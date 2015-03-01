@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>$$ORGNAME$$</title>
+</head>
+<style>
+* { 
+    font-family: sans-serif 
+}
+.box {
+    margin: 10px;
+    float: left;
+    width: 85px;
+    height: 115px;
+}
+.imgbox {
+    text-align: center;
+}
+.animalimg {
+    padding: 5px;
+    border: 1px solid #ccc;
+}
+.detailbox {
+    font-weight: bolder;
+    text-align: center;
+    padding-top: 16px;
+    color: #909090;
+}
+.animaldetails {
+    position: fixed;
+    box-shadow: 5px 5px 5px #888;
+    -moz-box-shadow: 5px 5px 5px #888;
+    -webkit-box-shadow: 5px 5px 5px #888;
+    top: 5px;
+    left: 10%;
+    width: 80%;
+    padding: 10px;
+    color: #909090;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    font-size: 10pt;
+}
+.animaldetails td {
+    font-size: 10pt;
+}
+a, a:hover, a:visited, a:active {
+    color: #069;
+}
+.ldesc, .lname, .lage, .lstatus, .lsex, .lbreed, .lgood {
+    font-weight: bold;
+}
+</style>
+<script type="text/javascript">
+function showImage(imgid, name) {
+    var img = document.getElementById(imgid);
+    img.src = name;
+}
+function blankImage(imgid) {
+    var img = document.getElementById(imgid);
+    img.style.display = "none";
+}
+</script>
+</style>
+
+<body>
+    

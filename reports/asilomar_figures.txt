@@ -1,0 +1,272 @@
+Asilomar Figures
+###
+Figures
+###
+3220/MySQL
+###
+Annual asilomar figures for US shelters
+###
+en
+###
+$VAR dt DATE Select which year to produce figures for$
+SELECT af.* FROM animalfiguresasilomar af
+WHERE af.Year = YEAR('$@dt$')
+ORDER BY af.OrderIndex
+###
+$$HTMLHEADER
+<html>
+<head>
+<title>Asilomar Figures</title>
+<style>
+table { border: none; border-collapse: collapse; width: 100% }
+td { border-left: 1px solid #000; }
+td:first-child { border-left: none; }
+td.fig { text-align: right; }
+.BOLD1 { font-weight: bold; }
+</style>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+</head>
+<body>
+<h2>Asilomar Figures</h2>
+<hr />
+<table>
+<tr>
+<th></th>
+<th></th>
+<th>Cat</th>
+<th>Dog</th>
+<th>Total</th>
+</tr>
+HTMLHEADER$$
+
+$$HEADER
+HEADER$$
+
+$$BODY
+<tr class="BOLD$BOLD $CODE">
+<td>$CODE</td>
+<td>$HEADING</td>
+<td width="50px" class="fig">$CAT</td>
+<td width="50px" class="fig">$DOG</td>
+<td width="50px" class="fig">$TOTAL</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<script type="text/javascript">
+$(function() {
+    $("td").each(function() {
+        if ($(this).text() == "-1") {
+            $(this).text("");
+        }
+    });
+});
+</script>
+FOOTER$$
+&&&
+Asilomar Figures
+###
+Figures
+###
+3220/PostgreSQL
+###
+Annual asilomar figures for US shelters
+###
+en
+###
+$VAR dt DATE Select which year to produce figures for$
+SELECT af.* FROM animalfiguresasilomar af
+WHERE af.Year = CAST(EXTRACT(YEAR FROM DATE('$@dt$')) AS INTEGER)
+ORDER BY af.OrderIndex
+###
+$$HTMLHEADER
+<html>
+<head>
+<title>Asilomar Figures</title>
+<style>
+table { border: none; border-collapse: collapse; width: 100% }
+td.fig { text-align: right; }
+td { border-left: 1px solid #000; }
+td:first-child { border-left: none; }
+.BOLD1 { font-weight: bold; }
+</style>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+</head>
+<body>
+<h2>Asilomar Figures</h2>
+<hr />
+<table>
+<tr>
+<th></th>
+<th></th>
+<th>Cat</th>
+<th>Dog</th>
+<th>Total</th>
+</tr>
+HTMLHEADER$$
+
+$$HEADER
+HEADER$$
+
+$$BODY
+<tr class="BOLD$BOLD $CODE">
+<td>$CODE</td>
+<td>$HEADING</td>
+<td width="50px" class="fig">$CAT</td>
+<td width="50px" class="fig">$DOG</td>
+<td width="50px" class="fig">$TOTAL</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<script type="text/javascript">
+$(function() {
+    $("td").each(function() {
+        if ($(this).text() == "-1") {
+            $(this).text("");
+        }
+    });
+});
+</script>
+FOOTER$$
+&&&
+Asilomar Figures (Monthly)
+###
+Figures
+###
+33309/MySQL
+###
+Monthly asilomar figures for US shelters
+###
+en
+###
+$VAR dt DATE Select which month/year to produce figures for$
+SELECT af.* FROM animalfiguresmonthlyasilomar af
+WHERE 
+af.Month = MONTH('$@dt$') AND
+af.Year = YEAR('$@dt$')
+ORDER BY af.OrderIndex
+###
+$$HTMLHEADER
+<html>
+<head>
+<title>Asilomar Figures (Monthly)</title>
+<style>
+table { border: none; border-collapse: collapse; width: 100% }
+td { border-left: 1px solid #000; }
+td:first-child { border-left: none; }
+td.fig { text-align: right; }
+.BOLD1 { font-weight: bold; }
+</style>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+</head>
+<body>
+<h2>Asilomar Figures (Monthly)</h2>
+<hr />
+<table>
+<tr>
+<th></th>
+<th></th>
+<th>Cat</th>
+<th>Dog</th>
+<th>Total</th>
+</tr>
+HTMLHEADER$$
+
+$$HEADER
+HEADER$$
+
+$$BODY
+<tr class="BOLD$BOLD $CODE">
+<td>$CODE</td>
+<td>$HEADING</td>
+<td width="50px" class="fig">$CAT</td>
+<td width="50px" class="fig">$DOG</td>
+<td width="50px" class="fig">$TOTAL</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<script type="text/javascript">
+$(function() {
+    $("td").each(function() {
+        if ($(this).text() == "-1") {
+            $(this).text("");
+        }
+    });
+});
+</script>
+FOOTER$$
+&&&
+Asilomar Figures (Monthly)
+###
+Figures
+###
+33309/PostgreSQL
+###
+Monthly asilomar figures for US shelters
+###
+en
+###
+$VAR dt DATE Select which month/year to produce figures for$
+SELECT af.* FROM animalfiguresmonthlyasilomar af
+WHERE 
+af.Month = CAST(EXTRACT(MONTH FROM DATE('$@dt$')) AS INTEGER) AND
+af.Year = CAST(EXTRACT(YEAR FROM DATE('$@dt$')) AS INTEGER)
+ORDER BY af.OrderIndex
+###
+$$HTMLHEADER
+<html>
+<head>
+<title>Asilomar Figures (Monthly)</title>
+<style>
+table { border: none; border-collapse: collapse; width: 100% }
+td.fig { text-align: right; }
+td { border-left: 1px solid #000; }
+td:first-child { border-left: none; }
+.BOLD1 { font-weight: bold; }
+</style>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+</head>
+<body>
+<h2>Asilomar Figures (Monthly)</h2>
+<hr />
+<table>
+<tr>
+<th></th>
+<th></th>
+<th>Cat</th>
+<th>Dog</th>
+<th>Total</th>
+</tr>
+HTMLHEADER$$
+
+$$HEADER
+HEADER$$
+
+$$BODY
+<tr class="BOLD$BOLD $CODE">
+<td>$CODE</td>
+<td>$HEADING</td>
+<td width="50px" class="fig">$CAT</td>
+<td width="50px" class="fig">$DOG</td>
+<td width="50px" class="fig">$TOTAL</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<script type="text/javascript">
+$(function() {
+    $("td").each(function() {
+        if ($(this).text() == "-1") {
+            $(this).text("");
+        }
+    });
+});
+</script>
+FOOTER$$
+

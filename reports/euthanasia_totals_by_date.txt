@@ -1,0 +1,20 @@
+Euthanasia Totals by Date
+###
+Movement Charts
+###
+Any
+###
+Total animals euthanised for each reason between two dates.
+###
+en
+###
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+
+SELECT ReasonName, COUNT(animal.ID) AS euthanised
+FROM animal
+INNER JOIN deathreason ON deathreason.ID = animal.PTSReasonID
+WHERE DiedOffShelter = 0 AND IsDOA = 0 AND PutToSleep = 1 AND DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$' AND NonShelterAnimal = 0
+GROUP BY ReasonName
+###
+GRAPH PIE

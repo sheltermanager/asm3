@@ -1,0 +1,86 @@
+Banned Owners
+###
+Auditing
+###
+Any
+###
+Owners banned from adopting animals.
+###
+en
+###
+SELECT ownername, owneraddress, ownertown, ownercounty, ownerpostcode, comments, lastchangeddate
+FROM owner 
+WHERE isbanned = 1
+ORDER BY ownername
+###
+$$HEADER
+<table border="1">
+HEADER$$
+
+$$BODY
+<tr>
+<td>
+<b>$OWNERNAME</b><br/>
+$OWNERADDRESS<br/>
+$OWNERTOWN $OWNERCOUNTY<br/>
+$OWNERPOSTCODE
+</td>
+<td>
+$LASTCHANGEDDATE
+</td>
+<td>
+<p>
+$COMMENTS
+</p>
+</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+&&&
+Banned Owners between two dates
+###
+Auditing
+###
+Any
+###
+Owners banned from adopting animals between two dates (last changed).
+###
+en
+###
+SELECT ownername, owneraddress, ownertown, ownercounty, ownerpostcode, comments, lastchangeddate
+FROM owner 
+WHERE isbanned = 1 
+AND LastChangedDate >= '$ASK DATE Enter the from date$' 
+AND LastChangedDate <= '$ASK DATE Enter the to date$'
+ORDER BY ownername
+###
+$$HEADER
+<table border="1">
+HEADER$$
+
+$$BODY
+<tr>
+<td>
+<b>$OWNERNAME</b><br/>
+$OWNERADDRESS<br/>
+$OWNERTOWN $OWNERCOUNTY<br/>
+$OWNERPOSTCODE
+</td>
+<td>
+$LASTCHANGEDDATE
+</td>
+<td>
+<p>
+$COMMENTS
+</p>
+</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+

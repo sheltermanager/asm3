@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="297mm"
+   height="210mm"
+   id="svg2160"
+   sodipodi:version="0.32"
+   inkscape:version="0.46"
+   sodipodi:docbase="/home/robin/Projects/sheltermanager/logo"
+   sodipodi:docname="splash_3.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+  <defs
+     id="defs2162">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 372.04724 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1052.3622 : 372.04724 : 1"
+       inkscape:persp3d-origin="526.18109 : 248.03149 : 1"
+       id="perspective2714" />
+    <linearGradient
+       gradientTransform="matrix(5.698013,0,0,5.45075,122.76732,194.95421)"
+       gradientUnits="userSpaceOnUse"
+       y2="51.613906"
+       x2="65.898417"
+       y1="51.613906"
+       x1="44.912956"
+       id="linearGradient2842"
+       xlink:href="#linearGradient2836"
+       inkscape:collect="always" />
+    <linearGradient
+       id="linearGradient2836"
+       inkscape:collect="always">
+      <stop
+         id="stop2838"
+         offset="0"
+         style="stop-color:blue;stop-opacity:1;" />
+      <stop
+         id="stop2840"
+         offset="1"
+         style="stop-color:blue;stop-opacity:0;" />
+    </linearGradient>
+    <linearGradient
+       gradientTransform="matrix(5.698013,0,0,5.45075,122.76732,194.95421)"
+       gradientUnits="userSpaceOnUse"
+       y2="20.730871"
+       x2="68.676781"
+       y1="20.730871"
+       x1="29.749166"
+       id="linearGradient2834"
+       xlink:href="#linearGradient2828"
+       inkscape:collect="always" />
+    <linearGradient
+       id="linearGradient2828"
+       inkscape:collect="always">
+      <stop
+         id="stop2830"
+         offset="0"
+         style="stop-color:lime;stop-opacity:1;" />
+      <stop
+         id="stop2832"
+         offset="1"
+         style="stop-color:lime;stop-opacity:0;" />
+    </linearGradient>
+    <linearGradient
+       gradientTransform="matrix(5.698013,0,0,5.45075,122.76732,194.95421)"
+       gradientUnits="userSpaceOnUse"
+       y2="42.147599"
+       x2="47.19458"
+       y1="42.147599"
+       x1="8.6899736"
+       id="linearGradient2826"
+       xlink:href="#linearGradient2820"
+       inkscape:collect="always" />
+    <linearGradient
+       id="linearGradient2820"
+       inkscape:collect="always">
+      <stop
+         id="stop2822"
+         offset="0"
+         style="stop-color:red;stop-opacity:1;" />
+      <stop
+         id="stop2824"
+         offset="1"
+         style="stop-color:red;stop-opacity:0;" />
+    </linearGradient>
+  </defs>
+  <sodipodi:namedview
+     inkscape:document-units="mm"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.43415836"
+     inkscape:cx="490"
+     inkscape:cy="380"
+     inkscape:current-layer="layer1"
+     id="namedview2164"
+     inkscape:window-width="794"
+     inkscape:window-height="707"
+     inkscape:window-x="657"
+     inkscape:window-y="284"
+     showgrid="false" />
+  <metadata
+     id="metadata2166">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <image
+       y="125.56535"
+       x="29.760628"
+       id="image2227"
+       height="500"
+       width="1000"
+       sodipodi:absref="/home/robin/Projects/sheltermanager/logo/splash_3_bg_1000.png"
+       xlink:href="splash_3_bg_1000.png"
+       inkscape:export-filename="/home/robin/workspace/sheltermanager/logo/asm2009/splash_3_400.png"
+       inkscape:export-xdpi="36"
+       inkscape:export-ydpi="36" />
+    <image
+       y="494.16879"
+       x="885.11871"
+       id="image2481"
+       height="122.10898"
+       width="127.68756"
+       sodipodi:absref="/mnt/disk2/workspace/sheltermanager/logo/asm2009/logo3_206.png"
+       xlink:href="logo3_206.png"
+       inkscape:export-filename="/home/robin/workspace/sheltermanager/logo/asm2009/splash_3_400.png"
+       inkscape:export-xdpi="36"
+       inkscape:export-ydpi="36"
+       style="opacity:0.73999999" />
+  </g>
+</svg>

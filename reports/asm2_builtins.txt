@@ -1,0 +1,439 @@
+Non-Microchipped Animals
+###
+Auditing
+###
+Any ASM2
+###
+Produces a list of animals without microchip information.
+###
+en
+###
+001
+###
+
+&&&
+Animals Without Photo Media
+###
+Auditing
+###
+Any ASM2
+###
+Produces a list of animals who do not have a photograph attached.
+###
+en
+###
+002
+###
+
+&&&
+Animals Never Vaccinated
+###
+Auditing
+###
+Any ASM2
+###
+Produces a list of animals who have never been vaccinated.
+###
+en
+###
+003
+###
+
+&&&
+Non-Neutered/Spayed Animals Aged Over 6 Months
+###
+Auditing
+###
+Any ASM2
+###
+Produces a list of animals aged over 6 months who have not been neutered/spayed.
+###
+en
+###
+004
+###
+
+&&&
+Cats Not Combi-Tested
+###
+Auditing
+###
+Any ASM2
+###
+Produces a list of cats who have not been Combi (FIV/L) tested.
+###
+en
+###
+005
+###
+
+&&&
+Monthly Animal Figures
+###
+Figures
+###
+Any ASM2
+###
+A comprehensive breakdown of animal movements over a monthly period.
+###
+en
+###
+006
+###
+
+&&&
+Long Term Animals
+###
+Figures
+###
+Any ASM2
+###
+Produces a list of animals who have been on the shelter longer than 3 months.
+###
+en
+###
+007
+###
+
+&&&
+Shelter Inventory
+###
+Inventories
+###
+Any ASM2
+###
+Shows the current shelter inventory.
+###
+en
+###
+008
+###
+
+&&&
+Detailed Shelter Inventory
+###
+Inventories
+###
+Any ASM2
+###
+Shows details of each on shelter animal, broken down by location.
+###
+en
+###
+009
+###
+
+&&&
+Animals Not Part Of A Litter
+###
+Litters
+###
+Any ASM2
+###
+Shows details of each animal aged under 6 months who is not part of a litter.
+###
+en
+###
+010
+###
+
+&&&
+In/Out
+###
+Movements
+###
+Any ASM2
+###
+Shows animal in/out movements over a period.
+###
+en
+###
+011
+###
+
+&&&
+In/Out Summary
+###
+Movements
+###
+Any ASM2
+###
+Shows animal in/out summary figures.
+###
+en
+###
+012
+###
+
+&&&
+Transfer In Report
+###
+Movements
+###
+Any ASM2
+###
+Shows a list of animals transferred into the shelter between two dates.
+###
+en
+###
+013
+###
+
+&&&
+Volume Of Adoptions Per Retailer
+###
+Retailers
+###
+Any ASM2
+###
+Shows the number of animals adopted from each retailer.
+###
+en
+###
+014
+###
+
+&&&
+Average Time At Retailer Before Adoption
+###
+Retailers
+###
+Any ASM2
+###
+Shows how long animals wait at each retailer before being adopted.
+###
+en
+###
+015
+###
+
+&&&
+Retailer Inventory
+###
+Retailers
+###
+Any ASM2
+###
+Shows which animals are currently with retailers.
+###
+en
+###
+016
+###
+
+&&&
+Returned Animals Report
+###
+Returns
+###
+Any ASM2
+###
+Shows animals returned within a period, along with their adoption histories.
+###
+en
+###
+017
+###
+
+&&&
+Animals Returned Within 6 Months
+###
+Returns
+###
+Any ASM2
+###
+Shows animals returned within 6 months of adoption.
+###
+en
+###
+018
+###
+
+&&&
+Animals Returned After 6 Months
+###
+Returns
+###
+Any ASM2
+###
+Shows animals returned after 6 months of adoption.
+###
+en
+###
+019
+###
+
+&&&
+Most Common Name
+###
+Statistics
+###
+Any ASM2
+###
+Shows the most common animal names in order.
+###
+en
+###
+020
+###
+
+&&&
+Animal Death Reasons
+###
+Statistics
+###
+Any ASM2
+###
+Shows the most common reasons for animal euthanasia.
+###
+en
+###
+021
+###
+
+&&&
+Common Animal Entry Areas
+###
+Statistics
+###
+Any ASM2
+###
+Shows the most common area animals enter the shelter from.
+###
+en
+###
+022
+###
+
+&&&
+Common Animal Adoption Areas
+###
+Statistics
+###
+Any ASM2
+###
+Shows the most common areas animals are adopted to.
+###
+en
+###
+023
+###
+
+&&&
+Average Time On Waiting List
+###
+Statistics
+###
+Any ASM2
+###
+Shows the average time animals are on the waiting list before a space is free.
+###
+en
+###
+024
+###
+
+&&&
+Monthly Donations
+###
+Financial Graphs
+###
+Any ASM2
+###
+Shows the volume of donations per month.
+###
+en
+###
+025
+###
+GRAPH
+
+&&&
+Monthly Donations By Species
+###
+Financial Graphs
+###
+Any ASM2
+###
+Shows the volume of donations per month, broken down by species.
+###
+en
+###
+026
+###
+GRAPH
+
+&&&
+Monthly Adoptions By Species
+###
+Movement Graphs
+###
+Any ASM2
+###
+Shows the number of adoptions per month, broken down by species.
+###
+en
+###
+027
+###
+GRAPH
+
+&&&
+Monthly Adoptions By Location
+###
+Movement Graphs
+###
+Any ASM2
+###
+Shows the number of adoptions per month, broken down by location.
+###
+en
+###
+028
+###
+GRAPH
+
+&&&
+Animal Entry Reasons
+###
+Movement Graphs
+###
+Any ASM2
+###
+Shows the number of animals that entered the shelter each month, broken down by entry reason.
+###
+en
+###
+029
+###
+GRAPH
+
+&&&
+Animal Return Reasons
+###
+Movement Graphs
+###
+Any ASM2
+###
+Shows the number of animals that were returned to the shelter each month, broken down by return reason.
+###
+en
+###
+030
+###
+GRAPH
+
+&&&
+Owner Criteria Matching
+###
+Inventories
+###
+Any ASM2
+###
+Matches owner criteria against current animals on the shelter.
+###
+en
+###
+031
+###
+

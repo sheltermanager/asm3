@@ -1,0 +1,43 @@
+Audit Trail: All Changes by Specific user
+###
+Auditing
+###
+2721/Any
+###
+All record creations, changes and deletions by a given user between two dates.
+###
+en
+###
+SELECT AuditDate, UserName, TableName, Description
+FROM audittrail
+WHERE
+UserName LIKE '$ASK STRING Enter a username$' 
+AND AuditDate >= '$ASK DATE Enter the from date$' AND AuditDate <= '$ASK DATE Enter the to date$'
+ORDER BY UserName, AuditDate
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_UserName
+$$HEAD
+<h2>$UserName</h2>
+<table>
+<tr>
+<td><b>Date</b></td>
+<td><b>Table</b></td>
+<td></td>
+</tr>
+$$FOOT
+</table>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$AUDITDATE</td>
+<td>$TABLENAME</td>
+<td>$DESCRIPTION</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$

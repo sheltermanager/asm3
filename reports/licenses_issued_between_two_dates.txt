@@ -1,0 +1,52 @@
+Licenses issued between two dates
+###
+Animal Control
+###
+33307/Any
+###
+Licenses that were issued between the two dates given
+###
+en
+###
+SELECT
+ol.LicenceNumber,
+lt.LicenceTypeName,
+o.OwnerName, a.AnimalName,
+ol.IssueDate, ol.ExpiryDate, ol.Comments
+FROM ownerlicence ol
+INNER JOIN licencetype lt ON lt.ID = ol.LicenceTypeID
+INNER JOIN owner o ON o.ID = ol.OwnerID
+LEFT OUTER JOIN animal a ON a.ID = ol.AnimalID 
+WHERE ol.IssueDate >= '$ASK DATE Enter the from date$'
+AND ol.IssueDate <= '$ASK DATE Enter the to date$'
+ORDER BY ol.IssueDate
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Number</th>
+<th>Type</th>
+<th>Person</th>
+<th>Animal</th>
+<th>Issued</th>
+<th>Expires</th>
+<th>Comments</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$LICENCENUMBER</td>
+<td>$LICENCETYPENAME</td>
+<td>$OWNERNAME</td>
+<td>$ANIMALNAME</td>
+<td>$ISSUEDATE</td>
+<td>$EXPIRYDATE</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+

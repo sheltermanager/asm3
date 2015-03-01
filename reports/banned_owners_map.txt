@@ -1,0 +1,16 @@
+Banned Owners Map
+###
+Maps
+###
+33402/PostgreSQL
+###
+Map of owners banned from adopting animals.
+###
+en
+###
+SELECT latlong, ownername || '<br>' || owneraddress
+FROM owner 
+WHERE isbanned = 1 AND latlong is not null AND latlong <> ''
+ORDER BY ownername
+###
+MAP

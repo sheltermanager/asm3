@@ -1,0 +1,100 @@
+Test Diary (On Shelter)
+###
+Diary
+###
+3309/Any
+###
+Tests required to date for shelter animals.
+###
+en
+###
+SELECT
+a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName,
+tt.TestName, at.DateRequired, at.Comments
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN animaltest at ON a.ID = at.AnimalID
+INNER JOIN testtype tt ON at.TestTypeID = tt.ID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+WHERE at.DateOfTest Is Null
+AND at.DateRequired <= '$CURRENT_DATE$'
+AND a.Archived = 0
+ORDER BY at.DateRequired
+###
+$$HEADER
+<table border=1><tr>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Type</b></td>
+<td><b>Location</b></td>
+<td><b>Test Type</b></td>
+<td><b>Required</b></td>
+<td><b>Comments</b></td>
+</tr>
+HEADER$$
+
+$$BODY<tr>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$ANIMALTYPE</td>
+<td>$LOCATIONNAME</td>
+<td>$TESTNAME</td>
+<td>$DATEREQUIRED</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+&&&
+Test Diary (On Shelter, Date Range)
+###
+Diary
+###
+3309/Any
+###
+Tests required between two dates for shelter animals.
+###
+en
+###
+SELECT
+a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName,
+tt.TestName, at.DateRequired, at.Comments
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN animaltest at ON a.ID = at.AnimalID
+INNER JOIN testtype tt ON at.TestTypeID = tt.ID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+WHERE at.DateOfTest Is Null
+AND at.DateRequired >= '$ASK DATE Enter the from date$'
+AND at.DateRequired <= '$ASK DATE Enter the to date$'
+AND a.Archived = 0
+ORDER BY at.DateRequired
+###
+$$HEADER
+<table border=1><tr>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Type</b></td>
+<td><b>Location</b></td>
+<td><b>Test Type</b></td>
+<td><b>Required</b></td>
+<td><b>Comments</b></td>
+</tr>
+HEADER$$
+
+$$BODY<tr>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$ANIMALTYPE</td>
+<td>$LOCATIONNAME</td>
+<td>$TESTNAME</td>
+<td>$DATEREQUIRED</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

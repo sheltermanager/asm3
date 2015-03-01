@@ -1,0 +1,49 @@
+RSPCA: Length of stay of animals currently in care
+###
+Figures
+###
+2721/PostgreSQL
+###
+Shows banded time on shelter by species for animals on the shelter at a date. Used for completing the UK RSPCA figures spreadsheet
+###
+en_GB
+###
+$VAR thedate DATE Select month end date$
+SELECT
+s.SpeciesName,
+CASE WHEN a.DaysOnShelter < 91 THEN '0-3 Months'
+WHEN a.DaysOnShelter >= 91 AND a.DaysOnShelter < 182 THEN '4-6 Months'
+ELSE 'Over 6 months' END AS BandOnShelter
+FROM animal a
+INNER JOIN species s ON s.ID = a.SpeciesID
+WHERE
+NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate < '$@thedate$' AND ReturnDate > '$@thedate$' AND MovementType <> 2 AND AnimalID = a.ID)
+AND NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate < '$@thedate$' AND ReturnDate Is Null AND MovementType <> 2 AND AnimalID = a.ID)
+AND DateBroughtIn <= '$@thedate$'
+AND NonShelterAnimal = 0 
+AND (DeceasedDate Is Null OR DeceasedDate > '$@thedate$') 
+ORDER BY SpeciesName, BandOnShelter
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h2>$SpeciesName</h2>
+<p>
+$$FOOT
+</p>
+GROUP$$
+
+$$GROUP_BandOnShelter
+$$HEAD
+$$FOOT
+$BandOnShelter : {COUNT.BANDONSHELTER}<br/>
+GROUP$$
+
+$$BODY
+BODY$$
+
+$$FOOTER
+FOOTER$$
+

@@ -1,0 +1,74 @@
+Shelter Inventory with Original Owner Addresses
+###
+Inventories
+###
+Any
+###
+Shelter animals, broken down by species/location with original owner addresses.
+###
+en
+###
+SELECT ShelterCode, AnimalName, DateBroughtIn,
+TimeOnShelter,
+animaltype.AnimalType AS theType,
+species.SpeciesName,
+animal.BreedName,
+internallocation.LocationName,
+oo.OwnerName AS OOName, oo.OwnerAddress AS OOAddress, oo.OwnerTown AS OOTown, oo.OwnerCounty AS OOCounty, oo.OwnerPostcode AS OOPostcode
+FROM animal
+INNER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
+INNER JOIN species ON species.ID = animal.SpeciesID
+INNER JOIN internallocation ON internallocation.ID = animal.ShelterLocation
+INNER JOIN owner oo ON animal.OriginalOwnerID = oo.ID
+WHERE Archived = 0 ORDER BY LocationName, SpeciesName, DateBroughtIn
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_LocationName
+$$HEAD
+<h2>$LocationName</h2>
+$$FOOT
+<h3>Total $LocationName: {COUNT.ShelterCode}</h3>
+GROUP$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h3>$SpeciesName</h3>
+<table border=1>
+<tr>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Type</b></td>
+<td><b>Breed</b></td>
+<td><b>Brought In</b></td>
+<td><b>By</b></td>
+<td><b>Time On Shelter</b></td>
+</tr>
+$$FOOT
+</table>
+<p>Total $SpeciesName: {COUNT.ShelterCode}</p>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$ShelterCode</td>
+<td>$AnimalName</td>
+<td>$theType</td>
+<td>$BreedName</td>
+<td>$DateBroughtIn</td>
+<td><i>$OOName</i><br />
+$OOAddress<br />
+$OOTown<br />
+$OOCounty<br />
+$OOPostcode
+</td>
+<td>$TimeOnShelter</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<h2>Total animals on shelter: {SQL.SELECT COUNT(*) FROM animal WHERE Archived = 0}</h2>
+FOOTER$$
+

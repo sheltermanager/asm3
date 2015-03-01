@@ -1,0 +1,55 @@
+Fosters by Date with Outcomes
+###
+Auditing
+###
+Any
+###
+Foster animals between two dates with their final outcomes
+###
+en
+###
+SELECT
+a.AnimalName, a.ShelterCode, a.DateOfBirth,
+e.ReasonName, o.OwnerName, m.MovementDate,
+a.NeuteredDate,
+CASE WHEN a.DeceasedDate Is Not Null THEN 'Died' WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType = 1 THEN 'Adopted' ELSE 'None' END AS OutcomeName,
+CASE WHEN a.DeceasedDate Is Not Null THEN a.DeceasedDate WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType = 1 THEN a.ActiveMovementDate ELSE Null END AS OutcomeDate
+FROM animal a
+INNER JOIN adoption m ON m.AnimalID = a.ID
+INNER JOIN owner o ON m.OwnerID = o.ID 
+INNER JOIN entryreason e ON a.EntryReasonID = e.ID 
+WHERE m.MovementType = 2 AND m.MovementDate >= '$ASK DATE Enter from date$' AND m.MovementDate <= '$ASK DATE Enter to date$' 
+ORDER BY m.MovementDate
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Animal</th>
+<th>Code</th>
+<th>DOB</th>
+<th>Entry category</th>
+<th>Fosterer</th>
+<th>Foster Date</th>
+<th>Neutered/Spayed</th>
+<th>Outcome</th>
+<th>Outcome date</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$ANIMALNAME</td>
+<td>$SHELTERCODE</td>
+<td>$DATEOFBIRTH</td>
+<td>$REASONNAME</td>
+<td>$OWNERNAME</td>
+<td>$MOVEMENTDATE</td>
+<td>$NEUTEREDDATE</td>
+<td>$OUTCOMENAME</td>
+<td>$OUTCOMEDATE</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

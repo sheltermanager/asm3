@@ -1,0 +1,47 @@
+Waiting List Removals
+###
+Waiting List
+###
+2732/Any
+###
+Animals removed from the waiting list between two dates.
+###
+en
+###
+SELECT u.Urgency, w.DateRemovedFromList,
+w.ReasonForRemoval, s.SpeciesName, w.AnimalDescription,
+o.OwnerName, o.HomeTelephone
+FROM animalwaitinglist w 
+INNER JOIN owner o ON w.OwnerID = o.ID
+INNER JOIN lkurgency u ON u.ID = w.Urgency
+INNER JOIN species s ON w.SpeciesID = s.ID
+WHERE w.DateRemovedFromList BETWEEN '$ASK DATE Enter from date$' AND '$ASK DATE Enter to date$'
+ORDER BY w.DateRemovedFromList DESC
+###
+$$HEADER
+<table border=1><tr>
+<td><b>Date Removed</b></td>
+<td><b>Ugency</b></td>
+<td><b>Reason</b></td>
+<td><b>Species</b></td>
+<td><b>Description</b></td>
+<td><b>Contact</b></td>
+<td><b>Telephone</b></td>
+</tr>
+HEADER$$
+
+$$BODY<tr>
+<td>$DATEREMOVEDFROMLIST</td>
+<td>$URGENCY</td>
+<td>$REASONFORREMOVAL</td>
+<td>$SPECIESNAME</td>
+<td>$ANIMALDESCRIPTION</td>
+<td>$OWNERNAME</td>
+<td>$HOMETELEPHONE</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<h2>Total: {COUNT.OWNERNAME}</h2>
+FOOTER$$

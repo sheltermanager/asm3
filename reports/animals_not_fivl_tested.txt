@@ -1,0 +1,40 @@
+Cats Not FIV/L Tested
+###
+Auditing
+###
+Any
+###
+Shelter cats who have not been FIV/L tested.
+###
+en
+###
+SELECT a.AnimalName, a.ShelterCode, a.AnimalAge, i.LocationName
+FROM animal a
+INNER JOIN internallocation i ON i.ID = a.ShelterLocation
+INNER JOIN species s ON s.ID = a.SpeciesID
+WHERE a.Archived = 0 AND a.CombiTested = 0 AND SpeciesName LIKE '%Cat%'
+ORDER BY a.DateOfBirth
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Code</th>
+<th>Age</th>
+<th>Location</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$ANIMALNAME</td>
+<td>$SHELTERCODE</td>
+<td>$ANIMALAGE</td>
+<td>$LOCATIONNAME</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+

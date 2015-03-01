@@ -1,0 +1,87 @@
+<div class="box">
+<div class="imgbox">
+<a href="javascript:show$$AnimalID$$()">
+<img class="animalimg" src="tn_$$WebMediaFilename$$" border="0" />
+</a>
+</div>
+
+<div class="detailbox">
+<b>
+<a href="javascript:show$$AnimalID$$()">$$AnimalName$$</a><br />
+$$Sex$$
+</b>
+</div>
+</div>
+
+<div id="box$$AnimalID$$" class="animaldetails" style="display: none">
+<p align="right"><a href="javascript:hide$$AnimalID$$()">Close</a></p>
+<table width="100%">
+<tr>
+<td width="160px" valign="top" align="center">
+<img id="$$AnimalID$$1" onError="blankImage(this.id)" onMouseOver="showImage('img$$AnimalID$$', '$$WebMediaFilename$$')" width="50px" border="0" src="$$WebMediaFilename$$" />
+<img id="$$AnimalID$$2" onError="blankImage(this.id)" onMouseOver="showImage('img$$AnimalID$$', '$$ShelterCode$$-2.jpg')" width="50px" border="0" src="$$ShelterCode$$-2.jpg" />
+<img id="$$AnimalID$$3" onError="blankImage(this.id)" onMouseOver="showImage('img$$AnimalID$$', '$$ShelterCode$$-3.jpg')" width="50px" border="0" src="$$ShelterCode$$-3.jpg" />
+<img id="$$AnimalID$$4" onError="blankImage(this.id)" onMouseOver="showImage('img$$AnimalID$$', '$$ShelterCode$$-4.jpg')" width="50px" border="0" src="$$ShelterCode$$-4.jpg" />
+<br />
+<img id="img$$AnimalID$$" class="animalimg" width="150px" src="$$WebMediaFilename$$" border="0" />
+</td>
+<td rowspan="2" valign="top"><table width="100%">
+<tr>
+<td width="85px"><span class="lname">Name:</span></td>
+<td><span class="vname">$$AnimalName$$</span></td>
+</tr>
+<tr>
+<td width="85px"><span class="lsex">Sex:</span></td>
+<td><span class="vsex">$$Sex$$</span></td>
+</tr>
+<tr>
+<td width="85px"><span class="lage">Age:</span></td>
+<td><span class="vage">$$Age$$</span></td>
+</tr>
+<tr>
+<td width="85px"><span class="lstatus">Status:</span></td>
+<td><span class="vstatus">Available</span></td>
+</tr>
+<tr>
+<td width="85px"><span class="lbreed">Breed:</span></td>
+<td><span class="vbreed">$$BreedName$$</span></td>
+</tr>
+<tr>
+<td></td>
+<td><span class="vgood">
+<script>
+    if ('$$GoodWithCats$$' == 'Yes') document.write("Good with cats <br />");
+    if ('$$GoodWithDogs$$' == 'Yes') document.write("Good with dogs <br />");
+    if ('$$GoodWithChildren$$' == 'Yes') document.write("Good with children <br />");
+</script>
+</span></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<p>$$WebMediaNotes$$</p>
+<script type="text/javascript">
+        if ("$$Youtube$$" != "" && "$$Youtube$$" != "None") {
+            document.write("<p><a target=\"_blank\" href=\"$$Youtube$$\">Click here for a video of $$AnimalName$$</a></p>");
+        }
+</script>
+
+</div>
+
+<script type="text/javascript">
+var disableLinks = false;
+function show$$AnimalID$$() {
+    if (disableLinks) return;
+    var id = "box$$AnimalID$$";
+    document.getElementById(id).style.display = "block";
+    disableLinks = true;
+}
+function hide$$AnimalID$$() {
+    var id = "box$$AnimalID$$";
+    document.getElementById(id).style.display = "none";
+    disableLinks = false;
+}
+</script>
+
+

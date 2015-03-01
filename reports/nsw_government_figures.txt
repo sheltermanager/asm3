@@ -1,0 +1,69 @@
+NSW Government Figures (16D)
+###
+Figures
+###
+Any
+###
+Annual New South Wales government figures report
+###
+en_AU
+###
+SELECT a.IdentichipNumber AS Microchip,
+a.AnimalName,
+a.BreedName || ', ' || bc.BaseColour AS Description,
+a.DateBroughtIn AS ArrivalDate,
+CASE WHEN a.DeceasedDate Is Not Null 
+THEN a.DeceasedDate
+ELSE a.ActiveMovementDate
+END AS ExitDate,
+oo.OwnerName AS Source,
+'' AS SignatureOfSurrenderer,
+(SELECT OwnerName || ', ' || OwnerAddress FROM owner INNER JOIN adoption ON adoption.OwnerID = owner.ID 
+WHERE adoption.AnimalID = a.ID AND adoption.MovementType = 2 LIMIT 1) AS Carer,
+CASE WHEN a.DeceasedDate Is Not Null
+THEN 'Deceased'
+WHEN a.ActiveMovementID Is Not Null OR a.ActiveMovementID = 0
+THEN mt.MovementType
+ELSE 'On Shelter'
+END AS Outcome
+FROM animal a
+LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation
+LEFT OUTER JOIN basecolour bc ON bc.ID = a.BaseColourID
+LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType
+LEFT OUTER JOIN owner oo ON a.OriginalOwnerID = oo.ID
+WHERE DateBroughtIn >= '$ASK DATE Animals brought in from$' 
+AND DateBroughtIn <= '$ASK DATE Animals brought in to$'
+ORDER BY DateBroughtIn
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Microchip No</th>
+<th>Name</th>
+<th>Description</th>
+<th>Arrival Date</th>
+<th>Exit Date</th>
+<th>Source</th>
+<th>Signature of Surrenderer</th>
+<th>Carer</th>
+<th>Outcome</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$MICROCHIP</td>
+<td>$ANIMALNAME</td>
+<td>$DESCRIPTION</td>
+<td>$ARRIVALDATE</td>
+<td>$EXITDATE</td>
+<td>$SOURCE</td>
+<td>$SIGNATUREOFSURRENDERER</td>
+<td>$CARER</td>
+<td>$OUTCOME</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

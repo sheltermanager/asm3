@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>$$ORGNAME$$</title>
+
+</head>
+<script>
+function blankImage(imgid) {
+    var img = document.getElementById(imgid);
+    img.style.display = "none";
+}
+</script>
+<style>
+body{
+color:#666;
+font-family: Ubuntu, Helvetica, Arial, Verdana, sans-serif;
+}
+</style>
+<style type="text/css">
+/*  SECTIONS  */
+.section {
+	clear: both;
+	padding: 0px;
+	margin: 0px;
+}
+
+/*  COLUMN SETUP  */
+.col {
+	display: block;
+	float:left;
+	margin: 1% 0 1% .2%;
+}
+.col:first-child { margin-left: 0; }
+
+
+/*  GROUPING  */
+.group:before,
+.group:after {
+	content:"";
+	display:table;
+}
+.group:after {
+	clear:both;
+}
+
+/* POPUP */
+.popup {
+    position: fixed;
+    box-shadow: 5px 5px 5px #888;
+    -moz-box-shadow: 5px 5px 5px #888;
+    -webkit-box-shadow: 5px 5px 5px #888;
+    top: 5px;
+    left: 10%;
+    width: 80%;
+    padding: 10px;
+    color: #909090;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    font-size: 10pt;
+}
+
+/*  GRID OF THREE  */
+.span_3_of_3 {
+	width: 100%;
+}
+.span_2_of_3 {
+	width: 76.1%;
+}
+.span_1_of_3 {
+	width: 22.2%;
+
+}
+/*  GO FULL WIDTH AT LESS THAN 480 PIXELS */
+@media only screen and (max-width: 480px) {
+	.col { 
+		margin: 1% 0 1% 0%;
+	}
+}
+
+@media only screen and (max-width: 480px) {
+	.span_3_of_3 {
+		width: 100%; 
+	}
+	.span_2_of_3 {
+		width: 100%; 
+	}
+	.span_1_of_3 {
+		width: 100%;
+	}
+}
+</style>
+<body>

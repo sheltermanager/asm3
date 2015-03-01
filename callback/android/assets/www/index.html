@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML1.0 Strict//EN"
+              "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>
+sheltermanager.com image uploader
+</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"> 
+<link rel="stylesheet" href="css/mobile/jquery.mobile-1.0.min.css" />
+<script type="text/javascript" src="js/jquery-1.6.4.min.js"></script>
+<script type="text/javascript" src="js/jquery.mobile-1.0.min.js"></script>
+<script type="text/javascript" src="js/phonegap-1.2.0.js"></script>
+<script type="text/javascript" src="js/index.js"></script>
+</head>
+<body>
+
+<div data-role='page' id='login'>
+<div data-role='header'><h1>Login</h1></div>
+<div data-role='content'>
+<h2>Login</h2>
+
+<div data-role="fieldcontain"><label for="database">Account</label><input type="text" id="database" name="database" value="" /></div>
+
+<div data-role="fieldcontain">
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username" value="" />
+</div>
+<div data-role="fieldcontain">
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" value="" />
+</div>
+
+<button id="loginbutton">Login</button>
+</div>
+</div>
+
+<div data-role='page' id='photo'>
+<div data-role='header'><h1>Photo</h1></div>
+<div data-role='content'>
+<h2>Photo</h2>
+<div data-role="fieldcontain">
+    <label for="animal">Animal</label>
+    <select id="animal">
+    </select>
+    <a id="take" data-role="button" data-icon="refresh">Take Photo</a>
+    <a id="gallery" data-role="button" data-icon="grid">Select From Gallery</a>
+    <img id="thumbnail" style="display: none; height: 200px; margin-left: auto; margin-right: auto;" />
+</div>
+
+</div>
+</div>
+
+</body>
+</html>

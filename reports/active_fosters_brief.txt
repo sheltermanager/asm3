@@ -1,0 +1,55 @@
+Active Fosters (Brief)
+###
+Auditing
+###
+Any
+###
+Active fosters, showing one foster per line.
+###
+en
+###
+SELECT
+OwnerName AS FosteredTo,
+OwnerAddress, HomeTelephone, MobileTelephone,
+ShelterCode, AnimalName,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS Sex,
+(SELECT BaseColour FROM basecolour WHERE ID = animal.BaseColourID) AS Colour,
+BreedName,
+DateOfBirth, AnimalAge
+FROM animal
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+INNER JOIN owner ON owner.ID = adoption.OwnerID
+WHERE MovementType = 2 AND DeceasedDate Is Null AND ReturnDate Is Null ORDER BY FosteredTo
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Fosterer</th>
+<th>Contact</th>
+<th>Code</th>
+<th>Name</th>
+<th>Sex</th>
+<th>Colour</th>
+<th>Breed</th>
+<th>Date Of Birth</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$FOSTEREDTO</td>
+<td>$OWNERADDRESS<br/>
+H: $HOMETELEPHONE<br/>
+M: $MOBILETELEPHONE</td>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$SEX</td>
+<td>$COLOUR</td>
+<td>$BREEDNAME</td>
+<td>$DATEOFBIRTH ($ANIMALAGE)</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

@@ -1,0 +1,44 @@
+0. Make sure VERSION has no u suffix
+
+1. Generate manual html for the program
+
+1.5 Update the translations
+
+2. Run make to compile/check, then make dist to build
+
+3. Verify installation works with an empty MySQL database
+
+4. Commit any changes made as the release
+
+5. Copy all sheltermanager* files to rawsoaa8:/var/www/deb
+
+6. Update news page on site
+
+7. Update changelog3.txt on site
+
+8. Update version on site
+
+9. Update deb package on rawsoaa8
+
+10. Update Launchpad release
+
+11. Update ASM online with "make smcomstable"
+
+12. Update twitter and facebook
+
+13. Update manual with lulu
+
+14. tag and commit again
+
+15. DON'T DO THIS - BZR TAKES FOREVER AND IT OFFER NO BENEFIT
+    Make a new branch for this release:
+    cd .. && cp sheltermanager sheltermanager_VERSION
+    cd sheltermanager_VERSION
+    bzr push --remember lp:~bobintetley/sheltermanager/VERSION
+    bzr pull --remember lp:~bobintetley/sheltermanager/VERSION
+    bzr info
+
+16. Mark the new branch as mature in the launchpad UI.
+
+17. Return to trunk working folder, update dev env version number
+

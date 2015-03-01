@@ -1,0 +1,74 @@
+Heartworm Positive Adoptions by Date
+###
+Movements
+###
+Any
+###
+Heartworm positive animals adopted between two dates 
+###
+en
+###
+SELECT a.ShelterCode, 
+a.AnimalName, 
+a.MostRecentEntryDate,
+a.IdentichipNumber,
+a.AnimalAge,
+a.BreedName,
+a.TimeOnShelter,
+sx.Sex,
+t.AnimalType,
+s.SpeciesName,
+a.ActiveMovementDate,
+o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN lksex sx ON sx.ID = a.Sex
+INNER JOIN adoption ad ON ad.ID = a.ActiveMovementID
+INNER JOIN owner o ON o.ID = ad.OwnerID
+WHERE a.ActiveMovementType = 1
+AND a.HeartwormTested = 1 AND a.HeartwormTestResult = 2
+AND a.ActiveMovementDate >= '$ASK DATE Enter from date$'
+AND a.ActiveMovementDate <= '$ASK DATE Enter to date$'
+ORDER BY s.SpeciesName, a.AnimalName
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h3>$SpeciesName</h3>
+<table border=1><tr>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Type</b></td>
+<td><b>Microchip</b></td>
+<td><b>Age</b></td>
+<td><b>Breed</b></td>
+<td><b>Sex</b></td>
+<td><b>Date Adopted</b></td>
+<td><b>Adopter</b></td>
+</tr>
+$$FOOT
+</table>
+<p>Total $SpeciesName: {COUNT.SpeciesName}</p>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$sheltercode</td>
+<td>$animalname</td>
+<td>$animaltype</td>
+<td>$identichipnumber</td>
+<td>$animalage</td>
+<td>$breedname</td>
+<td>$sex</td>
+<td>$activemovementdate</td>
+<td><b>$ownername</b><br/>$owneraddress<br/>$ownertown<br/>$ownercounty $ownerpostcode<br/>
+H: $hometelephone C: $mobiletelephone<br/>
+<i>$emailaddress</i></td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$

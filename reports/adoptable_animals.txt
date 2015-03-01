@@ -1,0 +1,74 @@
+Adoptable Animals
+###
+Inventories
+###
+33300/Any
+###
+List of adoptable animals with thumbnails.
+###
+en
+###
+SELECT
+ShelterCode,
+AnimalName,
+BreedName,
+SizeName,
+SexName,
+NeuteredName,
+AnimalAge,
+TimeOnShelter,
+IsGoodWithCatsName,
+IsGoodWithDogsName,
+IsGoodWithChildrenName,
+IsHouseTrainedName,
+ID AS AnimalID,
+DisplayLocation,
+AnimalComments,
+SpeciesName
+FROM v_animal
+WHERE AdoptionStatus = 'Adoptable'
+ORDER BY AnimalName
+###
+$$HEADER
+<h2>$SpeciesName</h2>
+<table border="1" width="100%">
+<tr>
+<th>Code</th>
+<th>Name</th>
+<th>Breed</th>
+<th>Size</th>
+<th>Sex/Fixed</th>
+<th>Age</th>
+<th>In Shelter</th>
+<th>Location</th>
+<th>OK With</th>
+<th>House Trnd</th>
+<th>Picture</th>
+<th>Comments</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$BREEDNAME</td>
+<td>$SIZENAME</td>
+<td>$SEXNAME / $NEUTEREDNAME</td>
+<td>$ANIMALAGE</td>
+<td>$TIMEONSHELTER</td>
+<td>$DISPLAYLOCATION</td>
+<td>Cats: $ISGOODWITHCATSNAME<br/>
+Dogs: $ISGOODWITHDOGSNAME<br/>
+Kids: $ISGOODWITHCHILDRENNAME</td>
+<td>$ISHOUSETRAINEDNAME</td>
+<td><a href="{IMAGE.$ANIMALID}"><img border="0" src="{IMAGE.$ANIMALID}" width="75" height="50" /></a></td>
+<td>$ANIMALCOMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<p>Total: {COUNT.ANIMALID}</p>
+FOOTER$$
+

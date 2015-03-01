@@ -1,0 +1,20 @@
+Animal Entry Reasons
+###
+Movement Charts
+###
+Any
+###
+Animals entering the shelter between two dates, broken down by entry reason.
+###
+en
+###
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+SELECT e.ReasonName, COUNT(a.ID) AS Entered
+FROM animal a
+INNER JOIN entryreason e ON e.ID = a.EntryReasonID
+WHERE a.DateBroughtIn >= '$@from$' AND a.DateBroughtIn <= '$@to$' AND NonShelterAnimal = 0
+AND a.NonShelterAnimal = 0
+GROUP BY e.ReasonName
+###
+GRAPH PIE

@@ -1,0 +1,14 @@
+
+<script type="text/javascript">
+// If the page has a show=ANIMALID parameter, make
+// that animal display.
+var loc = String(window.location);
+var pos = loc.indexOf("show=");
+var showid = "";
+if (pos != -1) {
+    showid = loc.substring(pos+5);
+    eval("show" + showid + "()"); 
+}
+</script>
+</body>
+</html>

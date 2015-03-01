@@ -1,0 +1,92 @@
+Payment Receipt
+###
+Financial
+###
+3000/Any
+###
+Produce a receipt for payments received from a person between two dates
+###
+en
+###
+SELECT o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, od.Donation, od.Date, od.Comments, dt.DonationName,
+(SELECT itemvalue FROM configuration WHERE itemname LIKE 'Organisation') AS OrgName, 
+(SELECT itemvalue FROM configuration WHERE itemname LIKE 'OrganisationAddress') AS OrgAddress,
+(SELECT itemvalue FROM configuration WHERE itemname LIKE 'OrganisationTelephone') AS OrgTel,
+'$CURRENT_DATE$' AS CurrentDate
+FROM owner o
+INNER JOIN ownerdonation od ON od.OwnerID = o.ID
+INNER JOIN donationtype dt ON dt.ID = od.DonationTypeID 
+WHERE o.OwnerName LIKE '%$ASK STRING Enter a partial person name$%'
+AND od.Date >= '$ASK DATE Enter the from date$'
+AND od.Date <= '$ASK DATE Enter the to date $'
+ORDER BY o.OwnerName, od.Date
+###
+$$HTMLHEADER
+<DOCTYPE html>
+<html>
+<head>
+<title>Payment Receipt</title>
+</head>
+<body>
+HTMLHEADER$$
+
+$$HEADER
+HEADER$$
+
+$$GROUP_OWNERNAME
+$$HEAD
+<table width="100%" border="0">
+<tr>
+<td>
+$ORGNAME<br  />
+$ORGADDRESS<br /><br />
+$ORGTEL
+</td>
+<td>
+<h2>RECEIPT</h2>
+Date: $CURRENTDATE
+</td>
+</table>
+<p>&nbsp;</p>
+<hr />
+<p><b>Received From:</b></p>
+<p>$OWNERNAME<br />
+$OWNERADDRESS<br />
+$OWNERTOWN<br />
+$OWNERCOUNTY<br />
+$OWNERPOSTCODE
+</p>
+<hr />
+<table width="100%" border="0">
+<tr>
+<td><b>Date</b></td>
+<td><b>Category</b></td>
+<td><b>Notes</b></td>
+<td align="right"><b>Amount</b></td>
+</tr>
+$$FOOT
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td align="right"><b>{SUM.DONATION.2}</b></td>
+</table>
+<hr />
+GROUP$$
+
+$$BODY
+<tr>
+<td>$DATE</td>
+<td>$DONATIONNAME</td>
+<td>$COMMENTS</td>
+<td align="right">$DONATION</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
+
+$$HTMLFOOTER
+</body>
+</html>
+HTMLFOOTER$

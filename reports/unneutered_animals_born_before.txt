@@ -1,0 +1,47 @@
+Non-Neutered/Spayed Shelter Animals Born Before
+###
+Auditing
+###
+Any
+###
+Non-neutered/spayed animals born before a certain date
+###
+en
+###
+SELECT ShelterCode, AnimalName,
+internallocation.LocationName, animaltype.AnimalType,
+species.SpeciesName, AnimalAge, lksex.Sex
+FROM animal
+INNER JOIN internallocation ON animal.ShelterLocation = internallocation.ID
+INNER JOIN animaltype ON animal.AnimalTypeID = animaltype.ID
+INNER JOIN species ON animal.SpeciesID = species.ID
+INNER JOIN lksex ON animal.Sex = lksex.ID
+WHERE Archived = 0 AND Neutered = 0
+AND DateOfBirth <= '$ASK DATE Animals born before$'
+###
+$$HEADER
+<table border=1><tr>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Location</b></td>
+<td><b>Type</b></td>
+<td><b>Species</b></td>
+<td><b>Age</b></td>
+<td><b>Sex</b></td>
+</tr>
+HEADER$$
+
+$$BODY<tr>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$LOCATIONNAME</td>
+<td>$ANIMALTYPE</td>
+<td>$SPECIESNAME</td>
+<td>$ANIMALAGE</td>
+<td>$SEX</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

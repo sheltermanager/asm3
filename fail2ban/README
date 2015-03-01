@@ -1,0 +1,4 @@
+Fail2ban filter and example jail.local for:
+
+asm3: bans the attacking IP for 10 minutes for 5 failed password authentications in a 10 minute period
+asm3-loginpost: bans the attacking IP for 10 minutes for posting to the login handler 3 times in 60 seconds

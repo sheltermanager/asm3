@@ -1,0 +1,80 @@
+Detailed Shelter Inventory including Fosters
+###
+Inventories
+###
+PostgreSQL MySQL SQLite
+###
+Detailed current shelter inventory, with breed and microchip details and showing foster homes as locations.
+###
+en
+###
+SELECT a.ShelterCode, 
+a.AnimalName, 
+a.MostRecentEntryDate,
+a.IdentichipNumber,
+a.AnimalAge,
+a.BreedName,
+sx.Sex,
+t.AnimalType,
+s.SpeciesName,
+o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.MobileTelephone,
+CASE
+WHEN a.ActiveMovementType = 2 THEN o.OwnerName
+ELSE i.LocationName END AS DisplayLocationName
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN lksex sx ON sx.ID = a.Sex
+INNER JOIN internallocation i ON i.ID = a.ShelterLocation
+LEFT OUTER JOIN adoption ad ON a.ActiveMovementID = ad.ID
+LEFT OUTER JOIN owner o ON ad.OwnerID = o.ID
+WHERE (a.Archived = 0 OR a.ActiveMovementType = 2) AND DeceasedDate Is Null 
+ORDER BY 
+CASE
+WHEN a.ActiveMovementType = 2 THEN o.OwnerName
+ELSE i.LocationName END, s.SpeciesName, a.DateBroughtIn
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_DisplayLocationName
+$$HEAD
+<h2>$DisplayLocationName</h2>
+<p>$OWNERADDRESS $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br/>$HOMETELEPHONE $MOBILETELEPHONE</p>
+$$FOOT
+<p><b>Total $DisplayLocationName: {COUNT.LocationName}</b></p>
+GROUP$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h3>$SpeciesName</h3>
+<table border=1><tr>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Type</b></td>
+<td><b>Microchip</b></td>
+<td><b>Age</b></td>
+<td><b>Breed</b></td>
+<td><b>Sex</b></td>
+<td><b>Date Entered Shelter</b></td>
+</tr>
+$$FOOT
+</table>
+<p>Total $SpeciesName: {COUNT.SpeciesName}</p>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$sheltercode</td>
+<td>$animalname</td>
+<td>$animaltype</td>
+<td>$identichipnumber</td>
+<td>$animalage</td>
+<td>$breedname</td>
+<td>$sex</td>
+<td>$mostrecententrydate</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$

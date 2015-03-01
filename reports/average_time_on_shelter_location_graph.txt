@@ -1,0 +1,41 @@
+Average Time On Shelter By Location
+###
+Movement Charts
+###
+3000/MySQL
+###
+Average time spent on shelter for all animals by year and location.
+###
+en
+###
+SELECT
+LocationName,
+YEAR(DateBroughtIn) AS biyear,
+AVG(DaysOnShelter) AS TimeOnShelter
+FROM animal
+INNER JOIN internallocation ON internallocation.ID = animal.ShelterLocation
+WHERE DaysOnShelter > 0
+GROUP BY LocationName, YEAR(DateBroughtIn)
+###
+GRAPH LINES
+&&&
+Average Time On Shelter By Location
+###
+Movement Charts
+###
+3000/PostgreSQL
+###
+Average time spent on shelter for all animals by year and species.
+###
+en
+###
+SELECT
+LocationName,
+CAST(EXTRACT(YEAR FROM DateBroughtIn) AS INTEGER) AS biyear,
+CAST(AVG(DaysOnShelter) AS INTEGER) AS avtimeonshelter
+FROM animal
+INNER JOIN internallocation ON internallocation.ID = animal.ShelterLocation
+WHERE DaysOnShelter > 0
+GROUP BY LocationName, EXTRACT(YEAR FROM DateBroughtIn)
+###
+GRAPH LINES

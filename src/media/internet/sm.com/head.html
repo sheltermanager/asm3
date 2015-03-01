@@ -1,0 +1,154 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>$$ORGNAME$$</title>
+</head>
+
+
+<style>
+
+* {
+	font-family: sans-serif;
+}
+
+h2 {
+   background: #555555;
+   padding: 5px;
+   color: white;
+   border: 1px solid #000000;
+   float: left;
+   width: 100%;
+}
+
+table {
+   float: left;
+   width: 100%;
+}
+
+.hoverbox
+{
+	cursor: default;
+	list-style: none;
+}
+
+.hoverbox img
+{
+	border: 0;
+	margin: 2px;
+	vertical-align: center;
+}
+
+.hoverbox img.full
+{
+	border: 1px solid black;
+	margin: 2px;
+	vertical-align: center;
+}
+
+.hoverbox a
+{
+	cursor: default;
+	border: none;
+	text-decoration: none;
+	color: black;
+}
+
+.hoverbox a .preview
+{
+	display: none;
+}
+
+.hoverbox a:hover .preview
+{
+	display: block;
+	position: absolute;
+	/*top: -1px; left: -1px;  ONLY USE WITH RELATIVE PARENT*/
+	z-index: 1;
+}
+
+.hoverbox ul {
+  float: left;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hoverbox li
+{
+	display: inline;
+	width: 229; /* 234 x 285, reduce by margin */
+	height: 280;
+	margin: 5px; 
+	background-image: url("back1.png"); 
+	text-align: center;
+	font-weight: bold;
+	/*position: relative; BREAKS IE7*/
+}
+
+.hoverbox .preview
+{
+	border: 2px solid #000000;
+	background-color: #cccccc;
+	width: 400px;
+}
+
+
+.hoverbox p.name {
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  font-size: 90%;
+}
+
+.hoverbox p.info {
+  font-weight: normal;
+  text-align: center;
+  text-decoration: none;
+  font-size: 60%;
+}
+
+</style>
+
+<script language="javascript">
+
+function outputImage(imagename, alttext) {
+
+	document.write("<img src='" + imagename + "' alt='" + alttext + "' title='" + alttext + "' />");
+
+}
+
+
+</script>
+
+<body>
+    
+<h2>$$ORGNAME$$</h2>
+
+<!-- Fill in your shelter details below -->
+<table>
+<tr>
+<td>Address:</td>
+<td>$$ORGADDRESS$$</td>
+</tr>
+<tr>
+<td>Telephone:</td>
+<td>$$ORGTEL$$</td>
+</tr>
+<tr>
+<td>Email:</td>
+<td>$$ORGEMAIL$$</td>
+</tr>
+</table>
+
+<table width="100%">
+<tr>
+<td><hr /></td>
+</tr>
+<tr>
+<td><p>$$NAV$$</p></td>
+</tr>
+</table>
+
+<ul class="hoverbox">
+

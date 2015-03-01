@@ -1,0 +1,39 @@
+Neutering by Date
+###
+Auditing
+###
+Any
+###
+All animals neutered/spayed between two dates.
+###
+en
+###
+SELECT ShelterCode, AnimalName,
+NeuteredDate, AnimalComments
+FROM animal
+WHERE Neutered = 1 AND 
+NeuteredDate BETWEEN '$ASK DATE Enter from date$' AND '$ASK DATE Enter to date$'
+ORDER BY NeuteredDate
+###
+$$HEADER
+<table border=1><tr>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Date</b></td>
+<td><b>Comments</b></td>
+</tr>
+HEADER$$
+
+$$BODY<tr>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$NEUTEREDDATE</td>
+<td>$ANIMALCOMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<p>Total: {COUNT.ShelterCode}</p>
+FOOTER$$
+

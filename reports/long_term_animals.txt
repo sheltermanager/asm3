@@ -1,0 +1,47 @@
+Long Term Animals
+###
+Figures
+###
+Any
+###
+Animals who have been on the shelter longer than 3 months.
+###
+en
+###
+SELECT a.AnimalName, a.ShelterCode, t.AnimalType, i.LocationName,
+s.SpeciesName, a.MostRecentEntryDate
+FROM animal a
+INNER JOIN internallocation i ON i.ID = a.ShelterLocation
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+WHERE a.Archived = 0 AND DaysOnShelter > 92
+ORDER BY a.MostRecentEntryDate
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Code</th>
+<th>Type</th>
+<th>Location</th>
+<th>Species</th>
+<th>Entry Date</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$ANIMALNAME</td>
+<td>$SHELTERCODE</td>
+<td>$ANIMALTYPE</td>
+<td>$LOCATIONNAME</td>
+<td>$SPECIESNAME</td>
+<td>$MOSTRECENTENTRYDATE</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+
+

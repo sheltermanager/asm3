@@ -1,0 +1,1660 @@
+36
+================
+
+01/03/15 Improve publisher performance by using new async module
+01/03/15 Add async module - helper functions for long running tasks
+26/02/15 Add PostgreSQL asm_to_integer to avoid cast errors with additionals
+26/02/15 Fix adoptapet.com goodwith fields (bad type comparison)
+25/02/15 Fix adoptapet.com default map to include Barnyard
+24/02/15 Incorporate JQuery UI timepicker widget
+24/02/15 Refactor OwnerName generating to support multiformat
+23/02/15 Facility to email HTML documents as PDFs from media tabs
+23/02/15 Show emblem icons on configuration screen as legend
+23/02/15 Add emblem for Heartworm, FIV or FLV positive
+23/02/15 Animal batch update should check location of animals due for return
+23/02/15 Add MicrochipManufacturer wordkey and factor regexes into backend
+23/02/15 Default values for additional fields, do not allow ? in field names
+19/02/15 Restructure user menu, add help menu and FAQ
+19/02/15 Show species in movement books
+19/02/15 Validate against date of birth being in the future
+19/02/15 Strip unicode characters when importing CSV
+17/02/15 add maint_db_reset cron target
+17/02/15 csvimport delete option removes all non-lookup data
+16/02/15 Fix bug with diary comments saving
+16/02/15 Fix diary note permissions for MY/ALL
+14/02/15 Include location filter on user overview screen
+14/02/15 Fix reliance on jquery ui accordion IDs (broken in jqueryui 1.11)
+14/02/15 Add PERSONFLAGS csv import key
+12/02/15 Save bandwidth by loading thumbs after multiselect dialog opened
+12/02/15 Reorganise dependencies into static/lib, fix boilerplate in sitedef
+11/02/15 Move away from CDNs to host with app due to Cloudflare SSL issues
+11/02/15 Add call/incident to mobile interface
+10/02/15 Add log to mobile incident view
+10/02/15 Add dispatch/respond/complete now to mobile incident view
+09/02/15 Add view open/my incidents to mobile interface
+09/02/15 Fixed bug when deleting treatments could orphan a regimen
+05/02/15 Added WebsiteImageCount wordkey
+05/02/15 Added annual figures breakdown by entry category
+05/02/15 Added extra annual figures for born on shelter, born on foster, DOA
+05/02/15 Use animal ID for publisher image names if sheltercode contains unicode
+04/02/15 Enable $$NODATA blocks in subreports
+04/02/15 Split showing incomplete medical on docs into medical and vacc option
+04/02/15 Add support for registering Anibase/idENTICHIP UK microchips
+04/02/15 Fix unicode bug when adding config changes to audit trail
+03/02/15 Show spinner in dialogs during save
+02/02/15 Add transport reports and extras to print animal report
+02/02/15 Add transport alerts and stats to costs
+02/02/15 Fix bad references breaking looking for report
+02/02/15 Separate document tab under options
+01/02/15 Settings screen to trigger batch jobs, changed menu layout
+01/02/15 Fix Kuwait date format to DMY instead
+30/01/15 Force uploadAllImages for PF and RG (PF breaks now without -1.jpg)
+26/01/15 Fix openoffice image support for placeholder.jpg/nopic.jpg
+26/01/15 (experimental) Allow native support for openoffice templates again
+26/01/15 Reinstate global search by location name
+25/01/15 Fix to gracefully handle missing GROUP fields in reports
+25/01/15 Fix for datetime parsing breaking with blank date
+24/01/15 Bulk creation of transports from transport book
+24/01/15 Add transports to calendar view and cost tab
+24/01/15 Transport permissions, person driver flag
+24/01/15 Separate transport storage rather than movements, animal tab/book
+24/01/15 Allow user to set the new password when resetting passwords
+24/01/15 New alert/search for not microchipped
+24/01/15 Additional animal emblem for not microchipped
+24/01/15 Allow intake time to be recorded with "When adding animals" option
+23/01/15 Fix max-width of calendar to prevent excess height on widescreen
+23/01/15 Add mark dispatched/responded now buttons
+23/01/15 Show responded date time in incident search results
+23/01/15 Allow additional fields to be selectively searchable
+21/01/15 Allow bulk change of hold/hold until
+21/01/15 Add MedicalNextTreatmentDue and MedicalLastTreatmentGiven wordkeys
+21/01/15 Remove cloudmade provider as they are no longer available
+21/01/15 Remove smcom geo provider as can override nominatim URL for proxy
+21/01/15 Fix Google QR to use // to match current site protocol
+21/01/15 Make QR source a sitedef to allow different providers
+20/01/15 Consolidate and simplify location filter code
+20/01/15 Allow on-shelter movements to be included in location filters
+19/01/15 Add DONATIONPAYMENT column to csv import for payment method
+19/01/15 Date manipulation hotkeys only work first time
+19/01/15 FTP publish, do no processing for existing images
+19/01/15 FTP publish, add lsdir, only issue one LIST per run, use nlst
+18/01/15 Add austrian locale
+15/01/15 Better javascript db for web publishing, fixed plain search template
+15/01/15 Add systemd unit file to Debian build
+14/01/15 Add Identichip UK homechips
+12/01/15 Reduce memory usage of update_animal_status with animal_status_query
+12/01/15 Fixes for person/animal links on additional slider
+12/01/15 Fixes to print animal report (costs and animal/person links)
+11/01/15 Fix embedded add owner disabling after single use
+09/01/15 Use two stage get_animal_ids function for shelterview performance
+08/01/15 Limit shelterview to 1,000 records in larger databases
+07/01/15 Fix orphaned records deleting waiting list, lost/found, animalcontrol
+07/01/15 Transfer batch number and stock name to vacc when administering
+07/01/15 HTML publisher can output forms.html with links to online forms
+07/01/15 Abandon VetEnvoy runs if a 54101/account not found is received
+05/01/15 Turning off good with fields breaks additional fields on that section
+05/01/15 Fix apostrophes in email addresses breaking pages
+05/01/15 Anti-spambot verification for online forms
+05/01/15 Allow online forms to be cloned
+05/01/15 <<ReservationStatus>> wordkey
+02/01/15 Better PetLink error handling for incorrect user/pass
+31/12/14 Fix hang adding a new report
+31/12/14 Regenerate sequences after an action query in SQL interface
+29/12/14 Add ASK LOGTYPE
+21/12/14 Fix timezone offset for default date in report dialogs
+20/12/14 Fixes for embedded widgets and indexed searches
+20/12/14 Fix size of onlineformfield tooltip/raw markup field (1Kb too small)
+20/12/14 Add reservation status field (adoption application status for US)
+20/12/14 Allow a fosterer to be selected when creating an animal
+18/12/14 Hide generate labels from mailmerge if required fields are missing
+18/12/14 Export Reports as CSV option on reports menu, new permission
+18/12/14 Fix for old ASM2 reports reappearing due to condition on wrong field
+17/12/14 Allow tokens in sitedef from address for org/db/alias
+16/12/14 Fix broken satellite icons on lost animal details tab
+16/12/14 Holds should come off on the actual day set, not the day after
+15/12/14 Allow use of multiple $PARENTARGX$ values when generating subreports
+11/12/14 Use sitedef for from address on all emails with shelter as reply-to
+11/12/14 Fix permissions on menu items for Animal Control/Medical calendar
+11/12/14 Show view roles when browsing reports
+11/12/14 Followup alert broken boolean logic, OR too inclusive
+11/12/14 requirefollowup filter wrong in incident find select
+10/12/14 Santise renamed html template paths
+10/12/14 Add half_a4_cage_card for landscape a4
+08/12/14 Fix to html decode entities in units
+
+35
+================
+
+04/12/14 Better error handling for {REPORT.} tags
+03/12/14 When suggesting location units, shows current availability
+03/12/14 Can set fixed location units in internal locations for animal/animal_new
+28/11/14 Ability to create incidents/complaints from online forms
+28/11/14 Allow configurable time for daily emails with reports_email cron target
+27/11/14 Daily Email report field to allow batch sending of reports every day
+27/11/14 Date picker field type for online forms (pulls in JQuery/UI)
+26/11/14 Option to show off shelter medical/vacc/tests in books and calendar
+24/11/14 Hide current account when creating trx to avoid zero trx
+24/11/14 Don't allow decimals in stock numbers
+24/11/14 Cost wordkeys on all meds, vacc batch, expires and manufacturer
+24/11/14 Allow CSV import to carry on if some rows have fewer columns
+24/11/14 Allow emails to be sent/logged from lost/found and waiting list records
+22/11/14 Fix bug with DisplayLocation calculated field not using new values
+22/11/14 Fix sql multi-query parsing when executing dumps
+21/11/14 Remove breed inner joins from reports as not necessary
+20/11/14 Widgetise email dialog for other screens
+20/11/14 Extra wordkeys for accessing cost records
+17/11/14 Fix use of wrong parameter for utils/POST (avid)
+15/11/14 Fix double click bug when changing password
+15/11/14 Complete Turkish translation (Burcu B)
+14/11/14 Show fore/background color selector in document template editor
+13/11/14 Improve lost/found search, show contact separate with person link
+06/11/14 Clone role button
+06/11/14 Allow vaccinations to track expiry, batch number and manufacturer
+05/11/14 Improve movement screen validation and field disabling
+05/11/14 Add new transport movement type with transport book
+05/11/14 Include pickup location/by in entry section and person links
+02/11/14 Add HomeCheckedByName, HomeCheckedByEmail wordkeys
+02/11/14 Add HomeCheckedByHomeTelephone, HomeCheckedByCellTelephone wordkeys
+02/11/14 Hide old online form attach functionality
+02/11/14 Allow online forms to be attached to existing animals
+02/11/14 Include a blank option for adoptable/shelter online form animals
+30/10/14 onlineform emails should include preview in the subject
+28/10/14 Use reserveanimalname as a prefix to allow multiple form reserves
+27/10/14 Extend data import modules to support pulling images from PetFinder
+27/10/14 Improve performance for home page link loading
+23/10/14 Don't include reserved animals in lookingfor report
+22/10/14 Fix storage of matchagefrom/to to floating point
+21/10/14 Fix high memory usage in lost/found match report
+21/10/14 Fix high memory usage in person looking for report
+21/10/14 Show person comments on looking for report
+20/10/14 Fix PetLink to use urllib3/SNI, refactored all HTTP requests
+20/10/14 Allow raw markup online form type
+17/10/14 Facebook now requires HTTPS/SNI, switch social.py to use urllib3
+14/10/14 Include payment wordkeys when generating animal/move documents
+09/10/14 Second payment should apply to "receive a payment" screen
+08/10/14 Add new map report type and some sample map reports to repository
+07/10/14 Importing online form to a person checks to see if that person exists
+07/10/14 Add TrialEndDate wordkey
+06/10/14 Fix manual and contents of animal.DisplayLocation field
+03/10/14 Support CTRL+A for selecting all items in a table
+01/10/14 Include reclaims when sending to PetLink
+30/09/14 Better keyboard support via mousetrap, now supports IE8 and CTRL+S
+30/09/14 Special form reserveanimalname field to auto reserve to person
+30/09/14 Add online form field types for animal, breed, colour, species
+30/09/14 Allow path to be set for document repository items
+29/09/14 Fix for display of account override on second donation
+26/09/14 Force reload of page after installing reports from repository
+26/09/14 Fix for form not dirtying when clearing bonded animals/additional
+26/09/14 Fix bad display of deceased animal logic in search/animal banner
+22/09/14 Fix display of linked additional fields
+13/09/14 Document directives for pdf papersize and pdf orientation
+10/09/14 Use separate permission for merging people
+09/09/14 Include suspect name on dispatch email
+09/09/14 Validation for incident times
+08/09/14 Include PetPlan form in base install
+07/09/14 Don't include excluded images when accessing media by sequence
+05/09/14 Fix for medical ends after 0 periods not creating treatments
+05/09/14 Automatic validation for time widgets
+03/09/14 Added en_MX locale
+30/08/14 Petlink should be enabled for Canada as well as US
+16/08/14 Add 6 week publish exclude and ddd-ddd-ddd AVID format
+13/08/14 Fixed bug in person looking for report
+11/08/14 Fixed bad quantity validation breaking stock change
+11/08/14 Fixed spelling of Dandie Dinmont Terrier for RG
+
+34
+================
+
+29/07/14 Fixed invalid reference in Greek translation
+28/07/14 traploan word keys added
+28/07/14 breed1==breed2 should denote unspecified/unknown crossbreeds
+25/07/14 Alert for holds ending today, matching search
+25/07/14 sitedef to decode html entities to unicode when storing in the db
+21/07/14 csv_mail API target
+17/07/14 Complete description, units and total from last stock with name
+17/07/14 Default stock balance to total if blank
+16/07/14 Allow quantity to create multiple stock items, update manual
+16/07/14 Show batch number in stock item list
+15/07/14 Stock take mobile interface
+15/07/14 Fix PetFinder publisher to use &#10; instead of <br> as advised
+13/07/14 Fix for licence number validation errors
+10/07/14 Default stock usage comments to animals receiving stock
+10/07/14 Add stock usage reports
+09/07/14 Hide zero balances when loading stock levels
+09/07/14 Allow deducting from stock when performing tests
+08/07/14 Add perform test dialog
+07/07/14 Allow deducting from stock when giving treatments
+07/07/14 Allow deducting from stock when administering vaccinations
+07/07/14 Fix vaccination rescheduling to use a date and dialog
+07/07/14 Allow stock control to be disabled
+04/07/14 Stock control UI added
+01/07/14 Stock control backend and unit tests
+24/06/14 Support for AVID ddd*ddd*ddd format
+20/06/14 PetRescue adjustments (single image, dump to FTP root)
+20/06/14 Show microchip manufacturer from prefixes on screen
+17/06/14 Calculate left shelter and time on shelter correctly
+16/06/14 Show diary as all day on the calendar if time is midnight/blank
+09/06/14 Unit test regression suite
+09/06/14 Show all diaries on calendar if option on, show quick button on home
+05/06/14 Split calendars into separate animal control, medical, payment and diary
+05/06/14 Calendar legend/toggles to show/hide different info
+05/06/14 Add payments, incident followups and trap loans to calendar view
+04/06/14 Calendar view with diary, vacc, medical and tests
+04/06/14 Medications can be given only on weekdays now (for fasted exotics)
+04/06/14 Validate usernames are unique before creation
+01/06/14 Only use views for reports due to poor MySQL performance
+01/06/14 Show number of published items for last 10 runs in publish_logs
+01/06/14 Only allow saving documents when dirty for non-generated
+31/05/14 Use browser's built in spellchecker and retire tinymce plugin
+30/05/14 Option to auto return fosters during adoption from tabs/books
+30/05/14 Add person class field to show organisation name
+30/05/14 Add deceased person flag
+30/05/14 Remove retailer person flag when retailer is disabled
+30/05/14 Sort all person flags in alphabetical order
+29/05/14 get_stats wasn't including cost of tests in total
+29/05/14 Licence search/display should be on person as animal is optional
+29/05/14 Critical performance bug with bad JOINs on licence search
+29/05/14 Improve similar person match - case insensitive, first address word
+26/05/14 Default boarding cost is set on creation, should not trigger on 0
+26/05/14 Fix unicode search issues with additional flags
+
+33
+================
+
+19/05/14 Link animal control incident from animal's record, show in results
+17/05/14 Make sure HTML publisher clears then uploads new pages last
+16/05/14 Option to show empty locations in shelterview
+16/05/14 Fix CSV importer to cope with universal line endings
+15/05/14 Add publisher for PetRescue.com.au
+15/05/14 Add perm attribute to standard buttons
+13/05/14 Fix for bug formatting yes/no values in templates
+12/05/14 Activate AKC Reunite publisher
+09/05/14 Add warning and link to change user theme if admin has changed theme
+09/05/14 Added Hungarian locale
+09/05/14 New E/EE/S/SS/XX/XXX format tokens for shelter codes
+09/05/14 Fix for failing server side validation leaving forms as not dirty
+08/05/14 Upgrade JQuery/UI/Mobile to latest versions
+08/05/14 Simplify PDF scaling and use shared single routine
+07/05/14 Hide tabs without view permission instead of ugly error
+06/05/14 Button to switch reservation to adoption
+06/05/14 Ability to view mail merge data
+06/05/14 Allow online form submissions to be emailed
+02/05/14 Treat 54100 and 54108 as successful VE codes
+01/05/14 send_bulk_email should be asynchronous to avoid proxy errors
+01/05/14 Correct IEEE rounding errors when sending currencies back
+30/04/14 Add size field to waiting list
+30/04/14 Allow trap loans to be enabled separately from animal control
+28/04/14 Add optional animal link to animal control
+28/04/14 Add extra suspect and followup fields to animal control
+25/04/14 Highlight owners with incidents against them
+24/04/14 Make VetEnvoy signup title a dropdown to save confusion
+24/04/14 When publishing, don't escape HTML/unicode entities
+24/04/14 Link to youtube channel under user menu
+24/04/14 Hide location field for foster when fosteronshelter
+23/04/14 HTML/FTP publisher can now output rss.xml with pages
+22/04/14 CitationTypeID reference wrong, should be ownercitation
+22/04/14 Animal link should be optional for licenses
+20/04/14 Highlight mandatory fields in online forms
+19/04/14 Animal control reports/graphs/mailmerge added
+18/04/14 Hide SmartTag config if no sitedefs
+16/04/14 Simplify SmartTag configuration and include contact info
+15/04/14 Disabling notadoption emblem should hide alert
+15/04/14 Individual onlineform header and footer fields
+14/04/14 Attaching online forms includes header/footer
+14/04/14 Allow person advanced search to match multiple flags
+14/04/14 Smartphone interface: extra data on view animal, add animal
+13/04/14 Fix XML escaping bug in HMRC spreadsheet
+11/04/14 Option to disable move menu and movements tab
+11/04/14 Option to force display of location icon with all emblems
+11/04/14 Show animal emblems in all medical/movement books
+11/04/14 Include websitemediadate to invalidate cache in movement books
+11/04/14 Temporarily disable AKC, go live for HomeAgain in stable
+11/04/14 Fix person delete, check more foreign keys, add to merge
+08/04/14 Fix person merge: error not closing dialog, undirty form
+08/04/14 Added bulk change animals screen
+08/04/14 Use opacity in multianimalselect to indicate selection
+07/04/14 Fix Chrome backspace bug
+07/04/14 Active traploans should be all unreturned
+07/04/14 Exclude from bulk email checkbox, updated mail merges in repo
+07/04/14 Monthly asilomar figures
+07/04/14 Investigations linked to animal control functionality flag
+06/04/14 Report email failures when sending from incident/person
+06/04/14 Email incident dispatch info to ACO
+06/04/14 Search by licence number
+06/04/14 Smarttag exporter can also register their microchips
+04/04/14 Added licencing module
+03/04/14 Trap loan alerts
+03/04/14 Trap loan support, trap type lookup, active loans menu item
+03/04/14 Split citations into separate module for incidents/people/unpaid
+02/04/14 Added animal control active incidents map
+02/04/14 Documented animal control module in manual
+02/04/14 Old screenshots updated in manual
+02/04/14 Payment wordkeys, manual updated
+02/04/14 Animal control alerts added for unpaid fines, undispatched, etc.
+02/04/14 Added adoption warnings for animal control
+02/04/14 Added person links for animal control
+01/04/14 Added Qatar locale
+01/04/14 Find incident/results screen
+01/04/14 Use ReservedOwnerID on animal docs if no CurrentOwnerID available
+01/04/14 Fixed selection bug with log and diary screens
+01/04/14 Incident minimap, satellite screens
+31/03/14 Incident editing screen, tweaks to other edit headers, icons
+31/03/14 Correct prefix for AKC Reunite chips
+31/03/14 Animal control permissions, menu entries, additional fields, links
+31/03/14 Animal control module/backend
+31/03/14 Renamed donations to payments for logical consistency
+
+32
+================
+
+28/03/14 Group shelterview by entry category
+28/03/14 Allow multiple incoming form submissions to be printed
+28/03/14 Option to treat retailer movements as on shelter
+28/03/14 Bulk medical/test support from books
+27/03/14 Don't output heartworm/fiv/l results in wordprocessor if not set
+27/03/14 Bulk vaccination support from vaccination book
+27/03/14 animalchoosermulti widget allows group animal selection
+26/03/14 SmartTag: remove sourcesystemidkey field at ST request
+26/03/14 Prevent trial adoptions registering with microchip providers
+26/03/14 Added responsive HTML publishing template
+25/03/14 Config switches for TinyMCE/window.print() and duplicate microchips
+25/03/14 Simplified version number change
+25/03/14 Documents post back to printable version for mobile devices instead
+of using javascript window.print(), which is not supported
+25/03/14 config switch AllowDuplicateMicrochip (default no)
+25/03/14 Printable online forms
+25/03/14 locationfilter wasn't applied to mobile interface
+24/03/14 Schema changes for VetEnvoy, pre-xsd validation
+24/03/14 Show number of alerts in publisher logs
+24/03/14 Flag AVID validation errors as alerts
+24/03/14 Added config switch for cost fields
+24/03/14 Add cost paid date functionality with config switch
+24/03/14 Fixed bug where dialog is unclosable for error with animal delete
+23/03/14 Removed redundant SYSVENDOR for VetEnvoy
+20/03/14 Rewrote publishing area of manual
+20/03/14 HTML/FTP publisher can now create adopted.html of recent adoptions
+20/03/14 Separate sitedefs for controlling PDF scaling in batch/attach
+19/03/14 Fixed bug with pettracuk name change causing animals to be resent
+19/03/14 Validate that microchip numbers are unique when adding/saving
+19/03/14 Option to show microchip fields when adding animals
+19/03/14 Improved SQL interface, script dialog
+19/03/14 Fix malformed HTML causing wide click area for sql file input
+18/03/14 Allow cron to rerun all annual figures in isolation
+18/03/14 Option to split annual figures (by type) into adults/juveniles
+18/03/14 User activity report shows changed logs, fixed off by one date bug
+18/03/14 Allow online form fields to be marked mandatory
+18/03/14 Fixed smarttag address handling, added utility functions
+18/03/14 Highlight publisher runs with errors as alerts
+18/03/14 Fix bug where time not given on new diary notes
+18/03/14 Allow rename of document templates
+13/03/14 Fixed bug where PetLinkSentDate still referenced
+13/03/14 Make exec_sql use ;\n as split instead of fragile scan version
+09/03/14 Make sure tests are cloned with animals
+09/03/14 VetEnvoy auto signup added (alpha)
+07/03/14 VetEnvoy publisher added, alpha HomeAgain microchip update support
+07/03/14 Tidy up publish options screen with signup URLs and info
+07/03/14 Move third party URLs and hostnames to sitedefs instead of db
+07/03/14 Override WEBSITEMEDIANOTES with comments for service users
+06/03/14 Refactoring to dbupdate module
+06/03/14 Manage published flags in a new table, remove fields added since
+ASM3, mark ASM2 fields as compatibility for future deletion
+06/03/14 Make AVID UK PETtrac a standard publisher
+05/03/14 Fix for csvimport creating breeds with no linked species
+05/03/14 Fix poorly sized splash images making a mess of login
+05/03/14 Default the email signature for bulk emails
+05/03/14 Ability to rename extra images
+04/03/14 Completion of refactoring to PostedData object
+03/03/14 Add smcom geocode provider
+03/03/14 Taiwanese dollar has no cents, remove superfluous server formatting
+03/03/14 DonationPaymentType wordkey
+02/03/14 Bug with figures generation not working with pseq
+28/02/14 Allow geo/map providers to be overridden per-database
+27/02/14 Adoption Fee field with wordkey and move* override
+26/02/14 Option to log every time an animal changes internal location
+26/02/14 Receiving donations prompts for document generation
+24/02/14 Creating animals from waiting list should populate hidden comments
+24/02/14 Fixed bug with person validation on donation_receive
+24/02/14 Allow override of deposit account when adding donations
+22/02/14 Allow neutered date to be set on add new animal screen
+21/02/14 Make using animal comments as bio a publishing option
+21/02/14 HTML publishing for smcom should remove existing files
+20/02/14 Show an alert for incoming online form submissions
+20/02/14 Updated cost reports to include animal tests
+20/02/14 Always use animal comments when publishing bio, nobody uses media
+notes and it's an endless source of confusion
+19/02/14 Sex should default to Unknown
+18/02/14 Move->reclaim screen
+17/02/14 Allow all media types to be emailed
+17/02/14 Fix for vaccination/cost types trying to create accounts
+15/02/14 Fix for shelterview sort by fosterer
+11/02/14 Add font size/face selectors to word processor
+11/02/14 Support for Google for bulk geocoding
+
+3.3.1
+================
+
+07/02/14 Use UTF8 for outputting PDFs from word processor documents
+07/02/14 Fix for output of unicode chars in lookup editing dialogs
+07/02/14 Looking for can match on colour
+07/02/14 Advanced find animal can search colours
+07/02/14 Option to merge bonded animals when publishing
+06/02/14 Ignore microchips of the wrong length publishing to PetLink
+06/02/14 Fixed bug in initial database setup since adding LocationFilter
+06/02/14 Use ON DUPLICATE KEY UPDATE For MySQL when saving configuration
+06/02/14 LogName/LogDate/LogComments wordkeys for animals
+06/02/14 Fixed bug where NextCreated blanked out by update
+06/02/14 Hide reports users don't have permission to view from the menu
+31/01/14 Ability to assign a location filter to users, enabling them to only
+view and edit animals in those locations
+30/01/14 Fixed bug where person flags weren't passed to online forms
+30/01/14 Ability to slice shelterview by foster home
+29/01/14 Simplify medical - give button prompts for date
+29/01/14 Publishing should always produce a log even if startup failed
+28/01/04 Allow changing of date required on medical treatments
+28/01/04 PetFinder have a limit of 3 photos
+28/01/04 HTML publisher should clear last error on startup
+28/01/04 More robust negative/currency handling
+28/01/04 Don't allow held animals to be adopted
+28/01/14 Create WL button on found animal should not need add animal perms
+28/01/14 Allow use of $$ tags in publisher media notes/comments and extra text
+27/01/14 Fixed bug in medical display where started column was blank
+27/01/14 Allow override URLs for sql dump with media
+27/01/14 Support for currency symbols at the end of the field (bulgarian)
+27/01/14 Don't show bonded code missing
+27/01/14 Protect against None in person_name_code / online forms
+24/01/14 Prevent session expired messages
+24/01/14 Don't show complete or held medical regimens as overdue
+23/01/14 Fixed bug in looking for report where it couldn't store 0 results
+23/01/14 Added DeceasedNotes and DeceasedCategory wordkeys
+23/01/14 Fixed old psycopg2 bug that broke pgbouncer pooling
+22/01/14 Show breed in search results
+22/01/14 Styled tinymce pagebreak, fixed table guides for print
+21/01/14 Allow negative donations for refunds
+21/01/14 Fixed unicode URL bug in Python2.7 when posting to Facebook
+21/01/14 select content-disposition for Facebook/PetLink compatibility
+21/01/14 Lost/found matches excluded if lost and found on the same day
+21/01/14 Force session cookie name/path to prevent Apache mangling it
+21/01/14 Fixed ancient bug where session parameters set too late
+21/01/14 FastCGI deployment mode for other webservers
+19/01/14 Daily job to find missing geocodes with bulk services
+19/01/14 Option to disable minimap
+18/01/14 Support for MapQuest geocoder
+17/01/14 Make creation of new people not dependent on geocode
+17/01/14 Remove static Google image stuff
+17/01/14 Support Google for maps
+16/01/14 Allow $0 donations for shelters who log food/other items as donations
+16/01/14 Support Google for geocoding
+16/01/14 Move geocoding to client side for better distribution
+15/01/14 Derive geocode country search from locale
+15/01/14 Add locales for Kuwait and Bahrain
+15/01/14 Use md5 hashes to verify address changes in geocodes
+15/01/14 DB search can search non-indexed fields in dbs<10000 animals
+14/01/14 UK postcodes should be on the last line for mailing labels
+14/01/14 Support for cloudmade geocoding, menu z-index fix
+14/01/14 Apostrophe in real name can break login
+13/01/14 OSM based embedded mini-map
+13/01/14 geo module for looking up lat/long from addresses
+13/01/14 If compressed PDF is larger, use the original
+10/01/14 Fix for bug where non-superusers couldn't edit accounts
+10/01/14 Allow spaces in yes/no lookupvalue formats
+09/01/14 Simple searches from DB search should not use non-indexed fields
+09/01/14 Fixed search timer clock (off by 1 order of magnitude)
+09/01/14 Many indexes should exist on animal/owner for larger sets
+08/01/14 Fix bug with clone and non-null identichipnumber constraint
+07/01/14 DonationPaymentID wasn't being copied when creating next frequency
+07/01/14 Fix for displaying null location units
+03/01/14 PetLink now want CSV instead of tab separated data
+02/01/14 PetLink website does not honour Content-Disposition: file
+02/01/14 Bug where meetapet marked SmartTag published
+31/12/13 SmartTag prefer animalkey as an integer
+31/12/13 Fixed null check in publisher for IsHold/IsQuarantine
+31/12/13 SmartTag missing terminator in signupeffectivedate
+31/12/13 Force PetLink to use SSL and fixed selection query
+31/12/13 SSLv3 bug fixes for Python 2.7/OpenSSL 1.0
+31/12/13 Add en_TW locale
+31/12/13 Set some fields to NULL for ASM2 compatibility
+17/12/13 Search base colours with simple find
+
+3.3.0
+================
+
+16/12/13 Simplify Debian package, remove debconf, update docs
+16/12/13 Remove environment variable overrides in favour of sitedefs
+15/12/13 Fix for forward slashes in shelter codes when publishing
+12/12/13 UI for OwnerNameFormat switch
+12/12/13 Hidden OwnerNameFormat config switch
+11/12/13 Add support for permanent fosters
+10/12/13 Use CDN version of TinyMCE and upgrade to 4.0.11
+10/12/13 Add PERSONNAME csv import field
+09/12/13 HTML/FTP publisher should obey extra text and use comments if blank
+08/12/13 Fix for commas in org names when constructing email
+06/12/13 Tweaks to SmartTag publisher files based on feedback from them
+03/12/13 Safari fix for parsing the validation messages
+03/12/13 Show validation errors in dialog instead
+03/12/13 Change mailing label layout based on locale
+01/12/13 Disable fancy tooltips altogether, too flaky
+30/11/13 Move CDN js/css references into sitedefs
+30/11/13 Add support for PostgreSQL sequences and ASM3_PK_STRATEGY sitedef
+29/11/13 HTML/FTP publisher always generates CODE-1.jpg or CODE.jpg but will
+also output ID.jpg for compatibility with old templates
+28/11/13 Show full animal emblems with animal name on movement screens
+28/11/13 halved the number of queries updating the configuration uses
+28/11/13 option to cache most common less important queries (shelter view
+animals, alerts, stats) for a minute to help with performance
+28/11/13 has_asm2_pk_table flag used by smcom, saves unnecessary db updates
+28/11/13 Support memcache incr for primary keys
+27/11/13 Added location and unit shelterview grouping
+27/11/13 Better error handling during audit, always show ID in diff
+24/11/13 Configurable "forgotten password?" link
+22/11/13 Added UserRealname and UserEmailAddress wordkeys
+18/11/13 Fix to make new/updated since last publish flags work correctly
+15/11/13 Report view role permissions to forbid certain users from reports
+15/11/13 split batch reports into separate cron task for more frequent running
+15/11/13 looking for, show criteria and hide animal header if no results
+15/11/13 Added location emblem to animal links on home page
+15/11/13 Cleaned up death icon, added non-shelter
+15/11/13 More useful info on animalchooser widget, rearranged emblem/link code
+15/11/13 Added show=ANIMALID URL parameter to littlebox template
+14/11/13 Better viewport sizing for iPads and other tables
+14/11/13 Create person, lostanimal, foundanimal and waitinglist from form
+13/11/13 Incoming form submitting screen, menu links and permissions
+12/11/13 Online form custom header/footers and default thank-you static page
+12/11/13 Online form field editing screen
+12/11/13 Online form header editing screen
+12/11/13 Use TABLES_ASM2 collection instead of diff
+12/11/13 Squash duplicate searches in the search autocomplete
+12/11/13 Maintain and tag ASM2 compatibility for later removal
+12/11/13 Updating FIV, FLV or heartworm tests updates the old ASM2 fields
+11/11/13 If a user's password is reset, request they change it on next login
+11/11/13 Add Facebook "Post as" ability
+11/11/13 Simplified Facebook config, page username no longer required
+08/11/13 Refactored out dbo.baseurl and moved into sitedefs
+08/11/13 Units appear in search results, shelter view and books
+08/11/13 Added Location units, so pen/cage numbers can be tracked
+07/11/13 Add payment type dropdown for donations with lookup
+07/11/13 Allow additional fields to be stored with lost/found and waiting list
+07/11/13 New additional field types, multi-lookup, animal and person
+04/11/13 Rearranged health/identification tab
+04/11/13 New test tab to log test results, moved FIV/L and heartworm
+04/11/13 Fix to not use js reserved keywords int and float
+04/11/13 Fix for concatenating cost totals (Chris M)
+04/11/13 Experiment with blank secondary breed for adoptapet.com mixes
+25/10/13 Add Quarantine and Hold checkboxes (with shelterview, advanced
+search, emblems, config, and auto cancel hold after period)
+24/10/13 sitedef to prevent image hotlinking except from specific domain
+23/10/13 Fix for unique codes being reused when unique through others
+22/10/13 Don't show unaltered alerts if the emblem is disabled
+22/10/13 Exclude names that end with numbers when generating randoms
+16/10/13 Fix for monthly animal figures wrongly excluding returns
+16/10/13 Fix for monthly animal figures double counting fosters
+15/10/13 LastChanged/CreatedDate should include time to current timezone
+15/10/13 Added owner.OWNERCODE field with search/display
+15/10/13 sitedef to disable pdf scaling
+11/10/13 Fix for broken empty owner validation on donations
+11/10/13 Tidied up default config and initial database
+11/10/13 Additional database views for medical/movements
+10/10/13 Fix for destination account validation
+10/10/13 Use real database views so they can be used with reports
+09/10/13 Add user overrides/settings screen for locale/theme/email/name
+09/10/13 Use tabs for options screens, less cluttered
+09/10/13 Fix bug with usernames/roles containing apostrophes
+08/10/13 Prefer to hide fields over disabling as looks inconsistent
+08/10/13 Fix to allow no donation type to be mapped to an account
+08/10/13 Fix to exclude non-income accounts when creating donation trx
+07/10/13 Added default cost/value to cost types and vouchers
+04/10/13 Changed users.get_users to use two queries instead of fragile db code
+04/10/13 Allow assigning of view and edit permissions on accounts
+04/10/13 Fixed multi-database splash screen bug on login (Derek Knight)
+04/10/13 Refactored ghostscript commands into sitedefs (Derek Knight)
+03/10/13 Sort shelterview by type
+03/10/13 Fix updates to still run default update queries even if DDL fails so
+that imports from older ASM databases still get default data
+03/10/13 Remove pointless path parameter from updates
+03/10/13 Recommend annual and asilomar figures reports
+02/10/13 Only show movement return category/reason if a date has been selected
+02/10/13 Add "reserved" logical location, fixed adoptable to not include trial
+02/10/13 Use JQuery UI tooltips
+01/10/13 Fix for 2 digit years at the client side
+30/09/13 Upgrade to TinyMCE4 to take advantage of improvements
+30/09/13 Show user when auditing user updates
+30/09/13 Fixed bug with generating PDFs from documents with nopic
+27/09/13 Inactivity timeout/auto logout option
+27/09/13 Allow omitheaderfooter/omitcriteria tokens in repository report
+database element to auto disable them after install
+27/09/13 Allow special template report tokens to be used in groups
+26/09/13 Allow VACCINATIONNAME[NAME] key, makes more sense than appears!
+26/09/13 Added en_CN locale for Chinese
+25/09/13 Comments/response diary field to prevent overwriting note/subject
+24/09/13 Completed refactoring of mobile.py
+24/09/13 Use 1-based count for image seq as stated in manual
+19/09/13 Add cost/donation stats and re-apply permissions
+19/09/13 multiprocess not buying us anything, switched to threading
+19/09/13 Added return from transfer book
+17/09/13 Don't use smcom alias_map, extract from pg_users instead
+17/09/13 Feedback when saving Settings->Options
+17/09/13 Allow movement insurance number field to be removed
+17/09/13 Add shelterview grouping selector and config
+17/09/13 Separate compilejs target, stops on error
+16/09/13 Make years/months diff work correctly again
+15/09/13 Optimise alerts into a single query and add stats to home page
+15/09/13 Use memcached for caching service call responses on the server
+14/09/13 Added VACCINATIONDESCRIPTION wordkeys
+13/09/13 Added js minification to the build with sitedef
+12/09/13 Give and reschedule should use existing date given if available
+11/09/13 Scale one side of images when appearing in documents
+09/09/13 Syntax error in update_all_animal_statuses
+06/09/13 Refactor CSS to take advantage of modernizr
+06/09/13 Add modernizr to detect browser features
+06/09/13 Split up header and common as they'd gotten large
+
+3.2.2.1
+================
+
+04/09/13 Fixes/refactoring for smcom aliases in cron.py
+
+3.2.2
+================
+
+03/09/13 Fix for sending blanks and broken mail merge
+01/09/13 Add $ASK PERSON$ and fix $ASK ANIMAL$ to use animalchooser
+01/09/13 Fix broken overlap where 364 day old animal becomes 0 years
+29/08/13 Default sex to unknown if not supplied during csv import
+28/08/13 Added locales for Ecuador and Mexico
+28/08/13 Support IE8 officially, remove warning, add box-shadow workaround
+28/08/13 Validate publishDir exists before continuing with HTML publish
+28/08/13 Switch "remember me" to use HTML5 local storage
+28/08/13 Remember previous searches with HTML5 local storage
+27/08/13 Allow partial matches for relevancy searching
+26/08/13 Disable Facebook publishing if animal has no image
+26/08/13 Person find simple search should include email address
+23/08/13 Update to JQuery 1.10.2
+23/08/13 Added sitedefs and refactored some hard coded values
+22/08/13 Fix for initial database redirect and PIL import (Derek Knight)
+22/08/13 Removed unneeded code now old HTML templates have gone
+22/08/13 Moved diary tasks to client side, last of templates removed
+21/08/13 Moved litter screen to client side
+21/08/13 Moved lookup data screen to client side, better workflow
+20/08/13 Moved publish_logs screen to client side, added sort
+20/08/13 Fixed bugs with one-way unicode symbols in report HTML
+19/08/13 Moved reports screen to client side
+19/08/13 Russian problem with formatting daily boarding cost currency fixed
+19/08/13 Option to remove Rabies Tag from health tab
+19/08/13 Make estimated age normal input box and allow floating point years
+19/08/13 Checkboxes on health and identification should disable fields
+19/08/13 Added Crossbreed/Dog breed to default set for PetFinder
+19/08/13 Added clone template button to document templates
+19/08/13 Added Caymen Islands locale
+16/08/13 Cope with blank mysql passwords by not sending them
+16/08/13 Allow users to send emails from their own addresses if set
+16/08/13 Fixed problem of issuing multiple chooser searches from same widget
+16/08/13 Fixed "apostrophe" type bug with dates in HMRC spreadsheet
+14/08/13 Added ASM2 SQL export option (experimental)
+14/08/13 toPOST failed truthy test for empty strings, now allows saving of
+blank values in configuration and other screens
+14/08/13 Overdue donations links to donation book now with overdue offset
+14/08/13 Full configuration of animal emblems
+14/08/13 Changed default incoming media scaling to 640 pixels on longest side
+13/08/13 Fix for some additional fields not appearing options for find screens
+13/08/13 Add emblem to highlight non-neutered/spayed animals
+13/08/13 Added donation book screen
+13/08/13 Removed redundant code from html.py
+13/08/13 Moved donation screen to client side
+12/08/13 "Remember me on this computer" checkbox on login screen
+12/08/13 Relevancy search sort order
+12/08/13 Option to show codes on shelter view screen
+09/08/13 Fixed "attroperties" bugs in asmselect with JQuery 1.10
+09/08/13 Fixed bug with multiple animal entries with multiple open reserves
+03/08/13 Stop chooser/clear causing form dirtying
+30/07/13 Moved user editing to client side, fixed bugs with assigning roles
+25/07/13 Fixed bug with redirecting to mobile if m. appears in the URL
+25/07/13 Added ANIMALHIDDENDETAILS, ANIMALHEALTHPROBLEMS,
+ANIMALNOTFORADOPTION, ANIMALHOUSETRAINE, ANIMALGOODWITH* to csv import module
+19/07/13 Moved animal costs to client, all ajax and removed unused js modules
+18/07/13 Link shelterview to trial adoption and foster books
+18/07/13 shelterview allows drag and drop to move animals between locations
+18/07/13 Fixed role bugs with initial create not saving checkboxes and
+"attroperties" with updated JQuery.
+18/07/13 Moved role screen to client side.
+17/07/13 Moved medicalprofile to client side rendering.
+17/07/13 Fix for broken HTML5 File APIs on Safari
+17/07/13 Moved medical book/animal medical to client side, refactored status
+display and added location.
+17/07/13 Added csvimport fields: reason for entry, original owner and person
+phone/email fields
+16/07/13 Remove existing HTML pages from publish space before running HTML
+publisher
+15/07/13 Upgraded to JQuery Mobile 1.3.1
+15/07/13 Fix to not show retailer movementtype in dropdown list if disable
+retailer option is on
+15/07/13 Upgraded to JQuery 1.10.1/UI 1.10.3 and removed reliance on browser
+object and other deprecated items
+15/07/13 Removed local jquery/ui/mobile libs in favour of using Google/JQuery
+CDN full time. It's a pain maintaining and upgrading these libs locally.
+People using ASM3 without internet access will have to setup a local CDN
+15/07/13 Allow warning for similar animal names to be disabled, and change
+dialog text so it makes more sense instead of asking a question and only
+giving a close button
+12/07/13 Allow emailing of documents from any media tab
+12/07/13 New alert for person looking for matches on main screen.
+08/07/13 Cloning animals should include their additional fields.
+08/07/13 Don't display MeetAPet key or base URL fields as they tell us
+defaults will always be correct and all those values are confusing users.
+08/07/13 Added recently adopted quicklink type.
+08/07/13 csvimport should not import data types where the mandatory field is
+missing (animal name, person last name, movement date and donation amount).
+04/07/13 Dump without media option to save bandwidth. Changed SQL interface to
+have export button/dropdown.
+03/07/13 Ported vouchers to client side.
+03/07/13 Show location on vaccination book.
+03/07/13 Fix for client side lib setting select lookups to 0  (mistakenly
+assumed them falsy and ignored) 
+03/07/13 Yes/No lookups allow custom text in document templates and the web
+publisher.
+03/07/13 Lookup items is only available for Yes/No and Lookups.
+03/07/13 Ported additional field editor to client side.
+03/07/13 Fix CSV output to cope with unicode and encode UTF8, as well as using
+unicode attachment names.
+03/07/13 Bug interpreting incoming codes when creating a/c trx.
+03/07/13 When unicode forces HTML emails, preserve line breaks.
+02/07/13 Fix to use dbfs IDs for templates (behaves with unicode).
+01/07/13 Ported document repository and templates to client side.
+01/07/13 Allow unicode chars when producing PDF labels.
+01/07/13 Use keychar so that colon/fullstop work on keyboard layouts other
+than latin (experimental).
+01/07/13 Fixed bug with default log filter.
+01/07/13 Added ERD to the manual and mysql-workbench format model.
+28/06/13 Service animal_image call can accept seq, plus new WebsiteImageCount
+field returned in animal data.
+28/06/13 Fixed service to cope with unicode input.
+27/06/13 Fixed bug where having log type filter default of anything but (all)
+causes (all) to stop working.
+27/06/13 Fixed unicode handling with report STRING parameters.
+26/06/13 Fixed bug loading breed field in lost/found screens.
+26/06/13 Add ANIMALCODE to csv import (overrides generation of code if given).
+23/06/13 Fix adoptapet publisher to use blank values for good with and
+housetrained if our value is set to unknown.
+21/06/13 My diary notes screen and main screen should take into account the
+user's roles when displaying diary notes.
+21/06/13 Removed diary userfilter, unnecessary with sorting.
+21/06/13 Ported diary note editing to client, added overdue display.
+21/06/13 Fix so that lost/found animal records are still viewable in
+databases that don't have breeds linked to species.
+21/06/13 Explicitly set ExcludeFromPublish for blank docs for databases
+created with it NOT NULL.
+21/06/13 Set default AJAX response mimetype to text/plain to prevent Firefox
+logging errors and trying to pre-parse as XML.
+21/06/13 Ported person_new and donation_receive to client.
+21/06/13 Ported all log tabs to client.
+20/06/13 Minor fix to disable default cost change events in vaccination
+editing to prevent default cost overwriting current cost for existing records.
+19/06/13 Ported person_links to client.
+19/06/13 Ported options, publish_options and publish to client.
+18/06/13 Rewritten vaccination book and animal tab to use new client side
+library.
+17/06/13 PostgreSQL databases should be using the TEXT type instead of
+VARCHAR(16384)
+17/06/13 Investigation tab against people.
+17/06/13 Fixes to some CSS/images to improve performance and clear up
+appearance of textboxes.
+16/06/13 More short fields (activeuser.username, report title/category)
+15/06/13 New generic CSV import module can deal with animals, people, movement
+and donation data from external sources by adding known column headers.
+14/06/13 Explicit use of no-cache to prevent IE caching controller data and
+generated pages.
+14/06/13 Use additional field ID for POST instead of fieldname.
+14/06/13 Fixed alignment problem with accounts_trx on widescreen.
+14/06/13 Don't store quicklinks translated in database, translate on the
+client from their IDs.
+14/06/13 Fixed litter ID autocomplete to decode unicode entities.
+14/06/13 Fixed odd alignment issues on new animal screen.
+14/06/13 Show periods less than a week in days.
+14/06/13 Move->Deceased was using validation warnings we don't use elsewhere
+and wrongly calling death a movement.
+14/06/13 Move adopt warning about bonded animals wasn't decoding unicode chars
+in the name.
+14/06/13 Fixed validation in add log screens, moved client side.
+14/06/13 Clearing animal/person on movement tab/screen should hide any
+previous errors related to that selection.
+14/06/13 Movements with no owner (stolen, escaped, etc.) were showing as null
+incorrectly.
+14/06/13 Prevent deletion of animals and owners with movements or who are
+linked to each other.
+31/05/13 Support for multiple plural forms in foreign translations.
+24/05/13 Asilomar annual figures generation with batch.
+24/05/13 Asilomar category fields added for US users with conf switch.
+24/05/13 Fixed bug with output of animal name on Move->Mark Deceased
+24/05/13 Fix for broken contact validation on lost/found animals, and not
+saving for species with no breeds.
+23/05/13 New alerts for unneutered adoptions in the last month and animals not
+currently available for adoption.
+22/05/13 Show all breeds on find animal until a species is selected.
+22/05/13 WebsiteVideoURL and WebsiteVideoNotes wordkeys.
+22/05/13 Only show female animals when searching for a litter mother.
+22/05/13 Fix for additional field names containing HTML entities breaking
+retrieval of XML from the service.
+21/05/13 Show YouTube preview thumbnails in the media tab.
+21/05/13 Remove references to asm.css for content_css in tinymce as it's
+overriding fault/size defaults unnecessarily for no good reason.
+21/05/13 Support for document and video links in media.
+20/05/13 Allow person media tab to email copies of documents to people.
+20/05/13 Fix to allow extra reoprt images to work with document to PDF
+generation.
+19/05/13 Hidden config switch AnimalFiguresSplitEntryReason to break down
+brought in figures on monthly animal figures report by entry reason.
+15/05/13 Stop search button leaving the search box via wordwrap on lower
+resolutions.
+14/05/13 Use ASM's translations and localisation settings for JQ UI datepicker
+to save dependencies.
+14/05/13 New icons for cruelty case, not for adoption and non-shelter.
+14/05/13 Fixed bug with boarding cost fields not showing on Move->Adopt.
+14/05/13 When adopting animals bonded to others from Move->Adopt,
+automatically create the adoption records for the bonded animals too.
+14/05/13 Clean up a few image links that weren't using the media date as a
+key, so cached for too long.
+13/05/13 Allow sheltermanager.com to use the correct locale for the login
+screen when available.
+11/05/13 Fixed bug with removing diary notes when deleting animals and people.
+Also added code to remove dbfs files for deleted animals and people.
+08/05/13 Improved caching with mobile interface, fixed icon/css reference.
+08/05/13 Fixed minor bug with waiting list details satellite counts.
+08/05/13 New configuration switch to allow overriding of movement numbers on
+Move menu screens.
+08/05/13 PetLink fix to find JSESSION cookie.
+02/05/13 Use inline-block for shelterview and main quicklinks instead of
+tables so that it lays out better for users with lower resolutions.
+02/05/13 File extensions should be checked in a case insensitive manner.
+02/05/13 Deceased should supercede other flags.
+30/04/13 Daily boarding cost label not decoded properly for unicode.
+29/04/13 Use the owner from the latest movement as current owner when
+generating documents so that paperwork for future adoptions still works.
+29/04/13 Fixed bug with size default not applying on new animals.
+29/04/13 Russian translation completed (Konstantin Chaus)
+26/04/13 Use query batches for waiting list daily updates, allow disabling of
+urgency updates by setting the interval to 0.
+26/04/13 Limit form dirtying only to fields in #asm-content (prevents popup
+dialogs dirtying the form, eg: email, diary tasks)
+25/04/13 Moved accounts modules to client side, unicode fixes.
+25/04/13 Moved remaining lost/found screens to client side.
+25/04/13 Moved remaining waiting list screens to client side.
+24/04/13 Moved lostanimal/foundanimal details to client side.
+24/04/13 Moved all move_* screens to client side.
+24/04/13 Moved person find to client side.
+24/04/13 Moved animal find to client side.
+23/04/13 Switch smcom to use memcached for sessions and pruned unnecessary
+cruft from the session object.
+22/04/13 htmltemplates moved to client side, fixes random append bug.
+22/04/13 change password moved to client side.
+22/04/13 Use browser onBeforeUnload where supported to prevent user leaving
+with unsaved changes.
+
+3.2.1
+================
+
+*. Use 127.0.0.1 as default on windows machines as localhost falls
+-  foul of default firewall rules.
+*. Prevent en locales from translating lks tables.
+*. Moved new animal to client side rendering.
+*. Moved find animal criteria to client side rendering.
+*. Moved person details to client side rendering.
+*. Use 10 hour timeout on sessions and remove menu structure data
+-  since it is all cached by configjs anyway. Should reduce session
+-  bloat considerably.
+*. Optimised monthly and annual figures generation to use batches.
+*. Heavily optimised update_animal_status, update_variable_animal_data
+-  and all publishers to use single-shot batches to reduce the number
+-  of queries as much as possible.
+*. Show first time dialog to superusers until dismissed instead of
+-  using < 50 conditional.
+*. Fix for internationalised email headers.
+*. Max short text length for MySQL is 333 bytes for UTF8 keys.
+*. When generating documents use original owner as current owner
+-  for non-shelter animals.
+*. Qualify non-shelter animals with original owner in details/search.
+*. Added missing lookup data for account types.
+*. Allow menus to break a column, use wider format for ASM and Move
+-  menus to take advantage of widescreen monitors.
+*. Turn petfinder breed/species into generic publisher breed/species
+-  and utilise mappings when publishing to adoptapet.com since the default
+-  mappings we already have turn petfinder breeds into adoptapet breeds.
+*. Unicode fixes for animal code generation and facebook posting.
+*. Use hover styles for menu items and quicklinks.
+*. Wordkeys to access donations from animal documents in similar fashion
+-  to diets, vaccinations and medical treatments.
+*. SQL interface allows script uploading.
+*. Show reserved owner in animal details banner.
+*. DisplayLocation denormalised field for reports.
+*. Smart tag number field should allow nulls in new databases.
+*. Allow addition/deleting of coat types.
+*. Implemented IP restriction CIDR check.
+*. Fix unicode bugs with sending emails.
+*. Fix escaping of email addresses in person screen.
+*. If defaulting to all in advanced find animal search, tick include
+-  deceased and non-shelter by default as well.
+*. Unicode fix for email owner screen.
+*. Extend length of many of the system lookup fields to account for
+-  foreign languages utilising escape sequences.
+*. Allow rotating of images in media tabs.
+*. Added high res icons for desktop/chrome links.
+*. new sort:as and sort:sa for order by species when searching.
+*. Show Monday as first day in datepicker.
+*. Extend column lengths of all owner/address fields. They're too short
+-  for locales using non-Latin1 charsets with unicode escapes.
+*. Fix publisher upload paths on Windows.
+*. New UK HMRC GiftAid spreadsheet generation module
+*. Fixed locale overrides and have translate function ignore poorly
+-  encoded items starting with ???
+*. Use upload datestamps in thumbnails/media images so that users don't
+-  have to keep using CTRL+R when they upload new images.
+*. Moved media screens to client side rendering.
+*. Web preferred wouldn't go to next image if animal only had one other
+-  image on file when the web preferred was deleted.
+*. Picup is no longer needed as iOS6 supports file upload. Show a tip
+-  for older idevices that they need to upgrade for upload support.
+*. animalfigures.Code and animalannualfigures.Code should be strings.
+*. Allow label override for hide
+*. Fix for null animalid with animalchooser.loadbyid
+*. Allow sending of a blank secondary breed field to PetFinder by creating
+-  a breed called "Mix" "Unknown", "Cross" or "Crossbreed" and assigning
+-  it to the secondary breed field of animals.
+*. Fixed directly entering dates with single digit portions in
+-  client side screens.
+*. Fixed display of additional currency fields in document templates.
+*. Fixed multi-locale table sorting.
+*. Added MedicalFieldTYPE and RecentTYPE wordkeys. Improved wordkey
+-  documentation.
+*. My diary notes should include diary notes for roles the user is in.
+*. Fixed bug where membership flag can't be removed once a number
+-  has been entered.
+*. Fixed bug with include locations saving in publishing options, but
+-  not reloading properly.
+*. Use date and time for outputting in db dump.
+*. Fixed bug with updating microchip number/date to show avid button.
+*. Make date hotkeys fire change events.
+*. Added service API documentation to manual.
+*. Automatically remove animals from the waiting list when a shelter
+-  animal record is created for them.
+*. waitinglist_results now client side
+*. Remove multi-query reports capability as it serves no purpose
+-  now. Prevent non-SELECT queries running as reports.
+*. Friendlier validation check for unique movement numbers.
+*. Export to animal/person csv on SQL interface.
+*. Use a long term config cache that can be updated when we change
+-  it. We do this with a timestamp key, similar to i18n.js, etc.
+-  searches moves into page body as it needs to be sent for each
+-  request. New area for variables that needs to set for every
+-  request in html.header().
+*. Don't use urllib2 .header parse as it blows up with meetapet,
+-  just return resp.info() since nothing uses it at the moment
+-  anyway, then things that want to can parse the headers.
+*. Use console logging instead of alerts and return 404 from embed
+-  controllers for missing records.
+*. Make locale a parameter to i18n.js and use key-caching.
+*. Added VaccinationGivenRecentTYPE (and Required/Comments) wordkeys.
+*. Hide person field on movement dialog for movements that don't
+-  require a person.
+*. Moved movement tabs/books/screens to use full client side rendering
+-  with new AJAX framework.
+*. Fixed name clash with jquery ui menu widget.
+*. Removing a person should remove all their movements. After
+-  removing the movements, we should update the denormalised location
+-  info of any animals affected by those movements.
+*. Microchip, tattoo and tag numbers shouldn't allow spaces
+-  and punctuation.
+*. Clicking created by in messages prompts for a reply.
+*. Fixed bug with main screen message dialog buttons not re-enabling
+-  after successful creation of a message.
+*. Extra cron methods for maint_db_dump_animalcsv and 
+-  maint_db_dump_personcsv to create csv files.
+*. Layout fix for textarea zoom bug in IE6/7/8
+*. Use js/css versioning to invalidate browser cache between builds.
+*. Shouldn't use Date.UTC in date_js
+*. Bug in VaccinationCommentsTYPE was trying to format as date.
+*. Quicklinks now break over lines gracefully if the horizontal
+-  resolution isn't wide enough.
+*. Fixed Facebook posting to use direct uploading instead of
+-  links back (now that graph API supports it correctly).
+-  Also, fixed post_multipart to have a consistent return type
+-  and behaviour to post_form with urllib2
+*. Moved avid registration to client side, fixed problems with
+-  move screens since refactoring of common libs.
+*. Upgraded to use tablesorter github fork for better cross
+-  browser compatibility. Added !important to default theme
+-  background properties to override jquery ui-state-default
+-  to maintain theming of table headers.
+*. Force CSV output to use the original column ordering
+-  from the mail merge query.
+*. Omit trial adoption movement type from selectable list.
+*. If a search only produces one result, go there instead
+-  of showing the results list.
+*. Moved main animal details screen to client side, separated
+-  out menu widget.
+*. Use brief animal records for shelterview, animal links on home 
+-  screen and when using site search.
+*. Moved rendering of shelterview to client side.
+*. Moved rendering of search to client side.
+*. Preliminary tableform module that does client side rendering
+-  validation and binding.
+*. Moved tips into main.js so they can be cached and not bloat
+-  i18n.js
+*. POT scanner searches javascript now and can pick up strings
+-  in there. Fixed some strings where URLs were included (removed).
+*. Locked database message should point to the my account
+-  page for sheltermanager.com users.
+*. Moved rendering of login screen to client side.
+*. Incorporate jslint into build chain as well as using
+-  vim plugin.
+*. Fixed bug with sprite on diary task/document menu buttons.
+*. Switched codebase to use new personchooser/animalchooser
+-  widgets and ditched old templator based widgets.
+*. Client side personchooser widget.
+*. Client side animalchooser widget.
+*. Split common module into multiple objects and updated all
+-  js to use it. Ditched the old i18n object and moved everything
+-  over to gettext style.
+*. Used namespace for config to prevent local variables
+-  masking globals.
+*. New cacheable config.js to save passing it with every
+-  page header. Updated rest of js to use it instead of the
+-  hidden fields previously output.
+*. Use Google CDN for sheltermanager.com jquery.
+*. Removed hand written json() routine and added handler
+-  for Python's json module instead - faster and can cope
+-  with edge cases better.
+*. Switched main module to use js templating, added support
+-  classes for date formatting, etc.
+*. Fixed audit trail to use ddt - stopped recording time in
+-  last release.
+*. Added javascript gettext type module that bundles locale
+-  locally and caches. Can be used to implement client side
+-  templating to improve performance.
+*. Sorted out messy topline/menu stuff, moved to new header
+-  js module that does client side templating for performance.
+-  significantly reduces session db size and bandwidth needed.
+*. Allow batch changing of vaccination required date.
+*. Remove old ASM2 guff about temporary tables from manual.
+*. Ignore blank queries in SQL interface, remove trailing ;
+*. Custom splash was smcom only
+*. SQL interface wasn't escaping unicode characters and breaking
+-  if query terminators appeared in string literals.
+*. If force reupload is on and we're dealing with sheltermanager.com,
+-  clear down any images first to prevent old images hanging around.
+*. Prevent trial adoption with null end date blowing up the trial
+-  adoption book (test for null in template before checking now).
+-  (backported into 3.2.0 downloadable binaries after release)
+
+3.2.0
+================
+
+*. refactored mobile login into module single header, used
+-  thumbnail_src like the rest of the app to stop giant nopic.
+*. update mobile interface to use new icon framework, dynamically
+-  load picup only if needed and tidy up the upload photo box
+-  for android 4+ users.
+*. move_foster should allow fostering of existing fosters (even
+-  if fosters are shelter inventory is not set)
+*. Reload quicklinks, reports, etc. after database update during
+-  login to make sure the user sees any changes the updates
+-  could have made.
+*. icon loader for templates to save endless span tags.
+*. Only load picup for iPhone/iPad.
+*. Removed chosen - no longer used.
+*. Created asm sprite instead of separate icons to reduce
+-  number of browser connections needed. Offers large performance
+-  gains on non-pipelined browsers.
+*. Trial adoptions shouldn't show as available for adoption.
+*. Added DocumentQRLink animal wordkey.
+*. Include additional fields with service adoptable animal data.
+*. Set default cache of one day on animal images, add cache
+-  control headers to service calls so that a serverside cache
+-  can be put in front of the service API if necessary.
+*. Use field reading utility classes in mobile interface to
+-  better handle bad input and errors.
+*. Add message support in mobile interface.
+*. Show messages in mobile interface.
+*. Removed multiaccordion and replaced with jquery ui accordions.
+*. Add created by column to diary editing screens.
+*. Main screen fix for diary notes to allow more space for the
+-  subject on widescreen monitors and to show the created by
+-  and date fields on mouseover.
+*. Usability fixes to message board, make buttons match rest of
+-  the system. Attach more/less to text instead of wasting space.
+*. News starts contracted for smcom users.
+*. multiaccordion widget fixes for jquery 1.8.3
+*. Fix server side error when logging out of expired sessions.
+*. Match opacity of the rest of the columns in movements, vacc,
+-  and medicals so images are consistent.
+*. Removed all occurrences of live as it performs poorly and has
+-  been deprecated by jquery.
+*. Updated to jquery 1.8.3 and jquery-ui 1.9.2
+*. Updated to jquery mobile 1.3.0 and set CSS transitions.
+*. make smoothness default theme.
+*. 3001 update should test if SystemTheme and Timezone are present
+-  before removing them (affects new smcom accounts, rather than
+-  open source, which is fine for upgrades).
+*. Cope better with invalid animal IDs passed to animal_image service.
+*. Fixed problem with backslashes passing through to js via json.
+*. When creating new animals, check the name against inductions
+-  through the last 3 weeks to look for matches (help prevent
+-  duplicates).
+*. Improve performance by caching header/menu. Invalidate appropriately
+-  for changed reports, publishing options and searches.
+*. Removed pets911.com publisher - site dead.
+*. Added slovenian translation.
+*. Option to treat trial adoptions as on shelter.
+*. Only count adoption returns in annual figures.
+*. Highlight overdue donation records on the donation tabs and don't
+-  count them in the total of received donations at the bottom.
+*. Better donation and vaccination icons.
+*. New alert - reservations over a week without adoption.
+*. Make audit trails log in local time rather than server time.
+*. Show trial end date in trial adoption book and exclude returned
+-  adoptions when looking up trial movements.
+*. Make vaccination and medical books show current animal location.
+*. Stop the [ Add a photo ] link wrapping on smaller resolutions.
+*. Show thumbnails in movement and medical books, with associated 
+-  option to turn them off if desired.
+*. Brought some sanity to image scaling, use longest side measurements
+-  and keep old ASM2 constants for compatibility, but can't be selected
+-  in ASM3 now.
+*. Ability to configure thumbnail size for HTML publisher.
+*. Add trial adoption book to available quicklinks.
+*. Fix diary emails to examine roles.
+*. Apply timezone to dbo and use it throughout when getting now()
+*. Trial adoptions ending alert.
+*. Trial adoptions book menu entry.
+*. Flag trial adoptions everywhere reserves are with another icon.
+*. New denormalised field for HasTrialAdoption.
+*. Don't include dead animals in vaccination/medical alerts/books.
+*. Added alert for overdue donations.
+*. Added alert for owners with active reservations that have not
+-  been homechecked (if homecheck warnings and alerts are on)
+*. New alerts section on main screen to show how many animals
+-  are in need of vaccinations, medical treatments and how
+-  many urgent waiting list entries there are.
+*. Report clone button.
+*. When theme is changed on options screen, update it on
+-  screen live so the user doesn't have to save to see it.
+*. Allow upto 8 age groups for ASM3 users.
+*. Check sockets for pets911, adoptapet, rescuegroups and
+-  petfinder such that if any errors occur, the socket is
+-  reopened and the publisher resumes.
+*. Disable image scaling for all but the HTML publisher as it's
+-  both irrelevant and a waste of processing time as the
+-  third party services can handle that.
+*. Trial adoption functionality, adds new checkbox and trial
+-  end date to move->adopt and movement screens. Added
+-  Active Trial Adoptions and Expired Trial Adoptions to repo.
+*. Validate codes have the correct number of Ns or Us to
+-  be valid.
+*. Fixed bug where saving donations overrides the account
+-  type on matching transactions.
+*. Fixed bug with gift aid flag being overwritten.
+*. Fixed a couple of validation errors in the menu.
+*. CURRENT_DATE and USER wouldn't work in reports without
+-  ASK, VAR or PARENTKEY tags.
+*. Additional fields were reparenting and leaving events
+-  and widgets behind.
+*. Cope with spaces in additional fieldnames in the UI,
+-  but prevent users entering spaces in the fieldname box 
+-  when defining them to save later headaches.
+*. Option to take a second donation on the move->adopt and
+-  move->reserve screens.
+*. Have VaccinationRequiredTYPE, VaccinationGivenTYPE and
+-  VaccinationCommentsTYPE wordkeys to access data from the
+-  most recent vaccination of TYPE
+*. When doing HTML publishing and splitting by species/age,
+-  produce an "all.[extension]" page which contains every
+-  animal.
+*. Highlight alternate rows on monthly figures report and
+-  show totals (needs reinstalling, dep on v3123)
+*. Added total column to monthly animal figures.
+*. delete_animal wasn't removing vaccinations.
+*. delete_animal and delete_person weren't removing all
+-  additional fields.
+*. animal_find_simple and person_find_simple weren't searching
+-  additional fields not assigned to additional tab.
+*. Bug in get_number_animals_on_shelter was not counting 
+-  movements today when it should. Affects monthly figures.
+*. Make monthly figures easier to read by using start of day
+-  and end of day total lines.
+*. auto_logout should run as part of the batch to clear down
+-  users who closed their browser without logging out.
+*. Italian currency/date missing.
+*. Format additional currency fields correctly when used
+-  in find animal search results.
+*. Link shelterview headers to advanced find animal search.
+*. Show reserved/deceased icons on find animal results.
+*. Show shelterview in alphabetical order, include totals
+-  for each location in header.
+*. Highlight reservations in foster book.
+*. 100% Norweigan Bokmal translation (Trine Storbraten)
+*. Added reserved icon to shelterview/links/search and 
+-  used displaylocationname in shelterview instead of 
+-  shelterlocationname to cope with foster animals when 
+-  foster animals are shelterinventory.
+*. Added new shelterview screen to view animals by location.
+*. Added new quick animal links to home screen, allows fast selection
+-  from recently changed, recently entered and longest on shelter.
+*. Fixed bug in person looking for report, stopped cron
+-  bailing before waiting list tasks.
+*. Fixed NPE bug with no bad report parameters.
+*. Added en_VN locale for English speakers in Vietnam.
+*. Added xgettext replacement as xgettext cannot include
+-  text strings as part of function calls inside other quoted 
+-  strings (so 170 HTML attribute strings weren't included before).
+*. Use dedicated en_AU translation instead of GB for 
+-  Australia and New Zealand.
+*. cron should make sure the database is upto date before
+-  running daily tasks.
+*. Supply default report header/footer if it gets blanked.
+*. Suggest county when it's blank and the town has just been
+-  set (as ASM2 used to).
+*. Added spellcheck with English dictionaries (requires
+-  GNU aspell to be on the system path) to documents.
+*. New Document button on media tabs.
+*. Don't allow HTML templates with blank names.
+*. (sheltermanager.com webspace) should link to it.
+*. Stop components of login screen being visible before
+-  javascript has loaded.
+*. Fixed bug where HOMECHECKEDBY being null causes person
+-  records to fail to open.
+*. Fix for logs not being saved when splitting HTML publish
+-  by species.
+*. Fix for blank age groups in match report.
+*. Fix for unicode characters in autocomplete address fields.
+*. Fix for additional fields failing validation.
+*. Show Ends After on medical tab/book.
+*. Added fancy_cage_card, fixed dates in cat/dog cage card.
+*. update_animal_status should take note of movement dates so as
+-  not to move animals off the shelter too early for future dates.
+*. Fix nightly process to include fostered animals.
+*. Option to send messages to users after creation.
+*. Option to send diary notes via email each day.
+*. User accounts can now hold an email address for that user.
+*. Allow HTML/FTP publisher options to set where output goes.
+*. Fix for broken MySQL databases created by earlier versions
+-  of ASM3. Eases importing from these to sheltermanager.com
+*. Next week/month/year Filter boxes on vaccination and medical books.
+*. Catch invalid mobile post type and handle gracefully.
+*. Textareas not decoding HTML entities on options screen.
+*. PetLink require tab separators in their "csv" files.
+-  Better validation around phone number@petlink.net format.
+*. Read EXIF tags and rotate images according to orientation
+-  (not compatible with HTML5 client side scaling).
+*. ASK FSANIMAL for shelter and foster animals in reports.
+*. Switch image references in generated document templates to 
+-  service calls when generating PDFs so animal images still appear.
+*. Embedded person search wasn't using translated strings for header.
+*. PetLink only accept 98102 prefixed chips.
+*. PetLink can use phone@petlink.tmp for blank email addresses.
+*. extra_image service call to get extra images.
+*. Squash non-printable characters that could blow up client
+-  side JSON parsing.
+*. donation_receive screen should check default amounts too.
+*. Fix to cope with null age field.
+*. Prevent UseShortShelterCodes duplicate in configuration table
+-  from wiping out get_animal_query()
+*. Annual figures was wiping out previous values for non-cat/dogs.
+*. Include fosters in the vaccination/medical books.
+*. Logging out of the system when in an smcom account should prompt
+-  for the same account on the login screen.
+*. Creating an animal from a waitinglist and found animal record
+-  wasn't transferring the description/notes fields over.
+*. Allow animals to be reserved when fostered via both Move->Reserve
+-  and by the movement screen.
+*. Added AdoptionCreatedByName wordkey.
+*. Removed plaintext password from page header (leftover dev code).
+*. Fixed giftaid flag to set correctly on move->reserve screen.
+*. Fixed blank donation dates when created by move->reserve.
+*. Added dump database button to SQL interface.
+*. Fixed SQL injection hole in checking shelter codes during save.
+*. CSS set logo max height to 32px in case of user error.
+
+3.1.1
+================
+
+*. Added maint_db_diagnostic and maint_db_dump to command line
+-  cron tasks to find orphaned records and dump all the DB
+-  data in a database agnostic way.
+*. Fixed broken group block in retailer_inventory report.
+*. Made diarytaskdetail/diarytaskhead/media match exactly
+-  ASM2 spec to ease data conversions.
+*. Better visual feedback when saving is occurring of top
+-  level records.
+*. Make adopting and creating a donation for someone with the
+-  giftaid flag set default to eligible for gift aid.
+*. Centralised additional field handling, fixed new bug introduced
+-  to saving additional fields for person records.
+*. Cosmetic fixes to menu and main screen display/effects.
+*. Allow additional fields to be assigned to other tabs on the
+-  animal and person screens.
+*. FB fix for if access_token is the last param returned.
+*. Added IE10 to the list of supported browsers, updated the
+-  manual with info on using the TT token in animal codes.
+*. Error handling fix in facebook sharing.
+*. Fix to disallow double clicking in embedded owner creation.
+*. SQL escape filenames in document_repository.
+*. Sanitise database name inputs during login.
+*. Use one query if possible for ASM2/primarykey compatibility.
+*. Use regex to strip HTML tags for truncate, instead of string
+-  manipulation that can cause MemoryError.
+*. Ability to set logo.jpg and splash.jpg in extra images to
+-  override the splash screen and logo at the top left.
+*. Fault in add_months if current day is not valid for month
+*. If blank movementdate was supplied, wasn't correctly setting
+-  to today or failing validation.
+*. Hide town/county config option wasn't connected to anything.
+*. Option to send PDF files to the browser inline or attach.
+*. Fixed bug with ExcludeFromPublish not being set.
+*. Enable RescueGroups publisher for Canadian locale.
+*. Allow person flags to be set on new person screen.
+*. Fixed bug checking for duplicate codes with apostrophes.
+*. New microchip publisher for PetLink.net
+*. Fix to smart tag publisher (not sending CSV data)
+*. Unicode bug in medical treatment names/dosages for audit.
+*. Debian package overwrites defaults file incorrectly if it
+-  wasn't set properly in debconf at every upgrade.
+*. dpkg breaks on uninstall if the service is not running or
+-  cannot be removed from init.d
+*. Broken FTP root directory could cause HTML publisher to fail
+-  before log was written with no indication.
+*. Bug with removing old HTML within publisher would cause failure.
+*. maint_animal_figures kept doing this year.
+*. Changing movements should force an update to TimeOnShelter.
+*. Setting animal as non-shelter should hide all location fields.
+*. Setting animal as non-shelter would prevent it being changed again.
+
+3.1.0
+================
+
+*. Fixed problems generating default database with cost field
+-  moving from species to donationtype.
+*. Fixed bug with multiline msgid/msgstr when generating
+-  python versions of translation files.
+*. Additional hidden maint_animal_figures cron call to go back
+-  and generate denormalised stats for all time.
+*. Make win32 batch file pause for keypress in case of error.
+*. New publisher for helpinglostanimals.com.
+*. Annual Figures reports added to repository.
+*. New animalfiguresannual table to hold annual stats.
+*. Never try and merge owner 0.
+*. Floating point numbers could break lost/found search.
+*. Possible to break advanced find animal by crafting the request
+-  to set no parameters and no WHERE clause.
+*. New publisher for meetapet.com
+*. Added 1 week and 3 years to give and reschedule.
+*. Fixed bug with unicode chars in username/passwords.
+*. Don't force a code change for datebroughtin/type if manual
+-  codes are enabled.
+*. Added document repository section of DBFS and screen for
+-  upload and view.
+*. Added sample set of over 4,000 names for generating random names.
+*. Add TimeOnList to waiting list entries and as available
+-  field for main waiting list screen.
+*. Null excludeFromPublish could hide tick/cross control.
+*. Add log entry, button didn't re-enable after create.
+*. Disabled RG "courtesy" field.
+*. Added popular label presets and auto shrinking of font for
+-  more than 8 labels per page vertically.
+*. Added support for label printing and one preset.
+*. Added $$DATETIME$$ and $$TIME$$ keys for report header/footers.
+*. Link to manual on first time load page.
+*. Fixed bug where default movement numbers weren't being checked
+-  for uniqueness when generating.
+*. Bug creating donation types in new databases.
+*. Show old ASM2 type 6 diary records with correct linkinfo.
+*. Media records created by ASM2 will have ExcludeFromPublish set
+-  to null, which means they will get excluded by default.
+
+3.0.9
+================
+
+*. Fix maxlength problem in lookingfor.comments
+*. Publish option to have a note in the animal's log when it is
+-  published to Facebook.
+*. Allow exclusion of images from publishing with little
+-  tick/cross icon on media screen.
+*. Switch to SSL for embedded google maps (prevent IE errors).
+*. Added ASM2 style person merge functionality.
+*. Optional search button inside search box.
+*. Service methods for adoptable_animals weren't using publisher
+-  presets/defaults.
+*. + should be forbidden in document template names.
+*. Fixed unicode logging errors in medical module.
+*. RTL support for Hebrew and Arabic
+*. Changing types and dates brought in should only generate a
+-  new code if the format relies on them.
+*. Filter breeds by selected species (Dwight Tinker)
+*. Allow setting of person flags from embedded person widget.
+*. Log IP address for auth and service calls.
+*. Make locking code-changing fields a bit more intelligent, so
+-  that if a field isn't part of the code it isn't locked.
+*. Mis-typing of bulk complete notes as cbn instead of bcn.
+*. Fix for blank/nonsent additional fields not being created
+-  when saving animals.
+*. Fix for IE problem with HTML tags in textareas.
+*. Fix for incorrect YearCodeID/UniqueCodeID when regenerating
+-  through javascript calls.
+*. Added BroughtInBy wordkeys
+*. Cell should appear before work in telephone numbers.
+*. On shelter animal selection for reports had backwards
+-  logic for showing codes or short codes.
+*. Fixed bug with membership and homechecked flag being set
+-  behind the scenes, but not reflected on screen.
+*. We should untick not available for adoption when the
+-  animal is adopted.
+*. All numeric fields were allowing shift with number keys to
+-  allow punctuation incorrectly (Dwight Tinker).
+*. Additional date fields were not being validated before save.
+*. Decoding HTML entities in advanced searches not escaping
+-  apostrophes like it should.
+*. Show previous location for animals leaving the shelter.
+*. Hide animal flags once the animal has left the shelter.
+*. Fix for df_m/df_km to use cint to avoid errors.
+*. Allow picup to work with non-sheltermanager via baseurl, 
+-  fixed bug with account being set to wrong value in mobile.
+*. Added In/Out by type reports.
+*. Fixed unicode bug in template names when generating docs.
+*. Fixed double click bug creating custom reports.
+*. Updating reports should recheck and load mail merges too.
+*. If an invalid group field is specified, it should be caught
+-  and turned into report output.
+*. Have a recommended set of sm.com installable reports
+-  for people doing it for the first time.
+*. Using check buttons on sm.com reports list should highlight
+-  the newly selected items.
+*. Warn about changing lks tables since people keep doing it
+-  and screwing up their databases.
+*. Added Bulgarian and Bosnian translations from Launchpad.
+*. Fix for picup trailing data in callback URL.
+*. Fixed problem with encoding of unicode tokens during embedded
+-  animal/person search.
+*. When searching for animals or people, decode any HTML entities
+-  and use unicode for query string. This allows foreign language
+-  databases from ASM2 to still be searchable with 3.
+*. Fixed bug with cron task that caused no locales to be
+-  loaded (breaks variable animal data for non-English locales)
+*. Align embedded owner fields correctly on entry section and
+-  health and identification.
+*. Editing reports forced document back to the top of the window,
+-  making the dialog off the bottom of the screen.
+*. $CURRENT_DATE$ token in reports would cause HTML generation
+-  to fail.
+
+3.0.8
+================
+
+*. Ditched species specific adoption fees in favour of default
+-  donation amounts instead.
+*. Added preliminary Norweigan language support
+*. Fixed bug with AVID registration requiring one letter gender
+*. Superusers can remove anyone's messages from the main screen
+*. Allow quicklinks to be displayed on all screens
+*. Fixed bug displaying person thumbnails
+*. Support 2 digit years in date boxes
+*. Add installing reports to the welcome popup
+*. Make browseable reports list order alphabetically
+*. Fixed bug with Android prompt being shown to non-android
+-  devices after return from viewing an animal
+*. Filtered Android uploader to prompt for Android 2.x and less
+-  as is not required for 3+
+*. Allowed for Picup use in mobile interface
+*. Allowed HTML image upload against animal record in mobile interface
+*. Fixed Picup callback URL error for iPhone/iPad
+*. Fixed unicode error with debug logging embedded find queries
+*. Added DonationGiftAid wordkey to donation documents
+*. Added AVID button to health and identification
+*. Animal names and codes in mobile interface should link to
+-  their record
+*. Fixed problem with non-unique movement numbers when adopting
+-  from a reservation
+*. Allow editing of code-related fields in cloned animals even if
+-  the lockcodes option is set
+*. Create animal from waitinglist/found animal doesn't work with
+-  manual codes turned on
+*. CurrentVet and OwnersVet wordkeys
+*. Fixed escaping for config text values in options/publishing
+*. Fixed broken escaping for foreign languages in options screen
+*. Fixed decoding of HTML entities in embedded person/animal
+*. Decode HTML entities in javascript i18n functions
+*. When diary tasks generate notes, it should be in creation order
+*. 0 on diary tasks should be 0 days, use 9999 for ask
+*. Diary display on homepage should use 23:59:59
+*. Fixed escaping on client side config
+*. Fixed Mozilla bug that prevented : in time fields
+*. Diary notes can be created and rediarised from the smartphone
+-  interface now.
+*. System option to make donations due instead of received when
+-  created through the Move menu
+*. Fixed double escaping in TPPublisherSig
+*. Fixed escaping JSON problem
+*. Detach movements from donations when we delete the movement
+*. Added <<Username>> token for documents
+*. Movements can be assigned to donations now
+*. Saving any movement now updates the denormalised donation total
+*. Add additional date validation to quick move screens
+*. Fix double click bug submitting new owners
+*. Fixed bug storing HTML/Javascript in publisher sig field
+*. When generating codes, ignoring leading whitespace and punctuation
+-  in animal type name
+*. Added ReservedOwner* wordkeys for active reserve
+*. Fixed bug with age range searching
+*. Fixed bug with media edit controls not re-enabling after save
+*. Fixed unicode bug when saving configuration
+*. Config switch to set default find animal search to onshelter or all
+*. Fix tinymce named font sizes for pisa PDF
+*. 3051 updater should remove TimingRuleNoFrequency column
+*. Code formats MUST have an N or U or they're invalid.
+*. Make adoptapet.com publisher support multiple animals
+*. escape backslashes going to the database
+*. df_ki should use cint to avoid errors on junk data
+*. Disable double clicking of create in similar person dialogs
+
+3.0.7
+================
+
+*. Major problem with database setup tool for any non-English locale
+-  due to use of ; as a split char
+*. Fix to post as Facebook page admin if available
+*. Moved AVID/Pettrac config to the publishing options screen instead
+-  of main system options
+*. (sm.com only) Publish animals direct to Facebook pages
+*. Escape names for similar person checks
+*. Truncate shortens before stripping to save memory
+*. Removed annoying SQL logging statements from session db
+*. Added duplicate person checking functionality to new person
+-  and embedded person components
+*. Fixed bug with search columns not displaying in options
+*. Database updates should be applied as part of the login
+-  process as well as through the main screen.
+
+3.0.6
+================
+
+*. Default to db session store instead
+*. Limit python process to 1 cpu in Debian package
+*. Updated README with info on Apache WSGI
+*. Windows installer now uses task scheduler for daily tasks
+
+3.0.5
+================
+
+*. Add an in-memory session store for performance
+*. Link 500 error page to main
+*. Fix incorrect fieldname medicalprofile.TimingRuleFrequency
+-  (only affects new asm3 installs)
+*. Include PIL and web.py in win32 installer for complete offline installation
+*. Show correct currency dp when setting values from js
+*. Tied adoption fees into move_adopt screen
+*. Accidentally broke lookup deletion with foreign key changes
+*. Adoption fees in species table and default costs for vaccination types
+*. Strip filepaths sent by boneheaded IE when POSTing files
+*. Show non-shelter animals in search results
+*. Use classes for non-shelter and not for adoption
+*. Don't display shelter info for non-shelter animals in banner
+*. Updated translations
+*. Server side date validation for updating vaccination and add/edit log
+
+3.0.4
+================
+
+*. Some browsers send path information with files, broke extra
+-  report images module
+
+3.0.3
+================
+
+*. Added daily tasks batch to win32 build
+*. Allow for SQLite type reports in the repository
+*. Added maint_variable_data target to regenerate all variable data
+*. Simplified age group calculation
+*. Allow searching of age groups through find animal
+*. Special needs shown incorrectly on find animal results
+*. Debian package wasn't including db location before
+-  firing up for daily cron jobs
+
+3.0.2
+================
+
+*. Install database to home folder on win32
+*. Added Win32 installer
+*. Fixed circular redirect with i18n on login
+*. Fixed IE6 syntax bug with picup.js
+*. Better error handling for sending email
+*. Make syslog dump to stdout on Windows
+*. Added SQLite support 
+*. Fixed bug with account dates in initial data
+*. Show an empty table for an empty waiting list instead of blank
+*. Added FIVResult, FLVResult, FIVTestResult, FLVTestResult,
+-  FIVLTested, FIVLTestDate wordkeys
+*. Mispelled "neutered" as "neuetered" in wordkeys
+*. Don't allow decimals in medical integer inputs
+*. Pay attention to default return category when creating movements
+*. Prevent double clicking option save button, otherwise multiple rows
+-  are created which breaks animal_query
+*. Fixed additional field case comparison for animals in wordprocessor
+*. Added person additional fields for wordprocessor
+
+3.0.1
+================
+
+*. Custom person flags
+*. Multiple waiting list highlights
+
+3.0.0
+================
+
+*. Flexible reschedule values for vaccinations
+*. Email supports SMTP AUTH and TLS
+*. Centralised publishing options screen
+*. New graphing/chart engine
+*. Role based authentication
+*. Simplified workflow with Move menu
+*. Media thumbnail view
+*. Message board
+*. Fully integrated HTML based word processor
+*. Key dates display on animal screen with adoptable indicator
+*. New multi-search bar at the top right searches all entities
+*. Audit trails now show what was changed in a record, deleted records
+-  are completely logged
+

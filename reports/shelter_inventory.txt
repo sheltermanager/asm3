@@ -1,0 +1,43 @@
+Shelter Inventory
+###
+Inventories
+###
+Any
+###
+Current shelter inventory totals.
+###
+en
+###
+SELECT s.SpeciesName, i.LocationName
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN lksex sx ON sx.ID = a.Sex
+INNER JOIN internallocation i ON i.ID = a.ShelterLocation
+WHERE a.Archived = 0
+ORDER BY i.LocationName, s.SpeciesName
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_LocationName
+$$HEAD
+<h2>$LocationName</h2>
+<p>
+$$FOOT
+</p>
+<p><b>Total $LocationName: {COUNT.LocationName}</b></p>
+GROUP$$
+
+$$GROUP_SpeciesName
+$$HEAD
+$$FOOT
+$SpeciesName: {COUNT.SpeciesName}
+<br />
+GROUP$$
+
+$$BODY
+BODY$$
+
+$$FOOTER
+FOOTER$$

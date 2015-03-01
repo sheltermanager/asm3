@@ -1,0 +1,32 @@
+<li>
+	<a href="#">
+	<p><font size="1">&nbsp;</font></p>
+	<img valign="center" src="$$WebMediaFilename$$" width="120" height="90" />
+	<span class="preview">
+	<img src="$$WebMediaFilename$$" align="left" class="full" />
+	<p class="name">$$ShelterCode$$: $$AnimalName$$</p>
+	<p class="info">$$Sex$$ $$BreedName$$ $$SpeciesName$$, aged $$Age$$</p>
+	<p class="info">On shelter $$TimeOnShelter$$</p>
+	<p class="info">$$WebMediaNotes$$</p>
+	</span>
+	</a>
+	<br />
+	<p class="name">$$ShelterCode$$: $$AnimalName$$</p>
+	<p class="info">$$Sex$$ $$BreedName$$ $$SpeciesName$$, aged $$Age$$</p>
+
+	<p>
+	<script language="javascript">
+		if ("Yes" == "$$GoodWithChildren$$") outputImage("kids.png", "Good with children");
+		if ("No" == "$$GoodWithChildren$$") outputImage("kids_no.png", "Not to go with children");
+		if ("Yes" == "$$GoodWithDogs$$") outputImage("dog.png", "Good with dogs");
+		if ("No" == "$$GoodWithDogs$$") outputImage("dog_no.png", "Not to go with dogs");
+		if ("Yes" == "$$GoodWithCats$$") outputImage("cat.png", "Good with cats");
+		if ("No" == "$$GoodWithCats$$") outputImage("cat_no.png", "Not to go with cats");
+		if ("Yes" == "$$Neutered$$") outputImage("neutered.png", "Neutered/Spayed");
+                if ("Yes" == "$$WebMediaNew$$") outputImage("new.png", "New!");
+                if ("Yes" == "$$WebMediaUpdated$$") outputImage("updated.png", "Updated");
+		if ("" != "$$VaccinationGiven1$$") outputImage("vaccinated.png", "Vaccinated");
+	</script>
+	</p>
+
+</li>

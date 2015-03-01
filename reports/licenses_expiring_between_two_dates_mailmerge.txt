@@ -1,0 +1,18 @@
+Expiring licenses between two dates
+###
+Animal Control
+###
+33307/Any
+###
+Licenses that expire between the two dates given with owner details
+###
+en
+###
+SELECT ol.*, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.EmailAddress
+FROM ownerlicence ol
+INNER JOIN owner o ON o.ID = ol.OwnerID
+WHERE ol.ExpiryDate >= '$ASK DATE Enter the from date$'
+AND ol.ExpiryDate <= '$ASK DATE Enter the to date$'
+ORDER BY ol.ExpiryDate
+###
+MAIL

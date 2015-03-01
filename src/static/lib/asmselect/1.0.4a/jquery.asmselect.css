@@ -1,0 +1,111 @@
+.asmContainer {
+	/* container that surrounds entire asmSelect widget */
+}
+
+.asmSelect {
+	/* the newly created regular 'select' */
+	display: inline; 
+}
+
+.asmOptionDisabled {
+	/* disabled options in new select */
+	color: #999; 
+}
+
+.asmHighlight {
+	/* the highlight span */
+	padding: 0;
+	margin: 0 0 0 1em;
+}
+
+.asmList {
+	/* html list that contains selected items */
+	margin: 0.25em 0 1em 0; 
+	position: relative;
+	display: block;
+	padding-left: 0; 
+	list-style: none; 
+}
+
+.asmListItem {
+	/* li item from the html list above */
+	position: relative; 
+	margin-left: 0;
+	padding-left: 0;
+	list-style: none;
+	background: #ddd;
+	border: 1px solid #bbb; 
+	width: 100%; 
+	margin: 0 0 -1px 0; 
+	line-height: 1em;
+}
+
+.asmListItem:hover {
+	background-color: #e5e5e5;
+}
+
+.asmListItemLabel {
+	/* this is a span that surrounds the text in the item, except for the remove link */
+	padding: 5px; 
+	display: block;
+}
+
+.asmListSortable .asmListItemLabel {
+	cursor: move; 
+}
+
+.asmListItemRemove {
+	/* the remove link in each list item */
+	position: absolute;
+	right: 0; 
+	top: 0;
+	padding: 5px;
+}
+
+.bsmListSortableCustom li {
+  cursor: move;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  margin: 2px 0;
+}
+
+.bsmList-custom {
+  /* html list that contains selected items */
+  margin: 0.25em 0 0.25em 0;
+  display: block;
+  padding-left: 0;
+  list-style: none;
+}
+
+.bsmListItem-custom {
+  /* li item from the html list above */
+  margin: 0 5px 5px 0;
+  padding: 4px;
+  list-style: none;
+  background: #ddd;
+  border: 1px solid #bbb;
+  color: #000;
+  cursor: move;
+  line-height: 1em;
+  float: left;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px; 
+}
+
+.bsmListItem-custom:hover {
+  background-color: #e5e5e5;
+  box-shadow: 0 0 3px #aaa;
+  -webkit-box-shadow: 0 0 3px #aaa;
+  -moz-box-shadow: 0 0 3px #aaa;
+}
+
+.bsmListItemLabel-custom {
+  padding-right: 5px;
+}
+
+.bsmListItemRemove-custom {
+  text-decoration: none;
+  color: #ff0000 !important;
+}

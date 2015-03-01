@@ -1,0 +1,54 @@
+Transfers In
+###
+Movements
+###
+Any
+###
+Animals transferred into the shelter between two dates.
+###
+en
+###
+SELECT a.DateBroughtIn, a.AnimalName, a.ShelterCode, t.AnimalType, 
+s.SpeciesName, i.LocationName, bi.OwnerName, bi.OwnerAddress, bi.OwnerTown,
+bi.OwnerCounty, bi.OwnerPostCode
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN internallocation i ON i.ID = a.ShelterLocation
+INNER JOIN species s ON s.ID = a.SpeciesID
+LEFT OUTER JOIN owner bi ON a.BroughtInByOwnerID = bi.ID
+WHERE a.IsTransfer = 1 
+AND DateBroughtIn >= '$ASK DATE Enter the from date$' AND DateBroughtIn <= '$ASK DATE Enter the to date$'
+ORDER BY a.DateBroughtIn
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Date</th>
+<th>Name</th>
+<th>Code</th>
+<th>Type</th>
+<th>Species</th>
+<th>Location</th>
+<th>From</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$DATEBROUGHTIN</td>
+<td>$ANIMALNAME</td>
+<td>$SHELTERCODE</td>
+<td>$ANIMALTYPE</td>
+<td>$SPECIESNAME</td>
+<td>$LOCATIONNAME</td>
+<td><b>$OWNERNAME</b><br />
+$OWNERADDRESS<br />
+$OWNERTOWN</br />
+$OWNERCOUNTY<br />
+$OWNERPOSTCODE</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

@@ -1,0 +1,43 @@
+View all PDFs
+###
+Maintenance
+###
+Any
+###
+List all PDFs added to the system in descending order of age with links
+###
+en
+###
+SELECT
+a.ID AS AnimalID, 
+m.ID AS MediaID,
+a.AnimalName,
+a.ShelterCode,
+m.Date,
+m.MediaName,
+m.MediaNotes
+FROM media m
+INNER JOIN animal a ON a.ID = m.LinkID
+WHERE m.MediaName LIKE '%.pdf'
+ORDER BY m.Date DESC
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Animal</th>
+<th>Date</th>
+<th>Link</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td><a href="animal?id=$ANIMALID">$ANIMALNAME - $SHELTERCODE</a></td>
+<td>$DATE</td>
+<td><a target="_blank" href="media?id=$MEDIAID">$MEDIANOTES</a></td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

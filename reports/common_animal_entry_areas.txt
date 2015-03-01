@@ -1,0 +1,93 @@
+Common Animal Entry Areas
+###
+Statistics
+###
+MySQL
+###
+The most common areas which animals enter the shelter from.
+###
+en
+###
+SELECT DISTINCT
+CASE WHEN LOCATE(' ', o.OwnerPostcode) > 1 
+THEN LEFT(o.OwnerPostcode, LOCATE(' ', o.OwnerPostcode))
+ELSE o.OwnerPostcode END AS Postcode,
+COUNT(CASE WHEN LOCATE(' ', o.OwnerPostcode) > 1 
+THEN LEFT(o.OwnerPostcode, LOCATE(' ', o.OwnerPostcode))
+ELSE o.OwnerPostcode END) AS Total
+FROM animal a
+INNER JOIN owner o ON o.ID = a.OriginalOwnerID
+WHERE NonShelterAnimal = 0
+GROUP BY 
+CASE WHEN LOCATE(' ', o.OwnerPostcode) > 1 
+THEN LEFT(o.OwnerPostcode, LOCATE(' ', o.OwnerPostcode))
+ELSE o.OwnerPostcode END
+HAVING Total > 1
+ORDER BY Total DESC
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Area</th>
+<th>Total</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$POSTCODE</td>
+<td>$TOTAL</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+
+&&&
+Common Animal Entry Areas
+###
+Statistics
+###
+PostgreSQL
+###
+The most common areas which animals enter the shelter from.
+###
+en
+###
+SELECT DISTINCT
+CASE WHEN position(' ' in o.OwnerPostcode) > 1 
+THEN substring(o.OwnerPostcode from 0 for position(' ' in o.OwnerPostcode))
+ELSE o.OwnerPostcode END AS Postcode,
+COUNT(CASE WHEN position(' ' in o.OwnerPostcode) > 1 
+THEN substring(o.OwnerPostcode from 0 for position(' ' in o.OwnerPostcode))
+ELSE o.OwnerPostcode END) AS Total
+FROM animal a
+INNER JOIN owner o ON o.ID = a.OriginalOwnerID
+GROUP BY 
+CASE WHEN position(' ' in o.OwnerPostcode) > 1 
+THEN substring(o.OwnerPostcode from 0 for position(' ' in o.OwnerPostcode))
+ELSE o.OwnerPostcode END
+HAVING COUNT(CASE WHEN position(' ' in o.OwnerPostcode) > 1 
+THEN substring(o.OwnerPostcode from 0 for position(' ' in o.OwnerPostcode))
+ELSE o.OwnerPostcode END) > 1
+ORDER BY Total DESC
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Area</th>
+<th>Total</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$POSTCODE</td>
+<td>$TOTAL</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

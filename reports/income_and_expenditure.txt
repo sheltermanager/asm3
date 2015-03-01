@@ -1,0 +1,48 @@
+Income and Expenditure
+###
+Accounts
+###
+2720/Any
+###
+Income and expenses over a period (profit and loss).
+###
+en
+###
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+
+SELECT 
+a.Code,
+ABS(COALESCE((SELECT SUM(Amount) FROM accountstrx
+WHERE accountstrx.DestinationAccountID = a.ID AND accountstrx.TrxDate BETWEEN '$@from$' AND '$@to$'), 0) - COALESCE((SELECT SUM(Amount) FROM accountstrx WHERE accountstrx.SourceAccountID = a.ID AND accountstrx.TrxDate BETWEEN '$@from$' AND '$@to$'), 0)) AS amt,
+l.AccountType
+FROM accounts a
+INNER JOIN lksaccounttype l ON l.ID = a.AccountType
+WHERE a.AccountType IN (2,3,4,5)
+ORDER BY l.AccountType
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_ACCOUNTTYPE
+$$HEAD
+<h2>$ACCOUNTTYPE</h2>
+<table>
+$$FOOT
+<tr>
+<td>Total $ACCOUNTTYPE:</td>
+<td align="right"><b>{SUM.AMT.2}</b></td>
+</tr>
+</table>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$CODE</td>
+<td align="right">$AMT</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

@@ -1,0 +1,59 @@
+Transports Completed Between Two Dates
+###
+Transport
+###
+33601/Any
+###
+Transports completed between two dates
+###
+en
+###
+SELECT t.*, 
+d.OwnerName AS DriverName, d.OwnerAddress AS DriverAddress, d.OwnerPostcode AS DriverPostcode, d.HomeTelephone AS DriverTelephone, 
+p.OwnerName AS PickupName, p.OwnerAddress AS PickupAddress, p.OwnerPostcode AS PickupPostcode,
+dr.OwnerName AS DropoffName, dr.OwnerAddress AS DropoffAddress, dr.OwnerPostcode AS DropoffPostcode,
+CASE WHEN t.Status = 1 THEN 'New' 
+WHEN t.Status = 2 THEN 'Confirmed'
+WHEN t.Status = 3 THEN 'Hold'
+WHEN t.Status = 4 THEN 'Scheduled'
+WHEN t.Status = 10 THEN 'Cancelled'
+WHEN t.Status = 11 THEN 'Completed' END AS StatusName
+FROM animaltransport t
+LEFT OUTER JOIN owner d ON d.ID = t.DriverOwnerID
+LEFT OUTER JOIN owner p ON p.ID = t.PickupOwnerID
+LEFT OUTER JOIN owner dr ON dr.ID = t.DropoffOwnerID
+WHERE t.Status = 11 AND t.DropoffDateTime >= '$ASK DATE Enter date from$' AND t.DropoffDateTime <= '$ASK DATE Enter date to$' 
+ORDER BY t.DropoffDateTime
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Driver</th>
+<th>Pickup</th>
+<th>from</th>
+<th>Dropoff</th>
+<th>at</th>
+<th>Status</th>
+<th>Miles</th>
+<th>Cost</th>
+<th>Comments</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$DRIVERNAME<br/>$DRIVERADDRESS<br/>$DRIVERPOSTCODE</td>
+<td>$PICKUPNAME<br/>$PICKUPADDRESS<br/>$PICKUPPOSTCODE</td>
+<td>$PICKUPDATETIME</td>
+<td>$DROPOFFNAME<br/>$DROPOFFADDRESS<br/>$DROPOFFPOSTCODE</td>
+<td>$DROPOFFDATETIME</td>
+<td>$STATUSNAME</td>
+<td>$MILES</td>
+<td>$COST</td>
+<td>$COMMENTS</td></tr>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en-GB" xml:lang="en-GB" xmlns="http://www.w3.org/1999/xhtml">
+  <!-- This file was converted to xhtml by Writer2xhtml ver. 1.0.2. See http://writer2latex.sourceforge.net for more info. -->
+  <head profile="http://dublincore.org/documents/dcq-html/">
+    <title></title>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+    <meta content="" name="description" />
+    <meta content="" name="keywords" />
+    <link href="http://purl.org/dc/elements/1.1/" rel="schema.DC" />
+    <meta content="" name="DC.title" />
+    <meta content="" name="DC.subject" />
+    <meta content="" name="DC.description" />
+    <meta content="Robin Rawson-Tetley" name="DC.creator" />
+    <meta content="2015-02-20T18:21:26.235594719" name="DC.date" />
+    <meta content="" name="DC.language" />
+    <style media="all" type="text/css">
+      body {font-family:'Liberation Serif',serif;font-size:16.0px}
+      span.NumberingSymbols {}
+      a:link {color:#000080;text-decoration:underline}
+      a.Internet20link:link {color:#000080;text-decoration:underline}
+      p.Standard {margin-left:0;margin-right:0;margin-top:0;margin-bottom:0;border:none;padding:0;font-size:16.0px}
+      p.TableContents {margin-left:0;margin-right:0;margin-top:0;margin-bottom:18.859844px;border:none;padding:0;font-size:16.0px}
+      p.Contents3 {margin-left:37.71969px;margin-right:0;margin-top:0;margin-bottom:0;border:none;padding:0;text-indent:0;font-size:16.0px}
+      p.ContentsHeading {margin-left:0;margin-right:0;margin-top:0;margin-bottom:0;border:none;padding:0;text-indent:0;font-family:Albany,sans-serif;font-weight:bold;font-size:21.333334px}
+      p.Textbody {margin-left:0;margin-right:0;margin-top:0;margin-bottom:18.859844px;border:none;padding:0;font-size:16.0px}
+      p.Contents2 {margin-left:18.859844px;margin-right:0;margin-top:0;margin-bottom:0;border:none;padding:0;text-indent:0;font-size:16.0px}
+      p.Heading {margin-left:0;margin-right:0;margin-top:15.987401px;margin-bottom:18.859844px;border:none;padding:0;font-family:Albany,sans-serif;font-size:18.666668px}
+      p.Contents1 {margin-left:0;margin-right:0;margin-top:0;margin-bottom:0;border:none;padding:0;text-indent:0;font-size:16.0px}
+      p.PreformattedText {margin-left:0;margin-right:0;margin-top:0;margin-bottom:0;border:none;padding:0;font-family:'DejaVu Sans Mono',monospace;font-size:13.333334px}
+      h1 {margin-left:0;margin-right:0;margin-top:15.987401px;margin-bottom:18.859844px;border:none;padding:0;font-family:Thorndale,serif;font-weight:bold;font-size:32.0px;clear:left}
+      h2 {margin-left:0;margin-right:0;margin-top:15.987401px;margin-bottom:18.859844px;border:none;padding:0;background-color:transparent;font-family:'Liberation Serif',serif;font-weight:bold;font-size:24.0px;clear:left}
+      h3 {margin-left:0;margin-right:0;margin-top:15.987401px;margin-bottom:18.859844px;border:none;padding:0;background-color:transparent;font-family:'Liberation Serif',serif;font-weight:bold;font-size:24.0px;clear:left}
+      .frameGraphics {margin-left:0;margin-right:0;margin-top:0;margin-bottom:0;border:none;padding:0;font-size:16.0px}
+      .frameGraphics p {margin-left:0;margin-right:0;margin-top:0;margin-bottom:0;font-size:16.0px}
+    </style>
+  </head>
+  <body>
+    <div id="header"><a href="manual.html">First</a> <a href="manual17.html">Previous</a> <a href="manual19.html">Next</a> <a href="manual22.html">Last</a> <a href="manual2.html">Contents</a> </div>
+    <div dir="ltr" id="content">
+      <h1 id="toc91"><span class="NumberingSymbols">17 </span><a id="RefHeading5301832728656"></a><a id="bkmRefHeading5301832728656"></a>Service API</h1>
+      <p class="Textbody">ASM includes a service API that you can call from other software via HTTP. To call the API you construct a URL to the service controller. The service controller is /service, so if you are accessing a local ASM from your local machine, the URL will start <a class="Internet20link" href="http://localhost:5000/service">http://localhost:5000/service</a>. If you are using sheltermanager.com, the URL will start <a class="Internet20link" href="https://sheltermanager.com/asm/service">https://sheltermanager.com/asm/service</a>. The service requires the  following parameters:</p>
+      <table cellspacing="0" id="Table5table" style="margin-top:0;margin-bottom:0;width:680.315px;border-collapse:separate;border-spacing:0;table-layout:fixed">
+        <tr>
+          <td style="border-top:1.0px solid #000000;border-bottom:1.0px solid #000000;border-left:1.0px solid #000000;border-right:none;padding:3.6661422px;vertical-align:top;width:121.683464px">
+            <p class="TableContents">account</p>
+          </td>
+          <td style="border:1.0px solid #000000;padding:3.6661422px;vertical-align:top;width:541.00476px">
+            <p class="TableContents">If this is a sheltermanager.com service call, the user's account number. Can be omitted for other installations.</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-top:none;border-bottom:1.0px solid #000000;border-left:1.0px solid #000000;border-right:none;padding:3.6661422px;vertical-align:top;width:121.683464px">
+            <p class="TableContents">username</p>
+          </td>
+          <td style="border-top:none;border-bottom:1.0px solid #000000;border-left:1.0px solid #000000;border-right:1.0px solid #000000;padding:3.6661422px;vertical-align:top;width:541.00476px">
+            <p class="TableContents">A valid ASM user.</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-top:none;border-bottom:1.0px solid #000000;border-left:1.0px solid #000000;border-right:none;padding:3.6661422px;vertical-align:top;width:121.683464px">
+            <p class="TableContents">password</p>
+          </td>
+          <td style="border-top:none;border-bottom:1.0px solid #000000;border-left:1.0px solid #000000;border-right:1.0px solid #000000;padding:3.6661422px;vertical-align:top;width:541.00476px">
+            <p class="TableContents">A valid ASM password. From a security standpoint, it's better to create at least one ASM user dedicated to calling the service to assist with audit trails and to lock it down so an attacker with the URL cannot change your data or view anything you don't want them to.</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-top:none;border-bottom:1.0px solid #000000;border-left:1.0px solid #000000;border-right:none;padding:3.6661422px;vertical-align:top;width:121.683464px">
+            <p class="TableContents">method</p>
+          </td>
+          <td style="border-top:none;border-bottom:1.0px solid #000000;border-left:1.0px solid #000000;border-right:1.0px solid #000000;padding:3.6661422px;vertical-align:top;width:541.00476px">
+            <p class="TableContents">A service method to call</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-top:none;border-bottom:1.0px solid #000000;border-left:1.0px solid #000000;border-right:none;padding:3.6661422px;vertical-align:top;width:121.683464px">
+            <p class="TableContents">animalid / title</p>
+          </td>
+          <td style="border-top:none;border-bottom:1.0px solid #000000;border-left:1.0px solid #000000;border-right:1.0px solid #000000;padding:3.6661422px;vertical-align:top;width:541.00476px">
+            <p class="TableContents">An animal ID or title depending on the service method called.</p>
+          </td>
+        </tr>
+      </table>
+      <p class="Textbody"> </p>
+      <p class="Textbody">The following method values are supported:</p>
+      <p class="Textbody" style="font-weight:bold">animal_image</p>
+      <p class="Textbody">Returns an animal's preferred image. Send the id of the animal.</p>
+      <p class="Textbody">http://localhost:5000/service?method=animal_image&amp;animalid=520</p>
+      <p class="Textbody" style="font-weight:bold">extra_image</p>
+      <p class="Textbody" style="font-weight:normal">Returns an extra image (see Settings-&gt;Reports-&gt;Extra Images). Pass the name of the image in the title parameter.</p>
+      <p class="Textbody" style="font-weight:normal">http://localhost:5000/service?method=extra_image&amp;title=splash.jpg</p>
+      <p class="Textbody" style="font-weight:bold">json_adoptable_animals | xml_adoptable_animals</p>
+      <p class="Textbody" style="font-weight:normal">Returns a dataset containing all animals available for adoption. The method determines whether the format returned is JSON or XML.</p>
+      <p class="Textbody" style="font-weight:normal">http://localhost:5000/service?method=xml_adoptable_animals&amp;username=user&amp;password=letmein</p>
+      <p class="Textbody" style="font-weight:bold">json_recent_adoptions | xml_recent_adoptions</p>
+      <p class="Textbody" style="font-weight:normal">Returns a dataset containing all recently adopted animals with their new owner information. The method name determines whether the format returned is JSON or XML.</p>
+      <p class="Textbody" style="font-weight:bold">html_report</p>
+      <p class="Textbody" style="font-weight:normal">Returns an HTML document containing a report. Pass the name of the report in the title attribute. If the report requires any parameters, you can pass those too. VAR parameters are just their name, ASK parameters are ASKn where n is the order within the SQL. If you run the report within the ASM frontend you will see the parameters it requires in the address bar.</p>
+      <p class="Textbody" style="font-weight:normal">http://localhost:5000/service?method=html_report&amp;username=user&amp;password=letmein&amp;title=Detailed+Shelter+Inventory</p>
+      <p class="Textbody" style="font-weight:bold">csv_mail</p>
+      <p class="Textbody" style="font-weight:normal">Returns a CSV file containing a mail merge. Pass the name of the mail merge in the title attribute and if the merge requires any parameters, you can pass those too just like with html_report.</p>
+      <p class="Textbody" style="font-weight:bold">json_shelter_animals | xml_shelter_animals</p>
+      <p class="Textbody" style="font-weight:normal">Returns a dataset containing all shelter animals. The method determines whether the format returned is JSON or XML.</p>
+      <p class="Textbody" style="font-weight:normal"> </p>
+    </div>
+    <div id="footer"><a href="manual.html">First</a> <a href="manual17.html">Previous</a> <a href="manual19.html">Next</a> <a href="manual22.html">Last</a> <a href="manual2.html">Contents</a> </div>
+  </body>
+</html>

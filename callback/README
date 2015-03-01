@@ -1,0 +1,13 @@
+sheltermanager.com image upload app
+===================================
+
+This is a phonegap/callback application for smartphones. It allows a device to
+connect to a sheltermanager.com account, retrieve the list of shelter animals
+and then use the device's camera to take a picture and attach it to the animal,
+or select one from the device's gallery of taken pictures.
+
+This app is no longer used as Android 4 and iOS 6 allow you to take a picture
+or supply a pre-taken picture with HTML file upload controls.
+
+This app is licensed under the GPLv3. See the COPYING file in the parent
+directory for more information.

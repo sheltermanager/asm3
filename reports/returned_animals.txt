@@ -1,0 +1,53 @@
+Returned Animals
+###
+Returns
+###
+Any
+###
+Animals returned within a date range.
+###
+en
+###
+SELECT a.AnimalName, a.ShelterCode, t.AnimalType, i.LocationName,
+ad.MovementDate, ad.ReturnDate, ad.ReasonForReturn, rr.ReasonName
+FROM adoption ad
+INNER JOIN animal a ON a.ID = ad.AnimalID
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN internallocation i ON i.ID = a.ShelterLocation
+INNER JOIN entryreason rr ON rr.ID = ad.ReturnedReasonID
+WHERE ad.MovementType = 1
+AND ad.ReturnDate >= '$ASK DATE Animals returned between$' 
+AND ad.ReturnDate <= '$ASK DATE and$'
+ORDER BY ad.ReturnDate, a.AnimalName
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Code</th>
+<th>Type</th>
+<th>Location</th>
+<th>Adopted</th>
+<th>Returned</th>
+<th>Reason</th>
+<th>Category</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$ANIMALNAME</td>
+<td>$SHELTERCODE</td>
+<td>$ANIMALTYPE</td>
+<td>$LOCATIONNAME</td>
+<td>$MOVEMENTDATE</td>
+<td>$RETURNDATE</td>
+<td>$REASONFORRETURN</td>
+<td>$REASONNAME</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+

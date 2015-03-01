@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Extra images</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="static/images/logo/icon-16.png" />
+<link rel="icon" href="static/images/logo/icon-32.png" sizes="32x32"/>
+<link rel="icon" href="static/images/logo/icon-48.png" sizes="48x48"/>
+<link rel="icon" href="static/images/logo/icon-128.png" sizes="128x128"/>
+<link rel="stylesheet" type="text/css" href="static/lib/tablesorter/2.7.12/themes/theme.asm.css"  />
+<link rel="stylesheet" type="text/css" href="static/lib/asmselect/1.0.4a/jquery.asmselect.css"  />
+<link rel="stylesheet" type="text/css" href="css?v=asm-icon.css&k=02121713" />
+<script type="text/javascript" src="static/lib/modernizr/modernizr.min.js" ></script>
+<script type="text/javascript" src="static/lib/jquery/1.11.2/jquery.min.js" ></script>
+<script type="text/javascript" src="static/lib/jqueryui/jquery-ui-1.11.2/jquery-ui.min.js" ></script>
+<link rel="stylesheet" type="text/css" href="static/lib/jqueryui/jquery-ui-themes-1.11.2/themes/start/jquery-ui.css" id="jqt" />
+<script type="text/javascript" src="static/lib/moment/2.9.0/moment.min.js" ></script>
+<script type="text/javascript" src="static/lib/mousetrap/1.4.6/mousetrap.min.js" ></script>
+<link rel="stylesheet" type="text/css" href="static/lib/fullcalendar/2.0.0/fullcalendar.css"  />
+<script type="text/javascript" src="static/lib/fullcalendar/2.0.0/fullcalendar.min.js" ></script>
+<link rel="stylesheet" type="text/css" href="css?v=asm.css&k=02121713" />
+<script type="text/javascript" src="static/lib/tablesorter/2.7.12/jquery.tablesorter.min.js" ></script>
+<script type="text/javascript" src="static/lib/asmselect/1.0.4a/jquery.asmselect.js" ></script>
+<script type="text/javascript" src="config.js?db=rb0448&ts=20150213152758"></script>
+<script type="text/javascript" src="i18n.js?l=en_GB&k=02121713"></script>
+<script type="text/javascript" src="js?v=min/common.min.js&k=02121713"></script>
+<script type="text/javascript" src="js?v=min/common_map.min.js&k=02121713"></script>
+<script type="text/javascript" src="js?v=min/common_widgets.min.js&k=02121713"></script>
+<script type="text/javascript" src="js?v=min/common_animalchooser.min.js&k=02121713"></script>
+<script type="text/javascript" src="js?v=min/common_animalchoosermulti.min.js&k=02121713"></script>
+<script type="text/javascript" src="js?v=min/common_personchooser.min.js&k=02121713"></script>
+<script type="text/javascript" src="js?v=min/common_tableform.min.js&k=02121713"></script>
+<script type="text/javascript" src="js?v=min/header.min.js&k=02121713"></script>
+<script type="text/javascript" src="js?v=min/header_additional.min.js&k=02121713"></script>
+<script type="text/javascript" src="js?v=min/header_edit_header.min.js&k=02121713"></script>
+<script type="text/javascript" src="js?v=min/report_images.min.js&k=02121713"></script>
+
+</head>
+<body style="background-color: #2191c0">
+<noscript>
+Sorry. ASM will not work without Javascript.
+</noscript>
+<script type="text/javascript">
+controller = {};controller.rows = [{"PATH": "/reports", "NAME": "logo.jpg"}, {"PATH": "/reports", "NAME": "nopic.jpg"}, {"PATH": "/reports", "NAME": "splash.jpg"}];
+</script>
+
+</body>
+</html>
