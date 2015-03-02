@@ -1,4 +1,5 @@
 *.pyc
+*.swp
 build
 tags
 installers/deb/sheltermanager3

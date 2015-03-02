@@ -1,6 +1,10 @@
 36
 ================
 
+02/03/15 Variable data performance: calc time on shelter with MostRecentEntryDate
+02/03/15 Variable data performance: cache age group bands to save queries
+02/03/15 Variable data performance: don't recalculate the dead every run
+02/03/15 Update MostRecentEntryDate as part of update_animal_status instead
 01/03/15 Improve publisher performance by using new async module
 01/03/15 Add async module - helper functions for long running tasks
 26/02/15 Add PostgreSQL asm_to_integer to avoid cast errors with additionals

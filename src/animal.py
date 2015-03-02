@@ -213,9 +213,9 @@ def get_animal_status_query(dbo):
     return "SELECT a.ID, a.ShelterCode, a.AnimalName, a.DeceasedDate, a.PutToSleep, " \
         "dr.ReasonName AS PTSReasonName, " \
         "il.LocationName AS ShelterLocationName, " \
-        "a.NonShelterAnimal, a.Archived, " \
+        "a.NonShelterAnimal, a.DateBroughtIn, a.Archived, " \
         "a.ActiveMovementID, a.ActiveMovementDate, a.ActiveMovementType, a.ActiveMovementReturn, " \
-        "a.HasActiveReserve, a.HasTrialAdoption, a.HasPermanentFoster, a.DisplayLocation " \
+        "a.HasActiveReserve, a.HasTrialAdoption, a.HasPermanentFoster, a.MostRecentEntryDate, a.DisplayLocation " \
         "FROM animal a " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation "
@@ -730,10 +730,11 @@ def calc_time_on_shelter(dbo, animalid, a = None):
     (int) animalid: The animal to calculate time on shelter for
     """
     l = dbo.locale
-    mre = calc_most_recent_entry(dbo, animalid, a)
     stop = now()
     if a is None:
-        a = db.query(dbo, "SELECT Archived, DeceasedDate, ActiveMovementDate FROM animal WHERE ID = %d" % animalid)[0]
+        a = db.query(dbo, "SELECT Archived, DeceasedDate, ActiveMovementDate, MostRecentEntryDate FROM animal WHERE ID = %d" % animalid)[0]
+
+    mre = a["MOSTRECENTENTRYDATE"]
 
     # If the animal is dead, use that as our cutoff
     if a["DECEASEDDATE"] is not None:
@@ -765,41 +766,33 @@ def calc_days_on_shelter(dbo, animalid, a = None):
 
     return date_diff_days(mre, stop)
 
-def calc_age_group(dbo, animalid, a = None):
+def calc_age_group(dbo, animalid, a = None, bands = None):
     """
     Returns the age group the animal fits into based on its
     date of birth.
     (int) animalid: The animal to calculate the age group for
     """
-
+    def bv(item, bands):
+        for b in bands:
+            if b["ITEMNAME"] == item:
+                return b["ITEMVALUE"]
+        return ""
     # Calculate animal's age in days
     dob = None
     if a is None:
         dob = get_date_of_birth(dbo, animalid)
     else:
         dob = a["DATEOFBIRTH"]
-
     days = date_diff_days(dob, now())
-
-    i = 1
-    band = 0
-
-    while True:
-
-        # Get the next age group band
-        band = configuration.age_group(dbo, i)
-        if band == 0:
-            break
-
-        # The band figure is expressed in years, convert it to days
-        band *= 365
-
-        # Does the animal's current age fall into this band?
-        if days <= band:
-            return configuration.age_group_name(dbo, i)
-
-        i += 1
-
+    # Load age group bands if they weren't passed
+    if bands is None:
+        bands = db.query(dbo, "SELECT ItemName, ItemValue FROM configuration WHERE ItemName LIKE 'AgeGroup%' ORDER BY ItemName")
+    # Loop through the bands until we find one that the age in days fits into
+    for i in xrange(0, 20):
+        band = bv("AgeGroup%d" % i, bands)
+        years = utils.cfloat(band)
+        if days <= years * 365:
+            return bv("AgeGroup%dName" % i, bands)
     # Out of bands and none matched
     return ""
 
@@ -2245,7 +2238,7 @@ def delete_litter(dbo, username, lid):
     audit.delete(dbo, username, "animallitter", str(db.query(dbo, "SELECT * FROM animallitter WHERE ID=%d" % int(lid))))
     db.execute(dbo, "DELETE FROM animallitter WHERE ID = %d" % int(lid))
 
-def update_variable_animal_data(dbo, animalid, a = None, animalupdatebatch = None):
+def update_variable_animal_data(dbo, animalid, a = None, animalupdatebatch = None, bands = None):
     """
     Updates the variable data animal fields,
     MostRecentEntryDate, TimeOnShelter, AgrGroup, AnimalAge
@@ -2256,16 +2249,14 @@ def update_variable_animal_data(dbo, animalid, a = None, animalupdatebatch = Non
     """
     if animalupdatebatch is not None:
         animalupdatebatch.append((
-            calc_most_recent_entry(dbo, animalid, a),
             calc_time_on_shelter(dbo, animalid, a),
-            calc_age_group(dbo, animalid, a),
+            calc_age_group(dbo, animalid, a, bands),
             calc_age(dbo, animalid, a),
             calc_days_on_shelter(dbo, animalid, a),
             animalid
         ))
     else:
         s = db.make_update_sql("animal", "ID = %d" % animalid, (
-            ( "MostRecentEntryDate", db.dd(calc_most_recent_entry(dbo, animalid, a))),
             ( "TimeOnShelter", db.ds(calc_time_on_shelter(dbo, animalid, a))),
             ( "AgeGroup", db.ds(calc_age_group(dbo, animalid, a))),
             ( "AnimalAge", db.ds(calc_age(dbo, animalid, a))),
@@ -2284,14 +2275,18 @@ def update_all_variable_animal_data(dbo):
         al.debug("already done today", "animal.update_all_variable_animal_data", dbo)
         return
 
-    # Update variable data for each animal
+    # Load age group bands now to save repeated looped lookups
+    bands = db.query(dbo, "SELECT ItemName, ItemValue FROM configuration WHERE ItemName LIKE 'AgeGroup%' ORDER BY ItemName")
+
+    # Update variable data for all animals who are still alive
     animalupdatebatch = []
-    animals = db.query(dbo, "SELECT ID, DateBroughtIn, DeceasedDate, Archived, ActiveMovementDate, DateOfBirth FROM animal")
+    animals = db.query(dbo, "SELECT ID, DateBroughtIn, DeceasedDate, Archived, ActiveMovementDate, " \
+        "MostRecentEntryDate, DateOfBirth FROM animal " \
+        "WHERE DeceasedDate Is Null")
     for a in animals:
-        update_variable_animal_data(dbo, int(a["ID"]), a, animalupdatebatch)
+        update_variable_animal_data(dbo, int(a["ID"]), a, animalupdatebatch, bands)
 
     db.execute_many(dbo, "UPDATE animal SET " \
-        "MostRecentEntryDate = %s, " \
         "TimeOnShelter = %s, " \
         "AgeGroup = %s, " \
         "AnimalAge = %s, " \
@@ -2324,6 +2319,7 @@ def update_all_animal_statuses(dbo):
         "HasActiveReserve = %s, " \
         "HasTrialAdoption = %s, " \
         "HasPermanentFoster = %s " \
+        "MostRecentEntryDate = %s " \
         "WHERE ID = %s", animalupdatebatch)
     aff = db.execute_many(dbo, "UPDATE diary SET LinkInfo = %s WHERE LinkType = %s AND LinkID = %s", diaryupdatebatch)
     al.debug("updated %d animal statuses (%d)" % (aff, len(animals)), "animal.update_all_animal_statuses", dbo)
@@ -2349,6 +2345,7 @@ def update_foster_animal_statuses(dbo):
         "HasActiveReserve = %s, " \
         "HasTrialAdoption = %s, " \
         "HasPermanentFoster = %s " \
+        "MostRecentEntryDate = %s " \
         "WHERE ID = %s", animalupdatebatch)
     aff = db.execute_many(dbo, "UPDATE diary SET LinkInfo = %s WHERE LinkType = %s AND LinkID = %s", diaryupdatebatch)
     al.debug("updated %d fostered animal statuses (%d)" % (aff, len(animals)), "animal.update_foster_animal_statuses", dbo)
@@ -2375,6 +2372,7 @@ def update_on_shelter_animal_statuses(dbo):
         "HasActiveReserve = %s, " \
         "HasTrialAdoption = %s, " \
         "HasPermanentFoster = %s " \
+        "MostRecentEntryDate = %s " \
         "WHERE ID = %s", animalupdatebatch)
     aff = db.execute_many(dbo, "UPDATE diary SET LinkInfo = %s WHERE LinkType = %s AND LinkID = %s", diaryupdatebatch)
     al.debug("updated %d on shelter animal statuses (%d)" % (aff, len(animals)), "animal.update_on_shelter_animal_statuses", dbo)
@@ -2422,6 +2420,7 @@ def update_animal_status(dbo, animalid, a = None, animalupdatebatch = None, diar
     has_trial = False
     has_permanent_foster = False
     last_return = None
+    mostrecententrydate = None
     activemovementid = 0
     activemovementdate = None
     activemovementtype = None
@@ -2477,10 +2476,6 @@ def update_animal_status(dbo, animalid, a = None, animalupdatebatch = None, diar
     if a["NONSHELTERANIMAL"] == 1:
         on_shelter = False
 
-    # Stamp our latest return date (or null if there isn't one)
-    db.execute(dbo, "UPDATE animal SET ActiveMovementReturn = " + db.dd(last_return) + 
-        " WHERE ID = %d" % animalid)
-
     # If the animal is on the shelter, or is a nonshelter animal then it has no active movement
     if not on_shelter and a["NONSHELTERANIMAL"] != 1:
         
@@ -2515,6 +2510,9 @@ def update_animal_status(dbo, animalid, a = None, animalupdatebatch = None, diar
                 and configuration.trial_on_shelter(dbo) and a["DECEASEDDATE"] is None:
                 on_shelter = True
 
+    # Calculate most recent entry date
+    mostrecententrydate = calc_most_recent_entry(dbo, animalid, a)
+
     # Calculate location and qualified display location
     loc = ""
     qlocname = ""
@@ -2541,6 +2539,7 @@ def update_animal_status(dbo, animalid, a = None, animalupdatebatch = None, diar
        a["HASACTIVERESERVE"] == b2i(has_reserve) and \
        a["HASTRIALADOPTION"] == b2i(has_trial) and \
        a["HASPERMANENTFOSTER"] == b2i(has_permanent_foster) and \
+       a["MOSTRECENTENTRYDATE"] == mostrecententrydate and \
        a["DISPLAYLOCATION"] == qlocname:
         # No - don't do anything
         return
@@ -2554,6 +2553,7 @@ def update_animal_status(dbo, animalid, a = None, animalupdatebatch = None, diar
     a["HASACTIVERESERVE"] = b2i(has_reserve)
     a["HASTRIALADOPTION"] = b2i(has_trial)
     a["HASPERMANENTFOSTER"] = b2i(has_permanent_foster)
+    a["MOSTRECENTENTRYDATE"] = mostrecententrydate
     a["DISPLAYLOCATION"] = qlocname
 
     # If we have an animal batch going, append to it
@@ -2568,6 +2568,7 @@ def update_animal_status(dbo, animalid, a = None, animalupdatebatch = None, diar
             b2i(has_reserve),
             b2i(has_trial),
             b2i(has_permanent_foster),
+            mostrecententrydate,
             animalid
         ))
     else:
@@ -2581,7 +2582,8 @@ def update_animal_status(dbo, animalid, a = None, animalupdatebatch = None, diar
             ( "DisplayLocation", db.ds(qlocname) ),
             ( "HasActiveReserve", db.di(b2i(has_reserve)) ),
             ( "HasTrialAdoption", db.di(b2i(has_trial)) ),
-            ( "HasPermanentFoster", db.di(b2i(has_permanent_foster)) )
+            ( "HasPermanentFoster", db.di(b2i(has_permanent_foster)) ),
+            ( "MostRecentEntryDate", db.dd(mostrecententrydate) )
             )))
 
     # Update the location on any diary notes for this animal
