@@ -9,8 +9,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-02-20 05:22+0000\n"
-"X-Generator: Launchpad (build 17341)\n"
+"X-Launchpad-Export-Date: 2015-03-02 05:17+0000\n"
+"X-Generator: Launchpad (build 17361)\n"
 
 #: options.js
 msgid " days."
@@ -28,8 +28,9 @@ msgstr "&#x3c;Prev"
 msgid "&#x3e;&#x3e;"
 msgstr "&#x3e;&#x3e;"
 
-#: stocklevel.js log.js incident_find.js animal_find.js lostfound_find.js
-#: common.js waitinglist_results.js options.js html.py diary.py utils.py
+#: log.js common.js lostfound_find.js options.js animal_find.js
+#: waitinglist_results.js incident_find.js stocklevel.js diary.py html.py
+#: utils.py
 msgid "(all)"
 msgstr "(visi)"
 
@@ -37,7 +38,7 @@ msgstr "(visi)"
 msgid "(any)"
 msgstr "(visi)"
 
-#: animal_new.js animal.js
+#: animal.js animal_new.js
 msgid "(available)"
 msgstr ""
 
@@ -49,7 +50,7 @@ msgstr "(tuščia)"
 msgid "(both)"
 msgstr "(abu)"
 
-#: main.js html.py diary.py utils.py
+#: main.js diary.py html.py utils.py
 msgid "(everyone)"
 msgstr "(visi)"
 
@@ -69,7 +70,7 @@ msgstr ""
 msgid "(none)"
 msgstr "(joks)"
 
-#: lostfound.js lostfound_find.js incident.js lostfound_new.js html.py
+#: lostfound_find.js lostfound.js incident.js lostfound_new.js html.py
 msgid "(unknown)"
 msgstr "(nežinoma)"
 
@@ -125,7 +126,7 @@ msgstr "9 mėnesiai"
 msgid "A (Stray Dog)"
 msgstr ""
 
-#: waitinglist_new.js waitinglist.js
+#: waitinglist.js waitinglist_new.js
 msgid "A description or other information about the animal"
 msgstr "Gyvūno aprašymas arba kita informacija"
 
@@ -145,12 +146,12 @@ msgstr "Šiam veiksmo tipui būtina nurodyti asmenį."
 msgid "A publish job is already running."
 msgstr "Publikavimas jau pradėtas."
 
-#: animal_new.js animal.js
+#: animal.js animal_new.js
 msgid "A short version of the reference number"
 msgstr "Trumpoji susijusio numerio versija"
 
-#: move_adopt.js move_transfer.js movements.js move_retailer.js move_reserve.js
-#: move_foster.js move_reclaim.js
+#: move_transfer.js move_adopt.js move_retailer.js move_reserve.js
+#: move_foster.js move_reclaim.js movements.js
 msgid "A unique number to identify this movement"
 msgstr "Unikalus numeris šio veiksmo identifikacijai"
 
@@ -162,12 +163,16 @@ msgstr "Unikalus šios vados numeris"
 msgid "A4"
 msgstr "A4"
 
-#: onlineforms.js person_find_results.js common.js header_edit_header.js
-#: incident_find_results.js html.py
+#: person_find_results.js onlineforms.js header_edit_header.js
+#: incident_find_results.js common.js html.py
 msgid "ACO"
 msgstr "Gyvūnų kontrolės darbuotojas"
 
-#: main.js html.py mobile.py
+#: common_widgets.js
+msgid "AM"
+msgstr ""
+
+#: main.js mobile.py html.py
 msgid "ASM"
 msgstr "ASM"
 
@@ -255,7 +260,7 @@ msgstr "Paskyra deaktyvuota."
 msgid "Accountant"
 msgstr "Apskaitininkas"
 
-#: roles.js accounts.js options.js header.js html.py code.py configuration.py
+#: accounts.js header.js options.js roles.js code.py html.py configuration.py
 msgid "Accounts"
 msgstr "Sąskaitos"
 
@@ -263,7 +268,7 @@ msgstr "Sąskaitos"
 msgid "Accounts need a code."
 msgstr "Būtina nurodyti sąskaitų kodą."
 
-#: medical.js medicalprofile.js person.js medical.py
+#: medical.js person.js medicalprofile.js medical.py
 msgid "Active"
 msgstr "Aktyvus"
 
@@ -411,7 +416,7 @@ msgstr "Pridėti kuponus"
 msgid "Add Waiting List"
 msgstr "Pridėti gyvūnus į laukiančių sąrašą"
 
-#: main.js header.js html.py configuration.py
+#: header.js main.js html.py configuration.py
 msgid "Add a diary note"
 msgstr "Pridėti darbotvarkės užduotį"
 
@@ -431,7 +436,7 @@ msgstr "Pridėti dingusį gyvūną"
 msgid "Add a medical regimen"
 msgstr "Pridėti gydymo programą"
 
-#: animal_new.js header.js html.py code.py configuration.py
+#: header.js animal_new.js code.py html.py configuration.py
 msgid "Add a new animal"
 msgstr "Pridėti gyvūną"
 
@@ -439,7 +444,7 @@ msgstr "Pridėti gyvūną"
 msgid "Add a new log"
 msgstr "Pridėti žurnalo įrašą"
 
-#: header.js person_new.js html.py code.py configuration.py
+#: header.js person_new.js code.py html.py configuration.py
 msgid "Add a new person"
 msgstr "Pridėti asmenį"
 
@@ -487,7 +492,7 @@ msgstr "Po išsiuntimo pridėti šio laiško detales į žurnalą"
 msgid "Add diary"
 msgstr "Pridėti darbotvarkę"
 
-#: diarytask.js diarytasks.js
+#: diarytasks.js diarytask.js
 msgid "Add diary task"
 msgstr "Pridėti darbotvarkės užduotį"
 
@@ -615,11 +620,11 @@ msgstr "Pridėti {0}"
 msgid "Added"
 msgstr "Pridėta"
 
-#: main.js header_edit_header.js
+#: header_edit_header.js main.js
 msgid "Added by {0} on {1}"
 msgstr "Pridėjo {0} {1}"
 
-#: lostfound.js incident.js animal.js person.js waitinglist.js
+#: person.js animal.js lostfound.js waitinglist.js incident.js
 msgid "Additional"
 msgstr "Papildoma"
 
@@ -639,10 +644,10 @@ msgstr "Papildomi laukai"
 msgid "Additional fields need a name, label and type."
 msgstr "Papildomas laukas privalo turėti pavadinimą, žymę ir tipą."
 
-#: common_personchooser.js person_find_results.js incident_find.js
-#: incident_new.js waitinglist_results.js incident.js movements.js options.js
-#: person.js header_edit_header.js incident_find_results.js person_new.js
-#: html.py dbupdate.py mobile.py
+#: person_find_results.js header_edit_header.js incident_find_results.js
+#: incident_new.js person.js person_new.js options.js incident.js
+#: waitinglist_results.js common_personchooser.js movements.js incident_find.js
+#: mobile.py html.py dbupdate.py
 msgid "Address"
 msgstr "Adresas"
 
@@ -662,7 +667,7 @@ msgstr ""
 msgid "Adopt"
 msgstr "Atidavimas"
 
-#: move_adopt.js header.js html.py code.py configuration.py
+#: move_adopt.js header.js code.py html.py configuration.py
 msgid "Adopt an animal"
 msgstr "Gyvūno atidavimas"
 
@@ -744,12 +749,12 @@ msgstr ""
 "Po to, kai naudotojas paspaudžia \"Patvirtinti\" ir ASM priima formą, "
 "atidaryti naudotojui šį URL"
 
-#: animal_find_results.js html.py person.py mobile.py
+#: animal_find_results.js mobile.py person.py html.py
 msgid "Age"
 msgstr "Amžius"
 
-#: incident_find.js lostfound.js animal_find.js lostfound_find.js incident.js
-#: lostfound_find_results.js lostfound_new.js html.py mobile.py
+#: lostfound_find_results.js lostfound_find.js lostfound.js incident.js
+#: animal_find.js lostfound_new.js incident_find.js mobile.py html.py
 msgid "Age Group"
 msgstr "Amžiaus grupė"
 
@@ -973,7 +978,7 @@ msgstr "Pagal abėcėlę A-Z"
 msgid "Alphabetically Z-A"
 msgstr "Pagal abėcėlę Z-A"
 
-#: animal_new.js animal_bulk.js animal_find_results.js animal.js html.py
+#: animal_bulk.js animal.js animal_new.js animal_find_results.js html.py
 msgid "Altered"
 msgstr "Kastruotas/Sterilizuota"
 
@@ -1041,8 +1046,8 @@ msgstr "Amerikiečių vandens spanielis"
 msgid "American Wirehair"
 msgstr "Amerikiečių šiurkščiaplaukė"
 
-#: move_adopt.js donations.js person_vouchers.js donation_receive.js
-#: move_reserve.js move_reclaim.js
+#: donations.js move_adopt.js move_reserve.js person_vouchers.js
+#: move_reclaim.js donation_receive.js
 msgid "Amount"
 msgstr "Suma"
 
@@ -1068,11 +1073,11 @@ msgstr "Anatolijos aviganis"
 msgid "Angora Rabbit"
 msgstr "Angoros triušis"
 
-#: onlineform_incoming.js licence.js diarytasks.js move_deceased.js test.js
-#: medical.js move_adopt.js donations.js search.js move_transfer.js
-#: vaccination.js movements.js move_retailer.js header_edit_header.js
-#: move_reserve.js move_foster.js incident_find_results.js log_new.js
-#: transport.js move_reclaim.js html.py dbupdate.py mobile.py reports.py
+#: test.js header_edit_header.js donations.js move_transfer.js diarytasks.js
+#: search.js incident_find_results.js move_adopt.js medical.js move_retailer.js
+#: log_new.js move_reserve.js move_foster.js transport.js move_reclaim.js
+#: licence.js vaccination.js movements.js onlineform_incoming.js
+#: move_deceased.js mobile.py reports.py html.py dbupdate.py
 msgid "Animal"
 msgstr "Gyvūnai"
 
@@ -1084,7 +1089,7 @@ msgstr "Sukurtas gyvūnas '{0}', turintis kodą '{1}'"
 msgid "Animal '{0}' successfully marked deceased."
 msgstr "Gyvūnas '{0}' sėkmingai pažymėtas nugaišusiu."
 
-#: licence.js incident.js donation_receive.js
+#: incident.js licence.js donation_receive.js
 msgid "Animal (optional)"
 msgstr "Gyvūnas (nebūtinas)"
 
@@ -1116,7 +1121,7 @@ msgstr "Gyvūnas - Papildoma informacija"
 msgid "Animal Codes"
 msgstr "Gyvūnų kodai"
 
-#: roles.js html.py mobile.py
+#: roles.js mobile.py html.py
 msgid "Animal Control"
 msgstr ""
 
@@ -1217,7 +1222,7 @@ msgstr ""
 msgid "Animal shortcode format"
 msgstr "Trumpojo gyvūnų kodo formatas"
 
-#: roles.js animal_bulk.js test.js medical.js vaccination.js transport.js
+#: test.js animal_bulk.js medical.js transport.js roles.js vaccination.js
 #: html.py
 msgid "Animals"
 msgstr "Gyvūnai"
@@ -1294,7 +1299,7 @@ msgstr "Balandis"
 msgid "Arabian"
 msgstr "Arabų"
 
-#: lostfound_find.js lostfound_find_results.js
+#: lostfound_find_results.js lostfound_find.js
 msgid "Area"
 msgstr "Vietovė"
 
@@ -1338,7 +1343,7 @@ msgstr "Turtas::Pastatai"
 msgid "At least the last name should be completed."
 msgstr "Turėtų būti įvesta bent jau pavardė."
 
-#: onlineform_incoming.js media.js
+#: media.js onlineform_incoming.js
 msgid "Attach"
 msgstr "Pridėti"
 
@@ -1453,7 +1458,7 @@ msgstr "Jauniklis"
 msgid "Back"
 msgstr "Atgal"
 
-#: accounts_trx.js stocklevel.js accounts.js
+#: accounts.js accounts_trx.js stocklevel.js
 msgid "Balance"
 msgstr "Balansas"
 
@@ -1493,7 +1498,7 @@ msgstr "Bankas::Depozitinė"
 msgid "Bank::Savings"
 msgstr "Bankas::Taupomoji"
 
-#: onlineforms.js person_find_results.js common.js header_edit_header.js
+#: person_find_results.js onlineforms.js header_edit_header.js common.js
 #: html.py
 msgid "Banned"
 msgstr "Juodasis sąrašas"
@@ -1718,10 +1723,10 @@ msgstr "Bokseris"
 msgid "Boykin Spaniel"
 msgstr "Boikino spanielis"
 
-#: animal_new.js common_animalchooser.js lostfound.js onlineform.js
-#: animal_find.js animal_find_results.js lostfound_find.js
-#: lostfound_find_results.js animal.js person.js lostfound_new.js html.py
-#: lookups.py person.py mobile.py
+#: person.js lostfound_find_results.js onlineform.js animal.js
+#: lostfound_find.js animal_new.js common_animalchooser.js lostfound.js
+#: animal_find.js animal_find_results.js lostfound_new.js lookups.py mobile.py
+#: person.py html.py
 msgid "Breed"
 msgstr "Veislė"
 
@@ -1771,7 +1776,7 @@ msgstr "Plonasnapė papūga"
 msgid "Brought In"
 msgstr "Pateko"
 
-#: animal.js person.py mobile.py
+#: animal.js mobile.py person.py
 msgid "Brought In By"
 msgstr "Pridavė"
 
@@ -1839,7 +1844,7 @@ msgstr ""
 msgid "Bulk Vaccination"
 msgstr "Masinė vakcinacija"
 
-#: animal_bulk.js html.py code.py
+#: animal_bulk.js code.py html.py
 msgid "Bulk change animals"
 msgstr ""
 
@@ -1863,7 +1868,7 @@ msgstr "Burmos katė"
 msgid "Burmilla"
 msgstr "Burmilos katė"
 
-#: diary.js log.js person_investigation.js medical.js
+#: diary.js medical.js log.js person_investigation.js
 msgid "By"
 msgstr "Atliko"
 
@@ -1891,7 +1896,7 @@ msgstr "Kernterjeras"
 msgid "Calendar View"
 msgstr ""
 
-#: main.js header.js code.py configuration.py
+#: header.js main.js code.py configuration.py
 msgid "Calendar view"
 msgstr ""
 
@@ -1927,7 +1932,7 @@ msgstr ""
 msgid "Camel"
 msgstr "Kupranugaris"
 
-#: waitinglist_new.js waitinglist.js
+#: waitinglist.js waitinglist_new.js
 msgid "Can afford donation?"
 msgstr "Ar bus suteikta parama?"
 
@@ -1947,13 +1952,12 @@ msgstr "Kanados beplaukė"
 msgid "Canary"
 msgstr "Kanarėlė"
 
-#: onlineform_incoming.js common_widgets.js onlineforms.js
-#: common_personchooser.js accounts_trx.js common_animalchooser.js
-#: common_tableform.js roles.js common_animalchoosermulti.js test.js
-#: report_images.js lostfound.js users.js medical.js common.js sql.js
-#: vaccination.js incident.js main.js animal.js document_templates.js
-#: reports.js person.js publish_options.js waitinglist.js media.js
-#: person_new.js
+#: onlineforms.js test.js medical.js person.js common.js document_templates.js
+#: users.js animal.js person_new.js sql.js common_animalchooser.js lostfound.js
+#: common_widgets.js roles.js reports.js waitinglist.js accounts_trx.js main.js
+#: incident.js publish_options.js media.js common_animalchoosermulti.js
+#: vaccination.js common_tableform.js common_personchooser.js
+#: onlineform_incoming.js report_images.js
 msgid "Cancel"
 msgstr "Atšaukti"
 
@@ -2004,7 +2008,7 @@ msgstr "Katė"
 msgid "Catahoula Leopard Dog"
 msgstr "Katahulos leopardinis šuo"
 
-#: move_deceased.js report_export.js animal.js reports.js html.py
+#: animal.js reports.js report_export.js move_deceased.js html.py
 msgid "Category"
 msgstr "Kategorija"
 
@@ -2024,8 +2028,8 @@ msgstr "Kavalieriaus karaliaus Karolio spanielis"
 msgid "Cell"
 msgstr "Mobilusis"
 
-#: common_personchooser.js person_find_results.js waitinglist_results.js
-#: person.js person_new.js
+#: person_find_results.js person.js person_new.js waitinglist_results.js
+#: common_personchooser.js
 msgid "Cell Phone"
 msgstr "Mobilusis telefonas"
 
@@ -2033,7 +2037,7 @@ msgstr "Mobilusis telefonas"
 msgid "Champagne DArgent"
 msgstr "Champagne DArgent"
 
-#: common_tableform.js common.js
+#: common.js common_tableform.js
 msgid "Change"
 msgstr "Keisti"
 
@@ -2101,7 +2105,7 @@ msgstr "Keisti medicininius įrašus"
 msgid "Change Movement"
 msgstr "Keisti veiksmus"
 
-#: users.js change_password.js header.js code.py
+#: header.js users.js change_password.js code.py
 msgid "Change Password"
 msgstr "Keisti slaptažodį"
 
@@ -2141,7 +2145,7 @@ msgstr ""
 msgid "Change Trap Loans"
 msgstr ""
 
-#: change_user_settings.js header.js code.py
+#: header.js change_user_settings.js code.py
 msgid "Change User Settings"
 msgstr "Keisti naudotojų nuostatas"
 
@@ -2269,12 +2273,12 @@ msgstr ""
 msgid "Citation Types"
 msgstr ""
 
-#: roles.js header_edit_header.js mobile.py
+#: header_edit_header.js roles.js mobile.py
 msgid "Citations"
 msgstr ""
 
-#: common_personchooser.js person_find_results.js incident_new.js
-#: waitinglist_results.js incident.js person.js person_new.js html.py
+#: person_find_results.js incident_new.js person.js person_new.js incident.js
+#: waitinglist_results.js common_personchooser.js html.py
 msgid "City"
 msgstr "Miestas"
 
@@ -2282,12 +2286,12 @@ msgstr "Miestas"
 msgid "City contains"
 msgstr "Miestas"
 
-#: common_personchooser.js person.js person_new.js
+#: person.js person_new.js common_personchooser.js
 msgid "Class"
 msgstr ""
 
-#: common_personchooser.js common_animalchooser.js common_animalchoosermulti.js
-#: common.js
+#: common.js common_animalchooser.js common_animalchoosermulti.js
+#: common_personchooser.js
 msgid "Clear"
 msgstr "Išvalyti"
 
@@ -2295,7 +2299,7 @@ msgstr "Išvalyti"
 msgid "Clear tables before importing"
 msgstr "Išvalyti lenteles prieš importuojant"
 
-#: onlineforms.js roles.js animal.js document_templates.js reports.js
+#: onlineforms.js document_templates.js animal.js roles.js reports.js
 msgid "Clone"
 msgstr "Klonuoti"
 
@@ -2303,7 +2307,7 @@ msgstr "Klonuoti"
 msgid "Clone Animals"
 msgstr "Kopijuoti gyvūnus"
 
-#: animal_new.js onlineform_incoming.js main.js
+#: animal_new.js common_widgets.js main.js onlineform_incoming.js
 msgid "Close"
 msgstr "Uždaryti"
 
@@ -2319,7 +2323,7 @@ msgstr "Klaidesdeilas"
 msgid "Coat"
 msgstr "Kailis"
 
-#: animal_find_results.js animal.js lookups.py mobile.py
+#: animal.js animal_find_results.js lookups.py mobile.py
 msgid "Coat Type"
 msgstr "Kailio tipas"
 
@@ -2343,8 +2347,9 @@ msgstr "Kakadu"
 msgid "Cocker Spaniel"
 msgstr "Amerikiečių kokerspanielis"
 
-#: animal_new.js common_personchooser.js common_animalchooser.js animal_find.js
-#: animal_find_results.js accounts.js animal.js person.js html.py person.py
+#: accounts.js person.js animal.js animal_new.js common_animalchooser.js
+#: animal_find.js animal_find_results.js common_personchooser.js person.py
+#: html.py
 msgid "Code"
 msgstr "Kodas"
 
@@ -2360,9 +2365,9 @@ msgstr "Kodo formato simbolių reikšmės:"
 msgid "Collie"
 msgstr "Kolis"
 
-#: lostfound.js onlineform.js animal_find.js animal_find_results.js
-#: lostfound_find.js lostfound_find_results.js animal.js person.js
-#: lostfound_new.js html.py lookups.py person.py mobile.py
+#: person.js lostfound_find_results.js onlineform.js animal.js
+#: lostfound_find.js lostfound.js animal_find.js animal_find_results.js
+#: lostfound_new.js lookups.py mobile.py person.py html.py
 msgid "Color"
 msgstr "Spalva"
 
@@ -2386,17 +2391,16 @@ msgstr "Atvaizduojami stulpeliai"
 msgid "Comma separated list of units for this location"
 msgstr ""
 
-#: licence.js traploan.js stocklevel.js diary.js log.js test.js
-#: person_find_results.js lostfound.js medical.js donations.js
-#: animal_find_results.js accounts.js waitinglist_results.js vaccination.js
-#: animal.js movements.js animal_diet.js medicalprofile.js person.js
-#: person_vouchers.js header_edit_header.js waitinglist_new.js litters.js
-#: lostfound_new.js transport.js waitinglist.js citations.js html.py person.py
-#: mobile.py
+#: person_find_results.js test.js header_edit_header.js accounts.js
+#: donations.js diary.js medical.js person.js log.js animal.js citations.js
+#: transport.js traploan.js person_vouchers.js lostfound.js waitinglist.js
+#: animal_diet.js medicalprofile.js licence.js animal_find_results.js
+#: lostfound_new.js vaccination.js waitinglist_results.js movements.js
+#: litters.js stocklevel.js waitinglist_new.js mobile.py person.py html.py
 msgid "Comments"
 msgstr "Aprašymas"
 
-#: animal_find.js person.js person.py
+#: person.js animal_find.js person.py
 msgid "Comments Contain"
 msgstr "Aprašyme yra"
 
@@ -2420,8 +2424,8 @@ msgstr "Užbaigta"
 msgid "Complete Tasks"
 msgstr "Atliktos užduotys"
 
-#: diary.js medical.js medicalprofile.js header_edit_header.js
-#: incident_find_results.js transport.js mobile.py medical.py
+#: header_edit_header.js incident_find_results.js diary.js medical.js
+#: transport.js medicalprofile.js mobile.py medical.py
 msgid "Completed"
 msgstr "Atlikta"
 
@@ -2465,8 +2469,8 @@ msgstr ""
 msgid "Consumed"
 msgstr ""
 
-#: lostfound.js lostfound_find_results.js waitinglist_new.js lostfound_new.js
-#: waitinglist.js lostfound.py
+#: lostfound_find_results.js lostfound.js waitinglist.js lostfound_new.js
+#: waitinglist_new.js lostfound.py
 msgid "Contact"
 msgstr "Kontaktinis asmuo"
 
@@ -2498,7 +2502,7 @@ msgstr ""
 msgid "Copy from animal comments"
 msgstr "Kopijuoti iš gyvūno aprašymo"
 
-#: roles.js reports.js onlineform.py animal.py
+#: roles.js reports.js animal.py onlineform.py
 msgid "Copy of {0}"
 msgstr "{0} kopija"
 
@@ -2514,8 +2518,8 @@ msgstr "Korgis"
 msgid "Cornish Rex"
 msgstr "Kornvalio reksas"
 
-#: animal_costs.js test.js medical.js vaccination.js medicalprofile.js
-#: transport.js
+#: test.js medical.js transport.js animal_costs.js medicalprofile.js
+#: vaccination.js
 msgid "Cost"
 msgstr "Kaina"
 
@@ -2535,7 +2539,7 @@ msgstr "Išlaidų data turi būti tinkama"
 msgid "Cost record"
 msgstr "Išlaidų žurnalas"
 
-#: roles.js options.js header_edit_header.js
+#: header_edit_header.js options.js roles.js
 msgid "Costs"
 msgstr "Išlaidos"
 
@@ -2563,12 +2567,12 @@ msgstr "Karvė"
 msgid "Cream"
 msgstr "Kreminė"
 
-#: animal_new.js common_personchooser.js roles.js incident_new.js
-#: waitinglist_new.js lostfound_new.js person_new.js
+#: incident_new.js person_new.js animal_new.js roles.js lostfound_new.js
+#: common_personchooser.js waitinglist_new.js
 msgid "Create"
 msgstr "Pridėti"
 
-#: lostfound.js incident.js waitinglist.js
+#: lostfound.js waitinglist.js incident.js
 msgid "Create Animal"
 msgstr "Pridėti gyvūną"
 
@@ -2621,8 +2625,8 @@ msgstr "Kurti naują šabloną, nukopijuojant pasirinktą šabloną"
 msgid "Create a new waiting list entry from this found animal record"
 msgstr "Kurti naują laukiančių eilės sąrašo įrašą iš šio rasto gyvūno įrašo"
 
-#: animal_new.js incident_new.js waitinglist_new.js lostfound_new.js
-#: person_new.js
+#: incident_new.js person_new.js animal_new.js lostfound_new.js
+#: waitinglist_new.js
 msgid "Create and edit"
 msgstr "Pridėti ir redaguoti"
 
@@ -2634,7 +2638,7 @@ msgstr ""
 msgid "Create boarding cost record when animal is adopted"
 msgstr "Gyvūną atidavus, sukurti jo išlaikymo sąnaudų įrašą"
 
-#: animal.js person.js
+#: person.js animal.js
 msgid "Create diary notes from a task"
 msgstr "Įtraukti užduotį į darbotvarkę"
 
@@ -2677,9 +2681,9 @@ msgid ""
 "transactions"
 msgstr ""
 
-#: animal_new.js move_adopt.js incident_new.js move_transfer.js
-#: move_retailer.js donation_receive.js move_reserve.js waitinglist_new.js
-#: move_foster.js log_new.js lostfound_new.js person_new.js move_reclaim.js
+#: move_transfer.js incident_new.js move_adopt.js move_retailer.js log_new.js
+#: move_reserve.js move_foster.js person_new.js animal_new.js move_reclaim.js
+#: lostfound_new.js waitinglist_new.js donation_receive.js
 msgid "Creating..."
 msgstr "Kuriama..."
 
@@ -2695,11 +2699,11 @@ msgstr "Creme DArgent"
 msgid "Criteria:"
 msgstr "Kriterijai:"
 
-#: animal_new.js animal.js dbupdate.py
+#: animal.js animal_new.js dbupdate.py
 msgid "Crossbreed"
 msgstr "Maišytas su"
 
-#: common.js animal.js options.js header_edit_header.js
+#: header_edit_header.js common.js animal.js options.js
 msgid "Cruelty Case"
 msgstr "Byla dėl žiauraus elgesio"
 
@@ -2715,7 +2719,7 @@ msgstr "Garbanotas"
 msgid "Current"
 msgstr "Dabartinis"
 
-#: animal.js person.py mobile.py
+#: animal.js mobile.py person.py
 msgid "Current Vet"
 msgstr "Gydantis veterinaras"
 
@@ -2771,23 +2775,23 @@ msgstr "Duomenys"
 msgid "Database"
 msgstr "Duomenų bazė"
 
-#: traploan.js animal_costs.js accounts_trx.js diary.js log.js
-#: person_investigation.js onlineform.js move_adopt.js animal_find_results.js
-#: move_transfer.js lostfound_find_results.js animal.js movements.js
-#: move_retailer.js person.js move_reserve.js move_foster.js log_new.js
-#: person_links.js citations.js move_reclaim.js dbupdate.py mobile.py
+#: person_links.js move_transfer.js diary.js move_adopt.js person.js
+#: move_retailer.js lostfound_find_results.js log_new.js onlineform.js
+#: move_reserve.js log.js animal.js move_foster.js citations.js traploan.js
+#: move_reclaim.js person_investigation.js animal_costs.js accounts_trx.js
+#: animal_find_results.js movements.js mobile.py dbupdate.py
 msgid "Date"
 msgstr "Data"
 
-#: animal_new.js animal.js html.py mobile.py
+#: animal.js animal_new.js mobile.py html.py
 msgid "Date Brought In"
 msgstr "Patekimo data"
 
-#: lostfound.js header_edit_header.js lostfound_new.js lostfound.py
+#: header_edit_header.js lostfound.js lostfound_new.js lostfound.py
 msgid "Date Found"
 msgstr "Radimo data"
 
-#: lostfound.js header_edit_header.js lostfound_new.js
+#: header_edit_header.js lostfound.js lostfound_new.js
 msgid "Date Lost"
 msgstr "Dingimo data"
 
@@ -2803,7 +2807,7 @@ msgstr "Įtraukimo data"
 msgid "Date Removed"
 msgstr "Pašalinimo data"
 
-#: lostfound.js header_edit_header.js lostfound_new.js
+#: header_edit_header.js lostfound.js lostfound_new.js
 msgid "Date Reported"
 msgstr "Pranešimo data"
 
@@ -2835,11 +2839,11 @@ msgstr "Būtina nurodyti dingimo datą"
 msgid "Date lost cannot be blank."
 msgstr "Būtina nurodyti dingimo datą."
 
-#: animal_new.js animal.js
+#: animal.js animal_new.js
 msgid "Date of Birth"
 msgstr "Gimimo data"
 
-#: animal_new.js animal.js animal.py
+#: animal.js animal_new.js animal.py
 msgid "Date of birth cannot be blank"
 msgstr "Būtina nurodyti gimimo datą"
 
@@ -2855,11 +2859,11 @@ msgstr "Netinkama gimimo data"
 msgid "Date of last owner contact"
 msgstr "Paskutinio kontakto su savininku data"
 
-#: waitinglist_new.js waitinglist.js
+#: waitinglist.js waitinglist_new.js
 msgid "Date put on"
 msgstr "Įtraukimo data"
 
-#: waitinglist_new.js waitinglist.js waitinglist.py
+#: waitinglist.js waitinglist_new.js waitinglist.py
 msgid "Date put on cannot be blank"
 msgstr "Būtina nurodyti priėmimo datą"
 
@@ -2899,7 +2903,7 @@ msgstr "Pateko nugaišęs"
 msgid "Dead animal"
 msgstr ""
 
-#: move_deceased.js animal.js
+#: animal.js move_deceased.js
 msgid "Dead on arrival"
 msgstr "Pateko nugaišęs"
 
@@ -2927,12 +2931,12 @@ msgstr "Debetinė kodrtelė"
 msgid "Dec"
 msgstr "Gruodis"
 
-#: animal_find.js search.js common.js header_edit_header.js person_links.js
+#: header_edit_header.js person_links.js search.js common.js animal_find.js
 #: animal.py
 msgid "Deceased"
 msgstr "Nugaišę"
 
-#: move_deceased.js animal.js
+#: animal.js move_deceased.js
 msgid "Deceased Date"
 msgstr "Gaišimo data"
 
@@ -2940,7 +2944,7 @@ msgstr "Gaišimo data"
 msgid "December"
 msgstr "Gruodis"
 
-#: animal_find_results.js animal.js html.py mobile.py
+#: animal.js animal_find_results.js mobile.py html.py
 msgid "Declawed"
 msgstr "Pašalinti nagai"
 
@@ -3016,6 +3020,10 @@ msgstr "Numatytasis tipas"
 msgid "Default Vaccination Type"
 msgstr "Numatytasis vakcinacijos tipas"
 
+#: additional.js
+msgid "Default Value"
+msgstr ""
+
 #: options.js
 msgid "Default daily boarding cost"
 msgstr "Numatytosios kasdienės išlaikymo išlaidos"
@@ -3064,15 +3072,15 @@ msgstr "Numatytieji"
 msgid "Defaults formats for code and shortcode are TYYYYNNN and NNT"
 msgstr "Numatytieji kodo ir trumpojo kodo formatai yra TYYYYNNN ir NNT"
 
-#: onlineform_incoming.js onlineforms.js licence.js traploan.js lookups.js
-#: animal_costs.js diarytask.js accounts_trx.js stocklevel.js diarytasks.js
-#: document_repository.js diary.js log.js common_tableform.js roles.js test.js
-#: report_images.js lostfound.js additional.js person_investigation.js users.js
-#: onlineform.js donations.js htmltemplates.js accounts.js
-#: waitinglist_results.js vaccination.js incident.js main.js animal.js
-#: movements.js animal_diet.js medicalprofile.js document_templates.js
-#: reports.js person.js person_vouchers.js litters.js transport.js
-#: waitinglist.js media.js citations.js
+#: additional.js htmltemplates.js onlineforms.js test.js accounts.js
+#: donations.js diarytasks.js diarytask.js diary.js person.js onlineform.js
+#: log.js document_templates.js users.js animal.js citations.js transport.js
+#: traploan.js person_vouchers.js lostfound.js roles.js person_investigation.js
+#: reports.js waitinglist.js lookups.js animal_costs.js accounts_trx.js
+#: animal_diet.js main.js document_repository.js incident.js medicalprofile.js
+#: licence.js media.js vaccination.js common_tableform.js
+#: waitinglist_results.js movements.js onlineform_incoming.js litters.js
+#: report_images.js stocklevel.js
 msgid "Delete"
 msgstr "Šalinti"
 
@@ -3232,14 +3240,14 @@ msgstr ""
 msgid "Deposit Returned"
 msgstr ""
 
-#: move_adopt.js donation_receive.js move_reserve.js move_reclaim.js
+#: move_adopt.js move_reserve.js move_reclaim.js donation_receive.js
 msgid "Deposit account"
 msgstr ""
 
-#: onlineforms.js lookups.js animal_costs.js accounts_trx.js stocklevel.js
-#: report_export.js incident_find.js accounts.js waitinglist_results.js
-#: incident.js animal_diet.js reports.js waitinglist_new.js waitinglist.js
-#: html.py lostfound.py mobile.py
+#: onlineforms.js accounts.js reports.js waitinglist.js lookups.js
+#: animal_costs.js accounts_trx.js animal_diet.js incident.js report_export.js
+#: waitinglist_results.js incident_find.js stocklevel.js waitinglist_new.js
+#: mobile.py lostfound.py html.py
 msgid "Description"
 msgstr "Aprašymas"
 
@@ -3247,11 +3255,15 @@ msgstr "Aprašymas"
 msgid "Description Contains"
 msgstr "Aprašymas"
 
-#: waitinglist_new.js waitinglist.js waitinglist.py
+#: waitinglist.js waitinglist_new.js waitinglist.py
 msgid "Description cannot be blank"
 msgstr "Aprašymas negali būti tuščias"
 
-#: lostfound.js incident.js animal.js header_edit_header.js waitinglist.js
+#: common_widgets.js
+msgid "Deselect"
+msgstr ""
+
+#: header_edit_header.js animal.js lostfound.js waitinglist.js incident.js
 msgid "Details"
 msgstr "Pagrindinė informacija"
 
@@ -3263,11 +3275,11 @@ msgstr "Devonreksas"
 msgid "Dialog title"
 msgstr "Dialogo antraštė"
 
-#: roles.js calendarview.js header_edit_header.js html.py mobile.py
+#: header_edit_header.js roles.js calendarview.js mobile.py html.py
 msgid "Diary"
 msgstr "Darbotvarkė"
 
-#: animal.js person.js
+#: person.js animal.js
 msgid "Diary Task"
 msgstr "Darbotvarkės užduotis"
 
@@ -3340,11 +3352,11 @@ msgstr "Būtina nurodyti standartinės darbotvarkės užduoties pavadinimą."
 msgid "Did you know?"
 msgstr "Ar žinai?"
 
-#: animal_find_results.js html.py animal.py dbupdate.py
+#: animal_find_results.js animal.py html.py dbupdate.py
 msgid "Died"
 msgstr "Mirė savo mirtimi"
 
-#: move_deceased.js animal.js
+#: animal.js move_deceased.js
 msgid "Died off shelter"
 msgstr "Mirė ne prieglaudoje"
 
@@ -3364,7 +3376,7 @@ msgstr "Dietos"
 msgid "Diets need a start date."
 msgstr "Būtina nurodyti dietos pradžios datą."
 
-#: incident.js header_edit_header.js mobile.py
+#: header_edit_header.js incident.js mobile.py
 msgid "Dispatch"
 msgstr ""
 
@@ -3376,7 +3388,7 @@ msgstr ""
 msgid "Dispatch Between"
 msgstr ""
 
-#: incident.js incident_find_results.js mobile.py
+#: incident_find_results.js incident.js mobile.py
 msgid "Dispatch Date/Time"
 msgstr ""
 
@@ -3384,7 +3396,7 @@ msgstr ""
 msgid "Dispatch {0}: {1}"
 msgstr ""
 
-#: incident_find.js incident.js mobile.py
+#: incident.js incident_find.js mobile.py
 msgid "Dispatched ACO"
 msgstr ""
 
@@ -3412,7 +3424,7 @@ msgstr "Nerodyti"
 msgid "Doberman Pinscher"
 msgstr "Dobermanas"
 
-#: animal.js person.js dbupdate.py
+#: person.js animal.js dbupdate.py
 msgid "Document"
 msgstr "Dokumentas"
 
@@ -3420,7 +3432,7 @@ msgstr "Dokumentas"
 msgid "Document Link"
 msgstr "Dokumento nuoroda"
 
-#: document_repository.js roles.js html.py code.py
+#: roles.js document_repository.js code.py html.py
 msgid "Document Repository"
 msgstr "Dokumentų saugykla"
 
@@ -3428,7 +3440,7 @@ msgstr "Dokumentų saugykla"
 msgid "Document Templates"
 msgstr "Dokumentų šablonai"
 
-#: document_repository.js document_templates.js
+#: document_templates.js document_repository.js
 msgid "Document file"
 msgstr "Dokumento failas"
 
@@ -3504,7 +3516,7 @@ msgstr "Asilas"
 msgid "Donkey/Mule"
 msgstr "Asilas/Mulas"
 
-#: onlineforms.js person_find_results.js common.js header_edit_header.js
+#: person_find_results.js onlineforms.js header_edit_header.js common.js
 #: html.py
 msgid "Donor"
 msgstr "Rėmėjas"
@@ -3525,7 +3537,7 @@ msgstr "Atsisiųsti"
 msgid "Draft"
 msgstr "Sunkusis"
 
-#: onlineforms.js common.js header_edit_header.js transport.js
+#: onlineforms.js header_edit_header.js common.js transport.js
 msgid "Driver"
 msgstr ""
 
@@ -3537,23 +3549,23 @@ msgstr ""
 msgid "Duck"
 msgstr "Antis"
 
-#: traploan.js donations.js citations.js
+#: donations.js citations.js traploan.js
 msgid "Due"
 msgstr "Planinė data"
 
-#: test.js medical.js donations.js vaccination.js
+#: test.js donations.js medical.js vaccination.js
 msgid "Due in next month"
 msgstr "Suplanuota kitam mėnesiui"
 
-#: test.js medical.js donations.js vaccination.js transport.js
+#: test.js donations.js medical.js transport.js vaccination.js
 msgid "Due in next week"
 msgstr "Suplanuota kitai savaitei"
 
-#: test.js medical.js donations.js vaccination.js
+#: test.js donations.js medical.js vaccination.js
 msgid "Due in next year"
 msgstr "Suplanuota kitiems metams"
 
-#: test.js medical.js vaccination.js transport.js
+#: test.js medical.js transport.js vaccination.js
 msgid "Due today"
 msgstr "Suplanuota šiandienai"
 
@@ -3653,7 +3665,7 @@ msgstr "Redaguoti darbotvarkę"
 msgid "Edit diary notes"
 msgstr "Redaguoti darbotvarkės užduotis"
 
-#: diarytask.js diarytasks.js
+#: diarytasks.js diarytask.js
 msgid "Edit diary task"
 msgstr "Redaguoti standartinę darbotvarkės užduotį"
 
@@ -3805,24 +3817,36 @@ msgstr "Egipto Mau"
 msgid "Electricity Bills"
 msgstr "Sąskaitos už elektrą"
 
-#: move_adopt.js donations.js donation_receive.js move_reserve.js
-#: move_reclaim.js
+#: donations.js move_adopt.js move_reserve.js move_reclaim.js
+#: donation_receive.js
 msgid "Eligible for gift aid"
 msgstr "Tinkamas neatlygintinai paslaugai"
 
-#: person_find_results.js lostfound.js users.js waitinglist_results.js
-#: incident.js person_find.js options.js person.js waitinglist.js media.js
+#: person_find_results.js person.js users.js options.js lostfound.js
+#: waitinglist.js incident.js media.js waitinglist_results.js person_find.js
 #: html.py
 msgid "Email"
 msgstr "El. paštas"
 
-#: common_personchooser.js change_user_settings.js person_new.js
+#: change_user_settings.js person_new.js common_personchooser.js
 msgid "Email Address"
 msgstr "El. pašto adresas"
 
 #: media.js
-msgid "Email a copy of the selected documents"
-msgstr "Siųsti pasirinktų dokumentų kopijas el. paštu"
+msgid "Email PDF"
+msgstr ""
+
+#: roles.js
+msgid "Email Person"
+msgstr ""
+
+#: media.js
+msgid "Email a copy of the selected HTML documents as PDFs"
+msgstr ""
+
+#: media.js
+msgid "Email a copy of the selected media files"
+msgstr ""
 
 #: options.js
 msgid "Email address"
@@ -3862,7 +3886,7 @@ msgstr "El. paštas sėkmingai nusiųstas {0}"
 msgid "Email this message to all matching users"
 msgstr "Siųsti šią žinutę el. paštu visiems tinkantiems naudotojams"
 
-#: lostfound.js person.js waitinglist.js
+#: person.js lostfound.js waitinglist.js
 msgid "Email this person"
 msgstr "Siųsti el. laišką šiam asmeniui"
 
@@ -4021,7 +4045,7 @@ msgstr "Entlebucho zenenhundas"
 msgid "Entry"
 msgstr "Patekimas"
 
-#: animal_new.js shelterview.js animal.js options.js mobile.py
+#: shelterview.js animal.js animal_new.js options.js mobile.py
 msgid "Entry Category"
 msgstr "Patekimo kategorija"
 
@@ -4029,7 +4053,7 @@ msgstr "Patekimo kategorija"
 msgid "Entry Donation"
 msgstr "Parama už priėmimą"
 
-#: animal_find_results.js html.py mobile.py
+#: animal_find_results.js mobile.py html.py
 msgid "Entry Reason"
 msgstr "Patekimo priežastis"
 
@@ -4041,7 +4065,7 @@ msgstr "Patekimo priežasties kategorija"
 msgid "Entry Reasons"
 msgstr "Patekimo priežastys"
 
-#: waitinglist_new.js waitinglist.js
+#: waitinglist.js waitinglist_new.js
 msgid "Entry reason"
 msgstr "Patekimo priežastis"
 
@@ -4073,7 +4097,7 @@ msgstr "Eskimų šuo"
 msgid "Estimate"
 msgstr "Apytikslė"
 
-#: move_deceased.js animal_find_results.js animal.js animal.py
+#: animal.js animal_find_results.js move_deceased.js animal.py
 msgid "Euthanized"
 msgstr "Atlikta eutanazija"
 
@@ -4161,12 +4185,12 @@ msgstr ""
 msgid "Expired in the last week"
 msgstr ""
 
-#: licence.js vaccination.js main.js person.js person_vouchers.js litters.js
+#: person.js person_vouchers.js main.js licence.js vaccination.js litters.js
 #: mobile.py
 msgid "Expires"
 msgstr "Galiojimo pabaiga"
 
-#: stocklevel.js person_find_results.js
+#: person_find_results.js stocklevel.js
 msgid "Expiry"
 msgstr "Narystės pabaiga"
 
@@ -4182,7 +4206,7 @@ msgstr "Eksportuoti"
 msgid "Export Report"
 msgstr ""
 
-#: report_export.js html.py code.py
+#: report_export.js code.py html.py
 msgid "Export Reports as CSV"
 msgstr ""
 
@@ -4222,11 +4246,15 @@ msgstr "FIV (kačių imunodeficito virusas)"
 msgid "FIV Result"
 msgstr "FIV testo rezultatas"
 
+#: common.js
+msgid "FIV+"
+msgstr ""
+
 #: html.py
 msgid "FIV/L Test Date"
 msgstr "FIV/FLV testo data"
 
-#: animal_find_results.js animal.js html.py mobile.py
+#: animal.js animal_find_results.js mobile.py html.py
 msgid "FIV/L Tested"
 msgstr "Atliktas FIV/FLV testas"
 
@@ -4237,6 +4265,10 @@ msgstr "FLV (kačių leukemijos virusas)"
 #: html.py
 msgid "FLV Result"
 msgstr "FLV rezultatas"
+
+#: common.js
+msgid "FLV+"
+msgstr ""
 
 #: publish_options.js
 msgid "FTP hostname"
@@ -4286,8 +4318,8 @@ msgstr "Vėžlio kiauto (smėlinio atspalvio)"
 msgid "FeLV"
 msgstr ""
 
-#: lostfound.js animal_find_results.js lostfound_find.js
-#: lostfound_find_results.js lostfound_new.js html.py
+#: lostfound_find_results.js lostfound_find.js lostfound.js
+#: animal_find_results.js lostfound_new.js html.py
 msgid "Features"
 msgstr "Požymiai"
 
@@ -4335,7 +4367,7 @@ msgstr "Failas"
 msgid "Filter"
 msgstr ""
 
-#: html.py mobile.py
+#: mobile.py html.py
 msgid "Financial"
 msgstr "Finansai"
 
@@ -4383,7 +4415,7 @@ msgstr ""
 msgid "Find an incident"
 msgstr ""
 
-#: common_animalchooser.js header.js html.py configuration.py
+#: header.js common_animalchooser.js html.py configuration.py
 msgid "Find animal"
 msgstr "Ieškoti gyvūno"
 
@@ -4431,7 +4463,7 @@ msgstr "Dingusių gyvūnų paieškos metu rasti {0} rezultatai."
 msgid "Find member"
 msgstr ""
 
-#: common_personchooser.js header.js html.py configuration.py
+#: header.js common_personchooser.js html.py configuration.py
 msgid "Find person"
 msgstr "Ieškoti asmens"
 
@@ -4483,7 +4515,7 @@ msgstr "Vardas Pavardė"
 msgid "First Names"
 msgstr "Vardai"
 
-#: common_personchooser.js person.js person_new.js
+#: person.js person_new.js common_personchooser.js
 msgid "First name(s)"
 msgstr "Vardas(-ai)"
 
@@ -4499,7 +4531,7 @@ msgstr "Žuvis"
 msgid "Flag"
 msgstr "Pažymėti"
 
-#: common_personchooser.js person.js person_new.js
+#: person.js person_new.js common_personchooser.js
 msgid "Flags"
 msgstr "Žymės"
 
@@ -4527,7 +4559,7 @@ msgstr ""
 msgid "Followup Date/Time"
 msgstr ""
 
-#: onlineforms.js htmltemplates.js reports.js
+#: htmltemplates.js onlineforms.js reports.js
 msgid "Footer"
 msgstr "Poraštė"
 
@@ -4559,7 +4591,7 @@ msgstr "Laikina globa namuose"
 msgid "Foster Book"
 msgstr "Namuose globojamų gyvūnų sąrašas"
 
-#: header.js move_foster.js html.py code.py configuration.py
+#: header.js move_foster.js code.py html.py configuration.py
 msgid "Foster an animal"
 msgstr "Gyvūno atidavimas laikinam globėjui"
 
@@ -4579,16 +4611,16 @@ msgstr "Laikina globa sėkmingai įrašyta."
 msgid "Fostered"
 msgstr "Globojamas namuose"
 
-#: animal_new.js onlineforms.js person_find_results.js common.js shelterview.js
-#: options.js header_edit_header.js html.py
+#: person_find_results.js onlineforms.js header_edit_header.js common.js
+#: shelterview.js animal_new.js options.js html.py
 msgid "Fosterer"
 msgstr "Laikinas globėjas"
 
-#: search.js header_edit_header.js
+#: header_edit_header.js search.js
 msgid "Found"
 msgstr "Rasti"
 
-#: onlineform_incoming.js search.js dbupdate.py
+#: search.js onlineform_incoming.js dbupdate.py
 msgid "Found Animal"
 msgstr "Rastas gyvūnas"
 
@@ -4660,7 +4692,7 @@ msgstr "Prancūzų buldogas"
 msgid "French-Lop"
 msgstr "Prancūzų nulėpausis"
 
-#: medical.js donations.js medicalprofile.js
+#: donations.js medical.js medicalprofile.js
 msgid "Frequency"
 msgstr "Dažnumas"
 
@@ -4676,7 +4708,7 @@ msgstr "Pen"
 msgid "Friday"
 msgstr "Penktadienis"
 
-#: onlineform_incoming.js common_widgets.js incident.js mailmerge.js
+#: mailmerge.js common_widgets.js incident.js onlineform_incoming.js
 msgid "From"
 msgstr "Nuo"
 
@@ -4740,7 +4772,7 @@ msgstr "Kiekvienam paieškos puslapiui kurti javascript duomenų bazę"
 msgid "Generate a new animal code"
 msgstr "Generuoti naują gyvūno kodą"
 
-#: animal_new.js animal.js
+#: animal.js animal_new.js
 msgid "Generate a random name for this animal"
 msgstr "Parinkti vardą atsitiktine tvarka"
 
@@ -4748,8 +4780,8 @@ msgstr "Parinkti vardą atsitiktine tvarka"
 msgid "Generate document from this payment"
 msgstr ""
 
-#: move_adopt.js move_transfer.js move_retailer.js donation_receive.js
-#: move_reserve.js move_foster.js move_reclaim.js
+#: move_transfer.js move_adopt.js move_retailer.js move_reserve.js
+#: move_foster.js move_reclaim.js donation_receive.js
 msgid "Generate documentation"
 msgstr "Generuoti dokumentaciją"
 
@@ -4789,8 +4821,8 @@ msgstr "Dratharas"
 msgid "Get more reports from sheltermanager.com"
 msgstr "Gauti daugiau ataskaitų iš sheltermanager.com"
 
-#: move_adopt.js donations.js donation_receive.js move_reserve.js
-#: move_reclaim.js
+#: donations.js move_adopt.js move_reserve.js move_reclaim.js
+#: donation_receive.js
 msgid "Gift Aid"
 msgstr "Neatlygintina paslauga"
 
@@ -4892,15 +4924,15 @@ msgstr "Draugiškas su vaikais"
 msgid "Good with Dogs"
 msgstr "Draugiškas su šunimis"
 
-#: animal_bulk.js animal_find.js animal.js person.js person.py
+#: animal_bulk.js person.js animal.js animal_find.js person.py
 msgid "Good with cats"
 msgstr "Draugiškas su katėmis"
 
-#: animal_find.js person.js person.py
+#: person.js animal_find.js person.py
 msgid "Good with children"
 msgstr "Draugiškas su vaikais"
 
-#: animal_bulk.js animal_find.js animal.js person.js person.py
+#: animal_bulk.js person.js animal.js animal_find.js person.py
 msgid "Good with dogs"
 msgstr "Draugiškas su šunimis"
 
@@ -4956,7 +4988,7 @@ msgstr "Jūros kiaulytė"
 msgid "Guinea fowl"
 msgstr "Perlinė višta"
 
-#: common_widgets.js mailmerge.js reports.js
+#: mailmerge.js common_widgets.js reports.js
 msgid "HTML"
 msgstr "HTML"
 
@@ -4992,11 +5024,11 @@ msgstr "Havanos"
 msgid "Havanese"
 msgstr "Havanos bišonas"
 
-#: onlineforms.js htmltemplates.js reports.js
+#: htmltemplates.js onlineforms.js reports.js
 msgid "Header"
 msgstr "Antraštė"
 
-#: animal_find_results.js animal.js html.py mobile.py
+#: animal.js animal_find_results.js mobile.py html.py
 msgid "Health Problems"
 msgstr "Sveikatos sutrikimai"
 
@@ -5020,9 +5052,13 @@ msgstr "Širdies kirmėlių testo data"
 msgid "Heartworm Test Result"
 msgstr "Širdies kirmėlių testo rezultatas"
 
-#: animal_find_results.js animal.js html.py mobile.py
+#: animal.js animal_find_results.js mobile.py html.py
 msgid "Heartworm Tested"
 msgstr "Atliktas testas dėl širdies kirmėlių"
+
+#: common.js
+msgid "Heartworm+"
+msgstr ""
 
 #: dbupdate.py
 msgid "Hedgehog"
@@ -5056,7 +5092,7 @@ msgstr ""
 msgid "Hidden"
 msgstr "Paslėpta"
 
-#: animal_find.js animal.js html.py mobile.py
+#: animal.js animal_find.js mobile.py html.py
 msgid "Hidden Comments"
 msgstr "Slepiamas aprašymas"
 
@@ -5080,8 +5116,8 @@ msgstr "Himalajų"
 msgid "History"
 msgstr "Istorija"
 
-#: animal_find.js animal_find_results.js common.js options.js
-#: header_edit_header.js transport.js html.py
+#: header_edit_header.js common.js transport.js options.js animal_find.js
+#: animal_find_results.js html.py
 msgid "Hold"
 msgstr "Laikinai neatiduodami"
 
@@ -5091,11 +5127,11 @@ msgstr ""
 "Laikinai neatiduoti gyvūno iki nurodytos datos, arba palikti tuščią, jei "
 "neatiduoti neapibrėžtą laiko tarpą"
 
-#: animal_bulk.js animal_find_results.js animal.js html.py
+#: animal_bulk.js animal.js animal_find_results.js html.py
 msgid "Hold until"
 msgstr "Laikinai neatiduoti iki"
 
-#: common.js header_edit_header.js
+#: header_edit_header.js common.js
 msgid "Hold until {0}"
 msgstr "Laikinai neatiduoti iki {0}"
 
@@ -5103,12 +5139,12 @@ msgstr "Laikinai neatiduoti iki {0}"
 msgid "Holland Lop"
 msgstr "Olandų nulėpausis"
 
-#: header.js html.py mobile.py
+#: header.js mobile.py html.py
 msgid "Home"
 msgstr "Namų"
 
-#: common_personchooser.js person_find_results.js waitinglist_results.js
-#: person.js person_new.js
+#: person_find_results.js person.js person_new.js waitinglist_results.js
+#: common_personchooser.js
 msgid "Home Phone"
 msgstr "Namų telefonas"
 
@@ -5132,7 +5168,7 @@ msgstr "Gyvenimo sąlygų tikrinimo istorija"
 msgid "Homecheck areas"
 msgstr "Tikrinimo vietovės"
 
-#: onlineforms.js person_find_results.js common.js header_edit_header.js
+#: person_find_results.js onlineforms.js header_edit_header.js common.js
 #: html.py
 msgid "Homechecked"
 msgstr "Patikrintos laikymo sąlygos"
@@ -5145,8 +5181,8 @@ msgstr "Patikrinęs asmuo"
 msgid "Homechecked by"
 msgstr "Sąlygas patikrino"
 
-#: onlineforms.js person_find_results.js common.js person.js
-#: header_edit_header.js html.py
+#: person_find_results.js onlineforms.js header_edit_header.js person.js
+#: common.js html.py
 msgid "Homechecker"
 msgstr "Tikrintojas"
 
@@ -5166,8 +5202,12 @@ msgstr "Hotot"
 msgid "Hound"
 msgstr "Skalikas"
 
-#: animal_bulk.js animal_find.js animal_find_results.js animal.js person.js
-#: html.py person.py mobile.py
+#: common_widgets.js
+msgid "Hours"
+msgstr ""
+
+#: animal_bulk.js person.js animal.js animal_find.js animal_find_results.js
+#: mobile.py person.py html.py
 msgid "Housetrained"
 msgstr "Dresuotas"
 
@@ -5175,7 +5215,7 @@ msgstr "Dresuotas"
 msgid "Hovawart"
 msgstr "Hovavartas"
 
-#: waitinglist_new.js waitinglist.js
+#: waitinglist.js waitinglist_new.js
 msgid "How urgent is it that we take this animal?"
 msgstr "Kaip skubu, kad mes priimtume šį gyvūną?"
 
@@ -5277,7 +5317,7 @@ msgstr "Paveikslėlio failas"
 msgid "Import"
 msgstr "Importuoti"
 
-#: csvimport.js html.py code.py
+#: csvimport.js code.py html.py
 msgid "Import a CSV file"
 msgstr "Importuoti CSV failą"
 
@@ -5329,7 +5369,7 @@ msgstr "Per pastaruosius metus"
 msgid "Inactive - do not include"
 msgstr "Neaktyvus - neįtraukti"
 
-#: onlineform_incoming.js search.js header_edit_header.js citations.js
+#: header_edit_header.js search.js citations.js onlineform_incoming.js
 #: dbupdate.py
 msgid "Incident"
 msgstr ""
@@ -5362,7 +5402,7 @@ msgstr ""
 msgid "Incident Completed Types"
 msgstr ""
 
-#: incident_new.js incident.js incident_find_results.js mobile.py
+#: incident_find_results.js incident_new.js incident.js mobile.py
 msgid "Incident Date/Time"
 msgstr ""
 
@@ -5545,7 +5585,7 @@ msgstr "Iki šiandienos neatliktos užduotys"
 msgid "Index"
 msgstr "Rodyklė"
 
-#: common_personchooser.js person.js person_new.js
+#: person.js person_new.js common_personchooser.js
 msgid "Individual/Couple"
 msgstr ""
 
@@ -5557,7 +5597,7 @@ msgstr "Naujo gyvūno priėmimas"
 msgid "Information"
 msgstr "Informacija"
 
-#: common_personchooser.js person_find_results.js person.js person_new.js
+#: person_find_results.js person.js person_new.js common_personchooser.js
 #: html.py
 msgid "Initials"
 msgstr "Inicialai"
@@ -5570,7 +5610,7 @@ msgstr "Įdiegti"
 msgid "Install the selected reports to your database"
 msgstr "Įdiegti pasirinktas ataskaitas į Jūsų duomenų bazę"
 
-#: move_adopt.js movements.js options.js
+#: move_adopt.js options.js movements.js
 msgid "Insurance"
 msgstr "Draudimas"
 
@@ -5594,7 +5634,7 @@ msgstr "Vidaus patalpos"
 msgid "Invalid email address"
 msgstr "Neteisingas el. pašto adresas"
 
-#: animal.js
+#: animal.js lookups.py
 msgid "Invalid microchip number length"
 msgstr ""
 
@@ -5638,7 +5678,7 @@ msgstr "Airių vandens spanielis"
 msgid "Irish Wolfhound"
 msgstr "Airių vilkogaudis"
 
-#: movements.js move_foster.js
+#: move_foster.js movements.js
 msgid "Is this a permanent foster?"
 msgstr "Ar tai nuolatinė globa namuose?"
 
@@ -5650,7 +5690,7 @@ msgstr "Ar tai bandomasis atidavimas?"
 msgid "Issue a new insurance number for this animal/adoption"
 msgstr "Parinkti naują draudimo numerį šiam gyvūnui/atidavimui"
 
-#: licence.js person_vouchers.js
+#: person_vouchers.js licence.js
 msgid "Issued"
 msgstr "Išduotas"
 
@@ -5806,6 +5846,10 @@ msgstr "Lankašyro hileris"
 msgid "Large"
 msgstr "Didelis"
 
+#: options.js
+msgid "Last First"
+msgstr ""
+
 #: animal.js
 msgid "Last Location"
 msgstr "Paskutinė buvimo vieta"
@@ -5826,7 +5870,7 @@ msgstr "Praėjusią savaitę"
 msgid "Last changed by {0} on {1}"
 msgstr "Paskutinį kartą keitė {0} {1}"
 
-#: common_personchooser.js person.js person_new.js
+#: person.js person_new.js common_personchooser.js
 msgid "Last name"
 msgstr "Pavardė"
 
@@ -5874,7 +5918,7 @@ msgstr "Lasos apsas"
 msgid "Liability"
 msgstr "Įsipareigojimai"
 
-#: search.js header_edit_header.js
+#: header_edit_header.js search.js
 msgid "License"
 msgstr ""
 
@@ -5898,7 +5942,7 @@ msgstr ""
 msgid "Licenses"
 msgstr ""
 
-#: html.py code.py
+#: code.py html.py
 msgid "Licensing"
 msgstr ""
 
@@ -5918,7 +5962,7 @@ msgstr "Alyvinė"
 msgid "Lilac Tortie"
 msgstr "Vėžlio kiauto (alyvinio atspalvio)"
 
-#: onlineform_incoming.js diary.js additional.js mobile.py
+#: additional.js diary.js onlineform_incoming.js mobile.py
 msgid "Link"
 msgstr "Sąsaja"
 
@@ -5930,7 +5974,7 @@ msgstr "Nuoroda į išorinį interneto šaltinį"
 msgid "Links"
 msgstr "Sąsajos"
 
-#: animal_new.js animal_bulk.js animal_find.js animal.js html.py reports.py
+#: animal_bulk.js animal.js animal_new.js animal_find.js reports.py html.py
 msgid "Litter"
 msgstr "Vada"
 
@@ -5946,7 +5990,7 @@ msgstr "Vados sąsaja"
 msgid "Littermates"
 msgstr "Kiti iš tos pačios vados"
 
-#: roles.js litters.js animal.py code.py
+#: roles.js litters.js code.py animal.py
 msgid "Litters"
 msgstr "Vados"
 
@@ -5970,7 +6014,7 @@ msgstr "Driežas"
 msgid "Llama"
 msgstr "Lama"
 
-#: onlineform_incoming.js sql.js header.js
+#: header.js sql.js onlineform_incoming.js
 msgid "Loading..."
 msgstr "Įkeliama…"
 
@@ -5982,9 +6026,9 @@ msgstr "Paskola"
 msgid "Locale"
 msgstr "Lokalė"
 
-#: stocklevel.js animal_bulk.js test.js medical.js animal_find.js
-#: animal_find_results.js shelterview.js vaccination.js animal.js options.js
-#: header_edit_header.js html.py lookups.py mobile.py reports.py
+#: test.js header_edit_header.js animal_bulk.js medical.js shelterview.js
+#: animal.js options.js animal_find.js animal_find_results.js vaccination.js
+#: stocklevel.js lookups.py mobile.py reports.py html.py
 msgid "Location"
 msgstr "Patalpa"
 
@@ -6004,7 +6048,7 @@ msgstr "Patalpa ir laikymo vieta"
 msgid "Locations"
 msgstr "Vietovės"
 
-#: roles.js header_edit_header.js mobile.py
+#: header_edit_header.js roles.js mobile.py
 msgid "Log"
 msgstr "Žurnalas"
 
@@ -6012,7 +6056,7 @@ msgstr "Žurnalas"
 msgid "Log Text"
 msgstr "Žurnalo tekstas"
 
-#: html.py mobile.py reports.py
+#: mobile.py reports.py html.py
 msgid "Log Type"
 msgstr "Žurnalo tipas"
 
@@ -6092,11 +6136,11 @@ msgstr "Nulėpausis"
 msgid "Lory/Lorikeet"
 msgstr "Loris"
 
-#: search.js header_edit_header.js
+#: header_edit_header.js search.js
 msgid "Lost"
 msgstr "Dingę"
 
-#: onlineform_incoming.js search.js dbupdate.py
+#: search.js onlineform_incoming.js dbupdate.py
 msgid "Lost Animal"
 msgstr "Dingęs gyvūnas"
 
@@ -6116,7 +6160,7 @@ msgstr "Dingusio gyvūno kontaktinis asmuo"
 msgid "Lost Animal: {0}"
 msgstr "Dingęs gyvūnas: {0}"
 
-#: roles.js options.js
+#: options.js roles.js
 msgid "Lost and Found"
 msgstr "Dingę ir rasti"
 
@@ -6247,7 +6291,7 @@ msgstr ""
 msgid "Manx"
 msgstr "Manksų katė"
 
-#: reports.js person.js reports.py
+#: person.js reports.js reports.py
 msgid "Map"
 msgstr "Žemėlapis"
 
@@ -6271,7 +6315,7 @@ msgstr "Maremos-Abruzo aviganis"
 msgid "Mark Deceased"
 msgstr "Pažymėti nugaišusiu"
 
-#: move_deceased.js header.js html.py code.py configuration.py
+#: header.js move_deceased.js code.py html.py configuration.py
 msgid "Mark an animal deceased"
 msgstr "Gyvūno gaišimas"
 
@@ -6303,7 +6347,7 @@ msgstr ""
 msgid "Marketer"
 msgstr "Prekybininkas"
 
-#: animal_find.js animal.js mobile.py
+#: animal.js animal_find.js mobile.py
 msgid "Markings"
 msgstr "Žymės"
 
@@ -6319,7 +6363,7 @@ msgstr "Skyrybos"
 msgid "Mastiff"
 msgstr "Mastifas"
 
-#: lostfound.js animal.js lostfound.py
+#: animal.js lostfound.js lostfound.py
 msgid "Match"
 msgstr "Atitikimas"
 
@@ -6331,7 +6375,7 @@ msgstr "Lyginti dingusius gyvūnus su rastais"
 msgid "Match against other lost/found animals"
 msgstr "Lyginti su kitais dingusiais/rastais gyvūnais"
 
-#: header.js html.py lostfound.py configuration.py
+#: header.js lostfound.py html.py configuration.py
 msgid "Match lost and found animals"
 msgstr "Lyginti dingusius ir rastus gyvūnus"
 
@@ -6347,7 +6391,7 @@ msgstr "Gegužė"
 msgid "McNab"
 msgstr "Maknabo aviganis"
 
-#: roles.js header_edit_header.js
+#: header_edit_header.js roles.js
 msgid "Media"
 msgstr "Failai"
 
@@ -6359,7 +6403,7 @@ msgstr "Failų aprašymuose yra:"
 msgid "Media notes contain"
 msgstr "Failų aprašymai"
 
-#: roles.js calendarview.js header_edit_header.js html.py mobile.py
+#: header_edit_header.js roles.js calendarview.js mobile.py html.py
 msgid "Medical"
 msgstr "Gydymas"
 
@@ -6409,7 +6453,7 @@ msgstr "Gydyti gyvūną"
 msgid "Medium"
 msgstr "Vidutinis"
 
-#: onlineforms.js person_find_results.js common.js header_edit_header.js
+#: person_find_results.js onlineforms.js header_edit_header.js common.js
 #: html.py
 msgid "Member"
 msgstr "Narys"
@@ -6462,8 +6506,8 @@ msgstr "Žinutės"
 msgid "Messages successfully sent"
 msgstr "Žinutės sėkmingai išsiųstos"
 
-#: move_adopt.js donations.js donation_receive.js move_reserve.js
-#: move_reclaim.js
+#: donations.js move_adopt.js move_reserve.js move_reclaim.js
+#: donation_receive.js
 msgid "Method"
 msgstr ""
 
@@ -6483,7 +6527,7 @@ msgstr "Mikroschemos numeris"
 msgid "Microchip number {0} has already been allocated to another animal."
 msgstr ""
 
-#: animal_new.js animal.js mobile.py
+#: animal.js animal_new.js mobile.py
 msgid "Microchipped"
 msgstr "Su mikroschema"
 
@@ -6502,6 +6546,10 @@ msgstr "Mini nulėpausis"
 #: dbupdate.py
 msgid "Miniature Pinscher"
 msgstr "Miniatiūrinis pinčeris"
+
+#: common_widgets.js
+msgid "Minutes"
+msgstr ""
 
 #: dbupdate.py
 msgid "Missouri Foxtrotter"
@@ -6603,7 +6651,7 @@ msgstr "Pelė"
 msgid "Move"
 msgstr "Perkėlimas"
 
-#: move_retailer.js html.py code.py
+#: move_retailer.js code.py html.py
 msgid "Move an animal to a retailer"
 msgstr "Gyvūno atidavimas tarpininkui"
 
@@ -6619,8 +6667,8 @@ msgstr "Veiksmas"
 msgid "Movement Date"
 msgstr "Veiksmo data"
 
-#: move_adopt.js move_transfer.js movements.js move_retailer.js move_reserve.js
-#: move_foster.js move_reclaim.js
+#: move_transfer.js move_adopt.js move_retailer.js move_reserve.js
+#: move_foster.js move_reclaim.js movements.js
 msgid "Movement Number"
 msgstr "Veiksmo numeris"
 
@@ -6640,12 +6688,12 @@ msgstr "Veiksmo datos kertasi su esamo veiksmo datomis."
 msgid "Movement numbers must be unique."
 msgstr "Veiksmų numeriai negali kartotis."
 
-#: roles.js options.js header_edit_header.js
+#: header_edit_header.js options.js roles.js
 msgid "Movements"
 msgstr "Veiksmai"
 
-#: move_transfer.js movements.js move_retailer.js move_reserve.js
-#: move_foster.js movement.py
+#: move_transfer.js move_retailer.js move_reserve.js move_foster.js
+#: movements.js movement.py
 msgid "Movements require an animal"
 msgstr "Pridedant veiksmą, būtina nurodyti gyvūną"
 
@@ -6701,11 +6749,11 @@ msgstr ""
 msgid "NNN or NN = number unique for this type of animal for this year"
 msgstr "NNN arba NN = unikalus šio tipo gyvūno numeris šiais metais"
 
-#: animal_new.js onlineform_incoming.js onlineforms.js common_personchooser.js
-#: stocklevel.js diarytasks.js common_animalchooser.js roles.js
-#: person_find_results.js additional.js onlineform.js medical.js animal_find.js
-#: animal_find_results.js htmltemplates.js waitinglist_results.js animal.js
-#: medicalprofile.js html.py person.py mobile.py
+#: additional.js person_find_results.js htmltemplates.js onlineforms.js
+#: diarytasks.js medical.js onlineform.js animal.js animal_new.js
+#: common_animalchooser.js roles.js medicalprofile.js animal_find.js
+#: animal_find_results.js waitinglist_results.js common_personchooser.js
+#: onlineform_incoming.js stocklevel.js mobile.py person.py html.py
 msgid "Name"
 msgstr "Vardas"
 
@@ -6717,7 +6765,7 @@ msgstr "Vardas"
 msgid "Name and Address"
 msgstr "Vardas ir adresas"
 
-#: animal_new.js animal.js person.js animal.py
+#: person.js animal.js animal_new.js animal.py
 msgid "Name cannot be blank"
 msgstr "Būtina nurodyti vardą"
 
@@ -6749,8 +6797,8 @@ msgstr "Kastracija/Sterilizacija"
 msgid "Neutered"
 msgstr "Kastruotas"
 
-#: lookups.js document_repository.js report_images.js person_investigation.js
-#: document_templates.js transport.js
+#: document_templates.js transport.js person_investigation.js lookups.js
+#: document_repository.js report_images.js
 msgid "New"
 msgstr "Naujas"
 
@@ -6886,7 +6934,7 @@ msgstr "Nauja standartinė darbotvarkės užduotis"
 msgid "New form field"
 msgstr "Naujas formos laukelis"
 
-#: report_images.js document_templates.js
+#: document_templates.js report_images.js
 msgid "New name"
 msgstr "Naujas pavadinimas"
 
@@ -6918,9 +6966,9 @@ msgstr "Kitas"
 msgid "Next&#x3e;"
 msgstr "Toliau&#x3e;"
 
-#: person_find_results.js additional.js users.js animal_find_results.js
-#: lostfound_find.js waitinglist_results.js sql.js publish_options.js
-#: onlineform.py dbupdate.py wordprocessor.py mobile.py i18n.py
+#: additional.js person_find_results.js users.js lostfound_find.js sql.js
+#: animal_find_results.js publish_options.js waitinglist_results.js mobile.py
+#: wordprocessor.py i18n.py dbupdate.py onlineform.py
 msgid "No"
 msgstr "Ne"
 
@@ -6960,11 +7008,11 @@ msgstr "Nėra teisių žiūrėti šią ataskaitą"
 msgid "Noise"
 msgstr ""
 
-#: animal_find.js common.js animal.js options.js
+#: common.js animal.js options.js animal_find.js
 msgid "Non-Shelter"
 msgstr "Ne prieglaudos"
 
-#: search.js header_edit_header.js
+#: header_edit_header.js search.js
 msgid "Non-Shelter Animal"
 msgstr "Ne prieglaudos gyvūnas"
 
@@ -7008,7 +7056,7 @@ msgstr "Neatiduodami"
 msgid "Not Available for Adoption"
 msgstr "Neatiduodami"
 
-#: animal_bulk.js animal_find.js common.js animal.js options.js
+#: animal_bulk.js common.js animal.js options.js animal_find.js
 msgid "Not For Adoption"
 msgstr "Neatiduodamas"
 
@@ -7028,8 +7076,8 @@ msgstr "Neatiduodami"
 msgid "Not dispatched"
 msgstr ""
 
-#: move_adopt.js donations.js donation_receive.js move_reserve.js
-#: move_reclaim.js
+#: donations.js move_adopt.js move_reserve.js move_reclaim.js
+#: donation_receive.js
 msgid "Not eligible for gift aid"
 msgstr "Netinkamas neatlygintinai paslaugai"
 
@@ -7041,17 +7089,17 @@ msgstr "Neatiduodami"
 msgid "Not reconciled"
 msgstr "Nesuderinta"
 
-#: diarytask.js diary.js log.js log_new.js mobile.py
+#: diarytask.js diary.js log_new.js log.js mobile.py
 msgid "Note"
 msgstr "Priminimas"
 
-#: move_deceased.js person_investigation.js onlineform.js incident_new.js
-#: incident.js animal.js incident_find_results.js media.js dbupdate.py
-#: mobile.py
+#: incident_find_results.js incident_new.js onlineform.js animal.js
+#: person_investigation.js incident.js media.js move_deceased.js mobile.py
+#: dbupdate.py
 msgid "Notes"
 msgstr "Papildoma informacija"
 
-#: move_deceased.js animal.js
+#: animal.js move_deceased.js
 msgid "Notes about the death of the animal"
 msgstr "Papildoma informacija apie gyvūno gaišimą"
 
@@ -7067,9 +7115,13 @@ msgstr "Naujosios Škotijos retriveris"
 msgid "November"
 msgstr "Lapkritis"
 
-#: person_find_results.js incident_find.js lostfound.js lostfound_find.js
-#: incident.js lostfound_find_results.js person_vouchers.js
-#: incident_find_results.js waitinglist.js dbupdate.py lostfound.py mobile.py
+#: common_widgets.js
+msgid "Now"
+msgstr ""
+
+#: person_find_results.js incident_find_results.js lostfound_find_results.js
+#: lostfound_find.js person_vouchers.js lostfound.js waitinglist.js incident.js
+#: incident_find.js mobile.py lostfound.py dbupdate.py
 msgid "Number"
 msgstr "Skaičius"
 
@@ -7125,7 +7177,7 @@ msgstr "Neįtraukti antraštės/poraštės"
 msgid "On Foster (in figures)"
 msgstr "Laikinai globojami namuose"
 
-#: animal_find.js animal_find_results.js common.js animal.py lostfound.py
+#: common.js animal_find.js animal_find_results.js lostfound.py animal.py
 msgid "On Shelter"
 msgstr "Prieglaudoje"
 
@@ -7155,7 +7207,7 @@ msgstr "Vienkartinis"
 msgid "Online Form: {0}"
 msgstr "Internetinė forma: {0}"
 
-#: onlineforms.js roles.js html.py code.py
+#: onlineforms.js roles.js code.py html.py
 msgid "Online Forms"
 msgstr "Internetinės formos"
 
@@ -7215,7 +7267,7 @@ msgstr "Ataskaitas atidaryti naujame naršyklės skirtuke"
 msgid "Opening balances"
 msgstr "Pradiniai likučiai"
 
-#: options.js html.py code.py
+#: options.js code.py html.py
 msgid "Options"
 msgstr "Parinktys"
 
@@ -7227,11 +7279,11 @@ msgstr "Arba priskirti šią darbotvarkę"
 msgid "Order published animals by"
 msgstr "Publikuojamus gyvūnus rūšiuoti pagal"
 
-#: common_personchooser.js person.js person_new.js dbupdate.py
+#: person.js person_new.js common_personchooser.js dbupdate.py
 msgid "Organisation"
 msgstr "Organizacija"
 
-#: common_personchooser.js person.js person_new.js
+#: person.js person_new.js common_personchooser.js
 msgid "Organisation name"
 msgstr ""
 
@@ -7251,7 +7303,7 @@ msgstr "Rytų trumpaplaukė"
 msgid "Oriental Tabby"
 msgstr "Rytų rainoji"
 
-#: animal_find.js animal.js person.py mobile.py
+#: animal.js animal_find.js mobile.py person.py
 msgid "Original Owner"
 msgstr "Buvęs savininkas"
 
@@ -7330,11 +7382,15 @@ msgstr ""
 msgid "Owners Vet"
 msgstr "Savininko nurodytas veterinaras"
 
+#: common_widgets.js
+msgid "PM"
+msgstr ""
+
 #: publish_options.js
 msgid "Page extension"
 msgstr "Puslapio plėtinys"
 
-#: animal_costs.js test.js medical.js vaccination.js transport.js citations.js
+#: test.js medical.js citations.js transport.js animal_costs.js vaccination.js
 msgid "Paid"
 msgstr "Apmokėta"
 
@@ -7386,7 +7442,7 @@ msgstr "Paso Fino"
 msgid "Pass Homecheck"
 msgstr "Atlikti namų patikrinimą"
 
-#: users.js login.js mobile.py
+#: login.js users.js mobile.py
 msgid "Password"
 msgstr "Slaptažodis"
 
@@ -7406,7 +7462,7 @@ msgstr "Slaptažodis sėkmingai pakeistas."
 msgid "Passwords cannot be blank."
 msgstr "Būtina nurodyti slaptažodį."
 
-#: document_repository.js document_templates.js
+#: document_templates.js document_repository.js
 msgid "Path"
 msgstr "Kelias"
 
@@ -7414,7 +7470,7 @@ msgstr "Kelias"
 msgid "Patterdale Terrier (Fell Terrier)"
 msgstr "Paterdeilo terjeras (Felterjeras)"
 
-#: move_adopt.js calendarview.js move_reserve.js move_reclaim.js
+#: move_adopt.js move_reserve.js move_reclaim.js calendarview.js
 msgid "Payment"
 msgstr ""
 
@@ -7434,7 +7490,7 @@ msgstr "Mokėjimo tipas"
 msgid "Payment Types"
 msgstr "Mokėjimų tipai"
 
-#: html.py code.py
+#: code.py html.py
 msgid "Payment book"
 msgstr ""
 
@@ -7446,7 +7502,7 @@ msgstr ""
 msgid "Payment of {0} successfully received ({1})."
 msgstr ""
 
-#: roles.js header_edit_header.js
+#: header_edit_header.js roles.js
 msgid "Payments"
 msgstr ""
 
@@ -7534,7 +7590,7 @@ msgstr ""
 msgid "Performed"
 msgstr "Atlikta"
 
-#: animal_find.js movements.js header_edit_header.js move_foster.js dbupdate.py
+#: header_edit_header.js move_foster.js animal_find.js movements.js dbupdate.py
 msgid "Permanent Foster"
 msgstr "Pastovus laikinas globėjas"
 
@@ -7542,9 +7598,10 @@ msgstr "Pastovus laikinas globėjas"
 msgid "Persian"
 msgstr "Persų katė"
 
-#: onlineform_incoming.js licence.js traploan.js diarytasks.js donations.js
-#: search.js movements.js person.js header_edit_header.js donation_receive.js
-#: log_new.js citations.js html.py dbupdate.py mobile.py reports.py
+#: header_edit_header.js donations.js diarytasks.js search.js person.js
+#: log_new.js citations.js traploan.js licence.js movements.js
+#: onlineform_incoming.js donation_receive.js mobile.py reports.py html.py
+#: dbupdate.py
 msgid "Person"
 msgstr "Asmenys"
 
@@ -7728,6 +7785,10 @@ msgstr "Portugalų vandens šuo"
 msgid "Positive"
 msgstr "Teigiamas"
 
+#: options.js
+msgid "Positive for Heartworm, FIV or FLV"
+msgstr ""
+
 #: lookups.py
 msgid "Positive/Negative"
 msgstr "Teigiamas/Neigiamas"
@@ -7852,7 +7913,7 @@ msgstr "Publikavimo žurnalas"
 msgid "Publisher Species"
 msgstr "Publikavimo rūšis"
 
-#: html.py code.py
+#: code.py html.py
 msgid "Publishing"
 msgstr "Publikavimas"
 
@@ -7896,12 +7957,12 @@ msgstr ""
 msgid "Quaker Parakeet"
 msgstr "Kalita"
 
-#: stocklevel.js test.js medical.js vaccination.js
+#: test.js medical.js vaccination.js stocklevel.js
 msgid "Quantity"
 msgstr ""
 
-#: animal_find.js animal_find_results.js common.js animal.js options.js
-#: header_edit_header.js html.py
+#: header_edit_header.js common.js animal.js options.js animal_find.js
+#: animal_find_results.js html.py
 msgid "Quarantine"
 msgstr "Karantinas"
 
@@ -7941,7 +8002,7 @@ msgstr "Triušis"
 msgid "Rabies"
 msgstr ""
 
-#: animal_find.js animal.js mobile.py
+#: animal.js animal_find.js mobile.py
 msgid "Rabies Tag"
 msgstr "Pasiutligės ženklelis"
 
@@ -7957,7 +8018,7 @@ msgstr "Ragamafinas (driskė)"
 msgid "Ragdoll"
 msgstr "Regdolas (skudurinė lėlė)"
 
-#: waitinglist_results.js header_edit_header.js html.py
+#: header_edit_header.js waitinglist_results.js html.py
 msgid "Rank"
 msgstr "Skubumas"
 
@@ -7982,7 +8043,7 @@ msgstr ""
 msgid "Real name"
 msgstr "Tikras vardas"
 
-#: waitinglist_results.js movements.js header_edit_header.js html.py lookups.py
+#: header_edit_header.js waitinglist_results.js movements.js lookups.py html.py
 msgid "Reason"
 msgstr "Priežastis"
 
@@ -8030,11 +8091,11 @@ msgstr "Gauti"
 msgid "Receive a donation"
 msgstr "Gauta parama"
 
-#: header.js donation_receive.js html.py code.py
+#: header.js donation_receive.js code.py html.py
 msgid "Receive a payment"
 msgstr ""
 
-#: onlineform_incoming.js donations.js donation_receive.js
+#: donations.js onlineform_incoming.js donation_receive.js
 msgid "Received"
 msgstr "Gavimo data"
 
@@ -8078,7 +8139,7 @@ msgstr "Neseniai nugaišę prieglaudos gyvūnai (per pastarąsias 30 dienų)."
 msgid "Reclaim"
 msgstr "Grąžinimas savininkui"
 
-#: move_reclaim.js html.py code.py
+#: move_reclaim.js code.py html.py
 msgid "Reclaim an animal"
 msgstr "Grąžinti savininkui"
 
@@ -8098,7 +8159,7 @@ msgstr "Atsiimtas"
 msgid "Reconcile"
 msgstr "Suderinti"
 
-#: accounts_trx.js accounts.js
+#: accounts.js accounts_trx.js
 msgid "Reconciled"
 msgstr "Suderinta"
 
@@ -8136,6 +8197,10 @@ msgstr ""
 
 #: batch.js
 msgid "Regenerate monthly animal figures for"
+msgstr ""
+
+#: batch.js
+msgid "Regenerate person names in selected format"
 msgstr ""
 
 #: animal_find.js animal.py dbupdate.py
@@ -8292,11 +8357,11 @@ msgstr ""
 msgid "Remove unwanted functionality"
 msgstr "Nereikalingų funkcijų šalinimas"
 
-#: waitinglist_results.js header_edit_header.js
+#: header_edit_header.js waitinglist_results.js
 msgid "Removed"
 msgstr "Pašalintas"
 
-#: report_images.js document_templates.js
+#: document_templates.js report_images.js
 msgid "Rename"
 msgstr "Pervadinti"
 
@@ -8304,15 +8369,15 @@ msgstr "Pervadinti"
 msgid "Report"
 msgstr "Ataskaita"
 
-#: report_export.js reports.js
+#: reports.js report_export.js
 msgid "Report Title"
 msgstr "Ataskaitos antraštė"
 
-#: incident_new.js header.js html.py code.py configuration.py
+#: incident_new.js header.js code.py html.py configuration.py
 msgid "Report a new incident"
 msgstr ""
 
-#: roles.js reports.js html.py mobile.py
+#: roles.js reports.js mobile.py html.py
 msgid "Reports"
 msgstr "Ataskaitos"
 
@@ -8384,12 +8449,12 @@ msgstr "Rezervacijoms būtina priskirti tinkamą rezervacijos datą."
 msgid "Reserve"
 msgstr "Rezervuoti"
 
-#: header.js move_reserve.js html.py code.py configuration.py
+#: move_reserve.js header.js code.py html.py configuration.py
 msgid "Reserve an animal"
 msgstr "Gyvūno rezervacija"
 
-#: animal_find.js animal_find_results.js common.js options.js
-#: header_edit_header.js html.py animal.py
+#: header_edit_header.js common.js options.js animal_find.js
+#: animal_find_results.js animal.py html.py
 msgid "Reserved"
 msgstr "Rezervuotas"
 
@@ -8409,7 +8474,7 @@ msgstr ""
 msgid "Responded Between"
 msgstr ""
 
-#: incident.js incident_find_results.js mobile.py
+#: incident_find_results.js incident.js mobile.py
 msgid "Responded Date/Time"
 msgstr ""
 
@@ -8417,8 +8482,8 @@ msgstr ""
 msgid "Result"
 msgstr "Rezultatas"
 
-#: person_find_results.js animal_find_results.js lostfound_find_results.js
-#: incident_find_results.js code.py
+#: person_find_results.js incident_find_results.js lostfound_find_results.js
+#: animal_find_results.js code.py
 msgid "Results"
 msgstr "Rezultatai"
 
@@ -8426,8 +8491,8 @@ msgstr "Rezultatai"
 msgid "Results for '{0}'."
 msgstr "{0}' rezultatai."
 
-#: onlineforms.js person_find_results.js users.js animal_find.js common.js
-#: movements.js move_retailer.js header_edit_header.js html.py dbupdate.py
+#: person_find_results.js onlineforms.js header_edit_header.js move_retailer.js
+#: common.js users.js animal_find.js movements.js html.py dbupdate.py
 msgid "Retailer"
 msgstr "Tarpininkas"
 
@@ -8467,11 +8532,11 @@ msgstr ""
 msgid "Return a transferred animal"
 msgstr "Perkelto į kitą prieglaudą gyvūno grąžinimas"
 
-#: header.js html.py code.py configuration.py
+#: header.js code.py html.py configuration.py
 msgid "Return an animal from adoption"
 msgstr "Atiduoto gyvūno grąžinimas"
 
-#: header.js html.py code.py configuration.py
+#: header.js code.py html.py configuration.py
 msgid "Return an animal from another movement"
 msgstr "Gyvūno grąžinimas iš kitur"
 
@@ -8675,9 +8740,10 @@ msgstr "Lygiakailis"
 msgid "Saturday"
 msgstr "Šeštadienis"
 
-#: onlineforms.js accounts_trx.js roles.js test.js lostfound.js medical.js
-#: change_user_settings.js vaccination.js incident.js animal.js options.js
-#: reports.js person.js publish_options.js waitinglist.js media.js mobile.py
+#: onlineforms.js test.js medical.js person.js change_user_settings.js
+#: animal.js options.js lostfound.js roles.js reports.js waitinglist.js
+#: accounts_trx.js incident.js publish_options.js media.js vaccination.js
+#: mobile.py
 msgid "Save"
 msgstr "Išsaugoti"
 
@@ -8705,8 +8771,8 @@ msgstr "Išsaugoti šį įrašą"
 msgid "Save this waiting list entry"
 msgstr "Išsaugoti šį įrašą laukiančių vietos sąraše"
 
-#: animal_costs.js lostfound.js incident.js animal.js options.js person.js
-#: waitinglist.js
+#: person.js animal.js options.js lostfound.js waitinglist.js animal_costs.js
+#: incident.js
 msgid "Saving..."
 msgstr "Išsaugoma..."
 
@@ -8750,8 +8816,8 @@ msgstr "Pilkšva"
 msgid "Sealyham Terrier"
 msgstr "Silihemo terjeras"
 
-#: common_personchooser.js common_animalchooser.js incident_find.js
-#: animal_find.js lostfound_find.js person_find.js options.js header.js
+#: header.js lostfound_find.js common_animalchooser.js options.js
+#: animal_find.js common_personchooser.js person_find.js incident_find.js
 msgid "Search"
 msgstr "Ieškoti"
 
@@ -8775,14 +8841,14 @@ msgstr ""
 msgid "Second offence"
 msgstr ""
 
-#: onlineforms.js common_personchooser.js accounts_trx.js diarytasks.js
-#: common_tableform.js roles.js common_animalchoosermulti.js users.js
-#: accounts.js common.js animal.js reports.js person.js litters.js transport.js
-#: html.py
+#: onlineforms.js accounts.js diarytasks.js person.js common.js users.js
+#: animal.js transport.js roles.js reports.js accounts_trx.js
+#: common_animalchoosermulti.js common_tableform.js common_personchooser.js
+#: litters.js html.py
 msgid "Select"
 msgstr "Pasirinkti"
 
-#: onlineform_incoming.js common_personchooser.js
+#: common_personchooser.js onlineform_incoming.js
 msgid "Select a person"
 msgstr "Pasirinkite asmenį"
 
@@ -8804,7 +8870,7 @@ msgstr ""
 msgid "Select all"
 msgstr "Žymėti viską"
 
-#: onlineform_incoming.js common_animalchooser.js
+#: common_animalchooser.js onlineform_incoming.js
 msgid "Select an animal"
 msgstr "Pasirinkite gyvūną"
 
@@ -8816,7 +8882,7 @@ msgstr ""
 msgid "Select animals"
 msgstr "Pasirinkite gyvūnus"
 
-#: animal.js person.js
+#: person.js animal.js
 msgid "Select date for diary task"
 msgstr "Nurodykite standartinės darbotvarkės užduoties datą"
 
@@ -8876,7 +8942,7 @@ msgstr "Serverio laikrodžio derinimas"
 msgid "Set publishing options"
 msgstr "Nustatyti publikavimo parinktis"
 
-#: common_widgets.js mailmerge.js
+#: mailmerge.js common_widgets.js
 msgid "Set the email content-type header to text/html"
 msgstr "Nustatyti el. laiškų turinio tipo antraštę kaip text/html"
 
@@ -8922,10 +8988,10 @@ msgstr "Nuostatos, Ataskaitos"
 msgid "Settings, System user accounts"
 msgstr "Nuostatos, Sistemos naudotojų paskyros"
 
-#: animal_new.js common_animalchooser.js incident_find.js lostfound.js
-#: animal_find.js animal_find_results.js lostfound_find.js incident.js
-#: lostfound_find_results.js animal.js person.js lostfound_new.js html.py
-#: lookups.py person.py mobile.py
+#: person.js lostfound_find_results.js animal.js lostfound_find.js
+#: animal_new.js common_animalchooser.js lostfound.js incident.js
+#: animal_find.js animal_find_results.js lostfound_new.js incident_find.js
+#: lookups.py mobile.py person.py html.py
 msgid "Sex"
 msgstr "Lytis"
 
@@ -8977,7 +9043,7 @@ msgstr "Prieglaudos gyvūnas {0} '{1}'"
 msgid "Shelter animals"
 msgstr "Prieglaudos gyvūnai"
 
-#: animal_new.js animal.js animal.py
+#: animal.js animal_new.js animal.py
 msgid "Shelter code cannot be blank"
 msgstr "Būtina nurodyti prieglaudos priskirtą kodą"
 
@@ -9005,7 +9071,7 @@ msgstr "Prieglaudos statistika (šių metų)"
 msgid "Shelter stats (today)"
 msgstr "Prieglaudos statistika (šiandienos)"
 
-#: options.js header.js html.py code.py configuration.py
+#: header.js options.js code.py html.py configuration.py
 msgid "Shelter view"
 msgstr "Šiuo metu prieglaudoje"
 
@@ -9183,7 +9249,7 @@ msgstr "Sidabrinė kiaunė"
 msgid "Similar Animal"
 msgstr "Panašus gyvūnas"
 
-#: common_personchooser.js person_new.js
+#: person_new.js common_personchooser.js
 msgid "Similar Person"
 msgstr "Panašus asmuo"
 
@@ -9199,9 +9265,9 @@ msgstr "Singapūro katė"
 msgid "Single Treatment"
 msgstr "Vienkartinis vartojimas"
 
-#: animal_new.js animal_find.js animal_find_results.js waitinglist_results.js
-#: animal.js person.js waitinglist_new.js waitinglist.js html.py lookups.py
-#: person.py mobile.py
+#: person.js animal.js animal_new.js waitinglist.js animal_find.js
+#: animal_find_results.js waitinglist_results.js waitinglist_new.js lookups.py
+#: mobile.py person.py html.py
 msgid "Size"
 msgstr "Dydis"
 
@@ -9292,17 +9358,16 @@ msgstr "Pietų Rusijos aviganis"
 msgid "Spaniel"
 msgstr "Spanielis"
 
-#: animal_find_results.js animal.js html.py mobile.py
+#: animal.js animal_find_results.js mobile.py html.py
 msgid "Special Needs"
 msgstr "Ypatingi poreikiai"
 
-#: animal_new.js lookups.js common_animalchooser.js
-#: common_animalchoosermulti.js incident_find.js lostfound.js onlineform.js
-#: animal_find.js animal_find_results.js lostfound_find.js shelterview.js
-#: waitinglist_results.js incident.js lostfound_find_results.js animal.js
-#: movements.js options.js person.js waitinglist_new.js litters.js
-#: lostfound_new.js waitinglist.js html.py lookups.py person.py mobile.py
-#: reports.py
+#: person.js lostfound_find_results.js onlineform.js shelterview.js animal.js
+#: lostfound_find.js animal_new.js common_animalchooser.js options.js
+#: lostfound.js waitinglist.js lookups.js incident.js animal_find.js
+#: animal_find_results.js lostfound_new.js common_animalchoosermulti.js
+#: waitinglist_results.js movements.js incident_find.js litters.js
+#: waitinglist_new.js lookups.py mobile.py person.py reports.py html.py
 msgid "Species"
 msgstr "Rūšis"
 
@@ -9353,7 +9418,7 @@ msgstr "Atskirti puslapius su rūšies pavadinimo priešdėliu"
 msgid "Sponsorship donations"
 msgstr "Rėmėjų parama"
 
-#: onlineforms.js person_find_results.js common.js header_edit_header.js
+#: person_find_results.js onlineforms.js header_edit_header.js common.js
 #: html.py dbupdate.py
 msgid "Staff"
 msgstr "Personalas"
@@ -9402,8 +9467,8 @@ msgstr "Pradėtas"
 msgid "Starts"
 msgstr "Prasideda"
 
-#: common_personchooser.js person_find_results.js incident_new.js
-#: waitinglist_results.js incident.js person.js person_new.js html.py
+#: person_find_results.js incident_new.js person.js person_new.js incident.js
+#: waitinglist_results.js common_personchooser.js html.py
 msgid "State"
 msgstr "Savivaldybė"
 
@@ -9432,8 +9497,8 @@ msgstr ""
 "laikotarpio skaičius apie patekusius į prieglaudą ir išvykusius iš "
 "prieglaudos gyvūnus."
 
-#: medical.js shelterview.js movements.js options.js medicalprofile.js
-#: person.js move_reserve.js transport.js lookups.py
+#: medical.js person.js move_reserve.js shelterview.js transport.js options.js
+#: medicalprofile.js movements.js lookups.py
 msgid "Status"
 msgstr "Būsena"
 
@@ -9441,7 +9506,7 @@ msgstr "Būsena"
 msgid "Stay"
 msgstr "Likti"
 
-#: stocklevel.js html.py code.py
+#: stocklevel.js code.py html.py
 msgid "Stock"
 msgstr ""
 
@@ -9509,7 +9574,7 @@ msgstr "Sk"
 msgid "SubTotal"
 msgstr "Pokytis"
 
-#: common_widgets.js diarytask.js diary.js incident.js mailmerge.js mobile.py
+#: mailmerge.js diarytask.js diary.js common_widgets.js incident.js mobile.py
 msgid "Subject"
 msgstr "Tema"
 
@@ -9549,7 +9614,7 @@ msgstr "Supernaudotojas"
 msgid "Surname"
 msgstr "Pavardė"
 
-#: incident_new.js incident.js incident_find_results.js
+#: incident_find_results.js incident_new.js incident.js
 msgid "Suspect"
 msgstr ""
 
@@ -9633,7 +9698,7 @@ msgstr "Rusva su juoda"
 msgid "Tan and White"
 msgstr "Rusva su balta"
 
-#: animal_find_results.js animal.js mobile.py
+#: animal.js animal_find_results.js mobile.py
 msgid "Tattoo"
 msgstr "Tatuiruotė"
 
@@ -9684,7 +9749,7 @@ msgstr "Roplys"
 msgid "Terrier"
 msgstr "Terjeras"
 
-#: calendarview.js header_edit_header.js mobile.py
+#: header_edit_header.js calendarview.js mobile.py
 msgid "Test"
 msgstr "Testas"
 
@@ -9724,7 +9789,7 @@ msgstr "Testai"
 msgid "Tests need an animal and at least a required date."
 msgstr "Turi būti nurodytas testuojamas gyvūnas ir bent jau planinė data."
 
-#: common_tableform.js onlineform.js dbupdate.py
+#: onlineform.js common_tableform.js dbupdate.py
 msgid "Text"
 msgstr "Tekstas"
 
@@ -9775,7 +9840,7 @@ msgstr "Šio gyvūno kailio tipas"
 msgid "The date reported to the shelter"
 msgstr "Data, kada pranešta prieglaudai"
 
-#: move_deceased.js animal.js
+#: animal.js move_deceased.js
 msgid "The date the animal died"
 msgstr "Gyvūno gaišimo data"
 
@@ -9791,7 +9856,7 @@ msgstr "Gyvūno atidavimo data"
 msgid "The date the animal was altered"
 msgstr "Gyvūno kastracijos data"
 
-#: animal_new.js animal.js
+#: animal.js animal_new.js
 msgid "The date the animal was born"
 msgstr "Gyvūno gimimo data"
 
@@ -9803,7 +9868,7 @@ msgstr "Gyvūno patekimo į prieglaudą data"
 msgid "The date the animal was heartworm tested"
 msgstr "Data, kada atliktas širdies kirmėlių testas"
 
-#: animal_new.js animal.js
+#: animal.js animal_new.js
 msgid "The date the animal was microchipped"
 msgstr "Ženklinimo mikroschema data"
 
@@ -9859,7 +9924,7 @@ msgstr "Gyvūno radimo data"
 msgid "The date this animal was lost"
 msgstr "Gyvūno dingimo data"
 
-#: waitinglist_new.js waitinglist.js
+#: waitinglist.js waitinglist_new.js
 msgid "The date this animal was put on the waiting list"
 msgstr "Gyvūno pridėjimo į laukiančių vietos sąrašą data"
 
@@ -9883,7 +9948,7 @@ msgstr "Data, kada buvo patikrintos šio asmens gyvenimo sąlygos"
 msgid "The default username is 'user' with the password 'letmein'"
 msgstr "Numatytasis naudotojo vardas yra \"user\", slaptažodis \"letmein\""
 
-#: animal_new.js animal.js
+#: animal.js animal_new.js
 msgid "The entry reason for this animal"
 msgstr "Šio gyvūno patekimo priežastis"
 
@@ -9903,7 +9968,7 @@ msgstr ""
 msgid "The location where the animal was picked up"
 msgstr ""
 
-#: animal_new.js animal.js
+#: animal.js animal_new.js
 msgid "The microchip number"
 msgstr "Mikroschemos numeris"
 
@@ -9938,7 +10003,7 @@ msgstr ""
 msgid "The primary breed of this animal"
 msgstr "Pagrindinė šio gyvūno veislė"
 
-#: waitinglist_new.js waitinglist.js
+#: waitinglist.js waitinglist_new.js
 msgid "The reason the owner wants to part with the animal"
 msgstr "Priežastis, kodėl asmuo nori atiduoti gyvūną"
 
@@ -9975,7 +10040,7 @@ msgstr "Pasirinktas failas nėra nuotrauka."
 msgid "The shelter category for this animal"
 msgstr "Šiam gyvūnui priskirta prieglaudos kategorija"
 
-#: animal_new.js animal.js
+#: animal.js animal_new.js
 msgid "The shelter reference number"
 msgstr "Prieglaudos priskirtas numeris"
 
@@ -10136,7 +10201,7 @@ msgstr "Šiais metais"
 msgid "This animal already has an active reservation."
 msgstr "Šis gyvūnas jau turi aktyvią rezervaciją."
 
-#: move_deceased.js animal.js
+#: animal.js move_deceased.js
 msgid ""
 "This animal died outside the care of the shelter, and the death should be "
 "kept out of reports"
@@ -10227,7 +10292,7 @@ msgstr ""
 msgid "This animal is microchipped"
 msgstr "Šis gyvūnas turi mikroschemą"
 
-#: move_adopt.js move_transfer.js move_retailer.js move_reserve.js
+#: move_transfer.js move_adopt.js move_retailer.js move_reserve.js
 #: move_foster.js move_reclaim.js
 msgid "This animal is not on the shelter."
 msgstr "Šis gyvūnas yra ne prieglaudoje."
@@ -10257,11 +10322,11 @@ msgid ""
 "shelter"
 msgstr "Šis gyvūnas nebus rodomas ataskaitose ir nėra prieglaudos globoje"
 
-#: move_deceased.js animal.js
+#: animal.js move_deceased.js
 msgid "This animal was dead on arrival to the shelter"
 msgstr "Šis gyvūnas buvo nugaišęs atvykimo į prieglaudą metu"
 
-#: move_deceased.js animal.js
+#: animal.js move_deceased.js
 msgid "This animal was euthanized"
 msgstr "Šiam gyvūnui buvo atlikta eutanazija"
 
@@ -10321,7 +10386,7 @@ msgstr ""
 "Šis veiksmas negali būti atliktas iš tarpininko, nes šiam gyvūnui niekada "
 "anksčiau nebuvo atlikti perdavimo tarpininkams veiksmai."
 
-#: move_adopt.js movements.js move_reserve.js
+#: move_adopt.js move_reserve.js movements.js
 msgid "This person has an animal control incident against them"
 msgstr ""
 
@@ -10333,7 +10398,7 @@ msgstr "Šis asmuo įtrauktas į juodąjį sąrašą"
 msgid "This person has been banned from adopting animals."
 msgstr "Šis gyvūnas įtrauktas į juodąjį sąrašą."
 
-#: move_adopt.js movements.js move_reserve.js
+#: move_adopt.js move_reserve.js movements.js
 msgid "This person has been under investigation"
 msgstr "Šis asmuo buvo įtrauktas į tyrimą"
 
@@ -10408,7 +10473,7 @@ msgstr ""
 "Šis asmuo nepažymėtas kaip tarpininkas, todėl gyvūnas negali būti jam "
 "atiduotas tarpininkavimo veiksmams."
 
-#: common_personchooser.js person_new.js
+#: person_new.js common_personchooser.js
 msgid ""
 "This person is very similar to another person on file, carry on creating "
 "this record?"
@@ -10444,13 +10509,13 @@ msgid ""
 "looks for you with the Visual Theme option here: {0}"
 msgstr ""
 
-#: move_adopt.js move_transfer.js movements.js move_retailer.js move_reserve.js
-#: move_foster.js move_reclaim.js
+#: move_transfer.js move_adopt.js move_retailer.js move_reserve.js
+#: move_foster.js move_reclaim.js movements.js
 msgid "This type of movement requires a date."
 msgstr "Šio tipo veiksmui būtina nurodyti datą."
 
-#: move_adopt.js move_transfer.js movements.js move_retailer.js move_reserve.js
-#: move_foster.js move_reclaim.js
+#: move_transfer.js move_adopt.js move_retailer.js move_reserve.js
+#: move_foster.js move_reclaim.js movements.js
 msgid "This type of movement requires a person."
 msgstr "Šio tipo veiksmui būtina pasirinkti asmenį."
 
@@ -10552,7 +10617,7 @@ msgstr "Tigrinė"
 msgid "Time"
 msgstr "Laikas"
 
-#: animal_new.js animal.js
+#: animal.js animal_new.js
 msgid "Time Brought In"
 msgstr ""
 
@@ -10576,7 +10641,7 @@ msgstr "Laikas, praleistas prieglaudoje"
 msgid "Times should be in HH:MM format, eg: 09:00, 16:30"
 msgstr "Laikas turėtų būti HH:MM formato, pvz.: 09:00, 16:30"
 
-#: common_personchooser.js person_find_results.js person.js person_new.js
+#: person_find_results.js person.js person_new.js common_personchooser.js
 #: html.py
 msgid "Title"
 msgstr "Kreipinys"
@@ -10621,7 +10686,7 @@ msgstr "Šiandiena"
 msgid "Tonkinese"
 msgstr "Tonkino katė"
 
-#: common_tableform.js additional.js onlineform.js
+#: additional.js onlineform.js common_tableform.js
 msgid "Tooltip"
 msgstr "Paaiškinimas"
 
@@ -10689,7 +10754,7 @@ msgstr "Priimtas iš kitos prieglaudos"
 msgid "Transfer To"
 msgstr "Perkėlimas pas"
 
-#: move_transfer.js header.js html.py code.py configuration.py
+#: move_transfer.js header.js code.py html.py configuration.py
 msgid "Transfer an animal"
 msgstr "Gyvūno perkėlimas į kitą prieglaudą"
 
@@ -10725,7 +10790,7 @@ msgstr "Perkelti į kitą prieglaudą {0}"
 msgid "Transfers must have a valid transfer date."
 msgstr "Perkėlimo veiksmams būtina priskirti tinkamą perkėlimo datą."
 
-#: roles.js calendarview.js header_edit_header.js dbupdate.py
+#: header_edit_header.js roles.js calendarview.js dbupdate.py
 msgid "Transport"
 msgstr ""
 
@@ -10741,7 +10806,7 @@ msgstr ""
 msgid "Transport requires an animal"
 msgstr ""
 
-#: roles.js header_edit_header.js
+#: header_edit_header.js roles.js
 msgid "Trap Loans"
 msgstr ""
 
@@ -10798,7 +10863,7 @@ msgstr "Gydymas"
 msgid "Treeing Walker Coonhound"
 msgstr "Tryngvolker kunhaundas"
 
-#: users.js common.js movements.js options.js dbupdate.py
+#: common.js users.js options.js movements.js dbupdate.py
 msgid "Trial Adoption"
 msgstr "Bandomasis atidavimas"
 
@@ -10806,7 +10871,7 @@ msgstr "Bandomasis atidavimas"
 msgid "Trial adoption"
 msgstr "Bandomasis atidavimas"
 
-#: header.js html.py code.py configuration.py
+#: header.js code.py html.py configuration.py
 msgid "Trial adoption book"
 msgstr "Bandomųjų atidavimų žurnalas"
 
@@ -10818,7 +10883,7 @@ msgstr "Bandomasis atidavimas baigiasi"
 msgid "Tricolour"
 msgstr "Trispalvė"
 
-#: roles.js batch.js html.py
+#: batch.js roles.js html.py
 msgid "Trigger Batch Processes"
 msgstr ""
 
@@ -10850,15 +10915,14 @@ msgstr "Turkų van"
 msgid "Turtle"
 msgstr "Vėžlys"
 
-#: animal_new.js licence.js traploan.js animal_costs.js diarytasks.js
-#: document_repository.js common_animalchooser.js log.js animal_bulk.js test.js
-#: additional.js users.js onlineform.js move_adopt.js animal_find.js
-#: donations.js animal_find_results.js accounts.js incident_new.js
-#: shelterview.js vaccination.js incident.js animal.js movements.js options.js
-#: animal_diet.js mailmerge.js reports.js person.js person_vouchers.js
-#: donation_receive.js move_reserve.js incident_find_results.js log_new.js
-#: media.js person_links.js citations.js move_reclaim.js html.py lookups.py
-#: mobile.py reports.py
+#: additional.js mailmerge.js test.js accounts.js donations.js person_links.js
+#: animal_bulk.js diarytasks.js incident_find_results.js incident_new.js
+#: move_adopt.js person.js log_new.js onlineform.js move_reserve.js log.js
+#: shelterview.js users.js animal.js citations.js animal_new.js traploan.js
+#: common_animalchooser.js person_vouchers.js options.js move_reclaim.js
+#: reports.js animal_costs.js animal_diet.js document_repository.js incident.js
+#: animal_find.js licence.js animal_find_results.js media.js vaccination.js
+#: movements.js donation_receive.js lookups.py mobile.py reports.py html.py
 msgid "Type"
 msgstr "Tipas"
 
@@ -10906,24 +10970,24 @@ msgstr ""
 msgid "Unaltered Dog - 3 year"
 msgstr ""
 
-#: animal_new.js stocklevel.js search.js animal_find_results.js common.js
-#: animal.js header_edit_header.js html.py mobile.py
+#: header_edit_header.js search.js common.js animal.js animal_new.js
+#: animal_find_results.js stocklevel.js mobile.py html.py
 msgid "Unit"
 msgstr "Laikymo vieta"
 
-#: animal_new.js animal.js
+#: animal.js animal_new.js
 msgid "Unit within the location, eg: pen or cage number"
 msgstr "Patalpoje esanti laikymo vieta, pvz. gardo arba narvo numeris"
 
-#: lookups.js stocklevel.js mailmerge.js
+#: mailmerge.js lookups.js stocklevel.js
 msgid "Units"
 msgstr "Vienetai"
 
-#: animal_find_results.js dbupdate.py i18n.py
+#: animal_find_results.js i18n.py dbupdate.py
 msgid "Unknown"
 msgstr "Nežinoma"
 
-#: animal.js
+#: animal.js lookups.py
 msgid "Unknown microchip brand"
 msgstr ""
 
@@ -10947,7 +11011,7 @@ msgstr "Nenurodyta"
 msgid "Unsuitable Accomodation"
 msgstr "Netinkama gyvenamoji vieta"
 
-#: options.js header.js code.py configuration.py
+#: header.js options.js code.py configuration.py
 msgid "Up for adoption"
 msgstr "Atiduodami"
 
@@ -10975,7 +11039,7 @@ msgstr "Atnaujinti duomenų bazę iki versijos {0}"
 msgid "Updated."
 msgstr "Atnaujinta."
 
-#: move_deceased.js animal_bulk.js
+#: animal_bulk.js move_deceased.js
 msgid "Updating..."
 msgstr "Atnaujinama..."
 
@@ -11019,7 +11083,7 @@ msgstr ""
 msgid "Urgencies"
 msgstr "Prioritetai"
 
-#: waitinglist_results.js waitinglist_new.js waitinglist.js html.py lookups.py
+#: waitinglist.js waitinglist_results.js waitinglist_new.js lookups.py html.py
 msgid "Urgency"
 msgstr "Prioritetas"
 
@@ -11027,11 +11091,11 @@ msgstr "Prioritetas"
 msgid "Urgent"
 msgstr "Skubus"
 
-#: stocklevel.js test.js medical.js vaccination.js
+#: test.js medical.js vaccination.js stocklevel.js
 msgid "Usage Date"
 msgstr ""
 
-#: stocklevel.js test.js medical.js vaccination.js lookups.py
+#: test.js medical.js vaccination.js stocklevel.js lookups.py
 msgid "Usage Type"
 msgstr ""
 
@@ -11096,7 +11160,7 @@ msgstr "Naudotojų funkcijos"
 msgid "User roles"
 msgstr "Naudotojų funkcijos"
 
-#: users.js change_user_settings.js login.js change_password.js mobile.py
+#: login.js users.js change_user_settings.js change_password.js mobile.py
 msgid "Username"
 msgstr "Naudotojo vardas"
 
@@ -11124,7 +11188,7 @@ msgstr "Vakcinuoti"
 msgid "Vaccinate Animal"
 msgstr "Vakcinuoti gyvūną"
 
-#: calendarview.js header_edit_header.js mobile.py
+#: header_edit_header.js calendarview.js mobile.py
 msgid "Vaccination"
 msgstr "Vakcinacijos"
 
@@ -11182,7 +11246,7 @@ msgstr "Vertikalus išdėstymas"
 msgid "Very Large"
 msgstr "Labai didelis"
 
-#: onlineforms.js person_find_results.js common.js header_edit_header.js
+#: person_find_results.js onlineforms.js header_edit_header.js common.js
 #: html.py dbupdate.py
 msgid "Vet"
 msgstr "Veterinaras"
@@ -11383,7 +11447,7 @@ msgstr "Vizualinė tema"
 msgid "Vizsla"
 msgstr "Vižlas"
 
-#: onlineforms.js person_find_results.js common.js header_edit_header.js
+#: person_find_results.js onlineforms.js header_edit_header.js common.js
 #: html.py
 msgid "Volunteer"
 msgstr "Savanoris"
@@ -11392,7 +11456,7 @@ msgstr "Savanoris"
 msgid "Voucher Types"
 msgstr "Kuponų tipai"
 
-#: roles.js header_edit_header.js
+#: header_edit_header.js roles.js
 msgid "Vouchers"
 msgstr "Kuponai"
 
@@ -11400,8 +11464,8 @@ msgstr "Kuponai"
 msgid "Vouchers need an issue and expiry date."
 msgstr "Būtina nurodyti kuponų išdavimo ir galiojimo datas."
 
-#: onlineform_incoming.js roles.js search.js waitinglist_results.js options.js
-#: header_edit_header.js html.py dbupdate.py code.py
+#: header_edit_header.js search.js options.js roles.js waitinglist_results.js
+#: onlineform_incoming.js code.py html.py dbupdate.py
 msgid "Waiting List"
 msgstr "Laukia vietos"
 
@@ -11441,7 +11505,7 @@ msgstr "Parama iš laukiančių vietos"
 msgid "Waiting list entries matching '{0}'."
 msgstr "Laukiantys vietos gyvūnai, atitinkantys '{0}'."
 
-#: waitinglist_new.js waitinglist.js waitinglist.py
+#: waitinglist.js waitinglist_new.js waitinglist.py
 msgid "Waiting list entries must have a contact"
 msgstr "Laukiančiųjų sąraše privalo būti nurodytas kontaktinis asmuo"
 
@@ -11587,8 +11651,8 @@ msgid ""
 msgstr ""
 
 #: options.js
-msgid "When displaying person names in lists, use the format"
-msgstr "Sąrašuose asmenų vardus pateikti nurodytu formatu"
+msgid "When displaying person names, use the format"
+msgstr ""
 
 #: main.js
 msgid ""
@@ -11686,7 +11750,7 @@ msgstr "Balta su rusva"
 msgid "White and Torti"
 msgstr "Balta su vėžlio kiauto"
 
-#: waitinglist_new.js waitinglist.js
+#: waitinglist.js waitinglist_new.js
 msgid "Will this owner give a donation?"
 msgstr "Ar šis asmuo skirs paramą?"
 
@@ -11714,8 +11778,8 @@ msgstr "Sav."
 msgid "Work"
 msgstr "Darbo"
 
-#: common_personchooser.js person_find_results.js waitinglist_results.js
-#: person.js person_new.js
+#: person_find_results.js person.js person_new.js waitinglist_results.js
+#: common_personchooser.js
 msgid "Work Phone"
 msgstr "Darbo telefonas"
 
@@ -11739,9 +11803,9 @@ msgstr "Geltonas labradoro retriveris"
 msgid "Yellow and Grey"
 msgstr "Geltona su pilka"
 
-#: person_find_results.js additional.js users.js animal_find_results.js
-#: lostfound_find.js waitinglist_results.js sql.js publish_options.js
-#: onlineform.py dbupdate.py wordprocessor.py mobile.py i18n.py
+#: additional.js person_find_results.js users.js lostfound_find.js sql.js
+#: animal_find_results.js publish_options.js waitinglist_results.js mobile.py
+#: wordprocessor.py i18n.py dbupdate.py onlineform.py
 msgid "Yes"
 msgstr "Taip"
 
@@ -11843,7 +11907,7 @@ msgstr ""
 "Nenurodėte jokių paieškos kriterijų, todėl pateikti prieglaudoje esantys "
 "gyvūnai."
 
-#: common.js header.js
+#: header.js common.js
 msgid "You have unsaved changes, are you sure you want to leave this page?"
 msgstr "Yra neišsaugotų pakeitimų, ar tikrai norite uždaryti šią kortelę?"
 
@@ -11884,10 +11948,10 @@ msgstr ""
 "Jūsų sheltermanager.com paskyros galiojimas baigsis {0}, prašome atnaujinti "
 "{1}"
 
-#: common_personchooser.js person_find_results.js incident_find.js lostfound.js
-#: lostfound_find.js incident_new.js waitinglist_results.js incident.js
-#: lostfound_find_results.js person.js incident_find_results.js
-#: lostfound_new.js person_new.js html.py
+#: person_find_results.js incident_find_results.js incident_new.js person.js
+#: lostfound_find_results.js lostfound_find.js person_new.js lostfound.js
+#: incident.js lostfound_new.js waitinglist_results.js common_personchooser.js
+#: incident_find.js html.py
 msgid "Zipcode"
 msgstr "Pašto kodas"
 
@@ -11903,7 +11967,7 @@ msgstr "[Nenustatytas]"
 msgid "after connecting, chdir to"
 msgstr "po prisijungimo chdir į"
 
-#: incident_find.js animal_find.js
+#: animal_find.js incident_find.js
 msgid "and"
 msgstr "iki"
 
@@ -12016,7 +12080,7 @@ msgstr ""
 msgid "{0} animals successfully updated."
 msgstr ""
 
-#: lostfound.js incident.js animal.js person.js waitinglist.js
+#: person.js animal.js lostfound.js waitinglist.js incident.js
 msgid "{0} cannot be blank"
 msgstr "Būtina užpildyti {0}"
 
