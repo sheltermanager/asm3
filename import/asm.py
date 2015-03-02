@@ -20,12 +20,15 @@ Eg:
     (prints media/dbfs INSERTS after getting Rover's petid and
      downloading primary image and base64 encoding it)
      
+Also has some useful helper functions for reading CSVs and parsing values, eg:
 
-
+    asm.csv_to_list(filename)
+    asm.get_currency
+    asm.getdate_yyyymmdd
     
 """
 
-import datetime, time
+import csv, datetime, time
 import sys, urllib2, base64
 
 # Next year code to use for animals when generating shelter codes
@@ -48,6 +51,70 @@ entryreasons = {}
 
 # Dictionary of donation types
 donationtypes = {}
+
+def csv_to_list(fname):
+    """
+    Reads the csv file fname and returns it as a list of maps 
+    with the first row used as the keys 
+    """
+    o = []
+    reader = csv.DictReader(open(fname, "r"))
+    for row in reader:
+        o.append(row)
+    return o
+
+def get_currency(s):
+    if s.strip() == "": return 0.0
+    s = s.replace("$", "")
+    try:
+        return float(s)
+    except:
+        return 0.0
+
+def getdate_yyyymmdd(s, defyear = "15"):
+    """ Parses a date in YYYY/MM/DD format. If the field is blank or not a date, None is returned """
+    if s.strip() == "": return None
+    if s.find("/") == -1: return None
+    if s.find(" ") != -1: s = s.split(" ")[0]
+    b = s.split("/")
+    # if we couldn't parse the date, use the first of the default year
+    if len(b) < 3: return datetime.date(int(defyear) + 2000, 1, 1)
+    try:
+        return datetime.date(int(b[0]), int(b[1]), int(b[2]))
+    except:
+        return datetime.date(int(defyear) + 2000, 1, 1)
+
+def getdate_mmddyyyy(s, defyear = "15"):
+    """ Parses a date in MM/DD/YYYY format. If the field is blank or not a date, None is returned """
+    if s.strip() == "": return None
+    if s.find("/") == -1: return None
+    if s.find(" ") != -1: s = s.split(" ")[0]
+    b = s.split("/")
+    # if we couldn't parse the date, use the first of the default year
+    if len(b) < 3: return datetime.date(int(defyear) + 2000, 1, 1)
+    try:
+        return datetime.date(int(b[2]), int(b[0]), int(b[1]))
+    except:
+        return datetime.date(int(defyear) + 2000, 1, 1)
+
+def getdate_ddmmmyy(s, defyear = "15"):
+    try:
+        return datetime.datetime.strptime(s, "%d-%b-%y")
+    except:
+        return None
+
+def getdate_iso(s, defyear = "15"):
+    """ Parses a date in YYYY-MM-DD format. If the field is blank, None is returned """
+    if s.strip() == "": return None
+    b = s.split("/")
+    # if we couldn't parse the date, use the first of the default year
+    if len(b) < 3: return datetime.date(int(defyear) + 2000, 1, 1)
+    try:
+        year = int(b[0])
+        if year < 1900: year += 2000
+        return datetime.date(year, int(b[1]), int(b[2]))
+    except:
+        return datetime.date(int(defyear) + 2000, 1, 1)
 
 # List of default colours
 colours = (
