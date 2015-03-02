@@ -217,7 +217,7 @@ $(function() {
                 '<input id="costamount" data="costamount" type="hidden" />',
                 '<input id="costtype" data="costtype" type="hidden" />',
                 '<select id="costcreate" data="costcreate" class="asm-selectbox">',
-                '<option value="0">' + _("Don\'t create a cost record") + '</option>',
+                '<option value="0">' + _("Don't create a cost record") + '</option>',
                 '<option value="1" selected="selected">' + _("Create a cost record") + '</option>',
                 '</select>',
                 '</td>',

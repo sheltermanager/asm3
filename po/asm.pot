@@ -3449,11 +3449,11 @@ msgid "Domestic Short Hair"
 msgstr ""
 
 #: move_adopt.js move_reclaim.js
-msgid "Don\'t create a cost record"
+msgid "Don't create a cost record"
 msgstr ""
 
 #: publish_options.js
-msgid "Don\'t scale"
+msgid "Don't scale"
 msgstr ""
 
 #: dbupdate.py
@@ -5227,7 +5227,7 @@ msgstr ""
 
 #: publish_options.js
 msgid ""
-"If you don\'t select any locations, publishers will include animals in all "
+"If you don't select any locations, publishers will include animals in all "
 "locations."
 msgstr ""
 
@@ -5377,7 +5377,7 @@ msgid "Include animals in the following locations"
 msgstr ""
 
 #: publish_options.js
-msgid "Include animals who don\'t have a picture"
+msgid "Include animals who don't have a picture"
 msgstr ""
 
 #: publish_options.js
