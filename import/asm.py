@@ -106,15 +106,27 @@ def getdate_ddmmmyy(s, defyear = "15"):
 def getdate_iso(s, defyear = "15"):
     """ Parses a date in YYYY-MM-DD format. If the field is blank, None is returned """
     if s.strip() == "": return None
-    b = s.split("/")
+    if s.find("-") == -1: return None
+    if s.find(" ") != -1: s = s.split(" ")[0]
+    b = s.split("-")
     # if we couldn't parse the date, use the first of the default year
     if len(b) < 3: return datetime.date(int(defyear) + 2000, 1, 1)
     try:
-        year = int(b[0])
-        if year < 1900: year += 2000
-        return datetime.date(year, int(b[1]), int(b[2]))
+        return datetime.date(int(b[0]), int(b[1]), int(b[2]))
     except:
         return datetime.date(int(defyear) + 2000, 1, 1)
+
+def getdatetime_iso(s, defyear = "15"):
+    """ Parses a date in YYYY-MM-DD HH:MM format, anything extra will be thrown away """
+    if s.strip() == "": return None
+    if s.find(" ") == -1: return None
+    bits = s.split(" ")
+    if len(bits) < 2: return None
+    dt = bits[0]
+    tt = bits[1]
+    d = dt.split("-")
+    t = tt.split(":")
+    return datetime.datetime(int(d[0]), int(d[1]), int(d[2]), int(t[0]), int(t[1]), 0)
 
 # List of default colours
 colours = (

@@ -1,8 +1,6 @@
 #!/usr/bin/python
 
-import asm
-
-# TODO: There are a lot of 2015-01-01 dates, is getdate_iso working correctly?
+import asm, datetime
 
 def findin(d, k, v, k2):
     """
@@ -43,7 +41,7 @@ coriginalcall = asm.csv_to_list("data/hs0701_ac/cOriginalCall.xlsx.csv")
 cusers = asm.csv_to_list("data/hs0701_ac/ShelterUser.xlsx.csv")
 
 asm.setid("adoption", 1000)
-asm.setid("animal", 1000)
+asm.setid("animal", 10000)
 asm.setid("animalcontrol", 1000)
 asm.setid("owner", 1000)
 asm.setid("ownerdonation", 1000)
@@ -62,6 +60,8 @@ owners["0"] = unknowntransfer
 # Set up animal records first
 for ca in canimal:
     a = asm.Animal()
+    a.Archived = 1
+    a.DateBroughtIn = datetime.datetime.today() - datetime.timedelta( days=365 )
     animals[ca["animalID"]] = a
     if ca["animalType"] == "C":
         a.SpeciesID = 2
@@ -74,7 +74,7 @@ for ca in canimal:
         a.AnimalName = "(unknown)"
     a.DateOfBirth = asm.getdate_yyyymmdd(ca["DOB"])
     if a.DateOfBirth is None: a.DateOfBirth = asm.getdate_iso(ca["dateEntered"])
-    a.EstimatedDOB = ca["DOBisActual"] == "0"
+    a.EstimatedDOB = ca["DOBisActual"] == "0" and 1 or 0
     a.Sex = 1
     if ca["sex"] == "F": a.Sex = 0
     a.Neutered = 1
@@ -109,7 +109,7 @@ for ca in canimal:
 # Now go through the intake records and augment our animal records with how they entered the shelter
 for ci in cintake:
     a = animals[ci["animalID"]]
-    a.DateBroughtIn = asm.getdate_iso(ca["dateEntered"])
+    a.DateBroughtIn = asm.getdatetime_iso(ci["dateTimeIn"])
     # Choose type based on agencyId - 5 = NB, 6 = CC, 7 = CM, 8 = HSNBA
     if ci["agencyID"] == "5":
         a.AnimalTypeID = 42 # NB New Braunfels
@@ -326,27 +326,29 @@ for oc in coriginalcall:
     ac = asm.AnimalControl()
     animalcontrol.append(ac)
     comments = ""
-    calldate = asm.getdate_iso(oc["dateTimeRcvd"])
+    calldate = asm.getdatetime_iso(oc["dateTimeRcvd"])
     ac.CallTaker = findin(cusers, "userID", oc["rcvdBy"], "fName")
     if oc["callerName"].strip() != "":
         comments = "caller: %s %s %s" % (oc["callerName"], oc["callerAddress"], oc["callerPhone"])
+        comments += "\ncall taken by: %s" % ac.CallTaker
     # Dispatch
     ac.DispatchAddress = oc["locationOfComplaint"]
     ac.IncidentTypeID = incidenttypes[oc["natureOfComplaintLUID"]]
     ac.IncidentDateTime = calldate
     ac.CallDateTime = calldate
-    ac.DispatchDateTime = asm.getdate_iso(oc["dateTimeDispatched"])
+    ac.DispatchDateTime = asm.getdatetime_iso(oc["dateTimeDispatched"])
     ac.DispatchedACO = findin(cusers, "userID", oc["dispatchedTo"], "fName")
+    comments += "\ndispatched to: %s" % ac.DispatchedACO
     ac.Sex = 2
     # Find the call record to get completion info
     for cc in ccall:
         if cc["callID"] == oc["callID"]:
-            ac.RespondedDateTime = asm.getdate_iso(cc["dateTimeArrived"])
+            ac.RespondedDateTime = asm.getdatetime_iso(cc["dateTimeArrived"])
             ac.CompletedDate = asm.getdate_iso(cc["dateTimeComplete"])
             ac.IncidentCompletedID = completedtypes[cc["outcomeCodeLUID"]]
             comments += "\ncase no: %s" % cc["caseNo"]
             if cc["outcomeAnimalCount"] != "":
-                comments += "\ncount: %s" % cc["outcomeAnimalCount"]
+                comments += "\nanimal count: %s" % cc["outcomeAnimalCount"]
     # Any notes?
     noteid = findin(ccallnote, "callID", oc["callID"], "noteID")
     notetext = findin(cnote, "noteID", noteid, "noteText")
@@ -359,11 +361,11 @@ for oc in coriginalcall:
     ac.CallNotes = comments.strip().replace("'", "`")
 
 print "\\set ON_ERROR_STOP\nBEGIN;"
-print "DELETE FROM animal WHERE ID >= 1000;"
-print "DELETE FROM animalcontrol WHERE ID >= 1000;"
-print "DELETE FROM owner WHERE ID >= 1000;"
-print "DELETE FROM ownerdonation WHERE ID >= 1000;"
-print "DELETE FROM adoption WHERE ID >= 1000;"
+print "DELETE FROM animal WHERE ID >= 10000 AND ID < %d;" % asm.getid("animal")
+print "DELETE FROM animalcontrol WHERE ID >= 1000 AND ID < %d;" % asm.getid("animalcontrol")
+print "DELETE FROM owner WHERE ID >= 1000 AND ID < %d;" % asm.getid("owner")
+print "DELETE FROM ownerdonation WHERE ID >= 1000 AND ID < %d;" % asm.getid("ownerdonation")
+print "DELETE FROM adoption WHERE ID >= 1000 AND ID < %d;" % asm.getid("adoption")
 
 # Now that everything else is done, output stored records
 for a in animals.itervalues():
