@@ -732,7 +732,9 @@ def calc_time_on_shelter(dbo, animalid, a = None):
     l = dbo.locale
     stop = now()
     if a is None:
-        a = db.query(dbo, "SELECT Archived, DeceasedDate, ActiveMovementDate, MostRecentEntryDate FROM animal WHERE ID = %d" % animalid)[0]
+        a = db.query(dbo, "SELECT Archived, DeceasedDate, ActiveMovementDate, MostRecentEntryDate FROM animal WHERE ID = %d" % animalid)
+        if len(a) == 0: return
+        a = a[0]
 
     mre = a["MOSTRECENTENTRYDATE"]
 
@@ -755,7 +757,9 @@ def calc_days_on_shelter(dbo, animalid, a = None):
     mre = calc_most_recent_entry(dbo, animalid, a)
     stop = now()
     if a is None:
-        a = db.query(dbo, "SELECT DeceasedDate, ActiveMovementDate FROM animal WHERE ID = %d" % animalid)[0]
+        a = db.query(dbo, "SELECT DeceasedDate, ActiveMovementDate FROM animal WHERE ID = %d" % animalid)
+        if len(a) == 0: return
+        a = a[0]
 
     # If the animal is dead, or has left the shelter
     # use that date as our cutoff instead
