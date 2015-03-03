@@ -28,7 +28,7 @@ Also has some useful helper functions for reading CSVs and parsing values, eg:
     
 """
 
-import csv, datetime, time
+import csv, datetime, re, time
 import sys, urllib2, base64
 
 # Next year code to use for animals when generating shelter codes
@@ -843,6 +843,11 @@ def di(i):
     if i == None: return "NULL"
     return str(i)
 
+def regex(findin, pattern):
+    matches = re.findall(pattern, findin)
+    if len(matches) == 0: return ""
+    return str(matches[0])
+
 def makesql(table, s):
     fl = ""
     fv = ""
@@ -913,7 +918,7 @@ def date_diff(date1, date2):
 
 def petfinder_get_adoptable(shelterid):
     """
-    Returns the page of adoptable animals for PetFinder shelterid
+    Returns the page of adoptable animals for the PetFinder shelterid
     """
     url = "http://fpm.petfinder.com/petlist/petlist.cgi?shelter=%s&status=A&limit=500&offset=0" % shelterid
     sys.stderr.write("GET " + url + "\n")
@@ -932,11 +937,14 @@ def petfinder_image(page, animalid, animalname):
     """
     sp = page.find(animalname)
     if sp == -1: return
-    sp = page.rfind("/", 0, sp)
-    ep = page.find("\"", sp)
-    petid = page[sp+1:ep]
+    # Each animal appears on its on row in a table, by taking
+    # everything upto the closing table row, we can do regex for just this
+    # animal to find its PetID and img URL
+    ep = page.find("</tr>", sp)
+    chunk = page[sp:ep]
+    petid = regex(chunk, r"\/petdetail\/(.+?)\"")
     sys.stderr.write("Got PetID: %s\n" % petid)
-    imageurl = "http://photos.petfinder.com/photos/pets/%s/1/?width=800&no_scale_up=1" % petid
+    imageurl = "http://photos.petfinder.com/photos/pets/%s/1/?bust=1425358987&width=632&no_scale_up=1" % petid
     try:
         sys.stderr.write("GET %s\n" % imageurl)
         jpgdata = urllib2.urlopen(imageurl).read()
@@ -1310,6 +1318,8 @@ class Animal:
     ActiveMovementDate = None
     ActiveMovementReturn = None
     HasActiveReserve = 0
+    HasTrialAdoption = 0
+    HasPermanentFoster = 0
     MostRecentEntryDate = None
     TimeOnShelter = ""
     DaysOnShelter = 0
@@ -1435,6 +1445,8 @@ class Animal:
             ( "ActiveMovementDate", dd(self.ActiveMovementDate) ),
             ( "ActiveMovementReturn", dd(self.ActiveMovementReturn) ),
             ( "HasActiveReserve", di(self.HasActiveReserve) ),
+            ( "HasTrialAdoption", di(self.HasTrialAdoption) ),
+            ( "HasPermanentFoster", di(self.HasPermanentFoster) ),
             ( "MostRecentEntryDate", dd(self.MostRecentEntryDate) ),
             ( "TimeOnShelter", ds(self.TimeOnShelter) ),
             ( "DaysOnShelter", di(self.DaysOnShelter) ),
