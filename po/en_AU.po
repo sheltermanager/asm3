@@ -7,15 +7,17 @@ msgstr ""
 "Project-Id-Version: sheltermanager\n"
 "Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
-"PO-Revision-Date: 2015-01-28 03:45+0000\n"
-"Last-Translator: Robin Rawson-Tetley <Unknown>\n"
+"PO-Revision-Date: 2015-03-04 16:01+0000\n"
+"Last-Translator: robin <support@sheltermanager.com>\n"
 "Language-Team: English (Australia) <en_AU@li.org>\n"
 "Language: en_AU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Launchpad (build 17361)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Pootle 2.5.1.1\n"
 "X-Launchpad-Export-Date: 2015-03-02 05:20+0000\n"
+"X-POOTLE-MTIME: 1425484887.015407\n"
 
 #: options.js
 msgid " days."
@@ -129,7 +131,7 @@ msgstr "9 months"
 
 #: dbupdate.py
 msgid "A (Stray Dog)"
-msgstr ""
+msgstr "A (Stray Dog)"
 
 #: waitinglist.js waitinglist_new.js
 msgid "A description or other information about the animal"
@@ -175,7 +177,7 @@ msgstr "ACO"
 
 #: common_widgets.js
 msgid "AM"
-msgstr ""
+msgstr "AM"
 
 #: main.js mobile.py html.py
 msgid "ASM"
@@ -305,7 +307,7 @@ msgstr "Add Animals"
 
 #: mobile.py
 msgid "Add Call"
-msgstr ""
+msgstr "Add Call"
 
 #: roles.js
 msgid "Add Citations"
@@ -896,6 +898,8 @@ msgid ""
 "All existing data in your database will be REMOVED before importing the CSV "
 "file. This removal cannot be reversed."
 msgstr ""
+"All existing data in your database will be REMOVED before importing the CSV "
+"file. This removal cannot be reversed."
 
 #: main.js
 msgid "All fields should be completed."
@@ -1694,11 +1698,11 @@ msgstr "Border Terrier"
 
 #: animal.py
 msgid "Born on Foster {0}"
-msgstr ""
+msgstr "Born on Foster {0}"
 
 #: animal.py
 msgid "Born on Shelter {0}"
-msgstr ""
+msgstr "Born on Shelter {0}"
 
 #: dbupdate.py
 msgid "Borzoi"
@@ -2554,7 +2558,7 @@ msgstr "Could not find animal with name '{0}'"
 
 #: mobile.py
 msgid "County"
-msgstr ""
+msgstr "County"
 
 #: dbupdate.py
 msgid "Cow"
@@ -2741,7 +2745,7 @@ msgstr "DHLPP"
 
 #: animal.py
 msgid "DOA {0}"
-msgstr ""
+msgstr "DOA {0}"
 
 #: mobile.py
 msgid "DOB"
@@ -2849,7 +2853,7 @@ msgstr "Date of birth cannot be blank"
 
 #: animal.py
 msgid "Date of birth cannot be in the future."
-msgstr ""
+msgstr "Date of birth cannot be in the future."
 
 #: animal.py
 msgid "Date of birth is not valid"
@@ -3022,7 +3026,7 @@ msgstr "Default Vaccination Type"
 
 #: additional.js
 msgid "Default Value"
-msgstr ""
+msgstr "Default Value"
 
 #: options.js
 msgid "Default daily boarding cost"
@@ -3261,7 +3265,7 @@ msgstr "Description cannot be blank"
 
 #: common_widgets.js
 msgid "Deselect"
-msgstr ""
+msgstr "Deselect"
 
 #: header_edit_header.js animal.js lostfound.js waitinglist.js incident.js
 msgid "Details"
@@ -3449,7 +3453,7 @@ msgstr "Document templates"
 
 #: options.js
 msgid "Documents"
-msgstr ""
+msgstr "Documents"
 
 #: dbupdate.py
 msgid "Dog"
@@ -3833,19 +3837,19 @@ msgstr "Email Address"
 
 #: media.js
 msgid "Email PDF"
-msgstr ""
+msgstr "Email PDF"
 
 #: roles.js
 msgid "Email Person"
-msgstr ""
+msgstr "Email Person"
 
 #: media.js
 msgid "Email a copy of the selected HTML documents as PDFs"
-msgstr ""
+msgstr "Email a copy of the selected HTML documents as PDFs"
 
 #: media.js
 msgid "Email a copy of the selected media files"
-msgstr ""
+msgstr "Email a copy of the selected media files"
 
 #: options.js
 msgid "Email address"
@@ -4226,7 +4230,7 @@ msgstr "Extra-Toes Cat (Hemingway Polydactyl)"
 
 #: dbupdate.py
 msgid "F (Feral Cat)"
-msgstr ""
+msgstr "F (Feral Cat)"
 
 #: dbupdate.py
 msgid "FECV/FeCoV"
@@ -4246,7 +4250,7 @@ msgstr "FIV Result"
 
 #: common.js
 msgid "FIV+"
-msgstr ""
+msgstr "FIV+"
 
 #: html.py
 msgid "FIV/L Test Date"
@@ -4266,7 +4270,7 @@ msgstr "FLV Result"
 
 #: common.js
 msgid "FLV+"
-msgstr ""
+msgstr "FLV+"
 
 #: publish_options.js
 msgid "FTP hostname"
@@ -4696,7 +4700,7 @@ msgstr "Frequency"
 
 #: header.js
 msgid "Frequently Asked Questions"
-msgstr ""
+msgstr "Frequently Asked Questions"
 
 #: common.js
 msgid "Fri"
@@ -4858,7 +4862,7 @@ msgstr "Glen of Imaal Terrier"
 
 #: batch.js
 msgid "Go"
-msgstr ""
+msgstr "Go"
 
 #: main.js
 msgid ""
@@ -5054,7 +5058,7 @@ msgstr "Heartworm Tested"
 
 #: common.js
 msgid "Heartworm+"
-msgstr ""
+msgstr "Heartworm+"
 
 #: dbupdate.py
 msgid "Hedgehog"
@@ -5066,7 +5070,7 @@ msgstr "Held"
 
 #: header.js
 msgid "Help"
-msgstr ""
+msgstr "Help"
 
 #: publish.py
 msgid "HelpingLostPets Publisher"
@@ -5198,7 +5202,7 @@ msgstr "Hound"
 
 #: common_widgets.js
 msgid "Hours"
-msgstr ""
+msgstr "Hours"
 
 #: animal_bulk.js person.js animal.js animal_find.js animal_find_results.js
 #: mobile.py person.py html.py
@@ -5462,13 +5466,15 @@ msgstr "Include held animals"
 
 #: options.js
 msgid "Include incomplete medical records when generating document templates"
-msgstr ""
+msgstr "Include incomplete medical records when generating document templates"
 
 #: options.js
 msgid ""
 "Include incomplete vaccination and test records when generating document "
 "templates"
 msgstr ""
+"Include incomplete vaccination and test records when generating document "
+"templates"
 
 #: animal_find.js
 msgid "Include non-shelter"
@@ -5841,7 +5847,7 @@ msgstr "Large"
 
 #: options.js
 msgid "Last First"
-msgstr ""
+msgstr "Last First"
 
 #: animal.js
 msgid "Last Location"
@@ -6539,7 +6545,7 @@ msgstr "Miniature Pinscher"
 
 #: common_widgets.js
 msgid "Minutes"
-msgstr ""
+msgstr "Minutes"
 
 #: dbupdate.py
 msgid "Missouri Foxtrotter"
@@ -6717,7 +6723,7 @@ msgstr "Mustang"
 
 #: mobile.py
 msgid "My Incidents"
-msgstr ""
+msgstr "My Incidents"
 
 #: header.js html.py configuration.py
 msgid "My diary notes"
@@ -6725,7 +6731,7 @@ msgstr "My diary notes"
 
 #: header.js
 msgid "My sheltermanager.com account"
-msgstr ""
+msgstr "My sheltermanager.com account"
 
 #: dbupdate.py
 msgid "Mynah"
@@ -7107,7 +7113,7 @@ msgstr "November"
 
 #: common_widgets.js
 msgid "Now"
-msgstr ""
+msgstr "Now"
 
 #: person_find_results.js incident_find_results.js lostfound_find_results.js
 #: lostfound_find.js person_vouchers.js lostfound.js waitinglist.js incident.js
@@ -7241,7 +7247,7 @@ msgstr "Only show transfers"
 
 #: mobile.py
 msgid "Open Incidents"
-msgstr ""
+msgstr "Open Incidents"
 
 #: options.js
 msgid "Open records in a new browser tab"
@@ -7370,7 +7376,7 @@ msgstr "Owners Vet"
 
 #: common_widgets.js
 msgid "PM"
-msgstr ""
+msgstr "PM"
 
 #: publish_options.js
 msgid "Page extension"
@@ -7773,7 +7779,7 @@ msgstr "Positive"
 
 #: options.js
 msgid "Positive for Heartworm, FIV or FLV"
-msgstr ""
+msgstr "Positive for Heartworm, FIV or FLV"
 
 #: lookups.py
 msgid "Positive/Negative"
@@ -8051,11 +8057,11 @@ msgstr "Reason the owner did not bring in the animal themselves"
 
 #: batch.js
 msgid "Recalculate ALL animal locations"
-msgstr ""
+msgstr "Recalculate ALL animal locations"
 
 #: batch.js
 msgid "Recalculate on-shelter animal locations"
-msgstr ""
+msgstr "Recalculate on-shelter animal locations"
 
 #: donations.js
 msgid "Receipt No"
@@ -8167,23 +8173,23 @@ msgstr "Refresh"
 
 #: batch.js
 msgid "Regenerate 'Match lost and found animals' report"
-msgstr ""
+msgstr "Regenerate 'Match lost and found animals' report"
 
 #: batch.js
 msgid "Regenerate 'Person looking for' report"
-msgstr ""
+msgstr "Regenerate 'Person looking for' report"
 
 #: batch.js
 msgid "Regenerate annual animal figures for"
-msgstr ""
+msgstr "Regenerate annual animal figures for"
 
 #: batch.js
 msgid "Regenerate monthly animal figures for"
-msgstr ""
+msgstr "Regenerate monthly animal figures for"
 
 #: batch.js
 msgid "Regenerate person names in selected format"
-msgstr ""
+msgstr "Regenerate person names in selected format"
 
 #: animal_find.js animal.py dbupdate.py
 msgid "Released To Wild"
@@ -9300,6 +9306,8 @@ msgid ""
 "Some batch processes may take a few minutes to run and could prevent other "
 "users being able to use the system for a short time."
 msgstr ""
+"Some batch processes may take a few minutes to run and could prevent other "
+"users being able to use the system for a short time."
 
 #: main.js
 msgid ""
@@ -10105,6 +10113,8 @@ msgid ""
 "These batch processes are run each night by the system and should not need "
 "to be run manually."
 msgstr ""
+"These batch processes are run each night by the system and should not need "
+"to be run manually."
 
 #: test.js
 msgid ""
@@ -10695,7 +10705,7 @@ msgstr "Toucan"
 
 #: mobile.py
 msgid "Town"
-msgstr ""
+msgstr "Town"
 
 #: dbupdate.py
 msgid "Toy Fox Terrier"
@@ -10851,7 +10861,7 @@ msgstr "Tricolour"
 
 #: batch.js roles.js html.py
 msgid "Trigger Batch Processes"
-msgstr ""
+msgstr "Trigger Batch Processes"
 
 #: common.js
 msgid "Tu"
@@ -11622,7 +11632,7 @@ msgstr ""
 
 #: options.js
 msgid "When displaying person names, use the format"
-msgstr ""
+msgstr "When displaying person names, use the format"
 
 #: main.js
 msgid ""
@@ -12230,7 +12240,7 @@ msgstr "{plural0} test needs to be performed today"
 
 #: main.js
 msgid "{plural0} transport does not have a driver assigned"
-msgstr ""
+msgstr "{plural0} transport does not have a driver assigned"
 
 #: main.js
 msgid "{plural0} trap is overdue for return"
@@ -12370,7 +12380,7 @@ msgstr "{plural1} tests need to be performed today"
 
 #: main.js
 msgid "{plural1} transports do not have a driver assigned"
-msgstr ""
+msgstr "{plural1} transports do not have a driver assigned"
 
 #: main.js
 msgid "{plural1} traps are overdue for return"
@@ -12510,7 +12520,7 @@ msgstr "{plural2} tests need to be performed today"
 
 #: main.js
 msgid "{plural2} transports do not have a driver assigned"
-msgstr ""
+msgstr "{plural2} transports do not have a driver assigned"
 
 #: main.js
 msgid "{plural2} traps are overdue for return"
@@ -12650,7 +12660,7 @@ msgstr "{plural3} tests need to be performed today"
 
 #: main.js
 msgid "{plural3} transports do not have a driver assigned"
-msgstr ""
+msgstr "{plural3} transports do not have a driver assigned"
 
 #: main.js
 msgid "{plural3} traps are overdue for return"
