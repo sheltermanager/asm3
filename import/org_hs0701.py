@@ -37,6 +37,7 @@ cluother = asm.csv_to_list("data/hs0701_ac/LU_OtherType.xlsx.csv")
 ccall = asm.csv_to_list("data/hs0701_ac/Call.xlsx.csv")
 ccallnote = asm.csv_to_list("data/hs0701_ac/Call_Note.xlsx.csv")
 coriginalcall = asm.csv_to_list("data/hs0701_ac/cOriginalCall.xlsx.csv")
+clic = asm.csv_to_list("data/hs0701_ac/RabVacCitLic.xlsx.csv")
 
 cusers = asm.csv_to_list("data/hs0701_ac/ShelterUser.xlsx.csv")
 
@@ -45,12 +46,14 @@ asm.setid("animal", 10000)
 asm.setid("animalcontrol", 1000)
 asm.setid("owner", 1000)
 asm.setid("ownerdonation", 1000)
+asm.setid("ownerlicence", 1000)
 
 animals = {}
 animalcontrol = []
 movements = []
 owners = {}
 ownerdonations = []
+ownerlicences = []
 
 unknowntransfer = asm.Owner()
 unknowntransfer.OwnerSurname = "Transfer Location"
@@ -360,11 +363,27 @@ for oc in coriginalcall:
             ac.AnimalID = animals[ci["animalID"]].ID
     ac.CallNotes = comments.strip().replace("'", "`")
 
+for rl in clic:
+    if rl["customerID"].strip() == "": continue
+    if rl["animalID"].strip() == "": continue
+    ol = asm.OwnerLicence()
+    ownerlicences.append(ol)
+    ol.OwnerID = owners[rl["customerID"]].ID
+    ol.AnimalID = animals[rl["animalID"]].ID
+    ol.IssueDate = asm.getdate_yyyymmdd(rl["CL_IssueDate"])
+    ol.ExpiryDate = asm.getdate_yyyymmdd(rl["RV_ExpDate"])
+    if rl["CL_Type"] == "A":
+        ol.LicenceTypeID = 1
+    else: 
+        ol.LicenceTypeID = 2
+    ol.LicenceNumber = "cv%d: %s" % (ol.ID, rl["RV_TagNo"])
+
 print "\\set ON_ERROR_STOP\nBEGIN;"
 print "DELETE FROM animal WHERE ID >= 10000 AND ID < %d;" % asm.getid("animal")
 print "DELETE FROM animalcontrol WHERE ID >= 1000 AND ID < %d;" % asm.getid("animalcontrol")
 print "DELETE FROM owner WHERE ID >= 1000 AND ID < %d;" % asm.getid("owner")
 print "DELETE FROM ownerdonation WHERE ID >= 1000 AND ID < %d;" % asm.getid("ownerdonation")
+print "DELETE FROM ownerlicence WHERE ID >= 1000 AND ID < %d;" % asm.getid("ownerlicence")
 print "DELETE FROM adoption WHERE ID >= 1000 AND ID < %d;" % asm.getid("adoption")
 
 # Now that everything else is done, output stored records
@@ -378,6 +397,8 @@ for m in movements:
     print m
 for ac in animalcontrol:
     print ac
+for ol in ownerlicences:
+    print ol
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"

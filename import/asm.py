@@ -1736,4 +1736,39 @@ class OwnerDonation:
             )
         return makesql("ownerdonation", s)
 
-
+class OwnerLicence:
+    ID = 0
+    OwnerID = 0
+    AnimalID = 0
+    LicenceTypeID = 1
+    LicenceNumber = ""
+    LicenceFee = 0
+    IssueDate = None
+    ExpiryDate = None
+    Comments = ""
+    RecordVersion = 0
+    CreatedBy = "conversion"
+    CreatedDate = today()
+    LastChangedBy = "conversion"
+    LastChangedDate = today()
+    def __init__(self, ID = 0):
+        self.ID = ID
+        if ID == 0: self.ID = getid("ownerlicence")
+    def __str__(self):
+        s = (
+            ( "ID", di(self.ID) ),
+            ( "OwnerID", di(self.OwnerID) ),
+            ( "AnimalID", di(self.AnimalID) ),
+            ( "LicenceTypeID", di(self.LicenceTypeID) ),
+            ( "LicenceNumber", ds(self.LicenceNumber) ),
+            ( "LicenceFee", di(self.LicenceFee) ),
+            ( "IssueDate", dd(self.IssueDate) ),
+            ( "ExpiryDate", dd(self.ExpiryDate) ),
+            ( "Comments", ds(self.Comments) ),
+            ( "RecordVersion", di(self.RecordVersion) ),
+            ( "CreatedBy", ds(self.CreatedBy) ),
+            ( "CreatedDate", dd(self.CreatedDate) ),
+            ( "LastChangedBy", ds(self.LastChangedBy) ),
+            ( "LastChangedDate", dd(self.LastChangedDate) )
+            )
+        return makesql("ownerlicence", s)
