@@ -2,24 +2,20 @@
 # Copyright (c) 2009 Rosetta Contributors and Canonical Ltd 2009
 # This file is distributed under the same license as the sheltermanager package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2009.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: sheltermanager\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
 "PO-Revision-Date: 2015-01-25 03:23+0000\n"
 "Last-Translator: Robin Rawson-Tetley <db@sheltermanager.com>\n"
 "Language-Team: Russian <ru@li.org>\n"
+"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-03-02 05:18+0000\n"
 "X-Generator: Launchpad (build 17361)\n"
-
-#: animal_find_results.js i18n.py dbupdate.py
-msgid "Unknown"
-msgstr "Неизвестно"
+"X-Launchpad-Export-Date: 2015-03-02 05:18+0000\n"
 
 #: options.js
 msgid " days."
@@ -1060,8 +1056,7 @@ msgstr "Возраст в годах, например, 1, 0,5"
 
 #: movement.py
 msgid "An animal cannot have multiple open movements."
-msgstr ""
-"В информации о животном не должно быть несколько открытых перемещений."
+msgstr "В информации о животном не должно быть несколько открытых перемещений."
 
 #: reports.js
 msgid ""
@@ -1727,8 +1722,7 @@ msgid "Breed"
 msgstr "Порода"
 
 #: lookups.js
-msgid ""
-"Breed to use when publishing to third party services and adoption sites"
+msgid "Breed to use when publishing to third party services and adoption sites"
 msgstr ""
 "Указание породы используется для публикации объявлений на сторонних сервисах "
 "и профильных сайтах"
@@ -1936,8 +1930,7 @@ msgstr "Можете позволить себе пожертвования?"
 
 #: movement.py
 msgid "Can't reserve an animal that has an active movement."
-msgstr ""
-"Нельзя зарезервировать животное, у которого запланировано перемещение."
+msgstr "Нельзя зарезервировать животное, у которого запланировано перемещение."
 
 #: dbupdate.py
 msgid "Canaan Dog"
@@ -1971,8 +1964,7 @@ msgid "Cancel unadopted reservations after"
 msgstr "После отмены передачи снять резервирование через"
 
 #: options.js
-msgid ""
-"Cancel unadopted reservations after this many days, or 0 to never cancel"
+msgid "Cancel unadopted reservations after this many days, or 0 to never cancel"
 msgstr ""
 "После отмены передачи снять резервирование через указанное количество дней. "
 "Значение 0 - резервирование не снимается никогда"
@@ -2492,8 +2484,8 @@ msgid ""
 "Copy animal comments to the notes field of the web preferred media for this "
 "animal"
 msgstr ""
-"Скопировать содержимое поля Комментарий в поле Описание файла для веб-"
-"публикации."
+"Скопировать содержимое поля Комментарий в поле Описание файла для "
+"веб-публикации."
 
 #: media.js
 msgid "Copy from animal comments"
@@ -2587,7 +2579,8 @@ msgstr "Создать запись расходов"
 
 #: donation_receive.js
 msgid ""
-"Create a matching transaction for this payment and deposit it in this account"
+"Create a matching transaction for this payment and deposit it in this "
+"account"
 msgstr ""
 
 #: animal.js
@@ -4032,8 +4025,7 @@ msgstr ""
 
 #: main.js
 msgid "Entering 'os' in the search box will show you all shelter animals."
-msgstr ""
-"Введите «os» в поле поиска и вы увидите список всех животных в приюте."
+msgstr "Введите «os» в поле поиска и вы увидите список всех животных в приюте."
 
 #: dbupdate.py
 msgid "Entlebucher"
@@ -4720,8 +4712,7 @@ msgstr "Из других источников"
 
 #: movement.py
 msgid "From retailer is only valid on adoption movements."
-msgstr ""
-"Вариант «от продавца» возможен только в случае выдачи новому хозяину."
+msgstr "Вариант «от продавца» возможен только в случае выдачи новому хозяину."
 
 #: diary.js
 msgid "Future notes"
@@ -4786,8 +4777,7 @@ msgstr "Сформировать документацию"
 
 #: publish_options.js
 msgid "Generate image thumbnails as tn_$$IMAGE$$"
-msgstr ""
-"Автоматически создать миниатюры изображений с именами вида tn_$$IMAGE$$"
+msgstr "Автоматически создать миниатюры изображений с именами вида tn_$$IMAGE$$"
 
 #: mailmerge.js
 msgid "Generate letters"
@@ -5267,8 +5257,7 @@ msgid "If this person is a member, their membership number."
 msgstr "Членский номер, если у этого человека есть членство."
 
 #: stocklevel.js
-msgid ""
-"If this stock record is for a drug, the batch number from the container"
+msgid "If this stock record is for a drug, the batch number from the container"
 msgstr ""
 
 #: stocklevel.js
@@ -6424,15 +6413,13 @@ msgid "Medical profiles"
 msgstr "Шаблоны рецептов"
 
 #: medicalprofile.js
-msgid ""
-"Medical profiles need a profile name, treatment, dosage and frequencies."
+msgid "Medical profiles need a profile name, treatment, dosage and frequencies."
 msgstr ""
 "Для шаблона рецепта необходимо указать название, лекарство или процедуру, "
 "дозировку и периодичность."
 
 #: medical.js
-msgid ""
-"Medical regimens need an animal, name, dosage, a start date and frequencies."
+msgid "Medical regimens need an animal, name, dosage, a start date and frequencies."
 msgstr ""
 "Для назначения рецепта необходимо выбрать животное, а также указать "
 "название, дозировку, дату начала и периодичность процедур или приема "
@@ -7325,8 +7312,7 @@ msgid "Otterhound"
 msgstr "Оттерхаунд"
 
 #: options.js
-msgid ""
-"Our shelter does trial adoptions, allow us to mark these on movement screens"
+msgid "Our shelter does trial adoptions, allow us to mark these on movement screens"
 msgstr ""
 "Наш приют позволяет передать животное на испытательный срок. Такие "
 "перемещения отражаются на соответствующей странице"
@@ -7813,8 +7799,7 @@ msgid "Prairie Dog"
 msgstr "Степная собачка"
 
 #: options.js
-msgid ""
-"Prefill new media notes for animal images with animal comments if left blank"
+msgid "Prefill new media notes for animal images with animal comments if left blank"
 msgstr ""
 "Автоматически заполнять заметки к файлам с изображением животного общими "
 "комментариями, если поле оставлено пустым"
@@ -9373,8 +9358,7 @@ msgid "Species Z-A"
 msgstr "Вид от Я до А"
 
 #: lookups.js
-msgid ""
-"Species to use when publishing to third party services and adoption sites"
+msgid "Species to use when publishing to third party services and adoption sites"
 msgstr ""
 "Указание вида используется для публикации объявлений на сторонних сервисах и "
 "профильных сайтах"
@@ -9722,7 +9706,8 @@ msgstr "Шаблон публикации в Facebook"
 
 #: document_templates.js
 msgid ""
-"Template names can include a path portion with /, eg: Vets/Rabies Certificate"
+"Template names can include a path portion with /, eg: Vets/Rabies "
+"Certificate"
 msgstr "Имена шаблонов могут включать в себя часть пути со знаком /"
 
 #: dbupdate.py
@@ -9802,8 +9787,7 @@ msgid "The SmartTag type"
 msgstr "Тип идетификационного жетона"
 
 #: media.js
-msgid ""
-"The URL is the address of a web resource, eg: www.youtube.com/watch?v=xxxxxx"
+msgid "The URL is the address of a web resource, eg: www.youtube.com/watch?v=xxxxxx"
 msgstr "Ссылка на веб-ресурс, например: www.youtube.com/watch?v=xxxxxx"
 
 #: animal.js
@@ -10086,8 +10070,7 @@ msgid ""
 msgstr ""
 
 #: onlineforms.js
-msgid ""
-"These are the HTML headers and footers used when displaying online forms."
+msgid "These are the HTML headers and footers used when displaying online forms."
 msgstr ""
 
 #: reports.js
@@ -10096,8 +10079,7 @@ msgstr ""
 "Это верхние и нижние колонтитулы HTML, использующиеся при создания отчетов."
 
 #: options.js
-msgid ""
-"These are the default values for these fields when creating new records."
+msgid "These are the default values for these fields when creating new records."
 msgstr "Значения по умолчанию для этих полей при создании новых записей"
 
 #: batch.js
@@ -10141,8 +10123,7 @@ msgstr ""
 "Таким приютам предоставляются пакеты страховых полисов."
 
 #: options.js
-msgid ""
-"These options change the behaviour of the search box at the top of the page."
+msgid "These options change the behaviour of the search box at the top of the page."
 msgstr "Эти параметры изменяют поведение окна поиска вверху страницы."
 
 #: lookups.js
@@ -10214,8 +10195,7 @@ msgstr ""
 
 #: animal.py
 msgid "This animal has movements and cannot be removed."
-msgstr ""
-"Животное не может быть удалено, так как есть запись о его перемещении."
+msgstr "Животное не может быть удалено, так как есть запись о его перемещении."
 
 #: animal.js
 msgid "This animal has special needs"
@@ -10223,7 +10203,8 @@ msgstr "Это животное нуждается в дополнительно
 
 #: animal_new.js
 msgid ""
-"This animal has the same name as another animal recently added to the system."
+"This animal has the same name as another animal recently added to the "
+"system."
 msgstr ""
 
 #: animal.js
@@ -10234,8 +10215,7 @@ msgstr "Это животное является метисом двух пор�
 msgid ""
 "This animal is bonded with {0}. Adoption movement records will be created "
 "for all bonded animals."
-msgstr ""
-"Это животное должно содержаться с {0}. Будут перемещены оба животных."
+msgstr "Это животное должно содержаться с {0}. Будут перемещены оба животных."
 
 #: move_adopt.js move_reclaim.js
 msgid ""
@@ -10246,8 +10226,7 @@ msgstr ""
 "будет возвращено."
 
 #: move_adopt.js move_reclaim.js
-msgid ""
-"This animal is currently fostered, it will be automatically returned first."
+msgid "This animal is currently fostered, it will be automatically returned first."
 msgstr ""
 "Это животное сейчас находится на передержке, поэтому сначала оно по "
 "умолчанию будет возвращено."
@@ -10280,8 +10259,7 @@ msgid "This animal should be held in case it is reclaimed"
 msgstr ""
 
 #: animal.js
-msgid ""
-"This animal should not be included when publishing animals for adoption"
+msgid "This animal should not be included when publishing animals for adoption"
 msgstr ""
 "Исключить это животное при размещении информации о животных, доступных для "
 "передачи"
@@ -10383,13 +10361,11 @@ msgstr ""
 
 #: move_adopt.js move_reserve.js
 msgid "This person has not passed a homecheck"
-msgstr ""
-"Условия содержания в доме этого человека не соответствуют требованиям"
+msgstr "Условия содержания в доме этого человека не соответствуют требованиям"
 
 #: movements.js
 msgid "This person has not passed a homecheck."
-msgstr ""
-"Условия содержания в доме этого человека не соответствуют требованиям."
+msgstr "Условия содержания в доме этого человека не соответствуют требованиям."
 
 #: person.py
 msgid "This person has payments and cannot be removed."
@@ -10503,8 +10479,7 @@ msgstr ""
 
 #: common_tableform.js
 msgid "This will permanently remove the selected records, are you sure?"
-msgstr ""
-"Это приведет к безвозвратному удалению выбранных записей, вы уверены?"
+msgstr "Это приведет к безвозвратному удалению выбранных записей, вы уверены?"
 
 #: roles.js
 msgid "This will permanently remove the selected roles, are you sure?"
@@ -10530,8 +10505,7 @@ msgstr ""
 
 #: animal.js
 msgid "This will permanently remove this animal, are you sure?"
-msgstr ""
-"Это приведет к безвозвратному удалению животного из базы, вы уверены?"
+msgstr "Это приведет к безвозвратному удалению животного из базы, вы уверены?"
 
 #: incident.js
 msgid "This will permanently remove this incident, are you sure?"
@@ -10957,6 +10931,10 @@ msgstr ""
 msgid "Units"
 msgstr "Единицы измерения"
 
+#: animal_find_results.js i18n.py dbupdate.py
+msgid "Unknown"
+msgstr "Неизвестно"
+
 #: animal.js lookups.py
 msgid "Unknown microchip brand"
 msgstr ""
@@ -11081,7 +11059,8 @@ msgstr "Использовать автоматическое создание  
 
 #: options.js
 msgid ""
-"Use HTML5 client side image scaling where available to speed up image uploads"
+"Use HTML5 client side image scaling where available to speed up image "
+"uploads"
 msgstr ""
 "Использовать клиентское масштабирование изображений средствами HTML5 для "
 "ускорения загрузки изображений, если это возможно"
@@ -11432,8 +11411,7 @@ msgstr "Купоны"
 
 #: person_vouchers.js
 msgid "Vouchers need an issue and expiry date."
-msgstr ""
-"Для купонов нужно указать дату выдачи и дату окончания срока действия."
+msgstr "Для купонов нужно указать дату выдачи и дату окончания срока действия."
 
 #: header_edit_header.js search.js options.js roles.js waitinglist_results.js
 #: onlineform_incoming.js code.py html.py dbupdate.py
@@ -11501,8 +11479,7 @@ msgid "Warn if the name of the new animal is similar to one entered recently"
 msgstr ""
 
 #: options.js
-msgid ""
-"Warn when adopting to a person who has been banned from adopting animals"
+msgid "Warn when adopting to a person who has been banned from adopting animals"
 msgstr ""
 "Предупреждать о попытке передачи животного контактному лицу, для которого "
 "такая передача запрещена"
@@ -11606,8 +11583,7 @@ msgid ""
 msgstr ""
 
 #: options.js
-msgid ""
-"When I generate a document, make a note of it in the log with this type"
+msgid "When I generate a document, make a note of it in the log with this type"
 msgstr ""
 "Каждый раз, когда я автоматически создаю документ, делать запись о нем в "
 "журнале следующего типа"
@@ -11806,7 +11782,8 @@ msgstr "Йоркширский терьер"
 
 #: main.js
 msgid ""
-"You can bookmark search results, animals, people and most data entry screens."
+"You can bookmark search results, animals, people and most data entry "
+"screens."
 msgstr ""
 "Вы можете добавлять в закладки результаты поиска, животных, людей и большую "
 "часть страниц для ввода данных."
@@ -11820,8 +11797,7 @@ msgstr ""
 "> Параметры > Данные о приюте > Визуальное оформление."
 
 #: main.js
-msgid ""
-"You can drag and drop animals in shelter view to change their locations."
+msgid "You can drag and drop animals in shelter view to change their locations."
 msgstr ""
 
 #: main.js
@@ -11882,16 +11858,14 @@ msgid "You can't have a return without a movement."
 msgstr "Нельзя оформить возврат без операции перемещения."
 
 #: animal_find_results.js
-msgid ""
-"You didn't specify any search criteria, so an on-shelter search was assumed."
+msgid "You didn't specify any search criteria, so an on-shelter search was assumed."
 msgstr ""
 "Вы не указали никаких критериев для поиска, поэтому поиск осуществлялся по "
 "приюту."
 
 #: header.js common.js
 msgid "You have unsaved changes, are you sure you want to leave this page?"
-msgstr ""
-"Есть несохраненные изменения. Вы уверены, что хотите покинуть страницу?"
+msgstr "Есть несохраненные изменения. Вы уверены, что хотите покинуть страницу?"
 
 #: animal.py
 msgid "You must supply a code."
@@ -11918,8 +11892,7 @@ msgid ""
 msgstr ""
 
 #: main.js
-msgid ""
-"Your sheltermanager.com account is due to expire on {0}, please renew {1}"
+msgid "Your sheltermanager.com account is due to expire on {0}, please renew {1}"
 msgstr ""
 
 #: person_find_results.js incident_find_results.js incident_new.js person.js
@@ -12045,8 +12018,7 @@ msgid "{0} - {1} {2}"
 msgstr "{0} — {1} {2}"
 
 #: lostfound.py
-msgid ""
-"{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}"
+msgid "{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}"
 msgstr ""
 "{0} — {1} {2} ({3}), контактное лицо {4} ({5}) — пропало в {6}, почтовый "
 "индекс {7}, {8}"
@@ -12136,11 +12108,10 @@ msgid "{0} {1}: posted to Facebook page {2} by {3}"
 msgstr "{0} {1}: опубликовано на странице Facebook: {2}; автор: {3}"
 
 #: common.js
-msgid ""
-"{0}: Entered shelter {1}, Last changed on {2} by {3}. {4} {5} {6} aged {7}"
+msgid "{0}: Entered shelter {1}, Last changed on {2} by {3}. {4} {5} {6} aged {7}"
 msgstr ""
-"{0}: поступило в приют {1}; последнее изменение: {2}; автор: {3}. {4} {5} "
-"{6}, возраст {7}"
+"{0}: поступило в приют {1}; последнее изменение: {2}; автор: {3}. {4} {5} {6}"
+", возраст {7}"
 
 #: html.py
 msgid "{0}: {1} {2} - {3} {4}"

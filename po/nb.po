@@ -2,20 +2,20 @@
 # Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
 # This file is distributed under the same license as the sheltermanager package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: sheltermanager\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
 "PO-Revision-Date: 2015-01-25 03:22+0000\n"
 "Last-Translator: Trine Storbråten <trine@dyrebeskyttelsen-bergen.no>\n"
 "Language-Team: Norwegian Bokmal <nb@li.org>\n"
+"Language: nb\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-03-02 05:17+0000\n"
 "X-Generator: Launchpad (build 17361)\n"
+"X-Launchpad-Export-Date: 2015-03-02 05:17+0000\n"
 
 #: options.js
 msgid " days."
@@ -137,8 +137,7 @@ msgstr "En beskrivelse eller andre opplysninger om dyret"
 
 #: person.js
 msgid "A list of areas this person will homecheck - eg: S60 S61"
-msgstr ""
-"En liste over områder denne personen skal hjemmesjekke - f.eks. 560 561"
+msgstr "En liste over områder denne personen skal hjemmesjekke - f.eks. 560 561"
 
 #: movements.js
 msgid "A movement must have a reservation date or type."
@@ -1729,8 +1728,7 @@ msgid "Breed"
 msgstr "Rase"
 
 #: lookups.js
-msgid ""
-"Breed to use when publishing to third party services and adoption sites"
+msgid "Breed to use when publishing to third party services and adoption sites"
 msgstr ""
 "Rase som skal brukes når det publiseres til tredjeparter og adopsjonssider"
 
@@ -1972,8 +1970,7 @@ msgid "Cancel unadopted reservations after"
 msgstr "Avbryt ikke-adoptert reservasjon etter"
 
 #: options.js
-msgid ""
-"Cancel unadopted reservations after this many days, or 0 to never cancel"
+msgid "Cancel unadopted reservations after this many days, or 0 to never cancel"
 msgstr ""
 "Avbryt ikke adopterte reservasjoner etter antall dager, eller 0 for å aldri "
 "avbryte"
@@ -2588,7 +2585,8 @@ msgstr "Lag et kostnadsregister"
 
 #: donation_receive.js
 msgid ""
-"Create a matching transaction for this payment and deposit it in this account"
+"Create a matching transaction for this payment and deposit it in this "
+"account"
 msgstr ""
 "Opprett en lik transaksjon for denne betalingen og sett inn på denne kontoen"
 
@@ -3859,8 +3857,8 @@ msgid ""
 "Email incoming form submissions to this comma separated list of email "
 "addresses"
 msgstr ""
-"Send inngående skjemaforespørsler til denne komma-separerte listen med e-"
-"postadresser"
+"Send inngående skjemaforespørsler til denne komma-separerte listen med "
+"e-postadresser"
 
 #: media.js
 msgid "Email media"
@@ -5265,8 +5263,7 @@ msgid "If this person is a member, their membership number."
 msgstr "Hvis denne personen er et medlem, medlemsnummeret."
 
 #: stocklevel.js
-msgid ""
-"If this stock record is for a drug, the batch number from the container"
+msgid "If this stock record is for a drug, the batch number from the container"
 msgstr ""
 
 #: stocklevel.js
@@ -6419,16 +6416,13 @@ msgid "Medical profiles"
 msgstr "Medisinske profiler"
 
 #: medicalprofile.js
-msgid ""
-"Medical profiles need a profile name, treatment, dosage and frequencies."
+msgid "Medical profiles need a profile name, treatment, dosage and frequencies."
 msgstr ""
 "Medisinske profiler trenger et profilnavn, behandling, dosering og hyppighet."
 
 #: medical.js
-msgid ""
-"Medical regimens need an animal, name, dosage, a start date and frequencies."
-msgstr ""
-"Medisinering trenger et dyr, navn, dosering, en startdato og hyppighet."
+msgid "Medical regimens need an animal, name, dosage, a start date and frequencies."
+msgstr "Medisinering trenger et dyr, navn, dosering, en startdato og hyppighet."
 
 #: mobile.py
 msgid "Medicate"
@@ -7317,8 +7311,7 @@ msgid "Otterhound"
 msgstr "Otterhound"
 
 #: options.js
-msgid ""
-"Our shelter does trial adoptions, allow us to mark these on movement screens"
+msgid "Our shelter does trial adoptions, allow us to mark these on movement screens"
 msgstr ""
 "Vårt hjelpesenter tilbyr prøveadopsjon, la oss merke disse under "
 "flytteaktivitet"
@@ -7803,8 +7796,7 @@ msgid "Prairie Dog"
 msgstr "Præriehund"
 
 #: options.js
-msgid ""
-"Prefill new media notes for animal images with animal comments if left blank"
+msgid "Prefill new media notes for animal images with animal comments if left blank"
 msgstr ""
 "Forhåndsutfyll nye mediamerknader for dyrebilder med dyrekommentarer hvis "
 "feltet er tomt"
@@ -9360,8 +9352,7 @@ msgid "Species Z-A"
 msgstr "Arter Z-A"
 
 #: lookups.js
-msgid ""
-"Species to use when publishing to third party services and adoption sites"
+msgid "Species to use when publishing to third party services and adoption sites"
 msgstr ""
 "Arter som skal brukes når det publiseres til tredjeparts tjenester og "
 "adopsjonssider"
@@ -9711,7 +9702,8 @@ msgstr "Mal for Facebook-poster"
 
 #: document_templates.js
 msgid ""
-"Template names can include a path portion with /, eg: Vets/Rabies Certificate"
+"Template names can include a path portion with /, eg: Vets/Rabies "
+"Certificate"
 msgstr ""
 "Navn på maler kan inkluder en del med  /, f.eks. Veterinær/rabiessertifikat"
 
@@ -9794,8 +9786,7 @@ msgid "The SmartTag type"
 msgstr "SmartTag-type"
 
 #: media.js
-msgid ""
-"The URL is the address of a web resource, eg: www.youtube.com/watch?v=xxxxxx"
+msgid "The URL is the address of a web resource, eg: www.youtube.com/watch?v=xxxxxx"
 msgstr ""
 "Nettadressen er nettkildens adresse, f.eks. www.youtube.com/watch?v=xxxxxx"
 
@@ -10023,8 +10014,7 @@ msgstr "Hjelpesenterets referansenummer"
 msgid ""
 "The sheltermanager.com admin account password cannot be changed here, please "
 "visit {0}"
-msgstr ""
-"Sheltermanager.com adminkontoens passord kan ikke endres her, besøk {0}"
+msgstr "Sheltermanager.com adminkontoens passord kan ikke endres her, besøk {0}"
 
 #: animal.js
 msgid "The size of this animal"
@@ -10069,16 +10059,16 @@ msgid ""
 "There is not enough information in the form to create a person record (need "
 "a surname)."
 msgstr ""
-"Det er ikke nok informasjon i skjemaet til å opprette en personoppføring "
-"(trenger et etternavn)."
+"Det er ikke nok informasjon i skjemaet til å opprette en personoppføring ("
+"trenger et etternavn)."
 
 #: onlineform.py
 msgid ""
 "There is not enough information in the form to create a waiting list record "
 "(need a description)."
 msgstr ""
-"Det er ikke nok informasjon i skjemaet til å opprette en sakslisteoppføring "
-"(trenger en beskrivelse)."
+"Det er ikke nok informasjon i skjemaet til å opprette en sakslisteoppføring ("
+"trenger en beskrivelse)."
 
 #: onlineform.py
 msgid ""
@@ -10087,8 +10077,7 @@ msgid ""
 msgstr ""
 
 #: onlineforms.js
-msgid ""
-"These are the HTML headers and footers used when displaying online forms."
+msgid "These are the HTML headers and footers used when displaying online forms."
 msgstr ""
 "Disse er HTML header og footer som brukes ved visning på nettbaserte "
 "skjemaer."
@@ -10099,8 +10088,7 @@ msgstr ""
 "Disse er HTML-topptekst og bunntekst som brukes når rapporterer genereres."
 
 #: options.js
-msgid ""
-"These are the default values for these fields when creating new records."
+msgid "These are the default values for these fields when creating new records."
 msgstr ""
 "Disse er standardverdier for disse feltene når man oppretter nye oppføringer."
 
@@ -10144,10 +10132,8 @@ msgstr ""
 "og gir felter for forsikringsnumre."
 
 #: options.js
-msgid ""
-"These options change the behaviour of the search box at the top of the page."
-msgstr ""
-"Disse alternativene endrer oppførslen på søkeboksen på toppen av siden"
+msgid "These options change the behaviour of the search box at the top of the page."
+msgstr "Disse alternativene endrer oppførslen på søkeboksen på toppen av siden"
 
 #: lookups.js
 msgid ""
@@ -10227,9 +10213,9 @@ msgstr "Dette dyret har spesialbehov"
 
 #: animal_new.js
 msgid ""
-"This animal has the same name as another animal recently added to the system."
-msgstr ""
-"Dette dyret har samme navnet som et annet dyr som er lagt til systemet."
+"This animal has the same name as another animal recently added to the "
+"system."
+msgstr "Dette dyret har samme navnet som et annet dyr som er lagt til systemet."
 
 #: animal.js
 msgid "This animal is a crossbreed"
@@ -10250,8 +10236,7 @@ msgid ""
 msgstr "Dette dyret er i butikk, det vil automatisk returneres først."
 
 #: move_adopt.js move_reclaim.js
-msgid ""
-"This animal is currently fostered, it will be automatically returned first."
+msgid "This animal is currently fostered, it will be automatically returned first."
 msgstr "Dette dyret er i fosterhjem, det vil automatisk returneres først."
 
 #: move_adopt.js movement.py
@@ -10280,8 +10265,7 @@ msgid "This animal should be held in case it is reclaimed"
 msgstr "Dette dyret skal holdes på vent i tilfelle eier melder seg"
 
 #: animal.js
-msgid ""
-"This animal should not be included when publishing animals for adoption"
+msgid "This animal should not be included when publishing animals for adoption"
 msgstr "Dette dyret skal ikke inkluderes i publiserte dyr for adopsjon"
 
 #: animal.js
@@ -10333,8 +10317,7 @@ msgstr "Denne fødselsdatoen er et estimat"
 
 #: accounts.js
 msgid "This income account is the source for payments received of this type"
-msgstr ""
-"Denne innskuddskontoen er kilden for betalinger mottatt av denne typen"
+msgstr "Denne innskuddskontoen er kilden for betalinger mottatt av denne typen"
 
 #: lookups.py
 msgid ""
@@ -11071,7 +11054,8 @@ msgstr "Bruk automatiske forsikringsnumre"
 
 #: options.js
 msgid ""
-"Use HTML5 client side image scaling where available to speed up image uploads"
+"Use HTML5 client side image scaling where available to speed up image "
+"uploads"
 msgstr ""
 "Bruk HTML5 bildeskalering der det er tilgjengelig for å fremskynde "
 "bildeopplasting"
@@ -11489,10 +11473,8 @@ msgid "Warn if the name of the new animal is similar to one entered recently"
 msgstr "Advarsel om navnet på et nytt dyr er lik et som nylig er tatt inn"
 
 #: options.js
-msgid ""
-"Warn when adopting to a person who has been banned from adopting animals"
-msgstr ""
-"Advarsel når det omplasseres til en person som er bannet for adopsjon"
+msgid "Warn when adopting to a person who has been banned from adopting animals"
+msgstr "Advarsel når det omplasseres til en person som er bannet for adopsjon"
 
 #: options.js
 msgid "Warn when adopting to a person who has not been homechecked"
@@ -11590,8 +11572,7 @@ msgstr ""
 "Når jeg endrer dyrets sted, lag et notat om det i loggen med denne typen"
 
 #: options.js
-msgid ""
-"When I generate a document, make a note of it in the log with this type"
+msgid "When I generate a document, make a note of it in the log with this type"
 msgstr ""
 "Når jeg genererer et dokument, lag en merknad om det i loggen med denne typen"
 
@@ -11781,7 +11762,8 @@ msgstr "Yorkshire Terrier Yorkie"
 
 #: main.js
 msgid ""
-"You can bookmark search results, animals, people and most data entry screens."
+"You can bookmark search results, animals, people and most data entry "
+"screens."
 msgstr "Du kan lage bokmerker på dine søk"
 
 #: main.js
@@ -11793,8 +11775,7 @@ msgstr ""
 "Alternativer - Hjelpesenterets detaljer - Visuelt tema."
 
 #: main.js
-msgid ""
-"You can drag and drop animals in shelter view to change their locations."
+msgid "You can drag and drop animals in shelter view to change their locations."
 msgstr "Du kan dra og slippe dyr på hjelpesenteret for å endre deres steder."
 
 #: main.js
@@ -11855,8 +11836,7 @@ msgid "You can't have a return without a movement."
 msgstr "Du kan ikke returnere et dyr uten en bevegelse."
 
 #: animal_find_results.js
-msgid ""
-"You didn't specify any search criteria, so an on-shelter search was assumed."
+msgid "You didn't specify any search criteria, so an on-shelter search was assumed."
 msgstr ""
 "Du spesifiserte ikke søkekriterier, så det ble antatt et søk på "
 "hjelpesenteret."
@@ -11896,8 +11876,7 @@ msgstr ""
 "du velger et nytt passord."
 
 #: main.js
-msgid ""
-"Your sheltermanager.com account is due to expire on {0}, please renew {1}"
+msgid "Your sheltermanager.com account is due to expire on {0}, please renew {1}"
 msgstr "Din sheltermanager.com-konto utløper {0}, fornye {1}"
 
 #: person_find_results.js incident_find_results.js incident_new.js person.js
@@ -12022,8 +12001,7 @@ msgid "{0} - {1} {2}"
 msgstr "{0} - {1} {2}"
 
 #: lostfound.py
-msgid ""
-"{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}"
+msgid "{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}"
 msgstr ""
 "{0} - {1} {2} ({3}), kontakt {4} ({5}) - mistet i {6}, postnummer {7}, den "
 "{8}"
@@ -12113,8 +12091,7 @@ msgid "{0} {1}: posted to Facebook page {2} by {3}"
 msgstr "{0}{1}: Delt til Facebook side {2} av {3}"
 
 #: common.js
-msgid ""
-"{0}: Entered shelter {1}, Last changed on {2} by {3}. {4} {5} {6} aged {7}"
+msgid "{0}: Entered shelter {1}, Last changed on {2} by {3}. {4} {5} {6} aged {7}"
 msgstr ""
 "{0}: Inn på hjelpesenteret {1}, Sist endret {2} av {3}. {4} {5} {6} alder {7}"
 

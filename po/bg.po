@@ -2,20 +2,20 @@
 # Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
 # This file is distributed under the same license as the sheltermanager package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: sheltermanager\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
 "PO-Revision-Date: 2015-01-25 03:19+0000\n"
 "Last-Translator: Ivo Dimov <dimov.ivo@gmail.com>\n"
 "Language-Team: Bulgarian <bg@li.org>\n"
+"Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-03-02 05:15+0000\n"
 "X-Generator: Launchpad (build 17361)\n"
+"X-Launchpad-Export-Date: 2015-03-02 05:15+0000\n"
 
 #: options.js
 msgid " days."
@@ -1733,10 +1733,8 @@ msgid "Breed"
 msgstr "Порода"
 
 #: lookups.js
-msgid ""
-"Breed to use when publishing to third party services and adoption sites"
-msgstr ""
-"Порода, която ще се използва при публикуване в сайтове за осиновяване"
+msgid "Breed to use when publishing to third party services and adoption sites"
+msgstr "Порода, която ще се използва при публикуване в сайтове за осиновяване"
 
 #: lookups.py
 msgid "Breeds"
@@ -1975,8 +1973,7 @@ msgid "Cancel unadopted reservations after"
 msgstr "Анулирай резервация след"
 
 #: options.js
-msgid ""
-"Cancel unadopted reservations after this many days, or 0 to never cancel"
+msgid "Cancel unadopted reservations after this many days, or 0 to never cancel"
 msgstr ""
 "Анулирай резервация след толкова на брой дни или остави 0 за да не се "
 "анулират никога"
@@ -2591,7 +2588,8 @@ msgstr "Създай запис за разход"
 
 #: donation_receive.js
 msgid ""
-"Create a matching transaction for this payment and deposit it in this account"
+"Create a matching transaction for this payment and deposit it in this "
+"account"
 msgstr ""
 
 #: animal.js
@@ -4599,8 +4597,7 @@ msgstr "Регистър на приемните домове"
 
 #: movement.py
 msgid "Foster movements must have a valid foster date."
-msgstr ""
-"Настаняването в приемен дом трябва да има валидна дата на настаняване."
+msgstr "Настаняването в приемен дом трябва да има валидна дата на настаняване."
 
 #: move_foster.js
 msgid "Foster successfully created."
@@ -5120,8 +5117,7 @@ msgstr "Задържане"
 
 #: animal.js
 msgid "Hold the animal until this date or blank to hold indefinitely"
-msgstr ""
-"Задръж животното до тази дата или остави празно за задържане завинаги"
+msgstr "Задръж животното до тази дата или остави празно за задържане завинаги"
 
 #: animal_bulk.js animal.js animal_find_results.js html.py
 msgid "Hold until"
@@ -5266,8 +5262,7 @@ msgid "If this person is a member, their membership number."
 msgstr "Ако този човек е член, датата, на която членството му изтича."
 
 #: stocklevel.js
-msgid ""
-"If this stock record is for a drug, the batch number from the container"
+msgid "If this stock record is for a drug, the batch number from the container"
 msgstr ""
 
 #: stocklevel.js
@@ -6239,8 +6234,7 @@ msgstr "Maine Coon"
 
 #: media.js
 msgid "Make this the default image when creating documents"
-msgstr ""
-"Направи това изображението по подразбиране при създаване на документи"
+msgstr "Направи това изображението по подразбиране при създаване на документи"
 
 #: media.js
 msgid ""
@@ -6252,8 +6246,7 @@ msgstr ""
 
 #: media.js
 msgid "Make this the default video link when publishing to the web"
-msgstr ""
-"Направи тази връзка към видео,връзката по подразбиране при публикуване"
+msgstr "Направи тази връзка към видео,връзката по подразбиране при публикуване"
 
 #: dbupdate.py
 msgid "Male"
@@ -6424,13 +6417,11 @@ msgid "Medical profiles"
 msgstr "Медицински профили"
 
 #: medicalprofile.js
-msgid ""
-"Medical profiles need a profile name, treatment, dosage and frequencies."
+msgid "Medical profiles need a profile name, treatment, dosage and frequencies."
 msgstr "Медицинските профили се нуждаят от име, лечение, доса и честота."
 
 #: medical.js
-msgid ""
-"Medical regimens need an animal, name, dosage, a start date and frequencies."
+msgid "Medical regimens need an animal, name, dosage, a start date and frequencies."
 msgstr ""
 "Медицинските режими трябва да имат животно, име, доза начална дата и честота."
 
@@ -7211,8 +7202,7 @@ msgstr "Интернет формата има нужда от име и опи�
 msgid ""
 "Online forms can be linked to from your website and used to take information "
 "from visitors for applications, etc."
-msgstr ""
-"Интернет формите могат да бъдат вързани към форми на вашият уеб сайт."
+msgstr "Интернет формите могат да бъдат вързани към форми на вашият уеб сайт."
 
 #: media.js
 msgid "Only PDF, HTML and JPG image files can be attached."
@@ -7319,8 +7309,7 @@ msgid "Otterhound"
 msgstr "Otterhound"
 
 #: options.js
-msgid ""
-"Our shelter does trial adoptions, allow us to mark these on movement screens"
+msgid "Our shelter does trial adoptions, allow us to mark these on movement screens"
 msgstr ""
 "Приюта прави пробни осиновявания. Разреши маркирането на тези движения на "
 "екрана за движения"
@@ -7805,8 +7794,7 @@ msgid "Prairie Dog"
 msgstr "Prairie Dog"
 
 #: options.js
-msgid ""
-"Prefill new media notes for animal images with animal comments if left blank"
+msgid "Prefill new media notes for animal images with animal comments if left blank"
 msgstr ""
 "Попълни бележките за медиите на новите изображения с кометарите от животното "
 "ако е оставено празно"
@@ -9366,8 +9354,7 @@ msgid "Species Z-A"
 msgstr "Вид животно (Я-А)"
 
 #: lookups.js
-msgid ""
-"Species to use when publishing to third party services and adoption sites"
+msgid "Species to use when publishing to third party services and adoption sites"
 msgstr "Вид, който да се използва при публикуване в сайтове за осиновяване"
 
 #: vaccination.js
@@ -9715,10 +9702,11 @@ msgstr "Шаблон за качване в Facebook"
 
 #: document_templates.js
 msgid ""
-"Template names can include a path portion with /, eg: Vets/Rabies Certificate"
+"Template names can include a path portion with /, eg: Vets/Rabies "
+"Certificate"
 msgstr ""
-"Имената на шаблоните могат да съдържат разделение в пътя с /, пр. "
-"Ветеринари/Заешки сертификати"
+"Имената на шаблоните могат да съдържат разделение в пътя с /, пр. Ветеринари/"
+"Заешки сертификати"
 
 #: dbupdate.py
 msgid "Tennessee Walker"
@@ -9798,10 +9786,8 @@ msgid "The SmartTag type"
 msgstr "Тип на SmartTag"
 
 #: media.js
-msgid ""
-"The URL is the address of a web resource, eg: www.youtube.com/watch?v=xxxxxx"
-msgstr ""
-"URL е адресът на интернет ресурса. Пр: www.youtube.com/watch?v=xxxxxx"
+msgid "The URL is the address of a web resource, eg: www.youtube.com/watch?v=xxxxxx"
+msgstr "URL е адресът на интернет ресурса. Пр: www.youtube.com/watch?v=xxxxxx"
 
 #: animal.js
 msgid "The animal name"
@@ -9865,8 +9851,7 @@ msgstr "Датата, на която животното е татуирано"
 
 #: move_foster.js
 msgid "The date the foster animal will be returned if known"
-msgstr ""
-"Датата, на която животното ще бъде върнато от приемния дом, ако се знае"
+msgstr "Датата, на която животното ще бъде върнато от приемния дом, ако се знае"
 
 #: move_foster.js
 msgid "The date the foster is effective from"
@@ -10095,8 +10080,7 @@ msgid ""
 msgstr ""
 
 #: onlineforms.js
-msgid ""
-"These are the HTML headers and footers used when displaying online forms."
+msgid "These are the HTML headers and footers used when displaying online forms."
 msgstr ""
 "Това са HTML горен и долен колонтитул когато се показват интернет формите."
 
@@ -10107,8 +10091,7 @@ msgstr ""
 "справки."
 
 #: options.js
-msgid ""
-"These are the default values for these fields when creating new records."
+msgid "These are the default values for these fields when creating new records."
 msgstr ""
 "Това са стойностите по подразбиране за изброените полета при създаване на "
 "нов запис."
@@ -10154,10 +10137,8 @@ msgstr ""
 "имат кочан с номера полици за издаване"
 
 #: options.js
-msgid ""
-"These options change the behaviour of the search box at the top of the page."
-msgstr ""
-"Тези настройки променят полето за търсене в горната част на страницата."
+msgid "These options change the behaviour of the search box at the top of the page."
+msgstr "Тези настройки променят полето за търсене в горната част на страницата."
 
 #: lookups.js
 msgid ""
@@ -10237,7 +10218,8 @@ msgstr "Това животно има специални нужди"
 
 #: animal_new.js
 msgid ""
-"This animal has the same name as another animal recently added to the system."
+"This animal has the same name as another animal recently added to the "
+"system."
 msgstr "Това животни има същото име като скоро добавено в системата."
 
 #: animal.js
@@ -10256,12 +10238,10 @@ msgstr ""
 msgid ""
 "This animal is currently at a retailer, it will be automatically returned "
 "first."
-msgstr ""
-"Това животно се води при търговец. Първо ще бъде автоматично върнато."
+msgstr "Това животно се води при търговец. Първо ще бъде автоматично върнато."
 
 #: move_adopt.js move_reclaim.js
-msgid ""
-"This animal is currently fostered, it will be automatically returned first."
+msgid "This animal is currently fostered, it will be automatically returned first."
 msgstr ""
 "Това животно в момента е настанено в приемен дом. Системата първо ще го "
 "върне в приюта автоматично."
@@ -10294,8 +10274,7 @@ msgstr ""
 "мнението"
 
 #: animal.js
-msgid ""
-"This animal should not be included when publishing animals for adoption"
+msgid "This animal should not be included when publishing animals for adoption"
 msgstr ""
 "Изключи възможността това животно да бъде публикувано в сайтовете за "
 "осиновяване"
@@ -10470,8 +10449,7 @@ msgstr ""
 msgid ""
 "This person lives in the same area as the person who brought the animal to "
 "the shelter."
-msgstr ""
-"Това лице живее в същият район като лицето довело животното в приюта."
+msgstr "Това лице живее в същият район като лицето довело животното в приюта."
 
 #: document_repository.js
 msgid ""
@@ -11087,7 +11065,8 @@ msgstr "Използвай автоматично номериране на по
 
 #: options.js
 msgid ""
-"Use HTML5 client side image scaling where available to speed up image uploads"
+"Use HTML5 client side image scaling where available to speed up image "
+"uploads"
 msgstr ""
 "Използвай HTML5 намаляване на големината на изображенията за подобряване на "
 "скоростта"
@@ -11507,8 +11486,7 @@ msgstr ""
 "Предупреди ако името на животното  е подобно на вече въведено в системата"
 
 #: options.js
-msgid ""
-"Warn when adopting to a person who has been banned from adopting animals"
+msgid "Warn when adopting to a person who has been banned from adopting animals"
 msgstr "Предупреди, когато осиновителят е със забрана за осиновяване"
 
 #: options.js
@@ -11606,10 +11584,8 @@ msgid ""
 msgstr ""
 
 #: options.js
-msgid ""
-"When I generate a document, make a note of it in the log with this type"
-msgstr ""
-"При генериране на документ, направи бележка в лога с типа на документа"
+msgid "When I generate a document, make a note of it in the log with this type"
+msgstr "При генериране на документ, направи бележка в лога с типа на документа"
 
 #: options.js
 msgid "When a message is created, email it to each matching user"
@@ -11801,7 +11777,8 @@ msgstr "Йоркширски териер"
 
 #: main.js
 msgid ""
-"You can bookmark search results, animals, people and most data entry screens."
+"You can bookmark search results, animals, people and most data entry "
+"screens."
 msgstr "Може да си добавите като букмарк животни, критерии за търсене и т.н."
 
 #: main.js
@@ -11813,8 +11790,7 @@ msgstr ""
 "приюта-Цветово оформление."
 
 #: main.js
-msgid ""
-"You can drag and drop animals in shelter view to change their locations."
+msgid "You can drag and drop animals in shelter view to change their locations."
 msgstr ""
 "Можете да размествате животните по местонахождения, чрез дръпване с мишката "
 "на екрана за преглед на приюта."
@@ -11878,8 +11854,7 @@ msgid "You can't have a return without a movement."
 msgstr "Не може да имате връщане, без да имате движение за даване."
 
 #: animal_find_results.js
-msgid ""
-"You didn't specify any search criteria, so an on-shelter search was assumed."
+msgid "You didn't specify any search criteria, so an on-shelter search was assumed."
 msgstr ""
 "Не сте избрали никакъв критерий за търсене, затова по подразбиране излизат "
 "животните в приюта."
@@ -11920,10 +11895,8 @@ msgstr ""
 "паролата."
 
 #: main.js
-msgid ""
-"Your sheltermanager.com account is due to expire on {0}, please renew {1}"
-msgstr ""
-"Абонамента Ви за sheltermanager.co, изтича на {0}. Моле подновете {1}"
+msgid "Your sheltermanager.com account is due to expire on {0}, please renew {1}"
+msgstr "Абонамента Ви за sheltermanager.co, изтича на {0}. Моле подновете {1}"
 
 #: person_find_results.js incident_find_results.js incident_new.js person.js
 #: lostfound_find_results.js lostfound_find.js person_new.js lostfound.js
@@ -12047,10 +12020,8 @@ msgid "{0} - {1} {2}"
 msgstr "{0} - {1} {2}"
 
 #: lostfound.py
-msgid ""
-"{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}"
-msgstr ""
-"{0} - {1} {2} ({3}),контакт {4} ({5}) - загубено в {6}, ПК {7}, на {8}"
+msgid "{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}"
+msgstr "{0} - {1} {2} ({3}),контакт {4} ({5}) - загубено в {6}, ПК {7}, на {8}"
 
 #: animal_bulk.js
 msgid "{0} animals successfully updated."
@@ -12137,8 +12108,7 @@ msgid "{0} {1}: posted to Facebook page {2} by {3}"
 msgstr "{0} {1}: качи на Facebook страницата {2} от {3}"
 
 #: common.js
-msgid ""
-"{0}: Entered shelter {1}, Last changed on {2} by {3}. {4} {5} {6} aged {7}"
+msgid "{0}: Entered shelter {1}, Last changed on {2} by {3}. {4} {5} {6} aged {7}"
 msgstr ""
 "{0}: Приет в приюта {1}, Последна редакция {2} от {3}. {4} {5} {6} на "
 "възраст {7}"

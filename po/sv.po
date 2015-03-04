@@ -2,20 +2,20 @@
 # Copyright (c) 2009 Rosetta Contributors and Canonical Ltd 2009
 # This file is distributed under the same license as the sheltermanager package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2009.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: sheltermanager\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
 "PO-Revision-Date: 2015-01-25 03:24+0000\n"
 "Last-Translator: Jennifer Luetz <info@foreningen9liv.se>\n"
 "Language-Team: Swedish <sv@li.org>\n"
+"Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-03-02 05:19+0000\n"
 "X-Generator: Launchpad (build 17361)\n"
+"X-Launchpad-Export-Date: 2015-03-02 05:19+0000\n"
 
 #: options.js
 msgid " days."
@@ -1413,8 +1413,7 @@ msgstr "Australian Terrier"
 
 #: options.js
 msgid "Auto log users out after this many minutes of inactivity"
-msgstr ""
-"Automatiskt logga ut användare efter så här många minuters inaktivitet"
+msgstr "Automatiskt logga ut användare efter så här många minuters inaktivitet"
 
 #: waitinglist.py
 msgid "Auto removed due to lack of owner contact."
@@ -1731,8 +1730,7 @@ msgid "Breed"
 msgstr "Ras"
 
 #: lookups.js
-msgid ""
-"Breed to use when publishing to third party services and adoption sites"
+msgid "Breed to use when publishing to third party services and adoption sites"
 msgstr ""
 "Ras för användning vid publicering till tredje parts tjänster och "
 "adoptionswebbplatser"
@@ -1975,8 +1973,7 @@ msgid "Cancel unadopted reservations after"
 msgstr "Avboka oadopterade tingningar efter"
 
 #: options.js
-msgid ""
-"Cancel unadopted reservations after this many days, or 0 to never cancel"
+msgid "Cancel unadopted reservations after this many days, or 0 to never cancel"
 msgstr ""
 "Avboka oadopterade tingningar efter så här många dagar, eller 0 för att "
 "aldrig avboka"
@@ -2590,7 +2587,8 @@ msgstr "Skapa kostnadsjournal"
 
 #: donation_receive.js
 msgid ""
-"Create a matching transaction for this payment and deposit it in this account"
+"Create a matching transaction for this payment and deposit it in this "
+"account"
 msgstr ""
 
 #: animal.js
@@ -2623,8 +2621,7 @@ msgstr "Skapa en ny mall genom att kopiera den markerade mallen"
 
 #: lostfound.js
 msgid "Create a new waiting list entry from this found animal record"
-msgstr ""
-"Skapa en ny väntelistanteckning från detta upphittade djurets journal"
+msgstr "Skapa en ny väntelistanteckning från detta upphittade djurets journal"
 
 #: incident_new.js person_new.js animal_new.js lostfound_new.js
 #: waitinglist_new.js
@@ -2657,8 +2654,7 @@ msgstr "Skapa saknade söksvärden"
 
 #: diarytask.js
 msgid "Create note this many days from today, or 9999 to ask"
-msgstr ""
-"Skapa anteckning så här många dagar från idag, eller 9999 för att fråga"
+msgstr "Skapa anteckning så här många dagar från idag, eller 9999 för att fråga"
 
 #: onlineform_incoming.js
 msgid "Create or attach person records from the selected forms"
@@ -5232,9 +5228,9 @@ msgid ""
 "127.0.0.0/8). If left blank, the user can login from any address."
 msgstr ""
 "IP begränsning är en mellanslagsavgränsad lista över IP netblocks i CIDR som "
-"den här användaren är *bara* tilllåten att logga ur från (t.ex. "
-"192.168.0.0/24 127.0.0.0 / 8). Om det lämnas tomt, kan användaren logga in "
-"från valfri adress."
+"den här användaren är *bara* tilllåten att logga ur från (t.ex. 192.168.0.0/"
+"24 127.0.0.0 / 8). Om det lämnas tomt, kan användaren logga in från valfri "
+"adress."
 
 #: dbupdate.py
 msgid "Ibizan Hound"
@@ -5265,8 +5261,7 @@ msgid "If this person is a member, their membership number."
 msgstr "Om denna person är medlem, deras medlemsnummer."
 
 #: stocklevel.js
-msgid ""
-"If this stock record is for a drug, the batch number from the container"
+msgid "If this stock record is for a drug, the batch number from the container"
 msgstr ""
 
 #: stocklevel.js
@@ -6422,15 +6417,13 @@ msgid "Medical profiles"
 msgstr "Medicinska profiler"
 
 #: medicalprofile.js
-msgid ""
-"Medical profiles need a profile name, treatment, dosage and frequencies."
+msgid "Medical profiles need a profile name, treatment, dosage and frequencies."
 msgstr ""
 "Medicinska profiler behöver ett profilnamn, behandling, dosering och "
 "frekvens."
 
 #: medical.js
-msgid ""
-"Medical regimens need an animal, name, dosage, a start date and frequencies."
+msgid "Medical regimens need an animal, name, dosage, a start date and frequencies."
 msgstr ""
 "Medicinska behandlingar behöver ett djur, namn, dosering, ett startdatum och "
 "frekvenser."
@@ -7322,8 +7315,7 @@ msgid "Otterhound"
 msgstr "Otterhound"
 
 #: options.js
-msgid ""
-"Our shelter does trial adoptions, allow us to mark these on movement screens"
+msgid "Our shelter does trial adoptions, allow us to mark these on movement screens"
 msgstr ""
 "Vårt djurhem tilllåter adoptioner-på-prov, tillåter oss att markera dessa på "
 "förflyttningsskärmen."
@@ -7808,8 +7800,7 @@ msgid "Prairie Dog"
 msgstr "Präriehund"
 
 #: options.js
-msgid ""
-"Prefill new media notes for animal images with animal comments if left blank"
+msgid "Prefill new media notes for animal images with animal comments if left blank"
 msgstr ""
 "Fyll nya media-anteckningar för djurbilder med djur kommentarer om rutan "
 "lämnas tom"
@@ -9106,8 +9097,7 @@ msgstr "Visa varningar på hemsidan"
 
 #: options.js
 msgid "Show animal thumbnails in movement and medical books"
-msgstr ""
-"Visa djurens miniatyrbilder i förflyttningar och medicinska journaler"
+msgstr "Visa djurens miniatyrbilder i förflyttningar och medicinska journaler"
 
 #: publish_options.js
 msgid "Show animals adopted"
@@ -9363,8 +9353,7 @@ msgid "Species Z-A"
 msgstr "Art Z-A"
 
 #: lookups.js
-msgid ""
-"Species to use when publishing to third party services and adoption sites"
+msgid "Species to use when publishing to third party services and adoption sites"
 msgstr ""
 "Arter att använda när du publicerar till tredje parts tjänster och adoptions "
 "webbplatser"
@@ -9714,7 +9703,8 @@ msgstr "Mall för Facebook-inlägg"
 
 #: document_templates.js
 msgid ""
-"Template names can include a path portion with /, eg: Vets/Rabies Certificate"
+"Template names can include a path portion with /, eg: Vets/Rabies "
+"Certificate"
 msgstr ""
 "Mallnamn kan inkludera en del med /, t.ex.: Veterinärer/rabiescertifikat"
 
@@ -9784,8 +9774,7 @@ msgstr "Thai Ridgeback"
 
 #: main.js
 msgid "Thank you for choosing Animal Shelter Manager for your shelter!"
-msgstr ""
-"Tack för att du väljer använda Animal Shelter Manager för ditt djurhem!"
+msgstr "Tack för att du väljer använda Animal Shelter Manager för ditt djurhem!"
 
 #: animal.js
 msgid "The SmartTag PETID number"
@@ -9796,8 +9785,7 @@ msgid "The SmartTag type"
 msgstr "SmartTag typ"
 
 #: media.js
-msgid ""
-"The URL is the address of a web resource, eg: www.youtube.com/watch?v=xxxxxx"
+msgid "The URL is the address of a web resource, eg: www.youtube.com/watch?v=xxxxxx"
 msgstr ""
 "URL är adressen till en webbresurs, t.ex.: www.youtube.com/watch?v=xxxxxx"
 
@@ -10090,8 +10078,7 @@ msgid ""
 msgstr ""
 
 #: onlineforms.js
-msgid ""
-"These are the HTML headers and footers used when displaying online forms."
+msgid "These are the HTML headers and footers used when displaying online forms."
 msgstr "Dessa HTML sidhuvud och sidfot används vid visning av webbformulär."
 
 #: reports.js
@@ -10099,10 +10086,8 @@ msgid "These are the HTML headers and footers used when generating reports."
 msgstr "Dessa HTML sidhuvud och sidfot används när du skapar rapporter."
 
 #: options.js
-msgid ""
-"These are the default values for these fields when creating new records."
-msgstr ""
-"Dessa är de standardvärden för dessa fält när du skapar nya journaler."
+msgid "These are the default values for these fields when creating new records."
+msgstr "Dessa är de standardvärden för dessa fält när du skapar nya journaler."
 
 #: batch.js
 msgid ""
@@ -10145,10 +10130,8 @@ msgstr ""
 "block av försäkringsnummer att fördela."
 
 #: options.js
-msgid ""
-"These options change the behaviour of the search box at the top of the page."
-msgstr ""
-"Dessa alternativ ändra funktionaliteten i sökrutan längst upp på sidan."
+msgid "These options change the behaviour of the search box at the top of the page."
+msgstr "Dessa alternativ ändra funktionaliteten i sökrutan längst upp på sidan."
 
 #: lookups.js
 msgid ""
@@ -10227,7 +10210,8 @@ msgstr "Detta djur har särskilda behov"
 
 #: animal_new.js
 msgid ""
-"This animal has the same name as another animal recently added to the system."
+"This animal has the same name as another animal recently added to the "
+"system."
 msgstr ""
 "Detta djur har samma namn som ett annat djur som nyligen lagts till systemet."
 
@@ -10252,8 +10236,7 @@ msgstr ""
 "automatiskt först."
 
 #: move_adopt.js move_reclaim.js
-msgid ""
-"This animal is currently fostered, it will be automatically returned first."
+msgid "This animal is currently fostered, it will be automatically returned first."
 msgstr ""
 "Detta djur för närvarande i ett stödhem, den kommer att återvända "
 "automatiskt först."
@@ -10284,8 +10267,7 @@ msgid "This animal should be held in case it is reclaimed"
 msgstr "Detta djur hålls kvar för närvarande i fall någon gör anspråk."
 
 #: animal.js
-msgid ""
-"This animal should not be included when publishing animals for adoption"
+msgid "This animal should not be included when publishing animals for adoption"
 msgstr ""
 "Detta djur ska inte inkluderas vid publicering av djursom är till adoption"
 
@@ -10293,8 +10275,7 @@ msgstr ""
 msgid ""
 "This animal should not be shown in figures and is not in the custody of the "
 "shelter"
-msgstr ""
-"Detta djur ska inte anges i statistiken och är inte i ägd av djurhemmet"
+msgstr "Detta djur ska inte anges i statistiken och är inte i ägd av djurhemmet"
 
 #: animal.js move_deceased.js
 msgid "This animal was dead on arrival to the shelter"
@@ -10499,8 +10480,7 @@ msgstr "Denna vecka"
 
 #: common_tableform.js
 msgid "This will permanently remove the selected records, are you sure?"
-msgstr ""
-"Detta kommer att permanent ta bort alla valda journaler, är du säker?"
+msgstr "Detta kommer att permanent ta bort alla valda journaler, är du säker?"
 
 #: roles.js
 msgid "This will permanently remove the selected roles, are you sure?"
@@ -11079,7 +11059,8 @@ msgstr "Använd automatiska försäkringsnummer"
 
 #: options.js
 msgid ""
-"Use HTML5 client side image scaling where available to speed up image uploads"
+"Use HTML5 client side image scaling where available to speed up image "
+"uploads"
 msgstr ""
 "Använd HTML5 client side image skalering där sådana finns för att påskynda "
 "uppladdning"
@@ -11498,8 +11479,7 @@ msgid "Warn if the name of the new animal is similar to one entered recently"
 msgstr ""
 
 #: options.js
-msgid ""
-"Warn when adopting to a person who has been banned from adopting animals"
+msgid "Warn when adopting to a person who has been banned from adopting animals"
 msgstr ""
 
 #: options.js
@@ -11593,8 +11573,7 @@ msgid ""
 msgstr ""
 
 #: options.js
-msgid ""
-"When I generate a document, make a note of it in the log with this type"
+msgid "When I generate a document, make a note of it in the log with this type"
 msgstr ""
 
 #: options.js
@@ -11781,7 +11760,8 @@ msgstr "Yorkshire Terrier (Yorkie)"
 
 #: main.js
 msgid ""
-"You can bookmark search results, animals, people and most data entry screens."
+"You can bookmark search results, animals, people and most data entry "
+"screens."
 msgstr ""
 "Du kan bokmärka sökresultat, djur, människor och de flesta "
 "inmantingskärmarna."
@@ -11793,8 +11773,7 @@ msgid ""
 msgstr ""
 
 #: main.js
-msgid ""
-"You can drag and drop animals in shelter view to change their locations."
+msgid "You can drag and drop animals in shelter view to change their locations."
 msgstr ""
 "Du kan dra och släppa djuren i djurhemmets översikt för att ändra deras "
 "platser."
@@ -11812,8 +11791,8 @@ msgid ""
 "You can override the search result sort by adding one of the following to "
 "the end of your search - sort:az, sort:za, sort:mr, sort:lr"
 msgstr ""
-"Du kan styra sorteringen av sökresultat genom att skriva in - sort:az, "
-"sort:za, sort:mr, sort:lr i slutet av ditt sökbegrepp."
+"Du kan styra sorteringen av sökresultat genom att skriva in - sort:az, sort:"
+"za, sort:mr, sort:lr i slutet av ditt sökbegrepp."
 
 #: main.js
 msgid ""
@@ -11853,8 +11832,7 @@ msgid "You can't have a return without a movement."
 msgstr ""
 
 #: animal_find_results.js
-msgid ""
-"You didn't specify any search criteria, so an on-shelter search was assumed."
+msgid "You didn't specify any search criteria, so an on-shelter search was assumed."
 msgstr ""
 
 #: header.js common.js
@@ -11886,8 +11864,7 @@ msgid ""
 msgstr ""
 
 #: main.js
-msgid ""
-"Your sheltermanager.com account is due to expire on {0}, please renew {1}"
+msgid "Your sheltermanager.com account is due to expire on {0}, please renew {1}"
 msgstr ""
 
 #: person_find_results.js incident_find_results.js incident_new.js person.js
@@ -12013,8 +11990,7 @@ msgid "{0} - {1} {2}"
 msgstr "{0} - {1} {2}"
 
 #: lostfound.py
-msgid ""
-"{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}"
+msgid "{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}"
 msgstr ""
 "{0} - {1} {2} ({3}), kontakt {4} ({5}) - försvunnen i {6}, postnr {7}, den "
 "{8}"
@@ -12104,8 +12080,7 @@ msgid "{0} {1}: posted to Facebook page {2} by {3}"
 msgstr ""
 
 #: common.js
-msgid ""
-"{0}: Entered shelter {1}, Last changed on {2} by {3}. {4} {5} {6} aged {7}"
+msgid "{0}: Entered shelter {1}, Last changed on {2} by {3}. {4} {5} {6} aged {7}"
 msgstr ""
 
 #: html.py

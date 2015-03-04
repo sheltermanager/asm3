@@ -2,21 +2,20 @@
 # Copyright (c) 2009 Rosetta Contributors and Canonical Ltd 2009
 # This file is distributed under the same license as the sheltermanager package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2009.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: sheltermanager\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
 "PO-Revision-Date: 2015-02-04 20:21+0000\n"
 "Last-Translator: Volkan Gezer <Unknown>\n"
 "Language-Team: Turkish <tr@li.org>\n"
+"Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-03-02 05:20+0000\n"
 "X-Generator: Launchpad (build 17361)\n"
-"Language: en_GB\n"
+"X-Launchpad-Export-Date: 2015-03-02 05:20+0000\n"
 
 #: options.js
 msgid " days."
@@ -1737,8 +1736,7 @@ msgid "Breed"
 msgstr "Irk"
 
 #: lookups.js
-msgid ""
-"Breed to use when publishing to third party services and adoption sites"
+msgid "Breed to use when publishing to third party services and adoption sites"
 msgstr ""
 "Üçüncü parti servislerine ve sahiplendirme sitelerine yayınlarken "
 "kullanılacak tür"
@@ -1982,8 +1980,7 @@ msgid "Cancel unadopted reservations after"
 msgstr "... sonra, sahiplenilmeyen rezervasyonları iptal et."
 
 #: options.js
-msgid ""
-"Cancel unadopted reservations after this many days, or 0 to never cancel"
+msgid "Cancel unadopted reservations after this many days, or 0 to never cancel"
 msgstr ""
 "Rezervasyon yapıldığı halde sahiplenme gerçekleşmeyen durumlarda şu kadar "
 "gün geçince rezervasyonları iptal et, ya da iptal etmemek için 0 yaz."
@@ -2598,7 +2595,8 @@ msgstr "Maliyet kaydı oluştur"
 
 #: donation_receive.js
 msgid ""
-"Create a matching transaction for this payment and deposit it in this account"
+"Create a matching transaction for this payment and deposit it in this "
+"account"
 msgstr ""
 "Bu ödeme ve depozit için bu hesapta, eşleşen bir hesap hareketi oluştur."
 
@@ -4044,8 +4042,7 @@ msgstr ""
 
 #: main.js
 msgid "Entering 'os' in the search box will show you all shelter animals."
-msgstr ""
-"Arama kutusuna 'os' giriliğinde, barınaktaki tüm hayvanlar listelenir."
+msgstr "Arama kutusuna 'os' giriliğinde, barınaktaki tüm hayvanlar listelenir."
 
 #: dbupdate.py
 msgid "Entlebucher"
@@ -5132,8 +5129,7 @@ msgstr "Muhafaza altına al"
 
 #: animal.js
 msgid "Hold the animal until this date or blank to hold indefinitely"
-msgstr ""
-"Hayvanı bu tarihe kadar tut ya da belirsiz üre tutmak için boş bırak."
+msgstr "Hayvanı bu tarihe kadar tut ya da belirsiz üre tutmak için boş bırak."
 
 #: animal_bulk.js animal.js animal_find_results.js html.py
 msgid "Hold until"
@@ -5277,8 +5273,7 @@ msgid "If this person is a member, their membership number."
 msgstr "Bu kişi üyeyse, üyelik numarası"
 
 #: stocklevel.js
-msgid ""
-"If this stock record is for a drug, the batch number from the container"
+msgid "If this stock record is for a drug, the batch number from the container"
 msgstr "Bu envanter kaydı ilaç içinse, konteynırdaki parti (batch) numarası"
 
 #: stocklevel.js
@@ -6432,14 +6427,11 @@ msgid "Medical profiles"
 msgstr "Tıbbi profiller"
 
 #: medicalprofile.js
-msgid ""
-"Medical profiles need a profile name, treatment, dosage and frequencies."
-msgstr ""
-"Tıbbi profillerin isim, tedavi, dozaj ve frekans bilgileri olmalıdır."
+msgid "Medical profiles need a profile name, treatment, dosage and frequencies."
+msgstr "Tıbbi profillerin isim, tedavi, dozaj ve frekans bilgileri olmalıdır."
 
 #: medical.js
-msgid ""
-"Medical regimens need an animal, name, dosage, a start date and frequencies."
+msgid "Medical regimens need an animal, name, dosage, a start date and frequencies."
 msgstr ""
 "Tıbbi kürlerin (regimen), hayvan, isim, dozaj, başlangıç tarihi ve frekans "
 "bilgileri olmalıdır."
@@ -7186,8 +7178,7 @@ msgstr "Sığınakta"
 
 #: code.py
 msgid "On shelter for {0} days, daily cost {1}, cost record total <b>{2}</b>"
-msgstr ""
-"{0} gündür barınakta, günlük maliyeti {1}, toplam maliyeti <b>{2}</b>"
+msgstr "{0} gündür barınakta, günlük maliyeti {1}, toplam maliyeti <b>{2}</b>"
 
 #: animal_costs.js
 msgid "On shelter for {0} days. Total cost: {1}"
@@ -7332,8 +7323,7 @@ msgid "Otterhound"
 msgstr "Otterhound"
 
 #: options.js
-msgid ""
-"Our shelter does trial adoptions, allow us to mark these on movement screens"
+msgid "Our shelter does trial adoptions, allow us to mark these on movement screens"
 msgstr ""
 "Barınağımız deneme sahiplendirmesi yapmaktadır, bunun için hareket "
 "ekranlarında, bu deneme sahiplendirmelerinin işaretlenmesine izin "
@@ -7819,8 +7809,7 @@ msgid "Prairie Dog"
 msgstr "Prairie Dog"
 
 #: options.js
-msgid ""
-"Prefill new media notes for animal images with animal comments if left blank"
+msgid "Prefill new media notes for animal images with animal comments if left blank"
 msgstr ""
 "Hayvan resimlerine ait medya notları boşsa, not alanını hayvanla ilgili "
 "yorumlarla doldur."
@@ -8042,8 +8031,7 @@ msgstr ""
 
 #: main.js
 msgid "Read the manual for more information about Animal Shelter Manager."
-msgstr ""
-"Animal Shelter Manager hakkında daha fazla bilgi için kılavuzu okuyun."
+msgstr "Animal Shelter Manager hakkında daha fazla bilgi için kılavuzu okuyun."
 
 #: users.js change_user_settings.js
 msgid "Real name"
@@ -8344,8 +8332,7 @@ msgstr "Ebat/büyüklük alanını, hayvan detaylarından kaldır."
 
 #: options.js
 msgid "Remove the stock control functionality from menus and screens"
-msgstr ""
-"Envanter kontrol fonksiyonalitesini menülerden ve ekranlardan kaldır."
+msgstr "Envanter kontrol fonksiyonalitesini menülerden ve ekranlardan kaldır."
 
 #: options.js
 msgid "Remove the tattoo fields from animal identification details"
@@ -9130,8 +9117,7 @@ msgstr "Ana sayfada uyarıları göster."
 
 #: options.js
 msgid "Show animal thumbnails in movement and medical books"
-msgstr ""
-"Küçük hayvan resimlerini, hareket ve tıbbi kayıt defterlerinde göster."
+msgstr "Küçük hayvan resimlerini, hareket ve tıbbi kayıt defterlerinde göster."
 
 #: publish_options.js
 msgid "Show animals adopted"
@@ -9388,8 +9374,7 @@ msgid "Species Z-A"
 msgstr "Türler Z-A"
 
 #: lookups.js
-msgid ""
-"Species to use when publishing to third party services and adoption sites"
+msgid "Species to use when publishing to third party services and adoption sites"
 msgstr ""
 "Üçüncü parti servislere y da sahiplendirme sitelerine yayınlarken "
 "kullanılacak türler."
@@ -9743,7 +9728,8 @@ msgstr "Facebook gönderileri için şablon"
 
 #: document_templates.js
 msgid ""
-"Template names can include a path portion with /, eg: Vets/Rabies Certificate"
+"Template names can include a path portion with /, eg: Vets/Rabies "
+"Certificate"
 msgstr ""
 "Şablon isimleri, yol (path) ,/ kullanarak içerebilir. ör: "
 "Veterinerler/KuduzSertifikalari"
@@ -9827,8 +9813,7 @@ msgid "The SmartTag type"
 msgstr "SmartTag PETID tipi"
 
 #: media.js
-msgid ""
-"The URL is the address of a web resource, eg: www.youtube.com/watch?v=xxxxxx"
+msgid "The URL is the address of a web resource, eg: www.youtube.com/watch?v=xxxxxx"
 msgstr "URL, web kaynağına aittir, ör: www.youtube.com/watch?v=xxxxxx"
 
 #: animal.js
@@ -10056,8 +10041,8 @@ msgid ""
 "The sheltermanager.com admin account password cannot be changed here, please "
 "visit {0}"
 msgstr ""
-"sheltermanager.com yönetici hesabı şifresi buradan değiştirilemez, lütfen "
-"{0}' a gidin."
+"sheltermanager.com yönetici hesabı şifresi buradan değiştirilemez, lütfen {0}"
+"' a gidin."
 
 #: animal.js
 msgid "The size of this animal"
@@ -10122,20 +10107,17 @@ msgid ""
 msgstr ""
 
 #: onlineforms.js
-msgid ""
-"These are the HTML headers and footers used when displaying online forms."
+msgid "These are the HTML headers and footers used when displaying online forms."
 msgstr ""
 "Çevrim içi formları gösterirken kullanılacak HTML üst ve alt bilgileri "
 "bunlardır."
 
 #: reports.js
 msgid "These are the HTML headers and footers used when generating reports."
-msgstr ""
-"Raporları oluşturuken kullanılacak HTML üst ve alt bilgileri bunlardır."
+msgstr "Raporları oluşturuken kullanılacak HTML üst ve alt bilgileri bunlardır."
 
 #: options.js
-msgid ""
-"These are the default values for these fields when creating new records."
+msgid "These are the default values for these fields when creating new records."
 msgstr ""
 "Bunlar, yeni kayıt oluşturulurken kullanılan alanların varsayılan "
 "değerleridir."
@@ -10187,8 +10169,7 @@ msgstr ""
 "poliçe numaralarına blok olarak tahsis edilmiştir."
 
 #: options.js
-msgid ""
-"These options change the behaviour of the search box at the top of the page."
+msgid "These options change the behaviour of the search box at the top of the page."
 msgstr ""
 "Bu seçenekler, sayfanın üzerindeki arama kutusunun davranışını değiştirir."
 
@@ -10270,7 +10251,8 @@ msgstr "Bu hayvanın özel ihtiyaçları vardır."
 
 #: animal_new.js
 msgid ""
-"This animal has the same name as another animal recently added to the system."
+"This animal has the same name as another animal recently added to the "
+"system."
 msgstr ""
 "Bu hayvanla aynı isme sahip başka bir hayvan, sistme kısa sürece eklendi."
 
@@ -10291,12 +10273,11 @@ msgid ""
 "This animal is currently at a retailer, it will be automatically returned "
 "first."
 msgstr ""
-"Bu hayvan, şu anda bir satıcıda, otomatik olarak ilk olarak iade edilecek. "
-"(returned first)"
+"Bu hayvan, şu anda bir satıcıda, otomatik olarak ilk olarak iade edilecek. ("
+"returned first)"
 
 #: move_adopt.js move_reclaim.js
-msgid ""
-"This animal is currently fostered, it will be automatically returned first."
+msgid "This animal is currently fostered, it will be automatically returned first."
 msgstr ""
 "Bu hayvan geçici yuvada, otomatik olarak ilk olarak iade edilecek. (returned "
 "first)"
@@ -10329,10 +10310,8 @@ msgstr ""
 "muhafaza edilmeli."
 
 #: animal.js
-msgid ""
-"This animal should not be included when publishing animals for adoption"
-msgstr ""
-"Bu hayvan, yayınlanan sahip bekleyen hayvanlar listesinde olmamalıdır."
+msgid "This animal should not be included when publishing animals for adoption"
+msgstr "Bu hayvan, yayınlanan sahip bekleyen hayvanlar listesinde olmamalıdır."
 
 #: animal.js
 msgid ""
@@ -10475,8 +10454,7 @@ msgstr "Bu kişi, kayıp hayvanlarla ilişkilidir ve çıkarılamaz."
 
 #: person.py
 msgid "This person is linked to trap loans and cannot be removed."
-msgstr ""
-"Bu kişi, ödünç verilen/kiralanan tuzaklarla ilişkilidir ve çıkarılamaz."
+msgstr "Bu kişi, ödünç verilen/kiralanan tuzaklarla ilişkilidir ve çıkarılamaz."
 
 #: movement.py
 msgid "This person is not flagged as a fosterer and cannot foster animals."
@@ -10495,8 +10473,7 @@ msgstr ""
 msgid ""
 "This person is very similar to another person on file, carry on creating "
 "this record?"
-msgstr ""
-"Bu kişi, sistemde olan başa bir kişiye benziyor, kayıt oluşturulsun mu?"
+msgstr "Bu kişi, sistemde olan başa bir kişiye benziyor, kayıt oluşturulsun mu?"
 
 #: movements.js
 msgid ""
@@ -10841,13 +10818,11 @@ msgstr "Verilen tuzaklar"
 
 #: options.js
 msgid "Treat animals at retailers as part of the shelter inventory"
-msgstr ""
-"Satıcılardaki hayvanlara, barınak envanterinin parçası olarak davran."
+msgstr "Satıcılardaki hayvanlara, barınak envanterinin parçası olarak davran."
 
 #: options.js
 msgid "Treat foster animals as part of the shelter inventory"
-msgstr ""
-"Geçici yuvadaki hayvanlara, barınak envanterinin parçası olarak davran."
+msgstr "Geçici yuvadaki hayvanlara, barınak envanterinin parçası olarak davran."
 
 #: options.js
 msgid "Treat trial adoptions as part of the shelter inventory"
@@ -11127,7 +11102,8 @@ msgstr "Otomatik Sigorta Numaraları Kullan"
 
 #: options.js
 msgid ""
-"Use HTML5 client side image scaling where available to speed up image uploads"
+"Use HTML5 client side image scaling where available to speed up image "
+"uploads"
 msgstr ""
 "Resim yüklemelerini hızlandırmak için, varsa, istemci HTML5 resim "
 "ölçeklendirmesini kullan."
@@ -11548,8 +11524,7 @@ msgstr ""
 "benziyorsa, uyar."
 
 #: options.js
-msgid ""
-"Warn when adopting to a person who has been banned from adopting animals"
+msgid "Warn when adopting to a person who has been banned from adopting animals"
 msgstr ""
 "Daha önce hayvan sahiplenmesi yasaklanmış kişilere, sahiplendirme yapılırsa, "
 "uyar."
@@ -11648,8 +11623,7 @@ msgid ""
 msgstr "Bir hayvanın yerleşkesini değiştirdiğimde, loga bunun notunu ekle."
 
 #: options.js
-msgid ""
-"When I generate a document, make a note of it in the log with this type"
+msgid "When I generate a document, make a note of it in the log with this type"
 msgstr "Bir doküman oluşturduğumda, loga bunun notunu ekle."
 
 #: options.js
@@ -11842,7 +11816,8 @@ msgstr "Yorkshire Terrier Yorkie"
 
 #: main.js
 msgid ""
-"You can bookmark search results, animals, people and most data entry screens."
+"You can bookmark search results, animals, people and most data entry "
+"screens."
 msgstr ""
 "Arama sonuçlarını, hayvanları, kişileri ve bir çok veri giriş ekranını, yer "
 "imlerine ekleyebilirsiniz."
@@ -11856,8 +11831,7 @@ msgstr ""
 "değiştirebilirsiniz."
 
 #: main.js
-msgid ""
-"You can drag and drop animals in shelter view to change their locations."
+msgid "You can drag and drop animals in shelter view to change their locations."
 msgstr ""
 "Barınak görünümüde, hayvanları sürükleyip bırakarak yerlerini "
 "değiştirebilirsiniz."
@@ -11924,8 +11898,7 @@ msgid "You can't have a return without a movement."
 msgstr "Hareket olmadan, iade gerçekleştiremezsiniz."
 
 #: animal_find_results.js
-msgid ""
-"You didn't specify any search criteria, so an on-shelter search was assumed."
+msgid "You didn't specify any search criteria, so an on-shelter search was assumed."
 msgstr "Arama kriteri girmediniz; sadece barınaktakiler arandı."
 
 #: header.js common.js
@@ -11963,8 +11936,7 @@ msgstr ""
 "değiştirmelisiniz."
 
 #: main.js
-msgid ""
-"Your sheltermanager.com account is due to expire on {0}, please renew {1}"
+msgid "Your sheltermanager.com account is due to expire on {0}, please renew {1}"
 msgstr ""
 "{0}'da sheltermanager.com hesabınız sona erecektir, lütfen yenileyin {1}"
 
@@ -12017,8 +11989,8 @@ msgid ""
 "keywords: onshelter/os, notforadoption, donors, deceased, vets, retailers, "
 "staff, fosterers, volunteers, homecheckers, members, activelost, activefound"
 msgstr ""
-"filtreler: a:hayvan, p:kişi, wl:beklemelistesi, la:kayıphayvan, "
-"fa:bulunanhayvan anahtarkelimeler: onshelter/os, notforadoption, donors, "
+"filtreler: a:hayvan, p:kişi, wl:beklemelistesi, la:kayıphayvan, fa:"
+"bulunanhayvan anahtarkelimeler: onshelter/os, notforadoption, donors, "
 "deceased, vets, retailers, staff, fosterers, volunteers, homecheckers, "
 "members, activelost, activefound"
 
@@ -12091,11 +12063,10 @@ msgid "{0} - {1} {2}"
 msgstr "{0} - {1} {2}"
 
 #: lostfound.py
-msgid ""
-"{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}"
+msgid "{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}"
 msgstr ""
-"{0} - {1} {2} ({3}), iletişim {4} ({5}) - kaybolduğu yer {6}, posta kodu "
-"{7}, on {8}"
+"{0} - {1} {2} ({3}), iletişim {4} ({5}) - kaybolduğu yer {6}, posta kodu {7}"
+", on {8}"
 
 #: animal_bulk.js
 msgid "{0} animals successfully updated."
@@ -12182,8 +12153,7 @@ msgid "{0} {1}: posted to Facebook page {2} by {3}"
 msgstr "{0} {1}: Facebook sayfa {2} ye  {3} tarafından gönderildi."
 
 #: common.js
-msgid ""
-"{0}: Entered shelter {1}, Last changed on {2} by {3}. {4} {5} {6} aged {7}"
+msgid "{0}: Entered shelter {1}, Last changed on {2} by {3}. {4} {5} {6} aged {7}"
 msgstr ""
 "{0}: Barınağa Geldi {1},Son Değişiklik Tarihi {2} by {3}. {4} {5} {6} yaş {7}"
 

@@ -1,16 +1,22 @@
+# ASM Translation Strings
+# Copyright (C) 2013 Robin Rawson-Tetley
+# This file is distributed under the same license as the ASM3 package.
+# Robin Rawson-Tetley <robin@rawsontetley.org>, 2013.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
 "PO-Revision-Date: 2015-01-25 03:22+0000\n"
 "Last-Translator: Mantas Kriaučiūnas <mantas@akl.lt>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: lt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-03-02 05:17+0000\n"
 "X-Generator: Launchpad (build 17361)\n"
+"X-Launchpad-Export-Date: 2015-03-02 05:17+0000\n"
 
 #: options.js
 msgid " days."
@@ -1731,8 +1737,7 @@ msgid "Breed"
 msgstr "Veislė"
 
 #: lookups.js
-msgid ""
-"Breed to use when publishing to third party services and adoption sites"
+msgid "Breed to use when publishing to third party services and adoption sites"
 msgstr ""
 "Veislė, naudojama publikuojant trečiųjų šalių ir dovanojimo tinklapiuose"
 
@@ -1974,8 +1979,7 @@ msgid "Cancel unadopted reservations after"
 msgstr "Atšaukti rezervacijas, kai gyvūnas neatiduodamas per"
 
 #: options.js
-msgid ""
-"Cancel unadopted reservations after this many days, or 0 to never cancel"
+msgid "Cancel unadopted reservations after this many days, or 0 to never cancel"
 msgstr ""
 "Atšaukti neatiduotų gyvūnų rezervacijas po nurodyto skaičiaus dienų, arba 0 -"
 " jei niekada automatiškai neatšaukti."
@@ -2590,7 +2594,8 @@ msgstr "Kurti išlaidų žurnalą"
 
 #: donation_receive.js
 msgid ""
-"Create a matching transaction for this payment and deposit it in this account"
+"Create a matching transaction for this payment and deposit it in this "
+"account"
 msgstr ""
 
 #: animal.js
@@ -2656,8 +2661,7 @@ msgstr "Kurti trūkstamus sąrašų įrašus"
 
 #: diarytask.js
 msgid "Create note this many days from today, or 9999 to ask"
-msgstr ""
-"Kurti darbotvarkės užduotį šiam dienų skaičiui, arba 9999 - jei klausti"
+msgstr "Kurti darbotvarkės užduotį šiam dienų skaičiui, arba 9999 - jei klausti"
 
 #: onlineform_incoming.js
 msgid "Create or attach person records from the selected forms"
@@ -5271,8 +5275,7 @@ msgid "If this person is a member, their membership number."
 msgstr "Jei šis asmuo yra narys, jo narystės numeris."
 
 #: stocklevel.js
-msgid ""
-"If this stock record is for a drug, the batch number from the container"
+msgid "If this stock record is for a drug, the batch number from the container"
 msgstr ""
 
 #: stocklevel.js
@@ -5294,8 +5297,7 @@ msgstr ""
 msgid ""
 "If you don't select any locations, publishers will include animals in all "
 "locations."
-msgstr ""
-"Jei nepasirinksite jokių patalpų, leidėjai įtrauks gyvūnus į jas visas."
+msgstr "Jei nepasirinksite jokių patalpų, leidėjai įtrauks gyvūnus į jas visas."
 
 #: dbupdate.py
 msgid "Iguana"
@@ -5506,8 +5508,7 @@ msgstr "Viešinti šią nuotrauką publikuojant"
 
 #: publish_options.js
 msgid "Include this information on animals shared via Facebook"
-msgstr ""
-"Įtraukti šią informaciją prie gyvūnų, kuriais dalijamasi per Facebook"
+msgstr "Įtraukti šią informaciją prie gyvūnų, kuriais dalijamasi per Facebook"
 
 #: dbupdate.py
 msgid "Income"
@@ -6428,15 +6429,13 @@ msgid "Medical profiles"
 msgstr "Standartinės gydymo schemos"
 
 #: medicalprofile.js
-msgid ""
-"Medical profiles need a profile name, treatment, dosage and frequencies."
+msgid "Medical profiles need a profile name, treatment, dosage and frequencies."
 msgstr ""
 "Gydymo profiliuose būtina nurodyti pavadinimą, medikamentą, dozavimą ir "
 "dažnumą."
 
 #: medical.js
-msgid ""
-"Medical regimens need an animal, name, dosage, a start date and frequencies."
+msgid "Medical regimens need an animal, name, dosage, a start date and frequencies."
 msgstr ""
 "Gydymo programose būtina nurodyti gyvūną, pavadinimą, dozavimą, pradžios "
 "datą ir dažnumą."
@@ -7328,8 +7327,7 @@ msgid "Otterhound"
 msgstr "Oterhaundas"
 
 #: options.js
-msgid ""
-"Our shelter does trial adoptions, allow us to mark these on movement screens"
+msgid "Our shelter does trial adoptions, allow us to mark these on movement screens"
 msgstr ""
 "Mūsų prieglauda vykdo bandomuosius atidavimus, todėl leisti mums juos žymėti "
 "veiksmuose"
@@ -7814,8 +7812,7 @@ msgid "Prairie Dog"
 msgstr "Prerijų šunelis"
 
 #: options.js
-msgid ""
-"Prefill new media notes for animal images with animal comments if left blank"
+msgid "Prefill new media notes for animal images with animal comments if left blank"
 msgstr ""
 "Į naujų failų su gyvūno nuotraukomis aprašymus, jei jie palikti tušti, "
 "įrašyti gyvūno aprašymą"
@@ -8036,8 +8033,7 @@ msgstr ""
 
 #: main.js
 msgid "Read the manual for more information about Animal Shelter Manager."
-msgstr ""
-"Daugiau informacijos apie Animal Shelter Manager rasite instrukcijoje."
+msgstr "Daugiau informacijos apie Animal Shelter Manager rasite instrukcijoje."
 
 #: users.js change_user_settings.js
 msgid "Real name"
@@ -8265,8 +8261,7 @@ msgstr "Šalinti vados ID lauką iš duomenų apie gyvūną"
 
 #: options.js
 msgid "Remove the Rabies Tag field from animal health details"
-msgstr ""
-"Pašalinti pasiutligės ženklelio lauką iš duomenų apie gyvūno sveikatą"
+msgstr "Pašalinti pasiutligės ženklelio lauką iš duomenų apie gyvūno sveikatą"
 
 #: options.js
 msgid "Remove the adoption fee field from animal details"
@@ -8299,13 +8294,11 @@ msgstr "Šalinti iš meniu dokumentų saugyklos funkcijas"
 
 #: options.js
 msgid "Remove the good with fields from animal notes"
-msgstr ""
-"Šalinti draugiškumo su kitais objektais laukus iš duomenų apie gyvūną"
+msgstr "Šalinti draugiškumo su kitais objektais laukus iš duomenų apie gyvūną"
 
 #: options.js
 msgid "Remove the heartworm test fields from animal health details"
-msgstr ""
-"Šalinti širdies kirmėlių testo laukus iš duomenų apie gyvūno sveikatą"
+msgstr "Šalinti širdies kirmėlių testo laukus iš duomenų apie gyvūno sveikatą"
 
 #: options.js
 msgid "Remove the insurance number field from the movement screens"
@@ -8317,8 +8310,7 @@ msgstr "Šalinti laikymo vietos lauką iš duomenų apie gyvūną"
 
 #: options.js
 msgid "Remove the microchip fields from animal identification details"
-msgstr ""
-"Šalinti mikroschemos laukus iš informacijos apie gyvūnų identifikaciją"
+msgstr "Šalinti mikroschemos laukus iš informacijos apie gyvūnų identifikaciją"
 
 #: options.js
 msgid "Remove the neutered fields from animal health details"
@@ -8342,8 +8334,7 @@ msgstr ""
 
 #: options.js
 msgid "Remove the tattoo fields from animal identification details"
-msgstr ""
-"Šalinti tatuiravimo laukus iš informacijos apie gyvūnų identifikavimą"
+msgstr "Šalinti tatuiravimo laukus iš informacijos apie gyvūnų identifikavimą"
 
 #: options.js
 msgid "Remove the transport functionality from menus and screens"
@@ -9380,8 +9371,7 @@ msgid "Species Z-A"
 msgstr "Rūšis Z-A"
 
 #: lookups.js
-msgid ""
-"Species to use when publishing to third party services and adoption sites"
+msgid "Species to use when publishing to third party services and adoption sites"
 msgstr ""
 "Naudojamos gyvūnų rūšys, publikuojant į trečiųjų šalių ir dovanojimo "
 "tinklapius"
@@ -9732,10 +9722,11 @@ msgstr "Facebook'o pranešimų šablonas"
 
 #: document_templates.js
 msgid ""
-"Template names can include a path portion with /, eg: Vets/Rabies Certificate"
+"Template names can include a path portion with /, eg: Vets/Rabies "
+"Certificate"
 msgstr ""
-"Šablonų pavadinimuose gali būti kelio simbolis /, pvz.: "
-"Veterinarai/Pasiutligės sertifikatas"
+"Šablonų pavadinimuose gali būti kelio simbolis /, pvz.: Veterinarai/"
+"Pasiutligės sertifikatas"
 
 #: dbupdate.py
 msgid "Tennessee Walker"
@@ -9815,8 +9806,7 @@ msgid "The SmartTag type"
 msgstr "SmartTag tipas"
 
 #: media.js
-msgid ""
-"The URL is the address of a web resource, eg: www.youtube.com/watch?v=xxxxxx"
+msgid "The URL is the address of a web resource, eg: www.youtube.com/watch?v=xxxxxx"
 msgstr ""
 "URL yra interneto šaltinio adresas, pvz.: www.youtube.com/watch?v=xxxxxx"
 
@@ -10009,8 +9999,7 @@ msgstr "Priežastis, kodėl asmuo nori atiduoti gyvūną"
 
 #: waitinglist.js
 msgid "The reason this animal was removed from the waiting list"
-msgstr ""
-"Priežastis, dėl ko gyvūnas buvo pašalintas iš laukiančių vietos sąrašo"
+msgstr "Priežastis, dėl ko gyvūnas buvo pašalintas iš laukiančių vietos sąrašo"
 
 #: stocklevel.js
 msgid "The remaining units in the container"
@@ -10112,8 +10101,7 @@ msgid ""
 msgstr ""
 
 #: onlineforms.js
-msgid ""
-"These are the HTML headers and footers used when displaying online forms."
+msgid "These are the HTML headers and footers used when displaying online forms."
 msgstr ""
 "Tai yra HTML antraštės ir poraštės, naudojamos atvaizduojant internetines "
 "formas."
@@ -10123,8 +10111,7 @@ msgid "These are the HTML headers and footers used when generating reports."
 msgstr "Tai yra HTML antraštės ir poraštės, naudojamos kuriant ataskaitas."
 
 #: options.js
-msgid ""
-"These are the default values for these fields when creating new records."
+msgid "These are the default values for these fields when creating new records."
 msgstr "Tai yra numatytosios šių laukų reikšmės, kuriant naujus įrašus."
 
 #: batch.js
@@ -10168,8 +10155,7 @@ msgstr ""
 "ir turinčioms rezervuotų poliso numerių sąrašus."
 
 #: options.js
-msgid ""
-"These options change the behaviour of the search box at the top of the page."
+msgid "These options change the behaviour of the search box at the top of the page."
 msgstr ""
 "Šios parinktys keičia paieškos laukelio, esančio puslapio viršuje, elgesį."
 
@@ -10253,7 +10239,8 @@ msgstr "Šis gyvūnas turi ypatingų poreikių"
 
 #: animal_new.js
 msgid ""
-"This animal has the same name as another animal recently added to the system."
+"This animal has the same name as another animal recently added to the "
+"system."
 msgstr ""
 "Šio gyvūno vardas sutampa su kito neseniai į sistemą pridėto gyvūno vardu."
 
@@ -10278,8 +10265,7 @@ msgstr ""
 "grąžintas."
 
 #: move_adopt.js move_reclaim.js
-msgid ""
-"This animal is currently fostered, it will be automatically returned first."
+msgid "This animal is currently fostered, it will be automatically returned first."
 msgstr ""
 "Šiuo metu šis gyvūnas yra pas laikiną globėją, todėl pirmiausia bus "
 "automatiškai grąžintas."
@@ -10312,8 +10298,7 @@ msgstr ""
 "šeimininkai"
 
 #: animal.js
-msgid ""
-"This animal should not be included when publishing animals for adoption"
+msgid "This animal should not be included when publishing animals for adoption"
 msgstr "Šis gyvūnas neturėtų būti publikuojamas tarp atiduodamų gyvūnų"
 
 #: animal.js
@@ -10404,8 +10389,7 @@ msgstr "Šis asmuo buvo įtrauktas į tyrimą"
 
 #: person.py
 msgid "This person has movements and cannot be removed."
-msgstr ""
-"Šis asmuo yra susietas su gyvūnų perkėlimais ir negali būti pašalintas."
+msgstr "Šis asmuo yra susietas su gyvūnų perkėlimais ir negali būti pašalintas."
 
 #: move_adopt.js move_reserve.js
 msgid "This person has not passed a homecheck"
@@ -11111,7 +11095,8 @@ msgstr "Naudoti automatinius draudimo numerius"
 
 #: options.js
 msgid ""
-"Use HTML5 client side image scaling where available to speed up image uploads"
+"Use HTML5 client side image scaling where available to speed up image "
+"uploads"
 msgstr ""
 "Naudoti HTML5 kliento šoninio paveikslėlio mažinimą, kai reikia pagreitinti "
 "paveikslėlių įkėlimą"
@@ -11530,8 +11515,7 @@ msgid "Warn if the name of the new animal is similar to one entered recently"
 msgstr "Įspėti, jei naujo gyvūno vardas yra panašus į neseniai įvesto"
 
 #: options.js
-msgid ""
-"Warn when adopting to a person who has been banned from adopting animals"
+msgid "Warn when adopting to a person who has been banned from adopting animals"
 msgstr "Perspėti, kai gyvūnas atiduodamas asmeniui iš juodojo sąrašo"
 
 #: options.js
@@ -11631,14 +11615,12 @@ msgid ""
 msgstr ""
 
 #: options.js
-msgid ""
-"When I generate a document, make a note of it in the log with this type"
+msgid "When I generate a document, make a note of it in the log with this type"
 msgstr "Generuojant dokumentą, šio tipo žurnale atlikti įrašą apie tai"
 
 #: options.js
 msgid "When a message is created, email it to each matching user"
-msgstr ""
-"Sukūrus pranešimą, siųsti jį el. paštu visiems susijusiems naudotojams"
+msgstr "Sukūrus pranešimą, siųsti jį el. paštu visiems susijusiems naudotojams"
 
 #: options.js
 msgid "When adding animals"
@@ -11664,8 +11646,7 @@ msgstr ""
 
 #: options.js
 msgid "When matching lost animals, include shelter animals"
-msgstr ""
-"Ieškant atitikimų su dingusiais gyvūnais, įtraukti prieglaudos gyvūnus"
+msgstr "Ieškant atitikimų su dingusiais gyvūnais, įtraukti prieglaudos gyvūnus"
 
 #: publish_options.js
 msgid ""
@@ -11823,7 +11804,8 @@ msgstr "Jorkšyro terjeras"
 
 #: main.js
 msgid ""
-"You can bookmark search results, animals, people and most data entry screens."
+"You can bookmark search results, animals, people and most data entry "
+"screens."
 msgstr ""
 "Jūs galite pasižymėti paieškos rezultatus, gyvūnus, asmenis ir daugumą "
 "duomenų įvedimo formų."
@@ -11837,8 +11819,7 @@ msgstr ""
 "Parinktys-Informacija apie prieglaudą-Vizualinė tema."
 
 #: main.js
-msgid ""
-"You can drag and drop animals in shelter view to change their locations."
+msgid "You can drag and drop animals in shelter view to change their locations."
 msgstr ""
 "Norėdami pakeisti gyvūnų buvimo vietą, žiūrėdami prieglaudos gyvūnus galite "
 "tiesiog juos perkelti su pele"
@@ -11877,8 +11858,7 @@ msgstr ""
 
 #: main.js
 msgid "You can sort tables by clicking on the column headings."
-msgstr ""
-"Paspaudę ant stulpelių pavadinimų, galite rūšiuoti lentelių rezultatus."
+msgstr "Paspaudę ant stulpelių pavadinimų, galite rūšiuoti lentelių rezultatus."
 
 #: main.js
 msgid ""
@@ -11901,8 +11881,7 @@ msgid "You can't have a return without a movement."
 msgstr "Negalite grąžinti gyvūno, neturinčio aktyvių veiksmų"
 
 #: animal_find_results.js
-msgid ""
-"You didn't specify any search criteria, so an on-shelter search was assumed."
+msgid "You didn't specify any search criteria, so an on-shelter search was assumed."
 msgstr ""
 "Nenurodėte jokių paieškos kriterijų, todėl pateikti prieglaudoje esantys "
 "gyvūnai."
@@ -11942,8 +11921,7 @@ msgstr ""
 "rekomenduojame nustatyti naują slaptažodį."
 
 #: main.js
-msgid ""
-"Your sheltermanager.com account is due to expire on {0}, please renew {1}"
+msgid "Your sheltermanager.com account is due to expire on {0}, please renew {1}"
 msgstr ""
 "Jūsų sheltermanager.com paskyros galiojimas baigsis {0}, prašome atnaujinti "
 "{1}"
@@ -12071,8 +12049,7 @@ msgid "{0} - {1} {2}"
 msgstr "{0} - {1} {2}"
 
 #: lostfound.py
-msgid ""
-"{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}"
+msgid "{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}"
 msgstr ""
 "{0} - {1} {2} ({3}), kontaktas {4} ({5}) - dingo {6}, pašto kodas {7}, {8}"
 
@@ -12161,8 +12138,7 @@ msgid "{0} {1}: posted to Facebook page {2} by {3}"
 msgstr "{0} {1}: paskelbtas Facebook puslapyje {2} (paskelbė {3})"
 
 #: common.js
-msgid ""
-"{0}: Entered shelter {1}, Last changed on {2} by {3}. {4} {5} {6} aged {7}"
+msgid "{0}: Entered shelter {1}, Last changed on {2} by {3}. {4} {5} {6} aged {7}"
 msgstr ""
 "{0}: Pateko į prieglaudą {1}, Paskutinį kartą redagavo {2} {3}. {4} {5} {6} "
 "amžius {7}"
@@ -12241,8 +12217,7 @@ msgstr ""
 
 #: main.js
 msgid "{plural0} person with an active reservation has not been homechecked"
-msgstr ""
-"{plural1} gyvūną rezervavusio asmens laikymo sąlygos yra nepatikrintos"
+msgstr "{plural1} gyvūną rezervavusio asmens laikymo sąlygos yra nepatikrintos"
 
 #: main.js
 msgid "{plural0} recent publisher run had errors"
@@ -12386,8 +12361,7 @@ msgstr ""
 
 #: main.js
 msgid "{plural1} people with active reservations have not been homechecked"
-msgstr ""
-"{plural1} gyvūnus rezervavusių asmenų laikymo sąlygos yra nepatikrintos"
+msgstr "{plural1} gyvūnus rezervavusių asmenų laikymo sąlygos yra nepatikrintos"
 
 #: main.js
 msgid "{plural1} recent publisher runs had errors"
@@ -12530,8 +12504,7 @@ msgstr ""
 
 #: main.js
 msgid "{plural2} people with active reservations have not been homechecked"
-msgstr ""
-"{plural2} gyvūnus rezervavusių asmenų laikymo sąlygos yra nepatikrintos"
+msgstr "{plural2} gyvūnus rezervavusių asmenų laikymo sąlygos yra nepatikrintos"
 
 #: main.js
 msgid "{plural2} recent publisher runs had errors"
@@ -12674,8 +12647,7 @@ msgstr ""
 
 #: main.js
 msgid "{plural3} people with active reservations have not been homechecked"
-msgstr ""
-"{plural3} gyvūnus rezervavusių asmenų laikymo sąlygos yra nepatikrintos"
+msgstr "{plural3} gyvūnus rezervavusių asmenų laikymo sąlygos yra nepatikrintos"
 
 #: main.js
 msgid "{plural3} recent publisher runs had errors"

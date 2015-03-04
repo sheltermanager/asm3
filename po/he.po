@@ -2,20 +2,20 @@
 # Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
 # This file is distributed under the same license as the sheltermanager package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: sheltermanager\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
 "PO-Revision-Date: 2012-05-09 14:26+0000\n"
 "Last-Translator: Yaron <sh.yaron@gmail.com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
+"Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-03-02 05:16+0000\n"
 "X-Generator: Launchpad (build 17361)\n"
+"X-Launchpad-Export-Date: 2015-03-02 05:16+0000\n"
 
 #: options.js
 msgid " days."
@@ -1711,8 +1711,7 @@ msgid "Breed"
 msgstr "גזע"
 
 #: lookups.js
-msgid ""
-"Breed to use when publishing to third party services and adoption sites"
+msgid "Breed to use when publishing to third party services and adoption sites"
 msgstr ""
 
 #: lookups.py
@@ -1949,8 +1948,7 @@ msgid "Cancel unadopted reservations after"
 msgstr ""
 
 #: options.js
-msgid ""
-"Cancel unadopted reservations after this many days, or 0 to never cancel"
+msgid "Cancel unadopted reservations after this many days, or 0 to never cancel"
 msgstr ""
 
 #: transport.js
@@ -2561,7 +2559,8 @@ msgstr ""
 
 #: donation_receive.js
 msgid ""
-"Create a matching transaction for this payment and deposit it in this account"
+"Create a matching transaction for this payment and deposit it in this "
+"account"
 msgstr ""
 
 #: animal.js
@@ -5214,8 +5213,7 @@ msgid "If this person is a member, their membership number."
 msgstr ""
 
 #: stocklevel.js
-msgid ""
-"If this stock record is for a drug, the batch number from the container"
+msgid "If this stock record is for a drug, the batch number from the container"
 msgstr ""
 
 #: stocklevel.js
@@ -6363,13 +6361,11 @@ msgid "Medical profiles"
 msgstr ""
 
 #: medicalprofile.js
-msgid ""
-"Medical profiles need a profile name, treatment, dosage and frequencies."
+msgid "Medical profiles need a profile name, treatment, dosage and frequencies."
 msgstr ""
 
 #: medical.js
-msgid ""
-"Medical regimens need an animal, name, dosage, a start date and frequencies."
+msgid "Medical regimens need an animal, name, dosage, a start date and frequencies."
 msgstr ""
 
 #: mobile.py
@@ -7112,8 +7108,7 @@ msgstr "בבית המחסה"
 
 #: code.py
 msgid "On shelter for {0} days, daily cost {1}, cost record total <b>{2}</b>"
-msgstr ""
-"בבית המחסה מזה {0} ימים, עלות יומית: {1}, סך כל רשומות העלות <b>{2}</b>"
+msgstr "בבית המחסה מזה {0} ימים, עלות יומית: {1}, סך כל רשומות העלות <b>{2}</b>"
 
 #: animal_costs.js
 msgid "On shelter for {0} days. Total cost: {1}"
@@ -7254,8 +7249,7 @@ msgid "Otterhound"
 msgstr ""
 
 #: options.js
-msgid ""
-"Our shelter does trial adoptions, allow us to mark these on movement screens"
+msgid "Our shelter does trial adoptions, allow us to mark these on movement screens"
 msgstr ""
 
 #: html.py
@@ -7738,8 +7732,7 @@ msgid "Prairie Dog"
 msgstr "נובחנית"
 
 #: options.js
-msgid ""
-"Prefill new media notes for animal images with animal comments if left blank"
+msgid "Prefill new media notes for animal images with animal comments if left blank"
 msgstr ""
 
 #: options.js
@@ -9286,8 +9279,7 @@ msgid "Species Z-A"
 msgstr ""
 
 #: lookups.js
-msgid ""
-"Species to use when publishing to third party services and adoption sites"
+msgid "Species to use when publishing to third party services and adoption sites"
 msgstr ""
 
 #: vaccination.js
@@ -9633,7 +9625,8 @@ msgstr ""
 
 #: document_templates.js
 msgid ""
-"Template names can include a path portion with /, eg: Vets/Rabies Certificate"
+"Template names can include a path portion with /, eg: Vets/Rabies "
+"Certificate"
 msgstr ""
 
 #: dbupdate.py
@@ -9713,8 +9706,7 @@ msgid "The SmartTag type"
 msgstr ""
 
 #: media.js
-msgid ""
-"The URL is the address of a web resource, eg: www.youtube.com/watch?v=xxxxxx"
+msgid "The URL is the address of a web resource, eg: www.youtube.com/watch?v=xxxxxx"
 msgstr ""
 
 #: animal.js
@@ -9992,8 +9984,7 @@ msgid ""
 msgstr ""
 
 #: onlineforms.js
-msgid ""
-"These are the HTML headers and footers used when displaying online forms."
+msgid "These are the HTML headers and footers used when displaying online forms."
 msgstr ""
 
 #: reports.js
@@ -10001,8 +9992,7 @@ msgid "These are the HTML headers and footers used when generating reports."
 msgstr ""
 
 #: options.js
-msgid ""
-"These are the default values for these fields when creating new records."
+msgid "These are the default values for these fields when creating new records."
 msgstr ""
 
 #: batch.js
@@ -10042,8 +10032,7 @@ msgid ""
 msgstr ""
 
 #: options.js
-msgid ""
-"These options change the behaviour of the search box at the top of the page."
+msgid "These options change the behaviour of the search box at the top of the page."
 msgstr ""
 
 #: lookups.js
@@ -10120,7 +10109,8 @@ msgstr ""
 
 #: animal_new.js
 msgid ""
-"This animal has the same name as another animal recently added to the system."
+"This animal has the same name as another animal recently added to the "
+"system."
 msgstr ""
 
 #: animal.js
@@ -10140,8 +10130,7 @@ msgid ""
 msgstr ""
 
 #: move_adopt.js move_reclaim.js
-msgid ""
-"This animal is currently fostered, it will be automatically returned first."
+msgid "This animal is currently fostered, it will be automatically returned first."
 msgstr "חיית מחמד זו נמצאת באומנה היא תוחזר אוטומטית תחילה."
 
 #: move_adopt.js movement.py
@@ -10170,8 +10159,7 @@ msgid "This animal should be held in case it is reclaimed"
 msgstr ""
 
 #: animal.js
-msgid ""
-"This animal should not be included when publishing animals for adoption"
+msgid "This animal should not be included when publishing animals for adoption"
 msgstr ""
 
 #: animal.js
@@ -10936,7 +10924,8 @@ msgstr "שימוש במספרי ביטוח אוטומטיים"
 
 #: options.js
 msgid ""
-"Use HTML5 client side image scaling where available to speed up image uploads"
+"Use HTML5 client side image scaling where available to speed up image "
+"uploads"
 msgstr ""
 "שימוש בשינוי גודל תמונות בצד הלקוח על ידי HTML5 כשניתן על מנת להאיץ את העלאת "
 "התמונות"
@@ -11353,8 +11342,7 @@ msgid "Warn if the name of the new animal is similar to one entered recently"
 msgstr ""
 
 #: options.js
-msgid ""
-"Warn when adopting to a person who has been banned from adopting animals"
+msgid "Warn when adopting to a person who has been banned from adopting animals"
 msgstr ""
 
 #: options.js
@@ -11448,8 +11436,7 @@ msgid ""
 msgstr ""
 
 #: options.js
-msgid ""
-"When I generate a document, make a note of it in the log with this type"
+msgid "When I generate a document, make a note of it in the log with this type"
 msgstr ""
 
 #: options.js
@@ -11635,7 +11622,8 @@ msgstr "יורקשייר טרייר"
 
 #: main.js
 msgid ""
-"You can bookmark search results, animals, people and most data entry screens."
+"You can bookmark search results, animals, people and most data entry "
+"screens."
 msgstr ""
 "ניתן לשמור תוצאות חיפוש, חיות מחמד, אנשים ואת רוב מסכי הזנת הנתונים כסימניות."
 
@@ -11646,8 +11634,7 @@ msgid ""
 msgstr ""
 
 #: main.js
-msgid ""
-"You can drag and drop animals in shelter view to change their locations."
+msgid "You can drag and drop animals in shelter view to change their locations."
 msgstr ""
 
 #: main.js
@@ -11655,16 +11642,16 @@ msgid ""
 "You can middle click a link to open it in a new browser tab (push the wheel "
 "on most modern mice)."
 msgstr ""
-"ניתן ללחוץ על קישור עם לחצן העכבר האמצעי כדי לפתוח בלשונית חדשה בדפדפן "
-"(מדובר בלחיצה על הגלגלת ברוב העכברים המודרניים)."
+"ניתן ללחוץ על קישור עם לחצן העכבר האמצעי כדי לפתוח בלשונית חדשה בדפדפן ("
+"מדובר בלחיצה על הגלגלת ברוב העכברים המודרניים)."
 
 #: main.js
 msgid ""
 "You can override the search result sort by adding one of the following to "
 "the end of your search - sort:az, sort:za, sort:mr, sort:lr"
 msgstr ""
-"ניתן לדרוס את תוצאות החיפוש על ידי הוספת אחד מהבאים לסוף החיפוש שלך -  "
-"sort:az, sort:za, sort:mr, sort:lr"
+"ניתן לדרוס את תוצאות החיפוש על ידי הוספת אחד מהבאים לסוף החיפוש שלך -  sort:"
+"az, sort:za, sort:mr, sort:lr"
 
 #: main.js
 msgid ""
@@ -11704,8 +11691,7 @@ msgid "You can't have a return without a movement."
 msgstr ""
 
 #: animal_find_results.js
-msgid ""
-"You didn't specify any search criteria, so an on-shelter search was assumed."
+msgid "You didn't specify any search criteria, so an on-shelter search was assumed."
 msgstr ""
 
 #: header.js common.js
@@ -11737,8 +11723,7 @@ msgid ""
 msgstr ""
 
 #: main.js
-msgid ""
-"Your sheltermanager.com account is due to expire on {0}, please renew {1}"
+msgid "Your sheltermanager.com account is due to expire on {0}, please renew {1}"
 msgstr ""
 
 #: person_find_results.js incident_find_results.js incident_new.js person.js
@@ -11860,8 +11845,7 @@ msgid "{0} - {1} {2}"
 msgstr ""
 
 #: lostfound.py
-msgid ""
-"{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}"
+msgid "{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}"
 msgstr ""
 "{0} - {1} {2} ({3}), איש קשר {4} ({5}) - אבד ב{6}, מיקוד {7}, בתאריך {8}"
 
@@ -11950,8 +11934,7 @@ msgid "{0} {1}: posted to Facebook page {2} by {3}"
 msgstr ""
 
 #: common.js
-msgid ""
-"{0}: Entered shelter {1}, Last changed on {2} by {3}. {4} {5} {6} aged {7}"
+msgid "{0}: Entered shelter {1}, Last changed on {2} by {3}. {4} {5} {6} aged {7}"
 msgstr ""
 
 #: html.py

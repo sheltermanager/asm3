@@ -3,21 +3,20 @@
 # This file is distributed under the same license as the sheltermanager package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2009.
 # Efstathios Iosifidis <iosifidis@opensuse.org>, 2010, 2011, 2012, 2014.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: sheltermanager\n"
-"Report-Msgid-Bugs-To: FULL NAME <iosifidis@opensuse.org>\n"
+"Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
 "PO-Revision-Date: 2015-02-16 09:06+0000\n"
 "Last-Translator: Efstathios Iosifidis <Unknown>\n"
 "Language-Team: Greek, Modern (1453-) <opensuse-translation-el@opensuse.org>\n"
+"Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-03-02 05:16+0000\n"
 "X-Generator: Launchpad (build 17361)\n"
-"Language: el\n"
+"X-Launchpad-Export-Date: 2015-03-02 05:16+0000\n"
 
 #: options.js
 msgid " days."
@@ -641,8 +640,7 @@ msgstr "Επιπρόσθετα Πεδία"
 
 #: additional.py
 msgid "Additional date field '{0}' contains an invalid date."
-msgstr ""
-"Το πεδίο πρόσθετης ημερομηνίας '{0}' περιέχει μια μη έγκυρη ημερομηνία."
+msgstr "Το πεδίο πρόσθετης ημερομηνίας '{0}' περιέχει μια μη έγκυρη ημερομηνία."
 
 #: html.py
 msgid "Additional fields"
@@ -713,8 +711,7 @@ msgstr "Δωρεές από τέλη υιοθεσίας"
 
 #: movement.py
 msgid "Adoption movements must have a valid adoption date."
-msgstr ""
-"Οι Κινήσεις Υιοθέτησης πρέπει να έχει μια έγκυρη ημερομηνία υιοθέτησης."
+msgstr "Οι Κινήσεις Υιοθέτησης πρέπει να έχει μια έγκυρη ημερομηνία υιοθέτησης."
 
 #: move_adopt.js
 msgid "Adoption successfully created."
@@ -867,8 +864,7 @@ msgstr "Όλα τα ζώα που η φιλοξενία τους λήγει σή
 
 #: search.py
 msgid "All animals who are currently held in case of reclaim."
-msgstr ""
-"Όλα τα ζώα που κρατούνται αυτή τη στιγμή σε περίπτωση επαναδιεκδίκησης."
+msgstr "Όλα τα ζώα που κρατούνται αυτή τη στιγμή σε περίπτωση επαναδιεκδίκησης."
 
 #: search.py
 msgid "All animals who are currently quarantined."
@@ -1728,8 +1724,7 @@ msgid "Breed"
 msgstr "Ράτσα"
 
 #: lookups.js
-msgid ""
-"Breed to use when publishing to third party services and adoption sites"
+msgid "Breed to use when publishing to third party services and adoption sites"
 msgstr ""
 
 #: lookups.py
@@ -1968,8 +1963,7 @@ msgid "Cancel unadopted reservations after"
 msgstr ""
 
 #: options.js
-msgid ""
-"Cancel unadopted reservations after this many days, or 0 to never cancel"
+msgid "Cancel unadopted reservations after this many days, or 0 to never cancel"
 msgstr ""
 
 #: transport.js
@@ -2582,7 +2576,8 @@ msgstr "Δημιουργία καταγραφής κόστους"
 
 #: donation_receive.js
 msgid ""
-"Create a matching transaction for this payment and deposit it in this account"
+"Create a matching transaction for this payment and deposit it in this "
+"account"
 msgstr ""
 "Δημιουργία μιας συναλλαγής που ταιριάζει με αυτή την πληρωμή και κατάθεση σε "
 "αυτό το λογαριασμό"
@@ -3877,8 +3872,7 @@ msgstr "Το Email στάλθηκε επιτυχώς σε {0}"
 
 #: main.js
 msgid "Email this message to all matching users"
-msgstr ""
-"Στείλε αυτό το μήνυμα, με email, σε όλους τους χρήστες που ταιριάζουν"
+msgstr "Στείλε αυτό το μήνυμα, με email, σε όλους τους χρήστες που ταιριάζουν"
 
 #: person.js lostfound.js waitinglist.js
 msgid "Email this person"
@@ -5244,8 +5238,7 @@ msgid "If this person is a member, their membership number."
 msgstr "Εάν αυτό το άτομο είναι μέλος, το αριθμός συνδρομής του."
 
 #: stocklevel.js
-msgid ""
-"If this stock record is for a drug, the batch number from the container"
+msgid "If this stock record is for a drug, the batch number from the container"
 msgstr ""
 
 #: stocklevel.js
@@ -6399,13 +6392,11 @@ msgid "Medical profiles"
 msgstr "Ιατρικά προφίλ"
 
 #: medicalprofile.js
-msgid ""
-"Medical profiles need a profile name, treatment, dosage and frequencies."
+msgid "Medical profiles need a profile name, treatment, dosage and frequencies."
 msgstr ""
 
 #: medical.js
-msgid ""
-"Medical regimens need an animal, name, dosage, a start date and frequencies."
+msgid "Medical regimens need an animal, name, dosage, a start date and frequencies."
 msgstr ""
 
 #: mobile.py
@@ -7182,8 +7173,7 @@ msgstr "Διαδικτυακές Φόρμες"
 
 #: onlineform.js
 msgid "Online form fields need a name and label."
-msgstr ""
-"Τα πεδία των Διαδικτυακών φορμών χρειάζονται ένα όνομα και μια ετικέτα."
+msgstr "Τα πεδία των Διαδικτυακών φορμών χρειάζονται ένα όνομα και μια ετικέτα."
 
 #: onlineforms.js
 msgid ""
@@ -7298,8 +7288,7 @@ msgid "Otterhound"
 msgstr "Otterhound"
 
 #: options.js
-msgid ""
-"Our shelter does trial adoptions, allow us to mark these on movement screens"
+msgid "Our shelter does trial adoptions, allow us to mark these on movement screens"
 msgstr ""
 "Το καταφύγιο μας κάνει δοκιμαστικές υιοθεσίες, επιτρέψτε μας να τις "
 "επισημάνουμε στις οθόνες κινήσεων"
@@ -7785,8 +7774,7 @@ msgid "Prairie Dog"
 msgstr "Κυνόμυς"
 
 #: options.js
-msgid ""
-"Prefill new media notes for animal images with animal comments if left blank"
+msgid "Prefill new media notes for animal images with animal comments if left blank"
 msgstr ""
 
 #: options.js
@@ -9338,8 +9326,7 @@ msgid "Species Z-A"
 msgstr "Είδη Ω-Α"
 
 #: lookups.js
-msgid ""
-"Species to use when publishing to third party services and adoption sites"
+msgid "Species to use when publishing to third party services and adoption sites"
 msgstr ""
 
 #: vaccination.js
@@ -9685,7 +9672,8 @@ msgstr "Πρότυπο για τις δημοσιεύσεις του Facebook"
 
 #: document_templates.js
 msgid ""
-"Template names can include a path portion with /, eg: Vets/Rabies Certificate"
+"Template names can include a path portion with /, eg: Vets/Rabies "
+"Certificate"
 msgstr ""
 
 #: dbupdate.py
@@ -9767,8 +9755,7 @@ msgid "The SmartTag type"
 msgstr ""
 
 #: media.js
-msgid ""
-"The URL is the address of a web resource, eg: www.youtube.com/watch?v=xxxxxx"
+msgid "The URL is the address of a web resource, eg: www.youtube.com/watch?v=xxxxxx"
 msgstr ""
 "Η διεύθυνση URL είναι η διεύθυνση μιας ιστοσελίδας, π.χ.: "
 "www.youtube.com/watch?v=xxxxxx"
@@ -10060,8 +10047,7 @@ msgid ""
 msgstr ""
 
 #: onlineforms.js
-msgid ""
-"These are the HTML headers and footers used when displaying online forms."
+msgid "These are the HTML headers and footers used when displaying online forms."
 msgstr ""
 "Αυτές είναι οι HTML κεφαλίδες και υποσέλιδα που χρησιμοποιούνται όταν "
 "προβάλλονται διαδικτυακές φόρμες."
@@ -10073,8 +10059,7 @@ msgstr ""
 "δημιουργία αναφορών."
 
 #: options.js
-msgid ""
-"These are the default values for these fields when creating new records."
+msgid "These are the default values for these fields when creating new records."
 msgstr ""
 
 #: batch.js
@@ -10114,8 +10099,7 @@ msgid ""
 msgstr ""
 
 #: options.js
-msgid ""
-"These options change the behaviour of the search box at the top of the page."
+msgid "These options change the behaviour of the search box at the top of the page."
 msgstr ""
 "Αυτές οι επιλογές αλλάζουν τη συμπεριφορά του πλαισίου αναζήτησης στο πάνω "
 "μέρος της σελίδας."
@@ -10198,7 +10182,8 @@ msgstr "Αυτό το ζώο έχει ειδικές ανάγκες"
 
 #: animal_new.js
 msgid ""
-"This animal has the same name as another animal recently added to the system."
+"This animal has the same name as another animal recently added to the "
+"system."
 msgstr ""
 "Αυτό το ζώο έχει το ίδιο όνομα με κάποιο άλλο ζώο που προστέθηκε πρόσφατα "
 "στο σύστημα."
@@ -10220,8 +10205,7 @@ msgid ""
 msgstr ""
 
 #: move_adopt.js move_reclaim.js
-msgid ""
-"This animal is currently fostered, it will be automatically returned first."
+msgid "This animal is currently fostered, it will be automatically returned first."
 msgstr ""
 
 #: move_adopt.js movement.py
@@ -10250,8 +10234,7 @@ msgid "This animal should be held in case it is reclaimed"
 msgstr ""
 
 #: animal.js
-msgid ""
-"This animal should not be included when publishing animals for adoption"
+msgid "This animal should not be included when publishing animals for adoption"
 msgstr ""
 
 #: animal.js
@@ -10454,8 +10437,7 @@ msgstr "Αυτή την εβδομάδα"
 
 #: common_tableform.js
 msgid "This will permanently remove the selected records, are you sure?"
-msgstr ""
-"Αυτό θα αφαιρέσει μόνιμα τις επιλεγμένες καταχωρήσεις, είστε σίγουροι;"
+msgstr "Αυτό θα αφαιρέσει μόνιμα τις επιλεγμένες καταχωρήσεις, είστε σίγουροι;"
 
 #: roles.js
 msgid "This will permanently remove the selected roles, are you sure?"
@@ -11027,7 +11009,8 @@ msgstr "Χρήση αυτόματων αριθμών Ασφάλισης"
 
 #: options.js
 msgid ""
-"Use HTML5 client side image scaling where available to speed up image uploads"
+"Use HTML5 client side image scaling where available to speed up image "
+"uploads"
 msgstr ""
 
 #: roles.js
@@ -11442,8 +11425,7 @@ msgid "Warn if the name of the new animal is similar to one entered recently"
 msgstr ""
 
 #: options.js
-msgid ""
-"Warn when adopting to a person who has been banned from adopting animals"
+msgid "Warn when adopting to a person who has been banned from adopting animals"
 msgstr ""
 
 #: options.js
@@ -11537,8 +11519,7 @@ msgid ""
 msgstr ""
 
 #: options.js
-msgid ""
-"When I generate a document, make a note of it in the log with this type"
+msgid "When I generate a document, make a note of it in the log with this type"
 msgstr ""
 "Όταν δημιουργώ ένα έγγραφο, κάνε μια σημείωση αυτού στο αρχείο καταγραφής με "
 "αυτόν τον τύπο"
@@ -11724,7 +11705,8 @@ msgstr "Yorkshire Terrier Yorkie"
 
 #: main.js
 msgid ""
-"You can bookmark search results, animals, people and most data entry screens."
+"You can bookmark search results, animals, people and most data entry "
+"screens."
 msgstr ""
 "Μπορείτε να αποθηκεύσετε αποτελέσματα αναζήτησης, ζώα, άτομα και τις "
 "περισσότερες οθόνες εγγραφής."
@@ -11736,8 +11718,7 @@ msgid ""
 msgstr ""
 
 #: main.js
-msgid ""
-"You can drag and drop animals in shelter view to change their locations."
+msgid "You can drag and drop animals in shelter view to change their locations."
 msgstr ""
 
 #: main.js
@@ -11791,8 +11772,7 @@ msgid "You can't have a return without a movement."
 msgstr "Δεν μπορείτε να έχετε μια επιστροφή χωρίς μια κίνηση."
 
 #: animal_find_results.js
-msgid ""
-"You didn't specify any search criteria, so an on-shelter search was assumed."
+msgid "You didn't specify any search criteria, so an on-shelter search was assumed."
 msgstr ""
 "Δεν καθορίσατε κάποια κριτήρια αναζήτησης, οπότε υποτέθηκε μια αναζήτηση "
 "εντός καταφυγίου."
@@ -11809,8 +11789,7 @@ msgstr "Πρέπει να παράσχετε έναν κωδικό."
 
 #: media.js mobile.py
 msgid "You will need to upgrade to iOS 6 or higher to upload files."
-msgstr ""
-"Θα πρέπει να αναβαθμίσετε σε iOS 6 ή νεότερο για να ανεβάσετε αρχεία."
+msgstr "Θα πρέπει να αναβαθμίσετε σε iOS 6 ή νεότερο για να ανεβάσετε αρχεία."
 
 #: dbupdate.py
 msgid "Young Adult"
@@ -11831,8 +11810,7 @@ msgstr ""
 "επισφαλής και σας προτείνουμε να επιλέξετε ένα νέο κωδικό πρόσβασης."
 
 #: main.js
-msgid ""
-"Your sheltermanager.com account is due to expire on {0}, please renew {1}"
+msgid "Your sheltermanager.com account is due to expire on {0}, please renew {1}"
 msgstr ""
 
 #: person_find_results.js incident_find_results.js incident_new.js person.js
@@ -11954,8 +11932,7 @@ msgid "{0} - {1} {2}"
 msgstr "{0} - {1} {2}"
 
 #: lostfound.py
-msgid ""
-"{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}"
+msgid "{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}"
 msgstr ""
 "{0} - {1} {2} ({3}), επικοινωνία {4} ({5}) - χάθηκε στο {6}, Τ.Κ. {7}, στο "
 "{8}"
@@ -12045,8 +12022,7 @@ msgid "{0} {1}: posted to Facebook page {2} by {3}"
 msgstr ""
 
 #: common.js
-msgid ""
-"{0}: Entered shelter {1}, Last changed on {2} by {3}. {4} {5} {6} aged {7}"
+msgid "{0}: Entered shelter {1}, Last changed on {2} by {3}. {4} {5} {6} aged {7}"
 msgstr ""
 
 #: html.py

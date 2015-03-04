@@ -1,16 +1,22 @@
+# ASM Translation Strings
+# Copyright (C) 2013 Robin Rawson-Tetley
+# This file is distributed under the same license as the ASM3 package.
+# Robin Rawson-Tetley <robin@rawsontetley.org>, 2013.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
 "PO-Revision-Date: 2015-01-25 03:21+0000\n"
 "Last-Translator: Federico balderas <fedebalderas@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-03-02 05:19+0000\n"
 "X-Generator: Launchpad (build 17361)\n"
+"X-Launchpad-Export-Date: 2015-03-02 05:19+0000\n"
 
 #: options.js
 msgid " days."
@@ -960,8 +966,7 @@ msgstr ""
 
 #: options.js
 msgid "Allow overriding of the movement number on the Move menu screens"
-msgstr ""
-"Permitir anular del número de movimientos de las pantallas de menú Move"
+msgstr "Permitir anular del número de movimientos de las pantallas de menú Move"
 
 #: options.js
 msgid "Allow use of OpenOffice document templates"
@@ -1730,8 +1735,7 @@ msgid "Breed"
 msgstr "Raza"
 
 #: lookups.js
-msgid ""
-"Breed to use when publishing to third party services and adoption sites"
+msgid "Breed to use when publishing to third party services and adoption sites"
 msgstr ""
 "Raza de uso para la publicación en servicios de terceros y sitios de adopción"
 
@@ -1973,8 +1977,7 @@ msgid "Cancel unadopted reservations after"
 msgstr "Cancelar reservas no confirmadas después de"
 
 #: options.js
-msgid ""
-"Cancel unadopted reservations after this many days, or 0 to never cancel"
+msgid "Cancel unadopted reservations after this many days, or 0 to never cancel"
 msgstr ""
 "Cancelar reservas no adoptados después de este número de días, o 0 para no "
 "cancelar"
@@ -2589,7 +2592,8 @@ msgstr "Crear un registros de costes"
 
 #: donation_receive.js
 msgid ""
-"Create a matching transaction for this payment and deposit it in this account"
+"Create a matching transaction for this payment and deposit it in this "
+"account"
 msgstr ""
 
 #: animal.js
@@ -3071,8 +3075,7 @@ msgstr "Por defecto"
 
 #: options.js
 msgid "Defaults formats for code and shortcode are TYYYYNNN and NNT"
-msgstr ""
-"Por defecto el formato del codigo y codigo corto serán TYYYYNNN y NNT"
+msgstr "Por defecto el formato del codigo y codigo corto serán TYYYYNNN y NNT"
 
 #: additional.js htmltemplates.js onlineforms.js test.js accounts.js
 #: donations.js diarytasks.js diarytask.js diary.js person.js onlineform.js
@@ -3411,8 +3414,7 @@ msgstr "Indíce de visualización"
 
 #: options.js
 msgid "Display a search button at the right side of the search box"
-msgstr ""
-"Muestra un botón de búsqueda en la parte derecha del cuadro de búsqueda"
+msgstr "Muestra un botón de búsqueda en la parte derecha del cuadro de búsqueda"
 
 #: dbupdate.py
 msgid "Distemper"
@@ -5271,8 +5273,7 @@ msgid "If this person is a member, their membership number."
 msgstr "Si esta persona es miembro, su número de membresía."
 
 #: stocklevel.js
-msgid ""
-"If this stock record is for a drug, the batch number from the container"
+msgid "If this stock record is for a drug, the batch number from the container"
 msgstr ""
 
 #: stocklevel.js
@@ -6429,15 +6430,13 @@ msgid "Medical profiles"
 msgstr "Perfiles Médicos"
 
 #: medicalprofile.js
-msgid ""
-"Medical profiles need a profile name, treatment, dosage and frequencies."
+msgid "Medical profiles need a profile name, treatment, dosage and frequencies."
 msgstr ""
 "Perfiles médicos necesitan un nombre de perfil, el tratamiento, la dosis y "
 "las frecuencias."
 
 #: medical.js
-msgid ""
-"Medical regimens need an animal, name, dosage, a start date and frequencies."
+msgid "Medical regimens need an animal, name, dosage, a start date and frequencies."
 msgstr ""
 "Regímenes médicos necesitan un animal, el nombre, la dosis, la fecha de "
 "inicio y frecuencias."
@@ -7235,8 +7234,7 @@ msgstr "Sólo publicar un número determinado de animales"
 
 #: options.js
 msgid "Only show account totals for the current period, which starts on "
-msgstr ""
-"Mostrar sólo cuentas totales para el período en curso, que comienza el "
+msgstr "Mostrar sólo cuentas totales para el período en curso, que comienza el "
 
 #: animal_find.js
 msgid "Only show cruelty cases"
@@ -7331,8 +7329,7 @@ msgid "Otterhound"
 msgstr "Perro de Nutria"
 
 #: options.js
-msgid ""
-"Our shelter does trial adoptions, allow us to mark these on movement screens"
+msgid "Our shelter does trial adoptions, allow us to mark these on movement screens"
 msgstr ""
 "Nuestro refugio hace adopciones juicio, nos permite marcar estas pantallas "
 "en movimiento"
@@ -7818,8 +7815,7 @@ msgid "Prairie Dog"
 msgstr "Perro de la Pradera"
 
 #: options.js
-msgid ""
-"Prefill new media notes for animal images with animal comments if left blank"
+msgid "Prefill new media notes for animal images with animal comments if left blank"
 msgstr ""
 "Prellenar nuevas notas multimedia para imagenes de animales con comentarios "
 "de animales si se dejan en blanco"
@@ -8264,8 +8260,7 @@ msgstr ""
 
 #: options.js
 msgid "Remove the FIV/L test fields from animal health details"
-msgstr ""
-"Retire los campos de prueba de VIF/L de los detalles de sanidad animal"
+msgstr "Retire los campos de prueba de VIF/L de los detalles de sanidad animal"
 
 #: options.js
 msgid "Remove the Litter ID field from animal details"
@@ -8309,13 +8304,11 @@ msgstr "Retire el campo de bueno con de las notas del animal"
 
 #: options.js
 msgid "Remove the heartworm test fields from animal health details"
-msgstr ""
-"Retirar el campo de Gusano de corazón de los campos de salud del animal"
+msgstr "Retirar el campo de Gusano de corazón de los campos de salud del animal"
 
 #: options.js
 msgid "Remove the insurance number field from the movement screens"
-msgstr ""
-"Retire el campo de número de seguro desde las pantallas de movimiento"
+msgstr "Retire el campo de número de seguro desde las pantallas de movimiento"
 
 #: options.js
 msgid "Remove the location unit field from animal details"
@@ -8553,8 +8546,7 @@ msgstr "Volver a un animal de transferencia"
 
 #: movement.py
 msgid "Return date cannot be before the movement date."
-msgstr ""
-"La fecha de devolución no puede ser anterior a la fecha del movimiento."
+msgstr "La fecha de devolución no puede ser anterior a la fecha del movimiento."
 
 #: traploan.js lostfound.js movements.js animal.py
 msgid "Returned"
@@ -8952,8 +8944,7 @@ msgstr "Establecer opciones de publicación"
 
 #: mailmerge.js common_widgets.js
 msgid "Set the email content-type header to text/html"
-msgstr ""
-"Ajustar el tipo de contenido del encabezado del email como texto / html"
+msgstr "Ajustar el tipo de contenido del encabezado del email como texto / html"
 
 #: waitinglist.js
 msgid "Set this to 0 to never automatically remove."
@@ -9387,8 +9378,7 @@ msgid "Species Z-A"
 msgstr "Especies de la Z-A"
 
 #: lookups.js
-msgid ""
-"Species to use when publishing to third party services and adoption sites"
+msgid "Species to use when publishing to third party services and adoption sites"
 msgstr ""
 "Las especies a utilizar cuando se publica a los servicios de terceros y "
 "sitios de adopción"
@@ -9738,7 +9728,8 @@ msgstr "Plantilla para publicaciones de Facebook"
 
 #: document_templates.js
 msgid ""
-"Template names can include a path portion with /, eg: Vets/Rabies Certificate"
+"Template names can include a path portion with /, eg: Vets/Rabies "
+"Certificate"
 msgstr ""
 "Nombres de plantillas que pueden incluir una parte de la ruta con /, por "
 "ejemplo: Veterinarios / Certificado Rabia"
@@ -9820,8 +9811,7 @@ msgid "The SmartTag type"
 msgstr "El tipo de SmartTag"
 
 #: media.js
-msgid ""
-"The URL is the address of a web resource, eg: www.youtube.com/watch?v=xxxxxx"
+msgid "The URL is the address of a web resource, eg: www.youtube.com/watch?v=xxxxxx"
 msgstr ""
 "La URL es la dirección de un recurso web, por ejemplo: "
 "www.youtube.com/watch?v=xxxxxx"
@@ -9888,8 +9878,7 @@ msgstr "La fecha en que se tatuó a este animal"
 
 #: move_foster.js
 msgid "The date the foster animal will be returned if known"
-msgstr ""
-"La fecha en la que el animal adoptado sera regresado (si existe fecha)"
+msgstr "La fecha en la que el animal adoptado sera regresado (si existe fecha)"
 
 #: move_foster.js
 msgid "The date the foster is effective from"
@@ -10012,8 +10001,7 @@ msgstr "La raza principal de este animal"
 
 #: waitinglist.js waitinglist_new.js
 msgid "The reason the owner wants to part with the animal"
-msgstr ""
-"La razón por la que el propietario desea desprenderse de los animales"
+msgstr "La razón por la que el propietario desea desprenderse de los animales"
 
 #: waitinglist.js
 msgid "The reason this animal was removed from the waiting list"
@@ -10120,8 +10108,7 @@ msgid ""
 msgstr ""
 
 #: onlineforms.js
-msgid ""
-"These are the HTML headers and footers used when displaying online forms."
+msgid "These are the HTML headers and footers used when displaying online forms."
 msgstr ""
 "Estos son los encabezados y pies de página HTML utilizadas al mostrar "
 "formularios en línea."
@@ -10133,8 +10120,7 @@ msgstr ""
 "de informes."
 
 #: options.js
-msgid ""
-"These are the default values for these fields when creating new records."
+msgid "These are the default values for these fields when creating new records."
 msgstr ""
 "Estos son los valores predeterminados para estos campos al crear nuevos "
 "registros."
@@ -10180,8 +10166,7 @@ msgstr ""
 "y que se dan bloques de números de políticas para asignar."
 
 #: options.js
-msgid ""
-"These options change the behaviour of the search box at the top of the page."
+msgid "These options change the behaviour of the search box at the top of the page."
 msgstr ""
 "Estas opciones cambian el comportamiento del cuadro de búsqueda en la parte "
 "superior de la página."
@@ -10264,7 +10249,8 @@ msgstr "Este animal tiene necesidades especiales"
 
 #: animal_new.js
 msgid ""
-"This animal has the same name as another animal recently added to the system."
+"This animal has the same name as another animal recently added to the "
+"system."
 msgstr ""
 "Este animal tiene el mismo nombre que otro animal recientemente añadido al "
 "sistema."
@@ -10290,8 +10276,7 @@ msgstr ""
 "automáticamente primero."
 
 #: move_adopt.js move_reclaim.js
-msgid ""
-"This animal is currently fostered, it will be automatically returned first."
+msgid "This animal is currently fostered, it will be automatically returned first."
 msgstr ""
 "Este animal se fomenta en la actualidad, se le devolverá automáticamente "
 "primero."
@@ -10322,8 +10307,7 @@ msgid "This animal should be held in case it is reclaimed"
 msgstr "Este animal debe mantenerse en caso de ser reclamado"
 
 #: animal.js
-msgid ""
-"This animal should not be included when publishing animals for adoption"
+msgid "This animal should not be included when publishing animals for adoption"
 msgstr "Este animal no debe incluirse al publicar los animales en adopción"
 
 #: animal.js
@@ -10844,8 +10828,7 @@ msgstr ""
 
 #: options.js
 msgid "Treat foster animals as part of the shelter inventory"
-msgstr ""
-"Tratar a los animales de crianza como parte del inventario de vivienda"
+msgstr "Tratar a los animales de crianza como parte del inventario de vivienda"
 
 #: options.js
 msgid "Treat trial adoptions as part of the shelter inventory"
@@ -10989,8 +10972,7 @@ msgstr "Unidad"
 
 #: animal.js animal_new.js
 msgid "Unit within the location, eg: pen or cage number"
-msgstr ""
-"Unidad dentro de la ubicación, por ejemplo: pluma o número de la jaula"
+msgstr "Unidad dentro de la ubicación, por ejemplo: pluma o número de la jaula"
 
 #: mailmerge.js lookups.js stocklevel.js
 msgid "Units"
@@ -11124,7 +11106,8 @@ msgstr "Emplear números automáticos de seguro"
 
 #: options.js
 msgid ""
-"Use HTML5 client side image scaling where available to speed up image uploads"
+"Use HTML5 client side image scaling where available to speed up image "
+"uploads"
 msgstr ""
 "Utilice HTML5 escalado de imagen del lado del cliente cuando sea posible "
 "para acelerar la subida de imágenes"
@@ -11544,8 +11527,7 @@ msgstr ""
 "Advertir si el nombre del nuevo animal es similar a uno entró recientemente"
 
 #: options.js
-msgid ""
-"Warn when adopting to a person who has been banned from adopting animals"
+msgid "Warn when adopting to a person who has been banned from adopting animals"
 msgstr ""
 "Advierta a la hora de adoptar a una persona que ha sido expulsado de la "
 "adopción de animales"
@@ -11646,8 +11628,7 @@ msgid ""
 msgstr ""
 
 #: options.js
-msgid ""
-"When I generate a document, make a note of it in the log with this type"
+msgid "When I generate a document, make a note of it in the log with this type"
 msgstr ""
 "Al generar un documento, hacer una nota de ello en el registro con este tipo"
 
@@ -11841,7 +11822,8 @@ msgstr "Yorkshire Terrier"
 
 #: main.js
 msgid ""
-"You can bookmark search results, animals, people and most data entry screens."
+"You can bookmark search results, animals, people and most data entry "
+"screens."
 msgstr ""
 "Puede crear marcadores de los resultados de búsquedas, animales, personas y "
 "la mayoría de las pantallas de entrada de datos."
@@ -11855,8 +11837,7 @@ msgstr ""
 "Configuración-Opciones-Shelter Details-Visual Theme."
 
 #: main.js
-msgid ""
-"You can drag and drop animals in shelter view to change their locations."
+msgid "You can drag and drop animals in shelter view to change their locations."
 msgstr ""
 "Puede arrastrar y soltar los animales, tanto refugio para cambiar su "
 "ubicación."
@@ -11921,8 +11902,7 @@ msgid "You can't have a return without a movement."
 msgstr "No se puede realizar una devolución sin un movimiento"
 
 #: animal_find_results.js
-msgid ""
-"You didn't specify any search criteria, so an on-shelter search was assumed."
+msgid "You didn't specify any search criteria, so an on-shelter search was assumed."
 msgstr ""
 "No se ha indicado ningún criterio de búsqueda, por lo  tanto se asume "
 "búsqueda general en el refugio"
@@ -11960,8 +11940,7 @@ msgstr ""
 "sugerimos fuertemente que usted elija una nueva contraseña."
 
 #: main.js
-msgid ""
-"Your sheltermanager.com account is due to expire on {0}, please renew {1}"
+msgid "Your sheltermanager.com account is due to expire on {0}, please renew {1}"
 msgstr ""
 
 #: person_find_results.js incident_find_results.js incident_new.js person.js
@@ -12087,8 +12066,7 @@ msgid "{0} - {1} {2}"
 msgstr "{0} - {1} {2}"
 
 #: lostfound.py
-msgid ""
-"{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}"
+msgid "{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}"
 msgstr ""
 "{0} - {1} {2} ({3}), contacto {4} ({5}) - perdido en {6}, código postal {7}, "
 "en {8}"
@@ -12123,8 +12101,7 @@ msgstr ""
 
 #: mailmerge.js
 msgid "{0} record(s) match the mail merge."
-msgstr ""
-"Hay {0} registros que coinciden con la combinación de correspondencia."
+msgstr "Hay {0} registros que coinciden con la combinación de correspondencia."
 
 #: sql.js
 msgid "{0} results."
@@ -12179,8 +12156,7 @@ msgid "{0} {1}: posted to Facebook page {2} by {3}"
 msgstr "{0} {1}: en la página de Facebook se publicó {2} por {3}"
 
 #: common.js
-msgid ""
-"{0}: Entered shelter {1}, Last changed on {2} by {3}. {4} {5} {6} aged {7}"
+msgid "{0}: Entered shelter {1}, Last changed on {2} by {3}. {4} {5} {6} aged {7}"
 msgstr ""
 "{0}: Inscrita refugio {1}, modificado el {2} por {3}. {4} {5} {6} {7} "
 "envejecido"
