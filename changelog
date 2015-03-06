@@ -1,6 +1,7 @@
 36
 ================
 
+06/03/15 Followup call alerts should not need calls to be incomplete
 06/03/15 Include pickup location fields when cloning animals
 02/03/15 Variable data performance: calc time on shelter with MostRecentEntryDate
 02/03/15 Variable data performance: cache age group bands to save queries

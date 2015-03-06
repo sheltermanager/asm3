@@ -641,10 +641,10 @@ def get_alerts(dbo, locationfilter = ""):
         "(SELECT COUNT(*) FROM ownercitation WHERE FineDueDate Is Not Null AND FineDueDate <= %(today)s AND FinePaidDate Is Null) AS acunfine, " \
         "(SELECT COUNT(*) FROM animalcontrol WHERE CompletedDate Is Null AND DispatchDateTime Is Null AND CallDateTime Is Not Null) AS acundisp, " \
         "(SELECT COUNT(*) FROM animalcontrol WHERE CompletedDate Is Null) AS acuncomp, " \
-        "(SELECT COUNT(*) FROM animalcontrol WHERE (CompletedDate Is Null AND (" \
+        "(SELECT COUNT(*) FROM animalcontrol WHERE (" \
             "(FollowupDateTime Is Not Null AND FollowupDateTime <= %(today)s) OR " \
             "(FollowupDateTime2 Is Not Null AND FollowupDateTime2 <= %(today)s) OR " \
-            "(FollowupDateTime3 Is Not Null AND FollowupDateTime3 <= %(today)s)))) AS acfoll, " \
+            "(FollowupDateTime3 Is Not Null AND FollowupDateTime3 <= %(today)s))) AS acfoll, " \
         "(SELECT COUNT(*) FROM ownertraploan WHERE ReturnDueDate Is Not Null AND ReturnDueDate <= %(today)s AND ReturnDate Is Null) AS tlover, " \
         "(SELECT COUNT(*) FROM stocklevel WHERE Balance > 0 AND Expiry Is Not Null AND Expiry > %(today)s AND Expiry <= %(futuremonth)s) AS stexpsoon, " \
         "(SELECT COUNT(*) FROM stocklevel WHERE Balance > 0 AND Expiry Is Not Null AND Expiry <= %(today)s) AS stexp, " \

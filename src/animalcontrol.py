@@ -173,7 +173,7 @@ def get_animalcontrol_find_advanced(dbo, criteria, limit = 0):
     addid("species", "ac.SpeciesID")
     addcomp("filter", "incomplete", "ac.CompletedDate Is Null")
     addcomp("filter", "undispatched", "ac.CompletedDate Is Null AND ac.CallDateTime Is Not Null AND ac.DispatchDateTime Is Null")
-    addcomp("filter", "requirefollowup", "ac.CompletedDate Is Null AND (" \
+    addcomp("filter", "requirefollowup", "(" \
         "(ac.FollowupDateTime Is Not Null AND ac.FollowupDateTime <= %(now)s) OR " \
         "(ac.FollowupDateTime2 Is Not Null AND ac.FollowupDateTime2 <= %(now)s) OR " \
         "(ac.FollowupDateTime3 Is Not Null AND ac.FollowupDateTime3 <= %(now)s) " \
