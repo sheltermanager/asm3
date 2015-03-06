@@ -1887,6 +1887,8 @@ def clone_animal(dbo, username, animalid):
         ( "PTSReasonID", db.di(a["PTSREASONID"])),
         ( "IsDOA", db.di(a["ISDOA"])),
         ( "IsTransfer", db.di(a["ISTRANSFER"])),
+        ( "IsPickup", db.di(a["ISPICKUP"])),
+        ( "PickupLocationID", db.di(a["PICKUPLOCATIONID"])),
         ( "IsGoodWithCats", db.di(a["ISGOODWITHCATS"])),
         ( "IsGoodWithDogs", db.di(a["ISGOODWITHDOGS"])),
         ( "IsGoodWithChildren", db.di(a["ISGOODWITHCHILDREN"])),

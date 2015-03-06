@@ -1,6 +1,7 @@
 36
 ================
 
+06/03/15 Include pickup location fields when cloning animals
 02/03/15 Variable data performance: calc time on shelter with MostRecentEntryDate
 02/03/15 Variable data performance: cache age group bands to save queries
 02/03/15 Variable data performance: don't recalculate the dead every run
