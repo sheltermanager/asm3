@@ -1,6 +1,6 @@
 # sl.po
 
-val = {"" : "Project-Id-Version: sheltermanager\nReport-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\nPOT-Creation-Date: 2013-01-24 10:55+0000\nPO-Revision-Date: 2014-01-30 00:16+0000\nLast-Translator: Matic <matic.lenko@gmail.com>\nLanguage-Team: Slovenian <sl@li.org>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nX-Launchpad-Export-Date: 2015-03-02 05:19+0000\nX-Generator: Launchpad (build 17361)\n",
+val = {"" : "Project-Id-Version: sheltermanager\nReport-Msgid-Bugs-To: db@sheltermanager.com\nPOT-Creation-Date: 2013-01-24 10:55+0000\nPO-Revision-Date: 2014-01-30 00:16+0000\nLast-Translator: Matic <matic.lenko@gmail.com>\nLanguage-Team: Slovenian <sl@li.org>\nLanguage: sl\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nX-Generator: Launchpad (build 17361)\nX-Launchpad-Export-Date: 2015-03-02 05:19+0000\n",
 "{plural3} people with active reservations have not been homechecked" : "",
 "Select recommended" : "",
 "Half-Yearly" : "Polletno",

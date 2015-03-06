@@ -1,6 +1,6 @@
 # zh_CN.po
 
-val = {"" : "Project-Id-Version: sheltermanager\nReport-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\nPOT-Creation-Date: 2013-01-24 10:55+0000\nPO-Revision-Date: 2011-09-03 07:17+0000\nLast-Translator: thanatoid <Unknown>\nLanguage-Team: Chinese (Simplified) <zh_CN@li.org>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nX-Launchpad-Export-Date: 2015-03-02 05:21+0000\nX-Generator: Launchpad (build 17361)\n",
+val = {"" : "Project-Id-Version: sheltermanager\nReport-Msgid-Bugs-To: db@sheltermanager.com\nPOT-Creation-Date: 2013-01-24 10:55+0000\nPO-Revision-Date: 2011-09-03 07:17+0000\nLast-Translator: thanatoid <Unknown>\nLanguage-Team: Chinese (Simplified) <zh_CN@li.org>\nLanguage: zh_CN\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nX-Generator: Launchpad (build 17361)\nX-Launchpad-Export-Date: 2015-03-02 05:21+0000\n",
 "{plural3} people with active reservations have not been homechecked" : "",
 "Select recommended" : "",
 "Half-Yearly" : "",

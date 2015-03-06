@@ -1,6 +1,6 @@
 # he.po
 
-val = {"" : "Project-Id-Version: sheltermanager\nReport-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\nPOT-Creation-Date: 2013-01-24 10:55+0000\nPO-Revision-Date: 2012-05-09 14:26+0000\nLast-Translator: Yaron <sh.yaron@gmail.com>\nLanguage-Team: Hebrew <he@li.org>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nX-Launchpad-Export-Date: 2015-03-02 05:16+0000\nX-Generator: Launchpad (build 17361)\n",
+val = {"" : "Project-Id-Version: sheltermanager\nReport-Msgid-Bugs-To: db@sheltermanager.com\nPOT-Creation-Date: 2013-01-24 10:55+0000\nPO-Revision-Date: 2012-05-09 14:26+0000\nLast-Translator: Yaron <sh.yaron@gmail.com>\nLanguage-Team: Hebrew <he@li.org>\nLanguage: he\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nX-Generator: Launchpad (build 17361)\nX-Launchpad-Export-Date: 2015-03-02 05:16+0000\n",
 "{plural3} people with active reservations have not been homechecked" : "",
 "Select recommended" : "",
 "Half-Yearly" : "&#1489;&#1499;&#1500; &#1495;&#1510;&#1497;&#1470;&#1513;&#1504;&#1492;",

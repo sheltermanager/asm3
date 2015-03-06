@@ -1,6 +1,6 @@
 # es.po
 
-val = {"" : "Project-Id-Version: PACKAGE VERSION\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2013-01-24 10:55+0000\nPO-Revision-Date: 2015-01-25 03:21+0000\nLast-Translator: Federico balderas <fedebalderas@gmail.com>\nLanguage-Team: LANGUAGE <LL@li.org>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nX-Launchpad-Export-Date: 2015-03-02 05:19+0000\nX-Generator: Launchpad (build 17361)\n",
+val = {"" : "Project-Id-Version: PACKAGE VERSION\nReport-Msgid-Bugs-To: db@sheltermanager.com\nPOT-Creation-Date: 2013-01-24 10:55+0000\nPO-Revision-Date: 2015-01-25 03:21+0000\nLast-Translator: Federico balderas <fedebalderas@gmail.com>\nLanguage-Team: LANGUAGE <LL@li.org>\nLanguage: es\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nX-Generator: Launchpad (build 17361)\nX-Launchpad-Export-Date: 2015-03-02 05:19+0000\n",
 "{plural3} people with active reservations have not been homechecked" : "{plural3} personas con reservas activas que no han sido revisadas en casa",
 "Select recommended" : "Seleccionar recomendaciones",
 "Half-Yearly" : "Semestral",
