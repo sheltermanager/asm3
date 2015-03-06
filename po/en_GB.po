@@ -2,7 +2,6 @@
 # Copyright (C) 2013 Robin Rawson-Tetley
 # This file is distributed under the same license as the ASM3 package.
 # Robin Rawson-Tetley <robin@rawsontetley.org>, 2013.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
