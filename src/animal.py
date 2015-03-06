@@ -1889,6 +1889,7 @@ def clone_animal(dbo, username, animalid):
         ( "IsTransfer", db.di(a["ISTRANSFER"])),
         ( "IsPickup", db.di(a["ISPICKUP"])),
         ( "PickupLocationID", db.di(a["PICKUPLOCATIONID"])),
+        ( "PickedUpByOwnerID", db.di(a["PICKEDUPBYOWNERID"])),
         ( "IsGoodWithCats", db.di(a["ISGOODWITHCATS"])),
         ( "IsGoodWithDogs", db.di(a["ISGOODWITHDOGS"])),
         ( "IsGoodWithChildren", db.di(a["ISGOODWITHCHILDREN"])),
