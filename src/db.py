@@ -129,10 +129,6 @@ def query(dbo, sql):
         return l
     except Exception,err:
         al.error(str(err), "db.query", dbo, sys.exc_info())
-        try:
-            connect_cursor_close(dbo, c, s)
-        except:
-            pass
         raise err
     finally:
         try:
@@ -275,7 +271,7 @@ def query_json(dbo, sql):
         return json
     except Exception,err:
         al.error(str(err), "db.query_json", dbo, sys.exc_info())
-        return ""
+        raise err
     finally:
         try:
             connect_cursor_close(dbo, c, s)

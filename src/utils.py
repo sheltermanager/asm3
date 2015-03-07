@@ -331,7 +331,7 @@ class ASMValidationError(web.HTTPError):
     Custom error thrown by data modules when validation fails
     """
     def __init__(self, msg):
-        status = '500 %s' % msg
+        status = '500 Internal Server Error'
         headers = { 'Content-Type': "text/html" }
         data = "<h1>Validation Error</h1><p>%s</p>" % msg
         web.HTTPError.__init__(self, status, headers, data)
@@ -341,7 +341,7 @@ class ASMPermissionError(web.HTTPError):
     Custom error thrown by data modules when validation fails
     """
     def __init__(self, msg):
-        status = '500 %s' % msg
+        status = '500 Internal Server Error'
         headers = { 'Content-Type': "text/html" }
         data = "<h1>Permission Error</h1><p>%s</p>" % msg
         web.HTTPError.__init__(self, status, headers, data)
@@ -351,7 +351,7 @@ class ASMError(web.HTTPError):
     Custom error thrown by data modules 
     """
     def __init__(self, msg):
-        status = '500 %s' % msg
+        status = '500 Internal Server Error'
         headers = { 'Content-Type': "text/html" }
         data = "<h1>Error</h1><p>%s</p>" % msg
         web.HTTPError.__init__(self, status, headers, data)
