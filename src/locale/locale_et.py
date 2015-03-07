@@ -1,6 +1,6 @@
 # et.po
 
-val = {"" : "Project-Id-Version: sheltermanager\nReport-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\nPOT-Creation-Date: 2013-01-24 10:55+0000\nPO-Revision-Date: 2010-08-23 10:57+0000\nLast-Translator: lyyser <Unknown>\nLanguage-Team: Estonian <et@li.org>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nX-Launchpad-Export-Date: 2015-03-02 05:15+0000\nX-Generator: Launchpad (build 17361)\n",
+val = {"" : "Project-Id-Version: sheltermanager\nReport-Msgid-Bugs-To: db@sheltermanager.com\nPOT-Creation-Date: 2013-01-24 10:55+0000\nPO-Revision-Date: 2015-03-04 13:56+0000\nLast-Translator: Administrator <>\nLanguage-Team: Estonian <et@li.org>\nLanguage: et\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\nX-Generator: Pootle 2.5.1.1\nX-Launchpad-Export-Date: 2015-03-02 05:15+0000\nX-POOTLE-MTIME: 1425477369.367494\n",
 "{plural3} people with active reservations have not been homechecked" : "",
 "Select recommended" : "",
 "Half-Yearly" : "Poole aasta tagant",
@@ -2968,7 +2968,7 @@ val = {"" : "Project-Id-Version: sheltermanager\nReport-Msgid-Bugs-To: FULL NAME
 "Lost from" : "",
 "More Tests" : "",
 "Show quick links on the home page" : "",
-" days." : "",
+" days." : " p&#228;eva.",
 "Delete this person" : "",
 "{plural0} week." : "",
 "Entered (newest first)" : "",
