@@ -313,59 +313,14 @@ $(function() {
             $("#returndate").change(movements.returndate_change);
 
             // When we choose a person
-            $("#person").personchooser().bind("personchooserchange", function(event, rec) {
+            $("#person").personchooser().bind("personchooserchange", function(event, rec) { lastperson = rec; movements.warnings(); });
 
-                lastperson = rec;
-                tableform.dialog_error("");
-
-                // We evaluate warnings in order of importance and drop out once we have one.
-
-                // Is this owner banned?
-                if (rec.ISBANNED == 1) {
-                     if (config.bool("WarnBannedOwner")) { 
-                         tableform.dialog_error(_("This person has been banned from adopting animals.")); 
-                         return;
-                     }
-                }
-
-                // Owner previously under investigation
-                if (rec.INVESTIGATION > 0) {
-                    tableform.dialog_error(_("This person has been under investigation"));
-                    return;
-                }
-
-                // Owner part of animal control incident
-                if (rec.INCIDENT > 0) {
-                    tableform.dialog_error(_("This person has an animal control incident against them"));
-                    return;
-                }
-
-
-                // Does this owner live in the same postcode area as the animal's
-                // original owner?
-                if ( format.postcode_prefix($(".animalchooser-oopostcode").val()) == format.postcode_prefix(rec.OWNERPOSTCODE) ||
-                     format.postcode_prefix($(".animalchooser-bipostcode").val()) == format.postcode_prefix(rec.OWNERPOSTCODE) ) {
-                    if (config.bool("WarnOOPostcode")) { 
-                        tableform.dialog_error(_("This person lives in the same area as the person who brought the animal to the shelter.")); 
-                        return;
-                    }
-                }
-
-                // Is this owner not homechecked?
-                if (rec.IDCHECK == 0) {
-                    if (config.bool("WarnNoHomeCheck")) { 
-                        tableform.dialog_error(_("This person has not passed a homecheck."));
-                        return;
-                    }
-                }
-            });
-
-            $("#person").personchooser().bind("personchooserloaded", function(event, rec) { lastperson = rec; });
-            $("#person").personchooser().bind("personchooserclear", function(event, rec) { tableform.dialog_error(""); });
-            $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) { lastanimal = rec; });
-            $("#animal").animalchooser().bind("animalchooserloaded", function(event, rec) { lastanimal = rec; });
-            $("#retailer").personchooser().bind("personchooserchange", function(event, rec) { lastretailer = rec; });
-            $("#retailer").personchooser().bind("personchooserloaded", function(event, rec) { lastretailer = rec; });
+            $("#person").personchooser().bind("personchooserloaded", function(event, rec) { lastperson = rec; movements.warnings(); });
+            $("#person").personchooser().bind("personchooserclear", function(event, rec) { movements.warnings(); });
+            $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) { lastanimal = rec; movements.warnings(); });
+            $("#animal").animalchooser().bind("animalchooserloaded", function(event, rec) { lastanimal = rec; movements.warnings(); });
+            $("#retailer").personchooser().bind("personchooserchange", function(event, rec) { lastretailer = rec; movements.warnings(); });
+            $("#retailer").personchooser().bind("personchooserloaded", function(event, rec) { lastretailer = rec; movements.warnings(); });
 
             // Insurance button
             $("#insurance").after('<button id="button-insurance">' + _("Issue a new insurance number for this animal/adoption") + '</button>');
@@ -382,6 +337,74 @@ $(function() {
                 $("#insurance").closest("tr").hide();
             }
 
+        },
+
+        warnings: function() {
+            var p = lastperson, a = lastanimal, warn = [];
+            tableform.dialog_error("");
+
+            // None of these warnings are valid if we this isn't an adoption
+            if ($("#type").val() != 1) { return; }
+
+            // Person warnings
+            if (p) {
+                // Is this owner banned?
+                if (p.ISBANNED == 1) {
+                     if (config.bool("WarnBannedOwner")) { 
+                         warn.push(_("This person has been banned from adopting animals.")); 
+                     }
+                }
+                // Owner previously under investigation
+                if (p.INVESTIGATION > 0) {
+                    warn.push(_("This person has been under investigation"));
+                }
+                // Owner part of animal control incident
+                if (p.INCIDENT > 0) {
+                    warn.push(_("This person has an animal control incident against them"));
+                }
+                // Does this owner live in the same postcode area as the animal's
+                // original owner?
+                if ( format.postcode_prefix($(".animalchooser-oopostcode").val()) == format.postcode_prefix(p.OWNERPOSTCODE) ||
+                     format.postcode_prefix($(".animalchooser-bipostcode").val()) == format.postcode_prefix(p.OWNERPOSTCODE) ) {
+                    if (config.bool("WarnOOPostcode")) { 
+                        warn.push(_("This person lives in the same area as the person who brought the animal to the shelter.")); 
+                    }
+                }
+
+                // Is this owner not homechecked?
+                if (p.IDCHECK == 0) {
+                    if (config.bool("WarnNoHomeCheck")) { 
+                        warn.push(_("This person has not passed a homecheck."));
+                    }
+                }
+            }
+
+            // Animal warnings
+            if (a) {
+                // If the animal is held, we shouldn't be allowed to adopt it
+                if (a.ISHOLD == 1) {
+                    warn.push(_("This animal is currently held and cannot be adopted."));
+                }
+
+                // Check for bonded animals and warn
+                if (a.BONDEDANIMALID != "0" || a.BONDEDANIMAL2ID != "0") {
+                    var bw = "";
+                    if (a.BONDEDANIMAL1NAME != "" && a.BONDEDANIMAL1NAME != null) {
+                        bw += a.BONDEDANIMAL1CODE + " - " + a.BONDEDANIMAL1NAME;
+                    }
+                    if (a.BONDEDANIMAL2NAME != "" && a.BONDEDANIMAL2NAME != null) {
+                        if (bw != "") { bw += ", "; }
+                        bw += a.BONDEDANIMAL2CODE + " - " + a.BONDEDANIMAL2NAME;
+                    }
+                    if (bw != "") {
+                        warn.push(_("This animal is bonded with {0}").replace("{0}", bw));
+                    }
+                }
+
+            }
+            if (warn.length > 0) {
+                tableform.dialog_error(warn.join("<br/>"));
+            }
         },
 
         validation: function() {
@@ -510,6 +533,7 @@ $(function() {
             else {
                 $("#person").closest("tr").fadeIn();
             }
+            movements.warnings();
         },
 
         /** Fires when the return date is changed */
