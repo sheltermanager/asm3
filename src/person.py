@@ -916,7 +916,7 @@ def update_missing_geocodes(dbo):
     a lot of historical data don't end up tying up the daily
     batch for a long time, they'll just slowly complete over time.
     """
-    LIMIT = 250
+    LIMIT = 50
     people = db.query(dbo, "SELECT ID, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode " \
         "FROM owner WHERE LatLong Is Null OR LatLong = '' LIMIT %d" % LIMIT)
     batch = []
