@@ -2325,7 +2325,7 @@ def update_all_animal_statuses(dbo):
         "DisplayLocation = %s, " \
         "HasActiveReserve = %s, " \
         "HasTrialAdoption = %s, " \
-        "HasPermanentFoster = %s " \
+        "HasPermanentFoster = %s, " \
         "MostRecentEntryDate = %s " \
         "WHERE ID = %s", animalupdatebatch)
     aff = db.execute_many(dbo, "UPDATE diary SET LinkInfo = %s WHERE LinkType = %s AND LinkID = %s", diaryupdatebatch)
@@ -2351,7 +2351,7 @@ def update_foster_animal_statuses(dbo):
         "DisplayLocation = %s, " \
         "HasActiveReserve = %s, " \
         "HasTrialAdoption = %s, " \
-        "HasPermanentFoster = %s " \
+        "HasPermanentFoster = %s, " \
         "MostRecentEntryDate = %s " \
         "WHERE ID = %s", animalupdatebatch)
     aff = db.execute_many(dbo, "UPDATE diary SET LinkInfo = %s WHERE LinkType = %s AND LinkID = %s", diaryupdatebatch)
@@ -2378,7 +2378,7 @@ def update_on_shelter_animal_statuses(dbo):
         "DisplayLocation = %s, " \
         "HasActiveReserve = %s, " \
         "HasTrialAdoption = %s, " \
-        "HasPermanentFoster = %s " \
+        "HasPermanentFoster = %s, " \
         "MostRecentEntryDate = %s " \
         "WHERE ID = %s", animalupdatebatch)
     aff = db.execute_many(dbo, "UPDATE diary SET LinkInfo = %s WHERE LinkType = %s AND LinkID = %s", diaryupdatebatch)
