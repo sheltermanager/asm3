@@ -1,6 +1,7 @@
 36
 ================
 
+09/03/15 Fix email and emailpdf to send multiple 
 07/03/15 Fix to show bonded warnings from movement tabs and books
 07/03/15 Fix timeouts with SQL interface errors behind Apache proxy
 06/03/15 Followup call alerts should not need calls to be incomplete

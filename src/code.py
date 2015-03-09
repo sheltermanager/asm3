@@ -1483,7 +1483,7 @@ class animal_media:
                 content = dbfs.get_string(dbo, m["MEDIANAME"])
                 contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
                 utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], "", "plain", contentpdf, "document.pdf")
-                return emailadd
+            return emailadd
         elif mode == "rotateclock":
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):
@@ -2833,7 +2833,7 @@ class foundanimal_media:
                 content = dbfs.get_string(dbo, m["MEDIANAME"])
                 content = utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
                 utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], content, "html")
-                return emailadd
+            return emailadd
         elif mode == "emailpdf":
             users.check_permission(session, users.EMAIL_PERSON)
             emailadd = post["email"]
@@ -2847,7 +2847,7 @@ class foundanimal_media:
                 content = dbfs.get_string(dbo, m["MEDIANAME"])
                 contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
                 utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], "", "plain", contentpdf, "document.pdf")
-                return emailadd
+            return emailadd
         elif mode == "rotateclock":
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):
@@ -3244,7 +3244,7 @@ class incident_media:
                 content = dbfs.get_string(dbo, m["MEDIANAME"])
                 content = utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
                 utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], content, "html")
-                return emailadd
+            return emailadd
         elif mode == "emailpdf":
             users.check_permission(session, users.EMAIL_PERSON)
             emailadd = post["email"]
@@ -3258,7 +3258,7 @@ class incident_media:
                 content = dbfs.get_string(dbo, m["MEDIANAME"])
                 contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
                 utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], "", "plain", contentpdf, "document.pdf")
-                return emailadd
+            return emailadd
         elif mode == "rotateclock":
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):
@@ -3715,7 +3715,7 @@ class lostanimal_media:
                 content = dbfs.get_string(dbo, m["MEDIANAME"])
                 content = utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
                 utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], content, "html")
-                return emailadd
+            return emailadd
         elif mode == "emailpdf":
             users.check_permission(session, users.EMAIL_PERSON)
             emailadd = post["email"]
@@ -3729,7 +3729,7 @@ class lostanimal_media:
                 content = dbfs.get_string(dbo, m["MEDIANAME"])
                 contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
                 utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], "", "plain", contentpdf, "document.pdf")
-                return emailadd
+            return emailadd
         elif mode == "rotateclock":
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):
@@ -5166,7 +5166,7 @@ class person_media:
                 if m["MEDIANAME"].endswith("html"):
                     content = utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
                 utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], post["emailnote"], "html", content, m["MEDIANOTES"] + m["MEDIANAME"])
-                return emailadd
+            return emailadd
         elif mode == "emailpdf":
             users.check_permission(session, users.EMAIL_PERSON)
             emailadd = post["email"]
@@ -5180,7 +5180,7 @@ class person_media:
                 content = dbfs.get_string(dbo, m["MEDIANAME"])
                 contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
                 utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], "", "plain", contentpdf, "document.pdf")
-                return emailadd
+            return emailadd
         elif mode == "rotateclock":
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):
@@ -6388,7 +6388,7 @@ class waitinglist_media:
                 content = dbfs.get_string(dbo, m["MEDIANAME"])
                 content = utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
                 utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], content, "html")
-                return emailadd
+            return emailadd
         elif mode == "emailpdf":
             users.check_permission(session, users.EMAIL_PERSON)
             emailadd = post["email"]
@@ -6402,7 +6402,7 @@ class waitinglist_media:
                 content = dbfs.get_string(dbo, m["MEDIANAME"])
                 contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
                 utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], "", "plain", contentpdf, "document.pdf")
-                return emailadd
+            return emailadd
         elif mode == "rotateclock":
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):
