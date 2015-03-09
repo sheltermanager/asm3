@@ -22,9 +22,15 @@ Eg:
      
 Also has some useful helper functions for reading CSVs and parsing values, eg:
 
+    asm.cint(string)
+    asm.cfloat(string)
     asm.csv_to_list(filename)
     asm.get_currency
-    asm.getdate_yyyymmdd
+    asm.getdate_yyyymmdd (and variants)
+    asm.getsex_mf
+    asm.now()
+    asm.subtract_days, asm.add_days
+    asm.iif (inline if, eg: iif(condition, true, false))
     
 """
 
@@ -63,70 +69,91 @@ def csv_to_list(fname):
         o.append(row)
     return o
 
-def get_currency(s):
-    if s.strip() == "": return 0.0
-    s = s.replace("$", "")
+def cint(s):
+    try:
+        return int(s)
+    except:
+        return 0
+
+def cfloat(s):
     try:
         return float(s)
     except:
         return 0.0
 
-def getdate_yyyymmdd(s, defyear = "15"):
-    """ Parses a date in YYYY/MM/DD format. If the field is blank or not a date, None is returned """
-    if s.strip() == "": return None
-    if s.find("/") == -1: return None
-    if s.find(" ") != -1: s = s.split(" ")[0]
-    b = s.split("/")
-    # if we couldn't parse the date, use the first of the default year
-    if len(b) < 3: return datetime.date(int(defyear) + 2000, 1, 1)
+def get_currency(s):
+    if s.strip() == "": return 0
+    s = s.replace("$", "")
     try:
-        return datetime.date(int(b[0]), int(b[1]), int(b[2]))
+        return int(float(s) * 100)
     except:
-        return datetime.date(int(defyear) + 2000, 1, 1)
+        return 0
 
-def getdate_mmddyyyy(s, defyear = "15"):
-    """ Parses a date in MM/DD/YYYY format. If the field is blank or not a date, None is returned """
-    if s.strip() == "": return None
-    if s.find("/") == -1: return None
-    if s.find(" ") != -1: s = s.split(" ")[0]
-    b = s.split("/")
-    # if we couldn't parse the date, use the first of the default year
-    if len(b) < 3: return datetime.date(int(defyear) + 2000, 1, 1)
-    try:
-        return datetime.date(int(b[2]), int(b[0]), int(b[1]))
-    except:
-        return datetime.date(int(defyear) + 2000, 1, 1)
+def remove_time(s):
+    if s is None: return s
+    if s.find(" ") == -1:
+        return s
+    return s.split(" ")[0]
 
-def getdate_ddmmmyy(s, defyear = "15"):
+def remove_seconds(s):
+    if s.find(" ") == -1:
+        return s
+    b = s.split(" ", 1)
+    d = b[0]
+    t = b[1]
+    if t.find(":") != -1:
+        t = t[0:5]
+    return d + " " + t
+
+def parse_date(s, f):
     try:
-        return datetime.datetime.strptime(s, "%d-%b-%y")
+        return datetime.datetime.strptime(s, f)
     except:
         return None
 
-def getdate_iso(s, defyear = "15"):
-    """ Parses a date in YYYY-MM-DD format. If the field is blank, None is returned """
-    if s.strip() == "": return None
-    if s.find("-") == -1: return None
-    if s.find(" ") != -1: s = s.split(" ")[0]
-    b = s.split("-")
-    # if we couldn't parse the date, use the first of the default year
-    if len(b) < 3: return datetime.date(int(defyear) + 2000, 1, 1)
-    try:
-        return datetime.date(int(b[0]), int(b[1]), int(b[2]))
-    except:
-        return datetime.date(int(defyear) + 2000, 1, 1)
+def getdate_yyyymmdd(s):
+    s = remove_time(s)
+    return parse_date(s, "%Y/%m/%d")
+
+def getdate_mmddyyyy(s):
+    s = remove_time(s)
+    return parse_date(s, "%m/%d/%Y")
+
+def getdate_mmddyy(s):
+    s = remove_time(s)
+    return parse_date(s, "%m/%d/%y")
+
+def getdate_ddmmyy(s):
+    s = remove_time(s)
+    return parse_date(s, "%d/%m/%y")
+
+def getdate_ddmmmyy(s):
+    s = remove_time(s)
+    return parse_date(s, "%d-%b-%y")
+
+def getdate_iso(s):
+    s = remove_time(s)
+    return parse_date(s, "%Y-%m-%d")
 
 def getdatetime_iso(s, defyear = "15"):
-    """ Parses a date in YYYY-MM-DD HH:MM format, anything extra will be thrown away """
-    if s.strip() == "": return None
-    if s.find(" ") == -1: return None
-    bits = s.split(" ")
-    if len(bits) < 2: return None
-    dt = bits[0]
-    tt = bits[1]
-    d = dt.split("-")
-    t = tt.split(":")
-    return datetime.datetime(int(d[0]), int(d[1]), int(d[2]), int(t[0]), int(t[1]), 0)
+    s = remove_seconds(s)
+    return parse_date(s, "%Y-%m-%d %H:%M")
+
+def getsex_mf(s):
+    if s is None: return 0
+    if s.lower().startswith("m"):
+        return 1
+    elif s.lower().startswith("f"):
+        return 0
+    else:
+        return 2
+
+def now():
+    return datetime.datetime.today()
+
+def today():
+    """ Returns today as a Python date """
+    return datetime.datetime.today()
 
 # List of default colours
 colours = (
@@ -818,10 +845,6 @@ def strip_unicode(s):
     """
     return "".join(i for i in s if ord(i)<128)
 
-def today():
-    """ Returns today as a Python date """
-    return datetime.datetime.today()
-
 def dd(d):
     if d == None: return "NULL"
     return "'%d-%02d-%02d'" % ( d.year, d.month, d.day )
@@ -847,6 +870,12 @@ def regex(findin, pattern):
     matches = re.findall(pattern, findin)
     if len(matches) == 0: return ""
     return str(matches[0])
+
+def iif(cond, iftrue, iffalse):
+    if cond:
+        return iftrue
+    else:
+        return iffalse
 
 def makesql(table, s):
     fl = ""
@@ -915,6 +944,14 @@ def date_diff(date1, date2):
         months = float(weeks % 52)
         months = int((months / 52.0) * 12)
         return "%d years %d months." % (years, months)
+
+def add_days(d, dy):
+    if d is None: return d
+    return d + datetime.timedelta(days=dy)
+
+def subtract_days(d, dy):
+    if d is None: return d
+    return d - datetime.timedelta(days=dy)
 
 def petfinder_get_adoptable(shelterid):
     """
@@ -1334,16 +1371,17 @@ class Animal:
     def __init__(self, ID = 0):
         self.ID = ID
         if ID == 0: self.ID = getid("animal")
-    def generateCode(self, type):
+    def generateCode(self, typename = ""):
         """ Generates a sheltercode and shortcode for the animal
             to the default schemes.
-            type is the animaltype name (eg: Unwanted Cat). The
+            typename is the animaltype name (eg: Unwanted Cat). The
             year is got from DateBroughtIn, the index maintained
             internally. """
         global nextyearcode
+        if typename == "": typename = type_name_for_id(self.AnimalTypeID)
         self.YearCodeID = nextyearcode
-        self.ShelterCode = "%s%d%03d" % ( type[0:1], self.DateBroughtIn.year, nextyearcode)
-        self.ShortCode = "%03d%s" % (nextyearcode, type[0:1])
+        self.ShelterCode = "%s%d%03d" % ( typename[0:1], self.DateBroughtIn.year, nextyearcode)
+        self.ShortCode = "%03d%s" % (nextyearcode, typename[0:1])
         nextyearcode += 1
     def __str__(self):
         if self.AnimalAge == "" and self.DateOfBirth is not None:

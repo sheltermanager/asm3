@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import asm, datetime
+import asm
 
 """
 Import script for PetPoint databases exported as CSV
@@ -12,34 +12,6 @@ Import script for PetPoint databases exported as CSV
 # The shelter's petfinder ID for grabbing animal images for adoptable animals
 PETFINDER_ID = "NC494"
 FILENAME = "data/pp_nc0743.csv"
-
-# For use with fields that just contain the sex
-def getsexmf(s):
-    if s.startswith("M"):
-        return 1
-    elif s.startswith("F"):
-        return 0
-    else:
-        return 2
-
-def gettype(s):
-    spmap = {
-        "Dog": 2,
-        "Cat": 11
-    }
-    if spmap.has_key(s):
-        return spmap[s]
-    else:
-        return 13 # Misc
-
-def gettypeletter(aid):
-    tmap = {
-        2: "D",
-        11: "U",
-        12: "S",
-        13: "M"
-    }
-    return tmap[aid]
 
 def findowner(ownername = ""):
     """ Looks for an owner with the given name in the collection
@@ -62,6 +34,7 @@ asm.setid("adoption", 100)
 asm.setid("media", 100)
 asm.setid("dbfs", 200)
 
+print "\\set ON_ERROR_STOP\nBEGIN;"
 print "DELETE FROM internallocation;"
 print "DELETE FROM animal WHERE ID >= 100;"
 print "DELETE FROM media WHERE ID >= 100;"
@@ -81,7 +54,7 @@ for d in data:
         a = asm.Animal()
         animals.append(a)
         ppa[d["Animal ID"]] = a
-        a.AnimalTypeID = gettype(d["Animal Type"])
+        a.AnimalTypeID = asm.iif(d["Animal Type"] == "Cat", 11, 2)
         if a.AnimalTypeID == 11 and d["Intake Type"] == "Stray":
             a.AnimalTypeID = 12
         a.SpeciesID = asm.species_id_for_name(d["Animal Type"])
@@ -93,20 +66,20 @@ for d in data:
         else:
             a.DateOfBirth = asm.getdate_yyyymmdd(d["Date Of Birth"])
         if a.DateOfBirth is None:
-            a.DateOfBirth = datetime.datetime.today()    
+            a.DateOfBirth = asm.today()
         a.DateBroughtIn = asm.getdate_yyyymmdd(d["Intake Date"])
         a.CreatedDate = a.DateBroughtIn
         a.LastChangedDate = a.DateBroughtIn
         if a.DateBroughtIn is None:
-            a.DateBroughtIn = datetime.datetime.today()
+            a.DateBroughtIn = asm.today()
         if d["Intake Type"] == "Transfer In":
             a.IsTransfer = 1
-        a.generateCode(gettypeletter(a.AnimalTypeID))
+        a.generateCode()
         a.ShortCode = d["ARN"]
         a.Markings = d["Distinguishing Markings"]
         a.IsNotAvailableForAdoption = 0
         a.ShelterLocation = asm.location_id_for_name(d["Location"])
-        a.Sex = getsexmf(d["Gender"])
+        a.Sex = asm.getsex_mf(d["Gender"])
         a.Size = 2
         a.Neutered = d["Altered"] == "Yes" and 1 or 0
         a.ReasonForEntry = d["Reason"]
@@ -233,7 +206,6 @@ for d in data:
         asm.petfinder_image(pf, a.ID, a.AnimalName)
 
 # Now that everything else is done, output stored records
-print "\\set ON_ERROR_STOP\nBEGIN;"
 for k,v in asm.locations.iteritems():
     print v
 for a in animals:
