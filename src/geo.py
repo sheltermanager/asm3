@@ -106,7 +106,7 @@ def normalise_nominatim(address, town, county, postcode, country):
     q = address + "," + town + "," + country
     q = utils.html_to_uri(q)
     q = q.replace("&", "").replace("=", "").replace("^", "").replace(".", "")
-    q = q.replace("\n", ",").replace(", ", ",").replace(" ", "+")
+    q = q.replace("\r", "").replace("\n", ",").replace(", ", ",").replace(" ", "+")
     q = q.lower()
     dummy = county + postcode
     return q
@@ -115,7 +115,7 @@ def normalise_google(address, town, county, postcode, country):
     q = address + "," + town + "," + county +"," + postcode + "," + country
     q = utils.html_to_uri(q)
     q = q.replace("&", "").replace("=", "").replace("^", "").replace(".", "")
-    q = q.replace("\n", ",").replace(", ", ",").replace(" ", "+")
+    q = q.replace("\r", "").replace("\n", ",").replace(", ", ",").replace(" ", "+")
     q = q.lower()
     return q
 
