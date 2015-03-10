@@ -1403,8 +1403,8 @@ class AnibaseUKPublisher(AbstractPublisher):
         practiceid = configuration.anibase_practice_id(self.dbo)
         pinno = configuration.anibase_pin_no(self.dbo)
 
-        if practiceid == "" or pinno == "":
-            self.setLastError("Anibase Practice ID and Pin No must be set")
+        if pinno == "":
+            self.setLastError("Anibase vet code must be set")
             return
 
         # TODO: Remove 999% test - not a live chip prefix and just being
