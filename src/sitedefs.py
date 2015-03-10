@@ -121,13 +121,15 @@ MAP_PROVIDER = "osm"
 OSM_MAP_TILES = "http://{s}.tile.osm.org/{z}/{x}/{y}.png" # (can be switched for cloudmade.com or other OSM slippy tiles)
 
 # Bulk geocode provider for server side geocoding of
-# historical data, can be "nominatim" or "google"
+# historical data, can be "nominatim" or "google" or "" to disable.
 BULK_GEO_PROVIDER = "nominatim"
+
+# Whether or not to try and complete blank geocodes as part of the batch
+BULK_GEO_BATCH = True
 
 # URLs for public geocoding services
 BULK_GEO_NOMINATIM_URL = "http://nominatim.openstreetmap.org/search?format=json&q={q}"
 BULK_GEO_GOOGLE_URL = "http://maps.googleapis.com/maps/api/geocode/json?address={q}&sensor=false"
-BULK_GEO_SMCOM_URL = ""
 
 # Timeout when doing server side geocode lookups
 BULK_GEO_LOOKUP_TIMEOUT = 10

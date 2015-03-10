@@ -1,6 +1,7 @@
 36
 ================
 
+10/03/15 BULK_GEO_BATCH sitedef to disable server geocoding during batch
 10/03/15 Update cron usage for petrescue.com.au
 10/03/15 Removing a test should remove FIV/FLV/Heartworm flags #42
 10/03/15 Fixed renaming document templates without extension hiding them #106

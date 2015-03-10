@@ -15,6 +15,7 @@ import reports
 import users
 import utils
 from i18n import _, subtract_years, now
+from sitedefs import BULK_GEO_BATCH
 
 ASCENDING = 0
 DESCENDING = 1
@@ -916,6 +917,9 @@ def update_missing_geocodes(dbo):
     a lot of historical data don't end up tying up the daily
     batch for a long time, they'll just slowly complete over time.
     """
+    if not BULK_GEO_BATCH:
+        al.warn("no BULK_GEO_PROVIDER set, not updating missing geocodes", "update_missing_geocodes", dbo)
+        return
     LIMIT = 50
     people = db.query(dbo, "SELECT ID, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode " \
         "FROM owner WHERE LatLong Is Null OR LatLong = '' LIMIT %d" % LIMIT)
