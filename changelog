@@ -1,11 +1,12 @@
 36
 ================
 
-10/03/15 Simplified breed select from species code to prevent impossible combos
-10/03/15 Refactor animal_new to use object methods
+10/03/15 Fixed renaming document templates without extension hiding them #106
+10/03/15 Simplified breed select from species code to prevent bad combos #104
+10/03/15 Refactor animal_new to use object methods #104
 10/03/15 PDF batch scaling running regardless of options #107
-09/03/15 Show "Reservation" instead of "None" in movement books/tabs
-09/03/15 Fix email and emailpdf to send multiple 
+09/03/15 Show "Reservation" instead of "None" in movement books/tabs #103
+09/03/15 Fix email and emailpdf to send multiple
 07/03/15 Fix to show bonded warnings from movement tabs and books
 07/03/15 Fix timeouts with SQL interface errors behind Apache proxy
 06/03/15 Followup call alerts should not need calls to be incomplete

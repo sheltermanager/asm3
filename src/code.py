@@ -2501,7 +2501,7 @@ class document_templates:
         elif mode == "rename":
             newname = dbfs.sanitise_path(post["newname"])
             if not newname.endswith(".html") and not newname.endswith(".odt"): newname += ".html"
-            dbfs.rename_file_id(dbo, post.integer("dbfsid"), post["newname"])
+            dbfs.rename_file_id(dbo, post.integer("dbfsid"), newname)
 
 class donation:
     def GET(self):
