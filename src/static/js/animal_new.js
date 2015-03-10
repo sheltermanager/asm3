@@ -201,147 +201,145 @@ $(function() {
             ].join("\n");
         },
 
-        bind: function() {
-            // Prevent the act of enabling crossbreeds from resetting the
-            // breed selects.
-            var crossbreedchange = false;
-            $('#crossbreed').change(function() {
-                crossbreedchange = true;
+        /**
+         * Posts the animal details to the backend.
+         * mode: "add" to stay on this screen after post, anything else to edit the created animal
+         */
+        add_animal: function(mode) {
+
+            if (!animal_new.validation()) { return; }
+
+            $(".asm-content button").button("disable");
+            header.show_loading(_("Creating..."));
+
+            var formdata = $("input, select").toPOST();
+            common.ajax_post("animal_new", formdata, function(data) { 
+                var bits = data.split(" ");
+                var createdID = bits[0];
+                var newCode = bits[1];
+                if (mode == "add") {
+                    header.show_info(_("Animal '{0}' created with code {1}").replace("{0}", $("#animalname").val()).replace("{1}", newCode));
+                }
+                else {
+                    if (createdID != "0") { window.location = "animal?id=" + createdID; }
+                }
+                $(".asm-content button").button("enable");
+                header.hide_loading();
+            }, function() {
+                $(".asm-content button").button("enable");
+            });
+        },
+
+        /**
+         * Updates widget enabled/visable after changes
+         */
+        enable_widgets: function() {
+
+            animal_new.update_units();
+                
+            $('#species').change(function() {
+                animal_new.update_breed_select();
             });
 
-            // Only show the breeds for the selected species
-            var changebreedselect = function() {
-                if (crossbreedchange == false) {
-                    $('optgroup', $('#breed1')).remove();
-                    $('#breedp optgroup').clone().appendTo($('#breed1'));
+            // Crossbreed flag being unset disables second breed field
+            if ($("#crossbreed").is(":checked")) {
+                $("#breed2").fadeIn();
+            }
+            else {
+                $("#breed2").fadeOut();
+                $("#breed2").select("value", ($("#breed1").val()));
+            }
 
-                    $('#breed1').children().each(function(){
-                        if($(this).attr('id') != 'ngp-'+$('#species').val()){
-                            $(this).remove();
-                        }
-                    });
+            // Not having any active litters disables join litter button
+            if ($("#sellitter option").size() == 0) {
+                $("#button-litterjoin").button("disable");
+            }
+    
+        },
 
-                    if($('#breed1 option').size() == 0) {
-                        $('#breed1').append("<option value='-1'>"+$('#species option:selected').text()+"</option>");
-                    }
+        /* Update the breed selects to only show the breeds for the selected species.
+         * If no breeds are available the species will be displayed.
+         * */
+        update_breed_select: function() {
+            $('optgroup', $('#breed1')).remove();
+            $('#breedp optgroup').clone().appendTo($('#breed1'));
 
-                    $('optgroup', $('#breed2')).remove();
-                    $('#breedp optgroup').clone().appendTo($('#breed2'));
-
-                    $('#breed2').children().each(function(){
-                        if($(this).attr('id') != 'ngp-'+$('#species').val()) {
-                            $(this).remove();
-                        }
-                    });
-                    if ($('#breed2 option').size() == 0) {
-                        $('#breed2').append("<option value='-1'>"+$('#species option:selected').text()+"</option>");
-                    }
-                } 
-                else {
-                    crossbreedchange = false;
+            $('#breed1').children().each(function(){
+                if($(this).attr('id') != 'ngp-'+$('#species').val()){
+                    $(this).remove();
                 }
-            };
+            });
 
-            // Update the units available for the selected location
-            var changelocation = function() {
-                var opts = ['<option value=""></option>'];
-                $("#unit").empty();
-                common.ajax_post("animal_new", "mode=units&locationid=" + $("#internallocation").val(), function(data) {
-                    $.each(html.decode(data).split("&&"), function(i, v) {
-                        var u = v.split("|");
-                        opts.push('<option value="' + html.title(u[0]) + '">' + u[0] +
-                            (u[1] == "1" ? ' ' + _("(available)") : "") +
-                            '</option>');
-                    });
-                    $("#unit").html(opts.join("\n")).change();
+            if($('#breed1 option').size() == 0) {
+                $('#breed1').append("<option value='0'>"+$('#species option:selected').text()+"</option>");
+            }
+
+            $('optgroup', $('#breed2')).remove();
+            $('#breedp optgroup').clone().appendTo($('#breed2'));
+
+            $('#breed2').children().each(function(){
+                if($(this).attr('id') != 'ngp-'+$('#species').val()) {
+                    $(this).remove();
+                }
+            });
+            if ($('#breed2 option').size() == 0) {
+                $('#breed2').append("<option value='0'>"+$('#species option:selected').text()+"</option>");
+            }
+        },
+
+        // Update the units available for the selected location
+        update_units: function() {
+            var opts = ['<option value=""></option>'];
+            $("#unit").empty();
+            common.ajax_post("animal_new", "mode=units&locationid=" + $("#internallocation").val(), function(data) {
+                $.each(html.decode(data).split("&&"), function(i, v) {
+                    var u = v.split("|");
+                    opts.push('<option value="' + html.title(u[0]) + '">' + u[0] +
+                        (u[1] == "1" ? ' ' + _("(available)") : "") +
+                        '</option>');
                 });
-            };
+                $("#unit").html(opts.join("\n")).change();
+            });
+        },
 
-            var enableScreen = function() {
+        validation: function() {
+            // Remove any previous errors
+            header.hide_error();
+            $("label").removeClass("ui-state-error-text");
 
-                changebreedselect();
-                changelocation();
-                    
-                $('#species').change(function() {
-                    changebreedselect();
-                });
-
-                // Crossbreed flag being unset disables second breed field
-                if ($("#crossbreed").is(":checked")) {
-                    $("#breed2").fadeIn();
-                }
-                else {
-                    $("#breed2").fadeOut();
-                    $("#breed2").select("value", ($("#breed1").val()));
-                }
-
-                // Not having any active litters disables join litter button
-                if ($("#sellitter option").size() == 0) {
-                    $("#button-litterjoin").button("disable");
-                }
-        
-            };
-
-            var validation = function() {
-                // Remove any previous errors
-                header.hide_error();
-                $("label").removeClass("ui-state-error-text");
-
-                // code
-                if (config.bool("ManualCodes")) {
-                    if ($.trim($("#sheltercode").val()) == "") {
-                        header.show_error(_("Shelter code cannot be blank"));
-                        $("label[for='sheltercode']").addClass("ui-state-error-text");
-                        $("#asm-details-accordion").accordion("option", "active", 0);
-                        $("#sheltercode").focus();
-                        return false;
-                    }
-                }
-
-                // name
-                if ($.trim($("#animalname").val()) == "") {
-                    header.show_error(_("Name cannot be blank"));
-                    $("label[for='animalname']").addClass("ui-state-error-text");
+            // code
+            if (config.bool("ManualCodes")) {
+                if ($.trim($("#sheltercode").val()) == "") {
+                    header.show_error(_("Shelter code cannot be blank"));
+                    $("label[for='sheltercode']").addClass("ui-state-error-text");
                     $("#asm-details-accordion").accordion("option", "active", 0);
-                    $("#animalname").focus();
+                    $("#sheltercode").focus();
                     return false;
                 }
+            }
 
-                // date of birth
-                if ($.trim($("#dateofbirth").val()) == "" && $.trim($("#estimatedage").val()) == "") {
-                    header.show_error(_("Date of birth cannot be blank"));
-                    $("label[for='dateofbirth']").addClass("ui-state-error-text");
-                    $("#asm-details-accordion").accordion("option", "active", 0);
-                    $("#dateofbirth").focus();
-                    return false;
-                }
+            // name
+            if ($.trim($("#animalname").val()) == "") {
+                header.show_error(_("Name cannot be blank"));
+                $("label[for='animalname']").addClass("ui-state-error-text");
+                $("#asm-details-accordion").accordion("option", "active", 0);
+                $("#animalname").focus();
+                return false;
+            }
 
-                return true;
-            };
+            // date of birth
+            if ($.trim($("#dateofbirth").val()) == "" && $.trim($("#estimatedage").val()) == "") {
+                header.show_error(_("Date of birth cannot be blank"));
+                $("label[for='dateofbirth']").addClass("ui-state-error-text");
+                $("#asm-details-accordion").accordion("option", "active", 0);
+                $("#dateofbirth").focus();
+                return false;
+            }
 
-            var addAnimal = function(mode) {
-                if (!validation()) { return; }
+            return true;
+        },
 
-                $(".asm-content button").button("disable");
-                header.show_loading(_("Creating..."));
-
-                var formdata = $("input, select").toPOST();
-                common.ajax_post("animal_new", formdata, function(data) { 
-                    var bits = data.split(" ");
-                    var createdID = bits[0];
-                    var newCode = bits[1];
-                    if (mode == "add") {
-                        header.show_info(_("Animal '{0}' created with code {1}").replace("{0}", $("#animalname").val()).replace("{1}", newCode));
-                    }
-                    else {
-                        if (createdID != "0") { window.location = "animal?id=" + createdID; }
-                    }
-                    $(".asm-content button").button("enable");
-                    header.hide_loading();
-                }, function() {
-                    $(".asm-content button").button("enable");
-                });
-            };
+        bind: function() {
 
             var similarbuttons = {};
             similarbuttons[_("Close")] = function() { 
@@ -447,9 +445,9 @@ $(function() {
                 }
             });
 
-            $("#internallocation").change(changelocation);
-            $("#crossbreed").change(enableScreen);
-            enableScreen();
+            $("#internallocation").change(animal_new.update_units);
+            $("#crossbreed").change(animal_new.enable_widgets);
+            animal_new.enable_widgets();
 
             // The species will have updated the breedlist, apply defaults
             $("#breed1").val(config.str("AFDefaultBreed"));
@@ -457,11 +455,11 @@ $(function() {
 
             // Buttons
             $("#add").button().click(function() {
-                addAnimal("add");
+                animal_new.add_animal("add");
             });
 
             $("#addedit").button().click(function() {
-                addAnimal("addedit");
+                animal_new.add_animal("addedit");
             });
 
             $("#button-randomname")

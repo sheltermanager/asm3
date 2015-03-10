@@ -665,27 +665,29 @@ $(function() {
             return h;
         },
 
-        /** Prevents enabling crossbreeds from resetting the breed select boxes */
-        crossbreedchange: false,
-
         /* Update the breed selects to only show the breeds for the selected species.
          * If no breeds are available the species will be displayed.
          * */
         update_breed_list: function() {
-            if (animal.crossbreedchange == false) {
-                $('#breed1 optgroup').remove();
-                $('#ngp-' + $("#species").val()).clone().appendTo($('#breed1'));
-                $('#breed2 optgroup').remove();
-                $('#ngp-' + $("#species").val()).clone().appendTo($('#breed2'));
-                if($('#breed1 option').size() == 0) {
-                    $('#breed1').append("<option value='-1'>"+$('#species option:selected').text()+"</option>");
+            $('optgroup', $('#breed1')).remove();
+            $('#breedp optgroup').clone().appendTo($('#breed1'));
+            $('#breed1').children().each(function(){
+                if($(this).attr('id') != 'ngp-'+$('#species').val()){
+                    $(this).remove();
                 }
-                if($('#breed2 option').size() == 0) {
-                    $('#breed2').append("<option value='-1'>"+$('#species option:selected').text()+"</option>");
+            });
+            if($('#breed1 option').size() == 0) {
+                $('#breed1').append("<option value='0'>"+$('#species option:selected').text() + "</option>");
+            }
+            $('optgroup', $('#breed2')).remove();
+            $('#breedp optgroup').clone().appendTo($('#breed2'));
+            $('#breed2').children().each(function(){
+                if($(this).attr('id') != 'ngp-'+$('#species').val()) {
+                    $(this).remove();
                 }
-            } 
-            else {
-                animal.crossbreedchange = false;
+            });
+            if ($('#breed2 option').size() == 0) {
+                $('#breed2').append("<option value='0'>"+$('#species option:selected').text()+"</option>");
             }
         },
 
@@ -1024,12 +1026,6 @@ $(function() {
             // Load the tab strip
             $(".asm-tabbar").asmtabs();
 
-            // Prevent the act of enabling crossbreeds from resetting the
-            // breed selects.
-            $('#crossbreed').change(function() {
-                animal.crossbreedchange = true;
-            });
-
             // Changing the species updates the breed list
             $('#species').change(function() {
                 animal.update_breed_list();
@@ -1295,7 +1291,6 @@ $(function() {
             // Events that trigger rechecking of the on-screen fields
             $("#crossbreed").click(function() {
                 animal.enable_widgets();
-                animal.update_breed_list();
             });
 
         },

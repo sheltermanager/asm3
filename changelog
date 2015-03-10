@@ -1,6 +1,8 @@
 36
 ================
 
+10/03/15 Simplified breed select from species code to prevent impossible combos
+10/03/15 Refactor animal_new to use object methods
 10/03/15 PDF batch scaling running regardless of options #107
 09/03/15 Show "Reservation" instead of "None" in movement books/tabs
 09/03/15 Fix email and emailpdf to send multiple 
