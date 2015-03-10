@@ -918,7 +918,7 @@ def update_missing_geocodes(dbo):
     batch for a long time, they'll just slowly complete over time.
     """
     if not BULK_GEO_BATCH:
-        al.warn("no BULK_GEO_PROVIDER set, not updating missing geocodes", "update_missing_geocodes", dbo)
+        al.warn("BULK_GEO_BATCH is False, skipping", "update_missing_geocodes", dbo)
         return
     LIMIT = 50
     people = db.query(dbo, "SELECT ID, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode " \
