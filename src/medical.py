@@ -844,7 +844,7 @@ def insert_test_from_form(dbo, username, post):
     db.execute(dbo, sql)
     audit.create(dbo, username, "animaltest", str(ntestid))
     # ASM2_COMPATIBILITY
-    update_asm2_tests(dbo, ntestid)
+    update_asm2_tests(dbo, ntestid, "insert")
     return ntestid
 
 def update_test_from_form(dbo, username, post):
@@ -871,9 +871,9 @@ def update_test_from_form(dbo, username, post):
     postaudit = db.query(dbo, "SELECT * FROM animaltest WHERE ID = %d" % testid)
     audit.edit(dbo, username, "animaltest", audit.map_diff(preaudit, postaudit))
     # ASM2_COMPATIBILITY
-    update_asm2_tests(dbo, testid)
+    update_asm2_tests(dbo, testid, "update")
 
-def update_asm2_tests(dbo, testid):
+def update_asm2_tests(dbo, testid, action = "insert"):
     """
     Used for asm2 compatibility, checks the test with testid and if it's
     a FIV, FLV or Heartworm test updates the old ASM2 fields for them.
@@ -893,16 +893,30 @@ def update_asm2_tests(dbo, testid):
     result = 0
     if t["RESULTNAME"].find("egativ") != -1: result = 1
     if t["RESULTNAME"].find("ositiv") != -1: result = 2
-    # Update for the correct test if it's one we know about
-    if t["TESTNAME"].find("FIV") != -1: 
-        db.execute(dbo, "UPDATE animal SET CombiTested = 1, CombiTestDate = %s, CombiTestResult = %d WHERE ID = %d" % \
-            (db.dd(t["DATEOFTEST"]), result, t["ANIMALID"]))
-    if t["TESTNAME"].find("FLV") != -1 or t["TESTNAME"].find("FeLV"): 
-        db.execute(dbo, "UPDATE animal SET CombiTested = 1, CombiTestDate = %s, FLVResult = %d WHERE ID = %d" % \
-            (db.dd(t["DATEOFTEST"]), result, t["ANIMALID"]))
-    if t["TESTNAME"].find("eartworm") != -1: 
-        db.execute(dbo, "UPDATE animal SET HeartwormTested = 1, HeartwormTestDate = %s, HeartwormTestResult = %d WHERE ID = %d" % \
-            (db.dd(t["DATEOFTEST"]), result, t["ANIMALID"]))
+    # Update for the correct test if it's one we know about and this is 
+    # an insert or update operation
+    if action == "insert" or action == "update":
+        if t["TESTNAME"].find("FIV") != -1: 
+            db.execute(dbo, "UPDATE animal SET CombiTested = 1, CombiTestDate = %s, CombiTestResult = %d WHERE ID = %d" % \
+                (db.dd(t["DATEOFTEST"]), result, t["ANIMALID"]))
+        if t["TESTNAME"].find("FLV") != -1 or t["TESTNAME"].find("FeLV") != -1: 
+            db.execute(dbo, "UPDATE animal SET CombiTested = 1, CombiTestDate = %s, FLVResult = %d WHERE ID = %d" % \
+                (db.dd(t["DATEOFTEST"]), result, t["ANIMALID"]))
+        if t["TESTNAME"].find("eartworm") != -1: 
+            db.execute(dbo, "UPDATE animal SET HeartwormTested = 1, HeartwormTestDate = %s, HeartwormTestResult = %d WHERE ID = %d" % \
+                (db.dd(t["DATEOFTEST"]), result, t["ANIMALID"]))
+    # If we were deleting a test, check if it's for one of our standard
+    # tests and if the test result was the same, reset it back to unknown
+    elif action == "delete":
+        if t["TESTNAME"].find("FIV") != -1:
+            db.execute(dbo, "UPDATE animal SET CombiTested = 0, CombiTestDate = Null, CombiTestResult = 0 WHERE ID = %d" % \
+                " AND CombiTestResult = %d" % (t["ANIMALID"], result))
+        if t["TESTNAME"].find("FLV") != -1 or t["TESTNAME"].find("FeLV") != -1:
+            db.execute(dbo, "UPDATE animal SET FLVResult = 0 WHERE ID = %d" % \
+                " AND FLVResult = %d" % (t["ANIMALID"], result))
+        if t["TESTNAME"].find("eartworm") != -1:
+            db.execute(dbo, "UPDATE animal SET HeartwormTested = 0, HeartwormTestDate = Null, HeartwormTestResult = 0 WHERE ID = %d" % \
+                " AND HeartwormTestResult = %d" % (t["ANIMALID"], result))
 
 def delete_regimen(dbo, username, amid):
     """
@@ -931,6 +945,8 @@ def delete_test(dbo, username, testid):
     Deletes a test record
     """
     audit.delete(dbo, username, "animaltest", str(db.query(dbo, "SELECT * FROM animaltest WHERE ID = %d" % int(testid))))
+    # ASM2_COMPATIBILITY
+    update_asm2_tests(dbo, testid, "delete")
     db.execute(dbo, "DELETE FROM animaltest WHERE ID = %d" % testid)
 
 def delete_vaccination(dbo, username, vaccinationid):

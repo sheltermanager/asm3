@@ -1,6 +1,7 @@
 36
 ================
 
+10/03/15 Removing a test should remove FIV/FLV/Heartworm flags #42
 10/03/15 Fixed renaming document templates without extension hiding them #106
 10/03/15 Simplified breed select from species code to prevent bad combos #104
 10/03/15 Refactor animal_new to use object methods #104
