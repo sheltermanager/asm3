@@ -645,6 +645,9 @@ def scale_pdf(filedata):
     f.close()
     os.unlink(inputfile.name)
     os.unlink(outputfile.name)
+    # If something has gone wrong and the scaled one has no size, return the original
+    if len(compressed) == 0:
+        return filedata
     # If the original is smaller than the scaled one, return the original
     if len(compressed) > len(filedata):
         return filedata
@@ -666,8 +669,10 @@ def check_and_scale_pdfs(dbo):
     """
     if not SCALE_PDF_DURING_BATCH:
         al.warn("SCALE_PDF_DURING_BATCH is disabled, not scaling pdfs", "media.check_and_scale_pdfs", dbo)
+        return
     if not configuration.scale_pdfs(dbo):
         al.warn("ScalePDFs config option disabled in this database, not scaling pdfs", "media.check_and_scale_pdfs", dbo)
+        return
     mp = db.query(dbo, \
         "SELECT MediaName FROM media WHERE LOWER(MediaName) LIKE '%.pdf' AND " \
         "LOWER(MediaName) NOT LIKE '%_scaled.pdf'")

@@ -1,6 +1,7 @@
 36
 ================
 
+10/03/15 PDF batch scaling running regardless of options #107
 09/03/15 Show "Reservation" instead of "None" in movement books/tabs
 09/03/15 Fix email and emailpdf to send multiple 
 07/03/15 Fix to show bonded warnings from movement tabs and books
