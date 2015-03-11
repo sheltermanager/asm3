@@ -915,7 +915,7 @@ def update_asm2_tests(dbo, testid, action = "insert"):
             db.execute(dbo, "UPDATE animal SET FLVResult = 0 WHERE ID = %d" % \
                 " AND FLVResult = %d" % (t["ANIMALID"], result))
         if t["TESTNAME"].find("eartworm") != -1:
-            db.execute(dbo, "UPDATE animal SET HeartwormTested = 0, HeartwormTestDate = Null, HeartwormTestResult = 0 WHERE ID = %d" % \
+            db.execute(dbo, "UPDATE animal SET HeartwormTested = 0, HeartwormTestDate = Null, HeartwormTestResult = 0 WHERE ID = %d" \
                 " AND HeartwormTestResult = %d" % (t["ANIMALID"], result))
 
 def delete_regimen(dbo, username, amid):
