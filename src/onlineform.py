@@ -134,7 +134,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             h.append('<select class="asm-onlineform-shelteranimal" name="%s" title="%s" %s>' % ( html.escape(fname), utils.nulltostr(f["TOOLTIP"]), required))
             h.append('<option></option>')
             for a in animal.get_animals_on_shelter_namecode(dbo):
-                h.append('<option value="%s">%s (%s)</option>' % (a["ANIMALNAME"], a["ANIMALNAME"], a["SHELTERCODE"]))
+                h.append('<option value="%(name)s::%(code)s">%(name)s (%(code)s)</option>' % { "name": a["ANIMALNAME"], "code": a["SHELTERCODE"]})
             h.append('</select>')
         elif f["FIELDTYPE"] == FIELDTYPE_ADOPTABLEANIMAL:
             h.append('<select class="asm-onlineform-adoptableanimal" name="%s" title="%s" %s>' % ( html.escape(fname), utils.nulltostr(f["TOOLTIP"]), required))
@@ -142,7 +142,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
             rs = publish.get_animal_data(dbo, pc, True)
             for a in rs:
-                h.append('<option value="%s">%s (%s)</option>' % (a["ANIMALNAME"], a["ANIMALNAME"], a["SHELTERCODE"]))
+                h.append('<option value="%(name)s::%(code)s">%(name)s (%(code)s)</option>' % { "name": a["ANIMALNAME"], "code": a["SHELTERCODE"]})
             h.append('</select>')
         elif f["FIELDTYPE"] == FIELDTYPE_COLOUR:
             h.append('<select class="asm-onlineform-colour" name="%s" title="%s" %s>' % ( html.escape(fname), utils.nulltostr(f["TOOLTIP"]), required))

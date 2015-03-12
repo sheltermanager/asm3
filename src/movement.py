@@ -724,11 +724,18 @@ def insert_transfer_from_form(dbo, username, post):
 
 def insert_reserve_for_animal_name(dbo, username, personid, animalname):
     """
-    Creates a reservation for the animal with animalname to personid
+    Creates a reservation for the animal with animalname to personid.
+    animalname can either be just the name of a shelter animal, or it
+    can be in the form name::code. If a code is present, that will be
+    used to locate the animal.
     """
     l = dbo.locale
-    aid = db.query_int(dbo, "SELECT ID FROM animal WHERE LOWER(AnimalName) LIKE '%s' ORDER BY ID DESC" % animalname.lower())
-    # Bail out if an invalid animal name was given - we can't create the reservation
+    if animalname.find("::") != -1:
+        animalcode = animalname.split("::")[1]
+        aid = db.query_int(dbo, "SELECT ID FROM animal WHERE ShelterCode = %s ORDER BY ID DESC" % db.ds(animalcode))
+    else:
+        aid = db.query_int(dbo, "SELECT ID FROM animal WHERE LOWER(AnimalName) LIKE '%s' ORDER BY ID DESC" % animalname.lower())
+    # Bail out if we couldn't find a matching animal
     if aid == 0: return
     move_dict = {
         "person"                : str(personid),
