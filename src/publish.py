@@ -285,6 +285,67 @@ def get_animal_data_query(dbo, pc):
         sql += " LIMIT %d" % pc.limit
     return sql
 
+def get_microchip_data(dbo, patterns, publishername, movementtypes = "1"):
+    """
+    Returns a list of animals with unpublished microchips.
+    patterns:      A list of either microchip prefixes or SQL clauses to OR together
+                   together in the preamble, eg: [ '977', "a.SmartTag = 1 AND a.SmartTagNumber <> ''" ]
+    publishername: The name of the microchip registration publisher, eg: pettracuk
+    movementtypes: An IN clause of movement types to include.
+    """
+    try:
+        rows = db.query(dbo, get_microchip_data_query(dbo, patterns, publishername, movementtypes))
+    except Exception,err:
+        al.error(str(err), "publisher.get_microchip_data", dbo, sys.exc_info())
+    # Transfer original owner data into the current owner fields for rows
+    # where it is a non-shelter animal so we can still register microchips
+    # for non-shelter animals.
+    for r in rows:
+        if r["NONSHELTERANIMAL"] == 1 and r["ORIGINALOWNERNAME"] is not None and r["ORIGINALOWNERNAME"] != "":
+            r["CURRENTOWNERNAME"] = r["ORIGINALOWNERNAME"]
+            r["CURRENTOWNERADDRESS"] = r["ORIGINALOWNERADDRESS"]
+            r["CURRENTOWNERTOWN"] = r["ORIGINALOWNERTOWN"]
+            r["CURRENTOWNERCOUNTY"] = r["ORIGINALOWNERCOUNTY"]
+            r["CURRENTOWNERPOSTCODE"] = r["ORIGINALOWNERPOSTCODE"]
+            r["CURRENTOWNERCITY"] = r["ORIGINALOWNERTOWN"]
+            r["CURRENTOWNERSTATE"] = r["ORIGINALOWNERCOUNTY"]
+            r["CURRENTOWNERZIPCODE"] = r["ORIGINALOWNERPOSTCODE"]
+            r["CURRENTOWNERHOMEPHONE"] = r["ORIGINALOWNERHOMETELEPHONE"]
+            r["CURRENTOWNERPHONE"] = r["ORIGINALOWNERHOMETELEPHONE"]
+            r["CURRENTOWNERWORKPHONE"] = r["ORIGINALOWNERWORKTELEPHONE"]
+            r["CURRENTOWNERMOBILEPHONE"] = r["ORIGINALOWNERMOBILETELEPHONE"]
+            r["CURRENTOWNERCELLPHONE"] = r["ORIGINALOWNERMOBILETELEPHONE"]
+            r["CURRENTOWNEREMAIL"] = r["ORIGINALOWNEREMAILADDRESS"]
+    return rows
+
+def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1"):
+    """
+    Generates a query for unpublished microchips.
+    It does this by looking for animals who have microchips matching the pattern where
+        they either have an activemovement of a type with a date newer than sent in the published table
+        OR they have a datebroughtin with a date newer than sent in the published table and they're a non-shelter animal
+    patterns:      A list of either microchip prefixes or SQL clauses to OR
+                   together in the preamble, eg: [ '977', "a.SmartTag = 1 AND a.SmartTagNumber <> ''" ]
+    publishername: The name of the microchip registration publisher, eg: pettracuk
+    movementtypes: An IN clause of movement types to include.
+    """
+    pclauses = []
+    for p in patterns:
+        if p.startswith("9") or p.startswith("0"):
+            pclauses.append("a.IdentichipNumber LIKE '%s%%'" % p)
+        else:
+            pclauses.append("(%s)" % p)
+    return animal.get_animal_query(dbo) + " WHERE (%(patterns)s) AND (" \
+        "(a.ActiveMovementID > 0 AND (a.ActiveMovementType IN (%(movementtypes)s)) AND a.HasTrialAdoption = 0 " \
+        "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
+        "AND AnimalID = a.ID AND SentDate >= a.ActiveMovementDate)) " \
+        "OR (a.NonShelterAnimal = 1 AND a.OriginalOwnerID > 0 " \
+        "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
+        "AND AnimalID = a.ID AND SentDate >= a.DateBroughtIn))) " % { 
+            "patterns": " OR ".join(pclauses),
+            "movementtypes": movementtypes, 
+            "publishername": publishername }
+
 class AbstractPublisher(threading.Thread):
     """
     Base class for all publishers
@@ -1407,13 +1468,9 @@ class AnibaseUKPublisher(AbstractPublisher):
             self.setLastError("Anibase vet code must be set")
             return
 
-        # TODO: Remove 999% test - not a live chip prefix and just being
+        # TODO: Remove 999 pattern - not a live chip prefix and just being
         #       used during testing.
-        where = " WHERE (a.IdentichipNumber LIKE '9851%' OR a.IdentichipNumber LIKE '9861%' OR a.IdentichipNumber LIKE '999%') AND " \
-                "a.ActiveMovementID > 0 AND a.ActiveMovementType = 1 AND a.HasTrialAdoption = 0 " \
-                "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = 'anibaseuk' " \
-                "AND AnimalID = a.ID AND SentDate >= a.ActiveMovementDate)"
-        animals = db.query(self.dbo, animal.get_animal_query(self.dbo) + where)
+        animals = get_microchip_data(self.dbo, ['9851', '9861', '999'], "anibaseuk")
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
             return
@@ -2807,12 +2864,7 @@ class PetLinkPublisher(AbstractPublisher):
             self.setLastError("baseurl and chippass need to be set for petlink.com publisher")
             return
 
-        where = " WHERE (a.IdentichipNumber Like '98102%') " \
-                "AND a.ActiveMovementID > 0 AND (a.ActiveMovementType = 1 OR a.ActiveMovementType = 5) " \
-                "AND a.HasTrialAdoption = 0 AND (co.EmailAddress <> '' OR co.HomeTelephone <> '') " \
-                "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = 'petlink' " \
-                "AND AnimalID = a.ID AND SentDate >= a.ActiveMovementDate) "
-        animals = db.query(self.dbo, animal.get_animal_query(self.dbo) + where)
+        animals = get_microchip_data(self.dbo, ['98102',], "petlink", "1,2,5")
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
             return
@@ -3176,11 +3228,7 @@ class PETtracUKPublisher(AbstractPublisher):
         if orgpostcode == "" or orgname == "" or orgserial == "" or orgpassword == "":
             self.setLastError("orgpostcode, orgname, orgserial and orgpassword all need to be set for AVID publisher")
 
-        where = " WHERE (a.IdentichipNumber Like '977%') AND " \
-                "a.ActiveMovementID > 0 AND a.ActiveMovementType = 1 AND a.HasTrialAdoption = 0 " \
-                "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = 'pettracuk' " \
-                "AND AnimalID = a.ID AND SentDate >= a.ActiveMovementDate) "
-        animals = db.query(self.dbo, animal.get_animal_query(self.dbo) + where)
+        animals = get_microchip_data(self.dbo, ['977%',], "pettracuk")
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
             return
@@ -3524,11 +3572,7 @@ class SmartTagPublisher(FTPPublisher):
             self.cleanup()
             return
 
-        where = " WHERE ((a.SmartTag = 1 AND a.SmartTagNumber <> '') OR a.IdentichipNumber LIKE '90007400%') " \
-                "AND a.ActiveMovementID > 0 AND a.ActiveMovementType = 1 AND a.HasTrialAdoption = 0 " \
-                "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = 'smarttag' " \
-                "AND AnimalID = a.ID AND SentDate >= a.ActiveMovementDate) "
-        animals = db.query(self.dbo, animal.get_animal_query(self.dbo) + where)
+        animals = get_microchip_data(self.dbo, ["a.SmartTag = 1 AND a.SmartTagNumber <> ''", '90007400'], "smarttag", "1,2,5")
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
             self.cleanup()
@@ -3694,12 +3738,12 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
     Handles updating animal microchips via recipients of
     the VetEnvoy system in the US
     """
-    def __init__(self, dbo, publishCriteria, publisherName, publisherKey, recipientId, microchipPattern):
+    def __init__(self, dbo, publishCriteria, publisherName, publisherKey, recipientId, microchipPatterns):
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.publisherName = publisherName
         self.setLogName(publisherKey)
         self.recipientId = recipientId
-        self.microchipPattern = microchipPattern
+        self.microchipPatterns = microchipPatterns
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
 
@@ -3751,11 +3795,7 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
             self.setLastError("VetEnvoy userid and userpassword must be set")
             return
 
-        where = " WHERE (%s) AND " \
-                "a.ActiveMovementID > 0 AND a.ActiveMovementType = 1 AND a.HasTrialAdoption = 0 " \
-                "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%s' " \
-                "AND AnimalID = a.ID AND SentDate >= a.ActiveMovementDate) " % (self.microchipPattern, self.publisherKey)
-        animals = db.query(self.dbo, animal.get_animal_query(self.dbo) + where)
+        animals = get_microchip_data(self.dbo, self.microchipPatterns, self.publisherKey)
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
             return
@@ -3978,11 +4018,11 @@ class HomeAgainPublisher(VetEnvoyUSMicrochipPublisher):
     def __init__(self, dbo, publishCriteria):
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         VetEnvoyUSMicrochipPublisher.__init__(self, dbo, publishCriteria, "HomeAgain Publisher", "homeagain", VETENVOY_US_HOMEAGAIN_RECIPIENTID, 
-            "a.IdentichipNumber LIKE '985%'")
+            ['985',])
 
 class AKCReunitePublisher(VetEnvoyUSMicrochipPublisher):
     def __init__(self, dbo, publishCriteria):
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         VetEnvoyUSMicrochipPublisher.__init__(self, dbo, publishCriteria, "AKC Reunite Publisher", "akcreunite", VETENVOY_US_AKC_REUNITE_RECIPIENTID, 
-            "a.IdentichipNumber LIKE '0006%' OR a.IdentichipNumber LIKE '0007%' OR a.IdentichipNumber LIKE '956%'")
+            ['0006', '0007', '956'])
 

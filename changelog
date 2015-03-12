@@ -1,6 +1,7 @@
 36
 ================
 
+12/03/15 Include non-shelter animals with microchip publishers #101
 12/03/15 Only show expired vacc alerts if no new vacc of that type exists #41
 12/03/15 Include raw markup content in stored versions of online forms #112
 12/03/15 Use sheltercode in online form animals to disambiguate names #110
