@@ -160,6 +160,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
                 h.append('<option>%s</option>' % l["SPECIESNAME"])
             h.append('</select>')
         elif f["FIELDTYPE"] == FIELDTYPE_RAWMARKUP:
+            h.append('<input type="hidden" name="%s" value="raw" />' % html.escape(fname))
             h.append(utils.nulltostr(f["TOOLTIP"]))
         h.append('</td>')
         h.append('</tr>')
@@ -226,17 +227,25 @@ def get_onlineformincoming_detail(dbo, collationid):
     """ Returns the detail lines for an incoming post """
     return db.query(dbo, "SELECT * FROM onlineformincoming WHERE CollationID = %d ORDER BY DisplayIndex" % int(collationid))
 
-def get_onlineformincoming_html(dbo, collationid):
+def get_onlineformincoming_html(dbo, collationid, includeRaw = False):
     """ Returns an HTML fragment of the incoming form data """
     h = []
     h.append('<table width="100%">')
     for f in get_onlineformincoming_detail(dbo, collationid):
         label = f["LABEL"]
         if label is None or label == "": label = f["FIELDNAME"]
-        h.append('<tr>')
-        h.append('<td>%s</td>' % label )
-        h.append('<td>%s</td>' % f["VALUE"])
-        h.append('</tr>')
+        v = f["VALUE"]
+        if v.startswith("RAW::") and not includeRaw: 
+            continue
+        if v.startswith("RAW::"): 
+            h.append('<tr>')
+            h.append('<td colspan="2">%s</td>' % v[5:])
+            h.append('</tr>')
+        else:
+            h.append('<tr>')
+            h.append('<td>%s</td>' % label )
+            h.append('<td>%s</td>' % v)
+            h.append('</tr>')
     h.append('</table>')
     return "\n".join(h)
 
@@ -244,6 +253,7 @@ def get_onlineformincoming_plain(dbo, collationid):
     """ Returns a plain text fragment of the incoming form data """
     h = []
     for f in get_onlineformincoming_detail(dbo, collationid):
+        if f["VALUE"].startswith("RAW::"): continue
         label = f["LABEL"]
         if label is None or label == "": label = f["FIELDNAME"]
         h.append("%s: %s\n" % (label, f["VALUE"]))
@@ -266,7 +276,7 @@ def get_onlineformincoming_html_print(dbo, ids):
         h.append(headercontent)
         formheader = get_onlineformincoming_formheader(dbo, collationid)
         h.append(formheader)
-        h.append(get_onlineformincoming_html(dbo, utils.cint(collationid)))
+        h.append(get_onlineformincoming_html(dbo, utils.cint(collationid), True))
         formfooter = get_onlineformincoming_formfooter(dbo, collationid)
         h.append(formfooter)
         h.append(footercontent)
@@ -424,15 +434,18 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
             displayindex = 0
             fieldname = k
             # Form fields should have a _ONLINEFORMFIELD.ID suffix we can use to get the
-            # original label and display position
+            # original label and display position. If the fieldtype is raw markup,
+            # store that as the value instead.
             if k.find("_") != -1:
                 fid = utils.cint(k[k.rfind("_")+1:])
                 fieldname = k[0:k.rfind("_")]
                 if fid != 0:
-                    fld = db.query(dbo, "SELECT Label, DisplayIndex FROM onlineformfield WHERE ID = %d" % fid)
+                    fld = db.query(dbo, "SELECT FieldType, Label, Tooltip, DisplayIndex FROM onlineformfield WHERE ID = %d" % fid)
                     if len(fld) > 0:
                         label = fld[0]["LABEL"]
                         displayindex = fld[0]["DISPLAYINDEX"]
+                        if fld[0]["FIELDTYPE"] == FIELDTYPE_RAWMARKUP:
+                            v = "RAW::%s" % fld[0]["TOOLTIP"]
 
             sql = db.make_insert_sql("onlineformincoming", ( 
                 ( "CollationID", db.di(collationid)),
@@ -443,7 +456,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                 ( "Label", db.ds(label)),
                 ( "DisplayIndex", db.di(displayindex)),
                 ( "Host", db.ds(remoteip)),
-                ( "Value", post.db_string(k))
+                ( "Value", db.ds(v))
                 ))
             db.execute(dbo, sql)
     # Sort out the preview of the first few fields
