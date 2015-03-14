@@ -738,8 +738,8 @@ $(function() {
                 $("#puttosleep").closest("tr").fadeIn();
                 $("#ptsreason").closest("div").fadeIn();
                 // If the animal is off the shelter, tick the died off shelter box
-                if ($("#archived") == "1")  {
-                    $("#diedoffshelter").attr("checked", "checked");
+                if (controller.animal.ARCHIVED == 1)  {
+                    $("#diedoffshelter").prop("checked", true);
                 }
             }
 
