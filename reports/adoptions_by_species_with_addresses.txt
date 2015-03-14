@@ -12,7 +12,7 @@ $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
 SELECT ShelterCode, AnimalName, DateBroughtIn, MovementDate, 
-species.SpeciesName,
+species.SpeciesName, animal.TimeOnShelter, animal.DaysOnShelter,
 animaltype.AnimalType AS theType,
 animal.BreedName,
 oo.OwnerName AS OOName, oo.OwnerAddress AS OOAddress, oo.OwnerTown AS OOTown, oo.OwnerCounty AS OOCounty, oo.OwnerPostcode AS OOPostcode, 
@@ -41,11 +41,23 @@ $$HEAD
 <td><b>Type</b></td>
 <td><b>Breed</b></td>
 <td><b>Entered Shelter</b></td>
+<td><b>Time On Shelter</b></td>
 <td><b>Came From</b></td>
 <td><b>Adoption Date</b></td>
 <td><b>Adopted To</b></td>
 </tr>
 $$FOOT
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>Average: {AVG.DaysOnShelter.2} days</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 </table>
 <h3>Total $SpeciesName: {COUNT.SpeciesName}</h3>
 GROUP$$
@@ -56,6 +68,7 @@ $$BODY<tr>
 <td>$theType</td>
 <td>$BreedName</td>
 <td>$DateBroughtIn</td>
+<td>$TimeOnShelter ($DaysOnShelter days)</td>
 <td><i>$OOName</i><br/>
 $OOAddress<br/>
 $OOTown<br/>
