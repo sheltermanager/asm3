@@ -1482,7 +1482,7 @@ class animal_media:
                 if not m["MEDIANAME"].endswith("html"): continue
                 content = dbfs.get_string(dbo, m["MEDIANAME"])
                 contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], "", "plain", contentpdf, "document.pdf")
+                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], post["emailnote"], "plain", contentpdf, "document.pdf")
             return emailadd
         elif mode == "rotateclock":
             users.check_permission(session, users.CHANGE_MEDIA)
@@ -5179,7 +5179,7 @@ class person_media:
                 if not m["MEDIANAME"].endswith("html"): continue
                 content = dbfs.get_string(dbo, m["MEDIANAME"])
                 contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], "", "plain", contentpdf, "document.pdf")
+                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], post["emailnote"], "plain", contentpdf, "document.pdf")
             return emailadd
         elif mode == "rotateclock":
             users.check_permission(session, users.CHANGE_MEDIA)
