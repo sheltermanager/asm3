@@ -354,7 +354,9 @@ $(function() {
 
             // If we aren't taking payments on this screen, disable both
             if (!config.bool("DonationOnMoveReserve")) { 
-                $("#table-payment").hide();
+                $("#table-payment").closest(".ui-widget").hide();
+                $("#amount").val("0");
+                $("#amount2").val("0");
             }
 
             $("#reserve").button().click(function() {
