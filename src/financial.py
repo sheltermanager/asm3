@@ -1018,7 +1018,7 @@ def giftaid_spreadsheet(dbo, path, fromdate, todate):
         # Return the full address if the first word is not numeric
         bits = s.strip().replace("\n", " ").split(" ")
         houseno = ""
-        if len(bits) > 0 and utils.cint(bits[0]) > 0:
+        if len(bits) > 0 and utils.cint(bits[0][0]) > 0:
             houseno = bits[0]
         return houseno
 
