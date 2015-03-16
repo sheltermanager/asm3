@@ -63,7 +63,7 @@ $(function() {
         },
         overdue: function(row) {
             if (!row.DATEOFVACCINATION && format.date_js(row.DATEREQUIRED) < common.today_no_time()) { return true; }
-            if (row.DATEOFVACCINATION && format.date_js(row.DATEEXPIRES) < common.today_no_time()) { return true; }
+            //if (row.DATEOFVACCINATION && format.date_js(row.DATEEXPIRES) < common.today_no_time()) { return true; } // Too aggressive
             return false;
         },
         columns: [
