@@ -708,6 +708,7 @@ $(function() {
                 '<p>',
                 '<input data="rc:DisableTips" id="disabletips" class="asm-checkbox" type="checkbox" /> <label for="disabletips">' + _("Show tips on the home page") + '</label><br />',
                 '<input data="ShowAlertsHomePage" id="showalerts" class="asm-checkbox" type="checkbox" /> <label for="showalerts">' + _("Show alerts on the home page") + '</label><br />',
+                '<input data="ShowTimelineHomePage" id="showtimeline" class="asm-checkbox" type="checkbox" /> <label for="showtimeline">' + _("Show timeline on the home page") + '</label><br />',
                 '<input data="QuicklinksHomeScreen" id="disablequicklinks" class="asm-checkbox" type="checkbox" /> <label for="disablequicklinks">' + _("Show quick links on the home page") + '</label><br />',
                 '<input data="QuicklinksAllScreens" id="disablequicklinks" class="asm-checkbox" type="checkbox" /> <label for="disablequicklinks">' + _("Show quick links on all pages") + '</label>',
                 '</p>',

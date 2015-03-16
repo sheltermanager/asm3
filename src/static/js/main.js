@@ -469,6 +469,16 @@ $(function() {
             return s;
         },
 
+        render_timeline: function() {
+            var h = [];
+            if (!config.bool("ShowTimelineHomePage")) { return; }
+            h.push('<p class="asm-menu-category"><a href="timeline">' + _("Timeline") + '</a></p><p>');
+            $.each(controller.recent, function(i, v) {
+                h.push(html.event_text(v, { includedate: true }) + '<br/>');
+            });
+            return h.join("\n");
+        },
+
         render: function() {
             var h = [
             '<div id="dialog-welcome" title="' + _('Welcome!') + '" style="display: none">',
@@ -552,6 +562,7 @@ $(function() {
             '<tr>',
             '<td id="asm-main-diary" width="50%" valign="top">',
             this.render_diary(),
+            this.render_timeline(),
             '</td>',
             '<td id="asm-main-messages" valign="top">',
             this.render_alerts(),

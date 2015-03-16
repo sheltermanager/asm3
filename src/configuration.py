@@ -58,7 +58,8 @@ QUICKLINKS_SET = {
     49: ("calendarview?ev=p", "asm-icon-calendar", i18n._("Payment calendar")),
     50: ("calendarview?ev=ol", "asm-icon-calendar", i18n._("Animal control calendar")),
     51: ("stocklevel", "asm-icon-stock", i18n._("Stock Levels")),
-    52: ("transport", "asm-icon-transport", i18n._("Transport Book"))
+    52: ("transport", "asm-icon-transport", i18n._("Transport Book")),
+    53: ("timeline", "asm-icon-calendar", i18n._("Timeline"))
 }
 
 # Default configuration values for unset items. This is so they
@@ -214,6 +215,7 @@ DEFAULTS = {
     "ShowCostAmount": "Yes",
     "ShowCostPaid": "No",
     "ShowAlertsHomePage": "Yes", 
+    "ShowTimelineHomePage": "Yes", 
     "ShowStatsHomePage": "thismonth", 
     "ShowFirstTime": "Yes",
     "ShowILOffShelter": "Yes",

@@ -189,6 +189,7 @@ urls = (
     "/sql", "sql",
     "/systemusers", "systemusers",
     "/test", "test",
+    "/timeline", "timeline",
     "/traploan", "traploan",
     "/transport", "transport",
     "/vaccination", "vaccination",
@@ -695,6 +696,7 @@ class main:
         c += html.controller_str("linkname", linkname)
         c += html.controller_json("usersandroles", usersandroles)
         c += html.controller_json("alerts", alerts)
+        c += html.controller_json("recent", extanimal.get_timeline(dbo, 10))
         c += html.controller_json("stats", extanimal.get_stats(dbo))
         c += html.controller_json("activeusers", activeusers)
         c += html.controller_json("animallinks", extanimal.get_animals_brief(animallinks))
@@ -5485,6 +5487,23 @@ class publish_options:
             users.check_permission(session, users.SYSTEM_OPTIONS)
             userid, userpwd = extpublish.VetEnvoyUSMicrochipPublisher.signup(session.dbo, post)
             return "%s,%s" % (userid, userpwd)
+
+class timeline:
+    def GET(self):
+        utils.check_loggedin(session, web)
+        l = session.locale
+        dbo = session.dbo
+        title = _("Timeline", l)
+        evts = extanimal.get_timeline(dbo, 500)
+        s = html.header(title, session, "timeline.js")
+        c = html.controller_json("recent", evts)
+        c += html.controller_str("explain", _("Showing {0} timeline events.", l).format(len(evts)));
+        s += html.controller(c)
+        s += html.footer()
+        al.debug("timeline events, run by %s, got %d events" % (session.user, len(evts)), "code.timeline", dbo)
+        web.header("Content-Type", "text/html")
+        web.header("Cache-Control", "no-cache")
+        return s
 
 class report:
     def GET(self):

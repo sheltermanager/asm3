@@ -1033,6 +1033,51 @@
             return s.join("");
         },
 
+        /** 
+         * Renders a shelter event described in e. Events should have
+         * the following attributes:
+         * LINKTARGET, CATEGORY, EVENTDATE, ID, TEXT1, TEXT2, TEXT3, LASTCHANGEDBY
+         */
+        event_text: function(e, o) {
+            var handlers = {
+                ENTERED: function(x) { return html.icon("animal") + ' ' + _("{0} {1}: entered the shelter"); },
+                MICROCHIP: function(x) { return html.icon("microchip") + ' ' + _("{0} {1}: was microchipped"); },
+                NEUTERED: function(x) { return html.icon("neutered") + ' ' + _("{0} {1}: was altered"); },
+                RESERVED: function(x) { return html.icon("reservation") + ' ' + _("{0} {1}: was reserved by {2}"); },
+                ADOPTED: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: was adopted by {2}"); },
+                FOSTERED: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: was fostered to {2}"); },
+                TRANSFER: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: was transferred to {2}"); },
+                ESCAPED: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: escaped"); },
+                STOLEN: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: was stolen"); },
+                RELEASED: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: was released"); },
+                RECLAIMED: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: was reclaimed by {2}"); },
+                RETAILER: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: was sent to retailer {2}"); },
+                RETURNED: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: was returned by {2}"); },
+                DIED: function(x) { return html.icon("death") + ' ' + _("{0} {1}: died ({2})"); },
+                EUTHANISED: function(x) { return html.icon("death") + ' ' + _("{0} {1}: was euthanised ({2})"); },
+                FIVP: function(x) { return html.icon("positivetest") + ' ' + _("{0} {1}: tested positive for FIV"); },
+                FLVP: function(x) { return html.icon("positivetest") + ' ' + _("{0} {1}: tested positive for FeLV"); },
+                HWP: function(x) { return html.icon("positivetest") + ' ' + _("{0} {1}: tested positive for Heartworm"); },
+                QUARANTINE: function(x) { return html.icon("quarantine") + ' ' + _("{0} {1}: was quarantined"); },
+                HOLD: function(x) { return html.icon("hold") + ' ' + _("{0} {1}: was held"); },
+                NOTADOPT: function(x) { return html.icon("notforadoption") + ' ' + _("{0} {1}: is not available for adoption"); },
+                AVAILABLE: function(x) { return html.icon("notforadoption") + ' ' + _("{0} {1}: is available for adoption"); },
+                VACC: function(x) { return html.icon("vaccination") + ' ' + _("{0} {1}: received {2} vaccination"); },
+                TEST: function(x) { return html.icon("test") + ' ' + _("{0} {1}: received {2} test"); },
+                MEDICAL: function(x) { return html.icon("medical") + ' ' + _("{0} {1}: received treatment of {2}"); }
+            },
+            text = handlers[e.CATEGORY](e), h = "";
+
+            text = text.replace("{0}", e.TEXT1).replace("{1}", e.TEXT2).replace("{2}", e.TEXT3);
+            if (o && o.includedate) {
+                h += '<span class="asm-timeline-small-date">' + format.date(e.EVENTDATE) + '</span> ';
+            }
+            h += ' <a href="' + e.LINKTARGET + '?id=' + e.ID + '">';
+            h += text;
+            h += '</a> <span class="asm-timeline-by">(' + e.LASTCHANGEDBY + ')</span>';
+            return h;
+        },
+
         /**
          * Renders a list of <option> tags for person flags.
          * It mixes in any additional person flags to the regular

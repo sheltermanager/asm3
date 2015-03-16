@@ -63,7 +63,8 @@ $(function() {
         49: ["calendarview?ev=p", "asm-icon-calendar", _("Payment calendar")],
         50: ["calendarview?ev=ol", "asm-icon-calendar", _("Animal control calendar")],
         51: ["stocklevel", "asm-icon-stock", _("Stock Levels")],
-        52: ["transport", "asm-icon-transport", _("Transport Book")]
+        52: ["transport", "asm-icon-transport", _("Transport Book")],
+        53: ["timeline", "asm-icon-calendar", _("Timeline")]
     };
 
     /** Functions related to rendering and binding to events for the page
