@@ -130,6 +130,7 @@ DEFAULTS = {
     "DisableRetailer": "No",
     "DocumentWordProcessor": "HTML",
     "DonationTrxOverride": "No",
+    "DonationOnMoveReserve": "Yes",
     "DontShowCombi": "Yes",
     "DontShowHeartworm": "Yes",
     "EmailDiaryNotes": "Yes", 

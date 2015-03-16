@@ -72,7 +72,7 @@ $(function() {
                 '</table>',
                 html.content_footer(),
                 html.content_header(_("Payment"), true),
-                '<table class="asm-table-layout">',
+                '<table id="table-payment" class="asm-table-layout">',
                 '<tr>',
                 '<td>',
                 '<label for="donationtype">' + _("Type") + '</label>',
@@ -233,10 +233,9 @@ $(function() {
                     $("#multiplereserve").fadeIn();
                 }
 
-                // If we have adoption fee fields, override the first donation
-                // with the fee from the animal assuming it's nonzero
+                // If we have an adoption fee, show it in the info bar
                 if (!config.bool("DontShowAdoptionFee") && rec.FEE) {
-                    $("#amount").currency("value", rec.FEE);
+                    // $("#amount").currency("value", rec.FEE); #122 disabled due to less relevant for reserves
                     $("#feeinfo .subtext").html( _("This animal has an adoption fee of {0}").replace("{0}", format.currency(rec.FEE)));
                     $("#feeinfo").fadeIn();
                 }
@@ -287,6 +286,7 @@ $(function() {
 
             // What to do when donation type is changed
             var donationtype_change = function() {
+                if (!config.bool("DonationOnMoveReserve")) { return; }
                 var dc = common.get_field(controller.donationtypes, $("#donationtype").select("value"), "DEFAULTCOST");
                 $("#amount").currency("value", dc);
             };
@@ -296,6 +296,7 @@ $(function() {
 
             // What to do when second donation type is changed
             var donationtype2_change = function() {
+                if (!config.bool("DonationOnMoveReserve")) { return; }
                 var dc = common.get_field(controller.donationtypes, $("#donationtype2").select("value"), "DEFAULTCOST");
                 $("#amount2").currency("value", dc);
             };
@@ -349,6 +350,11 @@ $(function() {
             }
             else {
                 $(".seconddonation").hide();
+            }
+
+            // If we aren't taking payments on this screen, disable both
+            if (!config.bool("DonationOnMoveReserve")) { 
+                $("#table-payment").hide();
             }
 
             $("#reserve").button().click(function() {

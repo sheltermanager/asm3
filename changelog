@@ -1,6 +1,7 @@
 36
 ================
 
+16/03/15 Option to disable reservation payments, don't default to full fee #122
 14/03/15 Make sure died off shelter is auto ticked if animal is off shelter
 14/03/15 Send document as PDF ignores body text #120
 12/03/15 Include non-shelter animals with microchip publishers #101
