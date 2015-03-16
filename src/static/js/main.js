@@ -472,7 +472,7 @@ $(function() {
         render_timeline: function() {
             var h = [];
             if (!config.bool("ShowTimelineHomePage")) { return; }
-            h.push('<p class="asm-menu-category"><a href="timeline">' + _("Timeline") + '</a></p><p>');
+            h.push('<p class="asm-menu-category"><a href="timeline">' + _("Timeline ({0})").replace("{0}", controller.recent.length) + '</a></p><p>');
             $.each(controller.recent, function(i, v) {
                 h.push(html.event_text(v, { includedate: true }) + '<br/>');
             });

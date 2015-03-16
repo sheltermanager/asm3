@@ -1042,7 +1042,7 @@
             var handlers = {
                 ENTERED: function(x) { return html.icon("animal") + ' ' + _("{0} {1}: entered the shelter"); },
                 MICROCHIP: function(x) { return html.icon("microchip") + ' ' + _("{0} {1}: was microchipped"); },
-                NEUTERED: function(x) { return html.icon("neutered") + ' ' + _("{0} {1}: was altered"); },
+                NEUTERED: function(x) { return html.icon("health") + ' ' + _("{0} {1}: was altered"); },
                 RESERVED: function(x) { return html.icon("reservation") + ' ' + _("{0} {1}: was reserved by {2}"); },
                 ADOPTED: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: was adopted by {2}"); },
                 FOSTERED: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: was fostered to {2}"); },

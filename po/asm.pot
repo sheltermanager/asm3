@@ -10465,8 +10465,12 @@ msgstr ""
 msgid "Time on shelter"
 msgstr ""
 
-#: main.js header.js code.py configuration.py
+#: header.js html.py code.py configuration.py
 msgid "Timeline"
+msgstr ""
+
+#: main.js
+msgid "Timeline ({0})"
 msgstr ""
 
 #: diary.js

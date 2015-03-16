@@ -367,7 +367,7 @@ img {
 }
 
 /** TIMELINE ==================== */
-.asm-timeline-small-date { font-weight: bold; }
+.asm-timeline-small-date { text-decoration: none; }
 .asm-timeline-large-date { font-weight: bold; font-size: 140%; border-bottom: 1px solid black; }
 .asm-timeline-by { font-size: 80%; font-style: italic }
 .asm-timeline-item { border-bottom: 1px dotted #555; padding: 10px; }

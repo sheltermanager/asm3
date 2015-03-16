@@ -528,6 +528,7 @@ def json_menu(l, reports, mailmerges):
             ( users.ADD_LOG, "alt+shift+l", "", "log_new", "asm-icon-log", _("Add a log entry", l) ),
             ( users.CHANGE_ANIMAL, "", "", "animal_bulk", "asm-icon-litter", _("Bulk change animals", l) ),
             ( users.ADD_LITTER, "", "", "litters", "asm-icon-litter", _("Edit litters", l) ),
+            ( users.VIEW_ANIMAL, "alt+shift+t", "", "timeline", "asm-icon-calendar", _("Timeline", l) ),
             ( "", "", "taglostfound", "--cat", "asm-icon-animal-lost", _("Lost/Found", l) ),
             ( users.VIEW_LOST_ANIMAL, "", "taglostfound", "lostanimal_find", "asm-icon-animal-lost-find", _("Find a lost animal", l) ),
             ( users.VIEW_FOUND_ANIMAL, "", "taglostfound", "foundanimal_find", "asm-icon-animal-found-find", _("Find a found animal", l) ),
