@@ -934,7 +934,7 @@ def auto_cancel_reservations(dbo):
         return
     cancelcutoff = i18n.subtract_days(i18n.now(dbo.timezone), cancelafter)
     al.debug("cutoff date: reservations < %s" % db.dd(cancelcutoff), "movement.auto_cancel_reservations")
-    sql = "UPDATE adoption SET ReservationCancelledDate = %s " \
+    sql = "UPDATE adoption SET ReservationCancelledDate = %s, LastChangedBy = 'system' " \
         "WHERE MovementDate Is Null AND ReservationCancelledDate Is Null AND " \
         "MovementType = 0 AND ReservationDate < %s" % ( db.dd(i18n.now(dbo.timezone)), db.dd(cancelcutoff))
     count = db.execute(dbo, sql)
