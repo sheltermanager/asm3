@@ -956,6 +956,10 @@ msgid "Allow a fosterer to be selected"
 msgstr ""
 
 #: options.js
+msgid "Allow creation of payments on the Move-Reserve screen"
+msgstr ""
+
+#: options.js
 msgid "Allow duplicate microchip numbers"
 msgstr ""
 
@@ -1693,6 +1697,10 @@ msgstr "Border Collie"
 #: dbupdate.py
 msgid "Border Terrier"
 msgstr "Border Terrier"
+
+#: dbupdate.py
+msgid "Born in Shelter"
+msgstr ""
 
 #: animal.py
 msgid "Born on Foster {0}"
@@ -6992,7 +7000,7 @@ msgstr "No se han encontrado coincidencias."
 msgid "No publishers are running."
 msgstr "No hay editores se están ejecutando."
 
-#: search.js
+#: search.js timeline.js
 msgid "No results found."
 msgstr "No se encontraron resultados."
 
@@ -8398,7 +8406,7 @@ msgstr "Fecha requeria debe de ser valida"
 msgid "Reschedule"
 msgstr ""
 
-#: dbupdate.py
+#: movements.js dbupdate.py
 msgid "Reservation"
 msgstr "Reserva"
 
@@ -8522,10 +8530,6 @@ msgstr "Regresar categoría"
 #: movements.js
 msgid "Return Date"
 msgstr "Fecha de devolución"
-
-#: dbupdate.py
-msgid "Return From Foster"
-msgstr ""
 
 #: html.py
 msgid "Return a transferred animal"
@@ -9196,12 +9200,20 @@ msgid "Show the time brought in field"
 msgstr ""
 
 #: options.js
+msgid "Show timeline on the home page"
+msgstr ""
+
+#: options.js
 msgid "Show tips on the home page"
 msgstr "Mostrar sugerencias en la página de inicio"
 
 #: accounts_trx.js
 msgid "Show transactions from"
 msgstr "Mostrar las transacciones de"
+
+#: code.py
+msgid "Showing {0} timeline events."
+msgstr ""
 
 #: dbupdate.py
 msgid "Siamese"
@@ -10258,6 +10270,10 @@ msgstr ""
 msgid "This animal is a crossbreed"
 msgstr "Este animal es híbrido"
 
+#: movements.js
+msgid "This animal is bonded with {0}"
+msgstr ""
+
 #: move_adopt.js
 msgid ""
 "This animal is bonded with {0}. Adoption movement records will be created "
@@ -10280,7 +10296,7 @@ msgstr ""
 "Este animal se fomenta en la actualidad, se le devolverá automáticamente "
 "primero."
 
-#: move_adopt.js movement.py
+#: move_adopt.js movements.js movement.py
 msgid "This animal is currently held and cannot be adopted."
 msgstr ""
 
@@ -10631,6 +10647,14 @@ msgstr "Tiempo en la lista"
 #: header_edit_header.js
 msgid "Time on shelter"
 msgstr "Tiempo en el refugio"
+
+#: header.js code.py html.py configuration.py
+msgid "Timeline"
+msgstr ""
+
+#: main.js
+msgid "Timeline ({0})"
+msgstr ""
 
 #: diary.js
 msgid "Times should be in HH:MM format, eg: 09:00, 16:30"
@@ -12028,6 +12052,10 @@ msgstr "o edad estimada en años"
 msgid "to"
 msgstr "a"
 
+#: timeline.js
+msgid "today"
+msgstr ""
+
 #: medical.js medicalprofile.js
 msgid "treatments"
 msgstr "tratamientos"
@@ -12150,9 +12178,101 @@ msgstr ""
 msgid "{0} {1}: Moved from {2} to {3}"
 msgstr ""
 
+#: common.js
+msgid "{0} {1}: adopted by {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: altered"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: available for adoption"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: died ({2})"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: entered the shelter"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: escaped"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: euthanised ({2})"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: fostered to {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: held"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: microchipped"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: not available for adoption"
+msgstr ""
+
 #: social.py
 msgid "{0} {1}: posted to Facebook page {2} by {3}"
 msgstr "{0} {1}: en la página de Facebook se publicó {2} por {3}"
+
+#: common.js
+msgid "{0} {1}: quarantined"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: received {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: reclaimed by {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: released"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: reserved by {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: returned by {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: sent to retailer {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: stolen"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: tested positive for FIV"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: tested positive for FeLV"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: tested positive for Heartworm"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: transferred to {2}"
+msgstr ""
 
 #: common.js
 msgid "{0}: Entered shelter {1}, Last changed on {2} by {3}. {4} {5} {6} aged {7}"

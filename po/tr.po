@@ -7,15 +7,17 @@ msgstr ""
 "Project-Id-Version: sheltermanager\n"
 "Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
-"PO-Revision-Date: 2015-02-04 20:21+0000\n"
-"Last-Translator: Volkan Gezer <Unknown>\n"
+"PO-Revision-Date: 2015-03-13 16:12+0000\n"
+"Last-Translator: Anonymous Pootle User\n"
 "Language-Team: Turkish <tr@li.org>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Launchpad (build 17361)\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Pootle 2.5.1.1\n"
 "X-Launchpad-Export-Date: 2015-03-02 05:20+0000\n"
+"X-POOTLE-MTIME: 1426263160.000000\n"
 
 #: options.js
 msgid " days."
@@ -892,8 +894,9 @@ msgid "All donors on file."
 msgstr "Tüm bağışçılar dosyada"
 
 #: search.py
+#, fuzzy
 msgid "All drivers on file."
-msgstr ""
+msgstr "Tüm veterinerler dosyada"
 
 #: csvimport.js
 msgid ""
@@ -955,6 +958,10 @@ msgstr "Alerjiler"
 
 #: options.js
 msgid "Allow a fosterer to be selected"
+msgstr ""
+
+#: options.js
+msgid "Allow creation of payments on the Move-Reserve screen"
 msgstr ""
 
 #: options.js
@@ -1696,6 +1703,10 @@ msgstr "Border Collie"
 msgid "Border Terrier"
 msgstr "Border Terrier"
 
+#: dbupdate.py
+msgid "Born in Shelter"
+msgstr ""
+
 #: animal.py
 msgid "Born on Foster {0}"
 msgstr ""
@@ -2030,8 +2041,9 @@ msgid "Cavalier King Charles Spaniel"
 msgstr "Cavalier King Charles Spaniel"
 
 #: html.py
+#, fuzzy
 msgid "Cell"
-msgstr ""
+msgstr "Çağrı"
 
 #: person_find_results.js person.js person_new.js waitinglist_results.js
 #: common_personchooser.js
@@ -2467,8 +2479,9 @@ msgid "Confirm Password"
 msgstr "Şifreyi Onayla"
 
 #: transport.js
+#, fuzzy
 msgid "Confirmed"
-msgstr ""
+msgstr "Onayla"
 
 #: dbupdate.py
 msgid "Consumed"
@@ -3458,8 +3471,9 @@ msgid "Document templates"
 msgstr "Doküman şablonları"
 
 #: options.js
+#, fuzzy
 msgid "Documents"
-msgstr ""
+msgstr "Doküman"
 
 #: dbupdate.py
 msgid "Dog"
@@ -3846,8 +3860,9 @@ msgid "Email PDF"
 msgstr ""
 
 #: roles.js
+#, fuzzy
 msgid "Email Person"
-msgstr ""
+msgstr "Kişiyi e-postala"
 
 #: media.js
 msgid "Email a copy of the selected HTML documents as PDFs"
@@ -4242,8 +4257,9 @@ msgid "FECV/FeCoV"
 msgstr ""
 
 #: dbupdate.py
+#, fuzzy
 msgid "FIPV"
-msgstr ""
+msgstr "FIV"
 
 #: animal_find_results.js dbupdate.py
 msgid "FIV"
@@ -4254,8 +4270,9 @@ msgid "FIV Result"
 msgstr "FIV Sonucu"
 
 #: common.js
+#, fuzzy
 msgid "FIV+"
-msgstr ""
+msgstr "FIV"
 
 #: html.py
 msgid "FIV/L Test Date"
@@ -4274,8 +4291,9 @@ msgid "FLV Result"
 msgstr "FLV Sonucu"
 
 #: common.js
+#, fuzzy
 msgid "FLV+"
-msgstr ""
+msgstr "FLV"
 
 #: publish_options.js
 msgid "FTP hostname"
@@ -4322,8 +4340,9 @@ msgid "Fawn Tortoiseshell"
 msgstr "Parçalı Açık Kahverengi"
 
 #: dbupdate.py
+#, fuzzy
 msgid "FeLV"
-msgstr ""
+msgstr "FLV"
 
 #: lostfound_find_results.js lostfound_find.js lostfound.js
 #: animal_find_results.js lostfound_new.js html.py
@@ -5064,8 +5083,9 @@ msgid "Heartworm Tested"
 msgstr "Kalp kurdu (heartworm) Test Edildi."
 
 #: common.js
+#, fuzzy
 msgid "Heartworm+"
-msgstr ""
+msgstr "Kalp kurdu (Heartworm)"
 
 #: dbupdate.py
 msgid "Hedgehog"
@@ -5076,8 +5096,9 @@ msgid "Held"
 msgstr "Muhafaza altında"
 
 #: header.js
+#, fuzzy
 msgid "Help"
-msgstr ""
+msgstr "Muhafaza altında"
 
 #: publish.py
 msgid "HelpingLostPets Publisher"
@@ -5695,12 +5716,14 @@ msgid "Issued"
 msgstr ""
 
 #: licence.js
+#, fuzzy
 msgid "Issued in the last month"
-msgstr ""
+msgstr "Geçen ay süresi dolan"
 
 #: licence.js
+#, fuzzy
 msgid "Issued in the last week"
-msgstr ""
+msgstr "Geçen hafta süresi dolan"
 
 #: dbupdate.py
 msgid "Italian Greyhound"
@@ -5847,8 +5870,9 @@ msgid "Large"
 msgstr "Büyük"
 
 #: options.js
+#, fuzzy
 msgid "Last First"
-msgstr ""
+msgstr "Son, İlk"
 
 #: animal.js
 msgid "Last Location"
@@ -6721,8 +6745,9 @@ msgid "Mustang"
 msgstr "Mustang"
 
 #: mobile.py
+#, fuzzy
 msgid "My Incidents"
-msgstr ""
+msgstr "Vaka/Olay Ekleyin"
 
 #: header.js html.py configuration.py
 msgid "My diary notes"
@@ -6737,8 +6762,9 @@ msgid "Mynah"
 msgstr "Mynah"
 
 #: dbupdate.py
+#, fuzzy
 msgid "N (Non-Shelter Animal)"
-msgstr ""
+msgstr "Barınak dışı hayvan"
 
 #: options.js
 msgid "NNN or NN = number unique for this type of animal for this year"
@@ -6987,7 +7013,7 @@ msgstr "Hiçbir eşleşme bulunamadı."
 msgid "No publishers are running."
 msgstr "Çalışan yayıncı yok."
 
-#: search.js
+#: search.js timeline.js
 msgid "No results found."
 msgstr "Sonuç bulunamadı."
 
@@ -7056,8 +7082,9 @@ msgid "Not For Adoption"
 msgstr "Sahiplendirme İçin Değil"
 
 #: common.js options.js
+#, fuzzy
 msgid "Not Microchipped"
-msgstr ""
+msgstr "Mikroçipli"
 
 #: accounts_trx.js
 msgid "Not Reconciled"
@@ -7247,8 +7274,9 @@ msgid "Only show transfers"
 msgstr "Sadece transferleri göster."
 
 #: mobile.py
+#, fuzzy
 msgid "Open Incidents"
-msgstr ""
+msgstr "Olayları/Vakaları Görüntüle"
 
 #: options.js
 msgid "Open records in a new browser tab"
@@ -8339,8 +8367,10 @@ msgid "Remove the tattoo fields from animal identification details"
 msgstr "Dövme alanlarını, hayvan kimliklendirme detaylarından çıkar."
 
 #: options.js
+#, fuzzy
 msgid "Remove the transport functionality from menus and screens"
 msgstr ""
+"Tuzak kirala/ödünç ver fonksiyonalitesini menülerden ve ekranlardan kaldır."
 
 #: options.js
 msgid "Remove the trap loan functionality from menus and screens"
@@ -8395,7 +8425,7 @@ msgstr "Gerekli tarih, geçerli bir tarih olmalıdır."
 msgid "Reschedule"
 msgstr "Yeniden çizelgele"
 
-#: dbupdate.py
+#: movements.js dbupdate.py
 msgid "Reservation"
 msgstr "Rezervasyon"
 
@@ -8416,12 +8446,14 @@ msgid "Reservation For"
 msgstr "İçin Rezerve Edildi"
 
 #: movements.js
+#, fuzzy
 msgid "Reservation Status"
-msgstr ""
+msgstr "Rezervasyon Tarihi"
 
 #: lookups.py
+#, fuzzy
 msgid "Reservation Statuses"
-msgstr ""
+msgstr "Rezervasyon Tarihi"
 
 #: header.js html.py configuration.py
 msgid "Reservation book"
@@ -8517,10 +8549,6 @@ msgstr "Geri Dönüş Kategorisi"
 #: movements.js
 msgid "Return Date"
 msgstr "Dönüş Tarihi"
-
-#: dbupdate.py
-msgid "Return From Foster"
-msgstr ""
 
 #: html.py
 msgid "Return a transferred animal"
@@ -9188,7 +9216,12 @@ msgid "Show the size field"
 msgstr "Ebat/büyüklük alanını göster."
 
 #: options.js
+#, fuzzy
 msgid "Show the time brought in field"
+msgstr "Getirildiği tarih alanını göster."
+
+#: options.js
+msgid "Show timeline on the home page"
 msgstr ""
 
 #: options.js
@@ -9198,6 +9231,10 @@ msgstr "Ana sayfada, ipuçlarını göster."
 #: accounts_trx.js
 msgid "Show transactions from"
 msgstr "Hesap hareketlerini göster:"
+
+#: code.py
+msgid "Showing {0} timeline events."
+msgstr ""
 
 #: dbupdate.py
 msgid "Siamese"
@@ -10260,6 +10297,10 @@ msgstr ""
 msgid "This animal is a crossbreed"
 msgstr "Bu hayvan melez."
 
+#: movements.js
+msgid "This animal is bonded with {0}"
+msgstr ""
+
 #: move_adopt.js
 msgid ""
 "This animal is bonded with {0}. Adoption movement records will be created "
@@ -10282,7 +10323,7 @@ msgstr ""
 "Bu hayvan geçici yuvada, otomatik olarak ilk olarak iade edilecek. (returned "
 "first)"
 
-#: move_adopt.js movement.py
+#: move_adopt.js movements.js movement.py
 msgid "This animal is currently held and cannot be adopted."
 msgstr "Bu hayvan, şu anda barınakta tutulmaktadır ve sahiplendirilemez."
 
@@ -10437,8 +10478,9 @@ msgid "This person is linked to animal licenses and cannot be removed."
 msgstr "Bu kişi, hayvan lisanslarıyla ilişkilidir ve çıkarılamaz."
 
 #: person.py
+#, fuzzy
 msgid "This person is linked to animal transportation and cannot be removed."
-msgstr ""
+msgstr "Bu kişi, hayvan kontrolüyle ilişkilidir ve çıkarılamaz."
 
 #: person.py
 msgid "This person is linked to citations and cannot be removed."
@@ -10608,8 +10650,9 @@ msgid "Time"
 msgstr "Süre"
 
 #: animal.js animal_new.js
+#, fuzzy
 msgid "Time Brought In"
-msgstr ""
+msgstr "Getirilme tarihi"
 
 #: waitinglist_results.js html.py
 msgid "Time On List"
@@ -10626,6 +10669,14 @@ msgstr "Listedeki süre"
 #: header_edit_header.js
 msgid "Time on shelter"
 msgstr "Barınaktaki süre"
+
+#: header.js code.py html.py configuration.py
+msgid "Timeline"
+msgstr ""
+
+#: main.js
+msgid "Timeline ({0})"
+msgstr ""
 
 #: diary.js
 msgid "Times should be in HH:MM format, eg: 09:00, 16:30"
@@ -12026,6 +12077,10 @@ msgstr "veya yıl olarak tahmin edilen yaş"
 msgid "to"
 msgstr "kime"
 
+#: timeline.js
+msgid "today"
+msgstr ""
+
 #: medical.js medicalprofile.js
 msgid "treatments"
 msgstr "tedaviler"
@@ -12148,9 +12203,101 @@ msgstr "{0} {1} {2} yaş {3}"
 msgid "{0} {1}: Moved from {2} to {3}"
 msgstr "{0} {1}: {2} den {3} e hareket ettirildi."
 
+#: common.js
+msgid "{0} {1}: adopted by {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: altered"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: available for adoption"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: died ({2})"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: entered the shelter"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: escaped"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: euthanised ({2})"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: fostered to {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: held"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: microchipped"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: not available for adoption"
+msgstr ""
+
 #: social.py
 msgid "{0} {1}: posted to Facebook page {2} by {3}"
 msgstr "{0} {1}: Facebook sayfa {2} ye  {3} tarafından gönderildi."
+
+#: common.js
+msgid "{0} {1}: quarantined"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: received {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: reclaimed by {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: released"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: reserved by {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: returned by {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: sent to retailer {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: stolen"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: tested positive for FIV"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: tested positive for FeLV"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: tested positive for Heartworm"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: transferred to {2}"
+msgstr ""
 
 #: common.js
 msgid "{0}: Entered shelter {1}, Last changed on {2} by {3}. {4} {5} {6} aged {7}"

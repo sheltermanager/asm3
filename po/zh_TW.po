@@ -2,24 +2,25 @@
 # Copyright (C) 2013 Robin Rawson-Tetley
 # This file is distributed under the same license as the ASM3 package.
 # Robin Rawson-Tetley <robin@rawsontetley.org>, 2013.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2015-03-11 11:10+0000\n"
+"Last-Translator: seanimals <sean@thesanctuarytaiwan.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Translate Toolkit 1.12.0\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Pootle 2.5.1.1\n"
+"X-POOTLE-MTIME: 1426072233.000000\n"
 
 #: options.js
 msgid " days."
-msgstr ""
+msgstr " 天。"
 
 #: common.js
 msgid "&#x3c;&#x3c;"
@@ -93,7 +94,7 @@ msgstr ""
 
 #: publish_options.js
 msgid "1 year"
-msgstr ""
+msgstr "一年"
 
 #: publish_options.js
 msgid "2 weeks"
@@ -101,7 +102,7 @@ msgstr ""
 
 #: publish_options.js
 msgid "3 months"
-msgstr ""
+msgstr "三個月"
 
 #: publish_options.js
 msgid "4 weeks"
@@ -109,11 +110,11 @@ msgstr ""
 
 #: animal.js html.py
 msgid "5 Year"
-msgstr ""
+msgstr "五年"
 
 #: publish_options.js
 msgid "6 months"
-msgstr ""
+msgstr "六個月"
 
 #: publish_options.js
 msgid "6 weeks"
@@ -125,11 +126,11 @@ msgstr ""
 
 #: publish_options.js
 msgid "9 months"
-msgstr ""
+msgstr "九個月"
 
 #: dbupdate.py
 msgid "A (Stray Dog)"
-msgstr ""
+msgstr "A (流浪狗)"
 
 #: waitinglist.js waitinglist_new.js
 msgid "A description or other information about the animal"
@@ -645,7 +646,7 @@ msgstr ""
 #: waitinglist_results.js common_personchooser.js movements.js incident_find.js
 #: mobile.py html.py dbupdate.py
 msgid "Address"
-msgstr ""
+msgstr "地址"
 
 #: waitinglist_results.js
 msgid "Address Contains"
@@ -729,11 +730,11 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Afghan Hound"
-msgstr ""
+msgstr "阿富汗獵犬"
 
 #: dbupdate.py
 msgid "African Grey"
-msgstr ""
+msgstr "非洲灰"
 
 #: onlineforms.js
 msgid ""
@@ -810,7 +811,7 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Airedale Terrier"
-msgstr ""
+msgstr "萬能梗"
 
 #: dbupdate.py
 msgid "Akbash"
@@ -818,11 +819,11 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Akita"
-msgstr ""
+msgstr "秋田"
 
 #: dbupdate.py
 msgid "Alaskan Malamute"
-msgstr ""
+msgstr "阿拉斯加雪橇犬"
 
 #: publish_logs.js main.js
 msgid "Alerts"
@@ -936,10 +937,14 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Allergies"
-msgstr ""
+msgstr "過敏"
 
 #: options.js
 msgid "Allow a fosterer to be selected"
+msgstr ""
+
+#: options.js
+msgid "Allow creation of payments on the Move-Reserve screen"
 msgstr ""
 
 #: options.js
@@ -988,7 +993,7 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Amazon"
-msgstr ""
+msgstr "亞馬遜"
 
 #: dbupdate.py
 msgid "Amber"
@@ -1000,15 +1005,15 @@ msgstr ""
 
 #: dbupdate.py
 msgid "American Bulldog"
-msgstr ""
+msgstr "美國鬥牛犬"
 
 #: dbupdate.py
 msgid "American Curl"
-msgstr ""
+msgstr "美國捲曲"
 
 #: dbupdate.py
 msgid "American Eskimo Dog"
-msgstr ""
+msgstr "美國愛斯基摩犬"
 
 #: dbupdate.py
 msgid "American Fuzzy Lop"
@@ -1669,6 +1674,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Border Terrier"
+msgstr ""
+
+#: dbupdate.py
+msgid "Born in Shelter"
 msgstr ""
 
 #: animal.py
@@ -6912,7 +6921,7 @@ msgstr ""
 msgid "No publishers are running."
 msgstr ""
 
-#: search.js
+#: search.js timeline.js
 msgid "No results found."
 msgstr ""
 
@@ -8301,7 +8310,7 @@ msgstr ""
 msgid "Reschedule"
 msgstr ""
 
-#: dbupdate.py
+#: movements.js dbupdate.py
 msgid "Reservation"
 msgstr ""
 
@@ -8422,10 +8431,6 @@ msgstr ""
 
 #: movements.js
 msgid "Return Date"
-msgstr ""
-
-#: dbupdate.py
-msgid "Return From Foster"
 msgstr ""
 
 #: html.py
@@ -9093,11 +9098,19 @@ msgid "Show the time brought in field"
 msgstr ""
 
 #: options.js
+msgid "Show timeline on the home page"
+msgstr ""
+
+#: options.js
 msgid "Show tips on the home page"
 msgstr ""
 
 #: accounts_trx.js
 msgid "Show transactions from"
+msgstr ""
+
+#: code.py
+msgid "Showing {0} timeline events."
 msgstr ""
 
 #: dbupdate.py
@@ -10110,6 +10123,10 @@ msgstr ""
 msgid "This animal is a crossbreed"
 msgstr ""
 
+#: movements.js
+msgid "This animal is bonded with {0}"
+msgstr ""
+
 #: move_adopt.js
 msgid ""
 "This animal is bonded with {0}. Adoption movement records will be created "
@@ -10126,7 +10143,7 @@ msgstr ""
 msgid "This animal is currently fostered, it will be automatically returned first."
 msgstr ""
 
-#: move_adopt.js movement.py
+#: move_adopt.js movements.js movement.py
 msgid "This animal is currently held and cannot be adopted."
 msgstr ""
 
@@ -10444,6 +10461,14 @@ msgstr ""
 
 #: header_edit_header.js
 msgid "Time on shelter"
+msgstr ""
+
+#: header.js code.py html.py configuration.py
+msgid "Timeline"
+msgstr ""
+
+#: main.js
+msgid "Timeline ({0})"
 msgstr ""
 
 #: diary.js
@@ -11783,6 +11808,10 @@ msgstr ""
 msgid "to"
 msgstr ""
 
+#: timeline.js
+msgid "today"
+msgstr ""
+
 #: medical.js medicalprofile.js
 msgid "treatments"
 msgstr ""
@@ -11903,8 +11932,100 @@ msgstr ""
 msgid "{0} {1}: Moved from {2} to {3}"
 msgstr ""
 
+#: common.js
+msgid "{0} {1}: adopted by {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: altered"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: available for adoption"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: died ({2})"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: entered the shelter"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: escaped"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: euthanised ({2})"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: fostered to {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: held"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: microchipped"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: not available for adoption"
+msgstr ""
+
 #: social.py
 msgid "{0} {1}: posted to Facebook page {2} by {3}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: quarantined"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: received {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: reclaimed by {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: released"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: reserved by {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: returned by {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: sent to retailer {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: stolen"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: tested positive for FIV"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: tested positive for FeLV"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: tested positive for Heartworm"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: transferred to {2}"
 msgstr ""
 
 #: common.js

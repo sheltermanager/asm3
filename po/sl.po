@@ -945,6 +945,10 @@ msgid "Allow a fosterer to be selected"
 msgstr ""
 
 #: options.js
+msgid "Allow creation of payments on the Move-Reserve screen"
+msgstr ""
+
+#: options.js
 msgid "Allow duplicate microchip numbers"
 msgstr ""
 
@@ -1671,6 +1675,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Border Terrier"
+msgstr ""
+
+#: dbupdate.py
+msgid "Born in Shelter"
 msgstr ""
 
 #: animal.py
@@ -6914,7 +6922,7 @@ msgstr "Ni najdenih zadetkov."
 msgid "No publishers are running."
 msgstr ""
 
-#: search.js
+#: search.js timeline.js
 msgid "No results found."
 msgstr "Ni najdenih zadetkov."
 
@@ -8303,7 +8311,7 @@ msgstr "Zahtevan datum mora biti veljaven"
 msgid "Reschedule"
 msgstr ""
 
-#: dbupdate.py
+#: movements.js dbupdate.py
 msgid "Reservation"
 msgstr "Rezervacija"
 
@@ -8424,10 +8432,6 @@ msgstr ""
 
 #: movements.js
 msgid "Return Date"
-msgstr ""
-
-#: dbupdate.py
-msgid "Return From Foster"
 msgstr ""
 
 #: html.py
@@ -9095,11 +9099,19 @@ msgid "Show the time brought in field"
 msgstr ""
 
 #: options.js
+msgid "Show timeline on the home page"
+msgstr ""
+
+#: options.js
 msgid "Show tips on the home page"
 msgstr ""
 
 #: accounts_trx.js
 msgid "Show transactions from"
+msgstr ""
+
+#: code.py
+msgid "Showing {0} timeline events."
 msgstr ""
 
 #: dbupdate.py
@@ -10112,6 +10124,10 @@ msgstr ""
 msgid "This animal is a crossbreed"
 msgstr ""
 
+#: movements.js
+msgid "This animal is bonded with {0}"
+msgstr ""
+
 #: move_adopt.js
 msgid ""
 "This animal is bonded with {0}. Adoption movement records will be created "
@@ -10128,7 +10144,7 @@ msgstr ""
 msgid "This animal is currently fostered, it will be automatically returned first."
 msgstr ""
 
-#: move_adopt.js movement.py
+#: move_adopt.js movements.js movement.py
 msgid "This animal is currently held and cannot be adopted."
 msgstr ""
 
@@ -10446,6 +10462,14 @@ msgstr ""
 
 #: header_edit_header.js
 msgid "Time on shelter"
+msgstr ""
+
+#: header.js code.py html.py configuration.py
+msgid "Timeline"
+msgstr ""
+
+#: main.js
+msgid "Timeline ({0})"
 msgstr ""
 
 #: diary.js
@@ -11785,6 +11809,10 @@ msgstr ""
 msgid "to"
 msgstr ""
 
+#: timeline.js
+msgid "today"
+msgstr ""
+
 #: medical.js medicalprofile.js
 msgid "treatments"
 msgstr ""
@@ -11905,8 +11933,100 @@ msgstr ""
 msgid "{0} {1}: Moved from {2} to {3}"
 msgstr ""
 
+#: common.js
+msgid "{0} {1}: adopted by {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: altered"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: available for adoption"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: died ({2})"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: entered the shelter"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: escaped"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: euthanised ({2})"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: fostered to {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: held"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: microchipped"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: not available for adoption"
+msgstr ""
+
 #: social.py
 msgid "{0} {1}: posted to Facebook page {2} by {3}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: quarantined"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: received {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: reclaimed by {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: released"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: reserved by {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: returned by {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: sent to retailer {2}"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: stolen"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: tested positive for FIV"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: tested positive for FeLV"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: tested positive for Heartworm"
+msgstr ""
+
+#: common.js
+msgid "{0} {1}: transferred to {2}"
 msgstr ""
 
 #: common.js
