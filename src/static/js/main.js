@@ -471,7 +471,7 @@ $(function() {
 
         render_timeline: function() {
             var h = [];
-            if (!config.bool("ShowTimelineHomePage")) { return; }
+            if (!config.bool("ShowTimelineHomePage") || !common.has_permission("va")) { return; }
             h.push('<p class="asm-menu-category"><a href="timeline">' + _("Timeline ({0})").replace("{0}", controller.recent.length) + '</a></p><p>');
             $.each(controller.recent, function(i, v) {
                 h.push(html.event_text(v, { includedate: true }) + '<br/>');
@@ -562,11 +562,11 @@ $(function() {
             '<tr>',
             '<td id="asm-main-diary" width="50%" valign="top">',
             this.render_diary(),
-            this.render_timeline(),
             '</td>',
             '<td id="asm-main-messages" valign="top">',
             this.render_alerts(),
             this.render_messages(),
+            this.render_timeline(),
             this.render_stats(),
             '<p class="asm-menu-category">',
             '<a id="newstoggle" href="#">',

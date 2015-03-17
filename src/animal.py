@@ -266,6 +266,7 @@ def get_animals_brief(animals):
             "ARCHIVED" : a["ARCHIVED"],
             "BREEDNAME": a["BREEDNAME"],
             "CODE": a["CODE"],
+            "COMBITESTED": a["COMBITESTED"],
             "COMBITESTRESULT": a["COMBITESTRESULT"],
             "CRUELTYCASE": a["CRUELTYCASE"],
             "CURRENTOWNERID": a["CURRENTOWNERID"],
@@ -277,6 +278,7 @@ def get_animals_brief(animals):
             "HASACTIVERESERVE": a["HASACTIVERESERVE"],
             "HASTRIALADOPTION": a["HASTRIALADOPTION"],
             "HASPERMANENTFOSTER": a["HASPERMANENTFOSTER"],
+            "HEARTWORMTESTED": a["HEARTWORMTESTED"],
             "HEARTWORMTESTRESULT": a["HEARTWORMTESTRESULT"],
             "HIDDENANIMALDETAILS": a["HIDDENANIMALDETAILS"],
             "HOLDUNTILDATE": a["HOLDUNTILDATE"],
@@ -769,15 +771,15 @@ def get_timeline(dbo, limit = 500):
             "ORDER BY DeceasedDate DESC LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'FIVP' AS Category, CombiTestDate AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
-            "WHERE NonShelterAnimal = 0 AND CombiTestDate Is Not Null AND CombiTestResult = 2 " \
+            "WHERE NonShelterAnimal = 0 AND CombiTested = 1 AND CombiTestDate Is Not Null AND CombiTestResult = 2 " \
             "ORDER BY CombiTestDate DESC LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'FLVP' AS Category, CombiTestDate AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
-            "WHERE NonShelterAnimal = 0 AND CombiTestDate Is Not Null AND FLVResult = 2 " \
+            "WHERE NonShelterAnimal = 0 AND CombiTested = 1 AND CombiTestDate Is Not Null AND FLVResult = 2 " \
             "ORDER BY CombiTestDate DESC LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'HWP' AS Category, CombiTestDate AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
-            "WHERE NonShelterAnimal = 0 AND HeartwormTestDate Is Not Null AND HeartwormTestResult = 2 " \
+            "WHERE NonShelterAnimal = 0 AND HeartwormTested = 1 AND HeartwormTestDate Is Not Null AND HeartwormTestResult = 2 " \
             "ORDER BY HeartwormTestDate DESC LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'QUARANTINE' AS Category, LastChangedDate AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \

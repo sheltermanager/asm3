@@ -5491,6 +5491,7 @@ class publish_options:
 class timeline:
     def GET(self):
         utils.check_loggedin(session, web)
+        users.check_permission(session, users.VIEW_ANIMAL)
         l = session.locale
         dbo = session.dbo
         title = _("Timeline", l)

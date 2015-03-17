@@ -21,7 +21,7 @@ $(function() {
                     lastdate = format.date(e.EVENTDATE);
                     modifier = "";
                     if (lastdate == format.date(new Date())) {
-                        modifier = _("(today)");
+                        modifier = ": " + _("today");
                     }
                     h.push('<p class="asm-timeline-large-date">' + lastdate + ' ' + modifier + '</p>');
                 }

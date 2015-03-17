@@ -999,7 +999,10 @@
             if (config.bool("EmblemNonShelter") && a.NONSHELTERANIMAL == 1) {
                 s.push(html.icon("nonshelter", _("Non-Shelter")));
             }
-            if (config.bool("EmblemPositiveTest") && (a.HEARTWORMTESTRESULT == 2 || a.COMBITESTRESULT == 2 || a.FLVRESULT == 2)) {
+            if (config.bool("EmblemPositiveTest") && (
+                (a.HEARTWORMTESTED == 1 && a.HEARTWORMTESTRESULT == 2) || 
+                (a.COMBITESTED == 1 && a.COMBITESTRESULT == 2) || 
+                (a.COMBITESTED == 1 && a.FLVRESULT == 2))) {
                 var p = [];
                 if (a.HEARTWORMTESTRESULT == 2) { p.push(_("Heartworm+")); }
                 if (a.COMBITESTRESULT == 2) { p.push(_("FIV+")); }
@@ -1062,15 +1065,18 @@
                 HOLD: function(x) { return html.icon("hold") + ' ' + _("{0} {1}: held"); },
                 NOTADOPT: function(x) { return html.icon("notforadoption") + ' ' + _("{0} {1}: not available for adoption"); },
                 AVAILABLE: function(x) { return html.icon("notforadoption") + ' ' + _("{0} {1}: available for adoption"); },
-                VACC: function(x) { return html.icon("vaccination") + ' ' + _("{0} {1}: received {2} vaccination"); },
-                TEST: function(x) { return html.icon("test") + ' ' + _("{0} {1}: received {2} test"); },
-                MEDICAL: function(x) { return html.icon("medical") + ' ' + _("{0} {1}: received treatment of {2}"); }
+                VACC: function(x) { return html.icon("vaccination") + ' ' + _("{0} {1}: received {2}"); },
+                TEST: function(x) { return html.icon("test") + ' ' + _("{0} {1}: received {2}"); },
+                MEDICAL: function(x) { return html.icon("medical") + ' ' + _("{0} {1}: received {2}"); }
             },
             text = handlers[e.CATEGORY](e), h = "";
 
             text = text.replace("{0}", e.TEXT1).replace("{1}", e.TEXT2).replace("{2}", e.TEXT3);
             if (o && o.includedate) {
                 h += '<span class="asm-timeline-small-date">' + format.date(e.EVENTDATE) + '</span> ';
+            }
+            if (o && o.includetime) {
+                h += '<span class="asm-timeline-time">' + format.time(e.EVENTDATE) + '</span>' ;
             }
             h += ' <a href="' + e.LINKTARGET + '?id=' + e.ID + '">';
             h += text;
