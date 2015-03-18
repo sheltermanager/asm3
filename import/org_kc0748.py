@@ -19,8 +19,10 @@ owners = {}
 movements = []
 animals = {}
 ownerdonations = []
+animalvaccinations = []
 
 asm.setid("animal", 100)
+asm.setid("animalvaccination", 100)
 asm.setid("owner", 100)
 asm.setid("ownerdonation", 100)
 asm.setid("adoption", 100)
@@ -33,6 +35,7 @@ print "DELETE FROM media WHERE ID >= 100;"
 print "DELETE FROM dbfs WHERE ID >= 200;"
 print "DELETE FROM owner WHERE ID >= 100;"
 print "DELETE FROM ownerdonation WHERE ID >= 100;"
+print "DELETE FROM animalvaccination WHERE ID >= 100;"
 print "DELETE FROM adoption WHERE ID >= 100;"
 
 cadoptions = asm.csv_to_list("data/kc0748_almosthome/adoptions.csv")
@@ -41,6 +44,20 @@ cdonors = asm.csv_to_list("data/kc0748_almosthome/donordatabase.csv")
 cpeople = asm.csv_to_list("data/kc0748_almosthome/people.csv")
 creceipts = asm.csv_to_list("data/kc0748_almosthome/receipts.csv")
 cvolunteers = asm.csv_to_list("data/kc0748_almosthome/volunteers.csv")
+
+vaccmap = {
+    "Leuk": 12,
+    "ombo": 9,
+    "all": 9,
+    "All": 9,
+    "fvrcp": 9,
+    "FVCC": 9,
+    "FVRC": 9,
+    "FVRCP": 9,
+    "FVCP": 9,
+    "abies": 4,
+    "elovax": 9
+}
 
 lastbroughtin = None
 for d in ccats:
@@ -67,7 +84,9 @@ for d in ccats:
         dy += 7 * asm.cint(d["AgeWks"])
         dy += asm.cint(d["AgeDays"])
         a.DateOfBirth = asm.subtract_days(a.DateBroughtIn, dy)
-    a.Neutered = asm.iif(d["Spay/NeuterDate"] != "", 1, 0)
+    a.Neutered = asm.iif(d["SpayOrNeuteredPreviously"] == "1", 1, 0)
+    if a.Neutered == 0:
+        a.Neutered = asm.iif(d["Spay/NeuterDate"] != "", 1, 0)
     a.NeuteredDate = asm.getdate_mmddyy(d["Spay/NeuterDate"])
     a.AnimalComments = d["Comments"]
     a.IdentichipDate = asm.getdate_mmddyy(d["MicrochipDate"])
@@ -89,6 +108,16 @@ for d in ccats:
     a.Size = 2
     a.CreatedDate = a.DateBroughtIn
     a.LastChangedDate = a.DateBroughtIn
+
+    for k, v in vaccmap.iteritems():
+        vd = asm.getdate_mmddyy(d["DateVaccinatedByOwner"])
+        if d["TypeOfVaccinations"].find(k) != -1 and vd is not None:
+            av = asm.AnimalVaccination()
+            animalvaccinations.append(av)
+            av.DateRequired = vd
+            av.DateOfVaccination = vd
+            av.VaccinationID = v
+            av.Comments = d["TypeOfVaccinations"]
     
     comments = "color: %s" % d["CatColor"]
     if d["LocationWhereFound"] != "": comments += "\nfound: %s" % d["LocationWhereFound"]
@@ -218,6 +247,8 @@ for m in movements:
     print m
 for od in ownerdonations:
     print od
+for av in animalvaccinations:
+    print av
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"
