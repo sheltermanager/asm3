@@ -2085,6 +2085,7 @@ def clone_animal(dbo, username, animalid):
             ( "Cost", db.di(t["COST"]) ),
             ( "Comments", db.ds(t["COMMENTS"]) )
             ))
+        db.execute(dbo, sql)
     # Medical
     for am in db.query(dbo, "SELECT * FROM animalmedical WHERE AnimalID = %d" % int(animalid)):
         namid = db.get_id(dbo, "animalmedical")
