@@ -2080,8 +2080,8 @@ def clone_animal(dbo, username, animalid):
             ( "AnimalID", db.di(nid)),
             ( "TestTypeID", db.di(t["TESTTYPEID"]) ),
             ( "TestResultID", db.di(t["TESTRESULTID"]) ),
-            ( "DateOfTest", db.di(t["DATEOFTEST"]) ),
-            ( "DateRequired", db.di(t["DATEREQUIRED"]) ),
+            ( "DateOfTest", db.dd(t["DATEOFTEST"]) ),
+            ( "DateRequired", db.dd(t["DATEREQUIRED"]) ),
             ( "Cost", db.di(t["COST"]) ),
             ( "Comments", db.ds(t["COMMENTS"]) )
             ))
