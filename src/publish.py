@@ -1280,10 +1280,10 @@ class AdoptAPetPublisher(FTPPublisher):
 
         if not self.openFTPSocket(): 
             self.setLastError("Failed opening FTP socket.")
-            self.cleanup()
-            if self.logBuffer.find("530 Login incorrect"):
+            if self.logBuffer.find("530 Login"):
                 self.log("Found 530 Login incorrect: disabling AdoptAPet publisher.")
                 configuration.publishers_enabled_disable(self.dbo, "ap")
+            self.cleanup()
             return
 
         # Do the images first
@@ -1644,10 +1644,15 @@ class HelpingLostPetsPublisher(FTPPublisher):
         animals = self.getMatchingAnimals()
         if len(animals) == 0 and len(foundanimals) == 0:
             self.setLastError("No animals found to publish.")
+            self.cleanup()
             return
 
         if not self.openFTPSocket(): 
             self.setLastError("Failed opening FTP socket.")
+            if self.logBuffer.find("530 Login"):
+                self.log("Found 530 Login incorrect: disabling HelpingLostPets publisher.")
+                configuration.publishers_enabled_disable(self.dbo, "hlp")
+            self.cleanup()
             return
 
         csv = []
@@ -2671,10 +2676,10 @@ class PetFinderPublisher(FTPPublisher):
 
         if not self.openFTPSocket(): 
             self.setLastError("Failed opening FTP socket.")
-            self.cleanup()
-            if self.logBuffer.find("530 Login incorrect"):
+            if self.logBuffer.find("530 Login"):
                 self.log("Found 530 Login incorrect: disabling PetFinder publisher.")
                 configuration.publishers_enabled_disable(self.dbo, "pf")
+            self.cleanup()
             return
 
         # Do the images first
@@ -3088,6 +3093,9 @@ class PetRescuePublisher(FTPPublisher):
 
         if not self.openFTPSocket(): 
             self.setLastError("Failed opening FTP socket.")
+            if self.logBuffer.find("530 Login"):
+                self.log("Found 530 Login incorrect: disabling PetRescue.com.au publisher.")
+                configuration.publishers_enabled_disable(self.dbo, "pr")
             self.cleanup()
             return
 
@@ -3393,6 +3401,9 @@ class RescueGroupsPublisher(FTPPublisher):
 
         if not self.openFTPSocket(): 
             self.setLastError("Failed opening FTP socket.")
+            if self.logBuffer.find("530 Login"):
+                self.log("Found 530 Login incorrect: disabling RescueGroups publisher.")
+                configuration.publishers_enabled_disable(self.dbo, "rg")
             self.cleanup()
             return
 
@@ -3586,6 +3597,9 @@ class SmartTagPublisher(FTPPublisher):
 
         if not self.openFTPSocket(): 
             self.setLastError("Failed to open FTP socket.")
+            if self.logBuffer.find("530 Login"):
+                self.log("Found 530 Login incorrect: disabling SmartTag publisher.")
+                configuration.publishers_enabled_disable(self.dbo, "st")
             self.cleanup()
             return
 
@@ -3924,10 +3938,12 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
                     # If we saw an account not found message, there's no point sending 
                     # anything else as they will all trigger the same error
                     if str(r["headers"]).find("54101") != -1 and str(r["headers"]).find("Account Not Found") != -1:
-                        self.logError("received HomeAgain 54101 'account not found' response header - abandoning run")
+                        self.logError("received HomeAgain 54101 'account not found' response header - abandoning run and disabling publisher")
+                        configuration.publishers_enabled_disable(self.dbo, "veha")
                         break
                     if str(r["headers"]).find("54101") != -1 and str(r["headers"]).find("sender not recognized") != -1:
-                        self.logError("received AKC Reunite 54101 'sender not recognized' response header - abandoning run")
+                        self.logError("received AKC Reunite 54101 'sender not recognized' response header - abandoning run and disabling publisher")
+                        configuration.publishers_enabled_disable(self.dbo, "vear")
                         break
 
                     if not wassuccess:
