@@ -590,7 +590,7 @@ def insert_person_from_form(dbo, post, username):
         ( "IsBanned", db.di(banned)),
         ( "IsVolunteer", db.di(volunteer)),
         ( "IsMember", db.di(member)),
-        ( "MembershipExpiryDate", db.dd(d("membershipexpirydate") )),
+        ( "MembershipExpiryDate", db.dd(d("membershipexpires") )),
         ( "MembershipNumber", db.ds(d("membershipnumber"))),
         ( "IsHomeChecker", db.di(homechecker)),
         ( "IsDeceased", db.di(deceased)),
