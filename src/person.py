@@ -289,9 +289,13 @@ def get_person_find_simple(dbo, query, classfilter="all", includeStaff = False, 
     """
     ors = []
     query = query.replace("'", "`")
+    words = query.split(" ")
     def add(field):
         return utils.where_text_filter(dbo, field, query)
-    ors.append(add("o.OwnerName"))
+    onac = []
+    for w in words:
+        onac.append("(%s)" % utils.where_text_filter(dbo, "o.OwnerName", w))
+    ors.append("(%s)" % " AND ".join(onac))
     ors.append(add("o.OwnerAddress"))
     ors.append(add("o.OwnerTown"))
     ors.append(add("o.OwnerCounty"))

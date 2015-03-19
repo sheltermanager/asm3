@@ -1,6 +1,7 @@
 36
 ================
 
+19/03/15 Use keyword based searches for people against OwnerName #114
 17/03/15 Fix to make FIV/FLV/HW+ flag check flags as well as results
 16/03/15 Show timeline on home page and as separate page with quicklink #28
 16/03/15 Option to disable reservation payments, don't default to full fee #122

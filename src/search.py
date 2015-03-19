@@ -71,7 +71,15 @@ def search(dbo, session, q):
                         r["SORTON"] = now() - datetime.timedelta(seconds=1)
                 elif rtype == "PERSON":
                     r["SORTON"] = r["LASTCHANGEDDATE"]
-                    if r["OWNERSURNAME"].lower() == qlow or r["OWNERNAME"].lower() == qlow:
+                    # Count how many of the keywords in the search were present
+                    # in the owner name field - if it's all of them then raise
+                    # the relevance.
+                    qw = qlow.split(" ")
+                    qm = 0
+                    for w in qw:
+                        if r["OWNERNAME"].lower().find(w) != -1:
+                            qm += 1
+                    if qm == len(qw):
                         r["SORTON"] = now()
                     # Put matches where term present just behind direct matches
                     if r["OWNERSURNAME"].lower().find(qlow) or r["OWNERNAME"].lower().find(qlow):
