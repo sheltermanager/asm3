@@ -814,6 +814,12 @@ def publisher_ignore_ftp_override(dbo):
 def publishers_enabled(dbo):
     return cstring(dbo, "PublishersEnabled")
 
+def publishers_enabled_disable(dbo, publishertodisable):
+    """ Disables a publisher by removing it from the PublishersEnabled config """
+    pe = cstring(dbo, "PublishersEnabled")
+    pe = pe.replace(" " + publishertodisable, "")
+    cset(dbo, "PublishersEnabled", pe)
+
 def quicklinks_id(dbo, newval = ""):
     if newval == "":
         return cstring(dbo, "QuicklinksID", DEFAULTS["QuicklinksID"])

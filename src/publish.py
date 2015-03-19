@@ -2669,6 +2669,9 @@ class PetFinderPublisher(FTPPublisher):
         if not self.openFTPSocket(): 
             self.setLastError("Failed opening FTP socket.")
             self.cleanup()
+            if self.logBuffer.find("530 Login incorrect"):
+                self.log("Found 530 Login incorrect: disabling PetFinder publisher.")
+                configuration.publishers_enabled_disable(self.dbo, "pf")
             return
 
         # Do the images first
