@@ -1,6 +1,7 @@
 36
 ================
 
+19/03/15 Disable adoptapet.com as well on 530 login incorrect
 19/03/15 PetFinder now using fail2ban, disable on 530 login incorrect
 19/03/15 Use keyword based searches for people against OwnerName #114
 17/03/15 Fix to make FIV/FLV/HW+ flag check flags as well as results
