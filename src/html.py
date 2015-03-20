@@ -611,8 +611,8 @@ def json_menu(l, reports, mailmerges):
         (users.USE_INTERNET_PUBLISHER, "publishing", _("Publishing", l), (
             ("", "", "", "--cat", "asm-icon-settings", _("Configuration", l) ),
             (users.VIEW_ANIMAL, "", "", "search?q=forpublish", "asm-icon-animal", _("View animals matching publishing options", l) ),
-            (users.SYSTEM_OPTIONS, "", "", "publish_options", "asm-icon-settings", _("Set publishing options", l) ),
-            (users.SYSTEM_OPTIONS, "", "", "htmltemplates", "asm-icon-document", _("Edit HTML publishing templates", l)),
+            (users.PUBLISH_OPTIONS, "", "", "publish_options", "asm-icon-settings", _("Set publishing options", l) ),
+            (users.PUBLISH_OPTIONS, "", "", "htmltemplates", "asm-icon-document", _("Edit HTML publishing templates", l)),
             ("", "", "", "--cat", "web", _("Publish now", l) ),
             ("", "", "", "publish?mode=ftp", "asm-icon-blank", _("Publish HTML via FTP", l) ),
             ("", "", "", "publish?mode=ap", "asm-icon-blank", "Publish to AdoptAPet.com" ),

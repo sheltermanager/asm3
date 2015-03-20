@@ -107,6 +107,7 @@ DELETE_INCOMING_FORMS           = "dif"
 
 SYSTEM_MENU                     = "asm"
 SYSTEM_OPTIONS                  = "cso"
+PUBLISH_OPTIONS                 = "cpo"
 MODIFY_LOOKUPS                  = "ml"
 TRIGGER_BATCH                   = "tbp"
 ADD_USER                        = "asu"

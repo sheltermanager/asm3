@@ -2922,7 +2922,7 @@ class giftaid_hmrc_spreadsheet:
 class htmltemplates:
     def GET(self):
         utils.check_loggedin(session, web)
-        users.check_permission(session, users.SYSTEM_OPTIONS)
+        users.check_permission(session, users.PUBLISH_OPTIONS)
         l = session.locale
         dbo = session.dbo
         title = _("HTML Publishing Templates", l)
@@ -2942,13 +2942,13 @@ class htmltemplates:
         mode = post["mode"]
         dbo = session.dbo
         if mode == "create":
-            users.check_permission(session, users.SYSTEM_OPTIONS)
+            users.check_permission(session, users.PUBLISH_OPTIONS)
             dbfs.update_html_publisher_template(dbo, session.user, post["templatename"], post["header"], post["body"], post["footer"])
         elif mode == "update":
-            users.check_permission(session, users.SYSTEM_OPTIONS)
+            users.check_permission(session, users.PUBLISH_OPTIONS)
             dbfs.update_html_publisher_template(dbo, session.user, post["templatename"], post["header"], post["body"], post["footer"])
         elif mode == "delete":
-            users.check_permission(session, users.SYSTEM_OPTIONS)
+            users.check_permission(session, users.PUBLISH_OPTIONS)
             for name in post["names"].split(","):
                 if name != "": dbfs.delete_html_publisher_template(dbo, session.user, name)
 
@@ -5453,7 +5453,7 @@ class publish_logs:
 class publish_options:
     def GET(self):
         utils.check_loggedin(session, web)
-        users.check_permission(session, users.SYSTEM_OPTIONS)
+        users.check_permission(session, users.PUBLISH_OPTIONS)
         l = session.locale
         dbo = session.dbo
         title = _("Publishing Options", l)
@@ -5480,11 +5480,11 @@ class publish_options:
         post = utils.PostedData(web.input(mode="save"), session.locale)
         mode = post["mode"]
         if mode == "save":
-            users.check_permission(session, users.SYSTEM_OPTIONS)
+            users.check_permission(session, users.PUBLISH_OPTIONS)
             configuration.csave(session.dbo, session.user, post)
             users.update_session(session)
         elif mode == "vesignup":
-            users.check_permission(session, users.SYSTEM_OPTIONS)
+            users.check_permission(session, users.PUBLISH_OPTIONS)
             userid, userpwd = extpublish.VetEnvoyUSMicrochipPublisher.signup(session.dbo, post)
             return "%s,%s" % (userid, userpwd)
 
