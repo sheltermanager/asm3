@@ -284,7 +284,9 @@ def update_report_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM customreport WHERE ID = %d" % reportid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM customreport WHERE ID = %d" % reportid)
-    audit.edit(dbo, username, "customreport", audit.map_diff(preaudit, postaudit, [ "TITLE", ]))
+    diff = audit.map_diff(preaudit, postaudit, [ "TITLE", ])
+    diff = html.escape(diff)
+    audit.edit(dbo, username, "customreport", diff)
     db.execute(dbo, "DELETE FROM customreportrole WHERE ReportID = %d" % reportid)
     for rid in post.integer_list("viewroles"):
         db.execute(dbo, "INSERT INTO customreportrole (ReportID, RoleID, CanView) VALUES (%d, %d, 1)" % (reportid, rid))
@@ -293,7 +295,9 @@ def delete_report(dbo, username, rid):
     """
     Deletes a report record
     """
-    audit.delete(dbo, username, "customreport", str(db.query(dbo, "SELECT * FROM customreport WHERE ID = %d" % rid)))
+    data = str(db.query(dbo, "SELECT * FROM customreport WHERE ID = %d" % rid))
+    data = html.escape(data)
+    audit.delete(dbo, username, "customreport", data)
     db.execute(dbo, "DELETE FROM customreportrole WHERE ReportID = %d" % rid)
     db.execute(dbo, "DELETE FROM customreport WHERE ID = %d" % rid)
 

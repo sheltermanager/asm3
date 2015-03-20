@@ -1,6 +1,7 @@
 36
 ================
 
+20/03/15 HTML escape auditing for customreport table to not bork reports #130
 20/03/15 Create separate permission for setting publishing options
 19/03/15 Same for all FTP publishers including RescueGroups, HLP and SmartTag
 19/03/15 Disable adoptapet.com as well on 530 login incorrect
