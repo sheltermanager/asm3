@@ -8,7 +8,7 @@ Contents:
 
    foreword
    gettingstarted
-   search
+   searching
    animals
    people
    movements
