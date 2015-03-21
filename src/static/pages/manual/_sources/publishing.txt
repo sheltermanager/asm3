@@ -107,7 +107,7 @@ Finally, if you wish, you can have ASM write a log entry to the animal's record
 whenever you publish an animal to Facebook.
 
 HTML/FTP Publishing
-===================
+-------------------
 
 ASM can create websites for you using a simple templating system and optionally
 upload them to an FTP server. The pages themselves can be split down by species
