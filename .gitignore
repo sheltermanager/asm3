@@ -7,3 +7,4 @@ src/static/pages/changelog.txt
 jsmin/jsmin
 src/static/js/min
 import/data
+doc/manual/_build

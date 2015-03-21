@@ -27,7 +27,7 @@ Contents:
    mailmerge
    configuration
    wordkeys
-   tables
+   databasetables
    relationships
    csvimportfields
    onlineformfields

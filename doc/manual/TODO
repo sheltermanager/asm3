@@ -1,7 +1,2 @@
-Make some of the other items definition lists (like wordkeys should definitely be definition lists)
 
-Database tables from old manual is missing
 
-How to generate latexpdf with a4 paper? Makefile hints at PAPER=a4 but that didn't work.
-
-Consider other themes. There may be some built in and the ones at http://docs.writethedocs.org/tools/sphinx-themes/ look good.
