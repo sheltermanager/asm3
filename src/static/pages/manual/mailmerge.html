@@ -1,0 +1,435 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Mail Merge Sources &mdash; ASM 36 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="ASM 36 documentation" href="index.html"/>
+        <link rel="next" title="Configuration" href="configuration.html"/>
+        <link rel="prev" title="Publishing" href="publishing.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="fa fa-home"> ASM</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="foreword.html">Foreword</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="foreword.html#introduction">Introduction</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#menus-and-shortcuts">Menus and Shortcuts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#shortcut-keys">Shortcut Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#dates">Dates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#tables">Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#initial-setup">Initial Setup</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="search.html">Search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="animals.html">Animals</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="animals.html#shelter-view">Shelter View</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animals.html#find-animal">Find Animal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animals.html#edit-animal">Edit Animal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animals.html#moving-and-reserving-animals">Moving and Reserving Animals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animals.html#documents">Documents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="people.html">People</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="people.html#find-person">Find Person</a></li>
+<li class="toctree-l2"><a class="reference internal" href="people.html#edit-person">Edit Person</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="movements.html">Movement Books</a></li>
+<li class="toctree-l1"><a class="reference internal" href="animalcontrol.html">Animal Control</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#incidents">Incidents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#incident-details">Incident Details</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#dispatch">Dispatch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#suspect-animal-and-citation">Suspect/Animal and Citation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#alerts">Alerts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#map-of-active-incidents">Map of active incidents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#trap-loans">Trap Loans</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#licensing">Licensing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="lostandfound.html">Lost and Found</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="lostandfound.html#matching-lost-and-found">Matching Lost and Found</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lostandfound.html#scoring">Scoring</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="waitinglist.html">Waiting List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generaldiary.html">General Diary</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="generaldiary.html#add-a-new-diary-note">Add a new diary note</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generaldiary.html#viewing-my-diary-notes">Viewing my diary notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generaldiary.html#diary-calendar">Diary calendar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generaldiary.html#printing-the-diary">Printing the diary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generaldiary.html#create-a-new-diary-task">Create a new diary task</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="accounts.html">Accounts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="accounts.html#reconciliation">Reconciliation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="accounts.html#payments">Payments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="accounts.html#reporting">Reporting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="stockcontrol.html">Stock Control</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="stockcontrol.html#adding-new-stock">Adding new stock</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stockcontrol.html#using-stock-manually">Using stock (manually)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stockcontrol.html#using-stock-medical-tests-and-vaccinations">Using stock (medical, tests and vaccinations)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stockcontrol.html#stock-alerts">Stock alerts</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#customising-reports">Customising Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#charts">Charts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#maps">Maps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="litters.html">Litters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="litters.html#mechanism">Mechanism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="litters.html#litter-completion">Litter Completion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mobile.html">Mobile Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="service.html">Service API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="publishing.html">Publishing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#animal-selection">Animal Selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#all-publishers">All Publishers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#facebook">Facebook</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="publishing.html#html-ftp-publishing">HTML/FTP Publishing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#adoptapet-com">adoptapet.com</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#helpinglostpets-com">helpinglostpets.com</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#meetapet-com">meetapet.com</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#petfinder-com">petfinder.com</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#petrescue-com-au">petrescue.com.au</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#rescuegroups-org">rescuegroups.org</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#avid-pettrac-uk">AVID/PETtrac UK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#identichip-anibase-uk">idENTICHIP/Anibase UK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#petlink">PetLink</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#smarttag">SmartTag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#vetenvoy-us-homeagain-and-akc-reunite">VetEnvoy US (HomeAgain and AKC Reunite)</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Mail Merge Sources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#running-a-mail-merge">Running a Mail Merge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#printing-labels">Printing Labels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#integrating-with-openoffice">Integrating with OpenOffice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#integrating-with-microsoft-word">Integrating with Microsoft Word</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bulk-email">Bulk Email</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#additional-fields">Additional Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#lookup-data">Lookup Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#document-templates">Document templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#reports">Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#system-user-accounts">System user accounts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#user-roles">User roles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#import-a-csv-file">Import a CSV file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#trigger-batch-processes">Trigger Batch Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#options">Options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="wordkeys.html">Appendix: Wordkeys</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#organisation-keys">Organisation Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#animal-keys">Animal Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#vaccination-keys">Vaccination Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#test-keys">Test Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#medical-keys">Medical Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#payment-keys">Payment Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#cost-keys">Cost Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#diet-keys">Diet Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#log-keys">Log Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#movement-keys">Movement Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#person-keys">Person Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#traploan-keys">Traploan Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#payment-receipt-invoice-keys">Payment/Receipt/Invoice Keys</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="databasetables.html">Database Tables/Columns</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="databasetables.html#adoption">adoption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="databasetables.html#animal">animal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="databasetables.html#dbfs">dbfs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="databasetables.html#media">media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="databasetables.html#owner">owner</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="relationships.html">Appendix: Entity Relationship Diagrams</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="relationships.html#animal-with-satellite-tables-media-and-logs">Animal with satellite tables, media and logs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="relationships.html#adoption-movement-table-with-relationships">Adoption/Movement table with relationships</a></li>
+<li class="toctree-l2"><a class="reference internal" href="relationships.html#person-payment-account-relationships">Person/payment/account relationships</a></li>
+<li class="toctree-l2"><a class="reference internal" href="relationships.html#lost-found-and-waiting-list">Lost/found and waiting list</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="csvimportfields.html">Appendix: CSV file import fields</a></li>
+<li class="toctree-l1"><a class="reference internal" href="onlineformfields.html">Appendix: Online Form import fields</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">ASM</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Mail Merge Sources</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/mailmerge.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="mail-merge-sources">
+<h1>Mail Merge Sources<a class="headerlink" href="#mail-merge-sources" title="Permalink to this headline">¶</a></h1>
+<p>You can create mail merge data sources quickly and easily for integration
+directly into word processors and spreadsheet applications. From these
+applications you can then print off bulk letters or save individual document
+files. Mail merge sources generate CSV files to perform this integration. They
+can also generate PDF files for sheets of printable labels and send bulk
+emails.</p>
+<div class="section" id="running-a-mail-merge">
+<h2>Running a Mail Merge<a class="headerlink" href="#running-a-mail-merge" title="Permalink to this headline">¶</a></h2>
+<p>To run a mail merge, navigate to the Mail top level menu.</p>
+<p>Initially, ASM does not come preloaded with any, however you can install mail
+merge sources from <em>Settings-&gt;Reports-&gt;Browse sheltermanager.com</em> (they appear
+in the list with the type “Mail Merge”).</p>
+<img alt="_images/merge_source.png" src="_images/merge_source.png" />
+<p>When executing a mail merge, you will be prompted to create a CSV file, print
+some labels, or send bulk emails. You will want to create a CSV file if you
+intend to use a wordprocessor to create printed letters.</p>
+<p>The files are always named &lt;source&gt;.csv (CSV is a text-based file of comma
+separated values). The mail merge tool will prompt you for a location to save
+the file to.</p>
+</div>
+<div class="section" id="printing-labels">
+<h2>Printing Labels<a class="headerlink" href="#printing-labels" title="Permalink to this headline">¶</a></h2>
+<p>ASM can generate sheets of labels for your printer. It has a list of some
+popular label manufacturers and sizes, or you can enter the paper size and
+measurements from the back of the box of labels that you have. Hitting Download
+will send a PDF to your computer with all the addresses laid out for the labels
+and ready to print. Most modern web browsers can render and print PDF files
+directly.</p>
+<img alt="_images/mail_labels.png" src="_images/mail_labels.png" />
+</div>
+<div class="section" id="integrating-with-openoffice">
+<h2>Integrating with OpenOffice<a class="headerlink" href="#integrating-with-openoffice" title="Permalink to this headline">¶</a></h2>
+<p>These instructions apply to versions 1.x and upwards of OpenOffice.  To
+integrate your CSV merge source with OpenOffice, you will need to register it
+as a data source. Open a new, empty document in OpenOffice and click on the
+Tools menu. Now click on “Data Sources” to bring up the list of known data
+sources.</p>
+<p>Enter the name first - you may call it anything you like, however for ease, use
+the name of the source in Animal Shelter Manager. For the type, select
+“Spreadsheet” from the drop down box. Click the browse button below to pop up
+an open dialog. You should then find the csv file you downloaded and select it.</p>
+<p>Now, click on the tables tab. You will be prompted with the OpenOffice text
+convert screen. OpenOffice is intelligent enough to understand csv files and
+you can safely click the Ok button in the top right corner.</p>
+<p>You will be returned to the data source manager screen. Simply click Ok now as
+you have successfully set up your mail data source.</p>
+<div class="section" id="create-the-openoffice-document">
+<h3>Create the OpenOffice Document<a class="headerlink" href="#create-the-openoffice-document" title="Permalink to this headline">¶</a></h3>
+<p>Now that your source is set up, you can create as many different documents as
+you like within OpenOffice to utilise them.</p>
+<p>Create a new document, or open an existing one you would like to adapt. Pull
+down the “Insert” menu and select “Fields”, followed by “Other”.</p>
+<p>Select the “Database” tab and highlight “Form Letter Field” on the left. You
+should now see all your data sources on the right in tree form. Expand the one
+you would like to use, and simply double click on fields to embed the
+placeholders in your document (these placeholders will be replaced with real
+data when you run the merge).</p>
+<p><strong>TIP:</strong> While this screen is open, double-click ALL the fields you intend to
+use and then move them around in your document later. This is much easier than
+coming back to this screen repeatedly for each field.</p>
+</div>
+<div class="section" id="run-the-merge">
+<h3>Run the Merge<a class="headerlink" href="#run-the-merge" title="Permalink to this headline">¶</a></h3>
+<p>Once you have a document that you are happy with, make sure it is saved. To run
+the merge, bring up the data sources window by pressing F4 on the keyboard.
+Your datasources will be listed down the left hand side. Expand the one you
+want to use (you may be prompted for the text import again - simply click Ok).
+Expand the Tables section and highlight “Sheet1”. Your data will be displayed
+on the right hand side.</p>
+<p>To initiate a merge, click on the “Form Letter” button. It appears on the data
+toolbar second from the right and looks like three envelopes stuck together.</p>
+<p>You may now choose how to merge. You can write emails (by selecting
+“Electronic” and selecting “Email” as the field). Generate printed documents by
+using the printer, or generate individual copies of this document for each
+entry by selecting “File”.</p>
+</div>
+</div>
+<div class="section" id="integrating-with-microsoft-word">
+<h2>Integrating with Microsoft Word<a class="headerlink" href="#integrating-with-microsoft-word" title="Permalink to this headline">¶</a></h2>
+<p>These instructions apply to versions 6.0, 95, 97, 2000 and XP of Microsoft
+Word.  To integrate your mail merge source with Microsoft Word, simply open
+Word with an empty new document. Pull down the Tools menu and select “Mail
+Merge”. Word allocates data sources per document (as opposed to OpenOffice,
+which allocates data sources applicable to all documents).</p>
+<p>Word will now prompt you through a three-step process, where you must either
+open an existing document or turn the current document into a mail merge
+document (you may choose from Form Letters, Address Labels etc.)</p>
+<p>Step two prompts you to get the data source - simply find the csv file you
+download and select it. Note that by default Word will not show the csv files
+in its dialog - make sure you drop down the file type list and select “All
+Files (<em>.</em>)”</p>
+<p>If you used an empty document, Word will prompt you to select mail merge
+fields to use. You can insert these placeholders into your document by
+dropping down the “Insert Merge Field” button that has appeared on the merge
+toolbar.</p>
+<p>When you are happy, make sure you save your document. To run the merge, go
+back to Tools-&gt;Mail Merge and select “Merge” under step 3.</p>
+<p>Word will generate a new document containing a new copy of your original
+document for each entry in the data for you to print and save.</p>
+<p>The Word document you have created will always rely on your data source, so
+should you change it (generate a new one from Animal Shelter Manager), you can
+simply open the document again and rerun the merge.</p>
+</div>
+<div class="section" id="bulk-email">
+<h2>Bulk Email<a class="headerlink" href="#bulk-email" title="Permalink to this headline">¶</a></h2>
+<img alt="_images/mail_email.png" src="_images/mail_email.png" />
+<p>In addition, Animal Shelter Manager allows you to bulk email any mail merge
+source directly - all you need is access to an SMTP. If you are using
+sheltermanager.com hosting, then your account will already be configured and
+using the hosted mail server and the option won&#8217;t appear.</p>
+<p>All ASM needs to know is the return address you would like stamped on the
+outgoing emails and the IP address/hostname of the SMTP server to use (usually
+smtp.&lt;your ISP name&gt;.com). Set these in Settings-Options (under the Email tab).
+It can also support authentication and TLS if your provider requires it.</p>
+<p>In the merge screen, you can expand the email panel to send emails. It contains
+ASM&#8217;s own internal email client with a list of tokens available so you can
+customise the email for each individual user.</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="configuration.html" class="btn btn-neutral float-right" title="Configuration"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="publishing.html" class="btn btn-neutral" title="Publishing"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Sheltermanager, Ltd.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'36',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

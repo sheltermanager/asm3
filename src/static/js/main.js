@@ -515,7 +515,7 @@ $(function() {
             '</div>',
             '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 5px;">',
             '<p><span class="ui-icon ui-icon-star" style="float: left; margin-right: .3em;"></span>',
-            '<a href="static/pages/manual/manual.html" target="_blank"><b>' + _("Manual") + '</b></a>',
+            '<a href="static/pages/manual/index.html" target="_blank"><b>' + _("Manual") + '</b></a>',
             _("Read the manual for more information about Animal Shelter Manager."),
             '</p>',
             '</div>',

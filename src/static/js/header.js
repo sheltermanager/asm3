@@ -344,7 +344,7 @@ $(function() {
                 '<div id="asm-topline-user-body" class="asm-menu-body">',
                     '<ul class="asm-menu-list">',
                         '<li class="asm-menu-category">' + _("Help") + '</li>',
-                        '<li class="asm-menu-item"><a href="static/pages/manual/manual.html" target="_blank"><span class="asm-icon asm-icon-help"></span> <nobr>' + _("View Manual") + '</nobr></a></li>',
+                        '<li class="asm-menu-item"><a href="static/pages/manual/index.html" target="_blank"><span class="asm-icon asm-icon-help"></span> <nobr>' + _("View Manual") + '</nobr></a></li>',
                         '<li class="asm-menu-item"><a href="http://youtube.com/user/sheltermanager" target="_blank"><nobr><span class="asm-icon asm-icon-youtube"></span> ' + _("View Training Videos") + '</nobr></a></li>',
                         '<li class="asm-menu-item"><a href="static/pages/faq/faq.html" target="_blank"><nobr><span class="asm-icon asm-icon-faq"></span> ' + _("Frequently Asked Questions") + '</nobr></a></li>',
                         '<li class="asm-menu-category">' + asm.user + '</li>',

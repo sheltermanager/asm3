@@ -1,0 +1,649 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Publishing &mdash; ASM 36 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="ASM 36 documentation" href="index.html"/>
+        <link rel="next" title="Mail Merge Sources" href="mailmerge.html"/>
+        <link rel="prev" title="Service API" href="service.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="fa fa-home"> ASM</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="foreword.html">Foreword</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="foreword.html#introduction">Introduction</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#menus-and-shortcuts">Menus and Shortcuts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#shortcut-keys">Shortcut Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#dates">Dates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#tables">Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#initial-setup">Initial Setup</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="search.html">Search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="animals.html">Animals</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="animals.html#shelter-view">Shelter View</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animals.html#find-animal">Find Animal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animals.html#edit-animal">Edit Animal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animals.html#moving-and-reserving-animals">Moving and Reserving Animals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animals.html#documents">Documents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="people.html">People</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="people.html#find-person">Find Person</a></li>
+<li class="toctree-l2"><a class="reference internal" href="people.html#edit-person">Edit Person</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="movements.html">Movement Books</a></li>
+<li class="toctree-l1"><a class="reference internal" href="animalcontrol.html">Animal Control</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#incidents">Incidents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#incident-details">Incident Details</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#dispatch">Dispatch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#suspect-animal-and-citation">Suspect/Animal and Citation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#alerts">Alerts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#map-of-active-incidents">Map of active incidents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#trap-loans">Trap Loans</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#licensing">Licensing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="lostandfound.html">Lost and Found</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="lostandfound.html#matching-lost-and-found">Matching Lost and Found</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lostandfound.html#scoring">Scoring</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="waitinglist.html">Waiting List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generaldiary.html">General Diary</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="generaldiary.html#add-a-new-diary-note">Add a new diary note</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generaldiary.html#viewing-my-diary-notes">Viewing my diary notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generaldiary.html#diary-calendar">Diary calendar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generaldiary.html#printing-the-diary">Printing the diary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generaldiary.html#create-a-new-diary-task">Create a new diary task</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="accounts.html">Accounts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="accounts.html#reconciliation">Reconciliation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="accounts.html#payments">Payments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="accounts.html#reporting">Reporting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="stockcontrol.html">Stock Control</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="stockcontrol.html#adding-new-stock">Adding new stock</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stockcontrol.html#using-stock-manually">Using stock (manually)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stockcontrol.html#using-stock-medical-tests-and-vaccinations">Using stock (medical, tests and vaccinations)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stockcontrol.html#stock-alerts">Stock alerts</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#customising-reports">Customising Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#charts">Charts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#maps">Maps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="litters.html">Litters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="litters.html#mechanism">Mechanism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="litters.html#litter-completion">Litter Completion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mobile.html">Mobile Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="service.html">Service API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Publishing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#animal-selection">Animal Selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#all-publishers">All Publishers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#facebook">Facebook</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#html-ftp-publishing">HTML/FTP Publishing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#adoptapet-com">adoptapet.com</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#helpinglostpets-com">helpinglostpets.com</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#meetapet-com">meetapet.com</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#petfinder-com">petfinder.com</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#petrescue-com-au">petrescue.com.au</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rescuegroups-org">rescuegroups.org</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#avid-pettrac-uk">AVID/PETtrac UK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#identichip-anibase-uk">idENTICHIP/Anibase UK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#petlink">PetLink</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#smarttag">SmartTag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vetenvoy-us-homeagain-and-akc-reunite">VetEnvoy US (HomeAgain and AKC Reunite)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mailmerge.html">Mail Merge Sources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mailmerge.html#running-a-mail-merge">Running a Mail Merge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mailmerge.html#printing-labels">Printing Labels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mailmerge.html#integrating-with-openoffice">Integrating with OpenOffice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mailmerge.html#integrating-with-microsoft-word">Integrating with Microsoft Word</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mailmerge.html#bulk-email">Bulk Email</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#additional-fields">Additional Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#lookup-data">Lookup Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#document-templates">Document templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#reports">Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#system-user-accounts">System user accounts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#user-roles">User roles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#import-a-csv-file">Import a CSV file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#trigger-batch-processes">Trigger Batch Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#options">Options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="wordkeys.html">Appendix: Wordkeys</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#organisation-keys">Organisation Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#animal-keys">Animal Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#vaccination-keys">Vaccination Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#test-keys">Test Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#medical-keys">Medical Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#payment-keys">Payment Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#cost-keys">Cost Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#diet-keys">Diet Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#log-keys">Log Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#movement-keys">Movement Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#person-keys">Person Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#traploan-keys">Traploan Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#payment-receipt-invoice-keys">Payment/Receipt/Invoice Keys</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="databasetables.html">Database Tables/Columns</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="databasetables.html#adoption">adoption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="databasetables.html#animal">animal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="databasetables.html#dbfs">dbfs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="databasetables.html#media">media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="databasetables.html#owner">owner</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="relationships.html">Appendix: Entity Relationship Diagrams</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="relationships.html#animal-with-satellite-tables-media-and-logs">Animal with satellite tables, media and logs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="relationships.html#adoption-movement-table-with-relationships">Adoption/Movement table with relationships</a></li>
+<li class="toctree-l2"><a class="reference internal" href="relationships.html#person-payment-account-relationships">Person/payment/account relationships</a></li>
+<li class="toctree-l2"><a class="reference internal" href="relationships.html#lost-found-and-waiting-list">Lost/found and waiting list</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="csvimportfields.html">Appendix: CSV file import fields</a></li>
+<li class="toctree-l1"><a class="reference internal" href="onlineformfields.html">Appendix: Online Form import fields</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">ASM</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Publishing</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/publishing.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="publishing">
+<h1>Publishing<a class="headerlink" href="#publishing" title="Permalink to this headline">¶</a></h1>
+<p>ASM can update many third party adoption sites and microchip registries as well
+as generating websites of your adoptable and recently adopted animals. The
+sites produced are based on simple editable templates and can be completely
+customised and branded to suit you.</p>
+<p>All of this functionality is accessed via the top level Publishing menu.</p>
+<p>There are many options you can set to choose what appears on the output, and
+how the output is generated. Set these options under <em>Publishing-&gt;Set
+Publishing Options</em></p>
+<div class="section" id="animal-selection">
+<h2>Animal Selection<a class="headerlink" href="#animal-selection" title="Permalink to this headline">¶</a></h2>
+<img alt="_images/animal_selection.png" src="_images/animal_selection.png" />
+<p>The Animal Selection tab allows you to control which animals are considered
+adoptable by ASM&#8217;s internet publishers.</p>
+<ul class="simple">
+<li>Include [category] animals: Select “yes” to include animals fitting the
+category.</li>
+<li>Merge bonded animals into a single record: When outputting bonded animals,
+merge them into a single entry. The names will be joined together with
+commas, but other than that all the details will be of the first animal in
+the sort so make sure the bio/notes include information on the bonded animals
+for all of them.</li>
+<li>Exclude animals aged under: This box is to prevent puppies and kittens who
+are too young being included in the list of available adoptions. You may
+choose an age limit on animals that appear. By default, the system excludes
+animals less than 1 year old (52 weeks).</li>
+<li>Include animals in the following locations: Select the locations to include
+adoptable animals from. If none are selected, all locations will be used.</li>
+</ul>
+</div>
+<div class="section" id="all-publishers">
+<h2>All Publishers<a class="headerlink" href="#all-publishers" title="Permalink to this headline">¶</a></h2>
+<img alt="_images/all_publishers.png" src="_images/all_publishers.png" />
+<p>The All Publishers tab allows you to set options common to all internet publishers.</p>
+<ul class="simple">
+<li>Reupload animal images every time: Ticking this box will tell the publisher
+to reupload images for all the animals published. Normally, ASM will not
+upload an image it has previously uploaded to save bandwidth. If you&#8217;ve
+changed the web preferred image for an animal after a publish, you&#8217;ll need to
+set this option to make sure the updated image is sent.</li>
+<li>Upload all available images for animals: Ticking this box will have the
+publisher upload all the images for each animal where available. They will be
+named sheltercode-X.jpg (X increments for each image). The first image will
+be the image flagged as web preferred.</li>
+<li>Order published animals by: Sorts the list of animals before they are
+published.</li>
+<li>Animal descriptions: This determines the source of the main description for
+animals when being published. For the HTML/FTP publisher, this is the source
+of the $$WebMediaNotes$$ token. Set to “Use animal comments” to use the
+comments field from the notes section of the animal&#8217;s record. “Use notes from
+preferred photo” will use the notes field on the animal&#8217;s web preferred
+photo.</li>
+<li>Add this text to all animal descriptions: Allows you to set a footer on every
+animal description before it is published.</li>
+</ul>
+</div>
+<div class="section" id="facebook">
+<h2>Facebook<a class="headerlink" href="#facebook" title="Permalink to this headline">¶</a></h2>
+<img alt="_images/facebook.png" src="_images/facebook.png" />
+<p>This only works for sheltermanager.com customers as Facebook require a
+registered application, and applications have to belong to a fixed domain. This
+is so that other Facebook users can filter your posts by application.</p>
+<p>You can publish an animal&#8217;s photo and adoption details to Facebook by clicking
+the Facebook button on the main animal details toolbar. The details will be
+merged with the facebook template configured in publishing options and it will
+be posted to the timeline of the page you specified in the configuration at
+<em>Publishing-&gt;Set Publishing Options</em></p>
+<img alt="_images/facebook_config.png" src="_images/facebook_config.png" />
+<p>The template allows you to specify the text that will be posted to Facebook,
+using the same wordkeys as the HTML publisher.</p>
+<p>You can choose to post to Facebook as yourself or as your page. If you choose
+page, you must complete the page name field.</p>
+<p>The Facebook page name field should contain a portion of your Facebook page
+name as presented to the user (it&#8217;s the main page title that appears at the top
+of the page). The reason for this is that Facebook users can administer
+multiple pages, so ASM needs to be able to find your page in the list available
+for your Facebook user. It only needs to be a portion of the page name that
+uniquely identifies it. For example, if your Facebook page name is “Humane
+Society of Georgia”, then you could just put the word “Humane” in there to help
+ASM find it.</p>
+<p>If you want to post to the logged in Facebook user&#8217;s wall, then leave the page
+name blank.</p>
+<p>Finally, if you wish, you can have ASM write a log entry to the animal&#8217;s record
+whenever you publish an animal to Facebook.</p>
+</div>
+</div>
+<div class="section" id="html-ftp-publishing">
+<h1>HTML/FTP Publishing<a class="headerlink" href="#html-ftp-publishing" title="Permalink to this headline">¶</a></h1>
+<p>ASM can create websites for you using a simple templating system and optionally
+upload them to an FTP server. The pages themselves can be split down by species
+and age, or arranged numerically with a fixed number of animals per page. In
+addition, a recently adopted page can be generated along with an rss.xml for
+feed readers.</p>
+<ul class="simple">
+<li>Generate javascript database: The site search facilities require a Javascript
+database, indexing the available animal records. If you wish to include
+search facilities, make sure this box is ticked.</li>
+<li>Generate thumbnail images: The publisher will create thumbnails of all the
+animal images. Thumbnail images have the same name as the animal image, but
+are prefixed with <a href="#id1"><span class="problematic" id="id2">tn_</span></a>. You can use tn_$$WebMediaFilename$$ in a template to
+get the thumbnail image for the current animal.</li>
+<li>Thumbnail size: The desired length in pixels of the longest side of the
+thumbnail.</li>
+<li>Split pages with a baby/adult prefix: If this option is selected, ASM will
+output pages in the form baby/adultSPECIES.EXTENSION. Eg: babyCat.html and
+adultCat.html for cats/kittens. This option only works with the Split pages
+with a species name prefix option.</li>
+<li>Split baby/adult age at: The split point to determine juvenile animals.</li>
+<li>Split pages with a species name prefix: Output pages of the form
+SPECIES.EXTENSION, eg: Dog.html. This means you can reference the page of
+adoptable dogs only from your website.</li>
+<li>Output an adopted animals page: If set to yes, a file named adopted.EXTENSION
+will be output that you can use to reference recently adopted animals.</li>
+<li>Output a page with links to available online forms: If set to yes, a file
+named forms.EXTENSION will be output that contains a link to all the online
+forms in the database.</li>
+<li>Output an rss.xml page: If set to yes, a file named rss.xml will be output
+for feed readers. It will use the rss template if it is available in your
+database, if it&#8217;s not then it will be constructed from a default template
+built into the program.</li>
+<li>Show animals adopted: If outputting an adopted animals page is on, how far
+back the adoptions should be included.</li>
+<li>Page extension: The file EXTENSION to give a page. Eg: html</li>
+<li>Publishing template: The template ASM should use to construct the
+header/footer/body elements of the pages. ASM comes with a set of included
+templates, outlined in the next section.</li>
+<li>Animals per page: If you don&#8217;t have split pages by species, ASM will output
+numbered pages, 1.EXTENSION, 2.EXTENSION, etc. Specify here how many animals
+you&#8217;d like before moving on to the next page. By default, the system shows
+10, however the more animals you put on a page, the longer the page will take
+to load.</li>
+<li>Scale published images to: Modern digital cameras can take very high quality
+images - so much so that they could take a very long time for users to
+download (particularly for people with modems). Also, if your shelter&#8217;s
+connection to the internet is over a modem, it could take a long time for the
+site to upload. This box allows you to reduce the size of your images to
+scaled JPEGs with the resolutions specified. ASM scales down pictures when
+you attach them under the media tab, so unless you want to make them smaller
+still, it&#8217;s best to leave this at No Scaling.</li>
+<li>Publish to folder: Choose the folder where output is to be generated. Note
+that this folder is on the machine that ASM is installed on, not your local
+client PC. If this is left blank, a temporary folder will be used.</li>
+</ul>
+<p>ASM comes with a number of site templates – plain, rss, littlebox and sm.com.</p>
+<ul class="simple">
+<li>plain produces very simple HTML output - just the animal&#8217;s picture and a few
+details in a list.</li>
+<li>rss produces XML output for interpreting by an RSS feed reader.</li>
+<li>sm.com uses CSS hover elements and javascript to do image substitution for
+icons and other tricks.</li>
+<li>littlebox is also more advanced, using CSS overlays and popups.</li>
+<li>responsive uses relative sizings to work equally well on mobile devices. It
+is not dissimilar to plain, but also features the ability to click an
+animal&#8217;s photo for more information.</li>
+</ul>
+<p>You can edit these templates under <em>Publishing-&gt;Edit HTML Publishing Templates</em>
+and add your own new ones if desired. Templates are made up of three sections.</p>
+<ul class="simple">
+<li>The header block - this is output for each page before any animal records.</li>
+<li>The footer block - this is output for each page after all the animal records.</li>
+<li>The body block - this is output for each animal record and has keys to pull
+data from the database and the animal&#8217;s image(s). The keys available are
+those available for animal documents (see wordkeys in the appendix at the end
+of this document) and are enclosed in $$ - eg: $$ShelterCode$$ will output
+the animal&#8217;s shelter code.</li>
+</ul>
+<p>A number of special keys are allowed in the header and footer blocks that pull
+information from other areas of the system. These are:</p>
+<ul class="simple">
+<li>$$ORGNAME$$ - Becomes your organisation&#8217;s name</li>
+<li>$$ORGADDRESS$$ - Your organisation&#8217;s address</li>
+<li>$$ORGTEL$$ - Your organisation&#8217;s telephone number (all of these org fields
+can be found under System-&gt;Options)</li>
+<li>$$ORGEMAIL$$ - Your email address (this is taken from
+Settings-&gt;Options-&gt;Email)</li>
+<li>$$USER$$ - Substitutes the current system user, including their real name</li>
+<li>$$DATE$$ - The current date</li>
+<li>$$TIME$$ - The current time</li>
+<li>$$DATETIME$$ - The current date and time</li>
+<li>$$VERSION$$ - The ASM version</li>
+<li>$$NAV$$ - If you are using numbered pages, outputs navigation with the
+current page disabled and links to the other available pages.</li>
+<li>$$TOTAL$$ - The number of animals output by the publisher</li>
+</ul>
+<div class="section" id="adoptapet-com">
+<h2>adoptapet.com<a class="headerlink" href="#adoptapet-com" title="Permalink to this headline">¶</a></h2>
+<p>ASM can send data to 1-800-Save-A-Pet.com (now known as AdoptAPet.com) and
+upload your animals for adoption directly to your account with them.</p>
+<p>You will need to go to the publishing options first and enter the user name
+given to you by AdoptAPet.com and your password. All you need to do then is
+choose Publish to AdoptAPet.com. The options for filtering animals are the same
+(see previous section for reference).</p>
+<p>If you have mapped the colours and wish to include them, you will need to tick
+the “Include colors in column 9” checkbox on the AdoptAPet panel of the
+publishing options.</p>
+<p>You can also have ASM stop sending the import.cfg file after the first export.
+This means you can then grab it from their FTP server and edit it yourself if
+you wish to change any mappings, then put it back again. This is generally only
+necessary for users who want to send colour information.</p>
+</div>
+<div class="section" id="helpinglostpets-com">
+<h2>helpinglostpets.com<a class="headerlink" href="#helpinglostpets-com" title="Permalink to this headline">¶</a></h2>
+<p>ASM can send data to www.helpinglostpets.com, a map-based website that
+publishes adoptable and found animals. Your ASM found data will also be
+published as well as adoptable animals. You will need an organisation ID, FTP
+username and password and to enter the postal/zipcode of your shelter.</p>
+<p>Helpinglostpets.com is global and can accept data from shelters in any country.</p>
+</div>
+<div class="section" id="meetapet-com">
+<h2>meetapet.com<a class="headerlink" href="#meetapet-com" title="Permalink to this headline">¶</a></h2>
+<p>ASM can send adoptable animal information to www.meetapet.com, an adoption
+website. After signing up with them, you will need to get a secret and shelter
+key from them in order to send them data.</p>
+</div>
+<div class="section" id="petfinder-com">
+<h2>petfinder.com<a class="headerlink" href="#petfinder-com" title="Permalink to this headline">¶</a></h2>
+<p>In addition to creating standalone websites with animals up for adoption, ASM
+can also integrate with PetFinder.com and upload your animals for adoption
+directly to your account with them.  You will need to go to <em>Publishing-&gt;Set
+Publishing Options</em> first and view the PetFinder panel. Here, you should enter
+the shelter Id given to you by PetFinder.com and your password. All you need to
+do then is choose Publish to PetFinder.com in place of the normal internet
+publisher. The options for filtering animals are the same (see previous section
+for reference).</p>
+<p>Note that if you have created new Species or Breeds within ASM, you will need
+to map them to the available publisher options under the Breed and Species
+sections of <em>Settings-&gt;Lookup Data</em></p>
+<p>If you have some that are not mapped, the publisher will fail with an error
+message.</p>
+<p>The “Upload all available images” option will upload all animal photos to
+PetFinder instead of just the preferred.</p>
+<p>PetFinder has some quirks in that they indicate an unknown crossbreed by having
+a blank secondary breed with the crossbreed flag set. Since ASM doesn&#8217;t allow
+you to set an empty second breed field, there&#8217;s a workaround - If you make the
+second breed the same as the first breed with the crossbreed flag set, ASM will
+send that second breed as a blank to PetFinder.</p>
+<p><strong>IMPORTANT:</strong> You have to let PetFinder know that you are using ASM to upload
+your data. Do this by going to the Admin System Help Center, then Contact Us
+and send PetFinder Tech Support a message that you are using ASM to publish
+animal data via their FTP server. They should give you the FTP login
+information and make sure permissions and quotas are correct.</p>
+</div>
+<div class="section" id="petrescue-com-au">
+<h2>petrescue.com.au<a class="headerlink" href="#petrescue-com-au" title="Permalink to this headline">¶</a></h2>
+<p>In addition to creating standalone websites with animals up for adoption, ASM
+can also integrate with Petrescue.com.au and upload your animals for adoption
+directly to your account with them.</p>
+<p>You will need to go to <em>Publishing-&gt;Set Publishing Options</em> first and view the
+PetRescue panel. Here, you should enter the shelter Id given to you by
+PetRescue.com.au and your password. All you need to do then is choose Publish
+to PetRescue.com.au in place of the normal internet publisher. The options for
+filtering animals are the same (see previous section for reference).</p>
+<p>Note that if you have created new Species or Breeds within ASM, you will need
+to map them to the available publisher options under the Breed and Species
+sections of <em>Settings-&gt;Lookup Data</em></p>
+<p>If you have some that are not mapped, the publisher will fail with an error
+message.</p>
+</div>
+<div class="section" id="rescuegroups-org">
+<h2>rescuegroups.org<a class="headerlink" href="#rescuegroups-org" title="Permalink to this headline">¶</a></h2>
+<p>ASM can integrate with RescueGroups.org. They run a pet adoption portal service
+that allows updating of multiple online services (including Facebook and
+Petsmart). See their website for information on which services they update. For
+more information on setting up RescueGroups to receive data from ASM, see their
+userguide at <a class="reference external" href="https://userguide.rescuegroups.org/">https://userguide.rescuegroups.org/</a> and search for ASM.</p>
+<p>To configure ASM, you will need to go to <em>Publish-&gt;Set Publishing Options</em> and
+enter the FTP username and password given to you by RescueGroups (you can find
+this by going to <em>Services-&gt;FTP account</em> in the RescueGroups management
+interface).</p>
+<p>Once you&#8217;ve done that, you can choose the Publish to RescueGroups.org menu
+item. The options for filtering animals are the same as for the other
+publishers.</p>
+<p><strong>Note:</strong> If you are using the “Upload all images” option, ASM will only send
+the first 4 images (the first is always the preferred) as RescueGroups.org do
+not support more than 4 images per animal.</p>
+<p><strong>Note:</strong> The RescueGroups.org publisher uses the publisher breeds and species
+mappings, so you should make sure that you have mappings for all your breeds
+and species before using the publisher (the publisher will give an error
+message if any species or breeds do not have mappings).</p>
+</div>
+<div class="section" id="avid-pettrac-uk">
+<h2>AVID/PETtrac UK<a class="headerlink" href="#avid-pettrac-uk" title="Permalink to this headline">¶</a></h2>
+<p>ASM can register animals with the AVID PETtrac database for shelters in the
+United Kingdom.</p>
+<p>When you publish to PETtrac, ASM finds all animals with a PETtrac microchip
+(they are 15 digits and start with 977) that have been adopted and sends their
+information and new owner info to PETtrac to update their records. ASM tracks
+the date PETtrac was last updated, so if the animal is returned and adopted
+again, another update will be done automatically.</p>
+</div>
+<div class="section" id="identichip-anibase-uk">
+<h2>idENTICHIP/Anibase UK<a class="headerlink" href="#identichip-anibase-uk" title="Permalink to this headline">¶</a></h2>
+<p>ASM can register animals with the Anibase database for shelters in the United
+Kingdom.</p>
+<p>When you publish to Anibase, ASM finds all animals with an idENTICHIP microchip
+(they are 15 digits and start with 9851 or 9861) that have been adopted and
+sends their information and new owner info to Anibase to update their records.
+ASM tracks the date Anibase was last updated, so if the animal is returned and
+adopted again, another update will be done automatically.</p>
+</div>
+<div class="section" id="petlink">
+<h2>PetLink<a class="headerlink" href="#petlink" title="Permalink to this headline">¶</a></h2>
+<p>ASM can register microchips with PetLink, a company that supply microchips to
+US shelters.</p>
+<p>When you register animals with PetLink, ASM finds all animals with a PetLink
+microchip (their microchips are 15 digits and start with 98102) that have been
+adopted and sends their information and new owner info to PetLink to update
+their records. If an animal is returned and adopted out again later, ASM will
+automatically update PetLink again.</p>
+</div>
+<div class="section" id="smarttag">
+<h2>SmartTag<a class="headerlink" href="#smarttag" title="Permalink to this headline">¶</a></h2>
+<p>ASM can register animals with SmartTag PETID, a company that supply collar tags
+to shelters for free in the US. Each tag has a unique number on it and if your
+locale is set to US and you have SmartTag PETID Settings in your database, you
+can enter the tag information in fields on the animal health and identification
+section.</p>
+<p>When you register animals with SmartTag, ASM finds all animals with a SmartTag
+that have been adopted and sends their information (along with owner info and a
+picture) to SmartTag so they can be identified in the event they are lost.  If
+an animal is returned and adopted out again later, ASM will register the tag
+again to the new owner.</p>
+</div>
+<div class="section" id="vetenvoy-us-homeagain-and-akc-reunite">
+<h2>VetEnvoy US (HomeAgain and AKC Reunite)<a class="headerlink" href="#vetenvoy-us-homeagain-and-akc-reunite" title="Permalink to this headline">¶</a></h2>
+<p>ASM can also use the VetEnvoy service in the US to register microchips with
+HomeAgain and AKC Reunite.</p>
+<p>ASM will find all HomeAgain microchips (15 digits starting with 985) and AKC
+Reunite microchips (15 digits starting with 956) that have been adopted and
+will register the animal and new owner information. As with the other microchip
+providers, ASM will register the chip again if the animal is returned and
+adopted to a new owner.</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="mailmerge.html" class="btn btn-neutral float-right" title="Mail Merge Sources"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="service.html" class="btn btn-neutral" title="Service API"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Sheltermanager, Ltd.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'36',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,453 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Appendix: CSV file import fields &mdash; ASM 36 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="ASM 36 documentation" href="index.html"/>
+        <link rel="next" title="Appendix: Online Form import fields" href="onlineformfields.html"/>
+        <link rel="prev" title="Appendix: Entity Relationship Diagrams" href="relationships.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="fa fa-home"> ASM</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="foreword.html">Foreword</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="foreword.html#introduction">Introduction</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#menus-and-shortcuts">Menus and Shortcuts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#shortcut-keys">Shortcut Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#dates">Dates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#tables">Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#initial-setup">Initial Setup</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="search.html">Search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="animals.html">Animals</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="animals.html#shelter-view">Shelter View</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animals.html#find-animal">Find Animal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animals.html#edit-animal">Edit Animal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animals.html#moving-and-reserving-animals">Moving and Reserving Animals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animals.html#documents">Documents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="people.html">People</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="people.html#find-person">Find Person</a></li>
+<li class="toctree-l2"><a class="reference internal" href="people.html#edit-person">Edit Person</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="movements.html">Movement Books</a></li>
+<li class="toctree-l1"><a class="reference internal" href="animalcontrol.html">Animal Control</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#incidents">Incidents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#incident-details">Incident Details</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#dispatch">Dispatch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#suspect-animal-and-citation">Suspect/Animal and Citation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#alerts">Alerts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#map-of-active-incidents">Map of active incidents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#trap-loans">Trap Loans</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#licensing">Licensing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="lostandfound.html">Lost and Found</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="lostandfound.html#matching-lost-and-found">Matching Lost and Found</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lostandfound.html#scoring">Scoring</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="waitinglist.html">Waiting List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generaldiary.html">General Diary</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="generaldiary.html#add-a-new-diary-note">Add a new diary note</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generaldiary.html#viewing-my-diary-notes">Viewing my diary notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generaldiary.html#diary-calendar">Diary calendar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generaldiary.html#printing-the-diary">Printing the diary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generaldiary.html#create-a-new-diary-task">Create a new diary task</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="accounts.html">Accounts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="accounts.html#reconciliation">Reconciliation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="accounts.html#payments">Payments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="accounts.html#reporting">Reporting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="stockcontrol.html">Stock Control</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="stockcontrol.html#adding-new-stock">Adding new stock</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stockcontrol.html#using-stock-manually">Using stock (manually)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stockcontrol.html#using-stock-medical-tests-and-vaccinations">Using stock (medical, tests and vaccinations)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stockcontrol.html#stock-alerts">Stock alerts</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#customising-reports">Customising Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#charts">Charts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#maps">Maps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="litters.html">Litters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="litters.html#mechanism">Mechanism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="litters.html#litter-completion">Litter Completion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mobile.html">Mobile Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="service.html">Service API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="publishing.html">Publishing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#animal-selection">Animal Selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#all-publishers">All Publishers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#facebook">Facebook</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="publishing.html#html-ftp-publishing">HTML/FTP Publishing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#adoptapet-com">adoptapet.com</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#helpinglostpets-com">helpinglostpets.com</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#meetapet-com">meetapet.com</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#petfinder-com">petfinder.com</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#petrescue-com-au">petrescue.com.au</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#rescuegroups-org">rescuegroups.org</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#avid-pettrac-uk">AVID/PETtrac UK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#identichip-anibase-uk">idENTICHIP/Anibase UK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#petlink">PetLink</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#smarttag">SmartTag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#vetenvoy-us-homeagain-and-akc-reunite">VetEnvoy US (HomeAgain and AKC Reunite)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mailmerge.html">Mail Merge Sources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mailmerge.html#running-a-mail-merge">Running a Mail Merge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mailmerge.html#printing-labels">Printing Labels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mailmerge.html#integrating-with-openoffice">Integrating with OpenOffice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mailmerge.html#integrating-with-microsoft-word">Integrating with Microsoft Word</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mailmerge.html#bulk-email">Bulk Email</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#additional-fields">Additional Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#lookup-data">Lookup Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#document-templates">Document templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#reports">Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#system-user-accounts">System user accounts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#user-roles">User roles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#import-a-csv-file">Import a CSV file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#trigger-batch-processes">Trigger Batch Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#options">Options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="wordkeys.html">Appendix: Wordkeys</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#organisation-keys">Organisation Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#animal-keys">Animal Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#vaccination-keys">Vaccination Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#test-keys">Test Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#medical-keys">Medical Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#payment-keys">Payment Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#cost-keys">Cost Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#diet-keys">Diet Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#log-keys">Log Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#movement-keys">Movement Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#person-keys">Person Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#traploan-keys">Traploan Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#payment-receipt-invoice-keys">Payment/Receipt/Invoice Keys</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="databasetables.html">Database Tables/Columns</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="databasetables.html#adoption">adoption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="databasetables.html#animal">animal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="databasetables.html#dbfs">dbfs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="databasetables.html#media">media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="databasetables.html#owner">owner</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="relationships.html">Appendix: Entity Relationship Diagrams</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="relationships.html#animal-with-satellite-tables-media-and-logs">Animal with satellite tables, media and logs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="relationships.html#adoption-movement-table-with-relationships">Adoption/Movement table with relationships</a></li>
+<li class="toctree-l2"><a class="reference internal" href="relationships.html#person-payment-account-relationships">Person/payment/account relationships</a></li>
+<li class="toctree-l2"><a class="reference internal" href="relationships.html#lost-found-and-waiting-list">Lost/found and waiting list</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Appendix: CSV file import fields</a></li>
+<li class="toctree-l1"><a class="reference internal" href="onlineformfields.html">Appendix: Online Form import fields</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">ASM</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Appendix: CSV file import fields</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/csvimportfields.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="appendix-csv-file-import-fields">
+<h1>Appendix: CSV file import fields<a class="headerlink" href="#appendix-csv-file-import-fields" title="Permalink to this headline">¶</a></h1>
+<p>ASM will recognise columns with the following names when importing CSV files:</p>
+<dl class="docutils">
+<dt>ANIMALCODE</dt>
+<dd>A code for the animal. If supplied, it will set the sheltercode and short sheltercode fields. If not supplied, the system will generate a code for the animal to the appropriate scheme. If you have manual codes turned on and no animal code is supplied, an error message will be displayed and the import abandoned.</dd>
+<dt>ANIMALNAME</dt>
+<dd>The animal&#8217;s name</dd>
+<dt>ANIMALNOTFORADOPTION</dt>
+<dd>Y/N to indicate whether this animal is not available for adoption (Y is not available).</dd>
+<dt>ANIMALSEX</dt>
+<dd>The animal&#8217;s gender. ASM looks for the initial letter “M” in the string to indicate male.</dd>
+<dt>ANIMALTYPE</dt>
+<dd>The animal&#8217;s type. This should correspond to one of ASM&#8217;s animal types from your database.</dd>
+<dt>ANIMALCOLOR</dt>
+<dd>The animal&#8217;s color. This should correspond to a color in your database.</dd>
+<dt>ANIMALBREED1</dt>
+<dd>The animal&#8217;s primary breed. It should match a breed in your database.</dd>
+<dt>ANIMALBREED2</dt>
+<dd>The animal&#8217;s secondary breed. If different from ANIMALBREED1, ASM will mark the animal as a crossbreed.</dd>
+<dt>ANIMALDOB</dt>
+<dd>The animal&#8217;s date of birth. This field, or ANIMALAGE must be supplied or the record will not be imported.</dd>
+<dt>ANIMALAGE</dt>
+<dd>The animal&#8217;s current age in years. ASM will calculate a date of birth from this during import if ANIMALDOB is not supplied or blank.</dd>
+<dt>ANIMALLOCATION</dt>
+<dd>The animal&#8217;s location within your shelter. This should correspond to a location in your database.</dd>
+<dt>ANIMALSPECIES</dt>
+<dd>The animal&#8217;s species. This should match a species in your database.</dd>
+<dt>ANIMALHOUSETRAINED</dt>
+<dd>Y/N/U to indicate yes/no/unknown</dd>
+<dt>ANIMALGOODWITHCATS</dt>
+<dd>Y/N/U to indicate yes/no/unknown</dd>
+<dt>ANIMALGOODWITHDOGS</dt>
+<dd>Y/N/U to indicate yes/no/unknown</dd>
+<dt>ANIMALGOODWITHKIDS</dt>
+<dd>Y/N/U to indicate yes/no/unknown</dd>
+<dt>ANIMALCOMMENTS</dt>
+<dd>Some comments to put in the animal&#8217;s comment field.</dd>
+<dt>ANIMALHIDDENDETAILS</dt>
+<dd>Some comments for the animal&#8217;s hidden details field.</dd>
+<dt>ANIMALHEALTHPROBLEMS</dt>
+<dd>Some comments for the animal&#8217;s health problems field.</dd>
+<dt>ANIMALNEUTEREDDATE</dt>
+<dd>If not blank and a valid date, ASM will mark the animal neutered.</dd>
+<dt>ANIMALMICROCHIP</dt>
+<dd>If not blank, ASM will mark the animal microchipped with this as the microchip number.</dd>
+<dt>ANIMALENTRYDATE</dt>
+<dd>The date the animal entered the shelter (date brought in). Today&#8217;s date will be used if this column is not present or the value is blank.</dd>
+<dt>ANIMALREASONFORENTRY</dt>
+<dd>Free text, notes on the reason the animal entered the shelter.</dd>
+<dt>ANIMALDECEASEDDATE</dt>
+<dd>If the animal is deceased, the date it died.</dd>
+<dt>ANIMALADDITIONAL</dt>
+<dd>&lt;fieldname&gt;</dd>
+<dt>If you have animal additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called Weight, ANIMALADDITIONALWEIGHT</dt>
+<dd>DONATIONDATE</dd>
+<dt>The date the donation amount on this line was received. If movement columns are present, it will be attached to the movement as well as the person. If no person columns are present, having this column in the CSV file will cause an error.</dt>
+<dd>DONATIONAMOUNT</dd>
+<dt>The amount of the donation on this line (as a floating point number)</dt>
+<dd>DONATIONCOMMENTS</dd>
+<dt>Any comments to go with the donation</dt>
+<dd>DONATIONPAYMENT</dd>
+<dt>The payment method to use (should correspond to a payment method in your database, eg: Cash)</dt>
+<dd>DONATIONTYPE</dd>
+<dt>The payment type to use (should correspond to a payment type in your database).</dt>
+<dd>MOVEMENTTYPE</dd>
+<dt>The type of movement for this line (1 = Adoption, 2 = Foster, 3 = Transfer, 4 = Escaped, 5 = Reclaimed, 6 = Stolen, 7 = Released to Wild, 8 = Moved to Retailer.</dt>
+<dd>If MOVEMENTTYPE is not specified, but a MOVEMENTDATE has been given, ASM will default the type to adoption.</dd>
+<dt>MOVEMENTDATE</dt>
+<dd>The date of the movement</dd>
+<dt>MOVEMENTCOMMENTS</dt>
+<dd>Any comments for the movement</dd>
+<dt>ORIGINALOWNERTITLE</dt>
+<dd>If we have original owner info for the animal, the person&#8217;s title.</dd>
+<dt>ORIGINALOWNERINITIALS</dt>
+<dd>Original owner&#8217;s initials.</dd>
+<dt>ORIGINALOWNERFIRSTNAME</dt>
+<dd>The original owner&#8217;s first name(s).</dd>
+<dt>ORIGINALOWNERLASTNAME</dt>
+<dd>The original owner&#8217;s last name. This column being present and having data in it determines whether or not the importer will consider the animal as having original owner info.</dd>
+<dt>ORIGINALOWNERADDRESS</dt>
+<dd>Original owner&#8217;s address.</dd>
+<dt>ORIGINALOWNERCITY</dt>
+<dd>The original owner&#8217;s city/town.</dd>
+<dt>ORIGINALOWNERSTATE</dt>
+<dd>The original owner&#8217;s state/county.</dd>
+<dt>ORIGINALOWNERZIPCODE</dt>
+<dd>The original owner&#8217;s zip or postcode.</dd>
+<dt>ORIGINALOWNERHOMEPHONE</dt>
+<dd>The original owner&#8217;s home phone.</dd>
+<dt>ORIGINALOWNERWORKPHONE</dt>
+<dd>The original owner&#8217;s work phone.</dd>
+<dt>ORIGINALOWNERCELLPHONE</dt>
+<dd>The original owner&#8217;s mobile phone.</dd>
+<dt>ORIGINALOWNEREMAIL</dt>
+<dd>The original owner&#8217;s email.</dd>
+<dt>ORIGINALOWNERADDITIONAL&lt;fieldname&gt;</dt>
+<dd>If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth ORIGINALOWNERADDITIONALDATEOFBIRTH</dd>
+<dt>PERSONTITLE</dt>
+<dd>The person&#8217;s title</dd>
+<dt>PERSONINITIALS</dt>
+<dd>The person&#8217;s initials</dd>
+<dt>PERSONFIRSTNAME</dt>
+<dd>The person&#8217;s first name (forenames)</dd>
+<dt>PERSONLASTNAME</dt>
+<dd>The person&#8217;s last name (surname)</dd>
+<dt>PERSONNAME</dt>
+<dd>If this field is supplied, ASM will assume it contains first names and a last name, overriding any fields that set those. Everything up to the last space is considered first names and everything up to the last space the last name.</dd>
+<dt>PERSONADDRESS</dt>
+<dd>The person&#8217;s address</dd>
+<dt>PERSONCITY</dt>
+<dd>The person&#8217;s town/city</dd>
+<dt>PERSONSTATE</dt>
+<dd>The person&#8217;s state/county</dd>
+<dt>PERSONZIPCODE</dt>
+<dd>The person&#8217;s zip or postcode</dd>
+<dt>PERSONHOMEPHONE</dt>
+<dd>The person&#8217;s home phone number</dd>
+<dt>PERSONWORKPHONE</dt>
+<dd>The person&#8217;s work phone number</dd>
+<dt>PERSONCELLPHONE</dt>
+<dd>The person&#8217;s cell/mobile number</dd>
+<dt>PERSONEMAIL</dt>
+<dd>The person&#8217;s email address</dd>
+<dt>PERSONMEMBER</dt>
+<dd>Y or 1 in this column to indicate the person should have the membership flag set.</dd>
+<dt>PERSONFOSTERER</dt>
+<dd>Y or 1 in this column to indicate the person should have the fosterer flag set.</dd>
+<dt>PERSONDONOR</dt>
+<dd>Y or 1 in this column to indicate the person is a regular donor.</dd>
+<dt>PERSONFLAGS</dt>
+<dd>This column can be used to set any other person flags on the imported person. Flags should be comma separated with no extra spaces. Built in flags are their lower case English names, eg: banned,aco,homechecked,homechecker
+Additional flags that you have added to the system should exactly match their flag names as they appear on the person screens, eg: banned,Fundraising Flag 1,Custom Flag</dd>
+<dt>PERSONCOMMENTS</dt>
+<dd>Any comments to go with the person record.</dd>
+<dt>PERSONADDITIONAL&lt;fieldname&gt;</dt>
+<dd>If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth PERSONADDITIONALDATEOFBIRTH</dd>
+</dl>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="onlineformfields.html" class="btn btn-neutral float-right" title="Appendix: Online Form import fields"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="relationships.html" class="btn btn-neutral" title="Appendix: Entity Relationship Diagrams"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Sheltermanager, Ltd.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'36',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

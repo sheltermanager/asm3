@@ -1,0 +1,933 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Appendix: Wordkeys &mdash; ASM 36 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="ASM 36 documentation" href="index.html"/>
+        <link rel="next" title="Database Tables/Columns" href="databasetables.html"/>
+        <link rel="prev" title="Configuration" href="configuration.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="fa fa-home"> ASM</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="foreword.html">Foreword</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="foreword.html#introduction">Introduction</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#menus-and-shortcuts">Menus and Shortcuts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#shortcut-keys">Shortcut Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#dates">Dates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#tables">Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#initial-setup">Initial Setup</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="search.html">Search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="animals.html">Animals</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="animals.html#shelter-view">Shelter View</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animals.html#find-animal">Find Animal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animals.html#edit-animal">Edit Animal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animals.html#moving-and-reserving-animals">Moving and Reserving Animals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animals.html#documents">Documents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="people.html">People</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="people.html#find-person">Find Person</a></li>
+<li class="toctree-l2"><a class="reference internal" href="people.html#edit-person">Edit Person</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="movements.html">Movement Books</a></li>
+<li class="toctree-l1"><a class="reference internal" href="animalcontrol.html">Animal Control</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#incidents">Incidents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#incident-details">Incident Details</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#dispatch">Dispatch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#suspect-animal-and-citation">Suspect/Animal and Citation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#alerts">Alerts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#map-of-active-incidents">Map of active incidents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#trap-loans">Trap Loans</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#licensing">Licensing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="lostandfound.html">Lost and Found</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="lostandfound.html#matching-lost-and-found">Matching Lost and Found</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lostandfound.html#scoring">Scoring</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="waitinglist.html">Waiting List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generaldiary.html">General Diary</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="generaldiary.html#add-a-new-diary-note">Add a new diary note</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generaldiary.html#viewing-my-diary-notes">Viewing my diary notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generaldiary.html#diary-calendar">Diary calendar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generaldiary.html#printing-the-diary">Printing the diary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generaldiary.html#create-a-new-diary-task">Create a new diary task</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="accounts.html">Accounts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="accounts.html#reconciliation">Reconciliation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="accounts.html#payments">Payments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="accounts.html#reporting">Reporting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="stockcontrol.html">Stock Control</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="stockcontrol.html#adding-new-stock">Adding new stock</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stockcontrol.html#using-stock-manually">Using stock (manually)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stockcontrol.html#using-stock-medical-tests-and-vaccinations">Using stock (medical, tests and vaccinations)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stockcontrol.html#stock-alerts">Stock alerts</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#customising-reports">Customising Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#charts">Charts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#maps">Maps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="litters.html">Litters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="litters.html#mechanism">Mechanism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="litters.html#litter-completion">Litter Completion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mobile.html">Mobile Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="service.html">Service API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="publishing.html">Publishing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#animal-selection">Animal Selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#all-publishers">All Publishers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#facebook">Facebook</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="publishing.html#html-ftp-publishing">HTML/FTP Publishing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#adoptapet-com">adoptapet.com</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#helpinglostpets-com">helpinglostpets.com</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#meetapet-com">meetapet.com</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#petfinder-com">petfinder.com</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#petrescue-com-au">petrescue.com.au</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#rescuegroups-org">rescuegroups.org</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#avid-pettrac-uk">AVID/PETtrac UK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#identichip-anibase-uk">idENTICHIP/Anibase UK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#petlink">PetLink</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#smarttag">SmartTag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#vetenvoy-us-homeagain-and-akc-reunite">VetEnvoy US (HomeAgain and AKC Reunite)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mailmerge.html">Mail Merge Sources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mailmerge.html#running-a-mail-merge">Running a Mail Merge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mailmerge.html#printing-labels">Printing Labels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mailmerge.html#integrating-with-openoffice">Integrating with OpenOffice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mailmerge.html#integrating-with-microsoft-word">Integrating with Microsoft Word</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mailmerge.html#bulk-email">Bulk Email</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#additional-fields">Additional Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#lookup-data">Lookup Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#document-templates">Document templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#reports">Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#system-user-accounts">System user accounts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#user-roles">User roles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#import-a-csv-file">Import a CSV file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#trigger-batch-processes">Trigger Batch Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#options">Options</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Appendix: Wordkeys</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#organisation-keys">Organisation Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#animal-keys">Animal Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vaccination-keys">Vaccination Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-keys">Test Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#medical-keys">Medical Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#payment-keys">Payment Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cost-keys">Cost Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#diet-keys">Diet Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#log-keys">Log Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#movement-keys">Movement Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#person-keys">Person Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#traploan-keys">Traploan Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#payment-receipt-invoice-keys">Payment/Receipt/Invoice Keys</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="databasetables.html">Database Tables/Columns</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="databasetables.html#adoption">adoption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="databasetables.html#animal">animal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="databasetables.html#dbfs">dbfs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="databasetables.html#media">media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="databasetables.html#owner">owner</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="relationships.html">Appendix: Entity Relationship Diagrams</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="relationships.html#animal-with-satellite-tables-media-and-logs">Animal with satellite tables, media and logs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="relationships.html#adoption-movement-table-with-relationships">Adoption/Movement table with relationships</a></li>
+<li class="toctree-l2"><a class="reference internal" href="relationships.html#person-payment-account-relationships">Person/payment/account relationships</a></li>
+<li class="toctree-l2"><a class="reference internal" href="relationships.html#lost-found-and-waiting-list">Lost/found and waiting list</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="csvimportfields.html">Appendix: CSV file import fields</a></li>
+<li class="toctree-l1"><a class="reference internal" href="onlineformfields.html">Appendix: Online Form import fields</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">ASM</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Appendix: Wordkeys</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/wordkeys.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="appendix-wordkeys">
+<h1>Appendix: Wordkeys<a class="headerlink" href="#appendix-wordkeys" title="Permalink to this headline">¶</a></h1>
+<p>The following wordkeys are available in different areas of the system when
+generating documents from templates. Wordkeys should be placed in your
+templates, wrapped in double angle-brackets. Eg: &lt;&lt;AnimalName&gt;&gt;</p>
+<div class="section" id="organisation-keys">
+<h2>Organisation Keys<a class="headerlink" href="#organisation-keys" title="Permalink to this headline">¶</a></h2>
+<p>These keys are available in all types of documents.</p>
+<dl class="docutils">
+<dt>Organisation</dt>
+<dd>The shelter&#8217;s name</dd>
+<dt>OrganisationAddress</dt>
+<dd>The shelter&#8217;s address</dd>
+<dt>OrganisationTelephone</dt>
+<dd>The shelter&#8217;s telephone number</dd>
+<dt>Date</dt>
+<dd>Today&#8217;s date</dd>
+<dt>Username</dt>
+<dd>The current user generating the document</dd>
+<dt>UserRealname</dt>
+<dd>The real name of the user generating the document</dd>
+<dt>UserEmailAddress</dt>
+<dd>The email address of the user generating the document</dd>
+</dl>
+</div>
+<div class="section" id="animal-keys">
+<h2>Animal Keys<a class="headerlink" href="#animal-keys" title="Permalink to this headline">¶</a></h2>
+<p>Animal keys are available for documents generated from the animal details and
+movement tab of the animal screens.</p>
+<dl class="docutils">
+<dt>DocumentImgLink</dt>
+<dd>An &lt;img&gt; tag containing a link to the animal&#8217;s preferred document image.</dd>
+<dt>DocumentImgThumbLink</dt>
+<dd>An &lt;img&gt; tag containing a link to a thumbnail of the animal&#8217;s preferred document image.</dd>
+<dt>DocumentQRLink</dt>
+<dd>An &lt;img&gt; tag containing a link to QR code that references a URL to the animal&#8217;s record within ASM.</dd>
+<dt>ShelterCode</dt>
+<dd>The animal&#8217;s shelter code</dd>
+<dt>ShortShelterCode</dt>
+<dd>The shortened version of the shelter code</dd>
+<dt>Age</dt>
+<dd>The animal&#8217;s age in readable form (eg: “5 years and 6 months”)</dd>
+<dt>AnimalComments</dt>
+<dd>The animal comment box</dd>
+<dt>HealthProblems</dt>
+<dd>The health problems field</dd>
+<dt>AcceptanceNumber</dt>
+<dd>The acceptance number</dd>
+<dt>AddressOfPersonBroughtAnimalIn</dt>
+<dd>The full address of the person who brought the animal in</dd>
+<dt>AnimalName</dt>
+<dd>The animal&#8217;s name</dd>
+<dt>AnimalTypeName</dt>
+<dd>The animal&#8217;s type</dd>
+<dt>BaseColourName (BaseColorName for US users)</dt>
+<dd>The animal&#8217;s colour</dd>
+<dt>BreedName</dt>
+<dd>The animal&#8217;s breed. If the “Use single breed field” option is not set and
+the animal is a crossbreed, ASM will output the this field as &#8220;Breed 1 /
+Breed 2&#8221; to indicate that the animal is a cross of two breeds.</dd>
+<dt>InternalLocation</dt>
+<dd>The animal&#8217;s location within the shelter</dd>
+<dt>LocationUnit</dt>
+<dd>The location unit (eg, pen or cage number)</dd>
+<dt>CoatType</dt>
+<dd>The animal&#8217;s coat type</dd>
+<dt>AnimalComments</dt>
+<dd>The animal comments box</dd>
+<dt>AnimalCreatedBy</dt>
+<dd>The user who created the animal record (AnimalCreatedByName for full user
+name)</dd>
+<dt>AnimalCreatedDate</dt>
+<dd>The date the animal record was created</dd>
+<dt>DateBroughtIn</dt>
+<dd>The date the animal was first brought to the shelter</dd>
+<dt>MonthBroughtIn</dt>
+<dd>The month the animal was first brought to the shelter</dd>
+<dt>DateOfBirth</dt>
+<dd>The animal&#8217;s date of birth</dd>
+<dt>EstimatedDOB</dt>
+<dd>The word (estimated) if the estimated date of birth flag is ticked on the animal, or a blank string if not.</dd>
+<dt>AgeGroup</dt>
+<dd>The animal&#8217;s age group (the defaults are Baby, Adult, Young Adult and Senior). These can be configured under the Settings-&gt;Options screen.</dd>
+<dt>DisplayAge</dt>
+<dd>If the EstimatedDOB flag is set, outputs the age group, if not, outputs a string representation of the animal&#8217;s age.</dd>
+<dt>DisplayDOB</dt>
+<dd>If the EstimatedDOB flag is set, outputs the age group, if not, outputs the animal&#8217;s date of birth.</dd>
+<dt>DeceasedDate</dt>
+<dd>The date the animal died (if applicable)</dd>
+<dt>DeceasedNotes</dt>
+<dd>The comments on the animal&#8217;s death</dd>
+<dt>DeceasedCategory</dt>
+<dd>The deceased category for the animal</dd>
+<dt>Declawed</dt>
+<dd>&#8220;Yes&#8221; if the animal has been declawed</dd>
+<dt>AnimalID</dt>
+<dd>The animal&#8217;s internal ID number</dd>
+<dt>BondedWith</dt>
+<dd>A list of the names and codes of animals this one is bonded with</dd>
+<dt>Fee</dt>
+<dd>The animal&#8217;s adoption fee if you are using per-animal adoption fees</dd>
+<dt>MicrochipNumber</dt>
+<dd>The animal&#8217;s microchip number</dd>
+<dt>Microchipped</dt>
+<dd>&#8220;Yes&#8221; if the animal has been microchipped</dd>
+<dt>MicrochipDate</dt>
+<dd>The date the animal was microchipped</dd>
+<dt>MicrochipManufacturer</dt>
+<dd>The manufacturer of the microchip</dd>
+<dt>Tattoo</dt>
+<dd>&#8220;Yes&#8221; if the animal has an identifying tattoo</dd>
+<dt>TattooNumber</dt>
+<dd>The tattoo number</dd>
+<dt>TattooDate</dt>
+<dd>The date the tattoo was applied</dd>
+<dt>CombiTested (FIVLTested for US users)</dt>
+<dd>“Yes” if the animal has been combi-tested (or FIV/L testing for the US)</dd>
+<dt>CombiTestDate (FIVLTestDate for US users)</dt>
+<dd>The date of the test</dd>
+<dt>CombiTestResult (FIVResult for US users)</dt>
+<dd>The test result - Positive or Negative.</dd>
+<dt>FLVResult</dt>
+<dd>The result of the FLV test - Positive or Negative</dd>
+<dt>HeartwormTested</dt>
+<dd>“Yes” if the animal has been heartworm tested.</dd>
+<dt>HeartwormTestDate</dt>
+<dd>The date of the test</dd>
+<dt>HeartwormTestResult</dt>
+<dd>The result - positive or negative</dd>
+<dt>HiddenAnimalDetails</dt>
+<dd>The hidden details box</dd>
+<dt>AnimalLastChangedBy</dt>
+<dd>The user who last changed the animal record (AnimalLastChangedByName for full user name)</dd>
+<dt>AnimalLastChangedDate</dt>
+<dd>The date record was last changed</dd>
+<dt>Markings</dt>
+<dd>The markings box</dd>
+<dt>NameOfOwnersVet</dt>
+<dd>The owner&#8217;s vet box</dd>
+<dt>HasSpecialNeeds</dt>
+<dd>&#8220;Yes&#8221; if the animal has the box ticked for special needs on the vet tab</dd>
+<dt>Neutered</dt>
+<dd>&#8220;Yes&#8221; if the animal has been neutered/spayed (usually called &#8220;altered&#8221; or &#8220;fixed&#8221; in the US)</dd>
+<dt>NeuteredDate</dt>
+<dd>The date the animal was neutered</dd>
+<dt>BroughtInByAddress</dt>
+<dd>The address of the person who brought the animal in</dd>
+<dt>BroughtInByName</dt>
+<dd>The name of the person who brought the animal in</dd>
+<dt>BroughtInByTown</dt>
+<dd>(BroughtInByCity for US users)</dd>
+<dt>BroughtInByCounty</dt>
+<dd>(BroughtInByState for US users)</dd>
+<dt>BroughtInByPostcode</dt>
+<dd>(BroughtInByZipcode for US users)</dd>
+<dt>BroughtInByHomePhone</dt>
+<dd>The home phone number of the person who brought the animal in</dd>
+<dt>BroughtInByWorkPhone</dt>
+<dd>The work phone number of the person who brought the animal in</dd>
+<dt>BroughtInByMobilePhone</dt>
+<dd>(BroughtInByCellPhone for US users)</dd>
+<dt>BroughtInByEmail</dt>
+<dd>The email address of the person who brought the animal in</dd>
+<dt>OriginalOwnerAddress</dt>
+<dd>The address of the animal&#8217;s original owner</dd>
+<dt>OriginalOwnerName</dt>
+<dd>The name of the animal&#8217;s original owner</dd>
+<dt>OriginalOwnerTown (OriginalOwnerCity for US users)</dt>
+<dd>The town of the animal&#8217;s original owner</dd>
+<dt>OriginalOwnerCounty (OriginalOwnerState for US users)</dt>
+<dd>The county of the animal&#8217;s original owner</dd>
+<dt>OriginalOwnerPostcode (OriginalOwnerZipcode for US users)</dt>
+<dd>The original owner&#8217;s post/zipcode</dd>
+<dt>OriginalOwnerHomePhone</dt>
+<dd>The original owner&#8217;s home phone number</dd>
+<dt>OriginalOwnerWorkPhone</dt>
+<dd>The original owner&#8217;s work phone number</dd>
+<dt>OriginalOwnerMobilePhone</dt>
+<dd>The original owner&#8217;s mobile phone number</dd>
+<dt>OriginalOwnerEmail</dt>
+<dd>The original owner&#8217;s email address</dd>
+<dt>CurrentOwnerName</dt>
+<dd>The name of the animal&#8217;s current owner (fosterer or adopter)</dd>
+<dt>CurrentOwnerAddress</dt>
+<dd>Current owner&#8217;s address</dd>
+<dt>CurrentOwnerTown</dt>
+<dd>(CurrentOwnerCity for US users)</dd>
+<dt>CurrentOwnerCounty</dt>
+<dd>(CurrentOwnerState for US users)</dd>
+<dt>CurrentOwnerPostcode</dt>
+<dd>(CurrentOwnerZipcode for US users)</dd>
+<dt>CurrentOwnerHomePhone</dt>
+<dd>Current owner&#8217;s home phone number</dd>
+<dt>CurrentOwnerWorkPhone</dt>
+<dd>Current owner&#8217;s work phone number</dd>
+<dt>CurrentOwnerMobilePhone</dt>
+<dd>Current owner&#8217;s cell/mobile phone number</dd>
+<dt>CurrentOwnerEmail</dt>
+<dd>Current owner&#8217;s email address</dd>
+<dt>ReservedOwnerName</dt>
+<dd>The name of the person with an active reserve on the animal</dd>
+<dt>ReservedOwnerAddress</dt>
+<dd>Reserved owner&#8217;s address</dd>
+<dt>ReservedOwnerTown</dt>
+<dd>(ReservedOwnerCity for US users)</dd>
+<dt>ReservedOwnerCounty</dt>
+<dd>(ReservedOwnerState for US users)</dd>
+<dt>ReservedOwnerPostcode</dt>
+<dd>(ReservedOwnerZipcode for US users)</dd>
+<dt>ReservedOwnerHomePhone</dt>
+<dd>Reserved owner&#8217;s home phone number</dd>
+<dt>ReservedOwnerWorkPhone</dt>
+<dd>Reserved owner&#8217;s work phone number</dd>
+<dt>ReservedOwnerMobilePhone</dt>
+<dd>Reserved owner&#8217;s cell/mobile phone number</dd>
+<dt>ReservedOwnerEmail</dt>
+<dd>Reserved owner&#8217;s email address</dd>
+<dt>ReservationStatus</dt>
+<dd>The active reservation/application status</dd>
+<dt>CurrentVetName</dt>
+<dd>The name of the animal&#8217;s current vet</dd>
+<dt>CurrentVetAddress</dt>
+<dd>The address of the animal&#8217;s current vet</dd>
+<dt>CurrentVetTown</dt>
+<dd>(CurrentVetCity for US users)</dd>
+<dt>CurrentVetCounty</dt>
+<dd>(CurrentVetState for US users)</dd>
+<dt>CurrentVetPostcode</dt>
+<dd>The postal code of the animal&#8217;s current vet</dd>
+<dt>CurrentVetPhone</dt>
+<dd>A phone number for the animal&#8217;s current vet</dd>
+<dt>OwnersVetName</dt>
+<dd>The owner&#8217;s vet</dd>
+<dt>OwnersVetAddress</dt>
+<dd>The address of the owner&#8217;s vet</dd>
+<dt>OwnersVetTown</dt>
+<dd>(CurrentVetCity for US users)</dd>
+<dt>OwnersVetCounty</dt>
+<dd>(CurrentVetState for US users)</dd>
+<dt>OwnersVetPostcode</dt>
+<dd>The postal code of the owner&#8217;s vet</dd>
+<dt>OwnersVetPhone</dt>
+<dd>A phone number for the owner&#8217;s vet</dd>
+<dt>RabiesTag</dt>
+<dd>The animal&#8217;s rabies tag</dd>
+<dt>GoodWithCats</dt>
+<dd>&#8220;Yes/No/Unknown&#8221;</dd>
+<dt>GoodWithDogs</dt>
+<dd>&#8220;Yes/No/Unknown&#8221;</dd>
+<dt>GoodWithChildren</dt>
+<dd>&#8220;Yes/No/Unknown&#8221;</dd>
+<dt>HouseTrained</dt>
+<dd>&#8220;Yes/No/Unknown&#8221;</dd>
+<dt>EntryCategory</dt>
+<dd>The entry category of the animal</dd>
+<dt>ReasonForEntry</dt>
+<dd>The reason the animal was brought to the shelter</dd>
+<dt>ReasonNotBroughtByOwner</dt>
+<dd>The reason (if any) that the animal was not brought in by the owner</dd>
+<dt>Sex</dt>
+<dd>The animal&#8217;s sex</dd>
+<dt>Size</dt>
+<dd>The animal&#8217;s size</dd>
+<dt>SpeciesName</dt>
+<dd>The animal&#8217;s species</dd>
+<dt>ReclaimedDate</dt>
+<dd>The date (if applicable) that the animal was reclaimed by its owner</dd>
+<dt>MostRecentEntry</dt>
+<dd>The date the animal most recently entered the shelter (if it was returned from an adoption or fostering for example)</dd>
+<dt>MostRecentMonthEntry</dt>
+<dd>The month the animal most recently entered the shelter</dd>
+<dt>TimeOnShelter</dt>
+<dd>A readable string showing the time the animal has spent on the shelter (from the last time it entered), eg: 4 weeks.</dd>
+<dt>NoTimesReturned</dt>
+<dd>The number of times the animal has been returned to the shelter</dd>
+<dt>HasValidMedia</dt>
+<dd>&#8220;Yes&#8221; if the animal has a photo flagged for website generation</dd>
+<dt>WebMediaFilename</dt>
+<dd>The filename of the animal&#8217;s default picture</dd>
+<dt>WebMediaNotes</dt>
+<dd>The notes to accompany the picture</dd>
+<dt>WebMediaNew</dt>
+<dd>&#8220;Yes&#8221; if the animal has not been published via the web publishing tool</dd>
+<dt>WebMediaUpdated</dt>
+<dd>&#8220;Yes&#8221; if the notes on the media for the animal have been edited since the animal was last published via the web publishing tool</dd>
+<dt>WebsiteVideoURL</dt>
+<dd>The web address of the default video link for this animal</dd>
+<dt>WebsiteVideoNotes</dt>
+<dd>The notes accompanying the video link</dd>
+<dt>AnimalOnShelter</dt>
+<dd>&#8220;Yes&#8221; if the animal is on the shelter</dd>
+<dt>AnimalIsReserved</dt>
+<dd>&#8220;Yes&#8221; if the animal has been reserved</dd>
+</dl>
+</div>
+<div class="section" id="vaccination-keys">
+<h2>Vaccination Keys<a class="headerlink" href="#vaccination-keys" title="Permalink to this headline">¶</a></h2>
+<p>Vaccination keys let you access the vaccination records for an animal. There
+are multiple ways of accessing the records. You construct a key that contains
+the field name and then an index for it. The field names are:</p>
+<dl class="docutils">
+<dt>VaccinationName</dt>
+<dd>The name of the vaccination (eg: Booster)</dd>
+<dt>VaccinationRequired</dt>
+<dd>The date the vaccination is required</dd>
+<dt>VaccinationGiven</dt>
+<dd>The date the vaccination was given</dd>
+<dt>VaccinationExpires</dt>
+<dd>The date the vaccination expires if known</dd>
+<dt>VaccinationBatch</dt>
+<dd>The batch number from the vaccination adminstered</dd>
+<dt>VaccinationManufacturer</dt>
+<dd>The manufacturer of the vaccine</dd>
+<dt>VaccinationCost</dt>
+<dd>The cost of this vaccine</dd>
+<dt>VaccinationComments</dt>
+<dd>The vaccination comments</dd>
+<dt>VaccinationDescription</dt>
+<dd>The vaccination description from the lookup data.</dd>
+</dl>
+<p>Just putting a number on the end of the fieldname returns that field for the
+records, counting from oldest to newest. For example, VaccinationName1 returns
+the name of the first vaccination on file for the animal.</p>
+<p>You can use the suffix Lastn, where n is a number to count from the newest to
+the oldest instead. For example, VaccinationGivenLast1 returns the given date
+of the most recent vaccination record.</p>
+<p>You can also use the vaccination type itself as an index, for example
+VaccinationRequiredDHCPP will return the latest vaccination record of type
+DHCPP. If your vaccination type has spaces in its name, then remove them when
+constructing the key. Eg: A type of “DHCPP Vacc” would bcome
+&lt;&lt;VaccinationRequiredDHCPPVacc&gt;&gt; when accessing it via a wordkey.</p>
+<p>The “Recent” keyword operates with the vaccination type and allows you to
+select the most recent vaccination of that type that has a non-blank given
+date. Eg: VaccinationCommentsRecentDHCPP will return the comments of the last
+given DHCPP vaccination.</p>
+</div>
+<div class="section" id="test-keys">
+<h2>Test Keys<a class="headerlink" href="#test-keys" title="Permalink to this headline">¶</a></h2>
+<p>The same rules for vaccinations apply to reading test records.</p>
+<dl class="docutils">
+<dt>TestName</dt>
+<dd>The name of the test (eg: FIV)</dd>
+<dt>TestResult</dt>
+<dd>The test result (eg: Positive)</dd>
+<dt>TestRequired</dt>
+<dd>The date the test is required</dd>
+<dt>TestGiven</dt>
+<dd>The date the test was performed</dd>
+<dt>TestCost</dt>
+<dd>The cost of the test</dd>
+<dt>TestComments</dt>
+<dd>The test comments</dd>
+<dt>TestDescription</dt>
+<dd>The test description from the lookup data.</dd>
+</dl>
+</div>
+<div class="section" id="medical-keys">
+<h2>Medical Keys<a class="headerlink" href="#medical-keys" title="Permalink to this headline">¶</a></h2>
+<p>The same rules for vaccinations apply to reading medical records, except the
+MedicalName field can be used for looking up the most recent record of that
+treatment. In addition, the Recent keyword looks for medical regimens that have
+a status of complete.</p>
+<dl class="docutils">
+<dt>MedicalName</dt>
+<dd>The name of the medical treatment</dd>
+<dt>MedicalFrequency</dt>
+<dd>How often the treatment is given (eg: Monthly)</dd>
+<dt>MedicalNumberOfTreatments</dt>
+<dd>The total number of treatments</dd>
+<dt>MedicalStatus</dt>
+<dd>The treatment status (eg: Active)</dd>
+<dt>MedicalDosage</dt>
+<dd>The treatment dosage</dd>
+<dt>MedicalStartDate</dt>
+<dd>The date treatment started</dd>
+<dt>MedicalTreatmentsGiven</dt>
+<dd>How many treatments the animal has had</dd>
+<dt>MedicalTreatmentsRemaining</dt>
+<dd>How many treatments are remaining</dd>
+<dt>MedicalNextTreatmentDue</dt>
+<dd>The date of the next due treatment in the regimen</dd>
+<dt>MedicalLastTreatmentGiven</dt>
+<dd>The date the last treatment was given in the regimen</dd>
+<dt>MedicalCost</dt>
+<dd>The cost of this medical regimen</dd>
+<dt>MedicalComments</dt>
+<dd>The medical comments</dd>
+</dl>
+</div>
+<div class="section" id="payment-keys">
+<h2>Payment Keys<a class="headerlink" href="#payment-keys" title="Permalink to this headline">¶</a></h2>
+<p>The same rules apply as for vaccinations and medical records but for accessing
+payments. The Recent keyword looks for payments that have been received. The
+fields are:</p>
+<dl class="docutils">
+<dt>ReceiptNum</dt>
+<dd>If you issue receipts for donations, the receipt number</dd>
+<dt>PaymentType</dt>
+<dd>The payment type</dd>
+<dt>PaymentMethod</dt>
+<dd>The payment method</dd>
+<dt>PaymentDate</dt>
+<dd>The date the payment was received</dd>
+<dt>PaymentDateDue</dt>
+<dd>If this is a recurring payment, the date it is due</dd>
+<dt>PaymentAmount</dt>
+<dd>The amount of the payment</dd>
+<dt>PaymentGiftAid</dt>
+<dd>Yes or No if this donation is eligible for UK giftaid</dd>
+<dt>PaymentComments</dt>
+<dd>Any comments on the payment</dd>
+</dl>
+</div>
+<div class="section" id="cost-keys">
+<h2>Cost Keys<a class="headerlink" href="#cost-keys" title="Permalink to this headline">¶</a></h2>
+<p>The same rules apply as for vaccinations and medical records but for accessing
+costs. The fields are:</p>
+<dl class="docutils">
+<dt>CostType</dt>
+<dd>The cost type</dd>
+<dt>CostDate</dt>
+<dd>The date the cost was incurred</dd>
+<dt>CostDatePaid</dt>
+<dd>If the “show cost paid field” option is on, the date the cost was actually paid for</dd>
+<dt>CostAmount</dt>
+<dd>The value of the cost</dd>
+<dt>CostDescription</dt>
+<dd>Any other information about the cost</dd>
+</dl>
+</div>
+<div class="section" id="diet-keys">
+<h2>Diet Keys<a class="headerlink" href="#diet-keys" title="Permalink to this headline">¶</a></h2>
+<p>The same rules apply as for vaccinations, but for accessing diet records. The fields are:</p>
+<dl class="docutils">
+<dt>DietName</dt>
+<dd>The name of the diet</dd>
+<dt>DietDescription</dt>
+<dd>The diet description</dd>
+<dt>DietDateStarted</dt>
+<dd>The date the diet started</dd>
+<dt>DietComments</dt>
+<dd>Any comments on the diet</dd>
+</dl>
+</div>
+<div class="section" id="log-keys">
+<h2>Log Keys<a class="headerlink" href="#log-keys" title="Permalink to this headline">¶</a></h2>
+<p>The same rules apply as for vaccinations, but for accessing log records. The
+fields are:</p>
+<dl class="docutils">
+<dt>LogName</dt>
+<dd>The type of log</dd>
+<dt>LogDate</dt>
+<dd>The date of the log</dd>
+<dt>LogComments</dt>
+<dd>The log entry</dd>
+</dl>
+</div>
+<div class="section" id="movement-keys">
+<h2>Movement Keys<a class="headerlink" href="#movement-keys" title="Permalink to this headline">¶</a></h2>
+<p>Movement keys are available for documents generated either from the Move-&gt;Adopt
+screen, or from the animal details screen (in which case the animal&#8217;s active
+movement is assumed if it has one). Since movements tie together animals and
+owners, all of the animal and owner keys are also available for movements.</p>
+<dl class="docutils">
+<dt>AdoptionID</dt>
+<dd>The adoption number</dd>
+<dt>AdoptionDate</dt>
+<dd>The date of the adoption</dd>
+<dt>ReservationDate</dt>
+<dd>The date the animal was reserved (if it&#8217;s a reserve record)</dd>
+<dt>ReturnDate</dt>
+<dd>The date the animal was returned from this movement</dd>
+<dt>FosteredDate</dt>
+<dd>The date the animal was fostered (if applicable)</dd>
+<dt>TransferDate</dt>
+<dd>The date the animal was transferred (if applicable)</dd>
+<dt>TrialEndDate</dt>
+<dd>The date the trial adoption ends (if applicable)</dd>
+<dt>MovementDate</dt>
+<dd>The date the animal was moved (whatever the type)</dd>
+<dt>MovementType</dt>
+<dd>The movement type (eg: Adoption, Foster, Transfer, etc)</dd>
+<dt>AdoptionNumber</dt>
+<dd>The adoption number</dd>
+<dt>AdoptionDonation</dt>
+<dd>The amount donated for the adoption</dd>
+<dt>AdoptionCreatedBy</dt>
+<dd>The user who created the movement record (AdoptionCreatedByName)</dd>
+<dt>AdoptionCreatedDate</dt>
+<dd>The date the movement was created</dd>
+<dt>AdoptionLastChangedBy</dt>
+<dd>The user who last changed the movement (AdoptionLastChangedByName)</dd>
+<dt>AdoptionLastChangedDate</dt>
+<dd>The date the movement was last changed</dd>
+<dt>InsuranceNumber</dt>
+<dd>If your shelter insures animals as they are adopted, the insurance number</dd>
+</dl>
+</div>
+<div class="section" id="person-keys">
+<h2>Person Keys<a class="headerlink" href="#person-keys" title="Permalink to this headline">¶</a></h2>
+<p>Person keys are available for documents generated from the owner and movement
+screens, they are also available for documents generated from the payment tab.</p>
+<dl class="docutils">
+<dt>OwnerTitle</dt>
+<dd>The person&#8217;s title</dd>
+<dt>OwnerInitials</dt>
+<dd>The person&#8217;s initials</dd>
+<dt>OwnerForenames</dt>
+<dd>(OwnerFirstNames for US users)</dd>
+<dt>OwnerSurname</dt>
+<dd>(OwnerLastName for US users)</dd>
+<dt>OwnerComments</dt>
+<dd>Any comments on the person</dd>
+<dt>OwnerCreatedBy</dt>
+<dd>(OwnerCreatedByName)</dd>
+<dt>OwnerCreatedDate</dt>
+<dd>The date the person record was created</dd>
+<dt>HomeTelephone</dt>
+<dd>The person&#8217;s home phone number</dd>
+<dt>OwnerID</dt>
+<dd>The ID of the person record</dd>
+<dt>IDCheck</dt>
+<dd>“Yes” if the owner has been homechecked</dd>
+<dt>HomeCheckedByName</dt>
+<dd>The name of the person who homechecked this person</dd>
+<dt>HomeCheckedByEmail</dt>
+<dd>The email address of the person who homechecked this person</dd>
+<dt>HomeCheckedByHomeTelephone</dt>
+<dd>A phone number for the person who homechecked this person</dd>
+<dt>HomeCheckedByMobileTelephone</dt>
+<dd>(HomeCheckedByCellTelephone for US users)</dd>
+<dt>OwnerLastChangedDate</dt>
+<dd>The date this person record was last changed</dd>
+<dt>OwnerLastChangedBy</dt>
+<dd>(OwnerLastChangedByName) - The person who last changed this person record</dd>
+<dt>OwnerAddress</dt>
+<dd>The person&#8217;s address</dd>
+<dt>OwnerName</dt>
+<dd>The person&#8217;s display name in the selected system display format</dd>
+<dt>OwnerTown</dt>
+<dd>(OwnerCity for US users)</dd>
+<dt>OwnerCounty</dt>
+<dd>(OwnerState for US users)</dd>
+<dt>OwnerPostcode</dt>
+<dd>(OwnerZipcode for US users)</dd>
+<dt>WorkTelephone</dt>
+<dd>The person&#8217;s work telephone number</dd>
+<dt>MobileTelephone</dt>
+<dd>(CellTelephone for US users)</dd>
+<dt>EmailAddress</dt>
+<dd>The person&#8217;s email address</dd>
+<dt>MembershipNumber</dt>
+<dd>The person&#8217;s membership number</dd>
+<dt>MembershipExpiryDate</dt>
+<dd>The date this person&#8217;s membership with the shelter expires</dd>
+</dl>
+</div>
+<div class="section" id="traploan-keys">
+<h2>Traploan Keys<a class="headerlink" href="#traploan-keys" title="Permalink to this headline">¶</a></h2>
+<p>The same rules apply as for vaccinations, but for accessing trap loans. Each
+loan is indexed with a number for ascending (eg: TrapTypeName1), LastX for
+descending (eg: TrapTypeNameLast1) and with the type name for the most recent
+loan of that type for the person (eg: TrapLoanDateCat). The fields are:</p>
+<dl class="docutils">
+<dt>TrapTypeName</dt>
+<dd>The type of trap being loaned</dd>
+<dt>TrapLoanDate</dt>
+<dd>The date the trap was loaned</dd>
+<dt>TrapDepositAmount</dt>
+<dd>The amount of deposit on the loan</dd>
+<dt>TrapDepositReturnDate</dt>
+<dd>The date the deposit was returned</dd>
+<dt>TrapNumber</dt>
+<dd>The trap number of the trap being loaned</dd>
+<dt>TrapReturnDueDate</dt>
+<dd>The date the trap is due for return</dd>
+<dt>TrapReturnDate</dt>
+<dd>The date the trap was returned</dd>
+<dt>TrapComments</dt>
+<dd>Any comments on the traploana</dd>
+</dl>
+</div>
+<div class="section" id="payment-receipt-invoice-keys">
+<h2>Payment/Receipt/Invoice Keys<a class="headerlink" href="#payment-receipt-invoice-keys" title="Permalink to this headline">¶</a></h2>
+<p>Payment keys are available for documents generated for a single payment from
+the payment tab. Keys for the person making the payment are also present and if
+the payment is linked to an animal, animal keys are also present.</p>
+<dl class="docutils">
+<dt>PaymentID</dt>
+<dd>The payment record ID (used to generate receipt number)</dd>
+<dt>PaymentType</dt>
+<dd>The payment type</dd>
+<dt>PaymentMethod</dt>
+<dd>The payment method</dd>
+<dt>PaymentDate</dt>
+<dd>The date the payment was received</dd>
+<dt>PaymentDateDue</dt>
+<dd>If this is a recurring payment, the date it is due</dd>
+</dl>
+<p>PaymentAmount
+ReceiptNum</p>
+<blockquote>
+<div>If you issue receipts for donations, the receipt number</div></blockquote>
+<dl class="docutils">
+<dt>PaymentGiftAid</dt>
+<dd>Yes or No if this donation is eligible for UK giftaid</dd>
+<dt>PaymentComments</dt>
+<dd>Any comments for the payment</dd>
+<dt>PaymentCreatedBy</dt>
+<dd>(PaymentCreatedByName)</dd>
+<dt>PaymentCreatedDate</dt>
+<dd>The date this payment record was created</dd>
+<dt>PaymentLastChangedBy</dt>
+<dd>(PaymentLastChangedByName)</dd>
+<dt>PaymentLastChangedDate</dt>
+<dd>The date this payment record was last changed</dd>
+</dl>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="databasetables.html" class="btn btn-neutral float-right" title="Database Tables/Columns"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="configuration.html" class="btn btn-neutral" title="Configuration"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Sheltermanager, Ltd.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'36',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,692 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Animals &mdash; ASM 36 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="ASM 36 documentation" href="index.html"/>
+        <link rel="next" title="People" href="people.html"/>
+        <link rel="prev" title="Search" href="search.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="fa fa-home"> ASM</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="foreword.html">Foreword</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="foreword.html#introduction">Introduction</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#menus-and-shortcuts">Menus and Shortcuts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#shortcut-keys">Shortcut Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#dates">Dates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#tables">Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#initial-setup">Initial Setup</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="search.html">Search</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Animals</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#shelter-view">Shelter View</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#find-animal">Find Animal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edit-animal">Edit Animal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#moving-and-reserving-animals">Moving and Reserving Animals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#documents">Documents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="people.html">People</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="people.html#find-person">Find Person</a></li>
+<li class="toctree-l2"><a class="reference internal" href="people.html#edit-person">Edit Person</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="movements.html">Movement Books</a></li>
+<li class="toctree-l1"><a class="reference internal" href="animalcontrol.html">Animal Control</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#incidents">Incidents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#incident-details">Incident Details</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#dispatch">Dispatch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#suspect-animal-and-citation">Suspect/Animal and Citation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#alerts">Alerts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#map-of-active-incidents">Map of active incidents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#trap-loans">Trap Loans</a></li>
+<li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#licensing">Licensing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="lostandfound.html">Lost and Found</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="lostandfound.html#matching-lost-and-found">Matching Lost and Found</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lostandfound.html#scoring">Scoring</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="waitinglist.html">Waiting List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generaldiary.html">General Diary</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="generaldiary.html#add-a-new-diary-note">Add a new diary note</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generaldiary.html#viewing-my-diary-notes">Viewing my diary notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generaldiary.html#diary-calendar">Diary calendar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generaldiary.html#printing-the-diary">Printing the diary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generaldiary.html#create-a-new-diary-task">Create a new diary task</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="accounts.html">Accounts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="accounts.html#reconciliation">Reconciliation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="accounts.html#payments">Payments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="accounts.html#reporting">Reporting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="stockcontrol.html">Stock Control</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="stockcontrol.html#adding-new-stock">Adding new stock</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stockcontrol.html#using-stock-manually">Using stock (manually)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stockcontrol.html#using-stock-medical-tests-and-vaccinations">Using stock (medical, tests and vaccinations)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stockcontrol.html#stock-alerts">Stock alerts</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#customising-reports">Customising Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#charts">Charts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reports.html#maps">Maps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="litters.html">Litters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="litters.html#mechanism">Mechanism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="litters.html#litter-completion">Litter Completion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mobile.html">Mobile Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="service.html">Service API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="publishing.html">Publishing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#animal-selection">Animal Selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#all-publishers">All Publishers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#facebook">Facebook</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="publishing.html#html-ftp-publishing">HTML/FTP Publishing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#adoptapet-com">adoptapet.com</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#helpinglostpets-com">helpinglostpets.com</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#meetapet-com">meetapet.com</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#petfinder-com">petfinder.com</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#petrescue-com-au">petrescue.com.au</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#rescuegroups-org">rescuegroups.org</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#avid-pettrac-uk">AVID/PETtrac UK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#identichip-anibase-uk">idENTICHIP/Anibase UK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#petlink">PetLink</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#smarttag">SmartTag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publishing.html#vetenvoy-us-homeagain-and-akc-reunite">VetEnvoy US (HomeAgain and AKC Reunite)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mailmerge.html">Mail Merge Sources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mailmerge.html#running-a-mail-merge">Running a Mail Merge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mailmerge.html#printing-labels">Printing Labels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mailmerge.html#integrating-with-openoffice">Integrating with OpenOffice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mailmerge.html#integrating-with-microsoft-word">Integrating with Microsoft Word</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mailmerge.html#bulk-email">Bulk Email</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#additional-fields">Additional Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#lookup-data">Lookup Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#document-templates">Document templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#reports">Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#system-user-accounts">System user accounts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#user-roles">User roles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#import-a-csv-file">Import a CSV file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#trigger-batch-processes">Trigger Batch Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#options">Options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="wordkeys.html">Appendix: Wordkeys</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#organisation-keys">Organisation Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#animal-keys">Animal Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#vaccination-keys">Vaccination Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#test-keys">Test Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#medical-keys">Medical Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#payment-keys">Payment Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#cost-keys">Cost Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#diet-keys">Diet Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#log-keys">Log Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#movement-keys">Movement Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#person-keys">Person Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#traploan-keys">Traploan Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordkeys.html#payment-receipt-invoice-keys">Payment/Receipt/Invoice Keys</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="databasetables.html">Database Tables/Columns</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="databasetables.html#adoption">adoption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="databasetables.html#animal">animal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="databasetables.html#dbfs">dbfs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="databasetables.html#media">media</a></li>
+<li class="toctree-l2"><a class="reference internal" href="databasetables.html#owner">owner</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="relationships.html">Appendix: Entity Relationship Diagrams</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="relationships.html#animal-with-satellite-tables-media-and-logs">Animal with satellite tables, media and logs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="relationships.html#adoption-movement-table-with-relationships">Adoption/Movement table with relationships</a></li>
+<li class="toctree-l2"><a class="reference internal" href="relationships.html#person-payment-account-relationships">Person/payment/account relationships</a></li>
+<li class="toctree-l2"><a class="reference internal" href="relationships.html#lost-found-and-waiting-list">Lost/found and waiting list</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="csvimportfields.html">Appendix: CSV file import fields</a></li>
+<li class="toctree-l1"><a class="reference internal" href="onlineformfields.html">Appendix: Online Form import fields</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">ASM</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Animals</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/animals.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="animals">
+<h1>Animals<a class="headerlink" href="#animals" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="shelter-view">
+<h2>Shelter View<a class="headerlink" href="#shelter-view" title="Permalink to this headline">¶</a></h2>
+<p>The shelter view screen (available from the default quicklinks or under
+<em>ASM-&gt;Shelter View</em>) gives you a an overview of all the animals currently on your
+shelter, broken down by their internal location. You can use this screen to
+jump straight to an animal&#8217;s record. You can also drag and drop animals to move
+them between locations quickly. If you have assigned units to the animal (for
+cage/pen numbers, etc) they will appear next to their name. A dropdown in the
+upper right corner allows different groupings to be applied.</p>
+<img alt="_images/shelterview.png" src="_images/shelterview.png" />
+</div>
+<div class="section" id="find-animal">
+<h2>Find Animal<a class="headerlink" href="#find-animal" title="Permalink to this headline">¶</a></h2>
+<p>ASM has multiple methods of finding animals. The default is the simple screen:</p>
+<img alt="_images/findanimal_simple.png" src="_images/findanimal_simple.png" />
+<p>From the single search term, this screen searches all aspects of the animal,
+including codes, names, breeds, microchip numbers, original owner details,
+media and movements. Animals are shown irrespective of where they are (the
+location field displays where the animal is) or whether or not they are dead.
+When you use the system search box at the top with an a: filter, the simple
+animal search is what gets performed.</p>
+<p>For example, searching for “black” would return animals with black in the name,
+animals that are black in colour, animals adopted to an owner with the surname
+black, etc. Results are sorted by relevance, so if the term appears in an
+animal&#8217;s name or code, it will be at the top of the list.</p>
+<p>By clicking the Advanced button, you can go to a more sophisticated search
+screen that allows you to search by animal location and state, age, etc.  You
+can change which find animal screen is shown by default under the
+<em>Settings-&gt;Options</em> menu.</p>
+<img alt="_images/findanimal_advanced.png" src="_images/findanimal_advanced.png" />
+<p>The Advanced screen allows you to enter detailed searches for groups of animals
+within your database.</p>
+<p>If you press the search button without entering any criteria, you will get a
+list of all animals on the shelter who are still alive. This is because the
+location box defaults to “On Shelter” - if you change this to “(all)” you will
+get all animals who are still alive, wherever they are. Alive, because the
+search automatically excludes dead animals. If you wish to include dead
+animals, tick the box labeled “Include deceased”.</p>
+<p>Once you press the search button, ASM will search through your database and
+check each record against any criteria you have chosen, and return to you a
+list of all those that matched. For example, you could quite easily search for
+all animals of species “Dog” who are still on the shelter, located in a
+particular location and under 6 months old.
+The criteria fields follow one of three types:</p>
+<ul class="simple">
+<li>Drop Down Boxes: You should select something from the list or the “(all)”
+entry to specify that you do not want to filter by this criteria.</li>
+<li>Text Boxes: The system expects you to type part of a word, name or code etc.
+For example, typing “ben” in the “Name” box on the find animal screen will
+return all animals who have “ben” somewhere in their name - eg: Ben, Benji,
+Benson etc. Some boxes require numbers - the “aged between” boxes require an
+animal age expressed as a year, or fraction of a year. Entering 0 in the
+“From Age” box and 0.5 in the “To Age” box will return animals who are six
+months old and younger.</li>
+<li>Check Boxes: Here, you are expected to tick the box to indicate a yes or no
+value - eg: Ticking the “Include deceased” box includes dead animals in your
+search results.</li>
+</ul>
+<p>For more information about what the criteria boxes expect, hover your mouse
+over them.</p>
+</div>
+<div class="section" id="edit-animal">
+<h2>Edit Animal<a class="headerlink" href="#edit-animal" title="Permalink to this headline">¶</a></h2>
+<p>The animal screen is the one you will certainly use the most often within the system. Across the top, the animal screen has a banner with important information about the animal.</p>
+<p>Below the banner, the animal screen is split into a number of different tabbed sections. Clicking these tabs makes that area of the animal active. Because not all of the information is mandatory or applicable to every animal, some of the tabs will show a graphic to highlight that they have information (the graphic varies according to what type of data is available on that particular tab).</p>
+<div class="section" id="animal-details">
+<h3>Animal Details<a class="headerlink" href="#animal-details" title="Permalink to this headline">¶</a></h3>
+<img alt="_images/animal_details.png" src="_images/animal_details.png" />
+<p>The animal details tab contains all the basic information about the animal,
+including it&#8217;s breed, species, name, age, location within the shelter,
+identifying code etc.</p>
+<p>A special option appears for “Non-Shelter Animal” (as shown in the screenshot).
+Tick this box if the animal is nothing to do with your shelter, but you want to
+utilise ASM&#8217;s facilities in managing vaccinations, etc. This is very useful for
+shelters that run their own clinics which are open to members of the public
+(and of course it allows clinics and vets to run their operations with ASM too
+if they don&#8217;t handle adoptions, etc).</p>
+<p>You can also tick a “not for adoption” flag, which enables you to hide this
+animal from the internet publishers. Using the Hold and Quarantine flags will
+also hide the animal from publishing and add an emblem (a little icon) when you
+see the animal.</p>
+<p>If the “Use Single Breed Field” option is not enabled in the system options
+(the default), then ASM will display two breed fields with a “Crossbreed” flag
+you can set. This allows you to choose two breeds for mixed/crossbreed animals.
+The details page is subdivided into a number of accordion panels to categorise
+the details. If you have created additional fields for animals under
+<em>Settings-&gt;Additional Fields</em> then the “Additional” panel will appear.</p>
+<img alt="_images/unsaved.png" src="_images/unsaved.png" />
+<p>Details are treated like a document and when viewing, you get a personal copy.
+Any changes you make aren&#8217;t effective until you hit the Save button on the
+toolbar. If you try to leave the details screen without saving changes, you
+will be prompted.</p>
+</div>
+<div class="section" id="entry">
+<h3>Entry<a class="headerlink" href="#entry" title="Permalink to this headline">¶</a></h3>
+<img alt="_images/animal_entry.png" src="_images/animal_entry.png" />
+<p>The Entry panel contains all the information about how the animal originally
+entered the shelter, including their background history and the names of the
+original owner and person who brought the animal in.</p>
+<p>When adopting animals out, the system uses this information to track owners who
+have brought animals into the shelter previously and to warn staff before
+adopting animals to them.</p>
+<p>The bonded with fields allow you to specify upto two animals that this animal
+can be bonded to. Bonding checks that when the animal is adopted, it is adopted
+with its bonded partner(s).</p>
+<p>Most importantly, the right hand side of the screen contains the animals
+original date of entry to the shelter. This date is used when generating animal
+figures and auditing reports.</p>
+<p>If you are using a US locale, you will also see Asilomar categories. These
+allow ASM to generate Asilomar figures for your shelter. Asilomar statistics
+are a standardised way of calculating euthanasia figures for animal shelters
+across the US. More information on them can be found here:
+<a class="reference external" href="http://www.asilomaraccords.org/">http://www.asilomaraccords.org/</a></p>
+</div>
+<div class="section" id="health-and-identification">
+<h3>Health and Identification<a class="headerlink" href="#health-and-identification" title="Permalink to this headline">¶</a></h3>
+<img alt="_images/animal_health.png" src="_images/animal_health.png" />
+<p>The health and identification tab is used for entering general information about the animal&#8217;s health and veterinary care. The special needs box can be used to indicate that the animal has an ongoing or permanent health problem. Ticking this box will flag this when publishing to the internet and to services like PetFinder.</p>
+</div>
+<div class="section" id="death">
+<h3>Death<a class="headerlink" href="#death" title="Permalink to this headline">¶</a></h3>
+<img alt="_images/animal_death.png" src="_images/animal_death.png" />
+<p>The death tab is used for capturing information about the animal&#8217;s death if it
+is deceased. The most important field is the deceased date, as a value in this
+field is used by the system to indicate that the animal is dead.</p>
+<p>In addition, an icon will be shown at the side of the death tab if the animal
+is dead. The animal&#8217;s location will also appear as Deceased with the reason if
+set.</p>
+<p>A special field “Died Off Shelter” can be set if you know a particular animal
+that is located off the shelter has died. This ensures that the animal&#8217;s death
+is not included in figures reports, but still shows the animal as dead
+everywhere.</p>
+</div>
+<div class="section" id="diet">
+<h3>Diet<a class="headerlink" href="#diet" title="Permalink to this headline">¶</a></h3>
+<img alt="_images/animal_diet.png" src="_images/animal_diet.png" />
+<p>The diet tab is used for capturing information about the animal&#8217;s diet. You can
+set up as many different diet types (under <em>Settings-&gt;Lookup Data-&gt;Diets</em>) as you
+like, and then log them here when the animal&#8217;s diet changes.</p>
+</div>
+<div class="section" id="costs">
+<h3>Costs<a class="headerlink" href="#costs" title="Permalink to this headline">¶</a></h3>
+<img alt="_images/animal_costs.png" src="_images/animal_costs.png" />
+<p>The costs tab allows you to track costs associated with looking after an animal
+whilst it is in your care. You can assign a daily boarding cost, and ASM will
+automatically keep track of how many days the animal has been on your shelter
+and how much it has cost.</p>
+<p>In addition, you can add cost types through the <em>Settings-&gt;Lookup Data-&gt;Cost
+Types</em> menu and allocate costs for anything else your shelter has spent on the
+animal (eg: Microchipping). Vaccinations and medical treatments have a cost
+field that you can set for each treatment and they will be automatically
+totalled up at the bottom of the costs screen along with a current running cost
+for all time and a balance, calculated from total costs less any donations
+allocated to the animal.</p>
+<p>By default, when the animal is adopted, ASM will automatically convert the
+current boarding cost/time into a separate cost record so it can be preserved.</p>
+</div>
+<div class="section" id="vaccination">
+<h3>Vaccination<a class="headerlink" href="#vaccination" title="Permalink to this headline">¶</a></h3>
+<img alt="_images/animal_vaccination.png" src="_images/animal_vaccination.png" />
+<p>The vaccination tab is used to track information about any vaccinations an
+animal requires. An animal can have an unlimited number of vaccination records.
+For complicated, multi-diary procedures, see Diary Tasks, covered later on.</p>
+<p>Use the toolbar to create and modify items in the list. Note that items in the
+vaccination list are saved immediately to the database when you hit the Save
+button in the popup screen. You will be reminded of outstanding vaccinations
+via the Vaccination Diary report, or by viewing them under <em>Medical-&gt;Vaccination
+Book</em></p>
+<p>Vaccinations can also have a cost attached for use with reporting. The cost is
+for the individual vaccination.</p>
+</div>
+<div class="section" id="test">
+<h3>Test<a class="headerlink" href="#test" title="Permalink to this headline">¶</a></h3>
+<img alt="_images/animal_test.png" src="_images/animal_test.png" />
+<p>The test tab is used to track information about any medical tests an animal
+requires. An animal can have an unlimited number of test records.</p>
+<p>Items in the test list are saved immediately to the database when you hit the
+Save button in the popup screen. You will be reminded of tests falling due via
+the Test Diary report, main screen alerts, or by viewing them under
+<em>Medical-&gt;Test Book</em></p>
+<p>Tests can also have a cost attached for use with reporting.</p>
+</div>
+<div class="section" id="medical">
+<h3>Medical<a class="headerlink" href="#medical" title="Permalink to this headline">¶</a></h3>
+<img alt="_images/animal_medical.png" src="_images/animal_medical.png" />
+<p>The medical tab is used to track information about medical treatments an animal
+is receiving. It is extremely flexible in what it can track and it can handle
+just about any kind of schedule. You can create medical profiles from
+<em>Medical-&gt;Medical Profiles</em> and use these as templates for treatment records.</p>
+<p>Treatment records are automatically created from regimens. You can edit the
+regimen by click on the treatment name.</p>
+<p>As you complete each treatment, ASM will generate the next record in the
+sequence, until there are none left and the medical record is automatically
+completed (unless the treatment has an unspecified end, in which case ASM will
+continue to keep creating treatments until the animal dies).</p>
+<p>You can view all outstanding medical treatments at any one time by visiting
+<em>Medical-&gt;Medical Book</em>, you can also print currently outstanding treatments from
+here.</p>
+<p>Medical records can also have a cost associated with them for reporting. The
+cost is for the whole medical item (ie. If it&#8217;s a course of tablets, then the
+cost should reflect the whole cost of all tablets required for the medical, it
+is not per individual tablet).</p>
+</div>
+<div class="section" id="media">
+<h3>Media<a class="headerlink" href="#media" title="Permalink to this headline">¶</a></h3>
+<img alt="_images/animal_media.png" src="_images/animal_media.png" />
+<p>The media tab contains documents, images, PDF files and links that have been
+stored with the animal.</p>
+<p>The most common use is for images. Click the attach file button to attach a new
+file to the animal. When you attach files, they are stored with the animal and
+you no longer need the original file. Since images are the most common use, the
+file browser will display previews of images, and if you click an image in the
+media list, it will be viewed full screen.</p>
+<p>The web publisher will use the notes attached to the default image as the
+animal&#8217;s description when building a site or sending data to PetFinder or other
+third parties.</p>
+<p>If the content is a PDF, you can click it to have your browser view it (if it
+has an appropriate plugin). If the content is an HTML document, then clicking
+it will open it with ASM&#8217;s built in word processor for editing and printing.</p>
+<p>You can also attach document and video links (for example, to Google Docs or
+YouTube videos). Video links and images can have a default set for publishing
+purposes. If you have the “publish all images” turned on in your publishing
+options and an animal has multiple images, you can individually choose which
+ones will be published with the tick/cross icon next to the image icon.</p>
+<p>Ticking the “Not for adoption” box on the details tab will ensure that the
+animal is not included in website publishing.</p>
+<p>Notice that when an animal has media, the tab displays a graphic, indicating
+there is data under this tab.</p>
+</div>
+<div class="section" id="diary">
+<h3>Diary<a class="headerlink" href="#diary" title="Permalink to this headline">¶</a></h3>
+<img alt="_images/animal_diary.png" src="_images/animal_diary.png" />
+<p>The diary tab shows a list of all diary notes relating to this particular
+animal. From here you can create new diary notes, as well as modify existing
+ones.</p>
+</div>
+<div class="section" id="transport">
+<h3>Transport<a class="headerlink" href="#transport" title="Permalink to this headline">¶</a></h3>
+<img alt="_images/animal_transport.png" src="_images/animal_transport.png" />
+<p>The transport tab shows a history of where the current animal has been
+transported to (particularly useful for rescues who have volunteer drivers
+taking animals to vets from foster homes). Transport can be scheduled and
+reports exist to find new transports without a driver, etc.</p>
+</div>
+<div class="section" id="movements">
+<h3>Movements<a class="headerlink" href="#movements" title="Permalink to this headline">¶</a></h3>
+<img alt="_images/animal_movement.png" src="_images/animal_movement.png" />
+<p>The movement tab shows a summary of all movements that the animal has
+undergone. An animal can have an unlimited amount of movements and the movement
+tab has its own special toolbar. From here, you can create new movements and
+jump straight to the owner records for existing movements.</p>
+</div>
+<div class="section" id="log">
+<h3>Log<a class="headerlink" href="#log" title="Permalink to this headline">¶</a></h3>
+<img alt="_images/animal_log.png" src="_images/animal_log.png" />
+<p>The log tab is used for logging additional useful information. You can create
+as many log types as you want under <em>Settings-&gt;Lookup Data-&gt;Log Types</em>. You can
+then create a log entry with a given type for a date and with a comment. This
+is useful for keeping track of animal weights, bite reports, owner emails,
+complaints and anything else you can think of.</p>
+</div>
+</div>
+<div class="section" id="moving-and-reserving-animals">
+<h2>Moving and Reserving Animals<a class="headerlink" href="#moving-and-reserving-animals" title="Permalink to this headline">¶</a></h2>
+<p>A large part of the administrative duties you will need to perform with Animal
+Shelter Manager revolve around the movement and reservation of animals.</p>
+<p>To start with, it is best to explain how the movement system works; each
+movement record represents a leaving and returning transaction. You can
+therefore only have one (or no) active movement record at a time. ie. No more
+than one unreturned movement. This is because the animal cannot leave the
+shelter in two different ways without being returned first.</p>
+<p>A special exception to this is reservations - since they are not actually a
+movement (the animal hasn&#8217;t gone anywhere), you can have one or more
+reservations as well as an open movement. You should turn the reservation into
+an adoption movement when the animal is adopted by the person with the reserve
+and cancel any other outstanding reservations. If it detects multiple
+reservations, ASM will prompt and cancel the other reservations for you when
+you turn one into an adoption.</p>
+<p>Note: ASM calls reservations what some shelters call &#8220;adoption applications&#8221;.
+You can have as many open applications on an animal as you like with an
+appropriate status, but only one will ever become the animal&#8217;s adoption.</p>
+<p>Any method by which an animal leaves your shelter requires a movement record.
+The only exception is death, which is handled through the animal death tab.</p>
+<img alt="_images/move_menu.png" src="_images/move_menu.png" />
+<p>To make this process easier, you can use the Move menu to quickly create
+movements for animals. These actions will automatically validate the animal and
+person to make sure the movement is appropriate, and if the animal is already
+fostered it will be returned first, etc.</p>
+<div class="section" id="retailer-movements">
+<h3>Retailer Movements<a class="headerlink" href="#retailer-movements" title="Permalink to this headline">¶</a></h3>
+<p>ASM has a special kind of movement called a “retailer” movement. This movement
+should be used if your shelter sells animals through retailers (pet shops,
+etc.).</p>
+<p>To use this, you need to create at least one person on the system with the
+“Retailer” flag set. When an animal goes to a retailer, you create a retailer
+movement, moving the animal to the retailer (you can use <em>Move-&gt;Out-&gt;Move an
+animal to a retailer</em>).</p>
+<p>Animals at retailers are still classed as on the shelter for reporting
+purposes, however you may then use the additional retailer reports to generate
+information about retailers (inventories, volumes moved, average time, etc)</p>
+<p>When an owner adopts the animal and the paperwork is received by the shelter,
+you should return the animal from the retailer movement, create the real owner
+record and adopt the animal to it. If you use <em>Move-&gt;Out-&gt;Adopt an animal</em> and
+the animal is at a retailer, ASM will take care of this for you.</p>
+<p>Movement records also hold a “from retailer” field, which allows you to
+identify a successful adoption to an owner through a particular retailer. As
+long as you use the Adopt an animal process, ASM will set this for you.</p>
+<p>If you do not want to use retailer functionality, you can turn off the retailer
+feature under the <em>Settings-&gt;Options</em> screen.</p>
+</div>
+<div class="section" id="trial-adoptions">
+<h3>Trial Adoptions<a class="headerlink" href="#trial-adoptions" title="Permalink to this headline">¶</a></h3>
+<p>If you have enabled the option under <em>Settings-&gt;Options-&gt;Movement</em> for “Our
+shelter does trial adoptions”, then when you adopt an animal, either from the
+movement screens or <em>Move-&gt;Out-&gt;Adopt an animal</em> then a checkbox will appear
+allowing you to flag that the adoption is a trial and when the trial ends.</p>
+<img alt="_images/move_trial.png" src="_images/move_trial.png" />
+<p>Animals who are on a trial adoption will appear under <em>Move-&gt;Books-&gt;Trial
+adoption book</em></p>
+<img alt="_images/move_trial_book.png" src="_images/move_trial_book.png" />
+<p>When the trial ends, an alert will be shown on the home screen, which you can
+use as a reminder to contact the owner and either get the animal returned or
+make the adoption permanent. There are reports you can also install from the
+repository to view active or expired trial adoptions.
+You make an adoption permanent by simply unticking the trial box in the
+movement record.</p>
+</div>
+</div>
+<div class="section" id="documents">
+<h2>Documents<a class="headerlink" href="#documents" title="Permalink to this headline">¶</a></h2>
+<p>Animal Shelter Manager has extensive document abilities for creating forms and
+letters. The system also includes its own web-based word processor for handling
+this.</p>
+<p>To create a document for use with the system, you can manage templates under
+<em>Settings-&gt;Document Templates</em>. You embed keys in your document that will be
+substituted with real data when a document is generated. For a complete list of
+document keys, see the wordkeys appendix at the end of this manual.</p>
+<p>Keys follow the format &lt;&lt;[Keyname]&gt;&gt;. For example, putting the tag
+&lt;&lt;AnimalName&gt;&gt; in your document will cause it to be substituted for the
+animal&#8217;s name.</p>
+<img alt="_images/document_menu.png" src="_images/document_menu.png" />
+<p>A number of places in the system have toolbars with generate document buttons,
+you can find these:</p>
+<ul class="simple">
+<li>On the animal details screen (creates documents with animal, person and
+movement information, useful for adoption paperwork)</li>
+<li>On the person screen(creates documents with person information)</li>
+<li>On the donations tab (creates documents with person, donation and animal
+information, useful for invoice and receipt templates)</li>
+</ul>
+<p>However you choose to create the document, the process is the same. You select
+your document template from the dropdown list.</p>
+<img alt="_images/html_wp.png" src="_images/html_wp.png" />
+<p>Once you have selected the template, the document will be generated and opened
+in the word processor, ready for editing and printing. If you hit the save
+button in the word processor, the document wi ll be saved to the appropriate
+media tab of the animal/person you generated the document for.</p>
+<p>You can also use the PDF button on the toolbar to generate and open a PDF of
+the document. This is useful as PDFs will be consistent across different
+machines running different operating systems and with different fonts
+installed.</p>
+<img alt="_images/html_wp_to_pdf.png" src="_images/html_wp_to_pdf.png" />
+<p>You can embed directives in your document to give some hints to the PDF engine.
+These should take the form of HTML comments, embedded in &lt;!&#8211; and &#8211;&gt;, and can
+be inserted by going to Tools-&gt;Source Code in the document editor:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;!-- pdf papersize a4 --&gt;
+</pre></div>
+</div>
+<p>To set the papersize to a4. Other options are a3, a5 and letter:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;!-- pdf orientation landscape --&gt;
+</pre></div>
+</div>
+<p>To set the orientation to landscape. Portrait is the default but can be
+explicitly set too.</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="people.html" class="btn btn-neutral float-right" title="People"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="search.html" class="btn btn-neutral" title="Search"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Sheltermanager, Ltd.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'36',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
