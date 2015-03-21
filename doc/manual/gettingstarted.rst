@@ -78,7 +78,7 @@ shortcuts can be used:
 * M – Today + 1 month
 * W – Today + 1 week
 * D – Today + 1 day
-* SHIFT + (YMWD) – Today less 1 year/month/week/day
+* :kbd:`SHIFT + (YMWD)` – Today less 1 year/month/week/day
 * CTRL+Cursor Keys move the date selector around (up/down is +/- one week)
 * CTRL+PgUp/PgDn go forwards and backwards 1 month.
 
@@ -106,23 +106,23 @@ perform the initial configuration of ASM for your shelter. The steps are as
 follows: 
 
 1. If you want to use your own animal classifications, you can use the
-   Settings->Lookup Data->Animal Types to alter the standard ASM ones - ASM
-   assumes your shelter deals with dogs and cats and wants to differentiate
-   between stray and abandoned animals. After doing that, select your new
-   defaults in the correct place on the defaults tab of the Settings->Options
-   screen.
+   :menuselection:`Settings --> Lookup Data --> Animal Types` to alter the
+   standard ASM ones - ASM assumes your shelter deals with dogs and cats and
+   wants to differentiate between stray and abandoned animals. After doing
+   that, select your new defaults in the correct place on the defaults tab of
+   the Settings->Options screen.
 
-2. Go to the Settings->Options->Details screen and enter your shelter's
+2. Go to the *Settings->Options->Details* screen and enter your shelter's
    details. You can set all of the systemwide behaviours for ASM and control
    the format of generated animal codes from this screen as well.
 
-3. Go to Settings->Lookup Data->Breeds - Remove any unwanted breeds and species
+3. Go to *Settings->Lookup Data->Breeds* - Remove any unwanted breeds and species
    from the database that your shelter does not deal with.
 
-4. Go to Settings->Reports->Browse sheltermanager.com and install some reports.
+4. Go to *Settings->Reports->Browse sheltermanager.com* and install some reports.
 
 5. Create usernames and passwords for your shelter staff in the
-   Settings->System User Accounts screen. Once you have your own username and
+   *Settings->System User Accounts* screen. Once you have your own username and
    password, delete the default “user” user.
 
 
