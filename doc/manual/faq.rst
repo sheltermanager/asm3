@@ -1,5 +1,5 @@
-Frequently Asked Questions
-==========================
+Appendix: Frequently Asked Questions
+====================================
 
 How do I add new vaccination types, breeds or internal locations?
 -----------------------------------------------------------------

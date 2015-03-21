@@ -5,7 +5,7 @@ Shelter View
 ------------
 
 The shelter view screen (available from the default quicklinks or under
-*ASM->Shelter View*) gives you a an overview of all the animals currently on your
+*ASM->Shelter View*) gives you an overview of all the animals currently on your
 shelter, broken down by their internal location. You can use this screen to
 jump straight to an animal's record. You can also drag and drop animals to move
 them between locations quickly. If you have assigned units to the animal (for
