@@ -22,6 +22,7 @@ Eg:
      
 Also has some useful helper functions for reading CSVs and parsing values, eg:
 
+    asm.atoi(string)
     asm.cint(string)
     asm.cfloat(string)
     asm.csv_to_list(filename)
@@ -29,6 +30,7 @@ Also has some useful helper functions for reading CSVs and parsing values, eg:
     asm.getdate_yyyymmdd (and variants)
     asm.getsex_mf
     asm.now()
+    asm.nulltostr()
     asm.subtract_days, asm.add_days
     asm.iif (inline if, eg: iif(condition, true, false))
     
@@ -57,6 +59,14 @@ entryreasons = {}
 
 # Dictionary of donation types
 donationtypes = {}
+
+def atoi(s):
+    """ Returns an integer based on only the numeric
+        portion of a string like the C lib atoi function """
+    try:
+        return int("".join(re.findall(r'[\d-]',s)))
+    except:
+        return 0
 
 def csv_to_list(fname):
     """
@@ -88,6 +98,12 @@ def get_currency(s):
         return int(float(s) * 100)
     except:
         return 0
+
+def nulltostr(s):
+    if s is None: 
+        return ""
+    else:
+        return s
 
 def remove_time(s):
     if s is None: return s
