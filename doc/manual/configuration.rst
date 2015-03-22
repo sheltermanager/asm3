@@ -124,7 +124,7 @@ people's work attributed to them on the audit trails.
 
 Whilst editing a user, you can choose absolutely everything that user may do
 within the system by assigning one or more appropriate roles. If you set the
-super user dropdown to yes, the user has full administrative privileges to the
+superuser dropdown to yes, the user has full administrative privileges to the
 system. If you set an email address for the user and configure email, you can
 have the system send diary notes and messages via email to users.
 
