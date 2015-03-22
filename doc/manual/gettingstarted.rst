@@ -73,14 +73,14 @@ interface for dealing with dates (as well as the more usual calendar). Every
 field within the system where a date is expected, the following keyboard
 shortcuts can be used: 
 
-* T - Today
-* Y – Today + 1 year
-* M – Today + 1 month
-* W – Today + 1 week
-* D – Today + 1 day
-* :kbd:`SHIFT + (YMWD)` – Today less 1 year/month/week/day
-* CTRL+Cursor Keys move the date selector around (up/down is +/- one week)
-* CTRL+PgUp/PgDn go forwards and backwards 1 month.
+* :kbd:`T` Today
+* :kbd:`Y` Today + 1 year
+* :kbd:`M` Today + 1 month
+* :kbd:`W` Today + 1 week
+* :kbd:`D` Today + 1 day
+* :kbd:`SHIFT + (YMWD)` Today less 1 year/month/week/day
+* :kbd:`CTRL + Cursor Keys` Move the date selector around (up/down is +/- one week)
+* :kbd:`CTRL + PgUp/PgDn` go forwards and backwards 1 month.
 
 Tables
 ------
@@ -112,17 +112,19 @@ follows:
    that, select your new defaults in the correct place on the defaults tab of
    the Settings->Options screen.
 
-2. Go to the *Settings->Options->Details* screen and enter your shelter's
-   details. You can set all of the systemwide behaviours for ASM and control
-   the format of generated animal codes from this screen as well.
+2. Go to the :menuselection:`Settings --> Options --> Details` screen and enter
+   your shelter's details. You can set all of the systemwide behaviours for ASM
+   and control the format of generated animal codes from this screen as well.
 
-3. Go to *Settings->Lookup Data->Breeds* - Remove any unwanted breeds and species
-   from the database that your shelter does not deal with.
+3. Go to :menuselection:`Settings --> Lookup Data --> Breeds` - Remove any
+   unwanted breeds and species from the database that your shelter does not
+   deal with.
 
-4. Go to *Settings->Reports->Browse sheltermanager.com* and install some reports.
+4. Go to :menuselection:`Settings --> Reports --> Browse sheltermanager.com` and
+   install some reports.
 
 5. Create usernames and passwords for your shelter staff in the
-   *Settings->System User Accounts* screen. Once you have your own username and
-   password, delete the default “user” user.
+   :menuselection:`Settings --> System User Accounts` screen. Once you have
+   your own username and password, delete the default “user” user.
 
 
