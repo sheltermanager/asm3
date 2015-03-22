@@ -12372,7 +12372,7 @@ msgstr "{plural0} trial adoption has ended"
 
 #: main.js
 msgid "{plural0} unaltered animal has been adopted in the last month"
-msgstr "{plural0} unaltered animal has been adopted in the last month"
+msgstr "{plural0} non-neutered/spayed animal has been adopted in the last month"
 
 #: main.js
 msgid "{plural0} undispatched animal control call"
@@ -12512,7 +12512,7 @@ msgstr "{plural1} trial adoptions have ended"
 
 #: main.js
 msgid "{plural1} unaltered animals have been adopted in the last month"
-msgstr "{plural1} unaltered animals have been adopted in the last month"
+msgstr "{plural1} non-neutered/spayed animals have been adopted in the last month"
 
 #: main.js
 msgid "{plural1} undispatched animal control calls"
@@ -12652,7 +12652,7 @@ msgstr "{plural2} trial adoptions have ended"
 
 #: main.js
 msgid "{plural2} unaltered animals have been adopted in the last month"
-msgstr "{plural2} unaltered animals have been adopted in the last month"
+msgstr "{plural2} non-neutered/spayed animals have been adopted in the last month"
 
 #: main.js
 msgid "{plural2} undispatched animal control calls"
@@ -12792,7 +12792,7 @@ msgstr "{plural3} trial adoptions have ended"
 
 #: main.js
 msgid "{plural3} unaltered animals have been adopted in the last month"
-msgstr "{plural3} unaltered animals have been adopted in the last month"
+msgstr "{plural3} non-neutered/spayed animals have been adopted in the last month"
 
 #: main.js
 msgid "{plural3} undispatched animal control calls"
