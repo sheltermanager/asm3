@@ -35,8 +35,7 @@ information the report will take.
 .. image:: images/onlineform_fields.png
 
 The dialog will autocomplete the known fields that ASM can look for when
-importing records (documented in an appendix at the back of this manual as
-"Online form import fields"). 
+importing records. For details, see :ref:`onlineformfields`
 
 To create any record, you will need at least a lastname or surname field. Lost
 animal records need an arealost and description, found animal records need an
@@ -66,7 +65,7 @@ form to existing records.
   person. If not match is found, a new person record is created. If a
   “reserveanimalname” field was found on the form as well, a reservation to the
   matching animal is created to the person (these can be all viewed under
-  *Move->Reservation Book*).
+  :menuselection:`Move --> Reservation Book`).
 
 * Lost Animal: Runs through the same steps as Person so needs enough
   information to create/find a person as well. “description” and “arealost”

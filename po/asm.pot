@@ -11398,7 +11398,7 @@ msgstr ""
 msgid "Weekly"
 msgstr ""
 
-#: dbupdate.py
+#: animal.js animal_new.js dbupdate.py
 msgid "Weight"
 msgstr ""
 
@@ -11437,6 +11437,12 @@ msgstr ""
 #: options.js
 msgid ""
 "When I change the location of an animal, make a note of it in the log with "
+"this type"
+msgstr ""
+
+#: options.js
+msgid ""
+"When I change the weight of an animal, make a note of it in the log with "
 "this type"
 msgstr ""
 
@@ -11769,6 +11775,10 @@ msgstr ""
 
 #: mailmerge.js
 msgid "inches"
+msgstr ""
+
+#: animal.js animal_new.js
+msgid "kg"
 msgstr ""
 
 #: main.js

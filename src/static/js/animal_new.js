@@ -142,6 +142,14 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
+                '<tr id="weightrow">',
+                '<td><label for="weight">' + _("Weight") + '</label></td>',
+                '<td><span style="white-space: nowrap;">',
+                '<input id="weight" data="weight" class="asm-textbox asm-numberbox" />',
+                _("kg"),
+                '</span>',
+                '</td>',
+                '</tr>',
                 '<tr id="neuteredrow">',
                 '<td>',
                 '<label for="neutereddate">' + _("Altered") + '</label>',
@@ -376,18 +384,19 @@ $(function() {
             }
 
             // Disable rows based on config options
-            if (!config.bool("AddAnimalsShowSize")) { $("#sizerow").hide(); }
+            if (!config.bool("AddAnimalsShowAcceptance")) { $("#litterrow").hide(); }
             if (!config.bool("AddAnimalsShowBreed")) { $("#breedrow").hide(); }
             if (!config.bool("AddAnimalsShowColour")) { $("#colourrow").hide(); }
+            if (!config.bool("AddAnimalsShowDateBroughtIn")) { $("#datebroughtinrow").hide(); }
+            if (!config.bool("AddAnimalsShowEntryCategory")) { $("#entryreasonrow").hide(); }
             if (!config.bool("AddAnimalsShowFosterer")) { $("#fostererrow").hide(); }
             if (!config.bool("AddAnimalsShowLocation")) { $("#locationrow").hide(); }
             if (!config.bool("AddAnimalsShowLocationUnit")) { $("#locationunitrow").hide(); }
-            if (!config.bool("AddAnimalsShowAcceptance")) { $("#litterrow").hide(); }
-            if (!config.bool("AddAnimalsShowDateBroughtIn")) { $("#datebroughtinrow").hide(); }
-            if (!config.bool("AddAnimalsShowTimeBroughtIn")) { $("#timebroughtinrow").hide(); }
-            if (!config.bool("AddAnimalsShowEntryCategory")) { $("#entryreasonrow").hide(); }
-            if (!config.bool("AddAnimalsShowNeutered")) { $("#neuteredrow").hide(); }
             if (!config.bool("AddAnimalsShowMicrochip")) { $("#microchiprow").hide(); }
+            if (!config.bool("AddAnimalsShowNeutered")) { $("#neuteredrow").hide(); }
+            if (!config.bool("AddAnimalsShowSize")) { $("#sizerow").hide(); }
+            if (!config.bool("AddAnimalsShowTimeBroughtIn")) { $("#timebroughtinrow").hide(); }
+            if (!config.bool("AddAnimalsShowWeight")) { $("#weightrow").hide(); }
             if (config.bool("UseSingleBreedField")) {
                 $("#crossbreedcol").hide();
                 $("#secondbreedcol").hide();

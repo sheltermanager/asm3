@@ -1708,6 +1708,7 @@ def insert_animal_from_form(dbo, post, username):
         ( "PTSReason", db.ds("")),
         ( "IsNotAvailableForAdoption", db.di(notforadoption)),
         ( "Size", s("size")),
+        ( "Weight", post.db_floating("weight")),
         ( "Archived", db.di(0)),
         ( "ActiveMovementID", db.di(0)),
         ( "HasActiveReserve", db.di(0)),
@@ -1732,6 +1733,11 @@ def insert_animal_from_form(dbo, post, username):
         }
         movement.insert_movement_from_form(dbo, username, utils.PostedData(move_dict, l))
 
+    # If a weight was specified and we're logging, mark it in the log
+    if configuration.weight_change_log(dbo) and kf("weight") > 0:
+        log.add_log(dbo, username, log.ANIMAL, nextid, configuration.weight_change_log_type(dbo),
+            str(kf("weight")))
+
     return (nextid, get_code(dbo, nextid))
 
 def update_animal_from_form(dbo, post, username):
@@ -1754,6 +1760,8 @@ def update_animal_from_form(dbo, post, username):
         return post.date(field)
     def kdt(datefield, timefield):
         return post.datetime(datefield, timefield)
+    def kf(field):
+        return post.floating(field)
     def ki(field):
         return post.integer(field)
     def ks(field):
@@ -1793,6 +1801,12 @@ def update_animal_from_form(dbo, post, username):
         log.add_log(dbo, username, log.ANIMAL, ki("id"), configuration.location_change_log_type(dbo), 
             _("{0} {1}: Moved from {2} to {3}", l).format(ks("sheltercode"), ks("animalname"), oldlocation, newlocation))
 
+    # If the option is on and the weight has changed, log it
+    oldweight = db.query_float(dbo, "SELECT Weight FROM animal WHERE ID=%d" % ki("id"))
+    if configuration.weight_change_log(dbo) and kf("weight") != oldweight:
+        log.add_log(dbo, username, log.ANIMAL, ki("id"), configuration.weight_change_log_type(dbo),
+            str(kf("weight")))
+
     preaudit = db.query(dbo, "SELECT * FROM animal WHERE ID = %d" % ki("id"))
     db.execute(dbo, db.make_update_user_sql(dbo, "animal", username, "ID=%d" % ki("id"), (
         ( "NonShelterAnimal", c("nonshelter")),
@@ -1812,6 +1826,7 @@ def update_animal_from_form(dbo, post, username):
         ( "BaseColourID", s("basecolour")),
         ( "CoatType", s("coattype")),
         ( "Size", s("size")),
+        ( "Weight", post.db_floating("weight")),
         ( "SpeciesID", s("species")),
         ( "BreedID", s("breed1")),
         ( "Breed2ID", s("breed2")),

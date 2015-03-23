@@ -1,3 +1,5 @@
+.. _csvimportfields:
+
 Appendix: CSV file import fields
 ================================
 

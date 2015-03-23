@@ -1,3 +1,5 @@
+.. _onlineformfields:
+
 Appendix: Online Form import fields
 ===================================
 

@@ -77,13 +77,19 @@ DEFAULTS = {
     "AllowDuplicateMicrochip": "No",
     "AllowNonANMicrochip": "No",
     "AllowODTDocumentTemplates": "No",
+    "AddAnimalsShowAcceptance": "No",
     "AddAnimalsShowBreed": "Yes",
+    "AddAnimalsShowColour": "No",
     "AddAnimalsShowDateBroughtIn": "Yes",
     "AddAnimalsShowEntryCategory": "Yes",
     "AddAnimalsShowFosterer": "Yes",
     "AddAnimalsShowLocation": "Yes",
     "AddAnimalsShowLocationUnit": "Yes",
+    "AddAnimalsShowMicrochip": "No",
+    "AddAnimalsShowNeutered": "No",
+    "AddAnimalsShowSize": "No",
     "AddAnimalsShowTimeBroughtIn": "No",
+    "AddAnimalsShowWeight": "No",
     "AnimalFiguresSplitEntryReason": "No",
     "AnnualFiguresShowBabies": "Yes",
     "AnnualFiguresShowBabiesType": "Yes",
@@ -240,7 +246,9 @@ DEFAULTS = {
     "WarnNoHomeCheck": "Yes",
     "WarnBannedOwner": "Yes",
     "WarnOOPostcode": "Yes",
-    "WarnSimilarAnimalName": "Yes"
+    "WarnSimilarAnimalName": "Yes",
+    "WeightChangeLog": "Yes",
+    "WeightChangeLogType": "4"
 }
 
 def cstring(dbo, key, default = ""):
@@ -922,4 +930,11 @@ def waiting_list_urgency_update_period(dbo):
 
 def warn_no_homecheck(dbo):
     return cboolean(dbo, "WarnNoHomeCheck", DEFAULTS["WarnNoHomeCheck"] == "Yes")
+
+def weight_change_log(dbo):
+    return cboolean(dbo, "WeightChangeLog", DEFAULTS["WeightChangeLog"] == "Yes")
+
+def weight_change_log_type(dbo):
+    return cint(dbo, "WeightChangeLogType", DEFAULTS["WeightChangeLogType"])
+
 

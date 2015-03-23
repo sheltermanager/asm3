@@ -5,12 +5,12 @@ Shelter View
 ------------
 
 The shelter view screen (available from the default quicklinks or under
-*ASM->Shelter View*) gives you an overview of all the animals currently on your
-shelter, broken down by their internal location. You can use this screen to
-jump straight to an animal's record. You can also drag and drop animals to move
-them between locations quickly. If you have assigned units to the animal (for
-cage/pen numbers, etc) they will appear next to their name. A dropdown in the
-upper right corner allows different groupings to be applied.
+:menuselection:`ASM --> Shelter View`) gives you an overview of all the animals
+currently on your shelter, broken down by their internal location. You can use
+this screen to jump straight to an animal's record. You can also drag and drop
+animals to move them between locations quickly. If you have assigned units to
+the animal (for cage/pen numbers, etc) they will appear next to their name. A
+dropdown in the upper right corner allows different groupings to be applied.
 
 .. image:: images/shelterview.png
 
@@ -36,7 +36,7 @@ animal's name or code, it will be at the top of the list.
 By clicking the Advanced button, you can go to a more sophisticated search
 screen that allows you to search by animal location and state, age, etc.  You
 can change which find animal screen is shown by default under the
-*Settings->Options* menu.
+:menuselection:`Settings --> Options` menu.
 
 .. image:: images/findanimal_advanced.png
 
@@ -78,9 +78,15 @@ over them.
 Edit Animal
 -----------
 
-The animal screen is the one you will certainly use the most often within the system. Across the top, the animal screen has a banner with important information about the animal.
+The animal screen is the one you will certainly use the most often within the
+system. Across the top, the animal screen has a banner with important
+information about the animal.
 
-Below the banner, the animal screen is split into a number of different tabbed sections. Clicking these tabs makes that area of the animal active. Because not all of the information is mandatory or applicable to every animal, some of the tabs will show a graphic to highlight that they have information (the graphic varies according to what type of data is available on that particular tab). 
+Below the banner, the animal screen is split into a number of different tabbed
+sections. Clicking these tabs makes that area of the animal active. Because not
+all of the information is mandatory or applicable to every animal, some of the
+tabs will show a graphic to highlight that they have information (the graphic
+varies according to what type of data is available on that particular tab). 
 
 Animal Details
 ^^^^^^^^^^^^^^
@@ -108,7 +114,8 @@ If the “Use Single Breed Field” option is not enabled in the system options
 you can set. This allows you to choose two breeds for mixed/crossbreed animals.
 The details page is subdivided into a number of accordion panels to categorise
 the details. If you have created additional fields for animals under
-*Settings->Additional Fields* then the “Additional” panel will appear.
+:menuselection:`Settings --> Additional Fields` then the “Additional” panel
+will appear.
 
 .. image:: images/unsaved.png
 
@@ -149,7 +156,11 @@ Health and Identification
 
 .. image:: images/animal_health.png
 
-The health and identification tab is used for entering general information about the animal's health and veterinary care. The special needs box can be used to indicate that the animal has an ongoing or permanent health problem. Ticking this box will flag this when publishing to the internet and to services like PetFinder. 
+The health and identification tab is used for entering general information
+about the animal's health and veterinary care. The special needs box can be
+used to indicate that the animal has an ongoing or permanent health problem.
+Ticking this box will flag this when publishing to the internet and to services
+like PetFinder. 
 
 Death
 ^^^^^
@@ -175,8 +186,9 @@ Diet
 .. image:: images/animal_diet.png
 
 The diet tab is used for capturing information about the animal's diet. You can
-set up as many different diet types (under *Settings->Lookup Data->Diets*) as you
-like, and then log them here when the animal's diet changes. 
+set up as many different diet types (under :menuselection:`Settings --> Lookup
+Data --> Diets`) as you like, and then log them here when the animal's diet
+changes. 
 
 Costs
 ^^^^^
@@ -188,13 +200,13 @@ whilst it is in your care. You can assign a daily boarding cost, and ASM will
 automatically keep track of how many days the animal has been on your shelter
 and how much it has cost.
 
-In addition, you can add cost types through the *Settings->Lookup Data->Cost
-Types* menu and allocate costs for anything else your shelter has spent on the
-animal (eg: Microchipping). Vaccinations and medical treatments have a cost
-field that you can set for each treatment and they will be automatically
-totalled up at the bottom of the costs screen along with a current running cost
-for all time and a balance, calculated from total costs less any donations
-allocated to the animal.
+In addition, you can add cost types through the :menuselection:`Settings -->
+Lookup Data --> Cost Types` menu and allocate costs for anything else your
+shelter has spent on the animal (eg: Microchipping). Vaccinations and medical
+treatments have a cost field that you can set for each treatment and they will
+be automatically totalled up at the bottom of the costs screen along with a
+current running cost for all time and a balance, calculated from total costs
+less any donations allocated to the animal.
 
 By default, when the animal is adopted, ASM will automatically convert the
 current boarding cost/time into a separate cost record so it can be preserved. 
@@ -228,7 +240,7 @@ requires. An animal can have an unlimited number of test records.
 Items in the test list are saved immediately to the database when you hit the
 Save button in the popup screen. You will be reminded of tests falling due via
 the Test Diary report, main screen alerts, or by viewing them under
-*Medical->Test Book*
+:menuselection:`Medical --> Test Book`
 
 Tests can also have a cost attached for use with reporting.
 
@@ -251,8 +263,8 @@ completed (unless the treatment has an unspecified end, in which case ASM will
 continue to keep creating treatments until the animal dies).
 
 You can view all outstanding medical treatments at any one time by visiting
-*Medical->Medical Book*, you can also print currently outstanding treatments from
-here.
+:menuselection:`Medical --> Medical Book`, you can also print currently
+outstanding treatments from here.
 
 Medical records can also have a cost associated with them for reporting. The
 cost is for the whole medical item (ie. If it's a course of tablets, then the
@@ -376,8 +388,8 @@ etc.).
 
 To use this, you need to create at least one person on the system with the
 “Retailer” flag set. When an animal goes to a retailer, you create a retailer
-movement, moving the animal to the retailer (you can use *Move->Out->Move an
-animal to a retailer*).
+movement, moving the animal to the retailer (you can use :menuselection:`Move
+--> Out --> Move an animal to a retailer`).
 
 Animals at retailers are still classed as on the shelter for reporting
 purposes, however you may then use the additional retailer reports to generate
@@ -385,15 +397,16 @@ information about retailers (inventories, volumes moved, average time, etc)
 
 When an owner adopts the animal and the paperwork is received by the shelter,
 you should return the animal from the retailer movement, create the real owner
-record and adopt the animal to it. If you use *Move->Out->Adopt an animal* and
-the animal is at a retailer, ASM will take care of this for you.
+record and adopt the animal to it. If you use :menuselection:`Move --> Out -->
+Adopt an animal` and the animal is at a retailer, ASM will take care of this
+for you.
 
 Movement records also hold a “from retailer” field, which allows you to
 identify a successful adoption to an owner through a particular retailer. As
 long as you use the Adopt an animal process, ASM will set this for you.
 
 If you do not want to use retailer functionality, you can turn off the retailer
-feature under the *Settings->Options* screen. 
+feature under the :menuselection:`Settings->Options` screen. 
 
 Trial Adoptions
 ^^^^^^^^^^^^^^^
@@ -405,8 +418,8 @@ allowing you to flag that the adoption is a trial and when the trial ends.
 
 .. image:: images/move_trial.png
 
-Animals who are on a trial adoption will appear under *Move->Books->Trial
-adoption book*
+Animals who are on a trial adoption will appear under
+:menuselection:`Move --> Books --> Trial adoption book`
 
 .. image:: images/move_trial_book.png
 
@@ -425,9 +438,9 @@ letters. The system also includes its own web-based word processor for handling
 this.
 
 To create a document for use with the system, you can manage templates under
-*Settings->Document Templates*. You embed keys in your document that will be
-substituted with real data when a document is generated. For a complete list of
-document keys, see the wordkeys appendix at the end of this manual.
+:menuselection:`Settings --> Document Templates`. You embed keys in your document
+that will be substituted with real data when a document is generated. For a
+complete list of document keys, see :ref:`wordkeys`
 
 Keys follow the format <<[Keyname]>>. For example, putting the tag
 <<AnimalName>> in your document will cause it to be substituted for the

@@ -124,9 +124,12 @@ people's work attributed to them on the audit trails.
 
 Whilst editing a user, you can choose absolutely everything that user may do
 within the system by assigning one or more appropriate roles. If you set the
-superuser dropdown to yes, the user has full administrative privileges to the
-system. If you set an email address for the user and configure email, you can
-have the system send diary notes and messages via email to users.
+user type to "superuser", the user has full administrative privileges to the
+system. If you choose "normal user", you will need to set permissions for
+the user by assigning roles.
+
+If you set an email address for the user and configure email, you can have the
+system send diary notes and messages via email to users.
 
 If you set a person record for the user, they will be forbidden from opening
 that person record. The idea is to prevent them from viewing their own person
@@ -171,8 +174,7 @@ spreadsheet products can all export individual sheets in CSV format.
 .. image:: images/import_csv.png
 
 The CSV file should have a header row that contains column names that ASM
-recognises (see the appendix at the back of this manual for a complete list of
-fields). 
+recognises (see :ref:`csvimportfields`)
 
 .. image:: images/sample_csv.png
 
@@ -453,6 +455,11 @@ used to select starting values when finding and creating animals.
   internal location with the new location so you can track the history of where
   the animal has moved within your shelter.
 
+* When I change the weight of an animal, make a note of it in the log: If
+  this option is on, a log record is created every time you change an animal's
+  weight so you can track the history of an animal's wieght with reports and
+  graphs.
+
 Diary 
 ^^^^^
 
@@ -504,7 +511,10 @@ documents from templates.
 Insurance
 ^^^^^^^^^
 
-If you have an agreement with a pet insurer, Animal Shelter Manager can accept a range of numbers under this tab and allow you to assign them to adoptions as they are made. 
+If you have an agreement with a pet insurer, Animal Shelter Manager can accept
+a range of numbers under this tab and allow you to assign them to adoptions as
+they are made. 
+
 Simply fill in the start/end/next values and tick the box to ensure you are
 using automatic numbers. When you next adopt an animal, a button will appear at
 the side of the insurance number on the movement screen, allowing you to assign

@@ -29,14 +29,8 @@ Menus and Shortcuts
 
 .. image:: images/menu.png
 
-You open screens in ASM by navigating and clicking on menu items. There are
-three types of menu in the bar. 
-
-* **Top-Level menus:** These are the words you see across the very top of the
-  menu, such as ASM and Move. These menus drop down to reveal other options. 
-
-* **Menu Commands:** These are the menu commands that actually do something.
-  Eg: Find Animal is a menu command - it calls up the Find Animal screen.
+You open screens in ASM by navigating and clicking on menu items. Menu items
+are laid out across the top of the screen.
 
 Shortcut Keys
 -------------
@@ -48,20 +42,21 @@ with the mouse.
 
 If a menu command has a shortcut key, it will be displayed at the side of it in
 the menu. For example, the Add Animal option on the menu can be accessed by
-pressing ALT+SHIFT+N - this means you hold down the shift and alt keys
+pressing :kbd:`ALT+SHIFT+N` - this means you hold down the shift and alt keys
 together, and tap N. It is worth learning these as you will find them much
 quicker to use when you are proficient with the system. 
 
 There are some additional shortcut keys you can use (some depend on which
 browser you have):
 
-* CTRL+H will return to the home screen
-* CTRL+S will save the current screen (animal, person details, etc).
-* CTRL+R or F5 will reload the current screen.
-* CTRL+W will close the current browser tab
-* CTRL+A will select all items on screens that display a table with multiple
+* :kbd:`CTRL+H` will return to the home screen
+* :kbd:`CTRL+S` will save the current screen (animal, person details, etc).
+* :kbd:`CTRL+R` or :kbd:`F5` will reload the current screen.
+* :kbd:`CTRL+W` will close the current browser tab
+* :kbd:`CTRL+A` will select all items on screens that display a table with multiple
   items (eg: Foster book, Vaccination Book, etc).
-* CTRL+Left mouse click when clicking a link will open that link in a new tab.
+* :kbd:`CTRL+LMB` (left mouse button) when clicking a link will open that link
+  in a new tab.
 
 Dates
 -----
@@ -73,14 +68,14 @@ interface for dealing with dates (as well as the more usual calendar). Every
 field within the system where a date is expected, the following keyboard
 shortcuts can be used: 
 
-* T - Today
-* Y – Today + 1 year
-* M – Today + 1 month
-* W – Today + 1 week
-* D – Today + 1 day
-* SHIFT + (YMWD) – Today less 1 year/month/week/day
-* CTRL+Cursor Keys move the date selector around (up/down is +/- one week)
-* CTRL+PgUp/PgDn go forwards and backwards 1 month.
+* :kbd:`T` Today
+* :kbd:`Y` Today + 1 year
+* :kbd:`M` Today + 1 month
+* :kbd:`W` Today + 1 week
+* :kbd:`D` Today + 1 day
+* :kbd:`SHIFT + (YMWD)` Today less 1 year/month/week/day
+* :kbd:`CTRL + Cursor Keys` Move the date selector around (up/down is +/- one week)
+* :kbd:`CTRL + PgUp/PgDn` go forwards and backwards 1 month.
 
 Tables
 ------
@@ -106,23 +101,25 @@ perform the initial configuration of ASM for your shelter. The steps are as
 follows: 
 
 1. If you want to use your own animal classifications, you can use the
-   Settings->Lookup Data->Animal Types to alter the standard ASM ones - ASM
-   assumes your shelter deals with dogs and cats and wants to differentiate
-   between stray and abandoned animals. After doing that, select your new
-   defaults in the correct place on the defaults tab of the Settings->Options
-   screen.
+   :menuselection:`Settings --> Lookup Data --> Animal Types` to alter the
+   standard ASM ones - ASM assumes your shelter deals with dogs and cats and
+   wants to differentiate between stray and abandoned animals. After doing
+   that, select your new defaults in the correct place on the defaults tab of
+   the Settings->Options screen.
 
-2. Go to the Settings->Options->Details screen and enter your shelter's
-   details. You can set all of the systemwide behaviours for ASM and control
-   the format of generated animal codes from this screen as well.
+2. Go to the :menuselection:`Settings --> Options --> Details` screen and enter
+   your shelter's details. You can set all of the systemwide behaviours for ASM
+   and control the format of generated animal codes from this screen as well.
 
-3. Go to Settings->Lookup Data->Breeds - Remove any unwanted breeds and species
-   from the database that your shelter does not deal with.
+3. Go to :menuselection:`Settings --> Lookup Data --> Breeds` - Remove any
+   unwanted breeds and species from the database that your shelter does not
+   deal with.
 
-4. Go to Settings->Reports->Browse sheltermanager.com and install some reports.
+4. Go to :menuselection:`Settings --> Reports --> Browse sheltermanager.com` and
+   install some reports.
 
 5. Create usernames and passwords for your shelter staff in the
-   Settings->System User Accounts screen. Once you have your own username and
-   password, delete the default “user” user.
+   :menuselection:`Settings --> System User Accounts` screen. Once you have
+   your own username and password, delete the default “user” user.
 
 

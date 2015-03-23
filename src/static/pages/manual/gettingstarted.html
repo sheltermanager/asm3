@@ -270,14 +270,8 @@ areas of the system.</p>
 <div class="section" id="menus-and-shortcuts">
 <h2>Menus and Shortcuts<a class="headerlink" href="#menus-and-shortcuts" title="Permalink to this headline">¶</a></h2>
 <img alt="_images/menu.png" src="_images/menu.png" />
-<p>You open screens in ASM by navigating and clicking on menu items. There are
-three types of menu in the bar.</p>
-<ul class="simple">
-<li><strong>Top-Level menus:</strong> These are the words you see across the very top of the
-menu, such as ASM and Move. These menus drop down to reveal other options.</li>
-<li><strong>Menu Commands:</strong> These are the menu commands that actually do something.
-Eg: Find Animal is a menu command - it calls up the Find Animal screen.</li>
-</ul>
+<p>You open screens in ASM by navigating and clicking on menu items. Menu items
+are laid out across the top of the screen.</p>
 </div>
 <div class="section" id="shortcut-keys">
 <h2>Shortcut Keys<a class="headerlink" href="#shortcut-keys" title="Permalink to this headline">¶</a></h2>
@@ -287,19 +281,20 @@ Pressing these keys is the same as navigating the menu and clicking on them
 with the mouse.</p>
 <p>If a menu command has a shortcut key, it will be displayed at the side of it in
 the menu. For example, the Add Animal option on the menu can be accessed by
-pressing ALT+SHIFT+N - this means you hold down the shift and alt keys
+pressing <tt class="kbd docutils literal"><span class="pre">ALT+SHIFT+N</span></tt> - this means you hold down the shift and alt keys
 together, and tap N. It is worth learning these as you will find them much
 quicker to use when you are proficient with the system.</p>
 <p>There are some additional shortcut keys you can use (some depend on which
 browser you have):</p>
 <ul class="simple">
-<li>CTRL+H will return to the home screen</li>
-<li>CTRL+S will save the current screen (animal, person details, etc).</li>
-<li>CTRL+R or F5 will reload the current screen.</li>
-<li>CTRL+W will close the current browser tab</li>
-<li>CTRL+A will select all items on screens that display a table with multiple
+<li><tt class="kbd docutils literal"><span class="pre">CTRL+H</span></tt> will return to the home screen</li>
+<li><tt class="kbd docutils literal"><span class="pre">CTRL+S</span></tt> will save the current screen (animal, person details, etc).</li>
+<li><tt class="kbd docutils literal"><span class="pre">CTRL+R</span></tt> or <tt class="kbd docutils literal"><span class="pre">F5</span></tt> will reload the current screen.</li>
+<li><tt class="kbd docutils literal"><span class="pre">CTRL+W</span></tt> will close the current browser tab</li>
+<li><tt class="kbd docutils literal"><span class="pre">CTRL+A</span></tt> will select all items on screens that display a table with multiple
 items (eg: Foster book, Vaccination Book, etc).</li>
-<li>CTRL+Left mouse click when clicking a link will open that link in a new tab.</li>
+<li><tt class="kbd docutils literal"><span class="pre">CTRL+LMB</span></tt> (left mouse button) when clicking a link will open that link
+in a new tab.</li>
 </ul>
 </div>
 <div class="section" id="dates">
@@ -310,14 +305,14 @@ interface for dealing with dates (as well as the more usual calendar). Every
 field within the system where a date is expected, the following keyboard
 shortcuts can be used:</p>
 <ul class="simple">
-<li>T - Today</li>
-<li>Y – Today + 1 year</li>
-<li>M – Today + 1 month</li>
-<li>W – Today + 1 week</li>
-<li>D – Today + 1 day</li>
-<li>SHIFT + (YMWD) – Today less 1 year/month/week/day</li>
-<li>CTRL+Cursor Keys move the date selector around (up/down is +/- one week)</li>
-<li>CTRL+PgUp/PgDn go forwards and backwards 1 month.</li>
+<li><tt class="kbd docutils literal"><span class="pre">T</span></tt> Today</li>
+<li><tt class="kbd docutils literal"><span class="pre">Y</span></tt> Today + 1 year</li>
+<li><tt class="kbd docutils literal"><span class="pre">M</span></tt> Today + 1 month</li>
+<li><tt class="kbd docutils literal"><span class="pre">W</span></tt> Today + 1 week</li>
+<li><tt class="kbd docutils literal"><span class="pre">D</span></tt> Today + 1 day</li>
+<li><tt class="kbd docutils literal"><span class="pre">SHIFT</span> <span class="pre">+</span> <span class="pre">(YMWD)</span></tt> Today less 1 year/month/week/day</li>
+<li><tt class="kbd docutils literal"><span class="pre">CTRL</span> <span class="pre">+</span> <span class="pre">Cursor</span> <span class="pre">Keys</span></tt> Move the date selector around (up/down is +/- one week)</li>
+<li><tt class="kbd docutils literal"><span class="pre">CTRL</span> <span class="pre">+</span> <span class="pre">PgUp/PgDn</span></tt> go forwards and backwards 1 month.</li>
 </ul>
 </div>
 <div class="section" id="tables">
@@ -340,20 +335,22 @@ perform the initial configuration of ASM for your shelter. The steps are as
 follows:</p>
 <ol class="arabic simple">
 <li>If you want to use your own animal classifications, you can use the
-Settings-&gt;Lookup Data-&gt;Animal Types to alter the standard ASM ones - ASM
-assumes your shelter deals with dogs and cats and wants to differentiate
-between stray and abandoned animals. After doing that, select your new
-defaults in the correct place on the defaults tab of the Settings-&gt;Options
-screen.</li>
-<li>Go to the Settings-&gt;Options-&gt;Details screen and enter your shelter&#8217;s
-details. You can set all of the systemwide behaviours for ASM and control
-the format of generated animal codes from this screen as well.</li>
-<li>Go to Settings-&gt;Lookup Data-&gt;Breeds - Remove any unwanted breeds and species
-from the database that your shelter does not deal with.</li>
-<li>Go to Settings-&gt;Reports-&gt;Browse sheltermanager.com and install some reports.</li>
+<em class="menuselection">Settings ‣ Lookup Data ‣ Animal Types</em> to alter the
+standard ASM ones - ASM assumes your shelter deals with dogs and cats and
+wants to differentiate between stray and abandoned animals. After doing
+that, select your new defaults in the correct place on the defaults tab of
+the Settings-&gt;Options screen.</li>
+<li>Go to the <em class="menuselection">Settings ‣ Options ‣ Details</em> screen and enter
+your shelter&#8217;s details. You can set all of the systemwide behaviours for ASM
+and control the format of generated animal codes from this screen as well.</li>
+<li>Go to <em class="menuselection">Settings ‣ Lookup Data ‣ Breeds</em> - Remove any
+unwanted breeds and species from the database that your shelter does not
+deal with.</li>
+<li>Go to <em class="menuselection">Settings ‣ Reports ‣ Browse sheltermanager.com</em> and
+install some reports.</li>
 <li>Create usernames and passwords for your shelter staff in the
-Settings-&gt;System User Accounts screen. Once you have your own username and
-password, delete the default “user” user.</li>
+<em class="menuselection">Settings ‣ System User Accounts</em> screen. Once you have
+your own username and password, delete the default “user” user.</li>
 </ol>
 </div>
 </div>

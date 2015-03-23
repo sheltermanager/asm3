@@ -29,14 +29,8 @@ Menus and Shortcuts
 
 .. image:: images/menu.png
 
-You open screens in ASM by navigating and clicking on menu items. There are
-three types of menu in the bar. 
-
-* **Top-Level menus:** These are the words you see across the very top of the
-  menu, such as ASM and Move. These menus drop down to reveal other options. 
-
-* **Menu Commands:** These are the menu commands that actually do something.
-  Eg: Find Animal is a menu command - it calls up the Find Animal screen.
+You open screens in ASM by navigating and clicking on menu items. Menu items
+are laid out across the top of the screen.
 
 Shortcut Keys
 -------------
@@ -48,20 +42,21 @@ with the mouse.
 
 If a menu command has a shortcut key, it will be displayed at the side of it in
 the menu. For example, the Add Animal option on the menu can be accessed by
-pressing ALT+SHIFT+N - this means you hold down the shift and alt keys
+pressing :kbd:`ALT+SHIFT+N` - this means you hold down the shift and alt keys
 together, and tap N. It is worth learning these as you will find them much
 quicker to use when you are proficient with the system. 
 
 There are some additional shortcut keys you can use (some depend on which
 browser you have):
 
-* CTRL+H will return to the home screen
-* CTRL+S will save the current screen (animal, person details, etc).
-* CTRL+R or F5 will reload the current screen.
-* CTRL+W will close the current browser tab
-* CTRL+A will select all items on screens that display a table with multiple
+* :kbd:`CTRL+H` will return to the home screen
+* :kbd:`CTRL+S` will save the current screen (animal, person details, etc).
+* :kbd:`CTRL+R` or :kbd:`F5` will reload the current screen.
+* :kbd:`CTRL+W` will close the current browser tab
+* :kbd:`CTRL+A` will select all items on screens that display a table with multiple
   items (eg: Foster book, Vaccination Book, etc).
-* CTRL+Left mouse click when clicking a link will open that link in a new tab.
+* :kbd:`CTRL+LMB` (left mouse button) when clicking a link will open that link
+  in a new tab.
 
 Dates
 -----

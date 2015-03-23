@@ -351,9 +351,11 @@ system for the next user) - simply to make sure that people do not get other
 people&#8217;s work attributed to them on the audit trails.</p>
 <p>Whilst editing a user, you can choose absolutely everything that user may do
 within the system by assigning one or more appropriate roles. If you set the
-super user dropdown to yes, the user has full administrative privileges to the
-system. If you set an email address for the user and configure email, you can
-have the system send diary notes and messages via email to users.</p>
+user type to &#8220;superuser&#8221;, the user has full administrative privileges to the
+system. If you choose &#8220;normal user&#8221;, you will need to set permissions for
+the user by assigning roles.</p>
+<p>If you set an email address for the user and configure email, you can have the
+system send diary notes and messages via email to users.</p>
 <p>If you set a person record for the user, they will be forbidden from opening
 that person record. The idea is to prevent them from viewing their own person
 record. You can also set the role permission to forbid them opening any other
@@ -387,8 +389,7 @@ what any user with that role is allowed to do within the system.</p>
 spreadsheet products can all export individual sheets in CSV format.</p>
 <img alt="_images/import_csv.png" src="_images/import_csv.png" />
 <p>The CSV file should have a header row that contains column names that ASM
-recognises (see the appendix at the back of this manual for a complete list of
-fields).</p>
+recognises (see <a class="reference internal" href="csvimportfields.html#csvimportfields"><em>Appendix: CSV file import fields</em></a>)</p>
 <img alt="_images/sample_csv.png" src="_images/sample_csv.png" />
 <p>Each row of data can contain animal, person, movement and donation information.
 If movement data is present, then an adoption (or other movement if
@@ -611,6 +612,10 @@ in medical books and the medical calendar.</li>
 this option is on, a log record is created every time you change an animal&#8217;s
 internal location with the new location so you can track the history of where
 the animal has moved within your shelter.</li>
+<li>When I change the weight of an animal, make a note of it in the log: If
+this option is on, a log record is created every time you change an animal&#8217;s
+weight so you can track the history of an animal&#8217;s wieght with reports and
+graphs.</li>
 </ul>
 </div>
 <div class="section" id="diary">
@@ -657,8 +662,10 @@ on, a log record is created every time you generate a document.</li>
 </div>
 <div class="section" id="insurance">
 <h3>Insurance<a class="headerlink" href="#insurance" title="Permalink to this headline">¶</a></h3>
-<p>If you have an agreement with a pet insurer, Animal Shelter Manager can accept a range of numbers under this tab and allow you to assign them to adoptions as they are made.
-Simply fill in the start/end/next values and tick the box to ensure you are
+<p>If you have an agreement with a pet insurer, Animal Shelter Manager can accept
+a range of numbers under this tab and allow you to assign them to adoptions as
+they are made.</p>
+<p>Simply fill in the start/end/next values and tick the box to ensure you are
 using automatic numbers. When you next adopt an animal, a button will appear at
 the side of the insurance number on the movement screen, allowing you to assign
 an insurance number to that adoption.</p>
