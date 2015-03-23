@@ -1,6 +1,7 @@
 36
 ================
 
+23/03/15 Add followup complete checkboxes to incidents to cancel alerts #132
 21/03/15 Switched manual over to Sphinx/RTD for readability and searching
 20/03/15 HTML escape auditing for customreport table to not bork reports #130
 20/03/15 Create separate permission for setting publishing options

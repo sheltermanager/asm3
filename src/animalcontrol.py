@@ -54,9 +54,9 @@ def get_followup_two_dates(dbo, dbstart, dbend):
     Returns incidents for followup between the two ISO dates specified
     """
     return db.query(dbo, get_animalcontrol_query(dbo) + " WHERE " \
-        "(ac.FollowupDateTime >= '%(start)s' AND ac.FollowupDateTime <= '%(end)s') OR " \
-        "(ac.FollowupDateTime2 >= '%(start)s' AND ac.FollowupDateTime2 <= '%(end)s') OR " \
-        "(ac.FollowupDateTime3 >= '%(start)s' AND ac.FollowupDateTime3 <= '%(end)s')" % { "start": dbstart, "end": dbend })
+        "(ac.FollowupDateTime >= '%(start)s' AND ac.FollowupDateTime <= '%(end)s' AND NOT ac.FollowupComplete = 1) OR " \
+        "(ac.FollowupDateTime2 >= '%(start)s' AND ac.FollowupDateTime2 <= '%(end)s' AND NOT ac.FollowupComplete2 = 1) OR " \
+        "(ac.FollowupDateTime3 >= '%(start)s' AND ac.FollowupDateTime3 <= '%(end)s' AND NOT ac.FollowupComplete3 = 1)" % { "start": dbstart, "end": dbend })
 
 def get_animalcontrol_find_simple(dbo, query = "", limit = 0):
     """
@@ -174,9 +174,9 @@ def get_animalcontrol_find_advanced(dbo, criteria, limit = 0):
     addcomp("filter", "incomplete", "ac.CompletedDate Is Null")
     addcomp("filter", "undispatched", "ac.CompletedDate Is Null AND ac.CallDateTime Is Not Null AND ac.DispatchDateTime Is Null")
     addcomp("filter", "requirefollowup", "(" \
-        "(ac.FollowupDateTime Is Not Null AND ac.FollowupDateTime <= %(now)s) OR " \
-        "(ac.FollowupDateTime2 Is Not Null AND ac.FollowupDateTime2 <= %(now)s) OR " \
-        "(ac.FollowupDateTime3 Is Not Null AND ac.FollowupDateTime3 <= %(now)s) " \
+        "(ac.FollowupDateTime Is Not Null AND ac.FollowupDateTime <= %(now)s AND NOT ac.FollowupComplete = 1) OR " \
+        "(ac.FollowupDateTime2 Is Not Null AND ac.FollowupDateTime2 <= %(now)s AND NOT ac.FollowupComplete2 = 1) OR " \
+        "(ac.FollowupDateTime3 Is Not Null AND ac.FollowupDateTime3 <= %(now)s AND NOT ac.FollowupComplete3 = 1) " \
         ")" % { "now": db.dd(now(dbo.timezone))} )
     where = ""
     if len(c) > 0:
@@ -282,8 +282,11 @@ def update_animalcontrol_from_form(dbo, post, username):
         ( "DispatchDateTime", post.db_datetime("dispatchdate", "dispatchtime")),
         ( "RespondedDateTime", post.db_datetime("respondeddate", "respondedtime")),
         ( "FollowupDateTime", post.db_datetime("followupdate", "followuptime")),
+        ( "FollowupComplete", post.db_boolean("followupcomplete")),
         ( "FollowupDateTime2", post.db_datetime("followupdate2", "followuptime2")),
+        ( "FollowupComplete2", post.db_boolean("followupcomplete2")),
         ( "FollowupDateTime3", post.db_datetime("followupdate3", "followuptime3")),
+        ( "FollowupComplete3", post.db_boolean("followupcomplete3")),
         ( "CompletedDate", post.db_date("completeddate")),
         ( "IncidentCompletedID", post.db_integer("completedtype")),
         ( "OwnerID", post.db_integer("owner")),
@@ -327,8 +330,11 @@ def insert_animalcontrol_from_form(dbo, post, username):
         ( "DispatchDateTime", post.db_datetime("dispatchdate", "dispatchtime")),
         ( "RespondedDateTime", post.db_datetime("respondeddate", "respondedtime")),
         ( "FollowupDateTime", post.db_datetime("followupdate", "followuptime")),
+        ( "FollowupComplete", post.db_boolean("followupcomplete")),
         ( "FollowupDateTime2", post.db_datetime("followupdate2", "followuptime2")),
+        ( "FollowupComplete2", post.db_boolean("followupcomplete2")),
         ( "FollowupDateTime3", post.db_datetime("followupdate3", "followuptime3")),
+        ( "FollowupComplete3", post.db_boolean("followupcomplete3")),
         ( "CompletedDate", post.db_date("completeddate")),
         ( "IncidentCompletedID", post.db_integer("completedtype")),
         ( "OwnerID", post.db_integer("owner")),
