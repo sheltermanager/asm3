@@ -153,7 +153,7 @@ $(function() {
                                 if (url.indexOf("report") == 0 && config.bool("ReportNewBrowserTab")) {
                                     target = " target=\"_blank\"";
                                 }
-                                menus.push("<li class=\"asm-menu-item " + classes + "\"><a href=\"" + url + "\" " + target + ">" + iconhtml + " " + display + "</a>" + accesskeydisp + "</li>");
+                                menus.push("<li class=\"asm-menu-item " + classes + "\"><a href=\"" + url + "\" " + target + ">" + iconhtml + " " + display + accesskeydisp + "</a></li>");
                             }
                         }
                     });

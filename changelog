@@ -1,6 +1,7 @@
 36
 ================
 
+23/03/15 Make menu item anchors fill space for bigger click target #131
 23/03/15 Add pickuplocation to incident, allow search/display #33
 23/03/15 Add weight field with option to update the log on each change #37
 23/03/15 Add followup complete checkboxes to incidents to cancel alerts #132

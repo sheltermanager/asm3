@@ -164,8 +164,12 @@ img {
 }
 
 .asm-menu-item {
-    padding-left: 15px;
     border: 1px solid transparent;
+}
+.asm-menu-item a {
+    padding-left: 15px;
+    display: block;
+    width: 100%;
 }
 
 .asm-disabled-menu-item img, .asm-menu-item img, .asm-menu-category img {
@@ -179,10 +183,11 @@ img {
 }
 
 .asm-hotkey {
+    margin-right: 20px;
     float: right;
     font-size: 60%;
     padding-left: 5px;
-    padding-top: 2px;
+    padding-top: 4px;
 }
 
 .asm-menu-category {
