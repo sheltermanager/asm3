@@ -7,7 +7,7 @@ import sys
 from i18n import _, BUILD
 from sitedefs import DB_PK_STRATEGY
 
-LATEST_VERSION = 33603
+LATEST_VERSION = 33607
 VERSIONS = ( 
     2870, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3050,
     3051, 3081, 3091, 3092, 3093, 3094, 3110, 3111, 3120, 3121, 3122, 3123, 3200,
@@ -17,7 +17,8 @@ VERSIONS = (
     33019, 33101, 33102, 33104, 33105, 33106, 33201, 33202, 33203, 33204, 33205,
     33206, 33300, 33301, 33302, 33303, 33304, 33305, 33306, 33307, 33308, 33309,
     33310, 33311, 33312, 33313, 33314, 33315, 33316, 33401, 33402, 33501, 33502,
-    33503, 33504, 33505, 33506, 33507, 33508, 33600, 33601, 33602, 33603
+    33503, 33504, 33505, 33506, 33507, 33508, 33600, 33601, 33602, 33603, 33604,
+    33605, 33606, 33607
 )
 
 # All ASM3 tables
@@ -122,9 +123,11 @@ def sql_structure(dbo):
         fid(),
         fstr("Code"),
         fstr("Description"),
+        fint("Archived", True),
         fint("AccountType"),
         fint("DonationTypeID") ))
     sql += index("accounts_Code", "accounts", "Code", True)
+    sql += index("accounts_Archived", "accounts", "Archived")
  
     sql += table("accountsrole", (
         fint("AccountID"),
@@ -294,6 +297,7 @@ def sql_structure(dbo):
         fstr("ShelterLocationUnit", True),
         fint("DiedOffShelter"),
         fint("Size"),
+        fint("Weight", True),
         fstr("RabiesTag", True),
         fint("Archived"),
         fint("ActiveMovementID"),
@@ -349,6 +353,7 @@ def sql_structure(dbo):
     sql += index("animal_ShortCode", "animal", "ShortCode")
     sql += index("animal_TattooNumber", "animal", "TattooNumber")
     sql += index("animal_UniqueCodeID", "animal", "UniqueCodeID")
+    sql += index("animal_Weight", "animal", "Weight")
     sql += index("animal_YearCodeID", "animal", "YearCodeID")
 
     sql += table("animalcontrol", (
@@ -369,8 +374,11 @@ def sql_structure(dbo):
         fdate("DispatchDateTime", True),
         fdate("RespondedDateTime", True),
         fdate("FollowupDateTime", True),
+        fint("FollowupComplete", True),
         fdate("FollowupDateTime2", True),
+        fint("FollowupComplete2", True),
         fdate("FollowupDateTime3", True),
+        fint("FollowupComplete3", True),
         fdate("CompletedDate", True),
         fint("IncidentCompletedID", True),
         fint("OwnerID", True),
@@ -390,8 +398,11 @@ def sql_structure(dbo):
     sql += index("animalcontrol_DispatchedACO", "animalcontrol", "DispatchedACO")
     sql += index("animalcontrol_DispatchDateTime", "animalcontrol", "DispatchDateTime")
     sql += index("animalcontrol_FollowupDateTime", "animalcontrol", "FollowupDateTime")
+    sql += index("animalcontrol_FollowupComplete", "animalcontrol", "FollowupComplete")
     sql += index("animalcontrol_FollowupDateTime2", "animalcontrol", "FollowupDateTime2")
+    sql += index("animalcontrol_FollowupComplete2", "animalcontrol", "FollowupComplete2")
     sql += index("animalcontrol_FollowupDateTime3", "animalcontrol", "FollowupDateTime3")
+    sql += index("animalcontrol_FollowupComplete3", "animalcontrol", "FollowupComplete3")
     sql += index("animalcontrol_CompletedDate", "animalcontrol", "CompletedDate")
     sql += index("animalcontrol_IncidentCompletedID", "animalcontrol", "IncidentCompletedID")
     sql += index("animalcontrol_AnimalID", "animalcontrol", "AnimalID")
@@ -607,8 +618,16 @@ def sql_structure(dbo):
         fint("AnimalID"),
         fint("DriverOwnerID"),
         fint("PickupOwnerID"),
-        fint("DropoffOwnerID"),
+        fstr("PickupAddress", True),
+        fstr("PickupTown", True),
+        fstr("PickupCounty", True),
+        fstr("PickupPostcode", True),
         fdate("PickupDateTime"),
+        fint("DropoffOwnerID"),
+        fstr("DropoffAddress", True),
+        fstr("DropoffTown", True),
+        fstr("DropoffCounty", True),
+        fstr("DropoffPostcode", True),
         fdate("DropoffDateTime"),
         fint("Status"),
         fint("Miles", True),
@@ -618,7 +637,9 @@ def sql_structure(dbo):
     sql += index("animaltransport_AnimalID", "animaltransport", "AnimalID")
     sql += index("animaltransport_DriverOwnerID", "animaltransport", "DriverOwnerID")
     sql += index("animaltransport_PickupOwnerID", "animaltransport", "PickupOwnerID")
+    sql += index("animaltransport_PickupAddress", "animaltransport", "PickupAddress")
     sql += index("animaltransport_DropoffOwnerID", "animaltransport", "DropoffOwnerID")
+    sql += index("animaltransport_DropoffAddress", "animaltransport", "DropoffAddress")
     sql += index("animaltransport_PickupDateTime", "animaltransport", "PickupDateTime")
     sql += index("animaltransport_DropoffDateTime", "animaltransport", "DropoffDateTime")
     sql += index("animaltransport_Status", "animaltransport", "Status")
@@ -1260,7 +1281,7 @@ def sql_default_data(dbo, skip_config = False):
     def lookup2money(tablename, tid, name, money = 0):
         return "INSERT INTO %s VALUES (%s, '%s', '%s', %d)|=\n" % ( tablename, str(tid), db.escape(name), "", money)
     def account(tid, code, desc, atype, dtype):
-        return "INSERT INTO accounts VALUES (%s, '%s', '%s', %s, %s, 0, '%s', %s, '%s', %s)|=\n" % ( str(tid), db.escape(code), db.escape(desc), str(atype), str(dtype), 'default', db.todaysql(), 'default', db.todaysql())
+        return "INSERT INTO accounts VALUES (%s, '%s', '%s', 0, %s, %s, 0, '%s', %s, '%s', %s)|=\n" % ( str(tid), db.escape(code), db.escape(desc), str(atype), str(dtype), 'default', db.todaysql(), 'default', db.todaysql())
     def breed(tid, name, petfinder, speciesid):
         return "INSERT INTO breed VALUES (%s, '%s', '', '%s', %s)|=\n" % ( str(tid), db.escape(name), petfinder, str(speciesid) )
     def internallocation(lid, name):
@@ -3740,4 +3761,53 @@ def update_33602(dbo):
 def update_33603(dbo):
     # Add additional.DefaultValue
     add_column(dbo, "additionalfield", "DefaultValue", longtext(dbo))
+
+def update_33604(dbo):
+    # Add weight field
+    add_column(dbo, "animal", "Weight", floattype(dbo))
+    add_index(dbo, "animal_Weight", "animal", "Weight")
+    # Add followupcomplete fields to animalcontrol
+    add_column(dbo, "animalcontrol", "FollowupComplete", "INTEGER")
+    add_column(dbo, "animalcontrol", "FollowupComplete2", "INTEGER")
+    add_column(dbo, "animalcontrol", "FollowupComplete3", "INTEGER")
+    add_index(dbo, "animalcontrol_FollowupComplete", "animalcontrol", "FollowupComplete")
+    add_index(dbo, "animalcontrol_FollowupComplete2", "animalcontrol", "FollowupComplete2")
+    add_index(dbo, "animalcontrol_FollowupComplete3", "animalcontrol", "FollowupComplete3")
+
+def update_33605(dbo):
+    # Add accounts archived flag
+    add_column(dbo, "accounts", "Archived", "INTEGER")
+    add_index(dbo, "accounts_Archived", "accounts", "ARCHIVED")
+
+def update_33606(dbo):
+    # Add new transport address fields
+    add_column(dbo, "animaltransport", "PickupAddress", shorttext(dbo))
+    add_column(dbo, "animaltransport", "PickupTown", shorttext(dbo))
+    add_column(dbo, "animaltransport", "PickupCounty", shorttext(dbo))
+    add_column(dbo, "animaltransport", "PickupPostcode", shorttext(dbo))
+    add_column(dbo, "animaltransport", "DropoffAddress", shorttext(dbo))
+    add_column(dbo, "animaltransport", "DropoffTown", shorttext(dbo))
+    add_column(dbo, "animaltransport", "DropoffCounty", shorttext(dbo))
+    add_column(dbo, "animaltransport", "DropoffPostcode", shorttext(dbo))
+    add_index(dbo, "animaltransport_PickupAddress", "animaltransport", "PickupAddress")
+    add_index(dbo, "animaltransport_DropoffAddress", "animaltransport", "DropoffAddress")
+
+def update_33607(dbo):
+    # Copy addresses from any existing transport records to the new fields
+    # (only acts on transport records with blank addresses)
+    tr = db.query(dbo, "SELECT animaltransport.ID, " \
+        "dro.OwnerAddress AS DRA, dro.OwnerTown AS DRT, dro.OwnerCounty AS DRC, dro.OwnerPostcode AS DRP, " \
+        "po.OwnerAddress AS POA, po.OwnerTown AS POT, po.OwnerCounty AS POC, po.OwnerPostcode AS POD " \
+        "FROM animaltransport " \
+        "INNER JOIN owner dro ON animaltransport.DropoffOwnerID = dro.ID " \
+        "INNER JOIN owner po ON animaltransport.PickupOwnerID = po.ID "\
+        "WHERE PickupAddress Is Null OR DropoffAddress Is Null")
+    for t in tr:
+        db.execute(dbo, "UPDATE animaltransport SET " \
+            "PickupAddress = %s, PickupTown = %s, PickupCounty = %s, PickupPostcode = %s,  " \
+            "DropoffAddress = %s, DropoffTown = %s, DropoffCounty = %s, DropoffPostcode = %s " \
+            "WHERE ID = %d" % ( \
+            db.ds(t["POA"]), db.ds(t["POT"]), db.ds(t["POC"]), db.ds(t["POD"]), 
+            db.ds(t["DRA"]), db.ds(t["DRT"]), db.ds(t["DRC"]), db.ds(t["DRP"]),
+            t["ID"] ))
 
