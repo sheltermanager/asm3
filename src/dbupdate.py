@@ -7,7 +7,7 @@ import sys
 from i18n import _, BUILD
 from sitedefs import DB_PK_STRATEGY
 
-LATEST_VERSION = 33607
+LATEST_VERSION = 33608
 VERSIONS = ( 
     2870, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3050,
     3051, 3081, 3091, 3092, 3093, 3094, 3110, 3111, 3120, 3121, 3122, 3123, 3200,
@@ -18,7 +18,7 @@ VERSIONS = (
     33206, 33300, 33301, 33302, 33303, 33304, 33305, 33306, 33307, 33308, 33309,
     33310, 33311, 33312, 33313, 33314, 33315, 33316, 33401, 33402, 33501, 33502,
     33503, 33504, 33505, 33506, 33507, 33508, 33600, 33601, 33602, 33603, 33604,
-    33605, 33606, 33607
+    33605, 33606, 33607, 33608
 )
 
 # All ASM3 tables
@@ -371,6 +371,7 @@ def sql_structure(dbo):
         fstr("DispatchPostcode", True),
         fstr("DispatchLatLong", True),
         fstr("DispatchedACO", True),
+        fint("PickupLocationID", True),
         fdate("DispatchDateTime", True),
         fdate("RespondedDateTime", True),
         fdate("FollowupDateTime", True),
@@ -405,6 +406,7 @@ def sql_structure(dbo):
     sql += index("animalcontrol_FollowupComplete3", "animalcontrol", "FollowupComplete3")
     sql += index("animalcontrol_CompletedDate", "animalcontrol", "CompletedDate")
     sql += index("animalcontrol_IncidentCompletedID", "animalcontrol", "IncidentCompletedID")
+    sql += index("animalcontrol_PickupLocationID", "animalcontrol", "PickupLocationID")
     sql += index("animalcontrol_AnimalID", "animalcontrol", "AnimalID")
     sql += index("animalcontrol_OwnerID", "animalcontrol", "OwnerID")
     sql += index("animalcontrol_Owner2ID", "animalcontrol", "Owner2ID")
@@ -3810,4 +3812,9 @@ def update_33607(dbo):
             db.ds(t["POA"]), db.ds(t["POT"]), db.ds(t["POC"]), db.ds(t["POD"]), 
             db.ds(t["DRA"]), db.ds(t["DRT"]), db.ds(t["DRC"]), db.ds(t["DRP"]),
             t["ID"] ))
+
+def update_33608(dbo):
+    # Add pickuplocationid to incidents
+    add_column(dbo, "animalcontrol", "PickupLocationID", "INTEGER")
+    add_index(dbo, "animalcontrol_PickupLocationID", "animalcontrol", "PickupLocationID")
 

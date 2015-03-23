@@ -1189,10 +1189,14 @@ class AnimalControl:
     DispatchLatLong = ""
     DispatchedACO = ""
     DispatchDateTime = None
+    PickupLocationID = 0
     RespondedDateTime = None
     FollowupDateTime = None
+    FollowupCompleted = 0
     FollowupDateTime2 = None
+    FollowupCompleted2 = 0
     FollowupDateTime3 = None
+    FollowupCompleted3 = 0
     CompletedDate = None
     IncidentCompletedID = 0
     OwnerID = 0
@@ -1227,11 +1231,15 @@ class AnimalControl:
             ( "DispatchPostcode", ds(self.DispatchPostcode) ),
             ( "DispatchLatLong", ds(self.DispatchLatLong) ),
             ( "DispatchedACO", ds(self.DispatchedACO) ),
+            ( "PickupLocationID", di(self.PickupLocationID) ),
             ( "DispatchDateTime", ddt(self.DispatchDateTime) ),
             ( "RespondedDateTime", ddt(self.RespondedDateTime) ),
             ( "FollowupDateTime", ddt(self.FollowupDateTime) ),
+            ( "FollowupCompleted", di(self.FollowupCompleted) ),
             ( "FollowupDateTime2", ddt(self.FollowupDateTime2) ),
+            ( "FollowupCompleted2", di(self.FollowupCompleted2) ),
             ( "FollowupDateTime3", ddt(self.FollowupDateTime3) ),
+            ( "FollowupCompleted3", di(self.FollowupCompleted3) ),
             ( "CompletedDate", dd(self.CompletedDate) ),
             ( "IncidentCompletedID", di(self.IncidentCompletedID) ),
             ( "OwnerID", di(self.OwnerID) ),
@@ -1364,6 +1372,7 @@ class Animal:
     ShelterLocationUnit = ""
     DiedOffShelter = 0
     Size = 2
+    Weight = 0.0
     RabiesTag = ""
     Archived = 0
     ActiveMovementID = 0
@@ -1492,6 +1501,7 @@ class Animal:
             ( "ShelterLocationUnit", ds(self.ShelterLocationUnit) ),
             ( "DiedOffShelter", di(self.DiedOffShelter) ),
             ( "Size", di(self.Size) ),
+            ( "Weight", df(self.Weight) ),
             ( "RabiesTag", ds(self.RabiesTag) ),
             ( "Archived", di(self.Archived) ),
             ( "ActiveMovementID", di(self.ActiveMovementID) ),
@@ -1504,7 +1514,7 @@ class Animal:
             ( "MostRecentEntryDate", dd(self.MostRecentEntryDate) ),
             ( "TimeOnShelter", ds(self.TimeOnShelter) ),
             ( "DaysOnShelter", di(self.DaysOnShelter) ),
-            ( "DailyBoardingCost", df(self.DailyBoardingCost) ),
+            ( "DailyBoardingCost", di(self.DailyBoardingCost) ),
             ( "AnimalAge", ds(self.AnimalAge) ),
             ( "RecordVersion", di(self.RecordVersion) ),
             ( "CreatedBy", ds(self.CreatedBy) ),
