@@ -32,6 +32,11 @@ dispatched and when they responded. A minimap is shown to the location and a
 followup date and time can be set for reporting and the system will also remind
 you when it is due with an alert on the home page.
 
+A "pickup location" can also be chosen here from the system's available
+locations (edit them under :menuselection:`Settings --> Lookup Data --> Pickup
+Locations`). You can use these as a jurisdiction for incidents and animals
+entering the shelter.
+
 Suspect/Animal and Citation
 ---------------------------
 

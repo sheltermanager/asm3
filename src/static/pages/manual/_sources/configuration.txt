@@ -805,6 +805,8 @@ choose some extra fields for the new animal screen.
 
 * Show the size field: Allow entry of the size
 
+* Show the weight field: Allow entry of the weight
+
 * Show the altered fields: Allow an altered date to be set 
 
 * Show the microchip fields: Allow a microchip date/number to be set 

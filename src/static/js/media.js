@@ -167,6 +167,8 @@ $(function() {
                 h.push('<td id="mrow-' + m.ID + '" data="' + m.ID + '" align="center" width="100px" valign="top" style="border: 1px solid #aaa; padding: 5px">');
                 h.push('<input type="hidden" class="media-name" value="' + html.title(m.MEDIANAME) + '" />');
                 h.push('<input type="hidden" class="media-type" value="' + html.title(m.MEDIATYPE) + '" />');
+                var fullnotes = html.decode(m.MEDIANOTES),
+                    shortnotes = html.truncate(html.decode(m.MEDIANOTES), 70);
                 if (m.MEDIATYPE == 1 || m.MEDIATYPE == 2) {
                     h.push('<a target="_blank" href="' + m.MEDIANAME + '">');
                     var linkimage = "static/images/ui/file-video.png";
@@ -182,37 +184,37 @@ $(function() {
                         }
                     }
                     h.push('<img class="asm-thumbnail thumbnailshadow" src="' + linkimage + '" height="70px" ');
-                    h.push('title="' + html.title(html.decode(m.MEDIANOTES)) + '" /></a>');
+                    h.push('title="' + html.title(fullnotes) + '" /></a>');
                     h.push('<br />');
-                    h.push('<a title="' + _('View media') + '" href="media?id=' + m.ID + '">' + m.MEDIANOTES + '</a>');
+                    h.push('<a class="viewlink" title="' + _('View media') + '" href="media?id=' + m.ID + '">' + shortnotes + '</a>');
                     h.push('</a>');
                 }
                 else if (media.is_extension(m.MEDIANAME, "jpg") || media.is_extension(m.MEDIANAME, "jpeg")) {
                     h.push('<a href="image?mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '">');
-                    h.push('<img class="asm-thumbnail thumbnailshadow" src="image?mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '" title="' + html.title(html.decode(m.MEDIANOTES)) + '" /></a>');
+                    h.push('<img class="asm-thumbnail thumbnailshadow" src="image?mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '" title="' + html.title(fullnotes) + '" /></a>');
                 }
                 else if (media.is_extension(m.MEDIANAME, "html")) {
                     h.push('<a href="document_media_edit?id=' + m.ID + '&redirecturl=' + controller.name + '?id=' + m.LINKID + '"> ');
                     h.push('<img class="asm-thumbnail thumbnailshadow" src="static/images/ui/document-media.png" height="70px" ');
-                    h.push('title="' + html.title(html.decode(m.MEDIANOTES)) + '" /></a>');
+                    h.push('title="' + html.title(fullnotes) + '" /></a>');
                     h.push('<br />');
-                    h.push('<a title="' + _('Edit document') + '" href="document_media_edit?id=' + m.ID + '&redirecturl=' + controller.name + '?id=' + m.LINKID + '">' + m.MEDIANOTES + '</a>');
+                    h.push('<a class="viewlink" title="' + _('Edit document') + '" href="document_media_edit?id=' + m.ID + '&redirecturl=' + controller.name + '?id=' + m.LINKID + '">' + shortnotes + '</a>');
                     h.push('</a>');
                 }
                 else if (media.is_extension(m.MEDIANAME, "pdf")) {
                     h.push('<a href="media?id=' + m.ID + '">');
                     h.push('<img class="asm-thumbnail thumbnailshadow" src="static/images/ui/pdf-media.png" height="70px" ');
-                    h.push('title="' + html.title(html.decode(m.MEDIANOTES)) + '" /></a>');
+                    h.push('title="' + html.title(fullnotes) + '" /></a>');
                     h.push('<br />');
-                    h.push('<a title="' + _('View PDF') + '" href="media?id=' + m.ID + '">' + m.MEDIANOTES + '</a>');
+                    h.push('<a class="viewlink" title="' + _('View PDF') + '" href="media?id=' + m.ID + '">' + shortnotes + '</a>');
                     h.push('</a>');
                 }
                 else {
                     h.push('<a href="media?id=' + m.ID + '">');
                     h.push('<img class="asm-thumbnail thumbnailshadow" src="static/images/ui/file-media.png" height="70px" ');
-                    h.push('title="' + html.title(html.decode(m.MEDIANOTES)) + '" /></a>');
+                    h.push('title="' + html.title(fullnotes) + '" /></a>');
                     h.push('<br />');
-                    h.push('<a title="' + _('View media') + '" href="media?id=' + m.ID + '">' + m.MEDIANOTES + '</a>');
+                    h.push('<a class="viewlink" title="' + _('View media') + '" href="media?id=' + m.ID + '">' + shortnotes + '</a>');
                     h.push('</a>');
                 }
                 h.push('<br />');
@@ -545,7 +547,8 @@ $(function() {
                 formdata += "&comments=" + encodeURIComponent($("#editcomments").val());
                 $("#dialog-edit").disable_dialog_buttons();
                 common.ajax_post(controller.name, formdata, function(result) { 
-                    $("#mrow-" + mediaid + " .asm-thumbnail").attr("title", $("#editcomments").val());
+                    $("#mrow-" + mediaid + " .asm-thumbnail").attr("title", html.title($("#editcomments").val()));
+                    $("#mrow-" + mediaid + " .viewlink").text(html.truncate($("#editcomments").val(), 70));
                     $("#dialog-edit").dialog("close");
                     $("#dialog-edit").enable_dialog_buttons();
                 });

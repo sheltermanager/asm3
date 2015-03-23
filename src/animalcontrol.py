@@ -17,7 +17,7 @@ def get_animalcontrol_query(dbo):
     return "SELECT ac.*, ac.ID AS ACID, s.SpeciesName, x.Sex AS SexName, " \
         "co.OwnerName AS CallerName, co.HomeTelephone, co.WorkTelephone, co.MobileTelephone, " \
         "o1.OwnerName AS OwnerName, o1.OwnerName AS OwnerName1, o2.OwnerName AS OwnerName2, o3.OwnerName AS OwnerName3, " \
-        "vo.OwnerName AS VictimName, ti.IncidentName, ci.CompletedName, a.AnimalName, a.ShelterCode " \
+        "vo.OwnerName AS VictimName, ti.IncidentName, ci.CompletedName, pl.LocationName, a.AnimalName, a.ShelterCode " \
         "FROM animalcontrol ac " \
         "LEFT OUTER JOIN species s ON s.ID = ac.SpeciesID " \
         "LEFT OUTER JOIN lksex x ON x.ID = ac.Sex " \
@@ -27,6 +27,7 @@ def get_animalcontrol_query(dbo):
         "LEFT OUTER JOIN owner o2 ON o2.ID = ac.Owner2ID " \
         "LEFT OUTER JOIN owner o3 ON o3.ID = ac.Owner3ID " \
         "LEFT OUTER JOIN owner vo ON vo.ID = ac.VictimID " \
+        "LEFT OUTER JOIN pickuplocation pl ON pl.ID = ac.PickupLocationID " \
         "LEFT OUTER JOIN incidenttype ti ON ti.ID = ac.IncidentTypeID " \
         "LEFT OUTER JOIN incidentcompleted ci ON ci.ID = ac.IncidentCompletedID"
 
@@ -106,6 +107,7 @@ def get_animalcontrol_find_advanced(dbo, criteria, limit = 0):
        citationtype - -1 for all or ID
        address - string partial pattern
        postcode - string partial pattern
+       pickuplocation - -1 for all or ID
        description - string partial pattern
        agegroup - agegroup text to match
        sex - -1 for all or ID
@@ -157,6 +159,7 @@ def get_animalcontrol_find_advanced(dbo, criteria, limit = 0):
     addstr("victimname", "vo.OwnerName")
     addstr("callerphone", "co.HomeTelephone")
     addid("incidenttype", "ac.IncidentTypeID")
+    addid("pickuplocation", "ac.PickupLocationID")
     if (crit("dispatchedaco") != "-1"): addstr("dispatchedaco", "ac.DispatchedACO")
     adddate("incidentfrom", "incidentto", "ac.IncidentDateTime")
     adddate("dispatchfrom", "dispatchto", "ac.DispatchDateTime")
@@ -277,6 +280,7 @@ def update_animalcontrol_from_form(dbo, post, username):
         ( "DispatchTown", post.db_string("dispatchtown")),
         ( "DispatchCounty", post.db_string("dispatchcounty")),
         ( "DispatchPostcode", post.db_string("dispatchpostcode")),
+        ( "PickupLocationID", post.db_integer("pickuplocation")),
         ( "DispatchLatLong", post.db_string("dispatchlatlong")),
         ( "DispatchedACO", post.db_string("dispatchedaco")),
         ( "DispatchDateTime", post.db_datetime("dispatchdate", "dispatchtime")),
@@ -325,6 +329,7 @@ def insert_animalcontrol_from_form(dbo, post, username):
         ( "DispatchTown", post.db_string("dispatchtown")),
         ( "DispatchCounty", post.db_string("dispatchcounty")),
         ( "DispatchPostcode", post.db_string("dispatchpostcode")),
+        ( "PickupLocationID", post.db_integer("pickuplocation")),
         ( "DispatchLatLong", post.db_string("dispatchlatlong")),
         ( "DispatchedACO", post.db_string("dispatchedaco")),
         ( "DispatchDateTime", post.db_datetime("dispatchdate", "dispatchtime")),

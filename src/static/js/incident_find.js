@@ -98,6 +98,11 @@ $(function() {
                 html.list_to_options(controller.agegroups),
                 '</select>',
                 '</td>',
+                '<td><label for="pickuplocation">' + _("Pickup Location") + '</label></td>',
+                '<td><select id="pickuplocation" name="pickuplocation" class="asm-selectbox">',
+                '<option value="-1">' + _("(all)") + '</option>',
+                html.list_to_options(controller.pickuplocations, "ID", "LOCATIONNAME"),
+                '</select></td>',
                 '</tr>',
 
                 '<tr>',

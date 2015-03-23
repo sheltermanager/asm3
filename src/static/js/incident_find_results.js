@@ -22,6 +22,7 @@ $(function() {
                 '<th>' + _("Incident Date/Time") + '</th>',
                 '<th>' + _("Address") + '</th>',
                 '<th>' + _("Zipcode") + '</th>',
+                '<th>' + _("Location") + '</th>',
                 '<th>' + _("Suspect") + '</th>',
                 '<th>' + _("Animal") + '</th>',
                 '<th>' + _("Dispatch Date/Time") + '</th>',
@@ -50,6 +51,7 @@ $(function() {
                 h.push('<td>' + format.date(r.INCIDENTDATETIME) + ' ' + format.time(r.INCIDENTDATETIME) + '</td>');
                 h.push('<td>' + common.nulltostr(r.DISPATCHADDRESS) + '</td>');
                 h.push('<td>' + common.nulltostr(r.DISPATCHPOSTCODE) + '</td>');
+                h.push('<td>' + common.nulltostr(r.LOCATIONNAME) + '</td>');
                 h.push('<td>');
                 if (r.OWNERNAME1) { h.push('<a href="person?id=' + r.OWNERID + '">' + common.nulltostr(r.OWNERNAME1) + '</a> '); }
                 if (r.OWNERNAME2) { h.push('<br/><a href="person?id=' + r.OWNER2ID + '">' + common.nulltostr(r.OWNERNAME2) + '</a> '); }
