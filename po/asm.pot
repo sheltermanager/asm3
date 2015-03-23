@@ -9089,6 +9089,10 @@ msgid "Show the time brought in field"
 msgstr ""
 
 #: options.js
+msgid "Show the weight field"
+msgstr ""
+
+#: options.js
 msgid "Show timeline on the home page"
 msgstr ""
 

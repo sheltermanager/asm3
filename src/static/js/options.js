@@ -930,6 +930,7 @@ $(function() {
                 '<input data="AddAnimalsShowFosterer" id="aashowfosterer" class="asm-checkbox" type="checkbox" /> <label for="aashowfosterer">' + _("Allow a fosterer to be selected") + '</label><br />',
                 '<input data="AddAnimalsShowAcceptance" id="aashowacceptance" class="asm-checkbox" type="checkbox" /> <label for="aashowacceptance">' + _("Show the litter ID field") + '</label><br />',
                 '<input data="AddAnimalsShowSize" id="aashowsize" class="asm-checkbox" type="checkbox" /> <label for="aashowsize">' + _("Show the size field") + '</label><br />',
+                '<input data="AddAnimalsShowWeight" id="aashowweight" class="asm-checkbox" type="checkbox" /> <label for="aashowweight">' + _("Show the weight field") + '</label><br />',
                 '<input data="AddAnimalsShowNeutered" id="aashowneutered" class="asm-checkbox" type="checkbox" /> <label for="aashowneutered">' + _("Show the altered fields") + '</label><br />',
                 '<input data="AddAnimalsShowMicrochip" id="aashowmicrochip" class="asm-checkbox" type="checkbox" /> <label for="aashowmicrochip">' + _("Show the microchip fields") + '</label><br />',
                 '<input data="AddAnimalsShowEntryCategory" id="aashowentrycategory" class="asm-checkbox" type="checkbox" /> <label for="aashowentrycategory">' + _("Show the entry category field") + '</label><br />',
