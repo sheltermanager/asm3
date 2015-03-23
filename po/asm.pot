@@ -8254,6 +8254,10 @@ msgid "Remove the trap loan functionality from menus and screens"
 msgstr ""
 
 #: options.js
+msgid "Remove the weight field from animal details"
+msgstr ""
+
+#: options.js
 msgid "Remove unwanted functionality"
 msgstr ""
 

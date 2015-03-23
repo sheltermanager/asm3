@@ -861,6 +861,7 @@ $(function() {
             if (config.bool("DontShowAdoptionFee")) { $("#feerow").hide(); }
             if (config.bool("DontShowCoatType")) { $("#coattyperow").hide(); }
             if (config.bool("DontShowSize")) { $("#sizerow").hide(); }
+            if (config.bool("DontShowWeight")) { $("#weightrow").hide(); }
             if (config.bool("DontShowMicrochip")) { $("#microchiprow").hide(); }
             if (config.bool("DontShowTattoo")) { $("#tattoorow").hide(); }
             if (config.str("SmartTagFTPURL") == "") { $("#smarttagrow").hide(); }
