@@ -2875,7 +2875,7 @@ class PetLinkPublisher(AbstractPublisher):
             self.setLastError("baseurl and chippass need to be set for petlink.com publisher")
             return
 
-        animals = get_microchip_data(self.dbo, ['98102',], "petlink", "1,2,5")
+        animals = get_microchip_data(self.dbo, ['98102',], "petlink", "1,5")
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
             return
@@ -3589,7 +3589,7 @@ class SmartTagPublisher(FTPPublisher):
             self.cleanup()
             return
 
-        animals = get_microchip_data(self.dbo, ["a.SmartTag = 1 AND a.SmartTagNumber <> ''", '90007400'], "smarttag", "1,2,5")
+        animals = get_microchip_data(self.dbo, ["a.SmartTag = 1 AND a.SmartTagNumber <> ''", '90007400'], "smarttag", "1,5")
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
             self.cleanup()
