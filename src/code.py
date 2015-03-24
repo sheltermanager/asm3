@@ -814,7 +814,11 @@ class accounts:
         users.check_permission(session, users.VIEW_ACCOUNT)
         l = session.locale
         dbo = session.dbo
-        accounts = financial.get_accounts(dbo)
+        post = utils.PostedData(web.input(offset="active"), session.locale)
+        if post["offset"] == "active":
+            accounts = financial.get_accounts(dbo, True)
+        else:
+            accounts = financial.get_accounts(dbo)
         al.debug("got %d accounts" % len(accounts), "code.accounts", dbo)
         title = _("Accounts", l)
         s = html.header(title, session, "accounts.js")

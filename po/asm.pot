@@ -251,7 +251,7 @@ msgstr ""
 msgid "Accounts need a code."
 msgstr ""
 
-#: medical.js medicalprofile.js person.js medical.py
+#: medical.js accounts.js medicalprofile.js person.js medical.py
 msgid "Active"
 msgstr ""
 
@@ -817,6 +817,10 @@ msgstr ""
 
 #: publish_options.js
 msgid "All Publishers"
+msgstr ""
+
+#: accounts.js
+msgid "All accounts"
 msgstr ""
 
 #: search.py
@@ -6885,8 +6889,9 @@ msgid "Next"
 msgstr ""
 
 #: person_find_results.js additional.js users.js animal_find_results.js
-#: lostfound_find.js waitinglist_results.js sql.js publish_options.js
-#: onlineform.py dbupdate.py wordprocessor.py mobile.py i18n.py
+#: lostfound_find.js accounts.js waitinglist_results.js sql.js
+#: publish_options.js onlineform.py dbupdate.py wordprocessor.py mobile.py
+#: i18n.py
 msgid "No"
 msgstr ""
 
@@ -7139,6 +7144,10 @@ msgstr ""
 
 #: media.js
 msgid "Only PDF, HTML and JPG image files can be attached."
+msgstr ""
+
+#: accounts.js
+msgid "Only active accounts"
 msgstr ""
 
 #: publish_options.js
@@ -11627,8 +11636,9 @@ msgid "Yellow and Grey"
 msgstr ""
 
 #: person_find_results.js additional.js users.js animal_find_results.js
-#: lostfound_find.js waitinglist_results.js sql.js publish_options.js
-#: onlineform.py dbupdate.py wordprocessor.py mobile.py i18n.py
+#: lostfound_find.js accounts.js waitinglist_results.js sql.js
+#: publish_options.js onlineform.py dbupdate.py wordprocessor.py mobile.py
+#: i18n.py
 msgid "Yes"
 msgstr ""
 

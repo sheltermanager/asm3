@@ -110,13 +110,14 @@ def get_account_code(dbo, accountid):
     """
     return db.query_string(dbo, "SELECT Code FROM accounts WHERE ID = %d" % int(accountid))
 
-def get_account_codes(dbo, exclude = ""):
+def get_account_codes(dbo, exclude = "", onlyactive = True):
     """
-    Returns a list of all account codes in order. If exclude is set,
-    leave that one out.
+    Returns a list of all account codes in order. 
+    exclude: if set, leaves that one out.
+    onlyactive: if set, only active accounts are included
     """
     l = []
-    for a in get_accounts(dbo):
+    for a in get_accounts(dbo, onlyactive):
         if a["CODE"] == exclude: continue
         l.append(a["CODE"])
     return l
@@ -137,17 +138,21 @@ def get_account_id(dbo, code):
     """
     return db.query_int(dbo, "SELECT ID FROM accounts WHERE Code = '%s'" % str(code))
     
-def get_accounts(dbo):
+def get_accounts(dbo, onlyactive = False):
     """
     Returns all of the accounts with reconciled/balance figures
     ID, CODE, DESCRIPTION, ACCOUNTTYPE, DONATIONTYPEID, RECONCILED, BALANCE, VIEWROLEIDS, VIEWROLES, EDITROLEIDS, EDITROLES
-    If an accounting period has been set, balances are calculated from that point
+    If an accounting period has been set, balances are calculated from that point.
+    onlyactive: If set to true, only accounts with ARCHIVED == 0 are returned
     """
     l = dbo.locale
     pfilter = ""
     aperiod = configuration.accounting_period(dbo)
     if aperiod != "":
         pfilter = " AND TrxDate >= " + db.dd(i18n.display2python(l, aperiod))
+    afilter = ""
+    if onlyactive:
+        afilter = "WHERE Archived = 0 "
     roles = db.query(dbo, "SELECT ar.*, r.RoleName FROM accountsrole ar INNER JOIN role r ON ar.RoleID = r.ID")
     accounts = db.query(dbo, "SELECT a.*, at.AccountType AS AccountTypeName, " \
         "dt.DonationName, " \
@@ -157,8 +162,8 @@ def get_accounts(dbo):
         "(SELECT SUM(Amount) FROM accountstrx WHERE Reconciled = 1 AND SourceAccountID = a.ID%s) AS recsrc " \
         "FROM accounts a " \
         "INNER JOIN lksaccounttype at ON at.ID = a.AccountType " \
-        "LEFT OUTER JOIN donationtype dt ON dt.ID = a.DonationTypeID " \
-        "ORDER BY a.AccountType, a.Code" % (pfilter, pfilter, pfilter, pfilter))
+        "LEFT OUTER JOIN donationtype dt ON dt.ID = a.DonationTypeID %s" \
+        "ORDER BY a.AccountType, a.Code" % (pfilter, pfilter, pfilter, pfilter, afilter))
     for a in accounts:
         dest = a["DEST"]
         src = a["SRC"]
@@ -733,6 +738,7 @@ def insert_account_from_form(dbo, username, post):
     sql = db.make_insert_user_sql(dbo, "accounts", username, ( 
         ( "ID", db.di(aid)),
         ( "Code", post.db_string("code")),
+        ( "Archived", post.db_integer("archived")),
         ( "AccountType", post.db_integer("type")),
         ( "DonationTypeID", post.db_integer("donationtype")),
         ( "Description", post.db_string("description"))
@@ -763,6 +769,7 @@ def update_account_from_form(dbo, username, post):
     sql = db.make_update_user_sql(dbo, "accounts", username, "ID=%d" % accountid, ( 
         ( "Code", post.db_string("code")),
         ( "AccountType", post.db_integer("type")),
+        ( "Archived", post.db_integer("archived")),
         ( "DonationTypeID", post.db_integer("donationtype")),
         ( "Description", post.db_string("description"))
         ))
