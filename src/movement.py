@@ -425,10 +425,14 @@ def delete_movement(dbo, username, mid):
     animal.update_animal_status(dbo, animalid)
     animal.update_variable_animal_data(dbo, animalid)
 
-def return_movement(dbo, movementid, animalid, returndate):
+def return_movement(dbo, movementid, animalid = 0, returndate = None):
     """
-    Returns a movement with the date given
+    Returns a movement with the date given. If animalid is not supplied, it
+    will be looked up from the movement given. If returndate is not supplied,
+    now() will be used.
     """
+    if returndate is None: returndate = i18n.now(dbo.timezone)
+    if animalid == 0: animalid = db.query_int(dbo, "SELECT AnimalID FROM adoption WHERE ID = %d" % int(movementid))
     db.execute(dbo, "UPDATE adoption SET ReturnDate = %s WHERE ID = %d" % (db.dd(returndate), int(movementid)))
     animal.update_animal_status(dbo, int(animalid))
 
