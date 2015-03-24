@@ -53,6 +53,15 @@ date from the account screen as a handy shortcut.
 From both the accounts and transaction list screens, you can tick the
 checkboxes in the leftmost column to select multiple transactions/accounts.
 
+Inactive Accounts
+-----------------
+
+Accounts can be marked inactive. When an account is inactive, it does not appear
+in the main list of accounts (unless you select "All accounts" from the filter
+at the top right). It is also not available when adding new transactions, but 
+existing transactions to and from that account will still be preserved and 
+viewable.
+
 Payments
 --------
 
