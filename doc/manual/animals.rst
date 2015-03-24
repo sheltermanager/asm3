@@ -223,8 +223,8 @@ For complicated, multi-diary procedures, see Diary Tasks, covered later on.
 Use the toolbar to create and modify items in the list. Note that items in the
 vaccination list are saved immediately to the database when you hit the Save
 button in the popup screen. You will be reminded of outstanding vaccinations
-via the Vaccination Diary report, or by viewing them under *Medical->Vaccination
-Book* 
+via the Vaccination Diary report, or by viewing them under
+:menuselection:`Medical --> Vaccination Book` 
 
 Vaccinations can also have a cost attached for use with reporting. The cost is
 for the individual vaccination. 
@@ -252,7 +252,8 @@ Medical
 The medical tab is used to track information about medical treatments an animal
 is receiving. It is extremely flexible in what it can track and it can handle
 just about any kind of schedule. You can create medical profiles from
-*Medical->Medical Profiles* and use these as templates for treatment records. 
+:menuselection:`Medical --> Medical Profiles` and use these as templates for
+treatment records. 
 
 Treatment records are automatically created from regimens. You can edit the
 regimen by click on the treatment name.
@@ -340,10 +341,10 @@ Log
 .. image:: images/animal_log.png
 
 The log tab is used for logging additional useful information. You can create
-as many log types as you want under *Settings->Lookup Data->Log Types*. You can
-then create a log entry with a given type for a date and with a comment. This
-is useful for keeping track of animal weights, bite reports, owner emails,
-complaints and anything else you can think of. 
+as many log types as you want under :menuselection:`Settings --> Lookup Data
+--> Log Types`. You can then create a log entry with a given type for a date
+and with a comment. This is useful for keeping track of animal weights, bite
+reports, owner emails, complaints and anything else you can think of. 
 
 Moving and Reserving Animals
 ----------------------------
@@ -406,15 +407,16 @@ identify a successful adoption to an owner through a particular retailer. As
 long as you use the Adopt an animal process, ASM will set this for you.
 
 If you do not want to use retailer functionality, you can turn off the retailer
-feature under the :menuselection:`Settings->Options` screen. 
+feature under the :menuselection:`Settings --> Options` screen. 
 
 Trial Adoptions
 ^^^^^^^^^^^^^^^
 
-If you have enabled the option under *Settings->Options->Movement* for “Our
-shelter does trial adoptions”, then when you adopt an animal, either from the
-movement screens or *Move->Out->Adopt an animal* then a checkbox will appear
-allowing you to flag that the adoption is a trial and when the trial ends.
+If you have enabled the option under :menuselection:`Settings --> Options -->
+Movement` for “Our shelter does trial adoptions”, then when you adopt an
+animal, either from the movement screens or :menuselection:`Move --> Out -->
+Adopt an animal` then a checkbox will appear allowing you to flag that the
+adoption is a trial and when the trial ends.
 
 .. image:: images/move_trial.png
 
