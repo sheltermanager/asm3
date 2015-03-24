@@ -6,9 +6,9 @@ fall broadly into the following categories.
 
 All reports are accessed from the Reports top level-menu. By default, ASM does
 not install with any reports. You must install them from
-*Settings->Reports->Browse sheltermanager.com* – this requires your ASM server
-to have access to the internet. There's an “Install Recommended” button you can
-use to choose the default set to install.
+:menuselection:`Settings --> Reports --> Browse sheltermanager.com` – this
+requires your ASM server to have access to the internet. There's an “Install
+Recommended” button you can use to choose the default set to install.
 
 Some of the standard, most useful reports you should install are:
 

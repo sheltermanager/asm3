@@ -9,8 +9,8 @@ customised and branded to suit you.
 All of this functionality is accessed via the top level Publishing menu.
 
 There are many options you can set to choose what appears on the output, and
-how the output is generated. Set these options under *Publishing->Set
-Publishing Options*
+how the output is generated. Set these options under :menuselection:`Publishing
+--> Set Publishing Options`
 
 Animal Selection
 ----------------
@@ -81,7 +81,7 @@ You can publish an animal's photo and adoption details to Facebook by clicking
 the Facebook button on the main animal details toolbar. The details will be
 merged with the facebook template configured in publishing options and it will
 be posted to the timeline of the page you specified in the configuration at
-*Publishing->Set Publishing Options*
+:menuselection:`Publishing --> Set Publishing Options`
 
 .. image:: images/facebook_config.png
 
@@ -121,8 +121,8 @@ feed readers.
 
 * Generate thumbnail images: The publisher will create thumbnails of all the
   animal images. Thumbnail images have the same name as the animal image, but
-  are prefixed with tn_. You can use tn_$$WebMediaFilename$$ in a template to
-  get the thumbnail image for the current animal. 
+  are prefixed with tn and an underscore. You can use tn_$$WebMediaFilename$$
+  in a template to get the thumbnail image for the current animal. 
 
 * Thumbnail size: The desired length in pixels of the longest side of the
   thumbnail.
@@ -197,8 +197,9 @@ ASM comes with a number of site templates – plain, rss, littlebox and sm.com.
   is not dissimilar to plain, but also features the ability to click an
   animal's photo for more information.
 
-You can edit these templates under *Publishing->Edit HTML Publishing Templates*
-and add your own new ones if desired. Templates are made up of three sections.
+You can edit these templates under :menuselection:`Publishing --> Edit HTML
+Publishing Templates` and add your own new ones if desired. Templates are made
+up of three sections.
  
 * The header block - this is output for each page before any animal records. 
 
@@ -218,10 +219,10 @@ information from other areas of the system. These are:
 * $$ORGADDRESS$$ - Your organisation's address 
 
 * $$ORGTEL$$ - Your organisation's telephone number (all of these org fields
-  can be found under System->Options) 
+  can be found under :menuselection:`System --> Options`) 
 
 * $$ORGEMAIL$$ - Your email address (this is taken from
-  Settings->Options->Email) 
+  :menuselection:`Settings --> Options --> Email`) 
 
 * $$USER$$ - Substitutes the current system user, including their real name 
 
@@ -280,16 +281,16 @@ petfinder.com
 
 In addition to creating standalone websites with animals up for adoption, ASM
 can also integrate with PetFinder.com and upload your animals for adoption
-directly to your account with them.  You will need to go to *Publishing->Set
-Publishing Options* first and view the PetFinder panel. Here, you should enter
-the shelter Id given to you by PetFinder.com and your password. All you need to
-do then is choose Publish to PetFinder.com in place of the normal internet
-publisher. The options for filtering animals are the same (see previous section
-for reference).
+directly to your account with them.  You will need to go to
+:menuselection:`Publishing --> Set Publishing Options` first and view the
+PetFinder panel. Here, you should enter the shelter Id given to you by
+PetFinder.com and your password. All you need to do then is choose Publish to
+PetFinder.com in place of the normal internet publisher. The options for
+filtering animals are the same (see previous section for reference).
 
 Note that if you have created new Species or Breeds within ASM, you will need
 to map them to the available publisher options under the Breed and Species
-sections of *Settings->Lookup Data*
+sections of :menuselection:`Settings --> Lookup Data`
 
 If you have some that are not mapped, the publisher will fail with an error
 message.
@@ -316,11 +317,12 @@ In addition to creating standalone websites with animals up for adoption, ASM
 can also integrate with Petrescue.com.au and upload your animals for adoption
 directly to your account with them. 
 
-You will need to go to *Publishing->Set Publishing Options* first and view the
-PetRescue panel. Here, you should enter the shelter Id given to you by
-PetRescue.com.au and your password. All you need to do then is choose Publish
-to PetRescue.com.au in place of the normal internet publisher. The options for
-filtering animals are the same (see previous section for reference).
+You will need to go to :menuselection:`Publishing --> Set Publishing Options`
+first and view the PetRescue panel. Here, you should enter the shelter Id given
+to you by PetRescue.com.au and your password. All you need to do then is choose
+Publish to PetRescue.com.au in place of the normal internet publisher. The
+options for filtering animals are the same (see previous section for
+reference).
 
 Note that if you have created new Species or Breeds within ASM, you will need
 to map them to the available publisher options under the Breed and Species
@@ -338,10 +340,10 @@ Petsmart). See their website for information on which services they update. For
 more information on setting up RescueGroups to receive data from ASM, see their
 userguide at https://userguide.rescuegroups.org/ and search for ASM.
 
-To configure ASM, you will need to go to *Publish->Set Publishing Options* and
-enter the FTP username and password given to you by RescueGroups (you can find
-this by going to *Services->FTP account* in the RescueGroups management
-interface).
+To configure ASM, you will need to go to :menuselection:`Publish --> Set
+Publishing Options` and enter the FTP username and password given to you by
+RescueGroups (you can find this by going to :menuselection:`Services --> FTP
+account` in the RescueGroups management interface).
 
 Once you've done that, you can choose the Publish to RescueGroups.org menu
 item. The options for filtering animals are the same as for the other

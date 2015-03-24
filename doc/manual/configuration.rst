@@ -118,9 +118,9 @@ System user accounts
 
 You may create, edit and delete system users from here. It is recommended that
 every person who uses Animal Shelter Manager have their own login and user name
-(when a user is finished, they should navigate to *User->Logout* to prepare the
-system for the next user) - simply to make sure that people do not get other
-people's work attributed to them on the audit trails.
+(when a user is finished, they should navigate to :menuselection:`User -->
+Logout` to prepare the system for the next user) - simply to make sure that
+people do not get other people's work attributed to them on the audit trails.
 
 Whilst editing a user, you can choose absolutely everything that user may do
 within the system by assigning one or more appropriate roles. If you set the
@@ -224,8 +224,8 @@ database for other users. They should be used sparingly.
 Options
 -------
 
-The main *Settings->Options* page allows configuring of the general preferences
-within Animal Shelter Manager. 
+The main :menuselection:`Settings --> Options` page allows configuring of the
+general preferences within Animal Shelter Manager. 
 
 Shelter Details
 ^^^^^^^^^^^^^^^
@@ -581,28 +581,29 @@ the reservation for you after this time.
   returned with the adoption date so that the adoption can proceed.
 
 * When creating payments from the Move menu screens, mark them due instead of
-  received: Creating adoptions and reservations from Move->Adopt an animal lets
-  you receive a payment at the same time. If this option is ticked, the payment
-  will be marked as due to be paid, but not actually received. 
+  received: Creating adoptions and reservations from :menuselection:`Move -->
+  Adopt an animal` lets you receive a payment at the same time. If this option
+  is ticked, the payment will be marked as due to be paid, but not actually
+  received. 
   
 * Allow creation of payments on the Move-Reserve screen: Allow payments to be
-  taken on the Move->Reserve an animal screen.
+  taken on the :menuselection:`Move --> Reserve an animal` screen.
 
 * Allow entry of two donations on the Move menu screens: When creating an
-  adoption or reserve from Move->Adopt an animal, allow space for two donations
-  in case of adopters who would like to make a donation as well as paying the
-  adoption fee.
+  adoption or reserve from :menuselection:`Move --> Adopt an animal`, allow
+  space for two donations in case of adopters who would like to make a donation
+  as well as paying the adoption fee.
 
 * Allow overriding of the movement number on the Move menu screens: If turned
   on, the movement number field will be visible on all Move menu screens for
   the user to override.
 
 * Our shelter does trial adoptions, allow us to mark these on movement screens:
-  When creating an adoption from Move->Adopt an animal, or in any of the
-  movement tabs/screens, show a “trial” tickbox and trial end date. This allows
-  for trial adoptions (some shelters call this “Foster to Adopt”), which can
-  then be reported on by installing the “Active Trial Adoptions” and “Expired
-  Trial Adoptions” reports.
+  When creating an adoption from :menuselection:`Move --> Adopt an animal`, or
+  in any of the movement tabs/screens, show a “trial” tickbox and trial end
+  date. This allows for trial adoptions (some shelters call this “Foster to
+  Adopt”), which can then be reported on by installing the “Active Trial
+  Adoptions” and “Expired Trial Adoptions” reports.
 
 * Treat Trial Adoptions as shelter inventory: As with the Foster as inventory
   option, trial adoptions are still shown in the Shelter View and on shelter
@@ -714,8 +715,8 @@ Remove Unwanted Functionality
   complete address in the address box. 
 
 * Remove the insurance number field from the movement screens: Setting this
-  option hides the insurance number field and button from Move->Adopt and all
-  movement tabs/books.
+  option hides the insurance number field and button from :menuselection:`Move
+  --> Adopt an animal` and all movement tabs/books.
 
 * Remove the coat type field from the animal screen: If ticked, ASM won't
   display the coat type dropdown on the animal editing screen. For some
@@ -753,7 +754,8 @@ Remove Unwanted Functionality
 * Remove the adoption fee field from the animal screen: If ticked, ASM won't
   show the adoption fee field on the animal details. If this option is not on
   and an animal has a fee set, it will override the donation amount in the
-  Move->Adopt and Move-Reserve screens.
+  :menuselection:`Move --> Adopt an animal` and :menuselection:`Move -->
+  Reserve an animal` screens.
 
 * Remove the Litter ID/Acceptance Number field from the animal screen: If
   ticked, ASM won't display the Litter ID or Acceptance Number field at the top

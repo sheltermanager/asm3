@@ -10,10 +10,10 @@ Mechanism
 
 .. image:: images/litters.png
 
-The main screen is accessible from *ASM->Edit Litters*. It shows you a list of
-all currently active litters on the shelter. A litter is deemed active whilst
-any of the animals who were part of it are still on the shelter or if it has an
-expiry date later than today.
+The main screen is accessible from :menuselection:`ASM --> Edit Litters`. It
+shows you a list of all currently active litters on the shelter. A litter is
+deemed active whilst any of the animals who were part of it are still on the
+shelter or if it has an expiry date later than today.
 
 If an animal is returned from adoption who was part of an expired litter, the
 litter will not be resurrected. 

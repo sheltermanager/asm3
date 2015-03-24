@@ -12,8 +12,8 @@ Most importantly, the waiting list is capable of assigning an urgency rating to
 entries and automatically increasing that rating after a configurable amount of
 time has elapsed to ensure that a queue system can be adhered to.
 
-To open the waiting list screen, go to *ASM->Edit the current waiting list* or
-press SHIFT+ALT+W if your browser supports it.
+To open the waiting list screen, go to :menuselection:`ASM --> Edit the current
+waiting list` or press :kbd:`SHIFT+ALT+W` if your browser supports it.
 
 .. image:: images/waitinglist_results.png
 
@@ -22,12 +22,12 @@ Entries are colour coded according to how urgent they are.
 Additionally, you can use the highlight buttons to mark interesting entries in
 upto 5 different colours for other staff members. Each item is given a rank
 according to how urgent it is and how long it has been on the list. This can be
-used to tell people where they are on the waiting list. The report *Average Time
-On Waiting List* can tell you how long people are waiting on average to get
-their animals into your shelter.
+used to tell people where they are on the waiting list. The report
+*Average Time On Waiting List* can tell you how long people are
+waiting on average to get their animals into your shelter.
 
 You can effectively run separate waiting lists per species (turn the option on
-under *Settings->Options* on the Waiting List tab) as for most shelters,
+under :menuselection:`Settings --> Options` on the Waiting List tab) as for most shelters,
 whether you can take a dog isn't affected by how many cats you have waiting for
 example. With this option on, the rankings are calculated separately for each
 species.

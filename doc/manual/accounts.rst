@@ -4,8 +4,8 @@ Accounts
 Animal Shelter Manager includes a full, double-entry book keeping system to
 manage your shelter's accounts. 
 
-To access the accounts module, go to *Financial->Accounts*, hit the toolbar
-button or press SHIFT+ALT+X if your browser supports it.
+To access the accounts module, go to :menuselection:`Financial --> Accounts`,
+hit the toolbar button or press :kbd:`SHIFT+ALT+X` if your browser supports it.
 
 .. image:: images/accounts.png
 
@@ -62,14 +62,16 @@ automatically create a matching nominal income account for it.
 
 When you add a new payment to the system, ASM will automatically create a
 matching transaction, taking the money from the payment type nominal account
-and moving it to the account of your choice (see *Settings->Options->Accounts*
-where this account can specified). The default destination account for payments
-is the first bank account listed if you do not change it.
+and moving it to the account of your choice (see :menuselection:`Settings -->
+Options --> Accounts` where this account can specified). The default
+destination account for payments is the first bank account listed if you do not
+change it.
 
 Reporting
 ---------
 
 ASM does not include accounting reports by default. Instead, you can install
-them under Settings->Reports from sheltermanager.com.You will find the standard
-Balance Sheet and Profit and Loss reports for the accounting system. 
+them under :menuselection:`Settings --> Reports` from sheltermanager.com.You
+will find the standard Balance Sheet and Profit and Loss reports for the
+accounting system. 
 

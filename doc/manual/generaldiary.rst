@@ -1,16 +1,23 @@
 General Diary
 =============
 
-The general diary is an extremely flexible diary based system that can track anything task-based in nature. You use it to set reminders for a particular date and time. 
+The general diary is an extremely flexible diary based system that can track
+anything task-based in nature. You use it to set reminders for a particular
+date and time. 
 
-Each user of the system has their own view into the general diary and they can monitor both diary notes that have been issued to them by other staff members and diary notes that they have created for other staff members. If you have email addresses for your user accounts and you've configured the system email account, you can have the system email everyone's diary notes to them each day.
+Each user of the system has their own view into the general diary and they can
+monitor both diary notes that have been issued to them by other staff members
+and diary notes that they have created for other staff members. If you have
+email addresses for your user accounts and you've configured the system email
+account, you can have the system email everyone's diary notes to them each day.
 
 Add a new diary note
 ^^^^^^^^^^^^^^^^^^^^
 
 .. image:: images/diary_add.png
 
-To add a new diary note to the system, navigate to *ASM->Add Diary Note*.
+To add a new diary note to the system, navigate to :menuselection:`ASM --> Add
+Diary Note`.
 
 You will be presented with the diary note screen. The first thing to fill in is
 who the note is for. There is a drop down list at the top of the screen,
@@ -32,7 +39,8 @@ Viewing my diary notes
 ^^^^^^^^^^^^^^^^^^^^^^
 
 To view all the diary notes for the current user, or created by the current
-user, go to the home screen or navigate to *ASM->View My Diary Notes*.
+user, go to the home screen or navigate to :menuselection:`ASM --> View My
+Diary Notes`.
 
 You will be given a list of all your diary notes. You may edit them to mark
 diary notes for you completed, or even amend diary notes you have created for
@@ -49,14 +57,15 @@ Diary calendar
 
 .. image:: images/diary_calendar.png
 
-The diary calendar allows you to see your uncompleted diary notes on a daily/weekly or monthly calendar view.
+The diary calendar allows you to see your uncompleted diary notes on a
+daily/weekly or monthly calendar view.
 
 Printing the diary
 ^^^^^^^^^^^^^^^^^^
 
 To print off the general diary for all outstanding notes (notes upto and
 including today), install and run the Diary (all users) or Diary (current user)
-reports from *Settings->Reports->Browse sheltermanager.com*
+reports from :menuselection:`Settings --> Reports --> Browse sheltermanager.com`
 
 .. image:: images/diary_report.png
 
@@ -120,8 +129,9 @@ Create a new diary task
 
 .. image:: images/diarytask_new.png
 
-Diary tasks can be edited under *ASM->Edit Diary Tasks* and attached to both
-animals and owners from the toolbar buttons on their detail tabs.
+Diary tasks can be edited under :menuselection:`ASM --> Edit Diary Tasks` and
+attached to both animals and owners from the toolbar buttons on their detail
+tabs.
  
 To add a new task, click on the new button. A screen asking for the name of the
 diary task will appear, along with a list of task items below it and another

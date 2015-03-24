@@ -81,6 +81,11 @@ icons:
 	mv src/static/images/icons/asm-icon.css src/static/css
 	rm -f src/static/images/icons/test.html
 
+manual:
+	@echo "[manual] =========================="
+	cd doc/manual && $(MAKE) clean html
+	cp -rf doc/manual/_build/html/* src/static/pages/manual/
+
 test: version
 	@echo "[test] ========================="
 	cd src && python code.py 5000

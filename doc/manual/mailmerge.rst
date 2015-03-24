@@ -14,8 +14,8 @@ Running a Mail Merge
 To run a mail merge, navigate to the Mail top level menu.
 
 Initially, ASM does not come preloaded with any, however you can install mail
-merge sources from *Settings->Reports->Browse sheltermanager.com* (they appear
-in the list with the type “Mail Merge”).
+merge sources from :menuselection:`Settings --> Reports --> Browse
+sheltermanager.com` (they appear in the list with the type “Mail Merge”).
 
 .. image:: images/merge_source.png
 
@@ -121,7 +121,7 @@ dropping down the “Insert Merge Field” button that has appeared on the merge
 toolbar. 
 
 When you are happy, make sure you save your document. To run the merge, go
-back to Tools->Mail Merge and select “Merge” under step 3. 
+back to :menuselection:`Tools --> Mail Merge` and select “Merge” under step 3. 
 
 Word will generate a new document containing a new copy of your original
 document for each entry in the data for you to print and save. 

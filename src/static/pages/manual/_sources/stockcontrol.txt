@@ -5,14 +5,16 @@ Animal Shelter Manager includes a stock control system for managing stores of
 drugs, food and other items.
 
 Before using the module, you should set up locations for your stock under
-*Settings->Lookup Data->Stock Locations*. Locations help subdivide your stock
-to assist with the stock taking process. A useful convention (similar to
-account codes) is to use a separator for child locations so they appear
-together in lists. For example, you could create locations called "Office",
-"Office::Shelves" and "Office::Desk", which would all appear together in the
-list of available locations and be able to hold their own list of stock.  
+:menuselection:`Settings --> Lookup Data --> Stock Locations`. Locations help
+subdivide your stock to assist with the stock taking process. A useful
+convention (similar to account codes) is to use a separator for child locations
+so they appear together in lists. For example, you could create locations
+called "Office", "Office::Shelves" and "Office::Desk", which would all appear
+together in the list of available locations and be able to hold their own list
+of stock.  
 
-To view and add to current stock levels, go to *Financial->Stock*
+To view and add to current stock levels, go to :menuselection:`Financial -->
+Stock`
 
 .. image:: images/stocklevels.png
 
@@ -75,9 +77,10 @@ Using stock (medical, tests and vaccinations)
 ---------------------------------------------
 
 As a shortcut, when you are performing tests or administering vaccinations and
-medical items through the tabs on the animal record or via *Medical->Test
-Book*, *Medical->Vaccination Book* or *Medical->Medical Book* the system will
-prompt you to deduct stocks for the test/vaccination/treatment.
+medical items through the tabs on the animal record or via
+:menuselection:`Medical --> Test Book`, :menuselection:`Medical --> Vaccination
+Book` or :menuselection:`Medical --> Medical Book` the system will prompt you
+to deduct stocks for the test/vaccination/treatment.
 
 When you hit the "Give" or "Perform" button on any of those screens, a dialog
 will appear to prompt you for the date the test was performed or
