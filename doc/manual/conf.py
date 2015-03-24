@@ -187,6 +187,12 @@ htmlhelp_basename = 'ASM3Manualdoc'
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
+
+# This removes the latex full duplex printing that adds blank pages
+# after the TOC and chapters
+'babel': '\\usepackage[english]{babel}',
+'classoptions': ',openany,oneside',
+
 # The paper size ('letterpaper' or 'a4paper').
 'papersize': 'a4paper',
 
