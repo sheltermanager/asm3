@@ -1,6 +1,6 @@
 Vaccinations administered between two dates
 ###
-Auditing
+Medical
 ###
 33503/Any
 ###
