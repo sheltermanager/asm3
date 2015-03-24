@@ -606,6 +606,7 @@ PaymentDate
 PaymentDateDue
     If this is a recurring payment, the date it is due 
 PaymentAmount 
+    The payment amount
 ReceiptNum
     If you issue receipts for donations, the receipt number 
 PaymentGiftAid
