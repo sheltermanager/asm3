@@ -629,8 +629,8 @@ msgstr ""
 
 #: common_personchooser.js person_find_results.js incident_find.js
 #: incident_new.js waitinglist_results.js incident.js movements.js options.js
-#: person.js header_edit_header.js incident_find_results.js person_new.js
-#: html.py dbupdate.py mobile.py
+#: person.js header_edit_header.js incident_find_results.js transport.js
+#: person_new.js html.py dbupdate.py mobile.py
 msgid "Address"
 msgstr ""
 
@@ -2249,7 +2249,8 @@ msgid "Citations"
 msgstr ""
 
 #: common_personchooser.js person_find_results.js incident_new.js
-#: waitinglist_results.js incident.js person.js person_new.js html.py
+#: waitinglist_results.js incident.js person.js transport.js person_new.js
+#: html.py
 msgid "City"
 msgstr ""
 
@@ -9377,7 +9378,8 @@ msgid "Starts"
 msgstr ""
 
 #: common_personchooser.js person_find_results.js incident_new.js
-#: waitinglist_results.js incident.js person.js person_new.js html.py
+#: waitinglist_results.js incident.js person.js transport.js person_new.js
+#: html.py
 msgid "State"
 msgstr ""
 
@@ -11743,7 +11745,7 @@ msgstr ""
 #: common_personchooser.js person_find_results.js incident_find.js lostfound.js
 #: lostfound_find.js incident_new.js waitinglist_results.js incident.js
 #: lostfound_find_results.js person.js incident_find_results.js
-#: lostfound_new.js person_new.js html.py
+#: lostfound_new.js transport.js person_new.js html.py
 msgid "Zipcode"
 msgstr ""
 

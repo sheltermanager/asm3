@@ -10,8 +10,8 @@ en
 ###
 SELECT t.*, 
 d.OwnerName AS DriverName, d.OwnerAddress AS DriverAddress, d.OwnerPostcode AS DriverPostcode, d.HomeTelephone AS DriverTelephone, 
-p.OwnerName AS PickupName, p.OwnerAddress AS PickupAddress, p.OwnerPostcode AS PickupPostcode,
-dr.OwnerName AS DropoffName, dr.OwnerAddress AS DropoffAddress, dr.OwnerPostcode AS DropoffPostcode,
+p.OwnerName AS PickupName, t.PickupAddress, t.PickupPostcode,
+dr.OwnerName AS DropoffName, t.DropoffAddress, t.DropoffPostcode,
 CASE WHEN t.Status = 1 THEN 'New' 
 WHEN t.Status = 2 THEN 'Confirmed'
 WHEN t.Status = 3 THEN 'Hold'

@@ -3775,11 +3775,14 @@ def update_33604(dbo):
     add_index(dbo, "animalcontrol_FollowupComplete", "animalcontrol", "FollowupComplete")
     add_index(dbo, "animalcontrol_FollowupComplete2", "animalcontrol", "FollowupComplete2")
     add_index(dbo, "animalcontrol_FollowupComplete3", "animalcontrol", "FollowupComplete3")
+    db.execute_dbupdate(dbo, "UPDATE animalcontrol SET FollowupComplete = 0, FollowComplete2 = 0, FollowupComplete3 = 0")
+    db.execute_dbupdate(dbo, "UPDATE animal SET Weight = 0")
 
 def update_33605(dbo):
     # Add accounts archived flag
     add_column(dbo, "accounts", "Archived", "INTEGER")
     add_index(dbo, "accounts_Archived", "accounts", "ARCHIVED")
+    db.execute_dbupdate(dbo, "UPDATE accounts SET Archived = 0")
 
 def update_33606(dbo):
     # Add new transport address fields
@@ -3805,7 +3808,7 @@ def update_33607(dbo):
         "INNER JOIN owner po ON animaltransport.PickupOwnerID = po.ID "\
         "WHERE PickupAddress Is Null OR DropoffAddress Is Null")
     for t in tr:
-        db.execute(dbo, "UPDATE animaltransport SET " \
+        db.execute_dbupdate(dbo, "UPDATE animaltransport SET " \
             "PickupAddress = %s, PickupTown = %s, PickupCounty = %s, PickupPostcode = %s,  " \
             "DropoffAddress = %s, DropoffTown = %s, DropoffCounty = %s, DropoffPostcode = %s " \
             "WHERE ID = %d" % ( \
@@ -3817,4 +3820,6 @@ def update_33608(dbo):
     # Add pickuplocationid to incidents
     add_column(dbo, "animalcontrol", "PickupLocationID", "INTEGER")
     add_index(dbo, "animalcontrol_PickupLocationID", "animalcontrol", "PickupLocationID")
+    db.execute_dbupdate(dbo, "UPDATE animalcontrol SET PickupLocationID = 0")
+
 

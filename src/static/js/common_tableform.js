@@ -703,6 +703,7 @@
          *        options: { displayfield: "DISPLAY", valuefield: "VALUE", rows: [ {rows} ] }, (only valid for select type)
          *        options: "<option>test</option>" also valid
          *        personfilter: "all",   (only valid for person type)
+         *        personmode: "full",    (only valid for person type)
          *        change: function(changeevent), 
          *        blur: function(blurevent)
          *      } ]
@@ -874,6 +875,7 @@
                     d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                     if (v.readonly) { d += " data-noedit=\"true\" "; }
                     if (v.personfilter) { d += "data-filter=\"" + v.personfilter + "\" "; }
+                    if (v.personmode) { d += "data-mode=\"" + v.personmode + "\" "; }
                     if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                     d += "/>";
                     if (!v.justwidget) { d += "</td></tr>"; }

@@ -73,6 +73,7 @@ def get_transport_query(dbo):
         "d.OwnerTown AS DriverOwnerTown, p.OwnerTown AS PickupOwnerTown, dr.OwnerTown AS DropoffOwnerTown, " \
         "d.OwnerCounty AS DriverOwnerCounty, p.OwnerCounty AS PickupOwnerCounty, dr.OwnerCounty AS DropoffOwnerCounty, " \
         "d.OwnerPostcode AS DriverOwnerPostcode, p.OwnerPostcode AS PickupOwnerPostcode, dr.OwnerPostcode AS DropoffOwnerPostcode, " \
+        "t.PickupAddress, t.PickupTown, t.PickupCounty, t.PickupPostcode, t.DropoffAddress, t.DropoffTown, t.DropoffCounty, t.DropoffPostcode, " \
         "a.AnimalName, a.ShelterCode " \
         "FROM animaltransport t " \
         "LEFT OUTER JOIN animal a ON t.AnimalID = a.ID " \
@@ -873,8 +874,16 @@ def insert_transport_from_form(dbo, username, post):
         ( "AnimalID", post.db_integer("animal")),
         ( "DriverOwnerID", post.db_integer("driver")),
         ( "PickupOwnerID", post.db_integer("pickup")),
-        ( "DropoffOwnerID", post.db_integer("dropoff")),
+        ( "PickupAddress", post.db_string("pickupaddress")),
+        ( "PickupTown", post.db_string("pickuptown")),
+        ( "PickupCounty", post.db_string("pickupcounty")),
         ( "PickupDateTime", post.db_datetime("pickupdate", "pickuptime")),
+        ( "PickupPostcode", post.db_string("pickuppostcode")),
+        ( "DropoffOwnerID", post.db_integer("dropoff")),
+        ( "DropoffAddress", post.db_string("dropoffaddress")),
+        ( "DropoffTown", post.db_string("dropofftown")),
+        ( "DropoffCounty", post.db_string("dropoffcounty")),
+        ( "DropoffPostcode", post.db_string("dropoffpostcode")),
         ( "DropoffDateTime", post.db_datetime("dropoffdate", "dropofftime")),
         ( "Status", post.db_integer("status")),
         ( "Miles", post.db_integer("miles")),
@@ -895,8 +904,16 @@ def update_transport_from_form(dbo, username, post):
         ( "AnimalID", post.db_integer("animal")),
         ( "DriverOwnerID", post.db_integer("driver")),
         ( "PickupOwnerID", post.db_integer("pickup")),
-        ( "DropoffOwnerID", post.db_integer("dropoff")),
+        ( "PickupAddress", post.db_string("pickupaddress")),
+        ( "PickupTown", post.db_string("pickuptown")),
+        ( "PickupCounty", post.db_string("pickupcounty")),
         ( "PickupDateTime", post.db_datetime("pickupdate", "pickuptime")),
+        ( "PickupPostcode", post.db_string("pickuppostcode")),
+        ( "DropoffOwnerID", post.db_integer("dropoff")),
+        ( "DropoffAddress", post.db_string("dropoffaddress")),
+        ( "DropoffTown", post.db_string("dropofftown")),
+        ( "DropoffCounty", post.db_string("dropoffcounty")),
+        ( "DropoffPostcode", post.db_string("dropoffpostcode")),
         ( "DropoffDateTime", post.db_datetime("dropoffdate", "dropofftime")),
         ( "Status", post.db_integer("status")),
         ( "Miles", post.db_integer("miles")),

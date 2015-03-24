@@ -37,10 +37,19 @@ $(function() {
             { json_field: "COSTPAIDDATE", post_field: "costpaid", label: _("Paid"), type: "date", hideif: function() { return !config.bool("ShowCostPaid"); } },
             { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" },
             { type: "nextcol" },
-            { json_field: "PICKUPOWNERID", post_field: "pickup", label: _("Pickup"), type: "person", validation: "notzero" },
+            { json_field: "PICKUPOWNERID", post_field: "pickup", label: _("Pickup"), personmode: "brief", type: "person" },
+            { json_field: "PICKUPADDRESS", post_field: "pickupaddress", label: _("Address"), type: "text", validation: "notblank" },
+            { json_field: "PICKUPTOWN", post_field: "pickuptown", label: _("City"), type: "text" },
+            { json_field: "PICKUPCOUNTY", post_field: "pickupcounty", label: _("State"), type: "text" },
+            { json_field: "PICKUPPOSTCODE", post_field: "pickuppostcode", label: _("Zipcode"), type: "text" },
             { json_field: "PICKUPDATETIME", post_field: "pickupdate", label: _("on"), type: "date", validation: "notblank", defaultval: new Date() },
             { json_field: "PICKUPDATETIME", post_field: "pickuptime", label: _("at"), type: "time", validation: "notblank", defaultval: format.time(new Date()) },
-            { json_field: "DROPOFFOWNERID", post_field: "dropoff", label: _("Dropoff"), type: "person", validation: "notzero" },
+            { json_field: "DROPOFFOWNERID", post_field: "dropoff", label: _("Dropoff"), personmode: "brief", type: "person" },
+            { json_field: "DROPOFFADDRESS", post_field: "dropoffaddress", label: _("Address"), type: "text", validation: "notblank" },
+            { json_field: "DROPOFFTOWN", post_field: "dropofftown", label: _("City"), type: "text" },
+            { json_field: "DROPOFFCOUNTY", post_field: "dropoffcounty", label: _("State"), type: "text" },
+            { json_field: "DROPOFFPOSTCODE", post_field: "dropoffpostcode", label: _("Zipcode"), type: "text" },
+
             { json_field: "DROPOFFDATETIME", post_field: "dropoffdate", label: _("on"), type: "date", validation: "notblank", defaultval: new Date() },
             { json_field: "DROPOFFDATETIME", post_field: "dropofftime", label: _("at"), type: "time", validation: "notblank", defaultval: format.time(new Date()) }
         ]
@@ -133,11 +142,11 @@ $(function() {
                 }
             },
             { field: "PICKUP", display: _("Pickup"), formatter: function(row) {
-                    if (row.PICKUPOWNERID) {
+                    if (row.PICKUPOWNERID && row.PICKUPOWNERID != "0") {
                         return '<a href=person?id="' + row.PICKUPOWNERID + '">' + row.PICKUPOWNERNAME + '</a><br />' +
-                            row.PICKUPOWNERADDRESS + "<br/>" + row.PICKUPOWNERTOWN + "<br />" + row.PICKUPOWNERCOUNTY + " " + row.PICKUPOWNERPOSTCODE;
+                            row.PICKUPADDRESS + "<br/>" + row.PICKUPTOWN + "<br />" + row.PICKUPCOUNTY + " " + row.PICKUPPOSTCODE;
                     }
-                    return "";
+                    return row.PICKUPADDRESS + "<br/>" + row.PICKUPTOWN + "<br/>" + row.PICKUPCOUNTY + "<br/>" + row.PICKUPPOSTCODE;
                 }
             },
             { field: "PICKUPDATETIME", display: _("at"), initialsort: true, initialsortdirection: "desc",
@@ -146,11 +155,11 @@ $(function() {
                 }
             },
             { field: "DROPOFF", display: _("Dropoff"), formatter: function(row) {
-                    if (row.DROPOFFOWNERID) {
+                    if (row.DROPOFFOWNERID && row.DROPOFFOWNERID != "0") {
                         return '<a href=person?id="' + row.DROPOFFOWNERID + '">' + row.DROPOFFOWNERNAME + '</a><br />' +
-                            row.DROPOFFOWNERADDRESS + "<br/>" + row.DROPOFFOWNERTOWN + "<br />" + row.DROPOFFOWNERCOUNTY + " " + row.DROPOFFOWNERPOSTCODE;
+                            row.DROPOFFADDRESS + "<br/>" + row.DROPOFFTOWN + "<br/>" + row.DROPOFFCOUNTY + "<br/>" + row.DROPOFFPOSTCODE;
                     }
-                    return "";
+                    return row.DROPOFFADDRESS + "<br/>" + row.DROPOFFTOWN + "<br/>" + row.DROPOFFCOUNTY + "<br/>" + row.DROPOFFPOSTCODE;
                 }
             },
             { field: "DROPOFFDATETIME", display: _("at"), 
@@ -285,6 +294,21 @@ $(function() {
             tableform.dialog_bind(dialog);
             tableform.buttons_bind(buttons);
             tableform.table_bind(table, buttons);
+            
+            // When we pickup and dropoff people, autofill the addresses
+            $("#pickup").personchooser().bind("personchooserchange", function(event, rec) { 
+                $("#pickupaddress").val(rec.OWNERADDRESS.replace("\n", ", "));
+                $("#pickuptown").val(rec.OWNERTOWN);
+                $("#pickupcounty").val(rec.OWNERCOUNTY);
+                $("#pickuppostcode").val(rec.OWNERPOSTCODE);
+            });
+            $("#dropoff").personchooser().bind("personchooserchange", function(event, rec) { 
+                $("#dropoffaddress").val(rec.OWNERADDRESS.replace("\n", ", "));
+                $("#dropofftown").val(rec.OWNERTOWN);
+                $("#dropoffcounty").val(rec.OWNERCOUNTY);
+                $("#dropoffpostcode").val(rec.OWNERPOSTCODE);
+            });
+
         },
 
         sync: function() {
