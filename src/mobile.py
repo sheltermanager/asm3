@@ -228,6 +228,7 @@ def page(dbo, session, username):
     stl = stock.get_stock_locations_totals(dbo)
     inmy = animalcontrol.get_animalcontrol_find_advanced(dbo, { "dispatchedaco": session.user, "filter": "incomplete" })
     inop = animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "incomplete" })
+    infp = animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "requirefollowup" })
     homelink = jqm_link("mobile", _("Home", l), "home", "ui-btn-right", "b")
     h = []
 
@@ -267,6 +268,8 @@ def page(dbo, session, username):
         items.append(jqm_listitem_link("#inmy", _("My Incidents", l), "call", len(inmy)))
     if len(inop) > 0 and pb(users.CHANGE_INCIDENT):
         items.append(jqm_listitem_link("#inop", _("Open Incidents", l), "call", len(inop)))
+    if len(infp) > 0 and pb(users.CHANGE_INCIDENT):
+        items.append(jqm_listitem_link("#infp", _("Incidents Requiring Followup", l), "call", len(infp)))
     if pb(users.ADD_DIARY) or pb(users.EDIT_MY_DIARY_NOTES):
         items.append(jqm_list_divider(_("Diary", l)))
     if pb(users.ADD_DIARY):
@@ -298,6 +301,7 @@ def page(dbo, session, username):
     h += page_stocklevels(l, homelink, stl)
     h += page_incidents(l, homelink, inmy, "inmy", _("My Incidents", l))
     h += page_incidents(l, homelink, inop, "inop", _("Open Incidents", l))
+    h += page_incidents(l, homelink, infp, "infp", _("Incidents Requiring Followup", l))
 
     h.append("</body></html>")
     return "\n".join(h)

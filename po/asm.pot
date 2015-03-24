@@ -5369,6 +5369,10 @@ msgstr ""
 msgid "Incident {0}, {1}: {2}"
 msgstr ""
 
+#: mobile.py
+msgid "Incidents Requiring Followup"
+msgstr ""
+
 #: mailmerge.js
 msgid "Include CSV header line"
 msgstr ""
