@@ -656,6 +656,9 @@ Display
 * Show a minimap of the address on person screens: Show an embedded map to the
   person's address on the details screen.
 
+* Show weight as lb rather than kg: Change the field label on the animal weight
+  field to lb instead of the usual kg.
+
 * Show animal thumbnails in movement and medical books: Show animal pictures in
   the rows of the movement and medical books (foster book, reservation book,
   vaccination book, etc.)
