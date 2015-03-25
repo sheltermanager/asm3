@@ -146,7 +146,7 @@ $(function() {
                 '<td><label for="weight">' + _("Weight") + '</label></td>',
                 '<td><span style="white-space: nowrap;">',
                 '<input id="weight" data="weight" class="asm-textbox asm-numberbox" />',
-                _("kg"),
+                '<label id="weightlabel">' + _("kg") + '</label>',
                 '</span>',
                 '</td>',
                 '</tr>',
@@ -381,6 +381,10 @@ $(function() {
                         $(".asm-content button").button("enable");
                     });
                 });
+            }
+
+            if (config.bool("ShowWeightInLbs")) {
+                $("#weightlabel").html(_("lb"));
             }
 
             // Disable rows based on config options
