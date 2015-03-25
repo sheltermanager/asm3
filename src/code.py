@@ -5343,6 +5343,21 @@ class staff_rota:
         web.header("Cache-Control", "no-cache")
         return s
 
+    def POST(self):
+        utils.check_loggedin(session, web)
+        post = utils.PostedData(web.input(mode="create"), session.locale)
+        mode = post["mode"]
+        if mode == "create":
+            users.check_permission(session, users.ADD_ROTA)
+            return extperson.insert_rota_from_form(session.dbo, session.user, post)
+        elif mode == "update":
+            users.check_permission(session, users.CHANGE_ROTA)
+            extperson.update_rota_from_form(session.dbo, session.user, post)
+        elif mode == "delete":
+            users.check_permission(session, users.DELETE_ROTA)
+            for rid in post.integer_list("ids"):
+                extperson.delete_rota(session.dbo, session.user, rid)
+
 class person_traploan:
     def GET(self):
         utils.check_loggedin(session, web)

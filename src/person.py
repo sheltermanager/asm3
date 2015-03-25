@@ -5,7 +5,6 @@ import al
 import animal
 import audit
 import configuration
-import datetime
 import dbfs
 import diary
 import db
@@ -15,7 +14,7 @@ import media
 import reports
 import users
 import utils
-from i18n import _, python2display, subtract_years, now
+from i18n import _, subtract_years, now
 from sitedefs import BULK_GEO_BATCH
 
 ASCENDING = 0
@@ -795,9 +794,9 @@ def update_rota_from_form(dbo, username, post):
         ( "RotaTypeID", post.db_integer("type")),
         ( "Comments", post.db_string("comments"))
         ))
-    preaudit = db.query(dbo, "SELECT * FROM ownerrotahours WHERE ID = %d" % rotahoursid)
+    preaudit = db.query(dbo, "SELECT * FROM ownerrota WHERE ID = %d" % rotaid)
     db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM ownerrotahours WHERE ID = %d" % rotahoursid)
+    postaudit = db.query(dbo, "SELECT * FROM ownerrota WHERE ID = %d" % rotaid)
     audit.edit(dbo, username, "ownerrota", audit.map_diff(preaudit, postaudit))
 
 def delete_rota(dbo, username, rid):
