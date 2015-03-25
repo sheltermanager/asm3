@@ -7,7 +7,7 @@ import sys
 from i18n import _, BUILD
 from sitedefs import DB_PK_STRATEGY
 
-LATEST_VERSION = 33608
+LATEST_VERSION = 33609
 VERSIONS = ( 
     2870, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3050,
     3051, 3081, 3091, 3092, 3093, 3094, 3110, 3111, 3120, 3121, 3122, 3123, 3200,
@@ -18,7 +18,7 @@ VERSIONS = (
     33206, 33300, 33301, 33302, 33303, 33304, 33305, 33306, 33307, 33308, 33309,
     33310, 33311, 33312, 33313, 33314, 33315, 33316, 33401, 33402, 33501, 33502,
     33503, 33504, 33505, 33506, 33507, 33508, 33600, 33601, 33602, 33603, 33604,
-    33605, 33606, 33607, 33608
+    33605, 33606, 33607, 33608, 33609
 )
 
 # All ASM3 tables
@@ -31,12 +31,12 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "activeuser", "additional"
     "diary", "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", "donationtype", "entryreason", 
     "incidentcompleted", "incidenttype", "internallocation", "licencetype", "lkcoattype", "lkownerflags", 
     "lksaccounttype", "lksdiarylink", "lksdonationfreq", "lksex", "lksfieldlink", "lksfieldtype", "lksize", 
-    "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", "lksposneg", "lksyesno", "lksynun", 
-    "lkurgency", "log", "logtype", "media", "medicalprofile", "messages", "onlineform", "onlineformfield", 
-    "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", "ownerlicence", 
-    "ownertraploan", "ownervoucher", "pickuplocation", "reservationstatus", "role", "species", "stocklevel", 
-    "stocklocation", "stockusage", "stockusagetype", "testtype", "testresult", "traptype", "userrole", 
-    "users", "vaccinationtype", "voucher" )
+    "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", "lksposneg", "lksrotahoursstatus", 
+    "lksyesno", "lksynun", "lkurgency", "log", "logtype", "media", "medicalprofile", "messages", "onlineform", 
+    "onlineformfield", "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
+    "ownerlicence", "ownerrota", "ownerrotahours", "ownertraploan", "ownervoucher", "pickuplocation", 
+    "reservationstatus", "role", "species", "stocklevel", "stocklocation", "stockusage", "stockusagetype", 
+    "testtype", "testresult", "traptype", "userrole", "users", "vaccinationtype", "voucher" )
 
 # ASM2_COMPATIBILITY This is used for dumping tables in ASM2/HSQLDB format. 
 # These are the tables present in ASM2.
@@ -875,6 +875,9 @@ def sql_structure(dbo):
     sql += table("lksloglink", (
         fid(), fstr("LinkType") ), False)
 
+    sql += table("lksrotahoursstatus", (
+        fid(), fstr("Status") ), False)
+
     sql += table("lkurgency", ( 
         fid(), fstr("Urgency") ), False)
 
@@ -1094,6 +1097,20 @@ def sql_structure(dbo):
     sql += index("ownerdonation_OwnerID", "ownerdonation", "OwnerID")
     sql += index("ownerdonation_Date", "ownerdonation", "Date")
 
+    sql += table("ownerrotahours", (
+        fid(),
+        fint("OwnerID"),
+        fint("OwnerRotaID"),
+        fdate("StartDateTime"),
+        fdate("EndDateTime"),
+        fint("Status"),
+        flongstr("Comments", True) ))
+    sql += index("ownerrotahours_OwnerID", "ownerrotahours", "OwnerID")
+    sql += index("ownerrotahours_OwnerRotaID", "ownerrotahours", "OwnerRotaID")
+    sql += index("ownerrotahours_DateTimeStart", "ownerrotahours", "DateTimeStart")
+    sql += index("ownerrotahours_DateTimeEnd", "ownerrotahours", "DateTimeEnd")
+    sql += index("ownerrotahours_Status", "ownerrotahours", "Status")
+
     sql += table("ownerinvestigation", (
         fid(),
         fint("OwnerID"),
@@ -1117,6 +1134,16 @@ def sql_structure(dbo):
     sql += index("ownerlicence_LicenceNumber", "ownerlicence", "LicenceNumber", True)
     sql += index("ownerlicence_IssueDate", "ownerlicence", "IssueDate")
     sql += index("ownerlicence_ExpiryDate", "ownerlicence", "ExpiryDate")
+
+    sql += table("ownerrota", (
+        fid(),
+        fint("OwnerID"),
+        fint("WeekDay"),
+        fstr("StartTime"),
+        fstr("EndTime"),
+        flongstr("Comments", True) ))
+    sql += index("ownerrota_OwnerID", "ownerrota", "OwnerID")
+    sql += index("ownerrota_WeekDay", "ownerrota", "WeekDay")
 
     sql += table("ownertraploan", (
         fid(),
@@ -1973,6 +2000,15 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup1("lksposneg", 0, _("Unknown", l))
     sql += lookup1("lksposneg", 1, _("Negative", l))
     sql += lookup1("lksposneg", 2, _("Positive", l))
+    sql += lookup1("lksrotahoursstatus", 1, _("Shift", l))
+    sql += lookup1("lksrotahoursstatus", 2, _("Vacation", l))
+    sql += lookup1("lksrotahoursstatus", 3, _("Leave of absence", l))
+    sql += lookup1("lksrotahoursstatus", 4, _("Maternity", l))
+    sql += lookup1("lksrotahoursstatus", 5, _("Personal", l))
+    sql += lookup1("lksrotahoursstatus", 6, _("Rostered day off", l))
+    sql += lookup1("lksrotahoursstatus", 7, _("Sick leave", l))
+    sql += lookup1("lksrotahoursstatus", 8, _("Training", l))
+    sql += lookup1("lksrotahoursstatus", 9, _("Unavailable", l))
     sql += lookup1("lkurgency", 1, _("Urgent", l))
     sql += lookup1("lkurgency", 2, _("High", l))
     sql += lookup1("lkurgency", 3, _("Medium", l))
@@ -3822,4 +3858,53 @@ def update_33608(dbo):
     add_index(dbo, "animalcontrol_PickupLocationID", "animalcontrol", "PickupLocationID")
     db.execute_dbupdate(dbo, "UPDATE animalcontrol SET PickupLocationID = 0")
 
+def update_33609(dbo):
+    l = dbo.locale
+    # Add ownerrota table
+    sql = "CREATE TABLE ownerrota ( ID INTEGER NOT NULL PRIMARY KEY, " \
+        "OwnerID INTEGER NOT NULL, " \
+        "WeekDay INTEGER NOT NULL, " \
+        "StartTime %(short)s NOT NULL, " \
+        "EndTime %(short)s NOT NULL, " \
+        "Comments %(long)s, " \
+        "RecordVersion INTEGER, " \
+        "CreatedBy %(short)s, " \
+        "CreatedDate %(date)s, " \
+        "LastChangedBy %(short)s, " \
+        "LastChangedDate %(date)s)" % { "short": shorttext(dbo), "long": longtext(dbo), "date": datetype(dbo) }
+    db.execute_dbupdate(dbo, sql)
+    add_index(dbo, "ownerrota_OwnerID", "ownerrota", "OwnerID")
+    add_index(dbo, "ownerrota_WeekDay", "ownerrota", "WeekDay")
+    # Add ownerrotahours table
+    sql = "CREATE TABLE ownerrotahours ( ID INTEGER NOT NULL PRIMARY KEY, " \
+        "OwnerID INTEGER NOT NULL, " \
+        "OwnerRotaID INTEGER NOT NULL, " \
+        "StartDateTime %(date)s NOT NULL, " \
+        "EndDateTime %(date)s NOT NULL, " \
+        "Status INTEGER NOT NULL, " \
+        "Comments %(long)s, " \
+        "RecordVersion INTEGER, " \
+        "CreatedBy %(short)s, " \
+        "CreatedDate %(date)s, " \
+        "LastChangedBy %(short)s, " \
+        "LastChangedDate %(date)s)" % { "short": shorttext(dbo), "long": longtext(dbo), "date": datetype(dbo) }
+    db.execute_dbupdate(dbo, sql)
+    add_index(dbo, "ownerrotahours_OwnerID", "ownerrotahours", "OwnerID")
+    add_index(dbo, "ownerrotahours_OwnerRotaID", "ownerrotahours", "OwnerRotaID")
+    add_index(dbo, "ownerrotahours_StartDateTime", "ownerrotahours", "StartDateTime")
+    add_index(dbo, "ownerrotahours_EndDateTime", "ownerrotahours", "EndDateTime")
+    add_index(dbo, "ownerrotahours_Status", "ownerrotahours", "Status")
+    # Add lksrotahoursstatus table
+    sql = "CREATE TABLE lksrotahoursstatus ( ID INTEGER NOT NULL PRIMARY KEY, " \
+        "Status %(short)s NOT NULL)" % { "short": shorttext(dbo) }
+    db.execute_dbupdate(dbo, sql)
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotahoursstatus VALUES (1, %s)" % db.ds(_("Shift", l)))
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotahoursstatus VALUES (2, %s)" % db.ds(_("Vacation", l)))
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotahoursstatus VALUES (3, %s)" % db.ds(_("Leave of absence", l)))
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotahoursstatus VALUES (4, %s)" % db.ds(_("Maternity", l)))
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotahoursstatus VALUES (5, %s)" % db.ds(_("Personal", l)))
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotahoursstatus VALUES (6, %s)" % db.ds(_("Rostered day off", l)))
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotahoursstatus VALUES (7, %s)" % db.ds(_("Sick leave", l)))
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotahoursstatus VALUES (8, %s)" % db.ds(_("Training", l)))
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotahoursstatus VALUES (9, %s)" % db.ds(_("Unavailable", l)))
 

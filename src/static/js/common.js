@@ -146,6 +146,16 @@
             return v instanceof Array || Object.prototype.toString.call(v) === '[object Array]';
         },
 
+        /**
+         * Returns true if v is a date or a string containing an ISO date
+         */
+        is_date: function(v) {
+            if (!v) { return false; }
+            if (v instanceof Date) { return true; }
+            if (common.is_string(v) && v.length == 19 && v.indexOf("T") == 10) { return true; }
+            return false;
+        },
+
         /** 
          * Returns true if v is a string
          */
@@ -219,6 +229,13 @@
         today_no_time: function() {
             var d = new Date();
             return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0);
+        },
+
+        /** Adds days to date */
+        add_days: function(date, days) {
+            var d = new Date();
+            d.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            return d;
         },
  
         /**
@@ -922,6 +939,27 @@
             if (p.indexOf(" ") == -1) { return p; }
             p = p.substring(0, p.indexOf(" "));
             return p;
+        },
+
+        /**
+         * Returns a readable day of the month from a number
+         * 0 = Jan, 1 = Feb, etc.
+         */
+        monthname: function(i) {
+            var months = [ _("Jan"), _("Feb"), _("Mar"), _("Apr"), 
+                _("May"), _("Jun"), _("Jul"), _("Aug"), _("Sep"), 
+                _("Oct"), _("Nov"), _("Dec") ];
+            if (i && (i < 0 || i > 11)) { return ""; }
+            return months[i];
+        },
+
+        /** Returns a readable day of the week from a number
+         *  0 = Mon, 1 = Tue, etc.
+         */
+        weekdayname: function(i) {
+            var days = [ _("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat"), _("Sun") ];
+            if (i && (i < 0 || i > 6)) { return ""; }
+            return days[i];
         }
 
     };
