@@ -745,10 +745,6 @@ $(function() {
                 $("#deathcategory").closest("tr").fadeIn();
                 $("#puttosleep").closest("tr").fadeIn();
                 $("#ptsreason").closest("div").fadeIn();
-                // If the animal is off the shelter, tick the died off shelter box
-                if (controller.animal.ARCHIVED == 1)  {
-                    $("#diedoffshelter").prop("checked", true);
-                }
             }
 
             // Enable/disable health and identification fields based on checkboxes
@@ -1181,6 +1177,16 @@ $(function() {
             // Same goes for any of our person choosers
             $(".asm-personchooser").personchooser().bind("personchoosercleared", function(event, rec) {
                 validate.dirty(true);
+            });
+
+            // If the deceased date is changed and now has a value, check to see if the
+            // animal is off shelter and helpfully tick the died off shelter box
+            $("#deceaseddate").change(function(e) {
+                if ($("#deceaseddate").val()) {
+                    if (controller.animal.ARCHIVED == 1)  {
+                        $("#diedoffshelter").prop("checked", true);
+                    }
+                }
             });
 
             // Controls that update the screen when changed
