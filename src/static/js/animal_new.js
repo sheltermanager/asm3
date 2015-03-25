@@ -145,7 +145,7 @@ $(function() {
                 '<tr id="weightrow">',
                 '<td><label for="weight">' + _("Weight") + '</label></td>',
                 '<td><span style="white-space: nowrap;">',
-                '<input id="weight" data="weight" class="asm-textbox asm-numberbox" />',
+                '<input id="weight" data="weight" class="asm-textbox asm-halftextbox asm-numberbox" />',
                 '<label id="weightlabel">' + _("kg") + '</label>',
                 '</span>',
                 '</td>',
