@@ -3775,7 +3775,7 @@ def update_33604(dbo):
     add_index(dbo, "animalcontrol_FollowupComplete", "animalcontrol", "FollowupComplete")
     add_index(dbo, "animalcontrol_FollowupComplete2", "animalcontrol", "FollowupComplete2")
     add_index(dbo, "animalcontrol_FollowupComplete3", "animalcontrol", "FollowupComplete3")
-    db.execute_dbupdate(dbo, "UPDATE animalcontrol SET FollowupComplete = 0, FollowComplete2 = 0, FollowupComplete3 = 0")
+    db.execute_dbupdate(dbo, "UPDATE animalcontrol SET FollowupComplete = 0, FollowupComplete2 = 0, FollowupComplete3 = 0")
     db.execute_dbupdate(dbo, "UPDATE animal SET Weight = 0")
 
 def update_33605(dbo):
