@@ -933,8 +933,8 @@ def get_posneg(dbo):
 def get_reservation_statuses(dbo):
     return db.query(dbo, "SELECT * FROM reservationstatus ORDER BY StatusName")
 
-def get_rota_hours_statuses(dbo):
-    return db.query(dbo, "SELECT * FROM lksrotahoursstatus ORDER BY ID")
+def get_rota_types(dbo):
+    return db.query(dbo, "SELECT * FROM lksrotatype ORDER BY ID")
 
 def get_sex_name(dbo, sid):
     if id is None: return ""

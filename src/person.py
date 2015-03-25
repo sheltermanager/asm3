@@ -15,7 +15,7 @@ import media
 import reports
 import users
 import utils
-from i18n import _, format_time, python2display, subtract_years, now
+from i18n import _, python2display, subtract_years, now
 from sitedefs import BULK_GEO_BATCH
 
 ASCENDING = 0
@@ -57,21 +57,12 @@ def get_person_query(dbo):
 
 def get_rota_query(dbo):
     """
-    Returns the SELECT and JOIN commands necessary for selecting from the rota
-    """
-    return "SELECT r.*, o.OwnerName " \
-        "FROM ownerrota r " \
-        "INNER JOIN owner o ON o.ID = r.OwnerID "
-
-def get_rotahours_query(dbo):
-    """
     Returns the SELECT and JOIN commands necessary for selecting from rota hours
     """
-    return "SELECT h.*, o.OwnerName, st.Status AS StatusName " \
-        "FROM ownerrotahours h " \
-        "LEFT OUTER JOIN ownerrota r ON r.ID = h.OwnerRotaID " \
-        "LEFT OUTER JOIN lksrotahoursstatus st ON st.ID = h.Status " \
-        "INNER JOIN owner o ON o.ID = h.OwnerID "
+    return "SELECT r.*, o.OwnerName, rt.RotaType AS RotaTypeName " \
+        "FROM ownerrota r " \
+        "LEFT OUTER JOIN lksrotatype rt ON rt.ID = r.RotaTypeID " \
+        "INNER JOIN owner o ON o.ID = r.OwnerID "
 
 def get_person(dbo, personid):
     """
@@ -168,7 +159,6 @@ def get_satellite_counts(dbo, personid):
         "(SELECT COUNT(*) FROM ownerinvestigation oi WHERE oi.OwnerID = o.ID) AS investigation, " \
         "(SELECT COUNT(*) FROM ownerlicence ol WHERE ol.OwnerID = o.ID) AS licence, " \
         "(SELECT COUNT(*) FROM ownerrota r WHERE r.OwnerID = o.ID) AS rota, " \
-        "(SELECT COUNT(*) FROM ownerrotahours rh WHERE rh.OwnerID = o.ID) AS rotahours, " \
         "(SELECT COUNT(*) FROM ownertraploan ot WHERE ot.OwnerID = o.ID) AS traploan, " \
         "(SELECT COUNT(*) FROM ownervoucher ov WHERE ov.OwnerID = o.ID) AS vouchers, " \
         "((SELECT COUNT(*) FROM animal WHERE BroughtInByOwnerID = o.ID OR OriginalOwnerID = o.ID OR CurrentVETID = o.ID OR OwnersVetID = o.ID OR PickedUpByOwnerID = o.ID) + " \
@@ -452,15 +442,12 @@ def get_person_find_advanced(dbo, criteria, includeStaff = False, limit = 0):
     return db.query(dbo, sql)
 
 def get_person_rota(dbo, personid):
-    return db.query(dbo, get_rota_query(dbo) + " WHERE r.OwnerID = %d ORDER BY WeekDay" % personid)
+    return db.query(dbo, get_rota_query(dbo) + " WHERE r.OwnerID = %d ORDER BY r.StartDateTime DESC LIMIT 100" % personid)
 
-def get_person_rotahours(dbo, personid):
-    return db.query(dbo, get_rotahours_query(dbo) + " WHERE h.OwnerID = %d ORDER BY h.StartDateTime DESC LIMIT 100" % personid)
-
-def get_rotahours(dbo, startdate, enddate):
-    """ Returns hours records where start >= startdate and end < enddate """
-    return db.query(dbo, get_rotahours_query(dbo) + \
-        " WHERE h.StartDateTime >= %s AND h.EndDateTime < %s ORDER BY h.StartDateTime" % (db.dd(startdate), db.dd(enddate)))
+def get_rota(dbo, startdate, enddate):
+    """ Returns rota records where start >= startdate and end < enddate """
+    return db.query(dbo, get_rota_query(dbo) + \
+        " WHERE r.StartDateTime >= %s AND r.EndDateTime < %s ORDER BY r.StartDateTime" % (db.dd(startdate), db.dd(enddate)))
 
 def calculate_owner_name(dbo, title = "", initials = "", first = "", last = "", nameformat = ""):
     """
@@ -787,9 +774,9 @@ def insert_rota_from_form(dbo, username, post):
     sql = db.make_insert_user_sql(dbo, "ownerrota", username, ( 
         ( "ID", db.di(nrota)),
         ( "OwnerID", post.db_integer("person")),
-        ( "WeekDay", post.db_integer("weekday")),
-        ( "StartTime", post.db_string("starttime")),
-        ( "EndTime", post.db_string("endtime")),
+        ( "StartDateTime", post.db_datetime("startdate", "starttime")),
+        ( "EndDateTime", post.db_datetime("enddate", "endtime")),
+        ( "RotaTypeID", post.db_integer("type")),
         ( "Comments", post.db_string("comments"))
         ))
     db.execute(dbo, sql)
@@ -803,14 +790,14 @@ def update_rota_from_form(dbo, username, post):
     rotaid = post.integer("rotaid")
     sql = db.make_update_user_sql(dbo, "ownerrota", username, "ID=%d" % rotaid, ( 
         ( "OwnerID", post.db_integer("person")),
-        ( "WeekDay", post.db_integer("weekday")),
-        ( "StartTime", post.db_string("starttime")),
-        ( "EndTime", post.db_string("endtime")),
+        ( "StartDateTime", post.db_datetime("startdate", "starttime")),
+        ( "EndDateTime", post.db_datetime("enddate", "endtime")),
+        ( "RotaTypeID", post.db_integer("type")),
         ( "Comments", post.db_string("comments"))
         ))
-    preaudit = db.query(dbo, "SELECT * FROM ownerrota WHERE ID = %d" % rotaid)
+    preaudit = db.query(dbo, "SELECT * FROM ownerrotahours WHERE ID = %d" % rotahoursid)
     db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM ownerrota WHERE ID = %d" % rotaid)
+    postaudit = db.query(dbo, "SELECT * FROM ownerrotahours WHERE ID = %d" % rotahoursid)
     audit.edit(dbo, username, "ownerrota", audit.map_diff(preaudit, postaudit))
 
 def delete_rota(dbo, username, rid):
@@ -819,87 +806,6 @@ def delete_rota(dbo, username, rid):
     """
     audit.delete(dbo, username, "ownerrota", str(db.query(dbo, "SELECT * FROM ownerrota WHERE ID=%d" % int(rid))))
     db.execute(dbo, "DELETE FROM ownerrota WHERE ID = %d" % int(rid))
-
-def create_rotahours(dbo, username, startdate, enddate, personid = 0):
-    """
-    Creates rota hours between two dates.
-    startdate: The date to start creating for
-    enddate: When to stop creating
-    personid: If 0, creates for all people, otherwise restrict hours creation to one person
-    """
-    l = dbo.locale
-    where = ""
-    if personid != 0:
-        where = "AND OwnerID = %d" % personid
-    weekrota = {
-        0: db.query(dbo, get_rota_query(dbo) + " WHERE WeekDay = 1 %s" % where),
-        1: db.query(dbo, get_rota_query(dbo) + " WHERE WeekDay = 2 %s" % where),
-        2: db.query(dbo, get_rota_query(dbo) + " WHERE WeekDay = 3 %s" % where),
-        3: db.query(dbo, get_rota_query(dbo) + " WHERE WeekDay = 4 %s" % where),
-        4: db.query(dbo, get_rota_query(dbo) + " WHERE WeekDay = 5 %s" % where),
-        5: db.query(dbo, get_rota_query(dbo) + " WHERE WeekDay = 6 %s" % where),
-        6: db.query(dbo, get_rota_query(dbo) + " WHERE WeekDay = 7 %s" % where)
-    }
-    d = startdate
-    oneday = datetime.timedelta(days=1)
-    recs = 0
-    while d <= enddate:
-        rotas = weekrota[d.weekday()]
-        for r in rotas:
-            insert_rotahours_from_form(dbo, username, utils.PostedData({
-                "person":    str(r["OWNERID"]),
-                "rotaid":    str(r["ID"]),
-                "startdate": python2display(l, d),
-                "starttime": r["STARTTIME"],
-                "enddate":   python2display(l, d),
-                "endtime":   r["ENDTIME"],
-                "status":    "1"
-            }, l))
-            recs += 1
-        d += oneday
-    return recs
-
-def insert_rotahours_from_form(dbo, username, post):
-    """
-    Creates a rota hours record from posted form data
-    """
-    nrota = db.get_id(dbo, "ownerrotahours")
-    sql = db.make_insert_user_sql(dbo, "ownerrotahours", username, ( 
-        ( "ID", db.di(nrota)),
-        ( "OwnerID", post.db_integer("person")),
-        ( "OwnerRotaID", post.db_integer("rotaid")),
-        ( "StartDateTime", post.db_datetime("startdate", "starttime")),
-        ( "EndDateTime", post.db_datetime("enddate", "endtime")),
-        ( "Status", post.db_integer("status")),
-        ( "Comments", post.db_string("comments"))
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "ownerrotahours", str(nrota))
-    return nrota
-
-def update_rotahours_from_form(dbo, username, post):
-    """
-    Updates a rota record from posted form data
-    """
-    rotahoursid = post.integer("rotahoursid")
-    sql = db.make_update_user_sql(dbo, "ownerrotahours", username, "ID=%d" % rotahoursid, ( 
-        ( "OwnerID", post.db_integer("person")),
-        ( "StartDateTime", post.db_datetime("startdate", "starttime")),
-        ( "EndDateTime", post.db_datetime("enddate", "endtime")),
-        ( "Status", post.db_integer("status")),
-        ( "Comments", post.db_string("comments"))
-        ))
-    preaudit = db.query(dbo, "SELECT * FROM ownerrotahours WHERE ID = %d" % rotahoursid)
-    db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM ownerrotahours WHERE ID = %d" % rotahoursid)
-    audit.edit(dbo, username, "ownerrotahours", audit.map_diff(preaudit, postaudit))
-
-def delete_rotahours(dbo, username, rid):
-    """
-    Deletes the selected rota hours record
-    """
-    audit.delete(dbo, username, "ownerrotahours", str(db.query(dbo, "SELECT * FROM ownerrotahours WHERE ID=%d" % int(rid))))
-    db.execute(dbo, "DELETE FROM ownerrotahours WHERE ID = %d" % int(rid))
 
 def insert_investigation_from_form(dbo, username, post):
     """

@@ -173,7 +173,6 @@ urls = (
     "/person_movements", "person_movements",
     "/person_new", "person_new",
     "/person_rota", "person_rota",
-    "/person_rotahours", "person_rotahours",
     "/person_traploan", "person_traploan",
     "/person_vouchers", "person_vouchers",
     "/publish", "publish",
@@ -5297,6 +5296,7 @@ class person_rota:
         c = html.controller_str("name", "person_rota")
         c += html.controller_json("rows", rota)
         c += html.controller_json("person", p)
+        c += html.controller_json("rotatypes", extlookups.get_rota_types(dbo))
         c += html.controller_json("tabcounts", extperson.get_satellite_counts(dbo, p["ID"])[0])
         s += html.controller(c)
         s += html.footer()
@@ -5318,66 +5318,24 @@ class person_rota:
             users.check_permission(session, users.DELETE_ROTA)
             for rid in post.integer_list("ids"):
                 extperson.delete_rota(session.dbo, session.user, rid)
-        elif mode == "createhours":
-            users.check_permission(session, users.ADD_ROTA_HOURS)
-            return extperson.create_rotahours(session.dbo, session.user, 
-                post.datetime("startdate", "starttime"), post.datetime("enddate", "endtime"), post.integer("personid"))
-
-class person_rotahours:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_ROTA_HOURS)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        p = extperson.get_person(dbo, post.integer("id"))
-        if p is None: raise web.notfound()
-        title = p["OWNERNAME"]
-        rota = extperson.get_person_rotahours(dbo, post.integer("id"))
-        al.debug("got %d rotahours" % len(rota), "code.person_rotahours", dbo)
-        s = html.header(title, session, "rotahours.js")
-        c = html.controller_str("name", "person_rotahours")
-        c += html.controller_json("rows", rota)
-        c += html.controller_json("person", p)
-        c += html.controller_json("rotahoursstatuses", extlookups.get_rota_hours_statuses(dbo))
-        c += html.controller_json("tabcounts", extperson.get_satellite_counts(dbo, p["ID"])[0])
-        s += html.controller(c)
-        s += html.footer()
-        web.header("Content-Type", "text/html")
-        web.header("Cache-Control", "no-cache")
-        return s
-
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_ROTA_HOURS)
-            return extperson.insert_rotahours_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_ROTA_HOURS)
-            extperson.update_rotahours_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_ROTA_HOURS)
-            for rid in post.integer_list("ids"):
-                extperson.delete_rotahours(session.dbo, session.user, rid)
 
 class staff_rota:
     def GET(self):
         utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_ROTA_HOURS)
+        users.check_permission(session, users.VIEW_ROTA)
         dbo = session.dbo
         l = session.locale
         post = utils.PostedData(web.input(startdate = ""), session.locale)
         title = _("Staff Rota", l)
         startdate = post.date("startdate")
         if startdate is None: startdate = monday_of_week(now())
-        rota = extperson.get_rotahours(dbo, startdate, add_days(startdate, 7))
-        al.debug("got %d rotahours" % len(rota), "code.staff_rota", dbo)
+        rota = extperson.get_rota(dbo, startdate, add_days(startdate, 7))
+        al.debug("got %d rota items" % len(rota), "code.staff_rota", dbo)
         s = html.header(title, session, "staff_rota.js")
         c = html.controller_str("name", "staff_rota")
         c += html.controller_json("rows", rota)
         c += html.controller_date("startdate", startdate)
-        c += html.controller_json("rotahoursstatuses", extlookups.get_rota_hours_statuses(dbo))
+        c += html.controller_json("rotatypes", extlookups.get_rota_types(dbo))
         c += html.controller_json("staff", extperson.get_staff_volunteers(dbo))
         s += html.controller(c)
         s += html.footer()

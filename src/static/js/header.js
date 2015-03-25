@@ -64,7 +64,8 @@ $(function() {
         50: ["calendarview?ev=ol", "asm-icon-calendar", _("Animal control calendar")],
         51: ["stocklevel", "asm-icon-stock", _("Stock Levels")],
         52: ["transport", "asm-icon-transport", _("Transport Book")],
-        53: ["timeline", "asm-icon-calendar", _("Timeline")]
+        53: ["timeline", "asm-icon-calendar", _("Timeline")],
+        54: ["staff_rota", "asm-icon-rota", _("Staff Rota")]
     };
 
     /** Functions related to rendering and binding to events for the page
@@ -239,12 +240,14 @@ $(function() {
                 if (config.bool("DisableRetailer")) {
                     $(".tagretailer").hide();
                 }
-
+                // If rota is disabled, hide menu entries for it
+                if (config.bool("DisableRota")) {
+                    $(".tagrota").hide();
+                }
                 // If transport is disabled, hide menu entries for it
                 if (config.bool("DisableTransport")) {
                     $(".tagtransport").hide();
                 }
-
                 // If trial adoptions are not enabled, hide any menu entries
                 if (!config.bool("TrialAdoptions")) {
                     $(".tagtrial").hide();

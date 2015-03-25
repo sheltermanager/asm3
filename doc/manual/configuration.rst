@@ -701,6 +701,9 @@ Remove Unwanted Functionality
 * Remove the animal control functionality from menus: Setting this option
   removes the animal control screens from the menu.
 
+* Remove the rota functionality from menus: Setting this option removes
+  the staff rota from the menu and person screens.
+
 * Remove the stock control functionality from menus: Setting this option
   removes the stock control screens from the financial menu and
   medical/vaccination dialogs.

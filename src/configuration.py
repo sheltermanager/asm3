@@ -59,7 +59,8 @@ QUICKLINKS_SET = {
     50: ("calendarview?ev=ol", "asm-icon-calendar", i18n._("Animal control calendar")),
     51: ("stocklevel", "asm-icon-stock", i18n._("Stock Levels")),
     52: ("transport", "asm-icon-transport", i18n._("Transport Book")),
-    53: ("timeline", "asm-icon-calendar", i18n._("Timeline"))
+    53: ("timeline", "asm-icon-calendar", i18n._("Timeline")),
+    54: ("staff_rota", "asm-icon-rota", i18n._("Staff Rota"))
 }
 
 # Default configuration values for unset items. This is so they

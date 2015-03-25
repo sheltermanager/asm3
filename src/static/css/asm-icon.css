@@ -1,8 +1,8 @@
 .asm-icon {
-	background-image: url('static/images/icons/asm-icon.png?gen=20150325134618'); display: inline-block; vertical-align: middle; 
+	background-image: url('static/images/icons/asm-icon.png?gen=20150325212751'); display: inline-block; vertical-align: middle; 
 }
 .asm-icon-bg {
-	background-image: url('static/images/icons/asm-icon.png?gen=20150325134618'); 
+	background-image: url('static/images/icons/asm-icon.png?gen=20150325212751'); 
 }
 .asm-icon-accounts {
 	background-position:0 -0px;
@@ -72,455 +72,450 @@
 .asm-icon-asm-icon {
 	background-position:0 -213px;
 	width: 19px;
-	height: 1644px;
+	height: 1628px;
 }
 .asm-icon-auth {
-	background-position:0 -1857px;
+	background-position:0 -1841px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-back {
-	background-position:0 -1873px;
+	background-position:0 -1857px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-batch {
-	background-position:0 -1889px;
+	background-position:0 -1873px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-blank {
-	background-position:0 -1905px;
+	background-position:0 -1889px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-book {
-	background-position:0 -1921px;
+	background-position:0 -1905px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-calendar {
-	background-position:0 -1937px;
+	background-position:0 -1921px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-call {
-	background-position:0 -1953px;
+	background-position:0 -1937px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-case {
-	background-position:0 -1969px;
+	background-position:0 -1953px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-citation {
-	background-position:0 -1985px;
+	background-position:0 -1969px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-complete {
-	background-position:0 -2001px;
+	background-position:0 -1985px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-copy {
-	background-position:0 -2017px;
+	background-position:0 -2001px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-cost {
-	background-position:0 -2033px;
+	background-position:0 -2017px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-database {
-	background-position:0 -2049px;
+	background-position:0 -2033px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-death {
-	background-position:0 -2065px;
+	background-position:0 -2049px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-delete {
-	background-position:0 -2081px;
+	background-position:0 -2065px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-diary {
-	background-position:0 -2097px;
+	background-position:0 -2081px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-diary-task {
-	background-position:0 -2113px;
+	background-position:0 -2097px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-diet {
-	background-position:0 -2129px;
+	background-position:0 -2113px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-document {
-	background-position:0 -2145px;
+	background-position:0 -2129px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-donation {
-	background-position:0 -2161px;
+	background-position:0 -2145px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-edit {
-	background-position:0 -2177px;
+	background-position:0 -2161px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-email {
-	background-position:0 -2193px;
+	background-position:0 -2177px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-facebook {
-	background-position:0 -2209px;
+	background-position:0 -2193px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-faq {
-	background-position:0 -2225px;
+	background-position:0 -2209px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-find {
-	background-position:0 -2241px;
+	background-position:0 -2225px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-forms {
-	background-position:0 -2257px;
+	background-position:0 -2241px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-health {
-	background-position:0 -2273px;
+	background-position:0 -2257px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-help {
-	background-position:0 -2289px;
+	background-position:0 -2273px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-highlight1 {
-	background-position:0 -2305px;
+	background-position:0 -2289px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-highlight2 {
-	background-position:0 -2321px;
+	background-position:0 -2305px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-highlight3 {
-	background-position:0 -2337px;
+	background-position:0 -2321px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-highlight4 {
-	background-position:0 -2353px;
+	background-position:0 -2337px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-highlight5 {
-	background-position:0 -2369px;
+	background-position:0 -2353px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-highlight {
-	background-position:0 -2385px;
+	background-position:0 -2369px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-hold {
-	background-position:0 -2401px;
+	background-position:0 -2385px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-image {
-	background-position:0 -2417px;
+	background-position:0 -2401px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-investigation {
-	background-position:0 -2433px;
+	background-position:0 -2417px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-licence {
-	background-position:0 -2449px;
+	background-position:0 -2433px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-link {
-	background-position:0 -2465px;
+	background-position:0 -2449px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-litter-new {
-	background-position:0 -2481px;
+	background-position:0 -2465px;
 	width: 16px;
 	height: 15px;
 }
 .asm-icon-litter {
-	background-position:0 -2496px;
+	background-position:0 -2480px;
 	width: 16px;
 	height: 15px;
 }
 .asm-icon-location {
-	background-position:0 -2511px;
+	background-position:0 -2495px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-logo {
-	background-position:0 -2527px;
+	background-position:0 -2511px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-logout {
-	background-position:0 -2543px;
+	background-position:0 -2527px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-log {
-	background-position:0 -2559px;
+	background-position:0 -2543px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-lookups {
-	background-position:0 -2575px;
+	background-position:0 -2559px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-map {
-	background-position:0 -2591px;
+	background-position:0 -2575px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-match {
-	background-position:0 -2607px;
+	background-position:0 -2591px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-media-add {
-	background-position:0 -2623px;
+	background-position:0 -2607px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-media-delete {
-	background-position:0 -2639px;
+	background-position:0 -2623px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-media {
-	background-position:0 -2655px;
+	background-position:0 -2639px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-medical {
-	background-position:0 -2671px;
+	background-position:0 -2655px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-message_new {
-	background-position:0 -2687px;
+	background-position:0 -2671px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-message {
-	background-position:0 -2703px;
+	background-position:0 -2687px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-microchip {
-	background-position:0 -2719px;
+	background-position:0 -2703px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-movement {
-	background-position:0 -2735px;
+	background-position:0 -2719px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-new {
-	background-position:0 -2751px;
+	background-position:0 -2735px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-nonshelter {
-	background-position:0 -2767px;
+	background-position:0 -2751px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-notforadoption {
-	background-position:0 -2783px;
+	background-position:0 -2767px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-pdf {
-	background-position:0 -2799px;
+	background-position:0 -2783px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-person-add {
-	background-position:0 -2815px;
+	background-position:0 -2799px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-person-find {
-	background-position:0 -2831px;
+	background-position:0 -2815px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-person {
-	background-position:0 -2847px;
+	background-position:0 -2831px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-positivetest {
-	background-position:0 -2863px;
+	background-position:0 -2847px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-print {
-	background-position:0 -2879px;
+	background-position:0 -2863px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-quarantine {
-	background-position:0 -2895px;
+	background-position:0 -2879px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-refresh {
-	background-position:0 -2911px;
+	background-position:0 -2895px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-report {
-	background-position:0 -2927px;
+	background-position:0 -2911px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-reservation {
-	background-position:0 -2943px;
+	background-position:0 -2927px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-right {
-	background-position:0 -2959px;
+	background-position:0 -2943px;
 	width: 9px;
 	height: 9px;
 }
-.asm-icon-rotahours {
-	background-position:0 -2968px;
-	width: 16px;
-	height: 16px;
-}
 .asm-icon-rota {
-	background-position:0 -2984px;
+	background-position:0 -2952px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-rotate-anti {
-	background-position:0 -3000px;
+	background-position:0 -2968px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-rotate-clock {
-	background-position:0 -3016px;
+	background-position:0 -2984px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-save {
-	background-position:0 -3032px;
+	background-position:0 -3000px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-search {
-	background-position:0 -3048px;
+	background-position:0 -3016px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-settings {
-	background-position:0 -3064px;
+	background-position:0 -3032px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-sql {
-	background-position:0 -3080px;
+	background-position:0 -3048px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-stock {
-	background-position:0 -3096px;
+	background-position:0 -3064px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-test {
-	background-position:0 -3112px;
+	background-position:0 -3080px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-transactions {
-	background-position:0 -3128px;
+	background-position:0 -3096px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-transport {
-	background-position:0 -3144px;
+	background-position:0 -3112px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-traploan {
-	background-position:0 -3160px;
+	background-position:0 -3128px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-trial {
-	background-position:0 -3176px;
+	background-position:0 -3144px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-users {
-	background-position:0 -3192px;
+	background-position:0 -3160px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-vaccination {
-	background-position:0 -3208px;
+	background-position:0 -3176px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-video {
-	background-position:0 -3224px;
+	background-position:0 -3192px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-waitinglist {
-	background-position:0 -3240px;
+	background-position:0 -3208px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-web {
-	background-position:0 -3256px;
+	background-position:0 -3224px;
 	width: 16px;
 	height: 16px;
 }
 .asm-icon-youtube {
-	background-position:0 -3272px;
+	background-position:0 -3240px;
 	width: 16px;
 	height: 16px;
 }

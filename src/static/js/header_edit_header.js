@@ -439,7 +439,6 @@ $(function() {
                 [ "investigation", "person_investigation", _("Investigation"), "investigation", "voi" ],
                 [ "citation", "person_citations", _("Citations"), "citation", "vacc" ],
                 [ "rota", "person_rota", _("Rota"), "rota", "voro" ],
-                [ "rotahours", "person_rotahours", _("Hours"), "rotahours", "vorh" ],
                 [ "traploan", "person_traploan", _("Trap Loans"), "traploan", "vatl" ],
                 [ "donations", "person_donations", _("Payments"), "donation", "ovod" ],
                 [ "vouchers", "person_vouchers", _("Vouchers"), "donation", "vvov" ],
@@ -460,7 +459,7 @@ $(function() {
                 if ((key == "movements") && config.bool("DisableMovements")) {
                     return;
                 }
-                if ((key == "rota" || key == "rotahours") && !p.ISVOLUNTEER && !p.ISSTAFF) {
+                if ((key == "rota") && ((!p.ISVOLUNTEER && !p.ISSTAFF) || config.bool("DisableRota"))) {
                     return;
                 }
                 if (key == selected) {

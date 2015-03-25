@@ -31,10 +31,10 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "activeuser", "additional"
     "diary", "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", "donationtype", "entryreason", 
     "incidentcompleted", "incidenttype", "internallocation", "licencetype", "lkcoattype", "lkownerflags", 
     "lksaccounttype", "lksdiarylink", "lksdonationfreq", "lksex", "lksfieldlink", "lksfieldtype", "lksize", 
-    "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", "lksposneg", "lksrotahoursstatus", 
+    "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", "lksposneg", "lksrotatype", 
     "lksyesno", "lksynun", "lkurgency", "log", "logtype", "media", "medicalprofile", "messages", "onlineform", 
     "onlineformfield", "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
-    "ownerlicence", "ownerrota", "ownerrotahours", "ownertraploan", "ownervoucher", "pickuplocation", 
+    "ownerlicence", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", 
     "reservationstatus", "role", "species", "stocklevel", "stocklocation", "stockusage", "stockusagetype", 
     "testtype", "testresult", "traptype", "userrole", "users", "vaccinationtype", "voucher" )
 
@@ -875,8 +875,8 @@ def sql_structure(dbo):
     sql += table("lksloglink", (
         fid(), fstr("LinkType") ), False)
 
-    sql += table("lksrotahoursstatus", (
-        fid(), fstr("Status") ), False)
+    sql += table("lksrotatype", (
+        fid(), fstr("RotaType") ), False)
 
     sql += table("lkurgency", ( 
         fid(), fstr("Urgency") ), False)
@@ -1097,20 +1097,6 @@ def sql_structure(dbo):
     sql += index("ownerdonation_OwnerID", "ownerdonation", "OwnerID")
     sql += index("ownerdonation_Date", "ownerdonation", "Date")
 
-    sql += table("ownerrotahours", (
-        fid(),
-        fint("OwnerID"),
-        fint("OwnerRotaID"),
-        fdate("StartDateTime"),
-        fdate("EndDateTime"),
-        fint("Status"),
-        flongstr("Comments", True) ))
-    sql += index("ownerrotahours_OwnerID", "ownerrotahours", "OwnerID")
-    sql += index("ownerrotahours_OwnerRotaID", "ownerrotahours", "OwnerRotaID")
-    sql += index("ownerrotahours_DateTimeStart", "ownerrotahours", "DateTimeStart")
-    sql += index("ownerrotahours_DateTimeEnd", "ownerrotahours", "DateTimeEnd")
-    sql += index("ownerrotahours_Status", "ownerrotahours", "Status")
-
     sql += table("ownerinvestigation", (
         fid(),
         fint("OwnerID"),
@@ -1138,12 +1124,15 @@ def sql_structure(dbo):
     sql += table("ownerrota", (
         fid(),
         fint("OwnerID"),
-        fint("WeekDay"),
-        fstr("StartTime"),
-        fstr("EndTime"),
+        fdate("StartDateTime"),
+        fdate("EndDateTime"),
+        fint("RotaTypeID"),
         flongstr("Comments", True) ))
     sql += index("ownerrota_OwnerID", "ownerrota", "OwnerID")
-    sql += index("ownerrota_WeekDay", "ownerrota", "WeekDay")
+    sql += index("ownerrota_DateTimeStart", "ownerrota", "DateTimeStart")
+    sql += index("ownerrota_DateTimeEnd", "ownerrota", "DateTimeEnd")
+    sql += index("ownerrota_RotaTypeID", "ownerrota", "RotaTypeID")
+
 
     sql += table("ownertraploan", (
         fid(),
@@ -2000,15 +1989,15 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup1("lksposneg", 0, _("Unknown", l))
     sql += lookup1("lksposneg", 1, _("Negative", l))
     sql += lookup1("lksposneg", 2, _("Positive", l))
-    sql += lookup1("lksrotahoursstatus", 1, _("Shift", l))
-    sql += lookup1("lksrotahoursstatus", 2, _("Vacation", l))
-    sql += lookup1("lksrotahoursstatus", 3, _("Leave of absence", l))
-    sql += lookup1("lksrotahoursstatus", 4, _("Maternity", l))
-    sql += lookup1("lksrotahoursstatus", 5, _("Personal", l))
-    sql += lookup1("lksrotahoursstatus", 6, _("Rostered day off", l))
-    sql += lookup1("lksrotahoursstatus", 7, _("Sick leave", l))
-    sql += lookup1("lksrotahoursstatus", 8, _("Training", l))
-    sql += lookup1("lksrotahoursstatus", 9, _("Unavailable", l))
+    sql += lookup1("lksrotatype", 1, _("Shift", l))
+    sql += lookup1("lksrotatype", 2, _("Vacation", l))
+    sql += lookup1("lksrotatype", 3, _("Leave of absence", l))
+    sql += lookup1("lksrotatype", 4, _("Maternity", l))
+    sql += lookup1("lksrotatype", 5, _("Personal", l))
+    sql += lookup1("lksrotatype", 6, _("Rostered day off", l))
+    sql += lookup1("lksrotatype", 7, _("Sick leave", l))
+    sql += lookup1("lksrotatype", 8, _("Training", l))
+    sql += lookup1("lksrotatype", 9, _("Unavailable", l))
     sql += lookup1("lkurgency", 1, _("Urgent", l))
     sql += lookup1("lkurgency", 2, _("High", l))
     sql += lookup1("lkurgency", 3, _("Medium", l))
@@ -3863,9 +3852,9 @@ def update_33609(dbo):
     # Add ownerrota table
     sql = "CREATE TABLE ownerrota ( ID INTEGER NOT NULL PRIMARY KEY, " \
         "OwnerID INTEGER NOT NULL, " \
-        "WeekDay INTEGER NOT NULL, " \
-        "StartTime %(short)s NOT NULL, " \
-        "EndTime %(short)s NOT NULL, " \
+        "StartDateTime %(date)s NOT NULL, " \
+        "EndDateTime %(date)s NOT NULL, " \
+        "RotaTypeID INTEGER NOT NULL, " \
         "Comments %(long)s, " \
         "RecordVersion INTEGER, " \
         "CreatedBy %(short)s, " \
@@ -3874,37 +3863,20 @@ def update_33609(dbo):
         "LastChangedDate %(date)s)" % { "short": shorttext(dbo), "long": longtext(dbo), "date": datetype(dbo) }
     db.execute_dbupdate(dbo, sql)
     add_index(dbo, "ownerrota_OwnerID", "ownerrota", "OwnerID")
-    add_index(dbo, "ownerrota_WeekDay", "ownerrota", "WeekDay")
-    # Add ownerrotahours table
-    sql = "CREATE TABLE ownerrotahours ( ID INTEGER NOT NULL PRIMARY KEY, " \
-        "OwnerID INTEGER NOT NULL, " \
-        "OwnerRotaID INTEGER NOT NULL, " \
-        "StartDateTime %(date)s NOT NULL, " \
-        "EndDateTime %(date)s NOT NULL, " \
-        "Status INTEGER NOT NULL, " \
-        "Comments %(long)s, " \
-        "RecordVersion INTEGER, " \
-        "CreatedBy %(short)s, " \
-        "CreatedDate %(date)s, " \
-        "LastChangedBy %(short)s, " \
-        "LastChangedDate %(date)s)" % { "short": shorttext(dbo), "long": longtext(dbo), "date": datetype(dbo) }
+    add_index(dbo, "ownerrota_StartDateTime", "ownerrota", "StartDateTime")
+    add_index(dbo, "ownerrota_EndDateTime", "ownerrota", "EndDateTime")
+    add_index(dbo, "ownerrota_RotaTypeID", "ownerrota", "RotaTypeID")
+    # Add lksrotatype table
+    sql = "CREATE TABLE lksrotatype ( ID INTEGER NOT NULL PRIMARY KEY, " \
+        "RotaType %(short)s NOT NULL)" % { "short": shorttext(dbo) }
     db.execute_dbupdate(dbo, sql)
-    add_index(dbo, "ownerrotahours_OwnerID", "ownerrotahours", "OwnerID")
-    add_index(dbo, "ownerrotahours_OwnerRotaID", "ownerrotahours", "OwnerRotaID")
-    add_index(dbo, "ownerrotahours_StartDateTime", "ownerrotahours", "StartDateTime")
-    add_index(dbo, "ownerrotahours_EndDateTime", "ownerrotahours", "EndDateTime")
-    add_index(dbo, "ownerrotahours_Status", "ownerrotahours", "Status")
-    # Add lksrotahoursstatus table
-    sql = "CREATE TABLE lksrotahoursstatus ( ID INTEGER NOT NULL PRIMARY KEY, " \
-        "Status %(short)s NOT NULL)" % { "short": shorttext(dbo) }
-    db.execute_dbupdate(dbo, sql)
-    db.execute_dbupdate(dbo, "INSERT INTO lksrotahoursstatus VALUES (1, %s)" % db.ds(_("Shift", l)))
-    db.execute_dbupdate(dbo, "INSERT INTO lksrotahoursstatus VALUES (2, %s)" % db.ds(_("Vacation", l)))
-    db.execute_dbupdate(dbo, "INSERT INTO lksrotahoursstatus VALUES (3, %s)" % db.ds(_("Leave of absence", l)))
-    db.execute_dbupdate(dbo, "INSERT INTO lksrotahoursstatus VALUES (4, %s)" % db.ds(_("Maternity", l)))
-    db.execute_dbupdate(dbo, "INSERT INTO lksrotahoursstatus VALUES (5, %s)" % db.ds(_("Personal", l)))
-    db.execute_dbupdate(dbo, "INSERT INTO lksrotahoursstatus VALUES (6, %s)" % db.ds(_("Rostered day off", l)))
-    db.execute_dbupdate(dbo, "INSERT INTO lksrotahoursstatus VALUES (7, %s)" % db.ds(_("Sick leave", l)))
-    db.execute_dbupdate(dbo, "INSERT INTO lksrotahoursstatus VALUES (8, %s)" % db.ds(_("Training", l)))
-    db.execute_dbupdate(dbo, "INSERT INTO lksrotahoursstatus VALUES (9, %s)" % db.ds(_("Unavailable", l)))
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotatype VALUES (1, %s)" % db.ds(_("Shift", l)))
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotatype VALUES (2, %s)" % db.ds(_("Vacation", l)))
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotatype VALUES (3, %s)" % db.ds(_("Leave of absence", l)))
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotatype VALUES (4, %s)" % db.ds(_("Maternity", l)))
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotatype VALUES (5, %s)" % db.ds(_("Personal", l)))
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotatype VALUES (6, %s)" % db.ds(_("Rostered day off", l)))
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotatype VALUES (7, %s)" % db.ds(_("Sick leave", l)))
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotatype VALUES (8, %s)" % db.ds(_("Training", l)))
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotatype VALUES (9, %s)" % db.ds(_("Unavailable", l)))
 

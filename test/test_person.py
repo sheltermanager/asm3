@@ -66,15 +66,12 @@ class TestPerson(unittest.TestCase):
     def test_get_investigation(self):
         person.get_investigation(base.get_dbo(), self.nid)
 
-    def test_get_rotahours(self):
-        person.get_rotahours(base.get_dbo(), base.today(), base.today())
+    def test_get_rota(self):
+        person.get_rota(base.get_dbo(), base.today(), base.today())
 
     def test_get_person_rota(self):
         person.get_person_rota(base.get_dbo(), self.nid)
  
-    def test_get_person_rotahours(self):
-        person.get_person_rotahours(base.get_dbo(), self.nid)
-     
     def test_get_person_find_simple(self):
         assert len(person.get_person_find_simple(base.get_dbo(), "Test")) > 0
 
@@ -96,30 +93,17 @@ class TestPerson(unittest.TestCase):
     def test_rota_crud(self):
         data = {
             "person": str(self.nid),
-            "weekday": str(1),
+            "startdate": base.today_display(),
             "starttime": "00:00",
-            "endtime": "00:00"
+            "enddate": base.today_display(),
+            "endtime": "00:00",
+            "type": "1"
         }
         post = utils.PostedData(data, "en")
         rid = person.insert_rota_from_form(base.get_dbo(), "test", post)
         data["rotaid"] = str(rid)
         person.update_rota_from_form(base.get_dbo(), "test", post)
         person.delete_rota(base.get_dbo(), "test", rid)
-
-    def test_rota_hours_crud(self):
-        data = {
-            "person": str(self.nid),
-            "startdate": base.today_display(),
-            "starttime": "00:00",
-            "enddate": base.today_display(),
-            "endtime": "00:00",
-            "status": "1"
-        }
-        post = utils.PostedData(data, "en")
-        rid = person.insert_rotahours_from_form(base.get_dbo(), "test", post)
-        data["rotahoursid"] = str(rid)
-        person.update_rotahours_from_form(base.get_dbo(), "test", post)
-        person.delete_rotahours(base.get_dbo(), "test", rid)
 
     def test_update_pass_homecheck(self):
         person.update_pass_homecheck(base.get_dbo(), "test", self.nid, "")

@@ -9,9 +9,9 @@ $(function() {
             return [
                 html.content_header(_("Staff Rota")),
                 tableform.buttons_render([
-                    { id: "shifts", text: _("Create Shifts"), icon: "rotahours", tooltip: _("Create shifts for this week") },
                     { id: "prev", text: _("Previous"), icon: "rotate-anti" },
-                    { id: "next", text: _("Next"), icon: "rotate-clock" }
+                    { id: "next", text: _("Next"), icon: "rotate-clock" },
+                    { id: "clone", text: _("Copy"), icon: "copy", tooltip: _("Copy the rota this week to another week") }
                 ]),
                 staff_rota.render_table(),
                 html.content_footer()
@@ -42,24 +42,24 @@ $(function() {
 
             h.push('</tr>');
 
-            // Render a row for each person with their hours for the week
+            // Render a row for each person with their rota for the week
             $.each(controller.staff, function(i, p) {
                 css = "asm-staff-rota-person-odd";
                 if (i % 2 == 0) { css = "asm-staff-rota-person-even"; }
                 h.push("<tr>");
                 h.push('<td class="' + css + '">');
-                h.push('<a href="person_rotahours?id=' + p.ID + '">' + p.OWNERNAME + '</a>');
+                h.push('<a href="person_rota?id=' + p.ID + '">' + p.OWNERNAME + '</a>');
                 h.push("</td>");
                 $.each(days, function(id, d) {
                     h.push('<td>');
                     $.each(controller.rows, function(ir, r) {
                         if (r.OWNERID == p.ID && format.date(r.STARTDATETIME) == format.date(d)) {
-                            if (r.STATUS == 1) { 
+                            if (r.ROTATYPEID == 1) { 
                                 css = 'asm-staff-rota-shift'; 
                                 h.push('<span class="asm-staff-rota-shift">' + format.time(r.STARTDATETIME) + '-' + format.time(r.ENDDATETIME) + '</span><br />');
                             }
                             else { 
-                                h.push('<span class="asm-staff-rota-timeoff">' + r.STATUSNAME + '</span><br />');
+                                h.push('<span class="asm-staff-rota-timeoff">' + r.ROTATYPENAME + '</span><br />');
                             }
                         }
                     });
@@ -73,7 +73,7 @@ $(function() {
         },
 
         bind: function() {
-            $("#button-shifts").button();
+            $("#button-clone").button();
             $("#button-prev").button();
             $("#button-next").button();
         }

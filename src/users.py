@@ -180,11 +180,6 @@ VIEW_ROTA                       = "voro"
 CHANGE_ROTA                     = "coro"
 DELETE_ROTA                     = "doro"
 
-ADD_ROTA_HOURS                  = "aorh"
-VIEW_ROTA_HOURS                 = "vorh"
-CHANGE_ROTA_HOURS               = "corh"
-DELETE_ROTA_HOURS               = "dorh"
-
 ADD_LITTER                      = "all"
 VIEW_LITTER                     = "vll"
 DELETE_LITTER                   = "dll"
