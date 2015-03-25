@@ -122,8 +122,8 @@ $(function() {
                 '<tr id="weightrow">',
                 '<td><label for="weight">' + _("Weight") + '</label></td>',
                 '<td><span style="white-space: nowrap;">',
-                '<input id="weight" data-json="WEIGHT" data-post="weight" class="asm-textbox asm-numberbox" />',
-                _("kg"),
+                '<input id="weight" data-json="WEIGHT" data-post="weight" class="asm-textbox asm-halftextbox asm-numberbox" />',
+                '<label id="weightlabel">' + _("kg") + '</label>',
                 '</span>',
                 '</td>',
                 '</tr>',
@@ -852,6 +852,10 @@ $(function() {
                     config.str("ShortCodingFormat").indexOf("E") != -1) {
                     $("#entryreason").select("disable");
                 }
+            }
+
+            if (config.bool("ShowWeightInLbs")) {
+                $("#weightlabel").html(_("lb"));
             }
 
             if (config.bool("DontShowLitterID")) { $("#litteridrow").hide(); }
