@@ -9431,12 +9431,16 @@ msgstr ""
 msgid "Staff"
 msgstr ""
 
-#: staff_rota.js header.js code.py html.py configuration.py
+#: staff_rota.js header.js code.py configuration.py
 msgid "Staff Rota"
 msgstr ""
 
 #: users.js
 msgid "Staff record"
+msgstr ""
+
+#: html.py
+msgid "Staff rota"
 msgstr ""
 
 #: dbupdate.py
