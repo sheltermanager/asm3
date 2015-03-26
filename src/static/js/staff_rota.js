@@ -12,7 +12,7 @@ $(function() {
         columns: 1,
         width: 550,
         fields: [
-            { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person", validation: "notzero" },
+            { json_field: "OWNERID", post_field: "person", personfilter: "volunteerandstaff", label: _("Person"), type: "person", validation: "notzero" },
             { json_field: "STARTDATETIME", post_field: "startdate", label: _("Starts"), type: "date", validation: "notblank", defaultval: new Date() },
             { json_field: "STARTDATETIME", post_field: "starttime", label: _("at"), type: "time", validation: "notblank", defaultval: "09:00" },
             { json_field: "ENDDATETIME", post_field: "enddate", label: _("Ends"), type: "date", validation: "notblank", defaultval: new Date() },
@@ -30,8 +30,9 @@ $(function() {
                 tableform.dialog_render(dialog),
                 html.content_header(_("Staff Rota")),
                 tableform.buttons_render([
-                    { id: "prev", icon: "rotate-anti" },
-                    { id: "next", icon: "rotate-clock" },
+                    { id: "prev", icon: "rotate-anti", tooltip: _("Previous week") },
+                    { id: "today", icon: "diary", tooltip: _("Today") },
+                    { id: "next", icon: "rotate-clock", tooltip: _("Next week") },
                     { id: "clone", text: _("Copy"), icon: "copy", tooltip: _("Copy the rota this week to another week") }
                 ]),
                 '<table class="asm-staff-rota">',
@@ -45,16 +46,19 @@ $(function() {
         days: [],
 
         generate_table: function() {
-            // Render the header - one blank column followed by a column
-            // for each day of the week.
-            var h = [
-                '<tr>',
-                '<th></th>'
-                ],
-                css = "",
-                i, 
-                d = format.date_js(controller.startdate);
 
+            // Render the header - week number, followed by a column
+            // for each day of the week.
+            var h = [ '<tr>' ],
+                css = "",
+                title = "",
+                i, 
+                d = format.date_js(controller.startdate),
+                year = d.getFullYear(),
+                weekno = format.date_weeknumber(d);
+
+            h.push('<th>' + _("{0}, Week {1}").replace("{0}", year).replace("{1}", weekno) + '</th>');
+            staff_rota.days = [];
             for (i = 0; i < 7; i += 1) {
                 css = "";
                 if (format.date(d) == format.date(new Date())) { css = 'asm-staff-rota-today'; }
@@ -68,22 +72,33 @@ $(function() {
             // Render a row for each person with their rota for the week
             h = [];
             $.each(controller.staff, function(i, p) {
-                css = "asm-staff-rota-person-odd";
-                if (i % 2 == 0) { css = "asm-staff-rota-person-even"; }
+                if (p.ISSTAFF) {
+                    title = _("Staff");
+                    css = "asm-staff-rota-staff-odd";
+                    if (i % 2 == 0) { css = "asm-staff-rota-staff-even"; }
+                }
+                else {
+                    title = _("Volunteer");
+                    css = "asm-staff-rota-volunteer-odd";
+                    if (i % 2 == 0) { css = "asm-staff-rota-volunteer-even"; }
+                }
                 h.push("<tr>");
-                h.push('<td class="' + css + '">');
-                h.push('<a href="person_rota?id=' + p.ID + '">' + p.OWNERNAME + '</a>');
+                h.push('<td class="' + css + '" title="' + html.title(title) + '">');
+                h.push('<a href="person_rota?id=' + p.ID + '" class="' + html.title(title) + '">' + p.OWNERNAME + '</a>');
                 h.push("</td>");
                 $.each(staff_rota.days, function(id, d) {
                     h.push('<td data-person="' + p.ID + '" data-date="' + format.date(d) + '" class="asm-staff-rota-cell">');
                     $.each(controller.rows, function(ir, r) {
-                        if (r.OWNERID == p.ID && format.date(r.STARTDATETIME) == format.date(d)) {
+                        if (r.OWNERID == p.ID && format.date_in_range(d, r.STARTDATETIME, r.ENDDATETIME, true)) {
+                            var period = format.time(r.STARTDATETIME, "%H:%M") + ' - ' + format.time(r.ENDDATETIME, "%H:%M");
                             if (r.ROTATYPEID == 1) { 
                                 css = 'asm-staff-rota-shift'; 
-                                h.push('<a class="asm-staff-rota-shift" href="#" data-id="' + r.ID + '">' + format.time(r.STARTDATETIME) + '-' + format.time(r.ENDDATETIME) + '</a><br />');
+                                h.push('<a class="asm-staff-rota-shift" href="#" data-id="' + r.ID + '">' + 
+                                    period + '</a><br />');
                             }
                             else { 
-                                h.push('<a class="asm-staff-rota-timeoff" href="#" data-id="' + r.ID + '">' + r.ROTATYPENAME + '</a><br />');
+                                h.push('<a class="asm-staff-rota-timeoff" href="#" data-id="' + r.ID + 
+                                    '" title="' + period + '">' + r.ROTATYPENAME + '</a><br />');
                             }
                         }
                     });
@@ -152,6 +167,10 @@ $(function() {
 
             $("#button-prev").button().click(function() {
                 window.location = controller.name + "?start=" + format.date(common.subtract_days(staff_rota.days[0], 7));
+            });
+
+            $("#button-today").button().click(function() {
+                window.location = controller.name;
             });
 
             $("#button-next").button().click(function() { 

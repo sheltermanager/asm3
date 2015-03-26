@@ -12,7 +12,7 @@ $(function() {
         columns: 1,
         width: 550,
         fields: [
-            { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person", validation: "notzero" },
+            { json_field: "OWNERID", post_field: "person", personfilter: "volunteerandstaff", label: _("Person"), type: "person", validation: "notzero" },
             { json_field: "STARTDATETIME", post_field: "startdate", label: _("Start Date"), type: "date", validation: "notblank", defaultval: new Date() },
             { json_field: "STARTDATETIME", post_field: "starttime", label: _("Start Time"), type: "time", validation: "notblank", defaultval: "09:00" },
             { json_field: "ENDDATETIME", post_field: "enddate", label: _("End Date"), type: "date", validation: "notblank", defaultval: new Date() },
@@ -49,7 +49,7 @@ $(function() {
                     return controller.name.indexOf("person_") != -1;
                 }
             },
-            { field: "STARTDATETIME", display: _("Start Time"), formatter: tableform.format_datetime },
+            { field: "STARTDATETIME", display: _("Start Time"), formatter: tableform.format_datetime, initialsort: true, initialsortdirection: "desc" },
             { field: "ENDDATETIME", display: _("End Time"), formatter: tableform.format_datetime },
             { field: "COMMENTS", display: _("Comments") }
         ]

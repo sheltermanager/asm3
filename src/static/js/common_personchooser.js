@@ -53,6 +53,7 @@
             if (this.options.filter == "staff") { title = _("Find staff"); }
             if (this.options.filter == "fosterer") { title = _("Find fosterer"); }
             if (this.options.filter == "volunteer") { title = _("Find volunteer"); }
+            if (this.options.filter == "volunteerandstaff") { title = _("Find staff/volunteer"); }
             if (this.options.filter == "shelter") { title = _("Find shelter"); }
             if (this.options.filter == "aco") { title = _("Find aco"); }
             if (this.options.filter == "homechecked") { title = _("Find homechecked"); }

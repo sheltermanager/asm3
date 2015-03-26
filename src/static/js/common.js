@@ -854,6 +854,25 @@
         },
 
         /**
+         * Checks if d is in between start and end
+         * d: js or iso date 
+         * start: js or iso date
+         * end: js or iso date 
+         * ignoretime: if true, removes time component before comparison
+         */
+        date_in_range: function(d, start, end, ignoretime) {
+            d = format.date_js(d); 
+            start = format.date_js(start); 
+            end = format.date_js(end); 
+            if (ignoretime) {
+                d.setHours(0,0,0,0);
+                start.setHours(0,0,0,0);
+                end.setHours(0,0,0,0);
+            }
+            return start.getTime() <= d.getTime() && d.getTime() <= end.getTime();
+        },
+
+        /**
          * Turns a display date or js date into iso format.
          * null is returned if d is undefined/null
          */
@@ -908,6 +927,7 @@
          */
         date_js: function(iso) {
             if (!iso) { return null; }
+            if (iso instanceof Date) { return iso; } // it's already a js date
             // IE8 and below doesn't support ISO date strings so we have to slice it up ourself
             var year = parseInt(iso.substring(0, 4), 10),
                 month = parseInt(iso.substring(5, 7), 10) - 1,
@@ -920,11 +940,31 @@
         },
 
         /**
+         * Returns the ISO 8601 week number for a date
+         * d: js or iso date
+         */
+        date_weeknumber: function(d) {
+            d = format.date_js(d);
+            d = new Date(+d);
+            d.setHours(0,0,0,0);
+            // Set to nearest Thursday: current date + 4 - current day number
+            // Make Sunday's day number 7
+            d.setDate(d.getDate() + 4 - (d.getDay() || 7));
+            // Get first day of year
+            var yearStart = new Date(d.getFullYear(), 0, 1);
+            // Calculate full weeks to nearest Thursday
+            var weekNo = Math.ceil( ( ( (d - yearStart) / 86400000) + 1) / 7);
+            return weekNo;
+        },
+
+        /**
          * Turns an iso or js date into a display time
          * empty string is returned if iso is undefined/null
+         * f: the format to use, %H, %h, %M, %S are supported
          */
-        time: function(iso) {
-            var d, f = "%H:%M:%S";
+        time: function(iso, f) {
+            var d; 
+            if (!f) { f = "%H:%M:%S"; }
             if (!iso) { return ""; }
             if (iso instanceof Date) { 
                 d = iso; 

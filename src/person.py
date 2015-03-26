@@ -108,7 +108,7 @@ def get_staff_volunteers(dbo):
     """
     Returns all staff and volunteers
     """
-    return db.query(dbo, get_person_query(dbo) + " WHERE o.IsStaff = 1 OR o.IsVolunteer = 1 ORDER BY OwnerName")
+    return db.query(dbo, get_person_query(dbo) + " WHERE o.IsStaff = 1 OR o.IsVolunteer = 1 ORDER BY o.IsStaff DESC, o.OwnerName")
 
 def get_towns(dbo):
     """
@@ -301,7 +301,7 @@ def get_person_find_simple(dbo, query, classfilter="all", includeStaff = False, 
     Returns rows for simple person searches.
     query: The search criteria
     classfilter: One of all, vet, retailer, staff, fosterer, volunteer, shelter, 
-                 aco, homechecked, homechecker, member, donor, driver
+                 aco, homechecked, homechecker, member, donor, driver, volunteerandstaff
     """
     ors = []
     query = query.replace("'", "`")
@@ -340,6 +340,8 @@ def get_person_find_simple(dbo, query, classfilter="all", includeStaff = False, 
         cf = " AND o.IsFosterer = 1"
     elif classfilter == "volunteer":
         cf = " AND o.IsVolunteer = 1"
+    elif classfilter == "volunteerandstaff":
+        cf = " AND (o.IsVolunteer = 1 OR o.IsStaff = 1)"
     elif classfilter == "shelter":
         cf = " AND o.IsShelter = 1"
     elif classfilter == "aco":
@@ -446,7 +448,8 @@ def get_person_rota(dbo, personid):
 def get_rota(dbo, startdate, enddate):
     """ Returns rota records where start >= startdate and end < enddate """
     return db.query(dbo, get_rota_query(dbo) + \
-        " WHERE r.StartDateTime >= %s AND r.EndDateTime < %s ORDER BY r.StartDateTime" % (db.dd(startdate), db.dd(enddate)))
+        " WHERE r.StartDateTime >= %s AND r.EndDateTime < %s" \
+        " ORDER BY r.StartDateTime" % (db.dd(startdate), db.dd(enddate)))
 
 def calculate_owner_name(dbo, title = "", initials = "", first = "", last = "", nameformat = ""):
     """
