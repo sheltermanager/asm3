@@ -731,7 +731,7 @@ def insert_account_from_form(dbo, username, post):
     l = dbo.locale
     if post["code"] == "":
         raise utils.ASMValidationError(i18n._("Account code cannot be blank.", l))
-    if 0 != db.query_int(dbo, "SELECT COUNT(*) FROM accounts WHERE Code Like '%s'" % post["code"]):
+    if 0 != db.query_int(dbo, "SELECT COUNT(*) FROM accounts WHERE Code Like %s" % db.ds(post["code"])):
         raise utils.ASMValidationError(i18n._("Account code '{0}' has already been used.", l).format(post["code"]))
 
     aid = db.get_id(dbo, "accounts")
