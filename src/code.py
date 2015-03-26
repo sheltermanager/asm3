@@ -5357,6 +5357,11 @@ class staff_rota:
             users.check_permission(session, users.DELETE_ROTA)
             for rid in post.integer_list("ids"):
                 extperson.delete_rota(session.dbo, session.user, rid)
+        elif mode == "clone":
+            users.check_permission(session, users.ADD_ROTA)
+            startdate = post.date("startdate")
+            newdate = post.date("newdate")
+            extperson.clone_rota_week(session.dbo, session.user, startdate, newdate)
 
 class person_traploan:
     def GET(self):

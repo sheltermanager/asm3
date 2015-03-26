@@ -14,7 +14,7 @@ import media
 import reports
 import users
 import utils
-from i18n import _, subtract_years, now
+from i18n import _, add_days, python2display, subtract_years, now
 from sitedefs import BULK_GEO_BATCH
 
 ASCENDING = 0
@@ -450,6 +450,29 @@ def get_rota(dbo, startdate, enddate):
     return db.query(dbo, get_rota_query(dbo) + \
         " WHERE r.StartDateTime >= %s AND r.EndDateTime < %s" \
         " ORDER BY r.StartDateTime" % (db.dd(startdate), db.dd(enddate)))
+
+def clone_rota_week(dbo, username, startdate, newdate):
+    """ Copies a weeks worth of rota records from startdate to newdate """
+    l = dbo.locale
+    if startdate is None or newdate is None:
+        raise utils.ASMValidationError("startdate and newdate cannot be blank")
+    if newdate.weekday() != 0 or startdate.weekday() != 0:
+        raise utils.ASMValidationError("startdate and newdate should both be a Monday")
+    enddate = add_days(startdate, 7)
+    rows = db.query(dbo, get_rota_query(dbo) + " WHERE StartDateTime >= %s AND StartDateTime <= %s" % (db.dd(startdate), db.dd(enddate)))
+    for r in rows:
+        datediff( 
+        sd = add_days(r["STARTDATETIME"], 7)
+        ed = add_days(r["ENDDATETIME"], 7)
+        insert_rota_from_form(dbo, username, utils.PostedData({
+            "person":    str(r["OWNERID"]),
+            "startdate": python2display(sd),
+            "starttime": format_time(sd),
+            "enddate":   python2display(ed),
+            "endtime":   format_time(ed),
+            "type":      str(r["ROTATYPEID"]),
+            "comments":  r["COMMENTS"]
+        }, l))
 
 def calculate_owner_name(dbo, title = "", initials = "", first = "", last = "", nameformat = ""):
     """
