@@ -32,9 +32,9 @@ $(function() {
                 staff_rota.render_clonedialog(),
                 html.content_header(_("Staff Rota")),
                 tableform.buttons_render([
-                    { id: "prev", icon: "rotate-anti", tooltip: format.date(controller.prevdate) },
-                    { id: "today", icon: "diary", tooltip: _("Today") },
-                    { id: "next", icon: "rotate-clock", tooltip: format.date(controller.nextdate) },
+                    { id: "prev", icon: "rotate-anti", tooltip: _("Week beginning {0}").replace("{0}", format.date(controller.prevdate)) },
+                    { id: "today", icon: "diary", tooltip: _("This week") },
+                    { id: "next", icon: "rotate-clock", tooltip: _("Week beginning {0}").replace("{0}", format.date(controller.nextdate)) },
                     { id: "clone", text: _("Clone"), icon: "copy", tooltip: _("Clone the rota this week to another week") }
                 ]),
                 '<table class="asm-staff-rota">',
@@ -64,7 +64,7 @@ $(function() {
             for (i = 0; i < 7; i += 1) {
                 css = "";
                 if (format.date(d) == format.date(new Date())) { css = 'asm-staff-rota-today'; }
-                h.push('<th class="' + css + '">' + format.weekdayname(i) + '. ' + format.monthname(d.getMonth()) + '. ' + d.getDate() + '</th>');
+                h.push('<th class="' + css + '">' + format.weekdayname(i) + '. ' + format.monthname(d.getMonth()) + ' ' + d.getDate() + '</th>');
                 staff_rota.days.push(d);
                 d = common.add_days(d, 1);
             }
