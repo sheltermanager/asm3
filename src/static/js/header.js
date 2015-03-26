@@ -322,7 +322,7 @@ $(function() {
                 homeicon = "image?db=" + asm.useraccount + "&mode=dbfs&id=/reports/logo.jpg";
             }
             var h = [
-                '<div id="asm-topline" style="display: none">',
+                '<div id="asm-topline" class="no-print" style="display: none">',
                     '<table style="border: 0; width: 100%">',
                     '<tr>',
                     '<td>',
@@ -393,7 +393,7 @@ $(function() {
                         '</p>',
                     '</div>',
                 '</div>',
-                '<div id="linkstips" class="ui-state-highlight ui-corner-all" style="display: none; margin-top: 5px; padding-left: 5px; padding-right: 5px">',
+                '<div id="linkstips" class="no-print ui-state-highlight ui-corner-all" style="display: none; margin-top: 5px; padding-left: 5px; padding-right: 5px">',
                     '<p id="quicklinks" class="asm-quicklinks" style="display: none"><span class="ui-icon ui-icon-bookmark" style="float: left; margin-right: .3em;"></span>',
                         _("Quick Links"),
                         this.quicklinks_html(),
@@ -423,7 +423,7 @@ $(function() {
                     '</p>',
                     '<h2 class="centered" id="asm-topline-loading-text">' + _("Loading...") + '</h2>',
                 '</div>',
-                '<table id="header-fixed" style="position: fixed; top: 0px; display: none;"></table>'
+                '<table id="header-fixed" class="no-print" style="position: fixed; top: 0px; display: none;"></table>'
             ];
             return h.join("\n");
         },
