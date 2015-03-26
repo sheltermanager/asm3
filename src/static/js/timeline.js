@@ -23,6 +23,9 @@ $(function() {
                     if (lastdate == format.date(new Date())) {
                         modifier = ": " + _("today");
                     }
+                    if (lastdate == format.date(common.subtract_days(new Date(), 1))) {
+                        modifier = ": " + _("yesterday");
+                    }
                     h.push('<p class="asm-timeline-large-date">' + lastdate + ' ' + modifier + '</p>');
                 }
                 h.push('<p class="asm-timeline-item">' + html.event_text(e) + '</p>');
