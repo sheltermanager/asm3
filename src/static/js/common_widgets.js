@@ -289,11 +289,34 @@
     
     $.fn.date = function() {
         this.each(function() {
-            $(this).datepicker({ 
-                changeMonth: true, 
-                changeYear: true,
-                firstDay: 1
-            });
+            var dayfilter = $(this).attr("data-onlydays");
+            var nopast = $(this).attr("data-nopast");
+            if (dayfilter) {
+                $(this).datepicker({ 
+                    changeMonth: true, 
+                    changeYear: true,
+                    firstDay: 1,
+                    beforeShowDay: function(a) {
+                        var day = a.getDay();
+                        var rv = false;
+                        $.each(dayfilter.split(","), function(i, v) {
+                            if (v == String(day)) {
+                                rv = true;
+                            }
+                            return false;
+                        });
+                        if (nopast && a < new Date()) { rv = false; }
+                        return [rv, ""];
+                    }
+                });
+            }
+            else {
+                $(this).datepicker({ 
+                    changeMonth: true, 
+                    changeYear: true,
+                    firstDay: 1
+                });
+            }
             $(this).keydown(function(e) {
                 var d = $(this);
                 var adjust = function(v) {

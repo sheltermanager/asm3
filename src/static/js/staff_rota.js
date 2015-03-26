@@ -28,12 +28,13 @@ $(function() {
         render: function() {
             return [
                 tableform.dialog_render(dialog),
+                staff_rota.render_clonedialog(),
                 html.content_header(_("Staff Rota")),
                 tableform.buttons_render([
                     { id: "prev", icon: "rotate-anti", tooltip: _("Previous week") },
                     { id: "today", icon: "diary", tooltip: _("Today") },
                     { id: "next", icon: "rotate-clock", tooltip: _("Next week") },
-                    { id: "clone", text: _("Copy"), icon: "copy", tooltip: _("Copy the rota this week to another week") }
+                    { id: "clone", text: _("Clone"), icon: "copy", tooltip: _("Clone the rota this week to another week") }
                 ]),
                 '<table class="asm-staff-rota">',
                 '<thead></thead>',
@@ -109,9 +110,54 @@ $(function() {
             $(".asm-staff-rota tbody").html(h.join("\n"));
         },
 
+        render_clonedialog: function() {
+            return [
+                '<div id="dialog-clone" style="display: none" title="' + html.title(_("Clone Rota")) + '">',
+                '<table width="100%">',
+                '<tr>',
+                '<td><label for="newdate">' + _("To week beginning") + '</label></td>',
+                '<td><input id="newdate" data="newdate" type="text" data-nopast="true" data-onlydays="1" class="asm-textbox asm-datebox" /></td>',
+                '</tr>',
+                '</table>',
+                '</div>'
+            ].join("\n");
+        },
+
+        bind_clonedialog: function() {
+
+            var clonebuttons = { };
+            clonebuttons[_("Clone")] = function() {
+                $("#dialog-clone label").removeClass("ui-state-error-text");
+                if (!validate.notblank([ "newdate" ])) { return; }
+                $("#dialog-clone").disable_dialog_buttons();
+                var newdate = encodeURIComponent($("#newdate").val());
+                common.ajax_post(controller.name, "mode=clone&startdate=" + format.date(staff_rota.days[0]) + "&newdate=" + newdate, function() {
+                    $("#dialog-clone").dialog("close");
+                    $("#dialog-clone").enable_dialog_buttons();
+                    header.show_info(_("Rota cloned successfully."));
+                });
+            };
+            clonebuttons[_("Cancel")] = function() {
+                $("#dialog-clone").dialog("close");
+            };
+
+            $("#dialog-clone").dialog({
+                autoOpen: false,
+                width: 500,
+                modal: true,
+                dialogClass: "dialogshadow",
+                show: dlgfx.edit_show,
+                hide: dlgfx.edit_hide,
+                buttons: clonebuttons
+            });
+
+        },
+
+
         bind: function() {
 
             tableform.dialog_bind(dialog);
+            staff_rota.bind_clonedialog();
 
             $(".asm-staff-rota").on("click", "a", function(e) {
                 var id = $(this).attr("data-id");
@@ -163,7 +209,9 @@ $(function() {
                 $("#enddate").val($("#startdate").val());
             });
 
-            $("#button-clone").button();
+            $("#button-clone").button().click(function() {
+                $("#dialog-clone").dialog("open");
+            });
 
             $("#button-prev").button().click(function() {
                 window.location = controller.name + "?start=" + format.date(common.subtract_days(staff_rota.days[0], 7));
