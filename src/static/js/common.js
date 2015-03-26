@@ -241,7 +241,7 @@
         /** Subtracts days from date */
         subtract_days: function(date, days) {
             var d = new Date();
-            d.setTime(date.getTime() - (days * 24 * 60 * 60 * 1000));
+            d.setTime(date.getTime() + 60 - (days * 24 * 60 * 60 * 1000));
             return d;
         },
  

@@ -5335,6 +5335,8 @@ class staff_rota:
         c = html.controller_str("name", "staff_rota")
         c += html.controller_json("rows", rota)
         c += html.controller_date("startdate", startdate)
+        c += html.controller_date("prevdate", subtract_days(startdate, 7))
+        c += html.controller_date("nextdate", add_days(startdate, 7))
         c += html.controller_json("rotatypes", extlookups.get_rota_types(dbo))
         c += html.controller_json("staff", extperson.get_staff_volunteers(dbo))
         s += html.controller(c)

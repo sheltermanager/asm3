@@ -5,6 +5,7 @@ import al
 import animal
 import audit
 import configuration
+import datetime
 import dbfs
 import diary
 import db
@@ -14,7 +15,7 @@ import media
 import reports
 import users
 import utils
-from i18n import _, add_days, python2display, subtract_years, now
+from i18n import _, add_days, date_diff_days, format_time, python2display, subtract_years, now
 from sitedefs import BULK_GEO_BATCH
 
 ASCENDING = 0
@@ -461,14 +462,19 @@ def clone_rota_week(dbo, username, startdate, newdate):
     enddate = add_days(startdate, 7)
     rows = db.query(dbo, get_rota_query(dbo) + " WHERE StartDateTime >= %s AND StartDateTime <= %s" % (db.dd(startdate), db.dd(enddate)))
     for r in rows:
-        datediff( 
-        sd = add_days(r["STARTDATETIME"], 7)
-        ed = add_days(r["ENDDATETIME"], 7)
+        # Calculate how far from the start date this rec is so we can apply that
+        # diff to the newdate
+        sdiff = date_diff_days(startdate, r["STARTDATETIME"])
+        ediff = date_diff_days(startdate, r["ENDDATETIME"])
+        sd = add_days(newdate, sdiff)
+        ed = add_days(newdate, ediff)
+        sd = datetime.datetime(sd.year, sd.month, sd.day, r["STARTDATETIME"].hour, r["STARTDATETIME"].minute, 0)
+        ed = datetime.datetime(ed.year, ed.month, ed.day, r["ENDDATETIME"].hour, r["ENDDATETIME"].minute, 0)
         insert_rota_from_form(dbo, username, utils.PostedData({
             "person":    str(r["OWNERID"]),
-            "startdate": python2display(sd),
+            "startdate": python2display(l, sd),
             "starttime": format_time(sd),
-            "enddate":   python2display(ed),
+            "enddate":   python2display(l, ed),
             "endtime":   format_time(ed),
             "type":      str(r["ROTATYPEID"]),
             "comments":  r["COMMENTS"]

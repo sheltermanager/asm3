@@ -379,10 +379,10 @@ img {
 .asm-staff-rota td:first-child { text-align: right !important; }
 .asm-staff-rota-cell { background-color: #fff; cursor: pointer; }
 .asm-staff-rota-cell:hover { background-color: #eee; }
-.asm-staff-rota-shift { color: #000; padding: 4px; display: inline-block; }
-.asm-staff-rota-shift:hover { background-color: #888 !important; color: #fff !important; }
-.asm-staff-rota-timeoff { background-color: #ffffcc; color: #000; padding: 4px; display: inline-block; }
-.asm-staff-rota-timeoff:hover { background-color: yellow !important; }
+.asm-staff-rota-shift { color: #000 !important; padding: 4px; display: inline-block; border: 1px solid transparent; }
+.asm-staff-rota-shift:hover { border: 1px dotted #555 !important; }
+.asm-staff-rota-timeoff { background-color: #ffffcc; color: #000 !important; padding: 4px; display: inline-block; border: 1px solid transparent; }
+.asm-staff-rota-timeoff:hover { border: 1px dotted #555 !important; }
 .asm-staff-rota-staff-odd { background-color: #085278; color: #fff; }
 .asm-staff-rota-staff-odd a { background-color: #085278; color: #fff; }
 .asm-staff-rota-staff-even { background-color: #126894; color: #fff; }

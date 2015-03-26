@@ -12,13 +12,14 @@ $(function() {
         columns: 1,
         width: 550,
         fields: [
-            { json_field: "OWNERID", post_field: "person", personfilter: "volunteerandstaff", label: _("Person"), type: "person", validation: "notzero" },
+            { json_field: "OWNERID", post_field: "person", personmode: "brief", personfilter: "volunteerandstaff", 
+                label: _("Person"), type: "person", validation: "notzero" },
             { json_field: "STARTDATETIME", post_field: "startdate", label: _("Starts"), type: "date", validation: "notblank", defaultval: new Date() },
-            { json_field: "STARTDATETIME", post_field: "starttime", label: _("at"), type: "time", validation: "notblank", defaultval: "09:00" },
+            { json_field: "STARTDATETIME", post_field: "starttime", label: _("at"), type: "time", validation: "notblank", defaultval: config.str("DefaultShiftStart") },
             { json_field: "ENDDATETIME", post_field: "enddate", label: _("Ends"), type: "date", validation: "notblank", defaultval: new Date() },
-            { json_field: "ENDDATETIME", post_field: "endtime", label: _("at"), type: "time", validation: "notblank", defaultval: "17:00" },
-
-            { json_field: "ROTATYPEID", post_field: "type", label: _("Type"), type: "select", options: { displayfield: "ROTATYPE", valuefield: "ID", rows: controller.rotatypes }},
+            { json_field: "ENDDATETIME", post_field: "endtime", label: _("at"), type: "time", validation: "notblank", defaultval: config.str("DefaultShiftEnd") },
+            { json_field: "ROTATYPEID", post_field: "type", label: _("Type"), type: "select", 
+                options: { displayfield: "ROTATYPE", valuefield: "ID", rows: controller.rotatypes }},
             { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
         ]
     };
@@ -31,9 +32,9 @@ $(function() {
                 staff_rota.render_clonedialog(),
                 html.content_header(_("Staff Rota")),
                 tableform.buttons_render([
-                    { id: "prev", icon: "rotate-anti", tooltip: _("Previous week") },
+                    { id: "prev", icon: "rotate-anti", tooltip: format.date(controller.prevdate) },
                     { id: "today", icon: "diary", tooltip: _("Today") },
-                    { id: "next", icon: "rotate-clock", tooltip: _("Next week") },
+                    { id: "next", icon: "rotate-clock", tooltip: format.date(controller.nextdate) },
                     { id: "clone", text: _("Clone"), icon: "copy", tooltip: _("Clone the rota this week to another week") }
                 ]),
                 '<table class="asm-staff-rota">',
@@ -200,6 +201,8 @@ $(function() {
                 }, function() {
                     $("#startdate").val(date);
                     $("#enddate").val(date);
+                    $("#starttime").val(config.str("DefaultShiftStart"));
+                    $("#endtime").val(config.str("DefaultShiftEnd"));
                     $("#person").personchooser("loadbyid", personid);
                     $("#type").val(1);
                 });
@@ -214,7 +217,7 @@ $(function() {
             });
 
             $("#button-prev").button().click(function() {
-                window.location = controller.name + "?start=" + format.date(common.subtract_days(staff_rota.days[0], 7));
+                window.location = controller.name + "?start=" + format.date(controller.prevdate);
             });
 
             $("#button-today").button().click(function() {
@@ -222,7 +225,7 @@ $(function() {
             });
 
             $("#button-next").button().click(function() { 
-                window.location = controller.name + "?start=" + format.date(common.add_days(staff_rota.days[0], 7));
+                window.location = controller.name + "?start=" + format.date(controller.nextdate);
             });
         },
 

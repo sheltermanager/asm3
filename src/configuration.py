@@ -128,6 +128,8 @@ DEFAULTS = {
     "DefaultDateBroughtIn": "Yes",
     "DefaultIncidentType": "1",
     "DefaultMediaNotesFromFile": "Yes",
+    "DefaultShiftStart": "09:00",
+    "DefaultShiftEnd": "17:00",
     "DisableAnimalControl": "No",
     "DisableStockControl": "No",
     "DisableTransport": "No",

@@ -22,7 +22,7 @@
         buttons_render: function(buttons, notoolbar) {
             var b = "";
             if (!notoolbar) {
-                b += "<div class=\"asm-toolbar\">";
+                b += "<div class=\"asm-toolbar no-print\">";
             }
             $.each(buttons, function(i, v) {
                 if (v.hideif && v.hideif()) { return; }
