@@ -376,7 +376,9 @@ img {
 .asm-staff-rota-today { background-color: #f5f5dc !important; color: #000 !important; }
 .asm-staff-rota { width: 100%; border-collapse: collapse; }
 .asm-staff-rota td { border: 1px solid #dbdbdb; text-align: center; padding: 5px; }
-.asm-staff-rota-shift { background-color: #fff; color: #000; padding: 4px; }
+.asm-staff-rota-cell { background-color: #fff }
+.asm-staff-rota-cell:hover { background-color: #eee; }
+.asm-staff-rota-shift { color: #000; padding: 4px; }
 .asm-staff-rota-timeoff { background-color: #ffffcc; color: #000; padding: 4px; }
 .asm-staff-rota-person-odd { background-color: #085278; color: #fff; }
 .asm-staff-rota-person-odd a { background-color: #085278; color: #fff; font-weight: bold; }
@@ -631,6 +633,11 @@ select[disabled="disabled"], input[disabled="disabled"], textarea[disabled="disa
 
 .asm-banner a {
     font-weight: bold;
+}
+
+.asm-redbutton {
+    background: red !important;
+    color: #fff !important;
 }
 
 .asm-underlined-rows {

@@ -237,6 +237,13 @@
             d.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
             return d;
         },
+
+        /** Subtracts days from date */
+        subtract_days: function(date, days) {
+            var d = new Date();
+            d.setTime(date.getTime() - (days * 24 * 60 * 60 * 1000));
+            return d;
+        },
  
         /**
          * Initialises a module.
@@ -327,6 +334,19 @@
                 }
             });
             return rv;
+        },
+
+        /**
+         * Deletes the row with the id given
+         * rows: The object to search in
+         * id: The ID field value to find
+         */
+        delete_row: function(rows, id, idcolumn) {
+            $.each(rows, function(i, row) {
+                if (row && row[idcolumn] == id) {
+                    rows.splice(i, 1); 
+                }
+            });
         },
 
         /** 

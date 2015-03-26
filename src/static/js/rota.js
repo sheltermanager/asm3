@@ -111,6 +111,9 @@ $(function() {
             tableform.dialog_bind(dialog);
             tableform.buttons_bind(buttons);
             tableform.table_bind(table, buttons);
+            $("#startdate").change(function() {
+                $("#enddate").val($("#startdate").val());
+            });
         }
 
     };

@@ -545,7 +545,7 @@ def json_menu(l, reports, mailmerges):
             ( users.ADD_PERSON, "", "", "person_new", "asm-icon-person-add", _("Add a new person", l) ),
             ( users.VIEW_PERSON, "", "", "person_lookingfor", "asm-icon-animal-find", _("Person looking for report", l) ),
             ( users.ADD_LOG, "", "", "log_new?mode=person", "asm-icon-log", _("Add a log entry", l) ),
-            ( users.VIEW_ROTA, "", "tagrota", "staff_rota", "asm-icon-rotahours", _("Staff Rota", l) ),
+            ( users.VIEW_ROTA, "", "tagrota", "staff_rota", "asm-icon-rota", _("Staff Rota", l) ),
             ( "", "", "", "--break", "", "" ),
             ( "", "", "taganimalcontrolheader", "--cat", "asm-icon-call", _("Animal Control", l) ),
             ( users.ADD_INCIDENT, "alt+shift+i", "taganimalcontrol", "incident_new", "asm-icon-blank", _("Report a new incident", l) ),

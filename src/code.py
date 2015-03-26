@@ -5325,9 +5325,9 @@ class staff_rota:
         users.check_permission(session, users.VIEW_ROTA)
         dbo = session.dbo
         l = session.locale
-        post = utils.PostedData(web.input(startdate = ""), session.locale)
+        post = utils.PostedData(web.input(start = ""), session.locale)
         title = _("Staff Rota", l)
-        startdate = post.date("startdate")
+        startdate = post.date("start")
         if startdate is None: startdate = monday_of_week(now())
         rota = extperson.get_rota(dbo, startdate, add_days(startdate, 7))
         al.debug("got %d rota items" % len(rota), "code.staff_rota", dbo)
