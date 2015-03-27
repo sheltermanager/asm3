@@ -230,6 +230,7 @@ DEFAULTS = {
     "ShowILOffShelter": "Yes",
     "ShowPersonMiniMap": "Yes",
     "ShowSearchGo": "No", 
+    "ShowWeightInLbs": "Yes",
     "SystemTheme": "smoothness",
     "Timezone": "-5",
     "TrialAdoptions": "No",
