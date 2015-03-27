@@ -46,7 +46,7 @@ $$FOOT
 <td></td>
 <td></td>
 <td></td>
-<td><b>£{SUM.Cost}<b/></td>
+<td><b>{SUM.Cost}<b/></td>
 </tr>
 
 </table>
@@ -70,5 +70,5 @@ BODY$$
 
 $$FOOTER
 </table>
-<h3>Total: £{SUM.Cost}</h3>
+<h3>Total: {SUM.Cost}</h3>
 FOOTER$$
