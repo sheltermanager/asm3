@@ -19,9 +19,11 @@ AND a.Archived = 1
 GROUP BY mt.MovementType
 UNION SELECT 'Died' AS MovementType, COUNT(a.ID) AS Exited
 FROM animal a
-WHERE DeceasedDate Is Not Null AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND PutToSleep = 0
+WHERE DeceasedDate Is Not Null AND DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$' 
+AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND PutToSleep = 0
 UNION SELECT 'Euthanized' AS MovementType, COUNT(a.ID) AS Exited
 FROM animal a
-WHERE DeceasedDate Is Not Null AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND PutToSleep = 1
+WHERE DeceasedDate Is Not Null AND DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$' 
+AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND PutToSleep = 1
 ###
 GRAPH PIE
