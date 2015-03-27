@@ -486,7 +486,7 @@ def calculate_owner_name(dbo, title = "", initials = "", first = "", last = "", 
     """
     if nameformat == "": nameformat = configuration.owner_name_format(dbo)
     # If something went wrong and we have a broken format for any reason, substitute our default
-    if nameformat is None or nameformat == "" or nameformat == "null": nameformat = "{ownertitle} {ownerforenames} {ownersurname}",
+    if nameformat is None or nameformat == "" or nameformat == "null": nameformat = "{ownertitle} {ownerforenames} {ownersurname}"
     nameformat = nameformat.replace("{ownername}", "{ownertitle} {ownerforenames} {ownersurname}") # Compatibility with old versions
     nameformat = nameformat.replace("{ownertitle}", title)
     nameformat = nameformat.replace("{ownerinitials}", initials)
