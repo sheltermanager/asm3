@@ -14,12 +14,12 @@ $(function() {
         fields: [
             { json_field: "OWNERID", post_field: "person", personmode: "brief", personfilter: "volunteerandstaff", 
                 label: _("Person"), type: "person", validation: "notzero" },
+            { json_field: "ROTATYPEID", post_field: "type", label: _("Type"), type: "select", 
+                options: { displayfield: "ROTATYPE", valuefield: "ID", rows: controller.rotatypes }},
             { json_field: "STARTDATETIME", post_field: "startdate", label: _("Starts"), type: "date", validation: "notblank", defaultval: new Date() },
             { json_field: "STARTDATETIME", post_field: "starttime", label: _("at"), type: "time", validation: "notblank", defaultval: config.str("DefaultShiftStart") },
             { json_field: "ENDDATETIME", post_field: "enddate", label: _("Ends"), type: "date", validation: "notblank", defaultval: new Date() },
             { json_field: "ENDDATETIME", post_field: "endtime", label: _("at"), type: "time", validation: "notblank", defaultval: config.str("DefaultShiftEnd") },
-            { json_field: "ROTATYPEID", post_field: "type", label: _("Type"), type: "select", 
-                options: { displayfield: "ROTATYPE", valuefield: "ID", rows: controller.rotatypes }},
             { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
         ]
     };
@@ -41,6 +41,7 @@ $(function() {
                 '<thead></thead>',
                 '<tbody></tbody>',
                 '</table>',
+                html.info(_("To add people to the rota, create new person records with the staff or volunteer flag."), "emptyhint"), 
                 html.content_footer()
             ].join("\n");
         },
@@ -71,6 +72,9 @@ $(function() {
             h.push('</tr>');
             $(".asm-staff-rota thead").html(h.join("\n"));
 
+            // If there aren't any staff, show a hint box
+            $("#emptyhint").toggle(controller.staff.length == 0);
+            
             // Render a row for each person with their rota for the week
             h = [];
             $.each(controller.staff, function(i, p) {
