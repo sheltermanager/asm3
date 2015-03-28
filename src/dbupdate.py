@@ -1129,10 +1129,9 @@ def sql_structure(dbo):
         fint("RotaTypeID"),
         flongstr("Comments", True) ))
     sql += index("ownerrota_OwnerID", "ownerrota", "OwnerID")
-    sql += index("ownerrota_DateTimeStart", "ownerrota", "DateTimeStart")
-    sql += index("ownerrota_DateTimeEnd", "ownerrota", "DateTimeEnd")
+    sql += index("ownerrota_StartDateTime", "ownerrota", "StartDateTime")
+    sql += index("ownerrota_EndDateTime", "ownerrota", "EndDateTime")
     sql += index("ownerrota_RotaTypeID", "ownerrota", "RotaTypeID")
-
 
     sql += table("ownertraploan", (
         fid(),
