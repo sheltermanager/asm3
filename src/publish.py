@@ -44,6 +44,7 @@ class PublishCriteria:
     includeRetailerAnimals = False
     includeFosterAnimals = False
     includeQuarantine = False
+    includeTrial = False
     includeHold = False
     includeWithoutImage = False
     includeColours = False
@@ -99,6 +100,7 @@ class PublishCriteria:
             if s == "includefosters": self.includeFosterAnimals = True
             if s == "includehold": self.includeHold = True
             if s == "includequarantine": self.includeQuarantine = True
+            if s == "includetrial": self.includeTrial = True
             if s == "includewithoutimage": self.includeWithoutImage = True
             if s == "includecolours": self.includeColours = True
             if s == "bondedassingle": self.bondedAsSingle = True
@@ -140,6 +142,7 @@ class PublishCriteria:
         if self.includeFosterAnimals: s += " includefosters"
         if self.includeHold: s += " includehold"
         if self.includeQuarantine: s += " includequarantine"
+        if self.includeTrial: s += " includetrial"
         if self.includeWithoutImage: s += " includewithoutimage"
         if self.includeColours: s += " includecolours"
         if self.bondedAsSingle: s += " bondedassingle"
@@ -230,47 +233,38 @@ def get_animal_data_query(dbo, pc):
         sql += " AND EXISTS(SELECT ID FROM media WHERE WebsitePhoto = 1 AND LinkID = a.ID AND LinkTypeID = 0)"
     if not pc.includeReservedAnimals: 
         sql += " AND a.HasActiveReserve = 0"
+    if not pc.includeHold: 
+        sql += " AND (a.IsHold = 0 OR a.IsHold Is Null)"
+    if not pc.includeQuarantine:
+        sql += " AND (a.IsQuarantine = 0 OR a.IsQuarantine Is Null)"
     if len(pc.internalLocations) > 0 and pc.internalLocations[0].strip() != "null":
         if utils.is_numeric(pc.internalLocations[0]):
             # We have a list of internal location IDs
             sql += " AND a.ShelterLocation IN (%s)" % ",".join(pc.internalLocations)
         else:
             # Must be a list of LIKE name comparisons
-            sql += " AND ("
-            firstLoc = True
+            locfilter = []
             for fr in pc.internalLocations:
-                if firstLoc:
-                    firstLoc = False
-                else:
-                    sql += " OR "
-                sql += "il.LocationName LIKE '%s'" % fr.replace("*", "%")
-            sql += ")"
+                locfilter.append("il.LocationName LIKE %s" % db.ds(fr.replace("*", "%")))
+            sql += " AND (" + " OR ".join(locfilter) + ")"
     # Make sure animal is old enough
     exclude = i18n.now()
     exclude -= datetime.timedelta(days=pc.excludeUnderWeeks * 7)
     sql += " AND a.DateOfBirth <= " + db.dd(exclude)
     # Filter out dead and unadoptable animals
     sql += " AND a.DeceasedDate Is Null AND a.IsNotAvailableForAdoption = 0"
-    # Filter out trial adoptions
-    sql += " AND (a.ActiveMovementType Is Null OR a.ActiveMovementType <> 1)"
     # Filter out permanent fosters
     sql += " AND a.HasPermanentFoster = 0"
-    # Filter out Hold/Quarantine if they aren't included
-    if not pc.includeHold: 
-        sql += " AND (a.IsHold = 0 OR a.IsHold Is Null)"
-    if not pc.includeQuarantine:
-        sql += " AND (a.IsQuarantine = 0 OR a.IsQuarantine Is Null)"
-    # If including fosters is on, allow animals with an active type of foster
-    # (this picks up foster animals even if foster on shelter is not set)
-    if pc.includeFosterAnimals and pc.includeRetailerAnimals:
-        sql += " AND (a.Archived = 0 OR a.ActiveMovementType = %d OR a.ActiveMovementType = %d)" % (movement.FOSTER, movement.RETAILER)
-    elif pc.includeRetailerAnimals:
-        sql += " AND (a.Archived = 0 OR a.ActiveMovementType = %d)" % movement.RETAILER
-    elif pc.includeFosterAnimals:
-        sql += " AND (a.Archived = 0 OR a.ActiveMovementType = %d)" % movement.FOSTER
-    else:
-        # On shelter only (this filters out fosters even if foster on shelter is set)
-        sql += " AND a.Archived = 0 AND (a.ActiveMovementType Is Null OR a.ActiveMovementType <> %d)" % movement.FOSTER
+    # Build a set of OR clauses based on any movements/locations
+    moveor = []
+    moveor.append("(a.Archived = 0)")
+    if pc.includeRetailerAnimals:
+        moveor.append("(a.ActiveMovementType = %d)" % movement.RETAILER)
+    if pc.includeFosterAnimals:
+        moveor.append("(a.ActiveMovementType = %d)" % movement.FOSTER)
+    if pc.includeTrial:
+        moveor.append("(a.ActiveMovementType = %d AND a.HasTrialAdoption = 1)" % movement.ADOPTION)
+    sql += " AND (" + " OR ".join(moveor) + ")"
     # Ordering
     if pc.order == 0:
         sql += " ORDER BY a.MostRecentEntryDate"

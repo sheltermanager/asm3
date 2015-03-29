@@ -5431,6 +5431,10 @@ msgid "Include animals in the following locations"
 msgstr ""
 
 #: publish_options.js
+msgid "Include animals on trial adoption"
+msgstr ""
+
+#: publish_options.js
 msgid "Include animals who don't have a picture"
 msgstr ""
 
