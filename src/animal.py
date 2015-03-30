@@ -1940,6 +1940,9 @@ def update_animal_from_form(dbo, post, username):
     update_animal_status(dbo, ki("id"))
     update_variable_animal_data(dbo, ki("id"))
 
+    # Update any diary notes linked to this animal
+    update_diary_linkinfo(dbo, ki("id"))
+
 def update_animals_from_form(dbo, post, username):
     """
     Batch updates multiple animal records from the bulk form
@@ -1990,6 +1993,24 @@ def update_deceased_from_form(dbo, username, post):
     # Update denormalised fields after the deceased change
     update_animal_status(dbo, animalid)
     update_variable_animal_data(dbo, animalid)
+
+def update_diary_linkinfo(dbo, animalid, a = None, diaryupdatebatch = None):
+    """
+    Updates the linkinfo on diary notes for an animal.
+    animalid: The animal's ID
+    a: An animal resultset (if none, will be loaded)
+    diaryupdatebatch: a batch of diary records to update, the three
+                      params are linkinfo, linktype and id. If blank, an update
+                      query will be done immediately
+    """
+    if a is None:
+        a = get_animal(dbo, animalid)
+    diaryloc = "%s %s - %s" % ( a["SHELTERCODE"], a["ANIMALNAME"], a["DISPLAYLOCATIONNAME"])
+    if diaryupdatebatch is not None:
+        diaryupdatebatch.append( (diaryloc, diary.ANIMAL, animalid) )
+    else:
+        db.execute(dbo, "UPDATE diary SET LinkInfo = %s WHERE LinkType = %d AND LinkID = %d" % (
+            db.ds(diaryloc), diary.ANIMAL, animalid ))
 
 def update_location(dbo, username, animalid, locationid):
     """
@@ -2756,6 +2777,9 @@ def update_animal_status(dbo, animalid, a = None, animalupdatebatch = None, diar
     a["MOSTRECENTENTRYDATE"] = mostrecententrydate
     a["DISPLAYLOCATION"] = qlocname
 
+    # Update the location on any diary notes for this animal
+    update_diary_linkinfo(dbo, animalid, a, diaryupdatebatch)
+  
     # If we have an animal batch going, append to it
     if animalupdatebatch is not None:
         animalupdatebatch.append((
@@ -2786,14 +2810,6 @@ def update_animal_status(dbo, animalid, a = None, animalupdatebatch = None, diar
             ( "MostRecentEntryDate", db.dd(mostrecententrydate) )
             )))
 
-    # Update the location on any diary notes for this animal
-    diaryloc = "%s %s - %s" % ( a["SHELTERCODE"], a["ANIMALNAME"], loc)
-    if diaryupdatebatch is not None:
-        diaryupdatebatch.append( (diaryloc, diary.ANIMAL, animalid) )
-    else:
-        db.execute(dbo, "UPDATE diary SET LinkInfo = %s WHERE LinkType = %d AND LinkID = %d" % (
-            db.ds(diaryloc), diary.ANIMAL, animalid ))
-  
 def get_number_animals_on_shelter(dbo, date, speciesid = 0, animaltypeid = 0, internallocationid = 0, ageselection = 0):
     """
     Returns the number of animals on shelter at a given date for a species, type,

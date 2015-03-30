@@ -1,6 +1,7 @@
 36
 ================
 
+30/03/15 Update diary link on every save to cope with name/code changes #127
 30/03/15 Add rss_timeline method to service API #125
 30/03/15 Refactor timeline translations and icons into backend
 30/03/15 Allow multiple payments to be selected for payment templates #34
