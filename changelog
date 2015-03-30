@@ -1,6 +1,7 @@
 36
 ================
 
+30/03/15 Don't include raw markup fields in online form previews
 30/03/15 Make service calls honour permissions #143
 30/03/15 Update diary link on every save to cope with name/code changes #127
 30/03/15 Add rss_timeline method to service API #125
