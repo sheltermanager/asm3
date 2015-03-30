@@ -209,6 +209,14 @@ def check_permission_bool(session, flag):
     if has_security_flag(session.securitymap, flag): return True
     return False
 
+def check_permission_map(l, superuser, securitymap, flag):
+    """
+    Throws an ASMPermissionError if the flag is not in the map
+    """
+    if superuser == 1: return
+    if not has_security_flag(securitymap, flag):
+        raise utils.ASMPermissionError(i18n._("Forbidden", l))
+
 def has_security_flag(securitymap, flag):
     """
     Returns true if the given flag is in the given map
