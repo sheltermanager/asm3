@@ -685,6 +685,43 @@ def get_stats(dbo):
         % { "from": countfrom, "adoption": movement.ADOPTION, "reclaimed": movement.RECLAIMED, "transfer": movement.TRANSFER }
     return db.query_cache(dbo, sql, 120)
 
+def embellish_timeline(l, rows):
+    """
+    Adds human readable description and icon fields to rows from get_timeline
+    """
+    td = { "ENTERED": ( _("{0} {1}: entered the shelter", l), "animal" ),
+          "MICROCHIP": ( _("{0} {1}: microchipped", l), "microchip" ),
+          "NEUTERED": ( _("{0} {1}: altered", l), "health" ),
+          "RESERVED": ( _("{0} {1}: reserved by {2}", l), "reservation" ),
+          "ADOPTED": ( _("{0} {1}: adopted by {2}", l), "movement" ),
+          "FOSTERED": ( _("{0} {1}: fostered to {2}", l), "movement" ),
+          "TRANSFER": ( _("{0} {1}: transferred to {2}", l), "movement" ),
+          "ESCAPED": ( _("{0} {1}: escaped", l), "movement" ),
+          "STOLEN": ( _("{0} {1}: stolen", l), "movement" ),
+          "RELEASED": (_("{0} {1}: released", l) , "movement" ),
+          "RECLAIMED": ( _("{0} {1}: reclaimed by {2}", l), "movement" ),
+          "RETAILER": ( _("{0} {1}: sent to retailer {2}", l), "movement" ),
+          "RETURNED": ( _("{0} {1}: returned by {2}", l), "movement" ),
+          "DIED": ( _("{0} {1}: died ({2})", l), "death" ),
+          "EUTHANISED": ( _("{0} {1}: euthanised ({2})", l), "death" ),
+          "FIVP": ( _("{0} {1}: tested positive for FIV", l), "positivetest" ),
+          "FLVP": ( _("{0} {1}: tested positive for FeLV", l), "positivetest" ),
+          "HWP": ( _("{0} {1}: tested positive for Heartworm", l), "positivetest" ),
+          "QUARANTINE": ( _("{0} {1}: quarantined", l), "quarantine" ),
+          "HOLD": ( _("{0} {1}: held", l), "hold" ),
+          "NOTADOPT": ( _("{0} {1}: not available for adoption", l), "notforadoption" ),
+          "AVAILABLE": ( _("{0} {1}: available for adoption", l), "notforadoption" ),
+          "VACC": ( _("{0} {1}: received {2}", l), "vaccination" ),
+          "TEST": ( _("{0} {1}: received {2}", l), "test" ),
+          "MEDICAL": ( _("{0} {1}: received {2}", l), "medical" )
+    }
+    for r in rows:
+        desc, icon = td[r["CATEGORY"]]
+        desc = desc.format(r["TEXT1"], r["TEXT2"], r["TEXT3"])
+        r["ICON"] = icon
+        r["DESCRIPTION"] = desc
+    return rows
+
 def get_timeline(dbo, limit = 500):
     """
     Returns a list of recent events at the shelter.
@@ -819,7 +856,7 @@ def get_timeline(dbo, limit = 500):
         "WHERE EventDate <= %(today)s " \
         "ORDER BY EventDate DESC " \
         "LIMIT %(limit)s" % { "today": db.dd(now(dbo.timezone)), "limit": str(limit) }
-    return db.query_cache(dbo, sql, 120)
+    return embellish_timeline(dbo.locale, db.query_cache(dbo, sql, 120))
 
 def calc_most_recent_entry(dbo, animalid, a = None):
     """

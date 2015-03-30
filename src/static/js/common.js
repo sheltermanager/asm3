@@ -1137,39 +1137,11 @@
         /** 
          * Renders a shelter event described in e. Events should have
          * the following attributes:
-         * LINKTARGET, CATEGORY, EVENTDATE, ID, TEXT1, TEXT2, TEXT3, LASTCHANGEDBY
+         * LINKTARGET, CATEGORY, EVENTDATE, ID, TEXT1, TEXT2, TEXT3, LASTCHANGEDBY,
+         * ICON, DESCRIPTION
          */
         event_text: function(e, o) {
-            var handlers = {
-                ENTERED: function(x) { return html.icon("animal") + ' ' + _("{0} {1}: entered the shelter"); },
-                MICROCHIP: function(x) { return html.icon("microchip") + ' ' + _("{0} {1}: microchipped"); },
-                NEUTERED: function(x) { return html.icon("health") + ' ' + _("{0} {1}: altered"); },
-                RESERVED: function(x) { return html.icon("reservation") + ' ' + _("{0} {1}: reserved by {2}"); },
-                ADOPTED: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: adopted by {2}"); },
-                FOSTERED: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: fostered to {2}"); },
-                TRANSFER: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: transferred to {2}"); },
-                ESCAPED: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: escaped"); },
-                STOLEN: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: stolen"); },
-                RELEASED: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: released"); },
-                RECLAIMED: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: reclaimed by {2}"); },
-                RETAILER: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: sent to retailer {2}"); },
-                RETURNED: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: returned by {2}"); },
-                DIED: function(x) { return html.icon("death") + ' ' + _("{0} {1}: died ({2})"); },
-                EUTHANISED: function(x) { return html.icon("death") + ' ' + _("{0} {1}: euthanised ({2})"); },
-                FIVP: function(x) { return html.icon("positivetest") + ' ' + _("{0} {1}: tested positive for FIV"); },
-                FLVP: function(x) { return html.icon("positivetest") + ' ' + _("{0} {1}: tested positive for FeLV"); },
-                HWP: function(x) { return html.icon("positivetest") + ' ' + _("{0} {1}: tested positive for Heartworm"); },
-                QUARANTINE: function(x) { return html.icon("quarantine") + ' ' + _("{0} {1}: quarantined"); },
-                HOLD: function(x) { return html.icon("hold") + ' ' + _("{0} {1}: held"); },
-                NOTADOPT: function(x) { return html.icon("notforadoption") + ' ' + _("{0} {1}: not available for adoption"); },
-                AVAILABLE: function(x) { return html.icon("notforadoption") + ' ' + _("{0} {1}: available for adoption"); },
-                VACC: function(x) { return html.icon("vaccination") + ' ' + _("{0} {1}: received {2}"); },
-                TEST: function(x) { return html.icon("test") + ' ' + _("{0} {1}: received {2}"); },
-                MEDICAL: function(x) { return html.icon("medical") + ' ' + _("{0} {1}: received {2}"); }
-            },
-            text = handlers[e.CATEGORY](e), h = "";
-
-            text = text.replace("{0}", e.TEXT1).replace("{1}", e.TEXT2).replace("{2}", e.TEXT3);
+            var h = "";
             if (o && o.includedate) {
                 h += '<span class="asm-timeline-small-date">' + format.date(e.EVENTDATE) + '</span> ';
             }
@@ -1177,7 +1149,7 @@
                 h += '<span class="asm-timeline-time">' + format.time(e.EVENTDATE) + '</span>' ;
             }
             h += ' <a href="' + e.LINKTARGET + '?id=' + e.ID + '">';
-            h += text;
+            h += html.icon(e.ICON) + ' ' + e.DESCRIPTION;
             h += '</a> <span class="asm-timeline-by">(' + e.LASTCHANGEDBY + ')</span>';
             return h;
         },

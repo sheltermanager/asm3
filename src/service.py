@@ -29,7 +29,7 @@ from sitedefs import BASE_URL, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, CACH
 AUTH_METHODS = [ 
     "upload_animal_image", 
     "json_shelter_animals", "jsonp_shelter_animals", "xml_shelter_animals", 
-    "html_report", "csv_mail", 
+    "html_report", "csv_mail", "rss_timeline", 
     "xml_recent_adoptions", "json_recent_adoptions", 
     "xml_adoptable_animals", "json_adoptable_animals"  
 ]
@@ -174,6 +174,9 @@ def handler(post, remoteip, referer):
     elif method == "xml_shelter_animals":
         sa = animal.get_animal_find_simple(dbo, "", "shelter")
         return set_cached_response(cache_key, "application/xml", 3600, html.xml(sa))
+
+    elif method == "rss_timeline":
+        return set_cached_response(cache_key, "application/rss+xml", 3600, html.timeline_rss(dbo))
 
     elif method == "upload_animal_image":
         media.attach_file_from_form(dbo, username, media.ANIMAL, int(animalid), post)

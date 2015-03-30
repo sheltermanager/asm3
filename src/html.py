@@ -477,6 +477,27 @@ def controller_json(name, obj):
     jv = json(obj)
     return "controller.%s = %s;" % (name, jv)
 
+def rss(inner, title, link, description):
+    """ Renders an RSS document """
+    return '<?xml version="1.0" encoding="UTF-8"?>' \
+        '<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" >' \
+        '<channel rdf:about="%s">' \
+        '<title>%s</title>' \
+        '<description>%s</description>' \
+        '<link>%s</link>' \
+        '</channel>' \
+        '%s' \
+        '</rdf:RDF>' % (BASE_URL, title, description, link, inner)
+
+def rss_item(title, link, description):
+    return '<item rdf:about="%s">' \
+        '<title>%s</title>' \
+        '<link>%s</link>' \
+        '<description>' \
+        '%s' \
+        '</description>' \
+        '</item>' % (BASE_URL, title, link, description)
+
 def icon(name, title = ""):
     """
     Outputs a span tag containing an icon
@@ -1378,6 +1399,14 @@ def template_selection(templates, url):
             lastpath = t["PATH"]
         s += "<li class=\"asm-menu-item\"><a target=\"_blank\" class=\"templatelink\" data=\"%d\" href=\"%s&template=%s\">%s</a></li>" % (t["ID"], url, t["ID"], t["NAME"])
     return s
+
+def timeline_rss(dbo, limit = 500):
+    l = dbo.locale
+    rows = animal.get_timeline(dbo, limit)
+    h = []
+    for r in rows:
+        h.append( rss_item( r["DESCRIPTION"], "%s/%s?id=%d" % (BASE_URL, r["LINKTARGET"], r["ID"]), "") )
+    return rss("\n".join(h), _("Showing {0} timeline events.", l).format(limit), BASE_URL, "")
 
 def report_criteria(dbo, crit, locationfilter = ""):
     """

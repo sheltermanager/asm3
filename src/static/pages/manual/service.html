@@ -256,8 +256,12 @@
 call the API you construct a URL to the service controller. The service
 controller is /service, so if you are accessing a local ASM from your local
 machine, the URL will start <a class="reference external" href="http://localhost:5000/service">http://localhost:5000/service</a>. If you are using
-sheltermanager.com, the URL will start <a class="reference external" href="https://sheltermanager.com/asm/service">https://sheltermanager.com/asm/service</a>.
-The service requires the  following parameters:</p>
+sheltermanager.com, the URL will start <a class="reference external" href="https://sheltermanager.com/asm/service">https://sheltermanager.com/asm/service</a>.</p>
+<p>If you are using sheltermanager.com, please be aware that service call
+responses are cached for performance. All requests for shelter/adoptable animal
+data will be cached for the next hour, with requests for online forms cached
+for the next couple of minutes.</p>
+<p>The service requires the  following parameters:</p>
 <ul class="simple">
 <li>account: If this is a sheltermanager.com service call, the user&#8217;s account
 number. Can be omitted for other installations.</li>
@@ -277,8 +281,8 @@ called.</li>
 </pre></div>
 </div>
 <p><strong>extra_image</strong></p>
-<p>Returns an extra image (see <em>Settings-&gt;Reports-&gt;Extra Images</em>). Pass the name
-of the image in the title parameter:</p>
+<p>Returns an extra image (see <em class="menuselection">Settings-&gt;Reports-&gt;Extra Images</em>).
+Pass the name of the image in the title parameter:</p>
 <div class="highlight-python"><div class="highlight"><pre>http://localhost:5000/service?method=extra_image&amp;title=splash.jpg
 </pre></div>
 </div>
@@ -308,6 +312,11 @@ those too just like with html_report.</p>
 <p><strong>json_shelter_animals | xml_shelter_animals</strong></p>
 <p>Returns a dataset containing all shelter animals. The method determines whether
 the format returned is JSON or XML.</p>
+<p><strong>rss_timeline</strong></p>
+<p>Returns an RSS feed of the timeline:</p>
+<div class="highlight-python"><div class="highlight"><pre>http://localhost:5000/service?method=rss_timeline&amp;username=user&amp;password=letmein
+</pre></div>
+</div>
 </div>
 
 
