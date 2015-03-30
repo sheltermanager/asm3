@@ -641,9 +641,14 @@ a status of complete.</p>
 </div>
 <div class="section" id="payment-keys">
 <h2>Payment Keys<a class="headerlink" href="#payment-keys" title="Permalink to this headline">¶</a></h2>
-<p>The same rules apply as for vaccinations and medical records but for accessing
-payments. The Recent keyword looks for payments that have been received. The
-fields are:</p>
+<p>If you are creating a document from the animal or person records, then the same
+rules apply as for vaccinations and medical records when accessing payments.
+payments. The Recent keyword looks for payments that have been received.</p>
+<p>However, if you create an invoice/receipt document from the payment tab of a
+person or animal record, you can select multiple payments before creating the
+document and access the information by suffixing a number to the end of the
+keys listed below (eg: PaymentType1, PaymentComments2)</p>
+<p>The fields are:</p>
 <dl class="docutils">
 <dt>ReceiptNum</dt>
 <dd>If you issue receipts for donations, the receipt number</dd>
@@ -661,6 +666,10 @@ fields are:</p>
 <dd>Yes or No if this donation is eligible for UK giftaid</dd>
 <dt>PaymentComments</dt>
 <dd>Any comments on the payment</dd>
+<dt>PaymentTotalDue</dt>
+<dd>The total of all selected payments that have a due date and no received date</dd>
+<dt>PaymentTotalReceived</dt>
+<dd>The total of all selected payments that have a received date</dd>
 </dl>
 </div>
 <div class="section" id="cost-keys">

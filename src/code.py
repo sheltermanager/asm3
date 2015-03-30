@@ -2313,8 +2313,8 @@ class document_gen:
             content = wordprocessor.generate_person_doc(dbo, template, post.integer("id"), session.user)
         elif mode == "DONATION":
             loglinktype = extlog.PERSON
-            logid = financial.get_donation(dbo, post.integer("id"))["OWNERID"]
-            content = wordprocessor.generate_donation_doc(dbo, template, post.integer("id"), session.user)
+            logid = financial.get_donation(dbo, post.integer_list("id")[0])["OWNERID"]
+            content = wordprocessor.generate_donation_doc(dbo, template, post.integer_list("id"), session.user)
         if configuration.generate_document_log(dbo) and configuration.generate_document_log_type(dbo) > 0:
             extlog.add_log(dbo, session.user, loglinktype, logid, configuration.generate_document_log_type(dbo), _("Generated document '{0}'").format(templatename))
         if templatename.endswith(".html"):
@@ -2348,10 +2348,13 @@ class document_gen:
                 extmedia.create_document_media(dbo, session.user, extmedia.PERSON, recid, tempname, post["document"])
                 raise web.seeother("person_media?id=%d" % recid)
             elif mode == "DONATION":
-                d = financial.get_donation(dbo, recid)
-                tempname += " - " + extperson.get_person_name(dbo, d["OWNERID"])
-                extmedia.create_document_media(dbo, session.user, extmedia.PERSON, d["OWNERID"], tempname, post["document"])
-                raise web.seeother("person_media?id=%d" % d["OWNERID"])
+                d = financial.get_donations_by_ids(dbo, post.integer_list("recid"))
+                if len(d) == 0:
+                    raise utils.ASMValidationError("list '%s' does not contain valid ids" % recid)
+                ownerid = d[0]["OWNERID"]
+                tempname += " - " + extperson.get_person_name(dbo, ownerid)
+                extmedia.create_document_media(dbo, session.user, extmedia.PERSON, ownerid, tempname, post["document"])
+                raise web.seeother("person_media?id=%d" % ownerid)
             else:
                 raise web.seeother("main")
         elif post["savemode"] == "pdf":

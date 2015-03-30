@@ -398,9 +398,16 @@ MedicalComments
 Payment Keys
 ------------
 
-The same rules apply as for vaccinations and medical records but for accessing
-payments. The Recent keyword looks for payments that have been received. The
-fields are:
+If you are creating a document from the animal or person records, then the same
+rules apply as for vaccinations and medical records when accessing payments.
+payments. The Recent keyword looks for payments that have been received. 
+
+However, if you create an invoice/receipt document from the payment tab of a
+person or animal record, you can select multiple payments before creating the
+document and access the information by suffixing a number to the end of the
+keys listed below (eg: PaymentType1, PaymentComments2)
+
+The fields are:
 
 ReceiptNum
     If you issue receipts for donations, the receipt number 
@@ -418,6 +425,10 @@ PaymentGiftAid
     Yes or No if this donation is eligible for UK giftaid
 PaymentComments 
     Any comments on the payment
+PaymentTotalDue
+    The total of all selected payments that have a due date and no received date
+PaymentTotalReceived
+    The total of all selected payments that have a received date
 
 Cost Keys
 ---------
