@@ -109,7 +109,6 @@ def handler(post, remoteip, referer):
             al.error("auth failed - %s/%s is not a valid username/password from %s" % (username, password, remoteip), "service.handler", dbo)
             return ("text/plain", 0, "ERROR: Invalid username and password")
         securitymap = users.get_security_map(dbo, user["USERNAME"])
-    al.debug("user: %s, super: %d, map: %s" % (user["USERNAME"], user["SUPERUSER"], securitymap), "service", dbo)
 
     # Get the preferred locale for the site
     l = configuration.locale(dbo)
