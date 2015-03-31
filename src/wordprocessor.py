@@ -843,7 +843,7 @@ def donation_tags(dbo, donations):
         tags.update(x)
         if i == "": return # Don't add a total for the compatibility row
         if p["DATE"] is not None: totals["received"] += p["DONATION"]
-        if p["DATE"] is None: totals["due"] += ["DONATION"]
+        if p["DATE"] is None: totals["due"] += p["DONATION"]
     add_to_tags("", donations[0]) 
     for i, d in enumerate(donations):
         add_to_tags(str(i+1), d)
