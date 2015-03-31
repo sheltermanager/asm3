@@ -465,7 +465,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     for fld in get_onlineformincoming_detail(dbo, collationid):
         if fieldssofar < 3:
             # Don't include raw markup fields in the preview
-            if fld["FIELDTYPE"] == FIELDTYPE_RAWMARKUP: continue
+            if fld["VALUE"].startswith("RAW::"): continue
             fieldssofar += 1
             preview.append( fld["LABEL"] + ": " + fld["VALUE"] )
     db.execute(dbo, "UPDATE onlineformincoming SET Preview = %s WHERE CollationID = %s" % ( db.ds(", ".join(preview)), db.di(collationid) ))
