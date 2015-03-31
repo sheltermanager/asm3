@@ -1080,7 +1080,7 @@ def generate_animal_doc(dbo, template, animalid, username):
     if a["ACTIVEMOVEMENTID"] is not None and a["ACTIVEMOVEMENTID"] != 0:
         md = financial.get_movement_donation(dbo, a["ACTIVEMOVEMENTID"])
         if md is not None and md > 0: 
-            tags = append_tags(tags, donation_tags(dbo, md))
+            tags = append_tags(tags, donation_tags(dbo, [md,]))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, template, tags, im)
 
