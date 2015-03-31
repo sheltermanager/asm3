@@ -1683,7 +1683,7 @@ def insert_animal_from_form(dbo, post, username):
         ( "BaseColourID", s("basecolour")),
         ( "ShelterLocation", s("internallocation")),
         ( "ShelterLocationUnit", t("unit")),
-        ( "NonShelterAnimal", db.di(0)),
+        ( "NonShelterAnimal", c("nonshelter")),
         ( "CrueltyCase", db.di(0)),
         ( "BondedAnimalID", db.di(0)),
         ( "BondedAnimal2ID", db.di(0)),

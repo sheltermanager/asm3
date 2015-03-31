@@ -15,6 +15,20 @@ $(function() {
                 '</div>',
                 html.content_header(_("Add a new animal")),
                 '<table class="asm-table-layout">',
+                '<tr id="nonshelterrow">',
+                '<td></td>',
+                '<td><input type="checkbox" title=',
+                '"' + html.title(_("This animal should not be shown in figures and is not in the custody of the shelter")) + '"',
+                ' data="nonshelter" id="nonshelter" /><label for="nonshelter">' + _("Non-Shelter") + '</label></td>',
+                '</tr>',
+                '<tr id="originalownerrow">',
+                '<td><label for="originalowner">' + _("Owner") + '</label></td>',
+                '<td>',
+                '<div style="margin: 0; width: 315px;">',
+                '<input id="originalowner" data="originalowner" class="asm-personchooser" type="hidden" value="" />',
+                '</div>',
+                '</td>',
+                '</tr>',
                 '<tr id="coderow">',
                 '<td><label for="sheltercode">' + _("Code") + '</label></td>',
                 '<td nowrap="nowrap">',
@@ -262,6 +276,24 @@ $(function() {
             if ($("#sellitter option").size() == 0) {
                 $("#button-litterjoin").button("disable");
             }
+
+            // Setting non-shelter should assign the non-shelter animal type
+            // and show the original owner field as well as getting rid of
+            // any fields that aren't relevant to non-shelter animals
+            if ($("#nonshelter").is(":checked")) {
+                $("#originalownerrow").fadeIn();
+                var nst = config.integer("AFNonShelterType");
+                if ($("#animaltype option[value='" + nst + "']").length > 0) { $("#animaltype").select("value", nst); }
+                $("#locationrow, #locationunitrow, #fostererrow, #litterrow, #entryreasonrow").fadeOut();
+            }
+            else {
+                $("#originalownerrow").fadeOut();
+                if (config.bool("AddAnimalsShowAcceptance")) { $("#litterrow").fadeIn(); }
+                if (config.bool("AddAnimalsShowEntryCategory")) { $("#entryreasonrow").fadeIn(); }
+                if (config.bool("AddAnimalsShowFosterer")) { $("#fostererrow").fadeIn(); }
+                if (config.bool("AddAnimalsShowLocation")) { $("#locationrow").fadeIn(); }
+                if (config.bool("AddAnimalsShowLocationUnit")) { $("#locationunitrow").fadeIn(); }
+            }
     
         },
 
@@ -460,6 +492,7 @@ $(function() {
 
             $("#internallocation").change(animal_new.update_units);
             $("#crossbreed").change(animal_new.enable_widgets);
+            $("#nonshelter").change(animal_new.enable_widgets);
             animal_new.enable_widgets();
 
             // The species will have updated the breedlist, apply defaults

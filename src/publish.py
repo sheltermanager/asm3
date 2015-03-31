@@ -333,9 +333,9 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1"):
         "(a.ActiveMovementID > 0 AND (a.ActiveMovementType IN (%(movementtypes)s)) AND a.HasTrialAdoption = 0 " \
         "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
         "AND AnimalID = a.ID AND SentDate >= a.ActiveMovementDate)) " \
-        "OR (a.NonShelterAnimal = 1 AND a.OriginalOwnerID > 0 " \
+        "OR (a.NonShelterAnimal = 1 AND a.OriginalOwnerID > 0 AND a.IdentichipDate Is Not Null " \
         "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
-        "AND AnimalID = a.ID AND SentDate >= a.DateBroughtIn))) " % { 
+        "AND AnimalID = a.ID AND SentDate >= a.IdentichipDate))) " % { 
             "patterns": " OR ".join(pclauses),
             "movementtypes": movementtypes, 
             "publishername": publishername }
