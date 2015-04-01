@@ -616,7 +616,7 @@ def get_alerts(dbo, locationfilter = ""):
             "DateRequired  >= %(oneyear)s AND DateRequired <= %(today)s %(locfilter)s) AS duevacc," \
         "(SELECT COUNT(*) FROM animalvaccination av1 INNER JOIN animal ON animal.ID = av1.AnimalID WHERE " \
             "av1.DateOfVaccination Is Not Null AND DeceasedDate Is Null %(shelterfilter)s AND " \
-            "av1.DateExpires  >= %(onemonth)s AND av1.DateExpires <= %(today)s %(locfilter)s AND " \
+            "av1.DateExpires  >= %(oneyear)s AND av1.DateExpires <= %(today)s %(locfilter)s AND " \
             "0 = (SELECT COUNT(*) FROM animalvaccination av2 WHERE av2.AnimalID = av1.AnimalID AND " \
             "av2.DateRequired > av1.DateRequired AND av2.VaccinationID = av1.VaccinationID)) AS expvacc," \
         "(SELECT COUNT(*) FROM animaltest INNER JOIN animal ON animal.ID = animaltest.AnimalID WHERE " \

@@ -1,6 +1,7 @@
 36
 ================
 
+01/04/15 Add 60 second flood protection to online form posts #144
 01/04/15 Make the default for medical alerts/books 365 days
 01/04/15 Option to choose which movements trigger chip registration #134
 31/03/15 Allow non-shelter to be set from add new animal with owner

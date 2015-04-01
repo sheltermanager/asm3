@@ -33,6 +33,28 @@ AUTH_METHODS = [
     "xml_shelter_animals", "json_shelter_animals", "jsonp_shelter_animals"
 ]
 
+def flood_protect(method, remoteip, ttl, message = ""):
+    """
+    Checks to see if we've had a request for method from 
+    remoteip since ttl seconds ago.
+    If we haven't, we record this as the last time we saw a request
+    from this ip address for that method. Otherwise, an error is thrown.
+    If memcache isn't available, does nothing.
+    method: The service method we're protecting
+    remoteip: The ip address of the caller
+    ttl: The protection period (one request per ttl seconds)
+    """
+    if not cache.available(): return
+    cache_key = "m%sr%s" % (method, remoteip)
+    v = cache.get(cache_key)
+    #al.debug("method: %s, remoteip: %s, ttl: %d, cacheval: %s" % (method, remoteip, ttl, v), "service.flood_protect")
+    if v is None:
+        cache.put(cache_key, "x", ttl)
+    else:
+        if message == "":
+            message = "You have already called '%s' in the last %d seconds, please wait before trying again." % (method, ttl)
+        raise utils.ASMError(message)
+
 def get_cached_response(cache_key):
     """
     Gets a service call response from the cache based on its key.
@@ -191,6 +213,7 @@ def handler(post, remoteip, referer):
         return set_cached_response(cache_key, "application/rss+xml", 3600, html.timeline_rss(dbo))
 
     elif method == "upload_animal_image":
+        flood_protect("upload_animal_image", remoteip, 60)
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.ADD_MEDIA)
         media.attach_file_from_form(dbo, username, media.ANIMAL, int(animalid), post)
         return ("text/plain", 0, "OK")
@@ -201,6 +224,7 @@ def handler(post, remoteip, referer):
         return set_cached_response(cache_key, "text/html; charset=utf-8", 120, onlineform.get_onlineform_html(dbo, formid))
 
     elif method == "online_form_post":
+        flood_protect("online_form_post", remoteip, 60)
         onlineform.insert_onlineformincoming_from_form(dbo, post, remoteip)
         redirect = post["redirect"]
         if redirect == "":
