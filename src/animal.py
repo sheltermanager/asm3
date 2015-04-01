@@ -602,6 +602,7 @@ def get_alerts(dbo, locationfilter = ""):
     Returns the alert totals for the main screen.
     """
     futuremonth = db.dd(add_days(now(dbo.timezone), 31))
+    oneyear = db.dd(subtract_days(now(dbo.timezone), 365))
     onemonth = db.dd(subtract_days(now(dbo.timezone), 31))
     oneweek = db.dd(subtract_days(now(dbo.timezone), 7))
     today = db.dd(now(dbo.timezone))
@@ -612,7 +613,7 @@ def get_alerts(dbo, locationfilter = ""):
     sql = "SELECT " \
         "(SELECT COUNT(*) FROM animalvaccination INNER JOIN animal ON animal.ID = animalvaccination.AnimalID WHERE " \
             "DateOfVaccination Is Null AND DeceasedDate Is Null %(shelterfilter)s AND " \
-            "DateRequired  >= %(onemonth)s AND DateRequired <= %(today)s %(locfilter)s) AS duevacc," \
+            "DateRequired  >= %(oneyear)s AND DateRequired <= %(today)s %(locfilter)s) AS duevacc," \
         "(SELECT COUNT(*) FROM animalvaccination av1 INNER JOIN animal ON animal.ID = av1.AnimalID WHERE " \
             "av1.DateOfVaccination Is Not Null AND DeceasedDate Is Null %(shelterfilter)s AND " \
             "av1.DateExpires  >= %(onemonth)s AND av1.DateExpires <= %(today)s %(locfilter)s AND " \
@@ -620,11 +621,11 @@ def get_alerts(dbo, locationfilter = ""):
             "av2.DateRequired > av1.DateRequired AND av2.VaccinationID = av1.VaccinationID)) AS expvacc," \
         "(SELECT COUNT(*) FROM animaltest INNER JOIN animal ON animal.ID = animaltest.AnimalID WHERE " \
             "DateOfTest Is Null AND DeceasedDate Is Null %(shelterfilter)s AND " \
-            "DateRequired >= %(onemonth)s AND DateRequired <= %(today)s %(locfilter)s) AS duetest," \
+            "DateRequired >= %(oneyear)s AND DateRequired <= %(today)s %(locfilter)s) AS duetest," \
         "(SELECT COUNT(*) FROM animalmedicaltreatment INNER JOIN animal ON animal.ID = animalmedicaltreatment.AnimalID " \
             "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID WHERE " \
             "DateGiven Is Null AND DeceasedDate Is Null %(shelterfilter)s AND " \
-            "Status = 0 AND DateRequired  >= %(onemonth)s AND DateRequired <= %(today)s %(locfilter)s) AS duemed," \
+            "Status = 0 AND DateRequired  >= %(oneyear)s AND DateRequired <= %(today)s %(locfilter)s) AS duemed," \
         "(SELECT COUNT(*) FROM animalwaitinglist INNER JOIN owner ON owner.ID = animalwaitinglist.OwnerID " \
             "WHERE Urgency = 1 AND DateRemovedFromList Is Null) AS urgentwl," \
         "(SELECT COUNT(*) FROM adoption INNER JOIN owner ON owner.ID = adoption.OwnerID WHERE " \
@@ -654,7 +655,8 @@ def get_alerts(dbo, locationfilter = ""):
         "(SELECT COUNT(*) FROM stocklevel WHERE Balance > 0 AND Expiry Is Not Null AND Expiry <= %(today)s) AS stexp, " \
         "(SELECT COUNT(*) FROM animaltransport WHERE (DriverOwnerID = 0 OR DriverOwnerID Is Null) AND Status < 10) AS trnodrv " \
         "FROM animal LIMIT 1" \
-            % { "today": today, "oneweek": oneweek, "onemonth": onemonth, "futuremonth": futuremonth, "locfilter": locationfilter, "shelterfilter": shelterfilter }
+            % { "today": today, "oneweek": oneweek, "oneyear": oneyear, "onemonth": onemonth, 
+                "futuremonth": futuremonth, "locfilter": locationfilter, "shelterfilter": shelterfilter }
     return db.query_cache(dbo, sql)
 
 def get_stats(dbo):

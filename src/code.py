@@ -3901,7 +3901,7 @@ class medical:
         users.check_permission(session, users.VIEW_MEDICAL)
         l = session.locale
         dbo = session.dbo
-        post = utils.PostedData(web.input(newmed = "0", offset = "m31"), session.locale)
+        post = utils.PostedData(web.input(newmed = "0", offset = "m365"), session.locale)
         med = extmedical.get_treatments_outstanding(dbo, post["offset"], session.locationfilter)
         profiles = extmedical.get_profiles(dbo)
         title = _("Medical Book", l)
@@ -6123,7 +6123,7 @@ class test:
         users.check_permission(session, users.VIEW_TEST)
         l = session.locale
         dbo = session.dbo
-        post = utils.PostedData(web.input(newtest = "0", offset = "m31"), session.locale)
+        post = utils.PostedData(web.input(newtest = "0", offset = "m365"), session.locale)
         test = extmedical.get_tests_outstanding(dbo, post["offset"], session.locationfilter)
         al.debug("got %d tests" % len(test), "code.test", dbo)
         title = _("Test Book", l)
@@ -6253,7 +6253,7 @@ class vaccination:
         users.check_permission(session, users.VIEW_VACCINATION)
         l = session.locale
         dbo = session.dbo
-        post = utils.PostedData(web.input(newvacc = "0", offset = "m31"), session.locale)
+        post = utils.PostedData(web.input(newvacc = "0", offset = "m365"), session.locale)
         vacc = extmedical.get_vaccinations_outstanding(dbo, post["offset"], session.locationfilter)
         al.debug("got %d vaccinations" % len(vacc), "code.vaccination", dbo)
         title = _("Vaccination Book", l)

@@ -4,8 +4,13 @@ import datetime
 import json
 import time
 
-VERSION = "36u [Wed  1 Apr 08:50:16 BST 2015]"
-BUILD = "04010850"
+<<<<<<< Updated upstream
+VERSION = "36u [Wed  1 Apr 16:27:53 BST 2015]"
+BUILD = "04011627"
+=======
+VERSION = "36u [Wed  1 Apr 16:27:53 BST 2015]"
+BUILD = "04011627"
+>>>>>>> Stashed changes
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
