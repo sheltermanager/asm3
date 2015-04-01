@@ -83,7 +83,7 @@ $(function() {
                         ]) + '</a><br />';
                 }
                 if (alerts.EXPVACC > 0 && common.has_permission("vav")) {
-                    s += '<a href="vaccination?offset=xm31">' + html.icon("vaccination") + ' ' + 
+                    s += '<a href="vaccination?offset=xm365">' + html.icon("vaccination") + ' ' + 
                         common.ntranslate(alerts.EXPVACC, [ 
                             _("{plural0} vaccination has expired"), 
                             _("{plural1} vaccinations have expired"),

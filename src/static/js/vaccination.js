@@ -157,7 +157,7 @@ $(function() {
          },
          { id: "offset", type: "dropdownfilter", 
              options: [ "m365|" + _("Due today"), "p7|" + _("Due in next week"), "p31|" + _("Due in next month"), "p365|" + _("Due in next year"), 
-                "xm31|" + _("Expired"), "xp31|" + _("Expire in next month") ],
+                "xm365|" + _("Expired"), "xp31|" + _("Expire in next month") ],
              click: function(selval) {
                 window.location = controller.name + "?offset=" + selval;
              },
