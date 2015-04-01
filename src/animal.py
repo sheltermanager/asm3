@@ -2005,7 +2005,7 @@ def update_diary_linkinfo(dbo, animalid, a = None, diaryupdatebatch = None):
     """
     if a is None:
         a = get_animal(dbo, animalid)
-    diaryloc = "%s %s - %s" % ( a["SHELTERCODE"], a["ANIMALNAME"], a["DISPLAYLOCATIONNAME"])
+    diaryloc = "%s %s - %s" % ( a["SHELTERCODE"], a["ANIMALNAME"], a["DISPLAYLOCATION"])
     if diaryupdatebatch is not None:
         diaryupdatebatch.append( (diaryloc, diary.ANIMAL, animalid) )
     else:
