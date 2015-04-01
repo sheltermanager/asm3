@@ -50,7 +50,9 @@ data = asm.csv_to_list(FILENAME)
 
 for d in data:
     # Each row contains an animal, intake and outcome
-    if not ppa.has_key(d["Animal ID"]):
+    if ppa.has_key(d["Animal ID"]):
+        a = ppa[d["Animal ID"]]
+    else:
         a = asm.Animal()
         animals.append(a)
         ppa[d["Animal ID"]] = a
