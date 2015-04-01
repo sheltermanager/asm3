@@ -191,8 +191,8 @@ DEFAULTS = {
     "MatchWithin2Weeks": "5",
     "MatchPointFloor": "20",
     "MaxMediaFileSize": "1000",
-    "MeetAPetBaseURL": "http://meetapet.com/api_crud/",
     "MeetAPetKey" : "haRQPthLgW",
+    "MicrochipRegisterMovements": "1,5",
     "MovementDonationsDefaultDue": "No",
     "MovementNumberOverride": "No",
     "JSWindowPrint": "Yes",
@@ -735,6 +735,9 @@ def meetapet_secret(dbo):
 
 def meetapet_userkey(dbo):
     return cstring(dbo, "MeetAPetUserKey")
+
+def microchip_register_movements(dbo):
+    return cstring(dbo, "MicrochipRegisterMovements", DEFAULTS["MicrochipRegisterMovements"])
 
 def movement_donations_default_due(dbo):
     return cboolean(dbo, "MovementDonationsDefaultDue", DEFAULTS["MovementDonationsDefaultDue"] == "Yes")

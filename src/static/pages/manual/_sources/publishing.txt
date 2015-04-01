@@ -58,6 +58,11 @@ The All Publishers tab allows you to set options common to all internet publishe
 * Order published animals by: Sorts the list of animals before they are
   published.
 
+* Register microchips after: If you are registering microchips, ASM will update
+  the owner information with the registry after these types of movements.
+  Non-shelter animals will always be registered with their original owner
+  information if present.
+
 * Animal descriptions: This determines the source of the main description for
   animals when being published. For the HTML/FTP publisher, this is the source
   of the $$WebMediaNotes$$ token. Set to “Use animal comments” to use the

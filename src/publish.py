@@ -279,14 +279,14 @@ def get_animal_data_query(dbo, pc):
         sql += " LIMIT %d" % pc.limit
     return sql
 
-def get_microchip_data(dbo, patterns, publishername, movementtypes = "1"):
+def get_microchip_data(dbo, patterns, publishername):
     """
     Returns a list of animals with unpublished microchips.
     patterns:      A list of either microchip prefixes or SQL clauses to OR together
                    together in the preamble, eg: [ '977', "a.SmartTag = 1 AND a.SmartTagNumber <> ''" ]
     publishername: The name of the microchip registration publisher, eg: pettracuk
-    movementtypes: An IN clause of movement types to include.
     """
+    movementtypes = configuration.microchip_register_movements(dbo)
     try:
         rows = db.query(dbo, get_microchip_data_query(dbo, patterns, publishername, movementtypes))
     except Exception,err:
@@ -321,7 +321,7 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1"):
     patterns:      A list of either microchip prefixes or SQL clauses to OR
                    together in the preamble, eg: [ '977', "a.SmartTag = 1 AND a.SmartTagNumber <> ''" ]
     publishername: The name of the microchip registration publisher, eg: pettracuk
-    movementtypes: An IN clause of movement types to include.
+    movementtypes: An IN clause of movement types to include. 11 can be used for trial adoptions
     """
     pclauses = []
     for p in patterns:
@@ -329,8 +329,11 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1"):
             pclauses.append("a.IdentichipNumber LIKE '%s%%'" % p)
         else:
             pclauses.append("(%s)" % p)
+    trialclause = ""
+    if movementtypes.find("11") == -1:
+        trialclause = "AND a.HasTrialAdoption = 0"
     return animal.get_animal_query(dbo) + " WHERE (%(patterns)s) AND (" \
-        "(a.ActiveMovementID > 0 AND (a.ActiveMovementType IN (%(movementtypes)s)) AND a.HasTrialAdoption = 0 " \
+        "(a.ActiveMovementID > 0 AND (a.ActiveMovementType IN (%(movementtypes)s)) %(trialclause)s " \
         "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
         "AND AnimalID = a.ID AND SentDate >= a.ActiveMovementDate)) " \
         "OR (a.NonShelterAnimal = 1 AND a.OriginalOwnerID > 0 AND a.IdentichipDate Is Not Null " \
@@ -338,6 +341,7 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1"):
         "AND AnimalID = a.ID AND SentDate >= a.IdentichipDate))) " % { 
             "patterns": " OR ".join(pclauses),
             "movementtypes": movementtypes, 
+            "trialclause": trialclause,
             "publishername": publishername }
 
 class AbstractPublisher(threading.Thread):
@@ -2869,7 +2873,7 @@ class PetLinkPublisher(AbstractPublisher):
             self.setLastError("baseurl and chippass need to be set for petlink.com publisher")
             return
 
-        animals = get_microchip_data(self.dbo, ['98102',], "petlink", "1,5")
+        animals = get_microchip_data(self.dbo, ['98102',], "petlink")
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
             return
@@ -3583,7 +3587,7 @@ class SmartTagPublisher(FTPPublisher):
             self.cleanup()
             return
 
-        animals = get_microchip_data(self.dbo, ["a.SmartTag = 1 AND a.SmartTagNumber <> ''", '90007400'], "smarttag", "1,5")
+        animals = get_microchip_data(self.dbo, ["a.SmartTag = 1 AND a.SmartTagNumber <> ''", '90007400'], "smarttag")
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
             self.cleanup()
