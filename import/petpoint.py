@@ -10,8 +10,8 @@ Import script for PetPoint databases exported as CSV
 """
 
 # The shelter's petfinder ID for grabbing animal images for adoptable animals
-PETFINDER_ID = "NC494"
-FILENAME = "data/pp_nc0743.csv"
+PETFINDER_ID = ""
+FILENAME = "data/pp_kt0752.csv"
 
 def findowner(ownername = ""):
     """ Looks for an owner with the given name in the collection
