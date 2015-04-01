@@ -3035,18 +3035,18 @@ class PetRescuePublisher(FTPPublisher):
         Returns a CSV entry for TRUE or FALSE based on the condition
         """
         if condition:
-            return "\"TRUE\""
+            return "TRUE"
         else:
-            return "\"FALSE\""
+            return "FALSE"
 
     def prYesNo(self, condition):
         """
         Returns a CSV entry for Yes or No based on the condition
         """
         if condition:
-            return "\"Yes\""
+            return "Yes"
         else:
-            return "\"No\""
+            return "No"
 
 
     def prGoodWith(self, v):
@@ -3116,14 +3116,14 @@ class PetRescuePublisher(FTPPublisher):
                     break
 
                 # Upload the image for this animal
-                self.uploadImage(an, an["WEBSITEMEDIANAME"], an["SHELTERCODE"] + ".jpg")
+                self.uploadImage(an, an["WEBSITEMEDIANAME"], str(an["ID"]) + ".jpg")
                 # AccountID
                 line.append("\"%s\"" % accountid)
                 # RegionID
                 regionid = "1"
                 line.append("\"%s\"" % regionid)
                 # ID
-                line.append("\"%s\"" % an["SHELTERCODE"])
+                line.append("\"%d\"" % an["ID"])
                 # Name
                 line.append("\"%s\"" % an["ANIMALNAME"].replace("\"", "\"\""))
                 # Type
@@ -3146,7 +3146,7 @@ class PetRescuePublisher(FTPPublisher):
                 # Description
                 line.append("\"%s\"" % self.getDescription(an))
                 # Sex
-                line.append("\"%s\"" % an["SEXNAME"])
+                line.append("\"%s\"" % an["SEXNAME"][0:1])
                 # CoatLength (not implemented)
                 line.append("\"\"")
                 # Mixed
