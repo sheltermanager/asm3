@@ -103,7 +103,7 @@ $(function() {
                     if (controller.animal) { return true; }
                 }
             },
-            { field: "DATEREQUIRED", display: _("Required"), formatter: tableform.format_date, initialsort: true, initalsortdirection: "desc" },
+            { field: "DATEREQUIRED", display: _("Required"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
             { field: "DATEOFVACCINATION", display: _("Given"), formatter: tableform.format_date },
             { field: "DATEEXPIRES", display: _("Expires"), formatter: tableform.format_date },
             { field: "MANUFACTURER", display: _("Manufacturer") },
