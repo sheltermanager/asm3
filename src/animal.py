@@ -732,131 +732,131 @@ def get_timeline(dbo, limit = 500):
         "(SELECT 'animal' AS LinkTarget, 'ENTERED' AS Category, DateBroughtIn AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 " \
-            "ORDER BY DateBroughtIn DESC LIMIT %(limit)s) " \
+            "ORDER BY DateBroughtIn DESC, ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'MICROCHIP' AS Category, IdentichipDate AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND IdentichipDate Is Not Null " \
-            "ORDER BY IdentichipDate DESC LIMIT %(limit)s) " \
+            "ORDER BY IdentichipDate DESC, ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'NEUTERED' AS Category, NeuteredDate AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND NeuteredDate Is Not Null " \
-            "ORDER BY NeuteredDate DESC LIMIT %(limit)s) " \
+            "ORDER BY NeuteredDate DESC, ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'RESERVED' AS Category, ReservationDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "INNER JOIN owner ON adoption.OwnerID = owner.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Null AND ReservationDate Is Not Null " \
-            "ORDER BY ReservationDate DESC LIMIT %(limit)s) " \
+            "ORDER BY ReservationDate DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'ADOPTED' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "INNER JOIN owner ON adoption.OwnerID = owner.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 1 " \
-            "ORDER BY MovementDate DESC LIMIT %(limit)s) " \
+            "ORDER BY MovementDate DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'FOSTERED' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "INNER JOIN owner ON adoption.OwnerID = owner.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 2 " \
-            "ORDER BY MovementDate DESC LIMIT %(limit)s) " \
+            "ORDER BY MovementDate DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'TRANSFER' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "INNER JOIN owner ON adoption.OwnerID = owner.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 3 " \
-            "ORDER BY MovementDate DESC LIMIT %(limit)s) " \
+            "ORDER BY MovementDate DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'ESCAPED' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 4 " \
-            "ORDER BY MovementDate DESC LIMIT %(limit)s) " \
+            "ORDER BY MovementDate DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'RECLAIMED' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "INNER JOIN owner ON adoption.OwnerID = owner.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 5 " \
-            "ORDER BY MovementDate DESC LIMIT %(limit)s) " \
+            "ORDER BY MovementDate DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'STOLEN' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 6 " \
-            "ORDER BY MovementDate DESC LIMIT %(limit)s) " \
+            "ORDER BY MovementDate DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'RELEASED' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 7 " \
-            "ORDER BY MovementDate DESC LIMIT %(limit)s) " \
+            "ORDER BY MovementDate DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'RETAILER' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "INNER JOIN owner ON adoption.OwnerID = owner.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 8 " \
-            "ORDER BY MovementDate DESC LIMIT %(limit)s) " \
+            "ORDER BY MovementDate DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'RETURNED' AS Category, ReturnDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "LEFT OUTER JOIN owner ON adoption.OwnerID = owner.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND ReturnDate Is Not Null " \
-            "ORDER BY ReturnDate DESC LIMIT %(limit)s) " \
+            "ORDER BY ReturnDate DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'DIED' AS Category, DeceasedDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, ReasonName AS Text3, animal.LastChangedBy FROM animal " \
             "INNER JOIN deathreason ON animal.PTSReasonID = deathreason.ID " \
             "WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND PutToSleep = 0 AND DeceasedDate Is Not Null " \
-            "ORDER BY DeceasedDate DESC LIMIT %(limit)s) " \
+            "ORDER BY DeceasedDate DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'EUTHANISED' AS Category, DeceasedDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, ReasonName AS Text3, animal.LastChangedBy FROM animal " \
             "INNER JOIN deathreason ON animal.PTSReasonID = deathreason.ID " \
             "WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND PutToSleep = 1 AND DeceasedDate Is Not Null " \
-            "ORDER BY DeceasedDate DESC LIMIT %(limit)s) " \
+            "ORDER BY DeceasedDate DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'FIVP' AS Category, CombiTestDate AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND CombiTested = 1 AND CombiTestDate Is Not Null AND CombiTestResult = 2 " \
-            "ORDER BY CombiTestDate DESC LIMIT %(limit)s) " \
+            "ORDER BY CombiTestDate DESC, ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'FLVP' AS Category, CombiTestDate AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND CombiTested = 1 AND CombiTestDate Is Not Null AND FLVResult = 2 " \
-            "ORDER BY CombiTestDate DESC LIMIT %(limit)s) " \
+            "ORDER BY CombiTestDate DESC, ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'HWP' AS Category, CombiTestDate AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND HeartwormTested = 1 AND HeartwormTestDate Is Not Null AND HeartwormTestResult = 2 " \
-            "ORDER BY HeartwormTestDate DESC LIMIT %(limit)s) " \
+            "ORDER BY HeartwormTestDate DESC, ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'QUARANTINE' AS Category, LastChangedDate AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND IsQuarantine = 1 " \
-            "ORDER BY LastChangedDate DESC LIMIT %(limit)s) " \
+            "ORDER BY LastChangedDate DESC, ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'HOLD' AS Category, DateBroughtIn AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND IsHold = 1 " \
-            "ORDER BY DateBroughtIn DESC LIMIT %(limit)s) " \
+            "ORDER BY DateBroughtIn DESC, ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'NOTADOPT' AS Category, DateBroughtIn AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND IsNotAvailableForAdoption = 1 " \
-            "ORDER BY DateBroughtIn DESC LIMIT %(limit)s) " \
+            "ORDER BY DateBroughtIn DESC, ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'AVAILABLE' AS Category, ActiveMovementReturn AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND ActiveMovementReturn Is Not Null AND IsNotAvailableForAdoption = 0 " \
-            "ORDER BY ActiveMovementReturn DESC LIMIT %(limit)s) " \
+            "ORDER BY ActiveMovementReturn DESC, ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal_vaccination' AS LinkTarget, 'VACC' AS Category, DateOfVaccination AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, VaccinationType AS Text3, animalvaccination.LastChangedBy FROM animal " \
             "INNER JOIN animalvaccination ON animalvaccination.AnimalID = animal.ID " \
             "INNER JOIN vaccinationtype ON vaccinationtype.ID = animalvaccination.VaccinationID " \
             "WHERE NonShelterAnimal = 0 AND DateOfVaccination Is Not Null " \
-            "ORDER BY DateOfVaccination DESC LIMIT %(limit)s) " \
+            "ORDER BY DateOfVaccination DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal_test' AS LinkTarget, 'TEST' AS Category, DateOfTest AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, TestName AS Text3, animaltest.LastChangedBy FROM animal " \
             "INNER JOIN animaltest ON animaltest.AnimalID = animal.ID " \
             "INNER JOIN testtype ON testtype.ID = animaltest.TestTypeID " \
             "WHERE NonShelterAnimal = 0 AND DateOfTest Is Not Null " \
-            "ORDER BY DateOfTest DESC LIMIT %(limit)s) " \
+            "ORDER BY DateOfTest DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal_medical' AS LinkTarget, 'MEDICAL' AS Category, DateGiven AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, TreatmentName AS Text3, animalmedicaltreatment.LastChangedBy FROM animal " \
             "INNER JOIN animalmedicaltreatment ON animalmedicaltreatment.AnimalID = animal.ID " \
             "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID " \
             "WHERE NonShelterAnimal = 0 AND DateGiven Is Not Null " \
-            "ORDER BY DateGiven DESC LIMIT %(limit)s) " \
+            "ORDER BY DateGiven DESC, animal.ID LIMIT %(limit)s) " \
         ") dummy " \
         "WHERE EventDate <= %(today)s " \
-        "ORDER BY EventDate DESC " \
+        "ORDER BY EventDate DESC, ID " \
         "LIMIT %(limit)s" % { "today": db.dd(now(dbo.timezone)), "limit": str(limit) }
     return embellish_timeline(dbo.locale, db.query_cache(dbo, sql, 120))
 
