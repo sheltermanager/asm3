@@ -136,7 +136,7 @@ $(function() {
                 '<tr>',
                 '<td><label for="limit">' + _("Only publish a set number of animals") + '</label></td>',
                 '<td valign="middle"><input id="limit" type="text" class="asm-textbox asm-numberbox preset" data="limit" value="0" />',
-                '<div class="ui-state-highlight ui-corner-all" style="padding: 0 .7em; float: right;">',
+                '<div class="ui-state-highlight ui-corner-all" style="padding: 0 .7em; display: inline-block; vertical-align: middle;">',
                 '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
                 _("Set to 0 for no limit."),
                 '</p>',
