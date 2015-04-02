@@ -239,7 +239,7 @@ $(function() {
                 '<td width="50%">',
                 '<!-- left table -->',
                 '<table width="100%">',
-                '<tr>',
+                '<tr id="originalownerrow">',
                 '<td valign="top" class="bottomborder">',
                 '<label for="originalowner">' + _("Original Owner") + '</label>',
                 '</td>',
@@ -247,7 +247,7 @@ $(function() {
                 '<input id="originalowner" data-json="ORIGINALOWNERID" data-post="originalowner" type="hidden" class="asm-personchooser" />',
                 '</td>',
                 '</tr>',
-                '<tr>',
+                '<tr id="broughtinbyownerrow">',
                 '<td valign="top">',
                 '<label for="broughtinby">' + _("Brought In By") + '</label>',
                 '</td>',
@@ -804,11 +804,22 @@ $(function() {
                 $("#onshelterflags").hide();
             }
 
-            // If the animal is non-shelter, don't show the location
+            // If the animal is non-shelter, don't show the location, 
+            // transfer/pickup, brought in by owner, bonded with, reasons or asilomar
             if ($("#nonshelter").is(":checked")) {
                 $("#lastlocation").hide();
                 $("#locationrow").hide();
                 $("#locationunitrow").hide();
+                $("#transferinrow").hide();
+                $("#pickeduprow").hide();
+                $("#broughtinbyownerrow").hide();
+                $("#originalownerrow td").removeClass("bottomborder");
+                $("#bondedwith1row").hide();
+                $("#bondedwith2row").hide();
+                $("#entryreasonrow").hide();
+                $("#reasonforentryrow").hide();
+                $("#reasonnotfromownerrow").hide();
+                $(".asilomar").hide();
             }
 
             // If the animal doesn't have a picture, they can't publish to Facebook

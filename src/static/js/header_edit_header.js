@@ -185,6 +185,9 @@ $(function() {
                 if ((key == "movements") && config.bool("DisableMovements")) {
                     return;
                 }
+                if ((key == "movements") && a.NONSHELTERANIMAL == 1) {
+                    return;
+                }
                 if ((key == "transport") && config.bool("DisableTransport")) {
                     return;
                 }
