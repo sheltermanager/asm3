@@ -135,13 +135,23 @@ $(function() {
                 '<table>',
                 '<tr>',
                 '<td><label for="limit">' + _("Only publish a set number of animals") + '</label></td>',
-                '<td><input id="limit" type="text" class="asm-textbox asm-numberbox preset" data="limit" value="0" />',
+                '<td valign="middle"><input id="limit" type="text" class="asm-textbox asm-numberbox preset" data="limit" value="0" />',
                 '<div class="ui-state-highlight ui-corner-all" style="padding: 0 .7em; float: right;">',
                 '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
                 _("Set to 0 for no limit."),
                 '</p>',
                 '</div>',
                 '</td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="regmic">' + _("Register microchips after") + '</label></td>',
+                '<td><select id="regmic" class="asm-bsmselect cfg" multiple="multiple" data="MicrochipRegisterMovements">',
+                '<option value="1">' + _("Adoption") + '</option>',
+                '<option value="2">' + _("Foster") + '</option>',
+                '<option value="3">' + _("Transfer") + '</option>',
+                '<option value="5">' + _("Reclaim") + '</option>',
+                '<option value="11">' + _("Trial Adoption") + '</option>',
+                '</select></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="forcereupload">' + _("Reupload animal images every time") + '</label></td>',
@@ -164,19 +174,6 @@ $(function() {
                 '<option value="0">' + _("Entered (oldest first)") + '</option>',
                 '<option value="1">' + _("Entered (newest first)") + '</option>',
                 '<option value="2">' + _("Animal Name") + '</option>',
-                '</select></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="regmic">' + _("Register microchips after") + '</label></td>',
-                '<td><select id="regmic" class="asm-selectbox cfg" data="MicrochipRegisterMovements">',
-                '<option value="1">' + _("Adoption") + '</option>',
-                '<option value="1,2">' + _("Adoption and Foster") + '</option>',
-                '<option value="1,5">' + _("Adoption and Reclaim") + '</option>',
-                '<option value="1,2,5">' + _("Adoption, Foster and Reclaim") + '</option>',
-                '<option value="1,11">' + _("Adoption and Trial Adoption") + '</option>',
-                '<option value="1,5,11">' + _("Adoption, Reclaim and Trial Adoption") + '</option>',
-                '<option value="1,2,11">' + _("Adoption, Foster and Trial Adoption") + '</option>',
-                '<option value="1,2,5,11">' + _("Adoption, Foster, Reclaim and Trial Adoption") + '</option>',
                 '</select></td>',
                 '</tr>',
                 '<tr>',
@@ -942,6 +939,14 @@ $(function() {
                     }
                     else if ($(this).is("input:checkbox")) {
                         $(this).attr("checked", config.bool(d));
+                    }
+                    else if ($(this).hasClass("asm-bsmselect")) {
+                        var n = $(this);
+                        n.children().prop("selected", false);
+                        $.each(config.str(d).split(/[|,]+/), function(mi, mv) {
+                            n.find("[value='" + mv + "']").prop("selected", true);
+                        });
+                        n.change();
                     }
                     else if ($(this).is("select")) {
                         $(this).select("value", config.str(d));
