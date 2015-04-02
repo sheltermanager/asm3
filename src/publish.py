@@ -1924,6 +1924,7 @@ class HTMLPublisher(FTPPublisher):
         """
         Substitutes any tags in the body for animal data
         """
+        LE_TOKEN = "**le**"
         tags = wordprocessor.animal_tags(self.dbo, a)
         tags["TotalAnimals"] = str(self.totalAnimals)
         tags["IMAGE"] = str(a["WEBSITEMEDIANAME"])
@@ -1931,8 +1932,11 @@ class HTMLPublisher(FTPPublisher):
         notes = utils.nulltostr(a["WEBSITEMEDIANOTES"])
         # Add any extra text and put the tag back
         notes += configuration.third_party_publisher_sig(self.dbo)
+        # Preserve line endings in the bio
+        notes = notes.replace("\n", LE_TOKEN)
         tags["WEBMEDIANOTES"] = notes 
-        return wordprocessor.substitute_tags(searchin, tags, True, "$$", "$$")
+        output = wordprocessor.substitute_tags(searchin, tags, True, "$$", "$$")
+        return output.replace(LE_TOKEN, "<br />")
 
     def writeJavaScript(self, animals):
         # Remove original owner and other sensitive info from javascript database
