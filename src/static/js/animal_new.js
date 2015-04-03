@@ -21,11 +21,11 @@ $(function() {
                 '"' + html.title(_("This animal should not be shown in figures and is not in the custody of the shelter")) + '"',
                 ' data="nonshelter" id="nonshelter" /><label for="nonshelter">' + _("Non-Shelter") + '</label></td>',
                 '</tr>',
-                '<tr id="originalownerrow">',
-                '<td><label for="originalowner">' + _("Owner") + '</label></td>',
+                '<tr id="nsownerrow">',
+                '<td><label for="nsowner">' + _("Owner") + '</label></td>',
                 '<td>',
                 '<div style="margin: 0; width: 315px;">',
-                '<input id="originalowner" data="originalowner" class="asm-personchooser" type="hidden" value="" />',
+                '<input id="nsowner" data="nsowner" class="asm-personchooser" type="hidden" value="" />',
                 '</div>',
                 '</td>',
                 '</tr>',
@@ -198,6 +198,22 @@ $(function() {
                 html.list_to_options(controller.entryreasons, "ID", "REASONNAME"),
                 '</select></td>',
                 '</tr>',
+                '<tr id="originalownerrow">',
+                '<td><label for="originalowner">' + _("Original Owner") + '</label></td>',
+                '<td>',
+                '<div style="margin: 0; width: 315px;">',
+                '<input id="originalowner" data="originalowner" class="asm-personchooser" type="hidden" value="" />',
+                '</div>',
+                '</td>',
+                '</tr>',
+                '<tr id="broughtinbyrow">',
+                '<td><label for="broughtinby">' + _("Brought In By") + '</label></td>',
+                '<td>',
+                '<div style="margin: 0; width: 315px;">',
+                '<input id="broughtinby" data="broughtinby" class="asm-personchooser" type="hidden" value="" />',
+                '</div>',
+                '</td>',
+                '</tr>',
                 '<tr id="datebroughtinrow">',
                 '<td>',
                 '<label for="datebroughtin">' + _("Date Brought In") + '</label>',
@@ -281,14 +297,16 @@ $(function() {
             // and show the original owner field as well as getting rid of
             // any fields that aren't relevant to non-shelter animals
             if ($("#nonshelter").is(":checked")) {
-                $("#originalownerrow").fadeIn();
+                $("#nsownerrow").fadeIn();
                 var nst = config.integer("AFNonShelterType");
                 if ($("#animaltype option[value='" + nst + "']").length > 0) { $("#animaltype").select("value", nst); }
-                $("#locationrow, #locationunitrow, #fostererrow, #litterrow, #entryreasonrow").fadeOut();
+                $("#locationrow, #locationunitrow, #fostererrow, #litterrow, #entryreasonrow, #broughtinbyrow, #originalownerrow").fadeOut();
             }
             else {
-                $("#originalownerrow").fadeOut();
+                $("#nsownerrow").fadeOut();
                 if (config.bool("AddAnimalsShowAcceptance")) { $("#litterrow").fadeIn(); }
+                if (config.bool("AddAnimalsShowBroughtInBy")) { $("#broughtinbyrow").fadeIn(); }
+                if (config.bool("AddAnimalsShowOriginalOwner")) { $("#originalownerrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowEntryCategory")) { $("#entryreasonrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowFosterer")) { $("#fostererrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowLocation")) { $("#locationrow").fadeIn(); }
@@ -422,6 +440,8 @@ $(function() {
             // Disable rows based on config options
             if (!config.bool("AddAnimalsShowAcceptance")) { $("#litterrow").hide(); }
             if (!config.bool("AddAnimalsShowBreed")) { $("#breedrow").hide(); }
+            if (!config.bool("AddAnimalsShowBroughtInBy")) { $("#broughtinbyrow").hide(); }
+            if (!config.bool("AddAnimalsShowOriginalOwner")) { $("#originalownerrow").hide(); }
             if (!config.bool("AddAnimalsShowColour")) { $("#colourrow").hide(); }
             if (!config.bool("AddAnimalsShowDateBroughtIn")) { $("#datebroughtinrow").hide(); }
             if (!config.bool("AddAnimalsShowEntryCategory")) { $("#entryreasonrow").hide(); }

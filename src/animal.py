@@ -1658,6 +1658,11 @@ def insert_animal_from_form(dbo, post, username):
     if dbb == 0:
         dbb = configuration.default_broughtinby(dbo)
 
+    # If we have nsowner, use that over originalowner for non-shelter animals
+    originalowner = ki("originalowner")
+    if ki("nsowner") != 0:
+        originalowner = ki("nsowner")
+
     # Set not for adoption if the option is on
     notforadoption = 0
     if post.has_key("notforadoption"):
@@ -1720,7 +1725,7 @@ def insert_animal_from_form(dbo, post, username):
         ( "IsGoodWithDogs", db.di(goodwithdogs)),
         ( "IsGoodWithChildren", db.di(goodwithkids)),
         ( "IsHouseTrained", db.di(housetrained)),
-        ( "OriginalOwnerID", s("originalowner")),
+        ( "OriginalOwnerID", db.di(originalowner)),
         ( "BroughtInByOwnerID", db.di(dbb) ),
         ( "ReasonNO", db.ds("")),
         ( "ReasonForEntry", t("reasonforentry")),

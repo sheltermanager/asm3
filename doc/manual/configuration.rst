@@ -821,6 +821,10 @@ choose some extra fields for the new animal screen.
 
 * Show the entry category field: Allow an entry category to be set 
 
+* Show the original owner field: Allow original owner to be set
+
+* Show the brought in by field: Allow brought in by to be set
+
 * Warn if the animal is similar to one entered recently: Pop up a warning
   dialog if the animal's name is the same as one entered recently to help
   prevent possible duplicates.
