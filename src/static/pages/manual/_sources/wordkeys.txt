@@ -266,6 +266,8 @@ Sex
     The animal's sex 
 Size
     The animal's size 
+Weight
+    The animal's weight
 SpeciesName
     The animal's species 
 ReclaimedDate

@@ -237,6 +237,7 @@ def animal_tags(dbo, a):
         "REASONNOTBROUGHTBYOWNER" : a["REASONNO"],
         "SEX"                   : a["SEXNAME"],
         "SIZE"                  : a["SIZENAME"],
+        "WEIGHT"                : "%0.1f" % a["WEIGHT"],
         "SPECIESNAME"           : a["SPECIESNAME"],
         "ANIMALCOMMENTS"        : a["ANIMALCOMMENTS"],
         "ANIMALCOMMENTSBR"      : br(a["ANIMALCOMMENTS"]),
