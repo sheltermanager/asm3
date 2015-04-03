@@ -9,6 +9,7 @@ import datetime
 import diary
 import db
 import dbfs
+import extension
 import log
 import lookups
 import media
@@ -1588,8 +1589,11 @@ def insert_animal_from_form(dbo, post, username):
     data: The webpy data object containing form parameters
     Returns a tuple containing the newly created animal id and code
     """
+    if not extension.route(dbo, "before", "insert_animal_from_form", post):
+        return
     l = dbo.locale
     nextid = db.get_id(dbo, "animal")
+    post.data["id"] = nextid
     def c(field):
         return post.db_boolean(field)
     def t(field):
@@ -1782,6 +1786,7 @@ def insert_animal_from_form(dbo, post, username):
         log.add_log(dbo, username, log.ANIMAL, nextid, configuration.weight_change_log_type(dbo),
             str(kf("weight")))
 
+    extension.route(dbo, "after", "insert_animal_from_form", post)
     return (nextid, get_code(dbo, nextid))
 
 def update_animal_from_form(dbo, post, username):
@@ -1789,6 +1794,8 @@ def update_animal_from_form(dbo, post, username):
     Updates an animal record from the edit animal screen
     data: The webpy data object containing form parameters
     """
+    if not extension.route(dbo, "before", "update_animal_from_form", post):
+        return
     l = dbo.locale
     def c(field):
         return post.db_boolean(field)
@@ -1949,6 +1956,7 @@ def update_animal_from_form(dbo, post, username):
 
     # Update any diary notes linked to this animal
     update_diary_linkinfo(dbo, ki("id"))
+    extension.route(dbo, "after", "update_animal_from_form", post)
 
 def update_animals_from_form(dbo, post, username):
     """

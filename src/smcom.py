@@ -5,6 +5,7 @@ import datetime
 import db
 import os
 import re
+import utils
 from sitedefs import MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE
 
 # Regex to remove invalid chars from an entered database
@@ -93,5 +94,18 @@ def set_last_connected(dbo):
     """
     al.debug("Setting last connected to now for %s" % dbo.database, "users.web_login", dbo)
     os.system("sudo /root/sheltermanager_setlastconnected.py %s &" % dbo.database)
+
+def route_customer_extension(dbo, when, caller, post):
+    target = dbo.database + "_" + when + "_" + caller
+    method = globals().get(target)
+    if method:
+        return method(dbo, post)
+    else:
+        return True
+
+# -- Everything below are extensions for specific customers
+def rp0282_before_insert_animal_from_form(dbo, post):
+    if post.integer("originalowner") == 0 or post.integer("broughtinby") == 0:
+        raise utils.ASMValidationError("Original Owner and Brought In By must be set")
 
 
