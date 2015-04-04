@@ -169,10 +169,6 @@ print "DELETE FROM owner WHERE ID >= %d;" % startownerid
 print "DELETE FROM adoption WHERE ID >= %d;" % startmovementid
 print "DELETE FROM media WHERE ID >= %d;" % startmediaid
 print "DELETE FROM dbfs WHERE ID >=%d;" % startdbfsid
-print "DELETE FROM vaccinationtype WHERE ID >= 8;"
-print "INSERT INTO vaccinationtype (ID, VaccinationType, VaccinationDescription) VALUES (8, 'DHLPP', '');"
-print "INSERT INTO vaccinationtype (ID, VaccinationType, VaccinationDescription) VALUES (9, 'Bordetella', '');"
-print "INSERT INTO vaccinationtype (ID, VaccinationType, VaccinationDescription) VALUES (10, 'Rabies', '');"
 
 # Create a transfer owner
 o = asm.Owner(nextownerid)
@@ -413,10 +409,10 @@ for row in reader:
     if vaccdate is None:
         vaccdate = a.DateBroughtIn
     av.AnimalID = a.ID
-    av.VaccinationID = 10
+    av.VaccinationID = 8
     if row[VACCTYPE].find("DHLPP") != -1: av.VaccinationID = 8
-    if row[VACCTYPE].find("BORDETELLA") != -1: av.VaccinationID = 9
-    if row[VACCTYPE].find("RABIES") != -1: av.VaccinationID = 10
+    if row[VACCTYPE].find("BORDETELLA") != -1: av.VaccinationID = 6
+    if row[VACCTYPE].find("RABIES") != -1: av.VaccinationID = 4
     av.DateRequired = vaccdate
     av.DateOfVaccination = vaccdate
     av.Manufacturer = row[VACCMANUFA]
