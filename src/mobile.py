@@ -699,9 +699,9 @@ def handler(dbo, user, locationfilter, post):
         return "GO mobile_post?posttype=vinc&id=%d" % nid
 
     elif mode == "lc":
-        # TODO: Filter out empty searches
         q = post["licence"]
-        matches = financial.get_licence_find_simple(dbo, q)
+        matches = []
+        if q.strip() != "": matches = financial.get_licence_find_simple(dbo, q)
         return handler_check_licence(l, homelink, q, matches)
 
     elif mode == "va":
@@ -806,13 +806,14 @@ def handler_check_licence(l, homelink, q, matches):
         h.append("<p><b>%s (%s) - %s</b>" % (m["LICENCENUMBER"], m["LICENCETYPENAME"], m["OWNERNAME"]))
         if m["OWNERADDRESS"] is not None and m["OWNERADDRESS"].strip() != "":
             h.append("<br/>%s, %s, %s %s" % (m["OWNERADDRESS"], m["OWNERTOWN"], m["OWNERCOUNTY"], m["OWNERPOSTCODE"]))
-        # TODO: Use right icon
-        h.append("<br/>%s -&gt; %s" % (python2display(l, m["ISSUEDATE"]), python2display(l, m["EXPIRYDATE"])))
+        h.append("<br/>%s %s %s" % (python2display(l, m["ISSUEDATE"]), html.icon("right"), python2display(l, m["EXPIRYDATE"])))
         if m["SHELTERCODE"] is not None: 
             h.append("<br/>%s %s" % (m["SHELTERCODE"], m["ANIMALNAME"]))
         if len(m["COMMENTS"]) != 0: 
             h.append("<br/>%s" % m["COMMENTS"])
         h.append("</p>")
+    if q.strip() == "":
+        h.append("<p>%s</p>" % _("No data.", l))
     h.append(jqm_page_footer())
     h.append("</body></html>")
     return "\n".join(h)
