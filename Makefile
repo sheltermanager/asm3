@@ -23,6 +23,7 @@ cscope:
 clean:
 	@echo "[clean] ============================"
 	rm -f cscope*
+	rm -f tags
 	rm -f src/*.pyc
 	rm -f src/locale/*.pyc
 

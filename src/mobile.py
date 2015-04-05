@@ -260,7 +260,7 @@ def page(dbo, session, username):
         items.append(jqm_listitem_link("#med", _("Medicate Animal", l), "medical", len(med)))
     if osa and pb(users.ADD_LOG):
         items.append(jqm_listitem_link("#log", _("Add Log to Animal", l), "log", -1, "dialog"))
-    if pb(users.ADD_INCIDENT) or pb(users.CHANGE_INCIDENT):
+    if pb(users.ADD_INCIDENT) or pb(users.CHANGE_INCIDENT) or pb(users.VIEW_LICENCE):
         items.append(jqm_list_divider(_("Animal Control", l)))
     if pb(users.ADD_INCIDENT):
         items.append(jqm_listitem_link("mobile_post?posttype=aincs", _("Add Call", l), "call"))
@@ -270,6 +270,8 @@ def page(dbo, session, username):
         items.append(jqm_listitem_link("#inop", _("Open Incidents", l), "call", len(inop)))
     if len(infp) > 0 and pb(users.CHANGE_INCIDENT):
         items.append(jqm_listitem_link("#infp", _("Incidents Requiring Followup", l), "call", len(infp)))
+    if pb(users.VIEW_LICENCE):
+        items.append(jqm_listitem_link("#checklicence", _("Check License", l), "licence", -1, "dialog"))
     if pb(users.ADD_DIARY) or pb(users.EDIT_MY_DIARY_NOTES):
         items.append(jqm_list_divider(_("Diary", l)))
     if pb(users.ADD_DIARY):
@@ -295,6 +297,7 @@ def page(dbo, session, username):
     h += page_tests(l, homelink, test, testresults)
     h += page_medication(l, homelink, med)
     h += page_log_add(l, homelink, dbo)
+    h += page_check_licence(l, homelink)
     h += page_diary_add(l, homelink, dbo)
     h += page_diary(l, homelink, dia)
     h += page_homecheck(l, homelink, dbo)
@@ -441,6 +444,16 @@ def page_medication(l, homelink, med):
     h.append(jqm_list("\n".join(mlist), True))
     h.append(jqm_page_footer())
     h.append("\n".join(mforms))
+    return h
+
+def page_check_licence(l, homelink):
+    h = []
+    h.append(jqm_page_header("checklicence", _("Check License", l), homelink))
+    h.append(jqm_form("licenceform"))
+    h.append(jqm_hidden("posttype", "lc"))
+    h.append(jqm_fieldcontain("licence", _("License Number", l), jqm_text("licence")))
+    h.append(jqm_submit(_("Check", l)))
+    h.append(jqm_page_footer())
     return h
 
 def page_diary(l, homelink, dia):
@@ -685,6 +698,12 @@ def handler(dbo, user, locationfilter, post):
         nid = animalcontrol.insert_animalcontrol_from_form(dbo, post, user)
         return "GO mobile_post?posttype=vinc&id=%d" % nid
 
+    elif mode == "lc":
+        # TODO: Filter out empty searches
+        q = post["licence"]
+        matches = financial.get_licence_find_simple(dbo, q)
+        return handler_check_licence(l, homelink, q, matches)
+
     elif mode == "va":
         # Display a page containing the selected animal by id
         a = animal.get_animal(dbo, pid)
@@ -770,6 +789,30 @@ def handler_addincident(l, homelink, dbo):
     h.append(jqm_fieldcontain("dispatchpostcode", _("Postcode", l), jqm_text("dispatchpostcode")))
     h.append(jqm_submit(_("Add", l)))
     h.append(jqm_form_end())
+    h.append(jqm_page_footer())
+    h.append("</body></html>")
+    return "\n".join(h)
+
+def handler_check_licence(l, homelink, q, matches):
+    """
+    Generates the page of results of matching licences.
+    l: The locale
+    matches: A list of licence records from get_licence_find_simple
+    """
+    h = []
+    h.append(header(l))
+    h.append(jqm_page_header("", _("Results for '{0}'.", l).format(q), homelink))
+    for m in matches:
+        h.append("<p><b>%s (%s) - %s</b>" % (m["LICENCENUMBER"], m["LICENCETYPENAME"], m["OWNERNAME"]))
+        if m["OWNERADDRESS"] is not None and m["OWNERADDRESS"].strip() != "":
+            h.append("<br/>%s, %s, %s %s" % (m["OWNERADDRESS"], m["OWNERTOWN"], m["OWNERCOUNTY"], m["OWNERPOSTCODE"]))
+        # TODO: Use right icon
+        h.append("<br/>%s -&gt; %s" % (python2display(l, m["ISSUEDATE"]), python2display(l, m["EXPIRYDATE"])))
+        if m["SHELTERCODE"] is not None: 
+            h.append("<br/>%s %s" % (m["SHELTERCODE"], m["ANIMALNAME"]))
+        if len(m["COMMENTS"]) != 0: 
+            h.append("<br/>%s" % m["COMMENTS"])
+        h.append("</p>")
     h.append(jqm_page_footer())
     h.append("</body></html>")
     return "\n".join(h)

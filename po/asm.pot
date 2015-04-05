@@ -1664,15 +1664,15 @@ msgid "Books"
 msgstr ""
 
 #: dbupdate.py
-msgid "Bordatella"
-msgstr ""
-
-#: dbupdate.py
 msgid "Border Collie"
 msgstr ""
 
 #: dbupdate.py
 msgid "Border Terrier"
+msgstr ""
+
+#: dbupdate.py
+msgid "Bordetella"
 msgstr ""
 
 #: dbupdate.py
@@ -2182,6 +2182,14 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Chartreux"
+msgstr ""
+
+#: mobile.py
+msgid "Check"
+msgstr ""
+
+#: mobile.py
+msgid "Check License"
 msgstr ""
 
 #: person_find_results.js
@@ -5915,7 +5923,7 @@ msgstr ""
 msgid "License"
 msgstr ""
 
-#: licence.js
+#: licence.js mobile.py
 msgid "License Number"
 msgstr ""
 
@@ -8474,7 +8482,7 @@ msgstr ""
 msgid "Results"
 msgstr ""
 
-#: search.py
+#: mobile.py search.py
 msgid "Results for '{0}'."
 msgstr ""
 
