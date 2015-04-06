@@ -821,6 +821,20 @@ class FTPPublisher(AbstractPublisher):
         except Exception, err:
             self.logError("warning: failed deleting from FTP server: %s" % err, sys.exc_info())
 
+    def clearExistingImages(self):
+        try:
+            oldfiles = glob.glob(os.path.join(self.publishDir, "*.jpg"))
+            for f in oldfiles:
+                os.remove(f)
+        except Exception, err:
+            self.logError("warning: failed removing %s from filesystem: %s" % (oldfiles, err), sys.exc_info())
+        if not self.pc.uploadDirectly: return
+        try:
+            for f in self.socket.nlst("*.jpg"):
+                self.socket.delete(f)
+        except Exception, err:
+            self.logError("warning: failed deleting from FTP server: %s" % err, sys.exc_info())
+
     def cleanup(self):
         """
         Call when the publisher has completed to tidy up.
@@ -2090,6 +2104,14 @@ class HTMLPublisher(FTPPublisher):
         if not self.openFTPSocket():
             self.setLastError("Failed opening FTP socket.")
             return
+
+        # Clear any existing uploaded images
+        if self.pc.forceReupload:
+            self.clearExistingImages()
+
+        # Clear any existing uploaded pages
+        if self.pc.clearExisting: 
+            self.clearExistingHTML()
             
         try:
             animals = self.getMatchingAnimals()
@@ -2182,10 +2204,6 @@ class HTMLPublisher(FTPPublisher):
         # Mark published
         self.markAnimalsPublished(animals)
 
-        # Clear any existing uploaded pages
-        if self.pc.clearExisting: 
-            self.clearExistingHTML()
-
         # Upload the pages
         for k, v in pages.iteritems():
             self.log("Saving page to disk: %s" % k)
@@ -2219,6 +2237,14 @@ class HTMLPublisher(FTPPublisher):
         if not self.openFTPSocket():
             self.setLastError("Failed opening FTP socket.")
             return
+
+        # Clear any existing uploaded images
+        if self.pc.forceReupload:
+            self.clearExistingImages()
+
+        # Clear any existing uploaded pages
+        if self.pc.clearExisting: 
+            self.clearExistingHTML()
 
         try:
             animals = self.getMatchingAnimals()
@@ -2309,10 +2335,6 @@ class HTMLPublisher(FTPPublisher):
         # Done with animals, store the final page
         thisPage += footer
         pages[thisPageName] = thisPage
-
-        # Clear any existing uploaded pages
-        if self.pc.clearExisting: 
-            self.clearExistingHTML()
 
         # Upload the new pages
         for k, v in pages.iteritems():
