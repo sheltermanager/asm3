@@ -1,6 +1,8 @@
 36
 ================
 
+06/04/15 Extra edit_perm attribute to hide dialog change buttons
+06/04/15 Facility to delete a week of rota items
 05/04/15 Add licence check to mobile interface #39
 03/04/15 Add simple framework for user/customer extensions #30
 03/04/15 Add options to show original owner and brought in by on new animal

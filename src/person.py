@@ -838,6 +838,19 @@ def delete_rota(dbo, username, rid):
     audit.delete(dbo, username, "ownerrota", str(db.query(dbo, "SELECT * FROM ownerrota WHERE ID=%d" % int(rid))))
     db.execute(dbo, "DELETE FROM ownerrota WHERE ID = %d" % int(rid))
 
+def delete_rota_week(dbo, username, startdate):
+    """
+    Deletes all rota records beginning at startdate and ending at
+    startdate+7
+    startdate: A python date representing the start of the week
+    """
+    enddate = add_days(startdate, 7)
+    audit.delete(dbo, username, "ownerrota", \
+        str(db.query(dbo, "SELECT * FROM ownerrota " \
+        "WHERE StartDateTime >= %s AND StartDateTime <= %s" % (db.dd(startdate), db.dd(enddate)))))
+    db.execute(dbo, "DELETE FROM ownerrota WHERE " \
+        "StartDateTime >= %s AND StartDateTime <= %s" % (db.dd(startdate), db.dd(enddate)))
+
 def insert_investigation_from_form(dbo, username, post):
     """
     Creates an investigation record from posted form data

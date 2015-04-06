@@ -36,7 +36,8 @@ $(function() {
                     { id: "prev", icon: "rotate-anti", tooltip: _("Week beginning {0}").replace("{0}", format.date(controller.prevdate)) },
                     { id: "today", icon: "diary", tooltip: _("This week") },
                     { id: "next", icon: "rotate-clock", tooltip: _("Week beginning {0}").replace("{0}", format.date(controller.nextdate)) },
-                    { id: "clone", text: _("Clone"), icon: "copy", tooltip: _("Clone the rota this week to another week") }
+                    { id: "clone", text: _("Clone"), icon: "copy", perm: 'aoro', tooltip: _("Clone the rota this week to another week") },
+                    { id: "delete", text: _("Delete"), icon: "delete", perm: 'doro', tooltip: _("Delete all rota entries for this week") }
                 ]),
                 '<table class="asm-staff-rota">',
                 '<thead></thead>',
@@ -219,6 +220,15 @@ $(function() {
 
             $("#button-clone").button().click(function() {
                 $("#dialog-clone").dialog("open");
+            });
+
+            $("#button-delete").button().click(function() {
+                var startdate = format.date(staff_rota.days[0]);
+                tableform.delete_dialog(function() {
+                    common.ajax_post(controller.name, "mode=deleteweek&startdate=" + startdate, function() {
+                        window.location = controller.name + "?start=" + startdate;
+                    });
+                }, _("This will remove ALL rota entries for the week beginning {0}. This action is irreversible, are you sure?").replace("{0}", startdate));
             });
 
             $("#button-prev").button().click(function() {
