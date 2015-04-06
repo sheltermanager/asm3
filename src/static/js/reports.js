@@ -52,6 +52,7 @@ $(function() {
     var dialog = {
         add_title: _("Add report"),
         edit_title: _("Edit report"),
+        edit_perm: 'hcr',
         close_on_ok: false,
         columns: 1,
         width: 800,

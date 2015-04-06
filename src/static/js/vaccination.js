@@ -8,6 +8,7 @@ $(function() {
     var dialog = {
         add_title: _("Add vaccination"),
         edit_title: _("Edit vaccination"),
+        edit_perm: 'cav',
         helper_text: _("Vaccinations need an animal and at least a required date."),
         close_on_ok: true,
         autofocus: false,

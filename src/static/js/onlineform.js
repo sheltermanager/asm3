@@ -21,6 +21,7 @@ $(function() {
     var dialog = {
         add_title: _("Add form field"),
         edit_title: _("Edit form field"),
+        edit_perm: 'eof',
         helper_text: _("Online form fields need a name and label."),
         close_on_ok: true,
         columns: 1,

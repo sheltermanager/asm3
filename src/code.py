@@ -6011,7 +6011,6 @@ class sql:
             return _("{0} rows affected.", l).format(rowsaffected)
         except Exception,err:
             al.error("%s" % str(err), "code.sql", dbo)
-            # TODO: WHY DOES THIS TAKE 10 SECONDS TO RETURN?
             raise utils.ASMValidationError(str(err))
 
     def exec_sql_from_file(self, dbo, sql):

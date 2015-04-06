@@ -8,6 +8,7 @@ $(function() {
     var dialog = {
         add_title: _("Add voucher"),
         edit_title: _("Edit voucher"),
+        edit_perm: 'vcov',
         helper_text: _("Vouchers need an issue and expiry date."),
         close_on_ok: true,
         columns: 1,

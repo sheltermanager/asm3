@@ -9,6 +9,7 @@ $(function() {
     var dialog = {
         add_title: _("Add litter"),
         edit_title: _("Edit litter"),
+        edit_perm: 'cll',
         helper_text: _("Litters need at least a required date and number."),
         close_on_ok: true,
         columns: 1,

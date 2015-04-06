@@ -8,6 +8,7 @@ $(function() {
     var dialog = {
         add_title: _("Add citation"),
         edit_title: _("Edit citation"),
+        edit_perm: 'cacc',
         close_on_ok: true,
         columns: 1,
         width: 550,

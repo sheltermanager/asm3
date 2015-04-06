@@ -25,6 +25,7 @@ $(function() {
     var dialog = {
         add_title: _("Add transport"),
         edit_title: _("Edit transport"),
+        edit_perm: 'ctr',
         close_on_ok: false,
         columns: 2,
         fields: [

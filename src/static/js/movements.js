@@ -25,6 +25,7 @@ $(function() {
     var dialog = {
         add_title: _("Add movement"),
         edit_title: _("Edit movement"),
+        edit_perm: 'camv',
         close_on_ok: false,
         autofocus: false,
         columns: 2,

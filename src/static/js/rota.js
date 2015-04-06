@@ -8,6 +8,7 @@ $(function() {
     var dialog = {
         add_title: _("Add rota item"),
         edit_title: _("Edit rota item"),
+        edit_perm: 'coro',
         close_on_ok: true,
         columns: 1,
         width: 550,

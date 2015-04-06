@@ -8,6 +8,7 @@ $(function() {
     var dialog = {
         add_title: _("Add test"),
         edit_title: _("Edit test"),
+        edit_perm: 'cat',
         helper_text: _("Tests need an animal and at least a required date."),
         close_on_ok: true,
         autofocus: false,

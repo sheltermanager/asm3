@@ -6,6 +6,7 @@ $(function() {
     var dialog = {
         add_title: _("Add diary task"),
         edit_title: _("Edit diary task"),
+        edit_perm: 'edt',
         helper_text: _("Diary tasks need a name."),
         close_on_ok: true,
         columns: 1,

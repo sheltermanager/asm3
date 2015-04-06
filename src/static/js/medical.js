@@ -8,6 +8,7 @@ $(function() {
     var dialog = {
         add_title: _("Add medical regimen"),
         edit_title: _("Edit medical regimen"),
+        edit_perm: 'mcam',
         helper_text: _("Medical regimens need an animal, name, dosage, a start date and frequencies."),
         close_on_ok: true,
         autofocus: false,

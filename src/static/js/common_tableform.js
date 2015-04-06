@@ -463,6 +463,7 @@
          *      columns: 1,
          *      delete_button: false,
          *      delete_perm: 'da',
+         *      edit_perm: 'ca',
          *      width: 500,
          *      height: 200, (omit for auto)
          *      html_form_action: target (renders form tag around fields if set)
@@ -654,19 +655,21 @@
                     }
                 };
             }
-            b[_("Change")] = function() {
-                if (tableform.fields_validate(dialog.fields)) {
-                    if (dialog.close_on_ok) {
-                        $(this).dialog("close");
+            if (!dialog.edit_perm || (dialog.edit_perm && common.has_permission(dialog.edit_perm))) {
+                b[_("Change")] = function() {
+                    if (tableform.fields_validate(dialog.fields)) {
+                        if (dialog.close_on_ok) {
+                            $(this).dialog("close");
+                        }
+                        else {
+                            tableform.dialog_disable_buttons();
+                        }
+                        if (changecallback) {
+                            changecallback(row);
+                        }
                     }
-                    else {
-                        tableform.dialog_disable_buttons();
-                    }
-                    if (changecallback) {
-                        changecallback(row);
-                    }
-                }
-            };
+                };
+            }
             b[_("Cancel")] = function() { $(this).dialog("close"); };
             $("#dialog-tableform").dialog({
                 resizable: false,

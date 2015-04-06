@@ -6,6 +6,7 @@ $(function() {
     var dialog = {
         add_title: _("Add diet"),
         edit_title: _("Edit diet"),
+        edit_perm: 'dcad',
         helper_text: _("Diets need a start date."),
         close_on_ok: true,
         columns: 1,

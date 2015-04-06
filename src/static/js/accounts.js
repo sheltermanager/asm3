@@ -5,6 +5,7 @@ $(function() {
     var dialog = {
         add_title: _("Add account"),
         edit_title: _("Edit account"),
+        edit_perm: 'cac',
         helper_text: _("Accounts need a code.") + "<br /><br />" + 
             _("If you assign view or edit roles, only users within those roles will be able to view and edit this account."),
         close_on_ok: true,

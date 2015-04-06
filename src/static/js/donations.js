@@ -11,6 +11,7 @@ $(function() {
     var dialog = {
         add_title: _("Add payment"),
         edit_title: _("Edit payment"),
+        edit_perm: 'ocod',
         close_on_ok: false,
         hide_read_only: true,
         width: 550,
