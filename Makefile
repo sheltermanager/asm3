@@ -84,8 +84,9 @@ icons:
 
 manual:
 	@echo "[manual] =========================="
-	cd doc/manual && $(MAKE) clean html
+	cd doc/manual && $(MAKE) clean html latexpdf
 	cp -rf doc/manual/_build/html/* src/static/pages/manual/
+	scp doc/manual/_build/latex/asm3.pdf root@rawsoaa2.miniserver.com:/var/www/sheltermanager.com/repo/asm3_help.pdf
 
 test: version
 	@echo "[test] ========================="
