@@ -1907,10 +1907,13 @@ class HTMLPublisher(FTPPublisher):
         """
         output = searchin
         nav = self.navbar.replace("<a href=\"%d.%s\">%d</a>" % (page, self.pc.extension, page), str(page))
+        dateportion = i18n.python2display(self.locale, i18n.now(self.dbo.timezone))
+        timeportion = time.strftime("%H:%M:%S", i18n.now(self.dbo.timezone).timetuple())
         output = output.replace("$$NAV$$", nav)
         output = output.replace("$$TOTAL$$", str(self.totalAnimals))
-        output = output.replace("$$DATE$$", i18n.python2display(self.locale, i18n.now(self.dbo.timezone)))
-        output = output.replace("$$TIME$$", time.strftime("%H:%M:%S", i18n.now().timetuple()))
+        output = output.replace("$$DATE$$", dateportion)
+        output = output.replace("$$TIME$$", timeportion)
+        output = output.replace("$$DATETIME$$", "%s %s" % (dateportion, timeportion))
         output = output.replace("$$VERSION$$", i18n.get_version())
         output = output.replace("$$REGISTEREDTO$$", configuration.organisation(self.dbo))
         output = output.replace("$$USER$$", "%s (%s)" % (user, users.get_real_name(self.dbo, user)))
