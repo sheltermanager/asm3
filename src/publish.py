@@ -302,7 +302,7 @@ def get_microchip_data(dbo, patterns, publishername):
             r["CURRENTOWNERWORKPHONE"] = r["ORIGINALOWNERWORKTELEPHONE"]
             r["CURRENTOWNERMOBILEPHONE"] = r["ORIGINALOWNERMOBILETELEPHONE"]
             r["CURRENTOWNERCELLPHONE"] = r["ORIGINALOWNERMOBILETELEPHONE"]
-            r["CURRENTOWNEREMAIL"] = r["ORIGINALOWNEREMAILADDRESS"]
+            r["CURRENTOWNEREMAILADDRESS"] = r["ORIGINALOWNEREMAILADDRESS"]
     return rows
 
 def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1"):
@@ -329,7 +329,7 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1"):
         "(a.ActiveMovementID > 0 AND (a.ActiveMovementType IN (%(movementtypes)s)) %(trialclause)s " \
         "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
         "AND AnimalID = a.ID AND SentDate >= a.ActiveMovementDate)) " \
-        "OR (a.NonShelterAnimal = 1 AND a.OriginalOwnerID > 0 AND a.IdentichipDate Is Not Null " \
+        "OR (a.NonShelterAnimal = 1 AND a.OriginalOwnerID Is Not Null AND a.OriginalOwnerID > 0 AND a.IdentichipDate Is Not Null " \
         "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
         "AND AnimalID = a.ID AND SentDate >= a.IdentichipDate))) " % { 
             "patterns": " OR ".join(pclauses),
@@ -2958,14 +2958,20 @@ class PetLinkPublisher(AbstractPublisher):
 
                 # If the microchip number isn't 15 digits, skip it
                 if len(an["IDENTICHIPNUMBER"].strip()) != 15:
-                    self.log("Chip number failed validation (%s not 15 digits), skipping." % an["IDENTICHIPNUMBER"])
+                    self.logError("Chip number failed validation (%s not 15 digits), skipping." % an["IDENTICHIPNUMBER"])
                     continue
 
+                # If there's no email or home phone, PetLink won't accept
+                email = utils.nulltostr(an["CURRENTOWNEREMAILADDRESS"]).strip()
+                homephone = utils.nulltostr(an["CURRENTOWNERHOMETELEPHONE"]).strip()
+                if email == "" and homephone == "":
+                    self.logError("No email address or home telephone for owner, skipping.")
+                    continue
+                
                 # If we don't have an email address, use the owner's
                 # phone number @petlink.tmp
-                email = an["CURRENTOWNEREMAILADDRESS"]
-                if email.strip() == "":
-                    email = "".join(c for c in an["CURRENTOWNERHOMETELEPHONE"] if c.isdigit())
+                if email == "":
+                    email = "".join(c for c in homephone if c.isdigit())
                     email = email + "@petlink.tmp"
 
                 # TransactionType
