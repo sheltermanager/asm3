@@ -237,16 +237,6 @@ def get_animal_data_query(dbo, pc):
         sql += " AND (a.IsHold = 0 OR a.IsHold Is Null)"
     if not pc.includeQuarantine:
         sql += " AND (a.IsQuarantine = 0 OR a.IsQuarantine Is Null)"
-    if len(pc.internalLocations) > 0 and pc.internalLocations[0].strip() != "null":
-        if utils.is_numeric(pc.internalLocations[0]):
-            # We have a list of internal location IDs
-            sql += " AND a.ShelterLocation IN (%s)" % ",".join(pc.internalLocations)
-        else:
-            # Must be a list of LIKE name comparisons
-            locfilter = []
-            for fr in pc.internalLocations:
-                locfilter.append("il.LocationName LIKE %s" % db.ds(fr.replace("*", "%")))
-            sql += " AND (" + " OR ".join(locfilter) + ")"
     # Make sure animal is old enough
     exclude = i18n.now()
     exclude -= datetime.timedelta(days=pc.excludeUnderWeeks * 7)
@@ -257,7 +247,10 @@ def get_animal_data_query(dbo, pc):
     sql += " AND a.HasPermanentFoster = 0"
     # Build a set of OR clauses based on any movements/locations
     moveor = []
-    moveor.append("(a.Archived = 0)")
+    if len(pc.internalLocations) > 0 and pc.internalLocations[0].strip() != "null":
+        moveor.append("(a.Archived = 0 AND a.ShelterLocation IN (%s))" % ",".join(pc.internalLocations))
+    else:
+        moveor.append("(a.Archived = 0)")
     if pc.includeRetailerAnimals:
         moveor.append("(a.ActiveMovementType = %d)" % movement.RETAILER)
     if pc.includeFosterAnimals:
