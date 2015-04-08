@@ -136,14 +136,6 @@ def get_animal_query(dbo):
         "ELSE " \
         "(SELECT LocationName FROM internallocation WHERE ID=a.ShelterLocation) " \
         "END AS DisplayLocationName, " \
-        "CASE " \
-        "WHEN a.Archived = 0 AND a.CrueltyCase = 1 THEN 'Cruelty Case' " \
-        "WHEN a.Archived = 0 AND a.IsQuarantine = 1 THEN 'Quarantine' " \
-        "WHEN a.Archived = 0 AND a.IsHold = 1 THEN 'Hold' " \
-        "WHEN a.Archived = 0 AND a.HasActiveReserve = 1 THEN 'Reserved' " \
-        "WHEN a.Archived = 0 AND a.HasPermanentFoster = 1 THEN 'Permanent Foster' " \
-        "WHEN a.IsNotAvailableForAdoption = 0 AND a.Archived = 0 AND a.HasTrialAdoption = 0 THEN 'Adoptable' " \
-        "ELSE 'Not For Adoption' END AS AdoptionStatus, " \
         "web.MediaName AS WebsiteMediaName, " \
         "web.Date AS WebsiteMediaDate, " \
         "web.MediaNotes AS WebsiteMediaNotes, " \
@@ -259,7 +251,6 @@ def get_animals_brief(animals):
         r.append({ 
             "ACTIVEMOVEMENTID": a["ACTIVEMOVEMENTID"],
             "ACTIVEMOVEMENTTYPE": a["ACTIVEMOVEMENTTYPE"],
-            "ADOPTIONSTATUS": a["ADOPTIONSTATUS"],
             "ANIMALCOMMENTS": a["ANIMALCOMMENTS"],
             "ANIMALAGE": a["ANIMALAGE"],
             "ANIMALNAME" : a["ANIMALNAME"],
@@ -272,6 +263,7 @@ def get_animals_brief(animals):
             "CRUELTYCASE": a["CRUELTYCASE"],
             "CURRENTOWNERID": a["CURRENTOWNERID"],
             "CURRENTOWNERNAME": a["CURRENTOWNERNAME"],
+            "DATEOFBIRTH": a["DATEOFBIRTH"],
             "DECEASEDDATE": a["DECEASEDDATE"],
             "DISPLAYLOCATIONNAME": a["DISPLAYLOCATIONNAME"],
             "ENTRYREASONNAME": a["ENTRYREASONNAME"],

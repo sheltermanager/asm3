@@ -93,6 +93,7 @@ def animal_tags(dbo, a):
         "BREEDNAME"             : a["BREEDNAME"],
         "INTERNALLOCATION"      : a["SHELTERLOCATIONNAME"],
         "LOCATIONUNIT"          : a["SHELTERLOCATIONUNIT"],
+        "DISPLAYLOCATION"       : a["DISPLAYLOCATION"],
         "COATTYPE"              : a["COATTYPENAME"],
         "HEALTHPROBLEMS"        : a["HEALTHPROBLEMS"],
         "HEALTHPROBLEMSBR"      : br(a["HEALTHPROBLEMS"]),

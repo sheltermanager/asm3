@@ -67,6 +67,8 @@ InternalLocation
     The animal's location within the shelter 
 LocationUnit
     The location unit (eg, pen or cage number)
+DisplayLocation
+    Either the internal location if the animal is on shelter, a movement type/person for animals leaving the shelter or a deceased reason if the animal is no longer alive
 CoatType
     The animal's coat type 
 AnimalComments

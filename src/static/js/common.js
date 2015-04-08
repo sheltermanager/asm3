@@ -101,7 +101,11 @@
          * or empty string if not present.
          */
         querystring_param: function(param) {
-            var s = common.current_url(), p = s.indexOf(param + "=");
+            return common.url_param(common.current_url(), param);
+        },
+
+        url_param: function(s, param) {
+            var p = s.indexOf(param + "=");
             if (p == -1) { return ""; }
             var e = s.indexOf("&", p);
             if (e == -1) { e = s.length; }
@@ -1025,6 +1029,40 @@
     };
 
     html = {
+
+        /**
+         * Returns true if animal a is adoptable. Looks at current publishing options
+         * and uses the same logic as the backend publisher
+         */
+        is_animal_adoptable: function(a) {
+            var p = config.str("PublisherPresets"),
+                exwks = format.to_int(common.url_param(p.replace(/ /g, "&"), "excludeunder")),
+                locs = common.url_param(p.replace(/ /g, "&"), "includelocations");
+            if (a.NONSHELTERANIMAL == 1) { return false; }
+            if (a.DECEASEDDATE) { return false; }
+            if (a.CRUELTYCASE == 1 && p.indexOf("includecase") == -1) { return false; }
+            if (!a.WEBSITEMEDIANAME && p.indexOf("includewithoutimage") == -1) { return false; }
+            if (a.HASACTIVERESERVE == 1 && p.indexOf("includereserved") == -1) { return false; }
+            if (a.ISHOLD == 1 && p.indexOf("includehold") == -1) { return false; }
+            if (a.ISQUARANTINE == 1 && p.indexOf("includequarantine") == -1) { return false; }
+            if (a.DECEASEDDATE || a.ISNOTAVAILABLEFORADOPTION == 1 || a.HASPERMANENTFOSTER == 1) { return false; }
+            if (a.ACTIVEMOVEMENTTYPE == 2 && p.indexOf("includefosters") == -1) { return false; }
+            if (a.ACTIVEMOVEMENTTYPE == 8 && p.indexOf("includeretailer") == -1) { return false; }
+            if (a.ACTIVEMOVEMENTTYPE == 1 && a.HASTRIALADOPTION == 1 && p.indexOf("includetrial") == -1) { return false; }
+            if (a.ACTIVEMOVEMENTTYPE == 1 && a.HASTRIALADOPTION == 0) { return false; }
+            if (a.ACTIVEMOVEMENTTYPE >= 3 && a.ACTIVEMOVEMENTTYPE <= 7) { return false; }
+            if (exwks) { 
+                if (common.add_days(format.date_js(a.DATEOFBIRTH), (exwks * 7)) > new Date()) { return false; } 
+            }
+            if (locs && locs != "null" && !a.ACTIVEMOVEMENTTYPE) {
+                var inloc = false;
+                $.each(locs.split(","), function(i,v) {
+                    if (format.to_int(v) == a.SHELTERLOCATION) { inloc = true; }
+                });
+                if (!inloc) { return false; }
+            }
+            return true;
+        },
 
         /**
          * Renders an animal link thumbnail from the record given
