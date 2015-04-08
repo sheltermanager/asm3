@@ -102,8 +102,14 @@ Declawed
     "Yes" if the animal has been declawed 
 AnimalID
     The animal's internal ID number 
-BondedWith
-    A list of the names and codes of animals this one is bonded with 
+BondedAnimal1Name
+    The name of the first animal this animal is bonded to
+BondedAnimal1Code
+    The code of the first animal this animal is bonded to
+BondedAnimal2Name
+    The name of the second animal this animal is bonded to
+BondedAnimal2Code
+    The code of the second animal this animal is bonded to
 Fee
     The animal's adoption fee if you are using per-animal adoption fees
 MicrochipNumber
