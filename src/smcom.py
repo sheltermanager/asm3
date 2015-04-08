@@ -23,7 +23,7 @@ def get_database_info(alias):
     Also returns a dbo with a database property of "DISABLED" for a 
     disabled account, or "FAIL" for a problem.
     """
-    alias = re.sub(INVALID_REMOVE, '', alias)
+    alias = re.sub(INVALID_REMOVE, '', alias).lower()
     dbo = db.DatabaseInfo()
     dbo.host = "localhost"
     dbo.port = 6432
