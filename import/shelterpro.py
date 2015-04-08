@@ -72,8 +72,8 @@ asm.setid("animalvaccination", 100)
 asm.setid("owner", 100)
 asm.setid("ownerlicence", 100)
 asm.setid("adoption", 100)
-asm.setid("media", 12000)
-asm.setid("dbfs", 23000)
+asm.setid("media", 100)
+asm.setid("dbfs", 300)
 
 # Remove existing
 print "\\set ON_ERROR_STOP\nBEGIN;"
