@@ -14,24 +14,8 @@ Find Person
 The advanced find person screen is used to search for groups of people matching
 criteria. It works exactly the same as the advanced find animal screen.
 
-A number of filters can also be applied here: 
-
-* Adopters - show any owners with an adoption movement 
-* Animal Care Officers - show any owners with the Animal Care Officer flag set 
-* Banned - show any owners with the Banned flag set 
-* Donors - show any owners with the Donor flag set 
-* Drivers - show any owners with the Driver flag set 
-* Fosterers - show any owners with the Fosters Animals flag set 
-* Homechecked - show any owners with the Homechecked flag set 
-* Homecheckers - show any owners with the Homechecker flag set 
-* Members - show any owners with the Member flag set 
-* Not Homechecked - show any owners with the Homechecked flag not set 
-* Potential Adopters - show any owners with active criteria, but no adoption movements 
-* Retailers - show any owners with the Retailer flag set 
-* Shelters - show any owners with the Other Animal Shelter flag set 
-* Staff - show any owners with the Staff flag set 
-* Vets - show any owners with the Vet flag set 
-* Volunteers - show any owners with the Volunteer flag set 
+You can choose to filter the results to only show people who have the flags you
+select in the flags dropdown. 
 
 Edit Person
 -----------
