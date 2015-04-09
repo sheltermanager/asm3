@@ -414,13 +414,15 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = ""):
        hiddencomments - partial word/string pattern
        originalowner - string partial pattern
        medianotes - partial word/string pattern
-       showtransfersonly - present if true
-       includedeceased - present if true
-       includenonshelter - present if true
-       goodwithchildren - present if true
-       goodwithcats - present if true
-       goodwithdogs - present if true
-       housetrained - present if true
+       filter - one or more of:
+           showtransfersonly
+           showpickupsonly
+           showcrueltycaseonly
+           showspecialneedsonly
+           goodwithchildren
+           goodwithcats
+           goodwithdogs
+           housetrained
     locationfilter: IN clause of locations to search
     """
     c = []
@@ -455,8 +457,8 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = ""):
             field, db.dd(display2python(l, crit(cfieldfrom))), 
             field, db.dd(display2python(l, crit(cfieldto)))))
 
-    def addcheck(cfield, condition):
-        if hk(cfield): c.append(condition)
+    def addfilter(f, condition):
+        if crit("filter").find(f) != -1: c.append(condition)
 
     def addcomp(cfield, value, condition):
         if hk(cfield) and crit(cfield) == value: c.append(condition)
@@ -486,14 +488,14 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = ""):
     addstr("sheltercode", "a.ShelterCode")
     addstr("litterid", "a.AcceptanceNumber")
     adddate("inbetweenfrom", "inbetweento", "a.MostRecentEntryDate")
-    addcheck("goodwithchildren", "a.IsGoodWithChildren = 0")
-    addcheck("goodwithdogs", "a.IsGoodWithDogs = 0")
-    addcheck("goodwithcats", "a.IsGoodWithCats = 0")
-    addcheck("housetrained", "a.IsHouseTrained = 0")
-    addcheck("showtransfersonly", "a.IsTransfer = 1")
-    addcheck("showpickupsonly", "a.IsPickup = 1")
-    addcheck("showcrueltycaseonly", "a.CrueltyCase = 1")
-    addcheck("showspecialneedsonly", "a.HasSpecialNeeds = 1")
+    addfilter("goodwithchildren", "a.IsGoodWithChildren = 0")
+    addfilter("goodwithdogs", "a.IsGoodWithDogs = 0")
+    addfilter("goodwithcats", "a.IsGoodWithCats = 0")
+    addfilter("housetrained", "a.IsHouseTrained = 0")
+    addfilter("showtransfersonly", "a.IsTransfer = 1")
+    addfilter("showpickupsonly", "a.IsPickup = 1")
+    addfilter("showcrueltycaseonly", "a.CrueltyCase = 1")
+    addfilter("showspecialneedsonly", "a.HasSpecialNeeds = 1")
     addwords("comments", "a.AnimalComments")
     addwords("hiddencomments", "a.HiddenAnimalDetails")
     addwords("features", "a.Markings")
@@ -502,14 +504,6 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = ""):
         addstr("agegroup", "a.AgeGroup")
     adddate("outbetweenfrom", "outbetweento", "a.ActiveMovementDate")
     addwords("medianotes", "web.MediaNotes")
-
-    if not hk("includedeceased") and not crit("logicallocation") == "deceased":
-        c.append("a.DeceasedDate Is Null")
-
-    if crit("logicallocation") == "nonshelter":
-        c.append("a.NonShelterAnimal = 1")
-    elif not hk("includenonshelter"):
-        c.append("a.NonShelterAnimal = 0")
 
     if hk("agedbetweenfrom") and hk("agedbetweento"):
         c.append("%s >= %s AND %s <= %s" % (
@@ -542,6 +536,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = ""):
     addcomp("logicallocation", "reclaimed", "a.ActiveMovementType = %d" % movement.RECLAIMED)
     addcomp("logicallocation", "retailer", "a.ActiveMovementType = %d" % movement.RETAILER)
     addcomp("logicallocation", "deceased", "a.DeceasedDate Is Not Null")
+    addcomp("logicallocation", "nonshelter", "a.NonShelterAnimal = 1")
     where = ""
     if len(c) > 0:
         where = " WHERE " + " AND ".join(c)

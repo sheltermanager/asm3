@@ -174,13 +174,14 @@ $(function() {
         add_adoption_status: function() {
             $.each(controller.animals, function(i, a) {
                 var s = "";
-                if (a.ARCHIVED == 0 && a.CRUELTYCASE == 1) { a.ADOPTIONSTATUS = _("Cruelty Case"); }
-                if (a.ARCHIVED == 0 && a.ISQUARANTINE == 1) { a.ADOPTIONSTATUS = _("Quarantine"); }
-                if (a.ARCHIVED == 0 && a.ISHOLD == 1) { a.ADOPTIONSTATUS = _("Hold"); }
-                if (a.ARCHIVED == 0 && a.HASACTIVERESERVE == 1) { a.ADOPTIONSTATUS = _("Reserved"); }
-                if (a.ARCHIVED == 0 && a.HASPERMANENTFOSTER == 1) { a.ADOPTIONSTATUS = _("Permanent Foster"); }
-                if (html.is_animal_adoptable(a)) { a.ADOPTIONSTATUS = _("Adoptable"); } 
-                else { a.ADOPTIONSTATUS = _("Not For Adoption"); }
+                if (a.ARCHIVED == 0 && a.CRUELTYCASE == 1) { a.ADOPTIONSTATUS = _("Cruelty Case"); return; }
+                if (a.ARCHIVED == 0 && a.ISQUARANTINE == 1) { a.ADOPTIONSTATUS = _("Quarantine"); return;  }
+                if (a.ARCHIVED == 0 && a.ISHOLD == 1) { a.ADOPTIONSTATUS = _("Hold"); return; }
+                if (a.ARCHIVED == 0 && a.HASACTIVERESERVE == 1) { a.ADOPTIONSTATUS = _("Reserved"); return; }
+                if (a.ARCHIVED == 0 && a.HASPERMANENTFOSTER == 1) { a.ADOPTIONSTATUS = _("Permanent Foster"); return; }
+                if (html.is_animal_adoptable(a)) { a.ADOPTIONSTATUS = _("Adoptable"); return; } 
+                a.ADOPTIONSTATUS = _("Not For Adoption"); 
+                return; 
             });
         },
 
