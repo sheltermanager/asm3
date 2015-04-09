@@ -117,6 +117,7 @@
     $.fn.table = function(options) {
         var defaults = {
             css:        'asm-table',
+            filter:     false,
             style_td:   true,
             row_hover:  true,
             row_select: true,
@@ -153,6 +154,9 @@
             input.tablesorter({
                 sortColumn: options.sortColumn,
                 sortList: options.sortList,
+                widgets: options.filter ? [ "filter" ] : [],
+                filter_columnFilters: options.filter,
+                filter_ignoreCase: true,
                 textExtraction: function(node) {
                     // custom extraction function turns display dates 
                     // into iso dates behind the scenes for 

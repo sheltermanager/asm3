@@ -307,7 +307,7 @@ $(function() {
                 autoOpen: false,
                 resizable: true,
                 height: 600,
-                width: 900,
+                width: 1100,
                 modal: true,
                 dialogClass: "dialogshadow",
                 show: dlgfx.add_show,
@@ -407,7 +407,7 @@ $(function() {
             var formdata = "mode=smcomlist";
             common.ajax_post("reports", formdata, function(result) { 
                 $("#table-smcom").html(result);
-                $("#table-smcom").table({ floating_header: false, sortList: [[1, 0]] });
+                $("#table-smcom").table({ floating_header: false, filter: true, sortList: [[1, 0]] });
                 $("#button-install").button("disable");
                 $("#table-smcom input").click(function() {
                     if ($("#table-smcom input:checked").length > 0) {
