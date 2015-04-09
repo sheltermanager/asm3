@@ -44,14 +44,14 @@ $(function() {
             var available = "";
             if (a.NONSHELTERANIMAL == 1) {
                 // show non-shelter info link
-                available = "<span class=\"asm-search-nonshelter\">" + _("Non-Shelter Animal");
+                available = _("Non-Shelter Animal");
                 if (a.ORIGINALOWNERID && a.ORIGINALOWNERID > 0) {
                     available += " " + html.icon("right") + " ";
                     available += "<a href=\"person?id=" + a.ORIGINALOWNERID + "\">" + a.ORIGINALOWNERNAME + "</a>";
                 }
-                available += "</span>";
+                available = html.info(available);
             }
-            else if (a.ARCHIVED == 1 && a.ACTIVEMOVEMENTTYPE != 2)  {
+            else if ((a.ARCHIVED == 1 && a.ACTIVEMOVEMENTTYPE != 2) || (a.HASPERMANENTFOSTER == 1))  {
                 // left the shelter, don't show anything
                 available = "";
             }
