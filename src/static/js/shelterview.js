@@ -179,7 +179,7 @@ $(function() {
                 if (a.ARCHIVED == 0 && a.ISHOLD == 1) { a.ADOPTIONSTATUS = _("Hold"); return; }
                 if (a.ARCHIVED == 0 && a.HASACTIVERESERVE == 1) { a.ADOPTIONSTATUS = _("Reserved"); return; }
                 if (a.ARCHIVED == 0 && a.HASPERMANENTFOSTER == 1) { a.ADOPTIONSTATUS = _("Permanent Foster"); return; }
-                if (html.is_animal_adoptable(a)) { a.ADOPTIONSTATUS = _("Adoptable"); return; } 
+                if (html.is_animal_adoptable(a)[0]) { a.ADOPTIONSTATUS = _("Adoptable"); return; } 
                 a.ADOPTIONSTATUS = _("Not For Adoption"); 
                 return; 
             });

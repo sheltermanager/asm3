@@ -1038,30 +1038,41 @@
             var p = config.str("PublisherPresets"),
                 exwks = format.to_int(common.url_param(p.replace(/ /g, "&"), "excludeunder")),
                 locs = common.url_param(p.replace(/ /g, "&"), "includelocations");
-            if (a.NONSHELTERANIMAL == 1) { return false; }
-            if (a.DECEASEDDATE) { return false; }
-            if (a.CRUELTYCASE == 1 && p.indexOf("includecase") == -1) { return false; }
-            if (!a.WEBSITEMEDIANAME && p.indexOf("includewithoutimage") == -1) { return false; }
-            if (a.HASACTIVERESERVE == 1 && p.indexOf("includereserved") == -1) { return false; }
-            if (a.ISHOLD == 1 && p.indexOf("includehold") == -1) { return false; }
-            if (a.ISQUARANTINE == 1 && p.indexOf("includequarantine") == -1) { return false; }
-            if (a.DECEASEDDATE || a.ISNOTAVAILABLEFORADOPTION == 1 || a.HASPERMANENTFOSTER == 1) { return false; }
-            if (a.ACTIVEMOVEMENTTYPE == 2 && p.indexOf("includefosters") == -1) { return false; }
-            if (a.ACTIVEMOVEMENTTYPE == 8 && p.indexOf("includeretailer") == -1) { return false; }
-            if (a.ACTIVEMOVEMENTTYPE == 1 && a.HASTRIALADOPTION == 1 && p.indexOf("includetrial") == -1) { return false; }
-            if (a.ACTIVEMOVEMENTTYPE == 1 && a.HASTRIALADOPTION == 0) { return false; }
-            if (a.ACTIVEMOVEMENTTYPE >= 3 && a.ACTIVEMOVEMENTTYPE <= 7) { return false; }
+            if (a.ISNOTAVAILABLEFORADOPTION == 1) { return [ false, _("Not for adoption flag set") ]; }
+            if (a.NONSHELTERANIMAL == 1) { return [ false, _("Non-Shelter") ]; }
+            if (a.DECEASEDDATE) { return [ false, _("Deceased") ]; }
+            if (a.CRUELTYCASE == 1 && p.indexOf("includecase") == -1) { return [ false, _("Cruelty Case") ]; }
+            if (a.HASACTIVERESERVE == 1 && a.RESERVEDOWNERID && p.indexOf("includereserved") == -1) {
+                return [ false, _("Reserved") + " " + html.icon("right") + " " + 
+                        "<a href=\"person?id=" + a.RESERVEDOWNERID + "\">" + a.RESERVEDOWNERNAME ];
+            }
+            if (a.HASACTIVERESERVE == 1 && p.indexOf("includereserved") == -1) { return [ false, _("Reserved") ]; }
+            if (a.ISHOLD == 1 && a.HOLDUNTILDATE && p.indexOf("includehold") == -1) { 
+                return [ false, _("Hold until {0}").replace("{0}", format.date(a.HOLDUNTILDATE)) ]; 
+            }
+            if (a.ISHOLD == 1 && p.indexOf("includehold") == -1) { return [ false, _("Hold") ]; }
+            if (a.ISQUARANTINE == 1 && p.indexOf("includequarantine") == -1) { return [ false, _("Quarantine") ]; }
+            if (a.DECEASEDDATE) { return [ false, _("Deceased") ]; }
+            if (a.HASPERMANENTFOSTER == 1) { return [ false, _("Permanent Foster") ]; }
+            if (a.ACTIVEMOVEMENTTYPE == 2 && p.indexOf("includefosters") == -1) { return [ false, _("Foster") ]; }
+            if (a.ACTIVEMOVEMENTTYPE == 8 && p.indexOf("includeretailer") == -1) { return [ false, _("Retailer") ]; }
+            if (a.ACTIVEMOVEMENTTYPE == 1 && a.HASTRIALADOPTION == 1 && p.indexOf("includetrial") == -1) { return [ false, _("Trial Adoption") ]; }
+            if (a.ACTIVEMOVEMENTTYPE == 1 && a.HASTRIALADOPTION == 0) { return [ false, _("Adopted") ]; }
+            if (a.ACTIVEMOVEMENTTYPE >= 3 && a.ACTIVEMOVEMENTTYPE <= 7) { return [ false, a.DISPLAYLOCATION ]; }
+            if (!a.WEBSITEMEDIANAME && p.indexOf("includewithoutimage") == -1) { return [ false, _("No picture") ]; }
             if (exwks) { 
-                if (common.add_days(format.date_js(a.DATEOFBIRTH), (exwks * 7)) > new Date()) { return false; } 
+                if (common.add_days(format.date_js(a.DATEOFBIRTH), (exwks * 7)) > new Date()) { 
+                    return [ false, _("Under {0} weeks old").replace("{0}", exwks) ]; 
+                } 
             }
             if (locs && locs != "null" && !a.ACTIVEMOVEMENTTYPE) {
                 var inloc = false;
                 $.each(locs.split(","), function(i,v) {
                     if (format.to_int(v) == a.SHELTERLOCATION) { inloc = true; }
                 });
-                if (!inloc) { return false; }
+                if (!inloc) { return [ false, _("Not in chosen publisher location") ]; }
             }
-            return true;
+            return [ true, _("Available for adoption") ];
         },
 
         /**

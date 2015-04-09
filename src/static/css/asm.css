@@ -326,31 +326,6 @@ img {
     font-weight: bold;
 }
 
-.asm-search-available {
-    color: green;
-    font-weight: bold;
-}
-
-.asm-search-reserved {
-    color: green;
-    font-weight: bold;
-}
-
-.asm-search-cruelty {
-    color: red;
-    font-weight: bold;
-}
-
-.asm-search-quarantine {
-    color: red;
-    font-weight: bold;
-}
-
-.asm-search-hold {
-    color: red;
-    font-weight: bold;
-}
-
 .asm-search-result {
     padding: 5px;
     border-bottom: 1px solid #999;

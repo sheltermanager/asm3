@@ -1,6 +1,7 @@
 36
 ================
 
+09/04/15 Show reason an animal is not for adoption
 09/04/15 Tidy up find animal to use multiselect filters
 08/04/15 Add wordkey for DisplayLocation
 08/04/15 AdoptionStatus inaccurate and not translated, calculated in js now

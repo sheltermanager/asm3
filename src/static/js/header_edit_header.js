@@ -43,6 +43,7 @@ $(function() {
             }
             var available = "";
             if (a.NONSHELTERANIMAL == 1) {
+                // show non-shelter info link
                 available = "<span class=\"asm-search-nonshelter\">" + _("Non-Shelter Animal");
                 if (a.ORIGINALOWNERID && a.ORIGINALOWNERID > 0) {
                     available += " " + html.icon("right") + " ";
@@ -51,32 +52,17 @@ $(function() {
                 available += "</span>";
             }
             else if (a.ARCHIVED == 1 && a.ACTIVEMOVEMENTTYPE != 2)  {
+                // left the shelter, don't show anything
                 available = "";
             }
-            else if (html.is_animal_adoptable(a)) {
-                available = "<span class=\"asm-search-available\">" + _("Available for adoption") + "</span>";
+            else if (html.is_animal_adoptable(a)[0]) {
+                // available
+                available = html.info(_("Available for adoption"));
             }
             else {
-                available = "<span class=\"asm-search-notforadoption\">" + _("Not available for adoption") + "</span>";
-                if (a.ARCHIVED == 0 && a.HASPERMANENTFOSTER == 1) {
-                    available = "<span class=\"asm-search-notforadoption\">" + _("Permanent Foster") + "</span>";
-                }
-                if (a.ARCHIVED == 0 && a.HASACTIVERESERVE == 1) {
-                    available = "<span class=\"asm-search-reserved\">" + _("Reserved") + " "  + html.icon("right") + " ";
-                    available += "<a href=\"person?id=" + a.RESERVEDOWNERID + "\">" + a.RESERVEDOWNERNAME + "</span>";
-                }
-                if (a.ISHOLD == 1 && !a.HOLDUNTILDATE) {
-                    available = "<span class=\"asm-search-hold\">" + _("Hold") + "</span>";
-                }
-                if (a.ISHOLD == 1 && a.HOLDUNTILDATE) {
-                    available = "<span class=\"asm-search-hold\">" + _("Hold until {0}").replace("{0}", format.date(a.HOLDUNTILDATE))  + "</span>";
-                }
-                if (a.ISQUARANTINE == 1) {
-                    available = "<span class=\"asm-search-quarantine\">" + _("Quarantine") + "</span>";
-                }
-                if (a.CRUELTYCASE == 1) {
-                    available = "<span class=\"asm-search-cruelty\">" + _("Cruelty Case") + "</span>";
-                }
+                // not available, include reason
+                available = html.error(_("Not available for adoption") + 
+                    "<br/>(" + html.is_animal_adoptable(a)[1] + ")");
             }
             var banner = [];
             if (common.nulltostr(a.HIDDENANIMALDETAILS) != "") {
