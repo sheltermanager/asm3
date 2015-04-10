@@ -1,6 +1,6 @@
 Length of Stay by Entry Reason
 ###
-Stats
+Statistics
 ###
 2721/PostgreSQL
 ###

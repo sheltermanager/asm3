@@ -1,6 +1,6 @@
 Length of Stay by Breed
 ###
-Stats
+Statistics
 ###
 2721/PostgreSQL
 ###

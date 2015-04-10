@@ -1,6 +1,6 @@
 Length of Stay by Species
 ###
-Stats
+Statistics
 ###
 2721/PostgreSQL
 ###
