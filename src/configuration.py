@@ -59,7 +59,8 @@ QUICKLINKS_SET = {
     50: ("calendarview?ev=ol", "asm-icon-calendar", i18n._("Animal control calendar")),
     51: ("stocklevel", "asm-icon-stock", i18n._("Stock Levels")),
     52: ("transport", "asm-icon-transport", i18n._("Transport Book")),
-    53: ("timeline", "asm-icon-calendar", i18n._("Timeline"))
+    53: ("timeline", "asm-icon-calendar", i18n._("Timeline")),
+    54: ("staff_rota", "asm-icon-rota", i18n._("Staff Rota"))
 }
 
 # Default configuration values for unset items. This is so they
@@ -79,6 +80,7 @@ DEFAULTS = {
     "AllowODTDocumentTemplates": "No",
     "AddAnimalsShowAcceptance": "No",
     "AddAnimalsShowBreed": "Yes",
+    "AddAnimalsShowBroughtInBy": "No",
     "AddAnimalsShowColour": "No",
     "AddAnimalsShowDateBroughtIn": "Yes",
     "AddAnimalsShowEntryCategory": "Yes",
@@ -87,6 +89,7 @@ DEFAULTS = {
     "AddAnimalsShowLocationUnit": "Yes",
     "AddAnimalsShowMicrochip": "No",
     "AddAnimalsShowNeutered": "No",
+    "AddAnimalsShowOriginalOwner": "No",
     "AddAnimalsShowSize": "No",
     "AddAnimalsShowTimeBroughtIn": "No",
     "AddAnimalsShowWeight": "No",
@@ -127,6 +130,8 @@ DEFAULTS = {
     "DefaultDateBroughtIn": "Yes",
     "DefaultIncidentType": "1",
     "DefaultMediaNotesFromFile": "Yes",
+    "DefaultShiftStart": "09:00",
+    "DefaultShiftEnd": "17:00",
     "DisableAnimalControl": "No",
     "DisableStockControl": "No",
     "DisableTransport": "No",
@@ -188,8 +193,8 @@ DEFAULTS = {
     "MatchWithin2Weeks": "5",
     "MatchPointFloor": "20",
     "MaxMediaFileSize": "1000",
-    "MeetAPetBaseURL": "http://meetapet.com/api_crud/",
     "MeetAPetKey" : "haRQPthLgW",
+    "MicrochipRegisterMovements": "1,5",
     "MovementDonationsDefaultDue": "No",
     "MovementNumberOverride": "No",
     "JSWindowPrint": "Yes",
@@ -227,6 +232,7 @@ DEFAULTS = {
     "ShowILOffShelter": "Yes",
     "ShowPersonMiniMap": "Yes",
     "ShowSearchGo": "No", 
+    "ShowWeightInLbs": "Yes",
     "SystemTheme": "smoothness",
     "Timezone": "-5",
     "TrialAdoptions": "No",
@@ -731,6 +737,9 @@ def meetapet_secret(dbo):
 
 def meetapet_userkey(dbo):
     return cstring(dbo, "MeetAPetUserKey")
+
+def microchip_register_movements(dbo):
+    return cstring(dbo, "MicrochipRegisterMovements", DEFAULTS["MicrochipRegisterMovements"])
 
 def movement_donations_default_due(dbo):
     return cboolean(dbo, "MovementDonationsDefaultDue", DEFAULTS["MovementDonationsDefaultDue"] == "Yes")

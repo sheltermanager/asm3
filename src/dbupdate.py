@@ -7,7 +7,7 @@ import sys
 from i18n import _, BUILD
 from sitedefs import DB_PK_STRATEGY
 
-LATEST_VERSION = 33608
+LATEST_VERSION = 33609
 VERSIONS = ( 
     2870, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3050,
     3051, 3081, 3091, 3092, 3093, 3094, 3110, 3111, 3120, 3121, 3122, 3123, 3200,
@@ -18,7 +18,7 @@ VERSIONS = (
     33206, 33300, 33301, 33302, 33303, 33304, 33305, 33306, 33307, 33308, 33309,
     33310, 33311, 33312, 33313, 33314, 33315, 33316, 33401, 33402, 33501, 33502,
     33503, 33504, 33505, 33506, 33507, 33508, 33600, 33601, 33602, 33603, 33604,
-    33605, 33606, 33607, 33608
+    33605, 33606, 33607, 33608, 33609
 )
 
 # All ASM3 tables
@@ -31,12 +31,12 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "activeuser", "additional"
     "diary", "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", "donationtype", "entryreason", 
     "incidentcompleted", "incidenttype", "internallocation", "licencetype", "lkcoattype", "lkownerflags", 
     "lksaccounttype", "lksdiarylink", "lksdonationfreq", "lksex", "lksfieldlink", "lksfieldtype", "lksize", 
-    "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", "lksposneg", "lksyesno", "lksynun", 
-    "lkurgency", "log", "logtype", "media", "medicalprofile", "messages", "onlineform", "onlineformfield", 
-    "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", "ownerlicence", 
-    "ownertraploan", "ownervoucher", "pickuplocation", "reservationstatus", "role", "species", "stocklevel", 
-    "stocklocation", "stockusage", "stockusagetype", "testtype", "testresult", "traptype", "userrole", 
-    "users", "vaccinationtype", "voucher" )
+    "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", "lksposneg", "lksrotatype", 
+    "lksyesno", "lksynun", "lkurgency", "log", "logtype", "media", "medicalprofile", "messages", "onlineform", 
+    "onlineformfield", "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
+    "ownerlicence", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", 
+    "reservationstatus", "role", "species", "stocklevel", "stocklocation", "stockusage", "stockusagetype", 
+    "testtype", "testresult", "traptype", "userrole", "users", "vaccinationtype", "voucher" )
 
 # ASM2_COMPATIBILITY This is used for dumping tables in ASM2/HSQLDB format. 
 # These are the tables present in ASM2.
@@ -875,6 +875,9 @@ def sql_structure(dbo):
     sql += table("lksloglink", (
         fid(), fstr("LinkType") ), False)
 
+    sql += table("lksrotatype", (
+        fid(), fstr("RotaType") ), False)
+
     sql += table("lkurgency", ( 
         fid(), fstr("Urgency") ), False)
 
@@ -1117,6 +1120,18 @@ def sql_structure(dbo):
     sql += index("ownerlicence_LicenceNumber", "ownerlicence", "LicenceNumber", True)
     sql += index("ownerlicence_IssueDate", "ownerlicence", "IssueDate")
     sql += index("ownerlicence_ExpiryDate", "ownerlicence", "ExpiryDate")
+
+    sql += table("ownerrota", (
+        fid(),
+        fint("OwnerID"),
+        fdate("StartDateTime"),
+        fdate("EndDateTime"),
+        fint("RotaTypeID"),
+        flongstr("Comments", True) ))
+    sql += index("ownerrota_OwnerID", "ownerrota", "OwnerID")
+    sql += index("ownerrota_StartDateTime", "ownerrota", "StartDateTime")
+    sql += index("ownerrota_EndDateTime", "ownerrota", "EndDateTime")
+    sql += index("ownerrota_RotaTypeID", "ownerrota", "RotaTypeID")
 
     sql += table("ownertraploan", (
         fid(),
@@ -1867,7 +1882,7 @@ def sql_default_data(dbo, skip_config = False):
     sql += internallocation(1, _("Shelter", l))
     sql += lookup2money("licencetype", 1, _("Altered Dog - 1 year", l))
     sql += lookup2money("licencetype", 2, _("Unaltered Dog - 1 year", l))
-    sql += lookup2money("licencetype", 3, _("Altered Dog - 1 year", l))
+    sql += lookup2money("licencetype", 3, _("Altered Dog - 3 year", l))
     sql += lookup2money("licencetype", 4, _("Unaltered Dog - 3 year", l))
     sql += lookup1("lksex", 0, _("Female", l))
     sql += lookup1("lksex", 1, _("Male", l))
@@ -1973,6 +1988,15 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup1("lksposneg", 0, _("Unknown", l))
     sql += lookup1("lksposneg", 1, _("Negative", l))
     sql += lookup1("lksposneg", 2, _("Positive", l))
+    sql += lookup1("lksrotatype", 1, _("Shift", l))
+    sql += lookup1("lksrotatype", 2, _("Vacation", l))
+    sql += lookup1("lksrotatype", 3, _("Leave of absence", l))
+    sql += lookup1("lksrotatype", 4, _("Maternity", l))
+    sql += lookup1("lksrotatype", 5, _("Personal", l))
+    sql += lookup1("lksrotatype", 6, _("Rostered day off", l))
+    sql += lookup1("lksrotatype", 7, _("Sick leave", l))
+    sql += lookup1("lksrotatype", 8, _("Training", l))
+    sql += lookup1("lksrotatype", 9, _("Unavailable", l))
     sql += lookup1("lkurgency", 1, _("Urgent", l))
     sql += lookup1("lkurgency", 2, _("High", l))
     sql += lookup1("lkurgency", 3, _("Medium", l))
@@ -2041,7 +2065,7 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup2money("vaccinationtype", 3, _("Leptospirosis", l))
     sql += lookup2money("vaccinationtype", 4, _("Rabies", l))
     sql += lookup2money("vaccinationtype", 5, _("Parainfluenza", l))
-    sql += lookup2money("vaccinationtype", 6, _("Bordatella", l))
+    sql += lookup2money("vaccinationtype", 6, _("Bordetella", l))
     sql += lookup2money("vaccinationtype", 7, _("Parvovirus", l))
     sql += lookup2money("vaccinationtype", 8, _("DHLPP", l))
     sql += lookup2money("vaccinationtype", 9, _("FVRCP", l))
@@ -3775,11 +3799,14 @@ def update_33604(dbo):
     add_index(dbo, "animalcontrol_FollowupComplete", "animalcontrol", "FollowupComplete")
     add_index(dbo, "animalcontrol_FollowupComplete2", "animalcontrol", "FollowupComplete2")
     add_index(dbo, "animalcontrol_FollowupComplete3", "animalcontrol", "FollowupComplete3")
+    db.execute_dbupdate(dbo, "UPDATE animalcontrol SET FollowupComplete = 0, FollowupComplete2 = 0, FollowupComplete3 = 0")
+    db.execute_dbupdate(dbo, "UPDATE animal SET Weight = 0")
 
 def update_33605(dbo):
     # Add accounts archived flag
     add_column(dbo, "accounts", "Archived", "INTEGER")
     add_index(dbo, "accounts_Archived", "accounts", "ARCHIVED")
+    db.execute_dbupdate(dbo, "UPDATE accounts SET Archived = 0")
 
 def update_33606(dbo):
     # Add new transport address fields
@@ -3805,7 +3832,7 @@ def update_33607(dbo):
         "INNER JOIN owner po ON animaltransport.PickupOwnerID = po.ID "\
         "WHERE PickupAddress Is Null OR DropoffAddress Is Null")
     for t in tr:
-        db.execute(dbo, "UPDATE animaltransport SET " \
+        db.execute_dbupdate(dbo, "UPDATE animaltransport SET " \
             "PickupAddress = %s, PickupTown = %s, PickupCounty = %s, PickupPostcode = %s,  " \
             "DropoffAddress = %s, DropoffTown = %s, DropoffCounty = %s, DropoffPostcode = %s " \
             "WHERE ID = %d" % ( \
@@ -3817,4 +3844,38 @@ def update_33608(dbo):
     # Add pickuplocationid to incidents
     add_column(dbo, "animalcontrol", "PickupLocationID", "INTEGER")
     add_index(dbo, "animalcontrol_PickupLocationID", "animalcontrol", "PickupLocationID")
+    db.execute_dbupdate(dbo, "UPDATE animalcontrol SET PickupLocationID = 0")
+
+def update_33609(dbo):
+    l = dbo.locale
+    # Add ownerrota table
+    sql = "CREATE TABLE ownerrota ( ID INTEGER NOT NULL PRIMARY KEY, " \
+        "OwnerID INTEGER NOT NULL, " \
+        "StartDateTime %(date)s NOT NULL, " \
+        "EndDateTime %(date)s NOT NULL, " \
+        "RotaTypeID INTEGER NOT NULL, " \
+        "Comments %(long)s, " \
+        "RecordVersion INTEGER, " \
+        "CreatedBy %(short)s, " \
+        "CreatedDate %(date)s, " \
+        "LastChangedBy %(short)s, " \
+        "LastChangedDate %(date)s)" % { "short": shorttext(dbo), "long": longtext(dbo), "date": datetype(dbo) }
+    db.execute_dbupdate(dbo, sql)
+    add_index(dbo, "ownerrota_OwnerID", "ownerrota", "OwnerID")
+    add_index(dbo, "ownerrota_StartDateTime", "ownerrota", "StartDateTime")
+    add_index(dbo, "ownerrota_EndDateTime", "ownerrota", "EndDateTime")
+    add_index(dbo, "ownerrota_RotaTypeID", "ownerrota", "RotaTypeID")
+    # Add lksrotatype table
+    sql = "CREATE TABLE lksrotatype ( ID INTEGER NOT NULL PRIMARY KEY, " \
+        "RotaType %(short)s NOT NULL)" % { "short": shorttext(dbo) }
+    db.execute_dbupdate(dbo, sql)
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotatype VALUES (1, %s)" % db.ds(_("Shift", l)))
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotatype VALUES (2, %s)" % db.ds(_("Vacation", l)))
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotatype VALUES (3, %s)" % db.ds(_("Leave of absence", l)))
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotatype VALUES (4, %s)" % db.ds(_("Maternity", l)))
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotatype VALUES (5, %s)" % db.ds(_("Personal", l)))
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotatype VALUES (6, %s)" % db.ds(_("Rostered day off", l)))
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotatype VALUES (7, %s)" % db.ds(_("Sick leave", l)))
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotatype VALUES (8, %s)" % db.ds(_("Training", l)))
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotatype VALUES (9, %s)" % db.ds(_("Unavailable", l)))
 

@@ -21,6 +21,7 @@ Contents:
    reports
    litters
    onlineform
+   rota
    mobile
    service
    publishing

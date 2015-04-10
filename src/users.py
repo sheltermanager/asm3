@@ -175,6 +175,11 @@ VIEW_LICENCE                    = "vapl"
 CHANGE_LICENCE                  = "capl"
 DELETE_LICENCE                  = "dapl"
 
+ADD_ROTA                        = "aoro"
+VIEW_ROTA                       = "voro"
+CHANGE_ROTA                     = "coro"
+DELETE_ROTA                     = "doro"
+
 ADD_LITTER                      = "all"
 VIEW_LITTER                     = "vll"
 DELETE_LITTER                   = "dll"
@@ -203,6 +208,14 @@ def check_permission_bool(session, flag):
     if session.superuser == 1: return True
     if has_security_flag(session.securitymap, flag): return True
     return False
+
+def check_permission_map(l, superuser, securitymap, flag):
+    """
+    Throws an ASMPermissionError if the flag is not in the map
+    """
+    if superuser == 1: return
+    if not has_security_flag(securitymap, flag):
+        raise utils.ASMPermissionError(i18n._("Forbidden", l))
 
 def has_security_flag(securitymap, flag):
     """

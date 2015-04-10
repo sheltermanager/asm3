@@ -1,6 +1,42 @@
 36
 ================
 
+09/04/15 table.filter property, applied to browse sm.com #10
+09/04/15 Show reason an animal is not for adoption
+09/04/15 Tidy up find animal to use multiselect filters
+08/04/15 Add wordkey for DisplayLocation
+08/04/15 AdoptionStatus inaccurate and not translated, calculated in js now
+06/04/15 With HTML/FTP if forcereupload is on, remove all images first
+06/04/15 Extra edit_perm attribute to hide dialog change buttons
+06/04/15 Facility to delete a week of rota items
+05/04/15 Add licence check to mobile interface #39
+03/04/15 Add simple framework for user/customer extensions #30
+03/04/15 Add options to show original owner and brought in by on new animal
+03/04/15 Add missing weight wordkey
+02/04/15 Hide extra entry fields for non-shelter animals #145
+02/04/15 Secondary sort timeline by animal #151
+01/04/15 Add 60 second flood protection to online form posts #144
+01/04/15 Make the default for medical alerts/books 365 days
+01/04/15 Option to choose which movements trigger chip registration #134
+31/03/15 Allow non-shelter to be set from add new animal with owner
+30/03/15 Don't include raw markup fields in online form previews
+30/03/15 Make service calls honour permissions #143
+30/03/15 Update diary link on every save to cope with name/code changes #127
+30/03/15 Add rss_timeline method to service API #125
+30/03/15 Refactor timeline translations and icons into backend
+30/03/15 Allow multiple payments to be selected for payment templates #34
+29/03/15 Option to include trial adoptions when publishing #139
+28/03/15 Tidy up menu, show hint when rota is empty
+26/03/15 Options for default working hours
+26/03/15 Rota cloning, more visual tidying up
+26/03/15 Hide UI elements when printing screens
+25/03/15 Staff Rota/Scheduling #31
+25/03/15 Option to show weight in lb rather than kg
+24/03/15 Fix lost and found shelter matching to only include on-shelter
+24/03/15 Separate mobile section for incidents requiring followup #113
+24/03/15 Allow accounts to be marked inactive #40
+24/03/15 Separate transport address fields #32
+24/03/15 Return buttons on the "Return an animal from..." screens #117
 23/03/15 Make menu item anchors fill space for bigger click target #131
 23/03/15 Add pickuplocation to incident, allow search/display #33
 23/03/15 Add weight field with option to update the log on each change #37

@@ -306,6 +306,8 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False):
             a["reasonforentry"] = gks(row, "ANIMALREASONFORENTRY")
             a["estimatedage"] = gks(row, "ANIMALAGE")
             a["dateofbirth"] = gkd(dbo, row, "ANIMALDOB", True)
+            if gks(row, "ANIMALDOB") == "" and a["estimatedage"] != "":
+                a["dateofbirth"] = "" # if we had an age and dob was blank, prefer the age
             a["datebroughtin"] = gkd(dbo, row, "ANIMALENTRYDATE", True)
             a["deceaseddate"] = gkd(dbo, row, "ANIMALDECEASEDDATE")
             a["neutereddate"] = gkd(dbo, row, "ANIMALNEUTEREDDATE")

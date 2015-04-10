@@ -42,38 +42,27 @@ $(function() {
                 currentowner = " <a href=\"person?id=" + a.CURRENTOWNERID + "\">" + a.CURRENTOWNERNAME + "</a>";
             }
             var available = "";
-            if (a.ARCHIVED == 0) {
-                available = "<span class=\"asm-search-notforadoption\">" + _("Not available for adoption") + "</span>";
-            }
-            if (a.ARCHIVED == 0 && a.HASPERMANENTFOSTER == 1) {
-                available = "<span class=\"asm-search-notforadoption\">" + _("Permanent Foster") + "</span>";
-            }
-            if (a.ARCHIVED == 0 && a.ISNOTAVAILABLEFORADOPTION == 0 && a.HASTRIALADOPTION == 0 && a.HASPERMANENTFOSTER == 0) {
-                available = "<span class=\"asm-search-available\">" + _("Available for adoption") + "</span>";
-            }
-            if (a.ARCHIVED == 0 && a.HASACTIVERESERVE == 1) {
-                available = "<span class=\"asm-search-reserved\">" + _("Reserved") + " "  + html.icon("right") + " ";
-                available += "<a href=\"person?id=" + a.RESERVEDOWNERID + "\">" + a.RESERVEDOWNERNAME + "</span>";
-            }
-            if (a.ISHOLD == 1 && !a.HOLDUNTILDATE) {
-                available = "<span class=\"asm-search-hold\">" + _("Hold") + "</span>";
-            }
-            if (a.ISHOLD == 1 && a.HOLDUNTILDATE) {
-                available = "<span class=\"asm-search-hold\">" + _("Hold until {0}").replace("{0}", format.date(a.HOLDUNTILDATE))  + "</span>";
-            }
-            if (a.ISQUARANTINE == 1) {
-                available = "<span class=\"asm-search-quarantine\">" + _("Quarantine") + "</span>";
-            }
-            if (a.CRUELTYCASE == 1) {
-                available = "<span class=\"asm-search-cruelty\">" + _("Cruelty Case") + "</span>";
-            }
             if (a.NONSHELTERANIMAL == 1) {
-                available = "<span class=\"asm-search-nonshelter\">" + _("Non-Shelter Animal");
+                // show non-shelter info link
+                available = _("Non-Shelter Animal");
                 if (a.ORIGINALOWNERID && a.ORIGINALOWNERID > 0) {
                     available += " " + html.icon("right") + " ";
                     available += "<a href=\"person?id=" + a.ORIGINALOWNERID + "\">" + a.ORIGINALOWNERNAME + "</a>";
                 }
-                available += "</span>";
+                available = html.info(available);
+            }
+            else if ((a.ARCHIVED == 1 && a.ACTIVEMOVEMENTTYPE != 2) || (a.HASPERMANENTFOSTER == 1))  {
+                // left the shelter, don't show anything
+                available = "";
+            }
+            else if (html.is_animal_adoptable(a)[0]) {
+                // available
+                available = html.info(_("Available for adoption"));
+            }
+            else {
+                // not available, include reason
+                available = html.error(_("Not available for adoption") + 
+                    "<br/>(" + html.is_animal_adoptable(a)[1] + ")");
             }
             var banner = [];
             if (common.nulltostr(a.HIDDENANIMALDETAILS) != "") {
@@ -183,6 +172,9 @@ $(function() {
                     return;
                 }
                 if ((key == "movements") && config.bool("DisableMovements")) {
+                    return;
+                }
+                if ((key == "movements") && a.NONSHELTERANIMAL == 1) {
                     return;
                 }
                 if ((key == "transport") && config.bool("DisableTransport")) {
@@ -438,6 +430,7 @@ $(function() {
                 [ "licence", "person_licence", _("License"), "licence", "vapl" ],
                 [ "investigation", "person_investigation", _("Investigation"), "investigation", "voi" ],
                 [ "citation", "person_citations", _("Citations"), "citation", "vacc" ],
+                [ "rota", "person_rota", _("Rota"), "rota", "voro" ],
                 [ "traploan", "person_traploan", _("Trap Loans"), "traploan", "vatl" ],
                 [ "donations", "person_donations", _("Payments"), "donation", "ovod" ],
                 [ "vouchers", "person_vouchers", _("Vouchers"), "donation", "vvov" ],
@@ -456,6 +449,9 @@ $(function() {
                     return;
                 }
                 if ((key == "movements") && config.bool("DisableMovements")) {
+                    return;
+                }
+                if ((key == "rota") && ((!p.ISVOLUNTEER && !p.ISSTAFF) || config.bool("DisableRota"))) {
                     return;
                 }
                 if (key == selected) {

@@ -6,6 +6,12 @@ call the API you construct a URL to the service controller. The service
 controller is /service, so if you are accessing a local ASM from your local
 machine, the URL will start http://localhost:5000/service. If you are using
 sheltermanager.com, the URL will start https://sheltermanager.com/asm/service.
+
+If you are using sheltermanager.com, please be aware that service call
+responses are cached for performance. All requests for shelter/adoptable animal
+data will be cached for the next hour, with requests for online forms cached
+for the next couple of minutes. 
+
 The service requires the  following parameters:
 
 * account: If this is a sheltermanager.com service call, the user's account
@@ -33,8 +39,8 @@ Returns an animal's preferred image. Send the id of the animal::
 
 **extra_image**
 
-Returns an extra image (see *Settings->Reports->Extra Images*). Pass the name
-of the image in the title parameter::
+Returns an extra image (see :menuselection:`Settings->Reports->Extra Images`).
+Pass the name of the image in the title parameter::
 
     http://localhost:5000/service?method=extra_image&title=splash.jpg
 
@@ -71,5 +77,11 @@ those too just like with html_report.
 
 Returns a dataset containing all shelter animals. The method determines whether
 the format returned is JSON or XML.
+
+**rss_timeline**
+
+Returns an RSS feed of the timeline::
+    
+    http://localhost:5000/service?method=rss_timeline&username=user&password=letmein
 
 

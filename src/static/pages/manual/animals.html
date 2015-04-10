@@ -112,6 +112,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="accounts.html">Accounts</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="accounts.html#reconciliation">Reconciliation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="accounts.html#inactive-accounts">Inactive Accounts</a></li>
 <li class="toctree-l2"><a class="reference internal" href="accounts.html#payments">Payments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="accounts.html#reporting">Reporting</a></li>
 </ul>
@@ -135,6 +136,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rota.html">Rota</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mobile.html">Mobile Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="service.html">Service API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="publishing.html">Publishing</a><ul>
@@ -283,17 +285,15 @@ can change which find animal screen is shown by default under the
 <p>The Advanced screen allows you to enter detailed searches for groups of animals
 within your database.</p>
 <p>If you press the search button without entering any criteria, you will get a
-list of all animals on the shelter who are still alive. This is because the
+list of all animals on the shelter. This is because the
 location box defaults to “On Shelter” - if you change this to “(all)” you will
-get all animals who are still alive, wherever they are. Alive, because the
-search automatically excludes dead animals. If you wish to include dead
-animals, tick the box labeled “Include deceased”.</p>
+get all animals wherever they are.</p>
 <p>Once you press the search button, ASM will search through your database and
 check each record against any criteria you have chosen, and return to you a
 list of all those that matched. For example, you could quite easily search for
 all animals of species “Dog” who are still on the shelter, located in a
-particular location and under 6 months old.
-The criteria fields follow one of three types:</p>
+particular location and under 6 months old.</p>
+<p>The criteria fields follow one of three types:</p>
 <ul class="simple">
 <li>Drop Down Boxes: You should select something from the list or the “(all)”
 entry to specify that you do not want to filter by this criteria.</li>
@@ -304,12 +304,10 @@ Benson etc. Some boxes require numbers - the “aged between” boxes require an
 animal age expressed as a year, or fraction of a year. Entering 0 in the
 “From Age” box and 0.5 in the “To Age” box will return animals who are six
 months old and younger.</li>
-<li>Check Boxes: Here, you are expected to tick the box to indicate a yes or no
-value - eg: Ticking the “Include deceased” box includes dead animals in your
-search results.</li>
+<li>Filter: The filter dropdown allows selection of a number of options at the
+same time, such as only including animals that were transferred in from
+another organisation or housetrained.</li>
 </ul>
-<p>For more information about what the criteria boxes expect, hover your mouse
-over them.</p>
 </div>
 <div class="section" id="edit-animal">
 <h2>Edit Animal<a class="headerlink" href="#edit-animal" title="Permalink to this headline">¶</a></h2>

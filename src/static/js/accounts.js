@@ -5,6 +5,7 @@ $(function() {
     var dialog = {
         add_title: _("Add account"),
         edit_title: _("Edit account"),
+        edit_perm: 'cac',
         helper_text: _("Accounts need a code.") + "<br /><br />" + 
             _("If you assign view or edit roles, only users within those roles will be able to view and edit this account."),
         close_on_ok: true,
@@ -14,6 +15,8 @@ $(function() {
             { json_field: "CODE", post_field: "code", label: _("Code"), type: "text", validation: "notblank" },
             { json_field: "ACCOUNTTYPE", post_field: "type", label: _("Type"), type: "select", 
                 options: { displayfield: "ACCOUNTTYPE", valuefield: "ID", rows: controller.accounttypes }},
+            { json_field: "ARCHIVED", post_field: "archived", label: _("Active"), type: "select",
+                options: '<option value="0">' + _("Yes") + '</option><option value="1">' + _("No") + '</option>' },
             { json_field: "DONATIONTYPEID", post_field: "donationtype", label: _("Payment Type"), type: "select", 
                 tooltip: _("This income account is the source for payments received of this type"),
                 options: { displayfield: "DONATIONNAME", valuefield: "ID", rows: controller.donationtypes }},
@@ -40,6 +43,9 @@ $(function() {
             if (common.array_overlap(row.VIEWROLEIDS.split("|"), asm.roleids.split("|"))) { return false; }
 
             return true;
+        },
+        complete: function(row) {
+            return row.ARCHIVED == 1 || row.ARCHIVED == "1";
         },
         edit: function(row) {
             // Only show donation type links for income accounts
@@ -110,7 +116,14 @@ $(function() {
                  _("This will permanently remove this account and ALL TRANSACTIONS HELD AGAINST IT. This action is irreversible, are you sure you want to do this?")
                  );
              } 
+         },
+         { id: "offset", type: "dropdownfilter", 
+             options: [ "active|" + _("Only active accounts"), "all|" + _("All accounts") ],
+             click: function(selval) {
+                window.location = "accounts?offset=" + selval;
+             }
          }
+
     ];
 
     var accounts = {
@@ -131,6 +144,13 @@ $(function() {
             tableform.table_bind(table, buttons);
             // Add an unmapped donation type selection
             $("#donationtype").prepend('<option value="0"> </option>');
+        },
+
+        sync: function() {
+            // If an offset is given in the querystring, update the select
+            if (common.querystring_param("offset")) {
+                $("#offset").select("value", common.querystring_param("offset"));
+            }
         }
 
     };

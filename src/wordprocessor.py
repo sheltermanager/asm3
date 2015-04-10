@@ -93,6 +93,7 @@ def animal_tags(dbo, a):
         "BREEDNAME"             : a["BREEDNAME"],
         "INTERNALLOCATION"      : a["SHELTERLOCATIONNAME"],
         "LOCATIONUNIT"          : a["SHELTERLOCATIONUNIT"],
+        "DISPLAYLOCATION"       : a["DISPLAYLOCATION"],
         "COATTYPE"              : a["COATTYPENAME"],
         "HEALTHPROBLEMS"        : a["HEALTHPROBLEMS"],
         "HEALTHPROBLEMSBR"      : br(a["HEALTHPROBLEMS"]),
@@ -162,6 +163,10 @@ def animal_tags(dbo, a):
         "BROUGHTINBYMOBILEPHONE" : a["BROUGHTINBYMOBILETELEPHONE"],
         "BROUGHTINBYCELLPHONE" : a["BROUGHTINBYMOBILETELEPHONE"],
         "BROUGHTINBYEMAIL"    : a["BROUGHTINBYEMAILADDRESS"],
+        "BONDEDANIMAL1NAME"     : a["BONDEDANIMAL1NAME"],
+        "BONDEDANIMAL1CODE"     : a["BONDEDANIMAL1CODE"],
+        "BONDEDANIMAL2NAME"     : a["BONDEDANIMAL2NAME"],
+        "BONDEDANIMAL2CODE"     : a["BONDEDANIMAL2CODE"],
         "NAMEOFOWNERSVET"       : a["OWNERSVETNAME"],
         "NAMEOFCURRENTVET"      : a["CURRENTVETNAME"],
         "HASSPECIALNEEDS"       : a["HASSPECIALNEEDSNAME"],
@@ -237,6 +242,7 @@ def animal_tags(dbo, a):
         "REASONNOTBROUGHTBYOWNER" : a["REASONNO"],
         "SEX"                   : a["SEXNAME"],
         "SIZE"                  : a["SIZENAME"],
+        "WEIGHT"                : utils.nulltostr(a["WEIGHT"]),
         "SPECIESNAME"           : a["SPECIESNAME"],
         "ANIMALCOMMENTS"        : a["ANIMALCOMMENTS"],
         "ANIMALCOMMENTSBR"      : br(a["ANIMALCOMMENTS"]),
@@ -798,44 +804,57 @@ def animal_tags(dbo, a):
 
     return tags
 
-def donation_tags(dbo, p):
+def donation_tags(dbo, donations):
     """
     Generates a list of tags from a donation result.
+    donations: a list of donation records
     """
     l = dbo.locale
-    tags = { 
-        "DONATIONID"            : str(p["ID"]),
-        "RECEIPTNUM"            : utils.padleft(p["ID"], 8),
-        "DONATIONTYPE"          : p["DONATIONNAME"],
-        "DONATIONPAYMENTTYPE"   : p["PAYMENTNAME"],
-        "DONATIONDATE"          : python2display(l, p["DATE"]),
-        "DONATIONDATEDUE"       : python2display(l, p["DATEDUE"]),
-        "DONATIONAMOUNT"        : format_currency_no_symbol(l, p["DONATION"]),
-        "DONATIONCOMMENTS"      : p["COMMENTS"],
-        "DONATIONCOMMENTSFW"    : fw(p["COMMENTS"]),
-        "DONATIONGIFTAID"       : p["ISGIFTAIDNAME"],
-        "DONATIONCREATEDBY"     : p["CREATEDBY"],
-        "DONATIONCREATEDBYNAME" : p["CREATEDBY"],
-        "DONATIONCREATEDDATE"   : python2display(l, p["CREATEDDATE"]),
-        "DONATIONLASTCHANGEDBY" : p["LASTCHANGEDBY"],
-        "DONATIONLASTCHANGEDBYNAME" : p["LASTCHANGEDBY"],
-        "DONATIONLASTCHANGEDDATE" : python2display(l, p["LASTCHANGEDDATE"]),
-        "PAYMENTID"             : str(p["ID"]),
-        "PAYMENTTYPE"           : p["DONATIONNAME"],
-        "PAYMENTMETHOD"         : p["PAYMENTNAME"],
-        "PAYMENTDATE"           : python2display(l, p["DATE"]),
-        "PAYMENTDATEDUE"        : python2display(l, p["DATEDUE"]),
-        "PAYMENTAMOUNT"         : format_currency_no_symbol(l, p["DONATION"]),
-        "PAYMENTCOMMENTS"       : p["COMMENTS"],
-        "PAYMENTCOMMENTSFW"     : fw(p["COMMENTS"]),
-        "PAYMENTGIFTAID"        : p["ISGIFTAIDNAME"],
-        "PAYMENTCREATEDBY"      : p["CREATEDBY"],
-        "PAYMENTCREATEDBYNAME"  : p["CREATEDBY"],
-        "PAYMENTCREATEDDATE"    : python2display(l, p["CREATEDDATE"]),
-        "PAYMENTLASTCHANGEDBY"  : p["LASTCHANGEDBY"],
-        "PAYMENTLASTCHANGEDBYNAME" : p["LASTCHANGEDBY"],
-        "PAYMENTLASTCHANGEDDATE" : python2display(l, p["LASTCHANGEDDATE"])
-    }
+    tags = {}
+    totals = { "due": 0, "received": 0 }
+    def add_to_tags(i, p): 
+        x = { 
+            "DONATIONID"+i          : str(p["ID"]),
+            "RECEIPTNUM"+i          : utils.padleft(p["ID"], 8),
+            "DONATIONTYPE"+i        : p["DONATIONNAME"],
+            "DONATIONPAYMENTTYPE"+i : p["PAYMENTNAME"],
+            "DONATIONDATE"+i        : python2display(l, p["DATE"]),
+            "DONATIONDATEDUE"+i     : python2display(l, p["DATEDUE"]),
+            "DONATIONAMOUNT"+i      : format_currency_no_symbol(l, p["DONATION"]),
+            "DONATIONCOMMENTS"+i    : p["COMMENTS"],
+            "DONATIONCOMMENTSFW"+i  : fw(p["COMMENTS"]),
+            "DONATIONGIFTAID"+i     : p["ISGIFTAIDNAME"],
+            "DONATIONCREATEDBY"+i   : p["CREATEDBY"],
+            "DONATIONCREATEDBYNAME"+i:  p["CREATEDBY"],
+            "DONATIONCREATEDDATE"+i : python2display(l, p["CREATEDDATE"]),
+            "DONATIONLASTCHANGEDBY"+i : p["LASTCHANGEDBY"],
+            "DONATIONLASTCHANGEDBYNAME"+i : p["LASTCHANGEDBY"],
+            "DONATIONLASTCHANGEDDATE"+i : python2display(l, p["LASTCHANGEDDATE"]),
+            "PAYMENTID"+i           : str(p["ID"]),
+            "PAYMENTTYPE"+i         : p["DONATIONNAME"],
+            "PAYMENTMETHOD"+i       : p["PAYMENTNAME"],
+            "PAYMENTDATE"+i         : python2display(l, p["DATE"]),
+            "PAYMENTDATEDUE"+i      : python2display(l, p["DATEDUE"]),
+            "PAYMENTAMOUNT"+i       : format_currency_no_symbol(l, p["DONATION"]),
+            "PAYMENTCOMMENTS"+i     : p["COMMENTS"],
+            "PAYMENTCOMMENTSFW"+i   : fw(p["COMMENTS"]),
+            "PAYMENTGIFTAID"+i      : p["ISGIFTAIDNAME"],
+            "PAYMENTCREATEDBY"+i    : p["CREATEDBY"],
+            "PAYMENTCREATEDBYNAME"+i: p["CREATEDBY"],
+            "PAYMENTCREATEDDATE"+i  : python2display(l, p["CREATEDDATE"]),
+            "PAYMENTLASTCHANGEDBY"+i: p["LASTCHANGEDBY"],
+            "PAYMENTLASTCHANGEDBYNAME"+i : p["LASTCHANGEDBY"],
+            "PAYMENTLASTCHANGEDDATE"+i : python2display(l, p["LASTCHANGEDDATE"])
+        }
+        tags.update(x)
+        if i == "": return # Don't add a total for the compatibility row
+        if p["DATE"] is not None: totals["received"] += p["DONATION"]
+        if p["DATE"] is None: totals["due"] += p["DONATION"]
+    add_to_tags("", donations[0]) 
+    for i, d in enumerate(donations):
+        add_to_tags(str(i+1), d)
+    tags["PAYMENTTOTALDUE"] = format_currency_no_symbol(l, totals["due"])
+    tags["PAYMENTTOTALRECEIVED"] = format_currency_no_symbol(l, totals["received"])
     return tags
 
 def person_tags(dbo, p):
@@ -1067,7 +1086,7 @@ def generate_animal_doc(dbo, template, animalid, username):
     if a["ACTIVEMOVEMENTID"] is not None and a["ACTIVEMOVEMENTID"] != 0:
         md = financial.get_movement_donation(dbo, a["ACTIVEMOVEMENTID"])
         if md is not None and md > 0: 
-            tags = append_tags(tags, donation_tags(dbo, md))
+            tags = append_tags(tags, donation_tags(dbo, [md,]))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, template, tags, im)
 
@@ -1084,18 +1103,20 @@ def generate_person_doc(dbo, template, personid, username):
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, template, tags, im)
 
-def generate_donation_doc(dbo, template, donationid, username):
+def generate_donation_doc(dbo, template, donationids, username):
     """
     Generates a donation document from a template
     template: The path/name of the template to use
-    donationid: The donation to generate for
+    donationids: A list of ids to generate for
     """
-    d = financial.get_donation(dbo, donationid)
-    if d is None: raise utils.ASMValidationError("%d is not a valid donation ID" % donationid)
-    tags = donation_tags(dbo, d)
-    tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, int(d["OWNERID"]))))
+    dons = financial.get_donations_by_ids(dbo, donationids)
+    if len(dons) == 0: 
+        raise utils.ASMValidationError("%s does not contain any valid donation IDs" % donationids)
+    d = dons[0]
+    tags = person_tags(dbo, person.get_person(dbo, int(d["OWNERID"])))
     if d["ANIMALID"] is not None and d["ANIMALID"] != 0:
         tags = append_tags(tags, animal_tags(dbo, animal.get_animal(dbo, d["ANIMALID"])))
+    tags = append_tags(tags, donation_tags(dbo, dons))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, template, tags)
 

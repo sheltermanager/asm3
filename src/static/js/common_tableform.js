@@ -22,7 +22,7 @@
         buttons_render: function(buttons, notoolbar) {
             var b = "";
             if (!notoolbar) {
-                b += "<div class=\"asm-toolbar\">";
+                b += "<div class=\"asm-toolbar no-print\">";
             }
             $.each(buttons, function(i, v) {
                 if (v.hideif && v.hideif()) { return; }
@@ -461,6 +461,9 @@
          *      use_default_values: false,
          *      autofocus: true,
          *      columns: 1,
+         *      delete_button: false,
+         *      delete_perm: 'da',
+         *      edit_perm: 'ca',
          *      width: 500,
          *      height: 200, (omit for auto)
          *      html_form_action: target (renders form tag around fields if set)
@@ -625,9 +628,10 @@
          * dialog: (see dialog_render)
          * row: The row to edit
          * changecallback: function to run when the user clicks the change button (after validation)
-         * onloadcallback: function to run after the form has been loaded and displayed
+         * loadcallback: function to run after the form has been loaded and displayed
+         * deletecallback: function to run after the delete button is clicked
          */
-        dialog_show_edit: function(dialog, row, changecallback, onloadcallback) {
+        dialog_show_edit: function(dialog, row, changecallback, loadcallback, deletecallback) {
             this.fields_populate_from_json(dialog.fields, row);
             // Find any fields marked readonly and disable/hide them
             $.each(dialog.fields, function(i, v) {
@@ -639,19 +643,33 @@
                 }
             });
             var b = {}; 
-            b[_("Change")] = function() {
-                if (tableform.fields_validate(dialog.fields)) {
-                    if (dialog.close_on_ok) {
-                        $(this).dialog("close");
-                    }
-                    else {
+            if (dialog.delete_button && dialog.delete_perm && common.has_permission(dialog.delete_perm)) {
+                b[_("Delete")] = {
+                    text: _("Delete"),
+                    "class": 'asm-redbutton',
+                    click: function() {
                         tableform.dialog_disable_buttons();
+                        if (deletecallback) {
+                            deletecallback(row);
+                        }
                     }
-                    if (changecallback) {
-                        changecallback(row);
+                };
+            }
+            if (!dialog.edit_perm || (dialog.edit_perm && common.has_permission(dialog.edit_perm))) {
+                b[_("Change")] = function() {
+                    if (tableform.fields_validate(dialog.fields)) {
+                        if (dialog.close_on_ok) {
+                            $(this).dialog("close");
+                        }
+                        else {
+                            tableform.dialog_disable_buttons();
+                        }
+                        if (changecallback) {
+                            changecallback(row);
+                        }
                     }
-                }
-            };
+                };
+            }
             b[_("Cancel")] = function() { $(this).dialog("close"); };
             $("#dialog-tableform").dialog({
                 resizable: false,
@@ -676,8 +694,8 @@
             });
             this.dialog_error("");
             $("#dialog-tableform").dialog("open");
-            if (onloadcallback) {
-                onloadcallback(row);
+            if (loadcallback) {
+                loadcallback(row);
             }
         },
 
@@ -703,6 +721,7 @@
          *        options: { displayfield: "DISPLAY", valuefield: "VALUE", rows: [ {rows} ] }, (only valid for select type)
          *        options: "<option>test</option>" also valid
          *        personfilter: "all",   (only valid for person type)
+         *        personmode: "full",    (only valid for person type)
          *        change: function(changeevent), 
          *        blur: function(blurevent)
          *      } ]
@@ -874,6 +893,7 @@
                     d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                     if (v.readonly) { d += " data-noedit=\"true\" "; }
                     if (v.personfilter) { d += "data-filter=\"" + v.personfilter + "\" "; }
+                    if (v.personmode) { d += "data-mode=\"" + v.personmode + "\" "; }
                     if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                     d += "/>";
                     if (!v.justwidget) { d += "</td></tr>"; }

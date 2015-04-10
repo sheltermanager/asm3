@@ -13,7 +13,7 @@ import person
 import users
 from i18n import BUILD, _, translate, format_currency, now, python2display
 from sitedefs import BASE_URL, LOCALE, MINIFY_JS
-from sitedefs import ASMSELECT_CSS, ASMSELECT_JS, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, TABLESORTER_CSS, TABLESORTER_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_4_JS
+from sitedefs import ASMSELECT_CSS, ASMSELECT_JS, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_4_JS
 
 BACKGROUND_COLOURS = {
     "black-tie":        "#333333",
@@ -206,6 +206,7 @@ def bare_header(title, js = "", theme = "ui-lightness", locale = LOCALE, config_
                 script_tag(ASMSELECT_JS) + 
                 script_tag(FULLCALENDAR_JS) + 
                 script_tag(TABLESORTER_JS) + 
+                script_tag(TABLESORTER_WIDGETS_JS) + 
                 script_tag(TIMEPICKER_JS) +
                 script_config() + 
                 script_i18n(locale) + 
@@ -454,6 +455,11 @@ def controller_bool(name, b):
     """ Adds a controller boolean property """
     return "controller.%s = %s;" % (name, b and "true" or "false")
 
+def controller_date(name, d):
+    """ Adds a controller date property """
+    if d is None: return controller_plain(name, "null")
+    return controller_str(name, d.isoformat())
+
 def controller_int(name, i):
     """ Adds a controller int property """
     return "controller.%s = %d;" % (name, i)
@@ -471,6 +477,27 @@ def controller_json(name, obj):
     """ Adds a controller json property (converts obj to json) """
     jv = json(obj)
     return "controller.%s = %s;" % (name, jv)
+
+def rss(inner, title, link, description):
+    """ Renders an RSS document """
+    return '<?xml version="1.0" encoding="UTF-8"?>' \
+        '<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" >' \
+        '<channel rdf:about="%s">' \
+        '<title>%s</title>' \
+        '<description>%s</description>' \
+        '<link>%s</link>' \
+        '</channel>' \
+        '%s' \
+        '</rdf:RDF>' % (BASE_URL, title, description, link, inner)
+
+def rss_item(title, link, description):
+    return '<item rdf:about="%s">' \
+        '<title>%s</title>' \
+        '<link>%s</link>' \
+        '<description>' \
+        '%s' \
+        '</description>' \
+        '</item>' % (BASE_URL, title, link, description)
 
 def icon(name, title = ""):
     """
@@ -538,8 +565,9 @@ def json_menu(l, reports, mailmerges):
             ( "", "", "", "--cat", "asm-icon-person", _("People", l) ),
             ( users.VIEW_PERSON, "alt+shift+p", "", "person_find", "asm-icon-person-find", _("Find person", l) ),
             ( users.ADD_PERSON, "", "", "person_new", "asm-icon-person-add", _("Add a new person", l) ),
-            ( users.VIEW_PERSON, "", "", "person_lookingfor", "asm-icon-animal-find", _("Person looking for report", l) ),
             ( users.ADD_LOG, "", "", "log_new?mode=person", "asm-icon-log", _("Add a log entry", l) ),
+            ( users.VIEW_PERSON, "", "", "person_lookingfor", "asm-icon-animal-find", _("Person looking for report", l) ),
+            ( users.VIEW_ROTA, "", "tagrota", "staff_rota", "asm-icon-rota", _("Staff rota", l) ),
             ( "", "", "", "--break", "", "" ),
             ( "", "", "taganimalcontrolheader", "--cat", "asm-icon-call", _("Animal Control", l) ),
             ( users.ADD_INCIDENT, "alt+shift+i", "taganimalcontrol", "incident_new", "asm-icon-blank", _("Report a new incident", l) ),
@@ -1372,6 +1400,14 @@ def template_selection(templates, url):
             lastpath = t["PATH"]
         s += "<li class=\"asm-menu-item\"><a target=\"_blank\" class=\"templatelink\" data=\"%d\" href=\"%s&template=%s\">%s</a></li>" % (t["ID"], url, t["ID"], t["NAME"])
     return s
+
+def timeline_rss(dbo, limit = 500):
+    l = dbo.locale
+    rows = animal.get_timeline(dbo, limit)
+    h = []
+    for r in rows:
+        h.append( rss_item( r["DESCRIPTION"], "%s/%s?id=%d" % (BASE_URL, r["LINKTARGET"], r["ID"]), "") )
+    return rss("\n".join(h), _("Showing {0} timeline events.", l).format(limit), BASE_URL, "")
 
 def report_criteria(dbo, crit, locationfilter = ""):
     """

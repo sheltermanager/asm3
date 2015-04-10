@@ -52,6 +52,7 @@ $(function() {
     var dialog = {
         add_title: _("Add report"),
         edit_title: _("Edit report"),
+        edit_perm: 'hcr',
         close_on_ok: false,
         columns: 1,
         width: 800,
@@ -406,7 +407,7 @@ $(function() {
             var formdata = "mode=smcomlist";
             common.ajax_post("reports", formdata, function(result) { 
                 $("#table-smcom").html(result);
-                $("#table-smcom").table({ floating_header: false, sortList: [[1, 0]] });
+                $("#table-smcom").table({ floating_header: false, filter: true, sortList: [[1, 0]] });
                 $("#button-install").button("disable");
                 $("#table-smcom input").click(function() {
                     if ($("#table-smcom input:checked").length > 0) {

@@ -32,6 +32,7 @@ Also has some useful helper functions for reading CSVs and parsing values, eg:
     asm.now()
     asm.nulltostr()
     asm.subtract_days, asm.add_days
+    asm.fw (first word)
     asm.iif (inline if, eg: iif(condition, true, false))
     
 """
@@ -104,6 +105,12 @@ def nulltostr(s):
         return ""
     else:
         return s
+
+def fw(s):
+    """ returns the first word """
+    if s is None: return s
+    if s.find(" ") == -1: return s
+    return s.split(" ", 2)[0]
 
 def remove_time(s):
     if s is None: return s
@@ -969,6 +976,17 @@ def subtract_days(d, dy):
     if d is None: return d
     return d - datetime.timedelta(days=dy)
 
+def animal_image(animalid, imagedata):
+    """ Writes the media and dbfs entries to add an image to an animal """
+    mediaid = getid("media")
+    medianame = str(mediaid) + '.jpg'
+    encoded = base64.b64encode(imagedata)
+    print "INSERT INTO media (id, medianame, medianotes, websitephoto, docphoto, newsincelastpublish, updatedsincelastpublish, " \
+        "excludefrompublish, linkid, linktypeid, recordversion, date) VALUES (%d, '%s', %s, 1, 1, 0, 0, 0, %d, 0, 0, %s);" % \
+        ( mediaid, medianame, ds(""), animalid, dd(datetime.datetime.today()) )
+    print "INSERT INTO dbfs (id, name, path, content) VALUES (%d, '%s', '%s', '');" % ( getid("dbfs"), str(animalid), '/animal' )
+    print "INSERT INTO dbfs (id, name, path, content) VALUES (%d, '%s', '%s', '%s');" % (getid("dbfs"), medianame, "/animal/" + str(animalid), encoded)
+
 def petfinder_get_adoptable(shelterid):
     """
     Returns the page of adoptable animals for the PetFinder shelterid
@@ -1001,18 +1019,11 @@ def petfinder_image(page, animalid, animalname):
     try:
         sys.stderr.write("GET %s\n" % imageurl)
         jpgdata = urllib2.urlopen(imageurl).read()
-        encoded = base64.b64encode(jpgdata)
         sys.stderr.write("Got image from %s\n" % imageurl)
     except Exception,err:
         sys.stderr.write(str(err) + "\n")
         return
-    mediaid = getid("media")
-    medianame = str(mediaid) + '.jpg'
-    print "INSERT INTO media (id, medianame, medianotes, websitephoto, docphoto, newsincelastpublish, updatedsincelastpublish, " \
-        "excludefrompublish, linkid, linktypeid, recordversion, date) VALUES (%d, '%s', %s, 1, 1, 0, 0, 0, %d, 0, 0, %s);" % \
-        ( mediaid, medianame, ds(""), animalid, dd(datetime.datetime.today()) )
-    print "INSERT INTO dbfs (id, name, path, content) VALUES (%d, '%s', '%s', '');" % ( getid("dbfs"), str(animalid), '/animal' )
-    print "INSERT INTO dbfs (id, name, path, content) VALUES (%d, '%s', '%s', '%s');" % (getid("dbfs"), medianame, "/animal/" + str(animalid), encoded)
+    animal_image(animalid, jpgdata)
 
 class AnimalType:
     ID = 0

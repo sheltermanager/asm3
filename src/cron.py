@@ -40,31 +40,56 @@ def daily(dbo):
         # lock at this time should be erroneous
         configuration.db_unlock(dbo)
 
-        # Check to see if any updates need performing on this database
-        if dbupdate.check_for_updates(dbo):
-            dbupdate.perform_updates(dbo)
-        if dbupdate.check_for_view_seq_changes(dbo):
-            dbupdate.install_db_views(dbo)
-            dbupdate.install_db_sequences(dbo)
+        try:
+            # Check to see if any updates need performing on this database
+            if dbupdate.check_for_updates(dbo):
+                dbupdate.perform_updates(dbo)
+            if dbupdate.check_for_view_seq_changes(dbo):
+                dbupdate.install_db_views(dbo)
+                dbupdate.install_db_sequences(dbo)
+            # Get the latest news from sheltermanager.com
+            dbfs.update_asm_news(dbo)
+            # Shouldn't be anyone logged in at this point
+            users.auto_logout(dbo)
+        except:
+            em = str(sys.exc_info()[0])
+            al.error("FAIL: running database preparation tasks: %s" % em, "cron.daily", dbo, sys.exc_info())
 
-        # Get the latest news from sheltermanager.com
-        dbfs.update_asm_news(dbo)
+        try:
+            # Update on shelter and foster animal location fields
+            animal.update_on_shelter_animal_statuses(dbo)
+            animal.update_foster_animal_statuses(dbo)
+        except:
+            em = str(sys.exc_info()[0])
+            al.error("FAIL: running animal update tasks: %s" % em, "cron.daily", dbo, sys.exc_info())
 
-        # Shouldn't be anyone logged in at this point
-        users.auto_logout(dbo)
+        try:
+            # Update all animal variable data (age, time on shelter, etc)
+            animal.update_all_variable_animal_data(dbo)
+        except:
+            em = str(sys.exc_info()[0])
+            al.error("FAIL: running variable data update: %s" % em, "cron.daily", dbo, sys.exc_info())
 
-        # Update on shelter and foster animal location fields
-        animal.update_on_shelter_animal_statuses(dbo)
-        animal.update_foster_animal_statuses(dbo)
+        try:
+            # Update animal figures for reports
+            animal.update_animal_figures(dbo)
+            animal.update_animal_figures_annual(dbo)
+            animal.update_animal_figures_asilomar(dbo)
+            animal.update_animal_figures_monthly_asilomar(dbo)
+        except:
+            em = str(sys.exc_info()[0])
+            al.error("FAIL: running animal figures: %s" % em, "cron.daily", dbo, sys.exc_info())
 
-        # Update all animal variable data (age, time on shelter, etc)
-        animal.update_all_variable_animal_data(dbo)
+        try:
+            # Update waiting list urgencies and auto remove
+            waitinglist.auto_remove_waitinglist(dbo)
+            waitinglist.auto_update_urgencies(dbo)
+        except:
+            em = str(sys.exc_info()[0])
+            al.error("FAIL: running waiting list tasks: %s" % em, "cron.daily", dbo, sys.exc_info())
 
-        # Update animal figures for reports
-        animal.update_animal_figures(dbo)
-        animal.update_animal_figures_annual(dbo)
-        animal.update_animal_figures_asilomar(dbo)
-        animal.update_animal_figures_monthly_asilomar(dbo)
+        # Email diary notes to users
+        diary.email_uncompleted_upto_today(dbo)
 
         # Update animal litter counts
         animal.update_active_litters(dbo)
@@ -87,15 +112,8 @@ def daily(dbo):
         # auto remove online forms
         onlineform.auto_remove_old_incoming_forms(dbo)
 
-        # Update waiting list urgencies and auto remove
-        waitinglist.auto_remove_waitinglist(dbo)
-        waitinglist.auto_update_urgencies(dbo)
-
         # See if any new PDFs have been attached that we can scale down
         media.check_and_scale_pdfs(dbo)
-
-        # Email diary notes to users
-        diary.email_uncompleted_upto_today(dbo)
 
     except:
         em = str(sys.exc_info()[0])

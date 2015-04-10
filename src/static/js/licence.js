@@ -8,6 +8,7 @@ $(function() {
     var dialog = {
         add_title: _("Add license"),
         edit_title: _("Edit license"),
+        edit_perm: 'capl',
         close_on_ok: false,
         columns: 1,
         width: 550,

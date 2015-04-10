@@ -326,31 +326,6 @@ img {
     font-weight: bold;
 }
 
-.asm-search-available {
-    color: green;
-    font-weight: bold;
-}
-
-.asm-search-reserved {
-    color: green;
-    font-weight: bold;
-}
-
-.asm-search-cruelty {
-    color: red;
-    font-weight: bold;
-}
-
-.asm-search-quarantine {
-    color: red;
-    font-weight: bold;
-}
-
-.asm-search-hold {
-    color: red;
-    font-weight: bold;
-}
-
 .asm-search-result {
     padding: 5px;
     border-bottom: 1px solid #999;
@@ -370,6 +345,27 @@ img {
 .asm-search-result a { 
     font-weight: bold; 
 }
+
+/** ROTA ======================== */
+.asm-staff-rota th { background-color: #fff; color: #666; padding: 8px; font-weight: normal; }
+.asm-staff-rota-today { background-color: #f5f5dc !important; color: #000 !important; }
+.asm-staff-rota { width: 100%; border-collapse: collapse; }
+.asm-staff-rota td { border: 1px solid #dbdbdb; text-align: center; padding: 5px; }
+.asm-staff-rota td:first-child { text-align: right !important; }
+.asm-staff-rota-cell { background-color: #fff; cursor: pointer; }
+.asm-staff-rota-cell:hover { background-color: #eee; }
+.asm-staff-rota-shift { width: 80%; color: #000 !important; padding: 4px; display: inline-block; border: 1px solid transparent; }
+.asm-staff-rota-shift:hover { border: 1px dotted #555 !important; }
+.asm-staff-rota-timeoff { width: 80%; background-color: #ffffcc; color: #000 !important; padding: 4px; display: inline-block; border: 1px solid transparent; }
+.asm-staff-rota-timeoff:hover { border: 1px dotted #555 !important; }
+.asm-staff-rota-staff-odd { background-color: #085278; color: #fff; }
+.asm-staff-rota-staff-odd a { background-color: #085278; color: #fff; }
+.asm-staff-rota-staff-even { background-color: #126894; color: #fff; }
+.asm-staff-rota-staff-even a { background-color: #126894; color: #fff; }
+.asm-staff-rota-volunteer-odd { background-color: #619a62; color: #fff; }
+.asm-staff-rota-volunteer-odd a { background-color: #619a62; color: #fff; }
+.asm-staff-rota-volunteer-even { background-color: #3d633e; color: #fff; }
+.asm-staff-rota-volunteer-even a { background-color: #3d633e; color: #fff; }
 
 /** TIMELINE ==================== */
 .asm-timeline-time { font-size: 80%; font-style: italic; opacity: 0.5; }
@@ -621,6 +617,11 @@ select[disabled="disabled"], input[disabled="disabled"], textarea[disabled="disa
     font-weight: bold;
 }
 
+.asm-redbutton {
+    background: red !important;
+    color: #fff !important;
+}
+
 .asm-underlined-rows {
     border-collapse: collapse;
     width: 100%;
@@ -650,4 +651,8 @@ select[disabled="disabled"], input[disabled="disabled"], textarea[disabled="disa
     text-decoration: none;
 }
 
-
+/** Hide elements from printing by giving them the no-print class */
+@media print
+{
+    .no-print, .no-print * { display: none !important; }
+}

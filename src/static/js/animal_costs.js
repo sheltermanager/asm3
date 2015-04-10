@@ -8,6 +8,7 @@ $(function() {
     var dialog = {
         add_title: _("Add cost"),
         edit_title: _("Edit cost"),
+        edit_perm: 'ccad',
         helper_text: _("Costs need a date and amount."),
         close_on_ok: true,
         columns: 1,

@@ -122,8 +122,8 @@ $(function() {
                 '<tr id="weightrow">',
                 '<td><label for="weight">' + _("Weight") + '</label></td>',
                 '<td><span style="white-space: nowrap;">',
-                '<input id="weight" data-json="WEIGHT" data-post="weight" class="asm-textbox asm-numberbox" />',
-                _("kg"),
+                '<input id="weight" data-json="WEIGHT" data-post="weight" class="asm-textbox asm-halftextbox asm-numberbox" />',
+                '<label id="weightlabel">' + _("kg") + '</label>',
                 '</span>',
                 '</td>',
                 '</tr>',
@@ -191,18 +191,21 @@ $(function() {
                 '<!-- final column holds flags -->',
                 '<td id="onshelterflags">',
                 '<span style="white-space: nowrap">',
+                //html.icon("nonshelter"),
                 '<input class="asm-checkbox" type="checkbox" id="nonshelter" data-json="NONSHELTERANIMAL" data-post="nonshelter" title=',
                 '"' + html.title(_("This animal should not be shown in figures and is not in the custody of the shelter")) + '" />',
                 '<label for="nonshelter" class="asm-search-nonshelter">' + _("Non-Shelter") + '</label>',
                 '</span>',
                 '<br />',
                 '<span style="white-space: nowrap">',
+                //html.icon("notforadoption"),
                 '<input class="asm-checkbox" type="checkbox" id="notforadoption" data-json="ISNOTAVAILABLEFORADOPTION" data-post="notforadoption" title=',
                 '"' + html.title(_("This animal should not be included when publishing animals for adoption")) + '" />',
                 '<label for="notforadoption" class="asm-search-notforadoption">' + _("Not For Adoption") + '</label>',
                 '</span>',
                 '<br />',
                 '<span style="white-space: nowrap">',
+                //html.icon("hold"),
                 '<input class="asm-checkbox" type="checkbox" id="hold" data-json="ISHOLD" data-post="hold" title=',
                 '"' + html.title(_("This animal should be held in case it is reclaimed")) + '" />',
                 '<label for="hold">' + _("Hold until") + '</label>',
@@ -211,12 +214,14 @@ $(function() {
                 '</span>',
                 '<br/>',
                 '<span style="white-space: nowrap">',
+                //html.icon("quarantine"),
                 '<input class="asm-checkbox" type="checkbox" id="quarantine" data-json="ISQUARANTINE" data-post="quarantine" title=',
                 '"' + html.title(_("This animal is quarantined")) + '" />',
                 '<label for="quarantine">' + _("Quarantine") + '</label>',
                 '</span>',
                 '<br />',
                 '<span style="white-space: nowrap">',
+                //html.icon("case"),
                 '<input class="asm-checkbox" type="checkbox" id="crueltycase" data-json="CRUELTYCASE" data-post="crueltycase" title=',
                 '"' + html.title(_("This animal is part of a cruelty case against an owner")) + '" />',
                 '<label for="crueltycase">' + _("Cruelty Case") + '</label>',
@@ -239,7 +244,7 @@ $(function() {
                 '<td width="50%">',
                 '<!-- left table -->',
                 '<table width="100%">',
-                '<tr>',
+                '<tr id="originalownerrow">',
                 '<td valign="top" class="bottomborder">',
                 '<label for="originalowner">' + _("Original Owner") + '</label>',
                 '</td>',
@@ -247,7 +252,7 @@ $(function() {
                 '<input id="originalowner" data-json="ORIGINALOWNERID" data-post="originalowner" type="hidden" class="asm-personchooser" />',
                 '</td>',
                 '</tr>',
-                '<tr>',
+                '<tr id="broughtinbyownerrow">',
                 '<td valign="top">',
                 '<label for="broughtinby">' + _("Brought In By") + '</label>',
                 '</td>',
@@ -745,10 +750,6 @@ $(function() {
                 $("#deathcategory").closest("tr").fadeIn();
                 $("#puttosleep").closest("tr").fadeIn();
                 $("#ptsreason").closest("div").fadeIn();
-                // If the animal is off the shelter, tick the died off shelter box
-                if (controller.animal.ARCHIVED == 1)  {
-                    $("#diedoffshelter").prop("checked", true);
-                }
             }
 
             // Enable/disable health and identification fields based on checkboxes
@@ -808,11 +809,22 @@ $(function() {
                 $("#onshelterflags").hide();
             }
 
-            // If the animal is non-shelter, don't show the location
+            // If the animal is non-shelter, don't show the location, 
+            // transfer/pickup, brought in by owner, bonded with, reasons or asilomar
             if ($("#nonshelter").is(":checked")) {
                 $("#lastlocation").hide();
                 $("#locationrow").hide();
                 $("#locationunitrow").hide();
+                $("#transferinrow").hide();
+                $("#pickeduprow").hide();
+                $("#broughtinbyownerrow").hide();
+                $("#originalownerrow td").removeClass("bottomborder");
+                $("#bondedwith1row").hide();
+                $("#bondedwith2row").hide();
+                $("#entryreasonrow").hide();
+                $("#reasonforentryrow").hide();
+                $("#reasonnotfromownerrow").hide();
+                $(".asilomar").hide();
             }
 
             // If the animal doesn't have a picture, they can't publish to Facebook
@@ -852,6 +864,10 @@ $(function() {
                     config.str("ShortCodingFormat").indexOf("E") != -1) {
                     $("#entryreason").select("disable");
                 }
+            }
+
+            if (config.bool("ShowWeightInLbs")) {
+                $("#weightlabel").html(_("lb"));
             }
 
             if (config.bool("DontShowLitterID")) { $("#litteridrow").hide(); }
@@ -1177,6 +1193,16 @@ $(function() {
             // Same goes for any of our person choosers
             $(".asm-personchooser").personchooser().bind("personchoosercleared", function(event, rec) {
                 validate.dirty(true);
+            });
+
+            // If the deceased date is changed and now has a value, check to see if the
+            // animal is off shelter and helpfully tick the died off shelter box
+            $("#deceaseddate").change(function(e) {
+                if ($("#deceaseddate").val()) {
+                    if (controller.animal.ARCHIVED == 1)  {
+                        $("#diedoffshelter").prop("checked", true);
+                    }
+                }
             });
 
             // Controls that update the screen when changed

@@ -11,9 +11,11 @@
      * records.
      *     
      *     filter: One of all, vet, retailer, staff, fosterer, volunteer, shelter, 
-     *            aco, homechecked, homechecker, member, donor
+     *             aco, homechecked, homechecker, member, donor
+     *     mode:   One of full or brief (full shows the address and other info, 
+     *             brief just shows the name)
      *
-     * <input id="person" data-filter="vet" class="asm-personchooser" data="boundfield" type="hidden" value="initialid" />
+     * <input id="person" data-mode="full" data-filter="vet" class="asm-personchooser" data="boundfield" type="hidden" value="initialid" />
      *
      * callbacks: loaded (after loadbyid is complete)
      *            change (after user has clicked on a new selection)
@@ -32,7 +34,8 @@
             counties: "",
             towncounties: "",
             personflags: [],
-            filter: "all"
+            filter: "all",
+            mode: "full"
         },
         _create: function() {
             var self = this;
@@ -41,12 +44,16 @@
             if (this.element.attr("data-filter")) { 
                 this.options.filter = this.element.attr("data-filter");
             }
+            if (this.element.attr("data-mode")) {
+                this.options.mode = this.element.attr("data-mode");
+            }
             // Choose the title from the filter
             if (this.options.filter == "vet") { title = _("Find vet"); }
             if (this.options.filter == "retailer") { title = _("Find retailer"); }
             if (this.options.filter == "staff") { title = _("Find staff"); }
             if (this.options.filter == "fosterer") { title = _("Find fosterer"); }
             if (this.options.filter == "volunteer") { title = _("Find volunteer"); }
+            if (this.options.filter == "volunteerandstaff") { title = _("Find staff/volunteer"); }
             if (this.options.filter == "shelter") { title = _("Find shelter"); }
             if (this.options.filter == "aco") { title = _("Find aco"); }
             if (this.options.filter == "homechecked") { title = _("Find homechecked"); }
@@ -337,9 +344,11 @@
                     self.element.val(rec.ID);
                     var disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + 
                         rec.OWNERNAME + " - " + rec.OWNERCODE + "</a></span>";
-                    disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + 
-                        "<br/>" + rec.OWNERPOSTCODE + "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + 
-                        "<br/>" + rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
+                    if (self.options.mode == "full") {
+                        disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + 
+                            "<br/>" + rec.OWNERPOSTCODE + "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + 
+                            "<br/>" + rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
+                    }
                     display.html(disp);
                     node.find(".personchooser-banned").val(rec.ISBANNED);
                     node.find(".personchooser-idcheck").val(rec.IDCHECK);
@@ -394,9 +403,11 @@
                         self.options.rec = rec;
                         var disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + 
                             "\">" + rec.OWNERNAME + " - " + rec.OWNERCODE + "</a></span>";
-                        disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + 
-                            rec.OWNERPOSTCODE + "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + 
-                            rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
+                        if (self.options.mode == "full") {
+                            disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + 
+                                rec.OWNERPOSTCODE + "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + 
+                                rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
+                        }
                         display.html(disp);
                         node.find(".personchooser-banned").val(rec.ISBANNED);
                         node.find(".personchooser-idcheck").val(rec.IDCHECK);
@@ -454,7 +465,9 @@
                     var rec = people[0];
                     self.element.val(rec.ID);
                     var disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + rec.OWNERNAME + "</a></span>";
-                    disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
+                    if (self.options.mode == "full") {
+                        disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
+                    }
                     display.html(disp);
                     node.find(".personchooser-banned").val(rec.ISBANNED);
                     node.find(".personchooser-idcheck").val(rec.IDCHECK);
@@ -529,7 +542,9 @@
                     }
                     else {
                         var disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"#\">" + rec.OWNERNAME + "</a></span>";
-                        disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
+                        if (self.options.mode == "full") {
+                            disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
+                        }
                         dialogsimilar.find(".similar-person").html(disp);
                         // When the user clicks the name of the similar person,
                         // select it for the field instead

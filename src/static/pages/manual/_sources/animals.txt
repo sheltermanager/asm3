@@ -44,17 +44,16 @@ The Advanced screen allows you to enter detailed searches for groups of animals
 within your database. 
 
 If you press the search button without entering any criteria, you will get a
-list of all animals on the shelter who are still alive. This is because the
+list of all animals on the shelter. This is because the
 location box defaults to “On Shelter” - if you change this to “(all)” you will
-get all animals who are still alive, wherever they are. Alive, because the
-search automatically excludes dead animals. If you wish to include dead
-animals, tick the box labeled “Include deceased”. 
+get all animals wherever they are. 
 
 Once you press the search button, ASM will search through your database and
 check each record against any criteria you have chosen, and return to you a
 list of all those that matched. For example, you could quite easily search for
 all animals of species “Dog” who are still on the shelter, located in a
 particular location and under 6 months old. 
+
 The criteria fields follow one of three types: 
 
 * Drop Down Boxes: You should select something from the list or the “(all)”
@@ -68,12 +67,9 @@ The criteria fields follow one of three types:
   “From Age” box and 0.5 in the “To Age” box will return animals who are six
   months old and younger. 
 
-* Check Boxes: Here, you are expected to tick the box to indicate a yes or no
-  value - eg: Ticking the “Include deceased” box includes dead animals in your
-  search results. 
-
-For more information about what the criteria boxes expect, hover your mouse
-over them. 
+* Filter: The filter dropdown allows selection of a number of options at the
+  same time, such as only including animals that were transferred in from
+  another organisation or housetrained.
 
 Edit Animal
 -----------

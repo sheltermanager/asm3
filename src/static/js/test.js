@@ -8,6 +8,7 @@ $(function() {
     var dialog = {
         add_title: _("Add test"),
         edit_title: _("Edit test"),
+        edit_perm: 'cat',
         helper_text: _("Tests need an animal and at least a required date."),
         close_on_ok: true,
         autofocus: false,
@@ -153,7 +154,7 @@ $(function() {
              }
          },
          { id: "offset", type: "dropdownfilter", 
-             options: [ "m31|" + _("Due today"), "p7|" + _("Due in next week"), "p31|" + _("Due in next month"), "p365|" + _("Due in next year") ],
+             options: [ "m365|" + _("Due today"), "p7|" + _("Due in next week"), "p31|" + _("Due in next month"), "p365|" + _("Due in next year") ],
              click: function(selval) {
                 window.location = controller.name + "?offset=" + selval;
              },

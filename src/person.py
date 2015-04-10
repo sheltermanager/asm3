@@ -5,6 +5,7 @@ import al
 import animal
 import audit
 import configuration
+import datetime
 import dbfs
 import diary
 import db
@@ -14,7 +15,7 @@ import media
 import reports
 import users
 import utils
-from i18n import _, subtract_years, now
+from i18n import _, add_days, date_diff_days, format_time, python2display, subtract_years, now
 from sitedefs import BULK_GEO_BATCH
 
 ASCENDING = 0
@@ -53,6 +54,15 @@ def get_person_query(dbo):
         "FROM owner o " \
         "LEFT OUTER JOIN owner ho ON ho.ID = o.HomeCheckedBy " \
         "LEFT OUTER JOIN media web ON web.LinkID = o.ID AND web.LinkTypeID = 3 AND web.WebsitePhoto = 1 " % ownercode
+
+def get_rota_query(dbo):
+    """
+    Returns the SELECT and JOIN commands necessary for selecting from rota hours
+    """
+    return "SELECT r.*, o.OwnerName, rt.RotaType AS RotaTypeName " \
+        "FROM ownerrota r " \
+        "LEFT OUTER JOIN lksrotatype rt ON rt.ID = r.RotaTypeID " \
+        "INNER JOIN owner o ON o.ID = r.OwnerID "
 
 def get_person(dbo, personid):
     """
@@ -94,6 +104,12 @@ def get_person_name_code(dbo, personid):
     r = db.query(dbo, "SELECT o.OwnerName, %s AS OwnerCode FROM owner o WHERE o.ID = %d" % (get_person_code_query(dbo), int(personid)))
     if len(r) == 0: return ""
     return "%s - %s" % (r[0]["OWNERNAME"], r[0]["OWNERCODE"])
+
+def get_staff_volunteers(dbo):
+    """
+    Returns all staff and volunteers
+    """
+    return db.query(dbo, get_person_query(dbo) + " WHERE o.IsStaff = 1 OR o.IsVolunteer = 1 ORDER BY o.IsStaff DESC, o.OwnerName")
 
 def get_towns(dbo):
     """
@@ -142,6 +158,7 @@ def get_satellite_counts(dbo, personid):
         "(SELECT COUNT(*) FROM ownercitation oc WHERE oc.OwnerID = o.ID) AS citation, " \
         "(SELECT COUNT(*) FROM ownerinvestigation oi WHERE oi.OwnerID = o.ID) AS investigation, " \
         "(SELECT COUNT(*) FROM ownerlicence ol WHERE ol.OwnerID = o.ID) AS licence, " \
+        "(SELECT COUNT(*) FROM ownerrota r WHERE r.OwnerID = o.ID) AS rota, " \
         "(SELECT COUNT(*) FROM ownertraploan ot WHERE ot.OwnerID = o.ID) AS traploan, " \
         "(SELECT COUNT(*) FROM ownervoucher ov WHERE ov.OwnerID = o.ID) AS vouchers, " \
         "((SELECT COUNT(*) FROM animal WHERE BroughtInByOwnerID = o.ID OR OriginalOwnerID = o.ID OR CurrentVETID = o.ID OR OwnersVetID = o.ID OR PickedUpByOwnerID = o.ID) + " \
@@ -285,7 +302,7 @@ def get_person_find_simple(dbo, query, classfilter="all", includeStaff = False, 
     Returns rows for simple person searches.
     query: The search criteria
     classfilter: One of all, vet, retailer, staff, fosterer, volunteer, shelter, 
-                 aco, homechecked, homechecker, member, donor, driver
+                 aco, homechecked, homechecker, member, donor, driver, volunteerandstaff
     """
     ors = []
     query = query.replace("'", "`")
@@ -324,6 +341,8 @@ def get_person_find_simple(dbo, query, classfilter="all", includeStaff = False, 
         cf = " AND o.IsFosterer = 1"
     elif classfilter == "volunteer":
         cf = " AND o.IsVolunteer = 1"
+    elif classfilter == "volunteerandstaff":
+        cf = " AND (o.IsVolunteer = 1 OR o.IsStaff = 1)"
     elif classfilter == "shelter":
         cf = " AND o.IsShelter = 1"
     elif classfilter == "aco":
@@ -424,12 +443,51 @@ def get_person_find_advanced(dbo, criteria, includeStaff = False, limit = 0):
     if limit > 0: sql += " LIMIT " + str(limit)
     return db.query(dbo, sql)
 
+def get_person_rota(dbo, personid):
+    return db.query(dbo, get_rota_query(dbo) + " WHERE r.OwnerID = %d ORDER BY r.StartDateTime DESC LIMIT 100" % personid)
+
+def get_rota(dbo, startdate, enddate):
+    """ Returns rota records where start >= startdate and end < enddate """
+    return db.query(dbo, get_rota_query(dbo) + \
+        " WHERE r.StartDateTime >= %s AND r.EndDateTime < %s" \
+        " ORDER BY r.StartDateTime" % (db.dd(startdate), db.dd(enddate)))
+
+def clone_rota_week(dbo, username, startdate, newdate):
+    """ Copies a weeks worth of rota records from startdate to newdate """
+    l = dbo.locale
+    if startdate is None or newdate is None:
+        raise utils.ASMValidationError("startdate and newdate cannot be blank")
+    if newdate.weekday() != 0 or startdate.weekday() != 0:
+        raise utils.ASMValidationError("startdate and newdate should both be a Monday")
+    enddate = add_days(startdate, 7)
+    rows = db.query(dbo, get_rota_query(dbo) + " WHERE StartDateTime >= %s AND StartDateTime <= %s" % (db.dd(startdate), db.dd(enddate)))
+    for r in rows:
+        # Calculate how far from the start date this rec is so we can apply that
+        # diff to the newdate
+        sdiff = date_diff_days(startdate, r["STARTDATETIME"])
+        ediff = date_diff_days(startdate, r["ENDDATETIME"])
+        sd = add_days(newdate, sdiff)
+        ed = add_days(newdate, ediff)
+        sd = datetime.datetime(sd.year, sd.month, sd.day, r["STARTDATETIME"].hour, r["STARTDATETIME"].minute, 0)
+        ed = datetime.datetime(ed.year, ed.month, ed.day, r["ENDDATETIME"].hour, r["ENDDATETIME"].minute, 0)
+        insert_rota_from_form(dbo, username, utils.PostedData({
+            "person":    str(r["OWNERID"]),
+            "startdate": python2display(l, sd),
+            "starttime": format_time(sd),
+            "enddate":   python2display(l, ed),
+            "endtime":   format_time(ed),
+            "type":      str(r["ROTATYPEID"]),
+            "comments":  r["COMMENTS"]
+        }, l))
+
 def calculate_owner_name(dbo, title = "", initials = "", first = "", last = "", nameformat = ""):
     """
     Calculates the owner name field based on the current format.
     """
     if nameformat == "": nameformat = configuration.owner_name_format(dbo)
-    nameformat = nameformat.replace("{ownername}", "{ownertitle} {ownerforenames} {ownersurname}") # Compatibility
+    # If something went wrong and we have a broken format for any reason, substitute our default
+    if nameformat is None or nameformat == "" or nameformat == "null": nameformat = "{ownertitle} {ownerforenames} {ownersurname}"
+    nameformat = nameformat.replace("{ownername}", "{ownertitle} {ownerforenames} {ownersurname}") # Compatibility with old versions
     nameformat = nameformat.replace("{ownertitle}", title)
     nameformat = nameformat.replace("{ownerinitials}", initials)
     nameformat = nameformat.replace("{ownerforenames}", first)
@@ -738,6 +796,60 @@ def delete_person(dbo, username, personid):
     for a in animals:
         animal.update_animal_status(dbo, int(a["ANIMALID"]))
         animal.update_variable_animal_data(dbo, int(a["ANIMALID"]))
+
+def insert_rota_from_form(dbo, username, post):
+    """
+    Creates a rota record from posted form data
+    """
+    nrota = db.get_id(dbo, "ownerrota")
+    sql = db.make_insert_user_sql(dbo, "ownerrota", username, ( 
+        ( "ID", db.di(nrota)),
+        ( "OwnerID", post.db_integer("person")),
+        ( "StartDateTime", post.db_datetime("startdate", "starttime")),
+        ( "EndDateTime", post.db_datetime("enddate", "endtime")),
+        ( "RotaTypeID", post.db_integer("type")),
+        ( "Comments", post.db_string("comments"))
+        ))
+    db.execute(dbo, sql)
+    audit.create(dbo, username, "ownerrota", str(nrota))
+    return nrota
+
+def update_rota_from_form(dbo, username, post):
+    """
+    Updates a rota record from posted form data
+    """
+    rotaid = post.integer("rotaid")
+    sql = db.make_update_user_sql(dbo, "ownerrota", username, "ID=%d" % rotaid, ( 
+        ( "OwnerID", post.db_integer("person")),
+        ( "StartDateTime", post.db_datetime("startdate", "starttime")),
+        ( "EndDateTime", post.db_datetime("enddate", "endtime")),
+        ( "RotaTypeID", post.db_integer("type")),
+        ( "Comments", post.db_string("comments"))
+        ))
+    preaudit = db.query(dbo, "SELECT * FROM ownerrota WHERE ID = %d" % rotaid)
+    db.execute(dbo, sql)
+    postaudit = db.query(dbo, "SELECT * FROM ownerrota WHERE ID = %d" % rotaid)
+    audit.edit(dbo, username, "ownerrota", audit.map_diff(preaudit, postaudit))
+
+def delete_rota(dbo, username, rid):
+    """
+    Deletes the selected rota record
+    """
+    audit.delete(dbo, username, "ownerrota", str(db.query(dbo, "SELECT * FROM ownerrota WHERE ID=%d" % int(rid))))
+    db.execute(dbo, "DELETE FROM ownerrota WHERE ID = %d" % int(rid))
+
+def delete_rota_week(dbo, username, startdate):
+    """
+    Deletes all rota records beginning at startdate and ending at
+    startdate+7
+    startdate: A python date representing the start of the week
+    """
+    enddate = add_days(startdate, 7)
+    audit.delete(dbo, username, "ownerrota", \
+        str(db.query(dbo, "SELECT * FROM ownerrota " \
+        "WHERE StartDateTime >= %s AND StartDateTime <= %s" % (db.dd(startdate), db.dd(enddate)))))
+    db.execute(dbo, "DELETE FROM ownerrota WHERE " \
+        "StartDateTime >= %s AND StartDateTime <= %s" % (db.dd(startdate), db.dd(enddate)))
 
 def insert_investigation_from_form(dbo, username, post):
     """

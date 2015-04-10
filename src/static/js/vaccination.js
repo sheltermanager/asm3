@@ -8,6 +8,7 @@ $(function() {
     var dialog = {
         add_title: _("Add vaccination"),
         edit_title: _("Edit vaccination"),
+        edit_perm: 'cav',
         helper_text: _("Vaccinations need an animal and at least a required date."),
         close_on_ok: true,
         autofocus: false,
@@ -103,7 +104,7 @@ $(function() {
                     if (controller.animal) { return true; }
                 }
             },
-            { field: "DATEREQUIRED", display: _("Required"), formatter: tableform.format_date, initialsort: true, initalsortdirection: "desc" },
+            { field: "DATEREQUIRED", display: _("Required"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
             { field: "DATEOFVACCINATION", display: _("Given"), formatter: tableform.format_date },
             { field: "DATEEXPIRES", display: _("Expires"), formatter: tableform.format_date },
             { field: "MANUFACTURER", display: _("Manufacturer") },
@@ -156,8 +157,8 @@ $(function() {
              }
          },
          { id: "offset", type: "dropdownfilter", 
-             options: [ "m31|" + _("Due today"), "p7|" + _("Due in next week"), "p31|" + _("Due in next month"), "p365|" + _("Due in next year"), 
-                "xm31|" + _("Expired"), "xp31|" + _("Expire in next month") ],
+             options: [ "m365|" + _("Due today"), "p7|" + _("Due in next week"), "p31|" + _("Due in next month"), "p365|" + _("Due in next year"), 
+                "xm365|" + _("Expired"), "xp31|" + _("Expire in next month") ],
              click: function(selval) {
                 window.location = controller.name + "?offset=" + selval;
              },
@@ -195,7 +196,7 @@ $(function() {
                 '<table width="100%">',
                 '<tr>',
                 '<td><label for="newdate">' + _("Required") + '</label></td>',
-                '<td><input id="newdate" data="newdate" type="textbox" class="asm-textbox asm-datebox" /></td>',
+                '<td><input id="newdate" data="newdate" type="text" class="asm-textbox asm-datebox" /></td>',
                 '</tr>',
                 '</table>',
                 '</div>'
@@ -290,12 +291,12 @@ $(function() {
                 '<table width="100%">',
                 '<tr>',
                 '<td><label for="newdateg">' + _("Given") + '</label></td>',
-                '<td><input id="newdateg" data="newdate" type="textbox" class="asm-textbox asm-datebox asm-field" /></td>',
+                '<td><input id="newdateg" data="newdate" type="text" class="asm-textbox asm-datebox asm-field" /></td>',
                 '</tr>',
                 '<tr><td></td><td>' + html.info(_("Specifying a reschedule date will make copies of the selected vaccinations and mark them to be given on the reschedule date. Example: If this vaccination needs to be given every year, set the reschedule date to be 1 year from today.")) + '</td></tr>',
                 '<tr>',
                 '<td><label for="rescheduledate">' + _("Reschedule") + '</label></td>',
-                '<td><input id="rescheduledate" data="rescheduledate" type="textbox" class="asm-textbox asm-datebox asm-field" /></td>',
+                '<td><input id="rescheduledate" data="rescheduledate" type="text" class="asm-textbox asm-datebox asm-field" /></td>',
                 '</tr>',
                 '<tr class="tagstock"><td></td><td>' + html.info(_("These fields allow you to deduct stock for the vaccination(s) given. This single deduction should cover the selected vaccinations being administered.")) + '</td></tr>',
                 '<tr class="tagstock">',
@@ -307,7 +308,7 @@ $(function() {
                 '</tr>',
                 '<tr class="tagstock">',
                 '<td><label for="quantity">' + _("Quantity") + '</label></td>',
-                '<td><input id="quantity" data="quantity" type="textbox" class="asm-textbox asm-numberbox asm-field" /></td>',
+                '<td><input id="quantity" data="quantity" type="text" class="asm-textbox asm-numberbox asm-field" /></td>',
                 '</tr>',
                 '<tr class="tagstock">',
                 '<td><label for="usagetype">' + _("Usage Type") + '</label></td>',

@@ -44,6 +44,7 @@ class PublishCriteria:
     includeRetailerAnimals = False
     includeFosterAnimals = False
     includeQuarantine = False
+    includeTrial = False
     includeHold = False
     includeWithoutImage = False
     includeColours = False
@@ -99,6 +100,7 @@ class PublishCriteria:
             if s == "includefosters": self.includeFosterAnimals = True
             if s == "includehold": self.includeHold = True
             if s == "includequarantine": self.includeQuarantine = True
+            if s == "includetrial": self.includeTrial = True
             if s == "includewithoutimage": self.includeWithoutImage = True
             if s == "includecolours": self.includeColours = True
             if s == "bondedassingle": self.bondedAsSingle = True
@@ -140,6 +142,7 @@ class PublishCriteria:
         if self.includeFosterAnimals: s += " includefosters"
         if self.includeHold: s += " includehold"
         if self.includeQuarantine: s += " includequarantine"
+        if self.includeTrial: s += " includetrial"
         if self.includeWithoutImage: s += " includewithoutimage"
         if self.includeColours: s += " includecolours"
         if self.bondedAsSingle: s += " bondedassingle"
@@ -230,47 +233,31 @@ def get_animal_data_query(dbo, pc):
         sql += " AND EXISTS(SELECT ID FROM media WHERE WebsitePhoto = 1 AND LinkID = a.ID AND LinkTypeID = 0)"
     if not pc.includeReservedAnimals: 
         sql += " AND a.HasActiveReserve = 0"
-    if len(pc.internalLocations) > 0 and pc.internalLocations[0].strip() != "null":
-        if utils.is_numeric(pc.internalLocations[0]):
-            # We have a list of internal location IDs
-            sql += " AND a.ShelterLocation IN (%s)" % ",".join(pc.internalLocations)
-        else:
-            # Must be a list of LIKE name comparisons
-            sql += " AND ("
-            firstLoc = True
-            for fr in pc.internalLocations:
-                if firstLoc:
-                    firstLoc = False
-                else:
-                    sql += " OR "
-                sql += "il.LocationName LIKE '%s'" % fr.replace("*", "%")
-            sql += ")"
+    if not pc.includeHold: 
+        sql += " AND (a.IsHold = 0 OR a.IsHold Is Null)"
+    if not pc.includeQuarantine:
+        sql += " AND (a.IsQuarantine = 0 OR a.IsQuarantine Is Null)"
     # Make sure animal is old enough
     exclude = i18n.now()
     exclude -= datetime.timedelta(days=pc.excludeUnderWeeks * 7)
     sql += " AND a.DateOfBirth <= " + db.dd(exclude)
     # Filter out dead and unadoptable animals
     sql += " AND a.DeceasedDate Is Null AND a.IsNotAvailableForAdoption = 0"
-    # Filter out trial adoptions
-    sql += " AND (a.ActiveMovementType Is Null OR a.ActiveMovementType <> 1)"
     # Filter out permanent fosters
     sql += " AND a.HasPermanentFoster = 0"
-    # Filter out Hold/Quarantine if they aren't included
-    if not pc.includeHold: 
-        sql += " AND (a.IsHold = 0 OR a.IsHold Is Null)"
-    if not pc.includeQuarantine:
-        sql += " AND (a.IsQuarantine = 0 OR a.IsQuarantine Is Null)"
-    # If including fosters is on, allow animals with an active type of foster
-    # (this picks up foster animals even if foster on shelter is not set)
-    if pc.includeFosterAnimals and pc.includeRetailerAnimals:
-        sql += " AND (a.Archived = 0 OR a.ActiveMovementType = %d OR a.ActiveMovementType = %d)" % (movement.FOSTER, movement.RETAILER)
-    elif pc.includeRetailerAnimals:
-        sql += " AND (a.Archived = 0 OR a.ActiveMovementType = %d)" % movement.RETAILER
-    elif pc.includeFosterAnimals:
-        sql += " AND (a.Archived = 0 OR a.ActiveMovementType = %d)" % movement.FOSTER
+    # Build a set of OR clauses based on any movements/locations
+    moveor = []
+    if len(pc.internalLocations) > 0 and pc.internalLocations[0].strip() != "null":
+        moveor.append("(a.Archived = 0 AND a.ShelterLocation IN (%s))" % ",".join(pc.internalLocations))
     else:
-        # On shelter only (this filters out fosters even if foster on shelter is set)
-        sql += " AND a.Archived = 0 AND (a.ActiveMovementType Is Null OR a.ActiveMovementType <> %d)" % movement.FOSTER
+        moveor.append("(a.Archived = 0)")
+    if pc.includeRetailerAnimals:
+        moveor.append("(a.ActiveMovementType = %d)" % movement.RETAILER)
+    if pc.includeFosterAnimals:
+        moveor.append("(a.ActiveMovementType = %d)" % movement.FOSTER)
+    if pc.includeTrial:
+        moveor.append("(a.ActiveMovementType = %d AND a.HasTrialAdoption = 1)" % movement.ADOPTION)
+    sql += " AND (" + " OR ".join(moveor) + ")"
     # Ordering
     if pc.order == 0:
         sql += " ORDER BY a.MostRecentEntryDate"
@@ -285,14 +272,14 @@ def get_animal_data_query(dbo, pc):
         sql += " LIMIT %d" % pc.limit
     return sql
 
-def get_microchip_data(dbo, patterns, publishername, movementtypes = "1"):
+def get_microchip_data(dbo, patterns, publishername):
     """
     Returns a list of animals with unpublished microchips.
     patterns:      A list of either microchip prefixes or SQL clauses to OR together
                    together in the preamble, eg: [ '977', "a.SmartTag = 1 AND a.SmartTagNumber <> ''" ]
     publishername: The name of the microchip registration publisher, eg: pettracuk
-    movementtypes: An IN clause of movement types to include.
     """
+    movementtypes = configuration.microchip_register_movements(dbo)
     try:
         rows = db.query(dbo, get_microchip_data_query(dbo, patterns, publishername, movementtypes))
     except Exception,err:
@@ -303,6 +290,10 @@ def get_microchip_data(dbo, patterns, publishername, movementtypes = "1"):
     for r in rows:
         if r["NONSHELTERANIMAL"] == 1 and r["ORIGINALOWNERNAME"] is not None and r["ORIGINALOWNERNAME"] != "":
             r["CURRENTOWNERNAME"] = r["ORIGINALOWNERNAME"]
+            r["CURRENTOWNERTITLE"] = r["ORIGINALOWNERTITLE"]
+            r["CURRENTOWNERINITIALS"] = r["ORIGINALOWNERINITIALS"]
+            r["CURRENTOWNERFORENAMES"] = r["ORIGINALOWNERFORENAMES"]
+            r["CURRENTOWNERSURNAME"] = r["ORIGINALOWNERSURNAME"]
             r["CURRENTOWNERADDRESS"] = r["ORIGINALOWNERADDRESS"]
             r["CURRENTOWNERTOWN"] = r["ORIGINALOWNERTOWN"]
             r["CURRENTOWNERCOUNTY"] = r["ORIGINALOWNERCOUNTY"]
@@ -315,7 +306,7 @@ def get_microchip_data(dbo, patterns, publishername, movementtypes = "1"):
             r["CURRENTOWNERWORKPHONE"] = r["ORIGINALOWNERWORKTELEPHONE"]
             r["CURRENTOWNERMOBILEPHONE"] = r["ORIGINALOWNERMOBILETELEPHONE"]
             r["CURRENTOWNERCELLPHONE"] = r["ORIGINALOWNERMOBILETELEPHONE"]
-            r["CURRENTOWNEREMAIL"] = r["ORIGINALOWNEREMAILADDRESS"]
+            r["CURRENTOWNEREMAILADDRESS"] = r["ORIGINALOWNEREMAILADDRESS"]
     return rows
 
 def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1"):
@@ -327,7 +318,7 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1"):
     patterns:      A list of either microchip prefixes or SQL clauses to OR
                    together in the preamble, eg: [ '977', "a.SmartTag = 1 AND a.SmartTagNumber <> ''" ]
     publishername: The name of the microchip registration publisher, eg: pettracuk
-    movementtypes: An IN clause of movement types to include.
+    movementtypes: An IN clause of movement types to include. 11 can be used for trial adoptions
     """
     pclauses = []
     for p in patterns:
@@ -335,15 +326,19 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1"):
             pclauses.append("a.IdentichipNumber LIKE '%s%%'" % p)
         else:
             pclauses.append("(%s)" % p)
+    trialclause = ""
+    if movementtypes.find("11") == -1:
+        trialclause = "AND a.HasTrialAdoption = 0"
     return animal.get_animal_query(dbo) + " WHERE (%(patterns)s) AND (" \
-        "(a.ActiveMovementID > 0 AND (a.ActiveMovementType IN (%(movementtypes)s)) AND a.HasTrialAdoption = 0 " \
+        "(a.ActiveMovementID > 0 AND (a.ActiveMovementType IN (%(movementtypes)s)) %(trialclause)s " \
         "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
         "AND AnimalID = a.ID AND SentDate >= a.ActiveMovementDate)) " \
-        "OR (a.NonShelterAnimal = 1 AND a.OriginalOwnerID > 0 " \
+        "OR (a.NonShelterAnimal = 1 AND a.OriginalOwnerID Is Not Null AND a.OriginalOwnerID > 0 AND a.IdentichipDate Is Not Null " \
         "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
-        "AND AnimalID = a.ID AND SentDate >= a.DateBroughtIn))) " % { 
+        "AND AnimalID = a.ID AND SentDate >= a.IdentichipDate))) " % { 
             "patterns": " OR ".join(pclauses),
             "movementtypes": movementtypes, 
+            "trialclause": trialclause,
             "publishername": publishername }
 
 class AbstractPublisher(threading.Thread):
@@ -820,6 +815,20 @@ class FTPPublisher(AbstractPublisher):
             for f in self.socket.nlst("*.%s" % self.pc.extension):
                 if not f.startswith("search"):
                     self.socket.delete(f)
+        except Exception, err:
+            self.logError("warning: failed deleting from FTP server: %s" % err, sys.exc_info())
+
+    def clearExistingImages(self):
+        try:
+            oldfiles = glob.glob(os.path.join(self.publishDir, "*.jpg"))
+            for f in oldfiles:
+                os.remove(f)
+        except Exception, err:
+            self.logError("warning: failed removing %s from filesystem: %s" % (oldfiles, err), sys.exc_info())
+        if not self.pc.uploadDirectly: return
+        try:
+            for f in self.socket.nlst("*.jpg"):
+                self.socket.delete(f)
         except Exception, err:
             self.logError("warning: failed deleting from FTP server: %s" % err, sys.exc_info())
 
@@ -1909,10 +1918,13 @@ class HTMLPublisher(FTPPublisher):
         """
         output = searchin
         nav = self.navbar.replace("<a href=\"%d.%s\">%d</a>" % (page, self.pc.extension, page), str(page))
+        dateportion = i18n.python2display(self.locale, i18n.now(self.dbo.timezone))
+        timeportion = time.strftime("%H:%M:%S", i18n.now(self.dbo.timezone).timetuple())
         output = output.replace("$$NAV$$", nav)
         output = output.replace("$$TOTAL$$", str(self.totalAnimals))
-        output = output.replace("$$DATE$$", i18n.python2display(self.locale, i18n.now(self.dbo.timezone)))
-        output = output.replace("$$TIME$$", time.strftime("%H:%M:%S", i18n.now().timetuple()))
+        output = output.replace("$$DATE$$", dateportion)
+        output = output.replace("$$TIME$$", timeportion)
+        output = output.replace("$$DATETIME$$", "%s %s" % (dateportion, timeportion))
         output = output.replace("$$VERSION$$", i18n.get_version())
         output = output.replace("$$REGISTEREDTO$$", configuration.organisation(self.dbo))
         output = output.replace("$$USER$$", "%s (%s)" % (user, users.get_real_name(self.dbo, user)))
@@ -1926,6 +1938,7 @@ class HTMLPublisher(FTPPublisher):
         """
         Substitutes any tags in the body for animal data
         """
+        LE_TOKEN = "**le**"
         tags = wordprocessor.animal_tags(self.dbo, a)
         tags["TotalAnimals"] = str(self.totalAnimals)
         tags["IMAGE"] = str(a["WEBSITEMEDIANAME"])
@@ -1933,8 +1946,11 @@ class HTMLPublisher(FTPPublisher):
         notes = utils.nulltostr(a["WEBSITEMEDIANOTES"])
         # Add any extra text and put the tag back
         notes += configuration.third_party_publisher_sig(self.dbo)
+        # Preserve line endings in the bio
+        notes = notes.replace("\n", LE_TOKEN)
         tags["WEBMEDIANOTES"] = notes 
-        return wordprocessor.substitute_tags(searchin, tags, True, "$$", "$$")
+        output = wordprocessor.substitute_tags(searchin, tags, True, "$$", "$$")
+        return output.replace(LE_TOKEN, "<br />")
 
     def writeJavaScript(self, animals):
         # Remove original owner and other sensitive info from javascript database
@@ -2085,6 +2101,14 @@ class HTMLPublisher(FTPPublisher):
         if not self.openFTPSocket():
             self.setLastError("Failed opening FTP socket.")
             return
+
+        # Clear any existing uploaded images
+        if self.pc.forceReupload:
+            self.clearExistingImages()
+
+        # Clear any existing uploaded pages
+        if self.pc.clearExisting: 
+            self.clearExistingHTML()
             
         try:
             animals = self.getMatchingAnimals()
@@ -2177,10 +2201,6 @@ class HTMLPublisher(FTPPublisher):
         # Mark published
         self.markAnimalsPublished(animals)
 
-        # Clear any existing uploaded pages
-        if self.pc.clearExisting: 
-            self.clearExistingHTML()
-
         # Upload the pages
         for k, v in pages.iteritems():
             self.log("Saving page to disk: %s" % k)
@@ -2214,6 +2234,14 @@ class HTMLPublisher(FTPPublisher):
         if not self.openFTPSocket():
             self.setLastError("Failed opening FTP socket.")
             return
+
+        # Clear any existing uploaded images
+        if self.pc.forceReupload:
+            self.clearExistingImages()
+
+        # Clear any existing uploaded pages
+        if self.pc.clearExisting: 
+            self.clearExistingHTML()
 
         try:
             animals = self.getMatchingAnimals()
@@ -2304,10 +2332,6 @@ class HTMLPublisher(FTPPublisher):
         # Done with animals, store the final page
         thisPage += footer
         pages[thisPageName] = thisPage
-
-        # Clear any existing uploaded pages
-        if self.pc.clearExisting: 
-            self.clearExistingHTML()
 
         # Upload the new pages
         for k, v in pages.iteritems():
@@ -2875,7 +2899,7 @@ class PetLinkPublisher(AbstractPublisher):
             self.setLastError("baseurl and chippass need to be set for petlink.com publisher")
             return
 
-        animals = get_microchip_data(self.dbo, ['98102',], "petlink", "1,5")
+        animals = get_microchip_data(self.dbo, ['98102',], "petlink")
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
             return
@@ -2938,14 +2962,20 @@ class PetLinkPublisher(AbstractPublisher):
 
                 # If the microchip number isn't 15 digits, skip it
                 if len(an["IDENTICHIPNUMBER"].strip()) != 15:
-                    self.log("Chip number failed validation (%s not 15 digits), skipping." % an["IDENTICHIPNUMBER"])
+                    self.logError("Chip number failed validation (%s not 15 digits), skipping." % an["IDENTICHIPNUMBER"])
                     continue
 
+                # If there's no email or home phone, PetLink won't accept
+                email = utils.nulltostr(an["CURRENTOWNEREMAILADDRESS"]).strip()
+                homephone = utils.nulltostr(an["CURRENTOWNERHOMETELEPHONE"]).strip()
+                if email == "" and homephone == "":
+                    self.logError("No email address or home telephone for owner, skipping.")
+                    continue
+                
                 # If we don't have an email address, use the owner's
                 # phone number @petlink.tmp
-                email = an["CURRENTOWNEREMAILADDRESS"]
-                if email.strip() == "":
-                    email = "".join(c for c in an["CURRENTOWNERHOMETELEPHONE"] if c.isdigit())
+                if email == "":
+                    email = "".join(c for c in homephone if c.isdigit())
                     email = email + "@petlink.tmp"
 
                 # TransactionType
@@ -3041,18 +3071,18 @@ class PetRescuePublisher(FTPPublisher):
         Returns a CSV entry for TRUE or FALSE based on the condition
         """
         if condition:
-            return "\"TRUE\""
+            return "TRUE"
         else:
-            return "\"FALSE\""
+            return "FALSE"
 
     def prYesNo(self, condition):
         """
         Returns a CSV entry for Yes or No based on the condition
         """
         if condition:
-            return "\"Yes\""
+            return "Yes"
         else:
-            return "\"No\""
+            return "No"
 
 
     def prGoodWith(self, v):
@@ -3122,14 +3152,14 @@ class PetRescuePublisher(FTPPublisher):
                     break
 
                 # Upload the image for this animal
-                self.uploadImage(an, an["WEBSITEMEDIANAME"], an["SHELTERCODE"] + ".jpg")
+                self.uploadImage(an, an["WEBSITEMEDIANAME"], str(an["ID"]) + ".jpg")
                 # AccountID
                 line.append("\"%s\"" % accountid)
                 # RegionID
                 regionid = "1"
                 line.append("\"%s\"" % regionid)
                 # ID
-                line.append("\"%s\"" % an["SHELTERCODE"])
+                line.append("\"%d\"" % an["ID"])
                 # Name
                 line.append("\"%s\"" % an["ANIMALNAME"].replace("\"", "\"\""))
                 # Type
@@ -3152,7 +3182,7 @@ class PetRescuePublisher(FTPPublisher):
                 # Description
                 line.append("\"%s\"" % self.getDescription(an))
                 # Sex
-                line.append("\"%s\"" % an["SEXNAME"])
+                line.append("\"%s\"" % an["SEXNAME"][0:1])
                 # CoatLength (not implemented)
                 line.append("\"\"")
                 # Mixed
@@ -3320,7 +3350,7 @@ class PETtracUKPublisher(AbstractPublisher):
                 # If AVID tell us the microchip is already registered, flag the animal
                 # as sent so we don't keep trying
                 elif r["response"].find("already registered") != -1:
-                    self.log("microchip already registered response, marking processed")
+                    self.logSuccess("microchip already registered response, marking processed")
                     processed_animals.append(an)
 
                 # There's a problem with the data we sent, flag it
@@ -3589,7 +3619,7 @@ class SmartTagPublisher(FTPPublisher):
             self.cleanup()
             return
 
-        animals = get_microchip_data(self.dbo, ["a.SmartTag = 1 AND a.SmartTagNumber <> ''", '90007400'], "smarttag", "1,5")
+        animals = get_microchip_data(self.dbo, ["a.SmartTag = 1 AND a.SmartTagNumber <> ''", '90007400'], "smarttag")
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
             self.cleanup()

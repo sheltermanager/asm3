@@ -74,6 +74,13 @@ $(function() {
                 '</select></td>',
                 '</tr>',
                 '<tr>',
+                '<td><label for="trialanimals">' + _("Include animals on trial adoption") + '</label></td>',
+                '<td><select id="trialanimals" class="asm-selectbox pbool preset" data="includetrial">',
+                '<option value="0">' + _("No") + '</option>',
+                '<option value="1">' + _("Yes") + '</option>',
+                '</select></td>',
+                '</tr>',
+                '<tr>',
                 '<td><label for="noimage">' + _("Include animals who don't have a picture") + '</label></td>',
                 '<td><select id="noimage" class="asm-selectbox pbool preset" data="includewithoutimage">',
                 '<option value="0">' + _("No") + '</option>',
@@ -128,13 +135,23 @@ $(function() {
                 '<table>',
                 '<tr>',
                 '<td><label for="limit">' + _("Only publish a set number of animals") + '</label></td>',
-                '<td><input id="limit" type="text" class="asm-textbox asm-numberbox preset" data="limit" value="0" />',
-                '<div class="ui-state-highlight ui-corner-all" style="padding: 0 .7em; float: right;">',
+                '<td valign="middle"><input id="limit" type="text" class="asm-textbox asm-numberbox preset" data="limit" value="0" />',
+                '<div class="ui-state-highlight ui-corner-all" style="padding: 0 .7em; display: inline-block; vertical-align: middle;">',
                 '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
                 _("Set to 0 for no limit."),
                 '</p>',
                 '</div>',
                 '</td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="regmic">' + _("Register microchips after") + '</label></td>',
+                '<td><select id="regmic" class="asm-bsmselect cfg" multiple="multiple" data="MicrochipRegisterMovements">',
+                '<option value="1">' + _("Adoption") + '</option>',
+                '<option value="2">' + _("Foster") + '</option>',
+                '<option value="3">' + _("Transfer") + '</option>',
+                '<option value="5">' + _("Reclaim") + '</option>',
+                '<option value="11">' + _("Trial Adoption") + '</option>',
+                '</select></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="forcereupload">' + _("Reupload animal images every time") + '</label></td>',
@@ -923,6 +940,14 @@ $(function() {
                     else if ($(this).is("input:checkbox")) {
                         $(this).attr("checked", config.bool(d));
                     }
+                    else if ($(this).hasClass("asm-bsmselect")) {
+                        var n = $(this);
+                        n.children().prop("selected", false);
+                        $.each(config.str(d).split(/[|,]+/), function(mi, mv) {
+                            n.find("[value='" + mv + "']").prop("selected", true);
+                        });
+                        n.change();
+                    }
                     else if ($(this).is("select")) {
                         $(this).select("value", config.str(d));
                     }
@@ -937,8 +962,8 @@ $(function() {
             $.each(cl.split(" "), function(i, o) {
                 // Deal with boolean flags in command line
                 $.each( [ "includecase", "includereserved", "includefosters", "includewithoutimage", 
-                    "includecolours", "includeretailer", "includehold", "includequarantine", "bondedassingle",
-                    "clearexisting", "uploadall", "forcereupload", 
+                    "includecolours", "includeretailer", "includehold", "includequarantine", "includetrial",
+                    "bondedassingle", "clearexisting", "uploadall", "forcereupload", 
                     "generatejavascriptdb","thumbnails", "checksocket", "uploaddirectly", 
                     "htmlbychildadult", "htmlbyspecies", "outputadopted", "outputrss", "noimportfile" ], 
                 function(bi, bo) {

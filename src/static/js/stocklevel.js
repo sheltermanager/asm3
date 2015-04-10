@@ -8,6 +8,7 @@ $(function() {
     var dialog = {
         add_title: _("Add stock"),
         edit_title: _("Edit stock"),
+        edit_perm: 'csl',
         helper_text: _("Stock needs a name and unit."),
         close_on_ok: true,
         hide_read_only: true,

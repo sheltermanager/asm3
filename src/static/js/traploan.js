@@ -8,6 +8,7 @@ $(function() {
     var dialog = {
         add_title: _("Add trap loan"),
         edit_title: _("Edit trap loan"),
+        edit_perm: 'catl',
         close_on_ok: true,
         columns: 1,
         width: 550,

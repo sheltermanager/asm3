@@ -21,7 +21,7 @@ import db, dbfs, dbupdate
 import diary as extdiary
 import financial
 import html
-from i18n import _, translate, get_version, get_display_date_format, get_currency_prefix, get_currency_symbol, get_currency_dp, python2display, subtract_days, subtract_months, first_of_month, last_of_month, monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency, i18nstringsjs
+from i18n import _, translate, get_version, get_display_date_format, get_currency_prefix, get_currency_symbol, get_currency_dp, python2display, add_days, subtract_days, subtract_months, first_of_month, last_of_month, monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency, i18nstringsjs
 import log as extlog
 import lookups as extlookups
 import lostfound as extlostfound
@@ -172,6 +172,7 @@ urls = (
     "/person_media", "person_media",
     "/person_movements", "person_movements",
     "/person_new", "person_new",
+    "/person_rota", "person_rota",
     "/person_traploan", "person_traploan",
     "/person_vouchers", "person_vouchers",
     "/publish", "publish",
@@ -185,6 +186,7 @@ urls = (
     "/search", "search",
     "/service", "service",
     "/shelterview", "shelterview",
+    "/staff_rota", "staff_rota", 
     "/stocklevel", "stocklevel",
     "/sql", "sql",
     "/systemusers", "systemusers",
@@ -814,7 +816,11 @@ class accounts:
         users.check_permission(session, users.VIEW_ACCOUNT)
         l = session.locale
         dbo = session.dbo
-        accounts = financial.get_accounts(dbo)
+        post = utils.PostedData(web.input(offset="active"), session.locale)
+        if post["offset"] == "active":
+            accounts = financial.get_accounts(dbo, True)
+        else:
+            accounts = financial.get_accounts(dbo)
         al.debug("got %d accounts" % len(accounts), "code.accounts", dbo)
         title = _("Accounts", l)
         s = html.header(title, session, "accounts.js")
@@ -2307,8 +2313,8 @@ class document_gen:
             content = wordprocessor.generate_person_doc(dbo, template, post.integer("id"), session.user)
         elif mode == "DONATION":
             loglinktype = extlog.PERSON
-            logid = financial.get_donation(dbo, post.integer("id"))["OWNERID"]
-            content = wordprocessor.generate_donation_doc(dbo, template, post.integer("id"), session.user)
+            logid = financial.get_donation(dbo, post.integer_list("id")[0])["OWNERID"]
+            content = wordprocessor.generate_donation_doc(dbo, template, post.integer_list("id"), session.user)
         if configuration.generate_document_log(dbo) and configuration.generate_document_log_type(dbo) > 0:
             extlog.add_log(dbo, session.user, loglinktype, logid, configuration.generate_document_log_type(dbo), _("Generated document '{0}'").format(templatename))
         if templatename.endswith(".html"):
@@ -2342,10 +2348,13 @@ class document_gen:
                 extmedia.create_document_media(dbo, session.user, extmedia.PERSON, recid, tempname, post["document"])
                 raise web.seeother("person_media?id=%d" % recid)
             elif mode == "DONATION":
-                d = financial.get_donation(dbo, recid)
-                tempname += " - " + extperson.get_person_name(dbo, d["OWNERID"])
-                extmedia.create_document_media(dbo, session.user, extmedia.PERSON, d["OWNERID"], tempname, post["document"])
-                raise web.seeother("person_media?id=%d" % d["OWNERID"])
+                d = financial.get_donations_by_ids(dbo, post.integer_list("recid"))
+                if len(d) == 0:
+                    raise utils.ASMValidationError("list '%s' does not contain valid ids" % recid)
+                ownerid = d[0]["OWNERID"]
+                tempname += " - " + extperson.get_person_name(dbo, ownerid)
+                extmedia.create_document_media(dbo, session.user, extmedia.PERSON, ownerid, tempname, post["document"])
+                raise web.seeother("person_media?id=%d" % ownerid)
             else:
                 raise web.seeother("main")
         elif post["savemode"] == "pdf":
@@ -3892,7 +3901,7 @@ class medical:
         users.check_permission(session, users.VIEW_MEDICAL)
         l = session.locale
         dbo = session.dbo
-        post = utils.PostedData(web.input(newmed = "0", offset = "m31"), session.locale)
+        post = utils.PostedData(web.input(newmed = "0", offset = "m365"), session.locale)
         med = extmedical.get_treatments_outstanding(dbo, post["offset"], session.locationfilter)
         profiles = extmedical.get_profiles(dbo)
         title = _("Medical Book", l)
@@ -5275,6 +5284,93 @@ class person_new:
         personid = extperson.insert_person_from_form(session.dbo, post, session.user)
         return str(personid)
 
+class person_rota:
+    def GET(self):
+        utils.check_loggedin(session, web)
+        users.check_permission(session, users.VIEW_ROTA)
+        dbo = session.dbo
+        post = utils.PostedData(web.input(id = 0), session.locale)
+        p = extperson.get_person(dbo, post.integer("id"))
+        if p is None: raise web.notfound()
+        title = p["OWNERNAME"]
+        rota = extperson.get_person_rota(dbo, post.integer("id"))
+        al.debug("got %d rota items" % len(rota), "code.person_rota", dbo)
+        s = html.header(title, session, "rota.js")
+        c = html.controller_str("name", "person_rota")
+        c += html.controller_json("rows", rota)
+        c += html.controller_json("person", p)
+        c += html.controller_json("rotatypes", extlookups.get_rota_types(dbo))
+        c += html.controller_json("tabcounts", extperson.get_satellite_counts(dbo, p["ID"])[0])
+        s += html.controller(c)
+        s += html.footer()
+        web.header("Content-Type", "text/html")
+        web.header("Cache-Control", "no-cache")
+        return s
+
+    def POST(self):
+        utils.check_loggedin(session, web)
+        post = utils.PostedData(web.input(mode="create"), session.locale)
+        mode = post["mode"]
+        if mode == "create":
+            users.check_permission(session, users.ADD_ROTA)
+            return extperson.insert_rota_from_form(session.dbo, session.user, post)
+        elif mode == "update":
+            users.check_permission(session, users.CHANGE_ROTA)
+            extperson.update_rota_from_form(session.dbo, session.user, post)
+        elif mode == "delete":
+            users.check_permission(session, users.DELETE_ROTA)
+            for rid in post.integer_list("ids"):
+                extperson.delete_rota(session.dbo, session.user, rid)
+
+class staff_rota:
+    def GET(self):
+        utils.check_loggedin(session, web)
+        users.check_permission(session, users.VIEW_ROTA)
+        dbo = session.dbo
+        l = session.locale
+        post = utils.PostedData(web.input(start = ""), session.locale)
+        title = _("Staff Rota", l)
+        startdate = post.date("start")
+        if startdate is None: startdate = monday_of_week(now())
+        rota = extperson.get_rota(dbo, startdate, add_days(startdate, 7))
+        al.debug("got %d rota items" % len(rota), "code.staff_rota", dbo)
+        s = html.header(title, session, "staff_rota.js")
+        c = html.controller_str("name", "staff_rota")
+        c += html.controller_json("rows", rota)
+        c += html.controller_date("startdate", startdate)
+        c += html.controller_date("prevdate", subtract_days(startdate, 7))
+        c += html.controller_date("nextdate", add_days(startdate, 7))
+        c += html.controller_json("rotatypes", extlookups.get_rota_types(dbo))
+        c += html.controller_json("staff", extperson.get_staff_volunteers(dbo))
+        s += html.controller(c)
+        s += html.footer()
+        web.header("Content-Type", "text/html")
+        web.header("Cache-Control", "no-cache")
+        return s
+
+    def POST(self):
+        utils.check_loggedin(session, web)
+        post = utils.PostedData(web.input(mode="create"), session.locale)
+        mode = post["mode"]
+        if mode == "create":
+            users.check_permission(session, users.ADD_ROTA)
+            return extperson.insert_rota_from_form(session.dbo, session.user, post)
+        elif mode == "update":
+            users.check_permission(session, users.CHANGE_ROTA)
+            extperson.update_rota_from_form(session.dbo, session.user, post)
+        elif mode == "delete":
+            users.check_permission(session, users.DELETE_ROTA)
+            for rid in post.integer_list("ids"):
+                extperson.delete_rota(session.dbo, session.user, rid)
+        elif mode == "deleteweek":
+            users.check_permission(session, users.DELETE_ROTA)
+            extperson.delete_rota_week(session.dbo, session.user, post.date("startdate"))
+        elif mode == "clone":
+            users.check_permission(session, users.ADD_ROTA)
+            startdate = post.date("startdate")
+            newdate = post.date("newdate")
+            extperson.clone_rota_week(session.dbo, session.user, startdate, newdate)
+
 class person_traploan:
     def GET(self):
         utils.check_loggedin(session, web)
@@ -5918,7 +6014,6 @@ class sql:
             return _("{0} rows affected.", l).format(rowsaffected)
         except Exception,err:
             al.error("%s" % str(err), "code.sql", dbo)
-            # TODO: WHY DOES THIS TAKE 10 SECONDS TO RETURN?
             raise utils.ASMValidationError(str(err))
 
     def exec_sql_from_file(self, dbo, sql):
@@ -6030,7 +6125,7 @@ class test:
         users.check_permission(session, users.VIEW_TEST)
         l = session.locale
         dbo = session.dbo
-        post = utils.PostedData(web.input(newtest = "0", offset = "m31"), session.locale)
+        post = utils.PostedData(web.input(newtest = "0", offset = "m365"), session.locale)
         test = extmedical.get_tests_outstanding(dbo, post["offset"], session.locationfilter)
         al.debug("got %d tests" % len(test), "code.test", dbo)
         title = _("Test Book", l)
@@ -6160,7 +6255,7 @@ class vaccination:
         users.check_permission(session, users.VIEW_VACCINATION)
         l = session.locale
         dbo = session.dbo
-        post = utils.PostedData(web.input(newvacc = "0", offset = "m31"), session.locale)
+        post = utils.PostedData(web.input(newvacc = "0", offset = "m365"), session.locale)
         vacc = extmedical.get_vaccinations_outstanding(dbo, post["offset"], session.locationfilter)
         al.debug("got %d vaccinations" % len(vacc), "code.vaccination", dbo)
         title = _("Vaccination Book", l)

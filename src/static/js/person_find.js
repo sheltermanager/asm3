@@ -100,7 +100,7 @@ $(function() {
                 '<input id="medianotes" data="medianotes" class="asm-textbox" />',
                 '</td>',
                 '<td>',
-                '<label for="filter">' + _("Show") + '</label>',
+                '<label for="filter">' + _("Flags") + '</label>',
                 '</td>',
                 '<td>',
                 '<select id="filter" data="filter" multiple="multiple" class="asm-bsmselect">',

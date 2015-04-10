@@ -656,6 +656,9 @@ Display
 * Show a minimap of the address on person screens: Show an embedded map to the
   person's address on the details screen.
 
+* Show weight as lb rather than kg: Change the field label on the animal weight
+  field to lb instead of the usual kg.
+
 * Show animal thumbnails in movement and medical books: Show animal pictures in
   the rows of the movement and medical books (foster book, reservation book,
   vaccination book, etc.)
@@ -697,6 +700,9 @@ Remove Unwanted Functionality
 
 * Remove the animal control functionality from menus: Setting this option
   removes the animal control screens from the menu.
+
+* Remove the rota functionality from menus: Setting this option removes
+  the staff rota from the menu and person screens.
 
 * Remove the stock control functionality from menus: Setting this option
   removes the stock control screens from the financial menu and
@@ -814,6 +820,10 @@ choose some extra fields for the new animal screen.
 * Show the microchip fields: Allow a microchip date/number to be set 
 
 * Show the entry category field: Allow an entry category to be set 
+
+* Show the original owner field: Allow original owner to be set
+
+* Show the brought in by field: Allow brought in by to be set
 
 * Warn if the animal is similar to one entered recently: Pop up a warning
   dialog if the animal's name is the same as one entered recently to help

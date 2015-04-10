@@ -112,6 +112,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="accounts.html">Accounts</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="accounts.html#reconciliation">Reconciliation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="accounts.html#inactive-accounts">Inactive Accounts</a></li>
 <li class="toctree-l2"><a class="reference internal" href="accounts.html#payments">Payments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="accounts.html#reporting">Reporting</a></li>
 </ul>
@@ -135,6 +136,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rota.html">Rota</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mobile.html">Mobile Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="service.html">Service API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="publishing.html">Publishing</a><ul>
@@ -312,6 +314,8 @@ Breed 2&#8221; to indicate that the animal is a cross of two breeds.</dd>
 <dd>The animal&#8217;s location within the shelter</dd>
 <dt>LocationUnit</dt>
 <dd>The location unit (eg, pen or cage number)</dd>
+<dt>DisplayLocation</dt>
+<dd>Either the internal location if the animal is on shelter, a movement type/person for animals leaving the shelter or a deceased reason if the animal is no longer alive</dd>
 <dt>CoatType</dt>
 <dd>The animal&#8217;s coat type</dd>
 <dt>AnimalComments</dt>
@@ -345,8 +349,14 @@ name)</dd>
 <dd>&#8220;Yes&#8221; if the animal has been declawed</dd>
 <dt>AnimalID</dt>
 <dd>The animal&#8217;s internal ID number</dd>
-<dt>BondedWith</dt>
-<dd>A list of the names and codes of animals this one is bonded with</dd>
+<dt>BondedAnimal1Name</dt>
+<dd>The name of the first animal this animal is bonded to</dd>
+<dt>BondedAnimal1Code</dt>
+<dd>The code of the first animal this animal is bonded to</dd>
+<dt>BondedAnimal2Name</dt>
+<dd>The name of the second animal this animal is bonded to</dd>
+<dt>BondedAnimal2Code</dt>
+<dd>The code of the second animal this animal is bonded to</dd>
 <dt>Fee</dt>
 <dd>The animal&#8217;s adoption fee if you are using per-animal adoption fees</dd>
 <dt>MicrochipNumber</dt>
@@ -511,6 +521,8 @@ name)</dd>
 <dd>The animal&#8217;s sex</dd>
 <dt>Size</dt>
 <dd>The animal&#8217;s size</dd>
+<dt>Weight</dt>
+<dd>The animal&#8217;s weight</dd>
 <dt>SpeciesName</dt>
 <dd>The animal&#8217;s species</dd>
 <dt>ReclaimedDate</dt>
@@ -639,9 +651,14 @@ a status of complete.</p>
 </div>
 <div class="section" id="payment-keys">
 <h2>Payment Keys<a class="headerlink" href="#payment-keys" title="Permalink to this headline">¶</a></h2>
-<p>The same rules apply as for vaccinations and medical records but for accessing
-payments. The Recent keyword looks for payments that have been received. The
-fields are:</p>
+<p>If you are creating a document from the animal or person records, then the same
+rules apply as for vaccinations and medical records when accessing payments.
+payments. The Recent keyword looks for payments that have been received.</p>
+<p>However, if you create an invoice/receipt document from the payment tab of a
+person or animal record, you can select multiple payments before creating the
+document and access the information by suffixing a number to the end of the
+keys listed below (eg: PaymentType1, PaymentComments2)</p>
+<p>The fields are:</p>
 <dl class="docutils">
 <dt>ReceiptNum</dt>
 <dd>If you issue receipts for donations, the receipt number</dd>
@@ -659,6 +676,10 @@ fields are:</p>
 <dd>Yes or No if this donation is eligible for UK giftaid</dd>
 <dt>PaymentComments</dt>
 <dd>Any comments on the payment</dd>
+<dt>PaymentTotalDue</dt>
+<dd>The total of all selected payments that have a due date and no received date</dd>
+<dt>PaymentTotalReceived</dt>
+<dd>The total of all selected payments that have a received date</dd>
 </dl>
 </div>
 <div class="section" id="cost-keys">

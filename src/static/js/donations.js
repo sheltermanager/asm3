@@ -11,6 +11,7 @@ $(function() {
     var dialog = {
         add_title: _("Add payment"),
         edit_title: _("Edit payment"),
+        edit_perm: 'ocod',
         close_on_ok: false,
         hide_read_only: true,
         width: 550,
@@ -160,7 +161,7 @@ $(function() {
                  });
              }
          },
-         { id: "document", text: _("Receipt/Invoice"), icon: "document", enabled: "one", perm: "gaf", 
+         { id: "document", text: _("Receipt/Invoice"), icon: "document", enabled: "multi", perm: "gaf", 
              tooltip: _("Generate document from this payment"), type: "buttonmenu" },
          { id: "offset", type: "dropdownfilter", 
              options: [ "m7|" + _("Received in last week"), 
@@ -341,8 +342,8 @@ $(function() {
             $(".templatelink").click(function() {
                 var template_name = $(this).attr("data");
                 $("#tableform input:checked").each(function() {
-                    var did = $(this).attr("data-id");
-                    window.location = "document_gen?mode=DONATION&id=" + did + "&template=" + template_name;
+                    var ids = tableform.table_ids(table);
+                    window.location = "document_gen?mode=DONATION&id=" + ids + "&template=" + template_name;
                 });
                 return false;
             });

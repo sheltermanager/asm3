@@ -8,6 +8,7 @@ $(function() {
     var dialog = {
         add_title: _("Add log"),
         edit_title: _("Edit log"),
+        edit_perm: 'cle',
         helper_text: _("Log entries need a date and text."),
         close_on_ok: true,
         columns: 1,

@@ -9,6 +9,7 @@ import datetime
 import diary
 import db
 import dbfs
+import extension
 import log
 import lookups
 import media
@@ -54,6 +55,10 @@ def get_animal_query(dbo):
         "cv.OwnerPostcode AS CurrentVetPostcode, " \
         "cv.WorkTelephone AS CurrentVetWorkTelephone, " \
         "oo.OwnerName AS OriginalOwnerName, " \
+        "oo.OwnerTitle AS OriginalOwnerTitle, " \
+        "oo.OwnerInitials AS OriginalOwnerInitials, " \
+        "oo.OwnerForeNames AS OriginalOwnerForeNames, " \
+        "oo.OwnerSurname AS OriginalOwnerSurname, " \
         "oo.OwnerAddress AS OriginalOwnerAddress, " \
         "oo.OwnerTown AS OriginalOwnerTown, " \
         "oo.OwnerCounty AS OriginalOwnerCounty, " \
@@ -135,14 +140,6 @@ def get_animal_query(dbo):
         "ELSE " \
         "(SELECT LocationName FROM internallocation WHERE ID=a.ShelterLocation) " \
         "END AS DisplayLocationName, " \
-        "CASE " \
-        "WHEN a.Archived = 0 AND a.CrueltyCase = 1 THEN 'Cruelty Case' " \
-        "WHEN a.Archived = 0 AND a.IsQuarantine = 1 THEN 'Quarantine' " \
-        "WHEN a.Archived = 0 AND a.IsHold = 1 THEN 'Hold' " \
-        "WHEN a.Archived = 0 AND a.HasActiveReserve = 1 THEN 'Reserved' " \
-        "WHEN a.Archived = 0 AND a.HasPermanentFoster = 1 THEN 'Permanent Foster' " \
-        "WHEN a.IsNotAvailableForAdoption = 0 AND a.Archived = 0 AND a.HasTrialAdoption = 0 THEN 'Adoptable' " \
-        "ELSE 'Not For Adoption' END AS AdoptionStatus, " \
         "web.MediaName AS WebsiteMediaName, " \
         "web.Date AS WebsiteMediaDate, " \
         "web.MediaNotes AS WebsiteMediaNotes, " \
@@ -258,7 +255,6 @@ def get_animals_brief(animals):
         r.append({ 
             "ACTIVEMOVEMENTID": a["ACTIVEMOVEMENTID"],
             "ACTIVEMOVEMENTTYPE": a["ACTIVEMOVEMENTTYPE"],
-            "ADOPTIONSTATUS": a["ADOPTIONSTATUS"],
             "ANIMALCOMMENTS": a["ANIMALCOMMENTS"],
             "ANIMALAGE": a["ANIMALAGE"],
             "ANIMALNAME" : a["ANIMALNAME"],
@@ -271,6 +267,7 @@ def get_animals_brief(animals):
             "CRUELTYCASE": a["CRUELTYCASE"],
             "CURRENTOWNERID": a["CURRENTOWNERID"],
             "CURRENTOWNERNAME": a["CURRENTOWNERNAME"],
+            "DATEOFBIRTH": a["DATEOFBIRTH"],
             "DECEASEDDATE": a["DECEASEDDATE"],
             "DISPLAYLOCATIONNAME": a["DISPLAYLOCATIONNAME"],
             "ENTRYREASONNAME": a["ENTRYREASONNAME"],
@@ -421,13 +418,15 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = ""):
        hiddencomments - partial word/string pattern
        originalowner - string partial pattern
        medianotes - partial word/string pattern
-       showtransfersonly - present if true
-       includedeceased - present if true
-       includenonshelter - present if true
-       goodwithchildren - present if true
-       goodwithcats - present if true
-       goodwithdogs - present if true
-       housetrained - present if true
+       filter - one or more of:
+           showtransfersonly
+           showpickupsonly
+           showcrueltycaseonly
+           showspecialneedsonly
+           goodwithchildren
+           goodwithcats
+           goodwithdogs
+           housetrained
     locationfilter: IN clause of locations to search
     """
     c = []
@@ -462,8 +461,8 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = ""):
             field, db.dd(display2python(l, crit(cfieldfrom))), 
             field, db.dd(display2python(l, crit(cfieldto)))))
 
-    def addcheck(cfield, condition):
-        if hk(cfield): c.append(condition)
+    def addfilter(f, condition):
+        if crit("filter").find(f) != -1: c.append(condition)
 
     def addcomp(cfield, value, condition):
         if hk(cfield) and crit(cfield) == value: c.append(condition)
@@ -493,14 +492,14 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = ""):
     addstr("sheltercode", "a.ShelterCode")
     addstr("litterid", "a.AcceptanceNumber")
     adddate("inbetweenfrom", "inbetweento", "a.MostRecentEntryDate")
-    addcheck("goodwithchildren", "a.IsGoodWithChildren = 0")
-    addcheck("goodwithdogs", "a.IsGoodWithDogs = 0")
-    addcheck("goodwithcats", "a.IsGoodWithCats = 0")
-    addcheck("housetrained", "a.IsHouseTrained = 0")
-    addcheck("showtransfersonly", "a.IsTransfer = 1")
-    addcheck("showpickupsonly", "a.IsPickup = 1")
-    addcheck("showcrueltycaseonly", "a.CrueltyCase = 1")
-    addcheck("showspecialneedsonly", "a.HasSpecialNeeds = 1")
+    addfilter("goodwithchildren", "a.IsGoodWithChildren = 0")
+    addfilter("goodwithdogs", "a.IsGoodWithDogs = 0")
+    addfilter("goodwithcats", "a.IsGoodWithCats = 0")
+    addfilter("housetrained", "a.IsHouseTrained = 0")
+    addfilter("showtransfersonly", "a.IsTransfer = 1")
+    addfilter("showpickupsonly", "a.IsPickup = 1")
+    addfilter("showcrueltycaseonly", "a.CrueltyCase = 1")
+    addfilter("showspecialneedsonly", "a.HasSpecialNeeds = 1")
     addwords("comments", "a.AnimalComments")
     addwords("hiddencomments", "a.HiddenAnimalDetails")
     addwords("features", "a.Markings")
@@ -509,14 +508,6 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = ""):
         addstr("agegroup", "a.AgeGroup")
     adddate("outbetweenfrom", "outbetweento", "a.ActiveMovementDate")
     addwords("medianotes", "web.MediaNotes")
-
-    if not hk("includedeceased") and not crit("logicallocation") == "deceased":
-        c.append("a.DeceasedDate Is Null")
-
-    if crit("logicallocation") == "nonshelter":
-        c.append("a.NonShelterAnimal = 1")
-    elif not hk("includenonshelter"):
-        c.append("a.NonShelterAnimal = 0")
 
     if hk("agedbetweenfrom") and hk("agedbetweento"):
         c.append("%s >= %s AND %s <= %s" % (
@@ -549,6 +540,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = ""):
     addcomp("logicallocation", "reclaimed", "a.ActiveMovementType = %d" % movement.RECLAIMED)
     addcomp("logicallocation", "retailer", "a.ActiveMovementType = %d" % movement.RETAILER)
     addcomp("logicallocation", "deceased", "a.DeceasedDate Is Not Null")
+    addcomp("logicallocation", "nonshelter", "a.NonShelterAnimal = 1")
     where = ""
     if len(c) > 0:
         where = " WHERE " + " AND ".join(c)
@@ -602,6 +594,7 @@ def get_alerts(dbo, locationfilter = ""):
     Returns the alert totals for the main screen.
     """
     futuremonth = db.dd(add_days(now(dbo.timezone), 31))
+    oneyear = db.dd(subtract_days(now(dbo.timezone), 365))
     onemonth = db.dd(subtract_days(now(dbo.timezone), 31))
     oneweek = db.dd(subtract_days(now(dbo.timezone), 7))
     today = db.dd(now(dbo.timezone))
@@ -612,19 +605,19 @@ def get_alerts(dbo, locationfilter = ""):
     sql = "SELECT " \
         "(SELECT COUNT(*) FROM animalvaccination INNER JOIN animal ON animal.ID = animalvaccination.AnimalID WHERE " \
             "DateOfVaccination Is Null AND DeceasedDate Is Null %(shelterfilter)s AND " \
-            "DateRequired  >= %(onemonth)s AND DateRequired <= %(today)s %(locfilter)s) AS duevacc," \
+            "DateRequired  >= %(oneyear)s AND DateRequired <= %(today)s %(locfilter)s) AS duevacc," \
         "(SELECT COUNT(*) FROM animalvaccination av1 INNER JOIN animal ON animal.ID = av1.AnimalID WHERE " \
             "av1.DateOfVaccination Is Not Null AND DeceasedDate Is Null %(shelterfilter)s AND " \
-            "av1.DateExpires  >= %(onemonth)s AND av1.DateExpires <= %(today)s %(locfilter)s AND " \
+            "av1.DateExpires  >= %(oneyear)s AND av1.DateExpires <= %(today)s %(locfilter)s AND " \
             "0 = (SELECT COUNT(*) FROM animalvaccination av2 WHERE av2.AnimalID = av1.AnimalID AND " \
             "av2.DateRequired > av1.DateRequired AND av2.VaccinationID = av1.VaccinationID)) AS expvacc," \
         "(SELECT COUNT(*) FROM animaltest INNER JOIN animal ON animal.ID = animaltest.AnimalID WHERE " \
             "DateOfTest Is Null AND DeceasedDate Is Null %(shelterfilter)s AND " \
-            "DateRequired >= %(onemonth)s AND DateRequired <= %(today)s %(locfilter)s) AS duetest," \
+            "DateRequired >= %(oneyear)s AND DateRequired <= %(today)s %(locfilter)s) AS duetest," \
         "(SELECT COUNT(*) FROM animalmedicaltreatment INNER JOIN animal ON animal.ID = animalmedicaltreatment.AnimalID " \
             "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID WHERE " \
             "DateGiven Is Null AND DeceasedDate Is Null %(shelterfilter)s AND " \
-            "Status = 0 AND DateRequired  >= %(onemonth)s AND DateRequired <= %(today)s %(locfilter)s) AS duemed," \
+            "Status = 0 AND DateRequired  >= %(oneyear)s AND DateRequired <= %(today)s %(locfilter)s) AS duemed," \
         "(SELECT COUNT(*) FROM animalwaitinglist INNER JOIN owner ON owner.ID = animalwaitinglist.OwnerID " \
             "WHERE Urgency = 1 AND DateRemovedFromList Is Null) AS urgentwl," \
         "(SELECT COUNT(*) FROM adoption INNER JOIN owner ON owner.ID = adoption.OwnerID WHERE " \
@@ -654,7 +647,8 @@ def get_alerts(dbo, locationfilter = ""):
         "(SELECT COUNT(*) FROM stocklevel WHERE Balance > 0 AND Expiry Is Not Null AND Expiry <= %(today)s) AS stexp, " \
         "(SELECT COUNT(*) FROM animaltransport WHERE (DriverOwnerID = 0 OR DriverOwnerID Is Null) AND Status < 10) AS trnodrv " \
         "FROM animal LIMIT 1" \
-            % { "today": today, "oneweek": oneweek, "onemonth": onemonth, "futuremonth": futuremonth, "locfilter": locationfilter, "shelterfilter": shelterfilter }
+            % { "today": today, "oneweek": oneweek, "oneyear": oneyear, "onemonth": onemonth, 
+                "futuremonth": futuremonth, "locfilter": locationfilter, "shelterfilter": shelterfilter }
     return db.query_cache(dbo, sql)
 
 def get_stats(dbo):
@@ -685,6 +679,43 @@ def get_stats(dbo):
         % { "from": countfrom, "adoption": movement.ADOPTION, "reclaimed": movement.RECLAIMED, "transfer": movement.TRANSFER }
     return db.query_cache(dbo, sql, 120)
 
+def embellish_timeline(l, rows):
+    """
+    Adds human readable description and icon fields to rows from get_timeline
+    """
+    td = { "ENTERED": ( _("{0} {1}: entered the shelter", l), "animal" ),
+          "MICROCHIP": ( _("{0} {1}: microchipped", l), "microchip" ),
+          "NEUTERED": ( _("{0} {1}: altered", l), "health" ),
+          "RESERVED": ( _("{0} {1}: reserved by {2}", l), "reservation" ),
+          "ADOPTED": ( _("{0} {1}: adopted by {2}", l), "movement" ),
+          "FOSTERED": ( _("{0} {1}: fostered to {2}", l), "movement" ),
+          "TRANSFER": ( _("{0} {1}: transferred to {2}", l), "movement" ),
+          "ESCAPED": ( _("{0} {1}: escaped", l), "movement" ),
+          "STOLEN": ( _("{0} {1}: stolen", l), "movement" ),
+          "RELEASED": (_("{0} {1}: released", l) , "movement" ),
+          "RECLAIMED": ( _("{0} {1}: reclaimed by {2}", l), "movement" ),
+          "RETAILER": ( _("{0} {1}: sent to retailer {2}", l), "movement" ),
+          "RETURNED": ( _("{0} {1}: returned by {2}", l), "movement" ),
+          "DIED": ( _("{0} {1}: died ({2})", l), "death" ),
+          "EUTHANISED": ( _("{0} {1}: euthanised ({2})", l), "death" ),
+          "FIVP": ( _("{0} {1}: tested positive for FIV", l), "positivetest" ),
+          "FLVP": ( _("{0} {1}: tested positive for FeLV", l), "positivetest" ),
+          "HWP": ( _("{0} {1}: tested positive for Heartworm", l), "positivetest" ),
+          "QUARANTINE": ( _("{0} {1}: quarantined", l), "quarantine" ),
+          "HOLD": ( _("{0} {1}: held", l), "hold" ),
+          "NOTADOPT": ( _("{0} {1}: not available for adoption", l), "notforadoption" ),
+          "AVAILABLE": ( _("{0} {1}: available for adoption", l), "notforadoption" ),
+          "VACC": ( _("{0} {1}: received {2}", l), "vaccination" ),
+          "TEST": ( _("{0} {1}: received {2}", l), "test" ),
+          "MEDICAL": ( _("{0} {1}: received {2}", l), "medical" )
+    }
+    for r in rows:
+        desc, icon = td[r["CATEGORY"]]
+        desc = desc.format(r["TEXT1"], r["TEXT2"], r["TEXT3"])
+        r["ICON"] = icon
+        r["DESCRIPTION"] = desc
+    return rows
+
 def get_timeline(dbo, limit = 500):
     """
     Returns a list of recent events at the shelter.
@@ -693,133 +724,133 @@ def get_timeline(dbo, limit = 500):
         "(SELECT 'animal' AS LinkTarget, 'ENTERED' AS Category, DateBroughtIn AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 " \
-            "ORDER BY DateBroughtIn DESC LIMIT %(limit)s) " \
+            "ORDER BY DateBroughtIn DESC, ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'MICROCHIP' AS Category, IdentichipDate AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND IdentichipDate Is Not Null " \
-            "ORDER BY IdentichipDate DESC LIMIT %(limit)s) " \
+            "ORDER BY IdentichipDate DESC, ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'NEUTERED' AS Category, NeuteredDate AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND NeuteredDate Is Not Null " \
-            "ORDER BY NeuteredDate DESC LIMIT %(limit)s) " \
+            "ORDER BY NeuteredDate DESC, ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'RESERVED' AS Category, ReservationDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "INNER JOIN owner ON adoption.OwnerID = owner.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Null AND ReservationDate Is Not Null " \
-            "ORDER BY ReservationDate DESC LIMIT %(limit)s) " \
+            "ORDER BY ReservationDate DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'ADOPTED' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "INNER JOIN owner ON adoption.OwnerID = owner.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 1 " \
-            "ORDER BY MovementDate DESC LIMIT %(limit)s) " \
+            "ORDER BY MovementDate DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'FOSTERED' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "INNER JOIN owner ON adoption.OwnerID = owner.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 2 " \
-            "ORDER BY MovementDate DESC LIMIT %(limit)s) " \
+            "ORDER BY MovementDate DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'TRANSFER' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "INNER JOIN owner ON adoption.OwnerID = owner.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 3 " \
-            "ORDER BY MovementDate DESC LIMIT %(limit)s) " \
+            "ORDER BY MovementDate DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'ESCAPED' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 4 " \
-            "ORDER BY MovementDate DESC LIMIT %(limit)s) " \
+            "ORDER BY MovementDate DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'RECLAIMED' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "INNER JOIN owner ON adoption.OwnerID = owner.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 5 " \
-            "ORDER BY MovementDate DESC LIMIT %(limit)s) " \
+            "ORDER BY MovementDate DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'STOLEN' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 6 " \
-            "ORDER BY MovementDate DESC LIMIT %(limit)s) " \
+            "ORDER BY MovementDate DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'RELEASED' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 7 " \
-            "ORDER BY MovementDate DESC LIMIT %(limit)s) " \
+            "ORDER BY MovementDate DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'RETAILER' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "INNER JOIN owner ON adoption.OwnerID = owner.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 8 " \
-            "ORDER BY MovementDate DESC LIMIT %(limit)s) " \
+            "ORDER BY MovementDate DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'RETURNED' AS Category, ReturnDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "LEFT OUTER JOIN owner ON adoption.OwnerID = owner.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND ReturnDate Is Not Null " \
-            "ORDER BY ReturnDate DESC LIMIT %(limit)s) " \
+            "ORDER BY ReturnDate DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'DIED' AS Category, DeceasedDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, ReasonName AS Text3, animal.LastChangedBy FROM animal " \
             "INNER JOIN deathreason ON animal.PTSReasonID = deathreason.ID " \
             "WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND PutToSleep = 0 AND DeceasedDate Is Not Null " \
-            "ORDER BY DeceasedDate DESC LIMIT %(limit)s) " \
+            "ORDER BY DeceasedDate DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'EUTHANISED' AS Category, DeceasedDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, ReasonName AS Text3, animal.LastChangedBy FROM animal " \
             "INNER JOIN deathreason ON animal.PTSReasonID = deathreason.ID " \
             "WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND PutToSleep = 1 AND DeceasedDate Is Not Null " \
-            "ORDER BY DeceasedDate DESC LIMIT %(limit)s) " \
+            "ORDER BY DeceasedDate DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'FIVP' AS Category, CombiTestDate AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND CombiTested = 1 AND CombiTestDate Is Not Null AND CombiTestResult = 2 " \
-            "ORDER BY CombiTestDate DESC LIMIT %(limit)s) " \
+            "ORDER BY CombiTestDate DESC, ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'FLVP' AS Category, CombiTestDate AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND CombiTested = 1 AND CombiTestDate Is Not Null AND FLVResult = 2 " \
-            "ORDER BY CombiTestDate DESC LIMIT %(limit)s) " \
+            "ORDER BY CombiTestDate DESC, ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'HWP' AS Category, CombiTestDate AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND HeartwormTested = 1 AND HeartwormTestDate Is Not Null AND HeartwormTestResult = 2 " \
-            "ORDER BY HeartwormTestDate DESC LIMIT %(limit)s) " \
+            "ORDER BY HeartwormTestDate DESC, ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'QUARANTINE' AS Category, LastChangedDate AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND IsQuarantine = 1 " \
-            "ORDER BY LastChangedDate DESC LIMIT %(limit)s) " \
+            "ORDER BY LastChangedDate DESC, ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'HOLD' AS Category, DateBroughtIn AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND IsHold = 1 " \
-            "ORDER BY DateBroughtIn DESC LIMIT %(limit)s) " \
+            "ORDER BY DateBroughtIn DESC, ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'NOTADOPT' AS Category, DateBroughtIn AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND IsNotAvailableForAdoption = 1 " \
-            "ORDER BY DateBroughtIn DESC LIMIT %(limit)s) " \
+            "ORDER BY DateBroughtIn DESC, ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'AVAILABLE' AS Category, ActiveMovementReturn AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND ActiveMovementReturn Is Not Null AND IsNotAvailableForAdoption = 0 " \
-            "ORDER BY ActiveMovementReturn DESC LIMIT %(limit)s) " \
+            "ORDER BY ActiveMovementReturn DESC, ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal_vaccination' AS LinkTarget, 'VACC' AS Category, DateOfVaccination AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, VaccinationType AS Text3, animalvaccination.LastChangedBy FROM animal " \
             "INNER JOIN animalvaccination ON animalvaccination.AnimalID = animal.ID " \
             "INNER JOIN vaccinationtype ON vaccinationtype.ID = animalvaccination.VaccinationID " \
             "WHERE NonShelterAnimal = 0 AND DateOfVaccination Is Not Null " \
-            "ORDER BY DateOfVaccination DESC LIMIT %(limit)s) " \
+            "ORDER BY DateOfVaccination DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal_test' AS LinkTarget, 'TEST' AS Category, DateOfTest AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, TestName AS Text3, animaltest.LastChangedBy FROM animal " \
             "INNER JOIN animaltest ON animaltest.AnimalID = animal.ID " \
             "INNER JOIN testtype ON testtype.ID = animaltest.TestTypeID " \
             "WHERE NonShelterAnimal = 0 AND DateOfTest Is Not Null " \
-            "ORDER BY DateOfTest DESC LIMIT %(limit)s) " \
+            "ORDER BY DateOfTest DESC, animal.ID LIMIT %(limit)s) " \
         "UNION ALL (SELECT 'animal_medical' AS LinkTarget, 'MEDICAL' AS Category, DateGiven AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, TreatmentName AS Text3, animalmedicaltreatment.LastChangedBy FROM animal " \
             "INNER JOIN animalmedicaltreatment ON animalmedicaltreatment.AnimalID = animal.ID " \
             "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID " \
             "WHERE NonShelterAnimal = 0 AND DateGiven Is Not Null " \
-            "ORDER BY DateGiven DESC LIMIT %(limit)s) " \
+            "ORDER BY DateGiven DESC, animal.ID LIMIT %(limit)s) " \
         ") dummy " \
         "WHERE EventDate <= %(today)s " \
-        "ORDER BY EventDate DESC " \
+        "ORDER BY EventDate DESC, ID " \
         "LIMIT %(limit)s" % { "today": db.dd(now(dbo.timezone)), "limit": str(limit) }
-    return db.query_cache(dbo, sql, 120)
+    return embellish_timeline(dbo.locale, db.query_cache(dbo, sql, 120))
 
 def calc_most_recent_entry(dbo, animalid, a = None):
     """
@@ -1549,8 +1580,11 @@ def insert_animal_from_form(dbo, post, username):
     data: The webpy data object containing form parameters
     Returns a tuple containing the newly created animal id and code
     """
+    if not extension.route(dbo, "before", "insert_animal_from_form", post):
+        return
     l = dbo.locale
     nextid = db.get_id(dbo, "animal")
+    post.data["id"] = nextid
     def c(field):
         return post.db_boolean(field)
     def t(field):
@@ -1619,6 +1653,11 @@ def insert_animal_from_form(dbo, post, username):
     if dbb == 0:
         dbb = configuration.default_broughtinby(dbo)
 
+    # If we have nsowner, use that over originalowner for non-shelter animals
+    originalowner = ki("originalowner")
+    if ki("nsowner") != 0:
+        originalowner = ki("nsowner")
+
     # Set not for adoption if the option is on
     notforadoption = 0
     if post.has_key("notforadoption"):
@@ -1646,7 +1685,7 @@ def insert_animal_from_form(dbo, post, username):
         ( "BaseColourID", s("basecolour")),
         ( "ShelterLocation", s("internallocation")),
         ( "ShelterLocationUnit", t("unit")),
-        ( "NonShelterAnimal", db.di(0)),
+        ( "NonShelterAnimal", c("nonshelter")),
         ( "CrueltyCase", db.di(0)),
         ( "BondedAnimalID", db.di(0)),
         ( "BondedAnimal2ID", db.di(0)),
@@ -1681,7 +1720,7 @@ def insert_animal_from_form(dbo, post, username):
         ( "IsGoodWithDogs", db.di(goodwithdogs)),
         ( "IsGoodWithChildren", db.di(goodwithkids)),
         ( "IsHouseTrained", db.di(housetrained)),
-        ( "OriginalOwnerID", s("originalowner")),
+        ( "OriginalOwnerID", db.di(originalowner)),
         ( "BroughtInByOwnerID", db.di(dbb) ),
         ( "ReasonNO", db.ds("")),
         ( "ReasonForEntry", t("reasonforentry")),
@@ -1738,6 +1777,7 @@ def insert_animal_from_form(dbo, post, username):
         log.add_log(dbo, username, log.ANIMAL, nextid, configuration.weight_change_log_type(dbo),
             str(kf("weight")))
 
+    extension.route(dbo, "after", "insert_animal_from_form", post)
     return (nextid, get_code(dbo, nextid))
 
 def update_animal_from_form(dbo, post, username):
@@ -1745,6 +1785,8 @@ def update_animal_from_form(dbo, post, username):
     Updates an animal record from the edit animal screen
     data: The webpy data object containing form parameters
     """
+    if not extension.route(dbo, "before", "update_animal_from_form", post):
+        return
     l = dbo.locale
     def c(field):
         return post.db_boolean(field)
@@ -1903,6 +1945,10 @@ def update_animal_from_form(dbo, post, username):
     update_animal_status(dbo, ki("id"))
     update_variable_animal_data(dbo, ki("id"))
 
+    # Update any diary notes linked to this animal
+    update_diary_linkinfo(dbo, ki("id"))
+    extension.route(dbo, "after", "update_animal_from_form", post)
+
 def update_animals_from_form(dbo, post, username):
     """
     Batch updates multiple animal records from the bulk form
@@ -1953,6 +1999,24 @@ def update_deceased_from_form(dbo, username, post):
     # Update denormalised fields after the deceased change
     update_animal_status(dbo, animalid)
     update_variable_animal_data(dbo, animalid)
+
+def update_diary_linkinfo(dbo, animalid, a = None, diaryupdatebatch = None):
+    """
+    Updates the linkinfo on diary notes for an animal.
+    animalid: The animal's ID
+    a: An animal resultset (if none, will be loaded)
+    diaryupdatebatch: a batch of diary records to update, the three
+                      params are linkinfo, linktype and id. If blank, an update
+                      query will be done immediately
+    """
+    if a is None:
+        a = get_animal(dbo, animalid)
+    diaryloc = "%s %s - %s" % ( a["SHELTERCODE"], a["ANIMALNAME"], a["DISPLAYLOCATION"])
+    if diaryupdatebatch is not None:
+        diaryupdatebatch.append( (diaryloc, diary.ANIMAL, animalid) )
+    else:
+        db.execute(dbo, "UPDATE diary SET LinkInfo = %s WHERE LinkType = %d AND LinkID = %d" % (
+            db.ds(diaryloc), diary.ANIMAL, animalid ))
 
 def update_location(dbo, username, animalid, locationid):
     """
@@ -2719,6 +2783,9 @@ def update_animal_status(dbo, animalid, a = None, animalupdatebatch = None, diar
     a["MOSTRECENTENTRYDATE"] = mostrecententrydate
     a["DISPLAYLOCATION"] = qlocname
 
+    # Update the location on any diary notes for this animal
+    update_diary_linkinfo(dbo, animalid, a, diaryupdatebatch)
+  
     # If we have an animal batch going, append to it
     if animalupdatebatch is not None:
         animalupdatebatch.append((
@@ -2749,14 +2816,6 @@ def update_animal_status(dbo, animalid, a = None, animalupdatebatch = None, diar
             ( "MostRecentEntryDate", db.dd(mostrecententrydate) )
             )))
 
-    # Update the location on any diary notes for this animal
-    diaryloc = "%s %s - %s" % ( a["SHELTERCODE"], a["ANIMALNAME"], loc)
-    if diaryupdatebatch is not None:
-        diaryupdatebatch.append( (diaryloc, diary.ANIMAL, animalid) )
-    else:
-        db.execute(dbo, "UPDATE diary SET LinkInfo = %s WHERE LinkType = %d AND LinkID = %d" % (
-            db.ds(diaryloc), diary.ANIMAL, animalid ))
-  
 def get_number_animals_on_shelter(dbo, date, speciesid = 0, animaltypeid = 0, internallocationid = 0, ageselection = 0):
     """
     Returns the number of animals on shelter at a given date for a species, type,

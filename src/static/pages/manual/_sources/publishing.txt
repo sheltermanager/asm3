@@ -44,6 +44,11 @@ All Publishers
 
 The All Publishers tab allows you to set options common to all internet publishers.
 
+* Register microchips after: If you are registering microchips, ASM will update
+  the owner information with the registry after these types of movements.
+  Non-shelter animals will always be registered with their original owner
+  information if present, using the microchip date as a trigger.
+
 * Reupload animal images every time: Ticking this box will tell the publisher
   to reupload images for all the animals published. Normally, ASM will not
   upload an image it has previously uploaded to save bandwidth. If you've

@@ -101,7 +101,11 @@
          * or empty string if not present.
          */
         querystring_param: function(param) {
-            var s = common.current_url(), p = s.indexOf(param + "=");
+            return common.url_param(common.current_url(), param);
+        },
+
+        url_param: function(s, param) {
+            var p = s.indexOf(param + "=");
             if (p == -1) { return ""; }
             var e = s.indexOf("&", p);
             if (e == -1) { e = s.length; }
@@ -144,6 +148,16 @@
          */
         is_array: function(v) {
             return v instanceof Array || Object.prototype.toString.call(v) === '[object Array]';
+        },
+
+        /**
+         * Returns true if v is a date or a string containing an ISO date
+         */
+        is_date: function(v) {
+            if (!v) { return false; }
+            if (v instanceof Date) { return true; }
+            if (common.is_string(v) && v.length == 19 && v.indexOf("T") == 10) { return true; }
+            return false;
         },
 
         /** 
@@ -219,6 +233,20 @@
         today_no_time: function() {
             var d = new Date();
             return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0);
+        },
+
+        /** Adds days to date */
+        add_days: function(date, days) {
+            var d = new Date();
+            d.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            return d;
+        },
+
+        /** Subtracts days from date */
+        subtract_days: function(date, days) {
+            var d = new Date();
+            d.setTime(date.getTime() + 60 - (days * 24 * 60 * 60 * 1000));
+            return d;
         },
  
         /**
@@ -310,6 +338,19 @@
                 }
             });
             return rv;
+        },
+
+        /**
+         * Deletes the row with the id given
+         * rows: The object to search in
+         * id: The ID field value to find
+         */
+        delete_row: function(rows, id, idcolumn) {
+            $.each(rows, function(i, row) {
+                if (row && row[idcolumn] == id) {
+                    rows.splice(i, 1); 
+                }
+            });
         },
 
         /** 
@@ -817,6 +858,25 @@
         },
 
         /**
+         * Checks if d is in between start and end
+         * d: js or iso date 
+         * start: js or iso date
+         * end: js or iso date 
+         * ignoretime: if true, removes time component before comparison
+         */
+        date_in_range: function(d, start, end, ignoretime) {
+            d = format.date_js(d); 
+            start = format.date_js(start); 
+            end = format.date_js(end); 
+            if (ignoretime) {
+                d.setHours(0,0,0,0);
+                start.setHours(0,0,0,0);
+                end.setHours(0,0,0,0);
+            }
+            return start.getTime() <= d.getTime() && d.getTime() <= end.getTime();
+        },
+
+        /**
          * Turns a display date or js date into iso format.
          * null is returned if d is undefined/null
          */
@@ -871,6 +931,7 @@
          */
         date_js: function(iso) {
             if (!iso) { return null; }
+            if (iso instanceof Date) { return iso; } // it's already a js date
             // IE8 and below doesn't support ISO date strings so we have to slice it up ourself
             var year = parseInt(iso.substring(0, 4), 10),
                 month = parseInt(iso.substring(5, 7), 10) - 1,
@@ -883,11 +944,31 @@
         },
 
         /**
+         * Returns the ISO 8601 week number for a date
+         * d: js or iso date
+         */
+        date_weeknumber: function(d) {
+            d = format.date_js(d);
+            d = new Date(+d);
+            d.setHours(0,0,0,0);
+            // Set to nearest Thursday: current date + 4 - current day number
+            // Make Sunday's day number 7
+            d.setDate(d.getDate() + 4 - (d.getDay() || 7));
+            // Get first day of year
+            var yearStart = new Date(d.getFullYear(), 0, 1);
+            // Calculate full weeks to nearest Thursday
+            var weekNo = Math.ceil( ( ( (d - yearStart) / 86400000) + 1) / 7);
+            return weekNo;
+        },
+
+        /**
          * Turns an iso or js date into a display time
          * empty string is returned if iso is undefined/null
+         * f: the format to use, %H, %h, %M, %S are supported
          */
-        time: function(iso) {
-            var d, f = "%H:%M:%S";
+        time: function(iso, f) {
+            var d; 
+            if (!f) { f = "%H:%M:%S"; }
             if (!iso) { return ""; }
             if (iso instanceof Date) { 
                 d = iso; 
@@ -922,11 +1003,77 @@
             if (p.indexOf(" ") == -1) { return p; }
             p = p.substring(0, p.indexOf(" "));
             return p;
+        },
+
+        /**
+         * Returns a readable day of the month from a number
+         * 0 = Jan, 1 = Feb, etc.
+         */
+        monthname: function(i) {
+            var months = [ _("Jan"), _("Feb"), _("Mar"), _("Apr"), 
+                _("May"), _("Jun"), _("Jul"), _("Aug"), _("Sep"), 
+                _("Oct"), _("Nov"), _("Dec") ];
+            if (i && (i < 0 || i > 11)) { return ""; }
+            return months[i];
+        },
+
+        /** Returns a readable day of the week from a number
+         *  0 = Mon, 1 = Tue, etc.
+         */
+        weekdayname: function(i) {
+            var days = [ _("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat"), _("Sun") ];
+            if (i && (i < 0 || i > 6)) { return ""; }
+            return days[i];
         }
 
     };
 
     html = {
+
+        /**
+         * Returns true if animal a is adoptable. Looks at current publishing options
+         * and uses the same logic as the backend publisher
+         */
+        is_animal_adoptable: function(a) {
+            var p = config.str("PublisherPresets"),
+                exwks = format.to_int(common.url_param(p.replace(/ /g, "&"), "excludeunder")),
+                locs = common.url_param(p.replace(/ /g, "&"), "includelocations");
+            if (a.ISNOTAVAILABLEFORADOPTION == 1) { return [ false, _("Not for adoption flag set") ]; }
+            if (a.NONSHELTERANIMAL == 1) { return [ false, _("Non-Shelter") ]; }
+            if (a.DECEASEDDATE) { return [ false, _("Deceased") ]; }
+            if (a.CRUELTYCASE == 1 && p.indexOf("includecase") == -1) { return [ false, _("Cruelty Case") ]; }
+            if (a.HASACTIVERESERVE == 1 && a.RESERVEDOWNERID && p.indexOf("includereserved") == -1) {
+                return [ false, _("Reserved") + " " + html.icon("right") + " " + 
+                        "<a href=\"person?id=" + a.RESERVEDOWNERID + "\">" + a.RESERVEDOWNERNAME ];
+            }
+            if (a.HASACTIVERESERVE == 1 && p.indexOf("includereserved") == -1) { return [ false, _("Reserved") ]; }
+            if (a.ISHOLD == 1 && a.HOLDUNTILDATE && p.indexOf("includehold") == -1) { 
+                return [ false, _("Hold until {0}").replace("{0}", format.date(a.HOLDUNTILDATE)) ]; 
+            }
+            if (a.ISHOLD == 1 && p.indexOf("includehold") == -1) { return [ false, _("Hold") ]; }
+            if (a.ISQUARANTINE == 1 && p.indexOf("includequarantine") == -1) { return [ false, _("Quarantine") ]; }
+            if (a.DECEASEDDATE) { return [ false, _("Deceased") ]; }
+            if (a.HASPERMANENTFOSTER == 1) { return [ false, _("Permanent Foster") ]; }
+            if (a.ACTIVEMOVEMENTTYPE == 2 && p.indexOf("includefosters") == -1) { return [ false, _("Foster") ]; }
+            if (a.ACTIVEMOVEMENTTYPE == 8 && p.indexOf("includeretailer") == -1) { return [ false, _("Retailer") ]; }
+            if (a.ACTIVEMOVEMENTTYPE == 1 && a.HASTRIALADOPTION == 1 && p.indexOf("includetrial") == -1) { return [ false, _("Trial Adoption") ]; }
+            if (a.ACTIVEMOVEMENTTYPE == 1 && a.HASTRIALADOPTION == 0) { return [ false, _("Adopted") ]; }
+            if (a.ACTIVEMOVEMENTTYPE >= 3 && a.ACTIVEMOVEMENTTYPE <= 7) { return [ false, a.DISPLAYLOCATION ]; }
+            if (!a.WEBSITEMEDIANAME && p.indexOf("includewithoutimage") == -1) { return [ false, _("No picture") ]; }
+            if (exwks) { 
+                if (common.add_days(format.date_js(a.DATEOFBIRTH), (exwks * 7)) > new Date()) { 
+                    return [ false, _("Under {0} weeks old").replace("{0}", exwks) ]; 
+                } 
+            }
+            if (locs && locs != "null" && !a.ACTIVEMOVEMENTTYPE) {
+                var inloc = false;
+                $.each(locs.split(","), function(i,v) {
+                    if (format.to_int(v) == a.SHELTERLOCATION) { inloc = true; }
+                });
+                if (!inloc) { return [ false, _("Not in chosen publisher location") ]; }
+            }
+            return [ true, _("Available for adoption") ];
+        },
 
         /**
          * Renders an animal link thumbnail from the record given
@@ -1039,39 +1186,11 @@
         /** 
          * Renders a shelter event described in e. Events should have
          * the following attributes:
-         * LINKTARGET, CATEGORY, EVENTDATE, ID, TEXT1, TEXT2, TEXT3, LASTCHANGEDBY
+         * LINKTARGET, CATEGORY, EVENTDATE, ID, TEXT1, TEXT2, TEXT3, LASTCHANGEDBY,
+         * ICON, DESCRIPTION
          */
         event_text: function(e, o) {
-            var handlers = {
-                ENTERED: function(x) { return html.icon("animal") + ' ' + _("{0} {1}: entered the shelter"); },
-                MICROCHIP: function(x) { return html.icon("microchip") + ' ' + _("{0} {1}: microchipped"); },
-                NEUTERED: function(x) { return html.icon("health") + ' ' + _("{0} {1}: altered"); },
-                RESERVED: function(x) { return html.icon("reservation") + ' ' + _("{0} {1}: reserved by {2}"); },
-                ADOPTED: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: adopted by {2}"); },
-                FOSTERED: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: fostered to {2}"); },
-                TRANSFER: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: transferred to {2}"); },
-                ESCAPED: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: escaped"); },
-                STOLEN: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: stolen"); },
-                RELEASED: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: released"); },
-                RECLAIMED: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: reclaimed by {2}"); },
-                RETAILER: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: sent to retailer {2}"); },
-                RETURNED: function(x) { return html.icon("movement") + ' ' + _("{0} {1}: returned by {2}"); },
-                DIED: function(x) { return html.icon("death") + ' ' + _("{0} {1}: died ({2})"); },
-                EUTHANISED: function(x) { return html.icon("death") + ' ' + _("{0} {1}: euthanised ({2})"); },
-                FIVP: function(x) { return html.icon("positivetest") + ' ' + _("{0} {1}: tested positive for FIV"); },
-                FLVP: function(x) { return html.icon("positivetest") + ' ' + _("{0} {1}: tested positive for FeLV"); },
-                HWP: function(x) { return html.icon("positivetest") + ' ' + _("{0} {1}: tested positive for Heartworm"); },
-                QUARANTINE: function(x) { return html.icon("quarantine") + ' ' + _("{0} {1}: quarantined"); },
-                HOLD: function(x) { return html.icon("hold") + ' ' + _("{0} {1}: held"); },
-                NOTADOPT: function(x) { return html.icon("notforadoption") + ' ' + _("{0} {1}: not available for adoption"); },
-                AVAILABLE: function(x) { return html.icon("notforadoption") + ' ' + _("{0} {1}: available for adoption"); },
-                VACC: function(x) { return html.icon("vaccination") + ' ' + _("{0} {1}: received {2}"); },
-                TEST: function(x) { return html.icon("test") + ' ' + _("{0} {1}: received {2}"); },
-                MEDICAL: function(x) { return html.icon("medical") + ' ' + _("{0} {1}: received {2}"); }
-            },
-            text = handlers[e.CATEGORY](e), h = "";
-
-            text = text.replace("{0}", e.TEXT1).replace("{1}", e.TEXT2).replace("{2}", e.TEXT3);
+            var h = "";
             if (o && o.includedate) {
                 h += '<span class="asm-timeline-small-date">' + format.date(e.EVENTDATE) + '</span> ';
             }
@@ -1079,7 +1198,7 @@
                 h += '<span class="asm-timeline-time">' + format.time(e.EVENTDATE) + '</span>' ;
             }
             h += ' <a href="' + e.LINKTARGET + '?id=' + e.ID + '">';
-            h += text;
+            h += html.icon(e.ICON) + ' ' + e.DESCRIPTION;
             h += '</a> <span class="asm-timeline-by">(' + e.LASTCHANGEDBY + ')</span>';
             return h;
         },

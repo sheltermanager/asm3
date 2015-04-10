@@ -67,6 +67,8 @@ InternalLocation
     The animal's location within the shelter 
 LocationUnit
     The location unit (eg, pen or cage number)
+DisplayLocation
+    Either the internal location if the animal is on shelter, a movement type/person for animals leaving the shelter or a deceased reason if the animal is no longer alive
 CoatType
     The animal's coat type 
 AnimalComments
@@ -100,8 +102,14 @@ Declawed
     "Yes" if the animal has been declawed 
 AnimalID
     The animal's internal ID number 
-BondedWith
-    A list of the names and codes of animals this one is bonded with 
+BondedAnimal1Name
+    The name of the first animal this animal is bonded to
+BondedAnimal1Code
+    The code of the first animal this animal is bonded to
+BondedAnimal2Name
+    The name of the second animal this animal is bonded to
+BondedAnimal2Code
+    The code of the second animal this animal is bonded to
 Fee
     The animal's adoption fee if you are using per-animal adoption fees
 MicrochipNumber
@@ -266,6 +274,8 @@ Sex
     The animal's sex 
 Size
     The animal's size 
+Weight
+    The animal's weight
 SpeciesName
     The animal's species 
 ReclaimedDate
@@ -398,9 +408,16 @@ MedicalComments
 Payment Keys
 ------------
 
-The same rules apply as for vaccinations and medical records but for accessing
-payments. The Recent keyword looks for payments that have been received. The
-fields are:
+If you are creating a document from the animal or person records, then the same
+rules apply as for vaccinations and medical records when accessing payments.
+payments. The Recent keyword looks for payments that have been received. 
+
+However, if you create an invoice/receipt document from the payment tab of a
+person or animal record, you can select multiple payments before creating the
+document and access the information by suffixing a number to the end of the
+keys listed below (eg: PaymentType1, PaymentComments2)
+
+The fields are:
 
 ReceiptNum
     If you issue receipts for donations, the receipt number 
@@ -418,6 +435,10 @@ PaymentGiftAid
     Yes or No if this donation is eligible for UK giftaid
 PaymentComments 
     Any comments on the payment
+PaymentTotalDue
+    The total of all selected payments that have a due date and no received date
+PaymentTotalReceived
+    The total of all selected payments that have a received date
 
 Cost Keys
 ---------

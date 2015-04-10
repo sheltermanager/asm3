@@ -6,6 +6,7 @@ $(function() {
     var dialog = {
         add_title: _("Add investigation"),
         edit_title: _("Edit investigation"),
+        edit_perm: 'coi',
         helper_text: _("Date and notes are mandatory."),
         close_on_ok: true,
         columns: 1,

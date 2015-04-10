@@ -25,6 +25,7 @@ $(function() {
     var dialog = {
         add_title: _("Add movement"),
         edit_title: _("Edit movement"),
+        edit_perm: 'camv',
         close_on_ok: false,
         autofocus: false,
         columns: 2,
@@ -274,6 +275,35 @@ $(function() {
                     $("#type").select("value", "1");
                     $("#movementdate").val(format.date(new Date()));
                     movements.type_change(); 
+                    movements.returndate_change();
+                });
+             }
+         },
+         { id: "return", text: _("Return"), icon: "complete", enabled: "one", perm: "camv",
+             tooltip: _("Return this movement and bring the animal back to the shelter"),
+             hideif: function() {
+                 return controller.name.indexOf("move_book_recent") == -1;
+             },
+             click: function() {
+                var row = tableform.table_selected_row(table);
+                tableform.fields_populate_from_json(dialog.fields, row);
+                movements.type_change(); 
+                movements.returndate_change();
+                tableform.dialog_show_edit(dialog, row, function() {
+                    if (!movements.validation()) { tableform.dialog_enable_buttons(); return; }
+                    tableform.fields_update_row(dialog.fields, row);
+                    movements.set_extra_fields(row);
+                    tableform.fields_post(dialog.fields, "mode=update&movementid=" + row.ID, controller.name, function(response) {
+                        tableform.table_update(table);
+                        tableform.dialog_close();
+                    },
+                    function(response) {
+                        tableform.dialog_error(response);
+                        tableform.dialog_enable_buttons();
+                    });
+                },
+                function() {
+                    $("#returndate").val(format.date(new Date()));
                     movements.returndate_change();
                 });
              }

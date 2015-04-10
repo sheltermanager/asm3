@@ -27,12 +27,33 @@ from sitedefs import BASE_URL, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, CACH
 
 # Service methods that require authentication
 AUTH_METHODS = [ 
-    "upload_animal_image", 
-    "json_shelter_animals", "jsonp_shelter_animals", "xml_shelter_animals", 
-    "html_report", "csv_mail", 
+    "csv_mail", "html_report", "rss_timeline", "upload_animal_image", 
+    "xml_adoptable_animals", "json_adoptable_animals",
     "xml_recent_adoptions", "json_recent_adoptions", 
-    "xml_adoptable_animals", "json_adoptable_animals"  
+    "xml_shelter_animals", "json_shelter_animals", "jsonp_shelter_animals"
 ]
+
+def flood_protect(method, remoteip, ttl, message = ""):
+    """
+    Checks to see if we've had a request for method from 
+    remoteip since ttl seconds ago.
+    If we haven't, we record this as the last time we saw a request
+    from this ip address for that method. Otherwise, an error is thrown.
+    If memcache isn't available, does nothing.
+    method: The service method we're protecting
+    remoteip: The ip address of the caller
+    ttl: The protection period (one request per ttl seconds)
+    """
+    if not cache.available(): return
+    cache_key = "m%sr%s" % (method, remoteip)
+    v = cache.get(cache_key)
+    #al.debug("method: %s, remoteip: %s, ttl: %d, cacheval: %s" % (method, remoteip, ttl, v), "service.flood_protect")
+    if v is None:
+        cache.put(cache_key, "x", ttl)
+    else:
+        if message == "":
+            message = "You have already called '%s' in the last %d seconds, please wait before trying again." % (method, ttl)
+        raise utils.ASMError(message)
 
 def get_cached_response(cache_key):
     """
@@ -103,14 +124,17 @@ def handler(post, remoteip, referer):
 
     # Does the method require us to authenticate? If so, do it.
     user = None
+    securitymap = ""
     if method in AUTH_METHODS:
         user = users.authenticate(dbo, username, password)
         if user is None:
             al.error("auth failed - %s/%s is not a valid username/password from %s" % (username, password, remoteip), "service.handler", dbo)
             return ("text/plain", 0, "ERROR: Invalid username and password")
+        securitymap = users.get_security_map(dbo, user["USERNAME"])
 
     # Get the preferred locale for the site
-    dbo.locale = configuration.locale(dbo)
+    l = configuration.locale(dbo)
+    dbo.locale = l
     al.info("call %s->%s [%s %s]" % (username, method, str(animalid), title), "service.handler", dbo)
 
     if method =="animal_image":
@@ -133,30 +157,36 @@ def handler(post, remoteip, referer):
         return ("image/jpeg", 86400, dbfs.get_string(dbo, title, "/reports"))
 
     elif method == "json_adoptable_animals":
+        users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
         rs = publish.get_animal_data(dbo, pc, True)
         return set_cached_response(cache_key, "application/json", 3600, html.json(rs))
 
     elif method == "xml_adoptable_animals":
+        users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
         rs = publish.get_animal_data(dbo, pc, True)
         return set_cached_response(cache_key, "application/xml", 3600, html.xml(rs))
 
     elif method == "json_recent_adoptions":
+        users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         rs = movement.get_recent_adoptions(dbo)
         return set_cached_response(cache_key, "application/json", 3600, html.json(rs))
 
     elif method == "xml_recent_adoptions":
+        users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         rs = movement.get_recent_adoptions(dbo)
         return set_cached_response(cache_key, "application/xml", 3600, html.xml(rs))
 
     elif method == "html_report":
+        users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_REPORT)
         crid = reports.get_id(dbo, title)
         p = reports.get_criteria_params(dbo, crid, post.data)
         rhtml = reports.execute(dbo, crid, username, p)
         return set_cached_response(cache_key, "text/html", 3600, rhtml)
 
     elif method == "csv_mail":
+        users.check_permission_map(l, user["SUPERUSER"], securitymap, users.MAIL_MERGE)
         crid = reports.get_id(dbo, title)
         p = reports.get_criteria_params(dbo, crid, post.data)
         rows, cols = reports.execute_query(dbo, crid, username, p)
@@ -164,18 +194,27 @@ def handler(post, remoteip, referer):
         return set_cached_response(cache_key, "text/csv", 3600, mcsv)
 
     elif method == "jsonp_shelter_animals":
+        users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         sa = animal.get_animal_find_simple(dbo, "", "shelter")
         return set_cached_response(cache_key, "application/javascript", 3600, str(post["callback"]) + "(" + html.json(sa) + ")")
 
     elif method == "json_shelter_animals":
+        users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         sa = animal.get_animal_find_simple(dbo, "", "shelter")
         return set_cached_response(cache_key, "application/json", 3600, html.json(sa))
 
     elif method == "xml_shelter_animals":
+        users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         sa = animal.get_animal_find_simple(dbo, "", "shelter")
         return set_cached_response(cache_key, "application/xml", 3600, html.xml(sa))
 
+    elif method == "rss_timeline":
+        users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
+        return set_cached_response(cache_key, "application/rss+xml", 3600, html.timeline_rss(dbo))
+
     elif method == "upload_animal_image":
+        flood_protect("upload_animal_image", remoteip, 60)
+        users.check_permission_map(l, user["SUPERUSER"], securitymap, users.ADD_MEDIA)
         media.attach_file_from_form(dbo, username, media.ANIMAL, int(animalid), post)
         return ("text/plain", 0, "OK")
 
@@ -185,6 +224,7 @@ def handler(post, remoteip, referer):
         return set_cached_response(cache_key, "text/html; charset=utf-8", 120, onlineform.get_onlineform_html(dbo, formid))
 
     elif method == "online_form_post":
+        flood_protect("online_form_post", remoteip, 60)
         onlineform.insert_onlineformincoming_from_form(dbo, post, remoteip)
         redirect = post["redirect"]
         if redirect == "":

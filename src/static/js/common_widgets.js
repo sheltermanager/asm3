@@ -117,6 +117,7 @@
     $.fn.table = function(options) {
         var defaults = {
             css:        'asm-table',
+            filter:     false,
             style_td:   true,
             row_hover:  true,
             row_select: true,
@@ -153,6 +154,10 @@
             input.tablesorter({
                 sortColumn: options.sortColumn,
                 sortList: options.sortList,
+                widgets: options.filter ? [ "filter" ] : [],
+                filter_columnFilters: options.filter,
+                filter_cssFilter: "tablesorter-filter",
+                filter_ignoreCase: true,
                 textExtraction: function(node) {
                     // custom extraction function turns display dates 
                     // into iso dates behind the scenes for 
@@ -289,11 +294,34 @@
     
     $.fn.date = function() {
         this.each(function() {
-            $(this).datepicker({ 
-                changeMonth: true, 
-                changeYear: true,
-                firstDay: 1
-            });
+            var dayfilter = $(this).attr("data-onlydays");
+            var nopast = $(this).attr("data-nopast");
+            if (dayfilter) {
+                $(this).datepicker({ 
+                    changeMonth: true, 
+                    changeYear: true,
+                    firstDay: 1,
+                    beforeShowDay: function(a) {
+                        var day = a.getDay();
+                        var rv = false;
+                        $.each(dayfilter.split(","), function(i, v) {
+                            if (v == String(day)) {
+                                rv = true;
+                            }
+                            return false;
+                        });
+                        if (nopast && a < new Date()) { rv = false; }
+                        return [rv, ""];
+                    }
+                });
+            }
+            else {
+                $(this).datepicker({ 
+                    changeMonth: true, 
+                    changeYear: true,
+                    firstDay: 1
+                });
+            }
             $(this).keydown(function(e) {
                 var d = $(this);
                 var adjust = function(v) {

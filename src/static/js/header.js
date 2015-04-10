@@ -64,7 +64,8 @@ $(function() {
         50: ["calendarview?ev=ol", "asm-icon-calendar", _("Animal control calendar")],
         51: ["stocklevel", "asm-icon-stock", _("Stock Levels")],
         52: ["transport", "asm-icon-transport", _("Transport Book")],
-        53: ["timeline", "asm-icon-calendar", _("Timeline")]
+        53: ["timeline", "asm-icon-calendar", _("Timeline")],
+        54: ["staff_rota", "asm-icon-rota", _("Staff Rota")]
     };
 
     /** Functions related to rendering and binding to events for the page
@@ -239,12 +240,14 @@ $(function() {
                 if (config.bool("DisableRetailer")) {
                     $(".tagretailer").hide();
                 }
-
+                // If rota is disabled, hide menu entries for it
+                if (config.bool("DisableRota")) {
+                    $(".tagrota").hide();
+                }
                 // If transport is disabled, hide menu entries for it
                 if (config.bool("DisableTransport")) {
                     $(".tagtransport").hide();
                 }
-
                 // If trial adoptions are not enabled, hide any menu entries
                 if (!config.bool("TrialAdoptions")) {
                     $(".tagtrial").hide();
@@ -319,7 +322,7 @@ $(function() {
                 homeicon = "image?db=" + asm.useraccount + "&mode=dbfs&id=/reports/logo.jpg";
             }
             var h = [
-                '<div id="asm-topline" style="display: none">',
+                '<div id="asm-topline" class="no-print" style="display: none">',
                     '<table style="border: 0; width: 100%">',
                     '<tr>',
                     '<td>',
@@ -390,7 +393,7 @@ $(function() {
                         '</p>',
                     '</div>',
                 '</div>',
-                '<div id="linkstips" class="ui-state-highlight ui-corner-all" style="display: none; margin-top: 5px; padding-left: 5px; padding-right: 5px">',
+                '<div id="linkstips" class="no-print ui-state-highlight ui-corner-all" style="display: none; margin-top: 5px; padding-left: 5px; padding-right: 5px">',
                     '<p id="quicklinks" class="asm-quicklinks" style="display: none"><span class="ui-icon ui-icon-bookmark" style="float: left; margin-right: .3em;"></span>',
                         _("Quick Links"),
                         this.quicklinks_html(),
@@ -420,7 +423,7 @@ $(function() {
                     '</p>',
                     '<h2 class="centered" id="asm-topline-loading-text">' + _("Loading...") + '</h2>',
                 '</div>',
-                '<table id="header-fixed" style="position: fixed; top: 0px; display: none;"></table>'
+                '<table id="header-fixed" class="no-print" style="position: fixed; top: 0px; display: none;"></table>'
             ];
             return h.join("\n");
         },
