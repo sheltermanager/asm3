@@ -3350,7 +3350,7 @@ class PETtracUKPublisher(AbstractPublisher):
                 # If AVID tell us the microchip is already registered, flag the animal
                 # as sent so we don't keep trying
                 elif r["response"].find("already registered") != -1:
-                    self.log("microchip already registered response, marking processed")
+                    self.logSuccess("microchip already registered response, marking processed")
                     processed_animals.append(an)
 
                 # There's a problem with the data we sent, flag it
