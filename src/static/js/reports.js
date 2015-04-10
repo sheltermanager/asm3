@@ -307,7 +307,7 @@ $(function() {
                 autoOpen: false,
                 resizable: true,
                 height: 600,
-                width: 1100,
+                width: 900,
                 modal: true,
                 dialogClass: "dialogshadow",
                 show: dlgfx.add_show,

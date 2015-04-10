@@ -6,6 +6,9 @@ ASM Theme
 	width: 100%;
 }
 
+/** ASM: Reduce size of filter inputs when shown */
+.tablesorter .tablesorter-filter { width: 100px; }
+
 /* header */
 .tablesorter-default th,
 .tablesorter-default thead td {

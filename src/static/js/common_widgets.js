@@ -156,6 +156,7 @@
                 sortList: options.sortList,
                 widgets: options.filter ? [ "filter" ] : [],
                 filter_columnFilters: options.filter,
+                filter_cssFilter: "tablesorter-filter",
                 filter_ignoreCase: true,
                 textExtraction: function(node) {
                     // custom extraction function turns display dates 
