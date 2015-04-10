@@ -55,6 +55,10 @@ def get_animal_query(dbo):
         "cv.OwnerPostcode AS CurrentVetPostcode, " \
         "cv.WorkTelephone AS CurrentVetWorkTelephone, " \
         "oo.OwnerName AS OriginalOwnerName, " \
+        "oo.OwnerTitle AS OriginalOwnerTitle, " \
+        "oo.OwnerInitials AS OriginalOwnerInitials, " \
+        "oo.OwnerForeNames AS OriginalOwnerForeNames, " \
+        "oo.OwnerSurname AS OriginalOwnerSurname, " \
         "oo.OwnerAddress AS OriginalOwnerAddress, " \
         "oo.OwnerTown AS OriginalOwnerTown, " \
         "oo.OwnerCounty AS OriginalOwnerCounty, " \

@@ -290,6 +290,10 @@ def get_microchip_data(dbo, patterns, publishername):
     for r in rows:
         if r["NONSHELTERANIMAL"] == 1 and r["ORIGINALOWNERNAME"] is not None and r["ORIGINALOWNERNAME"] != "":
             r["CURRENTOWNERNAME"] = r["ORIGINALOWNERNAME"]
+            r["CURRENTOWNERTITLE"] = r["ORIGINALOWNERTITLE"]
+            r["CURRENTOWNERINITIALS"] = r["ORIGINALOWNERINITIALS"]
+            r["CURRENTOWNERFORENAMES"] = r["ORIGINALOWNERFORENAMES"]
+            r["CURRENTOWNERSURNAME"] = r["ORIGINALOWNERSURNAME"]
             r["CURRENTOWNERADDRESS"] = r["ORIGINALOWNERADDRESS"]
             r["CURRENTOWNERTOWN"] = r["ORIGINALOWNERTOWN"]
             r["CURRENTOWNERCOUNTY"] = r["ORIGINALOWNERCOUNTY"]
