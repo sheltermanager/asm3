@@ -2585,7 +2585,8 @@ class donation_receive:
         mode = post["mode"]
         if mode == "create":
             users.check_permission(session, users.ADD_DONATION)
-            don1 = str(financial.insert_donation_from_form(session.dbo, session.user, post))
+            don1 = financial.insert_donation_from_form(session.dbo, session.user, post)
+            don2 = 0
             if post.integer("amount2") > 0:
                 don_dict = {
                     "person"                : post["person"],
@@ -2598,10 +2599,13 @@ class donation_receive:
                     "received"              : post["received"],
                     "giftaid"               : post["giftaid"]
                 }
-                financial.insert_donation_from_form(session.dbo, session.user, utils.PostedData(don_dict, session.locale))
-            return don1
+                don2 = financial.insert_donation_from_form(session.dbo, session.user, utils.PostedData(don_dict, session.locale))
+            if don2 != 0:
+                return "%d,%d" % (don1, don2)
+            else:
+                return "%d" % don1
         elif mode == "templates":
-            return html.template_selection(dbfs.get_document_templates(session.dbo), "document_gen?mode=DONATION&id=%d" % post.integer("id"))
+            return html.template_selection(dbfs.get_document_templates(session.dbo), "document_gen?mode=DONATION&id=%s" % post["id"])
 
 class foundanimal:
     def GET(self):
