@@ -26,7 +26,8 @@
 
 *. Update manual with lulu
 
-*. tag and commit again
+*. commit again and create a branch with the release number
+   git branch 36 && git push -u origin 36
 
 *. Return to trunk working folder, update dev env version number
 
