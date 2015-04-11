@@ -1224,7 +1224,15 @@
             };
 
             var flag_option = function(flag) {
-                var sel = p && p.ADDITIONALFLAGS && p.ADDITIONALFLAGS.indexOf(flag + "|") != -1 ? 'selected="selected"' : "";
+                var sel = "";
+                if (!p || !p.ADDITIONALFLAGS) { sel = ""; }
+                else {
+                    $.each(p.ADDITIONALFLAGS.split("|"), function(i, v) {
+                        if (v == flag) {
+                            sel = 'selected="selected"';
+                        }
+                    });
+                }
                 return '<option ' + sel + '>' + flag + '</option>';
             };
 
