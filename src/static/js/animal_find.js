@@ -303,7 +303,7 @@ $(function() {
                 $("#asm-search-selector-simple").addClass("asm-link-disabled");
                 $("#asm-criteria-advanced").slideUp(function() {
                     $("#asm-criteria-simple").slideDown(function() {
-                        $("input[name='q']").focus();
+                        $("input[data='q']").focus();
                     });
                 });
             };
@@ -311,12 +311,12 @@ $(function() {
             // Switch to advanced search criteria
             var advancedMode = function() {
                 $("#mode").val("ADVANCED");
-                $("input[name='q']").val("");
+                $("input[data='q']").val("");
                 $("#asm-search-selector-simple").removeClass("asm-link-disabled");
                 $("#asm-search-selector-advanced").addClass("asm-link-disabled");
                 $("#asm-criteria-simple").slideUp(function() {
                     $("#asm-criteria-advanced").slideDown(function() {
-                        $("input[name='animalname']").focus();
+                        $("input[data='animalname']").focus();
                     });
                 });
             };
