@@ -543,7 +543,7 @@
             $(".asm-bsmselect").asmSelect({
                 animate: true,
                 sortable: true,
-                removeLabel: '<strong>X</strong>',
+                removeLabel: '<strong>&times;</strong>',
                 listClass: 'bsmList-custom',  
                 listItemClass: 'bsmListItem-custom',
                 listItemLabelClass: 'bsmListItemLabel-custom',
