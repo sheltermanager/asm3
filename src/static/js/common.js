@@ -543,7 +543,7 @@
             $(".asm-bsmselect").asmSelect({
                 animate: true,
                 sortable: true,
-                removeLabel: '<strong>X</strong>',
+                removeLabel: '<strong>&times;</strong>',
                 listClass: 'bsmList-custom',  
                 listItemClass: 'bsmListItem-custom',
                 listItemLabelClass: 'bsmListItemLabel-custom',
@@ -1224,7 +1224,15 @@
             };
 
             var flag_option = function(flag) {
-                var sel = p && p.ADDITIONALFLAGS && p.ADDITIONALFLAGS.indexOf(flag + "|") != -1 ? 'selected="selected"' : "";
+                var sel = "";
+                if (!p || !p.ADDITIONALFLAGS) { sel = ""; }
+                else {
+                    $.each(p.ADDITIONALFLAGS.split("|"), function(i, v) {
+                        if (v == flag) {
+                            sel = 'selected="selected"';
+                        }
+                    });
+                }
                 return '<option ' + sel + '>' + flag + '</option>';
             };
 

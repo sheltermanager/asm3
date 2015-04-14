@@ -661,7 +661,6 @@ def json_menu(l, reports, mailmerges):
             mailmerges
         ),
         (users.VIEW_REPORT, "reports", _("Reports", l), 
-            [[users.EXPORT_REPORT, "", "", "report_export", "asm-icon-report", _("Export Reports as CSV", l) ]] + \
             reports 
         ),
         (users.SYSTEM_MENU, "settings", _("Settings", l), (
@@ -675,6 +674,7 @@ def json_menu(l, reports, mailmerges):
             (users.EDIT_USER, "", "", "roles", "asm-icon-auth", _("User roles", l) ),
             (users.SYSTEM_OPTIONS, "", "", "options", "asm-icon-settings", _("Options", l) ),
             ("", "", "", "--cat", "asm-icon-database", _("Data", l)),
+            (users.EXPORT_REPORT, "", "", "report_export", "asm-icon-report", _("Export Reports as CSV", l) ),
             (users.USE_SQL_INTERFACE, "", "", "csvimport", "asm-icon-database", _("Import a CSV file", l) ),
             (users.TRIGGER_BATCH, "", "", "batch", "asm-icon-batch", _("Trigger Batch Processes", l) )
         ))
