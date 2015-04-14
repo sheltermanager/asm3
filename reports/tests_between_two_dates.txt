@@ -1,0 +1,74 @@
+Tests carried out between two dates
+###		
+Medical
+###
+33503/Any
+###
+List of all tests carried out between two dates
+###
+en
+###
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+
+
+SELECT a. animalname, v. testname, v. cost, a.sheltercode, v. resultname, species. speciesname, a. breedname, v. comments, v.dateoftest 
+FROM v_animaltest v
+INNER JOIN animal a
+ON a. animalname = v. animalname
+INNER JOIN species 
+ON a. speciesid = species. id
+WHERE dateoftest >= '$@from$' AND dateoftest <= '$@to$'
+ORDER BY testname, dateoftest
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_TestName
+$$HEAD
+<h2>$TestName</h2>
+<table border="1">
+<tr>
+<th>Name</th>
+<th>ShelterCode</th>
+<th>Species</th>
+<th>Breed</th>
+<th>Comments</th>
+<th>Result</th>
+<th>Date</th>
+<th>Cost</th>
+</tr>
+$$FOOT
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><b> {SUM.Cost}<b/></td>
+</tr>
+</table>
+
+GROUP$$
+
+HEADER$$
+
+$$BODY
+<tr>
+<td>$ANIMALNAME</td>
+<td>$SHELTERCODE</td>
+<td>$SPECIESNAME</td>
+<td>$BREEDNAME</td>
+<td>$COMMENTS</td>
+<td>$RESULTNAME</td>
+<td>$DATEOFTEST</td>
+<td>$COST</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<h3>Total: {SUM.Cost}</h3>
+FOOTER$$
