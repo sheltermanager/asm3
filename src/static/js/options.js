@@ -33,10 +33,14 @@ $(function() {
     var options = {
 
         /** Where we have a list of pairs, first is value, second is label */
-        two_pair_options: function(o) {
+        two_pair_options: function(o, isflag) {
             var s = [];
             $.each(o, function(i, v) {
-                s.push('<option value="' + v[0] + '">' + v[1] + '</option>');
+                var ds = "";
+                if (isflag) {
+                    ds = 'data-style="background-image: url(static/images/flags/' + v[0] + '.png)"';
+                }
+                s.push('<option value="' + v[0] + '" ' + ds + '>' + v[1] + '</option>');
             });
             return s.join("\n");
         },
@@ -126,9 +130,10 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="olocale">' + _("Locale") + '</label></td>',
-                '<td><select id="olocale" type="text" class="asm-selectbox" data="Locale">',
-                options.two_pair_options(controller.locales),
-                '</select> <span id="localeflag"></span>',
+                '<td><select id="olocale" type="text" class="asm-doubleselectbox asm-iconselectmenu" data="Locale">',
+                options.two_pair_options(controller.locales, true),
+                '</select>',
+                '<span id="localeflag"></span>',
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -997,7 +1002,7 @@ $(function() {
             };
 
             var update_flag = function() {
-                var h = "<img style='position: relative; vertical-align: middle; left: -48px;' src='static/images/flags/" + 
+                var h = "<img style='position: relative; vertical-align: middle; left: -48px; top: -10px' src='static/images/flags/" + 
                     $("#olocale").val() + ".png' title='" + 
                     $("#olocale").val() + "' />";
                 $("#localeflag").html(h);

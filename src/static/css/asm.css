@@ -558,6 +558,14 @@ img {
     border: 1px solid #555;
 }
 
+.asm-doubleselectbox {
+    width: 387px;
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #555;
+}
+
+
 select[disabled="disabled"], input[disabled="disabled"], textarea[disabled="disabled"] {
     color: #999;
 }

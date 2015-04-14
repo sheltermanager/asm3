@@ -401,7 +401,22 @@
         }
         if (method == "create") {
             $(this).each(function() {
-                // $(this).dosomething
+                if ( $(this).hasClass("asm-iconselectmenu") ) {
+                    $(this).iconselectmenu({
+                        change: function(event , ui) {
+                            $(this).trigger("change");
+                        }
+                    });
+                    $(this).iconselectmenu("menuWidget").css("height", "200px");
+                }
+                if ( $(this).hasClass("asm-selectmenu") ) {
+                    $(this).selectmenu({
+                        change: function(event, ui) {
+                            $(this).trigger("change");
+                        }
+                    });
+                    $(this).selectmenu("menuWidget").css("height", "200px");
+                }
             });
         }
         if (method == "firstvalue") {
@@ -433,6 +448,23 @@
             });
         }
     };
+
+    /** 
+     * JQuery UI select menu with custom rendering for icons
+     */
+    $.widget( "asm.iconselectmenu", $.ui.selectmenu, {
+        _renderItem: function( ul, item ) {
+            var li = $( "<li>", { text: item.label } );
+            if ( item.disabled ) {
+                li.addClass( "ui-state-disabled" );
+            }
+            $( "<span>", {
+                "style": item.element.attr( "data-style" ),
+                "class": "ui-icon asm-icon asm-icon-" + item.element.attr( "data-class" )
+            }).appendTo( li );
+            return li.appendTo( ul );
+        }
+    });
 
     /**
      * Widget to manage a form that allows sending of email.

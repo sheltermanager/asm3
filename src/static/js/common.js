@@ -531,7 +531,7 @@
             $(".asm-ipbox").ipnumber();
             $(".asm-timebox").time();
             $(".asm-currencybox").currency();
-            $(".asm-selectbox, .selectbox").select();
+            $(".asm-selectbox, .asm-doubleselectbox, .asm-halfselectbox, .selectbox").select();
             $(".asm-animalchooser").animalchooser();
             $(".asm-animalchoosermulti").animalchoosermulti();
             $(".asm-personchooser").personchooser();
@@ -1713,7 +1713,7 @@
             $("#asm-content .asm-checkbox").change(dirtychange);
             $("#asm-content .asm-datebox").change(dirtychange);
             $("#asm-content .asm-textbox, #asm-content .asm-doubletextbox, #asm-content .asm-halftextbox, #asm-content .asm-textarea, #asm-content .asm-textareafixed, #asm-content .asm-textareafixeddouble").keyup(dirtykey).bind("paste", dirtychange);
-            $("#asm-content .asm-selectbox, #asm-content selectbox, #asm-content .asm-bsmselect").change(dirtychange);
+            $("#asm-content .asm-selectbox, #asm-content .asm-doubleselectbox, #asm-content .asm-halfselectbox, #asm-content .selectbox, #asm-content .asm-bsmselect").change(dirtychange);
             // Bind CTRL+S/META+S on Mac to clicking the save button on these screens
             Mousetrap.bind(["ctrl+s", "meta+s"], function(e) { $("#button-save").click(); return false; });
         }
