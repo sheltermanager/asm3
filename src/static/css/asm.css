@@ -143,19 +143,30 @@ img {
     */
 }
 
-#asm-menu td {
-    padding-left: 0px;
-    padding-right: 0px;
-}
-
 .asm-menu-icon {
-    display: inline;
+    display: inline-block;
     cursor: pointer;
     padding: 6px;
     zoom: 1;
     overflow: visible;
     white-space: nowrap;
 }
+
+.asm-menu-columns {
+    display: block;
+}
+
+.asm-menu-column {
+    vertical-align: top;
+    display: inline-block;
+    width: auto;
+}
+
+/** auto width does not work on IE8 and produces odd results */
+.ie8 .asm-menu-column {
+    width: 350px;
+}
+
 
 .asm-menu-list {
     list-style-type: none;
@@ -207,25 +218,33 @@ img {
 
 /** TOPLINE ====================+ */
 #topline-q {
+    width: 150px;
     padding: 4px;
-    padding-left: 22px;
     color: #000;
-}
-
-#searchicon {
-    position: relative;
-    left: 25px;
 }
 
 #searchgo {
     position: relative;
     left: -25px;
+    margin-right: -21px;
     cursor: pointer;
     display: none;
 }
 
 #asm-topline {
-    text-align: right;
+    text-align: left;
+    width: 100%;
+}
+
+#asm-topline .topline-element {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#asm-topline .topline-user-element {
+    position: absolute; 
+    right: 6px; 
+    top: 15px; 
 }
 
 #asm-topline img {
@@ -233,8 +252,6 @@ img {
 }
 
 #asm-topline-logo {
-    display: block;
-    float: left;
     cursor: pointer;
 }
 

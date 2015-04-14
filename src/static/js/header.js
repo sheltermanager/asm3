@@ -105,9 +105,10 @@ $(function() {
 
         menu_html: function() {
             var menu = [], menus = [];
-            // Renders menu items as a flat structure in a table with one or more columns
+            // Renders menu items as a flat structure in with one or more columns
             var menu_html_flat = function(items) {
-                menus.push("<table><tr><td valign=\"top\">");
+                menus.push("<div class=\"asm-menu-columns\">");
+                menus.push("<div class=\"asm-menu-column\">");
                 menus.push("<ul class=\"asm-menu-list\">");
                 $.each(items, function(i, v) {
                     var permission = v[0], accesskey = v[1], classes = v[2], url = v[3], icon = v[4], display = v[5], iconhtml = "";
@@ -116,7 +117,7 @@ $(function() {
                             menus.push("<hr class=\"asm-menu-body-rule\" />\n");
                         }
                         else if (url == "--break") {
-                            menus.push("</ul>\n</td>\n<td valign=\"top\">\n<ul class=\"asm-menu-list\">");
+                            menus.push("</ul>\n</div>\n<div class=\"asm-menu-column\">\n<ul class=\"asm-menu-list\">");
                         }
                         else if (url == "--cat") {
                             if (icon != "") { 
@@ -143,7 +144,7 @@ $(function() {
                         }
                     }
                 });
-                menus.push("</ul>\n</td>\n</tr>\n</table>\n</div>");
+                menus.push("</ul>\n</div>\n</div>\n");
             };
             // Renders menu items where each category becomes an accordion section **/
             var menu_html_accordion = function(name, items) {
@@ -191,7 +192,7 @@ $(function() {
                 var permission = vm[0], name = vm[1], display = vm[2], items = vm[3];
                 if (asm.superuser || asm.securitymap.indexOf(permission + " ") != -1) {
                     // Render the menu button and body
-                    menu.push("<td><span id=\"asm-menu-" + name + "\" class=\"asm-menu-icon\">" + display + "</span></td>");
+                    menu.push("<span id=\"asm-menu-" + name + "\" class=\"asm-menu-icon\">" + display + "</span>");
                     menus.push("<div id=\"asm-menu-" + name + "-body\" class=\"asm-menu-body\">");
                     if (name != "reports" && name != "mailmerge") {
                         menu_html_flat(items);
@@ -202,7 +203,7 @@ $(function() {
                     menus.push("</div>");
                 }
             });
-            return "<table id=\"asm-menu\" style=\"display: none\"><tr>\n" + menu.join("\n") + "</tr></table>\n" + menus.join("\n");
+            return [ "<div id=\"asm-menu\" style=\"display: none\">\n" + menu.join("") + "</div>\n", menus.join("\n") ];
         },
 
         /** Finds all menu widgets (have classes of asm-menu-icon and asm-menu-body) and
@@ -359,33 +360,34 @@ $(function() {
          * Render HTML components of the header
          */
         render: function() {
-            var homeicon = "static/images/logo/icon-32.png";
+            var homeicon = "static/images/logo/icon-32.png",
+                mh = this.menu_html(),
+                menubuttons = mh[0],
+                menubodies = mh[1];
             if (asm.hascustomlogo) {
                 homeicon = "image?db=" + asm.useraccount + "&mode=dbfs&id=/reports/logo.jpg";
             }
             var h = [
                 '<div id="asm-topline" class="no-print" style="display: none">',
-                    '<table style="border: 0; width: 100%">',
-                    '<tr>',
-                    '<td>',
-                    '<a id="asm-topline-logo" href="main" title="' + _("Home") + '"><img src="' + homeicon + '" /></a>',
-                    '</td>',
-                    '<td>' + this.menu_html() + '</td>',
-                    '<td>',
-                    '<span style="white-space: nowrap">',
-                    '<span id="searchicon" class="asm-icon asm-icon-search"></span>',
-                    '<input id="topline-q" name="q" type="text" class="asm-textbox" title="' + _("Search") + '" value="' + _("Search") + '" />',
-                    '<a id="searchgo" title=',
-                    '"' + _("filters: a:animal, p:person, wl:waitinglist, la:lostanimal, fa:foundanimal keywords: onshelter/os, notforadoption, donors, deceased, vets, retailers, staff, fosterers, volunteers, homecheckers, members, activelost, activefound") + '"',
-                    '><span class="asm-icon asm-icon-right"></span></a>',
-                    '</span>',
-                    '</td>',
-                    '<td>',
-                    '<span id="asm-topline-user" class="asm-menu-icon"><img id="asm-topline-flag" /> <span id="asm-topline-username"></span></span>',
-                    '</td>',
-                    '</tr>',
-                    '</table>',
+                    '<div class="topline-element">',
+                        '<a id="asm-topline-logo" href="main" title="' + _("Home") + '"><img src="' + homeicon + '" /></a>',
+                    '</div> ',
+                    '<div class="topline-element">',
+                        menubuttons,
+                    '</div> ',
+                    '<div class="topline-element">',
+                        '<span style="white-space: nowrap">',
+                        '<input id="topline-q" name="q" type="text" class="asm-textbox" title="' + _("Search") + '" value="' + _("Search") + '" />',
+                        '<a id="searchgo" title="',
+                        _("filters: a:animal, p:person, wl:waitinglist, la:lostanimal, fa:foundanimal keywords: onshelter/os, notforadoption, donors, deceased, vets, retailers, staff, fosterers, volunteers, homecheckers, members, activelost, activefound"),
+                        '"><span class="asm-icon asm-icon-search"></span></a>',
+                        '</span>',
+                    '</div>',
+                    '<div class="topline-user-element">',
+                        '<span id="asm-topline-user" class="asm-menu-icon"><img id="asm-topline-flag" /> <span id="asm-topline-username"></span></span>',
+                    '</div>',
                 '</div>',
+                menubodies,
                 '<div id="asm-topline-user-body" class="asm-menu-body">',
                     '<ul class="asm-menu-list">',
                         '<li class="asm-menu-category">' + _("Help") + '</li>',
@@ -467,7 +469,7 @@ $(function() {
                 '</div>',
                 '<table id="header-fixed" class="no-print" style="position: fixed; top: 0px; display: none;"></table>'
             ];
-            return h.join("\n");
+            return h.join("");
         },
 
         bind: function() {

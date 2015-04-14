@@ -1,6 +1,8 @@
 37
 ================
 
+14/04/15 Fix IE8 specific auto bug with width of menus #158
+14/04/15 Fix topline to use inline-block for wrapping on mobile #158
 14/04/15 Enable optional use of JQueryUI selectmenu widget for icons/locale #160
 13/04/15 Use accordions for reports/mailmerge menus #45
 13/04/15 Use times HTML entity instead of X to remove from bsmselect
