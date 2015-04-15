@@ -106,20 +106,28 @@ $(function() {
         menu_html: function() {
             var menu = [], menus = [];
             // Renders menu items as a flat structure in with one or more columns
-            var menu_html_flat = function(items) {
+            var menu_html_flat = function(items, breakevery) {
+                var breakafter = breakevery || 25, item = 0;
                 menus.push("<div class=\"asm-menu-columns\">");
                 menus.push("<div class=\"asm-menu-column\">");
                 menus.push("<ul class=\"asm-menu-list\">");
+
                 $.each(items, function(i, v) {
                     var permission = v[0], accesskey = v[1], classes = v[2], url = v[3], icon = v[4], display = v[5], iconhtml = "";
                     if (asm.superuser || asm.securitymap.indexOf(permission + " ") != -1) {
+                        item += 1;
                         if (url == "-") {
                             menus.push("<hr class=\"asm-menu-body-rule\" />\n");
                         }
                         else if (url == "--break") {
                             menus.push("</ul>\n</div>\n<div class=\"asm-menu-column\">\n<ul class=\"asm-menu-list\">");
+                            item = 0;
                         }
                         else if (url == "--cat") {
+                            if (item > breakafter) {
+                                menus.push("</ul>\n</div>\n<div class=\"asm-menu-column\">\n<ul class=\"asm-menu-list\">");
+                                item = 0;
+                            }
                             if (icon != "") { 
                                 iconhtml = "<span class=\"asm-icon " + icon + "\"></span>\n";
                             }
@@ -200,7 +208,7 @@ $(function() {
                         menu_html_accordion(name, items);
                     }
                     else {
-                        menu_html_flat(items);
+                        menu_html_flat(items, true);
                     }
                     menus.push("</div>");
                 }
