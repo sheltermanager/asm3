@@ -28,6 +28,7 @@ LOOKUP_TABLES = {
     "logtype":          (_("Log Types"), "LogTypeName", _("Type"), "LogTypeDescription", 0, 0, 0, 0, 0, 1, 1, ("log.LogTypeID",)),
     "lksmovementtype":  (_("Movement Types"), "MovementType", _("Type"), "", 0, 0, 0, 0, 0, 0, 0, ("adoption.MovementType", "animal.ActiveMovementType",)),
     "lkownerflags":     (_("Person Flags"), "Flag", _("Flag"), "", 0, 0, 0, 0, 0, 1, 1, ""),
+    "lksrotatype":      (_("Rota Types"), "RotaType", _("Type"), "", 0, 0, 0, 0, 0, 0, 0, ("ownerrota.RotaTypeID",)),
     "lksex":            (_("Sexes"), "Sex", _("Sex"), "", 0, 0, 0, 0, 0, 0, 0, ("animal.Sex", "animallost.Sex", "animalfound.Sex")),
     "lksize":           (_("Sizes"), "Size", _("Size"), "", 0, 0, 0, 0, 0, 0, 0, ("animal.Size",)),
     "lksyesno":         (_("Yes/No"), "Name", _("Yes/No"), "", 0, 0, 0, 0, 0, 0, 0, ("animal.Neutered",)),
