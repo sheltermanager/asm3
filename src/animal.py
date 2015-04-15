@@ -925,12 +925,13 @@ def calc_days_on_shelter(dbo, animalid, a = None):
     Returns the number of days an animal has been on the shelter as an int
     (int) animalid: The animal to get the number of days on shelter for
     """
-    mre = calc_most_recent_entry(dbo, animalid, a)
     stop = now()
     if a is None:
-        a = db.query(dbo, "SELECT DeceasedDate, ActiveMovementDate FROM animal WHERE ID = %d" % animalid)
+        a = db.query(dbo, "SELECT MostRecentEntryDate, DeceasedDate, ActiveMovementDate FROM animal WHERE ID = %d" % animalid)
         if len(a) == 0: return
         a = a[0]
+
+    mre = a["MOSTRECENTENTRYDATE"] 
 
     # If the animal is dead, or has left the shelter
     # use that date as our cutoff instead
