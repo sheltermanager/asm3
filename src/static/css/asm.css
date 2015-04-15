@@ -159,7 +159,6 @@ img {
 .asm-menu-column {
     vertical-align: top;
     display: inline-block;
-    min-width: 330px;
     width: auto;
 }
 
