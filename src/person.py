@@ -447,10 +447,12 @@ def get_person_rota(dbo, personid):
     return db.query(dbo, get_rota_query(dbo) + " WHERE r.OwnerID = %d ORDER BY r.StartDateTime DESC LIMIT 100" % personid)
 
 def get_rota(dbo, startdate, enddate):
-    """ Returns rota records where start >= startdate and end < enddate """
+    """ Returns rota records that apply between the two dates given """
     return db.query(dbo, get_rota_query(dbo) + \
-        " WHERE r.StartDateTime >= %s AND r.EndDateTime < %s" \
-        " ORDER BY r.StartDateTime" % (db.dd(startdate), db.dd(enddate)))
+        " WHERE (r.StartDateTime >= %(start)s AND r.StartDateTime < %(end)s)" \
+        " OR (r.EndDateTime >= %(start)s AND r.EndDateTime < %(end)s)" \
+        " OR (r.StartDateTime < %(start)s AND r.EndDateTime >= %(start)s) " \
+        " ORDER BY r.StartDateTime" % { "start": db.dd(startdate), "end": db.dd(enddate) })
 
 def clone_rota_week(dbo, username, startdate, newdate):
     """ Copies a weeks worth of rota records from startdate to newdate """
