@@ -266,6 +266,19 @@ img {
     padding: 5px;
 }
 
+/** MAIN =========================== */
+.asm-main-columns {
+    display: block;
+    width: 100%;
+}
+
+.asm-main-column {
+    display: inline-block;
+    vertical-align: top;
+    width: 49%;
+    min-width: 400px;
+}
+
 /** FOOTER ========================= */
 .asm-footer-version {
     margin-top: 16px;
