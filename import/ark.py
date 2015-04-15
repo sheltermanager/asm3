@@ -28,14 +28,16 @@ arkspecies = {
 asm.setid("animal", 100)
 asm.setid("owner", 100)
 asm.setid("ownerdonation", 100)
-asm.setid("ownerlicences", 100)
+asm.setid("ownerlicence", 100)
 asm.setid("adoption", 100)
 asm.setid("animalcontrol", 100)
 
 print "\\set ON_ERROR_STOP\nBEGIN;"
 print "DELETE FROM animal WHERE ID >= 100;"
+print "DELETE FROM animalcontrol WHERE ID >= 100;"
 print "DELETE FROM owner WHERE ID >= 100;"
 print "DELETE FROM ownerdonation WHERE ID >= 100;"
+print "DELETE FROM ownerlicence WHERE ID >= 100;"
 print "DELETE FROM adoption WHERE ID >= 100;"
 
 for p in dbfread.read("%s/NAMES.DBF" % PATH):
@@ -47,7 +49,7 @@ for p in dbfread.read("%s/NAMES.DBF" % PATH):
     o.OwnerAddress = "%s %s\n%s" % (p["ADR_ST_NUM"], p["ADR_ST_NAM"], p["ADR_LINE2"])
     o.OwnerTown = p["CITY"]
     o.OwnerCounty = p["STATE"]
-    o.OwnerPostcode = ["ZIP"]
+    o.OwnerPostcode = p["ZIP"]
     o.HomeTelephone = p["H_PHONE"]
     o.WorkTelephone = p["W_PHONE"]
     comments = "ID: %s" % p["ID"]
@@ -80,7 +82,10 @@ for d in dbfread.read("%s/ANIMALS.DBF" % PATH):
     if d["SURR_ID"] != "":
         if ppo.has_key(d["SURR_ID"]):
             a.OriginalOwnerID = ppo[d["SURR_ID"]].ID
+    a.generateCode()
+    a.ShortCode = d["ID_NUM"]
     a.Sex = asm.getsex_mf(d["SEX"])
+    a.ShelterLocationUnit = d["LOCATION"]
     a.BreedID = asm.breed_id_for_name(d["BREED"])
     a.BaseColourID = asm.colour_id_for_name(d["COLOR"])
     a.BreedName = asm.breed_name_for_id(a.BreedID)
@@ -106,6 +111,8 @@ for d in dbfread.read("%s/ANIMALS.DBF" % PATH):
         a.Archived = 1
         a.DeceasedDate = d["DATE_DISPO"]
     comments = "Original breed: %s\nColor: %s" % (d["BREED"].strip(), d["COLOR"].strip())
+    if asm.nulltostr(d["PU_LOC"]).strip() != "":
+        comments += "\nPicked up from: %s" % d["PU_LOC"]
     a.HiddenAnimalDetails = comments
     a.AnimalComments = asm.nulltostr(d["ANIMAL_TXT"]).strip()
     a.HealthProblems = d["HEALTH"]
@@ -118,6 +125,7 @@ for d in dbfread.read("%s/ANIMALS.DBF" % PATH):
             m.AnimalID = a.ID
             m.OwnerID = o.ID
             m.MovementType = 1
+            m.MovementDate = d["DATE_DISPO"]
             if d["RECLAIMED"] == "X": 
                 m.MovementType = 5
             m.LastChangedDate = m.MovementDate

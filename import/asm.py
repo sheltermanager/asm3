@@ -946,7 +946,7 @@ def date_diff_days(date1, date2):
         delta = int((ux2 - ux1) / 60 / 60 / 24)
         return delta
     except:
-        print "Invalid date: %s or %s" % ( date1, date2 )
+        sys.stderr.write("Invalid date: %s or %s\n" % ( date1, date2 ))
         return 0
 
 def date_diff(date1, date2):
@@ -1372,10 +1372,10 @@ class Animal:
     IsTransfer = 0
     IsPickup = 0
     PickupLocationID = 0
-    IsGoodWithCats = 0
-    IsGoodWithDogs = 0
-    IsGoodWithChildren = 0
-    IsHouseTrained = 0
+    IsGoodWithCats = 2
+    IsGoodWithDogs = 2
+    IsGoodWithChildren = 2
+    IsHouseTrained = 2
     IsNotAvailableForAdoption = 0
     IsHold = 0
     HoldUntilDate = None
