@@ -1,6 +1,7 @@
 37
 ================
 
+15/04/15 Include rspca templates as part of db install
 15/04/15 Remove pisa dependency, use wkhtmltopdf for template pdfs #164
 15/04/15 Include media when cloning animals
 15/04/15 Copy media and logs when creating animal from waiting list #73

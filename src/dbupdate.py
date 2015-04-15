@@ -2196,7 +2196,7 @@ def install_default_media(dbo, removeFirst = False):
     dbfs.create_path(dbo, "/internet", "plain")
     dbfs.put_file(dbo, "body.html", "/internet/plain", path + "media/internet/plain/body.html")
     dbfs.put_file(dbo, "foot.html", "/internet/plain", path + "media/internet/plain/foot.html")
-    dbfs.put_file(dbo, "heda.html", "/internet/plain", path + "media/internet/plain/head.html")
+    dbfs.put_file(dbo, "head.html", "/internet/plain", path + "media/internet/plain/head.html")
     dbfs.put_file(dbo, "redirector.html", "/internet/plain", path + "media/internet/plain/redirector.html")
     dbfs.put_file(dbo, "search.html", "/internet/plain", path + "media/internet/plain/search.html")
     dbfs.create_path(dbo, "/internet", "rss")
@@ -2239,6 +2239,11 @@ def install_default_media(dbo, removeFirst = False):
     dbfs.put_file(dbo, "petplan.html", "/templates", path + "media/templates/petplan.html")
     dbfs.put_file(dbo, "receipt.html", "/templates", path + "media/templates/receipt.html")
     dbfs.put_file(dbo, "reserved.html", "/templates", path + "media/templates/reserved.html")
+    dbfs.create_path(dbo, "/templates", "rspca")
+    dbfs.put_file(dbo, "rspca_adoption.html", "/templates/rspca", path + "media/templates/rspca/rspca_adoption.html")
+    dbfs.put_file(dbo, "rspca_post_home_visit.html", "/templates/rspca", path + "media/templates/rspca/rspca_post_home_visit.html")
+    dbfs.put_file(dbo, "rspca_transfer_of_ownership.html", "/templates/rspca", path + "media/templates/rspca/rspca_transfer_of_ownership.html")
+    dbfs.put_file(dbo, "rspca_transfer_of_title.html", "/templates/rspca", path + "media/templates/rspca/rspca_transfer_of_title.html")
 
 def install(dbo):
     """
@@ -2490,6 +2495,11 @@ def update_3000(dbo):
     dbfs.put_file(dbo, "petplan.html", "/templates", path + "media/templates/petplan.html")
     dbfs.put_file(dbo, "receipt.html", "/templates", path + "media/templates/receipt.html")
     dbfs.put_file(dbo, "reserved.html", "/templates", path + "media/templates/reserved.html")
+    dbfs.create_path(dbo, "/templates", "rspca")
+    dbfs.put_file(dbo, "rspca_adoption.html", "/templates/rspca", path + "media/templates/rspca/rspca_adoption.html")
+    dbfs.put_file(dbo, "rspca_post_home_visit.html", "/templates/rspca", path + "media/templates/rspca/rspca_post_home_visit.html")
+    dbfs.put_file(dbo, "rspca_transfer_of_ownership.html", "/templates/rspca", path + "media/templates/rspca/rspca_transfer_of_ownership.html")
+    dbfs.put_file(dbo, "rspca_transfer_of_title.html", "/templates/rspca", path + "media/templates/rspca/rspca_transfer_of_title.html")
     if not dbfs.has_nopic(dbo):
         dbfs.put_file(dbo, "nopic.jpg", "/reports", path + "media/reports/nopic.jpg")
     db.execute_dbupdate(dbo, "CREATE TABLE messages ( ID INTEGER NOT NULL, Added %s NOT NULL, Expires %s NOT NULL, " \
