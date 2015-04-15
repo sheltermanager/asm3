@@ -8,9 +8,11 @@ import datetime
 import db
 import hashlib
 import htmlentitydefs
+import os
 import re
 import smtplib
 import sys
+import tempfile
 import thread
 import urllib2
 import users
@@ -22,7 +24,7 @@ from email.header import Header
 from email import Charset, Encoders
 from i18n import _, display2python
 from cStringIO import StringIO
-from sitedefs import SMTP_SERVER, FROM_ADDRESS
+from sitedefs import SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF
 
 # Monkeypatch to allow SNI support in urllib3. This is necessary
 # as many servers (including Facebook and PetLink)
@@ -860,11 +862,6 @@ def html_to_pdf(htmldata, baseurl = "", account = ""):
     Converts HTML content to PDF and returns the PDF file data.
     Uses pisa for the conversion.
     """
-    try:
-        import sx.pisa3 as pisa
-    except:
-        al.error("trying to convert html to pdf, pisa not found.", "utils.html_to_pdf", None)
-        return ""
     # Allow orientation and papersize to be set
     # with directives in the document source - eg: <!-- pdf orientation landscape, pdf papersize letter -->
     orientation = "portrait"
@@ -895,13 +892,20 @@ def html_to_pdf(htmldata, baseurl = "", account = ""):
     htmldata = htmldata.replace("font-size: x-large", "font-size: 24pt")
     htmldata = htmldata.replace("font-size: xx-large", "font-size: 36pt")
     htmldata = fix_relative_document_uris(htmldata, baseurl, account)
-    fin = StringIO(header + str(htmldata) + footer)
-    fout = StringIO()
-    pdf = pisa.CreatePDF(fin, fout)
-    if pdf.err:
-        al.error("errors found converting html to pdf.", "utils.html_to_pdf", None)
-    else:
-        return fout.getvalue()
+    # Use temp files
+    inputfile = tempfile.NamedTemporaryFile(suffix=".html", delete=False)
+    outputfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
+    inputfile.write(header + htmldata + footer)
+    inputfile.flush()
+    inputfile.close()
+    outputfile.close()
+    os.system(HTML_TO_PDF % { "output": outputfile.name, "input": inputfile.name, "orientation": orientation, "papersize": papersize })
+    f = open(outputfile.name, "r")
+    pdfdata = f.read()
+    f.close()
+    os.unlink(inputfile.name)
+    os.unlink(outputfile.name)
+    return pdfdata
 
 def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, width, height, lmargin, tmargin, cols, rows):
     """

@@ -108,6 +108,10 @@ SCALE_PDF_CMD = "pdftk %(input)s output %(output)s compress"
 #SCALE_PDF_CMD = "convert %(input)s -compress Zip %(output)s"
 #SCALE_PDF_CMD = "gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/screen -dNOPAUSE -dQUIET -dBATCH -sOutputFile=%(output)s %(input)s"
 
+# Shell command to convert HTML to PDF
+HTML_TO_PDF = "wkhtmltopdf --orientation %(orientation)s --page-size %(papersize)s %(input)s %(output)s"
+#HTML_TO_PDF = "html2pdf %(input)s %(output)s"
+
 # Target for viewing an address on a map, {0} is the address
 MAP_LINK = "http://www.openstreetmap.org/search?query={0}"
 

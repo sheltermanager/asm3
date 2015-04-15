@@ -1,5 +1,5 @@
 Animal Shelter Manager v3 (sheltermanager3)
-Copyright(c)2011-2014 R. Rawson-Tetley
+Copyright(c)2011-2015 R. Rawson-Tetley
 
 This program is covered by the terms of the GNU General Public Licence. 
 See the file COPYING in this directory for details.
@@ -16,13 +16,13 @@ apt-get install make python python-imaging python-webpy python-mysqldb python-ps
 
 Extra, non-mandatory packages:
 
-apt-get install python-pisa (for viewing documents as PDF in the word processor and creating labels)
 apt-get install ghostscript (for scaling/compressing PDFs to save on storage)
+apt-get install wkhtmltopdf (for creating PDFs from HTML document templates)
 apt-get install python-requests python-ndg-httpsclient python-pyasn1 (needed for all HTTPS publishers - PetLink, MeetAPet, VetEnvoy, Facebook)
 
 Packages necessary for building static checkers, installers and manuals:
 
-apt-get install nodejs pychecker libreoffice-writer dpkg tar
+apt-get install nodejs pychecker libreoffice-writer dpkg tar python-sphinx texlive-latex-base textlive-latex-extras
 
 Logging:
 ================================
