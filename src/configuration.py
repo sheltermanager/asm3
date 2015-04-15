@@ -368,6 +368,9 @@ def account_period_totals(dbo):
 def accounting_period(dbo):
     return cstring(dbo, "AccountingPeriod")
 
+def add_animals_show_time_brought_in(dbo):
+    return cboolean(dbo, "AddAnimalsShowTimeBroughtIn", DEFAULTS["AddAnimalsShowTimeBroughtIn"] == "Yes")
+
 def adoptapet_user(dbo):
     return cstring(dbo, "SaveAPetFTPUser")
 

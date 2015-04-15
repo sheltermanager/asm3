@@ -359,6 +359,9 @@ def create_animal(dbo, username, wlid):
         "dateofbirth":          python2display(l, subtract_years(now(dbo.timezone))),
         "estimateddob":         "1"
     }
+    # If we aren't showing the time brought in, set it to midnight
+    if not configuration.add_animals_show_time_brought_in(dbo):
+        data["timebroughtin"] = "00:00:00"
     # If we're creating shelter codes manually, we need to put something unique
     # in there for now. Use the id
     if configuration.manual_codes(dbo):
