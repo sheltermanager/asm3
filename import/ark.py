@@ -8,7 +8,7 @@ Import script for ARK DBF databases, covers people, animals, payments, licences 
 21st March, 2015
 """
 
-PATH = "data/arktest"
+PATH = "data/ark_fa0779"
 
 owners = []
 ownerdonations = []
@@ -59,6 +59,8 @@ for d in dbfread.read("%s/ANIMALS.DBF" % PATH):
     animals.append(a)
     ppa[d["ID_NUM"]] = a
     a.AnimalName = d["NAME"]
+    if a.AnimalName.strip() == "":
+        a.AnimalName = "(unknown)"
     if d["SPECIES"] == "C":
         # Canine
         a.SpeciesID = 1
@@ -103,8 +105,9 @@ for d in dbfread.read("%s/ANIMALS.DBF" % PATH):
         a.PutToSleep = 1
         a.Archived = 1
         a.DeceasedDate = d["DATE_DISPO"]
-    comments = "Original breed: %s\nColor: %s" % (d["BREED"], d["COLOR"])
-    a.HiddenAnimalDetals = asm.nulltostr(d["ANIMAL_TXT"])
+    comments = "Original breed: %s\nColor: %s" % (d["BREED"].strip(), d["COLOR"].strip())
+    a.HiddenAnimalDetails = comments
+    a.AnimalComments = asm.nulltostr(d["ANIMAL_TXT"]).strip()
     a.HealthProblems = d["HEALTH"]
     a.LastChangedDate = a.DateBroughtIn
     if d["ADPT_ID"] != "":
@@ -143,8 +146,10 @@ for l in dbfread.read("%s/LICENSE.DBF" % PATH):
         ol.LicenceTypeID = 1
         ol.LicenceNumber = l["LIC_NUM"]
         ol.LicenceFee = int(l["FEE"] * 100)
-        ol.IssueDate = asm.parse_date("2006-01-01", "%Y-%m-%d")
-        ol.ExpiryDate= asm.parse_date("2007-01-01", "%Y-%m-%d")
+        ol.IssueDate = l["LIC_DATE"]
+        if ol.IssueDate is None: ol.IssueDate = asm.parse_date("2015-01-01", "%Y-%m-%d")
+        ol.ExpiryDate = l["LIC_EXDATE"]
+        if ol.ExpiryDate is None: ol.ExpiryDate = asm.parse_date("2015-01-01", "%Y-%m-%d")
 
 for c in dbfread.read("%s/CMPLAINT.DBF" % PATH):
     ac = asm.AnimalControl()
@@ -154,6 +159,8 @@ for c in dbfread.read("%s/CMPLAINT.DBF" % PATH):
     if c["ABOUT_ID"] != "" and ppo.has_key(c["ABOUT_ID"]):
         ac.OwnerID = ppo[c["ABOUT_ID"]].ID
     ac.CallDateTime = c["C_DATE"]
+    if ac.CallDateTime is None:
+        ac.CallDateTime = asm.parse_date("2015-01-01", "%Y-%m-%d")
     ac.IncidentDateTime = ac.CallDateTime
     ac.DispatchDateTime = ac.CallDateTime
     ac.CompletedDate = ac.CallDateTime

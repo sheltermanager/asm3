@@ -314,9 +314,11 @@ def species_name_for_id(id):
 # These are breed keywords to match commonly used breeds
 breedkeywords = (
 ("13", "Cattle"),
+("30", "Lab"),
 ("30", "Labrador"),
 ("34", "Collie"),
 ("73", "Bulldog"),
+("92", "Shep"),
 ("92", "Shepherd"),
 ("92", "Shepard"),
 ("103", "Hound"),
@@ -1203,11 +1205,11 @@ class AnimalControl:
     PickupLocationID = 0
     RespondedDateTime = None
     FollowupDateTime = None
-    FollowupCompleted = 0
+    FollowupComplete = 0
     FollowupDateTime2 = None
-    FollowupCompleted2 = 0
+    FollowupComplete2 = 0
     FollowupDateTime3 = None
-    FollowupCompleted3 = 0
+    FollowupComplete3 = 0
     CompletedDate = None
     IncidentCompletedID = 0
     OwnerID = 0
@@ -1246,11 +1248,11 @@ class AnimalControl:
             ( "DispatchDateTime", ddt(self.DispatchDateTime) ),
             ( "RespondedDateTime", ddt(self.RespondedDateTime) ),
             ( "FollowupDateTime", ddt(self.FollowupDateTime) ),
-            ( "FollowupCompleted", di(self.FollowupCompleted) ),
+            ( "FollowupComplete", di(self.FollowupComplete) ),
             ( "FollowupDateTime2", ddt(self.FollowupDateTime2) ),
-            ( "FollowupCompleted2", di(self.FollowupCompleted2) ),
+            ( "FollowupComplete2", di(self.FollowupComplete2) ),
             ( "FollowupDateTime3", ddt(self.FollowupDateTime3) ),
-            ( "FollowupCompleted3", di(self.FollowupCompleted3) ),
+            ( "FollowupComplete3", di(self.FollowupComplete3) ),
             ( "CompletedDate", dd(self.CompletedDate) ),
             ( "IncidentCompletedID", di(self.IncidentCompletedID) ),
             ( "OwnerID", di(self.OwnerID) ),
