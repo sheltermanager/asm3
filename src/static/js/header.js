@@ -111,7 +111,6 @@ $(function() {
                 menus.push("<div class=\"asm-menu-columns\">");
                 menus.push("<div class=\"asm-menu-column\">");
                 menus.push("<ul class=\"asm-menu-list\">");
-
                 $.each(items, function(i, v) {
                     var permission = v[0], accesskey = v[1], classes = v[2], url = v[3], icon = v[4], display = v[5], iconhtml = "";
                     if (asm.superuser || asm.securitymap.indexOf(permission + " ") != -1) {
@@ -204,7 +203,8 @@ $(function() {
                     menus.push("<div id=\"asm-menu-" + name + "-body\" class=\"asm-menu-body\">");
                     // If the option is on, render report and mail merge menus
                     // in accordions by category instead
-                    if (config.bool("ReportMenuAccordion") && (name == "reports" || name == "mailmerge")) {
+                    //if (config.bool("ReportMenuAccordion") && (name == "reports" || name == "mailmerge")) {
+                    if ((name == "reports" || name == "mailmerge")) {
                         menu_html_accordion(name, items);
                     }
                     else {
