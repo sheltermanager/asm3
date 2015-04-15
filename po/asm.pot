@@ -8641,6 +8641,10 @@ msgstr ""
 msgid "Rota"
 msgstr ""
 
+#: lookups.py
+msgid "Rota Types"
+msgstr ""
+
 #: staff_rota.js
 msgid "Rota cloned successfully."
 msgstr ""
@@ -9166,6 +9170,10 @@ msgstr ""
 
 #: options.js
 msgid "Show quick links on the home page"
+msgstr ""
+
+#: options.js
+msgid "Show report menu items in collapsed categories"
 msgstr ""
 
 #: options.js
