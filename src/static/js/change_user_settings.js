@@ -99,6 +99,17 @@ $(function() {
             ].join("\n");
         },
 
+        update_flag: function() {
+            if (!$("#olocale").val()) {
+                $("#localeflag").html("");
+                return;
+            }
+            var h = "<img style='position: relative; vertical-align: middle; left: -48px; top: -10px' src='static/images/flags/" + 
+                $("#olocale").val() + ".png' title='" + 
+                $("#olocale").val() + "' />";
+            $("#localeflag").html(h);
+        },
+
         bind: function() {
             $("#save").button().click(function() {
                 $(".asm-content button").button("disable");
@@ -111,17 +122,7 @@ $(function() {
                 });
             });
 
-            var update_flag = function() {
-                if (!$("#olocale").val()) {
-                    $("#localeflag").html("");
-                    return;
-                }
-                var h = "<img style='position: relative; vertical-align: middle; left: -48px; top: -10px' src='static/images/flags/" + 
-                    $("#olocale").val() + ".png' title='" + 
-                    $("#olocale").val() + "' />";
-                $("#localeflag").html(h);
-            };
-            $("#olocale").change(update_flag);
+            $("#olocale").change(this.update_flag);
 
             // When the visual theme is changed, switch the CSS file so the
             // theme updates immediately.
@@ -141,8 +142,9 @@ $(function() {
             var u = controller.user[0];
             $("#realname").val(html.decode(u.REALNAME));
             $("#email").val(u.EMAIL);
-            $("#olocale").val(u.LOCALEOVERRIDE);
-            $("#systemtheme").val(u.THEMEOVERRIDE);
+            $("#olocale").select("value", u.LOCALEOVERRIDE);
+            $("#systemtheme").select("value", u.THEMEOVERRIDE);
+            this.update_flag();
         }
     };
 

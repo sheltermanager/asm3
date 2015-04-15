@@ -429,6 +429,12 @@
             $(this).each(function() {
                 if (newval !== undefined) {
                     $(this).val(newval);
+                    if ($(this).hasClass("asm-iconselectmenu")) {
+                        $(this).iconselectmenu("refresh");
+                    }
+                    else if ($(this).hasClass("asm-selectmenu")) {
+                        $(this).selectmenu("refresh");
+                    }
                 }
                 else {
                     rv = $(this).val();
