@@ -194,11 +194,13 @@ $(function() {
                     // Render the menu button and body
                     menu.push("<span id=\"asm-menu-" + name + "\" class=\"asm-menu-icon\">" + display + "</span>");
                     menus.push("<div id=\"asm-menu-" + name + "-body\" class=\"asm-menu-body\">");
-                    if (name != "reports" && name != "mailmerge") {
-                        menu_html_flat(items);
+                    // If the option is on, render report and mail merge menus
+                    // in accordions by category instead
+                    if (config.bool("ReportMenuAccordion") && (name == "reports" || name == "mailmerge")) {
+                        menu_html_accordion(name, items);
                     }
                     else {
-                        menu_html_accordion(name, items);
+                        menu_html_flat(items);
                     }
                     menus.push("</div>");
                 }
