@@ -6,6 +6,7 @@ import animal
 import audit
 import configuration
 import db
+import dbfs
 import diary
 import log
 import media
@@ -370,6 +371,46 @@ def create_animal(dbo, username, wlid):
         db.dd(now(dbo.timezone)), 
         db.ds(_("Moved to animal record {0}", l).format(code)),
         wlid))
+    # If there were any logs and media entries on the waiting list, create them
+    # on the animal
+    # Media
+    for me in db.query(dbo, "SELECT * FROM media WHERE LinkTypeID = %d AND LinkID = %d" % (media.WAITINGLIST, wlid)):
+        ext = me["MEDIANAME"]
+        ext = ext[ext.rfind("."):].lower()
+        mediaid = db.get_id(dbo, "media")
+        medianame = "%d%s" % ( mediaid, ext )
+        sql = db.make_insert_sql("media", (
+            ( "ID", db.di(mediaid) ),
+            ( "MediaName", db.ds(medianame) ),
+            ( "MediaType", db.di(me["MEDIATYPE"]) ),
+            ( "MediaNotes", db.ds(me["MEDIANOTES"]) ),
+            ( "WebsitePhoto", db.di(me["WEBSITEPHOTO"]) ),
+            ( "WebsiteVideo", db.di(me["WEBSITEVIDEO"]) ),
+            ( "DocPhoto", db.di(me["DOCPHOTO"]) ),
+            ( "ExcludeFromPublish", db.di(0) ),
+            # ASM2_COMPATIBILITY
+            ( "NewSinceLastPublish", db.di(1) ),
+            ( "UpdatedSinceLastPublish", db.di(0) ),
+            # ASM2_COMPATIBILITY
+            ( "LinkID", db.di(nextid) ),
+            ( "LinkTypeID", db.di(media.ANIMAL) ),
+            ( "Date", db.dd(me["DATE"]))
+            ))
+        db.execute(dbo, sql)
+        # Now clone the dbfs item pointed to by this media item
+        filedata = dbfs.get_string(dbo, me["MEDIANAME"])
+        dbfs.put_string(dbo, medianame, "/animal/%d" % nextid, filedata)
+    # Logs
+    for lo in db.query(dbo, "SELECT * FROM log WHERE LinkType = %d AND LinkID = %d" % (log.WAITINGLIST, int(wlid))):
+        sql = db.make_insert_user_sql(dbo, "log", username, (
+            ( "ID", db.di(db.get_id(dbo, "log")) ),
+            ( "LinkID", db.di(nextid) ),
+            ( "LinkType", db.di(log.ANIMAL) ),
+            ( "LogTypeID", db.di(lo["LOGTYPEID"])),
+            ( "Date", db.dd(lo["DATE"])),
+            ( "Comments", db.ds(lo["COMMENTS"]))
+        ))
+        db.execute(dbo, sql)
     return nextid
    
 

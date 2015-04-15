@@ -2134,7 +2134,7 @@ def clone_animal(dbo, username, animalid):
         ))
     db.execute(dbo, sql)
     # Additional Fields
-    for af in db.query(dbo, "SELECT * FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (int(animalid), additional.ANIMAL_IN)):
+    for af in db.query(dbo, "SELECT * FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (animalid, additional.ANIMAL_IN)):
         sql = db.make_insert_sql("additional", (
             ( "LinkType", db.di(af["LINKTYPE"]) ),
             ( "LinkID", db.di(nid) ),
@@ -2142,7 +2142,7 @@ def clone_animal(dbo, username, animalid):
             ( "Value", db.ds(af["VALUE"])) ))
         db.execute(dbo, sql)
     # Vaccinations
-    for v in db.query(dbo, "SELECT * FROM animalvaccination WHERE AnimalID = %d" % int(animalid)):
+    for v in db.query(dbo, "SELECT * FROM animalvaccination WHERE AnimalID = %d" % animalid):
         sql = db.make_insert_user_sql(dbo, "animalvaccination", username, (
             ( "ID", db.di(db.get_id(dbo, "animalvaccination")) ),
             ( "AnimalID", db.di(nid) ),
@@ -2154,7 +2154,7 @@ def clone_animal(dbo, username, animalid):
             ))
         db.execute(dbo, sql)
     # Tests
-    for t in db.query(dbo, "SELECT * FROM animaltest WHERE AnimalID = %d" % int(animalid)):
+    for t in db.query(dbo, "SELECT * FROM animaltest WHERE AnimalID = %d" % animalid):
         sql = db.make_insert_user_sql(dbo, "animaltest", username, ( 
             ( "ID", db.di(db.get_id(dbo, "animaltest")) ),
             ( "AnimalID", db.di(nid)),
@@ -2167,7 +2167,7 @@ def clone_animal(dbo, username, animalid):
             ))
         db.execute(dbo, sql)
     # Medical
-    for am in db.query(dbo, "SELECT * FROM animalmedical WHERE AnimalID = %d" % int(animalid)):
+    for am in db.query(dbo, "SELECT * FROM animalmedical WHERE AnimalID = %d" % animalid):
         namid = db.get_id(dbo, "animalmedical")
         sql = db.make_insert_user_sql(dbo, "animalmedical", username, (
             ( "ID", db.di(namid)),
@@ -2202,7 +2202,7 @@ def clone_animal(dbo, username, animalid):
                 ))
             db.execute(dbo, sql)
     # Diet
-    for d in db.query(dbo, "SELECT * FROM animaldiet WHERE AnimalID = %d" % int(animalid)):
+    for d in db.query(dbo, "SELECT * FROM animaldiet WHERE AnimalID = %d" % animalid):
         sql = db.make_insert_user_sql(dbo, "animaldiet", username, (
             ( "ID", db.di(db.get_id(dbo, "animaldiet")) ),
             ( "AnimalID", db.di(nid) ),
@@ -2212,7 +2212,7 @@ def clone_animal(dbo, username, animalid):
         ))
         db.execute(dbo, sql)
     # Costs
-    for c in db.query(dbo, "SELECT * FROM animalcost WHERE AnimalID = %d" % int(animalid)):
+    for c in db.query(dbo, "SELECT * FROM animalcost WHERE AnimalID = %d" % animalid):
         sql = db.make_insert_user_sql(dbo, "animalcost", username, (
             ( "ID", db.di(db.get_id(dbo, "animalcost")) ),
             ( "AnimalID", db.di(nid) ),
@@ -2223,7 +2223,7 @@ def clone_animal(dbo, username, animalid):
         ))
         db.execute(dbo, sql)
     # Donations
-    for dt in db.query(dbo, "SELECT * FROM ownerdonation WHERE AnimalID = %d" % int(animalid)):
+    for dt in db.query(dbo, "SELECT * FROM ownerdonation WHERE AnimalID = %d" % animalid):
         sql = db.make_insert_user_sql(dbo, "ownerdonation", username, (
             ( "ID", db.di(db.get_id(dbo, "ownerdonation")) ),
             ( "AnimalID", db.di(nid) ),
@@ -2240,7 +2240,7 @@ def clone_animal(dbo, username, animalid):
         ))
         db.execute(dbo, sql)
     # Diary
-    for di in db.query(dbo, "SELECT * FROM diary WHERE LinkType = 1 AND LinkID = %d" % int(animalid)):
+    for di in db.query(dbo, "SELECT * FROM diary WHERE LinkType = 1 AND LinkID = %d" % animalid):
         sql = db.make_insert_user_sql(dbo, "diary", username, (
             ( "ID", db.di(db.get_id(dbo, "diary")) ),
             ( "LinkID", db.di(nid) ),
@@ -2253,8 +2253,35 @@ def clone_animal(dbo, username, animalid):
             ( "LinkInfo", db.ds(diary.get_link_info(dbo, 1, nid)))
         ))
         db.execute(dbo, sql)
+    # Media
+    for me in db.query(dbo, "SELECT * FROM media WHERE LinkTypeID = %d AND LinkID = %d" % (media.ANIMAL, animalid)):
+        ext = me["MEDIANAME"]
+        ext = ext[ext.rfind("."):].lower()
+        mediaid = db.get_id(dbo, "media")
+        medianame = "%d%s" % ( mediaid, ext )
+        sql = db.make_insert_sql("media", (
+            ( "ID", db.di(mediaid) ),
+            ( "MediaName", db.ds(medianame) ),
+            ( "MediaType", db.di(me["MEDIATYPE"]) ),
+            ( "MediaNotes", db.ds(me["MEDIANOTES"]) ),
+            ( "WebsitePhoto", db.di(me["WEBSITEPHOTO"]) ),
+            ( "WebsiteVideo", db.di(me["WEBSITEVIDEO"]) ),
+            ( "DocPhoto", db.di(me["DOCPHOTO"]) ),
+            ( "ExcludeFromPublish", db.di(0) ),
+            # ASM2_COMPATIBILITY
+            ( "NewSinceLastPublish", db.di(1) ),
+            ( "UpdatedSinceLastPublish", db.di(0) ),
+            # ASM2_COMPATIBILITY
+            ( "LinkID", db.di(nid) ),
+            ( "LinkTypeID", db.di(media.ANIMAL) ),
+            ( "Date", db.dd(me["DATE"]))
+            ))
+        db.execute(dbo, sql)
+        # Now clone the dbfs item pointed to by this media item
+        filedata = dbfs.get_string(dbo, me["MEDIANAME"])
+        dbfs.put_string(dbo, medianame, "/animal/%d" % animalid, filedata)
     # Movements
-    for mv in db.query(dbo, "SELECT * FROM adoption WHERE AnimalID = %d" % int(animalid)):
+    for mv in db.query(dbo, "SELECT * FROM adoption WHERE AnimalID = %d" % animalid):
         nadid = db.get_id(dbo, "adoption")
         sql = db.make_insert_user_sql(dbo, "adoption", username, (
             ( "ID", db.di(nadid) ),
@@ -2276,11 +2303,11 @@ def clone_animal(dbo, username, animalid):
         ))
         db.execute(dbo, sql)
     # Log
-    for lo in db.query(dbo, "SELECT * FROM log WHERE LinkType = 0 AND LinkID = %d" % int(animalid)):
+    for lo in db.query(dbo, "SELECT * FROM log WHERE LinkType = %d AND LinkID = %d" % (log.ANIMAL, animalid)):
         sql = db.make_insert_user_sql(dbo, "log", username, (
             ( "ID", db.di(db.get_id(dbo, "log")) ),
             ( "LinkID", db.di(nid) ),
-            ( "LinkType", db.di(0) ),
+            ( "LinkType", db.di(log.ANIMAL) ),
             ( "LogTypeID", db.di(lo["LOGTYPEID"])),
             ( "Date", db.dd(lo["DATE"])),
             ( "Comments", db.ds(lo["COMMENTS"]))
