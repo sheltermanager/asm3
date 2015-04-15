@@ -673,6 +673,10 @@ Display
 * Open reports in a new browser tab: Open all reports in their own browser
   tabs.
 
+* Show report menu items in collapsed categories: If you have a lot of reports
+  installed, this option allows you to just show the categories in the reports
+  menu. Clicking a category expands it.
+
 * Auto log users out after this many minutes of activity: If a user leaves
   their browser open and idle for this many minutes, the system will
   automatically log them out.

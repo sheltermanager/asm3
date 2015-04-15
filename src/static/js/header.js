@@ -103,97 +103,109 @@ $(function() {
             $("#asm-topline-loading").dialog("close");
         },
 
+        /** Renders menu items as a flat structure in with one or more columns 
+         *  h: html list to append to
+         *  items: the list of menu items
+         *  o: options 
+         */
+        menu_html_flat_renderer: function(h, items, o) {
+            var c = 0, breakafter = o.breakafter || 25;
+            h.push("<div class=\"asm-menu-columns\">");
+            h.push("<div class=\"asm-menu-column\">");
+            h.push("<ul class=\"asm-menu-list\">");
+            $.each(items, function(i, v) {
+                var permission = v[0], accesskey = v[1], classes = v[2], url = v[3], icon = v[4], display = v[5], iconhtml = "";
+                if (asm.superuser || asm.securitymap.indexOf(permission + " ") != -1) {
+                    c += 1;
+                    if (url == "-") {
+                        h.push("<hr class=\"asm-menu-body-rule\" />\n");
+                    }
+                    else if (url == "--break") {
+                        h.push("</ul>\n</div>\n<div class=\"asm-menu-column\">\n<ul class=\"asm-menu-list\">");
+                        c = 0;
+                    }
+                    else if (url == "--cat") {
+                        if (c > breakafter) {
+                            c = 0;
+                            h.push("</ul>\n</div>\n<div class=\"asm-menu-column\">\n<ul class=\"asm-menu-list\">");
+                        }
+                        if (icon != "") { 
+                            iconhtml = "<span class=\"asm-icon " + icon + "\"></span>\n";
+                        }
+                        h.push("<li class=\"asm-menu-category " + classes + "\">" + iconhtml + " " + display + "</li>");
+                    }
+                    else {
+                        if (icon != "") {
+                            iconhtml = "<span class=\"asm-icon " + icon + "\"></span>";
+                        }
+                        var accesskeydisp = "", target = "";
+                        if (accesskey != "") {
+                            accesskeydisp = "<span class=\"asm-hotkey\">" + accesskey.toUpperCase() + "</span>";
+                            Mousetrap.bind(accesskey, function(e) {
+                                window.location = url;
+                                return false;
+                            });
+                        }
+                        if (url.indexOf("report") == 0 && config.bool("ReportNewBrowserTab")) {
+                            target = " target=\"_blank\"";
+                        }
+                        h.push("<li class=\"asm-menu-item " + classes + "\"><a href=\"" + url + "\" " + target + ">" + iconhtml + " " + display + accesskeydisp + "</a></li>");
+                    }
+                }
+            });
+            h.push("</ul>\n</div>\n</div>\n");
+        },
+
+        /** Renders menu items where each category becomes an accordion section 
+         * h: The html list to append to
+         * items: The menu items
+         * name: The display name of the menu
+         */
+        menu_html_accordion_renderer: function(h, items, name) {
+            var openac = false, outputhead = false;
+            $.each(items, function(i, v) {
+                var permission = v[0], accesskey = v[1], classes = v[2], url = v[3], icon = v[4], display = v[5], iconhtml = "";
+                if (asm.superuser || asm.securitymap.indexOf(permission + " ") != -1) {
+                    if (url == "--cat") {
+                        if (!outputhead) { 
+                            h.push("<div class=\"asm-menu-accordion asm-menu-accordion-" + name + "\">");
+                            outputhead = true;
+                        }
+                        if (openac) { 
+                            h.push("</ul></div>"); 
+                        }
+                        if (icon != "") { 
+                            iconhtml = "<span class=\"asm-icon " + icon + "\"></span>\n";
+                        }
+                        h.push("<h3>" + iconhtml + " " + display + "</h3>");
+                        h.push("<div>");
+                        h.push('<ul class="asm-menu-list">');
+                        openac = true;
+                    }
+                    else {
+                        if (icon != "") {
+                            iconhtml = "<span class=\"asm-icon " + icon + "\"></span>";
+                        }
+                        var accesskeydisp = "", target = "";
+                        if (accesskey != "") {
+                            accesskeydisp = "<span class=\"asm-hotkey\">" + accesskey.toUpperCase() + "</span>";
+                            Mousetrap.bind(accesskey, function(e) {
+                                window.location = url;
+                                return false;
+                            });
+                        }
+                        if (url.indexOf("report") == 0 && config.bool("ReportNewBrowserTab")) {
+                            target = " target=\"_blank\"";
+                        }
+                        h.push("<li class=\"asm-menu-item " + classes + "\"><a href=\"" + url + "\" " + target + ">" + iconhtml + " " + display + accesskeydisp + "</a></li>");
+                    }
+                }
+            });
+            h.push("</ul>\n</div>\n</div>");
+        },
+
         menu_html: function() {
-            var menu = [], menus = [];
-            // Renders menu items as a flat structure in with one or more columns
-            var menu_html_flat = function(items, breakevery) {
-                var breakafter = breakevery || 25, item = 0;
-                menus.push("<div class=\"asm-menu-columns\">");
-                menus.push("<div class=\"asm-menu-column\">");
-                menus.push("<ul class=\"asm-menu-list\">");
-                $.each(items, function(i, v) {
-                    var permission = v[0], accesskey = v[1], classes = v[2], url = v[3], icon = v[4], display = v[5], iconhtml = "";
-                    if (asm.superuser || asm.securitymap.indexOf(permission + " ") != -1) {
-                        item += 1;
-                        if (url == "-") {
-                            menus.push("<hr class=\"asm-menu-body-rule\" />\n");
-                        }
-                        else if (url == "--break") {
-                            menus.push("</ul>\n</div>\n<div class=\"asm-menu-column\">\n<ul class=\"asm-menu-list\">");
-                            item = 0;
-                        }
-                        else if (url == "--cat") {
-                            if (item > breakafter) {
-                                menus.push("</ul>\n</div>\n<div class=\"asm-menu-column\">\n<ul class=\"asm-menu-list\">");
-                                item = 0;
-                            }
-                            if (icon != "") { 
-                                iconhtml = "<span class=\"asm-icon " + icon + "\"></span>\n";
-                            }
-                            menus.push("<li class=\"asm-menu-category " + classes + "\">" + iconhtml + " " + display + "</li>");
-                        }
-                        else {
-                            if (icon != "") {
-                                iconhtml = "<span class=\"asm-icon " + icon + "\"></span>";
-                            }
-                            var accesskeydisp = "", target = "";
-                            if (accesskey != "") {
-                                accesskeydisp = "<span class=\"asm-hotkey\">" + accesskey.toUpperCase() + "</span>";
-                                Mousetrap.bind(accesskey, function(e) {
-                                    window.location = url;
-                                    return false;
-                                });
-                            }
-                            if (url.indexOf("report") == 0 && config.bool("ReportNewBrowserTab")) {
-                                target = " target=\"_blank\"";
-                            }
-                            menus.push("<li class=\"asm-menu-item " + classes + "\"><a href=\"" + url + "\" " + target + ">" + iconhtml + " " + display + accesskeydisp + "</a></li>");
-                        }
-                    }
-                });
-                menus.push("</ul>\n</div>\n</div>\n");
-            };
-            // Renders menu items where each category becomes an accordion section **/
-            var menu_html_accordion = function(name, items) {
-                var openac = false, outputhead = false;
-                $.each(items, function(i, v) {
-                    var permission = v[0], accesskey = v[1], classes = v[2], url = v[3], icon = v[4], display = v[5], iconhtml = "";
-                    if (asm.superuser || asm.securitymap.indexOf(permission + " ") != -1) {
-                        if (url == "--cat") {
-                            if (!outputhead) { 
-                                menus.push("<div class=\"asm-menu-accordion asm-menu-accordion-" + name + "\">");
-                                outputhead = true;
-                            }
-                            if (openac) { menus.push("</ul></div>"); }
-                            if (icon != "") { 
-                                iconhtml = "<span class=\"asm-icon " + icon + "\"></span>\n";
-                            }
-                            menus.push("<h3>" + iconhtml + " " + display + "</h3>");
-                            menus.push("<div>");
-                            menus.push('<ul class="asm-menu-list">');
-                            openac = true;
-                        }
-                        else {
-                            if (icon != "") {
-                                iconhtml = "<span class=\"asm-icon " + icon + "\"></span>";
-                            }
-                            var accesskeydisp = "", target = "";
-                            if (accesskey != "") {
-                                accesskeydisp = "<span class=\"asm-hotkey\">" + accesskey.toUpperCase() + "</span>";
-                                Mousetrap.bind(accesskey, function(e) {
-                                    window.location = url;
-                                    return false;
-                                });
-                            }
-                            if (url.indexOf("report") == 0 && config.bool("ReportNewBrowserTab")) {
-                                target = " target=\"_blank\"";
-                            }
-                            menus.push("<li class=\"asm-menu-item " + classes + "\"><a href=\"" + url + "\" " + target + ">" + iconhtml + " " + display + accesskeydisp + "</a></li>");
-                        }
-                    }
-                });
-                menus.push("</ul>\n</div>\n</div>");
-            };
+            var menu = [], menus = [], self = this;
             // Go through each menu and render appropriately
             $.each(asm.menustructure, function(im, vm) {
                 var permission = vm[0], name = vm[1], display = vm[2], items = vm[3];
@@ -203,12 +215,11 @@ $(function() {
                     menus.push("<div id=\"asm-menu-" + name + "-body\" class=\"asm-menu-body\">");
                     // If the option is on, render report and mail merge menus
                     // in accordions by category instead
-                    //if (config.bool("ReportMenuAccordion") && (name == "reports" || name == "mailmerge")) {
-                    if ((name == "reports" || name == "mailmerge")) {
-                        menu_html_accordion(name, items);
+                    if (config.bool("ReportMenuAccordion") && (name == "reports" || name == "mailmerge")) {
+                        self.menu_html_accordion_renderer(menus, items, name);
                     }
                     else {
-                        menu_html_flat(items, true);
+                        self.menu_html_flat_renderer(menus, items, { breakafter: 25 });
                     }
                     menus.push("</div>");
                 }
