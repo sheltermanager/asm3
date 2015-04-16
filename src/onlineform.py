@@ -39,7 +39,7 @@ JSKEY_VALUE = '918273645'
 FORM_FIELDS = [
     "title", "initials", "firstname", "forenames", "surname", "lastname", "address",
     "town", "city", "county", "state", "postcode", "zipcode", "hometelephone", 
-    "worktelephone", "mobiletelephone", "celltelephone", "emailaddress",
+    "worktelephone", "mobiletelephone", "celltelephone", "emailaddress", "excludefrombulkemail",
     "description", "reason", "species", "breed", "agegroup", "color", "colour", 
     "arealost", "areafound", "areapostcode", "areazipcode",
     "animalname", "reserveanimalname",
@@ -570,6 +570,7 @@ def create_person(dbo, username, collationid):
         if f["FIELDNAME"] == "mobiletelephone": d["mobiletelephone"] = f["VALUE"]
         if f["FIELDNAME"] == "celltelephone": d["mobiletelephone"] = f["VALUE"]
         if f["FIELDNAME"] == "emailaddress": d["emailaddress"] = f["VALUE"]
+        if f["FIELDNAME"] == "excludefrombulkemail" and f["VALUE"] != "" and f["VALUE"] != i18n._("No", l): d["excludefrombulkemail"] == "on"
         if f["FIELDNAME"].startswith("reserveanimalname"): d[f["FIELDNAME"]] = f["VALUE"]
     d["flags"] = flags
     # Have we got enough info to create the person record? We just need a surname

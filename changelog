@@ -1,6 +1,7 @@
 37
 ================
 
+16/04/15 excludefrombulkemail online form field
 15/04/15 Fix for display of rota elements that cross multiple weeks
 15/04/15 Include rspca templates as part of db install
 15/04/15 Remove pisa dependency, use wkhtmltopdf for template pdfs #164
