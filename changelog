@@ -1,6 +1,7 @@
 37
 ================
 
+16/04/15 Add more missing microchip manufacturers, including Anibase
 16/04/15 Removed table layouts from edit headers, fix quicklink/calendar #158
 16/04/15 JS refactoring to use tableform.buttons_render for all toolbar #161
 16/04/15 JS refactoring to use #asm-body-container #161
