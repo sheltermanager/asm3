@@ -240,7 +240,12 @@ information from other areas of the system. These are:
 * $$VERSION$$ - The ASM version 
 
 * $$NAV$$ - If you are using numbered pages, outputs navigation with the
-  current page disabled and links to the other available pages.
+  current page disabled and links to the other available pages. Returns
+  a blank for recently adopted animal pages.
+
+* $$TITLE$$ - An appropriate title based on the page being published. If
+  it is a recently adopted page, the title will be "Recently adopted" in
+  your language. Otherwise, it will be "Available for adoption".
 
 * $$TOTAL$$ - The number of animals output by the publisher 
 

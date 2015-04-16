@@ -1421,7 +1421,7 @@ msgid ""
 "is adopted"
 msgstr ""
 
-#: common.js header_edit_header.js
+#: common.js header_edit_header.js publish.py
 msgid "Available for adoption"
 msgstr ""
 
@@ -8132,6 +8132,10 @@ msgstr ""
 
 #: options.js code.py
 msgid "Recently Fostered"
+msgstr ""
+
+#: publish.py
+msgid "Recently adopted"
 msgstr ""
 
 #: header.js configuration.py

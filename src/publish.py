@@ -1911,7 +1911,7 @@ class HTMLPublisher(FTPPublisher):
         dbfs.get_files(self.dbo, "%.gif", self.getPathFromStyle(), self.publishDir)
         # TODO: Upload these via FTP
 
-    def substituteHFTag(self, searchin, page, user):
+    def substituteHFTag(self, searchin, page, user, title = ""):
         """
         Substitutes special header and footer tokens in searchin. page
         contains the current page number.
@@ -1920,7 +1920,11 @@ class HTMLPublisher(FTPPublisher):
         nav = self.navbar.replace("<a href=\"%d.%s\">%d</a>" % (page, self.pc.extension, page), str(page))
         dateportion = i18n.python2display(self.locale, i18n.now(self.dbo.timezone))
         timeportion = time.strftime("%H:%M:%S", i18n.now(self.dbo.timezone).timetuple())
-        output = output.replace("$$NAV$$", nav)
+        if page != -1:
+            output = output.replace("$$NAV$$", nav)
+        else:
+            output = output.replace("$$NAV$$", "")
+        output = output.replace("$$TITLE$$", title)
         output = output.replace("$$TOTAL$$", str(self.totalAnimals))
         output = output.replace("$$DATE$$", dateportion)
         output = output.replace("$$TIME$$", timeportion)
@@ -1996,6 +2000,7 @@ class HTMLPublisher(FTPPublisher):
         thisPage = ""
         thisPageName = "adopted.%s" % self.pc.extension
         totalAnimals = 0
+        l = self.dbo.locale
 
         try:
             cutoff = i18n.subtract_days(i18n.now(self.dbo.timezone), self.pc.outputAdoptedDays)
@@ -2003,8 +2008,8 @@ class HTMLPublisher(FTPPublisher):
                 "a.ActiveMovementDate >= %s AND a.DeceasedDate Is Null AND a.NonShelterAnimal = 0 "
                 "ORDER BY a.AnimalName" % db.dd(cutoff))
             totalAnimals = len(animals)
-            header = self.substituteHFTag(self.getHeader(), 1, user)
-            footer = self.substituteHFTag(self.getFooter(), 1, user)
+            header = self.substituteHFTag(self.getHeader(), -1, user, i18n._("Recently adopted", l))
+            footer = self.substituteHFTag(self.getFooter(), -1, user, i18n._("Recently adopted", l))
             body = self.getBody()
             thisPage = header
         except Exception, err:
@@ -2087,11 +2092,12 @@ class HTMLPublisher(FTPPublisher):
         """
         self.log("HTMLPublisher starting...")
 
+        l = self.dbo.locale
         normHeader = self.getHeader()
         normFooter = self.getFooter()
         body = self.getBody()
-        header = self.substituteHFTag(normHeader, 0, user)
-        footer = self.substituteHFTag(normFooter, 0, user)
+        header = self.substituteHFTag(normHeader, 0, user, i18n._("Available for adoption", l))
+        footer = self.substituteHFTag(normFooter, 0, user, i18n._("Available for adoption", l))
 
         # Calculate the number of days old an animal has to be to
         # count as an adult
@@ -2229,6 +2235,7 @@ class HTMLPublisher(FTPPublisher):
         normHeader = self.getHeader()
         normFooter = self.getFooter()
         body = self.getBody()
+        l = self.dbo.locale
 
         # Open FTP socket, bail if it fails
         if not self.openFTPSocket():
@@ -2268,8 +2275,8 @@ class HTMLPublisher(FTPPublisher):
             itemsOnPage = 0
 
             # Substitute tags in the header and footer
-            header = self.substituteHFTag(normHeader, currentPage, user)
-            footer = self.substituteHFTag(normFooter, currentPage, user)
+            header = self.substituteHFTag(normHeader, currentPage, user, i18n._("Available for adoption", l))
+            footer = self.substituteHFTag(normFooter, currentPage, user, i18n._("Available for adoption", l))
             thisPage = header
             anCount = 0
         except Exception, err:
@@ -2312,8 +2319,8 @@ class HTMLPublisher(FTPPublisher):
                     # New page
                     currentPage += 1
                     thisPageName = "%d.%s" % ( currentPage, self.pc.extension )
-                    header = self.substituteHFTag(normHeader, currentPage, user)
-                    footer = self.substituteHFTag(normFooter, currentPage, user)
+                    header = self.substituteHFTag(normHeader, currentPage, user, i18n._("Available for adoption", l))
+                    footer = self.substituteHFTag(normFooter, currentPage, user, i18n._("Available for adoption", l))
                     thisPage = header
                     # Append this animal
                     thisPage += self.substituteBodyTags(body, an)
