@@ -31,6 +31,8 @@ mobiletelephone / celltelephone
     The person's mobile number
 emailaddress
     The person's email address
+excludefrombulkemail
+    If this field is supplied and not a blank or "No" in your language, the exclude from bulk email flag will be set for the created person
 description
     The description for the lost, found or waiting list animal
 reason
