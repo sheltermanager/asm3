@@ -96,22 +96,24 @@ $(function() {
             }
             var first_column = [
                 '<input type="hidden" id="animalid" value="' + a.ID + '" />',
-                '<table class="asm-left-table"><tr>',
-                '<td align="center">',
-                '<a href="' + html.img_src(a, "animal") + '">',
-                '<img onerror="image_error(this)" class="asm-thumbnail thumbnailshadow" src="' + html.thumbnail_src(a, "animalthumb") + '" />',
-                '</a>',
-                mediaprompt,
-                '</td>',
-                '<td width="30%">',
-                '<h2>' + html.icon("animal", _("Animal")) + a.ANIMALNAME + ' - ' + a.CODE + ' ' + html.animal_emblems(a) + '</h2>',
-                '<p>' + common.substitute(_("{0} {1} aged {2}"), { "0": "<b>" + a.SEXNAME, "1": a.SPECIESNAME + "</b>", "2": "<b>" + a.ANIMALAGE + "</b>" })  + '<br />',
-                html.truncate(banner.join(". "), 100),
-                '</p>',
-                '</td>'
+                '<div class="asm-grid">',
+                '<div class="asm-grid-col-3">',
+                    '<table><tr>',
+                    '<td align="center">',
+                        '<a href="' + html.img_src(a, "animal") + '">',
+                        '<img onerror="image_error(this)" class="asm-thumbnail thumbnailshadow" src="' + html.thumbnail_src(a, "animalthumb") + '" />',
+                        '</a>',
+                        mediaprompt,
+                    '</td>',
+                    '<td>',
+                    '<h2>' + html.icon("animal", _("Animal")) + a.ANIMALNAME + ' - ' + a.CODE + ' ' + html.animal_emblems(a) + '</h2>',
+                    '<p>' + common.substitute(_("{0} {1} aged {2}"), { "0": "<b>" + a.SEXNAME, "1": a.SPECIESNAME + "</b>", "2": "<b>" + a.ANIMALAGE + "</b>" })  + '<br />',
+                    html.truncate(banner.join(". "), 100),
+                    '</td></tr></table>',
+                '</div>'
             ].join("\n");
             var second_column = [
-                '<td width="30%">',
+                '<div class="asm-grid-col-3">',
                 '<table>',
                 '<tr>',
                 '<td id="hloc">' + _("Location") + ':</td><td><b>' + displaylocation + '</b></td>',
@@ -129,19 +131,18 @@ $(function() {
                 '<td id="htimeonshel">' + _("Time on shelter") + ':</td><td><b>' + a.TIMEONSHELTER + '</b></td>',
                 '</tr>',
                 '</table>',
-                '</td>'
+                '</div>'
             ].join("\n");
             if (a.NONSHELTERANIMAL == 1) {
-                second_column = "<td width=\"30%\">&nbsp;</td>";
+                second_column = '<div class="asm-grid-col-3" />';
             }
             var third_column = [
-                '<td width="30%">',
+                '<div class="asm-grid-col-3">',
                 _("Added by {0} on {1}").replace("{0}", "<b>" + a.CREATEDBY + "</b>").replace("{1}", "<b>" + format.date(a.CREATEDDATE) + "</b>") + '<br />',
                 _("Last changed by {0} on {1}").replace("{0}", "<b>" + a.LASTCHANGEDBY + "</b>").replace("{1}", "<b>" + format.date(a.LASTCHANGEDDATE) + "</b>") + '<br />',
                 available,
-                '</td>',
-                '</tr>',
-                '</table>'
+                '</div>',
+                '</div>'
             ].join("\n");
             var s = [
                 '<div class="asm-banner ui-helper-reset ui-widget-content ui-corner-all">',
@@ -229,16 +230,16 @@ $(function() {
             var h = [
                 '<div class="asm-banner ui-helper-reset ui-widget-content ui-corner-all">',
                 '<input type="hidden" id="incidentid" value="' + a.ACID + '" />',
-                '<table class="asm-left-table" width="100%" style="border-collapse: collapse;"><tr>',
-                '<td width="30%" style="padding-left: 10px">',
+                '<div class="asm-grid">',
+                '<div class="asm-grid-col-3">',
                 '<h2>' + html.icon("call", _("Incident")) + a.INCIDENTNAME + 
                     (a.OWNERNAME1 ? ' - ' + a.OWNERNAME1 : "") + 
                     (a.OWNERNAME2 ? ', ' + a.OWNERNAME2 : "") + 
                     (a.OWNERNAME3 ? ', ' + a.OWNERNAME3 : "") + 
                     '</h2>',
                 '<p>' + html.truncate(a.CALLNOTES) + '</p>',
-                '</td>',
-                '<td width="30%">',
+                '</div>',
+                '<div class="asm-grid-col-3">',
                 '<table>',
                 '<tr>',
                 '<td>' + _("Call") + ':</td><td><b>' + format.date(a.CALLDATETIME) + ' ' + format.time(a.CALLDATETIME) + ' ' + 
@@ -256,15 +257,14 @@ $(function() {
                 '<td>' + _("Completed") + ':</td><td><b>' + format.date(a.COMPLETEDDATE) + ' ' + common.nulltostr(a.COMPLETEDNAME) + '</b></td>',
                 '</tr>',
                 '</table>',
-                '</td>',
-                '<td width="30%">',
+                '</div>',
+                '<div class="asm-grid-col-3">',
                 _("Added by {0} on {1}").replace("{0}", "<b>" + a.CREATEDBY + "</b>").replace("{1}", "<b>" + format.date(a.CREATEDDATE) + "</b>") + ' <br/>',
                 _("Last changed by {0} on {1}").replace("{0}", "<b>" + a.LASTCHANGEDBY + "</b>").replace("{1}", "<b>" + format.date(a.LASTCHANGEDDATE) + "</b>"),
                 '<br />',
                 fine,
-                '</td>',
-                '</tr>',
-                '</table>',
+                '</div>',
+                '</div>',
                 '</div>',
                 '<div class="asm-tabbar">',
                 '<ul class="asm-tablist">'
@@ -306,7 +306,7 @@ $(function() {
                 }
                 return html.icon("blank");
             };
-            var lf = "", area = "", dl = "", dlv = "", prefix = "", icon = "", tdclass = "";
+            var lf = "", area = "", dl = "", dlv = "", prefix = "", icon = "";
             if (mode == "lost") {
                 lf = _("Lost");
                 area = a.AREALOST;
@@ -314,7 +314,6 @@ $(function() {
                 dlv = format.date(a.DATELOST);
                 prefix = "lostanimal";
                 icon = "animal-lost";
-                tdclass = "";
             }
             if (mode == "found") {
                 lf = _("Found");
@@ -323,18 +322,17 @@ $(function() {
                 dlv = format.date(a.DATEFOUND);
                 prefix = "foundanimal";
                 icon = "animal-found";
-                tdclass = "";
             }
             var h = [
                 '<div class="asm-banner ui-helper-reset ui-widget-content ui-corner-all">',
                 '<input type="hidden" id="lfid" value="' + a.LFID + '" />',
-                '<table class="asm-left-table" width="100%" style="border-collapse: collapse;"><tr>',
-                '<td width="30%" style="padding-left: 10px" class="' + tdclass + '">',
+                '<div class="asm-grid">',
+                '<div class="asm-grid-col-3">',
                 '<h2>' + html.icon(icon, lf) + a.OWNERNAME + '</h2>',
                 '<p>' + lf + ': ' + a.AGEGROUP + ' ' + a.SPECIESNAME + ' / ' + html.truncate(area) + '<br>',
                 html.truncate(a.DISTFEAT) + '</p>',
-                '</td>',
-                '<td width="30%" class="' + tdclass + '">',
+                '</div>',
+                '<div class="asm-grid-col-3">',
                 '<table>',
                 '<tr>',
                 '<td>' + dl + ':</td><td><b>' + dlv + '</b></td>',
@@ -344,13 +342,12 @@ $(function() {
                 '<td>' + _("Comments") + ':</td><td><b>' + html.truncate(a.COMMENTS) + '</b></td>',
                 '</tr>',
                 '</table>',
-                '</td>',
-                '<td width="30%" class="' + tdclass + '">',
+                '</div>',
+                '<div class="asm-grid-col-3">',
                 _("Added by {0} on {1}").replace("{0}", "<b>" + a.CREATEDBY + "</b>").replace("{1}", "<b>" + format.date(a.CREATEDDATE) + "</b>") + ' <br/>',
                 _("Last changed by {0} on {1}").replace("{0}", "<b>" + a.LASTCHANGEDBY + "</b>").replace("{1}", "<b>" + format.date(a.LASTCHANGEDDATE) + "</b>"),
-                '</td>',
-                '</tr>',
-                '</table>',
+                '</div>',
+                '</div>',
                 '</div>',
                 '<div class="asm-tabbar">',
                 '<ul class="asm-tablist">'
@@ -392,18 +389,22 @@ $(function() {
             var s = [
                 '<div class="asm-banner ui-helper-reset ui-widget-content ui-corner-all">',
                 '<input type="hidden" id="personid" value="' + p.ID + '" />',
-                '<table class="asm-left-table"><tr>',
+                '<div class="asm-grid">',
+                '<div class="asm-grid-col-3">',
+                '<table><tr>',
                 '<td>',
                 '<a href="' + html.img_src(p, "person") + '">',
                 '<img onerror="image_error(this)" class="asm-thumbnail thumbnailshadow" src="' + html.thumbnail_src(p, "personthumb") + '" />',
                 '</a>',
                 '</td>',
-                '<td width="30%">',
+                '<td>',
                 '<h2>' + html.icon("person", _("Person")) + p.OWNERNAME + '</h2>',
                 '<p><span style="font-style: italic">' + flags + '</span><br/>',
                 html.truncate(p.COMMENTS) + '</p>',
                 '</td>',
-                '<td width="30%">',
+                '</tr></table>',
+                '</div>',
+                '<div class="asm-grid-col-3">',
                 '<table>',
                 '<tr>',
                 '<td>' + p.OWNERADDRESS + '<br />',
@@ -414,14 +415,13 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                '</td>',
-                '<td width="30%">',
+                '</div>',
+                '<div class="asm-grid-col-3">',
                 _("Added by {0} on {1}").replace("{0}", "<b>" + p.CREATEDBY + "</b>").replace("{1}", "<b>" + format.date(p.CREATEDDATE) + "</b>"),
                 '<br />',
                 _("Last changed by {0} on {1}").replace("{0}", "<b>" + p.LASTCHANGEDBY + "</b>").replace("{1}", "<b>" + format.date(p.LASTCHANGEDDATE) + "</b>"),
-                '</td>',
-                '</tr>',
-                '</table>',
+                '</div>',
+                '</div>',
                 '</div>',
                 '<div class="asm-tabbar">',
                 '<ul class="asm-tablist">'
@@ -576,13 +576,13 @@ $(function() {
                 }
                 return html.icon("blank");
             };
-            var tdclass = "", removal = "";
+            var hclass = "", removal = "";
             if (!a.DATEREMOVEDFROMLIST) {
-                if (a.URGENCY == 5) { tdclass = "asm-wl-lowest"; }
-                else if (a.URGENCY == 4) { tdclass = "asm-wl-low"; }
-                else if (a.URGENCY == 3) { tdclass = "asm-wl-medium"; }
-                else if (a.URGENCY == 2) { tdclass = "asm-wl-high"; }
-                else if (a.URGENCY == 1) { tdclass = "asm-wl-urgent"; }
+                if (a.URGENCY == 5) { hclass = "asm-wl-lowest"; }
+                else if (a.URGENCY == 4) { hclass = "asm-wl-low"; }
+                else if (a.URGENCY == 3) { hclass = "asm-wl-medium"; }
+                else if (a.URGENCY == 2) { hclass = "asm-wl-high"; }
+                else if (a.URGENCY == 1) { hclass = "asm-wl-urgent"; }
             }
             else {
                 removal = "<tr><td>" + _("Removed") + ":</td><td><b>" + format.date(a.DATEREMOVEDFROMLIST) + "</b></td></tr>";
@@ -590,12 +590,12 @@ $(function() {
             var h = [
                 '<div class="asm-banner ui-helper-reset ui-widget-content ui-corner-all">',
                 '<input type="hidden" id="waitinglistid" value="' + a.WLID + '" />',
-                '<table class="asm-left-table" width="100%" style="border-collapse: collapse;"><tr>',
-                '<td width="30%" style="padding-left: 10px" class="' + tdclass + '">',
+                '<div class="asm-grid ' + hclass + '">',
+                '<div class="asm-grid-col-3">',
                 '<h2>' + html.icon("waitinglist", _("Waiting List")) + a.OWNERNAME + '</h2>',
                 '<p>' + a.SPECIESNAME + ': ' + html.truncate(a.ANIMALDESCRIPTION) + '</p>',
-                '</td>',
-                '<td width="30%" class="' + tdclass + '">',
+                '</div>',
+                '<div class="asm-grid-col-3">',
                 '<table>',
                 '<tr>',
                 '<td>' + _("Rank") + ':</td><td><b>' + a.RANK + '</b></td>',
@@ -608,13 +608,12 @@ $(function() {
                 '</tr>',
                 removal,
                 '</table>',
-                '</td>',
-                '<td width="30%" class="' + tdclass + '">',
+                '</div>',
+                '<div class="asm-grid-col-3">',
                 _("Added by {0} on {1}").replace("{0}", "<b>" + a.CREATEDBY + "</b>").replace("{1}", "<b>" + format.date(a.CREATEDDATE) + "</b>") + ' <br/>',
                 _("Last changed by {0} on {1}").replace("{0}", "<b>" + a.LASTCHANGEDBY + "</b>").replace("{1}", "<b>" + format.date(a.LASTCHANGEDDATE) + "</b>"),
-                '</td>',
-                '</tr>',
-                '</table>',
+                '</div>',
+                '</div>',
                 '</div>',
                 '<div class="asm-tabbar">',
                 '<ul class="asm-tablist">'

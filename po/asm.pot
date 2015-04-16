@@ -8783,15 +8783,11 @@ msgstr ""
 msgid "Save and leave"
 msgstr ""
 
-#: animal.js
-msgid "Save this animal"
-msgstr ""
-
 #: incident.js
 msgid "Save this incident"
 msgstr ""
 
-#: person.js
+#: animal.js person.js
 msgid "Save this person"
 msgstr ""
 

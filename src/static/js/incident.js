@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, asm, additional, common, config, controller, dlgfx, edit_header, format, geo, header, html, mapping, validate */
+/*global $, jQuery, _, asm, additional, common, config, controller, dlgfx, edit_header, format, geo, header, html, mapping, tableform, validate */
 
 $(function() {
 
@@ -285,20 +285,14 @@ $(function() {
                     _("This will permanently remove this incident, are you sure?") + '</p>',
                 '</div>',
                 edit_header.incident_edit_header(controller.incident, "details", controller.tabcounts),
-                '<div class="asm-toolbar">',
-                '<button id="button-save" title="' + html.title(_("Save this incident")) + '">' + html.icon("save"),
-                ' ' + _("Save") + '</button>',
-                '<button id="button-delete" title="' + html.title(_("Delete this incident")) + '">' + html.icon("delete"),
-                ' ' + _("Delete") + '</button>',
-                //'<button id="button-toanimal" title="' + html.title(_("Create a new animal from this incident")) + '">' + html.icon("animal-add"),
-                //' ' + _("Create Animal") + '</button>',
-                '<button id="button-email" title="' + html.title(_("Email incident notes to ACO")) + '">' + html.icon("email"),
-                ' ' + _("Email") + '</button>',
-                '<button id="button-dispatch" title="' + html.title(_("Mark dispatched now")) + '">' + html.icon("calendar"),
-                ' ' + _("Dispatch") + '</button>',
-                '<button id="button-respond" title="' + html.title(_("Mark responded now")) + '">' + html.icon("calendar"),
-                ' ' + _("Respond") + '</button>',
-                '</div>',
+                tableform.buttons_render([
+                    { id: "save", text: _("Save"), icon: "save", tooltip: _("Save this incident") },
+                    { id: "delete", text: _("Delete"), icon: "delete", tooltip: _("Delete this incident") },
+                    //{ id: "toanimal", text: _("Create Animal"), icon: "animal-add", tooltip: _("Create a new animal from this incident") }
+                    { id: "email", text: _("Email"), icon: "email", tooltip: _("Email incident notes to ACO") },
+                    { id: "dispatch", text: _("Dispatch"), icon: "calendar", tooltip: _("Mark dispatched now") },
+                    { id: "respond", text: _("Respond"), icon: "calendar", tooltip: _("Mark responded now") }
+                ]),
                 '<div id="asm-details-accordion">',
                 this.render_details(),
                 '<h3 id="asm-additional-accordion"><a href="#">' + _("Additional") + '</a></h3>',

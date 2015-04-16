@@ -258,7 +258,7 @@
          *             report, main, formtab, book, options
          */
         module: function(o, modulename, screentype) {
-            if (o.render) { $("body").append(o.render()); }
+            if (o.render) { $("#asm-body-container").html(o.render()); }
             common.bind_widgets();
             if (o.bind) { o.bind(); }
             if (o.sync) { o.sync(); }

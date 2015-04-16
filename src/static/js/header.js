@@ -372,7 +372,7 @@ $(function() {
                 if (image != "") {
                     s += "<span class='asm-icon " + image + "'></span> ";
                 }
-                s += text + "</a>\n";
+                s += text + "</a>";
             });
             return s;
         },
@@ -488,7 +488,8 @@ $(function() {
                     '</p>',
                     '<h2 class="centered" id="asm-topline-loading-text">' + _("Loading...") + '</h2>',
                 '</div>',
-                '<table id="header-fixed" class="no-print" style="position: fixed; top: 0px; display: none;"></table>'
+                '<table id="header-fixed" class="no-print" style="position: fixed; top: 0px; display: none;"></table>',
+                '<div id="asm-body-container" />'
             ];
             return h.join("");
         },

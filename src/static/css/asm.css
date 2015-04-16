@@ -462,10 +462,10 @@ img {
 /** QUICKLINKS ========================== */
 .asm-quicklinks {
     font-weight: bold;
-    line-height: 210%;
 }
 
 .asm-quicklinks a {
+    display: inline-block;
     white-space: nowrap;
 	border-radius: 3px;
     -moz-border-radius: 3px;
@@ -475,6 +475,7 @@ img {
     -webkit-box-shadow: 0 1px 3px #DDD;
     border: 1px solid #555;
     padding: 5px;
+    margin: 1px;
     font-weight: normal;
 }
 
@@ -483,7 +484,11 @@ img {
 }
 
 /** CALENDAR =========================== */
+.asm-calendar-legends {
+}
+
 .asm-calendar-legend {
+    display: inline-block;
     white-space: nowrap;
 	border-radius: 3px;
     -moz-border-radius: 3px;
@@ -493,8 +498,35 @@ img {
     -webkit-box-shadow: 0 1px 3px #DDD;
     border: 1px solid #555;
     padding: 5px;
-    margin: 2px;
+    margin: 1px;
     font-weight: normal;
+}
+
+/** GRIDS ============================= */
+.asm-grid {
+    display: block;
+    width: 100%;
+}
+
+.asm-grid-col-2 {
+    display: inline-block;
+    vertical-align: middle;
+    min-width: 300px;
+    width: 50%;
+}
+
+.asm-grid-col-3 {
+    display: inline-block;
+    vertical-align: middle;
+    min-width: 300px;
+    width: 33%;
+}
+
+.asm-grid-col-4 {
+    display: inline-block;
+    vertical-align: middle;
+    min-width: 300px;
+    width: 25%;
 }
 
 /** FORMS =========================== */
@@ -509,11 +541,6 @@ img {
 
 #asm-content label {
     text-align: right;
-}
-
-.asm-horizontal-list {
-    display: inline;
-    list-style
 }
 
 .asm-header {
@@ -649,6 +676,10 @@ select[disabled="disabled"], input[disabled="disabled"], textarea[disabled="disa
 
 .asm-left-table {
     margin-left: 0px !important;
+}
+
+.asm-banner {
+    padding: 5px;
 }
 
 .asm-banner a {

@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, asm, additional, common, config, controller, dlgfx, edit_header, format, header, html, validate */
+/*global $, jQuery, _, asm, additional, common, config, controller, dlgfx, edit_header, format, header, html, tableform, validate */
 
 $(function() {
 
@@ -16,14 +16,16 @@ $(function() {
                 '<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>' + _("This will permanently remove this record, are you sure?") + '</p>',
                 '</div>',
                 edit_header.lostfound_edit_header(mode, controller.animal, "details", controller.tabcounts),
-                '<div class="asm-toolbar">',
-                '<button id="button-save" title="' + html.title(_("Save this record")) + '">' + html.icon("save") + ' ' + _("Save") + '</button>',
-                '<button id="button-delete" title="' + html.title(_("Delete this record")) + '">' + html.icon("delete") + ' ' + _("Delete") + '</button>',
-                '<button id="button-match" title="' + html.title(_("Match against other lost/found animals")) + '">' + html.icon("match") + ' ' + _("Match") + '</button>',
-                '<button id="button-email" title="' + html.title(_("Email this person")) + '">' + html.icon("email") + ' ' + _("Email") + '</button>',
-                mode == "found" ? '<button id="button-toanimal" title="' + _("Create a new animal from this found animal record") + '">' + html.icon("animal-add") + ' ' + _("Create Animal") + '</button>' : "",
-                mode == "found" ? '<button id="button-towaitinglist" title="' + _("Create a new waiting list entry from this found animal record") + '">' + html.icon("waitinglist") + ' ' + _("Create Waiting List") + '</button>' : "",
-                '</div>',
+                tableform.buttons_render([
+                    { id: "save", text: _("Save"), icon: "save", tooltip: _("Save this record") },
+                    { id: "delete", text: _("Delete"), icon: "delete", tooltip: _("Delete this record") },
+                    { id: "match", text: _("Match"), icon: "match", tooltip: _("Match against other lost/found animals") },
+                    { id: "email", text: _("Email"), icon: "email", tooltip: _("Email this person") },
+                    { id: "toanimal", text: _("Create Animal"), icon: "animal-add", hideif: function() { return mode != "found"; },
+                        tooltip: _("Create a new animal from this found animal record") },
+                    { id: "towaitinglist", text: _("Create Waiting List"), icon: "waitinglist", hideif: function() { return mode != "found"; },
+                        tooltip: _("Create a new waiting list entry from this found animal record") }
+                ]),
                 '<div id="asm-details-accordion">',
                 '<h3><a href="#">' + _("Details") + '</a></h3>',
                 '<div>',

@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, additional, asm, common, config, controller, dlgfx, edit_header, format, geo, header, html, mapping, validate */
+/*global $, jQuery, _, additional, asm, common, config, controller, dlgfx, edit_header, format, geo, header, html, mapping, tableform, validate */
 
 $(function() {
 
@@ -385,21 +385,15 @@ $(function() {
         },
 
         render_toolbar: function() {
-            return [
-                '<div class="asm-toolbar">',
-                '<table>',
-                '<tr>',
-                '<td><button id="button-save" title="' + html.title(_("Save this person")) + '">' + html.icon("save") + ' ' + _("Save") + '</button></td>',
-                '<td><button id="button-delete" title="' + html.title(_("Delete this person")) + '">' + html.icon("delete") + ' ' + _("Delete") + '</button></td>',
-                '<td><button id="button-merge" title="' + html.title(_("Merge another person into this one")) + '">' + html.icon("copy") + ' ' + _("Merge") + '</button></td>',
-                '<td><span id="button-document" title="' + html.title(_("Generate a document from this person")) + '" class="asm-menu-icon">' + html.icon("document") + ' ' + _("Document") + '</span></td>',
-                '<td><span id="button-diarytask" title="' + html.title(_("Create diary notes from a task")) + '" class="asm-menu-icon">' + html.icon("diary-task") + ' ' + _("Diary Task") + '</span></td>',
-                '<td><button id="button-map" title="' + html.title(_("Find this address on a map")) + '">' + html.icon("map") + ' ' + _("Map") + '</button></td>',
-                '<td><button id="button-email" title="' + html.title(_("Email this person")) + '">' + html.icon("email") + ' ' + _("Email") + '</button></td>',
-                '</tr>',
-                '</table>',
-                '</div>'
-            ].join("\n");
+            return tableform.buttons_render([
+                { id: "save", text: _("Save"), icon: "save", tooltip: _("Save this person") },
+                { id: "delete", text: _("Delete"), icon: "delete", tooltip: _("Delete this person") },
+                { id: "merge", text: _("Merge"), icon: "copy", tooltip: _("Merge another person into this one") },
+                { id: "document", text: _("Document"), type: "buttonmenu", icon: "document", tooltip: _("Generate a document from this person") },
+                { id: "diarytask", text: _("Diary Task"), type: "buttonmenu", icon: "diary-task", tooltip: _("Create diary notes from a task") },
+                { id: "map", text: _("Map"), icon: "map", tooltip: _("Find this address on a map") },
+                { id: "email", text: _("Email"), icon: "email", tooltip: _("Email this person") }
+            ]);
         },
 
         render_submenus: function() {

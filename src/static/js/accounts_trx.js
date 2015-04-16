@@ -76,10 +76,10 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '</form>',
-                '<div class="asm-toolbar">',
-                '<button id="button-delete">' + html.icon("delete") + ' ' + _("Delete") + '</button>',
-                '<button id="button-reconcile">' + html.icon("transactions") + ' ' + _("Reconcile") + '</button>',
-                '</div>',
+                tableform.buttons_render([
+                    { id: "delete", text: _("Delete"), icon: "delete" },
+                    { id: "reconcile", text: _("Reconcile"), icon: "transactions" }
+                ]),
                 '<table id="table-trx" width="100%">',
                 '<thead>',
                 '<tr>',

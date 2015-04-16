@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, _, asm, common, config, controller, dlgfx, additional, edit_header, format, header, html, validate */
+/*global $, _, asm, common, config, controller, dlgfx, additional, edit_header, format, header, html, tableform, validate */
 
 $(function() {
 
@@ -647,20 +647,16 @@ $(function() {
                     '<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>' + _("This will permanently remove this animal, are you sure?") + '</p>',
                 '</div>',
                 edit_header.animal_edit_header(controller.animal, "animal", controller.tabcounts),
-                '<div class="asm-toolbar">',
-                '<table>',
-                '<tr>',
-                    '<td><button id="button-save" title="' + _("Save this animal") + '">' + html.icon("save") + ' ' + _("Save") + '</button></td>',
-                    '<td><button id="button-clone" title="' + _("Create a new animal by copying this one") + '">' + html.icon("copy") + ' ' + _("Clone") + '</button></td>',
-                    '<td><button id="button-delete" title="' + _("Delete this animal") + '">' + html.icon("animal-delete") + ' ' + _("Delete") + '</button></td>',
-                    '<td><span id="button-document" title="' + _("Generate a document from this animal") + '" class="asm-menu-icon">' + html.icon("document") + ' ' + _("Document") + '</span></td>',
-                    '<td><span id="button-diarytask" title="' + _("Create diary notes from a task") + '" class="asm-menu-icon">' + html.icon("diary-task") + ' ' + _("Diary Task") + '</span></td>',
-                    '<td><button id="button-match" title="' + _("Match this animal with the lost and found database") + '">' + html.icon("match") + ' ' + _("Match") + '</button></td>',
-                    '<td><button id="button-littermates" title="' + _("View littermates") + '">' + html.icon("litter") + ' ' + _("Littermates") + '</button></td>',
-                    '<td><button id="button-facebook" title="' + _("Share this animal on Facebook") + '">' + html.icon("facebook") + ' ' + _("Facebook") + '</button></td>',
-                '</tr>',
-                '</table>',
-                '</div>',
+                tableform.buttons_render([
+                    { id: "save", text: _("Save"), icon: "save", tooltip: _("Save this person") },
+                    { id: "clone", text: _("Clone"), icon: "copy", tooltip: _("Create a new animal by copying this one") },
+                    { id: "delete", text: _("Delete"), icon: "delete", tooltip: _("Delete this animal") },
+                    { id: "document", text: _("Document"), type: "buttonmenu", icon: "document", tooltip: _("Generate a document from this animal") },
+                    { id: "diarytask", text: _("Diary Task"), type: "buttonmenu", icon: "diary-task", tooltip: _("Create diary notes from a task") },
+                    { id: "match", text: _("Match"), icon: "match", tooltip: _("Match this animal with the lost and found database") },
+                    { id: "littermates", text: _("Littermates"), icon: "litter", tooltip: _("View littermates") },
+                    { id: "facebook", text: _("Facebook"), icon: "facebook", tooltip: _("Share this animal on Facebook") }
+                ]),
                 '<div id="asm-details-accordion">',
                 animal.render_details(),
                 animal.render_notes(),

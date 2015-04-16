@@ -27,7 +27,7 @@ $(function() {
         render: function() {
             return [
                 html.content_header(_("Calendar View")),
-                '<p id="toggles" class="centered">',
+                '<p id="toggles" class="asm-calendar-legends centered">',
                 '<span class="asm-calendar-legend">',
                 html.icon("diary") + '<input id="toggle-diary" data="d" type="checkbox" class="asm-checkbox" />' + 
                 '<label for="toggle-diary">' + _("Diary") + '</label>',
