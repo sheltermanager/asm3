@@ -1048,7 +1048,7 @@ $(function() {
                     else if ($(this).is("input:hidden")) {
                         $(this).val( config.str(d));
                     }
-                    else if ($(this).is(".asm-selectbox")) {
+                    else if ($(this).is("select")) {
                         $(this).select("value", config.str(d));
                     }
                     else if ($(this).is(".asm-bsmselect")) {
