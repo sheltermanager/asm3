@@ -364,8 +364,10 @@ $(function() {
          */
         quicklinks_html:  function() {
             var qls = config.str("QuicklinksID"), s = "";
+            if (!qls) { return ""; }
             $.each(qls.split(","), function(i, v) {
                 var b = QUICKLINKS_SET[parseInt(v, 10)];
+                if (!b) { return; }
                 var url = b[0], image = b[1], text = b[2];
                 s += "<a ";
                 s += "href='" + url + "'>";
