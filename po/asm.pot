@@ -7287,16 +7287,16 @@ msgstr ""
 msgid "Order published animals by"
 msgstr ""
 
-#: common_personchooser.js person.js person_new.js dbupdate.py
+#: dbupdate.py
 msgid "Organisation"
 msgstr ""
 
-#: common_personchooser.js person.js person_new.js
-msgid "Organisation name"
+#: common_personchooser.js options.js person.js person_new.js
+msgid "Organization"
 msgstr ""
 
-#: options.js
-msgid "Organization"
+#: common_personchooser.js person.js person_new.js
+msgid "Organization name"
 msgstr ""
 
 #: dbupdate.py
