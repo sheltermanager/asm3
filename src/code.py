@@ -4567,6 +4567,10 @@ class onlineform:
         formid = post.integer("formid")
         formname = extonlineform.get_onlineform_name(dbo, formid)
         fields = extonlineform.get_onlineformfields(dbo, formid)
+        # Escape any angle brackets in raw markup output
+        for r in fields:
+            if r["FIELDTYPE"] == extonlineform.FIELDTYPE_RAWMARKUP:
+               r["TOOLTIP"] = html.escape_angle(r["TOOLTIP"]) 
         title = _("Online Form: {0}", l).format(formname)
         al.debug("got %d online form fields" % len(fields), "code.onlineform", dbo)
         s = html.header(title, session, "onlineform.js")
@@ -4602,6 +4606,10 @@ class onlineforms:
         l = session.locale
         dbo = session.dbo
         onlineforms = extonlineform.get_onlineforms(dbo)
+        # Escape any angle brackets in form header/footers
+        for r in onlineforms:
+            r["HEADER"] = html.escape_angle(r["HEADER"])
+            r["FOOTER"] = html.escape_angle(r["FOOTER"])
         title = _("Online Forms", l)
         al.debug("got %d online forms" % len(onlineforms), "code.onlineforms", dbo)
         s = html.header(title, session, "onlineforms.js")

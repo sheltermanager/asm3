@@ -1,6 +1,7 @@
 37
 ================
 
+21/04/15 Fix closing </script> in header/footer blowing up online form screen
 16/04/15 Add $$TITLE$$ to HTML publisher and make $$NAV$$ blank for adopted
 16/04/15 Add more missing microchip manufacturers, including Anibase
 16/04/15 Removed table layouts from edit headers, fix quicklink/calendar #158
