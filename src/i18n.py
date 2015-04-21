@@ -4,8 +4,8 @@ import datetime
 import json
 import time
 
-VERSION = "37u [Tue 21 Apr 09:27:55 BST 2015]"
-BUILD = "04210927"
+VERSION = "37u [Tue 21 Apr 09:37:14 BST 2015]"
+BUILD = "04210937"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -75,6 +75,7 @@ locale_maps = {
     "es_MX":    ( DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "et":       ( DMY, "kr", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "fr":       ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
+    "fr_CA":    ( MDY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "he":       ( DMY, "&#x20aa;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "hu":       ( DMY, "Ft",  PLURAL_HUNGARIAN, CURRENCY_PREFIX, 2), 
     "it":       ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
@@ -95,9 +96,9 @@ def _(english, locale = "en"):
     return translate(english, locale)
 
 def real_locale(locale = "en"):
-    # Treat some locales as pointers to other locales as we have
-    # lots of English locales that don't need another translation.
-    # Our core English locales are:
+    # Treat some locales as pointers to other locales with out the
+    # need for a full translation:
+    # Our core English locales (with actual differences) are:
     #   en    (US)
     #   en_AU (AUS)
     #   en_GB (UK)
@@ -107,12 +108,15 @@ def real_locale(locale = "en"):
         locale = "en"
     if locale in ("en_NZ",):
         locale = "en_AU"
-    # Similarly, we have some Spanish locales that don't need another translation
-    if locale in ("es_EC", "es_MX"):
-        locale = "es"
-    # Treat austrian as german
+    # French locales
+    if locale in ("fr_CA",):
+        locale = "fr"
+    # German locales
     if locale in ("de_AT",):
         locale = "de"
+    # Spanish locales
+    if locale in ("es_EC", "es_MX"):
+        locale = "es"
     return locale
 
 def translate(english, locale = "en"):
