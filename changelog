@@ -1,6 +1,7 @@
 37
 ================
 
+22/04/15 Add csv_report service method, should only require VIEW_REPORT
 21/04/15 Add French Canadian locale
 21/04/15 Fix closing </script> in header/footer blowing up online form screen
 16/04/15 Add $$TITLE$$ to HTML publisher and make $$NAV$$ blank for adopted

@@ -67,11 +67,11 @@ see the parameters it requires in the address bar::
 
     http://localhost:5000/service?method=html_report&username=user&password=letmein&title=Detailed+Shelter+Inventory
 
-**csv_mail**
+**csv_mail** or **csv_report**
 
-Returns a CSV file containing a mail merge. Pass the name of the mail merge in
-the title attribute and if the merge requires any parameters, you can pass
-those too just like with html_report.
+Returns a CSV file containing a mail merge or report. Pass the name of the mail
+merge/report in the title attribute and if the merge requires any parameters,
+you can pass those too just like with html_report.
 
 **json_shelter_animals | xml_shelter_animals**
 
