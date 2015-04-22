@@ -914,8 +914,9 @@ def get_microchip_manufacturer(l, chipno):
     if chipno is None or chipno == "": return ""
     for m in MICROCHIP_MANUFACTURERS:
         if len(chipno) == m["length"] and re.compile(m["regex"]).match(chipno):
-            mf = m["name"]
-            break
+            if m.locales == "" or l in m.locales.split(" "):
+                mf = m["name"]
+                break
     if mf is None and (len(chipno) != 9 and len(chipno) != 10 and len(chipno) != 15):
         return _("Invalid microchip number length", l)
     if mf is None:
