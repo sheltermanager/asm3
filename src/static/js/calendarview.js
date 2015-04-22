@@ -71,7 +71,8 @@ $(function() {
                 header: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'month,agendaWeek,agendaDay'
+                    right: 'month,agendaWeek,agendaDay',
+                    firstDay: 1
                 }, 
                 editable: false,
                 lang: asm.locale,
