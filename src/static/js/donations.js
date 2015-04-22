@@ -27,8 +27,9 @@ $(function() {
             { json_field: "ISGIFTAID", post_field: "giftaid", label: _("Gift Aid"), type: "select", options: 
                 '<option value="0">' + _("Not eligible for gift aid") + '</option>' +
                 '<option value="1">' + _("Eligible for gift aid") + '</option>' },
-            { json_field: "", post_field: "destaccount", label: _("Deposit Account"), readonly: true, 
+            { json_field: "", post_field: "destaccount", label: _("Deposit Account"), 
                 hideif: function() { return !config.bool("DonationTrxOverride"); }, 
+                defaultval: config.integer("DonationTargetAccount"),
                 type: "select", options: { displayfield: "CODE", valuefield: "ID", rows: controller.accounts }},
             { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "animal" },
             { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person" },

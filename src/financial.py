@@ -567,7 +567,10 @@ def update_donation_from_form(dbo, username, post):
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM ownerdonation WHERE ID = %d" % donationid)
     audit.edit(dbo, username, "ownerdonation", audit.map_diff(preaudit, postaudit))
-    update_matching_transaction(dbo, username, donationid)
+    if configuration.donation_trx_override(dbo):
+        update_matching_transaction(dbo, username, donationid, post.integer("destaccount"))
+    else:
+        update_matching_transaction(dbo, username, donationid)
     check_create_next_donation(dbo, username, donationid)
     movement.update_movement_donation(dbo, post.integer("movement"))
 

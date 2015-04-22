@@ -226,6 +226,7 @@ $(function() {
             // Set default values
             $("#type").val(config.str("AFDefaultDonationType"));
             donationtype_change();
+            $("#destaccount, #destaccount2").select("value", config.str("DonationTargetAccount"));
             $("#received").datepicker("setDate", new Date());
 
             $("#receive").button().click(function() {
