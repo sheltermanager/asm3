@@ -196,10 +196,15 @@ def get_vaccinations(dbo, animalid, onlygiven = False, sort = ASCENDING_REQUIRED
 
 def get_vaccinated(dbo, animalid):
     """
-    Returns true if the animal has had at least one vaccination given
+    Returns true if:
+        1. The animal has had at least one vaccination given
+        2. There are no outstanding vaccinations due before today
     """
-    return 0 < db.query_int(dbo, "SELECT COUNT(ID) FROM animalvaccination " \
+    given = db.query_int(dbo, "SELECT COUNT(ID) FROM animalvaccination " \
         "WHERE AnimalID = %d AND DateOfVaccination Is Not Null" % animalid)
+    outstanding = db.query_int(dbo, "SELECT COUNT(ID) FROM animalvaccination " \
+        "WHERE AnimalID = %d AND DateOfVaccination Is Null AND DateRequired < %s" % (animalid, db.dd(now(dbo.timezone))))
+    return outstanding == 0 and given > 0
 
 def get_regimens(dbo, animalid, onlycomplete = False, sort = ASCENDING_REQUIRED):
     """

@@ -306,6 +306,8 @@ AnimalOnShelter
     "Yes" if the animal is on the shelter 
 AnimalIsReserved
     "Yes" if the animal has been reserved
+AnimalIsVaccinated
+    "Yes" if the animal has at least one vaccination given and no vaccinations due before today that have not been given
 
 Vaccination Keys
 ----------------

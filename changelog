@@ -1,6 +1,7 @@
 37
 ================
 
+22/04/15 Add AnimalIsVaccinated wordkey and improved it #156
 22/04/15 Fix calendar view firstDay by downgrading to moment 2.7.0
 22/04/15 Make calendar view use ASM translations
 22/04/15 Use tablesorter sticky headers widget instead of our own
