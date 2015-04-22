@@ -84,7 +84,7 @@
                 hide: dlgfx.edit_hide,
                 buttons: acbuttons
             });
-            dialog.find("table").table({ floating_header: false });
+            dialog.find("table").table({ sticky_header: false });
             dialog.find("input").keydown(function(event) { if (event.keyCode == 13) { self.find(); return false; }});
             dialog.find("button").button().click(function() { self.find(); });
             dialog.find("img").hide();

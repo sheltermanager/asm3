@@ -121,7 +121,7 @@
             style_td:   true,
             row_hover:  true,
             row_select: true,
-            floating_header: true
+            sticky_header: true
         };
         options = $.extend(defaults, options);
         return this.each(function () {
@@ -151,10 +151,13 @@
                 input.find("td").addClass("ui-widget-content");
             }
             input.addClass("tablesorter");
+            var tablewidgets = [];
+            if (options.filter) { tablewidgets.push("filter"); }
+            if (options.sticky_header && config.bool("StickyTableHeaders")) { tablewidgets.push("stickyHeaders"); }
             input.tablesorter({
                 sortColumn: options.sortColumn,
                 sortList: options.sortList,
-                widgets: options.filter ? [ "filter" ] : [],
+                widgets: tablewidgets,
                 filter_columnFilters: options.filter,
                 filter_cssFilter: "tablesorter-filter",
                 filter_ignoreCase: true,
@@ -171,30 +174,6 @@
                     return s;
                 }
             });
-            if (options.floating_header && config.bool("FloatingHeaders")) {
-                var header = $(input).find("thead").clone();
-                var fixedheader = $("#header-fixed").append(header);
-                //fixedheader.addClass("ui-state-default");
-                $(window).bind("scroll", function() {
-                    var tableOffset = $(input).offset().top;
-                    var offset = $(this).scrollTop();
-                    if (offset >= tableOffset && fixedheader.is(":hidden")) {
-                        $("#header-fixed").width($(input).width());
-                        $(input).find("thead th").each(function(i, v) {
-                            if ($(v).is(":visible")) {
-                                $($("#header-fixed th")[i]).width($(v).width());
-                            }
-                            else {
-                                $($("#header-fixed th")[i]).hide();
-                            }
-                        });
-                        fixedheader.fadeIn();
-                    }
-                    else if (offset < tableOffset) {
-                        fixedheader.fadeOut();
-                    }
-                });
-            }
         });
     };
 
