@@ -932,7 +932,7 @@ $(function() {
             }
             $.each(controller.microchipmanufacturers, function(i, v) {
                 if (n.length == v.length && new RegExp(v.regex).test(n)) {
-                    if (!n.locales || $.inArray(asm.locale, n.locales.split(" "))) {
+                    if (v.locales == "" || $.inArray(asm.locale, v.locales.split(" ")) != -1) {
                         m = "<span style='font-weight: bold'>" + v.name + "</span>";
                         return false;
                     }
