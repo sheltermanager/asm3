@@ -46,6 +46,9 @@ $(function() {
             dialog_row = row;
             donations.create_semaphore = false;
             donations.update_movements(row.OWNERID);
+            // Only allow destination account to be overridden when the received date
+            // hasn't been set yet.
+            $("#destaccount").closest("tr").toggle( config.bool("DonationTrxOverride") && !row.DATE );
             tableform.dialog_show_edit(dialog, row, function() {
                 if (!donations.validation()) { tableform.dialog_enable_buttons(); return; }
                 tableform.fields_update_row(dialog.fields, row);
