@@ -1277,11 +1277,11 @@ msgstr ""
 msgid "Approved"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "Apr"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "April"
 msgstr ""
 
@@ -1377,11 +1377,11 @@ msgstr ""
 msgid "Attach this form to an existing person"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "Aug"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "August"
 msgstr ""
 
@@ -2894,6 +2894,10 @@ msgstr ""
 msgid "Date/Time"
 msgstr ""
 
+#: calendarview.js
+msgid "Day"
+msgstr ""
+
 #: diarytask.js
 msgid "Day Pivot"
 msgstr ""
@@ -2934,7 +2938,7 @@ msgstr ""
 msgid "Debit Card"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "Dec"
 msgstr ""
 
@@ -2947,7 +2951,7 @@ msgstr ""
 msgid "Deceased Date"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "December"
 msgstr ""
 
@@ -4342,11 +4346,11 @@ msgstr ""
 msgid "Features"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "Feb"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "February"
 msgstr ""
 
@@ -4723,11 +4727,11 @@ msgstr ""
 msgid "Frequently Asked Questions"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "Fri"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "Friday"
 msgstr ""
 
@@ -5723,11 +5727,11 @@ msgstr ""
 msgid "Jack Russell Terrier"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "Jan"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "January"
 msgstr ""
 
@@ -5751,11 +5755,11 @@ msgstr ""
 msgid "Jindo"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "Jul"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "July"
 msgstr ""
 
@@ -5775,11 +5779,11 @@ msgstr ""
 msgid "Jump to movements"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "Jun"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "June"
 msgstr ""
 
@@ -6308,11 +6312,11 @@ msgstr ""
 msgid "Map of active incidents"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "Mar"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "March"
 msgstr ""
 
@@ -6396,7 +6400,7 @@ msgstr ""
 msgid "Maternity"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "May"
 msgstr ""
 
@@ -6574,16 +6578,20 @@ msgstr ""
 msgid "Modify Lookups"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "Mon"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "Monday"
 msgstr ""
 
 #: dbupdate.py
 msgid "Money"
+msgstr ""
+
+#: calendarview.js
+msgid "Month"
 msgstr ""
 
 #: dbupdate.py
@@ -7115,7 +7123,7 @@ msgstr ""
 msgid "Notes about the death of the animal"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "Nov"
 msgstr ""
 
@@ -7123,7 +7131,7 @@ msgstr ""
 msgid "Nova Scotia Duck-Tolling Retriever"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "November"
 msgstr ""
 
@@ -7161,11 +7169,11 @@ msgstr ""
 msgid "Ocicat"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "Oct"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "October"
 msgstr ""
 
@@ -8765,7 +8773,7 @@ msgstr ""
 msgid "Samoyed"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "Sat"
 msgstr ""
 
@@ -8773,7 +8781,7 @@ msgstr ""
 msgid "Satin"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "Saturday"
 msgstr ""
 
@@ -8951,7 +8959,7 @@ msgstr ""
 msgid "Senior"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "Sep"
 msgstr ""
 
@@ -8959,7 +8967,7 @@ msgstr ""
 msgid "Separate waiting list rank by species"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "September"
 msgstr ""
 
@@ -9658,11 +9666,11 @@ msgstr ""
 msgid "Sugar Glider"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "Sun"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "Sunday"
 msgstr ""
 
@@ -10582,7 +10590,7 @@ msgstr ""
 msgid "Thoroughbred"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "Thu"
 msgstr ""
 
@@ -10590,7 +10598,7 @@ msgstr ""
 msgid "Thumbnail size"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "Thursday"
 msgstr ""
 
@@ -10693,7 +10701,7 @@ msgstr ""
 msgid "To week beginning"
 msgstr ""
 
-#: common.js options.js
+#: calendarview.js common.js options.js
 msgid "Today"
 msgstr ""
 
@@ -10909,11 +10917,11 @@ msgstr ""
 msgid "Tu"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "Tue"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "Tuesday"
 msgstr ""
 
@@ -11597,12 +11605,16 @@ msgstr ""
 msgid "We"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "Wed"
 msgstr ""
 
-#: common.js
+#: calendarview.js common.js
 msgid "Wednesday"
+msgstr ""
+
+#: calendarview.js
+msgid "Week"
 msgstr ""
 
 #: staff_rota.js

@@ -1,7 +1,8 @@
 37
 ================
 
-22/04/15 Make calendar view use Monday as first day to match datepicker/rota
+22/04/15 Fix calendar view firstDay by downgrading to moment 2.7.0
+22/04/15 Make calendar view use ASM translations
 22/04/15 Use tablesorter sticky headers widget instead of our own
 22/04/15 Break up some of the unwieldy options #152
 22/04/15 Allow override of destination account for regular donations #171

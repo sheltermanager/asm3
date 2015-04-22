@@ -71,11 +71,9 @@ $(function() {
                 header: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'month,agendaWeek,agendaDay',
-                    firstDay: 1
+                    right: 'month,agendaWeek,agendaDay'
                 }, 
                 editable: false,
-                lang: asm.locale,
                 firstDay: 1,
                 events: [],
                 eventRender: function(event, element) {
@@ -94,7 +92,15 @@ $(function() {
                             element.find(".fc-event-title").prepend(html.icon(event.icon)); 
                         }
                     }
-                }
+                },
+                // Use ASM's translations
+                buttonText: { day: _("Day"), today: _("Today"), month: _("Month"), week: _("Week") },
+                monthNames: [ _("January"), _("February"),_("March"),_("April"),_("May"),_("June"),
+                _("July"),_("August"),_("September"),_("October"),_("November"),_("December")],
+                monthNamesShort: [_("Jan"), _("Feb"), _("Mar"), _("Apr"), _("May"), _("Jun"),
+                _("Jul"), _("Aug"), _("Sep"), _("Oct"), _("Nov"), _("Dec")],
+                dayNames: [_("Sunday"), _("Monday"), _("Tuesday"), _("Wednesday"), _("Thursday"), _("Friday"), _("Saturday")],
+                dayNamesShort: [_("Sun"), _("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat")]
             });
 
             $("#toggles input").change(calendarview.update_events_from_checkboxes);
