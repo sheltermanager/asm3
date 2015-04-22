@@ -27,7 +27,7 @@ from sitedefs import BASE_URL, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, CACH
 
 # Service methods that require authentication
 AUTH_METHODS = [ 
-    "csv_mail", "html_report", "rss_timeline", "upload_animal_image", 
+    "csv_mail", "csv_report", "html_report", "rss_timeline", "upload_animal_image", 
     "xml_adoptable_animals", "json_adoptable_animals",
     "xml_recent_adoptions", "json_recent_adoptions", 
     "xml_shelter_animals", "json_shelter_animals", "jsonp_shelter_animals"
