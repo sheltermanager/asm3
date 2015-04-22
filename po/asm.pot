@@ -275,7 +275,7 @@ msgstr ""
 msgid "Add Accounts"
 msgstr ""
 
-#: mobile.py
+#: options.js mobile.py
 msgid "Add Animal"
 msgstr ""
 
@@ -1134,6 +1134,10 @@ msgstr ""
 
 #: options.js
 msgid "Animal Emblems"
+msgstr ""
+
+#: options.js
+msgid "Animal Links"
 msgstr ""
 
 #: publish_options.js
@@ -7275,7 +7279,7 @@ msgstr ""
 msgid "Opening balances"
 msgstr ""
 
-#: options.js html.py code.py
+#: html.py code.py
 msgid "Options"
 msgstr ""
 
@@ -8246,7 +8250,7 @@ msgstr ""
 msgid "Removal reason"
 msgstr ""
 
-#: waitinglist_results.js
+#: waitinglist_results.js options.js
 msgid "Remove"
 msgstr ""
 
@@ -8368,10 +8372,6 @@ msgstr ""
 
 #: options.js
 msgid "Remove the weight field from animal details"
-msgstr ""
-
-#: options.js
-msgid "Remove unwanted functionality"
 msgstr ""
 
 #: waitinglist_results.js header_edit_header.js
@@ -11667,10 +11667,6 @@ msgstr ""
 
 #: options.js
 msgid "When a message is created, email it to each matching user"
-msgstr ""
-
-#: options.js
-msgid "When adding animals"
 msgstr ""
 
 #: options.js

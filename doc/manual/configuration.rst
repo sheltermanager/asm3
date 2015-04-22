@@ -284,6 +284,52 @@ ASM contains a full double entry accounting package. The options here are:
   receives a donation of a particular type, it uses the specified destination
   account for it when creating the matching accounting transaction. 
 
+Add Animal
+^^^^^^^^^^
+
+ASM allows you to bulk add more than one animal at a time by just hitting the
+“Create” button on the new animal screen instead of “Create and Edit” - this is
+useful if booking in a litter of kittens and puppies for example. Here, you can
+choose some extra fields for the new animal screen.
+
+* Show breed field(s): Allow entry of a breed
+
+* Use a single breed field for animals: Setting this option will make ASM only
+  display a single breed field on the animal details screen. This is the norm
+  for UK shelters, where animals are either pedigree or a crossbreed (a
+  “Crossbreed” breed can be added to the lookup). Without this option set, ASM
+  allows for two breed fields and a crossbreed indicator so that mixed breed
+  type animals can be recorded (this is typical for US shelters). 
+
+* Show the color field: Allow entry of a specific colour
+
+* Show the internal location field: Allow entry of an internal location 
+
+* Show the location unit field: Allow a cage/pen/kennel/hutch number to be set
+
+* Allow a fosterer to be selected: Allow new animals to be fostered straight
+  away
+
+* Show the litter ID field: Allow a litter ID
+
+* Show the size field: Allow entry of the size
+
+* Show the weight field: Allow entry of the weight
+
+* Show the altered fields: Allow an altered date to be set 
+
+* Show the microchip fields: Allow a microchip date/number to be set 
+
+* Show the entry category field: Allow an entry category to be set 
+
+* Show the original owner field: Allow original owner to be set
+
+* Show the brought in by field: Allow brought in by to be set
+
+* Warn if the animal is similar to one entered recently: Pop up a warning
+  dialog if the animal's name is the same as one entered recently to help
+  prevent possible duplicates.
+
 Age Groups
 ^^^^^^^^^^
 
@@ -436,16 +482,6 @@ used to select starting values when finding and creating animals.
   added is not an image and the notes are blank, use the original filename as
   the notes.
 
-* Default to advanced find animal screen: If ticked, the find animal screen
-  will appear in advanced mode by default. 
-
-* Advanced find animal screen defaults to on shelter: If ticked, the advanced
-  find animal screen will automatically select “On Shelter” as the logical
-  location when the screen is opened.
-
-* Default to advanced find person screen: If ticked, the find person screen
-  will appear in advanced mode by default. 
-
 * Include off-shelter animals in medical calendar and books: If ticked, animals
   with outstanding medical/vacc/tests that have left the shelter will be shown
   in medical books and the medical calendar.
@@ -468,6 +504,51 @@ diary on the home page, or just the diary notes for the current user. You can
 also set whether you would like diary notes emailed to each user every day –
 for this to work, you must have configured the system's email in the email
 section of the screen and your users must have an email address set.
+
+Display
+^^^^^^^
+
+* Enable Visual Effects: Enables visual sliding effects. Turn this off to speed
+  up the UI.
+
+* Use Fancy Tooltips: If your browser supports it (all but IE8), ASM can use
+  modern callout style tooltips in the interface.
+
+* Use HTML5 client side image scaling: If your browser supports it, media will
+  be scaled on your PC before being uploaded to the server to save time.
+
+* Show a minimap of the address on person screens: Show an embedded map to the
+  person's address on the details screen.
+
+* Show weight as lb rather than kg: Change the field label on the animal weight
+  field to lb instead of the usual kg.
+
+* Show animal thumbnails in movement and medical books: Show animal pictures in
+  the rows of the movement and medical books (foster book, reservation book,
+  vaccination book, etc.)
+
+* Keep table headers visible when scrolling: If selected, when scrolling down
+  long tables their headers will float at the top of the screen to remind you
+  of the column headings.
+
+* Open records in a new browser tab: Open all records in their own browser
+  tabs.
+
+* Open reports in a new browser tab: Open all reports in their own browser
+  tabs.
+
+* Show report menu items in collapsed categories: If you have a lot of reports
+  installed, this option allows you to just show the categories in the reports
+  menu. Clicking a category expands it.
+
+* Auto log users out after this many minutes of activity: If a user leaves
+  their browser open and idle for this many minutes, the system will
+  automatically log them out.
+
+* When displaying person names in lists, use the format: In movement books,
+  donation books, the waiting list, etc. when showing person names, ASM can use
+  different formats if you want surname first for sorting, etc.
+
 
 Documents
 ^^^^^^^^^
@@ -530,18 +611,23 @@ list columns box operates similarly.
 A comma separated list of field names should be given here. You can also use
 additional field names for your custom fields. 
 
+* Default to advanced find animal screen: If ticked, the find animal screen
+  will appear in advanced mode by default. 
+
+* Advanced find animal screen defaults to on shelter: If ticked, the advanced
+  find animal screen will automatically select “On Shelter” as the logical
+  location when the screen is opened.
+
+* Default to advanced find person screen: If ticked, the find person screen
+  will appear in advanced mode by default. 
+
 Home page
 ^^^^^^^^^
 
-The home page tab allows configuration of the home page. Here you can configure
-quicklinks bar across the top of the spage. There are options here to enable it
-for all screens (at the cost of some vertical space).
-
-This tab also allows configuration of the home page stats, the default shelter
-view and various animal emblems – the little informational icons that accompany
-animal thumbnails and names on the home screen, shelter view and search
-results. You can turn off any emblems that you are not interested in seeing
-here.
+The home page tab allows configuration of the home page. If selected, some
+shelter stats can be displayed for the current period on the home page as 
+well as links to a chosen set of animals (eg: Recently changed or Up
+for adoption).
 
 * Show tips on the home page: Shows tips at the top of the home page.
 
@@ -629,64 +715,15 @@ the reservation for you after this time.
   to an owner who looks like an owner who brought an animal in. This is a loose
   check based on name and address. 
 
-Waiting List
-^^^^^^^^^^^^
+Quicklinks
+^^^^^^^^^^
 
-The waiting list tab allows an update period to be configured here. Simply
-specify in days the interval between updates (how often a waiting list entry is
-bumped up the urgency ratings until it reaches “High”). Another option is
-available to select the default waiting list urgency - this is the default
-start value given to new waiting list entries. You can also choose hold
-separate rankings for species on the waiting list. This makes sense if your
-shelter takes dogs and cats for example and whether you can take a cat is
-independent of how many dogs are on the shelter. 
+Quicklinks can be configured here and shown on the home page and optionally
+all screens (at the cost of some vertical space). Quicklinks allow you to
+quickly get to some of ASM's screens without having to open the menus.
 
-Display
-^^^^^^^
-
-* Enable Visual Effects: Enables visual sliding effects. Turn this off to speed
-  up the UI.
-
-* Use Fancy Tooltips: If your browser supports it (all but IE8), ASM can use
-  modern callout style tooltips in the interface.
-
-* Use HTML5 client side image scaling: If your browser supports it, media will
-  be scaled on your PC before being uploaded to the server to save time.
-
-* Show a minimap of the address on person screens: Show an embedded map to the
-  person's address on the details screen.
-
-* Show weight as lb rather than kg: Change the field label on the animal weight
-  field to lb instead of the usual kg.
-
-* Show animal thumbnails in movement and medical books: Show animal pictures in
-  the rows of the movement and medical books (foster book, reservation book,
-  vaccination book, etc.)
-
-* Keep table headers visible when scrolling: If selected, when scrolling down
-  long tables their headers will float at the top of the screen to remind you
-  of the column headings.
-
-* Open records in a new browser tab: Open all records in their own browser
-  tabs.
-
-* Open reports in a new browser tab: Open all reports in their own browser
-  tabs.
-
-* Show report menu items in collapsed categories: If you have a lot of reports
-  installed, this option allows you to just show the categories in the reports
-  menu. Clicking a category expands it.
-
-* Auto log users out after this many minutes of activity: If a user leaves
-  their browser open and idle for this many minutes, the system will
-  automatically log them out.
-
-* When displaying person names in lists, use the format: In movement books,
-  donation books, the waiting list, etc. when showing person names, ASM can use
-  different formats if you want surname first for sorting, etc.
-
-Remove Unwanted Functionality
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Remove
+^^^^^^
 
 * Remove move menu and the movements tab from animal and person screens: If
   your shelter does not do adoptions and animals never leave, this option will
@@ -786,51 +823,17 @@ Remove Unwanted Functionality
   won't display the fields that allow an animal to be marked as picked up in a
   particular location or by an ACO (useful for shelters who do not have staff
   picking up animals).
-  
-When Adding Animals
-^^^^^^^^^^^^^^^^^^^
 
-ASM allows you to bulk add more than one animal at a time by just hitting the
-“Create” button on the new animal screen instead of “Create and Edit” - this is
-useful if booking in a litter of kittens and puppies for example. Here, you can
-choose some extra fields for the new animal screen.
+Waiting List
+^^^^^^^^^^^^
 
-* Show breed field(s): Allow entry of a breed
+The waiting list tab allows an update period to be configured here. Simply
+specify in days the interval between updates (how often a waiting list entry is
+bumped up the urgency ratings until it reaches “High”). Another option is
+available to select the default waiting list urgency - this is the default
+start value given to new waiting list entries. You can also choose hold
+separate rankings for species on the waiting list. This makes sense if your
+shelter takes dogs and cats for example and whether you can take a cat is
+independent of how many dogs are on the shelter. 
 
-* Use a single breed field for animals: Setting this option will make ASM only
-  display a single breed field on the animal details screen. This is the norm
-  for UK shelters, where animals are either pedigree or a crossbreed (a
-  “Crossbreed” breed can be added to the lookup). Without this option set, ASM
-  allows for two breed fields and a crossbreed indicator so that mixed breed
-  type animals can be recorded (this is typical for US shelters). 
-
-* Show the color field: Allow entry of a specific colour
-
-* Show the internal location field: Allow entry of an internal location 
-
-* Show the location unit field: Allow a cage/pen/kennel/hutch number to be set
-
-* Allow a fosterer to be selected: Allow new animals to be fostered straight
-  away
-
-* Show the litter ID field: Allow a litter ID
-
-* Show the size field: Allow entry of the size
-
-* Show the weight field: Allow entry of the weight
-
-* Show the altered fields: Allow an altered date to be set 
-
-* Show the microchip fields: Allow a microchip date/number to be set 
-
-* Show the entry category field: Allow an entry category to be set 
-
-* Show the original owner field: Allow original owner to be set
-
-* Show the brought in by field: Allow brought in by to be set
-
-* Warn if the animal is similar to one entered recently: Pop up a warning
-  dialog if the animal's name is the same as one entered recently to help
-  prevent possible duplicates.
-  
 
