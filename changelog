@@ -1,6 +1,7 @@
 37
 ================
 
+22/04/15 Add locales to microchip manufacturers for collisions #166
 22/04/15 Add csv_report service method, should only require VIEW_REPORT
 21/04/15 Add French Canadian locale
 21/04/15 Fix closing </script> in header/footer blowing up online form screen
