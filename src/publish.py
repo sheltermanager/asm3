@@ -378,6 +378,38 @@ class AbstractPublisher(threading.Thread):
         return 0 == db.query_int(self.dbo, "SELECT COUNT(*) FROM breed " + \
             "WHERE PetFinderBreed Is Null OR PetFinderBreed = ''")
 
+    def getPublisherBreed(self, an, b1or2 = 1):
+        """
+        Encapsulates logic for reading publisher breed fields.
+        an: The animal row
+        b1or2: Whether to get breed 1 or 2
+        return value is the publisher breed for datafiles/posts. It can be a blank
+        based on whether the animal is a crossbreed or not.
+        """
+        crossbreed = an["CROSSBREED"]
+        breed1id = an["BREEDID"]
+        breed2id = an["BREED2ID"]
+        breedname = an["BREEDNAME1"]
+        publisherbreed = an["PETFINDERBREED"]
+        # We're dealing with the first breed field. Always send the mapped
+        # publisher breed if it isn't a crossbreed animal
+        if b1or2 == 1:
+            if crossbreed == 0: 
+                return publisherbreed
+        # We're dealing with the second breed field. Always send that as a blank
+        # if this isn't a crossbreed animal
+        elif b1or2 == 2:
+            breedname = an["BREEDNAME2"]
+            publisherbreed = an["PETFINDERBREED2"]
+            if crossbreed == 0: 
+                return ""
+        # If one of our magic words is found, or both breeds are the
+        # same, return a blank. By the time we get here, crossbreed must == 1
+        b = utils.nulltostr(breedname).lower()
+        if b == "mix" or b == "cross" or b == "unknown" or b == "crossbreed" or breed1id == breed2id:
+            return ""
+        return publisherbreed
+
     def isPublisherExecuting(self):
         """
         Returns True if a publisher is already currently running against
@@ -1329,18 +1361,8 @@ class AdoptAPetPublisher(FTPPublisher):
                 line.append("\"%s\"" % an["PETFINDERSPECIES"])
                 # Breed 1
                 line.append("\"%s\"" % an["PETFINDERBREED"])
-                # Breed 2 (only include if different from breed 1)
-                # Breed 2 (blank if not crossbreed or unspecified crossbreed)
-                if an["CROSSBREED"] == 1:
-                    # If the second breed is one of our magic words, then don't
-                    # send it.
-                    b2 = utils.nulltostr(an["BREEDNAME2"]).lower()
-                    if b2 == "mix" or b2 == "cross"  or b2 == "unknown" or b2 == "crossbreed" or an["BREEDID"] == an["BREED2ID"]:
-                        line.append("\"\"")
-                    else:
-                        line.append("\"%s\"" % an["PETFINDERBREED2"])
-                else:
-                    line.append("\"\"")
+                # Breed 2
+                line.append("\"%s\"" % self.getPublisherBreed(an, 2))
                 # Age, one of Adult, Baby, Senior and Young
                 ageinyears = i18n.date_diff_days(an["DATEOFBIRTH"], i18n.now(self.dbo.timezone))
                 ageinyears /= 365.0
@@ -2795,16 +2817,7 @@ class PetFinderPublisher(FTPPublisher):
                 # ID
                 line.append("\"%s\"" % an["SHELTERCODE"])
                 # Breed 2
-                if an["CROSSBREED"] == 1:
-                    # If the second breed is one of our magic words or the same as breed one, then don't
-                    # send it. PetFinder indicate unknown crosses with a blank second breed but crossbreed set.
-                    b2 = utils.nulltostr(an["BREEDNAME2"]).lower()
-                    if b2 == "mix" or b2 == "cross"  or b2 == "unknown" or b2 == "crossbreed" or an["BREEDID"] == an["BREED2ID"]:
-                        line.append("\"\"")
-                    else:
-                        line.append("\"%s\"" % an["PETFINDERBREED2"])
-                else:
-                    line.append("\"\"")
+                line.append("\"%s\"" % self.getPublisherBreed(an, 2))
                 # Mix
                 line.append(self.pfYesNo(an["CROSSBREED"] == 1))
                 # Add to our CSV file
@@ -3172,18 +3185,9 @@ class PetRescuePublisher(FTPPublisher):
                 # Type
                 line.append("\"%s\"" % an["PETFINDERSPECIES"])
                 # Breed
-                line.append("\"%s\"" % an["PETFINDERBREED"])
-                # Breed2 (blank if not crossbreed or unspecified crossbreed)
-                if an["CROSSBREED"] == 1:
-                    # If the second breed is one of our magic words, then don't
-                    # send it.
-                    b2 = utils.nulltostr(an["BREEDNAME2"]).lower()
-                    if b2 == "mix" or b2 == "cross"  or b2 == "unknown" or b2 == "crossbreed" or an["BREEDID"] == an["BREED2ID"]:
-                        line.append("\"\"")
-                    else:
-                        line.append("\"%s\"" % an["PETFINDERBREED2"])
-                else:
-                    line.append("\"\"")
+                line.append("\"%s\"" % self.getPublisherBreed(an, 1))
+                # Breed2
+                line.append("\"%s\"" % self.getPublisherBreed(an, 2))
                 # Size
                 line.append("\"%s\"" % an["SIZENAME"])
                 # Description
@@ -3494,17 +3498,8 @@ class RescueGroupsPublisher(FTPPublisher):
                 line.append("\"%s\"" % an["BREEDNAME"])
                 # Primary breed
                 line.append("\"%s\"" % an["PETFINDERBREED"])
-                # Secondary (blank if not crossbreed or unspecified crossbreed)
-                if an["CROSSBREED"] == 1:
-                    # If the second breed is one of our magic words, then don't
-                    # send it.
-                    b2 = utils.nulltostr(an["BREEDNAME2"]).lower()
-                    if b2 == "mix" or b2 == "cross"  or b2 == "unknown" or b2 == "crossbreed":
-                        line.append("\"\"")
-                    else:
-                        line.append("\"%s\"" % an["PETFINDERBREED2"])
-                else:
-                    line.append("\"\"")
+                # Secondary breed
+                line.append("\"%s\"" % self.getPublisherBreed(an, 2))
                 # Sex
                 line.append("\"%s\"" % an["SEXNAME"])
                 # Mixed
