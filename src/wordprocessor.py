@@ -342,7 +342,7 @@ def animal_tags(dbo, a):
     include_incomplete_medical = configuration.include_incomplete_medical_doc(dbo)
     
     # Vaccinations
-    tags["ANIMALISVACCINATED"] = medical.get_vaccinated(dbo, a["ID"])
+    tags["ANIMALISVACCINATED"] = medical.get_vaccinated(dbo, a["ID"]) and _("Yes", l) or _("No", l)
     vaccasc = medical.get_vaccinations(dbo, int(a["ID"]), not include_incomplete_vacc)
     vaccdesc = medical.get_vaccinations(dbo, int(a["ID"]), not include_incomplete_vacc, medical.DESCENDING_REQUIRED)
     for idx in range(1, 101):
