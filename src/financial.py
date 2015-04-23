@@ -774,7 +774,7 @@ def update_account_from_form(dbo, username, post):
     accountid = post.integer("accountid")
     if post["code"] == "":
         raise utils.ASMValidationError(i18n._("Account code cannot be blank.", l))
-    if 0 != db.query_int(dbo, "SELECT COUNT(*) FROM accounts WHERE Code Like '%s' AND ID <> %d" % (post["code"], accountid)):
+    if 0 != db.query_int(dbo, "SELECT COUNT(*) FROM accounts WHERE Code Like %s AND ID <> %d" % (db.ds(post["code"]), accountid)):
         raise utils.ASMValidationError(i18n._("Account code '{0}' has already been used.", l).format(post["code"]))
 
     sql = db.make_update_user_sql(dbo, "accounts", username, "ID=%d" % accountid, ( 
