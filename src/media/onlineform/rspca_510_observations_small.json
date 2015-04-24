@@ -1,0 +1,240 @@
+{
+    "fields": [
+        {
+            "index": 10,
+            "lookups": "",
+            "mandatory": true,
+            "name": "animalname",
+            "tooltip": "",
+            "label": "Animal's Name",
+            "type": "SHELTERANIMAL"
+        },
+        {
+            "index": 20,
+            "lookups": "5th day|10th day",
+            "mandatory": true,
+            "name": "fiveorten",
+            "tooltip": "",
+            "label": "5th/10th day",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 30,
+            "lookups": "",
+            "mandatory": true,
+            "name": "date",
+            "tooltip": "",
+            "label": "Date",
+            "type": "DATE"
+        },
+        {
+            "index": 35,
+            "lookups": "",
+            "mandatory": false,
+            "name": "behaviour",
+            "tooltip": "<h2>Behaviour</h2>",
+            "label": "",
+            "type": "RAWMARKUP"
+        },
+        {
+            "index": 40,
+            "lookups": "",
+            "mandatory": false,
+            "name": "towardspeople",
+            "tooltip": "",
+            "label": "Is the rabbit/ferret friendly towards people?",
+            "type": "YESNO"
+        },
+        {
+            "index": 50,
+            "lookups": "",
+            "mandatory": false,
+            "name": "towardswho",
+            "tooltip": "",
+            "label": "If no, who is the rabbiet/ferret unfriendly towards and any comments on why?",
+            "type": "NOTES"
+        },
+        {
+            "index": 60,
+            "lookups": "",
+            "mandatory": false,
+            "name": "toysandplay",
+            "tooltip": "<h2>Toys and Play</h2>",
+            "label": "",
+            "type": "RAWMARKUP"
+        },
+        {
+            "index": 70,
+            "lookups": "",
+            "mandatory": false,
+            "name": "knowhowplay",
+            "tooltip": "",
+            "label": "Does the rabbit/ferret know how to play?",
+            "type": "YESNO"
+        },
+        {
+            "index": 80,
+            "lookups": "",
+            "mandatory": false,
+            "name": "reaction",
+            "tooltip": "<h2>Reaction to other animals</h2>",
+            "label": "",
+            "type": "RAWMARKUP"
+        },
+        {
+            "index": 90,
+            "lookups": "",
+            "mandatory": false,
+            "name": "reactionmale",
+            "tooltip": "",
+            "label": "Reaction to males",
+            "type": "TEXT"
+        },
+        {
+            "index": 100,
+            "lookups": "",
+            "mandatory": false,
+            "name": "reactionfemale",
+            "tooltip": "",
+            "label": "Reaction to females",
+            "type": "TEXT"
+        },
+        {
+            "index": 110,
+            "lookups": "",
+            "mandatory": false,
+            "name": "reactioncomments",
+            "tooltip": "",
+            "label": "Comments",
+            "type": "NOTES"
+        },
+        {
+            "index": 120,
+            "lookups": "Good/Enjoys|Wriggles|Growls|Tolerates",
+            "mandatory": false,
+            "name": "reactiongrooming",
+            "tooltip": "",
+            "label": "Reaction to grooming",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 130,
+            "lookups": "",
+            "mandatory": false,
+            "name": "donttouch",
+            "tooltip": "<p>Any parts of the body the animal does not like being touched?",
+            "label": "",
+            "type": "RAWMARKUP"
+        },
+        {
+            "index": 140,
+            "lookups": "",
+            "mandatory": false,
+            "name": "noears",
+            "tooltip": "",
+            "label": "Ears",
+            "type": "YESNO"
+        },
+        {
+            "index": 150,
+            "lookups": "",
+            "mandatory": false,
+            "name": "nonose",
+            "tooltip": "",
+            "label": "Nose",
+            "type": "YESNO"
+        },
+        {
+            "index": 160,
+            "lookups": "",
+            "mandatory": false,
+            "name": "noback",
+            "tooltip": "",
+            "label": "Back",
+            "type": "YESNO"
+        },
+        {
+            "index": 170,
+            "lookups": "",
+            "mandatory": false,
+            "name": "nobelly",
+            "tooltip": "",
+            "label": "Belly",
+            "type": "YESNO"
+        },
+        {
+            "index": 180,
+            "lookups": "",
+            "mandatory": false,
+            "name": "noeyes",
+            "tooltip": "",
+            "label": "Around Eyes",
+            "type": "YESNO"
+        },
+        {
+            "index": 190,
+            "lookups": "",
+            "mandatory": false,
+            "name": "nofeet",
+            "tooltip": "",
+            "label": "Feet",
+            "type": "YESNO"
+        },
+        {
+            "index": 200,
+            "lookups": "",
+            "mandatory": false,
+            "name": "notail",
+            "tooltip": "",
+            "label": "Tail",
+            "type": "YESNO"
+        },
+        {
+            "index": 210,
+            "lookups": "",
+            "mandatory": false,
+            "name": "nofrontlegs",
+            "tooltip": "",
+            "label": "Front Legs",
+            "type": "YESNO"
+        },
+        {
+            "index": 220,
+            "lookups": "",
+            "mandatory": false,
+            "name": "nobacklegs",
+            "tooltip": "",
+            "label": "Back Legs",
+            "type": "YESNO"
+        },
+        {
+            "index": 230,
+            "lookups": "",
+            "mandatory": false,
+            "name": "nogenitals",
+            "tooltip": "",
+            "label": "Genitals",
+            "type": "YESNO"
+        },
+        {
+            "index": 240,
+            "lookups": "",
+            "mandatory": false,
+            "name": "nomouthteeth",
+            "tooltip": "",
+            "label": "Mouth/Teeth",
+            "type": "YESNO"
+        },
+        {
+            "index": 250,
+            "lookups": "",
+            "mandatory": false,
+            "name": "noother",
+            "tooltip": "",
+            "label": "Other",
+            "type": "YESNO"
+        }
+    ],
+    "name": "RSPCA 5 and 10 Day Observations: Small Animal",
+    "description": ""
+}

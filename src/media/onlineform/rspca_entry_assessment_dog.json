@@ -1,0 +1,402 @@
+{
+    "fields": [
+        {
+            "index": 10,
+            "lookups": "",
+            "mandatory": false,
+            "name": "animalname",
+            "tooltip": "",
+            "label": "Animal Name",
+            "type": "TEXT"
+        },
+        {
+            "index": 11,
+            "lookups": "",
+            "mandatory": false,
+            "name": "species",
+            "tooltip": "",
+            "label": "Species",
+            "type": "SPECIES"
+        },
+        {
+            "index": 12,
+            "lookups": "",
+            "mandatory": false,
+            "name": "breed",
+            "tooltip": "",
+            "label": "Breed",
+            "type": "BREED"
+        },
+        {
+            "index": 13,
+            "lookups": "Male|Female",
+            "mandatory": false,
+            "name": "sex",
+            "tooltip": "",
+            "label": "Sex",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 14,
+            "lookups": "",
+            "mandatory": false,
+            "name": "age",
+            "tooltip": "",
+            "label": "Age",
+            "type": "TEXT"
+        },
+        {
+            "index": 15,
+            "lookups": "",
+            "mandatory": false,
+            "name": "description",
+            "tooltip": "",
+            "label": "Brief Description",
+            "type": "TEXT"
+        },
+        {
+            "index": 20,
+            "lookups": "",
+            "mandatory": false,
+            "name": "livedchildren",
+            "tooltip": "",
+            "label": "Has the animal lived with children?",
+            "type": "YESNO"
+        },
+        {
+            "index": 30,
+            "lookups": "",
+            "mandatory": false,
+            "name": "livedchildrenages",
+            "tooltip": "",
+            "label": "If so, please specify ages",
+            "type": "TEXT"
+        },
+        {
+            "index": 40,
+            "lookups": "",
+            "mandatory": false,
+            "name": "childreaction",
+            "tooltip": "",
+            "label": "If no, has the animal met children and what was his/her reaction?",
+            "type": "TEXT"
+        },
+        {
+            "index": 50,
+            "lookups": "",
+            "mandatory": false,
+            "name": "childagegroup",
+            "tooltip": "",
+            "label": "What age groups were any children met?",
+            "type": "TEXT"
+        },
+        {
+            "index": 60,
+            "lookups": "",
+            "mandatory": false,
+            "name": "liveddogs",
+            "tooltip": "",
+            "label": "Has the animal lived with dogs?",
+            "type": "YESNO"
+        },
+        {
+            "index": 70,
+            "lookups": "",
+            "mandatory": false,
+            "name": "liveddogsages",
+            "tooltip": "",
+            "label": "If so, please specify age and sex",
+            "type": "TEXT"
+        },
+        {
+            "index": 80,
+            "lookups": "",
+            "mandatory": false,
+            "name": "livedcats",
+            "tooltip": "",
+            "label": "Has the animal lived with cats?",
+            "type": "YESNO"
+        },
+        {
+            "index": 90,
+            "lookups": "",
+            "mandatory": false,
+            "name": "livedcatsages",
+            "tooltip": "",
+            "label": "If so, please specify age and sex",
+            "type": "TEXT"
+        },
+        {
+            "index": 100,
+            "lookups": "",
+            "mandatory": false,
+            "name": "livedother",
+            "tooltip": "",
+            "label": "Has the animal lived with animals other than cats and dogs?",
+            "type": "YESNO"
+        },
+        {
+            "index": 110,
+            "lookups": "",
+            "mandatory": false,
+            "name": "livedspecies",
+            "tooltip": "",
+            "label": "If so, please specify the species",
+            "type": "SPECIES"
+        },
+        {
+            "index": 120,
+            "lookups": "",
+            "mandatory": false,
+            "name": "livedmenwomen",
+            "tooltip": "",
+            "label": "Is the animal used to men and women?",
+            "type": "NOTES"
+        },
+        {
+            "index": 130,
+            "lookups": "",
+            "mandatory": false,
+            "name": "feedingreaction",
+            "tooltip": "",
+            "label": "What is the animal's reaction if you approach it when it is feeding?",
+            "type": "NOTES"
+        },
+        {
+            "index": 140,
+            "lookups": "",
+            "mandatory": false,
+            "name": "feedingregime",
+            "tooltip": "",
+            "label": "Please describe your animal's feeding regime - brands of food, scraps, dry or tinned, flavours, feeding times and quantities. Any dislikes?",
+            "type": "NOTES"
+        },
+        {
+            "index": 150,
+            "lookups": "Not known|Yes|No",
+            "mandatory": false,
+            "name": "neutered",
+            "tooltip": "",
+            "label": "Has the animal been neutered?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 160,
+            "lookups": "",
+            "mandatory": false,
+            "name": "commands",
+            "tooltip": "",
+            "label": "What commands does your animal obey? And what commands are used? For example, sit or sit down; lie or lie down etc.",
+            "type": "NOTES"
+        },
+        {
+            "index": 170,
+            "lookups": "",
+            "mandatory": false,
+            "name": "reasonparting",
+            "tooltip": "",
+            "label": "Owner's reason for parting with animal",
+            "type": "NOTES"
+        },
+        {
+            "index": 180,
+            "lookups": "",
+            "mandatory": false,
+            "name": "wherefrom",
+            "tooltip": "",
+            "label": "Where did you get the animal from initially?",
+            "type": "NOTES"
+        },
+        {
+            "index": 190,
+            "lookups": "",
+            "mandatory": false,
+            "name": "uptodatevacc",
+            "tooltip": "",
+            "label": "Is the animal upto date with its annual vaccinations?",
+            "type": "YESNO"
+        },
+        {
+            "index": 200,
+            "lookups": "",
+            "mandatory": false,
+            "name": "lastvaccdate",
+            "tooltip": "",
+            "label": "Date of last vaccination",
+            "type": "TEXT"
+        },
+        {
+            "index": 210,
+            "lookups": "",
+            "mandatory": false,
+            "name": "housetrained",
+            "tooltip": "",
+            "label": "Is the animal housetrained?",
+            "type": "YESNO"
+        },
+        {
+            "index": 220,
+            "lookups": "",
+            "mandatory": false,
+            "name": "travelwell",
+            "tooltip": "",
+            "label": "Does the animal travel well in cars?",
+            "type": "YESNO"
+        },
+        {
+            "index": 230,
+            "lookups": "",
+            "mandatory": false,
+            "name": "leavealone",
+            "tooltip": "",
+            "label": "Do you leave the animal alone for any period of time? If so, how long for and do you have concerns about them being on their own?",
+            "type": "NOTES"
+        },
+        {
+            "index": 240,
+            "lookups": "",
+            "mandatory": false,
+            "name": "destructive",
+            "tooltip": "",
+            "label": "Has the animal ever been destructive in the house? Please describe",
+            "type": "NOTES"
+        },
+        {
+            "index": 250,
+            "lookups": "",
+            "mandatory": false,
+            "name": "wheresleep",
+            "tooltip": "",
+            "label": "Where does the animal sleep?",
+            "type": "TEXT"
+        },
+        {
+            "index": 260,
+            "lookups": "",
+            "mandatory": false,
+            "name": "giveuptoys",
+            "tooltip": "",
+            "label": "Will the animal give up toys when commanded to?",
+            "type": "YESNO"
+        },
+        {
+            "index": 280,
+            "lookups": "",
+            "mandatory": false,
+            "name": "gentleplayer",
+            "tooltip": "",
+            "label": "Would you describe your animal as a gentle player or does he/she like \"rough\" play? Describe your animal's play activity, eg. favourite game, favourite toy, etc.",
+            "type": "NOTES"
+        },
+        {
+            "index": 290,
+            "lookups": "",
+            "mandatory": false,
+            "name": "reactgrooming",
+            "tooltip": "",
+            "label": "How does your animal react to grooming?",
+            "type": "NOTES"
+        },
+        {
+            "index": 300,
+            "lookups": "",
+            "mandatory": false,
+            "name": "reactvets",
+            "tooltip": "",
+            "label": "hHow does your animal behave at the vets?",
+            "type": "NOTES"
+        },
+        {
+            "index": 310,
+            "lookups": "",
+            "mandatory": false,
+            "name": "reactdonewrong",
+            "tooltip": "",
+            "label": "How does your animal react when he/she has done something wrong? How do you \"tell him off\"?",
+            "type": "NOTES"
+        },
+        {
+            "index": 320,
+            "lookups": "",
+            "mandatory": false,
+            "name": "pullonlead",
+            "tooltip": "",
+            "label": "Does the animal pull on the lead?",
+            "type": "YESNO"
+        },
+        {
+            "index": 325,
+            "lookups": "",
+            "mandatory": false,
+            "name": "recall",
+            "tooltip": "",
+            "label": "Does your animal return when called whilst off the lead?",
+            "type": "YESNO"
+        },
+        {
+            "index": 330,
+            "lookups": "",
+            "mandatory": true,
+            "name": "firstname",
+            "tooltip": "",
+            "label": "First name",
+            "type": "TEXT"
+        },
+        {
+            "index": 331,
+            "lookups": "",
+            "mandatory": true,
+            "name": "lastname",
+            "tooltip": "",
+            "label": "Surname",
+            "type": "TEXT"
+        },
+        {
+            "index": 332,
+            "lookups": "",
+            "mandatory": true,
+            "name": "address",
+            "tooltip": "",
+            "label": "Address",
+            "type": "TEXT"
+        },
+        {
+            "index": 333,
+            "lookups": "",
+            "mandatory": true,
+            "name": "postcode",
+            "tooltip": "",
+            "label": "Postcode",
+            "type": "TEXT"
+        },
+        {
+            "index": 334,
+            "lookups": "",
+            "mandatory": true,
+            "name": "hometelephone",
+            "tooltip": "",
+            "label": "Telephonenumber",
+            "type": "TEXT"
+        },
+        {
+            "index": 335,
+            "lookups": "",
+            "mandatory": false,
+            "name": "emailaddress",
+            "tooltip": "",
+            "label": "Emailaddress",
+            "type": "TEXT"
+        },
+        {
+            "index": 340,
+            "lookups": "Owner|Agent|Inspector",
+            "mandatory": false,
+            "name": "personprovidinginfo",
+            "tooltip": "",
+            "label": "Person providing information",
+            "type": "LOOKUP"
+        }
+    ],
+    "name": "RSPCA Entry Assessment: Dog",
+    "description": "Answering these questions honestly will not stop the RSPCA from admitting your animal but will ensure that we are able to provide the correct care for your animal.  Please help us to help your animal."
+}

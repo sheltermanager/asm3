@@ -1,0 +1,447 @@
+{
+    "fields": [
+        {
+            "index": 10,
+            "lookups": "",
+            "mandatory": true,
+            "name": "animalname",
+            "tooltip": "",
+            "label": "Animal's Name",
+            "type": "SHELTERANIMAL"
+        },
+        {
+            "index": 20,
+            "lookups": "",
+            "mandatory": true,
+            "name": "assessmentdate",
+            "tooltip": "",
+            "label": "Assessment Date",
+            "type": "DATE"
+        },
+        {
+            "index": 30,
+            "lookups": "",
+            "mandatory": false,
+            "name": "examinationheader",
+            "tooltip": "<h2>Examination Record</h2>",
+            "label": "examinationrecord",
+            "type": "RAWMARKUP"
+        },
+        {
+            "index": 40,
+            "lookups": "Normal|Discharging|Injured/abnormal",
+            "mandatory": false,
+            "name": "lefteye",
+            "tooltip": "",
+            "label": "Left Eye",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 50,
+            "lookups": "Normal|Discharging|Injured/abnormal",
+            "mandatory": false,
+            "name": "righteye",
+            "tooltip": "",
+            "label": "Right Eye",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 60,
+            "lookups": "",
+            "mandatory": false,
+            "name": "eyecomments",
+            "tooltip": "",
+            "label": "Comments",
+            "type": "NOTES"
+        },
+        {
+            "index": 80,
+            "lookups": "Normal|Thickened|Balding",
+            "mandatory": false,
+            "name": "leftearflap",
+            "tooltip": "",
+            "label": "Left Ear Flap",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 90,
+            "lookups": "Clean|Discharge/debris|Narrowed",
+            "mandatory": false,
+            "name": "leftearcanal",
+            "tooltip": "",
+            "label": "Left Ear Canal",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 110,
+            "lookups": "Normal|Thickened|Balding",
+            "mandatory": false,
+            "name": "rightearflap",
+            "tooltip": "",
+            "label": "Right Ear Flap",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 120,
+            "lookups": "Clean|Discharge/debris|Narrowed",
+            "mandatory": false,
+            "name": "rightearcanal",
+            "tooltip": "",
+            "label": "Right Ear Canal",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 130,
+            "lookups": "",
+            "mandatory": false,
+            "name": "earcomments",
+            "tooltip": "",
+            "label": "Comments",
+            "type": "NOTES"
+        },
+        {
+            "index": 150,
+            "lookups": "Moist|Scaly/dry|Discharging",
+            "mandatory": false,
+            "name": "nose",
+            "tooltip": "",
+            "label": "Nose",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 160,
+            "lookups": "Clean|Unclean|Fractures",
+            "mandatory": false,
+            "name": "teeth",
+            "tooltip": "",
+            "label": "Teeth",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 170,
+            "lookups": "Normal|Reddened|Pale|Injured",
+            "mandatory": false,
+            "name": "gums",
+            "tooltip": "",
+            "label": "Gums",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 180,
+            "lookups": "Normal|Ulcerated|Injured",
+            "mandatory": false,
+            "name": "tongue",
+            "tooltip": "",
+            "label": "Tongue",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 190,
+            "lookups": "",
+            "mandatory": false,
+            "name": "nosemouthcomments",
+            "tooltip": "",
+            "label": "Comments",
+            "type": "NOTES"
+        },
+        {
+            "index": 200,
+            "lookups": "Normal|Other",
+            "mandatory": false,
+            "name": "chest",
+            "tooltip": "",
+            "label": "Chest",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 210,
+            "lookups": "Normal|Distended|Other",
+            "mandatory": false,
+            "name": "abdomen",
+            "tooltip": "",
+            "label": "Abdomen",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 230,
+            "lookups": "Entire|Castrated|Left undescended|Right undescended",
+            "mandatory": false,
+            "name": "testicles",
+            "tooltip": "",
+            "label": "Testicles",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 240,
+            "lookups": "Normal|Swollen|Discharge|In season",
+            "mandatory": false,
+            "name": "vulva",
+            "tooltip": "",
+            "label": "Vulva",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 250,
+            "lookups": "",
+            "mandatory": false,
+            "name": "bodycomments",
+            "tooltip": "",
+            "label": "Comments",
+            "type": "NOTES"
+        },
+        {
+            "index": 260,
+            "lookups": "Normal|Swollen|Injured/abnormal",
+            "mandatory": false,
+            "name": "anus",
+            "tooltip": "",
+            "label": "Anus",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 270,
+            "lookups": "",
+            "mandatory": false,
+            "name": "anuscomments",
+            "tooltip": "",
+            "label": "Comments",
+            "type": "NOTES"
+        },
+        {
+            "index": 280,
+            "lookups": "Normal|Abnormal|Injured/abnormal",
+            "mandatory": false,
+            "name": "tail",
+            "tooltip": "",
+            "label": "Tail",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 290,
+            "lookups": "",
+            "mandatory": false,
+            "name": "tailcomments",
+            "tooltip": "",
+            "label": "Comments",
+            "type": "NOTES"
+        },
+        {
+            "index": 300,
+            "lookups": "Normal|Dull|Greasy|Alopecia",
+            "mandatory": false,
+            "name": "coat",
+            "tooltip": "",
+            "label": "Coat",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 310,
+            "lookups": "None|Fleas|Lice|Ticks",
+            "mandatory": false,
+            "name": "parasites",
+            "tooltip": "",
+            "label": "Parasites",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 320,
+            "lookups": "Very thin|Thin|Normal|Fat|Obese",
+            "mandatory": false,
+            "name": "bodycondition",
+            "tooltip": "",
+            "label": "Body Condition",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 340,
+            "lookups": "Normal|Abnormalities (lumps, etc)",
+            "mandatory": false,
+            "name": "bodyappearance",
+            "tooltip": "",
+            "label": "Body Appearance",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 350,
+            "lookups": "",
+            "mandatory": false,
+            "name": "coatcomments",
+            "tooltip": "",
+            "label": "Comments",
+            "type": "NOTES"
+        },
+        {
+            "index": 360,
+            "lookups": "",
+            "mandatory": false,
+            "name": "limbs",
+            "tooltip": "<h2>Limbs</h2>",
+            "label": "Limbs",
+            "type": "RAWMARKUP"
+        },
+        {
+            "index": 370,
+            "lookups": "Sound|Lame|Injured/abnormal",
+            "mandatory": false,
+            "name": "frontleft",
+            "tooltip": "",
+            "label": "Front Left",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 380,
+            "lookups": "Sound|Lame|Injured/abnormal",
+            "mandatory": false,
+            "name": "frontright",
+            "tooltip": "",
+            "label": "Front Right",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 390,
+            "lookups": "Sound|Lame|Injured/abnormal",
+            "mandatory": false,
+            "name": "rearleft",
+            "tooltip": "",
+            "label": "Rear Left",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 400,
+            "lookups": "Sound|Lame|Injured/abnormal",
+            "mandatory": false,
+            "name": "rearright",
+            "tooltip": "",
+            "label": "Rear Right",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 410,
+            "lookups": "",
+            "mandatory": false,
+            "name": "limbcomments",
+            "tooltip": "",
+            "label": "Comments",
+            "type": "NOTES"
+        },
+        {
+            "index": 420,
+            "lookups": "",
+            "mandatory": false,
+            "name": "feetpadsnails",
+            "tooltip": "<h2>Feet/pads/nails</h2>",
+            "label": "Feet Pad Nails",
+            "type": "RAWMARKUP"
+        },
+        {
+            "index": 420,
+            "lookups": "Normal|Sore|Injured|Trimming required",
+            "mandatory": false,
+            "name": "nfrontleft",
+            "tooltip": "",
+            "label": "Front left",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 430,
+            "lookups": "Normal|Sore|Injured|Trimming required",
+            "mandatory": false,
+            "name": "nfrontright",
+            "tooltip": "",
+            "label": "Front Right",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 440,
+            "lookups": "Normal|Sore|Injured|Trimming required",
+            "mandatory": false,
+            "name": "nrearleft",
+            "tooltip": "",
+            "label": "Rear Left",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 450,
+            "lookups": "Normal|Sore|Injured|Trimming required",
+            "mandatory": false,
+            "name": "nrearright",
+            "tooltip": "",
+            "label": "Rear Right",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 460,
+            "lookups": "",
+            "mandatory": false,
+            "name": "feetcomments",
+            "tooltip": "",
+            "label": "Comments",
+            "type": "NOTES"
+        },
+        {
+            "index": 480,
+            "lookups": "",
+            "mandatory": false,
+            "name": "weight",
+            "tooltip": "",
+            "label": "Weight",
+            "type": "TEXT"
+        },
+        {
+            "index": 490,
+            "lookups": "",
+            "mandatory": false,
+            "name": "pulse",
+            "tooltip": "",
+            "label": "Pulse",
+            "type": "TEXT"
+        },
+        {
+            "index": 500,
+            "lookups": "",
+            "mandatory": false,
+            "name": "respiratoryrate",
+            "tooltip": "",
+            "label": "Respiratory Rate",
+            "type": "TEXT"
+        },
+        {
+            "index": 510,
+            "lookups": "",
+            "mandatory": false,
+            "name": "temp",
+            "tooltip": "",
+            "label": "Temp",
+            "type": "TEXT"
+        },
+        {
+            "index": 530,
+            "lookups": "",
+            "mandatory": false,
+            "name": "carriedoutby",
+            "tooltip": "",
+            "label": "Healthcheck Carried Out By",
+            "type": "TEXT"
+        },
+        {
+            "index": 550,
+            "lookups": "|Treatment|Routine check-up",
+            "mandatory": false,
+            "name": "vetapptfor",
+            "tooltip": "",
+            "label": "Vet Appointment Made For",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 570,
+            "lookups": "",
+            "mandatory": false,
+            "name": "vetdate",
+            "tooltip": "",
+            "label": "On date",
+            "type": "DATE"
+        }
+    ],
+    "name": "RSPCA Staff Health Check Form",
+    "description": ""
+}

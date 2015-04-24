@@ -1,0 +1,177 @@
+{
+    "fields": [
+        {
+            "index": 10,
+            "lookups": "",
+            "mandatory": true,
+            "name": "animalname",
+            "tooltip": "",
+            "label": "Animal's Name",
+            "type": "SHELTERANIMAL"
+        },
+        {
+            "index": 20,
+            "lookups": "5th day|10th day",
+            "mandatory": true,
+            "name": "fiveorten",
+            "tooltip": "",
+            "label": "5th/10th day",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 30,
+            "lookups": "",
+            "mandatory": true,
+            "name": "date",
+            "tooltip": "",
+            "label": "Date",
+            "type": "DATE"
+        },
+        {
+            "index": 40,
+            "lookups": "",
+            "mandatory": false,
+            "name": "foradoption",
+            "tooltip": "",
+            "label": "For Adoption",
+            "type": "YESNO"
+        },
+        {
+            "index": 50,
+            "lookups": "",
+            "mandatory": false,
+            "name": "pts",
+            "tooltip": "",
+            "label": "PTS",
+            "type": "YESNO"
+        },
+        {
+            "index": 60,
+            "lookups": "",
+            "mandatory": false,
+            "name": "ptswhy",
+            "tooltip": "",
+            "label": "If no, why?",
+            "type": "NOTES"
+        },
+        {
+            "index": 70,
+            "lookups": "",
+            "mandatory": false,
+            "name": "further",
+            "tooltip": "",
+            "label": "Requires further observation tests",
+            "type": "YESNO"
+        },
+        {
+            "index": 80,
+            "lookups": "",
+            "mandatory": false,
+            "name": "furtherwhy",
+            "tooltip": "",
+            "label": "If no, why?",
+            "type": "NOTES"
+        },
+        {
+            "index": 90,
+            "lookups": "",
+            "mandatory": false,
+            "name": "maturefamily",
+            "tooltip": "",
+            "label": "Mature Family (members over 15 years)",
+            "type": "YESNO"
+        },
+        {
+            "index": 100,
+            "lookups": "",
+            "mandatory": false,
+            "name": "children13",
+            "tooltip": "",
+            "label": "Children over 13 years",
+            "type": "YESNO"
+        },
+        {
+            "index": 110,
+            "lookups": "",
+            "mandatory": false,
+            "name": "children10",
+            "tooltip": "",
+            "label": "Children over 10 years",
+            "type": "YESNO"
+        },
+        {
+            "index": 120,
+            "lookups": "",
+            "mandatory": false,
+            "name": "children5",
+            "tooltip": "",
+            "label": "Children over 5 years",
+            "type": "YESNO"
+        },
+        {
+            "index": 130,
+            "lookups": "",
+            "mandatory": false,
+            "name": "under5",
+            "tooltip": "",
+            "label": "Suitable for children under 5 years",
+            "type": "YESNO"
+        },
+        {
+            "index": 140,
+            "lookups": "",
+            "mandatory": false,
+            "name": "oneperson",
+            "tooltip": "",
+            "label": "One person",
+            "type": "YESNO"
+        },
+        {
+            "index": 150,
+            "lookups": "",
+            "mandatory": false,
+            "name": "othersmall",
+            "tooltip": "",
+            "label": "Suitable with rabbits and other small animals",
+            "type": "YESNO"
+        },
+        {
+            "index": 160,
+            "lookups": "",
+            "mandatory": false,
+            "name": "special",
+            "tooltip": "<h2>Special Recommendations</h2>",
+            "label": "",
+            "type": "RAWMARKUP"
+        },
+        {
+            "index": 170,
+            "lookups": "First time smalls owner|Experienced smalls owner|Owner needs experience of this animal",
+            "mandatory": false,
+            "name": "typeowner",
+            "tooltip": "",
+            "label": "Type of owner",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 180,
+            "lookups": "",
+            "mandatory": false,
+            "name": "comments",
+            "tooltip": "",
+            "label": "Comments",
+            "type": "NOTES"
+        },
+        {
+            "index": 190,
+            "lookups": "",
+            "mandatory": true,
+            "name": "completedby",
+            "tooltip": "",
+            "label": "Tests completed by",
+            "type": "TEXT"
+        }
+    ],
+    "name": "RSPCA 5 and 10 Day Recommendations: Small Animal",
+    "description": ""
+}

@@ -1,0 +1,78 @@
+{
+    "fields": [
+        {
+            "index": 10,
+            "lookups": "",
+            "mandatory": true,
+            "name": "animalname",
+            "tooltip": "",
+            "label": "Animal's Name",
+            "type": "SHELTERANIMAL"
+        },
+        {
+            "index": 20,
+            "lookups": "Red|Amber|Green",
+            "mandatory": false,
+            "name": "trafficlight",
+            "tooltip": "",
+            "label": "Traffic Light Assessment",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 30,
+            "lookups": "",
+            "mandatory": true,
+            "name": "date",
+            "tooltip": "",
+            "label": "Date",
+            "type": "DATE"
+        },
+        {
+            "index": 40,
+            "lookups": "",
+            "mandatory": true,
+            "name": "initials",
+            "tooltip": "",
+            "label": "Initials",
+            "type": "TEXT"
+        },
+        {
+            "index": 50,
+            "lookups": "",
+            "mandatory": false,
+            "name": "urine",
+            "tooltip": "",
+            "label": "Urine",
+            "type": "TEXT"
+        },
+        {
+            "index": 60,
+            "lookups": "",
+            "mandatory": false,
+            "name": "eaten",
+            "tooltip": "",
+            "label": "Drunk",
+            "type": "TEXT"
+        },
+        {
+            "index": 70,
+            "lookups": "",
+            "mandatory": false,
+            "name": "exercisecontact",
+            "tooltip": "",
+            "label": "Exercise/contact",
+            "type": "NOTES"
+        },
+        {
+            "index": 80,
+            "lookups": "",
+            "mandatory": false,
+            "name": "symptoms",
+            "tooltip": "",
+            "label": "Any untoward symptoms",
+            "type": "NOTES"
+        }
+    ],
+    "name": "RSPCA Daily Form",
+    "description": ""
+}

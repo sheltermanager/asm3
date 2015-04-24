@@ -1,0 +1,231 @@
+{
+    "fields": [
+        {
+            "index": 10,
+            "lookups": "",
+            "mandatory": true,
+            "name": "datefound",
+            "tooltip": "",
+            "label": "Date Found",
+            "type": "TEXT"
+        },
+        {
+            "index": 15,
+            "lookups": "",
+            "mandatory": true,
+            "name": "areafound",
+            "tooltip": "",
+            "label": "Area Found",
+            "type": "TEXT"
+        },
+        {
+            "index": 20,
+            "lookups": "0 - 6 Months|6 Months - 8 Years|8 Years and over",
+            "mandatory": false,
+            "name": "agegroup",
+            "tooltip": "",
+            "label": "Age Group",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 30,
+            "lookups": "",
+            "mandatory": false,
+            "name": "actualage",
+            "tooltip": "",
+            "label": "Actual Age",
+            "type": "TEXT"
+        },
+        {
+            "index": 40,
+            "lookups": "Male|Female",
+            "mandatory": false,
+            "name": "sex",
+            "tooltip": "",
+            "label": "Sex",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 50,
+            "lookups": "Cat|Dog",
+            "mandatory": false,
+            "name": "species",
+            "tooltip": "",
+            "label": "Species",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 60,
+            "lookups": "",
+            "mandatory": false,
+            "name": "breed",
+            "tooltip": "",
+            "label": "Breed",
+            "type": "BREED"
+        },
+        {
+            "index": 70,
+            "lookups": "",
+            "mandatory": false,
+            "name": "colour",
+            "tooltip": "",
+            "label": "Colour",
+            "type": "COLOUR"
+        },
+        {
+            "index": 80,
+            "lookups": "",
+            "mandatory": true,
+            "name": "description",
+            "tooltip": "",
+            "label": "Markings or distinguishing features",
+            "type": "NOTES"
+        },
+        {
+            "index": 90,
+            "lookups": "",
+            "mandatory": false,
+            "name": "featureshead",
+            "tooltip": "<h2>Features</h2>",
+            "label": "Features",
+            "type": "RAWMARKUP"
+        },
+        {
+            "index": 100,
+            "lookups": "Yes|No|Not checked",
+            "mandatory": false,
+            "name": "microchipped",
+            "tooltip": "",
+            "label": "Microchipped",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 110,
+            "lookups": "Yes|No|Unknown",
+            "mandatory": false,
+            "name": "neutered",
+            "tooltip": "",
+            "label": "Neutered",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 120,
+            "lookups": "Yes|No",
+            "mandatory": false,
+            "name": "collar",
+            "tooltip": "",
+            "label": "Collar",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 130,
+            "lookups": "",
+            "mandatory": false,
+            "name": "collarcolour",
+            "tooltip": "",
+            "label": "Collar colour",
+            "type": "TEXT"
+        },
+        {
+            "index": 140,
+            "lookups": "",
+            "mandatory": false,
+            "name": "animalname",
+            "tooltip": "",
+            "label": "Name",
+            "type": "TEXT"
+        },
+        {
+            "index": 150,
+            "lookups": "",
+            "mandatory": false,
+            "name": "nameaddressheader",
+            "tooltip": "<h2>Name and Address</h2>",
+            "label": "xxx",
+            "type": "RAWMARKUP"
+        },
+        {
+            "index": 160,
+            "lookups": "Mr|Mrs|Ms|Miss",
+            "mandatory": false,
+            "name": "title",
+            "tooltip": "",
+            "label": "Title",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 170,
+            "lookups": "",
+            "mandatory": true,
+            "name": "firstname",
+            "tooltip": "",
+            "label": "First name",
+            "type": "TEXT"
+        },
+        {
+            "index": 180,
+            "lookups": "",
+            "mandatory": true,
+            "name": "lastname",
+            "tooltip": "",
+            "label": "Last name",
+            "type": "TEXT"
+        },
+        {
+            "index": 190,
+            "lookups": "",
+            "mandatory": true,
+            "name": "address",
+            "tooltip": "",
+            "label": "Address",
+            "type": "NOTES"
+        },
+        {
+            "index": 200,
+            "lookups": "",
+            "mandatory": true,
+            "name": "postcode",
+            "tooltip": "",
+            "label": "Postcode",
+            "type": "TEXT"
+        },
+        {
+            "index": 210,
+            "lookups": "",
+            "mandatory": true,
+            "name": "hometelephone",
+            "tooltip": "",
+            "label": "Home Tel",
+            "type": "TEXT"
+        },
+        {
+            "index": 220,
+            "lookups": "",
+            "mandatory": false,
+            "name": "mobiletelephone",
+            "tooltip": "",
+            "label": "Mobile",
+            "type": "TEXT"
+        },
+        {
+            "index": 230,
+            "lookups": "Yes|No",
+            "mandatory": false,
+            "name": "oktopotentialowner",
+            "tooltip": "",
+            "label": "Is it ok to give out your details to a potential owner?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 240,
+            "lookups": "",
+            "mandatory": false,
+            "name": "comments",
+            "tooltip": "",
+            "label": "Comments",
+            "type": "NOTES"
+        }
+    ],
+    "name": "Found Animal Questionnaire",
+    "description": ""
+}

@@ -1,0 +1,366 @@
+{
+    "fields": [
+        {
+            "index": 5,
+            "lookups": "",
+            "mandatory": false,
+            "name": "section1header",
+            "tooltip": "<h2>Section 1 - How did you hear about us?</h2>",
+            "label": "xxx",
+            "type": "RAWMARKUP"
+        },
+        {
+            "index": 10,
+            "lookups": "Word of mouth|Radio|Internet|TV|Newspaper|Other",
+            "mandatory": false,
+            "name": "howdidyouhear",
+            "tooltip": "",
+            "label": "How did you hear about us?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 20,
+            "lookups": "",
+            "mandatory": false,
+            "name": "howdidyouhearother",
+            "tooltip": "",
+            "label": "If other, please specify",
+            "type": "TEXT"
+        },
+        {
+            "index": 25,
+            "lookups": "",
+            "mandatory": false,
+            "name": "section2header",
+            "tooltip": "<h2>Section 2 - Contacting us</h2>",
+            "label": "xxx",
+            "type": "RAWMARKUP"
+        },
+        {
+            "index": 27,
+            "lookups": "Telephone|Post|Email|Fax|Visit|Website",
+            "mandatory": false,
+            "name": "contactmethod",
+            "tooltip": "",
+            "label": "What method did you use to contact us",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 30,
+            "lookups": "",
+            "mandatory": false,
+            "name": "section3header",
+            "tooltip": "<h2>Section 3 - Service Provided</h2>\n<p>In this section we ask you about your perception of the service you received from the us, the ease of contact and use:</p>",
+            "label": "xxx",
+            "type": "RAWMARKUP"
+        },
+        {
+            "index": 40,
+            "lookups": "Excellent|Good|Fair|Poor|Very Poor|N/A",
+            "mandatory": false,
+            "name": "telephonerate",
+            "tooltip": "",
+            "label": "Telephone",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 50,
+            "lookups": "Excellent|Good|Fair|Poor|Very Poor|N/A",
+            "mandatory": false,
+            "name": "postrate",
+            "tooltip": "",
+            "label": "Post",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 60,
+            "lookups": "Excellent|Good|Fair|Poor|Very Poor|N/A",
+            "mandatory": false,
+            "name": "emailrate",
+            "tooltip": "",
+            "label": "Email",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 70,
+            "lookups": "Excellent|Good|Fair|Poor|Very Poor|N/A",
+            "mandatory": false,
+            "name": "faxrate",
+            "tooltip": "",
+            "label": "FAX",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 80,
+            "lookups": "Excellent|Good|Fair|Poor|Very Poor|N/A",
+            "mandatory": false,
+            "name": "websiterate",
+            "tooltip": "",
+            "label": "Website",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 90,
+            "lookups": "Excellent|Good|Fair|Poor|Very Poor|N/A",
+            "mandatory": false,
+            "name": "visitrate",
+            "tooltip": "",
+            "label": "Visit - how do you rate finding your way around our centre",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 100,
+            "lookups": "",
+            "mandatory": false,
+            "name": "section4header",
+            "tooltip": "<h2>Section 4 - Performance of Staff</h2>\n<p>In this section we ask you about the performance of our staff. Please tell us how you rate our competence and courtesy:</p>",
+            "label": "xxx",
+            "type": "RAWMARKUP"
+        },
+        {
+            "index": 110,
+            "lookups": "Excellent|Good|Fair|Poor|Very Poor|N/A",
+            "mandatory": false,
+            "name": "competencerate",
+            "tooltip": "",
+            "label": "Competence",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 120,
+            "lookups": "Excellent|Good|Fair|Poor|Very Poor|N/A",
+            "mandatory": false,
+            "name": "courtesyrate",
+            "tooltip": "",
+            "label": "Courtesy",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 130,
+            "lookups": "Excellent|Good|Fair|Poor|Very Poor|N/A",
+            "mandatory": false,
+            "name": "willingnessrate",
+            "tooltip": "",
+            "label": "Willingness to help",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 140,
+            "lookups": "Excellent|Good|Fair|Poor|Very Poor|N/A",
+            "mandatory": false,
+            "name": "attituderate",
+            "tooltip": "",
+            "label": "Attitude",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 150,
+            "lookups": "Excellent|Good|Fair|Poor|Very Poor|N/A",
+            "mandatory": false,
+            "name": "timelinessrate",
+            "tooltip": "",
+            "label": "Timeliness of response",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 160,
+            "lookups": "",
+            "mandatory": false,
+            "name": "section5header",
+            "tooltip": "<h2>Section 5 - Hours of opening - Shop and Reception</h2>\n<p>In this section we ask you about the current Shop and Reception opening hours. Please tell us how you rate these hours:</p>\n<table border=\"1\">\n<tr>\n<td>Monday-Friday</td>\n<td>Open: 9:00am</td>\n<td>Close: 5:00pm</td>\n</tr>\n<tr>\n<td>Saturday-Sunday</td>\n<td>Open: 9:00am</td>\n<td>Close: 4:00pm</td>\n</tr>\n</table>",
+            "label": "xxx",
+            "type": "RAWMARKUP"
+        },
+        {
+            "index": 170,
+            "lookups": "Excellent|Good|Fair|Poor|Very Poor|N/A",
+            "mandatory": false,
+            "name": "shoprate",
+            "tooltip": "",
+            "label": "Shop and Reception",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 180,
+            "lookups": "",
+            "mandatory": false,
+            "name": "section6header",
+            "tooltip": "<h2>Section 6 - Animal Viewing times</h2>\n<p>In this section we tell you the hours that you may currently view the Animals. Please tell us how you rate these hours:</p>\n<table border=\"1\">\n<tr>\n<td>Monday</td>\n<td>Start: 11:00am</td>\n<td>Finish: 4:00pm</td>\n</tr>\n<tr>\n<td>Wednesday-Friday</td>\n<td>Start: 11:00am</td>\n<td>Finish: 4:00pm</td>\n</tr>\n<tr>\n<td>Saturday-Sunday</td>\n<td>Start: 11:00am</td>\n<td>Finish: 3:00pm</td>\n</tr>\n</table>",
+            "label": "xxx",
+            "type": "RAWMARKUP"
+        },
+        {
+            "index": 190,
+            "lookups": "Excellent|Good|Fair|Poor|Very Poor|N/A",
+            "mandatory": false,
+            "name": "viewinghoursrate",
+            "tooltip": "",
+            "label": "Animal viewing hours",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 200,
+            "lookups": "",
+            "mandatory": false,
+            "name": "section7header",
+            "tooltip": "<h2>Section 7 - Adoption</h2>\n<p>In this section we ask you if you adopted an animal from us, and how you rate our current adoption process:</p>",
+            "label": "xxx",
+            "type": "RAWMARKUP"
+        },
+        {
+            "index": 210,
+            "lookups": "Yes|No|N/A",
+            "mandatory": false,
+            "name": "didyouadopt",
+            "tooltip": "",
+            "label": "Did you adopt an animal from us",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 220,
+            "lookups": "Excellent|Good|Fair|Poor|Very Poor|N/A",
+            "mandatory": false,
+            "name": "howinformative",
+            "tooltip": "",
+            "label": "How informative/useful did you find the information given to you about your adoptive animal",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 240,
+            "lookups": "",
+            "mandatory": false,
+            "name": "section8header",
+            "tooltip": "<h2>Section 8 - Performance of Home Visitor</h2>\n<p>In this section we ask you to comment on the performance of our home visiting staff. Please tell us how you rate our competence and courtesy: </p>",
+            "label": "xxx",
+            "type": "RAWMARKUP"
+        },
+        {
+            "index": 250,
+            "lookups": "Yes|No|N/A",
+            "mandatory": false,
+            "name": "homevisit",
+            "tooltip": "",
+            "label": "Did a representative from the our centre visit you at home?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 260,
+            "lookups": "Excellent|Good|Fair|Poor|Very Poor|N/A",
+            "mandatory": false,
+            "name": "hcompetencerate",
+            "tooltip": "",
+            "label": "Competence",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 270,
+            "lookups": "Excellent|Good|Fair|Poor|Very Poor|N/A",
+            "mandatory": false,
+            "name": "hcourtesyrate",
+            "tooltip": "",
+            "label": "Courtesy",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 280,
+            "lookups": "Excellent|Good|Fair|Poor|Very Poor|N/A",
+            "mandatory": false,
+            "name": "hwillingnessrate",
+            "tooltip": "",
+            "label": "Willingness to help",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 290,
+            "lookups": "Excellent|Good|Fair|Poor|Very Poor|N/A",
+            "mandatory": false,
+            "name": "hattituderate",
+            "tooltip": "",
+            "label": "Attitude",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 300,
+            "lookups": "Excellent|Good|Fair|Poor|Very Poor|N/A",
+            "mandatory": false,
+            "name": "htimelinessrate",
+            "tooltip": "",
+            "label": "Timeliness of response",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 310,
+            "lookups": "",
+            "mandatory": false,
+            "name": "section9header",
+            "tooltip": "<h2>Section 9 - Charity Shops and Fund Raising Events</h2>\n<p>In this section we ask you if you use any of our local Charity Shop, or attended any of our fundraising events:</p>",
+            "label": "xxx",
+            "type": "RAWMARKUP"
+        },
+        {
+            "index": 320,
+            "lookups": "Yes|No|N/A",
+            "mandatory": false,
+            "name": "birstallshop",
+            "tooltip": "",
+            "label": "Birstall",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 330,
+            "lookups": "Yes|No|N/A",
+            "mandatory": false,
+            "name": "shop1",
+            "tooltip": "",
+            "label": "Shop1",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 340,
+            "lookups": "Yes|No|N/A",
+            "mandatory": false,
+            "name": "shop2",
+            "tooltip": "",
+            "label": "Shop2",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 350,
+            "lookups": "Yes|No|N/A",
+            "mandatory": false,
+            "name": "shop3",
+            "tooltip": "",
+            "label": "Shop3",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 360,
+            "lookups": "Yes|No|N/A",
+            "mandatory": false,
+            "name": "fundraisingevents",
+            "tooltip": "",
+            "label": "Fund Raising events",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 370,
+            "lookups": "",
+            "mandatory": false,
+            "name": "section10header",
+            "tooltip": "<h2>Section 10 - General Comments</h2>",
+            "label": "xxx",
+            "type": "RAWMARKUP"
+        },
+        {
+            "index": 380,
+            "lookups": "",
+            "mandatory": false,
+            "name": "comments",
+            "tooltip": "",
+            "label": "Your comments",
+            "type": "NOTES"
+        }
+    ],
+    "name": "Customer Satisfaction Survey",
+    "description": ""
+}

@@ -1,0 +1,159 @@
+{
+    "fields": [
+        {
+            "index": 10,
+            "lookups": "",
+            "mandatory": true,
+            "name": "animalname",
+            "tooltip": "",
+            "label": "Animal's Name",
+            "type": "SHELTERANIMAL"
+        },
+        {
+            "index": 20,
+            "lookups": "5th day|10th day",
+            "mandatory": true,
+            "name": "fiveorten",
+            "tooltip": "",
+            "label": "5th/10th day",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 30,
+            "lookups": "",
+            "mandatory": true,
+            "name": "date",
+            "tooltip": "",
+            "label": "Date",
+            "type": "DATE"
+        },
+        {
+            "index": 40,
+            "lookups": "",
+            "mandatory": false,
+            "name": "friendly",
+            "tooltip": "",
+            "label": "Is the cat friendly towards people?",
+            "type": "YESNO"
+        },
+        {
+            "index": 50,
+            "lookups": "",
+            "mandatory": false,
+            "name": "nowho",
+            "tooltip": "",
+            "label": "If no, who is the cat unfriendly towards and any comments on why?",
+            "type": "NOTES"
+        },
+        {
+            "index": 60,
+            "lookups": "Likes/Friendly|Tolerates|Hisses/Dislikes|Attacks/Aggressive",
+            "mandatory": false,
+            "name": "cuddled",
+            "tooltip": "",
+            "label": "Can the cat be cuddled/picked up?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 70,
+            "lookups": "",
+            "mandatory": false,
+            "name": "cuddledcomments",
+            "tooltip": "",
+            "label": "Comments",
+            "type": "NOTES"
+        },
+        {
+            "index": 80,
+            "lookups": "",
+            "mandatory": false,
+            "name": "touched",
+            "tooltip": "<h2>Any parts of the body the cat does not like being touched?",
+            "label": "",
+            "type": "RAWMARKUP"
+        },
+        {
+            "index": 90,
+            "lookups": "",
+            "mandatory": false,
+            "name": "noears",
+            "tooltip": "",
+            "label": "Ears",
+            "type": "YESNO"
+        },
+        {
+            "index": 100,
+            "lookups": "",
+            "mandatory": false,
+            "name": "nonose",
+            "tooltip": "",
+            "label": "Nose",
+            "type": "YESNO"
+        },
+        {
+            "index": 110,
+            "lookups": "",
+            "mandatory": false,
+            "name": "noback",
+            "tooltip": "",
+            "label": "Back",
+            "type": "YESNO"
+        },
+        {
+            "index": 120,
+            "lookups": "",
+            "mandatory": false,
+            "name": "nobelly",
+            "tooltip": "",
+            "label": "Belly",
+            "type": "YESNO"
+        },
+        {
+            "index": 130,
+            "lookups": "",
+            "mandatory": false,
+            "name": "notail",
+            "tooltip": "",
+            "label": "Tail",
+            "type": "YESNO"
+        },
+        {
+            "index": 140,
+            "lookups": "",
+            "mandatory": false,
+            "name": "nofrontlegs",
+            "tooltip": "",
+            "label": "Front Legs",
+            "type": "YESNO"
+        },
+        {
+            "index": 150,
+            "lookups": "",
+            "mandatory": false,
+            "name": "nobacklegs",
+            "tooltip": "",
+            "label": "Back Legs",
+            "type": "YESNO"
+        },
+        {
+            "index": 160,
+            "lookups": "",
+            "mandatory": false,
+            "name": "reactiongrooming",
+            "tooltip": "",
+            "label": "Reaction to grooming",
+            "type": "TEXT"
+        },
+        {
+            "index": 170,
+            "lookups": "",
+            "mandatory": false,
+            "name": "comments",
+            "tooltip": "",
+            "label": "Comments",
+            "type": "NOTES"
+        }
+    ],
+    "name": "RSPCA 5 and 10 Day Observations: Cat",
+    "description": ""
+}

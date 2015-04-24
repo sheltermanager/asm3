@@ -1,0 +1,141 @@
+{
+    "fields": [
+        {
+            "index": 10,
+            "lookups": "",
+            "mandatory": true,
+            "name": "animalname",
+            "tooltip": "",
+            "label": "Animal's Name",
+            "type": "SHELTERANIMAL"
+        },
+        {
+            "index": 20,
+            "lookups": "1|2|3|4|5|6|7|8|9|10",
+            "mandatory": true,
+            "name": "day",
+            "tooltip": "",
+            "label": "Day",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 30,
+            "lookups": "",
+            "mandatory": true,
+            "name": "date",
+            "tooltip": "",
+            "label": "Date",
+            "type": "DATE"
+        },
+        {
+            "index": 40,
+            "lookups": "",
+            "mandatory": false,
+            "name": "cleankennelnight",
+            "tooltip": "",
+            "label": "Clean in kennel at night?",
+            "type": "YESNO"
+        },
+        {
+            "index": 50,
+            "lookups": "",
+            "mandatory": false,
+            "name": "cleankennelday",
+            "tooltip": "",
+            "label": "Clean in kennel in day?",
+            "type": "YESNO"
+        },
+        {
+            "index": 60,
+            "lookups": "",
+            "mandatory": false,
+            "name": "cleansleepnight",
+            "tooltip": "",
+            "label": "Clean in sleeping areas at night?",
+            "type": "YESNO"
+        },
+        {
+            "index": 70,
+            "lookups": "",
+            "mandatory": false,
+            "name": "cleansleepday",
+            "tooltip": "",
+            "label": "Clean in sleeping areas in day?",
+            "type": "YESNO"
+        },
+        {
+            "index": 80,
+            "lookups": "",
+            "mandatory": false,
+            "name": "destructiveinkennelnight",
+            "tooltip": "",
+            "label": "Destructive in kennel at night?",
+            "type": "YESNO"
+        },
+        {
+            "index": 90,
+            "lookups": "",
+            "mandatory": false,
+            "name": "destructiveinkennelday",
+            "tooltip": "",
+            "label": "Destructive in kennel in day?",
+            "type": "YESNO"
+        },
+        {
+            "index": 100,
+            "lookups": "Settles down|Barks|Cries|Howls|Scratches door|Destroys things|Jumps",
+            "mandatory": false,
+            "name": "reactiontokennels",
+            "tooltip": "",
+            "label": "Reaction to being left in kennels?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 110,
+            "lookups": "Quiet|Barker (people present)|Barker (dogs present)|Constantly|Howls|Whines",
+            "mandatory": false,
+            "name": "barkfew",
+            "tooltip": "",
+            "label": "Does the dog bark a few times or constantly?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 120,
+            "lookups": "Timid|Nervous|Submissive|Friendly|Bold|Aggressive|Depressed|Dominant|Grumbling/growling|Boisterous",
+            "mandatory": false,
+            "name": "generalbehaviour",
+            "tooltip": "",
+            "label": "How is the dogs behaviour in general?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 130,
+            "lookups": "Good eater|Poor eater|Food proud/growls|Feed alone|Normal|Not eaten",
+            "mandatory": false,
+            "name": "wheneating",
+            "tooltip": "",
+            "label": "What is the dog like when eating?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 140,
+            "lookups": "Always|Sometimes|Occasionally|Never",
+            "mandatory": false,
+            "name": "jumps",
+            "tooltip": "",
+            "label": "Does the dog jump up?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 150,
+            "lookups": "Always|Sometimes|Occasionally|Never",
+            "mandatory": false,
+            "name": "mouth",
+            "tooltip": "",
+            "label": "Does the dog mouth?",
+            "type": "LOOKUP"
+        }
+    ],
+    "name": "RSPCA Pre Observation Sheet: Dog",
+    "description": ""
+}

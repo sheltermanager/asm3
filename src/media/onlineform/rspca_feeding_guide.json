@@ -1,0 +1,87 @@
+{
+    "fields": [
+        {
+            "index": 10,
+            "lookups": "",
+            "mandatory": true,
+            "name": "animalname",
+            "tooltip": "",
+            "label": "Animal's Name",
+            "type": "SHELTERANIMAL"
+        },
+        {
+            "index": 20,
+            "lookups": "5th day|10th day",
+            "mandatory": true,
+            "name": "fiveorten",
+            "tooltip": "",
+            "label": "5th/10th day",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 30,
+            "lookups": "",
+            "mandatory": true,
+            "name": "date",
+            "tooltip": "",
+            "label": "Date",
+            "type": "DATE"
+        },
+        {
+            "index": 40,
+            "lookups": "",
+            "mandatory": true,
+            "name": "weightonentry",
+            "tooltip": "",
+            "label": "Weight on entry",
+            "type": "TEXT"
+        },
+        {
+            "index": 50,
+            "lookups": "1|2|3|4|5",
+            "mandatory": false,
+            "name": "weightbodyscore",
+            "tooltip": "",
+            "label": "Weight/body score",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 60,
+            "lookups": "",
+            "mandatory": false,
+            "name": "brandfood",
+            "tooltip": "",
+            "label": "Brand and type of food",
+            "type": "TEXT"
+        },
+        {
+            "index": 70,
+            "lookups": "",
+            "mandatory": false,
+            "name": "permeal",
+            "tooltip": "",
+            "label": "Amount fed per meal",
+            "type": "TEXT"
+        },
+        {
+            "index": 80,
+            "lookups": "",
+            "mandatory": false,
+            "name": "perday",
+            "tooltip": "",
+            "label": "Times fed per day and am, pm  or specific times",
+            "type": "TEXT"
+        },
+        {
+            "index": 90,
+            "lookups": "",
+            "mandatory": false,
+            "name": "comments",
+            "tooltip": "",
+            "label": "Comments (weighed at center/vets, good/poor eater)",
+            "type": "NOTES"
+        }
+    ],
+    "name": "RSPCA Feeding Guide",
+    "description": ""
+}

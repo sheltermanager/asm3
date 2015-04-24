@@ -1,0 +1,123 @@
+{
+    "fields": [
+        {
+            "index": 10,
+            "lookups": "",
+            "mandatory": true,
+            "name": "animalname",
+            "tooltip": "",
+            "label": "Animal's Name",
+            "type": "SHELTERANIMAL"
+        },
+        {
+            "index": 20,
+            "lookups": "1|2|3|4|5|6|7|8|9|10",
+            "mandatory": true,
+            "name": "day",
+            "tooltip": "",
+            "label": "Day",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 30,
+            "lookups": "",
+            "mandatory": true,
+            "name": "date",
+            "tooltip": "",
+            "label": "Date",
+            "type": "DATE"
+        },
+        {
+            "index": 40,
+            "lookups": "",
+            "mandatory": false,
+            "name": "cleanpennight",
+            "tooltip": "",
+            "label": "Clean in pen at night?",
+            "type": "YESNO"
+        },
+        {
+            "index": 50,
+            "lookups": "",
+            "mandatory": false,
+            "name": "cleanpenday",
+            "tooltip": "",
+            "label": "Clean in pen in day?",
+            "type": "YESNO"
+        },
+        {
+            "index": 60,
+            "lookups": "",
+            "mandatory": false,
+            "name": "cleansleepnight",
+            "tooltip": "",
+            "label": "Clean in sleeping areas at night?",
+            "type": "YESNO"
+        },
+        {
+            "index": 70,
+            "lookups": "",
+            "mandatory": false,
+            "name": "cleansleepday",
+            "tooltip": "",
+            "label": "Clean in sleeping areas in day?",
+            "type": "YESNO"
+        },
+        {
+            "index": 80,
+            "lookups": "",
+            "mandatory": false,
+            "name": "destructiveinpennight",
+            "tooltip": "",
+            "label": "Destructive in pen at night?",
+            "type": "YESNO"
+        },
+        {
+            "index": 90,
+            "lookups": "",
+            "mandatory": false,
+            "name": "destructiveinpenday",
+            "tooltip": "",
+            "label": "Destructive in pen in day?",
+            "type": "YESNO"
+        },
+        {
+            "index": 100,
+            "lookups": "Friendly|On cat's own terms|Hisses|Ears back|Attacks|Cannot be groomed or stroked",
+            "mandatory": false,
+            "name": "reactiontogroom",
+            "tooltip": "",
+            "label": "Reaction to groomed/stroked?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 100,
+            "lookups": "Friendly|On cat's own terms|Hisses|Ears back|Attacks|Cannot be cuddled",
+            "mandatory": false,
+            "name": "reactiontocuddle",
+            "tooltip": "",
+            "label": "Reaction to being cuddled for 2-3 minutes?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 110,
+            "lookups": "Timid|Nervous|Submissive|Friendly|Bold|Aggressive|Depressed|Dominant",
+            "mandatory": false,
+            "name": "generalbehaviour",
+            "tooltip": "",
+            "label": "How is the cat's behaviour in general?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 120,
+            "lookups": "Good eater|Poor eater|Food proud|Feed alone|Normal|Not eaten",
+            "mandatory": false,
+            "name": "eating",
+            "tooltip": "",
+            "label": "What is the cat like when eating?",
+            "type": "LOOKUP"
+        }
+    ],
+    "name": "RSPCA Pre Observation Sheet: Cat",
+    "description": ""
+}
