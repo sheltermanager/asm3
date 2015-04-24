@@ -65,13 +65,18 @@ def json_handler(obj):
     else:
         raise TypeError, 'Object of type %s with value of %s is not JSON serializable' % (type(obj), repr(obj))
 
-def json(obj):
+def json(obj, readable = False):
     """
     Takes a python object and serializes it to JSON.
     None objects are turned into "null"
     datetime objects are turned into string isoformat for use with js Date.
+    readable: If True, line breaks and padding are added to make it human-readable
     """
-    return extjson.dumps(obj, default=json_handler)
+    if not readable:
+        return extjson.dumps(obj, default=json_handler)
+    else:
+        return extjson.dumps(obj, default=json_handler, indent=4, separators=(',', ': '))
+
 
 def js_minified_name(filename):
     """

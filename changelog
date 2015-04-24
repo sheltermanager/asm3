@@ -1,6 +1,7 @@
 37
 ================
 
+24/04/15 Ability to import/export online forms as json #177
 22/04/15 Encapsulate publisher breeds for petrescue #170
 22/04/15 Add AnimalIsVaccinated wordkey and improved it #156
 22/04/15 Fix calendar view firstDay by downgrading to moment 2.7.0

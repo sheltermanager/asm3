@@ -223,6 +223,11 @@ def handler(post, remoteip, referer):
             raise utils.ASMError("method online_form_html requires a valid formid")
         return set_cached_response(cache_key, "text/html; charset=utf-8", 120, onlineform.get_onlineform_html(dbo, formid))
 
+    elif method == "online_form_json":
+        if formid == 0:
+            raise utils.ASMError("method online_form_json requires a valid formid")
+        return set_cached_response(cache_key, "text/json; charset=utf-8", 30, onlineform.get_onlineform_json(dbo, formid))
+
     elif method == "online_form_post":
         flood_protect("online_form_post", remoteip, 60)
         onlineform.insert_onlineformincoming_from_form(dbo, post, remoteip)

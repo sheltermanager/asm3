@@ -31,6 +31,23 @@ FIELDTYPE_SPECIES = 8
 FIELDTYPE_RAWMARKUP = 9
 FIELDTYPE_DATE = 10
 
+# Types as used in JSON representations
+FIELDTYPE_MAP = {
+    "YESNO": 0,
+    "TEXT": 1,
+    "NOTES": 2,
+    "LOOKUP": 3,
+    "SHELTERANIMAL": 4,
+    "ADOPTABLEANIMAL": 5,
+    "COLOUR": 6,
+    "BREED": 7,
+    "SPECIES": 8,
+    "RAWMARKUP": 9,
+    "DATE": 10
+}
+
+FIELDTYPE_MAP_REVERSE = {v: k for k, v in FIELDTYPE_MAP.items()}
+
 JSKEY_NAME = 'magicASJSkey'
 JSKEY_VALUE = '918273645'
 
@@ -176,6 +193,45 @@ def get_onlineform_html(dbo, formid, completedocument = True):
         footer = get_onlineform_footer(dbo)
         h.append(footer.replace("$$TITLE$$", form["NAME"]))
     return "\n".join(h)
+
+def get_onlineform_json(dbo, formid):
+    """
+    Get the selected online form as a JSON document
+    """
+    form = db.query(dbo, "SELECT * FROM onlineform WHERE ID = %d" % formid)
+    if len(form) == 0:
+        raise utils.ASMValidationError("Online form %d does not exist")
+    form = form[0]
+    formfields = get_onlineformfields(dbo, formid)
+    fd = { "name": form["NAME"], "description": form["DESCRIPTION"] }
+    ff = []
+    for f in formfields:
+        ff.append({ "name": f["FIELDNAME"], "label": f["LABEL"], "type": FIELDTYPE_MAP_REVERSE[f["FIELDTYPE"]],
+            "mandatory": f["MANDATORY"] == 1 and True or False, "index": f["DISPLAYINDEX"],
+            "lookups": f["LOOKUPS"], "tooltip": f["TOOLTIP"]})
+    fd["fields"] = ff
+    return html.json(fd, True)
+
+def import_onlineform_json(dbo, j):
+    """
+    Imports an online form from a JSON document
+    """
+    fd = html.json_parse(j)
+    data = {
+        "name": fd["name"],
+        "description": fd["description"]
+    }
+    fid = insert_onlineform_from_form(dbo, "import", utils.PostedData(data, dbo.locale))
+    for f in fd["fields"]:
+        data = { "formid": str(fid),
+            "fieldname": f["name"],
+            "fieldtype": str(FIELDTYPE_MAP[f["type"]]),
+            "label": f["label"],
+            "mandatory": f["mandatory"] and "1" or "0",
+            "lookups": f["lookups"],
+            "tooltip": f["tooltip"]
+        }
+        insert_onlineformfield_from_form(dbo, "import", utils.PostedData(data, dbo.locale))
 
 def get_onlineform_header(dbo):
     header = dbfs.get_string_filepath(dbo, "/onlineform/head.html")
