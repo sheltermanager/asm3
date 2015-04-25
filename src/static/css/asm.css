@@ -529,6 +529,16 @@ img {
     width: 25%;
 }
 
+.asm-grid-field {
+    width: 100%;
+}
+
+.asm-grid-field label {
+    display: inline;
+    width: 150px;
+    text-align: right;
+}
+
 /** FORMS =========================== */
 #asm-content {
     display: none;
