@@ -35,6 +35,14 @@ $(function() {
                 html.info(_("Any animal types, species, breeds, colors, locations, etc. in the CSV file that aren't already in the database will be created during the import.")),
                 '</div>',
                 '<p>',
+                '<p>',
+                '<input id="checkduplicates" name="checkduplicates" type="checkbox" /> ',
+                '<label for="checkduplicates">' + _("Merge duplicate records") + '</label>',
+                '</p>',
+                 '<div id="checkduplicatesexplain" style="display: none">',
+                html.info(_("People or animal records that already exist in the database will not be imported again and movement/payment data will be attached to the existing records instead.")),
+                '</div>',
+                '<p>',
                 '<input id="filechooser" name="filechooser" type="file" /><br/>',
                 '<button type="button">' + _("Import") + '</button>',
                 '</p>',
@@ -90,10 +98,20 @@ $(function() {
                     $("#cleartablesexplain").fadeOut();
                 }
             };
+            var cde = function() {
+                if ($("#checkduplicates").prop("checked")) {
+                    $("#checkduplicatesexplain").fadeIn();
+                }
+                else {
+                    $("#checkduplicatesexplain").fadeOut();
+                }
+            };
             $("#cleartables").click(cte);
             $("#cleartables").keypress(cte);
             $("#createmissinglookups").click(cme);
             $("#createmissinglookups").keypress(cme);
+            $("#checkduplicates").click(cde);
+            $("#checkduplicates").keypress(cde);
         }
 
     };

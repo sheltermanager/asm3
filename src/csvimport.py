@@ -165,7 +165,7 @@ def create_additional_fields(dbo, row, errors, rowno, csvkey = "ANIMALADDITIONAL
             except Exception,e:
                 errors.append( (rowno, str(row), str(e)) )
 
-def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False):
+def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, checkduplicates = False):
     """
     Imports the csvdata.
     createmissinglookups: If a lookup value is given that's not in our data, add it
@@ -331,17 +331,27 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False):
                 p["mobiletelephone"] = gks(row, "ORIGINALOWNERCELLPHONE")
                 p["emailaddress"] = gks(row, "ORIGINALOWNEREMAIL")
                 try:
-                    ooid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import")
-                    a["originalowner"] = str(ooid)
-                    # Identify an ORIGINALOWNERADDITIONAL additional fields and create them
-                    create_additional_fields(dbo, row, errors, rowno, "ORIGINALOWNERADDITIONAL", "person", ooid)
+                    if checkduplicates:
+                        dups = person.get_person_similar(dbo, p["surname"], p["forenames"], p["address"])
+                        if len(dups) > 0:
+                            a["originalowner"] = str(dups[0]["ID"])
+                    if not a.has_key("originalowner"):
+                        ooid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import")
+                        a["originalowner"] = str(ooid)
+                        # Identify an ORIGINALOWNERADDITIONAL additional fields and create them
+                        create_additional_fields(dbo, row, errors, rowno, "ORIGINALOWNERADDITIONAL", "person", ooid)
                 except Exception,e:
                     al.error("row %d (%s), originalowner: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
                     errors.append( (rowno, str(row), "originalowner: " + str(e)) )
             try:
-                animalid, newcode = animal.insert_animal_from_form(dbo, utils.PostedData(a, dbo.locale), "import")
-                # Identify an ANIMALADDITIONAL additional fields and create them
-                create_additional_fields(dbo, row, errors, rowno, "ANIMALADDITIONAL", "animal", animalid)
+                if checkduplicates:
+                    dup = animal.get_animal_sheltercode(dbo, a["sheltercode"])
+                    if dup is not None:
+                        animalid = dup["ID"]
+                if animalid == 0:
+                    animalid, newcode = animal.insert_animal_from_form(dbo, utils.PostedData(a, dbo.locale), "import")
+                    # Identify an ANIMALADDITIONAL additional fields and create them
+                    create_additional_fields(dbo, row, errors, rowno, "ANIMALADDITIONAL", "animal", animalid)
             except Exception,e:
                 al.error("row %d (%s): %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
                 errors.append( (rowno, str(row), str(e)) )
@@ -378,9 +388,14 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False):
             p["flags"] = flags
             p["comments"] = gks(row, "PERSONCOMMENTS")
             try:
-                personid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import")
-                # Identify any PERSONADDITIONAL additional fields and create them
-                create_additional_fields(dbo, row, errors, rowno, "PERSONADDITIONAL", "person", personid)
+                if checkduplicates:
+                    dups = person.get_person_similar(dbo, p["surname"], p["forenames"], p["address"])
+                    if len(dups) > 0:
+                        personid = dups[0]["ID"]
+                if personid == 0:
+                    personid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import")
+                    # Identify any PERSONADDITIONAL additional fields and create them
+                    create_additional_fields(dbo, row, errors, rowno, "PERSONADDITIONAL", "person", personid)
             except Exception,e:
                 al.error("row %d (%s), person: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
                 errors.append( (rowno, str(row), "person: " + str(e)) )

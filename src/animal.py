@@ -229,6 +229,17 @@ def get_animal(dbo, animalid):
     else:
         return rows[0]
 
+def get_animal_sheltercode(dbo, code):
+    """
+    Returns a complete animal row by ShelterCode
+    """
+    if code is None or code == "": return None
+    rows = db.query(dbo, get_animal_query(dbo) + " WHERE ShelterCode = %s" % db.ds(code))
+    if rows is None or len(rows) == 0:
+        return None
+    else:
+        return rows[0]
+
 def get_animals_ids(dbo, sort, q, cachetime = 60):
     """
     Given a recordset of animal IDs, goes and gets the

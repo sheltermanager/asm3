@@ -2099,11 +2099,12 @@ class csvimport:
         utils.check_locked_db(session)
         dbo = session.dbo
         l = session.locale
-        post = utils.PostedData(web.input(createmissinglookups = "", cleartables = "", filechooser={}), session.locale)
+        post = utils.PostedData(web.input(createmissinglookups = "", cleartables = "", checkduplicates = "", filechooser={}), session.locale)
         users.check_permission(session, users.USE_SQL_INTERFACE)
         web.header("Content-Type", "text/html")
         try:
-            errors = extcsvimport.csvimport(dbo, post.filedata(), post.boolean("createmissinglookups") == 1, post.boolean("cleartables") == 1)
+            errors = extcsvimport.csvimport(dbo, post.filedata(), 
+                post.boolean("createmissinglookups") == 1, post.boolean("cleartables") == 1, post.boolean("checkduplicates") == 1)
             title = _("Import a CSV file", l)
             s = html.header(title, session, "csvimport.js")
             c = html.controller_json("errors", errors)

@@ -207,6 +207,13 @@ from the animal, person, movement and donation tables before doing the import.
 This delete cannot be undone, so exercise caution when using this option as you
 can wipe out your entire database!
 
+If the “Merge duplicate records” option is on, then before importing people
+records from the fields prefixed with PERSON or ORIGINALOWNER, ASM will check
+the person database for anyone with the same name and address. If the person
+already exists, it will not be created again. Similarly, if ANIMALCODE has been
+specified and an animal record with that code already exists in the database,
+it will not be created again.
+
 Trigger Batch Processes
 -----------------------
 

@@ -6493,6 +6493,10 @@ msgstr ""
 msgid "Merge bonded animals into a single record"
 msgstr ""
 
+#: csvimport.js
+msgid "Merge duplicate records"
+msgstr ""
+
 #: main.js media.js
 msgid "Message"
 msgstr ""
@@ -7577,6 +7581,13 @@ msgstr ""
 
 #: search.py
 msgid "People matching '{0}'."
+msgstr ""
+
+#: csvimport.js
+msgid ""
+"People or animal records that already exist in the database will not be "
+"imported again and movement/payment data will be attached to the existing "
+"records instead."
 msgstr ""
 
 #: search.py
