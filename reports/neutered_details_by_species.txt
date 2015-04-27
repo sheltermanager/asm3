@@ -1,0 +1,113 @@
+Neuter/Spay Details by Species
+###
+Auditing
+###
+Any
+###
+Details for animals entering the shelter between two dates identifying their initial and final spay/neuter state by species
+###
+en
+###
+$VAR from DATE Animals entering between$
+$VAR to DATE and$
+
+SELECT * FROM (
+
+SELECT a.DateBroughtIn, a.ShelterCode, s.SpeciesName, a.Neutered, a.NeuteredDate, 
+ty.AnimalType, er.ReasonName, a.ActiveMovementDate, a.AnimalName, 
+CASE WHEN a.Neutered = 1 THEN 'Yes' ELSE 'No' END AS NeuteredName,
+'NOT neutered/spayed on Arrival' AS Category
+FROM animal a
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN animaltype ty ON ty.ID = a.AnimalTypeID 
+INNER JOIN entryreason er ON er.ID = a.EntryReasonID 
+WHERE a.DateBroughtIn >= '$@from$' AND a.DateBroughtIn <= '$@to$'
+AND ((a.Neutered = 0) OR (a.Neutered = 1 AND a.NeuteredDate >= a.DateBroughtIn))
+
+UNION SELECT a.DateBroughtIn, a.ShelterCode, s.SpeciesName, a.Neutered, a.NeuteredDate, 
+ty.AnimalType, er.ReasonName, a.ActiveMovementDate, a.AnimalName, 
+CASE WHEN a.Neutered = 1 THEN 'Yes' ELSE 'No' END AS NeuteredName,
+'Neutered/spayed on Arrival' AS Category
+FROM animal a
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN animaltype ty ON ty.ID = a.AnimalTypeID 
+INNER JOIN entryreason er ON er.ID = a.EntryReasonID 
+WHERE a.DateBroughtIn >= '$@from$' AND a.DateBroughtIn <= '$@to$'
+AND a.Neutered = 1 AND (a.NeuteredDate Is Null OR a.NeuteredDate < a.DateBroughtIn)
+
+UNION SELECT a.DateBroughtIn, a.ShelterCode, s.SpeciesName, a.Neutered, a.NeuteredDate, 
+ty.AnimalType, er.ReasonName, a.ActiveMovementDate, a.AnimalName, 
+CASE WHEN a.Neutered = 1 THEN 'Yes' ELSE 'No' END AS NeuteredName,
+'Neutered/spayed on Adoption' AS Category
+FROM animal a
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN animaltype ty ON ty.ID = a.AnimalTypeID 
+INNER JOIN entryreason er ON er.ID = a.EntryReasonID 
+WHERE a.DateBroughtIn >= '$@from$' AND a.DateBroughtIn <= '$@to$'
+AND a.Archived = 1 AND a.ActiveMovementType = 1 
+AND a.Neutered = 1 AND a.NeuteredDate Is Not Null 
+AND a.NeuteredDate >= a.DateBroughtIn AND a.NeuteredDate <= a.ActiveMovementDate
+
+UNION SELECT a.DateBroughtIn, a.ShelterCode, s.SpeciesName, a.Neutered, a.NeuteredDate, 
+ty.AnimalType, er.ReasonName, a.ActiveMovementDate, a.AnimalName, 
+CASE WHEN a.Neutered = 1 THEN 'Yes' ELSE 'No' END AS NeuteredName,
+'NOT neutered/spayed on Adoption' AS Category
+FROM animal a
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN animaltype ty ON ty.ID = a.AnimalTypeID 
+INNER JOIN entryreason er ON er.ID = a.EntryReasonID 
+WHERE a.DateBroughtIn >= '$@from$' AND a.DateBroughtIn <= '$@to$'
+AND a.Archived = 1 AND a.ActiveMovementType = 1 AND a.Neutered = 0
+
+) dummy
+ORDER BY Category, SpeciesName
+
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_Category
+$$HEAD
+<h1>$Category</h1>
+$$FOOT
+<h1>$Category: {COUNT.Category}</h1>
+<hr />
+GROUP$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h2>$SpeciesName</h2>
+<table border="1">
+<tr>
+<th>Entered</th>
+<th>Code</th>
+<th>Name</th>
+<th>Type</th>
+<th>Entry Category</th>
+<th>Neutered/Spayed</th>
+<th>Adopted</th>
+</tr>
+$$FOOT
+</table>
+<h2>$SpeciesName $Category: {COUNT.SpeciesName}</h2>
+GROUP$$
+
+$$HEADER
+HEADER$$
+
+$$BODY
+<tr>
+<td>$DATEBROUGHTIN</td>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$ANIMALTYPE</td>
+<td>$REASONNAME</td>
+<td>$NEUTEREDNAME $NEUTEREDDATE</td>
+<td>$ACTIVEMOVEMENTDATE</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+
