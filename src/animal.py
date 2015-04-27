@@ -234,7 +234,7 @@ def get_animal_sheltercode(dbo, code):
     Returns a complete animal row by ShelterCode
     """
     if code is None or code == "": return None
-    rows = db.query(dbo, get_animal_query(dbo) + " WHERE ShelterCode = %s" % db.ds(code))
+    rows = db.query(dbo, get_animal_query(dbo) + " WHERE a.ShelterCode = %s" % db.ds(code))
     if rows is None or len(rows) == 0:
         return None
     else:
