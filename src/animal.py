@@ -4157,43 +4157,43 @@ def update_animal_figures_asilomar(dbo, year = 0):
 
     # B Intake from the public
     sql = "SELECT AsilomarIntakeCategory, SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND IsTransfer = 0 AND AsilomarOwnerRequestedEuthanasia = 0 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND IsTransfer = 0 AND AsilomarOwnerRequestedEuthanasia = 0 " \
         "GROUP BY AsilomarIntakeCategory, SpeciesID" % (firstofyear, lastofyear)
     add_section(sql, "INTAKE (Live Dogs and Cats Only)", "Subtotal Intake from the Public", "B")
 
     # C Incoming transfers from community
     sql = "SELECT AsilomarIntakeCategory, SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND IsTransfer = 1 AND AsilomarIsTransferExternal = 0 AND AsilomarOwnerRequestedEuthanasia = 0 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND IsTransfer = 1 AND AsilomarIsTransferExternal = 0 AND AsilomarOwnerRequestedEuthanasia = 0 " \
         "GROUP BY AsilomarIntakeCategory, SpeciesID" % (firstofyear, lastofyear)
     add_section(sql, "Incoming Transfers from within Target Community", "Subtotal Intake from Incoming Transfers from Orgs within Community/Coalition", "C")
 
     # D Incoming transfers from outside community
     sql = "SELECT AsilomarIntakeCategory, SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND IsTransfer = 1 AND AsilomarIsTransferExternal = 1 AND AsilomarOwnerRequestedEuthanasia = 0 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND IsTransfer = 1 AND AsilomarIsTransferExternal = 1 AND AsilomarOwnerRequestedEuthanasia = 0 " \
         "GROUP BY AsilomarIntakeCategory, SpeciesID" % (firstofyear, lastofyear)
     add_section(sql, "Incoming Transfers from outside Target Community", "Subtotal Intake from Incoming Transfers from Orgs outside Community/Coalition", "D")
 
     # E Owners requesting euthanasia
     sql = "SELECT AsilomarIntakeCategory, SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND IsTransfer = 1 AND AsilomarIsTransferExternal = 1 AND AsilomarOwnerRequestedEuthanasia = 1 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND IsTransfer = 1 AND AsilomarIsTransferExternal = 1 AND AsilomarOwnerRequestedEuthanasia = 1 " \
         "GROUP BY AsilomarIntakeCategory, SpeciesID" % (firstofyear, lastofyear)
     add_section(sql, "From Owners/Guardians Requesting Euthanasia", "Subtotal Intake from Owners/Guardians Requesting Euthanasia", "E")
 
     # F Total Intake
     sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s " \
         "GROUP BY SpeciesID" % (firstofyear, lastofyear)
     add_subtotal(sql, "Total Intake [B + C + D + E]", "F")
 
     # G Unhealthy owner requesting euthanasia
     sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND AsilomarIntakeCategory = 3 AND AsilomarOwnerRequestedEuthanasia = 1 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND AsilomarIntakeCategory = 3 AND AsilomarOwnerRequestedEuthanasia = 1 " \
         "GROUP BY SpeciesID" % (firstofyear, lastofyear)
     add_subtotal(sql, "Owner/Guardian Requested Euthanasia (Unhealthy and Untreatable Only)", "G")
 
     # H Adjusted intake
     sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND AsilomarIntakeCategory <> 3 AND AsilomarOwnerRequestedEuthanasia = 0 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND AsilomarIntakeCategory <> 3 AND AsilomarOwnerRequestedEuthanasia = 0 " \
         "GROUP BY SpeciesID" % (firstofyear, lastofyear)
     add_subtotal(sql, "Adjusted Total Intake [F minus G]", "H")
 
@@ -4229,44 +4229,44 @@ def update_animal_figures_asilomar(dbo, year = 0):
 
     # M Healthy
     sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 AND AsilomarIntakeCategory = 0 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 AND AsilomarIntakeCategory = 0 " \
         "GROUP BY SpeciesID" % (firstofyear, lastofyear)
     add_subtotal(sql, "Healthy (Includes Owner/Guardian Requested Euthanasia)", "M")
 
     # N Rehabilitatable
     sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 AND AsilomarIntakeCategory = 1 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 AND AsilomarIntakeCategory = 1 " \
         "GROUP BY SpeciesID" % (firstofyear, lastofyear)
     add_subtotal(sql, "Treatable - Rehabilitatable (Includes Owner/Guardian Requested Euthanasia)", "N")
 
     # O Manageable
     sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 AND AsilomarIntakeCategory = 2 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 AND AsilomarIntakeCategory = 2 " \
         "GROUP BY SpeciesID" % (firstofyear, lastofyear)
     add_subtotal(sql, "Treatable - Manageable (Includes Owner/Guardian Requested Euthanasia)", "O")
 
     # P Unhealthy
     sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 AND AsilomarIntakeCategory = 3 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 AND AsilomarIntakeCategory = 3 " \
         "GROUP BY SpeciesID" % (firstofyear, lastofyear)
     add_subtotal(sql, "Unhealthy and Untreatable (Includes Owner/Guardian Requested Euthanasia)", "P")
 
     # Q Total Euthanasia 
     sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 " \
         "GROUP BY SpeciesID" % (firstofyear, lastofyear)
     add_subtotal(sql, "Total Euthanasia [M + N + O + P]", "Q")
 
     # R Unhealthy owner requesting euthanasia
     sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 " \
         "AND AsilomarIntakeCategory = 3 AND AsilomarOwnerRequestedEuthanasia = 1 " \
         "GROUP BY SpeciesID" % (firstofyear, lastofyear)
     add_subtotal(sql, "Owner/Guardian Requested Euthanasia (Unhealthy and Untreatable Only)", "R")
 
     # S Adjusted Total Euthanasia 
     sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 " \
         "AND AsilomarIntakeCategory <> 3 AND AsilomarOwnerRequestedEuthanasia = 0 " \
         "GROUP BY SpeciesID" % (firstofyear, lastofyear)
     add_subtotal(sql, "Adjusted Total Euthanasia [Q minus R]", "S")
@@ -4276,7 +4276,7 @@ def update_animal_figures_asilomar(dbo, year = 0):
    
     # U Died Or Lost in Shelter/Care
     sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 0 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 0 " \
         "GROUP BY SpeciesID" % (firstofyear, lastofyear)
     add_subtotal(sql, "Died Or Lost in Shelter/Care", "U")
 
@@ -4424,43 +4424,43 @@ def update_animal_figures_monthly_asilomar(dbo, month = 0, year = 0):
 
     # B Intake from the public
     sql = "SELECT AsilomarIntakeCategory, SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND IsTransfer = 0 AND AsilomarOwnerRequestedEuthanasia = 0 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND IsTransfer = 0 AND AsilomarOwnerRequestedEuthanasia = 0 " \
         "GROUP BY AsilomarIntakeCategory, SpeciesID" % (firstofmonth, lastofmonth)
     add_section(sql, "INTAKE (Live Dogs and Cats Only)", "Subtotal Intake from the Public", "B")
 
     # C Incoming transfers from community
     sql = "SELECT AsilomarIntakeCategory, SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND IsTransfer = 1 AND AsilomarIsTransferExternal = 0 AND AsilomarOwnerRequestedEuthanasia = 0 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND IsTransfer = 1 AND AsilomarIsTransferExternal = 0 AND AsilomarOwnerRequestedEuthanasia = 0 " \
         "GROUP BY AsilomarIntakeCategory, SpeciesID" % (firstofmonth, lastofmonth)
     add_section(sql, "Incoming Transfers from within Target Community", "Subtotal Intake from Incoming Transfers from Orgs within Community/Coalition", "C")
 
     # D Incoming transfers from outside community
     sql = "SELECT AsilomarIntakeCategory, SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND IsTransfer = 1 AND AsilomarIsTransferExternal = 1 AND AsilomarOwnerRequestedEuthanasia = 0 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND IsTransfer = 1 AND AsilomarIsTransferExternal = 1 AND AsilomarOwnerRequestedEuthanasia = 0 " \
         "GROUP BY AsilomarIntakeCategory, SpeciesID" % (firstofmonth, lastofmonth)
     add_section(sql, "Incoming Transfers from outside Target Community", "Subtotal Intake from Incoming Transfers from Orgs outside Community/Coalition", "D")
 
     # E Owners requesting euthanasia
     sql = "SELECT AsilomarIntakeCategory, SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND IsTransfer = 1 AND AsilomarIsTransferExternal = 1 AND AsilomarOwnerRequestedEuthanasia = 1 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND IsTransfer = 1 AND AsilomarIsTransferExternal = 1 AND AsilomarOwnerRequestedEuthanasia = 1 " \
         "GROUP BY AsilomarIntakeCategory, SpeciesID" % (firstofmonth, lastofmonth)
     add_section(sql, "From Owners/Guardians Requesting Euthanasia", "Subtotal Intake from Owners/Guardians Requesting Euthanasia", "E")
 
     # F Total Intake
     sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s " \
         "GROUP BY SpeciesID" % (firstofmonth, lastofmonth)
     add_subtotal(sql, "Total Intake [B + C + D + E]", "F")
 
     # G Unhealthy owner requesting euthanasia
     sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND AsilomarIntakeCategory = 3 AND AsilomarOwnerRequestedEuthanasia = 1 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND AsilomarIntakeCategory = 3 AND AsilomarOwnerRequestedEuthanasia = 1 " \
         "GROUP BY SpeciesID" % (firstofmonth, lastofmonth)
     add_subtotal(sql, "Owner/Guardian Requested Euthanasia (Unhealthy and Untreatable Only)", "G")
 
     # H Adjusted intake
     sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND AsilomarIntakeCategory <> 3 AND AsilomarOwnerRequestedEuthanasia = 0 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND AsilomarIntakeCategory <> 3 AND AsilomarOwnerRequestedEuthanasia = 0 " \
         "GROUP BY SpeciesID" % (firstofmonth, lastofmonth)
     add_subtotal(sql, "Adjusted Total Intake [F minus G]", "H")
 
@@ -4496,44 +4496,44 @@ def update_animal_figures_monthly_asilomar(dbo, month = 0, year = 0):
 
     # M Healthy
     sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 AND AsilomarIntakeCategory = 0 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 AND AsilomarIntakeCategory = 0 " \
         "GROUP BY SpeciesID" % (firstofmonth, lastofmonth)
     add_subtotal(sql, "Healthy (Includes Owner/Guardian Requested Euthanasia)", "M")
 
     # N Rehabilitatable
     sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 AND AsilomarIntakeCategory = 1 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 AND AsilomarIntakeCategory = 1 " \
         "GROUP BY SpeciesID" % (firstofmonth, lastofmonth)
     add_subtotal(sql, "Treatable - Rehabilitatable (Includes Owner/Guardian Requested Euthanasia)", "N")
 
     # O Manageable
     sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 AND AsilomarIntakeCategory = 2 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 AND AsilomarIntakeCategory = 2 " \
         "GROUP BY SpeciesID" % (firstofmonth, lastofmonth)
     add_subtotal(sql, "Treatable - Manageable (Includes Owner/Guardian Requested Euthanasia)", "O")
 
     # P Unhealthy
     sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 AND AsilomarIntakeCategory = 3 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 AND AsilomarIntakeCategory = 3 " \
         "GROUP BY SpeciesID" % (firstofmonth, lastofmonth)
     add_subtotal(sql, "Unhealthy and Untreatable (Includes Owner/Guardian Requested Euthanasia)", "P")
 
     # Q Total Euthanasia 
     sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 " \
         "GROUP BY SpeciesID" % (firstofmonth, lastofmonth)
     add_subtotal(sql, "Total Euthanasia [M + N + O + P]", "Q")
 
     # R Unhealthy owner requesting euthanasia
     sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 " \
         "AND AsilomarIntakeCategory = 3 AND AsilomarOwnerRequestedEuthanasia = 1 " \
         "GROUP BY SpeciesID" % (firstofmonth, lastofmonth)
     add_subtotal(sql, "Owner/Guardian Requested Euthanasia (Unhealthy and Untreatable Only)", "R")
 
     # S Adjusted Total Euthanasia 
     sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 " \
         "AND AsilomarIntakeCategory <> 3 AND AsilomarOwnerRequestedEuthanasia = 0 " \
         "GROUP BY SpeciesID" % (firstofmonth, lastofmonth)
     add_subtotal(sql, "Adjusted Total Euthanasia [Q minus R]", "S")
@@ -4543,7 +4543,7 @@ def update_animal_figures_monthly_asilomar(dbo, month = 0, year = 0):
    
     # U Died Or Lost in Shelter/Care
     sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 0 " \
+        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND DeceasedDate Is Not Null AND PutToSleep = 0 " \
         "GROUP BY SpeciesID" % (firstofmonth, lastofmonth)
     add_subtotal(sql, "Died Or Lost in Shelter/Care", "U")
 

@@ -1,6 +1,7 @@
 37
 ================
 
+28/04/15 Fix asilomar figures to exclude non-shelter animals`
 27/04/15 Merge duplicate records option when importing CSV files #36
 24/04/15 Ability to import/export online forms as json #177
 22/04/15 Encapsulate publisher breeds for petrescue #170
