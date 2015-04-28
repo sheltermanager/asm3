@@ -74,8 +74,8 @@ class PostedData(object):
         return df_kf(self.data, field)
     def db_floating(self, field):
         return str(df_kf(self.data, field))
-    def string(self, field):
-        return df_ks(self.data, field)
+    def string(self, field, strip = True):
+        return df_ks(self.data, field, strip)
     def db_string(self, field):
         return df_t(self.data, field)
     def filename(self):
@@ -420,11 +420,12 @@ def df_kf(data, field):
     else:
         return float(0)
 
-def df_ks(data, field):
+def df_ks(data, field, strip = True):
     """ Returns a string key from a datafield """
     if data.has_key(field):
         s = encode_html(data[field])
-        return s.strip()
+        if strip: s = s.strip()
+        return s
     else:
         return ""
 

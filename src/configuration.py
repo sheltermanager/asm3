@@ -329,7 +329,7 @@ def csave(dbo, username, post):
         return False
 
     for k in post.data.iterkeys():
-        v = post[k]
+        v = post.string(k, False)
         if k == "mode":
             pass
         elif k == "CodingFormat":
