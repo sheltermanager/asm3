@@ -550,6 +550,9 @@ class AbstractPublisher(threading.Thread):
     def getDescription(self, an, crToBr = False, crToHE = False):
         """
         Returns the description/bio for an animal.
+        an: The animal record
+        crToBr: Convert line breaks to <br /> tags
+        crToHE: Convert line breaks to html entity &#10;
         """
         # Note: WEBSITEMEDIANOTES becomes ANIMALCOMMENTS in get_animal_data when publisher_use_comments is on
         notes = utils.nulltostr(an["WEBSITEMEDIANOTES"])
@@ -563,9 +566,10 @@ class AbstractPublisher(threading.Thread):
             cr = "<br />"
         if crToHE:
             cr = "&#10;"
-        notes = notes.replace("\r\n", cr)
-        notes = notes.replace("\r", cr)
-        notes = notes.replace("\n", cr)
+        if crToBr or crToHE:
+            notes = notes.replace("\r\n", cr)
+            notes = notes.replace("\r", cr)
+            notes = notes.replace("\n", cr)
         # Escape speechmarks
         notes = notes.replace("\"", "\"\"")
         return notes
@@ -2792,7 +2796,7 @@ class PetFinderPublisher(FTPPublisher):
                 if an["SEX"] == 0: sexname = "F"
                 line.append("\"%s\"" % sexname)
                 # Description
-                line.append("\"%s\"" % self.getDescription(an, False, True))
+                line.append("\"%s\"" % self.getDescription(an))
                 # Special needs
                 if an["CRUELTYCASE"] == 1:
                     line.append("\"1\"")
