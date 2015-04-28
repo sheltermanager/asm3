@@ -15,7 +15,7 @@ import lookups
 import media
 import movement
 import utils
-from i18n import _, date_diff, date_diff_days, now, display2python, python2display, subtract_years, subtract_months, add_days, subtract_days, monday_of_week, first_of_month, last_of_month, first_of_year
+from i18n import _, date_diff, date_diff_days, now, today, display2python, python2display, subtract_years, subtract_months, add_days, subtract_days, monday_of_week, first_of_month, last_of_month, first_of_year
 from random import choice
 
 ASCENDING = 0
@@ -1624,7 +1624,10 @@ def insert_animal_from_form(dbo, post, username):
     # Set brought in by date
     datebroughtin = kdt("datebroughtin", "timebroughtin")
     if datebroughtin is None:
-        datebroughtin = now()
+        if configuration.add_animals_show_time_brought_in(dbo):
+            datebroughtin = now()
+        else:
+            datebroughtin = today()
 
     # Set the code manually if we were given a code, or the option was turned on
     if configuration.manual_codes(dbo) or ks("sheltercode") != "":

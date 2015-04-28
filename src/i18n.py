@@ -4,8 +4,8 @@ import datetime
 import json
 import time
 
-VERSION = "37u [Mon 27 Apr 15:26:05 BST 2015]"
-BUILD = "04271526"
+VERSION = "37u [Tue 28 Apr 15:04:11 BST 2015]"
+BUILD = "04281504"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -543,6 +543,13 @@ def now(offset = 0):
         return datetime.datetime.now() - datetime.timedelta(hours = abs(offset))
     else:
         return datetime.datetime.now() + datetime.timedelta(hours = offset)
+
+def today():
+    """
+    Returns a python datetime set to today, but with time information at midnight.
+    """
+    d = datetime.datetime.now()
+    return datetime.datetime(d.year, d.month, d.day)
 
 def i18nstringsjs(l):
     """
