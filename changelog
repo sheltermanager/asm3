@@ -1,6 +1,7 @@
 37
 ================
 
+28/04/15 Fixed inability to delete HTML publisher templates
 28/04/15 When defaulting broughtin, don't include time if option is off
 28/04/15 Fix asilomar figures to exclude non-shelter animals`
 27/04/15 Merge duplicate records option when importing CSV files #36

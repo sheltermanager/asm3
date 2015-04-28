@@ -53,8 +53,8 @@ $(function() {
              click: function() { 
                  tableform.delete_dialog(function() {
                      tableform.buttons_default_state(buttons);
-                     var ids = tableform.table_ids(table);
-                     common.ajax_post("htmltemplates", "mode=delete&ids=" + ids , function() {
+                     var names = tableform.table_ids(table);
+                     common.ajax_post("htmltemplates", "mode=delete&names=" + names, function() {
                          tableform.table_remove_selected_from_json(table, controller.rows);
                          tableform.table_update(table);
                      });
