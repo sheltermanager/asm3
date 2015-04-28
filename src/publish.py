@@ -2796,7 +2796,7 @@ class PetFinderPublisher(FTPPublisher):
                 if an["SEX"] == 0: sexname = "F"
                 line.append("\"%s\"" % sexname)
                 # Description
-                line.append("\"%s\"" % self.getDescription(an))
+                line.append("\"%s\"" % self.getDescription(an, False, True))
                 # Special needs
                 if an["CRUELTYCASE"] == 1:
                     line.append("\"1\"")
