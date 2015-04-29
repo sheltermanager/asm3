@@ -3404,9 +3404,9 @@ class RescueGroupsPublisher(FTPPublisher):
         Returns a CSV entry for yes or no based on the condition
         """
         if condition:
-            return "\"Yes\""
+            return "Yes"
         else:
-            return "\"No\""
+            return "No"
 
     def rgYesNoBlank(self, v):
         """
