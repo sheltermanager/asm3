@@ -261,9 +261,12 @@ ASM contains a full double entry accounting package. The options here are:
 * Creating donations and donation types creates matching accounts and
   transactions: When you create a new donation type, or log a new donation
   against an owner/animal, ASM will automatically create a matching account in
-  the accounts system if one does not exist, and a matching transaction. It is
-  suggested that you leave this option on, even if you have disabled accounts
-  functionality in case you wish to use it in future. 
+  the accounts system if one does not exist, and a matching transaction. 
+
+* Creating costs and cost types creates matching accounts and
+  transactions: When you create a new cost type, or log a new cost
+  against an animal, ASM will automatically create a matching account in
+  the accounts system if one does not exist, and a matching transaction.
 
 * When receiving donations, allow the deposit account to be overridden: When
   adding donations to the system, if you have the create matching transactions
@@ -281,7 +284,12 @@ ASM contains a full double entry accounting package. The options here are:
   show transactions matching this time period. The default is the current
   month.
 
-* Default desination account for donations: When ASM creates a matching
+* Default source account for costs: When ASM creates a matching cost
+  transaction, it will use the cost type to find the expense account to use.
+  The source account here denotes where the money will be moved from. If you do
+  not set one, ASM will use the first bank account on file. 
+
+* Default destination account for donations: When ASM creates a matching
   donation transaction, it will use the donation type to find the income
   account to use. The destination account here denotes where the money will be
   moved to. If you do not set one, ASM will use the first bank account on file. 

@@ -460,9 +460,11 @@ you will not be using ASM to manage your accounts.</li>
 <li>Creating donations and donation types creates matching accounts and
 transactions: When you create a new donation type, or log a new donation
 against an owner/animal, ASM will automatically create a matching account in
-the accounts system if one does not exist, and a matching transaction. It is
-suggested that you leave this option on, even if you have disabled accounts
-functionality in case you wish to use it in future.</li>
+the accounts system if one does not exist, and a matching transaction.</li>
+<li>Creating costs and cost types creates matching accounts and
+transactions: When you create a new cost type, or log a new cost
+against an animal, ASM will automatically create a matching account in
+the accounts system if one does not exist, and a matching transaction.</li>
 <li>When receiving donations, allow the deposit account to be overridden: When
 adding donations to the system, if you have the create matching transactions
 option on as well as this one, a destination account dropdown will be shown
@@ -476,7 +478,11 @@ screen will only include transactions from this date or later.</li>
 <li>Default transaction view: When viewing transactions for an account, ASM will
 show transactions matching this time period. The default is the current
 month.</li>
-<li>Default desination account for donations: When ASM creates a matching
+<li>Default source account for costs: When ASM creates a matching cost
+transaction, it will use the cost type to find the expense account to use.
+The source account here denotes where the money will be moved from. If you do
+not set one, ASM will use the first bank account on file.</li>
+<li>Default destination account for donations: When ASM creates a matching
 donation transaction, it will use the donation type to find the income
 account to use. The destination account here denotes where the money will be
 moved to. If you do not set one, ASM will use the first bank account on file.</li>
