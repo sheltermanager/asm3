@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import configuration
 import db
 import financial
 import re
@@ -854,8 +855,11 @@ def insert_lookup(dbo, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies
         sql = "INSERT INTO %s (ID, %s, %s, DefaultCost) VALUES (%s, %s, %s, %s)" % (
             lookup, t[LOOKUP_NAMEFIELD], t[LOOKUP_DESCFIELD], db.di(nid), db.ds(name), db.ds(desc), db.ds(defaultcost))
         # Create a matching account if we have a donation type
-        if lookup == "donationtype":
+        if lookup == "donationtype" and configuration.create_donation_trx(dbo):
             financial.insert_account_from_donationtype(dbo, nid, name, desc)
+        # Same goes for cost type
+        if lookup == "costtype" and configuration.create_cost_trx(dbo):
+            financial.insert_account_from_costtype(dbo, nid, name, desc)
     elif t[LOOKUP_DESCFIELD] == "":
         # No description
         nid = db.get_id(dbo, lookup)

@@ -40,11 +40,17 @@ $(function() {
                 '<td><label for="otheraccount">' + _("Other Account") + '</label></td>',
                 '<td><input id="otheraccount" data="otheraccount" class="asm-textbox" /></td>',
                 '</tr>',
-                '<tr id="personrow">',
+                '<tr id="paymentrow">',
                 '<td><label for="person">' + _("Payment From") + '</label></td>',
                 '<td>',
                 '<a id="personlink" class="asm-embed-name" href="#"></a> <img src="static/images/icons/right.gif" />',
                 '<a id="animallink" class="asm-embed-name" href="#"></a>',
+                '</td>',
+                '</tr>',
+                '<tr id="costrow">',
+                '<td><label for="costanimallink">' + _("Cost For") + '</label></td>',
+                '<td>',
+                '<a id="costanimallink" class="asm-embed-name" href="#"></a>',
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -245,14 +251,22 @@ $(function() {
                 $("#reconciled").select("value", row.RECONCILED);
                 $("#otheraccount").val(html.decode(row.OTHERACCOUNTCODE));
                 if (!row.PERSONNAME) {
-                    $("#personrow").hide();
+                    $("#paymentrow").hide();
                 }
                 else {
                     $("#personlink").html(row.PERSONNAME);
                     $("#personlink").prop("href", "person_donations?id=" + row.PERSONID);
-                    $("#personrow").show();
-                    $("#animallink").html(row.ANIMALCODE + " " + row.ANIMALNAME);
-                    $("#animallink").prop("href", "animal_donations?id=" + row.ANIMALID);
+                    $("#paymentrow").show();
+                    $("#animallink").html(row.DONATIONANIMALCODE + " " + row.DONATIONANIMALNAME);
+                    $("#animallink").prop("href", "animal_donations?id=" + row.DONATIONANIMALID);
+                }
+                if (!row.COSTANIMALNAME) {
+                    $("#costrow").hide();
+                }
+                else {
+                    $("#costanimallink").html(row.COSTANIMALCODE + " " + row.COSTANIMALNAME);
+                    $("#costanimallink").prop("href", "animal_costs?id=" + row.COSTANIMALID);
+                    $("#costrow").show();
                 }
                 common.inject_target();
                 $("#deposit").val(format.currency(row.DEPOSIT));

@@ -1168,6 +1168,10 @@ msgstr ""
 msgid "Animal Types"
 msgstr ""
 
+#: dbupdate.py
+msgid "Animal board costs"
+msgstr ""
+
 #: animal.py
 msgid "Animal cannot be deceased before it was brought to the shelter"
 msgstr ""
@@ -2530,7 +2534,11 @@ msgstr ""
 msgid "Cost"
 msgstr ""
 
-#: lookups.py
+#: accounts_trx.js
+msgid "Cost For"
+msgstr ""
+
+#: accounts.js lookups.py
 msgid "Cost Type"
 msgstr ""
 
@@ -2680,6 +2688,10 @@ msgstr ""
 
 #: onlineform_incoming.js
 msgid "Create waiting list records from the selected forms"
+msgstr ""
+
+#: options.js
+msgid "Creating cost and cost types creates matching accounts and transactions"
 msgstr ""
 
 #: options.js
@@ -3053,6 +3065,10 @@ msgstr ""
 
 #: media.js
 msgid "Default image for this record and the web"
+msgstr ""
+
+#: options.js
+msgid "Default source account for costs"
 msgstr ""
 
 #: options.js
@@ -4162,6 +4178,14 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Expense"
+msgstr ""
+
+#: financial.py
+msgid "Expense::"
+msgstr ""
+
+#: dbupdate.py
+msgid "Expenses::Board"
 msgstr ""
 
 #: dbupdate.py
@@ -10398,6 +10422,10 @@ msgstr ""
 
 #: animal.js
 msgid "This date of birth is an estimate"
+msgstr ""
+
+#: accounts.js
+msgid "This expense account is the source for costs of this type"
 msgstr ""
 
 #: accounts.js

@@ -7,7 +7,7 @@ import sys
 from i18n import _, BUILD
 from sitedefs import DB_PK_STRATEGY
 
-LATEST_VERSION = 33609
+LATEST_VERSION = 33700
 VERSIONS = ( 
     2870, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3050,
     3051, 3081, 3091, 3092, 3093, 3094, 3110, 3111, 3120, 3121, 3122, 3123, 3200,
@@ -18,7 +18,7 @@ VERSIONS = (
     33206, 33300, 33301, 33302, 33303, 33304, 33305, 33306, 33307, 33308, 33309,
     33310, 33311, 33312, 33313, 33314, 33315, 33316, 33401, 33402, 33501, 33502,
     33503, 33504, 33505, 33506, 33507, 33508, 33600, 33601, 33602, 33603, 33604,
-    33605, 33606, 33607, 33608, 33609
+    33605, 33606, 33607, 33608, 33609, 33700
 )
 
 # All ASM3 tables
@@ -125,9 +125,12 @@ def sql_structure(dbo):
         fstr("Description"),
         fint("Archived", True),
         fint("AccountType"),
+        fint("CostTypeID"),
         fint("DonationTypeID") ))
     sql += index("accounts_Code", "accounts", "Code", True)
     sql += index("accounts_Archived", "accounts", "Archived")
+    sql += index("accounts_CostTypeID", "accounts", "CostTypeID")
+    sql += index("accounts_DonationTypeID", "accounts", "DonationTypeID")
  
     sql += table("accountsrole", (
         fint("AccountID"),
@@ -144,10 +147,13 @@ def sql_structure(dbo):
         fint("Amount"),
         fint("SourceAccountID"),
         fint("DestinationAccountID"),
+        fint("AnimalCostID"), 
         fint("OwnerDonationID") ))
     sql += index("accountstrx_TrxDate", "accountstrx", "TrxDate")
     sql += index("accountstrx_Source", "accountstrx", "SourceAccountID")
     sql += index("accountstrx_Dest", "accountstrx", "DestinationAccountID")
+    sql += index("accountstrx_Cost", "accountstrx", "AnimalCostID")
+    sql += index("accountstrx_Donation", "accountstrx", "OwnerDonationID")
 
     sql += table("activeuser", (
         field("UserName", SHORTTEXT, False, True),
@@ -1297,8 +1303,8 @@ def sql_default_data(dbo, skip_config = False):
         return "INSERT INTO %s VALUES (%s, '%s', '%s')|=\n" % ( tablename, str(tid), db.escape(name), "")
     def lookup2money(tablename, tid, name, money = 0):
         return "INSERT INTO %s VALUES (%s, '%s', '%s', %d)|=\n" % ( tablename, str(tid), db.escape(name), "", money)
-    def account(tid, code, desc, atype, dtype):
-        return "INSERT INTO accounts VALUES (%s, '%s', '%s', 0, %s, %s, 0, '%s', %s, '%s', %s)|=\n" % ( str(tid), db.escape(code), db.escape(desc), str(atype), str(dtype), 'default', db.todaysql(), 'default', db.todaysql())
+    def account(tid, code, desc, atype, dtype, ctype):
+        return "INSERT INTO accounts VALUES (%s, '%s', '%s', 0, %s, %s, %s, 0, '%s', %s, '%s', %s)|=\n" % ( str(tid), db.escape(code), db.escape(desc), str(atype), str(dtype), str(ctype), 'default', db.todaysql(), 'default', db.todaysql())
     def breed(tid, name, petfinder, speciesid):
         return "INSERT INTO breed VALUES (%s, '%s', '', '%s', %s)|=\n" % ( str(tid), db.escape(name), petfinder, str(speciesid) )
     def internallocation(lid, name):
@@ -1342,25 +1348,26 @@ def sql_default_data(dbo, skip_config = False):
         sql += config("AgeGroup3Name", _("Adult", l))
         sql += config("AgeGroup4", "50")
         sql += config("AgeGroup4Name", _("Senior", l))
-    sql += account(1, _("Income::Donation", l), _("Incoming donations (misc)", l), 5, 1)
-    sql += account(2, _("Income::Adoption", l), _("Adoption fee donations", l), 5, 2)
-    sql += account(3, _("Income::WaitingList", l), _("Waiting list donations", l), 5, 3)
-    sql += account(4, _("Income::EntryDonation", l), _("Donations for animals entering the shelter", l), 5, 4)
-    sql += account(5, _("Income::Sponsorship", l), _("Sponsorship donations", l), 5, 5)
-    sql += account(6, _("Income::Shop", l), _("Income from an on-site shop", l), 5, 0)
-    sql += account(7, _("Income::Interest", l), _("Bank account interest", l), 5, 0)
-    sql += account(8, _("Income::OpeningBalances", l), _("Opening balances", l), 5, 0)
-    sql += account(9, _("Bank::Current", l), _("Bank current account", l), 1, 0)
-    sql += account(10, _("Bank::Deposit", l), _("Bank deposit account", l), 1, 0)
-    sql += account(11, _("Bank::Savings", l), _("Bank savings account", l), 1, 0)
-    sql += account(12, _("Asset::Premises", l), _("Premises", l), 8, 0)
-    sql += account(13, _("Expenses::Phone", l), _("Telephone Bills", l), 4, 0)
-    sql += account(14, _("Expenses::Electricity", l), _("Electricity Bills", l), 4, 0)
-    sql += account(15, _("Expenses::Water", l), _("Water Bills", l), 4, 0)
-    sql += account(16, _("Expenses::Gas", l), _("Gas Bills", l), 4, 0)
-    sql += account(17, _("Expenses::Postage", l), _("Postage costs", l), 4, 0)
-    sql += account(18, _("Expenses::Stationary", l), _("Stationary costs", l), 4, 0)
-    sql += account(19, _("Expenses::Food", l), _("Animal food costs"), 4, 0)
+    sql += account(1, _("Income::Donation", l), _("Incoming donations (misc)", l), 5, 1, 0)
+    sql += account(2, _("Income::Adoption", l), _("Adoption fee donations", l), 5, 2, 0)
+    sql += account(3, _("Income::WaitingList", l), _("Waiting list donations", l), 5, 3, 0)
+    sql += account(4, _("Income::EntryDonation", l), _("Donations for animals entering the shelter", l), 5, 4, 0)
+    sql += account(5, _("Income::Sponsorship", l), _("Sponsorship donations", l), 5, 5, 0)
+    sql += account(6, _("Income::Shop", l), _("Income from an on-site shop", l), 5, 0, 0)
+    sql += account(7, _("Income::Interest", l), _("Bank account interest", l), 5, 0, 0)
+    sql += account(8, _("Income::OpeningBalances", l), _("Opening balances", l), 5, 0, 0)
+    sql += account(9, _("Bank::Current", l), _("Bank current account", l), 1, 0, 0)
+    sql += account(10, _("Bank::Deposit", l), _("Bank deposit account", l), 1, 0, 0)
+    sql += account(11, _("Bank::Savings", l), _("Bank savings account", l), 1, 0, 0)
+    sql += account(12, _("Asset::Premises", l), _("Premises", l), 8, 0, 0)
+    sql += account(13, _("Expenses::Phone", l), _("Telephone Bills", l), 4, 0, 0)
+    sql += account(14, _("Expenses::Electricity", l), _("Electricity Bills", l), 4, 0, 0)
+    sql += account(15, _("Expenses::Water", l), _("Water Bills", l), 4, 0, 0)
+    sql += account(16, _("Expenses::Gas", l), _("Gas Bills", l), 4, 0, 0)
+    sql += account(17, _("Expenses::Postage", l), _("Postage costs", l), 4, 0, 0)
+    sql += account(18, _("Expenses::Stationary", l), _("Stationary costs", l), 4, 0, 0)
+    sql += account(19, _("Expenses::Food", l), _("Animal food costs"), 4, 0, 0)
+    sql += account(20, _("Expenses::Board", l), _("Animal board costs"), 4, 0, 1)
     sql += lookup2("animaltype", 2, _("D (Dog)", l))
     sql += lookup2("animaltype", 10, _("A (Stray Dog)", l))
     sql += lookup2("animaltype", 11, _("U (Unwanted Cat)", l))
@@ -3888,4 +3895,15 @@ def update_33609(dbo):
     db.execute_dbupdate(dbo, "INSERT INTO lksrotatype VALUES (7, %s)" % db.ds(_("Sick leave", l)))
     db.execute_dbupdate(dbo, "INSERT INTO lksrotatype VALUES (8, %s)" % db.ds(_("Training", l)))
     db.execute_dbupdate(dbo, "INSERT INTO lksrotatype VALUES (9, %s)" % db.ds(_("Unavailable", l)))
+
+def update_33700(dbo):
+    # Add account.CostTypeID
+    add_column(dbo, "accounts", "CostTypeID", "INTEGER")
+    add_index(dbo, "accounts_CostTypeID", "accounts", "CostTypeID")
+    # Add accountstrx.AnimalCostID
+    add_column(dbo, "accountstrx", "AnimalCostID", "INTEGER")
+    add_index(dbo, "accountstrx_AnimalCostID", "accountstrx", "AnimalCostID")
+    # Default values
+    db.execute_dbupdate(dbo, "UPDATE accounts SET CostTypeID = 0")
+    db.execute_dbupdate(dbo, "UPDATE accountstrx SET AnimalCostID = 0")
 

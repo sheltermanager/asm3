@@ -10,6 +10,7 @@ import diary
 import db
 import dbfs
 import extension
+import financial
 import log
 import lookups
 import media
@@ -2430,6 +2431,7 @@ def insert_cost_from_form(dbo, username, post):
         ))
     db.execute(dbo, sql)
     audit.create(dbo, username, "animalcost", str(ncostid))
+    financial.update_matching_cost_transaction(dbo, username, ncostid)
     return ncostid
 
 def update_cost_from_form(dbo, username, post):
@@ -2448,6 +2450,7 @@ def update_cost_from_form(dbo, username, post):
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM animalcost WHERE ID = %d" % costid)
     audit.edit(dbo, username, "animalcost", audit.map_diff(preaudit, postaudit))
+    financial.update_matching_cost_transaction(dbo, username, costid)
 
 def delete_cost(dbo, username, cid):
     """

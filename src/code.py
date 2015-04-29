@@ -825,6 +825,7 @@ class accounts:
         title = _("Accounts", l)
         s = html.header(title, session, "accounts.js")
         c = html.controller_json("accounttypes", extlookups.get_account_types(dbo))
+        c += html.controller_json("costtypes", extlookups.get_costtypes(dbo))
         c += html.controller_json("donationtypes", extlookups.get_donation_types(dbo))
         c += html.controller_json("roles", users.get_roles(dbo))
         c += html.controller_json("rows", accounts)

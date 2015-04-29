@@ -122,7 +122,9 @@ DEFAULTS = {
     "AFNonShelterType": "40",
     "BoardingCostType": "1",
     "CancelReservesOnAdoption": "Yes",
+    "CostSourceAccount": "9",
     "CreateBoardingCostOnAdoption": "Yes",
+    "CreateCostTrx": "No",
     "CreateDonationTrx": "Yes",
     "CodingFormat": "TYYYNNN",
     "ShortCodingFormat": "NNT",
@@ -141,6 +143,7 @@ DEFAULTS = {
     "DisableOnlineForms": "No",
     "DisableRetailer": "No",
     "DocumentWordProcessor": "HTML",
+    "DonationTargetAccount": "9",
     "DonationTrxOverride": "No",
     "DonationOnMoveReserve": "Yes",
     "DontShowCombi": "Yes",
@@ -471,6 +474,12 @@ def coding_format(dbo):
 def coding_format_short(dbo):
     return cstring(dbo, "ShortCodingFormat", DEFAULTS["ShortCodingFormat"])
 
+def cost_source_account(dbo):
+    return cint(dbo, "CostSourceAccount", DEFAULTS["CostSourceAccount"])
+
+def create_cost_trx(dbo):
+    return cboolean(dbo, "CreateCostTrx")
+
 def create_donation_trx(dbo):
     return cboolean(dbo, "CreateDonationTrx")
 
@@ -568,7 +577,7 @@ def disable_investigation(dbo):
     return cboolean(dbo, "DisableInvestigation", DEFAULTS["DisableInvestigation"] == "Yes")
 
 def donation_target_account(dbo):
-    return cint(dbo, "DonationTargetAccount", 0)
+    return cint(dbo, "DonationTargetAccount", DEFAULTS["DonationTargetAccount"])
 
 def donation_account_mappings(dbo):
     m = {}
@@ -877,6 +886,9 @@ def show_first_time_screen(dbo, change = False, newvalue = False):
 
 def show_alerts_home_page(dbo):
     return cboolean(dbo, "ShowAlertsHomePage", DEFAULTS["ShowAlertsHomePage"] == "Yes")
+
+def show_cost_paid(dbo):
+    return cboolean(dbo, "ShowCostPaid", DEFAULTS["ShowCostPaid"] == "Yes")
 
 def show_stats_home_page(dbo):
     return cstring(dbo, "ShowStatsHomePage", DEFAULTS["ShowStatsHomePage"])

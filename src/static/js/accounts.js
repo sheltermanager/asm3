@@ -20,6 +20,9 @@ $(function() {
             { json_field: "DONATIONTYPEID", post_field: "donationtype", label: _("Payment Type"), type: "select", 
                 tooltip: _("This income account is the source for payments received of this type"),
                 options: { displayfield: "DONATIONNAME", valuefield: "ID", rows: controller.donationtypes }},
+            { json_field: "COSTTYPEID", post_field: "costtype", label: _("Cost Type"), type: "select", 
+                tooltip: _("This expense account is the source for costs of this type"),
+                options: { displayfield: "COSTTYPENAME", valuefield: "ID", rows: controller.costtypes }},
             { json_field: "VIEWROLEIDS", post_field: "viewroles", label: _("View Roles"), type: "selectmulti", 
                 options: { rows: controller.roles, valuefield: "ID", displayfield: "ROLENAME" }},
             { json_field: "EDITROLEIDS", post_field: "editroles", label: _("Edit Roles"), type: "selectmulti", 
@@ -54,6 +57,13 @@ $(function() {
             }
             else {
                 $("#donationtype").closest("tr").show(); 
+            }
+            // Only show cost type links for expense accounts
+            if (row.ACCOUNTTYPE != 4) { 
+                $("#costtype").closest("tr").hide(); 
+            }
+            else {
+                $("#costtype").closest("tr").show(); 
             }
             tableform.dialog_show_edit(dialog, row, function() {
                 tableform.fields_update_row(dialog.fields, row);
@@ -142,8 +152,9 @@ $(function() {
             tableform.dialog_bind(dialog);
             tableform.buttons_bind(buttons);
             tableform.table_bind(table, buttons);
-            // Add an unmapped donation type selection
+            // Add an unmapped cost type selection
             $("#donationtype").prepend('<option value="0"> </option>');
+            $("#costtype").prepend('<option value="0"> </option>');
         },
 
         sync: function() {
