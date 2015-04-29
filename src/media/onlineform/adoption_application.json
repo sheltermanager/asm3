@@ -1,0 +1,798 @@
+{
+    "fields": [
+        {
+            "index": 1,
+            "lookups": "",
+            "mandatory": true,
+            "name": "reserveanimalname",
+            "tooltip": "",
+            "label": "Animal you are interested in adopting",
+            "type": "ADOPTABLEANIMAL"
+        },
+        {
+            "index": 3,
+            "lookups": "",
+            "mandatory": true,
+            "name": "firstname",
+            "tooltip": "",
+            "label": "Applicant's First Name",
+            "type": "TEXT"
+        },
+        {
+            "index": 4,
+            "lookups": "",
+            "mandatory": true,
+            "name": "lastname",
+            "tooltip": "",
+            "label": "Applicant's Last Name",
+            "type": "TEXT"
+        },
+        {
+            "index": 5,
+            "lookups": "",
+            "mandatory": true,
+            "name": "address",
+            "tooltip": "",
+            "label": "Street Address",
+            "type": "TEXT"
+        },
+        {
+            "index": 6,
+            "lookups": "",
+            "mandatory": true,
+            "name": "city",
+            "tooltip": "",
+            "label": "City",
+            "type": "TEXT"
+        },
+        {
+            "index": 7,
+            "lookups": "",
+            "mandatory": true,
+            "name": "state",
+            "tooltip": "",
+            "label": "State",
+            "type": "TEXT"
+        },
+        {
+            "index": 8,
+            "lookups": "",
+            "mandatory": true,
+            "name": "Apartment#",
+            "tooltip": "",
+            "label": "Apartment Number (if applicable)",
+            "type": "TEXT"
+        },
+        {
+            "index": 9,
+            "lookups": "",
+            "mandatory": true,
+            "name": "zipcode",
+            "tooltip": "",
+            "label": "Zip Code",
+            "type": "TEXT"
+        },
+        {
+            "index": 10,
+            "lookups": "",
+            "mandatory": true,
+            "name": "hometelephone",
+            "tooltip": "Please use the following format 248-555-1212",
+            "label": "Phone Number",
+            "type": "TEXT"
+        },
+        {
+            "index": 11,
+            "lookups": "",
+            "mandatory": true,
+            "name": "emailaddress",
+            "tooltip": "Please enter correctly as this is the main way we will contact you",
+            "label": "Email Address",
+            "type": "TEXT"
+        },
+        {
+            "index": 12,
+            "lookups": "",
+            "mandatory": false,
+            "name": "celltelephone",
+            "tooltip": "",
+            "label": "Alternate Phone Number",
+            "type": "TEXT"
+        },
+        {
+            "index": 13,
+            "lookups": "",
+            "mandatory": false,
+            "name": "dateofbirth",
+            "tooltip": "",
+            "label": "Date of Birth",
+            "type": "DATE"
+        },
+        {
+            "index": 14,
+            "lookups": "",
+            "mandatory": false,
+            "name": "Driverslicensenumber",
+            "tooltip": "",
+            "label": "Drivers License Number",
+            "type": "TEXT"
+        },
+        {
+            "index": 15,
+            "lookups": "Petfinder|Internet Search|Family/Friend|Staff/Volunteer|Facebook/Twitter|Other",
+            "mandatory": false,
+            "name": "Howdidyoufindus",
+            "tooltip": "",
+            "label": "How did you find out about us?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 16,
+            "lookups": "Yes",
+            "mandatory": false,
+            "name": "Haveyouappliedanywhereelse",
+            "tooltip": "",
+            "label": "Have you applied anywhere else for a pet?",
+            "type": "YESNO"
+        },
+        {
+            "index": 17,
+            "lookups": "",
+            "mandatory": false,
+            "name": "Ifyeswhere",
+            "tooltip": "",
+            "label": "If yes, where else have you applied for a pet?",
+            "type": "TEXT"
+        },
+        {
+            "index": 18,
+            "lookups": "Myself|Someone else",
+            "mandatory": false,
+            "name": "petownership",
+            "tooltip": "",
+            "label": "Is this pet for you or someone else?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 19,
+            "lookups": "",
+            "mandatory": false,
+            "name": "otherpets",
+            "tooltip": "",
+            "label": "Do you own other pets at the current time?",
+            "type": "YESNO"
+        },
+        {
+            "index": 20,
+            "lookups": "",
+            "mandatory": false,
+            "name": "ifyeswhatpets",
+            "tooltip": "",
+            "label": "If yes, please list their names, breeds, and ages.",
+            "type": "NOTES"
+        },
+        {
+            "index": 21,
+            "lookups": "Yes|No|N/A",
+            "mandatory": false,
+            "name": "spayedneutered",
+            "tooltip": "",
+            "label": "Are all of your pets spayed/neutered/fixed?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 22,
+            "lookups": "",
+            "mandatory": false,
+            "name": "Howmanypets",
+            "tooltip": "",
+            "label": "How many pets have you owned in the last 5-10 years?",
+            "type": "TEXT"
+        },
+        {
+            "index": 23,
+            "lookups": "",
+            "mandatory": false,
+            "name": "whathappenedtothem",
+            "tooltip": "",
+            "label": "What happened to them?",
+            "type": "NOTES"
+        },
+        {
+            "index": 24,
+            "lookups": "Yes|no|n/a",
+            "mandatory": false,
+            "name": "vacinations",
+            "tooltip": "",
+            "label": "Are your pets current on their vaccinations?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 25,
+            "lookups": "",
+            "mandatory": false,
+            "name": "pettoshelter",
+            "tooltip": "",
+            "label": "Have you ever turned your dog or cat into a shelter?",
+            "type": "YESNO"
+        },
+        {
+            "index": 26,
+            "lookups": "",
+            "mandatory": false,
+            "name": "ifyespleaseexplain",
+            "tooltip": "",
+            "label": "If yes, please explain?",
+            "type": "NOTES"
+        },
+        {
+            "index": 27,
+            "lookups": "",
+            "mandatory": false,
+            "name": "veterinariansname",
+            "tooltip": "If you have never owned a pet please tell us where you would go.",
+            "label": "Veterinarian's Name",
+            "type": "TEXT"
+        },
+        {
+            "index": 28,
+            "lookups": "",
+            "mandatory": false,
+            "name": "vetsaddress",
+            "tooltip": "Again if you have never owned a pet please list where you would go",
+            "label": "Veterinarian's Address, City, State, and Zip Code",
+            "type": "NOTES"
+        },
+        {
+            "index": 29,
+            "lookups": "",
+            "mandatory": false,
+            "name": "vetphonenumber",
+            "tooltip": "",
+            "label": "Veterinarian's Phone Number",
+            "type": "TEXT"
+        },
+        {
+            "index": 30,
+            "lookups": "",
+            "mandatory": false,
+            "name": "euthinized",
+            "tooltip": "",
+            "label": "Have you ever had a pet euthanized?",
+            "type": "YESNO"
+        },
+        {
+            "index": 31,
+            "lookups": "",
+            "mandatory": false,
+            "name": "euthizereason",
+            "tooltip": "",
+            "label": "If yes, please explain:",
+            "type": "NOTES"
+        },
+        {
+            "index": 32,
+            "lookups": "Agree|Disagree|Not Sure",
+            "mandatory": false,
+            "name": "spayedorneutered",
+            "tooltip": "",
+            "label": "How do you feel about having pets spayed/neutered?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 33,
+            "lookups": "",
+            "mandatory": false,
+            "name": "heartworm",
+            "tooltip": "",
+            "label": "Are you familiar with heartworm and heartworm prevention?",
+            "type": "YESNO"
+        },
+        {
+            "index": 34,
+            "lookups": "Yes|No|Unsure|N/A",
+            "mandatory": false,
+            "name": "petadjsutment",
+            "tooltip": "",
+            "label": "If you have pets, will they adjust to a new pet in the house?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 35,
+            "lookups": "Yes|No|N/A",
+            "mandatory": false,
+            "name": "obedienceschool",
+            "tooltip": "",
+            "label": "Were any of your pets obedience trained?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 36,
+            "lookups": "Companion| Family Pet| Child's Pet Guard Dog| Companion for another pet| Other",
+            "mandatory": false,
+            "name": "adoptionreason",
+            "tooltip": "",
+            "label": "Please check the main reason you plan to adopt a pet:",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 37,
+            "lookups": "",
+            "mandatory": false,
+            "name": "otherreasontoadopt",
+            "tooltip": "",
+            "label": "If you answered \"other\" above, please explain here:",
+            "type": "NOTES"
+        },
+        {
+            "index": 38,
+            "lookups": "",
+            "mandatory": false,
+            "name": "describepetofinterest",
+            "tooltip": "",
+            "label": "Please describe in detail the pet you are looking for.",
+            "type": "NOTES"
+        },
+        {
+            "index": 39,
+            "lookups": "Own|Rent|Someone else owns the Home|Someone else rents the Home",
+            "mandatory": false,
+            "name": "homeownership",
+            "tooltip": "",
+            "label": "Do you own or rent your home?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 40,
+            "lookups": "House|Apartment|Condo|Townhouse|Mobile Home|Other",
+            "mandatory": false,
+            "name": "residenttype",
+            "tooltip": "",
+            "label": "Please select your current residence type.",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 41,
+            "lookups": "",
+            "mandatory": false,
+            "name": "otherhometype",
+            "tooltip": "",
+            "label": "If you answered \"other\" above, please explain here:",
+            "type": "NOTES"
+        },
+        {
+            "index": 42,
+            "lookups": "Less than one month| 1-2 months|3-6 months| 6-9 months| 9-12 months|1-2 years|3-5 years|6-10 years|10 + years",
+            "mandatory": false,
+            "name": "Hometimein",
+            "tooltip": "",
+            "label": "How long have you lived at this address?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 43,
+            "lookups": "Yes|No|Unsure|N/A",
+            "mandatory": false,
+            "name": "landlordallowspets",
+            "tooltip": "",
+            "label": "If you rent, does your landlord and lease allow pets?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 44,
+            "lookups": "",
+            "mandatory": false,
+            "name": "numberinhouse",
+            "tooltip": "",
+            "label": "Including yourself, how many people live in your household?",
+            "type": "TEXT"
+        },
+        {
+            "index": 45,
+            "lookups": "",
+            "mandatory": false,
+            "name": "agesinhouse",
+            "tooltip": "",
+            "label": "Please list the ages & relationship of those who live in your home.",
+            "type": "NOTES"
+        },
+        {
+            "index": 46,
+            "lookups": "Yes| No| N/A",
+            "mandatory": false,
+            "name": "everybodyexpectspet",
+            "tooltip": "",
+            "label": "Is everyone in your household aware that you are planning to adopt a pet?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 47,
+            "lookups": "Yes| No| Possibly| N/A",
+            "mandatory": false,
+            "name": "alergies",
+            "tooltip": "",
+            "label": "Does anyone in your household have allergies to dogs/cats?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 48,
+            "lookups": "Full-Time| Part-Time| Retired| Work from Home|Stay at Home Parent| Student| Unemployed| Other",
+            "mandatory": false,
+            "name": "employment",
+            "tooltip": "",
+            "label": "Employment Status",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 49,
+            "lookups": "",
+            "mandatory": false,
+            "name": "employmentother",
+            "tooltip": "",
+            "label": "If you chose \"other\" above, please explain:",
+            "type": "NOTES"
+        },
+        {
+            "index": 50,
+            "lookups": "",
+            "mandatory": false,
+            "name": "currentoccupation",
+            "tooltip": "",
+            "label": "If you are employed, what is your current occupation?",
+            "type": "TEXT"
+        },
+        {
+            "index": 51,
+            "lookups": "",
+            "mandatory": false,
+            "name": "petleftalone",
+            "tooltip": "",
+            "label": "On average, how many hours per day will your pet be left alone?",
+            "type": "TEXT"
+        },
+        {
+            "index": 52,
+            "lookups": "About $100| $100 - $200| $200 - $300| $300 - $500| $500 +",
+            "mandatory": false,
+            "name": "estvetbills",
+            "tooltip": "",
+            "label": "How much do you think the annual medical bills will be for your pet?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 53,
+            "lookups": "",
+            "mandatory": false,
+            "name": "billoverage",
+            "tooltip": "",
+            "label": "What would you do if the bills went over this amount?",
+            "type": "NOTES"
+        },
+        {
+            "index": 54,
+            "lookups": "Inside|Outside| Both",
+            "mandatory": false,
+            "name": "insideoutside",
+            "tooltip": "",
+            "label": "Will this pet be predominantly living inside, outside, or both?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 55,
+            "lookups": "",
+            "mandatory": false,
+            "name": "livingconditiions",
+            "tooltip": "",
+            "label": "Please provide a description of this pet's living conditions.",
+            "type": "NOTES"
+        },
+        {
+            "index": 56,
+            "lookups": "Wood| Chain Link| Electric| Plastic|Iron|Other|Other (I do not have a fenced yard)",
+            "mandatory": false,
+            "name": "fencedyard",
+            "tooltip": "",
+            "label": "Do you have a completely fenced-in yard? If so, what kind of fence?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 57,
+            "lookups": "",
+            "mandatory": false,
+            "name": "otheronfencing",
+            "tooltip": "",
+            "label": "If you answered \"other\" above, please explain:",
+            "type": "NOTES"
+        },
+        {
+            "index": 58,
+            "lookups": "",
+            "mandatory": false,
+            "name": "dogletout",
+            "tooltip": "",
+            "label": "If you do not have a fenced yard, how will you let the animal out?",
+            "type": "NOTES"
+        },
+        {
+            "index": 59,
+            "lookups": "Yes|No|N/A",
+            "mandatory": false,
+            "name": "chainedup",
+            "tooltip": "",
+            "label": "Are there times when the animal will be tied/chained up?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 60,
+            "lookups": "",
+            "mandatory": false,
+            "name": "chainedwhen",
+            "tooltip": "",
+            "label": "If yes, when will they be tied/chained up?",
+            "type": "NOTES"
+        },
+        {
+            "index": 61,
+            "lookups": "In bed with me| In bed with my child| In a dog / cat bed| In a kennel / crate| Wherever he or she likes| Outside| Other",
+            "mandatory": false,
+            "name": "wheresleep",
+            "tooltip": "",
+            "label": "Where will the animal sleep?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 62,
+            "lookups": "",
+            "mandatory": false,
+            "name": "otherwheresleep",
+            "tooltip": "",
+            "label": "If you answered \"other\" above, please explain:",
+            "type": "NOTES"
+        },
+        {
+            "index": 63,
+            "lookups": "Yes|No|N/A",
+            "mandatory": false,
+            "name": "garagetime",
+            "tooltip": "",
+            "label": "Will the animal spend any time in the garage?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 64,
+            "lookups": "",
+            "mandatory": false,
+            "name": "explaingarage",
+            "tooltip": "",
+            "label": "If the animal will spend time in the garage, please explain when/why:",
+            "type": "NOTES"
+        },
+        {
+            "index": 65,
+            "lookups": "",
+            "mandatory": false,
+            "name": "Pool",
+            "tooltip": "",
+            "label": "Do you have a pool?",
+            "type": "YESNO"
+        },
+        {
+            "index": 66,
+            "lookups": "N/A|Yes|No",
+            "mandatory": false,
+            "name": "Poolfence",
+            "tooltip": "",
+            "label": "Is there a fence around the pool?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 67,
+            "lookups": "N/A| Wood| Chain Link| Plastic| Iron| Other",
+            "mandatory": false,
+            "name": "poolfencetype",
+            "tooltip": "",
+            "label": "What kind of fence do you have around your pool?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 68,
+            "lookups": "",
+            "mandatory": false,
+            "name": "otherfence",
+            "tooltip": "",
+            "label": "If you answered \"other\" above, please explain:",
+            "type": "NOTES"
+        },
+        {
+            "index": 69,
+            "lookups": "",
+            "mandatory": false,
+            "name": "housebreaking",
+            "tooltip": "",
+            "label": "How will you handle housebreaking?",
+            "type": "NOTES"
+        },
+        {
+            "index": 70,
+            "lookups": "",
+            "mandatory": false,
+            "name": "destructivebehavior",
+            "tooltip": "",
+            "label": "How will you handle destructive behavior?",
+            "type": "NOTES"
+        },
+        {
+            "index": 71,
+            "lookups": "",
+            "mandatory": false,
+            "name": "updatevaccinations",
+            "tooltip": "",
+            "label": "Will you keep the animal up-to-date on vaccinations and heartworm preventative?",
+            "type": "YESNO"
+        },
+        {
+            "index": 72,
+            "lookups": "",
+            "mandatory": false,
+            "name": "explainnovaccinations",
+            "tooltip": "",
+            "label": "If no, please explain:",
+            "type": "NOTES"
+        },
+        {
+            "index": 73,
+            "lookups": "Yes|No|N/A",
+            "mandatory": false,
+            "name": "willintoexercise",
+            "tooltip": "",
+            "label": "Are you willing and able to exercise the dog on a regular basis?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 74,
+            "lookups": "Walking| Running| Dog Park / Dog Run| Other",
+            "mandatory": false,
+            "name": "exercisetype",
+            "tooltip": "",
+            "label": "If yes, what is the method of exercise?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 75,
+            "lookups": "",
+            "mandatory": false,
+            "name": "otherexercise",
+            "tooltip": "",
+            "label": "If you answered \"other\" above, please explain:",
+            "type": "NOTES"
+        },
+        {
+            "index": 76,
+            "lookups": "",
+            "mandatory": false,
+            "name": "abuse",
+            "tooltip": "",
+            "label": "Have you ever been convicted of abuse or neglect of a child or animal?",
+            "type": "YESNO"
+        },
+        {
+            "index": 77,
+            "lookups": "",
+            "mandatory": false,
+            "name": "abuseexplanation",
+            "tooltip": "",
+            "label": "If yes, please explain:",
+            "type": "NOTES"
+        },
+        {
+            "index": 78,
+            "lookups": "Yes|No|N/A",
+            "mandatory": false,
+            "name": "pickuptruck",
+            "tooltip": "",
+            "label": "If you drive a pick up truck, would you allow the animal to ride in the back/bed?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 79,
+            "lookups": "Leave with family/friend|Boarding|Pet Sitter|Take with me/us| Other",
+            "mandatory": false,
+            "name": "emergencyarragements",
+            "tooltip": "",
+            "label": "What arrangements will you make for the care of your pets in case of an emergency?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 80,
+            "lookups": "",
+            "mandatory": false,
+            "name": "emergencyother",
+            "tooltip": "",
+            "label": "If you answered \"other\" above, please explain:",
+            "type": "NOTES"
+        },
+        {
+            "index": 81,
+            "lookups": "Leave with family/friend| Boarding|Pet sitter|Take with me/us| Other",
+            "mandatory": false,
+            "name": "vacation",
+            "tooltip": "",
+            "label": "What will you do with the animal when you go on vacation?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 82,
+            "lookups": "",
+            "mandatory": false,
+            "name": "vacationother",
+            "tooltip": "",
+            "label": "If you answered \"other\" above, please explain:",
+            "type": "NOTES"
+        },
+        {
+            "index": 83,
+            "lookups": "",
+            "mandatory": false,
+            "name": "animalgiveup",
+            "tooltip": "",
+            "label": "For what reason(s) would you consider returning/giving up the animal?",
+            "type": "NOTES"
+        },
+        {
+            "index": 84,
+            "lookups": "Take him / her with me|Give to family or friend| Return to shelter|Other",
+            "mandatory": false,
+            "name": "movingandanimal",
+            "tooltip": "",
+            "label": "What would you do with your animal if you had to move?",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 85,
+            "lookups": "",
+            "mandatory": false,
+            "name": "movingother",
+            "tooltip": "",
+            "label": "If you answered \"other\" above, please explain:",
+            "type": "NOTES"
+        },
+        {
+            "index": 86,
+            "lookups": "",
+            "mandatory": false,
+            "name": "keepanimalforyears",
+            "tooltip": "",
+            "label": "Are you willing to take responsibility for this animal for the next 10-20 years?",
+            "type": "YESNO"
+        },
+        {
+            "index": 87,
+            "lookups": "",
+            "mandatory": false,
+            "name": "notokeepinganimal",
+            "tooltip": "",
+            "label": "If no, please explain:",
+            "type": "NOTES"
+        },
+        {
+            "index": 88,
+            "lookups": "",
+            "mandatory": false,
+            "name": "Homechecks",
+            "tooltip": "",
+            "label": "Will you allow us to perform home checks?",
+            "type": "YESNO"
+        },
+        {
+            "index": 89,
+            "lookups": "Yes|No",
+            "mandatory": false,
+            "name": "contractagreement",
+            "tooltip": "",
+            "label": "I have read the foregoing and certify that the answers I have given are complete, true and not misleading in any way. I am authorizing you to contact landlords, associations and veterinarians. You are also aware that we cannot guarantee the health and temperament of the animal.",
+            "type": "LOOKUP"
+        }
+    ],
+    "name": "Adoption Application",
+    "description": ""
+}

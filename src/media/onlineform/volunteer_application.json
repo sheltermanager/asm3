@@ -1,0 +1,420 @@
+{
+    "fields": [
+        {
+            "index": 1,
+            "lookups": "yes",
+            "mandatory": true,
+            "name": "iamover18yearsold",
+            "tooltip": "If you are not 18 or over please do not continue.  We cannot accept volunteers under 18 for liability reasons.  However many young men and women help by raising money, blanket, food and toy drives.  We would love your help. You do not have to fill out this application to contribute in other ways.",
+            "label": "I am over 18 Years old",
+            "type": "YESNO"
+        },
+        {
+            "index": 2,
+            "lookups": "",
+            "mandatory": true,
+            "name": "firstname",
+            "tooltip": "",
+            "label": "Name - First",
+            "type": "TEXT"
+        },
+        {
+            "index": 3,
+            "lookups": "",
+            "mandatory": true,
+            "name": "lastname",
+            "tooltip": "",
+            "label": "Name - Last",
+            "type": "TEXT"
+        },
+        {
+            "index": 4,
+            "lookups": "",
+            "mandatory": true,
+            "name": "address",
+            "tooltip": "",
+            "label": "Address",
+            "type": "TEXT"
+        },
+        {
+            "index": 5,
+            "lookups": "",
+            "mandatory": true,
+            "name": "city",
+            "tooltip": "",
+            "label": "City",
+            "type": "TEXT"
+        },
+        {
+            "index": 6,
+            "lookups": "",
+            "mandatory": true,
+            "name": "state",
+            "tooltip": "",
+            "label": "State",
+            "type": "TEXT"
+        },
+        {
+            "index": 7,
+            "lookups": "",
+            "mandatory": true,
+            "name": "zipcode",
+            "tooltip": "",
+            "label": "ZIP",
+            "type": "TEXT"
+        },
+        {
+            "index": 8,
+            "lookups": "",
+            "mandatory": true,
+            "name": "hometelephone",
+            "tooltip": "",
+            "label": "Phone",
+            "type": "TEXT"
+        },
+        {
+            "index": 9,
+            "lookups": "",
+            "mandatory": true,
+            "name": "emailaddress",
+            "tooltip": "",
+            "label": "Email",
+            "type": "TEXT"
+        },
+        {
+            "index": 10,
+            "lookups": "",
+            "mandatory": true,
+            "name": "driverslicense",
+            "tooltip": "",
+            "label": "Driver's License #.",
+            "type": "TEXT"
+        },
+        {
+            "index": 10,
+            "lookups": "",
+            "mandatory": true,
+            "name": "Transportation",
+            "tooltip": "",
+            "label": "Do you have reliable transportation?",
+            "type": "YESNO"
+        },
+        {
+            "index": 11,
+            "lookups": "",
+            "mandatory": true,
+            "name": "emergencycontact",
+            "tooltip": "",
+            "label": "Emergency contact name",
+            "type": "TEXT"
+        },
+        {
+            "index": 11,
+            "lookups": "",
+            "mandatory": true,
+            "name": "emergencynumber",
+            "tooltip": "",
+            "label": "Emergency contact number",
+            "type": "TEXT"
+        },
+        {
+            "index": 11,
+            "lookups": "",
+            "mandatory": true,
+            "name": "courtorder",
+            "tooltip": "",
+            "label": "Are you volunteering to fulfill a court ordered community service program?",
+            "type": "YESNO"
+        },
+        {
+            "index": 12,
+            "lookups": "",
+            "mandatory": true,
+            "name": "healthinsurance",
+            "tooltip": "",
+            "label": "Do you have health insurance?",
+            "type": "YESNO"
+        },
+        {
+            "index": 13,
+            "lookups": "",
+            "mandatory": true,
+            "name": "dogcare",
+            "tooltip": "",
+            "label": "Dog Care",
+            "type": "YESNO"
+        },
+        {
+            "index": 14,
+            "lookups": "",
+            "mandatory": true,
+            "name": "catcare",
+            "tooltip": "",
+            "label": "Cat Care",
+            "type": "YESNO"
+        },
+        {
+            "index": 16,
+            "lookups": "",
+            "mandatory": true,
+            "name": "beingoncommittee",
+            "tooltip": "",
+            "label": "Being on a Committee",
+            "type": "YESNO"
+        },
+        {
+            "index": 18,
+            "lookups": "",
+            "mandatory": true,
+            "name": "officesecretarial",
+            "tooltip": "",
+            "label": "Office/Secretarial",
+            "type": "YESNO"
+        },
+        {
+            "index": 19,
+            "lookups": "",
+            "mandatory": true,
+            "name": "legal",
+            "tooltip": "",
+            "label": "Legal Help",
+            "type": "YESNO"
+        },
+        {
+            "index": 20,
+            "lookups": "",
+            "mandatory": true,
+            "name": "fosteringshort",
+            "tooltip": "",
+            "label": "Fostering - Short Term",
+            "type": "YESNO"
+        },
+        {
+            "index": 21,
+            "lookups": "",
+            "mandatory": true,
+            "name": "fosteringlong",
+            "tooltip": "See our fostering information and application for more information",
+            "label": "Fostering - Long Term",
+            "type": "YESNO"
+        },
+        {
+            "index": 22,
+            "lookups": "",
+            "mandatory": true,
+            "name": "fostercarecoordinator",
+            "tooltip": "",
+            "label": "Foster Care Coordinator",
+            "type": "YESNO"
+        },
+        {
+            "index": 23,
+            "lookups": "",
+            "mandatory": true,
+            "name": "helpingoutshelter",
+            "tooltip": "",
+            "label": "Helping Out at the Shelter - General Cleaning",
+            "type": "YESNO"
+        },
+        {
+            "index": 24,
+            "lookups": "",
+            "mandatory": true,
+            "name": "planningevents",
+            "tooltip": "",
+            "label": "Planning or Helping Out at Events",
+            "type": "YESNO"
+        },
+        {
+            "index": 25,
+            "lookups": "",
+            "mandatory": true,
+            "name": "bathinggooming",
+            "tooltip": "",
+            "label": "Bathing and Grooming Animals",
+            "type": "YESNO"
+        },
+        {
+            "index": 26,
+            "lookups": "",
+            "mandatory": true,
+            "name": "animaltrainer",
+            "tooltip": "",
+            "label": "Animal Trainer",
+            "type": "YESNO"
+        },
+        {
+            "index": 27,
+            "lookups": "",
+            "mandatory": true,
+            "name": "newslettereditor",
+            "tooltip": "",
+            "label": "Newsletter editor and assistant",
+            "type": "YESNO"
+        },
+        {
+            "index": 28,
+            "lookups": "Writing Grants|calling companies|PR efforts",
+            "mandatory": true,
+            "name": "fundraising",
+            "tooltip": "Please include interest in activities like\nEvent planning, solicitation efforts, grant writing, donor searches, Public Relations, etc.",
+            "label": "Fundraising efforts",
+            "type": "NOTES"
+        },
+        {
+            "index": 29,
+            "lookups": "",
+            "mandatory": true,
+            "name": "drivinganimals",
+            "tooltip": "",
+            "label": "Driving Animals to Vet Appointments, Adoption Events, etc.",
+            "type": "YESNO"
+        },
+        {
+            "index": 33,
+            "lookups": "",
+            "mandatory": true,
+            "name": "workathome",
+            "tooltip": "",
+            "label": "Doing Volunteer Work at Home",
+            "type": "YESNO"
+        },
+        {
+            "index": 34,
+            "lookups": "",
+            "mandatory": true,
+            "name": "fliersfriendsandfamily",
+            "tooltip": "",
+            "label": "Emailing Fliers to Friends and Family",
+            "type": "YESNO"
+        },
+        {
+            "index": 40,
+            "lookups": "",
+            "mandatory": true,
+            "name": "socialnetworking",
+            "tooltip": "",
+            "label": "Doing Social Networking for us",
+            "type": "YESNO"
+        },
+        {
+            "index": 41,
+            "lookups": "",
+            "mandatory": true,
+            "name": "petnoticesfriendsandfamily",
+            "tooltip": "",
+            "label": "Emailing Adoptable Pet Notices to my Friends and Family",
+            "type": "YESNO"
+        },
+        {
+            "index": 44,
+            "lookups": "",
+            "mandatory": true,
+            "name": "photographer",
+            "tooltip": "",
+            "label": "Photographer",
+            "type": "YESNO"
+        },
+        {
+            "index": 50,
+            "lookups": "",
+            "mandatory": true,
+            "name": "volunteercoordination",
+            "tooltip": "",
+            "label": "Volunteer Cordinator",
+            "type": "YESNO"
+        },
+        {
+            "index": 51,
+            "lookups": "",
+            "mandatory": true,
+            "name": "adoptioncounselor",
+            "tooltip": "",
+            "label": "Adoption Counselor",
+            "type": "YESNO"
+        },
+        {
+            "index": 60,
+            "lookups": "",
+            "mandatory": true,
+            "name": "hours",
+            "tooltip": "",
+            "label": "How many hours are you willing to commit to as a volunteer?",
+            "type": "TEXT"
+        },
+        {
+            "index": 65,
+            "lookups": "",
+            "mandatory": true,
+            "name": "contribution",
+            "tooltip": "",
+            "label": "Please explain what you hope to contibute as a volunteer?",
+            "type": "NOTES"
+        },
+        {
+            "index": 70,
+            "lookups": "",
+            "mandatory": true,
+            "name": "personalgain",
+            "tooltip": "",
+            "label": "Please explain what you hope to gain through you experience volunteering?",
+            "type": "TEXT"
+        },
+        {
+            "index": 75,
+            "lookups": "",
+            "mandatory": true,
+            "name": "experience",
+            "tooltip": "",
+            "label": "Please list any relevant animal care/volunteer experience.",
+            "type": "TEXT"
+        },
+        {
+            "index": 80,
+            "lookups": "",
+            "mandatory": false,
+            "name": "criminalrecord",
+            "tooltip": "",
+            "label": "Do you have a criminal conviction in the last 10 years?",
+            "type": "YESNO"
+        },
+        {
+            "index": 85,
+            "lookups": "",
+            "mandatory": false,
+            "name": "backgroundcheck",
+            "tooltip": "",
+            "label": "Are you willing to undergo a background check?",
+            "type": "YESNO"
+        },
+        {
+            "index": 90,
+            "lookups": "",
+            "mandatory": true,
+            "name": "references",
+            "tooltip": "",
+            "label": "Please provide 2 references, please include name, relationship, phone number and email address",
+            "type": "TEXT"
+        },
+        {
+            "index": 100,
+            "lookups": "",
+            "mandatory": true,
+            "name": "other",
+            "tooltip": "",
+            "label": "Other - We need all sorts of help with our vehicles, building, etc. We appreciate every helping paw!",
+            "type": "NOTES"
+        },
+        {
+            "index": 200,
+            "lookups": "",
+            "mandatory": true,
+            "name": "Date",
+            "tooltip": "",
+            "label": "Date",
+            "type": "DATE"
+        }
+    ],
+    "name": "Volunteer Application",
+    "description": "Thank you for offering your time, once submitted you will be contacted by email with our next orientation date and a request for confirmation."
+}
