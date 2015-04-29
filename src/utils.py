@@ -693,6 +693,14 @@ def post_xml(url, xml, headers = {}):
     resp = urllib2.urlopen(req)
     return { "headers": resp.info().headers, "response": resp.read(), "status": resp.getcode() }
 
+def read_text_file(name):
+    """
+    Reads a text file and returns the result as a string.
+    """
+    with codecs.open(name, 'r', encoding='utf8') as f:
+        text = f.read()
+    return text.encode("ascii", "xmlcharrefreplace")
+
 def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", contenttype = "plain", attachmentdata = None, attachmentfname = ""):
     """
     Sends an email.

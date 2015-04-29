@@ -1,13 +1,13 @@
 #!/usr/bin/python
 
 import al
-import animal, animalcontrol, financial, lostfound, medical, movement, person, waitinglist
-import configuration, db, dbfs
-import sys
+import animal, animalcontrol, financial, lostfound, medical, movement, onlineform, person, waitinglist
+import configuration, db, dbfs, utils
+import os, sys
 from i18n import _, BUILD
 from sitedefs import DB_PK_STRATEGY
 
-LATEST_VERSION = 33700
+LATEST_VERSION = 33701
 VERSIONS = ( 
     2870, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3050,
     3051, 3081, 3091, 3092, 3093, 3094, 3110, 3111, 3120, 3121, 3122, 3123, 3200,
@@ -18,7 +18,7 @@ VERSIONS = (
     33206, 33300, 33301, 33302, 33303, 33304, 33305, 33306, 33307, 33308, 33309,
     33310, 33311, 33312, 33313, 33314, 33315, 33316, 33401, 33402, 33501, 33502,
     33503, 33504, 33505, 33506, 33507, 33508, 33600, 33601, 33602, 33603, 33604,
-    33605, 33606, 33607, 33608, 33609, 33700
+    33605, 33606, 33607, 33608, 33609, 33700, 33701
 )
 
 # All ASM3 tables
@@ -2182,6 +2182,19 @@ def reinstall_default_data(dbo):
             db.execute_dbupdate(dbo, "DELETE FROM %s" % table)
     install_default_data(dbo, True)
 
+def install_default_onlineforms(dbo):
+    """
+    Installs the default online forms into the database
+    """
+    path = dbo.installpath + "media/onlineform/"
+    al.info("creating default online forms", "dbupdate.install_default_onlineforms", dbo)
+    for o in os.listdir(path):
+        if o.endswith(".json"):
+            try:
+                onlineform.import_onlineform_json(dbo, utils.read_text_file(path + o))
+            except Exception,err:
+                al.error("error importing form: %s" % str(err), "dbupdate.install_default_onlineformms", dbo)
+
 def install_default_media(dbo, removeFirst = False):
     """
     Installs the default media files into the dbfs
@@ -2263,6 +2276,7 @@ def install(dbo):
     install_db_sequences(dbo)
     install_db_stored_procedures(dbo)
     install_default_media(dbo)
+    install_default_onlineforms(dbo)
 
 def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = True, \
         includeNonASM2 = True, includeUsers = True, deleteDBV = False, deleteFirst = True, deleteViewSeq = False, \
@@ -3906,4 +3920,9 @@ def update_33700(dbo):
     # Default values
     db.execute_dbupdate(dbo, "UPDATE accounts SET CostTypeID = 0")
     db.execute_dbupdate(dbo, "UPDATE accountstrx SET AnimalCostID = 0")
+
+def update_33701(dbo):
+    # If the user has no online forms, install the default set
+    if 0 == db.query_int(dbo, "SELECT COUNT(*) FROM onlineform"):
+        install_default_onlineforms(dbo)
 
