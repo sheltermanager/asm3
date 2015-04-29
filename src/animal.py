@@ -439,6 +439,9 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = ""):
            goodwithcats
            goodwithdogs
            housetrained
+           fivplus
+           flvplus
+           heartwormplus
     locationfilter: IN clause of locations to search
     """
     c = []
@@ -512,6 +515,9 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = ""):
     addfilter("showpickupsonly", "a.IsPickup = 1")
     addfilter("showcrueltycaseonly", "a.CrueltyCase = 1")
     addfilter("showspecialneedsonly", "a.HasSpecialNeeds = 1")
+    addfilter("fivplus", "a.CombiTested = 1 AND a.CombiTestResult = 2")
+    addfilter("flvplus", "a.CombiTested = 1 AND a.FLVResult = 2")
+    addfilter("heartwormplus", "a.HeartwormTested = 1 AND a.HeartwormTestResult = 2")
     addwords("comments", "a.AnimalComments")
     addwords("hiddencomments", "a.HiddenAnimalDetails")
     addwords("features", "a.Markings")
