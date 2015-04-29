@@ -566,10 +566,9 @@ class AbstractPublisher(threading.Thread):
             cr = "<br />"
         if crToHE:
             cr = "&#10;"
-        if crToBr or crToHE:
-            notes = notes.replace("\r\n", cr)
-            notes = notes.replace("\r", cr)
-            notes = notes.replace("\n", cr)
+        notes = notes.replace("\r\n", cr)
+        notes = notes.replace("\r", cr)
+        notes = notes.replace("\n", cr)
         # Escape speechmarks
         notes = notes.replace("\"", "\"\"")
         return notes
