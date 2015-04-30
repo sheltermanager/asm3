@@ -403,6 +403,8 @@ $(function() {
                     html.icon("case") + ' <label for="showcrueltycase">' + _("Cruelty Case") + '</label><br />',
                 '<input data="EmblemHold" type="checkbox" id="showhold" class="asm-checkbox" type="checkbox" />',
                     html.icon("hold") + ' <label for="showhold">' + _("Hold") + '</label><br />',
+                '<input data="EmblemLongTerm" type="checkbox" id="longterm" class="asm-checkbox" type="checkbox" />',
+                    html.icon("calendar") + ' <label for="longterm">' + _("Long term") + '</label><br />',
                 '<input data="EmblemNonShelter" type="checkbox" id="shownonshelter" class="asm-checkbox" type="checkbox" />',
                     html.icon("nonshelter") + ' <label for="shownonshelter">' + _("Non-Shelter") + '</label><br />',
                 '<input data="EmblemNotForAdoption" type="checkbox" id="shownotforadoption" class="asm-checkbox" type="checkbox" />',

@@ -71,6 +71,9 @@ $(function() {
             if (config.bool("WarnNoHomeCheck")) { 
                 totalalerts += alerts.RSVHCK; 
             }
+            if (config.bool("EmblemLongTerm")) { 
+                totalalerts += alerts.LNGTERM; 
+            }
             if (totalalerts > 0) {
                 s += '<p class="asm-menu-category">' + _("Alerts") + ' (' + totalalerts + ')</p><p>';
                 if (alerts.DUEVACC > 0 && common.has_permission("vav")) {
@@ -181,6 +184,16 @@ $(function() {
                             _("{plural3} animals are not available for adoption")
                         ]) + '</a><br />';
                 }
+                if (alerts.LNGTERM > 0 && common.has_permission("va") && config.bool("EmblemLongTerm")) {
+                    s += '<a href="search?q=longterm">' + html.icon("calendar") + ' ' + 
+                        common.ntranslate(alerts.LNGTERM, [
+                            _("{plural0} animal has been on the shelter longer than {0} months").replace("{0}", config.integer("LongTermMonths")),
+                            _("{plural1} animals have been on the shelter longer than {0} months").replace("{0}", config.integer("LongTermMonths")),
+                            _("{plural2} animals have been on the shelter longer than {0} months").replace("{0}", config.integer("LongTermMonths")),
+                            _("{plural3} animals have been on the shelter longer than {0} months").replace("{0}", config.integer("LongTermMonths"))
+                        ]) + '</a><br />';
+                }
+
                 if (alerts.HOLDTODAY > 0 && common.has_permission("va") && config.bool("EmblemHold")) {
                     s += '<a href="search?q=holdtoday">' + html.icon("hold") + ' ' + 
                         common.ntranslate(alerts.HOLDTODAY, [

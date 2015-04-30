@@ -280,6 +280,7 @@ def get_animals_brief(animals):
             "CURRENTOWNERID": a["CURRENTOWNERID"],
             "CURRENTOWNERNAME": a["CURRENTOWNERNAME"],
             "DATEOFBIRTH": a["DATEOFBIRTH"],
+            "DAYSONSHELTER": a["DAYSONSHELTER"],
             "DECEASEDDATE": a["DECEASEDDATE"],
             "DISPLAYLOCATIONNAME": a["DISPLAYLOCATIONNAME"],
             "ENTRYREASONNAME": a["ENTRYREASONNAME"],
@@ -590,6 +591,12 @@ def get_animals_hold_today(dbo):
     """
     return db.query(dbo, get_animal_query(dbo) + " WHERE a.IsHold = 1 AND a.HoldUntilDate = %s AND a.Archived = 0" % db.dd(now(dbo.timezone)))
 
+def get_animals_long_term(dbo):
+    """
+    Returns all shelter animals who have been on the shelter for 6 months or more
+    """
+    return db.query(dbo, "%s WHERE a.DaysOnShelter > %d AND a.Archived = 0" % (get_animal_query(dbo), configuration.long_term_months(dbo) * 30))
+
 def get_animals_quarantine(dbo):
     """
     Returns all shelter animals who have the quarantine flag set
@@ -663,7 +670,8 @@ def get_alerts(dbo, locationfilter = ""):
         "(SELECT COUNT(*) FROM ownertraploan WHERE ReturnDueDate Is Not Null AND ReturnDueDate <= %(today)s AND ReturnDate Is Null) AS tlover, " \
         "(SELECT COUNT(*) FROM stocklevel WHERE Balance > 0 AND Expiry Is Not Null AND Expiry > %(today)s AND Expiry <= %(futuremonth)s) AS stexpsoon, " \
         "(SELECT COUNT(*) FROM stocklevel WHERE Balance > 0 AND Expiry Is Not Null AND Expiry <= %(today)s) AS stexp, " \
-        "(SELECT COUNT(*) FROM animaltransport WHERE (DriverOwnerID = 0 OR DriverOwnerID Is Null) AND Status < 10) AS trnodrv " \
+        "(SELECT COUNT(*) FROM animaltransport WHERE (DriverOwnerID = 0 OR DriverOwnerID Is Null) AND Status < 10) AS trnodrv, " \
+        "(SELECT COUNT(*) FROM animal WHERE Archived = 0 AND DaysOnShelter > 182) AS lngterm " \
         "FROM animal LIMIT 1" \
             % { "today": today, "oneweek": oneweek, "oneyear": oneyear, "onemonth": onemonth, 
                 "futuremonth": futuremonth, "locfilter": locationfilter, "shelterfilter": shelterfilter }

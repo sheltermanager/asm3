@@ -154,6 +154,7 @@ DEFAULTS = {
     "EmblemCrueltyCase": "Yes",
     "EmblemDeceased": "Yes",
     "EmblemHold": "Yes",
+    "EmblemLongTerm": "Yes",
     "EmblemNonShelter": "Yes",
     "EmblemNotForAdoption": "Yes",
     "EmblemNotMicrochipped": "Yes",
@@ -181,6 +182,7 @@ DEFAULTS = {
     "Locale": "en",
     "LocationChangeLog": "Yes",
     "LocationChangeLogType": "3",
+    "LongTermMonths": "6",
     "MainScreenAnimalLinkMode": "recentlychanged",
     "MainScreenAnimalLinkMax": "9",
     "ManualCodes": "No",
@@ -688,6 +690,9 @@ def location_change_log(dbo):
 
 def location_change_log_type(dbo):
     return cint(dbo, "LocationChangeLogType", DEFAULTS["LocationChangeLogType"])
+
+def long_term_months(dbo):
+    return cint(dbo, "LongTermMonths", DEFAULTS["LongTermMonths"])
 
 def lookingfor_last_match_count(dbo, newcount = -1):
     if newcount == -1:

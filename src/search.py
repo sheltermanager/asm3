@@ -234,6 +234,9 @@ def search(dbo, session, q):
     elif q == "notforadoption":
         ar(animal.get_animals_not_for_adoption(dbo), "ANIMAL", animalsort)
         explain = _("All animals who are flagged as not for adoption.", l)
+    elif q == "longterm":
+        ar(animal.get_animals_long_term(dbo), "ANIMAL", animalsort)
+        explain = _("All animals who have been on the shelter longer than {0} months.", l).format(configuration.long_term_months(dbo))
     elif q == "notmicrochipped":
         ar(animal.get_animals_not_microchipped(dbo), "ANIMAL", animalsort)
         explain = _("All animals who have not been microchipped", l)

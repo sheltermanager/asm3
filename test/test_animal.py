@@ -37,6 +37,7 @@ class TestAnimal(unittest.TestCase):
         assert len(animal.get_animal_find_advanced(base.get_dbo(), { "animalname": "Testio" })) > 0
 
     def test_get_animals_flag(self):
+        animal.get_animals_long_term(base.get_dbo())
         animal.get_animals_not_for_adoption(base.get_dbo())
         animal.get_animals_not_microchipped(base.get_dbo())
         animal.get_animals_hold(base.get_dbo())

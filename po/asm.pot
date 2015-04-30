@@ -865,6 +865,10 @@ msgid "All animals who are flagged as not for adoption."
 msgstr ""
 
 #: search.py
+msgid "All animals who have been on the shelter longer than {0} months."
+msgstr ""
+
+#: search.py
 msgid "All animals who have not been microchipped"
 msgstr ""
 
@@ -6140,6 +6144,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Long"
+msgstr ""
+
+#: common.js options.js
+msgid "Long term"
 msgstr ""
 
 #: options.js code.py
@@ -12326,6 +12334,10 @@ msgid "{plural0} animal has a hold ending today"
 msgstr ""
 
 #: main.js
+msgid "{plural0} animal has been on the shelter longer than {0} months"
+msgstr ""
+
+#: main.js
 msgid "{plural0} animal is not available for adoption"
 msgstr ""
 
@@ -12463,6 +12475,10 @@ msgstr ""
 
 #: main.js
 msgid "{plural1} animals entered the shelter"
+msgstr ""
+
+#: main.js
+msgid "{plural1} animals have been on the shelter longer than {0} months"
 msgstr ""
 
 #: main.js
@@ -12606,6 +12622,10 @@ msgid "{plural2} animals entered the shelter"
 msgstr ""
 
 #: main.js
+msgid "{plural2} animals have been on the shelter longer than {0} months"
+msgstr ""
+
+#: main.js
 msgid "{plural2} animals have holds ending today"
 msgstr ""
 
@@ -12743,6 +12763,10 @@ msgstr ""
 
 #: main.js
 msgid "{plural3} animals entered the shelter"
+msgstr ""
+
+#: main.js
+msgid "{plural3} animals have been on the shelter longer than {0} months"
 msgstr ""
 
 #: main.js
