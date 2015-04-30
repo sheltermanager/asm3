@@ -315,7 +315,7 @@ def page(dbo, session, username):
     h.append("</body></html>")
     return "\n".join(h)
 
-def page_sign(dbo, session, username):
+def page_sign(dbo, session):
     l = session.locale
     ids = configuration.signpad_ids(dbo)
     h = []

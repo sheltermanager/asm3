@@ -625,7 +625,7 @@ class mobile_sign:
     def GET(self):
         utils.check_loggedin(session, web, "/mobile_login")
         web.header("Content-Type", "text/html")
-        return extmobile.page_sign(session.dbo, session, session.user)
+        return extmobile.page_sign(session.dbo, session)
 
 class main:
     def GET(self):
