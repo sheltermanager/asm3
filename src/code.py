@@ -4642,6 +4642,7 @@ class onlineforms:
         # Escape any angle brackets in form header/footers
         for r in onlineforms:
             r["HEADER"] = html.escape_angle(r["HEADER"])
+            r["DESCRIPTION"] = html.escape_angle(r["DESCRIPTION"])
             r["FOOTER"] = html.escape_angle(r["FOOTER"])
         title = _("Online Forms", l)
         al.debug("got %d online forms" % len(onlineforms), "code.onlineforms", dbo)
