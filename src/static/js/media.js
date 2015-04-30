@@ -595,8 +595,7 @@ $(function() {
                 formdata += "&signdate=" + encodeURIComponent(format.date(new Date()) + " " + format.time(new Date()));
                 formdata += "&sig=" + encodeURIComponent(img);
                 common.ajax_post(controller.name, formdata, function(result) { 
-                    header.show_info(_("Documents successfully signed."));
-                    $("#dialog-sign").dialog("close");
+                    window.location = controller.name + "?id=" + controller.linkid;
                 });
             };
             signbuttons[_("Clear")] = function() {
