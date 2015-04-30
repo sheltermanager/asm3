@@ -3494,10 +3494,6 @@ msgstr ""
 msgid "Documents"
 msgstr ""
 
-#: media.js
-msgid "Documents successfully signed."
-msgstr ""
-
 #: dbupdate.py
 msgid "Dog"
 msgstr ""
@@ -3869,6 +3865,10 @@ msgstr ""
 
 #: media.js
 msgid "Electronically sign this document"
+msgstr ""
+
+#: media.js
+msgid "Electronically sign this document with the signing pad mobile interface"
 msgstr ""
 
 #: donations.js move_adopt.js move_reserve.js move_reclaim.js
@@ -9353,6 +9353,10 @@ msgstr ""
 
 #: media.js
 msgid "Signed"
+msgstr ""
+
+#: media.js
+msgid "Signing Pad"
 msgstr ""
 
 #: publish_options.js

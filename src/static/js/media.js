@@ -147,6 +147,7 @@ $(function() {
                 { id: "email", text: _("Email"), icon: "email", tooltip: _("Email a copy of the selected media files") },
                 { id: "emailpdf", text: _("Email PDF"), icon: "pdf", tooltip: _("Email a copy of the selected HTML documents as PDFs") },
                 { id: "sign", text: _("Sign"), icon: "signature", tooltip: _("Electronically sign this document") },
+                { id: "signpad", text: _("Signing Pad"), icon: "mobile", tooltip: _("Electronically sign this document with the signing pad mobile interface") },
                 { id: "rotateanti", icon: "rotate-anti", tooltip: _("Rotate image 90 degrees anticlockwise") },
                 { id: "rotateclock", icon: "rotate-clock", tooltip: _("Rotate image 90 degrees clockwise") },
                 { id: "web", icon: "web", tooltip: _("Make this the default image when viewing this record and publishing to the web") },
@@ -414,6 +415,7 @@ $(function() {
                 $("#button-email").button("option", "disabled", true); 
                 $("#button-emailpdf").button("option", "disabled", true); 
                 $("#button-sign").button("option", "disabled", true); 
+                $("#button-signpad").button("option", "disabled", true); 
 
                 // Only allow the image preferred buttons to be pressed if the
                 // selection size is one and the selection is an image
@@ -678,6 +680,9 @@ $(function() {
 
             $("#button-sign").button({disabled: true}).click(function() {
                 $("#dialog-sign").dialog("open");
+            });
+
+            $("#button-signpad").button({disabled: true}).click(function() {
             });
 
             $("#button-rotateanti").button({disabled: true}).click(function() {
