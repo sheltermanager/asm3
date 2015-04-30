@@ -2869,6 +2869,10 @@ class foundanimal_media:
                 contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
                 utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], "", "plain", contentpdf, "document.pdf")
             return emailadd
+        elif mode == "sign":
+            users.check_permission(session, users.CHANGE_MEDIA)
+            for mid in post.integer_list("ids"):
+                extmedia.sign_document(session.dbo, session.user, mid, post["sig"], post["signdate"])
         elif mode == "rotateclock":
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):
@@ -3282,6 +3286,10 @@ class incident_media:
                 contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
                 utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], "", "plain", contentpdf, "document.pdf")
             return emailadd
+        elif mode == "sign":
+            users.check_permission(session, users.CHANGE_MEDIA)
+            for mid in post.integer_list("ids"):
+                extmedia.sign_document(session.dbo, session.user, mid, post["sig"], post["signdate"])
         elif mode == "rotateclock":
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):
@@ -3754,6 +3762,10 @@ class lostanimal_media:
                 contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
                 utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], "", "plain", contentpdf, "document.pdf")
             return emailadd
+        elif mode == "sign":
+            users.check_permission(session, users.CHANGE_MEDIA)
+            for mid in post.integer_list("ids"):
+                extmedia.sign_document(session.dbo, session.user, mid, post["sig"], post["signdate"])
         elif mode == "rotateclock":
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):
@@ -5213,6 +5225,10 @@ class person_media:
                 contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
                 utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], post["emailnote"], "plain", contentpdf, "document.pdf")
             return emailadd
+        elif mode == "sign":
+            users.check_permission(session, users.CHANGE_MEDIA)
+            for mid in post.integer_list("ids"):
+                extmedia.sign_document(session.dbo, session.user, mid, post["sig"], post["signdate"])
         elif mode == "rotateclock":
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):
@@ -6539,6 +6555,10 @@ class waitinglist_media:
                 contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
                 utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], "", "plain", contentpdf, "document.pdf")
             return emailadd
+        elif mode == "sign":
+            users.check_permission(session, users.CHANGE_MEDIA)
+            for mid in post.integer_list("ids"):
+                extmedia.sign_document(session.dbo, session.user, mid, post["sig"], post["signdate"])
         elif mode == "rotateclock":
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):
