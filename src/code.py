@@ -1493,6 +1493,10 @@ class animal_media:
                 contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
                 utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], post["emailnote"], "plain", contentpdf, "document.pdf")
             return emailadd
+        elif mode == "sign":
+            users.check_permission(session, users.CHANGE_MEDIA)
+            for mid in post.integer_list("ids"):
+                extmedia.sign_document(session.dbo, session.user, mid, post["sig"])
         elif mode == "rotateclock":
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):

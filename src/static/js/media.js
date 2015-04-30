@@ -110,6 +110,10 @@ $(function() {
                 '</form>',
                 '</div>',
 
+                '<div id="dialog-sign" style="display: none" title="' + _("Sign document") + '">',
+                '<div id="signature" style="width: 500px; height: 300px;" />',
+                '</div>',
+
                 '<form id="newdocform" method="post" action="' + controller.name + '">',
                 '<input type="hidden" name="linkid" value="' + controller.linkid + '" />',
                 '<input type="hidden" name="mode" value="createdoc" />',
@@ -142,6 +146,7 @@ $(function() {
                 { id: "delete", text: _("Delete"), icon: "media-delete" },
                 { id: "email", text: _("Email"), icon: "email", tooltip: _("Email a copy of the selected media files") },
                 { id: "emailpdf", text: _("Email PDF"), icon: "pdf", tooltip: _("Email a copy of the selected HTML documents as PDFs") },
+                { id: "sign", text: _("Sign"), icon: "signature", tooltip: _("Electronically sign this document") },
                 { id: "rotateanti", icon: "rotate-anti", tooltip: _("Rotate image 90 degrees anticlockwise") },
                 { id: "rotateclock", icon: "rotate-clock", tooltip: _("Rotate image 90 degrees clockwise") },
                 { id: "web", icon: "web", tooltip: _("Make this the default image when viewing this record and publishing to the web") },
@@ -380,6 +385,7 @@ $(function() {
         bind: function() {
 
             $(".asm-tabbar").asmtabs();
+            $("#signature").signature({ guideline: true });
             $("#tipattach").show();
             $("#tipios6").hide();
 
@@ -404,6 +410,7 @@ $(function() {
                 $("#button-rotateclock").button("option", "disabled", true); 
                 $("#button-email").button("option", "disabled", true); 
                 $("#button-emailpdf").button("option", "disabled", true); 
+                $("#button-sign").button("option", "disabled", true); 
 
                 // Only allow the image preferred buttons to be pressed if the
                 // selection size is one and the selection is an image
@@ -451,6 +458,16 @@ $(function() {
                         $("#button-emailpdf").button("option", "disabled", false); 
                     }
                 });
+
+                // Only allow the sign button to be pressed if the
+                // selection only contains documents
+                $("#asm-mediaicons input:checked").each(function() {
+                    var mname = $(this).parent().parent().find(".media-name").val();
+                    if (media.is_extension(mname, "html")) {
+                        $("#button-sign").button("option", "disabled", false); 
+                    }
+                });
+
 
             });
 
@@ -567,6 +584,34 @@ $(function() {
                 buttons: editbuttons
             });
 
+            var signbuttons = {};
+            signbuttons[_("Sign")] = function() {
+                if ($("#signature").signature("isEmpty")) { return; }
+                var img = $("#signature canvas").get(0).toDataURL("image/png");
+                var formdata = "mode=sign&ids=" + $("#asm-mediaicons input").tableCheckedData();
+                formdata += "&sig=" + encodeURIComponent(img);
+                common.ajax_post(controller.name, formdata, function(result) { 
+                    header.show_info(_("Documents successfully signed."));
+                    $("#dialog-sign").dialog("close");
+                });
+            };
+            signbuttons[_("Clear")] = function() {
+                $("#signature").signature("clear");
+            };
+            signbuttons[_("Cancel")] = function() {
+                $("#dialog-sign").dialog("close");
+            };
+
+            $("#dialog-sign").dialog({
+                autoOpen: false,
+                width: 550,
+                modal: true,
+                dialogClass: "dialogshadow",
+                show: dlgfx.edit_show,
+                hide: dlgfx.edit_hide,
+                buttons: signbuttons
+            });
+
             $("#button-new").button().click(function() {
                 media.new_media();
             });
@@ -626,6 +671,10 @@ $(function() {
                     $("#emailto").val(controller.person.EMAILADDRESS);
                 }
                 $("#dialog-emailpdf").dialog("open");
+            });
+
+            $("#button-sign").button({disabled: true}).click(function() {
+                $("#dialog-sign").dialog("open");
             });
 
             $("#button-rotateanti").button({disabled: true}).click(function() {

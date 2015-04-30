@@ -454,6 +454,25 @@ def create_document_media(dbo, username, linktype, linkid, template, content):
     dbfs.put_string(dbo, name, path, content)
     audit.create(dbo, username, "media", str(mediaid) + ": for " + str(linkid) + "/" + str(linktype))
 
+def sign_document(dbo, username, mid, sigurl):
+    """
+    Signs an HTML document.
+    sigurl: An HTML5 data: URL containing an image of the signature
+    """
+    SIG_BLOCK_COMMENT = "<!-- signature block -->"
+    date, medianame, mimetype, content = get_media_file_data(dbo, mid)
+    # Is this an HTML document?
+    if content.find("<p") == -1:
+        raise utils.ASMValidationError("Cannot sign a non-HTML document")
+    # Has this document already been signed? 
+    if content.find(SIG_BLOCK_COMMENT) != -1:
+        raise utils.ASMValidationError("Document is already signed")
+    # Create the signature
+    sig = "<hr />\n%s\n" % SIG_BLOCK_COMMENT
+    sig += '<p><img src="' + sigurl + '" /></p>\n'
+    sig += "<p>%s %s</p>\n" % (i18n.python2display(dbo.locale, i18n.now(dbo.timezone)), i18n.format_time_now() )
+    update_file_content(dbo, username, mid, content + sig)
+
 def update_file_content(dbo, username, mid, content):
     """
     Updates the dbfs content for the file pointed to by id

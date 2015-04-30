@@ -2,6 +2,12 @@
 /*global $, baseurl, buildno, jswindowprint, tinymce, tinyMCE */
 
 $(function() {
+   
+    var rw_toolbar = "save preview pdf print | undo redo | fontselect fontsizeselect | bold italic forecolor backcolor | alignleft aligncenter alignright alignjustify | forecolor backcolor | bullist numlist outdent indent pagebreak | link image";
+    var ro_toolbar = "preview pdf print";
+
+    // If the document has been signed, go into read only mode
+    var readonly = $("#wp").html().indexOf("-- signature block") != -1;
 
     tinymce.init({
         selector: "#wp",
@@ -13,12 +19,19 @@ $(function() {
             "insertdatetime media nonbreaking save table contextmenu directionality",
             "emoticons template paste textcolor save"
             ],
-        toolbar1: "save preview pdf print | undo redo | fontselect fontsizeselect | bold italic forecolor backcolor | alignleft aligncenter alignright alignjustify | forecolor backcolor | bullist numlist outdent indent pagebreak | link image",
+        toolbar1: readonly ? ro_toolbar : rw_toolbar,
+
+        // Disable some items if we're in read only mode
+        menubar: !readonly,
+        readonly: readonly,
 
         // enable browser spellchecking and allow saving at any time
         gecko_spellcheck: true,
         browser_spellcheck: true,
         save_enablewhendirty: false,
+
+        // stop tinymce stripping data url images
+        paste_data_images: true,
 
         // Necessary for fontsizeselect to work
         convert_fonts_to_spans: true,
