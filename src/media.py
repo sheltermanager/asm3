@@ -454,7 +454,7 @@ def create_document_media(dbo, username, linktype, linkid, template, content):
     dbfs.put_string(dbo, name, path, content)
     audit.create(dbo, username, "media", str(mediaid) + ": for " + str(linkid) + "/" + str(linktype))
 
-def sign_document(dbo, username, mid, sigurl):
+def sign_document(dbo, username, mid, sigurl, signdate):
     """
     Signs an HTML document.
     sigurl: An HTML5 data: URL containing an image of the signature
@@ -470,7 +470,7 @@ def sign_document(dbo, username, mid, sigurl):
     # Create the signature
     sig = "<hr />\n%s\n" % SIG_BLOCK_COMMENT
     sig += '<p><img src="' + sigurl + '" /></p>\n'
-    sig += "<p>%s %s</p>\n" % (i18n.python2display(dbo.locale, i18n.now(dbo.timezone)), i18n.format_time_now() )
+    sig += "<p>%s</p>\n" % signdate
     update_file_content(dbo, username, mid, content + sig)
 
 def update_file_content(dbo, username, mid, content):

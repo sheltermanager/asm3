@@ -111,7 +111,7 @@ $(function() {
                 '</div>',
 
                 '<div id="dialog-sign" style="display: none" title="' + _("Sign document") + '">',
-                '<div id="signature" style="width: 500px; height: 300px;" />',
+                '<div id="signature" style="width: 500px; height: 200px;" />',
                 '</div>',
 
                 '<form id="newdocform" method="post" action="' + controller.name + '">',
@@ -589,6 +589,7 @@ $(function() {
                 if ($("#signature").signature("isEmpty")) { return; }
                 var img = $("#signature canvas").get(0).toDataURL("image/png");
                 var formdata = "mode=sign&ids=" + $("#asm-mediaicons input").tableCheckedData();
+                formdata += "&signdate=" + encodeURIComponent(format.date(new Date()) + " " + format.time(new Date()));
                 formdata += "&sig=" + encodeURIComponent(img);
                 common.ajax_post(controller.name, formdata, function(result) { 
                     header.show_info(_("Documents successfully signed."));

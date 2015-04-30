@@ -1496,7 +1496,7 @@ class animal_media:
         elif mode == "sign":
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):
-                extmedia.sign_document(session.dbo, session.user, mid, post["sig"])
+                extmedia.sign_document(session.dbo, session.user, mid, post["sig"], post["signdate"])
         elif mode == "rotateclock":
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):
