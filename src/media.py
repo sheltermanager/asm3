@@ -227,6 +227,8 @@ def get_dbfs_path(linkid, linktype):
         path = "/foundanimal/%d" % int(linkid)
     elif linktype == WAITINGLIST:
         path = "/waitinglist/%d" % int(linkid)
+    elif linktype == ANIMALCONTROL:
+        path = "/animalcontrol/%d" % int(linkid)
     return path
 
 def get_media(dbo, linktype, linkid):

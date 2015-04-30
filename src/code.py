@@ -129,6 +129,11 @@ urls = (
     "/media", "media",
     "/medicalprofile", "medicalprofile",
     "/mobile", "mobile",
+    "/mobile_login", "mobile_login",
+    "/mobile_logout", "mobile_logout",
+    "/mobile_post", "mobile_post",
+    "/mobile_report", "mobile_report",
+    "/mobile_sign", "mobile_sign",
     "/move_adopt", "move_adopt",
     "/move_book_foster", "move_book_foster",
     "/move_book_reservation", "move_book_reservation",
@@ -144,10 +149,6 @@ urls = (
     "/move_reserve", "move_reserve",
     "/move_retailer", "move_retailer",
     "/move_transfer", "move_transfer",
-    "/mobile_login", "mobile_login",
-    "/mobile_logout", "mobile_logout",
-    "/mobile_post", "mobile_post",
-    "/mobile_report", "mobile_report",
     "/main", "main",
     "/login", "login",
     "/login_splash", "login_splash",
@@ -619,6 +620,12 @@ class mobile_report:
         crid = post.integer("id")
         web.header("Content-Type", "text/html")
         return extmobile.report(session.dbo, crid, session.user)
+
+class mobile_sign:
+    def GET(self):
+        utils.check_loggedin(session, web, "/mobile_login")
+        web.header("Content-Type", "text/html")
+        return extmobile.page_sign(session.dbo, session, session.user)
 
 class main:
     def GET(self):
@@ -1497,6 +1504,8 @@ class animal_media:
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):
                 extmedia.sign_document(session.dbo, session.user, mid, post["sig"], post["signdate"])
+        elif mode == "signpad":
+            configuration.signpad_ids(session.dbo, post["ids"])
         elif mode == "rotateclock":
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):
@@ -2873,6 +2882,8 @@ class foundanimal_media:
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):
                 extmedia.sign_document(session.dbo, session.user, mid, post["sig"], post["signdate"])
+        elif mode == "signpad":
+            configuration.signpad_ids(session.dbo, post["ids"])
         elif mode == "rotateclock":
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):
@@ -3290,6 +3301,8 @@ class incident_media:
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):
                 extmedia.sign_document(session.dbo, session.user, mid, post["sig"], post["signdate"])
+        elif mode == "signpad":
+            configuration.signpad_ids(session.dbo, post["ids"])
         elif mode == "rotateclock":
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):
@@ -3766,6 +3779,8 @@ class lostanimal_media:
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):
                 extmedia.sign_document(session.dbo, session.user, mid, post["sig"], post["signdate"])
+        elif mode == "signpad":
+            configuration.signpad_ids(session.dbo, post["ids"])
         elif mode == "rotateclock":
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):
@@ -5229,6 +5244,8 @@ class person_media:
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):
                 extmedia.sign_document(session.dbo, session.user, mid, post["sig"], post["signdate"])
+        elif mode == "signpad":
+            configuration.signpad_ids(session.dbo, post["ids"])
         elif mode == "rotateclock":
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):
@@ -6559,6 +6576,8 @@ class waitinglist_media:
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):
                 extmedia.sign_document(session.dbo, session.user, mid, post["sig"], post["signdate"])
+        elif mode == "signpad":
+            configuration.signpad_ids(session.dbo, post["ids"])
         elif mode == "rotateclock":
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):

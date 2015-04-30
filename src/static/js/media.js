@@ -464,12 +464,14 @@ $(function() {
                     }
                 });
 
-                // Only allow the sign button to be pressed if the
-                // selection only contains documents
+                // Only allow the sign buttons to be pressed if the
+                // selection only contains unsigned documents
                 $("#asm-mediaicons input:checked").each(function() {
                     var mname = $(this).parent().parent().find(".media-name").val();
-                    if (media.is_extension(mname, "html")) {
+                    var issigned = $(this).parent().find(".asm-icon-signature").length > 0;
+                    if (media.is_extension(mname, "html") && !issigned ) {
                         $("#button-sign").button("option", "disabled", false); 
+                        $("#button-signpad").button("option", "disabled", false); 
                     }
                 });
 
@@ -592,13 +594,12 @@ $(function() {
             var signbuttons = {};
             signbuttons[_("Sign")] = function() {
                 if ($("#signature").signature("isEmpty")) { return; }
+                $("#dialog-sign").disable_dialog_buttons();
                 var img = $("#signature canvas").get(0).toDataURL("image/png");
                 var formdata = "mode=sign&ids=" + $("#asm-mediaicons input").tableCheckedData();
                 formdata += "&signdate=" + encodeURIComponent(format.date(new Date()) + " " + format.time(new Date()));
                 formdata += "&sig=" + encodeURIComponent(img);
-                common.ajax_post(controller.name, formdata, function(result) { 
-                    window.location = controller.name + "?id=" + controller.linkid;
-                });
+                media.ajax(formdata);
             };
             signbuttons[_("Clear")] = function() {
                 $("#signature").signature("clear");
@@ -683,6 +684,10 @@ $(function() {
             });
 
             $("#button-signpad").button({disabled: true}).click(function() {
+                var formdata = "mode=signpad&ids=" + $("#asm-mediaicons input").tableCheckedData();
+                common.ajax_post(controller.name, formdata, function(result) {
+                    header.show_info(_("Sent to mobile signing pad."));
+                });
             });
 
             $("#button-rotateanti").button({disabled: true}).click(function() {

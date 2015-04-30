@@ -2298,7 +2298,7 @@ msgid "Class"
 msgstr ""
 
 #: common.js common_animalchooser.js media.js common_animalchoosermulti.js
-#: common_personchooser.js
+#: common_personchooser.js mobile.py
 msgid "Clear"
 msgstr ""
 
@@ -8252,7 +8252,7 @@ msgstr ""
 msgid "Reference"
 msgstr ""
 
-#: accounts_trx.js waitinglist_results.js
+#: accounts_trx.js waitinglist_results.js mobile.py
 msgid "Refresh"
 msgstr ""
 
@@ -9010,6 +9010,10 @@ msgstr ""
 msgid "Senior"
 msgstr ""
 
+#: media.js
+msgid "Sent to mobile signing pad."
+msgstr ""
+
 #: common.js calendarview.js
 msgid "Sep"
 msgstr ""
@@ -9343,7 +9347,7 @@ msgstr ""
 msgid "Sick/injured animal"
 msgstr ""
 
-#: media.js
+#: media.js mobile.py
 msgid "Sign"
 msgstr ""
 
@@ -9355,7 +9359,11 @@ msgstr ""
 msgid "Signed"
 msgstr ""
 
-#: media.js
+#: mobile.py
+msgid "Signing"
+msgstr ""
+
+#: media.js mobile.py
 msgid "Signing Pad"
 msgstr ""
 
@@ -11600,6 +11608,10 @@ msgstr ""
 
 #: diary.py
 msgid "Waiting List: {0}"
+msgstr ""
+
+#: mobile.py
+msgid "Waiting for documents..."
 msgstr ""
 
 #: dbupdate.py

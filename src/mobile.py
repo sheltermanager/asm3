@@ -19,7 +19,7 @@ import users
 import utils
 from i18n import _, python2display, now, add_days, add_months, add_years, format_currency, format_time
 from sitedefs import MULTIPLE_DATABASES
-from sitedefs import JQUERY_JS, JQUERY_MOBILE_CSS, JQUERY_MOBILE_JS, SIGNATURE_JS
+from sitedefs import JQUERY_JS, JQUERY_MOBILE_CSS, JQUERY_MOBILE_JS, JQUERY_UI_JS, SIGNATURE_JS, MOMENT_JS
 
 def header(l):
     return """<!DOCTYPE html>
@@ -62,6 +62,7 @@ def header(l):
             });
 
             $("#home a").attr("data-transition", "slide");
+
         });
     </script>
     <style>
@@ -75,7 +76,9 @@ def header(l):
     """ % {
         "title":    _("Animal Shelter Manager", l),
         "css":      html.asm_css_tag("asm-icon.css"),
-        "scripts":  html.script_tag(JQUERY_JS) + html.css_tag(JQUERY_MOBILE_CSS) + html.script_tag(JQUERY_MOBILE_JS) + html.script_tag(SIGNATURE_JS)
+        "scripts":  html.script_tag(JQUERY_JS) + 
+            html.css_tag(JQUERY_MOBILE_CSS) + html.script_tag(JQUERY_MOBILE_JS) + 
+            html.script_tag(JQUERY_UI_JS) + html.script_tag(SIGNATURE_JS)
     }
 
 def jqm_button(href, text, icon = "", ajax = ""):
@@ -126,13 +129,14 @@ def jqm_list_divider(s):
 def jqm_listitem(s):
     return "<li>%s</li>" % s
 
-def jqm_listitem_link(href, text = "", icon = "", counter = -1, rel = ""):
+def jqm_listitem_link(href, text = "", icon = "", counter = -1, rel = "", ajax = ""):
     counterdisplay = ""
     if counter >= 0: counterdisplay = "<span class=\"ui-li-count ui-btn-up-c ui-btn-corner-all\">%d</span>" % counter
     if icon != "": icon = html.icon(icon)
     if rel != "": rel = "data-rel=\"%s\"" % rel
-    return "<li><a href=\"%(href)s\" %(rel)s>%(icon)s %(text)s %(counterdisplay)s</a></li>\n" % {
-        "href": href, "text": text, "icon": icon, "counterdisplay": counterdisplay, "rel": rel }
+    if ajax != "": ajax = "data-ajax=\"%s\"" % ajax
+    return "<li><a href=\"%(href)s\" %(ajax)s %(rel)s>%(icon)s %(text)s %(counterdisplay)s</a></li>\n" % {
+        "href": href, "ajax": ajax, "text": text, "icon": icon, "counterdisplay": counterdisplay, "rel": rel }
 
 def jqm_option(value, label = "", selected = False):
     if selected: selected = "selected=\"selected\""
@@ -245,6 +249,8 @@ def page(dbo, session, username):
     items.append(jqm_listitem_link("#messages", _("Messages", l), "message", len(mess)))
     if len(ar) > 0 and pb(users.VIEW_REPORT):
         items.append(jqm_listitem_link("#reports", _("Generate Report", l), "report"))
+    if pb(users.CHANGE_MEDIA):
+        items.append(jqm_listitem_link("mobile_sign", _("Signing Pad", l), "signature", -1, "", "false"))
     if pb(users.ADD_ANIMAL) or pb(users.VIEW_ANIMAL) or pb(users.CHANGE_VACCINATION) \
        or pb(users.CHANGE_TEST) or pb(users.CHANGE_MEDICAL) or pb(users.ADD_LOG):
         items.append(jqm_list_divider(_("Animal", l)))
@@ -306,6 +312,72 @@ def page(dbo, session, username):
     h += page_incidents(l, homelink, inop, "inop", _("Open Incidents", l))
     h += page_incidents(l, homelink, infp, "infp", _("Incidents Requiring Followup", l))
 
+    h.append("</body></html>")
+    return "\n".join(h)
+
+def page_sign(dbo, session, username):
+    l = session.locale
+    ids = configuration.signpad_ids(dbo)
+    h = []
+    h.append("""<!DOCTYPE html>
+    <html>
+    <head>
+    <title>
+    %(title)s
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    %(css)s
+    %(scripts)s
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#signature").signature({ guideline: true });
+            $("#sig-clear").click(function() {
+                $("#signature").signature("clear");
+            });
+            $("#sig-refresh").click(function() {
+                location.reload();
+            });
+            $("#sig-sign").click(function() {
+                var img = $("#signature canvas").get(0).toDataURL("image/png");
+                var formdata = "posttype=sign&ids=%(ids)s&sig=" + encodeURIComponent(img);
+                formdata += "&signdate=" + encodeURIComponent(moment().format("YYYY-MM-DD HH:mm:ss"));
+                $.ajax({
+                    type: "POST",
+                    url: "mobile_post",
+                    data: formdata,
+                    dataType: "text",
+                    mimeType: "textPlain",
+                    success: function(result) {
+                        location.reload();
+                    },
+                    error: function(jqxhr, textstatus, response) {
+                        $("body").append("<p>" + response + "</p>");
+                    }
+                });
+            });
+        });
+    </script>
+    </head>
+    <body>
+    """ % {
+        "title":    _("Signing Pad", l),
+        "ids":      ids,
+        "css":      html.asm_css_tag("asm-icon.css"),
+        "scripts":  html.script_tag(JQUERY_JS) + html.script_tag(JQUERY_UI_JS) + html.script_tag(SIGNATURE_JS) + html.script_tag(MOMENT_JS)
+    })
+    if ids.strip() == "":
+        h.append('<p>%s</p>' % _("Waiting for documents...", l))
+        h.append('<button id="sig-refresh">' + _("Refresh", l) + '</button>')
+    else:
+        for mid in ids.strip().split(","):
+            if mid.strip() != "": 
+                m = media.get_media_by_id(dbo, int(mid))
+                if len(m) > 0: h.append('<p><b>%s: %s</b></p>' % ( _("Signing", l), m[0]["MEDIANOTES"]))
+        h.append('<div id="signature" style="width: 100%; max-width: 500px; height: 200px;"></div>')
+        h.append('<p>')
+        h.append('<button id="sig-clear" type="button">' + _("Clear", l) + '</button>')
+        h.append('<button id="sig-sign" type="button">' + _("Sign", l) + '</button>')
+        h.append('</p>')
     h.append("</body></html>")
     return "\n".join(h)
 
@@ -752,6 +824,13 @@ def handler(dbo, user, locationfilter, post):
         # Update the stock levels from the posted values
         stock.stock_take_from_mobile_form(dbo, user, post)
         return "GO mobile"
+
+    elif mode == "sign":
+        # We're electronically signing a document
+        for mid in post.integer_list("ids"):
+            media.sign_document(dbo, user, mid, post["sig"], post["signdate"])
+            configuration.signpad_ids(dbo, " ")
+        return "ok"
 
 def handler_addanimal(l, homelink, dbo):
     h = []
