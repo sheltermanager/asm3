@@ -232,6 +232,9 @@ $(function() {
                 if (m.MEDIATYPE > 0) {
                     h.push(html.icon("link", _("Link to an external web resource")));
                 }
+                if (m.SIGNATUREHASH) {
+                    h.push(html.icon("signature", _("Signed")));
+                }
                 if (m.WEBSITEPHOTO == 1 && controller.showPreferred) {
                     h.push(html.icon("web", _("Default image for this record and the web")));
                 }

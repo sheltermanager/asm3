@@ -471,7 +471,11 @@ def sign_document(dbo, username, mid, sigurl, signdate):
     sig = "<hr />\n%s\n" % SIG_BLOCK_COMMENT
     sig += '<p><img src="' + sigurl + '" /></p>\n'
     sig += "<p>%s</p>\n" % signdate
-    update_file_content(dbo, username, mid, content + sig)
+    content += sig
+    # Create a hash of the contents and store it with the media record
+    db.execute(dbo, "UPDATE media SET SignatureHash = '%s' WHERE ID = %d" % (utils.md5_hash(content), mid))
+    # Update the dbfs contents
+    update_file_content(dbo, username, mid, content)
 
 def update_file_content(dbo, username, mid, content):
     """

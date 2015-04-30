@@ -7,7 +7,7 @@ import os, sys
 from i18n import _, BUILD
 from sitedefs import DB_PK_STRATEGY
 
-LATEST_VERSION = 33701
+LATEST_VERSION = 33702
 VERSIONS = ( 
     2870, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3050,
     3051, 3081, 3091, 3092, 3093, 3094, 3110, 3111, 3120, 3121, 3122, 3123, 3200,
@@ -18,7 +18,7 @@ VERSIONS = (
     33206, 33300, 33301, 33302, 33303, 33304, 33305, 33306, 33307, 33308, 33309,
     33310, 33311, 33312, 33313, 33314, 33315, 33316, 33401, 33402, 33501, 33502,
     33503, 33504, 33505, 33506, 33507, 33508, 33600, 33601, 33602, 33603, 33604,
-    33605, 33606, 33607, 33608, 33609, 33700, 33701
+    33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702
 )
 
 # All ASM3 tables
@@ -920,6 +920,7 @@ def sql_structure(dbo):
         fint("WebsiteVideo", True),
         fint("DocPhoto"),
         fint("ExcludeFromPublish", True),
+        fstr("SignatureHash", True),
         # ASM2_COMPATIBILITY
         fint("NewSinceLastPublish"),
         fint("UpdatedSinceLastPublish"),
@@ -3925,4 +3926,8 @@ def update_33701(dbo):
     # If the user has no online forms, install the default set
     if 0 == db.query_int(dbo, "SELECT COUNT(*) FROM onlineform"):
         install_default_onlineforms(dbo)
+
+def update_33702(dbo):
+    # Add media.SignatureHash
+    add_column(dbo, "media", "SignatureHash", shorttext(dbo))
 

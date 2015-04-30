@@ -2297,7 +2297,7 @@ msgstr ""
 msgid "Class"
 msgstr ""
 
-#: common.js common_animalchooser.js common_animalchoosermulti.js
+#: common.js common_animalchooser.js media.js common_animalchoosermulti.js
 #: common_personchooser.js
 msgid "Clear"
 msgstr ""
@@ -3494,6 +3494,10 @@ msgstr ""
 msgid "Documents"
 msgstr ""
 
+#: media.js
+msgid "Documents successfully signed."
+msgstr ""
+
 #: dbupdate.py
 msgid "Dog"
 msgstr ""
@@ -3861,6 +3865,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Electricity Bills"
+msgstr ""
+
+#: media.js
+msgid "Electronically sign this document"
 msgstr ""
 
 #: donations.js move_adopt.js move_reserve.js move_reclaim.js
@@ -9333,6 +9341,18 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Sick/injured animal"
+msgstr ""
+
+#: media.js
+msgid "Sign"
+msgstr ""
+
+#: media.js
+msgid "Sign document"
+msgstr ""
+
+#: media.js
+msgid "Signed"
 msgstr ""
 
 #: publish_options.js
