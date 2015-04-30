@@ -19,7 +19,7 @@ import users
 import utils
 from i18n import _, python2display, now, add_days, add_months, add_years, format_currency, format_time
 from sitedefs import MULTIPLE_DATABASES
-from sitedefs import JQUERY_JS, JQUERY_MOBILE_CSS, JQUERY_MOBILE_JS
+from sitedefs import JQUERY_JS, JQUERY_MOBILE_CSS, JQUERY_MOBILE_JS, SIGNATURE_JS
 
 def header(l):
     return """<!DOCTYPE html>
@@ -75,7 +75,7 @@ def header(l):
     """ % {
         "title":    _("Animal Shelter Manager", l),
         "css":      html.asm_css_tag("asm-icon.css"),
-        "scripts":  html.script_tag(JQUERY_JS) + html.css_tag(JQUERY_MOBILE_CSS) + html.script_tag(JQUERY_MOBILE_JS)
+        "scripts":  html.script_tag(JQUERY_JS) + html.css_tag(JQUERY_MOBILE_CSS) + html.script_tag(JQUERY_MOBILE_JS) + html.script_tag(SIGNATURE_JS)
     }
 
 def jqm_button(href, text, icon = "", ajax = ""):
