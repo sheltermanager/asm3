@@ -41,7 +41,7 @@ $(function() {
 
             ed.addButton("pdf", {
                 title: "PDF",
-                image: "static/images/ui/pdf-wp-button.gif",
+                image: "static/images/icons/pdf.png",
                 onclick: function() {
                     $("input[name='savemode']").val("pdf");
                     $("form").submit();
