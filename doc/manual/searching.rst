@@ -35,6 +35,7 @@ In addition to prefixes, you can add an extra clause to control sorting.
 There are a number of special keyword terms you can use:
 
 * onshelter (or os) – all on shelter animals
+* longterm - all animals who have been on shelter longer than 6 months
 * notforadoption – all animals flagged not for adoption
 * notmicrochipped - all animals who are not microchipped
 * hold – all animals currently being held in case of reclaim
@@ -45,8 +46,7 @@ There are a number of special keyword terms you can use:
   options
 * people – all people
 * fosterers, volunteers, shelters, aco, staff, retailers, vets, homechecked,
-  homecheckers, members and donors – all people with those flags set
-* drivers - all people with the driver flag set
+  homecheckers, drivers, members and donors – all people with those flags set
 * reservenohomecheck - active reservations where a homecheck has not been done
 * activelost – all lost animals who have not been found yet
 * activefound – all found animals who have not been returned
