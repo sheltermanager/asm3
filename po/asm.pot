@@ -8252,7 +8252,7 @@ msgstr ""
 msgid "Reference"
 msgstr ""
 
-#: accounts_trx.js waitinglist_results.js mobile.py
+#: accounts_trx.js waitinglist_results.js
 msgid "Refresh"
 msgstr ""
 
@@ -8286,6 +8286,10 @@ msgstr ""
 
 #: animal.py
 msgid "Released To Wild {0}"
+msgstr ""
+
+#: mobile.py
+msgid "Reload"
 msgstr ""
 
 #: litters.js
@@ -9357,10 +9361,6 @@ msgstr ""
 
 #: media.js
 msgid "Signed"
-msgstr ""
-
-#: mobile.py
-msgid "Signing"
 msgstr ""
 
 #: media.js mobile.py

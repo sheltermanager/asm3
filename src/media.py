@@ -461,19 +461,23 @@ def sign_document(dbo, username, mid, sigurl, signdate):
     Signs an HTML document.
     sigurl: An HTML5 data: URL containing an image of the signature
     """
-    SIG_BLOCK_COMMENT = "<!-- signature block -->"
+    SIG_PLACEHOLDER = "signature:placeholder"
     date, medianame, mimetype, content = get_media_file_data(dbo, mid)
     # Is this an HTML document?
     if content.find("<p") == -1:
         raise utils.ASMValidationError("Cannot sign a non-HTML document")
     # Has this document already been signed? 
-    if content.find(SIG_BLOCK_COMMENT) != -1:
+    if 0 != db.query_int(dbo, "SELECT COUNT(*) FROM media WHERE ID = %d AND SignatureHash Is Not Null AND SignatureHash <> ''" % mid):
         raise utils.ASMValidationError("Document is already signed")
-    # Create the signature
-    sig = "<hr />\n%s\n" % SIG_BLOCK_COMMENT
-    sig += '<p><img src="' + sigurl + '" /></p>\n'
-    sig += "<p>%s</p>\n" % signdate
-    content += sig
+    # Does the document have a signing placeholder image? If so, replace it
+    if content.find(SIG_PLACEHOLDER) != -1:
+        content = content.replace(SIG_PLACEHOLDER, sigurl)
+    else:
+        # Create the signature at the foot of the document
+        sig = "<hr />\n"
+        sig += '<p><img src="' + sigurl + '" /></p>\n'
+        sig += "<p>%s</p>\n" % signdate
+        content += sig
     # Create a hash of the contents and store it with the media record
     db.execute(dbo, "UPDATE media SET SignatureHash = '%s' WHERE ID = %d" % (utils.md5_hash(content), mid))
     # Update the dbfs contents

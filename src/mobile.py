@@ -19,7 +19,7 @@ import users
 import utils
 from i18n import _, python2display, now, add_days, add_months, add_years, format_currency, format_time
 from sitedefs import MULTIPLE_DATABASES
-from sitedefs import JQUERY_JS, JQUERY_MOBILE_CSS, JQUERY_MOBILE_JS, JQUERY_UI_JS, SIGNATURE_JS, MOMENT_JS
+from sitedefs import JQUERY_JS, JQUERY_MOBILE_CSS, JQUERY_MOBILE_JS, JQUERY_UI_JS, SIGNATURE_JS, MOMENT_JS, TOUCHPUNCH_JS
 
 def header(l):
     return """<!DOCTYPE html>
@@ -330,6 +330,9 @@ def page_sign(dbo, session):
     %(scripts)s
     <script type="text/javascript">
         $(document).ready(function() {
+            var vw = $(window).width();
+            if (vw > 500) { vw = 500; }
+            $("#signature").css("width", String(vw) + "px");
             $("#signature").signature({ guideline: true });
             $("#sig-clear").click(function() {
                 $("#signature").signature("clear");
@@ -357,23 +360,28 @@ def page_sign(dbo, session):
             });
         });
     </script>
+    <style>
+    button { padding: 10px; font-size: 100%%; }
+    </style>
     </head>
     <body>
     """ % {
         "title":    _("Signing Pad", l),
         "ids":      ids,
         "css":      html.asm_css_tag("asm-icon.css"),
-        "scripts":  html.script_tag(JQUERY_JS) + html.script_tag(JQUERY_UI_JS) + html.script_tag(SIGNATURE_JS) + html.script_tag(MOMENT_JS)
+        "scripts":  html.script_tag(JQUERY_JS) + html.script_tag(JQUERY_UI_JS) + 
+            html.script_tag(TOUCHPUNCH_JS) + html.script_tag(SIGNATURE_JS) + html.script_tag(MOMENT_JS)
     })
     if ids.strip() == "":
         h.append('<p>%s</p>' % _("Waiting for documents...", l))
-        h.append('<button id="sig-refresh">' + _("Refresh", l) + '</button>')
+        h.append('<button id="sig-refresh">' + _("Reload", l) + '</button>')
     else:
         for mid in ids.strip().split(","):
             if mid.strip() != "": 
-                m = media.get_media_by_id(dbo, int(mid))
-                if len(m) > 0: h.append('<p><b>%s: %s</b></p>' % ( _("Signing", l), m[0]["MEDIANOTES"]))
-        h.append('<div id="signature" style="width: 100%; max-width: 500px; height: 200px;"></div>')
+                mdate, medianame, mimetype, contents = media.get_media_file_data(dbo, int(mid))
+                h.append(contents)
+                h.append("<hr />")
+        h.append('<div id="signature" style="border: 1px solid #aaa; height: 200px;"></div>')
         h.append('<p>')
         h.append('<button id="sig-clear" type="button">' + _("Clear", l) + '</button>')
         h.append('<button id="sig-sign" type="button">' + _("Sign", l) + '</button>')
