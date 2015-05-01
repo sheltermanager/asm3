@@ -12,6 +12,7 @@ Contents:
    animals
    people
    movements
+   documents
    animalcontrol
    lostandfound
    waitinglist

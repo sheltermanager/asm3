@@ -1,13 +1,10 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true */
-/*global $, baseurl, buildno, jswindowprint, tinymce, tinyMCE */
+/*global $, baseurl, buildno, onlysavewhendirty, jswindowprint, readonly, tinymce, tinyMCE */
 
 $(function() {
    
     var rw_toolbar = "save preview pdf print | undo redo | fontselect fontsizeselect | bold italic forecolor backcolor | alignleft aligncenter alignright alignjustify | forecolor backcolor | bullist numlist outdent indent pagebreak | link image";
     var ro_toolbar = "preview pdf print";
-
-    // If the document has been signed, go into read only mode
-    var readonly = $("#wp").html().indexOf("-- signature block") != -1;
 
     tinymce.init({
         selector: "#wp",
@@ -23,12 +20,13 @@ $(function() {
 
         // Disable some items if we're in read only mode
         menubar: !readonly,
-        readonly: readonly,
+        
+        // readonly: readonly, // This takes out too much stuff, we remove contenteditable from iframe instead.
 
         // enable browser spellchecking and allow saving at any time
         gecko_spellcheck: true,
         browser_spellcheck: true,
-        save_enablewhendirty: false,
+        save_enablewhendirty: onlysavewhendirty,
 
         // stop tinymce stripping data url images
         paste_data_images: true,
@@ -57,9 +55,15 @@ $(function() {
                 });
             }, 1000);
 
-            // Start in fullscreen mode
             setTimeout(function() {
+                // Start in fullscreen mode
                 ed.execCommand('mceFullScreen');
+                // If we're in readonly mode, prevent editing of the content and
+                // disable the CTRL+S save shortcut
+                if (readonly) {
+                    $("iframe").contents().find("body").removeAttr("contenteditable");
+                    ed.addShortcut('ctrl+s', '', function () {});
+                }
             }, 1100);
 
             // Mobile devices cannot support TinyMCE's use of sending the content

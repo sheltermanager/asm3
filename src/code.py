@@ -2335,7 +2335,7 @@ class document_gen:
         if templatename.endswith(".html"):
             web.header("Content-Type", "text/html")
             web.header("Cache-Control", "no-cache")
-            return html.tinymce_header(title, "document_edit.js", configuration.js_window_print(dbo), False) + \
+            return html.tinymce_header(title, "document_edit.js", configuration.js_window_print(dbo)) + \
                 html.tinymce_main(dbo.locale, "document_gen", recid=post["id"], mode=post["mode"], \
                     template=post["template"], content=utils.escape_tinymce(content))
         elif templatename.endswith(".odt"):
@@ -2395,7 +2395,8 @@ class document_edit:
             content = utils.escape_tinymce(dbfs.get_string_id(dbo, template))
             web.header("Content-Type", "text/html")
             web.header("Cache-Control", "no-cache")
-            return html.tinymce_header(title, "document_edit.js", configuration.js_window_print(dbo)) + html.tinymce_main(dbo.locale, "document_edit", template=template, content=content)
+            return html.tinymce_header(title, "document_edit.js", configuration.js_window_print(dbo)) + \
+                html.tinymce_main(dbo.locale, "document_edit", template=template, content=content)
         elif templatename.endswith(".odt"):
             content = dbfs.get_string_id(dbo, template)
             web.header("Content-Type", "application/vnd.oasis.opendocument.text")
@@ -2429,7 +2430,7 @@ class document_media_edit:
         al.debug("editing media %d" % post.integer("id"), "code.document_media_edit", dbo)
         title = medianame
         web.header("Content-Type", "text/html")
-        return html.tinymce_header(title, "document_edit.js", configuration.js_window_print(dbo)) + \
+        return html.tinymce_header(title, "document_edit.js", configuration.js_window_print(dbo), False, extmedia.has_signature(dbo, post.integer("id"))) + \
             html.tinymce_main(dbo.locale, "document_media_edit", mediaid=post.integer("id"), redirecturl=post["redirecturl"], \
                 content=utils.escape_tinymce(filedata))
 

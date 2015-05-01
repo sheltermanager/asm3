@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Movements &mdash; ASM 37 documentation</title>
+  <title>Documents &mdash; ASM 37 documentation</title>
   
 
   
@@ -29,8 +29,8 @@
 
   
     <link rel="top" title="ASM 37 documentation" href="index.html"/>
-        <link rel="next" title="Documents" href="documents.html"/>
-        <link rel="prev" title="People" href="people.html"/> 
+        <link rel="next" title="Animal Control" href="animalcontrol.html"/>
+        <link rel="prev" title="Movements" href="movements.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -82,15 +82,15 @@
 <li class="toctree-l2"><a class="reference internal" href="people.html#edit-person">Edit Person</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Movements</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#retailer-movements">Retailer Movements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#trial-adoptions">Trial Adoptions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#movement-books">Movement Books</a></li>
+<li class="toctree-l1"><a class="reference internal" href="movements.html">Movements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="movements.html#retailer-movements">Retailer Movements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="movements.html#trial-adoptions">Trial Adoptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="movements.html#movement-books">Movement Books</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="documents.html">Documents</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="documents.html#electronic-signatures">Electronic Signatures</a></li>
-<li class="toctree-l2"><a class="reference internal" href="documents.html#mobile-signing">Mobile Signing</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Documents</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#electronic-signatures">Electronic Signatures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mobile-signing">Mobile Signing</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="animalcontrol.html">Animal Control</a><ul>
@@ -247,10 +247,10 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>Movements</li>
+    <li>Documents</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="_sources/movements.txt" rel="nofollow"> View page source</a>
+          <a href="_sources/documents.txt" rel="nofollow"> View page source</a>
         
       </li>
   </ul>
@@ -258,97 +258,94 @@
 </div>
           <div role="main">
             
-  <div class="section" id="movements">
-<h1>Movements<a class="headerlink" href="#movements" title="Permalink to this headline">¶</a></h1>
-<p>A large part of the administrative duties you will need to perform with Animal
-Shelter Manager revolve around the movement and reservation of animals.</p>
-<p>To start with, it is best to explain how the movement system works; each
-movement record represents a leaving and returning transaction. You can
-therefore only have one (or no) active movement record at a time. ie. No more
-than one unreturned movement. This is because the animal cannot leave the
-shelter in two different ways without being returned first.</p>
-<p>A special exception to this is reservations - since they are not actually a
-movement (the animal hasn&#8217;t gone anywhere), you can have one or more
-reservations as well as an open movement. You should turn the reservation into
-an adoption movement when the animal is adopted by the person with the reserve
-and cancel any other outstanding reservations. If it detects multiple
-reservations, ASM will prompt and automatically cancel the other reservations
-for you when you turn one into an adoption using the <em class="menuselection">Move ‣
-Adopt an animal</em> screen.</p>
-<p>Note: ASM calls reservations what some shelters call &#8220;adoption applications&#8221;.
-You can have as many open applications on an animal as you like with an
-appropriate status, but only one will ever become the animal&#8217;s adoption.</p>
-<p>Any method by which an animal leaves your shelter requires a movement record.
-The only exception is death, which is handled through the animal death tab
-since it can only occur once.</p>
-<img alt="_images/move_menu.png" src="_images/move_menu.png" />
-<p>To make this process easier, you can use the Move menu to quickly create
-movements for animals. These actions will automatically validate the animal and
-person to make sure the movement is appropriate, and if the animal is already
-fostered it will be returned first, etc.</p>
-<div class="section" id="retailer-movements">
-<h2>Retailer Movements<a class="headerlink" href="#retailer-movements" title="Permalink to this headline">¶</a></h2>
-<p>ASM has a special kind of movement called a “retailer” movement. This movement
-should be used if your shelter sells animals through retailers (pet shops,
-etc.).</p>
-<p>To use this, you need to create at least one person on the system with the
-“Retailer” flag set. When an animal goes to a retailer, you create a retailer
-movement, moving the animal to the retailer (you can use <em class="menuselection">Move
-‣ Out ‣ Move an animal to a retailer</em>).</p>
-<p>Animals at retailers are still classed as on the shelter for reporting
-purposes, however you may then use the additional retailer reports to generate
-information about retailers (inventories, volumes moved, average time, etc)</p>
-<p>When an owner adopts the animal and the paperwork is received by the shelter,
-you should return the animal from the retailer movement, create the real owner
-record and adopt the animal to it. If you use <em class="menuselection">Move ‣ Out ‣
-Adopt an animal</em> and the animal is at a retailer, ASM will take care of this
-for you.</p>
-<p>Movement records also hold a “from retailer” field, which allows you to
-identify a successful adoption to an owner through a particular retailer. As
-long as you use the Adopt an animal process, ASM will set this for you.</p>
-<p>If you do not want to use retailer functionality, you can turn off the retailer
-feature under the <em class="menuselection">Settings ‣ Options</em> screen.</p>
-</div>
-<div class="section" id="trial-adoptions">
-<h2>Trial Adoptions<a class="headerlink" href="#trial-adoptions" title="Permalink to this headline">¶</a></h2>
-<p>If you have enabled the option under <em class="menuselection">Settings ‣ Options ‣
-Movement</em> for “Our shelter does trial adoptions”, then when you adopt an
-animal, either from the movement screens or <em class="menuselection">Move ‣ Out ‣
-Adopt an animal</em> then a checkbox will appear allowing you to flag that the
-adoption is a trial and when the trial ends.</p>
-<p>Some shelters commonly call this process &#8220;Foster-to-adopt&#8221;.</p>
-<img alt="_images/move_trial.png" src="_images/move_trial.png" />
-<p>Animals who are on a trial adoption will appear under
-<em class="menuselection">Move ‣ Books ‣ Trial adoption book</em></p>
-<img alt="_images/move_trial_book.png" src="_images/move_trial_book.png" />
-<p>When the trial ends, an alert will be shown on the home screen, which you can
-use as a reminder to contact the owner and either get the animal returned or
-make the adoption permanent. There are reports you can also install from the
-repository to view active or expired trial adoptions.</p>
-<p>You make an adoption permanent by simply unticking the trial box in the
-movement record.</p>
-</div>
-<div class="section" id="movement-books">
-<h2>Movement Books<a class="headerlink" href="#movement-books" title="Permalink to this headline">¶</a></h2>
-<p>ASM has a set of movement books that can be used for conveniently viewing animals who are currently off the shelter or reserved.</p>
-<img alt="_images/move_menu.png" src="_images/move_menu.png" />
-<p>They are:</p>
+  <div class="section" id="documents">
+<h1>Documents<a class="headerlink" href="#documents" title="Permalink to this headline">¶</a></h1>
+<p>Animal Shelter Manager has extensive document abilities for creating forms and
+letters. The system also includes its own web-based word processor for handling
+this.</p>
+<p>To create a document for use with the system, you can manage templates under
+<em class="menuselection">Settings ‣ Document Templates</em>. You embed keys in your document
+that will be substituted with real data when a document is generated. For a
+complete list of document keys, see <a class="reference internal" href="wordkeys.html#wordkeys"><em>Appendix: Wordkeys</em></a></p>
+<p>Keys follow the format &lt;&lt;[Keyname]&gt;&gt;. For example, putting the tag
+&lt;&lt;AnimalName&gt;&gt; in your document will cause it to be substituted for the
+animal&#8217;s name.</p>
+<img alt="_images/document_menu.png" src="_images/document_menu.png" />
+<p>A number of places in the system have toolbars with generate document buttons,
+you can find these:</p>
 <ul class="simple">
-<li>Reservation book</li>
-<li>Foster book</li>
-<li>Retailer book</li>
-<li>Trial adoption book</li>
-<li>Return an animal from adoption (shows adoptions in the last 30 days)</li>
-<li>Return a transferred animal (shows transfers in the last 30 days)</li>
-<li>Return an animal from another movement (escaped, stolen, released, reclaimed
-animals in the last 30 days).</li>
+<li>On the animal details screen (creates documents with animal, person and
+movement information, useful for adoption paperwork)</li>
+<li>On the person screen(creates documents with person information)</li>
+<li>On the payments tab (creates documents with person, payment and animal
+information, useful for invoice and receipt templates)</li>
 </ul>
-<p>Conceptually, all the books work in exactly the same way – they show sets of
-animal movements off the shelter for different reasons. You can quickly link to
-the animal or people records or return the animal from the movement back to the
-shelter. To do that, simply open the movement and set a return date (or use the
-Return button).</p>
-<img alt="_images/move_trial_book.png" src="_images/move_trial_book.png" />
+<p>However you choose to create the document, the process is the same. You select
+your document template from the dropdown list.</p>
+<img alt="_images/html_wp.png" src="_images/html_wp.png" />
+<p>Once you have selected the template, the document will be generated and opened
+in the word processor, ready for editing and printing. If you hit the save
+button in the word processor, the document will be saved to the appropriate
+media tab of the animal/person you generated the document for.</p>
+<p>You can also use the PDF button on the toolbar to generate and open a PDF of
+the document. This is useful as PDFs will be consistent across different
+machines running different operating systems and with different fonts
+installed.</p>
+<img alt="_images/html_wp_to_pdf.png" src="_images/html_wp_to_pdf.png" />
+<p>You can embed directives in your document to give some hints to the PDF engine.
+These should take the form of HTML comments, embedded in &lt;!&#8211; and &#8211;&gt;, and can
+be inserted by going to Tools-&gt;Source Code in the document editor:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;!-- pdf papersize a4 --&gt;
+</pre></div>
+</div>
+<p>To set the papersize to a4. Other options are a3, a5 and letter:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;!-- pdf orientation landscape --&gt;
+</pre></div>
+</div>
+<p>To set the orientation to landscape. Portrait is the default but can be
+explicitly set too.</p>
+<div class="section" id="electronic-signatures">
+<h2>Electronic Signatures<a class="headerlink" href="#electronic-signatures" title="Permalink to this headline">¶</a></h2>
+<img alt="_images/sign_buttons.png" src="_images/sign_buttons.png" />
+<p>ASM allows you to add an electronic signature to documents. To do this, select
+the documents you&#8217;d like to sign and use either the &#8220;Sign&#8221; or &#8220;Signing Pad&#8221;
+buttons on the media tab. ASM allows you to use any generic mouse or touchscreen
+hardware and mobile touchscreen devices as signing pads - you do not need
+to buy expensive custom hardware.</p>
+<img alt="_images/sign_dialog.png" src="_images/sign_dialog.png" />
+<p>The &#8220;Sign&#8221; button shows a signature pad on-screen and allows you to use any
+mouse-style device to do the signing. This includes hardware like Wacom
+drawing tablets, mice, pens and touchscreen monitors.</p>
+<p>After signing, the signature will be attached to the document as a footer along
+with the date and time the document was signed.</p>
+<img alt="_images/sign_doc.png" src="_images/sign_doc.png" />
+<p>In addition, an icon will appear next to the document on the media tab to indicate
+that the document has now been signed.</p>
+<img alt="_images/sign_icon.png" src="_images/sign_icon.png" />
+<p>Signed documents are read only and cannot be edited. A cryptographic hash for the
+signed document is calculated and stored separately so that any future tampering
+can be detected.</p>
+<p>When editing your document templates, if you&#8217;d like to control the size and
+location of the signature, insert an image where you&#8217;d like the signature to
+appear and when the dialog requests the image source, instead of a URL, enter
+&#8220;signature:placeholder&#8221; without the quotes. The document signing module will
+insert the signature inside your image instead of appending a footer.</p>
+</div>
+<div class="section" id="mobile-signing">
+<h2>Mobile Signing<a class="headerlink" href="#mobile-signing" title="Permalink to this headline">¶</a></h2>
+<p>The &#8220;Signing Pad&#8221; button allows you to mark the document for signing in the mobile
+interface.</p>
+<p>If you visit ASM&#8217;s mobile interface on any mobile/tablet device, you can use the
+&#8220;Signing Pad&#8221; link in the mobile interface to go into signing pad mode.</p>
+<img alt="_images/sign_mobilepad.png" src="_images/sign_mobilepad.png" />
+<img alt="_images/sign_waiting.png" src="_images/sign_waiting.png" />
+<p>Once in signing pad mode, the interface waits for documents to sign. When
+documents are received, they are shown on the mobile interface with a signature
+pad at the bottom for the person to sign. This is useful for adoption and other
+paperwork and allows you to keep contracts in a completely electronic manner
+without the need for paper. You can still print off signed documents or email
+them in PDF form to adopters directly.</p>
+<img alt="_images/sign_mobiledoc.png" src="_images/sign_mobiledoc.png" />
 </div>
 </div>
 
@@ -358,10 +355,10 @@ Return button).</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="documents.html" class="btn btn-neutral float-right" title="Documents"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="animalcontrol.html" class="btn btn-neutral float-right" title="Animal Control"/>Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="people.html" class="btn btn-neutral" title="People"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="movements.html" class="btn btn-neutral" title="Movements"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -75,8 +75,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#shelter-view">Shelter View</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#find-animal">Find Animal</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#edit-animal">Edit Animal</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#moving-and-reserving-animals">Moving and Reserving Animals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#documents">Documents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="people.html">People</a><ul>
@@ -84,7 +82,17 @@
 <li class="toctree-l2"><a class="reference internal" href="people.html#edit-person">Edit Person</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="movements.html">Movement Books</a></li>
+<li class="toctree-l1"><a class="reference internal" href="movements.html">Movements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="movements.html#retailer-movements">Retailer Movements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="movements.html#trial-adoptions">Trial Adoptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="movements.html#movement-books">Movement Books</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="documents.html">Documents</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="documents.html#electronic-signatures">Electronic Signatures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documents.html#mobile-signing">Mobile Signing</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="animalcontrol.html">Animal Control</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#incidents">Incidents</a></li>
 <li class="toctree-l2"><a class="reference internal" href="animalcontrol.html#incident-details">Incident Details</a></li>
@@ -522,121 +530,6 @@ as many log types as you want under <em class="menuselection">Settings ‣ Looku
 and with a comment. This is useful for keeping track of animal weights, bite
 reports, owner emails, complaints and anything else you can think of.</p>
 </div>
-</div>
-<div class="section" id="moving-and-reserving-animals">
-<h2>Moving and Reserving Animals<a class="headerlink" href="#moving-and-reserving-animals" title="Permalink to this headline">¶</a></h2>
-<p>A large part of the administrative duties you will need to perform with Animal
-Shelter Manager revolve around the movement and reservation of animals.</p>
-<p>To start with, it is best to explain how the movement system works; each
-movement record represents a leaving and returning transaction. You can
-therefore only have one (or no) active movement record at a time. ie. No more
-than one unreturned movement. This is because the animal cannot leave the
-shelter in two different ways without being returned first.</p>
-<p>A special exception to this is reservations - since they are not actually a
-movement (the animal hasn&#8217;t gone anywhere), you can have one or more
-reservations as well as an open movement. You should turn the reservation into
-an adoption movement when the animal is adopted by the person with the reserve
-and cancel any other outstanding reservations. If it detects multiple
-reservations, ASM will prompt and cancel the other reservations for you when
-you turn one into an adoption.</p>
-<p>Note: ASM calls reservations what some shelters call &#8220;adoption applications&#8221;.
-You can have as many open applications on an animal as you like with an
-appropriate status, but only one will ever become the animal&#8217;s adoption.</p>
-<p>Any method by which an animal leaves your shelter requires a movement record.
-The only exception is death, which is handled through the animal death tab.</p>
-<img alt="_images/move_menu.png" src="_images/move_menu.png" />
-<p>To make this process easier, you can use the Move menu to quickly create
-movements for animals. These actions will automatically validate the animal and
-person to make sure the movement is appropriate, and if the animal is already
-fostered it will be returned first, etc.</p>
-<div class="section" id="retailer-movements">
-<h3>Retailer Movements<a class="headerlink" href="#retailer-movements" title="Permalink to this headline">¶</a></h3>
-<p>ASM has a special kind of movement called a “retailer” movement. This movement
-should be used if your shelter sells animals through retailers (pet shops,
-etc.).</p>
-<p>To use this, you need to create at least one person on the system with the
-“Retailer” flag set. When an animal goes to a retailer, you create a retailer
-movement, moving the animal to the retailer (you can use <em class="menuselection">Move
-‣ Out ‣ Move an animal to a retailer</em>).</p>
-<p>Animals at retailers are still classed as on the shelter for reporting
-purposes, however you may then use the additional retailer reports to generate
-information about retailers (inventories, volumes moved, average time, etc)</p>
-<p>When an owner adopts the animal and the paperwork is received by the shelter,
-you should return the animal from the retailer movement, create the real owner
-record and adopt the animal to it. If you use <em class="menuselection">Move ‣ Out ‣
-Adopt an animal</em> and the animal is at a retailer, ASM will take care of this
-for you.</p>
-<p>Movement records also hold a “from retailer” field, which allows you to
-identify a successful adoption to an owner through a particular retailer. As
-long as you use the Adopt an animal process, ASM will set this for you.</p>
-<p>If you do not want to use retailer functionality, you can turn off the retailer
-feature under the <em class="menuselection">Settings ‣ Options</em> screen.</p>
-</div>
-<div class="section" id="trial-adoptions">
-<h3>Trial Adoptions<a class="headerlink" href="#trial-adoptions" title="Permalink to this headline">¶</a></h3>
-<p>If you have enabled the option under <em class="menuselection">Settings ‣ Options ‣
-Movement</em> for “Our shelter does trial adoptions”, then when you adopt an
-animal, either from the movement screens or <em class="menuselection">Move ‣ Out ‣
-Adopt an animal</em> then a checkbox will appear allowing you to flag that the
-adoption is a trial and when the trial ends.</p>
-<img alt="_images/move_trial.png" src="_images/move_trial.png" />
-<p>Animals who are on a trial adoption will appear under
-<em class="menuselection">Move ‣ Books ‣ Trial adoption book</em></p>
-<img alt="_images/move_trial_book.png" src="_images/move_trial_book.png" />
-<p>When the trial ends, an alert will be shown on the home screen, which you can
-use as a reminder to contact the owner and either get the animal returned or
-make the adoption permanent. There are reports you can also install from the
-repository to view active or expired trial adoptions.
-You make an adoption permanent by simply unticking the trial box in the
-movement record.</p>
-</div>
-</div>
-<div class="section" id="documents">
-<h2>Documents<a class="headerlink" href="#documents" title="Permalink to this headline">¶</a></h2>
-<p>Animal Shelter Manager has extensive document abilities for creating forms and
-letters. The system also includes its own web-based word processor for handling
-this.</p>
-<p>To create a document for use with the system, you can manage templates under
-<em class="menuselection">Settings ‣ Document Templates</em>. You embed keys in your document
-that will be substituted with real data when a document is generated. For a
-complete list of document keys, see <a class="reference internal" href="wordkeys.html#wordkeys"><em>Appendix: Wordkeys</em></a></p>
-<p>Keys follow the format &lt;&lt;[Keyname]&gt;&gt;. For example, putting the tag
-&lt;&lt;AnimalName&gt;&gt; in your document will cause it to be substituted for the
-animal&#8217;s name.</p>
-<img alt="_images/document_menu.png" src="_images/document_menu.png" />
-<p>A number of places in the system have toolbars with generate document buttons,
-you can find these:</p>
-<ul class="simple">
-<li>On the animal details screen (creates documents with animal, person and
-movement information, useful for adoption paperwork)</li>
-<li>On the person screen(creates documents with person information)</li>
-<li>On the donations tab (creates documents with person, donation and animal
-information, useful for invoice and receipt templates)</li>
-</ul>
-<p>However you choose to create the document, the process is the same. You select
-your document template from the dropdown list.</p>
-<img alt="_images/html_wp.png" src="_images/html_wp.png" />
-<p>Once you have selected the template, the document will be generated and opened
-in the word processor, ready for editing and printing. If you hit the save
-button in the word processor, the document wi ll be saved to the appropriate
-media tab of the animal/person you generated the document for.</p>
-<p>You can also use the PDF button on the toolbar to generate and open a PDF of
-the document. This is useful as PDFs will be consistent across different
-machines running different operating systems and with different fonts
-installed.</p>
-<img alt="_images/html_wp_to_pdf.png" src="_images/html_wp_to_pdf.png" />
-<p>You can embed directives in your document to give some hints to the PDF engine.
-These should take the form of HTML comments, embedded in &lt;!&#8211; and &#8211;&gt;, and can
-be inserted by going to Tools-&gt;Source Code in the document editor:</p>
-<div class="highlight-python"><div class="highlight"><pre>&lt;!-- pdf papersize a4 --&gt;
-</pre></div>
-</div>
-<p>To set the papersize to a4. Other options are a3, a5 and letter:</p>
-<div class="highlight-python"><div class="highlight"><pre>&lt;!-- pdf orientation landscape --&gt;
-</pre></div>
-</div>
-<p>To set the orientation to landscape. Portrait is the default but can be
-explicitly set too.</p>
 </div>
 </div>
 

@@ -229,7 +229,7 @@ def bare_header(title, js = "", theme = "ui-lightness", locale = LOCALE, config_
                 script, 
               "bgcol": bgcol }
 
-def tinymce_header(title, js, jswindowprint = True, onlysavewhendirty = True):
+def tinymce_header(title, js, jswindowprint = True, onlysavewhendirty = False, readonly = False):
     """
     Outputs a header for tinymce pages.
     js: The name of the script file to load.
@@ -246,6 +246,7 @@ def tinymce_header(title, js, jswindowprint = True, onlysavewhendirty = True):
         var buildno = '%(buildno)s';
         var jswindowprint = %(jswindowprint)s;
         var onlysavewhendirty = %(onlysavewhendirty)s;
+        var readonly = %(readonly)s;
         </script>
         %(tinymce)s
         %(script)s
@@ -257,6 +258,7 @@ def tinymce_header(title, js, jswindowprint = True, onlysavewhendirty = True):
            "script": asm_script_tag(js),
            "baseurl": BASE_URL,
            "buildno": BUILD,
+           "readonly": readonly and "true" or "false",
            "jswindowprint": jswindowprint and "true" or "false",
            "onlysavewhendirty": onlysavewhendirty and "true" or "false" }
 

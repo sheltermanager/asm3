@@ -483,6 +483,10 @@ def sign_document(dbo, username, mid, sigurl, signdate):
     # Update the dbfs contents
     update_file_content(dbo, username, mid, content)
 
+def has_signature(dbo, mid):
+    """ Returns true if a piece of media has a signature """
+    return 0 != db.query_int(dbo, "SELECT COUNT(*) FROM media WHERE SignatureHash Is Not Null AND SignatureHash <> '' AND ID = %d" % mid)
+
 def update_file_content(dbo, username, mid, content):
     """
     Updates the dbfs content for the file pointed to by id

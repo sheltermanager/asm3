@@ -1,6 +1,7 @@
 37
 ================
 
+01/05/15 Use hash to detect signature, add documentation #162
 01/05/15 Add touchpunch to signing pad, show doc being signed #162
 30/04/15 Add signing pad to mobile interface #162
 30/04/15 Add signed document hashing/tamper proofing and indicator #162
