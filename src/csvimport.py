@@ -354,7 +354,9 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
                     create_additional_fields(dbo, row, errors, rowno, "ANIMALADDITIONAL", "animal", animalid)
             except Exception,e:
                 al.error("row %d (%s): %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
-                errors.append( (rowno, str(row), str(e)) )
+                errmsg = str(e)
+                if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
+                errors.append( (rowno, str(row), errmsg) )
 
         # Person data?
         personid = 0
@@ -398,7 +400,9 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
                     create_additional_fields(dbo, row, errors, rowno, "PERSONADDITIONAL", "person", personid)
             except Exception,e:
                 al.error("row %d (%s), person: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
-                errors.append( (rowno, str(row), "person: " + str(e)) )
+                errmsg = str(e)
+                if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
+                errors.append( (rowno, str(row), "person: " + errmsg) )
 
         # Movement to tie animal/person together?
         movementid = 0
@@ -416,7 +420,9 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
                 movementid = movement.insert_movement_from_form(dbo, "import", utils.PostedData(m, dbo.locale))
             except Exception,e:
                 al.error("row %d (%s), movement: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
-                errors.append( (rowno, str(row), "movement: " + str(e)) )
+                errmsg = str(e)
+                if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
+                errors.append( (rowno, str(row), "movement: " + errmsg) )
 
         # Donation?
         if hasdonation and personid != 0 and gkc(row, "DONATIONAMOUNT") != 0:
@@ -437,7 +443,9 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
                 financial.insert_donation_from_form(dbo, "import", utils.PostedData(d, dbo.locale))
             except Exception,e:
                 al.error("row %d (%s), donation: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
-                errors.append( (rowno, str(row), "donation: " + str(e)) )
+                errmsg = str(e)
+                if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
+                errors.append( (rowno, str(row), "donation: " + errmsg) )
             if movementid != 0: movement.update_movement_donation(dbo, movementid)
 
         rowno += 1

@@ -332,11 +332,16 @@ class ASMValidationError(web.HTTPError):
     """
     Custom error thrown by data modules when validation fails
     """
+    msg = ""
     def __init__(self, msg):
+        self.msg = msg
         status = '500 Internal Server Error'
         headers = { 'Content-Type': "text/html" }
         data = "<h1>Validation Error</h1><p>%s</p>" % msg
         web.HTTPError.__init__(self, status, headers, data)
+
+    def getMsg(self):
+        return self.msg
 
 class ASMPermissionError(web.HTTPError):
     """
