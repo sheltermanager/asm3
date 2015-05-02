@@ -328,29 +328,33 @@ explicitly set too.</p>
 <div class="section" id="electronic-signatures">
 <h2>Electronic Signatures<a class="headerlink" href="#electronic-signatures" title="Permalink to this headline">¶</a></h2>
 <img alt="_images/sign_buttons.png" src="_images/sign_buttons.png" />
-<p>ASM allows you to add an electronic signature to documents. To do this, select
-the documents you&#8217;d like to sign and use either the &#8220;Sign&#8221; or &#8220;Signing Pad&#8221;
-buttons on the media tab. ASM allows you to use any generic mouse or touchscreen
-hardware and mobile touchscreen devices as signing pads - you do not need
-to buy expensive custom hardware.</p>
+<p>ASM allows you to add an electronic signature to documents. Signed documents
+are read only and cannot be edited. A cryptographic hash for the signed
+document is calculated and stored separately so that any future
+tampering can be detected.</p>
+<p>There are two methods of adding signatures to documents - either via the
+user interface or through &#8220;signing pad&#8221; mode in the mobile interface.</p>
+<p>To use, select the documents you&#8217;d like to sign and use either the &#8220;Sign&#8221; or
+&#8220;Signing Pad&#8221; buttons on the media tab. ASM allows you to use any generic mouse
+or touchscreen hardware and mobile touchscreen devices as signing pads - you do
+not need to buy expensive custom hardware.</p>
 <img alt="_images/sign_dialog.png" src="_images/sign_dialog.png" />
 <p>The &#8220;Sign&#8221; button shows a signature pad on-screen and allows you to use any
-mouse-style device to do the signing. This includes hardware like Wacom
-drawing tablets, mice, pens and touchscreen monitors.</p>
-<p>After signing, the signature will be attached to the document as a footer along
-with the date and time the document was signed.</p>
-<img alt="_images/sign_doc.png" src="_images/sign_doc.png" />
-<p>In addition, an icon will appear next to the document on the media tab to indicate
-that the document has now been signed.</p>
-<img alt="_images/sign_icon.png" src="_images/sign_icon.png" />
-<p>Signed documents are read only and cannot be edited. A cryptographic hash for the
-signed document is calculated and stored separately so that any future tampering
-can be detected.</p>
-<p>When editing your document templates, if you&#8217;d like to control the size and
+mouse-style device to do the signing. This includes hardware like Wacom drawing
+tablets, mice, pens and touchscreen monitors (or if you are using a tablet
+computer with the standard user interface).</p>
+<p>When editing your document templates, if you would like to control the size and
 location of the signature, insert an image where you&#8217;d like the signature to
 appear and when the dialog requests the image source, instead of a URL, enter
 &#8220;signature:placeholder&#8221; without the quotes. The document signing module will
 insert the signature inside your image instead of appending a footer.</p>
+<p>If your document template does not contain a signature placeholder, the
+signature will be attached to the document as a footer along with the date and
+time the document was signed.</p>
+<img alt="_images/sign_doc.png" src="_images/sign_doc.png" />
+<p>In addition, an icon will appear next to the document on the media tab to indicate
+that the document has now been signed.</p>
+<img alt="_images/sign_icon.png" src="_images/sign_icon.png" />
 </div>
 <div class="section" id="mobile-signing">
 <h2>Mobile Signing<a class="headerlink" href="#mobile-signing" title="Permalink to this headline">¶</a></h2>
@@ -358,14 +362,18 @@ insert the signature inside your image instead of appending a footer.</p>
 interface.</p>
 <p>If you visit ASM&#8217;s mobile interface on any mobile/tablet device, you can use the
 &#8220;Signing Pad&#8221; link in the mobile interface to go into signing pad mode.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The mobile interface must be logged in with the same user account as the person who clicked the &#8220;Signing Pad&#8221; button on the media tab. This prevents users signing other&#8217;s documents and eliminates confusion in multi-site use.</p>
+</div>
 <img alt="_images/sign_mobilepad.png" src="_images/sign_mobilepad.png" />
 <img alt="_images/sign_waiting.png" src="_images/sign_waiting.png" />
 <p>Once in signing pad mode, the interface waits for documents to sign. When
-documents are received, they are shown on the mobile interface with a signature
-pad at the bottom for the person to sign. This is useful for adoption and other
-paperwork and allows you to keep contracts in a completely electronic manner
-without the need for paper. You can still print off signed documents or email
-them in PDF form to adopters directly.</p>
+documents are received, they can be reviewed in the mobile interface with a
+signature pad below for the person to sign. This is useful for adoption and
+other paperwork and allows you to keep contracts in a completely electronic
+manner without the need for paper. You can still print off signed documents or
+email them in PDF form to adopters directly.</p>
 <img alt="_images/sign_mobiledoc.png" src="_images/sign_mobiledoc.png" />
 </div>
 </div>

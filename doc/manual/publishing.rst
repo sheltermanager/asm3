@@ -179,9 +179,9 @@ feed readers.
   you attach them under the media tab, so unless you want to make them smaller
   still, it's best to leave this at No Scaling.  
   
-* Publish to folder: Choose the folder where output is to be generated. Note
-  that this folder is on the machine that ASM is installed on, not your local
-  client PC. If this is left blank, a temporary folder will be used.
+* Publish to folder: Choose the folder where output is to be generated. 
+  
+.. warning:: This folder is on the machine that ASM is installed on, not your local client PC. If this is left blank, a temporary folder will be used.
 
 Included templates
 ^^^^^^^^^^^^^^^^^^
@@ -298,9 +298,7 @@ PetFinder.com and your password. All you need to do then is choose Publish to
 PetFinder.com in place of the normal internet publisher. The options for
 filtering animals are the same (see previous section for reference).
 
-Note that if you have created new Species or Breeds within ASM, you will need
-to map them to the available publisher options under the Breed and Species
-sections of :menuselection:`Settings --> Lookup Data`
+.. note:: If you have created new Species or Breeds within ASM, you will need to map them to the available publisher options under the Breed and Species sections of :menuselection:`Settings --> Lookup Data`
 
 If you have some that are not mapped, the publisher will fail with an error
 message.
@@ -314,11 +312,7 @@ you to set an empty second breed field, there's a workaround - If you make the
 second breed the same as the first breed with the crossbreed flag set, ASM will
 send that second breed as a blank to PetFinder.
 
-**IMPORTANT:** You have to let PetFinder know that you are using ASM to upload
-your data. Do this by going to the Admin System Help Center, then Contact Us
-and send PetFinder Tech Support a message that you are using ASM to publish
-animal data via their FTP server. They should give you the FTP login
-information and make sure permissions and quotas are correct.
+.. warning:: You have to let PetFinder know that you are using ASM to upload your data. Do this by going to the Admin System Help Center, then Contact Us and send PetFinder Tech Support a message that you are using ASM to publish animal data via their FTP server. They should give you the FTP login information and make sure permissions and quotas are correct.
 
 petrescue.com.au
 ----------------
@@ -334,12 +328,7 @@ Publish to PetRescue.com.au in place of the normal internet publisher. The
 options for filtering animals are the same (see previous section for
 reference).
 
-Note that if you have created new Species or Breeds within ASM, you will need
-to map them to the available publisher options under the Breed and Species
-sections of *Settings->Lookup Data*
-
-If you have some that are not mapped, the publisher will fail with an error
-message.
+.. note:: If you have created new Species or Breeds within ASM, you will need to map them to the available publisher options under the Breed and Species sections of :menuselection:`Settings->Lookup Data`. If you have some that are not mapped, the publisher will fail with an error message.
 
 rescuegroups.org
 ----------------
@@ -359,14 +348,9 @@ Once you've done that, you can choose the Publish to RescueGroups.org menu
 item. The options for filtering animals are the same as for the other
 publishers.
 
-**Note:** If you are using the “Upload all images” option, ASM will only send
-the first 4 images (the first is always the preferred) as RescueGroups.org do
-not support more than 4 images per animal.
+.. warning:: If you are using the “Upload all images” option, ASM will only send the first 4 images (the first is always the preferred) as RescueGroups.org do not support more than 4 images per animal.
 
-**Note:** The RescueGroups.org publisher uses the publisher breeds and species
-mappings, so you should make sure that you have mappings for all your breeds
-and species before using the publisher (the publisher will give an error
-message if any species or breeds do not have mappings). 
+.. warning:: The RescueGroups.org publisher uses the publisher breeds and species mappings, so you should make sure that you have mappings for all your breeds and species before using the publisher (the publisher will give an error message if any species or breeds do not have mappings).
 
 AVID/PETtrac UK
 ---------------

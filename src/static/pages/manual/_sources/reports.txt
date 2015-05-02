@@ -83,10 +83,11 @@ users in those roles will be able to run the report and see its output.
 In addition to just creating queries, you can then format how the data is
 transformed and displayed to you in the format of a report. Again, this is done
 through the use of another language - HTML (HyperText Markup Language). This is
-the same language used for creating web pages on the internet. Note however
-that the report editor has a button to automatically run your query and
-generate the HTML for you in a simple table format. It is worthwhile running
-this and then modifying the HTML afterwards. 
+the same language used for creating web pages on the internet.
+
+The report editor has a button to automatically run your query and generate the
+HTML for you in a simple table format. It is worthwhile running this and then
+modifying the HTML afterwards. 
 
 For some excellent beginner tutorials on both SQL and HTML, see
 www.w3schools.com 
@@ -132,9 +133,7 @@ generation time. The basic syntax is this::
 
     $ASK [DATE | [ALL]ANIMAL | LITTER | SPECIES | LOCATION | LOGTYPE | TYPE | NUMBER | STRING] [Message]$
 
-Note that if you are substituting any kind of string value (ASK DATE or ASK
-STRING), you must wrap the ASK key inside string delimiters (the apostrophe ')
-otherwise you will get SQL errors. 
+.. note:: If you are substituting any kind of string value (ASK DATE or ASK STRING), you must wrap the ASK key inside string delimiters (the apostrophe ') otherwise you will get SQL errors. 
 
 The types are outlined below: 
 
@@ -286,10 +285,9 @@ $$FOOT blocks and the main $$FOOTER block. These are:
   with [title] and with the [parentkey] being the name of a field from the
   current report data to pass down to the subreport. The report output is
   embedded in the current report. You can use the $PARENTKEY$ field in the
-  subreport to access this value for filtering your data. Note that you can
-  nest reports to an unlimited depth. You can pass an unlimited number of
-  fields to a subreport, accessible as $PARENTARGX$ where X is the number of
-  the argument you want to access in the subreport query.
+  subreport to access this value for filtering your data. 
+
+  .. note:: You can nest reports to an unlimited depth. You can pass an unlimited number of fields to a subreport, accessible as $PARENTARGX$ where X is the number of the argument you want to access in the subreport query.
 
 Here is an example report to show all animals currently on the shelter, with
 their picture, grouped by their internal location and giving totals for each::
@@ -376,9 +374,7 @@ Year TotalAmount
 2007 55984
 ==== ===========
 
-Note that the graphs use a relative scale, interpreted from the data. If all of
-your column data is the same value, then the graph will not display because it
-has no variance. 
+.. note:: Graphs use a relative scale, interpreted from the data. If all of your column data is the same value, then the graph will not display because it has no variance. 
 
 Three column variant
 ^^^^^^^^^^^^^^^^^^^^

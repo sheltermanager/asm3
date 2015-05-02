@@ -625,7 +625,7 @@ class mobile_sign:
     def GET(self):
         utils.check_loggedin(session, web, "/mobile_login")
         web.header("Content-Type", "text/html")
-        return extmobile.page_sign(session.dbo, session)
+        return extmobile.page_sign(session.dbo, session, session.user)
 
 class main:
     def GET(self):
@@ -1505,7 +1505,7 @@ class animal_media:
             for mid in post.integer_list("ids"):
                 extmedia.sign_document(session.dbo, session.user, mid, post["sig"], post["signdate"])
         elif mode == "signpad":
-            configuration.signpad_ids(session.dbo, post["ids"])
+            configuration.signpad_ids(session.dbo, session.user, post["ids"])
         elif mode == "rotateclock":
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):

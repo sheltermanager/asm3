@@ -111,9 +111,9 @@ open an existing document or turn the current document into a mail merge
 document (you may choose from Form Letters, Address Labels etc.) 
 
 Step two prompts you to get the data source - simply find the csv file you
-download and select it. Note that by default Word will not show the csv files
-in its dialog - make sure you drop down the file type list and select “All
-Files (*.*)”
+download and select it. 
+
+.. note:: Note that by default Word will not show the csv files in its dialog - make sure you drop down the file type list and select “All Files (*.*)”
 
 If you used an empty document, Word will prompt you to select mail merge
 fields to use. You can insert these placeholders into your document by

@@ -25,9 +25,7 @@ reservations, ASM will prompt and automatically cancel the other reservations
 for you when you turn one into an adoption using the :menuselection:`Move -->
 Adopt an animal` screen.
 
-Note: ASM calls reservations what some shelters call "adoption applications".
-You can have as many open applications on an animal as you like with an
-appropriate status, but only one will ever become the animal's adoption.
+.. note:: ASM calls reservations what some shelters call "adoption applications". You can have as many open applications on an animal as you like with an appropriate status, but only one will ever become the animal's adoption.
 
 Any method by which an animal leaves your shelter requires a movement record.
 The only exception is death, which is handled through the animal death tab

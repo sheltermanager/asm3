@@ -440,8 +440,9 @@ the reservation for you after this time.
 
 * Treat foster animals as part of the shelter inventory: Setting this option
   will make ASM treat fostered animals as if they are on the shelter (with
-  appropriate visual output to show they are fostered). Note that this option
-  will not take effect until you restart ASM. 
+  appropriate visual output to show they are fostered). 
+
+.. note:: You should use :menuselection:`Settings --> Trigger Batch Processes` and recalculate animal locations after changing this option.
 
 * Automatically cancel any outstanding reservations on an animal when it is
   adopted: Self explanatory.

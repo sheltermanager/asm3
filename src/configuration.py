@@ -898,11 +898,11 @@ def show_cost_paid(dbo):
 def show_stats_home_page(dbo):
     return cstring(dbo, "ShowStatsHomePage", DEFAULTS["ShowStatsHomePage"])
 
-def signpad_ids(dbo, newval = ""):
+def signpad_ids(dbo, user, newval = ""):
     if newval == "":
-        return cstring(dbo, "SignpadIds", "")
+        return cstring(dbo, "SignpadIds%s" % user, "")
     else:
-        cset(dbo, "SignpadIds", newval)
+        cset(dbo, "SignpadIds%s" % user, newval)
 
 def smdb_locked(dbo):
     return cboolean(dbo, "SMDBLocked")

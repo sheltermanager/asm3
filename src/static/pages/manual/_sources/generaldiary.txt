@@ -24,10 +24,9 @@ who the note is for. There is a drop down list at the top of the screen,
 listing all the system users and roles. If you select a role, all users who
 have that role will receive the note.
 
-Select a date and time to remind the person. Note that the time field is not
-actually used for anything by the system, it is simply shown on the diary entry
-when it is printed off. Diary notes will appear on the main screen for the user
-once the day on the note reaches today.
+Select a date and time to remind the person. 
+
+.. note:: Note that the time field is not actually used for anything by the system, it is simply shown on the diary entry when it is printed off and in calendar view. Diary notes will appear on the main screen for the user once the day on the note reaches today.
 
 Enter a subject and the actual text of the diary note next. Leave the completed
 field blank. This field will be the date the diary note was actioned by the

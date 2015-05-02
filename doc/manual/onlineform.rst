@@ -24,10 +24,9 @@ automatically have those flags.
 
 As you can see in the screenshot, each form has a “Form URL”. This is the web
 link you can use on your website to link people to the form. You can also click
-it directly there in the UI to test your form. Note that sheltermanager.com
-uses a short term 2 minute cache on forms, so if you make changes to a form
-you've recently viewed, you may have to wait 2 minutes for any changes you make
-to appear.
+it directly there in the UI to test your form. 
+
+.. warning:: sheltermanager.com uses a short term 2 minute cache on forms, so if you make changes to a form you've recently viewed, you may have to wait 2 minutes for any changes you make to appear.
 
 Clicking on the form's name will allow you to edit the individual fields of
 information the report will take.

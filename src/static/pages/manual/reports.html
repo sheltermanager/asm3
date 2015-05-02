@@ -346,10 +346,10 @@ users in those roles will be able to run the report and see its output.</p>
 <p>In addition to just creating queries, you can then format how the data is
 transformed and displayed to you in the format of a report. Again, this is done
 through the use of another language - HTML (HyperText Markup Language). This is
-the same language used for creating web pages on the internet. Note however
-that the report editor has a button to automatically run your query and
-generate the HTML for you in a simple table format. It is worthwhile running
-this and then modifying the HTML afterwards.</p>
+the same language used for creating web pages on the internet.</p>
+<p>The report editor has a button to automatically run your query and generate the
+HTML for you in a simple table format. It is worthwhile running this and then
+modifying the HTML afterwards.</p>
 <p>For some excellent beginner tutorials on both SQL and HTML, see
 www.w3schools.com</p>
 <div class="section" id="sql-keys">
@@ -387,9 +387,10 @@ generation time. The basic syntax is this:</p>
 <div class="highlight-python"><div class="highlight"><pre>$ASK [DATE | [ALL]ANIMAL | LITTER | SPECIES | LOCATION | LOGTYPE | TYPE | NUMBER | STRING] [Message]$
 </pre></div>
 </div>
-<p>Note that if you are substituting any kind of string value (ASK DATE or ASK
-STRING), you must wrap the ASK key inside string delimiters (the apostrophe &#8216;)
-otherwise you will get SQL errors.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you are substituting any kind of string value (ASK DATE or ASK STRING), you must wrap the ASK key inside string delimiters (the apostrophe &#8216;) otherwise you will get SQL errors.</p>
+</div>
 <p>The types are outlined below:</p>
 <ul class="simple">
 <li>$ASK DATE message$ - requests a date from the user. A popup is displayed
@@ -474,47 +475,60 @@ GROUP$$
 </div>
 <p>ASM also offers a number of calculation instructions you may use in group
 $$FOOT blocks and the main $$FOOTER block. These are:</p>
-<ul class="simple">
-<li>{SUM.&lt;field&gt;[.round]} - Calculates the total of a given field for a group.
-Optionally, you can specify the number of decimal places to round to.</li>
-<li>{COUNT.&lt;field&gt;} - Calculates the number of records in a group (the field is
-ignored)</li>
-<li>{AVG.&lt;field&gt;[.round]} - Calculates the average of a group, based on the total
+<ul>
+<li><p class="first">{SUM.&lt;field&gt;[.round]} - Calculates the total of a given field for a group.
+Optionally, you can specify the number of decimal places to round to.</p>
+</li>
+<li><p class="first">{COUNT.&lt;field&gt;} - Calculates the number of records in a group (the field is
+ignored)</p>
+</li>
+<li><p class="first">{AVG.&lt;field&gt;[.round]} - Calculates the average of a group, based on the total
 of the field and the number of records. Optionally, you can specify the
-number of decimal places to round to.</li>
-<li>{MIN.&lt;field&gt;} - Shows the smallest value for a given field in a group</li>
-<li>{MAX.&lt;field&gt;} - Shows the largest value for a given field in a group</li>
-<li>{FIRST.&lt;field&gt;} - Returns the first value for a given field in a group</li>
-<li>{IMAGE.&lt;animalid&gt;[.seq]} – (also valid in $$BODY) Returns a URL to the
+number of decimal places to round to.</p>
+</li>
+<li><p class="first">{MIN.&lt;field&gt;} - Shows the smallest value for a given field in a group</p>
+</li>
+<li><p class="first">{MAX.&lt;field&gt;} - Shows the largest value for a given field in a group</p>
+</li>
+<li><p class="first">{FIRST.&lt;field&gt;} - Returns the first value for a given field in a group</p>
+</li>
+<li><p class="first">{IMAGE.&lt;animalid&gt;[.seq]} – (also valid in $$BODY) Returns a URL to the
 preferred image for the given animal ID. Animal IDs can be a $field from the
 selected data. If the optional sequence number is given, then a link to image
 seq (where seq is a 1-based count) for the animal is output instead. If seq
 is invalid, or the animal doesn&#8217;t have a preferred image the default system
-nopic.jpg file is used instead.</li>
-<li>{QR.&lt;animalid&gt;[.size]} – (also valid in $$BODY) Returns a URL to the google
+nopic.jpg file is used instead.</p>
+</li>
+<li><p class="first">{QR.&lt;animalid&gt;[.size]} – (also valid in $$BODY) Returns a URL to the google
 charting api to generate a QR code with a link to this animal&#8217;s record for
 mobile devices. If size is not set, then 150x150 is used. Eg:
-{QR.$ID.200x200}</li>
-<li>{LAST.&lt;field&gt;} - Returns the last value for a given field in a group</li>
-<li>{PCT.&lt;field&gt;.&lt;value&gt;[.round]} - Returns the percentage of rows in the group
+{QR.$ID.200x200}</p>
+</li>
+<li><p class="first">{LAST.&lt;field&gt;} - Returns the last value for a given field in a group</p>
+</li>
+<li><p class="first">{PCT.&lt;field&gt;.&lt;value&gt;[.round]} - Returns the percentage of rows in the group
 where field &lt;field&gt; matches value &lt;value&gt;. Optionally, you can specify a
 number of decimal places to round to. Eg: {PCT.Sex.1.2} Would show the
-percentage of male animals in the group, rounded to 2 decimal places.</li>
-<li>{SQL.&lt;sql command&gt;} - executes the SQL and outputs the value of the first
+percentage of male animals in the group, rounded to 2 decimal places.</p>
+</li>
+<li><p class="first">{SQL.&lt;sql command&gt;} - executes the SQL and outputs the value of the first
 field. Eg: {SQL.SELECT COUNT(*) FROM animal}. This tag is also available in
 the $$BODY block and can be used in conjunction with the field tags to
 produce a subquery. Eg: Suppose you wanted to show the number of movements
 attached to a particular animal without doing a group query with an inner
 join to adoption. You could just use {SQL.SELECT COUNT(*) FROM adoption WHERE
-AnimalID = $ID}</li>
-<li>{SUBREPORT.&lt;title&gt;.&lt;parentkey&gt;[.&lt;parentarg&gt;]} - executes the custom report
+AnimalID = $ID}</p>
+</li>
+<li><p class="first">{SUBREPORT.&lt;title&gt;.&lt;parentkey&gt;[.&lt;parentarg&gt;]} - executes the custom report
 with [title] and with the [parentkey] being the name of a field from the
 current report data to pass down to the subreport. The report output is
 embedded in the current report. You can use the $PARENTKEY$ field in the
-subreport to access this value for filtering your data. Note that you can
-nest reports to an unlimited depth. You can pass an unlimited number of
-fields to a subreport, accessible as $PARENTARGX$ where X is the number of
-the argument you want to access in the subreport query.</li>
+subreport to access this value for filtering your data.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can nest reports to an unlimited depth. You can pass an unlimited number of fields to a subreport, accessible as $PARENTARGX$ where X is the number of the argument you want to access in the subreport query.</p>
+</div>
+</li>
 </ul>
 <p>Here is an example report to show all animals currently on the shelter, with
 their picture, grouped by their internal location and giving totals for each:</p>
@@ -611,9 +625,10 @@ ORDER BY Year
 </tr>
 </tbody>
 </table>
-<p>Note that the graphs use a relative scale, interpreted from the data. If all of
-your column data is the same value, then the graph will not display because it
-has no variance.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Graphs use a relative scale, interpreted from the data. If all of your column data is the same value, then the graph will not display because it has no variance.</p>
+</div>
 </div>
 <div class="section" id="three-column-variant">
 <h3>Three column variant<a class="headerlink" href="#three-column-variant" title="Permalink to this headline">¶</a></h3>

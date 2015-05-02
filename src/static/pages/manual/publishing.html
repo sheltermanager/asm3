@@ -422,10 +422,12 @@ site to upload. This box allows you to reduce the size of your images to
 scaled JPEGs with the resolutions specified. ASM scales down pictures when
 you attach them under the media tab, so unless you want to make them smaller
 still, it&#8217;s best to leave this at No Scaling.</li>
-<li>Publish to folder: Choose the folder where output is to be generated. Note
-that this folder is on the machine that ASM is installed on, not your local
-client PC. If this is left blank, a temporary folder will be used.</li>
+<li>Publish to folder: Choose the folder where output is to be generated.</li>
 </ul>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This folder is on the machine that ASM is installed on, not your local client PC. If this is left blank, a temporary folder will be used.</p>
+</div>
 <div class="section" id="included-templates">
 <h3>Included templates<a class="headerlink" href="#included-templates" title="Permalink to this headline">¶</a></h3>
 <p>ASM comes with a number of site templates – plain, rss, littlebox and sm.com.</p>
@@ -516,9 +518,10 @@ PetFinder panel. Here, you should enter the shelter Id given to you by
 PetFinder.com and your password. All you need to do then is choose Publish to
 PetFinder.com in place of the normal internet publisher. The options for
 filtering animals are the same (see previous section for reference).</p>
-<p>Note that if you have created new Species or Breeds within ASM, you will need
-to map them to the available publisher options under the Breed and Species
-sections of <em class="menuselection">Settings ‣ Lookup Data</em></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you have created new Species or Breeds within ASM, you will need to map them to the available publisher options under the Breed and Species sections of <em class="menuselection">Settings ‣ Lookup Data</em></p>
+</div>
 <p>If you have some that are not mapped, the publisher will fail with an error
 message.</p>
 <p>The “Upload all available images” option will upload all animal photos to
@@ -528,11 +531,10 @@ a blank secondary breed with the crossbreed flag set. Since ASM doesn&#8217;t al
 you to set an empty second breed field, there&#8217;s a workaround - If you make the
 second breed the same as the first breed with the crossbreed flag set, ASM will
 send that second breed as a blank to PetFinder.</p>
-<p><strong>IMPORTANT:</strong> You have to let PetFinder know that you are using ASM to upload
-your data. Do this by going to the Admin System Help Center, then Contact Us
-and send PetFinder Tech Support a message that you are using ASM to publish
-animal data via their FTP server. They should give you the FTP login
-information and make sure permissions and quotas are correct.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">You have to let PetFinder know that you are using ASM to upload your data. Do this by going to the Admin System Help Center, then Contact Us and send PetFinder Tech Support a message that you are using ASM to publish animal data via their FTP server. They should give you the FTP login information and make sure permissions and quotas are correct.</p>
+</div>
 </div>
 <div class="section" id="petrescue-com-au">
 <h2>petrescue.com.au<a class="headerlink" href="#petrescue-com-au" title="Permalink to this headline">¶</a></h2>
@@ -545,11 +547,10 @@ to you by PetRescue.com.au and your password. All you need to do then is choose
 Publish to PetRescue.com.au in place of the normal internet publisher. The
 options for filtering animals are the same (see previous section for
 reference).</p>
-<p>Note that if you have created new Species or Breeds within ASM, you will need
-to map them to the available publisher options under the Breed and Species
-sections of <em>Settings-&gt;Lookup Data</em></p>
-<p>If you have some that are not mapped, the publisher will fail with an error
-message.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you have created new Species or Breeds within ASM, you will need to map them to the available publisher options under the Breed and Species sections of <em class="menuselection">Settings-&gt;Lookup Data</em>. If you have some that are not mapped, the publisher will fail with an error message.</p>
+</div>
 </div>
 <div class="section" id="rescuegroups-org">
 <h2>rescuegroups.org<a class="headerlink" href="#rescuegroups-org" title="Permalink to this headline">¶</a></h2>
@@ -565,13 +566,14 @@ account</em> in the RescueGroups management interface).</p>
 <p>Once you&#8217;ve done that, you can choose the Publish to RescueGroups.org menu
 item. The options for filtering animals are the same as for the other
 publishers.</p>
-<p><strong>Note:</strong> If you are using the “Upload all images” option, ASM will only send
-the first 4 images (the first is always the preferred) as RescueGroups.org do
-not support more than 4 images per animal.</p>
-<p><strong>Note:</strong> The RescueGroups.org publisher uses the publisher breeds and species
-mappings, so you should make sure that you have mappings for all your breeds
-and species before using the publisher (the publisher will give an error
-message if any species or breeds do not have mappings).</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">If you are using the “Upload all images” option, ASM will only send the first 4 images (the first is always the preferred) as RescueGroups.org do not support more than 4 images per animal.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The RescueGroups.org publisher uses the publisher breeds and species mappings, so you should make sure that you have mappings for all your breeds and species before using the publisher (the publisher will give an error message if any species or breeds do not have mappings).</p>
+</div>
 </div>
 <div class="section" id="avid-pettrac-uk">
 <h2>AVID/PETtrac UK<a class="headerlink" href="#avid-pettrac-uk" title="Permalink to this headline">¶</a></h2>

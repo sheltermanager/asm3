@@ -38,9 +38,7 @@ Person Types
 The Type panel allows you to set various classification flags for the person,
 along with comments and details on membership to your organisation.
 
-Note the gift aid registered flag for people in the UK, setting this will
-default the gift aid flag when creating donations for this owner (they can be
-unset where necessary) for tracking gift aid claims to HMRC. 
+.. note:: The gift aid registered flag appears for people in the UK. Setting this will default the gift aid flag when creating payments from this owner for tracking gift aid claims to HMRC. 
 
 Warnings
 ^^^^^^^^
@@ -131,7 +129,7 @@ Investigation
 ASM allows you to keep notes on any investigation currently going on against a
 person.This tab can be removed with the option “Disable animal control
 functionality from menus and screens” in the remove unwanted functionality
-section of *Settings-Options-Options*.
+section of :menuselection:`Settings --> Options --> Options`.
 
 Citations
 ^^^^^^^^^
@@ -141,7 +139,7 @@ Citations
 The citations tab holds details of citations and fines given to this owner.
 This tab can be removed with the option “Disable animal control functionality
 from menus and screens” in the remove unwanted functionality section of
-*Settings-Options-Options*.
+:menuselection:`Settings --> Options --> Options`.
 
 Trap Loans
 ^^^^^^^^^^
@@ -151,7 +149,7 @@ Trap Loans
 The trap loan tab holds details of traps loaned to this owner. This tab can be
 removed with the option “Disable animal control functionality from menus and
 screens” in the remove unwanted functionality section of
-*Settings-Options-Options*.
+:menuselection:`Settings --> Options --> Options`.
 
 Payments
 ^^^^^^^^
@@ -200,6 +198,7 @@ keep). Hit the merge button and choose the duplicate owner record.
 
 ASM will reparent all of the movements, links, media, etc from the duplicate
 person into the currently open record. When it's finished doing that, the
-duplicate person record will be removed. Note that person details are never
-copied during a merge, the merge just moves all the satellite data from the
-selected person to the open person before deleting the selected one. 
+duplicate person record will be removed. 
+
+.. note:: Person details are never copied during a merge, the merge just moves all the satellite data from the selected person to the open person before deleting the selected one. 
+

@@ -216,11 +216,9 @@ The vaccination tab is used to track information about any vaccinations an
 animal requires. An animal can have an unlimited number of vaccination records.
 For complicated, multi-diary procedures, see Diary Tasks, covered later on.
 
-Use the toolbar to create and modify items in the list. Note that items in the
-vaccination list are saved immediately to the database when you hit the Save
-button in the popup screen. You will be reminded of outstanding vaccinations
-via the Vaccination Diary report, or by viewing them under
-:menuselection:`Medical --> Vaccination Book` 
+Use the toolbar to create and modify items in the list. You will be reminded of
+outstanding vaccinations via the alerts on the home page, or by viewing them
+under :menuselection:`Medical --> Vaccination Book` 
 
 Vaccinations can also have a cost attached for use with reporting. The cost is
 for the individual vaccination. 

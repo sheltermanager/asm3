@@ -315,9 +315,9 @@ def page(dbo, session, username):
     h.append("</body></html>")
     return "\n".join(h)
 
-def page_sign(dbo, session):
+def page_sign(dbo, session, username):
     l = session.locale
-    ids = configuration.signpad_ids(dbo)
+    ids = configuration.signpad_ids(dbo, username)
     h = []
     h.append("""<!DOCTYPE html>
     <html>
@@ -330,9 +330,6 @@ def page_sign(dbo, session):
     %(scripts)s
     <script type="text/javascript">
         $(document).ready(function() {
-            var vw = $(window).width();
-            if (vw > 500) { vw = 500; }
-            $("#signature").css("width", String(vw) + "px");
             $("#signature").signature({ guideline: true });
             $("#sig-clear").click(function() {
                 $("#signature").signature("clear");
@@ -358,10 +355,23 @@ def page_sign(dbo, session):
                     }
                 });
             });
+            $("#reviewlink").click(function() { 
+                $("#reviewlink").fadeOut();
+                $("#review").slideDown(); 
+            });
         });
     </script>
     <style>
-    button { padding: 10px; font-size: 100%%; }
+    button { 
+        padding: 10px; 
+        font-size: 100%%; 
+    }
+    #signature { 
+        border: 1px solid #aaa; 
+        height: 200px; 
+        width: 100%%;
+        max-width: 500px;
+    }
     </style>
     </head>
     <body>
@@ -376,12 +386,20 @@ def page_sign(dbo, session):
         h.append('<p>%s</p>' % _("Waiting for documents...", l))
         h.append('<button id="sig-refresh">' + _("Reload", l) + '</button>')
     else:
+        d = []
+        docnotes = []
         for mid in ids.strip().split(","):
             if mid.strip() != "": 
+                docnotes.append(media.get_notes_for_id(dbo, int(mid)))
                 mdate, medianame, mimetype, contents = media.get_media_file_data(dbo, int(mid))
-                h.append(contents)
-                h.append("<hr />")
-        h.append('<div id="signature" style="border: 1px solid #aaa; height: 200px;"></div>')
+                d.append(contents)
+                d.append("<hr />")
+        h.append("<p><b>%s: %s</b></p>" % (_("Signing", l), ", ".join(docnotes)))
+        h.append('<p><a id="reviewlink" href="#">%s</a></p>' % _("Review", l))
+        h.append('<div id="review" style="display: none">')
+        h.append("\n".join(d))
+        h.append('</div>')
+        h.append('<div id="signature"></div>')
         h.append('<p>')
         h.append('<button id="sig-clear" type="button">' + _("Clear", l) + '</button>')
         h.append('<button id="sig-sign" type="button">' + _("Sign", l) + '</button>')
@@ -837,7 +855,7 @@ def handler(dbo, user, locationfilter, post):
         # We're electronically signing a document
         for mid in post.integer_list("ids"):
             media.sign_document(dbo, user, mid, post["sig"], post["signdate"])
-            configuration.signpad_ids(dbo, " ")
+            configuration.signpad_ids(dbo, user, " ")
         return "ok"
 
 def handler_addanimal(l, homelink, dbo):

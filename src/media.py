@@ -119,6 +119,9 @@ def set_excluded(dbo, username, mid, exclude = 1):
 def get_name_for_id(dbo, mid):
     return db.query_string(dbo, "SELECT MediaName FROM media WHERE ID = %d" % mid)
 
+def get_notes_for_id(dbo, mid):
+    return db.query_string(dbo, "SELECT MediaNotes FROM media WHERE ID = %d" % mid)
+
 def get_media_file_data(dbo, mid):
     """
     Gets a piece of media by id

@@ -40,9 +40,7 @@ animals reported found could tie up to those reported lost.
 To view the previous results of matching, go to *ASM->Match Lost and Found
 Animals*. 
 
-Note that because this report can take a while to run if you have a lot of
-records, ASM will run it overnight as part of its batch processes. It may
-therefore take upto 24 hours for changes to be reflected.
+.. note:: Note that because this report can take a while to run if you have a lot of records, ASM will run it overnight as part of its batch processes. It may therefore take upto 24 hours for changes to be reflected.
 
 If you run the Match by pressing the Match button on any lost, found or shelter
 animal, the report will be rerun immediately for that animal and you will see
