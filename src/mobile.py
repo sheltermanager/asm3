@@ -337,6 +337,9 @@ def page_sign(dbo, session, username):
             $("#sig-refresh").click(function() {
                 location.reload();
             });
+            $("#sig-logout").click(function() {
+                window.location = "mobile_logout";
+            });
             $("#sig-sign").click(function() {
                 var img = $("#signature canvas").get(0).toDataURL("image/png");
                 var formdata = "posttype=sign&ids=%(ids)s&sig=" + encodeURIComponent(img);
@@ -384,7 +387,8 @@ def page_sign(dbo, session, username):
     })
     if ids.strip() == "":
         h.append('<p>%s</p>' % _("Waiting for documents...", l))
-        h.append('<button id="sig-refresh">' + _("Reload", l) + '</button>')
+        h.append('<p><button id="sig-refresh">' + _("Reload", l) + '</button></p>')
+        h.append('</p><button id="sig-logout">' + _("Logout", l) + '</button></p>')
     else:
         d = []
         docnotes = []
