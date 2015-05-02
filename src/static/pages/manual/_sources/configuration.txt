@@ -289,14 +289,14 @@ ASM contains a full double entry accounting package. The options here are:
   The source account here denotes where the money will be moved from. If you do
   not set one, ASM will use the first bank account on file. 
 
-* Default destination account for donations: When ASM creates a matching
-  donation transaction, it will use the donation type to find the income
+* Default destination account for payments: When ASM creates a matching
+  payment transaction, it will use the payment type to find the income
   account to use. The destination account here denotes where the money will be
   moved to. If you do not set one, ASM will use the first bank account on file. 
 
-* Donations of type … are sent to ...: In addition to the default donation
+* Donations of type … are sent to ...: In addition to the default payment
   destination account, you can specify optional mappings, so that when ASM
-  receives a donation of a particular type, it uses the specified destination
+  receives a payment of a particular type, it uses the specified destination
   account for it when creating the matching accounting transaction. 
 
 Add Animal

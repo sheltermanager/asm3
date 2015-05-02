@@ -28,6 +28,7 @@ Contents:
    publishing
    mailmerge
    configuration
+   options
    wordkeys
    faq
    databasetables
