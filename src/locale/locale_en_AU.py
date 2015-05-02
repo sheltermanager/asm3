@@ -2243,7 +2243,7 @@ val = {"" : "Project-Id-Version: sheltermanager\nReport-Msgid-Bugs-To: db@shelte
 "Entlebucher" : "Entlebucher",
 "Stolen" : "Stolen",
 "Spitz" : "Spitz",
-"Email" : "E-mail",
+"Email" : "Email",
 "Age Groups" : "Age Groups",
 "{0} - {1} {2}" : "{0} - {1} {2}",
 "{0} {1}: received {2}" : "{0} {1}: received {2}",

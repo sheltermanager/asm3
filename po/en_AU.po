@@ -3915,7 +3915,7 @@ msgstr "Eligible for gift aid"
 #: waitinglist.js incident.js media.js waitinglist_results.js person_find.js
 #: html.py
 msgid "Email"
-msgstr "E-mail"
+msgstr "Email"
 
 #: change_user_settings.js person_new.js common_personchooser.js
 msgid "Email Address"
