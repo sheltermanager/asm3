@@ -8,22 +8,25 @@ msgstr ""
 "Project-Id-Version: sheltermanager\n"
 "Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
-"PO-Revision-Date: 2015-02-16 09:06+0000\n"
-"Last-Translator: Efstathios Iosifidis <Unknown>\n"
+"PO-Revision-Date: 2015-04-21 15:07+0000\n"
+"Last-Translator: kamar <marmako@gmail.com>\n"
 "Language-Team: Greek, Modern (1453-) <opensuse-translation-el@opensuse.org>\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Launchpad (build 17361)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Pootle 2.5.1.1\n"
 "X-Launchpad-Export-Date: 2015-03-02 05:16+0000\n"
+"X-POOTLE-MTIME: 1429628867.000000\n"
 
 #: options.js
 msgid " days."
-msgstr " ημέρες"
+msgstr " ημέρες."
 
-#: stocklevel.js log.js incident_find.js animal_find.js lostfound_find.js
-#: common.js waitinglist_results.js options.js html.py diary.py utils.py
+#: log.js common.js lostfound_find.js options.js animal_find.js
+#: waitinglist_results.js incident_find.js stocklevel.js diary.py html.py
+#: utils.py
 msgid "(all)"
 msgstr "(όλα)"
 
@@ -31,7 +34,7 @@ msgstr "(όλα)"
 msgid "(any)"
 msgstr "(οποιοδήποτε)"
 
-#: animal_new.js animal.js
+#: animal.js animal_new.js
 msgid "(available)"
 msgstr "(διαθέσιμο)"
 
@@ -43,7 +46,7 @@ msgstr "(κενό)"
 msgid "(both)"
 msgstr "(και τα δύο)"
 
-#: main.js html.py diary.py utils.py
+#: main.js diary.py html.py utils.py
 msgid "(everyone)"
 msgstr "(οποιοσδήποτε)"
 
@@ -63,7 +66,7 @@ msgstr "(χωρίς αφαίρεση)"
 msgid "(none)"
 msgstr "(Κανένα)"
 
-#: lostfound.js lostfound_find.js incident.js lostfound_new.js html.py
+#: lostfound_find.js lostfound.js incident.js lostfound_new.js html.py
 msgid "(unknown)"
 msgstr "(άγνωστο)"
 
@@ -117,9 +120,9 @@ msgstr "9 μήνες"
 
 #: dbupdate.py
 msgid "A (Stray Dog)"
-msgstr ""
+msgstr "A (Αδέσποτος Σκύλος)"
 
-#: waitinglist_new.js waitinglist.js
+#: waitinglist.js waitinglist_new.js
 msgid "A description or other information about the animal"
 msgstr "Μια περιγραφή ή άλλες πληροφορίες σχετικά με το ζώο"
 
@@ -139,12 +142,12 @@ msgstr "Ένα πρόσωπο απαιτείται για αυτόν τον τύ
 msgid "A publish job is already running."
 msgstr "Μια εργασία δημοσίευσης εκτελείται ήδη."
 
-#: animal_new.js animal.js
+#: animal.js animal_new.js
 msgid "A short version of the reference number"
 msgstr "Μια σύντομη εκδοχή του αριθμού αναφοράς"
 
-#: move_adopt.js move_transfer.js movements.js move_retailer.js move_reserve.js
-#: move_foster.js move_reclaim.js
+#: move_transfer.js move_adopt.js move_retailer.js move_reserve.js
+#: move_foster.js move_reclaim.js movements.js
 msgid "A unique number to identify this movement"
 msgstr "Ένας μοναδικός αριθμός για την αναγνώριση αυτής της κίνησης"
 
@@ -156,8 +159,8 @@ msgstr ""
 msgid "A4"
 msgstr "Α4"
 
-#: onlineforms.js person_find_results.js common.js header_edit_header.js
-#: incident_find_results.js html.py
+#: person_find_results.js onlineforms.js header_edit_header.js
+#: incident_find_results.js common.js html.py
 msgid "ACO"
 msgstr "ACO"
 
@@ -165,7 +168,7 @@ msgstr "ACO"
 msgid "AM"
 msgstr ""
 
-#: main.js html.py mobile.py
+#: main.js mobile.py html.py
 msgid "ASM"
 msgstr "ASM"
 
@@ -252,7 +255,7 @@ msgstr "Απενεργοποιημένος λογαριασμός."
 msgid "Accountant"
 msgstr "Λογιστής"
 
-#: roles.js accounts.js options.js header.js html.py code.py configuration.py
+#: accounts.js header.js options.js roles.js code.py html.py configuration.py
 msgid "Accounts"
 msgstr "Λογαριασμοί"
 
@@ -260,7 +263,7 @@ msgstr "Λογαριασμοί"
 msgid "Accounts need a code."
 msgstr "Οι λογαριασμοί απαιτούν κωδικό."
 
-#: medical.js accounts.js medicalprofile.js person.js medical.py
+#: accounts.js medical.js person.js medicalprofile.js medical.py
 msgid "Active"
 msgstr "Ενεργό"
 
@@ -269,8 +272,9 @@ msgid "Active Incidents"
 msgstr "Ενεργά Περιστατικά"
 
 #: code.py
+#, fuzzy
 msgid "Active Trap Loans"
-msgstr ""
+msgstr "Δανεισμός Ενεργών Παγίδων"
 
 #: main.js
 msgid "Active users: {0}"
@@ -284,7 +288,7 @@ msgstr "Προσθήκη"
 msgid "Add Accounts"
 msgstr "Προσθήκη λογαριασμών"
 
-#: mobile.py
+#: options.js mobile.py
 msgid "Add Animal"
 msgstr "Προσθήκη Ζώου"
 
@@ -293,8 +297,9 @@ msgid "Add Animals"
 msgstr "Προσθήκη ζώων"
 
 #: mobile.py
+#, fuzzy
 msgid "Add Call"
-msgstr ""
+msgstr "Προσθήκη Κλήσης"
 
 #: roles.js
 msgid "Add Citations"
@@ -333,8 +338,9 @@ msgid "Add Licenses"
 msgstr "Προσθήκη Αδειών"
 
 #: roles.js
+#, fuzzy
 msgid "Add Litter"
-msgstr ""
+msgstr "Προσθήκη τοκετοομάδας"
 
 #: roles.js mobile.py
 msgid "Add Log"
@@ -378,7 +384,7 @@ msgstr "Προσθήκη Αναφοράς"
 
 #: roles.js
 msgid "Add Rota"
-msgstr ""
+msgstr "Προσθήκη Προγράμματος Εργασιών"
 
 #: roles.js
 msgid "Add Stock"
@@ -389,12 +395,14 @@ msgid "Add Tests"
 msgstr "Προσθήκη Δοκιμών"
 
 #: roles.js
+#, fuzzy
 msgid "Add Transport"
-msgstr ""
+msgstr "Προσθήκη μεταφοράς"
 
 #: roles.js
+#, fuzzy
 msgid "Add Trap Loans"
-msgstr ""
+msgstr "Προσθήκη Δανεισμού Παγίδας"
 
 #: roles.js
 msgid "Add Users"
@@ -405,14 +413,15 @@ msgid "Add Vaccinations"
 msgstr "Προσθήκη Εμβολιασμών"
 
 #: roles.js
+#, fuzzy
 msgid "Add Vouchers"
-msgstr ""
+msgstr "Προσθήκη Παραστατικών"
 
 #: roles.js
 msgid "Add Waiting List"
 msgstr "Προσθήκη Λίστας Αναμονής"
 
-#: main.js header.js html.py configuration.py
+#: header.js main.js html.py configuration.py
 msgid "Add a diary note"
 msgstr "Προσθήκη σημείωσης στο ημερολόγιο"
 
@@ -432,7 +441,7 @@ msgstr "Προσθήκη απωλεσθέντος ζώου"
 msgid "Add a medical regimen"
 msgstr "Προσθέστε μια ιατρική συνταγή."
 
-#: animal_new.js header.js html.py code.py configuration.py
+#: header.js animal_new.js code.py html.py configuration.py
 msgid "Add a new animal"
 msgstr "Προσθήκη νέου ζώου"
 
@@ -440,7 +449,7 @@ msgstr "Προσθήκη νέου ζώου"
 msgid "Add a new log"
 msgstr "Προσθήκη νέου ιστορικού"
 
-#: header.js person_new.js html.py code.py configuration.py
+#: header.js person_new.js code.py html.py configuration.py
 msgid "Add a new person"
 msgstr "Προσθήκη νέου ατόμου"
 
@@ -473,8 +482,9 @@ msgid "Add an animal to the waiting list"
 msgstr "Προσθήκη ζώου στη λίστα αναμονής"
 
 #: citations.js
+#, fuzzy
 msgid "Add citation"
-msgstr ""
+msgstr "Προσθήκη Κλήσεων"
 
 #: animal_costs.js
 msgid "Add cost"
@@ -489,7 +499,7 @@ msgstr ""
 msgid "Add diary"
 msgstr "Προσθήκη ημερολογίου"
 
-#: diarytask.js diarytasks.js
+#: diarytasks.js diarytask.js
 msgid "Add diary task"
 msgstr "Προσθήκη εργασίας στο ημερολόγιο"
 
@@ -566,8 +576,9 @@ msgid "Add role"
 msgstr "Προσθήκη ρόλου"
 
 #: staff_rota.js
+#, fuzzy
 msgid "Add rota item"
-msgstr ""
+msgstr "Προσθήκη αντικειμένου προγράμματος εργασιών"
 
 #: stocklevel.js
 msgid "Add stock"
@@ -591,11 +602,12 @@ msgstr "Προσθήκη στο αρχείο καταγραφής"
 
 #: transport.js
 msgid "Add transport"
-msgstr ""
+msgstr "Προσθήκη μεταφοράς"
 
 #: traploan.js
+#, fuzzy
 msgid "Add trap loan"
-msgstr ""
+msgstr "Προσθήκη δανεισμού παγίδας"
 
 #: users.js
 msgid "Add user"
@@ -607,7 +619,7 @@ msgstr "Προσθήκη εμβολιασμού"
 
 #: person_vouchers.js
 msgid "Add voucher"
-msgstr ""
+msgstr "Προσθήκη παραστατικού"
 
 #: waitinglist_new.js code.py
 msgid "Add waiting list"
@@ -621,11 +633,11 @@ msgstr "Προσθήκη {0}"
 msgid "Added"
 msgstr "Προστέθηκε"
 
-#: main.js header_edit_header.js
+#: header_edit_header.js main.js
 msgid "Added by {0} on {1}"
 msgstr "Προστέθηκε απο {0} σε {1}"
 
-#: lostfound.js incident.js animal.js person.js waitinglist.js
+#: person.js animal.js lostfound.js waitinglist.js incident.js
 msgid "Additional"
 msgstr "Επιπρόσθετα"
 
@@ -645,10 +657,10 @@ msgstr "Πρόσθετα πεδία"
 msgid "Additional fields need a name, label and type."
 msgstr "Τα πρόσθετα πεδία χρειάζονται ένα όνομα, ετικέτα και τύπο."
 
-#: common_personchooser.js person_find_results.js incident_find.js
-#: incident_new.js waitinglist_results.js incident.js movements.js options.js
-#: person.js header_edit_header.js incident_find_results.js transport.js
-#: person_new.js html.py dbupdate.py mobile.py
+#: person_find_results.js header_edit_header.js incident_find_results.js
+#: incident_new.js person.js person_new.js transport.js options.js incident.js
+#: waitinglist_results.js common_personchooser.js movements.js incident_find.js
+#: mobile.py html.py dbupdate.py
 msgid "Address"
 msgstr "Διεύθυνση"
 
@@ -668,11 +680,11 @@ msgstr "Έχει διαχειριστεί"
 msgid "Adopt"
 msgstr "Υιοθεσία"
 
-#: move_adopt.js header.js html.py code.py configuration.py
+#: move_adopt.js header.js code.py html.py configuration.py
 msgid "Adopt an animal"
 msgstr "Υιοθεσία ζώου"
 
-#: animal_bulk.js animal_find.js shelterview.js
+#: animal_bulk.js shelterview.js animal_find.js
 msgid "Adoptable"
 msgstr "Κατάλληλο για υιοθεσία"
 
@@ -680,7 +692,7 @@ msgstr "Κατάλληλο για υιοθεσία"
 msgid "Adoptable Animal"
 msgstr "Ζώο για Υιοθέτηση"
 
-#: animal_find.js common.js animal.py
+#: common.js animal_find.js animal.py
 msgid "Adopted"
 msgstr "Υιοθετήθηκε"
 
@@ -745,13 +757,15 @@ msgid ""
 "After the user presses submit and ASM has accepted the form, redirect the "
 "user to this URL"
 msgstr ""
+"Αφού ο χρήστης πιέσει υποβολή και το ASM, έχει αποδεχτεί την φόρμα, "
+"μεταφέρει τον χρήστη σε αυτό το URL"
 
-#: animal_find_results.js html.py person.py mobile.py
+#: animal_find_results.js mobile.py person.py html.py
 msgid "Age"
 msgstr "Ηλικία"
 
-#: incident_find.js lostfound.js animal_find.js lostfound_find.js incident.js
-#: lostfound_find_results.js lostfound_new.js html.py mobile.py
+#: lostfound_find_results.js lostfound_find.js lostfound.js incident.js
+#: animal_find.js lostfound_new.js incident_find.js mobile.py html.py
 msgid "Age Group"
 msgstr "Ηλικιακή Ομάδα:"
 
@@ -811,7 +825,7 @@ msgstr "Ηλικίας ως"
 
 #: dbupdate.py
 msgid "Aggression"
-msgstr ""
+msgstr "Επιθετικότητα"
 
 #: dbupdate.py
 msgid "Airedale Terrier"
@@ -838,16 +852,18 @@ msgid "All Publishers"
 msgstr "Όλοι οι Συντάκτες"
 
 #: accounts.js
+#, fuzzy
 msgid "All accounts"
-msgstr ""
+msgstr "Προσθήκη λογαριασμού"
 
 #: search.py
+#, fuzzy
 msgid "All animal care officers on file."
-msgstr ""
+msgstr "Όλα τα στελέχη φροντίδας ζώων σε αρχείο."
 
 #: search.py
 msgid "All animal shelters on file."
-msgstr ""
+msgstr "Όλα τα καταφύγια ζώων σε αρχείο"
 
 #: search.py
 msgid "All animals matching current publishing options."
@@ -874,6 +890,10 @@ msgid "All animals who are flagged as not for adoption."
 msgstr "Όλα τα ζώα που έχουν επισημανθεί ως μη διαθέσιμα για υιοθεσία."
 
 #: search.py
+msgid "All animals who have been on the shelter longer than {0} months."
+msgstr ""
+
+#: search.py
 msgid "All animals who have not been microchipped"
 msgstr "Όλα τα ζώα που δεν τοποθετήθηκε μικροτσίπ"
 
@@ -886,22 +906,26 @@ msgid "All donors on file."
 msgstr "Όλοι οι δωρητές σε αρχείο."
 
 #: search.py
+#, fuzzy
 msgid "All drivers on file."
-msgstr ""
+msgstr "Όλοι οι κτηνίατροι σε αρχείο."
 
 #: csvimport.js
 msgid ""
 "All existing data in your database will be REMOVED before importing the CSV "
 "file. This removal cannot be reversed."
 msgstr ""
+"Όλα τα δεδομένα στη βάση δεδομένων σας, θα ΔΙΑΓΡΑΦΟΥΝ, πριν εισαχθεί το CSV "
+"αρχείο. Η διαγραφή δεν είναι αναστρέψιμη."
 
 #: main.js
 msgid "All fields should be completed."
 msgstr "Όλα τα πεδία πρέπει να συμπληρωθούν."
 
 #: search.py
+#, fuzzy
 msgid "All fosterers on file."
-msgstr ""
+msgstr "Όλοι οι εθελοντές σε αρχείο."
 
 #: search.py
 msgid "All homechecked owners on file."
@@ -924,8 +948,9 @@ msgid "All people on file."
 msgstr "Όλα τα άτομα σε αρχείο."
 
 #: search.py
+#, fuzzy
 msgid "All retailers on file."
-msgstr ""
+msgstr "Όλα τα μέλη σε αρχείο."
 
 #: search.py
 msgid "All staff on file."
@@ -952,8 +977,9 @@ msgid "Allow a fosterer to be selected"
 msgstr ""
 
 #: options.js
+#, fuzzy
 msgid "Allow creation of payments on the Move-Reserve screen"
-msgstr ""
+msgstr "Επιτρέπει τη δημιουργία πληρωμών στην οθόνη Μετακίνηση-Αναστροφή"
 
 #: options.js
 msgid "Allow duplicate microchip numbers"
@@ -969,7 +995,7 @@ msgstr "Αποδοχή παράκαμψης του αριθμού κίνησης
 
 #: options.js
 msgid "Allow use of OpenOffice document templates"
-msgstr ""
+msgstr "Επιτρέπει τη χρήση προτύπων εγγράφων OpenOffice"
 
 #: options.js search.py
 msgid "Alphabetically A-Z"
@@ -979,7 +1005,7 @@ msgstr "Αλφαβητικά Α-Ω"
 msgid "Alphabetically Z-A"
 msgstr "Αλφαβητικά Ω-Α"
 
-#: animal_new.js animal_bulk.js animal_find_results.js animal.js html.py
+#: animal_bulk.js animal.js animal_new.js animal_find_results.js html.py
 msgid "Altered"
 msgstr "Στειρωμένο"
 
@@ -989,15 +1015,16 @@ msgstr "Τροποποιημένη Ημερομηνία"
 
 #: dbupdate.py
 msgid "Altered Dog - 1 year"
-msgstr ""
+msgstr "Αλλαγές Σκύλου - 1 χρόνος"
 
 #: dbupdate.py
 msgid "Altered Dog - 3 year"
-msgstr ""
+msgstr "Αλλαγές Σκύλου - 3 χρόνια"
 
 #: options.js
+#, fuzzy
 msgid "Always show an emblem to indicate the current location"
-msgstr ""
+msgstr "Πάντα να εμφανίζεται ένα έμβλημα που να δείχει την τρέχουσα θέση"
 
 #: dbupdate.py
 msgid "Amazon"
@@ -1047,8 +1074,8 @@ msgstr "American Water Spaniel"
 msgid "American Wirehair"
 msgstr "American Wirehair"
 
-#: move_adopt.js donations.js person_vouchers.js donation_receive.js
-#: move_reserve.js move_reclaim.js
+#: donations.js move_adopt.js move_reserve.js person_vouchers.js
+#: move_reclaim.js donation_receive.js
 msgid "Amount"
 msgstr "Ποσό"
 
@@ -1074,11 +1101,11 @@ msgstr "Anatolian Shepherd"
 msgid "Angora Rabbit"
 msgstr "Angora Rabbit"
 
-#: onlineform_incoming.js licence.js diarytasks.js move_deceased.js test.js
-#: medical.js move_adopt.js donations.js search.js move_transfer.js
-#: vaccination.js movements.js move_retailer.js header_edit_header.js
-#: move_reserve.js move_foster.js incident_find_results.js log_new.js
-#: transport.js move_reclaim.js html.py dbupdate.py mobile.py reports.py
+#: test.js header_edit_header.js donations.js move_transfer.js diarytasks.js
+#: search.js incident_find_results.js move_adopt.js medical.js move_retailer.js
+#: log_new.js move_reserve.js move_foster.js transport.js move_reclaim.js
+#: licence.js vaccination.js movements.js onlineform_incoming.js
+#: move_deceased.js mobile.py reports.py html.py dbupdate.py
 msgid "Animal"
 msgstr "Ζώο"
 
@@ -1090,7 +1117,7 @@ msgstr "Το ζώο '{0}' δημιουργήθηκε με κωδικό {1}"
 msgid "Animal '{0}' successfully marked deceased."
 msgstr "Το ζώο '{0}' ταυτοποιήθηκε επιτυχώς ως νεκρό."
 
-#: licence.js incident.js donation_receive.js
+#: incident.js licence.js donation_receive.js
 msgid "Animal (optional)"
 msgstr "Ζώο (προαιρετικό)"
 
@@ -1122,28 +1149,36 @@ msgstr "Ζώο - Σημειώσεις"
 msgid "Animal Codes"
 msgstr "Κωδικοί ζώων"
 
-#: roles.js html.py mobile.py
+#: roles.js mobile.py html.py
 msgid "Animal Control"
 msgstr "Έλεγχος Ζώου"
 
 #: person.py
+#, fuzzy
 msgid "Animal Control Caller"
-msgstr ""
+msgstr "Στέλεχος Ελέγχου Ζώου"
 
 #: person.py
+#, fuzzy
 msgid "Animal Control Incident"
-msgstr ""
+msgstr "Περιστατικό Ελέγχου Ζώου"
 
 #: dbupdate.py
 msgid "Animal Control Officer"
-msgstr ""
+msgstr "Στέλεχος Ελέγχου Ζώου"
 
 #: person.py
+#, fuzzy
 msgid "Animal Control Victim"
-msgstr ""
+msgstr "Θύμα Ελέγχου Ζώου"
 
 #: options.js
+#, fuzzy
 msgid "Animal Emblems"
+msgstr "Εμβλήματα Ζώου"
+
+#: options.js
+msgid "Animal Links"
 msgstr ""
 
 #: publish_options.js
@@ -1174,39 +1209,48 @@ msgstr "Τύπος ζώου"
 msgid "Animal Types"
 msgstr "Τύποι Ζώων"
 
+#: dbupdate.py
+msgid "Animal board costs"
+msgstr ""
+
 #: animal.py
 msgid "Animal cannot be deceased before it was brought to the shelter"
 msgstr "Το ζώο δεν μπορεί να έχει πεθάνει πριν μπει στο καταφύγιο"
 
 #: options.js
 msgid "Animal code format"
-msgstr ""
+msgstr "Μορφή Κωδικού Ζώου"
 
 #: header.js html.py configuration.py
 msgid "Animal control calendar"
-msgstr ""
+msgstr "Ημερολόγιο ελέγχου ζώων"
 
 #: search.py
 msgid "Animal control incidents matching '{0}'."
-msgstr ""
+msgstr "Περιστατικά ελέγχου ζώων που ταιριάζουν '{0}'."
 
 #: dbupdate.py
+#, fuzzy
 msgid "Animal defecation"
-msgstr ""
+msgstr "Επιλογή Ζώου"
 
 #: publish_options.js
 msgid "Animal descriptions"
 msgstr "Περιγραφές ζώων"
 
 #: dbupdate.py
+#, fuzzy
 msgid "Animal destroyed"
-msgstr ""
+msgstr "Κατεστραμμένο ζώο"
 
 #: options.js
 msgid ""
 "Animal emblems are the little icons that appear next to animal names in "
 "shelter view, the home page and search results."
 msgstr ""
+"Τα εμβλήματα ζώου είναι μικρές εικόνες που εμφανίζονται δίπλα στο όνομα του "
+"ζώου στην προβολή καταφυγίου, την αρχική σελίδα και στα αποτελέσματα "
+"αναζήτησης."
 
 #: dbupdate.py
 msgid "Animal food costs"
@@ -1214,13 +1258,13 @@ msgstr "Κόστος τροφής ζώων"
 
 #: dbupdate.py
 msgid "Animal picked up"
-msgstr ""
+msgstr "Ζώο που συλλέχθηκε"
 
 #: options.js
 msgid "Animal shortcode format"
-msgstr ""
+msgstr "Μορφή σύντομου κωδικού ζώου"
 
-#: roles.js animal_bulk.js test.js medical.js vaccination.js transport.js
+#: test.js animal_bulk.js medical.js transport.js roles.js vaccination.js
 #: html.py
 msgid "Animals"
 msgstr "Ζώα"
@@ -1267,8 +1311,9 @@ msgid "Any information about the animal"
 msgstr "Οποιαδήποτε πληροφορία σχετικά με το ζώο"
 
 #: animal.js
+#, fuzzy
 msgid "Any markings or distinguishing features the animal has"
-msgstr ""
+msgstr "Οποιαδήποτε σημάδια ή χαρακτηριστικά που έχει το ζώο"
 
 #: dbupdate.py
 msgid "Appaloosa"
@@ -1284,13 +1329,13 @@ msgstr "Applehead Siamese"
 
 #: dbupdate.py
 msgid "Approved"
-msgstr ""
+msgstr "Εγκρίθηκε"
 
-#: common.js
+#: common.js calendarview.js
 msgid "Apr"
 msgstr "Απρ."
 
-#: common.js
+#: common.js calendarview.js
 msgid "April"
 msgstr "Απρίλιος"
 
@@ -1298,7 +1343,7 @@ msgstr "Απρίλιος"
 msgid "Arabian"
 msgstr "Arabian"
 
-#: lostfound_find.js lostfound_find_results.js
+#: lostfound_find_results.js lostfound_find.js
 msgid "Area"
 msgstr "Περιοχή"
 
@@ -1342,13 +1387,14 @@ msgstr "Περιουσία::Εγκαταστάσεις"
 msgid "At least the last name should be completed."
 msgstr "Τουλάχιστον το επώνυμο πρέπει να συμπληρωθεί."
 
-#: onlineform_incoming.js media.js
+#: media.js onlineform_incoming.js
 msgid "Attach"
 msgstr "Επισύναψη"
 
 #: onlineform_incoming.js
+#, fuzzy
 msgid "Attach Animal"
-msgstr ""
+msgstr "Προσθήκη Ζώου"
 
 #: media.js
 msgid "Attach File"
@@ -1359,8 +1405,9 @@ msgid "Attach Link"
 msgstr "Επισύναψη Συνδέσμου"
 
 #: onlineform_incoming.js
+#, fuzzy
 msgid "Attach Person"
-msgstr ""
+msgstr "Προσθήκη Προσώπου"
 
 #: media.js
 msgid "Attach a file"
@@ -1376,21 +1423,22 @@ msgstr "Επισύναψη συνδέσμου"
 
 #: onlineform_incoming.js
 msgid "Attach selected forms to animal records"
-msgstr ""
+msgstr "Προσθήκη επιλεγμένων φορμών στις εγγραφές ζώων"
 
 #: onlineform_incoming.js
+#, fuzzy
 msgid "Attach this form to an existing animal"
-msgstr ""
+msgstr "Επισύναψη αυτής της φόρμας σε ένα υπάρχον πρόσωπο"
 
 #: onlineform_incoming.js
 msgid "Attach this form to an existing person"
 msgstr "Επισύναψη αυτής της φόρμας σε ένα υπάρχον πρόσωπο"
 
-#: common.js
+#: common.js calendarview.js
 msgid "Aug"
 msgstr "Αύγ."
 
-#: common.js
+#: common.js calendarview.js
 msgid "August"
 msgstr "Αύγουστος"
 
@@ -1419,10 +1467,13 @@ msgid "Auto removed due to lack of owner contact."
 msgstr "Αυτόματη αφαίρεση λόγω έλλειψης επαφής με ιδιοκτήτη."
 
 #: options.js
+#, fuzzy
 msgid ""
 "Automatically cancel any outstanding reservations on an animal when it is "
 "adopted"
 msgstr ""
+"Αυτόματη ακύρωση οποιοδήποτε εκκρεμούς κράτησης σε ένα ζώο όταν αυτό "
+"υιοθετείται"
 
 #: waitinglist.js
 msgid "Automatically remove"
@@ -1434,7 +1485,7 @@ msgid ""
 "is adopted"
 msgstr ""
 
-#: common.js header_edit_header.js
+#: header_edit_header.js common.js publish.py
 msgid "Available for adoption"
 msgstr "Διαθέσιμο για υιοθεσία"
 
@@ -1443,8 +1494,9 @@ msgid "Available sheltermanager.com reports"
 msgstr "Διαθέσιμες εκθέσεις του sheltermanager.com"
 
 #: dbupdate.py
+#, fuzzy
 msgid "B (Boarding Animal)"
-msgstr ""
+msgstr "B (Φιλοξενία Ζώου)"
 
 #: dbupdate.py
 msgid "Baby"
@@ -1454,7 +1506,7 @@ msgstr "Νεογέννητο"
 msgid "Back"
 msgstr "Πίσω"
 
-#: accounts_trx.js stocklevel.js accounts.js
+#: accounts.js accounts_trx.js stocklevel.js
 msgid "Balance"
 msgstr "Ισοζύγιο"
 
@@ -1494,7 +1546,7 @@ msgstr "Τράπεζα::Καταθέσεις"
 msgid "Bank::Savings"
 msgstr "Τράπεζα::Αποταμιεύσεις"
 
-#: onlineforms.js person_find_results.js common.js header_edit_header.js
+#: person_find_results.js onlineforms.js header_edit_header.js common.js
 #: html.py
 msgid "Banned"
 msgstr "Αποκλεισμένος"
@@ -1689,15 +1741,16 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Born in Shelter"
-msgstr ""
+msgstr "Γεννημένο στο Καταφύγιο"
 
 #: animal.py
+#, fuzzy
 msgid "Born on Foster {0}"
-msgstr ""
+msgstr "Γεννημένο στο Καταφύγιο {0}"
 
 #: animal.py
 msgid "Born on Shelter {0}"
-msgstr ""
+msgstr "Γεννημένο στο Καταφύγιο {0}"
 
 #: dbupdate.py
 msgid "Borzoi"
@@ -1723,10 +1776,10 @@ msgstr "Boxer"
 msgid "Boykin Spaniel"
 msgstr "Boykin Spaniel"
 
-#: animal_new.js common_animalchooser.js lostfound.js onlineform.js
-#: animal_find.js animal_find_results.js lostfound_find.js
-#: lostfound_find_results.js animal.js person.js lostfound_new.js html.py
-#: lookups.py person.py mobile.py
+#: person.js lostfound_find_results.js onlineform.js animal.js
+#: lostfound_find.js animal_new.js common_animalchooser.js lostfound.js
+#: animal_find.js animal_find_results.js lostfound_new.js lookups.py mobile.py
+#: person.py html.py
 msgid "Breed"
 msgstr "Ράτσα"
 
@@ -1774,7 +1827,7 @@ msgstr "Brotogeris"
 msgid "Brought In"
 msgstr "Εισήχθη"
 
-#: animal_new.js animal.js person.py mobile.py
+#: animal.js animal_new.js mobile.py person.py
 msgid "Brought In By"
 msgstr "Προσκομίσθηκε από"
 
@@ -1812,39 +1865,42 @@ msgstr "Μελοψίττακος ο κυματοειδής"
 
 #: roles.js
 msgid "Bulk Complete Diary"
-msgstr ""
+msgstr "Μαζική Συμπλήρωση Ημερολογίου"
 
 #: roles.js
 msgid "Bulk Complete Medical Records"
-msgstr ""
+msgstr "Μαζική Συμπλήρωση Ιατρικών Εγγραφών"
 
 #: roles.js
 msgid "Bulk Complete Vaccinations"
-msgstr ""
+msgstr "Μαζική Συμπλήρωση Εμβολιασμών"
 
 #: roles.js
 msgid "Bulk Complete Waiting List"
-msgstr ""
+msgstr "Μαζική Συμπλήρωση Λίστας Αναμονής"
 
 #: medical.js
+#, fuzzy
 msgid "Bulk Regimen"
-msgstr ""
+msgstr "Μαζική Αγωγή"
 
 #: test.js
+#, fuzzy
 msgid "Bulk Test"
-msgstr ""
+msgstr "Μαζικά Test"
 
 #: transport.js
 msgid "Bulk Transport"
 msgstr ""
 
 #: vaccination.js
+#, fuzzy
 msgid "Bulk Vaccination"
-msgstr ""
+msgstr "Νέος εμβολιασμός"
 
-#: animal_bulk.js html.py code.py
+#: animal_bulk.js code.py html.py
 msgid "Bulk change animals"
-msgstr ""
+msgstr "Μαζική αλλαγή ζώων"
 
 #: dbupdate.py
 msgid "Bull Terrier"
@@ -1866,7 +1922,7 @@ msgstr "Burmese"
 msgid "Burmilla"
 msgstr "Burmilla"
 
-#: diary.js log.js person_investigation.js medical.js
+#: diary.js medical.js log.js person_investigation.js
 msgid "By"
 msgstr "Από"
 
@@ -1876,7 +1932,7 @@ msgstr "Κρ. Κοιν"
 
 #: sql.js
 msgid "CSV of animal/adopter data"
-msgstr ""
+msgstr "Δεδομένα CSV του ζώου/αναδόχου"
 
 #: sql.js
 msgid "CSV of person data"
@@ -1894,7 +1950,7 @@ msgstr "Cairn Terrier"
 msgid "Calendar View"
 msgstr "Προβολή Ημερολογίου"
 
-#: main.js header.js code.py configuration.py
+#: header.js main.js code.py configuration.py
 msgid "Calendar view"
 msgstr "Προβολή Ημερολογίου"
 
@@ -1915,8 +1971,9 @@ msgid "Call Date/Time"
 msgstr "Ημερομηνία/Ώρα Κλήσης"
 
 #: incident_new.js incident.js mobile.py
+#, fuzzy
 msgid "Caller"
-msgstr ""
+msgstr "Καλών"
 
 #: incident_find.js
 msgid "Caller Name"
@@ -1930,7 +1987,7 @@ msgstr "Τηλέφωνικός αριθμός Καλούντος"
 msgid "Camel"
 msgstr "Καμήλα"
 
-#: waitinglist_new.js waitinglist.js
+#: waitinglist.js waitinglist_new.js
 msgid "Can afford donation?"
 msgstr "Μπορεί να αντέξει οικονομικά μια δωρεά;"
 
@@ -1950,13 +2007,12 @@ msgstr "Canadian Hairless"
 msgid "Canary"
 msgstr "Καναρίνι"
 
-#: onlineform_incoming.js common_widgets.js onlineforms.js
-#: common_personchooser.js accounts_trx.js common_animalchooser.js
-#: staff_rota.js common_tableform.js roles.js common_animalchoosermulti.js
-#: test.js report_images.js lostfound.js users.js medical.js common.js sql.js
-#: vaccination.js incident.js main.js animal.js document_templates.js
-#: reports.js person.js publish_options.js waitinglist.js media.js
-#: person_new.js
+#: onlineforms.js test.js staff_rota.js medical.js person.js common.js
+#: document_templates.js users.js animal.js person_new.js sql.js
+#: common_animalchooser.js lostfound.js common_widgets.js roles.js reports.js
+#: waitinglist.js accounts_trx.js main.js incident.js publish_options.js
+#: media.js common_animalchoosermulti.js vaccination.js common_tableform.js
+#: common_personchooser.js onlineform_incoming.js report_images.js
 msgid "Cancel"
 msgstr "Άκυρο"
 
@@ -1976,7 +2032,7 @@ msgstr ""
 
 #: transport.js
 msgid "Cancelled"
-msgstr ""
+msgstr "Ακυρώθηκε"
 
 #: dbupdate.py
 msgid "Cancelled Reservation"
@@ -2002,7 +2058,7 @@ msgstr "Γάτα"
 msgid "Catahoula Leopard Dog"
 msgstr "Catahoula Leopard Dog"
 
-#: move_deceased.js report_export.js animal.js reports.js html.py
+#: animal.js reports.js report_export.js move_deceased.js html.py
 msgid "Category"
 msgstr "Κατηγορία"
 
@@ -2022,8 +2078,8 @@ msgstr "Cavalier King Charles Spaniel"
 msgid "Cell"
 msgstr "Κινητό"
 
-#: common_personchooser.js person_find_results.js waitinglist_results.js
-#: person.js person_new.js
+#: person_find_results.js person.js person_new.js waitinglist_results.js
+#: common_personchooser.js
 msgid "Cell Phone"
 msgstr "Κινητό τηλέφωνο"
 
@@ -2031,7 +2087,7 @@ msgstr "Κινητό τηλέφωνο"
 msgid "Champagne DArgent"
 msgstr "Champagne DArgent"
 
-#: common_tableform.js common.js
+#: common.js common_tableform.js
 msgid "Change"
 msgstr "Αλλαγή"
 
@@ -2060,16 +2116,18 @@ msgid "Change Diets"
 msgstr "Αλλαγή Δίαιτας"
 
 #: roles.js
+#, fuzzy
 msgid "Change Found Animal"
-msgstr ""
+msgstr "Αλλαγή Απωλεσθέντος Ζώου"
 
 #: roles.js
 msgid "Change Incidents"
-msgstr ""
+msgstr "Αλλαγή Περιστατικών"
 
 #: roles.js
+#, fuzzy
 msgid "Change Investigation"
-msgstr ""
+msgstr "Διαγραφή Έρευνας"
 
 #: roles.js
 msgid "Change Licenses"
@@ -2089,7 +2147,7 @@ msgstr "Αλλαγή Απωλεσθέντος Ζώου"
 
 #: roles.js
 msgid "Change Media"
-msgstr ""
+msgstr "Αλλαγή Μέσου"
 
 #: roles.js
 msgid "Change Medical Records"
@@ -2099,7 +2157,7 @@ msgstr "Αλλαγή Ιατρικών Εγγραφών"
 msgid "Change Movement"
 msgstr "Αλλαγή κίνησης"
 
-#: users.js change_password.js header.js code.py
+#: header.js users.js change_password.js code.py
 msgid "Change Password"
 msgstr "Αλλαγή Συνθηματικού"
 
@@ -2113,19 +2171,21 @@ msgstr "Αλλαγή Ατόμου"
 
 #: roles.js
 msgid "Change Publishing Options"
-msgstr ""
+msgstr "Αλλαγή Επιλογών Δημοσίευσης"
 
 #: roles.js
 msgid "Change Report"
 msgstr "Αλλαγή Αναφοράς"
 
 #: roles.js
+#, fuzzy
 msgid "Change Rota"
-msgstr ""
+msgstr "Αλλαγή Προγράμματος Εργασιών"
 
 #: roles.js
+#, fuzzy
 msgid "Change Stock"
-msgstr ""
+msgstr "Αλλαγή Αποθέματος"
 
 #: roles.js
 msgid "Change System Options"
@@ -2140,14 +2200,15 @@ msgid "Change Transactions"
 msgstr "Άλλαξε συναλλαγές"
 
 #: roles.js
+#, fuzzy
 msgid "Change Transport"
-msgstr ""
+msgstr "Αλλαγή Μεταφοράς"
 
 #: roles.js
 msgid "Change Trap Loans"
 msgstr ""
 
-#: change_user_settings.js header.js code.py
+#: header.js change_user_settings.js code.py
 msgid "Change User Settings"
 msgstr "Αλλαγή Ρυθμίσεων Χρήστη"
 
@@ -2156,8 +2217,9 @@ msgid "Change Vaccinations"
 msgstr "Αλλαγή Εμβολιασμών"
 
 #: roles.js
+#, fuzzy
 msgid "Change Vouchers"
-msgstr ""
+msgstr "Αλλαγή Παραστατικών"
 
 #: roles.js
 msgid "Change Waiting List"
@@ -2168,8 +2230,9 @@ msgid "Change date required on selected treatments"
 msgstr ""
 
 #: dbupdate.py
+#, fuzzy
 msgid "Changed Mind"
-msgstr ""
+msgstr "Άλλαξε Γνώμη "
 
 #: reports.js reports.py
 msgid "Chart"
@@ -2200,12 +2263,13 @@ msgid "Chartreux"
 msgstr "Chartreux"
 
 #: mobile.py
+#, fuzzy
 msgid "Check"
-msgstr ""
+msgstr "Έλεγχος"
 
 #: mobile.py
 msgid "Check License"
-msgstr ""
+msgstr "Έλγχος Αδείας"
 
 #: person_find_results.js
 msgid "Checked By"
@@ -2283,13 +2347,12 @@ msgstr ""
 msgid "Citation Types"
 msgstr ""
 
-#: roles.js header_edit_header.js mobile.py
+#: header_edit_header.js roles.js mobile.py
 msgid "Citations"
 msgstr ""
 
-#: common_personchooser.js person_find_results.js incident_new.js
-#: waitinglist_results.js incident.js person.js transport.js person_new.js
-#: html.py
+#: person_find_results.js incident_new.js person.js person_new.js transport.js
+#: incident.js waitinglist_results.js common_personchooser.js html.py
 msgid "City"
 msgstr "Πόλη"
 
@@ -2297,12 +2360,12 @@ msgstr "Πόλη"
 msgid "City contains"
 msgstr "Η πόλη περιέχει"
 
-#: common_personchooser.js person.js person_new.js
+#: person.js person_new.js common_personchooser.js
 msgid "Class"
 msgstr "Κλάση"
 
-#: common_personchooser.js common_animalchooser.js common_animalchoosermulti.js
-#: common.js
+#: common.js common_animalchooser.js media.js common_animalchoosermulti.js
+#: common_personchooser.js mobile.py
 msgid "Clear"
 msgstr "Εκκαθάριση"
 
@@ -2310,7 +2373,7 @@ msgstr "Εκκαθάριση"
 msgid "Clear tables before importing"
 msgstr "Άδειασμα πινάκων πριν την εισαγωγή"
 
-#: onlineforms.js staff_rota.js roles.js animal.js document_templates.js
+#: onlineforms.js staff_rota.js document_templates.js animal.js roles.js
 #: reports.js
 msgid "Clone"
 msgstr "Αντίγραφο"
@@ -2327,7 +2390,7 @@ msgstr ""
 msgid "Clone the rota this week to another week"
 msgstr ""
 
-#: animal_new.js onlineform_incoming.js common_widgets.js main.js
+#: animal_new.js common_widgets.js main.js onlineform_incoming.js
 msgid "Close"
 msgstr "Κλείσε"
 
@@ -2343,7 +2406,7 @@ msgstr "Clydesdale"
 msgid "Coat"
 msgstr "Τρίχωμα"
 
-#: animal_find_results.js animal.js lookups.py mobile.py
+#: animal.js animal_find_results.js lookups.py mobile.py
 msgid "Coat Type"
 msgstr "Τύπος Τριχώματος"
 
@@ -2367,8 +2430,9 @@ msgstr "Κακατούα"
 msgid "Cocker Spaniel"
 msgstr "Cocker Spaniel"
 
-#: animal_new.js common_personchooser.js common_animalchooser.js animal_find.js
-#: animal_find_results.js accounts.js animal.js person.js html.py person.py
+#: accounts.js person.js animal.js animal_new.js common_animalchooser.js
+#: animal_find.js animal_find_results.js common_personchooser.js person.py
+#: html.py
 msgid "Code"
 msgstr "Κωδικός"
 
@@ -2384,9 +2448,9 @@ msgstr ""
 msgid "Collie"
 msgstr "Collie"
 
-#: lostfound.js onlineform.js animal_find.js animal_find_results.js
-#: lostfound_find.js lostfound_find_results.js animal.js person.js
-#: lostfound_new.js html.py lookups.py person.py mobile.py
+#: person.js lostfound_find_results.js onlineform.js animal.js
+#: lostfound_find.js lostfound.js animal_find.js animal_find_results.js
+#: lostfound_new.js lookups.py mobile.py person.py html.py
 msgid "Color"
 msgstr "Χρώμα"
 
@@ -2408,19 +2472,19 @@ msgstr "Εμφανιζόμενες Στήλες"
 
 #: lookups.js
 msgid "Comma separated list of units for this location"
-msgstr ""
+msgstr "Λίστα μονάδων μέτρησης για αυτήν την περιοχή, χωρισμένη με κόμμα"
 
-#: licence.js traploan.js stocklevel.js diary.js log.js staff_rota.js test.js
-#: person_find_results.js lostfound.js medical.js donations.js
-#: animal_find_results.js accounts.js waitinglist_results.js vaccination.js
-#: animal.js movements.js animal_diet.js medicalprofile.js person.js
-#: person_vouchers.js header_edit_header.js waitinglist_new.js litters.js
-#: lostfound_new.js transport.js waitinglist.js citations.js html.py person.py
-#: mobile.py
+#: person_find_results.js test.js header_edit_header.js accounts.js
+#: donations.js staff_rota.js diary.js medical.js person.js log.js animal.js
+#: citations.js transport.js traploan.js person_vouchers.js lostfound.js
+#: waitinglist.js animal_diet.js medicalprofile.js licence.js
+#: animal_find_results.js lostfound_new.js vaccination.js
+#: waitinglist_results.js movements.js litters.js stocklevel.js
+#: waitinglist_new.js mobile.py person.py html.py
 msgid "Comments"
 msgstr "Σχόλια"
 
-#: animal_find.js person.js person.py
+#: person.js animal_find.js person.py
 msgid "Comments Contain"
 msgstr "Τα σχόλια περιέχουν"
 
@@ -2444,8 +2508,8 @@ msgstr "Πλήρης"
 msgid "Complete Tasks"
 msgstr "Ολοκληρωμένες εργασίες"
 
-#: diary.js medical.js medicalprofile.js header_edit_header.js
-#: incident_find_results.js transport.js mobile.py medical.py
+#: header_edit_header.js incident_find_results.js diary.js medical.js
+#: transport.js medicalprofile.js mobile.py medical.py
 msgid "Completed"
 msgstr "Ολοκληρώθηκε"
 
@@ -2458,8 +2522,9 @@ msgid "Completed Type"
 msgstr "Ολοκληρωμένος Τύπος"
 
 #: diary.js
+#, fuzzy
 msgid "Completed notes upto today"
-msgstr ""
+msgstr "Μη ολοκληρωμένες σημειώσεις μέχρι σήμερα"
 
 #: incident.js mobile.py
 msgid "Completion Date"
@@ -2482,21 +2547,23 @@ msgid "Confirm Password"
 msgstr "Επιβεβαίωση Συνθηματικού"
 
 #: transport.js
+#, fuzzy
 msgid "Confirmed"
-msgstr ""
+msgstr "Επιβεβαίωση"
 
 #: dbupdate.py
 msgid "Consumed"
 msgstr ""
 
-#: lostfound.js lostfound_find_results.js waitinglist_new.js lostfound_new.js
-#: waitinglist.js lostfound.py
+#: lostfound_find_results.js lostfound.js waitinglist.js lostfound_new.js
+#: waitinglist_new.js lostfound.py
 msgid "Contact"
 msgstr "Επαφή"
 
 #: lostfound_find.js
+#, fuzzy
 msgid "Contact Contains"
-msgstr ""
+msgstr "Η Επαφή Περιέχει"
 
 #: dbupdate.py
 msgid "Conure"
@@ -2522,7 +2589,7 @@ msgstr ""
 msgid "Copy from animal comments"
 msgstr "Αντιγραφή από σχόλια ζώου"
 
-#: roles.js reports.js onlineform.py animal.py
+#: roles.js reports.js animal.py onlineform.py
 msgid "Copy of {0}"
 msgstr "Αντιγραφή του {0}"
 
@@ -2538,12 +2605,16 @@ msgstr "Corgi"
 msgid "Cornish Rex"
 msgstr "Cornish Rex"
 
-#: animal_costs.js test.js medical.js vaccination.js medicalprofile.js
-#: transport.js
+#: test.js medical.js transport.js animal_costs.js medicalprofile.js
+#: vaccination.js
 msgid "Cost"
 msgstr "Κόστος"
 
-#: lookups.py
+#: accounts_trx.js
+msgid "Cost For"
+msgstr ""
+
+#: accounts.js lookups.py
 msgid "Cost Type"
 msgstr "Τύπος Κόστους"
 
@@ -2559,7 +2630,7 @@ msgstr "Η Ημερομηνία του κόστους πρέπει να είνα
 msgid "Cost record"
 msgstr "Καταχώρηση κόστους"
 
-#: roles.js options.js header_edit_header.js
+#: header_edit_header.js options.js roles.js
 msgid "Costs"
 msgstr "Κόστη"
 
@@ -2577,7 +2648,7 @@ msgstr "Δεν μπορώ να βρω το ζώο με όνομα '{0}'"
 
 #: mobile.py
 msgid "County"
-msgstr ""
+msgstr "Νομός"
 
 #: dbupdate.py
 msgid "Cow"
@@ -2587,12 +2658,12 @@ msgstr "Αγελάδα"
 msgid "Cream"
 msgstr "Κρεμ"
 
-#: animal_new.js common_personchooser.js roles.js incident_new.js
-#: waitinglist_new.js lostfound_new.js person_new.js
+#: incident_new.js person_new.js animal_new.js roles.js lostfound_new.js
+#: common_personchooser.js waitinglist_new.js
 msgid "Create"
 msgstr "Δημιουργία"
 
-#: lostfound.js incident.js waitinglist.js
+#: lostfound.js waitinglist.js incident.js
 msgid "Create Animal"
 msgstr "Δημιουργία Ζώου"
 
@@ -2626,11 +2697,12 @@ msgstr "Δημιουργία νέου ζώου από την εγγραφή το
 
 #: incident.js
 msgid "Create a new animal from this incident"
-msgstr ""
+msgstr "Δημιουργία νέου ζώου από αυτό το περιστατικό"
 
 #: waitinglist.js
+#, fuzzy
 msgid "Create a new animal from this waiting list entry"
-msgstr ""
+msgstr "Δημιουργία νέου ζώου από αυτό το περιστατικό"
 
 #: media.js
 msgid "Create a new document"
@@ -2645,11 +2717,12 @@ msgid "Create a new template by copying the selected template"
 msgstr "Δημιουργήστε ένα νέο πρότυπο αντιγράφοντας το επιλεγμένο πρότυπο"
 
 #: lostfound.js
+#, fuzzy
 msgid "Create a new waiting list entry from this found animal record"
-msgstr ""
+msgstr "Δημιουργία νέου ζώου από την εγγραφή του ευρεθέντος ζώου"
 
-#: animal_new.js incident_new.js waitinglist_new.js lostfound_new.js
-#: person_new.js
+#: incident_new.js person_new.js animal_new.js lostfound_new.js
+#: waitinglist_new.js
 msgid "Create and edit"
 msgstr "Δημιουργία και επεξεργασία"
 
@@ -2661,7 +2734,7 @@ msgstr ""
 msgid "Create boarding cost record when animal is adopted"
 msgstr ""
 
-#: animal.js person.js
+#: person.js animal.js
 msgid "Create diary notes from a task"
 msgstr "Δημιουργία σημειώσεων ημερολογίου από αυτή την εργασία"
 
@@ -2682,8 +2755,9 @@ msgid "Create note this many days from today, or 9999 to ask"
 msgstr "Δημιουργήστε σημείωση τόσες ημέρες από σήμερα, ή 9999 για ερώτηση"
 
 #: onlineform_incoming.js
+#, fuzzy
 msgid "Create or attach person records from the selected forms"
-msgstr ""
+msgstr "Δημιουργία εγγρφών απωλεσθέντος ζώου από τις επιλεγμένες φόρμες"
 
 #: main.js
 msgid "Create this message"
@@ -2694,7 +2768,12 @@ msgid "Create this person"
 msgstr "Δημιουργία αυτού του ατόμου"
 
 #: onlineform_incoming.js
+#, fuzzy
 msgid "Create waiting list records from the selected forms"
+msgstr "Δημιουργία εγγρφών απωλεσθέντος ζώου από τις επιλεγμένες φόρμες"
+
+#: options.js
+msgid "Creating cost and cost types creates matching accounts and transactions"
 msgstr ""
 
 #: options.js
@@ -2703,9 +2782,9 @@ msgid ""
 "transactions"
 msgstr ""
 
-#: animal_new.js move_adopt.js incident_new.js move_transfer.js
-#: move_retailer.js donation_receive.js move_reserve.js waitinglist_new.js
-#: move_foster.js log_new.js lostfound_new.js person_new.js move_reclaim.js
+#: move_transfer.js incident_new.js move_adopt.js move_retailer.js log_new.js
+#: move_reserve.js move_foster.js person_new.js animal_new.js move_reclaim.js
+#: lostfound_new.js waitinglist_new.js donation_receive.js
 msgid "Creating..."
 msgstr "Δημιουργία..."
 
@@ -2721,7 +2800,7 @@ msgstr "Κουνέλι Creme D'Argent"
 msgid "Criteria:"
 msgstr "Κριτήρια:"
 
-#: animal_new.js animal.js dbupdate.py
+#: animal.js animal_new.js dbupdate.py
 msgid "Crossbreed"
 msgstr "Διασταύρωση"
 
@@ -2741,7 +2820,7 @@ msgstr "Μπουκλες"
 msgid "Current"
 msgstr "Τρέχον"
 
-#: animal.js person.py mobile.py
+#: animal.js mobile.py person.py
 msgid "Current Vet"
 msgstr "Τρέχων Κτηνίατρος"
 
@@ -2797,23 +2876,23 @@ msgstr "Δεδομένα"
 msgid "Database"
 msgstr "Βάση δεδομένων"
 
-#: traploan.js animal_costs.js accounts_trx.js diary.js log.js
-#: person_investigation.js onlineform.js move_adopt.js animal_find_results.js
-#: move_transfer.js lostfound_find_results.js animal.js movements.js
-#: move_retailer.js person.js move_reserve.js move_foster.js log_new.js
-#: person_links.js citations.js move_reclaim.js dbupdate.py mobile.py
+#: person_links.js move_transfer.js diary.js move_adopt.js person.js
+#: move_retailer.js lostfound_find_results.js log_new.js onlineform.js
+#: move_reserve.js log.js animal.js move_foster.js citations.js traploan.js
+#: move_reclaim.js person_investigation.js animal_costs.js accounts_trx.js
+#: animal_find_results.js movements.js mobile.py dbupdate.py
 msgid "Date"
 msgstr "Ημερομηνία"
 
-#: animal_new.js animal.js html.py mobile.py
+#: animal.js animal_new.js mobile.py html.py
 msgid "Date Brought In"
 msgstr "Ημερομηνία προσαγωγής"
 
-#: lostfound.js header_edit_header.js lostfound_new.js lostfound.py
+#: header_edit_header.js lostfound.js lostfound_new.js lostfound.py
 msgid "Date Found"
 msgstr "Ημερομηνία εύρεσης"
 
-#: lostfound.js header_edit_header.js lostfound_new.js
+#: header_edit_header.js lostfound.js lostfound_new.js
 msgid "Date Lost"
 msgstr "Ημερομηνία Απώλειας"
 
@@ -2829,7 +2908,7 @@ msgstr "Ημερομηνία που τοποθετήθηκε"
 msgid "Date Removed"
 msgstr "Ημερομηνία αφαιρέθηκε."
 
-#: lostfound.js header_edit_header.js lostfound_new.js
+#: header_edit_header.js lostfound.js lostfound_new.js
 msgid "Date Reported"
 msgstr "Ημερομηνία Αναφοράς"
 
@@ -2861,17 +2940,17 @@ msgstr "Η ημερομηνία απώλειας δε μπορεί να είνα
 msgid "Date lost cannot be blank."
 msgstr "Η ημερομηνία δεν πρέπει να είναι κενή."
 
-#: animal_new.js animal.js
+#: animal.js animal_new.js
 msgid "Date of Birth"
 msgstr "Ημερομηνία Γέννησης"
 
-#: animal_new.js animal.js animal.py
+#: animal.js animal_new.js animal.py
 msgid "Date of birth cannot be blank"
 msgstr "Η ημερομηνία γέννησης δεν μπορεί να είναι κενή"
 
 #: animal.py
 msgid "Date of birth cannot be in the future."
-msgstr ""
+msgstr "Η ημερομηνία γέννησης δεν μπορεί να είναι στο μέλλον."
 
 #: animal.py
 msgid "Date of birth is not valid"
@@ -2881,13 +2960,15 @@ msgstr "Μη έγκυρη ημερομηνία γέννησης"
 msgid "Date of last owner contact"
 msgstr "Ημερομηνία επαφής με τελευταίο ιδιοκτήτη"
 
-#: waitinglist_new.js waitinglist.js
+#: waitinglist.js waitinglist_new.js
+#, fuzzy
 msgid "Date put on"
-msgstr ""
+msgstr "Ημερομηνία που τοποθετήθηκε"
 
-#: waitinglist_new.js waitinglist.js waitinglist.py
+#: waitinglist.js waitinglist_new.js waitinglist.py
+#, fuzzy
 msgid "Date put on cannot be blank"
-msgstr ""
+msgstr "Η ημερομηνία εισαγωγής δεν μπορεί να είναι κενή"
 
 #: header_edit_header.js
 msgid "Date put on list"
@@ -2909,6 +2990,10 @@ msgstr "Η ημερομηνία αναφοράς δεν πρέπει να είν
 msgid "Date/Time"
 msgstr "Ημερομηνία/Ώρα"
 
+#: calendarview.js
+msgid "Day"
+msgstr ""
+
 #: diarytask.js
 msgid "Day Pivot"
 msgstr "Άξονας Ημέρας"
@@ -2925,7 +3010,7 @@ msgstr "Θάνατος κατά την άφιξη"
 msgid "Dead animal"
 msgstr "Πεθαμένο ζώο"
 
-#: move_deceased.js animal.js
+#: animal.js move_deceased.js
 msgid "Dead on arrival"
 msgstr "Πέθανε κατά την άφιξη"
 
@@ -2949,24 +3034,24 @@ msgstr "Λόγοι Θανάτου"
 msgid "Debit Card"
 msgstr "Χρεωστική Κάρτα"
 
-#: common.js
+#: common.js calendarview.js
 msgid "Dec"
 msgstr "Δεκ."
 
-#: animal_find.js search.js common.js header_edit_header.js person_links.js
+#: header_edit_header.js person_links.js search.js common.js animal_find.js
 #: animal.py
 msgid "Deceased"
 msgstr "Απεβίωσε"
 
-#: move_deceased.js animal.js
+#: animal.js move_deceased.js
 msgid "Deceased Date"
 msgstr "Ημερομηνία Θανάτου"
 
-#: common.js
+#: common.js calendarview.js
 msgid "December"
 msgstr "Δεκέμβριος"
 
-#: animal_find_results.js animal.js html.py mobile.py
+#: animal.js animal_find_results.js mobile.py html.py
 msgid "Declawed"
 msgstr "Ονυχεκτομή"
 
@@ -2999,8 +3084,9 @@ msgid "Default Entry Reason"
 msgstr "Προεπιλεγμένη Αιτία Εισόδου"
 
 #: options.js
+#, fuzzy
 msgid "Default Incident Type"
-msgstr ""
+msgstr "Προεπιλεγμένος Τύπος Πληρωμής"
 
 #: options.js
 msgid "Default Location"
@@ -3016,7 +3102,7 @@ msgstr "Προεπιλεγμένος Τύπος Πληρωμής"
 
 #: options.js
 msgid "Default Reservation Status"
-msgstr ""
+msgstr "Προεπιλεγμένη Κατάσταση Κράτησης"
 
 #: options.js
 msgid "Default Return Reason"
@@ -3048,15 +3134,16 @@ msgstr "Προεπιλεγμένος Τύπος Εμβολιασμού"
 
 #: additional.js
 msgid "Default Value"
-msgstr ""
+msgstr "Προεπιλεγμένη Τιμή"
 
 #: options.js
 msgid "Default daily boarding cost"
 msgstr ""
 
 #: options.js
+#, fuzzy
 msgid "Default destination account for payments"
-msgstr ""
+msgstr "Προεπιλεγμένος προορισμός λογαριασμού για πληρωμές"
 
 #: media.js
 msgid "Default image for documents"
@@ -3065,6 +3152,10 @@ msgstr "Προεπιλεγμένη εικόνα για τα έγγραφα"
 #: media.js
 msgid "Default image for this record and the web"
 msgstr "Προεπιλεγμένη εικόνα για αυτή την καταχώρηση και για το web"
+
+#: options.js
+msgid "Default source account for costs"
+msgstr ""
 
 #: options.js
 msgid "Default to advanced find animal screen"
@@ -3097,16 +3188,18 @@ msgstr "Προεπιλογές"
 #: options.js
 msgid "Defaults formats for code and shortcode are TYYYYNNN and NNT"
 msgstr ""
+"Προκαθορισμένη μορφή για τον κωδικό και τον σύντομο κωδικό είναι TYYYYNNN "
+"και NNT"
 
-#: onlineform_incoming.js onlineforms.js licence.js traploan.js lookups.js
-#: animal_costs.js diarytask.js accounts_trx.js stocklevel.js diarytasks.js
-#: document_repository.js diary.js log.js staff_rota.js common_tableform.js
-#: roles.js test.js report_images.js lostfound.js additional.js
-#: person_investigation.js users.js onlineform.js donations.js htmltemplates.js
-#: accounts.js waitinglist_results.js vaccination.js incident.js main.js
-#: animal.js movements.js animal_diet.js medicalprofile.js
-#: document_templates.js reports.js person.js person_vouchers.js litters.js
-#: transport.js waitinglist.js media.js citations.js
+#: additional.js htmltemplates.js onlineforms.js test.js accounts.js
+#: donations.js staff_rota.js diarytasks.js diarytask.js diary.js person.js
+#: onlineform.js log.js document_templates.js users.js animal.js citations.js
+#: transport.js traploan.js person_vouchers.js lostfound.js roles.js
+#: person_investigation.js reports.js waitinglist.js lookups.js animal_costs.js
+#: accounts_trx.js animal_diet.js main.js document_repository.js incident.js
+#: medicalprofile.js licence.js media.js vaccination.js common_tableform.js
+#: waitinglist_results.js movements.js onlineform_incoming.js litters.js
+#: report_images.js stocklevel.js
 msgid "Delete"
 msgstr "Διαγραφή"
 
@@ -3144,7 +3237,7 @@ msgstr "Διαγραφή Ζώου που Βρέθηκε"
 
 #: roles.js
 msgid "Delete Incidents"
-msgstr ""
+msgstr "Διαγραφή Περιστατικών"
 
 #: roles.js
 msgid "Delete Incoming Forms"
@@ -3199,20 +3292,22 @@ msgid "Delete Report"
 msgstr "Διαγραφή Αναφοράς"
 
 #: roles.js
+#, fuzzy
 msgid "Delete Rota"
-msgstr ""
+msgstr "Διαγραφή Προγράμματος εργασίας"
 
 #: roles.js
 msgid "Delete Stock"
-msgstr ""
+msgstr "Διαγραφή Αποθέματος"
 
 #: roles.js
 msgid "Delete Tests"
 msgstr "Διαγραφή Δοκιμής"
 
 #: roles.js
+#, fuzzy
 msgid "Delete Transport"
-msgstr ""
+msgstr "Διαγραφή Μεταφοράς"
 
 #: roles.js
 msgid "Delete Trap Loans"
@@ -3244,7 +3339,7 @@ msgstr "Διαγραφή ζώου"
 
 #: incident.js
 msgid "Delete this incident"
-msgstr ""
+msgstr "Διαγραφή αυτού του περιστατικού"
 
 #: person.js
 msgid "Delete this person"
@@ -3260,7 +3355,7 @@ msgstr "Διαγραφή αυτής της καταχώρησης της λίσ�
 
 #: dbupdate.py
 msgid "Denied"
-msgstr ""
+msgstr "Απαγορεύεται"
 
 #: traploan.js accounts_trx.js
 msgid "Deposit"
@@ -3274,14 +3369,14 @@ msgstr "Λογαριασμός Κατάθεσης"
 msgid "Deposit Returned"
 msgstr ""
 
-#: move_adopt.js donation_receive.js move_reserve.js move_reclaim.js
+#: move_adopt.js move_reserve.js move_reclaim.js donation_receive.js
 msgid "Deposit account"
 msgstr "Λογαριασμός Κατάθεσης"
 
-#: onlineforms.js lookups.js animal_costs.js accounts_trx.js stocklevel.js
-#: report_export.js incident_find.js accounts.js waitinglist_results.js
-#: incident.js animal_diet.js reports.js waitinglist_new.js waitinglist.js
-#: html.py lostfound.py mobile.py
+#: onlineforms.js accounts.js reports.js waitinglist.js lookups.js
+#: animal_costs.js accounts_trx.js animal_diet.js incident.js report_export.js
+#: waitinglist_results.js incident_find.js stocklevel.js waitinglist_new.js
+#: mobile.py lostfound.py html.py
 msgid "Description"
 msgstr "Περιγραφή"
 
@@ -3289,15 +3384,15 @@ msgstr "Περιγραφή"
 msgid "Description Contains"
 msgstr "Η περιγραφή περιέχει"
 
-#: waitinglist_new.js waitinglist.js waitinglist.py
+#: waitinglist.js waitinglist_new.js waitinglist.py
 msgid "Description cannot be blank"
 msgstr "Η περιγραφή δε μπορεί να είναι κενή"
 
 #: common_widgets.js
 msgid "Deselect"
-msgstr ""
+msgstr "Αποεπιλογή"
 
-#: lostfound.js incident.js animal.js header_edit_header.js waitinglist.js
+#: header_edit_header.js animal.js lostfound.js waitinglist.js incident.js
 msgid "Details"
 msgstr "Πληροφορίες"
 
@@ -3309,11 +3404,11 @@ msgstr "Devon Rex"
 msgid "Dialog title"
 msgstr "Τίτλος διαλόγου"
 
-#: roles.js calendarview.js header_edit_header.js html.py mobile.py
+#: header_edit_header.js roles.js calendarview.js mobile.py html.py
 msgid "Diary"
 msgstr "Ημερολόγιο"
 
-#: animal.js person.js
+#: person.js animal.js
 msgid "Diary Task"
 msgstr "Εργασία Ημερολογίου"
 
@@ -3385,11 +3480,11 @@ msgstr "Οι εργασίες του ημερολογίου χρειάζοντα
 msgid "Did you know?"
 msgstr "Το γνωρίζατε;"
 
-#: animal_find_results.js html.py animal.py dbupdate.py
+#: animal_find_results.js animal.py html.py dbupdate.py
 msgid "Died"
 msgstr "Απεβίωσε"
 
-#: move_deceased.js animal.js
+#: animal.js move_deceased.js
 msgid "Died off shelter"
 msgstr "Πέθανε εκτός καταφυγίου"
 
@@ -3409,7 +3504,7 @@ msgstr "Δίαιτες"
 msgid "Diets need a start date."
 msgstr "Τα διαιτολόγια χρειάζονται μια ημερομηνία έναρξης."
 
-#: incident.js header_edit_header.js mobile.py
+#: header_edit_header.js incident.js mobile.py
 msgid "Dispatch"
 msgstr "Αποστολή"
 
@@ -3421,7 +3516,7 @@ msgstr "Διεύθυνση Αποστολής"
 msgid "Dispatch Between"
 msgstr "Αποστολή Μεταξύ"
 
-#: incident.js incident_find_results.js mobile.py
+#: incident_find_results.js incident.js mobile.py
 msgid "Dispatch Date/Time"
 msgstr "Ημερομηνία/Ώρα Αποστολής"
 
@@ -3429,7 +3524,7 @@ msgstr "Ημερομηνία/Ώρα Αποστολής"
 msgid "Dispatch {0}: {1}"
 msgstr "Αποστολή {0}: {1}"
 
-#: incident_find.js incident.js mobile.py
+#: incident.js incident_find.js mobile.py
 msgid "Dispatched ACO"
 msgstr ""
 
@@ -3458,7 +3553,7 @@ msgstr "Απόκρυψη"
 msgid "Doberman Pinscher"
 msgstr "Doberman Pinscher"
 
-#: animal.js person.js dbupdate.py
+#: person.js animal.js dbupdate.py
 msgid "Document"
 msgstr "Έγγραφο"
 
@@ -3466,7 +3561,7 @@ msgstr "Έγγραφο"
 msgid "Document Link"
 msgstr "Σύνδεσμος Εγγράφου"
 
-#: document_repository.js roles.js html.py code.py
+#: roles.js document_repository.js code.py html.py
 msgid "Document Repository"
 msgstr "Αποθετήριο Εγγράφου"
 
@@ -3474,7 +3569,7 @@ msgstr "Αποθετήριο Εγγράφου"
 msgid "Document Templates"
 msgstr "Πρότυπα Έγγραφα"
 
-#: document_repository.js document_templates.js
+#: document_templates.js document_repository.js
 msgid "Document file"
 msgstr "Αρχείο Εγγράφου"
 
@@ -3483,8 +3578,9 @@ msgid "Document templates"
 msgstr "Πρότυπα Έγγραφα"
 
 #: options.js
+#, fuzzy
 msgid "Documents"
-msgstr ""
+msgstr "Έγγραφο"
 
 #: dbupdate.py
 msgid "Dog"
@@ -3550,7 +3646,7 @@ msgstr "Γάιδαρος"
 msgid "Donkey/Mule"
 msgstr "Γάιδαρος/Μουλάρι"
 
-#: onlineforms.js person_find_results.js common.js header_edit_header.js
+#: person_find_results.js onlineforms.js header_edit_header.js common.js
 #: html.py
 msgid "Donor"
 msgstr "Δωρητής"
@@ -3571,9 +3667,9 @@ msgstr "Λήψη"
 msgid "Draft"
 msgstr "Πρόχειρο"
 
-#: onlineforms.js common.js header_edit_header.js transport.js
+#: onlineforms.js header_edit_header.js common.js transport.js
 msgid "Driver"
-msgstr ""
+msgstr "Οδιηγός"
 
 #: transport.js
 msgid "Dropoff"
@@ -3583,23 +3679,23 @@ msgstr ""
 msgid "Duck"
 msgstr "Πάπια"
 
-#: traploan.js donations.js citations.js
+#: donations.js citations.js traploan.js
 msgid "Due"
 msgstr "Λήξη"
 
-#: test.js medical.js donations.js vaccination.js
+#: test.js donations.js medical.js vaccination.js
 msgid "Due in next month"
 msgstr "Λήγει τον επόμενο μήνα"
 
-#: test.js medical.js donations.js vaccination.js transport.js
+#: test.js donations.js medical.js transport.js vaccination.js
 msgid "Due in next week"
 msgstr "Λήγει την επόμενη εβδομάδα"
 
-#: test.js medical.js donations.js vaccination.js
+#: test.js donations.js medical.js vaccination.js
 msgid "Due in next year"
 msgstr "Λήγει το επόμενο έτος"
 
-#: test.js medical.js vaccination.js transport.js
+#: test.js medical.js transport.js vaccination.js
 msgid "Due today"
 msgstr "Λήγει σήμερα"
 
@@ -3625,11 +3721,11 @@ msgstr "Dwarf Eared"
 
 #: options.js
 msgid "E = first letter of animal entry category"
-msgstr ""
+msgstr "E = πρώτο γράμμα της κατηγορίας εισόδου του ζώου"
 
 #: options.js
 msgid "EE = first and second letter of animal entry category"
-msgstr ""
+msgstr "EE = πρώτο και δεύτερο γράμμα της κατηγορίας εισόδου του ζώου"
 
 #: dbupdate.py
 msgid "Eclectus"
@@ -3684,8 +3780,9 @@ msgid "Edit additional field"
 msgstr "Επεξεργασία επιπρόσθετου πεδίου"
 
 #: citations.js
+#, fuzzy
 msgid "Edit citation"
-msgstr ""
+msgstr "Επεξεργασία εμβολιασμού"
 
 #: animal_costs.js
 msgid "Edit cost"
@@ -3699,7 +3796,7 @@ msgstr "Επεξεργασία ημερολογίου"
 msgid "Edit diary notes"
 msgstr "Επεξεργασία σημειώσεων ημερολογίου"
 
-#: diarytask.js diarytasks.js
+#: diarytasks.js diarytask.js
 msgid "Edit diary task"
 msgstr "Επεξεργασία εργασίας ημερολογίου"
 
@@ -3756,8 +3853,9 @@ msgid "Edit movement"
 msgstr "Επεξεργασία κίνησης"
 
 #: diary.js
+#, fuzzy
 msgid "Edit my  diary notes"
-msgstr ""
+msgstr "Επεξεργασία των σημειώσεων ημερολογίου μου"
 
 #: code.py
 msgid "Edit my diary notes"
@@ -3824,12 +3922,14 @@ msgid "Edit transaction"
 msgstr "Επεξεργασία συναλλαγής"
 
 #: transport.js
+#, fuzzy
 msgid "Edit transport"
-msgstr ""
+msgstr "Προσθήκη μεταφοράς"
 
 #: traploan.js
+#, fuzzy
 msgid "Edit trap loan"
-msgstr ""
+msgstr "Προσθήκη δανεισμού παγίδας"
 
 #: users.js
 msgid "Edit user"
@@ -3855,36 +3955,46 @@ msgstr "Egyptian Mau"
 msgid "Electricity Bills"
 msgstr "Λογαριασμοί ηλεκτρικού"
 
-#: move_adopt.js donations.js donation_receive.js move_reserve.js
-#: move_reclaim.js
+#: media.js
+msgid "Electronically sign this document"
+msgstr ""
+
+#: media.js
+msgid "Electronically sign this document with the signing pad mobile interface"
+msgstr ""
+
+#: donations.js move_adopt.js move_reserve.js move_reclaim.js
+#: donation_receive.js
 msgid "Eligible for gift aid"
 msgstr ""
 
-#: person_find_results.js lostfound.js users.js waitinglist_results.js
-#: incident.js person_find.js options.js person.js waitinglist.js media.js
+#: person_find_results.js person.js users.js options.js lostfound.js
+#: waitinglist.js incident.js media.js waitinglist_results.js person_find.js
 #: html.py
 msgid "Email"
 msgstr "Email"
 
-#: common_personchooser.js change_user_settings.js person_new.js
+#: change_user_settings.js person_new.js common_personchooser.js
 msgid "Email Address"
 msgstr "Διεύθυνση Email"
 
 #: media.js
+#, fuzzy
 msgid "Email PDF"
-msgstr ""
+msgstr "Αποστολή με email σε PDF"
 
 #: roles.js
+#, fuzzy
 msgid "Email Person"
-msgstr ""
+msgstr "Αποστολή email σε άτομο"
 
 #: media.js
 msgid "Email a copy of the selected HTML documents as PDFs"
-msgstr ""
+msgstr "Αποστολή με Email αντιγράφου των επιλεγμένων HTML εγγράφων ως PDF"
 
 #: media.js
 msgid "Email a copy of the selected media files"
-msgstr ""
+msgstr "Αποστολή με Email αντιγράφου των επιλεγμένων αρχείων"
 
 #: options.js
 msgid "Email address"
@@ -3901,8 +4011,9 @@ msgid ""
 msgstr ""
 
 #: media.js
+#, fuzzy
 msgid "Email media"
-msgstr ""
+msgstr "Αποστολή με Email του μέσου"
 
 #: common_widgets.js
 msgid "Email person"
@@ -3924,7 +4035,7 @@ msgstr "Το Email στάλθηκε επιτυχώς σε {0}"
 msgid "Email this message to all matching users"
 msgstr "Στείλε αυτό το μήνυμα, με email, σε όλους τους χρήστες που ταιριάζουν"
 
-#: lostfound.js person.js waitinglist.js
+#: person.js lostfound.js waitinglist.js
 msgid "Email this person"
 msgstr "Αποστολή email σε αυτό το άτομο"
 
@@ -3970,15 +4081,16 @@ msgstr "Τέλος της Ημέρας"
 
 #: rota.js
 msgid "End Time"
-msgstr ""
+msgstr "Χρόνος Λήξης"
 
 #: options.js
 msgid "End at"
-msgstr ""
+msgstr "Λήξη την"
 
 #: staff_rota.js
+#, fuzzy
 msgid "Ends"
-msgstr ""
+msgstr "Λήξη"
 
 #: medical.js medicalprofile.js
 msgid "Ends after"
@@ -4026,11 +4138,11 @@ msgstr "English Toy Spaniel"
 
 #: publish_options.js
 msgid "Entered (newest first)"
-msgstr ""
+msgstr "Με σειρά εισαγωγής (τα νεώτερα πρώτα)"
 
 #: publish_options.js
 msgid "Entered (oldest first)"
-msgstr ""
+msgstr "Με σειρά εισαγωγής (τα παλαιότερα πρώτα)"
 
 #: animal_find.js
 msgid "Entered From"
@@ -4049,12 +4161,16 @@ msgid ""
 "Entering 'activelost' or 'activefound' in the search box will show you lost "
 "and found animals reported in the last 30 days."
 msgstr ""
+"Η εισαγωγή 'activelost' ή 'activefound' στο πεδίο αναζήτησης θα δείξει τα "
+"απολεσθέντα και ευρεθέντα ζώα που δηλώθηκαν τις τελευταίες 30 ημέρες."
 
 #: main.js
 msgid ""
 "Entering 'deceased' in the search box will show you recently deceased "
 "animals."
 msgstr ""
+"Εισάγοντας 'deceased' στο πεδίο αναζήτησης θα σας δείξει τα πρόσφατα άρρωστα "
+"ζώα"
 
 #: main.js
 msgid ""
@@ -4071,6 +4187,7 @@ msgstr ""
 #: main.js
 msgid "Entering 'os' in the search box will show you all shelter animals."
 msgstr ""
+"Εισάγοντας 'os' στο πεδίο αναζήτησης θα σας δείξει όλα τα ζώα του καταφυγίου."
 
 #: dbupdate.py
 msgid "Entlebucher"
@@ -4080,7 +4197,7 @@ msgstr "Entlebucher"
 msgid "Entry"
 msgstr "Εισαγωγή"
 
-#: animal_new.js shelterview.js animal.js options.js mobile.py
+#: shelterview.js animal.js animal_new.js options.js mobile.py
 msgid "Entry Category"
 msgstr "Κατηγορία Εισόδου"
 
@@ -4088,7 +4205,7 @@ msgstr "Κατηγορία Εισόδου"
 msgid "Entry Donation"
 msgstr "Δωρεά εισαγωγής"
 
-#: animal_find_results.js html.py mobile.py
+#: animal_find_results.js mobile.py html.py
 msgid "Entry Reason"
 msgstr "Αιτία Εισόδου"
 
@@ -4100,7 +4217,7 @@ msgstr "Κατηγορία Αιτίας Εισόδου"
 msgid "Entry Reasons"
 msgstr "Λόγοι Εισόδου"
 
-#: waitinglist_new.js waitinglist.js
+#: waitinglist.js waitinglist_new.js
 msgid "Entry reason"
 msgstr "Αιτία εισαγωγής"
 
@@ -4132,7 +4249,7 @@ msgstr "Eskimo Dog"
 msgid "Estimate"
 msgstr "Εκτίμηση"
 
-#: move_deceased.js animal_find_results.js animal.js animal.py
+#: animal.js animal_find_results.js move_deceased.js animal.py
 msgid "Euthanized"
 msgstr "Ευθανασία"
 
@@ -4175,6 +4292,14 @@ msgstr "Exotic Shorthair"
 #: dbupdate.py
 msgid "Expense"
 msgstr "Έξοδο"
+
+#: financial.py
+msgid "Expense::"
+msgstr ""
+
+#: dbupdate.py
+msgid "Expenses::Board"
+msgstr ""
 
 #: dbupdate.py
 msgid "Expenses::Electricity"
@@ -4220,12 +4345,12 @@ msgstr "Έληξε τον προηγούμενο μήνα"
 msgid "Expired in the last week"
 msgstr "Έληξε την προηγούμενη εβδομάδα"
 
-#: licence.js vaccination.js main.js person.js person_vouchers.js litters.js
+#: person.js person_vouchers.js main.js licence.js vaccination.js litters.js
 #: mobile.py
 msgid "Expires"
 msgstr "Λήγει"
 
-#: stocklevel.js person_find_results.js
+#: person_find_results.js stocklevel.js
 msgid "Expiry"
 msgstr "Λήξη"
 
@@ -4241,7 +4366,7 @@ msgstr "Εξαγωγή"
 msgid "Export Report"
 msgstr "Εξαγωγή Έκθεσης"
 
-#: report_export.js html.py code.py
+#: report_export.js code.py html.py
 msgid "Export Reports as CSV"
 msgstr "Εξαγωγή Εκθέσεων ως CSV"
 
@@ -4270,8 +4395,9 @@ msgid "FECV/FeCoV"
 msgstr ""
 
 #: dbupdate.py
+#, fuzzy
 msgid "FIPV"
-msgstr ""
+msgstr "FIV"
 
 #: animal_find_results.js dbupdate.py
 msgid "FIV"
@@ -4281,15 +4407,16 @@ msgstr "FIV"
 msgid "FIV Result"
 msgstr "Αποτέλεσμα FIV"
 
-#: common.js
+#: common.js animal_find.js
+#, fuzzy
 msgid "FIV+"
-msgstr ""
+msgstr "FIV"
 
 #: html.py
 msgid "FIV/L Test Date"
 msgstr "Ημερομηνία Δοκιμής FIV/L"
 
-#: animal_find_results.js animal.js html.py mobile.py
+#: animal.js animal_find_results.js mobile.py html.py
 msgid "FIV/L Tested"
 msgstr "Ελεγμένο για FIV/L"
 
@@ -4301,9 +4428,10 @@ msgstr "FLV"
 msgid "FLV Result"
 msgstr "Αποτέλεσμα FLV"
 
-#: common.js
+#: common.js animal_find.js
+#, fuzzy
 msgid "FLV+"
-msgstr ""
+msgstr "FLV"
 
 #: publish_options.js
 msgid "FTP hostname"
@@ -4350,19 +4478,20 @@ msgid "Fawn Tortoiseshell"
 msgstr "Μπεζ με πολύχρωμες πιτσιλιές"
 
 #: dbupdate.py
+#, fuzzy
 msgid "FeLV"
-msgstr ""
+msgstr "FLV"
 
-#: lostfound.js animal_find_results.js lostfound_find.js
-#: lostfound_find_results.js lostfound_new.js html.py
+#: lostfound_find_results.js lostfound_find.js lostfound.js
+#: animal_find_results.js lostfound_new.js html.py
 msgid "Features"
 msgstr "Χαρακτηριστικά"
 
-#: common.js
+#: common.js calendarview.js
 msgid "Feb"
 msgstr "Φεβ."
 
-#: common.js
+#: common.js calendarview.js
 msgid "February"
 msgstr "Φεβρουάριος"
 
@@ -4398,11 +4527,11 @@ msgstr "Fila Brasileiro"
 msgid "File"
 msgstr "Αρχείο"
 
-#: incident_find.js animal_find.js
+#: animal_find.js incident_find.js
 msgid "Filter"
 msgstr "Φίλτρο"
 
-#: html.py mobile.py
+#: mobile.py html.py
 msgid "Financial"
 msgstr "Οικονομικά"
 
@@ -4424,7 +4553,7 @@ msgstr "βρες Ευρεθέντα ζώς"
 
 #: incident_find.js code.py
 msgid "Find Incident"
-msgstr ""
+msgstr "Εύρεση Περιστατικού"
 
 #: lostfound_find.js code.py
 msgid "Find Lost Animal"
@@ -4447,10 +4576,11 @@ msgid "Find aco"
 msgstr ""
 
 #: header.js configuration.py
+#, fuzzy
 msgid "Find an incident"
-msgstr ""
+msgstr "Εύρεση περιστατικού"
 
-#: common_animalchooser.js header.js html.py configuration.py
+#: header.js common_animalchooser.js html.py configuration.py
 msgid "Find animal"
 msgstr "Εύρεση ζώου"
 
@@ -4460,7 +4590,7 @@ msgstr "Εύρεση στηλών ζώων"
 
 #: code.py
 msgid "Find animal control incidents returned {0} results."
-msgstr ""
+msgstr "Η εύρεση περιστατικών ελέγχου ζώων επέστρεψε {0} αποτελέσματα."
 
 #: common_personchooser.js
 msgid "Find donor"
@@ -4475,8 +4605,9 @@ msgid "Find fosterer"
 msgstr ""
 
 #: code.py
+#, fuzzy
 msgid "Find found animal returned {0} results."
-msgstr ""
+msgstr "Η εύρεση απολεσθέντων ζώων επέστρεψε {0} αποτελέσματα."
 
 #: common_personchooser.js
 msgid "Find homechecked"
@@ -4487,18 +4618,19 @@ msgid "Find homechecker"
 msgstr ""
 
 #: html.py
+#, fuzzy
 msgid "Find incident"
-msgstr ""
+msgstr "Εύρεση περιστατικού"
 
 #: code.py
 msgid "Find lost animal returned {0} results."
-msgstr ""
+msgstr "Η εύρεση απολεσθέντων ζώων επέστρεψε {0} αποτελέσματα."
 
 #: common_personchooser.js
 msgid "Find member"
 msgstr "Εύρεση μέλους"
 
-#: common_personchooser.js header.js html.py configuration.py
+#: header.js common_personchooser.js html.py configuration.py
 msgid "Find person"
 msgstr "Αναζήτηση ατόμου"
 
@@ -4554,7 +4686,7 @@ msgstr ""
 msgid "First Names"
 msgstr "Ονόματα"
 
-#: common_personchooser.js person.js person_new.js
+#: person.js person_new.js common_personchooser.js
 msgid "First name(s)"
 msgstr "Όνομα(τα)"
 
@@ -4568,11 +4700,12 @@ msgstr "Ψάρι"
 
 #: lookups.py
 msgid "Flag"
-msgstr ""
+msgstr "Σημαία"
 
-#: common_personchooser.js person_find.js person.js person_new.js
+#: person.js person_new.js common_personchooser.js person_find.js
+#, fuzzy
 msgid "Flags"
-msgstr ""
+msgstr "Σημαία"
 
 #: dbupdate.py
 msgid "Flat-coated Retriever"
@@ -4598,7 +4731,7 @@ msgstr "Παρακολούθηση Μεταξύ"
 msgid "Followup Date/Time"
 msgstr "Ημερομηνία/Ώρα Παρακολούθησης"
 
-#: onlineforms.js htmltemplates.js reports.js
+#: htmltemplates.js onlineforms.js reports.js
 msgid "Footer"
 msgstr "Υποσέλιδο"
 
@@ -4622,7 +4755,7 @@ msgstr "URL Φόρμας"
 msgid "Forms need a name."
 msgstr "Οι φόρμες χρειάζονται ένα όνομα."
 
-#: users.js common.js publish_options.js move_foster.js dbupdate.py
+#: common.js users.js move_foster.js publish_options.js dbupdate.py
 msgid "Foster"
 msgstr "Ανάδοχος"
 
@@ -4630,7 +4763,7 @@ msgstr "Ανάδοχος"
 msgid "Foster Book"
 msgstr "Βιβλίο Αναδοχών"
 
-#: header.js move_foster.js html.py code.py configuration.py
+#: header.js move_foster.js code.py html.py configuration.py
 msgid "Foster an animal"
 msgstr "Υιοθετήστε ένα ζώο"
 
@@ -4639,27 +4772,29 @@ msgid "Foster book"
 msgstr "Βιβλίο Υιοθεσιών"
 
 #: movement.py
+#, fuzzy
 msgid "Foster movements must have a valid foster date."
-msgstr ""
+msgstr "Οι Κινήσεις Υιοθέτησης πρέπει να έχει μια έγκυρη ημερομηνία υιοθέτησης."
 
 #: move_foster.js
+#, fuzzy
 msgid "Foster successfully created."
-msgstr ""
+msgstr "Επιτυχής Δημιουργία Μεταφοράς."
 
 #: animal_find.js
 msgid "Fostered"
 msgstr "Έγινε αναδοχή"
 
-#: animal_new.js onlineforms.js person_find_results.js common.js shelterview.js
-#: options.js header_edit_header.js html.py
+#: person_find_results.js onlineforms.js header_edit_header.js common.js
+#: shelterview.js animal_new.js options.js html.py
 msgid "Fosterer"
 msgstr "Ανάδοχος"
 
-#: search.js header_edit_header.js
+#: header_edit_header.js search.js
 msgid "Found"
 msgstr "Ευρέθη"
 
-#: onlineform_incoming.js search.js dbupdate.py
+#: search.js onlineform_incoming.js dbupdate.py
 msgid "Found Animal"
 msgstr "Ευρεθέν ζώο"
 
@@ -4731,23 +4866,23 @@ msgstr "French Bulldog"
 msgid "French-Lop"
 msgstr "French-Lop"
 
-#: medical.js donations.js medicalprofile.js
+#: donations.js medical.js medicalprofile.js
 msgid "Frequency"
 msgstr "Συχνότητα"
 
 #: header.js
 msgid "Frequently Asked Questions"
-msgstr ""
+msgstr "Συχνές ερωτήσεις"
 
-#: common.js
+#: common.js calendarview.js
 msgid "Fri"
 msgstr "Παρ"
 
-#: common.js
+#: common.js calendarview.js
 msgid "Friday"
 msgstr "Παρασκευή"
 
-#: onlineform_incoming.js common_widgets.js incident.js mailmerge.js
+#: mailmerge.js common_widgets.js incident.js onlineform_incoming.js
 msgid "From"
 msgstr "Από"
 
@@ -4811,7 +4946,7 @@ msgstr "Δημιουργήστε μια javascript βάση δεδομένων �
 msgid "Generate a new animal code"
 msgstr "Δημιούργησε ένα νέο κωδικό ζώου"
 
-#: animal_new.js animal.js
+#: animal.js animal_new.js
 msgid "Generate a random name for this animal"
 msgstr "Δημιούργησε ένα τυχαίο όνομα για αυτό το ζώο"
 
@@ -4819,8 +4954,8 @@ msgstr "Δημιούργησε ένα τυχαίο όνομα για αυτό τ
 msgid "Generate document from this payment"
 msgstr "Δημιουργία εγγράφου από αυτή την πληρωμή"
 
-#: move_adopt.js move_transfer.js move_retailer.js donation_receive.js
-#: move_reserve.js move_foster.js move_reclaim.js
+#: move_transfer.js move_adopt.js move_retailer.js move_reserve.js
+#: move_foster.js move_reclaim.js donation_receive.js
 msgid "Generate documentation"
 msgstr "Δημιουργία τεκμηρίωσης"
 
@@ -4860,8 +4995,8 @@ msgstr "German Wirehaired Pointer"
 msgid "Get more reports from sheltermanager.com"
 msgstr "Λήψη περισσότερων αναφορών από sheltermanager.com"
 
-#: move_adopt.js donations.js donation_receive.js move_reserve.js
-#: move_reclaim.js
+#: donations.js move_adopt.js move_reserve.js move_reclaim.js
+#: donation_receive.js
 msgid "Gift Aid"
 msgstr ""
 
@@ -4878,16 +5013,18 @@ msgid "Ginger and White"
 msgstr "Πυρρόξανθο και λευκό"
 
 #: medical.js vaccination.js
+#, fuzzy
 msgid "Give"
-msgstr ""
+msgstr "Δοθέντα"
 
 #: medical.js
 msgid "Give Treatments"
 msgstr ""
 
 #: vaccination.js
+#, fuzzy
 msgid "Give Vaccination"
-msgstr ""
+msgstr "Περισσότεροι Εμβολιασμοί"
 
 #: medical.js vaccination.js
 msgid "Given"
@@ -4961,15 +5098,15 @@ msgstr "Φιλικό με Παιδιά"
 msgid "Good with Dogs"
 msgstr "Φιλικό με Σκύλους"
 
-#: animal_bulk.js animal_find.js animal.js person.js person.py
+#: animal_bulk.js person.js animal.js animal_find.js person.py
 msgid "Good with cats"
 msgstr "Καλό με γάτες"
 
-#: animal_find.js person.js person.py
+#: person.js animal_find.js person.py
 msgid "Good with children"
 msgstr "Καλό με παιδιά"
 
-#: animal_bulk.js animal_find.js animal.js person.js person.py
+#: animal_bulk.js person.js animal.js animal_find.js person.py
 msgid "Good with dogs"
 msgstr "Καλό με σκυλιά"
 
@@ -5025,7 +5162,7 @@ msgstr "Guinea Pig"
 msgid "Guinea fowl"
 msgstr "Πουλί της Γουινέας"
 
-#: common_widgets.js mailmerge.js reports.js
+#: mailmerge.js common_widgets.js reports.js
 msgid "HTML"
 msgstr "HTML"
 
@@ -5061,11 +5198,11 @@ msgstr "Havana"
 msgid "Havanese"
 msgstr "Havanese"
 
-#: onlineforms.js htmltemplates.js reports.js
+#: htmltemplates.js onlineforms.js reports.js
 msgid "Header"
 msgstr "Επικεφαλίδα"
 
-#: animal_find_results.js animal.js html.py mobile.py
+#: animal.js animal_find_results.js mobile.py html.py
 msgid "Health Problems"
 msgstr "Προβλήματα Υγείας"
 
@@ -5089,13 +5226,14 @@ msgstr "Ημερομηνία Δοκιμής Dirofilaria"
 msgid "Heartworm Test Result"
 msgstr "Αποτελέσματα Δοκιμής Dirofilaria"
 
-#: animal_find_results.js animal.js html.py mobile.py
+#: animal.js animal_find_results.js mobile.py html.py
 msgid "Heartworm Tested"
 msgstr "Ελεγμένο για Dirofilaria immitis"
 
-#: common.js
+#: common.js animal_find.js
+#, fuzzy
 msgid "Heartworm+"
-msgstr ""
+msgstr "Dirofilaria immitis"
 
 #: dbupdate.py
 msgid "Hedgehog"
@@ -5106,8 +5244,9 @@ msgid "Held"
 msgstr "Κατοχή"
 
 #: header.js
+#, fuzzy
 msgid "Help"
-msgstr ""
+msgstr "Κατοχή"
 
 #: publish.py
 msgid "HelpingLostPets Publisher"
@@ -5129,7 +5268,7 @@ msgstr ""
 msgid "Hidden"
 msgstr "Κρυφό"
 
-#: animal_find.js animal.js html.py mobile.py
+#: animal.js animal_find.js mobile.py html.py
 msgid "Hidden Comments"
 msgstr "Κρυφά σχόλια"
 
@@ -5153,10 +5292,11 @@ msgstr "Himalayan"
 msgid "History"
 msgstr "Ιστορικό"
 
-#: animal_find.js animal_find_results.js common.js shelterview.js options.js
-#: transport.js html.py
+#: common.js shelterview.js transport.js options.js animal_find.js
+#: animal_find_results.js html.py
+#, fuzzy
 msgid "Hold"
-msgstr ""
+msgstr "Κατοχή"
 
 #: animal.js
 msgid "Hold the animal until this date or blank to hold indefinitely"
@@ -5164,7 +5304,7 @@ msgstr ""
 "Κράτηση του ζώου μέχρι αυτή την ημερομηνία ή κενό για να κρατηθεί επ' "
 "αόριστον"
 
-#: animal_bulk.js animal_find_results.js animal.js html.py
+#: animal_bulk.js animal.js animal_find_results.js html.py
 msgid "Hold until"
 msgstr "Κράτηση μέχρι"
 
@@ -5176,12 +5316,12 @@ msgstr "Κράτηση μέχρι {0}"
 msgid "Holland Lop"
 msgstr "Holland Lop"
 
-#: header.js html.py mobile.py
+#: header.js mobile.py html.py
 msgid "Home"
 msgstr "Αρχική"
 
-#: common_personchooser.js person_find_results.js waitinglist_results.js
-#: person.js person_new.js
+#: person_find_results.js person.js person_new.js waitinglist_results.js
+#: common_personchooser.js
 msgid "Home Phone"
 msgstr "Τηλέφωνο οικίας"
 
@@ -5205,23 +5345,26 @@ msgstr ""
 msgid "Homecheck areas"
 msgstr ""
 
-#: onlineforms.js person_find_results.js common.js header_edit_header.js
+#: person_find_results.js onlineforms.js header_edit_header.js common.js
 #: html.py
 msgid "Homechecked"
 msgstr "Αρχικά ελεγμένο"
 
 #: html.py
+#, fuzzy
 msgid "Homechecked By"
-msgstr ""
+msgstr "Αρχικά ελεγμένο"
 
 #: person.js
+#, fuzzy
 msgid "Homechecked by"
-msgstr ""
+msgstr "Αρχικά ελεγμένο"
 
-#: onlineforms.js person_find_results.js common.js person.js
-#: header_edit_header.js html.py
+#: person_find_results.js onlineforms.js header_edit_header.js person.js
+#: common.js html.py
+#, fuzzy
 msgid "Homechecker"
-msgstr ""
+msgstr "Αρχικά ελεγμένο"
 
 #: mailmerge.js
 msgid "Horizontal Pitch"
@@ -5241,10 +5384,10 @@ msgstr "Hound"
 
 #: common_widgets.js
 msgid "Hours"
-msgstr ""
+msgstr "Ώρες"
 
-#: animal_bulk.js animal_find.js animal_find_results.js animal.js person.js
-#: html.py person.py mobile.py
+#: animal_bulk.js person.js animal.js animal_find.js animal_find_results.js
+#: mobile.py person.py html.py
 msgid "Housetrained"
 msgstr "Εκπαιδευμένο για σπίτι"
 
@@ -5252,9 +5395,9 @@ msgstr "Εκπαιδευμένο για σπίτι"
 msgid "Hovawart"
 msgstr "Hovawart"
 
-#: waitinglist_new.js waitinglist.js
+#: waitinglist.js waitinglist_new.js
 msgid "How urgent is it that we take this animal?"
-msgstr ""
+msgstr "Πόσο επείγον είναι να παραλάβουμε αυτό το ζώο;"
 
 #: dbupdate.py
 msgid "Husky"
@@ -5343,7 +5486,7 @@ msgstr "Αρχείο εικόνας"
 msgid "Import"
 msgstr "Εισαγωγή"
 
-#: csvimport.js html.py code.py
+#: csvimport.js code.py html.py
 msgid "Import a CSV file"
 msgstr "Εισαγωγή αρχείου CSV"
 
@@ -5372,8 +5515,9 @@ msgid "In"
 msgstr "Μέσα"
 
 #: animal.py
+#, fuzzy
 msgid "In SubTotal"
-msgstr ""
+msgstr "Στο Μερικό Σύνολο"
 
 #: publish_options.js
 msgid "In the last month"
@@ -5381,7 +5525,7 @@ msgstr "Τον τελευταίο μήνα"
 
 #: publish_options.js
 msgid "In the last quarter"
-msgstr ""
+msgstr "Το τελευταίο τετράμηνο"
 
 #: publish_options.js
 msgid "In the last week"
@@ -5393,9 +5537,9 @@ msgstr "Το τελευταίο έτος"
 
 #: person.js
 msgid "Inactive - do not include"
-msgstr ""
+msgstr "Ανενεργό - να μην συμπεριληφθεί"
 
-#: onlineform_incoming.js search.js header_edit_header.js citations.js
+#: header_edit_header.js search.js citations.js onlineform_incoming.js
 #: dbupdate.py
 msgid "Incident"
 msgstr ""
@@ -5428,7 +5572,7 @@ msgstr ""
 msgid "Incident Completed Types"
 msgstr ""
 
-#: incident_new.js incident.js incident_find_results.js mobile.py
+#: incident_find_results.js incident_new.js incident.js mobile.py
 msgid "Incident Date/Time"
 msgstr ""
 
@@ -5441,8 +5585,9 @@ msgid "Incident Types"
 msgstr ""
 
 #: incident.js animalcontrol.py
+#, fuzzy
 msgid "Incident date cannot be blank"
-msgstr ""
+msgstr "Η ημερομηνία του ημερολογίου δεν μπορεί να είναι κενή"
 
 #: calendarview.js
 msgid "Incident followup"
@@ -5461,12 +5606,14 @@ msgid "Incidents Requiring Followup"
 msgstr ""
 
 #: mailmerge.js
+#, fuzzy
 msgid "Include CSV header line"
-msgstr ""
+msgstr "Να συμπεριληφθεί η επικεφαλίδα στο CSV"
 
 #: waitinglist_results.js
+#, fuzzy
 msgid "Include Removed"
-msgstr ""
+msgstr "Να συμπεριληφθούν τα Αφαιρεμένα"
 
 #: publish_options.js
 msgid "Include animals in the following locations"
@@ -5474,7 +5621,7 @@ msgstr "Συμπεριλάβετε ζώα στις ακόλουθες τοποθ
 
 #: publish_options.js
 msgid "Include animals on trial adoption"
-msgstr ""
+msgstr "Να συμπεριληφθούν τα ζώα που βρίσκονται σε δοκιμαστική υιοθεσία"
 
 #: publish_options.js
 msgid "Include animals who don't have a picture"
@@ -5620,7 +5767,7 @@ msgstr "Μη ολοκληρωμένες σημειώσεις μέχρι σήμε
 msgid "Index"
 msgstr "Ευρετήριο"
 
-#: common_personchooser.js person.js person_new.js
+#: person.js person_new.js common_personchooser.js
 msgid "Individual/Couple"
 msgstr ""
 
@@ -5632,7 +5779,7 @@ msgstr "Εισάγετε ένα νέο ζώο"
 msgid "Information"
 msgstr "Πληροφορίες"
 
-#: common_personchooser.js person_find_results.js person.js person_new.js
+#: person_find_results.js person.js person_new.js common_personchooser.js
 #: html.py
 msgid "Initials"
 msgstr "Αρχικά"
@@ -5645,7 +5792,7 @@ msgstr "Εγκατάσταση"
 msgid "Install the selected reports to your database"
 msgstr "Εγκαταστήστε τις επιλεγμένες αναφορές στη βάση δεδομένων σας"
 
-#: move_adopt.js movements.js options.js
+#: move_adopt.js options.js movements.js
 msgid "Insurance"
 msgstr "Ασφάλεια"
 
@@ -5674,8 +5821,9 @@ msgid "Invalid microchip number length"
 msgstr ""
 
 #: common.js
+#, fuzzy
 msgid "Invalid time '{0}', times should be in 00:00 format"
-msgstr ""
+msgstr "Μη έγκυρη ώρα, η μορφή της πρέπει να είναι ΩΩ:ΛΛ"
 
 #: diary.py
 msgid "Invalid time, times should be in HH:MM format"
@@ -5686,16 +5834,19 @@ msgid "Invalid username or password."
 msgstr "Μή έγκυρο όνομα χρήστη ή κωδικός"
 
 #: header_edit_header.js
+#, fuzzy
 msgid "Investigation"
-msgstr ""
+msgstr "Προσθήκη Έρευνας"
 
 #: roles.js
+#, fuzzy
 msgid "Investigations"
-msgstr ""
+msgstr "Προσθήκη Έρευνας"
 
 #: dbupdate.py
+#, fuzzy
 msgid "Investigator"
-msgstr ""
+msgstr "Προσθήκη Έρευνας"
 
 #: dbupdate.py
 msgid "Irish Setter"
@@ -5713,7 +5864,7 @@ msgstr "Irish Water Spaniel"
 msgid "Irish Wolfhound"
 msgstr "Irish Wolfhound"
 
-#: movements.js move_foster.js
+#: move_foster.js movements.js
 msgid "Is this a permanent foster?"
 msgstr ""
 
@@ -5725,7 +5876,7 @@ msgstr "Είναι δοκιμαστική υιοθεσία?"
 msgid "Issue a new insurance number for this animal/adoption"
 msgstr ""
 
-#: licence.js person_vouchers.js
+#: person_vouchers.js licence.js
 msgid "Issued"
 msgstr "Εκδόθηκε"
 
@@ -5753,11 +5904,11 @@ msgstr "Αντικείμενο"
 msgid "Jack Russell Terrier"
 msgstr "Jack Russell Terrier"
 
-#: common.js
+#: common.js calendarview.js
 msgid "Jan"
 msgstr "Ιαν."
 
-#: common.js
+#: common.js calendarview.js
 msgid "January"
 msgstr "Ιανουάριος"
 
@@ -5781,11 +5932,11 @@ msgstr "Jersey Wooly"
 msgid "Jindo"
 msgstr "Jindo"
 
-#: common.js
+#: common.js calendarview.js
 msgid "Jul"
 msgstr "Ιούλ."
 
-#: common.js
+#: common.js calendarview.js
 msgid "July"
 msgstr "Ιούλιος"
 
@@ -5805,11 +5956,11 @@ msgstr "Μετάβαση στα πολυμέσα"
 msgid "Jump to movements"
 msgstr "Μετάβαση στις κινήσεις"
 
-#: common.js
+#: common.js calendarview.js
 msgid "Jun"
 msgstr "Ιούν."
 
-#: common.js
+#: common.js calendarview.js
 msgid "June"
 msgstr "Ιούνιος"
 
@@ -5905,7 +6056,7 @@ msgstr "Την προηγούμενη εβδομάδα"
 msgid "Last changed by {0} on {1}"
 msgstr "Τελευταία αλλαγη απο {0} σε {1}"
 
-#: common_personchooser.js person.js person_new.js
+#: person.js person_new.js common_personchooser.js
 msgid "Last name"
 msgstr "Επώνυμο"
 
@@ -5957,7 +6108,7 @@ msgstr "Lhasa Apso"
 msgid "Liability"
 msgstr "Παθητικό"
 
-#: search.js header_edit_header.js
+#: header_edit_header.js search.js
 msgid "License"
 msgstr "Άδεια Χρήσης"
 
@@ -5981,7 +6132,7 @@ msgstr ""
 msgid "Licenses"
 msgstr "Άδειες χρήσης"
 
-#: html.py code.py
+#: code.py html.py
 msgid "Licensing"
 msgstr "Αδειοδότηση"
 
@@ -6001,7 +6152,7 @@ msgstr "Lilac"
 msgid "Lilac Tortie"
 msgstr "Lilac με χρωματιστές πιτσιλιές"
 
-#: onlineform_incoming.js diary.js additional.js mobile.py
+#: additional.js diary.js onlineform_incoming.js mobile.py
 msgid "Link"
 msgstr "Σύνδεση"
 
@@ -6013,7 +6164,7 @@ msgstr "Σύνδεση σε μία εξωτερική διαδικτυακή π�
 msgid "Links"
 msgstr "Σύνδεσμοι"
 
-#: animal_new.js animal_bulk.js animal_find.js animal.js html.py reports.py
+#: animal_bulk.js animal.js animal_new.js animal_find.js reports.py html.py
 msgid "Litter"
 msgstr "Τοκετοομάδα"
 
@@ -6029,7 +6180,7 @@ msgstr "Αναφορά γέννας"
 msgid "Littermates"
 msgstr ""
 
-#: roles.js litters.js animal.py code.py
+#: roles.js litters.js code.py animal.py
 msgid "Litters"
 msgstr "Γέννες"
 
@@ -6053,7 +6204,7 @@ msgstr "Σαύρα"
 msgid "Llama"
 msgstr "Λάμα"
 
-#: onlineform_incoming.js sql.js header.js
+#: header.js sql.js onlineform_incoming.js
 msgid "Loading..."
 msgstr "Φόρτωση ..."
 
@@ -6065,10 +6216,10 @@ msgstr "Δάνειο"
 msgid "Locale"
 msgstr "Γλώσσα"
 
-#: stocklevel.js animal_bulk.js test.js medical.js animal_find.js
-#: animal_find_results.js shelterview.js vaccination.js animal.js options.js
-#: header_edit_header.js incident_find_results.js html.py lookups.py mobile.py
-#: reports.py
+#: test.js header_edit_header.js animal_bulk.js incident_find_results.js
+#: medical.js shelterview.js animal.js options.js animal_find.js
+#: animal_find_results.js vaccination.js stocklevel.js lookups.py mobile.py
+#: reports.py html.py
 msgid "Location"
 msgstr "Τοποθεσία"
 
@@ -6088,7 +6239,7 @@ msgstr ""
 msgid "Locations"
 msgstr "Τοποθεσίες"
 
-#: roles.js header_edit_header.js mobile.py
+#: header_edit_header.js roles.js mobile.py
 msgid "Log"
 msgstr "Αρχείο Καταγραφής"
 
@@ -6096,7 +6247,7 @@ msgstr "Αρχείο Καταγραφής"
 msgid "Log Text"
 msgstr "Κείμενο ιστορικού"
 
-#: html.py mobile.py reports.py
+#: mobile.py reports.py html.py
 msgid "Log Type"
 msgstr "Τύπος ιστορικού"
 
@@ -6105,8 +6256,9 @@ msgid "Log Types"
 msgstr "Τύποι Αρχείου Καταγραφής"
 
 #: log.py
+#, fuzzy
 msgid "Log date must be a valid date"
-msgstr ""
+msgstr "Η Ημερομηνία του κόστους πρέπει να είναι μια έγκυρη ημερομηνία"
 
 #: log.js
 msgid "Log entries need a date and text."
@@ -6144,6 +6296,10 @@ msgstr "Αποσύνδεση"
 msgid "Long"
 msgstr "Μακρύ"
 
+#: common.js options.js
+msgid "Long term"
+msgstr ""
+
 #: options.js code.py
 msgid "Longest On Shelter"
 msgstr ""
@@ -6165,8 +6321,9 @@ msgid "Lookup data"
 msgstr "Αναζήτηση δεδομένων"
 
 #: onlineform.js
+#, fuzzy
 msgid "Lookups"
-msgstr ""
+msgstr "Αναζήτηση"
 
 #: dbupdate.py
 msgid "Lop Eared"
@@ -6176,21 +6333,23 @@ msgstr "Lop Eared"
 msgid "Lory/Lorikeet"
 msgstr "Παπαγάλος ψιττακός Αυστραλίας"
 
-#: search.js header_edit_header.js
+#: header_edit_header.js search.js
 msgid "Lost"
 msgstr "Απωλεσθέν"
 
-#: onlineform_incoming.js search.js dbupdate.py
+#: search.js onlineform_incoming.js dbupdate.py
 msgid "Lost Animal"
 msgstr "Απωλεσθέν Ζώο"
 
 #: dbupdate.py
+#, fuzzy
 msgid "Lost Animal - Additional"
-msgstr ""
+msgstr "Ευρεθέν Ζώο - Επιπλέον"
 
 #: dbupdate.py
+#, fuzzy
 msgid "Lost Animal - Details"
-msgstr ""
+msgstr "Ευρεθέν Ζώο - Λεπτομέρεις"
 
 #: person.py
 msgid "Lost Animal Contact"
@@ -6200,7 +6359,7 @@ msgstr "Επαφή Απωλεσθέντος Ζώου"
 msgid "Lost Animal: {0}"
 msgstr "Απωλεσθέντα ζώα: {0}"
 
-#: roles.js options.js
+#: options.js roles.js
 msgid "Lost and Found"
 msgstr "Απωλεσθέντα και Ευρεθέντα"
 
@@ -6213,16 +6372,18 @@ msgid "Lost animal - {0} {1} [{2}]"
 msgstr "Απωλεσθέν ζώο = {0} {1} [{2}]"
 
 #: search.py
+#, fuzzy
 msgid "Lost animal entries matching '{0}'."
-msgstr ""
+msgstr "Βρέθηκαν '{0}' καταχωρήσεις ζώου που ταιριάζουν."
 
 #: lostfound_new.js
 msgid "Lost animal entry {0} successfully created."
 msgstr ""
 
 #: lostfound.py
+#, fuzzy
 msgid "Lost animals must have a contact"
-msgstr ""
+msgstr "Τα ζώα που βρέθηκαν πρέπει να έχουν μια επαφή"
 
 #: search.py
 msgid "Lost animals reported in the last 30 days."
@@ -6330,7 +6491,7 @@ msgstr ""
 msgid "Manx"
 msgstr "Manx"
 
-#: reports.js person.js reports.py
+#: person.js reports.js reports.py
 msgid "Map"
 msgstr "Χάρτης"
 
@@ -6338,11 +6499,11 @@ msgstr "Χάρτης"
 msgid "Map of active incidents"
 msgstr ""
 
-#: common.js
+#: common.js calendarview.js
 msgid "Mar"
 msgstr "Μάρ."
 
-#: common.js
+#: common.js calendarview.js
 msgid "March"
 msgstr "Μάρτιος"
 
@@ -6354,7 +6515,7 @@ msgstr "Maremma Sheepdog"
 msgid "Mark Deceased"
 msgstr ""
 
-#: move_deceased.js header.js html.py code.py configuration.py
+#: header.js move_deceased.js code.py html.py configuration.py
 msgid "Mark an animal deceased"
 msgstr "Σημάδεψε ένα ζώο ας αποβιώσαν"
 
@@ -6386,7 +6547,7 @@ msgstr ""
 msgid "Marketer"
 msgstr ""
 
-#: animal_find.js animal.js mobile.py
+#: animal.js animal_find.js mobile.py
 msgid "Markings"
 msgstr "Σημάδια"
 
@@ -6402,7 +6563,7 @@ msgstr "Διάλυση γάμου/σχέσης"
 msgid "Mastiff"
 msgstr "Mastiff"
 
-#: lostfound.js animal.js lostfound.py
+#: animal.js lostfound.js lostfound.py
 msgid "Match"
 msgstr "Αντιστοιχία"
 
@@ -6414,7 +6575,7 @@ msgstr "Συνδυασμός Απωλεσθέντων και Ευρεθέντω�
 msgid "Match against other lost/found animals"
 msgstr ""
 
-#: header.js html.py lostfound.py configuration.py
+#: header.js lostfound.py html.py configuration.py
 msgid "Match lost and found animals"
 msgstr "Αντιστοιχία απωλεσθέντων και ευρεθέντων ζώων"
 
@@ -6426,7 +6587,7 @@ msgstr ""
 msgid "Maternity"
 msgstr ""
 
-#: common.js
+#: common.js calendarview.js
 msgid "May"
 msgstr "Μάϊ."
 
@@ -6434,7 +6595,7 @@ msgstr "Μάϊ."
 msgid "McNab"
 msgstr "McNab"
 
-#: roles.js header_edit_header.js
+#: header_edit_header.js roles.js
 msgid "Media"
 msgstr "Πολυμέσα"
 
@@ -6446,7 +6607,7 @@ msgstr "Σημειώσεις πολυμέσων"
 msgid "Media notes contain"
 msgstr "Οι σημειώσεις πολυμέσων περιέχουν"
 
-#: roles.js calendarview.js header_edit_header.js html.py mobile.py
+#: header_edit_header.js roles.js calendarview.js mobile.py html.py
 msgid "Medical"
 msgstr "Ιατρικό"
 
@@ -6490,7 +6651,7 @@ msgstr "Θεράπευσε το Ζώο"
 msgid "Medium"
 msgstr "Μεσαίο"
 
-#: onlineforms.js person_find_results.js common.js header_edit_header.js
+#: person_find_results.js onlineforms.js header_edit_header.js common.js
 #: html.py
 msgid "Member"
 msgstr "Μέλος"
@@ -6519,6 +6680,10 @@ msgstr ""
 msgid "Merge bonded animals into a single record"
 msgstr ""
 
+#: csvimport.js
+msgid "Merge duplicate records"
+msgstr ""
+
 #: main.js media.js
 msgid "Message"
 msgstr "Μήνυμα"
@@ -6543,8 +6708,8 @@ msgstr "Μηνύματα"
 msgid "Messages successfully sent"
 msgstr "Τα μηνύματα στάλθηκαν με επιτυχία"
 
-#: move_adopt.js donations.js donation_receive.js move_reserve.js
-#: move_reclaim.js
+#: donations.js move_adopt.js move_reserve.js move_reclaim.js
+#: donation_receive.js
 msgid "Method"
 msgstr "Μέθοδος"
 
@@ -6564,7 +6729,7 @@ msgstr "Νούμερο μικροτσίπ"
 msgid "Microchip number {0} has already been allocated to another animal."
 msgstr "Ο Αριθμός Microchip {0} έχει ήδη διατεθεί σε άλλο ζώο."
 
-#: animal_new.js animal.js mobile.py
+#: animal.js animal_new.js mobile.py
 msgid "Microchipped"
 msgstr "Με μικροτσίπ"
 
@@ -6604,17 +6769,21 @@ msgstr "Κινητό"
 msgid "Modify Lookups"
 msgstr "Τροποποίησε την αναζήτηση"
 
-#: common.js
+#: common.js calendarview.js
 msgid "Mon"
 msgstr "Δευ"
 
-#: common.js
+#: common.js calendarview.js
 msgid "Monday"
 msgstr "Δευτέρα"
 
 #: dbupdate.py
 msgid "Money"
 msgstr "Χρήματα"
+
+#: calendarview.js
+msgid "Month"
+msgstr ""
 
 #: dbupdate.py
 msgid "Monthly"
@@ -6689,7 +6858,7 @@ msgstr "Ποντίκι"
 msgid "Move"
 msgstr "Μετακίνηση"
 
-#: move_retailer.js html.py code.py
+#: move_retailer.js code.py html.py
 msgid "Move an animal to a retailer"
 msgstr ""
 
@@ -6705,8 +6874,8 @@ msgstr "Κίνηση"
 msgid "Movement Date"
 msgstr "Ημερομηνία Κίνησης"
 
-#: move_adopt.js move_transfer.js movements.js move_retailer.js move_reserve.js
-#: move_foster.js move_reclaim.js
+#: move_transfer.js move_adopt.js move_retailer.js move_reserve.js
+#: move_foster.js move_reclaim.js movements.js
 msgid "Movement Number"
 msgstr "Αριθμός Κίνησης"
 
@@ -6726,12 +6895,12 @@ msgstr "Οι Ημερομηνίες Κίνησης συγκρούονται με
 msgid "Movement numbers must be unique."
 msgstr "Οι αριθμοί κίνησης πρέπει να είναι μοναδικοί."
 
-#: roles.js options.js header_edit_header.js
+#: header_edit_header.js options.js roles.js
 msgid "Movements"
 msgstr "Κινήσεις"
 
-#: move_transfer.js movements.js move_retailer.js move_reserve.js
-#: move_foster.js movement.py
+#: move_transfer.js move_retailer.js move_reserve.js move_foster.js
+#: movements.js movement.py
 msgid "Movements require an animal"
 msgstr "Οι κινήσεις απαιτούν κάποιο ζώο"
 
@@ -6764,8 +6933,9 @@ msgid "Mustang"
 msgstr "Mustang"
 
 #: mobile.py
+#, fuzzy
 msgid "My Incidents"
-msgstr ""
+msgstr "Προσθήκη Περιστατικών"
 
 #: header.js html.py configuration.py
 msgid "My diary notes"
@@ -6780,19 +6950,20 @@ msgid "Mynah"
 msgstr "Μάινα"
 
 #: dbupdate.py
+#, fuzzy
 msgid "N (Non-Shelter Animal)"
-msgstr ""
+msgstr "Το ζώο δεν είναι του καταφυγίου."
 
 #: options.js
 msgid "NNN or NN = number unique for this type of animal for this year"
 msgstr ""
 "NNN ή NN = αριθμός μοναδικός για αυτό το είδος του ζώου για το τρέχον έτος"
 
-#: animal_new.js onlineform_incoming.js onlineforms.js common_personchooser.js
-#: stocklevel.js diarytasks.js common_animalchooser.js roles.js
-#: person_find_results.js additional.js onlineform.js medical.js animal_find.js
-#: animal_find_results.js htmltemplates.js waitinglist_results.js animal.js
-#: medicalprofile.js html.py person.py mobile.py
+#: additional.js person_find_results.js htmltemplates.js onlineforms.js
+#: diarytasks.js medical.js onlineform.js animal.js animal_new.js
+#: common_animalchooser.js roles.js medicalprofile.js animal_find.js
+#: animal_find_results.js waitinglist_results.js common_personchooser.js
+#: onlineform_incoming.js stocklevel.js mobile.py person.py html.py
 msgid "Name"
 msgstr "Όνομα"
 
@@ -6804,13 +6975,14 @@ msgstr "Το όνομα περιλαμβάνει"
 msgid "Name and Address"
 msgstr "Όνομα και Διεύθυνση"
 
-#: animal_new.js animal.js person.js animal.py
+#: person.js animal.js animal_new.js animal.py
 msgid "Name cannot be blank"
 msgstr "Το όνομα δεν μπορεί να είναι κενό"
 
 #: person_find.js
+#, fuzzy
 msgid "Name contains"
-msgstr ""
+msgstr "Το όνομα περιλαμβάνει"
 
 #: dbupdate.py
 msgid "Neapolitan Mastiff"
@@ -6836,8 +7008,8 @@ msgstr "Στείρωση"
 msgid "Neutered"
 msgstr "Στειρωμένο"
 
-#: lookups.js document_repository.js report_images.js person_investigation.js
-#: rota.js document_templates.js transport.js
+#: document_templates.js transport.js person_investigation.js lookups.js
+#: document_repository.js report_images.js rota.js
 msgid "New"
 msgstr "Νέο"
 
@@ -6934,12 +7106,14 @@ msgid "New Template"
 msgstr "Νέο Πρότυπο"
 
 #: test.js
+#, fuzzy
 msgid "New Test"
-msgstr ""
+msgstr "Νέο κόστος"
 
 #: transport.js
+#, fuzzy
 msgid "New Transport"
-msgstr ""
+msgstr "Προσθήκη μεταφοράς"
 
 #: traploan.js
 msgid "New Trap Loan"
@@ -6973,7 +7147,7 @@ msgstr "Νέα εργασία ημερολογίου"
 msgid "New form field"
 msgstr "Νέο πεδίο φόρμας"
 
-#: report_images.js document_templates.js
+#: document_templates.js report_images.js
 msgid "New name"
 msgstr "Νέο όνομα"
 
@@ -7001,10 +7175,9 @@ msgstr "Newfoundland Dog"
 msgid "Next"
 msgstr "Επόμενο"
 
-#: person_find_results.js additional.js users.js animal_find_results.js
-#: lostfound_find.js accounts.js waitinglist_results.js sql.js
-#: publish_options.js onlineform.py dbupdate.py wordprocessor.py mobile.py
-#: i18n.py
+#: additional.js person_find_results.js accounts.js users.js lostfound_find.js
+#: sql.js animal_find_results.js publish_options.js waitinglist_results.js
+#: mobile.py wordprocessor.py i18n.py dbupdate.py onlineform.py
 msgid "No"
 msgstr "Όχι"
 
@@ -7032,7 +7205,7 @@ msgstr ""
 msgid "No publishers are running."
 msgstr ""
 
-#: timeline.js search.js
+#: search.js timeline.js
 msgid "No results found."
 msgstr "Δεν βρέθηκαν αποτελέσματα."
 
@@ -7048,11 +7221,11 @@ msgstr "Κανένα δικαίωμα προβολής για αυτή την α
 msgid "Noise"
 msgstr ""
 
-#: animal_new.js animal_find.js common.js animal.js options.js
+#: common.js animal.js animal_new.js options.js animal_find.js
 msgid "Non-Shelter"
 msgstr "Όχι καταφυγίου"
 
-#: search.js header_edit_header.js
+#: header_edit_header.js search.js
 msgid "Non-Shelter Animal"
 msgstr "Το ζώο δεν είναι του καταφυγίου."
 
@@ -7096,13 +7269,14 @@ msgstr "Μη Διαθέσιμο Προς Υιοθεσία"
 msgid "Not Available for Adoption"
 msgstr "Δεν είναι διαθέσιμο προς υιοθεσία"
 
-#: animal_bulk.js animal_find.js common.js shelterview.js animal.js options.js
+#: animal_bulk.js common.js shelterview.js animal.js options.js animal_find.js
 msgid "Not For Adoption"
 msgstr "Όχι για Υιοθεσία"
 
 #: common.js options.js
+#, fuzzy
 msgid "Not Microchipped"
-msgstr ""
+msgstr "Με μικροτσίπ"
 
 #: accounts_trx.js
 msgid "Not Reconciled"
@@ -7116,8 +7290,8 @@ msgstr "Μη διαθέσιμο για υιοθεσία"
 msgid "Not dispatched"
 msgstr ""
 
-#: move_adopt.js donations.js donation_receive.js move_reserve.js
-#: move_reclaim.js
+#: donations.js move_adopt.js move_reserve.js move_reclaim.js
+#: donation_receive.js
 msgid "Not eligible for gift aid"
 msgstr ""
 
@@ -7137,21 +7311,21 @@ msgstr ""
 msgid "Not reconciled"
 msgstr ""
 
-#: diarytask.js diary.js log.js log_new.js mobile.py
+#: diarytask.js diary.js log_new.js log.js mobile.py
 msgid "Note"
 msgstr "Σημείωση"
 
-#: move_deceased.js person_investigation.js onlineform.js incident_new.js
-#: incident.js animal.js incident_find_results.js media.js dbupdate.py
-#: mobile.py
+#: incident_find_results.js incident_new.js onlineform.js animal.js
+#: person_investigation.js incident.js media.js move_deceased.js mobile.py
+#: dbupdate.py
 msgid "Notes"
 msgstr "Σημειώσεις"
 
-#: move_deceased.js animal.js
+#: animal.js move_deceased.js
 msgid "Notes about the death of the animal"
 msgstr "Σημειώσεις σχετικά με το θάνατο του ζώου"
 
-#: common.js
+#: common.js calendarview.js
 msgid "Nov"
 msgstr "Νοέμ."
 
@@ -7159,7 +7333,7 @@ msgstr "Νοέμ."
 msgid "Nova Scotia Duck-Tolling Retriever"
 msgstr "Nova Scotia Duck-Tolling Retriever"
 
-#: common.js
+#: common.js calendarview.js
 msgid "November"
 msgstr "Νοέμβριος"
 
@@ -7167,9 +7341,9 @@ msgstr "Νοέμβριος"
 msgid "Now"
 msgstr ""
 
-#: person_find_results.js incident_find.js lostfound.js lostfound_find.js
-#: incident.js lostfound_find_results.js person_vouchers.js
-#: incident_find_results.js waitinglist.js dbupdate.py lostfound.py mobile.py
+#: person_find_results.js incident_find_results.js lostfound_find_results.js
+#: lostfound_find.js person_vouchers.js lostfound.js waitinglist.js incident.js
+#: incident_find.js mobile.py lostfound.py dbupdate.py
 msgid "Number"
 msgstr "Νούμερο"
 
@@ -7197,11 +7371,11 @@ msgstr "Αριθμός κατοικιδίων"
 msgid "Ocicat"
 msgstr "Ocicat"
 
-#: common.js
+#: common.js calendarview.js
 msgid "Oct"
 msgstr "Οκτ."
 
-#: common.js
+#: common.js calendarview.js
 msgid "October"
 msgstr "Οκτώβριος"
 
@@ -7218,14 +7392,15 @@ msgid "Omit criteria"
 msgstr ""
 
 #: reports.js
+#, fuzzy
 msgid "Omit header/footer"
-msgstr ""
+msgstr "Επεξεργασία Κεφαλίδας/Υποσέλιδου"
 
 #: animal.py
 msgid "On Foster (in figures)"
 msgstr "Σε αναδοχή (σε αριθμούς)"
 
-#: animal_find.js animal_find_results.js common.js animal.py lostfound.py
+#: common.js animal_find.js animal_find_results.js lostfound.py animal.py
 msgid "On Shelter"
 msgstr "Στο καταφύγιο"
 
@@ -7255,7 +7430,7 @@ msgstr "Άπαξ"
 msgid "Online Form: {0}"
 msgstr "Διαδικτυακή Φόρμα: {0}"
 
-#: onlineforms.js roles.js html.py code.py
+#: onlineforms.js roles.js code.py html.py
 msgid "Online Forms"
 msgstr "Διαδικτυακές Φόρμες"
 
@@ -7319,7 +7494,7 @@ msgstr "Άνοιγμα αναφορών σε μια νέα καρτέλα του
 msgid "Opening balances"
 msgstr "Άνοιγμα ισοζυγίου από μεταφορά"
 
-#: options.js html.py code.py
+#: code.py html.py
 msgid "Options"
 msgstr "Επιλογές"
 
@@ -7331,17 +7506,17 @@ msgstr ""
 msgid "Order published animals by"
 msgstr ""
 
-#: common_personchooser.js person.js person_new.js dbupdate.py
+#: dbupdate.py
 msgid "Organisation"
 msgstr "Οργανισμός"
 
-#: common_personchooser.js person.js person_new.js
-msgid "Organisation name"
-msgstr "Όνομα Οργανισμού"
-
-#: options.js
+#: person.js person_new.js options.js common_personchooser.js
 msgid "Organization"
 msgstr "Οργανισμός"
+
+#: person.js person_new.js common_personchooser.js
+msgid "Organization name"
+msgstr ""
 
 #: dbupdate.py
 msgid "Oriental Long Hair"
@@ -7355,7 +7530,7 @@ msgstr "Oriental Short Hair"
 msgid "Oriental Tabby"
 msgstr "Oriental Tabby"
 
-#: animal_new.js animal_find.js animal.js person.py mobile.py
+#: animal.js animal_new.js animal_find.js mobile.py person.py
 msgid "Original Owner"
 msgstr "Αρχικός Ιδιοκτήτης"
 
@@ -7394,8 +7569,9 @@ msgid "Out Between"
 msgstr "Έξω μεταξύ"
 
 #: animal.py
+#, fuzzy
 msgid "Out SubTotal"
-msgstr ""
+msgstr "Στο Μερικό Σύνολο"
 
 #: publish_options.js
 msgid "Output a page with links to available online forms"
@@ -7441,7 +7617,7 @@ msgstr ""
 msgid "Page extension"
 msgstr "Επέκταση σελίδας"
 
-#: animal_costs.js test.js medical.js vaccination.js transport.js citations.js
+#: test.js medical.js citations.js transport.js animal_costs.js vaccination.js
 msgid "Paid"
 msgstr ""
 
@@ -7493,7 +7669,7 @@ msgstr "Paso Fino"
 msgid "Pass Homecheck"
 msgstr ""
 
-#: users.js login.js mobile.py
+#: login.js users.js mobile.py
 msgid "Password"
 msgstr "Κωδικός"
 
@@ -7513,7 +7689,7 @@ msgstr "Επιτυχής αλλαγή συνθηματικού."
 msgid "Passwords cannot be blank."
 msgstr "Τα συνθηματικά δεν μπορεί να είναι κενά."
 
-#: document_repository.js document_templates.js
+#: document_templates.js document_repository.js
 msgid "Path"
 msgstr ""
 
@@ -7521,7 +7697,7 @@ msgstr ""
 msgid "Patterdale Terrier (Fell Terrier)"
 msgstr "Patterdale Terrier (Fell Terrier)"
 
-#: move_adopt.js calendarview.js move_reserve.js move_reclaim.js
+#: move_adopt.js move_reserve.js move_reclaim.js calendarview.js
 msgid "Payment"
 msgstr "Πληρωμή"
 
@@ -7541,7 +7717,7 @@ msgstr "Τύπος Πληρωμής"
 msgid "Payment Types"
 msgstr "Τύποι Πληρωμής"
 
-#: html.py code.py
+#: code.py html.py
 msgid "Payment book"
 msgstr ""
 
@@ -7553,7 +7729,7 @@ msgstr ""
 msgid "Payment of {0} successfully received ({1})."
 msgstr ""
 
-#: roles.js header_edit_header.js
+#: header_edit_header.js roles.js
 msgid "Payments"
 msgstr "Πληρωμές"
 
@@ -7614,6 +7790,13 @@ msgstr "Άτομα που ψάχνουν για"
 msgid "People matching '{0}'."
 msgstr ""
 
+#: csvimport.js
+msgid ""
+"People or animal records that already exist in the database will not be "
+"imported again and movement/payment data will be attached to the existing "
+"records instead."
+msgstr ""
+
 #: search.py
 msgid "People with active reservations, but no homecheck has been done."
 msgstr ""
@@ -7642,7 +7825,7 @@ msgstr ""
 msgid "Performed"
 msgstr ""
 
-#: animal_find.js common.js shelterview.js movements.js move_foster.js
+#: common.js shelterview.js move_foster.js animal_find.js movements.js
 #: dbupdate.py
 msgid "Permanent Foster"
 msgstr ""
@@ -7651,10 +7834,10 @@ msgstr ""
 msgid "Persian"
 msgstr "Persian"
 
-#: onlineform_incoming.js licence.js traploan.js diarytasks.js staff_rota.js
-#: donations.js search.js movements.js person.js header_edit_header.js
-#: donation_receive.js log_new.js citations.js html.py dbupdate.py mobile.py
-#: reports.py
+#: header_edit_header.js donations.js staff_rota.js diarytasks.js search.js
+#: person.js log_new.js citations.js traploan.js licence.js movements.js
+#: onlineform_incoming.js donation_receive.js mobile.py reports.py html.py
+#: dbupdate.py
 msgid "Person"
 msgstr "Άτομο"
 
@@ -7679,8 +7862,9 @@ msgid "Person looking for report"
 msgstr ""
 
 #: dbupdate.py
+#, fuzzy
 msgid "Personal"
-msgstr ""
+msgstr "Άτομο"
 
 #: dbupdate.py
 msgid "Peruvian Inca Orchid"
@@ -7722,7 +7906,7 @@ msgstr ""
 msgid "Pickup"
 msgstr ""
 
-#: incident_find.js incident_new.js incident.js animal.js
+#: incident_new.js animal.js incident.js incident_find.js
 msgid "Pickup Location"
 msgstr ""
 
@@ -7970,7 +8154,7 @@ msgstr ""
 msgid "Publisher Species"
 msgstr ""
 
-#: html.py code.py
+#: code.py html.py
 msgid "Publishing"
 msgstr "Δημοσίευση"
 
@@ -8014,12 +8198,12 @@ msgstr ""
 msgid "Quaker Parakeet"
 msgstr "Παπαγάλος Αργεντινής Quaker"
 
-#: stocklevel.js test.js medical.js vaccination.js
+#: test.js medical.js vaccination.js stocklevel.js
 msgid "Quantity"
 msgstr "Ποσότητα"
 
-#: animal_find.js animal_find_results.js common.js shelterview.js animal.js
-#: options.js html.py
+#: common.js shelterview.js animal.js options.js animal_find.js
+#: animal_find_results.js html.py
 msgid "Quarantine"
 msgstr "Καραντίνα"
 
@@ -8036,8 +8220,9 @@ msgid "Quick Links"
 msgstr "Γρήγοροι Σύνδεσμοι"
 
 #: options.js
+#, fuzzy
 msgid "Quicklinks"
-msgstr ""
+msgstr "Γρήγοροι Σύνδεσμοι"
 
 #: options.js
 msgid ""
@@ -8057,7 +8242,7 @@ msgstr "Λαγός"
 msgid "Rabies"
 msgstr ""
 
-#: animal_find.js animal.js mobile.py
+#: animal.js animal_find.js mobile.py
 msgid "Rabies Tag"
 msgstr "Ετικέτα Λύσσας"
 
@@ -8073,7 +8258,7 @@ msgstr "Ragamuffin"
 msgid "Ragdoll"
 msgstr "Ragdoll"
 
-#: waitinglist_results.js header_edit_header.js html.py
+#: header_edit_header.js waitinglist_results.js html.py
 msgid "Rank"
 msgstr "Κατάταξη"
 
@@ -8099,7 +8284,7 @@ msgstr ""
 msgid "Real name"
 msgstr "Πραγματικό Όνομα"
 
-#: waitinglist_results.js movements.js header_edit_header.js html.py lookups.py
+#: header_edit_header.js waitinglist_results.js movements.js lookups.py html.py
 msgid "Reason"
 msgstr "Αιτία"
 
@@ -8140,18 +8325,19 @@ msgid "Receipt/Invoice"
 msgstr "Απόδειξη/Τιμολόγιο"
 
 #: donations.js donation_receive.js
+#, fuzzy
 msgid "Receive"
-msgstr ""
+msgstr "Ελήφθη"
 
 #: configuration.py
 msgid "Receive a donation"
 msgstr "Αποδοχή δωρεάς"
 
-#: header.js donation_receive.js html.py code.py
+#: header.js donation_receive.js code.py html.py
 msgid "Receive a payment"
 msgstr ""
 
-#: onlineform_incoming.js donations.js donation_receive.js
+#: donations.js onlineform_incoming.js donation_receive.js
 msgid "Received"
 msgstr "Ελήφθη"
 
@@ -8183,6 +8369,10 @@ msgstr ""
 msgid "Recently Fostered"
 msgstr ""
 
+#: publish.py
+msgid "Recently adopted"
+msgstr ""
+
 #: header.js configuration.py
 msgid "Recently deceased"
 msgstr ""
@@ -8191,11 +8381,12 @@ msgstr ""
 msgid "Recently deceased shelter animals (last 30 days)."
 msgstr ""
 
-#: publish_options.js move_reclaim.js
+#: move_reclaim.js publish_options.js
+#, fuzzy
 msgid "Reclaim"
-msgstr ""
+msgstr "Ζητήθηκε επανάκτηση"
 
-#: move_reclaim.js html.py code.py
+#: move_reclaim.js code.py html.py
 msgid "Reclaim an animal"
 msgstr ""
 
@@ -8204,18 +8395,20 @@ msgid "Reclaim movements must have a valid reclaim date."
 msgstr ""
 
 #: move_reclaim.js
+#, fuzzy
 msgid "Reclaim successfully created."
-msgstr ""
+msgstr "Η υιοθεσία δημιουργήθηκε επιτυχώς."
 
 #: animal_find.js dbupdate.py
 msgid "Reclaimed"
 msgstr "Ζητήθηκε επανάκτηση"
 
 #: accounts_trx.js
+#, fuzzy
 msgid "Reconcile"
-msgstr ""
+msgstr "Ελέγχθηκε"
 
-#: accounts_trx.js accounts.js
+#: accounts.js accounts_trx.js
 msgid "Reconciled"
 msgstr "Ελέγχθηκε"
 
@@ -8271,6 +8464,10 @@ msgstr "Απελευθέρωση στη φύση"
 msgid "Released To Wild {0}"
 msgstr "Απελευθερώθηκε στη Φύση {0}"
 
+#: mobile.py
+msgid "Reload"
+msgstr ""
+
 #: litters.js
 msgid "Remaining"
 msgstr "Εναπομείναντα"
@@ -8291,7 +8488,7 @@ msgstr "Αιτιολογία Απομάκρυνσης"
 msgid "Removal reason"
 msgstr "Αιτία αφαίρεσης"
 
-#: waitinglist_results.js
+#: options.js waitinglist_results.js
 msgid "Remove"
 msgstr "Αφαίρεση"
 
@@ -8316,16 +8513,19 @@ msgid "Remove short shelter code box from the animal details screen"
 msgstr ""
 
 #: options.js
+#, fuzzy
 msgid "Remove the FIV/L test fields from animal health details"
-msgstr ""
+msgstr "Αφαίρεση του πεδίου τελών υιοθέτησης από τις λεπτομέρειες του ζώου"
 
 #: options.js
+#, fuzzy
 msgid "Remove the Litter ID field from animal details"
-msgstr ""
+msgstr "Αφαίρεση του πεδίου τελών υιοθέτησης από τις λεπτομέρειες του ζώου"
 
 #: options.js
+#, fuzzy
 msgid "Remove the Rabies Tag field from animal health details"
-msgstr ""
+msgstr "Αφαίρεση του πεδίου τελών υιοθέτησης από τις λεπτομέρειες του ζώου"
 
 #: options.js
 msgid "Remove the adoption fee field from animal details"
@@ -8336,20 +8536,23 @@ msgid "Remove the animal control functionality from menus and screens"
 msgstr ""
 
 #: options.js
+#, fuzzy
 msgid "Remove the bonded with fields from animal entry details"
-msgstr ""
+msgstr "Αφαίρεση του πεδίου τελών υιοθέτησης από τις λεπτομέρειες του ζώου"
 
 #: options.js
 msgid "Remove the city/state fields from person details"
 msgstr ""
 
 #: options.js
+#, fuzzy
 msgid "Remove the coat type field from animal details"
-msgstr ""
+msgstr "Αφαίρεση του πεδίου τελών υιοθέτησης από τις λεπτομέρειες του ζώου"
 
 #: options.js
+#, fuzzy
 msgid "Remove the declawed box from animal health details"
-msgstr ""
+msgstr "Αφαίρεση του πεδίου τελών υιοθέτησης από τις λεπτομέρειες του ζώου"
 
 #: options.js
 msgid "Remove the document repository functionality from menus"
@@ -8360,40 +8563,45 @@ msgid "Remove the good with fields from animal notes"
 msgstr ""
 
 #: options.js
+#, fuzzy
 msgid "Remove the heartworm test fields from animal health details"
-msgstr ""
+msgstr "Αφαίρεση του πεδίου τελών υιοθέτησης από τις λεπτομέρειες του ζώου"
 
 #: options.js
 msgid "Remove the insurance number field from the movement screens"
 msgstr ""
 
 #: options.js
+#, fuzzy
 msgid "Remove the location unit field from animal details"
-msgstr ""
+msgstr "Αφαίρεση του πεδίου τελών υιοθέτησης από τις λεπτομέρειες του ζώου"
 
 #: options.js
 msgid "Remove the microchip fields from animal identification details"
 msgstr ""
 
 #: options.js
+#, fuzzy
 msgid "Remove the neutered fields from animal health details"
-msgstr ""
+msgstr "Αφαίρεση του πεδίου τελών υιοθέτησης από τις λεπτομέρειες του ζώου"
 
 #: options.js
 msgid "Remove the online form functionality from menus"
 msgstr ""
 
 #: options.js
+#, fuzzy
 msgid "Remove the picked up fields from animal entry details"
-msgstr ""
+msgstr "Αφαίρεση του πεδίου τελών υιοθέτησης από τις λεπτομέρειες του ζώου"
 
 #: options.js
 msgid "Remove the rota functionality from menus and screens"
 msgstr ""
 
 #: options.js
+#, fuzzy
 msgid "Remove the size field from animal details"
-msgstr ""
+msgstr "Αφαίρεση του πεδίου τελών υιοθέτησης από τις λεπτομέρειες του ζώου"
 
 #: options.js
 msgid "Remove the stock control functionality from menus and screens"
@@ -8412,18 +8620,15 @@ msgid "Remove the trap loan functionality from menus and screens"
 msgstr ""
 
 #: options.js
+#, fuzzy
 msgid "Remove the weight field from animal details"
-msgstr ""
+msgstr "Αφαίρεση του πεδίου τελών υιοθέτησης από τις λεπτομέρειες του ζώου"
 
-#: options.js
-msgid "Remove unwanted functionality"
-msgstr ""
-
-#: waitinglist_results.js header_edit_header.js
+#: header_edit_header.js waitinglist_results.js
 msgid "Removed"
 msgstr "Αφαιρέθηκαν"
 
-#: report_images.js document_templates.js
+#: document_templates.js report_images.js
 msgid "Rename"
 msgstr "Μετονομασία"
 
@@ -8431,15 +8636,15 @@ msgstr "Μετονομασία"
 msgid "Report"
 msgstr "Έκθεση"
 
-#: report_export.js reports.js
+#: reports.js report_export.js
 msgid "Report Title"
 msgstr "Τίτλος Αναφοράς"
 
-#: incident_new.js header.js html.py code.py configuration.py
+#: incident_new.js header.js code.py html.py configuration.py
 msgid "Report a new incident"
 msgstr ""
 
-#: roles.js reports.js html.py mobile.py
+#: roles.js reports.js mobile.py html.py
 msgid "Reports"
 msgstr "Εκθέσεις"
 
@@ -8476,20 +8681,24 @@ msgid "Reservation Cancelled"
 msgstr ""
 
 #: movements.js
+#, fuzzy
 msgid "Reservation Date"
-msgstr ""
+msgstr "Βιβλίο Κρατήσεων"
 
 #: move_reserve.js
+#, fuzzy
 msgid "Reservation For"
-msgstr ""
+msgstr "Βιβλίο Κρατήσεων"
 
 #: movements.js
+#, fuzzy
 msgid "Reservation Status"
-msgstr ""
+msgstr "Βιβλίο Κρατήσεων"
 
 #: lookups.py
+#, fuzzy
 msgid "Reservation Statuses"
-msgstr ""
+msgstr "Βιβλίο Κρατήσεων"
 
 #: header.js html.py configuration.py
 msgid "Reservation book"
@@ -8500,23 +8709,25 @@ msgid "Reservation date cannot be after cancellation date."
 msgstr ""
 
 #: move_reserve.js
+#, fuzzy
 msgid "Reservation successfully created."
-msgstr ""
+msgstr "Η υιοθεσία δημιουργήθηκε επιτυχώς."
 
 #: movement.py
 msgid "Reservations must have a valid reservation date."
 msgstr ""
 
 #: move_reserve.js
+#, fuzzy
 msgid "Reserve"
-msgstr ""
+msgstr "Κρατημένο"
 
-#: header.js move_reserve.js html.py code.py configuration.py
+#: move_reserve.js header.js code.py html.py configuration.py
 msgid "Reserve an animal"
 msgstr "Δεσμεύστε ένα ζώο"
 
-#: animal_find.js animal_find_results.js common.js shelterview.js options.js
-#: html.py animal.py
+#: common.js shelterview.js options.js animal_find.js animal_find_results.js
+#: animal.py html.py
 msgid "Reserved"
 msgstr "Κρατημένο"
 
@@ -8536,7 +8747,7 @@ msgstr ""
 msgid "Responded Between"
 msgstr ""
 
-#: incident.js incident_find_results.js mobile.py
+#: incident_find_results.js incident.js mobile.py
 msgid "Responded Date/Time"
 msgstr ""
 
@@ -8544,17 +8755,17 @@ msgstr ""
 msgid "Result"
 msgstr "Αποτέλεσμα"
 
-#: person_find_results.js animal_find_results.js lostfound_find_results.js
-#: incident_find_results.js code.py
+#: person_find_results.js incident_find_results.js lostfound_find_results.js
+#: animal_find_results.js code.py
 msgid "Results"
 msgstr "Αποτελέσματα"
 
-#: search.py mobile.py
+#: mobile.py search.py
 msgid "Results for '{0}'."
 msgstr "Αποτελέσματα για '{0}'."
 
-#: onlineforms.js person_find_results.js users.js animal_find.js common.js
-#: movements.js move_retailer.js header_edit_header.js html.py dbupdate.py
+#: person_find_results.js onlineforms.js header_edit_header.js move_retailer.js
+#: common.js users.js animal_find.js movements.js html.py dbupdate.py
 msgid "Retailer"
 msgstr "Πωλητής Λιανικής"
 
@@ -8571,16 +8782,18 @@ msgid "Retailer movement successfully created."
 msgstr ""
 
 #: movement.py
+#, fuzzy
 msgid "Retailer movements must have a valid movement date."
-msgstr ""
+msgstr "Οι Κινήσεις Υιοθέτησης πρέπει να έχει μια έγκυρη ημερομηνία υιοθέτησης."
 
 #: dbupdate.py
 msgid "Retriever"
 msgstr "Retriever"
 
 #: movements.js
+#, fuzzy
 msgid "Return"
-msgstr ""
+msgstr "Επεστράφησαν"
 
 #: movements.js
 msgid "Return Category"
@@ -8594,11 +8807,11 @@ msgstr "Ημερομηνία επιστροφής"
 msgid "Return a transferred animal"
 msgstr ""
 
-#: header.js html.py code.py configuration.py
+#: header.js code.py html.py configuration.py
 msgid "Return an animal from adoption"
 msgstr "Επιστροφή ζώου από υιοθεσία"
 
-#: header.js html.py code.py configuration.py
+#: header.js code.py html.py configuration.py
 msgid "Return an animal from another movement"
 msgstr "Επιστροφή ζώου από άλλη κίνηση"
 
@@ -8632,8 +8845,9 @@ msgid "Returned to"
 msgstr ""
 
 #: animal.py
+#, fuzzy
 msgid "Returned to Owner {0}"
-msgstr ""
+msgstr "Επεστράφησαν στον ιδιοκτήτη"
 
 #: move_foster.js
 msgid "Returning"
@@ -8687,8 +8901,12 @@ msgstr "Παπαγάλος rosella"
 msgid "Rostered day off"
 msgstr ""
 
-#: roles.js header_edit_header.js
+#: header_edit_header.js roles.js
 msgid "Rota"
+msgstr ""
+
+#: lookups.py
+msgid "Rota Types"
 msgstr ""
 
 #: staff_rota.js
@@ -8784,8 +9002,9 @@ msgid "SQL is syntactically correct."
 msgstr "Η SQL είναι συντακτικά σωστή."
 
 #: options.js
+#, fuzzy
 msgid "SS = first and second letter of animal species"
-msgstr ""
+msgstr "EE = πρώτο και δεύτερο γράμμα της κατηγορίας εισόδου του ζώου"
 
 #: common.js
 msgid "Sa"
@@ -8807,7 +9026,7 @@ msgstr "Saluki"
 msgid "Samoyed"
 msgstr "Samoyed"
 
-#: common.js
+#: common.js calendarview.js
 msgid "Sat"
 msgstr "Σαβ"
 
@@ -8815,13 +9034,14 @@ msgstr "Σαβ"
 msgid "Satin"
 msgstr "Μεταξένιο"
 
-#: common.js
+#: common.js calendarview.js
 msgid "Saturday"
 msgstr "Σάββατο"
 
-#: onlineforms.js accounts_trx.js roles.js test.js lostfound.js medical.js
-#: change_user_settings.js vaccination.js incident.js animal.js options.js
-#: reports.js person.js publish_options.js waitinglist.js media.js mobile.py
+#: onlineforms.js test.js medical.js person.js change_user_settings.js
+#: animal.js options.js lostfound.js roles.js reports.js waitinglist.js
+#: accounts_trx.js incident.js publish_options.js media.js vaccination.js
+#: mobile.py
 msgid "Save"
 msgstr "Αποθήκευση"
 
@@ -8829,15 +9049,12 @@ msgstr "Αποθήκευση"
 msgid "Save and leave"
 msgstr "Αποθήκευση και έξοδος"
 
-#: animal.js
-msgid "Save this animal"
-msgstr "Αποθήκευση ζώου"
-
 #: incident.js
+#, fuzzy
 msgid "Save this incident"
-msgstr ""
+msgstr "Διαγραφή αυτού του περιστατικού"
 
-#: person.js
+#: person.js animal.js
 msgid "Save this person"
 msgstr "Αποθήκευση ατόμου"
 
@@ -8846,11 +9063,12 @@ msgid "Save this record"
 msgstr "Αποθήκευση Εγγραδής"
 
 #: waitinglist.js
+#, fuzzy
 msgid "Save this waiting list entry"
-msgstr ""
+msgstr "Διαγραφή αυτής της καταχώρησης της λίστας αναμονής"
 
-#: animal_costs.js lostfound.js incident.js animal.js options.js person.js
-#: waitinglist.js
+#: person.js animal.js options.js lostfound.js waitinglist.js animal_costs.js
+#: incident.js
 msgid "Saving..."
 msgstr "Αποθήκευση..."
 
@@ -8894,8 +9112,8 @@ msgstr "Φώκια"
 msgid "Sealyham Terrier"
 msgstr "Sealyham Terrier"
 
-#: common_personchooser.js common_animalchooser.js incident_find.js
-#: animal_find.js lostfound_find.js person_find.js options.js header.js
+#: header.js lostfound_find.js common_animalchooser.js options.js
+#: animal_find.js common_personchooser.js person_find.js incident_find.js
 msgid "Search"
 msgstr "Έρευνα"
 
@@ -8919,14 +9137,14 @@ msgstr ""
 msgid "Second offence"
 msgstr ""
 
-#: onlineforms.js common_personchooser.js accounts_trx.js diarytasks.js
-#: common_tableform.js roles.js common_animalchoosermulti.js users.js
-#: accounts.js common.js animal.js reports.js person.js litters.js transport.js
-#: html.py
+#: onlineforms.js accounts.js diarytasks.js person.js common.js users.js
+#: animal.js transport.js roles.js reports.js accounts_trx.js
+#: common_animalchoosermulti.js common_tableform.js common_personchooser.js
+#: litters.js html.py
 msgid "Select"
 msgstr "Επιλογή"
 
-#: onlineform_incoming.js common_personchooser.js
+#: common_personchooser.js onlineform_incoming.js
 msgid "Select a person"
 msgstr "Επιλογή ατόμου"
 
@@ -8945,19 +9163,20 @@ msgstr ""
 msgid "Select all"
 msgstr "Επιλογή όλων"
 
-#: onlineform_incoming.js common_animalchooser.js
+#: common_animalchooser.js onlineform_incoming.js
 msgid "Select an animal"
 msgstr "Επιλογή ζώου"
 
 #: onlineform_incoming.js
+#, fuzzy
 msgid "Select an animal to attach this form to."
-msgstr ""
+msgstr "Επιλέξτε ένα άτομο να του επισυνάψετε την παρούσα φόρμα."
 
 #: common_animalchoosermulti.js
 msgid "Select animals"
 msgstr "Επιλέξτε ζώα"
 
-#: animal.js person.js
+#: person.js animal.js
 msgid "Select date for diary task"
 msgstr ""
 
@@ -8997,7 +9216,11 @@ msgstr "Αποστολή μέσω email"
 msgid "Senior"
 msgstr "Ηλικιωμένος"
 
-#: common.js
+#: media.js
+msgid "Sent to mobile signing pad."
+msgstr ""
+
+#: common.js calendarview.js
 msgid "Sep"
 msgstr "Σεπτ."
 
@@ -9005,7 +9228,7 @@ msgstr "Σεπτ."
 msgid "Separate waiting list rank by species"
 msgstr ""
 
-#: common.js
+#: common.js calendarview.js
 msgid "September"
 msgstr "Σεπτέμβριος"
 
@@ -9017,7 +9240,7 @@ msgstr "Ρύθμιση ρολογιού διακομιστή"
 msgid "Set publishing options"
 msgstr "Όρισε επιλογές δημοσίευσης"
 
-#: common_widgets.js mailmerge.js
+#: mailmerge.js common_widgets.js
 msgid "Set the email content-type header to text/html"
 msgstr ""
 
@@ -9063,10 +9286,10 @@ msgstr "Ρυθμίσεις, Αναφορές"
 msgid "Settings, System user accounts"
 msgstr "Ρυθμίσεις, Λογαριασμοί χρηστών Συστήματος"
 
-#: animal_new.js common_animalchooser.js incident_find.js lostfound.js
-#: animal_find.js animal_find_results.js lostfound_find.js incident.js
-#: lostfound_find_results.js animal.js person.js lostfound_new.js html.py
-#: lookups.py person.py mobile.py
+#: person.js lostfound_find_results.js animal.js lostfound_find.js
+#: animal_new.js common_animalchooser.js lostfound.js incident.js
+#: animal_find.js animal_find_results.js lostfound_new.js incident_find.js
+#: lookups.py mobile.py person.py html.py
 msgid "Sex"
 msgstr "Φύλο"
 
@@ -9099,8 +9322,9 @@ msgid "Shelter"
 msgstr "Καταφύγιο"
 
 #: onlineform.js
+#, fuzzy
 msgid "Shelter Animal"
-msgstr ""
+msgstr "Ζώα Καταφυγίου"
 
 #: mobile.py
 msgid "Shelter Animals"
@@ -9115,16 +9339,18 @@ msgid "Shelter animal {0} '{1}'"
 msgstr ""
 
 #: header.js configuration.py
+#, fuzzy
 msgid "Shelter animals"
-msgstr ""
+msgstr "Ζώα Καταφυγίου"
 
-#: animal_new.js animal.js animal.py
+#: animal.js animal_new.js animal.py
 msgid "Shelter code cannot be blank"
 msgstr "Ο κωδικός καταφυγίου δεν μπορεί να είναι κενός"
 
 #: animal.py
+#, fuzzy
 msgid "Shelter code {0} has already been allocated to another animal."
-msgstr ""
+msgstr "Ο Αριθμός Microchip {0} έχει ήδη διατεθεί σε άλλο ζώο."
 
 #: main.js
 msgid "Shelter stats (all time)"
@@ -9146,7 +9372,7 @@ msgstr "Στατιστικά Καταφυγίου (αυτό το έτος)"
 msgid "Shelter stats (today)"
 msgstr "Στατιστικά Καταφυγίου (σήμερα)"
 
-#: options.js header.js html.py code.py configuration.py
+#: header.js options.js code.py html.py configuration.py
 msgid "Shelter view"
 msgstr "Προβολή Καταφυγίου"
 
@@ -9220,6 +9446,10 @@ msgid "Show quick links on the home page"
 msgstr "Προβολή γρήγορων συνδέσμων στην κεντρική σελίδα"
 
 #: options.js
+msgid "Show report menu items in collapsed categories"
+msgstr ""
+
+#: options.js
 msgid "Show short shelter codes on screens"
 msgstr ""
 
@@ -9228,8 +9458,9 @@ msgid "Show the altered fields"
 msgstr "Προβολή των αλλαγμένων πεδίων"
 
 #: options.js
+#, fuzzy
 msgid "Show the breed fields"
-msgstr ""
+msgstr "Προβολή των αλλαγμένων πεδίων"
 
 #: options.js
 msgid "Show the brought in by field"
@@ -9280,12 +9511,14 @@ msgid "Show the time brought in field"
 msgstr ""
 
 #: options.js
+#, fuzzy
 msgid "Show the weight field"
-msgstr ""
+msgstr "Προβολή του πεδίου μεγέθους"
 
 #: options.js
+#, fuzzy
 msgid "Show timeline on the home page"
-msgstr ""
+msgstr "Προβολή συμβουλών στην κεντρική σελίδα"
 
 #: options.js
 msgid "Show tips on the home page"
@@ -9299,7 +9532,7 @@ msgstr "Εμφάνιση συναλλαγών από"
 msgid "Show weight as lb rather than kg"
 msgstr ""
 
-#: html.py code.py
+#: code.py html.py
 msgid "Showing {0} timeline events."
 msgstr ""
 
@@ -9327,6 +9560,22 @@ msgstr "Άρρωστο/τραυματισμένο"
 msgid "Sick/injured animal"
 msgstr ""
 
+#: media.js mobile.py
+msgid "Sign"
+msgstr ""
+
+#: media.js
+msgid "Sign document"
+msgstr ""
+
+#: media.js
+msgid "Signed"
+msgstr ""
+
+#: media.js mobile.py
+msgid "Signing Pad"
+msgstr ""
+
 #: publish_options.js
 msgid "Signup"
 msgstr "Εγγραφή"
@@ -9351,7 +9600,7 @@ msgstr "Κουνέλι Silver Marten"
 msgid "Similar Animal"
 msgstr "Παρόμοιο Ζώο"
 
-#: common_personchooser.js person_new.js
+#: person_new.js common_personchooser.js
 msgid "Similar Person"
 msgstr "Παρόμοιο Άτομο"
 
@@ -9367,9 +9616,9 @@ msgstr "Singapura"
 msgid "Single Treatment"
 msgstr "Απλή θεραπευτική αγωγή"
 
-#: animal_new.js animal_find.js animal_find_results.js waitinglist_results.js
-#: animal.js person.js waitinglist_new.js waitinglist.js html.py lookups.py
-#: person.py mobile.py
+#: person.js animal.js animal_new.js waitinglist.js animal_find.js
+#: animal_find_results.js waitinglist_results.js waitinglist_new.js lookups.py
+#: mobile.py person.py html.py
 msgid "Size"
 msgstr "Μέγεθος"
 
@@ -9414,8 +9663,9 @@ msgid "Softbill (Other)"
 msgstr "Πουλί softbill (άλλα)"
 
 #: dbupdate.py
+#, fuzzy
 msgid "Sold"
-msgstr ""
+msgstr "Κατοχή"
 
 #: dbupdate.py
 msgid "Somali"
@@ -9460,17 +9710,16 @@ msgstr "South Russian Ovcharka"
 msgid "Spaniel"
 msgstr "Spaniel"
 
-#: animal_find_results.js animal.js html.py mobile.py
+#: animal.js animal_find_results.js mobile.py html.py
 msgid "Special Needs"
 msgstr "Ειδικές ανάγκες"
 
-#: animal_new.js lookups.js common_animalchooser.js
-#: common_animalchoosermulti.js incident_find.js lostfound.js onlineform.js
-#: animal_find.js animal_find_results.js lostfound_find.js shelterview.js
-#: waitinglist_results.js incident.js lostfound_find_results.js animal.js
-#: movements.js options.js person.js waitinglist_new.js litters.js
-#: lostfound_new.js waitinglist.js html.py lookups.py person.py mobile.py
-#: reports.py
+#: person.js lostfound_find_results.js onlineform.js shelterview.js animal.js
+#: lostfound_find.js animal_new.js common_animalchooser.js options.js
+#: lostfound.js waitinglist.js lookups.js incident.js animal_find.js
+#: animal_find_results.js lostfound_new.js common_animalchoosermulti.js
+#: waitinglist_results.js movements.js incident_find.js litters.js
+#: waitinglist_new.js lookups.py mobile.py person.py reports.py html.py
 msgid "Species"
 msgstr "Είδος"
 
@@ -9518,8 +9767,8 @@ msgstr ""
 msgid "Sponsorship donations"
 msgstr "Δωρεές χορηγιών"
 
-#: onlineforms.js staff_rota.js person_find_results.js common.js
-#: header_edit_header.js html.py dbupdate.py
+#: person_find_results.js onlineforms.js header_edit_header.js staff_rota.js
+#: common.js html.py dbupdate.py
 msgid "Staff"
 msgstr "Προσωπικό"
 
@@ -9560,34 +9809,37 @@ msgid "Start Time"
 msgstr ""
 
 #: options.js
+#, fuzzy
 msgid "Start at"
-msgstr ""
+msgstr "Ημερομηνία Έναρξης"
 
 #: litters.js
 msgid "Start date"
 msgstr "Ημερομηνία έναρξης"
 
 #: medical.py
+#, fuzzy
 msgid "Start date must be a valid date"
-msgstr ""
+msgstr "Η Ημερομηνία του κόστους πρέπει να είναι μια έγκυρη ημερομηνία"
 
 #: medical.js
 msgid "Started"
 msgstr "Ξεκίνησε"
 
 #: staff_rota.js litters.js
+#, fuzzy
 msgid "Starts"
-msgstr ""
+msgstr "Στατιστικά"
 
-#: common_personchooser.js person_find_results.js incident_new.js
-#: waitinglist_results.js incident.js person.js transport.js person_new.js
-#: html.py
+#: person_find_results.js incident_new.js person.js person_new.js transport.js
+#: incident.js waitinglist_results.js common_personchooser.js html.py
 msgid "State"
 msgstr "Πολιτεία"
 
 #: person_find.js
+#, fuzzy
 msgid "State contains"
-msgstr ""
+msgstr "Το όνομα περιλαμβάνει"
 
 #: dbupdate.py
 msgid "Stationary costs"
@@ -9607,16 +9859,17 @@ msgid ""
 "leaving the shelter on the home page."
 msgstr ""
 
-#: medical.js shelterview.js movements.js options.js medicalprofile.js
-#: person.js move_reserve.js transport.js lookups.py
+#: medical.js person.js move_reserve.js shelterview.js transport.js options.js
+#: medicalprofile.js movements.js lookups.py
 msgid "Status"
 msgstr "Κατάσταση"
 
 #: common.js
+#, fuzzy
 msgid "Stay"
-msgstr ""
+msgstr "Αδέσποτο"
 
-#: stocklevel.js html.py code.py
+#: stocklevel.js code.py html.py
 msgid "Stock"
 msgstr ""
 
@@ -9684,7 +9937,7 @@ msgstr "Κυ"
 msgid "SubTotal"
 msgstr "Υποσύνολο"
 
-#: common_widgets.js diarytask.js diary.js incident.js mailmerge.js mobile.py
+#: mailmerge.js diarytask.js diary.js common_widgets.js incident.js mobile.py
 msgid "Subject"
 msgstr "Θέμα"
 
@@ -9704,11 +9957,11 @@ msgstr "Υποβλήθηκε επιτυχώς στο Facebook"
 msgid "Sugar Glider"
 msgstr "Ιπτάμενος σκίουρος ζάχαρης"
 
-#: common.js
+#: common.js calendarview.js
 msgid "Sun"
 msgstr "Κυρ"
 
-#: common.js
+#: common.js calendarview.js
 msgid "Sunday"
 msgstr "Κυριακή"
 
@@ -9724,7 +9977,7 @@ msgstr "Υπερχρήστης"
 msgid "Surname"
 msgstr "Επίθετο"
 
-#: incident_new.js incident.js incident_find_results.js
+#: incident_find_results.js incident_new.js incident.js
 msgid "Suspect"
 msgstr ""
 
@@ -9777,8 +10030,9 @@ msgid "T = first letter of animal type"
 msgstr ""
 
 #: options.js
+#, fuzzy
 msgid "TT = first and second letter of animal type"
-msgstr ""
+msgstr "EE = πρώτο και δεύτερο γράμμα της κατηγορίας εισόδου του ζώου"
 
 #: dbupdate.py
 msgid "Tabby"
@@ -9808,7 +10062,7 @@ msgstr "Ανοιχτικαστανό και μαύρο"
 msgid "Tan and White"
 msgstr "Ανοιχτοκαστανό και λευκό"
 
-#: animal_find_results.js animal.js mobile.py
+#: animal.js animal_find_results.js mobile.py
 msgid "Tattoo"
 msgstr "Τατουάζ"
 
@@ -9858,13 +10112,15 @@ msgstr "Χελώνα terrapin"
 msgid "Terrier"
 msgstr "Terrier"
 
-#: calendarview.js header_edit_header.js mobile.py
+#: header_edit_header.js calendarview.js mobile.py
+#, fuzzy
 msgid "Test"
-msgstr ""
+msgstr "Κείμενο"
 
 #: mobile.py
+#, fuzzy
 msgid "Test Animal"
-msgstr ""
+msgstr "Απωλεσθέν Ζώο"
 
 #: test.js code.py
 msgid "Test Book"
@@ -9879,8 +10135,9 @@ msgid "Test Results"
 msgstr ""
 
 #: lookups.py
+#, fuzzy
 msgid "Test Types"
-msgstr ""
+msgstr "Τύπος Εξόδων"
 
 #: html.py
 msgid "Test book"
@@ -9891,14 +10148,15 @@ msgid "Test marked as performed for {0} - {1}"
 msgstr ""
 
 #: roles.js html.py
+#, fuzzy
 msgid "Tests"
-msgstr ""
+msgstr "Κείμενο"
 
 #: test.js
 msgid "Tests need an animal and at least a required date."
 msgstr ""
 
-#: common_tableform.js onlineform.js dbupdate.py
+#: onlineform.js common_tableform.js dbupdate.py
 msgid "Text"
 msgstr "Κείμενο"
 
@@ -9950,23 +10208,26 @@ msgstr ""
 msgid "The date reported to the shelter"
 msgstr ""
 
-#: move_deceased.js animal.js
+#: animal.js move_deceased.js
 msgid "The date the animal died"
 msgstr "Ημερομηνία θανάτου ζώου"
 
 #: animal.js
+#, fuzzy
 msgid "The date the animal was FIV/L tested"
-msgstr ""
+msgstr "Η ημερομηνία γέννησης του ζώου"
 
 #: move_adopt.js
+#, fuzzy
 msgid "The date the animal was adopted"
-msgstr ""
+msgstr "Η ημερομηνία γέννησης του ζώου"
 
 #: animal.js
+#, fuzzy
 msgid "The date the animal was altered"
-msgstr ""
+msgstr "Η ημερομηνία γέννησης του ζώου"
 
-#: animal_new.js animal.js
+#: animal.js animal_new.js
 msgid "The date the animal was born"
 msgstr "Η ημερομηνία γέννησης του ζώου"
 
@@ -9975,20 +10236,23 @@ msgid "The date the animal was brought into the shelter"
 msgstr "Ημερομηνία που το ζώο μεταφέρθηκε στο καταφύγιο"
 
 #: animal.js
+#, fuzzy
 msgid "The date the animal was heartworm tested"
-msgstr ""
+msgstr "Η ημερομηνία γέννησης του ζώου"
 
-#: animal_new.js animal.js
+#: animal.js animal_new.js
 msgid "The date the animal was microchipped"
 msgstr "Ημερομηνία τοποθέτησης μικροτσίπ"
 
 #: move_reclaim.js
+#, fuzzy
 msgid "The date the animal was reclaimed"
-msgstr ""
+msgstr "Ημερομηνία τοποθέτησης μικροτσίπ"
 
 #: animal.js
+#, fuzzy
 msgid "The date the animal was tattooed"
-msgstr ""
+msgstr "Η ημερομηνία γέννησης του ζώου"
 
 #: move_foster.js
 msgid "The date the foster animal will be returned if known"
@@ -10034,7 +10298,7 @@ msgstr "Η ημερομηνία που βρέθηκε το ζώο"
 msgid "The date this animal was lost"
 msgstr "Η ημερομηνία που χάθηκε το ζώο"
 
-#: waitinglist_new.js waitinglist.js
+#: waitinglist.js waitinglist_new.js
 msgid "The date this animal was put on the waiting list"
 msgstr "Η ημερομηνία που το ζώο μπήκε στη λίστα αναμονής"
 
@@ -10043,8 +10307,9 @@ msgid "The date this animal was removed from the waiting list"
 msgstr "Η ημερομηνία που το ζώο αφαιρέθηκε από τη λίστα ανομονής"
 
 #: movements.js
+#, fuzzy
 msgid "The date this animal was reserved"
-msgstr ""
+msgstr "Η ημερομηνία που χάθηκε το ζώο"
 
 #: lostfound.js
 msgid "The date this animal was returned to its owner"
@@ -10058,7 +10323,7 @@ msgstr ""
 msgid "The default username is 'user' with the password 'letmein'"
 msgstr "Το προεπιλεγμένο όνομα χρήστη είναι 'user' με τον κωδικό 'letmein'"
 
-#: animal_new.js animal.js
+#: animal.js animal_new.js
 msgid "The entry reason for this animal"
 msgstr ""
 
@@ -10078,7 +10343,7 @@ msgstr ""
 msgid "The location where the animal was picked up"
 msgstr ""
 
-#: animal_new.js animal.js
+#: animal.js animal_new.js
 msgid "The microchip number"
 msgstr "Αριθμός microchip"
 
@@ -10108,13 +10373,14 @@ msgstr ""
 msgid "The primary breed of this animal"
 msgstr ""
 
-#: waitinglist_new.js waitinglist.js
+#: waitinglist.js waitinglist_new.js
 msgid "The reason the owner wants to part with the animal"
 msgstr ""
 
 #: waitinglist.js
+#, fuzzy
 msgid "The reason this animal was removed from the waiting list"
-msgstr ""
+msgstr "Η ημερομηνία που το ζώο αφαιρέθηκε από τη λίστα ανομονής"
 
 #: stocklevel.js
 msgid "The remaining units in the container"
@@ -10144,7 +10410,7 @@ msgstr "Το επιλεγμένο αρχείο δεν είναι εικόνα."
 msgid "The shelter category for this animal"
 msgstr ""
 
-#: animal_new.js animal.js
+#: animal.js animal_new.js
 msgid "The shelter reference number"
 msgstr ""
 
@@ -10161,8 +10427,9 @@ msgid "The size of this animal"
 msgstr "Μέγεθος του ζώου"
 
 #: animal.js
+#, fuzzy
 msgid "The species of this animal"
-msgstr ""
+msgstr "Μέγεθος του ζώου"
 
 #: animal.js
 msgid "The tattoo number"
@@ -10302,7 +10569,7 @@ msgstr "Αυτό το χρόνο"
 msgid "This animal already has an active reservation."
 msgstr ""
 
-#: move_deceased.js animal.js
+#: animal.js move_deceased.js
 msgid ""
 "This animal died outside the care of the shelter, and the death should be "
 "kept out of reports"
@@ -10390,7 +10657,7 @@ msgstr ""
 msgid "This animal is microchipped"
 msgstr "Το ζώο έχει microchip"
 
-#: move_adopt.js move_transfer.js move_retailer.js move_reserve.js
+#: move_transfer.js move_adopt.js move_retailer.js move_reserve.js
 #: move_foster.js move_reclaim.js
 msgid "This animal is not on the shelter."
 msgstr "Αυτό το ζώο δεν είναι στο καταφύγιο."
@@ -10411,17 +10678,17 @@ msgstr ""
 msgid "This animal should not be included when publishing animals for adoption"
 msgstr ""
 
-#: animal_new.js animal.js
+#: animal.js animal_new.js
 msgid ""
 "This animal should not be shown in figures and is not in the custody of the "
 "shelter"
 msgstr ""
 
-#: move_deceased.js animal.js
+#: animal.js move_deceased.js
 msgid "This animal was dead on arrival to the shelter"
 msgstr ""
 
-#: move_deceased.js animal.js
+#: animal.js move_deceased.js
 msgid "This animal was euthanized"
 msgstr ""
 
@@ -10430,8 +10697,9 @@ msgid "This animal was picked up"
 msgstr ""
 
 #: animal.js
+#, fuzzy
 msgid "This animal was transferred from another shelter"
-msgstr ""
+msgstr "{plural1} ζώα μεταφέρθηκαν σε άλλα καταφύγια"
 
 #: sql.js
 msgid "This can take some time and generate a large file, are you sure?"
@@ -10458,6 +10726,10 @@ msgid "This date of birth is an estimate"
 msgstr "Η ημερομηνία γέννησης είναι κατά προσέγγιση"
 
 #: accounts.js
+msgid "This expense account is the source for costs of this type"
+msgstr ""
+
+#: accounts.js
 msgid "This income account is the source for payments received of this type"
 msgstr ""
 
@@ -10479,7 +10751,7 @@ msgid ""
 "retailer movements."
 msgstr ""
 
-#: move_adopt.js movements.js move_reserve.js
+#: move_adopt.js move_reserve.js movements.js
 msgid "This person has an animal control incident against them"
 msgstr ""
 
@@ -10491,7 +10763,7 @@ msgstr ""
 msgid "This person has been banned from adopting animals."
 msgstr ""
 
-#: move_adopt.js movements.js move_reserve.js
+#: move_adopt.js move_reserve.js movements.js
 msgid "This person has been under investigation"
 msgstr ""
 
@@ -10508,8 +10780,9 @@ msgid "This person has not passed a homecheck."
 msgstr ""
 
 #: person.py
+#, fuzzy
 msgid "This person has payments and cannot be removed."
-msgstr ""
+msgstr "Αυτό το άτομο έχει κινήσεις και δε μπορεί να αφαιρεθεί."
 
 #: person.py
 msgid "This person is linked to a waiting list record and cannot be removed."
@@ -10561,7 +10834,7 @@ msgid ""
 "movements."
 msgstr ""
 
-#: common_personchooser.js person_new.js
+#: person_new.js common_personchooser.js
 msgid ""
 "This person is very similar to another person on file, carry on creating "
 "this record?"
@@ -10595,13 +10868,13 @@ msgstr ""
 "Αυτό το θέμα έχει ρυθμιστεί από το διαχειριστή σας. Μπορείτε να επιλέξετε "
 "πώς θα φαίνεται το σύστημα σε εσάς με την επιλογή Οπτικού θέματος εδώ: {0}"
 
-#: move_adopt.js move_transfer.js movements.js move_retailer.js move_reserve.js
-#: move_foster.js move_reclaim.js
+#: move_transfer.js move_adopt.js move_retailer.js move_reserve.js
+#: move_foster.js move_reclaim.js movements.js
 msgid "This type of movement requires a date."
 msgstr "Αυτό το είδος κίνησης απαιτεί μια ημερομηνία."
 
-#: move_adopt.js move_transfer.js movements.js move_retailer.js move_reserve.js
-#: move_foster.js move_reclaim.js
+#: move_transfer.js move_adopt.js move_retailer.js move_reserve.js
+#: move_foster.js move_reclaim.js movements.js
 msgid "This type of movement requires a person."
 msgstr "Αυτός ο τύπος κίνησης απαιτεί ένα άτομο."
 
@@ -10635,8 +10908,9 @@ msgid "This will permanently remove this animal, are you sure?"
 msgstr "Αυτό θα διαγράψει μόνιμα αυτό το ζώο, είστε σίγουρος;"
 
 #: incident.js
+#, fuzzy
 msgid "This will permanently remove this incident, are you sure?"
-msgstr ""
+msgstr "Αυτό θα διαγράψει μόνιμα αυτό το ζώο, είστε σίγουρος;"
 
 #: person.js
 msgid "This will permanently remove this person, are you sure?"
@@ -10647,8 +10921,9 @@ msgid "This will permanently remove this record, are you sure?"
 msgstr "Αυτό θα αφαιρέσει οριστικά αυτή την εγγραφή, είστε σίγουρος;"
 
 #: waitinglist.js
+#, fuzzy
 msgid "This will permanently remove this waiting list entry, are you sure?"
-msgstr ""
+msgstr "Αυτό θα διαγράψει μόνιμα αυτό το ζώο, είστε σίγουρος;"
 
 #: staff_rota.js
 msgid ""
@@ -10664,7 +10939,7 @@ msgstr "Αυτό το έτος"
 msgid "Thoroughbred"
 msgstr "Thoroughbred"
 
-#: common.js
+#: common.js calendarview.js
 msgid "Thu"
 msgstr "Πεμ"
 
@@ -10672,7 +10947,7 @@ msgstr "Πεμ"
 msgid "Thumbnail size"
 msgstr "Μέγεθος εικονιδίου"
 
-#: common.js
+#: common.js calendarview.js
 msgid "Thursday"
 msgstr "Πέμπτη"
 
@@ -10696,9 +10971,10 @@ msgstr "Tiger"
 msgid "Time"
 msgstr ""
 
-#: animal_new.js animal.js
+#: animal.js animal_new.js
+#, fuzzy
 msgid "Time Brought In"
-msgstr ""
+msgstr "Ημερομηνία προσαγωγής"
 
 #: waitinglist_results.js html.py
 msgid "Time On List"
@@ -10716,7 +10992,7 @@ msgstr ""
 msgid "Time on shelter"
 msgstr "Χρόνος στο καταφύγιο"
 
-#: header.js html.py code.py configuration.py
+#: header.js code.py html.py configuration.py
 msgid "Timeline"
 msgstr ""
 
@@ -10728,7 +11004,7 @@ msgstr ""
 msgid "Times should be in HH:MM format, eg: 09:00, 16:30"
 msgstr "Οι ώρες πρέπει να είναι σε μορφή ΩΩ:ΛΛ, π.χ.: 09:00, 16:30"
 
-#: common_personchooser.js person_find_results.js person.js person_new.js
+#: person_find_results.js person.js person_new.js common_personchooser.js
 #: html.py
 msgid "Title"
 msgstr "Τίτλος"
@@ -10775,7 +11051,7 @@ msgstr ""
 msgid "To week beginning"
 msgstr ""
 
-#: common.js options.js
+#: common.js options.js calendarview.js
 msgid "Today"
 msgstr "Σήμερα"
 
@@ -10783,7 +11059,7 @@ msgstr "Σήμερα"
 msgid "Tonkinese"
 msgstr "Tonkinese"
 
-#: common_tableform.js additional.js onlineform.js
+#: additional.js onlineform.js common_tableform.js
 msgid "Tooltip"
 msgstr "Υποδείξεις"
 
@@ -10855,7 +11131,7 @@ msgstr "Μεταφέρθηκε μέσα"
 msgid "Transfer To"
 msgstr "Μεταφορά Σε"
 
-#: move_transfer.js header.js html.py code.py configuration.py
+#: move_transfer.js header.js code.py html.py configuration.py
 msgid "Transfer an animal"
 msgstr "Μεταφορά ενός ζώου"
 
@@ -10876,22 +11152,24 @@ msgid "Transferred In"
 msgstr "Μεταφέρθησαν εντός"
 
 #: animal.py
+#, fuzzy
 msgid "Transferred In {0}"
-msgstr ""
+msgstr "Μεταφέρθησαν εντός"
 
 #: animal.py
 msgid "Transferred Out"
 msgstr "Μεταφέρθησαν έξω"
 
 #: animal.py
+#, fuzzy
 msgid "Transferred Out {0}"
-msgstr ""
+msgstr "Μεταφέρθησαν έξω"
 
 #: movement.py
 msgid "Transfers must have a valid transfer date."
 msgstr ""
 
-#: roles.js calendarview.js header_edit_header.js dbupdate.py
+#: header_edit_header.js roles.js calendarview.js dbupdate.py
 msgid "Transport"
 msgstr ""
 
@@ -10907,7 +11185,7 @@ msgstr ""
 msgid "Transport requires an animal"
 msgstr ""
 
-#: roles.js header_edit_header.js
+#: header_edit_header.js roles.js
 msgid "Trap Loans"
 msgstr ""
 
@@ -10952,8 +11230,9 @@ msgid "Treatment marked as given for {0} - {1}"
 msgstr "Θεραπεία σημειωμένη όπως δόθηκε για {0} - {1}"
 
 #: medical.py
+#, fuzzy
 msgid "Treatment name cannot be blank"
-msgstr ""
+msgstr "Το όνομα προφίλ δε μπορεί να είναι κενό"
 
 #: html.py
 msgid "Treatments"
@@ -10963,7 +11242,7 @@ msgstr "Θεραπείες"
 msgid "Treeing Walker Coonhound"
 msgstr "Treeing Walker Coonhound"
 
-#: users.js common.js movements.js options.js publish_options.js dbupdate.py
+#: common.js users.js options.js publish_options.js movements.js dbupdate.py
 msgid "Trial Adoption"
 msgstr "Δοκιμαστική Υιοθεσία"
 
@@ -10971,7 +11250,7 @@ msgstr "Δοκιμαστική Υιοθεσία"
 msgid "Trial adoption"
 msgstr "Δοκιμαστική Υιοθεσία"
 
-#: header.js html.py code.py configuration.py
+#: header.js code.py html.py configuration.py
 msgid "Trial adoption book"
 msgstr "Βιβλίο Δοκιμαστικών Υιοθετήσεων"
 
@@ -10983,7 +11262,7 @@ msgstr ""
 msgid "Tricolour"
 msgstr "Τρίχρωμο"
 
-#: roles.js batch.js html.py
+#: batch.js roles.js html.py
 msgid "Trigger Batch Processes"
 msgstr ""
 
@@ -10991,11 +11270,11 @@ msgstr ""
 msgid "Tu"
 msgstr "Τρ"
 
-#: common.js
+#: common.js calendarview.js
 msgid "Tue"
 msgstr "Τρι"
 
-#: common.js
+#: common.js calendarview.js
 msgid "Tuesday"
 msgstr "Τρίτη"
 
@@ -11015,15 +11294,15 @@ msgstr "Turkish Van"
 msgid "Turtle"
 msgstr "Χελώνα"
 
-#: animal_new.js licence.js traploan.js animal_costs.js diarytasks.js
-#: document_repository.js common_animalchooser.js log.js staff_rota.js
-#: animal_bulk.js test.js additional.js users.js onlineform.js move_adopt.js
-#: animal_find.js donations.js animal_find_results.js accounts.js
-#: incident_new.js shelterview.js vaccination.js incident.js animal.js
-#: movements.js options.js animal_diet.js mailmerge.js reports.js person.js
-#: person_vouchers.js donation_receive.js move_reserve.js
-#: incident_find_results.js log_new.js media.js person_links.js citations.js
-#: move_reclaim.js html.py lookups.py mobile.py reports.py
+#: additional.js mailmerge.js test.js accounts.js donations.js person_links.js
+#: animal_bulk.js staff_rota.js diarytasks.js incident_find_results.js
+#: incident_new.js move_adopt.js person.js log_new.js onlineform.js
+#: move_reserve.js log.js shelterview.js users.js animal.js citations.js
+#: animal_new.js traploan.js common_animalchooser.js person_vouchers.js
+#: options.js move_reclaim.js reports.js animal_costs.js animal_diet.js
+#: document_repository.js incident.js animal_find.js licence.js
+#: animal_find_results.js media.js vaccination.js movements.js
+#: donation_receive.js lookups.py mobile.py reports.py html.py
 msgid "Type"
 msgstr "Τύπος"
 
@@ -11064,12 +11343,14 @@ msgid "Unaltered Adopted Animals"
 msgstr ""
 
 #: dbupdate.py
+#, fuzzy
 msgid "Unaltered Dog - 1 year"
-msgstr ""
+msgstr "Αλλαγές Σκύλου - 1 χρόνος"
 
 #: dbupdate.py
+#, fuzzy
 msgid "Unaltered Dog - 3 year"
-msgstr ""
+msgstr "Αλλαγές Σκύλου - 3 χρόνια"
 
 #: dbupdate.py
 msgid "Unavailable"
@@ -11079,20 +11360,20 @@ msgstr ""
 msgid "Under {0} weeks old"
 msgstr ""
 
-#: animal_new.js stocklevel.js search.js animal_find_results.js common.js
-#: animal.js header_edit_header.js html.py mobile.py
+#: header_edit_header.js search.js common.js animal.js animal_new.js
+#: animal_find_results.js stocklevel.js mobile.py html.py
 msgid "Unit"
 msgstr ""
 
-#: animal_new.js animal.js
+#: animal.js animal_new.js
 msgid "Unit within the location, eg: pen or cage number"
 msgstr ""
 
-#: lookups.js stocklevel.js mailmerge.js
+#: mailmerge.js lookups.js stocklevel.js
 msgid "Units"
 msgstr ""
 
-#: animal_find_results.js dbupdate.py i18n.py
+#: animal_find_results.js i18n.py dbupdate.py
 msgid "Unknown"
 msgstr "Άγνωστο"
 
@@ -11120,7 +11401,7 @@ msgstr "Μη καθορισμένο"
 msgid "Unsuitable Accomodation"
 msgstr "Ακατάλληλη εγκατάσταση διαμονής"
 
-#: options.js header.js code.py configuration.py
+#: header.js options.js code.py configuration.py
 msgid "Up for adoption"
 msgstr "Έτοιμο προς υιοθεσία"
 
@@ -11145,10 +11426,11 @@ msgid "Updated database to version {0}"
 msgstr "Ενημέρωση βάσης δεδομένων στην έκδοση {0}"
 
 #: onlineforms.js reports.js
+#, fuzzy
 msgid "Updated."
-msgstr ""
+msgstr "Ανανέωση"
 
-#: move_deceased.js animal_bulk.js
+#: animal_bulk.js move_deceased.js
 msgid "Updating..."
 msgstr "Ενημέρωση..."
 
@@ -11192,7 +11474,7 @@ msgstr ""
 msgid "Urgencies"
 msgstr ""
 
-#: waitinglist_results.js waitinglist_new.js waitinglist.js html.py lookups.py
+#: waitinglist.js waitinglist_results.js waitinglist_new.js lookups.py html.py
 msgid "Urgency"
 msgstr "Επείγουσα"
 
@@ -11200,11 +11482,11 @@ msgstr "Επείγουσα"
 msgid "Urgent"
 msgstr "Επείγον"
 
-#: stocklevel.js test.js medical.js vaccination.js
+#: test.js medical.js vaccination.js stocklevel.js
 msgid "Usage Date"
 msgstr ""
 
-#: stocklevel.js test.js medical.js vaccination.js lookups.py
+#: test.js medical.js vaccination.js stocklevel.js lookups.py
 msgid "Usage Type"
 msgstr ""
 
@@ -11268,7 +11550,7 @@ msgstr "Ρόλοι Χρήστη"
 msgid "User roles"
 msgstr "Ρόλοι χρήστη"
 
-#: users.js change_user_settings.js login.js change_password.js mobile.py
+#: login.js users.js change_user_settings.js change_password.js mobile.py
 msgid "Username"
 msgstr "Όνομα Χρήστη"
 
@@ -11287,8 +11569,9 @@ msgid ""
 msgstr ""
 
 #: dbupdate.py
+#, fuzzy
 msgid "Vacation"
-msgstr ""
+msgstr "Τοποθεσία"
 
 #: mobile.py
 msgid "Vaccinate"
@@ -11298,7 +11581,7 @@ msgstr "Εμβολιασμός"
 msgid "Vaccinate Animal"
 msgstr "Εμβολιασμός Ζώου"
 
-#: calendarview.js header_edit_header.js mobile.py
+#: header_edit_header.js calendarview.js mobile.py
 msgid "Vaccination"
 msgstr "Εμβολιασμός"
 
@@ -11356,7 +11639,7 @@ msgstr ""
 msgid "Very Large"
 msgstr "Πολύ μεγάλο"
 
-#: onlineforms.js person_find_results.js common.js header_edit_header.js
+#: person_find_results.js onlineforms.js header_edit_header.js common.js
 #: html.py dbupdate.py
 msgid "Vet"
 msgstr "Κτηνίατρος"
@@ -11410,28 +11693,32 @@ msgid "View Diets"
 msgstr ""
 
 #: roles.js
+#, fuzzy
 msgid "View Document Repository"
-msgstr ""
+msgstr "Αποθετήριο Εγγράφου"
 
 #: roles.js
+#, fuzzy
 msgid "View Found Animal"
-msgstr ""
+msgstr "βρες Ευρεθέντα ζώς"
 
 #: roles.js
 msgid "View Incidents"
 msgstr ""
 
 #: roles.js html.py
+#, fuzzy
 msgid "View Incoming Forms"
-msgstr ""
+msgstr "Ειαγραφή Εισερχόμενων Φορμών"
 
 #: roles.js
 msgid "View Investigations"
 msgstr ""
 
 #: roles.js
+#, fuzzy
 msgid "View Licenses"
-msgstr ""
+msgstr "Νέα Άδεια"
 
 #: roles.js
 msgid "View Litter"
@@ -11510,20 +11797,23 @@ msgid "View Training Videos"
 msgstr "Προβολή Εκπαιδευτικών Βίντεο"
 
 #: roles.js
+#, fuzzy
 msgid "View Transport"
-msgstr ""
+msgstr "Προσθήκη μεταφοράς"
 
 #: roles.js
 msgid "View Trap Loans"
 msgstr ""
 
 #: roles.js
+#, fuzzy
 msgid "View Vaccinations"
-msgstr ""
+msgstr "Νέος εμβολιασμός"
 
 #: roles.js
+#, fuzzy
 msgid "View Vouchers"
-msgstr ""
+msgstr "Νέο Κουπόνι"
 
 #: roles.js
 msgid "View Waiting List"
@@ -11542,8 +11832,9 @@ msgid "View matching records"
 msgstr ""
 
 #: media.js
+#, fuzzy
 msgid "View media"
-msgstr ""
+msgstr "Προβολή Πολυμέσων"
 
 #: html.py
 msgid "View publishing logs"
@@ -11561,8 +11852,8 @@ msgstr "Ορατό Θέμα"
 msgid "Vizsla"
 msgstr "Vizsla"
 
-#: onlineforms.js staff_rota.js person_find_results.js common.js
-#: header_edit_header.js html.py
+#: person_find_results.js onlineforms.js header_edit_header.js staff_rota.js
+#: common.js html.py
 msgid "Volunteer"
 msgstr "Εθελοντής"
 
@@ -11570,7 +11861,7 @@ msgstr "Εθελοντής"
 msgid "Voucher Types"
 msgstr "Τύποι Κουπονιών"
 
-#: roles.js header_edit_header.js
+#: header_edit_header.js roles.js
 msgid "Vouchers"
 msgstr "Κουπόνια"
 
@@ -11578,8 +11869,8 @@ msgstr "Κουπόνια"
 msgid "Vouchers need an issue and expiry date."
 msgstr ""
 
-#: onlineform_incoming.js roles.js search.js waitinglist_results.js options.js
-#: header_edit_header.js html.py dbupdate.py code.py
+#: header_edit_header.js search.js options.js roles.js waitinglist_results.js
+#: onlineform_incoming.js code.py html.py dbupdate.py
 msgid "Waiting List"
 msgstr "Λίστα αναμονής"
 
@@ -11611,6 +11902,10 @@ msgstr "Λίστα Αναμονής {0}"
 msgid "Waiting List: {0}"
 msgstr "Λίστα αναμονής: {0}"
 
+#: mobile.py
+msgid "Waiting for documents..."
+msgstr ""
+
 #: dbupdate.py
 msgid "Waiting list donations"
 msgstr "Λίστα αναμονής δωρεών"
@@ -11619,7 +11914,7 @@ msgstr "Λίστα αναμονής δωρεών"
 msgid "Waiting list entries matching '{0}'."
 msgstr ""
 
-#: waitinglist_new.js waitinglist.js waitinglist.py
+#: waitinglist.js waitinglist_new.js waitinglist.py
 msgid "Waiting list entries must have a contact"
 msgstr "Οι καταχωρήσεις λίστας αναμονής πρέπει να περιέχουν επαφή"
 
@@ -11683,13 +11978,17 @@ msgstr "Λαγαριασμοί νερού"
 msgid "We"
 msgstr "Τε"
 
-#: common.js
+#: common.js calendarview.js
 msgid "Wed"
 msgstr "Τετ"
 
-#: common.js
+#: common.js calendarview.js
 msgid "Wednesday"
 msgstr "Τετάρτη"
+
+#: calendarview.js
+msgid "Week"
+msgstr ""
 
 #: staff_rota.js
 msgid "Week beginning {0}"
@@ -11699,7 +11998,7 @@ msgstr ""
 msgid "Weekly"
 msgstr "Εβδομαδιαία"
 
-#: animal_new.js animal.js dbupdate.py
+#: animal.js animal_new.js dbupdate.py
 msgid "Weight"
 msgstr "Βάρος"
 
@@ -11755,10 +12054,6 @@ msgstr ""
 
 #: options.js
 msgid "When a message is created, email it to each matching user"
-msgstr ""
-
-#: options.js
-msgid "When adding animals"
 msgstr ""
 
 #: options.js
@@ -11861,7 +12156,7 @@ msgstr "Λευκό και ανοιχτοκαστανό"
 msgid "White and Torti"
 msgstr "Λευκό και πιτσιλωτό"
 
-#: waitinglist_new.js waitinglist.js
+#: waitinglist.js waitinglist_new.js
 msgid "Will this owner give a donation?"
 msgstr ""
 
@@ -11889,8 +12184,8 @@ msgstr ""
 msgid "Work"
 msgstr "Εργασία"
 
-#: common_personchooser.js person_find_results.js waitinglist_results.js
-#: person.js person_new.js
+#: person_find_results.js person.js person_new.js waitinglist_results.js
+#: common_personchooser.js
 msgid "Work Phone"
 msgstr "Τηλέφωνο Εργασίας"
 
@@ -11914,10 +12209,9 @@ msgstr "Yellow Labrador Retriever"
 msgid "Yellow and Grey"
 msgstr "Κίιτρινο και γκρί"
 
-#: person_find_results.js additional.js users.js animal_find_results.js
-#: lostfound_find.js accounts.js waitinglist_results.js sql.js
-#: publish_options.js onlineform.py dbupdate.py wordprocessor.py mobile.py
-#: i18n.py
+#: additional.js person_find_results.js accounts.js users.js lostfound_find.js
+#: sql.js animal_find_results.js publish_options.js waitinglist_results.js
+#: mobile.py wordprocessor.py i18n.py dbupdate.py onlineform.py
 msgid "Yes"
 msgstr "Ναί"
 
@@ -12007,7 +12301,7 @@ msgstr ""
 "Δεν καθορίσατε κάποια κριτήρια αναζήτησης, οπότε υποτέθηκε μια αναζήτηση "
 "εντός καταφυγίου."
 
-#: common.js header.js
+#: header.js common.js
 msgid "You have unsaved changes, are you sure you want to leave this page?"
 msgstr ""
 "Έχετε μη αποθηκευμένες αλλαγές, είστε σίγουροι ότι θέλετε να φύγετε από αυτή "
@@ -12043,16 +12337,17 @@ msgstr ""
 msgid "Your sheltermanager.com account is due to expire on {0}, please renew {1}"
 msgstr ""
 
-#: common_personchooser.js person_find_results.js incident_find.js lostfound.js
-#: lostfound_find.js incident_new.js waitinglist_results.js incident.js
-#: lostfound_find_results.js person.js incident_find_results.js
-#: lostfound_new.js transport.js person_new.js html.py
+#: person_find_results.js incident_find_results.js incident_new.js person.js
+#: lostfound_find_results.js lostfound_find.js person_new.js transport.js
+#: lostfound.js incident.js lostfound_new.js waitinglist_results.js
+#: common_personchooser.js incident_find.js html.py
 msgid "Zipcode"
 msgstr "ΤΚ"
 
 #: person_find.js
+#, fuzzy
 msgid "Zipcode contains"
-msgstr ""
+msgstr "Ο κώδικας περιέχει"
 
 #: options.js
 msgid "[None]"
@@ -12062,7 +12357,7 @@ msgstr "[Κανένα]"
 msgid "after connecting, chdir to"
 msgstr ""
 
-#: incident_find.js animal_find.js
+#: animal_find.js incident_find.js
 msgid "and"
 msgstr "και"
 
@@ -12097,11 +12392,11 @@ msgstr ""
 msgid "inches"
 msgstr "inches"
 
-#: animal_new.js animal.js
+#: animal.js animal_new.js
 msgid "kg"
 msgstr ""
 
-#: animal_new.js animal.js
+#: animal.js animal_new.js
 msgid "lb"
 msgstr ""
 
@@ -12134,8 +12429,9 @@ msgid "to"
 msgstr "σε"
 
 #: timeline.js
+#, fuzzy
 msgid "today"
-msgstr ""
+msgstr "Σήμερα"
 
 #: medical.js medicalprofile.js
 msgid "treatments"
@@ -12187,7 +12483,7 @@ msgstr ""
 msgid "{0} animals successfully updated."
 msgstr ""
 
-#: lostfound.js incident.js animal.js person.js waitinglist.js
+#: person.js animal.js lostfound.js waitinglist.js incident.js
 msgid "{0} cannot be blank"
 msgstr "{0} δεν μπορεί να είναι κενό"
 
@@ -12236,8 +12532,9 @@ msgid "{0} treatments every {1} months"
 msgstr "{0} θεραπείες κάθε {1} μήνες"
 
 #: medical.py
+#, fuzzy
 msgid "{0} treatments every {1} weekdays"
-msgstr ""
+msgstr "{0} θεραπείες κάθε {1} εβδομάδες"
 
 #: medical.py
 msgid "{0} treatments every {1} weeks"
@@ -12256,8 +12553,9 @@ msgid "{0} {1} aged {2}"
 msgstr "{0} {1} ηλικίας {2}"
 
 #: search.js
+#, fuzzy
 msgid "{0} {1} {2} aged {3}"
-msgstr ""
+msgstr "{0} {1} ηλικίας {2}"
 
 #: animal.py
 msgid "{0} {1}: Moved from {2} to {3}"
@@ -12376,8 +12674,9 @@ msgid "{plural0} animal control call due for followup today"
 msgstr ""
 
 #: main.js
+#, fuzzy
 msgid "{plural0} animal died"
-msgstr ""
+msgstr "{plural2} ζώα απεβίωσαν"
 
 #: main.js
 msgid "{plural0} animal entered the shelter"
@@ -12388,24 +12687,31 @@ msgid "{plural0} animal has a hold ending today"
 msgstr ""
 
 #: main.js
+msgid "{plural0} animal has been on the shelter longer than {0} months"
+msgstr ""
+
+#: main.js
 msgid "{plural0} animal is not available for adoption"
 msgstr "{plural0} ζώο δεν είναι διαθέσιμο για υιοθεσία"
 
 #: main.js
+#, fuzzy
 msgid "{plural0} animal was adopted"
-msgstr ""
+msgstr "{plural1} ζώα υιοθετήθηκαν"
 
 #: main.js
+#, fuzzy
 msgid "{plural0} animal was euthanized"
-msgstr ""
+msgstr "{plural1} ζώα υιοθετήθηκαν"
 
 #: main.js
 msgid "{plural0} animal was reclaimed by its owner"
 msgstr ""
 
 #: main.js
+#, fuzzy
 msgid "{plural0} animal was transferred to another shelter"
-msgstr ""
+msgstr "{plural1} ζώα μεταφέρθηκαν σε άλλα καταφύγια"
 
 #: i18n.py
 msgid "{plural0} day."
@@ -12424,8 +12730,9 @@ msgid "{plural0} item of stock has expired"
 msgstr ""
 
 #: main.js
+#, fuzzy
 msgid "{plural0} medical treatment needs to be administered today"
-msgstr ""
+msgstr "{plural2} εμβολιασμοί πρέπει να γίνουν σήμερα"
 
 #: i18n.py
 msgid "{plural0} month."
@@ -12452,8 +12759,9 @@ msgid "{plural0} reservation has been active over a week without adoption"
 msgstr ""
 
 #: search.js
+#, fuzzy
 msgid "{plural0} result found in {1} seconds. Order: {2}"
-msgstr ""
+msgstr "{plural1} αποτελέσματα βρέθηκαν σε {1} δευτερόλεπτα. Ταξινόμηση: {2}"
 
 #: main.js
 msgid "{plural0} shelter animal has not been microchipped"
@@ -12464,8 +12772,9 @@ msgid "{plural0} shelter animal has people looking for them"
 msgstr ""
 
 #: main.js
+#, fuzzy
 msgid "{plural0} test needs to be performed today"
-msgstr ""
+msgstr "{plural3} τεστς πρέπει να διεξαχθούν σήμερα"
 
 #: main.js
 msgid "{plural0} transport does not have a driver assigned"
@@ -12500,8 +12809,9 @@ msgid "{plural0} vaccination has expired"
 msgstr ""
 
 #: main.js
+#, fuzzy
 msgid "{plural0} vaccination needs to be administered today"
-msgstr ""
+msgstr "{plural2} εμβολιασμοί πρέπει να γίνουν σήμερα"
 
 #: i18n.py
 msgid "{plural0} week."
@@ -12520,11 +12830,16 @@ msgid "{plural1} animals are not available for adoption"
 msgstr "{plural1} ζώα δεν είναι διαθέσιμα προς υιοθεσία"
 
 #: main.js
+#, fuzzy
 msgid "{plural1} animals died"
-msgstr ""
+msgstr "{plural2} ζώα απεβίωσαν"
 
 #: main.js
 msgid "{plural1} animals entered the shelter"
+msgstr ""
+
+#: main.js
+msgid "{plural1} animals have been on the shelter longer than {0} months"
 msgstr ""
 
 #: main.js
@@ -12536,8 +12851,9 @@ msgid "{plural1} animals were adopted"
 msgstr "{plural1} ζώα υιοθετήθηκαν"
 
 #: main.js
+#, fuzzy
 msgid "{plural1} animals were euthanized"
-msgstr ""
+msgstr "{plural1} ζώα υιοθετήθηκαν"
 
 #: main.js
 msgid "{plural1} animals were reclaimed by their owners"
@@ -12564,8 +12880,9 @@ msgid "{plural1} items of stock have expired"
 msgstr ""
 
 #: main.js
+#, fuzzy
 msgid "{plural1} medical treatments need to be administered today"
-msgstr ""
+msgstr "{plural2} εμβολιασμοί πρέπει να γίνουν σήμερα"
 
 #: i18n.py
 msgid "{plural1} months."
@@ -12604,8 +12921,9 @@ msgid "{plural1} shelter animals have people looking for them"
 msgstr ""
 
 #: main.js
+#, fuzzy
 msgid "{plural1} tests need to be performed today"
-msgstr ""
+msgstr "{plural3} τεστς πρέπει να διεξαχθούν σήμερα"
 
 #: main.js
 msgid "{plural1} transports do not have a driver assigned"
@@ -12640,8 +12958,9 @@ msgid "{plural1} vaccinations have expired"
 msgstr ""
 
 #: main.js
+#, fuzzy
 msgid "{plural1} vaccinations need to be administered today"
-msgstr ""
+msgstr "{plural2} εμβολιασμοί πρέπει να γίνουν σήμερα"
 
 #: i18n.py
 msgid "{plural1} weeks."
@@ -12668,6 +12987,10 @@ msgid "{plural2} animals entered the shelter"
 msgstr ""
 
 #: main.js
+msgid "{plural2} animals have been on the shelter longer than {0} months"
+msgstr ""
+
+#: main.js
 msgid "{plural2} animals have holds ending today"
 msgstr ""
 
@@ -12676,8 +12999,9 @@ msgid "{plural2} animals were adopted"
 msgstr "{plural2} ζώα υιοθετήθηκαν"
 
 #: main.js
+#, fuzzy
 msgid "{plural2} animals were euthanized"
-msgstr ""
+msgstr "{plural2} ζώα υιοθετήθηκαν"
 
 #: main.js
 msgid "{plural2} animals were reclaimed by their owners"
@@ -12704,8 +13028,9 @@ msgid "{plural2} items of stock have expired"
 msgstr ""
 
 #: main.js
+#, fuzzy
 msgid "{plural2} medical treatments need to be administered today"
-msgstr ""
+msgstr "{plural2} εμβολιασμοί πρέπει να γίνουν σήμερα"
 
 #: i18n.py
 msgid "{plural2} months."
@@ -12744,8 +13069,9 @@ msgid "{plural2} shelter animals have people looking for them"
 msgstr ""
 
 #: main.js
+#, fuzzy
 msgid "{plural2} tests need to be performed today"
-msgstr ""
+msgstr "{plural3} τεστς πρέπει να διεξαχθούν σήμερα"
 
 #: main.js
 msgid "{plural2} transports do not have a driver assigned"
@@ -12800,11 +13126,16 @@ msgid "{plural3} animals are not available for adoption"
 msgstr "{plural3} ζώα δεν είναι διαθέσιμα για υιοθεσία"
 
 #: main.js
+#, fuzzy
 msgid "{plural3} animals died"
-msgstr ""
+msgstr "{plural2} ζώα απεβίωσαν"
 
 #: main.js
 msgid "{plural3} animals entered the shelter"
+msgstr ""
+
+#: main.js
+msgid "{plural3} animals have been on the shelter longer than {0} months"
 msgstr ""
 
 #: main.js
@@ -12812,20 +13143,23 @@ msgid "{plural3} animals have holds ending today"
 msgstr ""
 
 #: main.js
+#, fuzzy
 msgid "{plural3} animals were adopted"
-msgstr ""
+msgstr "{plural1} ζώα υιοθετήθηκαν"
 
 #: main.js
+#, fuzzy
 msgid "{plural3} animals were euthanized"
-msgstr ""
+msgstr "{plural1} ζώα υιοθετήθηκαν"
 
 #: main.js
 msgid "{plural3} animals were reclaimed by their owners"
 msgstr ""
 
 #: main.js
+#, fuzzy
 msgid "{plural3} animals were transferred to other shelters"
-msgstr ""
+msgstr "{plural1} ζώα μεταφέρθηκαν σε άλλα καταφύγια"
 
 #: i18n.py
 msgid "{plural3} days."
@@ -12844,16 +13178,18 @@ msgid "{plural3} items of stock have expired"
 msgstr ""
 
 #: main.js
+#, fuzzy
 msgid "{plural3} medical treatments need to be administered today"
-msgstr ""
+msgstr "{plural3} εμβολιασμοί πρέπει να χορηγηθούν σήμερα"
 
 #: i18n.py
 msgid "{plural3} months."
 msgstr "{plural3} μήνες."
 
 #: main.js
+#, fuzzy
 msgid "{plural3} new online form submissions"
-msgstr ""
+msgstr "{plural1} νέες υποβολές διαδικτακών φορμών"
 
 #: main.js
 msgid "{plural3} people have overdue payments"
@@ -12872,8 +13208,9 @@ msgid "{plural3} reservations have been active over a week without adoption"
 msgstr ""
 
 #: search.js
+#, fuzzy
 msgid "{plural3} results found in {1} seconds. Order: {2}"
-msgstr ""
+msgstr "{plural1} αποτελέσματα βρέθηκαν σε {1} δευτερόλεπτα. Ταξινόμηση: {2}"
 
 #: main.js
 msgid "{plural3} shelter animals have not been microchipped"
@@ -12930,6 +13267,12 @@ msgstr "{plural3} εβδομάδες."
 #: i18n.py
 msgid "{plural3} years."
 msgstr "{plural3} έτη."
+
+#~ msgid "Organisation name"
+#~ msgstr "Όνομα Οργανισμού"
+
+#~ msgid "Save this animal"
+#~ msgstr "Αποθήκευση ζώου"
 
 #~ msgid "Show"
 #~ msgstr "Προβολή"
