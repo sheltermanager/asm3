@@ -804,23 +804,6 @@
         });
     };
 
-    // Adds a shadow to an element
-    $.fn.shadow = function() {
-        this.each(function() {
-            $(this).after("<div class=\"shadow\" id=\"" + $(this).attr("id") + "-shadow\" />");
-            var h = $(this).outerHeight();
-            var w = $(this).outerWidth();
-            $(this).next().css({
-                "z-index": "-1 !important",
-                position: "absolute",
-                height: h + "px",
-                width: w + "px",
-                top: ($(this).offset().top + 15) + "px",
-                left: ($(this).offset().left + 15) + "px"
-            });
-        });
-    };
-
     $.fn.asmcontent = function(type) {
         // Show the content
         this.each(function() {
