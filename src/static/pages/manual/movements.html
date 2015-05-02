@@ -83,6 +83,7 @@
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Movements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#reservations">Reservations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#retailer-movements">Retailer Movements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#trial-adoptions">Trial Adoptions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#movement-books">Movement Books</a></li>
@@ -287,7 +288,11 @@ movement record represents a leaving and returning transaction. You can
 therefore only have one (or no) active movement record at a time. ie. No more
 than one unreturned movement. This is because the animal cannot leave the
 shelter in two different ways without being returned first.</p>
-<p>A special exception to this is reservations - since they are not actually a
+<p>This system allows you to keep track of all the animal&#8217;s movements over its
+lifetime to fosters, adopters, etc.</p>
+<div class="section" id="reservations">
+<h2>Reservations<a class="headerlink" href="#reservations" title="Permalink to this headline">¶</a></h2>
+<p>A singular exception to this is reservations - since they are not actually a
 movement (the animal hasn&#8217;t gone anywhere), you can have one or more
 reservations as well as an open movement. You should turn the reservation into
 an adoption movement when the animal is adopted by the person with the reserve
@@ -305,7 +310,9 @@ since it can only occur once.</p>
 <p>To make this process easier, you can use the Move menu to quickly create
 movements for animals. These actions will automatically validate the animal and
 person to make sure the movement is appropriate, and if the animal is already
-fostered it will be returned first, etc.</p>
+fostered it will be returned first, if it has open reservations/applications
+they will be cancelled, etc.</p>
+</div>
 <div class="section" id="retailer-movements">
 <h2>Retailer Movements<a class="headerlink" href="#retailer-movements" title="Permalink to this headline">¶</a></h2>
 <p>ASM has a special kind of movement called a “retailer” movement. This movement

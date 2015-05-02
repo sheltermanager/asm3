@@ -10,7 +10,13 @@ therefore only have one (or no) active movement record at a time. ie. No more
 than one unreturned movement. This is because the animal cannot leave the
 shelter in two different ways without being returned first.
 
-A special exception to this is reservations - since they are not actually a
+This system allows you to keep track of all the animal's movements over its
+lifetime to fosters, adopters, etc.
+
+Reservations
+------------
+
+A singular exception to this is reservations - since they are not actually a
 movement (the animal hasn't gone anywhere), you can have one or more
 reservations as well as an open movement. You should turn the reservation into
 an adoption movement when the animal is adopted by the person with the reserve
@@ -32,7 +38,8 @@ since it can only occur once.
 To make this process easier, you can use the Move menu to quickly create
 movements for animals. These actions will automatically validate the animal and
 person to make sure the movement is appropriate, and if the animal is already
-fostered it will be returned first, etc.
+fostered it will be returned first, if it has open reservations/applications
+they will be cancelled, etc.
 
 Retailer Movements
 ------------------
