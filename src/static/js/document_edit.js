@@ -3,8 +3,8 @@
 
 $(function() {
    
-    var rw_toolbar = "save preview pdf print | undo redo | fontselect fontsizeselect | bold italic forecolor backcolor | alignleft aligncenter alignright alignjustify | forecolor backcolor | bullist numlist outdent indent pagebreak | link image";
-    var ro_toolbar = "preview pdf print";
+    var rw_toolbar = "save pdf print | undo redo | fontselect fontsizeselect | bold italic forecolor backcolor | alignleft aligncenter alignright alignjustify | forecolor backcolor | bullist numlist outdent indent pagebreak | link image";
+    var ro_toolbar = "pdf print";
 
     tinymce.init({
         selector: "#wp",
