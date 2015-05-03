@@ -585,7 +585,7 @@ $(function() {
         },
 
         name: "movements",
-        animation: "book"
+        animation: common.current_url().indexOf("book") != -1 ? "book" : "formtab"
 
     };
 

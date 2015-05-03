@@ -441,7 +441,7 @@ $(function() {
         },
 
         name: "vaccination",
-        animation: "book"
+        animation: common.current_url().indexOf("animal") != -1 ? "formtab" : "book"
 
     };
     

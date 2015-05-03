@@ -226,7 +226,7 @@ $(function() {
         },
 
         name: "diary",
-        animation: "book"
+        animation: common.current_url().indexOf("diary_edit") == -1 ? "formtab" : "book"
 
     };
 

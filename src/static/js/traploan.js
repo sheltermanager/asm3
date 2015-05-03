@@ -131,7 +131,7 @@ $(function() {
         },
 
         name: "traploan",
-        animation: "formtab"
+        animation: common.current_url().indexOf("person") != -1 ? "formtab" : "book"
 
     };
 

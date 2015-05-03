@@ -365,7 +365,7 @@ $(function() {
         },
 
         name: "donations",
-        animation: "book"
+        animation: common.current_url().indexOf("_") != -1 ? "formtab" : "book"
 
     };
 
