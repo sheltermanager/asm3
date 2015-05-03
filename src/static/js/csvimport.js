@@ -112,10 +112,13 @@ $(function() {
             $("#createmissinglookups").keypress(cme);
             $("#checkduplicates").click(cde);
             $("#checkduplicates").keypress(cde);
-        }
+        },
+
+        name: "csvimport",
+        animation: "options"
 
     };
 
-    common.module(csvimport, "csvimport", "options");
+    common.module_register(csvimport);
 
 });

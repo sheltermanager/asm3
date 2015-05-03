@@ -77,9 +77,13 @@ $(function() {
 
         bind: function() {
             $("#searchresults").table();
-        }
+        },
+
+        name: "lostfound_find_results",
+        animation: "results"
+
     };
 
-    common.module(lostfound_find_results, "lostfound_find_results", "results");
+    common.module_register(lostfound_find_results);
 
 });

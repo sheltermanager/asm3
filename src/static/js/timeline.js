@@ -32,10 +32,13 @@ $(function() {
             });
             h.push("</div>");
             return h.join("\n");
-        }
+        },
+
+        name: "timeline",
+        animation: "results"
 
     };
 
-    common.module(timeline, "timeline", "results");
+    common.module_register(timeline);
 
 });

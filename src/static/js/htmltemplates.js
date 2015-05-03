@@ -88,9 +88,13 @@ $(function() {
                     this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');
                 }
             });
-        }
+        },
+
+        name: "htmltemplates",
+        animation: "options"
+
     };
 
-    common.module(htmltemplates, "htmltemplates", "options");
+    common.module_register(htmltemplates);
 
 });

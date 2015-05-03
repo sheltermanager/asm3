@@ -105,9 +105,13 @@ $(function() {
             if (controller.issuggest) {
                 $("#suggestinfo").fadeIn();
             }
-        }
+        },
+
+        name: "change_password",
+        animation: "options"
+
     };
 
-    common.module(change_password, "change_password", "options");
+    common.module_register(change_password);
 
 });

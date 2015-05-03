@@ -51,10 +51,13 @@ $(function() {
             $("#button-genlookingfor").button().click(function() { batch.runmode("genlookingfor", "mode=genlookingfor"); });
             $("#button-genownername").button().click(function() { batch.runmode("genownername", "mode=genownername"); });
             $("#button-genlostfound").button().click(function() { batch.runmode("genlostfound", "mode=genlostfound"); });
-        }
+        },
+
+        name: "batch",
+        animation: "options"
 
     };
 
-    common.module(batch, "batch", "options");
+    common.module_register(batch);
 
 });

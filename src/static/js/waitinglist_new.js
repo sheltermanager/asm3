@@ -155,9 +155,13 @@ $(function() {
             $("#addedit").button().click(function() {
                 addWaitingList("addedit");
             });
-        }
+        },
+
+        name: "waitinglist_new",
+        animation: "newdata"
+
     };
 
-    common.module(waitinglist_new, "waitinglist_new", "newdata");
+    common.module_register(waitinglist_new);
 
 });

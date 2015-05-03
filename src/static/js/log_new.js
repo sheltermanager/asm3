@@ -93,9 +93,13 @@ $(function() {
                     $("#log").button("enable");
                 });
             });
-        }
+        },
+
+        name: "log_new",
+        animation: "newdata"
+
     };
 
-    common.module(log_new, "log_new", "newdata");
+    common.module_register(log_new);
 
 });

@@ -161,9 +161,13 @@ $(function() {
                     $("#transfer").button("enable");
                 });
             });
-        }
+        },
+
+        name: "move_transfer",
+        animation: "newdata"
+
     };
 
-    common.module(move_transfer, "move_transfer", "newdata");
+    common.module_register(move_transfer);
 
 });

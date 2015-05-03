@@ -169,9 +169,13 @@ $(function() {
             $("#button-script").button().click(function() {
                 $("#dialog-script").dialog("open");
             });
-        }
+        },
+
+        name: "sql",
+        animation: "options"
+
     };
 
-    common.module(sql, "sql", "options");
+    common.module_register(sql);
 
 });

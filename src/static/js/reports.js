@@ -432,10 +432,13 @@ $(function() {
                 $("#html").val($("#type").val()); 
             }
             return true;
-        }
+        },
+
+        name: "reports",
+        animation: "options"
 
     };
     
-    common.module(reports, "reports", "options");
+    common.module_register(reports);
 
 });

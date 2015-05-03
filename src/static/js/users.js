@@ -223,10 +223,13 @@ $(function() {
                 roles.push(common.get_field(controller.roles, v, "ROLENAME"));
             });
             row.ROLES = roles.join("|");
-        }
+        },
+
+        name: "users",
+        animation: "options"
 
     };
     
-    common.module(users, "users", "options");
+    common.module_register(users);
 
 });

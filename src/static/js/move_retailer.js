@@ -161,9 +161,13 @@ $(function() {
                 });
             });
 
-        }
+        },
+
+        name: "move_retailer",
+        animation: "newdata"
+
     };
 
-    common.module(move_retailer, "move_retailer", "newdata");
+    common.module_register(move_retailer);
 
 });

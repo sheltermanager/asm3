@@ -180,9 +180,13 @@ $(function() {
 
         bind: function() {
             $("#searchbutton").button();
-        }
+        },
+
+        name: "incident_find",
+        animation: "criteria"
+
     };
 
-    common.module(incident_find, "incident_find", "criteria");
+    common.module_register(incident_find);
 
 });

@@ -217,9 +217,13 @@ $(function() {
                 });
             }
             return rv;
-        }    
+        },
+
+        name: "person_find_results",
+        animation: "results"
+
     };
 
-    common.module(person_find_results, "person_find_results", "results");
+    common.module_register(person_find_results);
 
 });

@@ -320,11 +320,14 @@ $(function() {
             validate.dirty(false);
             validate.check_unsaved_links("waitinglist_");
 
-        }
+        },
+
+        name: "waitinglist",
+        animation: "formtab"
 
     };
 
-    common.module(waitinglist, "waitinglist", "formtab");
+    common.module_register(waitinglist);
 
 });
 

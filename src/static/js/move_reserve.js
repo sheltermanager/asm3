@@ -382,9 +382,13 @@ $(function() {
                     $("#reserve").button("enable");
                 });
             });
-        }
+        },
+
+        name: "move_reserve",
+        animation: "newdata"
+
     };
 
-    common.module(move_reserve, "move_reserve", "newdata");
+    common.module_register(move_reserve);
 
 });

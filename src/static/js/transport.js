@@ -317,10 +317,13 @@ $(function() {
             if (common.querystring_param("offset")) {
                 $("#offset").select("value", common.querystring_param("offset"));
             }
-        }
+        },
+
+        name: "transport",
+        animation: "formtab"
 
     };
 
-    common.module(transport, "transport", "formtab");
+    common.module_register(transport);
 
 });

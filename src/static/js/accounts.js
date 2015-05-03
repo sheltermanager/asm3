@@ -162,10 +162,13 @@ $(function() {
             if (common.querystring_param("offset")) {
                 $("#offset").select("value", common.querystring_param("offset"));
             }
-        }
+        },
+
+        name: "accounts",
+        animation: "formtab"
 
     };
 
-    common.module(accounts, "accounts", "formtab");
+    common.module_register(accounts);
 
 });

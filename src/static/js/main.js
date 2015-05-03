@@ -776,10 +776,13 @@ $(function() {
             if (controller.showwelcome) {
                 $("#dialog-welcome").dialog("open");
             }
-        }
+        },
+
+        name: "main",
+        animation: "main"
 
     };
 
-    common.module(main, "main", "main");
+    common.module_register(main);
 
 });

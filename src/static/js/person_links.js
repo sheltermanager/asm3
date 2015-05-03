@@ -52,9 +52,13 @@ $(function() {
         bind: function() {
             $("#table-links").table();
             $(".asm-tabbar").asmtabs();
-        }
+        },
+
+        name: "person_links",
+        animation: "formtab"
+
     };
 
-    common.module(person_links, "person_links", "formtab");
+    common.module_register(person_links);
 
 });

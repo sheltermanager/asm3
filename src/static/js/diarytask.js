@@ -89,10 +89,13 @@ $(function() {
             tableform.dialog_bind(dialog);
             tableform.buttons_bind(buttons);
             tableform.table_bind(table, buttons);
-        }
+        },
+
+        name: "diarytask",
+        animation: "formtab"
 
     };
 
-    common.module(diarytask, "diarytask", "formtab");
+    common.module_register(diarytask);
 
 });

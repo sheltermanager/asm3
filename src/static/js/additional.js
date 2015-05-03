@@ -124,10 +124,13 @@ $(function() {
             // Show/hide the lookup values box if type changes
             $("#type").change(additional.check_lookup_values);
 
-        }
+        },
+
+        name: "additional",
+        animation: "options"
 
     };
 
-    common.module(additional, "additional", "options");
+    common.module_register(additional);
 
 });

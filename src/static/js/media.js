@@ -754,9 +754,13 @@ $(function() {
 
         sync: function() {
             if (controller.newmedia) { media.new_media(); }
-        }
+        },
+
+        name: "media",
+        animation: "formtab"
+
     };
 
-    common.module(media, "media", "formtab");
+    common.module_register(media);
 
 });

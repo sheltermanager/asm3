@@ -200,9 +200,13 @@ $(function() {
                 $("#asm-content button").button("disable");
                 check_for_similar();
             });
-        }
+        },
+
+        name: "person_new",
+        animation: "newdata"
+
     };
 
-    common.module(person_new, "person_new", "newdata");
+    common.module_register(person_new);
 
 });

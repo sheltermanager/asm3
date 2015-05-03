@@ -86,10 +86,13 @@ $(function() {
             tableform.dialog_bind(dialog);
             tableform.buttons_bind(buttons);
             tableform.table_bind(table, buttons);
-        }
+        },
+
+        name: "person_investigation",
+        animation: "formtab"
 
     };
 
-    common.module(person_investigation, "person_investigation", "formtab");
+    common.module_register(person_investigation);
 
 });

@@ -307,9 +307,13 @@ $(function() {
                 $(".newrow").hide();
                 $("#asm-content .asm-toolbar").hide();
             }
-        }
+        },
+
+        name: "accounts_trx",
+        animation: "book"
+
     };
 
-    common.module(accounts_trx, "accounts_trx", "book");
+    common.module_register(accounts_trx);
 
 });

@@ -315,9 +315,13 @@ $(function() {
                 if (value == 1) { rv = _("Yes"); }
             }
             return rv;
-        }    
+        },
+
+        name: "waitinglist_results",
+        animation: "book"
+
     };
 
-    common.module(waitinglist_results, "waitinglist_results", "book");
+    common.module_register(waitinglist_results);
 
 });

@@ -124,9 +124,13 @@ $(function() {
                 $("#calendar").fullCalendar("today");
                 calendarview.update_events_from_checkboxes();
             }, 500);
-        }
+        },
+
+        name: "calendarview",
+        animation: "search"
+
     };
 
-    common.module(calendarview, "calendarview", "search");
+    common.module_register(calendarview);
 
 });

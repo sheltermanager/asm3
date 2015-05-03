@@ -145,9 +145,13 @@ $(function() {
             $("#olocale").select("value", u.LOCALEOVERRIDE);
             $("#systemtheme").select("value", u.THEMEOVERRIDE);
             this.update_flag();
-        }
+        },
+
+        name: "change_user_settings",
+        animation: "options"
+
     };
 
-    common.module(change_user_settings, "change_user_settings", "options");
+    common.module_register(change_user_settings);
 
 });

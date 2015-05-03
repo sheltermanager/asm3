@@ -202,10 +202,13 @@ $(function() {
         type_change: function() {
             var dc = common.get_field(controller.licencetypes, $("#type").select("value"), "DEFAULTCOST");
             $("#fee").currency("value", dc);
-        }
+        },
+
+        name: "licence",
+        animation: "book"
 
     };
 
-    common.module(licence, "licence", "formtab");
+    common.module_register(licence);
 
 });

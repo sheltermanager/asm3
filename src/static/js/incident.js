@@ -595,11 +595,14 @@ $(function() {
             validate.dirty(false);
             validate.check_unsaved_links("incident_");
 
-        }
+        },
+
+        name: "incident",
+        animation: "formtab"
 
     };
 
-    common.module(incident, "incident", "formtab");
+    common.module_register(incident);
 
 });
 

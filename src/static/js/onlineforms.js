@@ -200,10 +200,13 @@ $(function() {
             tableform.table_bind(table, buttons);
             this.bind_headfoot();
             this.load_person_flags();
-        }
+        },
+
+        name: "onlineforms",
+        animation: "formtab"
 
     };
     
-    common.module(onlineforms, "onlineforms", "formtab");
+    common.module_register(onlineforms);
 
 });

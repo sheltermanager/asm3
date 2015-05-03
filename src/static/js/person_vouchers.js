@@ -101,10 +101,13 @@ $(function() {
         vouchertype_change: function() {
             var dc = common.get_field(controller.vouchertypes, $("#type").select("value"), "DEFAULTCOST");
             $("#amount").currency("value", dc);
-        }
+        },
+
+        name: "person_vouchers",
+        animation: "formtab"
 
     };
 
-    common.module(person_vouchers, "person_vouchers", "formtab");
+    common.module_register(person_vouchers);
 
 });

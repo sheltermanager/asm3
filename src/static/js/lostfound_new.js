@@ -236,9 +236,13 @@ $(function() {
             $('#species').change(function() {
                 changebreedselect1();
             });
-        }
+        },
+
+        name: "lostfound_new",
+        animation: "newdata"
+
     };
 
-    common.module(lostfound_new, "lostfound_new", "newdata");
+    common.module_register(lostfound_new);
 
 });

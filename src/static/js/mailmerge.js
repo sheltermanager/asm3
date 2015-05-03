@@ -245,9 +245,13 @@ $(function() {
                 }
             }
 
-        }
+        },
+
+        name: "mailmerge",
+        animation: "newdata"
+
     };
 
-    common.module(mailmerge, "mailmerge", "newdata");
+    common.module_register(mailmerge);
 
 });

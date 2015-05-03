@@ -78,9 +78,13 @@ $(function() {
 
         sync: function() {
             $("#searchresults").trigger("sorton", [[[2,1]]]);
-        }
+        },
+
+        name: "incident_find_results",
+        animation: "results"
+
     };
 
-    common.module(incident_find_results, "incident_find_results", "results");
+    common.module_register(incident_find_results);
 
 });

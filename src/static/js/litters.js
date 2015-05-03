@@ -129,10 +129,13 @@ $(function() {
             if (row.CACHEDANIMALSLEFT === undefined) {
                 row.CACHEDANIMALSLEFT = row.NUMBERINLITTER;
             }
-        }
+        },
+
+        name: "litters",
+        animation: "book"
 
     };
 
-    common.module(litters, "litters", "book");
+    common.module_register(litters);
 
 });

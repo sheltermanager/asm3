@@ -248,22 +248,30 @@
             d.setTime(date.getTime() + 60 - (days * 24 * 60 * 60 * 1000));
             return d;
         },
+
+        /** Loaded modules */
+        modules: {},
  
         /**
-         * Initialises a module.
+         * Registers a module.
          * o: The module object, implementing render, bind and sync
-         * modulename: The module name for applying label overrides
-         * screentype: The screen type for feeding to asmcontent
-         *             for the transition - criteria, results, newdata,
-         *             report, main, formtab, book, options
          */
-        module: function(o, modulename, screentype) {
+        module_register: function(o) {
+            common.modules[o.name] = o;
+            common.module_start(o.name); // TODO: This will be removed later and be called by client side routing
+        },
+
+        /**
+         * Starts a module.
+         */
+        module_start: function(modulename) {
+            var o = common.modules[modulename];
             if (o.render) { $("#asm-body-container").html(o.render()); }
             common.bind_widgets();
             if (o.bind) { o.bind(); }
             if (o.sync) { o.sync(); }
             common.apply_label_overrides(modulename); 
-            $("#asm-content").asmcontent(screentype);
+            $("#asm-content").asmcontent(o.animation);
         },
 
         /**

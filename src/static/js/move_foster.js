@@ -172,9 +172,13 @@ $(function() {
                     $("#foster").button("enable");
                 });
             });
-        }
+        },
+
+        name: "move_foster",
+        animation: "newdata"
+
     };
 
-    common.module(move_foster, "move_foster", "newdata");
+    common.module_register(move_foster);
 
 });

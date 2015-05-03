@@ -582,9 +582,13 @@ $(function() {
                 $("#returncategory").closest("tr").fadeOut();
                 $("#reason").closest("tr").fadeOut();
             }
-        }
+        },
+
+        name: "movements",
+        animation: "book"
+
     };
 
-    common.module(movements, "movements", common.current_url().indexOf("book") != -1 ? "book" : "formtab");
+    common.module_register(movements);
 
 });

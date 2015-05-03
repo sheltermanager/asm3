@@ -223,9 +223,13 @@ $(function() {
                     $("#comments").closest("tr").hide();
                 });
             });
-        }
+        },
+
+        name: "diary",
+        animation: "book"
+
     };
 
-    common.module(diary, "diary", common.current_url().indexOf("diary_edit") != -1 ? "book" : "formtab");
+    common.module_register(diary);
 
 });

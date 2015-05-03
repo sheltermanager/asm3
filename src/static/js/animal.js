@@ -1349,12 +1349,14 @@ $(function() {
             validate.dirty(false);
             validate.check_unsaved_links("animal_");
 
-        }
+        },
+
+        name: "animal",
+        animation: "formtab"
 
     };
-
     
-    common.module(animal, "animal", "formtab");
+    common.module_register(animal);
 
 });
 

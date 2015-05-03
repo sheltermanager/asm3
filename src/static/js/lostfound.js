@@ -378,11 +378,14 @@ $(function() {
             validate.dirty(false);
             validate.check_unsaved_links("lostanimal_");
             validate.check_unsaved_links("foundanimal_");
-        }
+        },
+
+        name: "lostfound",
+        animation: "formtab"
 
     };
 
-    common.module(lostfound, "lostfound", "formtab");
+    common.module_register(lostfound);
 
 });
 

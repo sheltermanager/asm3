@@ -199,9 +199,13 @@ $(function() {
             }, function() {
                 $("#button-savecost").button("enable");
             });
-        }
+        },
+
+        name: "animal_costs",
+        animation: "formtab"
+
     };
 
-    common.module(animal_costs, "animal_costs", "formtab");
+    common.module_register(animal_costs);
 
 });

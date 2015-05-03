@@ -438,9 +438,13 @@ $(function() {
                 row.WEBSITEMEDIANAME = lastanimal.WEBSITEMEDIANAME;
             }
             row.VACCINATIONTYPE = common.get_field(controller.vaccinationtypes, row.VACCINATIONID, "VACCINATIONTYPE");
-        }
+        },
+
+        name: "vaccination",
+        animation: "book"
+
     };
     
-    common.module(vaccination, "vaccination", controller.animal ? "formtab" : "book");
+    common.module_register(vaccination);
 
 });

@@ -144,10 +144,13 @@ $(function() {
         type_change: function() {
             var dc = common.get_field(controller.citationtypes, $("#type").select("value"), "DEFAULTCOST");
             $("#fineamount").currency("value", dc);
-        }
+        },
+
+        name: "citations",
+        animation: "formtab"
 
     };
 
-    common.module(citations, "citations", "formtab");
+    common.module_register(citations);
 
 });

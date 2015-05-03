@@ -128,10 +128,13 @@ $(function() {
         type_change: function() {
             var dc = common.get_field(controller.traptypes, $("#type").select("value"), "DEFAULTCOST");
             $("#depositamount").currency("value", dc);
-        }
+        },
+
+        name: "traploan",
+        animation: "formtab"
 
     };
 
-    common.module(traploan, "traploan", "formtab");
+    common.module_register(traploan);
 
 });

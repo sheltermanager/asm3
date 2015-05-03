@@ -527,9 +527,13 @@ $(function() {
                     $("#adopt").button("enable");
                 });
             });
-        }
+        },
+
+        name: "move_adopt",
+        animation: "newdata"
+
     };
 
-    common.module(move_adopt, "move_adopt", "newdata");
+    common.module_register(move_adopt);
 
 });

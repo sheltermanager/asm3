@@ -38,9 +38,13 @@ $(function() {
 
         sync: function() {
 
-        }
+        },
+
+        name: "giftaid_hmrc_spreadsheet",
+        animation: "report"
+
     };
 
-    common.module(giftaid_hmrc_spreadsheet, "giftaid_hmrc_spreadsheet", "report");
+    common.module_register(giftaid_hmrc_spreadsheet);
 
 });

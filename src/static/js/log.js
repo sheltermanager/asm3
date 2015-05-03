@@ -129,9 +129,13 @@ $(function() {
             if (controller.filter) {
                 $("#filter").select("value", controller.filter);
             }
-        }
+        },
+
+        name: "log",
+        animation: "formtab"
+
     };
     
-    common.module(log, "log", "formtab");
+    common.module_register(log);
 
 });

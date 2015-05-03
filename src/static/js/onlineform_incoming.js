@@ -257,10 +257,13 @@ $(function() {
         },
 
         sync: function() {
-        }
+        },
+
+        name: "onlineform_incoming",
+        animation: "formtab"
 
     };
 
-    common.module(onlineform_incoming, "onlineform_incoming", "formtab");
+    common.module_register(onlineform_incoming);
 
 });

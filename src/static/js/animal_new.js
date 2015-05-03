@@ -534,9 +534,13 @@ $(function() {
                 var formdata = "mode=randomname&sex=" + $("#sex").val();
                 common.ajax_post("animal", formdata, function(result) { $("#animalname").val(result); });
             });
-        }
+        },
+
+        name: "animal_new",
+        animation: "newdata"
+
     };
 
-    common.module(animal_new, "animal_new", "newdata");
+    common.module_register(animal_new);
 
 });

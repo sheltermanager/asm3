@@ -50,10 +50,13 @@ $(function() {
         },
 
         sync: function() {
-        }
+        },
+
+        name: "report_export",
+        animation: "options"
 
     };
     
-    common.module(report_export, "report_export", "options");
+    common.module_register(report_export);
 
 });

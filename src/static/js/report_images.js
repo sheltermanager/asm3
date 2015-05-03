@@ -120,10 +120,13 @@ $(function() {
             tableform.dialog_bind(dialog);
             tableform.buttons_bind(buttons);
             tableform.table_bind(table, buttons);
-        }
+        },
+
+        name: "report_images",
+        animation: "options"
 
     };
 
-    common.module(report_images, "report_images", "options");
+    common.module_register(report_images);
 
 });

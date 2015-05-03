@@ -812,11 +812,14 @@ $(function() {
             validate.bind_dirty();
             validate.dirty(false);
             validate.check_unsaved_links("person_");
-        }
+        },
+
+        name: "person",
+        animation: "formtab"
 
     };
 
-    common.module(person, "person", "formtab");
+    common.module_register(person);
 
 });
 

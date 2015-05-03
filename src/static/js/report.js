@@ -8,9 +8,13 @@ $(function() {
             $("#submitcriteria").button().click(function() {
                 window.location = "report?" + $("#criteriaform input, #criteriaform select").toPOST(true);
             });
-        }
+        },
+
+        name: "report",
+        animation: "report"
+
     };
 
-    common.module(report, "report", "report");
+    common.module_register(report);
 
 });

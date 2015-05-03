@@ -121,9 +121,13 @@ $(function() {
                     $("#deceased").button("enable");
                 });
             });
-        }
+        },
+
+        name: "move_deceased",
+        animation: "newdata"
+
     };
 
-    common.module(move_deceased, "move_deceased", "newdata");
+    common.module_register(move_deceased);
 
 });

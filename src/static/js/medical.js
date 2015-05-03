@@ -624,9 +624,13 @@ $(function() {
                 row.SHELTERCODE = lastanimal.SHELTERCODE;
                 row.WEBSITEMEDIANAME = lastanimal.WEBSITEMEDIANAME;
             }
-        }
+        },
+
+        name: "medical",
+        animation: "book"
+
     };
 
-    common.module(medical, "medical", common.current_url().indexOf("medical") == 0 ? "book" : "formtab");
+    common.module_register(medical);
 
 });

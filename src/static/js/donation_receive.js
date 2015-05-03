@@ -254,9 +254,13 @@ $(function() {
                     $("#receive").button("enable");
                 });
             });
-        }
+        },
+
+        name: "donation_receive",
+        animation: "newdata"
+
     };
 
-    common.module(donation_receive, "donation_receive", "newdata");
+    common.module_register(donation_receive);
 
 });

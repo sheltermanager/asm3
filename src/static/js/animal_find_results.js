@@ -276,11 +276,13 @@ $(function() {
                 });
             }
             return rv;
-        }    
+        },
 
+        name: "animal_find_results",
+        animation: "results"
 
     };
 
-    common.module(animal_find_results, "animal_find_results", "results");
+    common.module_register(animal_find_results);
 
 });

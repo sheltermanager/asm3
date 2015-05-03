@@ -222,9 +222,13 @@ $(function() {
             // Switch to the default view
             $("#viewmode").select("value", config.str("ShelterViewDefault"));
             $("#viewmode").change();
-        }
+        },
+
+        name: "shelterview",
+        animation: "search"
+
     };
 
-    common.module(shelterview, "shelterview", "search");
+    common.module_register(shelterview);
 
 });

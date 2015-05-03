@@ -1037,10 +1037,14 @@ $(function() {
                 $("#button-vesignup").hide();
             }
 
-        }
+        },
+
+        name: "publish_options",
+        animation: "options"
+
     };
 
-    common.module(publish_options, "publish_options", "options");
+    common.module_register(publish_options);
 
 });
 

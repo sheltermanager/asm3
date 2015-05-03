@@ -28,10 +28,13 @@ $(function() {
 
         bind: function() {
             tableform.table_bind(table);
-        }
+        },
+
+        name: "publish_logs",
+        animation: "options"
 
     };
 
-    common.module(publish_logs, "publish_logs", "options");
+    common.module_register(publish_logs);
 
 });

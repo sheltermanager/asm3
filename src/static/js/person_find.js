@@ -178,9 +178,13 @@ $(function() {
             else {
                 simpleMode();
             }
-        }
+        },
+
+        name: "person_find",
+        animation: "criteria"
+
     };
 
-    common.module(person_find, "person_find", "criteria");
+    common.module_register(person_find);
 
 });

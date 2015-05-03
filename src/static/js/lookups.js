@@ -135,10 +135,13 @@ $(function() {
                 $("#systemlookupwarn").delay(500).fadeIn();
             }
             $("#lookup").val(controller.tablename);
-        }
+        },
+
+        name: "lookups",
+        animation: "book"
 
     };
 
-    common.module(lookups, "lookups", "book");
+    common.module_register(lookups);
 
 });

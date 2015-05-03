@@ -130,10 +130,14 @@ $(function() {
 
             timed();
 
-        }
+        },
+
+        name: "publish",
+        animation: "default"
+
     };
 
-    common.module(publish, "publish", "default");
+    common.module_register(publish);
 
 });
 

@@ -246,10 +246,13 @@ $(function() {
 
         sync: function() {
             staff_rota.generate_table();
-        }
+        },
+
+        name: "staff_rota",
+        animation: "book"
 
     };
 
-    common.module(staff_rota, "staff_rota", "book");
+    common.module_register(staff_rota);
 
 });

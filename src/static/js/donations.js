@@ -362,9 +362,13 @@ $(function() {
                 $("#offset").select("value", common.querystring_param("offset"));
             }
 
-        }
+        },
+
+        name: "donations",
+        animation: "book"
+
     };
 
-    common.module(donations, "donations", common.current_url().indexOf("book") != -1 ? "book" : "formtab");
+    common.module_register(donations);
 
 });

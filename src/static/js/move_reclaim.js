@@ -329,9 +329,13 @@ $(function() {
                     $("#reclaim").button("enable");
                 });
             });
-        }
+        },
+
+        name: "move_reclaim",
+        animation: "newdata"
+
     };
 
-    common.module(move_reclaim, "move_reclaim", "newdata");
+    common.module_register(move_reclaim);
 
 });

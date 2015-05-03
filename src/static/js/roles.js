@@ -375,9 +375,13 @@ $(function() {
                 return false; // prevents # href
             });
 
-        }
+        },
+
+        name: "roles",
+        animation: "options"
+
     };
 
-    common.module(roles, "roles", "options");
+    common.module_register(roles);
 
 });

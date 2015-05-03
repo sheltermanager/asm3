@@ -143,10 +143,13 @@ $(function() {
             // shown or the stacking order is wrong. This fixes it now.
             $("#fieldname").autocomplete("widget").css("z-index", 1000);
 
-        }
+        },
+
+        name: "onlineform",
+        animation: "formtab"
 
     };
 
-    common.module(onlineform, "onlineform", "formtab");
+    common.module_register(onlineform);
 
 });

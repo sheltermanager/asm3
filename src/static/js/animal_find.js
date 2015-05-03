@@ -393,9 +393,13 @@ $(function() {
             // Search button
             $("#searchbutton").button();
 
-        }
+        },
+
+        name: "animal_find",
+        animation: "criteria"
+
     };
 
-    common.module(animal_find, "animal_find", "criteria");
+    common.module_register(animal_find);
 
 });

@@ -189,9 +189,13 @@ $(function() {
             $('#species').change(function() {
                 changebreedselect1();
             });
-        }
+        },
+
+        name: "lostfound_find",
+        animation: "criteria"
+
     };
 
-    common.module(lostfound_find, "lostfound_find", "criteria");
+    common.module_register(lostfound_find);
 
 });

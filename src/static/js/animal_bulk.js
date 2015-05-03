@@ -145,9 +145,13 @@ $(function() {
                 });
             });
 
-        }
+        },
+
+        name: "animal_bulk",
+        animation: "newdata"
+
     };
 
-    common.module(animal_bulk, "animal_bulk", "newdata");
+    common.module_register(animal_bulk);
 
 });

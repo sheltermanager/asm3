@@ -1158,10 +1158,14 @@ $(function() {
 
             validate.bind_dirty();
 
-        }
+        },
+
+        name: "options",
+        animation: "options"
+
     };
 
-    common.module(options, "options", "options");
+    common.module_register(options);
 
 });
 

@@ -31,11 +31,14 @@ $(function() {
 
         sync: function() {
             this.show_mini_map();
-        }
+        },
+
+        name: "incident_map",
+        animation: "results"
 
     };
 
-    common.module(incident_map, "incident_map", "results");
+    common.module_register(incident_map);
 
 });
 

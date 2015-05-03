@@ -70,10 +70,13 @@ $(function() {
             tableform.table_bind(table, buttons);
             // Assign name attribute to the path as we're using straight form POST for uploading
             $("#path").attr("name", "path");
-        }
+        },
+
+        name: "document_repository",
+        animation: "options"
 
     };
 
-    common.module(document_repository, "document_repository", "options");
+    common.module_register(document_repository);
 
 });

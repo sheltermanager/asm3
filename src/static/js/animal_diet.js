@@ -96,10 +96,13 @@ $(function() {
             tableform.dialog_bind(dialog);
             tableform.buttons_bind(buttons);
             tableform.table_bind(table, buttons);
-        }
+        },
+
+        name: "animal_diet",
+        animation: "formtab"
 
     };
 
-    common.module(animal_diet, "animal_diet", "formtab");
+    common.module_register(animal_diet);
 
 });

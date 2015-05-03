@@ -175,10 +175,13 @@ $(function() {
             tableform.table_bind(table, buttons);
             this.bind_rename_dialog();
             this.bind_newodt_dialog();
-        }
+        },
+
+        name: "document_templates",
+        animation: "options"
 
     };
 
-    common.module(document_templates, "document_templates", "options");
+    common.module_register(document_templates);
 
 });

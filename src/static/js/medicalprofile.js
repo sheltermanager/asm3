@@ -204,9 +204,13 @@ $(function() {
         },
 
         set_extra_fields: function(row) {
-        }
+        },
+
+        name: "medicalprofile",
+        animation: "book"
+
     };
 
-    common.module(medicalprofile, "medicalprofile", "book");
+    common.module_register(medicalprofile);
 
 });

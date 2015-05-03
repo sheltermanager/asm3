@@ -115,10 +115,13 @@ $(function() {
             $("#startdate").change(function() {
                 $("#enddate").val($("#startdate").val());
             });
-        }
+        },
+
+        name: "rota",
+        animation: "formtab"
 
     };
 
-    common.module(rota, "rota", "formtab");
+    common.module_register(rota);
 
 });

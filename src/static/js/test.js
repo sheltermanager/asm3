@@ -384,9 +384,13 @@ $(function() {
             }
             row.TESTNAME = common.get_field(controller.testtypes, row.TESTTYPEID, "TESTNAME");
             row.RESULTNAME = common.get_field(controller.testresults, row.TESTRESULTID, "RESULTNAME");
-        }
+        },
+
+        name: "test",
+        animation: "book"
+
     };
     
-    common.module(test, "test", controller.animal ? "formtab" : "book");
+    common.module_register(test);
 
 });

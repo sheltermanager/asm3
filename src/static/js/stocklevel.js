@@ -205,9 +205,13 @@ $(function() {
 
         set_extra_fields: function(row) {
             row.STOCKLOCATIONNAME = common.get_field(controller.stocklocations, row.STOCKLOCATIONID, "LOCATIONNAME");
-        }
+        },
+
+        name: "stocklevel",
+        animation: "book"
+
     };
     
-    common.module(stocklevel, "stocklevel", "book");
+    common.module_register(stocklevel);
 
 });

@@ -34,10 +34,13 @@ $(function() {
         },
 
         sync: function() {
-        }
+        },
+
+        name: "latency",
+        animation: "options"
 
     };
 
-    common.module(latency, "latency", "options");
+    common.module_register(latency);
 
 });

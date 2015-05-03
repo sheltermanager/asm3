@@ -141,9 +141,13 @@ $(function() {
             $("#calltime").val(format.time(new Date()));
             $("#calltaker").select("value", asm.user);
             $("#incidenttype").select("value", config.str("DefaultIncidentType"));
-        }
+        },
+
+        name: "incident_new",
+        animation: "newdata"
+
     };
 
-    common.module(incident_new, "incident_new", "newdata");
+    common.module_register(incident_new);
 
 });
