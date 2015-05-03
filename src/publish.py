@@ -887,7 +887,7 @@ class FTPPublisher(AbstractPublisher):
             if not self.pc.forceReupload:
                 if self.existingImageList is None:
                     self.existingImageList = self.lsdir()
-                if imagename in self.existingImageList:
+                elif imagename in self.existingImageList:
                     self.log("%s: skipping, already on server" % imagename)
                     return
             self.log("Retrieving image: %d::%s::%s" % ( a["ID"], medianame, imagename ))
