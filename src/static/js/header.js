@@ -528,7 +528,7 @@ $(function() {
                 if (config.has() && !config.bool("DisableTips")) {
                     $("#tips").show();
                 }
-                if (config.has() && config.str("SystemTheme") == asm.theme && 
+                if (config.has() && config.bool("ThemeChangeWarning") && config.str("SystemTheme") == asm.theme && 
                     $.inArray(config.str("SystemTheme"), [ "smoothness", "ui-lightness" ]) == -1) {
                     $("#overtheme").show();
                 }

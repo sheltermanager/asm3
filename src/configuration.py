@@ -241,6 +241,7 @@ DEFAULTS = {
     "StickyTableHeaders": "Yes",
     "SystemTheme": "smoothness",
     "TableHeadersVisible": "Yes",
+    "ThemeChangeWarning": "Yes",
     "Timezone": "-5",
     "TrialAdoptions": "No",
     "TrialOnShelter": "No",
