@@ -43,7 +43,7 @@ def get_last_stock_with_name(dbo, name):
     """
     rows = db.query(dbo, "SELECT Description, UnitName, Total FROM stocklevel WHERE Name LIKE %s ORDER BY ID DESC" % db.ds(name))
     if len(rows) > 0:
-        return "%s|%s|%d" % (rows[0]["DESCRIPTION"], rows[0]["UNITNAME"], rows[0]["TOTAL"])
+        return "%s|%s|%f" % (rows[0]["DESCRIPTION"], rows[0]["UNITNAME"], rows[0]["TOTAL"])
     return "||"
 
 def get_stock_items(dbo):
@@ -95,8 +95,8 @@ def update_stocklevel_from_form(dbo, post, username):
         ( "Description", post.db_string("description") ),
         ( "StockLocationID", post.db_integer("location") ),
         ( "UnitName", post.db_string("unitname") ),
-        ( "Total", post.db_integer("total") ),
-        ( "Balance", post.db_integer("balance") ),
+        ( "Total", post.db_floating("total") ),
+        ( "Balance", post.db_floating("balance") ),
         ( "Expiry", post.db_date("expiry") ),
         ( "BatchNumber", post.db_string("batchnumber") )
     )))
@@ -125,13 +125,13 @@ def insert_stocklevel_from_form(dbo, post, username):
         ( "Description", post.db_string("description") ),
         ( "StockLocationID", post.db_integer("location") ),
         ( "UnitName", post.db_string("unitname") ),
-        ( "Total", post.db_integer("total") ),
-        ( "Balance", post.db_integer("balance") ),
+        ( "Total", post.db_floating("total") ),
+        ( "Balance", post.db_floating("balance") ),
         ( "Expiry", post.db_date("expiry") ),
         ( "BatchNumber", post.db_string("batchnumber") ),
         ( "CreatedDate", db.todaysql() )
     )))
-    insert_stockusage(dbo, username, slid, post.integer("balance"), post.date("usagedate"), post.integer("usagetype"), post["comments"])
+    insert_stockusage(dbo, username, slid, post.floating("balance"), post.date("usagedate"), post.integer("usagetype"), post["comments"])
     audit.create(dbo, username, "stocklevel", str(nid))
     return nid
 
@@ -153,7 +153,7 @@ def insert_stockusage(dbo, username, slid, diff, usagedate, usagetype, comments)
         ( "StockUsageTypeID", db.di(usagetype) ),
         ( "StockLevelID", db.di(slid) ),
         ( "UsageDate", db.dd(usagedate) ),
-        ( "Quantity", db.di(diff) ),
+        ( "Quantity", db.df(diff) ),
         ( "Comments", db.ds(comments) )
     )))
     audit.create(dbo, username, "stockusage", str(nid))
@@ -165,13 +165,13 @@ def deduct_stocklevel_from_form(dbo, username, post):
     the stocklevel.
     """
     item = post.integer("item")
-    quantity = post.integer("quantity")
+    quantity = post.floating("quantity")
     usagetype = post.integer("usagetype")
     usagedate = post.date("usagedate")
     comments = post["usagecomments"]
-    curq = db.query_int(dbo, "SELECT Balance FROM stocklevel WHERE ID = %d" % item)
+    curq = db.query_float(dbo, "SELECT Balance FROM stocklevel WHERE ID = %d" % item)
     newq = curq - quantity
-    db.execute(dbo, "UPDATE stocklevel SET Balance = %d WHERE ID = %d" % (newq, item))
+    db.execute(dbo, "UPDATE stocklevel SET Balance = %f WHERE ID = %d" % (newq, item))
     insert_stockusage(dbo, username, item, quantity, usagedate, usagetype, comments)
 
 def stock_take_from_mobile_form(dbo, username, post):

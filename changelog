@@ -1,6 +1,7 @@
 37
 ================
 
+05/05/15 Allow fractional stock values #150
 05/05/15 JS refactoring to enable client side routing complete #161
 05/05/15 Add checkbox and radiogroup onlineform fields #189
 01/05/15 Use hash to detect signature, add documentation #162
