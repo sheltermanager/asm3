@@ -6,10 +6,12 @@ $(function() {
     var onlineform = {};
     var fieldtypes = [
         { "ID": 0, "NAME": _("Yes/No") },
+        { "ID": 11, "NAME": _("Checkbox") },
         { "ID": 1, "NAME": _("Text") },
         { "ID": 10, "NAME": _("Date") },
         { "ID": 2, "NAME": _("Notes") },
         { "ID": 3, "NAME": _("Lookup") },
+        { "ID": 12, "NAME": _("Radio Buttons") },
         { "ID": 4, "NAME": _("Shelter Animal") },
         { "ID": 5, "NAME": _("Adoptable Animal") },
         { "ID": 6, "NAME": _("Color") },
@@ -100,7 +102,7 @@ $(function() {
           */
         check_lookups: function() {
             var ft = $("#fieldtype").select("value");
-            if (ft == 3) {
+            if (ft == 3 || ft == 12) {
                 $("#lookups").closest("tr").fadeIn();
             }
             else {
@@ -108,6 +110,9 @@ $(function() {
             }
             if (ft == 9) {
                 $("#tooltip").closest("tr").find("label").html(_("Markup"));
+            }
+            else if (ft == 11) {
+                $("#tooltip").closest("tr").find("label").html(_("Flags"));
             }
             else {
                 $("#tooltip").closest("tr").find("label").html(_("Tooltip"));

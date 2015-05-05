@@ -457,11 +457,12 @@ def script_var_str(varname, v, prefix = "controller."):
 
 def controller(inner):
     """ Renders the controller """
-    return "<script type=\"text/javascript\">\ncontroller = {};%s\n</script>\n" % inner
+    if inner.endswith(","): inner = inner[0:len(inner)-1]
+    return "<script type=\"text/javascript\">\ncontroller = { %s };\n</script>\n" % inner
 
 def controller_bool(name, b):
     """ Adds a controller boolean property """
-    return "controller.%s = %s;" % (name, b and "true" or "false")
+    return "%s:%s," % (name, b and "true" or "false")
 
 def controller_date(name, d):
     """ Adds a controller date property """
@@ -470,21 +471,21 @@ def controller_date(name, d):
 
 def controller_int(name, i):
     """ Adds a controller int property """
-    return "controller.%s = %d;" % (name, i)
+    return "%s:%d," % (name, i)
 
 def controller_plain(name, v):
     """ Adds a controller property that's already formatted for js """
-    return "controller.%s = %s;" % (name, v)
+    return "%s:%s," % (name, v)
 
 def controller_str(name, s):
     """ Adds a controller string property """
     s = "'" + s.replace("'", "\\'").replace("\n", "\\n") + "'"
-    return "controller.%s = %s;" % (name, s)
+    return "%s:%s," % (name, s)
 
 def controller_json(name, obj):
     """ Adds a controller json property (converts obj to json) """
     jv = json(obj)
-    return "controller.%s = %s;" % (name, jv)
+    return "%s:%s," % (name, jv)
 
 def rss(inner, title, link, description):
     """ Renders an RSS document """

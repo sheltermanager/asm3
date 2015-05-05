@@ -1351,8 +1351,12 @@ $(function() {
 
         },
 
+
+        destroy: function() {},
+
         name: "animal",
-        animation: "formtab"
+        animation: "formtab",
+        route: "animal?id={id}"
 
     };
     

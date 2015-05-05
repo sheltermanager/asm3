@@ -251,6 +251,9 @@
 
         /** Loaded modules */
         modules: {},
+
+        /** Currently running module */
+        module_running: null,
  
         /**
          * Registers a module.
@@ -258,13 +261,24 @@
          */
         module_register: function(o) {
             common.modules[o.name] = o;
-            common.module_start(o.name); // TODO: This will be removed later and be called by client side routing
+            // TODO: This will be removed later and be called by client side routing
+            common.module_start(o.name); 
+            // TODO: When we're using crossroads
+            //if (o.route) { crossroads.addRoute(o.route, function() { common.module_start(o.name); } }
         },
 
         /**
-         * Starts a module.
+         * Starts a module, unloading any active module first.
          */
         module_start: function(modulename) {
+            // do we already have one running? If so, unload it first
+            if (common.module_running) {
+                if (common.module_running.destroy) {
+                    if (common.module_running.destroy()) {
+                        return;
+                    }
+                }
+            }
             var o = common.modules[modulename];
             if (o.render) { $("#asm-body-container").html(o.render()); }
             common.bind_widgets();
@@ -272,6 +286,7 @@
             if (o.sync) { o.sync(); }
             common.apply_label_overrides(modulename); 
             $("#asm-content").asmcontent(o.animation);
+            common.module_running = o;
         },
 
         /**

@@ -348,6 +348,20 @@ def emergency_notice():
             return s
     return ""
 
+def full_or_json(s, c, json = False):
+    """
+    If an json parameter is present, return the controller as json,
+    otherwise return the full page.
+    """
+    web.header("Cache-Control", "no-cache")
+    if not json:
+        web.header("Content-Type", "text/html")
+        return s
+    else:
+        web.header("Content-Type", "application/json")
+        if c.endswith(","): c = c[0:len(c)-1]
+        return "{ %s }" % c
+
 # Setup the WSGI application object and session with mappings
 app = web.application(urls, globals())
 app.notfound = asm_404
@@ -632,6 +646,7 @@ class main:
         utils.check_loggedin(session, web)
         l = session.locale
         dbo = session.dbo
+        post = utils.PostedData(web.input(), session.locale)
         title = _("Animal Shelter Manager", l)
         title += " - " + configuration.organisation(dbo)
         # Do we need to request a password change?
@@ -714,9 +729,7 @@ class main:
         s += html.controller(c)
         s += html.footer()
         al.debug("main for '%s', %d diary notes, %d messages" % (session.user, len(dm), len(mess)), "code.main", dbo)
-        web.header("Content-Type", "text/html")
-        web.header("Cache-Control", "no-cache")
-        return s
+        return full_or_json(s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -838,9 +851,7 @@ class accounts:
         c += html.controller_json("rows", accounts)
         s += html.controller(c)
         s += html.footer()
-        web.header("Content-Type", "text/html")
-        web.header("Cache-Control", "no-cache")
-        return s
+        return full_or_json(s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -900,9 +911,7 @@ class accounts_trx:
         c += html.controller_str("todate", python2display(l, todate))
         s += html.controller(c)
         s += html.footer()
-        web.header("Content-Type", "text/html")
-        web.header("Cache-Control", "no-cache")
-        return s
+        return full_or_json(s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)

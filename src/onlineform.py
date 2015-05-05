@@ -30,6 +30,8 @@ FIELDTYPE_BREED = 7
 FIELDTYPE_SPECIES = 8
 FIELDTYPE_RAWMARKUP = 9
 FIELDTYPE_DATE = 10
+FIELDTYPE_CHECKBOX = 11
+FIELDTYPE_RADIOGROUP = 12
 
 # Types as used in JSON representations
 FIELDTYPE_MAP = {
@@ -43,7 +45,9 @@ FIELDTYPE_MAP = {
     "BREED": 7,
     "SPECIES": 8,
     "RAWMARKUP": 9,
-    "DATE": 10
+    "DATE": 10,
+    "CHECKBOX": 11,
+    "RADIOGROUP": 12
 }
 
 FIELDTYPE_MAP_REVERSE = {v: k for k, v in FIELDTYPE_MAP.items()}
@@ -121,8 +125,10 @@ def get_onlineform_html(dbo, formid, completedocument = True):
         h.append('<tr class="asm-onlineform-tr">')
         if f["FIELDTYPE"] == FIELDTYPE_RAWMARKUP:
             h.append('<td class="asm-onlineform-td" colspan="2">')
+        elif f["FIELDTYPE"] == FIELDTYPE_CHECKBOX:
+            h.append('<td class="asm-onlineform-td"></td><td class="asm-onlineform-td">')
         else:
-            # Add label and cell wrapper if it's not raw markup
+            # Add label and cell wrapper if it's not raw markup or a checkbox
             h.append('<td class="asm-onlineform-td">')
             h.append('<label for="f%d">%s</label>' % ( f["ID"], f["LABEL"] ))
             h.append('</td>')
@@ -136,6 +142,9 @@ def get_onlineform_html(dbo, formid, completedocument = True):
         if f["FIELDTYPE"] == FIELDTYPE_YESNO:
             h.append('<select class="asm-onlineform-yesno" name="%s" title="%s"><option>%s</option><option>%s</option></select>' % \
                 ( html.escape(fname), utils.nulltostr(f["TOOLTIP"]), i18n._("No", l), i18n._("Yes", l)))
+        elif f["FIELDTYPE"] == FIELDTYPE_CHECKBOX:
+            h.append('<input class="asm-onlineform-check" type="checkbox" name="%s" %s /> <label for="f%d">%s</label>' % \
+                ( html.escape(fname), required, f["ID"], f["LABEL"]))
         elif f["FIELDTYPE"] == FIELDTYPE_TEXT:
             h.append('<input class="asm-onlineform-text" type="text" name="%s" title="%s" %s />' % ( html.escape(fname), utils.nulltostr(f["TOOLTIP"]), required))
         elif f["FIELDTYPE"] == FIELDTYPE_DATE:
@@ -147,6 +156,11 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             for lv in utils.nulltostr(f["LOOKUPS"]).split("|"):
                 h.append('<option>%s</option>' % lv)
             h.append('</select>')
+        elif f["FIELDTYPE"] == FIELDTYPE_RADIOGROUP:
+            h.append('<div class="asm-online-radiogroup" style="display: inline-block">')
+            for lv in utils.nulltostr(f["LOOKUPS"]).split("|"):
+                h.append('<input type="radio" class="asm-onlineform-radio" name="%s" value="%s" /> %s<br />' % (html.escape(fname), lv, lv))
+            h.append('</div>')
         elif f["FIELDTYPE"] == FIELDTYPE_SHELTERANIMAL:
             h.append('<select class="asm-onlineform-shelteranimal" name="%s" title="%s" %s>' % ( html.escape(fname), utils.nulltostr(f["TOOLTIP"]), required))
             h.append('<option></option>')
@@ -490,8 +504,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
             displayindex = 0
             fieldname = k
             # Form fields should have a _ONLINEFORMFIELD.ID suffix we can use to get the
-            # original label and display position. If the fieldtype is raw markup,
-            # store that as the value instead.
+            # original label and display position.
             if k.find("_") != -1:
                 fid = utils.cint(k[k.rfind("_")+1:])
                 fieldname = k[0:k.rfind("_")]
@@ -500,8 +513,15 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                     if len(fld) > 0:
                         label = fld[0]["LABEL"]
                         displayindex = fld[0]["DISPLAYINDEX"]
+                        # If it's a raw markup field, store the markup as the value
                         if fld[0]["FIELDTYPE"] == FIELDTYPE_RAWMARKUP:
                             v = "RAW::%s" % fld[0]["TOOLTIP"]
+                        # If we have a checkbox field with a tooltip, it contains additional
+                        # person flags, add them to our set
+                        if fld[0]["FIELDTYPE"] == FIELDTYPE_CHECKBOX:
+                            if utils.nulltostr(fld[0]["TOOLTIP"]) != "":
+                                flags += fld[0]["TOOLTIP"]
+                                db.execute(dbo, "UPDATE onlineformincoming SET Flags = %s WHERE CollationID = %d" % (db.ds(flags), collationid))
 
             sql = db.make_insert_sql("onlineformincoming", ( 
                 ( "CollationID", db.di(collationid)),
