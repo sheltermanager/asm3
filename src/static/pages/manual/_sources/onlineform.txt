@@ -18,7 +18,8 @@ If you use certain key fields (which the system will autocomplete for you), the
 system can create person, lost animal, found animal, animal control incident or
 waiting list records directly from submitted form data. If you set some person
 flags on your form, any person record created from the form data will
-automatically have those flags.
+automatically have those flags. The "checkbox" field type allows you to enter
+some additional person flags to set if that field is checked during submission.
 
 .. image:: images/onlineform_edit.png
 
