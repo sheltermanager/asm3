@@ -3,13 +3,14 @@
 
 $(function() {
 
-    var mode = controller.name.indexOf("lost") != -1 ? "lost" : "found";
-
     var lostfound = {
 
         current_person: null,
+        mode: "lost",
 
         render: function() {
+            var mode = controller.name.indexOf("lost") != -1 ? "lost" : "found";
+            this.mode = mode;
             return [
                 '<div id="emailform" />',
                 '<div id="dialog-delete" style="display: none" title="' + html.title(_("Delete")) + '">',
@@ -168,11 +169,11 @@ $(function() {
             if (!common.has_permission("aa")) { $("#button-toanimal").hide(); }
             if (!common.has_permission("awl")) { $("#button-towaitinglist").hide(); }
             if (!common.has_permission("mlaf")) { $("#button-match").hide(); }
-            if (mode == "lost") {
+            if (lostfound.mode == "lost") {
                 if (!common.has_permission("cla")) { $("#button-save").hide(); }
                 if (!common.has_permission("dla")) { $("#button-delete").hide(); }
             }
-            if (mode == "found") {
+            if (lostfound.mode == "found") {
                 if (!common.has_permission("cfa")) { $("#button-save").hide(); }
                 if (!common.has_permission("dfa")) { $("#button-delete").hide(); }
             } 
@@ -193,7 +194,7 @@ $(function() {
             }
 
             // date lost
-            if (mode == "lost" && $.trim($("#datelost").val()) == "") {
+            if (lostfound.mode == "lost" && $.trim($("#datelost").val()) == "") {
                 header.show_error(_("Date lost cannot be blank"));
                 $("label[for='datelost']").addclass("ui-state-error-text");
                 $("#datelost").focus();
@@ -201,7 +202,7 @@ $(function() {
             }
 
             // date found
-            if (mode == "found" && $.trim($("#datefound").val()) == "") {
+            if (lostfound.mode == "found" && $.trim($("#datefound").val()) == "") {
                 header.show_error(_("Date found cannot be blank"));
                 $("label[for='datefound']").addclass("ui-state-error-text");
                 $("#datefound").focus();
@@ -274,14 +275,14 @@ $(function() {
             });
 
             $("#button-match").button().click(function() {
-                var qs = ( mode == "lost" ? "lostanimalid=" : "foundanimalid=" ) + $("#lfid").val();
+                var qs = ( lostfound.mode == "lost" ? "lostanimalid=" : "foundanimalid=" ) + $("#lfid").val();
                 window.location = "lostfound_match?" + qs;
             });
 
             $("#button-email").button().click(function() {
                 $("#emailform").emailform("show", {
                     post: controller.name,
-                    formdata: "mode=email&lfid=" + $("#lfid").val() + "&lfmode=" + mode,
+                    formdata: "mode=email&lfid=" + $("#lfid").val() + "&lfmode=" + lostfound.mode,
                     name: lostfound.current_person.OWNERFORENAMES + " " + lostfound.current_person.OWNERSURNAME,
                     email: lostfound.current_person.EMAILADDRESS,
                     logtypes: controller.logtypes

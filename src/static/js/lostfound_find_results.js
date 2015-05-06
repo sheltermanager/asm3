@@ -3,11 +3,13 @@
 
 $(function() {
 
-    var mode = controller.name.indexOf("lost") != -1 ? "lost" : "found";
-
     var lostfound_find_results = {
+        
+        mode: "lost", 
 
         render: function() {
+            var mode = controller.name.indexOf("lost") != -1 ? "lost" : "found";
+            this.mode = mode;
             return [
                 html.content_header(_("Results")),
                 '<div id="asm-results">',
@@ -44,21 +46,21 @@ $(function() {
             var h = [];
             $.each(controller.rows, function(i, r) {
                 h.push('<tr>');
-                if (mode == "lost") {
+                if (lostfound_find_results.mode == "lost") {
                     h.push('<td><a href="lostanimal?id=' + r.ID + '">' + format.padleft(r.ID, 6) + '</a></td>');
                 }
                 else {
                     h.push('<td><a href="foundanimal?id=' + r.ID + '">' + format.padleft(r.ID, 6) + '</a></td>');
                 }
                 h.push('<td>' + edit_header.person_link(r, r.OWNERID) + '</td>');
-                if (mode == "lost") {
+                if (lostfound_find_results.mode == "lost") {
                     h.push('<td>' + r.AREALOST + '</td>');
                 }
                 else {
                     h.push('<td>' + r.AREAFOUND + '</td>');
                 }
                 h.push('<td>' + r.AREAPOSTCODE + '</td>');
-                if (mode == "lost") {
+                if (lostfound_find_results.mode == "lost") {
                     h.push('<td>' + format.date(r.DATELOST) + '</td>');
                 }
                 else {

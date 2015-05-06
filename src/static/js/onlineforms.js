@@ -3,104 +3,109 @@
 
 $(function() {
 
-    var dialog = {
-        add_title: _("Add online form"),
-        edit_title: _("Edit online form"),
-        edit_perm: 'eof',
-        helper_text: _("Forms need a name."),
-        close_on_ok: true,
-        columns: 1,
-        width: 550,
-        fields: [
-            { json_field: "NAME", post_field: "name", label: _("Name"), type: "text", validation: "notblank" },
-            { json_field: "REDIRECTURLAFTERPOST", post_field: "redirect", label: _("Redirect to URL after POST"), 
-                type: "text", 
-                tooltip: _("After the user presses submit and ASM has accepted the form, redirect the user to this URL") },
-            { json_field: "SETOWNERFLAGS", post_field: "flags", label: _("Person Flags"), type: "selectmulti" },
-            { json_field: "EMAILADDRESS", post_field: "email", label: _("Email submissions to"), type: "textarea",
-                tooltip: _("Email incoming form submissions to this comma separated list of email addresses") }, 
-            { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "textarea" },
-            { json_field: "HEADER", post_field: "header", label: _("Header"), type: "textarea" },
-            { json_field: "FOOTER", post_field: "footer", label: _("Footer"), type: "textarea" }
-        ]
-    };
-
-    var table = {
-        rows: controller.rows,
-        idcolumn: "ID",
-        edit: function(row) {
-            tableform.dialog_show_edit(dialog, row, function() {
-                tableform.fields_update_row(dialog.fields, row);
-                tableform.fields_post(dialog.fields, "mode=update&formid=" + row.ID, "onlineforms", function(response) {
-                    tableform.table_update(table);
-                });
-            });
-        },
-        columns: [
-            { field: "NAME", display: _("Name"), initialsort: true, formatter: function(row) {
-                return "<span style=\"white-space: nowrap\">" + 
-                    "<input type=\"checkbox\" data-id=\"" + row.ID + "\" title=\"" + html.title(_("Select")) + "\" />" +
-                    "<a href=\"onlineform?formid=" + row.ID + "\">" + row.NAME + "</a>" +
-                    "<a href=\"#\" class=\"link-edit\" data-id=\"" + row.ID + "\">" + html.icon("edit", _("Edit online form")) + "</a>" +
-                    "</span>";
-            }},
-            { field: "", display: _("Form URL"), formatter: function(row) {
-                    var u = "/service?";
-                    if (asm.useraccountalias) { u += "account=" + asm.useraccountalias + "&"; }
-                    u += "method=online_form_html&formid=" + row.ID;
-                    return '<a target="_blank" href="' + controller.baseurl + u + '">' + u + '</a>';
-                }},
-            { field: "REDIRECTURLAFTERPOST", display: _("Redirect to URL after POST") },
-            { field: "EMAILADDRESS", display: _("Email submissions to") },
-            { field: "SETOWNERFLAGS", display: _("Person Flags"), formatter: function(row) { return row.SETOWNERFLAGS.split("|").join(", "); }},
-            { field: "NUMBEROFFIELDS", display: _("Number of fields") },
-            { field: "DESCRIPTION", display: _("Description"), formatter: function(row) { return html.truncate(row.DESCRIPTION); } }
-        ]
-    };
-
-    var buttons = [
-         { id: "new", text: _("New online form"), icon: "new", enabled: "always", 
-             click: function() { 
-                 tableform.dialog_show_add(dialog, function() {
-                     tableform.fields_post(dialog.fields, "mode=create", "onlineforms", function(response) {
-                         var row = {};
-                         row.ID = response;
-                         tableform.fields_update_row(dialog.fields, row);
-                         controller.rows.push(row);
-                         tableform.table_update(table);
-                     });
-                 });
-             } 
-         },
-         { id: "clone", text: _("Clone"), icon: "copy", enabled: "multi", 
-             click: function() { 
-                 tableform.buttons_default_state(buttons);
-                 var ids = tableform.table_ids(table);
-                 common.ajax_post("onlineforms", "mode=clone&ids=" + ids , function() {
-                     window.location.reload();
-                 });
-             } 
-         },
-         { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
-             click: function() { 
-                 tableform.delete_dialog(function() {
-                     tableform.buttons_default_state(buttons);
-                     var ids = tableform.table_ids(table);
-                     common.ajax_post("onlineforms", "mode=delete&ids=" + ids , function() {
-                         tableform.table_remove_selected_from_json(table, controller.rows);
-                         tableform.table_update(table);
-                     });
-                 });
-             } 
-         },
-         { id: "headfoot", text: _("Edit Header/Footer"), icon: "forms", enabled: "always", tooltip: _("Edit online form HTML header/footer"),
-             click: function() {
-                $("#dialog-headfoot").dialog("open");
-             }
-         }
-    ];
-
     var onlineforms = {
+
+        model: function() {
+            var dialog = {
+                add_title: _("Add online form"),
+                edit_title: _("Edit online form"),
+                edit_perm: 'eof',
+                helper_text: _("Forms need a name."),
+                close_on_ok: true,
+                columns: 1,
+                width: 550,
+                fields: [
+                    { json_field: "NAME", post_field: "name", label: _("Name"), type: "text", validation: "notblank" },
+                    { json_field: "REDIRECTURLAFTERPOST", post_field: "redirect", label: _("Redirect to URL after POST"), 
+                        type: "text", 
+                        tooltip: _("After the user presses submit and ASM has accepted the form, redirect the user to this URL") },
+                    { json_field: "SETOWNERFLAGS", post_field: "flags", label: _("Person Flags"), type: "selectmulti" },
+                    { json_field: "EMAILADDRESS", post_field: "email", label: _("Email submissions to"), type: "textarea",
+                        tooltip: _("Email incoming form submissions to this comma separated list of email addresses") }, 
+                    { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "textarea" },
+                    { json_field: "HEADER", post_field: "header", label: _("Header"), type: "textarea" },
+                    { json_field: "FOOTER", post_field: "footer", label: _("Footer"), type: "textarea" }
+                ]
+            };
+
+            var table = {
+                rows: controller.rows,
+                idcolumn: "ID",
+                edit: function(row) {
+                    tableform.dialog_show_edit(dialog, row, function() {
+                        tableform.fields_update_row(dialog.fields, row);
+                        tableform.fields_post(dialog.fields, "mode=update&formid=" + row.ID, "onlineforms", function(response) {
+                            tableform.table_update(table);
+                        });
+                    });
+                },
+                columns: [
+                    { field: "NAME", display: _("Name"), initialsort: true, formatter: function(row) {
+                        return "<span style=\"white-space: nowrap\">" + 
+                            "<input type=\"checkbox\" data-id=\"" + row.ID + "\" title=\"" + html.title(_("Select")) + "\" />" +
+                            "<a href=\"onlineform?formid=" + row.ID + "\">" + row.NAME + "</a>" +
+                            "<a href=\"#\" class=\"link-edit\" data-id=\"" + row.ID + "\">" + html.icon("edit", _("Edit online form")) + "</a>" +
+                            "</span>";
+                    }},
+                    { field: "", display: _("Form URL"), formatter: function(row) {
+                            var u = "/service?";
+                            if (asm.useraccountalias) { u += "account=" + asm.useraccountalias + "&"; }
+                            u += "method=online_form_html&formid=" + row.ID;
+                            return '<a target="_blank" href="' + controller.baseurl + u + '">' + u + '</a>';
+                        }},
+                    { field: "REDIRECTURLAFTERPOST", display: _("Redirect to URL after POST") },
+                    { field: "EMAILADDRESS", display: _("Email submissions to") },
+                    { field: "SETOWNERFLAGS", display: _("Person Flags"), formatter: function(row) { return row.SETOWNERFLAGS.split("|").join(", "); }},
+                    { field: "NUMBEROFFIELDS", display: _("Number of fields") },
+                    { field: "DESCRIPTION", display: _("Description"), formatter: function(row) { return html.truncate(row.DESCRIPTION); } }
+                ]
+            };
+
+            var buttons = [
+                 { id: "new", text: _("New online form"), icon: "new", enabled: "always", 
+                     click: function() { 
+                         tableform.dialog_show_add(dialog, function() {
+                             tableform.fields_post(dialog.fields, "mode=create", "onlineforms", function(response) {
+                                 var row = {};
+                                 row.ID = response;
+                                 tableform.fields_update_row(dialog.fields, row);
+                                 controller.rows.push(row);
+                                 tableform.table_update(table);
+                             });
+                         });
+                     } 
+                 },
+                 { id: "clone", text: _("Clone"), icon: "copy", enabled: "multi", 
+                     click: function() { 
+                         tableform.buttons_default_state(buttons);
+                         var ids = tableform.table_ids(table);
+                         common.ajax_post("onlineforms", "mode=clone&ids=" + ids , function() {
+                             window.location.reload();
+                         });
+                     } 
+                 },
+                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
+                     click: function() { 
+                         tableform.delete_dialog(function() {
+                             tableform.buttons_default_state(buttons);
+                             var ids = tableform.table_ids(table);
+                             common.ajax_post("onlineforms", "mode=delete&ids=" + ids , function() {
+                                 tableform.table_remove_selected_from_json(table, controller.rows);
+                                 tableform.table_update(table);
+                             });
+                         });
+                     } 
+                 },
+                 { id: "headfoot", text: _("Edit Header/Footer"), icon: "forms", enabled: "always", tooltip: _("Edit online form HTML header/footer"),
+                     click: function() {
+                        $("#dialog-headfoot").dialog("open");
+                     }
+                 }
+            ];
+            this.dialog = dialog;
+            this.table = table;
+            this.buttons = buttons;
+        },
 
         load_person_flags: function() {
             var field_option = function(post, label) {
@@ -184,20 +189,21 @@ $(function() {
 
         render: function() {
             var s = "";
+            this.model();
             s += this.render_headfoot();
-            s += tableform.dialog_render(dialog);
+            s += tableform.dialog_render(this.dialog);
             s += html.content_header(_("Online Forms"));
             s += html.info(_("Online forms can be linked to from your website and used to take information from visitors for applications, etc."));
-            s += tableform.buttons_render(buttons);
-            s += tableform.table_render(table);
+            s += tableform.buttons_render(this.buttons);
+            s += tableform.table_render(this.table);
             s += html.content_footer();
             return s;
         },
 
         bind: function() {
-            tableform.dialog_bind(dialog);
-            tableform.buttons_bind(buttons);
-            tableform.table_bind(table, buttons);
+            tableform.dialog_bind(this.dialog);
+            tableform.buttons_bind(this.buttons);
+            tableform.table_bind(this.table, this.buttons);
             this.bind_headfoot();
             this.load_person_flags();
         },

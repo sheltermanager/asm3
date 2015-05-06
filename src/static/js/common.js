@@ -262,7 +262,7 @@
         module_register: function(o) {
             common.modules[o.name] = o;
             // TODO: This will be removed later and be called by client side routing
-            common.module_start(o.name); 
+            //common.module_start(o.name); 
             // TODO: When we're using crossroads
             //if (o.route) { crossroads.addRoute(o.route, function() { common.module_start(o.name); } }
         },

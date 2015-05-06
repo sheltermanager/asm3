@@ -9,10 +9,11 @@ import financial
 import json as extjson
 import lookups
 import medical
+import os
 import person
 import users
 from i18n import BUILD, _, translate, format_currency, now, python2display
-from sitedefs import BASE_URL, LOCALE, MINIFY_JS
+from sitedefs import BASE_URL, LOCALE, MINIFY_JS, ROLLUP_JS
 from sitedefs import ASMSELECT_CSS, ASMSELECT_JS, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_4_JS
 
 BACKGROUND_COLOURS = {
@@ -107,6 +108,46 @@ def asm_script_tag(filename):
     """
     return "<script type=\"text/javascript\" src=\"js?v=%s&k=%s\"></script>\n" % (js_minified_name(filename), BUILD)
 
+def asm_script_tags(path):
+    """
+    Returns separate script tags for all ASM javascript files.
+    """
+    jsfiles = [ "common.js", "common_map.js", "common_widgets.js", "common_animalchooser.js",
+        "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "header.js",
+        "header_additional.js", "header_edit_header.js" ]
+    exclude = [ "document_edit.js", ]
+    # Read our available js files and append them to this list, not including ones
+    # we've explicitly added above (since they are in correct load order)
+    for i in os.listdir(path + "static/js"):
+        if i not in jsfiles and i not in exclude and not i.startswith(".") and i.endswith(".js"):
+            jsfiles.append(i)
+    buf = []
+    for i in jsfiles:
+        buf.append(asm_script_tag(i))
+    return "".join(buf)
+
+def asm_rollup_scripts(path):
+    """
+    Returns the content of all ASM javascript files, rolled up into a single file in the
+    correct load order.
+    """
+    jsfiles = [ "common.js", "common_map.js", "common_widgets.js", "common_animalchooser.js",
+        "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "header.js",
+        "header_additional.js", "header_edit_header.js" ]
+    exclude = [ "document_edit.js", ]
+    # Read our available js files and append them to this list, not including ones
+    # we've explicitly added above (since they are in correct load order)
+    for i in os.listdir(path + "static/js"):
+        if i not in jsfiles and i not in exclude and not i.startswith(".") and i.endswith(".js"):
+            jsfiles.append(i)
+    # Read them all into a buffer and send it back
+    buf = []
+    for i in jsfiles:
+        f = open(path + "static/js/" + js_minified_name(i), "r")
+        buf.append(f.read())
+        f.close()
+    return "\n".join(buf)
+
 def asm_css_tag(filename):
     """
     Returns a path to our caching css loader for a stylesheet
@@ -172,10 +213,13 @@ def bare_header(title, js = "", theme = "ui-lightness", locale = LOCALE, config_
         return "<script type=\"text/javascript\" src=\"config.js?db=%s&ts=%s\"></script>\n" % (config_db, config_ts)
     # Use the default if we have no locale
     if locale is None: locale = LOCALE
-    # Add the script module if set
-    script = ""
-    if js is not None and js != "":
-        script = asm_script_tag(js)
+    # Load the asm scripts
+    if ROLLUP_JS:
+        # TODO: FIX THIS
+        path = "/home/robin/workspace/asm3/src/"
+        asm_scripts = script_tag("rollup.js")
+    else:
+        asm_scripts = asm_script_tags(path) 
     # Set the body colour from the theme
     bgcol = BACKGROUND_COLOURS[theme]
     return '<!DOCTYPE html>\n' \
@@ -216,17 +260,7 @@ def bare_header(title, js = "", theme = "ui-lightness", locale = LOCALE, config_
                 script_tag(TIMEPICKER_JS) +
                 script_config() + 
                 script_i18n(locale) + 
-                asm_script_tag("common.js") + 
-                asm_script_tag("common_map.js") + 
-                asm_script_tag("common_widgets.js") + 
-                asm_script_tag("common_animalchooser.js") + 
-                asm_script_tag("common_animalchoosermulti.js") + 
-                asm_script_tag("common_personchooser.js") + 
-                asm_script_tag("common_tableform.js") + 
-                asm_script_tag("header.js") + 
-                asm_script_tag("header_additional.js") + 
-                asm_script_tag("header_edit_header.js") + 
-                script, 
+                asm_scripts,
               "bgcol": bgcol }
 
 def tinymce_header(title, js, jswindowprint = True, onlysavewhendirty = False, readonly = False):

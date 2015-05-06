@@ -47,164 +47,168 @@ $(function() {
         { display: "23:00", value: 23 }
     ];
 
-    var reports = {};
+    var reports = {
 
-    var dialog = {
-        add_title: _("Add report"),
-        edit_title: _("Edit report"),
-        edit_perm: 'hcr',
-        close_on_ok: false,
-        columns: 1,
-        width: 800,
-        fields: [
-            { json_field: "TYPE", post_field: "type", label: _("Type"), type: "select", options: 
-                [ '<option value="REPORT">' + _("Report") + '</option>',
-                '<option value="GRAPH">' + _("Chart") + '</option>',
-                '<option value="GRAPH BARS">' + _("Chart (Bar)") + '</option>',
-                '<option value="GRAPH LINES">' + _("Chart (Line)") + '</option>',
-                '<option value="GRAPH PIE">' + _("Chart (Pie)") + '</option>',
-                '<option value="GRAPH POINTS">' + _("Chart (Point)") + '</option>',
-                '<option value="GRAPH STEPS">' + _("Chart (Steps)") + '</option>',
-                '<option value="MAIL">' + _("Mail Merge") + '</option>',
-                '<option value="MAP">' + _("Map") + '</option>' ].join("\n") },
-            { json_field: "CATEGORY", post_field: "category", classes: "asm-doubletextbox", label: _("Category"), type: "text", validation: "notblank" },
-            { json_field: "TITLE", post_field: "title", classes: "asm-doubletextbox", label: _("Report Title"), type: "text", validation: "notblank" },
-            { json_field: "DESCRIPTION", post_field: "description", classes: "asm-doubletextbox", label: _("Description"), type: "text" },
-            { json_field: "DAILYEMAIL", post_field: "dailyemail", classes: "asm-doubletextbox", label: _("Daily Email To"), type: "text",
-                tooltip: _("An optional comma separated list of email addresses to send the output of this report to each day")},
-            { json_field: "DAILYEMAILHOUR", post_field: "dailyemailhour", label: _("Time"), type: "select",
-                options: { displayfield: "display", valuefield: "value", rows: emailhours }},
-            { json_field: "OMITHEADERFOOTER", post_field: "omitheaderfooter", label: _("Omit header/footer"), type: "check" },
-            { json_field: "OMITCRITERIA", post_field: "omitcriteria", label: _("Omit criteria"), type: "check" },
-            { json_field: "VIEWROLEIDS", post_field: "viewroles", label: _("View Roles"), type: "selectmulti", 
-                options: { rows: controller.roles, valuefield: "ID", displayfield: "ROLENAME" }},
-            { type: "raw", label: "", markup: '<button id="button-checksql">' + _("Syntax check this SQL") + '</button>' +
-                '<button id="button-genhtml">' + _("Generate HTML from this SQL") + '</button>' },
-            { json_field: "SQLCOMMAND", post_field: "sql", label: _("SQL"), rows: 10, type: "textarea", validation: "notblank" },
-            { json_field: "HTMLBODY", post_field: "html", label: _("HTML"), rows: 10, type: "textarea" }
-        ]
-    };
+        model: function() {
+            var dialog = {
+                add_title: _("Add report"),
+                edit_title: _("Edit report"),
+                edit_perm: 'hcr',
+                close_on_ok: false,
+                columns: 1,
+                width: 800,
+                fields: [
+                    { json_field: "TYPE", post_field: "type", label: _("Type"), type: "select", options: 
+                        [ '<option value="REPORT">' + _("Report") + '</option>',
+                        '<option value="GRAPH">' + _("Chart") + '</option>',
+                        '<option value="GRAPH BARS">' + _("Chart (Bar)") + '</option>',
+                        '<option value="GRAPH LINES">' + _("Chart (Line)") + '</option>',
+                        '<option value="GRAPH PIE">' + _("Chart (Pie)") + '</option>',
+                        '<option value="GRAPH POINTS">' + _("Chart (Point)") + '</option>',
+                        '<option value="GRAPH STEPS">' + _("Chart (Steps)") + '</option>',
+                        '<option value="MAIL">' + _("Mail Merge") + '</option>',
+                        '<option value="MAP">' + _("Map") + '</option>' ].join("\n") },
+                    { json_field: "CATEGORY", post_field: "category", classes: "asm-doubletextbox", label: _("Category"), type: "text", validation: "notblank" },
+                    { json_field: "TITLE", post_field: "title", classes: "asm-doubletextbox", label: _("Report Title"), type: "text", validation: "notblank" },
+                    { json_field: "DESCRIPTION", post_field: "description", classes: "asm-doubletextbox", label: _("Description"), type: "text" },
+                    { json_field: "DAILYEMAIL", post_field: "dailyemail", classes: "asm-doubletextbox", label: _("Daily Email To"), type: "text",
+                        tooltip: _("An optional comma separated list of email addresses to send the output of this report to each day")},
+                    { json_field: "DAILYEMAILHOUR", post_field: "dailyemailhour", label: _("Time"), type: "select",
+                        options: { displayfield: "display", valuefield: "value", rows: emailhours }},
+                    { json_field: "OMITHEADERFOOTER", post_field: "omitheaderfooter", label: _("Omit header/footer"), type: "check" },
+                    { json_field: "OMITCRITERIA", post_field: "omitcriteria", label: _("Omit criteria"), type: "check" },
+                    { json_field: "VIEWROLEIDS", post_field: "viewroles", label: _("View Roles"), type: "selectmulti", 
+                        options: { rows: controller.roles, valuefield: "ID", displayfield: "ROLENAME" }},
+                    { type: "raw", label: "", markup: '<button id="button-checksql">' + _("Syntax check this SQL") + '</button>' +
+                        '<button id="button-genhtml">' + _("Generate HTML from this SQL") + '</button>' },
+                    { json_field: "SQLCOMMAND", post_field: "sql", label: _("SQL"), rows: 10, type: "textarea", validation: "notblank" },
+                    { json_field: "HTMLBODY", post_field: "html", label: _("HTML"), rows: 10, type: "textarea" }
+                ]
+            };
 
-    var table = {
-        rows: controller.rows,
-        idcolumn: "ID",
-        edit: function(row) {
-            tableform.dialog_error("");
-            tableform.dialog_show_edit(dialog, row, function() {
-                if (!reports.validation()) { tableform.dialog_enable_buttons(); return; }
-                tableform.fields_update_row(dialog.fields, row);
-                tableform.fields_post(dialog.fields, "mode=update&reportid=" + row.ID, "reports", function(response) {
-                    tableform.table_update(table);
-                    tableform.dialog_close();
-                });
-            }, function(row) {
-                var type = "REPORT";
-                if (row.HTMLBODY.indexOf("GRAPH") == 0 || row.HTMLBODY.indexOf("MAIL") == 0 || row.HTMLBODY.indexOf("MAP") == 0) { type = row.HTMLBODY; }
-                $("#type").select("value", type);
-                reports.change_type();
-            });
+            var table = {
+                rows: controller.rows,
+                idcolumn: "ID",
+                edit: function(row) {
+                    tableform.dialog_error("");
+                    tableform.dialog_show_edit(dialog, row, function() {
+                        if (!reports.validation()) { tableform.dialog_enable_buttons(); return; }
+                        tableform.fields_update_row(dialog.fields, row);
+                        tableform.fields_post(dialog.fields, "mode=update&reportid=" + row.ID, "reports", function(response) {
+                            tableform.table_update(table);
+                            tableform.dialog_close();
+                        });
+                    }, function(row) {
+                        var type = "REPORT";
+                        if (row.HTMLBODY.indexOf("GRAPH") == 0 || row.HTMLBODY.indexOf("MAIL") == 0 || row.HTMLBODY.indexOf("MAP") == 0) { type = row.HTMLBODY; }
+                        $("#type").select("value", type);
+                        reports.change_type();
+                    });
+                },
+                columns: [
+                    { field: "CATEGORY", display: _("Type"), formatter: function(row) {
+                        var t = "<span style=\"white-space: nowrap\">" +
+                            "<input type=\"checkbox\" data-id=\"" + row.ID + "\" title=\"" + html.title(_("Select")) + "\" />" +
+                            "<a href=\"#\" class=\"link-edit\" data-id=\"" + row.ID + "\">{val}</a></span>";
+                        if (row.HTMLBODY.indexOf("GRAPH") == 0) {
+                            return t.replace("{val}", _("Chart"));
+                        }
+                        if (row.HTMLBODY.indexOf("MAIL") == 0) {
+                            return t.replace("{val}", _("Mail Merge"));
+                        }
+                        if (row.HTMLBODY.indexOf("MAP") == 0) {
+                            return t.replace("{val}", _("Map"));
+                        }
+                        return t.replace("{val}", _("Report"));
+                    }},
+                    { field: "CATEGORY", display: _("Category") },
+                    { field: "VIEWROLES", display: _("Roles"), formatter: function(row) {
+                        return row.VIEWROLES ? row.VIEWROLES.replace("|", ", ") : "";
+                    }},
+                    { field: "TITLE", display: _("Report Title"), initialsort: true },
+                    { field: "DESCRIPTION", display: _("Description") }
+                ]
+            };
+
+            var buttons = [
+                 { id: "new", text: _("New Report"), icon: "new", enabled: "always", 
+                     click: function() { 
+                        tableform.dialog_error("");
+                         tableform.dialog_show_add(dialog, function() {
+                             if (!reports.validation()) { tableform.dialog_enable_buttons(); return; }
+                             tableform.fields_post(dialog.fields, "mode=create", "reports", function(response) {
+                                 var row = {};
+                                 row.ID = response;
+                                 row.VIEWROLES = "";
+                                 tableform.fields_update_row(dialog.fields, row);
+                                 controller.rows.push(row);
+                                 tableform.table_update(table);
+                                 tableform.dialog_close();
+                             });
+                         }, function() {
+                            $("#type").select("value", "REPORT");
+                            reports.change_type();
+                         });
+                     } 
+                 },
+                 { id: "clone", text: _("Clone"), icon: "copy", enabled: "one", 
+                     click: function() { 
+                         tableform.dialog_error("");
+                         tableform.dialog_show_add(dialog, function() {
+                             if (!reports.validation()) { tableform.dialog_enable_buttons(); return; }
+                             tableform.fields_post(dialog.fields, "mode=create", "reports", function(response) {
+                                 var row = {};
+                                 row.ID = response;
+                                 tableform.fields_update_row(dialog.fields, row);
+                                 controller.rows.push(row);
+                                 tableform.table_update(table);
+                                 tableform.dialog_close();
+                             });
+                         }, function() {
+                             var row = tableform.table_selected_row(table);
+                             tableform.fields_populate_from_json(dialog.fields, row);
+                             $("#title").val(_("Copy of {0}").replace("{0}", $("#title").val()));
+                             var type = "REPORT";
+                             if (row.HTMLBODY.indexOf("GRAPH") == 0 || row.HTMLBODY.indexOf("MAIL") == 0 || row.HTMLBODY.indexOf("MAP") == 0) { type = row.HTMLBODY; }
+                             $("#type").select("value", type);
+                         });
+                     } 
+                 },
+                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
+                     click: function() { 
+                         tableform.delete_dialog(function() {
+                             tableform.buttons_default_state(buttons);
+                             var ids = tableform.table_ids(table);
+                             common.ajax_post("reports", "mode=delete&ids=" + ids , function() {
+                                 tableform.table_remove_selected_from_json(table, controller.rows);
+                                 tableform.table_update(table);
+                             });
+                         });
+                     } 
+                 },
+                 { id: "browse", text: _("Browse sheltermanager.com"), icon: "logo", enabled: "always", tooltip: _("Get more reports from sheltermanager.com"),
+                     click: function() {
+                        reports.browse_smcom();
+                     }
+                 },
+
+                 { id: "headfoot", text: _("Edit Header/Footer"), icon: "report", enabled: "always", tooltip: _("Edit report template HTML header/footer"),
+                     click: function() {
+                        $("#dialog-headfoot").dialog("open");
+                     }
+                 },
+
+                 { id: "images", text: _("Extra Images"), icon: "image", enabled: "always", tooltip: _("Add extra images for use in reports and documents"),
+                     click: function() {
+                        window.location = "report_images";
+                     }
+                 }
+            ];
+            this.dialog = dialog;
+            this.table = table;
+            this.buttons = buttons;
+
         },
-        columns: [
-            { field: "CATEGORY", display: _("Type"), formatter: function(row) {
-                var t = "<span style=\"white-space: nowrap\">" +
-                    "<input type=\"checkbox\" data-id=\"" + row.ID + "\" title=\"" + html.title(_("Select")) + "\" />" +
-                    "<a href=\"#\" class=\"link-edit\" data-id=\"" + row.ID + "\">{val}</a></span>";
-                if (row.HTMLBODY.indexOf("GRAPH") == 0) {
-                    return t.replace("{val}", _("Chart"));
-                }
-                if (row.HTMLBODY.indexOf("MAIL") == 0) {
-                    return t.replace("{val}", _("Mail Merge"));
-                }
-                if (row.HTMLBODY.indexOf("MAP") == 0) {
-                    return t.replace("{val}", _("Map"));
-                }
-                return t.replace("{val}", _("Report"));
-            }},
-            { field: "CATEGORY", display: _("Category") },
-            { field: "VIEWROLES", display: _("Roles"), formatter: function(row) {
-                return row.VIEWROLES ? row.VIEWROLES.replace("|", ", ") : "";
-            }},
-            { field: "TITLE", display: _("Report Title"), initialsort: true },
-            { field: "DESCRIPTION", display: _("Description") }
-        ]
-    };
-
-    var buttons = [
-         { id: "new", text: _("New Report"), icon: "new", enabled: "always", 
-             click: function() { 
-                tableform.dialog_error("");
-                 tableform.dialog_show_add(dialog, function() {
-                     if (!reports.validation()) { tableform.dialog_enable_buttons(); return; }
-                     tableform.fields_post(dialog.fields, "mode=create", "reports", function(response) {
-                         var row = {};
-                         row.ID = response;
-                         row.VIEWROLES = "";
-                         tableform.fields_update_row(dialog.fields, row);
-                         controller.rows.push(row);
-                         tableform.table_update(table);
-                         tableform.dialog_close();
-                     });
-                 }, function() {
-                    $("#type").select("value", "REPORT");
-                    reports.change_type();
-                 });
-             } 
-         },
-         { id: "clone", text: _("Clone"), icon: "copy", enabled: "one", 
-             click: function() { 
-                 tableform.dialog_error("");
-                 tableform.dialog_show_add(dialog, function() {
-                     if (!reports.validation()) { tableform.dialog_enable_buttons(); return; }
-                     tableform.fields_post(dialog.fields, "mode=create", "reports", function(response) {
-                         var row = {};
-                         row.ID = response;
-                         tableform.fields_update_row(dialog.fields, row);
-                         controller.rows.push(row);
-                         tableform.table_update(table);
-                         tableform.dialog_close();
-                     });
-                 }, function() {
-                     var row = tableform.table_selected_row(table);
-                     tableform.fields_populate_from_json(dialog.fields, row);
-                     $("#title").val(_("Copy of {0}").replace("{0}", $("#title").val()));
-                     var type = "REPORT";
-                     if (row.HTMLBODY.indexOf("GRAPH") == 0 || row.HTMLBODY.indexOf("MAIL") == 0 || row.HTMLBODY.indexOf("MAP") == 0) { type = row.HTMLBODY; }
-                     $("#type").select("value", type);
-                 });
-             } 
-         },
-         { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
-             click: function() { 
-                 tableform.delete_dialog(function() {
-                     tableform.buttons_default_state(buttons);
-                     var ids = tableform.table_ids(table);
-                     common.ajax_post("reports", "mode=delete&ids=" + ids , function() {
-                         tableform.table_remove_selected_from_json(table, controller.rows);
-                         tableform.table_update(table);
-                     });
-                 });
-             } 
-         },
-         { id: "browse", text: _("Browse sheltermanager.com"), icon: "logo", enabled: "always", tooltip: _("Get more reports from sheltermanager.com"),
-             click: function() {
-                reports.browse_smcom();
-             }
-         },
-
-         { id: "headfoot", text: _("Edit Header/Footer"), icon: "report", enabled: "always", tooltip: _("Edit report template HTML header/footer"),
-             click: function() {
-                $("#dialog-headfoot").dialog("open");
-             }
-         },
-
-         { id: "images", text: _("Extra Images"), icon: "image", enabled: "always", tooltip: _("Add extra images for use in reports and documents"),
-             click: function() {
-                window.location = "report_images";
-             }
-         }
-    ];
-
-    reports = {
 
         render_headfoot: function() {
             return [
@@ -249,20 +253,21 @@ $(function() {
 
         render: function() {
             var s = "";
+            this.model();
             s += this.render_headfoot();
             s += this.render_browse_smcom();
-            s += tableform.dialog_render(dialog);
+            s += tableform.dialog_render(this.dialog);
             s += html.content_header(_("Reports"));
-            s += tableform.buttons_render(buttons);
-            s += tableform.table_render(table);
+            s += tableform.buttons_render(this.buttons);
+            s += tableform.table_render(this.table);
             s += html.content_footer();
             return s;
         },
 
         bind: function() {
-            tableform.dialog_bind(dialog);
-            tableform.buttons_bind(buttons);
-            tableform.table_bind(table, buttons);
+            tableform.dialog_bind(this.dialog);
+            tableform.buttons_bind(this.buttons);
+            tableform.table_bind(this.table, this.buttons);
             reports.bind_headfoot();
             reports.bind_browse_smcom();
             reports.bind_dialogbuttons();

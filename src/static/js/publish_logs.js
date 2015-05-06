@@ -2,32 +2,35 @@
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, tableform, validate */
 $(function() {
 
-    var table = {
-        rows: controller.rows,
-        idcolumn: "ID",
-        edit: function(row) {
-            window.location = "publish_logs?view=" + row.PATH + "/" + row.NAME;
-        },
-        columns: [
-            { field: "NAME", display: _("File"), initialsort: true },
-            { field: "SUCCESS", display: _("Success") },
-            { field: "ALERTS", display: _("Alerts") }
-        ]
-    };
-
-
     var publish_logs = {
+
+        model: function() {
+            var table = {
+                rows: controller.rows,
+                idcolumn: "ID",
+                edit: function(row) {
+                    window.location = "publish_logs?view=" + row.PATH + "/" + row.NAME;
+                },
+                columns: [
+                    { field: "NAME", display: _("File"), initialsort: true },
+                    { field: "SUCCESS", display: _("Success") },
+                    { field: "ALERTS", display: _("Alerts") }
+                ]
+            };
+            this.table = table;
+        },
 
         render: function() {
             var s = "";
+            this.model();
             s += html.content_header(_("Publishing Logs"));
-            s += tableform.table_render(table);
+            s += tableform.table_render(this.table);
             s += html.content_footer();
             return s;
         },
 
         bind: function() {
-            tableform.table_bind(table);
+            tableform.table_bind(this.table);
         },
 
         name: "publish_logs",

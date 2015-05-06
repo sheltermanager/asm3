@@ -3,175 +3,181 @@
 
 $(function() {
 
-    var test = {}, lastanimal;
+    var lastanimal;
 
-    var dialog = {
-        add_title: _("Add test"),
-        edit_title: _("Edit test"),
-        edit_perm: 'cat',
-        helper_text: _("Tests need an animal and at least a required date."),
-        close_on_ok: true,
-        autofocus: false,
-        use_default_values: false,
-        columns: 1,
-        width: 500,
-        fields: [
-            { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "animal" },
-            { json_field: "ANIMALS", post_field: "animals", label: _("Animals"), type: "animalmulti" },
-            { json_field: "TESTTYPEID", post_field: "type", label: _("Type"), type: "select", 
-                options: { displayfield: "TESTNAME", valuefield: "ID", rows: controller.testtypes }},
-            { json_field: "DATEREQUIRED", post_field: "required", label: _("Required"), type: "date", validation: "notblank" },
-            { json_field: "DATEOFTEST", post_field: "given", label: _("Performed"), type: "date" },
-            { json_field: "TESTRESULTID", post_field: "result", label: _("Result"), type: "select", 
-                options: { displayfield: "RESULTNAME", valuefield: "ID", rows: controller.testresults }},
-            { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency", hideif: function() { return !config.bool("ShowCostAmount"); } },
-            { json_field: "COSTPAIDDATE", post_field: "costpaid", label: _("Paid"), type: "date", hideif: function() { return !config.bool("ShowCostPaid"); } },
-            { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
-        ]
-    };
+    var test = {
 
-    var table = {
-        rows: controller.rows,
-        idcolumn: "ID",
-        edit: function(row) {
-            if (controller.animal) {
-                $("#animal").closest("tr").hide();
-            }
-            else {
-                $("#animal").closest("tr").show();
-            }
-            $("#animals").closest("tr").hide();
-            test.enable_default_cost = false;
-            tableform.fields_populate_from_json(dialog.fields, row);
-            test.enable_default_cost = true;
-            tableform.dialog_show_edit(dialog, row, function() {
-                tableform.fields_update_row(dialog.fields, row);
-                test.set_extra_fields(row);
-                tableform.fields_post(dialog.fields, "mode=update&testid=" + row.ID, controller.name, function(response) {
-                    tableform.table_update(table);
-                    tableform.dialog_close();
-                },
-                function(response) {
-                    tableform.dialog_error(response);
-                    tableform.dialog_enable_buttons();
-                });
-            });
-        },
-        complete: function(row) {
-            if (row.DATEOFTEST) { return true; }
-            return false;
-        },
-        overdue: function(row) {
-            return !row.DATEOFTEST && format.date_js(row.DATEREQUIRED) < common.today_no_time();
-        },
-        columns: [
-            { field: "TESTNAME", display: _("Type") },
-            { field: "IMAGE", display: "", 
-                formatter: function(row) {
-                    return '<a href="animal?id=' + row.ANIMALID + '"><img src=' + html.thumbnail_src(row, "animalthumb") + ' style="margin-right: 8px" class="asm-thumbnail thumbnailshadow" /></a>';
-                },
-                hideif: function(row) {
-                    // Don't show this column if we're in an animal record, or the option is turned off
-                    if (controller.animal || !config.bool("PicturesInBooks")) {
-                        return true;
-                    }
-                }
-            },
-            { field: "ANIMAL", display: _("Animal"), 
-                formatter: function(row) {
-                    var s = "";
-                    if (controller.name.indexOf("animal_") == -1) { s = html.animal_emblems(row) + " "; }
-                    return s + '<a href="animal?id=' + row.ANIMALID + '">' + row.ANIMALNAME + ' - ' + row.SHELTERCODE + '</a>';
-                },
-                hideif: function(row) {
-                    // Don't show for animal records
-                    if (controller.animal) { return true; }
-                }
-            },
-            { field: "LOCATIONNAME", display: _("Location"),
-                formatter: function(row) {
-                    var s = row.LOCATIONNAME;
-                    if (row.LOCATIONUNIT) {
-                        s += ' <span class="asm-search-locationunit">' + row.LOCATIONUNIT + '</span>';
-                    }
-                    return s;
-                },
-                hideif: function(row) {
-                     // Don't show for animal records
-                    if (controller.animal) { return true; }
-                }
-            },
-            { field: "DATEREQUIRED", display: _("Required"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
-            { field: "DATEOFTEST", display: _("Performed"), formatter: tableform.format_date },
-            { field: "RESULTNAME", display: _("Result"), formatter: function(row) {
-                    if (row.DATEOFTEST) {
-                        return row.RESULTNAME;
-                    }
-                    return "";
-                }},
-            { field: "COST", display: _("Cost"), formatter: tableform.format_currency,
-                hideif: function() { return !config.bool("ShowCostAmount"); }
-            },
-            { field: "COSTPAIDDATE", display: _("Paid"), formatter: tableform.format_date,
-                hideif: function() { return !config.bool("ShowCostPaid"); }
-            },
-            { field: "COMMENTS", display: _("Comments") }
-        ]
-    };
+        model: function() {
+            var dialog = {
+                add_title: _("Add test"),
+                edit_title: _("Edit test"),
+                edit_perm: 'cat',
+                helper_text: _("Tests need an animal and at least a required date."),
+                close_on_ok: true,
+                autofocus: false,
+                use_default_values: false,
+                columns: 1,
+                width: 500,
+                fields: [
+                    { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "animal" },
+                    { json_field: "ANIMALS", post_field: "animals", label: _("Animals"), type: "animalmulti" },
+                    { json_field: "TESTTYPEID", post_field: "type", label: _("Type"), type: "select", 
+                        options: { displayfield: "TESTNAME", valuefield: "ID", rows: controller.testtypes }},
+                    { json_field: "DATEREQUIRED", post_field: "required", label: _("Required"), type: "date", validation: "notblank" },
+                    { json_field: "DATEOFTEST", post_field: "given", label: _("Performed"), type: "date" },
+                    { json_field: "TESTRESULTID", post_field: "result", label: _("Result"), type: "select", 
+                        options: { displayfield: "RESULTNAME", valuefield: "ID", rows: controller.testresults }},
+                    { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency", hideif: function() { return !config.bool("ShowCostAmount"); } },
+                    { json_field: "COSTPAIDDATE", post_field: "costpaid", label: _("Paid"), type: "date", hideif: function() { return !config.bool("ShowCostPaid"); } },
+                    { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
+                ]
+            };
 
-    var buttons = [
-        { id: "new", text: _("New Test"), icon: "new", enabled: "always", perm: "aat", 
-             click: function() { test.new_test(); }},
-        { id: "bulk", text: _("Bulk Test"), icon: "new", enabled: "always", perm: "cat", 
-            hideif: function() { return controller.animal; }, click: function() { test.new_bulk_test(); }},
-         { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dat", 
-             click: function() { 
-                 tableform.delete_dialog(function() {
-                     tableform.buttons_default_state(buttons);
-                     var ids = tableform.table_ids(table);
-                     common.ajax_post(controller.name, "mode=delete&ids=" + ids , function() {
-                         tableform.table_remove_selected_from_json(table, controller.rows);
-                         tableform.table_update(table);
-                     });
-                 });
-             } 
-         },
-         { id: "perform", text: _("Perform"), icon: "complete", enabled: "multi", perm: "cat",
-             click: function() {
-                var comments = "";
-                $.each(controller.rows, function(i, v) {
-                    if (tableform.table_id_selected(v.ID)) {
-                        comments += "[" + v.SHELTERCODE + " - " + v.ANIMALNAME + "] ";
+            var table = {
+                rows: controller.rows,
+                idcolumn: "ID",
+                edit: function(row) {
+                    if (controller.animal) {
+                        $("#animal").closest("tr").hide();
                     }
-                });
-                $("#usagecomments").val(comments);
-                $("#newdate").datepicker("setDate", new Date());
-                $("#testresult").select("firstvalue");
-                $("#usagetype").select("firstvalue");
-                $("#usagedate").datepicker("setDate", new Date());
-                $("#quantity").val("1");
-                $("#dialog-given").dialog("open");
-             }
-         },
-         { id: "offset", type: "dropdownfilter", 
-             options: [ "m365|" + _("Due today"), "p7|" + _("Due in next week"), "p31|" + _("Due in next month"), "p365|" + _("Due in next year") ],
-             click: function(selval) {
-                window.location = controller.name + "?offset=" + selval;
-             },
-             hideif: function(row) {
-                 // Don't show for animal records
-                 if (controller.animal) {
-                     return true;
+                    else {
+                        $("#animal").closest("tr").show();
+                    }
+                    $("#animals").closest("tr").hide();
+                    test.enable_default_cost = false;
+                    tableform.fields_populate_from_json(dialog.fields, row);
+                    test.enable_default_cost = true;
+                    tableform.dialog_show_edit(dialog, row, function() {
+                        tableform.fields_update_row(dialog.fields, row);
+                        test.set_extra_fields(row);
+                        tableform.fields_post(dialog.fields, "mode=update&testid=" + row.ID, controller.name, function(response) {
+                            tableform.table_update(table);
+                            tableform.dialog_close();
+                        },
+                        function(response) {
+                            tableform.dialog_error(response);
+                            tableform.dialog_enable_buttons();
+                        });
+                    });
+                },
+                complete: function(row) {
+                    if (row.DATEOFTEST) { return true; }
+                    return false;
+                },
+                overdue: function(row) {
+                    return !row.DATEOFTEST && format.date_js(row.DATEREQUIRED) < common.today_no_time();
+                },
+                columns: [
+                    { field: "TESTNAME", display: _("Type") },
+                    { field: "IMAGE", display: "", 
+                        formatter: function(row) {
+                            return '<a href="animal?id=' + row.ANIMALID + '"><img src=' + html.thumbnail_src(row, "animalthumb") + ' style="margin-right: 8px" class="asm-thumbnail thumbnailshadow" /></a>';
+                        },
+                        hideif: function(row) {
+                            // Don't show this column if we're in an animal record, or the option is turned off
+                            if (controller.animal || !config.bool("PicturesInBooks")) {
+                                return true;
+                            }
+                        }
+                    },
+                    { field: "ANIMAL", display: _("Animal"), 
+                        formatter: function(row) {
+                            var s = "";
+                            if (controller.name.indexOf("animal_") == -1) { s = html.animal_emblems(row) + " "; }
+                            return s + '<a href="animal?id=' + row.ANIMALID + '">' + row.ANIMALNAME + ' - ' + row.SHELTERCODE + '</a>';
+                        },
+                        hideif: function(row) {
+                            // Don't show for animal records
+                            if (controller.animal) { return true; }
+                        }
+                    },
+                    { field: "LOCATIONNAME", display: _("Location"),
+                        formatter: function(row) {
+                            var s = row.LOCATIONNAME;
+                            if (row.LOCATIONUNIT) {
+                                s += ' <span class="asm-search-locationunit">' + row.LOCATIONUNIT + '</span>';
+                            }
+                            return s;
+                        },
+                        hideif: function(row) {
+                             // Don't show for animal records
+                            if (controller.animal) { return true; }
+                        }
+                    },
+                    { field: "DATEREQUIRED", display: _("Required"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
+                    { field: "DATEOFTEST", display: _("Performed"), formatter: tableform.format_date },
+                    { field: "RESULTNAME", display: _("Result"), formatter: function(row) {
+                            if (row.DATEOFTEST) {
+                                return row.RESULTNAME;
+                            }
+                            return "";
+                        }},
+                    { field: "COST", display: _("Cost"), formatter: tableform.format_currency,
+                        hideif: function() { return !config.bool("ShowCostAmount"); }
+                    },
+                    { field: "COSTPAIDDATE", display: _("Paid"), formatter: tableform.format_date,
+                        hideif: function() { return !config.bool("ShowCostPaid"); }
+                    },
+                    { field: "COMMENTS", display: _("Comments") }
+                ]
+            };
+
+            var buttons = [
+                { id: "new", text: _("New Test"), icon: "new", enabled: "always", perm: "aat", 
+                     click: function() { test.new_test(); }},
+                { id: "bulk", text: _("Bulk Test"), icon: "new", enabled: "always", perm: "cat", 
+                    hideif: function() { return controller.animal; }, click: function() { test.new_bulk_test(); }},
+                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dat", 
+                     click: function() { 
+                         tableform.delete_dialog(function() {
+                             tableform.buttons_default_state(buttons);
+                             var ids = tableform.table_ids(table);
+                             common.ajax_post(controller.name, "mode=delete&ids=" + ids , function() {
+                                 tableform.table_remove_selected_from_json(table, controller.rows);
+                                 tableform.table_update(table);
+                             });
+                         });
+                     } 
+                 },
+                 { id: "perform", text: _("Perform"), icon: "complete", enabled: "multi", perm: "cat",
+                     click: function() {
+                        var comments = "";
+                        $.each(controller.rows, function(i, v) {
+                            if (tableform.table_id_selected(v.ID)) {
+                                comments += "[" + v.SHELTERCODE + " - " + v.ANIMALNAME + "] ";
+                            }
+                        });
+                        $("#usagecomments").val(comments);
+                        $("#newdate").datepicker("setDate", new Date());
+                        $("#testresult").select("firstvalue");
+                        $("#usagetype").select("firstvalue");
+                        $("#usagedate").datepicker("setDate", new Date());
+                        $("#quantity").val("1");
+                        $("#dialog-given").dialog("open");
+                     }
+                 },
+                 { id: "offset", type: "dropdownfilter", 
+                     options: [ "m365|" + _("Due today"), "p7|" + _("Due in next week"), "p31|" + _("Due in next month"), "p365|" + _("Due in next year") ],
+                     click: function(selval) {
+                        window.location = controller.name + "?offset=" + selval;
+                     },
+                     hideif: function(row) {
+                         // Don't show for animal records
+                         if (controller.animal) {
+                             return true;
+                         }
+                     }
                  }
-             }
-         }
-    ];
-
-    test = {
+            ];
+            this.dialog = dialog;
+            this.table = table;
+            this.buttons = buttons;
+        },
 
         render: function() {
             var s = "";
-            s += tableform.dialog_render(dialog);
+            this.model();
+            s += tableform.dialog_render(this.dialog);
             s += test.render_givendialog();
             if (controller.animal) {
                 s += edit_header.animal_edit_header(controller.animal, "test", controller.tabcounts);
@@ -179,13 +185,14 @@ $(function() {
             else {
                 s += html.content_header(_("Test Book"));
             }
-            s += tableform.buttons_render(buttons);
-            s += tableform.table_render(table);
+            s += tableform.buttons_render(this.buttons);
+            s += tableform.table_render(this.table);
             s += html.content_footer();
             return s;
         },
 
         new_test: function() { 
+            var dialog = test.dialog, table = test.table;
             if (controller.animal) {
                 $("#animal").animalchooser("loadbyid", controller.animal.ID);
                 $("#animal").closest("tr").hide();
@@ -215,6 +222,7 @@ $(function() {
         },
 
         new_bulk_test: function() { 
+            var dialog = test.dialog, table = test.table;
             $("#animal").closest("tr").hide();
             $("#animals").closest("tr").show();
             $("#animals").animalchoosermulti("clear");
@@ -280,8 +288,8 @@ $(function() {
         },
 
         bind_givendialog: function() {
-
             var givenbuttons = { };
+            var dialog = test.dialog, table = test.table;
             givenbuttons[_("Save")] = function() {
                 $("#dialog-given label").removeClass("ui-state-error-text");
                 if (!validate.notblank([ "newdate" ])) { return; }
@@ -318,9 +326,9 @@ $(function() {
 
         bind: function() {
             $(".asm-tabbar").asmtabs();
-            tableform.dialog_bind(dialog);
-            tableform.buttons_bind(buttons);
-            tableform.table_bind(table, buttons);
+            tableform.dialog_bind(this.dialog);
+            tableform.buttons_bind(this.buttons);
+            tableform.table_bind(this.table, this.buttons);
             this.bind_givendialog();
 
             // When the test type is changed, use the default cost from the test type

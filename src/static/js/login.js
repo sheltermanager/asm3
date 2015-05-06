@@ -1,9 +1,9 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, _, common, controller */
+/*global $, _, common, controller, login: true */
 
 $(function() {
 
-    var login = {
+    login = {
         render: function() {
             var h = [
                 '<div id="asm-login-nav" style="display: none">',
@@ -290,8 +290,5 @@ $(function() {
             });
         }
     };
-
-    $("body").append(login.render());
-    login.bind();
 
 });

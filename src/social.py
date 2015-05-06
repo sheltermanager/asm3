@@ -28,9 +28,9 @@ def post_animal_facebook(dbo, user, oauth_code, oauth_state):
         fb_url = "https://graph.facebook.com/oauth/access_token?client_id=%s&redirect_uri=%s&client_secret=%s&code=%s" %  \
             (client_id, redirect_uri, client_secret, oauth_code)
 
-        al.debug("FB access token request: " + fb_url, "social.post_animal_facebook", dbo)
+        al.debug("FB access token request: %s" % fb_url, "social.post_animal_facebook", dbo)
         access_token = utils.get_url(fb_url)["response"]
-        al.debug("FB access token response: " + access_token, "social.post_animal_facebook", dbo)
+        al.debug("FB access token response: %s" % access_token, "social.post_animal_facebook", dbo)
 
     except Exception,err:
         em = str(err)
@@ -67,10 +67,10 @@ def post_animal_facebook(dbo, user, oauth_code, oauth_state):
     if page_name != "":
         try:
             fb_url = "https://graph.facebook.com/me/accounts?access_token=%s" % access_token
-            al.debug("FB accounts list request: " + fb_url, "social.post_animal_facebook", dbo)
+            al.debug("FB accounts list request: %s" % fb_url, "social.post_animal_facebook", dbo)
             accounts_list = utils.get_url(fb_url)["response"]
             json_response = html.json_parse(accounts_list)
-            al.debug("FB accounts list response: %s" + accounts_list, "social.post_animal_facebook", dbo)
+            al.debug("FB accounts list response: %s" % accounts_list, "social.post_animal_facebook", dbo)
             al.debug("FB page name to look for '%s'" % page_name, "social.post_animal_facebook", dbo)
             for item in json_response["data"]:
                 if item["name"].find(page_name) != -1:

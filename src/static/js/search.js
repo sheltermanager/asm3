@@ -181,9 +181,18 @@ $(function() {
         },
 
         bind: function() {
-        }
+        },
+
+        sync: function() {
+        },
+
+        name: "search",
+        animation: "results"
     };
 
+    common.module_register(search);
+
+    /*
     // Show the results into the page
     $("body").append(search.render());
     
@@ -194,5 +203,6 @@ $(function() {
     search.bind();
     common.apply_label_overrides("search");
     $("#asm-content").asmcontent("results");
+    */
 
 });

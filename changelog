@@ -1,6 +1,8 @@
 37
 ================
 
+06/05/15 JS refactoring, remove globals, isolate modules, model methods
+06/05/15 More JS refactoring, allow single rollup file
 05/05/15 Allow fractional stock values #150
 05/05/15 JS refactoring to enable client side routing complete #161
 05/05/15 Add checkbox and radiogroup onlineform fields #189

@@ -90,6 +90,11 @@ ADMIN_EMAIL = "you@youraddress.com"
 # in html.py will reference them instead
 MINIFY_JS = False
 
+# If ROLLUP_JS is set to True, all javascript files will be rolled
+# up into a single file before sending to the client (combine
+# with MINIFY_JS for smallest payload in a single request)
+ROLLUP_JS = False
+
 # Only allow hotlinks to the animal_image and extra_image
 # service calls from this domain (blank for any domain)
 IMAGE_HOTLINKING_ONLY_FROM_DOMAIN = ""

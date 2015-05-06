@@ -3,239 +3,245 @@
 
 $(function() {
 
-    var medical = {}, lastanimal;
+    var lastanimal;
 
-    var dialog = {
-        add_title: _("Add medical regimen"),
-        edit_title: _("Edit medical regimen"),
-        edit_perm: 'mcam',
-        helper_text: _("Medical regimens need an animal, name, dosage, a start date and frequencies."),
-        close_on_ok: true,
-        autofocus: false,
-        hide_read_only: true,
-        columns: 1,
-        width: 800,
-        fields: [
-            { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "animal" },
-            { json_field: "ANIMALS", post_field: "animals", label: _("Animals"), type: "animalmulti" },
-            { json_field: "MEDICALPROFILEID", post_field: "profileid", label:_("Profile"), type: "select",
-                options: '<option value="0"></option>' +
-                html.list_to_options(controller.profiles, "ID", "PROFILENAME") },
-            { json_field: "TREATMENTNAME", post_field: "treatmentname", label: _("Name"), type: "text", validation: "notblank" },
-            { json_field: "DOSAGE", post_field: "dosage", label: _("Dosage"), type: "text", validation: "notblank" },
-            { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency", defaultval: "0", hideif: function() { return !config.bool("ShowCostAmount"); } },
-            { json_field: "COSTPAIDDATE", post_field: "costpaid", label: _("Paid"), type: "date", hideif: function() { return !config.bool("ShowCostPaid"); } },
-            { json_field: "STARTDATE", post_field: "startdate", label: _("Start Date"), type: "date", validation: "notblank" },
-            { json_field: "STATUS", post_field: "status", label: _("Status"), type: "select",
-                options: '<option value="0">' + _("Active") + '</option><option value="1">' 
-                    + _("Held") + '</option><option value="2">' + _("Completed") + '</option>' },
-            { post_field: "singlemulti", label: _("Frequency"), type: "select", readonly: true, 
-                options: '<option value="0">' + _("Single Treatment") + '</option>' +
-                '<option value="1" selected="selected">' + _("Multiple Treatments") + '</option>' },
-            { type: "raw", justwidget: true, markup: "<tr><td></td><td>" },
-            { json_field: "TIMINGRULE", post_field: "timingrule", type: "number", readonly: true, justwidget: true, halfsize: true, defaultval: "1" },
-            { type: "raw", justwidget: true, markup: " " + _("treatments, every") + " " },
-            { json_field: "TIMINGRULENOFREQUENCIES", post_field: "timingrulenofrequencies", type: "number", justwidget: true, halfsize: true, readonly: true, defaultval: "1" },
-            { type: "raw", justwidget: true, markup: " " },
-            { json_field: "TIMINGRULEFREQUENCY", post_field: "timingrulefrequency", type: "select", justwidget: true, halfsize: true, readonly: true, options: 
-                    '<option value="0">' + _("days") + '</option>' + 
-                    '<option value="4">' + _("weekdays") + '</option>' +
-                    '<option value="1">' + _("weeks") + '</option>' +
-                    '<option value="2">' + _("months") + '</option>' + 
-                    '<option value="3">' + _("years") + '</option>' },
-            { type: "raw", justwidget: true, markup: "</td></tr>" },
-            { type: "raw", justwidget: true, markup: "<tr><td>" + _("Duration") + "</td><td>" },
-            { json_field: "TREATMENTRULE", post_field: "treatmentrule", justwidget: true, type: "select", halfsize: true, readonly: true, options:
-                    '<option value="0">' + _("Ends after") + '</option>' +
-                    '<option value="1">' + _("Unspecified") + '</option>' },
-            { type: "raw", justwidget: true, markup: " <span id='treatmentrulecalc'>" },
-            { json_field: "TOTALNUMBEROFTREATMENTS", post_field: "totalnumberoftreatments", justwidget: true, halfsize: true, type: "number", readonly: true, 
-                    defaultval: "1" },
-            { type: "raw", justwidget: true, markup:
-                ' <span id="timingrulefrequencyagain">' + _("days") + '</span> ' +
-                '(<span id="displaytotalnumberoftreatments">0</span> ' + _("treatments") + ')' +
-                '</span></span>' +
-                '</td></tr>'},
-            { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
-        ]
-    };
+    var medical = {
 
-    var table = {
-        rows: controller.rows,
-        idcolumn: "COMPOSITEID",
-        edit: function(row) {
-            if (controller.animal) {
-                $("#animal").closest("tr").hide();
-            }
-            else {
-                $("#animal").closest("tr").show();
-            }
-            $("#animals").closest("tr").hide();
-            $("#profileid").closest("tr").hide();
-            $("#treatmentrulecalc").hide();
-            $("#status").closest("tr").show();
-            tableform.fields_populate_from_json(dialog.fields, row);
-            tableform.dialog_show_edit(dialog, row, function() {
-                tableform.fields_update_row(dialog.fields, row);
-                medical.set_extra_fields(row);
-                tableform.fields_post(dialog.fields, "mode=update&regimenid=" + row.REGIMENID, controller.name, function(response) {
-                    tableform.table_update(table);
-                    tableform.dialog_close();
-                },
-                function(response) {
-                    tableform.dialog_error(response);
-                    tableform.dialog_enable_buttons();
-                });
-            });
-        },
-        complete: function(row) {
-            if (row.DATEGIVEN || row.STATUS == 2) { return true; }
-            return false;
-        },
-        overdue: function(row) {
-            return !row.DATEGIVEN && row.STATUS == 0 && format.date_js(row.DATEREQUIRED) < common.today_no_time();
-        },
-        columns: [
-            { field: "TREATMENTNAME", display: _("Name") },
-            { field: "IMAGE", display: "", 
-                formatter: function(row) {
-                    return '<a href="animal?id=' + row.ANIMALID + '"><img src=' + html.thumbnail_src(row, "animalthumb") + ' style="margin-right: 8px" class="asm-thumbnail" /></a>';
-                },
-                hideif: function(row) {
-                    // Don't show this column if we're in an animal record, or the option is turned off
-                    if (controller.animal || !config.bool("PicturesInBooks")) {
-                        return true;
+        model: function() {
+            var dialog = {
+                add_title: _("Add medical regimen"),
+                edit_title: _("Edit medical regimen"),
+                edit_perm: 'mcam',
+                helper_text: _("Medical regimens need an animal, name, dosage, a start date and frequencies."),
+                close_on_ok: true,
+                autofocus: false,
+                hide_read_only: true,
+                columns: 1,
+                width: 800,
+                fields: [
+                    { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "animal" },
+                    { json_field: "ANIMALS", post_field: "animals", label: _("Animals"), type: "animalmulti" },
+                    { json_field: "MEDICALPROFILEID", post_field: "profileid", label:_("Profile"), type: "select",
+                        options: '<option value="0"></option>' +
+                        html.list_to_options(controller.profiles, "ID", "PROFILENAME") },
+                    { json_field: "TREATMENTNAME", post_field: "treatmentname", label: _("Name"), type: "text", validation: "notblank" },
+                    { json_field: "DOSAGE", post_field: "dosage", label: _("Dosage"), type: "text", validation: "notblank" },
+                    { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency", defaultval: "0", hideif: function() { return !config.bool("ShowCostAmount"); } },
+                    { json_field: "COSTPAIDDATE", post_field: "costpaid", label: _("Paid"), type: "date", hideif: function() { return !config.bool("ShowCostPaid"); } },
+                    { json_field: "STARTDATE", post_field: "startdate", label: _("Start Date"), type: "date", validation: "notblank" },
+                    { json_field: "STATUS", post_field: "status", label: _("Status"), type: "select",
+                        options: '<option value="0">' + _("Active") + '</option><option value="1">' 
+                            + _("Held") + '</option><option value="2">' + _("Completed") + '</option>' },
+                    { post_field: "singlemulti", label: _("Frequency"), type: "select", readonly: true, 
+                        options: '<option value="0">' + _("Single Treatment") + '</option>' +
+                        '<option value="1" selected="selected">' + _("Multiple Treatments") + '</option>' },
+                    { type: "raw", justwidget: true, markup: "<tr><td></td><td>" },
+                    { json_field: "TIMINGRULE", post_field: "timingrule", type: "number", readonly: true, justwidget: true, halfsize: true, defaultval: "1" },
+                    { type: "raw", justwidget: true, markup: " " + _("treatments, every") + " " },
+                    { json_field: "TIMINGRULENOFREQUENCIES", post_field: "timingrulenofrequencies", type: "number", justwidget: true, halfsize: true, readonly: true, defaultval: "1" },
+                    { type: "raw", justwidget: true, markup: " " },
+                    { json_field: "TIMINGRULEFREQUENCY", post_field: "timingrulefrequency", type: "select", justwidget: true, halfsize: true, readonly: true, options: 
+                            '<option value="0">' + _("days") + '</option>' + 
+                            '<option value="4">' + _("weekdays") + '</option>' +
+                            '<option value="1">' + _("weeks") + '</option>' +
+                            '<option value="2">' + _("months") + '</option>' + 
+                            '<option value="3">' + _("years") + '</option>' },
+                    { type: "raw", justwidget: true, markup: "</td></tr>" },
+                    { type: "raw", justwidget: true, markup: "<tr><td>" + _("Duration") + "</td><td>" },
+                    { json_field: "TREATMENTRULE", post_field: "treatmentrule", justwidget: true, type: "select", halfsize: true, readonly: true, options:
+                            '<option value="0">' + _("Ends after") + '</option>' +
+                            '<option value="1">' + _("Unspecified") + '</option>' },
+                    { type: "raw", justwidget: true, markup: " <span id='treatmentrulecalc'>" },
+                    { json_field: "TOTALNUMBEROFTREATMENTS", post_field: "totalnumberoftreatments", justwidget: true, halfsize: true, type: "number", readonly: true, 
+                            defaultval: "1" },
+                    { type: "raw", justwidget: true, markup:
+                        ' <span id="timingrulefrequencyagain">' + _("days") + '</span> ' +
+                        '(<span id="displaytotalnumberoftreatments">0</span> ' + _("treatments") + ')' +
+                        '</span></span>' +
+                        '</td></tr>'},
+                    { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
+                ]
+            };
+
+            var table = {
+                rows: controller.rows,
+                idcolumn: "COMPOSITEID",
+                edit: function(row) {
+                    if (controller.animal) {
+                        $("#animal").closest("tr").hide();
                     }
-                }
-            },
-            { field: "ANIMAL", display: _("Animal"), 
-                formatter: function(row) {
-                    var s = "";
-                    if (controller.name.indexOf("animal_") == -1) { s = html.animal_emblems(row) + " "; }
-                    return s + '<a href="animal?id=' + row.ANIMALID + '">' + row.ANIMALNAME + ' - ' + row.SHELTERCODE + '</a>';
-                },
-                hideif: function(row) {
-                    // Don't show for animal records
-                    if (controller.animal) { return true; }
-                }
-            },
-            { field: "LOCATIONNAME", display: _("Location"),
-                formatter: function(row) {
-                    var s = row.LOCATIONNAME;
-                    if (row.LOCATIONUNIT) {
-                        s += ' <span class="asm-search-locationunit">' + row.LOCATIONUNIT + '</span>';
+                    else {
+                        $("#animal").closest("tr").show();
                     }
-                    return s;
+                    $("#animals").closest("tr").hide();
+                    $("#profileid").closest("tr").hide();
+                    $("#treatmentrulecalc").hide();
+                    $("#status").closest("tr").show();
+                    tableform.fields_populate_from_json(dialog.fields, row);
+                    tableform.dialog_show_edit(dialog, row, function() {
+                        tableform.fields_update_row(dialog.fields, row);
+                        medical.set_extra_fields(row);
+                        tableform.fields_post(dialog.fields, "mode=update&regimenid=" + row.REGIMENID, controller.name, function(response) {
+                            tableform.table_update(table);
+                            tableform.dialog_close();
+                        },
+                        function(response) {
+                            tableform.dialog_error(response);
+                            tableform.dialog_enable_buttons();
+                        });
+                    });
                 },
-                hideif: function(row) {
-                     // Don't show for animal records
-                    if (controller.animal) { return true; }
-                }
-            },
-            { field: "DOSAGE", display: _("Dosage") },
-            { field: "STARTDATE", display: _("Started"), formatter: tableform.format_date },
-            { field: "NAMEDSTATUS", display: _("Status"), formatter: function(row) {
-                return row.NAMEDSTATUS + ", " + row.NAMEDFREQUENCY + " " + html.icon("right") + " " + row.NAMEDNUMBEROFTREATMENTS +
-                    " (" + row.TREATMENTNUMBER + "/" + row.TOTALTREATMENTS + ")";
-            }},
-            { field: "COST", display: _("Cost"), formatter: tableform.format_currency,
-                hideif: function() { return !config.bool("ShowCostAmount"); }
-            },
-            { field: "COSTPAIDDATE", display: _("Paid"), formatter: tableform.format_date,
-                hideif: function() { return !config.bool("ShowCostPaid"); }
-            },
-            { field: "DATEREQUIRED", display: _("Required"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
-            { field: "DATEGIVEN", display: _("Given"), formatter: tableform.format_date },
-            { field: "GIVENBY", display: _("By") },
-            { field: "COMMENTS", display: _("Comments") }
-        ]
-    };
+                complete: function(row) {
+                    if (row.DATEGIVEN || row.STATUS == 2) { return true; }
+                    return false;
+                },
+                overdue: function(row) {
+                    return !row.DATEGIVEN && row.STATUS == 0 && format.date_js(row.DATEREQUIRED) < common.today_no_time();
+                },
+                columns: [
+                    { field: "TREATMENTNAME", display: _("Name") },
+                    { field: "IMAGE", display: "", 
+                        formatter: function(row) {
+                            return '<a href="animal?id=' + row.ANIMALID + '"><img src=' + html.thumbnail_src(row, "animalthumb") + ' style="margin-right: 8px" class="asm-thumbnail" /></a>';
+                        },
+                        hideif: function(row) {
+                            // Don't show this column if we're in an animal record, or the option is turned off
+                            if (controller.animal || !config.bool("PicturesInBooks")) {
+                                return true;
+                            }
+                        }
+                    },
+                    { field: "ANIMAL", display: _("Animal"), 
+                        formatter: function(row) {
+                            var s = "";
+                            if (controller.name.indexOf("animal_") == -1) { s = html.animal_emblems(row) + " "; }
+                            return s + '<a href="animal?id=' + row.ANIMALID + '">' + row.ANIMALNAME + ' - ' + row.SHELTERCODE + '</a>';
+                        },
+                        hideif: function(row) {
+                            // Don't show for animal records
+                            if (controller.animal) { return true; }
+                        }
+                    },
+                    { field: "LOCATIONNAME", display: _("Location"),
+                        formatter: function(row) {
+                            var s = row.LOCATIONNAME;
+                            if (row.LOCATIONUNIT) {
+                                s += ' <span class="asm-search-locationunit">' + row.LOCATIONUNIT + '</span>';
+                            }
+                            return s;
+                        },
+                        hideif: function(row) {
+                             // Don't show for animal records
+                            if (controller.animal) { return true; }
+                        }
+                    },
+                    { field: "DOSAGE", display: _("Dosage") },
+                    { field: "STARTDATE", display: _("Started"), formatter: tableform.format_date },
+                    { field: "NAMEDSTATUS", display: _("Status"), formatter: function(row) {
+                        return row.NAMEDSTATUS + ", " + row.NAMEDFREQUENCY + " " + html.icon("right") + " " + row.NAMEDNUMBEROFTREATMENTS +
+                            " (" + row.TREATMENTNUMBER + "/" + row.TOTALTREATMENTS + ")";
+                    }},
+                    { field: "COST", display: _("Cost"), formatter: tableform.format_currency,
+                        hideif: function() { return !config.bool("ShowCostAmount"); }
+                    },
+                    { field: "COSTPAIDDATE", display: _("Paid"), formatter: tableform.format_date,
+                        hideif: function() { return !config.bool("ShowCostPaid"); }
+                    },
+                    { field: "DATEREQUIRED", display: _("Required"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
+                    { field: "DATEGIVEN", display: _("Given"), formatter: tableform.format_date },
+                    { field: "GIVENBY", display: _("By") },
+                    { field: "COMMENTS", display: _("Comments") }
+                ]
+            };
 
-    var buttons = [
-        { id: "new", text: _("New Regimen"), icon: "new", enabled: "always", perm: "maam",
-             click: function() { medical.new_medical(); }},
-        { id: "bulk", text: _("Bulk Regimen"), icon: "new", enabled: "always",
-            hideif: function() { return controller.animal; }, click: function() { medical.new_bulk_medical(); }},
-         { id: "delete-regimens", text: _("Delete Regimen"), icon: "delete", enabled: "multi", 
-             mouseover: function() {
-                medical.highlight_selected_regimens(true);
-             },
-             mouseleave: function() {
-                medical.highlight_selected_regimens(false);
-             },
-             click: function() { 
-                 tableform.delete_dialog(function() {
-                     tableform.buttons_default_state(buttons);
-                     var ids = medical.selected_regimen_ids();
-                     common.ajax_post(controller.name, "mode=delete_regimen&ids=" + ids , function() {
-                         medical.remove_selected_regimens();
-                         tableform.table_update(table);
-                     });
-                 });
-             } 
-         },
-         { id: "delete-treatments", text: _("Delete Treatments"), icon: "delete", enabled: "multi", perm: "mdam", 
-             mouseover: function() {
-                medical.highlight_selected_treatments(true);
-             },
-             mouseleave: function() {
-                medical.highlight_selected_treatments(false);
-             },
-             click: function() { 
-                 tableform.delete_dialog(function() {
-                     tableform.buttons_default_state(buttons);
-                     var ids = medical.selected_treatment_ids();
-                     common.ajax_post(controller.name, "mode=delete_treatment&ids=" + ids , function() {
-                         medical.remove_selected_treatments();
-                         tableform.table_update(table);
-                     });
-                 });
-             } 
-         },
-         { id: "given", text: _("Give"), icon: "complete", enabled: "multi", perm: "mcam", 
-             tooltip: _("Mark treatments given"),
-             click: function() {
-                var comments = "";
-                $.each(controller.rows, function(i, v) {
-                    if (tableform.table_id_selected(v.COMPOSITEID)) {
-                        comments += "[" + v.SHELTERCODE + " - " + v.ANIMALNAME + "] ";
-                    }
-                });
-                $("#usagecomments").val(comments);
-                $("#newdate").datepicker("setDate", new Date());
-                $("#usagetype").select("firstvalue");
-                $("#usagedate").datepicker("setDate", new Date());
-                $("#quantity").val("1");
-                $("#dialog-given").dialog("open");
-             }
-         },
-         { id: "required", text: _("Change Date Required"), icon: "calendar", enabled: "multi", perm: "mcam", 
-             tooltip: _("Change date required on selected treatments"),
-             click: function() {
-                $("#newdater").datepicker("setDate", new Date());
-                $("#dialog-required").dialog("open");
-             }
-         },
+            var buttons = [
+                { id: "new", text: _("New Regimen"), icon: "new", enabled: "always", perm: "maam",
+                     click: function() { medical.new_medical(); }},
+                { id: "bulk", text: _("Bulk Regimen"), icon: "new", enabled: "always",
+                    hideif: function() { return controller.animal; }, click: function() { medical.new_bulk_medical(); }},
+                 { id: "delete-regimens", text: _("Delete Regimen"), icon: "delete", enabled: "multi", 
+                     mouseover: function() {
+                        medical.highlight_selected_regimens(true);
+                     },
+                     mouseleave: function() {
+                        medical.highlight_selected_regimens(false);
+                     },
+                     click: function() { 
+                         tableform.delete_dialog(function() {
+                             tableform.buttons_default_state(buttons);
+                             var ids = medical.selected_regimen_ids();
+                             common.ajax_post(controller.name, "mode=delete_regimen&ids=" + ids , function() {
+                                 medical.remove_selected_regimens();
+                                 tableform.table_update(table);
+                             });
+                         });
+                     } 
+                 },
+                 { id: "delete-treatments", text: _("Delete Treatments"), icon: "delete", enabled: "multi", perm: "mdam", 
+                     mouseover: function() {
+                        medical.highlight_selected_treatments(true);
+                     },
+                     mouseleave: function() {
+                        medical.highlight_selected_treatments(false);
+                     },
+                     click: function() { 
+                         tableform.delete_dialog(function() {
+                             tableform.buttons_default_state(buttons);
+                             var ids = medical.selected_treatment_ids();
+                             common.ajax_post(controller.name, "mode=delete_treatment&ids=" + ids , function() {
+                                 medical.remove_selected_treatments();
+                                 tableform.table_update(table);
+                             });
+                         });
+                     } 
+                 },
+                 { id: "given", text: _("Give"), icon: "complete", enabled: "multi", perm: "mcam", 
+                     tooltip: _("Mark treatments given"),
+                     click: function() {
+                        var comments = "";
+                        $.each(controller.rows, function(i, v) {
+                            if (tableform.table_id_selected(v.COMPOSITEID)) {
+                                comments += "[" + v.SHELTERCODE + " - " + v.ANIMALNAME + "] ";
+                            }
+                        });
+                        $("#usagecomments").val(comments);
+                        $("#newdate").datepicker("setDate", new Date());
+                        $("#usagetype").select("firstvalue");
+                        $("#usagedate").datepicker("setDate", new Date());
+                        $("#quantity").val("1");
+                        $("#dialog-given").dialog("open");
+                     }
+                 },
+                 { id: "required", text: _("Change Date Required"), icon: "calendar", enabled: "multi", perm: "mcam", 
+                     tooltip: _("Change date required on selected treatments"),
+                     click: function() {
+                        $("#newdater").datepicker("setDate", new Date());
+                        $("#dialog-required").dialog("open");
+                     }
+                 },
 
-         { id: "offset", type: "dropdownfilter", 
-             options: [ "m365|" + _("Due today"), "p7|" + _("Due in next week"), "p31|" + _("Due in next month"), "p365|" + _("Due in next year") ],
-             click: function(selval) {
-                window.location = controller.name + "?offset=" + selval;
-             },
-             hideif: function(row) {
-                 // Don't show for animal records
-                 if (controller.animal) {
-                     return true;
+                 { id: "offset", type: "dropdownfilter", 
+                     options: [ "m365|" + _("Due today"), "p7|" + _("Due in next week"), "p31|" + _("Due in next month"), "p365|" + _("Due in next year") ],
+                     click: function(selval) {
+                        window.location = controller.name + "?offset=" + selval;
+                     },
+                     hideif: function(row) {
+                         // Don't show for animal records
+                         if (controller.animal) {
+                             return true;
+                         }
+                     }
                  }
-             }
-         }
-    ];
-
-    medical = {
+            ];
+            this.dialog = dialog;
+            this.buttons = buttons;
+            this.table = table;
+        },
 
         render: function() {
             var s = "";
-            s += tableform.dialog_render(dialog);
+            this.model();
+            s += tableform.dialog_render(this.dialog);
             s += medical.render_givendialog();
             s += medical.render_requireddialog();
             if (controller.animal) {
@@ -244,8 +250,8 @@ $(function() {
             else {
                 s += html.content_header(_("Medical Book"));
             }
-            s += tableform.buttons_render(buttons);
-            s += tableform.table_render(table);
+            s += tableform.buttons_render(this.buttons);
+            s += tableform.table_render(this.table);
             s += html.content_footer();
             return s;
         },
@@ -360,9 +366,9 @@ $(function() {
             $("#profileid").closest("tr").show();
             $("#treatmentrulecalc").show();
             $("#status").closest("tr").hide();
-            tableform.dialog_show_add(dialog, function() {
+            tableform.dialog_show_add(medical.dialog, function() {
                 tableform.dialog_disable_buttons();   
-                tableform.fields_post(dialog.fields, "mode=createbulk", controller.name, function(response) {
+                tableform.fields_post(medical.dialog.fields, "mode=createbulk", controller.name, function(response) {
                     window.location.reload();
                 }, function() {
                     tableform.dialog_enable_buttons();   
@@ -428,7 +434,7 @@ $(function() {
                             if (!v.GIVENBY) { v.GIVENBY = asm.user; }
                         }
                     });
-                    tableform.table_update(table);
+                    tableform.table_update(medical.table);
                     $("#dialog-given").dialog("close");
                     $("#dialog-given").enable_dialog_buttons();
                 });
@@ -477,7 +483,7 @@ $(function() {
                             v.DATEREQUIRED = format.date_iso($("#newdater").val());
                         }
                     });
-                    tableform.table_update(table);
+                    tableform.table_update(medical.table);
                     $("#dialog-required").dialog("close");
                     $("#dialog-required").enable_dialog_buttons();
                 });
@@ -537,9 +543,9 @@ $(function() {
 
         bind: function() {
             $(".asm-tabbar").asmtabs();
-            tableform.dialog_bind(dialog);
-            tableform.buttons_bind(buttons);
-            tableform.table_bind(table, buttons);
+            tableform.dialog_bind(this.dialog);
+            tableform.buttons_bind(this.buttons);
+            tableform.table_bind(this.table, this.buttons);
             this.bind_givendialog();
             this.bind_requireddialog();
 

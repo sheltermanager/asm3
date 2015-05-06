@@ -3,33 +3,37 @@
 
 $(function() {
 
-    var dialog = {
-        add_title: _("Add rota item"),
-        edit_title: _("Edit rota item"),
-        edit_perm: 'coro',
-        close_on_ok: true,
-        delete_button: true,
-        delete_perm: 'doro',
-        columns: 1,
-        width: 550,
-        fields: [
-            { json_field: "OWNERID", post_field: "person", personmode: "brief", personfilter: "volunteerandstaff", 
-                label: _("Person"), type: "person", validation: "notzero" },
-            { json_field: "ROTATYPEID", post_field: "type", label: _("Type"), type: "select", 
-                options: { displayfield: "ROTATYPE", valuefield: "ID", rows: controller.rotatypes }},
-            { json_field: "STARTDATETIME", post_field: "startdate", label: _("Starts"), type: "date", validation: "notblank", defaultval: new Date() },
-            { json_field: "STARTDATETIME", post_field: "starttime", label: _("at"), type: "time", validation: "notblank", defaultval: config.str("DefaultShiftStart") },
-            { json_field: "ENDDATETIME", post_field: "enddate", label: _("Ends"), type: "date", validation: "notblank", defaultval: new Date() },
-            { json_field: "ENDDATETIME", post_field: "endtime", label: _("at"), type: "time", validation: "notblank", defaultval: config.str("DefaultShiftEnd") },
-            { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
-        ]
-    };
-
     var staff_rota = {
 
+        model: function() {
+            var dialog = {
+                add_title: _("Add rota item"),
+                edit_title: _("Edit rota item"),
+                edit_perm: 'coro',
+                close_on_ok: true,
+                delete_button: true,
+                delete_perm: 'doro',
+                columns: 1,
+                width: 550,
+                fields: [
+                    { json_field: "OWNERID", post_field: "person", personmode: "brief", personfilter: "volunteerandstaff", 
+                        label: _("Person"), type: "person", validation: "notzero" },
+                    { json_field: "ROTATYPEID", post_field: "type", label: _("Type"), type: "select", 
+                        options: { displayfield: "ROTATYPE", valuefield: "ID", rows: controller.rotatypes }},
+                    { json_field: "STARTDATETIME", post_field: "startdate", label: _("Starts"), type: "date", validation: "notblank", defaultval: new Date() },
+                    { json_field: "STARTDATETIME", post_field: "starttime", label: _("at"), type: "time", validation: "notblank", defaultval: config.str("DefaultShiftStart") },
+                    { json_field: "ENDDATETIME", post_field: "enddate", label: _("Ends"), type: "date", validation: "notblank", defaultval: new Date() },
+                    { json_field: "ENDDATETIME", post_field: "endtime", label: _("at"), type: "time", validation: "notblank", defaultval: config.str("DefaultShiftEnd") },
+                    { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
+                ]
+            };
+            this.dialog = dialog;
+        },
+
         render: function() {
+            this.model();
             return [
-                tableform.dialog_render(dialog),
+                tableform.dialog_render(this.dialog),
                 staff_rota.render_clonedialog(),
                 html.content_header(_("Staff Rota")),
                 tableform.buttons_render([
@@ -163,6 +167,7 @@ $(function() {
 
         bind: function() {
 
+            var dialog = this.dialog;
             tableform.dialog_bind(dialog);
             staff_rota.bind_clonedialog();
 

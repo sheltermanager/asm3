@@ -3,11 +3,11 @@
 
 $(function() {
 
-    var mode = controller.name.indexOf("lost") != -1 ? "lost" : "found";
-
     var lostfound_new = {
 
         render: function() {
+            var mode = controller.name.indexOf("lost") != -1 ? "lost" : "found";
+            this.mode = mode;
             return [
                 mode == "lost" ? html.content_header(_("Add lost animal")) : html.content_header(_("Add found animal")),
                 '<table class="asm-table-layout">',
@@ -135,7 +135,7 @@ $(function() {
                 }
 
                 // date lost
-                if (mode == "lost" && $.trim($("#datelost").val()) == "") {
+                if (lostfound_new.mode == "lost" && $.trim($("#datelost").val()) == "") {
                     header.show_error(_("Date lost cannot be blank."));
                     $("label[for='datelost']").addClass("ui-state-error-text");
                     $("#datelost").focus();
@@ -143,7 +143,7 @@ $(function() {
                 }
 
                 // date found
-                if (mode == "found" && $.trim($("#datefound").val()) == "") {
+                if (lostfound_new.mode == "found" && $.trim($("#datefound").val()) == "") {
                     header.show_error(_("Date found cannot be blank."));
                     $("label[for='datefound']").addClass("ui-state-error-text");
                     $("#datefound").focus();
@@ -171,7 +171,7 @@ $(function() {
                 var formdata = $("input, select, textarea").toPOST();
                 common.ajax_post(controller.name, formdata, function(createdID) { 
                     if (addmode == "add") {
-                        if (mode == "lost") {
+                        if (lostfound_new.mode == "lost") {
                             header.show_info(_("Lost animal entry {0} successfully created.").replace("{0}", format.padleft(createdID, 6)));
                         }
                         else {
@@ -179,7 +179,7 @@ $(function() {
                         }
                     }
                     else {
-                        if (mode == "lost") {
+                        if (lostfound_new.mode == "lost") {
                             if (createdID != "0") { window.location = "lostanimal?id=" + createdID; }
                         }
                         else {
@@ -197,10 +197,10 @@ $(function() {
             $("#species").val(config.str("AFDefaultSpecies"));
 
             // Default dates
-            if (mode == "lost") {
+            if (lostfound_new.mode == "lost") {
                 $("#datelost").datepicker("setDate", new Date());
             }
-            if (mode == "found") {
+            if (lostfound_new.mode == "found") {
                 $("#datefound").datepicker("setDate", new Date());
             }
             $("#datereported").datepicker("setDate", new Date());

@@ -3,97 +3,103 @@
 
 $(function() {
 
-    var animal_costs;
 
-    var dialog = {
-        add_title: _("Add cost"),
-        edit_title: _("Edit cost"),
-        edit_perm: 'ccad',
-        helper_text: _("Costs need a date and amount."),
-        close_on_ok: true,
-        columns: 1,
-        width: 550,
-        fields: [
-            { json_field: "COSTTYPEID", post_field: "type", label: _("Type"), type: "select", options: { displayfield: "COSTTYPENAME", valuefield: "ID", rows: controller.costtypes }},
-            { json_field: "COSTDATE", post_field: "costdate", label: _("Date"), type: "date", validation: "notblank", defaultval: new Date() },
-            { json_field: "COSTPAIDDATE", post_field: "costpaid", label: _("Paid"), type: "date", hideif: function() { return !config.bool("ShowCostPaid"); } },
-            { json_field: "COSTAMOUNT", post_field: "cost", label: _("Cost"), type: "currency" },
-            { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "textarea" }
-        ]
-    };
+    var animal_costs = {
 
-    var table = {
-        rows: controller.rows,
-        idcolumn: "ID",
-        edit: function(row) {
-            tableform.dialog_show_edit(dialog, row, function() {
-                tableform.fields_update_row(dialog.fields, row);
-                row.COSTTYPENAME = common.get_field(controller.costtypes, row.COSTTYPEID, "COSTTYPENAME");
-                tableform.fields_post(dialog.fields, "mode=update&costid=" + row.ID, "animal_costs", function(response) {
-                    tableform.table_update(table);
-                    animal_costs.calculate_costtotals();
-                });
-            });
+        model: function() {
+            var dialog = {
+                add_title: _("Add cost"),
+                edit_title: _("Edit cost"),
+                edit_perm: 'ccad',
+                helper_text: _("Costs need a date and amount."),
+                close_on_ok: true,
+                columns: 1,
+                width: 550,
+                fields: [
+                    { json_field: "COSTTYPEID", post_field: "type", label: _("Type"), type: "select", options: { displayfield: "COSTTYPENAME", valuefield: "ID", rows: controller.costtypes }},
+                    { json_field: "COSTDATE", post_field: "costdate", label: _("Date"), type: "date", validation: "notblank", defaultval: new Date() },
+                    { json_field: "COSTPAIDDATE", post_field: "costpaid", label: _("Paid"), type: "date", hideif: function() { return !config.bool("ShowCostPaid"); } },
+                    { json_field: "COSTAMOUNT", post_field: "cost", label: _("Cost"), type: "currency" },
+                    { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "textarea" }
+                ]
+            };
+
+            var table = {
+                rows: controller.rows,
+                idcolumn: "ID",
+                edit: function(row) {
+                    tableform.dialog_show_edit(dialog, row, function() {
+                        tableform.fields_update_row(dialog.fields, row);
+                        row.COSTTYPENAME = common.get_field(controller.costtypes, row.COSTTYPEID, "COSTTYPENAME");
+                        tableform.fields_post(dialog.fields, "mode=update&costid=" + row.ID, "animal_costs", function(response) {
+                            tableform.table_update(table);
+                            animal_costs.calculate_costtotals();
+                        });
+                    });
+                },
+                columns: [
+                    { field: "COSTTYPENAME", display: _("Type") },
+                    { field: "COSTDATE", display: _("Date"), initialsort: true, initialsortdirection: "desc", formatter: tableform.format_date },
+                    { field: "COSTAMOUNT", display: _("Cost"), formatter: tableform.format_currency },
+                    { field: "COSTPAIDDATE", display: _("Paid"), formatter: tableform.format_date,
+                        hideif: function() { return !config.bool("ShowCostPaid"); }
+                    },
+                    { field: "DESCRIPTION", display: _("Description") }
+                ]
+            };
+
+            var buttons = [
+                 { id: "new", text: _("New Cost"), icon: "new", enabled: "always", perm: "caad",
+                     click: function() { 
+                         tableform.dialog_show_add(dialog, function() {
+                             tableform.fields_post(dialog.fields, "mode=create&animalid="  + controller.animal.ID, "animal_costs", function(response) {
+                                 var row = {};
+                                 row.ID = response;
+                                 tableform.fields_update_row(dialog.fields, row);
+                                 row.COSTTYPENAME = common.get_field(controller.costtypes, row.COSTTYPEID, "COSTTYPENAME");
+                                 controller.rows.push(row);
+                                 tableform.table_update(table);
+                                 animal_costs.calculate_costtotals();
+                             });
+                         }, function() { animal_costs.costtype_change(); });
+                     } 
+                 },
+                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "cdad",
+                     click: function() { 
+                         tableform.delete_dialog(function() {
+                             tableform.buttons_default_state(buttons);
+                             var ids = tableform.table_ids(table);
+                             common.ajax_post("animal_costs", "mode=delete&ids=" + ids , function() {
+                                 tableform.table_remove_selected_from_json(table, controller.rows);
+                                 tableform.table_update(table);
+                                 animal_costs.calculate_costtotals();
+                             });
+                         });
+                     } 
+                 },
+                 { type: "raw", markup: [
+                     '<span id="onshelterboard" style="float: right">',
+                     _("Daily Boarding Cost"),
+                     ' <input id="dailyboardingcost" type="textbox" class="asm-textbox asm-currencybox" />',
+                     '<button id="button-savecost">' + _("Update the daily boarding cost for this animal") + '</button>',
+                     '<span id="costonshelter"></span>',
+                     '</span>'
+                     ].join("\n")
+                 }
+            ];
+
+            this.dialog = dialog;
+            this.buttons = buttons;
+            this.table = table;
         },
-        columns: [
-            { field: "COSTTYPENAME", display: _("Type") },
-            { field: "COSTDATE", display: _("Date"), initialsort: true, initialsortdirection: "desc", formatter: tableform.format_date },
-            { field: "COSTAMOUNT", display: _("Cost"), formatter: tableform.format_currency },
-            { field: "COSTPAIDDATE", display: _("Paid"), formatter: tableform.format_date,
-                hideif: function() { return !config.bool("ShowCostPaid"); }
-            },
-            { field: "DESCRIPTION", display: _("Description") }
-        ]
-    };
-
-    var buttons = [
-         { id: "new", text: _("New Cost"), icon: "new", enabled: "always", perm: "caad",
-             click: function() { 
-                 tableform.dialog_show_add(dialog, function() {
-                     tableform.fields_post(dialog.fields, "mode=create&animalid="  + controller.animal.ID, "animal_costs", function(response) {
-                         var row = {};
-                         row.ID = response;
-                         tableform.fields_update_row(dialog.fields, row);
-                         row.COSTTYPENAME = common.get_field(controller.costtypes, row.COSTTYPEID, "COSTTYPENAME");
-                         controller.rows.push(row);
-                         tableform.table_update(table);
-                         animal_costs.calculate_costtotals();
-                     });
-                 }, function() { animal_costs.costtype_change(); });
-             } 
-         },
-         { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "cdad",
-             click: function() { 
-                 tableform.delete_dialog(function() {
-                     tableform.buttons_default_state(buttons);
-                     var ids = tableform.table_ids(table);
-                     common.ajax_post("animal_costs", "mode=delete&ids=" + ids , function() {
-                         tableform.table_remove_selected_from_json(table, controller.rows);
-                         tableform.table_update(table);
-                         animal_costs.calculate_costtotals();
-                     });
-                 });
-             } 
-         },
-         { type: "raw", markup: [
-             '<span id="onshelterboard" style="float: right">',
-             _("Daily Boarding Cost"),
-             ' <input id="dailyboardingcost" type="textbox" class="asm-textbox asm-currencybox" />',
-             '<button id="button-savecost">' + _("Update the daily boarding cost for this animal") + '</button>',
-             '<span id="costonshelter"></span>',
-             '</span>'
-             ].join("\n")
-         }
-    ];
-
-    animal_costs = {
 
         render: function() {
+            this.model();
             var s = "";
-            s += tableform.dialog_render(dialog);
+            s += tableform.dialog_render(this.dialog);
             s += edit_header.animal_edit_header(controller.animal, "costs", controller.tabcounts);
-            s += tableform.buttons_render(buttons);
-            s += tableform.table_render(table);
+            s += tableform.buttons_render(this.buttons);
+            s += tableform.table_render(this.table);
             s += [
                 '<div id="asm-cost-footer">',
                 '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
@@ -108,9 +114,9 @@ $(function() {
 
         bind: function() {
             $(".asm-tabbar").asmtabs();
-            tableform.dialog_bind(dialog);
-            tableform.buttons_bind(buttons);
-            tableform.table_bind(table, buttons);
+            tableform.dialog_bind(this.dialog);
+            tableform.buttons_bind(this.buttons);
+            tableform.table_bind(this.table, this.buttons);
             
             $("#type").change(animal_costs.costtype_change);
 

@@ -3,94 +3,96 @@
 
 $(function() {
 
-    var onlineform_incoming = {};
+    var onlineform_incoming = {
 
-    var table = {
-        rows: controller.rows,
-        idcolumn: "COLLATIONID",
-        edit: function(row) {
-            header.show_loading(_("Loading..."));
-            common.ajax_post("onlineform_incoming", "mode=view&collationid=" + row.COLLATIONID, function(result) {
-                $("#dialog-viewer-content").html(result); 
-                header.hide_loading();
-                $("#dialog-viewer").dialog("open");
-            }, function() {
-                header.hide_loading();
-            });
-        },
-        complete: function(row) {
-            if (row.LINK) { return true; }
-        },
-        columns: [
-            { field: "FORMNAME", display: _("Name") },
-            { field: "POSTEDDATE", display: _("Received"), initialsort: true, initialsortdirection: "desc", formatter: tableform.format_datetime },
-            { field: "HOST", display: _("From") },
-            { field: "PREVIEW", display: _("Preview") },
-            { field: "LINK", display: _("Link") }
-        ]
-    };
+        model: function() {
+            var table = {
+                rows: controller.rows,
+                idcolumn: "COLLATIONID",
+                edit: function(row) {
+                    header.show_loading(_("Loading..."));
+                    common.ajax_post("onlineform_incoming", "mode=view&collationid=" + row.COLLATIONID, function(result) {
+                        $("#dialog-viewer-content").html(result); 
+                        header.hide_loading();
+                        $("#dialog-viewer").dialog("open");
+                    }, function() {
+                        header.hide_loading();
+                    });
+                },
+                complete: function(row) {
+                    if (row.LINK) { return true; }
+                },
+                columns: [
+                    { field: "FORMNAME", display: _("Name") },
+                    { field: "POSTEDDATE", display: _("Received"), initialsort: true, initialsortdirection: "desc", formatter: tableform.format_datetime },
+                    { field: "HOST", display: _("From") },
+                    { field: "PREVIEW", display: _("Preview") },
+                    { field: "LINK", display: _("Link") }
+                ]
+            };
 
-    var buttons = [
-        { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
-             click: function() { 
-                 tableform.delete_dialog(function() {
-                     tableform.buttons_default_state(buttons);
-                     var ids = tableform.table_ids(table);
-                     common.ajax_post("onlineform_incoming", "mode=delete&ids=" + ids , function() {
-                         tableform.table_remove_selected_from_json(table, controller.rows);
-                         tableform.table_update(table);
-                     });
-                 });
-             } 
+            var buttons = [
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
+                     click: function() { 
+                         tableform.delete_dialog(function() {
+                             tableform.buttons_default_state(buttons);
+                             var ids = tableform.table_ids(table);
+                             common.ajax_post("onlineform_incoming", "mode=delete&ids=" + ids , function() {
+                                 tableform.table_remove_selected_from_json(table, controller.rows);
+                                 tableform.table_update(table);
+                             });
+                         });
+                     } 
+                },
+                { id: "print", text: _("Print"), icon: "print", enabled: "multi", tooltip: _("Print selected forms"), 
+                    click: function() {
+                        window.location = "onlineform_incoming?mode=print&ids=" + encodeURIComponent(tableform.table_ids(table));
+                    }
+                },
+                { id: "attachperson", text: _("Attach Person"), icon: "person-find", enabled: "one", tooltip: _("Attach this form to an existing person"), 
+                    click: function() {
+                        $("#dialog-attach-person").dialog("open");
+                    }
+                },
+                { id: "attachanimal", text: _("Attach Animal"), icon: "animal-find", enabled: "one", tooltip: _("Attach this form to an existing animal"), 
+                    click: function() {
+                        $("#dialog-attach-animal").dialog("open");
+                    }
+                },
+                { id: "animal", text: _("Animal"), icon: "animal-find", enabled: "multi", tooltip: _("Attach selected forms to animal records"),
+                    click: function() {
+                        onlineform_incoming.create_record("animal");
+                    }
+                },
+                { id: "person", text: _("Person"), icon: "person-add", enabled: "multi", tooltip: _("Create or attach person records from the selected forms"),
+                    click: function() {
+                        onlineform_incoming.create_record("person");
+                    }
+                },
+                { id: "lostanimal", text: _("Lost Animal"), icon: "animal-lost-add", enabled: "multi", tooltip: _("Create lost animal records from the selected forms"),
+                    click: function() {
+                        onlineform_incoming.create_record("lostanimal");
+                    }
+                },
+                { id: "foundanimal", text: _("Found Animal"), icon: "animal-found-add", enabled: "multi", tooltip: _("Create found animal records from the selected forms"),
+                    click: function() {
+                        onlineform_incoming.create_record("foundanimal");
+                    }
+                },
+                { id: "incident", text: _("Incident"), icon: "call", enabled: "multi", tooltip: _("Create animal control incident records from the selected forms"),
+                    click: function() {
+                        onlineform_incoming.create_record("incident");
+                    }
+                },
+                { id: "waitinglist", text: _("Waiting List"), icon: "waitinglist", enabled: "multi", tooltip: _("Create waiting list records from the selected forms"),
+                    click: function() {
+                        onlineform_incoming.create_record("waitinglist");
+                    }
+                }
+            ];
+            this.table = table;
+            this.buttons = buttons;
         },
-        { id: "print", text: _("Print"), icon: "print", enabled: "multi", tooltip: _("Print selected forms"), 
-            click: function() {
-                window.location = "onlineform_incoming?mode=print&ids=" + encodeURIComponent(tableform.table_ids(table));
-            }
-        },
-        { id: "attachperson", text: _("Attach Person"), icon: "person-find", enabled: "one", tooltip: _("Attach this form to an existing person"), 
-            click: function() {
-                $("#dialog-attach-person").dialog("open");
-            }
-        },
-        { id: "attachanimal", text: _("Attach Animal"), icon: "animal-find", enabled: "one", tooltip: _("Attach this form to an existing animal"), 
-            click: function() {
-                $("#dialog-attach-animal").dialog("open");
-            }
-        },
-        { id: "animal", text: _("Animal"), icon: "animal-find", enabled: "multi", tooltip: _("Attach selected forms to animal records"),
-            click: function() {
-                onlineform_incoming.create_record("animal");
-            }
-        },
-        { id: "person", text: _("Person"), icon: "person-add", enabled: "multi", tooltip: _("Create or attach person records from the selected forms"),
-            click: function() {
-                onlineform_incoming.create_record("person");
-            }
-        },
-        { id: "lostanimal", text: _("Lost Animal"), icon: "animal-lost-add", enabled: "multi", tooltip: _("Create lost animal records from the selected forms"),
-            click: function() {
-                onlineform_incoming.create_record("lostanimal");
-            }
-        },
-        { id: "foundanimal", text: _("Found Animal"), icon: "animal-found-add", enabled: "multi", tooltip: _("Create found animal records from the selected forms"),
-            click: function() {
-                onlineform_incoming.create_record("foundanimal");
-            }
-        },
-        { id: "incident", text: _("Incident"), icon: "call", enabled: "multi", tooltip: _("Create animal control incident records from the selected forms"),
-            click: function() {
-                onlineform_incoming.create_record("incident");
-            }
-        },
-        { id: "waitinglist", text: _("Waiting List"), icon: "waitinglist", enabled: "multi", tooltip: _("Create waiting list records from the selected forms"),
-            click: function() {
-                onlineform_incoming.create_record("waitinglist");
-            }
-        }
-    ];
-
-    onlineform_incoming = {
 
         render_viewer: function() {
             return [
@@ -160,7 +162,7 @@ $(function() {
         },
 
         bind_attach_person: function() {
-            var ab = {}; 
+            var ab = {}, table = onlineform_incoming.table; 
             ab[_("Attach")] = function() { 
                 if (!validate.notblank(["attachperson"])) { return; }
                 var formdata = "mode=attachperson&personid=" + $("#attachperson").val() + "&collationid=" + tableform.table_selected_row(table).COLLATIONID;
@@ -187,7 +189,7 @@ $(function() {
         },
 
         bind_attach_animal: function() {
-            var ab = {}; 
+            var ab = {}, table = onlineform_incoming.table; 
             ab[_("Attach")] = function() { 
                 if (!validate.notblank(["attachanimal"])) { return; }
                 var formdata = "mode=attachanimal&animalid=" + $("#attachanimal").val() + "&collationid=" + tableform.table_selected_row(table).COLLATIONID;
@@ -219,7 +221,7 @@ $(function() {
          *       (also used to choose the url target for created records)
          */
         create_record: function(mode) {
-             var ids = tableform.table_ids(table);
+             var table = onlineform_incoming.table, ids = tableform.table_ids(table);
              common.ajax_post("onlineform_incoming", "mode=" + mode + "&ids=" + ids , function(result) {
                  var selrows = tableform.table_selected_rows(table);
                  $.each(selrows, function(i, v) {
@@ -236,21 +238,22 @@ $(function() {
 
         render: function() {
             var s = "";
+            this.model();
             s += this.render_viewer();
             s += this.render_attach_person();
             s += this.render_attach_animal();
             s += html.content_header(_("Incoming Forms"));
             s += html.info(_("Incoming forms are online forms that have been completed and submitted by people on the web.") + 
                 "<br />" + _("You can use incoming forms to create new records or attach them to existing records."));
-            s += tableform.buttons_render(buttons);
-            s += tableform.table_render(table);
+            s += tableform.buttons_render(this.buttons);
+            s += tableform.table_render(this.table);
             s += html.content_footer();
             return s;
         },
 
         bind: function() {
-            tableform.buttons_bind(buttons);
-            tableform.table_bind(table, buttons);
+            tableform.buttons_bind(this.buttons);
+            tableform.table_bind(this.table, this.buttons);
             this.bind_viewer();
             this.bind_attach_animal();
             this.bind_attach_person();

@@ -77,6 +77,7 @@ urls = (
     "/change_user_settings", "change_user_settings",
     "/citations", "citations", 
     "/config.js", "configjs",
+    "/rollup.js", "rollupjs",
     "/css", "css",
     "/csvimport", "csvimport",
     "/database", "database",
@@ -348,15 +349,16 @@ def emergency_notice():
             return s
     return ""
 
-def full_or_json(s, c, json = False):
+def full_or_json(modulename, s, c, json = False):
     """
     If a json is true, return the controller as json,
-    otherwise return the full page in s.
+    otherwise return the full page in s and add an inline
+    script to load the correct module.
     """
     web.header("Cache-Control", "no-cache")
     if not json:
         web.header("Content-Type", "text/html")
-        return s
+        return s.replace("</body>", "<script>\n$(document).ready(function() { common.module_start(\"%s\"); });\n</script>\n</body>" % modulename)
     else:
         web.header("Content-Type", "application/json")
         if c.endswith(","): c = c[0:len(c)-1]
@@ -457,6 +459,12 @@ class image:
             web.header("Content-Type", "image/jpeg")
             web.header("Cache-Control", "no-cache")
             raise web.seeother("image?mode=dbfs&id=/reports/nopic.jpg")
+
+class rollupjs:
+    def GET(self):
+        web.header("Content-Type", "text/javascript")
+        web.header("Cache-Control", "max-age=86400")
+        return html.asm_rollup_scripts(PATH)
 
 class configjs:
     def GET(self):
@@ -729,7 +737,7 @@ class main:
         s += html.controller(c)
         s += html.footer()
         al.debug("main for '%s', %d diary notes, %d messages" % (session.user, len(dm), len(mess)), "code.main", dbo)
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("main", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -794,6 +802,7 @@ class login:
         c += html.controller_str("target", post["target"])
         s += html.controller(c)
         s += "<noscript>" + _("Sorry. ASM will not work without Javascript.", l) + "</noscript>\n"
+        s += '<script>\n$(document).ready(function() { $("body").append(login.render()); login.bind(); });\n</script>'
         s += html.footer()
         web.header("Content-Type", "text/html")
         return s
@@ -851,7 +860,7 @@ class accounts:
         c += html.controller_json("rows", accounts)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("accounts", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -911,7 +920,7 @@ class accounts_trx:
         c += html.controller_str("todate", python2display(l, todate))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("accounts_trx", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -948,7 +957,7 @@ class additional:
         c += html.controller_json("linktypes", extlookups.get_additionalfield_links(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("additional", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -1005,7 +1014,7 @@ class animal:
         c += html.controller_json("ynun", extlookups.get_ynun(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("animal", s, c, post["json"] == "true")
         
     def POST(self):
         utils.check_loggedin(session, web)
@@ -1051,7 +1060,7 @@ class animal_bulk:
         c += html.controller_json("internallocations", extlookups.get_internal_locations(dbo, session.locationfilter))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("animal_bulk", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -1080,7 +1089,7 @@ class animal_costs:
         c += html.controller_json("tabcounts", extanimal.get_satellite_counts(dbo, a["ID"])[0])
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("animal_costs", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -1124,7 +1133,7 @@ class animal_diary:
         c += html.controller_json("forlist", users.get_users_and_roles(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("diary", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -1164,7 +1173,7 @@ class animal_diet:
         c += html.controller_json("diettypes", diettypes)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("animal_diet", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -1205,7 +1214,7 @@ class animal_donations:
         c += html.controller_json("rows", donations)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("donations", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -1304,7 +1313,7 @@ class animal_find:
         s += html.controller(c)
         s += html.footer()
         al.debug("loaded lookups for find animal", "code.animal_find", dbo)
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("animal_find", s, c, post["json"] == "true")
 
 class animal_find_results:
     def GET(self):
@@ -1333,7 +1342,7 @@ class animal_find_results:
         c += html.controller_bool("wasonshelter", wasonshelter)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("animal_find_results", s, c, post["json"] == "true")
 
 class animal_licence:
     def GET(self):
@@ -1355,7 +1364,7 @@ class animal_licence:
         c += html.controller_json("licencetypes", extlookups.get_licence_types(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("licence", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -1395,7 +1404,7 @@ class animal_log:
         c += html.controller_json("logtypes", extlookups.get_log_types(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("log", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -1434,7 +1443,7 @@ class animal_media:
         c += html.controller_bool("newmedia", post.integer("newmedia") == 1)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("media", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -1542,7 +1551,7 @@ class animal_medical:
         c += html.controller_json("animal", a)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("medical", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -1598,7 +1607,7 @@ class animal_movements:
         c += html.controller_str("name", self.__class__.__name__)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("movements", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -1638,7 +1647,7 @@ class animal_new:
         s += html.controller(c)
         s += html.footer()
         al.debug("loaded lookups for new animal", "code.animal_new", dbo)
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("animal_new", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -1680,7 +1689,7 @@ class animal_test:
         c += html.controller_json("testresults", extlookups.get_test_results(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("test", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -1725,7 +1734,7 @@ class animal_transport:
         c += html.controller_json("rows", transports)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("transport", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -1765,7 +1774,7 @@ class animal_vaccination:
         c += html.controller_json("vaccinationtypes", extlookups.get_vaccination_types(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("vaccination", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -1809,7 +1818,7 @@ class batch:
         s = html.header(title, session, "batch.js")
         s += html.controller("")
         s += html.footer()
-        return full_or_json(s, "", post["json"] == "true")
+        return full_or_json("batch", s, "", post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -1875,7 +1884,7 @@ class calendarview:
             s = html.header(title, session, "calendarview.js")
             s += html.footer()
             al.debug("calendarview load page", "code.calendarview", dbo)
-            return full_or_json(s, "", post["json"] == "true")
+            return full_or_json("calendarview", s, "", post["json"] == "true")
         elif post["start"] != "" and post["end"] != "":
             ev = post["ev"]
             if ev == "": ev = "dvmtrolp"
@@ -1995,7 +2004,7 @@ class change_password:
         c += html.controller_str("username", session.user)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("change_password", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -2020,7 +2029,7 @@ class change_user_settings:
         c += html.controller_json("themes", extlookups.VISUAL_THEMES)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("change_user_settings", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -2054,7 +2063,7 @@ class citations:
         c += html.controller_json("citationtypes", extlookups.get_citation_types(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("citations", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -2136,7 +2145,7 @@ class diary_edit:
         c += html.controller_json("forlist", users.get_users_and_roles(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("diary", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -2183,7 +2192,7 @@ class diary_edit_my:
         c += html.controller_json("forlist", users.get_users_and_roles(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("diary", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -2223,7 +2232,7 @@ class diarytask:
         c += html.controller_json("forlist", users.get_users_and_roles(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("diarytask", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -2258,7 +2267,7 @@ class diarytasks:
         c = html.controller_json("rows", diarytaskhead)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("diarytasks", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -2441,7 +2450,7 @@ class document_repository:
             c = html.controller_json("rows", documents)
             s += html.controller(c)
             s += html.footer()
-            return full_or_json(s, c, post["json"] == "true")
+            return full_or_json("document_repository", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -2470,7 +2479,7 @@ class document_templates:
         c = html.controller_json("rows", templates)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("document_templates", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -2515,7 +2524,7 @@ class donation:
         c += html.controller_json("rows", donations)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("donations", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -2556,7 +2565,7 @@ class donation_receive:
         c += html.controller_json("accounts", financial.get_accounts(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("donation_receive", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -2610,7 +2619,7 @@ class foundanimal:
         c += html.controller_json("tabcounts", extlostfound.get_foundanimal_satellite_counts(dbo, a["LFID"])[0])
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("lostfound", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -2656,7 +2665,7 @@ class foundanimal_diary:
         c += html.controller_json("forlist", users.get_users_and_roles(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("diary", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -2694,7 +2703,7 @@ class foundanimal_find:
         c += html.controller_str("mode", "found")
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("lostfound_find", s, c, post["json"] == "true")
 
 class foundanimal_find_results:
     def GET(self):
@@ -2713,7 +2722,7 @@ class foundanimal_find_results:
         c += html.controller_str("resultsmessage", resultsmessage)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("lostfound_find_results", s, c, post["json"] == "true")
 
 class foundanimal_log:
     def GET(self):
@@ -2738,7 +2747,7 @@ class foundanimal_log:
         c += html.controller_json("logtypes", extlookups.get_log_types(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("log", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -2777,7 +2786,7 @@ class foundanimal_media:
         c += html.controller_str("name", self.__class__.__name__)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("media", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -2876,7 +2885,7 @@ class foundanimal_new:
         c += html.controller_str("name", "foundanimal_new")
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("lostfound_new", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -2922,7 +2931,7 @@ class htmltemplates:
         c = html.controller_json("rows", templates)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("htmltemplates", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -2964,7 +2973,7 @@ class incident:
         c += html.controller_json("users", users.get_users(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("incident", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -3006,7 +3015,7 @@ class incident_citations:
         c += html.controller_json("citationtypes", extlookups.get_citation_types(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("citations", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -3042,7 +3051,7 @@ class incident_find:
         c += html.controller_json("users", users.get_users(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("incident_find", s, c, post["json"] == "true")
 
 class incident_find_results:
     def GET(self):
@@ -3061,7 +3070,7 @@ class incident_find_results:
         c += html.controller_str("resultsmessage", resultsmessage)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("incident_find_results", s, c, post["json"] == "true")
 
 class incident_diary:
     def GET(self):
@@ -3084,7 +3093,7 @@ class incident_diary:
         c += html.controller_json("forlist", users.get_users_and_roles(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("diary", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -3129,7 +3138,7 @@ class incident_log:
         c += html.controller_json("logtypes", extlookups.get_log_types(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("log", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -3160,7 +3169,7 @@ class incident_map:
         c = html.controller_json("rows", rows);
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("incident_map", s, c, post["json"] == "true")
 
 class incident_media:
     def GET(self):
@@ -3184,7 +3193,7 @@ class incident_media:
         c += html.controller_str("name", self.__class__.__name__)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("media", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -3281,7 +3290,7 @@ class incident_new:
         s += html.controller(c)
         s += html.footer()
         al.debug("add incident", "code.incident_new", dbo)
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("incident_new", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -3327,7 +3336,7 @@ class licence:
         c += html.controller_json("licencetypes", extlookups.get_licence_types(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("licence", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -3359,7 +3368,7 @@ class litters:
         c += html.controller_json("species", extlookups.get_species(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("litters", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -3394,7 +3403,7 @@ class log_new:
         al.debug("loaded lookups for new log", "code.log_new", dbo)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("log_new", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -3441,7 +3450,7 @@ class lookups:
         c += html.controller_json("tables", html.json_lookup_tables(l))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("lookups", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -3485,7 +3494,7 @@ class lostanimal:
         c += html.controller_json("tabcounts", extlostfound.get_lostanimal_satellite_counts(dbo, a["LFID"])[0])
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("lostfound", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -3525,7 +3534,7 @@ class lostanimal_diary:
         c += html.controller_json("forlist", users.get_users_and_roles(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("diary", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -3563,7 +3572,7 @@ class lostanimal_find:
         c += html.controller_str("mode", "lost")
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("lostfound_find", s, c, post["json"] == "true")
 
 class lostanimal_find_results:
     def GET(self):
@@ -3582,7 +3591,7 @@ class lostanimal_find_results:
         c += html.controller_str("resultsmessage", resultsmessage)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("lostfound_find_results", s, c, post["json"] == "true")
 
 class lostanimal_log:
     def GET(self):
@@ -3607,7 +3616,7 @@ class lostanimal_log:
         c += html.controller_json("logtypes", extlookups.get_log_types(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("log", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -3646,7 +3655,7 @@ class lostanimal_media:
         c += html.controller_str("name", self.__class__.__name__)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("media", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -3745,7 +3754,7 @@ class lostanimal_new:
         c += html.controller_str("name", "lostanimal_new")
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("lostfound_new", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -3803,7 +3812,7 @@ class mailmerge:
             s += "</div>"
             s += html.footing()
             s += html.footer()
-            return s
+            return full_or_json("mailmerge", s, "", post["json"] == "true")
         elif mode == "selection":
             al.debug("entering mail merge selection mode for %d" % post.integer("id"), "code.mailmerge", dbo)
             p = extreports.get_criteria_params(dbo, post.integer("id"), post)
@@ -3826,7 +3835,7 @@ class mailmerge:
             c += html.controller_json("rows", rows)
             s += html.controller(c)
             s += html.footer()
-            return s
+            return full_or_json("mailmerge", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -3878,7 +3887,7 @@ class medical:
         c += html.controller_json("stockusagetypes", extlookups.get_stock_usage_types(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("medical", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -3932,7 +3941,7 @@ class medicalprofile:
         c = html.controller_json("rows", med)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("medicalprofile", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -3963,7 +3972,7 @@ class move_adopt:
         c += html.controller_json("paymenttypes", extlookups.get_payment_types(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("move_adopt", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -4006,7 +4015,7 @@ class move_book_foster:
         c += html.controller_str("name", self.__class__.__name__)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("movements", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -4041,7 +4050,7 @@ class move_book_recent_adoption:
         c += html.controller_str("name", self.__class__.__name__)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("movements", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -4076,7 +4085,7 @@ class move_book_recent_other:
         c += html.controller_str("name", self.__class__.__name__)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("movements", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -4111,7 +4120,7 @@ class move_book_recent_transfer:
         c += html.controller_str("name", self.__class__.__name__)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("movements", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -4146,7 +4155,7 @@ class move_book_reservation:
         c += html.controller_str("name", self.__class__.__name__)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("movements", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -4181,7 +4190,7 @@ class move_book_retailer:
         c += html.controller_str("name", self.__class__.__name__)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("movements", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -4216,7 +4225,7 @@ class move_book_trial_adoption:
         c += html.controller_str("name", self.__class__.__name__)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("movements", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -4251,7 +4260,7 @@ class move_book_unneutered:
         c += html.controller_str("name", self.__class__.__name__)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("movements", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -4280,7 +4289,7 @@ class move_deceased:
         c = html.controller_json("deathreasons", extlookups.get_deathreasons(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("move_deceased", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -4300,7 +4309,7 @@ class move_foster:
         title = _("Foster an animal", l)
         s = html.header(title, session, "move_foster.js")
         s += html.footer()
-        return full_or_json(s, "", post["json"] == "true")
+        return full_or_json("move_foster", s, "", post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -4327,7 +4336,7 @@ class move_reclaim:
         c += html.controller_json("paymenttypes", extlookups.get_payment_types(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("move_reclaim", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -4365,7 +4374,7 @@ class move_reserve:
         c += html.controller_json("reservationstatuses", extlookups.get_reservation_statuses(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("move_reserve", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -4387,7 +4396,7 @@ class move_retailer:
         title = _("Move an animal to a retailer", l)
         s = html.header(title, session, "move_retailer.js")
         s += html.footer()
-        return full_or_json(s, "", post["json"] == "true")
+        return full_or_json("move_retailer", s, "", post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -4409,7 +4418,7 @@ class move_transfer:
         title = _("Transfer an animal", l)
         s = html.header(title, session, "move_transfer.js")
         s += html.footer()
-        return full_or_json(s, "", post["json"] == "true")
+        return full_or_json("move_transfer", s, "", post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -4442,7 +4451,7 @@ class onlineform_incoming:
         c = html.controller_json("rows", headers)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("onlineform_incoming", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -4536,7 +4545,7 @@ class onlineform:
         c += html.controller_json("formfields", extonlineform.FORM_FIELDS)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("onlineform", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -4576,7 +4585,7 @@ class onlineforms:
         c += html.controller_json("footer", html.escape_angle(extonlineform.get_onlineform_footer(dbo)))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("onlineforms", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -4639,7 +4648,7 @@ class options:
         al.debug("lookups loaded", "code.options", dbo)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("options", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -4683,7 +4692,7 @@ class person:
         c += html.controller_json("person", p)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("person", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -4727,7 +4736,7 @@ class person_citations:
         c += html.controller_json("citationtypes", extlookups.get_citation_types(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("citations", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -4764,7 +4773,7 @@ class person_diary:
         c += html.controller_json("forlist", users.get_users_and_roles(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("diary", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -4807,7 +4816,7 @@ class person_donations:
         c += html.controller_json("rows", donations)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("donations", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -4899,7 +4908,7 @@ class person_find:
         c = html.controller_json("flags", flags)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("person_find", s, c, post["json"] == "true")
 
 class person_find_results:
     def GET(self):
@@ -4925,7 +4934,7 @@ class person_find_results:
         c += html.controller_str("resultsmessage", _("Search returned {0} results.", l).format(len(results)))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("person_find_results", s, c, post["json"] == "true")
 
 class person_investigation:
     def GET(self):
@@ -4944,7 +4953,7 @@ class person_investigation:
         c += html.controller_json("tabcounts", extperson.get_satellite_counts(dbo, p["ID"])[0])
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("person_investigation", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -4980,7 +4989,7 @@ class person_licence:
         c += html.controller_json("licencetypes", extlookups.get_licence_types(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("licence", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -5019,7 +5028,7 @@ class person_log:
         c += html.controller_json("logtypes", extlookups.get_log_types(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("log", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -5061,7 +5070,7 @@ class person_links:
         c += html.controller_json("tabcounts", extperson.get_satellite_counts(dbo, p["ID"])[0])
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("person_links", s, c, post["json"] == "true")
 
 class person_media:
     def GET(self):
@@ -5084,7 +5093,7 @@ class person_media:
         c += html.controller_str("name", self.__class__.__name__)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("media", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -5188,7 +5197,7 @@ class person_movements:
         c += html.controller_str("name", self.__class__.__name__)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("movements", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -5223,7 +5232,7 @@ class person_new:
         s += html.controller(c)
         s += html.footer()
         al.debug("add person", "code.person_new", dbo)
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("person_new", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -5252,7 +5261,7 @@ class person_rota:
         c += html.controller_json("tabcounts", extperson.get_satellite_counts(dbo, p["ID"])[0])
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("rota", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -5291,7 +5300,7 @@ class staff_rota:
         c += html.controller_json("staff", extperson.get_staff_volunteers(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("staff_rota", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -5335,7 +5344,7 @@ class person_traploan:
         c += html.controller_json("traptypes", extlookups.get_trap_types(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("traploan", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -5370,7 +5379,7 @@ class person_vouchers:
         c += html.controller_json("tabcounts", extperson.get_satellite_counts(dbo, p["ID"])[0])
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("person_vouchers", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -5451,7 +5460,7 @@ class publish:
         c = html.controller_bool("failed", failed)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("publish", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -5478,7 +5487,7 @@ class publish_logs:
             c = html.controller_json("rows", logs)
             s += html.controller(c)
             s += html.footer()
-            return full_or_json(s, c, post["json"] == "true")
+            return full_or_json("publish_logs", s, c, post["json"] == "true")
         else:
             al.debug("viewing log file %s" % post["view"], "code.publish_logs", dbo)
             web.header("Content-Type", "text/plain")
@@ -5508,7 +5517,7 @@ class publish_options:
         s += html.controller(c)
         s += html.footer()
         al.debug("loaded lookups", "code.publish_options", dbo)
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("publish_options", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -5538,7 +5547,7 @@ class timeline:
         s += html.controller(c)
         s += html.footer()
         al.debug("timeline events, run by %s, got %d events" % (session.user, len(evts)), "code.timeline", dbo)
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("timeline", s, c, post["json"] == "true")
 
 class report:
     def GET(self):
@@ -5571,7 +5580,7 @@ class report:
             s += "</div>"
             s += html.footing()
             s += html.footer()
-            return s
+            return full_or_json("report", s, "", post["json"] == "true")
         # The user has entered the criteria and we're in exec mode, unpack
         # the criteria and run the report
         elif mode == "exec":
@@ -5654,7 +5663,7 @@ class report_images:
         c = html.controller_json("rows", images)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("report_images", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -5697,7 +5706,7 @@ class reports:
         c += html.controller_json("rows", reports)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("reports", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -5750,7 +5759,7 @@ class roles:
         c = html.controller_json("rows", roles)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("roles", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -5786,7 +5795,7 @@ class search:
         c += html.controller_str("sortname", sortname)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("search", s, c, post["json"] == "true")
 
 class service:
     def handle(self):
@@ -5820,7 +5829,7 @@ class shelterview:
         c += html.controller_int("perrow", perrow)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("shelterview", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -5983,7 +5992,7 @@ class stocklevel:
         c += html.controller_json("rows", levels)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("stocklevel", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -6024,7 +6033,7 @@ class systemusers:
         c += html.controller_json("internallocations", extlookups.get_internal_locations(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("users", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -6065,7 +6074,7 @@ class test:
         c += html.controller_json("testresults", extlookups.get_test_results(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("test", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -6111,7 +6120,7 @@ class transport:
         c += html.controller_json("rows", transports)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("transport", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -6153,7 +6162,7 @@ class traploan:
         c += html.controller_json("traptypes", extlookups.get_trap_types(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("traploan", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -6190,7 +6199,7 @@ class vaccination:
         c += html.controller_json("vaccinationtypes", extlookups.get_vaccination_types(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("vaccination", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -6250,7 +6259,7 @@ class waitinglist:
         c += html.controller_json("tabcounts", extwaitinglist.get_satellite_counts(dbo, a["ID"])[0])
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("waitinglist", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -6293,7 +6302,7 @@ class waitinglist_diary:
         c += html.controller_json("forlist", users.get_users_and_roles(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("diary", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -6338,7 +6347,7 @@ class waitinglist_log:
         c += html.controller_json("logtypes", extlookups.get_log_types(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("log", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -6377,7 +6386,7 @@ class waitinglist_media:
         c += html.controller_str("name", self.__class__.__name__)
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("media", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -6473,7 +6482,7 @@ class waitinglist_new:
         c += html.controller_json("urgencies", extlookups.get_urgencies(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("waitinglist_new", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -6510,7 +6519,7 @@ class waitinglist_results:
         c += html.controller_json("yesno", extlookups.get_yesno(dbo))
         s += html.controller(c)
         s += html.footer()
-        return full_or_json(s, c, post["json"] == "true")
+        return full_or_json("waitinglist_results", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)

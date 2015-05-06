@@ -5,193 +5,197 @@ $(function() {
 
     var lastanimal,
         lastperson,
-        dialog_row,
-        donations = {};
+        dialog_row;
 
-    var dialog = {
-        add_title: _("Add payment"),
-        edit_title: _("Edit payment"),
-        edit_perm: 'ocod',
-        close_on_ok: false,
-        hide_read_only: true,
-        width: 550,
-        helper_text: _("Payments need at least one date, an amount and a person."),
-        columns: 1,
-        fields: [
-            { json_field: "DONATIONTYPEID", post_field: "type", label: _("Type"), type: "select", options: { displayfield: "DONATIONNAME", valuefield: "ID", rows: controller.donationtypes }},
-            { json_field: "DONATIONPAYMENTID", post_field: "payment", label: _("Method"), type: "select", options: { displayfield: "PAYMENTNAME", valuefield: "ID", rows: controller.paymenttypes }},
-            { json_field: "FREQUENCY", post_field: "frequency", label: _("Frequency"), type: "select", options: { displayfield: "FREQUENCY", valuefield: "ID", rows: controller.frequencies }},
-            { json_field: "DATEDUE", post_field: "due", label: _("Due"), type: "date" },
-            { json_field: "DATE", post_field: "received", label: _("Received"), type: "date" },
-            { json_field: "DONATION", post_field: "amount", label: _("Amount"), type: "currency" },
-            { json_field: "ISGIFTAID", post_field: "giftaid", label: _("Gift Aid"), type: "select", options: 
-                '<option value="0">' + _("Not eligible for gift aid") + '</option>' +
-                '<option value="1">' + _("Eligible for gift aid") + '</option>' },
-            { json_field: "", post_field: "destaccount", label: _("Deposit Account"), 
-                hideif: function() { return !config.bool("DonationTrxOverride"); }, 
-                defaultval: config.integer("DonationTargetAccount"),
-                type: "select", options: { displayfield: "CODE", valuefield: "ID", rows: controller.accounts }},
-            { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "animal" },
-            { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person" },
-            { json_field: "MOVEMENTID", post_field: "movement", label: _("Movement"), type: "select", options: "" },
-            { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
-        ]
-    };
-
-    var table = {
-        rows: controller.rows,
-        idcolumn: "ID",
-        edit: function(row) {
-            tableform.fields_populate_from_json(dialog.fields, row);
-            dialog_row = row;
-            donations.create_semaphore = false;
-            donations.update_movements(row.OWNERID);
-            // Only allow destination account to be overridden when the received date
-            // hasn't been set yet.
-            $("#destaccount").closest("tr").toggle( config.bool("DonationTrxOverride") && !row.DATE );
-            tableform.dialog_show_edit(dialog, row, function() {
-                if (!donations.validation()) { tableform.dialog_enable_buttons(); return; }
-                tableform.fields_update_row(dialog.fields, row);
-                donations.set_extra_fields(row);
-                tableform.fields_post(dialog.fields, "mode=update&donationid=" + row.ID, controller.name, function(response) {
-                    donations.calculate_total();
-                    tableform.table_update(table);
-                    tableform.dialog_close();
-                },
-                function(response) {
-                    tableform.dialog_error(response);
-                    tableform.dialog_enable_buttons();
-                });
-            });
-        },
-        complete: function(row) {
-        },
-        overdue: function(row) {
-            return !row.DATE && format.date_js(row.DATEDUE) < common.today_no_time();
-        },
-        columns: [
-            { field: "DONATIONNAME", display: _("Type") },
-            { field: "PAYMENTNAME", display: _("Method") },
-            { field: "FREQUENCYNAME", display: _("Frequency") },
-            { field: "DATEDUE", display: _("Due"), formatter: tableform.format_date },
-            { field: "DATE", display: _("Received"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
-            { field: "ID", display: _("Receipt No"), formatter: function(row) {
-                return format.padleft(row.ID, 8);
-            }},
-            { field: "DONATION", display: _("Amount"), formatter: tableform.format_currency },
-            { field: "PERSON", display: _("Person"),
-                formatter: function(row) {
-                    if (row.OWNERID) {
-                        return edit_header.person_link(row, row.OWNERID);
-                    }
-                    return "";
-                },
-                hideif: function(row) {
-                    return controller.name.indexOf("person_") != -1;
-                }
-            },
-            { field: "ANIMAL", display: _("Animal"), 
-                formatter: function(row) {
-                    if (!row.ANIMALID || row.ANIMALID == 0) { return ""; }
-                    var s = "";
-                    if (controller.name.indexOf("animal_") == -1) { s = html.animal_emblems(row) + " "; }
-                    return s + '<a href="animal?id=' + row.ANIMALID + '">' + row.ANIMALNAME + ' - ' + row.SHELTERCODE + '</a>';
-                },
-                hideif: function(row) {
-                    return controller.name.indexOf("animal_") != -1;
-                }
-            },
-            { field: "COMMENTS", display: _("Comments") }
-        ]
-    };
-
-    var buttons = [
-        { id: "new", text: _("New Payment"), icon: "new", enabled: "always", perm: "oaod",
-             click: function() { 
-                donations.create_semaphore = true;
-                $("#animal").animalchooser("clear");
-                $("#person").personchooser("clear");
-                if (controller.animal) {
-                    $("#animal").animalchooser("loadbyid", controller.animal.ID);
-                }
-                if (controller.person) {
-                    $("#person").personchooser("loadbyid", controller.person.ID);
-                    donations.update_movements(controller.person.ID);
-                }
-                $("#type").select("value", config.integer("AFDefaultDonationType"));
-                $("#giftaid").select("value", "0");
-                donations.type_change();
-                tableform.dialog_show_add(dialog, function() {
-                    if (!donations.validation()) { tableform.dialog_enable_buttons(); return; }
-                    tableform.fields_post(dialog.fields, "mode=create", controller.name, function(response) {
-                        var row = {};
-                        row.ID = response;
-                        tableform.fields_update_row(dialog.fields, row);
-                        donations.set_extra_fields(row);
-                        controller.rows.push(row);
-                        tableform.table_update(table);
-                        donations.calculate_total();
-                        tableform.dialog_close();
-                    }, function() {
-                        tableform.dialog_enable_buttons();   
-                    });
-                });
-             } 
-         },
-         { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "odod", 
-             click: function() { 
-                 tableform.delete_dialog(function() {
-                     tableform.buttons_default_state(buttons);
-                     var ids = tableform.table_ids(table);
-                     common.ajax_post(controller.name, "mode=delete&ids=" + ids , function() {
-                         tableform.table_remove_selected_from_json(table, controller.rows);
-                         tableform.table_update(table);
-                     donations.calculate_total();
-                     });
-                 });
-             } 
-         },
-         { id: "receive", text: _("Receive"), icon: "complete", enabled: "multi", tooltip: _("Mark selected payments received"), perm: "ocod",
-             click: function() {
-                 var ids = tableform.table_ids(table);
-                 common.ajax_post(controller.name, "mode=receive&ids=" + ids, function() {
-                     $.each(controller.rows, function(i, v) {
-                        if (tableform.table_id_selected(v.ID)) {
-                            v.DATE = format.date_iso(new Date());
-                        }
-                     });
-                     tableform.table_update(table);
-                     donations.calculate_total();
-                 });
-             }
-         },
-         { id: "document", text: _("Receipt/Invoice"), icon: "document", enabled: "multi", perm: "gaf", 
-             tooltip: _("Generate document from this payment"), type: "buttonmenu" },
-         { id: "offset", type: "dropdownfilter", 
-             options: [ "m7|" + _("Received in last week"), 
-                "m31|" + _("Received in last month"),
-                "m365|" + _("Received in last year"),
-                "d0|" + _("Overdue"),
-                "p7|" + _("Due in next week"), 
-                "p31|" + _("Due in next month"), 
-                "p365|" + _("Due in next year") ],
-             click: function(selval) {
-                window.location = controller.name + "?offset=" + selval;
-             },
-             hideif: function(row) {
-                 // Don't show for animal or person records
-                 if (controller.animal || controller.person) {
-                     return true;
-                 }
-             }
-         }
-
-    ];
-
-    donations = {
+    var donations = {
 
         // Used to let person_loaded know whether we are creating or not
         create_semaphore: false,
+
+        model: function() {
+            var dialog = {
+                add_title: _("Add payment"),
+                edit_title: _("Edit payment"),
+                edit_perm: 'ocod',
+                close_on_ok: false,
+                hide_read_only: true,
+                width: 550,
+                helper_text: _("Payments need at least one date, an amount and a person."),
+                columns: 1,
+                fields: [
+                    { json_field: "DONATIONTYPEID", post_field: "type", label: _("Type"), type: "select", options: { displayfield: "DONATIONNAME", valuefield: "ID", rows: controller.donationtypes }},
+                    { json_field: "DONATIONPAYMENTID", post_field: "payment", label: _("Method"), type: "select", options: { displayfield: "PAYMENTNAME", valuefield: "ID", rows: controller.paymenttypes }},
+                    { json_field: "FREQUENCY", post_field: "frequency", label: _("Frequency"), type: "select", options: { displayfield: "FREQUENCY", valuefield: "ID", rows: controller.frequencies }},
+                    { json_field: "DATEDUE", post_field: "due", label: _("Due"), type: "date" },
+                    { json_field: "DATE", post_field: "received", label: _("Received"), type: "date" },
+                    { json_field: "DONATION", post_field: "amount", label: _("Amount"), type: "currency" },
+                    { json_field: "ISGIFTAID", post_field: "giftaid", label: _("Gift Aid"), type: "select", options: 
+                        '<option value="0">' + _("Not eligible for gift aid") + '</option>' +
+                        '<option value="1">' + _("Eligible for gift aid") + '</option>' },
+                    { json_field: "", post_field: "destaccount", label: _("Deposit Account"), 
+                        hideif: function() { return !config.bool("DonationTrxOverride"); }, 
+                        defaultval: config.integer("DonationTargetAccount"),
+                        type: "select", options: { displayfield: "CODE", valuefield: "ID", rows: controller.accounts }},
+                    { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "animal" },
+                    { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person" },
+                    { json_field: "MOVEMENTID", post_field: "movement", label: _("Movement"), type: "select", options: "" },
+                    { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
+                ]
+            };
+
+            var table = {
+                rows: controller.rows,
+                idcolumn: "ID",
+                edit: function(row) {
+                    tableform.fields_populate_from_json(dialog.fields, row);
+                    dialog_row = row;
+                    donations.create_semaphore = false;
+                    donations.update_movements(row.OWNERID);
+                    // Only allow destination account to be overridden when the received date
+                    // hasn't been set yet.
+                    $("#destaccount").closest("tr").toggle( config.bool("DonationTrxOverride") && !row.DATE );
+                    tableform.dialog_show_edit(dialog, row, function() {
+                        if (!donations.validation()) { tableform.dialog_enable_buttons(); return; }
+                        tableform.fields_update_row(dialog.fields, row);
+                        donations.set_extra_fields(row);
+                        tableform.fields_post(dialog.fields, "mode=update&donationid=" + row.ID, controller.name, function(response) {
+                            donations.calculate_total();
+                            tableform.table_update(table);
+                            tableform.dialog_close();
+                        },
+                        function(response) {
+                            tableform.dialog_error(response);
+                            tableform.dialog_enable_buttons();
+                        });
+                    });
+                },
+                complete: function(row) {
+                },
+                overdue: function(row) {
+                    return !row.DATE && format.date_js(row.DATEDUE) < common.today_no_time();
+                },
+                columns: [
+                    { field: "DONATIONNAME", display: _("Type") },
+                    { field: "PAYMENTNAME", display: _("Method") },
+                    { field: "FREQUENCYNAME", display: _("Frequency") },
+                    { field: "DATEDUE", display: _("Due"), formatter: tableform.format_date },
+                    { field: "DATE", display: _("Received"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
+                    { field: "ID", display: _("Receipt No"), formatter: function(row) {
+                        return format.padleft(row.ID, 8);
+                    }},
+                    { field: "DONATION", display: _("Amount"), formatter: tableform.format_currency },
+                    { field: "PERSON", display: _("Person"),
+                        formatter: function(row) {
+                            if (row.OWNERID) {
+                                return edit_header.person_link(row, row.OWNERID);
+                            }
+                            return "";
+                        },
+                        hideif: function(row) {
+                            return controller.name.indexOf("person_") != -1;
+                        }
+                    },
+                    { field: "ANIMAL", display: _("Animal"), 
+                        formatter: function(row) {
+                            if (!row.ANIMALID || row.ANIMALID == 0) { return ""; }
+                            var s = "";
+                            if (controller.name.indexOf("animal_") == -1) { s = html.animal_emblems(row) + " "; }
+                            return s + '<a href="animal?id=' + row.ANIMALID + '">' + row.ANIMALNAME + ' - ' + row.SHELTERCODE + '</a>';
+                        },
+                        hideif: function(row) {
+                            return controller.name.indexOf("animal_") != -1;
+                        }
+                    },
+                    { field: "COMMENTS", display: _("Comments") }
+                ]
+            };
+
+            var buttons = [
+                { id: "new", text: _("New Payment"), icon: "new", enabled: "always", perm: "oaod",
+                     click: function() { 
+                        donations.create_semaphore = true;
+                        $("#animal").animalchooser("clear");
+                        $("#person").personchooser("clear");
+                        if (controller.animal) {
+                            $("#animal").animalchooser("loadbyid", controller.animal.ID);
+                        }
+                        if (controller.person) {
+                            $("#person").personchooser("loadbyid", controller.person.ID);
+                            donations.update_movements(controller.person.ID);
+                        }
+                        $("#type").select("value", config.integer("AFDefaultDonationType"));
+                        $("#giftaid").select("value", "0");
+                        donations.type_change();
+                        tableform.dialog_show_add(dialog, function() {
+                            if (!donations.validation()) { tableform.dialog_enable_buttons(); return; }
+                            tableform.fields_post(dialog.fields, "mode=create", controller.name, function(response) {
+                                var row = {};
+                                row.ID = response;
+                                tableform.fields_update_row(dialog.fields, row);
+                                donations.set_extra_fields(row);
+                                controller.rows.push(row);
+                                tableform.table_update(table);
+                                donations.calculate_total();
+                                tableform.dialog_close();
+                            }, function() {
+                                tableform.dialog_enable_buttons();   
+                            });
+                        });
+                     } 
+                 },
+                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "odod", 
+                     click: function() { 
+                         tableform.delete_dialog(function() {
+                             tableform.buttons_default_state(buttons);
+                             var ids = tableform.table_ids(table);
+                             common.ajax_post(controller.name, "mode=delete&ids=" + ids , function() {
+                                 tableform.table_remove_selected_from_json(table, controller.rows);
+                                 tableform.table_update(table);
+                             donations.calculate_total();
+                             });
+                         });
+                     } 
+                 },
+                 { id: "receive", text: _("Receive"), icon: "complete", enabled: "multi", tooltip: _("Mark selected payments received"), perm: "ocod",
+                     click: function() {
+                         var ids = tableform.table_ids(table);
+                         common.ajax_post(controller.name, "mode=receive&ids=" + ids, function() {
+                             $.each(controller.rows, function(i, v) {
+                                if (tableform.table_id_selected(v.ID)) {
+                                    v.DATE = format.date_iso(new Date());
+                                }
+                             });
+                             tableform.table_update(table);
+                             donations.calculate_total();
+                         });
+                     }
+                 },
+                 { id: "document", text: _("Receipt/Invoice"), icon: "document", enabled: "multi", perm: "gaf", 
+                     tooltip: _("Generate document from this payment"), type: "buttonmenu" },
+                 { id: "offset", type: "dropdownfilter", 
+                     options: [ "m7|" + _("Received in last week"), 
+                        "m31|" + _("Received in last month"),
+                        "m365|" + _("Received in last year"),
+                        "d0|" + _("Overdue"),
+                        "p7|" + _("Due in next week"), 
+                        "p31|" + _("Due in next month"), 
+                        "p365|" + _("Due in next year") ],
+                     click: function(selval) {
+                        window.location = controller.name + "?offset=" + selval;
+                     },
+                     hideif: function(row) {
+                         // Don't show for animal or person records
+                         if (controller.animal || controller.person) {
+                             return true;
+                         }
+                     }
+                 }
+
+            ];
+            this.buttons = buttons;
+            this.dialog = dialog;
+            this.table = table;
+        },
 
         validation: function() {
             if (!validate.notzero(["person"])) { return false; }
@@ -272,7 +276,8 @@ $(function() {
 
         render: function() {
             var s = "";
-            s += tableform.dialog_render(dialog);
+            this.model();
+            s += tableform.dialog_render(this.dialog);
             s += '<div id="button-document-body" class="asm-menu-body">' +
                 '<ul class="asm-menu-list">' +
                 edit_header.template_list(controller.templates, "DONATION", 0) +
@@ -286,8 +291,8 @@ $(function() {
             else {
                 s += html.content_header(document.title);
             }
-            s += tableform.buttons_render(buttons);
-            s += tableform.table_render(table);
+            s += tableform.buttons_render(this.buttons);
+            s += tableform.table_render(this.table);
             s += '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">';
             s += '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>';
             s += _("Total payments") + ': <span class="strong" id="donationtotal"></span>';
@@ -298,9 +303,9 @@ $(function() {
 
         bind: function() {
 
-            tableform.dialog_bind(dialog);
-            tableform.buttons_bind(buttons);
-            tableform.table_bind(table, buttons);
+            tableform.dialog_bind(this.dialog);
+            tableform.buttons_bind(this.buttons);
+            tableform.table_bind(this.table, this.buttons);
 
             if (controller.name.indexOf("animal_") != -1) {
                 $("#animal").closest("tr").hide();
@@ -346,7 +351,7 @@ $(function() {
             $(".templatelink").click(function() {
                 var template_name = $(this).attr("data");
                 $("#tableform input:checked").each(function() {
-                    var ids = tableform.table_ids(table);
+                    var ids = tableform.table_ids(donations.table);
                     window.location = "document_gen?mode=DONATION&id=" + ids + "&template=" + template_name;
                 });
                 return false;
