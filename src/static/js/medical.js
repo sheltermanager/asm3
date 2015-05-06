@@ -330,6 +330,7 @@ $(function() {
         },
 
         new_medical: function() { 
+            var dialog = medical.dialog;
             if (controller.animal) {
                 $("#animal").animalchooser("loadbyid", controller.animal.ID);
                 $("#animal").closest("tr").hide();

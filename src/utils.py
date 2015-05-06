@@ -42,6 +42,9 @@ except:
 # session objects)
 websession = None
 
+# Global reference to the current code path
+PATH = os.path.dirname(os.path.abspath(__file__)) + os.sep
+
 class PostedData(object):
     """
     Helper class for reading fields from the web.py web.input object

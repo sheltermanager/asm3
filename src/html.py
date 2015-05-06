@@ -12,6 +12,7 @@ import medical
 import os
 import person
 import users
+import utils
 from i18n import BUILD, _, translate, format_currency, now, python2display
 from sitedefs import BASE_URL, LOCALE, MINIFY_JS, ROLLUP_JS
 from sitedefs import ASMSELECT_CSS, ASMSELECT_JS, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_4_JS
@@ -77,7 +78,6 @@ def json(obj, readable = False):
         return extjson.dumps(obj, default=json_handler)
     else:
         return extjson.dumps(obj, default=json_handler, indent=4, separators=(',', ': '))
-
 
 def js_minified_name(filename):
     """
@@ -196,7 +196,7 @@ def table(results):
     s += "</tbody>\n"
     return s
 
-def bare_header(title, js = "", theme = "ui-lightness", locale = LOCALE, config_db = "asm", config_ts = "0"):
+def bare_header(title, theme = "ui-lightness", locale = LOCALE, config_db = "asm", config_ts = "0"):
     """
     A bare header with just the script files needed for the program.
     title: The page title
@@ -215,11 +215,9 @@ def bare_header(title, js = "", theme = "ui-lightness", locale = LOCALE, config_
     if locale is None: locale = LOCALE
     # Load the asm scripts
     if ROLLUP_JS:
-        # TODO: FIX THIS
-        path = "/home/robin/workspace/asm3/src/"
         asm_scripts = script_tag("rollup.js")
     else:
-        asm_scripts = asm_script_tags(path) 
+        asm_scripts = asm_script_tags(utils.PATH) 
     # Set the body colour from the theme
     bgcol = BACKGROUND_COLOURS[theme]
     return '<!DOCTYPE html>\n' \
@@ -394,17 +392,13 @@ def escape_angle(s):
     s = str(s)
     return s.replace(">", "&gt;").replace("<", "&lt;")
 
-def header(title, session, js = ""):
+def header(title, session):
     """
     The header for html pages.
     title: The page title
     session: The user session
-    js: The name of an accompanying js file to load
     """
-    s =  bare_header(title, js, session.theme, session.locale, session.dbo.database, session.config_ts)
-    # Variables that we need to send for every page load
-    #s += "<script type=\"text/javascript\">\n"
-    #s += "</script>\n"
+    s =  bare_header(title, session.theme, session.locale, session.dbo.database, session.config_ts)
     return s
 
 def footer():
