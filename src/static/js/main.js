@@ -615,6 +615,14 @@ $(function() {
                 }
             }
 
+            if (common.msie_version() == 8 || common.msie_version() == 9) { 
+                header.show_error("You are using an old version of Internet Explorer.<br/>" +
+                    "This browser is slow, insecure, no longer supported by Microsoft " +
+                    "and missing many of the features necessary to run ASM effectively.<br />" +
+                    "We are planning to remove support for this browser entirely by June 2015.<br /> " +
+                    "<a href='static/pages/unsupported.html'>Please upgrade to a modern browser.</a>");
+            }
+
             if (!common.has_permission("vdn")) { $("#asm-main-diary").hide(); }
 
             var b = {}; 

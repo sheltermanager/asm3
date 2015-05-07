@@ -95,6 +95,7 @@ $(function() {
 
         render: function() {
             var h = [];
+            this.model();
             h.push(tableform.dialog_render(this.dialog));
             if (controller.name == "animal_log") {
                 h.push(edit_header.animal_edit_header(controller.animal, "logs", controller.tabcounts));
