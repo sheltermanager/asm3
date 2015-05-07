@@ -53,22 +53,20 @@ ANIMALREASONFORENTRY
     Free text, notes on the reason the animal entered the shelter.
 ANIMALDECEASEDDATE
     If the animal is deceased, the date it died.
-ANIMALADDITIONAL
-    <fieldname>
-If you have animal additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called Weight, ANIMALADDITIONALWEIGHT
-    DONATIONDATE
-The date the donation amount on this line was received. If movement columns are present, it will be attached to the movement as well as the person. If no person columns are present, having this column in the CSV file will cause an error.
-    DONATIONAMOUNT
-The amount of the donation on this line (as a floating point number)
-    DONATIONCOMMENTS
-Any comments to go with the donation
-    DONATIONPAYMENT
-The payment method to use (should correspond to a payment method in your database, eg: Cash)
-    DONATIONTYPE
-The payment type to use (should correspond to a payment type in your database).
-    MOVEMENTTYPE
-The type of movement for this line (1 = Adoption, 2 = Foster, 3 = Transfer, 4 = Escaped, 5 = Reclaimed, 6 = Stolen, 7 = Released to Wild, 8 = Moved to Retailer.
-    If MOVEMENTTYPE is not specified, but a MOVEMENTDATE has been given, ASM will default the type to adoption.
+ANIMALADDITIONAL<fieldname>
+    If you have animal additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called Weight, ANIMALADDITIONALWEIGHT
+DONATIONDATE
+    The date the donation amount on this line was received. If movement columns are present, it will be attached to the movement as well as the person. If no person columns are present, having this column in the CSV file will cause an error.
+DONATIONAMOUNT
+    The amount of the donation on this line (as a floating point number)
+DONATIONCOMMENTS
+    Any comments to go with the donation
+DONATIONPAYMENT
+    The payment method to use (should correspond to a payment method in your database, eg: Cash)
+DONATIONTYPE
+    The payment type to use (should correspond to a payment type in your database).
+MOVEMENTTYPE
+    The type of movement for this line (1 = Adoption, 2 = Foster, 3 = Transfer, 4 = Escaped, 5 = Reclaimed, 6 = Stolen, 7 = Released to Wild, 8 = Moved to Retailer. If MOVEMENTTYPE is not specified, but a MOVEMENTDATE has been given, ASM will default the type to adoption.
 MOVEMENTDATE
     The date of the movement
 MOVEMENTCOMMENTS
