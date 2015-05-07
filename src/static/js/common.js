@@ -1,7 +1,7 @@
 /*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, console, jQuery, Mousetrap */
+/*global $, console, jQuery, Mousetrap, Path */
 /*global asm, header, _, escape, unescape */
-/*global common: true, config: true, dlgfx: true, format: true, html: true, tableform: true, validate: true */
+/*global common: true, config: true, controller: true, dlgfx: true, format: true, html: true, tableform: true, validate: true */
 
 (function($) {
 
@@ -261,10 +261,46 @@
          */
         module_register: function(o) {
             common.modules[o.name] = o;
-            // TODO: This will be removed later and be called by client side routing
-            //common.module_start(o.name); 
-            // TODO: When we're using crossroads
-            //if (o.route) { crossroads.addRoute(o.route, function() { common.module_start(o.name); } }
+            if (o.routes) { 
+                $.each(o.routes, function(k, v) {
+                    Path.map(k).to(v);
+                });
+            }
+        },
+
+        /**
+         * Loads the data for a module into the global controller
+         * object (from uri) and then starts it.
+         */
+        module_loadandstart: function(modulename, uri) {
+            if (uri.indexOf("?") != -1) { uri += "?json=true"; }
+            else { uri += "&json=true"; }
+            header.show_loading();
+            $.ajax({
+                type: "GET",
+                url: uri,
+                dataType: "text",
+                mimeType: "textPlain",
+                success: function(result) {
+                    controller = jQuery.parseJSON(result);
+                    try {
+                        // This can cause an error if the dialog wasn't open
+                        header.hide_loading();
+                    }
+                    catch (ex) {}
+                    // Start the module
+                    common.module_start(modulename);
+                },
+                error: function(jqxhr, textstatus, response) {
+                    try {
+                        // This can cause an error if the dialog wasn't open
+                        header.hide_loading();
+                    }
+                    catch (ex) {}
+                    var errmessage = common.get_error_response(jqxhr, response);
+                    header.show_error(errmessage);
+                }
+            });
         },
 
         /**

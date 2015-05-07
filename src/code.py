@@ -358,7 +358,9 @@ def full_or_json(modulename, s, c, json = False):
     web.header("Cache-Control", "no-cache")
     if not json:
         web.header("Content-Type", "text/html")
-        return s.replace("</body>", "<script>\n$(document).ready(function() { common.module_start(\"%s\"); });\n</script>\n</body>" % modulename)
+        #extra = "<script>\n$(document).ready(function() { Path.listen(); common.module_start(\"%s\"); });\n</script>\n</body>" % modulename
+        extra = "<script>\n$(document).ready(function() { common.module_start(\"%s\"); });\n</script>\n</body>" % modulename
+        return s.replace("</body>",  extra)
     else:
         web.header("Content-Type", "application/json")
         if c.endswith(","): c = c[0:len(c)-1]

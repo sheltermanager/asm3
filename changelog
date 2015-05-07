@@ -1,6 +1,7 @@
 37
 ================
 
+06/05/15 Add PathJS dependency for later
 06/05/15 JS refactoring, remove globals, isolate modules, model methods
 06/05/15 More JS refactoring, allow single rollup file
 05/05/15 Allow fractional stock values #150

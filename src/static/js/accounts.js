@@ -171,7 +171,16 @@ $(function() {
         },
 
         name: "accounts",
-        animation: "formtab"
+        animation: "formtab",
+
+        routes: {
+            "accounts": function() {
+                common.module_loadandstart("accounts", "accounts");
+            },
+            "accounts?offset=:offset": function() {
+                common.module_loadandstart("accounts", "accounts?offset=" + this.params.offset);
+            }
+        }
 
     };
 
