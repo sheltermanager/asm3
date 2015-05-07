@@ -1167,15 +1167,15 @@
                 "5": a.BREEDNAME,
                 "6": a.SPECIESNAME,
                 "7": a.ANIMALAGE});
-            s.push(common.substitute('<a href="animal?id={id}"><img title="{title}" src="{imgsrc}" class="asm-thumbnail thumbnailshadow" /></a><br />', {
+            s.push(common.substitute('<a href="#/animal/{id}"><img title="{title}" src="{imgsrc}" class="asm-thumbnail thumbnailshadow" /></a><br />', {
                 "id" : a.ID,
                 "title" : html.title(title),
                 "imgsrc" : html.thumbnail_src(a, "animalthumb") }));
             s.push(html.animal_emblems(a, o));
             if (config.bool("ShelterViewShowCodes")) {
-                s.push('<a href="animal?id=' + a.ID + '">' + a.CODE + '</a><br />');
+                s.push('<a href="#/animal/' + a.ID + '">' + a.CODE + '</a><br />');
             }
-            s.push('<a href="animal?id=' + a.ID + '">' + a.ANIMALNAME + '</a>');
+            s.push('<a href="#/animal/' + a.ID + '">' + a.ANIMALNAME + '</a>');
             if (o.showselector) {
                 s.push('<br /><input type="checkbox" class="animalselect" data="{id}" title="{title}" />'.replace("{id}", a.ID).replace("{title}", _("Select")));
             }

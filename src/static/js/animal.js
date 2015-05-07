@@ -1356,7 +1356,11 @@ $(function() {
 
         name: "animal",
         animation: "formtab",
-        route: "animal?id={id}"
+        routes: {
+            "#/animal/:id": function() {
+                common.module_loadandstart("animal", "animal?id=" + this.params.id);
+            }
+        }
 
     };
     

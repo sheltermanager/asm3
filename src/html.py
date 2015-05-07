@@ -587,7 +587,7 @@ def json_menu(l, reports, mailmerges):
     structure = (
         ("", "asm", _("ASM", l), (
             ( "", "", "", "--cat", "asm-icon-animal", _("Animals", l) ),
-            ( users.VIEW_ANIMAL, "alt+shift+v", "", "shelterview", "asm-icon-location", _("Shelter view", l) ),
+            ( users.VIEW_ANIMAL, "alt+shift+v", "", "#/shelterview", "asm-icon-location", _("Shelter view", l) ),
             ( users.VIEW_ANIMAL, "alt+shift+f", "", "animal_find", "asm-icon-animal-find", _("Find animal", l) ),
             ( users.ADD_ANIMAL, "alt+shift+n", "", "animal_new", "asm-icon-animal-add", _("Add a new animal", l) ),
             ( users.ADD_LOG, "alt+shift+l", "", "log_new", "asm-icon-log", _("Add a log entry", l) ),

@@ -225,7 +225,12 @@ $(function() {
         },
 
         name: "shelterview",
-        animation: "search"
+        animation: "search",
+        routes: {
+            "#/shelterview": function() {
+                common.module_loadandstart("shelterview", "shelterview");
+            }
+        }
 
     };
 
