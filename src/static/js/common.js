@@ -249,6 +249,22 @@
             return d;
         },
 
+        /** Use an internal route to go to a URL */
+        route: function(path) {
+            window.location = path;
+        },
+
+        /** Given a url encoded string a, returns a dictionary of the elements */
+        route_criteria: function(a) {
+            var i = 0, b = {};
+            if (!a) { return {}; }
+            $.each(a.split("&"), function(i, v) {
+                var x = v.split("=");
+                b[x[0]] = decodeURIComponent(x[1].replace(/\+/g, " "));
+            });
+            return b;
+        },
+
         /** Loaded modules */
         modules: {},
 
@@ -273,7 +289,7 @@
          * object (from uri) and then starts it.
          */
         module_loadandstart: function(modulename, uri) {
-            if (uri.indexOf("?") != -1) { uri += "?json=true"; }
+            if (uri.indexOf("?") == -1) { uri += "?json=true"; }
             else { uri += "&json=true"; }
             header.show_loading();
             $.ajax({

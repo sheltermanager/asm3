@@ -133,7 +133,7 @@ $(function() {
                  { id: "offset", type: "dropdownfilter", 
                      options: [ "active|" + _("Only active accounts"), "all|" + _("All accounts") ],
                      click: function(selval) {
-                        window.location = "accounts?offset=" + selval;
+                        common.route("#/accounts/offset=" + selval);
                      }
                  }
 
@@ -164,21 +164,17 @@ $(function() {
         },
 
         sync: function() {
-            // If an offset is given in the querystring, update the select
-            if (common.querystring_param("offset")) {
-                $("#offset").select("value", common.querystring_param("offset"));
-            }
+            // If criteria was given, update the select
+            if (this.criteria) { $("#offset").select("value", this.criteria.offset); }
         },
 
         name: "accounts",
         animation: "formtab",
 
         routes: {
-            "accounts": function() {
-                common.module_loadandstart("accounts", "accounts");
-            },
-            "accounts?offset=:offset": function() {
-                common.module_loadandstart("accounts", "accounts?offset=" + this.params.offset);
+            "#/accounts(/:criteria)": function() {
+                accounts.criteria = common.route_criteria(this.params.criteria);
+                common.module_loadandstart("accounts", "accounts?offset=" + accounts.criteria.offset);
             }
         }
 

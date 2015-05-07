@@ -491,7 +491,7 @@ def controller(inner):
 
 def controller_bool(name, b):
     """ Adds a controller boolean property """
-    return "%s:%s," % (name, b and "true" or "false")
+    return controller_plain(name, b and "true" or "false")
 
 def controller_date(name, d):
     """ Adds a controller date property """
@@ -500,21 +500,21 @@ def controller_date(name, d):
 
 def controller_int(name, i):
     """ Adds a controller int property """
-    return "%s:%d," % (name, i)
+    return controller_plain(name, str(i));
 
 def controller_plain(name, v):
     """ Adds a controller property that's already formatted for js """
-    return "%s:%s," % (name, v)
+    return "\"%s\":%s," % (name, v)
 
 def controller_str(name, s):
     """ Adds a controller string property """
     s = "'" + s.replace("'", "\\'").replace("\n", "\\n") + "'"
-    return "%s:%s," % (name, s)
+    return controller_plain(name, s)
 
 def controller_json(name, obj):
     """ Adds a controller json property (converts obj to json) """
     jv = json(obj)
-    return "%s:%s," % (name, jv)
+    return controller_plain(name, jv)
 
 def rss(inner, title, link, description):
     """ Renders an RSS document """
@@ -665,7 +665,7 @@ def json_menu(l, reports, mailmerges):
             (users.VIEW_MEDICAL, "", "", "medicalprofile", "asm-icon-blank", _("Medical profiles", l) )
         )),
         ("", "financial", _("Financial", l), (
-            ( users.VIEW_ACCOUNT, "alt+shift+x", "tagaccounts", "accounts", "asm-icon-accounts", _("Accounts", l) ),
+            ( users.VIEW_ACCOUNT, "alt+shift+x", "tagaccounts", "#/accounts", "asm-icon-accounts", _("Accounts", l) ),
             ( users.VIEW_STOCKLEVEL, "", "tagstock", "stocklevel", "asm-icon-stock", _("Stock", l) ),
             ( users.VIEW_DONATION, "", "tagaccounts", "--cat", "", "Payments" ),
             ( users.VIEW_DONATION, "alt+shift+d", "tagaccounts", "donation", "asm-icon-donation", _("Payment book", l) ),

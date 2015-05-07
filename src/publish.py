@@ -3553,7 +3553,7 @@ class RescueGroupsPublisher(FTPPublisher):
                 # courtesy (what is this?)
                 line.append("\"\"")
                 # Description
-                line.append("\"%s\"" % self.getDescription(an))
+                line.append("\"%s\"" % self.getDescription(an, crToBr=True))
                 # pic1-pic4
                 if totalimages > 0:
                     # UploadAll isn't on, there was just one image with sheltercode == name

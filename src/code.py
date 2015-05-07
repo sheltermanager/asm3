@@ -358,8 +358,8 @@ def full_or_json(modulename, s, c, json = False):
     web.header("Cache-Control", "no-cache")
     if not json:
         web.header("Content-Type", "text/html")
-        #extra = "<script>\n$(document).ready(function() { Path.listen(); common.module_start(\"%s\"); });\n</script>\n</body>" % modulename
-        extra = "<script>\n$(document).ready(function() { common.module_start(\"%s\"); });\n</script>\n</body>" % modulename
+        extra = "<script>\n$(document).ready(function() { Path.listen(); common.module_start(\"%s\"); });\n</script>\n</body>" % modulename
+        #extra = "<script>\n$(document).ready(function() { common.module_start(\"%s\"); });\n</script>\n</body>" % modulename
         return s.replace("</body>",  extra)
     else:
         web.header("Content-Type", "application/json")
@@ -848,10 +848,10 @@ class accounts:
         l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(offset="active"), session.locale)
-        if post["offset"] == "active":
-            accounts = financial.get_accounts(dbo, True)
-        else:
+        if post["offset"] == "all":
             accounts = financial.get_accounts(dbo)
+        else:
+            accounts = financial.get_accounts(dbo, True)
         al.debug("got %d accounts" % len(accounts), "code.accounts", dbo)
         title = _("Accounts", l)
         s = html.header(title, session)
