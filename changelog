@@ -1,6 +1,8 @@
 37
 ================
 
+08/05/15 Forked path.js and added support for querystring capture groups
+08/05/15 Switch Facebook to use JS SDK and removed Python social module
 06/05/15 Add PathJS dependency for later
 06/05/15 JS refactoring, remove globals, isolate modules, model methods
 06/05/15 More JS refactoring, allow single rollup file

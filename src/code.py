@@ -37,7 +37,6 @@ import reports as extreports
 import search as extsearch
 import service as extservice
 import smcom
-import social
 import stock as extstock
 import users
 import utils
@@ -358,8 +357,7 @@ def full_or_json(modulename, s, c, json = False):
     web.header("Cache-Control", "no-cache")
     if not json:
         web.header("Content-Type", "text/html")
-        extra = "<script>\n$(document).ready(function() { Path.listen(); common.module_start(\"%s\"); });\n</script>\n</body>" % modulename
-        #extra = "<script>\n$(document).ready(function() { common.module_start(\"%s\"); });\n</script>\n</body>" % modulename
+        extra = "<script>\n$(document).ready(function() { common.route_listen(); common.module_start(\"%s\"); });\n</script>\n</body>" % modulename
         return s.replace("</body>",  extra)
     else:
         web.header("Content-Type", "application/json")
@@ -528,6 +526,7 @@ class configjs:
             s += "smcompaymentlink:'%s'," % (SMCOM_PAYMENT_LINK.replace("{alias}", dbo.alias).replace("{database}", dbo.database))
             s += "geoprovider:'%s'," % (geoprovider)
             s += "geoproviderkey:'%s'," % (geoproviderkey)
+            s += "facebookappid:'%s'," % (FACEBOOK_CLIENT_ID)
             s += "jqueryuicss:'%s'," % (JQUERY_UI_CSS)
             s += "leafletcss:'%s'," % (LEAFLET_CSS)
             s += "leafletjs:'%s'," % (LEAFLET_JS)
@@ -990,6 +989,9 @@ class animal:
         if not extanimal.is_animal_in_location_filter(a, session.locationfilter):
             raise utils.ASMPermissionError("animal not in location filter")
         al.debug("opened animal %s %s" % (a["CODE"], a["ANIMALNAME"]), "code.animal", dbo)
+        tags = wordprocessor.animal_tags(dbo, a)
+        template = configuration.facebook_template(dbo)
+        facebooktext = wordprocessor.substitute_tags(template, tags, False, "$$", "$$")
         title = _("{0} - {1} ({2} {3} aged {4})", l).format(a["ANIMALNAME"], a["CODE"], a["SEXNAME"], a["SPECIESNAME"], a["ANIMALAGE"])
         s = html.header(title, session)
         c = html.controller_json("animal", a)
@@ -1005,6 +1007,7 @@ class animal:
         c += html.controller_json("entryreasons", extlookups.get_entryreasons(dbo))
         c += html.controller_str("facebookclientid", FACEBOOK_CLIENT_ID)
         c += html.controller_bool("hasfacebook", FACEBOOK_CLIENT_ID != "")
+        c += html.controller_str("facebooktext", facebooktext)
         c += html.controller_json("internallocations", extlookups.get_internal_locations(dbo, session.locationfilter))
         c += html.controller_json("microchipmanufacturers", extlookups.MICROCHIP_MANUFACTURERS)
         c += html.controller_json("pickuplocations", extlookups.get_pickup_locations(dbo))
@@ -1046,6 +1049,16 @@ class animal:
         elif mode == "webnotes":
             users.check_permission(session, users.CHANGE_MEDIA)
             extanimal.update_preferred_web_media_notes(dbo, session.user, post.integer("id"), post["comments"])
+        elif mode == "facebooklog":
+            users.check_permission(session, users.ADD_LOG)
+            l = session.locale
+            a = extanimal.get_animal(dbo, post.integer("id"))
+            al.debug("FB writing entry to animal log: %s %s" % (a["SHELTERCODE"], a["ANIMALNAME"]), "code.animal", dbo)
+            extlog.add_log(dbo, session.user, extlog.ANIMAL, post.integer("id"), configuration.facebook_log_type(dbo),
+                _("{0} {1}: posted to Facebook page {2} by {3}", l).format(a["SHELTERCODE"], a["ANIMALNAME"], post["pagename"], 
+                session.user))
+
+
 
 class animal_bulk:
     def GET(self):
@@ -1269,31 +1282,6 @@ class animal_embed:
             else:
                 al.debug("got animal %s %s by id" % (a["CODE"], a["ANIMALNAME"]), "code.animal_embed", dbo)
                 return html.json((a,))
-
-class animal_facebook:
-    def GET(self):
-        """
-        This controller is redirected to from Facebook. 
-        The link to Facebook is done in animal.js when the Facebook button is pressed.
-        
-        Facebook include code and state query parameters when redirecting to this controller.
-        
-        code: a token that we can use in our server side HTTP request to Facebook to get a 
-              real access_token from them for the logged in user.
-        state: we passed this in the original link to Facebook and it's the 
-               ID of the animal we would like to post.
-        """
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_ANIMAL)
-        post = utils.PostedData(web.input(code = "", state = ""), session.locale)
-        oauth_code = post["code"]
-        oauth_state = post["state"]
-        if post["error_reason"] != "":
-            raise utils.ASMValidationError(post["error_description"])
-        # Post the requested animal to facebook
-        social.post_animal_facebook(session.dbo, session.user, oauth_code, oauth_state)
-        # Redirect back to the animal record and tell the user it worked
-        raise web.seeother("animal?facebook=true&id=" + oauth_state[1:])
 
 class animal_find:
     def GET(self):

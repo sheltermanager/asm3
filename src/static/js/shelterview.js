@@ -227,7 +227,7 @@ $(function() {
         name: "shelterview",
         animation: "search",
         routes: {
-            "#/shelterview": function() {
+            "shelterview": function() {
                 common.module_loadandstart("shelterview", "shelterview");
             }
         }

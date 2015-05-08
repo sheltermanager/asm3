@@ -96,7 +96,7 @@ MINIFY_JS = False
 ROLLUP_JS = False
 
 # Only allow hotlinks to the animal_image and extra_image
-# service calls from this domain (blank for any domain)
+# service calls from this domain, or comma separated list of domains
 IMAGE_HOTLINKING_ONLY_FROM_DOMAIN = ""
 
 # If you have a facebook app for page/wall posting, the id and secret
@@ -247,7 +247,7 @@ LEAFLET_CSS = 'static/lib/leaflet/0.7.3/leaflet.css'
 LEAFLET_JS = 'static/lib/leaflet/0.7.3/leaflet.js'
 MOMENT_JS = 'static/lib/moment/2.7.0/moment.min.js'
 MOUSETRAP_JS = 'static/lib/mousetrap/1.4.6/mousetrap.min.js'
-PATH_JS = 'static/lib/pathjs/0.8.4/path.min.js'
+PATH_JS = 'static/lib/pathjs/0.8.4.smcom/path.min.js'
 SIGNATURE_JS = 'static/lib/signature/1.1.1/jquery.signature.min.js'
 TABLESORTER_CSS = 'static/lib/tablesorter/2.7.12/themes/theme.asm.css'
 TABLESORTER_JS = 'static/lib/tablesorter/2.7.12/jquery.tablesorter.min.js'

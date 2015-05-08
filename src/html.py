@@ -508,7 +508,7 @@ def controller_plain(name, v):
 
 def controller_str(name, s):
     """ Adds a controller string property """
-    s = "'" + s.replace("'", "\\'").replace("\n", "\\n") + "'"
+    s = "\"" + s.replace("\"", "\\\"").replace("\n", "\\n") + "\""
     return controller_plain(name, s)
 
 def controller_json(name, obj):
@@ -587,7 +587,7 @@ def json_menu(l, reports, mailmerges):
     structure = (
         ("", "asm", _("ASM", l), (
             ( "", "", "", "--cat", "asm-icon-animal", _("Animals", l) ),
-            ( users.VIEW_ANIMAL, "alt+shift+v", "", "#/shelterview", "asm-icon-location", _("Shelter view", l) ),
+            ( users.VIEW_ANIMAL, "alt+shift+v", "", "shelterview", "asm-icon-location", _("Shelter view", l) ),
             ( users.VIEW_ANIMAL, "alt+shift+f", "", "animal_find", "asm-icon-animal-find", _("Find animal", l) ),
             ( users.ADD_ANIMAL, "alt+shift+n", "", "animal_new", "asm-icon-animal-add", _("Add a new animal", l) ),
             ( users.ADD_LOG, "alt+shift+l", "", "log_new", "asm-icon-log", _("Add a log entry", l) ),
@@ -665,7 +665,7 @@ def json_menu(l, reports, mailmerges):
             (users.VIEW_MEDICAL, "", "", "medicalprofile", "asm-icon-blank", _("Medical profiles", l) )
         )),
         ("", "financial", _("Financial", l), (
-            ( users.VIEW_ACCOUNT, "alt+shift+x", "tagaccounts", "#/accounts", "asm-icon-accounts", _("Accounts", l) ),
+            ( users.VIEW_ACCOUNT, "alt+shift+x", "tagaccounts", "accounts", "asm-icon-accounts", _("Accounts", l) ),
             ( users.VIEW_STOCKLEVEL, "", "tagstock", "stocklevel", "asm-icon-stock", _("Stock", l) ),
             ( users.VIEW_DONATION, "", "tagaccounts", "--cat", "", "Payments" ),
             ( users.VIEW_DONATION, "alt+shift+d", "tagaccounts", "donation", "asm-icon-donation", _("Payment book", l) ),

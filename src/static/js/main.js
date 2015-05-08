@@ -787,7 +787,14 @@ $(function() {
         },
 
         name: "main",
-        animation: "main"
+        animation: "main",
+
+        routes: {
+            "main": function() {
+                common.module_loadandstart("main", "main");
+            }
+        }
+
 
     };
 

@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, _, asm, common, config, controller, dlgfx, additional, edit_header, format, header, html, tableform, validate */
+/*global $, _, asm, common, config, controller, dlgfx, additional, edit_header, format, header, html, social, tableform, validate */
 
 $(function() {
 
@@ -643,6 +643,18 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '</div>',
+                '<div id="dialog-facebook" style="display: none" title="' + _("Share this animal on Facebook") + '">',
+                '<table width="100%">',
+                '<tr>',
+                '<td><label for="facebookpage">' + _("Post To") + '</label></td>',
+                '<td><select id="facebookpage" class="asm-selectbox"></select></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="message">' + _("Message") + '</label></td>',
+                '<td><textarea id="facebookmessage" class="asm-textarea" rows="5"></textarea></td>',
+                '</tr>',
+                '</table>',
+                '</div>',
                 '<div id="dialog-delete" style="display: none" title="' + _("Delete") + '">',
                     '<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>' + _("This will permanently remove this animal, are you sure?") + '</p>',
                 '</div>',
@@ -1182,6 +1194,37 @@ $(function() {
                 });
             });
 
+            // Facebook dialog
+            var fbbuttons = { };
+            fbbuttons[_("Post")] = function() {
+                var p = $("#facebookpage").select("value").split("|"),
+                    image_url = asm.baseurl + "/service?method=animal_image&account=" + asm.useraccount + "&method=animal_image&animalid=" + controller.animal.ID;
+                $("#dialog-facebook").disable_dialog_buttons();
+                social.facebook_post_photo(p[0], p[1], image_url, $("#facebookmessage").val(), function(response) {
+                    header.show_info(_("Successfully posted to Facebook"));
+                    $("#dialog-facebook").dialog("close");
+                    $("#dialog-facebook").enable_dialog_buttons();
+                    $("#button-facebook").button("enable");
+                    if (config.bool("FacebookLog")) {
+                        common.ajax_post("animal", "mode=facebooklog&id=" + controller.animal.ID + 
+                            "&pagename=" + encodeURIComponent($("#facebookpage").select("label")));
+                    }
+                });
+            };
+            fbbuttons[_("Cancel")] = function() {
+                $("#dialog-facebook").dialog("close");
+            };
+
+            $("#dialog-facebook").dialog({
+                autoOpen: false,
+                modal: true,
+                width: 550,
+                dialogClass: "dialogshadow",
+                show: dlgfx.add_show,
+                hide: dlgfx.add_hide,
+                buttons: fbbuttons
+            });
+
             // If the bonded animals are cleared (or any animalchooser as part
             // of an additional field for that matter), dirty the form.
             $(".asm-animalchooser").animalchooser().bind("animalchoosercleared", function(event, rec) {
@@ -1305,20 +1348,18 @@ $(function() {
             else {
                 $("#button-facebook").button().click(function() {
                     $("#button-facebook").button("disable");
-                    var client_id = controller.facebookclientid;
-                    var redirect_uri = asm.baseurl + "/animal_facebook";
-                    var scope = "publish_actions,manage_pages,publish_stream";
-                    var state = "a" + $("#animalid").val();
-                    window.location = "https://www.facebook.com/dialog/oauth/?client_id=" + client_id +
-                        "&redirect_uri=" + encodeURIComponent(redirect_uri) +
-                        "&scope=" + scope +
-                        "&state=" + state;
+                    social.facebook_get_pages(function(pages) {
+                        var h = '<option value="me|' + social.facebook_access_token + '">' + _("My Timeline") + '</option>';
+                        $.each(pages, function(i, v) {
+                            h += '<option value="' + v.id + '|' + v.access_token + '">' + v.name + '</option>';
+                        });
+                        $("#facebookpage").html(h);
+                        $("#facebookpage").select("firstvalue");
+                        $("#facebookmessage").html(controller.facebooktext);
+                        $("#dialog-facebook").dialog("open");
+                        $("#button-facebook").button("enable");
+                    });
                 });
-            }
-
-            // If we just posted to FB, say so
-            if (common.current_url().indexOf("facebook=true") != -1) {
-                header.show_info(_("Successfully posted to Facebook"));
             }
 
             // Events that trigger rechecking of the on-screen fields
@@ -1357,8 +1398,8 @@ $(function() {
         name: "animal",
         animation: "formtab",
         routes: {
-            "#/animal/:id": function() {
-                common.module_loadandstart("animal", "animal?id=" + this.params.id);
+            "animal": function() {
+                common.module_loadandstart("animal", "animal?id=" + this.qs.id);
             }
         }
 

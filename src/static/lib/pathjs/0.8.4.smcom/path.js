@@ -53,7 +53,26 @@ var Path = {
         }
     },
     'match': function (path, parameterize) {
-        var params = {}, route = null, possible_routes, slice, i, j, compare;
+        var params = {}, route = null, possible_routes, slice, i, j, compare, qs;
+        // RRT: 2015-05-08 If the path has a query string in it:
+        //      1. Remove it from the path for route matching purposes
+        //      2. Call splitqs() on it to turn it into an object
+        //      3. Assign it to this.qs similar to this.params
+        var splitqs = function(a) {
+            var i = 0, b = {};
+            if (!a) { return {}; }
+            $.each(a.split("&"), function(i, v) {
+                var x = v.split("=");
+                b[x[0]] = decodeURIComponent(x[1].replace(/\+/g, " "));
+            });
+            return b;
+        };
+        if (path.indexOf("?") != -1) {
+            qs = path.substring(path.indexOf("?")+1);
+            path = path.substring(0, path.indexOf("?"));
+            qs = splitqs(qs);
+        }
+        // RRT: End changes
         for (route in Path.routes.defined) {
             if (route !== null && route !== undefined) {
                 route = Path.routes.defined[route];
@@ -72,6 +91,7 @@ var Path = {
                     if (slice === compare) {
                         if (parameterize) {
                             route.params = params;
+                            route.qs = qs;
                         }
                         return route;
                     }

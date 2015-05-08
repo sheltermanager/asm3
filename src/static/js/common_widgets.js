@@ -375,6 +375,7 @@
 
     // Select box
     $.fn.select = function(method, newval) {
+        var rv = "";
         if (method === undefined) {
             method = "create";
         }
@@ -404,7 +405,7 @@
             });
         }
         if (method == "value") {
-            var rv = "";
+            rv = "";
             $(this).each(function() {
                 if (newval !== undefined) {
                     $(this).val(newval);
@@ -419,6 +420,13 @@
                     rv = $(this).val();
                     return;
                 }
+            });
+            return rv;
+        }
+        if (method == "label") {
+            rv = "";
+            $(this).each(function() {
+                rv = $(this).find("option:selected").html();    
             });
             return rv;
         }

@@ -139,7 +139,11 @@ def handler(post, remoteip, referer):
 
     if method =="animal_image":
         # If we have a hotlinking restriction, enforce it
-        if referer != "" and IMAGE_HOTLINKING_ONLY_FROM_DOMAIN != "" and referer.find(IMAGE_HOTLINKING_ONLY_FROM_DOMAIN) == -1:
+        domains = IMAGE_HOTLINKING_ONLY_FROM_DOMAIN.split(",")
+        fromhldomain = False
+        for d in domains:
+            if d != "" and referer.find(d) != -1: fromhldomain = True
+        if referer != "" and IMAGE_HOTLINKING_ONLY_FROM_DOMAIN != "" and not fromhldomain:
             raise utils.ASMPermissionError("Image hotlinking is forbidden.")
         if animalid == "" or utils.cint(animalid) == 0:
             al.error("animal_image failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
