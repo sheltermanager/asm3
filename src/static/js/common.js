@@ -251,7 +251,7 @@
 
         /** Use an internal route to go to a URL */
         route: function(path) {
-            window.location = path;
+            Path.history.pushState({}, "", path);
         },
 
         /** Given a url encoded string a, returns a dictionary of the elements */
@@ -1841,7 +1841,7 @@ $(function() {
 
     // Make CTRL+H return to the homescreen
     Mousetrap.bind([ "ctrl+h", "meta+h" ], function() {
-        window.location = "main";
+        common.route("main");
         return false;
     });
 
