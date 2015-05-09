@@ -1,6 +1,7 @@
 37
 ================
 
+09/05/15 Path.js change() function, fixed quicklinks in client mode
 09/05/15 More client side routes added, fallback to server processing
 08/05/15 Forked path.js and added support for querystring capture groups
 08/05/15 Switch Facebook to use JS SDK and removed Python social module

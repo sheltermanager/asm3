@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, Mousetrap, _, asm, common, config, controller, format, html */
+/*global $, Mousetrap, Path, _, asm, common, config, controller, format, html */
 /*global header: true */
 
 $(function() {
@@ -495,6 +495,55 @@ $(function() {
             return h.join("");
         },
 
+        /** Shows quicklinks for the main/home page */
+        quicklinks_main: function() {
+            if (config.bool("QuicklinksHomeScreen")) {
+                $("#linkstips").show();
+                $("#quicklinks").show();
+                $("#quicklinks").on("mouseover", "a", function() {
+                    $(this).addClass("ui-state-hover");
+                });
+                $("#quicklinks").on("mouseout", "a", function() {
+                    $(this).removeClass("ui-state-hover");
+                });
+
+            }
+            if (config.has() && !config.bool("DisableTips")) {
+                $("#tips").show();
+            }
+            if (config.has() && config.bool("ThemeChangeWarning") && config.str("SystemTheme") == asm.theme && 
+                $.inArray(config.str("SystemTheme"), [ "smoothness", "ui-lightness" ]) == -1) {
+                $("#overtheme").show();
+            }
+        },
+
+        quicklinks_other: function() {
+            // All other non-login screens
+            if (config.bool("QuicklinksAllScreens")) {
+                $("#linkstips").show();
+                $("#quicklinks").show();
+                $("#quicklinks").on("mouseover", "a", function() {
+                    $(this).addClass("ui-state-hover");
+                });
+                $("#quicklinks").on("mouseout", "a", function() {
+                    $(this).removeClass("ui-state-hover");
+                });
+            }
+        },
+
+        quicklinks_show: function(path) {
+            // Deal with whether we're showing quicklinks and tips
+            $("#linkstips").hide();
+            $("#quicklinks").hide();
+            if (!path) { path = common.current_url(); } 
+            if (config.has() && path.indexOf("main") != -1) {
+                this.quicklinks_main();
+            }
+            else if (path.indexOf("login") == -1) {
+                this.quicklinks_other();
+            }
+        },
+
         bind: function() {
             
             var timezone = config.str("Timezone");
@@ -511,42 +560,11 @@ $(function() {
             // Set user name
             $("#asm-topline-username").html(asm.user);
 
-            // Deal with whether we're showing quicklinks and tips
-            if (config.has() && common.current_url().indexOf("/main") != -1) {
-                // Main screen
-                if (config.bool("QuicklinksHomeScreen")) {
-                    $("#linkstips").show();
-                    $("#quicklinks").show();
-                    $("#quicklinks").on("mouseover", "a", function() {
-                        $(this).addClass("ui-state-hover");
-                    });
-                    $("#quicklinks").on("mouseout", "a", function() {
-                        $(this).removeClass("ui-state-hover");
-                    });
+            Path.change(function(path) {
+                header.quicklinks_show(path);
+            });
 
-                }
-                if (config.has() && !config.bool("DisableTips")) {
-                    $("#tips").show();
-                }
-                if (config.has() && config.bool("ThemeChangeWarning") && config.str("SystemTheme") == asm.theme && 
-                    $.inArray(config.str("SystemTheme"), [ "smoothness", "ui-lightness" ]) == -1) {
-                    $("#overtheme").show();
-                }
-            }
-            else if (common.current_url().indexOf("/login") == -1) {
-                // All other non-login screens
-                if (config.bool("QuicklinksAllScreens")) {
-                    $("#linkstips").show();
-                    $("#quicklinks").show();
-                    $("#quicklinks").on("mouseover", "a", function() {
-                        $(this).addClass("ui-state-hover");
-                    });
-                    $("#quicklinks").on("mouseout", "a", function() {
-                        $(this).removeClass("ui-state-hover");
-                    });
-                }
-            }
-
+            this.quicklinks_show();
             this.bind_search();
 
             // Hide the error and info boxes

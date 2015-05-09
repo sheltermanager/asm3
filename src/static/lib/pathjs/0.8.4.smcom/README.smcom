@@ -1,10 +1,13 @@
 This is path.js 0.8.4 from https://github.com/mtrpcic/pathjs
 
-For ASM, we've made 2 modifications:
+For ASM, we've made 3 modifications:
 
 1. Querystrings are extracted from paths and turned into an object, 
    accessible in your route callbacks as this.qs.[param] or in their
    raw form as this.rawqs
 
 2. Rescue routes receive the unmatched path as the first argument.
+
+3. Path.change(function(path) {}) allows you to listen for any changes
+   to the current route and take action.
 

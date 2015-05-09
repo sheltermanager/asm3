@@ -13,6 +13,10 @@ var Path = {
     'rescue': function (fn) {
         Path.routes.rescue = fn;
     },
+     /** RRT 2015-05-09: change route is called every time the route changes */
+    'change': function(fn) {
+        Path.routes.change = fn;
+    },
     'history': {
         'initial':{}, // Empty container for "Initial Popstate" checking variables.
         'pushState': function(state, title, path){
@@ -117,6 +121,10 @@ var Path = {
             }
 
             if (matched_route !== null) {
+                /** RRT 2015-05-09: Fire the "change" route every time we go somewhere */
+		if (Path.routes.change) { 
+                    Path.routes.change(passed_route);
+                }
                 matched_route.run();
                 return true;
             } else {
@@ -163,6 +171,7 @@ var Path = {
         'root': null,
         'rescue': null,
         'previous': null,
+        'change': null, // RRT: 2015-05-09
         'defined': {}
     }
 };
