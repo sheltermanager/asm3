@@ -172,7 +172,15 @@ $(function() {
         },
 
         name: "sql",
-        animation: "options"
+        animation: "options",
+        title: function() { return _("SQL Interface"); },
+
+        routes: {
+            "sql": function() {
+                common.module_loadandstart("sql", "sql");
+            }
+        }
+
 
     };
 

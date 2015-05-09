@@ -104,6 +104,8 @@ $(function() {
                          $("#accounttype").select("value", "0");
                          $("#donationtype").select("value", "0");
                          $("#donationtype").closest("tr").hide(); 
+                         $("#costtype").select("value", "0");
+                         $("#costtype").closest("tr").hide(); 
                          tableform.dialog_show_add(dialog, function() {
                              tableform.fields_post(dialog.fields, "mode=create", "accounts", function(response) {
                                  var row = {};
@@ -170,6 +172,7 @@ $(function() {
 
         name: "accounts",
         animation: "formtab",
+        title: function() { return _("Accounts"); },
 
         routes: {
             "accounts": function() {

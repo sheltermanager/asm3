@@ -64,16 +64,15 @@ $(function() {
                 '</table>',
                 '</div>',
                 html.content_header(_("Transactions")),
-                '<form id="criteria" action="accounts_trx" method="GET">',
-                '<input type="hidden" name="accountid" value="' + controller.accountid + '" />',
+                '<input type="hidden" id="accountid" data="accountid" value="' + controller.accountid + '" />',
                 '<table width="100%">',
                 '<tr>',
                 '<td>' + _("Show transactions from") + '</td>',
-                '<td><input id="fromdate" name="fromdate" type="text" class="asm-textbox asm-datebox" /></td>',
+                '<td><input id="fromdate" data="fromdate" type="text" class="asm-textbox asm-datebox" /></td>',
                 '<td>' + _("to") + '</td>',
-                '<td><input id="todate" name="todate" type="text" class="asm-textbox asm-datebox" /></td>',
+                '<td><input id="todate" data="todate" type="text" class="asm-textbox asm-datebox" /></td>',
                 '<td>' + _("Reconciled") + '</td>',
-                '<td><select id="recfilter" name="recfilter" class="asm-selectbox">',
+                '<td><select id="recfilter" data="recfilter" class="asm-selectbox">',
                 '<option value="0">' + _("Both") + '</option>',
                 '<option value="1">' + _("Reconciled") + '</option>',
                 '<option value="2">' + _("Not Reconciled") + '</option>',
@@ -81,7 +80,6 @@ $(function() {
                 '<td><button id="button-refresh">' + html.icon("refresh") + ' ' + _("Refresh") + '</button></td>',
                 '</tr>',
                 '</table>',
-                '</form>',
                 tableform.buttons_render([
                     { id: "delete", text: _("Delete"), icon: "delete" },
                     { id: "reconcile", text: _("Reconcile"), icon: "transactions" }
@@ -153,7 +151,11 @@ $(function() {
             return h.join("\n");
         },
 
-        bind: function () {
+        reload: function() {
+            common.route("accounts_trx?" + $("#fromdate, #todate, #recfilter, #accountid").toPOST());
+        },
+
+        bind: function() {
             var validate_account = function(selector) {
                 // Returns true if the value of $(selector) is a valid account code
                 var v = $(selector).val(),
@@ -198,7 +200,7 @@ $(function() {
                 var formdata = "mode=update&trxid=" + $("#trxid").val() + "&accountid=" + controller.accountid + "&" +
                     $("#dialog-edit input, #dialog-edit select").toPOST();
                 $("#dialog-edit").disable_dialog_buttons();
-                common.ajax_post("accounts_trx", formdata, function() { $("#criteria").submit(); }, function() { $("#dialog-edit").dialog("close"); });
+                common.ajax_post("accounts_trx", formdata, function() { accounts_trx.reload(); }, function() { $("#dialog-edit").dialog("close"); });
             };
             editbuttons[_("Cancel")] = function() {
                 $("#dialog-edit").dialog("close");
@@ -217,11 +219,11 @@ $(function() {
             $("#button-reconcile").button({disabled: true}).click(function() {
                 $("#button-reconcile").button("disable");
                 var formdata = "mode=reconcile&ids=" + $("#table-trx input").tableCheckedData();
-                common.ajax_post("accounts_trx", formdata, function() { $("#criteria").submit(); });
+                common.ajax_post("accounts_trx", formdata, function() { accounts_trx.reload(); });
             });
 
             $("#button-refresh").button().click(function() {
-                $("#criteria").submit();
+                accounts_trx.reload();
             });
 
             $("#button-add").button().click(function() {
@@ -230,14 +232,14 @@ $(function() {
                 $("#button-add").button("disable");
                 var formdata = "mode=create&accountid=" + controller.accountid + "&" +
                     $("#table-trx input, #table-trx select").toPOST();
-                common.ajax_post("accounts_trx", formdata, function() { $("#criteria").submit(); });
+                common.ajax_post("accounts_trx", formdata, function() { accounts_trx.reload(); });
             });
 
             $("#button-delete").button({disabled: true}).click(function() {
                 tableform.delete_dialog(function() {
                     var formdata = "mode=delete&ids=" + $("#table-trx input").tableCheckedData();
                     $("#dialog-delete").disable_dialog_buttons();
-                    common.ajax_post("accounts_trx", formdata, function() { $("#criteria").submit(); });
+                    common.ajax_post("accounts_trx", formdata, function() { accounts_trx.reload(); });
                 });
             });
 
@@ -310,7 +312,15 @@ $(function() {
         },
 
         name: "accounts_trx",
-        animation: "book"
+        animation: "book",
+        title: function() { return controller.accountcode; },
+
+        routes: {
+            "accounts_trx": function() {
+                common.module_loadandstart("accounts_trx", "accounts_trx?" + this.rawqs);
+            }
+        }
+
 
     };
 

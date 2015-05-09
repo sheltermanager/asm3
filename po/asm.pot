@@ -244,7 +244,7 @@ msgstr ""
 msgid "Accountant"
 msgstr ""
 
-#: accounts.js header.js options.js roles.js code.py html.py configuration.py
+#: accounts.js header.js options.js roles.js html.py configuration.py
 msgid "Accounts"
 msgstr ""
 
@@ -620,7 +620,7 @@ msgstr ""
 msgid "Additional"
 msgstr ""
 
-#: additional.js code.py
+#: additional.js
 msgid "Additional Fields"
 msgstr ""
 
@@ -1153,7 +1153,7 @@ msgstr ""
 msgid "Animal Selection"
 msgstr ""
 
-#: code.py mobile.py
+#: main.js mobile.py
 msgid "Animal Shelter Manager"
 msgstr ""
 
@@ -1840,7 +1840,7 @@ msgstr ""
 msgid "Bulk Vaccination"
 msgstr ""
 
-#: animal_bulk.js code.py html.py
+#: animal_bulk.js html.py
 msgid "Bulk change animals"
 msgstr ""
 
@@ -4357,14 +4357,6 @@ msgstr ""
 msgid "Facebook Sharing"
 msgstr ""
 
-#: publish_options.js
-msgid "Facebook page"
-msgstr ""
-
-#: publish_options.js
-msgid "Facebook page name"
-msgstr ""
-
 #: code.py
 msgid "Failed sending email"
 msgstr ""
@@ -6142,10 +6134,6 @@ msgstr ""
 msgid "Log successfully added."
 msgstr ""
 
-#: publish_options.js
-msgid "Logged in Facebook user"
-msgstr ""
-
 #: login.js mobile.py
 msgid "Login"
 msgstr ""
@@ -6541,7 +6529,7 @@ msgstr ""
 msgid "Merge duplicate records"
 msgstr ""
 
-#: main.js media.js
+#: animal.js main.js media.js
 msgid "Message"
 msgstr ""
 
@@ -6786,6 +6774,10 @@ msgstr ""
 
 #: mobile.py
 msgid "My Incidents"
+msgstr ""
+
+#: animal.js
+msgid "My Timeline"
 msgstr ""
 
 #: header.js html.py configuration.py
@@ -7869,8 +7861,12 @@ msgstr ""
 msgid "Positive/Negative"
 msgstr ""
 
-#: publish_options.js
-msgid "Post to Facebook as"
+#: animal.js
+msgid "Post"
+msgstr ""
+
+#: animal.js
+msgid "Post To"
 msgstr ""
 
 #: dbupdate.py
@@ -8787,7 +8783,7 @@ msgstr ""
 msgid "SQL"
 msgstr ""
 
-#: sql.js code.py
+#: sql.js
 msgid "SQL Interface"
 msgstr ""
 
@@ -9179,7 +9175,7 @@ msgstr ""
 msgid "Shelter stats (today)"
 msgstr ""
 
-#: header.js options.js code.py html.py configuration.py
+#: header.js shelterview.js options.js html.py configuration.py
 msgid "Shelter view"
 msgstr ""
 
@@ -10129,12 +10125,6 @@ msgstr ""
 
 #: movement.py
 msgid "The movement number '{0}' is not unique."
-msgstr ""
-
-#: publish_options.js
-msgid ""
-"The name of the page you want to post to (eg: Your Humane Society). Leave "
-"blank to post to your wall."
 msgstr ""
 
 #: stocklevel.js
@@ -12169,7 +12159,7 @@ msgstr ""
 msgid "{0} (under {1} months)"
 msgstr ""
 
-#: code.py
+#: animal.js animal_costs.js code.py
 msgid "{0} - {1} ({2} {3} aged {4})"
 msgstr ""
 
@@ -12305,7 +12295,7 @@ msgstr ""
 msgid "{0} {1}: not available for adoption"
 msgstr ""
 
-#: social.py
+#: code.py
 msgid "{0} {1}: posted to Facebook page {2} by {3}"
 msgstr ""
 

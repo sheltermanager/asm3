@@ -788,6 +788,7 @@ $(function() {
 
         name: "main",
         animation: "main",
+        title: function() { return _("Animal Shelter Manager") + " - " + config.str("Organisation"); },
 
         routes: {
             "main": function() {

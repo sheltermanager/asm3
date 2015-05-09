@@ -267,7 +267,16 @@
 
         /** Starts client side routing listening */
         route_listen: function() {
+            // Add a rescue route - if we can't find matching client route,
+            // we fall back to going to the server
+            Path.rescue(function(path) {
+                window.location = path;
+            });
+            // Listen for history state changes - falls back to
+            // using location hash for browsers without the history API
             Path.history.listen(true);
+            // Catch all clicks for "real" URLs and use client side
+            // routing to handle them.
             $(document).on("click", "a", function(event) {
                 var href = $(this).attr("href");
                 if (href && href != "#") {
@@ -348,6 +357,7 @@
             common.bind_widgets();
             if (o.bind) { o.bind(); }
             if (o.sync) { o.sync(); }
+            if (o.title) { $(document).attr("title", o.title()); }
             common.apply_label_overrides(modulename); 
             $("#asm-content").asmcontent(o.animation);
             common.module_running = o;

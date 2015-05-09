@@ -656,12 +656,10 @@ class main:
         l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
-        title = _("Animal Shelter Manager", l)
-        title += " - " + configuration.organisation(dbo)
         # Do we need to request a password change?
         if session.passchange:
             raise web.seeother("/change_password?suggest=1")
-        s = html.header(title, session)
+        s = html.header("", session)
         # Database update checks
         dbmessage = ""
         if dbupdate.check_for_updates(dbo):
@@ -852,8 +850,7 @@ class accounts:
         else:
             accounts = financial.get_accounts(dbo, True)
         al.debug("got %d accounts" % len(accounts), "code.accounts", dbo)
-        title = _("Accounts", l)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("accounttypes", extlookups.get_account_types(dbo))
         c += html.controller_json("costtypes", extlookups.get_costtypes(dbo))
         c += html.controller_json("donationtypes", extlookups.get_donation_types(dbo))
@@ -909,9 +906,8 @@ class accounts_trx:
         transactions = financial.get_transactions(dbo, post.integer("accountid"), fromdate, todate, post.integer("recfilter"))
         accountcode = financial.get_account_code(dbo, post.integer("accountid"))
         accounteditroles = financial.get_account_edit_roles(dbo, post.integer("accountid"))
-        title = accountcode
         al.debug("got %d trx for %s <-> %s" % (len(transactions), str(fromdate), str(todate)), "code.accounts_trx", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("rows", transactions)
         c += html.controller_json("codes", "|".join(financial.get_account_codes(dbo, accountcode)))
         c += html.controller_int("accountid", post.integer("accountid"))
@@ -950,9 +946,8 @@ class additional:
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         fields = extadditional.get_fields(dbo)
-        title = _("Additional Fields", l)
         al.debug("got %d additional field definitions" % len(fields), "code.additional", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("rows", fields)
         c += html.controller_json("fieldtypes", extlookups.get_additionalfield_types(dbo))
         c += html.controller_json("linktypes", extlookups.get_additionalfield_links(dbo))
@@ -992,8 +987,7 @@ class animal:
         tags = wordprocessor.animal_tags(dbo, a)
         template = configuration.facebook_template(dbo)
         facebooktext = wordprocessor.substitute_tags(template, tags, False, "$$", "$$")
-        title = _("{0} - {1} ({2} {3} aged {4})", l).format(a["ANIMALNAME"], a["CODE"], a["SEXNAME"], a["SPECIESNAME"], a["ANIMALAGE"])
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("animal", a)
         c += html.controller_plain("activelitters", html.json_autocomplete_litters(dbo))
         c += html.controller_json("additional", extadditional.get_additional_fields(dbo, a["ID"], "animal"))
@@ -1058,8 +1052,6 @@ class animal:
                 _("{0} {1}: posted to Facebook page {2} by {3}", l).format(a["SHELTERCODE"], a["ANIMALNAME"], post["pagename"], 
                 session.user))
 
-
-
 class animal_bulk:
     def GET(self):
         utils.check_loggedin(session, web)
@@ -1067,8 +1059,7 @@ class animal_bulk:
         l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
-        title = _("Bulk change animals", l)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("ynun", extlookups.get_ynun(dbo))
         c += html.controller_json("animaltypes", extlookups.get_animal_types(dbo))
         c += html.controller_plain("autolitters", html.json_autocomplete_litters(dbo))
@@ -1094,9 +1085,8 @@ class animal_costs:
         cost = extanimal.get_costs(dbo, post.integer("id"))
         costtypes = extlookups.get_costtypes(dbo)
         costtotals = extanimal.get_cost_totals(dbo, post.integer("id"))
-        title = _("{0} - {1} ({2} {3} aged {4})").format(a["ANIMALNAME"], a["CODE"], a["SEXNAME"], a["SPECIESNAME"], a["ANIMALAGE"])
         al.debug("got %d costs for animal %s %s" % (len(cost), a["CODE"], a["ANIMALNAME"]), "code.animal_costs", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("rows", cost)
         c += html.controller_json("animal", a)
         c += html.controller_json("costtypes", costtypes)
@@ -5811,9 +5801,8 @@ class shelterview:
         post = utils.PostedData(web.input(), session.locale)
         animals = extanimal.get_shelterview_animals(dbo, session.locationfilter)
         perrow = configuration.main_screen_animal_link_max(dbo)
-        title = _("Shelter view", l)
         al.debug("got %d animals for shelterview" % (len(animals)), "code.shelterview", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("animals", extanimal.get_animals_brief(animals))
         c += html.controller_json("locations", extlookups.get_internal_locations(dbo, session.locationfilter))
         c += html.controller_int("perrow", perrow)
@@ -5851,15 +5840,13 @@ class sql:
         post = utils.PostedData(web.input(mode="iface"), session.locale)
         mode = post["mode"]
         if mode == "iface":
-            title = _("SQL Interface", l)
             al.debug("%s opened SQL interface" % str(session.user), "code.sql", dbo)
-            s = html.header(title, session)
+            s = html.header("", session)
             c = html.controller_json("tables", dbupdate.TABLES + dbupdate.VIEWS)
             c += html.controller_json("dumpoverrides", DUMP_OVERRIDES)
             s += html.controller(c)
             s += html.footer()
-            web.header("Content-Type", "text/html")
-            return s
+            return full_or_json("sql", s, c, post["json"] == "true")
         elif mode == "dumpsql":
             self.check_disabled(dbo, "dumpsql")
             self.check_url(dbo, "dumpsql")

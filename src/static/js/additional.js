@@ -131,7 +131,15 @@ $(function() {
         },
 
         name: "additional",
-        animation: "options"
+        animation: "options",
+        title: function() { return _("Additional Fields"); },
+
+        routes: {
+            "additional": function() {
+                common.module_loadandstart("additional", "additional");
+            }
+        }
+
 
     };
 

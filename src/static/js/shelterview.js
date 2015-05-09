@@ -226,6 +226,8 @@ $(function() {
 
         name: "shelterview",
         animation: "search",
+        title: function() { return _("Shelter view"); },
+
         routes: {
             "shelterview": function() {
                 common.module_loadandstart("shelterview", "shelterview");

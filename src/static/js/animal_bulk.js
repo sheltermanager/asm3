@@ -148,7 +148,15 @@ $(function() {
         },
 
         name: "animal_bulk",
-        animation: "newdata"
+        animation: "newdata",
+        title: function() { return _("Bulk change animals"); },
+
+        routes: {
+            "additional": function() {
+                common.module_loadandstart("animal_bulk", "animal_bulk");
+            }
+        }
+
 
     };
 

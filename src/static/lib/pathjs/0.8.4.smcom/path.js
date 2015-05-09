@@ -1,5 +1,5 @@
 var Path = {
-    'version': "0.8.4",
+    'version': "0.8.4.smcom",
     'map': function (path) {
         if (Path.routes.defined.hasOwnProperty(path)) {
             return Path.routes.defined[path];
@@ -53,11 +53,12 @@ var Path = {
         }
     },
     'match': function (path, parameterize) {
-        var params = {}, route = null, possible_routes, slice, i, j, compare, qs;
+        var params = {}, route = null, possible_routes, slice, i, j, compare, q = "", qs = {};
         // RRT: 2015-05-08 If the path has a query string in it:
         //      1. Remove it from the path for route matching purposes
         //      2. Call splitqs() on it to turn it into an object
         //      3. Assign it to this.qs similar to this.params
+        //      4. Assign the raw querystring as this.rawqs
         var splitqs = function(a) {
             var i = 0, b = {};
             if (!a) { return {}; }
@@ -68,9 +69,9 @@ var Path = {
             return b;
         };
         if (path.indexOf("?") != -1) {
-            qs = path.substring(path.indexOf("?")+1);
+            q = path.substring(path.indexOf("?")+1);
             path = path.substring(0, path.indexOf("?"));
-            qs = splitqs(qs);
+            qs = splitqs(q);
         }
         // RRT: End changes
         for (route in Path.routes.defined) {
@@ -92,6 +93,7 @@ var Path = {
                         if (parameterize) {
                             route.params = params;
                             route.qs = qs;
+                            route.rawqs = q;
                         }
                         return route;
                     }
@@ -119,7 +121,8 @@ var Path = {
                 return true;
             } else {
                 if (Path.routes.rescue !== null) {
-                    Path.routes.rescue();
+                    // RRT: 2015-05-09 - pass the non-matching path to the rescue route
+                    Path.routes.rescue(passed_route);
                 }
             }
         }
