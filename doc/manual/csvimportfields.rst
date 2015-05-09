@@ -43,8 +43,10 @@ ANIMALHIDDENDETAILS
     Some comments for the animal's hidden details field.
 ANIMALHEALTHPROBLEMS
     Some comments for the animal's health problems field.
+ANIMALNEUTERED
+    Y/N to indicate yes/no
 ANIMALNEUTEREDDATE
-    If not blank and a valid date, ASM will mark the animal neutered.
+    The date the animal was neuteured. If supplied and not blank, ANIMALNEUTERED = Y is also assumed.
 ANIMALMICROCHIP
     If not blank, ASM will mark the animal microchipped with this as the microchip number.
 ANIMALENTRYDATE

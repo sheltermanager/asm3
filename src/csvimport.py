@@ -20,9 +20,10 @@ from cStringIO import StringIO
 VALID_FIELDS = [
     "ANIMALNAME", "ANIMALSEX", "ANIMALTYPE", "ANIMALCOLOR", "ANIMALBREED1", 
     "ANIMALBREED2", "ANIMALDOB", "ANIMALLOCATION", "ANIMALSPECIES", "ANIMALAGE", 
-    "ANIMALCOMMENTS", "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", 
+    "ANIMALCOMMENTS", "ANIMALNEUTERED", "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", 
     "ANIMALENTRYDATE", "ANIMALDECEASEDDATE", "ANIMALCODE",
     "ANIMALREASONFORENTRY", "ANIMALHIDDENDETAILS", "ANIMALNOTFORADOPTION",
+    "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS", 
     "ANIMALHOUSETRAINED", "ANIMALHEALTHPROBLEMS",
     "ORIGINALOWNERTITLE", "ORIGINALOWNERINITIALS", "ORIGINALOWNERFIRSTNAME",
     "ORIGINALOWNERLASTNAME", "ORIGINALOWNERADDRESS", "ORIGINALOWNERCITY",
@@ -310,6 +311,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
                 a["dateofbirth"] = "" # if we had an age and dob was blank, prefer the age
             a["datebroughtin"] = gkd(dbo, row, "ANIMALENTRYDATE", True)
             a["deceaseddate"] = gkd(dbo, row, "ANIMALDECEASEDDATE")
+            a["neutered"] = gkbi(row, "ANIMALNEUTERED")
             a["neutereddate"] = gkd(dbo, row, "ANIMALNEUTEREDDATE")
             if a["neutereddate"] != "": a["neutered"] = 1
             a["microchipnumber"] = gks(row, "ANIMALMICROCHIP")

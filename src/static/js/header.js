@@ -533,8 +533,7 @@ $(function() {
 
         quicklinks_show: function(path) {
             // Deal with whether we're showing quicklinks and tips
-            $("#linkstips").hide();
-            $("#quicklinks").hide();
+            $("#linkstips, #quicklinks, #tips, #overtheme").hide();
             if (!path) { path = common.current_url(); } 
             if (config.has() && path.indexOf("main") != -1) {
                 this.quicklinks_main();
