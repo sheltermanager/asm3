@@ -105,7 +105,18 @@ $(function() {
         },
 
         name: "animal_diet",
-        animation: "formtab"
+        animation: "formtab",
+
+        title:  function() { return common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
+            0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,
+            3: controller.animal.SPECIESNAME, 4: controller.animal.ANIMALAGE }); },
+
+        routes: {
+            "animal_diet": function() {
+                common.module_loadandstart("animal_diet", "animal_diet?id=" + this.qs.id);
+            }
+        }
+
 
     };
 

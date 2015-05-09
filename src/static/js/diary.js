@@ -230,7 +230,42 @@ $(function() {
         },
 
         name: "diary",
-        animation: common.current_url().indexOf("diary_edit") == -1 ? "formtab" : "book"
+        animation: common.current_url().indexOf("diary_edit") == -1 ? "formtab" : "book",
+        title:  function() { 
+            var t = "";
+            if (controller.name == "animal_diary") {
+                t = common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
+                    0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,
+                    3: controller.animal.SPECIESNAME, 4: controller.animal.ANIMALAGE }); 
+            }
+            else if (controller.name == "diary_edit") { t = _("Edit diary notes"); }
+            else if (controller.name == "diary_edit_my") { t = _("Edit my diary notes"); }
+            else if (controller.name == "foundanimal_diary") { t = common.substitute(_("Found animal - {0} {1} [{2}]"), {
+                0: controller.animal.AGEGROUP, 1: controller.animal.SPECIESNAME, 2: controller.animal.OWNERNAME});
+            }
+            else if (controller.name == "incident_diary") { t = common.substitute(_("Incident {0}, {1}: {2}"), {
+                0: controller.animal.ACID, 1: controller.animal.INCIDENTNAME, 2: format.date(controller.animal.INCIDENTDATETIME)});
+            }
+            else if (controller.name == "lostanimal_diary") { t = common.substitute(_("Lost animal - {0} {1} [{2}]"), {
+                0: controller.animal.AGEGROUP, 1: controller.animal.SPECIESNAME, 2: controller.animal.OWNERNAME});
+            }
+            else if (controller.name == "person_diary") { t = controller.person.OWNERNAME; }
+            else if (controller.name == "waitinglist_diary") { t = common.substitute(_("Waiting list entry for {0} ({1})"), {
+                0: controller.animal.OWNERNAME, 1: controller.animal.SPECIESNAME });
+            }
+            return t;
+        },
+
+        routes: {
+            "animal_diary": function() { common.module_loadandstart("diary", "animal_diary?id=" + this.qs.id); },
+            "diary_edit": function() { common.module_loadandstart("diary", "diary_edit?" + this.rawqs); },
+            "diary_edit_my": function() { common.module_loadandstart("diary", "diary_edit_my?" + this.rawqs); },
+            "foundanimal_diary": function() { common.module_loadandstart("diary", "foundanimal_diary?id=" + this.qs.id); },
+            "incident_diary": function() { common.module_loadandstart("diary", "incident_diary?id=" + this.qs.id); },
+            "lostanimal_diary": function() { common.module_loadandstart("diary", "lostanimal_diary?id=" + this.qs.id); },
+            "person_diary": function() { common.module_loadandstart("diary", "person_diary?id=" + this.qs.id); },
+            "waitinglist_diary": function() { common.module_loadandstart("diary", "waitinglist_diary?id=" + this.qs.id); }
+        }
 
     };
 
