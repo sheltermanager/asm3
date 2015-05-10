@@ -1740,7 +1740,7 @@
 
         unbind_dirty: function() {
             validate.active = false;
-            window.onbeforeunload = undefined;
+            window.onbeforeunload = function() {};
         },
 
         a_click_handler: function(event, href) {
