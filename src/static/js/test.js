@@ -395,7 +395,23 @@ $(function() {
         },
 
         name: "test",
-        animation: common.current_url().indexOf("animal") != -1 ? "formtab" : "book"
+        animation: common.current_url().indexOf("animal") != -1 ? "formtab" : "book",
+        title:  function() { 
+            var t = "";
+            if (controller.name == "animal_test") {
+                t = common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
+                    0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,
+                    3: controller.animal.SPECIESNAME, 4: controller.animal.ANIMALAGE }); 
+            }
+            else if (controller.name == "test") { t = _("Test Book"); }
+            return t;
+        },
+
+        routes: {
+            "animal_test": function() { common.module_loadandstart("test", "animal_test?id=" + this.qs.id); },
+            "test": function() { common.module_loadandstart("test", "test?" + this.rawqs); }
+        }
+
 
     };
     

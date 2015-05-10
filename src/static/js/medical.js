@@ -634,7 +634,23 @@ $(function() {
         },
 
         name: "medical",
-        animation: common.current_url().indexOf("animal") != -1 ? "formtab" : "book"
+        animation: common.current_url().indexOf("animal") != -1 ? "formtab" : "book",
+        title:  function() { 
+            var t = "";
+            if (controller.name == "animal_medical") {
+                t = common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
+                    0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,
+                    3: controller.animal.SPECIESNAME, 4: controller.animal.ANIMALAGE }); 
+            }
+            else if (controller.name == "medical") { t = _("Medical Book"); }
+            return t;
+        },
+
+        routes: {
+            "animal_medical": function() { common.module_loadandstart("medical", "animal_medical?id=" + this.qs.id); },
+            "medical": function() { common.module_loadandstart("medical", "medical?" + this.rawqs); }
+        }
+
 
     };
 

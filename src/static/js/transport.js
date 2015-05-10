@@ -325,7 +325,23 @@ $(function() {
         },
 
         name: "transport",
-        animation: "formtab"
+        animation: "formtab",
+        title:  function() { 
+            var t = "";
+            if (controller.name == "animal_transport") {
+                t = common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
+                    0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,
+                    3: controller.animal.SPECIESNAME, 4: controller.animal.ANIMALAGE }); 
+            }
+            else if (controller.name == "transport") { t = _("Transport Book"); }
+            return t;
+        },
+
+        routes: {
+            "animal_transport": function() { common.module_loadandstart("transport", "animal_transport?id=" + this.qs.id); },
+            "transport": function() { common.module_loadandstart("transport", "transport?" + this.rawqs); }
+        }
+
 
     };
 

@@ -591,7 +591,38 @@ $(function() {
         },
 
         name: "movements",
-        animation: common.current_url().indexOf("book") != -1 ? "book" : "formtab"
+        animation: common.current_url().indexOf("book") != -1 ? "book" : "formtab",
+        title:  function() { 
+            var t = "";
+            if (controller.name == "animal_movements") {
+                t = common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
+                    0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,
+                    3: controller.animal.SPECIESNAME, 4: controller.animal.ANIMALAGE }); 
+            }
+            else if (controller.name == "person_movements") { t = controller.person.OWNERNAME; }
+            else if (controller.name == "move_book_foster") { t = _("Foster Book"); }
+            else if (controller.name == "move_book_recent_adoption") { t = _("Return an animal from adoption"); }
+            else if (controller.name == "move_book_recent_other") { t = _("Return an animal from another movement"); }
+            else if (controller.name == "move_book_recent_transfer") { t = _("Return an animal from transfer"); }
+            else if (controller.name == "move_book_reservation") { t = _("Reservation Book"); }
+            else if (controller.name == "move_book_retailer") { t = _("Retailer Book"); }
+            else if (controller.name == "move_book_trial_adoption") { t = _("Trial adoption book"); }
+            else if (controller.name == "move_book_unneutered") { t = _("Unaltered Adopted Animals"); }
+            return t;
+        },
+
+        routes: {
+            "animal_movements": function() { common.module_loadandstart("movements", "animal_movements?id=" + this.qs.id); },
+            "person_movements": function() { common.module_loadandstart("movements", "person_movements?id=" + this.qs.id); },
+            "move_book_foster": function() { common.module_loadandstart("movements", "move_book_foster"); },
+            "move_book_recent_adoption": function() { common.module_loadandstart("movements", "move_book_recent_adoption"); },
+            "move_book_recent_other": function() { common.module_loadandstart("movements", "move_book_recent_other"); },
+            "move_book_recent_transfer": function() { common.module_loadandstart("movements", "move_book_recent_transfer"); },
+            "move_book_reservation": function() { common.module_loadandstart("movements", "move_book_reservation"); },
+            "move_book_retailer": function() { common.module_loadandstart("movements", "move_book_retailer"); },
+            "move_book_trial_adoption": function() { common.module_loadandstart("movements", "move_book_trial_adoption"); },
+            "move_book_unneutered": function() { common.module_loadandstart("movements", "move_book_unneutered"); }
+        }
 
     };
 

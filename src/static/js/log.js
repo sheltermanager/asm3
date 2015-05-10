@@ -136,7 +136,39 @@ $(function() {
         },
 
         name: "log",
-        animation: "formtab"
+        animation: "formtab",
+        title:  function() { 
+            var t = "";
+            if (controller.name == "animal_log") {
+                t = common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
+                    0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,
+                    3: controller.animal.SPECIESNAME, 4: controller.animal.ANIMALAGE }); 
+            }
+            else if (controller.name == "foundanimal_log") { t = common.substitute(_("Found animal - {0} {1} [{2}]"), {
+                0: controller.animal.AGEGROUP, 1: controller.animal.SPECIESNAME, 2: controller.animal.OWNERNAME});
+            }
+            else if (controller.name == "incident_log") { t = common.substitute(_("Incident {0}, {1}: {2}"), {
+                0: controller.animal.ACID, 1: controller.animal.INCIDENTNAME, 2: format.date(controller.animal.INCIDENTDATETIME)});
+            }
+            else if (controller.name == "lostanimal_log") { t = common.substitute(_("Lost animal - {0} {1} [{2}]"), {
+                0: controller.animal.AGEGROUP, 1: controller.animal.SPECIESNAME, 2: controller.animal.OWNERNAME});
+            }
+            else if (controller.name == "person_log") { t = controller.person.OWNERNAME; }
+            else if (controller.name == "waitinglist_log") { t = common.substitute(_("Waiting list entry for {0} ({1})"), {
+                0: controller.animal.OWNERNAME, 1: controller.animal.SPECIESNAME });
+            }
+            return t;
+        },
+
+        routes: {
+            "animal_log": function() { common.module_loadandstart("log", "animal_log?id=" + this.qs.id); },
+            "foundanimal_log": function() { common.module_loadandstart("log", "foundanimal_log?id=" + this.qs.id); },
+            "incident_log": function() { common.module_loadandstart("log", "incident_log?id=" + this.qs.id); },
+            "lostanimal_log": function() { common.module_loadandstart("log", "lostanimal_log?id=" + this.qs.id); },
+            "person_log": function() { common.module_loadandstart("log", "person_log?id=" + this.qs.id); },
+            "waitinglist_log": function() { common.module_loadandstart("log", "waitinglist_log?id=" + this.qs.id); }
+        }
+
 
     };
     

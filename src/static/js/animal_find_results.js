@@ -279,7 +279,13 @@ $(function() {
         },
 
         name: "animal_find_results",
-        animation: "results"
+        animation: "results",
+        title: function() { return _("Results"); },
+        routes: {
+            "animal_find_results": function() {
+                common.module_loadandstart("animal_find_results", "animal_find_results?" + this.rawqs);
+            }
+        }
 
     };
 

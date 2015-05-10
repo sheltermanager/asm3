@@ -181,7 +181,7 @@ $(function() {
                         "p31|" + _("Due in next month"), 
                         "p365|" + _("Due in next year") ],
                      click: function(selval) {
-                        window.location = controller.name + "?offset=" + selval;
+                        common.route(controller.name + "?offset=" + selval);
                      },
                      hideif: function(row) {
                          // Don't show for animal or person records
@@ -352,7 +352,7 @@ $(function() {
                 var template_name = $(this).attr("data");
                 $("#tableform input:checked").each(function() {
                     var ids = tableform.table_ids(donations.table);
-                    window.location = "document_gen?mode=DONATION&id=" + ids + "&template=" + template_name;
+                    common.route("document_gen?mode=DONATION&id=" + ids + "&template=" + template_name);
                 });
                 return false;
             });
@@ -370,7 +370,26 @@ $(function() {
         },
 
         name: "donations",
-        animation: common.current_url().indexOf("_") != -1 ? "formtab" : "book"
+        animation: common.current_url().indexOf("_") != -1 ? "formtab" : "book",
+
+        title:  function() { 
+            var t = "";
+            if (controller.name == "animal_donations") {
+                t = common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
+                    0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,
+                    3: controller.animal.SPECIESNAME, 4: controller.animal.ANIMALAGE }); 
+            }
+            else if (controller.name == "person_donations") { t = controller.person.OWNERNAME; }
+            else if (controller.name == "donation") { t = _("Payment Book"); }
+            return t;
+        },
+
+        routes: {
+            "animal_donations": function() { common.module_loadandstart("donations", "animal_donations?id=" + this.qs.id); },
+            "person_donations": function() { common.module_loadandstart("donations", "person_donations?id=" + this.qs.id); },
+            "donation": function() { common.module_loadandstart("donations", "donation?offset=" + this.qs.offset); }
+        }
+
 
     };
 

@@ -153,7 +153,7 @@ $(function() {
                         "e7|" + _("Expired in the last week"),
                         "e31|" + _("Expired in the last month") ],
                      click: function(selval) {
-                        window.location = controller.name + "?offset=" + selval;
+                        common.route(controller.name + "?offset=" + selval);
                      },
                      hideif: function(row) {
                          // Don't show for animal or person records
@@ -209,7 +209,25 @@ $(function() {
         },
 
         name: "licence",
-        animation: common.current_url().indexOf("_") != -1 ? "formtab" : "book"
+        animation: common.current_url().indexOf("_") != -1 ? "formtab" : "book",
+        title:  function() { 
+            var t = "";
+            if (controller.name == "animal_licence") {
+                t = common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
+                    0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,
+                    3: controller.animal.SPECIESNAME, 4: controller.animal.ANIMALAGE }); 
+            }
+            else if (controller.name == "person_licence") { t = controller.person.OWNERNAME; }
+            else if (controller.name == "licence") { t = _("Licensing"); }
+            return t;
+        },
+
+        routes: {
+            "animal_licence": function() { common.module_loadandstart("licence", "licence?id=" + this.qs.id); },
+            "person_licence": function() { common.module_loadandstart("licence", "licence?id=" + this.qs.id); },
+            "licence": function() { common.module_loadandstart("licence", "licence?offset=" + this.qs.offset); }
+        }
+
 
     };
 

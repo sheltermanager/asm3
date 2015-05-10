@@ -273,10 +273,7 @@
                 window.location = path;
             });
             // Listen for history state changes
-            // We deliberate do not use fallback and do not support client side
-            // routing for browsers without the history API as onhashchange
-            // breaks some JQueryUI widgets and causes other problems.
-            Path.history.listen();
+            Path.history.listen(true);
             // Catch all clicks for "real" URLs (ones without hashes) 
             // and use client side routing to handle them.
             $(document).on("click", "a", function(event) {

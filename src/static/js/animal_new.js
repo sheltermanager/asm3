@@ -259,7 +259,7 @@ $(function() {
                     header.show_info(_("Animal '{0}' created with code {1}").replace("{0}", $("#animalname").val()).replace("{1}", newCode));
                 }
                 else {
-                    if (createdID != "0") { window.location = "animal?id=" + createdID; }
+                    if (createdID != "0") { common.route("animal?id=" + createdID); }
                 }
                 $(".asm-content button").button("enable");
                 header.hide_loading();
@@ -537,7 +537,14 @@ $(function() {
         },
 
         name: "animal_new",
-        animation: "newdata"
+        animation: "newdata",
+        title: function() { return _("Add a new animal"); },
+        
+        routes: {
+            "animal_new": function() {
+                common.module_loadandstart("animal_new", "animal_new");
+            }
+        }
 
     };
 

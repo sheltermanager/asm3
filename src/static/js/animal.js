@@ -1139,7 +1139,7 @@ $(function() {
             var create_task = function(taskid) {
                 var formdata = "mode=exec&id=" + $("#animalid").val() + "&tasktype=ANIMAL&taskid=" + taskid + "&seldate=" + $("#seldate").val();
                 common.ajax_post("diarytask", formdata, function(result) { 
-                    window.location = "animal_diary?id=" + $("#animalid").val();
+                    common.route("animal_diary?id=" + $("#animalid").val());
                 });
             };
 
@@ -1276,14 +1276,14 @@ $(function() {
             $("#button-save").button().click(function() {
                 header.show_loading(_("Saving..."));
                 validate.save(function() {
-                    window.location="animal?id=" + $("#animalid").val();
+                    common.route("animal?id=" + $("#animalid").val());
                 });
             });
 
             $("#button-clone").button().click(function() {
                 $("#button-clone").button("disable");
                 var formdata = "mode=clone&animalid=" + $("#animalid").val();
-                common.ajax_post("animal", formdata, function(result) { window.location = "animal?id=" + result + "&cloned=true"; });
+                common.ajax_post("animal", formdata, function(result) { common.route("animal?id=" + result + "&cloned=true"); });
             });
 
             $("#button-delete").button().click(function() {
@@ -1291,7 +1291,7 @@ $(function() {
                 b[_("Delete")] = function() { 
                     $("#dialog-delete").disable_dialog_buttons();
                     var formdata = "mode=delete&animalid=" + $("#animalid").val();
-                    common.ajax_post("animal", formdata, function() { window.location = "main"; }, function() { $("#dialog-delete").dialog("close"); });
+                    common.ajax_post("animal", formdata, function() { common.route("main"); }, function() { $("#dialog-delete").dialog("close"); });
                 };
                 b[_("Cancel")] = function() { $(this).dialog("close"); };
                 $("#dialog-delete").dialog({
@@ -1305,11 +1305,11 @@ $(function() {
             });
 
             $("#button-match").button().click(function() {
-                window.location = "lostfound_match?animalid=" + $("#animalid").val();
+                common.route("lostfound_match?animalid=" + $("#animalid").val());
             });
 
             $("#button-littermates").button().click(function() {
-                window.location = "animal_find_results?mode=ADVANCED&q=&litterid=" + $("#litterid").val();
+                common.route("animal_find_results?mode=ADVANCED&q=&litterid=" + $("#litterid").val());
             });
 
             // Inline buttons

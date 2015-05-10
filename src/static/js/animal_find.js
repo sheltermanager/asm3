@@ -327,23 +327,25 @@ $(function() {
             // Handle switching between modes via the links
             $("#asm-search-selector-simple").click(function() {
                 simpleMode();
+                return false;
             });
 
             $("#asm-search-selector-advanced").click(function() {
                 advancedMode();
+                return false;
             });
 
             // Search button - we don't use the traditional submit because
             // the bsmselect widget craps extra values into the form and 
             // breaks the filter
             $("#searchbutton").button().click(function() {
-                window.location = "animal_find_results?" + $("#animalsearchform input, #animalsearchform select").toPOST();
+                common.route("animal_find_results?" + $("#animalsearchform input, #animalsearchform select").toPOST());
             });
 
             // We need to re-enable the return key submitting the form
             $("#animalsearchform").keypress(function(e) {
                 if (e.keyCode == 13) {
-                    window.location = "animal_find_results?" + $("#animalsearchform input, #animalsearchform select").toPOST();
+                    common.route("animal_find_results?" + $("#animalsearchform input, #animalsearchform select").toPOST());
                 }
             });
 
@@ -396,7 +398,14 @@ $(function() {
         },
 
         name: "animal_find",
-        animation: "criteria"
+        animation: "criteria",
+        title: function() { return _("Find Animal"); },
+
+        routes: {
+            "animal_find": function() {
+                common.module_loadandstart("animal_find", "animal_find");
+            }
+        }
 
     };
 

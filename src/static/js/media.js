@@ -757,7 +757,39 @@ $(function() {
         },
 
         name: "media",
-        animation: "formtab"
+        animation: "formtab",
+        title:  function() { 
+            var t = "";
+            if (controller.name == "animal_media") {
+                t = common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
+                    0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,
+                    3: controller.animal.SPECIESNAME, 4: controller.animal.ANIMALAGE }); 
+            }
+            else if (controller.name == "foundanimal_media") { t = common.substitute(_("Found animal - {0} {1} [{2}]"), {
+                0: controller.animal.AGEGROUP, 1: controller.animal.SPECIESNAME, 2: controller.animal.OWNERNAME});
+            }
+            else if (controller.name == "incident_media") { t = common.substitute(_("Incident {0}, {1}: {2}"), {
+                0: controller.animal.ACID, 1: controller.animal.INCIDENTNAME, 2: format.date(controller.animal.INCIDENTDATETIME)});
+            }
+            else if (controller.name == "lostanimal_media") { t = common.substitute(_("Lost animal - {0} {1} [{2}]"), {
+                0: controller.animal.AGEGROUP, 1: controller.animal.SPECIESNAME, 2: controller.animal.OWNERNAME});
+            }
+            else if (controller.name == "person_media") { t = controller.person.OWNERNAME; }
+            else if (controller.name == "waitinglist_media") { t = common.substitute(_("Waiting list entry for {0} ({1})"), {
+                0: controller.animal.OWNERNAME, 1: controller.animal.SPECIESNAME });
+            }
+            return t;
+        },
+
+        routes: {
+            "animal_media": function() { common.module_loadandstart("media", "animal_media?id=" + this.qs.id); },
+            "foundanimal_media": function() { common.module_loadandstart("media", "foundanimal_media?id=" + this.qs.id); },
+            "incident_media": function() { common.module_loadandstart("media", "incident_media?id=" + this.qs.id); },
+            "lostanimal_media": function() { common.module_loadandstart("media", "lostanimal_media?id=" + this.qs.id); },
+            "person_media": function() { common.module_loadandstart("media", "person_media?id=" + this.qs.id); },
+            "waitinglist_media": function() { common.module_loadandstart("media", "waitinglist_media?id=" + this.qs.id); }
+        }
+
 
     };
 

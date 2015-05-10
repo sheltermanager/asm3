@@ -448,7 +448,23 @@ $(function() {
         },
 
         name: "vaccination",
-        animation: common.current_url().indexOf("animal") != -1 ? "formtab" : "book"
+        animation: common.current_url().indexOf("animal") != -1 ? "formtab" : "book",
+        title:  function() { 
+            var t = "";
+            if (controller.name == "animal_vaccination") {
+                t = common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
+                    0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,
+                    3: controller.animal.SPECIESNAME, 4: controller.animal.ANIMALAGE }); 
+            }
+            else if (controller.name == "vaccination") { t = _("Vaccination Book"); }
+            return t;
+        },
+
+        routes: {
+            "animal_vaccination": function() { common.module_loadandstart("vaccination", "animal_vaccination?id=" + this.qs.id); },
+            "vaccination": function() { common.module_loadandstart("vaccination", "vaccination?" + this.rawqs); }
+        }
+
 
     };
     
