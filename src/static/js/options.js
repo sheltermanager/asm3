@@ -1160,6 +1160,10 @@ $(function() {
 
         },
 
+        destroy: function() {
+            validate.unbind_dirty();
+        },
+
         name: "options",
         animation: "options",
         title: function() { return _("Options"); },

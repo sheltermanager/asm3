@@ -1000,8 +1000,6 @@ $(function() {
             // Disable publisher fields for those not active
             change_checkbox();
 
-            validate.bind_dirty();
-
             // Setup the vetenvoy signup dialog
             this.bind_vetenvoy_signup_dialog();
 
@@ -1025,6 +1023,12 @@ $(function() {
                 $("#button-vesignup").hide();
             }
 
+            validate.bind_dirty();
+
+        },
+
+        destroy: function() {
+            validate.unbind_dirty();
         },
 
         name: "publish_options",

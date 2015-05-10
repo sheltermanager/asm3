@@ -253,8 +253,15 @@
         route_mode: "client",
 
         /** Go to a URL */
-        route: function(path) {
-            if (common.route_mode == "server") { window.location = path; return; }
+        route: function(path, forceserver) {
+            if (common.route_mode == "server" || forceserver) { window.location = path; return; }
+            // ie8 compatibility
+            var ALWAYS_ON_SERVER = [ "static", "report?", "mailmerge?", "document_edit?", "document_media_edit?" ], cancel = false;
+            $.each(ALWAYS_ON_SERVER, function(i, v) {
+                if (path.indexOf(v) == 0) { cancel = true; window.location = path; return false; }
+            });
+            if (cancel) { return; }
+            // end ie8 compatibility
             Path.history.pushState({}, "", path);
         },
 
@@ -295,7 +302,7 @@
                 var href = $(this).attr("href");
                 if (href && href.indexOf("#") == -1) {
                     event.preventDefault();
-                    Path.history.pushState({}, "", href);
+                    common.route(href);
                 }
             });
         },
