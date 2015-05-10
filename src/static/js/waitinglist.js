@@ -246,7 +246,7 @@ $(function() {
             $("#button-save").button().click(function() {
                 header.show_loading(_("Saving..."));
                 validate.save(function() {
-                    window.location="waitinglist?id=" + $("#waitinglistid").val();
+                    common.route_reload();
                 });
             });
 
@@ -263,7 +263,7 @@ $(function() {
             $("#button-toanimal").button().click(function() {
                 $("#button-toanimal").button("disable");
                 var formdata = "mode=toanimal&id=" + $("#waitinglistid").val();
-                common.ajax_post("waitinglist", formdata, function(result) { window.location = "animal?id=" + result; });
+                common.ajax_post("waitinglist", formdata, function(result) { common.route("animal?id=" + result); });
             });
 
             $("#button-delete").button().click(function() {
@@ -271,7 +271,7 @@ $(function() {
                 b[_("Delete")] = function() { 
                     var formdata = "mode=delete&id=" + $("#waitinglistid").val();
                     $("#dialog-delete").disable_dialog_buttons();
-                    common.ajax_post("waitinglist", formdata, function() { window.location = "waitinglist_results"; });
+                    common.ajax_post("waitinglist", formdata, function() { common.route("waitinglist_results"); });
                 };
                 b[_("Cancel")] = function() { $(this).dialog("close"); };
                 $("#dialog-delete").dialog({
@@ -323,8 +323,14 @@ $(function() {
         },
 
         name: "waitinglist",
-        animation: "formtab"
-
+        animation: "formtab",
+        title:  function() { 
+            return common.substitute(_("Waiting list entry for {0} ({1})"), {
+                0: controller.animal.OWNERNAME, 1: controller.animal.SPECIESNAME });
+        },
+        routes: {
+            "waitingist": function() { common.module_loadandstart("waitinglist", "waitinglist?id=" + this.qs.id); }
+        }
     };
 
     common.module_register(waitinglist);

@@ -124,7 +124,11 @@ $(function() {
         },
 
         name: "move_deceased",
-        animation: "newdata"
+        animation: "newdata",
+        title: function() { return _("Mark an animal deceased"); },
+        routes: {
+            "move_deceased": function() { common.module_loadandstart("move_deceased", "move_deceased"); }
+        }
 
     };
 

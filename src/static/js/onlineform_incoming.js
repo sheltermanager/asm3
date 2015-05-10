@@ -46,7 +46,7 @@ $(function() {
                 },
                 { id: "print", text: _("Print"), icon: "print", enabled: "multi", tooltip: _("Print selected forms"), 
                     click: function() {
-                        window.location = "onlineform_incoming?mode=print&ids=" + encodeURIComponent(tableform.table_ids(table));
+                        common.route("onlineform_incoming?mode=print&ids=" + encodeURIComponent(tableform.table_ids(table)));
                     }
                 },
                 { id: "attachperson", text: _("Attach Person"), icon: "person-find", enabled: "one", tooltip: _("Attach this form to an existing person"), 
@@ -263,7 +263,11 @@ $(function() {
         },
 
         name: "onlineform_incoming",
-        animation: "formtab"
+        animation: "formtab",
+        title: function() { return _("Incoming Forms"); },
+        routes: {
+            "onlineform_incoming": function() { common.module_loadandstart("onlineform_incoming", "onlineform_incoming"); }
+        }
 
     };
 

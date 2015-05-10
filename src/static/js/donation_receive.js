@@ -257,7 +257,14 @@ $(function() {
         },
 
         name: "donation_receive",
-        animation: "newdata"
+        animation: "newdata",
+        title: function() { return _("Receive a payment"); },
+        routes: {
+            "donation_receive": function() {
+                common.module_loadandstart("donation_receive", "donation_receive");
+            }
+        }
+
 
     };
 

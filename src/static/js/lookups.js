@@ -112,7 +112,7 @@ $(function() {
                      } 
                  },
                  { id: "lookup", type: "dropdownfilter", options: tablelist, click: function(newval) {
-                    window.location = "lookups?tablename=" + newval;
+                    common.route("lookups?tablename=" + newval);
                  }}
             ];
             this.dialog = dialog;
@@ -146,7 +146,11 @@ $(function() {
         },
 
         name: "lookups",
-        animation: "book"
+        animation: "book",
+        title: function() { return _("Edit Lookups"); },
+        routes: {
+            "lookups": function() { common.module_loadandstart("lookups", "lookups?" + this.rawqs); }
+        }
 
     };
 

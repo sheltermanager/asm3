@@ -81,7 +81,11 @@ $(function() {
         },
 
         name: "incident_find_results",
-        animation: "results"
+        animation: "results",
+        title: function() { return _("Results"); },
+        routes: {
+            "incident_find_results": function() { common.module_loadandstart("incident_find_results", "incident_find_results?" + this.rawqs); }
+        }
 
     };
 

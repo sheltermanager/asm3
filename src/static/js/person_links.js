@@ -55,7 +55,11 @@ $(function() {
         },
 
         name: "person_links",
-        animation: "formtab"
+        animation: "formtab",
+        title: function() { return controller.person.OWNERNAME; },
+        routes: {
+            "person_links": function() { common.module_loadandstart("person_links", "person_links?id=" + this.qs.id); }
+        }
 
     };
 

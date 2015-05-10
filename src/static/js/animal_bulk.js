@@ -152,7 +152,7 @@ $(function() {
         title: function() { return _("Bulk change animals"); },
 
         routes: {
-            "additional": function() {
+            "animal_bulk": function() {
                 common.module_loadandstart("animal_bulk", "animal_bulk");
             }
         }

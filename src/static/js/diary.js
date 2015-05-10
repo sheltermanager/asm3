@@ -137,7 +137,7 @@ $(function() {
                         return common.current_url().indexOf("diary_edit") == -1;
                      },
                      click: function(selval) {
-                        window.location = controller.name + "?filter=" + selval;
+                        common.route(controller.name + "?filter=" + selval);
                      }
                  }
             ];

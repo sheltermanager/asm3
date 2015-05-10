@@ -113,7 +113,7 @@ $(function() {
                 header.show_loading(_("Creating..."));
                 var formdata = $("input, textarea, select").toPOST();
                 common.ajax_post("person_new", formdata, function(personid) { 
-                    if (personid) { window.location = "person?id=" + personid; }
+                    if (personid) { common.route("person?id=" + personid); }
                     $("#asm-content button").button("enable");
                 }, function() {
                     $("#asm-content button").button("enable");
@@ -203,7 +203,11 @@ $(function() {
         },
 
         name: "person_new",
-        animation: "newdata"
+        animation: "newdata",
+        title: function() { return _("Add a new person"); },
+        routes: {
+            "person_new": function() { common.module_loadandstart("person_new", "person_new"); }
+        }
 
     };
 

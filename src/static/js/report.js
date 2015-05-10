@@ -6,12 +6,13 @@ $(function() {
     var report = {
         bind: function() {
             $("#submitcriteria").button().click(function() {
-                window.location = "report?" + $("#criteriaform input, #criteriaform select").toPOST(true);
+                common.route("report?" + $("#criteriaform input, #criteriaform select").toPOST(true));
             });
         },
 
         name: "report",
-        animation: "report"
+        animation: "report",
+        title: function() { return controller.title; }
 
     };
 

@@ -151,7 +151,23 @@ $(function() {
         },
 
         name: "citations",
-        animation: "formtab"
+        animation: "formtab",
+        title:  function() { 
+            var t = "";
+            if (controller.name == "person_citations") { t = controller.person.OWNERNAME; }
+            else if (controller.name == "incident_diary") { t = common.substitute(_("Incident {0}, {1}: {2}"), {
+                0: controller.animal.ACID, 1: controller.animal.INCIDENTNAME, 2: format.date(controller.animal.INCIDENTDATETIME)});
+            }
+            else if (controller.name == "citations") { t = _("Unpaid Fines"); }
+            return t;
+        },
+
+        routes: {
+            "incident_citations": function() { common.module_loadandstart("citations", "incident_citations?id=" + this.qs.id); },
+            "person_citations": function() { common.module_loadandstart("citations", "person_citations?id=" + this.qs.id); },
+            "citations": function() { common.module_loadandstart("citations", "citations?=" + this.rawqs); }
+        }
+
 
     };
 

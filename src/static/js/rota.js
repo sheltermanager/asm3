@@ -123,7 +123,15 @@ $(function() {
         },
 
         name: "rota",
-        animation: "formtab"
+        animation: "formtab",
+        title: function() {
+            if (controller.name == "person_rota") {
+                return controller.person.OWNERNAME;
+            }
+        },
+        routes: {
+            "person_rota": function() { common.module_loadandstart("person_rota", "person_rota?id=" + this.qs.id); }
+        }
 
     };
 

@@ -200,7 +200,7 @@ $(function() {
 
                  { id: "images", text: _("Extra Images"), icon: "image", enabled: "always", tooltip: _("Add extra images for use in reports and documents"),
                      click: function() {
-                        window.location = "report_images";
+                        common.route_reload();
                      }
                  }
             ];
@@ -354,7 +354,7 @@ $(function() {
                 });
                 common.ajax_post("reports", formdata, function() { 
                     header.hide_loading();
-                    window.location.reload(true);
+                    common.route_reload();
                 }, function() { header.hide_loading(); });
             });
         },
@@ -440,7 +440,11 @@ $(function() {
         },
 
         name: "reports",
-        animation: "options"
+        animation: "options",
+        title: function() { return _("Edit Reports"); },
+        routes: {
+            "reports": function() { common.module_loadandstart("reports", "reports"); }
+        }
 
     };
     

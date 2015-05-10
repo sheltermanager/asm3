@@ -230,7 +230,11 @@ $(function() {
         },
 
         name: "users",
-        animation: "options"
+        animation: "options",
+        title: function() { return _("Edit system users"); },
+        routes: {
+            "systemusers": function() { common.module_loadandstart("users", "systemusers"); }
+        }
 
     };
     

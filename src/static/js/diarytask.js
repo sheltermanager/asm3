@@ -98,7 +98,14 @@ $(function() {
         },
 
         name: "diarytask",
-        animation: "formtab"
+        animation: "formtab",
+        title: function() { return controller.title; },
+        
+        routes: {
+            "diarytask": function() { 
+                common.module_loadandstart("diarytask", "diarytask?taskid=" + this.qs.taskid);
+            }
+        }
 
     };
 

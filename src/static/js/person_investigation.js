@@ -96,7 +96,11 @@ $(function() {
         },
 
         name: "person_investigation",
-        animation: "formtab"
+        animation: "formtab",
+        title: function() { return controller.person.OWNERNAME; },
+        routes: {
+            "person_investigation": function() { common.module_loadandstart("person_investigation", "person_investigation?id=" + this.qs.id); }
+        }
 
     };
 

@@ -10,7 +10,7 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    window.location = "report_export?id=" + row.ID;
+                    common.route("report_export?id=" + row.ID);
                 },
                 hideif: function(row) {
                     // Superusers see everything
@@ -49,7 +49,7 @@ $(function() {
                 $("input[type='checkbox']").hide();
             }
             $("#submitcriteria").button().click(function() {
-                window.location = "report_export?" + $("#criteriaform input, #criteriaform select").toPOST(true);
+                common.route("report_export?" + $("#criteriaform input, #criteriaform select").toPOST(true));
             });
         },
 
@@ -57,7 +57,8 @@ $(function() {
         },
 
         name: "report_export",
-        animation: "options"
+        animation: "options",
+        title: function() { return _("Export Reports as CSV"); }
 
     };
     

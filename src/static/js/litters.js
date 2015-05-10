@@ -137,7 +137,11 @@ $(function() {
         },
 
         name: "litters",
-        animation: "book"
+        animation: "book",
+        title: function() { return _("Litters"); },
+        routes: {
+            "litters": function() { common.module_loadandstart("litters", "litters"); }
+        }
 
     };
 

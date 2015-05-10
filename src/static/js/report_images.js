@@ -22,7 +22,7 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "NAME",
                 edit: function(row) {
-                    window.location = "image?mode=dbfs&id=/reports/" + row.NAME;
+                    common.route("image?mode=dbfs&id=/reports/" + row.NAME);
                 },
                 columns: [
                     { field: "NAME", display: _("Image file"), initialsort: true }
@@ -49,7 +49,7 @@ $(function() {
                              tableform.buttons_default_state(buttons);
                              var ids = tableform.table_ids(table);
                              common.ajax_post("report_images", "mode=delete&ids=" + ids , function() {
-                                 window.location = "report_images";
+                                 common.route_reload();
                              });
                          });
                      } 
@@ -89,7 +89,7 @@ $(function() {
                 var oldname = tableform.table_ids(table).split(",")[0];
                 var newname = encodeURIComponent($("#newname").val());
                 common.ajax_post(controller.name, "mode=rename&newname=" + newname + "&oldname=" + oldname , function() {
-                    window.location = "report_images";
+                    common.route_reload();
                 });
             };
             renamebuttons[_("Cancel")] = function() {
@@ -130,7 +130,11 @@ $(function() {
         },
 
         name: "report_images",
-        animation: "options"
+        animation: "options",
+        title: function() { return _("Extra images"); },
+        routes: {
+            "report_images": function() { common.module_loadandstart("report_images", "report_images"); }
+        }
 
     };
 

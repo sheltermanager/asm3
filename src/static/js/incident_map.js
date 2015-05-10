@@ -34,7 +34,11 @@ $(function() {
         },
 
         name: "incident_map",
-        animation: "results"
+        animation: "results",
+        title: function() { return _("Active Incidents"); },
+        routes: {
+            "incident_map": function() { common.module_loadandstart("incident_map", "incident_map"); }
+        }
 
     };
 

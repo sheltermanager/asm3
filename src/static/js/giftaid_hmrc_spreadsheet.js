@@ -41,7 +41,11 @@ $(function() {
         },
 
         name: "giftaid_hmrc_spreadsheet",
-        animation: "report"
+        animation: "report",
+        title: function() { return _("HMRC Gift Aid Spreadsheet"); },
+        routes: {
+            "giftaid_hmrc_spreadsheet": function() { common.module_start("giftaid_hmrc_spreadsheet"); }
+        }
 
     };
 

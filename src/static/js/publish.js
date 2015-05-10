@@ -133,7 +133,11 @@ $(function() {
         },
 
         name: "publish",
-        animation: "default"
+        animation: "default",
+        title: function() { return _("Publishing"); },
+        routes: {
+            "publish": function() { common.module_loadandstart("publish", "publish?" + this.rawqs); }
+        }
 
     };
 

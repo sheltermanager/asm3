@@ -453,14 +453,14 @@ $(function() {
             $("#button-save").button().click(function() {
                 header.show_loading(_("Saving..."));
                 validate.save(function() {
-                    window.location="incident?id=" + $("#incidentid").val();
+                    common.route_reload();
                 });
             });
 
             $("#button-toanimal").button().click(function() {
                 $("#button-toanimal").button("disable");
                 var formdata = "mode=toanimal&id=" + $("#incidentid").val();
-                common.ajax_post("incident", formdata, function(result) { window.location = "animal?id=" + result; });
+                common.ajax_post("incident", formdata, function(result) { common.route("animal?id=" + result); });
             });
 
             $("#button-email").button().click(function() {
@@ -526,7 +526,7 @@ $(function() {
                 b[_("Delete")] = function() { 
                     var formdata = "mode=delete&id=" + $("#incidentid").val();
                     $("#dialog-delete").disable_dialog_buttons();
-                    common.ajax_post("incident", formdata, function() { window.location = "main"; });
+                    common.ajax_post("incident", formdata, function() { common.route("main"); });
                 };
                 b[_("Cancel")] = function() { $(this).dialog("close"); };
                 $("#dialog-delete").dialog({
@@ -598,7 +598,16 @@ $(function() {
         },
 
         name: "incident",
-        animation: "formtab"
+        animation: "formtab",
+        title: function() {
+            return common.substitute(_("Incident {0}, {1}: {2}"), {
+                0: controller.animal.ACID, 1: controller.animal.INCIDENTNAME, 2: format.date(controller.animal.INCIDENTDATETIME)});
+        },
+        routes: {
+            "incident": function() { 
+                common.module_loadandstart("incident", "incident?id=" + this.qs.id);
+            }
+        }
 
     };
 

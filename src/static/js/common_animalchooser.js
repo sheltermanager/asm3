@@ -192,6 +192,7 @@
                         self._trigger("change", null, rec);
                         self.selected = rec;
                         common.inject_target();
+                        return false;
                     });
                     // Force the table to update itself and remove the spinner
                     dialog.find("table").trigger("update");

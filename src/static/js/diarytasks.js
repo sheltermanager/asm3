@@ -95,7 +95,14 @@ $(function() {
         },
 
         name: "diarytasks",
-        animation: "book"
+        animation: "book",
+        title: function() { return _("Diary Tasks"); },
+        
+        routes: {
+            "diarytasks": function() { 
+                common.module_loadandstart("diarytasks", "diarytasks");
+            }
+        }
 
     };
     

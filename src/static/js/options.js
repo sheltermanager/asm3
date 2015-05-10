@@ -1161,7 +1161,11 @@ $(function() {
         },
 
         name: "options",
-        animation: "options"
+        animation: "options",
+        title: function() { return _("Options"); },
+        routes: {
+            "options": function() { common.module_loadandstart("options", "options"); }
+        }
 
     };
 

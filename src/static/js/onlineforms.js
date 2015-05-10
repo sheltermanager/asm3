@@ -209,7 +209,11 @@ $(function() {
         },
 
         name: "onlineforms",
-        animation: "formtab"
+        animation: "formtab",
+        title: function() { return _("Online Forms"); },
+        routes: { 
+            "onlineforms": function() { common.module_loadandstart("onlineforms", "onlineforms"); }
+        }
 
     };
     

@@ -164,7 +164,11 @@ $(function() {
         },
 
         name: "move_transfer",
-        animation: "newdata"
+        animation: "newdata",
+        title: function() { return _("Transfer an animal"); },
+        routes: {
+            "move_transfer": function() { common.module_loadandstart("move_transfer", "move_transfer"); }
+        }
 
     };
 

@@ -175,7 +175,11 @@ $(function() {
         },
 
         name: "move_foster",
-        animation: "newdata"
+        animation: "newdata",
+        title: function() { return _("Foster an animal"); },
+        routes: {
+            "move_foster": function() { common.module_loadandstart("move_foster", "move_foster"); }
+        }
 
     };
 

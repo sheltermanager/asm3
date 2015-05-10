@@ -95,9 +95,9 @@ def gkd(dbo, m, f, usetoday = False):
 def gkb(m, f):
     """ reads field f from map m, returning a boolean. 
         boolean is false if key not present. Interprets
-        anything but 0 or N as yes """
+        anything but blank, 0 or N as yes """
     if not m.has_key(f): return False
-    if m[f] == "0" or m[f] == "N": return False
+    if m[f] == "" or m[f] == "0" or m[f].upper().startswith("N"): return False
     return True
 
 def gkbi(m, f):

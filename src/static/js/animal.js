@@ -1276,7 +1276,7 @@ $(function() {
             $("#button-save").button().click(function() {
                 header.show_loading(_("Saving..."));
                 validate.save(function() {
-                    common.route("animal?id=" + $("#animalid").val());
+                    common.route_reload();
                 });
             });
 

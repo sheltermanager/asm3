@@ -82,7 +82,12 @@ $(function() {
         },
 
         name: "lostfound_find_results",
-        animation: "results"
+        animation: "results",
+        title: function() { return _("Results"); },
+        routes: {
+            "lostanimal_find_results": function() { common.module_loadandstart("lostfound_find_results", "lostanimal_find_results?" + this.rawqs); },
+            "foundanimal_find_results": function() { common.module_loadandstart("lostfound_find_results", "foundanimal_find_results?" + this.rawqs); }
+        }
 
     };
 

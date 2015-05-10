@@ -135,7 +135,17 @@ $(function() {
         },
 
         name: "traploan",
-        animation: common.current_url().indexOf("person") != -1 ? "formtab" : "book"
+        animation: common.current_url().indexOf("person") != -1 ? "formtab" : "book",
+        title: function() {
+            if (controller.name == "person_traploan") {
+                return controller.person.OWNERNAME;
+            }
+            return _("Active Trap Loans");
+        },
+        routes: {
+            "person_traploan": function() { common.module_loadandstart("traploan", "person_traploan?id=" + this.qs.id); },
+            "traploan": function() { common.module_loadandstart("traploan", "traploan?" + this.rawqs); }
+        }
 
     };
 

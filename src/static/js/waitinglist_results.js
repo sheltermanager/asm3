@@ -8,14 +8,14 @@ $(function() {
         render: function() {
             return [
                 html.content_header(_("Waiting List")),
-                '<form id="wlform" method="get" action="waitinglist_results">',
+                '<div id="waitinglistcriteria">',
                 '<table class="asm-table-layout">',
                 '<tr>',
                     '<td>',
                     '<label for="priorityfloor">' + _("Priority Floor") + '</label>',
                     '</td>',
                     '<td>',
-                    '<select id="priorityfloor" name="priorityfloor" class="asm-selectbox">',
+                    '<select id="priorityfloor" data="priorityfloor" class="asm-selectbox">',
                     html.list_to_options(controller.urgencies, "ID", "URGENCY"),
                     '</select>',
                     '</td>',
@@ -23,7 +23,7 @@ $(function() {
                     '<label for="includeremoved">' + _("Include Removed") + '</label>',
                     '</td>',
                     '<td>',
-                    '<select id="includeremoved" name="includeremoved" class="asm-selectbox">',
+                    '<select id="includeremoved" data="includeremoved" class="asm-selectbox">',
                     html.list_to_options(controller.yesno, "ID", "NAME"),
                     '</select>',
                     '</td>',
@@ -33,7 +33,7 @@ $(function() {
                     '<label for="species">' + _("Species") + '</label>',
                     '</td>',
                     '<td>',
-                    '<select id="species" name="species" class="asm-selectbox">',
+                    '<select id="species" data="species" class="asm-selectbox">',
                     '<option value="-1">' + _("(all)") + '</option>',
                     html.list_to_options(controller.species, "ID", "SPECIESNAME"),
                     '</select>',
@@ -42,7 +42,7 @@ $(function() {
                     '<label for="size">' + _("Size") + '</label>',
                     '</td>',
                     '<td>',
-                    '<select id="size" name="size" class="asm-selectbox">',
+                    '<select id="size" data="size" class="asm-selectbox">',
                     '<option value="-1">' + _("(all)") + '</option>',
                     html.list_to_options(controller.sizes, "ID", "SIZE"),
                     '</select>',
@@ -53,13 +53,13 @@ $(function() {
                     '<label for="namecontains">' + _("Name Contains") + '</label>',
                     '</td>',
                     '<td>',
-                    '<input id="namecontains" name="namecontains" class="asm-textbox" />',
+                    '<input id="namecontains" data="namecontains" class="asm-textbox" />',
                     '</td>',
                     '<td>',
                     '<label for="addresscontains">' + _("Address Contains") + '</label>',
                     '</td>',
                     '<td>',
-                    '<input id="addresscontains" name="addresscontains" class="asm-textbox" />',
+                    '<input id="addresscontains" data="addresscontains" class="asm-textbox" />',
                     '</td>',
                 '</tr>',
                 '<tr>',
@@ -67,7 +67,7 @@ $(function() {
                     '<label for="descriptioncontains">' + _("Description Contains") + '</label>',
                     '</td>',
                     '<td>',
-                    '<input id="descriptioncontains" name="descriptioncontains" class="asm-textbox" />',
+                    '<input id="descriptioncontains" data="descriptioncontains" class="asm-textbox" />',
                     '</td>',
                     '<td></td>',
                     '<td>',
@@ -75,7 +75,7 @@ $(function() {
                     '</td>',
                 '</tr>',
                 '</table>',
-                '</form>',
+                '</div>',
                 '<div class="asm-toolbar">',
                 '<button id="button-new">' + html.icon("new") + ' ' + _("New Waiting List Entry") + '</button>',
                 '<button id="button-delete">' + html.icon("delete") + ' ' + _("Delete") + '</button>',
@@ -171,29 +171,29 @@ $(function() {
             });
 
             $("#button-refresh").button().click(function() {
-                $("#wlform").submit();    
+                common.route("waitinglist_results?" + $("#waitinglistcriteria .asm-selectbox, #waitinglistcriteria .asm-textbox").toPOST());
             });
 
             $("#button-new").button().click(function() {
-                window.location = "waitinglist_new";
+                common.route("waitinglist_new");
             });
 
             $("#button-complete").button({disabled: true}).click(function() {
                 $("#button-complete").button("disable");
                 var formdata = "mode=complete&ids=" + $("#table-waitinglist input").tableCheckedData();
-                common.ajax_post("waitinglist_results", formdata, function() { window.location.reload(); });
+                common.ajax_post("waitinglist_results", formdata, function() { common.route_reload(); });
             });
 
             $(".bhighlight").button({disabled: true}).click(function() {
                 var formdata = "mode=highlight&himode=" + $(this).attr("data") + "&ids=" + $("#table-waitinglist input").tableCheckedData();
-                common.ajax_post("waitinglist_results", formdata, function() { window.location.reload(); });
+                common.ajax_post("waitinglist_results", formdata, function() { common.route_reload(); });
             });
 
             $("#button-delete").button({disabled: true}).click(function() {
                 tableform.delete_dialog(function() {
                     var formdata = "mode=delete&ids=" + $("#table-waitinglist input").tableCheckedData();
                     $("#dialog-delete").disable_dialog_buttons();
-                    common.ajax_post("waitinglist_results", formdata, function() { window.location.reload(); });
+                    common.ajax_post("waitinglist_results", formdata, function() { common.route_reload(); });
                 });
             });
         },
@@ -318,7 +318,11 @@ $(function() {
         },
 
         name: "waitinglist_results",
-        animation: "book"
+        animation: "book",
+        title: function() { return _("Waiting List"); },
+        routes: {
+            "waitinglist_results": function() { common.module_loadandstart("waitinglist_results", "waitinglist_results?" + this.rawqs); }
+        }
 
     };
 

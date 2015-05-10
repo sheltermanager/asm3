@@ -249,8 +249,12 @@
             return d;
         },
 
-        /** Use an internal route to go to a URL */
+        /** URL routing mode - client or server */
+        route_mode: "client",
+
+        /** Go to a URL */
         route: function(path) {
+            if (common.route_mode == "server") { window.location = path; return; }
             Path.history.pushState({}, "", path);
         },
 
@@ -267,6 +271,10 @@
 
         /** Starts client side routing listening */
         route_listen: function() {
+            // Don't do anything if we're in server mode, we'll just visit
+            // each URL on the server instead of trying to match routes on the
+            // client and deal with them here.
+            if (common.route_mode == "server") { return; }
             // Add a rescue route - if we can't find matching client route,
             // we fall back to going to the server for it
             Path.rescue(function(path) {
@@ -287,6 +295,7 @@
 
         /** Reload the current route */
         route_reload: function() {
+            if (common.route_mode == "server") { window.location.reload(); return; }
             Path.reload();
         },
 
@@ -314,9 +323,18 @@
          * object (from uri) and then starts it.
          */
         module_loadandstart: function(modulename, uri) {
+            // do we already have one running? If so, try to unload it first
+            if (common.module_running) {
+                if (common.module_running.destroy) {
+                    if (common.module_running.destroy()) {
+                        return;
+                    }
+                }
+            }
+            // add a json parameter to only retrieve the controller json document
             if (uri.indexOf("?") == -1) { uri += "?json=true"; }
             else { uri += "&json=true"; }
-            header.show_loading();
+            header.show_loading(_("Loading..."));
             $.ajax({
                 type: "GET",
                 url: uri,
@@ -348,7 +366,7 @@
          * Starts a module, unloading any active module first.
          */
         module_start: function(modulename) {
-            // do we already have one running? If so, unload it first
+            // do we already have one running? If so, try to unload it first
             if (common.module_running) {
                 if (common.module_running.destroy) {
                     if (common.module_running.destroy()) {

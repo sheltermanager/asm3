@@ -9,7 +9,7 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    window.location = "publish_logs?view=" + row.PATH + "/" + row.NAME;
+                    common.route("publish_logs?view=" + row.PATH + "/" + row.NAME);
                 },
                 columns: [
                     { field: "NAME", display: _("File"), initialsort: true },
@@ -34,7 +34,11 @@ $(function() {
         },
 
         name: "publish_logs",
-        animation: "options"
+        animation: "options",
+        title: function() { return _("Publisher Logs"); },
+        routes: {
+            "publish_logs": function() { common.module_loadandstart("publish_logs", "publish_logs?view=" + this.qs.view); }
+        }
 
     };
 

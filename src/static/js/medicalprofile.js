@@ -212,7 +212,11 @@ $(function() {
         },
 
         name: "medicalprofile",
-        animation: "book"
+        animation: "book",
+        title: function() { return _("Medical Profiles"); },
+        routes: {
+            "medicalprofile": function() { return common.module_loadandstart("medicalprofile", "medicalprofile"); }
+        }
 
     };
 

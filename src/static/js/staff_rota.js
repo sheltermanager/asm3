@@ -231,21 +231,21 @@ $(function() {
                 var startdate = format.date(staff_rota.days[0]);
                 tableform.delete_dialog(function() {
                     common.ajax_post(controller.name, "mode=deleteweek&startdate=" + startdate, function() {
-                        window.location = controller.name + "?start=" + startdate;
+                        common.route(controller.name + "?start=" + startdate);
                     });
                 }, _("This will remove ALL rota entries for the week beginning {0}. This action is irreversible, are you sure?").replace("{0}", startdate));
             });
 
             $("#button-prev").button().click(function() {
-                window.location = controller.name + "?start=" + format.date(controller.prevdate);
+                common.route(controller.name + "?start=" + format.date(controller.prevdate));
             });
 
             $("#button-today").button().click(function() {
-                window.location = controller.name;
+                common.route(controller.name);
             });
 
             $("#button-next").button().click(function() { 
-                window.location = controller.name + "?start=" + format.date(controller.nextdate);
+                common.route(controller.name + "?start=" + format.date(controller.nextdate));
             });
         },
 
@@ -254,7 +254,11 @@ $(function() {
         },
 
         name: "staff_rota",
-        animation: "book"
+        animation: "book",
+        title: function() { return _("Staff Rota"); },
+        routes: {
+            "staff_rota": function() { common.module_loadandstart("staff_rota", "staff_rota?" + this.rawqs); }
+        }
 
     };
 

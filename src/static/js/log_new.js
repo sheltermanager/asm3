@@ -96,7 +96,11 @@ $(function() {
         },
 
         name: "log_new",
-        animation: "newdata"
+        animation: "newdata",
+        title: function() { return _("Add a new log"); },
+        routes: {
+            "log_new": function() { common.module_loadandstart("log_new", "log_new"); }
+        }
 
     };
 

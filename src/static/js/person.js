@@ -612,7 +612,7 @@ $(function() {
             // Diary task create ajax call
             var create_task = function(taskid) {
                 var formdata = "mode=exec&id=" + $("#personid").val() + "&tasktype=PERSON&taskid=" + taskid + "&seldate=" + $("#seldate").val();
-                common.ajax_post("diarytask", formdata, function() { window.location = "person_diary?id=" + $("#personid").val(); });
+                common.ajax_post("diarytask", formdata, function() { common.route("person_diary?id=" + $("#personid").val()); });
             };
 
             // Diary task select date dialog
@@ -717,7 +717,7 @@ $(function() {
             $("#button-save").button().click(function() {
                 header.show_loading(_("Saving..."));
                 validate.save(function() {
-                    window.location="person?id=" + $("#personid").val();
+                    common.route_reload();
                 });
             });
 
@@ -727,7 +727,7 @@ $(function() {
                     var formdata = "mode=delete&personid=" + $("#personid").val();
                     common.ajax_post("person", formdata, function() { 
                         validate.dirty(false);
-                        window.location = "main"; 
+                        common.route("main"); 
                     });
                 };
                 b[_("Cancel")] = function() { $(this).dialog("close"); };
@@ -748,7 +748,7 @@ $(function() {
                     var formdata = "mode=merge&personid=" + $("#personid").val() + "&mergepersonid=" + $("#mergeperson").val();
                     common.ajax_post("person", formdata, function() { 
                         validate.dirty(false);
-                        window.location = "person?id=" + $("#personid").val(); 
+                        common.route_reload(); 
                     });
                 };
                 mb[_("Cancel")] = function() { $(this).dialog("close"); };
@@ -815,7 +815,11 @@ $(function() {
         },
 
         name: "person",
-        animation: "formtab"
+        animation: "formtab",
+        title: function() { return controller.person.OWNERNAME; },
+        routes: {
+            "person": function() { common.module_loadandstart("person", "person?id=" + this.qs.id); }
+        }
 
     };
 

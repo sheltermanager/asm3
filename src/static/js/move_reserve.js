@@ -385,7 +385,12 @@ $(function() {
         },
 
         name: "move_reserve",
-        animation: "newdata"
+        animation: "newdata",
+        title: function() { return _("Reserve an animal"); },
+        routes: {
+            "move_reserve": function() { common.module_loadandstart("move_reserve", "move_reserve"); }
+        }
+
 
     };
 

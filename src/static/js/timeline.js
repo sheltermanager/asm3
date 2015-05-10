@@ -35,7 +35,11 @@ $(function() {
         },
 
         name: "timeline",
-        animation: "results"
+        animation: "results",
+        title: function() { return _("Timeline"); },
+        routes: {
+            "timeline": function() { common.module_loadandstart("timeline", "timeline"); }
+        }
 
     };
 

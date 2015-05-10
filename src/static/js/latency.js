@@ -37,7 +37,11 @@ $(function() {
         },
 
         name: "latency",
-        animation: "options"
+        animation: "options",
+        title: function() { return _("Latency"); },
+        routes: {
+            "latency": function() { common.module_start("latency"); }
+        }
 
     };
 

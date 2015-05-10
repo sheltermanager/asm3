@@ -239,7 +239,17 @@ $(function() {
         },
 
         name: "lostfound_new",
-        animation: "newdata"
+        animation: "newdata",
+        title: function() { 
+            if (controller.name.indexOf("lost") != -1) {
+                return _("Add lost animal");
+            }
+            return _("Add found animal");
+        },
+        routes: {
+            "lostanimal_new": function() { common.module_loadandstart("lostfound_new", "lostanimal_new"); },
+            "foundanimal_new": function() { common.module_loadandstart("lostfound_new", "foundanimal_new"); }
+        }
 
     };
 

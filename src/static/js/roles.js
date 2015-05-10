@@ -276,7 +276,7 @@ $(function() {
                 });
                 var formdata = "mode=create&securitymap=" + securitymap + "&" + $("#dialog-add input").toPOST();
                 $("#dialog-add").disable_dialog_buttons();
-                common.ajax_post("roles", formdata, function() { window.location = "roles"; }, function() { $("#dialog-add").dialog("close"); });
+                common.ajax_post("roles", formdata, function() { common.route_reload(); }, function() { $("#dialog-add").dialog("close"); });
             };
             addbuttons[_("Cancel")] = function() {
                 $("#dialog-add").dialog("close");
@@ -294,7 +294,7 @@ $(function() {
                     "securitymap=" + securitymap + "&" +
                     $("#dialog-add input").toPOST();
                 $("#dialog-add").disable_dialog_buttons();
-                common.ajax_post("roles", formdata, function() { window.location = "roles"; }, function() { $("#dialog-add").dialog("close"); });
+                common.ajax_post("roles", formdata, function() { common.route_reload(); }, function() { $("#dialog-add").dialog("close"); });
             };
             editbuttons[_("Cancel")] = function() {
                 $("#dialog-add").dialog("close");
@@ -351,7 +351,7 @@ $(function() {
                         }
                     });
                     $("#dialog-delete").disable_dialog_buttons();
-                    common.ajax_post("roles", formdata, function() { window.location = "roles"; }, function() { $("#dialog-add").dialog("close"); });
+                    common.ajax_post("roles", formdata, function() { common.route_reload(); }, function() { $("#dialog-add").dialog("close"); });
                 },
                 _("This will permanently remove the selected roles, are you sure?")
                 );
@@ -378,7 +378,11 @@ $(function() {
         },
 
         name: "roles",
-        animation: "options"
+        animation: "options",
+        title: function() { return _("Edit roles"); },
+        routes: {
+            "roles": function() { common.module_loadandstart("roles", "roles"); }
+        }
 
     };
 

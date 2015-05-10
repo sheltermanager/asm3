@@ -530,7 +530,11 @@ $(function() {
         },
 
         name: "move_adopt",
-        animation: "newdata"
+        animation: "newdata",
+        title: function() { return _("Adopt an animal"); },
+        routes: {
+            "move_adopt": function() { common.module_loadandstart("move_adopt", "move_adopt"); }
+        }
 
     };
 

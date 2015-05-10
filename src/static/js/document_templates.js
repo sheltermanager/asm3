@@ -21,7 +21,7 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    window.location = "document_edit?template=" + row.ID;
+                    common.route("document_edit?template=" + row.ID);
                 },
                 columns: [
                     { field: "NAME", display: _("Template") },
@@ -34,7 +34,7 @@ $(function() {
                      click: function() { 
                          tableform.dialog_show_add(dialog, function() {
                              tableform.fields_post(dialog.fields, "mode=create", "document_templates", function(response) {
-                                 window.location="document_edit?template=" + response;
+                                 common.route("document_edit?template=" + response);
                              });
                          });
                      } 
@@ -52,7 +52,7 @@ $(function() {
                          var ids = tableform.table_ids(table);
                          tableform.dialog_show_add(dialog, function() {
                              tableform.fields_post(dialog.fields, "mode=clone&ids=" + ids , "document_templates", function(response) {
-                                 window.location="document_edit?template=" + response;
+                                 common.route("document_edit?template=" + response);
                              });
                          });
                      } 
@@ -104,7 +104,7 @@ $(function() {
                 var dbfsid = tableform.table_ids(document_templates.table).split(",")[0];
                 var newname = encodeURIComponent($("#newname").val());
                 common.ajax_post("document_templates", "mode=rename&newname=" + newname + "&dbfsid=" + dbfsid , function() {
-                    window.location = "document_templates";
+                    common.route("document_templates");
                 });
             };
             renamebuttons[_("Cancel")] = function() {
@@ -185,7 +185,14 @@ $(function() {
         },
 
         name: "document_templates",
-        animation: "options"
+        animation: "options",
+        title: function() { return _("Document Templates"); },
+        routes: {
+            "document_templates": function() {
+                common.module_loadandstart("document_templates", "document_templates");
+            }
+        }
+
 
     };
 

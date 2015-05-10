@@ -864,7 +864,7 @@ $(function() {
                 var formdata = "mode=save&" + $(".cfg").toPOST();
                 formdata += "&PublisherPresets=" + cfg_presets();
                 formdata += "&PublishersEnabled=" + cfg_enabled();
-                common.ajax_post("publish_options", formdata, function() { window.location="publish_options"; });
+                common.ajax_post("publish_options", formdata, function() { common.route_reload(); });
             });
             $("#button-save").button("disable");
 
@@ -1028,7 +1028,11 @@ $(function() {
         },
 
         name: "publish_options",
-        animation: "options"
+        animation: "options",
+        title: function() { return _("Publishing Options"); },
+        routes: {
+            "publish_options": function() { common.module_loadandstart("publish_options", "publish_options"); }
+        }
 
     };
 

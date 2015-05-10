@@ -115,7 +115,13 @@ $(function() {
         },
 
         name: "csvimport",
-        animation: "options"
+        animation: "options",
+        title: function() { return _("Import a CSV file"); },
+        routes: {
+            "csvimport": function() { 
+                common.module_start("csvimport"); 
+            }
+        }
 
     };
 

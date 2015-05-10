@@ -248,7 +248,8 @@ $(function() {
         },
 
         name: "mailmerge",
-        animation: "newdata"
+        animation: "newdata",
+        title: function() { return controller.title; }
 
     };
 

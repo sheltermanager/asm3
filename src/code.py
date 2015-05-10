@@ -842,7 +842,6 @@ class accounts:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_ACCOUNT)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(offset="active"), session.locale)
         if post["offset"] == "all":
@@ -942,7 +941,6 @@ class additional:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.MODIFY_LOOKUPS)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         fields = extadditional.get_fields(dbo)
@@ -976,7 +974,6 @@ class animal:
         users.check_permission(session, users.VIEW_ANIMAL)
         dbo = session.dbo
         post = utils.PostedData(web.input(id = 0), session.locale)
-        l = dbo.locale
         a = extanimal.get_animal(dbo, post.integer("id"))
         if a is None: raise web.notfound()
         # If a location filter is set, prevent the user opening this animal if it's
@@ -1056,7 +1053,6 @@ class animal_bulk:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.CHANGE_ANIMAL)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         s = html.header("", session)
@@ -1197,7 +1193,6 @@ class animal_donations:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_DONATION)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(id = 0), session.locale)
         a = extanimal.get_animal(dbo, post.integer("id"))
@@ -1274,7 +1269,6 @@ class animal_find:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_ANIMAL)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         s = html.header("", session)
@@ -1325,7 +1319,6 @@ class animal_licence:
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_LICENCE)
         dbo = session.dbo
-        l = session.locale
         post = utils.PostedData(web.input(id = 0), session.locale)
         a = extanimal.get_animal(dbo, post.integer("id"))
         if a is None: raise web.notfound()
@@ -1601,7 +1594,6 @@ class animal_new:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.ADD_ANIMAL)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         s = html.header("", session)
@@ -1640,7 +1632,6 @@ class animal_test:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_TEST)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(id = 0), session.locale)
         a = extanimal.get_animal(dbo, post.integer("id"))
@@ -1688,7 +1679,6 @@ class animal_transport:
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_TRANSPORT)
         dbo = session.dbo
-        l = session.locale
         post = utils.PostedData(web.input(id = 0), session.locale)
         a = extanimal.get_animal(dbo, post.integer("id"))
         if a is None: raise web.notfound()
@@ -1722,7 +1712,6 @@ class animal_vaccination:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_VACCINATION)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(id = 0), session.locale)
         a = extanimal.get_animal(dbo, post.integer("id"))
@@ -1778,7 +1767,6 @@ class batch:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.TRIGGER_BATCH)
-        l = session.locale
         post = utils.PostedData(web.input(), session.locale)
         s = html.header("", session)
         s += html.controller("")
@@ -1957,7 +1945,6 @@ class calendarview:
 class change_password:
     def GET(self):
         utils.check_loggedin(session, web)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         al.debug("%s change password screen" % session.user, "code.change_password", dbo)
@@ -1981,7 +1968,6 @@ class change_password:
 class change_user_settings:
     def GET(self):
         utils.check_loggedin(session, web)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         al.debug("%s change user settings screen" % session.user, "code.change_user_settings", dbo)
@@ -2046,13 +2032,10 @@ class csvimport:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.USE_SQL_INTERFACE)
-        l = session.locale
-        title = _("Import a CSV file", l)
-        s = html.header(title, session)
+        s = html.header("", session)
         s += html.controller("")
         s += html.footer()
-        web.header("Content-Type", "text/html")
-        return s
+        return full_or_json("csvimport", s, "", False)
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -2086,7 +2069,6 @@ class diary_edit:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.EDIT_ALL_DIARY_NOTES)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(id = 0, filter="uncompleted", newnote="0"), session.locale)
         dfilter = post["filter"]
@@ -2131,7 +2113,6 @@ class diary_edit_my:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.EDIT_MY_DIARY_NOTES)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(id = 0, filter="uncompleted", newnote="0"), session.locale)
         userfilter = session.user.strip()
@@ -2185,10 +2166,11 @@ class diarytask:
         diarytaskdetail = extdiary.get_diarytask_details(dbo, taskid)
         title = _("Diary task: {0}", l).format(taskname)
         al.debug("got %d diary task details" % len(diarytaskdetail), "code.diarytask", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("rows", diarytaskdetail)
         c += html.controller_int("taskid", taskid)
         c += html.controller_str("taskname", taskname)
+        c += html.controller_str("title", title)
         c += html.controller_json("forlist", users.get_users_and_roles(dbo))
         s += html.controller(c)
         s += html.footer()
@@ -2217,13 +2199,11 @@ class diarytasks:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.EDIT_DIARY_TASKS)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         diarytaskhead = extdiary.get_diarytasks(dbo)
-        title = _("Diary Tasks", l)
         al.debug("got %d diary tasks" % len(diarytaskhead), "code.diarytasks", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("rows", diarytaskhead)
         s += html.controller(c)
         s += html.footer()
@@ -2394,7 +2374,6 @@ class document_repository:
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_REPO_DOCUMENT)
         dbo = session.dbo
-        l = session.locale
         post = utils.PostedData(web.input(dbfsid = 0), session.locale)
         if post.integer("dbfsid") != 0:
             name = dbfs.get_name_for_id(dbo, post.integer("dbfsid"))
@@ -2403,10 +2382,9 @@ class document_repository:
             web.header("Content-Disposition", "attachment; filename=\"%s\"" % name)
             return dbfs.get_string_id(dbo, post.integer("dbfsid"))
         else:
-            title = _("Document Repository", l)
             documents = dbfs.get_document_repository(dbo)
             al.debug("got %d documents in repository" % len(documents), "code.document_repository", dbo)
-            s = html.header(title, session)
+            s = html.header("", session)
             c = html.controller_json("rows", documents)
             s += html.controller(c)
             s += html.footer()
@@ -2430,12 +2408,10 @@ class document_templates:
     def GET(self):
         utils.check_loggedin(session, web)
         dbo = session.dbo
-        l = session.locale
         post = utils.PostedData(web.input(), session.locale)
-        title = _("Document Templates", l)
         templates = dbfs.get_document_templates(dbo)
         al.debug("got %d document templates" % len(templates), "code.document_templates", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("rows", templates)
         s += html.controller(c)
         s += html.footer()
@@ -2468,7 +2444,6 @@ class donation:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_DONATION)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(id = 0, offset = "m7"), session.locale)
         donations = financial.get_donations(dbo, post["offset"])
@@ -2513,11 +2488,9 @@ class donation_receive:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.ADD_DONATION)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
-        title = _("Receive a payment", l)
-        s = html.header(title, session)
+        s = html.header("", session)
         al.debug("receiving donation", "code.donation_receive", dbo)
         c = html.controller_json("donationtypes", extlookups.get_donation_types(dbo))
         c += html.controller_json("paymenttypes", extlookups.get_payment_types(dbo))
@@ -2558,14 +2531,12 @@ class foundanimal:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_FOUND_ANIMAL)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(id = 0), session.locale)
         a = extlostfound.get_foundanimal(dbo, post.integer("id"))
         if a is None: raise web.notfound()
-        title = _("Found animal - {0} {1} [{2}]", l).format(a["AGEGROUP"], a["SPECIESNAME"], a["OWNERNAME"])
         al.debug("open found animal %s %s %s" % (a["AGEGROUP"], a["SPECIESNAME"], a["OWNERNAME"]), "code.foundanimal", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("animal", a)
         c += html.controller_str("name", "foundanimal")
         c += html.controller_json("additional", extadditional.get_additional_fields(dbo, a["ID"], "foundanimal"))
@@ -2607,7 +2578,6 @@ class foundanimal_diary:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_DIARY)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(id = 0), session.locale)
         a = extlostfound.get_foundanimal(dbo, post.integer("id"))
@@ -2648,13 +2618,12 @@ class foundanimal_find:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_FOUND_ANIMAL)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
-        title = _("Find Found Animal", l)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("agegroups", configuration.age_groups(dbo))
         c += html.controller_json("colours", extlookups.get_basecolours(dbo))
+        c += html.controller_str("name", "foundanimal_find")
         c += html.controller_json("species", extlookups.get_species(dbo))
         c += html.controller_json("breeds", extlookups.get_breeds_by_species(dbo))
         c += html.controller_json("sexes", extlookups.get_sexes(dbo))
@@ -2671,10 +2640,9 @@ class foundanimal_find_results:
         l = session.locale
         post = utils.PostedData(web.input(mode = ""), session.locale)
         results = extlostfound.get_foundanimal_find_advanced(dbo, post.data, configuration.record_search_limit(dbo))
-        title = _("Results", l)
         resultsmessage = _("Find found animal returned {0} results.", l).format(len(results))
         al.debug("found %d results for %s" % (len(results), str(web.ctx.query)), "code.foundanimal_find_results", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("rows", results)
         c += html.controller_str("name", "foundanimal_find_results")
         c += html.controller_str("resultsmessage", resultsmessage)
@@ -2686,7 +2654,6 @@ class foundanimal_log:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_LOG)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(id = 0, filter = -2), session.locale)
         logfilter = post.integer("filter")
@@ -2725,7 +2692,6 @@ class foundanimal_media:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_MEDIA)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(id = 0), session.locale)
         a = extlostfound.get_foundanimal(dbo, post.integer("id"))
@@ -2828,11 +2794,9 @@ class foundanimal_new:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.ADD_FOUND_ANIMAL)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
-        title = _("Add found animal", l)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("agegroups", configuration.age_groups(dbo))
         c += html.controller_json("colours", extlookups.get_basecolours(dbo))
         c += html.controller_json("species", extlookups.get_species(dbo))
@@ -2860,11 +2824,9 @@ class giftaid_hmrc_spreadsheet:
         fromdate = post["fromdate"]
         todate = post["todate"]
         if fromdate == "":
-            title = "HMRC Gift Aid Spreadsheet"
-            s = html.header(title, session)
+            s = html.header("", session)
             s += html.footer()
-            web.header("Content-Type", "text/html")
-            return s
+            return full_or_json("giftaid_hmrc_spreadsheet", s, "", False)
         else:
             al.debug("generating HMRC giftaid spreadsheet for %s -> %s" % (fromdate, todate), "code.giftaid_hmrc_spreadsheet", dbo)
             web.header("Content-Type", "application/vnd.oasis.opendocument.spreadsheet")
@@ -2876,14 +2838,11 @@ class htmltemplates:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.PUBLISH_OPTIONS)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
-        title = _("Add found animal", l)
-        title = _("HTML Publishing Templates", l)
         templates = dbfs.get_html_publisher_templates_files(dbo)
         al.debug("editing %d html templates" % len(templates), "code.htmltemplates", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("rows", templates)
         s += html.controller(c)
         s += html.footer()
@@ -2915,8 +2874,7 @@ class incident:
         a = extanimalcontrol.get_animalcontrol(dbo, post.integer("id"))
         if a is None: raise web.notfound()
         al.debug("open incident %s %s %s" % (a["ACID"], a["INCIDENTNAME"], python2display(l, a["INCIDENTDATETIME"])), "code.incident", dbo)
-        title = _("Incident {0}, {1}: {2}", l).format(a["ACID"], a["INCIDENTNAME"], python2display(l, a["INCIDENTDATETIME"]))
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("agegroups", configuration.age_groups(dbo))
         c += html.controller_json("additional", extadditional.get_additional_fields(dbo, a["ACID"], "incident"))
         c += html.controller_json("incident", a)
@@ -2955,15 +2913,13 @@ class incident_citations:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_CITATION)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(id = 0), session.locale)
         a = extanimalcontrol.get_animalcontrol(dbo, post.integer("id"))
         if a is None: raise web.notfound()
-        title = _("Incident {0}, {1}: {2}", l).format(a["ACID"], a["INCIDENTNAME"], python2display(l, a["INCIDENTDATETIME"]))
         citations = financial.get_incident_citations(dbo, post.integer("id"))
         al.debug("got %d citations" % len(citations), "code.incident_citations", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_str("name", "incident_citations")
         c += html.controller_json("rows", citations)
         c += html.controller_json("incident", a)
@@ -2992,11 +2948,9 @@ class incident_find:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_INCIDENT)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
-        title = _("Find Incident", l)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("agegroups", configuration.age_groups(dbo))
         c += html.controller_json("incidenttypes", extlookups.get_incident_types(dbo))
         c += html.controller_json("completedtypes", extlookups.get_incident_completed_types(dbo))
@@ -3017,10 +2971,9 @@ class incident_find_results:
         l = session.locale
         post = utils.PostedData(web.input(mode = ""), session.locale)
         results = extanimalcontrol.get_animalcontrol_find_advanced(dbo, post.data, configuration.record_search_limit(dbo))
-        title = _("Results", l)
         resultsmessage = _("Find animal control incidents returned {0} results.", l).format(len(results))
         al.debug("found %d results for %s" % (len(results), str(web.ctx.query)), "code.incident_find_results", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("rows", results)
         c += html.controller_str("name", "incident_find_results")
         c += html.controller_str("resultsmessage", resultsmessage)
@@ -3032,7 +2985,6 @@ class incident_diary:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_DIARY)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(id = 0), session.locale)
         a = extanimalcontrol.get_animalcontrol(dbo, post.integer("id"))
@@ -3073,7 +3025,6 @@ class incident_log:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_LOG)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(id = 0, filter = -2), session.locale)
         a = extanimalcontrol.get_animalcontrol(dbo, post.integer("id"))
@@ -3113,13 +3064,11 @@ class incident_map:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_INCIDENT)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         rows = extanimalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "incomplete" })
         al.debug("incident map, %d active" % (len(rows)), "code.incident_map", dbo)
-        title = _("Active Incidents", l)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("rows", rows);
         s += html.controller(c)
         s += html.footer()
@@ -3129,7 +3078,6 @@ class incident_media:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_MEDIA)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(id = 0), session.locale)
         a = extanimalcontrol.get_animalcontrol(dbo, post.integer("id"))
@@ -3261,8 +3209,7 @@ class latency:
         al.debug("latency check", "code.latency", dbo)
         s = html.header(title, session)
         s += html.footer()
-        web.header("Content-Type", "text/html")
-        return s
+        return full_or_json("latency", s, "", False)
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -3277,7 +3224,6 @@ class licence:
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_LICENCE)
         dbo = session.dbo
-        l = session.locale
         post = utils.PostedData(web.input(offset = "i31"), session.locale)
         licences = financial.get_licences(dbo, post["offset"])
         al.debug("got %d licences" % len(licences), "code.licence", dbo)
@@ -3308,13 +3254,11 @@ class litters:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_LITTER)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         litters = extanimal.get_litters(dbo)
-        title = _("Litters", l)
         al.debug("got %d litters" % len(litters), "code.litters", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("rows", litters)
         c += html.controller_json("species", extlookups.get_species(dbo))
         s += html.controller(c)
@@ -3344,11 +3288,9 @@ class log_new:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.CHANGE_ANIMAL)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(mode = "animal"), session.locale)
-        title = _("Add a new log", l)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("logtypes", extlookups.get_log_types(dbo))
         c += html.controller_str("mode", post["mode"])
         al.debug("loaded lookups for new log", "code.log_new", dbo)
@@ -3380,8 +3322,7 @@ class lookups:
         table[2] = translate(table[2], l)
         rows = extlookups.get_lookup(dbo, tablename, table[1])
         al.debug("edit lookups for %s, got %d rows" % (tablename, len(rows)), "code.lookups", dbo)
-        title = _("Edit Lookups", l)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("rows", rows)
         c += html.controller_json("petfinderspecies", extlookups.PETFINDER_SPECIES)
         c += html.controller_json("petfinderbreeds", extlookups.PETFINDER_BREEDS)
@@ -3425,14 +3366,12 @@ class lostanimal:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_LOST_ANIMAL)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(id = 0), session.locale)
         a = extlostfound.get_lostanimal(dbo, post.integer("id"))
         if a is None: raise web.notfound()
         al.debug("open lost animal %s %s %s" % (a["AGEGROUP"], a["SPECIESNAME"], a["OWNERNAME"]), "code.foundanimal", dbo)
-        title = _("Lost animal - {0} {1} [{2}]", l).format(a["AGEGROUP"], a["SPECIESNAME"], a["OWNERNAME"])
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("animal", a)
         c += html.controller_str("name", "lostanimal")
         c += html.controller_json("additional", extadditional.get_additional_fields(dbo, a["ID"], "lostanimal"))
@@ -3468,7 +3407,6 @@ class lostanimal_diary:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_DIARY)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(id = 0), session.locale)
         a = extlostfound.get_lostanimal(dbo, post.integer("id"))
@@ -3509,12 +3447,11 @@ class lostanimal_find:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_LOST_ANIMAL)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
-        title = _("Find Lost Animal", l)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("agegroups", configuration.age_groups(dbo))
+        c += html.controller_str("name", "lostanimal_find")
         c += html.controller_json("colours", extlookups.get_basecolours(dbo))
         c += html.controller_json("species", extlookups.get_species(dbo))
         c += html.controller_json("breeds", extlookups.get_breeds_by_species(dbo))
@@ -3532,10 +3469,9 @@ class lostanimal_find_results:
         l = session.locale
         post = utils.PostedData(web.input(mode = ""), session.locale)
         results = extlostfound.get_lostanimal_find_advanced(dbo, post.data, configuration.record_search_limit(dbo))
-        title = _("Results", l)
         resultsmessage = _("Find lost animal returned {0} results.", l).format(len(results))
         al.debug("found %d results for %s" % (len(results), str(web.ctx.query)), "code.lostanimal_find_results", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("rows", results)
         c += html.controller_str("name", "lostanimal_find_results")
         c += html.controller_str("resultsmessage", resultsmessage)
@@ -3547,7 +3483,6 @@ class lostanimal_log:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_LOG)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(id = 0, filter = -2), session.locale)
         logfilter = post.integer("filter")
@@ -3586,7 +3521,6 @@ class lostanimal_media:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_MEDIA)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(id = 0), session.locale)
         a = extlostfound.get_lostanimal(dbo, post.integer("id"))
@@ -3689,11 +3623,9 @@ class lostanimal_new:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.ADD_LOST_ANIMAL)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
-        title = _("Add lost animal", l)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("agegroups", configuration.age_groups(dbo))
         c += html.controller_json("colours", extlookups.get_basecolours(dbo))
         c += html.controller_json("species", extlookups.get_species(dbo))
@@ -3752,6 +3684,7 @@ class mailmerge:
             al.debug("building report criteria form for mailmerge %d %s" % (post.integer("id"), title), "code.mailmerge", dbo)
             s = html.header(title, session)
             s += html.controller(html.controller_bool("criteria", True))
+            s += html.controller_str("title", title)
             s += html.heading(title)
             s += "<div id=\"criteriaform\">"
             s += "<input data-post=\"id\" type=\"hidden\" value=\"%d\" />" % post.integer("id")
@@ -3819,7 +3752,6 @@ class medical:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_MEDICAL)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(newmed = "0", offset = "m365"), session.locale)
         med = extmedical.get_treatments_outstanding(dbo, post["offset"], session.locationfilter)
@@ -3878,13 +3810,11 @@ class medicalprofile:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_MEDICAL)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         med = extmedical.get_profiles(dbo)
-        title = _("Medical Profiles", l)
         al.debug("got %d medical profiles" % len(med), "code.medical_profile", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("rows", med)
         s += html.controller(c)
         s += html.footer()
@@ -3909,11 +3839,9 @@ class move_adopt:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.ADD_MOVEMENT)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
-        title = _("Adopt an animal", l)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("donationtypes", extlookups.get_donation_types(dbo))
         c += html.controller_json("accounts", financial.get_accounts(dbo))
         c += html.controller_json("paymenttypes", extlookups.get_payment_types(dbo))
@@ -3948,7 +3876,6 @@ class move_book_foster:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_MOVEMENT)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         movements = extmovement.get_movements(dbo, extmovement.FOSTER)
@@ -3982,7 +3909,6 @@ class move_book_recent_adoption:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_MOVEMENT)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         movements = extmovement.get_recent_adoptions(dbo)
@@ -4016,7 +3942,6 @@ class move_book_recent_other:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_MOVEMENT)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         movements = extmovement.get_recent_nonfosteradoption(dbo)
@@ -4050,7 +3975,6 @@ class move_book_recent_transfer:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_MOVEMENT)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         movements = extmovement.get_recent_transfers(dbo)
@@ -4084,7 +4008,6 @@ class move_book_reservation:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_MOVEMENT)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         movements = extmovement.get_active_reservations(dbo)
@@ -4118,7 +4041,6 @@ class move_book_retailer:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_MOVEMENT)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         movements = extmovement.get_movements(dbo, extmovement.RETAILER)
@@ -4152,7 +4074,6 @@ class move_book_trial_adoption:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_MOVEMENT)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         movements = extmovement.get_trial_adoptions(dbo)
@@ -4186,7 +4107,6 @@ class move_book_unneutered:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_MOVEMENT)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         movements = extmovement.get_recent_unneutered_adoptions(dbo)
@@ -4220,11 +4140,9 @@ class move_deceased:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.CHANGE_ANIMAL)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
-        title = _("Mark an animal deceased", l)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("deathreasons", extlookups.get_deathreasons(dbo))
         s += html.controller(c)
         s += html.footer()
@@ -4243,10 +4161,8 @@ class move_foster:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.ADD_MOVEMENT)
-        l = session.locale
         post = utils.PostedData(web.input(), session.locale)
-        title = _("Foster an animal", l)
-        s = html.header(title, session)
+        s = html.header("", session)
         s += html.footer()
         return full_or_json("move_foster", s, "", post["json"] == "true")
 
@@ -4265,11 +4181,9 @@ class move_reclaim:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.ADD_MOVEMENT)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
-        title = _("Reclaim an animal", l)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("donationtypes", extlookups.get_donation_types(dbo))
         c += html.controller_json("accounts", financial.get_accounts(dbo))
         c += html.controller_json("paymenttypes", extlookups.get_payment_types(dbo))
@@ -4302,11 +4216,9 @@ class move_reserve:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.ADD_MOVEMENT)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
-        title = _("Reserve an animal", l)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("donationtypes", extlookups.get_donation_types(dbo))
         c += html.controller_json("accounts", financial.get_accounts(dbo))
         c += html.controller_json("paymenttypes", extlookups.get_payment_types(dbo))
@@ -4330,10 +4242,9 @@ class move_retailer:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.ADD_MOVEMENT)
-        l = session.locale
         post = utils.PostedData(web.input(), session.locale)
-        title = _("Move an animal to a retailer", l)
-        s = html.header(title, session)
+        s = html.header("", session)
+        s += html.controller("")
         s += html.footer()
         return full_or_json("move_retailer", s, "", post["json"] == "true")
 
@@ -4352,10 +4263,9 @@ class move_transfer:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.ADD_MOVEMENT)
-        l = session.locale
         post = utils.PostedData(web.input(), session.locale)
-        title = _("Transfer an animal", l)
-        s = html.header(title, session)
+        s = html.header("", session)
+        s += html.controller("")
         s += html.footer()
         return full_or_json("move_transfer", s, "", post["json"] == "true")
 
@@ -4374,7 +4284,6 @@ class onlineform_incoming:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_INCOMING_FORMS)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(mode="view"), session.locale)
         mode = post["mode"]
@@ -4384,9 +4293,8 @@ class onlineform_incoming:
             users.check_permission(session, users.VIEW_INCOMING_FORMS)
             return extonlineform.get_onlineformincoming_html_print(dbo, post.integer_list("ids"))
         headers = extonlineform.get_onlineformincoming_headers(dbo)
-        title = _("Incoming Forms", l)
         al.debug("got %d submitted headers" % len(headers), "code.onlineform_incoming", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("rows", headers)
         s += html.controller(c)
         s += html.footer()
@@ -4477,11 +4385,12 @@ class onlineform:
                r["TOOLTIP"] = html.escape_angle(r["TOOLTIP"]) 
         title = _("Online Form: {0}", l).format(formname)
         al.debug("got %d online form fields" % len(fields), "code.onlineform", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("rows", fields)
         c += html.controller_int("formid", formid)
         c += html.controller_str("formname", formname)
         c += html.controller_json("formfields", extonlineform.FORM_FIELDS)
+        c += html.controller_str("title", title)
         s += html.controller(c)
         s += html.footer()
         return full_or_json("onlineform", s, c, post["json"] == "true")
@@ -4505,7 +4414,6 @@ class onlineforms:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.EDIT_ONLINE_FORMS)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         onlineforms = extonlineform.get_onlineforms(dbo)
@@ -4514,9 +4422,8 @@ class onlineforms:
             r["HEADER"] = html.escape_angle(r["HEADER"])
             r["DESCRIPTION"] = html.escape_angle(r["DESCRIPTION"])
             r["FOOTER"] = html.escape_angle(r["FOOTER"])
-        title = _("Online Forms", l)
         al.debug("got %d online forms" % len(onlineforms), "code.onlineforms", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("rows", onlineforms)
         c += html.controller_json("flags", extlookups.get_person_flags(dbo))
         c += html.controller_str("baseurl", BASE_URL)
@@ -4553,12 +4460,10 @@ class options:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.SYSTEM_OPTIONS)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
-        title = _("Options", l)
         session.configuration = configuration.get_map(dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("accounts", financial.get_accounts(dbo))
         c += html.controller_bool("hassmtpoverride", SMTP_SERVER is not None)
         c += html.controller_plain("animalfindcolumns", html.json_animalfindcolumns(dbo))
@@ -4608,9 +4513,8 @@ class person:
         if p is None: raise web.notfound()
         if p["ISSTAFF"] == 1:
             users.check_permission(session, users.VIEW_STAFF)
-        title = p["OWNERNAME"]
         al.debug("opened person '%s'" % p["OWNERNAME"], "code.person", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("additional", extadditional.get_additional_fields(dbo, p["ID"], "person"))
         c += html.controller_json("animaltypes", extlookups.get_animal_types(dbo))
         c += html.controller_json("species", extlookups.get_species(dbo))
@@ -4835,13 +4739,11 @@ class person_find:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_PERSON)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
-        title = _("Find Person", l)
         flags = extlookups.get_person_flags(dbo)
         al.debug("lookups loaded", "code.person_find", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("flags", flags)
         s += html.controller(c)
         s += html.footer()
@@ -4863,9 +4765,8 @@ class person_find_results:
         add = None
         if len(results) > 0: 
             add = extadditional.get_additional_fields_ids(dbo, results, "person")
-        title = _("Results", l)
         al.debug("found %d results for %s" % (len(results), str(web.ctx.query)), "code.person_find_results", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("rows", results)
         c += html.controller_json("additional", add)
         c += html.controller_str("resultsmessage", _("Search returned {0} results.", l).format(len(results)))
@@ -4881,10 +4782,9 @@ class person_investigation:
         post = utils.PostedData(web.input(id = 0), session.locale)
         p = extperson.get_person(dbo, post.integer("id"))
         if p is None: raise web.notfound()
-        title = p["OWNERNAME"]
         investigation = extperson.get_investigation(dbo, post.integer("id"))
         al.debug("got %d investigation records for person %s" % (len(investigation), p["OWNERNAME"]), "code.person_investigation", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("rows", investigation)
         c += html.controller_json("person", p)
         c += html.controller_json("tabcounts", extperson.get_satellite_counts(dbo, p["ID"])[0])
@@ -5153,11 +5053,9 @@ class person_new:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.ADD_PERSON)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
-        title = _("Add a new person", l)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_str("towns", "|".join(extperson.get_towns(dbo)))
         c += html.controller_str("counties", "|".join(extperson.get_counties(dbo)))
         c += html.controller_str("towncounties", "|".join(extperson.get_town_to_county(dbo)))
@@ -5183,10 +5081,9 @@ class person_rota:
         post = utils.PostedData(web.input(id = 0), session.locale)
         p = extperson.get_person(dbo, post.integer("id"))
         if p is None: raise web.notfound()
-        title = p["OWNERNAME"]
         rota = extperson.get_person_rota(dbo, post.integer("id"))
         al.debug("got %d rota items" % len(rota), "code.person_rota", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_str("name", "person_rota")
         c += html.controller_json("rows", rota)
         c += html.controller_json("person", p)
@@ -5216,14 +5113,12 @@ class staff_rota:
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_ROTA)
         dbo = session.dbo
-        l = session.locale
         post = utils.PostedData(web.input(start = ""), session.locale)
-        title = _("Staff Rota", l)
         startdate = post.date("start")
         if startdate is None: startdate = monday_of_week(now())
         rota = extperson.get_rota(dbo, startdate, add_days(startdate, 7))
         al.debug("got %d rota items" % len(rota), "code.staff_rota", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_str("name", "staff_rota")
         c += html.controller_json("rows", rota)
         c += html.controller_date("startdate", startdate)
@@ -5266,10 +5161,9 @@ class person_traploan:
         post = utils.PostedData(web.input(id = 0), session.locale)
         p = extperson.get_person(dbo, post.integer("id"))
         if p is None: raise web.notfound()
-        title = p["OWNERNAME"]
         traploans = extanimalcontrol.get_person_traploans(dbo, post.integer("id"))
         al.debug("got %d trap loans" % len(traploans), "code.person_traploan", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_str("name", "person_traploan")
         c += html.controller_json("rows", traploans)
         c += html.controller_json("person", p)
@@ -5302,10 +5196,9 @@ class person_vouchers:
         post = utils.PostedData(web.input(id = 0), session.locale)
         p = extperson.get_person(dbo, post.integer("id"))
         if p is None: raise web.notfound()
-        title = p["OWNERNAME"]
         vouchers = financial.get_vouchers(dbo, post.integer("id"))
         al.debug("got %d vouchers" % len(vouchers), "code.person_vouchers", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("vouchertypes", extlookups.get_voucher_types(dbo))
         c += html.controller_json("rows", vouchers)
         c += html.controller_json("person", p)
@@ -5333,7 +5226,6 @@ class publish:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.USE_INTERNET_PUBLISHER)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(mode="page"), session.locale)
         mode = post["mode"]
@@ -5389,7 +5281,7 @@ class publish:
             elif mode == "vear":
                 mp = extpublish.AKCReunitePublisher(dbo, pc)
                 mp.start()
-        s = html.header(_("Publishing", l), session)
+        s = html.header("", session)
         c = html.controller_bool("failed", failed)
         s += html.controller(c)
         s += html.footer()
@@ -5410,11 +5302,9 @@ class publish_logs:
     def GET(self):
         utils.check_loggedin(session, web)
         dbo = session.dbo
-        l = session.locale
         post = utils.PostedData(web.input(view = ""), session.locale)
         if post["view"] == "":
-            title = _("Publisher Logs", l)
-            s = html.header(title, session)
+            s = html.header("", session)
             logs = dbfs.get_publish_logs(dbo)
             al.debug("viewing %d publishing logs" % len(logs), "code.publish_logs", dbo)
             c = html.controller_json("rows", logs)
@@ -5432,11 +5322,9 @@ class publish_options:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.PUBLISH_OPTIONS)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
-        title = _("Publishing Options", l)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("locations", extlookups.get_internal_locations(dbo))
         c += html.controller_str("publishurl", MULTIPLE_DATABASES_PUBLISH_URL)
         c += html.controller_bool("hasftpoverride", MULTIPLE_DATABASES_PUBLISH_FTP is not None and not configuration.publisher_ignore_ftp_override(dbo))
@@ -5464,23 +5352,6 @@ class publish_options:
             users.check_permission(session, users.PUBLISH_OPTIONS)
             userid, userpwd = extpublish.VetEnvoyUSMicrochipPublisher.signup(session.dbo, post)
             return "%s,%s" % (userid, userpwd)
-
-class timeline:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_ANIMAL)
-        l = session.locale
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        title = _("Timeline", l)
-        evts = extanimal.get_timeline(dbo, 500)
-        s = html.header(title, session)
-        c = html.controller_json("recent", evts)
-        c += html.controller_str("explain", _("Showing {0} timeline events.", l).format(len(evts)));
-        s += html.controller(c)
-        s += html.footer()
-        al.debug("timeline events, run by %s, got %d events" % (session.user, len(evts)), "code.timeline", dbo)
-        return full_or_json("timeline", s, c, post["json"] == "true")
 
 class report:
     def GET(self):
@@ -5512,6 +5383,8 @@ class report:
             s += crit
             s += "</div>"
             s += html.footing()
+            c = html.controller_str("title", title)
+            s += html.controller(c)
             s += html.footer()
             return full_or_json("report", s, "", post["json"] == "true")
         # The user has entered the criteria and we're in exec mode, unpack
@@ -5536,15 +5409,12 @@ class report_export:
             # Sanitise the HTMLBODY for sending to the front end
             for r in reports:
                 r["HTMLBODY"] = html.escape_angle(r["HTMLBODY"])
-            title = _("Export Reports as CSV", l)
             al.debug("exporting %d reports" % len(reports), "code.report_export", dbo)
-            s = html.header(title, session)
+            s = html.header("", session)
             c = html.controller_json("rows", reports)
             s += html.controller(c)
             s += html.footer()
-            web.header("Content-Type", "text/html")
-            web.header("Cache-Control", "no-cache")
-            return s
+            return full_or_json("report_export", s, c, post["json"] == "true")
         elif mode == "criteria":
             # Make sure this user has a role that can view the report
             extreports.check_view_permission(session, crid)
@@ -5588,11 +5458,9 @@ class report_images:
         utils.check_loggedin(session, web)
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
-        l = session.locale
-        title = _("Extra images", l)
         images = dbfs.get_report_images(dbo)
         al.debug("got %d extra images" % len(images), "code.report_images", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("rows", images)
         s += html.controller(c)
         s += html.footer()
@@ -5618,7 +5486,6 @@ class reports:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_REPORT)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         reports = extreports.get_reports(dbo)
@@ -5629,9 +5496,8 @@ class reports:
         if header == "": header = dbfs.get_string(dbo, "head.dat", "/reports")
         footer = dbfs.get_string(dbo, "foot.html", "/reports")
         if footer == "": footer = dbfs.get_string(dbo, "foot.dat", "/reports")
-        title = _("Edit Reports", l)
         al.debug("editing %d reports" % len(reports), "code.reports", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("categories", "|".join(extreports.get_categories(dbo)))
         c += html.controller_json("header", html.escape_angle(header))
         c += html.controller_json("footer", html.escape_angle(footer))
@@ -5684,11 +5550,9 @@ class roles:
         users.check_permission(session, users.EDIT_USER)
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
-        l = session.locale
         roles = users.get_roles(dbo)
-        title = _("Edit roles", l)
         al.debug("editing %d roles" % len(roles), "code.roles", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("rows", roles)
         s += html.controller(c)
         s += html.footer()
@@ -5721,9 +5585,10 @@ class search:
         is_large_db = ""
         if dbo.is_large_db: is_large_db = " (indexed only)"
         al.debug("searched for '%s', got %d results in %s, sorted %s %s" % (q, len(results), timetaken, sortname, is_large_db), "code.search", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("results", results)
         c += html.controller_str("timetaken", str(round(timetaken, 2)))
+        c += html.controller_str("title", title)
         c += html.controller_str("explain", explain)
         c += html.controller_str("sortname", sortname)
         s += html.controller(c)
@@ -5749,7 +5614,6 @@ class shelterview:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_ANIMAL)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         animals = extanimal.get_shelterview_animals(dbo, session.locationfilter)
@@ -5788,7 +5652,6 @@ class sql:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.USE_SQL_INTERFACE)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(mode="iface"), session.locale)
         mode = post["mode"]
@@ -5906,13 +5769,11 @@ class stocklevel:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_STOCKLEVEL)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(newlevel = "0", sortexp = "0", viewlocation = "0"), session.locale)
         levels = extstock.get_stocklevels(dbo, post.integer("viewlocation"))
         al.debug("got %d stock levels" % len(levels), "code.stocklevel", dbo)
-        title = _("Stock", l)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("stocklocations", extlookups.get_stock_locations(dbo))
         c += html.controller_str("stocknames", "|".join(extstock.get_stock_names(dbo)))
         c += html.controller_json("stockusagetypes", extlookups.get_stock_usage_types(dbo))
@@ -5950,14 +5811,12 @@ class systemusers:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.EDIT_USER)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
-        title = _("Edit system users", l)
         user = users.get_users(dbo)
         roles = users.get_roles(dbo)
         al.debug("editing %d system users" % len(user), "code.systemusers", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("rows", user)
         c += html.controller_json("roles", roles)
         c += html.controller_json("internallocations", extlookups.get_internal_locations(dbo))
@@ -5988,7 +5847,6 @@ class test:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_TEST)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(newtest = "0", offset = "m365"), session.locale)
         test = extmedical.get_tests_outstanding(dbo, post["offset"], session.locationfilter)
@@ -6033,6 +5891,22 @@ class test:
             if post.integer("item") != -1:
                 extstock.deduct_stocklevel_from_form(session.dbo, session.user, post)
 
+class timeline:
+    def GET(self):
+        utils.check_loggedin(session, web)
+        users.check_permission(session, users.VIEW_ANIMAL)
+        l = session.locale
+        dbo = session.dbo
+        post = utils.PostedData(web.input(), session.locale)
+        evts = extanimal.get_timeline(dbo, 500)
+        s = html.header("", session)
+        c = html.controller_json("recent", evts)
+        c += html.controller_str("explain", _("Showing {0} timeline events.", l).format(len(evts)));
+        s += html.controller(c)
+        s += html.footer()
+        al.debug("timeline events, run by %s, got %d events" % (session.user, len(evts)), "code.timeline", dbo)
+        return full_or_json("timeline", s, c, post["json"] == "true")
+
 class transport:
     def GET(self):
         utils.check_loggedin(session, web)
@@ -6073,15 +5947,13 @@ class traploan:
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_TRAPLOAN)
         dbo = session.dbo
-        l = session.locale
         post = utils.PostedData(web.input(filter = "active"), session.locale)
         title = ""
         traploans = []
         if post["filter"] == "active":
-            title = _("Active Trap Loans", l)
             traploans = extanimalcontrol.get_active_traploans(dbo)
         al.debug("got %d trap loans" % len(traploans), "code.traploan", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_str("name", "traploan")
         c += html.controller_str("title", title)
         c += html.controller_json("rows", traploans)
@@ -6109,7 +5981,6 @@ class vaccination:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_VACCINATION)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(newvacc = "0", offset = "m365"), session.locale)
         vacc = extmedical.get_vaccinations_outstanding(dbo, post["offset"], session.locationfilter)
@@ -6167,14 +6038,12 @@ class waitinglist:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_WAITING_LIST)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(id = 0), session.locale)
         a = extwaitinglist.get_waitinglist_by_id(dbo, post.integer("id"))
         if a is None: raise web.notfound()
-        title = _("Waiting list entry for {0} ({1})", l).format(a["OWNERNAME"], a["SPECIESNAME"])
         al.debug("opened waiting list %s %s" % (a["OWNERNAME"], a["SPECIESNAME"]), "code.waitinglist", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("animal", a)
         c += html.controller_json("additional", extadditional.get_additional_fields(dbo, a["ID"], "waitinglist"))
         c += html.controller_json("logtypes", extlookups.get_log_types(dbo))
@@ -6210,7 +6079,6 @@ class waitinglist_diary:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_DIARY)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(id = 0), session.locale)
         a = extwaitinglist.get_waitinglist_by_id(dbo, post.integer("id"))
@@ -6251,7 +6119,6 @@ class waitinglist_log:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_LOG)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(id = 0, filter = -2), session.locale)
         logfilter = post.integer("filter")
@@ -6291,7 +6158,6 @@ class waitinglist_media:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_MEDIA)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(id = 0), session.locale)
         a = extwaitinglist.get_waitinglist_by_id(dbo, post.integer("id"))
@@ -6394,11 +6260,9 @@ class waitinglist_new:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.ADD_WAITING_LIST)
-        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
-        title = _("Add waiting list", l)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("species", extlookups.get_species(dbo))
         c += html.controller_json("sizes", extlookups.get_sizes(dbo))
         c += html.controller_json("urgencies", extlookups.get_urgencies(dbo))
@@ -6417,7 +6281,6 @@ class waitinglist_results:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_WAITING_LIST)
-        l = session.locale
         dbo = session.dbo
         urgencies = extlookups.get_urgencies(dbo)
         lowest_priority = len(urgencies)
@@ -6425,9 +6288,8 @@ class waitinglist_results:
             namecontains = "", addresscontains = "", descriptioncontains = ""), session.locale)
         rows = extwaitinglist.get_waitinglist(dbo, post.integer("priorityfloor"), post.integer("species"), post.integer("size"),
             post["addresscontains"], post.integer("includeremoved"), post["namecontains"], post["descriptioncontains"])
-        title = _("Waiting List", l)
         al.debug("found %d results" % (len(rows)), "code.waitinglist_results", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("rows", rows)
         c += html.controller_str("seladdresscontains", post["addresscontains"])
         c += html.controller_str("seldescriptioncontains", post["descriptioncontains"])

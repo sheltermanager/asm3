@@ -116,7 +116,7 @@ $(function() {
                 header.show_loading();
                 var formdata = $("input, select").toPOST();
                 common.ajax_post("change_user_settings", formdata, function(result) { 
-                    window.location = "main"; 
+                    common.route("main"); 
                 }, function() { 
                     $(".asm-content button").button("enable");
                 });

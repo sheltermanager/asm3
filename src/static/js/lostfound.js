@@ -270,13 +270,13 @@ $(function() {
             $("#button-save").button().click(function() {
                 header.show_loading(_("Saving..."));
                 validate.save(function() {
-                    window.location = controller.name + "?id=" + $("#lfid").val();
+                    common.route_reload();
                 });
             });
 
             $("#button-match").button().click(function() {
                 var qs = ( lostfound.mode == "lost" ? "lostanimalid=" : "foundanimalid=" ) + $("#lfid").val();
-                window.location = "lostfound_match?" + qs;
+                common.route("lostfound_match?" + qs);
             });
 
             $("#button-email").button().click(function() {
@@ -292,20 +292,20 @@ $(function() {
             $("#button-toanimal").button().click(function() {
                 $("#button-toanimal").button("disable");
                 var formdata = "mode=toanimal&id=" + $("#lfid").val();
-                common.ajax_post(controller.name, formdata, function(result) { window.location = "animal?id=" + result; });
+                common.ajax_post(controller.name, formdata, function(result) { common.route("animal?id=" + result); });
             });
 
             $("#button-towaitinglist").button().click(function() {
                 $("#button-towaitinglist").button("disable");
                 var formdata = "mode=towaitinglist&id=" + $("#lfid").val();
-                common.ajax_post(controller.name, formdata, function(result) { window.location = "waitinglist?id=" + result; });
+                common.ajax_post(controller.name, formdata, function(result) { common.route("waitinglist?id=" + result); });
             });
 
             $("#button-delete").button().click(function() {
                 var b = {}; 
                 b[_("Delete")] = function() { 
                     var formdata = "mode=delete&id=" + $("#lfid").val();
-                    common.ajax_post(controller.name, formdata, function() { window.location = "main"; });
+                    common.ajax_post(controller.name, formdata, function() { common.route("main"); });
                 };
                 b[_("Cancel")] = function() { $(this).dialog("close"); };
                 $("#dialog-delete").dialog({
@@ -382,8 +382,19 @@ $(function() {
         },
 
         name: "lostfound",
-        animation: "formtab"
-
+        animation: "formtab",
+        title: function() {
+            if (controller.name.indexOf("lost") != -1) {
+                return common.substitute(_("Lost animal - {0} {1} [{2}]"), { 
+                    0: controller.animal.AGEGROUP, 1: controller.animal.SPECIESNAME, 2: controller.animal.OWNERNAME });
+            }
+            return common.substitute(_("Found animal - {0} {1} [{2}]"), { 
+                0: controller.animal.AGEGROUP, 1: controller.animal.SPECIESNAME, 2: controller.animal.OWNERNAME });
+        },
+        routes: {
+            "foundanimal": function() { common.module_loadandstart("lostfound", "foundanimal?id=" + this.qs.id); },
+            "lostanimal": function() { common.module_loadandstart("lostfound", "lostanimal?id=" + this.qs.id); }
+        }
     };
 
     common.module_register(lostfound);

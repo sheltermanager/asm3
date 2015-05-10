@@ -192,8 +192,17 @@ $(function() {
         },
 
         name: "lostfound_find",
-        animation: "criteria"
-
+        animation: "criteria",
+        title: function() { 
+            if (controller.name.indexOf("lost") != -1) {
+                return _("Find Lost Animal");
+            }
+            return _("Find Found Animal");
+        },
+        routes: {
+            "lostanimal_find": function() { common.module_loadandstart("lostfound_find", "lostanimal_find"); },
+            "foundanimal_find": function() { common.module_loadandstart("lostfound_find", "foundanimal_find"); }
+        }
     };
 
     common.module_register(lostfound_find);

@@ -23,7 +23,7 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    window.location = "document_repository?dbfsid=" + row.ID;
+                    common.route("document_repository?dbfsid=" + row.ID);
                 },
                 columns: [
                     { field: "NAME", display: _("Document file") },
@@ -79,7 +79,13 @@ $(function() {
         },
 
         name: "document_repository",
-        animation: "options"
+        animation: "options",
+        title: function() { return _("Document Repository"); },
+        routes: {
+            "document_repository": function() {
+                common.module_loadandstart("document_repository", "document_repository");
+            }
+        }
 
     };
 

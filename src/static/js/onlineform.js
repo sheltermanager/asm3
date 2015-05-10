@@ -156,7 +156,11 @@ $(function() {
         },
 
         name: "onlineform",
-        animation: "formtab"
+        animation: "formtab",
+        title: function() { return controller.title; },
+        routes: {
+            "onlineform": function() { common.module_loadandstart("onlineform", "onlineform?formid=" + this.qs.formid); }
+        }
 
     };
 

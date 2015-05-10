@@ -220,7 +220,11 @@ $(function() {
         },
 
         name: "person_find_results",
-        animation: "results"
+        animation: "results",
+        title: function() { return _("Results"); },
+        routes: {
+            "person_find_results": function() { common.module_loadandstart("person_find_results", "person_find_results?" + this.rawqs); }
+        }
 
     };
 

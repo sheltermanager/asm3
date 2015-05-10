@@ -96,7 +96,11 @@ $(function() {
         },
 
         name: "htmltemplates",
-        animation: "options"
+        animation: "options",
+        title: function() { return _("HTML Publishing Templates"); },
+        routes: {
+            "htmltemplates": function() { common.module_loadandstart("htmltemplates", "htmltemplates"); }
+        }
 
     };
 

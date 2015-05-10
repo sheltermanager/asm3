@@ -187,22 +187,13 @@ $(function() {
         },
 
         name: "search",
-        animation: "results"
+        animation: "results",
+        title: function() { return controller.title; },
+        routes: {
+            "search": function() { common.module_loadandstart("search", "search?" + this.rawqs); }
+        }
     };
 
     common.module_register(search);
-
-    /*
-    // Show the results into the page
-    $("body").append(search.render());
-    
-    // If only one result was returned, stop now as we're going to be redirected.
-    if (controller.results.length == 1) { return; }
-
-    common.bind_widgets();
-    search.bind();
-    common.apply_label_overrides("search");
-    $("#asm-content").asmcontent("results");
-    */
 
 });

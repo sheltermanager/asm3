@@ -108,7 +108,11 @@ $(function() {
         },
 
         name: "person_vouchers",
-        animation: "formtab"
+        animation: "formtab",
+        title: function() { return controller.person.OWNERNAME; },
+        routes: {
+            "person_vouchers": function() { common.module_loadandstart("person_vouchers", "person_vouchers?id=" + this.qs.id); }
+        }
 
     };
 

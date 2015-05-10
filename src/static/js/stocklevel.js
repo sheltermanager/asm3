@@ -99,7 +99,7 @@ $(function() {
                  { id: "viewlocation", type: "dropdownfilter", 
                      options: '<option value="0">' + _("(all)") + '</option>' + html.list_to_options(controller.stocklocations, "ID", "LOCATIONNAME"),
                      click: function(selval) {
-                        window.location = "stocklevel?viewlocation=" + selval;
+                        common.route("stocklevel?viewlocation=" + selval);
                      }
                  }
             ];
@@ -126,7 +126,7 @@ $(function() {
                 tableform.fields_post(dialog.fields, "mode=create", controller.name, function(response) {
                     // If more than one record was created, reload the screen
                     if ($("#quantity").val() != "1") {
-                        window.location = "stocklevel";
+                        common.route_reload();
                     }
                     var row = {};
                     row.ID = response;
@@ -213,7 +213,11 @@ $(function() {
         },
 
         name: "stocklevel",
-        animation: "book"
+        animation: "book",
+        title: function() { return _("Stock"); },
+        routes: {
+            "stocklevel": function() { common.module_loadandstart("stocklevel", "stocklevel?" + this.rawqs); }
+        }
 
     };
     

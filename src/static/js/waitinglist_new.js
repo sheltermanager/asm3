@@ -131,7 +131,7 @@ $(function() {
                         header.show_info(_("Waiting list entry successfully added."));
                     }
                     else {
-                        if (createdID != "0") { window.location = "waitinglist?id=" + createdID; }
+                        if (createdID != "0") { common.route("waitinglist?id=" + createdID); }
                     }
                     $(".asm-content button").button("enable");
                 }, function() {
@@ -158,7 +158,11 @@ $(function() {
         },
 
         name: "waitinglist_new",
-        animation: "newdata"
+        animation: "newdata",
+        title: function() { return _("Add waiting list"); },
+        routes: {
+            "waitinglist_new": function() { common.module_loadandstart("waitinglist_new", "waitinglist_new"); }
+        }
 
     };
 

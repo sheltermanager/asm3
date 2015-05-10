@@ -1,6 +1,9 @@
 37
 ================
 
+10/05/15 Completion of client side routes available with switch
+10/05/15 Path.js reload() function
+10/05/15 Make blanks = N in csvimport boolean fields
 09/05/15 Add csv NEUTERED field and missing GOODWITH from validity checks
 09/05/15 Path.js change() function, fixed quicklinks in client mode
 09/05/15 More client side routes added, fallback to server processing

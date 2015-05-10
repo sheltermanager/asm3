@@ -112,7 +112,7 @@ $(function() {
                 var formdata = $("input, textarea, select").toPOST();
                 common.ajax_post("incident_new", formdata, function(incidentid) { 
                     if (mode == "addedit") {
-                        window.location = "incident?id=" + incidentid; 
+                        common.route("incident?id=" + incidentid);
                     }
                     else if (mode == "add") {
                         header.show_info(_("Incident {0} successfully created.").replace("{0}", incidentid));
@@ -144,7 +144,11 @@ $(function() {
         },
 
         name: "incident_new",
-        animation: "newdata"
+        animation: "newdata",
+        title: function() { return _("Report a new incident"); },
+        routes: {
+            "incident_new": function() { common.module_loadandstart("incident_new", "incident_new"); }
+        }
 
     };
 

@@ -181,7 +181,11 @@ $(function() {
         },
 
         name: "person_find",
-        animation: "criteria"
+        animation: "criteria",
+        title: function() { return _("Find Person"); },
+        routes: {
+            "person_find": function() { common.module_loadandstart("person_find", "person_find"); }
+        }
 
     };
 

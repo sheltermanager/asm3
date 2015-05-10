@@ -416,6 +416,7 @@
                         dialog.dialog("close");
                         self._trigger("change", null, rec);
                         self.selected = rec;
+                        return false;
                     });
                     dialog.find("table").trigger("update");
                     dialog.find("img").hide();
@@ -552,6 +553,7 @@
                             self.loadbyid(rec.ID);
                             dialogsimilar.dialog("close");
                             dialogadd.dialog("close");
+                            return false;
                         });
                         self.show_similar();
                     }
