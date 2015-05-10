@@ -223,8 +223,8 @@ $(function() {
         },
 
         routes: {
-            "animal_licence": function() { common.module_loadandstart("licence", "licence?id=" + this.qs.id); },
-            "person_licence": function() { common.module_loadandstart("licence", "licence?id=" + this.qs.id); },
+            "animal_licence": function() { common.module_loadandstart("licence", "animal_licence?id=" + this.qs.id); },
+            "person_licence": function() { common.module_loadandstart("licence", "animal_licence?id=" + this.qs.id); },
             "licence": function() { common.module_loadandstart("licence", "licence?offset=" + this.qs.offset); }
         }
 

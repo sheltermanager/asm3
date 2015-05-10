@@ -108,7 +108,11 @@ $(function() {
         },
 
         name: "change_password",
-        animation: "options"
+        animation: "options",
+        title: function() { return _("Change Password"); },
+        routes: {
+            "change_password": function() { return common.module_loadandstart("change_password", "change_password"); }
+        }
 
     };
 

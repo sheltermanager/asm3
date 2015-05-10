@@ -239,7 +239,7 @@ $(function() {
                         $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
                         tableform.dialog_show_add(dialog, function() {
                             tableform.fields_post(dialog.fields, "mode=createbulk", controller.name, function(response) {
-                                window.location.reload();
+                                common.route_reload();
                             }, function() {
                                 tableform.dialog_enable_buttons();   
                             });
@@ -261,7 +261,7 @@ $(function() {
                  { id: "offset", type: "dropdownfilter", 
                      options: [ "item|" + _("Due today"), "item2|" + _("Due in next week") ],
                      click: function(selval) {
-                        window.location = controller.name + "?offset=" + selval;
+                        common.route(controller.name + "?offset=" + selval);
                      },
                      hideif: function(row) {
                          // TODO: Don't show at all for now, not sure what this will be

@@ -1698,7 +1698,6 @@ class animal_transport:
         c = html.controller_str("name", "animal_transport")
         c += html.controller_json("animal", a)
         c += html.controller_json("tabcounts", extanimal.get_satellite_counts(dbo, a["ID"])[0])
-        c += html.controller_str("title", title)
         c += html.controller_json("rows", transports)
         s += html.controller(c)
         s += html.footer()
@@ -1781,8 +1780,7 @@ class batch:
         users.check_permission(session, users.TRIGGER_BATCH)
         l = session.locale
         post = utils.PostedData(web.input(), session.locale)
-        title = _("Batch", l)
-        s = html.header(title, session)
+        s = html.header("", session)
         s += html.controller("")
         s += html.footer()
         return full_or_json("batch", s, "", post["json"] == "true")
@@ -1847,8 +1845,7 @@ class calendarview:
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         if post["start"] == "":
-            title = _("Calendar view", l)
-            s = html.header(title, session)
+            s = html.header("", session)
             s += html.footer()
             al.debug("calendarview load page", "code.calendarview", dbo)
             return full_or_json("calendarview", s, "", post["json"] == "true")
@@ -1963,9 +1960,8 @@ class change_password:
         l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
-        title = _("Change Password", l)
         al.debug("%s change password screen" % session.user, "code.change_password", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_bool("ismaster", smcom.active() and dbo.database == session.user)
         c += html.controller_bool("issuggest", post.integer("suggest") == 1)
         c += html.controller_str("username", session.user)
@@ -1988,9 +1984,8 @@ class change_user_settings:
         l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
-        title = _("Change User Settings", l)
         al.debug("%s change user settings screen" % session.user, "code.change_user_settings", dbo)
-        s = html.header(title, session)
+        s = html.header("", session)
         c = html.controller_json("user", users.get_users(dbo, session.user))
         c += html.controller_json("locales", extlookups.LOCALES)
         c += html.controller_json("themes", extlookups.VISUAL_THEMES)
@@ -3288,7 +3283,6 @@ class licence:
         al.debug("got %d licences" % len(licences), "code.licence", dbo)
         s = html.header("", session)
         c = html.controller_str("name", "licence")
-        c += html.controller_str("title", title)
         c += html.controller_json("rows", licences)
         c += html.controller_json("licencetypes", extlookups.get_licence_types(dbo))
         s += html.controller(c)
@@ -6045,12 +6039,10 @@ class transport:
         users.check_permission(session, users.VIEW_TRANSPORT)
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
-        l = session.locale
         transports = extmovement.get_active_transports(dbo)
         al.debug("got %d transports" % len(transports), "code.transport", dbo)
         s = html.header("", session)
         c = html.controller_str("name", "transport")
-        c += html.controller_str("title", title)
         c += html.controller_json("rows", transports)
         s += html.controller(c)
         s += html.footer()

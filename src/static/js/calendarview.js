@@ -127,7 +127,13 @@ $(function() {
         },
 
         name: "calendarview",
-        animation: "search"
+        animation: "search",
+        title: function() { return _("Calendar view"); },
+        routes: {
+            "calendarview": function() { 
+                return common.module_loadandstart("calendarview", "calendarview?" + this.rawqs);
+            }
+        }
 
     };
 

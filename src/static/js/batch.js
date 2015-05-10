@@ -54,7 +54,11 @@ $(function() {
         },
 
         name: "batch",
-        animation: "options"
+        animation: "options",
+        title: function() { return _("Batch"); },
+        routes: {
+            "batch": function() { common.module_loadandstart("batch", "batch"); }
+        }
 
     };
 

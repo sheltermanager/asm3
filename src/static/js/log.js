@@ -79,7 +79,7 @@ $(function() {
                  { id: "filter", type: "dropdownfilter", 
                      options: '<option value="-1">' + _("(all)") + '</option>' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
                      click: function(selval) {
-                        window.location = controller.name + "?id=" + controller.linkid + "&filter=" + selval;
+                        common.route(controller.name + "?id=" + controller.linkid + "&filter=" + selval);
                      }
                  }
             ];

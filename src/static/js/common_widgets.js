@@ -727,6 +727,8 @@
         if (common.is_msie()) { pos = "left: -36px;"; }
         this.each(function() {
             var t = $(this);
+            if (t.attr("data-zoom")) { return; }
+            t.attr("data-zoom", "true");
             var zbid = t.attr("id") + "-zb";
             t.wrap("<span style='white-space: nowrap'></span>");
             t.after("<a style='position: relative; " + pos + " ' id='" + zbid + "' href='#'><span class='asm-icon asm-icon-edit'></span></a>");
@@ -741,6 +743,7 @@
                 if (t.attr("title")) { title = String(t.attr("title")); }
                 $("#dialog-textarea-zoom").dialog("option", "title", title);
                 $("#dialog-textarea-zoom").dialog("open");
+                return false;
             });
         });
     };

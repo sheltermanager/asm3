@@ -223,7 +223,7 @@ $(function() {
                  { id: "offset", type: "dropdownfilter", 
                      options: [ "m365|" + _("Due today"), "p7|" + _("Due in next week"), "p31|" + _("Due in next month"), "p365|" + _("Due in next year") ],
                      click: function(selval) {
-                        window.location = controller.name + "?offset=" + selval;
+                        common.route(controller.name + "?offset=" + selval);
                      },
                      hideif: function(row) {
                          // Don't show for animal records
@@ -348,10 +348,10 @@ $(function() {
                 tableform.dialog_disable_buttons();   
                 tableform.fields_post(dialog.fields, "mode=create", controller.name, function(response) {
                     if (controller.animal) {
-                        window.location = controller.name + "?id=" + controller.animal.ID;
+                        common.route(controller.name + "?id=" + controller.animal.ID);
                     }
                     else {
-                        window.location = controller.name + "?offset=" + $("#offset").val();
+                        common.route(controller.name + "?offset=" + $("#offset").val());
                     }
                 }, function() {
                     tableform.dialog_enable_buttons();   
@@ -370,7 +370,7 @@ $(function() {
             tableform.dialog_show_add(medical.dialog, function() {
                 tableform.dialog_disable_buttons();   
                 tableform.fields_post(medical.dialog.fields, "mode=createbulk", controller.name, function(response) {
-                    window.location.reload();
+                    common.route_reload();
                 }, function() {
                     tableform.dialog_enable_buttons();   
                 });

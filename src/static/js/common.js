@@ -268,7 +268,7 @@
         /** Starts client side routing listening */
         route_listen: function() {
             // Add a rescue route - if we can't find matching client route,
-            // we fall back to going to the server
+            // we fall back to going to the server for it
             Path.rescue(function(path) {
                 window.location = path;
             });
@@ -283,6 +283,11 @@
                     Path.history.pushState({}, "", href);
                 }
             });
+        },
+
+        /** Reload the current route */
+        route_reload: function() {
+            Path.reload();
         },
 
         /** Loaded modules */

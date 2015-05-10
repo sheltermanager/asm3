@@ -610,6 +610,7 @@
                     if (bp.find("#dialog-tableform-spinner").size() == 0) {
                         bp.append('<img id="dialog-tableform-spinner" style="display: none" src="static/images/wait/wait16trans.gif" />');
                     }
+                    tableform.dialog_enable_buttons();
                 },
                 close: function() {
                     tableform.dialog_enable_buttons();
@@ -687,6 +688,7 @@
                     if (bp.find("#dialog-tableform-spinner").size() == 0) {
                         bp.append('<img id="dialog-tableform-spinner" style="display: none" src="static/images/wait/wait16trans.gif" />');
                     }
+                    tableform.dialog_enable_buttons();
                 },
                 close: function() {
                     tableform.dialog_enable_buttons();

@@ -122,7 +122,7 @@ var Path = {
 
             if (matched_route !== null) {
                 /** RRT 2015-05-09: Fire the "change" route every time we go somewhere */
-		if (Path.routes.change) { 
+		        if (Path.routes.change) { 
                     Path.routes.change(passed_route);
                 }
                 matched_route.run();
@@ -133,6 +133,13 @@ var Path = {
                     Path.routes.rescue(passed_route);
                 }
             }
+        }
+    },
+    /** RRT 2015-05-10: Reruns the current route */
+    'reload': function() {
+        var matched_route = Path.match(Path.routes.current, true);
+        if (matched_route) {
+            matched_route.run();
         }
     },
     'listen': function () {

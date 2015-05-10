@@ -148,7 +148,11 @@ $(function() {
         },
 
         name: "change_user_settings",
-        animation: "options"
+        animation: "options",
+        title: function() { return _("Change User Settings"); },
+        routes: {
+            "change_user_settings": function() { common.module_loadandstart("change_user_settings", "change_user_settings"); }
+        }
 
     };
 
