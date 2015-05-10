@@ -80,17 +80,24 @@ def gkd(dbo, m, f, usetoday = False):
         else:
             return ""
     else:
-        # Which of our 3 bits is the year?
-        if utils.cint(b[0]) > 1900:
-            # it's Y/M/D
-            d = datetime.datetime(utils.cint(b[0]), utils.cint(b[1]), utils.cint(b[2]))
-        elif dbo.locale == "en":
-            # Assume it's M/D/Y for US
-            d = datetime.datetime(utils.cint(b[2]), utils.cint(b[0]), utils.cint(b[1]))
-        else:
-            # Assume it's D/M/Y
-            d = datetime.datetime(utils.cint(b[2]), utils.cint(b[1]), utils.cint(b[0]))
-        return i18n.python2display(dbo.locale, d)
+        try:
+            # Which of our 3 bits is the year?
+            if utils.cint(b[0]) > 1900:
+                # it's Y/M/D
+                d = datetime.datetime(utils.cint(b[0]), utils.cint(b[1]), utils.cint(b[2]))
+            elif dbo.locale == "en":
+                # Assume it's M/D/Y for US
+                d = datetime.datetime(utils.cint(b[2]), utils.cint(b[0]), utils.cint(b[1]))
+            else:
+                # Assume it's D/M/Y
+                d = datetime.datetime(utils.cint(b[2]), utils.cint(b[1]), utils.cint(b[0]))
+            return i18n.python2display(dbo.locale, d)
+        except:
+            # We've got an invalid date - return today
+            if usetoday:
+                return i18n.python2display(dbo.locale, i18n.now(dbo.timezone))
+            else:
+                return ""
 
 def gkb(m, f):
     """ reads field f from map m, returning a boolean. 

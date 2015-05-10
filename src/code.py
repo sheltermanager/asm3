@@ -2053,7 +2053,7 @@ class csvimport:
             c = html.controller_json("errors", errors)
             s += html.controller(c)
             s += html.footer()
-            return full_or_json("csvimport", s, c, post["json"] == "true")
+            return full_or_json("csvimport", s, c, False)
         except Exception,err:
             al.error("error in CSV data: %s" % str(err), "csvimport.csvimport", dbo, sys.exc_info())
             if str(err).find("no attribute 'value'") != -1:
@@ -2063,7 +2063,7 @@ class csvimport:
             c = html.controller_str("error", str(err))
             s += html.controller(c)
             s += html.footer()
-            return s
+            return full_or_json("csvimport", s, c, False)
 
 class diary_edit:
     def GET(self):
