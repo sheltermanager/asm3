@@ -1191,6 +1191,7 @@ $(function() {
                         // No need for anything else, go create the task
                         create_task(taskid);
                     }
+                    return false;
                 });
             });
 

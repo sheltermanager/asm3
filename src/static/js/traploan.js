@@ -113,7 +113,7 @@ $(function() {
                 s += edit_header.person_edit_header(controller.person, "traploan", controller.tabcounts);
             }
             else {
-                s += html.content_header(controller.title);
+                s += html.content_header(this.title());
             }
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);

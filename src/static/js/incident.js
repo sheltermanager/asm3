@@ -603,7 +603,7 @@ $(function() {
         animation: "formtab",
         title: function() {
             return common.substitute(_("Incident {0}, {1}: {2}"), {
-                0: controller.animal.ACID, 1: controller.animal.INCIDENTNAME, 2: format.date(controller.animal.INCIDENTDATETIME)});
+                0: controller.incident.ACID, 1: controller.incident.INCIDENTNAME, 2: format.date(controller.incident.INCIDENTDATETIME)});
         },
         routes: {
             "incident": function() { 

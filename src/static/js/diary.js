@@ -244,7 +244,7 @@ $(function() {
                 0: controller.animal.AGEGROUP, 1: controller.animal.SPECIESNAME, 2: controller.animal.OWNERNAME});
             }
             else if (controller.name == "incident_diary") { t = common.substitute(_("Incident {0}, {1}: {2}"), {
-                0: controller.animal.ACID, 1: controller.animal.INCIDENTNAME, 2: format.date(controller.animal.INCIDENTDATETIME)});
+                0: controller.incident.ACID, 1: controller.incident.INCIDENTNAME, 2: format.date(controller.incident.INCIDENTDATETIME)});
             }
             else if (controller.name == "lostanimal_diary") { t = common.substitute(_("Lost animal - {0} {1} [{2}]"), {
                 0: controller.animal.AGEGROUP, 1: controller.animal.SPECIESNAME, 2: controller.animal.OWNERNAME});

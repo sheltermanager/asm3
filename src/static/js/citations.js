@@ -155,8 +155,8 @@ $(function() {
         title:  function() { 
             var t = "";
             if (controller.name == "person_citations") { t = controller.person.OWNERNAME; }
-            else if (controller.name == "incident_diary") { t = common.substitute(_("Incident {0}, {1}: {2}"), {
-                0: controller.animal.ACID, 1: controller.animal.INCIDENTNAME, 2: format.date(controller.animal.INCIDENTDATETIME)});
+            else if (controller.name == "incident_citations") { t = common.substitute(_("Incident {0}, {1}: {2}"), {
+                0: controller.incident.ACID, 1: controller.incident.INCIDENTNAME, 2: format.date(controller.incident.INCIDENTDATETIME)});
             }
             else if (controller.name == "citations") { t = _("Unpaid Fines"); }
             return t;
