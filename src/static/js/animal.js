@@ -1386,14 +1386,12 @@ $(function() {
             animal.show_microchip_supplier();
 
             // Dirty handling
-            validate.bind_dirty();
-            validate.dirty(false);
-            validate.check_unsaved_links("animal_");
+            validate.bind_dirty([ "animal_" ]);
 
         },
 
         destroy: function() {
-            validate.unbind_unsaved_links();
+            validate.unbind_dirty();
         },
 
         name: "animal",

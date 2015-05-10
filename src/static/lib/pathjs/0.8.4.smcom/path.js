@@ -34,7 +34,13 @@ var Path = {
             var initialPop = !Path.history.initial.popped && location.href == Path.history.initial.URL;
             Path.history.initial.popped = true;
             if(initialPop) return;
-            Path.dispatch(document.location.pathname);
+            // RRT: 2015-05-10 Include querystring in state
+            if (document.location.search) {
+                Path.dispatch(document.location.pathname + document.location.search);
+            }
+            else {
+                Path.dispatch(document.location.pathname);
+            }
         },
         'listen': function(fallback){
             Path.history.supported = !!(window.history && window.history.pushState);

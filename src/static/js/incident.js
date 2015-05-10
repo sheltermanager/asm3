@@ -591,14 +591,12 @@ $(function() {
             incident.enable_widgets();
 
             // Dirty handling
-            validate.bind_dirty();
-            validate.dirty(false);
-            validate.check_unsaved_links("incident_");
+            validate.bind_dirty([ "incident_" ]);
 
         },
 
         destroy: function() {
-            validate.unbind_unsaved_links();
+            validate.unbind_dirty();
         },
 
         name: "incident",

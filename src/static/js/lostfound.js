@@ -375,14 +375,11 @@ $(function() {
             $("#breed").fromJSON(controller.animal);
 
             // Dirty handling
-            validate.bind_dirty();
-            validate.dirty(false);
-            validate.check_unsaved_links("lostanimal_");
-            validate.check_unsaved_links("foundanimal_");
+            validate.bind_dirty([ "lostanimal_", "foundanimal_" ]);
         },
 
         destroy: function() {
-            validate.unbind_unsaved_links();
+            validate.unbind_dirty();
         },
 
         name: "lostfound",

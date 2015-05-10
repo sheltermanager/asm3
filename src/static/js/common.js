@@ -285,6 +285,13 @@
             // Catch all clicks for "real" URLs (ones without hashes) 
             // and use client side routing to handle them.
             $(document).on("click", "a", function(event) {
+                // If dirty validation is active, check if we're
+                // ok to leave.
+                if (validate.active) {
+                    if (!validate.a_click_handler(event, $(this).attr("href"))) {
+                        return false;
+                    }
+                }
                 var href = $(this).attr("href");
                 if (href && href.indexOf("#") == -1) {
                     event.preventDefault();
@@ -1696,20 +1703,31 @@
 
     validate = {
 
+        /* Whether or not validation is currently active */
+        active: false,
+
         /* Global for whether or not there are unsaved changes */
         unsaved: false,
 
         /**
-         * Adds a delegate click handler for all links.
-         * The handler checks whether the global "unsaved" is set, and 
-         * if so tells the user they have unsaved changes and makes 
-         * sure they want to leave. If they
-         * don't, false is returned and the link not followed.
-         * It also adds the generic window.onbeforeunload event to browsers
-         * that support it so that if the user tries to leave the page
-         * by other means, they get warned.
+         * Does all binding for dirtiable forms.
+         * 1. Watches for controls changing and marks the form dirty.
+         * 2. If we are in server routing mode, adds a delegate listener 
+         *    to links and fires the unsaved dialog if necessary.
+         * 3. Catches beforeunload to prevent navigation away if dirty
          */
-        check_unsaved_links: function() {
+        bind_dirty: function() {
+            // Watch for control changes and call dirty()
+            var dirtykey = function(event) { if (event.keyCode != 9) { validate.dirty(true); } };
+            var dirtychange = function(event) { validate.dirty(true); };
+            validate.active = true;
+            $("#asm-content .asm-checkbox").change(dirtychange);
+            $("#asm-content .asm-datebox").change(dirtychange);
+            $("#asm-content .asm-textbox, #asm-content .asm-doubletextbox, #asm-content .asm-halftextbox, #asm-content .asm-textarea, #asm-content .asm-textareafixed, #asm-content .asm-textareafixeddouble").keyup(dirtykey).bind("paste", dirtychange);
+            $("#asm-content .asm-selectbox, #asm-content .asm-doubleselectbox, #asm-content .asm-halfselectbox, #asm-content .selectbox, #asm-content .asm-bsmselect").change(dirtychange);
+            // Bind CTRL+S/META+S on Mac to clicking the save button
+            Mousetrap.bind(["ctrl+s", "meta+s"], function(e) { $("#button-save").click(); return false; });
+            // Watch for links being clicked and the page being navigated away from
             if (common.route_mode == "server") {
                 $(document).on("a", "click", validate.a_click_handler);
             }
@@ -1720,24 +1738,21 @@
             };
         },
 
-        a_click_handler: function(event) {
+        unbind_dirty: function() {
+            validate.active = false;
+            window.onbeforeunload = undefined;
+        },
+
+        a_click_handler: function(event, href) {
             if ($(this).prop("href") != "#") {
                 if (validate.unsaved) {
                     event.preventDefault();
-                    validate.unsaved_dialog($(this).attr("href"));
+                    if (!href) { href = $(this).attr("href"); }
+                    validate.unsaved_dialog(href);
                     return false;
                 }
             }
-        },
-
-        /**
-         * Removes the binding for unsaved links. This is called by destroy() methods
-         * so in server mode, this will never fire.
-         */
-        unbind_unsaved_links: function() {
-            $(document).off("a", "click");
-            window.onbeforeunload = undefined;
-            validate.unsaved = false;
+            return true;
         },
 
         /** Displays the unsaved changes dialog and switches to the
@@ -1750,7 +1765,9 @@
                 });
             };
             b[_("Leave")] = function() {
+                self.active = false;
                 self.unsaved = false; // prevent onunload firing
+                $("#dialog-unsaved").dialog("close");
                 common.route(target);
             };
             b[_("Stay")] = function() { 
@@ -1837,22 +1854,6 @@
                 $("#button-save").button("disable");
             } 
         },
-
-        /**
-         * Called by forms that have a save button and want to watch
-         * for control changes
-         */
-        bind_dirty: function() {
-            var self = this;
-            var dirtykey = function(event) { if (event.keyCode != 9) { self.dirty(true); } };
-            var dirtychange = function(event) { self.dirty(true); };
-            $("#asm-content .asm-checkbox").change(dirtychange);
-            $("#asm-content .asm-datebox").change(dirtychange);
-            $("#asm-content .asm-textbox, #asm-content .asm-doubletextbox, #asm-content .asm-halftextbox, #asm-content .asm-textarea, #asm-content .asm-textareafixed, #asm-content .asm-textareafixeddouble").keyup(dirtykey).bind("paste", dirtychange);
-            $("#asm-content .asm-selectbox, #asm-content .asm-doubleselectbox, #asm-content .asm-halfselectbox, #asm-content .selectbox, #asm-content .asm-bsmselect").change(dirtychange);
-            // Bind CTRL+S/META+S on Mac to clicking the save button on these screens
-            Mousetrap.bind(["ctrl+s", "meta+s"], function(e) { $("#button-save").click(); return false; });
-        }
 
     };
 

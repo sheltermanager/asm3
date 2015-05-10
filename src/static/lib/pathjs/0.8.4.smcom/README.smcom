@@ -14,3 +14,5 @@ For ASM, we've made some modifications:
 4. Path.reload() - reloads the current route as if it was navigated to
    again, but without a new history state.
 
+5. Path.popState() - includes the querystring when returning to the
+   previous state.

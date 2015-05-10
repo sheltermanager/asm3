@@ -809,13 +809,11 @@ $(function() {
             }
 
             // Dirty handling
-            validate.bind_dirty();
-            validate.dirty(false);
-            validate.check_unsaved_links("person_");
+            validate.bind_dirty([ "person_" ]);
         },
 
         destroy: function() {
-            validate.unbind_unsaved_links();
+            validate.unbind_dirty();
         },
 
         name: "person",

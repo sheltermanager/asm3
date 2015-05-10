@@ -316,14 +316,12 @@ $(function() {
             waitinglist.enable_widgets();
 
             // Dirty handling
-            validate.bind_dirty();
-            validate.dirty(false);
-            validate.check_unsaved_links("waitinglist_");
+            validate.bind_dirty([ "waitinglist_" ]);
 
         },
 
         destroy: function() {
-            validate.unbind_unsaved_links();
+            validate.unbind_dirty();
         },
 
         name: "waitinglist",
