@@ -560,6 +560,7 @@ $(function() {
             $("#asm-topline-username").html(asm.user);
 
             Path.change(function(path) {
+                header.hide_error();
                 header.quicklinks_show(path);
             });
 
