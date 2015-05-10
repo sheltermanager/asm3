@@ -1743,6 +1743,8 @@
                     return _("You have unsaved changes, are you sure you want to leave this page?");
                 }
             };
+            // Default state
+            validate.dirty(false);
         },
 
         unbind_dirty: function() {
