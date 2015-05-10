@@ -814,6 +814,10 @@ $(function() {
             validate.check_unsaved_links("person_");
         },
 
+        destroy: function() {
+            validate.unbind_unsaved_links();
+        },
+
         name: "person",
         animation: "formtab",
         title: function() { return controller.person.OWNERNAME; },

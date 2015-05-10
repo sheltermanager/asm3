@@ -381,6 +381,10 @@ $(function() {
             validate.check_unsaved_links("foundanimal_");
         },
 
+        destroy: function() {
+            validate.unbind_unsaved_links();
+        },
+
         name: "lostfound",
         animation: "formtab",
         title: function() {

@@ -1392,8 +1392,9 @@ $(function() {
 
         },
 
-
-        destroy: function() {},
+        destroy: function() {
+            validate.unbind_unsaved_links();
+        },
 
         name: "animal",
         animation: "formtab",

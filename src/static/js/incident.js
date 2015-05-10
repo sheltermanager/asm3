@@ -597,6 +597,10 @@ $(function() {
 
         },
 
+        destroy: function() {
+            validate.unbind_unsaved_links();
+        },
+
         name: "incident",
         animation: "formtab",
         title: function() {

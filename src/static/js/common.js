@@ -375,7 +375,7 @@
                 }
             }
             var o = common.modules[modulename];
-            if (o.render) { $("#asm-body-container").html(o.render()); }
+            if (o.render) { $("#asm-body-container").empty(); $("#asm-body-container").html(o.render()); }
             common.bind_widgets();
             if (o.bind) { o.bind(); }
             if (o.sync) { o.sync(); }
@@ -1700,7 +1700,7 @@
         unsaved: false,
 
         /**
-         * Runs through all links on a page and adds a click handler. 
+         * Adds a delegate click handler for all links.
          * The handler checks whether the global "unsaved" is set, and 
          * if so tells the user they have unsaved changes and makes 
          * sure they want to leave. If they
@@ -1710,23 +1710,34 @@
          * by other means, they get warned.
          */
         check_unsaved_links: function() {
-            var self = this;
-            var click_handler = function(e) {
-                if (self.unsaved) {
-                    e.preventDefault();
-                    validate.unsaved_dialog(String($(this).attr("href")));
-                    return false;
-                }
-            };
-            $("a").each(function() {
-                if (String($(this).attr("href")) == "#") { return true; }
-                $(this).click(click_handler);
-            });
+            if (common.route_mode == "server") {
+                $(document).on("a", "click", validate.a_click_handler);
+            }
             window.onbeforeunload = function() {
-                if (self.unsaved) {
+                if (validate.unsaved) {
                     return _("You have unsaved changes, are you sure you want to leave this page?");
                 }
             };
+        },
+
+        a_click_handler: function(event) {
+            if ($(this).prop("href") != "#") {
+                if (validate.unsaved) {
+                    event.preventDefault();
+                    validate.unsaved_dialog($(this).attr("href"));
+                    return false;
+                }
+            }
+        },
+
+        /**
+         * Removes the binding for unsaved links. This is called by destroy() methods
+         * so in server mode, this will never fire.
+         */
+        unbind_unsaved_links: function() {
+            $(document).off("a", "click");
+            window.onbeforeunload = undefined;
+            validate.unsaved = false;
         },
 
         /** Displays the unsaved changes dialog and switches to the
@@ -1735,12 +1746,12 @@
             var b = {}, self = this;
             b[_("Save and leave")] = function() {
                 self.save(function() {
-                    window.location = target;
+                    common.route(target);
                 });
             };
             b[_("Leave")] = function() {
                 self.unsaved = false; // prevent onunload firing
-                window.location = target;
+                common.route(target);
             };
             b[_("Stay")] = function() { 
                 $(this).dialog("close"); 
@@ -1752,7 +1763,10 @@
                  dialogClass: "dialogshadow",
                  show: dlgfx.delete_show,
                  hide: dlgfx.delete_hide,
-                 buttons: b
+                 buttons: b,
+                 close: function() {
+                     $("#dialog-unsaved").dialog("destroy");
+                 }
             });
         },
 

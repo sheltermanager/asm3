@@ -613,6 +613,7 @@
                     tableform.dialog_enable_buttons();
                 },
                 close: function() {
+                    $("#dialog-tableform").dialog("destroy");
                     tableform.dialog_enable_buttons();
                 }
             });
@@ -691,6 +692,7 @@
                     tableform.dialog_enable_buttons();
                 },
                 close: function() {
+                    $("#dialog-tableform").dialog("destroy");
                     tableform.dialog_enable_buttons();
                 }
             });
