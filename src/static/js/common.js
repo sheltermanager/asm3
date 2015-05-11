@@ -259,7 +259,7 @@
         route: function(path, forceserver) {
             if (common.route_mode == "server" || forceserver) { window.location = path; return; }
             // ie8: if we use hash routing, it can't fall back to the server as history api does
-            var ALWAYS_ON_SERVER = [ "static", "report?", "mailmerge?", "document_edit?", "document_media_edit?" ], cancel = false;
+            var ALWAYS_ON_SERVER = [ "logout", "static", "report?", "mailmerge?", "document_edit?", "document_media_edit?" ], cancel = false;
             $.each(ALWAYS_ON_SERVER, function(i, v) {
                 if (path.indexOf(v) == 0) { cancel = true; window.location = path; return false; }
             });
