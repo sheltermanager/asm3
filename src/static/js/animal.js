@@ -675,7 +675,7 @@ $(function() {
                     { id: "diarytask", text: _("Diary Task"), type: "buttonmenu", icon: "diary-task", tooltip: _("Create diary notes from a task") },
                     { id: "match", text: _("Match"), icon: "match", tooltip: _("Match this animal with the lost and found database") },
                     { id: "littermates", text: _("Littermates"), icon: "litter", tooltip: _("View littermates") },
-                    { id: "share", text: _("Share"), type: "buttonmenu", icon: "facebook", tooltip: _("Share this animal via social media") }
+                    { id: "share", text: _("Share"), type: "buttonmenu", icon: "social", tooltip: _("Share this animal via social media") }
                 ]),
                 '<div id="asm-details-accordion">',
                 animal.render_details(),
@@ -1349,7 +1349,7 @@ $(function() {
                 });
             });
 
-            // Facebook button
+            // Facebook sharing
             if (!controller.hasfacebook) {
                 $("#button-facebook").hide();
             }
@@ -1365,8 +1365,16 @@ $(function() {
                         $("#facebookmessage").html(controller.facebooktext);
                         $("#dialog-facebook").dialog("open");
                     });
+                    return false;
                 });
             }
+
+            // Twitter
+            $("#button-twitter").hide();
+            $("#button-twitter a").click(function() {
+                // TODO:
+                return false;
+            });
 
             // Events that trigger rechecking of the on-screen fields
             $("#crossbreed").click(function() {
