@@ -191,7 +191,6 @@ $(function() {
                     h.push('title="' + html.title(fullnotes) + '" /></a>');
                     h.push('<br />');
                     h.push('<a class="viewlink" title="' + _('View media') + '" href="media?id=' + m.ID + '">' + shortnotes + '</a>');
-                    h.push('</a>');
                 }
                 else if (media.is_extension(m.MEDIANAME, "jpg") || media.is_extension(m.MEDIANAME, "jpeg")) {
                     h.push('<a href="image?mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '">');
@@ -203,7 +202,6 @@ $(function() {
                     h.push('title="' + html.title(fullnotes) + '" /></a>');
                     h.push('<br />');
                     h.push('<a class="viewlink" title="' + _('Edit document') + '" href="document_media_edit?id=' + m.ID + '&redirecturl=' + controller.name + '?id=' + m.LINKID + '">' + shortnotes + '</a>');
-                    h.push('</a>');
                 }
                 else if (media.is_extension(m.MEDIANAME, "pdf")) {
                     h.push('<a href="media?id=' + m.ID + '">');
@@ -211,7 +209,6 @@ $(function() {
                     h.push('title="' + html.title(fullnotes) + '" /></a>');
                     h.push('<br />');
                     h.push('<a class="viewlink" title="' + _('View PDF') + '" href="media?id=' + m.ID + '">' + shortnotes + '</a>');
-                    h.push('</a>');
                 }
                 else {
                     h.push('<a href="media?id=' + m.ID + '">');
@@ -219,7 +216,6 @@ $(function() {
                     h.push('title="' + html.title(fullnotes) + '" /></a>');
                     h.push('<br />');
                     h.push('<a class="viewlink" title="' + _('View media') + '" href="media?id=' + m.ID + '">' + shortnotes + '</a>');
-                    h.push('</a>');
                 }
                 h.push('<br />');
                 h.push('<span style="white-space: nowrap">');

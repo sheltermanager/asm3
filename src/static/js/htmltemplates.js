@@ -65,6 +65,7 @@ $(function() {
                      } 
                  }
             ];
+            this.dialog = dialog;
             this.buttons = buttons;
             this.table = table;
         },

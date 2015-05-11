@@ -618,8 +618,9 @@ $(function() {
             if (common.msie_version() < 10) { 
                 header.show_error("You are using Internet Explorer " + common.msie_version() + ".<br/>" +
                     "This browser is old, slow, insecure, and missing many of the features necessary to run ASM well.<br />" +
-                    "We try to keep ASM as compatible as possible, but you may encounter problems. " +
-                    "<a href='static/pages/unsupported.html'>Please upgrade to a modern browser.</a>");
+                    "We try to keep ASM as compatible with as many browers as possible, but you may encounter problems.<br />" +
+                    "<a href='static/pages/unsupported.html'>Please upgrade to a modern browser.</a> We recommend " +
+                    "<a href='http://www.mozilla.org'>Firefox</a> or <a href='http://www.google.com/chrome'>Google Chrome</a>.");
             }
 
             if (!common.has_permission("vdn")) { $("#asm-main-diary").hide(); }

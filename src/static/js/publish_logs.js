@@ -37,7 +37,7 @@ $(function() {
         animation: "options",
         title: function() { return _("Publisher Logs"); },
         routes: {
-            "publish_logs": function() { common.module_loadandstart("publish_logs", "publish_logs?view=" + this.qs.view); }
+            "publish_logs": function() { common.module_loadandstart("publish_logs", "publish_logs?" + this.rawqs); }
         }
 
     };

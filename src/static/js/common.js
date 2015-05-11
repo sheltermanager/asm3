@@ -257,6 +257,7 @@
          * forceserver: If set to true, does not use ajax and client routing 
          */
         route: function(path, forceserver) {
+            if (!common.route_is_client(path)) { forceserver = true; }
             if (common.route_mode == "server" || forceserver) { window.location = path; return; }
             Path.history.pushState({}, "", path);
         },
@@ -286,12 +287,14 @@
                 window.location = path;
             });
 
-            // Listen for history state changes
-            Path.history.listen();
+            // Listen for history state changes. The true parameter tells
+            // path.js to fallback to hash routing for browsers without the
+            // history api (IE8)
+            Path.history.listen(true);
 
-            // Catch all clicks for "real" URLs (ones without hashes) 
-            // and use client side routing to handle them.
+            // Catch all URL clicks to see if we can use client side routing to handle them.
             $(document).on("click", "a", function(event) {
+                
                 // If dirty validation is active, check if we're
                 // ok to leave.
                 if (validate.active) {
@@ -299,17 +302,38 @@
                         return false;
                     }
                 }
+
+                // If the clicked anchor goes to a URL we can handle with the
+                // client, do it.
                 var href = $(this).attr("href");
-                if (href && href.indexOf("#") == -1) {
+                if (common.route_is_client(href)) {
                     event.preventDefault();
                     common.route(href);
                 }
             });
         },
 
+        /** Returns true if the path supplied can be handled by client side routing */
+        route_is_client: function(path) {
+            var NOT_CLIENT_SIDE = [ "#", "/", "http", "document_edit", "document_gen", "document_media_edit", 
+                "logout", "mailmerge", "publish_logs?view=", "report", "static" ],
+                isclient = true;
+            $.each(NOT_CLIENT_SIDE, function(i, v) {
+                if (path.indexOf(v) == 0) { isclient = false; return false; }
+            });
+            return isclient;
+        },
+
         /** Reload the current route */
         route_reload: function() {
+
+            // We're sending everything to server, reload the page
             if (common.route_mode == "server") { window.location.reload(); return; }
+
+            // The browser doesn't support the history api, reload the page (ie8/9)
+            if ($("html").hasClass("no-history")) { window.location.reload(); return; }
+
+            // Construct one of our routes from the current URL
             var path = window.location.pathname;
             if (path.lastIndexOf("/") != -1) { path = path.substring(path.lastIndexOf("/")+1); }
             if (window.location.search) { path += window.location.search; }
@@ -1882,12 +1906,6 @@ $(function() {
     // will break most of our page layouts
     if (common.msie_version() < 8) {
         window.location = "static/pages/unsupported.html";
-    }
-
-    // If we don't have access to the history api, fall back
-    // to sending all URLs to the server instead
-    if ($("html").hasClass("no-history")) {
-        common.route_mode = "server";
     }
 
     // If this is IE8 or IE9, add a special class to the html element so
