@@ -94,7 +94,7 @@ $(function() {
             }
             $("#asm-topline-loading").dialog({
                 dialogClass: 'dialog-no-title',
-                height: 200,
+                height: "auto",
                 modal: true
             });
         },
@@ -486,9 +486,9 @@ $(function() {
                 '</div>',
                 '<div id="asm-topline-loading" style="display: none" title="' + _("Loading...") + '">',
                     '<p class="centered">',
-                        '<img src="static/images/wait/wait32trans.gif" /><br />',
+                        '<img src="static/images/wait/wait32trans.gif" /><br /><br />',
+                        '<span id="asm-topline-loading-text">' + _("Loading...") + '</span>',
                     '</p>',
-                    '<h2 class="centered" id="asm-topline-loading-text">' + _("Loading...") + '</h2>',
                 '</div>',
                 '<div id="asm-body-container" />'
             ];
