@@ -1886,7 +1886,7 @@ $(function() {
 
     // If we don't have access to the history api, fall back
     // to sending all URLs to the server instead
-    if ($("html").hasClass("history")) {
+    if ($("html").hasClass("no-history")) {
         common.route_mode = "server";
     }
 
