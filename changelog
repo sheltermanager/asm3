@@ -1,6 +1,7 @@
 37
 ================
 
+11/05/15 Canvas polyfill for signatures on IE8, warning message for IE<10
 10/05/15 Rewrote validate/dirty to cope with client or server routes
 10/05/15 Completion of client side routes available with switch
 10/05/15 Path.js reload() function, include querystring in popState

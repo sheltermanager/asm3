@@ -252,10 +252,13 @@
         /** URL routing mode - client or server */
         route_mode: "client",
 
-        /** Go to a URL */
+        /** Go to a URL
+         * path: The path to go to - eg: animal?id=52
+         * forceserver: If set to true, does not use ajax and client routing 
+         */
         route: function(path, forceserver) {
             if (common.route_mode == "server" || forceserver) { window.location = path; return; }
-            // ie8 compatibility
+            // ie8: if we use hash routing, it can't fall back to the server as history api does
             var ALWAYS_ON_SERVER = [ "static", "report?", "mailmerge?", "document_edit?", "document_media_edit?" ], cancel = false;
             $.each(ALWAYS_ON_SERVER, function(i, v) {
                 if (path.indexOf(v) == 0) { cancel = true; window.location = path; return false; }
@@ -430,6 +433,7 @@
                         header.hide_loading();
                     }
                     catch (ex) {}
+                    // TODO: Detect that user is not logged in
                     var errmessage = common.get_error_response(jqxhr, response);
                     header.show_error(errmessage);
                     if (errorfunc) {
@@ -1862,7 +1866,7 @@
                 this.unsaved = false; 
                 $("#button-save").button("disable");
             } 
-        },
+        }
 
     };
 
