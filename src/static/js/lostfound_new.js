@@ -180,10 +180,10 @@ $(function() {
                     }
                     else {
                         if (lostfound_new.mode == "lost") {
-                            if (createdID != "0") { window.location = "lostanimal?id=" + createdID; }
+                            if (createdID != "0") { common.route("lostanimal?id=" + createdID); }
                         }
                         else {
-                            if (createdID != "0") { window.location = "foundanimal?id=" + createdID; }
+                            if (createdID != "0") { common.route("foundanimal?id=" + createdID); }
                         }
                     }
                     $(".asm-content button").button("enable");

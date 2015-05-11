@@ -46,7 +46,7 @@ $(function() {
             $.each(controller.results, function(i, r) {
                 if (r.RESULTTYPE == "ANIMAL") {
                     if (controller.results.length == 1) {
-                        window.location = "animal?id=" + r.ID;
+                        common.route("animal?id=" + r.ID);
                     }
                     h.push('<p class="asm-search-result">' +
                         '<span class="asm-search-name">' + 
@@ -89,7 +89,7 @@ $(function() {
                 }
                 if (r.RESULTTYPE == "LICENCE") {
                     if (controller.results.length == 1) {
-                        window.location = "person_licence?id=" + r.OWNERID;
+                        common.route("person_licence?id=" + r.OWNERID);
                     }
                     h.push('<p class="asm-search-result"><span class="asm-search-name">');
                     h.push(html.icon("licence", _("License")));
@@ -105,7 +105,7 @@ $(function() {
                 }
                 else if (r.RESULTTYPE == "PERSON") {
                     if (controller.results.length == 1) {
-                        window.location = "person?id=" + r.ID;
+                        common.route("person?id=" + r.ID);
                     }
                     h.push('<p class="asm-search-result"><span class="asm-search-name">' +
                         '<img align="right" src="' + html.thumbnail_src(r, 'personthumb') + '" class="asm-thumbnail thumbnailshadow" />' +
@@ -124,7 +124,7 @@ $(function() {
                 }
                 else if (r.RESULTTYPE == "WAITINGLIST") {
                     if (controller.results.length == 1) {
-                        window.location = "waitinglist?id=" + r.ID;
+                        common.route("waitinglist?id=" + r.ID);
                     }
                     h.push('<p class="asm-search-result"><span class="asm-search-name">');
                     h.push(html.icon("waitinglist", _("Waiting List")));
@@ -135,7 +135,7 @@ $(function() {
                 }
                 else if (r.RESULTTYPE == "ANIMALCONTROL") {
                     if (controller.results.length == 1) {
-                        window.location = "incident?id=" + r.ID;
+                        common.route("incident?id=" + r.ID);
                     }
                     h.push('<p class="asm-search-result"><span class="asm-search-name">');
                     h.push(html.icon("call", _("Incident")));
@@ -153,7 +153,7 @@ $(function() {
                 }
                 else if (r.RESULTTYPE == "LOSTANIMAL") {
                     if (controller.results.length == 1) {
-                        window.location = "lostanimal?id=" + r.ID;
+                        common.route("lostanimal?id=" + r.ID);
                     }
                     h.push('<p class="asm-search-result"><span class="asm-search-name">');
                     h.push(html.icon("animal-lost", _("Lost Animal")));
@@ -165,7 +165,7 @@ $(function() {
                 }
                 else if (r.RESULTTYPE == "FOUNDANIMAL") {
                     if (controller.results.length == 1) {
-                        window.location = "foundanimal?id=" + r.ID;
+                        common.route("foundanimal?id=" + r.ID);
                     }
                     h.push('<p class="asm-search-result"><span class="asm-search-name">');
                     h.push(html.icon("animal-found", _("Found Animal")));

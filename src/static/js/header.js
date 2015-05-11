@@ -142,7 +142,7 @@ $(function() {
                         if (accesskey != "") {
                             accesskeydisp = "<span class=\"asm-hotkey\">" + accesskey.toUpperCase() + "</span>";
                             Mousetrap.bind(accesskey, function(e) {
-                                window.location = url;
+                                common.route(url);
                                 return false;
                             });
                         }
@@ -190,7 +190,7 @@ $(function() {
                         if (accesskey != "") {
                             accesskeydisp = "<span class=\"asm-hotkey\">" + accesskey.toUpperCase() + "</span>";
                             Mousetrap.bind(accesskey, function(e) {
-                                window.location = url;
+                                common.route(url);
                                 return false;
                             });
                         }
@@ -606,7 +606,7 @@ $(function() {
                     previous.push(term);
                     common.local_set("asmsearch", previous.join("|"));
                 }
-                window.location = "search?q=" + encodeURIComponent(term);
+                common.route("search?q=" + encodeURIComponent(term));
             };
 
             // Search autocompletes to keywords and previous searches

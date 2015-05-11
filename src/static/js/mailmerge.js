@@ -160,7 +160,7 @@ $(function() {
         bind: function() {
 
             $("#submitcriteria").button().click(function() {
-                window.location = "mailmerge?" + $("#criteriaform input, #criteriaform select").toPOST(true);
+                common.route("mailmerge?" + $("#criteriaform input, #criteriaform select").toPOST(true));
             });
 
             var preset_change = function() {

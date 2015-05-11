@@ -69,11 +69,6 @@ $(function() {
                          });
                      } 
                  }
-                 /*
-                 { id: "back", text: _("Back"), icon: "back", enabled: "always", click: function() {
-                     window.location = "diarytasks";
-                 }}
-                 */
             ];
             this.dialog = dialog;
             this.buttons = buttons;

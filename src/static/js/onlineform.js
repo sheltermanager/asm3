@@ -90,11 +90,6 @@ $(function() {
                          });
                      } 
                  }
-                 /*
-                 { id: "back", text: _("Back"), icon: "back", enabled: "always", click: function() {
-                     window.location = "onlineforms";
-                 }}
-                 */
             ];
             this.dialog = dialog;
             this.table = table;

@@ -125,16 +125,7 @@ $(function() {
             $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
             tableform.dialog_show_add(medicalprofile.dialog, function() {
                 tableform.fields_post(medicalprofile.dialog.fields, "mode=create", "medicalprofile", function(response) {
-                    window.location = "medicalprofile";
-                    /** Medical profile has too much server side logic when creating, reload the form
-                    var row = {};
-                    row.ID = response;
-                    tableform.fields_update_row(dialog.fields, row);
-                    medical.set_extra_fields(row);
-                    controller.rows.push(row);
-                    tableform.table_update(table);
-                    tableform.dialog_close();
-                    */
+                    common.route_reload();
                 }, function() {
                     tableform.dialog_enable_buttons();   
                 });

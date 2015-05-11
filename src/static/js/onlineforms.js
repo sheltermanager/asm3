@@ -80,7 +80,7 @@ $(function() {
                          tableform.buttons_default_state(buttons);
                          var ids = tableform.table_ids(table);
                          common.ajax_post("onlineforms", "mode=clone&ids=" + ids , function() {
-                             window.location.reload();
+                             common.route_reload();
                          });
                      } 
                  },

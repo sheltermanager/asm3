@@ -678,7 +678,8 @@ $(function() {
             var wb = {};
             wb[_("I've finished, Don't show me this popup again.")] = function() {
                 var formdata = "mode=showfirsttimescreen";
-                common.ajax_post("main", formdata, function() { window.location = "main"; });
+                common.ajax_post("main", formdata);
+                $(this).dialog("close");
             };
             wb[_("Close")] = function() { $(this).dialog("close"); };
 
@@ -704,13 +705,13 @@ $(function() {
             $("#button-adddiary")
                 .button({ icons: { primary: "ui-icon-circle-plus" }, text: false })
                 .click(function() {
-                window.location = "diary_edit_my?newnote=1";
+                common.route("diary_edit_my?newnote=1");
             });
 
             $("#button-diarycal")
                 .button({ icons: { primary: "ui-icon-calendar" }, text: false })
                 .click(function() {
-                window.location = "calendarview?ev=d";
+                common.route("calendarview?ev=d");
             });
 
             $("#button-addmessage")
