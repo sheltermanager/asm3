@@ -395,7 +395,8 @@
                 }
             }
             var o = common.modules[modulename];
-            if (o.render) { $("#asm-body-container").empty(); $("#asm-body-container").html(o.render()); }
+            $("#asm-body-container").empty(); 
+            if (o.render) { $("#asm-body-container").html(o.render()); }
             common.bind_widgets();
             if (o.bind) { o.bind(); }
             if (o.sync) { o.sync(); }

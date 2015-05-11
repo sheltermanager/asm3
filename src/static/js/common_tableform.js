@@ -692,8 +692,8 @@
                     tableform.dialog_enable_buttons();
                 },
                 close: function() {
-                    $("#dialog-tableform").dialog("destroy");
                     tableform.dialog_enable_buttons();
+                    $("#dialog-tableform").dialog("destroy");
                 }
             });
             this.dialog_error("");
