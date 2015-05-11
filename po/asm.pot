@@ -4349,10 +4349,6 @@ msgstr ""
 msgid "FVRCP"
 msgstr ""
 
-#: animal.js
-msgid "Facebook"
-msgstr ""
-
 #: publish_options.js
 msgid "Facebook Sharing"
 msgstr ""
@@ -9120,7 +9116,19 @@ msgid "Shar Pei"
 msgstr ""
 
 #: animal.js
+msgid "Share"
+msgstr ""
+
+#: animal.js
 msgid "Share this animal on Facebook"
+msgstr ""
+
+#: animal.js
+msgid "Share this animal on Twitter"
+msgstr ""
+
+#: animal.js
+msgid "Share this animal via social media"
 msgstr ""
 
 #: dbupdate.py

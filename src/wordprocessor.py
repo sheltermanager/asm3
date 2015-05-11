@@ -263,7 +263,7 @@ def animal_tags(dbo, a):
         "WEBSITEVIDEONOTES"     : a["WEBSITEVIDEONOTES"],
         "WEBMEDIANOTES"         : a["WEBSITEMEDIANOTES"],
         "WEBSITEMEDIANOTES"     : a["WEBSITEMEDIANOTES"],
-        "DOCUMENTIMGLINK"       : "<img height=\"200\" src=\"" + html.img_src(a, "animal") + "\" >",
+        "DOCUMENTIMGLINK"       : "<img height=\"200\" src=\"" + html.doc_img_src(a, "animal") + "\" >",
         "DOCUMENTIMGTHUMBLINK"  : "<img src=\"" + html.thumbnail_img_src(a, "animalthumb") + "\" />",
         "DOCUMENTQRLINK"        : "<img src=\"%s\" />" % qr,
         "ANIMALONSHELTER"       : yes_no(l, a["ARCHIVED"] == 0),

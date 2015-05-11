@@ -560,7 +560,7 @@ def img_src(row, mode):
     If we're in animal mode, we'll take ANIMALID or ID, if we're
     in person mode we'll use PERSONID or ID
     row: An animal_query or person_query row containing ID, ANIMALID or PERSONID and WEBSITEMEDIANAME/DATE
-    mode: The mode - animalthumb or personthumb
+    mode: The mode - animal or person
     """
     if row["WEBSITEMEDIANAME"] is None or row["WEBSITEMEDIANAME"] == "":
         return "image?mode=dbfs&id=/reports/nopic.jpg"
@@ -581,6 +581,34 @@ def img_src(row, mode):
         uri = "image?mode=" + mode + "&id=" + str(idval)
         if row.has_key("WEBSITEMEDIADATE") and row["WEBSITEMEDIADATE"] is not None:
             uri += "&date=" + str(row["WEBSITEMEDIADATE"].isoformat())
+        return uri
+
+def doc_img_src(row, mode):
+    """
+    Gets the img src attribute/link for a document picture. If the row
+    doesn't have doc preferred media, the nopic src is returned instead.
+    row: An animal_query or person_query row containing DOCMEDIANAME
+    mode: The mode - animal or person
+    """
+    if row["DOCMEDIANAME"] is None or row["DOCMEDIANAME"] == "":
+        return "image?mode=dbfs&id=/reports/nopic.jpg"
+    else:
+        path = ""
+        if mode == "animal":
+            if row.has_key("ANIMALID"):
+                idval = row["ANIMALID"]
+            elif row.has_key("ID"):
+                idval = row["ID"]
+            path = "/animal/%d/%s" % (idval, row["DOCMEDIANAME"])
+        elif mode == "person":
+            if row.has_key("PERSONID"):
+                idval = row["PERSONID"]
+            elif row.has_key("ID"):
+                idval = row["ID"]
+            path = "/person/%d/%s" % (idval, row["DOCMEDIANAME"])
+        else:
+            path = "/animal/%d/%s" % (row["ID"], row["DOCMEDIANAME"])
+        uri = "image?mode=dbfs&id=%s" % path
         return uri
 
 def json_menu(l, reports, mailmerges):
