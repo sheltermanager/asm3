@@ -1757,10 +1757,12 @@
         },
 
         a_click_handler: function(event, href) {
-            if ($(this).prop("href") != "#") {
+            // If the URL starts with a hash, don't do anything as it wouldn't
+            // be navigating away from the page.
+            if (!href) { href = $(this).attr("href"); }
+            if (href.indexOf("#") != 0) {
                 if (validate.unsaved) {
                     event.preventDefault();
-                    if (!href) { href = $(this).attr("href"); }
                     validate.unsaved_dialog(href);
                     return false;
                 }
@@ -1773,6 +1775,7 @@
         unsaved_dialog: function(target) {
             var b = {}, self = this;
             b[_("Save and leave")] = function() {
+                $(this).dialog("close"); 
                 self.save(function() {
                     common.route(target);
                 });
