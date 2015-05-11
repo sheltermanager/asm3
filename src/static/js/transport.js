@@ -325,7 +325,7 @@ $(function() {
         },
 
         name: "transport",
-        animation: "formtab",
+        animation: function() { return controller.name == "transport" ? "book" : "formtab"; },
         title:  function() { 
             var t = "";
             if (controller.name == "animal_transport") {

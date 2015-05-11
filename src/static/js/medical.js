@@ -634,7 +634,7 @@ $(function() {
         },
 
         name: "medical",
-        animation: common.current_url().indexOf("animal") != -1 ? "formtab" : "book",
+        animation: function() { return controller.name == "medical" ? "book" : "formtab"; },
         title:  function() { 
             var t = "";
             if (controller.name == "animal_medical") {

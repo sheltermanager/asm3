@@ -209,7 +209,7 @@ $(function() {
         },
 
         name: "licence",
-        animation: common.current_url().indexOf("_") != -1 ? "formtab" : "book",
+        animation: function() { return controller.name == "licence" ? "book" : "formtab"; },
         title:  function() { 
             var t = "";
             if (controller.name == "animal_licence") {

@@ -230,7 +230,7 @@ $(function() {
         },
 
         name: "diary",
-        animation: common.current_url().indexOf("diary_edit") == -1 ? "formtab" : "book",
+        animation: function() { return controller.name.indexOf("diary_edit") == 0 ? "book" : "formtab"; },
         title:  function() { 
             var t = "";
             if (controller.name == "animal_diary") {

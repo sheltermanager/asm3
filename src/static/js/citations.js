@@ -151,7 +151,7 @@ $(function() {
         },
 
         name: "citations",
-        animation: "formtab",
+        animation: function() { return controller.name == "citations" ? "book" : "formtab"; },
         title:  function() { 
             var t = "";
             if (controller.name == "person_citations") { t = controller.person.OWNERNAME; }

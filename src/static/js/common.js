@@ -398,7 +398,7 @@
             if (o.sync) { o.sync(); }
             if (o.title) { $(document).attr("title", o.title()); }
             common.apply_label_overrides(modulename); 
-            $("#asm-content").asmcontent(o.animation);
+            $("#asm-content").asmcontent(o.animation instanceof Function ? o.animation() : o.animation);
             common.module_running = o;
         },
 

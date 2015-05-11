@@ -591,7 +591,7 @@ $(function() {
         },
 
         name: "movements",
-        animation: common.current_url().indexOf("book") != -1 ? "book" : "formtab",
+        animation: function() { return controller.name.indexOf("move_book") == 0 ? "book" : "formtab"; },
         title:  function() { 
             var t = "";
             if (controller.name == "animal_movements") {

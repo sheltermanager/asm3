@@ -370,7 +370,7 @@ $(function() {
         },
 
         name: "donations",
-        animation: common.current_url().indexOf("_") != -1 ? "formtab" : "book",
+        animation: function() { return controller.name == "donation" ? "book" : "formtab"; },
 
         title:  function() { 
             var t = "";

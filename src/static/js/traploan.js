@@ -135,7 +135,7 @@ $(function() {
         },
 
         name: "traploan",
-        animation: common.current_url().indexOf("person") != -1 ? "formtab" : "book",
+        animation: function() { return controller.name == "traploan" ? "book" : "formtab"; },
         title: function() {
             if (controller.name == "person_traploan") {
                 return controller.person.OWNERNAME;

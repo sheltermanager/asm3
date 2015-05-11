@@ -12,7 +12,7 @@ $(function() {
             // The list of tables has two elements for value/label,
             // flatten it to value|label to work with the dropdownfilter
             // button type
-            tablelist = {};
+            tablelist = [];
             $.each(controller.tables, function(i, v) {
                 tablelist.push(v.join("|"));
             });
