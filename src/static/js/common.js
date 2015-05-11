@@ -331,13 +331,11 @@
             if (common.route_mode == "server") { window.location.reload(); return; }
 
             // The browser doesn't support the history api, reload the page (ie8/9)
+            // This is because setting the current route again won't fire onhashchange
             if ($("html").hasClass("no-history")) { window.location.reload(); return; }
 
-            // Construct one of our routes from the current URL
-            var path = window.location.pathname;
-            if (path.lastIndexOf("/") != -1) { path = path.substring(path.lastIndexOf("/")+1); }
-            if (window.location.search) { path += window.location.search; }
-            Path.reload(path);
+            // Reload the current route on the client
+            Path.reload();
         },
 
         /** Loaded modules */

@@ -34,13 +34,8 @@ var Path = {
             var initialPop = !Path.history.initial.popped && location.href == Path.history.initial.URL;
             Path.history.initial.popped = true;
             if(initialPop) return;
-            // RRT: 2015-05-10 Include querystring in state
-            if (document.location.search) {
-                Path.dispatch(document.location.pathname + document.location.search);
-            }
-            else {
-                Path.dispatch(document.location.pathname);
-            }
+            // RRT: 2015-05-10 Use a new function to transform current location to a route
+            Path.dispatch(Path.path_to_route());
         },
         'listen': function(fallback){
             Path.history.supported = !!(window.history && window.history.pushState);
@@ -142,12 +137,21 @@ var Path = {
         }
     },
     /** RRT 2015-05-10: Reruns the current route, if path is set uses that instead */
-    'reload': function(path) {
-        if (!path) { path = Path.route.current; }
+    'reload': function() {
+        var path = Path.path_to_route();
         var matched_route = Path.match(path, true);
         if (matched_route) {
             matched_route.run();
         }
+    },
+    /** RRT 2015-05-11: Transforms the current path to one of our routes. path.js
+     *  normally assumes that pathname matches routes and you're doing /route from
+     *  the host. We don't do that, but never leave the first path element.*/
+    'path_to_route': function() {
+        var path = document.location.pathname;
+        if (path.lastIndexOf("/") != -1) { path = path.substring(path.lastIndexOf("/")+1); }
+        if (document.location.search) { path += document.location.search; }
+        return path;
     },
     'listen': function () {
         var fn = function(){ Path.dispatch(location.hash); }
