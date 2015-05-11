@@ -315,8 +315,8 @@
 
         /** Returns true if the path supplied can be handled by client side routing */
         route_is_client: function(path) {
-            var NOT_CLIENT_SIDE = [ "#", "/", "http", "document_edit", "document_gen", "document_media_edit", 
-                "logout", "mailmerge", "publish_logs?view=", "report", "static" ],
+            var NOT_CLIENT_SIDE = [ "#", "/", "http", "image?", "document_edit", "document_gen", "document_media_edit", 
+                "logout", "mailmerge?", "publish_logs?view=", "report?", "static" ],
                 isclient = true;
             $.each(NOT_CLIENT_SIDE, function(i, v) {
                 if (path.indexOf(v) == 0) { isclient = false; return false; }

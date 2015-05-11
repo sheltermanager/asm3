@@ -200,7 +200,7 @@ $(function() {
 
                  { id: "images", text: _("Extra Images"), icon: "image", enabled: "always", tooltip: _("Add extra images for use in reports and documents"),
                      click: function() {
-                        common.route_reload();
+                        common.route("report_images");
                      }
                  }
             ];
