@@ -1,6 +1,7 @@
 37
 ================
 
+11/05/15 Disable client side routing for non-history API browsers (IE8)
 11/05/15 Fix DocumentImgLink to use doc preferred photo #178
 11/05/15 Move Facebook onto menu, add Twitter stub
 11/05/15 Merge person flags when importing online forms to existing people

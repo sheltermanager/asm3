@@ -258,13 +258,6 @@
          */
         route: function(path, forceserver) {
             if (common.route_mode == "server" || forceserver) { window.location = path; return; }
-            // ie8: if we use hash routing, it can't fall back to the server as history api does
-            var ALWAYS_ON_SERVER = [ "logout", "static", "report?", "mailmerge?", "document_edit?", "document_media_edit?" ], cancel = false;
-            $.each(ALWAYS_ON_SERVER, function(i, v) {
-                if (path.indexOf(v) == 0) { cancel = true; window.location = path; return false; }
-            });
-            if (cancel) { return; }
-            // end ie8 compatibility
             Path.history.pushState({}, "", path);
         },
 
@@ -281,17 +274,21 @@
 
         /** Starts client side routing listening */
         route_listen: function() {
+            
             // Don't do anything if we're in server mode, we'll just visit
             // each URL on the server instead of trying to match routes on the
             // client and deal with them here.
             if (common.route_mode == "server") { return; }
+
             // Add a rescue route - if we can't find matching client route,
             // we fall back to going to the server for it
             Path.rescue(function(path) {
                 window.location = path;
             });
+
             // Listen for history state changes
-            Path.history.listen(true);
+            Path.history.listen();
+
             // Catch all clicks for "real" URLs (ones without hashes) 
             // and use client side routing to handle them.
             $(document).on("click", "a", function(event) {
@@ -1881,11 +1878,16 @@
 
 $(function() {
 
-    // Execute every time this script is loaded.
-    // Check for adequate browser support - no AJAX is a showstopper
-    // as is IE below 8 because it doesn't have inline-block support.
-    if (!jQuery.support.ajax || common.msie_version() < 8) {
+    // Refuse to deal with IE < 8 - lack of inline-block support
+    // will break most of our page layouts
+    if (common.msie_version() < 8) {
         window.location = "static/pages/unsupported.html";
+    }
+
+    // If we don't have access to the history api, fall back
+    // to sending all URLs to the server instead
+    if ($("html").hasClass("history")) {
+        common.route_mode = "server";
     }
 
     // If this is IE8 or IE9, add a special class to the html element so
