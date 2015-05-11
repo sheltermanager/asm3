@@ -16,3 +16,10 @@ For ASM, we've made some modifications:
 
 5. Path.popState() - includes the querystring when returning to the
    previous state.
+
+6. Both Path.reload() and Path.popState() use a new function Path.path_to_route
+   to turn document.location.pathname into a matching route. If your
+   routes all being with / and start at the bottom of the path you may
+   want to alter this routine to just return 
+   document.location.pathname + document.location.search
+
