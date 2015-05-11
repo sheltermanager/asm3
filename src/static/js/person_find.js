@@ -8,7 +8,7 @@ $(function() {
         render: function() {
             return [
                 html.content_header(_("Find Person")),
-                '<form id="personsearchform" action="person_find_results" method="GET">',
+                '<div id="personsearchform">',
                 '<p class="asm-search-selector">',
                 '<a id="asm-search-selector-simple" href="#">' + _("Simple") + '</a> |',
                 '<a id="asm-search-selector-advanced" href="#">' + _("Advanced") + '</a>',
@@ -112,7 +112,7 @@ $(function() {
                 '<p class="centered">',
                 '<button id="searchbutton" type="button">' + _("Search") + '</button>',
                 '</p>',
-                '</form>',
+                '</div>',
                 html.content_footer()
             ].join("\n");
         },

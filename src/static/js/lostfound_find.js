@@ -8,22 +8,21 @@ $(function() {
         render: function() {
             return [
                 controller.mode == "lost" ? html.content_header(_("Find Lost Animal")) : "",
-                controller.mode == "lost" ? '<form id="lostfoundsearchform" action="lostanimal_find_results" method="GET">' : "",
                 controller.mode == "found" ? html.content_header(_("Find Found Animal")) : "",
-                controller.mode == "found" ? '<form id="lostfoundsearchform" action="foundanimal_find_results" method="GET">' : "",
+                '<div id="lostfoundsearchform">',
                 '<table class="asm-table-layout">',
                 '<tr>',
                 '<td>',
                 '<label for="number">' + _("Number") + '</label>',
                 '</td>',
                 '<td>',
-                '<input id="number" name="number" class="asm-textbox asm-numberbox" />',
+                '<input id="number" data="number" class="asm-textbox asm-numberbox" />',
                 '</td>',
                 '<td>',
                 '<label for="contact">' + _("Contact Contains") + '</label>',
                 '</td>',
                 '<td>',
-                '<input id="contact" name="contact" class="asm-textbox" />',
+                '<input id="contact" data="contact" class="asm-textbox" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -31,13 +30,13 @@ $(function() {
                 '<label for="area">' + _("Area") + '</label>',
                 '</td>',
                 '<td>',
-                '<input id="area" name="area" class="asm-textbox" />',
+                '<input id="area" data="area" class="asm-textbox" />',
                 '</td>',
                 '<td>',
                 '<label for="postcode">' + _("Zipcode") + '</label>',
                 '</td>',
                 '<td>',
-                '<input id="postcode" name="postcode" class="asm-textbox" />',
+                '<input id="postcode" data="postcode" class="asm-textbox" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -45,13 +44,13 @@ $(function() {
                 '<label for="features">' + _("Features") + '</label>',
                 '</td>',
                 '<td>',
-                '<input id="features" name="features" class="asm-textbox" />',
+                '<input id="features" data="features" class="asm-textbox" />',
                 '</td>',
                 '<td>',
                 '<label for="agegroup">' + _("Age Group") + '</label>',
                 '</td>',
                 '<td>',
-                '<select id="agegroup" name="agegroup" class="asm-selectbox">',
+                '<select id="agegroup" data="agegroup" class="asm-selectbox">',
                 '<option value="-1">' + _("(all)") + '</option>',
                 '<option value="Unknown">' + _("(unknown)") + '</option>',
                 html.list_to_options(controller.agegroups),
@@ -63,7 +62,7 @@ $(function() {
                 '<label for="sex">' + _("Sex") + '</label>',
                 '</td>',
                 '<td>',
-                '<select id="sex" name="sex" class="asm-selectbox">',
+                '<select id="sex" data="sex" class="asm-selectbox">',
                 '<option value="-1">' + _("(all)") + '</option>',
                 html.list_to_options(controller.sexes, "ID", "SEX"),
                 '</select>',
@@ -72,7 +71,7 @@ $(function() {
                 '<label for="species">' + _("Species") + '</label>',
                 '</td>',
                 '<td>',
-                '<select id="species" name="species" class="asm-selectbox">',
+                '<select id="species" data="species" class="asm-selectbox">',
                 '<option value="-1">' + _("(all)") + '</option>',
                 html.list_to_options(controller.species, "ID", "SPECIESNAME"),
                 '</select>',
@@ -83,7 +82,7 @@ $(function() {
                 '<label for="breed">' + _("Breed") + '</label>',
                 '</td>',
                 '<td>',
-                '<select id="breed" name="breed" class="asm-selectbox">',
+                '<select id="breed" data="breed" class="asm-selectbox">',
                 '<option value="-1">' + _("(all)") + '</option>',
                 html.list_to_options_breeds(controller.breeds),
                 '</select>',
@@ -96,7 +95,7 @@ $(function() {
                 '<label for="colour">' + _("Color") + '</label>',
                 '</td>',
                 '<td>',
-                '<select id="colour" name="colour" class="asm-selectbox">',
+                '<select id="colour" data="colour" class="asm-selectbox">',
                 '<option value="-1">' + _("(all)") + '</option>',
                 html.list_to_options(controller.colours, "ID", "BASECOLOUR"), 
                 '</select>',
@@ -109,7 +108,7 @@ $(function() {
                 '</label>',
                 '</td>',
                 '<td>',
-                '<input id="datefrom" name="datefrom" class="asm-textbox asm-datebox" />',
+                '<input id="datefrom" data="datefrom" class="asm-textbox asm-datebox" />',
                 '</td>',
                 '<td>',
                 '<label for="dateto">',
@@ -117,7 +116,7 @@ $(function() {
                 '</label>',
                 '</td>',
                 '<td>',
-                '<input id="dateto" name="dateto" class="asm-textbox asm-datebox" />',
+                '<input id="dateto" data="dateto" class="asm-textbox asm-datebox" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -127,7 +126,7 @@ $(function() {
                 '</label>',
                 '</td>',
                 '<td>',
-                '<input id="completefrom" name="completefrom" class="asm-textbox asm-datebox" />',
+                '<input id="completefrom" data="completefrom" class="asm-textbox asm-datebox" />',
                 '</td>',
                 '<td>',
                 '<label for="completeto">',
@@ -135,7 +134,7 @@ $(function() {
                 '</label>',
                 '</td>',
                 '<td>',
-                '<input id="completeto" name="completeto" class="asm-textbox asm-datebox" />',
+                '<input id="completeto" data="completeto" class="asm-textbox asm-datebox" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -145,7 +144,7 @@ $(function() {
                 '</label>',
                 '</td>',
                 '<td>',
-                '<select id="excludecomplete" name="excludecomplete" class="asm-selectbox">',
+                '<select id="excludecomplete" data="excludecomplete" class="asm-selectbox">',
                 '<option value="1" selected="selected">' + _("No") + '</option>',
                 '<option value="0">' + _("Yes") + '</option>',
                 '</select>',
@@ -157,13 +156,25 @@ $(function() {
                 '<p class="centered">',
                 '<button type="submit" id="searchbutton">' + _("Search") + '</button>',
                 '</p>',
-                '</form>',
+                '</div>',
                 html.content_footer()
             ].join("\n");
         },
 
         bind: function() {
-            $("#searchbutton").button();
+
+            $("#searchbutton").button().click(function() {
+                common.route((controller.mode == "lost" ? "lostanimal_find_results?" : "foundanimal_find_results?") + 
+                    $("#lostfoundsearchform input, #lostfoundsearchform select").toPOST());
+            });
+
+            // We need to re-enable the return key submitting the form
+            $("#lostfoundsearchform").keypress(function(e) {
+                if (e.keyCode == 13) {
+                    common.route((controller.mode == "lost" ? "lostanimal_find_results?" : "foundanimal_find_results") + 
+                        $("#lostfoundsearchform input, #lostfoundsearchform select").toPOST());
+                }
+            });
 
             // Only show the breeds for the selected species
             // The (all) option is displayed by default

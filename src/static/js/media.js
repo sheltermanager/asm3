@@ -545,7 +545,10 @@ $(function() {
             addlinkbuttons[_("Attach")] = function() {
                 if (!validate.notblank([ "linktarget" ])) { return; }
                 $("#dialog-addlink").disable_dialog_buttons();
-                var formdata = $("#dialog-addlink .asm-selectbox, #dialog-addlink input, #dialog-addlink textarea").toPOST();
+                var formdata = "mode=createlink&linkid=" + controller.linkid + 
+                    "&linktypeid=" + controller.linktypeid + 
+                    "&controller=" + controller.name + "&" +
+                    $("#linktype, #linktarget, #linkcomments").toPOST();
                 common.ajax_post(controller.name, formdata, function() {
                     $("#dialog-addlink").dialog("close").enable_dialog_buttons();
                     common.route_reload();
