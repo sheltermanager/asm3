@@ -658,6 +658,14 @@ $(function() {
                 '<div id="dialog-delete" style="display: none" title="' + _("Delete") + '">',
                     '<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>' + _("This will permanently remove this animal, are you sure?") + '</p>',
                 '</div>',
+                '<div id="button-share-body" class="asm-menu-body">',
+                '<ul class="asm-menu-list">',
+                    '<li id="button-facebook" class="asm-menu-item"><a '
+                        + '" href="#">' + html.icon("facebook") + ' ' + _("Share this animal on Facebook") + '</a></li>',
+                    '<li id="button-twitter" class="asm-menu-item"><a '
+                        + '" href="#">' + html.icon("twitter") + ' ' + _("Share this animal on Twitter") + '</a></li>',
+                '</ul>',
+                '</div>',
                 edit_header.animal_edit_header(controller.animal, "animal", controller.tabcounts),
                 tableform.buttons_render([
                     { id: "save", text: _("Save"), icon: "save", tooltip: _("Save this person") },
@@ -667,7 +675,7 @@ $(function() {
                     { id: "diarytask", text: _("Diary Task"), type: "buttonmenu", icon: "diary-task", tooltip: _("Create diary notes from a task") },
                     { id: "match", text: _("Match"), icon: "match", tooltip: _("Match this animal with the lost and found database") },
                     { id: "littermates", text: _("Littermates"), icon: "litter", tooltip: _("View littermates") },
-                    { id: "facebook", text: _("Facebook"), icon: "facebook", tooltip: _("Share this animal on Facebook") }
+                    { id: "share", text: _("Share"), type: "buttonmenu", icon: "facebook", tooltip: _("Share this animal via social media") }
                 ]),
                 '<div id="asm-details-accordion">',
                 animal.render_details(),
@@ -913,7 +921,7 @@ $(function() {
             if (!common.has_permission("vo")) { $("#button-currentowner").hide(); }
             if (!common.has_permission("mlaf")) { $("#button-match").hide(); }
             if (!common.has_permission("vll")) { $("#button-littermates").hide(); }
-            if (!common.has_permission("uipb")) { $("#button-facebook").hide(); }
+            if (!common.has_permission("uipb")) { $("#button-facebook, #button-twitter").hide(); }
 
             // ACCORDION ICONS =======================================================
 
@@ -1047,8 +1055,8 @@ $(function() {
          */
         bind: function() {
 
-            // Setup the document/diary task menu buttons
-            $("#button-diarytask, #button-document").asmmenu();
+            // Setup the document/diary task/social menu buttons
+            $("#button-diarytask, #button-document, #button-share").asmmenu();
 
             // If the option isn't set to allow alphanumeric/space
             // characters in microchip and ntattoo numbers, use
@@ -1205,7 +1213,6 @@ $(function() {
                     header.show_info(_("Successfully posted to Facebook"));
                     $("#dialog-facebook").dialog("close");
                     $("#dialog-facebook").enable_dialog_buttons();
-                    $("#button-facebook").button("enable");
                     if (config.bool("FacebookLog")) {
                         common.ajax_post("animal", "mode=facebooklog&id=" + controller.animal.ID + 
                             "&pagename=" + encodeURIComponent($("#facebookpage").select("label")));
@@ -1347,8 +1354,7 @@ $(function() {
                 $("#button-facebook").hide();
             }
             else {
-                $("#button-facebook").button().click(function() {
-                    $("#button-facebook").button("disable");
+                $("#button-facebook a").click(function() {
                     social.facebook_get_pages(function(pages) {
                         var h = '<option value="me|' + social.facebook_access_token + '">' + _("My Timeline") + '</option>';
                         $.each(pages, function(i, v) {
@@ -1358,7 +1364,6 @@ $(function() {
                         $("#facebookpage").select("firstvalue");
                         $("#facebookmessage").html(controller.facebooktext);
                         $("#dialog-facebook").dialog("open");
-                        $("#button-facebook").button("enable");
                     });
                 });
             }

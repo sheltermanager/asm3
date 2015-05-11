@@ -1,6 +1,8 @@
 37
 ================
 
+11/05/15 Move Facebook onto menu, add Twitter stub
+11/05/15 Merge person flags when importing online forms to existing people
 11/05/15 Canvas polyfill for signatures on IE8, warning message for IE<10
 10/05/15 Rewrote validate/dirty to cope with client or server routes
 10/05/15 Completion of client side routes available with switch
