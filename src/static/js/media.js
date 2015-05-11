@@ -190,7 +190,7 @@ $(function() {
                     h.push('<img class="asm-thumbnail thumbnailshadow" src="' + linkimage + '" height="70px" ');
                     h.push('title="' + html.title(fullnotes) + '" /></a>');
                     h.push('<br />');
-                    h.push('<a class="viewlink" title="' + _('View media') + '" href="media?id=' + m.ID + '">' + shortnotes + '</a>');
+                    h.push('<a class="viewlink" title="' + _('View media') + '" href="' + m.MEDIANAME + '">' + shortnotes + '</a>');
                 }
                 else if (media.is_extension(m.MEDIANAME, "jpg") || media.is_extension(m.MEDIANAME, "jpeg")) {
                     h.push('<a href="image?mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '">');
