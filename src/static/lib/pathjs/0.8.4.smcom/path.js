@@ -141,9 +141,10 @@ var Path = {
             }
         }
     },
-    /** RRT 2015-05-10: Reruns the current route */
-    'reload': function() {
-        var matched_route = Path.match(Path.routes.current, true);
+    /** RRT 2015-05-10: Reruns the current route, if path is set uses that instead */
+    'reload': function(path) {
+        if (!path) { path = Path.route.current; }
+        var matched_route = Path.match(path, true);
         if (matched_route) {
             matched_route.run();
         }

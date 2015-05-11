@@ -74,31 +74,29 @@ $(function() {
                 _("The URL is the address of a web resource, eg: www.youtube.com/watch?v=xxxxxx"),
                 '</p>',
                 '</div>',
-                '<form id="addlinkform" method="post" action="' + controller.name + '">',
-                '<input type="hidden" name="mode" value="createlink" />',
-                '<input type="hidden" id="linkid" name="linkid" value="' + controller.linkid + '" />',
-                '<input type="hidden" id="linktypeid" name="linktypeid" value="' + controller.linktypeid + '" />',
-                '<input type="hidden" id="controller" name="controller" value="' + controller.name + '" />',
+                '<input type="hidden" data="mode" value="createlink" />',
+                '<input type="hidden" id="linkid" data="linkid" value="' + controller.linkid + '" />',
+                '<input type="hidden" id="linktypeid" data="linktypeid" value="' + controller.linktypeid + '" />',
+                '<input type="hidden" id="controller" data="controller" value="' + controller.name + '" />',
                 '<table width="100%">',
                 '<tr>',
                 '<td><label for="linktype">' + _("Type") + '</label></td>',
-                '<td><select id="linktype" name="linktype" class="asm-selectbox">',
+                '<td><select id="linktype" data="linktype" class="asm-selectbox">',
                 '<option value="1">' + _("Document Link") + '</option>',
                 '<option value="2">' + _("Video Link") + '</option>',
                 '</select></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="linktarget">' + _("URL") + '</label></td>',
-                '<td><input id="linktarget" name="linktarget" class="asm-textbox" /></td>',
+                '<td><input id="linktarget" data="linktarget" class="asm-textbox" /></td>',
                 '</tr>',
                 '<tr id="commentsrow">',
                 '<td><label for="linkcomments">' + _("Notes") + '</label>',
                 '</td>',
-                '<td><textarea id="linkcomments" name="comments" rows="10" class="asm-textarea"></textarea>',
+                '<td><textarea id="linkcomments" data="comments" rows="10" class="asm-textarea"></textarea>',
                 '</td>',
                 '</tr>',
                 '</table>',
-                '</form>',
                 '</div>',
 
                 '<div id="dialog-edit" style="display: none" title="' + _("Edit media notes") + '">',
@@ -350,7 +348,10 @@ $(function() {
                 var formdata = "linkid=" + controller.linkid + "&linktypeid= " + 
                     controller.linktypeid + "&comments=" + encodeURIComponent($("#addcomments").val()) +
                     "&base64image=" + encodeURIComponent(finalfile);
-                common.ajax_post(controller.name, formdata, function(result) { window.location = controller.name + "?id=" + controller.linkid; });
+                common.ajax_post(controller.name, formdata, function(result) { 
+                    common.route_reload(); 
+                    $("#dialog-add").dialog("close").enable_dialog_buttons();
+                });
             };
             reader.readAsDataURL(selectedfile);
         },
@@ -382,7 +383,7 @@ $(function() {
          */
         ajax: function(formdata) {
             common.ajax_post(controller.name, formdata, function() { 
-                window.location = controller.name + "?id=" + controller.linkid;
+                common.route_reload();
             });
         },
 
@@ -548,7 +549,11 @@ $(function() {
             addlinkbuttons[_("Attach")] = function() {
                 if (!validate.notblank([ "linktarget" ])) { return; }
                 $("#dialog-addlink").disable_dialog_buttons();
-                $("#addlinkform").submit();
+                var formdata = $("#dialog-addlink .asm-selectbox, #dialog-addlink input, #dialog-addlink textarea").toPOST();
+                common.ajax_post(controller.name, formdata, function() {
+                    $("#dialog-addlink").dialog("close").enable_dialog_buttons();
+                    common.route_reload();
+                }, function() { $("#dialog-addlink").enable_dialog_buttons(); });
             };
             addlinkbuttons[_("Cancel")] = function() {
                 $("#dialog-addlink").dialog("close");

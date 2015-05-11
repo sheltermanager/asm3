@@ -313,7 +313,10 @@
         /** Reload the current route */
         route_reload: function() {
             if (common.route_mode == "server") { window.location.reload(); return; }
-            Path.reload();
+            var path = window.location.pathname;
+            if (path.lastIndexOf("/") != -1) { path = path.substring(path.lastIndexOf("/")+1); }
+            if (window.location.search) { path += window.location.search; }
+            Path.reload(path);
         },
 
         /** Loaded modules */
