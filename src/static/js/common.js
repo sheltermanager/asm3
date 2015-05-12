@@ -326,10 +326,10 @@
         },
 
         /** Reload the current route */
-        route_reload: function() {
+        route_reload: function(forceserver) {
 
             // We're sending everything to server, reload the page
-            if (common.route_mode == "server") { window.location.reload(); return; }
+            if (common.route_mode == "server" || forceserver) { window.location.reload(); return; }
 
             // The browser doesn't support the history api, reload the page (ie8/9)
             // This is because setting the current route again won't fire onhashchange

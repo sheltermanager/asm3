@@ -354,7 +354,7 @@ $(function() {
                 });
                 common.ajax_post("reports", formdata, function() { 
                     header.hide_loading();
-                    common.route_reload();
+                    common.route_reload(true);
                 }, function() { header.hide_loading(); });
             });
         },
