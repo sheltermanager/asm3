@@ -341,6 +341,30 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1"):
             "trialclause": trialclause,
             "publishername": publishername }
 
+def get_animal_view(dbo, animalid):
+    """
+    Constructs the animal view page to the template.
+    """
+    a = animal.get_animal(dbo, animalid)
+    head = dbfs.get_string(dbo, "head.html", "/internet/animalview")
+    body = dbfs.get_string(dbo, "body.html", "/internet/animalview")
+    foot = dbfs.get_string(dbo, "foot.html", "/internet/animalview")
+    if smcom.active():
+        a["WEBSITEMEDIANAME"] = "http://public.sheltermanager.com/animals/%s/%s" % (dbo.database, a["WEBSITEMEDIANAME"])
+    else:
+        a["WEBSITEMEDIANAME"] = "service?method=animal_image&animalid=%d" % (animalid)
+    a["WEBSITEMEDIANOTES"] = a["ANIMALCOMMENTS"]
+    if head == "":
+        head = "<!DOCTYPE html>\n<html>\n<head>\n<title>$$SHELTERCODE$$ - $$ANIMALNAME$$</title></head>\n<body>"
+    if body == "":
+        body = "<h2>$$SHELTERCODE$$ - $$ANIMALNAME$$</h2><p><img src='$$WEBMEDIAFILENAME$$'/></p><p>$$WEBMEDIANOTES$$</p>"
+    if foot == "":
+        foot = "</body>\n</html>"
+    s = head + body + foot
+    tags = wordprocessor.animal_tags(dbo, a)
+    s = wordprocessor.substitute_tags(s, tags, True, "$$", "$$")
+    return s
+
 class AbstractPublisher(threading.Thread):
     """
     Base class for all publishers

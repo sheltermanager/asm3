@@ -55,6 +55,14 @@ def flood_protect(method, remoteip, ttl, message = ""):
             message = "You have already called '%s' in the last %d seconds, please wait before trying again." % (method, ttl)
         raise utils.ASMError(message)
 
+def hotlink_protect(method, referer):
+    domains = IMAGE_HOTLINKING_ONLY_FROM_DOMAIN.split(",")
+    fromhldomain = False
+    for d in domains:
+        if d != "" and referer.find(d) != -1: fromhldomain = True
+    if referer != "" and IMAGE_HOTLINKING_ONLY_FROM_DOMAIN != "" and not fromhldomain:
+        raise utils.ASMPermissionError("Hotlinking to %s from %s is forbidden" % (method, referer))
+
 def get_cached_response(cache_key):
     """
     Gets a service call response from the cache based on its key.
@@ -138,13 +146,7 @@ def handler(post, remoteip, referer):
     al.info("call %s->%s [%s %s]" % (username, method, str(animalid), title), "service.handler", dbo)
 
     if method =="animal_image":
-        # If we have a hotlinking restriction, enforce it
-        domains = IMAGE_HOTLINKING_ONLY_FROM_DOMAIN.split(",")
-        fromhldomain = False
-        for d in domains:
-            if d != "" and referer.find(d) != -1: fromhldomain = True
-        if referer != "" and IMAGE_HOTLINKING_ONLY_FROM_DOMAIN != "" and not fromhldomain:
-            raise utils.ASMPermissionError("Image hotlinking is forbidden.")
+        hotlink_protect("animal_image", referer)
         if animalid == "" or utils.cint(animalid) == 0:
             al.error("animal_image failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
             return ("text/plain", 0, "ERROR: Invalid animalid")
@@ -156,6 +158,14 @@ def handler(post, remoteip, referer):
                 return ("image/jpeg", 86400, dbfs.get_string(dbo, "nopic.jpg", "/reports"))
             else:
                 return ("image/jpeg", 86400, dbfs.get_string(dbo, mm[0]["MEDIANAME"]))
+
+    elif method == "animal_view":
+        hotlink_protect("animal_view", referer)
+        if animalid == "" or utils.cint(animalid) == 0:
+            al.error("animal_view failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
+            return ("text/plain", 0, "ERROR: Invalid animalid")
+        else:
+            return set_cached_response(cache_key, "text/html", 120, publish.get_animal_view(dbo, int(animalid)))
 
     elif method =="extra_image":
         return ("image/jpeg", 86400, dbfs.get_string(dbo, title, "/reports"))

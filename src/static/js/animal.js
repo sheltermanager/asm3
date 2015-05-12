@@ -671,9 +671,9 @@ $(function() {
                 '<div id="button-share-body" class="asm-menu-body">',
                 '<ul class="asm-menu-list">',
                     '<li id="button-facebook" class="asm-menu-item"><a '
-                        + '" href="#">' + html.icon("facebook") + ' ' + _("Share this animal on Facebook") + '</a></li>',
+                        + '" href="#">' + html.icon("facebook") + ' ' + _("Facebook") + '</a></li>',
                     '<li id="button-twitter" class="asm-menu-item"><a '
-                        + '" href="#">' + html.icon("twitter") + ' ' + _("Share this animal on Twitter") + '</a></li>',
+                        + '" target="_blank" href="#">' + html.icon("twitter") + ' ' + _("Twitter") + '</a></li>',
                 '</ul>',
                 '</div>',
                 edit_header.animal_edit_header(controller.animal, "animal", controller.tabcounts),
@@ -1381,7 +1381,7 @@ $(function() {
                 });
             });
 
-            // Facebook sharing
+            // Facebook
             if (!controller.hasfacebook) {
                 $("#button-facebook").hide();
             }
@@ -1402,11 +1402,11 @@ $(function() {
             }
 
             // Twitter
-            $("#button-twitter").hide();
-            $("#button-twitter a").click(function() {
-                // TODO:
-                return false;
-            });
+            var view_url = asm.baseurl + "/service?method=animal_view&animalid=" + controller.animal.ID;
+            if (asm.smcom) { view_url += "&account=" + asm.useraccount; }
+            $("#button-twitter a").attr("href", "http://twitter.com/share?" +
+                "text=" + encodeURIComponent(html.truncate(controller.animal.ANIMALCOMMENTS, 113)) + 
+                "&url=" + encodeURIComponent(view_url));
 
             // Events that trigger rechecking of the on-screen fields
             $("#crossbreed").click(function() {

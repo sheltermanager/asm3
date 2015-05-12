@@ -1,6 +1,8 @@
 37
 ================
 
+12/05/15 Add Twitter sharing #119
+12/05/15 Add service API animal_view target #119
 12/05/15 Add lb/oz boxes for US users #179
 12/05/15 Add unit to DisplayLocation, hide units for fosters
 11/05/15 Cutting text should dirty forms
