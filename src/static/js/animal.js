@@ -1458,6 +1458,3 @@ $(function() {
 
 });
 
-function image_error(image) {
-    image.style.display = "none";
-}
