@@ -1,6 +1,7 @@
 37
 ================
 
+12/05/15 Add unit to DisplayLocation, hide units for fosters
 11/05/15 Cutting text should dirty forms
 11/05/15 Fix malformed html and broken video links in media screens
 11/05/15 Disable client side routing for non-history API browsers (IE8)

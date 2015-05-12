@@ -1341,7 +1341,7 @@
                 s.push(html.icon("quarantine", _("Quarantine")));
             }
             s.push("</span>");
-            if (o && o.showunit && a.SHELTERLOCATIONUNIT) {
+            if (o && o.showunit && a.SHELTERLOCATIONUNIT && a.ARCHIVED == 0 && !a.ACTIVEMOVEMENTTYPE ) {
                 s.push(' <span class="asm-search-locationunit" title="' + html.title(_("Unit")) + '">' + a.SHELTERLOCATIONUNIT + '</span>');
             }
             return s.join("");

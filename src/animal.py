@@ -210,7 +210,7 @@ def get_animal_status_query(dbo):
     dummy = dbo
     return "SELECT a.ID, a.ShelterCode, a.AnimalName, a.DeceasedDate, a.PutToSleep, " \
         "dr.ReasonName AS PTSReasonName, " \
-        "il.LocationName AS ShelterLocationName, " \
+        "il.LocationName AS ShelterLocationName, a.ShelterLocationUnit, " \
         "a.NonShelterAnimal, a.DateBroughtIn, a.Archived, " \
         "a.ActiveMovementID, a.ActiveMovementDate, a.ActiveMovementType, a.ActiveMovementReturn, " \
         "a.HasActiveReserve, a.HasTrialAdoption, a.HasPermanentFoster, a.MostRecentEntryDate, a.DisplayLocation " \
@@ -2814,6 +2814,8 @@ def update_animal_status(dbo, animalid, a = None, animalupdatebatch = None, diar
             qlocname = "%s::%s" % (loc, currentownername)
     else:
         loc = a["SHELTERLOCATIONNAME"]
+        if a["SHELTERLOCATIONUNIT"] is not None and a["SHELTERLOCATIONUNIT"] != "":
+            loc += "%s::%s" % (a["SHELTERLOCATIONNAME"], a["SHELTERLOCATIONUNIT"])
         qlocname = loc
 
     # Has anything actually changed?
