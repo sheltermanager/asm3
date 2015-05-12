@@ -1072,7 +1072,7 @@ $(function() {
                 var formdata = "mode=save&" + $("input, select, textarea").toPOST(true);
                 formdata += "&DonationAccountMappings=" + get_donation_mappings();
                 header.show_loading(_("Saving..."));
-                common.ajax_post("options", formdata, function() { common.route_reload(); });
+                common.ajax_post("options", formdata, function() { common.route_reload(true); });
             });
 
             // Components
