@@ -2813,9 +2813,10 @@ def update_animal_status(dbo, animalid, a = None, animalupdatebatch = None, diar
         if currentownerid is not None and currentownername is not None:
             qlocname = "%s::%s" % (loc, currentownername)
     else:
-        loc = a["SHELTERLOCATIONNAME"]
         if a["SHELTERLOCATIONUNIT"] is not None and a["SHELTERLOCATIONUNIT"] != "":
-            loc += "%s::%s" % (a["SHELTERLOCATIONNAME"], a["SHELTERLOCATIONUNIT"])
+            loc = "%s::%s" % (a["SHELTERLOCATIONNAME"], a["SHELTERLOCATIONUNIT"])
+        else:
+            loc = a["SHELTERLOCATIONNAME"]
         qlocname = loc
 
     # Has anything actually changed?
