@@ -119,11 +119,21 @@ $(function() {
                 html.list_to_options(controller.sizes, "ID", "SIZE"),
                 '</select></td>',
                 '</tr>',
-                '<tr id="weightrow">',
+                '<tr id="kilosrow">',
                 '<td><label for="weight">' + _("Weight") + '</label></td>',
                 '<td><span style="white-space: nowrap;">',
                 '<input id="weight" data-json="WEIGHT" data-post="weight" class="asm-textbox asm-halftextbox asm-numberbox" />',
-                '<label id="weightlabel">' + _("kg") + '</label>',
+                '<label">' + _("kg") + '</label>',
+                '</span>',
+                '</td>',
+                '</tr>',
+                '<tr id="poundsrow">',
+                '<td><label for="weightlb">' + _("Weight") + '</label></td>',
+                '<td><span style="white-space: nowrap;">',
+                '<input id="weightlb" class="asm-textbox asm-intbox" style="width: 70px" />',
+                '<label">' + _("lb") + '</label>',
+                '<input id="weightoz" class="asm-textbox asm-intbox" style="width: 70px" />',
+                '<label">' + _("oz") + '</label>',
                 '</span>',
                 '</td>',
                 '</tr>',
@@ -882,8 +892,30 @@ $(function() {
                 }
             }
 
+            // Converting between whole number for weight and pounds and ounces
+            var lboz_to_fraction = function() {
+                var lb = format.to_int($("#weightlb").val());
+                lb += format.to_int($("#weightoz").val()) / 16.0;
+                $("#weight").val(String(lb));
+            };
+
+            var fraction_to_lboz = function() {
+                var kg = format.to_float($("#weight").val()),
+                    lb = format.to_int($("#weight").val()),
+                    oz = (kg - lb) * 16.0;
+                $("#weightlb").val(lb);
+                $("#weightoz").val(oz);
+            };
+
             if (config.bool("ShowWeightInLbs")) {
-                $("#weightlabel").html(_("lb"));
+                $("#kilosrow").hide();
+                $("#poundsrow").show();
+                $("#weightlb, #weightoz").change(lboz_to_fraction);
+                fraction_to_lboz();
+            }
+            else {
+                $("#kilosrow").show();
+                $("#poundsrow").hide();
             }
 
             if (config.bool("DontShowLitterID")) { $("#litteridrow").hide(); }
@@ -893,7 +925,7 @@ $(function() {
             if (config.bool("DontShowAdoptionFee")) { $("#feerow").hide(); }
             if (config.bool("DontShowCoatType")) { $("#coattyperow").hide(); }
             if (config.bool("DontShowSize")) { $("#sizerow").hide(); }
-            if (config.bool("DontShowWeight")) { $("#weightrow").hide(); }
+            if (config.bool("DontShowWeight")) { $("#kilosrow, #poundsrow").hide(); }
             if (config.bool("DontShowMicrochip")) { $("#microchiprow").hide(); }
             if (config.bool("DontShowTattoo")) { $("#tattoorow").hide(); }
             if (config.str("SmartTagFTPURL") == "") { $("#smarttagrow").hide(); }

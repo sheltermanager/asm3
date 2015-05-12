@@ -1449,10 +1449,6 @@ msgstr ""
 msgid "Baby"
 msgstr ""
 
-#: onlineform.js diarytask.js
-msgid "Back"
-msgstr ""
-
 #: accounts_trx.js accounts.js stocklevel.js
 msgid "Balance"
 msgstr ""
@@ -12137,6 +12133,10 @@ msgstr ""
 
 #: animal_new.js
 msgid "or estimated age in years"
+msgstr ""
+
+#: animal.js
+msgid "oz"
 msgstr ""
 
 #: accounts_trx.js
