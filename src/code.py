@@ -5659,7 +5659,6 @@ class sql:
             al.debug("%s opened SQL interface" % str(session.user), "code.sql", dbo)
             s = html.header("", session)
             c = html.controller_json("tables", dbupdate.TABLES + dbupdate.VIEWS)
-            c += html.controller_json("dumpoverrides", DUMP_OVERRIDES)
             s += html.controller(c)
             s += html.footer()
             return full_or_json("sql", s, c, post["json"] == "true")

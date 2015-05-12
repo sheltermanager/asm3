@@ -9,7 +9,7 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    common.route("publish_logs?view=" + row.PATH + "/" + row.NAME);
+                    common.route("publish_logs?ajax=false&view=" + row.PATH + "/" + row.NAME);
                 },
                 columns: [
                     { field: "NAME", display: _("File"), initialsort: true },

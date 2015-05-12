@@ -114,7 +114,7 @@ $(function() {
             var dbuttons = {};
             dbuttons[_("Yes")] = function() {
                 $(this).dialog("close");
-                common.route("sql?mode=" + sql.dumpchoice);
+                common.route("sql?ajax=false&mode=" + sql.dumpchoice);
             };
             dbuttons[_("No")] = function() {
                 $(this).dialog("close");
