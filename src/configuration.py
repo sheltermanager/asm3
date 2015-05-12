@@ -215,6 +215,7 @@ DEFAULTS = {
     "PDFInline": "Yes",
     "PublisherUseComments": "Yes",
     "PublisherIgnoreFTPOverride": "No",
+    "PublisherPresets": "includefosters excludeunder=12",
     "QuicklinksID": "40,46,25,31,34,19,20",
     "QuicklinksHomeScreen": "Yes",
     "QuicklinksAllScreens": "No",
@@ -843,7 +844,7 @@ def smarttag_accountid(dbo):
     return cstring(dbo, "SmartTagFTPUser")
 
 def publisher_presets(dbo):
-    return cstring(dbo, "PublisherPresets")
+    return cstring(dbo, "PublisherPresets", DEFAULTS["PublisherPresets"])
 
 def publisher_ignore_ftp_override(dbo):
     return cboolean(dbo, "PublisherIgnoreFTPOverride", DEFAULTS["PublisherIgnoreFTPOverride"] == "Yes")
