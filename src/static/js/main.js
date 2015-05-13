@@ -788,6 +788,14 @@ $(function() {
             }
         },
 
+        sync: function() {
+            // If there's been a new deployment of ASM since we last
+            // downloaded it to the browser, force a page reload to get the new code.
+            if (asm.build != controller.build) {
+                common.route_reload(true);
+            }
+        },
+
         name: "main",
         animation: "main",
         title: function() { return _("Animal Shelter Manager") + " - " + config.str("Organisation"); },

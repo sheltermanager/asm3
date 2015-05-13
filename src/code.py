@@ -21,7 +21,7 @@ import db, dbfs, dbupdate
 import diary as extdiary
 import financial
 import html
-from i18n import _, translate, get_version, get_display_date_format, get_currency_prefix, get_currency_symbol, get_currency_dp, python2display, add_days, subtract_days, subtract_months, first_of_month, last_of_month, monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency, i18nstringsjs
+from i18n import _, BUILD, translate, get_version, get_display_date_format, get_currency_prefix, get_currency_symbol, get_currency_dp, python2display, add_days, subtract_days, subtract_months, first_of_month, last_of_month, monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency, i18nstringsjs
 import log as extlog
 import lookups as extlookups
 import lostfound as extlostfound
@@ -503,6 +503,7 @@ class configjs:
             maplinko = configuration.map_link_override(dbo)
             if maplinko != "": maplinko = maplink
             s = "asm={baseurl:'%s'," % BASE_URL
+            s += "build:'%s'," % BUILD
             s += "locale:'%s'," % session.locale
             s += "theme:'%s'," % session.theme
             s += "user:'%s'," % session.user.replace("'", "\\'")
@@ -718,6 +719,7 @@ class main:
             dm = extdiary.get_uncompleted_upto_today(dbo, session.user)
         # Create controller
         c = html.controller_bool("showwelcome", showwelcome)
+        c += html.controller_str("build", BUILD)
         c += html.controller_str("news", news)
         c += html.controller_str("dbmessage", dbmessage)
         c += html.controller_str("version", get_version())
