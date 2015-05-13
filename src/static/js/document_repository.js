@@ -23,7 +23,7 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    common.route("document_repository?dbfsid=" + row.ID);
+                    common.route("document_repository?ajax=false&dbfsid=" + row.ID);
                 },
                 columns: [
                     { field: "NAME", display: _("Document file") },
