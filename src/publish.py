@@ -350,7 +350,7 @@ def get_animal_view(dbo, animalid):
     body = dbfs.get_string(dbo, "body.html", "/internet/animalview")
     foot = dbfs.get_string(dbo, "foot.html", "/internet/animalview")
     if smcom.active():
-        a["WEBSITEMEDIANAME"] = "http://public.sheltermanager.com/animals/%s/%s" % (dbo.database, a["WEBSITEMEDIANAME"])
+        a["WEBSITEMEDIANAME"] = "service?account=%s&method=animal_image&animalid=%d" % (dbo.database, animalid)
     else:
         a["WEBSITEMEDIANAME"] = "service?method=animal_image&animalid=%d" % (animalid)
     a["WEBSITEMEDIANOTES"] = a["ANIMALCOMMENTS"]
