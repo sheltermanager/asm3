@@ -2293,7 +2293,7 @@ def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = Tr
     deleteViewSeq - issue DELETE DBViewSeqVersion from config after dump
     escapeCR - A substitute for any \n characters found in values
     """
-    s = ""
+    s = []
     for t in TABLES:
         if not includeDBFS and t == "dbfs": continue
         if not includeCustomReport and t == "customreport": continue
@@ -2303,16 +2303,16 @@ def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = Tr
         if not includeNonASM2 and t not in TABLES_ASM2 : continue
         outtable = t
         if uppernames: outtable = t.upper()
-        if deleteFirst: s += "DELETE FROM %s;\n" % outtable
+        if deleteFirst: s.append("DELETE FROM %s;\n" % outtable)
         try:
             sys.stderr.write("dumping %s.., \n" % t)
-            s += db.rows_to_insert_sql(outtable, db.query(dbo, "SELECT * FROM %s" % t), escapeCR)
+            s.append(db.rows_to_insert_sql(outtable, db.query(dbo, "SELECT * FROM %s" % t), escapeCR))
         except:
             em = str(sys.exc_info()[0])
             sys.stderr.write("%s: WARN: %s\n" % (t, em))
-    if deleteViewSeq: s += "DELETE FROM configuration WHERE ItemName LIKE 'DBViewSeqVersion';\n"
-    if deleteDBV: s += "DELETE FROM configuration WHERE ItemName LIKE 'DBV';\n"
-    return s
+    if deleteViewSeq: s.append("DELETE FROM configuration WHERE ItemName LIKE 'DBViewSeqVersion';\n")
+    if deleteDBV: s.append("DELETE FROM configuration WHERE ItemName LIKE 'DBV';\n")
+    return "".join(s)
 
 def dump_dbfs_stdout(dbo):
     """
@@ -2341,6 +2341,62 @@ def dump_smcom(dbo):
     Dumps the database in a convenient format for import to sheltermanager.com
     """
     return dump(dbo, includeConfig = False, includeUsers = False, deleteDBV = True, deleteViewSeq = True)
+
+def dump_merge(dbo, deleteViewSeq = True):
+    """
+    Produces a special type of dump - it renumbers the IDs into a higher range 
+    so that they can be inserted into another database.
+    """
+    ID_OFFSET = 100000
+    s = []
+    def fix_and_dump(table, fields = []):
+        rows = db.query(dbo, "SELECT * FROM %s" % table)
+        for r in rows:
+            for f in fields:
+                if f == "AdoptionNumber" or f == "ShelterCode":
+                    r[f] = "MG" + r[f]
+                elif r[f] is not None:
+                    r[f] += ID_OFFSET
+        s.append(db.rows_to_insert_sql(table, rows, ""))
+
+    fix_and_dump("adoption", [ "ID", "AnimalID", "AdoptionNumber", "OwnerID", "RetailerID", "OriginalRetailerMovementID" ])
+    fix_and_dump("animal", [ "ID", "AnimalTypeID", "ShelterLocation", "ShelterCode", "BondedAnimalID", "BondedAnimal2ID", "OwnersVetID", "CurrentVetID", "OriginalOwnerID", "BroughtInByOwnerID", "PickedUpByOwnerID", "ActiveMovementID" ])
+    fix_and_dump("animalcontrol", [ "ID", "CallerID", "VictimID", "OwnerID", "Owner2ID", "Owner3ID", "AnimalID" ])
+    fix_and_dump("animalcost", [ "ID", "AnimalID", "CostTypeID" ])
+    fix_and_dump("costtype", [ "ID", ])
+    fix_and_dump("animaldiet", [ "ID", "AnimalID" ])
+    fix_and_dump("animalfound", [ "ID", "OwnerID" ])
+    fix_and_dump("animallitter", [ "ID", "ParentAnimalID" ])
+    fix_and_dump("animallost", [ "ID", "OwnerID" ])
+    fix_and_dump("animalmedical", [ "ID", "AnimalID" ])
+    fix_and_dump("animalmedicaltreatment", [ "ID", "AnimalID", "AnimalMedicalID" ])
+    fix_and_dump("animaltest", [ "ID", "AnimalID", "TestTypeID", "TestResultID" ])
+    fix_and_dump("animaltype", [ "ID", ])
+    fix_and_dump("animaltransport", [ "ID", "AnimalID", "DriverOwnerID", "PickupOwnerID", "DropoffOwnerID" ])
+    fix_and_dump("animalvaccination", [ "ID", "AnimalID", "VaccinationID" ])
+    fix_and_dump("diary", [ "ID", "LinkID" ])
+    fix_and_dump("internallocation", [ "ID", ])
+    fix_and_dump("log", [ "ID", "LinkID" ])
+    fix_and_dump("owner", [ "ID", "HomeCheckedBy" ])
+    fix_and_dump("ownercitation", [ "ID", "OwnerID", "AnimalControlID" ])
+    fix_and_dump("ownerdonation", [ "ID", "AnimalID", "OwnerID", "MovementID", "DonationTypeID" ])
+    fix_and_dump("donationtype", [ "ID", ])
+    fix_and_dump("ownerinvestigation", [ "ID", "OwnerID" ])
+    fix_and_dump("ownerlicence", [ "ID", "OwnerID", "AnimalID", "LicenceTypeID" ])
+    fix_and_dump("licencetype", [ "ID", ])
+    fix_and_dump("ownerrota", [ "ID", "OwnerID" ])
+    fix_and_dump("ownertraploan", [ "ID", "OwnerID" ])
+    fix_and_dump("ownervoucher", [ "ID", "OwnerID", "VoucherID" ])
+    fix_and_dump("stocklevel", [ "ID", "StockLocationID" ])
+    fix_and_dump("stocklocation", [ "ID", ])
+    fix_and_dump("stockusage", [ "ID", "StockLevelID" ])
+    fix_and_dump("testtype", [ "ID", ])
+    fix_and_dump("testresult", [ "ID", ])
+    fix_and_dump("vaccinationtype", [ "ID", ])
+    fix_and_dump("voucher", [ "ID", ])
+    fix_and_dump("vouchertype", [ "ID", ])
+    if deleteViewSeq: s.append("DELETE FROM configuration WHERE ItemName LIKE 'DBViewSeqVersion';\n")
+    return "".join(s)
 
 def diagnostic(dbo):
     """
