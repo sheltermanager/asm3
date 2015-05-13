@@ -163,12 +163,6 @@ DEFAULTS = {
     "EmblemReserved": "Yes",
     "EmblemTrialAdoption": "Yes",
     "EmblemUnneutered": "Yes",
-    "FacebookEnabled": "Yes",
-    "FacebookTemplate": "$$ANIMALNAME$$, $$SEX$$ $$SPECIESNAME$$ aged $$DISPLAYAGE$$. $$ANIMALCOMMENTS$$",
-    "FacebookLog": "No",
-    "FacebookLogType": "3",
-    "FacebookPostAs": "me",
-    "FacebookPageName": "",
     "FancyTooltips": "No",
     "FosterOnShelter": "Yes",
     "IncomingMediaScaling": "640x640",
@@ -606,24 +600,6 @@ def email_diary_notes(dbo):
 
 def email_messages(dbo):
     return cboolean(dbo, "EmailMessages", DEFAULTS["EmailMessages"] == "Yes")
-
-def facebook_enabled(dbo):
-    return cboolean(dbo, "FacebookEnabled", DEFAULTS["FacebookEnabled"] == "Yes")
-
-def facebook_log(dbo):
-    return cboolean(dbo, "FacebookLog", DEFAULTS["FacebookLog"] == "Yes")
-
-def facebook_log_type(dbo):
-    return cint(dbo, "FacebookLogType", DEFAULTS["FacebookLogType"])
-
-def facebook_pagename(dbo):
-    return cstring(dbo, "FacebookPageName", DEFAULTS["FacebookPageName"])
-
-def facebook_post_as(dbo):
-    return cstring(dbo, "FacebookPostAs", DEFAULTS["FacebookPostAs"])
-
-def facebook_template(dbo):
-    return cstring(dbo, "FacebookTemplate", DEFAULTS["FacebookTemplate"])
 
 def foster_on_shelter(dbo):
     return cboolean(dbo, "FosterOnShelter", DEFAULTS["FosterOnShelter"] == "Yes")

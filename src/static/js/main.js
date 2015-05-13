@@ -777,6 +777,7 @@ $(function() {
                     $("#newsnav").addClass("ui-icon-triangle-1-e");
                     $("#newswrapper").fadeOut();
                 }
+                return false;
             });
 
             // Put a random tip in the box

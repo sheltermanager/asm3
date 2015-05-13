@@ -653,18 +653,6 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '</div>',
-                '<div id="dialog-facebook" style="display: none" title="' + _("Share this animal on Facebook") + '">',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="facebookpage">' + _("Post To") + '</label></td>',
-                '<td><select id="facebookpage" class="asm-selectbox"></select></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="message">' + _("Message") + '</label></td>',
-                '<td><textarea id="facebookmessage" class="asm-textarea" rows="5"></textarea></td>',
-                '</tr>',
-                '</table>',
-                '</div>',
                 '<div id="dialog-delete" style="display: none" title="' + _("Delete") + '">',
                     '<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>' + _("This will permanently remove this animal, are you sure?") + '</p>',
                 '</div>',
@@ -674,6 +662,9 @@ $(function() {
                         + '" target="_blank" href="#">' + html.icon("facebook") + ' ' + _("Facebook") + '</a></li>',
                     '<li id="button-twitter" class="asm-menu-item"><a '
                         + '" target="_blank" href="#">' + html.icon("twitter") + ' ' + _("Twitter") + '</a></li>',
+                    '<li id="button-gplus" class="asm-menu-item"><a '
+                        + '" target="_blank" href="#">' + html.icon("gplus") + ' ' + _("Google+") + '</a></li>',
+
                 '</ul>',
                 '</div>',
                 edit_header.animal_edit_header(controller.animal, "animal", controller.tabcounts),
@@ -853,11 +844,6 @@ $(function() {
                 $(".asilomar").hide();
             }
 
-            // If the animal doesn't have a picture, they can't publish to Facebook
-            if (!controller.animal.WEBSITEMEDIANAME) {
-                $("#button-facebook").hide();
-            }
-
             // CONFIG ===========================
 
             if (config.bool("DisableShortCodesControl")) {
@@ -941,7 +927,6 @@ $(function() {
             if (config.bool("DontShowHeartworm")) { $("#heartwormrow").hide(); }
             if (config.bool("DisableLostAndFound")) { $("#button-match").hide(); }
             if (config.bool("ManualCodes")) { $("#button-gencode").hide(); }
-            if (!config.bool("FacebookEnabled")) { $("#button-facebook").hide(); }
             if (!config.bool("AddAnimalsShowTimeBroughtIn")) { $("#timebroughtinrow").hide(); }
 
             // SECURITY =============================================================
@@ -953,7 +938,7 @@ $(function() {
             if (!common.has_permission("vo")) { $("#button-currentowner").hide(); }
             if (!common.has_permission("mlaf")) { $("#button-match").hide(); }
             if (!common.has_permission("vll")) { $("#button-littermates").hide(); }
-            if (!common.has_permission("uipb")) { $("#button-facebook, #button-twitter").hide(); }
+            if (!common.has_permission("uipb")) { $("#button-share, #button-facebook, #button-twitter, #button-gplus").hide(); }
 
             // ACCORDION ICONS =======================================================
 
@@ -1235,36 +1220,6 @@ $(function() {
                 });
             });
 
-            // Facebook dialog
-            var fbbuttons = { };
-            fbbuttons[_("Post")] = function() {
-                var p = $("#facebookpage").select("value").split("|"),
-                    image_url = asm.baseurl + "/service?method=animal_image&account=" + asm.useraccount + "&method=animal_image&animalid=" + controller.animal.ID;
-                $("#dialog-facebook").disable_dialog_buttons();
-                social.facebook_post_photo(p[0], p[1], image_url, $("#facebookmessage").val(), function(response) {
-                    header.show_info(_("Successfully posted to Facebook"));
-                    $("#dialog-facebook").dialog("close");
-                    $("#dialog-facebook").enable_dialog_buttons();
-                    if (config.bool("FacebookLog")) {
-                        common.ajax_post("animal", "mode=facebooklog&id=" + controller.animal.ID + 
-                            "&pagename=" + encodeURIComponent($("#facebookpage").select("label")));
-                    }
-                });
-            };
-            fbbuttons[_("Cancel")] = function() {
-                $("#dialog-facebook").dialog("close");
-            };
-
-            $("#dialog-facebook").dialog({
-                autoOpen: false,
-                modal: true,
-                width: 550,
-                dialogClass: "dialogshadow",
-                show: dlgfx.add_show,
-                hide: dlgfx.add_hide,
-                buttons: fbbuttons
-            });
-
             // If the bonded animals are cleared (or any animalchooser as part
             // of an additional field for that matter), dirty the form.
             $(".asm-animalchooser").animalchooser().bind("animalchoosercleared", function(event, rec) {
@@ -1385,39 +1340,26 @@ $(function() {
             var view_url = asm.baseurl + "/service?method=animal_view&animalid=" + controller.animal.ID;
             if (asm.smcom) { view_url += "&account=" + asm.useraccount; }
 
-            // Facebook
-            if (!controller.hasfacebook) {
-                $("#button-facebook").hide();
+            // Social media enabled
+            if (!controller.facebookappid) {
+                $("#button-facebook, #button-twitter, #button-gplus").hide();
             }
             else {
-                // Standard with sharer
+                // Facebook
                 $("#button-facebook a").attr("href", "https://facebook.com/sharer/sharer.php?" +
-                    "app_id=" + controller.facebookclientid +
+                    "app_id=" + controller.facebookappid +
                     "&display=popup" +
                     "&u=" + encodeURIComponent(view_url));
 
-                // Integrated method
-                /*
-                $("#button-facebook a").click(function() {
-                    social.facebook_get_pages(function(pages) {
-                        var h = '<option value="me|' + social.facebook_access_token + '">' + _("My Timeline") + '</option>';
-                        $.each(pages, function(i, v) {
-                            h += '<option value="' + v.id + '|' + v.access_token + '">' + v.name + '</option>';
-                        });
-                        $("#facebookpage").html(h);
-                        $("#facebookpage").select("firstvalue");
-                        $("#facebookmessage").html(controller.facebooktext);
-                        $("#dialog-facebook").dialog("open");
-                    });
-                    return false;
-                });
-                */
-            }
+                // Twitter
+                $("#button-twitter a").attr("href", "https://twitter.com/share?" +
+                    "text=" + encodeURIComponent(html.truncate(controller.animal.ANIMALCOMMENTS, 113)) + 
+                    "&url=" + encodeURIComponent(view_url));
 
-            // Twitter
-            $("#button-twitter a").attr("href", "http://twitter.com/share?" +
-                "text=" + encodeURIComponent(html.truncate(controller.animal.ANIMALCOMMENTS, 113)) + 
-                "&url=" + encodeURIComponent(view_url));
+                // Google Plus
+                $("#button-gplus a").attr("href", "https://plus.google.com/share?" +
+                    "&url=" + encodeURIComponent(view_url));
+            }
 
             // Events that trigger rechecking of the on-screen fields
             $("#crossbreed").click(function() {

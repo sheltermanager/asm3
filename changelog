@@ -1,8 +1,9 @@
 37
 ================
 
-12/05/15 Add animalview template and switch Facebook to URL sharing API
-12/05/15 Add maint_db_dump_merge target for renumbering IDs for merging
+13/05/15 Add Google plus sharing, remove Facebook API code, update manual
+13/05/15 Add animalview template and switch Facebook to URL sharing API
+13/05/15 Add maint_db_dump_merge target for renumbering IDs for merging
 12/05/15 Add Twitter sharing #119
 12/05/15 Add service API animal_view target #119
 12/05/15 Add lb/oz boxes for US users #179

@@ -58,7 +58,6 @@ urls = (
     "/animal_diet", "animal_diet", 
     "/animal_donations", "animal_donations",
     "/animal_embed", "animal_embed",
-    "/animal_facebook", "animal_facebook",
     "/animal_find", "animal_find",
     "/animal_find_results", "animal_find_results",
     "/animal_licence", "animal_licence",
@@ -526,7 +525,6 @@ class configjs:
             s += "smcompaymentlink:'%s'," % (SMCOM_PAYMENT_LINK.replace("{alias}", dbo.alias).replace("{database}", dbo.database))
             s += "geoprovider:'%s'," % (geoprovider)
             s += "geoproviderkey:'%s'," % (geoproviderkey)
-            s += "facebookappid:'%s'," % (FACEBOOK_CLIENT_ID)
             s += "jqueryuicss:'%s'," % (JQUERY_UI_CSS)
             s += "leafletcss:'%s'," % (LEAFLET_CSS)
             s += "leafletjs:'%s'," % (LEAFLET_JS)
@@ -981,9 +979,6 @@ class animal:
         if not extanimal.is_animal_in_location_filter(a, session.locationfilter):
             raise utils.ASMPermissionError("animal not in location filter")
         al.debug("opened animal %s %s" % (a["CODE"], a["ANIMALNAME"]), "code.animal", dbo)
-        tags = wordprocessor.animal_tags(dbo, a)
-        template = configuration.facebook_template(dbo)
-        facebooktext = wordprocessor.substitute_tags(template, tags, False, "$$", "$$")
         s = html.header("", session)
         c = html.controller_json("animal", a)
         c += html.controller_plain("activelitters", html.json_autocomplete_litters(dbo))
@@ -996,9 +991,7 @@ class animal:
         c += html.controller_json("deathreasons", extlookups.get_deathreasons(dbo))
         c += html.controller_json("diarytasks", extdiary.get_animal_tasks(dbo))
         c += html.controller_json("entryreasons", extlookups.get_entryreasons(dbo))
-        c += html.controller_str("facebookclientid", FACEBOOK_CLIENT_ID)
-        c += html.controller_bool("hasfacebook", FACEBOOK_CLIENT_ID != "")
-        c += html.controller_str("facebooktext", facebooktext)
+        c += html.controller_str("facebookappid", FACEBOOK_CLIENT_ID)
         c += html.controller_json("internallocations", extlookups.get_internal_locations(dbo, session.locationfilter))
         c += html.controller_json("microchipmanufacturers", extlookups.MICROCHIP_MANUFACTURERS)
         c += html.controller_json("pickuplocations", extlookups.get_pickup_locations(dbo))
@@ -1040,14 +1033,6 @@ class animal:
         elif mode == "webnotes":
             users.check_permission(session, users.CHANGE_MEDIA)
             extanimal.update_preferred_web_media_notes(dbo, session.user, post.integer("id"), post["comments"])
-        elif mode == "facebooklog":
-            users.check_permission(session, users.ADD_LOG)
-            l = session.locale
-            a = extanimal.get_animal(dbo, post.integer("id"))
-            al.debug("FB writing entry to animal log: %s %s" % (a["SHELTERCODE"], a["ANIMALNAME"]), "code.animal", dbo)
-            extlog.add_log(dbo, session.user, extlog.ANIMAL, post.integer("id"), configuration.facebook_log_type(dbo),
-                _("{0} {1}: posted to Facebook page {2} by {3}", l).format(a["SHELTERCODE"], a["ANIMALNAME"], post["pagename"], 
-                session.user))
 
 class animal_bulk:
     def GET(self):
@@ -5328,7 +5313,6 @@ class publish_options:
         c = html.controller_json("locations", extlookups.get_internal_locations(dbo))
         c += html.controller_str("publishurl", MULTIPLE_DATABASES_PUBLISH_URL)
         c += html.controller_bool("hasftpoverride", MULTIPLE_DATABASES_PUBLISH_FTP is not None and not configuration.publisher_ignore_ftp_override(dbo))
-        c += html.controller_bool("hasfacebook", FACEBOOK_CLIENT_ID != "")
         c += html.controller_bool("hassmarttag", SMARTTAG_FTP_USER != "")
         c += html.controller_bool("hasvevendor", VETENVOY_US_VENDOR_PASSWORD != "")
         c += html.controller_bool("hasvesys", VETENVOY_US_VENDOR_USERID != "")

@@ -10,7 +10,6 @@ $(function() {
                 '<ul>',
                 '<li><a href="#tab-animalselection">' + _("Animal Selection") + '</a></li>',
                 '<li><a href="#tab-allpublishers">' + _("All Publishers") + '</a></li>',
-                '<li class="facebook"><a href="#tab-facebook">' + _("Facebook Sharing") + '</a></li>',
                 '<li><a href="#tab-htmlftp">' + _("HTML/FTP Publisher") + '</a></li>',
                 '<li class="localeus"><a href="#tab-adoptapet">AdoptAPet Publisher</a></li>',
                 '<li><a href="#tab-helpinglostpets">HelpingLostPets Publisher</a></li>',
@@ -245,32 +244,6 @@ $(function() {
                 '<td>',
                 html.info('The chip password is the password that allows owners to update their own information on the PetLink' +
                   'website in combination with their email address.'),
-                '</td>',
-                '</tr>',
-                '</table>',
-                '</div>'
-            ].join("\n");
-        },
-
-        render_facebook: function() {
-            return [
-                '<div id="tab-facebook">',
-                '<p>',
-                '<input id="enabledfb" type="checkbox" class="asm-checkbox cfg enablecheck" data="FacebookEnabled" /><label for="enablefb">' + _("Enable sharing animals via Facebook") + '</label>',
-                '</p>',
-                '<table>',
-                '<tr>',
-                '<td><label for="fbformat">' + _("Template for Facebook posts") + '</label></td>',
-                '<td><textarea id="fbformat" type="text" rows="5" class="asm-textareafixeddouble cfg" data="FacebookTemplate"',
-                'title="' + html.title(_("Include this information on animals shared via Facebook")) + '"></textarea></td>',
-                '</tr>',
-                '<tr>',
-                '<td></td>',
-                '<td>',
-                '<input id="logonfb" type="checkbox" class="asm-checkbox cfg" data="FacebookLog" /><label for="logonfb">' + _("When posting an animal to Facebook, make a note of it in the log with this type") + '</label>',
-                '<select data="FacebookLogType" id="facebooklogtype" class="asm-selectbox cfg">',
-                html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
-                '</select>',
                 '</td>',
                 '</tr>',
                 '</table>',
@@ -736,7 +709,6 @@ $(function() {
                 this.render_anibase(),
                 this.render_pettrac(),
                 this.render_petlink(),
-                this.render_facebook(),
                 this.render_htmlftp(),
                 this.render_petfinder(),
                 this.render_petrescue(),
@@ -873,7 +845,6 @@ $(function() {
             $(".localeca").hide();
             $(".localegb").hide();
             $(".localemx").hide();
-            $(".facebook").hide();
 
             // Enable tabs for US only publishers
             if (asm.locale == "en") {
@@ -898,11 +869,6 @@ $(function() {
             // Enable tab sections for Mexican publishers
             if (asm.locale == "en_MX" || asm.locale == "es_MX") {
                 $(".localemx").show();
-            }
-
-            // Enable tab sections for facebook
-            if (controller.hasfacebook) {
-                $(".facebook").show();
             }
 
             // Disable VetEnvoy if there's no vendor password

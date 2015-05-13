@@ -73,44 +73,6 @@ The All Publishers tab allows you to set options common to all internet publishe
 * Add this text to all animal descriptions: Allows you to set a footer on every
   animal description before it is published.
 
-Facebook
---------
-
-.. image:: images/facebook.png
-
-This only works for sheltermanager.com customers as Facebook require a
-registered application, and applications have to belong to a fixed domain. This
-is so that other Facebook users can filter your posts by application.
-
-You can publish an animal's photo and adoption details to Facebook by clicking
-the Facebook button on the main animal details toolbar. The details will be
-merged with the facebook template configured in publishing options and it will
-be posted to the timeline of the page you specified in the configuration at
-:menuselection:`Publishing --> Set Publishing Options`
-
-.. image:: images/facebook_config.png
-
-The template allows you to specify the text that will be posted to Facebook,
-using the same wordkeys as the HTML publisher.
-
-You can choose to post to Facebook as yourself or as your page. If you choose
-page, you must complete the page name field.
-
-The Facebook page name field should contain a portion of your Facebook page
-name as presented to the user (it's the main page title that appears at the top
-of the page). The reason for this is that Facebook users can administer
-multiple pages, so ASM needs to be able to find your page in the list available
-for your Facebook user. It only needs to be a portion of the page name that
-uniquely identifies it. For example, if your Facebook page name is “Humane
-Society of Georgia”, then you could just put the word “Humane” in there to help
-ASM find it.
-
-If you want to post to the logged in Facebook user's wall, then leave the page
-name blank.
-
-Finally, if you wish, you can have ASM write a log entry to the animal's record
-whenever you publish an animal to Facebook.
-
 HTML/FTP Publishing
 -------------------
 
