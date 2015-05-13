@@ -1,0 +1,20 @@
+<img id="mainpic" src="$$WEBMEDIAFILENAME$$" />
+<h2>$$ANIMALNAME$$ - $$SHELTERCODE$$</h2>
+<p>$$SEX$$ $$SPECIESNAME$$ aged $$DISPLAYAGE$$. </p>
+
+<p>
+<ul>
+<script>
+    if ('$$GoodWithCats$$' == 'Yes') document.write("<li>Good with cats</li>");
+    if ('$$GoodWithDogs$$' == 'Yes') document.write("<li>Good with dogs</li>");
+    if ('$$GoodWithChildren$$' == 'Yes') document.write("<li>Good with children</li>");
+    if ('$$HouseTrained$$' == 'Yes') document.write("<li>Housetrained</li>");
+    if ('$$GoodWithCats$$' == 'No') document.write("<li>NOT Good with cats</li>");
+    if ('$$GoodWithDogs$$' == 'No') document.write("<li>NOT Good with dogs</li>");
+    if ('$$GoodWithChildren$$' == 'No') document.write("<li>NOT Good with children</li>");
+    if ('$$HouseTrained$$' == 'No') document.write("<li>NOT Housetrained</li>");
+</script>
+</ul>
+</p>
+
+<p>$$ANIMALCOMMENTS$$</p>

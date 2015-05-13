@@ -7,7 +7,7 @@ import os, sys
 from i18n import _, BUILD
 from sitedefs import DB_PK_STRATEGY
 
-LATEST_VERSION = 33703
+LATEST_VERSION = 33704
 VERSIONS = ( 
     2870, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3050,
     3051, 3081, 3091, 3092, 3093, 3094, 3110, 3111, 3120, 3121, 3122, 3123, 3200,
@@ -18,7 +18,7 @@ VERSIONS = (
     33206, 33300, 33301, 33302, 33303, 33304, 33305, 33306, 33307, 33308, 33309,
     33310, 33311, 33312, 33313, 33314, 33315, 33316, 33401, 33402, 33501, 33502,
     33503, 33504, 33505, 33506, 33507, 33508, 33600, 33601, 33602, 33603, 33604,
-    33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702, 33703
+    33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702, 33703, 33704
 )
 
 # All ASM3 tables
@@ -2206,6 +2206,10 @@ def install_default_media(dbo, removeFirst = False):
         db.execute_dbupdate(dbo, "DELETE FROM dbfs WHERE Path Like '/internet%' OR Path Like '/report%' OR Path Like '/template%'")
     al.info("creating default media", "dbupdate.install_default_media", dbo)
     dbfs.create_path(dbo, "/", "internet")
+    dbfs.create_path(dbo, "/internet", "animalview")
+    dbfs.put_file(dbo, "body.html", "/internet/animalview", path + "media/internet/animalview/body.html")
+    dbfs.put_file(dbo, "foot.html", "/internet/animalview", path + "media/internet/animalview/foot.html")
+    dbfs.put_file(dbo, "head.html", "/internet/animalview", path + "media/internet/animalview/head.html")
     dbfs.create_path(dbo, "/internet", "littlebox")
     dbfs.put_file(dbo, "body.html", "/internet/littlebox", path + "media/internet/littlebox/body.html")
     dbfs.put_file(dbo, "foot.html", "/internet/littlebox", path + "media/internet/littlebox/foot.html")
@@ -3992,4 +3996,12 @@ def update_33703(dbo):
     modify_column(dbo, "stocklevel", "Total", floattype(dbo), "Total::real") 
     modify_column(dbo, "stocklevel", "Balance", floattype(dbo), "Balance::real") 
     modify_column(dbo, "stockusage", "Quantity", floattype(dbo), "Quantity::real") 
+
+def update_33704(dbo):
+    # Add the default animalview template
+    path = dbo.installpath
+    dbfs.create_path(dbo, "/internet", "animalview")
+    dbfs.put_file(dbo, "body.html", "/internet/animalview", path + "media/internet/animalview/body.html")
+    dbfs.put_file(dbo, "foot.html", "/internet/animalview", path + "media/internet/animalview/foot.html")
+    dbfs.put_file(dbo, "head.html", "/internet/animalview", path + "media/internet/animalview/head.html")
 

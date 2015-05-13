@@ -82,8 +82,6 @@ img {
 
 .boxshadow .dialogshadow, .boxshadow .menushadow, .boxshadow .thumbnailshadow {
     box-shadow: 3px 3px 5px #888;
-    -webkit-box-shadow: 3px 3px 5px #888;
-    -moz-box-shadow: 3px 3px 5px #888;
 }
 
 .ie8 .dialogshadow, .ie8 .menushadow, .ie8 .thumbnailshadow {
@@ -468,11 +466,7 @@ img {
     display: inline-block;
     white-space: nowrap;
 	border-radius: 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
     box-shadow: 0 1px 3px #DDD;
-    -moz-box-shadow: 0 1px 3px #DDD;
-    -webkit-box-shadow: 0 1px 3px #DDD;
     border: 1px solid #555;
     padding: 5px;
     margin: 1px;
@@ -491,11 +485,7 @@ img {
     display: inline-block;
     white-space: nowrap;
 	border-radius: 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
     box-shadow: 0 1px 3px #DDD;
-    -moz-box-shadow: 0 1px 3px #DDD;
-    -webkit-box-shadow: 0 1px 3px #DDD;
     border: 1px solid #555;
     padding: 5px;
     margin: 1px;
@@ -569,14 +559,10 @@ img {
 
 .boxshadow .controlshadow {
     box-shadow: 0 1px 2px #DDD;
-    -moz-box-shadow: 0 1px 2px #DDD;
-    -webkit-box-shadow: 0 1px 2px #DDD;
 }
 
 .borderradius .controlborder {
     border-radius: 2px;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
 }
 
 .asm-textareafixed {
@@ -672,11 +658,7 @@ select[disabled="disabled"], input[disabled="disabled"], textarea[disabled="disa
     height: expression(this.height > 70 ? "70px" : true);
     background-color: #fff;
     border-radius: 2px;
-    -webkit-border-radius: 2px;
-    -moz-border-radius: 2px;
     box-shadow: 3px 3px 5px #888;
-    -webkit-box-shadow: 3px 3px 5px #888;
-    -moz-box-shadow: 3px 3px 5px #888;
 }
 
 .asm-textbox, .asm-selectbox {
