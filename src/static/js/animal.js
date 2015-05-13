@@ -671,7 +671,7 @@ $(function() {
                 '<div id="button-share-body" class="asm-menu-body">',
                 '<ul class="asm-menu-list">',
                     '<li id="button-facebook" class="asm-menu-item"><a '
-                        + '" href="#">' + html.icon("facebook") + ' ' + _("Facebook") + '</a></li>',
+                        + '" target="_blank" href="#">' + html.icon("facebook") + ' ' + _("Facebook") + '</a></li>',
                     '<li id="button-twitter" class="asm-menu-item"><a '
                         + '" target="_blank" href="#">' + html.icon("twitter") + ' ' + _("Twitter") + '</a></li>',
                 '</ul>',
@@ -1381,11 +1381,23 @@ $(function() {
                 });
             });
 
+            // Link to our animal_view page for sharing
+            var view_url = asm.baseurl + "/service?method=animal_view&animalid=" + controller.animal.ID;
+            if (asm.smcom) { view_url += "&account=" + asm.useraccount; }
+
             // Facebook
             if (!controller.hasfacebook) {
                 $("#button-facebook").hide();
             }
             else {
+                // Standard with sharer
+                $("#button-facebook a").attr("href", "https://facebook.com/sharer/sharer.php?" +
+                    "app_id=" + controller.facebookclientid +
+                    "&display=popup" +
+                    "&u=" + encodeURIComponent(view_url));
+
+                // Integrated method
+                /*
                 $("#button-facebook a").click(function() {
                     social.facebook_get_pages(function(pages) {
                         var h = '<option value="me|' + social.facebook_access_token + '">' + _("My Timeline") + '</option>';
@@ -1399,11 +1411,10 @@ $(function() {
                     });
                     return false;
                 });
+                */
             }
 
             // Twitter
-            var view_url = asm.baseurl + "/service?method=animal_view&animalid=" + controller.animal.ID;
-            if (asm.smcom) { view_url += "&account=" + asm.useraccount; }
             $("#button-twitter a").attr("href", "http://twitter.com/share?" +
                 "text=" + encodeURIComponent(html.truncate(controller.animal.ANIMALCOMMENTS, 113)) + 
                 "&url=" + encodeURIComponent(view_url));
