@@ -658,6 +658,11 @@ $(function() {
                 '</div>',
                 '<div id="button-share-body" class="asm-menu-body">',
                 '<ul class="asm-menu-list">',
+                    '<li id="button-shareemail" class="asm-menu-item"><a '
+                        + '" target="_blank" href="#">' + html.icon("email") + ' ' + _("Email") + '</a></li>',
+                    '<li id="button-shareweb" class="asm-menu-item"><a '
+                        + '" target="_blank" href="#">' + html.icon("web") + ' ' + _("Web") + '</a></li>',
+                    '<li class="asm-menu-category">' + _("Social") + ' </li>',
                     '<li id="button-facebook" class="asm-menu-item"><a '
                         + '" target="_blank" href="#">' + html.icon("facebook") + ' ' + _("Facebook") + '</a></li>',
                     '<li id="button-twitter" class="asm-menu-item"><a '
@@ -676,7 +681,7 @@ $(function() {
                     { id: "diarytask", text: _("Diary Task"), type: "buttonmenu", icon: "diary-task", tooltip: _("Create diary notes from a task") },
                     { id: "match", text: _("Match"), icon: "match", tooltip: _("Match this animal with the lost and found database") },
                     { id: "littermates", text: _("Littermates"), icon: "litter", tooltip: _("View littermates") },
-                    { id: "share", text: _("Share"), type: "buttonmenu", icon: "social", tooltip: _("Share this animal via social media") }
+                    { id: "share", text: _("Share"), type: "buttonmenu", icon: "social" }
                 ]),
                 '<div id="asm-details-accordion">',
                 animal.render_details(),
@@ -938,7 +943,7 @@ $(function() {
             if (!common.has_permission("vo")) { $("#button-currentowner").hide(); }
             if (!common.has_permission("mlaf")) { $("#button-match").hide(); }
             if (!common.has_permission("vll")) { $("#button-littermates").hide(); }
-            if (!common.has_permission("uipb")) { $("#button-share, #button-facebook, #button-twitter, #button-gplus").hide(); }
+            if (!common.has_permission("uipb")) { $("#button-share").hide(); }
 
             // ACCORDION ICONS =======================================================
 
@@ -1340,11 +1345,16 @@ $(function() {
             var view_url = asm.baseurl + "/service?method=animal_view&animalid=" + controller.animal.ID;
             if (asm.smcom) { view_url += "&account=" + asm.useraccount; }
 
-            // Social media enabled
+            // Sharing enabled
             if (!controller.facebookappid) {
-                $("#button-facebook, #button-twitter, #button-gplus").hide();
+                $("#button-share").hide();
             }
             else {
+
+                // Web and email
+                $("#button-shareweb a").attr("href", view_url);
+                $("#button-shareemail a").attr("href", "mailto:?body=" + encodeURIComponent(view_url));
+
                 // Facebook
                 $("#button-facebook a").attr("href", "https://facebook.com/sharer/sharer.php?" +
                     "app_id=" + controller.facebookappid +

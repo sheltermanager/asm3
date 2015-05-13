@@ -3876,8 +3876,8 @@ msgid "Eligible for gift aid"
 msgstr ""
 
 #: media.js waitinglist_results.js person.js incident.js users.js
-#: person_find.js person_find_results.js options.js lostfound.js waitinglist.js
-#: html.py
+#: person_find.js animal.js person_find_results.js options.js lostfound.js
+#: waitinglist.js html.py
 msgid "Email"
 msgstr ""
 
@@ -3961,10 +3961,6 @@ msgstr ""
 
 #: options.js
 msgid "Enable lost and found functionality"
-msgstr ""
-
-#: publish_options.js
-msgid "Enable sharing animals via Facebook"
 msgstr ""
 
 #: options.js
@@ -4346,10 +4342,6 @@ msgstr ""
 
 #: animal.js
 msgid "Facebook"
-msgstr ""
-
-#: publish_options.js
-msgid "Facebook Sharing"
 msgstr ""
 
 #: code.py
@@ -4988,6 +4980,10 @@ msgstr ""
 msgid "Good with kids"
 msgstr ""
 
+#: animal.js
+msgid "Google+"
+msgstr ""
+
 #: dbupdate.py
 msgid "Goose"
 msgstr ""
@@ -5545,10 +5541,6 @@ msgstr ""
 
 #: media.js
 msgid "Include this image when publishing"
-msgstr ""
-
-#: publish_options.js
-msgid "Include this information on animals shared via Facebook"
 msgstr ""
 
 #: dbupdate.py
@@ -6532,7 +6524,7 @@ msgstr ""
 msgid "Merge duplicate records"
 msgstr ""
 
-#: media.js animal.js main.js
+#: media.js main.js
 msgid "Message"
 msgstr ""
 
@@ -6777,10 +6769,6 @@ msgstr ""
 
 #: mobile.py
 msgid "My Incidents"
-msgstr ""
-
-#: animal.js
-msgid "My Timeline"
 msgstr ""
 
 #: header.js configuration.py html.py
@@ -7866,14 +7854,6 @@ msgstr ""
 
 #: lookups.py
 msgid "Positive/Negative"
-msgstr ""
-
-#: animal.js
-msgid "Post"
-msgstr ""
-
-#: animal.js
-msgid "Post To"
 msgstr ""
 
 #: dbupdate.py
@@ -9117,14 +9097,6 @@ msgstr ""
 msgid "Share"
 msgstr ""
 
-#: animal.js
-msgid "Share this animal on Facebook"
-msgstr ""
-
-#: animal.js
-msgid "Share this animal via social media"
-msgstr ""
-
 #: dbupdate.py
 msgid "Shares"
 msgstr ""
@@ -9475,6 +9447,10 @@ msgstr ""
 msgid "Snowshoe"
 msgstr ""
 
+#: animal.js
+msgid "Social"
+msgstr ""
+
 #: dbupdate.py
 msgid "Softbill (Other)"
 msgstr ""
@@ -9758,10 +9734,6 @@ msgstr ""
 msgid "Successfully attached to {0}"
 msgstr ""
 
-#: animal.js
-msgid "Successfully posted to Facebook"
-msgstr ""
-
 #: dbupdate.py
 msgid "Sugar Glider"
 msgstr ""
@@ -9896,10 +9868,6 @@ msgstr ""
 
 #: document_templates.js
 msgid "Template Name"
-msgstr ""
-
-#: publish_options.js
-msgid "Template for Facebook posts"
 msgstr ""
 
 #: document_templates.js
@@ -11711,6 +11679,10 @@ msgstr ""
 msgid "We"
 msgstr ""
 
+#: animal.js
+msgid "Web"
+msgstr ""
+
 #: common.js calendarview.js
 msgid "Wed"
 msgstr ""
@@ -11805,12 +11777,6 @@ msgstr ""
 
 #: options.js
 msgid "When matching lost animals, include shelter animals"
-msgstr ""
-
-#: publish_options.js
-msgid ""
-"When posting an animal to Facebook, make a note of it in the log with this "
-"type"
 msgstr ""
 
 #: publish_options.js
@@ -12319,10 +12285,6 @@ msgstr ""
 
 #: animal.py
 msgid "{0} {1}: not available for adoption"
-msgstr ""
-
-#: code.py
-msgid "{0} {1}: posted to Facebook page {2} by {3}"
 msgstr ""
 
 #: animal.py
