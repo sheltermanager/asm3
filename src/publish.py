@@ -362,6 +362,7 @@ def get_animal_view(dbo, animalid):
         foot = "</body>\n</html>"
     s = head + body + foot
     tags = wordprocessor.animal_tags(dbo, a)
+    tags = wordprocessor.append_tags(tags, wordprocessor.org_tags(dbo, "system"))
     s = wordprocessor.substitute_tags(s, tags, True, "$$", "$$")
     return s
 
