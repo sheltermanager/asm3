@@ -2376,6 +2376,7 @@ def dump_merge(dbo, deleteViewSeq = True):
     fix_and_dump("animalvaccination", [ "ID", "AnimalID", "VaccinationID" ])
     fix_and_dump("diary", [ "ID", "LinkID" ])
     fix_and_dump("internallocation", [ "ID", ])
+    fix_and_dump("lkownerflags", [ "ID", ])
     fix_and_dump("log", [ "ID", "LinkID" ])
     fix_and_dump("owner", [ "ID", "HomeCheckedBy" ])
     fix_and_dump("ownercitation", [ "ID", "OwnerID", "AnimalControlID" ])
