@@ -2349,16 +2349,16 @@ def dump_merge(dbo, deleteViewSeq = True):
     """
     ID_OFFSET = 100000
     s = []
-    def fix_and_dump(table, fields = []):
+    def fix_and_dump(table, fields):
         rows = db.query(dbo, "SELECT * FROM %s" % table)
         for r in rows:
             for f in fields:
-                if f == "AdoptionNumber" or f == "ShelterCode":
+                f = f.upper()
+                if f == "ADOPTIONNUMBER" or f == "SHELTERCODE":
                     r[f] = "MG" + r[f]
                 elif r[f] is not None:
                     r[f] += ID_OFFSET
         s.append(db.rows_to_insert_sql(table, rows, ""))
-
     fix_and_dump("adoption", [ "ID", "AnimalID", "AdoptionNumber", "OwnerID", "RetailerID", "OriginalRetailerMovementID" ])
     fix_and_dump("animal", [ "ID", "AnimalTypeID", "ShelterLocation", "ShelterCode", "BondedAnimalID", "BondedAnimal2ID", "OwnersVetID", "CurrentVetID", "OriginalOwnerID", "BroughtInByOwnerID", "PickedUpByOwnerID", "ActiveMovementID" ])
     fix_and_dump("animalcontrol", [ "ID", "CallerID", "VictimID", "OwnerID", "Owner2ID", "Owner3ID", "AnimalID" ])
@@ -2394,7 +2394,6 @@ def dump_merge(dbo, deleteViewSeq = True):
     fix_and_dump("testresult", [ "ID", ])
     fix_and_dump("vaccinationtype", [ "ID", ])
     fix_and_dump("voucher", [ "ID", ])
-    fix_and_dump("vouchertype", [ "ID", ])
     if deleteViewSeq: s.append("DELETE FROM configuration WHERE ItemName LIKE 'DBViewSeqVersion';\n")
     return "".join(s)
 
