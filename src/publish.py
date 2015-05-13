@@ -1421,7 +1421,7 @@ class AdoptAPetPublisher(FTPPublisher):
                 if self.pc.includeColours:
                     line.append("\"%s\"" % an["BASECOLOURNAME"])
                 # Description
-                line.append("\"%s\"" % self.getDescription(an, crToBR=True))
+                line.append("\"%s\"" % self.getDescription(an, crToBr=True))
                 # Status, one of Available, Adopted or Delete
                 line.append("\"Available\"")
                 # Good with Kids
@@ -3578,7 +3578,7 @@ class RescueGroupsPublisher(FTPPublisher):
                 # courtesy (what is this?)
                 line.append("\"\"")
                 # Description
-                line.append("\"%s\"" % self.getDescription(an, crToBR=True))
+                line.append("\"%s\"" % self.getDescription(an, crToBr=True))
                 # pic1-pic4
                 if totalimages > 0:
                     # UploadAll isn't on, there was just one image with sheltercode == name
