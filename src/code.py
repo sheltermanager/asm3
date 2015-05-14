@@ -5418,7 +5418,8 @@ class report_export:
             title = extreports.get_title(dbo, crid)
             al.debug("building criteria form for report %d %s" % (crid, title), "code.report", dbo)
             s = html.header(title, session)
-            s += html.controller(html.controller_bool("norows", True))
+            c = html.controller_bool("norows", True)
+            s += html.controller(c)
             s += html.heading(title)
             s += "<div id=\"criteriaform\">"
             s += "<input data-post=\"id\" type=\"hidden\" value=\"%d\" />" % crid
@@ -5427,9 +5428,7 @@ class report_export:
             s += "</div>"
             s += html.footing()
             s += html.footer()
-            web.header("Content-Type", "text/html")
-            web.header("Cache-Control", "no-cache")
-            return s
+            return full_or_json("report_export", s, c, post["json"] == "true")
         elif mode == "exec":
             title = extreports.get_title(dbo, post.integer("id"))
             filename = title.replace(" ", "_").replace("\"", "").replace("'", "").lower()

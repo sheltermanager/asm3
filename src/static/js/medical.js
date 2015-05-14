@@ -347,12 +347,7 @@ $(function() {
             tableform.dialog_show_add(dialog, function() {
                 tableform.dialog_disable_buttons();   
                 tableform.fields_post(dialog.fields, "mode=create", controller.name, function(response) {
-                    if (controller.animal) {
-                        common.route(controller.name + "?id=" + controller.animal.ID);
-                    }
-                    else {
-                        common.route(controller.name + "?offset=" + $("#offset").val());
-                    }
+                    common.route_reload();
                 }, function() {
                     tableform.dialog_enable_buttons();   
                 });

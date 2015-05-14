@@ -130,7 +130,7 @@ $(function() {
             }
         },
         routes: {
-            "person_rota": function() { common.module_loadandstart("person_rota", "person_rota?id=" + this.qs.id); }
+            "person_rota": function() { common.module_loadandstart("rota", "person_rota?id=" + this.qs.id); }
         }
 
     };

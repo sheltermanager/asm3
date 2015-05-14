@@ -316,7 +316,7 @@
         /** Returns true if the path supplied can be handled by client side routing */
         route_is_client: function(path) {
             var NOT_CLIENT_SIDE = [ "#", "/", "http", "image?", "document_edit", "document_gen", "document_media_edit", 
-                "logout", "mailmerge?", "report?", "static" ],
+                "logout", "mailmerge?", "report?", "report_export?", "static" ],
                 isclient = true;
             if (path.indexOf("ajax=false") != -1) { return false; }
             $.each(NOT_CLIENT_SIDE, function(i, v) {
