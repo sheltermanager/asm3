@@ -99,10 +99,6 @@ ROLLUP_JS = False
 # service calls from this domain, or comma separated list of domains
 IMAGE_HOTLINKING_ONLY_FROM_DOMAIN = ""
 
-# If you have a facebook app for page/wall posting, the id and secret
-FACEBOOK_CLIENT_ID = ""
-FACEBOOK_CLIENT_SECRET = ""
-
 # QR code provider. "url" and "size" tokens will be substituted
 QR_IMG_SRC = "//chart.googleapis.com/chart?cht=qr&chl=%(url)s&chs=%(size)s"
 

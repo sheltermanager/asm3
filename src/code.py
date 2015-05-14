@@ -43,7 +43,7 @@ import utils
 import waitinglist as extwaitinglist
 import web
 import wordprocessor
-from sitedefs import BASE_URL, DEPLOYMENT_TYPE, DUMP_OVERRIDES, EMERGENCY_NOTICE, FORGOTTEN_PASSWORD, FORGOTTEN_PASSWORD_LABEL, LOCALE, FACEBOOK_CLIENT_ID, GEO_PROVIDER, GEO_PROVIDER_KEY, JQUERY_UI_CSS, LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_PUBLISH_URL, MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MAP_LINK, MAP_PROVIDER, OSM_MAP_TILES, PETRESCUE_FTP_HOST, QR_IMG_SRC, SESSION_STORE, SMARTTAG_FTP_USER, SMTP_SERVER, SMCOM_PAYMENT_LINK, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_VENDOR_USERID
+from sitedefs import BASE_URL, DEPLOYMENT_TYPE, DUMP_OVERRIDES, EMERGENCY_NOTICE, FORGOTTEN_PASSWORD, FORGOTTEN_PASSWORD_LABEL, LOCALE, GEO_PROVIDER, GEO_PROVIDER_KEY, JQUERY_UI_CSS, LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_PUBLISH_URL, MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MAP_LINK, MAP_PROVIDER, OSM_MAP_TILES, PETRESCUE_FTP_HOST, QR_IMG_SRC, SESSION_STORE, SMARTTAG_FTP_USER, SMTP_SERVER, SMCOM_PAYMENT_LINK, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_VENDOR_USERID
 
 # URL to class mappings
 urls = (
@@ -993,7 +993,6 @@ class animal:
         c += html.controller_json("deathreasons", extlookups.get_deathreasons(dbo))
         c += html.controller_json("diarytasks", extdiary.get_animal_tasks(dbo))
         c += html.controller_json("entryreasons", extlookups.get_entryreasons(dbo))
-        c += html.controller_str("facebookappid", FACEBOOK_CLIENT_ID)
         c += html.controller_json("internallocations", extlookups.get_internal_locations(dbo, session.locationfilter))
         c += html.controller_json("microchipmanufacturers", extlookups.MICROCHIP_MANUFACTURERS)
         c += html.controller_json("pickuplocations", extlookups.get_pickup_locations(dbo))

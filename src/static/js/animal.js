@@ -1076,6 +1076,44 @@ $(function() {
         },
 
         /**
+         * Generates the sharing links/share button
+         */
+        set_sharinglinks: function() {
+
+            if (!asm.smcom) { $("#button-share").hide(); return; }
+
+            // Link to our animal_view page and image for sharing
+            var view_url = asm.baseurl + "/service?method=animal_view&animalid=" + controller.animal.ID;
+            var view_image = asm.baseurl + "/service?method=animal_image&animalid=" + controller.animal.ID;
+            if (asm.smcom) { view_url += "&account=" + asm.useraccount; view_image += "&account=" + asm.useraccount; }
+
+
+            // Web and email
+            $("#button-shareweb a").attr("href", view_url);
+            $("#button-shareemail a").attr("href", "mailto:?body=" + encodeURIComponent(view_url));
+
+            // Facebook
+            $("#button-facebook a").attr("href", "https://facebook.com/sharer/sharer.php?" +
+                "&u=" + encodeURIComponent(view_url));
+
+            // Twitter
+            $("#button-twitter a").attr("href", "https://twitter.com/share?" +
+                "text=" + encodeURIComponent(html.truncate(controller.animal.ANIMALCOMMENTS, 113)) + 
+                "&url=" + encodeURIComponent(view_url));
+
+            // Google Plus
+            $("#button-gplus a").attr("href", "https://plus.google.com/share?" +
+                "&url=" + encodeURIComponent(view_url));
+
+            // Pinterest
+            $("#button-pinterest a").attr("href", "http://pinterest.com/pin/create/button/?" +
+                "url=" + encodeURIComponent(view_url) + 
+                "&media=" + encodeURIComponent(view_image) +
+                "&description=" + encodeURIComponent(html.truncate(controller.animal.ANIMALCOMMENTS, 120)));
+
+        },
+
+        /**
          * Bind widgets and control events
          */
         bind: function() {
@@ -1344,44 +1382,6 @@ $(function() {
                 });
             });
 
-            // Link to our animal_view page and image for sharing
-            var view_url = asm.baseurl + "/service?method=animal_view&animalid=" + controller.animal.ID;
-            var view_image = asm.baseurl + "/service?method=animal_image&animalid=" + controller.animal.ID;
-            if (asm.smcom) { view_url += "&account=" + asm.useraccount; view_image += "&account=" + asm.useraccount; }
-
-            // Sharing enabled
-            if (!controller.facebookappid) {
-                $("#button-share").hide();
-            }
-            else {
-
-                // Web and email
-                $("#button-shareweb a").attr("href", view_url);
-                $("#button-shareemail a").attr("href", "mailto:?body=" + encodeURIComponent(view_url));
-
-                // Facebook
-                $("#button-facebook a").attr("href", "https://facebook.com/sharer/sharer.php?" +
-                    "app_id=" + controller.facebookappid +
-                    "&display=popup" +
-                    "&u=" + encodeURIComponent(view_url));
-
-                // Twitter
-                $("#button-twitter a").attr("href", "https://twitter.com/share?" +
-                    "text=" + encodeURIComponent(html.truncate(controller.animal.ANIMALCOMMENTS, 113)) + 
-                    "&url=" + encodeURIComponent(view_url));
-
-                // Google Plus
-                $("#button-gplus a").attr("href", "https://plus.google.com/share?" +
-                    "&url=" + encodeURIComponent(view_url));
-
-                // Pinterest
-                $("#button-pinterest a").attr("href", "http://pinterest.com/pin/create/button/?" +
-                    "url=" + encodeURIComponent(view_url) + 
-                    "&media=" + encodeURIComponent(view_image) +
-                    "&description=" + encodeURIComponent(html.truncate(controller.animal.ANIMALCOMMENTS, 120)));
-
-            }
-
             // Events that trigger rechecking of the on-screen fields
             $("#crossbreed").click(function() {
                 animal.enable_widgets();
@@ -1404,6 +1404,9 @@ $(function() {
             // Update on-screen fields from the data and display the screen
             animal.enable_widgets();
             animal.show_microchip_supplier();
+
+            // Share button/links
+            animal.set_sharinglinks();
 
             // Dirty handling
             validate.bind_dirty([ "animal_" ]);
