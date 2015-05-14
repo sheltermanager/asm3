@@ -252,6 +252,7 @@ for row in cshelter:
         m.MovementDate = asm.getdate_yyyymmdd(row["DISPDATE"])
         a.Archived = 1
         a.ActiveMovementID = m.ID
+        a.ActiveMovementDate = m.MovementDate
         a.ActiveMovementType = 1
         movements.append(m)
 
@@ -265,6 +266,7 @@ for row in cshelter:
         m.MovementDate = asm.getdate_yyyymmdd(row["DISPDATE"])
         a.Archived = 1
         a.ActiveMovementID = m.ID
+        a.ActiveMovementDate = m.MovementDate
         a.ActiveMovementType = 5
         movements.append(m)
 
@@ -278,6 +280,7 @@ for row in cshelter:
         m.MovementDate = asm.getdate_yyyymmdd(row["DISPDATE"])
         m.Comments = row["DISPMETH"]
         a.Archived = 1
+        a.ActiveMovementDate = m.MovementDate
         a.ActiveMovementID = m.ID
         a.ActiveMovementType = 7
         movements.append(m)
