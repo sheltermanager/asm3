@@ -73,6 +73,7 @@ $(function() {
                      } 
                  }
             ];
+            this.dialog = dialog;
             this.table = table;
             this.buttons = buttons;
         },

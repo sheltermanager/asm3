@@ -1208,9 +1208,9 @@ $(function() {
 
             // Diary task create ajax call
             var create_task = function(taskid) {
-                var formdata = "mode=exec&id=" + $("#animalid").val() + "&tasktype=ANIMAL&taskid=" + taskid + "&seldate=" + $("#seldate").val();
+                var formdata = "mode=exec&id=" + controller.animal.ID + "&tasktype=ANIMAL&taskid=" + taskid + "&seldate=" + $("#seldate").val();
                 common.ajax_post("diarytask", formdata, function(result) { 
-                    common.route("animal_diary?id=" + $("#animalid").val());
+                    common.route("animal_diary?id=" + controller.animal.ID);
                 });
             };
 
@@ -1229,6 +1229,7 @@ $(function() {
                 });
                 if (valid) {
                     create_task($("#diarytaskid").val());
+                    $("#dialog-dt-date").dialog("close");
                 }
             };
             addbuttons[_("Cancel")] = function() {

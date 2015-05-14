@@ -157,7 +157,7 @@ def get_animal_tasks(dbo):
     """
     return db.query(dbo, "SELECT *, CASE " \
         "WHEN EXISTS(SELECT * FROM diarytaskdetail WHERE " \
-        "DiaryTaskHeadID = dth.ID AND DayPivot = 0) THEN 1 " \
+        "DiaryTaskHeadID = dth.ID AND DayPivot = 9999) THEN 1 " \
         "ELSE 0 END AS NEEDSDATE " \
         "FROM diarytaskhead dth WHERE dth.RecordType = %d" % ANIMAL_TASK)
 

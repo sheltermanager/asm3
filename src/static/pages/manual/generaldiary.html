@@ -357,12 +357,13 @@ diary notes.</p>
 <p>In the example above, we would create a new diary task called “Starve and
 Neuter”. The task would have two items on its list (diary tasks can have an
 unlimited number of items); one for the starving and one for the neutering. The
-day pivot on the starving will be a 0 - zero means that the system should ask
-the user for the actual date to go on that task when they apply it to the
-animal (after all, you can book a neuter operation for any time). The day pivot
-on the operation will be a 1 - because it occurs one day after the starving.
-This is because diary tasks are cumulative - each one is performed in order and
-the day pivot is taken relative to the date on the task that ran before it.</p>
+day pivot on the starving will be a 9999 - this value means that the system
+should ask the user for the actual date to go on that task when they apply it
+to the animal (after all, you can book a neuter operation for any time). The
+day pivot on the operation will be a 1 - because it occurs one day after the
+starving.  This is because diary tasks are cumulative - each one is performed
+in order and the day pivot is taken relative to the date on the task that ran
+before it.</p>
 <p>If we created another task for after the operation, say “Check on the animal in
 a week”, then we would set the day pivot to 7, because the task comes after the
 operation and it should generate a reminder 7 days from the operation.</p>
