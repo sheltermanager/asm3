@@ -2093,7 +2093,7 @@ class HTMLPublisher(FTPPublisher):
 
         # Append the footer, flush and upload the page
         thisPage += footer
-        self.log("Saving page to disk: %s" % thisPageName)
+        self.log("Saving page to disk: %s (%d bytes)" % (thisPageName, len(thisPage)))
         self.saveFile(os.path.join(self.publishDir, thisPageName), thisPage)
         self.log("Saved page to disk: %s" % thisPageName)
         if self.pc.uploadDirectly:
@@ -2126,7 +2126,7 @@ class HTMLPublisher(FTPPublisher):
             return
 
         # Flush and upload the page
-        self.log("Saving page to disk: %s" % thisPageName)
+        self.log("Saving page to disk: %s (%d bytes)" % (thisPageName, len(thisPage)))
         self.saveFile(os.path.join(self.publishDir, thisPageName), thisPage)
         self.log("Saved page to disk: %s" % thisPageName)
         if self.pc.uploadDirectly:
@@ -2140,7 +2140,7 @@ class HTMLPublisher(FTPPublisher):
         childadult: True if we should split up pages by animals under/over 6 months 
         species: True if we should split up pages by species
         """
-        self.log("HTMLPublisher starting...")
+        self.log("HTMLPublisher (age/species pages) starting...")
 
         l = self.dbo.locale
         normHeader = self.getHeader()
@@ -2241,7 +2241,7 @@ class HTMLPublisher(FTPPublisher):
                 # Add this item to the page
                 page += self.substituteBodyTags(body, an)
                 pages[pagename] = page
-                self.log("Finished processing: %s" % an["SHELTERCODE"])
+                self.log("%s -> %s" % (an["SHELTERCODE"], pagename))
 
                 # Add this item to our magic "all" page
                 page = pages[allpage]
@@ -2259,7 +2259,7 @@ class HTMLPublisher(FTPPublisher):
 
         # Upload the pages
         for k, v in pages.iteritems():
-            self.log("Saving page to disk: %s" % k)
+            self.log("Saving page to disk: %s (%d bytes)" % (k, len(v + footer)))
             self.saveFile(os.path.join(self.publishDir, k), v + footer)
             self.log("Saved page to disk: %s" % k)
             if self.pc.uploadDirectly:
@@ -2279,7 +2279,7 @@ class HTMLPublisher(FTPPublisher):
         Publisher based on assigning animals to pages.
         """
 
-        self.log("HTMLPublisher starting...")
+        self.log("HTMLPublisher (numbered pages) starting...")
 
         user = self.user
         normHeader = self.getHeader()
@@ -2360,7 +2360,7 @@ class HTMLPublisher(FTPPublisher):
                 if itemsOnPage < animalsPerPage:
                     thisPage += self.substituteBodyTags(body, an)
                     itemsOnPage += 1
-                    self.log("Finished processing: %s" % an["SHELTERCODE"])
+                    self.log("%s -> %s" % (an["SHELTERCODE"], thisPageName))
                 else:
                     self.log("Current page complete.")
                     # No, append the footer, store the page
@@ -2375,7 +2375,7 @@ class HTMLPublisher(FTPPublisher):
                     # Append this animal
                     thisPage += self.substituteBodyTags(body, an)
                     itemsOnPage = 1
-                    self.log("Finished processing: %s" % an["SHELTERCODE"])
+                    self.log("%s -> %s" % (an["SHELTERCODE"], thisPageName))
                 
                 # Mark success in the log
                 self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
@@ -2392,7 +2392,7 @@ class HTMLPublisher(FTPPublisher):
 
         # Upload the new pages
         for k, v in pages.iteritems():
-            self.log("Saving page to disk: %s" % k)
+            self.log("Saving page to disk: %s (%d bytes)" % (k, len(v)))
             self.saveFile(os.path.join(self.publishDir, k), v)
             self.log("Saved page to disk: %s" % k)
             if self.pc.uploadDirectly:
@@ -2484,7 +2484,7 @@ class HTMLPublisher(FTPPublisher):
         # Append the footer, flush and upload the page
         thisPage += footer
         thisPage = thisPage.replace("RDFLINK", link)
-        self.log("Saving page to disk: %s" % thisPageName)
+        self.log("Saving page to disk: %s (%d bytes)" % (thisPageName, len(thisPage)))
         self.saveFile(os.path.join(self.publishDir, thisPageName), thisPage)
         self.log("Saved page to disk: %s" % thisPageName)
         if self.pc.uploadDirectly:
