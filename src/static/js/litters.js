@@ -128,8 +128,11 @@ $(function() {
         },
 
         set_extra_fields: function(row) {
-            row.MOTHERNAME = lastanimal.ANIMALNAME;
-            row.MOTHERCODE = lastanimal.SHELTERCODE;
+            row.MOTHERNAME = ""; row.MOTHERCODE = "";
+            if (lastanimal) {
+                row.MOTHERNAME = lastanimal.ANIMALNAME;
+                row.MOTHERCODE = lastanimal.SHELTERCODE;
+            }
             row.SPECIESNAME = common.get_field(controller.species, row.SPECIESID, "SPECIESNAME");
             if (row.CACHEDANIMALSLEFT === undefined) {
                 row.CACHEDANIMALSLEFT = row.NUMBERINLITTER;

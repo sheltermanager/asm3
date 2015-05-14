@@ -182,7 +182,9 @@
                             infowindow.open(map, marker);
                         });
                     }
-                    if (v.popupactive) { infowindow.open(map, marker); }
+                    if (v.popupactive) { 
+                        if (infowindow) { infowindow.open(map, marker); }
+                    }
                 });
             };
             var key = "";

@@ -331,7 +331,7 @@ $(function() {
                 0: controller.animal.OWNERNAME, 1: controller.animal.SPECIESNAME });
         },
         routes: {
-            "waitingist": function() { common.module_loadandstart("waitinglist", "waitinglist?id=" + this.qs.id); }
+            "waitinglist": function() { common.module_loadandstart("waitinglist", "waitinglist?id=" + this.qs.id); }
         }
     };
 

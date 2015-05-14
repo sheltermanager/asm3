@@ -289,7 +289,7 @@ $(function() {
                 s += edit_header.person_edit_header(controller.person, "donations", controller.tabcounts);
             }
             else {
-                s += html.content_header(document.title);
+                s += html.content_header(this.title());
             }
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);
@@ -387,7 +387,7 @@ $(function() {
         routes: {
             "animal_donations": function() { common.module_loadandstart("donations", "animal_donations?id=" + this.qs.id); },
             "person_donations": function() { common.module_loadandstart("donations", "person_donations?id=" + this.qs.id); },
-            "donation": function() { common.module_loadandstart("donations", "donation?offset=" + this.qs.offset); }
+            "donation": function() { common.module_loadandstart("donations", "donation?" + this.rawqs); }
         }
 
 

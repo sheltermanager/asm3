@@ -614,7 +614,9 @@
                 },
                 close: function() {
                     tableform.dialog_enable_buttons();
-                    $("#dialog-tableform").dialog("destroy");
+                    try {
+                        $("#dialog-tableform").dialog("destroy");
+                    } catch (ex) {}
                 }
             });
             this.dialog_error("");

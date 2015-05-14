@@ -604,6 +604,7 @@ $(function() {
                 formdata += "&signdate=" + encodeURIComponent(format.date(new Date()) + " " + format.time(new Date()));
                 formdata += "&sig=" + encodeURIComponent(img);
                 media.ajax(formdata);
+                $("#dialog-sign").dialog("close");
             };
             signbuttons[_("Clear")] = function() {
                 $("#signature").signature("clear");
