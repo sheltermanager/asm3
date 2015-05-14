@@ -1,6 +1,7 @@
 37
 ================
 
+14/05/15 Add Pinterest support
 13/05/15 Add Google plus sharing, remove Facebook API code, update manual
 13/05/15 Add animalview template and switch Facebook to URL sharing API
 13/05/15 Add maint_db_dump_merge target for renumbering IDs for merging

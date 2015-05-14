@@ -658,10 +658,12 @@ $(function() {
                 '</div>',
                 '<div id="button-share-body" class="asm-menu-body">',
                 '<ul class="asm-menu-list">',
+                    /*
                     '<li id="button-shareemail" class="asm-menu-item"><a '
                         + '" target="_blank" href="#">' + html.icon("email") + ' ' + _("Email") + '</a></li>',
+                    */
                     '<li id="button-shareweb" class="asm-menu-item"><a '
-                        + '" target="_blank" href="#">' + html.icon("web") + ' ' + _("Web") + '</a></li>',
+                        + '" target="_blank" href="#">' + html.icon("web") + ' ' + _("Link to this animal") + '</a></li>',
                     '<li class="asm-menu-category">' + _("Social") + ' </li>',
                     '<li id="button-facebook" class="asm-menu-item"><a '
                         + '" target="_blank" href="#">' + html.icon("facebook") + ' ' + _("Facebook") + '</a></li>',
@@ -669,7 +671,8 @@ $(function() {
                         + '" target="_blank" href="#">' + html.icon("twitter") + ' ' + _("Twitter") + '</a></li>',
                     '<li id="button-gplus" class="asm-menu-item"><a '
                         + '" target="_blank" href="#">' + html.icon("gplus") + ' ' + _("Google+") + '</a></li>',
-
+                    '<li id="button-pinterest" class="asm-menu-item"><a '
+                        + '" target="_blank" href="#">' + html.icon("pinterest") + ' ' + _("Pinterest") + '</a></li>',
                 '</ul>',
                 '</div>',
                 edit_header.animal_edit_header(controller.animal, "animal", controller.tabcounts),
@@ -1341,9 +1344,10 @@ $(function() {
                 });
             });
 
-            // Link to our animal_view page for sharing
+            // Link to our animal_view page and image for sharing
             var view_url = asm.baseurl + "/service?method=animal_view&animalid=" + controller.animal.ID;
-            if (asm.smcom) { view_url += "&account=" + asm.useraccount; }
+            var view_image = asm.baseurl + "/service?method=animal_image&animalid=" + controller.animal.ID;
+            if (asm.smcom) { view_url += "&account=" + asm.useraccount; view_image += "&account=" + asm.useraccount; }
 
             // Sharing enabled
             if (!controller.facebookappid) {
@@ -1369,6 +1373,13 @@ $(function() {
                 // Google Plus
                 $("#button-gplus a").attr("href", "https://plus.google.com/share?" +
                     "&url=" + encodeURIComponent(view_url));
+
+                // Pinterest
+                $("#button-pinterest a").attr("href", "http://pinterest.com/pin/create/button/?" +
+                    "url=" + encodeURIComponent(view_url) + 
+                    "&media=" + encodeURIComponent(view_image) +
+                    "&description=" + encodeURIComponent(html.truncate(controller.animal.ANIMALCOMMENTS, 120)));
+
             }
 
             // Events that trigger rechecking of the on-screen fields
