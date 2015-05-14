@@ -7,7 +7,7 @@ import os, sys
 from i18n import _, BUILD
 from sitedefs import DB_PK_STRATEGY
 
-LATEST_VERSION = 33704
+LATEST_VERSION = 33705
 VERSIONS = ( 
     2870, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3050,
     3051, 3081, 3091, 3092, 3093, 3094, 3110, 3111, 3120, 3121, 3122, 3123, 3200,
@@ -18,7 +18,7 @@ VERSIONS = (
     33206, 33300, 33301, 33302, 33303, 33304, 33305, 33306, 33307, 33308, 33309,
     33310, 33311, 33312, 33313, 33314, 33315, 33316, 33401, 33402, 33501, 33502,
     33503, 33504, 33505, 33506, 33507, 33508, 33600, 33601, 33602, 33603, 33604,
-    33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702, 33703, 33704
+    33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702, 33703, 33704, 33705
 )
 
 # All ASM3 tables
@@ -4004,4 +4004,8 @@ def update_33704(dbo):
     dbfs.put_file(dbo, "body.html", "/internet/animalview", path + "media/internet/animalview/body.html")
     dbfs.put_file(dbo, "foot.html", "/internet/animalview", path + "media/internet/animalview/foot.html")
     dbfs.put_file(dbo, "head.html", "/internet/animalview", path + "media/internet/animalview/head.html")
+
+def update_33705(dbo):
+    # Fix the animalview template to have OpenGraph meta tags
+    dbfs.replace_string(dbo, utils.read_text_file(dbo.installpath + "media/internet/animalview/head.html") , "head.html", "/internet/animalview")
 
