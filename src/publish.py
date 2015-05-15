@@ -356,7 +356,6 @@ def get_animal_view(dbo, animalid):
         a["WEBSITEMEDIANAME"] = "%s/service?account=%s&method=animal_image&animalid=%d" % (BASE_URL, dbo.database, animalid)
     else:
         a["WEBSITEMEDIANAME"] = "%s/service?method=animal_image&animalid=%d" % (BASE_URL, animalid)
-    a["WEBSITEMEDIANOTES"] = a["ANIMALCOMMENTS"]
     if head == "":
         head = "<!DOCTYPE html>\n<html>\n<head>\n<title>$$SHELTERCODE$$ - $$ANIMALNAME$$</title></head>\n<body>"
     if body == "":
