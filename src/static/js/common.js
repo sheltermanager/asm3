@@ -953,7 +953,7 @@
                 }
             }
             catch (ex) {
-                log.debug("widget_destroy: " + selector + " " + type + ",\n" + ex);
+                log.trace("widget_destroy: " + selector + " " + type + ",\n" + ex);
             }
         }
     };
@@ -1827,7 +1827,7 @@
 
     log = {
 
-        level: 0,
+        level: 1,
 
         trace: function(s) {
             if (log.level > 0) { return; }
