@@ -1162,6 +1162,7 @@ $(function() {
 
         destroy: function() {
             validate.unbind_dirty();
+            common.widget_destroy("#DefaultBroughtInBy", "personchooser");
         },
 
         name: "options",

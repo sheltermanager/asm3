@@ -13,7 +13,7 @@ $(function() {
                 edit_title: _("Edit vaccination"),
                 edit_perm: 'cav',
                 helper_text: _("Vaccinations need an animal and at least a required date."),
-                close_on_ok: true,
+                close_on_ok: false,
                 autofocus: false,
                 use_default_values: false,
                 columns: 1,
@@ -286,6 +286,7 @@ $(function() {
             vaccination.set_default_cost();
             tableform.dialog_show_add(dialog, function() {
                 tableform.fields_post(dialog.fields, "mode=createbulk", controller.name, function(response) {
+                    tableform.dialog_close();
                     common.route_reload();
                 }, function() {
                     tableform.dialog_enable_buttons();   
@@ -445,6 +446,13 @@ $(function() {
                 row.WEBSITEMEDIANAME = lastanimal.WEBSITEMEDIANAME;
             }
             row.VACCINATIONTYPE = common.get_field(controller.vaccinationtypes, row.VACCINATIONID, "VACCINATIONTYPE");
+        },
+
+        destroy: function() {
+            common.widget_destroy("#dialog-required");
+            common.widget_destroy("#dialog-given");
+            common.widget_destroy("#animal");
+            common.widget_destroy("#animals");
         },
 
         name: "vaccination",

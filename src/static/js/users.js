@@ -229,6 +229,11 @@ $(function() {
             row.ROLES = roles.join("|");
         },
 
+        destroy: function() {
+            common.widget_destroy("#dialog-reset");
+            common.widget_destroy("#person");
+        },
+
         name: "users",
         animation: "options",
         title: function() { return _("Edit system users"); },

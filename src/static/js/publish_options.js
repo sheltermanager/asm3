@@ -995,6 +995,7 @@ $(function() {
 
         destroy: function() {
             validate.unbind_dirty();
+            common.widget_destroy("#dialog-vetenvoy");
         },
 
         name: "publish_options",

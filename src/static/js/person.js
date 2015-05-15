@@ -815,6 +815,10 @@ $(function() {
 
         destroy: function() {
             validate.unbind_dirty();
+            common.widget_destroy("#dialog-dt-date");
+            common.widget_destroy("#dialog-merge");
+            common.widget_destroy("#mergeperson", "personchooser");
+            common.widget_destroy("#homecheckedby", "personchooser");
         },
 
         name: "person",

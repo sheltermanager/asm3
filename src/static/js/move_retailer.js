@@ -163,6 +163,11 @@ $(function() {
 
         },
 
+        destroy: function() {
+            common.widget_destroy("#animal");
+            common.widget_destroy("#person");
+        },
+
         name: "move_retailer",
         animation: "newdata",
         title: function() { return _("Move an animal to a retailer"); },

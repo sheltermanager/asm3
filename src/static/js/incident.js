@@ -526,7 +526,9 @@ $(function() {
                 b[_("Delete")] = function() { 
                     var formdata = "mode=delete&id=" + $("#incidentid").val();
                     $("#dialog-delete").disable_dialog_buttons();
-                    common.ajax_post("incident", formdata, function() { common.route("main"); });
+                    common.ajax_post("incident", formdata, function() { 
+                        common.route("main"); $("#dialog-delete").dialog("close"); 
+                    }, function() { $("#dialog-delete").dialog("close"); });
                 };
                 b[_("Cancel")] = function() { $(this).dialog("close"); };
                 $("#dialog-delete").dialog({
@@ -597,6 +599,12 @@ $(function() {
 
         destroy: function() {
             validate.unbind_dirty();
+            common.widget_destroy("#animal");
+            common.widget_destroy("#owner");
+            common.widget_destroy("#owner2");
+            common.widget_destroy("#owner3");
+            common.widget_destroy("#caller", "personchooser");
+            common.widget_destroy("#victim", "personchooser");
         },
 
         name: "incident",

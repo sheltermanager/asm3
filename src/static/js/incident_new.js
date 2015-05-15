@@ -143,6 +143,12 @@ $(function() {
             $("#incidenttype").select("value", config.str("DefaultIncidentType"));
         },
 
+        destroy: function() {
+            common.widget_destroy("#owner");
+            common.widget_destroy("#caller", "personchooser");
+            common.widget_destroy("#victim", "personchooser");
+        },
+
         name: "incident_new",
         animation: "newdata",
         title: function() { return _("Report a new incident"); },

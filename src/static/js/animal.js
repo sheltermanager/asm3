@@ -1256,7 +1256,8 @@ $(function() {
                 dialogClass: "dialogshadow",
                 show: dlgfx.add_show,
                 hide: dlgfx.add_hide,
-                buttons: addbuttons
+                buttons: addbuttons,
+                close: function() { try { $(this).dialog("destroy"); } catch (ex) {} }
             });
 
             // Attach handlers for diary tasks
@@ -1347,7 +1348,9 @@ $(function() {
                 b[_("Delete")] = function() { 
                     $("#dialog-delete").disable_dialog_buttons();
                     var formdata = "mode=delete&animalid=" + $("#animalid").val();
-                    common.ajax_post("animal", formdata, function() { common.route("main"); }, function() { $("#dialog-delete").dialog("close"); });
+                    common.ajax_post("animal", formdata, function() { 
+                        common.route("main"); $("#dialog-delete").dialog("close"); 
+                    }, function() { $("#dialog-delete").dialog("close"); });
                 };
                 b[_("Cancel")] = function() { $(this).dialog("close"); };
                 $("#dialog-delete").dialog({
@@ -1430,6 +1433,14 @@ $(function() {
 
         destroy: function() {
             validate.unbind_dirty();
+            common.widget_destroy("#dialog-dt-date");
+            common.widget_destroy("#bonded1", "animalchooser");
+            common.widget_destroy("#bonded2", "animalchooser");
+            common.widget_destroy("#originalowner", "personchooser");
+            common.widget_destroy("#broughtinby", "personchooser");
+            common.widget_destroy("#pickedupby", "personchooser");
+            common.widget_destroy("#currentvet", "personchooser");
+            common.widget_destroy("#ownersvet", "personchooser");
         },
 
         name: "animal",

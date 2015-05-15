@@ -115,6 +115,11 @@
             this.options.display.html("");
             if (fireclearedevent) { this._trigger("cleared", null); }
         },
+        destroy: function() {
+            try {
+                this.options.dialog.dialog("destroy");
+            } catch (ex) {}
+        },
         /**
          * Loads an animal into the widget by ID
          */

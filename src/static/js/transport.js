@@ -324,6 +324,14 @@ $(function() {
             }
         },
 
+        destroy: function() {
+            common.widget_destroy("#animal");
+            common.widget_destroy("#driver", "personchooser");
+            common.widget_destroy("#pickup", "personchooser");
+            common.widget_destroy("#dropoff", "personchooser");
+        },
+
+
         name: "transport",
         animation: function() { return controller.name == "transport" ? "book" : "formtab"; },
         title:  function() { 

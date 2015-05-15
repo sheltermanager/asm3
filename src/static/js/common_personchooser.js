@@ -324,6 +324,11 @@
                 }
             });
         },
+        destroy: function() {
+            try { this.options.dialog.dialog("destroy"); } catch (ex) {}
+            try { this.options.dialogadd.dialog("destroy"); } catch (exa) {}
+            try { this.options.dialogsimilar.dialog("destroy"); } catch (exs) {}
+        },
         /**
          * Load a person record from its ID
          */

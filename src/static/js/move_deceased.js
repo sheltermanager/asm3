@@ -123,6 +123,10 @@ $(function() {
             });
         },
 
+        destroy: function() {
+            common.widget_destroy("#animal");
+        },
+
         name: "move_deceased",
         animation: "newdata",
         title: function() { return _("Mark an animal deceased"); },

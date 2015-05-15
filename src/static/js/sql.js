@@ -175,6 +175,10 @@ $(function() {
         animation: "options",
         title: function() { return _("SQL Interface"); },
 
+        destroy: function() {
+            common.widget_destroy("#dialog-script");
+        },
+
         routes: {
             "sql": function() {
                 common.module_loadandstart("sql", "sql");

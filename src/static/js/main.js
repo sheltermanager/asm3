@@ -796,6 +796,11 @@ $(function() {
             }
         },
 
+        destroy: function() {
+            common.widget_destroy("#dialog-addmessage");
+            common.widget_destroy("#dialog-welcome");
+        },
+
         name: "main",
         animation: "main",
         title: function() { return _("Animal Shelter Manager") + " - " + config.str("Organisation"); },

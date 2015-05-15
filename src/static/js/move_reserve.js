@@ -384,6 +384,11 @@ $(function() {
             });
         },
 
+        destroy: function() {
+            common.widget_destroy("#animal");
+            common.widget_destroy("#person");
+        },
+
         name: "move_reserve",
         animation: "newdata",
         title: function() { return _("Reserve an animal"); },

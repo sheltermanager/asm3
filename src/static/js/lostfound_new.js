@@ -238,6 +238,10 @@ $(function() {
             });
         },
 
+        destroy: function() {
+            common.widget_destroy("#owner");
+        },
+
         name: "lostfound_new",
         animation: "newdata",
         title: function() { 

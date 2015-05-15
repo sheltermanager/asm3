@@ -157,6 +157,10 @@ $(function() {
             });
         },
 
+        destroy: function() {
+            common.widget_destroy("#owner");
+        },
+
         name: "waitinglist_new",
         animation: "newdata",
         title: function() { return _("Add waiting list"); },

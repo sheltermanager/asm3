@@ -590,6 +590,12 @@ $(function() {
             }
         },
 
+        destroy: function() {
+            common.widget_destroy("#animal");
+            common.widget_destroy("#person");
+            common.widget_destroy("#retailer");
+        },
+
         name: "movements",
         animation: function() { return controller.name.indexOf("move_book") == 0 ? "book" : "formtab"; },
         title:  function() { 

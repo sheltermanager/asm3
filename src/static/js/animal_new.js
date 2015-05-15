@@ -536,6 +536,14 @@ $(function() {
             });
         },
 
+        destroy: function() {
+            common.widget_destroy("#dialog-similar");
+            common.widget_destroy("#nsowner", "personchooser");
+            common.widget_destroy("#fosterer", "personchooser");
+            common.widget_destroy("#originalowner", "personchooser");
+            common.widget_destroy("#broughtinby", "personchooser");
+        },
+
         name: "animal_new",
         animation: "newdata",
         title: function() { return _("Add a new animal"); },

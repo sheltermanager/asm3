@@ -139,6 +139,10 @@ $(function() {
             }
         },
 
+        destroy: function() {
+            common.widget_destroy("#animal");
+        },
+
         name: "litters",
         animation: "book",
         title: function() { return _("Litters"); },

@@ -11,7 +11,7 @@ $(function() {
                 edit_title: _("Edit voucher"),
                 edit_perm: 'vcov',
                 helper_text: _("Vouchers need an issue and expiry date."),
-                close_on_ok: true,
+                close_on_ok: false,
                 columns: 1,
                 width: 550,
                 fields: [
@@ -32,6 +32,7 @@ $(function() {
                         row.VOUCHERNAME = common.get_field(controller.vouchertypes, row.VOUCHERID, "VOUCHERNAME");
                         tableform.fields_post(dialog.fields, "mode=update&voucherid=" + row.ID, "person_vouchers", function(response) {
                             tableform.table_update(table);
+                            tableform.dialog_close();
                         });
                     });
                 },
@@ -61,6 +62,7 @@ $(function() {
                                  row.VOUCHERNAME = common.get_field(controller.vouchertypes, row.VOUCHERID, "VOUCHERNAME");
                                  controller.rows.push(row);
                                  tableform.table_update(table);
+                                 tableform.dialog_close();
                              });
                          }, function() { person_vouchers.vouchertype_change(); });
                      } 

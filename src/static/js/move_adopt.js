@@ -529,6 +529,11 @@ $(function() {
             });
         },
 
+        destroy: function() {
+            common.widget_destroy("#animal");
+            common.widget_destroy("#person");
+        },
+
         name: "move_adopt",
         animation: "newdata",
         title: function() { return _("Adopt an animal"); },

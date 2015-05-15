@@ -526,6 +526,10 @@
             $("#dialog-tableform").dialog("close");
         },
 
+        dialog_destroy: function() {
+            common.widget_destroy("#dialog-tableform", "dialog", true);
+        },
+
         /**
          * Displays the dialog error text. If no text is supplied, 
          * removes the error.
@@ -568,6 +572,10 @@
          * onloadcallback: function to run when the form has loaded and been displayed
          */
         dialog_show_add: function(dialog, callback, onloadcallback) {
+
+            // Make sure any existing dialog is destroyed before starting
+            tableform.dialog_destroy();
+
             var b = {}; 
             // Set fields to their default values
             if (dialog.use_default_values === undefined || dialog.use_default_values === true) {
@@ -582,6 +590,7 @@
                     }
                 }
             });
+
             b[_("Add")] = function() {
                 if (tableform.fields_validate(dialog.fields)) {
                     if (dialog.close_on_ok) {
@@ -614,9 +623,7 @@
                 },
                 close: function() {
                     tableform.dialog_enable_buttons();
-                    try {
-                        $("#dialog-tableform").dialog("destroy");
-                    } catch (ex) {}
+                    tableform.dialog_destroy();
                 }
             });
             this.dialog_error("");
@@ -636,7 +643,12 @@
          * deletecallback: function to run after the delete button is clicked
          */
         dialog_show_edit: function(dialog, row, changecallback, loadcallback, deletecallback) {
+
+            // Make sure any existing dialog is destroyed before starting
+            tableform.dialog_destroy();
+
             this.fields_populate_from_json(dialog.fields, row);
+
             // Find any fields marked readonly and disable/hide them
             $.each(dialog.fields, function(i, v) {
                 if (v.readonly) { 
@@ -646,6 +658,7 @@
                     }
                 }
             });
+
             var b = {}; 
             if (dialog.delete_button && dialog.delete_perm && common.has_permission(dialog.delete_perm)) {
                 b[_("Delete")] = {
@@ -695,7 +708,7 @@
                 },
                 close: function() {
                     tableform.dialog_enable_buttons();
-                    $("#dialog-tableform").dialog("destroy");
+                    tableform.dialog_destroy();
                 }
             });
             this.dialog_error("");

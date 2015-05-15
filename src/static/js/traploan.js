@@ -10,7 +10,7 @@ $(function() {
                 add_title: _("Add trap loan"),
                 edit_title: _("Edit trap loan"),
                 edit_perm: 'catl',
-                close_on_ok: true,
+                close_on_ok: false,
                 columns: 1,
                 width: 550,
                 fields: [
@@ -36,6 +36,7 @@ $(function() {
                         row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
                         tableform.fields_post(dialog.fields, "mode=update&traploanid=" + row.ID, controller.name, function(response) {
                             tableform.table_update(table);
+                            tableform.dialog_close();
                         });
                     });
                 },
@@ -83,6 +84,7 @@ $(function() {
                                  row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
                                  controller.rows.push(row);
                                  tableform.table_update(table);
+                                 tableform.dialog_close();
                              });
                          }, function() { traploan.type_change(); });
                      } 
@@ -133,6 +135,11 @@ $(function() {
             var dc = common.get_field(controller.traptypes, $("#type").select("value"), "DEFAULTCOST");
             $("#depositamount").currency("value", dc);
         },
+
+        destroy: function() {
+            common.widget_destroy("#person");
+        },
+
 
         name: "traploan",
         animation: function() { return controller.name == "traploan" ? "book" : "formtab"; },

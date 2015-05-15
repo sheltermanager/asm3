@@ -10,7 +10,7 @@ $(function() {
                 add_title: _("Add citation"),
                 edit_title: _("Edit citation"),
                 edit_perm: 'cacc',
-                close_on_ok: true,
+                close_on_ok: false,
                 columns: 1,
                 width: 550,
                 fields: [
@@ -34,6 +34,7 @@ $(function() {
                         row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
                         tableform.fields_post(dialog.fields, "mode=update&citationid=" + row.ID, controller.name, function(response) {
                             tableform.table_update(table);
+                            tableform.dialog_close();
                         });
                     });
                 },
@@ -96,6 +97,7 @@ $(function() {
                                  row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
                                  controller.rows.push(row);
                                  tableform.table_update(table);
+                                 tableform.dialog_close();
                              });
                          }, function() { citations.type_change(); });
                      } 
@@ -148,6 +150,10 @@ $(function() {
         type_change: function() {
             var dc = common.get_field(controller.citationtypes, $("#type").select("value"), "DEFAULTCOST");
             $("#fineamount").currency("value", dc);
+        },
+
+        destroy: function() {
+            common.widget_destroy("#person");
         },
 
         name: "citations",

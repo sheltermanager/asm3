@@ -1,6 +1,7 @@
 37
 ================
 
+15/05/15 Full destructor support for client side widgets
 15/05/15 Add tumblr support
 14/05/15 Extra debug info during HTML/FTP publish
 14/05/15 Fix broken diary task pivots

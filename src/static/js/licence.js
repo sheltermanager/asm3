@@ -208,6 +208,11 @@ $(function() {
             $("#fee").currency("value", dc);
         },
 
+        destroy: function() {
+            common.widget_destroy("#person");
+            common.widget_destroy("#animal");
+        },
+
         name: "licence",
         animation: function() { return controller.name == "licence" ? "book" : "formtab"; },
         title:  function() { 

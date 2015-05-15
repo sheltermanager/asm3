@@ -11,7 +11,7 @@ $(function() {
                 edit_title: _("Edit diet"),
                 edit_perm: 'dcad',
                 helper_text: _("Diets need a start date."),
-                close_on_ok: true,
+                close_on_ok: false,
                 columns: 1,
                 width: 550,
                 fields: [
@@ -31,6 +31,7 @@ $(function() {
                         row.DIETDESCRIPTION = common.get_field(controller.diettypes, row.DIETID, "DIETDESCRIPTION");
                         tableform.fields_post(dialog.fields, "mode=update&dietid=" + row.ID, "animal_diet", function(response) {
                             tableform.table_update(table);
+                            tableform.dialog_close();
                         });
                     });
                 },
@@ -64,6 +65,7 @@ $(function() {
                                  row.DIETDESCRIPTION = common.get_field(controller.diettypes, row.DIETID, "DIETDESCRIPTION");
                                  controller.rows.push(row);
                                  tableform.table_update(table);
+                                 tableform.dialog_close();
                              });
                          });
                      } 

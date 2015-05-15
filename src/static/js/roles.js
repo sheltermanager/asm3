@@ -276,7 +276,7 @@ $(function() {
                 });
                 var formdata = "mode=create&securitymap=" + securitymap + "&" + $("#dialog-add input").toPOST();
                 $("#dialog-add").disable_dialog_buttons();
-                common.ajax_post("roles", formdata, function() { common.route_reload(); $("#dialog-add").dialog("close"); }, function() { $("#dialog-add").dialog("close"); });
+                common.ajax_post("roles", formdata, function() { $("#dialog-add").dialog("close"); common.route_reload(); }, function() { $("#dialog-add").dialog("close"); });
             };
             addbuttons[_("Cancel")] = function() {
                 $("#dialog-add").dialog("close");
@@ -294,7 +294,7 @@ $(function() {
                     "securitymap=" + securitymap + "&" +
                     $("#dialog-add input").toPOST();
                 $("#dialog-add").disable_dialog_buttons();
-                common.ajax_post("roles", formdata, function() { common.route_reload(); $("#dialog-add").dialog("close"); }, function() { $("#dialog-add").dialog("close"); });
+                common.ajax_post("roles", formdata, function() { $("#dialog-add").dialog("close"); common.route_reload(); }, function() { $("#dialog-add").dialog("close"); });
             };
             editbuttons[_("Cancel")] = function() {
                 $("#dialog-add").dialog("close");
@@ -375,6 +375,10 @@ $(function() {
                 return false; // prevents # href
             });
 
+        },
+
+        destroy: function() {
+            common.widget_destroy("#dialog-add");
         },
 
         name: "roles",

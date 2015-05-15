@@ -369,6 +369,11 @@ $(function() {
 
         },
 
+        destroy: function() {
+            common.widget_destroy("#animal");
+            common.widget_destroy("#person");
+        },
+
         name: "donations",
         animation: function() { return controller.name == "donation" ? "book" : "formtab"; },
 

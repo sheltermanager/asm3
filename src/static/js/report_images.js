@@ -129,6 +129,11 @@ $(function() {
             tableform.table_bind(this.table, this.buttons);
         },
 
+        destroy: function() {
+            $("#dialog-rename").dialog("destroy");
+        },
+
+
         name: "report_images",
         animation: "options",
         title: function() { return _("Extra images"); },

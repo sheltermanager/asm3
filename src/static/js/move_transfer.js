@@ -163,6 +163,11 @@ $(function() {
             });
         },
 
+        destroy: function() {
+            common.widget_destroy("#animal");
+            common.widget_destroy("#person");
+        },
+
         name: "move_transfer",
         animation: "newdata",
         title: function() { return _("Transfer an animal"); },

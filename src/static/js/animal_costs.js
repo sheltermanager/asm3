@@ -12,7 +12,7 @@ $(function() {
                 edit_title: _("Edit cost"),
                 edit_perm: 'ccad',
                 helper_text: _("Costs need a date and amount."),
-                close_on_ok: true,
+                close_on_ok: false,
                 columns: 1,
                 width: 550,
                 fields: [
@@ -34,6 +34,7 @@ $(function() {
                         tableform.fields_post(dialog.fields, "mode=update&costid=" + row.ID, "animal_costs", function(response) {
                             tableform.table_update(table);
                             animal_costs.calculate_costtotals();
+                            tableform.dialog_close();
                         });
                     });
                 },
@@ -60,6 +61,7 @@ $(function() {
                                  controller.rows.push(row);
                                  tableform.table_update(table);
                                  animal_costs.calculate_costtotals();
+                                 tableform.dialog_close();
                              });
                          }, function() { animal_costs.costtype_change(); });
                      } 

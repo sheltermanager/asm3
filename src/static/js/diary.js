@@ -11,7 +11,7 @@ $(function() {
                 edit_title: _("Edit diary"),
                 helper_text: _("Diary notes need a date and subject.") + "<br />" + 
                     _("Times should be in HH:MM format, eg: 09:00, 16:30"),
-                close_on_ok: true,
+                close_on_ok: false,
                 columns: 1,
                 width: 500,
                 fields: [

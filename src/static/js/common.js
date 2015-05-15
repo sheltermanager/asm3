@@ -865,8 +865,54 @@
             setInterval(common.inactive_time_increment, 60000);
             $(document).keypress(common.inactivity_reset);
             $(document).mousemove(common.inactivity_reset);
-        }
+        },
 
+        /** Destroys a JQuery widget by calling its destroy method.
+         * Infers type from selector if it is not supplied:
+         *     animal = animalchooser
+         *     animals = animalschoosermulti
+         *     owner/person = personchooser
+         *     dialog- = dialog
+         */
+        widget_destroy: function(selector, type, noremove) {
+            var types = {
+                "#animals": "animalchoosermulti",
+                "#animal": "animalchooser",
+                "#owner": "personchooser",
+                "#person": "personchooser",
+                "#dialog-": "dialog"
+            };
+            if (!type) {
+                $.each(types, function(k, v) {
+                    if (selector.indexOf(k) == 0) { type = v; return false; }
+                });
+            }
+            try {
+                if (type == "animalchooser") { 
+                    $(selector).animalchooser("destroy").remove();
+                }
+                else if (type == "animalchoosermulti") {
+                    $(selector).animalchoosermulti("destroy").remove();
+                }
+                else if (type == "personchooser") {
+                    $(selector).personchooser("destroy").remove();
+                }
+                else if (type == "dialog") {
+                    if (noremove) {
+                        $(selector).dialog("destroy");
+                    }
+                    else {
+                        $(selector).dialog("destroy").remove();
+                    }
+                }
+                else {
+                    common.console_log("widget_destroy: invalid type '" + type + "' for selector '" + selector + "'");
+                }
+            }
+            catch (ex) {
+                common.console_log("widget_destroy: " + selector + " " + type + ",\n" + ex);
+            }
+        }
     };
 
     config = {

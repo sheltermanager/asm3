@@ -147,6 +147,10 @@ $(function() {
 
         },
 
+        destroy: function() {
+            common.widget_destroy("#animals");
+        },
+
         name: "animal_bulk",
         animation: "newdata",
         title: function() { return _("Bulk change animals"); },

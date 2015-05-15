@@ -311,6 +311,10 @@ $(function() {
             }
         },
 
+        destroy: function() {
+            common.widget_destroy("#dialog-edit");
+        },
+
         name: "accounts_trx",
         animation: "book",
         title: function() { return controller.accountcode; },

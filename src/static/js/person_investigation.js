@@ -11,7 +11,7 @@ $(function() {
                 edit_title: _("Edit investigation"),
                 edit_perm: 'coi',
                 helper_text: _("Date and notes are mandatory."),
-                close_on_ok: true,
+                close_on_ok: false,
                 columns: 1,
                 width: 550,
                 fields: [
@@ -28,6 +28,7 @@ $(function() {
                         tableform.fields_update_row(dialog.fields, row);
                         tableform.fields_post(dialog.fields, "mode=update&investigationid=" + row.ID, "person_investigation", function(response) {
                             tableform.table_update(table);
+                            tableform.dialog_close();
                         });
                     });
                     $("#date").datepicker("hide");
@@ -47,9 +48,11 @@ $(function() {
                              tableform.fields_post(dialog.fields, "mode=create&personid="  + controller.person.ID, "person_investigation", function(response) {
                                  var row = {};
                                  row.ID = response;
+                                 row.CREATEDBY = asm.user;
                                  tableform.fields_update_row(dialog.fields, row);
                                  controller.rows.push(row);
                                  tableform.table_update(table);
+                                 tableform.dialog_close();
                              });
                          });
                          $("#date").datepicker("setDate", new Date());

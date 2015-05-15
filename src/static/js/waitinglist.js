@@ -271,7 +271,9 @@ $(function() {
                 b[_("Delete")] = function() { 
                     var formdata = "mode=delete&id=" + $("#waitinglistid").val();
                     $("#dialog-delete").disable_dialog_buttons();
-                    common.ajax_post("waitinglist", formdata, function() { common.route("waitinglist_results"); });
+                    common.ajax_post("waitinglist", formdata, function() { 
+                        common.route("main"); $("#dialog-delete").dialog("close"); 
+                    }, function() { $("#dialog-delete").dialog("close"); });
                 };
                 b[_("Cancel")] = function() { $(this).dialog("close"); };
                 $("#dialog-delete").dialog({
@@ -322,6 +324,7 @@ $(function() {
 
         destroy: function() {
             validate.unbind_dirty();
+            common.widget_destroy("#owner");
         },
 
         name: "waitinglist",

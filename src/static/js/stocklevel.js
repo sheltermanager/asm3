@@ -11,7 +11,7 @@ $(function() {
                 edit_title: _("Edit stock"),
                 edit_perm: 'csl',
                 helper_text: _("Stock needs a name and unit."),
-                close_on_ok: true,
+                close_on_ok: false,
                 hide_read_only: true,
                 columns: 1,
                 width: 500,
@@ -126,15 +126,18 @@ $(function() {
                 tableform.fields_post(dialog.fields, "mode=create", controller.name, function(response) {
                     // If more than one record was created, reload the screen
                     if ($("#quantity").val() != "1") {
+                        tableform.dialog_close();
                         common.route_reload();
                     }
-                    var row = {};
-                    row.ID = response;
-                    tableform.fields_update_row(dialog.fields, row);
-                    stocklevel.set_extra_fields(row);
-                    controller.rows.push(row);
-                    tableform.table_update(table);
-                    tableform.dialog_close();
+                    else {
+                        var row = {};
+                        row.ID = response;
+                        tableform.fields_update_row(dialog.fields, row);
+                        stocklevel.set_extra_fields(row);
+                        controller.rows.push(row);
+                        tableform.table_update(table);
+                        tableform.dialog_close();
+                    }
                 }, function() {
                     tableform.dialog_enable_buttons();   
                 });

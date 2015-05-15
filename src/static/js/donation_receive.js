@@ -256,6 +256,11 @@ $(function() {
             });
         },
 
+        destroy: function() {
+            common.widget_destroy("#animal");
+            common.widget_destroy("#person");
+        },
+
         name: "donation_receive",
         animation: "newdata",
         title: function() { return _("Receive a payment"); },

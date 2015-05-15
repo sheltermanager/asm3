@@ -117,7 +117,9 @@ $(function() {
                 hide: dlgfx.add_hide,
                 buttons: viewbuttons
             });
+
         },
+
 
         render_attach_person: function() {
             return [
@@ -172,7 +174,7 @@ $(function() {
                     tableform.table_selected_row(table).LINK = 
                         '<a target="_blank" href="person_media?id=' + $("#attachperson").val() + '">' + personname + '</a>';
                     tableform.table_update(table);
-                    $("#dialog-attach").dialog("close");
+                    $("#dialog-attach-person").dialog("close");
                 });
             };
             ab[_("Cancel")] = function() { $(this).dialog("close"); };
@@ -199,7 +201,7 @@ $(function() {
                     tableform.table_selected_row(table).LINK = 
                         '<a target="_blank" href="animal_media?id=' + $("#attachanimal").val() + '">' + animalname + '</a>';
                     tableform.table_update(table);
-                    $("#dialog-attach").dialog("close");
+                    $("#dialog-attach-animal").dialog("close");
                 });
             };
             ab[_("Cancel")] = function() { $(this).dialog("close"); };
@@ -261,6 +263,15 @@ $(function() {
 
         sync: function() {
         },
+
+        destroy: function() {
+            common.widget_destroy("#dialog-viewer");
+            common.widget_destroy("#dialog-attach-animal");
+            common.widget_destroy("#dialog-attach-person");
+            common.widget_destroy("#attachanimal", "animalchooser");
+            common.widget_destroy("#attachperson", "personchooser");
+        },
+
 
         name: "onlineform_incoming",
         animation: "formtab",

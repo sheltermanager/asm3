@@ -439,6 +439,11 @@ $(function() {
             return true;
         },
 
+        destroy: function() {
+            common.widget_destroy("#dialog-headfoot");
+            common.widget_destroy("#dialog-browse");
+        },
+
         name: "reports",
         animation: "options",
         title: function() { return _("Edit Reports"); },

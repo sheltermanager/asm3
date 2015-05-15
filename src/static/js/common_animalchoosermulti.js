@@ -117,6 +117,12 @@
             this.options.species.find(":checked").prop("checked", false);
             this.options.results.find(":checked").prop("checked", false);
         },
+        destroy: function() {
+            try {
+                this.options.dialog.dialog("destroy"); 
+            }
+            catch (ex) {}
+        },
         /**
          * Returns the animal row with ID aid
          */

@@ -13,7 +13,7 @@ $(function() {
                 edit_title: _("Edit medical regimen"),
                 edit_perm: 'mcam',
                 helper_text: _("Medical regimens need an animal, name, dosage, a start date and frequencies."),
-                close_on_ok: true,
+                close_on_ok: false,
                 autofocus: false,
                 hide_read_only: true,
                 columns: 1,
@@ -347,9 +347,10 @@ $(function() {
             tableform.dialog_show_add(dialog, function() {
                 tableform.dialog_disable_buttons();   
                 tableform.fields_post(dialog.fields, "mode=create", controller.name, function(response) {
+                    tableform.dialog_close();
                     common.route_reload();
                 }, function() {
-                    tableform.dialog_enable_buttons();   
+                    tableform.dialog_enable_buttons();
                 });
             });
         },
@@ -365,6 +366,7 @@ $(function() {
             tableform.dialog_show_add(medical.dialog, function() {
                 tableform.dialog_disable_buttons();   
                 tableform.fields_post(medical.dialog.fields, "mode=createbulk", controller.name, function(response) {
+                    tableform.dialog_close();
                     common.route_reload();
                 }, function() {
                     tableform.dialog_enable_buttons();   
@@ -626,6 +628,12 @@ $(function() {
                 row.SHELTERCODE = lastanimal.SHELTERCODE;
                 row.WEBSITEMEDIANAME = lastanimal.WEBSITEMEDIANAME;
             }
+        },
+
+        destroy: function() {
+            common.widget_destroy("#dialog-given");
+            common.widget_destroy("#animal");
+            common.widget_destroy("#animals");
         },
 
         name: "medical",

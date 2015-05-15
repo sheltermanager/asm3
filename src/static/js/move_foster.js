@@ -174,6 +174,12 @@ $(function() {
             });
         },
 
+        destroy: function() {
+            common.widget_destroy("#animal");
+            common.widget_destroy("#person");
+        },
+
+
         name: "move_foster",
         animation: "newdata",
         title: function() { return _("Foster an animal"); },

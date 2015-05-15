@@ -208,6 +208,11 @@ $(function() {
             this.load_person_flags();
         },
 
+        destroy: function() {
+            common.widget_destroy("#dialog-headfoot");
+        },
+
+
         name: "onlineforms",
         animation: "formtab",
         title: function() { return _("Online Forms"); },

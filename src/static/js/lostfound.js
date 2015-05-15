@@ -305,7 +305,9 @@ $(function() {
                 var b = {}; 
                 b[_("Delete")] = function() { 
                     var formdata = "mode=delete&id=" + $("#lfid").val();
-                    common.ajax_post(controller.name, formdata, function() { common.route("main"); });
+                    common.ajax_post(controller.name, formdata, function() { 
+                        common.route("main"); $("#dialog-delete").dialog("close"); 
+                    }, function() { $("#dialog-delete").dialog("close"); });
                 };
                 b[_("Cancel")] = function() { $(this).dialog("close"); };
                 $("#dialog-delete").dialog({
@@ -380,6 +382,7 @@ $(function() {
 
         destroy: function() {
             validate.unbind_dirty();
+            common.widget_destroy("#owner");
         },
 
         name: "lostfound",

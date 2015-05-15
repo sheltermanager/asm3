@@ -10,7 +10,7 @@ $(function() {
                 add_title: _("Add rota item"),
                 edit_title: _("Edit rota item"),
                 edit_perm: 'coro',
-                close_on_ok: true,
+                close_on_ok: false,
                 columns: 1,
                 width: 550,
                 fields: [
@@ -35,6 +35,7 @@ $(function() {
                         row.ROTATYPENAME = common.get_field(controller.rotatypes, row.ROTATYPEID, "ROTATYPE");
                         tableform.fields_post(dialog.fields, "mode=update&rotaid=" + row.ID, controller.name, function(response) {
                             tableform.table_update(table);
+                            tableform.dialog_close();
                         });
                     });
                 },
@@ -73,6 +74,7 @@ $(function() {
                                  row.ROTATYPENAME = common.get_field(controller.rotatypes, row.ROTATYPEID, "ROTATYPE");
                                  controller.rows.push(row);
                                  tableform.table_update(table);
+                                 tableform.dialog_close();
                              });
                          });
                      } 
@@ -121,6 +123,11 @@ $(function() {
                 $("#enddate").val($("#startdate").val());
             });
         },
+
+        destroy: function() {
+            common.widget_destroy("#person");
+        },
+
 
         name: "rota",
         animation: "formtab",

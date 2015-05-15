@@ -345,8 +345,8 @@ $(function() {
                     controller.linktypeid + "&comments=" + encodeURIComponent($("#addcomments").val()) +
                     "&base64image=" + encodeURIComponent(finalfile);
                 common.ajax_post(controller.name, formdata, function(result) { 
-                    common.route_reload(); 
                     $("#dialog-add").dialog("close").enable_dialog_buttons();
+                    common.route_reload(); 
                 });
             };
             reader.readAsDataURL(selectedfile);
@@ -759,6 +759,15 @@ $(function() {
 
         sync: function() {
             if (controller.newmedia) { media.new_media(); }
+        },
+
+        destroy: function() {
+            common.widget_destroy("#dialog-email");
+            common.widget_destroy("#dialog-emailpdf");
+            common.widget_destroy("#dialog-add");
+            common.widget_destroy("#dialog-addlink");
+            common.widget_destroy("#dialog-edit");
+            common.widget_destroy("#dialog-sign");
         },
 
         name: "media",
