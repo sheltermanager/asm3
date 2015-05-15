@@ -11000,6 +11000,10 @@ msgstr ""
 msgid "Tuesday"
 msgstr ""
 
+#: animal.js
+msgid "Tumblr"
+msgstr ""
+
 #: dbupdate.py
 msgid "Turkey"
 msgstr ""

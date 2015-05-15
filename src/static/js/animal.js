@@ -673,6 +673,9 @@ $(function() {
                         + '" target="_blank" href="#">' + html.icon("gplus") + ' ' + _("Google+") + '</a></li>',
                     '<li id="button-pinterest" class="asm-menu-item"><a '
                         + '" target="_blank" href="#">' + html.icon("pinterest") + ' ' + _("Pinterest") + '</a></li>',
+                    '<li id="button-tumblr" class="asm-menu-item"><a '
+                        + '" target="_blank" href="#">' + html.icon("tumblr") + ' ' + _("Tumblr") + '</a></li>',
+
                 '</ul>',
                 '</div>',
                 edit_header.animal_edit_header(controller.animal, "animal", controller.tabcounts),
@@ -1082,34 +1085,42 @@ $(function() {
 
             if (!asm.smcom) { $("#button-share").hide(); return; }
 
-            // Link to our animal_view page and image for sharing
-            var view_url = asm.baseurl + "/service?method=animal_view&animalid=" + controller.animal.ID;
-            var view_image = asm.baseurl + "/service?method=animal_image&animalid=" + controller.animal.ID;
-            if (asm.smcom) { view_url += "&account=" + asm.useraccount; view_image += "&account=" + asm.useraccount; }
+            // Share data
+            var share_url = asm.baseurl + "/service?method=animal_view&animalid=" + controller.animal.ID;
+            var share_image = asm.baseurl + "/service?method=animal_image&animalid=" + controller.animal.ID;
+            if (asm.smcom) { share_url += "&account=" + asm.useraccount; share_image += "&account=" + asm.useraccount; }
+            var share_title = controller.animal.ANIMALNAME;
+            var share_description = controller.animal.ANIMALCOMMENTS;
 
 
             // Web and email
-            $("#button-shareweb a").attr("href", view_url);
-            $("#button-shareemail a").attr("href", "mailto:?body=" + encodeURIComponent(view_url));
+            $("#button-shareweb a").attr("href", share_url);
+            $("#button-shareemail a").attr("href", "mailto:?body=" + encodeURIComponent(share_url));
 
             // Facebook
             $("#button-facebook a").attr("href", "https://facebook.com/sharer/sharer.php?" +
-                "&u=" + encodeURIComponent(view_url));
+                "&u=" + encodeURIComponent(share_url));
 
             // Twitter
             $("#button-twitter a").attr("href", "https://twitter.com/share?" +
-                "text=" + encodeURIComponent(html.truncate(controller.animal.ANIMALCOMMENTS, 113)) + 
-                "&url=" + encodeURIComponent(view_url));
+                "text=" + encodeURIComponent(html.truncate(share_description, 113)) + 
+                "&url=" + encodeURIComponent(share_url));
 
             // Google Plus
             $("#button-gplus a").attr("href", "https://plus.google.com/share?" +
-                "&url=" + encodeURIComponent(view_url));
+                "&url=" + encodeURIComponent(share_url));
 
             // Pinterest
             $("#button-pinterest a").attr("href", "http://pinterest.com/pin/create/button/?" +
-                "url=" + encodeURIComponent(view_url) + 
-                "&media=" + encodeURIComponent(view_image) +
-                "&description=" + encodeURIComponent(html.truncate(controller.animal.ANIMALCOMMENTS, 120)));
+                "url=" + encodeURIComponent(share_url) + 
+                "&media=" + encodeURIComponent(share_image) +
+                "&description=" + encodeURIComponent(html.truncate(share_description, 120)));
+
+            // Tumblr
+            $("#button-tumblr a").attr("href", "http://www.tumblr.com/share/link?" +
+                "url=" + encodeURIComponent(share_url) +
+                "&name=" + encodeURIComponent(share_title) +
+                "&description=" + encodeURIComponent(share_description));
 
         },
 
