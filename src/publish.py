@@ -346,6 +346,9 @@ def get_animal_view(dbo, animalid):
     Constructs the animal view page to the template.
     """
     a = animal.get_animal(dbo, animalid)
+    # If the option is on, use animal comments as the notes
+    if configuration.publisher_use_comments(dbo):
+        a["WEBSITEMEDIANOTES"] = a["ANIMALCOMMENTS"]
     head = dbfs.get_string(dbo, "head.html", "/internet/animalview")
     body = dbfs.get_string(dbo, "body.html", "/internet/animalview")
     foot = dbfs.get_string(dbo, "foot.html", "/internet/animalview")

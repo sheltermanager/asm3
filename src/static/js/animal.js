@@ -1090,8 +1090,11 @@ $(function() {
             var share_image = asm.baseurl + "/service?method=animal_image&animalid=" + controller.animal.ID;
             if (asm.smcom) { share_url += "&account=" + asm.useraccount; share_image += "&account=" + asm.useraccount; }
             var share_title = controller.animal.ANIMALNAME;
-            var share_description = controller.animal.ANIMALCOMMENTS;
+            var share_description = controller.animal.WEBSITEMEDIANOTES;
 
+            if (config.bool("PublisherUseComments") || !share_description) {
+                share_description = controller.animal.ANIMALCOMMENTS;
+            }
 
             // Web and email
             $("#button-shareweb a").attr("href", share_url);
