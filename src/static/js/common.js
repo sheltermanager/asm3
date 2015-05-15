@@ -880,6 +880,7 @@
                 "#animal": "animalchooser",
                 "#owner": "personchooser",
                 "#person": "personchooser",
+                "#retailer": "personchooser",
                 "#dialog-": "dialog"
             };
             if (!type) {
