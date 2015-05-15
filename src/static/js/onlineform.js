@@ -150,6 +150,10 @@ $(function() {
 
         },
 
+        destroy: function() {
+            tableform.dialog_destroy();
+        },
+
         name: "onlineform",
         animation: "formtab",
         title: function() { return controller.title; },

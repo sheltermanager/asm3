@@ -106,6 +106,10 @@ $(function() {
             tableform.table_bind(this.table, this.buttons);
         },
 
+        destroy: function() {
+            tableform.dialog_destroy();
+        },
+
         name: "animal_diet",
         animation: "formtab",
 

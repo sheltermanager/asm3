@@ -78,6 +78,10 @@ $(function() {
             $("#path").attr("name", "path");
         },
 
+        destroy: function() {
+            tableform.dialog_destroy();
+        },
+
         name: "document_repository",
         animation: "options",
         title: function() { return _("Document Repository"); },

@@ -313,6 +313,7 @@ $(function() {
 
         destroy: function() {
             common.widget_destroy("#dialog-edit");
+            tableform.dialog_destroy();
         },
 
         name: "accounts_trx",

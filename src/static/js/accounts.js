@@ -170,6 +170,10 @@ $(function() {
             if (this.offset) { $("#offset").select("value", this.offset); }
         },
 
+        destroy: function() {
+            tableform.dialog_destroy();
+        },
+
         name: "accounts",
         animation: "formtab",
         title: function() { return _("Accounts"); },

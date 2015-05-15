@@ -210,8 +210,8 @@ $(function() {
 
         destroy: function() {
             common.widget_destroy("#dialog-headfoot");
+            tableform.dialog_destroy();
         },
-
 
         name: "onlineforms",
         animation: "formtab",

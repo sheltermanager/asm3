@@ -209,6 +209,10 @@ $(function() {
             });
         },
 
+        destroy: function() {
+            tableform.dialog_destroy();
+        },
+
         name: "animal_costs",
         animation: "formtab",
         title:  function() { return common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 

@@ -104,6 +104,10 @@ $(function() {
             tableform.table_bind(this.table, this.buttons);
         },
 
+        destroy: function() {
+            tableform.dialog_destroy();
+        },
+
         vouchertype_change: function() {
             var dc = common.get_field(controller.vouchertypes, $("#type").select("value"), "DEFAULTCOST");
             $("#amount").currency("value", dc);

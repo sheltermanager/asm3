@@ -199,6 +199,10 @@ $(function() {
         sync: function() {
         },
 
+        destroy: function() {
+            tableform.dialog_destroy();
+        },
+
         set_extra_fields: function(row) {
         },
 

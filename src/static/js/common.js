@@ -1,7 +1,7 @@
 /*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, console, jQuery, Mousetrap, Path */
 /*global asm, header, _, escape, unescape */
-/*global common: true, config: true, controller: true, dlgfx: true, format: true, html: true, tableform: true, validate: true */
+/*global common: true, config: true, controller: true, dlgfx: true, format: true, html: true, log: true, validate: true */
 
 (function($) {
 
@@ -54,12 +54,6 @@
             text = text.replace("{plural3}", number);
             text = text.replace("{plural4}", number);
             return text;
-        },
-
-        console_log: function(str) {
-            if (window.console) {
-                console.log(str);
-            }
         },
 
         cookie_set: function(name, value, days) {
@@ -363,11 +357,17 @@
          * object (from uri) and then starts it.
          */
         module_loadandstart: function(modulename, uri) {
+            var logprefix = "module_loadandstart [" + modulename + "]: ";
             // do we already have one running? If so, try to unload it first
             if (common.module_running) {
                 if (common.module_running.destroy) {
-                    if (common.module_running.destroy()) {
-                        return;
+                    try {
+                        if (common.module_running.destroy()) {
+                            return;
+                        }
+                    }
+                    catch (exdestroy) {
+                        log.error(logprefix + "destroy: " + exdestroy);
                     }
                 }
             }
@@ -404,25 +404,67 @@
 
         /**
          * Starts a module, unloading any active module first.
+         * Runs through the lifecycle events of render, bind, sync, title, animation
+         * if any throw errors, they're caught and logged so the application
+         * can recover if necessary.
          */
         module_start: function(modulename) {
+            var logprefix = "module_start [" + modulename + "]: ";
             // do we already have one running? If so, try to unload it first
             if (common.module_running) {
                 if (common.module_running.destroy) {
-                    if (common.module_running.destroy()) {
-                        return;
+                    try {
+                        if (common.module_running.destroy()) {
+                            return;
+                        }
+                    }
+                    catch (exdestroy) {
+                        log.error(logprefix + "destroy: " + exdestroy);
                     }
                 }
             }
             var o = common.modules[modulename];
             $("#asm-body-container").empty(); 
-            if (o.render) { $("#asm-body-container").html(o.render()); }
+            if (o.render) { 
+                try {
+                    $("#asm-body-container").html(o.render()); 
+                }
+                catch (exrender) {
+                    log.error(logprefix + "render: " + exrender);
+                }
+            }
             common.bind_widgets();
-            if (o.bind) { o.bind(); }
-            if (o.sync) { o.sync(); }
-            if (o.title) { $(document).attr("title", o.title()); }
-            common.apply_label_overrides(modulename); 
-            $("#asm-content").asmcontent(o.animation instanceof Function ? o.animation() : o.animation);
+            if (o.bind) { 
+                try {
+                    o.bind(); 
+                }
+                catch (exbind) {
+                    log.error(logprefix + "bind: " + exbind);
+                }
+            }
+            if (o.sync) {
+                try {
+                    o.sync(); 
+                }
+                catch (exsync) {
+                    log.error(logprefix + "sync: " + exsync);
+                }
+            }
+            if (o.title) { 
+                try {
+                    $(document).attr("title", o.title()); 
+                }
+                catch (extitle) {
+                    log.error(logprefix + "title: " + extitle);
+                }
+            }
+            common.apply_label_overrides(modulename);
+            try {
+                $("#asm-content").asmcontent(o.animation instanceof Function ? o.animation() : o.animation);
+            }
+            catch (exanim) {
+                log.error(logprefix + "animation: " + exanim);
+            }
             common.module_running = o;
         },
 
@@ -907,11 +949,11 @@
                     }
                 }
                 else {
-                    common.console_log("widget_destroy: invalid type '" + type + "' for selector '" + selector + "'");
+                    log.error("widget_destroy: invalid type '" + type + "' for selector '" + selector + "'");
                 }
             }
             catch (ex) {
-                common.console_log("widget_destroy: " + selector + " " + type + ",\n" + ex);
+                log.error("widget_destroy: " + selector + " " + type + ",\n" + ex);
             }
         }
     };
@@ -1780,6 +1822,33 @@
                 uri += "&date=" + encodeURIComponent(row.WEBSITEMEDIADATE);
             }
             return uri;
+        }
+    };
+
+    log = {
+
+        trace: function(s) {
+            log.console_log("TRACE: " + s);
+        },
+
+        debug: function(s) {
+            log.console_log("DEBUG: " + s);
+        },
+
+        info: function(s) {
+            log.console_log("INFO: " + s);
+        },
+
+        warn: function(s) {
+            log.console_log("WARN: " + s);
+        },
+
+        error: function(s) {
+            log.console_log("ERROR: " + s);
+        },
+
+        console_log: function(str) {
+            if (window.console) { console.log(str); }
         }
     };
 

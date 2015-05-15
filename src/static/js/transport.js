@@ -329,6 +329,7 @@ $(function() {
             common.widget_destroy("#driver", "personchooser");
             common.widget_destroy("#pickup", "personchooser");
             common.widget_destroy("#dropoff", "personchooser");
+            tableform.dialog_destroy();
         },
 
 

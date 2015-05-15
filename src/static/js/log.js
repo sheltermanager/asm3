@@ -135,6 +135,10 @@ $(function() {
             }
         },
 
+        destroy: function() {
+            tableform.dialog_destroy();
+        },
+
         name: "log",
         animation: "formtab",
         title:  function() { 

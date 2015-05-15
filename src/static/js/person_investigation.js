@@ -98,6 +98,10 @@ $(function() {
             tableform.table_bind(this.table, this.buttons);
         },
 
+        destroy: function() {
+            tableform.dialog_destroy();
+        },
+
         name: "person_investigation",
         animation: "formtab",
         title: function() { return controller.person.OWNERNAME; },

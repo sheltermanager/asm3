@@ -126,8 +126,8 @@ $(function() {
 
         destroy: function() {
             common.widget_destroy("#person");
+            tableform.dialog_destroy();
         },
-
 
         name: "rota",
         animation: "formtab",

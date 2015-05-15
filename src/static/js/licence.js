@@ -211,6 +211,7 @@ $(function() {
         destroy: function() {
             common.widget_destroy("#person");
             common.widget_destroy("#animal");
+            tableform.dialog_destroy();
         },
 
         name: "licence",

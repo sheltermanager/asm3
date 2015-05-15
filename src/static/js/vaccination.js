@@ -453,6 +453,7 @@ $(function() {
             common.widget_destroy("#dialog-given");
             common.widget_destroy("#animal");
             common.widget_destroy("#animals");
+            tableform.dialog_destroy();
         },
 
         name: "vaccination",

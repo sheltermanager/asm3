@@ -130,6 +130,10 @@ $(function() {
 
         },
 
+        destroy: function() {
+            tableform.dialog_destroy();
+        },
+
         name: "additional",
         animation: "options",
         title: function() { return _("Additional Fields"); },

@@ -1,6 +1,7 @@
 37
 ================
 
+15/05/15 Client side lifecycle error handling/logging
 15/05/15 Full destructor support for client side widgets
 15/05/15 Add tumblr support
 14/05/15 Extra debug info during HTML/FTP publish

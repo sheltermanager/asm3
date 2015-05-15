@@ -92,6 +92,10 @@ $(function() {
             tableform.table_bind(this.table, this.buttons);
         },
 
+        destroy: function() {
+            tableform.dialog_destroy();
+        },
+
         name: "diarytask",
         animation: "formtab",
         title: function() { return controller.title; },

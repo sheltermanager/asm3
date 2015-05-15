@@ -594,6 +594,7 @@ $(function() {
             common.widget_destroy("#animal");
             common.widget_destroy("#person");
             common.widget_destroy("#retailer");
+            tableform.dialog_destroy();
         },
 
         name: "movements",

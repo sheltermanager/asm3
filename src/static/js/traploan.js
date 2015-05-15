@@ -138,8 +138,8 @@ $(function() {
 
         destroy: function() {
             common.widget_destroy("#person");
+            tableform.dialog_destroy();
         },
-
 
         name: "traploan",
         animation: function() { return controller.name == "traploan" ? "book" : "formtab"; },

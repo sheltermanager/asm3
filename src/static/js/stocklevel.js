@@ -211,6 +211,10 @@ $(function() {
 
         },
 
+        destroy: function() {
+            tableform.dialog_destroy();
+        },
+
         set_extra_fields: function(row) {
             row.STOCKLOCATIONNAME = common.get_field(controller.stocklocations, row.STOCKLOCATIONID, "LOCATIONNAME");
         },

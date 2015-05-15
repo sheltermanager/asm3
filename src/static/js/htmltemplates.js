@@ -96,6 +96,10 @@ $(function() {
             });
         },
 
+        destroy: function() {
+            tableform.dialog_destroy();
+        },
+
         name: "htmltemplates",
         animation: "options",
         title: function() { return _("HTML Publishing Templates"); },

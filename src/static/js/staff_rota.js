@@ -258,6 +258,7 @@ $(function() {
         destroy: function() {
             common.widget_destroy("#dialog-clone");
             common.widget_destroy("#person");
+            tableform.dialog_destroy();
         },
 
         name: "staff_rota",

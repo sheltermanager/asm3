@@ -442,6 +442,7 @@ $(function() {
         destroy: function() {
             common.widget_destroy("#dialog-headfoot");
             common.widget_destroy("#dialog-browse");
+            tableform.dialog_destroy();
         },
 
         name: "reports",

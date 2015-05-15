@@ -232,6 +232,7 @@ $(function() {
         destroy: function() {
             common.widget_destroy("#dialog-reset");
             common.widget_destroy("#person");
+            tableform.dialog_destroy();
         },
 
         name: "users",

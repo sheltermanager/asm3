@@ -229,6 +229,10 @@ $(function() {
             });
         },
 
+        destroy: function() {
+            tableform.dialog_destroy();
+        },
+
         name: "diary",
         animation: function() { return controller.name.indexOf("diary_edit") == 0 ? "book" : "formtab"; },
         title:  function() { 

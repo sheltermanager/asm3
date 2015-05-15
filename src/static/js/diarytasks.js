@@ -95,6 +95,10 @@ $(function() {
             tableform.table_bind(this.table, this.buttons);
         },
 
+        destroy: function() {
+            tableform.dialog_destroy();
+        },
+
         name: "diarytasks",
         animation: "book",
         title: function() { return _("Diary Tasks"); },

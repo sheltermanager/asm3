@@ -184,6 +184,10 @@ $(function() {
             this.bind_newodt_dialog();
         },
 
+        destroy: function() {
+            tableform.dialog_destroy();
+        },
+
         name: "document_templates",
         animation: "options",
         title: function() { return _("Document Templates"); },

@@ -1,6 +1,6 @@
 /*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, console, jQuery */
-/*global asm, common, config, dlgfx, format, html, header, validate, _, escape, unescape */
+/*global asm, common, config, dlgfx, format, html, header, log, validate, _, escape, unescape */
 
 (function($) {
 
@@ -258,8 +258,8 @@
                 },
                 error: function(jqxhr, textstatus, response) {
                     dialog.dialog("close");
-                    common.console_log(response);
                     dialog.find(".spinner").hide();
+                    log.error(response);
                 }
             });
         }

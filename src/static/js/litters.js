@@ -141,6 +141,7 @@ $(function() {
 
         destroy: function() {
             common.widget_destroy("#animal");
+            tableform.dialog_destroy();
         },
 
         name: "litters",

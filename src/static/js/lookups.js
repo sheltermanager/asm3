@@ -146,6 +146,10 @@ $(function() {
             $("#lookup").val(controller.tablename);
         },
 
+        destroy: function() {
+            tableform.dialog_destroy();
+        },
+
         name: "lookups",
         animation: "book",
         title: function() { return _("Edit Lookups"); },
