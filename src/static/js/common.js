@@ -953,7 +953,7 @@
                 }
             }
             catch (ex) {
-                log.error("widget_destroy: " + selector + " " + type + ",\n" + ex);
+                log.debug("widget_destroy: " + selector + " " + type + ",\n" + ex);
             }
         }
     };
@@ -1827,23 +1827,30 @@
 
     log = {
 
+        level: 0,
+
         trace: function(s) {
+            if (log.level > 0) { return; }
             log.console_log("TRACE: " + s);
         },
 
         debug: function(s) {
+            if (log.level > 1) { return; }
             log.console_log("DEBUG: " + s);
         },
 
         info: function(s) {
+            if (log.level > 2) { return; }
             log.console_log("INFO: " + s);
         },
 
         warn: function(s) {
+            if (log.level > 3) { return; }
             log.console_log("WARN: " + s);
         },
 
         error: function(s) {
+            if (log.level > 4) { return; }
             log.console_log("ERROR: " + s);
         },
 
