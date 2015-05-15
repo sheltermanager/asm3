@@ -349,6 +349,8 @@ def get_animal_view(dbo, animalid):
     # If the option is on, use animal comments as the notes
     if configuration.publisher_use_comments(dbo):
         a["WEBSITEMEDIANOTES"] = a["ANIMALCOMMENTS"]
+    a["WEBSITEMEDIANOTES"] += configuration.third_party_publisher_sig(dbo)
+    a["WEBSITEMEDIANOTES"] = a["WEBSITEMEDIANOTES"].replace("\n", "<br />")
     head = dbfs.get_string(dbo, "head.html", "/internet/animalview")
     body = dbfs.get_string(dbo, "body.html", "/internet/animalview")
     foot = dbfs.get_string(dbo, "foot.html", "/internet/animalview")
