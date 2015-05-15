@@ -125,8 +125,8 @@ def sql_structure(dbo):
         fstr("Description"),
         fint("Archived", True),
         fint("AccountType"),
-        fint("CostTypeID"),
-        fint("DonationTypeID") ))
+        fint("CostTypeID", True),
+        fint("DonationTypeID", True) ))
     sql += index("accounts_Code", "accounts", "Code", True)
     sql += index("accounts_Archived", "accounts", "Archived")
     sql += index("accounts_CostTypeID", "accounts", "CostTypeID")
@@ -147,8 +147,8 @@ def sql_structure(dbo):
         fint("Amount"),
         fint("SourceAccountID"),
         fint("DestinationAccountID"),
-        fint("AnimalCostID"), 
-        fint("OwnerDonationID") ))
+        fint("AnimalCostID", True), 
+        fint("OwnerDonationID", True) ))
     sql += index("accountstrx_TrxDate", "accountstrx", "TrxDate")
     sql += index("accountstrx_Source", "accountstrx", "SourceAccountID")
     sql += index("accountstrx_Dest", "accountstrx", "DestinationAccountID")
