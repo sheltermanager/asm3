@@ -160,7 +160,6 @@ def handler(post, remoteip, referer):
                 return ("image/jpeg", 86400, dbfs.get_string(dbo, mm[0]["MEDIANAME"]))
 
     elif method == "animal_view":
-        hotlink_protect("animal_view", referer)
         if animalid == "" or utils.cint(animalid) == 0:
             al.error("animal_view failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
             return ("text/plain", 0, "ERROR: Invalid animalid")
