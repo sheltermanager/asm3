@@ -1,6 +1,7 @@
 37
 ================
 
+16/05/15 Support electronic signatures in online forms #185
 15/05/15 Client side lifecycle error handling/logging
 15/05/15 Full destructor support for client side widgets
 15/05/15 Add tumblr support

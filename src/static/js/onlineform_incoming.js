@@ -110,7 +110,7 @@ $(function() {
                 autoOpen: false,
                 resizable: true,
                 height: "auto",
-                width: 600,
+                width: 760,
                 modal: true,
                 dialogClass: "dialogshadow",
                 show: dlgfx.add_show,

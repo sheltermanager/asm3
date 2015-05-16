@@ -17,7 +17,7 @@ import person
 import publish
 import utils
 import waitinglist
-from sitedefs import BASE_URL, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS
+from sitedefs import BASE_URL, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, SIGNATURE_JS, TOUCHPUNCH_JS
 
 FIELDTYPE_YESNO = 0
 FIELDTYPE_TEXT = 1
@@ -32,6 +32,7 @@ FIELDTYPE_RAWMARKUP = 9
 FIELDTYPE_DATE = 10
 FIELDTYPE_CHECKBOX = 11
 FIELDTYPE_RADIOGROUP = 12
+FIELDTYPE_SIGNATURE = 13
 
 # Types as used in JSON representations
 FIELDTYPE_MAP = {
@@ -47,7 +48,8 @@ FIELDTYPE_MAP = {
     "RAWMARKUP": 9,
     "DATE": 10,
     "CHECKBOX": 11,
-    "RADIOGROUP": 12
+    "RADIOGROUP": 12,
+    "SIGNATURE": 13
 }
 
 FIELDTYPE_MAP_REVERSE = {v: k for k, v in FIELDTYPE_MAP.items()}
@@ -91,7 +93,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
     # and have it applied to all date fields.
     needjqui = False
     for f in formfields:
-        if f["FIELDTYPE"] == FIELDTYPE_DATE:
+        if f["FIELDTYPE"] == FIELDTYPE_DATE or f["FIELDTYPE"] == FIELDTYPE_SIGNATURE:
             needjqui = True
     if completedocument:
         header = get_onlineform_header(dbo)
@@ -100,14 +102,36 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             df = df.replace("%Y", "yy").replace("%m", "mm").replace("%d", "dd")
             header = header.replace("</head>", """
                 %s
-                %s
-                %s
                 <script>
                 $(document).ready(function() {
                     $(".asm-onlineform-date").datepicker({ dateFormat: '%s' });
+                    try {
+                        $(".asm-onlineform-signature").signature({ guideline: true });
+                        $(".asm-onlineform-signature-clear").click(function() {
+                            var signame = $(this).attr("data-clear");
+                            $("div[data-name='" + signame + "']").signature("clear");
+                        });
+                    } catch (ex) {}
+                    $("input[type='submit']").click(function() {
+                        $(".asm-onlineform-signature").each(function() {
+                            try {
+                                var img = $(this).find("canvas").get(0).toDataURL("image/png");
+                                var fieldname = $(this).attr("data-name");
+                                $("input[name='" + fieldname + "']").val(img);
+                            }
+                            catch (exo) {
+                                if (window.console) { console.log(exo); }
+                            }
+                        });
+                    });
                 });
                 </script>
-                </head>""" % (html.css_tag(JQUERY_UI_CSS.replace("%(theme)s", "smoothness")), html.script_tag(JQUERY_JS), html.script_tag(JQUERY_UI_JS), df))
+                </head>""" % (html.css_tag(JQUERY_UI_CSS.replace("%(theme)s", "smoothness")) + \
+                    html.script_tag(JQUERY_JS) + \
+                    html.script_tag(JQUERY_UI_JS) + \
+                    html.script_tag(TOUCHPUNCH_JS) + \
+                    html.script_tag(SIGNATURE_JS),
+                    df))
         h.append(header.replace("$$TITLE$$", form["NAME"]))
         h.append('<h2 class="asm-onlineform-title">%s</h2>' % form["NAME"])
         if form["DESCRIPTION"] is not None and form["DESCRIPTION"] != "":
@@ -193,6 +217,10 @@ def get_onlineform_html(dbo, formid, completedocument = True):
         elif f["FIELDTYPE"] == FIELDTYPE_RAWMARKUP:
             h.append('<input type="hidden" name="%s" value="raw" />' % html.escape(fname))
             h.append(utils.nulltostr(f["TOOLTIP"]))
+        elif f["FIELDTYPE"] == FIELDTYPE_SIGNATURE:
+            h.append('<input type="hidden" name="%s" value="" />' % html.escape(fname))
+            h.append('<div class="asm-onlineform-signature" style="width: 500px; height: 200px" data-name="%s"></div>' % ( html.escape(fname) ))
+            h.append('<br/><button type="button" class="asm-onlineform-signature-clear" data-clear="%s">%s</button>' % ( html.escape(fname), i18n._("Clear", l) ))
         h.append('</td>')
         h.append('</tr>')
     h.append('</table>')
@@ -310,6 +338,11 @@ def get_onlineformincoming_html(dbo, collationid, includeRaw = False):
         if v.startswith("RAW::"): 
             h.append('<tr>')
             h.append('<td colspan="2">%s</td>' % v[5:])
+            h.append('</tr>')
+        elif v.startswith("data:"):
+            h.append('<tr>')
+            h.append('<td>%s</td>' % label )
+            h.append('<td><img src="%s" border="0" /></td>' % v)
             h.append('</tr>')
         else:
             h.append('<tr>')
@@ -540,8 +573,8 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     preview = []
     for fld in get_onlineformincoming_detail(dbo, collationid):
         if fieldssofar < 3:
-            # Don't include raw markup fields in the preview
-            if fld["VALUE"].startswith("RAW::"): continue
+            # Don't include raw markup or signature fields in the preview
+            if fld["VALUE"].startswith("RAW::") or fld["VALUE"].startswith("data:"): continue
             fieldssofar += 1
             preview.append( fld["LABEL"] + ": " + fld["VALUE"] )
     db.execute(dbo, "UPDATE onlineformincoming SET Preview = %s WHERE CollationID = %s" % ( db.ds(", ".join(preview)), db.di(collationid) ))

@@ -16,7 +16,8 @@ $(function() {
         { "ID": 6, "NAME": _("Color") },
         { "ID": 7, "NAME": _("Breed") },
         { "ID": 8, "NAME": _("Species") },
-        { "ID": 9, "NAME": _("Raw Markup") }
+        { "ID": 9, "NAME": _("Raw Markup") },
+        { "ID": 13, "NAME": _("Signature") }
     ];
 
     var onlineform = {
