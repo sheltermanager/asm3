@@ -349,8 +349,6 @@ def get_animal_view(dbo, animalid):
     # If the option is on, use animal comments as the notes
     if configuration.publisher_use_comments(dbo):
         a["WEBSITEMEDIANOTES"] = a["ANIMALCOMMENTS"]
-    a["WEBSITEMEDIANOTES"] += configuration.third_party_publisher_sig(dbo)
-    a["WEBSITEMEDIANOTES"] = a["WEBSITEMEDIANOTES"].replace("\n", "<br />")
     head = dbfs.get_string(dbo, "head.html", "/internet/animalview")
     body = dbfs.get_string(dbo, "body.html", "/internet/animalview")
     foot = dbfs.get_string(dbo, "foot.html", "/internet/animalview")
@@ -367,7 +365,14 @@ def get_animal_view(dbo, animalid):
     s = head + body + foot
     tags = wordprocessor.animal_tags(dbo, a)
     tags = wordprocessor.append_tags(tags, wordprocessor.org_tags(dbo, "system"))
+    # Add extra publishing text, preserving the line endings
+    LE_TOKEN = "**le**"
+    notes = utils.nulltostr(a["WEBSITEMEDIANOTES"])
+    notes += configuration.third_party_publisher_sig(dbo)
+    notes = notes.replace("\n" ,LE_TOKEN)
+    tags["WEBMEDIANOTES"] = notes 
     s = wordprocessor.substitute_tags(s, tags, True, "$$", "$$")
+    s = s.repace(LE_TOKEN, "<br/>")
     return s
 
 class AbstractPublisher(threading.Thread):
