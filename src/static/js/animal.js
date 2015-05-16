@@ -690,15 +690,15 @@ $(function() {
                     { id: "share", text: _("Share"), type: "buttonmenu", icon: "social" }
                 ]),
                 '<div id="asm-details-accordion">',
-                animal.render_details(),
-                animal.render_notes(),
+                this.render_details(),
+                this.render_notes(),
                 '<h3 id="asm-additional-accordion"><a href="#">' + _("Additional") + '</a></h3>',
                 '<div>',
                 additional.additional_fields(controller.additional),
                 '</div>',
-                animal.render_entry(),
-                animal.render_health_and_identification(),
-                animal.render_death(),
+                this.render_entry(),
+                this.render_health_and_identification(),
+                this.render_death(),
                 '</div> <!-- accordion -->',
                 '</div> <!-- asmcontent -->',
                 '</div> <!-- tabs -->'
@@ -1082,8 +1082,6 @@ $(function() {
          * Generates the sharing links/share button
          */
         set_sharinglinks: function() {
-
-            if (!asm.smcom) { $("#button-share").hide(); return; }
 
             // Share data
             var share_url = asm.baseurl + "/service?method=animal_view&animalid=" + controller.animal.ID;
