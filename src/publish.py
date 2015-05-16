@@ -372,7 +372,7 @@ def get_animal_view(dbo, animalid):
     notes = notes.replace("\n" ,LE_TOKEN)
     tags["WEBMEDIANOTES"] = notes 
     s = wordprocessor.substitute_tags(s, tags, True, "$$", "$$")
-    s = s.repace(LE_TOKEN, "<br/>")
+    s = s.replace(LE_TOKEN, "<br/>")
     return s
 
 class AbstractPublisher(threading.Thread):
