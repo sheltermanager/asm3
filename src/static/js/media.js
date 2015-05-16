@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, asm, common, config, controller, dlgfx, edit_header, format, header, html, tableform, validate */
+/*global $, jQuery, _, asm, common, config, controller, dlgfx, edit_header, format, header, html, log, tableform, validate */
 /*global escape, FileReader */
 
 $(function() {
@@ -386,9 +386,16 @@ $(function() {
         bind: function() {
 
             $(".asm-tabbar").asmtabs();
-            $("#signature").signature({ guideline: true });
             $("#tipattach").show();
             $("#tipios6").hide();
+
+            try {
+                // Can fail on IE8/9 without canvas support
+                $("#signature").signature({ guideline: true });
+            }
+            catch (excanvas) {
+                log.error("failed creating signature canvas");   
+            }
 
             // If this is an idevice and the file upload box is
             // disabled, it needs upgrading to iOS6 or better.
