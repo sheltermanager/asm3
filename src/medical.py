@@ -560,7 +560,7 @@ def reschedule_vaccination(dbo, username, vaccinationid, newdate):
         ( "DateRequired", db.dd(newdate)),
         ( "Cost", db.di(av["COST"])),
         ( "CostPaidDate", db.dd(None)),
-        ( "Comments", db.ds(av["COMMENTS"])))))
+        ( "Comments", db.ds("")))))
 
     audit.create(dbo, username, "animalvaccination", str(nvaccid))
 
