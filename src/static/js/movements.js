@@ -25,6 +25,11 @@ $(function() {
                 }
             });
 
+            // Clear the last loaded items before starting
+            lastanimal = null;
+            lastperson = null;
+            lastretailer = null;
+
             var dialog = {
                 add_title: _("Add movement"),
                 edit_title: _("Edit movement"),
@@ -220,7 +225,10 @@ $(function() {
                             if (controller.name == "move_book_recent_adoption") { $("#type").select("value", "1"); }
                             if (controller.name == "move_book_recent_transfer") { $("#type").select("value", "3"); }
                             if (controller.name == "move_book_retailer") { $("#type").select("value", "8"); }
-                            if (controller.name == "move_book_trial_adoption") { $("#type").select("value", "1"); }
+                            if (controller.name == "move_book_trial_adoption") { 
+                                $("#type").select("value", "1"); 
+                                $("#trial").prop("checked", true);
+                            }
 
                             // If we're in a book other than the reservation book, set the movement date to today
                             if (controller.name.indexOf("move_book") == 0 && controller.name != "move_book_reservation") {

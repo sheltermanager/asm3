@@ -8,6 +8,9 @@ $(function() {
     var medical = {
 
         model: function() {
+
+            lastanimal = null;
+
             var dialog = {
                 add_title: _("Add medical regimen"),
                 edit_title: _("Edit medical regimen"),

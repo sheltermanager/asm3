@@ -8,6 +8,9 @@ $(function() {
     var vaccination = {
 
         model: function() {
+
+            lastanimal = null;
+
             var dialog = {
                 add_title: _("Add vaccination"),
                 edit_title: _("Edit vaccination"),

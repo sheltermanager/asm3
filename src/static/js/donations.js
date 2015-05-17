@@ -13,6 +13,12 @@ $(function() {
         create_semaphore: false,
 
         model: function() {
+
+            // clear some things before we start
+            lastanimal = null;
+            lastperson = null;
+            dialog_row = null;
+
             var dialog = {
                 add_title: _("Add payment"),
                 edit_title: _("Edit payment"),

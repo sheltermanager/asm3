@@ -8,6 +8,9 @@ $(function() {
     var test = {
 
         model: function() {
+
+            lastanimal = null;
+
             var dialog = {
                 add_title: _("Add test"),
                 edit_title: _("Edit test"),
