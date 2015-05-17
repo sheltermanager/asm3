@@ -223,6 +223,7 @@ $(function() {
          *       (also used to choose the url target for created records)
          */
         create_record: function(mode) {
+             header.hide_error();
              var table = onlineform_incoming.table, ids = tableform.table_ids(table);
              common.ajax_post("onlineform_incoming", "mode=" + mode + "&ids=" + ids , function(result) {
                  var selrows = tableform.table_selected_rows(table);
