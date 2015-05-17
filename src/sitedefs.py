@@ -202,6 +202,12 @@ DUMP_OVERRIDES = {
     "dumpsqlasm2nomedia": ""
 }
 
+# Options available under the share button
+SHARE_BUTTON = "shareweb,shareemail"
+
+# Type of electronic signing device available
+ELECTRONIC_SIGNATURES = ""
+
 # If you want a forgotten password link on the login page,
 # the URL it should link to
 FORGOTTEN_PASSWORD = ""

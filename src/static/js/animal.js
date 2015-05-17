@@ -658,22 +658,20 @@ $(function() {
                 '</div>',
                 '<div id="button-share-body" class="asm-menu-body">',
                 '<ul class="asm-menu-list">',
-                    /*
-                    '<li id="button-shareemail" class="asm-menu-item"><a '
-                        + '" target="_blank" href="#">' + html.icon("email") + ' ' + _("Email") + '</a></li>',
-                    */
-                    '<li id="button-shareweb" class="asm-menu-item"><a '
+                    '<li id="button-shareweb" class="sharebutton asm-menu-item"><a '
                         + '" target="_blank" href="#">' + html.icon("web") + ' ' + _("Link to this animal") + '</a></li>',
-                    '<li class="asm-menu-category">' + _("Social") + ' </li>',
-                    '<li id="button-facebook" class="asm-menu-item"><a '
+                    '<li id="button-shareemail" class="sharebutton asm-menu-item"><a '
+                        + '" target="_blank" href="#">' + html.icon("email") + ' ' + _("Email") + '</a></li>',
+                    '<li id="button-social" class="sharebutton asm-menu-category">' + _("Social") + ' </li>',
+                    '<li id="button-facebook" class="sharebutton asm-menu-item"><a '
                         + '" target="_blank" href="#">' + html.icon("facebook") + ' ' + _("Facebook") + '</a></li>',
-                    '<li id="button-twitter" class="asm-menu-item"><a '
+                    '<li id="button-twitter" class="sharebutton asm-menu-item"><a '
                         + '" target="_blank" href="#">' + html.icon("twitter") + ' ' + _("Twitter") + '</a></li>',
-                    '<li id="button-gplus" class="asm-menu-item"><a '
+                    '<li id="button-gplus" class="sharebutton asm-menu-item"><a '
                         + '" target="_blank" href="#">' + html.icon("gplus") + ' ' + _("Google+") + '</a></li>',
-                    '<li id="button-pinterest" class="asm-menu-item"><a '
+                    '<li id="button-pinterest" class="sharebutton asm-menu-item"><a '
                         + '" target="_blank" href="#">' + html.icon("pinterest") + ' ' + _("Pinterest") + '</a></li>',
-                    '<li id="button-tumblr" class="asm-menu-item"><a '
+                    '<li id="button-tumblr" class="sharebutton asm-menu-item"><a '
                         + '" target="_blank" href="#">' + html.icon("tumblr") + ' ' + _("Tumblr") + '</a></li>',
 
                 '</ul>',
@@ -1093,6 +1091,12 @@ $(function() {
             if (config.bool("PublisherUseComments") || !share_description) {
                 share_description = controller.animal.ANIMALCOMMENTS;
             }
+
+            // Enable sharing according to sitedef
+            $(".sharebutton").hide();
+            $.each(controller.sharebutton.split(","), function(i, v) {
+                $("#button-" + v).show();
+            });
 
             // Web and email
             $("#button-shareweb a").attr("href", share_url);

@@ -325,6 +325,7 @@ $(function() {
         destroy: function() {
             validate.unbind_dirty();
             common.widget_destroy("#owner");
+            this.current_person = null;
         },
 
         name: "waitinglist",

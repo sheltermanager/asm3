@@ -3,9 +3,9 @@
 
 $(function() {
 
-    var lastanimal = null;
-    
     var litters = {
+
+        lastanimal: null,
 
         model: function() {
             var dialog = {
@@ -123,15 +123,15 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
-            $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) { lastanimal = rec; $("#species").select("value", rec.SPECIESID); });
-            $("#animal").animalchooser().bind("animalchooserloaded", function(event, rec) { lastanimal = rec; });
+            $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) { litters.lastanimal = rec; $("#species").select("value", rec.SPECIESID); });
+            $("#animal").animalchooser().bind("animalchooserloaded", function(event, rec) { litters.lastanimal = rec; });
         },
 
         set_extra_fields: function(row) {
             row.MOTHERNAME = ""; row.MOTHERCODE = "";
-            if (lastanimal) {
-                row.MOTHERNAME = lastanimal.ANIMALNAME;
-                row.MOTHERCODE = lastanimal.SHELTERCODE;
+            if (litters.lastanimal) {
+                row.MOTHERNAME = litters.lastanimal.ANIMALNAME;
+                row.MOTHERCODE = litters.lastanimal.SHELTERCODE;
             }
             row.SPECIESNAME = common.get_field(controller.species, row.SPECIESID, "SPECIESNAME");
             if (row.CACHEDANIMALSLEFT === undefined) {
@@ -142,6 +142,7 @@ $(function() {
         destroy: function() {
             common.widget_destroy("#animal");
             tableform.dialog_destroy();
+            this.lastanimal = null;
         },
 
         name: "litters",

@@ -43,7 +43,7 @@ import utils
 import waitinglist as extwaitinglist
 import web
 import wordprocessor
-from sitedefs import BASE_URL, DEPLOYMENT_TYPE, DUMP_OVERRIDES, EMERGENCY_NOTICE, FORGOTTEN_PASSWORD, FORGOTTEN_PASSWORD_LABEL, LOCALE, GEO_PROVIDER, GEO_PROVIDER_KEY, JQUERY_UI_CSS, LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_PUBLISH_URL, MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MAP_LINK, MAP_PROVIDER, OSM_MAP_TILES, PETRESCUE_FTP_HOST, QR_IMG_SRC, SESSION_STORE, SMARTTAG_FTP_USER, SMTP_SERVER, SMCOM_PAYMENT_LINK, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_VENDOR_USERID
+from sitedefs import BASE_URL, DEPLOYMENT_TYPE, DUMP_OVERRIDES, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, FORGOTTEN_PASSWORD, FORGOTTEN_PASSWORD_LABEL, LOCALE, GEO_PROVIDER, GEO_PROVIDER_KEY, JQUERY_UI_CSS, LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_PUBLISH_URL, MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MAP_LINK, MAP_PROVIDER, OSM_MAP_TILES, PETRESCUE_FTP_HOST, QR_IMG_SRC, SESSION_STORE, SHARE_BUTTON, SMARTTAG_FTP_USER, SMTP_SERVER, SMCOM_PAYMENT_LINK, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_VENDOR_USERID
 
 # URL to class mappings
 urls = (
@@ -999,6 +999,7 @@ class animal:
         c += html.controller_json("posneg", extlookups.get_posneg(dbo))
         c += html.controller_json("sexes", extlookups.get_sexes(dbo))
         c += html.controller_json("sizes", extlookups.get_sizes(dbo))
+        c += html.controller_str("sharebutton", SHARE_BUTTON)
         c += html.controller_json("tabcounts", extanimal.get_satellite_counts(dbo, a["ID"])[0])
         c += html.controller_json("templates", dbfs.get_document_templates(dbo))
         c += html.controller_json("ynun", extlookups.get_ynun(dbo))
@@ -1391,8 +1392,10 @@ class animal_media:
         c += html.controller_bool("showPreferred", True)
         c += html.controller_int("linkid", post.integer("id"))
         c += html.controller_int("linktypeid", extmedia.ANIMAL)
-        c += html.controller_str("name", self.__class__.__name__)
+        c += html.controller_str("sigtype", ELECTRONIC_SIGNATURES)
         c += html.controller_bool("newmedia", post.integer("newmedia") == 1)
+        c += html.controller_str("name", self.__class__.__name__)
+        c += html.controller_str("sigtype", ELECTRONIC_SIGNATURES)
         s += html.controller(c)
         s += html.footer()
         return full_or_json("media", s, c, post["json"] == "true")
@@ -2692,6 +2695,7 @@ class foundanimal_media:
         c += html.controller_int("linkid", post.integer("id"))
         c += html.controller_int("linktypeid", extmedia.FOUNDANIMAL)
         c += html.controller_str("name", self.__class__.__name__)
+        c += html.controller_str("sigtype", ELECTRONIC_SIGNATURES)
         s += html.controller(c)
         s += html.footer()
         return full_or_json("media", s, c, post["json"] == "true")
@@ -3078,6 +3082,7 @@ class incident_media:
         c += html.controller_int("linkid", post.integer("id"))
         c += html.controller_int("linktypeid", extmedia.ANIMALCONTROL)
         c += html.controller_str("name", self.__class__.__name__)
+        c += html.controller_str("sigtype", ELECTRONIC_SIGNATURES)
         s += html.controller(c)
         s += html.footer()
         return full_or_json("media", s, c, post["json"] == "true")
@@ -3521,6 +3526,7 @@ class lostanimal_media:
         c += html.controller_int("linkid", post.integer("id"))
         c += html.controller_int("linktypeid", extmedia.LOSTANIMAL)
         c += html.controller_str("name", self.__class__.__name__)
+        c += html.controller_str("sigtype", ELECTRONIC_SIGNATURES)
         s += html.controller(c)
         s += html.footer()
         return full_or_json("media", s, c, post["json"] == "true")
@@ -4912,6 +4918,7 @@ class person_media:
         c += html.controller_int("linkid", post.integer("id"))
         c += html.controller_int("linktypeid", extmedia.PERSON)
         c += html.controller_str("name", self.__class__.__name__)
+        c += html.controller_str("sigtype", ELECTRONIC_SIGNATURES)
         s += html.controller(c)
         s += html.footer()
         return full_or_json("media", s, c, post["json"] == "true")
@@ -6156,6 +6163,7 @@ class waitinglist_media:
         c += html.controller_int("linkid", post.integer("id"))
         c += html.controller_int("linktypeid", extmedia.WAITINGLIST)
         c += html.controller_str("name", self.__class__.__name__)
+        c += html.controller_str("sigtype", ELECTRONIC_SIGNATURES)
         s += html.controller(c)
         s += html.footer()
         return full_or_json("media", s, c, post["json"] == "true")

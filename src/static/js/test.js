@@ -3,14 +3,11 @@
 
 $(function() {
 
-    var lastanimal;
-
     var test = {
 
+        lastanimal: null,
+
         model: function() {
-
-            lastanimal = null;
-
             var dialog = {
                 add_title: _("Add test"),
                 edit_title: _("Edit test"),
@@ -340,8 +337,8 @@ $(function() {
 
             // Remember the currently selected animal when it changes so we can add
             // its name and code to the local set
-            $("#animal").bind("animalchooserchange", function(event, rec) { lastanimal = rec; });
-            $("#animal").bind("animalchooserloaded", function(event, rec) { lastanimal = rec; });
+            $("#animal").bind("animalchooserchange", function(event, rec) { test.lastanimal = rec; });
+            $("#animal").bind("animalchooserloaded", function(event, rec) { test.lastanimal = rec; });
 
             if (controller.newtest == 1) {
                 this.new_test();
@@ -387,12 +384,12 @@ $(function() {
                 row.SHELTERCODE = controller.animal.SHELTERCODE;
                 row.WEBSITEMEDIANAME = controller.animal.WEBSITEMEDIANAME;
             }
-            else if (lastanimal) {
-                row.LOCATIONUNIT = lastanimal.SHELTERLOCATIONUNIT;
-                row.LOCATIONNAME = lastanimal.SHELTERLOCATIONNAME;
-                row.ANIMALNAME = lastanimal.ANIMALNAME;
-                row.SHELTERCODE = lastanimal.SHELTERCODE;
-                row.WEBSITEMEDIANAME = lastanimal.WEBSITEMEDIANAME;
+            else if (test.lastanimal) {
+                row.LOCATIONUNIT = test.lastanimal.SHELTERLOCATIONUNIT;
+                row.LOCATIONNAME = test.lastanimal.SHELTERLOCATIONNAME;
+                row.ANIMALNAME = test.lastanimal.ANIMALNAME;
+                row.SHELTERCODE = test.lastanimal.SHELTERCODE;
+                row.WEBSITEMEDIANAME = test.lastanimal.WEBSITEMEDIANAME;
             }
             row.TESTNAME = common.get_field(controller.testtypes, row.TESTTYPEID, "TESTNAME");
             row.RESULTNAME = common.get_field(controller.testresults, row.TESTRESULTID, "RESULTNAME");
@@ -403,6 +400,7 @@ $(function() {
             common.widget_destroy("#animal");
             common.widget_destroy("#animals");
             tableform.dialog_destroy();
+            this.lastanimal = null;
         },
 
         name: "test",

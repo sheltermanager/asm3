@@ -3,21 +3,16 @@
 
 $(function() {
 
-    var lastanimal,
-        lastperson,
-        dialog_row;
-
     var donations = {
 
         // Used to let person_loaded know whether we are creating or not
         create_semaphore: false,
 
-        model: function() {
+        lastanimal: null,
+        lastperson: null,
+        dialog_row: null,
 
-            // clear some things before we start
-            lastanimal = null;
-            lastperson = null;
-            dialog_row = null;
+        model: function() {
 
             var dialog = {
                 add_title: _("Add payment"),
@@ -54,7 +49,7 @@ $(function() {
                 idcolumn: "ID",
                 edit: function(row) {
                     tableform.fields_populate_from_json(dialog.fields, row);
-                    dialog_row = row;
+                    donations.dialog_row = row;
                     donations.create_semaphore = false;
                     donations.update_movements(row.OWNERID);
                     // Only allow destination account to be overridden when the received date
@@ -228,8 +223,8 @@ $(function() {
                         h += "</option>";
                     });
                     $("#movement").html(h);
-                    if (dialog_row && dialog_row.MOVEMENTID) {
-                        $("#movement").select("value", dialog_row.MOVEMENTID);
+                    if (donations.dialog_row && donations.dialog_row.MOVEMENTID) {
+                        $("#movement").select("value", donations.dialog_row.MOVEMENTID);
                     }
                     $("#movement").closest("tr").fadeIn();
                 },
@@ -244,9 +239,9 @@ $(function() {
                 row.ANIMALNAME = controller.animal.ANIMALNAME;
                 row.SHELTERCODE = controller.animal.SHELTERCODE;
             }
-            else if (lastanimal) {
-                row.ANIMALNAME = lastanimal.ANIMALNAME;
-                row.SHELTERCODE = lastanimal.SHELTERCODE;
+            else if (donations.lastanimal) {
+                row.ANIMALNAME = donations.lastanimal.ANIMALNAME;
+                row.SHELTERCODE = donations.lastanimal.SHELTERCODE;
             }
             else {
                 row.ANIMALNAME = "";
@@ -259,12 +254,12 @@ $(function() {
                 row.WORKTELEPHONE = controller.person.WORKTELEPHONE;
                 row.MOBILETELEPHONE = controller.person.MOBILETELEPHONE;
             }
-            else if (lastperson) {
-                row.OWNERNAME = lastperson.OWNERNAME;
-                row.OWNERADDRESS = lastperson.OWNERADDRESS;
-                row.HOMETELEPHONE = lastperson.HOMETELEPHONE;
-                row.WORKTELEPHONE = lastperson.WORKTELEPHONE;
-                row.MOBILETELEPHONE = lastperson.MOBILETELEPHONE;
+            else if (donations.lastperson) {
+                row.OWNERNAME = donations.lastperson.OWNERNAME;
+                row.OWNERADDRESS = donations.lastperson.OWNERADDRESS;
+                row.HOMETELEPHONE = donations.lastperson.HOMETELEPHONE;
+                row.WORKTELEPHONE = donations.lastperson.WORKTELEPHONE;
+                row.MOBILETELEPHONE = donations.lastperson.MOBILETELEPHONE;
             }
             row.DONATIONNAME = common.get_field(controller.donationtypes, row.DONATIONTYPEID, "DONATIONNAME");
             row.PAYMENTNAME = common.get_field(controller.paymenttypes, row.DONATIONPAYMENTID, "PAYMENTNAME");
@@ -328,21 +323,21 @@ $(function() {
             $("#movement").closest("tr").hide();
 
             $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) {
-                lastanimal = rec;
+                donations.lastanimal = rec;
             });
 
             $("#animal").animalchooser().bind("animalchooserloaded", function(event, rec) {
-                lastanimal = rec;
+                donations.lastanimal = rec;
             });
 
             $("#person").personchooser().bind("personchooserchange", function(event, rec) {
-                lastperson = rec;
+                donations.lastperson = rec;
                 donations.update_movements(rec.ID);
                 $("#giftaid").select("value", rec.ISGIFTAID);
             });
 
             $("#person").personchooser().bind("personchooserloaded", function(event, rec) {
-                lastperson = rec;
+                donations.lastperson = rec;
                 if (donations.create_semaphore) {
                     $("#giftaid").select("value", rec.ISGIFTAID);
                 }
@@ -379,6 +374,10 @@ $(function() {
             common.widget_destroy("#animal");
             common.widget_destroy("#person");
             tableform.dialog_destroy();
+            this.create_semaphore = false;
+            this.lastanimal = null;
+            this.lastperson = null;
+            this.dialog_row = null;
         },
 
         name: "donations",

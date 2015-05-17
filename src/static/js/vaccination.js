@@ -3,14 +3,11 @@
 
 $(function() {
 
-    var lastanimal;
-
     var vaccination = {
 
+        lastanimal: null, 
+
         model: function() {
-
-            lastanimal = null;
-
             var dialog = {
                 add_title: _("Add vaccination"),
                 edit_title: _("Edit vaccination"),
@@ -390,8 +387,8 @@ $(function() {
 
             // Remember the currently selected animal when it changes so we can add
             // its name and code to the local set
-            $("#animal").bind("animalchooserchange", function(event, rec) { lastanimal = rec; });
-            $("#animal").bind("animalchooserloaded", function(event, rec) { lastanimal = rec; });
+            $("#animal").bind("animalchooserchange", function(event, rec) { vaccination.lastanimal = rec; });
+            $("#animal").bind("animalchooserloaded", function(event, rec) { vaccination.lastanimal = rec; });
 
             if (controller.newvacc == 1) {
                 this.new_vacc();
@@ -441,12 +438,12 @@ $(function() {
                 row.SHELTERCODE = controller.animal.SHELTERCODE;
                 row.WEBSITEMEDIANAME = controller.animal.WEBSITEMEDIANAME;
             }
-            else if (lastanimal) {
-                row.LOCATIONUNIT = lastanimal.SHELTERLOCATIONUNIT;
-                row.LOCATIONNAME = lastanimal.SHELTERLOCATIONNAME;
-                row.ANIMALNAME = lastanimal.ANIMALNAME;
-                row.SHELTERCODE = lastanimal.SHELTERCODE;
-                row.WEBSITEMEDIANAME = lastanimal.WEBSITEMEDIANAME;
+            else if (vaccination.lastanimal) {
+                row.LOCATIONUNIT = vaccination.lastanimal.SHELTERLOCATIONUNIT;
+                row.LOCATIONNAME = vaccination.lastanimal.SHELTERLOCATIONNAME;
+                row.ANIMALNAME = vaccination.lastanimal.ANIMALNAME;
+                row.SHELTERCODE = vaccination.lastanimal.SHELTERCODE;
+                row.WEBSITEMEDIANAME = vaccination.lastanimal.WEBSITEMEDIANAME;
             }
             row.VACCINATIONTYPE = common.get_field(controller.vaccinationtypes, row.VACCINATIONID, "VACCINATIONTYPE");
         },
@@ -457,6 +454,7 @@ $(function() {
             common.widget_destroy("#animal");
             common.widget_destroy("#animals");
             tableform.dialog_destroy();
+            this.lastanimal = null;
         },
 
         name: "vaccination",

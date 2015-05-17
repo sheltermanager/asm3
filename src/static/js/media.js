@@ -702,6 +702,10 @@ $(function() {
                 });
             });
 
+            if (controller.sigtype != "touch") {
+                $("#button-sign, #button-signpad").hide();
+            }
+
             $("#button-rotateanti").button({disabled: true}).click(function() {
                 $("#button-rotateanti").button("disable");
                 var formdata = "mode=rotateanti&ids=" + $("#asm-mediaicons input").tableCheckedData();

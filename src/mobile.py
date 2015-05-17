@@ -19,7 +19,7 @@ import users
 import utils
 from i18n import _, python2display, now, add_days, add_months, add_years, format_currency, format_time
 from sitedefs import MULTIPLE_DATABASES
-from sitedefs import JQUERY_JS, JQUERY_MOBILE_CSS, JQUERY_MOBILE_JS, JQUERY_UI_JS, SIGNATURE_JS, MOMENT_JS, TOUCHPUNCH_JS
+from sitedefs import ELECTRONIC_SIGNATURES, JQUERY_JS, JQUERY_MOBILE_CSS, JQUERY_MOBILE_JS, JQUERY_UI_JS, SIGNATURE_JS, MOMENT_JS, TOUCHPUNCH_JS
 
 def header(l):
     return """<!DOCTYPE html>
@@ -249,7 +249,7 @@ def page(dbo, session, username):
     items.append(jqm_listitem_link("#messages", _("Messages", l), "message", len(mess)))
     if len(ar) > 0 and pb(users.VIEW_REPORT):
         items.append(jqm_listitem_link("#reports", _("Generate Report", l), "report"))
-    if pb(users.CHANGE_MEDIA):
+    if pb(users.CHANGE_MEDIA) and ELECTRONIC_SIGNATURES == "touch":
         items.append(jqm_listitem_link("mobile_sign", _("Signing Pad", l), "signature", -1, "", "false"))
     if pb(users.ADD_ANIMAL) or pb(users.VIEW_ANIMAL) or pb(users.CHANGE_VACCINATION) \
        or pb(users.CHANGE_TEST) or pb(users.CHANGE_MEDICAL) or pb(users.ADD_LOG):

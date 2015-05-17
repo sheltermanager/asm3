@@ -3,11 +3,11 @@
 
 $(function() {
 
-    var lastanimal = null;
-    var lastperson = null;
-    var lastretailer = null;
-    
     var movements = {
+
+        lastanimal: null,
+        lastperson: null,
+        lastretailer: null,
 
         model: function() {
             // Filter list of chooseable types
@@ -24,11 +24,6 @@ $(function() {
                     choosetypes.push(v);
                 }
             });
-
-            // Clear the last loaded items before starting
-            lastanimal = null;
-            lastperson = null;
-            lastretailer = null;
 
             var dialog = {
                 add_title: _("Add movement"),
@@ -361,14 +356,14 @@ $(function() {
             $("#returndate").change(movements.returndate_change);
 
             // When we choose a person
-            $("#person").personchooser().bind("personchooserchange", function(event, rec) { lastperson = rec; movements.warnings(); });
+            $("#person").personchooser().bind("personchooserchange", function(event, rec) { movements.lastperson = rec; movements.warnings(); });
 
-            $("#person").personchooser().bind("personchooserloaded", function(event, rec) { lastperson = rec; movements.warnings(); });
+            $("#person").personchooser().bind("personchooserloaded", function(event, rec) { movements.lastperson = rec; movements.warnings(); });
             $("#person").personchooser().bind("personchooserclear", function(event, rec) { movements.warnings(); });
-            $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) { lastanimal = rec; movements.warnings(); });
-            $("#animal").animalchooser().bind("animalchooserloaded", function(event, rec) { lastanimal = rec; movements.warnings(); });
-            $("#retailer").personchooser().bind("personchooserchange", function(event, rec) { lastretailer = rec; movements.warnings(); });
-            $("#retailer").personchooser().bind("personchooserloaded", function(event, rec) { lastretailer = rec; movements.warnings(); });
+            $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) { movements.lastanimal = rec; movements.warnings(); });
+            $("#animal").animalchooser().bind("animalchooserloaded", function(event, rec) { movements.lastanimal = rec; movements.warnings(); });
+            $("#retailer").personchooser().bind("personchooserchange", function(event, rec) { movements.lastretailer = rec; movements.warnings(); });
+            $("#retailer").personchooser().bind("personchooserloaded", function(event, rec) { movements.lastretailer = rec; movements.warnings(); });
 
             // Insurance button
             $("#insurance").after('<button id="button-insurance">' + _("Issue a new insurance number for this animal/adoption") + '</button>');
@@ -388,7 +383,7 @@ $(function() {
         },
 
         warnings: function() {
-            var p = lastperson, a = lastanimal, warn = [];
+            var p = movements.lastperson, a = movements.lastanimal, warn = [];
             tableform.dialog_error("");
 
             // None of these warnings are valid if we this isn't an adoption
@@ -499,29 +494,29 @@ $(function() {
          * extra lookup fields.
          */
         set_extra_fields: function(row) {
-            row.ANIMALNAME = lastanimal.ANIMALNAME;
-            row.SHELTERCODE = lastanimal.SHELTERCODE;
-            if (lastperson) {
-                row.OWNERNAME = lastperson.OWNERNAME;
-                row.OWNERADDRESS = lastperson.OWNERADDRESS;
-                row.HOMETELEPHONE = lastperson.HOMETELEPHONE;
-                row.WORKTELEPHONE = lastperson.WORKTELEPHONE;
-                row.MOBILETELEPHONE = lastperson.MOBILETELEPHONE;
+            row.ANIMALNAME = movements.lastanimal.ANIMALNAME;
+            row.SHELTERCODE = movements.lastanimal.SHELTERCODE;
+            if (movements.lastperson) {
+                row.OWNERNAME = movements.lastperson.OWNERNAME;
+                row.OWNERADDRESS = movements.lastperson.OWNERADDRESS;
+                row.HOMETELEPHONE = movements.lastperson.HOMETELEPHONE;
+                row.WORKTELEPHONE = movements.lastperson.WORKTELEPHONE;
+                row.MOBILETELEPHONE = movements.lastperson.MOBILETELEPHONE;
             }
             else {
                 row.OWNERNAME = ""; row.OWNERADDRESS = "";
                 row.HOMETELEPHONE = ""; row.WORKTELEPHONE = "";
                 row.MOBILETELEPHONE = "";
             }
-            if (lastretailer) {
-                row.RETAILERNAME = lastretailer.OWNERNAME;
+            if (movements.lastretailer) {
+                row.RETAILERNAME = movements.lastretailer.OWNERNAME;
             }
             else {
                 row.RETAILERNAME = "";
             }
-            row.AGEGROUP = lastanimal.AGEGROUP;
-            row.SEX = lastanimal.SEXNAME;
-            row.SPECIESNAME = lastanimal.SPECIESNAME;
+            row.AGEGROUP = movements.lastanimal.AGEGROUP;
+            row.SEX = movements.lastanimal.SEXNAME;
+            row.SPECIESNAME = movements.lastanimal.SPECIESNAME;
             row.MOVEMENTNAME = common.get_field(controller.movementtypes, row.MOVEMENTTYPE, "MOVEMENTTYPE");
             row.RESERVATIONSTATUSNAME = common.get_field(controller.reservationstatuses, row.RESERVATIONSTATUSID, "STATUSNAME");
             if (row.RESERVATIONDATE != null && row.RESERVATIONCANCELLEDDATE == null && !row.MOVEMENTDATE) { row.MOVEMENTNAME = common.get_field(controller.movementtypes, 9, "MOVEMENTTYPE"); }
@@ -603,6 +598,9 @@ $(function() {
             common.widget_destroy("#person");
             common.widget_destroy("#retailer");
             tableform.dialog_destroy();
+            this.lastanimal = null;
+            this.lastperson = null;
+            this.lastretailer = null;
         },
 
         name: "movements",

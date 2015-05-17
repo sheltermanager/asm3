@@ -3,14 +3,11 @@
 
 $(function() {
 
-    var lastanimal;
-
     var medical = {
 
+        lastanimal: null,
+
         model: function() {
-
-            lastanimal = null;
-
             var dialog = {
                 add_title: _("Add medical regimen"),
                 edit_title: _("Edit medical regimen"),
@@ -552,8 +549,8 @@ $(function() {
 
             // Remember the currently selected animal when it changes so we can add
             // its name and code to the local set
-            $("#animal").bind("animalchooserchange", function(event, rec) { lastanimal = rec; });
-            $("#animal").bind("animalchooserloaded", function(event, rec) { lastanimal = rec; });
+            $("#animal").bind("animalchooserchange", function(event, rec) { medical.lastanimal = rec; });
+            $("#animal").bind("animalchooserloaded", function(event, rec) { medical.lastanimal = rec; });
 
             $("#singlemulti").change(function() {
                 medical.change_singlemulti();
@@ -624,12 +621,12 @@ $(function() {
                 row.SHELTERCODE = controller.animal.SHELTERCODE;
                 row.WEBSITEMEDIANAME = controller.animal.WEBSITEMEDIANAME;
             }
-            else if (lastanimal) {
-                row.LOCATIONUNIT = lastanimal.SHELTERLOCATIONUNIT;
-                row.LOCATIONNAME = lastanimal.SHELTERLOCATIONNAME;
-                row.ANIMALNAME = lastanimal.ANIMALNAME;
-                row.SHELTERCODE = lastanimal.SHELTERCODE;
-                row.WEBSITEMEDIANAME = lastanimal.WEBSITEMEDIANAME;
+            else if (medical.lastanimal) {
+                row.LOCATIONUNIT = medical.lastanimal.SHELTERLOCATIONUNIT;
+                row.LOCATIONNAME = medical.lastanimal.SHELTERLOCATIONNAME;
+                row.ANIMALNAME = medical.lastanimal.ANIMALNAME;
+                row.SHELTERCODE = medical.lastanimal.SHELTERCODE;
+                row.WEBSITEMEDIANAME = medical.lastanimal.WEBSITEMEDIANAME;
             }
         },
 
@@ -638,6 +635,7 @@ $(function() {
             common.widget_destroy("#animal");
             common.widget_destroy("#animals");
             tableform.dialog_destroy();
+            this.lastanimal = null;
         },
 
         name: "medical",
