@@ -368,9 +368,10 @@ def get_animal_view(dbo, animalid):
     # Add extra publishing text, preserving the line endings
     notes = utils.nulltostr(a["WEBSITEMEDIANOTES"])
     notes += configuration.third_party_publisher_sig(dbo)
-    notes = notes.replace("\n", "<br />")
+    notes = notes.replace("\n", "**le**")
     tags["WEBMEDIANOTES"] = notes 
-    s = wordprocessor.substitute_tags(s, tags, False, "$$", "$$")
+    s = wordprocessor.substitute_tags(s, tags, True, "$$", "$$")
+    s = s.replace("**le**", "<br />")
     return s
 
 class AbstractPublisher(threading.Thread):
@@ -473,7 +474,7 @@ class AbstractPublisher(threading.Thread):
         Replace any $$Tag$$ tags in s, using animal a
         """
         tags = wordprocessor.animal_tags(self.dbo, a)
-        return wordprocessor.substitute_tags(s, tags, False, "$$", "$$")
+        return wordprocessor.substitute_tags(s, tags, True, "$$", "$$")
 
     def resetPublisherProgress(self):
         """
@@ -2007,9 +2008,10 @@ class HTMLPublisher(FTPPublisher):
         # Add any extra text
         notes += configuration.third_party_publisher_sig(self.dbo)
         # Preserve line endings in the bio
-        notes = notes.replace("\n", "<br />")
+        notes = notes.replace("\n", "**le**")
         tags["WEBMEDIANOTES"] = notes 
-        output = wordprocessor.substitute_tags(searchin, tags, False, "$$", "$$")
+        output = wordprocessor.substitute_tags(searchin, tags, True, "$$", "$$")
+        output = output.replace("**le**", "<br />")
         return output
 
     def writeJavaScript(self, animals):
