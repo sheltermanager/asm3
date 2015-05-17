@@ -152,7 +152,7 @@ $(function() {
         },
 
         reload: function() {
-            common.route("accounts_trx?" + $("#fromdate, #todate, #recfilter, #accountid").toPOST());
+            common.route_reload();
         },
 
         bind: function() {
@@ -223,7 +223,7 @@ $(function() {
             });
 
             $("#button-refresh").button().click(function() {
-                accounts_trx.reload();
+                common.route("accounts_trx?" + $("#fromdate, #todate, #recfilter, #accountid").toPOST());
             });
 
             $("#button-add").button().click(function() {
