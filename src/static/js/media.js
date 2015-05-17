@@ -230,13 +230,13 @@ $(function() {
                 if (m.SIGNATUREHASH) {
                     h.push(html.icon("signature", _("Signed")));
                 }
-                if (m.WEBSITEPHOTO == 1 && controller.showPreferred) {
+                if (m.WEBSITEPHOTO == 1 && controller.showpreferred) {
                     h.push(html.icon("web", _("Default image for this record and the web")));
                 }
-                if (m.WEBSITEVIDEO == 1 && controller.showPreferred) {
+                if (m.WEBSITEVIDEO == 1 && controller.showpreferred) {
                     h.push(html.icon("video", _("Default video for publishing")));
                 }
-                if (m.DOCPHOTO == 1 && controller.showPreferred) {
+                if (m.DOCPHOTO == 1 && controller.showpreferred) {
                     h.push(html.icon("document", _("Default image for documents")));
                 }
                 if (media.is_extension(m.MEDIANAME, "jpg") && m.WEBSITEPHOTO == 0 && !m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
@@ -657,7 +657,7 @@ $(function() {
             });
 
             // If we aren't including preferred, hide the buttons
-            if (!controller.showPreferred) {
+            if (!controller.showpreferred) {
                 $("#button-web").hide();
                 $("#button-doc").hide();
                 $("#button-video").hide();
