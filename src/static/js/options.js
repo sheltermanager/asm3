@@ -1069,6 +1069,7 @@ $(function() {
             // Toolbar buttons
             $("#button-save").button().click(function() {
                 $("#button-save").button("disable");
+                validate.dirty(false);
                 var formdata = "mode=save&" + $("input, select, textarea").toPOST(true);
                 formdata += "&DonationAccountMappings=" + get_donation_mappings();
                 header.show_loading(_("Saving..."));

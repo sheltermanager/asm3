@@ -833,6 +833,7 @@ $(function() {
             // Toolbar buttons
             $("#button-save").button().click(function() {
                 $("#button-save").button("disable");
+                validate.dirty(false);
                 var formdata = "mode=save&" + $(".cfg").toPOST();
                 formdata += "&PublisherPresets=" + cfg_presets();
                 formdata += "&PublishersEnabled=" + cfg_enabled();
