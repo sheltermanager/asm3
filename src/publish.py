@@ -366,13 +366,11 @@ def get_animal_view(dbo, animalid):
     tags = wordprocessor.animal_tags(dbo, a)
     tags = wordprocessor.append_tags(tags, wordprocessor.org_tags(dbo, "system"))
     # Add extra publishing text, preserving the line endings
-    LE_TOKEN = "**le**"
     notes = utils.nulltostr(a["WEBSITEMEDIANOTES"])
     notes += configuration.third_party_publisher_sig(dbo)
-    notes = notes.replace("\n" ,LE_TOKEN)
+    notes = notes.replace("\n", "<br />")
     tags["WEBMEDIANOTES"] = notes 
-    s = wordprocessor.substitute_tags(s, tags, True, "$$", "$$")
-    s = s.replace(LE_TOKEN, "<br/>")
+    s = wordprocessor.substitute_tags(s, tags, False, "$$", "$$")
     return s
 
 class AbstractPublisher(threading.Thread):
@@ -475,7 +473,7 @@ class AbstractPublisher(threading.Thread):
         Replace any $$Tag$$ tags in s, using animal a
         """
         tags = wordprocessor.animal_tags(self.dbo, a)
-        return wordprocessor.substitute_tags(s, tags, True, "$$", "$$")
+        return wordprocessor.substitute_tags(s, tags, False, "$$", "$$")
 
     def resetPublisherProgress(self):
         """
@@ -2001,19 +1999,18 @@ class HTMLPublisher(FTPPublisher):
         """
         Substitutes any tags in the body for animal data
         """
-        LE_TOKEN = "**le**"
         tags = wordprocessor.animal_tags(self.dbo, a)
         tags["TotalAnimals"] = str(self.totalAnimals)
         tags["IMAGE"] = str(a["WEBSITEMEDIANAME"])
         # Note: WEBSITEMEDIANOTES becomes ANIMALCOMMENTS in get_animal_data when publisher_use_comments is on
         notes = utils.nulltostr(a["WEBSITEMEDIANOTES"])
-        # Add any extra text and put the tag back
+        # Add any extra text
         notes += configuration.third_party_publisher_sig(self.dbo)
         # Preserve line endings in the bio
-        notes = notes.replace("\n", LE_TOKEN)
+        notes = notes.replace("\n", "<br />")
         tags["WEBMEDIANOTES"] = notes 
-        output = wordprocessor.substitute_tags(searchin, tags, True, "$$", "$$")
-        return output.replace(LE_TOKEN, "<br />")
+        output = wordprocessor.substitute_tags(searchin, tags, False, "$$", "$$")
+        return output
 
     def writeJavaScript(self, animals):
         # Remove original owner and other sensitive info from javascript database
