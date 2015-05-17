@@ -56,6 +56,11 @@ $(function() {
         sync: function() {
         },
 
+        destroy: function() {
+            // Criteria are manually inserted by the server side page loader
+            $("#asm-content").remove();
+        },
+
         name: "report_export",
         animation: "options",
         title: function() { return _("Export Reports as CSV"); }

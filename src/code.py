@@ -3669,8 +3669,9 @@ class mailmerge:
         if mode == "criteria":
             al.debug("building report criteria form for mailmerge %d %s" % (post.integer("id"), title), "code.mailmerge", dbo)
             s = html.header(title, session)
-            s += html.controller(html.controller_bool("criteria", True))
-            s += html.controller_str("title", title)
+            c = html.controller_bool("criteria", True)
+            c += html.controller_str("title", title)
+            s += html.controller(c)
             s += html.heading(title)
             s += "<div id=\"criteriaform\">"
             s += "<input data-post=\"id\" type=\"hidden\" value=\"%d\" />" % post.integer("id")
@@ -3679,7 +3680,7 @@ class mailmerge:
             s += "</div>"
             s += html.footing()
             s += html.footer()
-            return full_or_json("mailmerge", s, "", post["json"] == "true")
+            return full_or_json("mailmerge", s, c, post["json"] == "true")
         elif mode == "selection":
             al.debug("entering mail merge selection mode for %d" % post.integer("id"), "code.mailmerge", dbo)
             p = extreports.get_criteria_params(dbo, post.integer("id"), post)

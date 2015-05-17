@@ -10,9 +10,15 @@ $(function() {
             });
         },
 
+        destroy: function() {
+            // Criteria are manually inserted by the server side page loader
+            $("#asm-content").remove();
+        },
+
         name: "report",
         animation: "report",
         title: function() { return controller.title; }
+
 
     };
 

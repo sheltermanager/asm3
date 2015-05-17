@@ -247,6 +247,11 @@ $(function() {
 
         },
 
+        destroy: function() {
+            // Criteria are manually inserted by the server side page loader
+            $("#asm-content").remove();
+        },
+
         name: "mailmerge",
         animation: "newdata",
         title: function() { return controller.title; }
