@@ -237,7 +237,7 @@ $(function() {
                 var formdata = $("input, select").toPOST();
                 common.ajax_post("donation_receive", formdata, function(result) { 
                     header.hide_loading();
-                    $("#successmessage").val(
+                    $("#successmessage p").append(
                         _("Payment of {0} successfully received ({1}).")
                             .replace("{0}", $("#amount").val())
                             .replace("{1}", $("#received").val()));
