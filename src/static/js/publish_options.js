@@ -836,7 +836,10 @@ $(function() {
                 var formdata = "mode=save&" + $(".cfg").toPOST();
                 formdata += "&PublisherPresets=" + cfg_presets();
                 formdata += "&PublishersEnabled=" + cfg_enabled();
-                common.ajax_post("publish_options", formdata, function() { common.route_reload(); });
+                common.ajax_post("publish_options", formdata, function() { 
+                    // Needs to do a full reload to get config.js to update
+                    common.route_reload(true); 
+                });
             });
             $("#button-save").button("disable");
 
