@@ -353,12 +353,13 @@ def full_or_json(modulename, s, c, json = False):
     otherwise return the full page in s and add an inline
     script to load the correct module.
     """
-    web.header("Cache-Control", "no-cache")
     if not json:
+        web.header("Cache-Control", "no-cache, no-store, must-revalidate")
         web.header("Content-Type", "text/html")
         extra = "<script>\n$(document).ready(function() { common.route_listen(); common.module_start(\"%s\"); });\n</script>\n</body>" % modulename
         return s.replace("</body>",  extra)
     else:
+        web.header("Cache-Control", "no-cache, no-store, must-revalidate")
         web.header("Content-Type", "application/json")
         if c.endswith(","): c = c[0:len(c)-1]
         return "{ %s }" % c

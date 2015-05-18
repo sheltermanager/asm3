@@ -372,8 +372,9 @@
                 }
             }
             // add a json parameter to only retrieve the controller json document
-            if (uri.indexOf("?") == -1) { uri += "?json=true"; }
-            else { uri += "&json=true"; }
+            // also add a timestamp parameter to ensure uniqueness of uri as
+            // IE11 seems to cache ajax requests despite Cache-Control=no-cache
+            uri += (uri.indexOf("?") == -1 ? "?" : "&") + "json=true&ts=" + $.now();
             header.show_loading(_("Loading..."));
             $.ajax({
                 type: "GET",
