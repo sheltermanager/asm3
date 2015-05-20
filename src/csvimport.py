@@ -193,7 +193,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
         cols = row
         break
     if cols is None:
-        raise utils.ASMValidationError("Your CSV file is empty")
+        return [ (0, "", "Your CSV file is empty"), ]
 
     onevalid = False
     hasanimal = False
@@ -223,31 +223,31 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
 
     # Any valid fields?
     if not onevalid:
-        raise utils.ASMValidationError("Your CSV file did not contain any fields that ASM recognises")
+        return [ (0, "", "Your CSV file did not contain any fields that ASM recognises"), ]
 
     # If we have any animal fields, make sure at least ANIMALNAME is supplied
     if hasanimal and not hasanimalname:
-        raise utils.ASMValidationError("Your CSV file has animal fields, but no ANIMALNAME column")
+        return [ (0, "", "Your CSV file has animal fields, but no ANIMALNAME column"), ]
 
     # If we have any person fields, make sure at least PERSONLASTNAME or PERSONNAME is supplied
     if hasperson and not haspersonlastname and not haspersonname:
-        raise utils.ASMValidationError("Your CSV file has person fields, but no PERSONNAME or PERSONLASTNAME column")
+        return [ (0, "", "Your CSV file has person fields, but no PERSONNAME or PERSONLASTNAME column"), ]
 
     # If we have any original owner fields, make sure at least ORIGINALOWNERLASTNAME is supplied
     if hasoriginalowner and not hasoriginalownerlastname:
-        raise utils.ASMValidationError("Your CSV file has original owner fields, but no ORIGINALOWNERLASTNAME column")
+        return [ (0, "", "Your CSV file has original owner fields, but no ORIGINALOWNERLASTNAME column"), ]
 
     # If we have any movement fields, make sure MOVEMENTDATE is supplied
     if hasmovement and not hasmovementdate:
-        raise utils.ASMValidationError("Your CSV file has movement fields, but no MOVEMENTDATE column")
+        return [ (0, "", "Your CSV file has movement fields, but no MOVEMENTDATE column"), ]
 
     # If we have any donation fields, we need an amount
     if hasdonation and not hasdonationamount:
-        raise utils.ASMValidationError("Your CSV file has donation fields, but no DONATIONAMOUNT column")
+        return [ (0, "", "Your CSV file has donation fields, but no DONATIONAMOUNT column"), ]
 
     # We also need a valid person
     if hasdonation and not (haspersonlastname or haspersonname):
-        raise utils.ASMValidationError("Your CSV file has donation fields, but no person to apply the donation to")
+        return [ (0, "", "Your CSV file has donation fields, but no person to apply the donation to"), ]
 
     # Read the whole CSV file into a list of maps. Note, the
     # reader has a cursor at the second row already because
