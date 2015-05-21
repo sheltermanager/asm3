@@ -287,12 +287,12 @@
             Path.history.listen(true);
 
             // Catch all URL clicks to see if we can use client side routing to handle them.
-            $(document).on("click", "a", function(event) {
+            $(document).on("click", "a", function(e) {
                 
                 // If dirty validation is active, check if we're
                 // ok to leave.
                 if (validate.active) {
-                    if (!validate.a_click_handler(event, $(this).attr("href"))) {
+                    if (!validate.a_click_handler(e, $(this).attr("href"))) {
                         return false;
                     }
                 }
@@ -301,7 +301,7 @@
                 // client, do it.
                 var href = $(this).attr("href");
                 if (common.route_is_client(href)) {
-                    event.preventDefault();
+                    e.preventDefault();
                     common.route(href);
                     return false;
                 }
