@@ -27,7 +27,7 @@ AnimalAge,
 (SELECT OwnerName FROM owner WHERE ID = animal.BroughtInByOwnerID) AS OwnerName,
 'Animals Brought In' AS CategoryName,
 'Animals In' AS OutOrIn,
-COALESCE((SELECT SUM(Donation) FROM ownerdonation WHERE OwnerID = animal.OriginalOwnerID AND ownerdonation.AnimalID = animal.ID), 0) AS donation
+COALESCE((SELECT SUM(Donation) FROM ownerdonation WHERE OwnerID = animal.OriginalOwnerID AND ownerdonation.AnimalID = animal.ID AND ownerdonation.MovementID = 0), 0) AS donation
 FROM animal
 WHERE IsTransfer = 0 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' AND NonShelterAnimal = 0
 
@@ -44,7 +44,7 @@ AnimalAge,
 (SELECT OwnerName FROM owner WHERE ID = animal.BroughtInByOwnerID) AS OwnerName,
 'Animals Transferred In' AS CategoryName,
 'Animals In' AS OutOrIn,
-COALESCE((SELECT SUM(Donation) FROM ownerdonation WHERE OwnerID = animal.OriginalOwnerID AND ownerdonation.AnimalID = animal.ID), 0) AS donation
+COALESCE((SELECT SUM(Donation) FROM ownerdonation WHERE OwnerID = animal.OriginalOwnerID AND ownerdonation.AnimalID = animal.ID AND ownerdonation.MovementID = 0), 0) AS donation
 FROM animal
 WHERE IsTransfer = 1 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' AND NonShelterAnimal = 0
 
@@ -60,7 +60,8 @@ AnimalAge,
 (SELECT LocationName FROM internallocation WHERE ID = animal.ShelterLocation) AS Location,
 (SELECT OwnerName FROM owner WHERE ID = adoption.OwnerID) AS OwnerName,
 'Animals Returned From Adoption' AS CategoryName,
-'Animals In' AS OutOrIn
+'Animals In' AS OutOrIn,
+0 AS donation
 FROM animal
 INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 1 AND adoption.MovementDate Is Not Null AND adoption.IsTrial = 0 AND adoption.ReturnDate >= '$@from$' AND adoption.ReturnDate <= '$@to$' AND NonShelterAnimal = 0
@@ -77,7 +78,8 @@ AnimalAge,
 (SELECT LocationName FROM internallocation WHERE ID = animal.ShelterLocation) AS Location,
 (SELECT OwnerName FROM owner WHERE ID = adoption.OwnerID) AS OwnerName,
 'Animals Returned From Trial Adoption' AS CategoryName,
-'Animals In' AS OutOrIn
+'Animals In' AS OutOrIn,
+0 AS donation
 FROM animal
 INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 1 AND adoption.MovementDate Is Not Null AND adoption.IsTrial = 1 AND adoption.ReturnDate >= '$@from$' AND adoption.ReturnDate <= '$@to$' AND NonShelterAnimal = 0
@@ -148,7 +150,8 @@ AnimalAge,
 (SELECT LocationName FROM internallocation WHERE ID = animal.ShelterLocation) AS Location,
 (SELECT OwnerName FROM owner WHERE ID = adoption.OwnerID) AS OwnerName,
 'Animals Adopted' AS CategoryName,
-'Animals Out' AS OutOrIn
+'Animals Out' AS OutOrIn,
+COALESCE((SELECT SUM(Donation) FROM ownerdonation WHERE MovementID = adoption.ID), 0) AS donation
 FROM animal
 INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 1 AND adoption.IsTrial = 0 AND 
@@ -166,7 +169,8 @@ AnimalAge,
 (SELECT LocationName FROM internallocation WHERE ID = animal.ShelterLocation) AS Location,
 (SELECT OwnerName FROM owner WHERE ID = adoption.OwnerID) AS OwnerName,
 'Animals Trial Adopted' AS CategoryName,
-'Animals Out' AS OutOrIn
+'Animals Out' AS OutOrIn,
+COALESCE((SELECT SUM(Donation) FROM ownerdonation WHERE MovementID = adoption.ID), 0) AS donation
 FROM animal
 INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 1 AND adoption.IsTrial = 1 AND 
