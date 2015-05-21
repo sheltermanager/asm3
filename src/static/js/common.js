@@ -303,6 +303,7 @@
                 if (common.route_is_client(href)) {
                     event.preventDefault();
                     common.route(href);
+                    return false;
                 }
             });
         },
