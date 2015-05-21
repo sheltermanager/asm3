@@ -8,7 +8,7 @@ Mail merge for all fosterers who are currently looking after an animal
 ###
 en
 ###
-SELECT
+SELECT DISTINCT 
 OwnerName, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, 
 HomeTelephone, WorkTelephone, MobileTelephone, EmailAddress
 FROM animal

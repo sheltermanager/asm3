@@ -8,7 +8,7 @@ Mailmerge source of owner and animal information for all non-returned adoptions 
 ###
 en
 ###
-SELECT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode,
+SELECT DISTINCT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode,
 animal.AnimalName, owner.EmailAddress, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname
 FROM adoption

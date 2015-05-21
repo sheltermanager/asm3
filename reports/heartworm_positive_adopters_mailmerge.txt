@@ -8,7 +8,7 @@ Adopters of heartworm positive animals between two dates
 ###
 en
 ###
-SELECT a.ShelterCode, 
+SELECT DISTINCT a.ShelterCode, 
 a.AnimalName, 
 a.IdentichipNumber,
 s.SpeciesName,
