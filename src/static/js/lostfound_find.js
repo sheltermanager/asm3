@@ -204,6 +204,7 @@ $(function() {
 
         name: "lostfound_find",
         animation: "criteria",
+        autofocus: "#number",
         title: function() { 
             if (controller.name.indexOf("lost") != -1) {
                 return _("Find Lost Animal");

@@ -387,6 +387,7 @@ $(function() {
 
         name: "lostfound",
         animation: "formtab",
+        autofocus: "#datereported",
         title: function() {
             if (controller.name.indexOf("lost") != -1) {
                 return common.substitute(_("Lost animal - {0} {1} [{2}]"), { 

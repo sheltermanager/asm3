@@ -149,6 +149,7 @@ $(function() {
 
         name: "change_user_settings",
         animation: "options",
+        autofocus: "#realname",
         title: function() { return _("Change User Settings"); },
         routes: {
             "change_user_settings": function() { common.module_loadandstart("change_user_settings", "change_user_settings"); }

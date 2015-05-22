@@ -188,6 +188,7 @@ $(function() {
 
         name: "search",
         animation: "results",
+        autofocus: "#asm-content a:first",
         title: function() { return controller.title; },
         routes: {
             "search": function() { common.module_loadandstart("search", "search?" + this.rawqs); }

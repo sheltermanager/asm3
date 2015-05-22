@@ -330,6 +330,7 @@ $(function() {
 
         name: "waitinglist",
         animation: "formtab",
+        autofocus: "#species",
         title:  function() { 
             return common.substitute(_("Waiting list entry for {0} ({1})"), {
                 0: controller.animal.OWNERNAME, 1: controller.animal.SPECIESNAME });

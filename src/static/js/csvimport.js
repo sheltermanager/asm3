@@ -116,6 +116,7 @@ $(function() {
 
         name: "csvimport",
         animation: "options",
+        autofocus: "#cleartables",
         title: function() { return _("Import a CSV file"); },
         routes: {
             "csvimport": function() { 

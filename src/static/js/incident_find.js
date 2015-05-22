@@ -195,6 +195,7 @@ $(function() {
 
         name: "incident_find",
         animation: "criteria",
+        autofocus: "#number",
         title: function() { return _("Find Incident"); },
         routes: {
             "incident_find": function() { common.module_loadandstart("incident_find", "incident_find"); }

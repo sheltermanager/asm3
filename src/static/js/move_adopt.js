@@ -536,6 +536,7 @@ $(function() {
 
         name: "move_adopt",
         animation: "newdata",
+        autofocus: "#asm-content button:first",
         title: function() { return _("Adopt an animal"); },
         routes: {
             "move_adopt": function() { common.module_loadandstart("move_adopt", "move_adopt"); }

@@ -170,6 +170,7 @@ $(function() {
 
         name: "move_transfer",
         animation: "newdata",
+        autofocus: "#asm-content button:first",
         title: function() { return _("Transfer an animal"); },
         routes: {
             "move_transfer": function() { common.module_loadandstart("move_transfer", "move_transfer"); }

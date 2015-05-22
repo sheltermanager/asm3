@@ -128,6 +128,7 @@ $(function() {
 
         name: "calendarview",
         animation: "search",
+        autofocus: "#toggle-diary", 
         title: function() { return _("Calendar view"); },
         routes: {
             "calendarview": function() { 

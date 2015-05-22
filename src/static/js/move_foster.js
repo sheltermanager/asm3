@@ -182,6 +182,7 @@ $(function() {
 
         name: "move_foster",
         animation: "newdata",
+        autofocus: "#asm-content button:first",
         title: function() { return _("Foster an animal"); },
         routes: {
             "move_foster": function() { common.module_loadandstart("move_foster", "move_foster"); }

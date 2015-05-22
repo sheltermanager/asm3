@@ -1447,6 +1447,7 @@ $(function() {
 
         name: "animal",
         animation: "formtab",
+        autofocus: "#animalname", 
         title:  function() { return common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
             0: controller.animal.ANIMALNAME, 1: controller.animal.CODE, 2: controller.animal.SEXNAME,
             3: controller.animal.SPECIESNAME, 4: controller.animal.ANIMALAGE }); },

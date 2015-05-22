@@ -170,6 +170,7 @@ $(function() {
 
         name: "move_retailer",
         animation: "newdata",
+        autofocus: "#asm-content button:first",
         title: function() { return _("Move an animal to a retailer"); },
         routes: {
             "move_retailer": function() { common.module_loadandstart("move_retailer", "move_retailer"); }

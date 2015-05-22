@@ -204,6 +204,7 @@ $(function() {
 
         name: "person_new",
         animation: "newdata",
+        autofocus: "#ownertype",
         title: function() { return _("Add a new person"); },
         routes: {
             "person_new": function() { common.module_loadandstart("person_new", "person_new"); }

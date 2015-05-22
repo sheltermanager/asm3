@@ -163,6 +163,7 @@ $(function() {
 
         name: "waitinglist_new",
         animation: "newdata",
+        autofocus: "#species",
         title: function() { return _("Add waiting list"); },
         routes: {
             "waitinglist_new": function() { common.module_loadandstart("waitinglist_new", "waitinglist_new"); }

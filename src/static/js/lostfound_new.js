@@ -244,6 +244,7 @@ $(function() {
 
         name: "lostfound_new",
         animation: "newdata",
+        autofocus: "#datereported",
         title: function() { 
             if (controller.name.indexOf("lost") != -1) {
                 return _("Add lost animal");

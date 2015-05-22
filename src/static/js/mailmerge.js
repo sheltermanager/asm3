@@ -254,6 +254,7 @@ $(function() {
 
         name: "mailmerge",
         animation: "newdata",
+        autofocus: "#includeheader",
         title: function() { return controller.title; }
 
     };

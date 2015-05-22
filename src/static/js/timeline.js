@@ -36,6 +36,7 @@ $(function() {
 
         name: "timeline",
         animation: "results",
+        autofocus: "#asm-content a:first",
         title: function() { return _("Timeline"); },
         routes: {
             "timeline": function() { common.module_loadandstart("timeline", "timeline"); }

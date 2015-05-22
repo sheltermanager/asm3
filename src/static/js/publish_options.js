@@ -1004,6 +1004,7 @@ $(function() {
 
         name: "publish_options",
         animation: "options",
+        autofocus: "#caseanimals",
         title: function() { return _("Publishing Options"); },
         routes: {
             "publish_options": function() { common.module_loadandstart("publish_options", "publish_options"); }

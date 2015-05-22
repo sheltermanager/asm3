@@ -226,6 +226,7 @@ $(function() {
 
         name: "shelterview",
         animation: "search",
+        autofocus: "#asm-content a:first",
         title: function() { return _("Shelter view"); },
 
         routes: {

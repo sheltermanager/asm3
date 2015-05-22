@@ -319,6 +319,7 @@ $(function() {
 
         name: "waitinglist_results",
         animation: "book",
+        autofocus: "#priorityfloor",
         title: function() { return _("Waiting List"); },
         routes: {
             "waitinglist_results": function() { common.module_loadandstart("waitinglist_results", "waitinglist_results?" + this.rawqs); }

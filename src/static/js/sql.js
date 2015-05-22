@@ -173,6 +173,7 @@ $(function() {
 
         name: "sql",
         animation: "options",
+        autofocus: "#sql",
         title: function() { return _("SQL Interface"); },
 
         destroy: function() {

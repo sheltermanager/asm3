@@ -338,6 +338,7 @@ $(function() {
 
         name: "move_reclaim",
         animation: "newdata",
+        autofocus: "#asm-content button:first",
         title: function() { return _("Reclaim an animal"); },
         routes: {
             "move_reclaim": function() { common.module_loadandstart("move_reclaim", "move_reclaim"); }

@@ -391,6 +391,7 @@ $(function() {
 
         name: "move_reserve",
         animation: "newdata",
+        autofocus: "#asm-content button:first",
         title: function() { return _("Reserve an animal"); },
         routes: {
             "move_reserve": function() { common.module_loadandstart("move_reserve", "move_reserve"); }

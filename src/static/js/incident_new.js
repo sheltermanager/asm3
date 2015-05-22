@@ -151,6 +151,7 @@ $(function() {
 
         name: "incident_new",
         animation: "newdata",
+        autofocus: "#incidenttype",
         title: function() { return _("Report a new incident"); },
         routes: {
             "incident_new": function() { common.module_loadandstart("incident_new", "incident_new"); }

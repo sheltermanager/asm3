@@ -546,6 +546,7 @@ $(function() {
 
         name: "animal_new",
         animation: "newdata",
+        autofocus: "#nonshelter", 
         title: function() { return _("Add a new animal"); },
         
         routes: {

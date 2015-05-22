@@ -1,6 +1,7 @@
 37
 ================
 
+22/05/15 autofocus module attribute for client navigation #196
 17/05/15 Add field for users.Signature
 17/05/15 Allow HTML in bio/add this text to all descriptions
 17/05/15 Don't copy comments when rescheduling vaccinations

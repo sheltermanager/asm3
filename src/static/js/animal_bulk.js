@@ -153,6 +153,7 @@ $(function() {
 
         name: "animal_bulk",
         animation: "newdata",
+        autofocus: "#litterid", 
         title: function() { return _("Bulk change animals"); },
 
         routes: {

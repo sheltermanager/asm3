@@ -280,6 +280,7 @@ $(function() {
 
         name: "animal_find_results",
         animation: "results",
+        autofocus: "#asm-content a:first", 
         title: function() { return _("Results"); },
         routes: {
             "animal_find_results": function() {

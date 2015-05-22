@@ -468,6 +468,9 @@
                 log.error(logprefix + "animation: " + exanim);
             }
             common.module_running = o;
+            if (o.autofocus) {
+                setTimeout(function() { $(o.autofocus).focus(); }, 750);
+            }
         },
 
         /**

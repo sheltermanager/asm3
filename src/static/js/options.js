@@ -1171,6 +1171,7 @@ $(function() {
 
         name: "options",
         animation: "options",
+        autofocus: "#organisation",
         title: function() { return _("Options"); },
         routes: {
             "options": function() { common.module_loadandstart("options", "options"); }

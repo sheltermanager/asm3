@@ -263,6 +263,7 @@ $(function() {
 
         name: "donation_receive",
         animation: "newdata",
+        autofocus: "#asm-content button:first",
         title: function() { return _("Receive a payment"); },
         routes: {
             "donation_receive": function() {
