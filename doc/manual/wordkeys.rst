@@ -27,7 +27,9 @@ UserRealname
 UserEmailAddress
     The email address of the user generating the document
 UserSignature
-    An image containing the electronic signature of the user generating the document
+    An image tag containing the electronic signature of the user generating the document
+UserSignatureSrc
+    Just the src attribute value so the signature can be applied to your own image tag (eg: to override size)
 
 Animal Keys
 -----------

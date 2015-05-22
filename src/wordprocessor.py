@@ -41,6 +41,7 @@ def org_tags(dbo, username):
         "USERREALNAME"          : realname,
         "USEREMAILADDRESS"      : email,
         "USERSIGNATURE"         : "<img src=\"" + sig + "\" >",
+        "USERSIGNATURESRC"      : sig
     }
     return tags
 
