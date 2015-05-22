@@ -711,6 +711,7 @@ class main:
         alerts = extanimal.get_alerts(dbo, session.locationfilter)
         if len(alerts) > 0: 
             alerts[0]["LOOKFOR"] = configuration.lookingfor_last_match_count(dbo)
+            alerts[0]["LOSTFOUND"] = configuration.lostfound_last_match_count(dbo)
             alerts[0]["PUBLISH"] = dbfs.get_publish_alerts(dbo)
         # Diary Notes
         dm = None

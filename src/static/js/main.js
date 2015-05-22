@@ -56,9 +56,9 @@ $(function() {
             alerts = controller.alerts[0];
             var totalalerts = alerts.DUEVACC + alerts.EXPVACC + alerts.DUETEST + alerts.DUEMED + 
                 alerts.URGENTWL +  alerts.LONGRSV + alerts.DUEDON + alerts.ENDTRIAL + alerts.NOTNEU + 
-                alerts.PUBLISH + alerts.LOOKFOR + alerts.INFORM + alerts.ACUNFINE + alerts.ACUNDISP +
-                alerts.ACUNCOMP + alerts.ACFOLL + alerts.TLOVER + alerts.STEXP + alerts.STEXPSOON +
-                alerts.TRNODRV;
+                alerts.PUBLISH + alerts.LOOKFOR + alerts.LOSTFOUND + alerts.INFORM + alerts.ACUNFINE + 
+                alerts.ACUNDISP + alerts.ACUNCOMP + alerts.ACFOLL + alerts.TLOVER + alerts.STEXP + 
+                alerts.STEXPSOON + alerts.TRNODRV;
             if (config.bool("EmblemNotForAdoption")) {
                 totalalerts += alerts.NOTADOPT;
             }
@@ -219,6 +219,15 @@ $(function() {
                             _("{plural1} shelter animals have people looking for them"),
                             _("{plural2} shelter animals have people looking for them"),
                             _("{plural3} shelter animals have people looking for them")
+                        ]) + '</a><br />';
+                }
+                if (alerts.LOSTFOUND > 0 && common.has_permission("mlaf")) {
+                    s += '<a href="lostfound_match">' + html.icon("match") + ' ' + 
+                        common.ntranslate(alerts.LOSTFOUND, [
+                            _("{plural0} potential match for a lost animal"),
+                            _("{plural1} potential matches for lost animals"),
+                            _("{plural2} potential matches for lost animals"),
+                            _("{plural3} potential matches for lost animals")
                         ]) + '</a><br />';
                 }
                 if (alerts.PUBLISH > 0 && common.has_permission("uipb")) {

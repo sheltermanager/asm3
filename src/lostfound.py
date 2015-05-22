@@ -546,9 +546,20 @@ def match_report(dbo, username = "system", lostanimalid = 0, foundanimalid = 0, 
         h.append("</tr></table>")
     else:
         h.append(p(_("No matches found.", l)))
+    h.append( "<!-- $AM%d^ animal matches -->" % len(matches))
     h.append(reports.get_report_footer(dbo, title, username))
     return "\n".join(h)
-       
+
+def lostfound_last_match_count(dbo):
+    """
+    Inspects the cached version of the lost and found match report and
+    returns the number of animal matches.
+    """
+    s = dbfs.get_string_filepath(dbo, "/reports/daily/lost_found_match.html")
+    sp = s.find("$AM")
+    if sp == -1: return 0
+    return utils.cint(s[sp+3:s.find("^", sp)])
+
 def update_match_report(dbo):
     """
     Updates the latest version of the lost/found match report in the dbfs
@@ -556,6 +567,7 @@ def update_match_report(dbo):
     al.debug("updating lost/found match report", "lostfound.update_match_report", dbo)
     s = match_report(dbo)
     dbfs.put_string_filepath(dbo, "/reports/daily/lost_found_match.html", s)
+    configuration.lostfound_last_match_count(dbo, lostfound_last_match_count(dbo))
 
 def get_lost_person_name(dbo, aid):
     """

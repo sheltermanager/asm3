@@ -678,6 +678,12 @@ def lookingfor_last_match_count(dbo, newcount = -1):
     else:
         cset(dbo, "LookingForLastMatchCount", "%d" % newcount)
 
+def lostfound_last_match_count(dbo, newcount = -1):
+    if newcount == -1:
+        return cint(dbo, "LostFoundLastMatchCount", 0)
+    else:
+        cset(dbo, "LostFoundLastMatchCount", "%d" % newcount)
+
 def main_screen_animal_link_mode(dbo):
     return cstring(dbo, "MainScreenAnimalLinkMode", DEFAULTS["MainScreenAnimalLinkMode"])
 

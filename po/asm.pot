@@ -2301,6 +2301,10 @@ msgstr ""
 msgid "Clear"
 msgstr ""
 
+#: change_user_settings.js
+msgid "Clear and sign again"
+msgstr ""
+
 #: csvimport.js
 msgid "Clear tables before importing"
 msgstr ""
@@ -9361,7 +9365,7 @@ msgstr ""
 msgid "Sign document"
 msgstr ""
 
-#: onlineform.js
+#: change_user_settings.js onlineform.js
 msgid "Signature"
 msgstr ""
 
@@ -12436,6 +12440,10 @@ msgid "{plural0} person with an active reservation has not been homechecked"
 msgstr ""
 
 #: main.js
+msgid "{plural0} potential match for a lost animal"
+msgstr ""
+
+#: main.js
 msgid "{plural0} recent publisher run had errors"
 msgstr ""
 
@@ -12577,6 +12585,10 @@ msgstr ""
 
 #: main.js
 msgid "{plural1} people with active reservations have not been homechecked"
+msgstr ""
+
+#: main.js
+msgid "{plural1} potential matches for lost animals"
 msgstr ""
 
 #: main.js
@@ -12724,6 +12736,10 @@ msgid "{plural2} people with active reservations have not been homechecked"
 msgstr ""
 
 #: main.js
+msgid "{plural2} potential matches for lost animals"
+msgstr ""
+
+#: main.js
 msgid "{plural2} recent publisher runs had errors"
 msgstr ""
 
@@ -12865,6 +12881,10 @@ msgstr ""
 
 #: main.js
 msgid "{plural3} people with active reservations have not been homechecked"
+msgstr ""
+
+#: main.js
+msgid "{plural3} potential matches for lost animals"
 msgstr ""
 
 #: main.js
