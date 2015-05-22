@@ -1807,6 +1807,9 @@ def insert_animal_from_form(dbo, post, username):
         log.add_log(dbo, username, log.ANIMAL, nextid, configuration.weight_change_log_type(dbo),
             str(kf("weight")))
 
+    # Do we have a matching template animal we can copy some satellite info from?
+    clone_from_template(dbo, username, nextid, ki("animaltype"), ki("species"))
+
     extension.route(dbo, "after", "insert_animal_from_form", post)
     return (nextid, get_code(dbo, nextid))
 
@@ -2346,6 +2349,111 @@ def clone_animal(dbo, username, animalid):
     update_animal_status(dbo, nid)
     update_variable_animal_data(dbo, nid)
     return nid
+
+def clone_from_template(dbo, username, animalid, animaltypeid, speciesid):
+    """
+    Tries to locate a non-shelter animal called "TemplateType" with animaltypeid,
+    if it doesn't find one, it looks for a non-shelter animal called "TemplateSpecies"
+    with speciesid. If one is not found, does nothing.
+    Clones appropriate medical and diet info from the template animal.
+    """
+    cloneanimalid = db.query_int(dbo, "SELECT ID FROM animal " \
+        "WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatetype' AND AnimalTypeID = %d" % animaltypeid)
+    if cloneanimalid == 0:
+        cloneanimalid = db.query_int(dbo, "SELECT ID FROM animal " \
+            "WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatespecies' AND SpeciesID = %d" % speciesid)
+    if cloneanimalid == 0:
+        return
+    dbtoday = db.dd(now(dbo.timezone))
+    # Additional Fields
+    for af in db.query(dbo, "SELECT * FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (cloneanimalid, additional.ANIMAL_IN)):
+        sql = db.make_insert_sql("additional", (
+            ( "LinkType", db.di(af["LINKTYPE"]) ),
+            ( "LinkID", db.di(animalid) ),
+            ( "AdditionalFieldID", db.di(af["ADDITIONALFIELDID"]) ),
+            ( "Value", db.ds(af["VALUE"])) ))
+        db.execute(dbo, sql)
+    # Vaccinations
+    for v in db.query(dbo, "SELECT * FROM animalvaccination WHERE AnimalID = %d" % cloneanimalid):
+        sql = db.make_insert_user_sql(dbo, "animalvaccination", username, (
+            ( "ID", db.di(db.get_id(dbo, "animalvaccination")) ),
+            ( "AnimalID", db.di(animalid) ),
+            ( "VaccinationID", db.di(v["VACCINATIONID"]) ),
+            ( "DateOfVaccination", db.dd(None) ),
+            ( "DateRequired", dbtoday ),
+            ( "Cost", db.di(v["COST"]) ),
+            ( "Comments", db.ds(v["COMMENTS"]) )
+            ))
+        db.execute(dbo, sql)
+    # Tests
+    for t in db.query(dbo, "SELECT * FROM animaltest WHERE AnimalID = %d" % cloneanimalid):
+        sql = db.make_insert_user_sql(dbo, "animaltest", username, ( 
+            ( "ID", db.di(db.get_id(dbo, "animaltest")) ),
+            ( "AnimalID", db.di(animalid)),
+            ( "TestTypeID", db.di(t["TESTTYPEID"]) ),
+            ( "TestResultID", db.di(t["TESTRESULTID"]) ),
+            ( "DateOfTest", db.dd(None) ),
+            ( "DateRequired", dbtoday ),
+            ( "Cost", db.di(t["COST"]) ),
+            ( "Comments", db.ds(t["COMMENTS"]) )
+            ))
+        db.execute(dbo, sql)
+    # Medical
+    for am in db.query(dbo, "SELECT * FROM animalmedical WHERE AnimalID = %d" % cloneanimalid):
+        namid = db.get_id(dbo, "animalmedical")
+        sql = db.make_insert_user_sql(dbo, "animalmedical", username, (
+            ( "ID", db.di(namid)),
+            ( "AnimalID", db.di(animalid) ),
+            ( "MedicalProfileID", db.di(am["MEDICALPROFILEID"]) ),
+            ( "TreatmentName", db.ds(am["TREATMENTNAME"]) ),
+            ( "StartDate", dbtoday ),
+            ( "Dosage", db.ds(am["DOSAGE"]) ),
+            ( "Cost", db.di(am["COST"]) ),
+            ( "TimingRule", db.di(am["TIMINGRULE"]) ),
+            ( "TimingRuleFrequency", db.di(am["TIMINGRULEFREQUENCY"]) ),
+            ( "TimingRuleNoFrequencies", db.di(am["TIMINGRULENOFREQUENCIES"]) ),
+            ( "TreatmentRule", db.di(am["TREATMENTRULE"]) ),
+            ( "TotalNumberOfTreatments", db.di(am["TOTALNUMBEROFTREATMENTS"]) ),
+            ( "TreatmentsGiven", db.di(am["TREATMENTSGIVEN"]) ),
+            ( "TreatmentsRemaining", db.di(am["TREATMENTSREMAINING"]) ),
+            ( "Status", db.di(am["STATUS"]) ),
+            ( "Comments", db.ds(am["COMMENTS"]) )
+            ))
+        db.execute(dbo, sql)
+        for amt in db.query(dbo, "SELECT * FROM animalmedicaltreatment WHERE AnimalMedicalID = %d" % int(am["ID"])):
+            sql = db.make_insert_user_sql(dbo, "animalmedicaltreatment", username, (
+                ( "ID", db.di(db.get_id(dbo, "animalmedicaltreatment")) ),
+                ( "AnimalID", db.di(animalid) ),
+                ( "AnimalMedicalID", db.di(namid) ),
+                ( "DateRequired", dbtoday ),
+                ( "DateGiven", db.dd(None) ),
+                ( "TreatmentNumber", db.di(amt["TREATMENTNUMBER"])),
+                ( "TotalTreatments", db.di(amt["TOTALTREATMENTS"])),
+                ( "GivenBy", db.ds(amt["GIVENBY"])),
+                ( "Comments", db.ds(amt["COMMENTS"]))
+                ))
+            db.execute(dbo, sql)
+    # Diet
+    for d in db.query(dbo, "SELECT * FROM animaldiet WHERE AnimalID = %d" % cloneanimalid):
+        sql = db.make_insert_user_sql(dbo, "animaldiet", username, (
+            ( "ID", db.di(db.get_id(dbo, "animaldiet")) ),
+            ( "AnimalID", db.di(animalid) ),
+            ( "DietID", db.di(d["DIETID"]) ),
+            ( "DateStarted", dbtoday ),
+            ( "Comments", db.ds(d["COMMENTS"]))
+        ))
+        db.execute(dbo, sql)
+    # Costs
+    for c in db.query(dbo, "SELECT * FROM animalcost WHERE AnimalID = %d" % cloneanimalid):
+        sql = db.make_insert_user_sql(dbo, "animalcost", username, (
+            ( "ID", db.di(db.get_id(dbo, "animalcost")) ),
+            ( "AnimalID", db.di(animalid) ),
+            ( "CostTypeID", db.di(c["COSTTYPEID"])),
+            ( "CostDate", dbtoday ),
+            ( "CostAmount", db.di(c["COSTAMOUNT"])),
+            ( "Description", db.ds(c["DESCRIPTION"]))
+        ))
+        db.execute(dbo, sql)
 
 def delete_animal(dbo, username, animalid):
     """

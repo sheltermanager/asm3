@@ -75,6 +75,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#shelter-view">Shelter View</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#find-animal">Find Animal</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#edit-animal">Edit Animal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#template-animals">Template Animals</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="people.html">People</a><ul>
@@ -552,6 +553,28 @@ as many log types as you want under <em class="menuselection">Settings ‣ Looku
 and with a comment. This is useful for keeping track of animal weights, bite
 reports, owner emails, complaints and anything else you can think of.</p>
 </div>
+</div>
+<div class="section" id="template-animals">
+<h2>Template Animals<a class="headerlink" href="#template-animals" title="Permalink to this headline">¶</a></h2>
+<p>It&#8217;s quite common for shelters to want to assign certain elements to new
+animals. Whilst defaults for all the dropdowns can be assigned under
+<em class="menuselection">Settings ‣ Options ‣ Defaults</em>, it&#8217;s normal to want to
+be able to assign a set of vaccinations, medical treatments or tests,
+or a particular diet, or some standard costs to new animals.</p>
+<p>To do this, create a new animal record with the vaccination, medical treatments,
+diets and costs on that you&#8217;d like to be assigned to new animals. Make sure that
+the &#8220;Non-shelter&#8221; box is ticked so that this template animal is kept away from
+all reports and figures. Finally, give it the name &#8220;TemplateType&#8221; or
+&#8220;TemplateSpecies&#8221;.</p>
+<p>If you name the animal TemplateType, the system will look for your template
+animal when the type of the new animal matches it. Similarly, the species has
+to match if the template is called TemplateSpecies. Type is preferred over
+species so if you have a new animal where the type and species match two
+different templates, the type will &#8220;win&#8221; and the new animal will get the
+records from the matching type template.</p>
+<p>Where records require dates (for example, the due date on medical treatments or
+vaccinations), the system will substitute today when cloning records
+from the template.</p>
 </div>
 </div>
 

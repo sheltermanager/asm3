@@ -345,4 +345,29 @@ as many log types as you want under :menuselection:`Settings --> Lookup Data
 and with a comment. This is useful for keeping track of animal weights, bite
 reports, owner emails, complaints and anything else you can think of. 
 
+Template Animals
+----------------
+
+It's quite common for shelters to want to assign certain elements to new
+animals. Whilst defaults for all the dropdowns can be assigned under
+:menuselection:`Settings --> Options --> Defaults`, it's normal to want to
+be able to assign a set of vaccinations, medical treatments or tests, 
+or a particular diet, or some standard costs to new animals.
+
+To do this, create a new animal record with the vaccination, medical treatments,
+diets and costs on that you'd like to be assigned to new animals. Make sure that
+the "Non-shelter" box is ticked so that this template animal is kept away from
+all reports and figures. Finally, give it the name "TemplateType" or 
+"TemplateSpecies". 
+
+If you name the animal TemplateType, the system will look for your template
+animal when the type of the new animal matches it. Similarly, the species has
+to match if the template is called TemplateSpecies. Type is preferred over
+species so if you have a new animal where the type and species match two
+different templates, the type will "win" and the new animal will get the
+records from the matching type template.
+
+Where records require dates (for example, the due date on medical treatments or
+vaccinations), the system will substitute today when cloning records 
+from the template.
 
