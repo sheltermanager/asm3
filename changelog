@@ -1,6 +1,8 @@
 37
 ================
 
+22/05/15 Add UserSignature wordkey #184
+22/05/15 Allow editing of user signature in user settings #184
 22/05/15 autofocus module attribute for client navigation #196
 17/05/15 Add field for users.Signature
 17/05/15 Allow HTML in bio/add this text to all descriptions

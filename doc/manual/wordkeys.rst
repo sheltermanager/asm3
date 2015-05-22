@@ -26,6 +26,8 @@ UserRealname
     The real name of the user generating the document
 UserEmailAddress
     The email address of the user generating the document
+UserSignature
+    An image containing the electronic signature of the user generating the document
 
 Animal Keys
 -----------

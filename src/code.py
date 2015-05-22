@@ -1963,6 +1963,7 @@ class change_user_settings:
         s = html.header("", session)
         c = html.controller_json("user", users.get_users(dbo, session.user))
         c += html.controller_json("locales", extlookups.LOCALES)
+        c += html.controller_str("sigtype", ELECTRONIC_SIGNATURES)
         c += html.controller_json("themes", extlookups.VISUAL_THEMES)
         s += html.controller(c)
         s += html.footer()
@@ -1976,8 +1977,9 @@ class change_user_settings:
         locale = post["locale"]
         realname = post["realname"]
         email = post["email"]
+        signature = post["signature"]
         al.debug("%s changed settings: theme=%s, locale=%s, realname=%s, email=%s" % (session.user, theme, locale, realname, email), "code.change_password", dbo)
-        users.update_user_settings(dbo, session.user, email, realname, locale, theme)
+        users.update_user_settings(dbo, session.user, email, realname, locale, theme, signature)
         users.update_session(session)
 
 class citations:

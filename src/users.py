@@ -470,13 +470,14 @@ def insert_user_from_form(dbo, username, post):
                 db.execute(dbo, "INSERT INTO userrole VALUES (%d, %d)" % (nuserid, int(rid)))
     return nuserid
 
-def update_user_settings(dbo, username, email = "", realname = "", locale = "", theme = ""):
+def update_user_settings(dbo, username, email = "", realname = "", locale = "", theme = "", signature = ""):
     userid = db.query_int(dbo, "SELECT ID FROM users WHERE Username = '%s'" % username)
     sql = db.make_update_sql("users", "ID=%d" % userid, (
         ( "RealName", db.ds(realname) ),
         ( "EmailAddress", db.ds(email) ),
         ( "ThemeOverride", db.ds(theme) ),
-        ( "LocaleOverride", db.ds(locale) )
+        ( "LocaleOverride", db.ds(locale) ),
+        ( "Signature", db.ds(signature) )
     ))
     preaudit = db.query(dbo, "SELECT * FROM users WHERE ID = %d" % int(userid))[0]
     db.execute(dbo, sql)

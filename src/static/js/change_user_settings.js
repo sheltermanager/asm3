@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, validate */
+/*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, log, validate */
 
 $(function() {
 
@@ -91,6 +91,16 @@ $(function() {
                     '</select> <span id="localeflag"></span>',
                     '</td>',
                 '</tr>',
+                '<tr>',
+                    '<td>',
+                    '<label for="signature">' + _("Signature") + '</label>',
+                    '<button id="button-change" type="button" style="vertical-align: middle">' + _("Clear and sign again") + '</button>',
+                    '</td>',
+                    '<td>',
+                    '<div id="signature" style="width: 500px; height: 200px; display: none" />',
+                    '<img id="existingsig" style="display: none; border: 0" />',
+                    '</td>',
+                '</tr>',
                 '</table>',
                 '<div class="centered">',
                     '<button id="save">' + html.icon("save") + ' ' + _("Save") + '</button>',
@@ -111,10 +121,34 @@ $(function() {
         },
 
         bind: function() {
+
+            try {
+                // Can fail on IE8/9
+                $("#signature").signature({ guideline: true });
+                $("#button-change")
+                    .button({ icons: { primary: "ui-icon-pencil" }, text: false })
+                    .click(function() {
+                        $("#existingsig").hide();
+                        $("#signature").show();
+                        $("#signature").signature("clear");
+                    });
+            }
+            catch (excanvas) {
+                log.error("failed creating signature canvas");   
+            }
+
             $("#save").button().click(function() {
                 $(".asm-content button").button("disable");
                 header.show_loading();
                 var formdata = $("input, select").toPOST();
+                try {
+                    // Can fail if signature wasn't bound
+                    if (!$("#signature").signature("isEmpty")) {
+                        formdata += "&signature=" + encodeURIComponent($("#signature canvas").get(0).toDataURL("image/png"));
+                    }
+                } catch (excanvas) {
+                    log.error("failed reading signature canvas");   
+                }
                 common.ajax_post("change_user_settings", formdata, function(result) { 
                     common.route("main"); 
                 }, function() { 
@@ -141,9 +175,20 @@ $(function() {
         sync: function() {
             var u = controller.user[0];
             $("#realname").val(html.decode(u.REALNAME));
-            $("#email").val(u.EMAIL);
+            $("#email").val(u.EMAILADDRESS);
             $("#olocale").select("value", u.LOCALEOVERRIDE);
             $("#systemtheme").select("value", u.THEMEOVERRIDE);
+            if (controller.sigtype != "touch") { 
+                $("#signature").closest("tr").hide(); 
+            }
+            if (u.SIGNATURE) {
+                $("#signature").hide();
+                $("#existingsig").attr("src", u.SIGNATURE).show();
+            }
+            else {
+                $("#existingsig").hide();
+                $("#signature").show();
+            }
             this.update_flag();
         },
 

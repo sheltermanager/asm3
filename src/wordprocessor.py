@@ -26,10 +26,12 @@ def org_tags(dbo, username):
     u = users.get_users(dbo, username)
     realname = ""
     email = ""
+    sig = ""
     if len(u) > 0:
         u = u[0]
         realname = u["REALNAME"]
         email = u["EMAILADDRESS"]
+        sig = u["SIGNATURE"]
     tags = {
         "ORGANISATION"          : configuration.organisation(dbo),
         "ORGANISATIONADDRESS"   : configuration.organisation_address(dbo),
@@ -37,7 +39,8 @@ def org_tags(dbo, username):
         "DATE"                  : python2display(dbo.locale, now(dbo.timezone)),
         "USERNAME"              : username,
         "USERREALNAME"          : realname,
-        "USEREMAILADDRESS"      : email
+        "USEREMAILADDRESS"      : email,
+        "USERSIGNATURE"         : "<img src=\"" + sig + "\" >",
     }
     return tags
 
