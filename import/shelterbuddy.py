@@ -1,13 +1,16 @@
 #!/usr/bin/python
 
-import asm, csv, sys, datetime
+import asm
 
 """
-Import script for ShelterBuddy MDB export
-2nd June, 2012
+Import script for ShelterBuddy MDB/SQL Server export with QueryExpress
+2nd June, 2012 - 22nd May, 2015
 """
 
-# Use gmdb2 to export these tables 
+PATH = "data/uvhs/"
+
+# Use gmdb2 to export these tables from Access
+# OR use queryexpress to do it from SQL Server Ex2005
 # tbladdress.csv
 # tbladoption.csv
 # tblanimal.csv
@@ -41,20 +44,27 @@ def findowner(recnum = ""):
             return o
     return None
 
-def getdate(s, defyear = "12"):
-    """ Parses a date in DD/MM/YY format. If the field is blank, None is returned """
-    if s.strip() == "": return None
-    # If there's time info, throw it
-    if s.find(" ") != -1: s = s[0:s.find(" ")]
-    b = s.split("/")
-    # if we couldn't parse the date, use the first of the default year
-    if len(b) < 3: return datetime.date(int(defyear) + 2000, 1, 1)
-    try:
-        year = int(b[2])
-        if year < 1900: year += 2000
-        return datetime.date(year, int(b[1]), int(b[0]))
-    except:
-        return datetime.date(int(defyear) + 2000, 1, 1)
+def getdate(s):
+    if s.find("/1900") != -1: return None
+    return asm.getdate_mmddyyyy(s)
+
+def gettype(col1, col2):
+    catwords = [ "tabby", "calico", "tortoise", "tiger", "buff", "seal", "tri" ]
+    dogwords = [ "tan", "brindle", "yellow", "liver" ]
+    for c in catwords:
+        if col1.find(c) != -1 or col2.find(c) != -1: return 11 # cat
+    for d in dogwords:
+        if col1.find(d) != -1 or col2.find(d) != -1: return 2 # dog
+    return 11 # cat
+
+def getspecies(col1, col2):
+    if gettype(col1, col2) == 11: return 2
+    return 1
+
+def getbreed(col1, col2):
+    if getspecies(col1, col2) == 2:
+        return 261 # domestic shorthair
+    return 30 # black lab
 
 def tocurrency(s):
     if s.strip() == "": return 0.0
@@ -95,185 +105,173 @@ movements = []
 animals = []
 
 asm.setid("animal", 100)
-asm.setid("person", 100)
+asm.setid("owner", 100)
 asm.setid("adoption", 100)
 asm.setid("animalvaccination", 100)
 
+print "DELETE FROM animal WHERE ID >= 100;"
+print "DELETE FROM animalvaccination WHERE ID >= 100;"
+print "DELETE FROM owner WHERE ID >= 100;"
+print "DELETE FROM adoption WHERE ID >= 100;"
+
 # tblsuburblist.csv
-SUBURBID = 0
-SUBURBNAME = 1
-POSTCODE = 2
-STATE = 3
-reader = csv.reader(open("tblsuburblist.csv", "r"), dialect="excel")
-reader.next() # skip header
-for row in reader:
-    if row[0].strip() == "": break
+for row in asm.csv_to_list(PATH + "tblsuburblist.csv"):
     s = SBSuburb()
-    s.id = row[SUBURBID].strip()
-    s.suburb = row[SUBURBNAME]
-    s.postcode = row[POSTCODE]
-    s.state = row[STATE]
+    s.id = row["ID"].strip()
+    s.suburb = row["Suburb"]
+    s.postcode = row["postcode"]
+    s.state = row["state"]
     suburbs[s.id] = s
     
 # tblanimalvacc.csv
-VDESCRIPTION = 1
-VCODE = 4
 print "DELETE FROM vaccinationtype WHERE ID > 200;"
-reader = csv.reader(open("tblanimalvacc.csv", "r"), dialect="excel")
-reader.next() # skip header
-for row in reader:
-    if row[1].strip() == "": break
-    vt = row[VDESCRIPTION].strip()
-    vc = row[VCODE].strip()
+for row in asm.csv_to_list(PATH + "tblanimalvacc.csv"):
+    vc = row["show"].strip()
+    vt = row["vaccCode2"].strip() + " " + row["description"]
     vacctype[vc] = vt
     print "INSERT INTO vaccinationtype VALUES (%s, '%s');" % (vc, vt.replace("'", "`"))
 
 # tbladdress.csv
-ADDRESSID = 0
-STREETNUM = 1
-STREETNAME = 2
-EXTRAADD = 7
-POSTCODE = 9
-SUBURBID = 13
-reader = csv.reader(open("tbladdress.csv", "r"), dialect="excel")
-reader.next() # skip header
-for row in reader:
-    if row[0].strip() == "": break
+for row in asm.csv_to_list(PATH + "tbladdress.csv"):
     s = SBAddress()
-    s.id = row[ADDRESSID].strip()
-    s.streetNum = row[STREETNUM]
-    s.streetName = row[STREETNAME]
-    s.extraAddress = row[EXTRAADD]
-    s.postcode = row[POSTCODE]
-    if suburbs.has_key(row[SUBURBID]):
-        sb = suburbs[row[SUBURBID]]
+    s.id = row["id"].strip()
+    s.streetNum = row["streetNum"]
+    s.streetName = row["streetName"]
+    s.extraAddress = row["extraAddress"]
+    s.postcode = row["postcode"]
+    if suburbs.has_key(row["suburbId"]):
+        sb = suburbs[row["suburbId"]]
         s.city = sb.suburb
         s.state = sb.state
     addresses[s.id] = s
 
 # tblanimal.csv
-ANIMALID = 0 
-RECNUM = 1              # Could be original owner?
-MICROCHIP = 4
-TYPE = 5                # Cat or Dog
-BREED = 6               # Primary breed
-SEX = 7                 # 1 for Male, 2 for Female
-COLOUR = 8
-DATEIN = 21             # Date brought in
-DATEOUT = 22
-DESEXDATE = 41          # Neutered date
-ENTRYREASON = 46        # Plain text
-NAME = 50
-CROSSBREED = 77         # -1 for yes, 0 for no
-SECONDBREED = 78
-DOB = 95
-
-reader = csv.reader(open("tblanimal.csv", "r"), dialect="excel")
-reader.next() # skip header
-for row in reader:
-    if row[0].strip() == "": break
+for row in asm.csv_to_list(PATH + "tblanimal.csv"):
     a = asm.Animal()
     animals.append(a)
-    a.ExtraID = row[ANIMALID].strip()
-    a.AnimalName = row[NAME]
-    a.AnimalTypeID = asm.type_id_for_name(row[TYPE])
-    a.SpeciesID = asm.species_id_for_name(row[TYPE])
-    if row[DATEIN].strip() != "": a.DateBroughtIn = getdate(row[DATEIN])
-    a.Neutered = row[DESEXDATE].strip() != "" and 1 or 0
-    a.NeuteredDate = getdate(row[DESEXDATE])
-    a.BreedID = asm.breed_id_for_name(row[BREED])
-    a.Breed2ID = asm.breed_id_for_name(row[SECONDBREED])
+    a.ExtraID = row["AnimalID"].strip()
+    a.AnimalName = row["name"]
+    if a.AnimalName.strip() == "":
+        a.AnimalName = "(unknown)"
+    if row.has_key("type"):
+        a.AnimalTypeID = asm.type_id_for_name(row["type"])
+        a.SpeciesID = asm.species_id_for_name(row["type"])
+        a.BreedID = asm.breed_id_for_name(row["breed"])
+        a.Breed2ID = asm.breed_id_for_name(row["secondBreed"])
+    else:
+        # I've seen a version of this database where there's no type field in tblanimal,
+        # so we have to infer fields from the colours - ridiculous
+        a.AnimalTypeID = gettype(row["Colour"], row["SecondaryColour"])
+        a.SpeciesID = getspecies(row["Colour"], row["SecondaryColour"])
+        a.BreedID = getbreed(row["Colour"], row["SecondaryColour"])
+        # If there's Chicken or Duck or Rabbit in the name, set accordingly
+        if a.AnimalName.lower().find("chicken") != -1:
+            a.SpeciesID = 14
+            a.BreedID = 404
+        elif a.AnimalName.lower().find("duck") != -1:
+            a.SpeciesID = 3
+            a.BreedID = 409
+        elif a.AnimalName.lower().find("rabbit") != -1:
+            a.SpeciesID = 7
+            a.BreedID = 321
+    if row["DateIN"].strip() != "": 
+        a.DateBroughtIn = getdate(row["DateIN"])
+        if a.DateBroughtIn is None:
+            a.DateBroughtIn = getdate(row["AddDateTime"])
+    if row["DateOUT"].strip() != "":
+        a.ActiveMovementDate = getdate(row["DateOUT"])
+        if a.ActiveMovementDate is not None:
+            a.ActiveMovementType = 1
+            a.Archived = 1
+        elif a.DateBroughtIn.year < 2015:
+            a.Archived = 1
+    a.Neutered = row["desexdate"].strip() != "" and 1 or 0
+    a.NeuteredDate = getdate(row["desexdate"])
     a.BreedName = asm.breed_name_for_id(a.BreedID)
-    a.CrossBreed = row[CROSSBREED] == -1 and 1 or 0
-    if row[DOB].strip() != "": a.DateOfBirth = getdate(row[DOB])
-    a.IdentichipNumber = row[MICROCHIP]
-    if row[MICROCHIP].strip() != "": a.Identichipped = 1
-    a.Sex = getsex12(row[SEX])
-    a.BaseColourID = asm.colour_id_for_name(row[COLOUR])
+    a.CrossBreed = row["crossbreed"] == "TRUE" and 1 or 0
+    if a.CrossBreed == 1:
+        a.Breed2ID = 442
+    if row["dob"].strip() != "":
+        a.DateOfBirth = getdate(row["dob"])
+    if a.DateOfBirth is None:
+        a.DateOfBirth = a.DateBroughtIn
+    a.IdentichipNumber = row["MicroChip"]
+    if a.IdentichipNumber != "": a.Identichipped = 1
+    a.Sex = getsex12(row["Sex"])
+    a.Weight = asm.cfloat(row["weight"])
+    a.BaseColourID = asm.colour_id_for_name(row["Colour"])
     a.ShelterLocation = 1
     a.generateCode(asm.type_name_for_id(a.AnimalTypeID))
-    comments = "Original Breed: " + row[BREED] + " " + row[SECONDBREED] + ", "
-    comments += "Original Colour: " + row[COLOUR]
+    a.ReasonForEntry = row["dep_sReason"]
+    if row["sOther"] != "":
+        a.ReasonForEntry = row["sOther"]
+    a.EntryReasonID = 11
+    if row["circumstance"].find("Stray"):
+        a.EntryReasonID = 7
+    comments = "Original Colour: " + row["Colour"] + "/" + row["SecondaryColour"]
+    comments += "\nCircumstance: " + row["circumstance"]
     a.HiddenAnimalDetails = comments
-    #if row[PLACEMENT_STATUS].strip() == "Deceased": 
-    #    a.DeceasedDate = getdate(row[PLACEMENT_DATE])
+    if row["euthanasiaType"] != "0":
+        a.Archived = 1
+        a.DeceasedDate = a.DateBroughtIn
+        a.PutToSleep = 1
+        a.PTSReasonID = 4
+    if row["crueltyCase"] == "TRUE":
+        a.CrueltyCase = 1
+    a.LastChangedDate = getdate(row["AddDateTime"])
 
 # tblperson.csv
-RECNUM = 0
-TITLE = 1
-TITLE2 = 2
-FIRSTNAME = 3
-LASTNAME = 4
-PNAME = 5
-DEAR = 6
-HOMEPHONE = 10
-WORKPHONE = 11
-MOBILEPHONE = 12
-ADDRESSID = 85
-reader = csv.reader(open("tblperson.csv", "r"), dialect="excel")
-reader.next() # skip header
-for row in reader:
-    if row[0].strip() == "": break
+for row in asm.csv_to_list(PATH + "tblperson.csv"):
     o = asm.Owner()
     owners.append(o)
-    o.ExtraID = row[RECNUM].strip()
-    o.OwnerTitle = row[TITLE]
-    o.OwnerForeNames = row[FIRSTNAME]
-    o.OwnerSurname = row[LASTNAME]
+    o.ExtraID = row["recnum"].strip()
+    o.OwnerTitle = row["Title"]
+    o.OwnerForeNames = row["FirstName"]
+    o.OwnerSurname = row["LastName"]
     o.OwnerName = o.OwnerForeNames + " " + o.OwnerSurname
-    o.HomeTelephone = row[HOMEPHONE]
-    o.WorkTelephone = row[WORKPHONE]
-    o.MobileTelephone = row[MOBILEPHONE]
-    if addresses.has_key(row[ADDRESSID].strip()):
-        a = addresses[row[ADDRESSID].strip()]
+    o.HomeTelephone = row["dep_HomePhone"]
+    o.WorkTelephone = row["dep_WorkPhone"]
+    o.MobileTelephone = row["dep_MobilePhone"]
+    if addresses.has_key(row["physicalAddress"].strip()):
+        a = addresses[row["physicalAddress"].strip()]
         o.OwnerAddress = a.address()
         o.OwnerTown = a.city
         o.OwnerCounty = a.state
         o.OwnerPostcode = a.postcode
 
 # tbladoption.csv
-ADOPTIONID = 0
-RECNUM = 1
-ANIMALID = 2
-DATE = 4
-reader = csv.reader(open("tbladoption.csv", "r"), dialect="excel")
-reader.next() # skip header
-for row in reader:
-    if row[0].strip() == "": break
+for row in asm.csv_to_list(PATH + "tbladoption.csv"):
     # Find the animal and owner for this movement
-    a = findanimal(row[ANIMALID].strip())
-    o = findowner(row[RECNUM].strip())
+    a = findanimal(row["animalid"].strip())
+    o = findowner(row["recnum"].strip())
     if a != None and o != None:
         m = asm.Movement()
         movements.append(m)
         m.OwnerID = o.ID
         m.AnimalID = a.ID
-        m.MovementDate = getdate(row[DATE])
+        if a.ActiveMovementDate is not None:
+            m.MovementDate = a.ActiveMovementDate
+        else:
+            m.MovementDate = getdate(row["adddatetime"])
         m.MovementType = 1
+        a.Archived = 1
+        a.ActiveMovementType = 1
+        a.ActiveMovementID = m.ID
 
 # tblanimalvettreatments.csv
-ANIMALID = 1
-DUEDATE = 2
-DATEGIVEN = 3
-VACCID = 4
-print "DELETE FROM animalvaccination WHERE ID > 100;"
-reader = csv.reader(open("tblanimalvettreatments.csv", "r"), dialect="excel")
-reader.next() # skip header
-for row in reader:
-    if row[0].strip() == "": break
+for row in asm.csv_to_list(PATH + "tblanimalvettreatments.csv"):
     av = asm.AnimalVaccination()
-    av.DateRequired = getdate(row[DUEDATE])
-    av.DateOfVaccination = getdate(row[DATEGIVEN])
-    a = findanimal(row[ANIMALID].strip())
+    av.DateRequired = getdate(row["dueDate"])
+    if av.DateRequired is None:
+        av.DateRequired = getdate(row["addDateTime"])
+    av.DateOfVaccination = getdate(row["dateGiven"])
+    a = findanimal(row["animalid"].strip())
     if a == None: continue
     av.AnimalID = a.ID
-    av.VaccinationID = int(row[VACCID].strip())
+    av.VaccinationID = int(row["vacc"].strip())
     print av
 
 # Now that everything else is done, output stored records
-print "DELETE FROM animal WHERE ID > 100;"
-print "DELETE FROM owner WHERE ID > 100;"
-print "DELETE FROM adoption WHERE ID > 100;"
 print "DELETE FROM primarykey;"
 print "DELETE FROM configuration WHERE ItemName Like 'VariableAnimalDataUpdated';"
 for a in animals:
