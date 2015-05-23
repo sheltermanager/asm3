@@ -167,9 +167,11 @@ def handler(post, remoteip, referer):
             return set_cached_response(cache_key, "text/html", 120, publish.get_animal_view(dbo, int(animalid)))
 
     elif method =="dbfs_image":
+        hotlink_protect("dbfs_image", referer)
         return ("image/jpeg", 86400, dbfs.get_string_filepath(dbo, title))
 
     elif method =="extra_image":
+        hotlink_protect("extra_image", referer)
         return ("image/jpeg", 86400, dbfs.get_string(dbo, title, "/reports"))
 
     elif method == "json_adoptable_animals":
