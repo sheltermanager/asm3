@@ -3586,6 +3586,10 @@ msgstr ""
 msgid "Driver"
 msgstr ""
 
+#: media.js
+msgid "Drop files here..."
+msgstr ""
+
 #: transport.js
 msgid "Dropoff"
 msgstr ""
@@ -11200,6 +11204,10 @@ msgstr ""
 msgid ""
 "Upload splash.jpg and logo.jpg to override the login screen image and logo "
 "at the top left of ASM."
+msgstr ""
+
+#: media.js
+msgid "Uploading..."
 msgstr ""
 
 #: lookups.py

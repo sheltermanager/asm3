@@ -250,26 +250,33 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
     """
     Attaches a media file from the posted form
     data is the web.py data object and should contain
-    comments, the filechooser object, with filename and value 
-    props - OR a parameter called base64image containing a base64
-    encoded jpg image.
+    comments and either the filechooser object, with filename and value 
+    OR filedata, filetype and filename parameters (filetype is the MIME type, filedata is base64 encoded contents)
     """
     ext = ""
-    base64data = ""
-    base64image = post["base64image"]
-    if base64image != "":
-        ext = ".jpg"
-        # If an HTML5 data url was used, strip the prefix so we just have base64 data
-        if base64image.find("data:") != -1:
-            base64data = base64image[base64image.find(",")+1:]
+    filedata = post["filedata"]
+    filename = post["filename"]
+    comments = post["comments"]
+    if filedata != "":
+        filetype = post["filetype"]
+        if filetype.startswith("image"): ext = ".jpg"
+        elif filetype.find("pdf") != -1: ext = ".pdf"
+        elif filetype.find("html") != -1: ext = ".html"
+        # Strip the data:mime prefix so we just have base64 data
+        if filedata.startswith("data:"):
+            filedata = filedata[filedata.find(",")+1:]
             # Browser escaping turns base64 pluses back into spaces, so switch back
-            base64data = base64data.replace(" ", "+")
-        else:
-            base64data = base64image
-        al.debug("received HTML5 base64 image data (%d bytes)" % (len(base64image)), "media.attach_file_from_form", dbo)
+            filedata = filedata.replace(" ", "+")
+        filedata = base64.b64decode(filedata)
+        al.debug("received HTML5 file data '%s' (%d bytes)" % (filename, len(filedata)), "media.attach_file_from_form", dbo)
     else:
+        # It's a traditional form post with a filechooser
         ext = post.filename()
         ext = ext[ext.rfind("."):].lower()
+        filedata = post.filedata()
+        filename = post.filename()
+        al.debug("received POST file data '%s' (%d bytes)" % (filename, len(filedata)), "media.attach_file_from_form", dbo)
+
     mediaid = db.get_id(dbo, "media")
     medianame = "%d%s" % ( mediaid, ext )
     ispicture = ext == ".jpg" or ext == ".jpeg"
@@ -287,12 +294,6 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
         web = 1
     if existing_doc == 0 and ispicture:
         doc = 1
-
-    if base64image != "":
-        filedata = base64.b64decode(base64data)
-    else:
-        filedata = post.filedata()
-        al.debug("received POST file data '%s' (%d bytes)" % (post.filename(), len(filedata)), "media.attach_file_from_form", dbo)
 
     # Is it a picture?
     if ispicture:
@@ -315,12 +316,11 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
     dbfs.put_string(dbo, medianame, path, filedata)
 
     # Are the notes for an image blank and we're defaulting them from animal comments?
-    comments = post["comments"]
     if comments == "" and ispicture and linktype == ANIMAL and configuration.auto_media_notes(dbo):
         comments = animal.get_comments(dbo, int(linkid))
         # Are the notes blank and we're defaulting them from the filename?
-    elif comments == "" and configuration.default_media_notes_from_file(dbo) and base64image == "":
-        comments = utils.filename_only(post.filename())
+    elif comments == "" and configuration.default_media_notes_from_file(dbo):
+        comments = utils.filename_only(filename)
     
     # Create the media record
     sql = db.make_insert_sql("media", (

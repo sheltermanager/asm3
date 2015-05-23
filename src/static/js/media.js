@@ -153,22 +153,23 @@ $(function() {
                 { id: "video", icon: "video", tooltip: _("Make this the default video link when publishing to the web") }
             ]));
 
-            h.push("<div id='asm-mediacontainer'>");
-            h.push(media.render_table());
-            h.push("</div>");
+            h.push(media.render_items());
             h.push(html.content_footer());
             return h.join("\n");
         },
 
-        render_table: function() {
+        render_items: function() {
 
             var h = [];
-            h.push('<table id="asm-mediaicons">');
-            h.push('<tr>');
+            h.push('<div class="asm-mediaicons">');
 
-            var col = 0;
+            // Show our drag and drop target for uploading files if the HTML5 File API is available
+            if (media.html5_file_api()) {
+                h.push('<div class="asm-mediadroptarget"><p>' + _("Drop files here...") + '</p></div>');
+            }
+
             $.each(controller.media, function(i, m) {
-                h.push('<td id="mrow-' + m.ID + '" data="' + m.ID + '" align="center" width="100px" valign="top" style="border: 1px solid #aaa; padding: 5px">');
+                h.push('<div class="asm-mediaicon" id="mrow-' + m.ID + '" data="' + m.ID + '" >');
                 h.push('<input type="hidden" class="media-name" value="' + html.title(m.MEDIANAME) + '" />');
                 h.push('<input type="hidden" class="media-type" value="' + html.title(m.MEDIATYPE) + '" />');
                 var fullnotes = html.decode(m.MEDIANOTES),
@@ -246,23 +247,140 @@ $(function() {
                     h.push('<img class="incexc" data="' + m.ID + '" src="static/images/ui/cross.gif" title="' + _('Exclude this image when publishing') + '" />');
                 }
                 h.push('</span>');
-                h.push('</td>');
-                col += 1;
-                if (col == 6) {
-                    col = 0;
-                    h.push('</tr><tr>');
-                }
+                h.push('</div>');
             });
-
-            h.push('</tr>');
-            h.push('</table>');
+            h.push('</div>');
             return h.join("\n");
         },
 
+        /** Returns true if the html5 file api is available */
+        html5_file_api: function() {
+            if (!window.File && !window.FileReader && !window.FileList) { return false; }
+            // FileReader isn't supported in Safari below version 6.0, but
+            // the FileReader object/type does exist in Safari 5, so it 
+            // only fails when you try to instantiate one.
+            try { var safaritest = new FileReader(); }
+            catch(ex) {
+                return false;
+            }
+            return true;
+        },
 
-        // Posts the image back to the server. If HTML5 File APIs are available,
-        // uses a Canvas to scale the image first.
-        post: function() {
+        /**
+         * Called by our drag/drop upload widget (which only appears if
+         * HTML5 File APIs are available
+         */
+        attach_files: function(files) {
+            var i = 0;
+            if (!media.html5_file_api()) { return; }
+            for (i = 0; i < files.length; i += 1) {
+                media.attach_file(files[i]);    
+            }
+        },
+
+        /**
+         * Uploads a single file using the HTML5 file APIs. If the file is an image, 
+         * scales it down first.
+         */
+        attach_file: function(file, comments) {
+
+            // If no comments were supplied, make them an empty string instead
+            if (!comments) { comments = ""; }
+
+            // We're only allowed to upload files of a certain type
+            if ( !media.is_extension(file.name, "jpg") && !media.is_extension(file.name, "jpeg") && 
+                 !media.is_extension(file.name, "pdf") && !media.is_extension(file.name, "html") ) {
+                header.show_error(_("Only PDF, HTML and JPG image files can be attached."));
+                return;
+            }
+
+            // Is this an image? If so, try to scale it down before sending
+            if (file.type.match('image.*')) {
+
+                // Figure out the size we're scaling to
+                var media_scaling = config.str("IncomingMediaScaling");
+                if (!media_scaling) { media_scaling = "320x200"; }
+                var max_width = format.to_int(media_scaling.split("x")[0]);
+                var max_height = format.to_int(media_scaling.split("x")[1]);
+
+                // Read the file to an image tag, then render it to
+                // an HTML5 canvas to scale it
+                var img = document.createElement("img");
+                var filedata = null;
+                var imreader = new FileReader();
+                imreader.onload = function(e) { 
+                    filedata = e.target.result;
+                    img.src = filedata; 
+                };
+                img.onload = function() {
+                    var img_width = img.width, img_height = img.height;
+                    if (img_width > img_height) {
+                        if (img_width > max_width) {
+                            img_height *= max_width / img_width;
+                            img_width = max_width;
+                        }
+                    }
+                    else {
+                        if (img_height > max_height) {
+                            img_width *= max_height / img_height;
+                            img_height = max_height;
+                        }
+                    }
+                    var canvas = document.createElement("canvas");
+                    canvas.width = img_width;
+                    canvas.height = img_height;
+                    var ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0, img_width, img_height);
+                    var finalfile = canvas.toDataURL("image/jpeg");
+
+                    // Older versions of Chrome, Chromium and Android < 3.2 
+                    // cannot encode canvas as a jpeg. If we detect that's
+                    // happened, just use the original file contents for
+                    // scaling on the server instead.
+                    if (finalfile == "data:,") {
+                        log.error("Failed exporting scaled canvas as image/jpeg, " +
+                            "this is a Chromium and Android Browser < 3.2 problem, sending full file data instead");
+                        finalfile = filedata;
+                    }
+
+                    // Post the scaled image via AJAX
+                    var formdata = "linkid=" + controller.linkid + "&linktypeid=" + controller.linktypeid + 
+                        "&comments=" + encodeURIComponent(comments) + 
+                        "&filename=" + encodeURIComponent(file.name) +
+                        "&filetype=" + encodeURIComponent(file.type) + 
+                        "&filedata=" + encodeURIComponent(finalfile);
+                    header.show_loading(_("Uploading..."));
+                    common.ajax_post(controller.name, formdata, function(result) { 
+                        header.hide_loading();
+                        common.route_reload(); 
+                    });
+                };
+                imreader.readAsDataURL(file);
+            } 
+            // It's not an image, just read it and send it to the backend
+            else {
+                var docreader = new FileReader();
+                docreader.onload = function(e) { 
+                    // Post the PDF/HTML doc via AJAX
+                    var formdata = "linkid=" + controller.linkid + 
+                        "&linktypeid=" + controller.linktypeid + 
+                        "&comments=" + encodeURIComponent(comments) + 
+                        "&filename=" + encodeURIComponent(file.name) +
+                        "&filetype=" + encodeURIComponent(file.type) + 
+                        "&filedata=" + encodeURIComponent(e.target.result);
+                    header.show_loading(_("Uploading..."));
+                    common.ajax_post(controller.name, formdata, function(result) { 
+                        header.hide_loading();
+                        common.route_reload(); 
+                    });
+                };
+                docreader.readAsDataURL(file);
+            }
+        },
+
+        /** Posts the image back to the server. If HTML5 File APIs are available,
+           uses a Canvas to scale the image first. */
+        post_file: function() {
             
             // If we don't have a file, fail validation
             if (!validate.notblank([ "filechooser" ])) { return; }
@@ -278,16 +396,7 @@ $(function() {
             $("#dialog-add").disable_dialog_buttons();
 
             // If we don't support the HTML5 File APIs, fall back gracefully
-            if (!window.File && !window.FileReader && !window.FileList && !window.Blob) {
-                $("#addform").submit();
-                return;
-            }
-
-            // FileReader isn't supported in Safari below version 6.0, but
-            // the FileReader object/type does exist in Safari 5, so it 
-            // only fails when you try to instantiate one.
-            try { var safaritest = new FileReader(); }
-            catch(ex) {
+            if (!media.html5_file_api()) { 
                 $("#addform").submit();
                 return;
             }
@@ -308,48 +417,8 @@ $(function() {
                 return;
             }
 
-            // Figure out the size we're scaling to
-            var media_scaling = config.str("IncomingMediaScaling");
-            if (media_scaling == "") { media_scaling = "320x200"; }
-            var max_width = parseInt(media_scaling.substring(0, media_scaling.indexOf("x")), 10);
-            var max_height = parseInt(media_scaling.substring(media_scaling.indexOf("x") + 1), 10);
-
-            // Read the file to an image tag, then render it to
-            // an HTML5 canvas to scale it
-            var img = document.createElement("img");
-            var reader = new FileReader();
-            reader.onload = function(e) { img.src = e.target.result; };
-            img.onload = function() {
-                var img_width = img.width, img_height = img.height;
-                if (img_width > img_height) {
-                    if (img_width > max_width) {
-                        img_height *= max_width / img_width;
-                        img_width = max_width;
-                    }
-                }
-                else {
-                    if (img_height > max_height) {
-                        img_width *= max_height / img_height;
-                        img_height = max_height;
-                    }
-                }
-                var canvas = document.createElement("canvas");
-                canvas.width = img_width;
-                canvas.height = img_height;
-                var ctx = canvas.getContext("2d");
-                ctx.drawImage(this, 0, 0, img_width, img_height);
-                var finalfile = canvas.toDataURL("image/jpeg");
-
-                // Post the scaled image via AJAX
-                var formdata = "linkid=" + controller.linkid + "&linktypeid= " + 
-                    controller.linktypeid + "&comments=" + encodeURIComponent($("#addcomments").val()) +
-                    "&base64image=" + encodeURIComponent(finalfile);
-                common.ajax_post(controller.name, formdata, function(result) { 
-                    $("#dialog-add").dialog("close").enable_dialog_buttons();
-                    common.route_reload(); 
-                });
-            };
-            reader.readAsDataURL(selectedfile);
+            // Attach the file with the HTML5 APIs
+            media.attach_file(selectedfile, $("#addcomments").val());
         },
 
         is_extension: function(s, ext) {
@@ -404,8 +473,8 @@ $(function() {
                 $("#tipios6").show();
             }
 
-            $("#asm-mediaicons input").change(function() {
-                if ($("#asm-mediaicons input:checked").size() > 0) {
+            $(".asm-mediaicons input").change(function() {
+                if ($(".asm-mediaicons input:checked").size() > 0) {
                     $("#button-delete").button("option", "disabled", false); 
                 }
                 else {
@@ -423,8 +492,8 @@ $(function() {
 
                 // Only allow the image preferred buttons to be pressed if the
                 // selection size is one and the selection is an image
-                if ($("#asm-mediaicons input:checked").size() == 1) {
-                    $("#asm-mediaicons input:checked").each(function() {
+                if ($(".asm-mediaicons input:checked").size() == 1) {
+                    $(".asm-mediaicons input:checked").each(function() {
                         var mname = $(this).parent().parent().find(".media-name").val();
                         if (media.is_extension(mname, "jpg") || media.is_extension(mname, "jpeg")) {
                             $("#button-web").button("option", "disabled", false); 
@@ -435,8 +504,8 @@ $(function() {
 
                 // Only allow the video preferred button to be pressed if the
                 // selection size is one and the selection is a video link
-                if ($("#asm-mediaicons input:checked").size() == 1) {
-                    $("#asm-mediaicons input:checked").each(function() {
+                if ($(".asm-mediaicons input:checked").size() == 1) {
+                    $(".asm-mediaicons input:checked").each(function() {
                         var mtype = $(this).parent().parent().find(".media-type").val();
                         if (mtype == 2) {
                             $("#button-video").button("option", "disabled", false);
@@ -446,7 +515,7 @@ $(function() {
 
                 // Only allow the rotate buttons to be pressed if the
                 // selection only contains images
-                $("#asm-mediaicons input:checked").each(function() {
+                $(".asm-mediaicons input:checked").each(function() {
                     var mname = $(this).parent().parent().find(".media-name").val();
                     if (media.is_extension(mname, "jpg") || media.is_extension(mname, "jpeg")) {
                         $("#button-rotateanti").button("option", "disabled", false); 
@@ -455,13 +524,13 @@ $(function() {
                 });
 
                 // Only allow the email button to be pressed if we have a selection 
-                if ($("#asm-mediaicons input:checked").size() > 0) {
+                if ($(".asm-mediaicons input:checked").size() > 0) {
                     $("#button-email").button("option", "disabled", false); 
                 }
 
                 // Only allow the email pdf button to be pressed if the
                 // selection only contains documents
-                $("#asm-mediaicons input:checked").each(function() {
+                $(".asm-mediaicons input:checked").each(function() {
                     var mname = $(this).parent().parent().find(".media-name").val();
                     if (media.is_extension(mname, "html")) {
                         $("#button-emailpdf").button("option", "disabled", false); 
@@ -470,7 +539,7 @@ $(function() {
 
                 // Only allow the sign buttons to be pressed if the
                 // selection only contains unsigned documents
-                $("#asm-mediaicons input:checked").each(function() {
+                $(".asm-mediaicons input:checked").each(function() {
                     var mname = $(this).parent().parent().find(".media-name").val();
                     var issigned = $(this).parent().find(".asm-icon-signature").length > 0;
                     if (media.is_extension(mname, "html") && !issigned ) {
@@ -482,12 +551,29 @@ $(function() {
 
             });
 
+            $(".asm-mediadroptarget").on("dragover", function() {
+                $(".asm-mediadroptarget").addClass("asm-mediadroptarget-hover");
+                return false;
+            });
+            $(".asm-mediadroptarget").on("dragleave", function() {
+                $(".asm-mediadroptarget").removeClass("asm-mediadroptarget-hover");
+                return false;
+            });
+            $(".asm-mediadroptarget").on("drop", function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                $(".asm-mediadroptarget").removeClass("asm-mediadroptarget-hover");
+                media.attach_files(e.originalEvent.dataTransfer.files);
+                return false;
+            });
+
+
             var emailbuttons = { };
             emailbuttons[_("Send")] = function() {
                 if (!validate.notblank([ "emailto" ])) { return; }
                 var formdata = "mode=email&email=" + encodeURIComponent($("#emailto").val()) + 
                     "&emailnote=" + encodeURIComponent($("#emailnote").val()) + 
-                    "&ids=" + $("#asm-mediaicons input").tableCheckedData();
+                    "&ids=" + $(".asm-mediaicons input").tableCheckedData();
                 $("#dialog-email").dialog("close");
                 common.ajax_post(controller.name, formdata, function(result) { 
                     header.show_info(_("Email successfully sent to {0}").replace("{0}", result));
@@ -512,7 +598,7 @@ $(function() {
                 if (!validate.notblank([ "emailpdfto" ])) { return; }
                 var formdata = "mode=emailpdf&email=" + encodeURIComponent($("#emailpdfto").val()) + 
                     "&emailnote=" + encodeURIComponent($("#emailpdfnote").val()) + 
-                    "&ids=" + $("#asm-mediaicons input").tableCheckedData();
+                    "&ids=" + $(".asm-mediaicons input").tableCheckedData();
                 $("#dialog-emailpdf").dialog("close");
                 common.ajax_post(controller.name, formdata, function(result) { 
                     header.show_info(_("Email successfully sent to {0}").replace("{0}", result));
@@ -533,7 +619,7 @@ $(function() {
             });
 
             var addbuttons = { };
-            addbuttons[_("Attach")] = media.post;
+            addbuttons[_("Attach")] = media.post_file;
             addbuttons[_("Cancel")] = function() {
                 $("#dialog-add").dialog("close");
             };
@@ -607,7 +693,7 @@ $(function() {
                 if ($("#signature").signature("isEmpty")) { return; }
                 $("#dialog-sign").disable_dialog_buttons();
                 var img = $("#signature canvas").get(0).toDataURL("image/png");
-                var formdata = "mode=sign&ids=" + $("#asm-mediaicons input").tableCheckedData();
+                var formdata = "mode=sign&ids=" + $(".asm-mediaicons input").tableCheckedData();
                 formdata += "&signdate=" + encodeURIComponent(format.date(new Date()) + " " + format.time(new Date()));
                 formdata += "&sig=" + encodeURIComponent(img);
                 media.ajax(formdata);
@@ -650,7 +736,7 @@ $(function() {
 
             $("#button-delete").button({disabled: true}).click(function() {
                 tableform.delete_dialog(function() {
-                    var formdata = "mode=delete&ids=" + $("#asm-mediaicons input").tableCheckedData();
+                    var formdata = "mode=delete&ids=" + $(".asm-mediaicons input").tableCheckedData();
                     $("#dialog-delete").disable_dialog_buttons();
                     media.ajax(formdata);
                 });
@@ -665,13 +751,13 @@ $(function() {
 
             $("#button-web").button({disabled: true}).click(function() {
                 $("#button-web").button("disable");
-                var formdata = "mode=web&ids=" + $("#asm-mediaicons input").tableCheckedData();
+                var formdata = "mode=web&ids=" + $(".asm-mediaicons input").tableCheckedData();
                 media.ajax(formdata);
             });
 
             $("#button-video").button({disabled: true}).click(function() {
                 $("#button-video").button("disable");
-                var formdata = "mode=video&ids=" + $("#asm-mediaicons input").tableCheckedData();
+                var formdata = "mode=video&ids=" + $(".asm-mediaicons input").tableCheckedData();
                 media.ajax(formdata);
             });
 
@@ -696,7 +782,7 @@ $(function() {
             });
 
             $("#button-signpad").button({disabled: true}).click(function() {
-                var formdata = "mode=signpad&ids=" + $("#asm-mediaicons input").tableCheckedData();
+                var formdata = "mode=signpad&ids=" + $(".asm-mediaicons input").tableCheckedData();
                 common.ajax_post(controller.name, formdata, function(result) {
                     header.show_info(_("Sent to mobile signing pad."));
                 });
@@ -708,20 +794,20 @@ $(function() {
 
             $("#button-rotateanti").button({disabled: true}).click(function() {
                 $("#button-rotateanti").button("disable");
-                var formdata = "mode=rotateanti&ids=" + $("#asm-mediaicons input").tableCheckedData();
+                var formdata = "mode=rotateanti&ids=" + $(".asm-mediaicons input").tableCheckedData();
                 media.ajax(formdata);
             });
 
             $("#button-rotateclock").button({disabled: true}).click(function() {
                 $("#button-rotateclock").button("disable");
-                var formdata = "mode=rotateclock&ids=" + $("#asm-mediaicons input").tableCheckedData();
+                var formdata = "mode=rotateclock&ids=" + $(".asm-mediaicons input").tableCheckedData();
                 media.ajax(formdata);
             });
 
 
             $("#button-doc").button({disabled: true}).click(function() {
                 $("#button-doc").button("disable");
-                var formdata = "mode=doc&ids=" + $("#asm-mediaicons input").tableCheckedData();
+                var formdata = "mode=doc&ids=" + $(".asm-mediaicons input").tableCheckedData();
                 media.ajax(formdata);
             });
 
