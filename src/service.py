@@ -166,6 +166,9 @@ def handler(post, remoteip, referer):
         else:
             return set_cached_response(cache_key, "text/html", 120, publish.get_animal_view(dbo, int(animalid)))
 
+    elif method =="dbfs_image":
+        return ("image/jpeg", 86400, dbfs.get_string_filepath(dbo, title))
+
     elif method =="extra_image":
         return ("image/jpeg", 86400, dbfs.get_string(dbo, title, "/reports"))
 

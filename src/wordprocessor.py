@@ -29,9 +29,9 @@ def org_tags(dbo, username):
     sig = ""
     if len(u) > 0:
         u = u[0]
-        realname = u["REALNAME"]
-        email = u["EMAILADDRESS"]
-        sig = u["SIGNATURE"]
+        realname = utils.nulltostr(u["REALNAME"])
+        email = utils.nulltostr(u["EMAILADDRESS"])
+        sig = utils.nulltostr(u["SIGNATURE"])
     tags = {
         "ORGANISATION"          : configuration.organisation(dbo),
         "ORGANISATIONADDRESS"   : configuration.organisation_address(dbo),
