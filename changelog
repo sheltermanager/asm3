@@ -1,6 +1,7 @@
 37
 ================
 
+23/05/15 Fix safari issue with popState firing on page load
 23/05/15 Fix broken links when rendering document images as PDF
 22/05/15 Template animals #181
 22/05/15 Alert for lost/found matches #133
