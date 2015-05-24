@@ -1,6 +1,7 @@
 37
 ================
 
+24/05/15 Add a switch to disable shelterview drag/drop
 24/05/15 Use promises to cleanup code for drag/drop of multiple files
 24/05/15 Log javascript stack traces and output them in alert windows
 23/05/15 Update media tab to use responsive grid instead of table

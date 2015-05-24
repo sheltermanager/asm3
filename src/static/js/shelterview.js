@@ -143,7 +143,7 @@ $(function() {
                 h = this.render_view("ANIMALTYPENAME", "ANIMALTYPENAME,ANIMALNAME", false, true);
             }
             $("#viewcontainer").html(h);
-            if (dragdrop) {
+            if (dragdrop && config.bool("ShelterViewDragDrop")) {
                 $(".animaldragtarget").draggable();
                 $(".locationdroptarget").droppable({
                     over: function(event, ui) {

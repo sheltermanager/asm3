@@ -222,6 +222,7 @@ DEFAULTS = {
     "SearchSort": "3",
     "SecondDonationOnMove": "No",
     "ShelterViewDefault": "location",
+    "ShelterViewDragDrop": "Yes",
     "ShelterViewShowCodes": "No",
     "ShowCostAmount": "Yes",
     "ShowCostPaid": "No",

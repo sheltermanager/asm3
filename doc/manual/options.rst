@@ -610,6 +610,17 @@ Remove
   particular location or by an ACO (useful for shelters who do not have staff
   picking up animals).
 
+Shelter View
+------------
+
+The shelter view allows the default grouping to be set.
+
+* Allow drag and drop to move animals between locations: If set, you can drag animal
+  thumbnails between locations in shelter view to move them.
+
+* Show empty locations: If set, headings for all internal locations will be shown, 
+  even if there are no animals in them.
+
 Waiting List
 ------------
 
