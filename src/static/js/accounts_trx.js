@@ -200,7 +200,11 @@ $(function() {
                 var formdata = "mode=update&trxid=" + $("#trxid").val() + "&accountid=" + controller.accountid + "&" +
                     $("#dialog-edit input, #dialog-edit select").toPOST();
                 $("#dialog-edit").disable_dialog_buttons();
-                common.ajax_post("accounts_trx", formdata, function() { accounts_trx.reload(); }, function() { $("#dialog-edit").dialog("close"); });
+                common.ajax_post("accounts_trx", formdata)
+                    .then(accounts_trx.reload)
+                    .always(function() {
+                        $("#dialog-edit").dialog("close");
+                    });
             };
             editbuttons[_("Cancel")] = function() {
                 $("#dialog-edit").dialog("close");
@@ -219,7 +223,7 @@ $(function() {
             $("#button-reconcile").button({disabled: true}).click(function() {
                 $("#button-reconcile").button("disable");
                 var formdata = "mode=reconcile&ids=" + $("#table-trx input").tableCheckedData();
-                common.ajax_post("accounts_trx", formdata, function() { accounts_trx.reload(); });
+                common.ajax_post("accounts_trx", formdata).then(accounts_trx.reload);
             });
 
             $("#button-refresh").button().click(function() {
@@ -232,15 +236,16 @@ $(function() {
                 $("#button-add").button("disable");
                 var formdata = "mode=create&accountid=" + controller.accountid + "&" +
                     $("#table-trx input, #table-trx select").toPOST();
-                common.ajax_post("accounts_trx", formdata, function() { accounts_trx.reload(); });
+                common.ajax_post("accounts_trx", formdata).then(accounts_trx.reload);
             });
 
             $("#button-delete").button({disabled: true}).click(function() {
-                tableform.delete_dialog(function() {
-                    var formdata = "mode=delete&ids=" + $("#table-trx input").tableCheckedData();
-                    $("#dialog-delete").disable_dialog_buttons();
-                    common.ajax_post("accounts_trx", formdata, function() { accounts_trx.reload(); });
-                });
+                tableform.delete_dialog()
+                    .then(function() {
+                         var formdata = "mode=delete&ids=" + $("#table-trx input").tableCheckedData();
+                         return common.ajax_post("accounts_trx", formdata);
+                    })
+                    .then(accounts_trx.reload);
             });
 
             $(".trx-edit-link").click(function() {

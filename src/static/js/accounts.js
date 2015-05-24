@@ -11,7 +11,7 @@ $(function() {
                 edit_perm: 'cac',
                 helper_text: _("Accounts need a code.") + "<br /><br />" + 
                     _("If you assign view or edit roles, only users within those roles will be able to view and edit this account."),
-                close_on_ok: true,
+                close_on_ok: false,
                 columns: 1,
                 width: 550,
                 fields: [
@@ -68,13 +68,18 @@ $(function() {
                     else {
                         $("#costtype").closest("tr").show(); 
                     }
-                    tableform.dialog_show_edit(dialog, row, function() {
-                        tableform.fields_update_row(dialog.fields, row);
-                        row.ACCOUNTTYPENAME = common.get_field(controller.accounttypes, row.ACCOUNTTYPE, "ACCOUNTTYPE");
-                        tableform.fields_post(dialog.fields, "mode=update&accountid=" + row.ID, "accounts", function(response) {
+                    tableform.dialog_show_edit(dialog, row)
+                        .then(function() {
+                            tableform.fields_update_row(dialog.fields, row);
+                            row.ACCOUNTTYPENAME = common.get_field(controller.accounttypes, row.ACCOUNTTYPE, "ACCOUNTTYPE");
+                            return tableform.fields_post(dialog.fields, "mode=update&accountid=" + row.ID, "accounts");
+                        })
+                        .then(function() {
                             tableform.table_update(table);
+                        })
+                        .always(function() {
+                            tableform.dialog_close();
                         });
-                    });
                 },
                 columns: [
                     { field: "CODE", display: _("Code"), formatter: function(row) {
@@ -106,30 +111,35 @@ $(function() {
                          $("#donationtype").closest("tr").hide(); 
                          $("#costtype").select("value", "0");
                          $("#costtype").closest("tr").hide(); 
-                         tableform.dialog_show_add(dialog, function() {
-                             tableform.fields_post(dialog.fields, "mode=create", "accounts", function(response) {
+                         tableform.dialog_show_add(dialog)
+                             .then(function() {
+                                 return tableform.fields_post(dialog.fields, "mode=create", "accounts");
+                             })
+                             .then(function(response) {
                                  var row = {};
                                  row.ID = response;
                                  tableform.fields_update_row(dialog.fields, row);
                                  row.ACCOUNTTYPENAME = common.get_field(controller.accounttypes, row.ACCOUNTTYPE, "ACCOUNTTYPE");
                                  controller.rows.push(row);
                                  tableform.table_update(table);
+                             })
+                             .always(function() {
+                                 tableform.dialog_close();
                              });
-                         });
                      } 
                  },
                  { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dac",
                      click: function() { 
-                         tableform.delete_dialog(function() {
-                             tableform.buttons_default_state(buttons);
-                             var ids = tableform.table_ids(table);
-                             common.ajax_post("accounts", "mode=delete&ids=" + ids , function() {
+                         tableform.delete_dialog(null, _("This will permanently remove this account and ALL TRANSACTIONS HELD AGAINST IT. This action is irreversible, are you sure you want to do this?"))
+                             .then(function() {
+                                 tableform.buttons_default_state(buttons);
+                                 var ids = tableform.table_ids(table);
+                                 return common.ajax_post("accounts", "mode=delete&ids=" + ids);
+                             })
+                             .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
                                  tableform.table_update(table);
                              });
-                         },
-                         _("This will permanently remove this account and ALL TRANSACTIONS HELD AGAINST IT. This action is irreversible, are you sure you want to do this?")
-                         );
                      } 
                  },
                  { id: "offset", type: "dropdownfilter", 
