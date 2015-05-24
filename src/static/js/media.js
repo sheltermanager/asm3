@@ -271,18 +271,26 @@ $(function() {
          * HTML5 File APIs are available
          */
         attach_files: function(files) {
-            var i = 0;
+            var i = 0, promises = [];
             if (!media.html5_file_api()) { return; }
+            header.show_loading(_("Uploading..."));
             for (i = 0; i < files.length; i += 1) {
-                media.attach_file(files[i]);    
+                promises.push(media.attach_file(files[i])); 
             }
+            $.when.apply(this, promises).then(function() {
+                header.hide_loading();
+                common.route_reload(); 
+            });
         },
 
         /**
-         * Uploads a single file using the HTML5 file APIs. If the file is an image, 
-         * scales it down first.
+         * Uploads a single file using the HTML5 file APIs. 
+         * If the file is an image, scales it down first.
+         * returns a promise.
          */
         attach_file: function(file, comments) {
+
+            var deferred = $.Deferred();
 
             // If no comments were supplied, make them an empty string instead
             if (!comments) { comments = ""; }
@@ -291,7 +299,8 @@ $(function() {
             if ( !media.is_extension(file.name, "jpg") && !media.is_extension(file.name, "jpeg") && 
                  !media.is_extension(file.name, "pdf") && !media.is_extension(file.name, "html") ) {
                 header.show_error(_("Only PDF, HTML and JPG image files can be attached."));
-                return;
+                deferred.reject();
+                return deferred.promise();
             }
 
             // Is this an image? If so, try to scale it down before sending
@@ -349,10 +358,10 @@ $(function() {
                         "&filename=" + encodeURIComponent(file.name) +
                         "&filetype=" + encodeURIComponent(file.type) + 
                         "&filedata=" + encodeURIComponent(finalfile);
-                    header.show_loading(_("Uploading..."));
                     common.ajax_post(controller.name, formdata, function(result) { 
-                        header.hide_loading();
-                        common.route_reload(); 
+                        deferred.resolve();
+                    }, function() { 
+                        deferred.reject(); 
                     });
                 };
                 imreader.readAsDataURL(file);
@@ -368,14 +377,15 @@ $(function() {
                         "&filename=" + encodeURIComponent(file.name) +
                         "&filetype=" + encodeURIComponent(file.type) + 
                         "&filedata=" + encodeURIComponent(e.target.result);
-                    header.show_loading(_("Uploading..."));
                     common.ajax_post(controller.name, formdata, function(result) { 
-                        header.hide_loading();
-                        common.route_reload(); 
+                        deferred.resolve();
+                    }, function() { 
+                        deferred.reject(); 
                     });
                 };
                 docreader.readAsDataURL(file);
             }
+            return deferred.promise();
         },
 
         /** Posts the image back to the server. If HTML5 File APIs are available,
@@ -418,7 +428,11 @@ $(function() {
             }
 
             // Attach the file with the HTML5 APIs
-            media.attach_file(selectedfile, $("#addcomments").val());
+            header.show_loading(_("Uploading..."));
+            $.when( media.attach_file(selectedfile, $("#addcomments").val()) ).then(function() {
+                header.hide_loading();
+                common.route_reload(); 
+            });
         },
 
         is_extension: function(s, ext) {

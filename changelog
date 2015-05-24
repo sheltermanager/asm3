@@ -1,6 +1,8 @@
 37
 ================
 
+24/05/15 Use promises to cleanup code for drag/drop of multiple files
+24/05/15 Log javascript stack traces and output them in alert windows
 23/05/15 Update media tab to use responsive grid instead of table
 23/05/15 Allow HTML5 drag/drop of media #69
 23/05/15 Fix safari issue with popState firing on page load

@@ -1,6 +1,6 @@
 /*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, console, jQuery, Mousetrap, Path */
-/*global asm, header, _, escape, unescape */
+/*global alert, asm, header, _, escape, unescape */
 /*global common: true, config: true, controller: true, dlgfx: true, format: true, html: true, log: true, validate: true */
 
 (function($) {
@@ -411,7 +411,11 @@
          * can recover if necessary.
          */
         module_start: function(modulename) {
-            var logprefix = "module_start [" + modulename + "]: ";
+            var errhandler = function(name, e) {
+                    var msg = "module_start [" + modulename + "]: " + name + ": " + e;
+                    log.error(msg, e);
+                    alert(msg + "\n" + e.stack);
+                };
             // do we already have one running? If so, try to unload it first
             if (common.module_running) {
                 if (common.module_running.destroy) {
@@ -421,7 +425,7 @@
                         }
                     }
                     catch (exdestroy) {
-                        log.error(logprefix + "destroy: " + exdestroy);
+                        errhandler("destroy", exdestroy);
                     }
                 }
             }
@@ -432,7 +436,7 @@
                     $("#asm-body-container").html(o.render()); 
                 }
                 catch (exrender) {
-                    log.error(logprefix + "render: " + exrender);
+                    errhandler("render", exrender);
                 }
             }
             common.bind_widgets();
@@ -441,7 +445,7 @@
                     o.bind(); 
                 }
                 catch (exbind) {
-                    log.error(logprefix + "bind: " + exbind);
+                    errhandler("bind", exbind);
                 }
             }
             if (o.sync) {
@@ -449,7 +453,7 @@
                     o.sync(); 
                 }
                 catch (exsync) {
-                    log.error(logprefix + "sync: " + exsync);
+                    errhandler("sync", exsync);
                 }
             }
             if (o.title) { 
@@ -457,7 +461,7 @@
                     $(document).attr("title", o.title()); 
                 }
                 catch (extitle) {
-                    log.error(logprefix + "title: " + extitle);
+                    errhandler("title", extitle);
                 }
             }
             common.apply_label_overrides(modulename);
@@ -465,7 +469,7 @@
                 $("#asm-content").asmcontent(o.animation instanceof Function ? o.animation() : o.animation);
             }
             catch (exanim) {
-                log.error(logprefix + "animation: " + exanim);
+                errhandler("animation", exanim);
             }
             common.module_running = o;
             if (o.autofocus) {
@@ -479,10 +483,11 @@
          * formdata: The formdata as a string
          * successfunc: The callback function (will pass response)
          * errorfunc: The callback function on error (will include response)
+         * returns a promise.
          */
         ajax_post: function(action, formdata, successfunc, errorfunc) {
             var st = new Date().getTime();
-            $.ajax({
+            return $.ajax({
                 type: "POST",
                 url: action,
                 data: formdata,
@@ -1854,9 +1859,15 @@
             log.console_log("WARN: " + s);
         },
 
-        error: function(s) {
+        error: function(s, e) {
             if (log.level > 4) { return; }
-            log.console_log("ERROR: " + s);
+            if (!window.console) { return; }
+            if (e) {
+                console.log("ERROR: " + s, "from", e.stack);
+            }
+            else {
+                console.log("ERROR: " + s);
+            }
         },
 
         console_log: function(str) {
