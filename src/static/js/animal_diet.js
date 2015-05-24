@@ -25,15 +25,19 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row, function() {
-                        tableform.fields_update_row(dialog.fields, row);
-                        row.DIETNAME = common.get_field(controller.diettypes, row.DIETID, "DIETNAME");
-                        row.DIETDESCRIPTION = common.get_field(controller.diettypes, row.DIETID, "DIETDESCRIPTION");
-                        tableform.fields_post(dialog.fields, "mode=update&dietid=" + row.ID, "animal_diet", function(response) {
+                    tableform.dialog_show_edit(dialog, row)
+                        .then(function() {
+                            tableform.fields_update_row(dialog.fields, row);
+                            row.DIETNAME = common.get_field(controller.diettypes, row.DIETID, "DIETNAME");
+                            row.DIETDESCRIPTION = common.get_field(controller.diettypes, row.DIETID, "DIETDESCRIPTION");
+                            return tableform.fields_post(dialog.fields, "mode=update&dietid=" + row.ID, "animal_diet");
+                        })
+                        .then(function() {
                             tableform.table_update(table);
+                        })
+                        .always(function() {
                             tableform.dialog_close();
                         });
-                    });
                 },
                 complete: function(row) {
                     // Do we have a diet newer than this one? If so, mark it complete
@@ -56,8 +60,11 @@ $(function() {
             var buttons = [
                  { id: "new", text: _("New Diet"), icon: "new", enabled: "always", perm: "daad",
                      click: function() { 
-                         tableform.dialog_show_add(dialog, function() {
-                             tableform.fields_post(dialog.fields, "mode=create&animalid="  + controller.animal.ID, "animal_diet", function(response) {
+                         tableform.dialog_show_add(dialog)
+                             .then(function() {
+                                 return tableform.fields_post(dialog.fields, "mode=create&animalid="  + controller.animal.ID, "animal_diet");
+                             })
+                             .then(function(response) {
                                  var row = {};
                                  row.ID = response;
                                  tableform.fields_update_row(dialog.fields, row);
@@ -65,21 +72,24 @@ $(function() {
                                  row.DIETDESCRIPTION = common.get_field(controller.diettypes, row.DIETID, "DIETDESCRIPTION");
                                  controller.rows.push(row);
                                  tableform.table_update(table);
+                             })
+                             .always(function() {
                                  tableform.dialog_close();
                              });
-                         });
                      } 
                  },
                  { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "ddad",
                      click: function() { 
-                         tableform.delete_dialog(function() {
-                             tableform.buttons_default_state(buttons);
-                             var ids = tableform.table_ids(table);
-                             common.ajax_post("animal_diet", "mode=delete&ids=" + ids , function() {
+                         tableform.delete_dialog()
+                             .then(function() {
+                                 tableform.buttons_default_state(buttons);
+                                 var ids = tableform.table_ids(table);
+                                 return common.ajax_post("animal_diet", "mode=delete&ids=" + ids);
+                             })
+                             .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
                                  tableform.table_update(table);
                              });
-                         });
                      } 
                  }
             ];

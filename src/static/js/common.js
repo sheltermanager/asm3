@@ -486,8 +486,9 @@
          * returns a promise.
          */
         ajax_post: function(action, formdata, successfunc, errorfunc) {
-            var st = new Date().getTime();
-            return $.ajax({
+            var st = new Date().getTime(),
+                deferred = $.Deferred();
+            $.ajax({
                 type: "POST",
                 url: action,
                 data: formdata,
@@ -502,6 +503,7 @@
                     if (successfunc) {
                         successfunc(result, new Date().getTime() - st);
                     }
+                    deferred.resolve(result);
                 },
                 error: function(jqxhr, textstatus, response) {
                     try {
@@ -515,8 +517,10 @@
                     if (errorfunc) {
                         errorfunc(errmessage);
                     }
+                    deferred.reject(response);
                 }
             });
+            return deferred.promise();
         },
 
         /**

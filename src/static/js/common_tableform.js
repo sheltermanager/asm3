@@ -573,6 +573,8 @@
          */
         dialog_show_add: function(dialog, callback, onloadcallback) {
 
+            var deferred = $.Deferred();
+
             // Make sure any existing dialog is destroyed before starting
             tableform.dialog_destroy();
 
@@ -599,10 +601,16 @@
                     else {
                         tableform.dialog_disable_buttons();
                     }
-                    callback();
+                    if (callback) { callback(); }
+                    deferred.resolve();
                 }
             };
-            b[_("Cancel")] = function() { $(this).dialog("close"); };
+
+            b[_("Cancel")] = function() { 
+                $(this).dialog("close"); 
+                deferred.reject();
+            };
+
             $("#dialog-tableform").dialog({
                 resizable: false,
                 width: (dialog.width || "auto"),
@@ -631,6 +639,7 @@
             if (onloadcallback) {
                 onloadcallback();
             }
+            return deferred.promise();
         },
 
         /**
@@ -643,6 +652,8 @@
          * deletecallback: function to run after the delete button is clicked
          */
         dialog_show_edit: function(dialog, row, changecallback, loadcallback, deletecallback) {
+
+            var deferred = $.Deferred();
 
             // Make sure any existing dialog is destroyed before starting
             tableform.dialog_destroy();
@@ -669,6 +680,7 @@
                         if (deletecallback) {
                             deletecallback(row);
                         }
+                        deferred.reject("delete", row);
                     }
                 };
             }
@@ -684,10 +696,14 @@
                         if (changecallback) {
                             changecallback(row);
                         }
+                        deferred.resolve(row);
                     }
                 };
             }
-            b[_("Cancel")] = function() { $(this).dialog("close"); };
+            b[_("Cancel")] = function() { 
+                $(this).dialog("close");
+                deferred.reject();
+            };
             $("#dialog-tableform").dialog({
                 resizable: false,
                 width: (dialog.width || "auto"),
@@ -716,6 +732,7 @@
             if (loadcallback) {
                 loadcallback(row);
             }
+            return deferred.promise();
         },
 
 
@@ -1167,10 +1184,11 @@
          * postvar: any extra post variables to send, eg: mode=amazing - don't leave trailing &
          * postto: The URL to post to
          * callback: function to call on success of the post, the ajax response is passed
-         * errorcallback: function to call on error, the reponse is passed
+         * errorcallback: function to call on error, the response is passed
+         * return value is a promise.
          */
         fields_post: function(fields, postvar, postto, callback, errorcallback) {
-            var post = "";
+            var post = "", deferred = $.Deferred();
             if (postvar) { post = postvar; }
             $.each(fields, function(i, v) {
                 var n = $("#" + v.post_field);
@@ -1200,15 +1218,17 @@
                 data: post,
                 dataType: "text",
                 success: function(result) {
-                    callback(result);
+                    if (callback) { callback(result); }
+                    deferred.resolve(result);
                 },
                 error: function(jqxhr, textstatus, response) {
                     var errmessage = common.get_error_response(jqxhr, response);
                     tableform.dialog_error(errmessage);
                     if (errorcallback) { errorcallback(errmessage); }
+                    deferred.reject(response);
                 }
             });
-            return post;
+            return deferred.promise();
         },
 
         /**
@@ -1217,12 +1237,16 @@
          * text: The delete dialog text (don't pass for the default)
          */
         delete_dialog: function(callback, text) {
-            var b = {}; 
+            var b = {}, deferred = $.Deferred(); 
             b[_("Delete")] = function() {
                 $("#dialog-delete").dialog("close");
-                callback();
+                if (callback) { callback(); }
+                deferred.resolve();
             };
-            b[_("Cancel")] = function() { $(this).dialog("close"); };
+            b[_("Cancel")] = function() { 
+                $(this).dialog("close"); 
+                deferred.reject();
+            };
             var mess = _("This will permanently remove the selected records, are you sure?"); 
             if (text && text != "") {
                 mess = text;
@@ -1243,6 +1267,7 @@
                 hide: dlgfx.delete_hide,
                 buttons: b
             });
+            return deferred.promise();
         }
 
     };
