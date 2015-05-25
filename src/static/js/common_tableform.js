@@ -459,7 +459,7 @@
          *      close_on_ok: false,
          *      hide_read_only: false, // whether or not to hide read only fields in editing
          *      use_default_values: false,
-         *      autofocus: true,
+         *      focusfirst: true,
          *      columns: 1,
          *      delete_button: false,
          *      delete_perm: 'da',
@@ -496,10 +496,10 @@
                 if (dialog.html_form_enctype) { d.push(" enctype=\"" + dialog.html_form_enctype + "\""); }
                 d.push(">");
             }
-            // If autofocus is defined and set to false, add a hidden
+            // If focusfirst is defined and set to false, add a hidden
             // field that prevents JQuery UI autofocusing on any of our
             // fields (good for when choosers are the first field)
-            if (dialog.autofocus === false) {
+            if (dialog.focusfirst === false) {
                 d.push(html.capture_autofocus());
             }
             d.push(this.fields_render(dialog.fields, dialog.columns));
