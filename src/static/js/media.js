@@ -487,7 +487,17 @@ $(function() {
                 $("#tipios6").show();
             }
 
-            $(".asm-mediaicons input").change(function() {
+            $(".asm-mediaicons").on("change", "input[type='checkbox']", function() {
+
+                // If the selected element is ticked, apply a highlight style
+                // to the media item
+                if ($(this).is(":checked")) {
+                    $(this).closest(".asm-mediaicon").addClass("ui-state-highlight");
+                }
+                else {
+                    $(this).closest(".asm-mediaicon").removeClass("ui-state-highlight");
+                }
+
                 if ($(".asm-mediaicons input:checked").size() > 0) {
                     $("#button-delete").button("option", "disabled", false); 
                 }
