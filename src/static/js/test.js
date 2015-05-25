@@ -14,7 +14,6 @@ $(function() {
                 edit_perm: 'cat',
                 helper_text: _("Tests need an animal and at least a required date."),
                 close_on_ok: false,
-                autofocus: false,
                 use_default_values: false,
                 columns: 1,
                 width: 500,

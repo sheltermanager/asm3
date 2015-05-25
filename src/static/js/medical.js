@@ -14,7 +14,6 @@ $(function() {
                 edit_perm: 'mcam',
                 helper_text: _("Medical regimens need an animal, name, dosage, a start date and frequencies."),
                 close_on_ok: false,
-                autofocus: false,
                 hide_read_only: true,
                 columns: 1,
                 width: 800,

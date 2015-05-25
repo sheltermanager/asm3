@@ -14,7 +14,6 @@ $(function() {
                 edit_perm: 'cav',
                 helper_text: _("Vaccinations need an animal and at least a required date."),
                 close_on_ok: false,
-                autofocus: false,
                 use_default_values: false,
                 columns: 1,
                 width: 500,
