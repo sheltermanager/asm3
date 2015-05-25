@@ -323,11 +323,10 @@ def asm_500_email():
 
         <p>The system administrator has been notified to fix the problem.</p>
 
-        <p>Sometimes, a database update needs to have been run. Return
-        to the <a href="main">main screen</a> to run any outstanding
-        database updates.</p>
-
-        <p><a href="javascript:history.back()">Go Back</a></p>
+        <p>Sometimes, a database update needs to have been run, or you 
+        need to update your browser's local version of the application. 
+        Please return to the <a href="main">home page</a> to run and
+        receive any updates.</p>
 
         </div>
         </body>
