@@ -136,15 +136,15 @@ $(function() {
                 $("#bulk").button("disable");
                 header.show_loading(_("Updating..."));
                 var formdata = $("input, select, textarea").toPOST();
-                common.ajax_post("animal_bulk", formdata, function(data) {
-                    header.hide_loading();
-                    header.show_info(_("{0} animals successfully updated.").replace("{0}", data));
-                    $("#bulk").button("enable");
-                }, function() {
-                    $("#bulk").button("enable");
-                });
+                common.ajax_post("animal_bulk", formdata)
+                    .then(function(data) {
+                        header.hide_loading();
+                        header.show_info(_("{0} animals successfully updated.").replace("{0}", data));
+                    })
+                    .always(function() {
+                        $("#bulk").button("enable");
+                    });
             });
-
         },
 
         destroy: function() {
