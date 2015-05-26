@@ -141,9 +141,6 @@ $$BODY
 <h2>Costs</h2>
 {SUBREPORT.SUBREPORT_AnimalPrintCost.ANIMALID}
 
-<h2>Payments</h2>
-{SUBREPORT.SUBREPORT_AnimalPrintDonation.ANIMALID}
-
 <h2>Log</h2>
 {SUBREPORT.SUBREPORT_AnimalPrintLog.ANIMALID}
 
