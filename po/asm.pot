@@ -950,6 +950,10 @@ msgid "Allow creation of payments on the Move-Reserve screen"
 msgstr ""
 
 #: options.js
+msgid "Allow drag and drop to move animals between locations"
+msgstr ""
+
+#: options.js
 msgid "Allow duplicate microchip numbers"
 msgstr ""
 

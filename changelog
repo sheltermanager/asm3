@@ -1,6 +1,7 @@
 37
 ================
 
+26/05/15 Disable searchable on additional fields of wrong type #199
 25/05/15 Visually show selected media
 25/05/15 Fix bad autofocus on medical, test and vacc screens
 24/05/15 Add a switch to disable shelterview drag/drop

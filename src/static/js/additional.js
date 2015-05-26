@@ -10,7 +10,7 @@ $(function() {
                 add_title: _("Add additional field"),
                 edit_title: _("Edit additional field"),
                 helper_text: _("Additional fields need a name, label and type.") + '<br />' + _("Field names should not contain spaces."),
-                close_on_ok: true,
+                close_on_ok: false,
                 columns: 1,
                 width: 550,
                 fields: [
@@ -33,16 +33,19 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row, function() {
-                        tableform.fields_update_row(dialog.fields, row);
-                        row.FIELDTYPENAME = common.get_field(controller.fieldtypes, row.FIELDTYPE, "FIELDTYPE");
-                        row.LINKTYPENAME = common.get_field(controller.linktypes, row.LINKTYPE, "LINKTYPE");
-                        tableform.fields_post(dialog.fields, "mode=update&id=" + row.ID, "additional", function(response) {
+                    tableform.dialog_show_edit(dialog, row, null, additional.check_type)
+                        .then(function() {
+                            tableform.fields_update_row(dialog.fields, row);
+                            row.FIELDTYPENAME = common.get_field(controller.fieldtypes, row.FIELDTYPE, "FIELDTYPE");
+                            row.LINKTYPENAME = common.get_field(controller.linktypes, row.LINKTYPE, "LINKTYPE");
+                            return tableform.fields_post(dialog.fields, "mode=update&id=" + row.ID, "additional");
+                        })
+                        .then(function(response) {
                             tableform.table_update(table);
+                        })
+                        .always(function() {
+                            tableform.dialog_close();
                         });
-                    }, function() {
-                        additional.check_lookup_values();
-                    });
                 },
                 columns: [
                     { field: "FIELDNAME", display: _("Name"), initialsort: true },
@@ -58,9 +61,11 @@ $(function() {
             var buttons = [
                  { id: "new", text: _("New Field"), icon: "new", enabled: "always", 
                      click: function() { 
-                         tableform.dialog_show_add(dialog, function() {
-                             additional.check_lookup_values();
-                             tableform.fields_post(dialog.fields, "mode=create", "additional", function(response) {
+                         tableform.dialog_show_add(dialog, null, additional.check_type)
+                             .then(function() {
+                                 return tableform.fields_post(dialog.fields, "mode=create", "additional");
+                             })
+                             .then(function(response) {
                                  var row = {};
                                  row.ID = response;
                                  tableform.fields_update_row(dialog.fields, row);
@@ -68,21 +73,24 @@ $(function() {
                                  row.LINKTYPENAME = common.get_field(controller.linktypes, row.LINKTYPE, "LINKTYPE");
                                  controller.rows.push(row);
                                  tableform.table_update(table);
-                             });
-                         }, function() { additional.check_lookup_values(); });
+                            })
+                            .always(function() {
+                                tableform.dialog_close();  
+                            });
                      } 
                  },
                  { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
                      click: function() { 
-                         tableform.delete_dialog(function() {
-                             tableform.buttons_default_state(buttons);
-                             var ids = tableform.table_ids(table);
-                             common.ajax_post("additional", "mode=delete&ids=" + ids , function() {
+                         tableform.delete_dialog(null, _("This will permanently remove this additional field and ALL DATA CURRENTLY HELD AGAINST IT. This action is irreversible, are you sure you want to do this?"))
+                             .then(function() {
+                                tableform.buttons_default_state(buttons);
+                                var ids = tableform.table_ids(table);
+                                return common.ajax_post("additional", "mode=delete&ids=" + ids);
+                             })
+                             .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
                                  tableform.table_update(table);
                              });
-                         },
-                         _("This will permanently remove this additional field and ALL DATA CURRENTLY HELD AGAINST IT. This action is irreversible, are you sure you want to do this?"));
                      } 
                  }
             ];
@@ -102,16 +110,27 @@ $(function() {
             return s;
         },
 
-        /** Check if we should show the lookup values row (only
-          * valid if the field type is yes/no, lookup or multi-lookup
+        /** 
+         * Depending on type selected, show or hide the lookups
+         * and searchable fields.
           */
-        check_lookup_values: function() {
+        check_type: function() {
             var ft = $("#type").select("value");
+            // Show lookups if field type is yes/no, lookup or multi-lookup
             if (ft == 0 || ft == 6 || ft == 7) {
                 $("#lookupvalues").closest("tr").fadeIn();
             }
             else {
                 $("#lookupvalues").closest("tr").fadeOut();
+            }
+            // Show searchable for correct field types
+            // of text, notes, lookup or multi-lookup
+            if (ft == 1 || ft == 2 || ft == 6 || ft == 7) {
+                $("#searchable").closest("tr").fadeIn();
+            }
+            else {
+                $("#searchable").prop("checked", false);
+                $("#searchable").closest("tr").fadeOut();
             }
         },
 
@@ -125,8 +144,8 @@ $(function() {
                 if (e.keyCode == 32 || e.keyCode == 191) { return false; }
             });
 
-            // Show/hide the lookup values box if type changes
-            $("#type").change(additional.check_lookup_values);
+            // Show/hide fields if type changes
+            $("#type").change(additional.check_type);
 
         },
 
