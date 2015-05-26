@@ -228,7 +228,11 @@ $(function() {
                 if (!waitinglist.validation()) { return; }
                 validate.dirty(false);
                 var formdata = "mode=save&id=" + $("#waitinglistid").val() + "&" + $("input, select, textarea").toPOST();
-                common.ajax_post("waitinglist", formdata, callback, function() { validate.dirty(true); });
+                common.ajax_post("waitinglist", formdata)
+                    .then(callback)
+                    .fail(function() { 
+                        validate.dirty(true); 
+                    });
             };
 
             // When contact changes, keep track of the record
@@ -263,7 +267,10 @@ $(function() {
             $("#button-toanimal").button().click(function() {
                 $("#button-toanimal").button("disable");
                 var formdata = "mode=toanimal&id=" + $("#waitinglistid").val();
-                common.ajax_post("waitinglist", formdata, function(result) { common.route("animal?id=" + result); });
+                common.ajax_post("waitinglist", formdata)
+                    .then(function(result) { 
+                        common.route("animal?id=" + result); 
+                    });
             });
 
             $("#button-delete").button().click(function() {
@@ -271,9 +278,13 @@ $(function() {
                 b[_("Delete")] = function() { 
                     var formdata = "mode=delete&id=" + $("#waitinglistid").val();
                     $("#dialog-delete").disable_dialog_buttons();
-                    common.ajax_post("waitinglist", formdata, function() { 
-                        common.route("main"); $("#dialog-delete").dialog("close"); 
-                    }, function() { $("#dialog-delete").dialog("close"); });
+                    common.ajax_post("waitinglist", formdata)
+                        .then(function() { 
+                            common.route("main");
+                        })
+                        .always(function() { 
+                            $("#dialog-delete").dialog("close"); 
+                        });
                 };
                 b[_("Cancel")] = function() { $(this).dialog("close"); };
                 $("#dialog-delete").dialog({

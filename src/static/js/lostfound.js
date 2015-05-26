@@ -252,7 +252,11 @@ $(function() {
                 if (!lostfound.validation()) { return; }
                 validate.dirty(false);
                 var formdata = "mode=save&id=" + $("#lfid").val() + "&" + $("input, select, textarea").toPOST();
-                common.ajax_post(controller.name, formdata, callback, function() { validate.dirty(true); });
+                common.ajax_post(controller.name, formdata)
+                    .then(callback)
+                    .fail(function() { 
+                        validate.dirty(true); 
+                    });
             };
 
             // When contact changes, keep track of the record
@@ -292,22 +296,33 @@ $(function() {
             $("#button-toanimal").button().click(function() {
                 $("#button-toanimal").button("disable");
                 var formdata = "mode=toanimal&id=" + $("#lfid").val();
-                common.ajax_post(controller.name, formdata, function(result) { common.route("animal?id=" + result); });
+                common.ajax_post(controller.name, formdata)
+                    .then(function(result) { 
+                        common.route("animal?id=" + result); 
+                    });
             });
 
             $("#button-towaitinglist").button().click(function() {
                 $("#button-towaitinglist").button("disable");
                 var formdata = "mode=towaitinglist&id=" + $("#lfid").val();
-                common.ajax_post(controller.name, formdata, function(result) { common.route("waitinglist?id=" + result); });
+                common.ajax_post(controller.name, formdata)
+                    .then(function(result) { 
+                        common.route("waitinglist?id=" + result); 
+                    });
             });
 
             $("#button-delete").button().click(function() {
                 var b = {}; 
                 b[_("Delete")] = function() { 
                     var formdata = "mode=delete&id=" + $("#lfid").val();
-                    common.ajax_post(controller.name, formdata, function() { 
-                        common.route("main"); $("#dialog-delete").dialog("close"); 
-                    }, function() { $("#dialog-delete").dialog("close"); });
+                    common.ajax_post(controller.name, formdata)
+                        .then(function() { 
+                            $("#dialog-delete").dialog("close"); 
+                            common.route("main"); 
+                        })
+                        .fail(function() {
+                            $("#dialog-delete").dialog("close"); 
+                        });
                 };
                 b[_("Cancel")] = function() { $(this).dialog("close"); };
                 $("#dialog-delete").dialog({

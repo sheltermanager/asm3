@@ -18,7 +18,6 @@ animal.BreedName, entryreason.ReasonName,
 oo.OwnerName AS OOName, oo.OwnerAddress AS OOAddress, oo.OwnerTown AS OOTown, oo.OwnerCounty AS OOCounty, oo.OwnerPostcode AS OOPostcode, 
 oo.EmailAddress AS OOEmail
 FROM animal
-INNER JOIN owner no ON adoption.OwnerID = no.ID
 INNER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
 INNER JOIN species ON species.ID = animal.SpeciesID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID

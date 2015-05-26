@@ -60,10 +60,11 @@ $(function() {
 
             $("#button-stop").button().click(function() {
                 $("#button-stop").button("disable");
-                common.ajax_post("publish", "mode=stop", function() { 
-                    $("#button-stop").button("enable");
-                    forcestop = true;
-                });
+                common.ajax_post("publish", "mode=stop")
+                    .then(function() { 
+                        $("#button-stop").button("enable");
+                        forcestop = true;
+                    });
             });
 
             // Poll timer function

@@ -27,14 +27,19 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row, function() {
-                        tableform.fields_update_row(dialog.fields, row);
-                        row.VOUCHERNAME = common.get_field(controller.vouchertypes, row.VOUCHERID, "VOUCHERNAME");
-                        tableform.fields_post(dialog.fields, "mode=update&voucherid=" + row.ID, "person_vouchers", function(response) {
+                    tableform.dialog_show_edit(dialog, row)
+                        .then(function() {
+                            tableform.fields_update_row(dialog.fields, row);
+                            row.VOUCHERNAME = common.get_field(controller.vouchertypes, row.VOUCHERID, "VOUCHERNAME");
+                            return tableform.fields_post(dialog.fields, "mode=update&voucherid=" + row.ID, "person_vouchers");
+                        })
+                        .then(function(response) {
                             tableform.table_update(table);
                             tableform.dialog_close();
+                        })
+                        .fail(function() {
+                            tableform.dialog_buttons_enable();
                         });
-                    });
                 },
                 complete: function(row) {
                     if (row.DATEEXPIRED != null && format.date_js(row.DATEEXPIRED) <= new Date()) {
@@ -54,8 +59,11 @@ $(function() {
             var buttons = [
                  { id: "new", text: _("New Voucher"), icon: "new", enabled: "always", perm: "vaov", 
                      click: function() { 
-                         tableform.dialog_show_add(dialog, function() {
-                             tableform.fields_post(dialog.fields, "mode=create&personid=" + controller.person.ID, "person_vouchers", function(response) {
+                         tableform.dialog_show_add(dialog, null, person_vouchers.vouchertype_change)
+                             .then(function() {
+                                 return tableform.fields_post(dialog.fields, "mode=create&personid=" + controller.person.ID, "person_vouchers");
+                             })
+                             .then(function(response) {
                                  var row = {};
                                  row.ID = response;
                                  tableform.fields_update_row(dialog.fields, row);
@@ -63,20 +71,24 @@ $(function() {
                                  controller.rows.push(row);
                                  tableform.table_update(table);
                                  tableform.dialog_close();
+                             })
+                             .fail(function() {
+                                 tableform.dialog_buttons_enable();
                              });
-                         }, function() { person_vouchers.vouchertype_change(); });
                      } 
                  },
                  { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "vdov", 
                      click: function() { 
-                         tableform.delete_dialog(function() {
-                             tableform.buttons_default_state(buttons);
-                             var ids = tableform.table_ids(table);
-                             common.ajax_post("person_vouchers", "mode=delete&ids=" + ids , function() {
+                         tableform.delete_dialog()
+                             .then(function() {
+                                 tableform.buttons_default_state(buttons);
+                                 var ids = tableform.table_ids(table);
+                                 return common.ajax_post("person_vouchers", "mode=delete&ids=" + ids);
+                             })
+                             .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
                                  tableform.table_update(table);
                              });
-                         });
                      } 
                  }
             ];

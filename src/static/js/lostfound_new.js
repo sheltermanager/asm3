@@ -169,28 +169,29 @@ $(function() {
                 header.show_loading(_("Creating..."));
 
                 var formdata = $("input, select, textarea").toPOST();
-                common.ajax_post(controller.name, formdata, function(createdID) { 
-                    if (addmode == "add") {
-                        if (lostfound_new.mode == "lost") {
-                            header.show_info(_("Lost animal entry {0} successfully created.").replace("{0}", format.padleft(createdID, 6)));
+                common.ajax_post(controller.name, formdata)
+                    .then(function(createdID) { 
+                        if (addmode == "add") {
+                            if (lostfound_new.mode == "lost") {
+                                header.show_info(_("Lost animal entry {0} successfully created.").replace("{0}", format.padleft(createdID, 6)));
+                            }
+                            else {
+                                header.show_info(_("FoundLost animal entry {0} successfully created.").replace("{0}", format.padleft(createdID, 6)));
+                            }
                         }
                         else {
-                            header.show_info(_("FoundLost animal entry {0} successfully created.").replace("{0}", format.padleft(createdID, 6)));
+                            if (lostfound_new.mode == "lost") {
+                                if (createdID != "0") { common.route("lostanimal?id=" + createdID); }
+                            }
+                            else {
+                                if (createdID != "0") { common.route("foundanimal?id=" + createdID); }
+                            }
                         }
-                    }
-                    else {
-                        if (lostfound_new.mode == "lost") {
-                            if (createdID != "0") { common.route("lostanimal?id=" + createdID); }
-                        }
-                        else {
-                            if (createdID != "0") { common.route("foundanimal?id=" + createdID); }
-                        }
-                    }
-                    $(".asm-content button").button("enable");
-                    header.hide_loading();
-                }, function() {
-                    $(".asm-content button").button("enable");
-                });
+                    })
+                    .always(function() {
+                        $(".asm-content button").button("enable");
+                        header.hide_loading();
+                    });
             };
 
             // Set select box default values

@@ -104,27 +104,30 @@ $(function() {
                  }},
                  { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "ddn", 
                      click: function() { 
-                         tableform.delete_dialog(function() {
-                             tableform.buttons_default_state(buttons);
-                             var ids = tableform.table_ids(table);
-                             common.ajax_post(controller.name, "mode=delete&ids=" + ids , function() {
+                         tableform.delete_dialog()
+                             .then(function() {
+                                 tableform.buttons_default_state(buttons);
+                                 var ids = tableform.table_ids(table);
+                                 return common.ajax_post(controller.name, "mode=delete&ids=" + ids);
+                             })
+                             .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
                                  tableform.table_update(table);
                              });
-                         });
                      } 
                  },
                  { id: "complete", text: _("Complete"), icon: "complete", enabled: "multi", 
                      click: function() { 
                          var ids = tableform.table_ids(table);
-                         common.ajax_post(controller.name, "mode=complete&ids=" + ids, function() {
-                             $.each(controller.rows, function(i, v) {
-                                if (tableform.table_id_selected(v.ID)) {
-                                    v.DATECOMPLETED = format.date_iso(new Date());
-                                }
+                         common.ajax_post(controller.name, "mode=complete&ids=" + ids)
+                             .then(function() {
+                                 $.each(controller.rows, function(i, v) {
+                                    if (tableform.table_id_selected(v.ID)) {
+                                        v.DATECOMPLETED = format.date_iso(new Date());
+                                    }
+                                 });
+                                 tableform.table_update(table);
                              });
-                             tableform.table_update(table);
-                         });
                      } 
                  },
                  { id: "filter", type: "dropdownfilter", 

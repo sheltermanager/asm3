@@ -28,15 +28,17 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row, function() {
-                        tableform.fields_update_row(dialog.fields, row);
-                        row.CITATIONNAME = common.get_field(controller.citationtypes, row.CITATIONTYPEID, "CITATIONNAME");
-                        row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
-                        tableform.fields_post(dialog.fields, "mode=update&citationid=" + row.ID, controller.name, function(response) {
+                    tableform.dialog_show_edit(dialog, row)
+                        .then(function() {
+                            tableform.fields_update_row(dialog.fields, row);
+                            row.CITATIONNAME = common.get_field(controller.citationtypes, row.CITATIONTYPEID, "CITATIONNAME");
+                            row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
+                            return tableform.fields_post(dialog.fields, "mode=update&citationid=" + row.ID, controller.name);
+                        })
+                        .then(function() {
                             tableform.table_update(table);
                             tableform.dialog_close();
                         });
-                    });
                 },
                 complete: function(row) {
                     if (row.FINEPAIDDATE) { return true; }
@@ -86,10 +88,13 @@ $(function() {
                          if (controller.incident && controller.incident.OWNERID) {
                              $("#person").personchooser("loadbyid", controller.incident.OWNERID);
                          }
-                         tableform.dialog_show_add(dialog, function() {
-                             var incid = "";
-                             if (controller.incident) { incid = controller.incident.ACID; }
-                             tableform.fields_post(dialog.fields, "mode=create&incident=" + incid, controller.name, function(response) {
+                         tableform.dialog_show_add(dialog, null, citations.type_change)
+                             .then(function() {
+                                 var incid = "";
+                                 if (controller.incident) { incid = controller.incident.ACID; }
+                                 tableform.fields_post(dialog.fields, "mode=create&incident=" + incid, controller.name);
+                             })
+                             .then(function(response) {
                                  var row = {};
                                  row.ID = response;
                                  tableform.fields_update_row(dialog.fields, row);
@@ -99,19 +104,20 @@ $(function() {
                                  tableform.table_update(table);
                                  tableform.dialog_close();
                              });
-                         }, function() { citations.type_change(); });
                      } 
                  },
                  { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dacc", 
                      click: function() { 
-                         tableform.delete_dialog(function() {
-                             tableform.buttons_default_state(buttons);
-                             var ids = tableform.table_ids(table);
-                             common.ajax_post(controller.name, "mode=delete&ids=" + ids , function() {
+                         tableform.delete_dialog()
+                             .then(function() {
+                                 tableform.buttons_default_state(buttons);
+                                 var ids = tableform.table_ids(table);
+                                 return common.ajax_post(controller.name, "mode=delete&ids=" + ids);
+                             })
+                             .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
                                  tableform.table_update(table);
                              });
-                         });
                      } 
                  }
             ];

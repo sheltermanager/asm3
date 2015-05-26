@@ -358,11 +358,13 @@ $(function() {
                         "&filename=" + encodeURIComponent(file.name) +
                         "&filetype=" + encodeURIComponent(file.type) + 
                         "&filedata=" + encodeURIComponent(finalfile);
-                    common.ajax_post(controller.name, formdata, function(result) { 
-                        deferred.resolve();
-                    }, function() { 
-                        deferred.reject(); 
-                    });
+                    common.ajax_post(controller.name, formdata)
+                        .then(function(result) { 
+                            deferred.resolve();
+                        })
+                        .fail(function() {
+                            deferred.reject(); 
+                        });
                 };
                 imreader.readAsDataURL(file);
             } 
@@ -377,11 +379,13 @@ $(function() {
                         "&filename=" + encodeURIComponent(file.name) +
                         "&filetype=" + encodeURIComponent(file.type) + 
                         "&filedata=" + encodeURIComponent(e.target.result);
-                    common.ajax_post(controller.name, formdata, function(result) { 
-                        deferred.resolve();
-                    }, function() { 
-                        deferred.reject(); 
-                    });
+                    common.ajax_post(controller.name, formdata)
+                        .then(function(result) { 
+                            deferred.resolve();
+                        })
+                        .fail(function() {
+                            deferred.reject(); 
+                        });
                 };
                 docreader.readAsDataURL(file);
             }
@@ -461,9 +465,10 @@ $(function() {
          * header.
          */
         ajax: function(formdata) {
-            common.ajax_post(controller.name, formdata, function() { 
-                common.route_reload();
-            });
+            common.ajax_post(controller.name, formdata)
+                .then(function() { 
+                    common.route_reload();
+                });
         },
 
         bind: function() {
@@ -599,9 +604,10 @@ $(function() {
                     "&emailnote=" + encodeURIComponent($("#emailnote").val()) + 
                     "&ids=" + $(".asm-mediaicons input").tableCheckedData();
                 $("#dialog-email").dialog("close");
-                common.ajax_post(controller.name, formdata, function(result) { 
-                    header.show_info(_("Email successfully sent to {0}").replace("{0}", result));
-                });
+                common.ajax_post(controller.name, formdata)
+                    .then(function(result) { 
+                        header.show_info(_("Email successfully sent to {0}").replace("{0}", result));
+                    });
             };
             emailbuttons[_("Cancel")] = function() {
                 $("#dialog-email").dialog("close");
@@ -624,9 +630,10 @@ $(function() {
                     "&emailnote=" + encodeURIComponent($("#emailpdfnote").val()) + 
                     "&ids=" + $(".asm-mediaicons input").tableCheckedData();
                 $("#dialog-emailpdf").dialog("close");
-                common.ajax_post(controller.name, formdata, function(result) { 
-                    header.show_info(_("Email successfully sent to {0}").replace("{0}", result));
-                });
+                common.ajax_post(controller.name, formdata)
+                    .then(function(result) { 
+                        header.show_info(_("Email successfully sent to {0}").replace("{0}", result));
+                    });
             };
             emailpdfbuttons[_("Cancel")] = function() {
                 $("#dialog-emailpdf").dialog("close");
@@ -666,10 +673,14 @@ $(function() {
                     "&linktypeid=" + controller.linktypeid + 
                     "&controller=" + controller.name + "&" +
                     $("#linktype, #linktarget, #linkcomments").toPOST();
-                common.ajax_post(controller.name, formdata, function() {
-                    $("#dialog-addlink").dialog("close").enable_dialog_buttons();
-                    common.route_reload();
-                }, function() { $("#dialog-addlink").enable_dialog_buttons(); });
+                common.ajax_post(controller.name, formdata)
+                    .then(function() {
+                        $("#dialog-addlink").dialog("close").enable_dialog_buttons();
+                        common.route_reload();
+                    })
+                    .fail(function() {
+                        $("#dialog-addlink").dialog("close").enable_dialog_buttons(); 
+                    });
             };
             addlinkbuttons[_("Cancel")] = function() {
                 $("#dialog-addlink").dialog("close");
@@ -691,12 +702,14 @@ $(function() {
                 var formdata = "mode=update&mediaid=" + mediaid;
                 formdata += "&comments=" + encodeURIComponent($("#editcomments").val());
                 $("#dialog-edit").disable_dialog_buttons();
-                common.ajax_post(controller.name, formdata, function(result) { 
-                    $("#mrow-" + mediaid + " .asm-thumbnail").attr("title", html.title($("#editcomments").val()));
-                    $("#mrow-" + mediaid + " .viewlink").text(html.truncate($("#editcomments").val(), 70));
-                    $("#dialog-edit").dialog("close");
-                    $("#dialog-edit").enable_dialog_buttons();
-                });
+                common.ajax_post(controller.name, formdata)
+                    .then(function(result) { 
+                        $("#mrow-" + mediaid + " .asm-thumbnail").attr("title", html.title($("#editcomments").val()));
+                        $("#mrow-" + mediaid + " .viewlink").text(html.truncate($("#editcomments").val(), 70));
+                    })
+                    .always(function() {
+                        $("#dialog-edit").dialog("close").enable_dialog_buttons();
+                    });
             };
             editbuttons[_("Cancel")] = function() {
                 $("#dialog-edit").dialog("close");
@@ -807,9 +820,10 @@ $(function() {
 
             $("#button-signpad").button({disabled: true}).click(function() {
                 var formdata = "mode=signpad&ids=" + $(".asm-mediaicons input").tableCheckedData();
-                common.ajax_post(controller.name, formdata, function(result) {
-                    header.show_info(_("Sent to mobile signing pad."));
-                });
+                common.ajax_post(controller.name, formdata)
+                    .then(function(result) {
+                        header.show_info(_("Sent to mobile signing pad."));
+                    });
             });
 
             if (controller.sigtype != "touch") {
@@ -840,18 +854,20 @@ $(function() {
                 if (img.attr("src").indexOf("tick") != -1) {
                     // Exclude
                     formdata = "mode=exclude&mediaid=" + img.attr("data") + "&exclude=1";
-                    common.ajax_post(controller.name, formdata, function(result) { 
-                        img.attr("src", "static/images/ui/cross.gif");
-                        img.attr("title", _("Exclude this image when publishing"));
-                    });
+                    common.ajax_post(controller.name, formdata)
+                        .then(function(result) { 
+                            img.attr("src", "static/images/ui/cross.gif");
+                            img.attr("title", _("Exclude this image when publishing"));
+                        });
                 }
                 else {
                     // Include
                     formdata = "mode=exclude&mediaid=" + img.attr("data") + "&exclude=0";
-                    common.ajax_post(controller.name, formdata, function(result) { 
-                        img.attr("src", "static/images/ui/tick.gif");
-                        img.attr("title", _("Include this image when publishing"));
-                    });
+                    common.ajax_post(controller.name, formdata)
+                        .then(function(result) { 
+                            img.attr("src", "static/images/ui/tick.gif");
+                            img.attr("title", _("Include this image when publishing"));
+                        });
                 }
             });
 

@@ -116,7 +116,10 @@ $(function() {
 
                 // Update the list of document templates
                 var formdata = "mode=templates&id=" + rec.ID;
-                common.ajax_post("move_retailer", formdata, function(data) { $("#templatelist").html(data); });
+                common.ajax_post("move_retailer", formdata)
+                    .then(function(data) { 
+                        $("#templatelist").html(data); 
+                    });
 
             });
 
@@ -143,22 +146,24 @@ $(function() {
                 header.show_loading(_("Creating..."));
 
                 var formdata = $("input, select").toPOST();
-                common.ajax_post("move_retailer", formdata, function(data) {
+                common.ajax_post("move_retailer", formdata)
+                    .then(function(data) {
 
-                    $("#movementid").val(data);
-                    header.hide_loading();
+                        $("#movementid").val(data);
 
-                    // Copy the animal/owner links to the success page so
-                    // the user can go view them quickly again if they want
-                    $("#retailerfrom").html( $(".animalchooser-display").html() );
-                    $("#retailerto").html( $(".personchooser-display .justlink").html() );
+                        // Copy the animal/owner links to the success page so
+                        // the user can go view them quickly again if they want
+                        $("#retailerfrom").html( $(".animalchooser-display").html() );
+                        $("#retailerto").html( $(".personchooser-display .justlink").html() );
 
-                    $("#page1").fadeOut(function() {
-                        $("#page2").fadeIn();
+                        $("#page1").fadeOut(function() {
+                            $("#page2").fadeIn();
+                        });
+                    })
+                    .always(function() {
+                        header.hide_loading();
+                        $("#retailer").button("enable");
                     });
-                }, function() {
-                    $("#retailer").button("enable");
-                });
             });
 
         },

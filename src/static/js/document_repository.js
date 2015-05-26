@@ -35,21 +35,24 @@ $(function() {
             var buttons = [
                  { id: "new", text: _("New"), icon: "new", enabled: "always", perm: "ard", 
                      click: function() { 
-                         tableform.dialog_show_add(dialog, function() {
-                             $("#form-tableform").submit();
-                         });
+                         tableform.dialog_show_add(dialog)
+                             .then(function() {
+                                $("#form-tableform").submit();
+                             });
                      } 
                  },
                  { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "drd", 
                      click: function() { 
-                         tableform.delete_dialog(function() {
-                             tableform.buttons_default_state(buttons);
-                             var ids = tableform.table_ids(table);
-                             common.ajax_post("document_repository", "mode=delete&ids=" + ids , function() {
+                         tableform.delete_dialog()
+                             .then(function() {
+                                tableform.buttons_default_state(buttons);
+                                 var ids = tableform.table_ids(table);
+                                 return common.ajax_post("document_repository", "mode=delete&ids=" + ids);
+                             })
+                             .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
                                  tableform.table_update(table);
                              });
-                         });
                      } 
                  }
             ];

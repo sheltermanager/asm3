@@ -13,7 +13,7 @@ $(function() {
                 edit_title: _("Edit litter"),
                 edit_perm: 'cll',
                 helper_text: _("Litters need at least a required date and number."),
-                close_on_ok: true,
+                close_on_ok: false,
                 columns: 1,
                 fields: [
                     { json_field: "ACCEPTANCENUMBER", post_field: "litterref", label: _("Litter Reference"), type: "text",
@@ -34,16 +34,16 @@ $(function() {
                 idcolumn: "ID",
                 edit: function(row) {
                     tableform.fields_populate_from_json(dialog.fields, row);
-                    tableform.dialog_show_edit(dialog, row, function() {
-                        tableform.fields_update_row(dialog.fields, row);
-                        litters.set_extra_fields(row);
-                        tableform.fields_post(dialog.fields, "mode=update&litterid=" + row.ID, controller.name, function(response) {
+                    tableform.dialog_show_edit(dialog, row)
+                        .then(function() {
+                            tableform.fields_update_row(dialog.fields, row);
+                            litters.set_extra_fields(row);
+                            return tableform.fields_post(dialog.fields, "mode=update&litterid=" + row.ID, controller.name);
+                        })
+                        .then(function(response) {
                             tableform.table_update(table);
-                        },
-                        function(response) {
-                            header.show_error(response);
+                            tableform.dialog_close();
                         });
-                    });
                 },
                 complete: function(row) {
                     return (row.INVALIDDATE && format.date_js(row.INVALIDATE) <= new Date()) || row.CACHEDANIMALSLEFT == 0;
@@ -75,31 +75,39 @@ $(function() {
             var buttons = [
                 { id: "new", text: _("New Litter"), icon: "new", enabled: "always", perm: "all", 
                      click: function() { 
-                        tableform.dialog_show_add(dialog, function() {
-                            tableform.fields_post(dialog.fields, "mode=create", "litters", function(response) {
+                        var formdata = "mode=nextlitterid";
+                        common.ajax_post("litters", formdata)
+                            .then(function(result) { 
+                                return tableform.dialog_show_add(dialog, null, function() {
+                                    $("#litterref").val(result);
+                                });
+                            })
+                            .then(function() {
+                                return tableform.fields_post(dialog.fields, "mode=create", "litters");
+                            })
+                            .then(function(response) {
                                 var row = {};
                                 row.ID = response;
                                 tableform.fields_update_row(dialog.fields, row);
                                 litters.set_extra_fields(row);
                                 controller.rows.push(row);
                                 tableform.table_update(table);
+                                tableform.dialog_close();
                             });
-                        }, function() {
-                            var formdata = "mode=nextlitterid";
-                            common.ajax_post("litters", formdata, function(result) { $("#litterref").val(result); }, function() { tableform.dialog_close(); });
-                        });
                      } 
                  },
                  { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dll", 
                      click: function() { 
-                         tableform.delete_dialog(function() {
-                             tableform.buttons_default_state(buttons);
-                             var ids = tableform.table_ids(table);
-                             common.ajax_post("litters", "mode=delete&ids=" + ids , function() {
+                         tableform.delete_dialog()
+                             .then(function() {
+                                 tableform.buttons_default_state(buttons);
+                                 var ids = tableform.table_ids(table);
+                                 return common.ajax_post("litters", "mode=delete&ids=" + ids);
+                             })
+                             .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
                                  tableform.table_update(table);
                              });
-                         });
                      } 
                  }
             ];

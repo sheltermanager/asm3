@@ -126,17 +126,18 @@ $(function() {
                 header.show_loading(_("Creating..."));
 
                 var formdata = $("input, select, textarea").toPOST();
-                common.ajax_post("waitinglist_new", formdata, function(createdID) {
-                    if (mode == "add") {
-                        header.show_info(_("Waiting list entry successfully added."));
-                    }
-                    else {
-                        if (createdID != "0") { common.route("waitinglist?id=" + createdID); }
-                    }
-                    $(".asm-content button").button("enable");
-                }, function() {
-                    $(".asm-content button").button("enable");
-                });
+                common.ajax_post("waitinglist_new", formdata)
+                    .then(function(createdID) {
+                        if (mode == "add") {
+                            header.show_info(_("Waiting list entry successfully added."));
+                        }
+                        else {
+                            if (createdID != "0") { common.route("waitinglist?id=" + createdID); }
+                        }
+                    })
+                    .always(function() {
+                        $(".asm-content button").button("enable");
+                    });
             };
 
             // Set select box default values

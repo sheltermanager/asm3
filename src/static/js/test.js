@@ -46,18 +46,19 @@ $(function() {
                     test.enable_default_cost = false;
                     tableform.fields_populate_from_json(dialog.fields, row);
                     test.enable_default_cost = true;
-                    tableform.dialog_show_edit(dialog, row, function() {
-                        tableform.fields_update_row(dialog.fields, row);
-                        test.set_extra_fields(row);
-                        tableform.fields_post(dialog.fields, "mode=update&testid=" + row.ID, controller.name, function(response) {
+                    tableform.dialog_show_edit(dialog, row)
+                        .then(function() {
+                            tableform.fields_update_row(dialog.fields, row);
+                            test.set_extra_fields(row);
+                            return tableform.fields_post(dialog.fields, "mode=update&testid=" + row.ID, controller.name);
+                        })
+                        .then(function(response) {
                             tableform.table_update(table);
                             tableform.dialog_close();
-                        },
-                        function(response) {
-                            tableform.dialog_error(response);
+                        })
+                        .fail(function(response) {
                             tableform.dialog_enable_buttons();
                         });
-                    });
                 },
                 complete: function(row) {
                     if (row.DATEOFTEST) { return true; }
@@ -128,14 +129,16 @@ $(function() {
                     hideif: function() { return controller.animal; }, click: function() { test.new_bulk_test(); }},
                  { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dat", 
                      click: function() { 
-                         tableform.delete_dialog(function() {
-                             tableform.buttons_default_state(buttons);
-                             var ids = tableform.table_ids(table);
-                             common.ajax_post(controller.name, "mode=delete&ids=" + ids , function() {
+                         tableform.delete_dialog()
+                             .then(function() {
+                                 tableform.buttons_default_state(buttons);
+                                 var ids = tableform.table_ids(table);
+                                 return common.ajax_post(controller.name, "mode=delete&ids=" + ids);
+                             })
+                             .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
                                  tableform.table_update(table);
                              });
-                         });
                      } 
                  },
                  { id: "perform", text: _("Perform"), icon: "complete", enabled: "multi", perm: "cat",
@@ -205,8 +208,11 @@ $(function() {
             $("#type").select("value", config.str("AFDefaultTestType"));
             test.enable_default_cost = true;
             test.set_default_cost();
-            tableform.dialog_show_add(dialog, function() {
-                tableform.fields_post(dialog.fields, "mode=create", controller.name, function(response) {
+            tableform.dialog_show_add(dialog)
+                .then(function() {
+                    return tableform.fields_post(dialog.fields, "mode=create", controller.name);
+                })
+                .then(function(response) {
                     var row = {};
                     row.ID = response;
                     tableform.fields_update_row(dialog.fields, row);
@@ -214,10 +220,10 @@ $(function() {
                     controller.rows.push(row);
                     tableform.table_update(table);
                     tableform.dialog_close();
-                }, function() {
+                })
+                .fail(function() {
                     tableform.dialog_enable_buttons();   
                 });
-            });
         },
 
         new_bulk_test: function() { 
@@ -229,14 +235,17 @@ $(function() {
             $("#type").select("value", config.str("AFDefaultTestType"));
             test.enable_default_cost = true;
             test.set_default_cost();
-            tableform.dialog_show_add(dialog, function() {
-                tableform.fields_post(dialog.fields, "mode=createbulk", controller.name, function(response) {
+            tableform.dialog_show_add(dialog)
+                .then(function() {
+                    return tableform.fields_post(dialog.fields, "mode=createbulk", controller.name);
+                })
+                .then(function(response) {
                     tableform.dialog_close();
                     common.route_reload();
-                }, function() {
+                })
+                .fail(function() {
                     tableform.dialog_enable_buttons();   
                 });
-            });
         },
 
         render_givendialog: function() {
@@ -295,18 +304,21 @@ $(function() {
                 if (!validate.notblank([ "newdate" ])) { return; }
                 $("#dialog-given").disable_dialog_buttons();
                 var ids = tableform.table_ids(table);
-                common.ajax_post(controller.name, $("#dialog-given .asm-field").toPOST() + "&mode=perform&ids=" + ids , function() {
-                    $.each(controller.rows, function(i, t) {
-                        if (tableform.table_id_selected(t.ID)) {
-                            t.DATEOFTEST = format.date_iso($("#newdate").val());
-                            t.TESTRESULTID = $("#testresult").val();
-                            t.RESULTNAME = common.get_field(controller.testresults, t.TESTRESULTID, "RESULTNAME");
-                        }
+                common.ajax_post(controller.name, $("#dialog-given .asm-field").toPOST() + "&mode=perform&ids=" + ids)
+                    .then(function() {
+                        $.each(controller.rows, function(i, t) {
+                            if (tableform.table_id_selected(t.ID)) {
+                                t.DATEOFTEST = format.date_iso($("#newdate").val());
+                                t.TESTRESULTID = $("#testresult").val();
+                                t.RESULTNAME = common.get_field(controller.testresults, t.TESTRESULTID, "RESULTNAME");
+                            }
+                        });
+                        tableform.table_update(table);
+                    })
+                    .always(function() {
+                        $("#dialog-given").dialog("close");
+                        $("#dialog-given").enable_dialog_buttons();
                     });
-                    tableform.table_update(table);
-                    $("#dialog-given").dialog("close");
-                    $("#dialog-given").enable_dialog_buttons();
-                });
             };
             givenbuttons[_("Cancel")] = function() {
                 $("#dialog-given").dialog("close");

@@ -142,11 +142,14 @@ $(function() {
                 if (!validate.notblank([ "newdate" ])) { return; }
                 $("#dialog-clone").disable_dialog_buttons();
                 var newdate = encodeURIComponent($("#newdate").val());
-                common.ajax_post(controller.name, "mode=clone&startdate=" + format.date(staff_rota.days[0]) + "&newdate=" + newdate, function() {
-                    $("#dialog-clone").dialog("close");
-                    $("#dialog-clone").enable_dialog_buttons();
-                    header.show_info(_("Rota cloned successfully."));
-                });
+                common.ajax_post(controller.name, "mode=clone&startdate=" + format.date(staff_rota.days[0]) + "&newdate=" + newdate)
+                    .then(function() {
+                        header.show_info(_("Rota cloned successfully."));
+                    })
+                    .always(function() {
+                        $("#dialog-clone").dialog("close");
+                        $("#dialog-clone").enable_dialog_buttons();
+                    });
             };
             clonebuttons[_("Cancel")] = function() {
                 $("#dialog-clone").dialog("close");
@@ -174,25 +177,29 @@ $(function() {
             $(".asm-staff-rota").on("click", "a", function(e) {
                 var id = $(this).attr("data-id");
                 var row = common.get_row(controller.rows, id, "ID");
-                tableform.dialog_show_edit(dialog, row, function() {
-                    tableform.fields_update_row(dialog.fields, row);
-                    row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
-                    row.ROTATYPENAME = common.get_field(controller.rotatypes, row.ROTATYPEID, "ROTATYPE");
-                    tableform.fields_post(dialog.fields, "mode=update&rotaid=" + row.ID, controller.name, function(response) {
+                tableform.dialog_show_edit(dialog, row)
+                    .then(function() {
+                        tableform.fields_update_row(dialog.fields, row);
+                        row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
+                        row.ROTATYPENAME = common.get_field(controller.rotatypes, row.ROTATYPEID, "ROTATYPE");
+                        return tableform.fields_post(dialog.fields, "mode=update&rotaid=" + row.ID, controller.name);
+                    })
+                    .then(function(response) {
                         staff_rota.generate_table();
                         tableform.dialog_close();
+                    })
+                    .fail(function(type, row) {
+                        if (type == "delete") {
+                            common.ajax_post(controller.name, "mode=delete&ids=" + id)
+                                .then(function() {
+                                    common.delete_row(controller.rows, id, "ID");
+                                    staff_rota.generate_table();
+                                })
+                                .always(function() {
+                                    tableform.dialog_close();
+                                });
+                        }
                     });
-                }, 
-                null,
-                function(row) {
-                    common.ajax_post(controller.name, "mode=delete&ids=" + id, function() {
-                        common.delete_row(controller.rows, id, "ID");
-                        staff_rota.generate_table();
-                        tableform.dialog_close();
-                    }, function() {
-                        tableform.dialog_close();   
-                    });
-                });
                 return false;
             });
 
@@ -231,11 +238,13 @@ $(function() {
 
             $("#button-delete").button().click(function() {
                 var startdate = format.date(staff_rota.days[0]);
-                tableform.delete_dialog(function() {
-                    common.ajax_post(controller.name, "mode=deleteweek&startdate=" + startdate, function() {
+                tableform.delete_dialog(null, _("This will remove ALL rota entries for the week beginning {0}. This action is irreversible, are you sure?").replace("{0}", startdate))
+                    .then(function() {
+                        return common.ajax_post(controller.name, "mode=deleteweek&startdate=" + startdate);
+                    })
+                    .then(function() {
                         common.route(controller.name + "?start=" + startdate);
                     });
-                }, _("This will remove ALL rota entries for the week beginning {0}. This action is irreversible, are you sure?").replace("{0}", startdate));
             });
 
             $("#button-prev").button().click(function() {

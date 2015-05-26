@@ -76,8 +76,6 @@ $(function() {
                         })
                         .then(function() {
                             tableform.table_update(table);
-                        })
-                        .always(function() {
                             tableform.dialog_close();
                         });
                 },
@@ -122,8 +120,6 @@ $(function() {
                                  row.ACCOUNTTYPENAME = common.get_field(controller.accounttypes, row.ACCOUNTTYPE, "ACCOUNTTYPE");
                                  controller.rows.push(row);
                                  tableform.table_update(table);
-                             })
-                             .always(function() {
                                  tableform.dialog_close();
                              });
                      } 

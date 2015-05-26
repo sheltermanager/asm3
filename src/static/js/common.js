@@ -503,7 +503,7 @@
                     if (successfunc) {
                         successfunc(result, new Date().getTime() - st);
                     }
-                    deferred.resolve(result);
+                    deferred.resolve(result, new Date().getTime() - st);
                 },
                 error: function(jqxhr, textstatus, response) {
                     try {
@@ -517,7 +517,7 @@
                     if (errorfunc) {
                         errorfunc(errmessage);
                     }
-                    deferred.reject(response);
+                    deferred.reject(errmessage);
                 }
             });
             return deferred.promise();

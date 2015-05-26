@@ -276,7 +276,13 @@ $(function() {
                 });
                 var formdata = "mode=create&securitymap=" + securitymap + "&" + $("#dialog-add input").toPOST();
                 $("#dialog-add").disable_dialog_buttons();
-                common.ajax_post("roles", formdata, function() { $("#dialog-add").dialog("close"); common.route_reload(); }, function() { $("#dialog-add").dialog("close"); });
+                common.ajax_post("roles", formdata)
+                    .then(function() { 
+                        common.route_reload(); 
+                    })
+                    .always(function() {
+                        $("#dialog-add").dialog("close"); 
+                    });
             };
             addbuttons[_("Cancel")] = function() {
                 $("#dialog-add").dialog("close");
@@ -294,7 +300,13 @@ $(function() {
                     "securitymap=" + securitymap + "&" +
                     $("#dialog-add input").toPOST();
                 $("#dialog-add").disable_dialog_buttons();
-                common.ajax_post("roles", formdata, function() { $("#dialog-add").dialog("close"); common.route_reload(); }, function() { $("#dialog-add").dialog("close"); });
+                common.ajax_post("roles", formdata)
+                    .then(function() { 
+                        common.route_reload(); 
+                    })
+                    .always(function() { 
+                        $("#dialog-add").dialog("close"); 
+                    });
             };
             editbuttons[_("Cancel")] = function() {
                 $("#dialog-add").dialog("close");
@@ -341,20 +353,21 @@ $(function() {
             });
 
             $("#button-delete").button({disabled: true}).click(function() {
-                tableform.delete_dialog(function() {
-                    var formdata = "mode=delete&ids=";
-                    $("#table-roles input").each(function() {
-                        if ($(this).attr("type") == "checkbox") {
-                            if ($(this).is(":checked")) {
-                                formdata += $(this).attr("data") + ",";
+                tableform.delete_dialog(null, _("This will permanently remove the selected roles, are you sure?"))
+                    .then(function() {
+                        var formdata = "mode=delete&ids=";
+                        $("#table-roles input").each(function() {
+                            if ($(this).attr("type") == "checkbox") {
+                                if ($(this).is(":checked")) {
+                                    formdata += $(this).attr("data") + ",";
+                                }
                             }
-                        }
+                        });
+                        return common.ajax_post("roles", formdata);
+                    })
+                    .then(function() { 
+                        common.route_reload(); 
                     });
-                    $("#dialog-delete").disable_dialog_buttons();
-                    common.ajax_post("roles", formdata, function() { common.route_reload(); }, function() { $("#dialog-add").dialog("close"); });
-                },
-                _("This will permanently remove the selected roles, are you sure?")
-                );
             });
 
             $(".role-edit-link")

@@ -29,15 +29,20 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row, function() {
-                        tableform.fields_update_row(dialog.fields, row);
-                        row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
-                        row.ROTATYPENAME = common.get_field(controller.rotatypes, row.ROTATYPEID, "ROTATYPE");
-                        tableform.fields_post(dialog.fields, "mode=update&rotaid=" + row.ID, controller.name, function(response) {
+                    tableform.dialog_show_edit(dialog, row)
+                        .then(function() {
+                            tableform.fields_update_row(dialog.fields, row);
+                            row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
+                            row.ROTATYPENAME = common.get_field(controller.rotatypes, row.ROTATYPEID, "ROTATYPE");
+                            return tableform.fields_post(dialog.fields, "mode=update&rotaid=" + row.ID, controller.name);
+                        })
+                        .then(function(response) {
                             tableform.table_update(table);
                             tableform.dialog_close();
+                        })
+                        .fail(function() {
+                            tableform.dialog_enable_buttons();
                         });
-                    });
                 },
                 columns: [
                     { field: "ROTATYPENAME", display: _("Type") },
@@ -65,8 +70,11 @@ $(function() {
                          if (controller.person) {
                              $("#person").personchooser("loadbyid", controller.person.ID);
                          }
-                         tableform.dialog_show_add(dialog, function() {
-                             tableform.fields_post(dialog.fields, "mode=create", controller.name, function(response) {
+                         tableform.dialog_show_add(dialog)
+                             .then(function() {
+                                return tableform.fields_post(dialog.fields, "mode=create", controller.name);
+                             })
+                             .then(function(response) {
                                  var row = {};
                                  row.ID = response;
                                  tableform.fields_update_row(dialog.fields, row);
@@ -75,20 +83,24 @@ $(function() {
                                  controller.rows.push(row);
                                  tableform.table_update(table);
                                  tableform.dialog_close();
+                             })
+                             .fail(function() {
+                                 tableform.dialog_enable_buttons();
                              });
-                         });
                      } 
                  },
                  { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "doro",
                      click: function() { 
-                         tableform.delete_dialog(function() {
-                             tableform.buttons_default_state(buttons);
-                             var ids = tableform.table_ids(table);
-                             common.ajax_post(controller.name, "mode=delete&ids=" + ids , function() {
+                         tableform.delete_dialog()
+                             .then(function() {
+                                 tableform.buttons_default_state(buttons);
+                                 var ids = tableform.table_ids(table);
+                                 return common.ajax_post(controller.name, "mode=delete&ids=" + ids);
+                             })
+                             .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
                                  tableform.table_update(table);
                              });
-                         });
                      } 
                  }
             ];

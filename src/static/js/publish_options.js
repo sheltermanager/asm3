@@ -730,19 +730,20 @@ $(function() {
                 if (!validate.notblank([ "vefirstname", "velastname", "vephone", "veemail", "vepracticename", "vezipcode", "veaddress" ])) { return; }
                 $("#dialog-vetenvoy").disable_dialog_buttons();
                 var formdata = $("#dialog-vetenvoy .asm-textbox, #dialog-vetenvoy .asm-selectbox").toPOST();
-                common.ajax_post("publish_options", "mode=vesignup&" + formdata , function(result) {
-                    $("#dialog-vetenvoy").dialog("close");
-                    $("#dialog-vetenvoy").enable_dialog_buttons();
-                    // Result should be userid,password
-                    $("#veuserid").val(result.split(",")[0]);
-                    $("#veuserpassword").val(result.split(",")[1]);
-                    $("#enabledve").prop("checked", true);
-                    $("#enabledve").closest("div").find(".asm-doubletextbox").removeAttr("disabled");
-                    // Hide the signup button
-                    $("#button-vesignup").hide();
-                    // Prompt to save
-                    validate.dirty(true);
-                });
+                common.ajax_post("publish_options", "mode=vesignup&" + formdata)
+                    .then(function(result) {
+                        $("#dialog-vetenvoy").dialog("close");
+                        $("#dialog-vetenvoy").enable_dialog_buttons();
+                        // Result should be userid,password
+                        $("#veuserid").val(result.split(",")[0]);
+                        $("#veuserpassword").val(result.split(",")[1]);
+                        $("#enabledve").prop("checked", true);
+                        $("#enabledve").closest("div").find(".asm-doubletextbox").removeAttr("disabled");
+                        // Hide the signup button
+                        $("#button-vesignup").hide();
+                        // Prompt to save
+                        validate.dirty(true);
+                    });
             };
             b[_("Cancel")] = function() {
                 $("#dialog-vetenvoy").dialog("close");
@@ -837,10 +838,11 @@ $(function() {
                 var formdata = "mode=save&" + $(".cfg").toPOST();
                 formdata += "&PublisherPresets=" + cfg_presets();
                 formdata += "&PublishersEnabled=" + cfg_enabled();
-                common.ajax_post("publish_options", formdata, function() { 
-                    // Needs to do a full reload to get config.js to update
-                    common.route_reload(true); 
-                });
+                common.ajax_post("publish_options", formdata)
+                    .then(function() { 
+                        // Needs to do a full reload to get config.js to update
+                        common.route_reload(true); 
+                    });
             });
             $("#button-save").button("disable");
 

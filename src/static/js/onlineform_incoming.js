@@ -11,13 +11,14 @@ $(function() {
                 idcolumn: "COLLATIONID",
                 edit: function(row) {
                     header.show_loading(_("Loading..."));
-                    common.ajax_post("onlineform_incoming", "mode=view&collationid=" + row.COLLATIONID, function(result) {
-                        $("#dialog-viewer-content").html(result); 
-                        header.hide_loading();
-                        $("#dialog-viewer").dialog("open");
-                    }, function() {
-                        header.hide_loading();
-                    });
+                    common.ajax_post("onlineform_incoming", "mode=view&collationid=" + row.COLLATIONID)
+                        .then(function(result) {
+                            $("#dialog-viewer-content").html(result); 
+                            $("#dialog-viewer").dialog("open");
+                        })
+                        .always(function() {
+                            header.hide_loading();
+                        });
                 },
                 complete: function(row) {
                     if (row.LINK) { return true; }
@@ -34,19 +35,21 @@ $(function() {
             var buttons = [
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
                      click: function() { 
-                         tableform.delete_dialog(function() {
-                             tableform.buttons_default_state(buttons);
-                             var ids = tableform.table_ids(table);
-                             common.ajax_post("onlineform_incoming", "mode=delete&ids=" + ids , function() {
+                         tableform.delete_dialog()
+                             .then(function() {
+                                 tableform.buttons_default_state(buttons);
+                                 var ids = tableform.table_ids(table);
+                                 return common.ajax_post("onlineform_incoming", "mode=delete&ids=" + ids);
+                             })
+                             .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
                                  tableform.table_update(table);
                              });
-                         });
                      } 
                 },
                 { id: "print", text: _("Print"), icon: "print", enabled: "multi", tooltip: _("Print selected forms"), 
                     click: function() {
-                        common.route("onlineform_incoming?mode=print&ids=" + encodeURIComponent(tableform.table_ids(table)));
+                        common.route("onlineform_incoming?ajax=false&mode=print&ids=" + encodeURIComponent(tableform.table_ids(table)));
                     }
                 },
                 { id: "attachperson", text: _("Attach Person"), icon: "person-find", enabled: "one", tooltip: _("Attach this form to an existing person"), 
@@ -168,14 +171,17 @@ $(function() {
             ab[_("Attach")] = function() { 
                 if (!validate.notblank(["attachperson"])) { return; }
                 var formdata = "mode=attachperson&personid=" + $("#attachperson").val() + "&collationid=" + tableform.table_selected_row(table).COLLATIONID;
-                common.ajax_post("onlineform_incoming", formdata, function() { 
-                    var personname = $("#attachperson").closest("td").find(".asm-embed-name").html();
-                    header.show_info(_("Successfully attached to {0}").replace("{0}", personname));
-                    tableform.table_selected_row(table).LINK = 
-                        '<a target="_blank" href="person_media?id=' + $("#attachperson").val() + '">' + personname + '</a>';
-                    tableform.table_update(table);
-                    $("#dialog-attach-person").dialog("close");
-                });
+                common.ajax_post("onlineform_incoming", formdata)
+                    .then(function() { 
+                        var personname = $("#attachperson").closest("td").find(".asm-embed-name").html();
+                        header.show_info(_("Successfully attached to {0}").replace("{0}", personname));
+                        tableform.table_selected_row(table).LINK = 
+                            '<a target="_blank" href="person_media?id=' + $("#attachperson").val() + '">' + personname + '</a>';
+                        tableform.table_update(table);
+                    })
+                    .always(function() {
+                        $("#dialog-attach-person").dialog("close");
+                    });
             };
             ab[_("Cancel")] = function() { $(this).dialog("close"); };
             $("#dialog-attach-person").dialog({
@@ -195,14 +201,17 @@ $(function() {
             ab[_("Attach")] = function() { 
                 if (!validate.notblank(["attachanimal"])) { return; }
                 var formdata = "mode=attachanimal&animalid=" + $("#attachanimal").val() + "&collationid=" + tableform.table_selected_row(table).COLLATIONID;
-                common.ajax_post("onlineform_incoming", formdata, function() { 
-                    var animalname = $("#attachanimal").closest("td").find(".asm-embed-name").html();
-                    header.show_info(_("Successfully attached to {0}").replace("{0}", animalname));
-                    tableform.table_selected_row(table).LINK = 
-                        '<a target="_blank" href="animal_media?id=' + $("#attachanimal").val() + '">' + animalname + '</a>';
-                    tableform.table_update(table);
-                    $("#dialog-attach-animal").dialog("close");
-                });
+                common.ajax_post("onlineform_incoming", formdata)
+                    .then(function() { 
+                        var animalname = $("#attachanimal").closest("td").find(".asm-embed-name").html();
+                        header.show_info(_("Successfully attached to {0}").replace("{0}", animalname));
+                        tableform.table_selected_row(table).LINK = 
+                            '<a target="_blank" href="animal_media?id=' + $("#attachanimal").val() + '">' + animalname + '</a>';
+                        tableform.table_update(table);
+                    })
+                    .always(function() {
+                        $("#dialog-attach-animal").dialog("close");
+                    });
             };
             ab[_("Cancel")] = function() { $(this).dialog("close"); };
             $("#dialog-attach-animal").dialog({
@@ -225,18 +234,19 @@ $(function() {
         create_record: function(mode) {
              header.hide_error();
              var table = onlineform_incoming.table, ids = tableform.table_ids(table);
-             common.ajax_post("onlineform_incoming", "mode=" + mode + "&ids=" + ids , function(result) {
-                 var selrows = tableform.table_selected_rows(table);
-                 $.each(selrows, function(i, v) {
-                     $.each(result.split("^$"), function(ir, vr) {
-                         var vb = vr.split("|");
-                         if (vb[0] == v.COLLATIONID) {
-                             v.LINK = '<a target="_blank" href="' + mode + '?id=' + vb[1] + '">' + vb[2] + '</a>';
-                         }
+             common.ajax_post("onlineform_incoming", "mode=" + mode + "&ids=" + ids)
+                 .then(function(result) {
+                     var selrows = tableform.table_selected_rows(table);
+                     $.each(selrows, function(i, v) {
+                         $.each(result.split("^$"), function(ir, vr) {
+                             var vb = vr.split("|");
+                             if (vb[0] == v.COLLATIONID) {
+                                 v.LINK = '<a target="_blank" href="' + mode + '?id=' + vb[1] + '">' + vb[2] + '</a>';
+                             }
+                         });
                      });
+                     tableform.table_update(table);
                  });
-                 tableform.table_update(table);
-             });
         },
 
         render: function() {

@@ -107,19 +107,20 @@ $(function() {
                 header.show_loading(_("Updating..."));
 
                 var formdata = $("input, select, textarea").toPOST();
-                common.ajax_post("move_deceased", formdata, function(data) {
-                    header.hide_loading();
-                    header.show_info(_("Animal '{0}' successfully marked deceased.").replace("{0}", $(".animalchooser-display .asm-embed-name").html()));
-                    $("#deceaseddate").datepicker("setDate", new Date());
-                    $("#animal").animalchooser("clear");
-                    $("#ptsreason").val("");
-                    $("#puttosleep").attr("checked", false);
-                    $("#deadonarrival").attr("checked", false);
-                    $("#diedoffshelter").attr("checked", false);
-                    $("#deceased").button("enable");
-                }, function() {
-                    $("#deceased").button("enable");
-                });
+                common.ajax_post("move_deceased", formdata)
+                    .then(function(data) {
+                        header.show_info(_("Animal '{0}' successfully marked deceased.").replace("{0}", $(".animalchooser-display .asm-embed-name").html()));
+                        $("#deceaseddate").datepicker("setDate", new Date());
+                        $("#animal").animalchooser("clear");
+                        $("#ptsreason").val("");
+                        $("#puttosleep").attr("checked", false);
+                        $("#deadonarrival").attr("checked", false);
+                        $("#diedoffshelter").attr("checked", false);
+                    })
+                    .always(function() {
+                        header.hide_loading();
+                        $("#deceased").button("enable");
+                    });
             });
         },
 

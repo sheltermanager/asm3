@@ -12,7 +12,20 @@
      */
     geo = {
 
-        get_lat_long: function(address, town, city, postcode, callback) {
+        /**
+         * Get a geocode lat/long for an address.
+         * Returns a promise that will resolve with the lat/long value.
+         */
+        get_lat_long: function(address, town, city, postcode) {
+            var deferred = $.Deferred();
+            var callback = function(lat, lng) {
+                if (lat || lng) { 
+                    deferred.resolve(lat, lng); 
+                }
+                else { 
+                    deferred.reject(); 
+                }
+            };
             if (asm.geoprovider == "nominatim") {
                 this._nominatim_get_lat_long(address, town, city, postcode, callback);
             }

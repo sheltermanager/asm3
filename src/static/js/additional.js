@@ -42,8 +42,6 @@ $(function() {
                         })
                         .then(function(response) {
                             tableform.table_update(table);
-                        })
-                        .always(function() {
                             tableform.dialog_close();
                         });
                 },
@@ -73,8 +71,6 @@ $(function() {
                                  row.LINKTYPENAME = common.get_field(controller.linktypes, row.LINKTYPE, "LINKTYPE");
                                  controller.rows.push(row);
                                  tableform.table_update(table);
-                            })
-                            .always(function() {
                                 tableform.dialog_close();  
                             });
                      } 

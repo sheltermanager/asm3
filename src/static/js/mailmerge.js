@@ -193,10 +193,11 @@ $(function() {
             $("#button-email").button().click(function() {
                 $("#button-email").button("disable");
                 var formdata = "mode=email&" + $("#sendemail input, #sendemail textarea").toPOST();
-                common.ajax_post("mailmerge", formdata, function() { 
-                    header.show_info(_("Messages successfully sent"));
-                    $("#asm-mailmerge-accordion").hide();
-                });
+                common.ajax_post("mailmerge", formdata)
+                    .then(function() { 
+                        header.show_info(_("Messages successfully sent"));
+                        $("#asm-mailmerge-accordion").hide();
+                    });
             });
 
             if (controller && controller.numrows == 0) {

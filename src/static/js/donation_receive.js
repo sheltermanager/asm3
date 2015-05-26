@@ -171,15 +171,17 @@ $(function() {
 
             // Look up default amount when type is changed
             var donationtype_change = function() {
-                common.ajax_post("move_adopt", 
-                    "mode=donationdefault&donationtype=" + $("#type").val(),
-                    function(result) { $("#amount").currency("value", result); });
+                common.ajax_post("move_adopt", "mode=donationdefault&donationtype=" + $("#type").val())
+                    .then(function(result) { 
+                        $("#amount").currency("value", result); 
+                    });
             };
 
             var donationtype2_change = function() {
-                common.ajax_post("move_adopt", 
-                    "mode=donationdefault&donationtype=" + $("#type2").val(),
-                    function(result) { $("#amount2").currency("value", result); });
+                common.ajax_post("move_adopt", "mode=donationdefault&donationtype=" + $("#type2").val())
+                    .then(function(result) { 
+                        $("#amount2").currency("value", result); 
+                    });
             };
 
             $("#type").change(function() {
@@ -235,24 +237,25 @@ $(function() {
                 header.show_loading(_("Creating..."));
 
                 var formdata = $("input, select").toPOST();
-                common.ajax_post("donation_receive", formdata, function(result) { 
-                    header.hide_loading();
-                    $("#successmessage p").append(
-                        _("Payment of {0} successfully received ({1}).")
-                            .replace("{0}", $("#amount").val())
-                            .replace("{1}", $("#received").val()));
-                    // Update the list of document templates
-                    common.ajax_post("donation_receive", "mode=templates&id=" + result, function(data) { 
+                common.ajax_post("donation_receive", formdata)
+                    .then(function(result) { 
+                        header.hide_loading();
+                        $("#successmessage p").append(
+                            _("Payment of {0} successfully received ({1}).")
+                                .replace("{0}", $("#amount").val())
+                                .replace("{1}", $("#received").val()));
+                        // Update the list of document templates
+                        return common.ajax_post("donation_receive", "mode=templates&id=" + result);
+                    })
+                    .then(function(data) { 
                         $("#templatelist").html(data); 
                         $("#page1").fadeOut(function() {
                             $("#page2").fadeIn();
                         });
+                    })
+                    .always(function() {
+                        $("#receive").button("enable");
                     });
-
-                    $("#receive").button("enable");
-                }, function() {
-                    $("#receive").button("enable");
-                });
             });
         },
 

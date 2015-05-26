@@ -28,15 +28,17 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row, function() {
-                        tableform.fields_update_row(dialog.fields, row);
-                        row.COSTTYPENAME = common.get_field(controller.costtypes, row.COSTTYPEID, "COSTTYPENAME");
-                        tableform.fields_post(dialog.fields, "mode=update&costid=" + row.ID, "animal_costs", function(response) {
+                    tableform.dialog_show_edit(dialog, row)
+                        .then(function() {
+                            tableform.fields_update_row(dialog.fields, row);
+                            row.COSTTYPENAME = common.get_field(controller.costtypes, row.COSTTYPEID, "COSTTYPENAME");
+                            return tableform.fields_post(dialog.fields, "mode=update&costid=" + row.ID, "animal_costs");
+                        })
+                        .then(function() {
                             tableform.table_update(table);
                             animal_costs.calculate_costtotals();
                             tableform.dialog_close();
                         });
-                    });
                 },
                 columns: [
                     { field: "COSTTYPENAME", display: _("Type") },
@@ -52,8 +54,11 @@ $(function() {
             var buttons = [
                  { id: "new", text: _("New Cost"), icon: "new", enabled: "always", perm: "caad",
                      click: function() { 
-                         tableform.dialog_show_add(dialog, function() {
-                             tableform.fields_post(dialog.fields, "mode=create&animalid="  + controller.animal.ID, "animal_costs", function(response) {
+                         tableform.dialog_show_add(dialog, null, animal_costs.costtype_change)
+                             .then(function() {
+                                 return tableform.fields_post(dialog.fields, "mode=create&animalid="  + controller.animal.ID, "animal_costs");
+                             })
+                             .then(function(response) {
                                  var row = {};
                                  row.ID = response;
                                  tableform.fields_update_row(dialog.fields, row);
@@ -63,20 +68,21 @@ $(function() {
                                  animal_costs.calculate_costtotals();
                                  tableform.dialog_close();
                              });
-                         }, function() { animal_costs.costtype_change(); });
                      } 
                  },
                  { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "cdad",
                      click: function() { 
-                         tableform.delete_dialog(function() {
-                             tableform.buttons_default_state(buttons);
-                             var ids = tableform.table_ids(table);
-                             common.ajax_post("animal_costs", "mode=delete&ids=" + ids , function() {
+                         tableform.delete_dialog()
+                             .then(function() {
+                                 tableform.buttons_default_state(buttons);
+                                 var ids = tableform.table_ids(table);
+                                 return common.ajax_post("animal_costs", "mode=delete&ids=" + ids);
+                             })
+                             .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
                                  tableform.table_update(table);
                                  animal_costs.calculate_costtotals();
                              });
-                         });
                      } 
                  },
                  { type: "raw", markup: [
@@ -202,11 +208,10 @@ $(function() {
             var formdata = "mode=dailyboardingcost&animalid=" + $("#animalid").val() + 
                 "&dailyboardingcost=" + $("#dailyboardingcost").currency("value");
             header.show_loading(_("Saving..."));
-            common.ajax_post("animal_costs", formdata, function() { 
-                $("#button-savecost").button("enable");
-            }, function() {
-                $("#button-savecost").button("enable");
-            });
+            common.ajax_post("animal_costs", formdata)
+                .always(function() { 
+                    $("#button-savecost").button("enable");
+                });
         },
 
         destroy: function() {

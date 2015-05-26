@@ -20,7 +20,7 @@ $(function() {
             var dialog = {
                 add_title: _("Add {0}").replace("{0}", html.decode(controller.tablelabel)),
                 edit_title: _("Edit {0}").replace("{0}", html.decode(controller.tablelabel)),
-                close_on_ok: true,
+                close_on_ok: false,
                 columns: 1,
                 width: 550,
                 fields: [
@@ -50,17 +50,19 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row, function() {
-                        tableform.fields_update_row(dialog.fields, row);
-                        if (row.SPECIESID) {
-                            row.SPECIESNAME = common.get_field(controller.species, row.SPECIESID, "SPECIESNAME");
-                        }
-                        tableform.fields_post(dialog.fields, 
-                            "mode=update&lookup=" + controller.tablename + "&namefield=" + controller.namefield + "&id=" + row.ID, "lookups", 
-                            function(response) {
-                                tableform.table_update(table);
-                            });
-                    });
+                    tableform.dialog_show_edit(dialog, row)
+                        .then(function() {
+                            tableform.fields_update_row(dialog.fields, row);
+                            if (row.SPECIESID) {
+                                row.SPECIESNAME = common.get_field(controller.species, row.SPECIESID, "SPECIESNAME");
+                            }
+                            return tableform.fields_post(dialog.fields, 
+                                    "mode=update&lookup=" + controller.tablename + "&namefield=" + controller.namefield + "&id=" + row.ID, "lookups");
+                        })
+                        .then(function(response) {
+                            tableform.table_update(table);
+                            tableform.dialog_close();
+                        });
                 },
                 columns: [
                     { field: controller.namefield, display: controller.namelabel, initialsort: true },
@@ -85,9 +87,12 @@ $(function() {
             var buttons = [
                  { id: "new", text: _("New"), icon: "new", enabled: "always", hideif: function() { return !controller.canadd; },
                      click: function() { 
-                        tableform.dialog_show_add(dialog, function() {
-                            tableform.fields_post(dialog.fields, 
-                                 "mode=create&lookup=" + controller.tablename + "&namefield=" + controller.namefield, "lookups", function(response) {
+                        tableform.dialog_show_add(dialog)
+                            .then(function() {
+                                return tableform.fields_post(dialog.fields, 
+                                     "mode=create&lookup=" + controller.tablename + "&namefield=" + controller.namefield, "lookups");
+                            })
+                            .then(function(response) {
                                  var row = {};
                                  row.ID = response;
                                  tableform.fields_update_row(dialog.fields, row);
@@ -96,20 +101,22 @@ $(function() {
                                  }
                                  controller.rows.push(row);
                                  tableform.table_update(table);
+                                 tableform.dialog_close();
                             });
-                        });
                      } 
                  },
                  { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", hideif: function() { return !controller.candelete; },
                      click: function() { 
-                         tableform.delete_dialog(function() {
-                             tableform.buttons_default_state(buttons);
-                             var ids = tableform.table_ids(table);
-                             common.ajax_post("lookups", "mode=delete&lookup=" + controller.tablename + "&ids=" + ids , function() {
+                         tableform.delete_dialog()
+                             .then(function() {
+                                 tableform.buttons_default_state(buttons);
+                                 var ids = tableform.table_ids(table);
+                                 return common.ajax_post("lookups", "mode=delete&lookup=" + controller.tablename + "&ids=" + ids);
+                             })
+                             .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
                                  tableform.table_update(table);
                              });
-                         });
                      } 
                  },
                  { id: "lookup", type: "dropdownfilter", options: tablelist, click: function(newval) {

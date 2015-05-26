@@ -337,13 +337,14 @@ $(function() {
                 // Grab cost information if option is on
                 if (config.bool("CreateBoardingCostOnAdoption")) {
                     var formdata = "mode=cost&id=" + rec.ID;
-                    common.ajax_post("move_adopt", formdata, function(data) {
-                        var bits = data.split("||");
-                        $("#costdata").html(bits[1]);
-                        $("#costamount").val(format.currency_to_int(bits[0]));
-                        $("#costtype").val(config.str("BoardingCostType"));
-                        $("#costdisplay").closest(".ui-widget").fadeIn();
-                    });
+                    common.ajax_post("move_adopt", formdata)
+                        .then(function(data) {
+                            var bits = data.split("||");
+                            $("#costdata").html(bits[1]);
+                            $("#costamount").val(format.currency_to_int(bits[0]));
+                            $("#costtype").val(config.str("BoardingCostType"));
+                            $("#costdisplay").closest(".ui-widget").fadeIn();
+                        });
                 }
 
                 // If we have adoption fee fields, override the first donation
@@ -356,7 +357,10 @@ $(function() {
 
                 // Update the list of document templates
                 var formdatat = "mode=templates&id=" + rec.ID;
-                common.ajax_post("move_adopt", formdatat, function(data) { $("#templatelist").html(data); });
+                common.ajax_post("move_adopt", formdatat)
+                    .then(function(data) { 
+                        $("#templatelist").html(data); 
+                    });
 
             });
 
@@ -453,12 +457,13 @@ $(function() {
                 .button({ icons: { primary: "ui-icon-cart" }, text: false })
                 .click(function() {
                 $("#button-insurance").button("disable");
-                common.ajax_post("move_adopt", "mode=insurance", function(result) {
-                    $("#insurance").val(result);
-                    $("#button-insurance").button("enable");
-                }, function() {
-                    $("#button-insurance").button("enable");
-                });
+                common.ajax_post("move_adopt", "mode=insurance")
+                    .then(function(result) {
+                        $("#insurance").val(result);
+                    })
+                    .always(function() {
+                        $("#button-insurance").button("enable");
+                    });
             });
             if (!config.bool("UseAutoInsurance")) { $("#button-insurance").button("disable"); }
 
@@ -509,23 +514,23 @@ $(function() {
                 header.show_loading(_("Creating..."));
 
                 var formdata = $("input, select").toPOST();
-                common.ajax_post("move_adopt", formdata, function(data) {
+                common.ajax_post("move_adopt", formdata)
+                    .then(function(data) {
+                        $("#movementid").val(data);
+                        header.hide_loading();
 
-                    $("#movementid").val(data);
-                    header.hide_loading();
+                        // Copy the animal/owner links to the success page so
+                        // the user can go view them quickly again if they want
+                        $("#adoptfrom").html( $(".animalchooser-display").html() );
+                        $("#adoptto").html( $(".personchooser-display .justlink").html() );
 
-                    // Copy the animal/owner links to the success page so
-                    // the user can go view them quickly again if they want
-                    $("#adoptfrom").html( $(".animalchooser-display").html() );
-                    $("#adoptto").html( $(".personchooser-display .justlink").html() );
-
-                    $("#page1").fadeOut(function() {
-                        $("#page2").fadeIn();
+                        $("#page1").fadeOut(function() {
+                            $("#page2").fadeIn();
+                        });
+                    })
+                    .fail(function() {
+                        $("#adopt").button("enable");
                     });
-
-                }, function() {
-                    $("#adopt").button("enable");
-                });
             });
         },
 

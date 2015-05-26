@@ -77,14 +77,16 @@ $(function() {
                 header.show_loading();
 
                 var formdata = $("input").toPOST();
-                common.ajax_post("change_password", formdata, function(result) { 
-                    header.show_info(_("Password successfully changed."));
-                    $("#change").button("enable");
-                    $("#oldpassword, #newpassword, #confirmpassword").val("");
-                    header.hide_loading();
-                }, function() {
-                    $("#change").button("enable");
-                });
+                common.ajax_post("change_password", formdata)
+                    .then(function(result) { 
+                        header.show_info(_("Password successfully changed."));
+                        $("#change").button("enable");
+                        $("#oldpassword, #newpassword, #confirmpassword").val("");
+                    })
+                    .always(function() {
+                        header.hide_loading();
+                        $("#change").button("enable");
+                    });
             };
 
             // Buttons

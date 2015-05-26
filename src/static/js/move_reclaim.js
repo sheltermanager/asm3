@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, asm, avid, common, config, controller, dlgfx, format, header, html, validate */
+/*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, validate */
 
 $(function() {
 
@@ -153,9 +153,6 @@ $(function() {
                 '<h3><a href="#">' + _("Generate documentation") + '</a></h3>',
                 '<div id="templatelist">',
                 '</div>',
-                '<h3 id="avidsection"><a href="#">Register with AVID PETtrac database</a></h3>',
-                '<div id="avid">',
-                '</div>',
                 '</div>',
                 '</div>'
             ].join("\n");
@@ -225,18 +222,22 @@ $(function() {
                 // Grab cost information if option is on
                 if (config.bool("CreateBoardingCostOnAdoption")) {
                     var formdata = "mode=cost&id=" + rec.ID;
-                    common.ajax_post("move_reclaim", formdata, function(data) {
-                        var bits = data.split("||");
-                        $("#costdata").html(bits[1]);
-                        $("#costamount").val(bits[0]);
-                        $("#costtype").val(config.str("BoardingCostType"));
-                        $("#costdisplay").closest(".ui-widget").fadeIn();
-                    });
+                    common.ajax_post("move_reclaim", formdata)
+                        .then(function(data) {
+                            var bits = data.split("||");
+                            $("#costdata").html(bits[1]);
+                            $("#costamount").val(bits[0]);
+                            $("#costtype").val(config.str("BoardingCostType"));
+                            $("#costdisplay").closest(".ui-widget").fadeIn();
+                        });
                 }
 
                 // Update the list of document templates
                 var formdatat = "mode=templates&id=" + rec.ID;
-                common.ajax_post("move_reclaim", formdatat, function(data) { $("#templatelist").html(data); });
+                common.ajax_post("move_reclaim", formdatat)
+                    .then(function(data) { 
+                        $("#templatelist").html(data); 
+                    });
 
             });
 
@@ -300,34 +301,25 @@ $(function() {
                 header.show_loading(_("Creating..."));
 
                 var formdata = $("input, select").toPOST();
-                common.ajax_post("move_reclaim", formdata, function(data) {
+                common.ajax_post("move_reclaim", formdata)
+                    .then(function(data) {
 
-                    $("#movementid").val(data);
-                    header.hide_loading();
+                        $("#movementid").val(data);
 
-                    // Copy the animal/owner links to the success page so
-                    // the user can go view them quickly again if they want
-                    $("#reclaimfrom").html( $(".animalchooser-display").html() );
-                    $("#reclaimto").html( $(".personchooser-display .justlink").html() );
+                        // Copy the animal/owner links to the success page so
+                        // the user can go view them quickly again if they want
+                        $("#reclaimfrom").html( $(".animalchooser-display").html() );
+                        $("#reclaimto").html( $(".personchooser-display .justlink").html() );
 
-                    $("#page1").fadeOut(function() {
-                        $("#page2").fadeIn();
+                        $("#page1").fadeOut(function() {
+                            $("#page2").fadeIn();
+                        });
+
+                    })
+                    .always(function() {
+                        header.hide_loading();
+                        $("#reclaim").button("enable");
                     });
-
-                    // Render our microchip submission form with the new owner details
-                    if (asm.locale == "en_GB" && current_animal.IDENTICHIPNUMBER.indexOf("977") == 0 && 
-                        current_animal.IDENTICHIPDATE != null && config.str("AvidOrgName") != "") {
-                        $("#avid").html(avid.render(current_animal, current_person));
-                        $(".avidsubmit").button();
-                    }
-                    else {
-                        // Hide the section
-                        $("#avidsection").hide();
-                        $("#avid").hide();
-                    }
-                }, function() {
-                    $("#reclaim").button("enable");
-                });
             });
         },
 

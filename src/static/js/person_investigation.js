@@ -24,15 +24,19 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row, function() {
-                        tableform.fields_update_row(dialog.fields, row);
-                        tableform.fields_post(dialog.fields, "mode=update&investigationid=" + row.ID, "person_investigation", function(response) {
+                    tableform.dialog_show_edit(dialog, row)
+                        .then(function() {
+                            tableform.fields_update_row(dialog.fields, row);
+                            return tableform.fields_post(dialog.fields, "mode=update&investigationid=" + row.ID, "person_investigation");
+                        })
+                        .then(function(response) {
                             tableform.table_update(table);
                             tableform.dialog_close();
+                        })
+                        .fail(function() {
+                            tableform.dialog_enable_buttons();
                         });
-                    });
                     $("#date").datepicker("hide");
-                    $("#notes").focus();
                 },
                 columns: [
                     { field: "CREATEDBY", display: _("By") },
@@ -44,8 +48,13 @@ $(function() {
             var buttons = [
                  { id: "new", text: _("New"), icon: "new", enabled: "always", perm: "aoi",
                      click: function() { 
-                         tableform.dialog_show_add(dialog, function() {
-                             tableform.fields_post(dialog.fields, "mode=create&personid="  + controller.person.ID, "person_investigation", function(response) {
+                         $("#date").datepicker("setDate", new Date());
+                         $("#date").datepicker("hide");
+                         tableform.dialog_show_add(dialog)
+                             .then(function() {
+                                 return tableform.fields_post(dialog.fields, "mode=create&personid="  + controller.person.ID, "person_investigation");
+                             })
+                             .then(function(response) {
                                  var row = {};
                                  row.ID = response;
                                  row.CREATEDBY = asm.user;
@@ -53,23 +62,24 @@ $(function() {
                                  controller.rows.push(row);
                                  tableform.table_update(table);
                                  tableform.dialog_close();
-                             });
-                         });
-                         $("#date").datepicker("setDate", new Date());
-                         $("#date").datepicker("hide");
-                         $("#notes").focus();
+                             })
+                            .fail(function() {
+                                tableform.dialog_enable_buttons();
+                            });
                      } 
                  },
                  { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "doi",
                      click: function() { 
-                         tableform.delete_dialog(function() {
-                             tableform.buttons_default_state(buttons);
-                             var ids = tableform.table_ids(table);
-                             common.ajax_post("person_investigation", "mode=delete&ids=" + ids , function() {
+                         tableform.delete_dialog()
+                             .then(function() {
+                                 tableform.buttons_default_state(buttons);
+                                 var ids = tableform.table_ids(table);
+                                 return common.ajax_post("person_investigation", "mode=delete&ids=" + ids);
+                             })
+                             .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
                                  tableform.table_update(table);
                              });
-                         });
                      } 
                  }
             ];

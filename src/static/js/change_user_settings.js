@@ -149,11 +149,13 @@ $(function() {
                 } catch (excanvas) {
                     log.error("failed reading signature canvas");   
                 }
-                common.ajax_post("change_user_settings", formdata, function(result) { 
-                    common.route("main"); 
-                }, function() { 
-                    $(".asm-content button").button("enable");
-                });
+                common.ajax_post("change_user_settings", formdata)
+                    .then(function(result) { 
+                        common.route("main");
+                    })
+                    .fail(function() {
+                        $(".asm-content button").button("enable");
+                    });
             });
 
             $("#olocale").change(this.update_flag);

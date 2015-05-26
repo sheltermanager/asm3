@@ -95,16 +95,18 @@ $(function() {
             $("#tables").change(function() {
                 var formdata = "mode=cols&" + $("#tables").toPOST();
                 header.show_loading(_("Loading..."));
-                common.ajax_post("sql", formdata, function(result) { 
-                    var cols = result.split("|");
-                    var h = "<option></option>";
-                    $.each(cols, function(i, v) {
-                        h += "<option>" + v + "</option>";
+                common.ajax_post("sql", formdata)
+                    .then(function(result) { 
+                        var cols = result.split("|");
+                        var h = "<option></option>";
+                        $.each(cols, function(i, v) {
+                            h += "<option>" + v + "</option>";
+                        });
+                        $("#columns").html(h);
+                    })
+                    .always(function() {
+                        header.hide_loading();
                     });
-                    $("#columns").html(h);
-                }, function() {
-                    $("#button-exec").button("enable");
-                });
             });
 
             $("#columns").change(function() {
@@ -143,27 +145,28 @@ $(function() {
                 var formdata = "mode=exec&" + $("#sql").toPOST();
                 $("#button-exec").button("disable");
                 header.show_loading(_("Executing..."));
-                common.ajax_post("sql", formdata, function(result) { 
-                    if (result.indexOf("<thead") == 0) {
-                        $("#sql-results").html(result);
-                        $("#sql-results").table();
-                        $("#sql-results").fadeIn();
-                        var norecs = String($("#sql-results tr").length - 1);
-                        header.show_info(_("{0} results.").replace("{0}", norecs));
-                    }
-                    else {
-                        $("#sql-results").fadeOut();
-                        if (result != "") {
-                            header.show_info(result);
+                common.ajax_post("sql", formdata)
+                    .then(function(result) { 
+                        if (result.indexOf("<thead") == 0) {
+                            $("#sql-results").html(result);
+                            $("#sql-results").table();
+                            $("#sql-results").fadeIn();
+                            var norecs = String($("#sql-results tr").length - 1);
+                            header.show_info(_("{0} results.").replace("{0}", norecs));
                         }
                         else {
-                            header.show_info(_("No results."));
+                            $("#sql-results").fadeOut();
+                            if (result != "") {
+                                header.show_info(result);
+                            }
+                            else {
+                                header.show_info(_("No results."));
+                            }
                         }
-                    }
-                    $("#button-exec").button("enable");
-                }, function() {
-                    $("#button-exec").button("enable");
-                });
+                    })
+                    .always(function() {
+                        $("#button-exec").button("enable");
+                    });
             });
 
             $("#button-script").button().click(function() {

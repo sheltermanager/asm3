@@ -11,7 +11,7 @@ $(function() {
                 edit_title: _("Edit online form"),
                 edit_perm: 'eof',
                 helper_text: _("Forms need a name."),
-                close_on_ok: true,
+                close_on_ok: false,
                 columns: 1,
                 width: 550,
                 fields: [
@@ -32,12 +32,18 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row, function() {
-                        tableform.fields_update_row(dialog.fields, row);
-                        tableform.fields_post(dialog.fields, "mode=update&formid=" + row.ID, "onlineforms", function(response) {
+                    tableform.dialog_show_edit(dialog, row)
+                        .then(function() {
+                            tableform.fields_update_row(dialog.fields, row);
+                            return tableform.fields_post(dialog.fields, "mode=update&formid=" + row.ID, "onlineforms");
+                        })
+                        .then(function(response) {
                             tableform.table_update(table);
+                            tableform.dialog_close();
+                        })
+                        .fail(function() {
+                            tableform.dialog_enable_buttons();
                         });
-                    });
                 },
                 columns: [
                     { field: "NAME", display: _("Name"), initialsort: true, formatter: function(row) {
@@ -64,36 +70,45 @@ $(function() {
             var buttons = [
                  { id: "new", text: _("New online form"), icon: "new", enabled: "always", 
                      click: function() { 
-                         tableform.dialog_show_add(dialog, function() {
-                             tableform.fields_post(dialog.fields, "mode=create", "onlineforms", function(response) {
+                         tableform.dialog_show_add(dialog)
+                             .then(function() {
+                                return tableform.fields_post(dialog.fields, "mode=create", "onlineforms");
+                             })
+                             .then(function(response) {
                                  var row = {};
                                  row.ID = response;
                                  tableform.fields_update_row(dialog.fields, row);
                                  controller.rows.push(row);
                                  tableform.table_update(table);
-                             });
-                         });
+                                 tableform.dialog_close();
+                            })
+                            .fail(function() {
+                                 tableform.dialog_enable_buttons();
+                            });
                      } 
                  },
                  { id: "clone", text: _("Clone"), icon: "copy", enabled: "multi", 
                      click: function() { 
                          tableform.buttons_default_state(buttons);
                          var ids = tableform.table_ids(table);
-                         common.ajax_post("onlineforms", "mode=clone&ids=" + ids , function() {
-                             common.route_reload();
-                         });
+                         common.ajax_post("onlineforms", "mode=clone&ids=" + ids)
+                             .then(function() {
+                                 common.route_reload();
+                             });
                      } 
                  },
                  { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
                      click: function() { 
-                         tableform.delete_dialog(function() {
-                             tableform.buttons_default_state(buttons);
-                             var ids = tableform.table_ids(table);
-                             common.ajax_post("onlineforms", "mode=delete&ids=" + ids , function() {
+                         tableform.delete_dialog()
+                             .then(function() {
+                                 tableform.buttons_default_state(buttons);
+                                 var ids = tableform.table_ids(table);
+                                 return common.ajax_post("onlineforms", "mode=delete&ids=" + ids);
+                             })
+                             .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
                                  tableform.table_update(table);
                              });
-                         });
                      } 
                  },
                  { id: "headfoot", text: _("Edit Header/Footer"), icon: "forms", enabled: "always", tooltip: _("Edit online form HTML header/footer"),
@@ -168,10 +183,13 @@ $(function() {
             var headfootbuttons = {};
             headfootbuttons[_("Save")] = function() {
                 var formdata = "mode=headfoot&" + $(".headfoot").toPOST();
-                common.ajax_post("onlineforms", formdata, function() { 
-                    header.show_info(_("Updated."));
-                    $("#dialog-headfoot").dialog("close");
-                });
+                common.ajax_post("onlineforms", formdata)
+                    .then(function() { 
+                        header.show_info(_("Updated."));
+                    })
+                    .always(function() {
+                        $("#dialog-headfoot").dialog("close");
+                    });
             };
             headfootbuttons[_("Cancel")] = function() { $(this).dialog("close"); };
             $("#dialog-headfoot").dialog({

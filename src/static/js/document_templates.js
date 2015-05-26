@@ -50,23 +50,27 @@ $(function() {
                  { id: "clone", text: _("Clone"), icon: "copy", tooltip: _("Create a new template by copying the selected template"), enabled: "one", 
                      click: function() { 
                          var ids = tableform.table_ids(table);
-                         tableform.dialog_show_add(dialog, function() {
-                             tableform.fields_post(dialog.fields, "mode=clone&ids=" + ids , "document_templates", function(response) {
+                         tableform.dialog_show_add(dialog)
+                             .then(function() {
+                                 return tableform.fields_post(dialog.fields, "mode=clone&ids=" + ids , "document_templates");
+                             })
+                             .then(function(response) {
                                  common.route("document_edit?template=" + response);
                              });
-                         });
                      } 
                  },
                  { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
                      click: function() { 
-                         tableform.delete_dialog(function() {
-                             tableform.buttons_default_state(buttons);
-                             var ids = tableform.table_ids(table);
-                             common.ajax_post("document_templates", "mode=delete&ids=" + ids , function() {
+                         tableform.delete_dialog()
+                             .then(function() {
+                                 tableform.buttons_default_state(buttons);
+                                 var ids = tableform.table_ids(table);
+                                 return common.ajax_post("document_templates", "mode=delete&ids=" + ids);
+                             })
+                             .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
                                  tableform.table_update(table);
                              });
-                         });
                      } 
                  },
                  { id: "rename", text: _("Rename"), icon: "link", enabled: "one", 
@@ -103,9 +107,10 @@ $(function() {
                 $("#dialog-rename").disable_dialog_buttons();
                 var dbfsid = tableform.table_ids(document_templates.table).split(",")[0];
                 var newname = encodeURIComponent($("#newname").val());
-                common.ajax_post("document_templates", "mode=rename&newname=" + newname + "&dbfsid=" + dbfsid , function() {
-                    common.route("document_templates");
-                });
+                common.ajax_post("document_templates", "mode=rename&newname=" + newname + "&dbfsid=" + dbfsid)
+                    .then(function() {
+                        common.route("document_templates");
+                    });
             };
             renamebuttons[_("Cancel")] = function() {
                 $("#dialog-rename").dialog("close");

@@ -47,18 +47,19 @@ $(function() {
                     vaccination.enable_default_cost = false;
                     tableform.fields_populate_from_json(dialog.fields, row);
                     vaccination.enable_default_cost = true;
-                    tableform.dialog_show_edit(dialog, row, function() {
-                        tableform.fields_update_row(dialog.fields, row);
-                        vaccination.set_extra_fields(row);
-                        tableform.fields_post(dialog.fields, "mode=update&vaccid=" + row.ID, controller.name, function(response) {
+                    tableform.dialog_show_edit(dialog, row)
+                        .then(function() {
+                            tableform.fields_update_row(dialog.fields, row);
+                            vaccination.set_extra_fields(row);
+                            return tableform.fields_post(dialog.fields, "mode=update&vaccid=" + row.ID, controller.name);
+                        })
+                        .then(function(response) {
                             tableform.table_update(table);
                             tableform.dialog_close();
-                        },
-                        function(response) {
-                            tableform.dialog_error(response);
+                        })
+                        .fail(function() {
                             tableform.dialog_enable_buttons();
                         });
-                    });
                 },
                 complete: function(row) {
                     if (row.DATEOFVACCINATION) { return true; }
@@ -127,14 +128,16 @@ $(function() {
                     hideif: function() { return controller.animal; }, click: function() { vaccination.new_bulk_vacc(); }},
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dav", 
                      click: function() { 
-                         tableform.delete_dialog(function() {
-                             tableform.buttons_default_state(buttons);
-                             var ids = tableform.table_ids(table);
-                             common.ajax_post(controller.name, "mode=delete&ids=" + ids , function() {
+                         tableform.delete_dialog()
+                             .then(function() {
+                                 tableform.buttons_default_state(buttons);
+                                 var ids = tableform.table_ids(table);
+                                 return common.ajax_post(controller.name, "mode=delete&ids=" + ids);
+                             })
+                             .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
                                  tableform.table_update(table);
                              });
-                         });
                      } 
                  },
                  { id: "given", text: _("Give"), icon: "complete", enabled: "multi", perm: "cav",
@@ -217,16 +220,19 @@ $(function() {
                 $("#dialog-required").disable_dialog_buttons();
                 var ids = tableform.table_ids(table);
                 var newdate = encodeURIComponent($("#newdate").val());
-                common.ajax_post(controller.name, "mode=required&newdate=" + newdate + "&ids=" + ids , function() {
-                    $.each(controller.rows, function(i, v) {
-                        if (tableform.table_id_selected(v.ID)) {
-                            v.DATEREQUIRED = format.date_iso($("#newdate").val());
-                        }
+                common.ajax_post(controller.name, "mode=required&newdate=" + newdate + "&ids=" + ids)
+                    .then(function() {
+                        $.each(controller.rows, function(i, v) {
+                            if (tableform.table_id_selected(v.ID)) {
+                                v.DATEREQUIRED = format.date_iso($("#newdate").val());
+                            }
+                        });
+                        tableform.table_update(table);
+                    })
+                    .always(function() {
+                        $("#dialog-required").dialog("close");
+                        $("#dialog-required").enable_dialog_buttons();
                     });
-                    tableform.table_update(table);
-                    $("#dialog-required").dialog("close");
-                    $("#dialog-required").enable_dialog_buttons();
-                });
             };
             requiredbuttons[_("Cancel")] = function() {
                 $("#dialog-required").dialog("close");
@@ -346,16 +352,19 @@ $(function() {
                 if (!validate.notblank([ "newdateg" ])) { return; }
                 $("#dialog-given").disable_dialog_buttons();
                 var ids = tableform.table_ids(table);
-                common.ajax_post(controller.name, $("#dialog-given .asm-field").toPOST() + "&mode=given&ids=" + ids , function() {
-                    $.each(controller.rows, function(i, v) {
-                        if (tableform.table_id_selected(v.ID)) {
-                            v.DATEOFVACCINATION = format.date_iso($("#newdateg").val());
-                        }
+                common.ajax_post(controller.name, $("#dialog-given .asm-field").toPOST() + "&mode=given&ids=" + ids)
+                    .then(function() {
+                        $.each(controller.rows, function(i, v) {
+                            if (tableform.table_id_selected(v.ID)) {
+                                v.DATEOFVACCINATION = format.date_iso($("#newdateg").val());
+                            }
+                        });
+                        tableform.table_update(table);
+                    })
+                    .always(function() {
+                        $("#dialog-given").dialog("close");
+                        $("#dialog-given").enable_dialog_buttons();
                     });
-                    tableform.table_update(table);
-                    $("#dialog-given").dialog("close");
-                    $("#dialog-given").enable_dialog_buttons();
-                });
             };
             givenbuttons[_("Cancel")] = function() {
                 $("#dialog-given").dialog("close");

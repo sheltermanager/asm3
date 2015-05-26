@@ -66,18 +66,19 @@ $(function() {
                     }
                     medicalprofile.change_singlemulti();
                     medicalprofile.change_values();
-                    tableform.dialog_show_edit(dialog, row, function() {
-                        tableform.fields_update_row(dialog.fields, row);
-                        medicalprofile.set_extra_fields(row);
-                        tableform.fields_post(dialog.fields, "mode=update&profileid=" + row.ID, "medicalprofile", function(response) {
+                    tableform.dialog_show_edit(dialog, row)
+                        .then(function() {
+                            tableform.fields_update_row(dialog.fields, row);
+                            medicalprofile.set_extra_fields(row);
+                            return tableform.fields_post(dialog.fields, "mode=update&profileid=" + row.ID, "medicalprofile");
+                        })
+                        .then(function(response) {
                             tableform.table_update(table);
                             tableform.dialog_close();
-                        },
-                        function(response) {
-                            tableform.dialog_error(response);
+                        })
+                        .fail(function() {
                             tableform.dialog_enable_buttons();
                         });
-                    });
                 },
                 columns: [
                     { field: "PROFILENAME", display: _("Name"), initialsort: true },
@@ -94,14 +95,16 @@ $(function() {
                      click: function() { medicalprofile.new_medicalprofile(); }},
                  { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "mdam", 
                      click: function() { 
-                         tableform.delete_dialog(function() {
-                             tableform.buttons_default_state(buttons);
-                             var ids = tableform.table_ids(table);
-                             common.ajax_post(controller.name, "mode=delete&ids=" + ids , function() {
+                         tableform.delete_dialog()
+                             .then(function() {
+                                 tableform.buttons_default_state(buttons);
+                                 var ids = tableform.table_ids(table);
+                                 return common.ajax_post(controller.name, "mode=delete&ids=" + ids);
+                             })
+                             .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
                                  tableform.table_update(table);
                              });
-                         });
                      } 
                  }
             ];
@@ -123,13 +126,16 @@ $(function() {
 
         new_medicalprofile: function() { 
             $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
-            tableform.dialog_show_add(medicalprofile.dialog, function() {
-                tableform.fields_post(medicalprofile.dialog.fields, "mode=create", "medicalprofile", function(response) {
+            tableform.dialog_show_add(medicalprofile.dialog)
+                .then(function() {
+                    return tableform.fields_post(medicalprofile.dialog.fields, "mode=create", "medicalprofile");
+                })
+                .then(function(response) {
                     common.route_reload();
-                }, function() {
+                })
+                .fail(function() {
                     tableform.dialog_enable_buttons();   
                 });
-            });
         },
 
         /* What to do when we switch between single/multiple treatments */

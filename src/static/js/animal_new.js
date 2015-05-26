@@ -251,21 +251,22 @@ $(function() {
             header.show_loading(_("Creating..."));
 
             var formdata = $("input, select").toPOST();
-            common.ajax_post("animal_new", formdata, function(data) { 
-                var bits = data.split(" ");
-                var createdID = bits[0];
-                var newCode = bits[1];
-                if (mode == "add") {
-                    header.show_info(_("Animal '{0}' created with code {1}").replace("{0}", $("#animalname").val()).replace("{1}", newCode));
-                }
-                else {
-                    if (createdID != "0") { common.route("animal?id=" + createdID); }
-                }
-                $(".asm-content button").button("enable");
-                header.hide_loading();
-            }, function() {
-                $(".asm-content button").button("enable");
-            });
+            common.ajax_post("animal_new", formdata)
+                .then(function(data) { 
+                    var bits = data.split(" ");
+                    var createdID = bits[0];
+                    var newCode = bits[1];
+                    if (mode == "add") {
+                        header.show_info(_("Animal '{0}' created with code {1}").replace("{0}", $("#animalname").val()).replace("{1}", newCode));
+                    }
+                    else {
+                        if (createdID != "0") { common.route("animal?id=" + createdID); }
+                    }
+                })
+                .always(function() {
+                    $(".asm-content button").button("enable");
+                    header.hide_loading();
+                });
         },
 
         /**
@@ -349,15 +350,16 @@ $(function() {
         update_units: function() {
             var opts = ['<option value=""></option>'];
             $("#unit").empty();
-            common.ajax_post("animal_new", "mode=units&locationid=" + $("#internallocation").val(), function(data) {
-                $.each(html.decode(data).split("&&"), function(i, v) {
-                    var u = v.split("|");
-                    opts.push('<option value="' + html.title(u[0]) + '">' + u[0] +
-                        (u[1] == "1" ? ' ' + _("(available)") : "") +
-                        '</option>');
+            common.ajax_post("animal_new", "mode=units&locationid=" + $("#internallocation").val())
+                .then(function(data) {
+                    $.each(html.decode(data).split("&&"), function(i, v) {
+                        var u = v.split("|");
+                        opts.push('<option value="' + html.title(u[0]) + '">' + u[0] +
+                            (u[1] == "1" ? ' ' + _("(available)") : "") +
+                            '</option>');
+                    });
+                    $("#unit").html(opts.join("\n")).change();
                 });
-                $("#unit").html(opts.join("\n")).change();
-            });
         },
 
         validation: function() {
@@ -419,17 +421,19 @@ $(function() {
             if (config.bool("WarnSimilarAnimalName")) {
                 $("#animalname").blur(function() {
                     var formdata = "mode=recentnamecheck&animalname=" + encodeURIComponent($("#animalname").val());
-                    common.ajax_post("animal_new", formdata, function(data) { 
-                        if (data == "None") {
-                            return;
-                        }
-                        var bits = data.split("|");
-                        var h = "<a class='asm-embed-name' href='animal?id=" + bits[0] + "'>" + bits[1] + " - " + bits[2] + "</a>";
-                        $(".similar-animal").html(h);
-                        $("#dialog-similar").dialog("open");
-                    }, function() {
-                        $(".asm-content button").button("enable");
-                    });
+                    common.ajax_post("animal_new", formdata)
+                        .then(function(data) { 
+                            if (data == "None") {
+                                return;
+                            }
+                            var bits = data.split("|");
+                            var h = "<a class='asm-embed-name' href='animal?id=" + bits[0] + "'>" + bits[1] + " - " + bits[2] + "</a>";
+                            $(".similar-animal").html(h);
+                            $("#dialog-similar").dialog("open");
+                        })
+                        .always(function() {
+                            $(".asm-content button").button("enable");
+                        });
                 });
             }
 
@@ -532,7 +536,10 @@ $(function() {
                 .button({ icons: { primary: "ui-icon-tag" }, text: false })
                 .click(function() {
                 var formdata = "mode=randomname&sex=" + $("#sex").val();
-                common.ajax_post("animal", formdata, function(result) { $("#animalname").val(result); });
+                common.ajax_post("animal", formdata)
+                    .then(function(result) { 
+                        $("#animalname").val(result); 
+                    });
             });
         },
 

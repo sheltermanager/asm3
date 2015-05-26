@@ -77,18 +77,19 @@ $(function() {
                     $("#treatmentrulecalc").hide();
                     $("#status").closest("tr").show();
                     tableform.fields_populate_from_json(dialog.fields, row);
-                    tableform.dialog_show_edit(dialog, row, function() {
-                        tableform.fields_update_row(dialog.fields, row);
-                        medical.set_extra_fields(row);
-                        tableform.fields_post(dialog.fields, "mode=update&regimenid=" + row.REGIMENID, controller.name, function(response) {
+                    tableform.dialog_show_edit(dialog, row)
+                        .then(function() {
+                            tableform.fields_update_row(dialog.fields, row);
+                            medical.set_extra_fields(row);
+                            return tableform.fields_post(dialog.fields, "mode=update&regimenid=" + row.REGIMENID, controller.name);
+                        })
+                        .then(function(response) {
                             tableform.table_update(table);
                             tableform.dialog_close();
-                        },
-                        function(response) {
-                            tableform.dialog_error(response);
+                        })
+                        .fail(function() {
                             tableform.dialog_enable_buttons();
                         });
-                    });
                 },
                 complete: function(row) {
                     if (row.DATEGIVEN || row.STATUS == 2) { return true; }
@@ -166,14 +167,16 @@ $(function() {
                         medical.highlight_selected_regimens(false);
                      },
                      click: function() { 
-                         tableform.delete_dialog(function() {
-                             tableform.buttons_default_state(buttons);
-                             var ids = medical.selected_regimen_ids();
-                             common.ajax_post(controller.name, "mode=delete_regimen&ids=" + ids , function() {
+                         tableform.delete_dialog()
+                             .then(function() {
+                                 tableform.buttons_default_state(buttons);
+                                 var ids = medical.selected_regimen_ids();
+                                 return common.ajax_post(controller.name, "mode=delete_regimen&ids=" + ids);
+                             })
+                             .then(function() {
                                  medical.remove_selected_regimens();
                                  tableform.table_update(table);
                              });
-                         });
                      } 
                  },
                  { id: "delete-treatments", text: _("Delete Treatments"), icon: "delete", enabled: "multi", perm: "mdam", 
@@ -184,14 +187,16 @@ $(function() {
                         medical.highlight_selected_treatments(false);
                      },
                      click: function() { 
-                         tableform.delete_dialog(function() {
-                             tableform.buttons_default_state(buttons);
-                             var ids = medical.selected_treatment_ids();
-                             common.ajax_post(controller.name, "mode=delete_treatment&ids=" + ids , function() {
+                         tableform.delete_dialog()
+                             .then(function() {
+                                 tableform.buttons_default_state(buttons);
+                                 var ids = medical.selected_treatment_ids();
+                                 return common.ajax_post(controller.name, "mode=delete_treatment&ids=" + ids);
+                             })
+                             .then(function() {
                                  medical.remove_selected_treatments();
                                  tableform.table_update(table);
                              });
-                         });
                      } 
                  },
                  { id: "given", text: _("Give"), icon: "complete", enabled: "multi", perm: "mcam", 
@@ -341,17 +346,21 @@ $(function() {
             $("#animals").closest("tr").hide();
             $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
             $("#profileid").closest("tr").show();
+            $("#profileid").select("value", "");
             $("#treatmentrulecalc").show();
             $("#status").closest("tr").hide();
-            tableform.dialog_show_add(dialog, function() {
-                tableform.dialog_disable_buttons();   
-                tableform.fields_post(dialog.fields, "mode=create", controller.name, function(response) {
+            tableform.dialog_show_add(dialog)
+                .then(function() {
+                    tableform.dialog_disable_buttons();   
+                    return tableform.fields_post(dialog.fields, "mode=create", controller.name);
+                })
+                .then(function(response) {
                     tableform.dialog_close();
                     common.route_reload();
-                }, function() {
+                })
+                .fail(function() {
                     tableform.dialog_enable_buttons();
                 });
-            });
         },
 
         new_bulk_medical: function() { 
@@ -362,15 +371,18 @@ $(function() {
             $("#profileid").closest("tr").show();
             $("#treatmentrulecalc").show();
             $("#status").closest("tr").hide();
-            tableform.dialog_show_add(medical.dialog, function() {
-                tableform.dialog_disable_buttons();   
-                tableform.fields_post(medical.dialog.fields, "mode=createbulk", controller.name, function(response) {
+            tableform.dialog_show_add(medical.dialog)
+                .then(function() {
+                    tableform.dialog_disable_buttons();   
+                    return tableform.fields_post(medical.dialog.fields, "mode=createbulk", controller.name);
+                })
+                .then(function(response) {
                     tableform.dialog_close();
                     common.route_reload();
-                }, function() {
+                })
+                .fail(function() {
                     tableform.dialog_enable_buttons();   
                 });
-            });
         },
 
 
@@ -424,17 +436,20 @@ $(function() {
                 $("#dialog-given").disable_dialog_buttons();
                 var ids = medical.selected_treatment_ids();
                 var newdate = encodeURIComponent($("#newdate").val());
-                common.ajax_post(controller.name, $("#dialog-given .asm-field").toPOST() + "&mode=given&ids=" + ids , function() {
-                    $.each(controller.rows, function(i, v) {
-                        if (tableform.table_id_selected(v.COMPOSITEID)) {
-                            v.DATEGIVEN = format.date_iso($("#newdate").val());
-                            if (!v.GIVENBY) { v.GIVENBY = asm.user; }
-                        }
+                common.ajax_post(controller.name, $("#dialog-given .asm-field").toPOST() + "&mode=given&ids=" + ids)
+                    .then(function() {
+                        $.each(controller.rows, function(i, v) {
+                            if (tableform.table_id_selected(v.COMPOSITEID)) {
+                                v.DATEGIVEN = format.date_iso($("#newdate").val());
+                                if (!v.GIVENBY) { v.GIVENBY = asm.user; }
+                            }
+                        });
+                        tableform.table_update(medical.table);
+                    })
+                    .always(function() {
+                        $("#dialog-given").dialog("close");
+                        $("#dialog-given").enable_dialog_buttons();
                     });
-                    tableform.table_update(medical.table);
-                    $("#dialog-given").dialog("close");
-                    $("#dialog-given").enable_dialog_buttons();
-                });
             };
             givenbuttons[_("Cancel")] = function() {
                 $("#dialog-given").dialog("close");
@@ -474,16 +489,19 @@ $(function() {
                 $("#dialog-required").disable_dialog_buttons();
                 var ids = medical.selected_treatment_ids();
                 var newdate = encodeURIComponent($("#newdater").val());
-                common.ajax_post(controller.name, "mode=required&newdate=" + newdate + "&ids=" + ids , function() {
-                    $.each(controller.rows, function(i, v) {
-                        if (tableform.table_id_selected(v.COMPOSITEID)) {
-                            v.DATEREQUIRED = format.date_iso($("#newdater").val());
-                        }
+                common.ajax_post(controller.name, "mode=required&newdate=" + newdate + "&ids=" + ids)
+                    .then(function() {
+                        $.each(controller.rows, function(i, v) {
+                            if (tableform.table_id_selected(v.COMPOSITEID)) {
+                                v.DATEREQUIRED = format.date_iso($("#newdater").val());
+                            }
+                        });
+                        tableform.table_update(medical.table);
+                    })
+                    .always(function() {
+                        $("#dialog-required").dialog("close");
+                        $("#dialog-required").enable_dialog_buttons();
                     });
-                    tableform.table_update(medical.table);
-                    $("#dialog-required").dialog("close");
-                    $("#dialog-required").enable_dialog_buttons();
-                });
             };
             requiredbuttons[_("Cancel")] = function() {
                 $("#dialog-required").dialog("close");
@@ -572,22 +590,23 @@ $(function() {
             $("#profileid").change(function() {
                 if ($("#profileid").val() == "0") { return; }
                 var formdata = "mode=get_profile&profileid=" + $("#profileid").val();
-                common.ajax_post("medical", formdata, function(result) {
-                    var p = jQuery.parseJSON(result)[0];
-                    $("#treatmentname").val( html.decode(p.TREATMENTNAME));
-                    $("#dosage").val( html.decode(p.DOSAGE) );
-                    $("#cost").currency("value", p.COST );
-                    $("#comments").val( html.decode(p.COMMENTS) );
-                    $("#totalnumberoftreatments").val( p.TOTALNUMBEROFTREATMENTS );
-                    $("#singlemulti").val( p.TOTALNUMBEROFTREATMENTS == 1 ? "0" : "1" );
-                    medical.change_singlemulti();
-                    $("#timingrule").val( p.TIMINGRULE );
-                    $("#timingrulenofrequencies").val( p.TIMINGRULENOFREQUENCIES );
-                    $("#timingrulefrequency").val( p.TIMINGRULEFREQUENCY );
-                    $("#treatmentrule").val( p.TREATMENTRULE );
-                    $("#totalnumberoftreatments").val( p.TOTALNUMBEROFTREATMENTS );
-                    medical.change_values();
-                });
+                common.ajax_post("medical", formdata)
+                    .then(function(result) {
+                        var p = jQuery.parseJSON(result)[0];
+                        $("#treatmentname").val( html.decode(p.TREATMENTNAME));
+                        $("#dosage").val( html.decode(p.DOSAGE) );
+                        $("#cost").currency("value", p.COST );
+                        $("#comments").val( html.decode(p.COMMENTS) );
+                        $("#totalnumberoftreatments").val( p.TOTALNUMBEROFTREATMENTS );
+                        $("#singlemulti").val( p.TOTALNUMBEROFTREATMENTS == 1 ? "0" : "1" );
+                        medical.change_singlemulti();
+                        $("#timingrule").val( p.TIMINGRULE );
+                        $("#timingrulenofrequencies").val( p.TIMINGRULENOFREQUENCIES );
+                        $("#timingrulefrequency").val( p.TIMINGRULEFREQUENCY );
+                        $("#treatmentrule").val( p.TREATMENTRULE );
+                        $("#totalnumberoftreatments").val( p.TOTALNUMBEROFTREATMENTS );
+                        medical.change_values();
+                    });
             });
 
             $("#timingrule").change(medical.change_values);

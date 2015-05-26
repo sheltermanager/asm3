@@ -86,14 +86,16 @@ $(function() {
                     click: function() { stocklevel.new_level(); }},
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dsl", 
                      click: function() { 
-                         tableform.delete_dialog(function() {
-                             tableform.buttons_default_state(buttons);
-                             var ids = tableform.table_ids(table);
-                             common.ajax_post(controller.name, "mode=delete&ids=" + ids , function() {
+                         tableform.delete_dialog()
+                             .then(function() {
+                                 tableform.buttons_default_state(buttons);
+                                 var ids = tableform.table_ids(table);
+                                 return common.ajax_post(controller.name, "mode=delete&ids=" + ids);
+                             })
+                            .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
                                  tableform.table_update(table);
                              });
-                         });
                      } 
                  },
                  { id: "viewlocation", type: "dropdownfilter", 
@@ -180,15 +182,16 @@ $(function() {
             // look up the last stock we saw with that name to autocomplete
             $("#name").change(function() {
                 if (!$("#description").val() && !$("#unitname").val()) {
-                    common.ajax_post("stocklevel", "mode=lastname&name=" + $("#name").val(), function(data) {
-                        if (data != "||") {
-                            var d = data.split("|");
-                            $("#description").val(d[0]);
-                            $("#unitname").val(d[1]);
-                            $("#total").val(d[2]);
-                            $("#balance").val(d[2]);
-                        }
-                    });
+                    common.ajax_post("stocklevel", "mode=lastname&name=" + $("#name").val())
+                        .then(function(data) {
+                            if (data != "||") {
+                                var d = data.split("|");
+                                $("#description").val(d[0]);
+                                $("#unitname").val(d[1]);
+                                $("#total").val(d[2]);
+                                $("#balance").val(d[2]);
+                            }
+                        });
                 }
             });
 

@@ -55,20 +55,21 @@ $(function() {
                     // Only allow destination account to be overridden when the received date
                     // hasn't been set yet.
                     $("#destaccount").closest("tr").toggle( config.bool("DonationTrxOverride") && !row.DATE );
-                    tableform.dialog_show_edit(dialog, row, function() {
-                        if (!donations.validation()) { tableform.dialog_enable_buttons(); return; }
-                        tableform.fields_update_row(dialog.fields, row);
-                        donations.set_extra_fields(row);
-                        tableform.fields_post(dialog.fields, "mode=update&donationid=" + row.ID, controller.name, function(response) {
+                    tableform.dialog_show_edit(dialog, row)
+                        .then(function() {
+                            if (!donations.validation()) { tableform.dialog_enable_buttons(); return; }
+                            tableform.fields_update_row(dialog.fields, row);
+                            donations.set_extra_fields(row);
+                            return tableform.fields_post(dialog.fields, "mode=update&donationid=" + row.ID, controller.name);
+                        })
+                        .then(function(response) {
                             donations.calculate_total();
                             tableform.table_update(table);
                             tableform.dialog_close();
-                        },
-                        function(response) {
-                            tableform.dialog_error(response);
+                        })
+                        .fail(function() {
                             tableform.dialog_enable_buttons();
                         });
-                    });
                 },
                 complete: function(row) {
                 },
@@ -127,9 +128,12 @@ $(function() {
                         $("#type").select("value", config.integer("AFDefaultDonationType"));
                         $("#giftaid").select("value", "0");
                         donations.type_change();
-                        tableform.dialog_show_add(dialog, function() {
-                            if (!donations.validation()) { tableform.dialog_enable_buttons(); return; }
-                            tableform.fields_post(dialog.fields, "mode=create", controller.name, function(response) {
+                        tableform.dialog_show_add(dialog)
+                            .then(function() {
+                                if (!donations.validation()) { tableform.dialog_enable_buttons(); return; }
+                                return tableform.fields_post(dialog.fields, "mode=create", controller.name);
+                            })
+                            .then(function(response) {
                                 var row = {};
                                 row.ID = response;
                                 tableform.fields_update_row(dialog.fields, row);
@@ -138,37 +142,40 @@ $(function() {
                                 tableform.table_update(table);
                                 donations.calculate_total();
                                 tableform.dialog_close();
-                            }, function() {
+                            })
+                            .always(function() {
                                 tableform.dialog_enable_buttons();   
                             });
-                        });
                      } 
                  },
                  { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "odod", 
                      click: function() { 
-                         tableform.delete_dialog(function() {
-                             tableform.buttons_default_state(buttons);
-                             var ids = tableform.table_ids(table);
-                             common.ajax_post(controller.name, "mode=delete&ids=" + ids , function() {
+                         tableform.delete_dialog()
+                             .then(function() {
+                                 tableform.buttons_default_state(buttons);
+                                 var ids = tableform.table_ids(table);
+                                 return common.ajax_post(controller.name, "mode=delete&ids=" + ids);
+                             })
+                             .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
                                  tableform.table_update(table);
-                             donations.calculate_total();
+                                 donations.calculate_total();
                              });
-                         });
                      } 
                  },
                  { id: "receive", text: _("Receive"), icon: "complete", enabled: "multi", tooltip: _("Mark selected payments received"), perm: "ocod",
                      click: function() {
                          var ids = tableform.table_ids(table);
-                         common.ajax_post(controller.name, "mode=receive&ids=" + ids, function() {
-                             $.each(controller.rows, function(i, v) {
-                                if (tableform.table_id_selected(v.ID)) {
-                                    v.DATE = format.date_iso(new Date());
-                                }
+                         common.ajax_post(controller.name, "mode=receive&ids=" + ids)
+                             .then(function() {
+                                 $.each(controller.rows, function(i, v) {
+                                    if (tableform.table_id_selected(v.ID)) {
+                                        v.DATE = format.date_iso(new Date());
+                                    }
+                                 });
+                                 tableform.table_update(table);
+                                 donations.calculate_total();
                              });
-                             tableform.table_update(table);
-                             donations.calculate_total();
-                         });
                      }
                  },
                  { id: "document", text: _("Receipt/Invoice"), icon: "document", enabled: "multi", perm: "gaf", 
@@ -214,8 +221,8 @@ $(function() {
 
         update_movements: function(personid) {
             var formdata = "mode=personmovements&personid=" + personid;
-            common.ajax_post(controller.name, "mode=personmovements&personid=" + personid,
-                function(result) {
+            common.ajax_post(controller.name, "mode=personmovements&personid=" + personid)
+                .then(function(result) {
                     var h = "<option value=\"0\"></option>";
                     $.each(jQuery.parseJSON(result), function(i,v) {
                         h += "<option value=\"" + v.ID + "\">";
@@ -227,11 +234,7 @@ $(function() {
                         $("#movement").select("value", donations.dialog_row.MOVEMENTID);
                     }
                     $("#movement").closest("tr").fadeIn();
-                },
-                function(jqxhr, textstatus, response) {
-                    header.show_error(response);
-                }
-            );
+                });
         },
 
         set_extra_fields: function(row) {

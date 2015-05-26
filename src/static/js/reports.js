@@ -176,14 +176,16 @@ $(function() {
                  },
                  { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
                      click: function() { 
-                         tableform.delete_dialog(function() {
-                             tableform.buttons_default_state(buttons);
-                             var ids = tableform.table_ids(table);
-                             common.ajax_post("reports", "mode=delete&ids=" + ids , function() {
+                         tableform.delete_dialog()
+                             .then(function() {
+                                 tableform.buttons_default_state(buttons);
+                                 var ids = tableform.table_ids(table);
+                                 return common.ajax_post("reports", "mode=delete&ids=" + ids);
+                             })
+                             .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
                                  tableform.table_update(table);
                              });
-                         });
                      } 
                  },
                  { id: "browse", text: _("Browse sheltermanager.com"), icon: "logo", enabled: "always", tooltip: _("Get more reports from sheltermanager.com"),
@@ -288,10 +290,13 @@ $(function() {
             var headfootbuttons = {};
             headfootbuttons[_("Save")] = function() {
                 var formdata = "mode=headfoot&" + $(".headfoot").toPOST();
-                common.ajax_post("reports", formdata, function() { 
-                    header.show_info(_("Updated."));
-                    $("#dialog-headfoot").dialog("close");
-                });
+                common.ajax_post("reports", formdata)
+                    .then(function() { 
+                        header.show_info(_("Updated."));
+                    })
+                    .always(function() {
+                        $("#dialog-headfoot").dialog("close");
+                    });
             };
             headfootbuttons[_("Cancel")] = function() { $(this).dialog("close"); };
             $("#dialog-headfoot").dialog({
@@ -352,10 +357,13 @@ $(function() {
                         }
                     }
                 });
-                common.ajax_post("reports", formdata, function() { 
-                    header.hide_loading();
-                    common.route_reload(true);
-                }, function() { header.hide_loading(); });
+                common.ajax_post("reports", formdata)
+                    .then(function() { 
+                        common.route_reload(true);
+                    })
+                    .always(function() {
+                        header.hide_loading(); 
+                    });
             });
         },
 
@@ -367,10 +375,16 @@ $(function() {
                 var formdata = "mode=sql&sql=" + encodeURIComponent($("#sql").val());
                 $("#asm-report-error").fadeOut();
                 header.show_loading();
-                common.ajax_post("reports", formdata, function() { 
-                    tableform.dialog_info(_("SQL is syntactically correct."));
-                    header.hide_loading();
-                }, function() { header.hide_loading(); });
+                common.ajax_post("reports", formdata)
+                    .then(function() { 
+                        tableform.dialog_info(_("SQL is syntactically correct."));
+                    })
+                    .fail(function(err) {
+                        tableform.dialog_error(err);
+                    })
+                    .always(function() {
+                        header.hide_loading();
+                    });
             });
 
             $("#button-genhtml")
@@ -379,13 +393,16 @@ $(function() {
                 var formdata = "mode=genhtml&sql=" + encodeURIComponent($("#sql").val());
                 $("#asm-report-error").fadeOut();
                 header.show_loading();
-                common.ajax_post("reports", formdata, function(result) { 
-                    $("#html").val(result);
-                    header.hide_loading();
-                }, function(response) { 
-                    header.hide_loading(); 
-                    tableform.dialog_error(response);
-                });
+                common.ajax_post("reports", formdata)
+                    .then(function(result) { 
+                        $("#html").val(result);
+                    })
+                    .fail(function(err) {
+                        tableform.dialog_error(err);
+                    })
+                    .always(function() {
+                        header.hide_loading(); 
+                    });
             });
         },
 
@@ -410,21 +427,24 @@ $(function() {
         browse_smcom: function() {
             header.show_loading();
             var formdata = "mode=smcomlist";
-            common.ajax_post("reports", formdata, function(result) { 
-                $("#table-smcom").html(result);
-                $("#table-smcom").table({ sticky_header: false, filter: true, sortList: [[1, 0]] });
-                $("#button-install").button("disable");
-                $("#table-smcom input").click(function() {
-                    if ($("#table-smcom input:checked").length > 0) {
-                        $("#button-install").button("enable");
-                    }
-                    else {
-                        $("#button-install").button("disable");
-                    }
+            common.ajax_post("reports", formdata)
+                .then(function(result) { 
+                    $("#table-smcom").html(result);
+                    $("#table-smcom").table({ sticky_header: false, filter: true, sortList: [[1, 0]] });
+                    $("#button-install").button("disable");
+                    $("#table-smcom input").click(function() {
+                        if ($("#table-smcom input:checked").length > 0) {
+                            $("#button-install").button("enable");
+                        }
+                        else {
+                            $("#button-install").button("disable");
+                        }
+                    });
+                    $("#dialog-browse").dialog("open");
+                })
+                .always(function() {
+                    header.hide_loading();
                 });
-                header.hide_loading();
-                $("#dialog-browse").dialog("open");
-            });
         },
 
         validation: function() {

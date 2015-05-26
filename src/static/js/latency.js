@@ -3,9 +3,9 @@
 
 $(function() {
 
-    var formdata = "junk=123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
-
     var latency = {
+
+        formdata: "junk=123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890",
 
         render: function() {
             return [
@@ -20,15 +20,18 @@ $(function() {
 
             $("#button-test").button().click(function() {
                 $("#button-test").button("disable");
-                common.ajax_post("latency", formdata, function(r, ms) {
-                   $("#testoutput").append("Test 1: " + ms + "ms<br/>");
-                    common.ajax_post("latency", formdata, function(r, ms) {
-                       $("#testoutput").append("Test 2: " + ms + "ms<br/>");
-                        common.ajax_post("latency", formdata, function(r, ms) {
-                           $("#testoutput").append("Test 3: " + ms + "ms<br/>");
-                        });
+                common.ajax_post("latency", latency.formdata)
+                    .then(function(r, ms) {
+                        $("#testoutput").append("Test 1: " + ms + "ms<br/>");
+                        return common.ajax_post("latency", latency.formdata);
+                    })
+                    .then(function(r, ms) {
+                        $("#testoutput").append("Test 2: " + ms + "ms<br/>");
+                        return common.ajax_post("latency", latency.formdata);
+                    })
+                    .then(function(r, ms) {
+                        $("#testoutput").append("Test 3: " + ms + "ms<br/>");
                     });
-                });
             });
 
         },

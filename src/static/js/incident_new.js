@@ -110,17 +110,18 @@ $(function() {
                 }
                 header.show_loading(_("Creating..."));
                 var formdata = $("input, textarea, select").toPOST();
-                common.ajax_post("incident_new", formdata, function(incidentid) { 
-                    if (mode == "addedit") {
-                        common.route("incident?id=" + incidentid);
-                    }
-                    else if (mode == "add") {
-                        header.show_info(_("Incident {0} successfully created.").replace("{0}", incidentid));
+                common.ajax_post("incident_new", formdata)
+                    .then(function(incidentid) { 
+                        if (mode == "addedit") {
+                            common.route("incident?id=" + incidentid);
+                        }
+                        else if (mode == "add") {
+                            header.show_info(_("Incident {0} successfully created.").replace("{0}", incidentid));
+                        }
+                    })
+                    .always( function() {
                         $("#asm-content button").button("enable");
-                    }
-                }, function() {
-                    $("#asm-content button").button("enable");
-                });
+                    });
             };
 
             $("#add").button().click(function() {

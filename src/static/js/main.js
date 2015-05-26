@@ -639,34 +639,34 @@ $(function() {
                 if (!validate.notblank(["expires", "message"])) { return; }
                 $("#dialog-addmessage").disable_dialog_buttons();
                 var formdata = "mode=addmessage&" + $("#dialog-addmessage .asm-textbox, #dialog-addmessage textarea, #dialog-addmessage select, #dialog-addmessage .asm-checkbox").toPOST();
-                common.ajax_post("main", formdata, function() { 
-                    var h = "<tr>\n";
-                    h += "<td>\n";
-                    h += "<span style=\"white-space: nowrap; padding-right: 5px;\">" + asm.user + "</span>\n";
-                    h += "</td><td>";
-                    h += "<span style=\"white-space: nowrap; padding-right: 5px;\">";
-                    if ($("#priority").val() == 1) {
-                        h += '<span class="ui-icon ui-icon-alert" style="float: left"></span>\n';
-                    }
-                    else {
-                        h += '<span class="ui-icon ui-icon-info" style="float: left"></span>\n';
-                    }
-                    h += $("#expires").val();
-                    h += "</span></td>";
-                    if ($("#priority").val() == 1) {
-                        h += '<td><span class="mtext" style="font-weight: bold !important">' + $("#message").val() + '</span></td>\n';
-                    }
-                    else {
-                        h += '<td><span class="mtext">' + $("#message").val() + '</span></td>\n';
-                    }
-                    h += "</tr>";
-                    $("#asm-messageboard > tbody:first").prepend(h);
-                    $("#dialog-addmessage").enable_dialog_buttons();
-                    $("#dialog-addmessage").dialog("close");
-                }, function() {
-                    $("#dialog-addmessage").dialog("close");
-                    $("#dialog-addmessage").enable_dialog_buttons();
-                });
+                common.ajax_post("main", formdata)
+                    .then(function() { 
+                        var h = "<tr>\n";
+                        h += "<td>\n";
+                        h += "<span style=\"white-space: nowrap; padding-right: 5px;\">" + asm.user + "</span>\n";
+                        h += "</td><td>";
+                        h += "<span style=\"white-space: nowrap; padding-right: 5px;\">";
+                        if ($("#priority").val() == 1) {
+                            h += '<span class="ui-icon ui-icon-alert" style="float: left"></span>\n';
+                        }
+                        else {
+                            h += '<span class="ui-icon ui-icon-info" style="float: left"></span>\n';
+                        }
+                        h += $("#expires").val();
+                        h += "</span></td>";
+                        if ($("#priority").val() == 1) {
+                            h += '<td><span class="mtext" style="font-weight: bold !important">' + $("#message").val() + '</span></td>\n';
+                        }
+                        else {
+                            h += '<td><span class="mtext">' + $("#message").val() + '</span></td>\n';
+                        }
+                        h += "</tr>";
+                        $("#asm-messageboard > tbody:first").prepend(h);
+                    })
+                    .always(function() {
+                        $("#dialog-addmessage").enable_dialog_buttons();
+                        $("#dialog-addmessage").dialog("close");
+                    });
             };
             b[_("Cancel")] = function() { $(this).dialog("close"); };
 
@@ -735,7 +735,10 @@ $(function() {
                 .click(function() {
                 var t = $(this);
                 var formdata = "mode=delmessage&id=" + String(t.attr("data"));
-                common.ajax_post("main", formdata, function() { t.closest("tr").fadeOut(); });
+                common.ajax_post("main", formdata)
+                    .then(function() { 
+                        t.closest("tr").fadeOut(); 
+                    });
             });
 
             $(".messagetoggle").each(function() {

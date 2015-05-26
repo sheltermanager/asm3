@@ -83,15 +83,16 @@ $(function() {
                 $("#log").button("disable");
                 header.show_loading(_("Creating..."));
                 var formdata = $("input, select, textarea").toPOST() + "&mode=" + controller.mode;
-                common.ajax_post("log_new", formdata, function() { 
-                    header.hide_loading();
-                    header.show_info(_("Log successfully added."));
-                    $("#logdate").datepicker("setDate", new Date());
-                    $("#entry").val("");
-                    $("#log").button("enable");
-                }, function() {
-                    $("#log").button("enable");
-                });
+                common.ajax_post("log_new", formdata)
+                    .then(function() { 
+                        header.show_info(_("Log successfully added."));
+                        $("#logdate").datepicker("setDate", new Date());
+                        $("#entry").val("");
+                    })
+                    .always(function() {
+                        header.hide_loading();
+                        $("#log").button("enable");
+                    });
             });
         },
 

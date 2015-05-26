@@ -446,13 +446,14 @@
                 county = dialogadd.find("[data='county']").val(), 
                 postcode = dialogadd.find("[data='postcode']").val();
             var addrhash = geo.address_hash(address, town, county, postcode);
-            geo.get_lat_long(address, town, county, postcode, function(lat, lon) {
-                if (lat) {
-                    var latlong = lat + "," + lon + "," + addrhash;
-                    var formdata = "personid=" + personid + "&latlong=" + latlong;
-                    common.ajax("person", formdata);
-                }
-            });
+            geo.get_lat_long(address, town, county, postcode)
+                .then(function(lat, lon) {
+                    if (lat) {
+                        var latlong = lat + "," + lon + "," + addrhash;
+                        var formdata = "personid=" + personid + "&latlong=" + latlong;
+                        common.ajax("person", formdata);
+                    }
+                });
         },
         /**
          * Posts the add dialog to the backend to create the owner

@@ -34,8 +34,6 @@ $(function() {
                         })
                         .then(function() {
                             tableform.table_update(table);
-                        })
-                        .always(function() {
                             tableform.dialog_close();
                         });
                 },
@@ -72,8 +70,6 @@ $(function() {
                                  row.DIETDESCRIPTION = common.get_field(controller.diettypes, row.DIETID, "DIETDESCRIPTION");
                                  controller.rows.push(row);
                                  tableform.table_update(table);
-                             })
-                             .always(function() {
                                  tableform.dialog_close();
                              });
                      } 

@@ -157,13 +157,11 @@ $(function() {
                         var animalid = $(ui.draggable).attr("data");
                         var droptarget = $(this);
                         header.show_loading(_("Moving..."));
-                        common.ajax_post("shelterview", "locationid=" + locationid + "&animalid=" + animalid, function() {
-                            header.hide_loading();
-                            droptarget.removeClass("transparent");
-                        }, function() {
-                            header.hide_loading();
-                            droptarget.removeClass("transparent");
-                        });
+                        common.ajax_post("shelterview", "locationid=" + locationid + "&animalid=" + animalid)
+                            .always(function() {
+                                header.hide_loading();
+                                droptarget.removeClass("transparent");
+                            });
                     }
                 });
             }

@@ -181,20 +181,29 @@ $(function() {
             $("#button-complete").button({disabled: true}).click(function() {
                 $("#button-complete").button("disable");
                 var formdata = "mode=complete&ids=" + $("#table-waitinglist input").tableCheckedData();
-                common.ajax_post("waitinglist_results", formdata, function() { common.route_reload(); });
+                common.ajax_post("waitinglist_results", formdata)
+                    .then(function() { 
+                        common.route_reload(); 
+                    });
             });
 
             $(".bhighlight").button({disabled: true}).click(function() {
                 var formdata = "mode=highlight&himode=" + $(this).attr("data") + "&ids=" + $("#table-waitinglist input").tableCheckedData();
-                common.ajax_post("waitinglist_results", formdata, function() { common.route_reload(); });
+                common.ajax_post("waitinglist_results", formdata)
+                    .then(function() { 
+                        common.route_reload(); 
+                    });
             });
 
             $("#button-delete").button({disabled: true}).click(function() {
-                tableform.delete_dialog(function() {
-                    var formdata = "mode=delete&ids=" + $("#table-waitinglist input").tableCheckedData();
-                    $("#dialog-delete").disable_dialog_buttons();
-                    common.ajax_post("waitinglist_results", formdata, function() { common.route_reload(); });
-                });
+                tableform.delete_dialog()
+                    .then(function() {
+                        var formdata = "mode=delete&ids=" + $("#table-waitinglist input").tableCheckedData();
+                        return common.ajax_post("waitinglist_results", formdata);
+                    })
+                    .then(function() { 
+                        common.route_reload(); 
+                    });
             });
         },
 

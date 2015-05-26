@@ -49,7 +49,7 @@ $(function() {
                 $("input[type='checkbox']").hide();
             }
             $("#submitcriteria").button().click(function() {
-                common.route("report_export?" + $("#criteriaform input, #criteriaform select").toPOST(true));
+                common.route("report_export?ajax=false&" + $("#criteriaform input, #criteriaform select").toPOST(true));
             });
         },
 

@@ -112,12 +112,13 @@ $(function() {
                 }
                 header.show_loading(_("Creating..."));
                 var formdata = $("input, textarea, select").toPOST();
-                common.ajax_post("person_new", formdata, function(personid) { 
-                    if (personid) { common.route("person?id=" + personid); }
-                    $("#asm-content button").button("enable");
-                }, function() {
-                    $("#asm-content button").button("enable");
-                });
+                common.ajax_post("person_new", formdata)
+                    .then(function(personid) { 
+                        if (personid) { common.route("person?id=" + personid); }
+                    })
+                    .always(function() {
+                        $("#asm-content button").button("enable");
+                    });
             };
 
             var similar_dialog = function() {
@@ -145,19 +146,20 @@ $(function() {
             var check_for_similar = function() {
                 if (!validation()) { return; }
                 var formdata = "mode=similar&" + $("#surname, #forenames, #address").toPOST();
-                common.ajax_post("person_embed", formdata, function(result) { 
-                    var people = jQuery.parseJSON(result);
-                    var rec = people[0];
-                    if (rec === undefined) {
-                        addPerson();
-                    }
-                    else {
-                        var disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + rec.OWNERNAME + "</a></span>";
-                        disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
-                        $(".similar-person").html(disp);
-                        similar_dialog();
-                    }
-                });
+                common.ajax_post("person_embed", formdata)
+                    .then(function(result) { 
+                        var people = jQuery.parseJSON(result);
+                        var rec = people[0];
+                        if (rec === undefined) {
+                            addPerson();
+                        }
+                        else {
+                            var disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + rec.OWNERNAME + "</a></span>";
+                            disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
+                            $(".similar-person").html(disp);
+                            similar_dialog();
+                        }
+                    });
             };
 
             var check_org = function() {

@@ -9,7 +9,7 @@ $(function() {
             var dialog = {
                 add_title: _("Add template"),
                 edit_title: _("Edit template"),
-                close_on_ok: true,
+                close_on_ok: false,
                 columns: 1,
                 width: 550,
                 fields: [
@@ -24,12 +24,14 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "NAME",
                 edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row, function() {
-                        tableform.fields_update_row(dialog.fields, row);
-                        tableform.fields_post(dialog.fields, "mode=update&name=" + row.NAME, "htmltemplates", function(response) {
+                    tableform.dialog_show_edit(dialog, row)
+                        .then(function() {
+                            tableform.fields_update_row(dialog.fields, row);
+                            tableform.fields_post(dialog.fields, "mode=update&name=" + row.NAME, "htmltemplates");
+                        })
+                        .then(function(response) {
                             tableform.table_update(table);
                         });
-                    });
                 },
                 columns: [
                     { field: "NAME", display: _("Name"), initialsort: true },
@@ -42,26 +44,30 @@ $(function() {
             var buttons = [
                  { id: "new", text: _("New Template"), icon: "new", enabled: "always", 
                      click: function() { 
-                         tableform.dialog_show_add(dialog, function() {
-                             tableform.fields_post(dialog.fields, "mode=create", "htmltemplates", function(response) {
+                         tableform.dialog_show_add(dialog)
+                             .then(function() {
+                                 return tableform.fields_post(dialog.fields, "mode=create", "htmltemplates");
+                             })
+                             .then(function(response) {
                                  var row = {};
                                  tableform.fields_update_row(dialog.fields, row);
                                  controller.rows.push(row);
                                  tableform.table_update(table);
                              });
-                         });
                      } 
                  },
                  { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
                      click: function() { 
-                         tableform.delete_dialog(function() {
-                             tableform.buttons_default_state(buttons);
-                             var names = tableform.table_ids(table);
-                             common.ajax_post("htmltemplates", "mode=delete&names=" + names, function() {
+                         tableform.delete_dialog()
+                             .then(function() {
+                                 tableform.buttons_default_state(buttons);
+                                 var names = tableform.table_ids(table);
+                                 return common.ajax_post("htmltemplates", "mode=delete&names=" + names);
+                             })
+                             .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
                                  tableform.table_update(table);
                              });
-                         });
                      } 
                  }
             ];

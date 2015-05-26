@@ -552,14 +552,15 @@ $(function() {
                 }
             }
             // Lookup the LATLONG and then show the map
-            geo.get_lat_long(p.OWNERADDRESS, p.OWNERTOWN, p.OWNERCOUNTY, p.OWNERPOSTCODE, function(lat, lon) {
-                var latlon = lat + "," + lon + "," + addrhash;
-                p.LATLONG = latlon;
-                $("#latlong").val(latlon);
-                // We updated the latlong, rather than dirtying the form, send it to the DB
-                common.ajax_post("person", "mode=latlong&personid=" + p.ID + "&latlong=" + encodeURIComponent(latlon));
-                if (showminimap) { person.show_mini_map(); }
-            });
+            geo.get_lat_long(p.OWNERADDRESS, p.OWNERTOWN, p.OWNERCOUNTY, p.OWNERPOSTCODE)
+                .then(function(lat, lon) {
+                    var latlon = lat + "," + lon + "," + addrhash;
+                    p.LATLONG = latlon;
+                    $("#latlong").val(latlon);
+                    // We updated the latlong, rather than dirtying the form, send it to the DB
+                    common.ajax_post("person", "mode=latlong&personid=" + p.ID + "&latlong=" + encodeURIComponent(latlon));
+                    if (showminimap) { person.show_mini_map(); }
+                });
         },
 
         bind: function() {
@@ -612,7 +613,10 @@ $(function() {
             // Diary task create ajax call
             var create_task = function(taskid) {
                 var formdata = "mode=exec&id=" + $("#personid").val() + "&tasktype=PERSON&taskid=" + taskid + "&seldate=" + $("#seldate").val();
-                common.ajax_post("diarytask", formdata, function() { common.route("person_diary?id=" + $("#personid").val()); });
+                common.ajax_post("diarytask", formdata)
+                    .then(function() { 
+                        common.route("person_diary?id=" + controller.person.ID); 
+                    });
             };
 
             // Diary task select date dialog
@@ -711,7 +715,11 @@ $(function() {
                 // and wipe out the values. The same problem doesn't exist
                 // for textboxes because they're blank and therefore ignored.
                 var formdata = "mode=save&id=" + $("#personid").val() + "&" + $("input, select, textarea").toPOST() + "&" + $("#ownertype").toPOST();
-                common.ajax_post("person", formdata, callback, function() { validate.dirty(true); });
+                common.ajax_post("person", formdata)
+                    .then(callback)
+                    .fail(function() { 
+                        validate.dirty(true); 
+                    });
             };
 
            // Toolbar buttons
@@ -726,10 +734,11 @@ $(function() {
                 var b = {}; 
                 b[_("Delete")] = function() { 
                     var formdata = "mode=delete&personid=" + $("#personid").val();
-                    common.ajax_post("person", formdata, function() { 
-                        validate.dirty(false);
-                        common.route("main"); 
-                    });
+                    common.ajax_post("person", formdata)
+                        .then(function() { 
+                            validate.dirty(false);
+                            common.route("main"); 
+                        });
                 };
                 b[_("Cancel")] = function() { $(this).dialog("close"); };
                 $("#dialog-delete").dialog({
@@ -747,10 +756,11 @@ $(function() {
                 mb[_("Merge")] = function() { 
                     $("#dialog-merge").dialog("close");
                     var formdata = "mode=merge&personid=" + $("#personid").val() + "&mergepersonid=" + $("#mergeperson").val();
-                    common.ajax_post("person", formdata, function() { 
-                        validate.dirty(false);
-                        common.route_reload(); 
-                    });
+                    common.ajax_post("person", formdata)
+                        .then(function() { 
+                            validate.dirty(false);
+                            common.route_reload(); 
+                        });
                 };
                 mb[_("Cancel")] = function() { $(this).dialog("close"); };
                 $("#dialog-merge").dialog({

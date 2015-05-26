@@ -28,7 +28,7 @@ $(function() {
                 edit_title: _("Edit form field"),
                 edit_perm: 'eof',
                 helper_text: _("Online form fields need a name and label."),
-                close_on_ok: true,
+                close_on_ok: false,
                 columns: 1,
                 width: 550,
                 fields: [
@@ -48,12 +48,18 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row, function() {
-                        tableform.fields_update_row(dialog.fields, row);
-                        tableform.fields_post(dialog.fields, "mode=update&formfieldid=" + row.ID, "onlineform", function(response) {
+                    tableform.dialog_show_edit(dialog, row, null, onlineform.check_lookups)
+                        .then(function() {
+                            tableform.fields_update_row(dialog.fields, row);
+                            return tableform.fields_post(dialog.fields, "mode=update&formfieldid=" + row.ID, "onlineform");
+                        })
+                        .then(function(response) {
                             tableform.table_update(table);
+                            tableform.dialog_close();
+                        })
+                        .fail(function() {
+                            tableform.dialog_enable_buttons();
                         });
-                    }, function() { onlineform.check_lookups(); });
                 },
                 columns: [
                     { field: "FIELDNAME", display: _("Name") },
@@ -68,27 +74,35 @@ $(function() {
             var buttons = [
                  { id: "new", text: _("New form field"), icon: "new", enabled: "always", 
                      click: function() { 
-                         tableform.dialog_show_add(dialog, function() {
-                             tableform.fields_post(dialog.fields, "mode=create&formid=" + controller.formid, "onlineform", function(response) {
+                         tableform.dialog_show_add(dialog, null, onlineform.check_lookups)
+                             .then(function() {
+                                return tableform.fields_post(dialog.fields, "mode=create&formid=" + controller.formid, "onlineform");
+                             })
+                             .then(function(response) {
                                  var row = {};
                                  row.ID = response;
                                  tableform.fields_update_row(dialog.fields, row);
                                  controller.rows.push(row);
                                  tableform.table_update(table);
+                                 tableform.dialog_close();
+                             })
+                             .fail(function() {
+                                 tableform.dialog_enable_buttons();
                              });
-                         }, function() { onlineform.check_lookups(); });
                      } 
                  },
                  { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
                      click: function() { 
-                         tableform.delete_dialog(function() {
-                             tableform.buttons_default_state(buttons);
-                             var ids = tableform.table_ids(table);
-                             common.ajax_post("onlineform", "mode=delete&ids=" + ids , function() {
+                         tableform.delete_dialog()
+                             .then(function() {
+                                 tableform.buttons_default_state(buttons);
+                                 var ids = tableform.table_ids(table);
+                                 return common.ajax_post("onlineform", "mode=delete&ids=" + ids);
+                             })
+                             .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
                                  tableform.table_update(table);
                              });
-                         });
                      } 
                  }
             ];

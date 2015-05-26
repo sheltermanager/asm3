@@ -30,15 +30,17 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row, function() {
-                        tableform.fields_update_row(dialog.fields, row);
-                        row.TRAPTYPENAME = common.get_field(controller.traptypes, row.TRAPTYPEID, "TRAPTYPENAME");
-                        row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
-                        tableform.fields_post(dialog.fields, "mode=update&traploanid=" + row.ID, controller.name, function(response) {
+                    tableform.dialog_show_edit(dialog, row)
+                        .then(function() {
+                            tableform.fields_update_row(dialog.fields, row);
+                            row.TRAPTYPENAME = common.get_field(controller.traptypes, row.TRAPTYPEID, "TRAPTYPENAME");
+                            row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
+                            return tableform.fields_post(dialog.fields, "mode=update&traploanid=" + row.ID, controller.name);
+                        })
+                        .then(function(response) {
                             tableform.table_update(table);
                             tableform.dialog_close();
                         });
-                    });
                 },
                 complete: function(row) {
                     if (row.RETURNDATE) { return true; }
@@ -75,8 +77,11 @@ $(function() {
                          if (controller.person) {
                              $("#person").personchooser("loadbyid", controller.person.ID);
                          }
-                         tableform.dialog_show_add(dialog, function() {
-                             tableform.fields_post(dialog.fields, "mode=create", controller.name, function(response) {
+                         tableform.dialog_show_add(dialog, null, traploan.type_change)
+                             .then(function() {
+                                 return tableform.fields_post(dialog.fields, "mode=create", controller.name);
+                             })
+                             .then(function(response) {
                                  var row = {};
                                  row.ID = response;
                                  tableform.fields_update_row(dialog.fields, row);
@@ -86,19 +91,20 @@ $(function() {
                                  tableform.table_update(table);
                                  tableform.dialog_close();
                              });
-                         }, function() { traploan.type_change(); });
                      } 
                  },
                  { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "datl",
                      click: function() { 
-                         tableform.delete_dialog(function() {
-                             tableform.buttons_default_state(buttons);
-                             var ids = tableform.table_ids(table);
-                             common.ajax_post(controller.name, "mode=delete&ids=" + ids , function() {
+                         tableform.delete_dialog()
+                             .then(function() {
+                                 tableform.buttons_default_state(buttons);
+                                 var ids = tableform.table_ids(table);
+                                 return common.ajax_post(controller.name, "mode=delete&ids=" + ids);
+                             }) 
+                             .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
                                  tableform.table_update(table);
                              });
-                         });
                      } 
                  }
             ];

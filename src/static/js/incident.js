@@ -371,14 +371,15 @@ $(function() {
                 }
             }
             // Lookup the LATLONG and then show the map
-            geo.get_lat_long(i.DISPATCHADDRESS, i.DISPATCHTOWN, i.DISPATCHCOUNTY, i.DISPATCHPOSTCODE, function(lat, lon) {
-                var latlon = lat + "," + lon + "," + addrhash;
-                i.DISPATCHLATLONG = latlon;
-                $("#latlong").val(latlon);
-                // We updated the latlong, rather than dirtying the form, send it to the DB
-                common.ajax_post("incident", "mode=latlong&incidentid=" + i.ACID + "&latlong=" + encodeURIComponent(latlon));
-                if (showminimap) { incident.show_mini_map(); }
-            });
+            geo.get_lat_long(i.DISPATCHADDRESS, i.DISPATCHTOWN, i.DISPATCHCOUNTY, i.DISPATCHPOSTCODE)
+                .then(function(lat, lon) {
+                    var latlon = lat + "," + lon + "," + addrhash;
+                    i.DISPATCHLATLONG = latlon;
+                    $("#latlong").val(latlon);
+                    // We updated the latlong, rather than dirtying the form, send it to the DB
+                    common.ajax_post("incident", "mode=latlong&incidentid=" + i.ACID + "&latlong=" + encodeURIComponent(latlon));
+                    if (showminimap) { incident.show_mini_map(); }
+                });
         },
 
         validation: function() {
@@ -446,7 +447,11 @@ $(function() {
                 }
                 validate.dirty(false);
                 var formdata = "mode=save&id=" + $("#incidentid").val() + "&" + $("input, select, textarea").toPOST();
-                common.ajax_post("incident", formdata, callback, function() { validate.dirty(true); });
+                common.ajax_post("incident", formdata)
+                    .then(callback)
+                    .fail(function() { 
+                        validate.dirty(true); 
+                    });
             };
 
             // Toolbar buttons
@@ -460,7 +465,10 @@ $(function() {
             $("#button-toanimal").button().click(function() {
                 $("#button-toanimal").button("disable");
                 var formdata = "mode=toanimal&id=" + $("#incidentid").val();
-                common.ajax_post("incident", formdata, function(result) { common.route("animal?id=" + result); });
+                common.ajax_post("incident", formdata)
+                    .then(function(result) { 
+                        common.route("animal?id=" + result); 
+                    });
             });
 
             $("#button-email").button().click(function() {
@@ -468,10 +476,11 @@ $(function() {
                 b[_("Send")] = function() { 
                     var formdata = "mode=email&" +
                         $("#dialog-email input, #dialog-email select, #dialog-email textarea").toPOST();
-                    common.ajax_post("incident", formdata, function() { 
-                        header.show_info(_("Message successfully sent"));
-                        $("#dialog-email").dialog("close");
-                    });
+                    common.ajax_post("incident", formdata)
+                        .then(function() { 
+                            header.show_info(_("Message successfully sent"));
+                            $("#dialog-email").dialog("close");
+                        });
                 };
                 b[_("Cancel")] = function() { $(this).dialog("close"); };
                 $("#dialog-email").dialog({
@@ -526,9 +535,14 @@ $(function() {
                 b[_("Delete")] = function() { 
                     var formdata = "mode=delete&id=" + $("#incidentid").val();
                     $("#dialog-delete").disable_dialog_buttons();
-                    common.ajax_post("incident", formdata, function() { 
-                        common.route("main"); $("#dialog-delete").dialog("close"); 
-                    }, function() { $("#dialog-delete").dialog("close"); });
+                    common.ajax_post("incident", formdata)
+                        .then(function() { 
+                            $("#dialog-delete").dialog("close"); 
+                            common.route("main");
+                        })
+                        .fail(function() { 
+                            $("#dialog-delete").dialog("close"); 
+                        });
                 };
                 b[_("Cancel")] = function() { $(this).dialog("close"); };
                 $("#dialog-delete").dialog({

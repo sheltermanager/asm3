@@ -732,14 +732,15 @@ $(function() {
 
         // Update the units available for the selected location
         update_units: function() {
-            common.ajax_post("animal_new", "mode=units&locationid=" + $("#location").val(), function(data) {
-                var src = [];
-                $.each(html.decode(data).split("&&"), function(i, v) {
-                    var u = v.split("|");
-                    src.push({ label: u[0] + (u[1] == "1" ? ' ' + _("(available)") : ''), value: u[0] });
+            common.ajax_post("animal_new", "mode=units&locationid=" + $("#location").val())
+                .then(function(data) {
+                    var src = [];
+                    $.each(html.decode(data).split("&&"), function(i, v) {
+                        var u = v.split("|");
+                        src.push({ label: u[0] + (u[1] == "1" ? ' ' + _("(available)") : ''), value: u[0] });
+                    });
+                    $("#unit").autocomplete({ source: src });
                 });
-                $("#unit").autocomplete({ source: src });
-            });
         },
 
         /** 
@@ -1066,14 +1067,15 @@ $(function() {
                 "&animaltypeid=" + $("#animaltype").val() +
                 "&entryreasonid=" + $("#entryreason").val() +
                 "&speciesid=" + $("#species").val();
-            common.ajax_post("animal", formdata, function(result) { 
-                var codes = result.split("||");
-                $("#sheltercode").val(html.decode(codes[0]));
-                $("#shortcode").val(html.decode(codes[1]));
-                $("#uniquecode").val(codes[2]);
-                $("#yearcode").val(codes[3]);
-                validate.dirty(true);
-            });
+            common.ajax_post("animal", formdata)
+                .then(function(result) { 
+                    var codes = result.split("||");
+                    $("#sheltercode").val(html.decode(codes[0]));
+                    $("#shortcode").val(html.decode(codes[1]));
+                    $("#uniquecode").val(codes[2]);
+                    $("#yearcode").val(codes[3]);
+                    validate.dirty(true);
+                });
         },
 
         /**
@@ -1225,9 +1227,10 @@ $(function() {
             // Diary task create ajax call
             var create_task = function(taskid) {
                 var formdata = "mode=exec&id=" + controller.animal.ID + "&tasktype=ANIMAL&taskid=" + taskid + "&seldate=" + $("#seldate").val();
-                common.ajax_post("diarytask", formdata, function(result) { 
-                    common.route("animal_diary?id=" + controller.animal.ID);
-                });
+                common.ajax_post("diarytask", formdata)
+                    .then(function(result) { 
+                        common.route("animal_diary?id=" + controller.animal.ID);
+                    });
             };
 
             // Diary task select date dialog
@@ -1328,7 +1331,11 @@ $(function() {
                 }
                 validate.dirty(false);
                 var formdata = "mode=save&id=" + $("#animalid").val() + "&" + $("input, select, textarea").toPOST();
-                common.ajax_post("animal", formdata, callback, function() { validate.dirty(true); });
+                common.ajax_post("animal", formdata)
+                    .then(callback)
+                    .fail(function() {
+                        validate.dirty(true); 
+                    });
             };
 
             // Toolbar buttons
@@ -1342,7 +1349,10 @@ $(function() {
             $("#button-clone").button().click(function() {
                 $("#button-clone").button("disable");
                 var formdata = "mode=clone&animalid=" + $("#animalid").val();
-                common.ajax_post("animal", formdata, function(result) { common.route("animal?id=" + result + "&cloned=true"); });
+                common.ajax_post("animal", formdata)
+                    .then(function(result) { 
+                        common.route("animal?id=" + result + "&cloned=true"); 
+                    });
             });
 
             $("#button-delete").button().click(function() {
@@ -1350,9 +1360,14 @@ $(function() {
                 b[_("Delete")] = function() { 
                     $("#dialog-delete").disable_dialog_buttons();
                     var formdata = "mode=delete&animalid=" + $("#animalid").val();
-                    common.ajax_post("animal", formdata, function() { 
-                        common.route("main"); $("#dialog-delete").dialog("close"); 
-                    }, function() { $("#dialog-delete").dialog("close"); });
+                    common.ajax_post("animal", formdata)
+                        .then(function() { 
+                            $("#dialog-delete").dialog("close"); 
+                            common.route("main");
+                        })
+                        .fail(function() {
+                            $("#dialog-delete").dialog("close"); 
+                        });
                 };
                 b[_("Cancel")] = function() { $(this).dialog("close"); };
                 $("#dialog-delete").dialog({
@@ -1383,11 +1398,11 @@ $(function() {
                 .click(function() {
                 validate.dirty(false);
                 var formdata = "mode=randomname&sex=" + $("#sex").val();
-                common.ajax_post("animal", formdata, function(result) { 
-                    $("#animalname").val(result);
-                    validate.dirty(true);
-                });
-
+                common.ajax_post("animal", formdata)
+                    .then(function(result) { 
+                        $("#animalname").val(result);
+                        validate.dirty(true);
+                    });
             });
 
             $("#button-commentstomedia")
@@ -1396,10 +1411,11 @@ $(function() {
                 .click(function() {
                 $("#button-commentstomedia").button("disable");
                 var formdata = "mode=webnotes&id=" + $("#animalid").val() + "&" + $("#comments").toPOST();
-                common.ajax_post("animal", formdata, function(result) { 
-                    $("#button-commentstomedia").button("enable");
-                    header.show_info(_("Comments copied to web preferred media."));
-                });
+                common.ajax_post("animal", formdata)
+                    .then(function(result) { 
+                        $("#button-commentstomedia").button("enable");
+                        header.show_info(_("Comments copied to web preferred media."));
+                    });
             });
 
             // Events that trigger rechecking of the on-screen fields

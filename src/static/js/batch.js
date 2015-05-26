@@ -36,11 +36,12 @@ $(function() {
             $("#p-" + btn).show();
             $("#button-" + btn).button("disable");
             $("#progress").show().progressbar({ value: false });
-            common.ajax_post("batch", formdata, function() {
-                $("#button-" + btn).button("enable");
-                $("#progress").hide();
-                $("#tasks p").show();
-            });
+            common.ajax_post("batch", formdata)
+                .then(function() {
+                    $("#button-" + btn).button("enable");
+                    $("#progress").hide();
+                    $("#tasks p").show();
+                });
         },
 
         bind: function() {
