@@ -597,58 +597,6 @@ $(function() {
             });
 
 
-            var emailbuttons = { };
-            emailbuttons[_("Send")] = function() {
-                if (!validate.notblank([ "emailto" ])) { return; }
-                var formdata = "mode=email&email=" + encodeURIComponent($("#emailto").val()) + 
-                    "&emailnote=" + encodeURIComponent($("#emailnote").val()) + 
-                    "&ids=" + $(".asm-mediaicons input").tableCheckedData();
-                $("#dialog-email").dialog("close");
-                common.ajax_post(controller.name, formdata)
-                    .then(function(result) { 
-                        header.show_info(_("Email successfully sent to {0}").replace("{0}", result));
-                    });
-            };
-            emailbuttons[_("Cancel")] = function() {
-                $("#dialog-email").dialog("close");
-            };
-
-            $("#dialog-email").dialog({
-                autoOpen: false,
-                width: 550,
-                modal: true,
-                dialogClass: "dialogshadow",
-                show: dlgfx.add_show,
-                hide: dlgfx.add_hide,
-                buttons: emailbuttons
-            });
-
-            var emailpdfbuttons = { };
-            emailpdfbuttons[_("Send")] = function() {
-                if (!validate.notblank([ "emailpdfto" ])) { return; }
-                var formdata = "mode=emailpdf&email=" + encodeURIComponent($("#emailpdfto").val()) + 
-                    "&emailnote=" + encodeURIComponent($("#emailpdfnote").val()) + 
-                    "&ids=" + $(".asm-mediaicons input").tableCheckedData();
-                $("#dialog-emailpdf").dialog("close");
-                common.ajax_post(controller.name, formdata)
-                    .then(function(result) { 
-                        header.show_info(_("Email successfully sent to {0}").replace("{0}", result));
-                    });
-            };
-            emailpdfbuttons[_("Cancel")] = function() {
-                $("#dialog-emailpdf").dialog("close");
-            };
-
-            $("#dialog-emailpdf").dialog({
-                autoOpen: false,
-                width: 550,
-                modal: true,
-                dialogClass: "dialogshadow",
-                show: dlgfx.add_show,
-                hide: dlgfx.add_hide,
-                buttons: emailpdfbuttons
-            });
-
             var addbuttons = { };
             addbuttons[_("Attach")] = media.post_file;
             addbuttons[_("Cancel")] = function() {
@@ -803,7 +751,16 @@ $(function() {
                 if (controller.person) {
                     $("#emailto").val(controller.person.EMAILADDRESS);
                 }
-                $("#dialog-email").dialog("open");
+                tableform.show_okcancel_dialog("#dialog-email", _("Send"), { width: 550, notblank: [ "emailto" ] })
+                    .then(function() {
+                        var formdata = "mode=email&email=" + encodeURIComponent($("#emailto").val()) + 
+                            "&emailnote=" + encodeURIComponent($("#emailnote").val()) + 
+                            "&ids=" + $(".asm-mediaicons input").tableCheckedData();
+                        return common.ajax_post(controller.name, formdata);
+                    })
+                    .then(function(result) { 
+                        header.show_info(_("Email successfully sent to {0}").replace("{0}", result));
+                    });
             });
 
             $("#button-emailpdf").button({disabled: true}).click(function() {
@@ -811,7 +768,17 @@ $(function() {
                 if (controller.person) {
                     $("#emailto").val(controller.person.EMAILADDRESS);
                 }
-                $("#dialog-emailpdf").dialog("open");
+                tableform.show_okcancel_dialog("#dialog-emailpdf", _("Send"), { width: 550, notblank: [ "emailpdfto" ] })
+                    .then(function() {
+                        var formdata = "mode=emailpdf&email=" + encodeURIComponent($("#emailpdfto").val()) + 
+                            "&emailnote=" + encodeURIComponent($("#emailpdfnote").val()) + 
+                            "&ids=" + $(".asm-mediaicons input").tableCheckedData();
+                        $("#dialog-emailpdf").dialog("close");
+                        return common.ajax_post(controller.name, formdata);
+                    })
+                    .then(function(result) { 
+                        header.show_info(_("Email successfully sent to {0}").replace("{0}", result));
+                    });
             });
 
             $("#button-sign").button({disabled: true}).click(function() {
