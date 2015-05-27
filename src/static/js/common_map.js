@@ -38,6 +38,7 @@
             else if (asm.geoprovider == "mapquest") {
                 this._mapquest_get_lat_long(address, town, city, postcode, callback);
             }
+            return deferred.promise();
         },
 
         /** Gets the lat/long position for an address from google */
