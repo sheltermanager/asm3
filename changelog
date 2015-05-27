@@ -1,6 +1,7 @@
 37
 ================
 
+27/05/15 More dialog cleanup/refactoring, cleanup bug with email forms
 26/05/15 Promise refactoring complete #198
 26/05/15 Disable searchable on additional fields of wrong type #199
 25/05/15 Visually show selected media

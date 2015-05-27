@@ -107,8 +107,11 @@ def query(dbo, sql):
         s.execute(sql)
         c.commit()
         d = s.fetchall()
-        # Initalise our list of results
         l = []
+        cols = []
+        # Get the list of column names
+        for i in s.description:
+            cols.append(i[0].upper())
         for row in d:
             # Intialise a map for each row
             rowmap = {}
@@ -123,7 +126,7 @@ def query(dbo, sql):
                     if v is not None:
                         v = v.replace("`", "'")
                         v = v.replace("\x92", "'")
-                rowmap[s.description[i][0].upper()] = v
+                rowmap[cols[i]] = v
             l.append(rowmap)
         connect_cursor_close(dbo, c, s)
         return l

@@ -653,9 +653,6 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '</div>',
-                '<div id="dialog-delete" style="display: none" title="' + _("Delete") + '">',
-                    '<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>' + _("This will permanently remove this animal, are you sure?") + '</p>',
-                '</div>',
                 '<div id="button-share-body" class="asm-menu-body">',
                 '<ul class="asm-menu-list">',
                     '<li id="button-shareweb" class="sharebutton asm-menu-item"><a '
@@ -1233,38 +1230,6 @@ $(function() {
                     });
             };
 
-            // Diary task select date dialog
-            var addbuttons = { };
-            addbuttons[_("Select")] = function() {
-                var valid = true;
-                var fields = [ "seldate" ];
-                $.each(fields, function(i, f) {
-                    if ($("#" + f).val() == "") {
-                        $("label[for='" + f + "']").addClass("ui-state-error-text");
-                        $("#" + f).focus();
-                        valid = false;
-                        return false;
-                    }
-                });
-                if (valid) {
-                    create_task($("#diarytaskid").val());
-                    $("#dialog-dt-date").dialog("close");
-                }
-            };
-            addbuttons[_("Cancel")] = function() {
-                $("#dialog-dt-date").dialog("close");
-            };
-
-            $("#dialog-dt-date").dialog({
-                autoOpen: false,
-                modal: true,
-                dialogClass: "dialogshadow",
-                show: dlgfx.add_show,
-                hide: dlgfx.add_hide,
-                buttons: addbuttons,
-                close: function() { try { $(this).dialog("destroy"); } catch (ex) {} }
-            });
-
             // Attach handlers for diary tasks
             $(".diarytask").each(function() {
                 var a = $(this);
@@ -1277,7 +1242,10 @@ $(function() {
                     // If the task needs a date, prompt for it
                     if (taskneeddate == "1") {
                         $("#diarytaskid").val(taskid);
-                        $("#dialog-dt-date").dialog("open");
+                        tableform.show_okcancel_dialog("#dialog-dt-date", _("Select"), { notblank: [ "seldate" ]})
+                            .then(function() {
+                                create_task($("#diarytaskid").val());
+                            });
                     }
                     else {
                         // No need for anything else, go create the task
@@ -1356,28 +1324,14 @@ $(function() {
             });
 
             $("#button-delete").button().click(function() {
-                var b = {}; 
-                b[_("Delete")] = function() { 
-                    $("#dialog-delete").disable_dialog_buttons();
-                    var formdata = "mode=delete&animalid=" + $("#animalid").val();
-                    common.ajax_post("animal", formdata)
-                        .then(function() { 
-                            $("#dialog-delete").dialog("close"); 
-                            common.route("main");
-                        })
-                        .fail(function() {
-                            $("#dialog-delete").dialog("close"); 
-                        });
-                };
-                b[_("Cancel")] = function() { $(this).dialog("close"); };
-                $("#dialog-delete").dialog({
-                     resizable: false,
-                     modal: true,
-                     dialogClass: "dialogshadow",
-                     show: dlgfx.delete_show,
-                     hide: dlgfx.delete_hide,
-                     buttons: b
-                });
+                tableform.delete_dialog(null, _("This will permanently remove this animal, are you sure?"))
+                    .then(function() {
+                        var formdata = "mode=delete&animalid=" + $("#animalid").val();
+                        return common.ajax_post("animal", formdata);
+                    })
+                    .then(function() { 
+                        common.route("main");
+                    });
             });
 
             $("#button-match").button().click(function() {

@@ -10,9 +10,6 @@ $(function() {
         render: function() {
             return [
                 '<div id="emailform" />',
-                '<div id="dialog-delete" style="display: none" title="' + _("Delete") + '">',
-                '<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>' + _("This will permanently remove this waiting list entry, are you sure?") + '</p>',
-                '</div>',
                 edit_header.waitinglist_edit_header(controller.animal, "details", controller.tabcounts),
                 tableform.buttons_render([
                     { id: "save", text: _("Save"), icon: "save", tooltip: _("Save this waiting list entry") },
@@ -274,27 +271,14 @@ $(function() {
             });
 
             $("#button-delete").button().click(function() {
-                var b = {}; 
-                b[_("Delete")] = function() { 
-                    var formdata = "mode=delete&id=" + $("#waitinglistid").val();
-                    $("#dialog-delete").disable_dialog_buttons();
-                    common.ajax_post("waitinglist", formdata)
-                        .then(function() { 
-                            common.route("main");
-                        })
-                        .always(function() { 
-                            $("#dialog-delete").dialog("close"); 
-                        });
-                };
-                b[_("Cancel")] = function() { $(this).dialog("close"); };
-                $("#dialog-delete").dialog({
-                     resizable: false,
-                     modal: true,
-                     dialogClass: "dialogshadow",
-                     show: dlgfx.delete_show,
-                     hide: dlgfx.delete_hide,
-                     buttons: b
-                });
+                tableform.delete_dialog(null, _("This will permanently remove this waiting list entry, are you sure?"))
+                    .then(function() {
+                        var formdata = "mode=delete&id=" + $("#waitinglistid").val();
+                        return common.ajax_post("waitinglist", formdata);
+                    })
+                    .then(function() { 
+                        common.route("main");
+                    });
             });
 
             // If any of our additional fields need moving to other tabs, 
@@ -336,6 +320,7 @@ $(function() {
         destroy: function() {
             validate.unbind_dirty();
             common.widget_destroy("#owner");
+            common.widget_destroy("#emailform");
             this.current_person = null;
         },
 

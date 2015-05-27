@@ -510,6 +510,10 @@
                 '</div>'
             ].join("\n"));
         },
+
+        destroy: function() {
+            common.widget_destroy("#dialog-email", "dialog"); 
+        },
         
         /**
          * Shows the email dialog.

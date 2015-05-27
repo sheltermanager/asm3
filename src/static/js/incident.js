@@ -280,10 +280,6 @@ $(function() {
                 '</table>',
                 '<textarea id="emailbody" data="body" rows="15" class="asm-textarea"></textarea>',
                 '</div>',
-                '<div id="dialog-delete" style="display: none" title="' + _("Delete") + '">',
-                '<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>' + 
-                    _("This will permanently remove this incident, are you sure?") + '</p>',
-                '</div>',
                 edit_header.incident_edit_header(controller.incident, "details", controller.tabcounts),
                 tableform.buttons_render([
                     { id: "save", text: _("Save"), icon: "save", tooltip: _("Save this incident") },
@@ -531,28 +527,15 @@ $(function() {
             });
 
             $("#button-delete").button().click(function() {
-                var b = {}; 
-                b[_("Delete")] = function() { 
-                    var formdata = "mode=delete&id=" + $("#incidentid").val();
-                    $("#dialog-delete").disable_dialog_buttons();
-                    common.ajax_post("incident", formdata)
-                        .then(function() { 
-                            $("#dialog-delete").dialog("close"); 
-                            common.route("main");
-                        })
-                        .fail(function() { 
-                            $("#dialog-delete").dialog("close"); 
-                        });
-                };
-                b[_("Cancel")] = function() { $(this).dialog("close"); };
-                $("#dialog-delete").dialog({
-                     resizable: false,
-                     modal: true,
-                     dialogClass: "dialogshadow",
-                     show: dlgfx.delete_show,
-                     hide: dlgfx.delete_hide,
-                     buttons: b
-                });
+                tableform.delete_dialog(null, _("This will permanently remove this incident, are you sure?"))
+                    .then(function() {
+                        var formdata = "mode=delete&id=" + $("#incidentid").val();
+                        return common.ajax_post("incident", formdata);
+                    })
+                    .then(function() { 
+                        $("#dialog-delete").dialog("close"); 
+                        common.route("main");
+                    });
             });
 
             $("#button-dispatch").button().click(function() {
@@ -619,6 +602,7 @@ $(function() {
             common.widget_destroy("#owner3");
             common.widget_destroy("#caller", "personchooser");
             common.widget_destroy("#victim", "personchooser");
+            common.widget_destroy("#dialog-email");
         },
 
         name: "incident",

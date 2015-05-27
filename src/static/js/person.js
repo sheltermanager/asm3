@@ -32,10 +32,7 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '</div>',
-                '<div id="emailform" />',
-                '<div id="dialog-delete" style="display: none" title="' + _("Delete") + '">',
-                '<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>' + _("This will permanently remove this person, are you sure?") + '</p>',
-                '</div>'
+                '<div id="emailform" />'
             ].join("\n");
         },
 
@@ -731,24 +728,15 @@ $(function() {
             });
 
             $("#button-delete").button().click(function() {
-                var b = {}; 
-                b[_("Delete")] = function() { 
-                    var formdata = "mode=delete&personid=" + $("#personid").val();
-                    common.ajax_post("person", formdata)
-                        .then(function() { 
-                            validate.dirty(false);
-                            common.route("main"); 
-                        });
-                };
-                b[_("Cancel")] = function() { $(this).dialog("close"); };
-                $("#dialog-delete").dialog({
-                     resizable: false,
-                     modal: true,
-                     dialogClass: "dialogshadow",
-                     show: dlgfx.delete_show,
-                     hide: dlgfx.delete_hide,
-                     buttons: b
-                });
+                tableform.delete_dialog(null, _("This will permanently remove this person, are you sure?"))
+                    .then(function() {
+                        var formdata = "mode=delete&personid=" + $("#personid").val();
+                        return common.ajax_post("person", formdata);
+                    })
+                    .then(function() { 
+                        validate.dirty(false);
+                        common.route("main"); 
+                    });
             });
 
             $("#button-merge").button().click(function() {
@@ -827,6 +815,7 @@ $(function() {
             validate.unbind_dirty();
             common.widget_destroy("#dialog-dt-date");
             common.widget_destroy("#dialog-merge");
+            common.widget_destroy("#emailform");
             common.widget_destroy("#mergeperson", "personchooser");
             common.widget_destroy("#homecheckedby", "personchooser");
         },

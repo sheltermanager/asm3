@@ -937,7 +937,8 @@
                 "#owner": "personchooser",
                 "#person": "personchooser",
                 "#retailer": "personchooser",
-                "#dialog-": "dialog"
+                "#dialog-": "dialog",
+                "#emailform": "emailform"
             };
             if (!type) {
                 $.each(types, function(k, v) {
@@ -953,6 +954,9 @@
                 }
                 else if (type == "personchooser") {
                     $(selector).personchooser("destroy").remove();
+                }
+                else if (type == "emailform") {
+                    $(selector).emailform("destroy").remove();
                 }
                 else if (type == "dialog") {
                     if (noremove) {

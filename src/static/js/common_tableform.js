@@ -1235,6 +1235,7 @@
          * Prompts the user to delete with a dialog.
          * callback: Function to be run if the user clicks delete
          * text: The delete dialog text (don't pass for the default)
+         * returns a promise.
          */
         delete_dialog: function(callback, text) {
             var b = {}, deferred = $.Deferred(); 
@@ -1259,7 +1260,7 @@
             $("#dialog-delete-text").html(mess);
             $("#dialog-delete").dialog({
                 resizable: false,
-                height: 170,
+                height: "auto",
                 width: 400,
                 modal: true,
                 dialogClass: "dialogshadow",
@@ -1267,6 +1268,51 @@
                 hide: dlgfx.delete_hide,
                 buttons: b
             });
+            return deferred.promise();
+        },
+
+        /**
+         * Shows an Ok/Cancel dialog.
+         * selector: The dialog div
+         * oktext: The text to show on the ok button
+         * o: Additional options to pass the dialog
+         * callback: A function to call when ok is clicked.
+         * returns a promise that resolves when ok is clicked.
+         */
+        show_okcancel_dialog: function(selector, oktext, o) {
+            
+            var b = {}, deferred = $.Deferred();
+
+            // If this dialog has already been created, destroy it first
+            common.widget_destroy(selector, "dialog", true);
+
+            b[oktext] = function() {
+                // We've been given a list of fields that should not be blank,
+                // validate them before doing anything
+                if (o.notblank) {
+                    if (!validate.notblank(o.notblank)) { return; }
+                }
+                $(selector).dialog("close");
+                if (o.callback) { o.callback(); }
+                deferred.resolve();
+            };
+
+            b[_("Cancel")] = function() { 
+                $(this).dialog("close"); 
+                deferred.reject();
+            };
+
+            if (!o) { o = {}; }
+            $.extend(o, {
+                autoOpen: false,
+                modal: true,
+                dialogClass: "dialogshadow",
+                show: dlgfx.delete_show,
+                hide: dlgfx.delete_hide,
+                buttons: b
+            });
+            $(selector).dialog(o).dialog("open");
+
             return deferred.promise();
         }
 
