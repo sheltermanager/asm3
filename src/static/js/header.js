@@ -93,7 +93,7 @@ $(function() {
                 $("#asm-topline-loading-text").text(text);
             }
             $("#asm-topline-loading").dialog({
-                dialogClass: 'dialog-no-title',
+                dialogClass: 'dialog-no-title dialogshadow',
                 height: "auto",
                 modal: true
             });
