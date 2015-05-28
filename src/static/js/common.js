@@ -1412,16 +1412,18 @@
         animal_emblems: function(a, o) {
             var s = [];
             if (!o) { o = {}; }
-            if (config.bool("EmblemAlwaysLocation")) { o.showlocation = true; }
+            if (config.bool("EmblemAlwaysLocation")) { 
+                o.showlocation = true; 
+            }
             s.push("<span class=\"asm-animal-emblems\">");
             if (o && o.showlocation && !a.DECEASEDDATE) {
-                if (a.ARCHIVED == 0 && !a.ACTIVEMOVEMENTTYPE) {
+                if (a.ARCHIVED == 0 && !a.ACTIVEMOVEMENTTYPE && a.SHELTERLOCATIONNAME) {
                     s.push(html.icon("location", _("On Shelter") + " / " + a.SHELTERLOCATIONNAME + " " + common.nulltostr(a.SHELTERLOCATIONUNIT)));
                 }
-                else if (a.ACTIVEMOVEMENTTYPE == 2) {
+                else if (a.ACTIVEMOVEMENTTYPE == 2 && a.DISPLAYLOCATIONNAME && a.CURRENTOWNERNAME) {
                     s.push(html.icon("person", a.DISPLAYLOCATIONNAME + " / " + a.CURRENTOWNERNAME));
                 }
-                else if (a.NONSHELTERANIMAL == 0) {
+                else if (a.NONSHELTERANIMAL == 0 && a.DISPLAYLOCATIONNAME && a.CURRENTOWNERNAME) {
                     s.push(html.icon("movement", a.DISPLAYLOCATIONNAME + " / " + a.CURRENTOWNERNAME));
                 }
             }

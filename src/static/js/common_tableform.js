@@ -1287,10 +1287,13 @@
             common.widget_destroy(selector, "dialog", true);
 
             b[oktext] = function() {
-                // We've been given a list of fields that should not be blank,
+                // We've been given a list of fields that should not be blank or zero,
                 // validate them before doing anything
                 if (o.notblank) {
                     if (!validate.notblank(o.notblank)) { return; }
+                }
+                if (o.notzero) {
+                    if (!validate.notzero(o.notzero)) { return; }
                 }
                 $(selector).dialog("close");
                 if (o.callback) { o.callback(); }

@@ -260,8 +260,8 @@ $(function() {
         load_animallinks: function() {
             var h = [];
             $.each(controller.animallinks, function(i, v) {
-                h.push('<button data="' + v.ID + '">' + _("Remove") + '</button> ' 
-                    + html.animal_link(v, { emblemsright: true }) + '<br />');
+                h.push('<span class="linkedanimal"><button data="' + v.ID + '">' + _("Remove") + '</button> ' 
+                    + html.animal_link(v, { emblemsright: true, showlocation: false }) + '</span><br />');
             });
             $("#animallist").empty().html(h.join("\n"));
             $("#animallist button").button({ icons: { primary: "ui-icon-trash" }, text: false })
@@ -271,7 +271,7 @@ $(function() {
                     node.button("disable");
                     common.ajax_post("incident", "mode=linkanimaldelete&id=" + controller.incident.ID + "&animalid=" + animalid)
                         .then(function() {
-                            node.closest("tr").remove();
+                            node.closest(".linkedanimal").fadeOut().then().remove();
                         });
                 });
         },
@@ -588,7 +588,8 @@ $(function() {
             $("#button-linkanimal")
                 .button({ icons: { primary: "ui-icon-link" }, text: false })
                 .click(function() {
-                    tableform.show_okcancel_dialog("#dialog-linkanimal", _("Link"), { notblank: [ "linkanimal" ] })
+                    $("#linkanimal").animalchooser("clear");
+                    tableform.show_okcancel_dialog("#dialog-linkanimal", _("Link"), { notzero: [ "linkanimal" ] })
                         .then(function() {
                             var a = $("#linkanimal").animalchooser("get_selected");
                             return common.ajax_post("incident", "mode=linkanimaladd&id=" + controller.incident.ID + "&animalid=" + a.ID);
