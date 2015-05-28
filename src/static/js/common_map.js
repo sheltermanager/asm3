@@ -162,6 +162,7 @@
             $.getScript(asm.leafletjs, function() {
                 var ll = latlong.split(",");
                 var map = L.map(divid).setView([ll[0], ll[1]], 15);
+                L.Icon.Default.imagePath = asm.leafletjs.substring(0, asm.leafletjs.lastIndexOf("/")) + "/images";
                 L.tileLayer(asm.osmmaptiles, {
                     attribution: '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 }).addTo(map);
