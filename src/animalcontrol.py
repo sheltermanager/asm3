@@ -17,11 +17,10 @@ def get_animalcontrol_query(dbo):
     return "SELECT ac.*, ac.ID AS ACID, s.SpeciesName, x.Sex AS SexName, " \
         "co.OwnerName AS CallerName, co.HomeTelephone, co.WorkTelephone, co.MobileTelephone, " \
         "o1.OwnerName AS OwnerName, o1.OwnerName AS OwnerName1, o2.OwnerName AS OwnerName2, o3.OwnerName AS OwnerName3, " \
-        "vo.OwnerName AS VictimName, ti.IncidentName, ci.CompletedName, pl.LocationName, a.AnimalName, a.ShelterCode " \
+        "vo.OwnerName AS VictimName, ti.IncidentName, ci.CompletedName, pl.LocationName " \
         "FROM animalcontrol ac " \
         "LEFT OUTER JOIN species s ON s.ID = ac.SpeciesID " \
         "LEFT OUTER JOIN lksex x ON x.ID = ac.Sex " \
-        "LEFT OUTER JOIN animal a ON a.ID = ac.AnimalID " \
         "LEFT OUTER JOIN owner co ON co.ID = ac.CallerID " \
         "LEFT OUTER JOIN owner o1 ON o1.ID = ac.OwnerID " \
         "LEFT OUTER JOIN owner o2 ON o2.ID = ac.Owner2ID " \
@@ -30,6 +29,14 @@ def get_animalcontrol_query(dbo):
         "LEFT OUTER JOIN pickuplocation pl ON pl.ID = ac.PickupLocationID " \
         "LEFT OUTER JOIN incidenttype ti ON ti.ID = ac.IncidentTypeID " \
         "LEFT OUTER JOIN incidentcompleted ci ON ci.ID = ac.IncidentCompletedID"
+
+def get_animalcontrol_animals_query(dbo):
+    return "SELECT a.ID, a.ShelterCode, a.ShortCode, a.AgeGroup, a.AnimalName, a.Neutered, a.DeceasedDate, a.HasActiveReserve, " \
+        "a.HasTrialAdoption, a.IsHold, a.IsQuarantine, a.HoldUntilDate, a.CrueltyCase, a.NonShelterAnimal, " \
+        "a.ActiveMovementType, a.Archived, a.IsNotAvailableForAdoption, " \
+        "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult " \
+        "FROM animalcontrolanimal aca " \
+        "INNER JOIN animal a ON aca.AnimalID = a.ID"
 
 def get_traploan_query(dbo):
     return "SELECT ot.ID, ot.TrapTypeID, ot.LoanDate, tt.TrapTypeName, ot.TrapNumber, " \
@@ -49,6 +56,9 @@ def get_animalcontrol(dbo, acid):
         return None
     else:
         return rows[0]
+
+def get_animalcontrol_animals(dbo, acid):
+    return db.query(dbo, get_animalcontrol_animals_query(dbo) + " WHERE aca.AnimalControlID = %d" % acid)
 
 def get_followup_two_dates(dbo, dbstart, dbend):
     """
@@ -296,7 +306,6 @@ def update_animalcontrol_from_form(dbo, post, username):
         ( "OwnerID", post.db_integer("owner")),
         ( "Owner2ID", post.db_integer("owner2")),
         ( "Owner3ID", post.db_integer("owner3")),
-        ( "AnimalID", post.db_integer("animal")),
         ( "AnimalDescription", post.db_string("animaldescription")),
         ( "SpeciesID", post.db_integer("species")),
         ( "Sex", post.db_integer("sex")),
@@ -305,6 +314,23 @@ def update_animalcontrol_from_form(dbo, post, username):
     additional.save_values_for_link(dbo, post, acid, "incident")
     postaudit = db.query(dbo, "SELECT * FROM animalcontrol WHERE ID = %d" % acid)
     audit.edit(dbo, username, "animalcontrol", audit.map_diff(preaudit, postaudit))
+
+def update_animalcontrol_addlink(dbo, username, acid, animalid):
+    """
+    Adds a link between an animal and an incident.
+    """
+    l = dbo.locale
+    if 0 != db.query_int(dbo, "SELECT COUNT(*) FROM animalcontrolanimal WHERE AnimalControlID = %d AND AnimalID = %d" % (acid, animalid)):
+        raise utils.ASMValidationError(_("That animal is already linked to the incident", l))
+    db.execute(dbo, "INSERT INTO animalcontrolanimal (AnimalControlID, AnimalID) VALUES (%d, %d)" % (acid, animalid))
+    audit.create(dbo, username, "animalcontrolanimal", "incident %d linked to animal %d")
+
+def update_animalcontrol_removelink(dbo, username, acid, animalid):
+    """
+    Removes a link between an animal and an incident.
+    """
+    db.execute(dbo, "DELETE FROM animalcontrolanimal WHERE AnimalControlID = %d AND AnimalID = %d" % (acid, animalid))
+    audit.delete(dbo, username, "animalcontrolanimal", "incident %d no longer linked to animal %d")
 
 def insert_animalcontrol_from_form(dbo, post, username):
     """
@@ -345,7 +371,6 @@ def insert_animalcontrol_from_form(dbo, post, username):
         ( "OwnerID", post.db_integer("owner")),
         ( "Owner2ID", post.db_integer("owner2")),
         ( "Owner3ID", post.db_integer("owner3")),
-        ( "AnimalID", post.db_integer("animal")),
         ( "AnimalDescription", post.db_string("animaldescription")),
         ( "SpeciesID", post.db_integer("species")),
         ( "Sex", post.db_integer("sex")),

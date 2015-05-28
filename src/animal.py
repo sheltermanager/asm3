@@ -200,7 +200,8 @@ def get_animal_query(dbo):
         "LEFT OUTER JOIN adoption am ON am.ID = a.ActiveMovementID " \
         "LEFT OUTER JOIN users au ON au.UserName = am.CreatedBy " \
         "LEFT OUTER JOIN owner co ON co.ID = am.OwnerID " \
-        "LEFT OUTER JOIN animalcontrol ac ON ac.AnimalID = a.ID AND ac.ID = (SELECT MAX(sac.ID) FROM animalcontrol sac WHERE sac.AnimalID = a.ID) " \
+        "LEFT OUTER JOIN animalcontrolanimal aca ON aca.AnimalControlID = (SELECT MAX(saca.AnimalControlID) FROM animalcontrolanimal saca WHERE saca.AnimalID = a.ID) " \
+        "LEFT OUTER JOIN animalcontrol ac ON ac.ID = aca.AnimalControlID " \
         "LEFT OUTER JOIN incidenttype itn ON itn.ID = ac.IncidentTypeID " \
         "LEFT OUTER JOIN adoption ar ON ar.AnimalID = a.ID AND ar.MovementType = 0 AND ar.MovementDate Is Null AND ar.ReservationDate Is Not Null AND ar.ReservationCancelledDate Is Null AND ar.ID = (SELECT MAX(sar.ID) FROM adoption sar WHERE sar.AnimalID = a.ID AND sar.MovementType = 0 AND sar.MovementDate Is Null AND sar.ReservationDate Is Not Null AND sar.ReservationCancelledDate Is Null) " \
         "LEFT OUTER JOIN reservationstatus ars ON ars.ID = ar.ReservationStatusID " \
@@ -208,7 +209,7 @@ def get_animal_query(dbo):
 
 def get_animal_status_query(dbo):
     dummy = dbo
-    return "SELECT a.ID, a.ShelterCode, a.AnimalName, a.DeceasedDate, a.PutToSleep, " \
+    return "SELECT a.ID, a.ShelterCode, a.ShortCode, a.AnimalName, a.DeceasedDate, a.PutToSleep, " \
         "dr.ReasonName AS PTSReasonName, " \
         "il.LocationName AS ShelterLocationName, a.ShelterLocationUnit, " \
         "a.NonShelterAnimal, a.DateBroughtIn, a.Archived, " \

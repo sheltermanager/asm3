@@ -7,7 +7,7 @@ import os, sys
 from i18n import _, BUILD
 from sitedefs import DB_PK_STRATEGY
 
-LATEST_VERSION = 33706
+LATEST_VERSION = 33707
 VERSIONS = ( 
     2870, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3050,
     3051, 3081, 3091, 3092, 3093, 3094, 3110, 3111, 3120, 3121, 3122, 3123, 3200,
@@ -19,20 +19,20 @@ VERSIONS = (
     33310, 33311, 33312, 33313, 33314, 33315, 33316, 33401, 33402, 33501, 33502,
     33503, 33504, 33505, 33506, 33507, 33508, 33600, 33601, 33602, 33603, 33604,
     33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702, 33703, 33704, 33705,
-    33706
+    33706, 33707
 )
 
 # All ASM3 tables
 TABLES = ( "accounts", "accountsrole", "accountstrx", "activeuser", "additional", "additionalfield",
     "adoption", "animal", "animalcontrol", "animalcost", "animaldiet", "animalfigures", "animalfiguresannual", 
-    "animalfiguresasilomar", "animalfiguresmonthlyasilomar", "animalfound", "animallitter", "animallost", 
-    "animalmedical", "animalmedicaltreatment", "animalname", "animalpublished", "animaltype", "animaltest", 
-    "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", "basecolour", "breed", 
-    "citationtype", "configuration", "costtype", "customreport", "customreportrole", "dbfs", "deathreason", 
-    "diary", "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", "donationtype", "entryreason", 
-    "incidentcompleted", "incidenttype", "internallocation", "licencetype", "lkcoattype", "lkownerflags", 
-    "lksaccounttype", "lksdiarylink", "lksdonationfreq", "lksex", "lksfieldlink", "lksfieldtype", "lksize", 
-    "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", "lksposneg", "lksrotatype", 
+    "animalfiguresasilomar", "animalfiguresmonthlyasilomar", "animalfound", "animalcontrolanimal", "animallitter", 
+    "animallost", "animalmedical", "animalmedicaltreatment", "animalname", "animalpublished", "animaltype", 
+    "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", "basecolour", 
+    "breed", "citationtype", "configuration", "costtype", "customreport", "customreportrole", "dbfs", 
+    "deathreason", "diary", "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", "donationtype", 
+    "entryreason", "incidentcompleted", "incidenttype", "internallocation", "licencetype", "lkcoattype", 
+    "lkownerflags", "lksaccounttype", "lksdiarylink", "lksdonationfreq", "lksex", "lksfieldlink", "lksfieldtype", 
+    "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", "lksposneg", "lksrotatype", 
     "lksyesno", "lksynun", "lkurgency", "log", "logtype", "media", "medicalprofile", "messages", "onlineform", 
     "onlineformfield", "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
     "ownerlicence", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", 
@@ -527,6 +527,11 @@ def sql_structure(dbo):
     sql += index("animalfound_AnimalTypeID", "animalfound", "AnimalTypeID")
     sql += index("animalfound_AreaFound", "animalfound", "AreaFound")
     sql += index("animalfound_AreaPostcode", "animalfound", "AreaPostcode")
+
+    sql += table("animalcontrolanimal", (
+        fint("AnimalControlID"),
+        fint("AnimalID") ), False)
+    sql += index("animalcontrolanimal_AnimalControlIDAnimalID", "animalcontrolanimal", "AnimalControlID, AnimalID", True)
 
     sql += table("animallitter", (
         fid(),
@@ -4014,4 +4019,17 @@ def update_33705(dbo):
 def update_33706(dbo):
     # Add users.Signature
     add_column(dbo, "users", "Signature", longtext(dbo))
+
+def update_33707(dbo):
+    # Add animalincident table
+    sql = "CREATE TABLE animalcontrolanimal (" \
+        "AnimalControlID INTEGER NOT NULL, " \
+        "AnimalID INTEGER NOT NULL)"
+    db.execute_dbupdate(dbo, sql)
+    add_index(dbo, "animalcontrolanimal_AnimalControlIDAnimalID", "animalcontrolanimal", "AnimalControlID, AnimalID", True)
+    # Copy the existing links from animalcontrol.AnimalID
+    for ac in db.query(dbo, "SELECT ID, AnimalID FROM animalcontrol WHERE AnimalID Is Not Null AND AnimalID <> 0"):
+        db.execute_dbupdate(dbo, "INSERT INTO animalcontrolanimal (AnimalControlID, AnimalID) VALUES (%d, %d)" % (ac["ID"], ac["ANIMALID"]))
+    # Remove the animalid field from animalcontrol
+    drop_column(dbo, "animalcontrol", "AnimalID")
 

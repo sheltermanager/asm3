@@ -24,7 +24,6 @@ $(function() {
                 '<th>' + _("Zipcode") + '</th>',
                 '<th>' + _("Location") + '</th>',
                 '<th>' + _("Suspect") + '</th>',
-                '<th>' + _("Animal") + '</th>',
                 '<th>' + _("Dispatch Date/Time") + '</th>',
                 '<th>' + _("Responded Date/Time") + '</th>',
                 '<th>' + _("ACO") + '</th>',
@@ -57,9 +56,6 @@ $(function() {
                 if (r.OWNERNAME2) { h.push('<br/><a href="person?id=' + r.OWNER2ID + '">' + common.nulltostr(r.OWNERNAME2) + '</a> '); }
                 if (r.OWNERNAME3) { h.push('<br/><a href="person?id=' + r.OWNER3ID + '">' + common.nulltostr(r.OWNERNAME3) + '</a>'); }
                 h.push('</td>');
-                h.push('<td>' + (r.ANIMALID ? 
-                    '<a href="animal?id=' + r.ANIMALID + '">' + common.nulltostr(r.SHELTERCODE) + ' ' + common.nulltostr(r.ANIMALNAME) + '</a>' :
-                    "") + '</td>');
                 h.push('<td>' + format.date(r.DISPATCHDATETIME) + ' ' + format.time(r.DISPATCHDATETIME) + '</td>');
                 h.push('<td>' + format.date(r.RESPONDEDDATETIME) + ' ' + format.time(r.RESPONDEDDATETIME) + '</td>');
                 h.push('<td>' + common.nulltostr(r.DISPATCHEDACO) + '</td>');

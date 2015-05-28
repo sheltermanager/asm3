@@ -1344,12 +1344,38 @@
         },
 
         /**
+         * Renders an animal link from the record given.
+         * a: An animal or brief animal record
+         * o: Options to pass on to animal_emblems
+         * o.noemblems: Don't show the emblems
+         * o.emblemsright: Show the emblems to the right of the link
+         */
+        animal_link: function(a, o) {
+            var s = "", e = "", animalid = a.ID || a.ANIMALID;
+            if (o && o.noemblems) { 
+                e = ""; 
+            } 
+            else { 
+                e = html.animal_emblems(a, o) + " "; 
+            }
+            s = '<a class="asm-embed-name" href="animal?id=' + animalid + '">' + a.ANIMALNAME + ' - ' + 
+                (config.bool("UseShortShelterCodes") ? a.SHORTCODE : a.SHELTERCODE) + '</a>';
+            if (!o || (o && o.emblemsright)) {
+                s += ' ' + e;
+            }
+            else {
+                s = e + ' ' + s;    
+            }
+            return s;
+        },
+
+        /**
          * Renders an animal link thumbnail from the record given
          * a: An animal or brief animal record
          * o: Options to pass on to animal_emblems
          * o.showselector: if true outputs a checkbox to select the animal link
          */
-        animal_link: function(a, o) {
+        animal_link_thumb: function(a, o) {
             var s = [];
             var title = common.substitute(_("{0}: Entered shelter {1}, Last changed on {2} by {3}. {4} {5} {6} aged {7}"), { 
                 "0": a.CODE,
@@ -1547,6 +1573,16 @@
             node.html(opt.join("\n"));
             node.change();
 
+        },
+
+        /**
+         * Returns a link to a person
+         * row: A row containing the ownername field
+         * ownerid: The owner ID number for the link
+         */
+        person_link: function(row, ownerid) {
+            var h = '<a href="person?id=' + ownerid + '">' + row.OWNERNAME + '</a>';
+            return h;
         },
 
         /**

@@ -113,9 +113,7 @@ $(function() {
                     },
                     { field: "ANIMAL", display: _("Animal"), 
                         formatter: function(row) {
-                            var s = "";
-                            if (controller.name.indexOf("animal_") == -1) { s = html.animal_emblems(row) + " "; }
-                            return s + '<a href="animal?id=' + row.ANIMALID + '">' + row.ANIMALNAME + ' - ' + row.SHELTERCODE + '</a>';
+                            return html.animal_link(row, { noemblems: controller.name == "animal_medical" });
                         },
                         hideif: function(row) {
                             // Don't show for animal records

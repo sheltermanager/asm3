@@ -50,7 +50,7 @@ def get_donation_query(dbo):
         "fr.Frequency AS FrequencyName, od.NextCreated, " \
         "od.CreatedBy, od.CreatedDate, od.LastChangedBy, od.LastChangedDate, " \
         "od.Comments, o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, " \
-        "o.OwnerName, a.AnimalName, a.ShelterCode, a.ID AS AnimalID, o.ID AS OwnerID, " \
+        "o.OwnerName, a.AnimalName, a.ShelterCode, a.ShortCode, a.ID AS AnimalID, o.ID AS OwnerID, " \
         "a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, " \
         "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, a.ShelterLocationUnit, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \

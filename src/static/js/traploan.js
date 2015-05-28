@@ -53,7 +53,7 @@ $(function() {
                     { field: "PERSON", display: _("Person"),
                         formatter: function(row) {
                             if (row.OWNERID) {
-                                return edit_header.person_link(row, row.OWNERID);
+                                return html.person_link(row, row.OWNERID);
                             }
                             return "";
                         },

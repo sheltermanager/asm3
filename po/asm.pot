@@ -1072,11 +1072,11 @@ msgstr ""
 msgid "Angora Rabbit"
 msgstr ""
 
-#: test.js donations.js header_edit_header.js movements.js
-#: incident_find_results.js diarytasks.js log_new.js move_retailer.js
-#: transport.js search.js onlineform_incoming.js medical.js licence.js
-#: move_reserve.js move_foster.js move_transfer.js move_adopt.js vaccination.js
-#: move_reclaim.js move_deceased.js reports.py dbupdate.py mobile.py html.py
+#: test.js donations.js header_edit_header.js movements.js diarytasks.js
+#: log_new.js move_retailer.js transport.js incident.js search.js
+#: onlineform_incoming.js medical.js licence.js move_reserve.js move_foster.js
+#: move_transfer.js move_adopt.js vaccination.js move_reclaim.js
+#: move_deceased.js reports.py dbupdate.py mobile.py html.py
 msgid "Animal"
 msgstr ""
 
@@ -1088,7 +1088,7 @@ msgstr ""
 msgid "Animal '{0}' successfully marked deceased."
 msgstr ""
 
-#: incident.js donation_receive.js licence.js
+#: donation_receive.js licence.js
 msgid "Animal (optional)"
 msgstr ""
 
@@ -1226,8 +1226,8 @@ msgstr ""
 msgid "Animal shortcode format"
 msgstr ""
 
-#: test.js transport.js medical.js animal_bulk.js vaccination.js roles.js
-#: html.py
+#: test.js transport.js incident.js medical.js animal_bulk.js vaccination.js
+#: roles.js html.py
 msgid "Animals"
 msgstr ""
 
@@ -1950,9 +1950,9 @@ msgstr ""
 #: test.js onlineforms.js common.js media.js document_templates.js
 #: common_animalchoosermulti.js reports.js person.js incident.js
 #: onlineform_incoming.js accounts_trx.js users.js staff_rota.js medical.js
-#: sql.js animal.js person_new.js common_personchooser.js common_tableform.js
-#: common_animalchooser.js main.js common_widgets.js lostfound.js
-#: vaccination.js report_images.js publish_options.js roles.js waitinglist.js
+#: sql.js person_new.js common_personchooser.js common_tableform.js
+#: common_animalchooser.js main.js common_widgets.js vaccination.js
+#: report_images.js publish_options.js roles.js
 msgid "Cancel"
 msgstr ""
 
@@ -6014,8 +6014,12 @@ msgstr ""
 msgid "Lilac Tortie"
 msgstr ""
 
-#: onlineform_incoming.js additional.js diary.js mobile.py
+#: incident.js onlineform_incoming.js additional.js diary.js mobile.py
 msgid "Link"
+msgstr ""
+
+#: incident.js
+msgid "Link an animal"
 msgstr ""
 
 #: media.js
@@ -8323,7 +8327,7 @@ msgstr ""
 msgid "Removal reason"
 msgstr ""
 
-#: waitinglist_results.js options.js
+#: waitinglist_results.js incident.js options.js
 msgid "Remove"
 msgstr ""
 
@@ -9966,6 +9970,10 @@ msgstr ""
 
 #: main.js
 msgid "Thank you for choosing Animal Shelter Manager for your shelter!"
+msgstr ""
+
+#: animalcontrol.py
+msgid "That animal is already linked to the incident"
 msgstr ""
 
 #: animal.js

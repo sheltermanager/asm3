@@ -322,7 +322,7 @@ $(function() {
                 s.push('<p class="asm-menu-category">' + controller.linkname + '</p>');
                 $.each(controller.animallinks, function(i, a) {
                     s.push('<div style="display: inline-block; text-align: center">');
-                    s.push(html.animal_link(a, { showlocation: true }));
+                    s.push(html.animal_link_thumb(a, { showlocation: true }));
                     s.push("</div>");
                 });
             }

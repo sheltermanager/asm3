@@ -85,7 +85,7 @@ $(function() {
                     }
                 }
                 h.push('<div class="animaldragtarget" data="' + a.ID + '" style="display: inline-block; text-align: center">');
-                h.push(html.animal_link(a, {showunit: true}));
+                h.push(html.animal_link_thumb(a, {showunit: true}));
                 h.push('</div>');
                 runningtotal += 1;
             });

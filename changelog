@@ -1,6 +1,7 @@
 37
 ================
 
+28/05/15 Allow incident to be linked to multiple animals #43
 27/05/15 More dialog cleanup/refactoring, cleanup bug with email forms
 26/05/15 Promise refactoring complete #198
 26/05/15 Disable searchable on additional fields of wrong type #199

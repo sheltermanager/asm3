@@ -145,15 +145,13 @@ $(function() {
                     },
                     { field: "ANIMAL", display: _("Animal"), 
                         formatter: function(row) {
-                            var s = "";
-                            if (controller.name != "animal_movements") { s = html.animal_emblems(row) + " "; }
-                            return s + '<a href="animal?id=' + row.ANIMALID + '">' + row.ANIMALNAME + ' - ' + row.SHELTERCODE + '</a>';
+                            return html.animal_link(row, { noemblems: controller.name == "animal_movements" });
                         }
                     },
                     { field: "PERSON", display: _("Person"),
                         formatter: function(row) {
                             if (row.OWNERID) {
-                                return edit_header.person_link(row, row.OWNERID);
+                                return html.person_link(row, row.OWNERID);
                             }
                             return "";
                         },

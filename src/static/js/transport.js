@@ -128,9 +128,7 @@ $(function() {
                     { field: "ANIMAL", display: _("Animal"), 
                         formatter: function(row) {
                             if (!row.ANIMALID) { return ""; }
-                            var s = "";
-                            if (controller.name != "animal_transport") { s = html.animal_emblems(row) + " "; }
-                            return s + '<a href="animal?id=' + row.ANIMALID + '">' + row.ANIMALNAME + ' - ' + row.SHELTERCODE + '</a>';
+                            return html.animal_link(row, { noemblems: controller.name == "animal_transport" });
                         },
                         hideif: function(row) {
                             return controller.name.indexOf("animal_") != -1;

@@ -52,7 +52,7 @@ $(function() {
                 else {
                     h.push('<td><a href="foundanimal?id=' + r.ID + '">' + format.padleft(r.ID, 6) + '</a></td>');
                 }
-                h.push('<td>' + edit_header.person_link(r, r.OWNERID) + '</td>');
+                h.push('<td>' + html.person_link(r, r.OWNERID) + '</td>');
                 if (lostfound_find_results.mode == "lost") {
                     h.push('<td>' + r.AREALOST + '</td>');
                 }

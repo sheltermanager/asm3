@@ -191,7 +191,7 @@ $(function() {
                 '<div>',
                 '<table width="100%">',
                 '<tr>',
-                '<td>',
+                '<td width="50%">',
                 '<!-- left table -->',
                 '<table width="100%" class="additionaltarget" data="to18">',
                 '<tr>',
@@ -214,12 +214,6 @@ $(function() {
                 '</td>',
                 '<td>',
                 '<table width="100%">',
-                '<tr>',
-                '<td>' + _("Animal (optional)") + '</td>',
-                '<input id="animal" data-json="ANIMALID" data-post="animal" type="hidden" class="asm-animalchooser" />',
-                '</td>',
-                '</tr>',
-                '<tr>',
                 '<td><label for="species">' + _("Species") + '</label></td>',
                 '<td nowrap="nowrap">',
                 '<select id="species" data-json="SPECIESID" data-post="species" class="asm-selectbox">',
@@ -250,11 +244,36 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '<!-- end right table -->',
+
+                '<p class="asm-menu-category">' + _("Animals") + ' <button id="button-linkanimal">' + _("Link an animal") + '</button></p>',
+                '<div id="animallist">',
+                '</div>',
+
                 '</td>',
                 '</tr>',
                 '</table>',
+
                 '</div>'
             ].join("\n");
+        },
+
+        load_animallinks: function() {
+            var h = [];
+            $.each(controller.animallinks, function(i, v) {
+                h.push('<button data="' + v.ID + '">' + _("Remove") + '</button> ' 
+                    + html.animal_link(v, { emblemsright: true }) + '<br />');
+            });
+            $("#animallist").empty().html(h.join("\n"));
+            $("#animallist button").button({ icons: { primary: "ui-icon-trash" }, text: false })
+                .click(function() {
+                    var node = $(this),
+                        animalid = node.attr("data");
+                    node.button("disable");
+                    common.ajax_post("incident", "mode=linkanimaldelete&id=" + controller.incident.ID + "&animalid=" + animalid)
+                        .then(function() {
+                            node.closest("tr").remove();
+                        });
+                });
         },
 
         render: function() {
@@ -279,6 +298,14 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '<textarea id="emailbody" data="body" rows="15" class="asm-textarea"></textarea>',
+                '</div>',
+                '<div id="dialog-linkanimal" style="display: none" title="' + html.title(_("Link an animal")) + '">',
+                '<table width="100%">',
+                '<tr>',
+                '<td><label for="linkanimal">' + _("Animal") + '</label></td>',
+                '<td><input id="linkanimal" data="linkanimal" type="hidden" class="asm-animalchooser" /></td>',
+                '</tr>',
+                '</table>',
                 '</div>',
                 edit_header.incident_edit_header(controller.incident, "details", controller.tabcounts),
                 tableform.buttons_render([
@@ -558,6 +585,21 @@ $(function() {
                 }
             });
 
+            $("#button-linkanimal")
+                .button({ icons: { primary: "ui-icon-link" }, text: false })
+                .click(function() {
+                    tableform.show_okcancel_dialog("#dialog-linkanimal", _("Link"), { notblank: [ "linkanimal" ] })
+                        .then(function() {
+                            var a = $("#linkanimal").animalchooser("get_selected");
+                            return common.ajax_post("incident", "mode=linkanimaladd&id=" + controller.incident.ID + "&animalid=" + a.ID);
+                        })
+                        .then(function() {
+                            var a = $("#linkanimal").animalchooser("get_selected");
+                            controller.animallinks.push(a);
+                            incident.load_animallinks();
+                        });
+            });
+
             // If any of our additional fields need moving to other tabs, 
             // let's take care of that. Additional fields are always in pairs of
             // <td> fields, with the label containing a toX class, where toX is
@@ -588,6 +630,7 @@ $(function() {
 
             // Update on-screen fields from the data and display the screen
             incident.enable_widgets();
+            incident.load_animallinks();
 
             // Dirty handling
             validate.bind_dirty([ "incident_" ]);
@@ -603,6 +646,7 @@ $(function() {
             common.widget_destroy("#caller", "personchooser");
             common.widget_destroy("#victim", "personchooser");
             common.widget_destroy("#dialog-email");
+            common.widget_destroy("#dialog-linkanimal");
         },
 
         name: "incident",

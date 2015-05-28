@@ -2870,6 +2870,7 @@ class incident:
         c = html.controller_json("agegroups", configuration.age_groups(dbo))
         c += html.controller_json("additional", extadditional.get_additional_fields(dbo, a["ACID"], "incident"))
         c += html.controller_json("incident", a)
+        c += html.controller_json("animallinks", extanimalcontrol.get_animalcontrol_animals(dbo, post.integer("id")))
         c += html.controller_json("incidenttypes", extlookups.get_incident_types(dbo))
         c += html.controller_json("completedtypes", extlookups.get_incident_completed_types(dbo))
         c += html.controller_json("pickuplocations", extlookups.get_pickup_locations(dbo))
@@ -2900,6 +2901,12 @@ class incident:
             users.check_permission(session, users.EMAIL_PERSON)
             if not extperson.send_email_from_form(dbo, session.user, post):
                 raise utils.ASMError(_("Failed sending email", l))
+        elif mode == "linkanimaladd":
+            users.check_permission(session, users.CHANGE_INCIDENT)
+            extanimalcontrol.update_animalcontrol_addlink(dbo, session.user, post.integer("id"), post.integer("animalid"))
+        elif mode == "linkanimaldelete":
+            users.check_permission(session, users.CHANGE_INCIDENT)
+            extanimalcontrol.update_animalcontrol_removelink(dbo, session.user, post.integer("id"), post.integer("animalid"))
 
 class incident_citations:
     def GET(self):

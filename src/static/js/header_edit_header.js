@@ -467,16 +467,6 @@ $(function() {
         },
 
         /**
-         * Returns a link to a person
-         * row: A row containing the ownername field
-         * ownerid: The owner ID number for the link
-         */
-        person_link: function(row, ownerid) {
-            var h = '<a href="person?id=' + ownerid + '">' + row.OWNERNAME + '</a>';
-            return h;
-        },
-
-        /**
          * Returns a string list of enabled flags for a person record,
          * Eg: Volunteer, member, donor, etc.
          */
