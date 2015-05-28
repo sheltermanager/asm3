@@ -53,7 +53,7 @@ TABLES_ASM2 = ( "accounts", "accountsrole", "accountstrx", "activeuser", "additi
     "species", "users", "vaccinationtype", "voucher" )
 
 # Tables that don't have an ID column (we don't create PostgreSQL sequences for them for pseq pk)
-TABLES_NO_ID_COLUMN = ( "accountsrole", "activeuser", "additional", "audittrail", 
+TABLES_NO_ID_COLUMN = ( "accountsrole", "activeuser", "additional", "audittrail", "animalcontrolanimal", 
     "animalpublished", "configuration", "customreportrole", "onlineformincoming", "userrole" )
 
 VIEWS = ( "v_adoption", "v_animal", "v_animalcontrol", "v_animalfound", "v_animallost", 
