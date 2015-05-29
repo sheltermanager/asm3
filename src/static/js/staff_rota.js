@@ -41,7 +41,11 @@ $(function() {
                     { id: "today", icon: "diary", tooltip: _("This week") },
                     { id: "next", icon: "rotate-clock", tooltip: _("Week beginning {0}").replace("{0}", format.date(controller.nextdate)) },
                     { id: "clone", text: _("Clone"), icon: "copy", perm: 'aoro', tooltip: _("Clone the rota this week to another week") },
-                    { id: "delete", text: _("Delete"), icon: "delete", perm: 'doro', tooltip: _("Delete all rota entries for this week") }
+                    { id: "delete", text: _("Delete"), icon: "delete", perm: 'doro', tooltip: _("Delete all rota entries for this week") },
+                    { type: "raw", markup: '<span style="float: right">' +
+                        '<select id="flags" multiple="multiple" class="asm-bsmselect">' +
+                        html.list_to_options(controller.flags, "FLAG", "FLAG") +
+                        '</select></span>' }
                 ]),
                 '<table class="asm-staff-rota">',
                 '<thead></thead>',
@@ -94,6 +98,13 @@ $(function() {
                     css = "asm-staff-rota-volunteer-odd";
                     if (i % 2 == 0) { css = "asm-staff-rota-volunteer-even"; }
                 }
+                // If there are some flags set in the filter box, make sure this person has them before
+                // rendering their row
+                if ($("#flags").val()) {
+                    if (!common.array_overlap($("#flags").val(), p.ADDITIONALFLAGS.split("|"))) {
+                        return false;
+                    }
+                }
                 h.push("<tr>");
                 h.push('<td class="' + css + '" title="' + html.title(title) + '">');
                 h.push('<a href="person_rota?id=' + p.ID + '" class="' + html.title(title) + '">' + p.OWNERNAME + '</a>');
@@ -121,6 +132,12 @@ $(function() {
             $(".asm-staff-rota tbody").html(h.join("\n"));
         },
 
+        get_flags_param: function() {
+            var flags = $("#flags").val();
+            if (!flags) { flags = []; }
+            return encodeURIComponent(flags.join("|"));
+        },
+
         render_clonedialog: function() {
             return [
                 '<div id="dialog-clone" style="display: none" title="' + html.title(_("Clone Rota")) + '">',
@@ -134,45 +151,10 @@ $(function() {
             ].join("\n");
         },
 
-        bind_clonedialog: function() {
-
-            var clonebuttons = { };
-            clonebuttons[_("Clone")] = function() {
-                $("#dialog-clone label").removeClass("ui-state-error-text");
-                if (!validate.notblank([ "newdate" ])) { return; }
-                $("#dialog-clone").disable_dialog_buttons();
-                var newdate = encodeURIComponent($("#newdate").val());
-                common.ajax_post(controller.name, "mode=clone&startdate=" + format.date(staff_rota.days[0]) + "&newdate=" + newdate)
-                    .then(function() {
-                        header.show_info(_("Rota cloned successfully."));
-                    })
-                    .always(function() {
-                        $("#dialog-clone").dialog("close");
-                        $("#dialog-clone").enable_dialog_buttons();
-                    });
-            };
-            clonebuttons[_("Cancel")] = function() {
-                $("#dialog-clone").dialog("close");
-            };
-
-            $("#dialog-clone").dialog({
-                autoOpen: false,
-                width: 500,
-                modal: true,
-                dialogClass: "dialogshadow",
-                show: dlgfx.edit_show,
-                hide: dlgfx.edit_hide,
-                buttons: clonebuttons
-            });
-
-        },
-
-
         bind: function() {
 
             var dialog = this.dialog;
             tableform.dialog_bind(dialog);
-            staff_rota.bind_clonedialog();
 
             $(".asm-staff-rota").on("click", "a", function(e) {
                 var id = $(this).attr("data-id");
@@ -233,7 +215,22 @@ $(function() {
             });
 
             $("#button-clone").button().click(function() {
-                $("#dialog-clone").dialog("open");
+                tableform.show_okcancel_dialog("#dialog-clone", _("Clone"), { width: 500, notblank: [ "newdate" ] })
+                    .then(function() {
+                         var newdate = encodeURIComponent($("#newdate").val()),
+                             flags = staff_rota.get_flags_param(); 
+                         return common.ajax_post(controller.name, "mode=clone" +
+                             "&startdate=" + format.date(staff_rota.days[0]) + 
+                             "&newdate=" + newdate +
+                             "&flags=" + flags);
+                    })
+                    .then(function() {
+                        header.show_info(_("Rota cloned successfully."));
+                    })
+                    .always(function() {
+                        $("#dialog-clone").dialog("close");
+                        $("#dialog-clone").enable_dialog_buttons();
+                    });
             });
 
             $("#button-delete").button().click(function() {
@@ -243,12 +240,12 @@ $(function() {
                         return common.ajax_post(controller.name, "mode=deleteweek&startdate=" + startdate);
                     })
                     .then(function() {
-                        common.route(controller.name + "?start=" + startdate);
+                        common.route(controller.name + "?flags=" + staff_rota.get_flags_param() + "&start=" + startdate);
                     });
             });
 
             $("#button-prev").button().click(function() {
-                common.route(controller.name + "?start=" + format.date(controller.prevdate));
+                common.route(controller.name + "?flags=" + staff_rota.get_flags_param() + "&start=" + format.date(controller.prevdate));
             });
 
             $("#button-today").button().click(function() {
@@ -256,11 +253,21 @@ $(function() {
             });
 
             $("#button-next").button().click(function() { 
-                common.route(controller.name + "?start=" + format.date(controller.nextdate));
+                common.route(controller.name + "?flags=" + staff_rota.get_flags_param() + "&start=" + format.date(controller.nextdate));
+            });
+
+            $("#flags").change(function() {
+                staff_rota.generate_table(); 
             });
         },
 
         sync: function() {
+            if (controller.flagsel) {
+                $.each(controller.flagsel.split("|"), function(i, v) {
+                    $("#flags option[value='" + v + "']").prop("selected", true); 
+                });
+                $("#flags").change();
+            }
             staff_rota.generate_table();
         },
 

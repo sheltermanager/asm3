@@ -59,7 +59,7 @@ def get_rota_query(dbo):
     """
     Returns the SELECT and JOIN commands necessary for selecting from rota hours
     """
-    return "SELECT r.*, o.OwnerName, rt.RotaType AS RotaTypeName " \
+    return "SELECT r.*, o.OwnerName, o.AdditionalFlags, rt.RotaType AS RotaTypeName " \
         "FROM ownerrota r " \
         "LEFT OUTER JOIN lksrotatype rt ON rt.ID = r.RotaTypeID " \
         "INNER JOIN owner o ON o.ID = r.OwnerID "
@@ -454,7 +454,7 @@ def get_rota(dbo, startdate, enddate):
         " OR (r.StartDateTime < %(start)s AND r.EndDateTime >= %(start)s) " \
         " ORDER BY r.StartDateTime" % { "start": db.dd(startdate), "end": db.dd(enddate) })
 
-def clone_rota_week(dbo, username, startdate, newdate):
+def clone_rota_week(dbo, username, startdate, newdate, flags):
     """ Copies a weeks worth of rota records from startdate to newdate """
     l = dbo.locale
     if startdate is None or newdate is None:
@@ -464,6 +464,12 @@ def clone_rota_week(dbo, username, startdate, newdate):
     enddate = add_days(startdate, 7)
     rows = db.query(dbo, get_rota_query(dbo) + " WHERE StartDateTime >= %s AND StartDateTime <= %s" % (db.dd(startdate), db.dd(enddate)))
     for r in rows:
+        # Were some flags set? If so, does the current person for this rota element have those flags?
+        if flags is not None and flags != "":
+            print flags + " -> " + utils.nulltostr(r["ADDITIONALFLAGS"])
+            if not utils.list_overlap(flags.split("|"), utils.nulltostr(r["ADDITIONALFLAGS"]).split("|")):
+                # The element doesn't have the right flags, skip to the next
+                continue
         # Calculate how far from the start date this rec is so we can apply that
         # diff to the newdate
         sdiff = date_diff_days(startdate, r["STARTDATETIME"])

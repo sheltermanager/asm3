@@ -5124,6 +5124,8 @@ class staff_rota:
         s = html.header("", session)
         c = html.controller_str("name", "staff_rota")
         c += html.controller_json("rows", rota)
+        c += html.controller_json("flags", extlookups.get_person_flags(dbo))
+        c += html.controller_json("flagsel", post["flags"])
         c += html.controller_date("startdate", startdate)
         c += html.controller_date("prevdate", subtract_days(startdate, 7))
         c += html.controller_date("nextdate", add_days(startdate, 7))
@@ -5149,12 +5151,13 @@ class staff_rota:
                 extperson.delete_rota(session.dbo, session.user, rid)
         elif mode == "deleteweek":
             users.check_permission(session, users.DELETE_ROTA)
-            extperson.delete_rota_week(session.dbo, session.user, post.date("startdate"))
+            extperson.delete_rota_week(session.dbo, session.user, post.date("startdate"), post["flags"])
         elif mode == "clone":
             users.check_permission(session, users.ADD_ROTA)
             startdate = post.date("startdate")
             newdate = post.date("newdate")
-            extperson.clone_rota_week(session.dbo, session.user, startdate, newdate)
+            flags = post["flags"]
+            extperson.clone_rota_week(session.dbo, session.user, startdate, newdate, flags)
 
 class person_traploan:
     def GET(self):

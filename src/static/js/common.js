@@ -313,6 +313,7 @@
             var NOT_CLIENT_SIDE = [ "#", "/", "http", "image?", "document_edit", "document_gen", "document_media_edit", 
                 "logout", "lostfound_match", "mailmerge?", "person_lookingfor", "report?", "report_export?", "static" ],
                 isclient = true;
+            if (!path) { return true; }
             if (path.indexOf("ajax=false") != -1) { return false; }
             $.each(NOT_CLIENT_SIDE, function(i, v) {
                 if (path.indexOf(v) == 0) { isclient = false; return false; }

@@ -1,6 +1,7 @@
 37
 ================
 
+29/05/15 Use person flags to make staff rota groups #190
 28/05/15 Allow incident to be linked to multiple animals #43
 27/05/15 More dialog cleanup/refactoring, cleanup bug with email forms
 26/05/15 Promise refactoring complete #198

@@ -12,7 +12,9 @@ volunteers. Hovering over a person's name will indicate their status as a staff
 member or volunteer, with staff members shown in blue and volunteers in green.
 
 Across the top, the rota shows each day of the week with today highlighted if
-the rota is showing the current week.
+the rota is showing the current week. A flag filter allows you to select additional
+person flags - choosing these will filter the list to only people with any
+of those additional flags.
 
 New rota entries can be created by clicking in the empty cells for a given day
 and person:
@@ -33,4 +35,5 @@ it is time off variants rather than shifts that span multiple days.
 
 The staff rota screen also gives you the facility to clone the current week's
 rota to a future week. This is the expected mechanism for propogating the rota
-each week.
+each week. If a person flag filter has been selected, then only the matching
+rows in the rota will be cloned.
