@@ -8,12 +8,12 @@ All lost animals on file.
 ###
 en
 ###
-SELECT at.SpeciesName, s.Sex, b.BreedName, 
+SELECT ay.SpeciesName, s.Sex, b.BreedName, 
 c.BaseColour, o.OwnerName, o.OwnerAddress, o.HomeTelephone, o.WorkTelephone, 
 o.MobileTelephone, a.DateReported, a.DateLost,
 a.AgeGroup, a.DistFeat, a.AreaLost, a.AreaPostcode, a.Comments
 FROM animallost a
-INNER JOIN species at ON at.ID = a.AnimalTypeID
+INNER JOIN species ay ON ay.ID = a.AnimalTypeID
 INNER JOIN lksex s ON s.ID = a.Sex
 LEFT OUTER JOIN breed b ON b.ID = a.BreedID
 INNER JOIN basecolour c ON c.ID = a.BaseColourID
