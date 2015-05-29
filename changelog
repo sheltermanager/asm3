@@ -1,6 +1,7 @@
 37
 ================
 
+29/05/15 500 error should redirect to main to pickup app updates
 29/05/15 Use very short term caching on service images (increase cache)
 29/05/15 Use person flags to make staff rota groups #190
 28/05/15 Allow incident to be linked to multiple animals #43

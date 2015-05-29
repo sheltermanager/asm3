@@ -312,6 +312,7 @@ def asm_500_email():
         <html>
         <head>
         <title>500</title>
+        <meta http-equiv="refresh" content="5;url=main">
         </head>
         <body style="background-color: #999">
         <div style="position: absolute; left: 20%; width: 60%; padding: 20px; background-color: white">
