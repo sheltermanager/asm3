@@ -72,16 +72,21 @@ def get_cached_response(cache_key):
         return None
     return cache.get(cache_key)
 
-def set_cached_response(cache_key, mime, maxage, content):
+def set_cached_response(cache_key, mime, clientage, serverage, content):
     """
     Sets a service call response in the cache and returns
     the response so methods can use this as a passthrough
     to return the response.
+    cache_key: The constructed cache key from the parameters
+    mime: The mime type to return in the response
+    clientage: The max-age to set for the client to cache the response (seconds)
+    serverage: The ttl for storing in our server cache (seconds)
+    content: The response
     """
-    response = (mime, maxage, content)
+    response = (mime, clientage, content)
     if not CACHE_SERVICE_RESPONSES:
         return response
-    cache.put(cache_key, response, maxage)
+    cache.put(cache_key, response, serverage)
     return response
 
 def handler(post, remoteip, referer):
@@ -155,53 +160,53 @@ def handler(post, remoteip, referer):
             if seq == 0: seq = 1
             mm = media.get_media_by_seq(dbo, media.ANIMAL, utils.cint(animalid), seq)
             if len(mm) == 0:
-                return ("image/jpeg", 86400, dbfs.get_string(dbo, "nopic.jpg", "/reports"))
+                return set_cached_response(cache_key, "image/jpeg", 86400, 120, dbfs.get_string(dbo, "nopic.jpg", "/reports"))
             else:
-                return ("image/jpeg", 86400, dbfs.get_string(dbo, mm[0]["MEDIANAME"]))
+                return set_cached_response(cache_key, "image/jpeg", 86400, 120, dbfs.get_string(dbo, mm[0]["MEDIANAME"]))
 
     elif method == "animal_view":
         if animalid == "" or utils.cint(animalid) == 0:
             al.error("animal_view failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
             return ("text/plain", 0, "ERROR: Invalid animalid")
         else:
-            return set_cached_response(cache_key, "text/html", 120, publish.get_animal_view(dbo, int(animalid)))
+            return set_cached_response(cache_key, "text/html", 120, 120, publish.get_animal_view(dbo, int(animalid)))
 
     elif method =="dbfs_image":
         hotlink_protect("dbfs_image", referer)
-        return ("image/jpeg", 86400, dbfs.get_string_filepath(dbo, title))
+        return set_cached_response(cache_key, "image/jpeg", 86400, 120, dbfs.get_string_filepath(dbo, title))
 
     elif method =="extra_image":
         hotlink_protect("extra_image", referer)
-        return ("image/jpeg", 86400, dbfs.get_string(dbo, title, "/reports"))
+        return set_cached_response(cache_key, "image/jpeg", 86400, 120, dbfs.get_string(dbo, title, "/reports"))
 
     elif method == "json_adoptable_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
         rs = publish.get_animal_data(dbo, pc, True)
-        return set_cached_response(cache_key, "application/json", 3600, html.json(rs))
+        return set_cached_response(cache_key, "application/json", 3600, 3600, html.json(rs))
 
     elif method == "xml_adoptable_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
         rs = publish.get_animal_data(dbo, pc, True)
-        return set_cached_response(cache_key, "application/xml", 3600, html.xml(rs))
+        return set_cached_response(cache_key, "application/xml", 3600, 3600, html.xml(rs))
 
     elif method == "json_recent_adoptions":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         rs = movement.get_recent_adoptions(dbo)
-        return set_cached_response(cache_key, "application/json", 3600, html.json(rs))
+        return set_cached_response(cache_key, "application/json", 3600, 3600, html.json(rs))
 
     elif method == "xml_recent_adoptions":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         rs = movement.get_recent_adoptions(dbo)
-        return set_cached_response(cache_key, "application/xml", 3600, html.xml(rs))
+        return set_cached_response(cache_key, "application/xml", 3600, 3600, html.xml(rs))
 
     elif method == "html_report":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_REPORT)
         crid = reports.get_id(dbo, title)
         p = reports.get_criteria_params(dbo, crid, post.data)
         rhtml = reports.execute(dbo, crid, username, p)
-        return set_cached_response(cache_key, "text/html", 3600, rhtml)
+        return set_cached_response(cache_key, "text/html", 3600, 3600, rhtml)
 
     elif method == "csv_mail" or method == "csv_report":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_REPORT)
@@ -209,26 +214,26 @@ def handler(post, remoteip, referer):
         p = reports.get_criteria_params(dbo, crid, post.data)
         rows, cols = reports.execute_query(dbo, crid, username, p)
         mcsv = utils.csv(rows, cols, True)
-        return set_cached_response(cache_key, "text/csv", 3600, mcsv)
+        return set_cached_response(cache_key, "text/csv", 3600, 3600, mcsv)
 
     elif method == "jsonp_shelter_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         sa = animal.get_animal_find_simple(dbo, "", "shelter")
-        return set_cached_response(cache_key, "application/javascript", 3600, str(post["callback"]) + "(" + html.json(sa) + ")")
+        return set_cached_response(cache_key, "application/javascript", 3600, 3600, str(post["callback"]) + "(" + html.json(sa) + ")")
 
     elif method == "json_shelter_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         sa = animal.get_animal_find_simple(dbo, "", "shelter")
-        return set_cached_response(cache_key, "application/json", 3600, html.json(sa))
+        return set_cached_response(cache_key, "application/json", 3600, 3600, html.json(sa))
 
     elif method == "xml_shelter_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         sa = animal.get_animal_find_simple(dbo, "", "shelter")
-        return set_cached_response(cache_key, "application/xml", 3600, html.xml(sa))
+        return set_cached_response(cache_key, "application/xml", 3600, 3600, html.xml(sa))
 
     elif method == "rss_timeline":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
-        return set_cached_response(cache_key, "application/rss+xml", 3600, html.timeline_rss(dbo))
+        return set_cached_response(cache_key, "application/rss+xml", 3600, 3600, html.timeline_rss(dbo))
 
     elif method == "upload_animal_image":
         flood_protect("upload_animal_image", remoteip, 60)
@@ -239,12 +244,12 @@ def handler(post, remoteip, referer):
     elif method == "online_form_html":
         if formid == 0:
             raise utils.ASMError("method online_form_html requires a valid formid")
-        return set_cached_response(cache_key, "text/html; charset=utf-8", 120, onlineform.get_onlineform_html(dbo, formid))
+        return set_cached_response(cache_key, "text/html; charset=utf-8", 120, 120, onlineform.get_onlineform_html(dbo, formid))
 
     elif method == "online_form_json":
         if formid == 0:
             raise utils.ASMError("method online_form_json requires a valid formid")
-        return set_cached_response(cache_key, "text/json; charset=utf-8", 30, onlineform.get_onlineform_json(dbo, formid))
+        return set_cached_response(cache_key, "text/json; charset=utf-8", 30, 30, onlineform.get_onlineform_json(dbo, formid))
 
     elif method == "online_form_post":
         flood_protect("online_form_post", remoteip, 60)
