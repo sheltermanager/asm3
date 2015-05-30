@@ -384,13 +384,24 @@
                 dataType: "text",
                 mimeType: "textPlain",
                 success: function(result) {
-                    controller = jQuery.parseJSON(result);
                     try {
                         // This can cause an error if the dialog wasn't open
                         header.hide_loading();
                     }
                     catch (ex) {}
+
+                    // If we lost our session at some point, the AJAX request
+                    // will have been redirected and we'll have the
+                    // login page. If that's the case, force a reload of
+                    // the page to get the new version of the application
+                    // and to follow the redirect back to login
+                    if (result.indexOf("login.render()") != -1) {
+                        common.route_reload(true);
+                        return;
+                    }
+                    
                     // Start the module
+                    controller = jQuery.parseJSON(result);
                     common.module_start(modulename);
                 },
                 error: function(jqxhr, textstatus, response) {
@@ -501,6 +512,18 @@
                         header.hide_loading();
                     }
                     catch (ex) {}
+
+                    // If we lost our session at some point, the AJAX request
+                    // will have been redirected and we'll have been sent the
+                    // login page. If that's the case, force a reload of
+                    // the page to get the new version of the application
+                    // and to follow the redirect back to login
+                    if (result.indexOf("login.render()") != -1) {
+                        common.route_reload(true);
+                        deferred.reject("login");
+                        return;
+                    }
+
                     if (successfunc) {
                         successfunc(result, new Date().getTime() - st);
                     }
@@ -512,7 +535,6 @@
                         header.hide_loading();
                     }
                     catch (ex) {}
-                    // TODO: Detect that user is not logged in
                     var errmessage = common.get_error_response(jqxhr, response);
                     header.show_error(errmessage);
                     if (errorfunc) {

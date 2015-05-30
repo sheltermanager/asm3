@@ -66,6 +66,10 @@ smcomdev: version clean minify
 
 smcom: smcomdev
 
+smcomsessions: smcomstable
+	@echo "[smcom sessions] ========================"
+	ssh root@rawsoaa2.miniserver.com "/etc/init.d/memcached restart"
+
 pot:
 	@echo "[template] ========================="
 	python po/extract_strings.py > po/asm.pot
