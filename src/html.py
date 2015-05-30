@@ -1430,30 +1430,6 @@ def options_ynun(dbo, includeAll = False, selected = -1):
             int(y["ID"]) == selected)
     return s
 
-def smcom_report_list_table(l, reports):
-    """
-    Produces thead and tbody HTML for a list of selectable reports from sheltermanager.com
-    """
-    s = """<thead>
-        <tr>
-        <th>%s</th>
-        <th>%s</th>
-        <th>%s</th>
-        <th>%s</th>
-        <th>%s</th>
-        </tr>
-        </thead>
-        <tbody>
-    """ % ( _("Type", l), _("Title", l), _("Category", l), _("Locale", l), _("Description", l))
-    for r in reports:
-        s += "<tr>\n<td><span style='white-space: nowrap'>"
-        s += "<input type='checkbox' class='asm-checkbox' data='%d' id='r%d' title='%s' /> <label for='r%d'>%s</label></span>\n" % (r["ID"], r["ID"], _("Select", l), r["ID"], r["TYPE"])
-        s += "<td class='smcom-title'>%s</td>\n" % r["TITLE"]
-        s += "<td class='smcom-category'>%s</td>\n" % r["CATEGORY"]
-        s += "<td class='smcom-locale'>%s</td>\n" % r["LOCALE"]
-        s += "<td class='smcom-description'>%s</td>\n</tr>\n" % r["DESCRIPTION"]
-    return s
-
 def template_selection(templates, url):
     """
     templates: A list of templates pathnames

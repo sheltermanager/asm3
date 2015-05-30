@@ -5543,7 +5543,7 @@ class reports:
             dbfs.put_string_filepath(dbo, "/reports/head.html", post["header"])
             dbfs.put_string_filepath(dbo, "/reports/foot.html", post["footer"])
         elif mode == "smcomlist":
-            return html.smcom_report_list_table(l, extreports.get_smcom_reports(dbo))
+            return html.json(extreports.get_smcom_reports(dbo))
         elif mode == "smcominstall":
             users.check_permission(session, users.ADD_REPORT)
             extreports.install_smcom_reports(dbo, session.user, post.integer_list("ids"))
