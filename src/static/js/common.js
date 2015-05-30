@@ -1352,7 +1352,7 @@
          * o.emblemsright: Show the emblems to the right of the link
          */
         animal_link: function(a, o) {
-            var s = "", e = "", animalid = a.ID || a.ANIMALID;
+            var s = "", e = "", animalid = a.ANIMALID || a.ID;
             if (o && o.noemblems) { 
                 e = ""; 
             } 
