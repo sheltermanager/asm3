@@ -248,6 +248,16 @@ $(function() {
                 '<button id="button-checkrecommended">' + _("Select recommended") + '</button>',
                 '</div>',
                 '<table id="table-smcom">',
+                '<thead>',
+                '<tr>',
+                '<th>' + _("Type") + '</th>',
+                '<th>' + _("Title") + '</th>',
+                '<th>' + _("Category") + '</th>',
+                '<th>' + _("Locale") + '</th>',
+                '<th>' + _("Description") + '</th>',
+                '</tr>',
+                '</thead>',
+                '<tbody></tbody>',
                 '</table>',
                 '</div>'
             ].join("\n");
@@ -313,6 +323,7 @@ $(function() {
         },
 
         bind_browse_smcom: function() {
+            $("#table-smcom").table({ sticky_header: false, filter: true, sortList: [[1, 0]] });
             $("#dialog-browse").dialog({
                 autoOpen: false,
                 resizable: true,
@@ -428,9 +439,20 @@ $(function() {
             header.show_loading();
             var formdata = "mode=smcomlist";
             common.ajax_post("reports", formdata)
-                .then(function(result) { 
-                    $("#table-smcom").html(result);
-                    $("#table-smcom").table({ sticky_header: false, filter: true, sortList: [[1, 0]] });
+                .then(function(result) {
+                    var h = [];
+                    $.each(jQuery.parseJSON(result), function(i, r) {
+                        h.push('<tr><td><span style="white-space: nowrap">');
+                        h.push('<input type="checkbox" class="asm-checkbox" data="' + r.ID + '" id="r' + r.ID + 
+                            '" title="' + _("Select") + '" /> <label for="r' + r.ID + '">' + r.TYPE + '</label></span>');
+                        h.push('<td class="smcom-title">' + r.TITLE + '</td>');
+                        h.push('<td class="smcom-category">' + r.CATEGORY + '</td>');
+                        h.push('<td class="smcom-locale">' + r.LOCALE + '</td>');
+                        h.push('<td class="smcom-description">' + r.DESCRIPTION + '</td>');
+                        h.push('</tr>');
+                    });
+                    $("#table-smcom > tbody").html(h.join("\n"));
+                    $("#table-smcom").trigger("update");
                     $("#button-install").button("disable");
                     $("#table-smcom input").click(function() {
                         if ($("#table-smcom input:checked").length > 0) {
