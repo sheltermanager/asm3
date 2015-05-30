@@ -2469,7 +2469,7 @@ def delete_animal(dbo, username, animalid):
     db.execute(dbo, "DELETE FROM log WHERE LinkID = %d AND LinkType = %d" % (animalid, 0))
     db.execute(dbo, "DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (animalid, additional.ANIMAL_IN))
     db.execute(dbo, "DELETE FROM adoption WHERE AnimalID = %d" % animalid)
-    db.execute(dbo, "DELETE FROM animalcontrol WHERE AnimalID = %d" % animalid)
+    db.execute(dbo, "DELETE FROM animalcontrolanimal WHERE AnimalID = %d" % animalid)
     db.execute(dbo, "DELETE FROM animalmedical WHERE AnimalID = %d" % animalid)
     db.execute(dbo, "DELETE FROM animalmedicaltreatment WHERE AnimalID = %d" % animalid)
     db.execute(dbo, "DELETE FROM animalvaccination WHERE AnimalID = %d" % animalid)

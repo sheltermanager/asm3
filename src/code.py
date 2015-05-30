@@ -5152,7 +5152,7 @@ class staff_rota:
                 extperson.delete_rota(session.dbo, session.user, rid)
         elif mode == "deleteweek":
             users.check_permission(session, users.DELETE_ROTA)
-            extperson.delete_rota_week(session.dbo, session.user, post.date("startdate"), post["flags"])
+            extperson.delete_rota_week(session.dbo, session.user, post.date("startdate"))
         elif mode == "clone":
             users.check_permission(session, users.ADD_ROTA)
             startdate = post.date("startdate")
