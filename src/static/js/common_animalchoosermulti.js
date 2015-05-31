@@ -209,7 +209,7 @@
                     // Add a thumbnail for each shelter animal to the results
                     $.each(self.rows, function(i, a) {
                         results.append( '<div class="asm-animalchoosermulti-result">' + 
-                            html.animal_thumb_link(a, { showselector: true, showunit: true, showlocation: true }) + 
+                            html.animal_link_thumb(a, { showselector: true, showunit: true, showlocation: true }) + 
                             '<input type="hidden" class="locationid" data="{locid}" />'.replace("{locid}", a.SHELTERLOCATION) +
                             '<input type="hidden" class="speciesid" data="{speciesid}" />'.replace("{speciesid}", a.SPECIESID) +
                         '</div>' );
