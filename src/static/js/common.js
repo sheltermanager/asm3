@@ -1478,7 +1478,7 @@
                 if (a.FLVRESULT == 2) { p.push(_("FLV+")); }
                 s.push(html.icon("positivetest", p.join(" ")));
             }
-            if (config.bool("EmblemUnneutered") && a.NEUTERED == 0 && a.NONSHELTERANIMAL == 0) {
+            if (config.bool("EmblemUnneutered") && a.NEUTERED == 0) {
                 s.push(html.icon("health", _("Unaltered")));
             }
             if (config.bool("EmblemNotMicrochipped") && a.IDENTICHIPPED == 0 && a.NONSHELTERANIMAL == 0) {
