@@ -69,6 +69,9 @@ SESSION_STORE = "database" # database or memcached
 #MEMCACHED_SERVER = "127.0.0.1:11211"
 MEMCACHED_SERVER = ""
 
+# The directory to use to cache elements on disk. Must already exist.
+DISK_CACHE = "/tmp/asm_disk_cache"
+
 # Cache results of the most common, less important queries for
 # a short period (60 seconds) to help performance. These queries
 # include shelterview animals and main screen links) 
@@ -76,7 +79,7 @@ MEMCACHED_SERVER = ""
 CACHE_COMMON_QUERIES = False
 
 # Cache service call responses on the server side according
-# to their max-age headers - requires MEMCACHED_SERVER
+# to their max-age headers in the disk cache
 CACHE_SERVICE_RESPONSES = False
 
 # If EMAIL_ERRORS is set to True, all errors from the site
