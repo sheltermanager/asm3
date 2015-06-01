@@ -5517,7 +5517,6 @@ class reports:
         post = utils.PostedData(web.input(mode="create"), session.locale)
         mode = post["mode"]
         dbo = session.dbo
-        l = dbo.locale
         if mode == "create":
             users.check_permission(session, users.ADD_REPORT)
             rid = extreports.insert_report_from_form(dbo, session.user, post)

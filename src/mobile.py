@@ -820,10 +820,11 @@ def handler(dbo, user, locationfilter, post):
     elif mode == "vinc":
         # Display a page containing the selected incident by id
         a = animalcontrol.get_animalcontrol(dbo, pid)
+        amls = animalcontrol.get_animalcontrol_animals(dbo, pid)
         cit = financial.get_incident_citations(dbo, pid)
         dia = diary.get_diaries(dbo, diary.ANIMALCONTROL, pid)
         logs = log.get_logs(dbo, log.ANIMALCONTROL, pid)
-        return handler_viewincident(l, dbo, a, cit, dia, logs, homelink, post)
+        return handler_viewincident(l, dbo, a, amls, cit, dia, logs, homelink, post)
 
     elif mode == "vinccomp":
         # Mark the incident with pid completed with type=ct
@@ -1080,11 +1081,12 @@ def handler_viewanimal(l, dbo, a, af, diet, vacc, test, med, logs, homelink, pos
     h.append("</body></html>")
     return "\n".join(h)
 
-def handler_viewincident(l, dbo, a, cit, dia, logs, homelink, post):
+def handler_viewincident(l, dbo, a, amls, cit, dia, logs, homelink, post):
     """
     Generate the view incident mobile page.
     l:  The locale
     a:   An incident record
+    amls: Any linked animals for the incident
     cit: Citations for the incident
     dia: Diary notes for the incident
     logs: Logs for the incident
@@ -1160,8 +1162,8 @@ def handler_viewincident(l, dbo, a, cit, dia, logs, homelink, post):
     h.append(tr( _("Suspect 1", l), a["OWNERNAME1"]))
     h.append(tr( _("Suspect 2", l), a["OWNERNAME2"]))
     h.append(tr( _("Suspect 3", l), a["OWNERNAME3"]))
-    if a["ANIMALID"] is not None and a["ANIMALID"] != 0:
-        h.append(tr( _("Animal", l), '<a href="mobile_post?posttype=va&id=%d">%s</a>' % (a["ANIMALID"], a["ANIMALNAME"])))
+    for m in amls:
+        h.append(tr( _("Animal", l), '<a href="mobile_post?posttype=va&id=%d">%s - %s</a>' % (m["ANIMALID"], m["SHELTERCODE"], m["ANIMALNAME"])))
     h.append(tr( _("Species", l), a["SPECIESNAME"]))
     h.append(tr( _("Sex", l), a["SEXNAME"]))
     h.append(tr( _("Age Group", l), a["AGEGROUP"]))
