@@ -2,19 +2,23 @@
 
 """
 Implements a python disk cache in a similar way to memcache,
-uses keys as filenames.
+uses md5sums of the key as filenames.
 """
 
 import cPickle as pickle
+import hashlib
 import os
 import time
 from sitedefs import DISK_CACHE
 
 def _getfilename(key):
-    notallowed = [ "!", "\"", "$", "%", "^", "&", "*", "(", ")", "-", "/", "\\", "'", "@", ":", ";", ",", ".", "?" ]
-    for s in notallowed:
-        key = key.replace(s, "_")
-    fname = "%s/%s" % (DISK_CACHE, key)
+    """
+    Calculates the filename from the key
+    (md5 hash)
+    """
+    m = hashlib.md5()
+    m.update(key)
+    fname = "%s/%s" % (DISK_CACHE, m.hexdigest())
     return fname
 
 def delete(key):
@@ -65,9 +69,4 @@ def put(key, value, ttl):
     pickle.dump(o, f)
     f.close()
 
-def reap():
-    """
-    Removes any dead or stale entries from the disk cache.
-    """
-    # TODO:
 
