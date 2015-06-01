@@ -40,7 +40,6 @@ def flood_protect(method, remoteip, ttl, message = ""):
     remoteip since ttl seconds ago.
     If we haven't, we record this as the last time we saw a request
     from this ip address for that method. Otherwise, an error is thrown.
-    If memcache isn't available, does nothing.
     method: The service method we're protecting
     remoteip: The ip address of the caller
     ttl: The protection period (one request per ttl seconds)
