@@ -60,6 +60,8 @@ explicitly set too.
 Electronic Signatures
 ---------------------
 
+.. warning:: Electronic signatures are only supported by ASM's built in HTML-based word processor. They cannot be used with OpenOffice templates.
+
 .. image:: images/sign_buttons.png
 
 ASM allows you to add an electronic signature to documents. Signed documents
@@ -123,4 +125,24 @@ email them in PDF form to adopters directly.
 
 .. image:: images/sign_mobiledoc.png
 
+User Signatures
+---------------
+
+It is quite common for documents to require a member of staff's signature as
+well as the new adopter/volunteer/etc.
+
+Each user can store their own signature in the "Change User Settings" page,
+accessed under the user menu (the menu with the logged in user's name at
+the top right of the screen).
+
+.. image:: images/sign_user.png
+
+You can add a placeholder for the current user's signature in your document
+templates with the <<UserSignature>> wordkey. This will insert the signature
+at full size into the document as an image.
+
+If you'd like to control the size and placement of the user's signature in
+a similar manner to normal signatures, you can insert an image and
+when prompted for the image source use "signature:user" without the
+quotes.
 

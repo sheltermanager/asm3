@@ -1047,6 +1047,8 @@ def substitute_template(dbo, template, tags, imdata = None):
     templatedata = dbfs.get_string_id(dbo, template)
     templatename = dbfs.get_name_for_id(dbo, template)
     if templatename.endswith(".html"):
+        # Translate any user signature placeholder
+        templatedata = templatedata.replace("signature:user", "&lt;&lt;UserSignatureSrc&gt;&gt;")
         return substitute_tags(templatedata, tags)
     elif templatename.endswith(".odt"):
         try:
