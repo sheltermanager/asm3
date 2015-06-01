@@ -334,26 +334,37 @@ explicitly set too.</p>
 <p class="last">Electronic signatures are only supported by ASM&#8217;s built in HTML-based word processor. They cannot be used with OpenOffice templates.</p>
 </div>
 <img alt="_images/sign_buttons.png" src="_images/sign_buttons.png" />
-<p>ASM allows you to add an electronic signature to documents. Signed documents
-are read only and cannot be edited. A cryptographic hash for the signed
-document is calculated and stored separately so that any future
-tampering can be detected.</p>
-<p>There are two methods of adding signatures to documents - either via the
-user interface or through &#8220;signing pad&#8221; mode in the mobile interface.</p>
+<p>ASM allows you to add electronic signatures to documents. Signed documents are
+read only and cannot be edited. A cryptographic hash for the signed document is
+calculated and stored separately so that any future tampering can be detected.</p>
+<p>There are three methods of adding signatures to documents:</p>
+<ul class="simple">
+<li>&#8220;Sign&#8221; button in the media tab (using a touchscreen monitor, wacom
+tablet, lightpen, other mouse-like device or if you are using a tablet
+computer)</li>
+<li>&#8220;Signing Pad&#8221; mode of the mobile interface for any external
+touchscreen device (iPad, iPhone, Android phone/tablet, etc).</li>
+<li>A signature that has been pre-stored for the currently logged in user
+(necessary for a staff signature in addition to the main signatory).</li>
+</ul>
 <p>To use, select the documents you&#8217;d like to sign and use either the &#8220;Sign&#8221; or
 &#8220;Signing Pad&#8221; buttons on the media tab. ASM allows you to use any generic mouse
 or touchscreen hardware and mobile touchscreen devices as signing pads - you do
 not need to buy expensive custom hardware.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Once signed, a document cannot be edited. A maximum of two signatures can be recorded in a document - one for the signatory and one for the current system user.</p>
+</div>
 <img alt="_images/sign_dialog.png" src="_images/sign_dialog.png" />
-<p>The &#8220;Sign&#8221; button shows a signature pad on-screen and allows you to use any
-mouse-style device to do the signing. This includes hardware like Wacom drawing
-tablets, mice, pens and touchscreen monitors (or if you are using a tablet
-computer with the standard user interface).</p>
-<p>When editing your document templates, if you would like to control the size and
-location of the signature, insert an image where you&#8217;d like the signature to
-appear and when the dialog requests the image source, instead of a URL, enter
-&#8220;signature:placeholder&#8221; without the quotes. The document signing module will
-insert the signature inside your image instead of appending a footer.</p>
+<p>To control the size and location of the signature:</p>
+<ul class="simple">
+<li>insert an image where you&#8217;d like the signature to appear</li>
+<li>When the insert image dialog requests the image source, instead of a URL,
+enter &#8220;signature:placeholder&#8221; without the quotes.</li>
+<li>Choose a size to constrain the image to - eg: 150 x 75</li>
+<li>The document signing module will insert the signature inside your image
+when the document is signed.</li>
+</ul>
 <p>If your document template does not contain a signature placeholder, the
 signature will be attached to the document as a footer along with the date and
 time the document was signed.</p>
@@ -384,8 +395,12 @@ email them in PDF form to adopters directly.</p>
 </div>
 <div class="section" id="user-signatures">
 <h2>User Signatures<a class="headerlink" href="#user-signatures" title="Permalink to this headline">¶</a></h2>
-<p>It is quite common for documents to require a member of staff&#8217;s signature as
-well as the new adopter/volunteer/etc.</p>
+<p>It is quite common for documents to require a member of staff signature as well
+as the main signatory (eg: new adopter/volunteer/etc. ). In order to add a
+second signature to a document, the user&#8217;s signature must be stored within the
+system. This means the system can insert the user&#8217;s signature into the document
+which can then be signed using the signing pad - it isn&#8217;t currently possible to
+add multiple signatures to a single document using the signing pad.</p>
 <p>Each user can store their own signature in the &#8220;Change User Settings&#8221; page,
 accessed under the user menu (the menu with the logged in user&#8217;s name at
 the top right of the screen).</p>

@@ -64,31 +64,37 @@ Electronic Signatures
 
 .. image:: images/sign_buttons.png
 
-ASM allows you to add an electronic signature to documents. Signed documents
-are read only and cannot be edited. A cryptographic hash for the signed
-document is calculated and stored separately so that any future
-tampering can be detected.
+ASM allows you to add electronic signatures to documents. Signed documents are
+read only and cannot be edited. A cryptographic hash for the signed document is
+calculated and stored separately so that any future tampering can be detected.
 
-There are two methods of adding signatures to documents - either via the
-user interface or through "signing pad" mode in the mobile interface.
+There are three methods of adding signatures to documents:
+
+* "Sign" button in the media tab (using a touchscreen monitor, wacom
+  tablet, lightpen, other mouse-like device or if you are using a tablet
+  computer)
+* "Signing Pad" mode of the mobile interface for any external
+  touchscreen device (iPad, iPhone, Android phone/tablet, etc).
+* A signature that has been pre-stored for the currently logged in user
+  (necessary for a staff signature in addition to the main signatory).
 
 To use, select the documents you'd like to sign and use either the "Sign" or
 "Signing Pad" buttons on the media tab. ASM allows you to use any generic mouse
 or touchscreen hardware and mobile touchscreen devices as signing pads - you do
 not need to buy expensive custom hardware.
 
+.. note:: Once signed, a document cannot be edited. A maximum of two signatures can be recorded in a document - one for the signatory and one for the current system user.
+
 .. image:: images/sign_dialog.png
 
-The "Sign" button shows a signature pad on-screen and allows you to use any
-mouse-style device to do the signing. This includes hardware like Wacom drawing
-tablets, mice, pens and touchscreen monitors (or if you are using a tablet
-computer with the standard user interface).
+To control the size and location of the signature:
 
-When editing your document templates, if you would like to control the size and
-location of the signature, insert an image where you'd like the signature to
-appear and when the dialog requests the image source, instead of a URL, enter
-"signature:placeholder" without the quotes. The document signing module will
-insert the signature inside your image instead of appending a footer.
+* insert an image where you'd like the signature to appear 
+* When the insert image dialog requests the image source, instead of a URL,
+  enter "signature:placeholder" without the quotes.
+* Choose a size to constrain the image to - eg: 150 x 75
+* The document signing module will insert the signature inside your image
+  when the document is signed.
 
 If your document template does not contain a signature placeholder, the
 signature will be attached to the document as a footer along with the date and
@@ -128,8 +134,12 @@ email them in PDF form to adopters directly.
 User Signatures
 ---------------
 
-It is quite common for documents to require a member of staff's signature as
-well as the new adopter/volunteer/etc.
+It is quite common for documents to require a member of staff signature as well
+as the main signatory (eg: new adopter/volunteer/etc. ). In order to add a
+second signature to a document, the user's signature must be stored within the
+system. This means the system can insert the user's signature into the document
+which can then be signed using the signing pad - it isn't currently possible to
+add multiple signatures to a single document using the signing pad. 
 
 Each user can store their own signature in the "Change User Settings" page,
 accessed under the user menu (the menu with the logged in user's name at
