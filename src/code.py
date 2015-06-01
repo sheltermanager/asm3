@@ -14,7 +14,7 @@ import additional as extadditional
 import animal as extanimal
 import animalcontrol as extanimalcontrol
 import async
-import cache
+import cachemem
 import configuration
 import csvimport as extcsvimport
 import db, dbfs, dbupdate
@@ -211,13 +211,13 @@ class MemCacheStore(web.session.Store):
     reconnects so as not to leave the store in a broken state.
     """
     def __contains__(self, key):
-        return cache.get(key) is not None
+        return cachemem.get(key) is not None
     def __getitem__(self, key):
-        return cache.get(key)
+        return cachemem.get(key)
     def __setitem__(self, key, value):
-        return cache.put(key, value, web.config.session_parameters["timeout"])
+        return cachemem.put(key, value, web.config.session_parameters["timeout"])
     def __delitem__(self, key):
-        cache.delete(key)
+        cachemem.delete(key)
     def cleanup(self, timeout):
         pass # Not needed, we assign values to memcache with timeout
 

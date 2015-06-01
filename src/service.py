@@ -10,7 +10,7 @@ for others.
 
 import al
 import animal
-import cache
+import cachemem
 import cachedisk
 import configuration
 import db
@@ -45,12 +45,11 @@ def flood_protect(method, remoteip, ttl, message = ""):
     remoteip: The ip address of the caller
     ttl: The protection period (one request per ttl seconds)
     """
-    if not cache.available(): return
     cache_key = "m%sr%s" % (method, remoteip)
-    v = cache.get(cache_key)
+    v = cachemem.get(cache_key)
     #al.debug("method: %s, remoteip: %s, ttl: %d, cacheval: %s" % (method, remoteip, ttl, v), "service.flood_protect")
     if v is None:
-        cache.put(cache_key, "x", ttl)
+        cachemem.put(cache_key, "x", ttl)
     else:
         if message == "":
             message = "You have already called '%s' in the last %d seconds, please wait before trying again." % (method, ttl)
@@ -72,7 +71,7 @@ def get_cached_response(cache_key):
     if not CACHE_SERVICE_RESPONSES: return None
     response = cachedisk.get(cache_key)
     if response is None: return None
-    al.debug("GET: %s (%d bytes)" % (cache_key, len(response[2])), "service.get_cached_response")
+    #al.debug("GET: %s (%d bytes)" % (cache_key, len(response[2])), "service.get_cached_response")
     return response
 
 def set_cached_response(cache_key, mime, clientage, serverage, content):
@@ -88,7 +87,7 @@ def set_cached_response(cache_key, mime, clientage, serverage, content):
     """
     response = (mime, clientage, content)
     if not CACHE_SERVICE_RESPONSES: return response
-    al.debug("PUT: %s (%d bytes)" % (cache_key, len(content)), "service.set_cached_response")
+    #al.debug("PUT: %s (%d bytes)" % (cache_key, len(content)), "service.set_cached_response")
     cachedisk.put(cache_key, response, serverage)
     return response
 

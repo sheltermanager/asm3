@@ -1,0 +1,116 @@
+#!/usr/bin/python
+
+from sitedefs import MEMCACHED_SERVER
+
+def get(key):
+    """
+    Retrieves a cache value. Returns None if
+    the value isn't set
+    """
+    if _memcache_available(): return _memcache_get(key)
+    return _dict_get(key)
+
+def put(key, value, ttl):
+    """
+    Sets a cache value with a ttl in seconds
+    """
+    if _memcache_available(): return _memcache_put(key, value, ttl)
+    return _dict_put(key, value, ttl)
+
+def increment(key):
+    """
+    Increments a cache value and returns it or
+    None if the value doesn't exist.
+    """
+    if _memcache_available(): return _memcache_increment(key)
+    return _dict_increment(key)
+
+def delete(key):
+    """
+    Deletes a cache value.
+    """
+    if _memcache_available(): return _memcache_delete(key)
+    return _dict_delete(key)
+
+
+
+# ==============================================
+# Dict implementation of memory cache
+# ==============================================
+dict_client = {}
+
+def _dict_get(key):
+    global dict_client
+    if not dict_client.has_key(key): return None
+    return dict_client[key]
+
+def _dict_put(key, value, ttl):
+    global dict_client
+    dict_client[key] = value
+    # TODO: ttl is ignored for this implementation
+    dummy = ttl
+
+def _dict_increment(key):
+    global dict_client
+    v = _dict_get(key)
+    if v is None: return None
+    dict_client[key] += 1
+    return v
+
+def _dict_delete(key):
+    global dict_client
+    del dict_client[key]
+
+# ==============================================
+# Memcache implementation of memory cache
+# ==============================================
+memcache_client = None
+
+def _get_mc():
+    """
+    Returns a memcache client
+    """
+    import memcache
+    mc = memcache.Client([MEMCACHED_SERVER], debug=0)
+    return mc
+
+def _memcache_available():
+    return MEMCACHED_SERVER != ""
+
+def _memcache_get(key):
+    global memcache_client
+    try:
+        if memcache_client is None: memcache_client = _get_mc()
+        return memcache_client.get(key)
+    except:
+        memcache_client = _get_mc()
+        return memcache_client.get(key)
+
+def _memcache_put(key, value, ttl):
+    global memcache_client
+    try:
+        if memcache_client is None: memcache_client = _get_mc()
+        return memcache_client.set(key, value, time = ttl )
+    except:
+        memcache_client = _get_mc()
+        return memcache_client.set(key, value, time = ttl )
+
+def _memcache_increment(key):
+    global memcache_client
+    try:
+        if memcache_client is None: memcache_client = _get_mc()
+        return memcache_client.incr(key)
+    except:
+        memcache_client = _get_mc()
+        return memcache_client.incr(key)
+
+def _memcache_delete(key):
+    global memcache_client
+    try:
+        if memcache_client is None: memcache_client = _get_mc()
+        return memcache_client.delete(key)
+    except:
+        memcache_client = _get_mc()
+        return memcache_client.delete(key)
+
+

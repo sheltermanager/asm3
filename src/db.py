@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
 import al
-import cache
+import cachemem
+import cachedisk
 import datetime
-import hashlib
 import i18n
 import sys
 import utils
@@ -148,16 +148,13 @@ def query_cache(dbo, sql, age = 60):
     If CACHE_COMMON_QUERIES is set to false, just runs the query
     without doing any caching and is equivalent to db.query()
     """
-    if not CACHE_COMMON_QUERIES or not cache.available(): return query(dbo, sql)
+    if not CACHE_COMMON_QUERIES: return query(dbo, sql)
     cache_key = "%s:%s:%s" % (dbo.alias, dbo.database, sql.replace(" ", "_"))
-    m = hashlib.md5()
-    m.update(cache_key)
-    cache_key = "q:%s" % m.hexdigest()
-    results = cache.get(cache_key)
+    results = cachedisk.get(cache_key)
     if results is not None:
         return results
     results = query(dbo, sql)
-    cache.put(cache_key, results, age)
+    cachedisk.put(cache_key, results, age)
     return results
 
 def query_columns(dbo, sql):
@@ -375,12 +372,12 @@ def _get_id_set_asm2_primarykey(dbo, table, nextid):
 def _get_id_max(dbo, table):
     return query_int(dbo, "SELECT MAX(ID) FROM %s" % table) + 1
 
-def _get_id_memcache(dbo, table):
+def _get_id_cache(dbo, table):
     cache_key = "db:%s:as:%s:tb:%s" % (dbo.database, dbo.alias, table)
-    nextid = cache.increment(cache_key)
+    nextid = cachemem.increment(cache_key)
     if nextid is None: 
         nextid = query_int(dbo, "SELECT MAX(ID) FROM %s" % table) + 1
-        cache.put(cache_key, nextid, 600)
+        cachemem.put(cache_key, nextid, 600)
     return nextid
 
 def _get_id_postgres_seq(dbo, table):
@@ -388,9 +385,11 @@ def _get_id_postgres_seq(dbo, table):
 
 def get_id(dbo, table):
     """
-    Returns the next ID in sequence for a table.
-    Will use memcache for pk generation if the CACHE_PRIMARY_KEYS option is on
-        and will set the cache first value if not set.
+    Returns the next ID in sequence for a table according to a number
+    of different strategies.
+    max:   Do SELECT MAX(ID)+1 FROM TABLE
+    cache: Use an in-memory cache to track PK values (initialised by SELECT MAX)
+    pseq:  Use PostgreSQL sequences
     If the database has an ASM2 primary key table, it will be updated
         with the next pk value.
     """
@@ -399,9 +398,9 @@ def get_id(dbo, table):
     if DB_PK_STRATEGY == "max" or dbo.has_asm2_pk_table:
         nextid = _get_id_max(dbo, table)
         strategy = "max"
-    elif DB_PK_STRATEGY == "memcache" and cache.available():
-        nextid = _get_id_memcache(dbo, table)
-        strategy = "memcache"
+    elif DB_PK_STRATEGY == "cache":
+        nextid = _get_id_cache(dbo, table)
+        strategy = "cache"
     elif DB_PK_STRATEGY == "pseq" and dbo.dbtype == "POSTGRESQL":
         nextid = _get_id_postgres_seq(dbo, table)
         strategy = "pseq"

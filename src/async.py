@@ -5,25 +5,15 @@ Module for helping run tasks asynchronously and updating/getting progress.
 Only allows one async task per database to be run at a time.
 """
 
-import cache
+import cachemem
 
 lc = {}
 
 def get(dbo, k):
-    if cache.available():
-        return cache.get("%s.%s" % (dbo.database, k))
-    else:
-        global lc
-        if lc.has_key(k):
-            return lc[k]
-        return None
+    return cachemem.get("%s.%s" % (dbo.database, k))
 
 def put(dbo, k, v):
-    if cache.available():
-        cache.put("%s.%s" % (dbo.database, k), v, 3600)
-    else:
-        global lc
-        lc[k] = v
+    cachemem.put("%s.%s" % (dbo.database, k), v, 3600)
 
 def is_task_running(dbo):
     name = get(dbo, "taskname")

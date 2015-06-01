@@ -41,7 +41,7 @@ DB_HAS_ASM2_PK_TABLE = False
 # ASM2 and ASM3
 #
 # max:      Use MAX(ID)+1
-# memcache: Store IDs in memcache and use memcache.incr (requires memcache)
+# cache:    Store IDs in a memory cache 
 # pseq:     Use PostgreSQL sequences (only valid for PostgreSQL database)
 DB_PK_STRATEGY = "max"
 
@@ -65,17 +65,19 @@ DEPLOYMENT_TYPE = "wsgi"
 # use the above database even if MULTIPLE_DATABASES is on below.
 SESSION_STORE = "database" # database or memcached
 
-# The host/port that memcached is running on if it is to be used
+# The host/port that memcached is running on if it is to be used.
+# If memcache is not available, an in memory dictionary will be
+# used instead.
 #MEMCACHED_SERVER = "127.0.0.1:11211"
 MEMCACHED_SERVER = ""
 
-# The directory to use to cache elements on disk. Must already exist.
+# The directory to use to cache elements on disk. Must already exist
+# as the application will not attempt to create it.
 DISK_CACHE = "/tmp/asm_disk_cache"
 
 # Cache results of the most common, less important queries for
-# a short period (60 seconds) to help performance. These queries
-# include shelterview animals and main screen links) 
-#- requires MEMCACHED_SERVER
+# a short period (60 seconds) in the disk cache to help performance. 
+# These queries include shelterview animals and main screen links) 
 CACHE_COMMON_QUERIES = False
 
 # Cache service call responses on the server side according

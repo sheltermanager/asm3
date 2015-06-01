@@ -1,6 +1,7 @@
 37
 ================
 
+01/06/15 Rewrite cache into cachemem and use fallback dict if no memcache
 01/06/15 Rewrite service response caching to use disk
 01/06/15 Fix bug in view incident due to multi-animal support
 30/05/15 Detect dumped sessions and force a reload gracefully

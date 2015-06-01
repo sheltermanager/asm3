@@ -5,7 +5,7 @@
 """
 
 import al
-import cache
+import cachemem
 import json
 import threading
 import time
@@ -50,11 +50,10 @@ def get_lat_long(dbo, address, town, county, postcode, country = None):
         al.debug("looking up geocode for address: %s" % q, "geo.get_lat_long", dbo)
         
         key = "nom:" + q
-        if cache.available():
-            v = cache.get(key)
-            if v is not None:
-                al.debug("cache hit for address: %s = %s" % (q, v), "geo.get_lat_long", dbo)
-                return v
+        v = cachemem.get(key)
+        if v is not None:
+            al.debug("cache hit for address: %s = %s" % (q, v), "geo.get_lat_long", dbo)
+            return v
 
         jr = urllib2.urlopen(url, timeout = BULK_GEO_LOOKUP_TIMEOUT).read()
         j = json.loads(jr)
@@ -68,6 +67,7 @@ def get_lat_long(dbo, address, town, county, postcode, country = None):
         if BULK_GEO_SLEEP_AFTER > 0:
             time.sleep(BULK_GEO_SLEEP_AFTER)
 
+        cachemem.put(key, latlon, 86400)
         return latlon
 
     except Exception,err:
