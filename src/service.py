@@ -44,7 +44,7 @@ def flood_protect(method, remoteip, ttl, message = ""):
     remoteip: The ip address of the caller
     ttl: The protection period (one request per ttl seconds)
     """
-    cache_key = "m%sr%s" % (method, remoteip)
+    cache_key = "m%sr%s" % (method, remoteip.replace(", ", "")) # X-FORWARDED-FOR can be a list, remove commas
     v = cachemem.get(cache_key)
     #al.debug("method: %s, remoteip: %s, ttl: %d, cacheval: %s" % (method, remoteip, ttl, v), "service.flood_protect")
     if v is None:
