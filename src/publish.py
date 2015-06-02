@@ -1218,14 +1218,14 @@ class AdoptAPetPublisher(FTPPublisher):
             "Domestic Medium Hair-white=Domestic Mediumhair\n" \
             "Domestic Medium Hair-orange=Domestic Mediumhair\n" \
             "Domestic Medium Hair - orange and white=Domestic Mediumhair\n" \
-            "Domestic Medium Hair -black and white=Domestic Mediumhair\n" \
+            "Domestic Medium Hair-black and white=Domestic Mediumhair\n" \
             "Domestic Short Hair=Domestic Shorthair\n" \
             "Domestic Short Hair - buff=Domestic Shorthair\n" \
             "Domestic Short Hair - gray and white=Domestic Shorthair\n" \
             "Domestic Short Hair-white=Domestic Shorthair\n" \
             "Domestic Short Hair-orange=Domestic Shorthair\n" \
             "Domestic Short Hair - orange and white=Domestic Shorthair\n" \
-            "Domestic Short Hair -black and white=Domestic Shorthair\n" \
+            "Domestic Short Hair-black and white=Domestic Shorthair\n" \
             "Exotic Shorthair=Exotic\n" \
             "Extra-Toes Cat (Hemingway Polydactyl)=Hemingway/Polydactyl\n" \
             "Havana=Havana Brown\n" \
