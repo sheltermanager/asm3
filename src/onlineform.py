@@ -356,7 +356,7 @@ def get_onlineformincoming_plain(dbo, collationid):
     """ Returns a plain text fragment of the incoming form data """
     h = []
     for f in get_onlineformincoming_detail(dbo, collationid):
-        if f["VALUE"].startswith("RAW::"): continue
+        if f["VALUE"].startswith("RAW::") or f["VALUE"].startswith("data:"): continue
         label = f["LABEL"]
         if label is None or label == "": label = f["FIELDNAME"]
         h.append("%s: %s\n" % (label, f["VALUE"]))
