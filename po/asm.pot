@@ -1998,7 +1998,7 @@ msgstr ""
 msgid "Catahoula Leopard Dog"
 msgstr ""
 
-#: animal.js reports.js report_export.js move_deceased.js html.py
+#: animal.js reports.js report_export.js move_deceased.js
 msgid "Category"
 msgstr ""
 
@@ -2392,6 +2392,10 @@ msgstr ""
 #: lostfound_find.js lostfound.js animal_find.js animal_find_results.js
 #: lostfound_new.js lookups.py mobile.py person.py html.py
 msgid "Color"
+msgstr ""
+
+#: lookups.js
+msgid "Color to use when publishing to third party services and adoption sites"
 msgstr ""
 
 #: lookups.py
@@ -4361,11 +4365,11 @@ msgid "Failed sending email"
 msgstr ""
 
 #: dbupdate.py
-msgid "Fawn"
+msgid "Fawn Tortoiseshell"
 msgstr ""
 
 #: dbupdate.py
-msgid "Fawn Tortoiseshell"
+msgid "Fawn", l, "Tan/Yellow/Fawn"
 msgstr ""
 
 #: dbupdate.py
@@ -6082,7 +6086,7 @@ msgstr ""
 msgid "Loan"
 msgstr ""
 
-#: change_user_settings.js options.js html.py
+#: change_user_settings.js options.js reports.js
 msgid "Locale"
 msgstr ""
 
@@ -7263,6 +7267,10 @@ msgstr ""
 msgid "Once assigned, codes cannot be changed"
 msgstr ""
 
+#: mobile.py
+msgid "Once signed, this document cannot be edited or tampered with."
+msgstr ""
+
 #: medical.py
 msgid "One Off"
 msgstr ""
@@ -7988,6 +7996,10 @@ msgstr ""
 msgid "Publisher Breed"
 msgstr ""
 
+#: lookups.js
+msgid "Publisher Color"
+msgstr ""
+
 #: publish_logs.js
 msgid "Publisher Logs"
 msgstr ""
@@ -8678,10 +8690,6 @@ msgstr ""
 msgid "Reupload animal images every time"
 msgstr ""
 
-#: mobile.py
-msgid "Review"
-msgstr ""
-
 #: dbupdate.py
 msgid "Rex"
 msgstr ""
@@ -8958,7 +8966,7 @@ msgstr ""
 #: onlineforms.js accounts.js diarytasks.js person.js common.js users.js
 #: animal.js transport.js roles.js reports.js accounts_trx.js
 #: common_animalchoosermulti.js common_tableform.js common_personchooser.js
-#: litters.js html.py
+#: litters.js
 msgid "Select"
 msgstr ""
 
@@ -10752,8 +10760,8 @@ msgstr ""
 msgid "Times should be in HH:MM format, eg: 09:00, 16:30"
 msgstr ""
 
-#: person_find_results.js person.js person_new.js common_personchooser.js
-#: html.py
+#: person_find_results.js person.js person_new.js reports.js
+#: common_personchooser.js html.py
 msgid "Title"
 msgstr ""
 
@@ -11439,6 +11447,10 @@ msgstr ""
 
 #: roles.js
 msgid "View Diets"
+msgstr ""
+
+#: mobile.py
+msgid "View Document"
 msgstr ""
 
 #: roles.js

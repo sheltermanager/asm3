@@ -7,7 +7,7 @@ import os, sys
 from i18n import _, BUILD
 from sitedefs import DB_PK_STRATEGY
 
-LATEST_VERSION = 33707
+LATEST_VERSION = 33708
 VERSIONS = ( 
     2870, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3050,
     3051, 3081, 3091, 3092, 3093, 3094, 3110, 3111, 3120, 3121, 3122, 3123, 3200,
@@ -19,7 +19,7 @@ VERSIONS = (
     33310, 33311, 33312, 33313, 33314, 33315, 33316, 33401, 33402, 33501, 33502,
     33503, 33504, 33505, 33506, 33507, 33508, 33600, 33601, 33602, 33603, 33604,
     33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702, 33703, 33704, 33705,
-    33706, 33707
+    33706, 33707, 33708
 )
 
 # All ASM3 tables
@@ -718,7 +718,8 @@ def sql_structure(dbo):
     sql += table("basecolour", (
         fid(),
         fstr("BaseColour"),
-        fstr("BaseColourDescription", True) ), False)
+        fstr("BaseColourDescription", True),
+        fstr("AdoptAPetColour", True) ), False)
 
     sql += table("breed", (
         fid(),
@@ -1315,6 +1316,8 @@ def sql_default_data(dbo, skip_config = False):
         return "INSERT INTO accounts VALUES (%s, '%s', '%s', 0, %s, %s, %s, 0, '%s', %s, '%s', %s)|=\n" % ( str(tid), db.escape(code), db.escape(desc), str(atype), str(dtype), str(ctype), 'default', db.todaysql(), 'default', db.todaysql())
     def breed(tid, name, petfinder, speciesid):
         return "INSERT INTO breed VALUES (%s, '%s', '', '%s', %s)|=\n" % ( str(tid), db.escape(name), petfinder, str(speciesid) )
+    def basecolour(tid, name, adoptapet):
+        return "INSERT INTO basecolour VALUES (%s, '%s', '', '%s')|=\n" % (str(tid), db.escape(name), adoptapet)
     def internallocation(lid, name):
         return "INSERT INTO internallocation (ID, LocationName, LocationDescription, Units) VALUES (%s, '%s', '', '')|=\n" % ( str(lid), db.escape(name) )
     def species(tid, name, petfinder):
@@ -1384,63 +1387,63 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup2("animaltype", 13, _("M (Miscellaneous)", l))
     sql += lookup2("animaltype", 40, _("N (Non-Shelter Animal)", l))
     sql += lookup2("animaltype", 41, _("B (Boarding Animal)", l))
-    sql += lookup2("basecolour", 1, _("Black", l))
-    sql += lookup2("basecolour", 2, _("White", l))
-    sql += lookup2("basecolour", 3, _("Black and White", l))
-    sql += lookup2("basecolour", 4, _("Ginger", l))
-    sql += lookup2("basecolour", 5, _("White and Black", l))
-    sql += lookup2("basecolour", 6, _("Tortie", l))
-    sql += lookup2("basecolour", 7, _("Tabby", l))
-    sql += lookup2("basecolour", 8, _("Tan", l))
-    sql += lookup2("basecolour", 9, _("Black and Tan", l))
-    sql += lookup2("basecolour", 10, _("Tan and Black", l))
-    sql += lookup2("basecolour", 11, _("Brown", l))
-    sql += lookup2("basecolour", 12, _("Brown and Black", l))
-    sql += lookup2("basecolour", 13, _("Black and Brown", l))
-    sql += lookup2("basecolour", 14, _("Brindle", l))
-    sql += lookup2("basecolour", 15, _("Brindle and Black", l))
-    sql += lookup2("basecolour", 16, _("Brindle and White", l))
-    sql += lookup2("basecolour", 17, _("Black and Brindle", l))
-    sql += lookup2("basecolour", 18, _("White and Brindle", l))
-    sql += lookup2("basecolour", 19, _("Tricolour", l))
-    sql += lookup2("basecolour", 20, _("Liver", l))
-    sql += lookup2("basecolour", 21, _("Liver and White", l))
-    sql += lookup2("basecolour", 22, _("White and Liver", l))
-    sql += lookup2("basecolour", 23, _("Cream", l))
-    sql += lookup2("basecolour", 24, _("Tan and White", l))
-    sql += lookup2("basecolour", 26, _("White and Tan", l))
-    sql += lookup2("basecolour", 27, _("Tortie and White", l))
-    sql += lookup2("basecolour", 28, _("Tabby and White", l))
-    sql += lookup2("basecolour", 29, _("Ginger and White", l))
-    sql += lookup2("basecolour", 30, _("Grey", l))
-    sql += lookup2("basecolour", 31, _("Grey and White", l))
-    sql += lookup2("basecolour", 32, _("White and Grey", l))
-    sql += lookup2("basecolour", 33, _("White and Torti", l))
-    sql += lookup2("basecolour", 35, _("Brown and White", l))
-    sql += lookup2("basecolour", 36, _("Blue", l))
-    sql += lookup2("basecolour", 37, _("White and Tabby", l))
-    sql += lookup2("basecolour", 38, _("Yellow and Grey", l))
-    sql += lookup2("basecolour", 39, _("Various", l))
-    sql += lookup2("basecolour", 40, _("White and Brown", l))
-    sql += lookup2("basecolour", 41, _("Green", l))
-    sql += lookup2("basecolour", 42, _("Amber", l))
-    sql += lookup2("basecolour", 43, _("Black Tortie", l))
-    sql += lookup2("basecolour", 44, _("Blue Tortie", l))
-    sql += lookup2("basecolour", 45, _("Chocolate", l))
-    sql += lookup2("basecolour", 46, _("Chocolate Tortie", l))
-    sql += lookup2("basecolour", 47, _("Cinnamon", l))
-    sql += lookup2("basecolour", 48, _("Cinnamon Tortoiseshell", l))
-    sql += lookup2("basecolour", 49, _("Fawn", l))
-    sql += lookup2("basecolour", 50, _("Fawn Tortoiseshell", l))
-    sql += lookup2("basecolour", 51, _("Golden", l))
-    sql += lookup2("basecolour", 52, _("Light Amber", l))
-    sql += lookup2("basecolour", 53, _("Lilac", l))
-    sql += lookup2("basecolour", 54, _("Lilac Tortie", l))
-    sql += lookup2("basecolour", 55, _("Ruddy", l))
-    sql += lookup2("basecolour", 56, _("Seal", l))
-    sql += lookup2("basecolour", 57, _("Silver", l))
-    sql += lookup2("basecolour", 58, _("Sorrel", l))
-    sql += lookup2("basecolour", 59, _("Sorrel Tortoiseshell", l))
+    sql += basecolour(1, _("Black", l), "Black")
+    sql += basecolour(2, _("White", l), "White")
+    sql += basecolour(3, _("Black and White", l), "Black - with White")
+    sql += basecolour(4, _("Ginger", l), "Red/Golden/Orange/Chestnut")
+    sql += basecolour(5, _("White and Black", l), "White - with Black")
+    sql += basecolour(6, _("Tortie", l), "Tortoiseshell")
+    sql += basecolour(7, _("Tabby", l), "Brown Tabby")
+    sql += basecolour(8, _("Tan", l), "Tan/Yellow/Fawn")
+    sql += basecolour(9, _("Black and Tan", l), "Black - with Tan, Yellow or Fawn")
+    sql += basecolour(10, _("Tan and Black", l), "Black - with Tan, Yellow or Fawn")
+    sql += basecolour(11, _("Brown", l), "Brown/Chocolate")
+    sql += basecolour(12, _("Brown and Black", l), "Brown/Chocolate - with Black")
+    sql += basecolour(13, _("Black and Brown", l), "Brown/Chocolate - with White")
+    sql += basecolour(14, _("Brindle", l), "Brindle")
+    sql += basecolour(15, _("Brindle and Black", l), "Brindle")
+    sql += basecolour(16, _("Brindle and White", l), "Brindle - with White")
+    sql += basecolour(17, _("Black and Brindle", l), "Black - with Tan, Yellow or Fawn")
+    sql += basecolour(18, _("White and Brindle", l), "White - with Tan, Yelow or Fawn")
+    sql += basecolour(19, _("Tricolour", l), "Tricolor (Tan/Brown & Black & White)")
+    sql += basecolour(20, _("Liver", l), "Brown/Chocolate")
+    sql += basecolour(21, _("Liver and White", l), "Brown/Chocolate - with White")
+    sql += basecolour(22, _("White and Liver", l), "Brown/Chocolate - with White")
+    sql += basecolour(23, _("Cream", l), "White")
+    sql += basecolour(24, _("Tan and White", l), "White - with Tan, Yellow or Fawn")
+    sql += basecolour(26, _("White and Tan", l), "White - with Tan, Yellow or Fawn")
+    sql += basecolour(27, _("Tortie and White", l), "Tortoiseshell")
+    sql += basecolour(28, _("Tabby and White", l), "Brown Tabby")
+    sql += basecolour(29, _("Ginger and White", l), "Red/Golden/Orange/Chestnut - with White")
+    sql += basecolour(30, _("Grey", l), "Gray/Blue/Silver/Salt & Pepper")
+    sql += basecolour(31, _("Grey and White", l), "Gray/Silver/Salt & Pepper - with White")
+    sql += basecolour(32, _("White and Grey", l), "Gray/Silver/Salt & Pepper - with White")
+    sql += basecolour(33, _("White and Torti", l), "Tortoiseshell")
+    sql += basecolour(35, _("Brown and White", l), "Brown/Chocolate - with White")
+    sql += basecolour(36, _("Blue", l), "Gray or Blue")
+    sql += basecolour(37, _("White and Tabby", l), "White")
+    sql += basecolour(38, _("Yellow and Grey", l), "Tan/Yellow/Fawn")
+    sql += basecolour(39, _("Various", l), "Tan/Yellow/Fawn")
+    sql += basecolour(40, _("White and Brown", l), "Brown/Chocolate - with White")
+    sql += basecolour(41, _("Green", l), "Green")
+    sql += basecolour(42, _("Amber", l), "Red/Golden/Orange/Chestnut")
+    sql += basecolour(43, _("Black Tortie", l), "Tortoiseshell")
+    sql += basecolour(44, _("Blue Tortie", l), "Tortoiseshell")
+    sql += basecolour(45, _("Chocolate", l), "Brown/Chocolate")
+    sql += basecolour(46, _("Chocolate Tortie", l), "Tortoiseshell")
+    sql += basecolour(47, _("Cinnamon", l), "Red/Golden/Orange/Chestnut")
+    sql += basecolour(48, _("Cinnamon Tortoiseshell", l), "Tortoiseshell")
+    sql += basecolour(49, _("Fawn", l, "Tan/Yellow/Fawn"))
+    sql += basecolour(50, _("Fawn Tortoiseshell", l), "Tortoiseshell")
+    sql += basecolour(51, _("Golden", l), "Red/Golden/Orange/Chestnut")
+    sql += basecolour(52, _("Light Amber", l), "Red/Golden/Orange/Chestnut")
+    sql += basecolour(53, _("Lilac", l), "Gray/Blue/Silver/Salt & Pepper")
+    sql += basecolour(54, _("Lilac Tortie", l), "Tortoiseshell")
+    sql += basecolour(55, _("Ruddy", l), "Red/Golden/Orange/Chestnut")
+    sql += basecolour(56, _("Seal", l), "Tan/Yellow/Fawn")
+    sql += basecolour(57, _("Silver", l), "Gray/Blue/Silver/Salt & Pepper")
+    sql += basecolour(58, _("Sorrel", l), "Red/Golden/Orange/Chestnut")
+    sql += basecolour(59, _("Sorrel Tortoiseshell", l), "Tortoiseshell")
     sql += breed(1, _("Affenpinscher", l), "Affenpinscher", 1)
     sql += breed(2, _("Afghan Hound", l), "Afghan Hound", 1)
     sql += breed(3, _("Airedale Terrier", l), "Airedale Terrier", 1)
@@ -4032,4 +4035,8 @@ def update_33707(dbo):
         db.execute_dbupdate(dbo, "INSERT INTO animalcontrolanimal (AnimalControlID, AnimalID) VALUES (%d, %d)" % (ac["ID"], ac["ANIMALID"]))
     # Remove the animalid field from animalcontrol
     drop_column(dbo, "animalcontrol", "AnimalID")
+
+def update_33708(dbo):
+    # Add basecolour.AdoptAPetColour
+    add_column(dbo, "basecolour", "AdoptAPetColour", shorttext(dbo))
 

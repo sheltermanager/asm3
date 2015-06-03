@@ -411,6 +411,13 @@ class AbstractPublisher(threading.Thread):
         return 0 == db.query_int(self.dbo, "SELECT COUNT(*) FROM breed " + \
             "WHERE PetFinderBreed Is Null OR PetFinderBreed = ''")
 
+    def checkMappedColours(self):
+        """
+        Returns True if all colours have been mapped for publishers
+        """
+        return 0 == db.query_int(self.dbo, "SELECT COUNT(*) FROM basecolour " + \
+            "WHERE AdoptAPetColour Is Null OR AdoptAPetColour = ''")
+
     def getPublisherBreed(self, an, b1or2 = 1):
         """
         Encapsulates logic for reading publisher breed fields.
@@ -1262,59 +1269,6 @@ class AdoptAPetPublisher(FTPPublisher):
             "#18:SpecialNeeds=SpecialNeeds"
         else:
             defmap += "#9:Color=Color\n" \
-            "Amber=Red/Golden/Orange/Chestnut\n" \
-            "Black Tortie=Tortoiseshell\n" \
-            "Black and Brindle=Black - with Tan, Yellow or Fawn\n" \
-            "Black and Brown=Black - with Tan, Yellow or Fawn\n" \
-            "Black and Tan=Black - with Tan, Yellow or Fawn\n" \
-            "Black and White=Black - with White\n" \
-            "Blue=Gray or Blue\n" \
-            "Blue Tortie=Tortoiseshell\n" \
-            "Brindle and Black=Brindle\n" \
-            "Brindle and White=Brindle - with White\n" \
-            "Brown=Brown/Chocolate\n" \
-            "Brown and Black=Brown/Chocolate - with Black\n" \
-            "Brown and White=Brown/Chocolate - with White\n" \
-            "Chocolate=Brown/Chocolate\n" \
-            "Chocolate Tortie=Tortoiseshell\n" \
-            "Cinnamon=Red/Golden/Orange/Chestnut\n" \
-            "Cinnamon Tortoiseshell=Tortoiseshell\n" \
-            "Cream=White - with Tan, Yellow or Fawn\n" \
-            "Fawn=Tan/Yellow/Fawn\n" \
-            "Fawn Tortoise=Tortoiseshell\n" \
-            "Ginger=Red/Golden/Orange/Chestnut\n" \
-            "Ginger and White=Red/Golden/Orange/Chestnut - with White\n" \
-            "Golden=Tan/Yellow/Fawn\n" \
-            "Grey=Gray/Blue/Silver/Salt & Pepper\n" \
-            "Grey and White=Gray/Silver/Salt & Pepper - with White\n" \
-            "Light Amber=Tan/Yellow/Fawn\n" \
-            "Lilac=Gray/Blue/Silver/Salt & Pepper\n" \
-            "Lilac Tortie=Tortoiseshell\n" \
-            "Liver=Brown/Chocolate\n" \
-            "Liver and White=Brown/Chocolate - with White\n" \
-            "Red=Red/Golden/Orange/Chestnut\n" \
-            "Ruddy=Red/Golden/Orange/Chestnut\n" \
-            "Seal=Gray/Blue/Silver/Salt & Pepper\n" \
-            "Silver=Gray/Blue/Silver/Salt & Pepper\n" \
-            "Sorrel=Red/Golden/Orange/Chestnut\n" \
-            "Sorrel Tortoiseshell=Tortoiseshell\n" \
-            "Tabby=Brown Tabby\n" \
-            "Tabby and White=Brown Tabby\n" \
-            "Tan=Tan/Yellow/Fawn\n" \
-            "Tan and Black=Tan/Yellow/Fawn - with Black\n" \
-            "Tan and White=Tan/Yellow/Fawn - with White\n" \
-            "Tortie=Tortoiseshell\n" \
-            "Tortie and White=Tortoiseshell\n" \
-            "Tricolour=Tricolor (Tan/Brown & Black & White)\n" \
-            "Various=Tricolor (Tan/Brown & Black & White)\n" \
-            "White and Black=White - with Black\n" \
-            "White and Brindle=White - with Black\n" \
-            "White and Brown=White - with Brown or Chocolate\n" \
-            "White and Grey=White - with Gray or Silver\n" \
-            "White and Liver=White - with Brown or Chocolate\n" \
-            "White and Tabby=White\n" \
-            "White and Tan=White - with Tan, Yellow or Fawn\n" \
-            "White and Torti=White (Mostly)\n" \
             "#10:Description=Description\n" \
             "#11:Status=Status\n" \
             "#12:GoodWKids=GoodWKids\n" \
@@ -1344,6 +1298,11 @@ class AdoptAPetPublisher(FTPPublisher):
             self.setLastError("Not all breeds have been mapped.")
             self.cleanup()
             return
+        if self.pc.includeColours and not self.checkMappedColours():
+            self.setLastError("Not all colours have been mapped and sending colours is enabled")
+            self.cleanup()
+            return
+
         shelterid = configuration.adoptapet_user(self.dbo)
         if shelterid == "":
             self.setLastError("No AdoptAPet.com shelter id has been set.")
@@ -1426,8 +1385,7 @@ class AdoptAPetPublisher(FTPPublisher):
                 if an["SEX"] == 0: sexname = "F"
                 line.append("\"%s\"" % sexname)
                 # Colour
-                if self.pc.includeColours:
-                    line.append("\"%s\"" % an["BASECOLOURNAME"])
+                if self.pc.includeColours: line.append("\"%s\"" % an["ADOPTAPETCOLOUR"])
                 # Description
                 line.append("\"%s\"" % self.getDescription(an, crToBr=True))
                 # Status, one of Available, Adopted or Delete

@@ -36,6 +36,10 @@ $(function() {
                         json_field: "PETFINDERBREED", post_field: "pfbreed", label: _("Publisher Breed"), type: "select", 
                         tooltip: _("Breed to use when publishing to third party services and adoption sites"),
                         options: controller.petfinderbreeds },
+                    { hideif: function() { return !controller.hasapcolour; },
+                        json_field: "ADOPTAPETCOLOUR", post_field: "apcolour", label: _("Publisher Color"), type: "select", 
+                        tooltip: _("Color to use when publishing to third party services and adoption sites"),
+                        options: controller.adoptapetcolours },
                     { hideif: function() { return !controller.hasdefaultcost; },
                         json_field: "DEFAULTCOST", post_field: "defaultcost", label: _("Default Cost"), type: "currency" },
                     { hideif: function() { return !controller.hasunits; },
@@ -69,13 +73,12 @@ $(function() {
                     { field: "SPECIESNAME", display: _("Species"), hideif: function(row) {
                         return !controller.hasspecies;
                     }},
-                    { field: "PETFINDERSPECIES", display: _("Publisher"), hideif: function(row) {
-                        if (asm.locale == "en" && (controller.haspfspecies || controller.haspfbreed)) { return false; }
-                        if (asm.locale == "en_AU" && (controller.haspfspecies || controller.haspfbreed)) { return false; }
-                        return true;
+                    { field: "PUBLISHER", display: _("Publisher"), hideif: function(row) {
+                        return !(controller.haspfspecies || controller.haspfbreed || controller.hasapcolour);
                     }, formatter: function(row) {
                         if (controller.haspfspecies) { return row.PETFINDERSPECIES; }
                         if (controller.haspfbreed) { return row.PETFINDERBREED; }
+                        if (controller.hasapcolour) { return row.ADOPTAPETCOLOUR; }
                     }},
                     { field: controller.descfield, display: _("Description"), hideif: function(row) { return controller.descfield == ""; }},
                     { field: "UNITS", display: _("Units"), hideif: function(row) { return !controller.hasunits; }},
