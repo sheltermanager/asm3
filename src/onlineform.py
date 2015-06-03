@@ -584,7 +584,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
         "WHERE oi.CollationID = %d" % int(collationid))
     if email is not None and email.strip() != "":
-        utils.send_email(dbo, configuration.email(dbo), email, "", "%s - %s" % (formname, ", ".join(preview)), get_onlineformincoming_html_print(dbo, collationid), "html")
+        utils.send_email(dbo, configuration.email(dbo), email, "", "%s - %s" % (formname, ", ".join(preview)), get_onlineformincoming_html_print(dbo, [collationid,]), "html")
     return collationid
 
 def delete_onlineformincoming(dbo, username, collationid):
