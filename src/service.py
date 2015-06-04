@@ -107,8 +107,10 @@ def handler(post, remoteip, referer):
     method = post["method"]
     animalid = post.integer("animalid")
     formid = post.integer("formid")
+    seq = post.integer("seq")
     title = post["title"]
-    cache_key = "a" + account + "u" + username + "p" + password + "m" + method + "a" + str(animalid) + "f" + str(formid) + "t" + title
+    cache_key = "a" + account + "u" + username + "p" + password + "m" + method + \
+        "i" + str(animalid) + "s" + str(seq) + "f" + str(formid) + "t" + title
     
     # cache keys aren't allowed spaces
     cache_key = cache_key.replace(" ", "")
@@ -162,7 +164,6 @@ def handler(post, remoteip, referer):
             al.error("animal_image failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
             return ("text/plain", 0, "ERROR: Invalid animalid")
         else:
-            seq = post.integer("seq")
             if seq == 0: seq = 1
             mm = media.get_media_by_seq(dbo, media.ANIMAL, utils.cint(animalid), seq)
             if len(mm) == 0:
