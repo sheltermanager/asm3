@@ -1,0 +1,23 @@
+Adoptions by Date Map
+###
+Maps
+###
+33402/PostgreSQL
+###
+Adoptions between two dates with the adopters plotted on a map.
+###
+en
+###
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+
+SELECT o.LatLong, a.AnimalName || ' - ' || a.ShelterCode || '<br/>Adopted on ' || 
+m.MovementDate || '<br />' || o.OwnerName || <br /> ||
+o.OwnerAddress || '<br />' || o.OwnerTown || o.OwnerCounty ||
+o.OwnerPostcode 
+FROM adoption
+INNER JOIN animal ON adoption.AnimalID = animal.ID
+INNER JOIN owner o ON adoption.OwnerID = no.ID
+WHERE MovementType = 1 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' ORDER BY MovementDate
+###
+MAP

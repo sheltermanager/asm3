@@ -37,6 +37,7 @@ def get(key):
     Retrieves a value from our disk cache. Returns None if the
     value is not found or has expired.
     """
+    f = None
     try:
         fname = _getfilename(key)
         
@@ -46,7 +47,6 @@ def get(key):
         # Pull the entry out
         f = open(fname, "r")
         o = pickle.load(f)
-        f.close()
 
         # Has the entry expired?
         if o["expires"] < int(time.time()):
@@ -57,12 +57,19 @@ def get(key):
     except Exception,err:
         al.error(str(err), "cachedisk.get")
         return None
+    finally:
+        try:
+            f.close()
+        except:
+            pass
+
 
 def put(key, value, ttl):
     """
     Stores a value in our disk cache with a time to live of ttl. The value
     will be removed if it is accessed past the ttl.
     """
+    f = None
     try:
         fname = _getfilename(key)
 
@@ -74,9 +81,13 @@ def put(key, value, ttl):
         # Write the entry
         f = open(fname, "w")
         pickle.dump(o, f)
-        f.close()
 
     except Exception,err:
         al.error(str(err), "cachedisk.put")
+    finally:
+        try:
+            f.close()
+        except:
+            pass
 
 
