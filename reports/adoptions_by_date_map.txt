@@ -11,13 +11,15 @@ en
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
-SELECT o.LatLong, a.AnimalName || ' - ' || a.ShelterCode || '<br/>Adopted on ' || 
-m.MovementDate || '<br />' || o.OwnerName || <br /> ||
-o.OwnerAddress || '<br />' || o.OwnerTown || o.OwnerCounty ||
-o.OwnerPostcode 
-FROM adoption
-INNER JOIN animal ON adoption.AnimalID = animal.ID
-INNER JOIN owner o ON adoption.OwnerID = no.ID
-WHERE MovementType = 1 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' ORDER BY MovementDate
+SELECT o.LatLong, 
+'<a href="animal?id=' || a.ID::varchar || '">' || a.AnimalName || ' - ' || a.ShelterCode || '</a>' ||
+'<br>Adopted on ' || 
+TO_CHAR(m.MovementDate, 'MM/DD/YYYY') || '<br>' || 
+'<b><a href="person?id=' || o.ID::varchar || '">' || o.OwnerName || '</a><br />' ||
+o.OwnerAddress || '<br />' || o.OwnerTown || ' ' || o.OwnerCounty || ' ' || o.OwnerPostcode 
+FROM adoption m
+INNER JOIN animal a ON m.AnimalID = a.ID
+INNER JOIN owner o ON m.OwnerID = o.ID
+WHERE m.MovementType = 1 AND m.MovementDate >= '$@from$' AND m.MovementDate <= '$@to$' ORDER BY m.MovementDate
 ###
 MAP
