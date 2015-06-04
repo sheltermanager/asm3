@@ -15,6 +15,7 @@ import cachedisk
 import configuration
 import db
 import dbfs
+import dbupdate
 import html
 import media
 import movement
@@ -135,6 +136,10 @@ def handler(post, remoteip, referer):
             if dbo.database == "FAIL" or dbo.database == "DISABLED": 
                 al.error("auth failed - invalid smaccount %s from %s" % (account, remoteip), "service.handler", dbo)
                 return ("text/plain", 0, "ERROR: Invalid database")
+
+    # Do any database updates need doing in this db?
+    if dbupdate.check_for_updates(dbo):
+        dbupdate.perform_updates(dbo)
 
     # Does the method require us to authenticate? If so, do it.
     user = None
