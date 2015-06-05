@@ -257,7 +257,9 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
     filedata = post["filedata"]
     filename = post["filename"]
     comments = post["comments"]
+    checkpref = True
     if filedata != "":
+        checkpref = False
         filetype = post["filetype"]
         if filetype.startswith("image"): ext = ".jpg"
         elif filetype.find("pdf") != -1: ext = ".pdf"
@@ -270,7 +272,9 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
         filedata = base64.b64decode(filedata)
         al.debug("received HTML5 file data '%s' (%d bytes)" % (filename, len(filedata)), "media.attach_file_from_form", dbo)
     else:
-        # It's a traditional form post with a filechooser
+        # It's a traditional form post with a filechooser, we should make
+        # it the default web/doc picture after posting if none is available.
+        checkpref = True
         ext = post.filename()
         ext = ext[ext.rfind("."):].lower()
         filedata = post.filedata()
@@ -281,19 +285,6 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
     medianame = "%d%s" % ( mediaid, ext )
     ispicture = ext == ".jpg" or ext == ".jpeg"
     ispdf = ext == ".pdf"
-
-    # Does this link have anything with web/doc set? If not, set the
-    # web/doc flags
-    web = 0
-    doc = 0
-    existing_web = db.query_int(dbo, "SELECT COUNT(*) FROM media WHERE WebsitePhoto = 1 " \
-        "AND LinkID = %d AND LinkTypeID = %d" % ( int(linkid), int(linktype) ))
-    existing_doc = db.query_int(dbo, "SELECT COUNT(*) FROM media WHERE DocPhoto = 1 " \
-        "AND LinkID = %d AND LinkTypeID = %d" % ( int(linkid), int(linktype) ))
-    if existing_web == 0 and ispicture:
-        web = 1
-    if existing_doc == 0 and ispicture:
-        doc = 1
 
     # Is it a picture?
     if ispicture:
@@ -328,9 +319,9 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
         ( "MediaName", db.ds(medianame) ),
         ( "MediaType", db.di(0) ),
         ( "MediaNotes", db.ds(comments) ),
-        ( "WebsitePhoto", db.di(web) ),
+        ( "WebsitePhoto", db.di(0) ),
         ( "WebsiteVideo", db.di(0) ),
-        ( "DocPhoto", db.di(doc) ),
+        ( "DocPhoto", db.di(0) ),
         ( "ExcludeFromPublish", db.di(0) ),
         # ASM2_COMPATIBILITY
         ( "NewSinceLastPublish", db.di(1) ),
@@ -342,6 +333,9 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
         ))
     db.execute(dbo, sql)
     audit.create(dbo, username, "media", str(mediaid) + ": for " + str(linkid) + "/" + str(linktype))
+
+    if ispicture and checkpref:
+        check_default_web_doc_pic(dbo, mediaid, linkid, linktype)
 
 def attach_link_from_form(dbo, username, linktype, linkid, post):
     """
@@ -376,6 +370,20 @@ def attach_link_from_form(dbo, username, linktype, linkid, post):
         ))
     db.execute(dbo, sql)
     audit.create(dbo, username, "media", str(mediaid) + ": for " + str(linkid) + "/" + str(linktype) + ": link to " + post["linktarget"])
+
+def check_default_web_doc_pic(dbo, mediaid, linkid, linktype):
+    """
+    Checks if linkid/type has a default pic for the web or documents. If not,
+    sets mediaid to be the default.
+    """
+    existing_web = db.query_int(dbo, "SELECT COUNT(*) FROM media WHERE WebsitePhoto = 1 " \
+        "AND LinkID = %d AND LinkTypeID = %d" % ( int(linkid), int(linktype) ))
+    existing_doc = db.query_int(dbo, "SELECT COUNT(*) FROM media WHERE DocPhoto = 1 " \
+        "AND LinkID = %d AND LinkTypeID = %d" % ( int(linkid), int(linktype) ))
+    if existing_web == 0:
+        db.execute(dbo, "UPDATE media SET WebsitePhoto = 1 WHERE ID = %d" % mediaid)
+    if existing_doc == 0:
+        db.execute(dbo, "UPDATE media SET DocPhoto = 1 WHERE ID = %d" % mediaid)
 
 def create_blank_document_media(dbo, username, linktype, linkid):
     """

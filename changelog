@@ -1,6 +1,7 @@
 37
 ================
 
+05/06/15 Fix race condition in multi-file upload and preferred
 03/06/15 Send online form notifications as html to include signatures
 03/06/15 Add publisher colour mappings (in particular for adoptapet) #204
 01/06/15 Rewrite cache into cachemem and use fallback dict if no memcache

@@ -279,7 +279,7 @@ $(function() {
             }
             $.when.apply(this, promises).then(function() {
                 header.hide_loading();
-                common.route_reload(); 
+                common.route_reload();
             });
         },
 
@@ -392,6 +392,43 @@ $(function() {
             return deferred.promise();
         },
 
+        /** 
+         * Goes through our list of media elements and if we have pictures
+         * but none preferred for the web or doc, select the first.
+         * Multi-file drag and drop doesn't auto select these values due
+         * to it being a race condition.
+         * Reloads if a change is made or forcereload is true.
+         */
+        check_preferred_images: function(forcereload) {
+            var newweb, newdoc, hasweb, hasdoc;
+            if (!controller.showpreferred) { return false; }
+            $.each(controller.media, function(i, v) {
+                if (v.MEDIANAME.indexOf(".jpg") != -1) { 
+                    if (!newweb) { newweb = v.ID; }
+                    if (!newdoc) { newdoc = v.ID; }
+                    if (v.WEBSITEPHOTO) { hasweb = true; }
+                    if (v.DOCPHOTO) { hasdoc = true; }
+                }
+            });
+            if (!hasweb && !hasdoc && newweb) {
+                $.when(
+                    common.ajax_post(controller.name, "mode=web&ids=" + newweb),
+                    common.ajax_post(controller.name, "mode=doc&ids=" + newweb)
+                ).then(function() {
+                    common.route_reload();
+                });
+            }
+            else if (!hasweb && newweb) {
+                media.ajax("mode=web&ids=" + newweb);
+            }
+            else if (!hasdoc && newdoc) {
+                media.ajax("mode=doc&ids=" + newdoc);
+            }
+            else if (forcereload) {
+                common.route_reload();
+            }
+        },
+
         /** Posts the image back to the server. If HTML5 File APIs are available,
            uses a Canvas to scale the image first. */
         post_file: function() {
@@ -433,10 +470,11 @@ $(function() {
 
             // Attach the file with the HTML5 APIs
             header.show_loading(_("Uploading..."));
-            $.when( media.attach_file(selectedfile, $("#addcomments").val()) ).then(function() {
-                header.hide_loading();
-                common.route_reload(); 
-            });
+            media.attach_file(selectedfile, $("#addcomments").val())
+                .then(function() {
+                    header.hide_loading();
+                    common.route_reload(); 
+                });
         },
 
         is_extension: function(s, ext) {
@@ -862,7 +900,11 @@ $(function() {
         },
 
         sync: function() {
+
             if (controller.newmedia) { media.new_media(); }
+
+            // Check if we have pictures but no preferred set and choose one if we don't
+            media.check_preferred_images();
         },
 
         destroy: function() {
