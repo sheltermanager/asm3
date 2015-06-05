@@ -5796,11 +5796,8 @@ class stocklevel:
         mode = post["mode"]
         if mode == "create":
             users.check_permission(session, users.ADD_STOCKLEVEL)
-            if post.integer("quantity") == 1:
-                return extstock.insert_stocklevel_from_form(session.dbo, post, session.user)
-            else:
-                for dummy in xrange(0, post.integer("quantity")):
-                    extstock.insert_stocklevel_from_form(session.dbo, post, session.user)
+            for dummy in xrange(0, post.integer("quantity")):
+                extstock.insert_stocklevel_from_form(session.dbo, post, session.user)
         elif mode == "update":
             users.check_permission(session, users.CHANGE_STOCKLEVEL)
             extstock.update_stocklevel_from_form(session.dbo, post, session.user)

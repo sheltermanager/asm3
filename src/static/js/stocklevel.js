@@ -48,7 +48,7 @@ $(function() {
                     tableform.dialog_show_edit(dialog, row, function() {
                         tableform.fields_update_row(dialog.fields, row);
                         stocklevel.set_extra_fields(row);
-                        tableform.fields_post(dialog.fields, "mode=update&stocklevelid=" + row.ID, controller.name, function(response) {
+                        tableform.fields_post(dialog.fields, "mode=update&stocklevelid=" + row.ID, "stocklevel", function(response) {
                             tableform.table_update(table);
                             tableform.dialog_close();
                         },
@@ -90,7 +90,7 @@ $(function() {
                              .then(function() {
                                  tableform.buttons_default_state(buttons);
                                  var ids = tableform.table_ids(table);
-                                 return common.ajax_post(controller.name, "mode=delete&ids=" + ids);
+                                 return common.ajax_post("stocklevel", "mode=delete&ids=" + ids);
                              })
                             .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
@@ -125,7 +125,7 @@ $(function() {
             var dialog = stocklevel.dialog, table = stocklevel.table;
             $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
             tableform.dialog_show_add(dialog, function() {
-                tableform.fields_post(dialog.fields, "mode=create", controller.name, function(response) {
+                tableform.fields_post(dialog.fields, "mode=create", "stocklevel", function(response) {
                     // If more than one record was created, reload the screen
                     if ($("#quantity").val() != "1") {
                         tableform.dialog_close();
