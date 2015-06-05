@@ -11,7 +11,7 @@ en
 SELECT
 a.AnimalName, a.ShelterCode,
 s.SpeciesName, e.ReasonName, a.BreedName,
-a.DateBroughtIn, a.TimeOnShelter, a.DaysOnShelter,
+a.DateBroughtIn, a.TimeOnShelter, a.DaysOnShelter, a.AnimalAge, 
 CASE WHEN a.ActiveMovementType = 2 THEN Null ELSE a.ActiveMovementDate END AS DateExit,
 CASE WHEN a.DeceasedDate Is Not Null THEN 'Deceased' WHEN a.Archived = 0 THEN 'On Shelter' ELSE mt.MovementType END AS Outcome
 FROM animal a
@@ -32,6 +32,7 @@ $$HEAD
 <tr>
 <th>Code</th>
 <th>Name</th>
+<th>Age</th>
 <th>Species</th>
 <th>Entered</th>
 <th>Left</th>
@@ -46,6 +47,7 @@ $$BODY
 <tr>
 <td>$SHELTERCODE</td>
 <td>$ANIMALNAME</td>
+<td>$ANIMALAGE</td>
 <td>$SPECIESNAME</td>
 <td>$DATEBROUGHTIN</td>
 <td>$DATEEXIT</td>

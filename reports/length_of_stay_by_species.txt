@@ -11,7 +11,7 @@ en
 SELECT
 a.AnimalName, a.ShelterCode,
 s.SpeciesName, e.ReasonName,
-a.DateBroughtIn, a.TimeOnShelter, a.DaysOnShelter,
+a.DateBroughtIn, a.TimeOnShelter, a.DaysOnShelter, a.AnimalAge, 
 CASE WHEN a.ActiveMovementType = 2 THEN Null ELSE a.ActiveMovementDate END AS DateExit
 FROM animal a
 INNER JOIN species s ON s.ID = a.SpeciesID
@@ -30,6 +30,7 @@ $$HEAD
 <tr>
 <th>Code</th>
 <th>Name</th>
+<th>Age</th>
 <th>Entry Category</th>
 <th>Entered</th>
 <th>Left</th>
@@ -44,6 +45,7 @@ $$BODY
 <tr>
 <td>$SHELTERCODE</td>
 <td>$ANIMALNAME</td>
+<td>$ANIMALAGE</td>
 <td>$REASONNAME</td>
 <td>$DATEBROUGHTIN</td>
 <td>$DATEEXIT</td>
