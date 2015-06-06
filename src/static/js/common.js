@@ -296,6 +296,12 @@
                         return false;
                     }
                 }
+                
+                // If CTRL is held down, do what the browser would normally do
+                // (open a new window) and allow the navigation
+                if (window.event.ctrlKey) {
+                    return true;
+                }
 
                 // If the clicked anchor goes to a URL we can handle with the
                 // client, do it.
