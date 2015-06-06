@@ -1,6 +1,7 @@
 37
 ================
 
+06/06/15 Complete set of adoptapet colour mappings
 05/06/15 Fix bug in adding stock after client side navigation
 05/06/15 Fix race condition in multi-file upload and preferred
 03/06/15 Send online form notifications as html to include signatures
