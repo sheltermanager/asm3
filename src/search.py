@@ -67,7 +67,7 @@ def search(dbo, session, q):
                     if r["ANIMALNAME"].lower() == qlow or r["SHELTERCODE"].lower() == qlow or r["SHORTCODE"].lower() == qlow:
                         r["SORTON"] = now()
                     # Put matches where term present just behind direct matches
-                    if r["ANIMALNAME"].lower().find(qlow) != -1 or r["SHELTERCODE"].lower().find(qlow) != -1 or r["SHORTCODE"].lower().find(qlow) != -1:
+                    elif r["ANIMALNAME"].lower().find(qlow) != -1 or r["SHELTERCODE"].lower().find(qlow) != -1 or r["SHORTCODE"].lower().find(qlow) != -1:
                         r["SORTON"] = now() - datetime.timedelta(seconds=1)
                 elif rtype == "PERSON":
                     r["SORTON"] = r["LASTCHANGEDDATE"]
