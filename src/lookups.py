@@ -208,6 +208,7 @@ MICROCHIP_MANUFACTURERS = [
     { "length": 15, "regex": r"^9851", "name": "Anibase/Identichip", "locales": "en_GB" },
     { "length": 15, "regex": r"^985", "name": "HomeAgain", "locales": "" },
     { "length": 15, "regex": r"^9861", "name": "Anibase/Identichip", "locales": "en_GB" },
+    { "length": 15, "regex": r"^990000000", "name": "nanoChip", "locales": "" },
     { "length": 15, "regex": r"^999", "name": "Transponder Test", "locales": ""}
 ]
 
