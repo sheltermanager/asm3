@@ -299,7 +299,7 @@
                 
                 // If CTRL is held down, do what the browser would normally do
                 // (open a new window) and allow the navigation
-                if (window.event.ctrlKey) {
+                if (e.ctrlKey) {
                     return true;
                 }
 
