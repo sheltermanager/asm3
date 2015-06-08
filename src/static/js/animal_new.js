@@ -156,11 +156,21 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
-                '<tr id="weightrow">',
+                '<tr id="kilosrow">',
                 '<td><label for="weight">' + _("Weight") + '</label></td>',
                 '<td><span style="white-space: nowrap;">',
-                '<input id="weight" data="weight" class="asm-textbox asm-halftextbox asm-numberbox" />',
-                '<label id="weightlabel">' + _("kg") + '</label>',
+                '<input id="weight" data-json="WEIGHT" data-post="weight" class="asm-textbox asm-halftextbox asm-numberbox" />',
+                '<label id="kglabel">' + _("kg") + '</label>',
+                '</span>',
+                '</td>',
+                '</tr>',
+                '<tr id="poundsrow">',
+                '<td><label for="weightlb">' + _("Weight") + '</label></td>',
+                '<td><span style="white-space: nowrap;">',
+                '<input id="weightlb" class="asm-textbox asm-intbox" style="width: 70px" />',
+                '<label id="lblabel">' + _("lb") + '</label>',
+                '<input id="weightoz" class="asm-textbox asm-intbox" style="width: 70px" />',
+                '<label id="ozlabel">' + _("oz") + '</label>',
                 '</span>',
                 '</td>',
                 '</tr>',
@@ -437,8 +447,21 @@ $(function() {
                 });
             }
 
+            // Converting between whole number for weight and pounds and ounces
+            var lboz_to_fraction = function() {
+                var lb = format.to_int($("#weightlb").val());
+                lb += format.to_int($("#weightoz").val()) / 16.0;
+                $("#weight").val(String(lb));
+            };
+
             if (config.bool("ShowWeightInLbs")) {
-                $("#weightlabel").html(_("lb"));
+                $("#kilosrow").hide();
+                $("#poundsrow").show();
+                $("#weightlb, #weightoz").change(lboz_to_fraction);
+            }
+            else {
+                $("#kilosrow").show();
+                $("#poundsrow").hide();
             }
 
             // Disable rows based on config options
@@ -456,7 +479,7 @@ $(function() {
             if (!config.bool("AddAnimalsShowNeutered")) { $("#neuteredrow").hide(); }
             if (!config.bool("AddAnimalsShowSize")) { $("#sizerow").hide(); }
             if (!config.bool("AddAnimalsShowTimeBroughtIn")) { $("#timebroughtinrow").hide(); }
-            if (!config.bool("AddAnimalsShowWeight")) { $("#weightrow").hide(); }
+            if (!config.bool("AddAnimalsShowWeight")) { $("#kilosrow, #poundsrow").hide(); }
             if (config.bool("UseSingleBreedField")) {
                 $("#crossbreedcol").hide();
                 $("#secondbreedcol").hide();
