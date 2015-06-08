@@ -2,7 +2,6 @@
 
 import al
 import cachemem
-import cachedisk
 import datetime
 import i18n
 import sys
@@ -149,12 +148,12 @@ def query_cache(dbo, sql, age = 60):
     without doing any caching and is equivalent to db.query()
     """
     if not CACHE_COMMON_QUERIES: return query(dbo, sql)
-    cache_key = "%s:%s:%s" % (dbo.alias, dbo.database, sql.replace(" ", "_"))
-    results = cachedisk.get(cache_key)
+    cache_key = utils.md5_hash("%s:%s:%s" % (dbo.alias, dbo.database, sql.replace(" ", "_")))
+    results = cachemem.get(cache_key)
     if results is not None:
         return results
     results = query(dbo, sql)
-    cachedisk.put(cache_key, results, age)
+    cachemem.put(cache_key, results, age)
     return results
 
 def query_columns(dbo, sql):
