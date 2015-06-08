@@ -171,7 +171,7 @@ $(function() {
             // We need to re-enable the return key submitting the form
             $("#lostfoundsearchform").keypress(function(e) {
                 if (e.keyCode == 13) {
-                    common.route((controller.mode == "lost" ? "lostanimal_find_results?" : "foundanimal_find_results") + 
+                    common.route((controller.mode == "lost" ? "lostanimal_find_results?" : "foundanimal_find_results?") + 
                         $("#lostfoundsearchform input, #lostfoundsearchform select").toPOST());
                 }
             });
