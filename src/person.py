@@ -602,6 +602,47 @@ def update_person_from_form(dbo, post, username):
     # Save any additional field values given
     additional.save_values_for_link(dbo, post, pid, "person")
 
+def update_flags(dbo, username, personid, flags):
+    """
+    Updates the flags on a person record from a list of flags
+    """
+    def bi(b): return b and 1 or 0
+    homechecked = bi("homechecked" in flags)
+    banned = bi("banned" in flags)
+    volunteer = bi("volunteer" in flags)
+    member = bi("member" in flags)
+    homechecker = bi("homechecker" in flags)
+    donor = bi("donor" in flags)
+    driver = bi("driver" in flags)
+    deceased = bi("deceased" in flags)
+    shelter = bi("shelter" in flags)
+    aco = bi("aco" in flags)
+    staff = bi("staff" in flags)
+    fosterer = bi("fosterer" in flags)
+    retailer = bi("retailer" in flags)
+    vet = bi("vet" in flags)
+    giftaid = bi("giftaid" in flags)
+    flagstr = "|".join(flags) + "|"
+    sql = db.make_update_user_sql(dbo, "owner", username, "ID=%d" % personid, (
+        ( "IDCheck", db.di(homechecked) ),
+        ( "IsBanned", db.di(banned)),
+        ( "IsVolunteer", db.di(volunteer)),
+        ( "IsMember", db.di(member)),
+        ( "IsHomeChecker", db.di(homechecker)),
+        ( "IsDeceased", db.di(deceased)),
+        ( "IsDonor", db.di(donor)),
+        ( "IsDriver", db.di(driver)),
+        ( "IsShelter", db.di(shelter)),
+        ( "IsACO", db.di(aco)),
+        ( "IsStaff", db.di(staff)),
+        ( "IsFosterer", db.di(fosterer)),
+        ( "IsRetailer", db.di(retailer)),
+        ( "IsVet", db.di(vet)),
+        ( "IsGiftAid", db.di(giftaid)),
+        ( "AdditionalFlags", db.ds(flagstr))
+    ))
+    db.execute(dbo, sql)
+
 def insert_person_from_form(dbo, post, username):
     """
     Creates a new person record from incoming form data

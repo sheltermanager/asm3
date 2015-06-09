@@ -35,7 +35,7 @@ VALID_FIELDS = [
     "PERSONADDRESS", "PERSONCITY", "PERSONSTATE",
     "PERSONZIPCODE", "PERSONMEMBER", "PERSONFOSTERER", "PERSONDONOR",
     "PERSONFLAGS", "PERSONCOMMENTS", "PERSONHOMEPHONE", "PERSONWORKPHONE",
-    "PERSONCELLPHONE", "PERSONEMAIL"
+    "PERSONCELLPHONE", "PERSONEMAIL", "PERSONCLASS"
 ]
 
 def gkc(m, f):
@@ -371,6 +371,9 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
         personid = 0
         if hasperson and (gks(row, "PERSONLASTNAME") != "" or gks(row, "PERSONNAME") != ""):
             p = {}
+            p["ownertype"] = gks(row, "PERSONCLASS")
+            if p["ownertype"] != "1" and p["ownertype"] != "2": 
+                p["ownertype"] = "1"
             p["title"] = gks(row, "PERSONTITLE")
             p["initials"] = gks(row, "PERSONINITIALS")
             p["forenames"] = gks(row, "PERSONFIRSTNAME")
@@ -403,6 +406,15 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
                     dups = person.get_person_similar(dbo, p["surname"], p["forenames"], p["address"])
                     if len(dups) > 0:
                         personid = dups[0]["ID"]
+                        # Get the flags off the existing person record and merge any new ones (if there aren't any
+                        # new ones to merge, do nothing)
+                        if flags != "":
+                            epf = db.query_string(dbo, "SELECT AdditionalFlags FROM owner WHERE ID = %d" % personid)
+                            epfb = epf.split("|")
+                            for x in flags.split(","):
+                                if not x in epfb and not x == "":
+                                    epf += "%s|" % x
+                            person.update_flags(dbo, "import", personid, epf.split("|"))
                 if personid == 0:
                     personid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import")
                     # Identify any PERSONADDITIONAL additional fields and create them
