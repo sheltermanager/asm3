@@ -4440,7 +4440,7 @@ class onlineforms:
 
     def POST(self):
         utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
+        post = utils.PostedData(web.input(mode="create", filechooser={}), session.locale)
         mode = post["mode"]
         if mode == "create":
             users.check_permission(session, users.EDIT_ONLINE_FORMS)
@@ -4460,6 +4460,10 @@ class onlineforms:
             users.check_permission(session, users.EDIT_ONLINE_FORMS)
             dbfs.put_string_filepath(session.dbo, "/onlineform/head.html", post["header"])
             dbfs.put_string_filepath(session.dbo, "/onlineform/foot.html", post["footer"])
+        elif mode == "import":
+            users.check_permission(session, users.EDIT_ONLINE_FORMS)
+            extonlineform.import_onlineform_json(session.dbo, post.filedata())
+            raise web.seeother("onlineforms")
 
 class options:
     def GET(self):

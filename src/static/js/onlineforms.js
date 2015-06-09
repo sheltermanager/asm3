@@ -115,6 +115,14 @@ $(function() {
                      click: function() {
                         $("#dialog-headfoot").dialog("open");
                      }
+                 },
+                 { id: "import", text: _("Import"), icon: "database", enabled: "always", tooltip: _("Import from file"),
+                     click: function() {
+                         tableform.show_okcancel_dialog("#dialog-import", _("Import"), { notblank: ["filechooser"] })
+                             .then(function() {
+                                 $("#importform").submit();
+                             });
+                     }
                  }
             ];
             this.dialog = dialog;
@@ -179,6 +187,17 @@ $(function() {
             ].join("\n");
         },
 
+        render_import: function() {
+            return [
+                '<div id="dialog-import" style="display: none" title="' + html.title(_("Import from file")) + '">',
+                '<form id="importform" action="onlineforms" method="post" enctype="multipart/form-data">',
+                '<input name="mode" value="import" type="hidden" />',
+                '<input id="filechooser" name="filechooser" type="file" />',
+                '</form>',
+                '</div>'
+            ].join("\n");
+        },
+
         bind_headfoot: function() {
             var headfootbuttons = {};
             headfootbuttons[_("Save")] = function() {
@@ -209,6 +228,7 @@ $(function() {
             var s = "";
             this.model();
             s += this.render_headfoot();
+            s += this.render_import();
             s += tableform.dialog_render(this.dialog);
             s += html.content_header(_("Online Forms"));
             s += html.info(_("Online forms can be linked to from your website and used to take information from visitors for applications, etc."));
@@ -228,6 +248,7 @@ $(function() {
 
         destroy: function() {
             common.widget_destroy("#dialog-headfoot");
+            common.widget_destroy("#dialog-import");
             tableform.dialog_destroy();
         },
 
