@@ -179,7 +179,7 @@ $(function() {
                 '<label for="neutereddate">' + _("Altered") + '</label>',
                 '</td>',
                 '<td>',
-                '<input id="neutered" data="neutered" type="hidden" value="0" />',
+                '<input id="neutered" data="neutered" type="checkbox" class="asm-checkbox" />',
                 '<input id="neutereddate" data="neutereddate" class="asm-textbox asm-datebox" />',
                 '</td>',
                 '</tr>',
@@ -188,7 +188,7 @@ $(function() {
                 '<label for="microchipdate">' + _("Microchipped") + '</label>',
                 '</td>',
                 '<td>',
-                '<input id="microchipped" data="microchipped" type="hidden" value="0" />',
+                '<input id="microchipped" data="microchipped" type="checkbox" class="asm-checkbox" />',
                 '<input id="microchipdate" data="microchipdate" class="asm-textbox asm-datebox" title="' + html.title(_("The date the animal was microchipped")) + '" />',
                 '<input type="text" id="microchipnumber" data="microchipnumber" class="asm-textbox" title="' + html.title(_("The microchip number")) + '" />',
                 '</td>',
@@ -286,10 +286,6 @@ $(function() {
 
             animal_new.update_units();
                 
-            $('#species').change(function() {
-                animal_new.update_breed_select();
-            });
-
             // Crossbreed flag being unset disables second breed field
             if ($("#crossbreed").is(":checked")) {
                 $("#breed2").fadeIn();
@@ -514,26 +510,25 @@ $(function() {
                 }
             });
 
+            // Changing species updates the breed list
+            $('#species').change(function() {
+                animal_new.update_breed_select();
+            });
+
             // Litter autocomplete
             $("#litterid").autocomplete({source: html.decode(controller.autolitters)});
 
             // Changing the neutered date sets a hidden version of the checkbox
             $("#neutereddate").change(function() {
                 if ($("#neutereddate").val()) {
-                    $("#neutered").val("1");
-                }
-                else {
-                    $("#neutered").val("0");
+                    $("#neutered").prop("checked", true);
                 }
             });
 
             // Changing the microchipped date sets a hidden version of the checkbox
             $("#microchipdate").change(function() {
                 if ($("#microchipdate").val()) {
-                    $("#microchipped").val("1");
-                }
-                else {
-                    $("#microchipped").val("0");
+                    $("#microchipped").prop("checked", true);
                 }
             });
 
@@ -542,7 +537,9 @@ $(function() {
             $("#nonshelter").change(animal_new.enable_widgets);
             animal_new.enable_widgets();
 
-            // The species will have updated the breedlist, apply defaults
+            // Default species has been set, update the available breeds
+            // before choosing the default breed
+            animal_new.update_breed_select();
             $("#breed1").val(config.str("AFDefaultBreed"));
             $("#breed2").val(config.str("AFDefaultBreed"));
 

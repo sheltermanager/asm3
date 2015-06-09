@@ -1,6 +1,7 @@
 37
 ================
 
+09/06/15 Show microchipped/neutered tickbox on animal_new
 09/06/15 Add PERSONCLASS to csvimport
 09/06/15 csvimport duplicate person squash merges flags
 08/06/15 Fix lb/oz on create new animal screen #207
