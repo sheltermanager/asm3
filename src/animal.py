@@ -1724,7 +1724,7 @@ def insert_animal_from_form(dbo, post, username):
         ( "CoatType", db.di(configuration.default_coattype(dbo))),
         ( "EstimatedDOB", db.di(estimateddob)),
         ( "Fee", s("fee")),
-        ( "Identichipped", s("microchipped")),
+        ( "Identichipped", c("microchipped")),
         ( "IdentichipNumber", t("microchipnumber")),
         ( "IdentichipDate", db.dd(kd("microchipdate"))),
         ( "Tattoo", db.di(0)),
@@ -1733,7 +1733,7 @@ def insert_animal_from_form(dbo, post, username):
         ( "SmartTag", db.di(0)),
         ( "SmartTagNumber", db.ds("")),
         ( "SmartTagType", db.di(0)),
-        ( "Neutered", s("neutered")),
+        ( "Neutered", c("neutered")),
         ( "NeuteredDate", db.dd(kd("neutereddate"))),
         ( "Declawed", db.di(0)),
         # ASM2_COMPATIBILITY
