@@ -324,3 +324,55 @@ BODY$$
 
 $$FOOTER
 FOOTER$$
+&&&
+Payment Breakdown By Receipt Number
+###
+Financial
+###
+33011/Any
+###
+All payments by type for a range of receipt numbers with totals.
+###
+en
+###
+$VAR from NUMBER Enter earliest receipt number$
+$VAR to NUMBER Enter latest receipt number$
+
+SELECT ownerdonation.Date, ownerdonation.DateDue, owner.OwnerName, 
+donationtype.DonationName, ownerdonation.ID as receipt,
+Donation AS amt, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
+owner.OwnerPostcode, donationpayment.PaymentName 
+FROM ownerdonation 
+INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
+INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
+INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
+WHERE ownerdonation.ID >= $@from$ AND ownerdonation.ID <= $@to$
+ORDER BY ownerdonation.ID
+###
+$$HEADER
+<table border=1><tr>
+<td><b>Receipt</b></td>
+<td><b>Due</b></td>
+<td><b>Received</b></td>
+<td><b>Person</b></td>
+<td><b>Method</b></td>
+<td><b>Amount</b></td>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$receipt</td>
+<td>$datedue</td>
+<td>$date</td>
+<td>$ownername</td>
+<td>$paymentname</td>
+<td>$amt</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<p><b>Total: {SUM.amt.2}</b></p>
+FOOTER$$
+
