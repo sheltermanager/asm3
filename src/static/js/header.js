@@ -65,7 +65,8 @@ $(function() {
         51: ["stocklevel", "asm-icon-stock", _("Stock Levels")],
         52: ["transport", "asm-icon-transport", _("Transport Book")],
         53: ["timeline", "asm-icon-calendar", _("Timeline")],
-        54: ["staff_rota", "asm-icon-rota", _("Staff Rota")]
+        54: ["staff_rota", "asm-icon-rota", _("Staff Rota")],
+        55: ["move_reclaim", "", _("Reclaim an animal")]
     };
 
     /** Functions related to rendering and binding to events for the page
