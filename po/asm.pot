@@ -6634,6 +6634,14 @@ msgid "Mobile"
 msgstr ""
 
 #: roles.js
+msgid "Modify Additional Fields"
+msgstr ""
+
+#: roles.js
+msgid "Modify Document Templates"
+msgstr ""
+
+#: roles.js
 msgid "Modify Lookups"
 msgstr ""
 
@@ -8243,7 +8251,7 @@ msgstr ""
 msgid "Reclaim"
 msgstr ""
 
-#: move_reclaim.js html.py
+#: header.js move_reclaim.js configuration.py html.py
 msgid "Reclaim an animal"
 msgstr ""
 

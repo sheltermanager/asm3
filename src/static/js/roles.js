@@ -192,6 +192,8 @@ $(function() {
                 cr("asm", _("Access System Menu")),
                 cr("cso", _("Change System Options")),
                 cr("cpo", _("Change Publishing Options")),
+                cr("maf", _("Modify Additional Fields")),
+                cr("mdt", _("Modify Document Templates")),
                 cr("ml", _("Modify Lookups")),
                 cr("tbp", _("Trigger Batch Processes")),
                 cr("usi", _("Use SQL Interface")),
