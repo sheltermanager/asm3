@@ -942,12 +942,12 @@ $(function() {
         },
 
         routes: {
-            "animal_media": function() { common.module_loadandstart("media", "animal_media?id=" + this.qs.id); },
-            "foundanimal_media": function() { common.module_loadandstart("media", "foundanimal_media?id=" + this.qs.id); },
-            "incident_media": function() { common.module_loadandstart("media", "incident_media?id=" + this.qs.id); },
-            "lostanimal_media": function() { common.module_loadandstart("media", "lostanimal_media?id=" + this.qs.id); },
-            "person_media": function() { common.module_loadandstart("media", "person_media?id=" + this.qs.id); },
-            "waitinglist_media": function() { common.module_loadandstart("media", "waitinglist_media?id=" + this.qs.id); }
+            "animal_media": function() { common.module_loadandstart("media", "animal_media?" + this.rawqs); },
+            "foundanimal_media": function() { common.module_loadandstart("media", "foundanimal_media?" + this.rawqs); },
+            "incident_media": function() { common.module_loadandstart("media", "incident_media?" + this.rawqs); },
+            "lostanimal_media": function() { common.module_loadandstart("media", "lostanimal_media?" + this.rawqs); },
+            "person_media": function() { common.module_loadandstart("media", "person_media?" + this.rawqs); },
+            "waitinglist_media": function() { common.module_loadandstart("media", "waitinglist_media?" + this.rawqs); }
         }
 
 
