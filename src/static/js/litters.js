@@ -38,7 +38,7 @@ $(function() {
                         .then(function() {
                             tableform.fields_update_row(dialog.fields, row);
                             litters.set_extra_fields(row);
-                            return tableform.fields_post(dialog.fields, "mode=update&litterid=" + row.ID, controller.name);
+                            return tableform.fields_post(dialog.fields, "mode=update&litterid=" + row.ID, "litters");
                         })
                         .then(function(response) {
                             tableform.table_update(table);
