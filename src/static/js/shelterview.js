@@ -84,7 +84,12 @@ $(function() {
                         h.push('<div>');
                     }
                 }
-                h.push('<div class="animaldragtarget" data="' + a.ID + '" style="display: inline-block; text-align: center">');
+                h.push('<div ');
+                // Only on shelter animals that are physically present can be dragged
+                if (!a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0) {
+                    h.push('class="animaldragtarget" ');
+                }
+                h.push('data="' + a.ID + '" style="display: inline-block; text-align: center">');
                 h.push(html.animal_link_thumb(a, {showunit: true}));
                 h.push('</div>');
                 runningtotal += 1;

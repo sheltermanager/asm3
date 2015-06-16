@@ -1,6 +1,7 @@
 37
 ================
 
+16/06/15 Prevent foster/retailer animals being dragged in shelterview
 15/06/15 Add extra permissions for additional fields/doc templates
 15/06/15 Add reclaim to quicklinks
 09/06/15 Allow import of JSON exported online forms
