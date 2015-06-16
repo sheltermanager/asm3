@@ -20,6 +20,8 @@ o.OwnerAddress || '<br />' || o.OwnerTown || ' ' || o.OwnerCounty || ' ' || o.Ow
 FROM adoption m
 INNER JOIN animal a ON m.AnimalID = a.ID
 INNER JOIN owner o ON m.OwnerID = o.ID
-WHERE m.MovementType = 1 AND m.MovementDate >= '$@from$' AND m.MovementDate <= '$@to$' ORDER BY m.MovementDate
+WHERE m.MovementType = 1 AND m.MovementDate >= '$@from$' AND m.MovementDate <= '$@to$' 
+AND o.LatLong <> '' 
+ORDER BY m.MovementDate
 ###
 MAP
