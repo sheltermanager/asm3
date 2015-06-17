@@ -75,9 +75,9 @@ def json(obj, readable = False):
     readable: If True, line breaks and padding are added to make it human-readable
     """
     if not readable:
-        return extjson.dumps(obj, default=json_handler)
+        return extjson.dumps(obj, default=json_handler, ensure_ascii=False).encode("utf-8")
     else:
-        return extjson.dumps(obj, default=json_handler, indent=4, separators=(',', ': '))
+        return extjson.dumps(obj, default=json_handler, ensure_ascii=False, indent=4, separators=(',', ': ')).encode("utf-8")
 
 def js_minified_name(filename):
     """

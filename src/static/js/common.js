@@ -365,20 +365,10 @@
          * object (from uri) and then starts it.
          */
         module_loadandstart: function(modulename, uri) {
-            var logprefix = "module_loadandstart [" + modulename + "]: ";
+            
             // do we already have one running? If so, try to unload it first
-            if (common.module_running) {
-                if (common.module_running.destroy) {
-                    try {
-                        if (common.module_running.destroy()) {
-                            return;
-                        }
-                    }
-                    catch (exdestroy) {
-                        log.error(logprefix + "destroy: " + exdestroy);
-                    }
-                }
-            }
+            if (common.module_unload()) { return; }
+
             // add a json parameter to only retrieve the controller json document
             // also add a timestamp parameter to ensure uniqueness of uri as
             // IE11 seems to cache ajax requests despite Cache-Control=no-cache
@@ -425,28 +415,26 @@
         /**
          * Starts a module, unloading any active module first.
          * Runs through the lifecycle events of render, bind, sync, title, animation
-         * if any throw errors, they're caught and logged so the application
-         * can recover if necessary.
+         * if any throw errors, they're caught and logged at the backend so the 
+         * application can recover if necessary.
          */
         module_start: function(modulename) {
+
             var errhandler = function(name, e) {
-                    var msg = "module_start [" + modulename + "]: " + name + ": " + e;
-                    log.error(msg, e);
-                    alert(msg + "\n" + e.stack);
-                };
+                var msg = "module_start [" + modulename + "]: " + name + ": " + e;
+                log.error(msg, e);
+                common.ajax_post("jserror", 
+                    "user=" + encodeURIComponent(asm.user) +
+                    "&account=" + encodeURIComponent(asm.useraccount) + 
+                    "&msg=" + encodeURIComponent(msg) + 
+                    "&stack=" + encodeURIComponent(String(e.stack))
+                );
+                alert(msg + "\n" + e.stack);
+            };
+
             // do we already have one running? If so, try to unload it first
-            if (common.module_running) {
-                if (common.module_running.destroy) {
-                    try {
-                        if (common.module_running.destroy()) {
-                            return;
-                        }
-                    }
-                    catch (exdestroy) {
-                        errhandler("destroy", exdestroy);
-                    }
-                }
-            }
+            if (common.module_unload()) { return; }
+
             var o = common.modules[modulename];
             $("#asm-body-container").empty(); 
             if (o.render) { 
@@ -493,6 +481,26 @@
             if (o.autofocus) {
                 setTimeout(function() { $(o.autofocus).focus(); }, 750);
             }
+        },
+
+        /**
+         * Unloads the currently loaded module (if one is)
+         * returns true if the unload was cancelled.
+         */
+        module_unload: function() {
+            if (common.module_running && common.module_running.destroy) {
+                var logprefix = "module_unload [" + common.module_running.name + "]: ";
+                try {
+                    if (common.module_running.destroy()) {
+                        return true;
+                    }
+                    common.module_running = null;
+                }
+                catch (exdestroy) {
+                    log.error(logprefix + "destroy: " + exdestroy);
+                }
+            }
+            return false;
         },
 
         /**

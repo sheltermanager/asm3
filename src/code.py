@@ -101,6 +101,7 @@ urls = (
     "/htmltemplates", "htmltemplates",
     "/i18n.js", "i18njs",
     "/js", "js",
+    "/jserror", "jserror",
     "/image", "image",
     "/incident", "incident",
     "/incident_citations", "incident_citations",
@@ -583,6 +584,23 @@ class js:
         web.header("Content-Type", "text/javascript")
         web.header("Cache-Control", "max-age=8640000") # Don't refresh this version for 100 days
         return content
+
+class jserror:
+    """
+    Target for logging javascript errors from the frontend.
+    Nothing is returned as the UI does not expect a response.
+    Errors are logged and emailed to the admin if EMAIL_ERRORS is set.
+    """
+    def POST(self):
+        post = utils.PostedData(web.input(), LOCALE)
+        if utils.is_loggedin(session) and session.dbo is not None:
+            dbo = session.dbo
+            emailsubject = "%s @ %s" % (post["user"], post["account"])
+            emailbody = "%s:\n\n%s" % (post["msg"], post["stack"])
+            logmess = "%s@%s: %s %s" % (post["user"], post["account"], post["msg"], post["stack"])
+            al.error(logmess, "code.jserror", dbo)
+            if EMAIL_ERRORS:
+                utils.send_email(dbo, ADMIN_EMAIL, ADMIN_EMAIL, "", emailsubject, emailbody, "plain")
 
 class media:
     def GET(self):

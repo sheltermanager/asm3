@@ -1,6 +1,8 @@
 37
 ================
 
+17/06/15 Make sure all JSON responses are UTF-8
+17/06/15 Catch client side errors and send them to the server for log/email
 16/06/15 Prevent foster/retailer animals being dragged in shelterview
 15/06/15 Add extra permissions for additional fields/doc templates
 15/06/15 Add reclaim to quicklinks
