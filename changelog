@@ -1,6 +1,7 @@
 37
 ================
 
+17/06/15 Make cron.diagnostics fix too many web/doc preferred images
 17/06/15 Make sure all JSON responses are UTF-8
 17/06/15 Catch client side errors and send them to the server for log/email
 16/06/15 Prevent foster/retailer animals being dragged in shelterview

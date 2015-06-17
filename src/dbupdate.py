@@ -2414,7 +2414,8 @@ def dump_merge(dbo, deleteViewSeq = True):
 
 def diagnostic(dbo):
     """
-    Checks for and removes orphaned records and any other useful bits and pieces
+    1. Checks for and removes orphaned records (of some types)
+    2. Checks for and fixes animal records with too many web or doc preferred images
     """
     def orphan(table, linktable, leftfield, rightfield):
         count = db.query_int(dbo, "SELECT COUNT(*) FROM %s LEFT OUTER JOIN %s ON %s = %s " \
@@ -2425,13 +2426,32 @@ def diagnostic(dbo):
                 table, leftfield, leftfield, table, linktable, leftfield, rightfield, rightfield))
         return count
 
-    return (
-        orphan("adoption", "animal", "adoption.AnimalID", "animal.ID"),
-        orphan("animalvaccination", "animal", "animalvaccination.AnimalID", "animal.ID"),
-        orphan("animaltest", "animal", "animaltest.AnimalID", "animal.ID"),
-        orphan("animalmedical", "animal", "animalmedical.AnimalID", "animal.ID"),
-        orphan("animalmedicaltreatment", "animal", "animalmedicaltreatment.AnimalID", "animal.ID")
-    )
+    def mediapref():
+        duplicatepic = 0
+        for a in db.query(dbo, "SELECT ID, " \
+            "(SELECT COUNT(*) FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0) AS TotalMedia, " \
+            "(SELECT COUNT(*) FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0 AND WebsitePhoto = 1) AS TotalWeb, " \
+            "(SELECT COUNT(*) FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0 AND DocPhoto = 1) AS TotalDoc, " \
+            "(SELECT ID FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0 AND MediaName LIKE '%.jpg' LIMIT 1) AS FirstImage " \
+            "FROM animal"):
+            if a["TOTALMEDIA"] > 0 and a["TOTALWEB"] > 1:
+                # Too many web preferreds
+                db.execute(dbo, "UPDATE media SET WebsitePhoto = 0 WHERE LinkID = %d AND LinkTypeID = 0 AND ID <> %d" % (a["ID"], a["FIRSTIMAGE"]))
+                duplicatepic += 1
+            if a["TOTALMEDIA"] > 0 and a["TOTALDOC"] > 1:
+                # Too many doc preferreds
+                db.execute(dbo, "UPDATE media SET DocPhoto = 0 WHERE LinkID = %d AND LinkTypeID = 0 AND ID <> %d" % (a["ID"], a["FIRSTIMAGE"]))
+                duplicatepic += 1
+        return duplicatepic
+
+    return {
+        "orphaned adoptions": orphan("adoption", "animal", "adoption.AnimalID", "animal.ID"),
+        "orphaned vacc": orphan("animalvaccination", "animal", "animalvaccination.AnimalID", "animal.ID"),
+        "orphaned tests": orphan("animaltest", "animal", "animaltest.AnimalID", "animal.ID"),
+        "orphaned medical": orphan("animalmedical", "animal", "animalmedical.AnimalID", "animal.ID"),
+        "orphaned treatments": orphan("animalmedicaltreatment", "animal", "animalmedicaltreatment.AnimalID", "animal.ID"),
+        "duplicate preferred images": mediapref()
+    }
 
 def check_for_updates(dbo):
     """

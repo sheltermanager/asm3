@@ -439,8 +439,9 @@ def maint_animal_figures_annual(dbo):
 
 def maint_db_diagnostic(dbo):
     try:
-        move, vacc, med, medt = dbupdate.diagnostic(dbo)
-        print "Removed:\n%d orphaned movements,\n%d orphaned vaccinations\n%d orphaned medical records\n%d orphaned treatments" % (move, vacc, med, medt)
+        d = dbupdate.diagnostic(dbo)
+        for k, v in d.iteritems():
+            print "%s: %s" % (k, v)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_diagnostic: %s" % em, "cron.maint_db_diagnostic", dbo, sys.exc_info())
@@ -673,7 +674,7 @@ def print_usage():
     print "       publish_pr - update petrescue aus"
     print "       maint_animal_figures - calculate all monthly/annual figures for all time"
     print "       maint_animal_figures_annual - calculate all annual figures for all time"
-    print "       maint_db_diagnostic - run database diagnostics (orphaned records)"
+    print "       maint_db_diagnostic - run database diagnostics"
     print "       maint_db_dump - produce a dump of INSERT statements to recreate the db"
     print "       maint_db_dump_dbfs - produce a dump of INSERT statements to recreate the dbfs"
     print "       maint_db_dump_merge - produce a dump of INSERT statements, renumbering IDs to +100000"
