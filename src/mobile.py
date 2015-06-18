@@ -77,8 +77,7 @@ def header(l):
         "title":    _("Animal Shelter Manager", l),
         "css":      html.asm_css_tag("asm-icon.css"),
         "scripts":  html.script_tag(JQUERY_JS) + 
-            html.css_tag(JQUERY_MOBILE_CSS) + html.script_tag(JQUERY_MOBILE_JS) + 
-            html.script_tag(JQUERY_UI_JS) + html.script_tag(SIGNATURE_JS)
+            html.css_tag(JQUERY_MOBILE_CSS) + html.script_tag(JQUERY_MOBILE_JS) 
     }
 
 def jqm_button(href, text, icon = "", ajax = ""):
