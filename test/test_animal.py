@@ -106,6 +106,12 @@ class TestAnimal(unittest.TestCase):
         animal.get_active_litters(base.get_dbo())
         animal.update_active_litters(base.get_dbo())
 
+    def test_get_publish_history(self):
+        animal.get_publish_history(base.get_dbo(), self.nid)
+
+    def test_insert_publish_history(self):
+        animal.insert_publish_history(base.get_dbo(), self.nid, "fakeservice")
+
     def test_get_satellite_counts(self):
         assert len(animal.get_satellite_counts(base.get_dbo(), self.nid)) > 0
 

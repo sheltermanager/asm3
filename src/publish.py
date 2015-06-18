@@ -522,7 +522,7 @@ class AbstractPublisher(threading.Thread):
         """
         async.set_last_error(self.dbo, msg)
         self.lastError = msg
-        self.log(self.lastError)
+        if msg != "": self.logError(self.lastError)
         self.resetPublisherProgress()
 
     def makePublishDirectory(self):

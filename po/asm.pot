@@ -8000,6 +8000,10 @@ msgstr ""
 msgid "Publish to folder"
 msgstr ""
 
+#: animal.js
+msgid "Published to Website"
+msgstr ""
+
 #: lookups.js dbupdate.py
 msgid "Publisher"
 msgstr ""
@@ -8022,6 +8026,10 @@ msgstr ""
 
 #: publish.js html.py
 msgid "Publishing"
+msgstr ""
+
+#: animal.js
+msgid "Publishing History"
 msgstr ""
 
 #: publish_logs.js

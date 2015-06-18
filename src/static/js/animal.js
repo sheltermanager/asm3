@@ -629,6 +629,50 @@ $(function() {
             ].join("\n");
         },
 
+        render_publish_history: function() {
+            
+            if (controller.publishhistory.length == 0) {
+                return;
+            }
+
+            var pname = function(p) {
+                var t = p;
+                if (p == "html") { t = html.icon("web") + " " + _("Published to Website"); }
+                else if (p == "petfinder") { t = "Published to petfinder.com"; }
+                else if (p == "adoptapet") { t = "Published to adoptapet.com"; }
+                else if (p == "rescuegroups") { t = "Published to rescuegroups.org"; }
+                else if (p == "meetapet") { t = "Published to meetapet.com"; }
+                else if (p == "helpinglostpets") { t = "Published to helpinglostpets.com"; }
+                else if (p == "petrescue") { t = "Published to petrescue.com.au"; }
+                
+                else if (p == "petlink") { t = html.icon("microchip") + " Microchip registered with PetLink"; }
+                else if (p == "pettracuk") { t = html.icon("microchip") + " Microchip registered with AVID/PETtrac UK"; }
+                else if (p == "anibaseuk") { t = html.icon("microchip") + " Microchip registered with idENTICHIP/Anibase UK"; }
+                else if (p == "smarttag") { t = html.icon("microchip") + " Microchip/Tag registered with SmartTag"; }
+                else if (p == "akcreunite") { t = html.icon("microchip") + " Microchip registered with AKC Reunite"; }
+                else if (p == "homeagain") { t = html.icon("microchip") + " Microchip registered with HomeAgain"; }
+
+                else if (p == "facebook") { t = html.icon("facebook") + " Shared on Facebook"; }
+                else if (p == "twitter") { t = html.icon("twitter") + " Shared on Twitter"; }
+                else if (p == "gplus") { t = html.icon("gplus") + " Shared on Google+"; }
+                else if (p == "pinterest") { t = html.icon("pinterest") + " Shared on Pinterest"; }
+                else if (p == "tumblr") { t = html.icon("tumblr") + " Shared on Tumblr"; }
+
+                return t;
+            },
+            h = [
+                '<h3><a href="#">' + _("Publishing History") + '</a></h3>',
+                '<div>'
+            ];
+
+            $.each(controller.publishhistory, function(i, v) {
+                h.push('<p>' + format.date(v.SENTDATE) + ' - ' + pname(v.PUBLISHEDTO) + '</p>');
+            });
+
+            h.push('</div>');
+            return h.join("\n");
+        },
+
         /**
          * Render the animal details screen
          */
@@ -694,9 +738,10 @@ $(function() {
                 this.render_entry(),
                 this.render_health_and_identification(),
                 this.render_death(),
-                '</div> <!-- accordion -->',
-                '</div> <!-- asmcontent -->',
-                '</div> <!-- tabs -->'
+                this.render_publish_history(),
+                '</div>', // accordion
+                '</div>', // asmcontent
+                '</div>'  // tabs
             ].join("\n");
             return h;
         },
@@ -1095,6 +1140,12 @@ $(function() {
             $(".sharebutton").hide();
             $.each(controller.sharebutton.split(","), function(i, v) {
                 $("#button-" + v).show();
+            });
+
+            // When a share button is clicked, mark it as such for the publishing history
+            $("#button-share-body").on("click", "li", function() {
+                var service = $(this).attr("id").replace("button-", "");
+                common.ajax_post("animal", "mode=shared&id=" + controller.animal.ID + "&service=" + service);
             });
 
             // Web and email

@@ -1596,6 +1596,20 @@ def get_units_with_availability(dbo, locationid):
         a.append( "%s|%d" % (uname, ainu == 0 and 1 or 0 ))
     return a
 
+def get_publish_history(dbo, animalid):
+    """
+    Returns a list of services and the date the animal was last registered with them.
+    """
+    return db.query(dbo, "SELECT PublishedTo, SentDate FROM animalpublished WHERE AnimalID = %d ORDER BY SentDate DESC" % animalid)
+
+def insert_publish_history(dbo, animalid, service):
+    """
+    Marks an animal as published to a particular service now
+    """
+    db.execute(dbo, "DELETE FROM animalpublished WHERE AnimalID = %d AND PublishedTo = '%s'" % (animalid, service))
+    db.execute(dbo, "INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate) VALUES (%d, '%s', %s)" % \
+        (animalid, service, db.dd(now())))
+
 def get_shelterview_animals(dbo, locationfilter = ""):
     """
     Returns all available animals for shelterview

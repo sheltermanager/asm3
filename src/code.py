@@ -1016,6 +1016,7 @@ class animal:
         c += html.controller_json("internallocations", extlookups.get_internal_locations(dbo, session.locationfilter))
         c += html.controller_json("microchipmanufacturers", extlookups.MICROCHIP_MANUFACTURERS)
         c += html.controller_json("pickuplocations", extlookups.get_pickup_locations(dbo))
+        c += html.controller_json("publishhistory", extanimal.get_publish_history(dbo, a["ID"]))
         c += html.controller_json("posneg", extlookups.get_posneg(dbo))
         c += html.controller_json("sexes", extlookups.get_sexes(dbo))
         c += html.controller_json("sizes", extlookups.get_sizes(dbo))
@@ -1047,6 +1048,8 @@ class animal:
             return sheltercode + "||" + shortcode + "||" + str(unique) + "||" + str(year)
         elif mode == "randomname":
             return extanimal.get_random_name(dbo, post.integer("sex"))
+        elif mode == "shared":
+            extanimal.insert_publish_history(dbo, post.integer("id"), post["service"])
         elif mode == "clone":
             users.check_permission(session, users.CLONE_ANIMAL)
             utils.check_locked_db(session)
