@@ -1,6 +1,7 @@
 37
 ================
 
+19/06/15 Remove pointless body column from publish template edit
 18/06/15 Sharing on social media logged in publishing history
 18/06/15 Add Publishing History slider to animal records
 18/06/15 publisher.setLastError should log as ALERT for UI

@@ -30,14 +30,12 @@ $(function() {
                             tableform.fields_post(dialog.fields, "mode=update&name=" + row.NAME, "htmltemplates");
                         })
                         .then(function(response) {
+                            tableform.dialog_close();
                             tableform.table_update(table);
                         });
                 },
                 columns: [
-                    { field: "NAME", display: _("Name"), initialsort: true },
-                    { field: "BODY", display: _("Body"), formatter: function(row) {
-                        return html.truncate(html.strip_tags(row.BODY));
-                    }}
+                    { field: "NAME", display: _("Name"), initialsort: true }
                 ]
             };
 
