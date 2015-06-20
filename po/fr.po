@@ -5661,7 +5661,7 @@ msgstr "Crédit::Don"
 #: dbupdate.py
 #, fuzzy
 msgid "Income::EntryDonation"
-msgstr "Crédit::Don"
+msgstr "Crédit::Entrée"
 
 #: dbupdate.py
 msgid "Income::Interest"

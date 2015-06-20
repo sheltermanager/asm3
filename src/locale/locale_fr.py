@@ -2059,7 +2059,7 @@ val = {"" : "Project-Id-Version: PACKAGE VERSION\nReport-Msgid-Bugs-To: db@shelt
 "Manual" : "Manuel",
 "Upload" : "",
 "{plural2} months." : "{plural2} mois",
-"Income::EntryDonation" : "Cr&#233;dit::Don",
+"Income::EntryDonation" : "Cr&#233;dit::Entr&#233;e",
 "{plural3} animals entered the shelter" : "{plural3} les animaux entr&#233;s au refuge",
 "Not for adoption" : "Pas disponible &#224; l'adoption",
 "{plural2} animals died" : "",
