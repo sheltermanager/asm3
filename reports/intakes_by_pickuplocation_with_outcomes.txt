@@ -30,7 +30,7 @@ LEFT OUTER JOIN owner oo ON a.OriginalOwnerID = oo.ID
 INNER JOIN entryreason e ON a.EntryReasonID = e.ID 
 INNER JOIN pickuplocation pl ON a.PickupLocationID = pl.ID
 WHERE a.DateBroughtIn >= '$ASK DATE Enter from date$' AND a.DateBroughtIn <= '$ASK DATE Enter to date$' 
-AND NonShelterAnimal = 0 
+AND NonShelterAnimal = 0 AND IsPickup = 1
 ORDER BY pl.LocationName, a.DateBroughtIn
 ###
 $$HEADER
