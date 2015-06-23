@@ -80,6 +80,7 @@ $(function() {
                 '<div class="centered">',
                 '<button id="addedit">' + html.icon("animal-add") + ' ' + _("Create and edit") + '</button>',
                 '<button id="add">' + html.icon("animal-add") + ' ' + _("Create") + '</button>',
+                '<button id="reset">' + html.icon("delete") + ' ' + _("Reset") + '</button>',
                 '</div>',
                 html.content_footer()
             ].join("\n");
@@ -140,14 +141,6 @@ $(function() {
                     });
             };
 
-            // Set select box default values
-            $("#species").val(config.str("AFDefaultSpecies"));
-            $("#size").val(config.str("AFDefaultSize"));
-            $("#urgency").val(config.str("WaitingListDefaultUrgency"));
-
-            // Default dates
-            $("#dateputon").datepicker("setDate", new Date());
-
             // Buttons
             $("#add").button().click(function() {
                 addWaitingList("add");
@@ -156,6 +149,27 @@ $(function() {
             $("#addedit").button().click(function() {
                 addWaitingList("addedit");
             });
+
+            $("#reset").button().click(function() {
+                waitinglist_new.reset();
+            });
+        },
+
+        sync: function() {
+            waitinglist_new.reset();
+        },
+
+        reset: function() {
+            // Set select box default values
+            $("#species").val(config.str("AFDefaultSpecies"));
+            $("#size").val(config.str("AFDefaultSize"));
+            $("#urgency").val(config.str("WaitingListDefaultUrgency"));
+
+            // Default dates
+            $(".asm-textbox, .asm-textarea, .asm-textareafixed").val("").change();
+            $(".asm-checkbox").prop("checked", false).change();
+            $(".asm-personchooser").personchooser("clear");
+            $("#dateputon").val(format.date(new Date()));
         },
 
         destroy: function() {

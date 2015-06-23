@@ -89,6 +89,7 @@ $(function() {
                 '<div class="centered">',
                 '<button id="addedit">' + html.icon("call") + ' ' + _("Create and edit") + '</button>',
                 '<button id="add">' + html.icon("call") + ' ' + _("Create") + '</button>',
+                '<button id="reset">' + html.icon("delete") + ' ' + _("Reset") + '</button>',
                 '</div>',
                 html.content_footer()
             ].join("\n");
@@ -133,21 +134,32 @@ $(function() {
                 $("#asm-content button").button("disable");
                 addIncident("addedit");
             });
+
+            $("#reset").button().click(function() {
+                incident_new.reset();
+            });
         },
 
         sync: function() {
-            $("#incidentdate").datepicker("setDate", new Date());
-            $("#incidenttime").val(format.time(new Date()));
-            $("#calldate").datepicker("setDate", new Date());
-            $("#calltime").val(format.time(new Date()));
-            $("#calltaker").select("value", asm.user);
-            $("#incidenttype").select("value", config.str("DefaultIncidentType"));
+            incident_new.reset();
         },
 
         destroy: function() {
             common.widget_destroy("#owner");
             common.widget_destroy("#caller", "personchooser");
             common.widget_destroy("#victim", "personchooser");
+        },
+
+        reset: function() {
+            $(".asm-textbox, .asm-textarea").val("").change();
+            $(".asm-checkbox").prop("checked", false).change();
+            $(".asm-personchooser").personchooser("clear");
+            $("#incidentdate").val(format.date(new Date()));
+            $("#incidenttime").val(format.time(new Date()));
+            $("#calldate").val(format.date(new Date()));
+            $("#calltime").val(format.time(new Date()));
+            $("#calltaker").select("value", asm.user);
+            $("#incidenttype").select("value", config.str("DefaultIncidentType"));
         },
 
         name: "incident_new",

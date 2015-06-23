@@ -17,7 +17,7 @@ $(function() {
                 '<table class="asm-table-layout">',
                 '<tr id="nonshelterrow">',
                 '<td></td>',
-                '<td><input type="checkbox" title=',
+                '<td><input type="checkbox" class="asm-checkbox" title=',
                 '"' + html.title(_("This animal should not be shown in figures and is not in the custody of the shelter")) + '"',
                 ' data="nonshelter" id="nonshelter" /><label for="nonshelter">' + _("Non-Shelter") + '</label></td>',
                 '</tr>',
@@ -244,6 +244,7 @@ $(function() {
                 '<div class="centered">',
                 '<button id="addedit">' + html.icon("animal-add") + ' ' + _("Create and edit") + '</button>',
                 '<button id="add">' + html.icon("animal-add") + ' ' + _("Create") + '</button>',
+                '<button id="reset">' + html.icon("delete") + ' ' + _("Reset") + '</button>',
                 '</div>',
                 html.content_footer()
             ].join("\n");
@@ -368,6 +369,29 @@ $(function() {
                 });
         },
 
+        reset: function() {
+
+            $(".asm-textbox").val("").change();
+            $(".asm-checkbox").prop("checked", false).change();
+            $(".asm-personchooser").personchooser("clear");
+
+            // Set select box default values
+            $("#animaltype").val(config.str("AFDefaultType"));
+            $("#species").val(config.str("AFDefaultSpecies"));
+            animal_new.update_breed_select();
+            $("#basecolour").val(config.str("AFDefaultColour"));
+            $("#entryreason").val(config.str("AFDefaultEntryReason"));
+            $("#internallocation").val(config.str("AFDefaultLocation"));
+            $("#size").val(config.str("AFDefaultSize"));
+            $("#sex").val("2"); // Unknown
+
+            // Set date/time defaults
+            $("#datebroughtin").val(format.date(new Date()));
+            if (config.bool("AddAnimalsShowTimeBroughtIn")) {
+                $("#timebroughtin").val(format.time(new Date()));
+            }
+        },
+
         validation: function() {
             // Remove any previous errors
             header.hide_error();
@@ -488,21 +512,6 @@ $(function() {
             if (!config.bool("ManualCodes")) { $("#coderow").hide(); }
 
 
-            // Set select box default values
-            $("#animaltype").val(config.str("AFDefaultType"));
-            $("#species").val(config.str("AFDefaultSpecies"));
-            $("#basecolour").val(config.str("AFDefaultColour"));
-            $("#entryreason").val(config.str("AFDefaultEntryReason"));
-            $("#internallocation").val(config.str("AFDefaultLocation"));
-            $("#size").val(config.str("AFDefaultSize"));
-            $("#sex").val("2"); // Unknown
-
-            // Set date/time defaults
-            $("#datebroughtin").val(format.date(new Date()));
-            if (config.bool("AddAnimalsShowTimeBroughtIn")) {
-                $("#timebroughtin").val(format.time(new Date()));
-            }
-
             // Keep breed2 in sync with breed1 for non-crossbreeds
             $("#breed1").change(function() {
                 if (!$("#crossbreed").is(":checked")) {
@@ -552,6 +561,10 @@ $(function() {
                 animal_new.add_animal("addedit");
             });
 
+            $("#reset").button().click(function() {
+                animal_new.reset();
+            });
+
             $("#button-randomname")
                 .button({ icons: { primary: "ui-icon-tag" }, text: false })
                 .click(function() {
@@ -561,6 +574,10 @@ $(function() {
                         $("#animalname").val(result); 
                     });
             });
+        },
+
+        sync: function() {
+            animal_new.reset();
         },
 
         destroy: function() {

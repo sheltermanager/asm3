@@ -1,7 +1,8 @@
 37
 ================
 
-23/06/15 Use page transitions for move* to allow back button to reset
+23/06/15 Add reset buttons to add screens #208
+23/06/15 Use page transitions for move* to allow back button to reset #206
 19/06/15 Remove pointless body column from publish template edit
 18/06/15 Sharing on social media logged in publishing history
 18/06/15 Add Publishing History slider to animal records

@@ -8583,6 +8583,11 @@ msgstr ""
 msgid "Reserved"
 msgstr ""
 
+#: incident_new.js person_new.js animal_new.js lostfound_new.js
+#: waitinglist_new.js
+msgid "Reset"
+msgstr ""
+
 #: users.js
 msgid "Reset Password"
 msgstr ""

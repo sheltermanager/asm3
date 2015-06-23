@@ -82,6 +82,7 @@ $(function() {
                 '</table>',
                 '<div class="centered">',
                 '<button id="add">' + html.icon("person-add") + ' ' + _("Create and edit") + '</button>',
+                '<button id="reset">' + html.icon("delete") + ' ' + _("Reset") + '</button>',
                 '</div>',
                 html.content_footer()
             ].join("\n");
@@ -202,6 +203,20 @@ $(function() {
                 $("#asm-content button").button("disable");
                 check_for_similar();
             });
+
+            $("#reset").button().click(function() {
+                person_new.reset();
+            });
+        },
+
+        sync: function() {
+            person_new.reset();
+        },
+
+        reset: function() {
+            $(".asm-textbox, .asm-textarea").val("").change();
+            $(".asm-checkbox").prop("checked", false).change();
+            $(".asm-personchooser").personchooser("clear");
         },
 
         name: "person_new",

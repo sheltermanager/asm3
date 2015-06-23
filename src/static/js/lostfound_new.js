@@ -114,6 +114,7 @@ $(function() {
                 '<div class="centered">',
                 '<button id="addedit">' + html.icon("animal-add") + ' ' + _("Create and edit") + '</button>',
                 '<button id="add">' + html.icon("animal-add") + ' ' + _("Create") + '</button>',
+                '<button id="reset">' + html.icon("delete") + ' ' + _("Reset") + '</button>',
                 '</div>',
                 html.content_footer()
             ].join("\n");
@@ -194,18 +195,6 @@ $(function() {
                     });
             };
 
-            // Set select box default values
-            $("#species").val(config.str("AFDefaultSpecies"));
-
-            // Default dates
-            if (lostfound_new.mode == "lost") {
-                $("#datelost").datepicker("setDate", new Date());
-            }
-            if (lostfound_new.mode == "found") {
-                $("#datefound").datepicker("setDate", new Date());
-            }
-            $("#datereported").datepicker("setDate", new Date());
-
             // Buttons
             $("#add").button().click(function() {
                 addLFAnimal("add");
@@ -213,6 +202,10 @@ $(function() {
 
             $("#addedit").button().click(function() {
                 addLFAnimal("addedit");
+            });
+
+            $("#reset").button().click(function() {
+                lostfound_new.reset();
             });
 
             // Only show the breeds for the selected species
@@ -237,6 +230,26 @@ $(function() {
             $('#species').change(function() {
                 changebreedselect1();
             });
+        },
+
+        sync: function() {
+            lostfound_new.reset();
+        },  
+
+        reset: function() {
+            $(".asm-textbox, .asm-textarea").val("").change();
+            $(".asm-checkbox").prop("checked", false).change();
+            $(".asm-personchooser").personchooser("clear");
+            // Set select box default values
+            $("#species").val(config.str("AFDefaultSpecies"));
+            // Default dates
+            if (lostfound_new.mode == "lost") {
+                $("#datelost").val(format.date(new Date()));
+            }
+            if (lostfound_new.mode == "found") {
+                $("#datefound").val(format.date(new Date()));
+            }
+            $("#datereported").val(format.date(new Date()));
         },
 
         destroy: function() {
