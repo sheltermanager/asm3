@@ -81,7 +81,8 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '<div class="centered">',
-                '<button id="add">' + html.icon("person-add") + ' ' + _("Create and edit") + '</button>',
+                '<button id="addedit">' + html.icon("person-add") + ' ' + _("Create and edit") + '</button>',
+                '<button id="add">' + html.icon("person-add") + ' ' + _("Create") + '</button>',
                 '<button id="reset">' + html.icon("delete") + ' ' + _("Reset") + '</button>',
                 '</div>',
                 html.content_footer()
@@ -115,7 +116,12 @@ $(function() {
                 var formdata = $("input, textarea, select").toPOST();
                 common.ajax_post("person_new", formdata)
                     .then(function(personid) { 
-                        if (personid) { common.route("person?id=" + personid); }
+                        if (personid && person_new.create_and_edit) { 
+                            common.route("person?id=" + personid); 
+                        }
+                        else {
+                            header.show_info(_("Person successfully created"));
+                        }
                     })
                     .always(function() {
                         $("#asm-content button").button("enable");
@@ -200,9 +206,17 @@ $(function() {
 
 
             $("#add").button().click(function() {
+                person_new.create_and_edit = false;
                 $("#asm-content button").button("disable");
                 check_for_similar();
             });
+
+            $("#addedit").button().click(function() {
+                person_new.create_and_edit = true;
+                $("#asm-content button").button("disable");
+                check_for_similar();
+            });
+
 
             $("#reset").button().click(function() {
                 person_new.reset();
