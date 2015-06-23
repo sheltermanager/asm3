@@ -214,9 +214,11 @@ $(function() {
         },
 
         reset: function() {
-            $(".asm-textbox, .asm-textarea").val("").change();
+            $(".asm-textbox, .asm-textarea, .asm-textareafixed").val("").change();
             $(".asm-checkbox").prop("checked", false).change();
             $(".asm-personchooser").personchooser("clear");
+            $("#flags option").prop("selected", false);
+            $("#flags").change();
         },
 
         name: "person_new",
