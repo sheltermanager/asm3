@@ -241,6 +241,7 @@ FROM_ADDRESS = "you@yourdomain.com"
 # Script and css references for dependencies (can be substituted for separate CDN here)
 ASMSELECT_CSS = 'static/lib/asmselect/1.0.4a/jquery.asmselect.css'
 ASMSELECT_JS = 'static/lib/asmselect/1.0.4a/jquery.asmselect.js'
+BASE64_JS = 'static/lib/base64/0.3.0/base64.min.js'
 FLOT_JS = 'static/lib/flot/0.7/jquery.flot.min.js'
 FLOT_PIE_JS = 'static/lib/flot/0.7/jquery.flot.pie.min.js'
 FULLCALENDAR_CSS = 'static/lib/fullcalendar/2.0.0/fullcalendar.css'

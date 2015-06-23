@@ -145,6 +145,7 @@ urls = (
     "/move_book_unneutered", "move_book_unneutered",
     "/move_deceased", "move_deceased",
     "/move_foster", "move_foster",
+    "/move_gendoc", "move_gendoc",
     "/move_reclaim", "move_reclaim",
     "/move_reserve", "move_reserve",
     "/move_retailer", "move_retailer",
@@ -2537,8 +2538,6 @@ class donation_receive:
                 return "%d,%d" % (don1, don2)
             else:
                 return "%d" % don1
-        elif mode == "templates":
-            return html.template_selection(dbfs.get_document_templates(session.dbo), "document_gen?mode=DONATION&id=%s" % post["id"])
 
 class foundanimal:
     def GET(self):
@@ -3891,8 +3890,6 @@ class move_adopt:
             daysonshelter = extanimal.get_days_on_shelter(dbo, post.integer("id"))
             totaldisplay = format_currency(l, dailyboardcost * daysonshelter)
             return totaldisplay + "||" + _("On shelter for {0} days, daily cost {1}, cost record total <b>{2}</b>", l).format(daysonshelter, dailyboardcostdisplay, totaldisplay)
-        elif mode == "templates":
-            return html.template_selection(dbfs.get_document_templates(dbo), "document_gen?mode=ANIMAL&id=%d" % post.integer("id"))
         elif mode == "donationdefault":
             return extlookups.get_donation_default(dbo, post.integer("donationtype"))
         elif mode == "insurance":
@@ -4194,14 +4191,25 @@ class move_foster:
 
     def POST(self):
         utils.check_loggedin(session, web)
-        dbo = session.dbo
         post = utils.PostedData(web.input(mode="create"), session.locale)
         mode = post["mode"]
         if mode == "create":
             users.check_permission(session, users.ADD_MOVEMENT)
             return str(extmovement.insert_foster_from_form(session.dbo, session.user, post))
-        if mode == "templates":
-            return html.template_selection(dbfs.get_document_templates(dbo), "document_gen?mode=ANIMAL&id=%d" % post.integer("id"))
+
+class move_gendoc:
+    def GET(self):
+        utils.check_loggedin(session, web)
+        users.check_permission(session, users.ADD_MOVEMENT)
+        post = utils.PostedData(web.input(), session.locale)
+        dbo = session.dbo
+        s = html.header("", session)
+        c = html.controller_str("templates", html.template_selection(
+            dbfs.get_document_templates(dbo), "document_gen?mode=%s&id=%d" % (post["mode"], post.integer("id"))))
+        c += html.controller_str("message", post["message"])
+        s += html.controller(c)
+        s += html.footer()
+        return full_or_json("move_gendoc", s, c, post["json"] == "true")
 
 class move_reclaim:
     def GET(self):
@@ -4233,8 +4241,6 @@ class move_reclaim:
             daysonshelter = extanimal.get_days_on_shelter(dbo, post.integer("id"))
             totaldisplay = format_currency(l, dailyboardcost * daysonshelter)
             return totaldisplay + "||" + _("On shelter for {0} days, daily cost {1}, cost record total <b>{2}</b>", l).format(daysonshelter, dailyboardcostdisplay, totaldisplay)
-        elif mode == "templates":
-            return html.template_selection(dbfs.get_document_templates(dbo), "document_gen?mode=ANIMAL&id=%d" % post.integer("id"))
         elif mode == "donationdefault":
             return extlookups.get_donation_default(dbo, post.integer("donationtype"))
 
@@ -4255,14 +4261,11 @@ class move_reserve:
 
     def POST(self):
         utils.check_loggedin(session, web)
-        dbo = session.dbo
         post = utils.PostedData(web.input(mode="create"), session.locale)
         mode = post["mode"]
         if mode == "create":
             users.check_permission(session, users.ADD_MOVEMENT)
             return str(extmovement.insert_reserve_from_form(session.dbo, session.user, post))
-        if mode == "templates":
-            return html.template_selection(dbfs.get_document_templates(dbo), "document_gen?mode=ANIMAL&id=%d" % post.integer("id"))
 
 class move_retailer:
     def GET(self):
@@ -4276,14 +4279,11 @@ class move_retailer:
 
     def POST(self):
         utils.check_loggedin(session, web)
-        dbo = session.dbo
         post = utils.PostedData(web.input(mode="create"), session.locale)
         mode = post["mode"]
         if mode == "create":
             users.check_permission(session, users.ADD_MOVEMENT)
             return str(extmovement.insert_retailer_from_form(session.dbo, session.user, post))
-        if mode == "templates":
-            return html.template_selection(dbfs.get_document_templates(dbo), "document_gen?mode=ANIMAL&id=%d" % post.integer("id"))
 
 class move_transfer:
     def GET(self):
@@ -4297,14 +4297,11 @@ class move_transfer:
 
     def POST(self):
         utils.check_loggedin(session, web)
-        dbo = session.dbo
         post = utils.PostedData(web.input(mode="create"), session.locale)
         mode = post["mode"]
         if mode == "create":
             users.check_permission(session, users.ADD_MOVEMENT)
             return str(extmovement.insert_transfer_from_form(session.dbo, session.user, post))
-        if mode == "templates":
-            return html.template_selection(dbfs.get_document_templates(dbo), "document_gen?mode=ANIMAL&id=%d" % post.integer("id"))
 
 class onlineform_incoming:
     def GET(self):

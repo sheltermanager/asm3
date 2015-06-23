@@ -9,7 +9,6 @@ $(function() {
             return [
                 '<div id="asm-content">',
                 '<input id="movementid" type="hidden" />',
-                '<div id="page1">',
                 html.content_header(_("Reclaim an animal"), true),
                 '<div id="fosterinfo" class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
                 '<p class="centered">',
@@ -137,21 +136,6 @@ $(function() {
                 html.content_footer(),
                 html.box(5),
                 '<button id="reclaim">' + html.icon("movement") + ' ' + _("Reclaim") + '</button>',
-                '</div>',
-                '</div>',
-                '<div id="page2">',
-                '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em;">',
-                '<p class="centered"><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
-                '<span class="centered">' + _("Reclaim successfully created."),
-                '</span>',
-                '<span class="centered" id="reclaimfrom"></span>',
-                html.icon("right"),
-                '<span class="centered" id="reclaimto"></span>',
-                '</p>',
-                '</div>',
-                '<div id="asm-reclaim-accordion">',
-                '<h3><a href="#">' + _("Generate documentation") + '</a></h3>',
-                '<div id="templatelist">',
                 '</div>',
                 '</div>',
                 '</div>'
@@ -284,12 +268,6 @@ $(function() {
 
             if (asm.locale != "en_GB") { $("#giftaidrow").hide(); }
 
-            $("#page1").show();
-            $("#page2").hide();
-            $("#asm-reclaim-accordion").accordion({
-                heightStyle: "content"
-            });
-
             // Set default values
             $("#donationtype").val(config.str("AFDefaultDonationType"));
             donationtype_change();
@@ -306,14 +284,12 @@ $(function() {
 
                         $("#movementid").val(data);
 
-                        // Copy the animal/owner links to the success page so
-                        // the user can go view them quickly again if they want
-                        $("#reclaimfrom").html( $(".animalchooser-display").html() );
-                        $("#reclaimto").html( $(".personchooser-display .justlink").html() );
-
-                        $("#page1").fadeOut(function() {
-                            $("#page2").fadeIn();
-                        });
+                        var u = "move_gendoc?" +
+                            "mode=ANIMAL&id=" + $("#animal").val() +
+                            "&message=" + encodeURIComponent(common.base64_encode(_("Reclaim successfully created.") + " " + 
+                                $(".animalchooser-display").html() + " " + html.icon("right") + " " +
+                                $(".personchooser-display .justlink").html() ));
+                        common.route(u);
 
                     })
                     .always(function() {

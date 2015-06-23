@@ -9,7 +9,6 @@ $(function() {
             return [
                 '<div id="asm-content">',
                 '<input id="movementid" type="hidden" />',
-                '<div id="page1">',
                 html.content_header(_("Reserve an animal"), true),
                 '<div id="feeinfo" class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
                 '<p class="centered">',
@@ -162,22 +161,6 @@ $(function() {
                 html.box(5),
                 '<button id="reserve">' + html.icon("movement") + ' ' + _("Reserve") + '</button>',
                 '</div>',
-                '</div>',
-                '<div id="page2">',
-                '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em;">',
-                '<p class="centered"><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
-                '<span class="centered">' + _("Reservation successfully created."),
-                '</span>',
-                '<span class="centered" id="reservefrom"></span>',
-                html.icon("right"),
-                '<span class="centered" id="reserveto"></span>',
-                '</p>',
-                '</div>',
-                '<div id="asm-reserve-accordion">',
-                '<h3><a href="#">' + _("Generate documentation") + '</a></h3>',
-                '<div id="templatelist">',
-                '</div>',
-                '</div>',
                 '</div>'
             ].join("\n");
         },
@@ -319,12 +302,6 @@ $(function() {
 
             if (asm.locale != "en_GB") { $("#giftaidrow").hide(); }
 
-            $("#page1").show();
-            $("#page2").hide();
-            $("#asm-reserve-accordion").accordion({
-                heightStyle: "content"
-            });
-
             // Set default values
             $("#donationtype").val(config.str("AFDefaultDonationType"));
             donationtype_change();
@@ -373,14 +350,13 @@ $(function() {
 
                         $("#movementid").val(data);
 
-                        // Copy the animal/owner links to the success page so
-                        // the user can go view them quickly again if they want
-                        $("#reservefrom").html( $(".animalchooser-display").html() );
-                        $("#reserveto").html( $(".personchooser-display .justlink").html() );
+                        var u = "move_gendoc?" +
+                            "mode=ANIMAL&id=" + $("#animal").val() +
+                            "&message=" + encodeURIComponent(common.base64_encode(_("Reservation successfully created.") + " " + 
+                                $(".animalchooser-display").html() + " " + html.icon("right") + " " +
+                                $(".personchooser-display .justlink").html() ));
+                        common.route(u);
 
-                        $("#page1").fadeOut(function() {
-                            $("#page2").fadeIn();
-                        });
                     })
                     .always(function() {
                         header.hide_loading();

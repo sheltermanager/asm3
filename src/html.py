@@ -15,7 +15,7 @@ import users
 import utils
 from i18n import BUILD, _, translate, format_currency, now, python2display
 from sitedefs import BASE_URL, LOCALE, MINIFY_JS, ROLLUP_JS
-from sitedefs import ASMSELECT_CSS, ASMSELECT_JS, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_4_JS, TOUCHPUNCH_JS
+from sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_4_JS, TOUCHPUNCH_JS
 
 BACKGROUND_COLOURS = {
     "black-tie":        "#333333",
@@ -252,6 +252,7 @@ def bare_header(title, theme = "ui-lightness", locale = LOCALE, config_db = "asm
                 script_tag(MOMENT_JS) + 
                 script_tag(MOUSETRAP_JS) + 
                 script_tag(ASMSELECT_JS) + 
+                script_tag(BASE64_JS) + 
                 script_tag(FULLCALENDAR_JS) + 
                 script_tag(SIGNATURE_JS) +
                 script_tag(TABLESORTER_JS) + 

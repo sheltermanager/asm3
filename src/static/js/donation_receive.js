@@ -9,7 +9,6 @@ $(function() {
             return [
                 '<div id="asm-content">',
                 '<input id="donationid" type="hidden" />',
-                '<div id="page1">',
                 html.content_header(_("Receive a payment"), true),
                 '<table class="asm-table-layout">',
                 '<tr>',
@@ -135,14 +134,6 @@ $(function() {
                 '<button id="receive">' + html.icon("donation") + ' ' + _("Receive") + '</button>',
                 '</div>',
                 html.content_footer(),
-                '</div>',
-                '<div id="page2">',
-                html.info("", "successmessage"),
-                '<div id="asm-donation-accordion">',
-                '<h3><a href="#">' + _("Generate documentation") + '</a></h3>',
-                '<div id="templatelist">',
-                '</div>',
-                '</div>',
                 '</div>'
             ].join("\n");
         },
@@ -219,12 +210,6 @@ $(function() {
                 $(".seconddonation").hide();
             }
 
-            $("#page1").show();
-            $("#page2").hide();
-            $("#asm-donation-accordion").accordion({
-                heightStyle: "content"
-            });
-
             // Set default values
             $("#type").val(config.str("AFDefaultDonationType"));
             donationtype_change();
@@ -240,18 +225,14 @@ $(function() {
                 common.ajax_post("donation_receive", formdata)
                     .then(function(result) { 
                         header.hide_loading();
-                        $("#successmessage p").append(
-                            _("Payment of {0} successfully received ({1}).")
+                        var msg = _("Payment of {0} successfully received ({1}).")
                                 .replace("{0}", $("#amount").val())
-                                .replace("{1}", $("#received").val()));
-                        // Update the list of document templates
-                        return common.ajax_post("donation_receive", "mode=templates&id=" + result);
-                    })
-                    .then(function(data) { 
-                        $("#templatelist").html(data); 
-                        $("#page1").fadeOut(function() {
-                            $("#page2").fadeIn();
-                        });
+                                .replace("{1}", $("#received").val());
+                        var u = "move_gendoc?" +
+                            "mode=DONATION&id=" + result +
+                            "&message=" + encodeURIComponent(common.base64_encode(msg));
+                        common.route(u);
+
                     })
                     .always(function() {
                         $("#receive").button("enable");

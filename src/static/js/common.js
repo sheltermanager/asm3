@@ -1,6 +1,6 @@
 /*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, console, jQuery, Mousetrap, Path */
-/*global alert, asm, header, _, escape, unescape */
+/*global alert, asm, atob, btoa, header, _, escape, unescape */
 /*global common: true, config: true, controller: true, dlgfx: true, format: true, html: true, log: true, validate: true */
 
 (function($) {
@@ -27,6 +27,14 @@
                 });
             });
             return overlap;
+        },
+
+        base64_encode: function(i) {
+            return btoa(encodeURIComponent(i));
+        },
+
+        base64_decode: function(i) {
+            return decodeURIComponent(atob(i));
         },
 
         /**

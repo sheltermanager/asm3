@@ -9,7 +9,6 @@ $(function() {
             return [
                 '<div id="asm-content">',
                 '<input id="movementid" type="hidden" />',
-                '<div id="page1">',
                 html.content_header(_("Adopt an animal"), true),
                 '<div id="bonddisplay" class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
                 '<p class="centered"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>',
@@ -226,22 +225,6 @@ $(function() {
                 html.content_footer(),
                 html.box(5),
                 '<button id="adopt">' + html.icon("movement") + ' ' + _("Adopt") + '</button>',
-                '</div>',
-                '</div>',
-                '<div id="page2">',
-                '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em;">',
-                '<p class="centered"><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
-                '<span class="centered">' + _("Adoption successfully created."),
-                '</span>',
-                '<span class="centered" id="adoptfrom"></span>',
-                html.icon("right"),
-                '<span class="centered" id="adoptto"></span>',
-                '</p>',
-                '</div>',
-                '<div id="asm-adopt-accordion">',
-                '<h3><a href="#">' + _("Generate documentation") + '</a></h3>',
-                '<div id="templatelist">',
-                '</div>',
                 '</div>',
                 '</div>'
             ].join("\n");
@@ -519,14 +502,13 @@ $(function() {
                         $("#movementid").val(data);
                         header.hide_loading();
 
-                        // Copy the animal/owner links to the success page so
-                        // the user can go view them quickly again if they want
-                        $("#adoptfrom").html( $(".animalchooser-display").html() );
-                        $("#adoptto").html( $(".personchooser-display .justlink").html() );
+                        var u = "move_gendoc?" +
+                            "mode=ANIMAL&id=" + $("#animal").val() +
+                            "&message=" + encodeURIComponent(common.base64_encode(_("Adoption successfully created.") + " " + 
+                                $(".animalchooser-display").html() + " " + html.icon("right") + " " +
+                                $(".personchooser-display .justlink").html() ));
+                        common.route(u);
 
-                        $("#page1").fadeOut(function() {
-                            $("#page2").fadeIn();
-                        });
                     })
                     .fail(function() {
                         $("#adopt").button("enable");
