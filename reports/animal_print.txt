@@ -96,7 +96,7 @@ $$BODY
 </tr><tr>
 <td>Microchipped</td><td>$YIDENTICHIPPED $IDENTICHIPDATE $IDENTICHIPNUMBER</td><td>Tattoo</td><td>$YTATTOO $TATTOODATE $TATTOONUMBER</td>
 </tr><tr>
-<td>Altered</td><td>$ALTERED</td><td>Declawed</td><td>$YDECLAWED</td>
+<td>Altered</td><td>$ALTERED $NEUTEREDDATE</td><td>Declawed</td><td>$YDECLAWED</td>
 </tr><tr>
 <td>Heartworm Tested</td><td>$YHEARTWORMTESTED $HEARTWORMTESTDATE $PHEARTWORMTESTRESULT</td>
 </tr><tr>
