@@ -101,9 +101,8 @@ $(function() {
                 // If there are some flags set in the filter box, make sure this person has them before
                 // rendering their row
                 if ($("#flags").val()) {
-                    if (!common.array_overlap($("#flags").val(), p.ADDITIONALFLAGS.split("|"))) {
-                        return false;
-                    }
+                    if (!p.ADDITIONALFLAGS) { return; }
+                    if (!common.array_overlap($("#flags").val(), p.ADDITIONALFLAGS.split("|"))) { return ; }
                 }
                 h.push("<tr>");
                 h.push('<td class="' + css + '" title="' + html.title(title) + '">');
