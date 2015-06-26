@@ -120,7 +120,8 @@ $(function() {
             var h = [],
                 tdc = "even",
                 futuredrawn = false,
-                reconciled = "";
+                reconciled = "",
+                desc = "";
             $.each(controller.rows, function(i, t) {
                 tdc = (tdc == "even" ? "odd" : "even");
                 if (format.date_js(t.TRXDATE) > new Date() && !futuredrawn) {
@@ -133,6 +134,18 @@ $(function() {
                 else {
                     reconciled = "";
                 }
+                desc = "";
+                if (t.PERSONNAME) {
+                    desc += '<a href="person?id=' + t.PERSONID + '">' +
+                        t.PERSONNAME + '</a>';
+                }
+                if (t.DONATIONANIMALCODE) {
+                    desc += " " + html.icon("right") + " " + 
+                        '<a href="animal?id=' + t.DONATIONANIMALID + '">' +
+                        t.DONATIONANIMALCODE + " - " + 
+                        t.DONATIONANIMALNAME;
+                }
+                desc = html.truncate(t.DESCRIPTION) + " " + desc;
                 h.push("<tr>");
                 h.push('<td class="' + tdc + ' left">');
                 h.push('<span style="white-space: nowrap">');
@@ -141,7 +154,7 @@ $(function() {
                 h.push('</span>');
                 h.push('</td>');
                 h.push('<td class="' + tdc + ' left">' + reconciled + '</td>');
-                h.push('<td class="' + tdc + ' left">' + html.truncate(t.DESCRIPTION) + '</td>');
+                h.push('<td class="' + tdc + ' left">' + desc + '</td>');
                 h.push('<td class="' + tdc + ' left">' + t.OTHERACCOUNTCODE + '</td>');
                 h.push('<td class="right ' + tdc + '">' + format.currency(t.DEPOSIT) + '</td>');
                 h.push('<td class="right ' + tdc + '">' + format.currency(t.WITHDRAWAL) + '</td>');

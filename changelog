@@ -1,5 +1,7 @@
 37
 ================
+
+26/06/15 Show link info in view of accounting transactions
 25/06/15 Fix flag filtering of rota screen
 23/06/15 Add reset buttons to add screens #208
 23/06/15 Use page transitions for move* to allow back button to reset #206
