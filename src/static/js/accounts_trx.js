@@ -63,7 +63,7 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '</div>',
-                html.content_header(_("Transactions")),
+                html.content_header(_("Transactions") + " - " + controller.accountcode),
                 '<input type="hidden" id="accountid" data="accountid" value="' + controller.accountid + '" />',
                 '<table width="100%">',
                 '<tr>',
