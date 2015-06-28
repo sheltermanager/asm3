@@ -4,8 +4,8 @@ import datetime
 import json
 import time
 
-VERSION = "37u [Fri 26 Jun 10:05:41 BST 2015]"
-BUILD = "06261005"
+VERSION = "37u [Sun 28 Jun 10:53:17 BST 2015]"
+BUILD = "06281053"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -56,6 +56,7 @@ locale_maps = {
     "en_KY":    ( DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_IE":    ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_IN":    ( DMY, "Rs.", PLURAL_ENGLISH, CURRENCY_PREFIX, 2),
+    "en_LU":    ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_MX":    ( DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_PH":    ( DMY, "&#x20b1;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2),
     "en_QA":    ( DMY, "QR", PLURAL_ENGLISH, CURRENCY_PREFIX, 2),
@@ -68,6 +69,7 @@ locale_maps = {
     "bs":       ( DMY, "KM", PLURAL_ENGLISH, CURRENCY_PREFIX, 2),
     "cs":       ( YMD, "&#x004b;&#x010d;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "de":       ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
+    "de_LU":    ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "de_AT":    ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "el":       ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "es":       ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
@@ -75,6 +77,7 @@ locale_maps = {
     "es_MX":    ( DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "et":       ( DMY, "kr", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "fr":       ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
+    "fr_LU":    ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "fr_CA":    ( MDY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "he":       ( DMY, "&#x20aa;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "hu":       ( DMY, "Ft",  PLURAL_HUNGARIAN, CURRENCY_PREFIX, 2), 
@@ -102,17 +105,17 @@ def real_locale(locale = "en"):
     #   en    (US)
     #   en_AU (AUS)
     #   en_GB (UK)
-    if locale in ("en_IE", "en_IN", "en_NZ", "en_PH", "en_TH", "en_TW", "en_VN", "en_ZA"):
+    if locale in ("en_IE", "en_IN", "en_LU", "en_NZ", "en_PH", "en_TH", "en_TW", "en_VN", "en_ZA"):
         locale = "en_GB"
     if locale in ("en_CA", "en_KY", "en_KW", "en_BH", "en_MX"):
         locale = "en"
     if locale in ("en_NZ",):
         locale = "en_AU"
     # French locales
-    if locale in ("fr_CA",):
+    if locale in ("fr_CA", "fr_LU"):
         locale = "fr"
     # German locales
-    if locale in ("de_AT",):
+    if locale in ("de_AT", "de_LU"):
         locale = "de"
     # Spanish locales
     if locale in ("es_EC", "es_MX"):
