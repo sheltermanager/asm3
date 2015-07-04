@@ -1,6 +1,8 @@
 37
 ================
 
+04/07/15 Settings->Reports should be only accessible to CHANGE_REPORT
+04/07/15 Fix estimated age and breed defaults on add new animal
 28/06/15 Add Cyprus locale
 28/06/15 Add Luxembourg locale
 26/06/15 Show link info in view of accounting transactions

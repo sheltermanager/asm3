@@ -736,7 +736,7 @@ def json_menu(l, reports, mailmerges):
             (users.MODIFY_ADDITIONAL_FIELDS, "", "", "additional", "asm-icon-additional-field", _("Additional fields", l) ),
             (users.MODIFY_DOCUMENT_TEMPLATES, "", "", "document_templates", "asm-icon-document", _("Document templates", l) ),
             (users.MODIFY_LOOKUPS, "", "", "lookups", "asm-icon-lookups", _("Lookup data", l) ),
-            (users.VIEW_REPORT, "", "", "reports", "asm-icon-report", _("Reports", l) ),
+            (users.CHANGE_REPORT, "", "", "reports", "asm-icon-report", _("Reports", l) ),
             (users.USE_SQL_INTERFACE, "", "", "sql", "asm-icon-sql", _("SQL interface", l) ),
             (users.EDIT_USER, "", "", "systemusers", "asm-icon-users", _("System user accounts", l) ),
             (users.EDIT_USER, "", "", "roles", "asm-icon-auth", _("User roles", l) ),

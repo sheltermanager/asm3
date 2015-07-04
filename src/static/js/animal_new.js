@@ -379,6 +379,7 @@ $(function() {
             $("#animaltype").val(config.str("AFDefaultType"));
             $("#species").val(config.str("AFDefaultSpecies"));
             animal_new.update_breed_select();
+            $("#breed1, #breed2").val(config.str("AFDefaultBreed"));
             $("#basecolour").val(config.str("AFDefaultColour"));
             $("#entryreason").val(config.str("AFDefaultEntryReason"));
             $("#internallocation").val(config.str("AFDefaultLocation"));
@@ -390,6 +391,9 @@ $(function() {
             if (config.bool("AddAnimalsShowTimeBroughtIn")) {
                 $("#timebroughtin").val(format.time(new Date()));
             }
+
+            // Estimated age default
+            $("#estimatedage").val("1.0");
         },
 
         validation: function() {
