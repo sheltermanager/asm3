@@ -311,6 +311,12 @@
                     return true;
                 }
 
+                // If the URL has a target attribute, allow the browser to
+                // use its normal behaviour to open in a new window
+                if ($(this).attr("target")) {
+                    return true;
+                }
+
                 // If the clicked anchor goes to a URL we can handle with the
                 // client, do it.
                 var href = $(this).attr("href");

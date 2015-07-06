@@ -1,6 +1,7 @@
 37
 ================
 
+06/07/15 Fix broken open records in new browser tab since client routing
 06/07/15 When marking animals published, deduplicate to prevent key violation
 06/07/15 Remove need for add movement permission for move_gendoc
 06/07/15 Clone adoption fees from template animals
