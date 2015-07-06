@@ -2371,7 +2371,7 @@ def clone_from_template(dbo, username, animalid, animaltypeid, speciesid):
     Tries to locate a non-shelter animal called "TemplateType" with animaltypeid,
     if it doesn't find one, it looks for a non-shelter animal called "TemplateSpecies"
     with speciesid. If one is not found, does nothing.
-    Clones appropriate medical and diet info from the template animal.
+    Clones appropriate medical, cost and diet info from the template animal.
     """
     cloneanimalid = db.query_int(dbo, "SELECT ID FROM animal " \
         "WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatetype' AND AnimalTypeID = %d" % animaltypeid)
@@ -2381,6 +2381,9 @@ def clone_from_template(dbo, username, animalid, animaltypeid, speciesid):
     if cloneanimalid == 0:
         return
     dbtoday = db.dd(now(dbo.timezone))
+    # Any animal fields that should be copied to the new record
+    cloneanimalfee = dbo.query_int(dbo, "SELECT Fee FROM animal WHERE ID = %d" % cloneanimalid)
+    db.execute(dbo, "UPDATE animal SET Fee = %d WHERE ID = %d" % (cloneanimalfee, animalid))
     # Additional Fields
     for af in db.query(dbo, "SELECT * FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (cloneanimalid, additional.ANIMAL_IN)):
         sql = db.make_insert_sql("additional", (

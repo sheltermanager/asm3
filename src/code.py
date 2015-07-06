@@ -4200,7 +4200,6 @@ class move_foster:
 class move_gendoc:
     def GET(self):
         utils.check_loggedin(session, web)
-        users.check_permission(session, users.ADD_MOVEMENT)
         post = utils.PostedData(web.input(), session.locale)
         dbo = session.dbo
         s = html.header("", session)

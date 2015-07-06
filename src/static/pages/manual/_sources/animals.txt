@@ -371,3 +371,13 @@ Where records require dates (for example, the due date on medical treatments or
 vaccinations), the system will substitute today when cloning records 
 from the template.
 
+When copying from a template animal, ASM will copy the following items:
+
+* The animal's adoption fee amount
+* Any additional fields the shelter has added to the system
+* Vaccinations
+* Tests
+* Medical regimens
+* Diets
+* Costs
+
