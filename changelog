@@ -1,6 +1,7 @@
 37
 ================
 
+06/07/15 When marking animals published, deduplicate to prevent key violation
 06/07/15 Remove need for add movement permission for move_gendoc
 06/07/15 Clone adoption fees from template animals
 04/07/15 Settings->Reports should be only accessible to CHANGE_REPORT

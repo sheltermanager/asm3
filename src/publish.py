@@ -642,9 +642,13 @@ class AbstractPublisher(threading.Thread):
         """
         batch = []
         inclause = []
+        # build a list of IDs and deduplicate them
         for a in animals:
-            batch.append( (a["ID"], self.publisherKey, i18n.now(self.dbo.timezone)) )
             inclause.append( str(a["ID"]) )
+        inclause = set(inclause)
+        # build a batch for inserting animalpublished entries into the table
+        for i in inclause:
+            batch.append( ( int(i), self.publisherKey, i18n.now(self.dbo.timezone) ) )
         if len(inclause) == 0: return
         db.execute(self.dbo, "DELETE FROM animalpublished WHERE PublishedTo = '%s' AND AnimalID IN (%s)" % (self.publisherKey, ",".join(inclause)))
         db.execute_many(self.dbo, "INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate) VALUES (%s, %s, %s)", batch)
