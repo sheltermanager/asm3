@@ -2382,7 +2382,7 @@ def clone_from_template(dbo, username, animalid, animaltypeid, speciesid):
         return
     dbtoday = db.dd(now(dbo.timezone))
     # Any animal fields that should be copied to the new record
-    cloneanimalfee = dbo.query_int(dbo, "SELECT Fee FROM animal WHERE ID = %d" % cloneanimalid)
+    cloneanimalfee = db.query_int(dbo, "SELECT Fee FROM animal WHERE ID = %d" % cloneanimalid)
     db.execute(dbo, "UPDATE animal SET Fee = %d WHERE ID = %d" % (cloneanimalfee, animalid))
     # Additional Fields
     for af in db.query(dbo, "SELECT * FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (cloneanimalid, additional.ANIMAL_IN)):
