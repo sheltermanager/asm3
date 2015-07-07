@@ -12,22 +12,6 @@ PATH = "data/ishelters_beltrami/"
 # Files needed
 # adoptions.csv, checkins.csv, medical.csv, volunteers.csv
 
-def findanimal(animalid = ""):
-    """ Looks for an animal with the given shelterbuddy id in the collection
-        of animals. If one wasn't found, None is returned """
-    global ppa
-    if ppa.has_key(animalid):
-        return ppa[animalid]
-    return None
-
-def findowner(recnum = ""):
-    """ Looks for an owner with the given name in the collection
-        of owners. If one wasn't found, None is returned """
-    global ppo
-    if ppo.has_key(recnum):
-        return ppo[recnum]
-    return None
-
 def getcreateowner(first, last, address, city, state, postal):
     global owners
     global ppo
@@ -112,7 +96,7 @@ for row in asm.csv_to_list(PATH + "checkins.csv"):
 
 # adoptions.csv
 for row in asm.csv_to_list(PATH + "adoptions.csv"):
-
+    
     ### UPTO HERE ###
 
     # Find the animal and owner for this movement
