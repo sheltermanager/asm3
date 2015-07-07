@@ -752,11 +752,15 @@ breeds = (
 def breed_id_for_name(name, default = 1):
     if name.find(" x") != -1 or name.find(" X") != -1:
         name = name.replace(" x", "").replace(" X", "")
-    # do keyword matching first by looking for keywords in name given
+    # try a complete match first
+    for bid, bname in breeds:
+        if bname.upper() == name.upper():
+            return int(bid)
+    # now do keyword matching to see if any are present in the breed given
     for bid, bname in breedkeywords:
         if name.upper().find(bname.upper()) != -1:
             return int(bid)
-    # fall back to looking for name given against full breed list
+    # fall back to looking for the name given in each item in the full breed list
     for bid, bname in breeds:
         if bname.upper().find(name.upper()) != -1 or name.upper().find(bname.upper()) != -1:
             return int(bid)

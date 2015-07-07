@@ -144,6 +144,8 @@ movements = []
 animals = []
 
 asm.setid("animal", 100)
+asm.setid("dbfs", 400)
+asm.setid("media", 100)
 asm.setid("owner", 100)
 asm.setid("ownerdonation", 100)
 asm.setid("adoption", 100)
@@ -151,6 +153,8 @@ asm.setid("animalvaccination", 100)
 
 print "DELETE FROM animal WHERE ID >= 100;"
 print "DELETE FROM animalvaccination WHERE ID >= 100;"
+print "DELETE FROM dbfs WHERE ID >= 100;"
+print "DELETE FROM media WHERE ID >= 100;"
 print "DELETE FROM owner WHERE ID >= 100;"
 print "DELETE FROM ownerdonation WHERE ID >= 100;"
 print "DELETE FROM adoption WHERE ID >= 100;"
@@ -311,10 +315,7 @@ for row in asm.csv_to_list(PATH + "tbladoption.csv"):
         movements.append(m)
         m.OwnerID = o.ID
         m.AnimalID = a.ID
-        if a.ActiveMovementDate is not None:
-            m.MovementDate = a.ActiveMovementDate
-        else:
-            m.MovementDate = getdate(row["adddatetime"])
+        m.MovementDate = getdate(row["adddatetime"])
         m.MovementType = 1
         a.Archived = 1
         a.ActiveMovementType = 1
