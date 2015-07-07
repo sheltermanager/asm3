@@ -38,17 +38,17 @@ def getsex12(s):
 def findanimal(animalid = ""):
     """ Looks for an animal with the given shelterbuddy id in the collection
         of animals. If one wasn't found, None is returned """
-    for a in animals:
-        if a.ExtraID == animalid.strip():
-            return a
+    global ppa
+    if ppa.has_key(animalid):
+        return ppa[animalid]
     return None
 
 def findowner(recnum = ""):
     """ Looks for an owner with the given name in the collection
         of owners. If one wasn't found, None is returned """
-    for o in owners:
-        if o.ExtraID == recnum.strip():
-            return o
+    global ppo
+    if ppo.has_key(recnum):
+        return ppo[recnum]
     return None
 
 def getdate(s):
@@ -133,6 +133,8 @@ suburbs = {}
 vacctype = {}
 
 owners = []
+ppo = {}
+ppa = {}
 movements = []
 animals = []
 
@@ -190,7 +192,7 @@ for row in asm.csv_to_list(PATH + "tbladdress.csv"):
 for row in asm.csv_to_list(PATH + "tblanimal.csv"):
     a = asm.Animal()
     animals.append(a)
-    a.ExtraID = row["AnimalID"].strip()
+    ppa[row["AnimalID"]] = a
     a.AnimalName = row["name"]
     if a.AnimalName.strip() == "":
         a.AnimalName = "(unknown)"
@@ -268,7 +270,7 @@ for row in asm.csv_to_list(PATH + "tblanimal.csv"):
 for row in asm.csv_to_list(PATH + "tblperson.csv"):
     o = asm.Owner()
     owners.append(o)
-    o.ExtraID = row["recnum"].strip()
+    ppo[row["recnum"]] = o
     o.OwnerTitle = row["Title"]
     o.OwnerForeNames = row["FirstName"]
     o.OwnerSurname = row["LastName"]
@@ -286,8 +288,8 @@ for row in asm.csv_to_list(PATH + "tblperson.csv"):
 # tbladoption.csv
 for row in asm.csv_to_list(PATH + "tbladoption.csv"):
     # Find the animal and owner for this movement
-    a = findanimal(row["animalid"].strip())
-    o = findowner(row["recnum"].strip())
+    a = findanimal(row["animalid"])
+    o = findowner(row["recnum"])
     if a != None and o != None:
         m = asm.Movement()
         movements.append(m)
@@ -309,7 +311,7 @@ for row in asm.csv_to_list(PATH + "tblanimalvettreatments.csv"):
     if av.DateRequired is None:
         av.DateRequired = getdate(row["addDateTime"])
     av.DateOfVaccination = getdate(row["dateGiven"])
-    a = findanimal(row["animalid"].strip())
+    a = findanimal(row["animalid"])
     if a == None: continue
     av.AnimalID = a.ID
     av.VaccinationID = int(row["vacc"].strip())
