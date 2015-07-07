@@ -34,11 +34,13 @@ Also has some useful helper functions for reading CSVs and parsing values, eg:
     asm.subtract_days, asm.add_days
     asm.fw (first word)
     asm.iif (inline if, eg: iif(condition, true, false))
+    asm.animal_image(animalid, imagedata)
+    asm.load_image_from_file(filename)
     
 """
 
 import csv, datetime, re, time
-import sys, urllib2, base64
+import os, sys, urllib2, base64
 
 # Next year code to use for animals when generating shelter codes
 nextyearcode = 1
@@ -988,6 +990,14 @@ def animal_image(animalid, imagedata):
         ( mediaid, medianame, ds(""), animalid, dd(datetime.datetime.today()) )
     print "INSERT INTO dbfs (id, name, path, content) VALUES (%d, '%s', '%s', '');" % ( getid("dbfs"), str(animalid), '/animal' )
     print "INSERT INTO dbfs (id, name, path, content) VALUES (%d, '%s', '%s', '%s');" % (getid("dbfs"), medianame, "/animal/" + str(animalid), encoded)
+
+def load_image_from_file(filename):
+    """ Reads image data from a disk file or returns None if the file does not exist """
+    if not os.path.exists(filename): return None
+    f = open(filename, "rb")
+    s = f.read()
+    f.close()
+    return s
 
 def petfinder_get_adoptable(shelterid):
     """
