@@ -4,19 +4,26 @@ import asm
 
 """
 Import script for ShelterBuddy MDB/SQL Server export with QueryExpress
-2nd June, 2012 - 22nd May, 2015
+2nd June, 2012 - 7th July, 2015
 """
 
-PATH = "data/uvhs/"
+PATH = "data/shelterbuddy_uvhs/"
 
 # Use gmdb2 to export these tables from Access
 # OR use queryexpress to do it from SQL Server Ex2005
+
+# animaltype
 # tbladdress.csv
 # tbladoption.csv
 # tblanimal.csv
+# tblanimalbreeds.csv
 # tblanimalvacc.csv
 # tblanimalvettreatments.csv
+# tblnotes.csv
+# tblpaymenttypes.csv
 # tblperson.csv
+# tblreceiptentry.csv
+# tblspecies.csv
 # tblsuburblist.csv
 
 def getsex12(s):
@@ -45,26 +52,51 @@ def findowner(recnum = ""):
     return None
 
 def getdate(s):
-    if s.find("/1900") != -1: return None
-    return asm.getdate_mmddyyyy(s)
+    if s.find("/1900") != -1 or s.find("/00") != -1: return None
+    return asm.getdate_mmddyy(s)
 
-def gettype(col1, col2):
-    catwords = [ "tabby", "calico", "tortoise", "tiger", "buff", "seal", "tri" ]
-    dogwords = [ "tan", "brindle", "yellow", "liver" ]
-    for c in catwords:
-        if col1.find(c) != -1 or col2.find(c) != -1: return 11 # cat
-    for d in dogwords:
-        if col1.find(d) != -1 or col2.find(d) != -1: return 2 # dog
-    return 11 # cat
+def getsbnotes(animalid):
+    global cnotes
+    for r in cnotes:
+        if r["animalID"] == animalid and r["fieldText"] != "":
+            return r["fieldText"]
+    return ""
 
-def getspecies(col1, col2):
-    if gettype(col1, col2) == 11: return 2
-    return 1
+def getsbpaymentmethod(pmid):
+    global cpaymentmethods
+    for r in cpaymentmethods:
+        if r["id"] == pmid:
+            return r["PaymentType"]
+    return ""
 
-def getbreed(col1, col2):
-    if getspecies(col1, col2) == 2:
-        return 261 # domestic shorthair
-    return 30 # black lab
+def getsbspecies(id):
+    global cspecies
+    for r in cspecies:
+        if r["id"] == id:
+            return r
+    return None
+
+def getsbtypenamefromspeciesid(speciesid):
+    sbs = getsbspecies(speciesid)
+    if sbs is None: return ""
+    id = sbs["typeID"]
+    global ctypes
+    for r in ctypes:
+        if r["ID"] == id:
+            #print "getsbtypenamefromspeciesid: %s = %s" % (speciesid, r["Description"])
+            return r["Description"]
+    return ""
+
+def getsbbreednamefromspeciesid(speciesid):
+    sbs = getsbspecies(speciesid)
+    if sbs is None: return ""
+    id = sbs["breedID"]
+    global cbreeds
+    for r in cbreeds:
+        if r["BreedID"] == id:
+            #print "getsbbreednamefromspeciesid: %s = %s" % (speciesid, r["Breed"])
+            return r["Breed"]
+    return ""
 
 def tocurrency(s):
     if s.strip() == "": return 0.0
@@ -106,13 +138,22 @@ animals = []
 
 asm.setid("animal", 100)
 asm.setid("owner", 100)
+asm.setid("ownerdonation", 100)
 asm.setid("adoption", 100)
 asm.setid("animalvaccination", 100)
 
 print "DELETE FROM animal WHERE ID >= 100;"
 print "DELETE FROM animalvaccination WHERE ID >= 100;"
 print "DELETE FROM owner WHERE ID >= 100;"
+print "DELETE FROM ownerdonation WHERE ID >= 100;"
 print "DELETE FROM adoption WHERE ID >= 100;"
+
+# load lookups into memory
+cnotes = asm.csv_to_list(PATH + "tblnotes.csv")
+cspecies = asm.csv_to_list(PATH + "tblspecies.csv")
+cbreeds = asm.csv_to_list(PATH + "tblanimalbreeds.csv")
+ctypes = asm.csv_to_list(PATH + "animaltype.csv")
+cpaymentmethods = asm.csv_to_list(PATH + "tblpaymenttypes.csv")
 
 # tblsuburblist.csv
 for row in asm.csv_to_list(PATH + "tblsuburblist.csv"):
@@ -126,8 +167,8 @@ for row in asm.csv_to_list(PATH + "tblsuburblist.csv"):
 # tblanimalvacc.csv
 print "DELETE FROM vaccinationtype WHERE ID > 200;"
 for row in asm.csv_to_list(PATH + "tblanimalvacc.csv"):
-    vc = row["show"].strip()
-    vt = row["vaccCode2"].strip() + " " + row["description"]
+    vc = row["vaccCode"].strip()
+    vt = row["description"]
     vacctype[vc] = vt
     print "INSERT INTO vaccinationtype VALUES (%s, '%s');" % (vc, vt.replace("'", "`"))
 
@@ -153,31 +194,31 @@ for row in asm.csv_to_list(PATH + "tblanimal.csv"):
     a.AnimalName = row["name"]
     if a.AnimalName.strip() == "":
         a.AnimalName = "(unknown)"
+    # Depending on the version of shelterbuddy, sometimes there's 
+    ## type, breed and secondBreed cols that dereference the tables
+    typecol = ""
+    breedcol = ""
+    breed2col = ""
     if row.has_key("type"):
-        a.AnimalTypeID = asm.type_id_for_name(row["type"])
-        a.SpeciesID = asm.species_id_for_name(row["type"])
-        a.BreedID = asm.breed_id_for_name(row["breed"])
-        a.Breed2ID = asm.breed_id_for_name(row["secondBreed"])
+        typecol = row["type"]
+        breedcol = row["breed"]
+        breed2col = row["secondBreed"]
     else:
-        # I've seen a version of this database where there's no type field in tblanimal,
-        # so we have to infer fields from the colours - ridiculous
-        a.AnimalTypeID = gettype(row["Colour"], row["SecondaryColour"])
-        a.SpeciesID = getspecies(row["Colour"], row["SecondaryColour"])
-        a.BreedID = getbreed(row["Colour"], row["SecondaryColour"])
-        # If there's Chicken or Duck or Rabbit in the name, set accordingly
-        if a.AnimalName.lower().find("chicken") != -1:
-            a.SpeciesID = 14
-            a.BreedID = 404
-        elif a.AnimalName.lower().find("duck") != -1:
-            a.SpeciesID = 3
-            a.BreedID = 409
-        elif a.AnimalName.lower().find("rabbit") != -1:
-            a.SpeciesID = 7
-            a.BreedID = 321
+        # We're going to have to look them up from the speciesID and
+        # secondarySpeciesID fields
+        typecol = getsbtypenamefromspeciesid(row["speciesID"])
+        breedcol = getsbbreednamefromspeciesid(row["speciesID"])
+        breed2col = getsbbreednamefromspeciesid(row["secondarySpeciesID"])
+    a.AnimalTypeID = asm.type_id_for_name(typecol)
+    a.SpeciesID = asm.species_id_for_name(typecol)
+    a.BreedID = asm.breed_id_for_name(breedcol)
+    a.Breed2ID = asm.breed_id_for_name(breed2col)
     if row["DateIN"].strip() != "": 
         a.DateBroughtIn = getdate(row["DateIN"])
         if a.DateBroughtIn is None:
             a.DateBroughtIn = getdate(row["AddDateTime"])
+            if a.DateBroughtIn is None:
+                print "BOLLOCKS: " + str(row)
     if row["DateOUT"].strip() != "":
         a.ActiveMovementDate = getdate(row["DateOUT"])
         if a.ActiveMovementDate is not None:
@@ -208,9 +249,12 @@ for row in asm.csv_to_list(PATH + "tblanimal.csv"):
     a.EntryReasonID = 11
     if row["circumstance"].find("Stray"):
         a.EntryReasonID = 7
-    comments = "Original Colour: " + row["Colour"] + "/" + row["SecondaryColour"]
+    comments = "Original Type: " + typecol
+    comments += "\nOriginal Breed: " + breedcol + "/" + breed2col
+    comments += "\nOriginal Colour: " + row["Colour"] + "/" + row["SecondaryColour"]
     comments += "\nCircumstance: " + row["circumstance"]
     a.HiddenAnimalDetails = comments
+    a.AnimalComments = getsbnotes(row["AnimalID"])
     if row["euthanasiaType"] != "0":
         a.Archived = 1
         a.DeceasedDate = a.DateBroughtIn
@@ -270,6 +314,24 @@ for row in asm.csv_to_list(PATH + "tblanimalvettreatments.csv"):
     av.AnimalID = a.ID
     av.VaccinationID = int(row["vacc"].strip())
     print av
+
+# tblreceiptentry.csv
+for row in asm.csv_to_list(PATH + "tblreceiptentry.csv"):
+    od = asm.OwnerDonation()
+    od.DonationTypeID = 1
+    pm = getsbpaymentmethod(row["paymentmethod"])
+    od.DonationPaymentID = 1
+    if pm.find("Check") != -1: od.DonationPaymentID = 2
+    if pm.find("Credit Card") != -1: od.DonationPaymentID = 3
+    if pm.find("Debit Card") != -1: od.DonationPaymentID = 4
+    od.Date = getdate(row["receiptdate"])
+    od.OwnerID = findowner(row["recnum"]).ID
+    od.Donation = asm.get_currency(row["Amount"])
+    comments = "Check No: " + row["chequeno"]
+    comments += "\nMethod: " + pm
+    comments += "\n" + row["NotesToPrint"]
+    od.Comments = comments
+    print od
 
 # Now that everything else is done, output stored records
 print "DELETE FROM primarykey;"
