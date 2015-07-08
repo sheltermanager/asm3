@@ -1042,7 +1042,7 @@ def animal_regimen_single(animalid, dategiven, treatmentname, dosage = "", comme
         ( "TreatmentName", ds(treatmentname)),
         ( "Dosage", ds(dosage)),
         ( "StartDate", dd(dategiven)),
-        ( "Status", di(0)),
+        ( "Status", di(2)), # Completed
         ( "Cost", di(0)),
         ( "CostPaidDate", dd(None)),
         ( "TimingRule", di(0)),

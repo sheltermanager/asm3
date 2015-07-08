@@ -75,6 +75,7 @@ print "DELETE FROM vaccinationtype;"
 
 # checkins.csv
 for row in asm.csv_to_list(PATH + "checkins.csv"):
+    if ppa.has_key(row["Code"]): continue # We've already seen this animal
     a = asm.Animal()
     animals.append(a)
     ppa[row["Code"]] = a
