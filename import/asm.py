@@ -31,6 +31,7 @@ Also has some useful helper functions for reading CSVs and parsing values, eg:
     asm.getsex_mf
     asm.now()
     asm.nulltostr()
+    asm.regex(findin, pattern)
     asm.subtract_days, asm.add_days
     asm.fw (first word)
     asm.iif (inline if, eg: iif(condition, true, false))
@@ -59,7 +60,16 @@ customcolours = {}
 entryreasons = {}
 
 # Dictionary of donation types
-donationtypes = {}
+donationtypes = {
+}
+
+# Dictionary of test types
+testtypes = {
+}
+
+# Dictionary of vaccination types
+vaccinationtypes = {
+}
 
 def atoi(s):
     """ Returns an integer based on only the numeric
@@ -836,6 +846,32 @@ def donationtype_from_db(name, default = 2):
     """ Looks up the donationtype in the db when the conversion is run, assign to DonationID """
     return "COALESCE((SELECT ID FROM donationtype WHERE lower(DonationName) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
 
+def testtype_id_for_name(name, createIfNotExist = True):
+    global vaccinationtypes
+    if name.strip() == "": return 1
+    if testtypes.has_key(name):
+        return testtypes[name].ID
+    else:
+        testtypes[name] = TestType(Name=name)
+        return testtypes[name].ID
+
+def vaccinationtype_from_db(name, default = 1):
+    """ Looks up the donationtype in the db when the conversion is run, assign to DonationID """
+    return "COALESCE((SELECT ID FROM vaccinationtype WHERE lower(VaccinationType) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
+
+
+def vaccinationtype_id_for_name(name, createIfNotExist = True):
+    global vaccinationtypes
+    if name.strip() == "": return 1
+    if vaccinationtypes.has_key(name):
+        return vaccinationtypes[name].ID
+    else:
+        vaccinationtypes[name] = VaccinationType(Name=name)
+        return vaccinationtypes[name].ID
+
+def vaccinationtype_from_db(name, default = 1):
+    """ Looks up the donationtype in the db when the conversion is run, assign to DonationID """
+    return "COALESCE((SELECT ID FROM vaccinationtype WHERE lower(VaccinationType) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
 
 types = (
 ("2","D (Dog)"),
@@ -988,6 +1024,53 @@ def animal_image(animalid, imagedata):
         ( mediaid, medianame, ds(""), animalid, dd(datetime.datetime.today()) )
     print "INSERT INTO dbfs (id, name, path, content) VALUES (%d, '%s', '%s', '');" % ( getid("dbfs"), str(animalid), '/animal' )
     print "INSERT INTO dbfs (id, name, path, content) VALUES (%d, '%s', '%s', '%s');" % (getid("dbfs"), medianame, "/animal/" + str(animalid), encoded)
+
+def animal_regimen_single(animalid, dategiven, treatmentname, dosage = "", comments = ""):
+    """ Writes a regimen and treatment record for a single given treatment """
+    regimenid = getid("animalmedical")
+    treatmentid = getid("animalmedicaltreatment")
+    s = (
+        ( "ID", di(regimenid)),
+        ( "AnimalID", di(animalid)),
+        ( "MedicalProfileID", di(0)),
+        ( "TreatmentName", ds(treatmentname)),
+        ( "Dosage", ds(dosage)),
+        ( "StartDate", dd(dategiven)),
+        ( "Status", di(0)),
+        ( "Cost", di(0)),
+        ( "CostPaidDate", dd(None)),
+        ( "TimingRule", di(0)),
+        ( "TimingRuleFrequency", di(0)),
+        ( "TimingRuleNoFrequencies", di(0)),
+        ( "TreatmentRule", di(0)),
+        ( "TotalNumberOfTreatments", di(1)),
+        ( "TreatmentsGiven", di(1)),
+        ( "TreatmentsRemaining", di(0)),
+        ( "Comments", ds(comments)),
+        ( "RecordVersion", di(0) ),
+        ( "CreatedBy", ds("conversion") ),
+        ( "CreatedDate", dd(today()) ),
+        ( "LastChangedBy", ds("conversion") ),
+        ( "LastChangedDate", dd(today()) )
+        )
+    print makesql("animalmedical", s)
+    s = (
+        ( "ID", di(treatmentid)),
+        ( "AnimalID", di(animalid)),
+        ( "AnimalMedicalID", di(regimenid)),
+        ( "DateRequired", dd(dategiven)),
+        ( "DateGiven", dd(dategiven)),
+        ( "GivenBy", ds("conversion")),
+        ( "TreatmentNumber", di(1)),
+        ( "TotalTreatments", di(1)),
+        ( "Comments", ds("")),
+        ( "RecordVersion", di(0) ),
+        ( "CreatedBy", ds("conversion") ),
+        ( "CreatedDate", dd(today()) ),
+        ( "LastChangedBy", ds("conversion") ),
+        ( "LastChangedDate", dd(today()) )
+        )
+    print makesql("animalmedicaltreatment", s)
 
 def petfinder_get_adoptable(shelterid):
     """
@@ -1151,6 +1234,24 @@ class PickupLocation:
             ( "LocationDescription", ds(self.Description) )
             )
         return makesql("pickuplocation", s)
+
+class TestType:
+    ID = 0
+    Name = ""
+    Description = None
+    def __init__(self, ID = 0, Name = "", Description = ""):
+        self.ID = ID
+        if ID == 0: self.ID = getid("testtype")
+        self.Name = Name
+        self.Description = Description
+    def __str__(self):
+        s = (
+            ( "ID", di(self.ID) ),
+            ( "TestName", ds(self.Name) ),
+            ( "TestDescription", ds(self.Description) )
+            )
+        return makesql("testtype", s)
+
 
 class VaccinationType:
     ID = 0
