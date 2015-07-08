@@ -30,7 +30,7 @@ LEFT OUTER JOIN owner oo ON a.OriginalOwnerID = oo.ID
 INNER JOIN entryreason e ON a.EntryReasonID = e.ID 
 WHERE a.DateBroughtIn >= '$ASK DATE Enter from date$' AND a.DateBroughtIn <= '$ASK DATE Enter to date$' 
 AND NonShelterAnimal = 0 AND a.Archived = 1
-ORDER BY s.SpeciesName, e.ReasonName, OutcomeDate
+ORDER BY s.SpeciesName, e.ReasonName, OutcomeName
 ###
 $$HEADER
 HEADER$$
