@@ -127,7 +127,7 @@
 
         /** Returns a hash of an address */
         address_hash: function(address, town, city, postcode) {
-            var addrhash = address + town + city + postcode;
+            var addrhash = String(address + town + city + postcode);
             addrhash = addrhash.replace(/ /g, '').replace(/,/g, '').replace(/\n/g, '');
             if (addrhash.length > 220) { addrhash = addrhash.substring(0, 220); }
             return addrhash;

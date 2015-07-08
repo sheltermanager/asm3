@@ -19,12 +19,16 @@ PATH = "data/shelterbuddy_uvhs/"
 # tblanimalbreeds.csv
 # tblanimalvacc.csv
 # tblanimalvettreatments.csv
+# tbldocument.csv
 # tblnotes.csv
 # tblpaymenttypes.csv
 # tblperson.csv
 # tblreceiptentry.csv
 # tblspecies.csv
 # tblsuburblist.csv
+
+# If the shelterbuddy docs_* folders are available, dump all the jpgs
+# in a folder called images in the path and delete any matching doc*_th_*.jpg
 
 def getsex12(s):
     """ 1 = Male, 2 = Female """
@@ -133,12 +137,15 @@ suburbs = {}
 vacctype = {}
 
 owners = []
+documents = {}
 ppo = {}
 ppa = {}
 movements = []
 animals = []
 
 asm.setid("animal", 100)
+asm.setid("dbfs", 400)
+asm.setid("media", 100)
 asm.setid("owner", 100)
 asm.setid("ownerdonation", 100)
 asm.setid("adoption", 100)
@@ -146,6 +153,8 @@ asm.setid("animalvaccination", 100)
 
 print "DELETE FROM animal WHERE ID >= 100;"
 print "DELETE FROM animalvaccination WHERE ID >= 100;"
+print "DELETE FROM dbfs WHERE ID >= 100;"
+print "DELETE FROM media WHERE ID >= 100;"
 print "DELETE FROM owner WHERE ID >= 100;"
 print "DELETE FROM ownerdonation WHERE ID >= 100;"
 print "DELETE FROM adoption WHERE ID >= 100;"
@@ -156,6 +165,12 @@ cspecies = asm.csv_to_list(PATH + "tblspecies.csv")
 cbreeds = asm.csv_to_list(PATH + "tblanimalbreeds.csv")
 ctypes = asm.csv_to_list(PATH + "animaltype.csv")
 cpaymentmethods = asm.csv_to_list(PATH + "tblpaymenttypes.csv")
+
+# parse a fast version of the document table where we can lookup
+# the image name for an animal's preferred picture
+for row in asm.csv_to_list(PATH + "tbldocument.csv"):
+    if row["objectypeid"] == "0" and row["extension"] == "jpg" and row["isDefault"] == "-1":
+        documents[row["objectid"]] = PATH + "images/doc_%s.jpg" % row["docID"]
 
 # tblsuburblist.csv
 for row in asm.csv_to_list(PATH + "tblsuburblist.csv"):
@@ -265,6 +280,11 @@ for row in asm.csv_to_list(PATH + "tblanimal.csv"):
     if row["crueltyCase"] == "TRUE":
         a.CrueltyCase = 1
     a.LastChangedDate = getdate(row["AddDateTime"])
+    # Do we have a default image for this animal in the images folder and document table?
+    if documents.has_key(row["AnimalID"]):
+        imagedata = asm.load_image_from_file(documents[row["AnimalID"]])
+        if imagedata is not None:
+            asm.animal_image(a.ID, imagedata)
 
 # tblperson.csv
 for row in asm.csv_to_list(PATH + "tblperson.csv"):
@@ -295,10 +315,7 @@ for row in asm.csv_to_list(PATH + "tbladoption.csv"):
         movements.append(m)
         m.OwnerID = o.ID
         m.AnimalID = a.ID
-        if a.ActiveMovementDate is not None:
-            m.MovementDate = a.ActiveMovementDate
-        else:
-            m.MovementDate = getdate(row["adddatetime"])
+        m.MovementDate = getdate(row["adddatetime"])
         m.MovementType = 1
         a.Archived = 1
         a.ActiveMovementType = 1

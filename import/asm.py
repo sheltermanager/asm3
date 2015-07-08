@@ -35,11 +35,13 @@ Also has some useful helper functions for reading CSVs and parsing values, eg:
     asm.subtract_days, asm.add_days
     asm.fw (first word)
     asm.iif (inline if, eg: iif(condition, true, false))
+    asm.animal_image(animalid, imagedata)
+    asm.load_image_from_file(filename)
     
 """
 
 import csv, datetime, re, time
-import sys, urllib2, base64
+import os, sys, urllib2, base64
 
 # Next year code to use for animals when generating shelter codes
 nextyearcode = 1
@@ -760,11 +762,15 @@ breeds = (
 def breed_id_for_name(name, default = 1):
     if name.find(" x") != -1 or name.find(" X") != -1:
         name = name.replace(" x", "").replace(" X", "")
-    # do keyword matching first by looking for keywords in name given
+    # try a complete match first
+    for bid, bname in breeds:
+        if bname.upper() == name.upper():
+            return int(bid)
+    # now do keyword matching to see if any are present in the breed given
     for bid, bname in breedkeywords:
         if name.upper().find(bname.upper()) != -1:
             return int(bid)
-    # fall back to looking for name given against full breed list
+    # fall back to looking for the name given in each item in the full breed list
     for bid, bname in breeds:
         if bname.upper().find(name.upper()) != -1 or name.upper().find(bname.upper()) != -1:
             return int(bid)
@@ -1071,6 +1077,14 @@ def animal_regimen_single(animalid, dategiven, treatmentname, dosage = "", comme
         ( "LastChangedDate", dd(today()) )
         )
     print makesql("animalmedicaltreatment", s)
+
+def load_image_from_file(filename):
+    """ Reads image data from a disk file or returns None if the file does not exist """
+    if not os.path.exists(filename): return None
+    f = open(filename, "rb")
+    s = f.read()
+    f.close()
+    return s
 
 def petfinder_get_adoptable(shelterid):
     """
