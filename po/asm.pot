@@ -2969,8 +2969,8 @@ msgstr ""
 msgid "Dec"
 msgstr ""
 
-#: header_edit_header.js person_links.js search.js common.js animal_find.js
-#: animal.py
+#: header_edit_header.js person_links.js search.js common.js options.js
+#: animal_find.js animal.py
 msgid "Deceased"
 msgstr ""
 
@@ -7721,6 +7721,10 @@ msgstr ""
 
 #: html.py
 msgid "Person looking for report"
+msgstr ""
+
+#: person_new.js
+msgid "Person successfully created"
 msgstr ""
 
 #: dbupdate.py
