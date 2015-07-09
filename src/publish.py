@@ -653,6 +653,26 @@ class AbstractPublisher(threading.Thread):
         db.execute(self.dbo, "DELETE FROM animalpublished WHERE PublishedTo = '%s' AND AnimalID IN (%s)" % (self.publisherKey, ",".join(inclause)))
         db.execute_many(self.dbo, "INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate) VALUES (%s, %s, %s)", batch)
 
+    def markAnimalsPublishFailed(self, animals):
+        """
+        Marks all animals in the set as published at the current date/time
+        for the current publisher but with an extra failure message
+        """
+        batch = []
+        inclause = {}
+        # build a list of IDs and deduplicate them
+        for a in animals:
+            m = ""
+            if a.has_key("FAILMESSAGE"):
+                m = a["FAILMESSAGE"]
+            inclause[str(a["ID"])] = m
+        # build a batch for inserting animalpublished entries into the table
+        for k, v in inclause.iteritems():
+            batch.append( ( int(k), self.publisherKey, i18n.now(self.dbo.timezone), v ) )
+        if len(inclause) == 0: return
+        db.execute(self.dbo, "DELETE FROM animalpublished WHERE PublishedTo = '%s' AND AnimalID IN (%s)" % (self.publisherKey, ",".join(inclause)))
+        db.execute_many(self.dbo, "INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate, Extra) VALUES (%s, %s, %s, %s)", batch)
+
     def getMatchingAnimals(self):
         a = get_animal_data(self.dbo, self.pc)
         self.log("Got %d matching animals for publishing." % len(a))
@@ -3797,6 +3817,13 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
 
+    def getHeader(self, headers, header):
+        """ Returns a header from the headers list of a get_url call """
+        for h in headers:
+            if h.startswith(header):
+                return h.strip()
+        return ""
+
     def get_vetenvoy_species(self, asmspeciesid):
         SPECIES_MAP = {
             1:  "Canine",
@@ -3852,6 +3879,7 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
 
         anCount = 0
         processed_animals = []
+        failed_animals = []
         for an in animals:
             try:
                 anCount += 1
@@ -3869,8 +3897,14 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
                 if utils.nulltostr(an["CURRENTOWNERPOSTCODE"].strip()) == "":
                     self.logError("Postal code for the new owner is blank, cannot process")
                     continue
+
                 if an["IDENTICHIPDATE"] is None:
                     self.logError("Microchip date cannot be blank, cannot process")
+                    continue
+
+                # Make sure the length is actually suitable
+                if not len(an["IDENTICHIPNUMBER"]) in (9, 10, 15):
+                    self.logError("Microchip length is not 9, 10 or 15, cannot process")
                     continue
 
                 # Construct the XML document
@@ -3975,9 +4009,11 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
                         self.logError("received AKC Reunite 54101 'sender not recognized' response header - abandoning run and disabling publisher")
                         configuration.publishers_enabled_disable(self.dbo, "vear")
                         break
-
+                    
                     if not wassuccess:
                         self.logError("no successful response header %s received" % str(SUCCESS))
+                        an["FAILMESSAGE"] = "%s: %s" % (self.getHeader(r["headers"], "ResultCode"), self.getHeader(r["headers"], "ResultDetails"))
+                        failed_animals.append(an)
 
                 except Exception,err:
                     em = str(err)
@@ -3991,6 +4027,9 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
         if len(processed_animals) > 0 and VETENVOY_US_BASE_URL.find("test") == -1:
             self.log("successfully processed %d animals, marking sent" % len(processed_animals))
             self.markAnimalsPublished(processed_animals)
+        if len(failed_animals) > 0 and VETENVOY_US_BASE_URL.find("test") == -1:
+            self.log("failed processing %d animals, marking failed" % len(failed_animals))
+            self.markAnimalsPublishFailed(failed_animals)
 
         if VETENVOY_US_BASE_URL.find("test") != -1:
             self.log("VetEnvoy test mode, not marking animals published")

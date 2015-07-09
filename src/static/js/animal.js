@@ -666,7 +666,9 @@ $(function() {
             ];
 
             $.each(controller.publishhistory, function(i, v) {
-                h.push('<p>' + format.date(v.SENTDATE) + ' - ' + pname(v.PUBLISHEDTO) + '</p>');
+                var err = "";
+                if (v.EXTRA) { err = " : <span style='color: red'>" + v.EXTRA + "</span>"; }
+                h.push('<p>' + format.date(v.SENTDATE) + ' - ' + pname(v.PUBLISHEDTO) + err + '</p>');
             });
 
             h.push('</div>');

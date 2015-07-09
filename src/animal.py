@@ -1600,7 +1600,7 @@ def get_publish_history(dbo, animalid):
     """
     Returns a list of services and the date the animal was last registered with them.
     """
-    return db.query(dbo, "SELECT PublishedTo, SentDate FROM animalpublished WHERE AnimalID = %d ORDER BY SentDate DESC" % animalid)
+    return db.query(dbo, "SELECT PublishedTo, SentDate, Extra FROM animalpublished WHERE AnimalID = %d ORDER BY SentDate DESC" % animalid)
 
 def insert_publish_history(dbo, animalid, service):
     """
