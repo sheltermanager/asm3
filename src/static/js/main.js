@@ -499,7 +499,7 @@ $(function() {
             h.push('<p class="asm-menu-category"><a href="timeline">' + _("Timeline ({0})").replace("{0}", controller.recent.length) + '</a></p><p>');
             $.each(controller.recent, function(i, v) {
                 // Skip this entry if it's for a deceased animal and we aren't showing them
-                if (!config.bool("ShowDeceasedHomePage") && (v.CATEGORY == "DIED" || v.CATEGORY == "EUTHANIZED")) { return; }
+                if (!config.bool("ShowDeceasedHomePage") && (v.CATEGORY == "DIED" || v.CATEGORY == "EUTHANISED")) { return; }
                 h.push(html.event_text(v, { includedate: true }) + '<br/>');
             });
             return h.join("\n");
