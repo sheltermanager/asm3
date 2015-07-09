@@ -321,6 +321,8 @@ $(function() {
             if (controller.linkname != "none" && controller.animallinks.length > 0) {
                 s.push('<p class="asm-menu-category">' + controller.linkname + '</p>');
                 $.each(controller.animallinks, function(i, a) {
+                    // Skip this one if the animal is deceased and we aren't showing them
+                    if (!config.bool("ShowDeceasedHomePage") && a.DECEASEDDATE) { return; }
                     s.push('<div style="display: inline-block; text-align: center">');
                     s.push(html.animal_link_thumb(a, { showlocation: true }));
                     s.push("</div>");
@@ -496,6 +498,8 @@ $(function() {
             if (!config.bool("ShowTimelineHomePage") || !common.has_permission("va")) { return; }
             h.push('<p class="asm-menu-category"><a href="timeline">' + _("Timeline ({0})").replace("{0}", controller.recent.length) + '</a></p><p>');
             $.each(controller.recent, function(i, v) {
+                // Skip this entry if it's for a deceased animal and we aren't showing them
+                if (!config.bool("ShowDeceasedHomePage") && (v.CATEGORY == "DIED" || v.CATEGORY == "EUTHANIZED")) { return; }
                 h.push(html.event_text(v, { includedate: true }) + '<br/>');
             });
             return h.join("\n");

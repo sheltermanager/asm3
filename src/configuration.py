@@ -227,6 +227,7 @@ DEFAULTS = {
     "ShelterViewShowCodes": "No",
     "ShowCostAmount": "Yes",
     "ShowCostPaid": "No",
+    "ShowDeceasedHomePage": "Yes",
     "ShowAlertsHomePage": "Yes", 
     "ShowTimelineHomePage": "Yes", 
     "ShowStatsHomePage": "thismonth", 

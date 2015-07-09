@@ -1,6 +1,7 @@
 37
 ================
 
+09/07/15 Option to hide deceased animals from areas of the homepage
 09/07/15 Record VetEnvoy failures and don't send again
 06/07/15 Fix broken open records in new browser tab since client routing
 06/07/15 When marking animals published, deduplicate to prevent key violation
