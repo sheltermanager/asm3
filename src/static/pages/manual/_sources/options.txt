@@ -422,6 +422,12 @@ for adoption).
 * Show timeline on the home page: Shows the last 10 things that happened at the
   shelter on the home page (intake, adoptions, euthanasia, etc)
 
+* Hide deceased animals from the home page: If this option is on, any deceased
+  animals on the animal links or timeline sections of the home page will be
+  hidden.  This option does not apply to the full timeline view, accessed by
+  clicking the Timeline heading on the home page or from the
+  :menuselection:`ASM --> Timeline` menu option.
+
 Lost and Found
 --------------
 
