@@ -120,6 +120,21 @@ $(function() {
             ].join("\n");
         },
 
+        update_breed_select: function() {
+            // Only show the breeds for the selected species
+            // If the species has no breeds the species is shown
+            $('optgroup', $('#breed')).remove();
+            $('#breedp optgroup').clone().appendTo($('#breed'));
+            $('#breed').children().each(function(){
+                if($(this).attr('id') != 'ngp-'+$('#species').val()){
+                    $(this).remove();
+                }
+            });
+            if($('#breed option').size() == 0) {
+                $('#breed').append("<option value='1'>"+$('#species option:selected').text()+"</option>");
+            }
+        },
+
         bind: function() {
 
             var validation = function() {
@@ -208,27 +223,8 @@ $(function() {
                 lostfound_new.reset();
             });
 
-            // Only show the breeds for the selected species
-            // If the species has no breeds the species is shown
-            var changebreedselect1 = function() {
-                $('optgroup', $('#breed')).remove();
-                $('#breedp optgroup').clone().appendTo($('#breed'));
-
-                $('#breed').children().each(function(){
-                    if($(this).attr('id') != 'ngp-'+$('#species').val()){
-                        $(this).remove();
-                    }
-                });
-
-                if($('#breed option').size() == 0) {
-                    $('#breed').append("<option value='1'>"+$('#species option:selected').text()+"</option>");
-                }
-            };
-
-            changebreedselect1();
-
             $('#species').change(function() {
-                changebreedselect1();
+                lostfound_new.update_breed_select();
             });
         },
 
@@ -242,6 +238,8 @@ $(function() {
             $(".asm-personchooser").personchooser("clear");
             // Set select box default values
             $("#species").val(config.str("AFDefaultSpecies"));
+            lostfound_new.update_breed_select();
+            $("#breed").val(config.str("AFDefaultBreed"));
             // Default dates
             if (lostfound_new.mode == "lost") {
                 $("#datelost").val(format.date(new Date()));
