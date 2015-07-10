@@ -10,6 +10,7 @@ for others.
 
 import al
 import animal
+import cachedisk
 import cachemem
 import configuration
 import db
@@ -68,7 +69,7 @@ def get_cached_response(cache_key):
     If no entry is found, None is returned.
     """
     if not CACHE_SERVICE_RESPONSES: return None
-    response = cachemem.get(cache_key)
+    response = cachedisk.get(cache_key)
     if response is None: return None
     #al.debug("GET: %s (%d bytes)" % (cache_key, len(response[2])), "service.get_cached_response")
     return response
@@ -87,7 +88,7 @@ def set_cached_response(cache_key, mime, clientage, serverage, content):
     response = (mime, clientage, content)
     if not CACHE_SERVICE_RESPONSES: return response
     #al.debug("PUT: %s (%d bytes)" % (cache_key, len(content)), "service.set_cached_response")
-    cachemem.put(cache_key, response, serverage)
+    cachedisk.put(cache_key, response, serverage)
     return response
 
 def handler(post, remoteip, referer):

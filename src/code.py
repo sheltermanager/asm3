@@ -466,7 +466,11 @@ class rollupjs:
     def GET(self):
         web.header("Content-Type", "text/javascript")
         web.header("Cache-Control", "max-age=86400")
-        return html.asm_rollup_scripts(PATH)
+        rollup = cachemem.get("rollup")
+        if rollup is None:
+            rollup = html.asm_rollup_scripts(PATH)
+            cachemem.put("rollup", rollup, 60)
+        return rollup
 
 class configjs:
     def GET(self):
