@@ -366,6 +366,17 @@ def full_or_json(modulename, s, c, json = False):
         if c.endswith(","): c = c[0:len(c)-1]
         return "{ %s }" % c
 
+# SSL for the server can be passed as an extra startup argument, eg:
+# python code.py 5000 ssl=true,cert=/etc/cert.crt,key=/etc/cert.key,chain=/etc/chain.crt
+if len(sys.argv) > 2:
+    from web.wsgiserver import CherryPyWSGIServer
+    for arg in sys.argv[2].split(","):
+        if arg.find("=") == -1: continue
+        k, v = arg.split("=")
+        if k == "cert": CherryPyWSGIServer.ssl_certificate = v
+        if k == "key": CherryPyWSGIServer.ssl_private_key = v
+        if k == "chain": CherryPyWSGIServer.ssl_certificate_chain = v
+
 # Setup the WSGI application object and session with mappings
 app = web.application(urls, globals())
 app.notfound = asm_404

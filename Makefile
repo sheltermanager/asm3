@@ -52,7 +52,7 @@ compilejs:
 compilepy:
 	@echo "[compile python] ====================="
 	# 800 lines per method, 25 returns, 20 args, 60 locals
-	pychecker -L 800 -R 25 -J 20 -K 60 -j -b al,email,httplib,multiprocessing,threading src/*.py
+	pychecker -L 800 -R 25 -J 20 -K 60 -j -b al,email,httplib,multiprocessing,threading,web src/*.py
 
 smcomstable: version clean minify
 	@echo "[smcom stable] ========================="
