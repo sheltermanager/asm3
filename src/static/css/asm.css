@@ -384,6 +384,8 @@ img {
 .asm-staff-rota-cell:hover { background-color: #eee; }
 .asm-staff-rota-shift { width: 80%; color: #000 !important; padding: 4px; display: inline-block; border: 1px solid transparent; }
 .asm-staff-rota-shift:hover { border: 1px dotted #555 !important; }
+.asm-staff-rota-overtime { width: 80%; background-color: #ff9999; color: #000 !important; padding: 4px; display: inline-block; border: 1px solid transparent; }
+.asm-staff-rota-overtime:hover { border: 1px dotted #555 !important; }
 .asm-staff-rota-timeoff { width: 80%; background-color: #ffffcc; color: #000 !important; padding: 4px; display: inline-block; border: 1px solid transparent; }
 .asm-staff-rota-timeoff:hover { border: 1px dotted #555 !important; }
 .asm-staff-rota-staff-odd { background-color: #085278; color: #fff; }

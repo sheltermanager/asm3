@@ -113,9 +113,10 @@ $(function() {
                     $.each(controller.rows, function(ir, r) {
                         if (r.OWNERID == p.ID && format.date_in_range(d, r.STARTDATETIME, r.ENDDATETIME, true)) {
                             var period = format.time(r.STARTDATETIME, "%H:%M") + ' - ' + format.time(r.ENDDATETIME, "%H:%M");
-                            if (r.ROTATYPEID == 1) { 
-                                css = 'asm-staff-rota-shift'; 
-                                h.push('<a class="asm-staff-rota-shift" href="#" data-id="' + r.ID + '">' + 
+                            if (r.ROTATYPEID < 10) {
+                                if (r.ROTATYPEID == 1) { css = 'asm-staff-rota-shift'; }
+                                if (r.ROTATYPEID == 2) { css = 'asm-staff-rota-overtime'; }
+                                h.push('<a class="' + css + '" href="#" data-id="' + r.ID + '">' + 
                                     period + '</a><br />');
                             }
                             else { 

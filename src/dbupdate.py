@@ -7,7 +7,7 @@ import os, sys
 from i18n import _, BUILD
 from sitedefs import DB_PK_STRATEGY
 
-LATEST_VERSION = 33708
+LATEST_VERSION = 33709
 VERSIONS = ( 
     2870, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3050,
     3051, 3081, 3091, 3092, 3093, 3094, 3110, 3111, 3120, 3121, 3122, 3123, 3200,
@@ -19,7 +19,7 @@ VERSIONS = (
     33310, 33311, 33312, 33313, 33314, 33315, 33316, 33401, 33402, 33501, 33502,
     33503, 33504, 33505, 33506, 33507, 33508, 33600, 33601, 33602, 33603, 33604,
     33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702, 33703, 33704, 33705,
-    33706, 33707, 33708
+    33706, 33707, 33708, 33709
 )
 
 # All ASM3 tables
@@ -2007,14 +2007,16 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup1("lksposneg", 1, _("Negative", l))
     sql += lookup1("lksposneg", 2, _("Positive", l))
     sql += lookup1("lksrotatype", 1, _("Shift", l))
-    sql += lookup1("lksrotatype", 2, _("Vacation", l))
-    sql += lookup1("lksrotatype", 3, _("Leave of absence", l))
-    sql += lookup1("lksrotatype", 4, _("Maternity", l))
-    sql += lookup1("lksrotatype", 5, _("Personal", l))
-    sql += lookup1("lksrotatype", 6, _("Rostered day off", l))
-    sql += lookup1("lksrotatype", 7, _("Sick leave", l))
-    sql += lookup1("lksrotatype", 8, _("Training", l))
-    sql += lookup1("lksrotatype", 9, _("Unavailable", l))
+    sql += lookup1("lksrotatype", 2, _("Overtime", l))
+    sql += lookup1("lksrotatype", 11, _("Public Holiday", l))
+    sql += lookup1("lksrotatype", 12, _("Vacation", l))
+    sql += lookup1("lksrotatype", 13, _("Leave of absence", l))
+    sql += lookup1("lksrotatype", 14, _("Maternity", l))
+    sql += lookup1("lksrotatype", 15, _("Personal", l))
+    sql += lookup1("lksrotatype", 16, _("Rostered day off", l))
+    sql += lookup1("lksrotatype", 17, _("Sick leave", l))
+    sql += lookup1("lksrotatype", 18, _("Training", l))
+    sql += lookup1("lksrotatype", 19, _("Unavailable", l))
     sql += lookup1("lkurgency", 1, _("Urgent", l))
     sql += lookup1("lkurgency", 2, _("High", l))
     sql += lookup1("lkurgency", 3, _("Medium", l))
@@ -4059,4 +4061,13 @@ def update_33707(dbo):
 def update_33708(dbo):
     # Add basecolour.AdoptAPetColour
     add_column(dbo, "basecolour", "AdoptAPetColour", shorttext(dbo))
+
+def update_33709(dbo):
+    l = dbo.locale
+    # Move all rota types above shift up 2 places
+    db.execute_dbupdate(dbo, "UPDATE lksrotatype SET ID = ID + 10 WHERE ID > 1")
+    db.execute_dbupdate(dbo, "UPDATE ownerrota SET RotaTypeID = RotaTypeID + 10 WHERE RotaTypeID > 1")
+    # Insert two new types
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotatype (ID, RotaType) VALUES (2, %s)" % db.ds(_("Overtime", l)))
+    db.execute_dbupdate(dbo, "INSERT INTO lksrotatype (ID, RotaType) VALUES (11, %s)" % db.ds(_("Public Holiday", l)))
 

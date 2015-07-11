@@ -1,6 +1,7 @@
 37
 ================
 
+11/07/15 Add overtime and public holiday to rota types #221
 09/07/15 Option to hide deceased animals from areas of the homepage
 09/07/15 Record VetEnvoy failures and don't send again
 06/07/15 Fix broken open records in new browser tab since client routing

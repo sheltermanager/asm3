@@ -7453,6 +7453,10 @@ msgid "Overdue"
 msgstr ""
 
 #: dbupdate.py
+msgid "Overtime"
+msgstr ""
+
+#: dbupdate.py
 msgid "Owl"
 msgstr ""
 
@@ -7985,6 +7989,10 @@ msgstr ""
 
 #: medical.py
 msgid "Profile name cannot be blank"
+msgstr ""
+
+#: dbupdate.py
+msgid "Public Holiday"
 msgstr ""
 
 #: roles.js
