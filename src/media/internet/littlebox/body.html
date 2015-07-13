@@ -18,12 +18,12 @@ $$Sex$$
 <table width="100%">
 <tr>
 <td width="160px" valign="top" align="center">
-<img id="$$AnimalID$$1" onError="blankImage(this.id)" onMouseOver="showImage('img$$AnimalID$$', '$$WebMediaFilename$$')" width="50px" border="0" src="$$WebMediaFilename$$" />
-<img id="$$AnimalID$$2" onError="blankImage(this.id)" onMouseOver="showImage('img$$AnimalID$$', '$$ShelterCode$$-2.jpg')" width="50px" border="0" src="$$ShelterCode$$-2.jpg" />
-<img id="$$AnimalID$$3" onError="blankImage(this.id)" onMouseOver="showImage('img$$AnimalID$$', '$$ShelterCode$$-3.jpg')" width="50px" border="0" src="$$ShelterCode$$-3.jpg" />
-<img id="$$AnimalID$$4" onError="blankImage(this.id)" onMouseOver="showImage('img$$AnimalID$$', '$$ShelterCode$$-4.jpg')" width="50px" border="0" src="$$ShelterCode$$-4.jpg" />
+<img id="$$AnimalID$$1" onError="blankImage(this.id)" onMouseOver="showImage('img$$AnimalID$$', '$$WebMediaFilename$$')" width="50px" border="0" src="" />
+<img id="$$AnimalID$$2" onError="blankImage(this.id)" onMouseOver="showImage('img$$AnimalID$$', '$$ShelterCode$$-2.jpg')" width="50px" border="0" src="" />
+<img id="$$AnimalID$$3" onError="blankImage(this.id)" onMouseOver="showImage('img$$AnimalID$$', '$$ShelterCode$$-3.jpg')" width="50px" border="0" src="" />
+<img id="$$AnimalID$$4" onError="blankImage(this.id)" onMouseOver="showImage('img$$AnimalID$$', '$$ShelterCode$$-4.jpg')" width="50px" border="0" src="" />
 <br />
-<img id="img$$AnimalID$$" class="animalimg" width="150px" src="$$WebMediaFilename$$" border="0" />
+<img id="img$$AnimalID$$" class="animalimg" width="150px" src="" border="0" />
 </td>
 <td rowspan="2" valign="top"><table width="100%">
 <tr>
@@ -53,6 +53,9 @@ $$Sex$$
     if ('$$GoodWithCats$$' == 'Yes') document.write("Good with cats <br />");
     if ('$$GoodWithDogs$$' == 'Yes') document.write("Good with dogs <br />");
     if ('$$GoodWithChildren$$' == 'Yes') document.write("Good with children <br />");
+    if ('$$GoodWithCats$$' == 'No') document.write("NOT Good with cats <br />");
+    if ('$$GoodWithDogs$$' == 'No') document.write("NOT Good with dogs <br />");
+    if ('$$GoodWithChildren$$' == 'No') document.write("NOT Good with children <br />");
 </script>
 </span></td>
 </tr>
@@ -74,6 +77,11 @@ var disableLinks = false;
 function show$$AnimalID$$() {
     if (disableLinks) return;
     var id = "box$$AnimalID$$";
+    document.getElementById("img$$AnimalID$$").src = "$$WebMediaFilename$$";
+    document.getElementById("$$AnimalID$$1").src = "$$WebMediaFilename$$";
+    document.getElementById("$$AnimalID$$2").src = "$$ShelterCode$$-2.jpg";
+    document.getElementById("$$AnimalID$$3").src = "$$ShelterCode$$-3.jpg";
+    document.getElementById("$$AnimalID$$4").src = "$$ShelterCode$$-4.jpg";
     document.getElementById(id).style.display = "block";
     disableLinks = true;
 }
@@ -83,5 +91,3 @@ function hide$$AnimalID$$() {
     disableLinks = false;
 }
 </script>
-
-
