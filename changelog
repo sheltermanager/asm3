@@ -1,6 +1,7 @@
 37
 ================
 
+14/07/15 Switch to new smcom last connected mechanism, smaccount on mobile_login
 11/07/15 Add overtime and public holiday to rota types #221
 09/07/15 Option to hide deceased animals from areas of the homepage
 09/07/15 Record VetEnvoy failures and don't send again

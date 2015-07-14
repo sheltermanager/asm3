@@ -637,11 +637,12 @@ class mobile:
 class mobile_login:
     def GET(self):
         l = LOCALE
+        post = utils.PostedData(web.input( smaccount="" ), LOCALE)
         if not MULTIPLE_DATABASES:
             dbo = db.DatabaseInfo()
             l = configuration.locale(dbo)
         web.header("Content-Type", "text/html")
-        return extmobile.page_login(l)
+        return extmobile.page_login(l, post["smaccount"])
 
     def POST(self):
         post = utils.PostedData(web.input( database="", username="", password="" ), LOCALE)

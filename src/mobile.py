@@ -654,12 +654,12 @@ def page_incidents(l, homelink, inc, pageid = "inmy", pagetitle = ""):
     h.append(jqm_page_footer())
     return h
 
-def page_login(l):
+def page_login(l, smaccount = ""):
     accountline = ""
     accounttext = _("Database", l)
     if smcom.active(): accounttext = _("SM Account", l)
     if MULTIPLE_DATABASES:
-        accountline = "<div data-role='fieldcontain'><label for='database'>%s</label><input type='text' id='database' name='database' /></div>" % accounttext
+        accountline = "<div data-role='fieldcontain'><label for='database'>%s</label><input type='text' id='database' name='database' value='%s'/></div>" % (accounttext, html.escape(smaccount))
     return header(l) + """
         <div data-role='page' id='login'>
         <div data-role='header'>

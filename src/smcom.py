@@ -92,8 +92,10 @@ def set_last_connected(dbo):
     """
     Sets the last connected date on a database to today
     """
-    al.debug("Setting last connected to now for %s" % dbo.database, "users.web_login", dbo)
-    os.system("sudo /root/sheltermanager_setlastconnected.py %s &" % dbo.database)
+    al.debug("Setting last connected to now for %s" % dbo.database, "smcom.set_last_connected", dbo)
+    response = utils.get_url("http://sheltermanager.com/service/asmlastconnection?a=%s" % dbo.database)["response"]
+    if response != "OK":
+        al.error("Failed setting last connection: %s" % response, "smcom.set_last_connected", dbo)
 
 def route_customer_extension(dbo, when, caller, post):
     target = dbo.database + "_" + when + "_" + caller
