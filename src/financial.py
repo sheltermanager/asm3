@@ -1169,7 +1169,11 @@ def giftaid_spreadsheet(dbo, path, fromdate, todate):
         subearly = False
         for d in dons:
             if not subearly:
+                # This is the date field at the top, turn it into a date
                 subearly = True
+                content = content.replace("table:style-name=\"ce21\" office:value-type=\"string\">", 
+                    "table:style-name=\"ce36\" office:value-type=\"date\" office:date-value=\"%s\">" % \
+                    i18n.format_date("%Y-%m-%d", d["DONATIONDATE"]))
                 content = content.replace("DONEARLIESTDONATION", i18n.format_date("%d/%m/%y", d["DONATIONDATE"]))
             content = content.replace("DONTITLE", xmlescape(d["OWNERTITLE"]), 1)
             content = content.replace("DONFIRSTNAME", xmlescape(d["OWNERFORENAMES"]), 1)
