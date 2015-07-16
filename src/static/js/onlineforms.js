@@ -54,10 +54,10 @@ $(function() {
                             "</span>";
                     }},
                     { field: "", display: _("Form URL"), formatter: function(row) {
-                            var u = "/service?";
+                            var u = "?";
                             if (asm.useraccountalias) { u += "account=" + asm.useraccountalias + "&"; }
                             u += "method=online_form_html&formid=" + row.ID;
-                            return '<a target="_blank" href="' + controller.baseurl + u + '">' + u + '</a>';
+                            return '<a target="_blank" href="' + asm.serviceurl + u + '">' + u + '</a>';
                         }},
                     { field: "REDIRECTURLAFTERPOST", display: _("Redirect to URL after POST") },
                     { field: "EMAILADDRESS", display: _("Email submissions to") },

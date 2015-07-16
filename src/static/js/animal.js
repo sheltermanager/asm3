@@ -1128,8 +1128,8 @@ $(function() {
         set_sharinglinks: function() {
 
             // Share data
-            var share_url = asm.baseurl + "/service?method=animal_view&animalid=" + controller.animal.ID;
-            var share_image = asm.baseurl + "/service?method=animal_image&animalid=" + controller.animal.ID;
+            var share_url = asm.serviceurl + "?method=animal_view&animalid=" + controller.animal.ID;
+            var share_image = asm.serviceurl + "?method=animal_image&animalid=" + controller.animal.ID;
             if (asm.smcom) { share_url += "&account=" + asm.useraccount; share_image += "&account=" + asm.useraccount; }
             var share_title = controller.animal.ANIMALNAME;
             var share_description = controller.animal.WEBSITEMEDIANOTES;

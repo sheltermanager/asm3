@@ -43,7 +43,7 @@ import utils
 import waitinglist as extwaitinglist
 import web
 import wordprocessor
-from sitedefs import BASE_URL, DEPLOYMENT_TYPE, DUMP_OVERRIDES, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, FORGOTTEN_PASSWORD, FORGOTTEN_PASSWORD_LABEL, LOCALE, GEO_PROVIDER, GEO_PROVIDER_KEY, JQUERY_UI_CSS, LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_PUBLISH_URL, MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MAP_LINK, MAP_PROVIDER, OSM_MAP_TILES, PETRESCUE_FTP_HOST, QR_IMG_SRC, SESSION_STORE, SHARE_BUTTON, SMARTTAG_FTP_USER, SMTP_SERVER, SMCOM_PAYMENT_LINK, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_VENDOR_USERID
+from sitedefs import BASE_URL, DEPLOYMENT_TYPE, DUMP_OVERRIDES, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, FORGOTTEN_PASSWORD, FORGOTTEN_PASSWORD_LABEL, LOCALE, GEO_PROVIDER, GEO_PROVIDER_KEY, JQUERY_UI_CSS, LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_PUBLISH_URL, MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MAP_LINK, MAP_PROVIDER, OSM_MAP_TILES, PETRESCUE_FTP_HOST, QR_IMG_SRC, SERVICE_URL, SESSION_STORE, SHARE_BUTTON, SMARTTAG_FTP_USER, SMTP_SERVER, SMCOM_PAYMENT_LINK, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_VENDOR_USERID
 
 # URL to class mappings
 urls = (
@@ -521,6 +521,7 @@ class configjs:
             maplinko = configuration.map_link_override(dbo)
             if maplinko != "": maplinko = maplink
             s = "asm={baseurl:'%s'," % BASE_URL
+            s += "serviceurl:'%s'," % SERVICE_URL
             s += "build:'%s'," % BUILD
             s += "locale:'%s'," % session.locale
             s += "theme:'%s'," % session.theme
@@ -4464,7 +4465,6 @@ class onlineforms:
         s = html.header("", session)
         c = html.controller_json("rows", onlineforms)
         c += html.controller_json("flags", extlookups.get_person_flags(dbo))
-        c += html.controller_str("baseurl", BASE_URL)
         c += html.controller_json("header", html.escape_angle(extonlineform.get_onlineform_header(dbo)))
         c += html.controller_json("footer", html.escape_angle(extonlineform.get_onlineform_footer(dbo)))
         s += html.controller(c)
