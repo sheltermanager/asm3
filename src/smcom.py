@@ -52,6 +52,7 @@ def get_database_info(alias):
         # Are we on the wrong server for this database?
         if thisserver != "" and l.startswith("Server:") and l.find(thisserver) == -1:
             dbo.database = "WRONGSERVER"
+            al.error("failed login, wrong server: %s not present in %s" % (thisserver, l))
     return dbo
 
 def get_expiry_date(dbo):
