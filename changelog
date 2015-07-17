@@ -1,6 +1,7 @@
 37
 ================
 
+17/07/15 Use default session initially for service calls instead of sessions
 15/07/15 Fix for apostrophe in earliest HMRC giftaid date, fix for house no
 14/07/15 Switch to new smcom last connected mechanism, smaccount on mobile_login
 11/07/15 Add overtime and public holiday to rota types #221

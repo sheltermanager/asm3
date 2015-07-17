@@ -5640,7 +5640,7 @@ class search:
 
 class service:
     def handle(self):
-        post = utils.PostedData(web.input(filechooser = {}), session.locale)
+        post = utils.PostedData(web.input(filechooser = {}), LOCALE)
         contenttype, maxage, response = extservice.handler(post, remote_ip(),  web.ctx.env.get("HTTP_REFERER", ""))
         if contenttype == "redirect":
             raise web.seeother(response)
