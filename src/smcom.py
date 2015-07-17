@@ -30,6 +30,9 @@ def get_database_info(alias):
     dbo.dbtype = "POSTGRESQL"
     dbo.alias = alias
     dbo.database = resolve_alias(alias)
+    thisserver = ""
+    if os.path.exists("/root/asmdb/SERVER_NAME"):
+        thisserver = utils.read_text_file("/root/asmdb/SERVER_NAME")
     # Make sure we have the matching sm.com account
     info = _get_account_info(alias)
     if info is None:
@@ -46,6 +49,9 @@ def get_database_info(alias):
         # Is this sm.com account disabled?
         if l.startswith("Expired:") and l.find("Yes") != -1: 
             dbo.database = "DISABLED"
+        # Are we on the wrong server for this database?
+        if thisserver != "" and l.startswith("Server:") and l.find(thisserver) == -1:
+            dbo.database = "WRONGSERVER"
     return dbo
 
 def get_expiry_date(dbo):

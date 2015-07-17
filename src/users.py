@@ -592,8 +592,9 @@ def web_login(post, session, remoteip, path):
     """
     Performs a login and sets up the user's session.
     Returns the username on successful login, or:
-        FAIL     - problem with user/pass/account/ip
-        DISABLED - The database is disabled
+        FAIL        - problem with user/pass/account/ip
+        DISABLED    - The database is disabled
+        WRONGSERVER - The database is not on this server
     """
     dbo = db.DatabaseInfo()
     database = post["database"]
@@ -614,7 +615,7 @@ def web_login(post, session, remoteip, path):
             else:
                 dbo = smcom.get_database_info(database)
                 # Bail out if there was a problem with the database
-                if dbo.database == "FAIL" or dbo.database == "DISABLED":
+                if dbo.database in ("FAIL", "DISABLED", "WRONGSERVER"):
                     return dbo.database
         else:
             # Look up the database info from our map
