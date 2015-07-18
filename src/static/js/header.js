@@ -419,7 +419,7 @@ $(function() {
                         '<li class="asm-menu-item"><a href="http://youtube.com/user/sheltermanager" target="_blank"><nobr><span class="asm-icon asm-icon-youtube"></span> ' + _("View Training Videos") + '</nobr></a></li>',
                         '<li class="asm-menu-item"><a href="static/pages/manual/faq.html" target="_blank"><nobr><span class="asm-icon asm-icon-faq"></span> ' + _("Frequently Asked Questions") + '</nobr></a></li>',
                         '<li class="asm-menu-category">' + asm.user + '</li>',
-                        '<li id="asm-mysmcom" class="asm-menu-item"><a href="/my" target="_blank"><nobr><span class="asm-icon asm-icon-logo"></span> ' + _("My sheltermanager.com account") + '</nobr></a></li>',
+                        '<li id="asm-mysmcom" class="asm-menu-item"><a href="https://sheltermanager.com/my" target="_blank"><nobr><span class="asm-icon asm-icon-logo"></span> ' + _("My sheltermanager.com account") + '</nobr></a></li>',
                         '<li class="asm-menu-item"><a href="change_password"><nobr><span class="asm-icon asm-icon-auth"></span> ' + _("Change Password") + '</nobr></a></li>',
                         '<li class="asm-menu-item"><a href="change_user_settings"><nobr><span class="asm-icon asm-icon-settings"></span> ' + _("Change User Settings") + '</nobr></a></li>',
                         '<li class="asm-menu-item"><a href="logout"><nobr><span class="asm-icon asm-icon-logout"></span> ' + _("Logout") + '</nobr></a></li>',
