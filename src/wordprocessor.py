@@ -11,6 +11,7 @@ import log
 import lookups
 import media
 import medical
+import movement
 import person
 import users
 import utils
@@ -271,6 +272,9 @@ def animal_tags(dbo, a):
         "DOCUMENTIMGTHUMBLINK"  : "<img src=\"" + html.thumbnail_img_src(a, "animalthumb") + "\" />",
         "DOCUMENTQRLINK"        : "<img src=\"%s\" />" % qr,
         "ANIMALONSHELTER"       : yes_no(l, a["ARCHIVED"] == 0),
+        "ANIMALONFOSTER"        : yes_no(l, a["ACTIVEMOVEMENTTYPE"] == movement.FOSTER),
+        "ANIMALPERMANENTFOSTER" : yes_no(l, a["HASPERMANENTFOSTER"] == 1),
+        "ANIMALATRETAILER"      : yes_no(l, a["ACTIVEMOVEMENTTYPE"] == movement.RETAILER),
         "ANIMALISRESERVED"      : yes_no(l, a["HASACTIVERESERVE"] == 1),
         "ADOPTIONID"            : a["ACTIVEMOVEMENTADOPTIONNUMBER"],
         "ADOPTIONNUMBER"        : a["ACTIVEMOVEMENTADOPTIONNUMBER"],
@@ -279,9 +283,9 @@ def animal_tags(dbo, a):
         "RESERVATIONSTATUS"     : a["RESERVATIONSTATUSNAME"],
         "RETURNDATE"            : python2display(l, a["ACTIVEMOVEMENTRETURNDATE"]),
         "ADOPTIONDATE"          : python2display(l, a["ACTIVEMOVEMENTDATE"]),
-        "FOSTEREDDATE"          : python2display(l, a["ACTIVEMOVEMENTDATE"]),
-        "TRANSFERDATE"          : python2display(l, a["ACTIVEMOVEMENTDATE"]),
-        "TRIALENDDATE"          : python2display(l, a["ACTIVEMOVEMENTTRIALENDDATE"]),
+        "FOSTEREDDATE"          : a["ACTIVEMOVEMENTTYPE"] == movement.FOSTER and python2display(l, a["ACTIVEMOVEMENTDATE"]) or "",
+        "TRANSFERDATE"          : a["ACTIVEMOVEMENTTYPE"] == movement.TRANSFER and python2display(l, a["ACTIVEMOVEMENTDATE"]) or "",
+        "TRIALENDDATE"          : a["ACTIVEMOVEMENTTYPE"] == movement.ADOPTION and python2display(l, a["ACTIVEMOVEMENTTRIALENDDATE"]) or "",
         "MOVEMENTDATE"          : python2display(l, a["ACTIVEMOVEMENTDATE"]),
         "MOVEMENTTYPE"          : a["ACTIVEMOVEMENTTYPENAME"],
         "ADOPTIONDONATION"      : format_currency_no_symbol(l, a["ACTIVEMOVEMENTDONATION"]),

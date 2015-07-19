@@ -1,6 +1,7 @@
 37
 ================
 
+19/07/15 Add extra wordkeys for AnimalAtRetailer, AnimalPermanentFoster, etc.
 17/07/15 Use default locale initially for service calls instead of sessions
 15/07/15 Fix for apostrophe in earliest HMRC giftaid date, fix for house no
 14/07/15 Switch to new smcom last connected mechanism, smaccount on mobile_login

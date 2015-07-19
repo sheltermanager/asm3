@@ -306,8 +306,14 @@ WebsiteVideoURL
     The web address of the default video link for this animal
 WebsiteVideoNotes
     The notes accompanying the video link
+AnimalAtRetailer
+    "Yes" if the animal is currently located at a retailer
+AnimalOnFoster
+    "Yes" if the animal is in a foster home
 AnimalOnShelter
     "Yes" if the animal is on the shelter 
+AnimalPermanentFoster
+    "Yes" if the animal is a permanent foster
 AnimalIsReserved
     "Yes" if the animal has been reserved
 AnimalIsVaccinated
