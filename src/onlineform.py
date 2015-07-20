@@ -100,6 +100,9 @@ def get_onlineform_html(dbo, formid, completedocument = True):
         if needjqui:
             df = i18n.get_display_date_format(l)
             df = df.replace("%Y", "yy").replace("%m", "mm").replace("%d", "dd")
+            prefix = ""
+            if not JQUERY_JS.startswith("http") and not JQUERY_JS.startswith("//"):
+                prefix = BASE_URL + "/" # it's a relative URL, qualify it with BASE_URL
             header = header.replace("</head>", """
                 %s
                 <script>
@@ -126,11 +129,11 @@ def get_onlineform_html(dbo, formid, completedocument = True):
                     });
                 });
                 </script>
-                </head>""" % (html.css_tag(JQUERY_UI_CSS.replace("%(theme)s", "smoothness")) + \
-                    html.script_tag(JQUERY_JS) + \
-                    html.script_tag(JQUERY_UI_JS) + \
-                    html.script_tag(TOUCHPUNCH_JS) + \
-                    html.script_tag(SIGNATURE_JS),
+                </head>""" % (html.css_tag(prefix + JQUERY_UI_CSS.replace("%(theme)s", "smoothness")) + \
+                    html.script_tag(prefix + JQUERY_JS) + \
+                    html.script_tag(prefix + JQUERY_UI_JS) + \
+                    html.script_tag(prefix + TOUCHPUNCH_JS) + \
+                    html.script_tag(prefix + SIGNATURE_JS),
                     df))
         h.append(header.replace("$$TITLE$$", form["NAME"]))
         h.append('<h2 class="asm-onlineform-title">%s</h2>' % form["NAME"])
