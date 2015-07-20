@@ -1093,6 +1093,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "Llama=Horse\n" \
             "Pig=Farm Animal\n" \
             "Barnyard=Farm Animal\n" \
+            "Small&Furry=Small Animal\n" \
             "#3:Breed=Breed\n" \
             "Appenzell Mountain Dog=Shepherd (Unknown Type)\n" \
             "Australian Cattle Dog/Blue Heeler=Australian Cattle Dog\n" \
