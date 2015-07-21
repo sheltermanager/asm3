@@ -26,7 +26,7 @@ DisplayLocation,
 AnimalComments,
 SpeciesName
 FROM v_animal
-WHERE AdoptionStatus = 'Adoptable'
+WHERE Archived = 0 AND IsNotAvailableForAdoption = 0 AND HasTrialAdoption = 0
 ORDER BY AnimalName
 ###
 $$HEADER
