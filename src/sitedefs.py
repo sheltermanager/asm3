@@ -3,7 +3,7 @@
 # The base URL to the ASM installation as seen by the client
 BASE_URL = "http://localhost:5000"
 
-# The URL to asm's service endpoint
+# The URL to asm's service endpoint to be shown in online forms screen
 SERVICE_URL = BASE_URL + "/service"
 
 # The language to use before a locale has been configured 
