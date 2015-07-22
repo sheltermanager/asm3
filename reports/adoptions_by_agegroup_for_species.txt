@@ -9,15 +9,14 @@ Number of adoptions between two dates of animals of selected age group/species.
 en
 ###
 $VAR spec SPECIES$
-select
+SELECT
 animal.AgeGroup,
-Count(animal.id) AS TotalAdoptions
-from animal
-where animal.ActiveMovementDate BETWEEN '$ASK DATE Enter from date$' AND
-'$ASK DATE Enter to date$'
-AND animal.ActiveMovementType = 1
-AND (animal.speciesid = $@spec$ OR $@spec$ = 0)
-AND AgeGroup <> ''
+COUNT(animal.id) AS TotalAdoptions
+FROM animal
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+WHERE adoption.MovementDate >= '$ASK DATE Enter from date$' AND adoption.MovementDate <= '$ASK DATE Enter to date$'
+AND adoption.MovementType = 1
+AND (animal.SpeciesID = $@spec$ OR $@spec$ = 0)
 GROUP BY AgeGroup
 ORDER BY AgeGroup
 ###
