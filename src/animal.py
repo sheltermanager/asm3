@@ -149,6 +149,7 @@ def get_animal_query(dbo):
         "doc.MediaName AS DocMediaName, " \
         "vid.MediaName AS WebsiteVideoURL, " \
         "vid.MediaNotes AS WebsiteVideoNotes, " \
+        "(SELECT COUNT(*) FROM media WHERE LOWER(MediaName) LIKE '%%jpg' AND Date >= %(twodaysago)s AND LinkID = a.ID AND LinkTypeID = 0) AS RecentlyChangedImages, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.NonShelterAnimal) AS NonShelterAnimalName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.CrueltyCase) AS CrueltyCaseName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.CrossBreed) AS CrossBreedName, " \
@@ -206,7 +207,9 @@ def get_animal_query(dbo):
         "LEFT OUTER JOIN incidenttype itn ON itn.ID = ac.IncidentTypeID " \
         "LEFT OUTER JOIN adoption ar ON ar.AnimalID = a.ID AND ar.MovementType = 0 AND ar.MovementDate Is Null AND ar.ReservationDate Is Not Null AND ar.ReservationCancelledDate Is Null AND ar.ID = (SELECT MAX(sar.ID) FROM adoption sar WHERE sar.AnimalID = a.ID AND sar.MovementType = 0 AND sar.MovementDate Is Null AND sar.ReservationDate Is Not Null AND sar.ReservationCancelledDate Is Null) " \
         "LEFT OUTER JOIN reservationstatus ars ON ars.ID = ar.ReservationStatusID " \
-        "LEFT OUTER JOIN owner ro ON ro.ID = ar.OwnerID"
+        "LEFT OUTER JOIN owner ro ON ro.ID = ar.OwnerID" % {
+            "twodaysago":  db.dd(subtract_days(now(dbo.timezone), 2))
+        }
 
 def get_animal_status_query(dbo):
     dummy = dbo

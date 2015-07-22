@@ -1,6 +1,7 @@
 37
 ================
 
+22/07/15 Disable forceReupload for RG/AP, use RECENTLYCHANGEDIMAGES to trigger
 19/07/15 Add extra wordkeys for AnimalAtRetailer, AnimalPermanentFoster, etc.
 17/07/15 Use default locale initially for service calls instead of sessions
 15/07/15 Fix for apostrophe in earliest HMRC giftaid date, fix for house no

@@ -51,9 +51,11 @@ The All Publishers tab allows you to set options common to all internet publishe
 
 * Reupload animal images every time: Ticking this box will tell the publisher
   to reupload images for all the animals published. Normally, ASM will not
-  upload an image it has previously uploaded to save bandwidth. If you've
-  changed the web preferred image for an animal after a publish, you'll need to
-  set this option to make sure the updated image is sent. 
+  upload an image it has previously uploaded to save bandwidth. ASM will detect
+  the preferred image changing and force a reupload for that animal without
+  the need for this option. This option will be ignored by some publishers
+  (notably RescueGroups.org and AdoptAPet.com) as reuploading all images constantly
+  is considered abusive behaviour.
 
 * Upload all available images for animals: Ticking this box will have the
   publisher upload all the images for each animal where available. They will be

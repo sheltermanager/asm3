@@ -97,7 +97,7 @@ def set_web_preferred(dbo, username, mid):
     """
     link = db.query(dbo, "SELECT LinkID, LinkTypeID FROM media WHERE ID = %d" % int(mid))[0]
     db.execute(dbo, "UPDATE media SET WebsitePhoto = 0 WHERE LinkID = %d AND LinkTypeID = %d" % ( int(link["LINKID"]), int(link["LINKTYPEID"])))
-    db.execute(dbo, "UPDATE media SET WebsitePhoto = 1 WHERE ID = %d" % int(mid))
+    db.execute(dbo, "UPDATE media SET WebsitePhoto = 1, Date = %s WHERE ID = %d" % (db.dd(i18n.now(dbo.timezone)), int(mid) ))
     audit.edit(dbo, username, "media", str(id) + ": web preferred for " + str(link["LINKID"]) + "/" + str(link["LINKTYPEID"]))
 
 def set_doc_preferred(dbo, username, mid):

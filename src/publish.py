@@ -947,14 +947,14 @@ class FTPPublisher(AbstractPublisher):
         """
         try:
             # Check if the image is already on the server if 
-            # forceReupload is off.
-            if not self.pc.forceReupload:
+            # forceReupload is off and the animal doesn't
+            # have any recently changed images
+            if not self.pc.forceReupload and a["RECENTLYCHANGEDIMAGES"] == 0:
                 if self.existingImageList is None:
                     self.existingImageList = self.lsdir()
                 elif imagename in self.existingImageList:
                     self.log("%s: skipping, already on server" % imagename)
                     return
-            self.log("Retrieving image: %d::%s::%s" % ( a["ID"], medianame, imagename ))
             imagefile = os.path.join(self.publishDir, imagename)
             thumbnail = os.path.join(self.publishDir, "tn_" + imagename)
             dbfs.get_file(self.dbo, medianame, "", imagefile)
@@ -1012,7 +1012,7 @@ class FTPPublisher(AbstractPublisher):
         # zero, we upload everything.
         if self.pc.uploadAllImages:
             mrecs = media.get_image_media(self.dbo, media.ANIMAL, a["ID"], True)
-            self.log("Animal has %d media files" % len(mrecs))
+            self.log("Animal has %d media files (%d recently changed)" % (len(mrecs), a["RECENTLYCHANGEDIMAGES"]))
             for m in mrecs:
                 # Ignore the main media since we used that
                 if m["MEDIANAME"] == animalweb:
@@ -1033,6 +1033,7 @@ class AdoptAPetPublisher(FTPPublisher):
     """
     def __init__(self, dbo, publishCriteria):
         publishCriteria.uploadDirectly = True
+        publishCriteria.forceReupload = False
         publishCriteria.checkSocket = True
         publishCriteria.scaleImages = 1
         self.publisherName = "AdoptAPet Publisher"
@@ -3409,6 +3410,7 @@ class RescueGroupsPublisher(FTPPublisher):
         publishCriteria.thumbnails = False
         publishCriteria.checkSocket = True
         publishCriteria.uploadAllImages = True
+        publishCriteria.forceReupload = False
         publishCriteria.scaleImages = 1
         FTPPublisher.__init__(self, dbo, publishCriteria, 
             RESCUEGROUPS_FTP_HOST, configuration.rescuegroups_user(dbo), 
