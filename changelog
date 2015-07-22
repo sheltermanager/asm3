@@ -1,6 +1,7 @@
 37
 ================
 
+22/07/15 cachedisk creates cache folder if not present
 22/07/15 Stop adoptapet.com publisher sending thumbnails if option is on
 22/07/15 Disable forceReupload for RG/AP, use RECENTLYCHANGEDIMAGES to trigger
 19/07/15 Add extra wordkeys for AnimalAtRetailer, AnimalPermanentFoster, etc.

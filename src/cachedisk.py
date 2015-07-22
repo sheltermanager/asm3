@@ -17,9 +17,11 @@ def _getfilename(key):
     Calculates the filename from the key
     (md5 hash)
     """
+    if not os.path.exists(DISK_CACHE):
+        os.mkdir(DISK_CACHE)
     m = hashlib.md5()
     m.update(key)
-    fname = "%s/%s" % (DISK_CACHE, m.hexdigest())
+    fname = "%s%s%s" % (DISK_CACHE, os.path.sep, m.hexdigest())
     return fname
 
 def delete(key):
@@ -62,7 +64,6 @@ def get(key):
             f.close()
         except:
             pass
-
 
 def put(key, value, ttl):
     """
