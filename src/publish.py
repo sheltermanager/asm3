@@ -1036,6 +1036,7 @@ class AdoptAPetPublisher(FTPPublisher):
         publishCriteria.forceReupload = False
         publishCriteria.checkSocket = True
         publishCriteria.scaleImages = 1
+        publishCriteria.thumbnails = False
         self.publisherName = "AdoptAPet Publisher"
         self.setLogName("adoptapet")
         FTPPublisher.__init__(self, dbo, publishCriteria, 
