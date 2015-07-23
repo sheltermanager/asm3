@@ -168,6 +168,7 @@
                     var s = $(node).text();
                     if (s.split("/").length == 3) {
                         var rv = format.date_iso(s);
+                        if (!rv) { return ""; }
                         rv = rv.replace(/\-/g, "").replace(/\:/g, "").replace("T", "");
                         return rv;
                     }
