@@ -295,10 +295,11 @@ def authenticate_ip(user, remoteip):
     # notation.
     restrictions = user["IPRESTRICTION"].split(" ")
     for r in restrictions:
-        # We have to have a slash for CIDR notation
-        if r.count("/") != 1:
-            continue
-        address, size = r.split("/")
+        address = r
+        size = "32"
+        # if there's a slash, extract CIDR size
+        if r.count("/") == 1:
+            address, size = r.split("/")
         # We should have 4 numbers for the dotted quads
         if address.count(".") != 3:
             continue
