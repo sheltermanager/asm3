@@ -1200,11 +1200,17 @@
          * null is returned if d is undefined/null
          */
         date_iso: function(d) {
+            var time = "00:00:00";
             if (!d) { return null; }
             if (d instanceof Date) {
                 return format.padleft(d.getFullYear(), 4) + "-" + 
                     format.padleft((d.getMonth() + 1), 2) + "-" + 
                     format.padleft(d.getDate(), 2) + "T00:00:00";
+            }
+            if (d.indexOf(" ") != -1 && d.indexOf(":") != -1) {
+                // There's a time component, save it
+                time = d.substring(d.indexOf(" ")+1);
+                d = d.substring(0, d.indexOf(" "));
             }
             var fbits = asm.dateformat.split("/"), dbits = d.split("/");
             if (fbits.length < 3 || dbits.length < 3) { return null; }
@@ -1224,7 +1230,7 @@
                     day = format.padleft(dbits[i], 2);
                 }
             }
-            return year + "-" + month + "-" + day + "T00:00:00";
+            return year + "-" + month + "-" + day + "T" + time;
         },
 
         /**
@@ -1242,7 +1248,7 @@
             if (t.length <= 5) {
                 t += ":00:00";
             }
-            return d.replace("00:00:00", t);
+            return d.substring(0, d.indexOf("T")+1) + t;
         },
 
         /**
