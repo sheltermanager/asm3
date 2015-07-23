@@ -399,6 +399,24 @@ def get_vaccinations_two_dates(dbo, dbstart, dbend, locationfilter = ""):
         "AND a.DeceasedDate Is Null %s %s %s " \
         "ORDER BY av.DateRequired, a.AnimalName" % (shelterfilter, ec, locationfilter))
 
+def get_vaccinations_expiring_two_dates(dbo, dbstart, dbend, locationfilter = ""):
+    """
+    Returns vaccinations expiring between two dates:
+    dbstart, dbend: ISO dates
+    locationfilter is a comma separated list of internal locations to include animals in
+    ID, ANIMALID, SHELTERCODE, ANIMALNAME, LOCATIONNAME, WEBSITEMEDIANAME, DATEREQUIRED, DATEOFVACCINATION, COMMENTS, VACCINATIONTYPE, VACCINATIONID
+    """
+    ec = " AND av.DateExpires >= '%s' AND av.DateExpires <= '%s'" % (dbstart, dbend)
+    if locationfilter != "":
+        locationfilter = " AND a.ShelterLocation IN (%s)" % locationfilter
+    shelterfilter = ""
+    if not configuration.include_off_shelter_medical(dbo):
+        shelterfilter = " AND (a.Archived = 0 OR a.ActiveMovementType = 2)"
+    return db.query(dbo, get_vaccination_query(dbo) + \
+        "WHERE av.DateExpires Is Not Null AND av.DateOfVaccination Is Not Null " \
+        "AND a.DeceasedDate Is Null %s %s %s " \
+        "ORDER BY av.DateExpires, a.AnimalName" % (shelterfilter, ec, locationfilter))
+
 def get_vacc_manufacturers(dbo):
     rows = db.query(dbo, "SELECT DISTINCT Manufacturer FROM animalvaccination WHERE Manufacturer Is Not Null AND Manufacturer <> '' ORDER BY Manufacturer")
     mf = []

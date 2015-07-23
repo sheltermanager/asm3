@@ -1898,6 +1898,16 @@ class calendarview:
                         "tooltip": tit, 
                         "icon": "vaccination",
                         "link": "animal_vaccination?id=%d" % v["ANIMALID"] })
+                for v in extmedical.get_vaccinations_expiring_two_dates(dbo, post["start"], post["end"], session.locationfilter):
+                    sub = "%s - %s" % (v["VACCINATIONTYPE"], v["ANIMALNAME"])
+                    tit = "%s - %s %s %s" % (v["VACCINATIONTYPE"], v["SHELTERCODE"], v["ANIMALNAME"], v["COMMENTS"])
+                    events.append({ 
+                        "title": sub, 
+                        "allDay": True, 
+                        "start": v["DATEEXPIRES"], 
+                        "tooltip": tit, 
+                        "icon": "vaccination",
+                        "link": "animal_vaccination?id=%d" % v["ANIMALID"] })
             if "m" in ev and users.check_permission_bool(session, users.VIEW_MEDICAL):
                 for m in extmedical.get_treatments_two_dates(dbo, post["start"], post["end"], session.locationfilter):
                     sub = "%s - %s" % (m["TREATMENTNAME"], m["ANIMALNAME"])
