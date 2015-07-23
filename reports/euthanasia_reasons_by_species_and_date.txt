@@ -11,8 +11,8 @@ en
 SELECT ReasonName, SpeciesName, COUNT(PTSReasonID) AS Total FROM animal 
 INNER JOIN deathreason ON deathreason.ID = PTSReasonID
 INNER JOIN species ON animal.SpeciesID = species.ID
-WHERE DeceasedDate BETWEEN '$ASK DATE Enter date from$' AND '$ASK DATE Enter date to$'
-AND PutToSleep = 1 AND NonShelterAnimal = 0
+WHERE DeceasedDate >= '$ASK DATE Enter date from$' AND DeceasedDate <= '$ASK DATE Enter date to$'
+AND PutToSleep = 1 AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0
 GROUP BY SpeciesName, ReasonName
 ORDER BY SpeciesName, ReasonName
 ###
