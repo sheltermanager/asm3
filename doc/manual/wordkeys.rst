@@ -67,8 +67,10 @@ BreedName
     The animal's breed. If the “Use single breed field” option is not set and
     the animal is a crossbreed, ASM will output the this field as "Breed 1 /
     Breed 2" to indicate that the animal is a cross of two breeds. 
-InternalLocation
+InternalLocation / LocationName
     The animal's location within the shelter 
+LocationDescription
+    The description field from the animal's internal location
 LocationUnit
     The location unit (eg, pen or cage number)
 DisplayLocation

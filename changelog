@@ -1,6 +1,7 @@
 37
 ================
 
+24/07/15 Add <<LocationDescription>> wordkey
 23/07/15 Default /32 for ip restrictions without CIDR mask
 23/07/15 Show expiring vaccinations on medical calendar #230
 23/07/15 date_iso includes times, fixes table date/time sorting #229

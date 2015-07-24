@@ -97,6 +97,8 @@ def animal_tags(dbo, a):
         "BASECOLORNAME"         : a["BASECOLOURNAME"],
         "BREEDNAME"             : a["BREEDNAME"],
         "INTERNALLOCATION"      : a["SHELTERLOCATIONNAME"],
+        "LOCATIONNAME"          : a["SHELTERLOCATIONNAME"],
+        "LOCATIONDESCRIPTION"   : a["SHELTERLOCATIONDESCRIPTION"],
         "LOCATIONUNIT"          : a["SHELTERLOCATIONUNIT"],
         "DISPLAYLOCATION"       : a["DISPLAYLOCATION"],
         "COATTYPE"              : a["COATTYPENAME"],

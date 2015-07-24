@@ -215,7 +215,9 @@ def get_animal_status_query(dbo):
     dummy = dbo
     return "SELECT a.ID, a.ShelterCode, a.ShortCode, a.AnimalName, a.DeceasedDate, a.PutToSleep, " \
         "dr.ReasonName AS PTSReasonName, " \
-        "il.LocationName AS ShelterLocationName, a.ShelterLocationUnit, " \
+        "il.LocationName AS ShelterLocationName, " \
+        "il.LocationDescription AS ShelterLocationDescription, " \
+        "a.ShelterLocationUnit, " \
         "a.NonShelterAnimal, a.DateBroughtIn, a.Archived, " \
         "a.ActiveMovementID, a.ActiveMovementDate, a.ActiveMovementType, a.ActiveMovementReturn, " \
         "a.HasActiveReserve, a.HasTrialAdoption, a.HasPermanentFoster, a.MostRecentEntryDate, a.DisplayLocation " \
