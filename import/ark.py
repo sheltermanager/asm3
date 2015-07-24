@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
-import dbfread, asm
+import asm
+from dbfread import DBF
 
 """
 Import script for ARK DBF databases, covers people, animals, payments, licences and complaints
@@ -8,7 +9,7 @@ Import script for ARK DBF databases, covers people, animals, payments, licences 
 21st March, 2015
 """
 
-PATH = "data/ark_fa0779"
+PATH = "data/ark_mc0834"
 
 owners = []
 ownerdonations = []
@@ -40,7 +41,7 @@ print "DELETE FROM ownerdonation WHERE ID >= 100;"
 print "DELETE FROM ownerlicence WHERE ID >= 100;"
 print "DELETE FROM adoption WHERE ID >= 100;"
 
-for p in dbfread.read("%s/NAMES.DBF" % PATH):
+for p in DBF("%s/NAMES.DBF" % PATH):
     o = asm.Owner()
     owners.append(o)
     ppo[p["ID"]] = o
@@ -56,7 +57,7 @@ for p in dbfread.read("%s/NAMES.DBF" % PATH):
     comments += "\n%s" % asm.nulltostr(p["NAMES_TXT"])
     o.Comments = comments
 
-for d in dbfread.read("%s/ANIMALS.DBF" % PATH):
+for d in DBF("%s/ANIMALS.DBF" % PATH):
     a = asm.Animal()
     animals.append(a)
     ppa[d["ID_NUM"]] = a
@@ -133,7 +134,7 @@ for d in dbfread.read("%s/ANIMALS.DBF" % PATH):
             a.ActiveMovementType = m.MovementType
             a.ActiveMovementDate = m.MovementDate
 
-for p in dbfread.read("%s/PAYMENTS.DBF" % PATH):
+for p in DBF("%s/PAYMENTS.DBF" % PATH):
     od = asm.OwnerDonation()
     ownerdonations.append(od)
     if ppo.has_key(p["PMNT_ID"]):
@@ -145,7 +146,7 @@ for p in dbfread.read("%s/PAYMENTS.DBF" % PATH):
         if p["PMNT_CODE"] == "ADP":
             od.DonationTypeID = 2
 
-for l in dbfread.read("%s/LICENSE.DBF" % PATH):
+for l in DBF("%s/LICENSE.DBF" % PATH):
     ol = asm.OwnerLicence()
     ownerlicences.append(ol)
     if ppo.has_key(l["OWNER_ID"]):
@@ -159,7 +160,7 @@ for l in dbfread.read("%s/LICENSE.DBF" % PATH):
         ol.ExpiryDate = l["LIC_EXDATE"]
         if ol.ExpiryDate is None: ol.ExpiryDate = asm.parse_date("2015-01-01", "%Y-%m-%d")
 
-for c in dbfread.read("%s/CMPLAINT.DBF" % PATH):
+for c in DBF("%s/CMPLAINT.DBF" % PATH, encoding="cp1252"):
     ac = asm.AnimalControl()
     animalcontrol.append(ac)
     if c["FROM_ID"] != "" and ppo.has_key(c["FROM_ID"]):
@@ -182,6 +183,7 @@ for c in dbfread.read("%s/CMPLAINT.DBF" % PATH):
     if c["OFFICER_ID"] != "": comments += "\nOfficer: %s" % c["OFFICER_ID"]
     if c["CITATION"] != "": comments += "\nCitation: %s" % c["CITATION"]
     if c["CMPL_TEXT"] != "": comments += "\nCompleted: %s" % c["CMPL_TEXT"]
+    if type(comments) == unicode: comments = comments.encode("ascii", "xmlcharrefreplace")
     ac.CallNotes = comments
 
 for a in animals:
