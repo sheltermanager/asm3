@@ -68,18 +68,22 @@ ASM allows you to add electronic signatures to documents. Signed documents are
 read only and cannot be edited. A cryptographic hash for the signed document is
 calculated and stored separately so that any future tampering can be detected.
 
-There are three methods of adding signatures to documents:
+There are multiple methods of adding signatures to documents:
 
-* "Sign" button in the media tab (using a touchscreen monitor, wacom
-  tablet, lightpen, other mouse-like device or if you are using a tablet
+* "Sign on screen" menu item in the media tab (using a touchscreen monitor,
+  wacom tablet, lightpen, other mouse-like device or if you are using a tablet
   computer)
 * "Signing Pad" mode of the mobile interface for any external
   touchscreen device (iPad, iPhone, Android phone/tablet, etc).
+* "Request signature by email" menu item in the media tab, which sends an email
+  to the recipient of your choice (defaults to the current person if this is
+  a person's media tab) with links for them to follow to sign the selected 
+  documents with their own touchscreen device.
 * A signature that has been pre-stored for the currently logged in user
   (necessary for a staff signature in addition to the main signatory).
 
-To use, select the documents you'd like to sign and use either the "Sign" or
-"Signing Pad" buttons on the media tab. ASM allows you to use any generic mouse
+To use, select the documents you'd like to sign and click the "Sign" dropdown
+on the toolbar of the media tab. ASM allows you to use any generic mouse
 or touchscreen hardware and mobile touchscreen devices as signing pads - you do
 not need to buy expensive custom hardware.
 
@@ -110,8 +114,8 @@ that the document has now been signed.
 Mobile Signing
 --------------
 
-The "Signing Pad" button allows you to mark the document for signing in the mobile
-interface. 
+The "Mobile signing pad" menu item allows you to mark the document for signing
+in the mobile interface. 
 
 If you visit ASM's mobile interface on any mobile/tablet device, you can use the
 "Signing Pad" link in the mobile interface to go into signing pad mode.

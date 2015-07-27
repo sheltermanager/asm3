@@ -1494,6 +1494,23 @@ class animal_media:
                 contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
                 utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], post["emailnote"], "plain", contentpdf, "document.pdf")
             return emailadd
+        elif mode == "emailsign":
+            users.check_permission(session, users.EMAIL_PERSON)
+            emailadd = post["email"]
+            if emailadd == "" or emailadd.find("@") == -1:
+                raise utils.ASMValidationError(_("Invalid email address", l))
+            body = []
+            body.append(post["emailnote"] + "\n\n")
+            for mid in post.integer_list("ids"):
+                m = extmedia.get_media_by_id(dbo, mid)
+                if len(m) == 0: raise web.notfound()
+                m = m[0]
+                if not m["MEDIANAME"].endswith("html"): continue
+                body.append(m["MEDIANOTES"])
+                body.append("%s?account=%s&method=sign_document&formid=%d" % (SERVICE_URL, dbo.database, mid))
+                body.append("")
+            utils.send_email(dbo, configuration.email(dbo), emailadd, "", _("Document signing request", l), "\n".join(body), "plain")
+            return emailadd
         elif mode == "sign":
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):
@@ -2803,6 +2820,23 @@ class foundanimal_media:
                 contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
                 utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], "", "plain", contentpdf, "document.pdf")
             return emailadd
+        elif mode == "emailsign":
+            users.check_permission(session, users.EMAIL_PERSON)
+            emailadd = post["email"]
+            if emailadd == "" or emailadd.find("@") == -1:
+                raise utils.ASMValidationError(_("Invalid email address", l))
+            body = []
+            body.append(post["emailnote"] + "\n\n")
+            for mid in post.integer_list("ids"):
+                m = extmedia.get_media_by_id(dbo, mid)
+                if len(m) == 0: raise web.notfound()
+                m = m[0]
+                if not m["MEDIANAME"].endswith("html"): continue
+                body.append(m["MEDIANOTES"])
+                body.append("%s?account=%s&method=sign_document&formid=%d" % (SERVICE_URL, dbo.database, mid))
+                body.append("")
+            utils.send_email(dbo, configuration.email(dbo), emailadd, "", _("Document signing request", l), "\n".join(body), "plain")
+            return emailadd
         elif mode == "sign":
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):
@@ -3196,6 +3230,23 @@ class incident_media:
                 content = dbfs.get_string(dbo, m["MEDIANAME"])
                 contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
                 utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], "", "plain", contentpdf, "document.pdf")
+            return emailadd
+        elif mode == "emailsign":
+            users.check_permission(session, users.EMAIL_PERSON)
+            emailadd = post["email"]
+            if emailadd == "" or emailadd.find("@") == -1:
+                raise utils.ASMValidationError(_("Invalid email address", l))
+            body = []
+            body.append(post["emailnote"] + "\n\n")
+            for mid in post.integer_list("ids"):
+                m = extmedia.get_media_by_id(dbo, mid)
+                if len(m) == 0: raise web.notfound()
+                m = m[0]
+                if not m["MEDIANAME"].endswith("html"): continue
+                body.append(m["MEDIANOTES"])
+                body.append("%s?account=%s&method=sign_document&formid=%d" % (SERVICE_URL, dbo.database, mid))
+                body.append("")
+            utils.send_email(dbo, configuration.email(dbo), emailadd, "", _("Document signing request", l), "\n".join(body), "plain")
             return emailadd
         elif mode == "sign":
             users.check_permission(session, users.CHANGE_MEDIA)
@@ -3642,6 +3693,23 @@ class lostanimal_media:
                 content = dbfs.get_string(dbo, m["MEDIANAME"])
                 contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
                 utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], "", "plain", contentpdf, "document.pdf")
+            return emailadd
+        elif mode == "emailsign":
+            users.check_permission(session, users.EMAIL_PERSON)
+            emailadd = post["email"]
+            if emailadd == "" or emailadd.find("@") == -1:
+                raise utils.ASMValidationError(_("Invalid email address", l))
+            body = []
+            body.append(post["emailnote"] + "\n\n")
+            for mid in post.integer_list("ids"):
+                m = extmedia.get_media_by_id(dbo, mid)
+                if len(m) == 0: raise web.notfound()
+                m = m[0]
+                if not m["MEDIANAME"].endswith("html"): continue
+                body.append(m["MEDIANOTES"])
+                body.append("%s?account=%s&method=sign_document&formid=%d" % (SERVICE_URL, dbo.database, mid))
+                body.append("")
+            utils.send_email(dbo, configuration.email(dbo), emailadd, "", _("Document signing request", l), "\n".join(body), "plain")
             return emailadd
         elif mode == "sign":
             users.check_permission(session, users.CHANGE_MEDIA)
@@ -5036,6 +5104,23 @@ class person_media:
                 contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
                 utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], post["emailnote"], "plain", contentpdf, "document.pdf")
             return emailadd
+        elif mode == "emailsign":
+            users.check_permission(session, users.EMAIL_PERSON)
+            emailadd = post["email"]
+            if emailadd == "" or emailadd.find("@") == -1:
+                raise utils.ASMValidationError(_("Invalid email address", l))
+            body = []
+            body.append(post["emailnote"] + "\n\n")
+            for mid in post.integer_list("ids"):
+                m = extmedia.get_media_by_id(dbo, mid)
+                if len(m) == 0: raise web.notfound()
+                m = m[0]
+                if not m["MEDIANAME"].endswith("html"): continue
+                body.append(m["MEDIANOTES"])
+                body.append("%s?account=%s&method=sign_document&formid=%d" % (SERVICE_URL, dbo.database, mid))
+                body.append("")
+            utils.send_email(dbo, configuration.email(dbo), emailadd, "", _("Document signing request", l), "\n".join(body), "plain")
+            return emailadd
         elif mode == "sign":
             users.check_permission(session, users.CHANGE_MEDIA)
             for mid in post.integer_list("ids"):
@@ -6278,6 +6363,23 @@ class waitinglist_media:
                 content = dbfs.get_string(dbo, m["MEDIANAME"])
                 contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
                 utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], "", "plain", contentpdf, "document.pdf")
+            return emailadd
+        elif mode == "emailsign":
+            users.check_permission(session, users.EMAIL_PERSON)
+            emailadd = post["email"]
+            if emailadd == "" or emailadd.find("@") == -1:
+                raise utils.ASMValidationError(_("Invalid email address", l))
+            body = []
+            body.append(post["emailnote"] + "\n\n")
+            for mid in post.integer_list("ids"):
+                m = extmedia.get_media_by_id(dbo, mid)
+                if len(m) == 0: raise web.notfound()
+                m = m[0]
+                if not m["MEDIANAME"].endswith("html"): continue
+                body.append(m["MEDIANOTES"])
+                body.append("%s?account=%s&method=sign_document&formid=%d" % (SERVICE_URL, dbo.database, mid))
+                body.append("")
+            utils.send_email(dbo, configuration.email(dbo), emailadd, "", _("Document signing request", l), "\n".join(body), "plain")
             return emailadd
         elif mode == "sign":
             users.check_permission(session, users.CHANGE_MEDIA)

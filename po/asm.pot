@@ -977,6 +977,10 @@ msgstr ""
 msgid "Alphabetically Z-A"
 msgstr ""
 
+#: service.py
+msgid "Already Signed"
+msgstr ""
+
 #: animal_new.js animal.js animal_find_results.js animal_bulk.js html.py
 msgid "Altered"
 msgstr ""
@@ -2301,7 +2305,7 @@ msgid "Class"
 msgstr ""
 
 #: common.js media.js common_animalchoosermulti.js common_personchooser.js
-#: common_animalchooser.js mobile.py onlineform.py
+#: common_animalchooser.js mobile.py service.py onlineform.py
 msgid "Clear"
 msgstr ""
 
@@ -3497,6 +3501,10 @@ msgstr ""
 msgid "Document file"
 msgstr ""
 
+#: code.py
+msgid "Document signing request"
+msgstr ""
+
 #: html.py
 msgid "Document templates"
 msgstr ""
@@ -3878,14 +3886,6 @@ msgstr ""
 msgid "Electricity Bills"
 msgstr ""
 
-#: media.js
-msgid "Electronically sign this document"
-msgstr ""
-
-#: media.js
-msgid "Electronically sign this document with the signing pad mobile interface"
-msgstr ""
-
 #: donations.js donation_receive.js move_reserve.js move_adopt.js
 #: move_reclaim.js
 msgid "Eligible for gift aid"
@@ -3919,6 +3919,10 @@ msgstr ""
 
 #: options.js
 msgid "Email address"
+msgstr ""
+
+#: media.js
+msgid "Email document for electronic signature"
 msgstr ""
 
 #: incident.js
@@ -6636,6 +6640,10 @@ msgstr ""
 msgid "Mobile"
 msgstr ""
 
+#: media.js
+msgid "Mobile signing pad"
+msgstr ""
+
 #: roles.js
 msgid "Modify Additional Fields"
 msgstr ""
@@ -7282,7 +7290,7 @@ msgstr ""
 msgid "Once assigned, codes cannot be changed"
 msgstr ""
 
-#: mobile.py
+#: mobile.py service.py
 msgid "Once signed, this document cannot be edited or tampered with."
 msgstr ""
 
@@ -7817,6 +7825,10 @@ msgstr ""
 
 #: media.js
 msgid "Please select a PDF, HTML or JPG image file to attach"
+msgstr ""
+
+#: media.js
+msgid "Please use the links below to electronically sign these documents."
 msgstr ""
 
 #: dbupdate.py
@@ -8520,6 +8532,10 @@ msgstr ""
 
 #: reports.js roles.js mobile.py html.py
 msgid "Reports"
+msgstr ""
+
+#: media.js
+msgid "Request signature by email"
 msgstr ""
 
 #: dbupdate.py
@@ -9416,12 +9432,16 @@ msgstr ""
 msgid "Sick/injured animal"
 msgstr ""
 
-#: media.js mobile.py
+#: media.js mobile.py service.py
 msgid "Sign"
 msgstr ""
 
 #: media.js
 msgid "Sign document"
+msgstr ""
+
+#: media.js
+msgid "Sign on screen"
 msgstr ""
 
 #: change_user_settings.js onlineform.js
@@ -9432,11 +9452,11 @@ msgstr ""
 msgid "Signed"
 msgstr ""
 
-#: mobile.py
+#: mobile.py service.py
 msgid "Signing"
 msgstr ""
 
-#: media.js mobile.py
+#: mobile.py service.py
 msgid "Signing Pad"
 msgstr ""
 
@@ -9560,6 +9580,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Sorrel Tortoiseshell"
+msgstr ""
+
+#: service.py
+msgid "Sorry, this document has already been signed"
 msgstr ""
 
 #: code.py
@@ -9885,6 +9909,10 @@ msgstr ""
 msgid "T = first letter of animal type"
 msgstr ""
 
+#: dbupdate.py
+msgid "TNR - Trap/Neuter/Release"
+msgstr ""
+
 #: options.js
 msgid "TT = first and second letter of animal type"
 msgstr ""
@@ -10017,6 +10045,10 @@ msgstr ""
 
 #: main.js
 msgid "Thank you for choosing Animal Shelter Manager for your shelter!"
+msgstr ""
+
+#: service.py
+msgid "Thank you, the document is now signed."
 msgstr ""
 
 #: animalcontrol.py
@@ -10930,6 +10962,14 @@ msgstr ""
 msgid "Transfer an animal"
 msgstr ""
 
+#: dbupdate.py
+msgid "Transfer from Municipal Shelter"
+msgstr ""
+
+#: dbupdate.py
+msgid "Transfer from Other Shelter"
+msgstr ""
+
 #: move_transfer.js
 msgid "Transfer successfully created."
 msgstr ""
@@ -11488,7 +11528,7 @@ msgstr ""
 msgid "View Diets"
 msgstr ""
 
-#: mobile.py
+#: mobile.py service.py
 msgid "View Document"
 msgstr ""
 

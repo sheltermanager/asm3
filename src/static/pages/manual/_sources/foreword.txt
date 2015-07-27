@@ -36,6 +36,9 @@ offers a whole host of features, including:
 * Form creation facilities for instant generation of adoption paperwork,
   reservation cards etc. 
 
+* Electronic signatures with any touchscreen hardware allow completely 
+  paper-free document archiving.
+
 * Web site generation to allow a wider audience to see your animals
 
 * Publishing to adoption websites, including PetFinder.com, AdoptAPet.com and
@@ -54,5 +57,7 @@ offers a whole host of features, including:
 
 * Bulk mail shotting, label printing and email facilities based on filtered
   criteria 
+
+* Customisable online forms for adopter/foster/volunteer applications, etc.
 
 

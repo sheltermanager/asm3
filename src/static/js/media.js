@@ -14,33 +14,6 @@ $(function() {
                 _("Please select a PDF, HTML or JPG image file to attach"),
                 '</p>',
                 '</div>',
-
-                '<div id="dialog-email" style="display: none" title="' + html.title(_("Email media"))  + '">',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="emailto">' + _("To") + '</label></td>',
-                '<td><input id="emailto" type="text" class="asm-doubletextbox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="emailnote">' + _("Message") + '</label></td>',
-                '<td><textarea id="emailnote" class="asm-textarea" rows="5"></textarea></td>',
-                '</tr>',
-                '</table>',
-                '</div>',
-
-                '<div id="dialog-emailpdf" style="display: none" title="' + html.title(_("Email PDF"))  + '">',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="emailpdfto">' + _("To") + '</label></td>',
-                '<td><input id="emailpdfto" type="text" class="asm-doubletextbox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="emailpdfnote">' + _("Message") + '</label></td>',
-                '<td><textarea id="emailpdfnote" class="asm-textarea" rows="5"></textarea></td>',
-                '</tr>',
-                '</table>',
-                '</div>',
-
                 '<div id="tipios6" class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
                 '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
                 _("You will need to upgrade to iOS 6 or higher to upload files."),
@@ -108,6 +81,56 @@ $(function() {
                 '</form>',
                 '</div>',
 
+                '<div id="dialog-email" style="display: none" title="' + html.title(_("Email media"))  + '">',
+                '<table width="100%">',
+                '<tr>',
+                '<td><label for="emailto">' + _("To") + '</label></td>',
+                '<td><input id="emailto" type="text" class="asm-doubletextbox" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="emailnote">' + _("Message") + '</label></td>',
+                '<td><textarea id="emailnote" class="asm-textarea" rows="5"></textarea></td>',
+                '</tr>',
+                '</table>',
+                '</div>',
+
+                '<div id="dialog-emailpdf" style="display: none" title="' + html.title(_("Email PDF"))  + '">',
+                '<table width="100%">',
+                '<tr>',
+                '<td><label for="emailpdfto">' + _("To") + '</label></td>',
+                '<td><input id="emailpdfto" type="text" class="asm-doubletextbox" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="emailpdfnote">' + _("Message") + '</label></td>',
+                '<td><textarea id="emailpdfnote" class="asm-textarea" rows="5"></textarea></td>',
+                '</tr>',
+                '</table>',
+                '</div>',
+
+                '<div id="dialog-emailsign" style="display: none" title="' + html.title(_("Email document for electronic signature"))  + '">',
+                '<table width="100%">',
+                '<tr>',
+                '<td><label for="emailsignto">' + _("To") + '</label></td>',
+                '<td><input id="emailsignto" type="text" class="asm-doubletextbox" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="emailsignnote">' + _("Message") + '</label></td>',
+                '<td><textarea id="emailsignnote" class="asm-textarea" rows="5"></textarea></td>',
+                '</tr>',
+                '</table>',
+                '</div>',
+
+                '<div id="button-sign-body" class="asm-menu-body">',
+                '<ul class="asm-menu-list">',
+                    '<li id="button-signscreen" class="asm-menu-item"><a '
+                        + '" href="#">' + html.icon("signature") + ' ' + _("Sign on screen") + '</a></li>',
+                    '<li id="button-signpad" class="sharebutton asm-menu-item"><a '
+                        + '" href="#">' + html.icon("mobile") + ' ' + _("Mobile signing pad") + '</a></li>',
+                    '<li id="button-signemail" class="sharebutton asm-menu-item"><a '
+                        + '" href="#">' + html.icon("email") + ' ' + _("Request signature by email") + '</a></li>',
+                '</ul>',
+                '</div>',
+
                 '<div id="dialog-sign" style="display: none" title="' + _("Sign document") + '">',
                 '<div id="signature" style="width: 500px; height: 200px;" />',
                 '</div>',
@@ -144,8 +167,7 @@ $(function() {
                 { id: "delete", text: _("Delete"), icon: "media-delete" },
                 { id: "email", text: _("Email"), icon: "email", tooltip: _("Email a copy of the selected media files") },
                 { id: "emailpdf", text: _("Email PDF"), icon: "pdf", tooltip: _("Email a copy of the selected HTML documents as PDFs") },
-                { id: "sign", text: _("Sign"), icon: "signature", tooltip: _("Electronically sign this document") },
-                { id: "signpad", text: _("Signing Pad"), icon: "mobile", tooltip: _("Electronically sign this document with the signing pad mobile interface") },
+                { id: "sign", text: _("Sign"), type: "buttonmenu", icon: "signature" },
                 { id: "rotateanti", icon: "rotate-anti", tooltip: _("Rotate image 90 degrees anticlockwise") },
                 { id: "rotateclock", icon: "rotate-clock", tooltip: _("Rotate image 90 degrees clockwise") },
                 { id: "web", icon: "web", tooltip: _("Make this the default image when viewing this record and publishing to the web") },
@@ -554,8 +576,7 @@ $(function() {
                 $("#button-rotateclock").button("option", "disabled", true); 
                 $("#button-email").button("option", "disabled", true); 
                 $("#button-emailpdf").button("option", "disabled", true); 
-                $("#button-sign").button("option", "disabled", true); 
-                $("#button-signpad").button("option", "disabled", true); 
+                $("#button-sign").addClass("ui-state-disabled").addClass("ui-button-disabled");
 
                 // Only allow the image preferred buttons to be pressed if the
                 // selection size is one and the selection is an image
@@ -610,8 +631,7 @@ $(function() {
                     var mname = $(this).parent().parent().find(".media-name").val();
                     var issigned = $(this).parent().find(".asm-icon-signature").length > 0;
                     if (media.is_extension(mname, "html") && !issigned ) {
-                        $("#button-sign").button("option", "disabled", false); 
-                        $("#button-signpad").button("option", "disabled", false); 
+                        $("#button-sign").removeClass("ui-state-disabled").removeClass("ui-button-disabled");
                     }
                 });
 
@@ -804,7 +824,7 @@ $(function() {
             $("#button-emailpdf").button({disabled: true}).click(function() {
                 // If we have a person, default the email address
                 if (controller.person) {
-                    $("#emailto").val(controller.person.EMAILADDRESS);
+                    $("#emailpdfto").val(controller.person.EMAILADDRESS);
                 }
                 tableform.show_okcancel_dialog("#dialog-emailpdf", _("Send"), { width: 550, notblank: [ "emailpdfto" ] })
                     .then(function() {
@@ -819,20 +839,48 @@ $(function() {
                     });
             });
 
-            $("#button-sign").button({disabled: true}).click(function() {
-                $("#dialog-sign").dialog("open");
+            $("#button-sign").asmmenu().addClass("ui-state-disabled").addClass("ui-button-disabled");
+
+            $("#button-signemail").click(function() {
+                $("#button-sign").asmmenu("hide_all");
+                // If we have a person, default the email address
+                if (controller.person) {
+                    $("#emailsignto").val(controller.person.EMAILADDRESS);
+                }
+                $("#emailsignnote").html( _("Please use the links below to electronically sign these documents.") );
+                tableform.show_okcancel_dialog("#dialog-emailsign", _("Send"), { width: 550, notblank: [ "emailsignto" ] })
+                    .then(function() {
+                        var formdata = "mode=emailsign&email=" + encodeURIComponent($("#emailsignto").val()) + 
+                            "&emailnote=" + encodeURIComponent($("#emailsignnote").val()) + 
+                            "&ids=" + $(".asm-mediaicons input").tableCheckedData();
+                        $("#dialog-emailsign").dialog("close");
+                        return common.ajax_post(controller.name, formdata);
+                    })
+                    .then(function(result) { 
+                        header.show_info(_("Email successfully sent to {0}").replace("{0}", result));
+                    });
+                return false;
             });
 
-            $("#button-signpad").button({disabled: true}).click(function() {
+
+            $("#button-signscreen").click(function() {
+                $("#button-sign").asmmenu("hide_all");
+                $("#dialog-sign").dialog("open");
+                return false;
+            });
+
+            $("#button-signpad").click(function() {
+                $("#button-sign").asmmenu("hide_all");
                 var formdata = "mode=signpad&ids=" + $(".asm-mediaicons input").tableCheckedData();
                 common.ajax_post(controller.name, formdata)
                     .then(function(result) {
                         header.show_info(_("Sent to mobile signing pad."));
                     });
+                return false;
             });
 
             if (controller.sigtype != "touch") {
-                $("#button-sign, #button-signpad").hide();
+                $("#button-sign").hide();
             }
 
             $("#button-rotateanti").button({disabled: true}).click(function() {
@@ -910,6 +958,7 @@ $(function() {
         destroy: function() {
             common.widget_destroy("#dialog-email");
             common.widget_destroy("#dialog-emailpdf");
+            common.widget_destroy("#dialog-emailsign");
             common.widget_destroy("#dialog-add");
             common.widget_destroy("#dialog-addlink");
             common.widget_destroy("#dialog-edit");
