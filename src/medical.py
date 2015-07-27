@@ -519,8 +519,11 @@ def update_test_today(dbo, username, testid, resultid):
     """
     db.execute(dbo, db.make_update_user_sql(dbo, "animaltest", username, "ID = %d" % testid, (
         ( "DateOfTest", db.dd(now(dbo.timezone)) ), 
-        ( "TestResultID", db.di(resultid) )
+        ( "TestResultID", db.di(resultid) ),
+        ( "LastChangedDate", db.ddt(now(dbo.timezone)) ), 
+        ( "LastChangedBy", db.ds(username) )
         )))
+    audit.edit(dbo, username, "animaltest", str(testid) + " => given " + str(db.dd(now(dbo.timezone))))
     # ASM2_COMPATIBILITY
     update_asm2_tests(dbo, testid)
 
@@ -530,8 +533,10 @@ def update_vaccination_today(dbo, username, vaccid):
     """
     db.execute(dbo, db.make_update_user_sql(dbo, "animalvaccination", username, "ID = %d" % vaccid, (
         ( "DateOfVaccination", db.dd(now(dbo.timezone)) ), 
-        None )
-        ))
+        ( "LastChangedDate", db.ddt(now(dbo.timezone)) ), 
+        ( "LastChangedBy", db.ds(username) )
+        )))
+    audit.edit(dbo, username, "animalvaccination", str(vaccid) + " => given " + str(db.dd(now(dbo.timezone))))
 
 def calculate_given_remaining(dbo, amid):
     """
@@ -547,14 +552,18 @@ def complete_vaccination(dbo, username, vaccinationid, newdate):
     """
     Marks a vaccination completed on newdate
     """
-    db.execute(dbo, "UPDATE animalvaccination SET DateOfVaccination = %s WHERE ID = %d" % ( db.dd(newdate), int(vaccinationid)))
+    db.execute(dbo, "UPDATE animalvaccination SET DateOfVaccination = %s, " \
+        "LastChangedBy = %s, LastChangedDate = %s WHERE ID = %d" % \
+        ( db.dd(newdate), db.ds(username), db.ddt(now(dbo.timezone)), db.di(vaccinationid)))
     audit.edit(dbo, username, "animalvaccination", str(vaccinationid) + " => given " + str(newdate))
 
 def complete_test(dbo, username, testid, newdate, testresult):
     """
     Marks a test performed on newdate with testresult
     """
-    db.execute(dbo, "UPDATE animaltest SET DateOfTest = %s, TestResultID = %d WHERE ID = %d" % ( db.dd(newdate), testresult, testid))
+    db.execute(dbo, "UPDATE animaltest SET DateOfTest = %s, " \
+        "LastChangedBy = %s, LastChangedDate = %s, TestResultID = %d WHERE ID = %d" % \
+        ( db.dd(newdate), db.ds(username), db.ddt(now(dbo.timezone)), testresult, testid))
     audit.edit(dbo, username, "animaltest", "%d => performed on %s (result: %d)" % (testid, str(newdate), testresult))
     # ASM2_COMPATIBILITY
     update_asm2_tests(dbo, testid)
