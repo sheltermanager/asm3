@@ -7,6 +7,11 @@
 
 <div class="detailbox">
 <b>
+<script>
+    if ('$$AnimalIsReserved$$' == 'Yes') {
+        document.write('<span class="reserved" title="Reserved"></span>');
+    }
+</script>
 <a href="javascript:show$$AnimalID$$()">$$AnimalName$$</a><br />
 $$Sex$$
 </b>
@@ -50,6 +55,7 @@ $$Sex$$
 <td></td>
 <td><span class="vgood">
 <script>
+    if ('$$AnimalIsReserved$$' == 'Yes') document.write("<b>Reserved</b><br />");
     if ('$$GoodWithCats$$' == 'Yes') document.write("Good with cats <br />");
     if ('$$GoodWithDogs$$' == 'Yes') document.write("Good with dogs <br />");
     if ('$$GoodWithChildren$$' == 'Yes') document.write("Good with children <br />");
