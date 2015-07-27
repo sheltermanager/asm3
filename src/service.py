@@ -25,6 +25,8 @@ import reports
 import smcom
 import users
 import utils
+from i18n import _
+from sitedefs import JQUERY_JS, JQUERY_UI_JS, MOMENT_JS, SIGNATURE_JS, TOUCHPUNCH_JS
 from sitedefs import BASE_URL, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, CACHE_SERVICE_RESPONSES, IMAGE_HOTLINKING_ONLY_FROM_DOMAIN
 
 # Service methods that require authentication
@@ -90,6 +92,100 @@ def set_cached_response(cache_key, mime, clientage, serverage, content):
     #al.debug("PUT: %s (%d bytes)" % (cache_key, len(content)), "service.set_cached_response")
     cachedisk.put(cache_key, response, serverage)
     return response
+
+def sign_document_page(dbo, mid):
+    """
+    Outputs a page that allows signing of document mid
+    """
+    l = dbo.locale
+    if media.has_signature(dbo, mid):
+        return "<!DOCTYPE html><head><title>%s</title></head>" \
+            "<body><p>%s</p></body></html>" % \
+            ( _("Already Signed", l), _("Sorry, this document has already been signed", l))
+    h = []
+    h.append("""<!DOCTYPE html>
+    <html>
+    <head>
+    <title>
+    %(title)s
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    %(css)s
+    %(scripts)s
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#signature").signature({ guideline: true });
+            $("#sig-clear").click(function() {
+                $("#signature").signature("clear");
+            });
+            $("#sig-sign").click(function() {
+                var img = $("#signature canvas").get(0).toDataURL("image/png");
+                var formdata = "account=%(account)s&method=sign_document&formid=%(id)s&sig=" + encodeURIComponent(img);
+                formdata += "&signdate=" + encodeURIComponent(moment().format("YYYY-MM-DD HH:mm:ss"));
+                $.ajax({
+                    type: "POST",
+                    url: "service",
+                    data: formdata,
+                    dataType: "text",
+                    mimeType: "textPlain",
+                    success: function(response) {
+                        $("body").empty().append("<p>%(thankyou)s</p>");
+                    },
+                    error: function(jqxhr, textstatus, response) {
+                        $("body").append("<p>" + response + "</p>");
+                    }
+                });
+            });
+            $("#reviewlink").click(function() { 
+                $("#reviewlink").fadeOut();
+                $("#review").slideDown(); 
+            });
+        });
+    </script>
+    <style>
+    button { 
+        padding: 10px; 
+        font-size: 100%%; 
+    }
+    #signature { 
+        border: 1px solid #aaa; 
+        height: 200px; 
+        width: 100%%;
+        max-width: 500px;
+    }
+    </style>
+    </head>
+    <body>
+    """ % {
+        "title":    _("Signing Pad", l),
+        "id":       mid,
+        "account":  dbo.database,
+        "css":      html.asm_css_tag("asm-icon.css"),
+        "thankyou": _("Thank you, the document is now signed.", l),
+        "scripts":  html.script_tag(JQUERY_JS) + html.script_tag(JQUERY_UI_JS) + 
+            html.script_tag(TOUCHPUNCH_JS) + html.script_tag(SIGNATURE_JS) + html.script_tag(MOMENT_JS)
+    })
+    d = []
+    docnotes = []
+    docnotes.append(media.get_notes_for_id(dbo, int(mid)))
+    mdate, medianame, mimetype, contents = media.get_media_file_data(dbo, int(mid))
+    d.append(contents)
+    d.append("<hr />")
+    h.append("<p><b>%s: %s</b></p>" % (_("Signing", l), ", ".join(docnotes)))
+    h.append('<p><a id="reviewlink" href="#">%s</a></p>' % _("View Document", l))
+    h.append('<div id="review" style="display: none">')
+    h.append("\n".join(d))
+    h.append('</div>')
+    h.append('<div id="signature"></div>')
+    h.append('<p>')
+    h.append('<button id="sig-clear" type="button">' + _("Clear", l) + '</button>')
+    h.append('<button id="sig-sign" type="button">' + _("Sign", l) + '</button>')
+    h.append('</p>')
+    h.append('<p>')
+    h.append(_("Once signed, this document cannot be edited or tampered with.", l))
+    h.append('</p>')
+    h.append("</body></html>")
+    return "\n".join(h)
 
 def handler(post, remoteip, referer):
     """
@@ -265,6 +361,15 @@ def handler(post, remoteip, referer):
         if redirect == "":
             redirect = BASE_URL + "/static/pages/form_submitted.html"
         return ("redirect", 0, redirect)
+
+    elif method == "sign_document":
+        if formid == 0:
+            raise utils.ASMError("method sign_document requires a valid formid")
+        if post["sig"] == "":
+            return set_cached_response(cache_key, "text/html", 60, 60, sign_document_page(dbo, formid))
+        else:
+            media.sign_document(dbo, "service", formid, post["sig"], post["signdate"])
+            return ("text/plain", 0, "OK")
 
     else:
         al.error("invalid method '%s'" % method, "service.handler", dbo)
