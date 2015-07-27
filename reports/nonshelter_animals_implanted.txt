@@ -13,7 +13,7 @@ a.IdentichipDate, a.IdentichipNumber,
 o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone
 FROM animal a
 INNER JOIN species s ON s.ID = a.SpeciesID
-INNER JOIN owner o ON o.ID = a.OriginalOwnerID
+LEFT OUTER JOIN owner o ON o.ID = a.OriginalOwnerID
 WHERE a.NonShelterAnimal = 1  AND a.Identichipped = 1 AND a.IdentichipNumber <> '' 
 AND a.IdentichipDate >= '$ASK DATE Enter the from date$' AND a.IdentichipDate <= '$ASK DATE Enter the to date$'
 ORDER BY a.IdentichipDate

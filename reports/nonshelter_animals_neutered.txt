@@ -13,7 +13,7 @@ a.NeuteredDate,
 o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone
 FROM animal a
 INNER JOIN species s ON s.ID = a.SpeciesID
-INNER JOIN owner o ON o.ID = a.OriginalOwnerID
+LEFT OUTER JOIN owner o ON o.ID = a.OriginalOwnerID
 WHERE a.NonShelterAnimal = 1  AND a.Neutered = 1 
 AND a.NeuteredDate >= '$ASK DATE Enter the from date$' AND a.NeuteredDate <= '$ASK DATE Enter the to date$'
 ORDER BY a.NeuteredDate
