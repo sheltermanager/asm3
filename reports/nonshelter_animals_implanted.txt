@@ -1,0 +1,51 @@
+Non-shelter animals chipped between two dates
+###
+Medical
+###
+Any
+###
+Non-shelter animals implanted with microchips between two dates.
+###
+en
+###
+SELECT a.ID AS AID, a.ShelterCode, a.AnimalName, s.SpeciesName, a.BreedName, a.DateOfBirth, a.AnimalAge,
+a.IdentichipDate, a.IdentichipNumber, 
+o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone
+FROM animal a
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN owner o ON o.ID = a.OriginalOwnerID
+WHERE a.NonShelterAnimal = 1  AND a.Identichipped = 1 AND a.IdentichipNumber <> '' 
+AND a.IdentichipDate >= '$ASK DATE Enter the from date$' AND a.IdentichipDate <= '$ASK DATE Enter the to date$'
+ORDER BY a.IdentichipDate
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Date</th>
+<th>Animal</th>
+<th>Species</th>
+<th>Breed</th>
+<th>DOB</th>
+<th>Number</th>
+<th>Owner</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$IDENTICHIPDATE</td>
+<td><a target="_blank" href="animal?id=$AID">$SHELTERCODE $ANIMALNAME</a></td>
+<td>$SPECIESNAME</td>
+<td>$BREEDNAME</td>
+<td>$DATEOFBIRTH ($ANIMALAGE)</td>
+<td>$IDENTICHIPNUMBER</td>
+<td><b>$OWNERNAME</b><br/>
+$OWNERADDRESS<br />
+$OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br />
+$HOMETELEPHONE</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

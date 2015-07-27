@@ -1,0 +1,49 @@
+Non-shelter animals neutered/spayed between two dates
+###
+Medical
+###
+Any
+###
+Non-shelter animals neutered/spayed between two dates.
+###
+en
+###
+SELECT a.ID AS AID, a.ShelterCode, a.AnimalName, s.SpeciesName, a.BreedName, a.DateOfBirth, a.AnimalAge,
+a.NeuteredDate,
+o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone
+FROM animal a
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN owner o ON o.ID = a.OriginalOwnerID
+WHERE a.NonShelterAnimal = 1  AND a.Neutered = 1 
+AND a.NeuteredDate >= '$ASK DATE Enter the from date$' AND a.NeuteredDate <= '$ASK DATE Enter the to date$'
+ORDER BY a.NeuteredDate
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Date</th>
+<th>Animal</th>
+<th>Species</th>
+<th>Breed</th>
+<th>DOB</th>
+<th>Owner</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$NEUTEREDDATE</td>
+<td><a target="_blank" href="animal?id=$AID">$SHELTERCODE $ANIMALNAME</a></td>
+<td>$SPECIESNAME</td>
+<td>$BREEDNAME</td>
+<td>$DATEOFBIRTH ($ANIMALAGE)</td>
+<td><b>$OWNERNAME</b><br/>
+$OWNERADDRESS<br />
+$OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br />
+$HOMETELEPHONE</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

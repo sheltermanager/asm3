@@ -1,10 +1,10 @@
-Medical, Vaccination and Tests due between two dates
+Non-shelter animal medical treatments between two dates
 ###
-Diary
+Medical
 ###
-3309/Any
+33503/Any
 ###
-Medical, vaccination and tests due between two dates in one report
+Non-shelter animal vaccinations, treatments and tests administered between two dates
 ###
 en
 ###
@@ -16,76 +16,82 @@ SELECT * FROM
 
 SELECT
 'Medical' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID,
-t.AnimalType, s.SpeciesName, il.LocationName, 
+a.BreedName, s.SpeciesName, il.LocationName, 
 am.TreatmentName, am.Dosage, amt.TreatmentNumber, 
-amt.TotalTreatments, amt.DateRequired, am.Comments
+amt.TotalTreatments, amt.DateGiven, am.Comments,
+o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone
 FROM animal a
-INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN species s ON s.ID = a.SpeciesID
 INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 INNER JOIN animalmedical am ON a.ID = am.AnimalID
 INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID
-WHERE amt.DateGiven Is Null 
-AND amt.DateRequired >= '$@from$' AND amt.DateRequired <= '$@to$'
-AND a.Archived = 0 AND a.DeceasedDate Is Null
+INNER JOIN owner o ON a.OriginalOwnerID = o.ID
+WHERE amt.DateGiven Is Not Null 
+AND amt.DateGiven >= '$@from$' AND amt.DateGiven <= '$@to$'
+AND a.NonShelterAnimal = 1
 
 UNION SELECT
 'Vaccination' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
-t.AnimalType, sp.SpeciesName, il.LocationName,
+a.BreedName, sp.SpeciesName, il.LocationName,
 v.VaccinationType AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber,
-'1' AS TotalTreatments, av.DateRequired, av.Comments
+'1' AS TotalTreatments, av.DateOfVaccination AS DateGiven, av.Comments,
+o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone
 FROM animal a
-INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN animalvaccination av ON a.ID = av.AnimalID
 INNER JOIN species sp ON sp.ID = a.SpeciesID
 INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID
 INNER JOIN internallocation il ON il.ID = a.ShelterLocation
-WHERE av.DateOfVaccination Is Null
-AND av.DateRequired >= '$@from$' AND av.DateRequired <= '$@to$'
-AND a.Archived = 0 AND a.DeceasedDate Is Null
+INNER JOIN owner o ON a.OriginalOwnerID = o.ID
+WHERE av.DateOfVaccination Is Not Null
+AND av.DateOfVaccination >= '$@from$' AND av.DateOfVaccination <= '$@to$'
+AND a.NonShelterAnimal = 1
 
 UNION SELECT
 'Test' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
-t.AnimalType, sp.SpeciesName, il.LocationName,
+a.BreedName, sp.SpeciesName, il.LocationName,
 tt.TestName AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber,
-'1' AS TotalTreatments, at.DateRequired, at.Comments
+'1' AS TotalTreatments, at.DateOfTest AS DateGiven, at.Comments,
+o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone
 FROM animal a
-INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN animaltest at ON a.ID = at.AnimalID
 INNER JOIN species sp ON sp.ID = a.SpeciesID
 INNER JOIN testtype tt ON at.TestTypeID = tt.ID
 INNER JOIN internallocation il ON il.ID = a.ShelterLocation
-WHERE at.DateOfTest Is Null
-AND at.DateRequired >= '$@from$' AND at.DateRequired <= '$@to$'
-AND a.Archived = 0 AND a.DeceasedDate Is Null
+INNER JOIN owner o ON a.OriginalOwnerID = o.ID
+WHERE at.DateOfTest Is Not Null
+AND at.DateOfTest >= '$@from$' AND at.DateOfTest <= '$@to$'
+AND a.NonShelterAnimal = 1
 
 ) dummy
-ORDER BY DateRequired
+ORDER BY DateGiven
 
 ###
 $$HEADER
 <table border=1><tr>
+<td><b>Date</b></td>
 <td><b>Animal</b></td>
-<td><b>Type</b></td>
 <td><b>Species</b></td>
-<td><b>Internal Loc</b></td>
+<td><b>Breed</b></td>
+<td><b>Owner</b></td>
 <td><b>Therapy</b></td>
 <td><b>Dosage</b></td>
 <td><b>Number</b></td>
-<td><b>Date Required</b></td>
 <td><b>Comments</b></td>
 </tr>
 HEADER$$
 
 $$BODY<tr>
+<td>$DATEGIVEN</td>
 <td><a target="_blank" href="animal?id=$AID">$SHELTERCODE $ANIMALNAME</a></td>
-<td>$ANIMALTYPE</td>
 <td>$SPECIESNAME</td>
-<td>$LOCATIONNAME</td>
+<td>$BREEDNAME</td>
+<td><b>$OWNERNAME</b><br/>
+$OWNERADDRESS<br />
+$OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br />
+$HOMETELEPHONE</td>
 <td><b>$MTYPE: $TREATMENTNAME</b></td>
 <td>$DOSAGE</td>
 <td>$TREATMENTNUMBER / $TOTALTREATMENTS</td>
-<td>$DATEREQUIRED</td>
 <td>$COMMENTS</td>
 </tr>
 BODY$$
