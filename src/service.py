@@ -366,7 +366,7 @@ def handler(post, remoteip, referer):
         if formid == 0:
             raise utils.ASMError("method sign_document requires a valid formid")
         if post["sig"] == "":
-            return set_cached_response(cache_key, "text/html", 60, 60, sign_document_page(dbo, formid))
+            return set_cached_response(cache_key, "text/html", 2, 2, sign_document_page(dbo, formid))
         else:
             media.sign_document(dbo, "service", formid, post["sig"], post["signdate"])
             return ("text/plain", 0, "OK")
