@@ -552,9 +552,9 @@ def complete_vaccination(dbo, username, vaccinationid, newdate):
     """
     Marks a vaccination completed on newdate
     """
-    db.execute(dbo, "UPDATE animalvaccination SET DateOfVaccination = %s, " \
-        "LastChangedBy = %s, LastChangedDate = %s WHERE ID = %d" % \
-        ( db.dd(newdate), db.ds(username), db.ddt(now(dbo.timezone)), db.di(vaccinationid)))
+    db.execute(dbo, "UPDATE animalvaccination SET DateOfVaccination = %d, " \
+        "LastChangedBy = %s, LastChangedDate = %s WHERE ID = %s" % \
+        ( db.dd(newdate), db.ds(username), db.ddt(now(dbo.timezone)), vaccinationid))
     audit.edit(dbo, username, "animalvaccination", str(vaccinationid) + " => given " + str(newdate))
 
 def complete_test(dbo, username, testid, newdate, testresult):
