@@ -7,7 +7,7 @@ $(function() {
         render: function() {
             var h = [
                 '<div id="asm-login-nav" style="display: none">',
-                    '<a href="mobile_login">' + _("Mobile") + '</a>',
+                    '<a href="mobile_login' + (controller.smaccount ? '?smaccount=' + controller.smaccount : '') + '">' + _("Mobile") + '</a>',
                     '<img id="flag" />',
                 '</div>',
                 '<img id="qr" align="right" style="display: none" />',
@@ -150,7 +150,7 @@ $(function() {
                             common.local_delete("asmaccount");
                         }
                         $("#asm-login-window").fadeOut("slow", function() {
-                            if (controller.target == "") { 
+                            if (!controller.target) { 
                                 controller.target = "main"; 
                             }
                             window.location = controller.target;
@@ -244,7 +244,7 @@ $(function() {
             if (controller.multipledatabases) {
                 $(".asm-account-row").show();
                 $("input#database").focus();
-                if (controller.smaccount != "") {
+                if (controller.smaccount) {
                     $("#database").val(controller.smaccount);
                     $("input#username").focus();
                 }
@@ -255,13 +255,13 @@ $(function() {
             }
 
             // If we were passed a username, stick it in
-            if (controller.husername != "") {
+            if (controller.husername) {
                 $("input#username").val(controller.husername);
             }
 
             // If we were passed a password, copy it in and
             // might as well try and authenticate too
-            if (controller.hpassword != "") {
+            if (controller.hpassword) {
                 $("input#password").val(controller.hpassword);
                 $("#loginbutton").button();
                 self.login();
