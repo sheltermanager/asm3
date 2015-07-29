@@ -31,7 +31,7 @@ DB_HOST = "localhost"
 DB_PORT = 3306
 DB_USERNAME = "root"
 DB_PASSWORD = "root"
-DB_NAME = "asm"
+DB_NAME = "asm2"
 
 # If you want to maintain compatibility with an ASM2 client
 # accessing your database, setting this will have ASM3

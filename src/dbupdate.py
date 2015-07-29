@@ -1313,7 +1313,7 @@ def sql_default_data(dbo, skip_config = False):
     def lookup2money(tablename, tid, name, money = 0):
         return "INSERT INTO %s VALUES (%s, '%s', '%s', %d)|=\n" % ( tablename, str(tid), db.escape(name), "", money)
     def account(tid, code, desc, atype, dtype, ctype):
-        return "INSERT INTO accounts VALUES (%s, '%s', '%s', 0, %s, %s, %s, 0, '%s', %s, '%s', %s)|=\n" % ( str(tid), db.escape(code), db.escape(desc), str(atype), str(dtype), str(ctype), 'default', db.todaysql(), 'default', db.todaysql())
+        return "INSERT INTO accounts VALUES (%s, '%s', '%s', 0, %s, %s, %s, 0, '%s', %s, '%s', %s)|=\n" % ( str(tid), db.escape(code), db.escape(desc), str(atype), str(ctype), str(dtype), 'default', db.todaysql(), 'default', db.todaysql())
     def breed(tid, name, petfinder, speciesid):
         return "INSERT INTO breed VALUES (%s, '%s', '', '%s', %s)|=\n" % ( str(tid), db.escape(name), petfinder, str(speciesid) )
     def basecolour(tid, name, adoptapet):
