@@ -2,6 +2,7 @@
 
 import audit
 import db
+import i18n
 import utils
 from i18n import _, now 
 
@@ -50,12 +51,14 @@ def get_stock_items(dbo):
     """
     Returns a set of stock items.
     """
-    rows = db.query(dbo, "SELECT stocklevel.BatchNumber, stocklevel.ID, %s AS ItemName FROM stocklevel " \
-        "INNER JOIN stocklocation ON stocklocation.ID = stocklevel.StockLocationID " \
-        "WHERE Balance > 0 " \
-        "ORDER BY StockLocationID, Name" % db.concat(dbo, 
-            ("stocklocation.LocationName", "' - '", "stocklevel.Name", "' '", "stocklevel.BatchNumber", 
-             "' ('", "stocklevel.Balance", "'/'", "stocklevel.Total", "')'")))
+    rows = db.query(dbo, "SELECT sv.*, sl.LocationName " \
+        "FROM stocklevel sv " \
+        "INNER JOIN stocklocation sl ON sl.ID = sv.StockLocationID " \
+        "WHERE sv.Balance > 0 " \
+        "ORDER BY sv.StockLocationID, sv.Name")
+    for r in rows:
+        r["ITEMNAME"] = "%s - %s %s %s (%g/%g)" % (r["LOCATIONNAME"], r["NAME"], r["BATCHNUMBER"], 
+            i18n.python2display(dbo.locale, r["EXPIRY"]), r["BALANCE"], r["TOTAL"])
     return rows
 
 def get_stock_locations_totals(dbo):

@@ -152,7 +152,8 @@ $(function() {
                         $("#testresult").select("firstvalue");
                         $("#usagetype").select("firstvalue");
                         $("#usagedate").datepicker("setDate", new Date());
-                        $("#quantity").val("1");
+                        $("#usagedate").closest("tr").hide();
+                        $("#quantity").val("0");
                         $("#dialog-given").dialog("open");
                      }
                  },
@@ -300,6 +301,7 @@ $(function() {
             givenbuttons[_("Save")] = function() {
                 $("#dialog-given label").removeClass("ui-state-error-text");
                 if (!validate.notblank([ "newdate" ])) { return; }
+                $("#usagedate").val($("#newdate").val()); // copy given to usage
                 $("#dialog-given").disable_dialog_buttons();
                 var ids = tableform.table_ids(table);
                 common.ajax_post(controller.name, $("#dialog-given .asm-field").toPOST() + "&mode=perform&ids=" + ids)

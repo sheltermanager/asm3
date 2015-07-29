@@ -84,6 +84,8 @@ $(function() {
             var buttons = [
                 { id: "new", text: _("New Stock"), icon: "new", enabled: "always", perm: "asl", 
                     click: function() { stocklevel.new_level(); }},
+                { id: "clone", text: _("Clone"), icon: "copy", enabled: "one", perm: "asl",
+                    click: function() { stocklevel.clone_level(); }},
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dsl", 
                      click: function() { 
                          tableform.delete_dialog()
@@ -146,6 +148,39 @@ $(function() {
             }, function() {
                 stocklevel.show_usage_fields();
                 $("#usagetype").select("firstvalue");
+            });
+        },
+
+        clone_level: function() { 
+            var dialog = stocklevel.dialog, table = stocklevel.table;
+            $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
+            tableform.dialog_show_add(dialog, function() {
+                tableform.fields_post(dialog.fields, "mode=create", "stocklevel", function(response) {
+                    // If more than one record was created, reload the screen
+                    if ($("#quantity").val() != "1") {
+                        tableform.dialog_close();
+                        common.route_reload();
+                    }
+                    else {
+                        var row = {};
+                        row.ID = response;
+                        tableform.fields_update_row(dialog.fields, row);
+                        stocklevel.set_extra_fields(row);
+                        controller.rows.push(row);
+                        tableform.table_update(table);
+                        tableform.dialog_close();
+                    }
+                }, function() {
+                    tableform.dialog_enable_buttons();   
+                });
+            }, function() {
+                 var row = tableform.table_selected_row(table);
+                 tableform.fields_populate_from_json(dialog.fields, row);
+                 $("#name").val(_("Copy of {0}").replace("{0}", $("#name").val()));
+                stocklevel.show_usage_fields();
+                $("#usagetype").select("firstvalue");
+                $("#usagedate").datepicker("setDate", new Date());
+                $("#quantity").val("1"); 
             });
         },
 

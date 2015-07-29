@@ -1,6 +1,10 @@
 37
 ================
 
+29/07/15 Default given quantity to 0 in given dialogs #123
+29/07/15 Omit usage date from given dialogs as same as given #123
+29/07/15 Include expiry date when listing stock items in give dialogs #123
+29/07/15 Add stock cloning #123
 27/07/15 Fixed "give"ing a vacc/test to stamp the correct user on timeline
 27/07/15 Add ability to request electronic signature by email #210
 24/07/15 Add <<LocationDescription>> wordkey
