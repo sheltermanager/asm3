@@ -2,9 +2,8 @@
 
 import audit
 import db
-import i18n
 import utils
-from i18n import _, now 
+from i18n import _, now, python2display
 
 def get_stocklevel_query(dbo):
     return "SELECT s.*, s.ID AS SLID, l.LocationName AS StockLocationName " \
@@ -58,7 +57,7 @@ def get_stock_items(dbo):
         "ORDER BY sv.StockLocationID, sv.Name")
     for r in rows:
         r["ITEMNAME"] = "%s - %s %s %s (%g/%g)" % (r["LOCATIONNAME"], r["NAME"], r["BATCHNUMBER"], 
-            i18n.python2display(dbo.locale, r["EXPIRY"]), r["BALANCE"], r["TOTAL"])
+            python2display(dbo.locale, r["EXPIRY"]), r["BALANCE"], r["TOTAL"])
     return rows
 
 def get_stock_locations_totals(dbo):

@@ -532,9 +532,7 @@ def update_vaccination_today(dbo, username, vaccid):
     Marks a vaccination record as given today. 
     """
     db.execute(dbo, db.make_update_user_sql(dbo, "animalvaccination", username, "ID = %d" % vaccid, (
-        ( "DateOfVaccination", db.dd(now(dbo.timezone)) ), 
-        ( "LastChangedDate", db.ddt(now(dbo.timezone)) ), 
-        ( "LastChangedBy", db.ds(username) )
+        ( "DateOfVaccination", db.dd(now(dbo.timezone)) ),
         )))
     audit.edit(dbo, username, "animalvaccination", str(vaccid) + " => given " + str(db.dd(now(dbo.timezone))))
 
