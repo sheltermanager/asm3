@@ -960,7 +960,7 @@ def calc_days_on_shelter(dbo, animalid, a = None):
     """
     stop = now()
     if a is None:
-        a = db.query(dbo, "SELECT MostRecentEntryDate, DeceasedDate, ActiveMovementDate FROM animal WHERE ID = %d" % animalid)
+        a = db.query(dbo, "SELECT Archived, MostRecentEntryDate, DeceasedDate, ActiveMovementDate FROM animal WHERE ID = %d" % animalid)
         if len(a) == 0: return
         a = a[0]
 
@@ -970,7 +970,7 @@ def calc_days_on_shelter(dbo, animalid, a = None):
     # use that date as our cutoff instead
     if a["DECEASEDDATE"] is not None:
         stop = a["DECEASEDDATE"]
-    elif a["ACTIVEMOVEMENTDATE"] is not None:
+    elif a["ACTIVEMOVEMENTDATE"] is not None and a["ARCHIVED"] == 1:
         stop = a["ACTIVEMOVEMENTDATE"]
 
     return date_diff_days(mre, stop)
