@@ -16,28 +16,30 @@ $VAR patt STRING Enter a pattern to match the source brought in by name or blank
 SELECT * FROM (
 
 SELECT council.OwnerName AS coun,
-CAST('Intake' AS varchar) AS heading,
+'Intake: ' || er.ReasonName AS heading,
 CAST('Cats' AS varchar) AS species,
 1 AS theorder,
 COUNT(DISTINCT animal.id) AS val
 FROM animal
+INNER JOIN entryreason er ON animal.EntryReasonID = er.ID
 INNER JOIN owner council ON animal.BroughtInByOwnerID = council.ID
 WHERE SpeciesID = 2
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$'
 AND UPPER(council.ownername) LIKE '%$@patt$%'
-GROUP BY coun
+GROUP BY coun, heading
 
 UNION SELECT council.OwnerName AS coun,
-CAST('Intake' AS varchar) AS heading,
+'Intake: ' || er.ReasonName AS heading,
 CAST('Dogs' AS varchar) AS species,
 1 AS theorder,
 COUNT(DISTINCT animal.id) AS val
 FROM animal
+INNER JOIN entryreason er ON animal.EntryReasonID = er.ID
 INNER JOIN owner council ON animal.BroughtInByOwnerID = council.ID
 WHERE SpeciesID = 1
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$'
 AND UPPER(council.ownername) LIKE '%$@patt$%'
-GROUP BY coun
+GROUP BY coun, heading
 
 UNION SELECT council.OwnerName AS coun, 
 CAST('Reclaimed' AS varchar) AS heading, 
