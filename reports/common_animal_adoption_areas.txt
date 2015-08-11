@@ -46,13 +46,13 @@ $$FOOTER
 FOOTER$$
 
 &&&
-Common Animal Entry Areas
+Common Animal Adoption Areas
 ###
 Statistics
 ###
 PostgreSQL
 ###
-The most common areas which animals enter the shelter from.
+The most common areas which animals are adopted to.
 ###
 en
 ###
