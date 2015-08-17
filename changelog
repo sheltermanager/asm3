@@ -1,6 +1,7 @@
 37
 ================
 
+17/08/15 Weight was not defaulting to a float when it should
 03/08/15 Make DaysOnShelter logic match TimeOnShelter
 29/07/15 Default given quantity to 0 in given dialogs #123
 29/07/15 Omit usage date from given dialogs as same as given #123

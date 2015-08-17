@@ -304,7 +304,7 @@ def sql_structure(dbo):
         fstr("ShelterLocationUnit", True),
         fint("DiedOffShelter"),
         fint("Size"),
-        fint("Weight", True),
+        ffloat("Weight", True),
         fstr("RabiesTag", True),
         fint("Archived"),
         fint("ActiveMovementID"),
