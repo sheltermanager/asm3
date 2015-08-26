@@ -19,7 +19,8 @@ from cStringIO import StringIO
 
 VALID_FIELDS = [
     "ANIMALNAME", "ANIMALSEX", "ANIMALTYPE", "ANIMALCOLOR", "ANIMALBREED1", 
-    "ANIMALBREED2", "ANIMALDOB", "ANIMALLOCATION", "ANIMALSPECIES", "ANIMALAGE", 
+    "ANIMALBREED2", "ANIMALDOB", "ANIMALLOCATION", "ANIMALUNIT", 
+    "ANIMALSPECIES", "ANIMALAGE", 
     "ANIMALCOMMENTS", "ANIMALNEUTERED", "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", 
     "ANIMALENTRYDATE", "ANIMALDECEASEDDATE", "ANIMALCODE",
     "ANIMALREASONFORENTRY", "ANIMALHIDDENDETAILS", "ANIMALNOTFORADOPTION",
@@ -303,6 +304,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
             a["internallocation"] = gkl(dbo, row, "ANIMALLOCATION", "internallocation", "LocationName", createmissinglookups)
             if a["internallocation"] == "0":
                 a["internallocation"] = str(configuration.default_location(dbo))
+            a["unit"] = gks(row, "ANIMALUNIT")
             a["comments"] = gks(row, "ANIMALCOMMENTS")
             a["hiddenanimaldetails"] = gks(row, "ANIMALHIDDENDETAILS")
             a["healthproblems"] = gks(row, "ANIMALHEALTHPROBLEMS")
