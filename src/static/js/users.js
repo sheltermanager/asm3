@@ -127,7 +127,7 @@ $(function() {
                  },
                  { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
                      click: function() { 
-                         tableform.delete_dialog()
+                         tableform.delete_dialog(null, _("This will permanently remove the selected user accounts. Are you sure?"))
                              .then(function() {
                                  tableform.buttons_default_state(buttons);
                                  var ids = tableform.table_ids(table);

@@ -1,6 +1,7 @@
 37
 ================
 
+26/08/15 Use clearer message when removing user accounts
 26/08/15 Add ANIMALUNIT to csv import fields #240
 17/08/15 Weight was not defaulting to a float when it should
 03/08/15 Make DaysOnShelter logic match TimeOnShelter
