@@ -684,7 +684,7 @@ def scale_pdf(filedata):
     inputfile.close()
     outputfile.close()
     scale_pdf_file(inputfile.name, outputfile.name)
-    f = open(outputfile.name, "r")
+    f = open(outputfile.name, "rb")
     compressed = f.read()
     f.close()
     os.unlink(inputfile.name)
