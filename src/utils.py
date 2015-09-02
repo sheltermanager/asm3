@@ -801,11 +801,13 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
     usetls = False
     if SMTP_SERVER is None:
         server = configuration.smtp_server(dbo)
+        port = configuration.smtp_port(dbo)
         username = configuration.smtp_server_username(dbo)
         password = configuration.smtp_server_password(dbo) 
         usetls = configuration.smtp_server_tls(dbo)
     else:
         server = SMTP_SERVER["host"]
+        port = SMTP_SERVER["port"]
         username = SMTP_SERVER["username"]
         password = SMTP_SERVER["password"]
         usetls = SMTP_SERVER["usetls"]
@@ -816,7 +818,7 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
         tolist += [strip_email(x) for x in ccadd.split(",")]
 
     try:
-        smtp = smtplib.SMTP(server)
+        smtp = smtplib.SMTP(server, port)
         if usetls:
             smtp.starttls()
         if password.strip() != "":

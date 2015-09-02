@@ -236,6 +236,7 @@ DEFAULTS = {
     "ShowPersonMiniMap": "Yes",
     "ShowSearchGo": "No", 
     "ShowWeightInLbs": "Yes",
+    "SMTPPort": "25",
     "StickyTableHeaders": "Yes",
     "SystemTheme": "smoothness",
     "TableHeadersVisible": "Yes",
@@ -896,6 +897,9 @@ def smdb_locked(dbo):
 
 def smtp_server(dbo):
     return cstring(dbo, "SMTPServer")
+
+def smtp_port(dbo):
+    return cint(dbo, "SMTPPort", DEFAULTS["SMTPPort"])
 
 def smtp_server_username(dbo):
     return cstring(dbo, "SMTPServerUsername")

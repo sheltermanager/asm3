@@ -27,6 +27,8 @@ ANIMALAGE
     The animal's current age in years. ASM will calculate a date of birth from this during import if ANIMALDOB is not supplied or blank.
 ANIMALLOCATION
     The animal's location within your shelter. This should correspond to a location in your database.
+ANIMALUNIT
+    The unit within the animal's location within the shelter, eg: pen/cage number.
 ANIMALSPECIES
     The animal's species. This should match a species in your database.
 ANIMALHOUSETRAINED

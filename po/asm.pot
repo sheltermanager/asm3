@@ -2318,7 +2318,7 @@ msgid "Clear tables before importing"
 msgstr ""
 
 #: onlineforms.js document_templates.js reports.js staff_rota.js animal.js
-#: roles.js
+#: stocklevel.js roles.js
 msgid "Clone"
 msgstr ""
 
@@ -2532,7 +2532,7 @@ msgstr ""
 msgid "Copy from animal comments"
 msgstr ""
 
-#: reports.js roles.js animal.py onlineform.py
+#: reports.js stocklevel.js roles.js animal.py onlineform.py
 msgid "Copy of {0}"
 msgstr ""
 
@@ -8847,6 +8847,10 @@ msgid "SMTP password"
 msgstr ""
 
 #: options.js
+msgid "SMTP port"
+msgstr ""
+
+#: options.js
 msgid "SMTP server"
 msgstr ""
 
@@ -10718,6 +10722,10 @@ msgstr ""
 
 #: roles.js
 msgid "This will permanently remove the selected roles, are you sure?"
+msgstr ""
+
+#: users.js
+msgid "This will permanently remove the selected user accounts. Are you sure?"
 msgstr ""
 
 #: accounts.js
