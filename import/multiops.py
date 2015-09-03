@@ -108,7 +108,7 @@ for d in asm.csv_to_list("%s/animal.csv" % PATH):
         elif d["AGE"].find("M") != -1:
             dob = asm.subtract_days(dob, asm.atoi(d["AGE"]) * 30)
     a.DateOfBirth = dob
-    if d["EUTH_USD"] > 0:
+    if asm.atoi(d["EUTH_USD"]) > 0:
         a.PutToSleep = 1
         a.Archived = 1
         a.DeceasedDate = asm.getdate_mmddyy(d["DATE_DISPO"])
