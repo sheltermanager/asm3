@@ -1,6 +1,7 @@
 37
 ================
 
+04/09/15 Changing unit should also write log entry #241
 04/09/15 Make global search obey permissions #245
 02/09/15 Option to set SMTP port
 26/08/15 Use clearer message when removing user accounts

@@ -1889,19 +1889,25 @@ def update_animal_from_form(dbo, post, username):
         if deceaseddate is not None and datebroughtin != None and deceaseddate < datebroughtin:
             raise utils.ASMValidationError(_("Animal cannot be deceased before it was brought to the shelter", l))
 
-    # If the option is on and the internal location has changed, log it
-    oldlocid = db.query_int(dbo, "SELECT ShelterLocation FROM animal WHERE ID=%d" % ki("id"))
-    if configuration.location_change_log(dbo) and ki("location") != oldlocid:
-        oldlocation = db.query_string(dbo, "SELECT LocationName FROM internallocation WHERE ID = %d" % oldlocid)
-        newlocation = db.query_string(dbo, "SELECT LocationName FROM internallocation WHERE ID = %d" % ki("location"))
-        log.add_log(dbo, username, log.ANIMAL, ki("id"), configuration.location_change_log_type(dbo), 
-            _("{0} {1}: Moved from {2} to {3}", l).format(ks("sheltercode"), ks("animalname"), oldlocation, newlocation))
+    # If the option is on and the internal location/unit has changed, log it
+    if configuration.location_change_log(dbo):
+        oldloc = db.query(dbo, "SELECT ShelterLocation, ShelterLocationUnit FROM animal WHERE ID=%d" % ki("id"))
+        if ki("location") != oldloc["SHELTERLOCATION"] or ks("unit") != oldloc["SHELTERLOCATIONUNIT"]:
+            oldlocation = db.query_string(dbo, "SELECT LocationName FROM internallocation WHERE ID = %d" % oldloc["SHELTERLOCATION"])
+            if oldloc["SHELTERLOCATIONUNIT"] is not None and oldloc["SHELTERLOCATIONUNIT"] != "":
+                oldlocation += " " + oldloc["SHELTERLOCATIONUNIT"]
+            newlocation = db.query_string(dbo, "SELECT LocationName FROM internallocation WHERE ID = %d" % ki("location"))
+            if ks("unit") != "":
+                newlocation += " " + ks("unit")
+            log.add_log(dbo, username, log.ANIMAL, ki("id"), configuration.location_change_log_type(dbo), 
+                _("{0} {1}: Moved from {2} to {3}", l).format(ks("sheltercode"), ks("animalname"), oldlocation, newlocation))
 
     # If the option is on and the weight has changed, log it
-    oldweight = db.query_float(dbo, "SELECT Weight FROM animal WHERE ID=%d" % ki("id"))
-    if configuration.weight_change_log(dbo) and kf("weight") != oldweight:
-        log.add_log(dbo, username, log.ANIMAL, ki("id"), configuration.weight_change_log_type(dbo),
-            str(kf("weight")))
+    if configuration.weight_change_log(dbo):
+        oldweight = db.query_float(dbo, "SELECT Weight FROM animal WHERE ID=%d" % ki("id"))
+        if kf("weight") != oldweight:
+            log.add_log(dbo, username, log.ANIMAL, ki("id"), configuration.weight_change_log_type(dbo),
+                str(kf("weight")))
 
     preaudit = db.query(dbo, "SELECT * FROM animal WHERE ID = %d" % ki("id"))
     db.execute(dbo, db.make_update_user_sql(dbo, "animal", username, "ID=%d" % ki("id"), (
