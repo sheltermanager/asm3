@@ -3,9 +3,7 @@
 import asm, os
 
 """
-Import script for Multiple Options SQL->MDB->CSV databases, covers people, animals, payments, licences and complaints.
-
-Multiple Options appears to be a rebranding of Ark, which uses SQL Server as a backend instead of DBF.
+Import script for Ark CSV, covers people, animals, payments, licences and complaints.
 
 2nd Sep, 2015
 """
