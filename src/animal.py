@@ -1889,18 +1889,21 @@ def update_animal_from_form(dbo, post, username):
         if deceaseddate is not None and datebroughtin != None and deceaseddate < datebroughtin:
             raise utils.ASMValidationError(_("Animal cannot be deceased before it was brought to the shelter", l))
 
-    # If the option is on and the internal location/unit has changed, log it
+    # If the option is on and the internal location or unit has changed, log it
     if configuration.location_change_log(dbo):
         oldloc = db.query(dbo, "SELECT ShelterLocation, ShelterLocationUnit FROM animal WHERE ID=%d" % ki("id"))
-        if ki("location") != oldloc["SHELTERLOCATION"] or ks("unit") != oldloc["SHELTERLOCATIONUNIT"]:
-            oldlocation = db.query_string(dbo, "SELECT LocationName FROM internallocation WHERE ID = %d" % oldloc["SHELTERLOCATION"])
-            if oldloc["SHELTERLOCATIONUNIT"] is not None and oldloc["SHELTERLOCATIONUNIT"] != "":
-                oldlocation += " " + oldloc["SHELTERLOCATIONUNIT"]
-            newlocation = db.query_string(dbo, "SELECT LocationName FROM internallocation WHERE ID = %d" % ki("location"))
-            if ks("unit") != "":
-                newlocation += " " + ks("unit")
-            log.add_log(dbo, username, log.ANIMAL, ki("id"), configuration.location_change_log_type(dbo), 
-                _("{0} {1}: Moved from {2} to {3}", l).format(ks("sheltercode"), ks("animalname"), oldlocation, newlocation))
+        if len(oldloc) > 0:
+            oldlocid = oldloc[0]["SHELTERLOCATION"]
+            oldlocunit = oldloc[0]["SHELTERLOCATIONUNIT"]
+            if ki("location") != oldlocid or ks("unit") != oldlocunit:
+                oldlocation = db.query_string(dbo, "SELECT LocationName FROM internallocation WHERE ID = %d" % oldlocid)
+                if oldlocunit is not None and oldlocunit != "":
+                    oldlocation += "-" + oldlocunit
+                newlocation = db.query_string(dbo, "SELECT LocationName FROM internallocation WHERE ID = %d" % ki("location"))
+                if ks("unit") != "":
+                    newlocation += "-" + ks("unit")
+                log.add_log(dbo, username, log.ANIMAL, ki("id"), configuration.location_change_log_type(dbo), 
+                    _("{0} {1}: Moved from {2} to {3}", l).format(ks("sheltercode"), ks("animalname"), oldlocation, newlocation))
 
     # If the option is on and the weight has changed, log it
     if configuration.weight_change_log(dbo):
