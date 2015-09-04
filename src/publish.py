@@ -237,6 +237,8 @@ def get_animal_data_query(dbo, pc):
         sql += " AND (a.IsHold = 0 OR a.IsHold Is Null)"
     if not pc.includeQuarantine:
         sql += " AND (a.IsQuarantine = 0 OR a.IsQuarantine Is Null)"
+    if not pc.includeTrial:
+        sql += " AND a.HasTrialAdoption = 0"
     # Make sure animal is old enough
     exclude = i18n.now()
     exclude -= datetime.timedelta(days=pc.excludeUnderWeeks * 7)
