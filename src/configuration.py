@@ -808,6 +808,9 @@ def petrescue_user(dbo):
 def petrescue_password(dbo):
     return cstring(dbo, "PetRescueFTPPassword")
 
+def petrescue_location_regionid(dbo):
+    return cboolean(dbo, "PetRescueLocationRegionID", "No")
+
 def pets911_user(dbo):
     return cstring(dbo, "Pets911FTPUser")
 

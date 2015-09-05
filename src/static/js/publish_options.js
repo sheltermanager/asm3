@@ -477,6 +477,13 @@ $(function() {
                 '<td><label for="prftppass">PetRescue password</label></td>',
                 '<td><input id="prftppass" type="text" class="asm-textbox cfg" data="PetRescueFTPPassword" /></td>',
                 '</tr>',
+                '<tr>',
+                '<td><label for="prregion">Send internal locations as region IDs</label></td>',
+                '<td><select id="prregion" class="asm-selectbox cfg" data="PetRescueLocationRegionID">',
+                '<option value="No">' + _("No") + '</option>',
+                '<option value="Yes">' + _("Yes") + '</option>',
+                '</select></td>',
+                '</tr>',
                 '</table>',
                 '</div>'
             ].join("\n");

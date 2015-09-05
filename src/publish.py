@@ -3299,6 +3299,12 @@ class PetRescuePublisher(FTPPublisher):
                 line.append("\"%s\"" % accountid)
                 # RegionID
                 regionid = "1"
+                # If the option is on, look for a region id in the location name
+                # and if one can't be found, fall back to ASM's internal location id
+                if configuration.petrescue_location_regionid(self.dbo):
+                    regionid = utils.atoi(an["SHELTERLOCATIONNAME"])
+                    if regionid == 0:
+                        regionid = an["SHELTERLOCATION"]
                 line.append("\"%s\"" % regionid)
                 # ID
                 line.append("\"%d\"" % an["ID"])

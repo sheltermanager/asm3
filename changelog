@@ -1,6 +1,7 @@
 37
 ================
 
+05/09/15 Option to send numeric location prefix as regionID to petrescue #242
 05/09/15 Allow standard flags as filters on staff rota screen #246
 05/09/15 Refactor publisher to output species/type/number simultaneously #243
 05/09/15 Publisher can output pages by animal type #243

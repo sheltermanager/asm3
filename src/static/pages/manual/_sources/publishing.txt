@@ -96,16 +96,23 @@ feed readers.
 * Thumbnail size: The desired length in pixels of the longest side of the
   thumbnail.
 
-* Split pages with a baby/adult prefix: If this option is selected, ASM will
-  output pages in the form baby/adultSPECIES.EXTENSION. Eg: babyCat.html and
-  adultCat.html for cats/kittens. This option only works with the Split pages
-  with a species name prefix option.
+* Output a separate page for each animal type: Output extra pages of the form
+  ANIMALTYPE.EXTENSION, eg: Miscellaneous.html. This means you can reference
+  the page of miscellaneous animals only from your website. If you have used
+  any punctuation or spaces in the animal type, then they will be turned into
+  to underscores. For example, a type of "D (Dog)" will create a page called
+  D__Dog_.html
 
-* Split baby/adult age at: The split point to determine juvenile animals.
-
-* Split pages with a species name prefix: Output pages of the form
+* Output a separate page for each species: Output extra pages of the form
   SPECIES.EXTENSION, eg: Dog.html. This means you can reference the page of
   adoptable dogs only from your website.
+
+* Split species pages with a baby/adult prefix: If this option is selected, ASM
+  will output species pages in the form baby/adultSPECIES.EXTENSION. Eg:
+  babyCat.html and adultCat.html for cats/kittens. This option only works in
+  conjunction with the "Output a separate page for each species" option.
+
+* Split baby/adult age at: The split point to determine juvenile animals.
 
 * Output an adopted animals page: If set to yes, a file named adopted.EXTENSION
   will be output that you can use to reference recently adopted animals.
@@ -128,11 +135,11 @@ feed readers.
   header/footer/body elements of the pages. ASM comes with a set of included
   templates, outlined in the next section.
 
-* Animals per page: If you don't have split pages by species, ASM will output
-  numbered pages, 1.EXTENSION, 2.EXTENSION, etc. Specify here how many animals
-  you'd like before moving on to the next page. By default, the system shows
-  10, however the more animals you put on a page, the longer the page will take
-  to load.
+* Animals per page: ASM will always output numbered pages of the form
+  1.EXTENSION, 2.EXTENSION, etc. Specify here how many animals you'd like
+  before moving on to the next page. By default, the system shows 10 animals
+  per page, however the more animals you put on a page, the longer the page
+  will take to load.
 
 * Scale published images to: Modern digital cameras can take very high quality
   images - so much so that they could take a very long time for users to
@@ -291,6 +298,15 @@ to you by PetRescue.com.au and your password. All you need to do then is choose
 Publish to PetRescue.com.au in place of the normal internet publisher. The
 options for filtering animals are the same (see previous section for
 reference).
+
+PetRescue has an additional option you can set for "Send internal locations as
+region IDs". By default the PetRescue publisher sends regionID as 1 (the
+default if you do not have separate regions registered with PetRescue). If you
+turn this option on, ASM will look at the internal location of each animal and
+if there's a numeric prefix on the location name, that number will be sent as
+the regionID. The number itself is evaluated so you can pad the numbers with
+leading zeroes for readability if you prefer. This feature is aimed at small
+foster-based rescue groups who operate in multiple areas.
 
 .. note:: If you have created new Species or Breeds within ASM, you will need to map them to the available publisher options under the Breed and Species sections of :menuselection:`Settings->Lookup Data`. If you have some that are not mapped, the publisher will fail with an error message.
 
