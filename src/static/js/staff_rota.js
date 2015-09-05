@@ -261,8 +261,11 @@ $(function() {
         sync: function() {
             // Load the full set of flags into the select
             html.person_flag_options(null, controller.flags, $("#flags"), false);
-            // Now remove the volunteer and staff ones as they're a given for anything to appear
-            $("#flags option[value='staff'], #flags option[value='volunteer']").remove();
+            // Now remove irrelevant built in flags (staff/volunteer are a given,
+            // banned, donor, deceased and homechecked don't make sense)
+            $.each([ "staff", "volunteer", "banned", "deceased", "donor", "homechecked" ], function(i, v) {
+                $("#flags option[value='" + v + "']").remove();
+            });
             $("#flags").change();
             // Mark set any that were passed during page load
             if (controller.flagsel) {
