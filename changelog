@@ -1,6 +1,7 @@
 37
 ================
 
+05/09/15 Allow standard flags as filters on staff rota screen #246
 05/09/15 Refactor publisher to output species/type/number simultaneously #243
 05/09/15 Publisher can output pages by animal type #243
 05/09/15 Improve unit display/performance with fewer queries and animal info

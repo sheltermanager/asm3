@@ -42,10 +42,7 @@ $(function() {
                     { id: "next", icon: "rotate-clock", tooltip: _("Week beginning {0}").replace("{0}", format.date(controller.nextdate)) },
                     { id: "clone", text: _("Clone"), icon: "copy", perm: 'aoro', tooltip: _("Clone the rota this week to another week") },
                     { id: "delete", text: _("Delete"), icon: "delete", perm: 'doro', tooltip: _("Delete all rota entries for this week") },
-                    { type: "raw", markup: '<span style="float: right">' +
-                        '<select id="flags" multiple="multiple" class="asm-bsmselect">' +
-                        html.list_to_options(controller.flags, "FLAG", "FLAG") +
-                        '</select></span>' }
+                    { type: "raw", markup: '<span style="float: right"><select id="flags" multiple="multiple" class="asm-bsmselect"></select></span>' }
                 ]),
                 '<table class="asm-staff-rota">',
                 '<thead></thead>',
@@ -262,6 +259,12 @@ $(function() {
         },
 
         sync: function() {
+            // Load the full set of flags into the select
+            html.person_flag_options(null, controller.flags, $("#flags"), false);
+            // Now remove the volunteer and staff ones as they're a given for anything to appear
+            $("#flags option[value='staff'], #flags option[value='volunteer']").remove();
+            $("#flags").change();
+            // Mark set any that were passed during page load
             if (controller.flagsel) {
                 $.each(controller.flagsel.split("|"), function(i, v) {
                     $("#flags option[value='" + v + "']").prop("selected", true); 
