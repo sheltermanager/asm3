@@ -1589,16 +1589,26 @@ def get_recent_with_name(dbo, name):
 
 def get_units_with_availability(dbo, locationid):
     """
-    Returns a list of location units for location id
-    each one has a pipe delimiter and 1 for free/available,
-    0 for unavailable.
+    Returns a list of location units for location id.
+    The layout of each element is unit|shortcode|sheltercode|animalname
+    a blank in any of the shortcode/sheltercode/name fields means the unit is free
     """
     a = []
     units = db.query_string(dbo, "SELECT Units FROM internallocation WHERE ID = %d" % utils.cint(locationid)).split(",")
+    animals = db.query(dbo, "SELECT a.AnimalName, a.ShortCode, a.ShelterCode, a.ShelterLocationUnit " \
+        "FROM animal a WHERE a.Archived = 0 AND ShelterLocation = %d" % utils.cint(locationid))
     for u in units:
+        if u == "": continue
         uname = u.strip().replace("'", "`")
-        ainu = db.query_int(dbo, "SELECT COUNT(*) FROM animal WHERE Archived = 0 AND ShelterLocationUnit LIKE '%s'" % uname)
-        a.append( "%s|%d" % (uname, ainu == 0 and 1 or 0 ))
+        sheltercode = ""
+        shortcode = ""
+        animalname = ""
+        for n in animals:
+            if utils.nulltostr(n["SHELTERLOCATIONUNIT"]).strip().lower() == uname.strip().lower():
+                sheltercode = n["SHELTERCODE"]
+                shortcode = n["SHORTCODE"]
+                animalname = n["ANIMALNAME"]
+        a.append( "%s|%s|%s|%s" % (uname, shortcode, sheltercode, animalname) )
     return a
 
 def get_publish_history(dbo, animalid):
