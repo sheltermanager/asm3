@@ -206,6 +206,7 @@ DEFAULTS = {
         "MembershipNumber,IsBanned,IDCheck,OwnerAddress," \
         "OwnerTown,OwnerCounty,OwnerPostcode,HomeTelephone,WorkTelephone," \
         "MobileTelephone,EmailAddress",
+    "PetRescueLocationRegionID": "No",
     "PicturesInBooks": "Yes",
     "PDFInline": "Yes",
     "PublisherUseComments": "Yes",
