@@ -7449,6 +7449,14 @@ msgid "Output a page with links to available online forms"
 msgstr ""
 
 #: publish_options.js
+msgid "Output a separate page for each animal type"
+msgstr ""
+
+#: publish_options.js
+msgid "Output a separate page for each species"
+msgstr ""
+
+#: publish_options.js
 msgid "Output an adopted animals page"
 msgstr ""
 
@@ -9649,11 +9657,7 @@ msgid "Split baby/adult age at"
 msgstr ""
 
 #: publish_options.js
-msgid "Split pages with a baby/adult prefix"
-msgstr ""
-
-#: publish_options.js
-msgid "Split pages with a species name prefix"
+msgid "Split species pages with a baby/adult prefix"
 msgstr ""
 
 #: dbupdate.py

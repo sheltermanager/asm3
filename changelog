@@ -1,6 +1,8 @@
 37
 ================
 
+05/09/15 Refactor publisher to output species/type/number simultaneously #243
+05/09/15 Publisher can output pages by animal type #243
 05/09/15 Improve unit display/performance with fewer queries and animal info
 04/09/15 Publishing, trial adoptions can be included without option #235
 04/09/15 Changing unit should also write log entry #241

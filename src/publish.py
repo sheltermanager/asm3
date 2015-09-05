@@ -63,7 +63,8 @@ class PublishCriteria:
     animalsPerPage = 10
     htmlByChildAdult = False # True if html pages should be prefixed baby/adult_ and split
     childAdultSplit=26 # Number of weeks before an animal is treated as an adult by the child adult publisher
-    htmlBySpecies = False # True if html pages should be prefixed with species name and split
+    htmlBySpecies = False # True if html pages should be output with species name and possibly split by age
+    htmlByType = False # True if html pages should be output with type name
     outputAdopted = False # True if html publisher should output an adopted.html page
     outputAdoptedDays = 30 # The number of days to go back when considering adopted animals
     outputForms = False # True if html publisher should output a forms.html page
@@ -114,6 +115,7 @@ class PublishCriteria:
             if s == "uploaddirectly": self.uploadDirectly = True
             if s == "htmlbychildadult": self.htmlByChildAdult = True
             if s == "htmlbyspecies": self.htmlBySpecies = True
+            if s == "htmlbytype": self.htmlByType = True
             if s == "outputadopted": self.outputAdopted = True
             if s == "outputforms": self.outputForms = True
             if s == "outputrss": self.outputRSS = True
@@ -155,6 +157,7 @@ class PublishCriteria:
         if self.checkSocket: s += " checksocket"
         if self.uploadDirectly: s += " uploaddirectly"
         if self.htmlBySpecies: s += " htmlbyspecies"
+        if self.htmlByType: s += " htmlbytype"
         if self.htmlByChildAdult: s += " htmlbychildadult"
         if self.outputAdopted: s += " outputadopted"
         if self.outputForms: s += " outputforms"
@@ -1903,6 +1906,12 @@ class HTMLPublisher(FTPPublisher):
                 configuration.ftp_host(dbo), configuration.ftp_user(dbo), configuration.ftp_password(dbo),
                 configuration.ftp_port(dbo), configuration.ftp_root(dbo), configuration.ftp_passive(dbo))
 
+    def escapePageName(self, s):
+        suppress = [ " ", "(", ")", "/", "\\", "!", "?", "*" ]
+        for x in suppress:
+            s = s.replace(x, "_")
+        return s
+
     def getPathFromStyle(self):
         """
         Looks at the publishing criteria and returns a DBFS path to get
@@ -2022,10 +2031,11 @@ class HTMLPublisher(FTPPublisher):
         if self.isPublisherExecuting(): return
         self.updatePublisherProgress(0)
         self.setStartPublishing()
+        self.executePages()
         if self.pc.htmlByChildAdult or self.pc.htmlBySpecies:
             self.executeAgeSpecies(self.user, self.pc.htmlByChildAdult, self.pc.htmlBySpecies)
-        else:
-            self.executePages()
+        if self.pc.htmlByType:
+            self.executeType(self.user)
         if self.pc.outputAdopted:
             self.executeAdoptedPage()
         if self.pc.outputForms:
@@ -2153,14 +2163,6 @@ class HTMLPublisher(FTPPublisher):
             self.setLastError("Failed opening FTP socket.")
             return
 
-        # Clear any existing uploaded images
-        if self.pc.forceReupload:
-            self.clearExistingImages()
-
-        # Clear any existing uploaded pages
-        if self.pc.clearExisting: 
-            self.clearExistingHTML()
-            
         try:
             animals = self.getMatchingAnimals()
             self.totalAnimals = len(animals)
@@ -2244,7 +2246,7 @@ class HTMLPublisher(FTPPublisher):
                 pages[allpage] = page
                 
                 # Mark success in the log
-                self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                self.log("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
 
             except Exception,err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
@@ -2255,19 +2257,12 @@ class HTMLPublisher(FTPPublisher):
         # Upload the pages
         for k, v in pages.iteritems():
             self.log("Saving page to disk: %s (%d bytes)" % (k, len(v + footer)))
-            self.saveFile(os.path.join(self.publishDir, k), v + footer)
+            self.saveFile(os.path.join(self.publishDir, self.escapePageName(k)), v + footer)
             self.log("Saved page to disk: %s" % k)
             if self.pc.uploadDirectly:
                 self.log("Uploading page: %s" % k)
-                self.upload(k)
+                self.upload(self.escapePageName(k))
                 self.log("Uploaded page: %s" % k)
-
-        # Handle javascript db
-        if self.pc.generateJavascriptDB:
-            self.writeJavaScript(animals)
-
-        # Save any additional images required by the template
-        self.saveTemplateImages()
 
     def executePages(self):
         """
@@ -2486,6 +2481,110 @@ class HTMLPublisher(FTPPublisher):
             self.log("Uploading page: %s" % thisPageName)
             self.upload(thisPageName)
             self.log("Uploaded page: %s" % thisPageName)
+
+    def executeType(self, user):
+        """
+        Publisher that puts animals on pages by type
+        """
+        self.log("HTMLPublisher (type) starting...")
+
+        l = self.dbo.locale
+        normHeader = self.getHeader()
+        normFooter = self.getFooter()
+        body = self.getBody()
+        header = self.substituteHFTag(normHeader, 0, user, i18n._("Available for adoption", l))
+        footer = self.substituteHFTag(normFooter, 0, user, i18n._("Available for adoption", l))
+
+        # Open FTP socket, bail if it fails
+        if not self.openFTPSocket():
+            self.setLastError("Failed opening FTP socket.")
+            return
+
+        try:
+            animals = self.getMatchingAnimals()
+            self.totalAnimals = len(animals)
+
+            anCount = 0
+            pages = {}
+
+            # Create default pages for every possible permutation
+            defaultpages = []
+            atype = lookups.get_animal_types(self.dbo)
+            for atype in lookups.get_animal_types(self.dbo):
+                defaultpages.append(atype["ANIMALTYPE"])
+            for dp in defaultpages:
+                pages[dp + "." + self.pc.extension] = header
+
+            # Create an all page
+            allpage = "all." + self.pc.extension
+            pages[allpage] = header
+
+        except Exception, err:
+            self.logError("Error setting up page: %s" % err, sys.exc_info())
+            self.setLastError("Error setting up page: %s" % err)
+            return
+
+        for an in animals:
+            try:
+                anCount += 1
+
+                # If a limit was set, stop now
+                if self.pc.limit > 0 and anCount > self.pc.limit:
+                    self.log("Hit publishing limit of %d animals. Stopping." % self.pc.limit)
+                    break
+
+                self.log("Processing: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, self.totalAnimals))
+                self.updatePublisherProgress(self.getProgress(anCount, len(animals)))
+
+                # If the user cancelled, stop now
+                if self.shouldStopPublishing(): 
+                    self.log("User cancelled publish. Stopping.")
+                    self.resetPublisherProgress()
+                    self.cleanup()
+                    return
+
+                # upload all images for this animal to our current FTP
+                self.uploadImages(an, True)
+                
+                # Calculate the new page name
+                pagename = an["ANIMALTYPENAME"] + "." + self.pc.extension
+
+                # Does this page exist?
+                if not pages.has_key(pagename):
+                    # No, create it and add the header
+                    page = header
+                else:
+                    page = pages[pagename]
+
+                # Add this item to the page
+                page += self.substituteBodyTags(body, an)
+                pages[pagename] = page
+                self.log("%s -> %s" % (an["SHELTERCODE"], pagename))
+
+                # Add this item to our magic "all" page
+                page = pages[allpage]
+                page += self.substituteBodyTags(body, an)
+                pages[allpage] = page
+                
+                # Mark success in the log
+                self.log("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+
+            except Exception,err:
+                self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
+
+        # Mark published
+        self.markAnimalsPublished(animals)
+
+        # Upload the pages
+        for k, v in pages.iteritems():
+            self.log("Saving page to disk: %s (%d bytes)" % (k, len(v + footer)))
+            self.saveFile(os.path.join(self.publishDir, self.escapePageName(k)), v + footer)
+            self.log("Saved page to disk: %s" % k)
+            if self.pc.uploadDirectly:
+                self.log("Uploading page: %s" % k)
+                self.upload(self.escapePageName(k))
+                self.log("Uploaded page: %s" % k)
+
 
 class MeetAPetPublisher(AbstractPublisher):
     """
