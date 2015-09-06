@@ -1590,25 +1590,24 @@ def get_recent_with_name(dbo, name):
 def get_units_with_availability(dbo, locationid):
     """
     Returns a list of location units for location id.
-    The layout of each element is unit|shortcode|sheltercode|animalname
-    a blank in any of the shortcode/sheltercode/name fields means the unit is free
+    The layout of each element is unit|occupant
+    Blank occupant means a free unit
     """
     a = []
     units = db.query_string(dbo, "SELECT Units FROM internallocation WHERE ID = %d" % utils.cint(locationid)).split(",")
     animals = db.query(dbo, "SELECT a.AnimalName, a.ShortCode, a.ShelterCode, a.ShelterLocationUnit " \
         "FROM animal a WHERE a.Archived = 0 AND ShelterLocation = %d" % utils.cint(locationid))
+    useshortcodes = configuration.use_short_shelter_codes(dbo)
     for u in units:
         if u == "": continue
         uname = u.strip().replace("'", "`")
-        sheltercode = ""
-        shortcode = ""
-        animalname = ""
+        occupant = ""
         for n in animals:
             if utils.nulltostr(n["SHELTERLOCATIONUNIT"]).strip().lower() == uname.strip().lower():
-                sheltercode = n["SHELTERCODE"]
-                shortcode = n["SHORTCODE"]
-                animalname = n["ANIMALNAME"]
-        a.append( "%s|%s|%s|%s" % (uname, shortcode, sheltercode, animalname) )
+                if occupant != "": occupant += ", "
+                occupant += useshortcodes and n["SHORTCODE"] or n["SHELTERCODE"]
+                occupant += " %s" % n["ANIMALNAME"]
+        a.append( "%s|%s" % (uname, occupant) )
     return a
 
 def get_publish_history(dbo, animalid):

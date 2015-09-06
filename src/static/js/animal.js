@@ -780,23 +780,11 @@ $(function() {
                 .then(function(data) {
                     var src = [];
                     $.each(html.decode(data).split("&&"), function(i, v) {
-                        var u = v.split("|"), desc = "";
-                        var unit = u[0], shortcode = u[1], sheltercode = u[2], animalname = u[3];
-                        if (!unit) {
-                            return false;
-                        }
-                        if (sheltercode) {
-                           if (config.bool("UseShortShelterCodes")) {
-                               desc = shortcode + " - " + animalname;
-                           }
-                           else {
-                               desc = sheltercode + " - " + animalname;
-                           }
-                        }
-                        else {
-                            desc = _("(available)");
-                        }
-                        src.push({ label: unit + ' ' + desc, value: unit });
+                        var u = v.split("|");
+                        var unit = u[0], desc = u[1];
+                        if (!unit) { return false; }
+                        if (!desc) { desc = _("(available)"); }
+                        src.push({ label: unit + ' : ' + desc, value: unit });
                     });
                     $("#unit").autocomplete({ source: src });
                 });

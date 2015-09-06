@@ -360,24 +360,12 @@ $(function() {
             common.ajax_post("animal_new", "mode=units&locationid=" + $("#internallocation").val())
                 .then(function(data) {
                     $.each(html.decode(data).split("&&"), function(i, v) {
-                        var u = v.split("|"), desc = "";
-                        var unit = u[0], shortcode = u[1], sheltercode = u[2], animalname = u[3];
-                        if (!unit) {
-                            return false;
-                        }
-                        if (sheltercode) {
-                           if (config.bool("UseShortShelterCodes")) {
-                               desc = shortcode + " - " + animalname;
-                           }
-                           else {
-                               desc = sheltercode + " - " + animalname;
-                           }
-                        }
-                        else {
-                            desc = _("(available)");
-                        }
+                        var u = v.split("|");
+                        var unit = u[0], desc = u[1];
+                        if (!unit) { return false; }
+                        if (!desc) { desc = _("(available)"); }
                         opts.push('<option value="' + html.title(unit) + '">' + unit +
-                            ' ' + desc + '</option>');
+                            ' : ' + desc + '</option>');
                     });
                     $("#unit").html(opts.join("\n")).change();
                 });
