@@ -88,7 +88,7 @@ def get_medicaltreatment_query(dbo):
         "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
         "INNER JOIN animalmedical am ON a.ID = am.AnimalID " \
         "INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID " \
-        "INNER JOIN internallocation il ON il.ID = a.ShelterLocation " % \
+        "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " % \
             { 
                 "compositeid": db.concat(dbo, ["am.ID", "'_'", "amt.ID"]),
                 "daily": db.concat(dbo, ["am.TimingRule", "' treatments every '", "am.TimingRuleNoFrequencies", "' days'"]),
@@ -137,7 +137,7 @@ def get_test_query(dbo):
         "INNER JOIN animaltest at ON a.ID = at.AnimalID " \
         "INNER JOIN testtype tt ON tt.ID = at.TestTypeID " \
         "LEFT OUTER JOIN testresult tr ON tr.ID = at.TestResultID " \
-        "INNER JOIN internallocation il ON il.ID = a.ShelterLocation "
+        "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation "
 
 def get_vaccination_query(dbo):
     return "SELECT av.*, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementType, a.DeceasedDate, " \
@@ -176,7 +176,7 @@ def get_vaccination_query(dbo):
         "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
         "INNER JOIN animalvaccination av ON a.ID = av.AnimalID " \
         "INNER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID " \
-        "INNER JOIN internallocation il ON il.ID = a.ShelterLocation "
+        "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation "
 
 def get_vaccinations(dbo, animalid, onlygiven = False, sort = ASCENDING_REQUIRED):
     """
