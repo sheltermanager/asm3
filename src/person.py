@@ -208,7 +208,7 @@ def get_links(dbo, pid):
         "FROM animal a " \
         "LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType " \
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
-        "INNER JOIN internallocation il ON il.ID = a.ShelterLocation " \
+        "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
         "WHERE OriginalOwnerID = %d " \
         "UNION SELECT 'BI' AS TYPE, " \
@@ -219,7 +219,7 @@ def get_links(dbo, pid):
         "FROM animal a " \
         "LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType " \
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
-        "INNER JOIN internallocation il ON il.ID = a.ShelterLocation " \
+        "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
         "WHERE BroughtInByOwnerID = %d " \
         "UNION SELECT 'PB' AS TYPE, " \
@@ -230,7 +230,7 @@ def get_links(dbo, pid):
         "FROM animal a " \
         "LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType " \
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
-        "INNER JOIN internallocation il ON il.ID = a.ShelterLocation " \
+        "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
         "WHERE PickedUpByOwnerID = %d " \
         "UNION SELECT 'OV' AS TYPE, " \
