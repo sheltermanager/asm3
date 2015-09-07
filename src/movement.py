@@ -59,7 +59,7 @@ def get_movement_query(dbo):
         "INNER JOIN animal a ON m.AnimalID = a.ID " \
         "LEFT OUTER JOIN adoption ad ON a.ActiveMovementID = ad.ID " \
         "LEFT OUTER JOIN owner co ON co.ID = ad.OwnerID " \
-        "INNER JOIN internallocation il ON il.ID = a.ShelterLocation " \
+        "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
         "LEFT OUTER JOIN entryreason rr ON m.ReturnedReasonID = rr.ID " \
         "INNER JOIN species s ON a.SpeciesID = s.ID " \

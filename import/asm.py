@@ -35,6 +35,13 @@ Also has some useful helper functions for reading CSVs and parsing values, eg:
     asm.subtract_days, asm.add_days
     asm.fw (first word)
     asm.iif (inline if, eg: iif(condition, true, false))
+    asm.spaceleft(s, length)
+    asm.spaceright(s, length)
+    asm.padleft(s, length)
+    asm.padright(s, length)
+    asm.truncate(s, length)
+    asm.find_row (list_of_dicts, fieldname, value)
+    asm.find_value (list_of_dicts, fieldname, value, fieldtoreturn)
     asm.animal_image(animalid, imagedata)
     asm.load_image_from_file(filename)
     
@@ -853,7 +860,7 @@ def donationtype_from_db(name, default = 2):
     return "COALESCE((SELECT ID FROM donationtype WHERE lower(DonationName) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
 
 def testtype_id_for_name(name, createIfNotExist = True):
-    global vaccinationtypes
+    global testtypes
     if name.strip() == "": return 1
     if testtypes.has_key(name):
         return testtypes[name].ID
@@ -862,9 +869,8 @@ def testtype_id_for_name(name, createIfNotExist = True):
         return testtypes[name].ID
 
 def vaccinationtype_from_db(name, default = 1):
-    """ Looks up the donationtype in the db when the conversion is run, assign to DonationID """
+    """ Looks up the vaccinationtype in the db when the conversion is run, assign to VaccinationID """
     return "COALESCE((SELECT ID FROM vaccinationtype WHERE lower(VaccinationType) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
-
 
 def vaccinationtype_id_for_name(name, createIfNotExist = True):
     global vaccinationtypes
@@ -874,10 +880,6 @@ def vaccinationtype_id_for_name(name, createIfNotExist = True):
     else:
         vaccinationtypes[name] = VaccinationType(Name=name)
         return vaccinationtypes[name].ID
-
-def vaccinationtype_from_db(name, default = 1):
-    """ Looks up the donationtype in the db when the conversion is run, assign to DonationID """
-    return "COALESCE((SELECT ID FROM vaccinationtype WHERE lower(VaccinationType) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
 
 types = (
 ("2","D (Dog)"),
@@ -943,6 +945,81 @@ def iif(cond, iftrue, iffalse):
         return iftrue
     else:
         return iffalse
+
+def spaceleft(s, spaces):
+    """
+    leftpads a string to a number of spaces
+    """
+    sp = "                                                 "
+    if len(s) > spaces: return s
+    nr = spaces - len(s)
+    return sp[0:nr] + s
+
+def spaceright(s, spaces):
+    """
+    rightpads a string to a number of spaces
+    """
+    sp = "                                                 "
+    if len(s) > spaces: return s
+    nr = spaces - len(s)
+    return s + sp[0:nr]
+
+def padleft(num, digits):
+    """
+    leftpads a number to digits
+    """
+    zeroes = "000000000000000"
+    s = str(num)
+    if len(s) > digits: return s
+    nr = digits - len(s)
+    return zeroes[0:nr] + s
+
+def padright(num, digits):
+    """
+    rightpads a number to digits
+    """
+    zeroes = "000000000000000"
+    s = str(num)
+    if len(s) > digits: return s
+    nr = digits - len(s)
+    return s + zeroes[0:nr]
+
+def truncate(s, length = 100):
+    """
+    Truncates a string to length. If the string is longer than
+    length, appends ...
+    Removes any unicode sequences
+    HTML entities count as one character
+    """
+    if s is None: s = ""
+    s = strip_html_tags(s)
+    s = strip_unicode(s)
+    if len(decode_html(s)) < length: return s
+    return substring(s, 0, length) + "..."
+
+def find_row(d, fieldname, value):
+    """
+    given a list of dictionaries d, returns the
+    row where fieldname = value
+    """
+    for x in d:
+        if not x.has_key(fieldname):
+            break
+        if x[fieldname] == value:
+            return x
+    return None
+
+def find_value(d, fieldname, value, findfield):
+    """
+    given a list of dictionaries d, returns findfield
+    where fieldname = value
+    """
+    for x in d:
+        if not x.has_key(fieldname) or not x.has_key(findfield):
+            break
+        if x[fieldname] == value:
+            return x[findfield]
+    return ""
 
 def makesql(table, s):
     fl = ""
@@ -1758,6 +1835,7 @@ class Owner:
     WorkTelephone = ""
     MobileTelephone = ""
     EmailAddress = ""
+    LatLong = ""
     IDCheck = 0
     Comments = ""
     IsBanned = 0
@@ -1836,6 +1914,7 @@ class Owner:
             ( "WorkTelephone", ds(self.WorkTelephone) ),
             ( "MobileTelephone", ds(self.MobileTelephone) ),
             ( "EmailAddress", ds(self.EmailAddress) ),
+            ( "LatLong", ds(self.LatLong) ),
             ( "IDCheck", di(self.IDCheck) ),
             ( "Comments", ds(self.Comments) ),
             ( "IsBanned", di(self.IsBanned) ),

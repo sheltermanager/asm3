@@ -33,14 +33,14 @@ asm.setid("adoption", 100)
 asm.setid("animalcontrol", 100)
 
 print "\\set ON_ERROR_STOP\nBEGIN;"
-print "DELETE FROM animal WHERE ID >= 100;"
-print "DELETE FROM animalcontrol WHERE ID >= 100;"
-print "DELETE FROM owner WHERE ID >= 100;"
-print "DELETE FROM ownerdonation WHERE ID >= 100;"
-print "DELETE FROM ownerlicence WHERE ID >= 100;"
-print "DELETE FROM adoption WHERE ID >= 100;"
+print "DELETE FROM animal WHERE ID >= 100 AND ID < 49999;"
+print "DELETE FROM animalcontrol WHERE ID >= 100 AND ID < 49999;"
+print "DELETE FROM owner WHERE ID >= 100 AND ID < 49999;"
+print "DELETE FROM ownerdonation WHERE ID >= 100 AND ID < 49999;"
+print "DELETE FROM ownerlicence WHERE ID >= 100 AND ID < 49999;"
+print "DELETE FROM adoption WHERE ID >= 100 AND ID < 49999;"
 
-for p in asm.csv_to_list("%s/names.csv" % PATH):
+for p in asm.csv_to_list("%s/NAMES.csv" % PATH):
     o = asm.Owner()
     owners.append(o)
     ppo[p["ID"]] = o
@@ -56,7 +56,7 @@ for p in asm.csv_to_list("%s/names.csv" % PATH):
     comments += "\n%s" % asm.nulltostr(p["NAMES_TXT"])
     o.Comments = comments
 
-for d in asm.csv_to_list("%s/animal.csv" % PATH):
+for d in asm.csv_to_list("%s/ANIMALS.csv" % PATH):
     a = asm.Animal()
     animals.append(a)
     ppa[d["ID_NUM"]] = a
@@ -133,7 +133,7 @@ for d in asm.csv_to_list("%s/animal.csv" % PATH):
             a.ActiveMovementType = m.MovementType
             a.ActiveMovementDate = m.MovementDate
 
-for p in asm.csv_to_list("%s/payments.csv" % PATH):
+for p in asm.csv_to_list("%s/PAYMENTS.csv" % PATH):
     od = asm.OwnerDonation()
     ownerdonations.append(od)
     if ppo.has_key(p["PMNT_ID"]):
@@ -145,8 +145,8 @@ for p in asm.csv_to_list("%s/payments.csv" % PATH):
         if p["PMNT_CODE"] == "ADP":
             od.DonationTypeID = 2
 
-if os.path.exists("%s/license.csv" % PATH):
-    for l in asm.csv_to_list("%s/license.csv" % PATH):
+if os.path.exists("%s/LICENSE.csv" % PATH):
+    for l in asm.csv_to_list("%s/LICENSE.csv" % PATH):
         ol = asm.OwnerLicence()
         ownerlicences.append(ol)
         if ppo.has_key(l["OWNER_ID"]):
@@ -160,8 +160,8 @@ if os.path.exists("%s/license.csv" % PATH):
             ol.ExpiryDate = asm.getdate_mmddyy(l["LIC_EXDATE"])
             if ol.ExpiryDate is None: ol.ExpiryDate = asm.parse_date("2015-01-01", "%Y-%m-%d")
 
-if os.path.exists("%s/cmplaint.csv" % PATH):
-    for c in asm.csv_to_list("%s/cmplaint.csv" % PATH):
+if os.path.exists("%s/CMPLAINT.csv" % PATH):
+    for c in asm.csv_to_list("%s/CMPLAINT.csv" % PATH):
         ac = asm.AnimalControl()
         animalcontrol.append(ac)
         if c["FROM_ID"] != "" and ppo.has_key(c["FROM_ID"]):
@@ -201,5 +201,8 @@ for ac in animalcontrol:
     print ac
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
+# TODO: Most recent customer wanted all ark data as historic - this should be 
+# removed for future conversions
+print "UPDATE animal SET Archived = 1 WHERE ID >= 100;"
 print "COMMIT;"
 
