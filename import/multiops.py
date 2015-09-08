@@ -10,23 +10,6 @@ Import script for Multiple Options SQL Server databases exported to MDB and then
 
 PATH = "data/multiops_zg0861"
 
-def gettype(animaldes):
-    spmap = {
-        "Dog": 2,
-        "Cat": 11
-    }
-    if spmap.has_key(animaldes):
-        return spmap[animaldes]
-    else:
-        return 2
-
-def gettypeletter(aid):
-    tmap = {
-        2: "D",
-        11: "U"
-    }
-    return tmap[aid]
-
 owners = []
 ownerlicences = []
 logs = []
@@ -40,6 +23,8 @@ addresses = {}
 addrlink = {}
 
 asm.setid("animal", 50000)
+asm.setid("animalmedical", 50000)
+asm.setid("animalmedicaltreatment", 50000)
 asm.setid("animalvaccination", 50000)
 asm.setid("log", 50000)
 asm.setid("owner", 50000)
@@ -51,6 +36,8 @@ asm.setid("dbfs", 50000)
 # Remove existing
 print "\\set ON_ERROR_STOP\nBEGIN;"
 print "DELETE FROM animal WHERE ID >= 50000;"
+print "DELETE FROM animalmedical WHERE ID >= 50000;"
+print "DELETE FROM animalmedicaltreatment WHERE ID >= 50000;"
 print "DELETE FROM animalvaccination WHERE ID >= 50000;"
 print "DELETE FROM log WHERE ID >= 50000;"
 print "DELETE FROM owner WHERE ID >= 50000;"
@@ -67,6 +54,7 @@ to.OwnerName = to.OwnerSurname
 
 # Load up data files
 canimaldispo = asm.csv_to_list("%s/sysAnimalDispositionChoices.csv" % PATH)
+canimalrectypes = asm.csv_to_list("%s/sysAnimalReceivedTypes.csv" % PATH)
 canimalstatuses = asm.csv_to_list("%s/sysAnimalStatusChoices.csv" % PATH)
 cbreeds = asm.csv_to_list("%s/sysBreeds.csv" % PATH)
 ccolors = asm.csv_to_list("%s/sysCoatColors.csv" % PATH)
@@ -81,8 +69,10 @@ canimals = asm.csv_to_list("%s/tblAnimals.csv" % PATH)
 canimalids = asm.csv_to_list("%s/tblAnimalIDs.csv" % PATH)
 canimalintakes = asm.csv_to_list("%s/tblAnimalIntakesDispositions.csv" % PATH)
 canimalsnotes = asm.csv_to_list("%s/tblAnimalsNotes.csv" % PATH)
+cmedicalhistory = asm.csv_to_list("%s/tblMedicalHistory.csv" % PATH)
 cpersons = asm.csv_to_list("%s/tblKnownPersons.csv" % PATH)
 cpersonsaddresses = asm.csv_to_list("%s/tblKnownPersonsAddresses.csv" % PATH)
+cpersonsids = asm.csv_to_list("%s/tblKnownPersonsIDs.csv" % PATH)
 cpersonsnotes = asm.csv_to_list("%s/tblKnownPersonsNotes.csv" % PATH)
 cpersonsphone = asm.csv_to_list("%s/tblKPPhoneNumbers.csv" % PATH)
 cvaccinations = asm.csv_to_list("%s/tblVaccinations.csv" % PATH)
@@ -122,6 +112,14 @@ for row in cpersonsphone:
         elif row["Type"] == "Mobile":
             o.MobileTelephone = row["Telephone"]
 
+# ids
+for row in cpersonsids:
+    # 1 == Driver's licence - might be user specific
+    if row["sysKnownPersonsIDTypesID"] == "1":
+        if ppo.has_key(row["tblKnownPersonsID"]):
+            o = ppo[row["tblKnownPersonsID"]]
+            o.Comments = "ID: " + row["Note"]
+
 # animals
 for row in canimals:
     if row["PrimaryIDString"] == "": continue
@@ -129,7 +127,7 @@ for row in canimals:
     animals.append(a)
     ppa[row["tblAnimalsID"]] = a
     species = asm.find_value(cspecies, "sysSpeciesID", row["sysSpeciesID"], "CommonName")
-    a.AnimalTypeID = gettype(species)
+    a.AnimalTypeID = 2
     a.SpeciesID = asm.species_id_for_name(asm.fw(species))
     a.AnimalName = row["Name"]
     if a.AnimalName.strip() == "":
@@ -149,6 +147,9 @@ for row in canimals:
     a.ShortCode = code
     a.NeuteredDate = asm.getdate_mmddyy(row["SpayNeuterPerformedDate"])
     if a.NeuteredDate is not None:
+        a.Neutered = 1
+    # 1 = neutered, 2 = spayed, 3 = entire, 5 = unknown
+    if row["sysAlteredChoicesID"] == "1" or row["sysAlteredChoicesID"] == "2":
         a.Neutered = 1
     a.Markings = row["DistinguishingMarks"]
     a.HealthProblems = row["Condition"]
@@ -219,6 +220,7 @@ for row in canimalintakes:
     if not ppa.has_key(row["tblAnimalsID"]):
         continue
     a = ppa[row["tblAnimalsID"]]
+    a.AnimalTypeID = asm.type_from_db(asm.find_value(canimalrectypes, "sysAnimalReceivedTypesID", row["sysAnimalReceivedTypesID"], "ReceivedType"))
     a.EntryReason = row["SurrenderReasons"] + ". " + row["Location"] + ": " + row["StreetNumber"] + " " + row["Street"] + " " + row["City"] + " " + row["State"] + " " + row["ZipCode"]
     if row["BroughtInByID"] != "":
         if ppo.has_key(row["BroughtInByID"]):
@@ -331,6 +333,20 @@ for row in cvaccinations:
         av.DateRequired = av.DateOfVaccination
         if av.DateRequired is None:
             av.DateRequired = a.DateBroughtIn
+
+# medical history
+for row in cmedicalhistory:
+    if not ppa.has_key(row["tblAnimalsID"]): continue
+    a = ppa[row["tblAnimalsID"]]
+    if row["Issue"] == "Spay" or row["Issue"] == "Neuter":
+        a.Neutered = 1
+        a.NeuteredDate = asm.getdate_mmddyy(row["DateOfService"])
+    else:
+        tname = row["Issue"]
+        if tname == "": tname = row["Note"]
+        sdate = asm.getdate_mmddyy(row["DateOfService"])
+        if sdate is None: sdate = a.DateBroughtIn
+        asm.animal_regimen_single(a.ID, sdate, tname, "", row["Note"])
 
 # animal notes
 for row in canimalsnotes:
