@@ -65,6 +65,7 @@ cspecies = asm.csv_to_list("%s/sysSpecies.csv" % PATH)
 cvacctype = asm.csv_to_list("%s/sysVaccinations.csv" % PATH)
 cadoptions = asm.csv_to_list("%s/tblAdoptions.csv" % PATH)
 #canimalimages = asm.csv_to_list("%s/tblAnimalImages.csv" % PATH)
+canimalguardians = asm.csv_to_list("%s/tblAnimalGuardians.csv" % PATH)
 canimals = asm.csv_to_list("%s/tblAnimals.csv" % PATH)
 canimalids = asm.csv_to_list("%s/tblAnimalIDs.csv" % PATH)
 canimalintakes = asm.csv_to_list("%s/tblAnimalIntakesDispositions.csv" % PATH)
@@ -79,7 +80,6 @@ cvaccinations = asm.csv_to_list("%s/tblVaccinations.csv" % PATH)
 
 # people
 for row in cpersons:
-    if row["LegacyPK"] != "": continue # this customer had ark data in multiops which we're doing separately
     o = asm.Owner()
     owners.append(o)
     ppo[row["tblKnownPersonsID"]] = o
@@ -311,6 +311,31 @@ for row in cadoptions:
     a.ActiveMovementID = m.ID
     a.ActiveMovementDate = m.MovementDate
     a.ActiveMovementType = 1
+    movements.append(m)
+
+# foster list
+for row in canimalguardians:
+    if not ppa.has_key(row["tblAnimalsID"]) or not ppo.has_key(row["tblKnownPersonsID"]): continue
+    # only pick up currently active fosters to save fighting over activemovement* fields
+    if row["CurrentGuardian"] == "0": continue
+    a = ppa[row["tblAnimalsID"]]
+    o = ppo[row["tblKnownPersonsID"]]
+    # if the animal already has an active movement, don't bother with the foster. multiops
+    # allows the status to control everything so people don't have to close out the foster
+    # records.
+    if a.ActiveMovementID != 0: continue
+    m = asm.Movement()
+    m.AnimalID = a.ID
+    m.OwnerID = o.ID
+    m.MovementType = 2
+    m.MovementDate = asm.getdate_mmddyy(row["DateFrom"])
+    if m.MovementDate is None:
+        m.MovementDate = a.DateBroughtIn
+    m.ReturnDate = asm.getdate_mmddyy(row["DateTo"])
+    a.Archived = 0
+    a.ActiveMovementID = m.ID
+    a.ActiveMovementDate = m.MovementDate
+    a.ActiveMovementType = 2
     movements.append(m)
 
 # vaccinations
