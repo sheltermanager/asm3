@@ -85,7 +85,9 @@ for row in cpersons:
     ppo[row["tblKnownPersonsID"]] = o
     o.OwnerForeNames = row["FirstName"]
     o.OwnerSurname = row["LastName"]
-    o.OwnerName = o.OwnerForeNames + " " + o.OwnerSurname
+    o.OwnerTitle = asm.fw(row["LetterName"])
+    o.OwnerName = o.OwnerTitle + " " + o.OwnerForeNames + " " + o.OwnerSurname
+    o.OwnerName = o.OwnerName.strip()
     o.EmailAddress = row["EmailAddress"]
     o.IsBanned = row["NoAdoptPermanently"] == "-1" and 1 or 0
     o.ExcludeFromBulkEmail = row["DoNotSolicitContact"] == "-1" and 1 or 0
