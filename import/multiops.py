@@ -185,6 +185,10 @@ for row in canimals:
     status = asm.find_value(canimalstatuses, "sysAnimalStatusChoicesID", row["sysAnimalStatusChoicesID"], "STATUS")
     statusdate = asm.getdate_mmddyy(row["StatusDate"])
     a.ExtraID = statusdate
+    # Set a new flag of OnFoster = True if the animal has sysLocationChoicesID = 5 for "Foster Care"
+    # TODO: could be customer specific.
+    a.OnFoster = False
+    if row["sysLocationChoicesID"] == "5": a.OnFoster = True
     comments = "Original breed: " + breed1 + "/" + breed2
     comments += ", Color: " + color1 + "/" + color2
     comments += ", Status: " + status
@@ -322,10 +326,8 @@ for row in canimalguardians:
     if row["CurrentGuardian"] == "0": continue
     a = ppa[row["tblAnimalsID"]]
     o = ppo[row["tblKnownPersonsID"]]
-    # if the animal already has an active movement, don't bother with the foster. multiops
-    # allows the status to control everything so people don't have to close out the foster
-    # records.
-    if a.ActiveMovementID != 0: continue
+    # if we didn't previously flag this animal as fostered, don't bother
+    if not a.OnFoster: continue
     m = asm.Movement()
     m.AnimalID = a.ID
     m.OwnerID = o.ID
