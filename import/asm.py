@@ -1097,6 +1097,14 @@ def subtract_days(d, dy):
     if d is None: return d
     return d - datetime.timedelta(days=dy)
 
+def additional_field(fieldname, linktypeid, linkid, value):
+    """ Writes an additional field entry """
+    print "DELETE FROM additional WHERE LinkType=%d AND LinkID=%d AND AdditionalFieldID = " \
+        "(SELECT ID FROM additionalfield WHERE FieldName LIKE '%s');" % (linktypeid, linkid, fieldname)
+    print "INSERT INTO additional (LinkType, LinkID, AdditionalFieldID, Value) VALUES (" \
+        "%d, %d, (SELECT ID FROM additionalfield WHERE FieldName LIKE '%s'), %s);" % \
+        ( linktypeid, linkid, fieldname, ds(value))
+
 def animal_image(animalid, imagedata):
     """ Writes the media and dbfs entries to add an image to an animal """
     mediaid = getid("media")

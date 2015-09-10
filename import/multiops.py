@@ -35,6 +35,7 @@ asm.setid("dbfs", 50000)
 
 # Remove existing
 print "\\set ON_ERROR_STOP\nBEGIN;"
+print "DELETE FROM additional WHERE LinkID >= 50000;"
 print "DELETE FROM animal WHERE ID >= 50000;"
 print "DELETE FROM animalmedical WHERE ID >= 50000;"
 print "DELETE FROM animalmedicaltreatment WHERE ID >= 50000;"
@@ -116,11 +117,11 @@ for row in cpersonsphone:
 
 # ids
 for row in cpersonsids:
-    # 1 == Driver's licence - might be user specific
+    # TODO: 1 == Driver's licence - user specific
     if row["sysKnownPersonsIDTypesID"] == "1":
         if ppo.has_key(row["tblKnownPersonsID"]):
             o = ppo[row["tblKnownPersonsID"]]
-            o.Comments = "ID: " + row["Note"]
+            asm.additional_field("DriversLicense", 1, o.ID, row["Code"])
 
 # animals
 for row in canimals:
@@ -209,15 +210,21 @@ for row in canimals:
         asm.animal_image(a.ID, imdata)
     """
 
-# microchips
+# microchips, animal codes and document ids
 for row in canimalids:
     if not ppa.has_key(row["tblAnimalsID"]): continue
     a = ppa[row["tblAnimalsID"]]
-    # TODO: Is this customer specific? 2 == microchip
+    # TODO: These are customer specific. 2 == microchip
     if row["sysAnimalIDTypesID"] == "2":
         a.IdentichipNumber = row["Code"]
         a.Identichipped = 1
         a.IdentichipDate = asm.getdate_mmddyy(row["LastUpdate"])
+    # 10 = police document id
+    if row["sysAnimalIDTypesID"] == "10":
+        asm.additional_field("DocumentID", 0, a.ID, row["Code"])
+    # 21 = jcas animal code
+    if row["sysAnimalIDTypesID"] == "21":
+        a.ShortCode = row["Code"]
 
 # animal intake/disposition list
 for row in canimalintakes:
@@ -328,6 +335,8 @@ for row in canimalguardians:
     o = ppo[row["tblKnownPersonsID"]]
     # if we didn't previously flag this animal as fostered, don't bother
     if not a.OnFoster: continue
+    # if the animal is dead, also don't bother
+    if a.DeceasedDate is not None: continue
     m = asm.Movement()
     m.AnimalID = a.ID
     m.OwnerID = o.ID
