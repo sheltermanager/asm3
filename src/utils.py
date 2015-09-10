@@ -783,7 +783,7 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
     add_header(msg, "To", toadd)
     if ccadd != "": 
         add_header(msg, "Cc", ccadd)
-    add_header(msg, "Subject", subject)
+    add_header(msg, "Subject", truncate(subject, 77))
     msg.attach(msgtext)
 
     # If an attachment has been specified, add it to the message
