@@ -223,8 +223,8 @@ for row in canimalids:
     if row["sysAnimalIDTypesID"] == "10":
         asm.additional_field("DocumentID", 0, a.ID, row["Code"])
     # 21 = jcas animal code
-    if row["sysAnimalIDTypesID"] == "21":
-        a.ShelterCode = row["Code"]
+    if row["sysAnimalIDTypesID"] == "21" and row["Code"].strip() != "":
+        a.ShelterCode = "JCAS%s(%s)" % (row["Code"], a.ID)
         a.ShortCode = row["Code"]
 
 # animal intake/disposition list
@@ -330,14 +330,14 @@ for row in cadoptions:
 # foster list
 for row in canimalguardians:
     if not ppa.has_key(row["tblAnimalsID"]) or not ppo.has_key(row["tblKnownPersonsID"]): continue
-    # only pick up currently active fosters to save fighting over activemovement* fields
-    if row["CurrentGuardian"] == "0": continue
     a = ppa[row["tblAnimalsID"]]
     o = ppo[row["tblKnownPersonsID"]]
     # if we didn't previously flag this animal as fostered, don't bother
     if not a.OnFoster: continue
     # if the animal is dead, also don't bother
     if a.DeceasedDate is not None: continue
+    # if the animal already has an active movement of some type, don't bother
+    if a.ActiveMovementID > 0: continue
     m = asm.Movement()
     m.AnimalID = a.ID
     m.OwnerID = o.ID
