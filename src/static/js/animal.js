@@ -1052,7 +1052,7 @@ $(function() {
             // name
             if ($.trim($("#animalname").val()) == "") {
                 header.show_error(_("Name cannot be blank"));
-                $("#asm-details-accordion").accordion("option", "active", 2);
+                $("#asm-details-accordion").accordion("option", "active", 0);
                 validate.highlight("animalname");
                 return false;
             }

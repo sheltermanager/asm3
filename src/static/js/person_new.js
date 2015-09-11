@@ -142,7 +142,10 @@ $(function() {
             };
 
             var check_for_similar = function() {
-                if (!validation()) { return; }
+                if (!validation()) { 
+                    $("#asm-content button").button("enable"); 
+                    return; 
+                }
                 var formdata = "mode=similar&" + $("#surname, #forenames, #address").toPOST();
                 common.ajax_post("person_embed", formdata)
                     .then(function(result) { 
