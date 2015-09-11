@@ -8,19 +8,21 @@ Shelter animals, broken down by species/location with original owner addresses.
 ###
 en
 ###
-SELECT ShelterCode, AnimalName, DateBroughtIn,
-TimeOnShelter,
-animaltype.AnimalType AS theType,
-species.SpeciesName,
-animal.BreedName,
-internallocation.LocationName,
+SELECT a.ShelterCode, a.AnimalName, a.DateBroughtIn,
+a.TimeOnShelter,
+y.AnimalType AS theType,
+s.SpeciesName,
+a.BreedName,
+CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' ELSE i.LocationName END AS LocationName,
 oo.OwnerName AS OOName, oo.OwnerAddress AS OOAddress, oo.OwnerTown AS OOTown, oo.OwnerCounty AS OOCounty, oo.OwnerPostcode AS OOPostcode
-FROM animal
-INNER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
-INNER JOIN species ON species.ID = animal.SpeciesID
-INNER JOIN internallocation ON internallocation.ID = animal.ShelterLocation
+FROM animal a
+INNER JOIN animaltype y ON y.ID = a.AnimalTypeID
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN internallocation i ON i.ID = a.ShelterLocation
 INNER JOIN owner oo ON animal.OriginalOwnerID = oo.ID
-WHERE Archived = 0 ORDER BY LocationName, SpeciesName, DateBroughtIn
+WHERE a.Archived = 0 
+ORDER BY 
+CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' ELSE i.LocationName END, s.SpeciesName, a.DateBroughtIn
 ###
 $$HEADER
 HEADER$$

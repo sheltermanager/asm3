@@ -18,15 +18,16 @@ a.TimeOnShelter,
 sx.Sex,
 t.AnimalType,
 s.SpeciesName,
-i.LocationName,
+CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' ELSE i.LocationName END AS LocationName,
 a.ShelterLocationUnit
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN species s ON s.ID = a.SpeciesID
 INNER JOIN lksex sx ON sx.ID = a.Sex
-INNER JOIN internallocation i ON i.ID = a.ShelterLocation
+LEFT OUTER JOIN internallocation i ON i.ID = a.ShelterLocation
 WHERE a.Archived = 0
-ORDER BY i.LocationName, s.SpeciesName
+ORDER BY 
+CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' ELSE i.LocationName END, s.SpeciesName
 ###
 $$HEADER
 HEADER$$

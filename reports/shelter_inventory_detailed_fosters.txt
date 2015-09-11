@@ -25,7 +25,7 @@ FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN species s ON s.ID = a.SpeciesID
 INNER JOIN lksex sx ON sx.ID = a.Sex
-INNER JOIN internallocation i ON i.ID = a.ShelterLocation
+LEFT OUTER JOIN internallocation i ON i.ID = a.ShelterLocation
 LEFT OUTER JOIN adoption ad ON a.ActiveMovementID = ad.ID
 LEFT OUTER JOIN owner o ON ad.OwnerID = o.ID
 WHERE (a.Archived = 0 OR a.ActiveMovementType = 2) AND DeceasedDate Is Null 
