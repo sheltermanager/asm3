@@ -220,10 +220,10 @@
             pcaddbuttons[_("Create this person")] = function() {
                 var valid = true, dialogadd = self.options.dialogadd;
                 // Validate fields that can't be blank
-                dialogadd.find("label").removeClass("ui-state-error-text");
+                dialogadd.find("label").removeClass(validate.ERROR_LABEL_CLASS);
                 dialogadd.find("input[data='surname']").each(function() {
                     if ($.trim($(this).val()) == "") {
-                        $(this).parent().parent().find("label").addClass("ui-state-error-text");
+                        $(this).parent().parent().find("label").addClass(validate.ERROR_LABEL_CLASS);
                         $(this).focus();
                         valid = false;
                         return false;
@@ -253,7 +253,7 @@
                     dialogadd.find("input, textarea").val("");
                     dialogadd.find(".personchooser-flags option:selected").removeAttr("selected");
                     dialogadd.find(".personchooser-flags").change();
-                    dialogadd.find("label").removeClass("ui-state-error-text");
+                    dialogadd.find("label").removeClass(validate.ERROR_LABEL_CLASS);
                     dialogadd.enable_dialog_buttons();
                 }
             });

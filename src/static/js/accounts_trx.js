@@ -207,7 +207,7 @@ $(function() {
 
             var editbuttons = { };
             editbuttons[_("Save")] = function() {
-                $("#dialog-edit label").removeClass("ui-state-error-text");
+                validate.reset();
                 if (!validate_account("#otheraccount")) { return; }
                 if (!validate.notblank([ "trxdate", "otheraccount", "description", "deposit", "withdrawal" ])) { return; }
                 var formdata = "mode=update&trxid=" + $("#trxid").val() + "&accountid=" + controller.accountid + "&" +
@@ -264,7 +264,7 @@ $(function() {
             $(".trx-edit-link").click(function() {
                 if (accounts_trx.readonly) { return false; }
                 var row = common.get_row(controller.rows, $(this).attr("data-id"));
-                $("#dialog-edit label").removeClass("ui-state-error-text");
+                validate.reset("dialog-edit");
                 $("#trxid").val(row.ID);
                 $("#trxdate").val(format.date(row.TRXDATE));
                 $("#description").val(html.decode(row.DESCRIPTION));

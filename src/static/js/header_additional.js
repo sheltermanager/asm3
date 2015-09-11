@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, _, asm, common, config, format, header, html */
+/*global $, _, asm, common, config, format, header, html, validate */
 /*global additional: true */
 
 $(function() {
@@ -172,7 +172,7 @@ $(function() {
                             header.show_error(_("{0} cannot be blank").replace("{0}", label.html()));
                             // Find the index of the accordion section this element is in and activate it
                             $("#asm-details-accordion").accordion("option", "active", acchead.index("#asm-details-accordion h3"));
-                            label.addClass("ui-state-error-text");
+                            label.addClass(validate.ERROR_LABEL_CLASS);
                             t.focus();
                             valid = false;
                             return false;

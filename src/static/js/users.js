@@ -170,7 +170,7 @@ $(function() {
         bind_resetdialog: function() {
             var resetbuttons = { }, table = users.table;
             resetbuttons[_("Change Password")] = function() {
-                $("#dialog-reset label").removeClass("ui-state-error-text");
+                validate.reset("dialog-reset");
                 if (!validate.notblank([ "newpassword" ])) { return; }
                 if (!validate.notblank([ "confirmpassword" ])) { return; }
                 if ($.trim($("#newpassword").val()) != $.trim($("#confirmpassword").val())) {

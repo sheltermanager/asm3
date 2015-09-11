@@ -53,7 +53,7 @@ $(function() {
             var validation = function() {
                 // Remove any previous errors
                 header.hide_error();
-                $("label").removeClass("ui-state-error-text");
+                validate.reset();
 
                 // Password must be supplied
                 if ($.trim($("#newpassword").val()) == "") {

@@ -102,7 +102,7 @@ $(function() {
         bind_rename_dialog: function() {
             var renamebuttons = { };
             renamebuttons[_("Rename")] = function() {
-                $("#dialog-rename label").removeClass("ui-state-error-text");
+                validate.reset();
                 if (!validate.notblank([ "newname" ])) { return; }
                 $("#dialog-rename").disable_dialog_buttons();
                 var dbfsid = tableform.table_ids(document_templates.table).split(",")[0];
@@ -149,7 +149,7 @@ $(function() {
         bind_newodt_dialog: function() {
             var odtbuttons = { };
             odtbuttons[_("Upload")] = function() {
-                $("#dialog-newodt label").removeClass("ui-state-error-text");
+                validate.reset();
                 if (!validate.notblank([ "filechooser" ])) { return; }
                 $("#dialog-newodt").disable_dialog_buttons();
                 $("#form-newodt").submit();

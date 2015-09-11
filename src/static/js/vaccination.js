@@ -214,7 +214,7 @@ $(function() {
 
             var requiredbuttons = { }, table = vaccination.table;
             requiredbuttons[_("Save")] = function() {
-                $("#dialog-required label").removeClass("ui-state-error-text");
+                validate.reset("dialog-required");
                 if (!validate.notblank([ "newdate" ])) { return; }
                 $("#dialog-required").disable_dialog_buttons();
                 var ids = tableform.table_ids(table);
@@ -347,7 +347,7 @@ $(function() {
         bind_givendialog: function() {
             var givenbuttons = { }, table = vaccination.table;
             givenbuttons[_("Save")] = function() {
-                $("#dialog-given label").removeClass("ui-state-error-text");
+                validate.reset("dialog-given");
                 if (!validate.notblank([ "newdateg" ])) { return; }
                 $("#usagedate").val($("#newdateg").val()); // copy given to usage
                 $("#dialog-given").disable_dialog_buttons();

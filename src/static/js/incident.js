@@ -409,14 +409,13 @@ $(function() {
 
             // Remove any previous errors
             header.hide_error();
-            $("label").removeClass("ui-state-error-text");
+            validate.reset();
 
             // incident date
             if ($.trim($("#incidentdate").val()) == "") {
                 header.show_error(_("Incident date cannot be blank"));
-                $("label[for='incidentdate']").addClass("ui-state-error-text");
                 $("#asm-details-accordion").accordion("option", "active", 0);
-                $("#dateputon").focus();
+                validate.highlight("incidentdate");
                 return false;
             }
 

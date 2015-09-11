@@ -99,7 +99,7 @@ $(function() {
             var validation = function() {
                 // Remove any previous errors
                 header.hide_error();
-                $("label").removeClass("ui-state-error-text");
+                validate.reset();
                 if (!validate.notblank([ "incidentdate", "incidenttime" ])) { return false; }
                 if (!validate.validtime([ "incidenttime", "calltime" ])) { return false; }
                 return true;

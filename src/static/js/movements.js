@@ -458,6 +458,9 @@ $(function() {
         },
 
         validation: function() {
+
+            validate.reset();
+
             // Movement needs a reservation date or movement type > 0
             if ($("#type").val() == 0 && $("#reservationdate").val() == "") {
                 validate.notblank([ "reservationdate" ]);
@@ -478,8 +481,7 @@ $(function() {
                 var mt = $("#type").val();
                 if (mt != 4 && mt != 6 && mt != 7) {
                     tableform.dialog_error(_("This type of movement requires a person."));
-                    $("label[for='person']").addClass("ui-state-error-text");
-                    $("#person").focus();
+                    validate.highlight("person");
                     return false;
                 }
             }
@@ -487,8 +489,7 @@ $(function() {
             // All movements require an animal
             if ($("#animal").val() == "") {
                 tableform.dialog_error(_("Movements require an animal"));
-                $("label[for='animal']").addClass("ui-state-error-text");
-                $("#animal").focus();
+                validate.highlight("animal");
                 return false;
             }
 

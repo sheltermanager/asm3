@@ -685,7 +685,7 @@ $(function() {
                 buttons: b,      
                 close: function() {
                     $("#dialog-addmessage .asm-textbox").val("");
-                    $("#dialog-addmessage label").removeClass("ui-state-error-text");
+                    validate.reset("dialog-addmessage");
                 }
             });
 

@@ -142,19 +142,17 @@ $(function() {
             var validation = function() {
                 // Remove any previous errors
                 header.hide_error();
-                $("label").removeClass("ui-state-error-text");
+                validate.reset();
                 // person
                 if ($("#person").val() == "") {
                     header.show_error(_("Payments require a person"));
-                    $("label[for='person']").addClass("ui-state-error-text");
-                    $("#person").focus();
+                    validate.highlight("person");
                     return false;
                 }
                 // date
                 if ($.trim($("#received").val()) == "") {
                     header.show_error(_("Payments require a received date"));
-                    $("label[for='received']").addClass("ui-state-error-text");
-                    $("#received").focus();
+                    validate.highlight("received");
                     return false;
                 }
                 return true;

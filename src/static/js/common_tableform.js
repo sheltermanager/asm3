@@ -1149,7 +1149,7 @@
             var nzids = [];
             var ntids = [];
             $.each(fields, function(i, v) {
-                $("label[for='" + v.post_field + "']").removeClass("ui-state-error-text");
+                $("label[for='" + v.post_field + "']").removeClass(validate.ERROR_LABEL_CLASS);
                 if (v.validation == "notblank") {
                     nbids.push(v.post_field);
                 }

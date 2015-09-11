@@ -90,29 +90,26 @@ $(function() {
             var validation = function() {
                 // Remove any previous errors
                 header.hide_error();
-                $("label").removeClass("ui-state-error-text");
+                validate.reset();
 
                 // owner
                 if ($.trim($("#owner").val()) == "") {
                     header.show_error(_("Waiting list entries must have a contact"));
-                    $("label[for='owner']").addClass("ui-state-error-text");
-                    $("#owner").focus();
+                    validate.highlight("owner");
                     return false;
                 }
 
                 // date put on list
                 if ($.trim($("#dateputon").val()) == "") {
                     header.show_error(_("Date put on cannot be blank"));
-                    $("label[for='dateputon']").addClass("ui-state-error-text");
-                    $("#dateputon").focus();
+                    validate.highlight("dateputon");
                     return false;
                 }
 
                 // description
                 if ($.trim($("#description").val()) == "") {
                     header.show_error(_("Description cannot be blank"));
-                    $("label[for='description']").addClass("ui-state-error-text");
-                    $("#description").focus();
+                    validate.highlight("description");
                     return false;
                 }
 

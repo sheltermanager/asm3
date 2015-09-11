@@ -1,7 +1,7 @@
 /*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, console, jQuery, Mousetrap, Path */
 /*global alert, asm, atob, btoa, header, _, escape, unescape */
-/*global common: true, config: true, controller: true, dlgfx: true, format: true, html: true, log: true, validate: true */
+/*global consts: true, common: true, config: true, controller: true, dlgfx: true, format: true, html: true, log: true, validate: true */
 
 (function($) {
 
@@ -1986,6 +1986,11 @@
         /* Global for whether or not there are unsaved changes */
         unsaved: false,
 
+        /* The CSS class to be applied to labels that are in error -
+         * used to be ui-state-error-text for JQUI but it quite often
+         * produces white text on a white background??? */
+        ERROR_LABEL_CLASS: "asm-error-text",
+
         /**
          * Does all binding for dirtiable forms.
          * 1. Watches for controls changing and marks the form dirty.
@@ -2069,6 +2074,20 @@
             });
         },
 
+        /* Given a field ID, highlights the label and focuses the field. */
+        highlight: function(fid) {
+            $("label[for='" + fid + "']").addClass(validate.ERROR_LABEL_CLASS);
+            $("#" + fid).focus();
+        },
+
+        /* Given a container ID, removes highlighting from all the labels
+         * if container is not supplied, #asm-content is assumed
+         */
+        reset: function(container) {
+            if (!container) { container = "asm-content"; }
+            $("#" + container + " label").removeClass(validate.ERROR_LABEL_CLASS);
+        },
+
         /* Accepts an array of ids to test whether they're blank or not
            if they are, their label is highlighted and false is returned */
         notblank: function(fields) {
@@ -2077,8 +2096,7 @@
                 var v = $("#" + f).val();
                 v = $.trim(v);
                 if (v == "") {
-                    $("label[for='" + f + "']").addClass("ui-state-error-text");
-                    $("#" + f).focus();
+                    validate.highlight(f);
                     rv = false;
                     return false;
                 }
@@ -2094,8 +2112,7 @@
                 var v = $("#" + f).val();
                 v = $.trim(v);
                 if (v == "0") {
-                    $("label[for='" + f + "']").addClass("ui-state-error-text");
-                    $("#" + f).focus();
+                    validate.highlight(f);
                     rv = false;
                     return false;
                 }
@@ -2114,7 +2131,7 @@
                 if (v != "" && !valid1.test(v) && !valid2.test(v)) {
                     // Times rarely have their own label, instead look for the label
                     // in the same table row as our widget
-                    $("#" + f).closest("tr").find("label").addClass("ui-state-error-text");
+                    $("#" + f).closest("tr").find("label").addClass(validate.ERROR_LABEL_CLASS);
                     $("#" + f).focus();
                     header.show_error(_("Invalid time '{0}', times should be in 00:00 format").replace("{0}", v));
                     rv = false;

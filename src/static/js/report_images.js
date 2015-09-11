@@ -35,9 +35,10 @@ $(function() {
                          tableform.dialog_show_add(dialog)
                              .then(function() {
                                  var fn = $("#filechooser").val().toLowerCase();
+                                 validate.reset();
                                  if (fn.indexOf(".jpg") == -1 && fn.indexOf(".png") == -1 && fn.indexOf(".gif") == -1) {
                                      header.show_error(_("The selected file is not an image."));
-                                     $("label[for='filechooser']").addClass("ui-state-error-text");
+                                     validate.highlight("filechooser");
                                      return;
                                  }
                                  $("#form-tableform").submit();
@@ -86,7 +87,7 @@ $(function() {
         bind_rename_dialog: function() {
             var renamebuttons = { }, table = report_images.table;
             renamebuttons[_("Rename")] = function() {
-                $("#dialog-rename label").removeClass("ui-state-error-text");
+                validate.reset("dialog-rename");
                 if (!validate.notblank([ "newname" ])) { return; }
                 $("#dialog-rename").disable_dialog_buttons();
                 var oldname = tableform.table_ids(table).split(",")[0];

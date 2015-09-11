@@ -140,37 +140,33 @@ $(function() {
             var validation = function() {
                 // Remove any previous errors
                 header.hide_error();
-                $("label").removeClass("ui-state-error-text");
+                validate.reset();
 
                 // owner
                 if ($("#owner").val() == "") {
                     header.show_error(_("Lost and found entries must have a contact"));
-                    $("label[for='owner']").addClass("ui-state-error-text");
-                    $("#owner").focus();
+                    validate.highlight("owner");
                     return false;
                 }
 
                 // date lost
                 if (lostfound_new.mode == "lost" && $.trim($("#datelost").val()) == "") {
                     header.show_error(_("Date lost cannot be blank."));
-                    $("label[for='datelost']").addClass("ui-state-error-text");
-                    $("#datelost").focus();
+                    validate.highlight("datelost");
                     return false;
                 }
 
                 // date found
                 if (lostfound_new.mode == "found" && $.trim($("#datefound").val()) == "") {
                     header.show_error(_("Date found cannot be blank."));
-                    $("label[for='datefound']").addClass("ui-state-error-text");
-                    $("#datefound").focus();
+                    validate.highlight("datefound");
                     return false;
                 }
 
                 // date reported
                 if ($.trim($("#datereported").val()) == "") {
                     header.show_error(_("Date reported cannot be blank."));
-                    $("label[for='datereported']").addClass("ui-state-error-text");
-                    $("#datereported").focus();
+                    validate.highlight("datereported");
                     return false;
                 }
 

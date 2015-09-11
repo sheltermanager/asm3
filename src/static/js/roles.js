@@ -270,7 +270,7 @@ $(function() {
 
             var addbuttons = { };
             addbuttons[_("Create")] = function() {
-                $("#dialog-add label").removeClass("ui-state-error-text");
+                validate.reset("dialog-add");
                 if (!validate.notblank([ "rolename" ])) { return; }
                 var securitymap = "";
                 $(".token").each(function() {
@@ -292,7 +292,7 @@ $(function() {
 
             var editbuttons = { };
             editbuttons[_("Save")] = function() {
-                $("#dialog-add label").removeClass("ui-state-error-text");
+                validate.reset("dialog-add");
                 if (!validate.notblank([ "rolename" ])) { return; }
                 var securitymap = "";
                 $(".token").each(function() {
@@ -326,9 +326,9 @@ $(function() {
             });
          
             $("#button-new").button().click(function() {
+               validate.reset("dialog-add");
                $("#dialog-add .asm-textbox").val("");
                $("#dialog-add input:checkbox").attr("checked", false);
-               $("#dialog-add label").removeClass("ui-state-error-text");
                $("#dialog-add").dialog("option", "buttons", addbuttons);
                $("#dialog-add").dialog("option", "title", _("Add role"));
                $("#dialog-add").dialog("open"); 
@@ -348,7 +348,7 @@ $(function() {
                 $.each(perms, function(i, v) {
                     $("#" + v).prop("checked", true);
                 });
-                $("#dialog-add label").removeClass("ui-state-error-text");
+                validate.reset("dialog-add");
                 $("#dialog-add").dialog("option", "buttons", addbuttons);
                 $("#dialog-add").dialog("option", "title", _("Add role"));
                 $("#dialog-add").dialog("open"); 
@@ -376,7 +376,7 @@ $(function() {
             .click(function() {
                 var rid = $(this).attr("data");
                 var rrow = "#rolerow-" + rid + " ";
-                $("#dialog-add label").removeClass("ui-state-error-text");
+                validate.reset("dialog-add");
                 $("#roleid").val($(this).attr("data"));
                 $("#rolename").val($(rrow + ".role-name").val());
                 var perms = $(rrow + ".role-map").val().replace(/\*/g, "").split(" ");

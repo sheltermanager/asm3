@@ -1047,41 +1047,37 @@ $(function() {
 
             // Remove any previous errors
             header.hide_error();
-            $("label").removeClass("ui-state-error-text");
+            validate.reset();
 
             // name
             if ($.trim($("#animalname").val()) == "") {
                 header.show_error(_("Name cannot be blank"));
-                $("label[for='animalname']").addClass("ui-state-error-text");
                 $("#asm-details-accordion").accordion("option", "active", 2);
-                $("#animalname").focus();
+                validate.highlight("animalname");
                 return false;
             }
 
             // date brought in
             if ($.trim($("#datebroughtin").val()) == "") {
                 header.show_error(_("Date brought in cannot be blank"));
-                $("label[for='datebroughtin']").addClass("ui-state-error-text");
                 $("#asm-details-accordion").accordion("option", "active", 3);
-                $("#datebroughtin").focus();
+                validate.highlight("datebroughtin");
                 return false;
             }
 
             // date of birth
             if ($.trim($("#dateofbirth").val()) == "") {
                 header.show_error(_("Date of birth cannot be blank"));
-                $("label[for='dateofbirth']").addClass("ui-state-error-text");
                 $("#asm-details-accordion").accordion("option", "active", 0);
-                $("#dateofbirth").focus();
+                validate.highlight("dateofbirth");
                 return false;
             }
 
             // shelter code
             if ($.trim($("#sheltercode").val()) == "") {
                 header.show_error(_("Shelter code cannot be blank"));
-                $("label[for='sheltercode']").addClass("ui-state-error-text");
                 $("#asm-details-accordion").accordion("option", "active", 0);
-                $("#sheltercode").focus();
+                validate.highlight("sheltercode");
                 return false;
             }
 

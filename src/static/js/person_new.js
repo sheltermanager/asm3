@@ -93,18 +93,9 @@ $(function() {
             var validation = function() {
                 // Remove any previous errors
                 header.hide_error();
-                $("label").removeClass("ui-state-error-text");
-                var fields = [ "surname" ];
-                var valid = true;
-                $.each(fields, function(i, f) {
-                    if ($("#" + f).val() == "") {
-                        $("label[for='" + f + "']").addClass("ui-state-error-text");
-                        $("#" + f).focus();
-                        valid = false;
-                        return false;
-                    }
-                });
-                return valid;
+                validate.reset();
+                if (!validate.notblank([ "surname" ])) { return false; }
+                return true;
             };
 
             var addPerson = function() {

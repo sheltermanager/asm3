@@ -430,7 +430,7 @@ $(function() {
 
             var givenbuttons = { };
             givenbuttons[_("Save")] = function() {
-                $("#dialog-given label").removeClass("ui-state-error-text");
+                validate.reset();
                 if (!validate.notblank([ "newdate" ])) { return; }
                 $("#usagedate").val($("#newdate").val()); // copy given to usage
                 $("#dialog-given").disable_dialog_buttons();
@@ -484,7 +484,7 @@ $(function() {
 
             var requiredbuttons = { };
             requiredbuttons[_("Save")] = function() {
-                $("#dialog-required label").removeClass("ui-state-error-text");
+                validate.reset();
                 if (!validate.notblank([ "newdater" ])) { return; }
                 $("#dialog-required").disable_dialog_buttons();
                 var ids = medical.selected_treatment_ids();

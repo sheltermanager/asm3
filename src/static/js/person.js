@@ -482,14 +482,13 @@ $(function() {
 
             // Remove any previous errors
             header.hide_error();
-            $("label").removeClass("ui-state-error-text");
+            validate.reset();
 
             // name
             if ($.trim($("#surname").val()) == "") {
                 header.show_error(_("Name cannot be blank"));
-                $("label[for='surname']").addClass("ui-state-error-text");
                 $("#asm-details-accordion").accordion("option", "active", 0);
-                $("#surname").focus();
+                validate.highlight("surname");
                 return false;
             }
 
@@ -605,17 +604,10 @@ $(function() {
             // Diary task select date dialog
             var addbuttons = { };
             addbuttons[_("Select")] = function() {
-                var valid = true;
-                var fields = [ "seldate" ];
-                $.each(fields, function(i, f) {
-                    if ($("#" + f).val() == "") {
-                        $("label[for='" + f + "']").addClass("ui-state-error-text");
-                        $("#" + f).focus();
-                        valid = false;
-                        return false;
-                    }
-                });
-                if (valid) { create_task($("#diarytaskid").val()); }
+                validate.reset();
+                if (validate.notblank([ "seldate" ])) {
+                    create_task($("#diarytaskid").val()); 
+                }
             };
             addbuttons[_("Cancel")] = function() {
                 $("#dialog-dt-date").dialog("close");

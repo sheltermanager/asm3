@@ -577,6 +577,10 @@ img {
     text-align: right;
 }
 
+.asm-error-text {
+    color: red !important;
+}
+
 .asm-header {
     text-align: center;
     font-weight: bold;

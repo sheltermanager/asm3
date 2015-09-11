@@ -6276,6 +6276,12 @@ msgstr ""
 msgid "Lost/Found"
 msgstr ""
 
+#: main.js
+msgid ""
+"Lots of reports installed? Clean up the Reports menu with Settings-Options- "
+"Display-Show report menu items in collapsed categories."
+msgstr ""
+
 #: dbupdate.py
 msgid "Lovebird"
 msgstr ""
@@ -12306,7 +12312,7 @@ msgstr ""
 msgid "{0} animals successfully updated."
 msgstr ""
 
-#: person.js incident.js animal.js lostfound.js waitinglist.js
+#: header_additional.js
 msgid "{0} cannot be blank"
 msgstr ""
 

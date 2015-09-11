@@ -163,32 +163,29 @@ $(function() {
 
             // Remove any previous errors
             header.hide_error();
-            $("label").removeClass("ui-state-error-text");
+            validate.reset();
 
             // owner
             if ($.trim($("#owner").val()) == "0") {
                 header.show_error(_("Waiting list entries must have a contact"));
-                $("label[for='owner']").addClass("ui-state-error-text");
                 $("#asm-details-accordion").accordion("option", "active", 0);
-                $("#owner").focus();
+                validate.highlight("owner");
                 return false;
             }
 
             // date put on list
             if ($.trim($("#dateputon").val()) == "") {
                 header.show_error(_("Date put on cannot be blank"));
-                $("label[for='dateputon']").addClass("ui-state-error-text");
                 $("#asm-details-accordion").accordion("option", "active", 3);
-                $("#dateputon").focus();
+                validate.highlight("dateputon");
                 return false;
             }
 
             // description
             if ($.trim($("#description").val()) == "") {
                 header.show_error(_("Description cannot be blank"));
-                $("label[for='description']").addClass("ui-state-error-text");
                 $("#asm-details-accordion").accordion("option", "active", 0);
-                $("#description").focus();
+                validate.highlight("description");
                 return false;
             }
 

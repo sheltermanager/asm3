@@ -169,26 +169,23 @@ $(function() {
             var validation = function() {
                 // Remove any previous errors
                 header.hide_error();
-                $("label").removeClass("ui-state-error-text");
+                validate.reset();
                 // animal
                 if ($("#animal").val() == "") {
                     header.show_error(_("Movements require an animal"));
-                    $("label[for='animal']").addClass("ui-state-error-text");
-                    $("#animal").focus();
+                    validate.highlight("animal");
                     return false;
                 }
                 // person
                 if ($("#person").val() == "") {
                     header.show_error(_("This type of movement requires a person."));
-                    $("label[for='person']").addClass("ui-state-error-text");
-                    $("#person").focus();
+                    validate.highlight("person");
                     return false;
                 }
                 // date
                 if ($.trim($("#reservationdate").val()) == "") {
                     header.show_error(_("This type of movement requires a date."));
-                    $("label[for='reservationdate']").addClass("ui-state-error-text");
-                    $("#reservationdate").focus();
+                    validate.highlight("reservationdate");
                     return false;
                 }
                 return true;

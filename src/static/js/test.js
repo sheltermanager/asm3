@@ -299,7 +299,7 @@ $(function() {
             var givenbuttons = { };
             var dialog = test.dialog, table = test.table;
             givenbuttons[_("Save")] = function() {
-                $("#dialog-given label").removeClass("ui-state-error-text");
+                validate.reset("dialog-given");
                 if (!validate.notblank([ "newdate" ])) { return; }
                 $("#usagedate").val($("#newdate").val()); // copy given to usage
                 $("#dialog-given").disable_dialog_buttons();

@@ -66,22 +66,9 @@ $(function() {
 
         bind: function() {
             var validation = function() {
-                // Remove any previous errors
                 header.hide_error();
-                $("label").removeClass("ui-state-error-text");
-                // animal
-                if ($("#animal").val() == "") {
-                    $("label[for='animal']").addClass("ui-state-error-text");
-                    $("#animal").focus();
-                    return false;
-                }
-                // date
-                if ($.trim($("#deceaseddate").val()) == "") {
-                    $("label[for='deceaseddate']").addClass("ui-state-error-text");
-                    $("#deceaseddate").focus();
-                    return false;
-                }
-                return true;
+                validate.reset();
+                return validate.notblank([ "animal", "deceaseddate" ]);
             };
 
             // Callback when animal is changed

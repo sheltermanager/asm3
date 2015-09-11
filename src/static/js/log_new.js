@@ -46,13 +46,12 @@ $(function() {
             var validation = function() {
                 // Remove any previous errors
                 header.hide_error();
-                $("label").removeClass("ui-state-error-text");
+                validate.reset();
                 if (controller.mode == "animal") {
                     // animal
                     if ($("#animal").val() == "" || $("#animal").val() == "0") {
                         header.show_error(_("Log requires an animal."));
-                        $("label[for='animal']").addClass("ui-state-error-text");
-                        $("#animal").focus();
+                        validate.highlight("animal");
                         return false;
                     }
                 }
@@ -60,16 +59,14 @@ $(function() {
                     // person
                     if ($("#person").val() == "" || $("#person").val() == "0") {
                         header.show_error(_("Log requires a person."));
-                        $("label[for='person']").addClass("ui-state-error-text");
-                        $("#person").focus();
+                        validate.highlight("person");
                         return false;
                     }
                 }
                 // date
                 if ($.trim($("#logdate").val()) == "") {
                     header.show_error(_("Log requires a date."));
-                    $("label[for='logdate']").addClass("ui-state-error-text");
-                    $("#logdate").focus();
+                    validate.highlight("logdate");
                     return false;
                 }
                 return true;

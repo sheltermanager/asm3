@@ -740,7 +740,7 @@ $(function() {
         bind_vetenvoy_signup_dialog: function() {
             var b = { };
             b[_("Signup")] = function() {
-                $("#dialog-vetenvoy label").removeClass("ui-state-error-text");
+                validate.reset("dialog-vetenvoy");
                 if (!validate.notblank([ "vefirstname", "velastname", "vephone", "veemail", "vepracticename", "vezipcode", "veaddress" ])) { return; }
                 $("#dialog-vetenvoy").disable_dialog_buttons();
                 var formdata = $("#dialog-vetenvoy .asm-textbox, #dialog-vetenvoy .asm-selectbox").toPOST();
