@@ -1,6 +1,7 @@
 37
 ================
 
+11/09/15 Fix Avery 5160 standard label size (2.75 x 1)
 10/09/15 Truncate email subject to 78 chars for Outlook/other MUAs
 09/09/15 Trial adoption ending alert ignoring return date
 06/09/15 Show all occupants in unit availability listing
