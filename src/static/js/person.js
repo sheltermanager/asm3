@@ -496,14 +496,16 @@ $(function() {
             // any additional fields that are marked mandatory
             var valid = true;
             $(".additional").each(function() {
-                var t = $(this);
+                var t = $(this), 
+                    label = $("label[for='" + t.attr("id") + "']"),
+                    acchead = $("#" + t.closest(".ui-accordion-content").prev().attr("id"));
                 if (t.attr("type") != "checkbox") {
-                    var d = String(t.attr("data"));
+                    var d = String(t.attr("data-post"));
                     if (d.indexOf("a.1") != -1) {
                         if ($.trim(t.val()) == "") {
-                            header.show_error(_("{0} cannot be blank").replace("{0}", d.substring(4)));
-                            $("#asm-details-accordion").accordion("option", "active", 2);
-                            $("label[for='" + t.attr("id") + "']").addClass("ui-state-error-text");
+                            header.show_error(_("{0} cannot be blank").replace("{0}", label.html()));
+                            $("#asm-details-accordion").accordion("option", "active", acchead.index("#asm-details-accordion h3"));
+                            label.addClass("ui-state-error-text");
                             t.focus();
                             valid = false;
                             return;
