@@ -494,27 +494,11 @@ $(function() {
             }
 
             // any additional fields that are marked mandatory
-            var valid = true;
-            $(".additional").each(function() {
-                var t = $(this), 
-                    label = $("label[for='" + t.attr("id") + "']"),
-                    acchead = $("#" + t.closest(".ui-accordion-content").prev().attr("id"));
-                if (t.attr("type") != "checkbox") {
-                    var d = String(t.attr("data-post"));
-                    if (d.indexOf("a.1") != -1) {
-                        if ($.trim(t.val()) == "") {
-                            header.show_error(_("{0} cannot be blank").replace("{0}", label.html()));
-                            $("#asm-details-accordion").accordion("option", "active", acchead.index("#asm-details-accordion h3"));
-                            label.addClass("ui-state-error-text");
-                            t.focus();
-                            valid = false;
-                            return;
-                        }
-                    }
-                }
-            });
+            if (!additional.validate_mandatory()) {
+                return false;
+            }
 
-            return valid;
+            return true;
         },
 
         get_map_url: function() {
@@ -707,7 +691,7 @@ $(function() {
             });
 
             validate.save = function(callback) {
-                if (!person.validation()) { return; }
+                if (!person.validation()) { header.hide_loading(); return; }
                 validate.dirty(false);
                 // Note we specify ownertype again at the end, otherwise the 
                 // values in the embedded person choosers will take precedence

@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, _, asm, common, config, format, html */
+/*global $, _, asm, common, config, format, header, html */
 /*global additional: true */
 
 $(function() {
@@ -145,7 +145,44 @@ $(function() {
             add.push("</tr></table>");
             other.push("</tr></table>");
             return add.join("\n") + other.join("\n");
+        },
+
+        /**
+         * Evaluates all additional fields in the DOM and checks to
+         * see if they are mandatory and if so whether or not they
+         * are blank. Returns true if all is ok, or false if a field
+         * fails a check.
+         * If a field fails the manadatory check:
+         * 1. Its label is highlighted
+         * 2. The correct accordion section is opened
+         * 3. An error message is displayed
+         */
+        validate_mandatory: function() {
+            var valid = true;
+            $(".additional").each(function() {
+                var t = $(this), 
+                    label = $("label[for='" + t.attr("id") + "']"),
+                    acchead = $("#" + t.closest(".ui-accordion-content").prev().attr("id"));
+                // ignore checkboxes
+                if (t.attr("type") != "checkbox") {
+                    var d = String(t.attr("data-post"));
+                    // mandatory additional fields have a post attribute prefixed with a.1
+                    if (d.indexOf("a.1") != -1) {
+                        if ($.trim(t.val()) == "") {
+                            header.show_error(_("{0} cannot be blank").replace("{0}", label.html()));
+                            // Find the index of the accordion section this element is in and activate it
+                            $("#asm-details-accordion").accordion("option", "active", acchead.index("#asm-details-accordion h3"));
+                            label.addClass("ui-state-error-text");
+                            t.focus();
+                            valid = false;
+                            return false;
+                        }
+                    }
+                }
+            });
+            return valid;
         }
+
     };
 
 });
