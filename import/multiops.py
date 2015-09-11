@@ -224,6 +224,7 @@ for row in canimalids:
         asm.additional_field("DocumentID", 0, a.ID, row["Code"])
     # 21 = jcas animal code
     if row["sysAnimalIDTypesID"] == "21":
+        a.ShelterCode = row["Code"]
         a.ShortCode = row["Code"]
 
 # animal intake/disposition list
