@@ -783,7 +783,8 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
     add_header(msg, "To", toadd)
     if ccadd != "": 
         add_header(msg, "Cc", ccadd)
-    add_header(msg, "Subject", truncate(subject, 77))
+    subject = truncate(subject, 69) # limit subject to 78 chars - "Subject: "
+    add_header(msg, "Subject", subject)
     msg.attach(msgtext)
 
     # If an attachment has been specified, add it to the message
