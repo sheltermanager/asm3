@@ -22,9 +22,9 @@ lksmovementtype.MovementType AS LatestMovement,
 animal.ActiveMovementDate AS DateLeftShelter,
 owner.OwnerName
 FROM animal 
-INNER JOIN animaltype ON animal.AnimalTypeID = animaltype.ID
-INNER JOIN species ON species.ID = animal.SpeciesID
-INNER JOIN internallocation ON internallocation.ID = animal.ShelterLocation
+LEFT OUTER JOIN animaltype ON animal.AnimalTypeID = animaltype.ID
+LEFT OUTER JOIN species ON species.ID = animal.SpeciesID
+LEFT OUTER JOIN internallocation ON internallocation.ID = animal.ShelterLocation
 LEFT OUTER JOIN lksmovementtype ON lksmovementtype.ID = animal.ActiveMovementType
 LEFT OUTER JOIN adoption ON adoption.ID = animal.ActiveMovementID
 LEFT OUTER JOIN owner ON owner.ID = adoption.OwnerID

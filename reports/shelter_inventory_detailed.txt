@@ -20,9 +20,9 @@ t.AnimalType,
 s.SpeciesName,
 CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' ELSE i.LocationName END AS LocationName
 FROM animal a
-INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
-INNER JOIN species s ON s.ID = a.SpeciesID
-INNER JOIN lksex sx ON sx.ID = a.Sex
+LEFT OUTER JOIN animaltype t ON t.ID = a.AnimalTypeID
+LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
+LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex
 LEFT OUTER JOIN internallocation i ON i.ID = a.ShelterLocation
 WHERE a.Archived = 0
 ORDER BY

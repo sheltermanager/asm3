@@ -16,10 +16,10 @@ a.BreedName,
 CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' ELSE i.LocationName END AS LocationName,
 oo.OwnerName AS OOName, oo.OwnerAddress AS OOAddress, oo.OwnerTown AS OOTown, oo.OwnerCounty AS OOCounty, oo.OwnerPostcode AS OOPostcode
 FROM animal a
-INNER JOIN animaltype y ON y.ID = a.AnimalTypeID
-INNER JOIN species s ON s.ID = a.SpeciesID
-INNER JOIN internallocation i ON i.ID = a.ShelterLocation
-INNER JOIN owner oo ON animal.OriginalOwnerID = oo.ID
+LEFT OUTER JOIN animaltype y ON y.ID = a.AnimalTypeID
+LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
+LEFT OUTER JOIN internallocation i ON i.ID = a.ShelterLocation
+LEFT OUTER JOIN owner oo ON animal.OriginalOwnerID = oo.ID
 WHERE a.Archived = 0 
 ORDER BY 
 CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' ELSE i.LocationName END, s.SpeciesName, a.DateBroughtIn

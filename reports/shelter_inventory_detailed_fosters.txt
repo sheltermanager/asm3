@@ -22,9 +22,9 @@ CASE
 WHEN a.ActiveMovementType = 2 THEN o.OwnerName
 ELSE i.LocationName END AS DisplayLocationName
 FROM animal a
-INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
-INNER JOIN species s ON s.ID = a.SpeciesID
-INNER JOIN lksex sx ON sx.ID = a.Sex
+LEFT OUTER JOIN animaltype t ON t.ID = a.AnimalTypeID
+LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
+LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex
 LEFT OUTER JOIN internallocation i ON i.ID = a.ShelterLocation
 LEFT OUTER JOIN adoption ad ON a.ActiveMovementID = ad.ID
 LEFT OUTER JOIN owner o ON ad.OwnerID = o.ID
