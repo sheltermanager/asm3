@@ -186,10 +186,13 @@ for row in canimals:
     status = asm.find_value(canimalstatuses, "sysAnimalStatusChoicesID", row["sysAnimalStatusChoicesID"], "STATUS")
     statusdate = asm.getdate_mmddyy(row["StatusDate"])
     a.ExtraID = statusdate
-    # Set a new flag of OnFoster = True if the animal has sysLocationChoicesID = 5 for "Foster Care"
-    # TODO: could be customer specific.
     a.OnFoster = False
-    if row["sysLocationChoicesID"] == "5": a.OnFoster = True
+    # Set a new flag of OnFoster = True if the animal is fostered in MO
+    # TODO: customer specific
+    # Location of "Foster Care" - turn out to be wrong
+    #if row["sysLocationChoicesID"] == "5": a.OnFoster = True
+    # Shelter Area of "Foster - Shelter"
+    if row["sysShelterAreasID"] == "11": a.OnFoster = True
     comments = "Original breed: " + breed1 + "/" + breed2
     comments += ", Color: " + color1 + "/" + color2
     comments += ", Status: " + status
