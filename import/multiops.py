@@ -192,7 +192,7 @@ for row in canimals:
     # Location of "Foster Care" - turn out to be wrong
     #if row["sysLocationChoicesID"] == "5": a.OnFoster = True
     # Shelter Area of "Foster - Shelter"
-    if row["sysShelterAreasID"] == "11": a.OnFoster = True
+    if row["sysShelterAreasID"] == "11" or row["sysAnimalStatusChoicesID"] == 32: a.OnFoster = True
     comments = "Original breed: " + breed1 + "/" + breed2
     comments += ", Color: " + color1 + "/" + color2
     comments += ", Status: " + status
