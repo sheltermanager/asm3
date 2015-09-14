@@ -32,7 +32,7 @@ import threading
 import users
 import utils
 import wordprocessor
-from sitedefs import BASE_URL, MULTIPLE_DATABASES_PUBLISH_DIR, MULTIPLE_DATABASES_PUBLISH_FTP, MULTIPLE_DATABASES_PUBLISH_URL, ADOPTAPET_FTP_HOST, ANIBASE_BASE_URL, ANIBASE_API_USER, ANIBASE_API_KEY, HELPINGLOSTPETS_FTP_HOST, PETFINDER_FTP_HOST, PETRESCUE_FTP_HOST, RESCUEGROUPS_FTP_HOST, SMARTTAG_FTP_HOST, SMARTTAG_FTP_USER, SMARTTAG_FTP_PASSWORD, PETTRAC_UK_POST_URL, MEETAPET_BASE_URL, PETLINK_BASE_URL, SERVICE_URL, VETENVOY_US_VENDOR_USERID, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_HOMEAGAIN_RECIPIENTID, VETENVOY_US_AKC_REUNITE_RECIPIENTID, VETENVOY_US_BASE_URL, VETENVOY_US_SYSTEM_ID
+from sitedefs import BASE_URL, MULTIPLE_DATABASES_PUBLISH_DIR, MULTIPLE_DATABASES_PUBLISH_FTP, MULTIPLE_DATABASES_PUBLISH_URL, ADOPTAPET_FTP_HOST, ANIBASE_BASE_URL, ANIBASE_API_USER, ANIBASE_API_KEY, HELPINGLOSTPETS_FTP_HOST, PETFINDER_FTP_HOST, PETRESCUE_FTP_HOST, PETSLOCATED_FTP_HOST, PETSLOCATED_FTP_USER, PETSLOCATED_FTP_PASSWORD, RESCUEGROUPS_FTP_HOST, SMARTTAG_FTP_HOST, SMARTTAG_FTP_USER, SMARTTAG_FTP_PASSWORD, PETTRAC_UK_POST_URL, MEETAPET_BASE_URL, PETLINK_BASE_URL, SERVICE_URL, VETENVOY_US_VENDOR_USERID, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_HOMEAGAIN_RECIPIENTID, VETENVOY_US_AKC_REUNITE_RECIPIENTID, VETENVOY_US_BASE_URL, VETENVOY_US_SYSTEM_ID
 
 class PublishCriteria:
     """
@@ -2585,7 +2585,6 @@ class HTMLPublisher(FTPPublisher):
                 self.upload(self.escapePageName(k))
                 self.log("Uploaded page: %s" % k)
 
-
 class MeetAPetPublisher(AbstractPublisher):
     """
     Handles publishing to MeetAPet.com
@@ -3382,6 +3381,319 @@ class PetRescuePublisher(FTPPublisher):
         self.upload("pets.csv")
         self.log("Uploaded %s" % "pets.csv")
         self.cleanup()
+
+class PetsLocatedUKPublisher(FTPPublisher):
+    """
+    Handles publishing to petslocated.com in the UK
+    """
+    def __init__(self, dbo, publishCriteria):
+        l = dbo.locale
+        publishCriteria.uploadDirectly = True
+        publishCriteria.thumbnails = False
+        publishCriteria.checkSocket = True
+        publishCriteria.scaleImages = 1
+        self.publisherName = i18n._("PetsLocated UK Publisher", l)
+        self.setLogName("petslocated")
+        FTPPublisher.__init__(self, dbo, publishCriteria, 
+            PETSLOCATED_FTP_HOST, PETSLOCATED_FTP_USER, PETSLOCATED_FTP_PASSWORD)
+
+    def plcAge(self, agegroup):
+        if agegroup is None: return "Older"
+        if agegroup == "Baby": return "Very Young"
+        elif agegroup.startswith("Young"): return "Young"
+        elif agegroup.find("Adult") != -1: return "Average"
+        else:
+            return "Older"
+
+    def plcChipChecked(self, chipped):
+        if chipped == 1:
+            return 2
+        return 3
+
+    def plcNeutered(self, neutered):
+        if type(neutered) == str:
+            if neutered.find("payed") != -1 or neutered.find("eutered") != -1:
+                return "y"
+        elif type(neutered) == int:
+            if neutered == 1:
+                return "y"
+            return "n"
+        return "u"
+
+    def plcSex(self, sexID):
+        if sexID == 0: return "f"
+        if sexID == 1: return "m"
+        return "u"
+
+    def plcHairType(self, an):
+        if an["BREEDNAME"] is None: return "Not Applicable"
+        if an["BREEDNAME"].find("Short") != -1 or an["BREEDNAME"].find("DSH") != -1:
+            return "Short"
+        if an["BREEDNAME"].find("Medium") != -1 or an["BREEDNAME"].find("DMH") != -1:
+            return "Medium"
+        if an["BREEDNAME"].find("Long") != -1 or an["BREEDNAME"].find("DLH") != -1:
+            return "Long"
+        return "Not Applicable"
+
+    def plcColour(self, an):
+        if an["SPECIESNAME"] == "Cat":
+            catcolours = [ "Mainly/All Black", "Mainly/All White", "Black and White",
+                "Brown/Chocolate", "Grey", "Blue", "Beige/Cream", "Ginger/Orange",
+                "Tabby", "Tortoiseshell", "Calico", "Leopard Skin", "Spotted",
+                "Black", "White" ]
+            for c in catcolours:
+                if c.find(an["BASECOLOURNAME"]) != -1:
+                    return c
+                return "Black and White"
+        elif an["SPECIESNAME"] == "Dog":
+            dogcolours = [ "Mainly/All Black", "Mainly/All White", "Black and White",
+                "Brown and White", "Black and Tan", "Brown/Town", "Grey/Silver/Blue",
+                "Golden/Sandy/Apricot", "Red", "Tri-colour", "Brindle",
+                "Black", "White", "Other" ]
+            for d in dogcolours:
+                if d.find(an["BASECOLOURNAME"]) != -1:
+                    return d
+                return "Other"
+        else:
+            return an["BASECOLOURNAME"]
+
+    def run(self):
+        
+        if self.isPublisherExecuting(): return
+        self.updatePublisherProgress(0)
+        self.setLastError("")
+        self.setStartPublishing()
+
+        customerid = configuration.petslocated_customerid(self.dbo)
+        if customerid == "":
+            self.setLastError("No petslocated.com customer ID has been set.")
+            return
+
+        lostanimals = lostfound.get_lostanimal_find_advanced(self.dbo, {})
+        foundanimals = lostfound.get_foundanimal_find_advanced(self.dbo, {})
+        animals = self.getMatchingAnimals()
+        if len(animals) == 0 and len(foundanimals) == 0 and len(lostanimals) == 0:
+            self.setLastError("No animals found to publish.")
+            self.cleanup()
+            return
+
+        if not self.openFTPSocket(): 
+            self.setLastError("Failed opening FTP socket.")
+            if self.logBuffer.find("530 Login"):
+                self.log("Found 530 Login incorrect: disabling PetsLocated UK publisher.")
+                configuration.publishers_enabled_disable(self.dbo, "pcuk")
+            self.cleanup()
+            return
+
+        csv = []
+        header = "customerurn,lostfound,pettype,breed,sexofpet,neutered,petname,internalref,petage,hairtype,petcoloursall,chipchecked,chipno,petfeatures,lastlocationst,lastlocation,locationpostcode,datelostfound,otherdetails,privatenotes,showonsite\n"
+
+        # Lost Animals
+        anCount = 0
+        for an in lostanimals:
+            try:
+                line = []
+                anCount += 1
+                self.log("Processing Lost Animal: %d: %s (%d of %d)" % ( an["ID"], an["COMMENTS"], anCount, len(foundanimals)))
+
+                # If the user cancelled, stop now
+                if self.shouldStopPublishing(): 
+                    self.log("User cancelled publish. Stopping.")
+                    self.resetPublisherProgress()
+                    return
+
+                # customerurn
+                line.append("\"%s\"" % customerid)
+                # lostfound
+                line.append("\"L\"")
+                # pettype
+                line.append("\"%s\"" % an["SPECIESNAME"])
+                # breed
+                line.append("\"%s\"" % an["BREEDNAME"])
+                # sexofpet
+                line.append("\"%s\"" % self.plcSex(an["SEX"]))
+                # neutered
+                line.append("\"%s\"" % (self.plcNeutered(an["DISTFEAT"])))
+                # petname
+                line.append("\"\"")
+                # internalref
+                line.append("\"L%s\"" % an["ID"])
+                # petage
+                line.append("\"%s\"" % self.plcAge(an["AGEGROUP"]))
+                # hairtype
+                line.append("\"%s\"" % self.plcHairType(an))
+                # petcoloursall
+                line.append("\"%s\"" % self.plcColour(an))
+                # chipchecked
+                line.append("\"1\"")
+                # chipno
+                line.append("\"\"")
+                # petfeatures
+                line.append("\"%s\"" % an["DISTFEAT"])
+                # lastlocationst
+                line.append("\"\"")
+                # lastlocation
+                line.append("\"%s\"" % an["AREALOST"])
+                # locationpostcode
+                line.append("\"%s\"" % an["AREAPOSTCODE"])
+                # datelostfound
+                line.append("\"%s\"" % i18n.python2display(self.locale, an["DATELOST"]))
+                # otherdetails
+                line.append("\"\"")
+                # privatenotes
+                line.append("\"%s\"" % an["COMMENTS"])
+                # showonsite
+                line.append("\"1\"")
+                # Add to our CSV file
+                csv.append(",".join(line))
+                # Mark success in the log
+                self.logSuccess("Processed Lost Animal: %d: %s (%d of %d)" % ( an["ID"], an["COMMENTS"], anCount, len(foundanimals)))
+            except Exception,err:
+                self.logError("Failed processing lost animal: %s, %s" % (str(an["ID"]), err), sys.exc_info())
+
+        # Found Animals
+        anCount = 0
+        for an in foundanimals:
+            try:
+                line = []
+                anCount += 1
+                self.log("Processing Found Animal: %d: %s (%d of %d)" % ( an["ID"], an["COMMENTS"], anCount, len(foundanimals)))
+
+                # If the user cancelled, stop now
+                if self.shouldStopPublishing(): 
+                    self.log("User cancelled publish. Stopping.")
+                    self.resetPublisherProgress()
+                    return
+
+                # customerurn
+                line.append("\"%s\"" % customerid)
+                # lostfound
+                line.append("\"F\"")
+                # pettype
+                line.append("\"%s\"" % an["SPECIESNAME"])
+                # breed
+                line.append("\"%s\"" % an["BREEDNAME"])
+                # sexofpet
+                line.append("\"%s\"" % self.plcSex(an["SEX"]))
+                # neutered
+                line.append("\"%s\"" % (self.plcNeutered(an["DISTFEAT"])))
+                # petname
+                line.append("\"\"")
+                # internalref
+                line.append("\"F%s\"" % an["ID"])
+                # petage
+                line.append("\"%s\"" % self.plcAge(an["AGEGROUP"]))
+                # hairtype
+                line.append("\"%s\"" % self.plcHairType(an))
+                # petcoloursall
+                line.append("\"%s\"" % self.plcColour(an))
+                # chipchecked
+                line.append("\"1\"")
+                # chipno
+                line.append("\"\"")
+                # petfeatures
+                line.append("\"%s\"" % an["DISTFEAT"])
+                # lastlocationst
+                line.append("\"\"")
+                # lastlocation
+                line.append("\"%s\"" % an["AREAFOUND"])
+                # locationpostcode
+                line.append("\"%s\"" % an["AREAPOSTCODE"])
+                # datelostfound
+                line.append("\"%s\"" % i18n.python2display(self.locale, an["DATEFOUND"]))
+                # otherdetails
+                line.append("\"\"")
+                # privatenotes
+                line.append("\"%s\"" % an["COMMENTS"])
+                # showonsite
+                line.append("\"1\"")
+                # Add to our CSV file
+                csv.append(",".join(line))
+                # Mark success in the log
+                self.logSuccess("Processed Found Animal: %d: %s (%d of %d)" % ( an["ID"], an["COMMENTS"], anCount, len(foundanimals)))
+            except Exception,err:
+                self.logError("Failed processing found animal: %s, %s" % (str(an["ID"]), err), sys.exc_info())
+
+        # Animals
+        anCount = 0
+        for an in animals:
+            try:
+                line = []
+                anCount += 1
+                self.log("Processing: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                self.updatePublisherProgress(self.getProgress(anCount, len(animals)))
+
+                # If the user cancelled, stop now
+                if self.shouldStopPublishing(): 
+                    self.log("User cancelled publish. Stopping.")
+                    self.resetPublisherProgress()
+                    return
+
+                # Upload one image for this animal
+                # self.uploadImage(an, an["WEBSITEMEDIANAME"], an["SHELTERCODE"] + ".jpg")
+
+                # customerurn
+                line.append("\"%s\"" % customerid)
+                # lostfound
+                line.append("\"F\"")
+                # pettype
+                line.append("\"%s\"" % an["SPECIESNAME"])
+                # breed
+                line.append("\"%s\"" % an["BREEDNAME"])
+                # sexofpet
+                line.append("\"%s\"" % self.plcSex(an["SEX"]))
+                # neutered
+                line.append("\"%s\"" % self.plcNeutered(an["NEUTERED"]))
+                # petname
+                line.append("\"%s\"" % an["ANIMALNAME"])
+                # internalref
+                line.append("\"%s\"" % an["SHELTERCODE"])
+                # petage
+                line.append("\"%s\"" % self.plcAge(an["AGEGROUP"]))
+                # hairtype
+                line.append("\"%s\"" % self.plcHairType(an))
+                # petcoloursall
+                line.append("\"%s\"" % self.plcColour(an))
+                # chipchecked
+                line.append("\"%d\"" % self.plcChipChecked(an["IDENTICHIPPED"]))
+                # chipno
+                line.append("\"%s\"" % an["IDENTICHIPNUMBER"])
+                # petfeatures
+                line.append("\"%s\"" % an["MARKINGS"])
+                # lastlocationst
+                line.append("\"\"")
+                # lastlocation
+                line.append("\"\"")
+                # locationpostcode
+                line.append("\"\"")
+                # datelostfound
+                line.append("\"%s\"" % i18n.python2display(self.locale, an["DATEBROUGHTIN"]))
+                # otherdetails
+                line.append("\"%s\"" % an["ANIMALCOMMENTS"])
+                # privatenotes
+                line.append("\"%s\"" % an["HIDDENANIMALDETAILS"])
+                # showonsite
+                line.append("\"1\"")
+                # Add to our CSV file
+                csv.append(",".join(line))
+                # Mark success in the log
+                self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+            except Exception,err:
+                self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
+
+        # Mark published
+        self.markAnimalsPublished(animals)
+
+        filename = customerid + ".csv"
+        self.saveFile(os.path.join(self.publishDir, filename), header + "\n".join(csv))
+        self.log("Uploading datafile %s" % filename)
+        self.upload(filename)
+        self.log("Uploaded %s" % filename)
+        # Clean up
+        self.closeFTPSocket()
+        self.deletePublishDirectory()
+        self.saveLog()
+        self.setPublisherComplete()
 
 class PETtracUKPublisher(AbstractPublisher):
     """

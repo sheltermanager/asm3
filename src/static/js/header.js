@@ -265,14 +265,11 @@ $(function() {
                 ep.replace("pr", "");
             }
 
-            // PETtrac UK
-            if (asm.locale != "en_GB") {
-                ep.replace("ptuk", "");
-            }
-
-            // Anibase UK
+            // PETtrac, Anibase and PetsLocated are UK only
             if (asm.locale != "en_GB") {
                 ep.replace("abuk", "");
+                ep.replace("ptuk", "");
+                ep.replace("pcuk", "");
             }
 
             if (ep.indexOf("html") == -1) { $("#asm-menu-publishing-body [href='publish?mode=ftp']").closest("li").hide(); }
@@ -284,6 +281,7 @@ $(function() {
             if (ep.indexOf("mp") == -1) { $("#asm-menu-publishing-body [href='publish?mode=mp']").closest("li").hide(); }
             if (ep.indexOf("hlp") == -1) { $("#asm-menu-publishing-body [href='publish?mode=hlp']").closest("li").hide(); }
             if (ep.indexOf("pl") == -1) { $("#asm-menu-publishing-body [href='publish?mode=pl']").closest("li").hide(); }
+            if (ep.indexOf("pcuk") == -1) { $("#asm-menu-publishing-body [href='publish?mode=pcuk']").closest("li").hide(); }
             if (ep.indexOf("pr") == -1) { $("#asm-menu-publishing-body [href='publish?mode=pr']").closest("li").hide(); }
             if (ep.indexOf("ptuk") == -1) { $("#asm-menu-publishing-body [href='publish?mode=ptuk']").closest("li").hide(); }
             if (ep.indexOf("st") == -1) { $("#asm-menu-publishing-body [href='publish?mode=st']").closest("li").hide(); }

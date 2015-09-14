@@ -716,6 +716,7 @@ def json_menu(l, reports, mailmerges):
             ("", "", "", "publish?mode=mp", "asm-icon-blank", "Publish to MeetAPet.com" ),
             ("", "", "", "publish?mode=pf", "asm-icon-blank", "Publish to PetFinder.com" ),
             ("", "", "", "publish?mode=pr", "asm-icon-blank", "Publish to PetRescue.com.au" ),
+            ("", "", "", "publish?mode=pcuk", "asm-icon-blank", _("Publish to PetsLocated.com", l) ),
             ("", "", "", "publish?mode=rg", "asm-icon-blank", "Publish to RescueGroups.org" ),
             ("", "", "", "publish?mode=vear", "asm-icon-blank", "Register animals with AKC Reunite Microchips (via VetEnvoy)"),
             ("", "", "", "publish?mode=abuk", "asm-icon-blank", "Register animals with idENTICHIP/Anibase UK Microchips"),

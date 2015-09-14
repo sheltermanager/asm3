@@ -821,6 +821,9 @@ def pets911_password(dbo):
 def pets911_source(dbo):
     return cstring(dbo, "Pets911FTPSourceID")
 
+def petslocated_customerid(dbo):
+    return cstring(dbo, "PetsLocatedCustomerID")
+
 def publisher_use_comments(dbo):
     return cboolean(dbo, "PublisherUseComments", DEFAULTS["PublisherUseComments"] == "Yes")
 

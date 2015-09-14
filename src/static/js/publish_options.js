@@ -15,6 +15,7 @@ $(function() {
                 '<li><a href="#tab-helpinglostpets">HelpingLostPets Publisher</a></li>',
                 '<li class="localeus localeca localemx"><a href="#tab-meetapet">MeetAPet Publisher</a></li>',
                 '<li class="localeus localeca localemx"><a href="#tab-petfinder">PetFinder Publisher</a></li>',
+                '<li class="localegb haspetslocated"><a href="#tab-petslocated">PetsLocated Publisher</a></li>',
                 '<li class="localeau"><a href="#tab-petrescue">PetRescue Publisher</a></li>',
                 '<li class="localeus"><a href="#tab-rescuegroups">RescueGroups Publisher</a></li>',
                 '<li class="localegb"><a href="#tab-anibase">Anibase UK Microchips</a></li>',
@@ -245,6 +246,21 @@ $(function() {
                 html.info('The chip password is the password that allows owners to update their own information on the PetLink' +
                   'website in combination with their email address.'),
                 '</td>',
+                '</tr>',
+                '</table>',
+                '</div>'
+            ].join("\n");
+        },
+
+        render_petslocated: function() {
+            return [
+                '<div id="tab-petslocated">',
+                html.info('Signup at <a href="http://www.petslocated.com">www.petslocated.com</a>'),
+                '<p><input id="enabledpcuk" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledpcuk">' + _("Enabled") + '</label></p>',
+                '<table>',
+                '<tr>',
+                '<td><label for="pcukcustid">petslocated.com customer number</label></td>',
+                '<td><input id="pcukcustid" type="text" class="asm-textbox cfg" data="PetsLocatedCustomerID" /></td>',
                 '</tr>',
                 '</table>',
                 '</div>'
@@ -725,7 +741,7 @@ $(function() {
                 this.render_petlink(),
                 this.render_htmlftp(),
                 this.render_petfinder(),
-                this.render_petrescue(),
+                this.render_petslocated(),
                 this.render_rescuegroups(),
                 this.render_adoptapet(),
                 this.render_meetapet(),
@@ -819,6 +835,7 @@ $(function() {
                 if ($("#enabledmp").is(":checked")) { ep += " mp"; }
                 if ($("#enabledhlp").is(":checked")) { ep += " hlp"; }
                 if ($("#enabledpl").is(":checked")) { ep += " pl"; }
+                if ($("#enabledpcuk").is(":checked")) { ep += " pcuk"; }
                 if ($("#enabledpr").is(":checked")) { ep += " pr"; }
                 if ($("#enabledptuk").is(":checked")) { ep += " ptuk"; }
                 if ($("#enabledst").is(":checked")) { ep += " st"; }
@@ -889,6 +906,11 @@ $(function() {
             // Enable tab sections for Mexican publishers
             if (asm.locale == "en_MX" || asm.locale == "es_MX") {
                 $(".localemx").show();
+            }
+
+            // Disable PetsLocated if it's not setup in sitedefs
+            if (!controller.haspetslocated) {
+                $(".haspetslocated").hide();
             }
 
             // Disable VetEnvoy if there's no vendor password
@@ -977,6 +999,7 @@ $(function() {
             if (pe.indexOf("mp") != -1) { $("#enabledmp").attr("checked", true); }
             if (pe.indexOf("hlp") != -1) { $("#enabledhlp").attr("checked", true); }
             if (pe.indexOf("pl") != -1) { $("#enabledpl").attr("checked", true); }
+            if (pe.indexOf("pcuk") != -1) { $("#enabledpcuk").attr("checked", true); }
             if (pe.indexOf("pr") != -1) { $("#enabledpr").attr("checked", true); }
             if (pe.indexOf("ptuk") != -1) { $("#enabledptuk").attr("checked", true); }
             if (pe.indexOf("abuk") != -1) { $("#enabledabuk").attr("checked", true); }

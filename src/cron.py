@@ -266,6 +266,24 @@ def publish_pl(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running petlink publisher: %s" % em, "cron.publish_pl", dbo, sys.exc_info())
 
+def publish_pcuk(dbo):
+    try :
+
+        pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
+        publishers = configuration.publishers_enabled(dbo)
+        if smcom.active():
+            pc.ignoreLock = True
+
+        if publishers.find("pcuk") != -1:
+            al.info("start petslocated uk publisher", "cron.publish_pcuk", dbo)
+            pn = publish.PetsLocatedUKPublisher(dbo, pc)
+            pn.run()
+            al.info("end petslocated uk publisher", "cron.publish_pcuk", dbo)
+
+    except:
+        em = str(sys.exc_info()[0])
+        al.error("FAIL: uncaught error running petslocated publisher: %s" % em, "cron.publish_pcuk", dbo, sys.exc_info())
+
 def publish_pr(dbo):
     try :
 
@@ -538,6 +556,7 @@ def run(dbo, mode):
         publish_mp(dbo)
         publish_pf(dbo)
         publish_pl(dbo)
+        publish_pcuk(dbo)
         publish_pr(dbo)
         publish_abuk(dbo)
         publish_ptuk(dbo)
@@ -561,6 +580,8 @@ def run(dbo, mode):
         publish_pf(dbo)
     elif mode == "publish_pl":
         publish_pl(dbo)
+    elif mode == "publish_pcuk":
+        publish_pcuk(dbo)
     elif mode == "publish_pr":
         publish_pr(dbo)
     elif mode == "publish_abuk":
@@ -671,6 +692,7 @@ def print_usage():
     print "       publish_vear - update akc reunite via vetenvoy"
     print "       publish_abuk - update anibase uk"
     print "       publish_ptuk - update pettrac uk"
+    print "       publish_pcuk - publish to petslocated.com uk"
     print "       publish_pr - update petrescue aus"
     print "       maint_animal_figures - calculate all monthly/annual figures for all time"
     print "       maint_animal_figures_annual - calculate all annual figures for all time"

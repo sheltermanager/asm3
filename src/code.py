@@ -43,7 +43,7 @@ import utils
 import waitinglist as extwaitinglist
 import web
 import wordprocessor
-from sitedefs import BASE_URL, DEPLOYMENT_TYPE, DUMP_OVERRIDES, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, FORGOTTEN_PASSWORD, FORGOTTEN_PASSWORD_LABEL, LOCALE, GEO_PROVIDER, GEO_PROVIDER_KEY, JQUERY_UI_CSS, LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_PUBLISH_URL, MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MAP_LINK, MAP_PROVIDER, OSM_MAP_TILES, PETRESCUE_FTP_HOST, QR_IMG_SRC, SERVICE_URL, SESSION_STORE, SHARE_BUTTON, SMARTTAG_FTP_USER, SMTP_SERVER, SMCOM_PAYMENT_LINK, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_VENDOR_USERID
+from sitedefs import BASE_URL, DEPLOYMENT_TYPE, DUMP_OVERRIDES, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, FORGOTTEN_PASSWORD, FORGOTTEN_PASSWORD_LABEL, LOCALE, GEO_PROVIDER, GEO_PROVIDER_KEY, JQUERY_UI_CSS, LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_PUBLISH_URL, MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MAP_LINK, MAP_PROVIDER, OSM_MAP_TILES, PETRESCUE_FTP_HOST, PETSLOCATED_FTP_USER, QR_IMG_SRC, SERVICE_URL, SESSION_STORE, SHARE_BUTTON, SMARTTAG_FTP_USER, SMTP_SERVER, SMCOM_PAYMENT_LINK, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_VENDOR_USERID
 
 # URL to class mappings
 urls = (
@@ -5413,6 +5413,9 @@ class publish:
             elif mode == "abuk": 
                 mp = extpublish.AnibaseUKPublisher(dbo, pc)
                 mp.start()
+            elif mode == "pcuk": 
+                mp = extpublish.PetsLocatedUKPublisher(dbo, pc)
+                mp.start()
             elif mode == "ptuk": 
                 mp = extpublish.PETtracUKPublisher(dbo, pc)
                 mp.start()
@@ -5469,6 +5472,7 @@ class publish_options:
         c = html.controller_json("locations", extlookups.get_internal_locations(dbo))
         c += html.controller_str("publishurl", MULTIPLE_DATABASES_PUBLISH_URL)
         c += html.controller_bool("hasftpoverride", MULTIPLE_DATABASES_PUBLISH_FTP is not None and not configuration.publisher_ignore_ftp_override(dbo))
+        c += html.controller_bool("haspetslocated", PETSLOCATED_FTP_USER != "")
         c += html.controller_bool("hassmarttag", SMARTTAG_FTP_USER != "")
         c += html.controller_bool("hasvevendor", VETENVOY_US_VENDOR_PASSWORD != "")
         c += html.controller_bool("hasvesys", VETENVOY_US_VENDOR_USERID != "")
