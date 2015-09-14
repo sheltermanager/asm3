@@ -1,6 +1,7 @@
 37
 ================
 
+14/09/15 Merge button handles person details/flags too now #222
 14/09/15 Support merging person details/flags from csv/online form #222
 11/09/15 Refactor validation and use a more visible colour for highlights
 11/09/15 Fix for blank additional mandatory fields not producing errors #251 

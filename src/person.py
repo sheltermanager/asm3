@@ -780,7 +780,8 @@ def merge_flags(dbo, username, personid, flags):
 def merge_person(dbo, username, personid, mergepersonid):
     """
     Reparents all satellite records of mergepersonid onto
-    personid and then deletes it.
+    personid, merges any missing flags or details and then 
+    deletes it.
     """
     l = dbo.locale
     if personid == mergepersonid:
@@ -792,6 +793,20 @@ def merge_person(dbo, username, personid, mergepersonid):
             db.execute(dbo, "UPDATE %s SET %s = %d WHERE %s = %d AND %s = %d" % (table, field, personid, field, mergepersonid, linktypefield, linktype))
         else:
             db.execute(dbo, "UPDATE %s SET %s = %d WHERE %s = %d" % (table, field, personid, field, mergepersonid))
+    # Merge any contact info
+    mp = get_person(dbo, mergepersonid)
+    mp["address"] = mp["OWNERADDRESS"]
+    mp["town"] = mp["OWNERTOWN"]
+    mp["county"] = mp["OWNERCOUNTY"]
+    mp["postcode"] = mp["OWNERPOSTCODE"]
+    mp["hometelephone"] = mp["HOMETELEPHONE"]
+    mp["worktelephone"] = mp["WORKTELEPHONE"]
+    mp["mobiletelephone"] = mp["MOBILETELEPHONE"]
+    mp["emailaddress"] = mp["EMAILADDRESS"]
+    merge_person_details(dbo, username, personid, mp)
+    # Merge any flags from the target
+    merge_flags(dbo, username, personid, mp["ADDITIONALFLAGS"])
+    # Reparent all satellite records
     reparent("adoption", "OwnerID")
     reparent("adoption", "RetailerID")
     reparent("animal", "OriginalOwnerID")
