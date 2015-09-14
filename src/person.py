@@ -736,6 +736,47 @@ def insert_person_from_form(dbo, post, username):
     audit.create(dbo, username, "owner", str(pid) + " %s %s %s" % (d("title"), d("forenames"), d("surname")))
     return pid
 
+def merge_person_details(dbo, username, personid, d):
+    """
+    Merges person details in data dictionary d (the same dictionary that
+    would be fed to insert_person_from_form and update_person_from_form)
+    to person with personid.
+    If any of the contact fields on the person record are blank, the ones
+    from the dictionary are used instead and updated on the record.
+    """
+    p = get_person(dbo, personid)
+    def merge(dictfield, fieldname):
+        if p[fieldname] == "" or p[fieldname] is None:
+            db.execute(dbo, "UPDATE owner SET %s = %s, LastChangedBy = %s, LastChangedDate = %s WHERE ID = %d" % \
+                (fieldname, db.ds(d[dictfield]), db.ds(username), db.ddt(now(dbo.timezone)), personid))
+    merge("address", "OWNERADDRESS")
+    merge("town", "OWNERTOWN")
+    merge("county", "OWNERCOUNTY")
+    merge("postcode", "OWNERPOSTCODE")
+    merge("hometelephone", "HOMETELEPHONE")
+    merge("worktelephone", "WORKTELEPHONE")
+    merge("mobiletelephone", "MOBILETELEPHONE")
+    merge("emailaddress", "EMAILADDRESS")
+
+def merge_flags(dbo, username, personid, flags):
+    """
+    Merges the delimited string flags with those on personid
+    flags can be delimited with either pipes or commas.
+    The original person record is updated and the new list of flags is returned 
+    as a pipe delimited string.
+    """
+    fgs = []
+    if flags == "": return
+    if flags.find("|"): fgs = flags.split("|")
+    if flags.find(","): fgs = flags.split(",")
+    epf = db.query_string(dbo, "SELECT AdditionalFlags FROM owner WHERE ID = %d" % personid)
+    epfb = epf.split("|")
+    for x in fgs:
+        if not x in epfb and not x == "":
+            epf += "%s|" % x
+    update_flags(dbo, username, personid, epf.split("|"))
+    return epf
+
 def merge_person(dbo, username, personid, mergepersonid):
     """
     Reparents all satellite records of mergepersonid onto

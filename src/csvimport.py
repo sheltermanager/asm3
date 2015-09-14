@@ -408,15 +408,9 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
                     dups = person.get_person_similar(dbo, p["surname"], p["forenames"], p["address"])
                     if len(dups) > 0:
                         personid = dups[0]["ID"]
-                        # Get the flags off the existing person record and merge any new ones (if there aren't any
-                        # new ones to merge, do nothing)
-                        if flags != "":
-                            epf = db.query_string(dbo, "SELECT AdditionalFlags FROM owner WHERE ID = %d" % personid)
-                            epfb = epf.split("|")
-                            for x in flags.split(","):
-                                if not x in epfb and not x == "":
-                                    epf += "%s|" % x
-                            person.update_flags(dbo, "import", personid, epf.split("|"))
+                        # Merge flags and any extra details
+                        person.merge_flags(dbo, "import", personid, flags)
+                        person.merge_person_details(dbo, "import", personid, p)
                 if personid == 0:
                     personid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import")
                     # Identify any PERSONADDITIONAL additional fields and create them

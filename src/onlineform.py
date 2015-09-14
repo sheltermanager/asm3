@@ -691,19 +691,12 @@ def create_person(dbo, username, collationid):
         similar = person.get_person_similar(dbo, d["surname"], d["forenames"], d["address"])
         if len(similar) > 0:
             personid = similar[0]["ID"]
+            # Merge flags and any extra details
+            person.merge_flags(dbo, username, personid, flags)
+            person.merge_person_details(dbo, username, personid, d)
     # Create the person record if we didn't find one
     if personid == 0:
         personid = person.insert_person_from_form(dbo, utils.PostedData(d, dbo.locale), username)
-    # Get the flags off the existing person record and merge any new ones (if there aren't any
-    # new ones to merge, do nothing)
-    elif flags != "":
-        epf = db.query_string(dbo, "SELECT AdditionalFlags FROM owner WHERE ID = %d" % personid)
-        epfb = epf.split("|")
-        for x in flags:
-            if not x in epfb and not x == "":
-                epf += "%s|" % x
-        d["flags"] = epf.replace("|", ",")
-        person.update_person_from_form(dbo, utils.PostedData(d, dbo.locale), username)
     personname = person.get_person_name_code(dbo, personid)
     # Attach the form to the person
     formname = get_onlineformincoming_name(dbo, collationid)
