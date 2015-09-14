@@ -1825,7 +1825,10 @@ class Movement:
             ( "LastChangedBy", ds(self.LastChangedBy) ),
             ( "LastChangedDate", dd(self.LastChangedDate) )
             )
-        return makesql("adoption", s)
+        sql = makesql("adoption", s)
+        # Close any existing movements for this animal
+        sql += "\nUPDATE adoption SET ReturnDate = %s WHERE MovementDate < %s AND AnimalID = %s AND ReturnDate Is Null;" % ( dd(self.MovementDate), dd(self.MovementDate), di(self.AnimalID))
+        return sql
 
 class Owner:
     ID = 0

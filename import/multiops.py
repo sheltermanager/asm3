@@ -351,13 +351,12 @@ for row in canimalguardians:
     if not a.OnFoster: continue
     # if the animal is dead, also don't bother
     if a.DeceasedDate is not None: continue
-    # if the animal already has an active movement of some type, don't bother
-    if a.ActiveMovementID > 0: continue
     m = asm.Movement()
     m.AnimalID = a.ID
     m.OwnerID = o.ID
     m.MovementType = 2
-    m.MovementDate = asm.getdate_mmddyy(row["DateFrom"])
+    fromdate = asm.getdate_mmddyy(row["DateFrom"])
+    m.MovementDate = fromdate
     if m.MovementDate is None:
         m.MovementDate = a.DateBroughtIn
     m.ReturnDate = asm.getdate_mmddyy(row["DateTo"])
