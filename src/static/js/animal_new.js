@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, validate */
+/*global $, jQuery, _, additional, asm, common, config, controller, dlgfx, format, header, html, validate */
 
 $(function() {
 
@@ -240,6 +240,7 @@ $(function() {
                 '<input id="timebroughtin" data="timebroughtin" class="asm-textbox asm-timebox" />',
                 '</td>',
                 '</tr>',
+                additional.additional_mandatory_fields(controller.additional),
                 '</table>',
                 '<div class="centered">',
                 '<button id="addedit">' + html.icon("animal-add") + ' ' + _("Create and edit") + '</button>',
@@ -425,6 +426,9 @@ $(function() {
                 validate.highlight("dateofbirth");
                 return false;
             }
+
+            // mandatory additional fields
+            if (!additional.validate_mandatory()) { return false; }
 
             return true;
         },

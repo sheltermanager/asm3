@@ -646,6 +646,10 @@ def insert_lostanimal_from_form(dbo, post, username):
         ( "Comments", post.db_string("comments"))
         )))
     audit.create(dbo, username, "animallost", str(nid))
+
+    # Save any additional field values given
+    additional.save_values_for_link(dbo, post, nid, "lostanimal")
+
     return nid
 
 def update_foundanimal_from_form(dbo, post, username):
@@ -713,6 +717,10 @@ def insert_foundanimal_from_form(dbo, post, username):
         ( "Comments", post.db_string("comments"))
         )))
     audit.create(dbo, username, "animalfound", str(nid))
+
+    # Save any additional field values given
+    additional.save_values_for_link(dbo, post, nid, "foundanimal")
+
     return nid
 
 def create_animal_from_found(dbo, username, aid):

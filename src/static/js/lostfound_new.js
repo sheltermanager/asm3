@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, validate */
+/*global $, jQuery, _, additional, asm, common, config, controller, dlgfx, format, header, html, validate */
 
 $(function() {
 
@@ -107,6 +107,7 @@ $(function() {
                 '<input id="owner" data="owner" type="hidden" class="asm-personchooser" value="" />',
                 '</td>',
                 '</tr>',
+                additional.additional_mandatory_fields(controller.additional),
                 '</table>',
                 '</td>',
                 '</tr>',
@@ -169,6 +170,9 @@ $(function() {
                     validate.highlight("datereported");
                     return false;
                 }
+
+                // mandatory additional fields
+                if (!additional.validate_mandatory()) { return false; }
 
                 return true;
 

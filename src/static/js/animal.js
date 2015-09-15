@@ -1211,27 +1211,7 @@ $(function() {
             // display it
             $("#microchipnumber").change(animal.show_microchip_supplier);
 
-            // If any of our additional fields need moving to other tabs, 
-            // let's take care of that. Additional fields are always in pairs of
-            // <td> fields, with the label containing a toX class, where toX is
-            // an entry in lksfieldlink. Some tables in the form have a .additionaltarget
-            // class with a data element marked toX. We reparent our .toX elements
-            // to those elements.
-            $(".additionaltarget").each(function() {
-                var target = $(this);
-                var targetname = target.attr("data");
-                $(".additionalmove ." + targetname).each(function() {
-                    // $(this) is the td containing the label
-                    var label = $(this);
-                    var item = $(this).next();
-                    // For some reason, jquery gets confused if we reparent the row, so
-                    // we have to add a new row to the table and then move our cells in.
-                    target.append("<tr></tr>");
-                    target.find("tr:last").append(label);
-                    target.find("tr:last").append(item);
-                });
-            });
-
+            additional.relocate_fields();
 
             // If the animal type changes, or the date brought in, we may need to
             // generate a new code

@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, asm, common, config, controller, dlgfx, format, geo, header, html, validate */
+/*global $, jQuery, _, additional, asm, common, config, controller, dlgfx, format, geo, header, html, validate */
 
 $(function() {
 
@@ -85,6 +85,7 @@ $(function() {
                 html.list_to_options(controller.pickuplocations, "ID", "LOCATIONNAME"),
                 '</select></td>',
                 '</tr>',
+                additional.additional_mandatory_fields(controller.additional),
                 '</table>',
                 '<div class="centered">',
                 '<button id="addedit">' + html.icon("call") + ' ' + _("Create and edit") + '</button>',
@@ -102,6 +103,8 @@ $(function() {
                 validate.reset();
                 if (!validate.notblank([ "incidentdate", "incidenttime" ])) { return false; }
                 if (!validate.validtime([ "incidenttime", "calltime" ])) { return false; }
+                // mandatory additional fields
+                if (!additional.validate_mandatory()) { return false; }
                 return true;
             };
             var addIncident = function(mode) {

@@ -334,6 +334,10 @@ def insert_waitinglist_from_form(dbo, post, username):
         ( "UrgencyUpdateDate", db.dd(add_days(now(dbo.timezone), configuration.waiting_list_urgency_update_period(dbo))))
         )))
     audit.create(dbo, username, "animalwaitinglist", str(nwlid))
+
+    # Save any additional field values given
+    additional.save_values_for_link(dbo, post, nwlid, "waitinglist")
+
     return nwlid
 
 def create_animal(dbo, username, wlid):

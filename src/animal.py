@@ -1816,6 +1816,9 @@ def insert_animal_from_form(dbo, post, username):
     db.execute(dbo, sql)
     audit.create(dbo, username, "animal", sheltercode + " " + t("animalname"))
 
+    # Save any additional field values given
+    additional.save_values_for_link(dbo, post, nextid, "animal")
+
     # Update denormalised fields after the insert
     update_animal_check_bonds(dbo, nextid)
     update_animal_status(dbo, nextid)

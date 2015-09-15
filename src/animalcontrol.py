@@ -378,6 +378,10 @@ def insert_animalcontrol_from_form(dbo, post, username):
         ( "AgeGroup", post.db_string("agegroup"))
         )))
     audit.create(dbo, username, "animalcontrol", str(nid))
+
+    # Save any additional field values given
+    additional.save_values_for_link(dbo, post, nid, "incident")
+
     return nid
 
 def delete_animalcontrol(dbo, username, acid):

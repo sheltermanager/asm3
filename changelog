@@ -1,6 +1,7 @@
 37
 ================
 
+15/09/15 Show mandatory fields with validation on all new screens #61
 14/09/15 Support for petslocated.com in the UK #252
 14/09/15 Merge button handles person details/flags too now #222
 14/09/15 Support merging person details/flags from csv/online form #222

@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, asm, common, config, controller, dlgfx, format, geo, header, html, validate */
+/*global $, jQuery, _, additional, asm, common, config, controller, dlgfx, format, geo, header, html, validate */
 
 $(function() {
 
@@ -79,6 +79,7 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
+                additional.additional_mandatory_fields(controller.additional),
                 '</table>',
                 '<div class="centered">',
                 '<button id="addedit">' + html.icon("person-add") + ' ' + _("Create and edit") + '</button>',
@@ -95,6 +96,8 @@ $(function() {
                 header.hide_error();
                 validate.reset();
                 if (!validate.notblank([ "surname" ])) { return false; }
+                // mandatory additional fields
+                if (!additional.validate_mandatory()) { return false; }
                 return true;
             };
 

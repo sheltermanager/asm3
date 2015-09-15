@@ -734,6 +734,10 @@ def insert_person_from_form(dbo, post, username):
     )))
     db.execute(dbo, sql)
     audit.create(dbo, username, "owner", str(pid) + " %s %s %s" % (d("title"), d("forenames"), d("surname")))
+
+    # Save any additional field values given
+    additional.save_values_for_link(dbo, post, pid, "person")
+
     return pid
 
 def merge_person_details(dbo, username, personid, d):
