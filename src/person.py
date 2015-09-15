@@ -746,6 +746,7 @@ def merge_person_details(dbo, username, personid, d):
     """
     p = get_person(dbo, personid)
     def merge(dictfield, fieldname):
+        if not d.has_key(dictfield): return
         if p[fieldname] == "" or p[fieldname] is None:
             db.execute(dbo, "UPDATE owner SET %s = %s, LastChangedBy = %s, LastChangedDate = %s WHERE ID = %d" % \
                 (fieldname, db.ds(d[dictfield]), db.ds(username), db.ddt(now(dbo.timezone)), personid))
