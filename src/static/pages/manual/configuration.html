@@ -304,12 +304,23 @@ be pipe-separated, eg: Item 1 | Item 2 | Item 3</p>
 hold a pair of values that ASM will use. You can use this to supply your own
 text for Yes/No fields in the web publisher and document templates. The default
 if you don&#8217;t supply a Lookup Items for a Yes/No field is 0=Yes|1=No</p>
-<p>For example, to add a new field to the animal screen to say whether the animal
-has been tested for kennel cough, create a new additional field and enter the
-following values:</p>
+<p>The mandatory checkbox allows you to mark a field as mandatory (ie. Will not
+let a user save until they have supplied a value). Mandatory additional fields
+will appear on the new screen for a record where non-mandatory ones do not.</p>
+<p>The searchable checkbox allows you to include the additional field in global
+searches using the search box at the top right of every screen. Pay careful
+attention to your use of this as unnecessarily marking fields searchable can
+slow things down. It&#8217;s best generally to only make an additional field searchable
+if that field contains a unique string to identify the record (for example,
+Driving Licence ID).</p>
+<p>Here&#8217;s a worked example: To add a new field to the animal screen to say whether
+the animal has been tested for kennel cough, create a new additional field and
+enter the following values:</p>
 <div class="highlight-python"><div class="highlight"><pre>Name: KennelCough
 Label: Kennel Cough Tested?
 Tooltip: Tick this box if the animal has been tested for kennel cough
+Mandatory: No
+Searchable: No
 Type: Yes/No
 Link: Animal - Additional
 DisplayIndex: 0
