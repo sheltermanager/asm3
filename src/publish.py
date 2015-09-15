@@ -3457,6 +3457,12 @@ class PetsLocatedUKPublisher(FTPPublisher):
         else:
             return an["BASECOLOURNAME"]
 
+    def plcSpecies(self, s):
+        if s == "Rat": return "Mouse/Rat"
+        if s == "Tortoise" or s == "Terrapin" or s == "Turtle": return "Tortoise/Terrapin/Turtle"
+        if s == "Snake" or s == "Reptile": return "Snake/Reptile"
+        return s
+
     def run(self):
         
         if self.isPublisherExecuting(): return
@@ -3488,7 +3494,10 @@ class PetsLocatedUKPublisher(FTPPublisher):
         csv = []
         header = "customerurn,lostfound,pettype,breed,sexofpet,neutered,petname,internalref,petage,hairtype,petcoloursall,chipchecked,chipno,petfeatures,lastlocationst,lastlocation,locationpostcode,datelostfound,otherdetails,privatenotes,showonsite\n"
 
-        # Lost Animals
+        # Lost Animals - DISABLED ON REQUEST FROM PETSLOCATED.COM
+        # In their business model, animal losers pay 10 pounds to list
+        # their lost animal for 12 months.
+        """
         anCount = 0
         for an in lostanimals:
             try:
@@ -3507,7 +3516,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 # lostfound
                 line.append("\"L\"")
                 # pettype
-                line.append("\"%s\"" % an["SPECIESNAME"])
+                line.append("\"%s\"" % self.plcSpecies(an["SPECIESNAME"]))
                 # breed
                 line.append("\"%s\"" % an["BREEDNAME"])
                 # sexofpet
@@ -3550,6 +3559,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 self.logSuccess("Processed Lost Animal: %d: %s (%d of %d)" % ( an["ID"], an["COMMENTS"], anCount, len(foundanimals)))
             except Exception,err:
                 self.logError("Failed processing lost animal: %s, %s" % (str(an["ID"]), err), sys.exc_info())
+        """
 
         # Found Animals
         anCount = 0
@@ -3570,7 +3580,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 # lostfound
                 line.append("\"F\"")
                 # pettype
-                line.append("\"%s\"" % an["SPECIESNAME"])
+                line.append("\"%s\"" % self.plcSpecies(an["SPECIESNAME"]))
                 # breed
                 line.append("\"%s\"" % an["BREEDNAME"])
                 # sexofpet
@@ -3614,7 +3624,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
             except Exception,err:
                 self.logError("Failed processing found animal: %s, %s" % (str(an["ID"]), err), sys.exc_info())
 
-        # Animals
+        # Shelter animals
         anCount = 0
         for an in animals:
             try:
@@ -3637,7 +3647,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 # lostfound
                 line.append("\"F\"")
                 # pettype
-                line.append("\"%s\"" % an["SPECIESNAME"])
+                line.append("\"%s\"" % self.plcSpecies(an["SPECIESNAME"]))
                 # breed
                 line.append("\"%s\"" % an["BREEDNAME"])
                 # sexofpet
