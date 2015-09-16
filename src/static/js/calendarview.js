@@ -74,7 +74,7 @@ $(function() {
                     right: 'month,agendaWeek,agendaDay'
                 }, 
                 editable: false,
-                firstDay: 1,
+                firstDay: config.integer("FirstDayOfWeek"),
                 events: [],
                 eventRender: function(event, element) {
                     // Need to decode html entities in the title

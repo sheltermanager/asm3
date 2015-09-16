@@ -280,7 +280,7 @@
                 $(this).datepicker({ 
                     changeMonth: true, 
                     changeYear: true,
-                    firstDay: 1,
+                    firstDay: config.integer("FirstDayOfWeek"),
                     beforeShowDay: function(a) {
                         var day = a.getDay();
                         var rv = false;
@@ -299,7 +299,7 @@
                 $(this).datepicker({ 
                     changeMonth: true, 
                     changeYear: true,
-                    firstDay: 1
+                    firstDay: config.integer("FirstDayOfWeek")
                 });
             }
             $(this).keydown(function(e) {

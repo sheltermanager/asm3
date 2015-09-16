@@ -623,6 +623,11 @@ $(function() {
                 '<option value="{ownerforenames} {ownersurname}">' + _("First Last") + '</option>',
                 '<option value="{ownersurname}, {ownerforenames}">' + _("Last, First") + '</option>',
                 '<option value="{ownersurname} {ownerforenames}">' + _("Last First") + '</option>',
+                '</select><br />',
+                '<label for="ownernameformat" style="margin-left: 24px">' + _("When displaying calendars, the first day of the week is") + '</label> ',
+                '<select data="FirstDayOfWeek" id="firstdayofweek" type="text" class="asm-selectbox">',
+                '<option value="0">' + _("Sunday") + '</option>',
+                '<option value="1">' + _("Monday") + '</option>',
                 '</select>',
                 '</p>',
                 '</div>'

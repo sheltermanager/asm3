@@ -760,7 +760,7 @@
                 dayNames: [_("Sunday"), _("Monday"), _("Tuesday"), _("Wednesday"), _("Thursday"), _("Friday"), _("Saturday")],
                 dayNamesShort: [_("Sun"), _("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat")],
                 dayNamesMin: [_("Su"),_("Mo"),_("Tu"),_("We"),_("Th"),_("Fr"),_("Sa")],
-                firstDay: 1,
+                firstDay: config.integer("FirstDayOfWeek"),
                 dateFormat: df,
                 prevText: _("Previous"), prevStatus: "",
                 prevJumpText: "&#x3c;&#x3c;", prevJumpStatus: "",

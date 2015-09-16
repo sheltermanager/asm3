@@ -165,6 +165,7 @@ DEFAULTS = {
     "EmblemTrialAdoption": "Yes",
     "EmblemUnneutered": "Yes",
     "FancyTooltips": "No",
+    "FirstDayOfWeek": "1",
     "FosterOnShelter": "Yes",
     "IncomingMediaScaling": "640x640",
     "GenerateDocumentLog": "No",

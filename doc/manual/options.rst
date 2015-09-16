@@ -334,6 +334,11 @@ Display
   donation books, the waiting list, etc. when showing person names, ASM can use
   different formats if you want surname first for sorting, etc.
 
+* When displaying calendars, the first day of the week is: For date choosers
+  and calendar view, select which day the week should start on. For the US
+  and some Jewish cultures, it's generally Sunday, for the rest of the world,
+  Monday.
+
 
 Documents
 ---------
