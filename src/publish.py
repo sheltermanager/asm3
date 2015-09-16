@@ -3657,7 +3657,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 # petname
                 line.append("\"%s\"" % an["ANIMALNAME"])
                 # internalref
-                line.append("\"%s\"" % an["SHELTERCODE"])
+                line.append("\"A%s\"" % an["ID"])
                 # petage
                 line.append("\"%s\"" % self.plcAge(an["AGEGROUP"]))
                 # hairtype
