@@ -519,9 +519,7 @@ def update_test_today(dbo, username, testid, resultid):
     """
     db.execute(dbo, db.make_update_user_sql(dbo, "animaltest", username, "ID = %d" % testid, (
         ( "DateOfTest", db.dd(now(dbo.timezone)) ), 
-        ( "TestResultID", db.di(resultid) ),
-        ( "LastChangedDate", db.ddt(now(dbo.timezone)) ), 
-        ( "LastChangedBy", db.ds(username) )
+        ( "TestResultID", db.di(resultid) )
         )))
     audit.edit(dbo, username, "animaltest", str(testid) + " => given " + str(db.dd(now(dbo.timezone))))
     # ASM2_COMPATIBILITY
