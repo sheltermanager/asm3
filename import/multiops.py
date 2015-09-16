@@ -192,7 +192,9 @@ for row in canimals:
     # sysLocationChoicesID == 5 "Foster Care"
     # sysAnimalStatusChoicesID = 26 "Adoptable"
     # sysAnimalStatusChoicesID = 32 "Shelter"
-    if row["sysLocationChoicesID"] == "5" and (row["sysAnimalStatusChoicesID"] == "26" or row["sysAnimalStatusChoicesID"] == "32"): a.OnFoster = True
+    # sysShelterAreasID = 11 "Foster"
+    if (row["sysLocationChoicesID"] == "5" and (row["sysAnimalStatusChoicesID"] == "26" or row["sysAnimalStatusChoicesID"] == "32")) or row["sysShelterAreasID"] == "11": a.OnFoster = True
+    """
     # Oddly, customer reported some death statuses not in disposition
     # TODO: customer specific, 10 == euthanized, 15 = died
     if row["sysAnimalStatusChoicesID"] == "10":
@@ -205,6 +207,7 @@ for row in canimals:
         a.PutToSleep = 0
         a.PTSReasonID = 2
         a.Archived = 1
+    """
     comments = "Original breed: " + breed1 + "/" + breed2
     comments += ", Color: " + color1 + "/" + color2
     comments += ", Status: " + status
