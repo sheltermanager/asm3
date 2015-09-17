@@ -201,7 +201,7 @@ def get_lostanimal_find_advanced(dbo, criteria, limit = 0):
             field, db.dd(display2python(l, crit(cfieldto)))))
 
     c.append("a.ID > 0")
-    if crit("number") != "": c.append("a.ID = " + str(int(crit("number"))))
+    if crit("number") != "": c.append("a.ID = %s" % utils.cint(crit("number")))
     addstr("contact", "o.OwnerName")
     addstr("area", "a.AreaLost")
     addstr("postcode", "a.AreaPostcode")
@@ -268,7 +268,7 @@ def get_foundanimal_find_advanced(dbo, criteria, limit = 0):
             field, db.dd(display2python(l, crit(cfieldto)))))
 
     c.append("a.ID > 0")
-    if crit("number") != "": c.append("a.ID = " + str(int(crit("number"))))
+    if crit("number") != "": c.append("a.ID = %s" % utils.cint(crit("number")))
     addstr("contact", "o.OwnerName")
     addstr("area", "a.AreaFound")
     addstr("postcode", "a.AreaPostcode")
