@@ -467,6 +467,8 @@ for m in movements:
 for ol in ownerlicences:
     print ol
 
+# Move all animals without a matching location off shelter
+print "UPDATE animal SET Archived = 1 WHERE Archived = 0 AND ActiveMovementID = 0 AND ShelterLocation = 1;"
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"
 
