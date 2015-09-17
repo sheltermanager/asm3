@@ -1,6 +1,7 @@
 37
 ================
 
+17/09/15 Fix bad logic that disabled publishers for any FTP error #253
 16/09/15 Option to change the first weekday for calendars
 15/09/15 Show mandatory fields with validation on all new screens #61
 14/09/15 Support for petslocated.com in the UK #252
