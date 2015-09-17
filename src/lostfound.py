@@ -588,6 +588,10 @@ def update_lostanimal_from_form(dbo, post, username):
     """
     l = dbo.locale
     lfid = post.integer("id")
+
+    if not db.check_recordversion(dbo, "animallost", post.integer("id"), post.integer("recordversion")):
+        raise utils.ASMValidationError(_("This record has been changed by another user, please reload.", l))
+
     if post.date("datelost") is None:
         raise utils.ASMValidationError(_("Date lost cannot be blank", l))
     if post.date("datereported") is None:
@@ -659,6 +663,10 @@ def update_foundanimal_from_form(dbo, post, username):
     """
     l = dbo.locale
     lfid = post.integer("id")
+
+    if not db.check_recordversion(dbo, "animalfound", post.integer("id"), post.integer("recordversion")):
+        raise utils.ASMValidationError(_("This record has been changed by another user, please reload.", l))
+
     if post.date("datefound") is None:
         raise utils.ASMValidationError(_("Date found cannot be blank", l))
     if post.date("datereported") is None:

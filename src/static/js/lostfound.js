@@ -230,7 +230,10 @@ $(function() {
             validate.save = function(callback) {
                 if (!lostfound.validation()) { header.hide_loading(); return; }
                 validate.dirty(false);
-                var formdata = "mode=save&id=" + $("#lfid").val() + "&" + $("input, select, textarea").toPOST();
+                var formdata = "mode=save" +
+                    "&id=" + $("#lfid").val() + 
+                    "&recordversion=" + controller.animal.RECORDVERSION + 
+                    "&" + $("input, select, textarea").toPOST();
                 common.ajax_post(controller.name, formdata)
                     .then(callback)
                     .fail(function() { 

@@ -452,7 +452,10 @@ $(function() {
             validate.save = function(callback) {
                 if (!incident.validation()) { header.hide_loading(); return; }
                 validate.dirty(false);
-                var formdata = "mode=save&id=" + $("#incidentid").val() + "&" + $("input, select, textarea").toPOST();
+                var formdata = "mode=save" +
+                    "&id=" + $("#incidentid").val() + 
+                    "&recordversion=" + controller.incident.RECORDVERSION + 
+                    "&" + $("input, select, textarea").toPOST();
                 common.ajax_post("incident", formdata)
                     .then(callback)
                     .fail(function() { 

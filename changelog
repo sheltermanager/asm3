@@ -1,6 +1,7 @@
 37
 ================
 
+17/09/15 Reimplement ASM2's optimistic lock algorithm #255
 17/09/15 Fix bad logic that disabled publishers for any FTP error #253
 16/09/15 Option to change the first weekday for calendars
 15/09/15 Show mandatory fields with validation on all new screens #61

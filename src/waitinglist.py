@@ -275,6 +275,10 @@ def update_waitinglist_from_form(dbo, post, username):
     """
     l = dbo.locale
     wlid = post.integer("id")
+
+    if not db.check_recordversion(dbo, "animalwaitinglist", post.integer("id"), post.integer("recordversion")):
+        raise utils.ASMValidationError(_("This record has been changed by another user, please reload.", l))
+
     if post["description"] == "":
         raise utils.ASMValidationError(_("Description cannot be blank", l))
     if post.integer("owner") == 0:

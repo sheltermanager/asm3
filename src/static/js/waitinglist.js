@@ -207,7 +207,10 @@ $(function() {
             validate.save = function(callback) {
                 if (!waitinglist.validation()) { header.hide_loading(); return; }
                 validate.dirty(false);
-                var formdata = "mode=save&id=" + $("#waitinglistid").val() + "&" + $("input, select, textarea").toPOST();
+                var formdata = "mode=save" +
+                    "&id=" + $("#waitinglistid").val() + 
+                    "&recordversion=" + controller.animal.RECORDVERSION + 
+                    "&" + $("input, select, textarea").toPOST();
                 common.ajax_post("waitinglist", formdata)
                     .then(callback)
                     .fail(function() { 

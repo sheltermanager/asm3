@@ -518,6 +518,11 @@ def update_person_from_form(dbo, post, username):
     """
     Updates an existing person record from incoming form data
     """
+
+    l = dbo.locale
+    if not db.check_recordversion(dbo, "owner", post.integer("id"), post.integer("recordversion")):
+        raise utils.ASMValidationError(_("This record has been changed by another user, please reload.", l))
+
     pid = post.integer("id")
     flags = post["flags"].split(",")
     def bi(b): return b and 1 or 0
@@ -537,6 +542,7 @@ def update_person_from_form(dbo, post, username):
     vet = bi("vet" in flags)
     giftaid = bi("giftaid" in flags)
     flagstr = "|".join(flags) + "|"
+
     sql = db.make_update_user_sql(dbo, "owner", username, "ID=%d" % pid, (
         ( "OwnerType", post.db_integer("ownertype") ),
         ( "OwnerName", db.ds(calculate_owner_name(dbo, post["title"], post["initials"], post["forenames"], post["surname"] ))),

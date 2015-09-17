@@ -552,6 +552,14 @@ def char_length(dbo, item):
     elif dbo.dbtype == "SQLITE":
         return "length(%s)" % item
 
+def check_recordversion(dbo, table, tid, version):
+    """
+    Verifies that the record with ID tid in table still has
+    RecordVersion = version.
+    If not, returns False otherwise True
+    """
+    return version == query_int(dbo, "SELECT RecordVersion FROM %s WHERE ID = %d" % (table, tid))
+
 def escape(s):
     """ Makes a value safe for queries """
     return s.replace("'", "`")

@@ -275,6 +275,10 @@ def update_animalcontrol_from_form(dbo, post, username):
     """
     l = dbo.locale
     acid = post.integer("id")
+
+    if not db.check_recordversion(dbo, "animalcontrol", post.integer("id"), post.integer("recordversion")):
+        raise utils.ASMValidationError(_("This record has been changed by another user, please reload.", l))
+
     if post.date("incidentdate") is None:
         raise utils.ASMValidationError(_("Incident date cannot be blank", l))
 

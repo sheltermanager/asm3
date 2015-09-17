@@ -670,7 +670,10 @@ $(function() {
                 // values in the embedded person choosers will take precedence
                 // and wipe out the values. The same problem doesn't exist
                 // for textboxes because they're blank and therefore ignored.
-                var formdata = "mode=save&id=" + $("#personid").val() + "&" + $("input, select, textarea").toPOST() + "&" + $("#ownertype").toPOST();
+                var formdata = "mode=save" +
+                    "&id=" + $("#personid").val() + 
+                    "&recordversion=" + controller.person.RECORDVERSION + 
+                    "&" + $("input, select, textarea").toPOST() + "&" + $("#ownertype").toPOST();
                 common.ajax_post("person", formdata)
                     .then(callback)
                     .fail(function() { 

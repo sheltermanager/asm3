@@ -1875,6 +1875,10 @@ def update_animal_from_form(dbo, post, username):
     def ks(field):
         return post.string(field)
 
+    # Optimistic lock check
+    if not db.check_recordversion(dbo, "animal", ki("id"), ki("recordversion")):
+        raise utils.ASMValidationError(_("This record has been changed by another user, please reload.", l))
+
     # Validate form fields
     if ks("animalname") == "":
         raise utils.ASMValidationError(_("Name cannot be blank", l))
