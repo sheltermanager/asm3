@@ -907,6 +907,12 @@ class FTPPublisher(AbstractPublisher):
         except Exception, err:
             self.logError("chdir %s: %s" % (newdir, err), sys.exc_info())
 
+    def delete(self, filename):
+        try:
+            self.socket.delete(filename)
+        except Exception,err:
+            self.log("delete %s: %s" % (filename, err))
+
     def clearExistingHTML(self):
         try:
             oldfiles = glob.glob(os.path.join(self.publishDir, "*." + self.pc.extension))
@@ -1006,6 +1012,16 @@ class FTPPublisher(AbstractPublisher):
         imagename = animalcode + ".jpg"
         if self.pc.uploadAllImages:
             imagename = animalcode + "-1.jpg"
+        # If we're forcing reupload or the animal has
+        # some recently changed images, remove all the images
+        # for this animal before doing anything.
+        if self.pc.forceReupload or a["RECENTLYCHANGEDIMAGES"] > 0:
+            if self.existingImageList is None:
+                self.existingImageList = self.lsdir()
+            for ei in self.existingImageList:
+                if ei.startswith(animalcode):
+                    self.log("delete: %s" % ei)
+                    self.delete(ei)
         # Save it to the publish directory
         totalimages = 1
         self.uploadImage(a, animalweb, imagename)
