@@ -86,7 +86,7 @@ for row in cpersons:
     ppo[row["tblKnownPersonsID"]] = o
     o.OwnerForeNames = row["FirstName"]
     o.OwnerSurname = row["LastName"]
-    o.OwnerTitle = asm.fw(row["LetterName"])
+    #o.OwnerTitle = asm.fw(row["LetterName"]) # Disabled as this cust did not want
     o.OwnerName = o.OwnerTitle + " " + o.OwnerForeNames + " " + o.OwnerSurname
     o.OwnerName = o.OwnerName.strip()
     o.EmailAddress = row["EmailAddress"]
