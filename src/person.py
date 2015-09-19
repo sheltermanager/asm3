@@ -777,7 +777,7 @@ def merge_flags(dbo, username, personid, flags):
     as a pipe delimited string.
     """
     fgs = []
-    if flags == "": return
+    if flags is None or flags == "": return
     if flags.find("|"): fgs = flags.split("|")
     if flags.find(","): fgs = flags.split(",")
     epf = db.query_string(dbo, "SELECT AdditionalFlags FROM owner WHERE ID = %d" % personid)
