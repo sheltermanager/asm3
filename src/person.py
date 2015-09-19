@@ -84,10 +84,10 @@ def get_person_similar(dbo, surname = "", forenames = "", address = ""):
     if address.find(" ") != -1: address = address[0:address.find(" ")]
     if address.find("\n") != -1: address = address[0:address.find("\n")]
     if address.find(",") != -1: address = address[0:address.find(",")]
-    address = address.replace("'", "`").lower()
-    forenames = forenames.replace("'", "`").lower()
+    address = address.replace("'", "`").lower().strip()
+    forenames = forenames.replace("'", "`").lower().strip()
     if forenames.find(" ") != -1: forenames = forenames[0:forenames.find(" ")]
-    surname = surname.replace("'", "`").lower()
+    surname = surname.replace("'", "`").lower().strip()
     return db.query(dbo, get_person_query(dbo) + "WHERE LOWER(o.OwnerSurname) LIKE '%s' AND " \
         "LOWER(o.OwnerForeNames) LIKE '%s%%' AND LOWER(o.OwnerAddress) Like '%s%%'" % (surname, forenames, address))
 
