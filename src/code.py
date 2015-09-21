@@ -2316,6 +2316,7 @@ class document_gen:
                     template=post["template"], content=utils.escape_tinymce(content))
         elif templatename.endswith(".odt"):
             web.header("Content-Type", "application/vnd.oasis.opendocument.text")
+            web.header("Content-Disposition", "attach; filename=\"%s\"" % templatename)
             web.header("Cache-Control", "no-cache")
             return content
 
