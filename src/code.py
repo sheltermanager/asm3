@@ -2564,26 +2564,7 @@ class donation_receive:
         post = utils.PostedData(web.input(mode="create"), session.locale)
         mode = post["mode"]
         if mode == "create":
-            users.check_permission(session, users.ADD_DONATION)
-            don1 = financial.insert_donation_from_form(session.dbo, session.user, post)
-            don2 = 0
-            if post.integer("amount2") > 0:
-                don_dict = {
-                    "person"                : post["person"],
-                    "animal"                : post["animal"],
-                    "type"                  : post["type2"],
-                    "payment"               : post["payment2"],
-                    "destaccount"           : post["destaccount2"],
-                    "frequency"             : "0",
-                    "amount"                : post["amount2"],
-                    "received"              : post["received"],
-                    "giftaid"               : post["giftaid"]
-                }
-                don2 = financial.insert_donation_from_form(session.dbo, session.user, utils.PostedData(don_dict, session.locale))
-            if don2 != 0:
-                return "%d,%d" % (don1, don2)
-            else:
-                return "%d" % don1
+            return financial.insert_donations_from_form(session.dbo, session.user, post, post["received"], True, post["person"], post["animal"])
 
 class foundanimal:
     def GET(self):
@@ -4304,7 +4285,7 @@ class move_gendoc:
         dbo = session.dbo
         s = html.header("", session)
         c = html.controller_str("templates", html.template_selection(
-            dbfs.get_document_templates(dbo), "document_gen?mode=%s&id=%d" % (post["mode"], post.integer("id"))))
+            dbfs.get_document_templates(dbo), "document_gen?mode=%s&id=%s" % (post["mode"], post["id"])))
         c += html.controller_str("message", post["message"])
         s += html.controller(c)
         s += html.footer()

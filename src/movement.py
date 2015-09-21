@@ -525,50 +525,8 @@ def insert_adoption_from_form(dbo, username, post, creating = []):
         update_movement_from_form(dbo, username, utils.PostedData(move_dict, l))
     else:
         movementid = insert_movement_from_form(dbo, username, utils.PostedData(move_dict, l))
-    # Create the donation if there is one
-    donation_amount = post.integer("amount")
-    if donation_amount > 0:
-        due = ""
-        received = post["movementdate"]
-        if configuration.movement_donations_default_due(dbo):
-            due = post["movementdate"]
-            received = ""
-        don_dict = {
-            "person"                : post["person"],
-            "animal"                : post["animal"],
-            "movement"              : str(movementid),
-            "type"                  : post["donationtype"],
-            "payment"               : post["payment"],
-            "destaccount"           : post["destaccount"],
-            "frequency"             : "0",
-            "amount"                : post["amount"],
-            "due"                   : due,
-            "received"              : received,
-            "giftaid"               : post["giftaid"]
-        }
-        financial.insert_donation_from_form(dbo, username, utils.PostedData(don_dict, l))
-    # And a second donation if there is one
-    donation_amount = post.integer("amount2")
-    if donation_amount > 0:
-        due = ""
-        received = post["movementdate"]
-        if configuration.movement_donations_default_due(dbo):
-            due = post["movementdate"]
-            received = ""
-        don_dict = {
-            "person"                : post["person"],
-            "animal"                : post["animal"],
-            "movement"              : str(movementid),
-            "type"                  : post["donationtype2"],
-            "payment"               : post["payment2"],
-            "destaccount"           : post["destaccount2"],
-            "frequency"             : "0",
-            "amount"                : post["amount2"],
-            "due"                   : due,
-            "received"              : received,
-            "giftaid"               : post["giftaid"]
-        }
-        financial.insert_donation_from_form(dbo, username, utils.PostedData(don_dict, l))
+    # Create any payments
+    financial.insert_donations_from_form(dbo, username, post, post["movementdate"], False, post["person"], post["animal"], movementid) 
     # Then any boarding cost record
     cost_amount = post.integer("costamount")
     cost_type = post["costtype"]
@@ -615,7 +573,7 @@ def insert_foster_from_form(dbo, username, post):
     return movementid
 
 def insert_reclaim_from_form(dbo, username, post):
-    """
+    """f
     Inserts a movement from the workflow adopt an animal screen.
     Returns the new movement id
     """
@@ -662,28 +620,8 @@ def insert_reclaim_from_form(dbo, username, post):
             db.execute(dbo, "UPDATE adoption SET ReservationCancelledDate = %s WHERE ID = %d" % \
                 ( post.db_date("movementdate"), m["ID"] ))
     movementid = insert_movement_from_form(dbo, username, utils.PostedData(move_dict, l))
-    # Create the donation if there is one
-    donation_amount = post.integer("amount")
-    if donation_amount > 0:
-        due = ""
-        received = post["movementdate"]
-        if configuration.movement_donations_default_due(dbo):
-            due = post["movementdate"]
-            received = ""
-        don_dict = {
-            "person"                : post["person"],
-            "animal"                : post["animal"],
-            "movement"              : str(movementid),
-            "type"                  : post["donationtype"],
-            "payment"               : post["payment"],
-            "destaccount"           : post["destaccount"],
-            "frequency"             : "0",
-            "amount"                : post["amount"],
-            "due"                   : due,
-            "received"              : received,
-            "giftaid"               : post["giftaid"]
-        }
-        financial.insert_donation_from_form(dbo, username, utils.PostedData(don_dict, l))
+    # Create any payments
+    financial.insert_donations_from_form(dbo, username, post, post["movementdate"], False, post["person"], post["animal"], movementid) 
     # Then any boarding cost record
     cost_amount = post.integer("costamount")
     cost_type = post["costtype"]
@@ -776,50 +714,8 @@ def insert_reserve_from_form(dbo, username, post):
         "returncategory"        : configuration.default_return_reason(dbo)
     }
     movementid = insert_movement_from_form(dbo, username, utils.PostedData(move_dict, l))
-    # Then the donation if we have one
-    donation_amount = post.integer("amount")
-    if donation_amount > 0:
-        due = ""
-        received = post["reservationdate"]
-        if configuration.movement_donations_default_due(dbo):
-            due = post["reservationdate"]
-            received = ""
-        don_dict = {
-            "person"                : post["person"],
-            "animal"                : post["animal"],
-            "movement"              : str(movementid),
-            "type"                  : post["donationtype"],
-            "payment"               : post["payment"],
-            "destaccount"           : post["destaccount"],
-            "frequency"             : "0",
-            "amount"                : post["amount"],
-            "due"                   : due,
-            "received"              : received,
-            "giftaid"               : post["giftaid"]
-        }
-        financial.insert_donation_from_form(dbo, username, utils.PostedData(don_dict, l))
-    # And a second donation if there is one
-    donation_amount = post.integer("amount2")
-    if donation_amount > 0:
-        due = ""
-        received = post["movementdate"]
-        if configuration.movement_donations_default_due(dbo):
-            due = post["movementdate"]
-            received = ""
-        don_dict = {
-            "person"                : post["person"],
-            "animal"                : post["animal"],
-            "movement"              : str(movementid),
-            "type"                  : post["donationtype2"],
-            "payment"               : post["payment2"],
-            "destaccount"           : post["destaccount2"],
-            "frequency"             : "0",
-            "amount"                : post["amount2"],
-            "due"                   : due,
-            "received"              : received,
-            "giftaid"               : post["giftaid"]
-        }
-        financial.insert_donation_from_form(dbo, username, utils.PostedData(don_dict, l))
+    # Create any payments
+    financial.insert_donations_from_form(dbo, username, post, post["reservationdate"], False, post["person"], post["animal"], movementid) 
     return movementid
 
 def insert_retailer_from_form(dbo, username, post):

@@ -64,56 +64,7 @@ $(function() {
                 '</tr>',
                 '</table>',
                 html.content_footer(),
-                html.content_header(_("Payment"), true),
-                '<table class="asm-table-layout">',
-                '<tr>',
-                '<td>',
-                '<label for="donationtype">' + _("Type") + '</label>',
-                '</td>',
-                '<td>',
-                '<select id="donationtype" data="donationtype" class="asm-selectbox">',
-                html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td>',
-                '<label for="payment">' + _("Method") + '</label>',
-                '</td>',
-                '<td>',
-                '<select id="payment" data="payment" class="asm-selectbox">',
-                html.list_to_options(controller.paymenttypes, "ID", "PAYMENTNAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr class="overrideaccount">',
-                '<td>',
-                '<label for="destaccount">' + _("Deposit account") + '</label>',
-                '</td>',
-                '<td>',
-                '<select id="destaccount" data="destaccount" class="asm-selectbox">',
-                html.list_to_options(controller.accounts, "ID", "CODE"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td>',
-                '<label for="amount">' + _("Amount") + '</label>',
-                '</td>',
-                '<td>',
-                '<input id="amount" data="amount" class="asm-currencybox asm-textbox" />',
-                '</td>',
-                '</tr>',
-                '<tr id="giftaidrow">',
-                '<td><label for="giftaid">' + _("Gift Aid") + '</label></td>',
-                '<td><select id="giftaid" data="giftaid" class="asm-selectbox">',
-                '<option value="0">' + _("Not eligible for gift aid") + '</option>',
-                '<option value="1">' + _("Eligible for gift aid") + '</option>',
-                '</select>',
-                '</td>',
-                '</tr>',
-                '</table>',
-                html.content_footer(),
+                '<div id="payment"></div>',
                 html.content_header(_("Boarding Cost"), true),
                 '<div id="costdisplay" class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
                 '<p class="centered"><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
@@ -232,25 +183,8 @@ $(function() {
 
             });
 
-            // What to do when donation type is changed
-            var donationtype_change = function() {
-                var dc = common.get_field(controller.donationtypes, $("#donationtype").select("value"), "DEFAULTCOST");
-                $("#amount").currency("value", dc);
-            };
-            $("#donationtype").change(function() {
-                donationtype_change();
-            });
-
-            // If we're creating accounting transactions and the override
-            // option is set, allow override of the destination account
-            if (config.bool("CreateDonationTrx") && config.bool("DonationTrxOverride")) {
-                $(".overrideaccount").show();
-                // Set it to the default account
-                $("#destaccount").val(config.str("DonationTargetAccount"));
-            }
-            else {
-                $(".overrideaccount").hide();
-            }
+            // Payments
+            $("#payment").payments({ controller: controller });
 
             $("#costdisplay").closest(".ui-widget").hide();
             $("#notonshelter").hide();
@@ -263,11 +197,7 @@ $(function() {
                 $("#movementnumberrow").show();
             }
 
-            if (asm.locale != "en_GB") { $("#giftaidrow").hide(); }
-
             // Set default values
-            $("#donationtype").val(config.str("AFDefaultDonationType"));
-            donationtype_change();
             $("#movementdate").datepicker("setDate", new Date());
 
             $("#reclaim").button().click(function() {

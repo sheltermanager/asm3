@@ -472,11 +472,6 @@ the reservation for you after this time.
 * Allow creation of payments on the Move-Reserve screen: Allow payments to be
   taken on the :menuselection:`Move --> Reserve an animal` screen.
 
-* Allow entry of two donations on the Move menu screens: When creating an
-  adoption or reserve from :menuselection:`Move --> Adopt an animal`, allow
-  space for two donations in case of adopters who would like to make a donation
-  as well as paying the adoption fee.
-
 * Allow overriding of the movement number on the Move menu screens: If turned
   on, the movement number field will be visible on all Move menu screens for
   the user to override.

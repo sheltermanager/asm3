@@ -568,6 +568,125 @@
         }
     });
 
+    /**
+     * Widget to take one or more payments.
+     * Relies on controller.accounts, controller.paymenttypes and controller.donationtypes
+     * target should be a container div
+     */
+    $.widget("asm.payments", {
+        options: {
+            count: 0,
+            controller: null
+        },
+        _create: function() {
+            var self = this;
+            this.element.append([
+                html.content_header(_("Payment"), true),
+                '<table class="asm-table-layout">',
+                '<tbody>',
+                '<tr id="giftaidrow">',
+                '<td><label for="giftaid">' + _("Gift Aid") + '</label></td>',
+                '<td><select id="giftaid" data="giftaid" class="asm-selectbox">',
+                '<option value="0">' + _("Not eligible for gift aid") + '</option>',
+                '<option value="1">' + _("Eligible for gift aid") + '</option>',
+                '</select>',
+                '</td>',
+                '</tr>',
+                '</tbody>',
+                '</table>',
+                '<p class="centered"><button class="takepayment">' + _("Take another payment") + '</button>',
+                '<a class="takepayment" href="#">' + _("Take another payment") + '</a></p>',
+                html.content_footer()
+            ].join("\n"));
+            this.add_payment();
+            $("button.takepayment")
+                .button({ icons: { primary: "ui-icon-circle-plus" }, text: false })
+                .click(function() {
+                self.add_payment();
+            });
+            this.element.find("a.takepayment").click(function() {
+                self.add_payment();
+                return false;
+            });
+        },
+
+        add_payment: function() {
+            var h = [
+                '<tr>',
+                '<td style="padding-top: 8px">',
+                '<label for="donationtype{i}">{type}</label>',
+                '</td>',
+                '<td style="padding-top: 8px">',
+                '<select id="donationtype{i}" data="donationtype{i}" class="asm-selectbox">',
+                html.list_to_options(this.options.controller.donationtypes, "ID", "DONATIONNAME"),
+                '</select>',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td>',
+                '<label for="payment{i}">{method}</label>',
+                '</td>',
+                '<td>',
+                '<select id="payment{i}" data="payment{i}" class="asm-selectbox">',
+                html.list_to_options(this.options.controller.paymenttypes, "ID", "PAYMENTNAME"),
+                '</select>',
+                '</td>',
+                '</tr>',
+                '<tr class="overrideaccount">',
+                '<td>',
+                '<label for="destaccount{i}">{depositaccount}</label>',
+                '</td>',
+                '<td>',
+                '<select id="destaccount{i}" data="destaccount{i}" class="asm-selectbox">',
+                html.list_to_options(this.options.controller.accounts, "ID", "CODE"),
+                '</select>',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td>',
+                '<label for="amount{i}">' + _("Amount") + '</label>',
+                '</td>',
+                '<td>',
+                '<input id="amount{i}" data="amount{i}" class="asm-currencybox asm-textbox" />',
+                '</td>',
+                '</tr>'
+            ];
+            // Construct and add our new payment fields to the DOM
+            this.options.count += 1;
+            var i = this.options.count, self = this;
+            this.element.find("tbody").append(common.substitute(h.join("\n"), {
+                i: this.options.count,
+                type: _("Type"),
+                method: _("Method"),
+                depositaccount: _("Deposit account"),
+                amount: _("Amount")
+            }));
+            // Change the default amount when the payment type changes
+            $("#donationtype" + i).change(function() {
+                var dc = common.get_field(self.options.controller.donationtypes, $("#donationtype" + i).select("value"), "DEFAULTCOST");
+                $("#amount" + i).currency("value", dc);
+            });
+            // Set the default for our new payment type
+            $("#donationtype" + i).val(config.str("AFDefaultDonationType")).change();
+            // If we're creating accounting transactions and the override
+            // option is set, allow override of the destination account
+            if (config.bool("CreateDonationTrx") && config.bool("DonationTrxOverride")) {
+                $(".overrideaccount").show();
+                // Set it to the default account
+                $("#destaccount" + i).val(config.str("DonationTargetAccount"));
+            }
+            else {
+                $(".overrideaccount").hide();
+            }
+            // Gift aid only applies to the UK
+            if (asm.locale != "en_GB") { $("#giftaidrow").hide(); }
+        },
+
+        destroy: function() {
+        }
+
+    });
+
 
     /**
      * ASM menu widget (we have to use asmmenu so as not to clash
@@ -784,7 +903,7 @@
             });
         }
         else if (cmd == "value") {
-            if (newval == undefined) {
+            if (newval === undefined) {
                 // Get the value
                 var v = this.val(), f;
                 if (!v) {

@@ -70,94 +70,7 @@ $(function() {
                 '</tr>',
                 '</table>',
                 html.content_footer(),
-                html.content_header(_("Payment"), true),
-                '<table id="table-payment" class="asm-table-layout">',
-                '<tr>',
-                '<td>',
-                '<label for="donationtype">' + _("Type") + '</label>',
-                '</td>',
-                '<td>',
-                '<select id="donationtype" data="donationtype" class="asm-selectbox">',
-                html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td>',
-                '<label for="payment">' + _("Method") + '</label>',
-                '</td>',
-                '<td>',
-                '<select id="payment" data="payment" class="asm-selectbox">',
-                html.list_to_options(controller.paymenttypes, "ID", "PAYMENTNAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr class="overrideaccount">',
-                '<td>',
-                '<label for="destaccount">' + _("Deposit account") + '</label>',
-                '</td>',
-                '<td>',
-                '<select id="destaccount" data="destaccount" class="asm-selectbox">',
-                html.list_to_options(controller.accounts, "ID", "CODE"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td>',
-                '<label for="amount">' + _("Amount") + '</label>',
-                '</td>',
-                '<td>',
-                '<input id="amount" data="amount" class="asm-currencybox asm-textbox" />',
-                '</td>',
-                '</tr>',
-                '<tr class="seconddonation">',
-                '<td>',
-                '<label for="donationtype2">' + _("Type") + '</label>',
-                '</td>',
-                '<td>',
-                '<select id="donationtype2" data="donationtype2" class="asm-selectbox">',
-                html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr class="seconddonation">',
-                '<td>',
-                '<label for="payment2">' + _("Method") + '</label>',
-                '</td>',
-                '<td>',
-                '<select id="payment2" data="payment2" class="asm-selectbox">',
-                html.list_to_options(controller.paymenttypes, "ID", "PAYMENTNAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr class="seconddonation overrideaccount">',
-                '<td>',
-                '<label for="destaccount2">' + _("Deposit account") + '</label>',
-                '</td>',
-                '<td>',
-                '<select id="destaccount2" data="destaccount2" class="asm-selectbox">',
-                html.list_to_options(controller.accounts, "ID", "CODE"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr class="seconddonation">',
-                '<td>',
-                '<label for="amount2">' + _("Amount") + '</label>',
-                '</td>',
-                '<td>',
-                '<input id="amount2" data="amount2" class="asm-currencybox asm-textbox" />',
-                '</td>',
-                '</tr>',
-                '<tr id="giftaidrow">',
-                '<td><label for="giftaid">' + _("Gift Aid") + '</label></td>',
-                '<td><select id="giftaid" data="giftaid" class="asm-selectbox">',
-                '<option value="0">' + _("Not eligible for gift aid") + '</option>',
-                '<option value="1">' + _("Eligible for gift aid") + '</option>',
-                '</select>',
-                '</td>',
-                '</tr>',
-                '</table>',
-                html.content_footer(),
+                '<div id="payment"></div>',
                 html.box(5),
                 '<button id="reserve">' + html.icon("movement") + ' ' + _("Reserve") + '</button>',
                 '</div>',
@@ -267,25 +180,8 @@ $(function() {
 
             });
 
-            // What to do when donation type is changed
-            var donationtype_change = function() {
-                if (!config.bool("DonationOnMoveReserve")) { return; }
-                var dc = common.get_field(controller.donationtypes, $("#donationtype").select("value"), "DEFAULTCOST");
-                $("#amount").currency("value", dc);
-            };
-            $("#donationtype").change(function() {
-                donationtype_change();
-            });
-
-            // What to do when second donation type is changed
-            var donationtype2_change = function() {
-                if (!config.bool("DonationOnMoveReserve")) { return; }
-                var dc = common.get_field(controller.donationtypes, $("#donationtype2").select("value"), "DEFAULTCOST");
-                $("#amount2").currency("value", dc);
-            };
-            $("#donationtype2").change(function() {
-                donationtype2_change();
-            });
+            // Payments
+            $("#payment").payments({ controller: controller });
 
             $("#ownerwarn").hide();
             $("#notonshelter").hide();
@@ -297,43 +193,14 @@ $(function() {
                 $("#movementnumberrow").show();
             }
 
-            if (asm.locale != "en_GB") { $("#giftaidrow").hide(); }
-
             // Set default values
-            $("#donationtype").val(config.str("AFDefaultDonationType"));
-            donationtype_change();
             $("#reservationdate").datepicker("setDate", new Date());
             $("#reservationstatus").select("value", config.str("AFDefaultReservationStatus"));
 
-            // If we're creating accounting transactions and the override
-            // option is set, allow override of the destination account
-            if (config.bool("CreateDonationTrx") && config.bool("DonationTrxOverride")) {
-                $(".overrideaccount").show();
-                // Set it to the default account
-                $("#destaccount").val(config.str("DonationTargetAccount"));
-            }
-            else {
-                $(".overrideaccount").hide();
-            }
-
-            // Show second donation field if option is set
-            if (config.bool("SecondDonationOnMove")) {
-                $(".seconddonation").show();
-                $("#donationtype2").val($("#donationtype").val());
-                $("#amount2").val($("#amount").val());
-                if (!config.bool("CreateDonationTrx") || !config.bool("DonationTrxOverride")) {
-                    $(".overrideaccount.seconddonation").hide();
-                }
-            }
-            else {
-                $(".seconddonation").hide();
-            }
-
             // If we aren't taking payments on this screen, disable both
             if (!config.bool("DonationOnMoveReserve")) { 
-                $("#table-payment").closest(".ui-widget").hide();
-                $("#amount").val("0");
-                $("#amount2").val("0");
+                $("#payment").hide();
+                $("#amount1").val("0");
             }
 
             $("#reserve").button().click(function() {

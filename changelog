@@ -1,6 +1,7 @@
 37
 ================
 
+21/09/15 Allow unlimited payments to be taken on move/receive screens #244
 21/09/15 Use attachment disposition on generated ODT docs #249
 18/09/15 Remove FTP images on change or force #247
 17/09/15 Reimplement ASM2's optimistic lock algorithm #255
