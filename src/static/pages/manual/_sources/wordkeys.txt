@@ -86,6 +86,8 @@ AnimalCreatedDate
     The date the animal record was created 
 DateBroughtIn
     The date the animal was first brought to the shelter 
+TimeBroughtIn
+    The time of day the animal was first brought to the shelter
 MonthBroughtIn
     The month the animal was first brought to the shelter 
 DateOfBirth
@@ -98,6 +100,8 @@ DisplayAge
     If the EstimatedDOB flag is set, outputs the age group, if not, outputs a string representation of the animal's age. 
 DisplayDOB
     If the EstimatedDOB flag is set, outputs the age group, if not, outputs the animal's date of birth. 
+HoldUntilDate
+    If the animal is held, the date it will be held until
 DeceasedDate
     The date the animal died (if applicable) 
 DeceasedNotes
@@ -294,6 +298,8 @@ TimeOnShelter
     A readable string showing the time the animal has spent on the shelter (from the last time it entered), eg: 4 weeks. 
 NoTimesReturned
     The number of times the animal has been returned to the shelter 
+AdoptionStatus
+    A readable string of the animal's status, eg: Hold, Reserved, Quarantine, Adoptable
 HasValidMedia
     "Yes" if the animal has a photo flagged for website generation 
 WebMediaFilename
@@ -310,6 +316,8 @@ WebsiteVideoNotes
     The notes accompanying the video link
 AnimalAtRetailer
     "Yes" if the animal is currently located at a retailer
+AnimalIsAdoptable
+    "Yes" if the animal is available for adoption
 AnimalOnFoster
     "Yes" if the animal is in a foster home
 AnimalOnShelter
