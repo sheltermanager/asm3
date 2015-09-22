@@ -13,10 +13,11 @@ import media
 import medical
 import movement
 import person
+import publish
 import users
 import utils
 import zipfile
-from i18n import _, format_currency_no_symbol, now, python2display, yes_no
+from i18n import _, format_currency_no_symbol, format_time, now, python2display, yes_no
 from sitedefs import BASE_URL, QR_IMG_SRC
 from cStringIO import StringIO
 
@@ -107,11 +108,13 @@ def animal_tags(dbo, a):
         "ANIMALCREATEDBY"       : a["CREATEDBY"],
         "ANIMALCREATEDDATE"     : python2display(l, a["CREATEDDATE"]),
         "DATEBROUGHTIN"         : python2display(l, a["DATEBROUGHTIN"]),
+        "TIMEBROUGHTIN"         : format_time(a["DATEBROUGHTIN"]),
         "DATEOFBIRTH"           : python2display(l, a["DATEOFBIRTH"]),
         "AGEGROUP"              : a["AGEGROUP"],
         "DISPLAYDOB"            : displaydob,
         "DISPLAYAGE"            : displayage,
         "ESTIMATEDDOB"          : estimate,
+        "HOLDUNTILDATE"         : python2display(l, a["HOLDUNTILDATE"]),
         "ANIMALID"              : str(a["ID"]),
         "FEE"                   : format_currency_no_symbol(l, a["FEE"]),
         "IDENTICHIPNUMBER"      : a["IDENTICHIPNUMBER"],
@@ -277,7 +280,9 @@ def animal_tags(dbo, a):
         "ANIMALONFOSTER"        : yes_no(l, a["ACTIVEMOVEMENTTYPE"] == movement.FOSTER),
         "ANIMALPERMANENTFOSTER" : yes_no(l, a["HASPERMANENTFOSTER"] == 1),
         "ANIMALATRETAILER"      : yes_no(l, a["ACTIVEMOVEMENTTYPE"] == movement.RETAILER),
+        "ANIMALISADOPTABLE"     : publish.is_adoptable(dbo, a["ID"]) and _("Yes", l) or _("No", l),
         "ANIMALISRESERVED"      : yes_no(l, a["HASACTIVERESERVE"] == 1),
+        "ADOPTIONSTATUS"        : publish.get_adoption_status(dbo, a),
         "ADOPTIONID"            : a["ACTIVEMOVEMENTADOPTIONNUMBER"],
         "ADOPTIONNUMBER"        : a["ACTIVEMOVEMENTADOPTIONNUMBER"],
         "INSURANCENUMBER"       : a["ACTIVEMOVEMENTINSURANCENUMBER"],

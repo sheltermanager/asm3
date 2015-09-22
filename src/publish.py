@@ -228,8 +228,17 @@ def get_animal_data(dbo, pc, include_additional_fields = False):
                 merge_animal(r, r["BONDEDANIMAL2ID"])
     return rows
 
-def get_animal_data_query(dbo, pc):
-    sql = animal.get_animal_query(dbo) + " WHERE a.ID > 0"
+def get_animal_data_query(dbo, pc, animalid = 0):
+    """
+    Generate the adoptable animal query. If animalid is supplied, only runs the
+    query for a single animal (useful for determining if one animal is on the
+    adoptable list).
+    """
+    sql = animal.get_animal_query(dbo)
+    if animalid == 0:
+        sql += " WHERE a.ID > 0"
+    else:
+        sql += " WHERE a.ID = %d" % animalid
     if not pc.includeCaseAnimals: 
         sql += " AND a.CrueltyCase = 0"
     if not pc.includeWithoutImage: 
@@ -378,6 +387,29 @@ def get_animal_view(dbo, animalid):
     s = wordprocessor.substitute_tags(s, tags, True, "$$", "$$")
     s = s.replace("**le**", "<br />")
     return s
+
+def get_adoption_status(dbo, a):
+    """
+    Returns a string representing the animal's current adoption 
+    status.
+    """
+    l = dbo.locale
+    if a["ARCHIVED"] == 0 and a["CRUELTYCASE"] == 1: return i18n._("Cruelty Case", l)
+    if a["ARCHIVED"] == 0 and a["ISQUARANTINE"] == 1: return i18n._("Quarantine", l)
+    if a["ARCHIVED"] == 0 and a["ISHOLD"] == 1: return i18n._("Hold", l)
+    if a["ARCHIVED"] == 0 and a["HASACTIVERESERVE"] == 1: return i18n._("Reserved", l)
+    if a["ARCHIVED"] == 0 and a["HASPERMANENTFOSTER"] == 1: return i18n._("Permanent Foster", l)
+    if is_adoptable(dbo, a["ID"]): return i18n._("Adoptable", l)
+    return i18n._("Not For Adoption", l)
+
+def is_adoptable(dbo, animalid):
+    """
+    Returns true if the animal is adoptable
+    """
+    pc = PublishCriteria(configuration.publisher_presets(dbo))
+    sql = get_animal_data_query(dbo, pc, animalid)
+    rows = db.query(dbo, sql)
+    return len(rows) > 0
 
 class AbstractPublisher(threading.Thread):
     """
