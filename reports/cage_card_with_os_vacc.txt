@@ -51,7 +51,7 @@ FROM animal
 INNER JOIN animalvaccination ON animal.ID = animalvaccination.AnimalID
 INNER JOIN vaccinationtype ON animalvaccination.VaccinationID = vaccinationtype.ID
 INNER JOIN species ON species.ID=animal.speciesID
-INNER JOIN internallocation ON internallocation.id=animal.shelterlocation
+LEFT OUTER JOIN internallocation ON internallocation.id=animal.shelterlocation
 INNER JOIN basecolour ON basecolour.ID=animal.basecolourID
 INNER JOIN animaltype ON animaltype.ID=animal.animalTypeID
 INNER JOIN lksize ON
