@@ -3540,7 +3540,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
             return
 
         csv = []
-        header = "customerurn,lostfound,pettype,breed,sexofpet,neutered,petname,internalref,petage,hairtype,petcoloursall,chipchecked,chipno,petfeatures,lastlocationst,lastlocation,locationpostcode,datelostfound,otherdetails,privatenotes,showonsite\n"
+        header = "customerurn,importkey,lostfound,pettype,breed,sexofpet,neutered,petname,internalref,petage,hairtype,petcoloursall,chipchecked,chipno,petfeatures,lastlocationst,lastlocation,locationpostcode,datelostfound,otherdetails,privatenotes,showonsite\n"
 
         # Lost Animals - DISABLED ON REQUEST FROM PETSLOCATED.COM
         # In their business model, animal losers pay 10 pounds to list
@@ -3561,6 +3561,8 @@ class PetsLocatedUKPublisher(FTPPublisher):
 
                 # customerurn
                 line.append("\"%s\"" % customerid)
+                # importkey
+                line.append("\"L%s\"" % an["ID"])
                 # lostfound
                 line.append("\"L\"")
                 # pettype
@@ -3625,6 +3627,8 @@ class PetsLocatedUKPublisher(FTPPublisher):
 
                 # customerurn
                 line.append("\"%s\"" % customerid)
+                # importkey
+                line.append("\"F%s\"" % an["ID"])
                 # lostfound
                 line.append("\"F\"")
                 # pettype
@@ -3692,6 +3696,8 @@ class PetsLocatedUKPublisher(FTPPublisher):
 
                 # customerurn
                 line.append("\"%s\"" % customerid)
+                # importkey
+                line.append("\"A%s\"" % an["ID"])
                 # lostfound
                 line.append("\"F\"")
                 # pettype
