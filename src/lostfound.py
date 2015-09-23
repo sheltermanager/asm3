@@ -50,9 +50,9 @@ def get_foundanimal_query(dbo):
         "o.OwnerName, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone " \
         "FROM animalfound a " \
         "LEFT OUTER JOIN breed b ON a.BreedID = b.ID " \
-        "INNER JOIN species s ON a.AnimalTypeID = s.ID " \
-        "INNER JOIN basecolour c ON a.BaseColourID = c.ID " \
-        "INNER JOIN lksex x ON a.Sex = x.ID " \
+        "LEFT OUTER JOIN species s ON a.AnimalTypeID = s.ID " \
+        "LEFT OUTER JOIN basecolour c ON a.BaseColourID = c.ID " \
+        "LEFT OUTER JOIN lksex x ON a.Sex = x.ID " \
         "LEFT OUTER JOIN owner o ON a.OwnerID = o.ID"
 
 def get_lostanimal_query(dbo):
@@ -63,9 +63,9 @@ def get_lostanimal_query(dbo):
         "o.OwnerName, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone " \
         "FROM animallost a " \
         "LEFT OUTER JOIN breed b ON a.BreedID = b.ID " \
-        "INNER JOIN species s ON a.AnimalTypeID = s.ID " \
-        "INNER JOIN basecolour c ON a.BaseColourID = c.ID " \
-        "INNER JOIN lksex x ON a.Sex = x.ID " \
+        "LEFT OUTER JOIN species s ON a.AnimalTypeID = s.ID " \
+        "LEFT OUTER JOIN basecolour c ON a.BaseColourID = c.ID " \
+        "LEFT OUTER JOIN lksex x ON a.Sex = x.ID " \
         "LEFT OUTER JOIN owner o ON a.OwnerID = o.ID"
 
 def get_lostanimal(dbo, aid):
