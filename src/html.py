@@ -329,8 +329,8 @@ def tinymce_main(locale, action, recid="", mediaid = "", mode = "", redirecturl 
         <input type="hidden" name="mode" value="%(mode)s" />
         <input type="hidden" name="redirecturl" value="%(redirecturl)s" />
         <input type="hidden" name="savemode" value="save" />
-        <div style="width: 750px; height: 600px; margin-left: auto; margin-right: auto">
-        <textarea id="wp" name="document" style="width: 750px; height: 600px;">
+        <div style="padding: 0; margin-left: auto; margin-right: auto">
+        <textarea id="wp" name="document" style="margin: 0; padding: 0">
         %(content)s
         </textarea>
         </div>

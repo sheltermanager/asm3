@@ -6,13 +6,26 @@ $(function() {
     var rw_toolbar = "save pdf print | undo redo | fontselect fontsizeselect | bold italic forecolor backcolor | alignleft aligncenter alignright alignjustify | forecolor backcolor | bullist numlist outdent indent pagebreak | link image";
     var ro_toolbar = "pdf print";
 
+    // Set the containing div and textarea to the vertical 
+    // height of the viewport and a suitable printable width
+    var h = $(window).height(),
+        w = "775";
+    $("div").css({
+        height: h,
+        width: w
+    });
+    $("#wp").css({
+        height: h - 160,
+        width: w
+    });
+
     tinymce.init({
         selector: "#wp",
         theme: "modern",
         content_css: "css?v=asm-tinymce.css&k=" + buildno,
         plugins: [
-            "advlist autolink lists link image charmap print preview hr anchor pagebreak",
-            "searchreplace wordcount visualblocks visualchars code fullscreen",
+            "advlist autolink lists link image charmap print preview",
+            "hr anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen",
             "insertdatetime media nonbreaking save table contextmenu directionality",
             "emoticons template paste textcolor save"
             ],
@@ -20,7 +33,7 @@ $(function() {
 
         // Disable some items if we're in read only mode
         menubar: !readonly,
-        
+
         // readonly: readonly, // This takes out too much stuff, we remove contenteditable from iframe instead.
 
         // enable browser spellchecking and allow saving at any time
@@ -37,6 +50,7 @@ $(function() {
 
         setup: function(ed) {
 
+            // Add a PDF button
             ed.addButton("pdf", {
                 title: "PDF",
                 image: "static/images/icons/pdf.png",
@@ -56,15 +70,17 @@ $(function() {
             }, 1000);
 
             setTimeout(function() {
+
                 // Start in fullscreen mode
-                ed.execCommand('mceFullScreen');
+                // ed.execCommand('mceFullScreen');
+
                 // If we're in readonly mode, prevent editing of the content and
                 // disable the CTRL+S save shortcut
                 if (readonly) {
                     $("iframe").contents().find("body").removeAttr("contenteditable");
                     ed.addShortcut('ctrl+s', '', function () {});
                 }
-            }, 1100);
+            }, 1000);
 
             // Mobile devices cannot support TinyMCE's use of sending the content
             // to an iframe and then calling window.print() as they all involve sending
