@@ -1245,6 +1245,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "French-Lop=Lop, French\n" \
             "Hotot=Blanc de Hotot\n" \
             "Holland Lop=Lop, Holland\n" \
+            "Mini-Lop=Mini Lop\n" \
             "#4:Breed2=Breed2\n" \
             "Appenzell Mountain Dog=Shepherd (Unknown Type)\n" \
             "Australian Cattle Dog/Blue Heeler=Australian Cattle Dog\n" \
@@ -1340,6 +1341,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "French-Lop=Lop, French\n" \
             "Hotot=Blanc de Hotot\n" \
             "Holland Lop=Lop, Holland\n" \
+            "Mini-Lop=Mini Lop\n" \
             "#5:Age=Age\n" \
             "#6:Name=Name\n" \
             "#7:Size=Size\n" \
