@@ -43,7 +43,7 @@ $(function() {
                             '<option value="1">' + _("Unspecified") + '</option>' },
                     { type: "raw", justwidget: true, markup: " <span id='treatmentrulecalc'>" },
                     { json_field: "TOTALNUMBEROFTREATMENTS", post_field: "totalnumberoftreatments", justwidget: true, halfsize: true, type: "number", 
-                            defaultval: "1", validation: "notzero" },
+                            defaultval: "1" },
                     { type: "raw", justwidget: true, markup:
                         ' <span id="timingrulefrequencyagain">' + _("days") + '</span> ' +
                         '(<span id="displaytotalnumberoftreatments">0</span> ' + _("treatments") + ')' +
@@ -58,12 +58,8 @@ $(function() {
                 idcolumn: "ID",
                 edit: function(row) {
                     tableform.fields_populate_from_json(dialog.fields, row);
-                    if (row.TIMINGRULE == 0) {
-                        $("#singlemulti").select("value", "0");
-                    }
-                    else {
-                        $("#singlemulti").select("value", "1");
-                    }
+                    $("#singlemulti").select("value", row.TIMINGRULE);
+                    $("#treatmentrule").select("value", row.TREATMENTRULE);
                     medicalprofile.change_singlemulti();
                     medicalprofile.change_values();
                     tableform.dialog_show_edit(dialog, row)
@@ -148,7 +144,6 @@ $(function() {
                 $("#treatmentrule").select("value", "0");
                 $("#treatmentrule").select("disable");
                 $("#totalnumberoftreatments").val("1");
-
                 $("#timingrule").closest("tr").fadeOut();
                 $("#treatmentrule").closest("tr").fadeOut();
             }
@@ -160,7 +155,6 @@ $(function() {
                 $("#treatmentrule").select("value", "0");
                 $("#treatmentrule").select("enable");
                 $("#totalnumberoftreatments").val("1");
-
                 $("#timingrule").closest("tr").fadeIn();
                 $("#treatmentrule").closest("tr").fadeIn();
             }
@@ -169,8 +163,13 @@ $(function() {
         /* Recalculate ends after period and update screen*/
         change_values: function() {
             if ($("#treatmentrule").val() == "0") {
+                $("#treatmentrulecalc").fadeIn();
                 $("#displaytotalnumberoftreatments").text( parseInt($("#timingrule").val(), 10) * parseInt($("#totalnumberoftreatments").val(), 10));
                 $("#timingrulefrequencyagain").text($("#timingrulefrequency option[value=\"" + $("#timingrulefrequency").val() + "\"]").text());
+            }
+            else if ($("#treatmentrule").val() == "1") {
+                $("#treatmentrulecalc").fadeOut();
+                $("#totalnumberoftreatments").val("1");
             }
         },
 
@@ -180,20 +179,8 @@ $(function() {
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
 
-            $("#singlemulti").change(function() {
-                medicalprofile.change_singlemulti();
-            });
-
-            $("#treatmentrule").change(function() {
-                if ($("#treatmentrule").val() == "1") {
-                    $("#treatmentrulecalc").fadeOut();
-                }
-                else {
-                    $("#treatmentrulecalc").fadeIn();
-                    medicalprofile.change_values();
-                }
-            });
-
+            $("#singlemulti").change(medicalprofile.change_singlemulti);
+            $("#treatmentrule").change(medicalprofile.change_values);
             $("#timingrule").change(medicalprofile.change_values);
             $("#timingrulefrequency").change(medicalprofile.change_values);
             $("#timingrulenofrequencies").change(medicalprofile.change_values);
