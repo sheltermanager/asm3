@@ -1481,6 +1481,7 @@ class AnimalVaccination:
     VaccinationID = 0
     DateOfVaccination = None
     DateRequired = today()
+    DateExpires = None
     Manufacturer = ""
     BatchNumber = ""
     Comments = ""
@@ -1500,6 +1501,7 @@ class AnimalVaccination:
             ( "VaccinationID", di(self.VaccinationID) ),
             ( "DateOfVaccination", dd(self.DateOfVaccination) ),
             ( "DateRequired", dd(self.DateRequired) ),
+            ( "DateExpires", dd(self.DateExpires) ),
             ( "Comments", ds(self.Comments) ),
             ( "Manufacturer", ds(self.Manufacturer) ),
             ( "BatchNumber", ds(self.BatchNumber) ),

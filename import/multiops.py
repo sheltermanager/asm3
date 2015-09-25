@@ -395,9 +395,9 @@ for row in crabies:
     av.VaccinationID = 4
     av.DateOfVaccination = asm.getdate_mmddyy(row["RabiesVaccinationDate"])
     av.DateRequired = av.DateOfVaccination
-    av.Manufacturer = row["RabiesVaccinationManufacturer"]
-    av.BatchNumber = row["RabiesVaccinationLotNumber"]
-    av.Comments = "Brand: %s\nLot Expiry: %s" % (row["RabiesVaccinationBrand"], row["RabiesVaccinationLotExpiration"])
+    av.DateExpires = asm.getdate_mmddyy(row["RabiesVaccinationExpiration"])
+    av.Manufacturer = "%s %s" % (row["RabiesVaccinationManufacturer"], row["RabiesVaccinationBrand"])
+    av.BatchNumber = "%s %s" % (row["RabiesVaccinationLotNumber"], asm.fw(row["RabiesVaccinationLotExpiration"]))
 
 # medical history
 for row in cmedicalhistory:
