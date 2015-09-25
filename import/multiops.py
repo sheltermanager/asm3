@@ -15,14 +15,18 @@ ownerlicences = []
 logs = []
 movements = []
 animals = []
+animalcontrol = []
+animalcontrolanimals = []
 animalvaccinations = []
 
 ppa = {}
 ppo = {}
+ppac = {}
 addresses = {}
 addrlink = {}
 
 asm.setid("animal", 50000)
+asm.setid("animalcontrol", 50000)
 asm.setid("animalmedical", 50000)
 asm.setid("animalmedicaltreatment", 50000)
 asm.setid("animalvaccination", 50000)
@@ -37,6 +41,7 @@ asm.setid("dbfs", 50000)
 print "\\set ON_ERROR_STOP\nBEGIN;"
 print "DELETE FROM additional WHERE LinkID >= 50000;"
 print "DELETE FROM animal WHERE ID >= 50000;"
+print "DELETE FROM animalcontrol WHERE ID >= 50000;"
 print "DELETE FROM animalmedical WHERE ID >= 50000;"
 print "DELETE FROM animalmedicaltreatment WHERE ID >= 50000;"
 print "DELETE FROM animalvaccination WHERE ID >= 50000;"
@@ -65,13 +70,16 @@ cshelterareas = asm.csv_to_list("%s/sysShelterAreas.csv" % PATH)
 cspecies = asm.csv_to_list("%s/sysSpecies.csv" % PATH)
 cvacctype = asm.csv_to_list("%s/sysVaccinations.csv" % PATH)
 cadoptions = asm.csv_to_list("%s/tblAdoptions.csv" % PATH)
-#canimalimages = asm.csv_to_list("%s/tblAnimalImages.csv" % PATH)
 canimalguardians = asm.csv_to_list("%s/tblAnimalGuardians.csv" % PATH)
 canimals = asm.csv_to_list("%s/tblAnimals.csv" % PATH)
 canimalids = asm.csv_to_list("%s/tblAnimalIDs.csv" % PATH)
 canimalimages = asm.csv_to_list("%s/tblAnimalImages.csv" % PATH)
 canimalintakes = asm.csv_to_list("%s/tblAnimalIntakesDispositions.csv" % PATH)
 canimalsnotes = asm.csv_to_list("%s/tblAnimalsNotes.csv" % PATH)
+ccomplaints = asm.csv_to_list("%s/tblComplaints.csv" % PATH)
+ccomplaintsanimals = asm.csv_to_list("%s/tblComplaintsAnimals.csv" % PATH)
+ccomplaintspeople = asm.csv_to_list("%s/tblComplaintsKnownPersons.csv" % PATH)
+ccomplainttypes = asm.csv_to_list("%s/sysComplaintTypes.csv" % PATH)
 cmedicalhistory = asm.csv_to_list("%s/tblMedicalHistory.csv" % PATH)
 cpersons = asm.csv_to_list("%s/tblKnownPersons.csv" % PATH)
 cpersonsaddresses = asm.csv_to_list("%s/tblKnownPersonsAddresses.csv" % PATH)
@@ -439,28 +447,46 @@ for row in cpersonsnotes:
     l.Date = asm.now()
     l.Comments = row["Note"]
 
-"""
-for row in clicense:
-    a = None
-    if ppa.has_key(row["ANIMALKEY"]):
-        a = ppa[row["ANIMALKEY"]]
-    o = None
-    if ppo.has_key(row["LICENSEOWN"]):
-        o = ppo[row["LICENSEOWN"]]
-    if a is not None and o is not None:
-        if asm.getdate_yyyymmdd(row["LICENSEEFF"]) is None:
-            continue
-        ol = asm.OwnerLicence()
-        ownerlicences.append(ol)
-        ol.AnimalID = a.ID
-        ol.OwnerID = o.ID
-        ol.IssueDate = asm.getdate_yyyymmdd(row["LICENSEEFF"])
-        ol.ExpiryDate = asm.getdate_yyyymmdd(row["LICENSEEXP"])
-        ol.LicenceNumber = asm.fw(row["LICENSE"])
-        ol.LicenceTypeID = 2 # Unaltered dog
-        if row["LICENSEFIX"] == "1":
-            ol.LicenceTypeID = 1 # Altered dog
-"""
+for row in ccomplaints:
+    ac = asm.AnimalControl()
+    ppac[row["tblComplaintsID"]] = ac 
+    animalcontrol.append(ac)
+    ac.CallDateTime = asm.getdate_mmddyy(row["ReceivedDate"])
+    if ac.CallDateTime is None:
+        ac.CallDateTime = asm.parse_date("2015-01-01", "%Y-%m-%d")
+    ac.IncidentDateTime = ac.CallDateTime
+    incidentname = asm.find_value(ccomplainttypes, "sysComplaintTypesID", row["sysComplaintTypesID"], "ComplaintType")
+    ac.IncidentTypeID = asm.incidenttype_from_db(incidentname)
+    ac.DispatchDateTime = ac.CallDateTime
+    ac.CompletedDate = asm.getdate_mmddyy(row["StatusDate"])
+    ac.DispatchAddress = row["StreetNumber"] + " " + row["Street"]
+    ac.DispatchTown = row["City"]
+    ac.DispatchCounty = row["State"]
+    ac.DispatchPostcode = row["ZipCode"]
+    comments = ""
+    if row["Location"].strip() != "": comments += "Location: %s" % row["Location"]
+    comments += "\nMO ID: %s" % row["tblComplaintsID"]
+    ac.CallNotes = comments
+
+for row in ccomplaintsanimals:
+    if not ppac.has_key(row["tblComplaintsID"]): continue
+    ac = ppac[row["tblComplaintsID"]]
+    if not ppa.has_key(row["tblAnimalsID"]): continue
+    a = ppa[row["tblAnimalsID"]]
+    animalcontrolanimals.append("DELETE FROM animalcontrolanimal WHERE AnimalControlID = %s AND AnimalID = %s;" % (ac.ID, a.ID))
+    animalcontrolanimals.append("INSERT INTO animalcontrolanimal (AnimalControlID, AnimalID) VALUES (%s, %s);" % (ac.ID, a.ID))
+
+for row in ccomplaintspeople:
+    if not ppo.has_key(row["tblKnownPersonsID"]): continue
+    o = ppo[row["tblKnownPersonsID"]]
+    if not ppac.has_key(row["tblComplaintsID"]): continue
+    ac = ppac[row["tblComplaintsID"]]
+    if row["CalledInFromTelephoneNumber"].strip() != "": ac.CallNotes += "\nNumber: %s" % row["CalledInFromTelephoneNumber"]
+    if row["Note"].strip() != "": ac.CallNotes += "\n" + row["Note"]
+    itype = row["sysComplaintsInvolvementTypesID"]
+    if itype == "1": ac.CallerID = o.ID # Complainant
+    elif itype == "2" or itype == "5": ac.OwnerID = o.ID # Animal Owner or Suspect
+    elif itype == "4": ac.VictimID = o.ID # Victim
 
 # Now that everything else is done, output stored records
 for a in animals:
@@ -475,6 +501,10 @@ for m in movements:
     print m
 for ol in ownerlicences:
     print ol
+for ac in animalcontrol:
+    print ac
+for ac in animalcontrolanimals:
+    print ac
 
 # Move all animals without a matching location off shelter
 print "UPDATE animal SET Archived = 1 WHERE Archived = 0 AND ActiveMovementID = 0 AND ShelterLocation = 1;"

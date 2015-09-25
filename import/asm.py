@@ -798,6 +798,10 @@ def breed_from_db(name, default = 2):
     """ Looks up the breed in the db when the conversion is run, assign to BreedID """
     return "COALESCE((SELECT ID FROM breed WHERE lower(BreedName) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
 
+def incidenttype_from_db(name, default = 1):
+    """ Looks up the type in the db when the conversion is run, assign to IncidentTypeID """
+    return "COALESCE((SELECT ID FROM incidenttype WHERE lower(IncidentName) LIKE lower(%s) LIMIT 1), %d)" % (ds(name.strip()), default)
+
 def location_id_for_name(name, createIfNotExist = True):
     global locations
     if name.strip() == "": return 1
