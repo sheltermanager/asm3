@@ -83,8 +83,12 @@ def animal_tags(dbo, a):
     """
     l = dbo.locale
     qr = QR_IMG_SRC % { "url": BASE_URL + "/animal?id=%d" % a["ID"], "size": "150x150" }
+    animalage = a["ANIMALAGE"]
+    if animalage.endswith("."): animalage = animalage[0:len(animalage)-1]
+    timeonshelter = a["TIMEONSHELTER"]
+    if timeonshelter.endswith("."): timeonshelter = timeonshelter[0:len(timeonshelter)-1]
     displaydob = python2display(l, a["DATEOFBIRTH"])
-    displayage = a["ANIMALAGE"]
+    displayage = animalage
     estimate = ""
     if a["ESTIMATEDDOB"] == 1: 
         displaydob = a["AGEGROUP"]
@@ -257,7 +261,7 @@ def animal_tags(dbo, a):
         "ANIMALCOMMENTS"        : a["ANIMALCOMMENTS"],
         "ANIMALCOMMENTSBR"      : br(a["ANIMALCOMMENTS"]),
         "SHELTERCODE"           : a["SHELTERCODE"],
-        "AGE"                   : a["ANIMALAGE"],
+        "AGE"                   : animalage,
         "ACCEPTANCENUMBER"      : a["ACCEPTANCENUMBER"],
         "LITTERID"              : a["ACCEPTANCENUMBER"],
         "DECEASEDDATE"          : python2display(l, a["DECEASEDDATE"]),
@@ -265,7 +269,7 @@ def animal_tags(dbo, a):
         "DECEASEDCATEGORY"      : a["PTSREASONNAME"],
         "SHORTSHELTERCODE"      : a["SHORTCODE"],
         "MOSTRECENTENTRY"       : python2display(l, a["MOSTRECENTENTRYDATE"]),
-        "TIMEONSHELTER"         : a["TIMEONSHELTER"],
+        "TIMEONSHELTER"         : timeonshelter,
         "WEBMEDIAFILENAME"      : a["WEBSITEMEDIANAME"],
         "WEBSITEIMAGECOUNT"     : a["WEBSITEIMAGECOUNT"],
         "WEBSITEMEDIANAME"      : a["WEBSITEMEDIANAME"],

@@ -1,6 +1,7 @@
 37
 ================
 
+25/09/15 Remove trailing full stop from date_diff wordprocessor keys
 25/09/15 Fix validation bug in medical profiles with unspecified/0
 25/09/15 Add Colombian locale with Spanish/English (es_CO/en_CO)
 24/09/15 Fix word processor width for better preview
