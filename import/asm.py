@@ -1107,6 +1107,7 @@ def additional_field(fieldname, linktypeid, linkid, value):
 
 def animal_image(animalid, imagedata):
     """ Writes the media and dbfs entries to add an image to an animal """
+    if imagedata is None: return
     mediaid = getid("media")
     medianame = str(mediaid) + '.jpg'
     encoded = base64.b64encode(imagedata)
@@ -1166,10 +1167,13 @@ def animal_regimen_single(animalid, dategiven, treatmentname, dosage = "", comme
 def load_image_from_file(filename):
     """ Reads image data from a disk file or returns None if the file does not exist """
     if not os.path.exists(filename): return None
-    f = open(filename, "rb")
-    s = f.read()
-    f.close()
-    return s
+    try:
+        f = open(filename, "rb")
+        s = f.read()
+        f.close()
+        return s
+    except:
+        return None
 
 def petfinder_get_adoptable(shelterid):
     """

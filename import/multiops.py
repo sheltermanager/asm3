@@ -69,6 +69,7 @@ cadoptions = asm.csv_to_list("%s/tblAdoptions.csv" % PATH)
 canimalguardians = asm.csv_to_list("%s/tblAnimalGuardians.csv" % PATH)
 canimals = asm.csv_to_list("%s/tblAnimals.csv" % PATH)
 canimalids = asm.csv_to_list("%s/tblAnimalIDs.csv" % PATH)
+canimalimages = asm.csv_to_list("%s/tblAnimalImages.csv" % PATH)
 canimalintakes = asm.csv_to_list("%s/tblAnimalIntakesDispositions.csv" % PATH)
 canimalsnotes = asm.csv_to_list("%s/tblAnimalsNotes.csv" % PATH)
 cmedicalhistory = asm.csv_to_list("%s/tblMedicalHistory.csv" % PATH)
@@ -77,6 +78,7 @@ cpersonsaddresses = asm.csv_to_list("%s/tblKnownPersonsAddresses.csv" % PATH)
 cpersonsids = asm.csv_to_list("%s/tblKnownPersonsIDs.csv" % PATH)
 cpersonsnotes = asm.csv_to_list("%s/tblKnownPersonsNotes.csv" % PATH)
 cpersonsphone = asm.csv_to_list("%s/tblKPPhoneNumbers.csv" % PATH)
+crabies = asm.csv_to_list("%s/tblRabiesCertificates.csv" % PATH)
 cvaccinations = asm.csv_to_list("%s/tblVaccinations.csv" % PATH)
 
 # people
@@ -211,20 +213,12 @@ for row in canimals:
     comments += ", Status: " + status
     comments += ", Area: " + location + ", Pen: " + pen
     a.HiddenAnimalDetails = comments
-    """
-    # Does this animal have an image? If so, add media/dbfs entries for it
-    imdata = None
-    if os.path.exists(PATH + "/images/%s.jpg" % row["ANIMALKEY"]):
-        f = open(PATH + "/images/%s.jpg" % row["ANIMALKEY"], "rb")
-        imdata = f.read()
-        f.close()
-    elif os.path.exists(PATH + "/images/%s.JPG" % row["ANIMALKEY"]):
-        f = open(PATH + "/images/%s.JPG" % row["ANIMALKEY"], "rb")
-        imdata = f.read()
-        f.close()
-    if imdata is not None:
-        asm.animal_image(a.ID, imdata)
-    """
+
+# Read and store images
+for row in canimalimages:
+    if not ppa.has_key(row["tblAnimalsID"]): continue
+    a = ppa[row["tblAnimalsID"]]
+    asm.animal_image(a.ID, asm.load_image_from_file("%s/images/%s" % (PATH, row["ImageFilename"])))
 
 # microchips, animal codes and document ids
 for row in canimalids:
@@ -387,6 +381,23 @@ for row in cvaccinations:
         av.DateRequired = av.DateOfVaccination
         if av.DateRequired is None:
             av.DateRequired = a.DateBroughtIn
+
+# rabies certs
+for row in crabies:
+    if not ppa.has_key(row["tblAnimalsID"]): continue
+    if asm.getdate_mmddyy(row["RabiesVaccinationDate"]) is None: continue
+    a = ppa[row["tblAnimalsID"]]
+    # Each row contains a rabies vaccination/cert
+    a.RabiesTag = row["RabiesVaccinationCertificateNumber"]
+    av = asm.AnimalVaccination()
+    animalvaccinations.append(av)
+    av.AnimalID = a.ID
+    av.VaccinationID = 4
+    av.DateOfVaccination = asm.getdate_mmddyy(row["RabiesVaccinationDate"])
+    av.DateRequired = av.DateOfVaccination
+    av.Manufacturer = row["RabiesVaccinationManufacturer"]
+    av.BatchNumber = row["RabiesVaccinationLotNumber"]
+    av.Comments = "Brand: %s\nLot Expiry: %s" % (row["RabiesVaccinationBrand"], row["RabiesVaccinationLotExpiration"])
 
 # medical history
 for row in cmedicalhistory:
