@@ -1837,7 +1837,7 @@ class Movement:
             )
         sql = makesql("adoption", s)
         # Close any existing movements for this animal
-        sql += "\nUPDATE adoption SET ReturnDate = %s WHERE MovementDate < %s AND AnimalID = %s AND ReturnDate Is Null;" % ( dd(self.MovementDate), dd(self.MovementDate), di(self.AnimalID))
+        sql += "\nUPDATE adoption SET ReturnDate = %s WHERE ID <> %s AND AnimalID = %s AND ReturnDate Is Null;" % ( dd(self.MovementDate), di(self.ID), di(self.AnimalID))
         return sql
 
 class Owner:
