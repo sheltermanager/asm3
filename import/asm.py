@@ -1115,6 +1115,7 @@ def animal_image(animalid, imagedata):
     mediaid = getid("media")
     medianame = str(mediaid) + '.jpg'
     encoded = base64.b64encode(imagedata)
+    print "UPDATE media SET websitephoto = 0, docphoto = 0 WHERE linkid = %d AND linktypeid = 0;" % animalid
     print "INSERT INTO media (id, medianame, medianotes, websitephoto, docphoto, newsincelastpublish, updatedsincelastpublish, " \
         "excludefrompublish, linkid, linktypeid, recordversion, date) VALUES (%d, '%s', %s, 1, 1, 0, 0, 0, %d, 0, 0, %s);" % \
         ( mediaid, medianame, ds(""), animalid, dd(datetime.datetime.today()) )
