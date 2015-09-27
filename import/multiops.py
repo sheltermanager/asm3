@@ -354,6 +354,9 @@ for row in canimalguardians:
     if not a.OnFoster: continue
     # if the animal is dead, also don't bother
     if a.DeceasedDate is not None: continue
+    # Make this person a fosterer
+    o.IsFosterer = 1
+    o.AdditionalFlags = "fosterer|"
     m = asm.Movement()
     m.AnimalID = a.ID
     m.OwnerID = o.ID
