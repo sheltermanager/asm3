@@ -7,6 +7,10 @@
 
     common = {
 
+        replace_all: function(str, find, replace) {
+          return str.replace(new RegExp(find, 'g'), replace);
+        },
+
         substitute: function(str, sub) {
             /*jslint regexp: true */
             return str.replace(/\{(.+?)\}/g, function($0, $1) {

@@ -405,7 +405,7 @@ $(function() {
             s += '</tr></tbody></table>';
 
             $.each(controller.mess, function(i, m) {
-                s += '<input id="long' + m.ID + '" type="hidden" value="' + html.title(m.MESSAGE) + '" />';
+                s += '<input id="long' + m.ID + '" type="hidden" value="' + html.title(common.replace_all(m.MESSAGE, "\n", "<br/>")) + '" />';
                 s += '<input id="short' + m.ID + '" type="hidden" value="' + html.title(html.truncate(m.MESSAGE)) + '" />';
             });
             return s;
