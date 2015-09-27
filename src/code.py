@@ -2480,25 +2480,24 @@ class document_templates:
     def POST(self):
         utils.check_loggedin(session, web)
         dbo = session.dbo
+        username = session.user
         post = utils.PostedData(web.input(mode="create", template="", filechooser={}), session.locale)
         mode = post["mode"]
         if mode == "create":
-            return dbfs.create_document_template(dbo, post["template"])
+            return dbfs.create_document_template(dbo, username, post["template"])
         elif mode == "createodt":
             fn = post.filename()
             if post["path"] != "": fn = post["path"] + "/" + fn
-            dbfs.create_document_template(dbo, fn, ".odt", post.filedata())
+            dbfs.create_document_template(dbo, username, fn, ".odt", post.filedata())
             raise web.seeother("document_templates")
         elif mode == "clone":
             for t in post.integer_list("ids"):
-                return dbfs.clone_document_template(dbo, t, post["template"])
+                return dbfs.clone_document_template(dbo, username, t, post["template"])
         elif mode == "delete":
             for t in post.integer_list("ids"):
-                dbfs.delete_id(dbo, t)
+                dbfs.delete_document_template(dbo, username, t)
         elif mode == "rename":
-            newname = dbfs.sanitise_path(post["newname"])
-            if not newname.endswith(".html") and not newname.endswith(".odt"): newname += ".html"
-            dbfs.rename_file_id(dbo, post.integer("dbfsid"), newname)
+            dbfs.rename_document_template(dbo, username, post.integer("dbfsid"), post["newname"])
 
 class donation:
     def GET(self):

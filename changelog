@@ -1,6 +1,7 @@
 37
 ================
 
+27/09/15 Changes to doc and html templates should go to the audit log
 27/09/15 Retain line breaks in long version of messages
 25/09/15 Remove trailing full stop from date_diff wordprocessor keys
 25/09/15 Fix validation bug in medical profiles with unspecified/0

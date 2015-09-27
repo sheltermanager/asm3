@@ -109,7 +109,10 @@ $(function() {
                 var newname = encodeURIComponent($("#newname").val());
                 common.ajax_post("document_templates", "mode=rename&newname=" + newname + "&dbfsid=" + dbfsid)
                     .then(function() {
-                        common.route("document_templates");
+                        $("#dialog-rename").enable_dialog_buttons();
+                        $("#dialog-rename").dialog("close");
+                        tableform.table_selected_row(document_templates.table).NAME = newname;
+                        tableform.table_update(document_templates.table);
                     });
             };
             renamebuttons[_("Cancel")] = function() {

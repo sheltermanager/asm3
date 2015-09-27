@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import al
+import audit
 import base64
 import configuration
 import db
@@ -282,11 +283,13 @@ def update_html_publisher_template(dbo, username, name, header, body, footer):
     put_string(dbo, "body.html", "/internet/%s" % name, body)
     put_string(dbo, "foot.html", "/internet/%s" % name, footer)
     al.debug("%s updated html template %s" % (username, name), "dbfs.update_html_publisher_template", dbo)
+    audit.edit(dbo, username, "htmltemplate", "altered html template '%s'" % name)
 
 def delete_html_publisher_template(dbo, username, name):
     delete_path(dbo, "/internet/" + name)
     delete(dbo, name, "/internet")
     al.debug("%s deleted html template %s" % (username, name), "dbfs.update_html_publisher_template", dbo)
+    audit.delete(dbo, username, "htmltemplate", "remove html template '%s'" % name)
 
 def get_publish_logs(dbo):
     """
@@ -360,7 +363,7 @@ def get_odt_document_templates(dbo):
     """
     return db.query(dbo, "SELECT ID, Name, Path FROM dbfs WHERE Name Like '%.odt' AND Path Like '/templates%' ORDER BY Path, Name")
 
-def create_document_template(dbo, name, ext = ".html", content = "<p></p>"):
+def create_document_template(dbo, username, name, ext = ".html", content = "<p></p>"):
     """
     Creates a document template from the name given.
     If there's no extension, adds it
@@ -373,9 +376,11 @@ def create_document_template(dbo, name, ext = ".html", content = "<p></p>"):
     if not filepath.startswith("/"): filepath = "/templates/" + filepath
     if not filepath.startswith("/templates"): filepath = "/templates" + filepath
     filepath = sanitise_path(filepath)
-    return put_string_filepath(dbo, filepath, content)
+    dbfsid = put_string_filepath(dbo, filepath, content)
+    audit.create(dbo, username, "documenttemplate", "id: %d, name: %s" % (dbfsid, name))
+    return dbfsid
 
-def clone_document_template(dbo, dbfsid, newname):
+def clone_document_template(dbo, username, dbfsid, newname):
     """
     Creates a new document template with the content from the dbfsid given.
     """
@@ -384,7 +389,24 @@ def clone_document_template(dbo, dbfsid, newname):
     if newname.rfind(".") != -1:
         ext = newname[newname.rfind("."):]
     content = get_string_id(dbo, dbfsid)
-    return create_document_template(dbo, newname, ext, content)
+    ndbfsid = create_document_template(dbo, username, newname, ext, content)
+    audit.create(dbo, username, "documenttemplate", "clone %d to %s (new id: %d)" % (dbfsid, newname, ndbfsid))
+    return ndbfsid
+
+def delete_document_template(dbo, username, dbfsid):
+    """
+    Deletes a document template. This is a separate function so auditing can be done.
+    """
+    delete_id(dbo, dbfsid)
+    audit.delete(dbo, username, "documenttemplate", "delete template %d" % dbfsid)
+
+def rename_document_template(dbo, username, dbfsid, newname):
+    """
+    Renames a document template.
+    """
+    if not newname.endswith(".html") and not newname.endswith(".odt"): newname += ".html"
+    rename_file_id(dbo, dbfsid, newname)
+    audit.edit(dbo, username, "documenttemplate", "rename %d to %s" % (dbfsid, newname))
 
 def get_name_for_id(dbo, dbfsid):
     """
