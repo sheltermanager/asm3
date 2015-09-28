@@ -74,9 +74,11 @@ def get_transport_query(dbo):
         "d.OwnerCounty AS DriverOwnerCounty, p.OwnerCounty AS PickupOwnerCounty, dr.OwnerCounty AS DropoffOwnerCounty, " \
         "d.OwnerPostcode AS DriverOwnerPostcode, p.OwnerPostcode AS PickupOwnerPostcode, dr.OwnerPostcode AS DropoffOwnerPostcode, " \
         "t.PickupAddress, t.PickupTown, t.PickupCounty, t.PickupPostcode, t.DropoffAddress, t.DropoffTown, t.DropoffCounty, t.DropoffPostcode, " \
-        "a.AnimalName, a.ShelterCode " \
+        "ma.MediaName AS WebsiteMediaName, ma.Date AS WebsiteMediaDate, " \
+        "a.AnimalName, a.ShelterCode, a.ShortCode " \
         "FROM animaltransport t " \
         "LEFT OUTER JOIN animal a ON t.AnimalID = a.ID " \
+        "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
         "LEFT OUTER JOIN owner d ON t.DriverOwnerID = d.ID " \
         "LEFT OUTER JOIN owner p ON t.PickupOwnerID = p.ID " \
         "LEFT OUTER JOIN owner dr ON t.DropoffOwnerID = dr.ID "
