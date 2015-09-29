@@ -2538,6 +2538,8 @@ class donation:
             users.check_permission(session, users.CHANGE_DONATION)
             for did in post.integer_list("ids"):
                 financial.receive_donation(dbo, session.user, did)
+        elif mode == "nextreceipt":
+            return financial.get_next_receipt_number(dbo)
         elif mode == "personmovements":
             users.check_permission(session, users.VIEW_MOVEMENT)
             web.header("Content-Type", "application/json")

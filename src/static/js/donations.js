@@ -20,9 +20,9 @@ $(function() {
                 edit_perm: 'ocod',
                 close_on_ok: false,
                 hide_read_only: true,
-                width: 550,
+                width: 750,
                 helper_text: _("Payments need at least one date, an amount and a person."),
-                columns: 1,
+                columns: 2,
                 fields: [
                     { json_field: "DONATIONTYPEID", post_field: "type", label: _("Type"), type: "select", options: { displayfield: "DONATIONNAME", valuefield: "ID", rows: controller.donationtypes }},
                     { json_field: "DONATIONPAYMENTID", post_field: "payment", label: _("Method"), type: "select", options: { displayfield: "PAYMENTNAME", valuefield: "ID", rows: controller.paymenttypes }},
@@ -30,13 +30,19 @@ $(function() {
                     { json_field: "DATEDUE", post_field: "due", label: _("Due"), type: "date" },
                     { json_field: "DATE", post_field: "received", label: _("Received"), type: "date" },
                     { json_field: "DONATION", post_field: "amount", label: _("Amount"), type: "currency" },
-                    { json_field: "ISGIFTAID", post_field: "giftaid", label: _("Gift Aid"), type: "select", options: 
-                        '<option value="0">' + _("Not eligible for gift aid") + '</option>' +
-                        '<option value="1">' + _("Eligible for gift aid") + '</option>' },
                     { json_field: "", post_field: "destaccount", label: _("Deposit Account"), 
                         hideif: function() { return !config.bool("DonationTrxOverride"); }, 
                         defaultval: config.integer("DonationTargetAccount"),
                         type: "select", options: { displayfield: "CODE", valuefield: "ID", rows: controller.accounts }},
+                    { json_field: "RECEIPTNUMBER", post_field: "receiptnumber", label: _("Receipt No"), type: "text" },
+                    { json_field: "ISGIFTAID", post_field: "giftaid", label: _("Gift Aid"), type: "check" },
+                    { json_field: "ISVAT", post_field: "vat", label: _("Sales Tax/VAT?"), type: "check", 
+                        hideif: function() { return !config.bool("VATEnabled"); } },
+                    { json_field: "VATRATE", post_field: "vatrate", label: _("Tax Rate %"), type: "number", 
+                        hideif: function() { return !config.bool("VATEnabled"); } },
+                    { json_field: "VATAMOUNT", post_field: "vatamount", label: _("Tax Amount"), type: "currency",
+                        hideif: function() { return !config.bool("VATEnabled"); } },
+                    { type: "nextcol" },
                     { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "animal" },
                     { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person" },
                     { json_field: "MOVEMENTID", post_field: "movement", label: _("Movement"), type: "select", options: "" },
@@ -55,6 +61,14 @@ $(function() {
                     // Only allow destination account to be overridden when the received date
                     // hasn't been set yet.
                     $("#destaccount").closest("tr").toggle( config.bool("DonationTrxOverride") && !row.DATE );
+                    if (row.ISVAT == 1) {
+                        $("#vatrate").closest("tr").show();
+                        $("#vatamount").closest("tr").show();
+                    }
+                    else {
+                        $("#vatrate").closest("tr").hide();
+                        $("#vatamount").closest("tr").hide();
+                    }
                     tableform.dialog_show_edit(dialog, row)
                         .then(function() {
                             if (!donations.validation()) { tableform.dialog_enable_buttons(); return; }
@@ -82,10 +96,9 @@ $(function() {
                     { field: "FREQUENCYNAME", display: _("Frequency") },
                     { field: "DATEDUE", display: _("Due"), formatter: tableform.format_date },
                     { field: "DATE", display: _("Received"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
-                    { field: "ID", display: _("Receipt No"), formatter: function(row) {
-                        return format.padleft(row.ID, 8);
-                    }},
+                    { field: "RECEIPTNUMBER", display: _("Receipt No") },
                     { field: "DONATION", display: _("Amount"), formatter: tableform.format_currency },
+                    { field: "VATAMOUNT", display: _("Tax"), formatter: tableform.format_currency, hideif: function() { return !config.bool("VATEnabled"); } },
                     { field: "PERSON", display: _("Person"),
                         formatter: function(row) {
                             if (row.OWNERID) {
@@ -127,7 +140,13 @@ $(function() {
                         }
                         $("#type").select("value", config.integer("AFDefaultDonationType"));
                         $("#giftaid").select("value", "0");
+                        common.ajax_post("donation", "nextreceipt")
+                            .then(function(result) {
+                                $("#receiptnumber").val(result);
+                            });
                         donations.type_change();
+                        $("#vatrate").closest("tr").hide();
+                        $("#vatamount").closest("tr").hide();
                         tableform.dialog_show_add(dialog)
                             .then(function() {
                                 if (!donations.validation()) { tableform.dialog_enable_buttons(); return; }
@@ -181,7 +200,9 @@ $(function() {
                  { id: "document", text: _("Receipt/Invoice"), icon: "document", enabled: "multi", perm: "gaf", 
                      tooltip: _("Generate document from this payment"), type: "buttonmenu" },
                  { id: "offset", type: "dropdownfilter", 
-                     options: [ "m7|" + _("Received in last week"), 
+                     options: [ 
+                        "m1|" + _("Received today"),
+                        "m7|" + _("Received in last week"), 
                         "m31|" + _("Received in last month"),
                         "m365|" + _("Received in last year"),
                         "d0|" + _("Overdue"),
@@ -348,6 +369,21 @@ $(function() {
 
             $("#type").change(function() {
                 donations.type_change();
+            });
+
+            $("#vat").change(function() {
+                if ($(this).is(":checked")) {
+                    $("#vatrate").val(config.number("VATRate"));
+                    $("#vatamount").currency("value", ($("#amount").currency("value") / 100) * config.number("VATRate"));
+                    $("#vatrate").closest("tr").fadeIn();
+                    $("#vatamount").closest("tr").fadeIn();
+                }
+                else {
+                    $("#vatamount").currency("value", "0");
+                    $("#vatrate").val("0"); 
+                    $("#vatrate").closest("tr").fadeOut();
+                    $("#vatamount").closest("tr").fadeOut();
+                }
             });
 
             // Add click handlers to templates to figure out where to go based

@@ -247,6 +247,8 @@ DEFAULTS = {
     "TrialOnShelter": "No",
     "UseAutoInsurance": "No",
     "UseShortShelterCodes": "Yes", 
+    "VATEnabled": "Yes",
+    "VATRate": "20",
     "WaitingListViewColumns": "Rank,OwnerName,OwnerAddress," \
         "HomeTelephone,EmailAddress,DatePutOnList,TimeOnList," \
         "DateRemovedFromList,Urgency,SpeciesID,Size,AnimalDescription",

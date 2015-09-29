@@ -48,6 +48,7 @@ def get_donation_query(dbo):
     return "SELECT od.ID, od.DonationTypeID, od.DonationPaymentID, dt.DonationName, od.Date, od.DateDue, " \
         "od.Donation, p.PaymentName, od.IsGiftAid, lk.Name AS IsGiftAidName, od.Frequency, " \
         "fr.Frequency AS FrequencyName, od.NextCreated, " \
+        "od.ReceiptNumber, od.IsVAT, od.VATRate, od.VATAmount, " \
         "od.CreatedBy, od.CreatedDate, od.LastChangedBy, od.LastChangedDate, " \
         "od.Comments, o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, " \
         "o.OwnerName, a.AnimalName, a.ShelterCode, a.ShortCode, a.ID AS AnimalID, o.ID AS OwnerID, " \
@@ -349,6 +350,9 @@ def get_movement_donation(dbo, mid):
     if len(r) == 0: return None
     return r[0]
 
+def get_next_receipt_number(dbo):
+    return utils.padleft(1 + db.query_int("SELECT MAX(ID) FROM ownerdonation"), 8)
+
 def get_donations(dbo, offset = "m31"):
     """
     Returns a recordset of donations
@@ -545,7 +549,11 @@ def insert_donations_from_form(dbo, username, post, donationdate, force_receive 
                 "amount"                : post["amount%d" % i],
                 "due"                   : due,
                 "received"              : received,
-                "giftaid"               : post["giftaid"]
+                "giftaid"               : post["giftaid"],
+                "receiptnumber"         : post["receiptnumber"],
+                "vat"                   : post["vat%d" % i],
+                "vatrate"               : post["vatrate%d" % i],
+                "vatamount"             : post["vatamount%d" % i]
             }
             created.append(str(insert_donation_from_form(dbo, username, utils.PostedData(don_dict, l))))
     return ",".join(created)
@@ -555,6 +563,8 @@ def insert_donation_from_form(dbo, username, post):
     Creates a donation record from posted form data 
     """
     donationid = db.get_id(dbo, "ownerdonation")
+    if post["receiptnumber"] == "":
+        post.data["receiptnumber"] = utils.padleft(donationid, 8)
     sql = db.make_insert_user_sql(dbo, "ownerdonation", username, ( 
         ( "ID", db.di(donationid)),
         ( "OwnerID", post.db_integer("person")),
@@ -567,7 +577,11 @@ def insert_donation_from_form(dbo, username, post):
         ( "DateDue", post.db_date("due")),
         ( "Date", post.db_date("received")),
         ( "NextCreated", db.di(0)),
-        ( "IsGiftAid", post.db_integer("giftaid")),
+        ( "ReceiptNumber", post.db_string("receiptnumber")),
+        ( "IsGiftAid", post.db_boolean("giftaid")),
+        ( "IsVAT", post.db_boolean("vat")),
+        ( "VATRate", post.db_floating("vatrate")),
+        ( "VATAmount", post.db_integer("vatamount")),
         ( "Comments", post.db_string("comments"))
         ))
     db.execute(dbo, sql)
@@ -596,7 +610,11 @@ def update_donation_from_form(dbo, username, post):
         ( "DateDue", post.db_date("due")),
         ( "Date", post.db_date("received")),
         ( "NextCreated", db.di(0)),
-        ( "IsGiftAid", post.db_integer("giftaid")),
+        ( "ReceiptNumber", post.db_string("receiptnumber")),
+        ( "IsGiftAid", post.db_boolean("giftaid")),
+        ( "IsVAT", post.db_boolean("vat")),
+        ( "VATRate", post.db_floating("vatrate")),
+        ( "VATAmount", post.db_integer("vatamount")),
         ( "Comments", post.db_string("comments"))
         ))
     preaudit = db.query(dbo, "SELECT * FROM ownerdonation WHERE ID = %d" % donationid)
@@ -673,6 +691,10 @@ def check_create_next_donation(dbo, username, odid):
             ( "DonationPaymentID", db.di(d["DONATIONPAYMENTID"])),
             ( "Frequency", db.di(d["FREQUENCY"])),
             ( "NextCreated", db.di(0)),
+            ( "ReceiptNumber", db.ds(utils.padleft(did, 8))),
+            ( "IsVAT", db.di(d["ISVAT"])),
+            ( "VATRate", db.df(d["VATRATE"])),
+            ( "VATAmount", db.di(d["VATAMOUNT"])),
             ( "Comments", db.ds(d["COMMENTS"]))
         ))
         db.execute(dbo, sql)

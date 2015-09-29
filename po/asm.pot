@@ -662,7 +662,7 @@ msgstr ""
 msgid "Adopt an animal"
 msgstr ""
 
-#: shelterview.js animal_find.js animal_bulk.js
+#: shelterview.js animal_find.js animal_bulk.js publish.py
 msgid "Adoptable"
 msgstr ""
 
@@ -958,10 +958,6 @@ msgid "Allow duplicate microchip numbers"
 msgstr ""
 
 #: options.js
-msgid "Allow entry of two payments on the Move menu screens"
-msgstr ""
-
-#: options.js
 msgid "Allow overriding of the movement number on the Move menu screens"
 msgstr ""
 
@@ -1049,8 +1045,7 @@ msgstr ""
 msgid "American Wirehair"
 msgstr ""
 
-#: donations.js person_vouchers.js donation_receive.js move_reserve.js
-#: move_adopt.js move_reclaim.js
+#: donations.js person_vouchers.js common_widgets.js
 msgid "Amount"
 msgstr ""
 
@@ -2622,12 +2617,6 @@ msgstr ""
 msgid "Create a cost record"
 msgstr ""
 
-#: donation_receive.js
-msgid ""
-"Create a matching transaction for this payment and deposit it in this "
-"account"
-msgstr ""
-
 #: animal.js
 msgid "Create a new animal by copying this one"
 msgstr ""
@@ -2741,7 +2730,7 @@ msgstr ""
 msgid "Crossbreed"
 msgstr ""
 
-#: common.js shelterview.js animal.js options.js
+#: common.js shelterview.js animal.js options.js publish.py
 msgid "Cruelty Case"
 msgstr ""
 
@@ -3298,7 +3287,7 @@ msgstr ""
 msgid "Deposit Returned"
 msgstr ""
 
-#: donation_receive.js move_reserve.js move_adopt.js move_reclaim.js
+#: common_widgets.js
 msgid "Deposit account"
 msgstr ""
 
@@ -3884,11 +3873,6 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Electricity Bills"
-msgstr ""
-
-#: donations.js donation_receive.js move_reserve.js move_adopt.js
-#: move_reclaim.js
-msgid "Eligible for gift aid"
 msgstr ""
 
 #: media.js waitinglist_results.js person.js incident.js users.js
@@ -4886,8 +4870,7 @@ msgstr ""
 msgid "Get more reports from sheltermanager.com"
 msgstr ""
 
-#: donations.js donation_receive.js move_reserve.js move_adopt.js
-#: move_reclaim.js
+#: donations.js common_widgets.js
 msgid "Gift Aid"
 msgstr ""
 
@@ -5186,7 +5169,7 @@ msgid "History"
 msgstr ""
 
 #: common.js shelterview.js transport.js animal_find.js animal_find_results.js
-#: options.js html.py
+#: options.js publish.py html.py
 msgid "Hold"
 msgstr ""
 
@@ -6589,8 +6572,7 @@ msgstr ""
 msgid "Messages successfully sent"
 msgstr ""
 
-#: donations.js donation_receive.js move_reserve.js move_adopt.js
-#: move_reclaim.js
+#: donations.js common_widgets.js
 msgid "Method"
 msgstr ""
 
@@ -7153,6 +7135,7 @@ msgid "Not Available for Adoption"
 msgstr ""
 
 #: common.js shelterview.js animal_find.js animal.js animal_bulk.js options.js
+#: publish.py
 msgid "Not For Adoption"
 msgstr ""
 
@@ -7170,11 +7153,6 @@ msgstr ""
 
 #: incident_find.js
 msgid "Not dispatched"
-msgstr ""
-
-#: donations.js donation_receive.js move_reserve.js move_adopt.js
-#: move_reclaim.js
-msgid "Not eligible for gift aid"
 msgstr ""
 
 #: header.js configuration.py
@@ -7586,7 +7564,7 @@ msgstr ""
 msgid "Patterdale Terrier (Fell Terrier)"
 msgstr ""
 
-#: move_reserve.js calendarview.js move_adopt.js move_reclaim.js
+#: calendarview.js common_widgets.js
 msgid "Payment"
 msgstr ""
 
@@ -7718,7 +7696,7 @@ msgid "Performed"
 msgstr ""
 
 #: common.js movements.js shelterview.js animal_find.js move_foster.js
-#: dbupdate.py
+#: dbupdate.py publish.py
 msgid "Permanent Foster"
 msgstr ""
 
@@ -8126,7 +8104,7 @@ msgid "Quantity"
 msgstr ""
 
 #: common.js shelterview.js animal_find.js animal.js animal_find_results.js
-#: options.js html.py
+#: options.js publish.py html.py
 msgid "Quarantine"
 msgstr ""
 
@@ -8274,6 +8252,10 @@ msgstr ""
 
 #: donations.js
 msgid "Received in last year"
+msgstr ""
+
+#: donations.js
+msgid "Received today"
 msgstr ""
 
 #: options.js code.py
@@ -8633,7 +8615,7 @@ msgid "Reserve an animal"
 msgstr ""
 
 #: common.js shelterview.js animal_find.js animal_find_results.js options.js
-#: animal.py html.py
+#: animal.py publish.py html.py
 msgid "Reserved"
 msgstr ""
 
@@ -8926,6 +8908,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Saint Bernard St. Bernard"
+msgstr ""
+
+#: donations.js
+msgid "Sales Tax/VAT?"
 msgstr ""
 
 #: dbupdate.py
@@ -9951,6 +9937,10 @@ msgstr ""
 msgid "Table"
 msgstr ""
 
+#: common_widgets.js
+msgid "Take another payment"
+msgstr ""
+
 #: incident.js incident_new.js mobile.py
 msgid "Taken By"
 msgstr ""
@@ -9977,6 +9967,18 @@ msgstr ""
 
 #: html.py
 msgid "Tattoo Number"
+msgstr ""
+
+#: donations.js
+msgid "Tax"
+msgstr ""
+
+#: donations.js
+msgid "Tax Amount"
+msgstr ""
+
+#: donations.js
+msgid "Tax Rate %"
 msgstr ""
 
 #: options.js dbupdate.py
@@ -11168,11 +11170,10 @@ msgstr ""
 #: incident_find_results.js reports.js diarytasks.js person_vouchers.js
 #: log_new.js rota.js onlineform.js person.js animal_find.js incident.js
 #: incident_new.js users.js animal_costs.js staff_rota.js animal_new.js
-#: person_links.js donation_receive.js accounts.js log.js mailmerge.js
-#: animal.js animal_diet.js licence.js document_repository.js traploan.js
-#: move_reserve.js animal_find_results.js animal_bulk.js
-#: common_animalchooser.js move_adopt.js additional.js options.js
-#: vaccination.js move_reclaim.js reports.py mobile.py lookups.py html.py
+#: person_links.js accounts.js log.js mailmerge.js animal.js animal_diet.js
+#: licence.js document_repository.js traploan.js animal_find_results.js
+#: animal_bulk.js common_animalchooser.js additional.js common_widgets.js
+#: options.js vaccination.js reports.py mobile.py lookups.py html.py
 msgid "Type"
 msgstr ""
 
@@ -11944,6 +11945,12 @@ msgstr ""
 msgid ""
 "When publishing to third party services, add this extra text to the bottom "
 "of all animal descriptions"
+msgstr ""
+
+#: options.js
+msgid ""
+"When receiving payments, allow recording of sales tax/VAT with a default "
+"rate of"
 msgstr ""
 
 #: options.js

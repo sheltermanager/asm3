@@ -7,7 +7,7 @@ import os, sys
 from i18n import _, BUILD
 from sitedefs import DB_PK_STRATEGY
 
-LATEST_VERSION = 33710
+LATEST_VERSION = 33712
 VERSIONS = ( 
     2870, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3050,
     3051, 3081, 3091, 3092, 3093, 3094, 3110, 3111, 3120, 3121, 3122, 3123, 3200,
@@ -19,7 +19,7 @@ VERSIONS = (
     33310, 33311, 33312, 33313, 33314, 33315, 33316, 33401, 33402, 33501, 33502,
     33503, 33504, 33505, 33506, 33507, 33508, 33600, 33601, 33602, 33603, 33604,
     33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702, 33703, 33704, 33705,
-    33706, 33707, 33708, 33709, 33710
+    33706, 33707, 33708, 33709, 33710, 33711, 33712
 )
 
 # All ASM3 tables
@@ -1105,11 +1105,17 @@ def sql_structure(dbo):
         fdate("DateDue", True),
         fint("Donation"),
         fint("IsGiftAid"),
+        fint("IsVAT", True),
+        ffloat("VATRate", True),
+        fint("VATAmount", True),
         fint("Frequency"),
         fint("NextCreated", True),
+        fstr("ReceiptNumber", True),
         flongstr("Comments") ))
     sql += index("ownerdonation_OwnerID", "ownerdonation", "OwnerID")
+    sql += index("ownerdonation_ReceiptNumber", "ownerdonation", "ReceiptNumber")
     sql += index("ownerdonation_Date", "ownerdonation", "Date")
+    sql += index("ownerdonation_IsVAT", "ownerdonation", "IsVAT")
 
     sql += table("ownerinvestigation", (
         fid(),
@@ -4081,3 +4087,24 @@ def update_33710(dbo):
     for x in p.split(" "):
         if x != "forcereupload": s.append(x)
     db.execute_dbupdate(dbo, "UPDATE configuration SET ItemValue = '%s' WHERE ItemName LIKE 'PublisherPresets'" % " ".join(s))
+
+def update_33711(dbo):
+    # Add ownerdonation.ReceiptNumber
+    add_column(dbo, "ownerdonation", "ReceiptNumber", shorttext(dbo))
+    add_index(dbo, "ownerdonation_ReceiptNumber", "ownerdonation", "ReceiptNumber")
+    # Use ID to prepopulate existing records
+    if dbo.dbtype == "POSTGRESQL":
+        db.execute_dbupdate(dbo, "UPDATE ownerdonation SET ReceiptNumber = LPAD(ID::text, 8, '0')")
+    elif dbo.dbtype == "MYSQL":
+        db.execute_dbupdate(dbo, "UPDATE ownerdonation SET ReceiptNumber = LPAD(ID, 8, '0')")
+    else:
+        db.execute_dbupdate(dbo, "UPDATE ownerdonation SET ReceiptNumber = ID")
+
+def update_33712(dbo):
+    # Add ownerdonation Sales Tax/VAT fields
+    add_column(dbo, "ownerdonation", "IsVAT", "INTEGER")
+    add_column(dbo, "ownerdonation", "VATRate", floattype(dbo))
+    add_column(dbo, "ownerdonation", "VATAmount", "INTEGER")
+    add_index(dbo, "ownerdonation_IsVAT", "ownerdonation", "IsVAT")
+    db.execute_dbupdate(dbo, "UPDATE ownerdonation SET IsVAT=0, VATRate=0, VATAmount=0")
+

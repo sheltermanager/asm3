@@ -1,6 +1,8 @@
 37
 ================
 
+29/09/15 Receipt numbers field #264
+29/09/15 Sales tax/VAT fields and config #259
 28/09/15 Fix missing images/shortcode from transport book
 27/09/15 Changes to doc and html templates should go to the audit log
 27/09/15 Retain line breaks in long version of messages
