@@ -33,6 +33,12 @@ $(function() {
                 '<input id="received" data="received" class="asm-textbox asm-datebox" title=\'' + _("The date the payment was received") + '\' />',
                 '</td>',
                 '</tr>',
+                '<tr>',
+                '<td><label for="receiptnumber">' + _("Receipt No") + '</label></td>',
+                '<td>',
+                '<input id="receiptnumber" data="receiptnumber" class="asm-textbox" type="text" />',
+                '</td>',
+                '</tr>',
                 '</table>',
                 html.content_footer(),
                 '<div id="payment"></div>',
@@ -68,6 +74,12 @@ $(function() {
 
             // Set default values
             $("#received").datepicker("setDate", new Date());
+
+            // Set next receipt number
+            common.ajax_post("donation", "mode=nextreceipt")
+                .then(function(result) {
+                    $("#receiptnumber").val(result);
+                });
 
             $("#receive").button().click(function() {
                 if (!validation()) { return; }

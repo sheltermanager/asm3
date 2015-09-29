@@ -586,7 +586,7 @@
                 '<tbody>',
                 '<tr id="giftaidrow">',
                 '<td></td>',
-                '<td><input id="giftaid" data="giftaid" class="asm-checkbox" /> <label for="giftaid">' + _("Gift Aid") + '</label></td>',
+                '<td><input id="giftaid" data="giftaid" type="checkbox" class="asm-checkbox" /><label for="giftaid">' + _("Gift Aid") + '</label></td>',
                 '</tr>',
                 '</tbody>',
                 '</table>',

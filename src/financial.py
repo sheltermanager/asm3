@@ -351,7 +351,7 @@ def get_movement_donation(dbo, mid):
     return r[0]
 
 def get_next_receipt_number(dbo):
-    return utils.padleft(1 + db.query_int("SELECT MAX(ID) FROM ownerdonation"), 8)
+    return utils.padleft(1 + db.query_int(dbo, "SELECT MAX(ID) FROM ownerdonation"), 8)
 
 def get_donations(dbo, offset = "m31"):
     """

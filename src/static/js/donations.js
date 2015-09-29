@@ -140,7 +140,7 @@ $(function() {
                         }
                         $("#type").select("value", config.integer("AFDefaultDonationType"));
                         $("#giftaid").select("value", "0");
-                        common.ajax_post("donation", "nextreceipt")
+                        common.ajax_post("donation", "mode=nextreceipt")
                             .then(function(result) {
                                 $("#receiptnumber").val(result);
                             });
