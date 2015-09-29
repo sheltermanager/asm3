@@ -351,6 +351,7 @@ def get_movement_donation(dbo, mid):
     return r[0]
 
 def get_next_receipt_number(dbo):
+    """ Returns the next receipt number for the frontend """
     return utils.padleft(1 + db.query_int(dbo, "SELECT MAX(ID) FROM ownerdonation"), 8)
 
 def get_donations(dbo, offset = "m31"):
