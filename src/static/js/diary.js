@@ -43,10 +43,11 @@ $(function() {
                         });
                     }, function(row) {
                        
-                        // If this is the my diary note screen, and the user is not a 
-                        // superuser and not the person who created the diary note, they
-                        // should only be able to edit the comments.
-                        if ((controller.name.indexOf("diary_edit_my") == 0) && (row.CREATEDBY != asm.user) && (!asm.superuser)) {
+                        // If this is my/all diary notes, and the user does not
+                        // have the edit all diary notes permission and is not
+                        // the person who created the diary note, they should only 
+                        // be able to edit the comments.
+                        if ((controller.name.indexOf("diary_edit") == 0) && (row.CREATEDBY != asm.user) && (!common.has_permission("eadn"))) {
                             $("#subjecttext").remove();
                             $("#notetext").remove();
                             $("#note").closest("span").hide();
