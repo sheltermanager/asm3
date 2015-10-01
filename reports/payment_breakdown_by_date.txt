@@ -329,7 +329,7 @@ Payment Breakdown By Receipt Number
 ###
 Financial
 ###
-33011/Any
+33712/PostgreSQL
 ###
 All payments by type for a range of receipt numbers with totals.
 ###
@@ -339,14 +339,14 @@ $VAR from NUMBER Enter earliest receipt number$
 $VAR to NUMBER Enter latest receipt number$
 
 SELECT ownerdonation.Date, ownerdonation.DateDue, owner.OwnerName, 
-donationtype.DonationName, ownerdonation.ID as receipt,
+donationtype.DonationName, ownerdonation.ReceiptNumber as receipt,
 Donation AS amt, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerPostcode, donationpayment.PaymentName 
 FROM ownerdonation 
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE ownerdonation.ID >= $@from$ AND ownerdonation.ID <= $@to$
+WHERE asm_to_integer(ownerdonation.ReceiptNumber) >= $@from$ AND asm_to_integer(ownerdonation.ReceiptNumber) <= $@to$
 ORDER BY ownerdonation.ID
 ###
 $$HEADER
