@@ -91,7 +91,7 @@ $(function() {
                     .then(function(result) { 
                         header.hide_loading();
                         var msg = _("Payment of {0} successfully received ({1}).")
-                                .replace("{0}", $("#amount1").val())
+                                .replace("{0}", $("#totalamount").val())
                                 .replace("{1}", $("#received").val());
                         var u = "move_gendoc?" +
                             "mode=DONATION&id=" + result +

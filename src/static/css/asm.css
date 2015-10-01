@@ -96,6 +96,10 @@ img {
     text-align: right;
 }
 
+.nowrap {
+    white-space: nowrap;
+}
+
 .transparent {
     zoom: 1;
     filter: alpha(opacity=50);
@@ -644,6 +648,13 @@ img {
 
 .asm-chosen {
     width: 197px;
+}
+
+.asm-halfselectbox {
+    width: 95px;
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #555;
 }
 
 .asm-selectbox {

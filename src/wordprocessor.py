@@ -669,7 +669,7 @@ def animal_tags(dbo, a):
 
     idx = 1
     for d in donasc:
-        tags["RECEIPTNUM" + str(idx)] = utils.padleft(d["ID"], 8)
+        tags["RECEIPTNUM" + str(idx)] = d["RECEIPTNUMBER"]
         tags["DONATIONTYPE" + str(idx)] = d["DONATIONNAME"]
         tags["DONATIONPAYMENTTYPE" + str(idx)] = d["PAYMENTNAME"]
         tags["DONATIONDATE" + str(idx)] = python2display(l, d["DATE"])
@@ -695,7 +695,7 @@ def animal_tags(dbo, a):
     uniquetypes = {}
     recentrec = {}
     for d in dondesc:
-        tags["RECEIPTNUMLAST" + str(idx)] = utils.padleft(d["ID"], 8)
+        tags["RECEIPTNUMLAST" + str(idx)] = d["RECEIPTNUMBER"]
         tags["DONATIONTYPELAST" + str(idx)] = d["DONATIONNAME"]
         tags["DONATIONPAYMENTTYPELAST" + str(idx)] = d["PAYMENTNAME"]
         tags["DONATIONDATELAST" + str(idx)] = python2display(l, d["DATE"])
@@ -723,7 +723,7 @@ def animal_tags(dbo, a):
         if not uniquetypes.has_key(d["DONATIONNAME"]):
             dname = d["DONATIONNAME"].upper().replace(" ", "").replace("/", "")
             uniquetypes[d["DONATIONNAME"]] = d
-            tags["RECEIPTNUM" + dname] = utils.padleft(d["ID"], 8)
+            tags["RECEIPTNUM" + dname] = d["RECEIPTNUMBER"]
             tags["DONATIONTYPE" + dname] = d["DONATIONNAME"]
             tags["DONATIONPAYMENTTYPE" + dname] = d["PAYMENTNAME"]
             tags["DONATIONDATE" + dname] = python2display(l, d["DATE"])
@@ -749,7 +749,7 @@ def animal_tags(dbo, a):
         if not recentrec.has_key(d["DONATIONNAME"]) and d["DATE"] is not None:
             dname = d["DONATIONNAME"].upper().replace(" ", "").replace("/", "")
             recentrec[d["DONATIONNAME"]] = d
-            tags["RECEIPTNUMRECENT" + dname] = utils.padleft(d["ID"], 8)
+            tags["RECEIPTNUMRECENT" + dname] = d["RECEIPTNUMBER"]
             tags["DONATIONTYPERECENT" + dname] = d["DONATIONNAME"]
             tags["DONATIONPAYMENTTYPERECENT" + dname] = d["PAYMENTNAME"]
             tags["DONATIONDATERECENT" + dname] = python2display(l, d["DATE"])
@@ -873,7 +873,7 @@ def donation_tags(dbo, donations):
     def add_to_tags(i, p): 
         x = { 
             "DONATIONID"+i          : str(p["ID"]),
-            "RECEIPTNUM"+i          : utils.padleft(p["ID"], 8),
+            "RECEIPTNUM"+i          : p["RECEIPTNUMBER"],
             "DONATIONTYPE"+i        : p["DONATIONNAME"],
             "DONATIONPAYMENTTYPE"+i : p["PAYMENTNAME"],
             "DONATIONDATE"+i        : python2display(l, p["DATE"]),
