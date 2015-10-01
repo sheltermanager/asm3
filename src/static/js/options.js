@@ -168,7 +168,7 @@ $(function() {
                 '<label for="donationtrxoverride">' + _("When receiving payments, allow the deposit account to be overridden") + '</label>',
                 '<br />',
                 '<input data="VATEnabled" id="vatenabled" type="checkbox" class="asm-checkbox" />',
-                '<label for="vatenabled">' + _("When receiving payments, allow recording of sales tax/VAT with a default rate of") + '</label>',
+                '<label for="vatenabled">' + _("When receiving payments, allow recording of sales tax with a default rate of") + '</label>',
                 '<input data="VATRate" class="asm-textbox asm-halftextbox asm-numberbox" type="text" />%',
                 '<br />',
                 '<input data="AccountPeriodTotals" id="accountperiodtotals" type="checkbox" class="asm-checkbox" />',

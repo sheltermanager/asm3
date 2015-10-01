@@ -92,6 +92,10 @@ img {
     text-align: center;
 }
 
+.rightalign {
+    text-align: right;
+}
+
 .transparent {
     zoom: 1;
     filter: alpha(opacity=50);

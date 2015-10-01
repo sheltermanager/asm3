@@ -36,7 +36,7 @@ $(function() {
                         type: "select", options: { displayfield: "CODE", valuefield: "ID", rows: controller.accounts }},
                     { json_field: "RECEIPTNUMBER", post_field: "receiptnumber", label: _("Receipt No"), type: "text" },
                     { json_field: "ISGIFTAID", post_field: "giftaid", label: _("Gift Aid"), type: "check" },
-                    { json_field: "ISVAT", post_field: "vat", label: _("Sales Tax/VAT?"), type: "check", 
+                    { json_field: "ISVAT", post_field: "vat", label: _("Sales Tax"), type: "check", 
                         hideif: function() { return !config.bool("VATEnabled"); } },
                     { json_field: "VATRATE", post_field: "vatrate", label: _("Tax Rate %"), type: "number", 
                         hideif: function() { return !config.bool("VATEnabled"); } },

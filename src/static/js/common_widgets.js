@@ -583,15 +583,28 @@
             this.element.append([
                 html.content_header(_("Payment"), true),
                 '<table class="asm-table-layout">',
-                '<tbody>',
-                '<tr id="giftaidrow">',
+                '<thead>',
+                '<tr>',
+                '<th>' + _("Type") + '</th>',
+                '<th>' + _("Method") + '</th>',
+                '<th>' + _("Amount") + '</th>',
+                '<th class="overrideaccount">' + _("Deposit Account") + '</th>',
+                '<th class="giftaid">' + _("Gift Aid") + '</th>',
+                '<th class="vat">' + _("Sales Tax") + '</th>',
+                '</tr>',
+                '</thead>',
+                '<tbody id="paymentlines">',
+                '</tbody>',
+                '<tbody id="paymenttotals">',
+                '<tr>',
+                '<td><button class="takepayment">' + _("Take another payment") + '</button>',
+                '<a class="takepayment" href="#">' + _("Take another payment") + '</a></td>',
                 '<td></td>',
-                '<td><input id="giftaid" data="giftaid" type="checkbox" class="asm-checkbox" /><label for="giftaid">' + _("Gift Aid") + '</label></td>',
+                '<td class="rightalign strong" id="totalamount"></td>',
+                '<td class="vat rightalign strong" id="totalvat"></td>',
                 '</tr>',
                 '</tbody>',
                 '</table>',
-                '<p class="centered"><button class="takepayment">' + _("Take another payment") + '</button>',
-                '<a class="takepayment" href="#">' + _("Take another payment") + '</a></p>',
                 html.content_footer()
             ].join("\n"));
             this.add_payment();
@@ -609,61 +622,70 @@
         add_payment: function() {
             var h = [
                 '<tr>',
-                '<td style="padding-top: 8px">',
-                '<label for="donationtype{i}">{type}</label>',
-                '</td>',
-                '<td style="padding-top: 8px">',
+                '<td>',
                 '<select id="donationtype{i}" data="donationtype{i}" class="asm-selectbox">',
                 html.list_to_options(this.options.controller.donationtypes, "ID", "DONATIONNAME"),
                 '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td>',
-                '<label for="payment{i}">{method}</label>',
                 '</td>',
                 '<td>',
                 '<select id="payment{i}" data="payment{i}" class="asm-selectbox">',
                 html.list_to_options(this.options.controller.paymenttypes, "ID", "PAYMENTNAME"),
                 '</select>',
                 '</td>',
-                '</tr>',
-                '<tr class="overrideaccount">',
-                '<td>',
-                '<label for="destaccount{i}">{depositaccount}</label>',
-                '</td>',
-                '<td>',
+                '<td class="overrideaccount">',
                 '<select id="destaccount{i}" data="destaccount{i}" class="asm-selectbox">',
                 html.list_to_options(this.options.controller.accounts, "ID", "CODE"),
                 '</select>',
                 '</td>',
-                '</tr>',
-                '<tr>',
                 '<td>',
-                '<label for="amount{i}">' + _("Amount") + '</label>',
+                '<input id="amount{i}" data="amount{i}" class="rightalign amount asm-currencybox asm-textbox asm-halftextbox" />',
                 '</td>',
-                '<td>',
-                '<input id="amount{i}" data="amount{i}" class="asm-currencybox asm-textbox" />',
+                '<td class="vat">',
+                '<input id="vat{i}" data="vat{i}" type="checkbox" class="asm-checkbox" />',
+                '<span id="vatboxes{i}" style="display: none">',
+                '<input id="vatrate{i}" data="vatrate{i}" class="rightalign asm-textbox asm-halftextbox asm-numberbox" value="0" /> %',
+                '<input id="vatamount{i}" data="vatamount{i}" class="rightalign vatamount asm-textbox asm-halftextbox asm-currencybox" value="0" />',
+                '</span>',
                 '</td>',
                 '</tr>'
             ];
             // Construct and add our new payment fields to the DOM
             this.options.count += 1;
             var i = this.options.count, self = this;
-            this.element.find("tbody").append(common.substitute(h.join("\n"), {
-                i: this.options.count,
-                type: _("Type"),
-                method: _("Method"),
-                depositaccount: _("Deposit account"),
-                amount: _("Amount")
+            this.element.find("#paymentlines").append(common.substitute(h.join("\n"), {
+                i: this.options.count
             }));
             // Change the default amount when the payment type changes
             $("#donationtype" + i).change(function() {
                 var dc = common.get_field(self.options.controller.donationtypes, $("#donationtype" + i).select("value"), "DEFAULTCOST");
                 $("#amount" + i).currency("value", dc);
+                self.update_totals();
+            });
+            // Recalculate when amount or VAT changes
+            $("#amount" + i + ", #vatamount" + i).change(function() {
+                self.update_totals(); 
+            });
+            // Recalculate VAT when just amount or rate changes
+            $("#amount" + i + ", #vatrate" + i).change(function() {
+                $("#vatamount" + i).currency("value", ($("#amount" + i).currency("value") / 100) * format.to_float($("#vatrate" + i).val()));
+                self.update_totals();
+            });
+            // Clicking the VAT checkbox enables and disables the rate/amount fields with defaults
+            $("#vat" + i).change(function() {
+                if ($(this).is(":checked")) {
+                    $("#vatrate" + i).val(config.number("VATRate"));
+                    $("#vatamount" + i).currency("value", ($("#amount" + i).currency("value") / 100) * format.to_float($("#vatrate" + i).val()));
+                    $("#vatboxes" + i).fadeIn();
+                }
+                else {
+                    $("#vatrate" + i + ", #vatamount" + i).val("0");
+                    $("#vatboxes" + i).fadeOut();
+                }
+                self.update_totals();
             });
             // Set the default for our new payment type
             $("#donationtype" + i).val(config.str("AFDefaultDonationType")).change();
+            $("#donationtype" + i).change();
             // If we're creating accounting transactions and the override
             // option is set, allow override of the destination account
             if (config.bool("CreateDonationTrx") && config.bool("DonationTrxOverride")) {
@@ -675,7 +697,21 @@
                 $(".overrideaccount").hide();
             }
             // Gift aid only applies to the UK
-            if (asm.locale != "en_GB") { $("#giftaidrow").hide(); }
+            if (asm.locale != "en_GB") { $(".giftaid").hide(); }
+            // Disable vat/tax if the option is off necessary
+            if (!config.bool("VATEnabled")) { $(".vat").hide(); }
+        },
+
+        update_totals: function() {
+            var totalamt = 0, totalvat = 0;
+            $(".amount").each(function() {
+                totalamt += $(this).currency("value");
+            });
+            $(".vatamount").each(function() {
+                totalvat += $(this).currency("value");
+            });
+            $("#totalamount").html(format.currency(totalamt));
+            $("#totalvat").html(format.currency(totalvat));
         },
 
         destroy: function() {

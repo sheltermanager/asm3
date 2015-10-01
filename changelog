@@ -1,6 +1,9 @@
 37
 ================
 
+01/10/15 Add PaymentTax wordkeys Tax total
+01/10/15 Show totals in payment widget #258
+01/10/15 Better layout for payment widget, add sales tax/VAT
 30/09/15 Allow users with Edit All Diary permission to change notes
 29/09/15 Receipt numbers field #264
 29/09/15 Sales tax/VAT fields and config #259

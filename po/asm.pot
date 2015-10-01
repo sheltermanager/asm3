@@ -3279,16 +3279,12 @@ msgstr ""
 msgid "Deposit"
 msgstr ""
 
-#: donations.js
+#: donations.js common_widgets.js
 msgid "Deposit Account"
 msgstr ""
 
 #: traploan.js
 msgid "Deposit Returned"
-msgstr ""
-
-#: common_widgets.js
-msgid "Deposit account"
 msgstr ""
 
 #: onlineforms.js reports.js waitinglist_results.js incident.js
@@ -8218,7 +8214,7 @@ msgstr ""
 msgid "Recalculate on-shelter animal locations"
 msgstr ""
 
-#: donations.js
+#: donations.js donation_receive.js
 msgid "Receipt No"
 msgstr ""
 
@@ -8910,8 +8906,8 @@ msgstr ""
 msgid "Saint Bernard St. Bernard"
 msgstr ""
 
-#: donations.js
-msgid "Sales Tax/VAT?"
+#: donations.js common_widgets.js
+msgid "Sales Tax"
 msgstr ""
 
 #: dbupdate.py
@@ -11948,9 +11944,7 @@ msgid ""
 msgstr ""
 
 #: options.js
-msgid ""
-"When receiving payments, allow recording of sales tax/VAT with a default "
-"rate of"
+msgid "When receiving payments, allow recording of sales tax with a default rate of"
 msgstr ""
 
 #: options.js

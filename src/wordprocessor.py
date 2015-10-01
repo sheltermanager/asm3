@@ -646,6 +646,13 @@ def animal_tags(dbo, a):
         tags["PAYMENTDATEDUE" + str(idx)] = ""
         tags["PAYMENTAMOUNT" + str(idx)] = ""
         tags["PAYMENTCOMMENTS" + str(idx)] = ""
+        tags["PAYMENTGIFTAID" + str(idx)] = ""
+        tags["PAYMENTVAT" + str(idx)] = ""
+        tags["PAYMENTTAX" + str(idx)] = ""
+        tags["PAYMENTVATRATE" + str(idx)] = ""
+        tags["PAYMENTTAXRATE" + str(idx)] = ""
+        tags["PAYMENTVATAMOUNT" + str(idx)] = ""
+        tags["PAYMENTTAXAMOUNT" + str(idx)] = ""
         tags["PAYMENTTYPELAST" + str(idx)] = ""
         tags["PAYMENTMETHODLAST" + str(idx)] = ""
         tags["PAYMENTDATELAST" + str(idx)] = ""
@@ -653,6 +660,12 @@ def animal_tags(dbo, a):
         tags["PAYMENTAMOUNTLAST" + str(idx)] = ""
         tags["PAYMENTCOMMENTSLAST" + str(idx)] = ""
         tags["PAYMENTGIFTAIDLAST" + str(idx)] = ""
+        tags["PAYMENTVATLAST" + str(idx)] = ""
+        tags["PAYMENTTAXLAST" + str(idx)] = ""
+        tags["PAYMENTVATRATELAST" + str(idx)] = ""
+        tags["PAYMENTTAXRATELAST" + str(idx)] = ""
+        tags["PAYMENTVATAMOUNTLAST" + str(idx)] = ""
+        tags["PAYMENTTAXAMOUNTLAST" + str(idx)] = ""
 
     idx = 1
     for d in donasc:
@@ -671,6 +684,12 @@ def animal_tags(dbo, a):
         tags["PAYMENTAMOUNT" + str(idx)] = format_currency_no_symbol(l, d["DONATION"])
         tags["PAYMENTCOMMENTS" + str(idx)] = d["COMMENTS"]
         tags["PAYMENTGIFTAID" + str(idx)] = d["ISGIFTAID"] == 1 and _("Yes", l) or _("No", l)
+        tags["PAYMENTVAT" + str(idx)] = d["ISVAT"] == 1 and _("Yes", l) or _("No", l)
+        tags["PAYMENTTAX" + str(idx)] = d["ISVAT"] == 1 and _("Yes", l) or _("No", l)
+        tags["PAYMENTVATRATE" + str(idx)] = "%0.2f" % d["VATRATE"]
+        tags["PAYMENTTAXRATE" + str(idx)] = "%0.2f" % d["VATRATE"]
+        tags["PAYMENTVATAMOUNT" + str(idx)] = format_currency_no_symbol(l, d["VATAMOUNT"])
+        tags["PAYMENTTAXAMOUNT" + str(idx)] = format_currency_no_symbol(l, d["VATAMOUNT"])
 
     idx = 1
     uniquetypes = {}
@@ -691,6 +710,12 @@ def animal_tags(dbo, a):
         tags["PAYMENTAMOUNTLAST" + str(idx)] = format_currency_no_symbol(l, d["DONATION"])
         tags["PAYMENTCOMMENTSLAST" + str(idx)] = d["COMMENTS"]
         tags["PAYMENTGIFTAIDLAST" + str(idx)] = d["ISGIFTAID"] == 1 and _("Yes", l) or _("No", l)
+        tags["PAYMENTVATLAST" + str(idx)] = d["ISVAT"] == 1 and _("Yes", l) or _("No", l)
+        tags["PAYMENTTAXLAST" + str(idx)] = d["ISVAT"] == 1 and _("Yes", l) or _("No", l)
+        tags["PAYMENTVATRATELAST" + str(idx)] = "%0.2f" % d["VATRATE"]
+        tags["PAYMENTTAXRATELAST" + str(idx)] = "%0.2f" % d["VATRATE"]
+        tags["PAYMENTVATAMOUNTLAST" + str(idx)] = format_currency_no_symbol(l, d["VATAMOUNT"])
+        tags["PAYMENTTAXAMOUNTLAST" + str(idx)] = format_currency_no_symbol(l, d["VATAMOUNT"])
 
         idx += 1
         # If this is the first of this type of donation we've seen, make
@@ -713,6 +738,13 @@ def animal_tags(dbo, a):
             tags["PAYMENTAMOUNT" + dname] = format_currency_no_symbol(l, d["DONATION"])
             tags["PAYMENTCOMMENTS" + dname] = d["COMMENTS"]
             tags["PAYMENTGIFTAID" + dname] = d["ISGIFTAID"] == 1 and _("Yes", l) or _("No", l)
+            tags["PAYMENTVAT" + dname] = d["ISVAT"] == 1 and _("Yes", l) or _("No", l)
+            tags["PAYMENTTAX" + dname] = d["ISVAT"] == 1 and _("Yes", l) or _("No", l)
+            tags["PAYMENTVATRATE" + dname] = "%0.2f" % d["VATRATE"]
+            tags["PAYMENTTAXRATE" + dname] = "%0.2f" % d["VATRATE"]
+            tags["PAYMENTVATAMOUNT" + dname] = format_currency_no_symbol(l, d["VATAMOUNT"])
+            tags["PAYMENTTAXAMOUNT" + dname] = format_currency_no_symbol(l, d["VATAMOUNT"])
+
         # If this is the first of this type of donation we've seen that's received
         if not recentrec.has_key(d["DONATIONNAME"]) and d["DATE"] is not None:
             dname = d["DONATIONNAME"].upper().replace(" ", "").replace("/", "")
@@ -732,6 +764,12 @@ def animal_tags(dbo, a):
             tags["PAYMENTAMOUNTRECENT" + dname] = format_currency_no_symbol(l, d["DONATION"])
             tags["PAYMENTCOMMENTSRECENT" + dname] = d["COMMENTS"]
             tags["PAYMENTGIFTAIDRECENT" + dname] = d["ISGIFTAID"] == 1 and _("Yes", l) or _("No", l)
+            tags["PAYMENTVATRECENT" + dname] = d["ISVAT"] == 1 and _("Yes", l) or _("No", l)
+            tags["PAYMENTTAXRECENT" + dname] = d["ISVAT"] == 1 and _("Yes", l) or _("No", l)
+            tags["PAYMENTVATRATERECENT" + dname] = "%0.2f" % d["VATRATE"]
+            tags["PAYMENTTAXRATERECENT" + dname] = "%0.2f" % d["VATRATE"]
+            tags["PAYMENTVATAMOUNTRECENT" + dname] = format_currency_no_symbol(l, d["VATAMOUNT"])
+            tags["PAYMENTTAXAMOUNTRECENT" + dname] = format_currency_no_symbol(l, d["VATAMOUNT"])
 
     # Costs
     costasc = animal.get_costs(dbo, int(a["ID"]))
@@ -831,7 +869,7 @@ def donation_tags(dbo, donations):
     """
     l = dbo.locale
     tags = {}
-    totals = { "due": 0, "received": 0 }
+    totals = { "due": 0, "received": 0, "vat": 0 }
     def add_to_tags(i, p): 
         x = { 
             "DONATIONID"+i          : str(p["ID"]),
@@ -859,6 +897,12 @@ def donation_tags(dbo, donations):
             "PAYMENTCOMMENTS"+i     : p["COMMENTS"],
             "PAYMENTCOMMENTSFW"+i   : fw(p["COMMENTS"]),
             "PAYMENTGIFTAID"+i      : p["ISGIFTAIDNAME"],
+            "PAYMENTVAT"+i          : p["ISVAT"] == 1 and _("Yes", l) or _("No", l),
+            "PAYMENTTAX"+i          : p["ISVAT"] == 1 and _("Yes", l) or _("No", l),
+            "PAYMENTVATRATE"+i      : "%0.2f" % p["VATRATE"],
+            "PAYMENTTAXRATE"+i      : "%0.2f" % p["VATRATE"],
+            "PAYMENTVATAMOUNT"+i    : format_currency_no_symbol(l, p["VATAMOUNT"]),
+            "PAYMENTTAXAMOUNT"+i    : format_currency_no_symbol(l, p["VATAMOUNT"]),
             "PAYMENTCREATEDBY"+i    : p["CREATEDBY"],
             "PAYMENTCREATEDBYNAME"+i: p["CREATEDBY"],
             "PAYMENTCREATEDDATE"+i  : python2display(l, p["CREATEDDATE"]),
@@ -870,11 +914,14 @@ def donation_tags(dbo, donations):
         if i == "": return # Don't add a total for the compatibility row
         if p["DATE"] is not None: totals["received"] += p["DONATION"]
         if p["DATE"] is None: totals["due"] += p["DONATION"]
+        totals["vat"] += p["VATAMOUNT"]
     add_to_tags("", donations[0]) 
     for i, d in enumerate(donations):
         add_to_tags(str(i+1), d)
     tags["PAYMENTTOTALDUE"] = format_currency_no_symbol(l, totals["due"])
     tags["PAYMENTTOTALRECEIVED"] = format_currency_no_symbol(l, totals["received"])
+    tags["PAYMENTTOTALVAT"] = format_currency_no_symbol(l, totals["vat"])
+    tags["PAYMENTTOTALTAX"] = format_currency_no_symbol(l, totals["vat"])
     return tags
 
 def person_tags(dbo, p):
