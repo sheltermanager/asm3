@@ -50,6 +50,9 @@ $(function() {
                 else {
                     // Output a box for every unit within the location
                     $.each(l.UNITS.split(","), function(iu, u) {
+                        u = common.trim(u);
+                        // If the unit name is blank, skip it
+                        if (!u) { return; }
                         // Find all animals in this unit and construct the inner
                         var boxinner = [], classes = "unitdroptarget asm-shelterview-unit";
                         $.each(controller.animals, function(ia, a) {
@@ -64,6 +67,31 @@ $(function() {
                         h.push(boxinner.join("\n"));
                         h.push('</div>');
                     });
+                    // Find any animals who were in the location but didn't match one of the
+                    // set units. Put them in an "invalid" unit that they can be dragged out of
+                    // but not dropped into.
+                    var badunit = [];
+                    $.each(controller.animals, function(ia, a) {
+                        // Skip animals not in this location
+                        if (a.SHELTERLOCATION != l.ID) { return; }
+                        var validunit = false;
+                        $.each(l.UNITS.split(","), function(iu, u) {
+                            u = common.trim(u);
+                            if (a.SHELTERLOCATIONUNIT == u) {
+                                validunit = true;
+                                return false;
+                            }
+                        });
+                        if (!validunit) {
+                            badunit.push(shelterview.render_animal(a, true));
+                        }
+                    });
+                    if (badunit.length > 0) {
+                        h.push('<div data-location="' + l.ID + '" data-unit="' + _("invalid") + '" class="asm-shelterview-unit">');
+                        h.push('<div><span class="asm-search-locationunit">' + _("invalid") + '</span></div>');
+                        h.push(badunit.join("\n"));
+                        h.push('</div>');
+                    }
                 }
             });
 

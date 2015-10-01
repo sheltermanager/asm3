@@ -409,7 +409,7 @@ img {
 .asm-shelterview-unit { 
     display: inline-block;
     min-width: 80px;
-    min-height: 80px;
+    min-height: 110px;
     text-align: center;
     vertical-align: top;
     border: 1px solid #333;
