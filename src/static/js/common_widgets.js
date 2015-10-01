@@ -595,7 +595,7 @@
                 '</thead>',
                 '<tbody id="paymentlines">',
                 '</tbody>',
-                '<tbody id="paymenttotals">',
+                '<tfoot id="paymenttotals">',
                 '<tr>',
                 '<td><button class="takepayment">' + _("Take another payment") + '</button>',
                 '<a class="takepayment" href="#">' + _("Take another payment") + '</a></td>',
@@ -605,7 +605,7 @@
                 '<td class="giftaid"></td>',
                 '<td class="vat rightalign strong" id="totalvat"></td>',
                 '</tr>',
-                '</tbody>',
+                '</tfoot>',
                 '</table>',
                 html.content_footer()
             ].join("\n"));
