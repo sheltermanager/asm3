@@ -6,11 +6,17 @@ Shelter View
 
 The shelter view screen (available from the default quicklinks or under
 :menuselection:`ASM --> Shelter View`) gives you an overview of all the animals
-currently on your shelter, broken down by their internal location. You can use
-this screen to jump straight to an animal's record. You can also drag and drop
-animals to move them between locations quickly. If you have assigned units to
-the animal (for cage/pen numbers, etc) they will appear next to their name. A
-dropdown in the upper right corner allows different groupings to be applied.
+currently on your shelter, broken down by their internal location. 
+
+You can use this screen to jump straight to an animal's record. You can also
+drag and drop animals to move them between locations quickly. If you have
+assigned units to the animal (for cage/pen numbers, etc) they will appear next
+to their name. A dropdown in the upper right corner allows different groupings
+to be applied.
+
+The "Location and Unit" grouping will show a box for every cage/pen with the
+animals occupying them. If they are unoccupied, they'll be displayed with a
+green highlight. You can drag and drop animals between units in this view.
 
 .. image:: images/shelterview.png
 
