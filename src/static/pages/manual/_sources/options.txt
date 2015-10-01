@@ -28,8 +28,8 @@ ASM contains a full double entry accounting package. The options here are:
   all accounts related menu entries/buttons so that users do not see it, and
   you will not be using ASM to manage your accounts. 
 
-* Creating donations and donation types creates matching accounts and
-  transactions: When you create a new donation type, or log a new donation
+* Creating payments and payments types creates matching accounts and
+  transactions: When you create a new payment type, or log a new payment
   against an owner/animal, ASM will automatically create a matching account in
   the accounts system if one does not exist, and a matching transaction. 
 
@@ -38,12 +38,17 @@ ASM contains a full double entry accounting package. The options here are:
   against an animal, ASM will automatically create a matching account in
   the accounts system if one does not exist, and a matching transaction.
 
-* When receiving donations, allow the deposit account to be overridden: When
-  adding donations to the system, if you have the create matching transactions
+* When receiving payments, allow the deposit account to be overridden: When
+  adding payments to the system, if you have the create matching transactions
   option on as well as this one, a destination account dropdown will be shown
-  on donation screens allowing you to override the deposit account that the
+  on payment screens allowing you to override the deposit account that the
   donation will be applied to (the withdrawal account is always the donation
   type's matching income account).
+
+* When receiving payments, allow recording of sales tax with a default rate of %:
+  ASM can calculate and store sales tax/VAT/GST amounts on payments you receive
+  for taxable goods. Enabling this option will add a tickbox to all payment
+  screens allowing you to calculate the taxable value.
 
 * Only show account totals for the current period, which starts on: If you wish
   to use accounting periods, put the start date in here. By enabling the show

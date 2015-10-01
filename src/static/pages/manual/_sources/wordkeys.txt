@@ -454,13 +454,21 @@ PaymentDateDue
 PaymentAmount 
     The amount of the payment
 PaymentGiftAid
-    Yes or No if this donation is eligible for UK giftaid
+    Yes or No if this payment is eligible for UK giftaid
+PaymentTax / PaymentVAT
+    Yes or No if this payment was taxable for sales tax/VAT/GST
+PaymentTaxRate / PaymentVATRate
+    The taxable rate applied
+PaymentTaxAmount / PaymentVATAmount
+    The taxable amount charged
 PaymentComments 
     Any comments on the payment
 PaymentTotalDue
     The total of all selected payments that have a due date and no received date
 PaymentTotalReceived
     The total of all selected payments that have a received date
+PaymentTotalTax / PaymentTotalVAT
+    The total of all sales tax/VAT/GST on the selected payments
 
 Cost Keys
 ---------
