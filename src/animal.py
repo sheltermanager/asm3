@@ -2097,22 +2097,30 @@ def update_diary_linkinfo(dbo, animalid, a = None, diaryupdatebatch = None):
         db.execute(dbo, "UPDATE diary SET LinkInfo = %s WHERE LinkType = %d AND LinkID = %d" % (
             db.ds(diaryloc), diary.ANIMAL, animalid ))
 
-def update_location(dbo, username, animalid, locationid):
+def update_location_unit(dbo, username, animalid, newlocationid, newunit = ""):
     """
-    Updates the shelterlocation field of the animal given.
+    Updates the shelterlocation and shelterlocationunit fields of the animal given.
     """
     # If the option is on and the internal location has changed, log it
     l = dbo.locale
-    a = db.query(dbo, "SELECT ShelterCode, AnimalName, ShelterLocation FROM animal WHERE ID=%d" % animalid)
-    if len(a) == 0: return
-    a = a[0]
-    if configuration.location_change_log(dbo) and locationid != a["SHELTERLOCATION"]:
-        oldlocation = db.query_string(dbo, "SELECT LocationName FROM internallocation WHERE ID = %d" % a["SHELTERLOCATION"])
-        newlocation = db.query_string(dbo, "SELECT LocationName FROM internallocation WHERE ID = %d" % locationid)
-        log.add_log(dbo, username, log.ANIMAL, animalid, configuration.location_change_log_type(dbo), 
-            _("{0} {1}: Moved from {2} to {3}", l).format(a["SHELTERCODE"], a["ANIMALNAME"], oldlocation, newlocation))
+    if configuration.location_change_log(dbo):
+        oldloc = db.query(dbo, "SELECT ShelterCode, AnimalName, ShelterLocation, ShelterLocationUnit FROM animal WHERE ID=%d" % animalid)
+        if len(oldloc) > 0:
+            animalname = oldloc[0]["ANIMALNAME"]
+            sheltercode = oldloc[0]["SHELTERCODE"]
+            oldlocid = oldloc[0]["SHELTERLOCATION"]
+            oldlocunit = oldloc[0]["SHELTERLOCATIONUNIT"]
+            if newlocationid != oldlocid or newunit != oldlocunit:
+                oldlocation = db.query_string(dbo, "SELECT LocationName FROM internallocation WHERE ID = %d" % oldlocid)
+                if oldlocunit is not None and oldlocunit != "":
+                    oldlocation += "-" + oldlocunit
+                newlocation = db.query_string(dbo, "SELECT LocationName FROM internallocation WHERE ID = %d" % newlocationid)
+                if newunit != "":
+                    newlocation += "-" + newunit
+                log.add_log(dbo, username, log.ANIMAL, animalid, configuration.location_change_log_type(dbo), 
+                    _("{0} {1}: Moved from {2} to {3}", l).format(sheltercode, animalname, oldlocation, newlocation))
     # Change the location
-    db.execute(dbo, "UPDATE animal SET ShelterLocation = %d WHERE ID = %d" % (int(locationid), int(animalid)))
+    db.execute(dbo, "UPDATE animal SET ShelterLocation = %s, ShelterLocationUnit = %s WHERE ID = %s" % (db.di(newlocationid), db.ds(newunit), db.di(animalid)))
 
 def clone_animal(dbo, username, animalid):
     """

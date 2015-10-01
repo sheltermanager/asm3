@@ -223,7 +223,7 @@ DEFAULTS = {
     "SearchColumns": "AnimalName,Image,ShelterCode,ShelterLocation,SpeciesID,BreedName," \
         "Sex, AnimalAge, Size, BaseColourID, Markings, IdentichipNumber, DateBroughtIn",
     "SearchSort": "3",
-    "ShelterViewDefault": "location",
+    "ShelterViewDefault": "locationunit",
     "ShelterViewDragDrop": "Yes",
     "ShelterViewShowCodes": "No",
     "ShowCostAmount": "Yes",

@@ -5761,9 +5761,13 @@ class shelterview:
         utils.check_loggedin(session, web)
         post = utils.PostedData(web.input(mode="move"), session.locale)
         mode = post["mode"]
-        if mode == "move":
+        if mode == "movelocation":
             users.check_permission(session, users.CHANGE_ANIMAL)
-            extanimal.update_location(session.dbo, session.user, post.integer("animalid"), post.integer("locationid"))
+            extanimal.update_location_unit(session.dbo, session.user, post.integer("animalid"), post.integer("locationid"))
+        if mode == "moveunit":
+            users.check_permission(session, users.CHANGE_ANIMAL)
+            extanimal.update_location_unit(session.dbo, session.user, post.integer("animalid"), post.integer("locationid"), post["unit"])
+
 
 class sql:
     def check_disabled(self, dbo, dumptype):

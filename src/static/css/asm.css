@@ -405,6 +405,22 @@ img {
 .asm-staff-rota-volunteer-even { background-color: #3d633e; color: #fff; }
 .asm-staff-rota-volunteer-even a { background-color: #3d633e; color: #fff; }
 
+/** SHELTERVIEW ================= */
+.asm-shelterview-unit { 
+    display: inline-block;
+    min-width: 80px;
+    min-height: 80px;
+    text-align: center;
+    vertical-align: top;
+    border: 1px solid #333;
+    padding: 5px;
+    margin: 1px;
+}
+
+.asm-shelterview-unit-available {
+    background-color: #b2ffb2;
+}
+
 /** TIMELINE ==================== */
 .asm-timeline-time { font-size: 80%; font-style: italic; opacity: 0.5; }
 .asm-timeline-small-date { text-decoration: none; opacity: 0.5; }

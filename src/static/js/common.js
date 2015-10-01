@@ -215,9 +215,9 @@
             return s;
         },
 
-            // Safari doesn't parse the response text correctly, so
-            // it ends up as "Internal Server Error" instead of the message.
-            // parse the responseText instead to work in all browsers.
+        trim: function(s) {
+            return $.trim(s);
+        },
 
         /** 
          * Used for reading the error message from an AJAX response. 
@@ -672,7 +672,7 @@
             var x = s.split(spliton);
             var o = [];
             $.each(x, function(i, v) {
-                o.push($.trim(v));
+                o.push(common.trim(v));
             });
             return o;
         },
@@ -2098,7 +2098,7 @@
             var rv = true;
             $.each(fields, function(i, f) {
                 var v = $("#" + f).val();
-                v = $.trim(v);
+                v = common.trim(v);
                 if (v == "") {
                     validate.highlight(f);
                     rv = false;
@@ -2114,7 +2114,7 @@
             var rv = true;
             $.each(fields, function(i, f) {
                 var v = $("#" + f).val();
-                v = $.trim(v);
+                v = common.trim(v);
                 if (v == "0") {
                     validate.highlight(f);
                     rv = false;
@@ -2131,7 +2131,7 @@
             var rv = true, valid1 = /^\d\d\:\d\d\:\d\d$/, valid2 = /^\d\d\:\d\d$/;
             $.each(fields, function(i, f) {
                 var v = $("#" + f).val();
-                v = $.trim(v);
+                v = common.trim(v);
                 if (v != "" && !valid1.test(v) && !valid2.test(v)) {
                     // Times rarely have their own label, instead look for the label
                     // in the same table row as our widget

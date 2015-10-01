@@ -6,6 +6,103 @@ $(function() {
     var shelterview = {
 
         /**
+         * Renders an animal thumbnail
+         */
+        render_animal: function(a, showunit) {
+            var h = [];
+            h.push('<div ');
+            // Only on shelter animals that are physically present can be dragged
+            if (!a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0) {
+                h.push('class="animaldragtarget" ');
+            }
+            h.push('data="' + a.ID + '" style="display: inline-block; text-align: center">');
+            h.push(html.animal_link_thumb(a, {showunit: showunit}));
+            h.push('</div>');
+            return h.join("\n");
+        },
+
+        /**
+         * Renders a specialised shelterview that shows all locations, then
+         * all units within those locations. Available units are highlighted
+         * and occupied units show animal links.
+         */
+        render_units_available: function() {
+            var h = [];
+            $.each(controller.locations, function(il, l) {
+                // Output the location
+                var loclink = "animal_find_results?logicallocation=onshelter&shelterlocation=" + l.ID;
+                h.push('<p class="asm-menu-category"><a href="' + loclink + '">' + 
+                    l.LOCATIONNAME + '</a></p>');
+                // If the location has no units, just output a single unit for the location
+                if (!common.trim(common.nulltostr(l.UNITS))) { 
+                    var boxinner = [], classes = "unitdroptarget asm-shelterview-unit";
+                    $.each(controller.animals, function(ia, a) {
+                        if (a.SHELTERLOCATION == l.ID) {
+                            boxinner.push(shelterview.render_animal(a, false));
+                        }
+                    });
+                    // Show the unit as available if there are no animals in it
+                    if (boxinner.length == 0) { classes += " asm-shelterview-unit-available"; }
+                    h.push('<div data-location="' + l.ID + '" data-unit="" class="' + classes + '">');
+                    h.push(boxinner.join("\n"));
+                    h.push('</div>');
+                }
+                else {
+                    // Output a box for every unit within the location
+                    $.each(l.UNITS.split(","), function(iu, u) {
+                        // Find all animals in this unit and construct the inner
+                        var boxinner = [], classes = "unitdroptarget asm-shelterview-unit";
+                        $.each(controller.animals, function(ia, a) {
+                            if (a.SHELTERLOCATION == l.ID && a.SHELTERLOCATIONUNIT == u) {
+                                boxinner.push(shelterview.render_animal(a, false));    
+                            }
+                        });
+                        // Show the unit as available if there are no animals in it
+                        if (boxinner.length == 0) { classes += " asm-shelterview-unit-available"; }
+                        h.push('<div data-location="' + l.ID + '" data-unit="' + u.replace("\"", "") + '" class="' + classes + '">');
+                        h.push('<div><span class="asm-search-locationunit">' + u + '</span></div>');
+                        h.push(boxinner.join("\n"));
+                        h.push('</div>');
+                    });
+                }
+            });
+
+            // Load the whole thing into the DOM
+            $("#viewcontainer").html(h.join("\n"));
+
+            if (config.bool("ShelterViewDragDrop")) {
+                $(".animaldragtarget").draggable();
+                $(".unitdroptarget").droppable({
+                    over: function(event, ui) {
+                        $(this).addClass("transparent");
+                    },
+                    out: function(event, ui) {
+                        $(this).removeClass("transparent");
+                    },
+                    drop: function(event, ui) {
+                        var locationid = $(this).attr("data-location");
+                        var unit = $(this).attr("data-unit");
+                        var animalid = $(ui.draggable).attr("data");
+                        var droptarget = $(this);
+                        header.show_loading(_("Moving..."));
+                        common.ajax_post("shelterview", "mode=moveunit&locationid=" + locationid + "&unit=" + encodeURIComponent(unit) + "&animalid=" + animalid)
+                            .always(function() {
+                                $.each(controller.animals, function(i, a) {
+                                    if (a.ID == animalid) {
+                                        a.SHELTERLOCATION = locationid;
+                                        a.SHELTERLOCATIONUNIT = unit;
+                                        return false;
+                                    }
+                                });
+                                shelterview.reload();
+                            });
+                    }
+                });
+            }
+
+        },
+
+        /**
          * groupfield: The name of the field to group headings on with totals
          * sorton: Comma separated list of fields to sort on
          * dragdrop: Whether dragging and dropping is on and moves between locations
@@ -47,22 +144,22 @@ $(function() {
                         grplink = "animal_find_results?logicallocation=onshelter&speciesid=" + a.SPECIESID;
                     }
                     if (groupfield == "ADOPTIONSTATUS") {
-                        if (a.ADOPTIONSTATUS == "Adoptable") {
+                        if (a.ADOPTIONSTATUS == _("Adoptable")) {
                             grplink = "animal_find_results?logicallocation=adoptable";
                         }
-                        if (a.ADOPTIONSTATUS == "Not For Adoption") {
+                        if (a.ADOPTIONSTATUS == _("Not For Adoption")) {
                             grplink = "animal_find_results?logicallocation=notforadoption";
                         }
-                        if (a.ADOPTIONSTATUS == "Reserved") {
+                        if (a.ADOPTIONSTATUS == _("Reserved")) {
                             grplink = "move_book_reservation";
                         }
-                        if (a.ADOPTIONSTATUS == "Cruelty Case") {
+                        if (a.ADOPTIONSTATUS == _("Cruelty Case")) {
                             grplink = "animal_find_results?logicallocation=onshelter&showcrueltycaseonly=on";
                         }
-                        if (a.ADOPTIONSTATUS == "Hold") {
+                        if (a.ADOPTIONSTATUS == _("Hold")) {
                             grplink = "animal_find_results?logicallocation=hold";
                         }
-                        if (a.ADOPTIONSTATUS == "Quarantine") {
+                        if (a.ADOPTIONSTATUS == _("Quarantine")) {
                             grplink = "animal_find_results?logicallocation=quarantine";
                         }
                     }
@@ -78,20 +175,13 @@ $(function() {
                         grpdisplay + ' (##LASTTOTAL)</a></p>');
                     // Foster and trial adoptions can't be drop targets and drag/drop must be on for this view
                     if (a.ACTIVEMOVEMENTTYPE != 2 && a.HASTRIALADOPTION == 0 && dragdrop) {
-                        h.push('<div class="locationdroptarget" data="' + a.SHELTERLOCATION + '">');
+                        h.push('<div class="locationdroptarget" data-location="' + a.SHELTERLOCATION + '">');
                     }
                     else {
                         h.push('<div>');
                     }
                 }
-                h.push('<div ');
-                // Only on shelter animals that are physically present can be dragged
-                if (!a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0) {
-                    h.push('class="animaldragtarget" ');
-                }
-                h.push('data="' + a.ID + '" style="display: inline-block; text-align: center">');
-                h.push(html.animal_link_thumb(a, {showunit: true}));
-                h.push('</div>');
+                h.push(shelterview.render_animal(a, true));
                 runningtotal += 1;
             });
             if (lastgrp != "") { 
@@ -115,39 +205,11 @@ $(function() {
                     }
                 });
             }
-            return h.join("\n");
-        },
 
-        switch_view: function(viewmode) {
-            var h = "", dragdrop = false;
-            if (viewmode == "entrycategory") {
-                h = this.render_view("ENTRYREASONNAME", "ENTRYREASONNAME,ANIMALNAME", true, false);
-            }
-            else if (viewmode == "fosterer") {
-                h = this.render_view("CURRENTOWNERNAME", "CURRENTOWNERNAME,ANIMALNAME", true, false);
-            }
-            else if (viewmode == "location") {
-                h = this.render_view("DISPLAYLOCATIONNAME", "DISPLAYLOCATIONNAME,ANIMALNAME", true, false);
-                dragdrop = true;
-            }
-            else if (viewmode == "locationspecies") {
-                h = this.render_view("DISPLAYLOCATIONNAME", "DISPLAYLOCATIONNAME,SPECIESNAME,ANIMALNAME", true, false);
-                dragdrop = true;
-            }
-            else if (viewmode == "locationunit") {
-                h = this.render_view("DISPLAYLOCATIONNAME", "DISPLAYLOCATIONNAME,SHELTERLOCATIONUNIT,ANIMALNAME", true, false);
-                dragdrop = true;
-            }
-            else if (viewmode == "species") {
-                h = this.render_view("SPECIESNAME", "SPECIESNAME,ANIMALNAME", false, false);
-            }
-            else if (viewmode == "status") {
-                h = this.render_view("ADOPTIONSTATUS", "ADOPTIONSTATUS,ANIMALNAME", false, true);
-            }
-            else if (viewmode == "type") {
-                h = this.render_view("ANIMALTYPENAME", "ANIMALTYPENAME,ANIMALNAME", false, true);
-            }
-            $("#viewcontainer").html(h);
+            // Load the whole thing into the DOM
+            $("#viewcontainer").html(h.join("\n"));
+
+            // Handle drag and drop if enabled for this view
             if (dragdrop && config.bool("ShelterViewDragDrop")) {
                 $(".animaldragtarget").draggable();
                 $(".locationdroptarget").droppable({
@@ -158,17 +220,58 @@ $(function() {
                         $(this).removeClass("transparent");
                     },
                     drop: function(event, ui) {
-                        var locationid = $(this).attr("data");
+                        var locationid = $(this).attr("data-location");
+                        var locationname = common.get_field(controller.locations, locationid, "LOCATIONNAME");
                         var animalid = $(ui.draggable).attr("data");
                         var droptarget = $(this);
                         header.show_loading(_("Moving..."));
-                        common.ajax_post("shelterview", "locationid=" + locationid + "&animalid=" + animalid)
+                        common.ajax_post("shelterview", "mode=movelocation&locationid=" + locationid + "&animalid=" + animalid)
                             .always(function() {
                                 header.hide_loading();
                                 droptarget.removeClass("transparent");
+                                $.each(controller.animals, function(i, a) {
+                                    if (a.ID == animalid) {
+                                        a.SHELTERLOCATION = locationid;
+                                        a.DISPLAYLOCATIONNAME = locationname;
+                                        return false;
+                                    }
+                                });
+                                shelterview.reload();
                             });
                     }
                 });
+            }
+
+        },
+
+        reload: function() {
+            shelterview.switch_view($("#viewmode").select("value"));
+        },
+
+        switch_view: function(viewmode) {
+            if (viewmode == "entrycategory") {
+                this.render_view("ENTRYREASONNAME", "ENTRYREASONNAME,ANIMALNAME", false, false);
+            }
+            else if (viewmode == "fosterer") {
+                this.render_view("CURRENTOWNERNAME", "CURRENTOWNERNAME,ANIMALNAME", false, false);
+            }
+            else if (viewmode == "location") {
+                this.render_view("DISPLAYLOCATIONNAME", "DISPLAYLOCATIONNAME,ANIMALNAME", true, false);
+            }
+            else if (viewmode == "locationspecies") {
+                this.render_view("DISPLAYLOCATIONNAME", "DISPLAYLOCATIONNAME,SPECIESNAME,ANIMALNAME", true, false);
+            }
+            else if (viewmode == "locationunit") {
+                this.render_units_available();
+            }
+            else if (viewmode == "species") {
+                this.render_view("SPECIESNAME", "SPECIESNAME,ANIMALNAME", false, false);
+            }
+            else if (viewmode == "status") {
+                this.render_view("ADOPTIONSTATUS", "ADOPTIONSTATUS,ANIMALNAME", false, true);
+            }
+            else if (viewmode == "type") {
+                this.render_view("ANIMALTYPENAME", "ANIMALTYPENAME,ANIMALNAME", false, true);
             }
             common.bind_tooltips();
         },
