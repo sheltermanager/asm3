@@ -532,6 +532,8 @@ def insert_donations_from_form(dbo, username, post, donationdate, force_receive 
     """
     l = dbo.locale
     created = []
+    if post["receiptnumber"] == "":
+        post.data["receiptnumber"] = get_next_receipt_number(dbo)
     for i in xrange(1, 100):
         if post.integer("amount%d" % i) > 0:
             due = ""

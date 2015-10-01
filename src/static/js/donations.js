@@ -34,7 +34,9 @@ $(function() {
                         hideif: function() { return !config.bool("DonationTrxOverride"); }, 
                         defaultval: config.integer("DonationTargetAccount"),
                         type: "select", options: { displayfield: "CODE", valuefield: "ID", rows: controller.accounts }},
+                    /* NOT EDITABLE
                     { json_field: "RECEIPTNUMBER", post_field: "receiptnumber", label: _("Receipt No"), type: "text" },
+                    */
                     { json_field: "ISGIFTAID", post_field: "giftaid", label: _("Gift Aid"), type: "check" },
                     { json_field: "ISVAT", post_field: "vat", label: _("Sales Tax"), type: "check", 
                         hideif: function() { return !config.bool("VATEnabled"); } },
@@ -140,10 +142,12 @@ $(function() {
                         }
                         $("#type").select("value", config.integer("AFDefaultDonationType"));
                         $("#giftaid").select("value", "0");
+                        /* NOT NECESSARY AS NO EDITABLE FIELD - BACKEND WILL SUPPLY RECEIPT NUMBER
                         common.ajax_post("donation", "mode=nextreceipt")
                             .then(function(result) {
                                 $("#receiptnumber").val(result);
                             });
+                        */
                         donations.type_change();
                         $("#vatrate").closest("tr").hide();
                         $("#vatamount").closest("tr").hide();
