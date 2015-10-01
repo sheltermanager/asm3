@@ -151,24 +151,23 @@ $(function() {
                         donations.type_change();
                         $("#vatrate").closest("tr").hide();
                         $("#vatamount").closest("tr").hide();
-                        tableform.dialog_show_add(dialog)
-                            .then(function() {
-                                if (!donations.validation()) { tableform.dialog_enable_buttons(); return; }
-                                return tableform.fields_post(dialog.fields, "mode=create", controller.name);
-                            })
-                            .then(function(response) {
-                                var row = {};
-                                row.ID = response;
-                                tableform.fields_update_row(dialog.fields, row);
-                                donations.set_extra_fields(row);
-                                controller.rows.push(row);
-                                tableform.table_update(table);
-                                donations.calculate_total();
-                                tableform.dialog_close();
-                            })
-                            .always(function() {
-                                tableform.dialog_enable_buttons();   
-                            });
+                        tableform.dialog_show_add(dialog, function() {
+                            if (!donations.validation()) { tableform.dialog_enable_buttons(); return; }
+                            tableform.fields_post(dialog.fields, "mode=create", controller.name)
+                                .then(function(response) {
+                                    var row = {};
+                                    row.ID = response;
+                                    tableform.fields_update_row(dialog.fields, row);
+                                    donations.set_extra_fields(row);
+                                    controller.rows.push(row);
+                                    tableform.table_update(table);
+                                    donations.calculate_total();
+                                    tableform.dialog_close();
+                                })
+                                .fail(function() {
+                                    tableform.dialog_enable_buttons();   
+                                });
+                        });
                      } 
                  },
                  { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "odod", 
@@ -233,7 +232,7 @@ $(function() {
         validation: function() {
             if (!validate.notzero(["person"])) { return false; }
             if ($("#due").val() == "" && $("#received").val() == "") {
-                validate.notblank(["due", "received"]);
+                validate.notblank(["received", "due"]);
                 return false;
             }
             return true;
@@ -292,6 +291,7 @@ $(function() {
             row.DONATIONNAME = common.get_field(controller.donationtypes, row.DONATIONTYPEID, "DONATIONNAME");
             row.PAYMENTNAME = common.get_field(controller.paymenttypes, row.DONATIONPAYMENTID, "PAYMENTNAME");
             row.FREQUENCYNAME = common.get_field(controller.frequencies, row.FREQUENCY, "FREQUENCY");
+            row.RECEIPTNUMBER = "";
         },
 
         calculate_total: function() {
