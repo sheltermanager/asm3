@@ -74,6 +74,7 @@ $(function() {
                     $.each(controller.animals, function(ia, a) {
                         // Skip animals not in this location
                         if (a.SHELTERLOCATION != l.ID) { return; }
+                        if (a.ACTIVEMOVEMENTID != 0) { return; }
                         var validunit = false;
                         $.each(l.UNITS.split(","), function(iu, u) {
                             u = common.trim(u);
