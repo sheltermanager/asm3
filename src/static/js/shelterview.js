@@ -73,11 +73,11 @@ $(function() {
                     var badunit = [];
                     $.each(controller.animals, function(ia, a) {
                         // Skip animals not in this location
-                        if (a.ACTIVEMOVEMENTID == 0 && a.SHELTERLOCATION != l.ID) { return; }
+                        if (a.SHELTERLOCATION != l.ID) { return; }
                         var validunit = false;
                         $.each(l.UNITS.split(","), function(iu, u) {
                             u = common.trim(u);
-                            if (a.SHELTERLOCATIONUNIT == u) {
+                            if (a.ACTIVEMOVEMENTID == 0 && a.SHELTERLOCATIONUNIT == u) {
                                 validunit = true;
                                 return false;
                             }
