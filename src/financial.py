@@ -602,6 +602,8 @@ def update_donation_from_form(dbo, username, post):
     Updates a donation record from posted form data
     """
     donationid = post.integer("donationid")
+    if post["receiptnumber"] == "":
+        post.data["receiptnumber"] = db.query_string(dbo, "SELECT ReceiptNumber FROM ownerdonation WHERE ID = %d" % donationid)
     sql = db.make_update_user_sql(dbo, "ownerdonation", username, "ID=%d" % donationid, ( 
         ( "OwnerID", post.db_integer("person")),
         ( "AnimalID", post.db_integer("animal")),
