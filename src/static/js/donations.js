@@ -34,9 +34,7 @@ $(function() {
                         hideif: function() { return !config.bool("DonationTrxOverride"); }, 
                         defaultval: config.integer("DonationTargetAccount"),
                         type: "select", options: { displayfield: "CODE", valuefield: "ID", rows: controller.accounts }},
-                    /* NOT EDITABLE
                     { json_field: "RECEIPTNUMBER", post_field: "receiptnumber", label: _("Receipt No"), type: "text" },
-                    */
                     { json_field: "ISGIFTAID", post_field: "giftaid", label: _("Gift Aid"), type: "check" },
                     { json_field: "ISVAT", post_field: "vat", label: _("Sales Tax"), type: "check", 
                         hideif: function() { return !config.bool("VATEnabled"); } },
@@ -63,6 +61,8 @@ $(function() {
                     // Only allow destination account to be overridden when the received date
                     // hasn't been set yet.
                     $("#destaccount").closest("tr").toggle( config.bool("DonationTrxOverride") && !row.DATE );
+                    $("#receiptnumber").closest("tr").show();
+                    $("#receiptnumber").prop("disabled", true);
                     if (row.ISVAT == 1) {
                         $("#vatrate").closest("tr").show();
                         $("#vatamount").closest("tr").show();
@@ -142,12 +142,7 @@ $(function() {
                         }
                         $("#type").select("value", config.integer("AFDefaultDonationType"));
                         $("#giftaid").select("value", "0");
-                        /* NOT NECESSARY AS NO EDITABLE FIELD - BACKEND WILL SUPPLY RECEIPT NUMBER
-                        common.ajax_post("donation", "mode=nextreceipt")
-                            .then(function(result) {
-                                $("#receiptnumber").val(result);
-                            });
-                        */
+                        $("#receiptnumber").closest("tr").hide();
                         donations.type_change();
                         $("#vatrate").closest("tr").hide();
                         $("#vatamount").closest("tr").hide();
@@ -159,6 +154,7 @@ $(function() {
                                     row.ID = response;
                                     tableform.fields_update_row(dialog.fields, row);
                                     donations.set_extra_fields(row);
+                                    row.RECEIPTNUMBER = format.padleft(row.ID, 8);
                                     controller.rows.push(row);
                                     tableform.table_update(table);
                                     donations.calculate_total();
@@ -291,7 +287,6 @@ $(function() {
             row.DONATIONNAME = common.get_field(controller.donationtypes, row.DONATIONTYPEID, "DONATIONNAME");
             row.PAYMENTNAME = common.get_field(controller.paymenttypes, row.DONATIONPAYMENTID, "PAYMENTNAME");
             row.FREQUENCYNAME = common.get_field(controller.frequencies, row.FREQUENCY, "FREQUENCY");
-            row.RECEIPTNUMBER = "";
         },
 
         calculate_total: function() {
