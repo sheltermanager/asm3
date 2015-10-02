@@ -552,9 +552,11 @@
             var conf_org = html.decode(config.str("Organisation").replace(",", ""));
             var conf_email = config.str("EmailAddress");
             var org_email = conf_org + " <" + conf_email + ">";
+            mailaddresses.push(conf_email);
             mailaddresses.push(org_email);
-            $("#emailfrom").val(org_email);
+            $("#emailfrom").val(conf_email);
             if (asm.useremail) {
+                mailaddresses.push(asm.useremail);
                 mailaddresses.push(html.decode(asm.userreal) + " <" + asm.useremail + ">");
             }
             $("#emailfrom").autocomplete({source: mailaddresses});
