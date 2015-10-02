@@ -68,7 +68,7 @@ smcom: smcomdev
 
 smcomsessions: smcomstable
 	@echo "[smcom sessions] ========================"
-	ssh root@rawsoaa2.miniserver.com "/etc/init.d/memcached restart"
+	ssh root@rawsoaa2.miniserver.com "/root/sheltermanager_clear_sessions.py"
 
 pot:
 	@echo "[template] ========================="

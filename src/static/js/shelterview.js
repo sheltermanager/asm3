@@ -37,7 +37,7 @@ $(function() {
                 if (!common.trim(common.nulltostr(l.UNITS))) { 
                     var boxinner = [], classes = "unitdroptarget asm-shelterview-unit";
                     $.each(controller.animals, function(ia, a) {
-                        if (a.SHELTERLOCATION == l.ID) {
+                        if (a.ACTIVEMOVEMENTID == 0 && a.SHELTERLOCATION == l.ID) {
                             boxinner.push(shelterview.render_animal(a, false));
                         }
                     });
@@ -56,7 +56,7 @@ $(function() {
                         // Find all animals in this unit and construct the inner
                         var boxinner = [], classes = "unitdroptarget asm-shelterview-unit";
                         $.each(controller.animals, function(ia, a) {
-                            if (a.SHELTERLOCATION == l.ID && a.SHELTERLOCATIONUNIT == u) {
+                            if (a.ACTIVEMOVEMENTID == 0 && a.SHELTERLOCATION == l.ID && a.SHELTERLOCATIONUNIT == u) {
                                 boxinner.push(shelterview.render_animal(a, false));    
                             }
                         });
@@ -73,7 +73,7 @@ $(function() {
                     var badunit = [];
                     $.each(controller.animals, function(ia, a) {
                         // Skip animals not in this location
-                        if (a.SHELTERLOCATION != l.ID) { return; }
+                        if (a.ACTIVEMOVEMENTID == 0 && a.SHELTERLOCATION != l.ID) { return; }
                         var validunit = false;
                         $.each(l.UNITS.split(","), function(iu, u) {
                             u = common.trim(u);
