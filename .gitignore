@@ -8,3 +8,4 @@ jsmin/jsmin
 src/static/js/min
 import/data
 doc/manual/_build
+cordova/asm/platforms
