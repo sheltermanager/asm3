@@ -1,7 +1,18 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, alert */
 
-$(function() {
+document.addEventListener("deviceready", function() {
+
+    if (navigator.notification) {
+        window.alert = function(message) {
+            navigator.notification.alert(
+                message,
+                null,       // callback
+                "ASM",
+                'OK'        // button
+            );
+        };
+    }
 
     $("#button-login").click(function() {
         
@@ -11,7 +22,7 @@ $(function() {
             .then(function(data) {
                 
                 if (!data.server) {
-                    alert("Invalid account number");
+                    window.alert("Invalid account number");
                     return $.Deferred().reject();
                 }
 
@@ -25,10 +36,10 @@ $(function() {
             .then(function(data) {
 
                 if (data.response == "FAIL") {
-                    alert("Incorrect account, username or password");
+                    window.alert("Incorrect account, username or password");
                 }
                 else if (data.response == "DISABLED") {
-                    alert("This account is disabled");
+                    window.alert("This account is disabled");
                 }
                 else {
                     window.localStorage.setItem("asm_account", $("#account").val());
@@ -39,6 +50,7 @@ $(function() {
 
             })
             .fail(function(xhr, msg) {
+                if (!msg) { return; }
                 alert(msg);
             });
 
@@ -57,5 +69,4 @@ $(function() {
         $("#password").val(password);
     }
 
-});
-
+}, false);
