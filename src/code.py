@@ -152,6 +152,7 @@ urls = (
     "/move_transfer", "move_transfer",
     "/main", "main",
     "/login", "login",
+    "/login_jsonp", "login_jsonp",
     "/login_splash", "login_splash",
     "/logout", "logout",
     "/medical", "medical",
@@ -651,9 +652,18 @@ class mobile_login:
 
 class mobile_logout:
     def GET(self):
+        url = "mobile_login"
+        try:
+            if session.logout != "":
+                url = session.logout
+            elif MULTIPLE_DATABASES and session.dbo is not None and session.dbo.alias != None:
+                url = "mobile_login?smaccount=" + session.dbo.alias
+        except:
+            pass
         users.logout(session.dbo, session.user)
         session.user = None
-        raise web.seeother("mobile_login")
+        session.kill()
+        raise web.seeother(url)
 
 class mobile_post:
     def handle(self):
@@ -848,6 +858,12 @@ class login:
         post = utils.PostedData(web.input( database = "", username = "", password = "", nologconnection = "" ), LOCALE)
         return users.web_login(post, session, remote_ip(), PATH)
 
+class login_jsonp:
+    def GET(self):
+        post = utils.PostedData(web.input( database = "", username = "", password = "", nologconnection = "", logout = "", callback = "" ), LOCALE)
+        web.header("Content-Type", "text/javascript")
+        return "%s({ response: '%s' })" % (post["callback"], users.web_login(post, session, remote_ip(), PATH))
+
 class login_splash:
     def GET(self):
         post = utils.PostedData(web.input(smaccount = ""), LOCALE)
@@ -869,8 +885,13 @@ class login_splash:
 class logout:
     def GET(self):
         url = "login"
-        if MULTIPLE_DATABASES and session.dbo is not None and session.dbo.alias != None:
-            url = "login?smaccount=" + session.dbo.alias
+        try:
+            if session.logout != "":
+                url = session.logout
+            elif MULTIPLE_DATABASES and session.dbo is not None and session.dbo.alias != None:
+                url = "login?smaccount=" + session.dbo.alias
+        except:
+            pass
         users.logout(session.dbo, session.user)
         session.user = None
         session.kill()

@@ -601,6 +601,7 @@ def web_login(post, session, remoteip, path):
     database = post["database"]
     username = post["username"]
     password = post["password"]
+    logouturl = post["logout"]
     nologconnection = post["nologconnection"]
     if len(username) > 100:
         username = username[0:100]
@@ -640,6 +641,7 @@ def web_login(post, session, remoteip, path):
             session.user = user["USERNAME"]
             session.superuser = user["SUPERUSER"]
             session.passchange = (password == "password")
+            session.logout = logouturl
             update_session(session)
         except:
             al.error("failed setting up session: %s" % str(sys.exc_info()[0]), "users.web_login", dbo, sys.exc_info())
