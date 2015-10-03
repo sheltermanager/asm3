@@ -17,8 +17,7 @@ $(function() {
 
                 base = "https://" + data.server + ".sheltermanager.com/";
                 params = "database=" + $("#account").val() + "&username=" + $("#username").val() + "&password=" + $("#password").val();
-                params += "&logout=" + encodeURIComponent(window.location.href);
-                url = base + "login_jsonp?" + params + "&callback=?";
+                url = base + "login_jsonp?" + params + "&mobile=true&callback=?";
 
                 return $.getJSON(url);
 
@@ -35,7 +34,7 @@ $(function() {
                     window.localStorage.setItem("asm_account", $("#account").val());
                     window.localStorage.setItem("asm_username", $("#username").val());
                     window.localStorage.setItem("asm_password", $("#password").val());
-                    window.location = base + $("#ui").val();
+                    window.open(base + $("#ui").val(), "_self", "location=no,hardwareback=yes");
                 }
 
             })
@@ -46,7 +45,7 @@ $(function() {
     });
 
     $("#button-signup").click(function() {
-        window.location = "https://sheltermanager.com/site/en_signup.html";
+        window.open("https://sheltermanager.com/site/en_signup.html", "_system");
     });
 
     var account = window.localStorage.getItem("asm_account"),

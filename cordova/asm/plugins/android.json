@@ -15,6 +15,10 @@
                         {
                             "xml": "<feature name=\"Device\"><param name=\"android-package\" value=\"org.apache.cordova.device.Device\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"InAppBrowser\"><param name=\"android-package\" value=\"org.apache.cordova.inappbrowser.InAppBrowser\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -29,6 +33,9 @@
             "PACKAGE_NAME": "com.sheltermanager.asm"
         },
         "org.apache.cordova.device": {
+            "PACKAGE_NAME": "com.sheltermanager.asm"
+        },
+        "cordova-plugin-inappbrowser": {
             "PACKAGE_NAME": "com.sheltermanager.asm"
         }
     },

@@ -240,7 +240,10 @@ def page(dbo, session, username):
 
     h.append(header(l))
 
-    logoutlink = jqm_link("mobile_logout", _("Logout", l), "delete", "ui-btn-right", "b")
+    logoutlink = ""
+    if not session.mobileapp: 
+        logoutlink = jqm_link("mobile_logout", _("Logout", l), "delete", "ui-btn-right", "b")
+
     h.append(jqm_page_header("home", "%s : %s" % (username, _("ASM", l)), logoutlink , False))
     items = []
     if configuration.smdb_locked(dbo):
@@ -387,7 +390,8 @@ def page_sign(dbo, session, username):
     if ids.strip() == "":
         h.append('<p>%s</p>' % _("Waiting for documents...", l))
         h.append('<p><button id="sig-refresh">' + _("Reload", l) + '</button></p>')
-        h.append('</p><button id="sig-logout">' + _("Logout", l) + '</button></p>')
+        if not session.mobileapp:
+            h.append('</p><button id="sig-logout">' + _("Logout", l) + '</button></p>')
     else:
         d = []
         docnotes = []

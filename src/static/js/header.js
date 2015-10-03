@@ -420,7 +420,7 @@ $(function() {
                         '<li id="asm-mysmcom" class="asm-menu-item"><a href="https://sheltermanager.com/my" target="_blank"><nobr><span class="asm-icon asm-icon-logo"></span> ' + _("My sheltermanager.com account") + '</nobr></a></li>',
                         '<li class="asm-menu-item"><a href="change_password"><nobr><span class="asm-icon asm-icon-auth"></span> ' + _("Change Password") + '</nobr></a></li>',
                         '<li class="asm-menu-item"><a href="change_user_settings"><nobr><span class="asm-icon asm-icon-settings"></span> ' + _("Change User Settings") + '</nobr></a></li>',
-                        '<li class="asm-menu-item"><a href="logout"><nobr><span class="asm-icon asm-icon-logout"></span> ' + _("Logout") + '</nobr></a></li>',
+                        '<li id="asm-logout" class="asm-menu-item"><a href="logout"><nobr><span class="asm-icon asm-icon-logout"></span> ' + _("Logout") + '</nobr></a></li>',
                     '</ul>',
                 '</div>',
                 '<div id="asm-topline-error" style="display: none" class="ui-widget">',
@@ -573,6 +573,11 @@ $(function() {
             // Hide the My sheltermanager.com menu option for non-smcom and non-superusers
             if (!asm.smcom || !asm.superuser) {
                 $("#asm-mysmcom").hide();
+            }
+
+            // Hide the logout link if we're in the mobile app
+            if (asm.mobileapp) {
+                $("#asm-logout").hide();
             }
 
             // If the database is locked, show it

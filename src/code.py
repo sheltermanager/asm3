@@ -553,6 +553,7 @@ class configjs:
             s += "mapprovider:'%s'," % (mapprovider)
             s += "osmmaptiles:'%s'," % (OSM_MAP_TILES)
             s += "hascustomlogo:%s," % (dbfs.file_exists(dbo, "logo.jpg") and "true" or "false")
+            s += "mobileapp:%s," % (session.mobileapp and "true" or "false")
             s += "config:" + html.json([configuration.get_map(dbo),]) + ", "
             s += "menustructure:" + html.json_menu(session.locale, 
                 extreports.get_reports_menu(dbo, session.roleids, session.superuser), 
@@ -653,13 +654,8 @@ class mobile_login:
 class mobile_logout:
     def GET(self):
         url = "mobile_login"
-        try:
-            if session.logout != "":
-                url = session.logout
-            elif MULTIPLE_DATABASES and session.dbo is not None and session.dbo.alias != None:
-                url = "mobile_login?smaccount=" + session.dbo.alias
-        except:
-            pass
+        if MULTIPLE_DATABASES and session.dbo is not None and session.dbo.alias != None:
+            url = "mobile_login?smaccount=" + session.dbo.alias
         users.logout(session.dbo, session.user)
         session.user = None
         session.kill()
@@ -860,7 +856,7 @@ class login:
 
 class login_jsonp:
     def GET(self):
-        post = utils.PostedData(web.input( database = "", username = "", password = "", nologconnection = "", logout = "", callback = "" ), LOCALE)
+        post = utils.PostedData(web.input( database = "", username = "", password = "", nologconnection = "", mobile = "", callback = "" ), LOCALE)
         web.header("Content-Type", "text/javascript")
         return "%s({ response: '%s' })" % (post["callback"], users.web_login(post, session, remote_ip(), PATH))
 
@@ -885,13 +881,8 @@ class login_splash:
 class logout:
     def GET(self):
         url = "login"
-        try:
-            if session.logout != "":
-                url = session.logout
-            elif MULTIPLE_DATABASES and session.dbo is not None and session.dbo.alias != None:
-                url = "login?smaccount=" + session.dbo.alias
-        except:
-            pass
+        if MULTIPLE_DATABASES and session.dbo is not None and session.dbo.alias != None:
+            url = "login?smaccount=" + session.dbo.alias
         users.logout(session.dbo, session.user)
         session.user = None
         session.kill()

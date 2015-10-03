@@ -186,7 +186,8 @@ $(function() {
             h.push('<div class="asm-mediaicons">');
 
             // Show our drag and drop target for uploading files if the HTML5 File API is available
-            if (media.html5_file_api()) {
+            // and we're not in mobile app mode
+            if (media.html5_file_api() && !asm.mobileapp) {
                 h.push('<div class="asm-mediadroptarget"><p>' + _("Drop files here...") + '</p></div>');
             }
 

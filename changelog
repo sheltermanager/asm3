@@ -1,6 +1,7 @@
 37
 ================
 
+03/10/15 Disable media drag/drop and shelterview drag/drop for mobile #260
 03/10/15 Mobile application wrapper #260
 03/10/15 Add PaymentTotal wordkey
 02/10/15 Show non-editable receipt number in payment book, fix blanks
