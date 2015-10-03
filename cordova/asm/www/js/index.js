@@ -3,7 +3,7 @@
 
 $(function() {
 
-    $("button").click(function() {
+    $("#button-login").click(function() {
         
         var base, params, url = "https://sheltermanager.com/service/findserver?a=" + $("#account").val();
 
@@ -45,6 +45,10 @@ $(function() {
 
     });
 
+    $("#button-signup").click(function() {
+        window.location = "https://sheltermanager.com/site/en_signup.html";
+    });
+
     var account = window.localStorage.getItem("asm_account"),
         username = window.localStorage.getItem("asm_username"),
         password = window.localStorage.getItem("asm_password");
@@ -53,8 +57,6 @@ $(function() {
         $("#username").val(username);
         $("#password").val(password);
     }
-
-    alert(window.location.href);
 
 });
 
