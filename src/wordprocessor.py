@@ -869,7 +869,7 @@ def donation_tags(dbo, donations):
     """
     l = dbo.locale
     tags = {}
-    totals = { "due": 0, "received": 0, "vat": 0 }
+    totals = { "due": 0, "received": 0, "vat": 0, "total": 0 }
     def add_to_tags(i, p): 
         x = { 
             "DONATIONID"+i          : str(p["ID"]),
@@ -915,6 +915,7 @@ def donation_tags(dbo, donations):
         if p["DATE"] is not None: totals["received"] += p["DONATION"]
         if p["DATE"] is None: totals["due"] += p["DONATION"]
         totals["vat"] += p["VATAMOUNT"]
+        totals["total"] += totals["vat"] + totals["received"]
     add_to_tags("", donations[0]) 
     for i, d in enumerate(donations):
         add_to_tags(str(i+1), d)
@@ -922,6 +923,7 @@ def donation_tags(dbo, donations):
     tags["PAYMENTTOTALRECEIVED"] = format_currency_no_symbol(l, totals["received"])
     tags["PAYMENTTOTALVAT"] = format_currency_no_symbol(l, totals["vat"])
     tags["PAYMENTTOTALTAX"] = format_currency_no_symbol(l, totals["vat"])
+    tags["PAYMENTTOTAL"] = format_currency_no_symbol(l, totals["total"])
     return tags
 
 def person_tags(dbo, p):

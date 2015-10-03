@@ -469,6 +469,8 @@ PaymentTotalReceived
     The total of all selected payments that have a received date
 PaymentTotalTax / PaymentTotalVAT
     The total of all sales tax/VAT/GST on the selected payments
+PaymentTotal
+    PaymentTotalReceived + PaymentTotalTax
 
 Cost Keys
 ---------
