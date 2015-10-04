@@ -9,6 +9,14 @@
                 "parents": {
                     "/*": [
                         {
+                            "xml": "<feature name=\"Notification\"><param name=\"firefoxos-package\" value=\"Notification\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<permission description=\"Enables the app to implement a browser in an iframe.\" name=\"browser\" privileged=\"true\" />",
+                            "count": 1
+                        },
+                        {
                             "xml": "<feature name=\"Device\"><param name=\"firefoxos-package\" value=\"Device\" /></feature>",
                             "count": 1
                         }
@@ -18,6 +26,12 @@
         }
     },
     "installed_plugins": {
+        "cordova-plugin-dialogs": {
+            "PACKAGE_NAME": "com.sheltermanager.asm"
+        },
+        "cordova-plugin-inappbrowser": {
+            "PACKAGE_NAME": "com.sheltermanager.asm"
+        },
         "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.sheltermanager.asm"
         },
