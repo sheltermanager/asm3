@@ -980,7 +980,7 @@ def handler_viewanimal(l, dbo, a, af, diet, vacc, test, med, logs, homelink, pos
         <input type="hidden" name="posttype" value="uai" />
         <input type="hidden" name="comments" value="" />
         <input type="hidden" name="base64image" value="" />
-        <input type="file" data-role='none' name="filechooser" id="fc%d" />
+        <input type="file" data-role='none' accept="image/*" capture="camera" name="filechooser" id="fc%d" />
         <span class=".tipios6" style="display: none">%s</span>
         <input id='sfc%d' type='submit' data-icon='arrow-u' data-inline='true' data-mini='true' value='%s' />
         </form>
