@@ -722,6 +722,10 @@
             if (config.has() && config.bool("DisableEffects")) {
                 jQuery.fx.off = true;
             }
+            // Disable effects if we're running in the mobile app
+            if (asm.mobileapp) {
+                jQuery.fx.off = true;
+            }
             // textarea zoom dialog
             try {
                 var tzb = {};
