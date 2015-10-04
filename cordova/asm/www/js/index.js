@@ -45,7 +45,7 @@ document.addEventListener("deviceready", function() {
                     window.localStorage.setItem("asm_account", $("#account").val());
                     window.localStorage.setItem("asm_username", $("#username").val());
                     window.localStorage.setItem("asm_password", $("#password").val());
-                    window.open(base + $("#ui").val(), "_self", "location=no,hardwareback=yes");
+                    window.open(base + $("#ui").val(), "_self", "location=no,hardwareback=yes,zoom=no");
                 }
 
             })

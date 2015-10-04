@@ -23,6 +23,20 @@
                         {
                             "xml": "<feature name=\"Notification\"><param name=\"android-package\" value=\"org.apache.cordova.dialogs.Notification\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Camera\"><param name=\"android-package\" value=\"org.apache.cordova.camera.CameraLauncher\" /></feature>",
+                            "count": 1
+                        }
+                    ]
+                }
+            },
+            "AndroidManifest.xml": {
+                "parents": {
+                    "/*": [
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />",
+                            "count": 1
                         }
                     ]
                 }
@@ -43,6 +57,9 @@
             "PACKAGE_NAME": "com.sheltermanager.asm"
         },
         "cordova-plugin-dialogs": {
+            "PACKAGE_NAME": "com.sheltermanager.asm"
+        },
+        "cordova-plugin-camera": {
             "PACKAGE_NAME": "com.sheltermanager.asm"
         }
     },
