@@ -62,7 +62,7 @@ def insert_log_from_form(dbo, username, linktypeid, linkid, post):
         ( "LogTypeID", post.db_integer("type")),
         ( "LinkID", db.di(linkid) ),
         ( "LinkType", db.di(linktypeid) ),
-        ( "Date", post.db_date("logdate")),
+        ( "Date", post.db_datetime("logdate", "logtime")),
         ( "Comments", post.db_string("entry"))
         ))
     db.execute(dbo, sql)
@@ -79,7 +79,7 @@ def update_log_from_form(dbo, username, post):
         raise utils.ASMValidationError(i18n._("Log date must be a valid date", l))
     sql = db.make_update_user_sql(dbo, "log", username, "ID=%d" % logid, (
         ( "LogTypeID", post.db_integer("type")),
-        ( "Date", post.db_date("logdate")),
+        ( "Date", post.db_datetime("logdate", "logtime")),
         ( "Comments", post.db_string("entry"))
         ))
     preaudit = db.query(dbo, "SELECT * FROM log WHERE ID=%d" % logid)

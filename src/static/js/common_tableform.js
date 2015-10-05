@@ -174,6 +174,16 @@
             return String(v);
         },
 
+        /** Formats a value as a date time, leaving time blank if not present */
+        format_time: function(row, v) {
+            return format.time(v);
+        },
+
+        /** Formats a value as a time, returning blank for midnight */
+        format_time_blank: function(row, v) {
+            return (format.time(v) == "00:00:00" ? "" : format.time(v));
+        },
+
         /**
          * Renders a table
          *

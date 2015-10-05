@@ -1,6 +1,7 @@
 37
 ================
 
+05/10/15 Allow times to be set on log entries #266
 05/10/15 Parameterise mobile login in the same way as desktop login
 05/10/15 Add Total column to payments widget
 05/10/15 Add PaymentTotalTaxRate wordkey

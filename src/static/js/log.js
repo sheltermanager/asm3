@@ -18,6 +18,7 @@ $(function() {
                     { json_field: "LOGTYPEID", post_field: "type", label: _("Type"), type: "select", 
                         options: { displayfield: "LOGTYPENAME", valuefield: "ID", rows: controller.logtypes }},
                     { json_field: "DATE", post_field: "logdate", label: _("Date"), type: "date", validation: "notblank", defaultval: new Date() },
+                    { json_field: "DATE", post_field: "logtime", label: _("Time"), type: "time" },
                     { json_field: "COMMENTS", post_field: "entry", label: _("Comments"), type: "textarea" }
                 ]
             };
@@ -45,6 +46,7 @@ $(function() {
                     { field: "LOGTYPENAME", display: _("Type") },
                     { field: "LASTCHANGEDBY", display: _("By") },
                     { field: "DATE", display: _("Date"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
+                    { field: "DATE", display: _("Time"), formatter: tableform.format_time_blank },
                     { field: "COMMENTS", display: _("Note"), formatter: function(row, v) { return v.replace(/\n/g, "<br />");  }}
                 ]
             };
