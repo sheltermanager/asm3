@@ -1,17 +1,18 @@
-Intakes by Brought In By Postal Code and Species with Outcomes
+Intakes by Brought In By City with Outcomes
 ###
 Auditing
 ###
 Any
 ###
-Animals entering between two dates that were brought in from a particular postal code with their final outcomes
+Animals entering between two dates that were brought in from a particular city with their final outcomes
 ###
 en
 ###
 SELECT
 a.AnimalName, a.ShelterCode, a.DateOfBirth, s.SpeciesName, atp.AnimalType, 
 a.BreedName, e.ReasonName, o.OwnerName, a.DateBroughtIn, m.MovementDate,
-a.NeuteredDate, a.IdentichipNumber, oo.OwnerName AS OriginalOwner,
+a.NeuteredDate, a.IdentichipNumber, 
+bo.OwnerName AS BroughtInOwner, bo.OwnerTown AS BroughtInCity, bo.OwnerAddress AS BroughtInAddress, bo.OwnerPostcode AS BroughtInPostcode,
 CASE WHEN a.DeceasedDate Is Not Null THEN 'Died' 
 WHEN a.ActiveMovementDate Is Not Null THEN (SELECT MovementType FROM lksmovementtype WHERE ID = a.ActiveMovementType) 
 ELSE 'On Shelter' END AS OutcomeName,
@@ -30,15 +31,16 @@ LEFT OUTER JOIN owner oo ON a.OriginalOwnerID = oo.ID
 LEFT OUTER JOIN owner bo ON a.BroughtInByOwnerID = bo.ID
 INNER JOIN entryreason e ON a.EntryReasonID = e.ID 
 WHERE a.DateBroughtIn >= '$ASK DATE Enter from date$' AND a.DateBroughtIn <= '$ASK DATE Enter to date$'
-AND bo.OwnerPostcode LIKE '%$ASK STRING Enter partial postal code$%'
+AND bo.OwnerTown LIKE '%$ASK STRING Enter partial city$%'
 AND NonShelterAnimal = 0 
 ORDER BY a.DateBroughtIn
 ###
 $$HEADER
 HEADER$$
 
-$$GROUP_SpeciesName
+$$GROUP_BroughtInCity
 $$HEAD
+<h2>$BroughtInCity</h2>
 <table border="1">
 <tr>
 <th>Name</th>
@@ -47,12 +49,13 @@ $$HEAD
 <th>Microchip</th>
 <th>DOB</th>
 <th>Entry</th>
+<th>By</th>
 <th>Altered</th>
 <th>Outcome</th>
 </tr>
 $$FOOT
 </table>
-<p>Total $SpeciesName: {COUNT.SpeciesName}</p>
+<p>Total $BroughtInCity: {COUNT.BroughtInCity}</p>
 GROUP$$
 
 $$BODY
@@ -62,7 +65,9 @@ $$BODY
 <td>$ANIMALTYPE / $BREEDNAME / $SPECIESNAME</td>
 <td>$IDENTICHIPNUMBER</td>
 <td>$DATEOFBIRTH</td>
-<td>$REASONNAME : $ORIGINALOWNER $DATEBROUGHTIN</td>
+<td>$REASONNAME : $DATEBROUGHTIN</td>
+<td><i>$BROUGHTINOWNER</i><br/>
+$BROUGHTINADDRESS $BROUGHTINCITY $BROUGHTINPOSTCODE</td>
 <td>$NEUTEREDDATE</td>
 <td>$OUTCOMENAME : $OUTCOMEQUALIFIER $OUTCOMEDATE</td>
 </tr>
