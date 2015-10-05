@@ -33,7 +33,7 @@ INNER JOIN entryreason e ON a.EntryReasonID = e.ID
 WHERE a.DateBroughtIn >= '$ASK DATE Enter from date$' AND a.DateBroughtIn <= '$ASK DATE Enter to date$'
 AND bo.OwnerTown LIKE '%$ASK STRING Enter partial city$%'
 AND NonShelterAnimal = 0 
-ORDER BY a.DateBroughtIn
+ORDER BY bo.OwnerTown, a.DateBroughtIn
 ###
 $$HEADER
 HEADER$$
