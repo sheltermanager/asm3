@@ -1672,11 +1672,11 @@ class animal_new:
 
     def POST(self):
         utils.check_loggedin(session, web)
-        users.check_permission(session, users.ADD_ANIMAL)
         utils.check_locked_db(session)
         post = utils.PostedData(web.input(mode = "save"), session.locale)
         mode = post["mode"]
         if mode == "save":
+            users.check_permission(session, users.ADD_ANIMAL)
             animalid, code = extanimal.insert_animal_from_form(session.dbo, post, session.user)
             return str(animalid) + " " + str(code)
         elif mode == "recentnamecheck":

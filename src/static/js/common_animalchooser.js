@@ -124,10 +124,9 @@
          * Loads an animal into the widget by ID
          */
         loadbyid: function(animalid) {
+            if (!animalid || animalid == "0" || animalid == "") { return; }
             this.clear();
-            if (!animalid || animalid == "0" || animalid == "") {
-                return;
-            }
+            this.element.val(animalid);
             var self = this;
             var formdata = "mode=id&id=" + animalid;
             $.ajax({

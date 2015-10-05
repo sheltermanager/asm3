@@ -333,8 +333,9 @@
          * Load a person record from its ID
          */
         loadbyid: function(personid) {
-            this.clear();
             if (!personid || personid == "0" || personid == "") { return; }
+            this.clear();
+            this.element.val(personid);
             var self = this, node = this.options.node, display = this.options.display, dialog = this.options.dialog;
             var formdata = "mode=id&id=" + personid;
             $.ajax({

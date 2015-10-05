@@ -1,6 +1,8 @@
 37
 ================
 
+05/10/15 No permission should be needed for ajax get units call
+05/10/15 Stop users without view people perm removing people links
 05/10/15 Allow times to be set on log entries #266
 05/10/15 Parameterise mobile login in the same way as desktop login
 05/10/15 Add Total column to payments widget
