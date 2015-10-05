@@ -467,6 +467,8 @@ PaymentTotalDue
     The total of all selected payments that have a due date and no received date
 PaymentTotalReceived
     The total of all selected payments that have a received date
+PaymenTotalTaxRate / PaymentTotalVATRate
+    The highest rate of tax applied by any of the selected payments
 PaymentTotalTax / PaymentTotalVAT
     The total of all sales tax/VAT/GST on the selected payments
 PaymentTotal

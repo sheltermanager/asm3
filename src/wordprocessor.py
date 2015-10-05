@@ -869,7 +869,7 @@ def donation_tags(dbo, donations):
     """
     l = dbo.locale
     tags = {}
-    totals = { "due": 0, "received": 0, "vat": 0, "total": 0 }
+    totals = { "due": 0, "received": 0, "vat": 0, "total": 0, "taxrate": 0.0 }
     def add_to_tags(i, p): 
         x = { 
             "DONATIONID"+i          : str(p["ID"]),
@@ -912,6 +912,8 @@ def donation_tags(dbo, donations):
         }
         tags.update(x)
         if i == "": return # Don't add a total for the compatibility row
+        if p["VATRATE"] > totals["taxrate"]:
+            totals["taxrate"] = p["VATRATE"]
         if p["DATE"] is not None: 
             totals["received"] += p["DONATION"]
             totals["vat"] += p["VATAMOUNT"]
@@ -923,6 +925,8 @@ def donation_tags(dbo, donations):
         add_to_tags(str(i+1), d)
     tags["PAYMENTTOTALDUE"] = format_currency_no_symbol(l, totals["due"])
     tags["PAYMENTTOTALRECEIVED"] = format_currency_no_symbol(l, totals["received"])
+    tags["PAYMENTTOTALVATRATE"] = format_currency_no_symbol(l, totals["taxrate"])
+    tags["PAYMENTTOTALTAXRATE"] = format_currency_no_symbol(l, totals["taxrate"])
     tags["PAYMENTTOTALVAT"] = format_currency_no_symbol(l, totals["vat"])
     tags["PAYMENTTOTALTAX"] = format_currency_no_symbol(l, totals["vat"])
     tags["PAYMENTTOTAL"] = format_currency_no_symbol(l, totals["total"])
