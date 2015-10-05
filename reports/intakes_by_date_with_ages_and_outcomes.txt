@@ -1,4 +1,4 @@
-Intakes by Date with Intake Age and Outcomes
+Intakes by Date with Ages and Outcomes
 ###
 Auditing
 ###
@@ -21,7 +21,10 @@ ELSE Null END AS OutcomeDate,
 CASE WHEN a.DeceasedDate Is Not Null THEN (SELECT ReasonName FROM deathreason WHERE ID = a.PTSReasonID)
 WHEN a.ActiveMovementDate Is Not Null THEN o.OwnerName
 ELSE '' END AS OutcomeQualifier,
-age(DateBroughtIn, DateOfBirth)::varchar AS AgeAtIntake
+age(DateBroughtIn, DateOfBirth)::varchar AS AgeAtIntake,
+CASE WHEN a.DeceasedDate Is Not Null THEN age(DeceasedDate, DateOfBirth)::varchar 
+WHEN a.ActiveMovementDate Is Not Null THEN age(ActiveMovementDate, DateOfBirth)::varchar
+ELSE '' END AS AgeAtOutcome
 FROM animal a
 INNER JOIN species s ON a.SpeciesID = s.ID
 INNER JOIN animaltype atp ON a.AnimalTypeID = atp.ID
@@ -45,6 +48,7 @@ $$HEADER
 <th>Entry</th>
 <th>Altered</th>
 <th>Outcome</th>
+<th>Age at Outcome</th>
 </tr>
 HEADER$$
 
@@ -59,6 +63,7 @@ $$BODY
 <td>$REASONNAME : $ORIGINALOWNER $DATEBROUGHTIN</td>
 <td>$NEUTEREDDATE</td>
 <td>$OUTCOMENAME : $OUTCOMEQUALIFIER $OUTCOMEDATE</td>
+<td>$AGEATOUTCOME</td>
 </tr>
 BODY$$
 
