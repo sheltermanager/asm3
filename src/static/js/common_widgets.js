@@ -593,6 +593,7 @@
                 '<th class="overrideaccount">' + _("Deposit Account") + '</th>',
                 '<th class="giftaid">' + _("Gift Aid") + '</th>',
                 '<th class="vat">' + _("Sales Tax") + '</th>',
+                '<th class="vat">' + _("Total") + '</th>',
                 '</tr>',
                 '</thead>',
                 '<tbody id="paymentlines">',
@@ -606,6 +607,7 @@
                 '<td class="overrideaccount"></td>',
                 '<td class="giftaid"></td>',
                 '<td class="vat rightalign strong" id="totalvat"></td>',
+                '<td class="vat rightalign strong" id="totalall"></td>',
                 '</tr>',
                 '</tfoot>',
                 '</table>',
@@ -710,15 +712,17 @@
         },
 
         update_totals: function() {
-            var totalamt = 0, totalvat = 0;
+            var totalamt = 0, totalvat = 0, totalall = 0;
             $(".amount").each(function() {
                 totalamt += $(this).currency("value");
             });
             $(".vatamount").each(function() {
                 totalvat += $(this).currency("value");
             });
+            totalall = totalamt + totalvat;
             $("#totalamount").html(format.currency(totalamt));
             $("#totalvat").html(format.currency(totalvat));
+            $("#totalall").html(format.currency(totalall));
         },
 
         destroy: function() {
