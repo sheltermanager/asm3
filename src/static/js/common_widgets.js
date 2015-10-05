@@ -656,6 +656,9 @@
                 '<input id="vatamount{i}" data="vatamount{i}" class="rightalign vatamount asm-textbox asm-halftextbox asm-currencybox" value="0" />',
                 '</span>',
                 '</td>',
+                '<td class="vat centered">',
+                '<input id="total{i}" data="{i}" class="rightalign totalamount asm-textbox asm-halftextbox asm-currencybox" disabled="disabled" />',
+                '</td>',
                 '</tr>'
             ];
             // Construct and add our new payment fields to the DOM
@@ -718,6 +721,10 @@
             });
             $(".vatamount").each(function() {
                 totalvat += $(this).currency("value");
+            });
+            $(".totalamount").each(function() {
+                var idx = $(this).attr("data");
+                $(this).currency("value",  $("#amount" + idx).currency("value") + $("#vatamount" + idx).currency("value") );
             });
             totalall = totalamt + totalvat;
             $("#totalamount").html(format.currency(totalamt));
