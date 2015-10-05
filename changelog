@@ -1,6 +1,7 @@
 37
 ================
 
+05/10/15 Parameterise mobile login in the same way as desktop login
 05/10/15 Add Total column to payments widget
 05/10/15 Add PaymentTotalTaxRate wordkey
 03/10/15 Disable media drag/drop and shelterview drag/drop for mobile #260

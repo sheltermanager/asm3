@@ -43,6 +43,12 @@ def header(l):
             is_oldandroid = navigator.userAgent.indexOf("Android 2") != -1 ||
                 navigator.userAgent.indexOf("Android 1") != -1;
 
+            // If we're on the login page and all the boxes were filled in, 
+            // submit it
+            if ($("#loginform").size() > 0 && $("#username").val() && $("#password").val()) {
+                $("#loginform").submit();
+            }
+
             // If the user sets a new diary date in the future, post it
             $(".diaryon").change(function() {
                 $.mobile.changePage("mobile_post?posttype=dia&on=" + $(this).val() + "&id=" + $(this).attr("data"));
@@ -658,12 +664,12 @@ def page_incidents(l, homelink, inc, pageid = "inmy", pagetitle = ""):
     h.append(jqm_page_footer())
     return h
 
-def page_login(l, smaccount = ""):
+def page_login(l, post):
     accountline = ""
     accounttext = _("Database", l)
     if smcom.active(): accounttext = _("SM Account", l)
     if MULTIPLE_DATABASES:
-        accountline = "<div data-role='fieldcontain'><label for='database'>%s</label><input type='text' id='database' name='database' value='%s'/></div>" % (accounttext, html.escape(smaccount))
+        accountline = "<div data-role='fieldcontain'><label for='database'>%s</label><input type='text' id='database' name='database' value='%s'/></div>" % (accounttext, html.escape(post["smaccount"]))
     return header(l) + """
         <div data-role='page' id='login'>
         <div data-role='header'>
@@ -675,11 +681,11 @@ def page_login(l, smaccount = ""):
         %s
         <div data-role="fieldcontain">
             <label for="username">%s</label>
-            <input type="text" id="username" name="username" />
+            <input type="text" id="username" name="username" value='%s' />
         </div>
         <div data-role="fieldcontain">
             <label for="password">%s</label>
-            <input type="password" id="password" name="password" />
+            <input type="password" id="password" name="password" value='%s' />
         </div>
         <button type="submit">%s</button>
         </form>
@@ -687,7 +693,10 @@ def page_login(l, smaccount = ""):
         </div>
         </body>
         </html>
-    """ % ( _("Login", l), _("Login", l), accountline, _("Username", l), _("Password", l), _("Login", l) )
+    """ % ( _("Login", l), _("Login", l), accountline, 
+        _("Username", l), html.escape(post["username"]), 
+        _("Password", l), html.escape(post["password"]),
+        _("Login", l) )
 
 def handler(dbo, user, locationfilter, post):
     """
