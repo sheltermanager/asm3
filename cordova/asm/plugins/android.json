@@ -21,11 +21,11 @@
                             "count": 1
                         },
                         {
-                            "xml": "<feature name=\"Device\"><param name=\"android-package\" value=\"org.apache.cordova.device.Device\" /></feature>",
+                            "xml": "<feature name=\"Camera\"><param name=\"android-package\" value=\"org.apache.cordova.camera.CameraLauncher\" /></feature>",
                             "count": 1
                         },
                         {
-                            "xml": "<feature name=\"Camera\"><param name=\"android-package\" value=\"org.apache.cordova.camera.CameraLauncher\" /></feature>",
+                            "xml": "<feature name=\"Device\"><param name=\"android-package\" value=\"org.apache.cordova.device.Device\" /></feature>",
                             "count": 1
                         }
                     ]
@@ -53,13 +53,13 @@
         "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.sheltermanager.asm"
         },
-        "org.apache.cordova.console": {
-            "PACKAGE_NAME": "com.sheltermanager.asm"
-        },
-        "org.apache.cordova.device": {
-            "PACKAGE_NAME": "com.sheltermanager.asm"
-        },
         "cordova-plugin-camera": {
+            "PACKAGE_NAME": "com.sheltermanager.asm"
+        },
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "com.sheltermanager.asm"
+        },
+        "cordova-plugin-console": {
             "PACKAGE_NAME": "com.sheltermanager.asm"
         }
     },
