@@ -925,8 +925,8 @@ def donation_tags(dbo, donations):
         add_to_tags(str(i+1), d)
     tags["PAYMENTTOTALDUE"] = format_currency_no_symbol(l, totals["due"])
     tags["PAYMENTTOTALRECEIVED"] = format_currency_no_symbol(l, totals["received"])
-    tags["PAYMENTTOTALVATRATE"] = format_currency_no_symbol(l, totals["taxrate"])
-    tags["PAYMENTTOTALTAXRATE"] = format_currency_no_symbol(l, totals["taxrate"])
+    tags["PAYMENTTOTALVATRATE"] = "%0.2f" % totals["taxrate"]
+    tags["PAYMENTTOTALTAXRATE"] = "%0.2f" % totals["taxrate"]
     tags["PAYMENTTOTALVAT"] = format_currency_no_symbol(l, totals["vat"])
     tags["PAYMENTTOTALTAX"] = format_currency_no_symbol(l, totals["vat"])
     tags["PAYMENTTOTAL"] = format_currency_no_symbol(l, totals["total"])
