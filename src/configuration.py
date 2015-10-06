@@ -216,6 +216,7 @@ DEFAULTS = {
     "QuicklinksID": "40,46,25,31,34,19,20",
     "QuicklinksHomeScreen": "Yes",
     "QuicklinksAllScreens": "No",
+    "ReceiptNumberNext": "0",
     "RecordSearchLimit": "1000",
     "RetailerOnShelter": "Yes",
     "ReturnFostersOnAdoption": "Yes",
@@ -858,6 +859,14 @@ def quicklinks_id(dbo, newval = ""):
         return cstring(dbo, "QuicklinksID", DEFAULTS["QuicklinksID"])
     else:
         cset(dbo, "QuicklinksID", newval)
+
+def receipt_number_next(dbo):
+    """ Returns the ReceiptNumberNext value and increments it """
+    nrn = cint(dbo, "ReceiptNumberNext", 0)
+    if nrn == 0:
+        nrn = 1 + db.query_int(dbo, "SELECT MAX(ID) FROM ownerdonation")
+    cset(dbo, "ReceiptNumberNext", str(nrn + 1))
+    return nrn
 
 def rescuegroups_user(dbo):
     return cstring(dbo, "RescueGroupsFTPUser")
