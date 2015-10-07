@@ -10513,6 +10513,10 @@ msgstr ""
 msgid "This animal is currently held and cannot be adopted."
 msgstr ""
 
+#: movements.js move_adopt.js
+msgid "This animal is marked not for adoption."
+msgstr ""
+
 #: animal.js
 msgid "This animal is microchipped"
 msgstr ""
@@ -10823,7 +10827,7 @@ msgstr ""
 msgid "Tiger"
 msgstr ""
 
-#: reports.js diary.js
+#: reports.js log_new.js log.js diary.js
 msgid "Time"
 msgstr ""
 
@@ -10938,7 +10942,7 @@ msgstr ""
 msgid "Tosa Inu"
 msgstr ""
 
-#: stocklevel.js
+#: stocklevel.js common_widgets.js
 msgid "Total"
 msgstr ""
 
@@ -12233,6 +12237,10 @@ msgstr ""
 
 #: mailmerge.js
 msgid "inches"
+msgstr ""
+
+#: shelterview.js
+msgid "invalid"
 msgstr ""
 
 #: animal_new.js animal.js

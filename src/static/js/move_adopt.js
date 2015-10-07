@@ -45,6 +45,7 @@ $(function() {
                 '<span id="warntext" class="centered"></span>',
                 '</p>',
                 '</div>',
+
                 '<div id="notonshelter" class="ui-state-error ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
                 '<p class="centered"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>',
                 '<span class="centered">' + _("This animal is not on the shelter.") + '</span>',
@@ -53,6 +54,11 @@ $(function() {
                 '<div id="onhold" class="ui-state-error ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
                 '<p class="centered"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>',
                 '<span class="centered">' + _("This animal is currently held and cannot be adopted.") + '</span>',
+                '</p>',
+                '</div>',
+                '<div id="notavailable" class="ui-state-error ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
+                '<p class="centered"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>',
+                '<span class="centered">' + _("This animal is marked not for adoption.") + '</span>',
                 '</p>',
                 '</div>',
                 '<table class="asm-table-layout">',
@@ -180,6 +186,7 @@ $(function() {
                 $("#feeinfo").fadeOut();
                 $("#notonshelter").fadeOut();
                 $("#onhold").fadeOut();
+                $("#notavailable").fadeOut();
                 $("#adopt").button("enable");
 
                 // If the animal is not on the shelter and not fostered or at a retailer, 
@@ -193,6 +200,13 @@ $(function() {
                 // If the animal is held, we shouldn't be allowed to adopt it
                 if (rec.ISHOLD == 1) {
                     $("#onhold").fadeIn();
+                    $("#adopt").button("disable");
+                    return;
+                }
+
+                // If the animal is not available for adoption, we shouldn't be allowed to adopt it
+                if (rec.ISNOTAVAILABLEFORADOPTION == 1) {
+                    $("#notavailable").fadeIn();
                     $("#adopt").button("disable");
                     return;
                 }
@@ -306,6 +320,7 @@ $(function() {
             $("#ownerwarn").hide();
             $("#notonshelter").hide();
             $("#onhold").hide();
+            $("#notavailable").hide();
             $("#fosterinfo").hide();
             $("#reserveinfo").hide();
             $("#feeinfo").hide();

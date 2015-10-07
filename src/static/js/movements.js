@@ -393,7 +393,7 @@ $(function() {
             var p = movements.lastperson, a = movements.lastanimal, warn = [];
             tableform.dialog_error("");
 
-            // None of these warnings are valid if we this isn't an adoption
+            // None of these warnings are valid if this isn't an adoption
             if ($("#type").val() != 1) { return; }
 
             // Person warnings
@@ -431,6 +431,12 @@ $(function() {
 
             // Animal warnings
             if (a) {
+
+                // If the animal is marked not for adoption
+                if (a.ISNOTAVAILABLEFORADOPTION == 1) {
+                    warn.push(_("This animal is marked not for adoption."));
+                }
+
                 // If the animal is held, we shouldn't be allowed to adopt it
                 if (a.ISHOLD == 1) {
                     warn.push(_("This animal is currently held and cannot be adopted."));

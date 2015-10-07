@@ -1,6 +1,7 @@
 37
 ================
 
+07/10/15 Warn when adopting "not for adoption" animals #261
 06/10/15 Fix bad display of tax rates in receipts
 05/10/15 No permission should be needed for ajax get units call
 05/10/15 Stop users without view people perm removing people links
