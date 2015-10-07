@@ -162,6 +162,7 @@ DEFAULTS = {
     "EmblemPositiveTest": "Yes",
     "EmblemQuarantine": "Yes",
     "EmblemReserved": "Yes",
+    "EmblemSpecialNeeds": "Yes",
     "EmblemTrialAdoption": "Yes",
     "EmblemUnneutered": "Yes",
     "FancyTooltips": "No",

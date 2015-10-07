@@ -1520,8 +1520,11 @@
                 if (a.FLVRESULT == 2) { p.push(_("FLV+")); }
                 s.push(html.icon("positivetest", p.join(" ")));
             }
+            if (config.bool("EmblemSpecialNeeds") && a.HASSPECIALNEEDS == 1) {
+                s.push(html.icon("health", _("Special Needs")));
+            }
             if (config.bool("EmblemUnneutered") && a.NEUTERED == 0) {
-                s.push(html.icon("health", _("Unaltered")));
+                s.push(html.icon("unneutered", _("Unaltered")));
             }
             if (config.bool("EmblemNotMicrochipped") && a.IDENTICHIPPED == 0 && a.NONSHELTERANIMAL == 0) {
                 s.push(html.icon("microchip", _("Not Microchipped")));

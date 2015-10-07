@@ -396,7 +396,7 @@ $(function() {
 
         render_health_and_identification: function() {
             return [
-                '<h3><a href="#">' + _("Health and Identification") + ' <span id="tabvet" style="display: none" class="asm-icon asm-icon-health"></span></a></h3><div>',
+                '<h3><a href="#">' + _("Health and Identification") + ' <span id="tabhealth" style="display: none" class="asm-icon asm-icon-health"></span></a></h3><div>',
                 '<!-- Outer table -->',
                 '<table width="100%">',
                 '<tr>',
@@ -999,12 +999,12 @@ $(function() {
 
             // ACCORDION ICONS =======================================================
 
-            // A value in health problems or special needs being checked flags Vet tab
+            // A value in health problems or special needs being checked flags health/id tab
             if ($("#healthproblems").val() != "" || $("#specialneeds").is(":checked")) {
-                $("#tabvet").show();
+                $("#tabhealth").show();
             }
             else {
-                $("#tabvet").hide();
+                $("#tabhealth").hide();
             }
 
             // A deceased date being completed flags Death tab

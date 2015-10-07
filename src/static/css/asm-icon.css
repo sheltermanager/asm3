@@ -1,8 +1,8 @@
 .asm-icon {
-	background-image: url('static/images/icons/asm-icon.png?gen=20150916082410'); display: inline-block; vertical-align: middle; 
+	background-image: url('static/images/icons/asm-icon.png?gen=20151007125541'); display: inline-block; vertical-align: middle; 
 }
 .asm-icon-bg {
-	background-image: url('static/images/icons/asm-icon.png?gen=20150916082410'); 
+	background-image: url('static/images/icons/asm-icon.png?gen=20151007125541'); 
 }
 .asm-icon-accounts {
 	background-position:0 -0px;
@@ -72,490 +72,495 @@
 .asm-icon-asm-icon {
 	background-position:0 -213px;
 	width: 19px;
-	height: 1756px;
+	height: 1772px;
 }
 .asm-icon-auth {
-	background-position:0 -1969px;
-	width: 16px;
-	height: 16px;
-}
-.asm-icon-back {
 	background-position:0 -1985px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-batch {
+.asm-icon-back {
 	background-position:0 -2001px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-blank {
+.asm-icon-batch {
 	background-position:0 -2017px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-book {
+.asm-icon-blank {
 	background-position:0 -2033px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-calendar {
+.asm-icon-book {
 	background-position:0 -2049px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-call {
+.asm-icon-calendar {
 	background-position:0 -2065px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-case {
+.asm-icon-call {
 	background-position:0 -2081px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-citation {
+.asm-icon-case {
 	background-position:0 -2097px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-complete {
+.asm-icon-citation {
 	background-position:0 -2113px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-copy {
+.asm-icon-complete {
 	background-position:0 -2129px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-cost {
+.asm-icon-copy {
 	background-position:0 -2145px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-database {
+.asm-icon-cost {
 	background-position:0 -2161px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-death {
+.asm-icon-database {
 	background-position:0 -2177px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-delete {
+.asm-icon-death {
 	background-position:0 -2193px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-diary {
+.asm-icon-delete {
 	background-position:0 -2209px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-diary-task {
+.asm-icon-diary {
 	background-position:0 -2225px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-diet {
+.asm-icon-diary-task {
 	background-position:0 -2241px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-document {
+.asm-icon-diet {
 	background-position:0 -2257px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-donation {
+.asm-icon-document {
 	background-position:0 -2273px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-edit {
+.asm-icon-donation {
 	background-position:0 -2289px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-email {
+.asm-icon-edit {
 	background-position:0 -2305px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-facebook {
+.asm-icon-email {
 	background-position:0 -2321px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-faq {
+.asm-icon-facebook {
 	background-position:0 -2337px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-find {
+.asm-icon-faq {
 	background-position:0 -2353px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-forms {
+.asm-icon-find {
 	background-position:0 -2369px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-gplus {
+.asm-icon-forms {
 	background-position:0 -2385px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-health {
+.asm-icon-gplus {
 	background-position:0 -2401px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-help {
+.asm-icon-health {
 	background-position:0 -2417px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-highlight1 {
+.asm-icon-help {
 	background-position:0 -2433px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-highlight2 {
+.asm-icon-highlight1 {
 	background-position:0 -2449px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-highlight3 {
+.asm-icon-highlight2 {
 	background-position:0 -2465px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-highlight4 {
+.asm-icon-highlight3 {
 	background-position:0 -2481px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-highlight5 {
+.asm-icon-highlight4 {
 	background-position:0 -2497px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-highlight {
+.asm-icon-highlight5 {
 	background-position:0 -2513px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-hold {
+.asm-icon-highlight {
 	background-position:0 -2529px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-image {
+.asm-icon-hold {
 	background-position:0 -2545px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-investigation {
+.asm-icon-image {
 	background-position:0 -2561px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-licence {
+.asm-icon-investigation {
 	background-position:0 -2577px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-link {
+.asm-icon-licence {
 	background-position:0 -2593px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-litter-new {
+.asm-icon-link {
 	background-position:0 -2609px;
+	width: 16px;
+	height: 16px;
+}
+.asm-icon-litter-new {
+	background-position:0 -2625px;
 	width: 16px;
 	height: 15px;
 }
 .asm-icon-litter {
-	background-position:0 -2624px;
+	background-position:0 -2640px;
 	width: 16px;
 	height: 15px;
 }
 .asm-icon-location {
-	background-position:0 -2639px;
-	width: 16px;
-	height: 16px;
-}
-.asm-icon-logo {
 	background-position:0 -2655px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-logout {
+.asm-icon-logo {
 	background-position:0 -2671px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-log {
+.asm-icon-logout {
 	background-position:0 -2687px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-lookups {
+.asm-icon-log {
 	background-position:0 -2703px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-map {
+.asm-icon-lookups {
 	background-position:0 -2719px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-match {
+.asm-icon-map {
 	background-position:0 -2735px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-media-add {
+.asm-icon-match {
 	background-position:0 -2751px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-media-delete {
+.asm-icon-media-add {
 	background-position:0 -2767px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-media {
+.asm-icon-media-delete {
 	background-position:0 -2783px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-medical {
+.asm-icon-media {
 	background-position:0 -2799px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-message_new {
+.asm-icon-medical {
 	background-position:0 -2815px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-message {
+.asm-icon-message_new {
 	background-position:0 -2831px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-microchip {
+.asm-icon-message {
 	background-position:0 -2847px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-mobile {
+.asm-icon-microchip {
 	background-position:0 -2863px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-movement {
+.asm-icon-mobile {
 	background-position:0 -2879px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-new {
+.asm-icon-movement {
 	background-position:0 -2895px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-nonshelter {
+.asm-icon-new {
 	background-position:0 -2911px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-notforadoption {
+.asm-icon-nonshelter {
 	background-position:0 -2927px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-pdf {
+.asm-icon-notforadoption {
 	background-position:0 -2943px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-person-add {
+.asm-icon-pdf {
 	background-position:0 -2959px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-person-find {
+.asm-icon-person-add {
 	background-position:0 -2975px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-person {
+.asm-icon-person-find {
 	background-position:0 -2991px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-pinterest {
+.asm-icon-person {
 	background-position:0 -3007px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-positivetest {
+.asm-icon-pinterest {
 	background-position:0 -3023px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-print {
+.asm-icon-positivetest {
 	background-position:0 -3039px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-quarantine {
+.asm-icon-print {
 	background-position:0 -3055px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-refresh {
+.asm-icon-quarantine {
 	background-position:0 -3071px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-report {
+.asm-icon-refresh {
 	background-position:0 -3087px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-reservation {
+.asm-icon-report {
 	background-position:0 -3103px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-right {
+.asm-icon-reservation {
 	background-position:0 -3119px;
+	width: 16px;
+	height: 16px;
+}
+.asm-icon-right {
+	background-position:0 -3135px;
 	width: 9px;
 	height: 9px;
 }
 .asm-icon-rota {
-	background-position:0 -3128px;
-	width: 16px;
-	height: 16px;
-}
-.asm-icon-rotate-anti {
 	background-position:0 -3144px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-rotate-clock {
+.asm-icon-rotate-anti {
 	background-position:0 -3160px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-rss {
+.asm-icon-rotate-clock {
 	background-position:0 -3176px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-save {
+.asm-icon-rss {
 	background-position:0 -3192px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-search {
+.asm-icon-save {
 	background-position:0 -3208px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-settings {
+.asm-icon-search {
 	background-position:0 -3224px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-signature {
+.asm-icon-settings {
 	background-position:0 -3240px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-social {
+.asm-icon-signature {
 	background-position:0 -3256px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-sql {
+.asm-icon-social {
 	background-position:0 -3272px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-stock {
+.asm-icon-sql {
 	background-position:0 -3288px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-test {
+.asm-icon-stock {
 	background-position:0 -3304px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-transactions {
+.asm-icon-test {
 	background-position:0 -3320px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-transport {
+.asm-icon-transactions {
 	background-position:0 -3336px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-traploan {
+.asm-icon-transport {
 	background-position:0 -3352px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-trial {
+.asm-icon-traploan {
 	background-position:0 -3368px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-tumblr {
+.asm-icon-trial {
 	background-position:0 -3384px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-twitter {
+.asm-icon-tumblr {
 	background-position:0 -3400px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-users {
+.asm-icon-twitter {
 	background-position:0 -3416px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-vaccination {
+.asm-icon-unneutered {
 	background-position:0 -3432px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-video {
+.asm-icon-users {
 	background-position:0 -3448px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-waitinglist {
+.asm-icon-vaccination {
 	background-position:0 -3464px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-web {
+.asm-icon-video {
 	background-position:0 -3480px;
 	width: 16px;
 	height: 16px;
 }
-.asm-icon-youtube {
+.asm-icon-waitinglist {
 	background-position:0 -3496px;
+	width: 16px;
+	height: 16px;
+}
+.asm-icon-web {
+	background-position:0 -3512px;
+	width: 16px;
+	height: 16px;
+}
+.asm-icon-youtube {
+	background-position:0 -3528px;
 	width: 16px;
 	height: 16px;
 }

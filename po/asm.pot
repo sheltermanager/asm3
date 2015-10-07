@@ -9606,7 +9606,7 @@ msgstr ""
 msgid "Spaniel"
 msgstr ""
 
-#: animal.js animal_find_results.js mobile.py html.py
+#: common.js animal.js animal_find_results.js options.js mobile.py html.py
 msgid "Special Needs"
 msgstr ""
 

@@ -423,10 +423,12 @@ $(function() {
                     html.icon("quarantine") + ' <label for="showquarantine">' + _("Quarantine") + '</label><br />',
                 '<input data="EmblemReserved" type="checkbox" id="showreserved" class="asm-checkbox" type="checkbox" />',
                     html.icon("reservation") + ' <label for="showreserved">' + _("Reserved") + '</label><br />',
+                '<input data="EmblemSpecialNeeds" type="checkbox" id="showspecialneeds" class="asm-checkbox" type="checkbox" />',
+                    html.icon("health") + ' <label for="showspecialneeds">' + _("Special Needs") + '</label><br />',
                 '<input data="EmblemTrialAdoption" type="checkbox" id="showtrialadoption" class="asm-checkbox" type="checkbox" />',
                     html.icon("trial") + ' <label for="showtrialadoption">' + _("Trial Adoption") + '</label><br />',
                 '<input data="EmblemUnneutered" type="checkbox" id="showunneutered" class="asm-checkbox" type="checkbox" />',
-                    html.icon("health") + ' <label for="showunneutered">' + _("Unaltered") + '</label><br />',
+                    html.icon("unneutered") + ' <label for="showunneutered">' + _("Unaltered") + '</label><br />',
                 '</p>',
                 '</div>'
             ].join("\n");
