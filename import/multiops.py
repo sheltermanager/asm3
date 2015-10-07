@@ -462,6 +462,8 @@ for row in ccomplaints:
     ac.IncidentTypeID = asm.incidenttype_from_db(incidentname)
     ac.DispatchDateTime = ac.CallDateTime
     ac.CompletedDate = asm.getdate_mmddyy(row["StatusDate"])
+    if ac.CompletedDate is None:
+        ac.CompletedDate = ac.CallDateTime
     ac.DispatchAddress = row["StreetNumber"] + " " + row["Street"]
     ac.DispatchTown = row["City"]
     ac.DispatchCounty = row["State"]
