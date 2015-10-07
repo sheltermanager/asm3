@@ -261,6 +261,8 @@ def get_animal_data_query(dbo, pc, animalid = 0):
     sql += " AND a.HasPermanentFoster = 0"
     # Build a set of OR clauses based on any movements/locations
     moveor = []
+    # Always include courtesy post non-shelter animals
+    moveor.append("(a.NonShelterAnimal = 1 AND a.IsCourtesy = 1)")
     if len(pc.internalLocations) > 0 and pc.internalLocations[0].strip() != "null":
         moveor.append("(a.Archived = 0 AND a.ShelterLocation IN (%s))" % ",".join(pc.internalLocations))
     else:
@@ -4064,8 +4066,11 @@ class RescueGroupsPublisher(FTPPublisher):
                 line.append("\"\"")
                 # pattern (not implemented)
                 line.append("\"\"")
-                # courtesy (what is this?)
-                line.append("\"\"")
+                # courtesy
+                if an["ISCOURTESY"] == 1:
+                    line.append("\"1\"")
+                else:
+                    line.append("\"\"")
                 # Description
                 line.append("\"%s\"" % self.getDescription(an, crToBr=True))
                 # pic1-pic4
