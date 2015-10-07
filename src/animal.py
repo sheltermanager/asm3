@@ -423,8 +423,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = ""):
        hasactivereserve - "both" "reserved" "unreserved"
        logicallocation - "all" "onshelter" "adoptable" "adopted" 
             "fostered" "permanentfoster" "transferred" "escaped" "stolen" "releasedtowild" 
-            "reclaimed" "retailer" "nonshelter" "deceased" "notforadoption",
-            "hold", "quarantine"
+            "reclaimed" "retailer" "deceased", "hold", "quarantine"
        inbetweenfrom - date string in current locale display format
        inbetweento - date string in current locale display format
        features - partial word/string match
@@ -559,7 +558,6 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = ""):
     addcomp("logicallocation", "onshelter", "a.Archived = 0")
     addcomp("logicallocation", "adoptable", "a.Archived = 0 AND a.IsNotAvailableForAdoption = 0 AND a.HasTrialAdoption = 0")
     addcomp("logicallocation", "reserved", "a.Archived = 0 AND a.HasActiveReserve = 1 AND a.HasTrialAdoption = 0")
-    addcomp("logicallocation", "notforadoption", "a.IsNotAvailableForAdoption = 1 AND a.Archived = 0")
     addcomp("logicallocation", "hold", "a.IsHold = 1 AND a.Archived = 0")
     addcomp("logicallocation", "fostered", "a.ActiveMovementType = %d" % movement.FOSTER)
     addcomp("logicallocation", "permanentfoster", "a.ActiveMovementType = %d AND a.HasPermanentFoster = 1" % movement.FOSTER)
@@ -571,7 +569,6 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = ""):
     addcomp("logicallocation", "reclaimed", "a.ActiveMovementType = %d" % movement.RECLAIMED)
     addcomp("logicallocation", "retailer", "a.ActiveMovementType = %d" % movement.RETAILER)
     addcomp("logicallocation", "deceased", "a.DeceasedDate Is Not Null")
-    addcomp("logicallocation", "nonshelter", "a.NonShelterAnimal = 1")
     if crit("flags") != "":
         for flag in crit("flags").split(","):
             if flag == "courtesy": c.append("a.IsCourtesy=1")

@@ -113,8 +113,6 @@ $(function() {
                 '<option value="escaped">' + _("Escaped") + '</option>',
                 '<option value="fostered">' + _("Fostered") + '</option>',
                 '<option value="hold">' + _("Hold") + '</option>',
-                '<option value="nonshelter">' + _("Non-Shelter") + '</option>',
-                '<option value="notforadoption">' + _("Not For Adoption") + '</option>',
                 '<option value="permanentfoster">' + _("Permanent Foster") + '</option>',
                 '<option value="reclaimed">' + _("Reclaimed") + '</option>',
                 '<option value="releasedtowild">' + _("Released To Wild") + '</option>',
