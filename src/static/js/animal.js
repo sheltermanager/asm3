@@ -105,14 +105,6 @@ $(function() {
                 html.list_to_options(controller.coattypes, "ID", "COATTYPE"),
                 '</select></td>',
                 '</tr>',
-                '</table>',
-                '<!-- right table -->',
-                '<td>',
-                '<table>',
-                '<tr>',
-                '<td>',
-                '<!-- second column-->',
-                '<table class="additionaltarget" data="to2">',
                 '<tr id="sizerow">',
                 '<td><label for="size">' + _("Size") + '</label></td>',
                 '<td><select id="size" data-json="SIZE" data-post="size" class="asm-selectbox" title="' + html.title(_("The size of this animal")) + '">',
@@ -137,6 +129,14 @@ $(function() {
                 '</span>',
                 '</td>',
                 '</tr>',
+                '</table>',
+                '<!-- right table -->',
+                '<td>',
+                '<table>',
+                '<tr>',
+                '<td>',
+                '<!-- second column-->',
+                '<table class="additionaltarget" data="to2">',
                 '<tr>',
                 '<td><label for="species">' + _("Species") + '</label></td>',
                 '<td><select id="species" data-json="SPECIESID" data-post="species" class="asm-selectbox" title="' + html.title(_("The species of this animal")) + '">',
@@ -153,8 +153,11 @@ $(function() {
                 '</select></td>',
                 '</tr>',
                 '<tr id="secondbreedrow">',
-                '<td><label for="crossbreed">' + _("Crossbreed") + '</label>',
+                '<td>',
+                '<span style="white-space: nowrap">',
+                '<label for="crossbreed">' + _("Crossbreed") + '</label>',
                 '<input type="checkbox" class="asm-checkbox" id="crossbreed" data-json="CROSSBREED" data-post="crossbreed" title="' + _("This animal is a crossbreed") + '" /></td>',
+                '</span>',
                 '<td><select id="breed2" data-json="BREED2ID" data-post="breed2" class="asm-selectbox" title="' + html.title(_("The secondary breed of this animal")) + '">',
                 html.list_to_options_breeds(controller.breeds),
                 '</select></td>',
@@ -172,12 +175,20 @@ $(function() {
                 '<td><label for="unit">' + _("Unit") + '</label></td>',
                 '<td>',
                 '<input id="unit" data-json="SHELTERLOCATIONUNIT" data-post="unit" class="asm-textbox" title="' + html.title(_("Unit within the location, eg: pen or cage number")) + '" />',
+                '<!--<button id="button-unit"></button>-->',
                 '</td>',
                 '</tr>',
                 '<tr id="lastlocation">',
                 '<td><label>' + _("Last Location") + '</label></td>',
                 '<td>',
                 '<a class="asm-embed-name" href="animal_find_results?logicallocation=onshelter&shelterlocation=' + controller.animal.SHELTERLOCATION + '">' + controller.animal.SHELTERLOCATIONNAME + ' ' + common.nulltostr(controller.animal.SHELTERLOCATIONUNIT) + '</a>',
+                '</td>',
+                '</tr>',
+                '<tr id="onshelterflags">',
+                '<td><label for="flags">' + _("Flags") + '</label></td>',
+                '<td>',
+                '<select id="flags" data="flags" class="asm-bsmselect" multiple="multiple">',
+                '</select>',
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -198,45 +209,7 @@ $(function() {
                 '<!-- end right table -->',
                 '</table>',
                 '</td>',
-                '<!-- final column holds flags -->',
-                '<td id="onshelterflags">',
-                '<span style="white-space: nowrap">',
-                //html.icon("nonshelter"),
-                '<input class="asm-checkbox" type="checkbox" id="nonshelter" data-json="NONSHELTERANIMAL" data-post="nonshelter" title=',
-                '"' + html.title(_("This animal should not be shown in figures and is not in the custody of the shelter")) + '" />',
-                '<label for="nonshelter" class="asm-search-nonshelter">' + _("Non-Shelter") + '</label>',
-                '</span>',
-                '<br />',
-                '<span style="white-space: nowrap">',
-                //html.icon("notforadoption"),
-                '<input class="asm-checkbox" type="checkbox" id="notforadoption" data-json="ISNOTAVAILABLEFORADOPTION" data-post="notforadoption" title=',
-                '"' + html.title(_("This animal should not be included when publishing animals for adoption")) + '" />',
-                '<label for="notforadoption" class="asm-search-notforadoption">' + _("Not For Adoption") + '</label>',
-                '</span>',
-                '<br />',
-                '<span style="white-space: nowrap">',
-                //html.icon("hold"),
-                '<input class="asm-checkbox" type="checkbox" id="hold" data-json="ISHOLD" data-post="hold" title=',
-                '"' + html.title(_("This animal should be held in case it is reclaimed")) + '" />',
-                '<label for="hold">' + _("Hold until") + '</label>',
-                '<input class="asm-halftextbox asm-datebox" id="holduntil" data-json="HOLDUNTILDATE" data-post="holduntil" title=',
-                '"' + html.title(_("Hold the animal until this date or blank to hold indefinitely")) + '" />',
-                '</span>',
-                '<br/>',
-                '<span style="white-space: nowrap">',
-                //html.icon("quarantine"),
-                '<input class="asm-checkbox" type="checkbox" id="quarantine" data-json="ISQUARANTINE" data-post="quarantine" title=',
-                '"' + html.title(_("This animal is quarantined")) + '" />',
-                '<label for="quarantine">' + _("Quarantine") + '</label>',
-                '</span>',
-                '<br />',
-                '<span style="white-space: nowrap">',
-                //html.icon("case"),
-                '<input class="asm-checkbox" type="checkbox" id="crueltycase" data-json="CRUELTYCASE" data-post="crueltycase" title=',
-                '"' + html.title(_("This animal is part of a cruelty case against an owner")) + '" />',
-                '<label for="crueltycase">' + _("Cruelty Case") + '</label>',
-                '</span>',
-                '</td>',
+
                 '<!-- end outer table -->',
                 '</tr>',
                 '</table>',
@@ -318,9 +291,11 @@ $(function() {
                 '<tr id="pickeduprow">',
                 '<td></td>',
                 '<td>',
+                '<span style="white-space: nowrap">',
                 '<input class="asm-checkbox" type="checkbox" id="pickedup" data-json="ISPICKUP" data-post="pickedup" title=',
                 '"' + html.title(_("This animal was picked up")) + '" />',
                 '<label for="pickedup">' + _("Picked Up") + '</label>',
+                '</span>',
                 '</td>',
                 '</tr>',
                 '<tr id="pickuplocationrow">',
@@ -338,6 +313,18 @@ $(function() {
                 '</td>',
                 '<td valign="top">',
                 '<input id="pickedupby" data-json="PICKEDUPBYOWNERID" data-post="pickedupby" data-filter="aco" type="hidden" class="asm-personchooser" />',
+                '</td>',
+                '</tr>',
+                '<tr id="holdrow">',
+                '<td></td>',
+                '<td>',
+                '<span style="white-space: nowrap">',
+                '<input class="asm-checkbox" type="checkbox" id="hold" data-json="ISHOLD" data-post="hold" title=',
+                '"' + html.title(_("This animal should be held in case it is reclaimed")) + '" />',
+                '<label for="hold">' + _("Hold until") + '</label>',
+                '<input class="asm-halftextbox asm-datebox" id="holduntil" data-json="HOLDUNTILDATE" data-post="holduntil" title=',
+                '"' + html.title(_("Hold the animal until this date or blank to hold indefinitely")) + '" />',
+                '</span>',
                 '</td>',
                 '</tr>',
                 '<tr class="asilomar">',
@@ -879,18 +866,19 @@ $(function() {
             }
 
             // Hide the on shelter flags if the animal is off the shelter
-            if (controller.animal.ARCHIVED == 1 && controller.animal.ACTIVEMOVEMENTTYPE != 2 && !$("#nonshelter").is(":checked")) {
+            if (controller.animal.ARCHIVED == 1 && controller.animal.ACTIVEMOVEMENTTYPE != 2 && controller.animal.NONSHELTERANIMAL == 0) {
                 $("#onshelterflags").hide();
             }
 
             // If the animal is non-shelter, don't show the location, 
             // transfer/pickup, brought in by owner, bonded with, reasons or asilomar
-            if ($("#nonshelter").is(":checked")) {
+            if ($("#flags option[value='nonshelter']").is(":selected")) {
                 $("#lastlocation").hide();
                 $("#locationrow").hide();
                 $("#locationunitrow").hide();
                 $("#transferinrow").hide();
                 $("#pickeduprow").hide();
+                $("#holdrow").hide();
                 $("#broughtinbyownerrow").hide();
                 $("#originalownerrow td").removeClass("bottomborder");
                 $("#bondedwith1row").hide();
@@ -1377,6 +1365,13 @@ $(function() {
                     });
             });
 
+            $("#button-unit")
+                .button({ icons: { primary: "ui-icon-refresh" }, text: false })
+                .click(function() {
+                    $("#unit").focus();
+                    $("#unit").autocomplete("search", "");   
+                });
+
             $("#button-commentstomedia")
                 .hide()
                 .button({ icons: { primary: "ui-icon-arrow-1-ne" }, text: false })
@@ -1405,6 +1400,9 @@ $(function() {
             // Update the breeds to match the species we just loaded and reload the breed values
             animal.update_breed_list();
             $("#breed1, #breed2").fromJSON(controller.animal);
+
+            // Load animal flags
+            html.animal_flag_options(controller.animal, controller.flags, $("#flags"));
 
             // Update the unit autocomplete to match the selected location
             animal.update_units();

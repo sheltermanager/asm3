@@ -116,7 +116,6 @@ $(function() {
                 '<option value="nonshelter">' + _("Non-Shelter") + '</option>',
                 '<option value="notforadoption">' + _("Not For Adoption") + '</option>',
                 '<option value="permanentfoster">' + _("Permanent Foster") + '</option>',
-                '<option value="quarantine">' + _("Quarantine") + '</option>',
                 '<option value="reclaimed">' + _("Reclaimed") + '</option>',
                 '<option value="releasedtowild">' + _("Released To Wild") + '</option>',
                 '<option value="reserved">' + _("Reserved") + '</option>',
@@ -258,9 +257,6 @@ $(function() {
                 '</td>',
                 '<td>',
                 '<select id="filter" data="filter" multiple="multiple" class="asm-bsmselect">',
-                // Both of these can be selected as logical locations
-                //'<option value="includedeceased">' + _("Include deceased") + '</option>',
-                //'<option value="includenonshelter">' + _("Include non-shelter") + '</option>',
                 '<option value="goodwithchildren">' + _("Good with children") + '</option>',
                 '<option value="goodwithcats">' + _("Good with cats") + '</option>',
                 '<option value="goodwithdogs">' + _("Good with dogs") + '</option>',
@@ -286,6 +282,13 @@ $(function() {
                 '</td>',
                 '<td>',
                 '<input id="medianotes" data="medianotes" class="asm-textbox" />',
+                '</td>',
+                '<td>',
+                '<label for="flags">' + _("Flags") + '</label>',
+                '</td>',
+                '<td>',
+                '<select id="flags" data="flags" class="asm-bsmselect" multiple="multiple">',
+                '</select>',
                 '</td>',
                 '</tr>',
                 '</table>',
@@ -391,6 +394,9 @@ $(function() {
             $('#speciesid').change(function() {
                 changebreedselect1();
             });
+
+            // Load animal flags
+            html.animal_flag_options(controller.animal, controller.flags, $("#flags"));
 
             // Search button
             $("#searchbutton").button();

@@ -11,6 +11,7 @@ from i18n import _, add_days, now
 # tablename : ( tablelabel, namefield, namelabel, descfield, hasspecies, haspfspecies, haspfbreed, hasapcolour, hasdefaultcost, hasunits, canadd, candelete, (foreignkeys) )
 LOOKUP_TABLES = {
     "lksaccounttype":   (_("Account Types"), "AccountType", _("Type"), "", 0, 0, 0, 0, 0, 0, 0, 0, ("accounts.AccountType",)),
+    "lkanimalflags":    (_("Animal Flags"), "Flag", _("Flag"), "", 0, 0, 0, 0, 0, 0, 1, 1, ""),
     "animaltype":       (_("Animal Types"), "AnimalType", _("Type"), "AnimalDescription", 0, 0, 0, 0, 0, 0, 1, 1, ("animal.AnimalTypeID",)),
     "basecolour":       (_("Colors"), "BaseColour", _("Color"), "BaseColourDescription", 0, 0, 0, 1, 0, 0, 1, 1, ("animal.BaseColourID", "animallost.BaseColourID", "animalfound.BaseColourID")),
     "breed":            (_("Breeds"), "BreedName", _("Breed"), "BreedDescription", 1, 0, 1, 0, 0, 0, 1, 1, ("animal.BreedID", "animal.Breed2ID", "animallost.BreedID", "animalfound.BreedID")),
@@ -863,6 +864,9 @@ def get_additionalfield_links(dbo):
 
 def get_additionalfield_types(dbo):
     return db.query(dbo, "SELECT * FROM lksfieldtype ORDER BY FieldType")
+
+def get_animal_flags(dbo):
+    return db.query(dbo, "SELECT * FROM lkanimalflags ORDER BY Flag")
 
 def get_animal_types(dbo):
     return db.query(dbo, "SELECT * FROM animaltype ORDER BY AnimalType")

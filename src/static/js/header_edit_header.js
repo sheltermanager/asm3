@@ -467,6 +467,39 @@ $(function() {
         },
 
         /**
+         * Returns a string list of enabled flags for an animal record,
+         * Eg: Quarantine, Cruelty Case, etc.
+         */
+        animal_flags: function(a) {
+            var flags = [];
+            if (a.ISCOURTESY == 1) {
+                flags.push(_("Courtesy Listing"));
+            }
+            if (a.CRUELTYCASE == 1) {
+                flags.push(_("Cruelty Case"));
+            }
+            if (a.NONSHELTERANIMAL == 1) {
+                flags.push(_("Non-Shelter"));
+            }
+            if (a.ISNOTAVAILABLEFORADOPTION == 1) {
+                flags.push("<span style=\"color: red\">" + _("Not For Adoption") + "</span>");
+            }
+            if (a.ISQUARANTINE == 1) {
+                flags.push(_("Quarantine"));
+            }
+            if (a.ADDITIONALFLAGS != null) {
+                var stock = [ "crueltycase", "nonshelter", "notforadoption", "quarantine" ];
+                $.each(a.ADDITIONALFLAGS.split("|"), function(i, v) {
+                    if (v != "" && $.inArray(v, stock) == -1) {
+                        flags.push(v);
+                    }
+                });
+            }
+            flags.sort();
+            return flags.join(", ");
+        },
+
+        /**
          * Returns a string list of enabled flags for a person record,
          * Eg: Volunteer, member, donor, etc.
          */

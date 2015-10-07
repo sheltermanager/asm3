@@ -441,7 +441,6 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = ""):
        filter - one or more of:
            showtransfersonly
            showpickupsonly
-           showcrueltycaseonly
            showspecialneedsonly
            goodwithchildren
            goodwithcats
@@ -450,6 +449,12 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = ""):
            fivplus
            flvplus
            heartwormplus
+        flag - one or more of (plus custom):
+            courtesy
+            crueltycase
+            nonshelter
+            notforadoption
+            quarantine
     locationfilter: IN clause of locations to search
     """
     c = []
@@ -521,7 +526,6 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = ""):
     addfilter("housetrained", "a.IsHouseTrained = 0")
     addfilter("showtransfersonly", "a.IsTransfer = 1")
     addfilter("showpickupsonly", "a.IsPickup = 1")
-    addfilter("showcrueltycaseonly", "a.CrueltyCase = 1")
     addfilter("showspecialneedsonly", "a.HasSpecialNeeds = 1")
     addfilter("fivplus", "a.CombiTested = 1 AND a.CombiTestResult = 2")
     addfilter("flvplus", "a.CombiTested = 1 AND a.FLVResult = 2")
@@ -555,7 +559,6 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = ""):
     addcomp("logicallocation", "reserved", "a.Archived = 0 AND a.HasActiveReserve = 1 AND a.HasTrialAdoption = 0")
     addcomp("logicallocation", "notforadoption", "a.IsNotAvailableForAdoption = 1 AND a.Archived = 0")
     addcomp("logicallocation", "hold", "a.IsHold = 1 AND a.Archived = 0")
-    addcomp("logicallocation", "quarantine", "a.IsQuarantine = 1 AND a.Archived = 0")
     addcomp("logicallocation", "fostered", "a.ActiveMovementType = %d" % movement.FOSTER)
     addcomp("logicallocation", "permanentfoster", "a.ActiveMovementType = %d AND a.HasPermanentFoster = 1" % movement.FOSTER)
     addcomp("logicallocation", "adopted", "a.ActiveMovementType = %d" % movement.ADOPTION)
@@ -567,6 +570,14 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = ""):
     addcomp("logicallocation", "retailer", "a.ActiveMovementType = %d" % movement.RETAILER)
     addcomp("logicallocation", "deceased", "a.DeceasedDate Is Not Null")
     addcomp("logicallocation", "nonshelter", "a.NonShelterAnimal = 1")
+    if crit("flags") != "":
+        for flag in crit("flags").split(","):
+            if flag == "courtesy": c.append("a.IsCourtesy=1")
+            elif flag == "crueltycase": c.append("a.CrueltyCase=1")
+            elif flag == "nonshelter": c.append("a.NonShelterAnimal=1")
+            elif flag == "notforadoption": c.append("a.IsNotAvailableForAdoption=1")
+            elif flag == "quarantine": c.append("a.IsQuarantine=1")
+            else: c.append("LOWER(a.AdditionalFlags) LIKE '%%%s%%'" % str(flag).lower())
     where = ""
     if len(c) > 0:
         where = " WHERE " + " AND ".join(c)
@@ -1789,7 +1800,9 @@ def insert_animal_from_form(dbo, post, username):
         ( "IsPickup", db.di(0)),
         ( "IsHold", db.di(0)),
         ( "HoldUntilDate", db.dd(None)),
+        ( "IsCourtesy", db.di(0)),
         ( "IsQuarantine", db.di(0)),
+        ( "AdditionalFlags", db.ds("")),
         ( "DateBroughtIn", db.ddt(datebroughtin)),
         ( "AsilomarIntakeCategory", db.di(0)),
         ( "AsilomarIsTransferExternal", db.di(0)),
@@ -1928,14 +1941,26 @@ def update_animal_from_form(dbo, post, username):
             log.add_log(dbo, username, log.ANIMAL, ki("id"), configuration.weight_change_log_type(dbo),
                 str(kf("weight")))
 
+    # Sort out any flags
+    flags = post["flags"].split(",")
+    def bi(b): return b and 1 or 0
+    courtesy = bi("courtesy" in flags)
+    crueltycase = bi("crueltycase" in flags)
+    notforadoption = bi("notforadoption" in flags)
+    nonshelter = bi("nonshelter" in flags)
+    quarantine = bi("quarantine" in flags)
+    flagstr = "|".join(flags) + "|"
+
     preaudit = db.query(dbo, "SELECT * FROM animal WHERE ID = %d" % ki("id"))
     db.execute(dbo, db.make_update_user_sql(dbo, "animal", username, "ID=%d" % ki("id"), (
-        ( "NonShelterAnimal", c("nonshelter")),
-        ( "IsNotAvailableForAdoption", c("notforadoption")),
+        ( "NonShelterAnimal", db.di(nonshelter)),
+        ( "IsNotAvailableForAdoption", db.di(notforadoption)),
         ( "IsHold", c("hold")),
         ( "HoldUntilDate", d("holduntil")),
-        ( "IsQuarantine", c("quarantine")),
-        ( "CrueltyCase", c("crueltycase")),
+        ( "IsQuarantine", db.di(quarantine)),
+        ( "IsCourtesy", db.di(courtesy)),
+        ( "CrueltyCase", db.di(crueltycase)),
+        ( "AdditionalFlags", db.ds(flagstr)),
         ( "ShelterCode", t("sheltercode")),
         ( "ShortCode", t("shortcode")),
         ( "UniqueCodeID", s("uniquecode")),

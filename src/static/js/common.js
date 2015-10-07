@@ -1571,6 +1571,66 @@
         },
 
         /**
+         * Renders a list of <option> tags for animal flags.
+         * It mixes in any additional animal flags to the regular
+         * set, sorts them all alphabetically and applies them
+         * to the select specified by selector. If an animal record
+         * is passed, then it will be checked and selected items
+         * will be selected.
+         * a: An animal record (or null if not available)
+         * flags: A list of extra animal flags from the lookup call
+         * node: A jquery dom node of the select box to populate
+         * includeall: Have an all/(all) option at the top of the list
+         */
+        animal_flag_options: function(a, flags, node, includeall) {
+
+            var opt = [];
+            var field_option = function(fieldname, post, label) {
+                var sel = a && a[fieldname] == 1 ? 'selected="selected"' : "";
+                return '<option value="' + post + '" ' + sel + '>' + label + '</option>\n';
+            };
+
+            var flag_option = function(flag) {
+                var sel = "";
+                if (!a || !a.ADDITIONALFLAGS) { sel = ""; }
+                else {
+                    $.each(a.ADDITIONALFLAGS.split("|"), function(i, v) {
+                        if (v == flag) {
+                            sel = 'selected="selected"';
+                        }
+                    });
+                }
+                return '<option ' + sel + '>' + flag + '</option>';
+            };
+
+            var h = [
+                { label: _("Courtesy Listing"), html: field_option("ISCOURTESY", "courtesy", _("Courtesy Listing")) },
+                { label: _("Cruelty Case"), html: field_option("CRUELTYCASE", "crueltycase", _("Cruelty Case")) },
+                { label: _("Non-Shelter"), html: field_option("NONSHELTERANIMAL", "nonshelter", _("Non-Shelter")) },
+                { label: _("Not For Adoption"), html: field_option("ISNOTAVAILABLEFORADOPTION", "notforadoption", _("Not For Adoption")) },
+                { label: _("Quarantine"), html: field_option("ISQUARANTINE", "quarantine", _("Quarantine")) }
+            ];
+
+            $.each(flags, function(i, v) {
+                h.push({ label: v.FLAG, html: flag_option(v.FLAG) });
+            });
+
+            h.sort(common.sort_single("label"));
+
+            if (includeall) {
+                opt.push('<option value="all">' + _("(all)") + '</option>');
+            }
+
+            $.each(h, function(i, v) {
+                opt.push(v.html);    
+            });
+
+            node.html(opt.join("\n"));
+            node.change();
+
+        },
+
+        /**
          * Renders a list of <option> tags for person flags.
          * It mixes in any additional person flags to the regular
          * set, sorts them all alphabetically and applies them

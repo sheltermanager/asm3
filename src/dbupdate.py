@@ -7,7 +7,7 @@ import os, sys
 from i18n import _, BUILD
 from sitedefs import DB_PK_STRATEGY
 
-LATEST_VERSION = 33712
+LATEST_VERSION = 33713
 VERSIONS = ( 
     2870, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3050,
     3051, 3081, 3091, 3092, 3093, 3094, 3110, 3111, 3120, 3121, 3122, 3123, 3200,
@@ -19,7 +19,7 @@ VERSIONS = (
     33310, 33311, 33312, 33313, 33314, 33315, 33316, 33401, 33402, 33501, 33502,
     33503, 33504, 33505, 33506, 33507, 33508, 33600, 33601, 33602, 33603, 33604,
     33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702, 33703, 33704, 33705,
-    33706, 33707, 33708, 33709, 33710, 33711, 33712
+    33706, 33707, 33708, 33709, 33710, 33711, 33712, 33713
 )
 
 # All ASM3 tables
@@ -30,7 +30,7 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "activeuser", "additional"
     "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", "basecolour", 
     "breed", "citationtype", "configuration", "costtype", "customreport", "customreportrole", "dbfs", 
     "deathreason", "diary", "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", "donationtype", 
-    "entryreason", "incidentcompleted", "incidenttype", "internallocation", "licencetype", "lkcoattype", 
+    "entryreason", "incidentcompleted", "incidenttype", "internallocation", "licencetype", "lkanimalflags", "lkcoattype", 
     "lkownerflags", "lksaccounttype", "lksdiarylink", "lksdonationfreq", "lksex", "lksfieldlink", "lksfieldtype", 
     "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", "lksposneg", "lksrotatype", 
     "lksyesno", "lksynun", "lkurgency", "log", "logtype", "media", "medicalprofile", "messages", "onlineform", 
@@ -289,6 +289,7 @@ def sql_structure(dbo):
         fint("PutToSleep"),
         flongstr("PTSReason"),
         fint("PTSReasonID"),
+        fint("IsCourtesy", True),
         fint("IsDOA"),
         fint("IsTransfer"),
         fint("IsGoodWithCats"),
@@ -300,6 +301,7 @@ def sql_structure(dbo):
         fdate("HoldUntilDate", True),
         fint("IsQuarantine", True),
         fint("HasSpecialNeeds"),
+        flongstr("AdditionalFlags", True),
         fint("ShelterLocation"),
         fstr("ShelterLocationUnit", True),
         fint("DiedOffShelter"),
@@ -851,6 +853,9 @@ def sql_structure(dbo):
 
     sql += table("lksaccounttype", (
         fid(), fstr("AccountType") ), False)
+
+    sql += table("lkanimalflags", (
+        fid(), fstr("Flag") ), False)
 
     sql += table("lkownerflags", (
         fid(), fstr("Flag") ), False)
@@ -2402,6 +2407,7 @@ def dump_merge(dbo, deleteViewSeq = True):
     fix_and_dump("animalvaccination", [ "ID", "AnimalID", "VaccinationID" ])
     fix_and_dump("diary", [ "ID", "LinkID" ])
     fix_and_dump("internallocation", [ "ID", ])
+    fix_and_dump("lkanimalflags", [ "ID", ])
     fix_and_dump("lkownerflags", [ "ID", ])
     fix_and_dump("log", [ "ID", "LinkID" ])
     fix_and_dump("owner", [ "ID", "HomeCheckedBy" ])
@@ -4109,4 +4115,16 @@ def update_33712(dbo):
     add_column(dbo, "ownerdonation", "VATAmount", "INTEGER")
     add_index(dbo, "ownerdonation_IsVAT", "ownerdonation", "IsVAT")
     db.execute_dbupdate(dbo, "UPDATE ownerdonation SET IsVAT=0, VATRate=0, VATAmount=0")
+
+def update_33713(dbo):
+    # Create animal flags table
+    sql = "CREATE TABLE lkanimalflags ( ID INTEGER NOT NULL, " \
+        "Flag %s NOT NULL)" % shorttext(dbo)
+    db.execute_dbupdate(dbo, sql)
+    # Add additionalflags field to animal
+    add_column(dbo, "animal", "AdditionalFlags", longtext(dbo))
+    # Add IsCourtesy to animal
+    add_column(dbo, "animal", "IsCourtesy", "INTEGER")
+    db.execute_dbupdate(dbo, "UPDATE animal SET IsCourtesy=0, AdditionalFlags=''")
+
 

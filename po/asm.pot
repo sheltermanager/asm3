@@ -1143,6 +1143,10 @@ msgstr ""
 msgid "Animal Emblems"
 msgstr ""
 
+#: lookups.py
+msgid "Animal Flags"
+msgstr ""
+
 #: options.js
 msgid "Animal Links"
 msgstr ""
@@ -2588,6 +2592,10 @@ msgstr ""
 msgid "County"
 msgstr ""
 
+#: common.js header_edit_header.js
+msgid "Courtesy Listing"
+msgstr ""
+
 #: dbupdate.py
 msgid "Cow"
 msgstr ""
@@ -2730,7 +2738,7 @@ msgstr ""
 msgid "Crossbreed"
 msgstr ""
 
-#: common.js shelterview.js animal.js options.js publish.py
+#: common.js header_edit_header.js shelterview.js options.js publish.py
 msgid "Cruelty Case"
 msgstr ""
 
@@ -4577,7 +4585,8 @@ msgstr ""
 msgid "Flag"
 msgstr ""
 
-#: onlineform.js person.js person_find.js person_new.js common_personchooser.js
+#: onlineform.js person.js animal_find.js person_find.js animal.js
+#: person_new.js common_personchooser.js
 msgid "Flags"
 msgstr ""
 
@@ -5495,10 +5504,6 @@ msgstr ""
 msgid "Include cruelty case animals"
 msgstr ""
 
-#: animal_find.js
-msgid "Include deceased"
-msgstr ""
-
 #: publish_options.js
 msgid "Include fostered animals"
 msgstr ""
@@ -5519,10 +5524,6 @@ msgstr ""
 msgid ""
 "Include incomplete vaccination and test records when generating document "
 "templates"
-msgstr ""
-
-#: animal_find.js
-msgid "Include non-shelter"
 msgstr ""
 
 #: options.js
@@ -7082,7 +7083,7 @@ msgstr ""
 msgid "Noise"
 msgstr ""
 
-#: common.js animal_find.js animal_new.js animal.js options.js
+#: common.js header_edit_header.js animal_find.js animal_new.js options.js
 msgid "Non-Shelter"
 msgstr ""
 
@@ -7130,8 +7131,8 @@ msgstr ""
 msgid "Not Available for Adoption"
 msgstr ""
 
-#: common.js shelterview.js animal_find.js animal.js animal_bulk.js options.js
-#: publish.py
+#: common.js header_edit_header.js shelterview.js animal_find.js animal_bulk.js
+#: options.js publish.py
 msgid "Not For Adoption"
 msgstr ""
 
@@ -8099,7 +8100,7 @@ msgstr ""
 msgid "Quantity"
 msgstr ""
 
-#: common.js shelterview.js animal_find.js animal.js animal_find_results.js
+#: common.js header_edit_header.js shelterview.js animal_find_results.js
 #: options.js publish.py html.py
 msgid "Quarantine"
 msgstr ""
@@ -10527,22 +10528,10 @@ msgid "This animal is not on the shelter."
 msgstr ""
 
 #: animal.js
-msgid "This animal is part of a cruelty case against an owner"
-msgstr ""
-
-#: animal.js
-msgid "This animal is quarantined"
-msgstr ""
-
-#: animal.js
 msgid "This animal should be held in case it is reclaimed"
 msgstr ""
 
-#: animal.js
-msgid "This animal should not be included when publishing animals for adoption"
-msgstr ""
-
-#: animal_new.js animal.js
+#: animal_new.js
 msgid ""
 "This animal should not be shown in figures and is not in the custody of the "
 "shelter"
