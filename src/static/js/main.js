@@ -324,7 +324,7 @@ $(function() {
                 $.each(controller.animallinks, function(i, a) {
                     // Skip this one if the animal is deceased and we aren't showing them
                     if (!config.bool("ShowDeceasedHomePage") && a.DECEASEDDATE) { return; }
-                    s.push('<div style="display: inline-block; text-align: center">');
+                    s.push('<div class="asm-shelterview-animal">');
                     s.push(html.animal_link_thumb(a, { showlocation: true }));
                     s.push("</div>");
                 });

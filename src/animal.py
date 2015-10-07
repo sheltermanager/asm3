@@ -274,6 +274,7 @@ def get_animals_brief(animals):
         r.append({ 
             "ACTIVEMOVEMENTID": a["ACTIVEMOVEMENTID"],
             "ACTIVEMOVEMENTTYPE": a["ACTIVEMOVEMENTTYPE"],
+            "ADDITIONALFLAGS": a["ADDITIONALFLAGS"],
             "ANIMALCOMMENTS": a["ANIMALCOMMENTS"],
             "ANIMALAGE": a["ANIMALAGE"],
             "ANIMALNAME" : a["ANIMALNAME"],
@@ -293,6 +294,7 @@ def get_animals_brief(animals):
             "ENTRYREASONNAME": a["ENTRYREASONNAME"],
             "FLVRESULT": a["FLVRESULT"],
             "HASACTIVERESERVE": a["HASACTIVERESERVE"],
+            "HASSPECIALNEEDS": a["HASSPECIALNEEDS"],
             "HASTRIALADOPTION": a["HASTRIALADOPTION"],
             "HASPERMANENTFOSTER": a["HASPERMANENTFOSTER"],
             "HEARTWORMTESTED": a["HEARTWORMTESTED"],

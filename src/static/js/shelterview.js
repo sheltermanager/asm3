@@ -13,9 +13,12 @@ $(function() {
             h.push('<div ');
             // Only on shelter animals that are physically present can be dragged
             if (!a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0) {
-                h.push('class="animaldragtarget" ');
+                h.push('class="asm-shelterview-animal animaldragtarget" ');
             }
-            h.push('data="' + a.ID + '" style="display: inline-block; text-align: center">');
+            else {
+                h.push('class="asm-shelterview-animal" ');
+            }
+            h.push('data="' + a.ID + '">');
             h.push(html.animal_link_thumb(a, {showunit: showunit}));
             h.push('</div>');
             return h.join("\n");

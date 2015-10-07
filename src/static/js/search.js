@@ -83,6 +83,7 @@ $(function() {
                             h.push(' <span class="asm-search-locationunit" title="' + html.title(_("Unit")) + '">' + r.SHELTERLOCATIONUNIT + '</span>');
                         }
                     }
+                    h.push('<span style="margin-left: 15px;" class="asm-search-personflags">' + edit_header.animal_flags(r) + '</span>');
                     h.push('<br/>');
                     h.push(html.truncate(search.description(r)));
                     h.push('</p>');

@@ -406,6 +406,13 @@ img {
 .asm-staff-rota-volunteer-even a { background-color: #3d633e; color: #fff; }
 
 /** SHELTERVIEW ================= */
+.asm-shelterview-animal {
+    display: inline-block;
+    text-align: center;
+    border: 1px dotted #ccc;
+    padding: 2px;
+}
+
 .asm-shelterview-unit { 
     display: inline-block;
     min-width: 80px;

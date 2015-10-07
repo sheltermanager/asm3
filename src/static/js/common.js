@@ -11,6 +11,11 @@
           return str.replace(new RegExp(find, 'g'), replace);
         },
 
+        /** Returns the number of times find appears in str */
+        count_occurrences: function(str, find) {
+            return str.split(find).length - 1;
+        },
+
         substitute: function(str, sub) {
             /*jslint regexp: true */
             return str.replace(/\{(.+?)\}/g, function($0, $1) {
@@ -1455,7 +1460,11 @@
                 "id" : a.ID,
                 "title" : html.title(title),
                 "imgsrc" : html.thumbnail_src(a, "animalthumb") }));
-            s.push(html.animal_emblems(a, o));
+            var emblems = html.animal_emblems(a, o);
+            s.push(emblems);
+            if (common.count_occurrences(emblems, "title=") >= 3) {
+                s.push("<br />");
+            }
             if (config.bool("ShelterViewShowCodes")) {
                 s.push('<a href="animal?id=' + a.ID + '">' + a.CODE + '</a><br />');
             }

@@ -488,7 +488,7 @@ $(function() {
                 flags.push(_("Quarantine"));
             }
             if (a.ADDITIONALFLAGS != null) {
-                var stock = [ "crueltycase", "nonshelter", "notforadoption", "quarantine" ];
+                var stock = [ "courtesy", "crueltycase", "nonshelter", "notforadoption", "quarantine" ];
                 $.each(a.ADDITIONALFLAGS.split("|"), function(i, v) {
                     if (v != "" && $.inArray(v, stock) == -1) {
                         flags.push(v);

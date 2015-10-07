@@ -1,6 +1,9 @@
 37
 ================
 
+07/10/15 Show animal flags on search results #269
+07/10/15 Show dotted box around animal link thumbnails for clarity
+07/10/15 Break up emblems and names if there are > 3
 07/10/15 Add animal flag lookup type #269
 07/10/15 Add animal flags to advanced animal find screen #269
 07/10/15 Add animal flags and consolidate existing flags #269
