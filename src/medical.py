@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import al
+import animal
 import audit
 import configuration
 import datetime
@@ -371,8 +372,7 @@ def get_vaccinations_outstanding(dbo, offset = "m31", locationfilter = ""):
         ec = " AND av.DateExpires >= %s AND av.DateExpires <= %s AND av.DateOfVaccination Is Not Null" % (db.dd( subtract_days(now(dbo.timezone), offsetdays)), db.dd(now(dbo.timezone)))
     if offset.startswith("xp"):
         ec = " AND av.DateExpires >= %s AND av.DateExpires <= %s AND av.DateOfVaccination Is Not Null" % (db.dd(now(dbo.timezone)), db.dd( add_days(now(dbo.timezone), offsetdays)))
-    if locationfilter != "":
-        locationfilter = " AND a.ShelterLocation IN (%s)" % locationfilter
+    if locationfilter != "": locationfilter = " AND " + animal.get_location_filter_clause(locationfilter)
     shelterfilter = ""
     if not configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (a.Archived = 0 OR a.ActiveMovementType = 2)"
@@ -389,8 +389,7 @@ def get_vaccinations_two_dates(dbo, dbstart, dbend, locationfilter = ""):
     ID, ANIMALID, SHELTERCODE, ANIMALNAME, LOCATIONNAME, WEBSITEMEDIANAME, DATEREQUIRED, DATEOFVACCINATION, COMMENTS, VACCINATIONTYPE, VACCINATIONID
     """
     ec = " AND av.DateRequired >= '%s' AND av.DateRequired <= '%s'" % (dbstart, dbend)
-    if locationfilter != "":
-        locationfilter = " AND a.ShelterLocation IN (%s)" % locationfilter
+    if locationfilter != "": locationfilter = " AND " + animal.get_location_filter_clause(locationfilter)
     shelterfilter = ""
     if not configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (a.Archived = 0 OR a.ActiveMovementType = 2)"
@@ -407,8 +406,7 @@ def get_vaccinations_expiring_two_dates(dbo, dbstart, dbend, locationfilter = ""
     ID, ANIMALID, SHELTERCODE, ANIMALNAME, LOCATIONNAME, WEBSITEMEDIANAME, DATEREQUIRED, DATEOFVACCINATION, COMMENTS, VACCINATIONTYPE, VACCINATIONID
     """
     ec = " AND av.DateExpires >= '%s' AND av.DateExpires <= '%s'" % (dbstart, dbend)
-    if locationfilter != "":
-        locationfilter = " AND a.ShelterLocation IN (%s)" % locationfilter
+    if locationfilter != "": locationfilter = " AND " + animal.get_location_filter_clause(locationfilter)
     shelterfilter = ""
     if not configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (a.Archived = 0 OR a.ActiveMovementType = 2)"
@@ -436,8 +434,7 @@ def get_tests_outstanding(dbo, offset = "m31", locationfilter = ""):
         ec = " AND at.DateRequired >= %s AND at.DateRequired <= %s" % (db.dd( subtract_days(now(dbo.timezone), offsetdays)), db.dd(now(dbo.timezone)))
     if offset.startswith("p"):
         ec = " AND at.DateRequired >= %s AND at.DateRequired <= %s" % (db.dd(now(dbo.timezone)), db.dd( add_days(now(dbo.timezone), offsetdays)))
-    if locationfilter != "":
-        locationfilter = " AND a.ShelterLocation IN (%s)" % locationfilter
+    if locationfilter != "": locationfilter = " AND " + animal.get_location_filter_clause(locationfilter)
     shelterfilter = ""
     if not configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (a.Archived = 0 OR a.ActiveMovementType = 2)"
@@ -453,8 +450,7 @@ def get_tests_two_dates(dbo, dbstart, dbend, locationfilter = ""):
     ID, ANIMALID, SHELTERCODE, ANIMALNAME, LOCATIONNAME, WEBSITEMEDIANAME, DATEREQUIRED, DATEOFTEST, COMMENTS, TESTNAME, RESULTNAME, TESTTYPEID
     """
     ec = " AND at.DateRequired >= '%s' AND at.DateRequired <= '%s'" % (dbstart, dbend)
-    if locationfilter != "":
-        locationfilter = " AND a.ShelterLocation IN (%s)" % locationfilter
+    if locationfilter != "": locationfilter = " AND " + animal.get_location_filter_clause(locationfilter)
     shelterfilter = ""
     if not configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (a.Archived = 0 OR a.ActiveMovementType = 2)"
@@ -480,8 +476,7 @@ def get_treatments_outstanding(dbo, offset = "m31", locationfilter = ""):
         ec = " AND amt.DateRequired >= %s AND amt.DateRequired <= %s" % (db.dd( subtract_days(now(dbo.timezone), offsetdays)), db.dd(now(dbo.timezone)))
     if offset.startswith("p"):
         ec = " AND amt.DateRequired >= %s AND amt.DateRequired <= %s" % (db.dd(now(dbo.timezone)), db.dd( add_days(now(dbo.timezone), offsetdays)))
-    if locationfilter != "":
-        locationfilter = " AND a.ShelterLocation IN (%s)" % locationfilter
+    if locationfilter != "": locationfilter = " AND " + animal.get_location_filter_clause(locationfilter)
     shelterfilter = ""
     if not configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (a.Archived = 0 OR a.ActiveMovementType = 2)"
@@ -502,8 +497,7 @@ def get_treatments_two_dates(dbo, dbstart, dbend, locationfilter = ""):
     TREATMENTNUMBER, TOTALTREATMENTS, GIVENBY, REGIMENID, TREATMENTID
     """
     ec = " AND amt.DateRequired >= '%s' AND amt.DateRequired <= '%s'" % (dbstart, dbend)
-    if locationfilter != "":
-        locationfilter = " AND a.ShelterLocation IN (%s)" % locationfilter
+    if locationfilter != "": locationfilter = " AND " + animal.get_location_filter_clause(locationfilter)
     shelterfilter = ""
     if not configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (a.Archived = 0 OR a.ActiveMovementType = 2)"
