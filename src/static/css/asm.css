@@ -410,6 +410,7 @@ img {
     display: inline-block;
     text-align: center;
     border: 1px dotted #ccc;
+    margin-top: 3px;
     padding: 2px;
 }
 
