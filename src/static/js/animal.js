@@ -175,7 +175,6 @@ $(function() {
                 '<td><label for="unit">' + _("Unit") + '</label></td>',
                 '<td>',
                 '<input id="unit" data-json="SHELTERLOCATIONUNIT" data-post="unit" class="asm-textbox" title="' + html.title(_("Unit within the location, eg: pen or cage number")) + '" />',
-                '<!--<button id="button-unit"></button>-->',
                 '</td>',
                 '</tr>',
                 '<tr id="lastlocation">',
@@ -773,7 +772,11 @@ $(function() {
                         if (!desc) { desc = _("(available)"); }
                         src.push({ label: unit + ' : ' + desc, value: unit });
                     });
-                    $("#unit").autocomplete({ source: src });
+                    // Load the unit source and trigger display of the
+                    // dropdown on focus
+                    $("#unit").autocomplete({ source: src }).bind('focus', function() { 
+                        $(this).autocomplete("search", ":"); 
+                    });
                 });
         },
 
@@ -1364,13 +1367,6 @@ $(function() {
                         validate.dirty(true);
                     });
             });
-
-            $("#button-unit")
-                .button({ icons: { primary: "ui-icon-refresh" }, text: false })
-                .click(function() {
-                    $("#unit").focus();
-                    $("#unit").autocomplete("search", "");   
-                });
 
             $("#button-commentstomedia")
                 .hide()
