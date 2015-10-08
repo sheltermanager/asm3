@@ -1,6 +1,7 @@
 37
 ================
 
+08/10/15 Fix bug where blank addresses could blow hmrc giftaid
 08/10/15 Pop up available units on focus like other jqui widgets #272
 07/10/15 Add courtesy posts to all publishers and dedicated RG flag #236
 07/10/15 Show animal flags on search results #269

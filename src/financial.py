@@ -1201,7 +1201,7 @@ def giftaid_spreadsheet(dbo, path, fromdate, todate):
         """
         bits = s.strip().replace("\n", " ").split(" ")
         houseno = ""
-        if len(bits) > 0 and utils.cint(bits[0][0]) > 0:
+        if len(bits) > 0 and len(bits[0]) > 0 and utils.cint(bits[0][0]) > 0:
             houseno = bits[0]
         return houseno
 
