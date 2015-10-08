@@ -1591,6 +1591,8 @@ class Animal:
     IsHold = 0
     HoldUntilDate = None
     IsQuarantine = 0
+    IsCourtesy = 0
+    AdditionalFlags = ""
     HasSpecialNeeds = 0
     ShelterLocation = 1
     ShelterLocationUnit = ""
@@ -1720,7 +1722,9 @@ class Animal:
             ( "IsHold", di(self.IsHold) ),
             ( "HoldUntilDate", dd(self.HoldUntilDate) ),
             ( "IsQuarantine", di(self.IsQuarantine) ),
+            ( "IsCourtesy", di(self.IsCourtesy) ),
             ( "HasSpecialNeeds", di(self.HasSpecialNeeds) ),
+            ( "AdditionalFlags", ds(self.AdditionalFlags) ),
             ( "ShelterLocation", di(self.ShelterLocation) ),
             ( "ShelterLocationUnit", ds(self.ShelterLocationUnit) ),
             ( "DiedOffShelter", di(self.DiedOffShelter) ),
