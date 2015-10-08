@@ -3039,14 +3039,6 @@ def update_3217(dbo):
     db.execute_dbupdate(dbo, "ALTER TABLE animal ADD AsilomarOwnerRequestedEuthanasia INTEGER")
     db.execute_dbupdate(dbo, "UPDATE animal SET AsilomarIsTransferExternal = 0, AsilomarIntakeCategory = 0, AsilomarOwnerRequestedEuthanasia = 0")
 
-def update_3218(dbo):
-    # Broken previously by missing field type
-    try:
-        db.execute_dbupdate(dbo, "ALTER TABLE animal ADD AsilomarOwnerRequestedEuthanasia INTEGER")
-    except Exception,err:
-        al.error("failed creating animal.AsilomarOwnerRequestedEuthanasia: %s" % str(err), "dbupdate.update_3218", dbo)
-    db.execute_dbupdate(dbo, "UPDATE animal SET AsilomarIsTransferExternal = 0, AsilomarIntakeCategory = 0, AsilomarOwnerRequestedEuthanasia = 0")
-
 def update_3220(dbo):
     # Create animalfiguresasilomar table to be updated each night
     # for US shelters with the option on
@@ -3164,7 +3156,6 @@ def update_3307(dbo):
         "LastChangedDate %(date)s)" % { "date": datetype(dbo), "long": longtext(dbo), "short": shorttext(dbo)}
     db.execute_dbupdate(dbo, sql)
     add_index(dbo, "animaltest_AnimalID", "animaltest", "AnimalID")
-    db.execute_dbupdate(dbo, sql)
     sql = "CREATE TABLE testtype (ID INTEGER NOT NULL PRIMARY KEY, " \
         "TestName %(short)s NOT NULL, " \
         "TestDescription %(long)s, " \
@@ -3285,7 +3276,6 @@ def update_33013(dbo):
         "Description %(long)s )" % { "short": shorttext(dbo), "long": longtext(dbo) }
     db.execute_dbupdate(dbo, sql)
     add_index(dbo, "onlineform_Name", "onlineform", "Name")
-    db.execute_dbupdate(dbo, sql)
     sql = "CREATE TABLE onlineformfield(ID INTEGER NOT NULL PRIMARY KEY, " \
         "OnlineFormID INTEGER NOT NULL, " \
         "FieldName %(short)s NOT NULL, " \
@@ -3295,7 +3285,6 @@ def update_33013(dbo):
         "Tooltip %(long)s )" % { "short": shorttext(dbo), "long": longtext(dbo) }
     db.execute_dbupdate(dbo, sql)
     add_index(dbo, "onlineformfield_OnlineFormID", "onlineformfield", "OnlineFormID")
-    db.execute_dbupdate(dbo, sql)
     sql = "CREATE TABLE onlineformincoming(CollationID INTEGER NOT NULL, " \
         "FormName %(short)s NOT NULL, " \
         "PostedDate %(date)s NOT NULL, " \
@@ -3304,7 +3293,6 @@ def update_33013(dbo):
         "Value %(long)s )" % { "date": datetype(dbo), "short": shorttext(dbo), "long": longtext(dbo) }
     db.execute_dbupdate(dbo, sql)
     add_index(dbo, "onlineformincoming_CollationID", "onlineformincoming", "CollationID")
-    db.execute_dbupdate(dbo, sql)
 
 def update_33014(dbo):
     # Add a display index field to onlineformfield

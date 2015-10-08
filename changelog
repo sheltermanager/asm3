@@ -1,6 +1,7 @@
 37
 ================
 
+08/10/15 Fix broken MySQL upgrade path with double queries #254
 08/10/15 Parameterise different manual elements in sitedef #141
 08/10/15 Fix bug where blank addresses could blow hmrc giftaid
 08/10/15 Pop up available units on focus like other jqui widgets #272
