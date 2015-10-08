@@ -54,21 +54,20 @@ compilepy:
 	# 800 lines per method, 30 returns, 20 args, 60 locals
 	pychecker -L 800 -R 30 -J 20 -K 60 -j -b al,email,httplib,multiprocessing,threading,web src/*.py
 
-smcomstable: version clean minify
-	@echo "[smcom stable] ========================="
-	rsync --exclude '*.pyc' --delete -r src/* root@rawsoaa2.miniserver.com:/usr/local/lib/asm_stable.new
-	ssh root@rawsoaa2.miniserver.com "/root/sheltermanager_update_asm_stable.sh"
-
-smcomdev: version clean minify
+smcom-dev: version clean minify
 	@echo "[smcom dev] ========================="
 	rsync --exclude '*.pyc' --delete -r src/* root@rawsoaa2.miniserver.com:/usr/local/lib/asm_dev.new
 	ssh root@rawsoaa2.miniserver.com "/root/sheltermanager_update_asm_dev.sh"
 
-smcom: smcomdev
+smcom-stable: version clean minify
+	@echo "[smcom stable] ========================="
+	rsync --exclude '*.pyc' --delete -r src/* root@rawsoaa2.miniserver.com:/usr/local/lib/asm_stable.new
+	ssh root@rawsoaa2.miniserver.com "/root/sheltermanager_update_asm_stable.sh"
 
-smcomsessions: smcomstable
+smcom-stable-sessions: version clean minify
 	@echo "[smcom sessions] ========================"
-	ssh root@rawsoaa2.miniserver.com "/root/sheltermanager_clear_sessions.py"
+	rsync --exclude '*.pyc' --delete -r src/* root@rawsoaa2.miniserver.com:/usr/local/lib/asm_stable.new
+	ssh root@rawsoaa2.miniserver.com "/root/sheltermanager_update_asm_stable.sh dumpsessions"
 
 pot:
 	@echo "[template] ========================="
@@ -109,5 +108,7 @@ testsdb:
 
 deps:
 	@echo "[deps] ========================="
-	apt-get install python-webpy
+	apt-get install python python-imaging python-webpy python-mysqldb python-psycopg2
+	apt-get install python-requests python-ndg-httpsclient python-pyasn1
+	apt-get install nodejs pychecker python-sphinx python-sphinx-rtd-theme texlive-latex-base texlive-latex-extras
 

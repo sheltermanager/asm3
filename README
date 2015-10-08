@@ -16,13 +16,16 @@ apt-get install make python python-imaging python-webpy python-mysqldb python-ps
 
 Extra, non-mandatory packages:
 
-apt-get install ghostscript (for scaling/compressing PDFs to save on storage)
+apt-get install imagemagick (for scaling/compressing PDFs to save on storage)
 apt-get install wkhtmltopdf (for creating PDFs from HTML document templates)
-apt-get install python-requests python-ndg-httpsclient python-pyasn1 (needed for all HTTPS publishers - PetLink, MeetAPet, VetEnvoy, Facebook)
+apt-get install python-requests python-ndg-httpsclient python-pyasn1 (needed for all HTTPS publishers - PetLink, MeetAPet, VetEnvoy)
 
 Packages necessary for building static checkers, installers and manuals:
 
-apt-get install nodejs pychecker libreoffice-writer dpkg tar python-sphinx texlive-latex-base textlive-latex-extras
+apt-get install nodejs pychecker python-sphinx python-sphinx-rtd-theme texlive-latex-base texlive-latex-extras
+
+If you're using Debian and want to do development, you can use "make deps"
+to install the needed dependencies.
 
 Logging:
 ================================
