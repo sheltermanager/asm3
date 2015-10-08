@@ -855,8 +855,8 @@ $(function() {
             }
 
             // Hide the internal location dropdown row if the animal is off the shelter
-            // and show the last location info instead.
-            if (controller.animal.ACTIVEMOVEMENTID) {
+            // or dead and show the last location info instead.
+            if (controller.animal.ACTIVEMOVEMENTID || controller.animal.DECEASEDDATE) {
                 $("#locationrow").hide();
                 $("#locationunitrow").hide();
                 $("#lastlocation").show();
