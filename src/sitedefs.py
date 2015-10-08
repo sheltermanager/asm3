@@ -244,6 +244,12 @@ SMTP_SERVER = None
 # {alias} database alias
 FROM_ADDRESS = "you@yourdomain.com"
 
+# URLs to access manuals and help documentation
+MANUAL_HTML_URL = "static/pages/manual/index.html"
+MANUAL_FAQ_URL = "static/pages/manual/faq.html"
+MANUAL_PDF_URL = ""
+MANUAL_VIDEO_URL = ""
+
 # Script and css references for dependencies (can be substituted for separate CDN here)
 ASMSELECT_CSS = 'static/lib/asmselect/1.0.4a/jquery.asmselect.css'
 ASMSELECT_JS = 'static/lib/asmselect/1.0.4a/jquery.asmselect.js'

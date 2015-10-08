@@ -413,9 +413,10 @@ $(function() {
                 '<div id="asm-topline-user-body" class="asm-menu-body">',
                     '<ul class="asm-menu-list">',
                         '<li class="asm-menu-category">' + _("Help") + '</li>',
-                        '<li class="asm-menu-item"><a href="static/pages/manual/index.html" target="_blank"><span class="asm-icon asm-icon-help"></span> <nobr>' + _("View Manual") + '</nobr></a></li>',
-                        '<li class="asm-menu-item"><a href="http://youtube.com/user/sheltermanager" target="_blank"><nobr><span class="asm-icon asm-icon-youtube"></span> ' + _("View Training Videos") + '</nobr></a></li>',
-                        '<li class="asm-menu-item"><a href="static/pages/manual/faq.html" target="_blank"><nobr><span class="asm-icon asm-icon-faq"></span> ' + _("Frequently Asked Questions") + '</nobr></a></li>',
+                        '<li class="asm-menu-item asm-manual asm-manualhtml"><a href="#" target="_blank"><span class="asm-icon asm-icon-help"></span> <nobr>' + _("View Manual") + '</nobr></a></li>',
+                        '<li class="asm-menu-item asm-manual asm-manualpdf"><a href="#" target="_blank"><span class="asm-icon asm-icon-pdf"></span> <nobr>' + _("Printable Manual") + '</nobr></a></li>',
+                        '<li class="asm-menu-item asm-manual asm-manualvideo"><a href="#" target="_blank"><nobr><span class="asm-icon asm-icon-youtube"></span> ' + _("View Training Videos") + '</nobr></a></li>',
+                        '<li class="asm-menu-item asm-manual asm-manualfaq"><a href="#" target="_blank"><nobr><span class="asm-icon asm-icon-faq"></span> ' + _("Frequently Asked Questions") + '</nobr></a></li>',
                         '<li class="asm-menu-category">' + asm.user + '</li>',
                         '<li id="asm-mysmcom" class="asm-menu-item"><a href="https://sheltermanager.com/my" target="_blank"><nobr><span class="asm-icon asm-icon-logo"></span> ' + _("My sheltermanager.com account") + '</nobr></a></li>',
                         '<li class="asm-menu-item"><a href="change_password"><nobr><span class="asm-icon asm-icon-auth"></span> ' + _("Change Password") + '</nobr></a></li>',
@@ -566,6 +567,13 @@ $(function() {
             this.quicklinks_show();
             this.bind_search();
 
+            // Load the manual links
+            $(".asm-manual").hide();
+            if (asm.manualhtml) { $(".asm-manualhtml").show().find("a").prop("href", asm.manualhtml); }
+            if (asm.manualpdf) { $(".asm-manualpdf").show().find("a").prop("href", asm.manualpdf); }
+            if (asm.manualvideo) { $(".asm-manualvideo").show().find("a").prop("href", asm.manualvideo); }
+            if (asm.manualfaq) { $(".asm-manualfaq").show().find("a").prop("href", asm.manualfaq); }
+            
             // Hide the error and info boxes
             $("#asm-topline-error").hide();
             $("#asm-topline-info").hide();

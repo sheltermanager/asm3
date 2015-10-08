@@ -90,6 +90,7 @@ manual:
 	cd doc/manual && $(MAKE) clean html latexpdf
 	cp -rf doc/manual/_build/html/* src/static/pages/manual/
 	scp doc/manual/_build/latex/asm3.pdf root@rawsoaa2.miniserver.com:/var/www/sheltermanager.com/repo/asm3_help.pdf
+	rsync -a doc/manual/_build/html/ root@rawsoaa2.miniserver.com:/var/www/sheltermanager.com/repo/asm3_help/
 
 test: version
 	@echo "[test] ========================="
