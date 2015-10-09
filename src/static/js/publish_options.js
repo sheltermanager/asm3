@@ -961,7 +961,8 @@ $(function() {
                     "includecolours", "includeretailer", "includehold", "includequarantine", "includetrial",
                     "bondedassingle", "clearexisting", "uploadall", "forcereupload", 
                     "generatejavascriptdb","thumbnails", "checksocket", "uploaddirectly", 
-                    "htmlbychildadult", "htmlbyspecies", "outputadopted", "outputrss", "noimportfile" ], 
+                    "htmlbychildadult", "htmlbyspecies", "htmlbytype", "outputadopted", 
+                    "outputrss", "noimportfile" ], 
                 function(bi, bo) {
                     if (bo == o) { $("[data='" + bo + "']").select("value", "1"); }
                 });
