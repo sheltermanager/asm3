@@ -686,8 +686,8 @@ def animal_tags(dbo, a):
         tags["PAYMENTGIFTAID" + str(idx)] = d["ISGIFTAID"] == 1 and _("Yes", l) or _("No", l)
         tags["PAYMENTVAT" + str(idx)] = d["ISVAT"] == 1 and _("Yes", l) or _("No", l)
         tags["PAYMENTTAX" + str(idx)] = d["ISVAT"] == 1 and _("Yes", l) or _("No", l)
-        tags["PAYMENTVATRATE" + str(idx)] = "%0.2f" % d["VATRATE"]
-        tags["PAYMENTTAXRATE" + str(idx)] = "%0.2f" % d["VATRATE"]
+        tags["PAYMENTVATRATE" + str(idx)] = "%0.2f" % utils.cfloat(d["VATRATE"])
+        tags["PAYMENTTAXRATE" + str(idx)] = "%0.2f" % utils.cfloat(d["VATRATE"])
         tags["PAYMENTVATAMOUNT" + str(idx)] = format_currency_no_symbol(l, d["VATAMOUNT"])
         tags["PAYMENTTAXAMOUNT" + str(idx)] = format_currency_no_symbol(l, d["VATAMOUNT"])
 
@@ -712,8 +712,8 @@ def animal_tags(dbo, a):
         tags["PAYMENTGIFTAIDLAST" + str(idx)] = d["ISGIFTAID"] == 1 and _("Yes", l) or _("No", l)
         tags["PAYMENTVATLAST" + str(idx)] = d["ISVAT"] == 1 and _("Yes", l) or _("No", l)
         tags["PAYMENTTAXLAST" + str(idx)] = d["ISVAT"] == 1 and _("Yes", l) or _("No", l)
-        tags["PAYMENTVATRATELAST" + str(idx)] = "%0.2f" % d["VATRATE"]
-        tags["PAYMENTTAXRATELAST" + str(idx)] = "%0.2f" % d["VATRATE"]
+        tags["PAYMENTVATRATELAST" + str(idx)] = "%0.2f" % utils.cfloat(d["VATRATE"])
+        tags["PAYMENTTAXRATELAST" + str(idx)] = "%0.2f" % utils.cfloat(d["VATRATE"])
         tags["PAYMENTVATAMOUNTLAST" + str(idx)] = format_currency_no_symbol(l, d["VATAMOUNT"])
         tags["PAYMENTTAXAMOUNTLAST" + str(idx)] = format_currency_no_symbol(l, d["VATAMOUNT"])
 
@@ -740,8 +740,8 @@ def animal_tags(dbo, a):
             tags["PAYMENTGIFTAID" + dname] = d["ISGIFTAID"] == 1 and _("Yes", l) or _("No", l)
             tags["PAYMENTVAT" + dname] = d["ISVAT"] == 1 and _("Yes", l) or _("No", l)
             tags["PAYMENTTAX" + dname] = d["ISVAT"] == 1 and _("Yes", l) or _("No", l)
-            tags["PAYMENTVATRATE" + dname] = "%0.2f" % d["VATRATE"]
-            tags["PAYMENTTAXRATE" + dname] = "%0.2f" % d["VATRATE"]
+            tags["PAYMENTVATRATE" + dname] = "%0.2f" % utils.cfloat(d["VATRATE"])
+            tags["PAYMENTTAXRATE" + dname] = "%0.2f" % utils.cfloat(d["VATRATE"])
             tags["PAYMENTVATAMOUNT" + dname] = format_currency_no_symbol(l, d["VATAMOUNT"])
             tags["PAYMENTTAXAMOUNT" + dname] = format_currency_no_symbol(l, d["VATAMOUNT"])
 
@@ -766,8 +766,8 @@ def animal_tags(dbo, a):
             tags["PAYMENTGIFTAIDRECENT" + dname] = d["ISGIFTAID"] == 1 and _("Yes", l) or _("No", l)
             tags["PAYMENTVATRECENT" + dname] = d["ISVAT"] == 1 and _("Yes", l) or _("No", l)
             tags["PAYMENTTAXRECENT" + dname] = d["ISVAT"] == 1 and _("Yes", l) or _("No", l)
-            tags["PAYMENTVATRATERECENT" + dname] = "%0.2f" % d["VATRATE"]
-            tags["PAYMENTTAXRATERECENT" + dname] = "%0.2f" % d["VATRATE"]
+            tags["PAYMENTVATRATERECENT" + dname] = "%0.2f" % utils.cfloat(d["VATRATE"])
+            tags["PAYMENTTAXRATERECENT" + dname] = "%0.2f" % utils.cfloat(d["VATRATE"])
             tags["PAYMENTVATAMOUNTRECENT" + dname] = format_currency_no_symbol(l, d["VATAMOUNT"])
             tags["PAYMENTTAXAMOUNTRECENT" + dname] = format_currency_no_symbol(l, d["VATAMOUNT"])
 
@@ -899,8 +899,8 @@ def donation_tags(dbo, donations):
             "PAYMENTGIFTAID"+i      : p["ISGIFTAIDNAME"],
             "PAYMENTVAT"+i          : p["ISVAT"] == 1 and _("Yes", l) or _("No", l),
             "PAYMENTTAX"+i          : p["ISVAT"] == 1 and _("Yes", l) or _("No", l),
-            "PAYMENTVATRATE"+i      : "%0.2f" % p["VATRATE"],
-            "PAYMENTTAXRATE"+i      : "%0.2f" % p["VATRATE"],
+            "PAYMENTVATRATE"+i      : "%0.2f" % utils.cfloat(p["VATRATE"]),
+            "PAYMENTTAXRATE"+i      : "%0.2f" % utils.cfloat(p["VATRATE"]),
             "PAYMENTVATAMOUNT"+i    : format_currency_no_symbol(l, p["VATAMOUNT"]),
             "PAYMENTTAXAMOUNT"+i    : format_currency_no_symbol(l, p["VATAMOUNT"]),
             "PAYMENTCREATEDBY"+i    : p["CREATEDBY"],
