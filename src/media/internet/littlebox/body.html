@@ -1,17 +1,22 @@
 <div class="box">
-<div class="imgbox">
-<a href="javascript:show$$AnimalID$$()">
-<img class="animalimg" src="tn_$$WebMediaFilename$$" border="0" />
-</a>
-</div>
+
+<script>
+    if ('$$AnimalIsReserved$$' == 'Yes') {
+        document.write('<div class="imgbox side-corner-tag">');
+    else {
+        document.write('<div class="imgbox">');
+    }
+    document.write('<a href="javascript:show$$AnimalID$$()">');
+    document.write('<img class="animalimg" src="tn_$$WebMediaFilename$$" border="0" />');
+    document.write('</a>');
+    if ('$$AnimalIsReserved$$' == 'Yes') {
+        document.write('<p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;reserved</span></p>');
+    }
+    document.write('</div>');
+</script>
 
 <div class="detailbox">
 <b>
-<script>
-    if ('$$AnimalIsReserved$$' == 'Yes') {
-        document.write('<span class="reserved" title="Reserved"></span>');
-    }
-</script>
 <a href="javascript:show$$AnimalID$$()">$$AnimalName$$</a><br />
 $$Sex$$
 </b>
