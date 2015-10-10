@@ -7,8 +7,8 @@
     <author email="support@sheltermanager.com" href="http://sheltermanager.com">
         sheltermanager.com team
     </author>
-    <preference name="stay-in-webview" value="true" />
     <content src="index.html" />
+    <icon src="www/img/logo.png" />
     <plugin name="cordova-plugin-whitelist" version="1" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
