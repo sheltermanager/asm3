@@ -45,7 +45,14 @@ document.addEventListener("deviceready", function() {
                     window.localStorage.setItem("asm_account", $("#account").val());
                     window.localStorage.setItem("asm_username", $("#username").val());
                     window.localStorage.setItem("asm_password", $("#password").val());
-                    window.open(base + $("#ui").val(), "_self", "location=yes,hardwareback=yes,zoom=no");
+
+                    var ui = $("#ui").val();
+                    if (ui == "mobile" || ui == "main") {
+                        window.open(base + ui, "_self", "location=yes,hardwareback=yes,zoom=no");
+                    }
+                    else if (ui == "upload") {
+                        window.location = "upload.html";
+                    }
                 }
 
             })
