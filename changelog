@@ -1,6 +1,7 @@
 37
 ================
 
+12/10/15 Add sample rabies certificate template
 12/10/15 Fix all choosers to be cleared by edit dialogs before load
 08/10/15 Fix broken MySQL upgrade path with double queries #254
 08/10/15 Parameterise different manual elements in sitedef #141
