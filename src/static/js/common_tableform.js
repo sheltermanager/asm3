@@ -1063,12 +1063,15 @@
                 var n = $("#" + v.post_field);
                 if (n.length == 0) { return; }
                 if (v.type == "animal") {
+                    n.animalchooser("clear", false);
                     n.animalchooser("loadbyid", row[v.json_field]);
                 }
-                else if (v.type == "animal") {
-                    n.animalchooser("selectbyids", row[v.json_field]);
+                else if (v.type == "animalmulti") {
+                    n.animalchoosermulti("clear");
+                    n.animalchoosermulti("selectbyids", row[v.json_field]);
                 }
                 else if (v.type == "person") {
+                    n.personchooser("clear", false);
                     n.personchooser("loadbyid", row[v.json_field]);
                 }
                 else if (v.type == "currency") {
