@@ -322,7 +322,7 @@ def handler(post, remoteip, referer):
     elif method == "jsonp_shelter_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         sa = animal.get_animal_find_simple(dbo, "", "shelter")
-        return set_cached_response(cache_key, "application/javascript", 3600, 3600, str(post["callback"]) + "(" + html.json(sa) + ")")
+        return ("application/javascript", 0, "%s(%s);" % (post["callback"], html.json(sa)))
 
     elif method == "json_shelter_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
