@@ -21,15 +21,36 @@ document.addEventListener("deviceready", function() {
             );
         };
     }
+
+    var sort_single = function(fieldname) {
+        /* Sorts a list of dictionaries by fieldname.
+         * Use a - prefix in front of fieldname to sort
+         * descending. */
+        var sortOrder = 1;
+        if (fieldname[0] === "-") {
+            sortOrder = -1;
+            fieldname = fieldname.substr(1);
+        }
+        return function (a,b) {
+            var ca = String(a[fieldname]).toUpperCase();
+            var cb = String(b[fieldname]).toUpperCase();
+            var result = (ca < cb) ? -1 : (ca > cb) ? 1 : 0;
+            return result * sortOrder;
+        };
+    };
    
-    var show_loading = function() {
+    var show_loading = function(msg) {
         $("#spinner").show();
         $("#button-take, #button-gallery").prop("disabled", true);
+        if (msg) {
+            $("#spinner-message").html(msg);
+        }
     };
 
     var hide_loading = function() {
         $("#spinner").hide();
         $("#button-take, #button-gallery").prop("disabled", false);
+        $("#spinner-message").html("");
     };
 
     var load_animals = function() {
@@ -39,18 +60,19 @@ document.addEventListener("deviceready", function() {
             .replace("{u}", username)
             .replace("{p}", password)
             .replace("{s}", server);
-        show_loading();
+        show_loading("retreiving animals...");
         $.getJSON(url, 
             function(animals) {
                 var h = [];
+                animals.sort(sort_single("ANIMALNAME"));
                 $.each(animals, function(i, a) {
                     var hasimage = "";
-                    if (a.WEBSITEMEDIANAME == "null") {
+                    if (!a.WEBSITEMEDIANAME) {
                         hasimage = " (no image)";
                     }
                     h.push("<option value='" + a.ID + "'>" + 
-                        a.SHELTERCODE + " - " + 
-                        a.ANIMALNAME + hasimage + "</option>");
+                        a.ANIMALNAME + " - " + a.SHELTERCODE + 
+                        hasimage + "</option>");
                 });
                 $("#animal").html(h.join("\n"));
                 hide_loading();
@@ -62,14 +84,18 @@ document.addEventListener("deviceready", function() {
         $("#thumbnail").hide();
     };
 
-    var fail = function(message) {
+    var fail_selection = function(message) {
+        hide_loading();
+    };
+
+    var fail_upload = function(message) {
         hide_loading();
         alert("Failed uploading image to sheltermanager.com");
     };
 
     var onPhotoURISuccess = function(imageURI) {
  
-        show_loading();
+        show_loading("uploading photo...");
        
         var img = $("#thumbnail")[0];
         img.style.display = 'block';
@@ -89,11 +115,11 @@ document.addEventListener("deviceready", function() {
         };
      
         var ft = new FileTransfer();
-        ft.upload(imageURI, UPLOAD_URL.replace("{s}", server), success, fail, options);
+        ft.upload(imageURI, UPLOAD_URL.replace("{s}", server), success, fail_upload, options);
     };
 
     $("#button-take").click(function() {
-        navigator.camera.getPicture(onPhotoURISuccess, fail, { 
+        navigator.camera.getPicture(onPhotoURISuccess, fail_selection, { 
             quality: 30, 
             destinationType: navigator.camera.DestinationType.FILE_URI,
             sourceType: navigator.camera.PictureSourceType.CAMERA
@@ -101,7 +127,7 @@ document.addEventListener("deviceready", function() {
     });
 
     $("#button-gallery").click(function() {
-        navigator.camera.getPicture(onPhotoURISuccess, fail, { 
+        navigator.camera.getPicture(onPhotoURISuccess, fail_selection, { 
             quality: 30, 
             destinationType: navigator.camera.DestinationType.FILE_URI,
             sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY
