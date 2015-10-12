@@ -18,6 +18,8 @@ document.addEventListener("deviceready", function() {
         
         var base, params, url = "https://sheltermanager.com/service/findserver?a=" + $("#account").val();
 
+        $("#button-login span").show();
+
         $.getJSON(url + "&callback=?")
             .then(function(data) {
                 
@@ -26,6 +28,7 @@ document.addEventListener("deviceready", function() {
                     return $.Deferred().reject();
                 }
 
+                window.localStorage.setItem("asm_server", data.server);
                 base = "https://" + data.server + ".sheltermanager.com/";
                 params = "database=" + $("#account").val() + "&username=" + $("#username").val() + "&password=" + $("#password").val();
                 url = base + "login_jsonp?" + params + "&mobile=true&callback=?";
@@ -45,6 +48,7 @@ document.addEventListener("deviceready", function() {
                     window.localStorage.setItem("asm_account", $("#account").val());
                     window.localStorage.setItem("asm_username", $("#username").val());
                     window.localStorage.setItem("asm_password", $("#password").val());
+                    window.localStorage.setItem("asm_ui", $("#ui").val());
 
                     var ui = $("#ui").val();
                     if (ui == "mobile" || ui == "main") {
@@ -59,6 +63,9 @@ document.addEventListener("deviceready", function() {
             .fail(function(xhr, msg) {
                 if (!msg) { return; }
                 alert(msg);
+            })
+            .always(function() {
+                $("#button-login span").hide();
             });
 
     });
@@ -69,11 +76,13 @@ document.addEventListener("deviceready", function() {
 
     var account = window.localStorage.getItem("asm_account"),
         username = window.localStorage.getItem("asm_username"),
-        password = window.localStorage.getItem("asm_password");
+        password = window.localStorage.getItem("asm_password"),
+        ui = window.localStorage.getItem("asm_ui");
     if (account && username && password) {
         $("#account").val(account);
         $("#username").val(username);
         $("#password").val(password);
+        $("#ui").val(ui);
     }
 
 }, false);
