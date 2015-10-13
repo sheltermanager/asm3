@@ -27,7 +27,7 @@ LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex
 LEFT OUTER JOIN internallocation i ON i.ID = a.ShelterLocation
 WHERE a.Archived = 0
 ORDER BY 
-CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' ELSE i.LocationName END, s.SpeciesName
+CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' ELSE i.LocationName END, a.ShelterLocationUnit
 ###
 $$HEADER
 HEADER$$
@@ -35,13 +35,6 @@ HEADER$$
 $$GROUP_LocationName
 $$HEAD
 <h2>$LocationName</h2>
-$$FOOT
-<p><b>Total $LocationName: {COUNT.LocationName}</b></p>
-GROUP$$
-
-$$GROUP_SpeciesName
-$$HEAD
-<h3>$SpeciesName</h3>
 <table border=1><tr>
 <td><b>Unit</b></td>
 <td><b>Code</b></td>
@@ -56,7 +49,7 @@ $$HEAD
 </tr>
 $$FOOT
 </table>
-<p>Total $SpeciesName: {COUNT.SpeciesName}</p>
+<p><b>Total $LocationName: {COUNT.LocationName}</b></p>
 GROUP$$
 
 $$BODY
