@@ -9,7 +9,7 @@ document.addEventListener("deviceready", function() {
         password = window.localStorage.getItem("asm_password"),
         server = window.localStorage.getItem("asm_server"),
         SHELTER_ANIMALS_URL = "https://{s}.sheltermanager.com/service?method={m}&account={a}&username={u}&password={p}&callback=?",
-        UPLOAD_URL = "http://{s}.sheltermanager.com/service";
+        UPLOAD_URL = "https://{s}.sheltermanager.com/service";
 
     if (navigator.notification) {
         window.alert = function(message) {
