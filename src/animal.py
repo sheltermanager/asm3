@@ -2259,6 +2259,9 @@ def clone_animal(dbo, username, animalid):
             ( "VaccinationID", db.di(v["VACCINATIONID"]) ),
             ( "DateOfVaccination", db.dd(v["DATEOFVACCINATION"]) ),
             ( "DateRequired", db.dd(v["DATEREQUIRED"]) ),
+            ( "DateExpires", db.dd(v["DATEEXPIRES"]) ),
+            ( "BatchNumber", db.ds(v["BATCHNUMBER"]) ),
+            ( "Manufacturer", db.ds(v["MANUFACTURER"]) ),
             ( "Cost", db.di(v["COST"]) ),
             ( "Comments", db.ds(v["COMMENTS"]) )
             ))
@@ -2462,6 +2465,9 @@ def clone_from_template(dbo, username, animalid, animaltypeid, speciesid):
             ( "VaccinationID", db.di(v["VACCINATIONID"]) ),
             ( "DateOfVaccination", db.dd(None) ),
             ( "DateRequired", dbtoday ),
+            ( "DateExpires", db.dd(None) ),
+            ( "BatchNumber", db.ds(v["BATCHNUMBER"]) ),
+            ( "Manufacturer", db.ds(v["MANUFACTURER"]) ),
             ( "Cost", db.di(v["COST"]) ),
             ( "Comments", db.ds(v["COMMENTS"]) )
             ))

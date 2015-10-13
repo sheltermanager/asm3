@@ -1,6 +1,7 @@
 37
 ================
 
+13/10/15 Make sure batch number/manufacturer are cloned with vacc
 12/10/15 Add sample rabies certificate template
 12/10/15 Fix all choosers to be cleared by edit dialogs before load
 08/10/15 Fix broken MySQL upgrade path with double queries #254

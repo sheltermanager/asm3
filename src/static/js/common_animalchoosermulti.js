@@ -184,6 +184,7 @@
             this.clear();
             var self = this;
             var results = this.options.results;
+            if (!animalids) { return; }
             $.each(animalids.split(","), function(i, v) {
                 results.find("data=['" + v + "']").prop("checked", true);
             });
