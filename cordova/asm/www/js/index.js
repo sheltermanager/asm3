@@ -52,7 +52,7 @@ document.addEventListener("deviceready", function() {
 
                     var ui = $("#ui").val();
                     if (ui == "mobile" || ui == "main") {
-                        window.open(base + ui, "_blank", "location=yes,hardwareback=yes,zoom=no");
+                        window.open(base + ui, "_blank", "location=yes,toolbar=yes,hardwareback=yes,zoom=no");
                     }
                     else if (ui == "upload") {
                         window.location = "upload.html";
