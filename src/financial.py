@@ -1245,8 +1245,8 @@ def giftaid_spreadsheet(dbo, path, fromdate, todate):
                 i18n.format_date("%Y-%m-%d", d["DONATIONDATE"]), 1)
             content = content.replace("DONDATE", i18n.format_date("%d/%m/%y", d["DONATIONDATE"]), 1)
             donamt = str(float(d["DONATIONAMOUNT"]) / 100)
-            content = content.replace("<text:p>54,321.00</text:p>", "<text:p>" + donamt + "</text:p>", 1)
-            content = content.replace("office:value=\"54321\"", "office:value=\"" + donamt + "\"", 1)
+            content = content.replace("54,321,000.00</text:p>", donamt + "</text:p>", 1)
+            content = content.replace("office:value=\"54321000\"", "office:value=\"" + donamt + "\"", 1)
         # Clear out anything remaining
         content = content.replace("DONTITLE", "")
         content = content.replace("DONFIRSTNAME", "")
