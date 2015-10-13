@@ -136,6 +136,10 @@ document.addEventListener("deviceready", function() {
         });
     });
 
+    $("#button-logout").click(function() {
+        window.location = "index.html";
+    });
+
     load_animals();
 
 });
