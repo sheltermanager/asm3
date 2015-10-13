@@ -393,8 +393,8 @@ $(function() {
             var p = movements.lastperson, a = movements.lastanimal, warn = [];
             tableform.dialog_error("");
 
-            // None of these warnings are valid if this isn't an adoption
-            if ($("#type").val() != 1) { return; }
+            // None of these warnings are valid if this isn't an adoption or a reclaim
+            if ($("#type").val() != 1 && $("#type").val() != 5) { return; }
 
             // Person warnings
             if (p) {
@@ -440,6 +440,16 @@ $(function() {
                 // If the animal is held, we shouldn't be allowed to adopt it
                 if (a.ISHOLD == 1) {
                     warn.push(_("This animal is currently held and cannot be adopted."));
+                }
+
+                // Cruelty case
+                if (a.CRUELTYCASE == 1) {
+                    warn.push(_("This animal is part of a cruelty case and should not leave the shelter."));
+                }
+
+                // Quarantined
+                if (a.ISQUARANTINE == 1) {
+                    warn.push(_("This animal is currently quarantined and should not leave the shelter."));
                 }
 
                 // Check for bonded animals and warn

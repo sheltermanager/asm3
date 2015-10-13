@@ -1,6 +1,7 @@
 37
 ================
 
+13/10/15 Warn on adopt/reclaim of quarantine or cruelty case #273
 13/10/15 Fix HMRC giftaid spreadsheet totals
 13/10/15 Make sure batch number/manufacturer are cloned with vacc
 12/10/15 Add sample rabies certificate template

@@ -33,6 +33,16 @@ $(function() {
                 '<span class="centered">' + _("This animal is not on the shelter.") + '</span>',
                 '</p>',
                 '</div>',
+                '<div id="crueltycase" class="ui-state-error ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
+                '<p class="centered"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>',
+                '<span class="centered">' + _("This animal is part of a cruelty case and should not leave the shelter.") + '</span>',
+                '</p>',
+                '</div>',
+                '<div id="quarantine" class="ui-state-error ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
+                '<p class="centered"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>',
+                '<span class="centered">' + _("This animal is currently quarantined and should not leave the shelter.") + '</span>',
+                '</p>',
+                '</div>',
                 '<table class="asm-table-layout">',
                 '<tr>',
                 '<td>',
@@ -129,6 +139,8 @@ $(function() {
                 $("#reserveinfo").fadeOut();
                 $("#retailerinfo").fadeOut();
                 $("#notonshelter").fadeOut();
+                $("#crueltycase").fadeOut();
+                $("#quarantine").fadeOut();
                 $("#reclaim").button("enable");
 
                 // If the animal is not on the shelter and not fostered or at a retailer, 
@@ -137,6 +149,18 @@ $(function() {
                     $("#notonshelter").fadeIn();
                     $("#reclaim").button("disable");
                     return;
+                }
+
+                // If the animal is a cruelty case, we should not allow reclaim
+                if (rec.CRUELTYCASE == 1) {
+                    $("#crueltycase").fadeIn();
+                    $("#reclaim").button("disable");
+                }
+
+                // If the animal is quarantined, we shouldn't allow reclaim either
+                if (rec.ISQUARANTINE == 1) {
+                    $("#quarantine").fadeIn();
+                    $("#reclaim").button("disable");
                 }
 
                 if (rec.ACTIVEMOVEMENTTYPE == "2") {
@@ -188,6 +212,8 @@ $(function() {
 
             $("#costdisplay").closest(".ui-widget").hide();
             $("#notonshelter").hide();
+            $("#crueltycase").hide();
+            $("#quarantine").hide();
             $("#fosterinfo").hide();
             $("#reserveinfo").hide();
             $("#retailerinfo").hide();
