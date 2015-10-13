@@ -48,6 +48,9 @@ body {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+.form-signin #animal {
+  margin-bottom: 10px;
+}
 
 .glyphicon-refresh-animate {
     -animation: spin .7s infinite linear;

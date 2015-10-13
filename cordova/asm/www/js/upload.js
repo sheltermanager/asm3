@@ -63,7 +63,7 @@ document.addEventListener("deviceready", function() {
         show_loading("retreiving animals...");
         $.getJSON(url, 
             function(animals) {
-                var h = [];
+                var h = [ '<option value="" selected="selected">Select an animal</option>' ];
                 animals.sort(sort_single("ANIMALNAME"));
                 $.each(animals, function(i, a) {
                     var hasimage = "";
@@ -119,6 +119,7 @@ document.addEventListener("deviceready", function() {
     };
 
     $("#button-take").click(function() {
+        if (!$("#animal").val()) { return; }
         navigator.camera.getPicture(onPhotoURISuccess, fail_selection, { 
             quality: 30, 
             destinationType: navigator.camera.DestinationType.FILE_URI,
@@ -127,6 +128,7 @@ document.addEventListener("deviceready", function() {
     });
 
     $("#button-gallery").click(function() {
+        if (!$("#animal").val()) { return; }
         navigator.camera.getPicture(onPhotoURISuccess, fail_selection, { 
             quality: 30, 
             destinationType: navigator.camera.DestinationType.FILE_URI,
