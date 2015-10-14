@@ -1,6 +1,7 @@
 37
 ================
 
+14/10/15 Fix drag and drop in shelterview to update DisplayLocation
 13/10/15 Warn on adopt/reclaim of quarantine or cruelty case #273
 13/10/15 Fix HMRC giftaid spreadsheet totals
 13/10/15 Make sure batch number/manufacturer are cloned with vacc

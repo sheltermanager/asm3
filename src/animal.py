@@ -2145,6 +2145,7 @@ def update_location_unit(dbo, username, animalid, newlocationid, newunit = ""):
                     _("{0} {1}: Moved from {2} to {3}", l).format(sheltercode, animalname, oldlocation, newlocation))
     # Change the location
     db.execute(dbo, "UPDATE animal SET ShelterLocation = %s, ShelterLocationUnit = %s WHERE ID = %s" % (db.di(newlocationid), db.ds(newunit), db.di(animalid)))
+    update_animal_status(dbo, animalid)
 
 def clone_animal(dbo, username, animalid):
     """
