@@ -60,7 +60,7 @@ document.addEventListener("deviceready", function() {
             .replace("{u}", username)
             .replace("{p}", password)
             .replace("{s}", server);
-        show_loading("retreiving animals...");
+        show_loading("loading animals...");
         $.getJSON(url, 
             function(animals) {
                 var h = [ '<option value="" selected="selected">Select an animal</option>' ];
