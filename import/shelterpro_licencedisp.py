@@ -9,8 +9,11 @@ Import script for Shelterpro databases exported as CSV
 This variant is for a customer that didn't use shelterpro functionality as intended.
 
 They put ADOPTED and DECEASED in the LICENSE field to indicate the disposition and
-left their SHELTER table blank. This creates an adoption to move all animals off shelter
-unless they were marked DECEASED.
+left their SHELTER table blank. 
+
+They put adopters in PERSOWNR and it doesn't always tie up with LICENSE, so this
+creates an adoption to PERSOWNR if one is there, otherwise it goes to an unknown adopter
+unless DECEASED.
 
 Will also look in PATH/images/ANIMALKEY.[jpg|JPG] for animal photos if available.
 
@@ -73,22 +76,22 @@ ppo = {}
 addresses = {}
 addrlink = {}
 
-asm.setid("animal", 100)
-asm.setid("animalvaccination", 100)
-asm.setid("owner", 100)
-asm.setid("ownerlicence", 100)
-asm.setid("adoption", 100)
-asm.setid("media", 100)
+asm.setid("animal", 300)
+asm.setid("animalvaccination", 300)
+asm.setid("owner", 300)
+asm.setid("ownerlicence", 300)
+asm.setid("adoption", 300)
+asm.setid("media", 300)
 asm.setid("dbfs", 300)
 
 # Remove existing
 print "\\set ON_ERROR_STOP\nBEGIN;"
-print "DELETE FROM animal WHERE ID >= 100;"
-print "DELETE FROM animalvaccination WHERE ID >= 100;"
-print "DELETE FROM owner WHERE ID >= 100;"
-print "DELETE FROM ownerlicence WHERE ID >= 100;"
-print "DELETE FROM adoption WHERE ID >= 100;"
-print "DELETE FROM media WHERE ID >= 100;"
+print "DELETE FROM animal WHERE ID >= 300;"
+print "DELETE FROM animalvaccination WHERE ID >= 300;"
+print "DELETE FROM owner WHERE ID >= 300;"
+print "DELETE FROM ownerlicence WHERE ID >= 300;"
+print "DELETE FROM adoption WHERE ID >= 300;"
+print "DELETE FROM media WHERE ID >= 300;"
 print "DELETE FROM dbfs WHERE ID >= 300;"
 
 # Create a transfer owner
@@ -104,13 +107,13 @@ uo.OwnerSurname = "Unknown"
 uo.OwnerName = o.OwnerSurname
 
 # Load up data files
-caddress = asm.csv_to_list("%s/address.csv" % PATH)
-caddrlink = asm.csv_to_list("%s/addrlink.csv" % PATH)
-canimal = asm.csv_to_list("%s/animal.csv" % PATH)
-clicense = asm.csv_to_list("%s/license.csv" % PATH)
-cperson = asm.csv_to_list("%s/person.csv" % PATH)
-cshelter = asm.csv_to_list("%s/shelter.csv" % PATH)
-cvacc = asm.csv_to_list("%s/vacc.csv" % PATH)
+caddress = asm.csv_to_list("%s/address.csv" % PATH, remove_control=True)
+caddrlink = asm.csv_to_list("%s/addrlink.csv" % PATH, remove_control=True)
+canimal = asm.csv_to_list("%s/animal.csv" % PATH, remove_control=True)
+clicense = asm.csv_to_list("%s/license.csv" % PATH, remove_control=True)
+cperson = asm.csv_to_list("%s/person.csv" % PATH, remove_control=True)
+cshelter = asm.csv_to_list("%s/shelter.csv" % PATH, remove_control=True)
+cvacc = asm.csv_to_list("%s/vacc.csv" % PATH, remove_control=True)
 
 # Next, addresses
 for row in caddress:
@@ -194,10 +197,24 @@ for row in canimal:
         if a.Breed2ID == 1: a.Breed2ID = 442
         a.BreedName = "%s / %s" % ( asm.breed_name_for_id(a.BreedID), asm.breed_name_for_id(a.Breed2ID) )
     a.HiddenAnimalDetails = comments
+    # They also jammed rabies into VACC
+    a.RabiesTag = row["VACC"]
     # If the animal is dead, mark it as such
     if row["LICENSE"] == "DECEASED":
         a.Archived = 1
         a.DeceasedDate = a.DateBroughtIn
+    elif row["PERSOWNR"] != "0" and row["PERSOWNR"].strip() != "":
+        # Is there an adopter link?
+        m = asm.Movement()
+        m.AnimalID = a.ID
+        m.OwnerID = ppo[row["PERSOWNR"]].ID
+        m.MovementType = 1
+        m.MovementDate = a.DateBroughtIn
+        a.Archived = 1
+        a.ActiveMovementID = m.ID
+        a.ActiveMovementDate = m.MovementDate
+        a.ActiveMovementType = 1
+        movements.append(m)
     else:
         # Create a fake adoption to an unknown owner get this animal off shelter
         m = asm.Movement()

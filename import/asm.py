@@ -88,15 +88,24 @@ def atoi(s):
     except:
         return 0
 
-def csv_to_list(fname):
+def csv_to_list(fname, strip = False, remove_control = False):
     """
     Reads the csv file fname and returns it as a list of maps 
-    with the first row used as the keys 
+    with the first row used as the keys.
+    strip: If True, removes whitespace from all fields
+    remove_control: If True, removes all ascii chars < 32
     """
     o = []
     reader = csv.DictReader(open(fname, "r"))
     for row in reader:
         o.append(row)
+        if strip:
+            for k, v in row.iteritems():
+                row[k] = v.strip()
+        if remove_control:
+            for k, v in row.iteritems():
+                v = ''.join(c for c in v if ord(c) >= 32)
+                row[k]= v.strip()
     return o
 
 def cint(s):
