@@ -12,7 +12,7 @@
     </author>
 
     <content src="index.html" />
-    <icon src="www/img/logo-144.png" />
+    <icon src="www/img/logo/logo-144.png" />
     <plugin name="cordova-plugin-whitelist" version="1" />
 
     <access origin="*" />
@@ -24,11 +24,10 @@
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
 
-    <preference name="AndroidPersistentFileLocation" value="Compatibility" />
-
     <platform name="android">
         
         <allow-intent href="market:*" />
+        <preference name="AndroidPersistentFileLocation" value="Compatibility" />
         
         <icon src="www/img/logo/logo-ldpi.png" density="ldpi" />
         <icon src="www/img/logo/logo-mdpi.png" density="mdpi" />
@@ -65,10 +64,10 @@
 
         <splash src="www/img/splash/splash-port-960.png" width="640" height="960" />
         <splash src="www/img/splash/splash-port-1024.png" width="768" height="1024" />
-        <splash src="www/img/splash/splash-port-2408.png" width="1536" height="2048" />
+        <splash src="www/img/splash/splash-port-2048.png" width="1536" height="2048" />
         <splash src="www/img/splash/splash-land-960.png" width="960" height="640" />
         <splash src="www/img/splash/splash-land-1024.png" width="1024" height="768" />
-        <splash src="www/img/splash/splash-land-2408.png" width="2048" height="1536" />
+        <splash src="www/img/splash/splash-land-2048.png" width="2048" height="1536" />
     </platform>
 
 </widget>

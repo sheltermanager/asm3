@@ -9,18 +9,6 @@
                 "parents": {
                     "/*": [
                         {
-                            "xml": "<feature name=\"Notification\"><param name=\"android-package\" value=\"org.apache.cordova.dialogs.Notification\" /></feature>",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<feature name=\"InAppBrowser\"><param name=\"android-package\" value=\"org.apache.cordova.inappbrowser.InAppBrowser\" /></feature>",
-                            "count": 1
-                        },
-                        {
-                            "xml": "<feature name=\"Whitelist\"><param name=\"android-package\" value=\"org.apache.cordova.whitelist.WhitelistPlugin\" /><param name=\"onload\" value=\"true\" /></feature>",
-                            "count": 1
-                        },
-                        {
                             "xml": "<feature name=\"Camera\"><param name=\"android-package\" value=\"org.apache.cordova.camera.CameraLauncher\" /></feature>",
                             "count": 1
                         },
@@ -29,11 +17,23 @@
                             "count": 1
                         },
                         {
+                            "xml": "<feature name=\"Notification\"><param name=\"android-package\" value=\"org.apache.cordova.dialogs.Notification\" /></feature>",
+                            "count": 1
+                        },
+                        {
                             "xml": "<feature name=\"File\"><param name=\"android-package\" value=\"org.apache.cordova.file.FileUtils\" /><param name=\"onload\" value=\"true\" /></feature>",
                             "count": 1
                         },
                         {
                             "xml": "<feature name=\"FileTransfer\"><param name=\"android-package\" value=\"org.apache.cordova.filetransfer.FileTransfer\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"InAppBrowser\"><param name=\"android-package\" value=\"org.apache.cordova.inappbrowser.InAppBrowser\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Whitelist\"><param name=\"android-package\" value=\"org.apache.cordova.whitelist.WhitelistPlugin\" /><param name=\"onload\" value=\"true\" /></feature>",
                             "count": 1
                         }
                     ]
@@ -62,7 +62,22 @@
         }
     },
     "installed_plugins": {
+        "cordova-plugin-camera": {
+            "PACKAGE_NAME": "com.sheltermanager.asm"
+        },
+        "cordova-plugin-console": {
+            "PACKAGE_NAME": "com.sheltermanager.asm"
+        },
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "com.sheltermanager.asm"
+        },
         "cordova-plugin-dialogs": {
+            "PACKAGE_NAME": "com.sheltermanager.asm"
+        },
+        "cordova-plugin-file": {
+            "PACKAGE_NAME": "com.sheltermanager.asm"
+        },
+        "cordova-plugin-file-transfer": {
             "PACKAGE_NAME": "com.sheltermanager.asm"
         },
         "cordova-plugin-inappbrowser": {
@@ -70,23 +85,7 @@
         },
         "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.sheltermanager.asm"
-        },
-        "cordova-plugin-camera": {
-            "PACKAGE_NAME": "com.sheltermanager.asm"
-        },
-        "cordova-plugin-device": {
-            "PACKAGE_NAME": "com.sheltermanager.asm"
-        },
-        "cordova-plugin-console": {
-            "PACKAGE_NAME": "com.sheltermanager.asm"
-        },
-        "cordova-plugin-file-transfer": {
-            "PACKAGE_NAME": "com.sheltermanager.asm"
         }
     },
-    "dependent_plugins": {
-        "cordova-plugin-file": {
-            "PACKAGE_NAME": "com.sheltermanager.asm"
-        }
-    }
+    "dependent_plugins": {}
 }
