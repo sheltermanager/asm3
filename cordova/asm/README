@@ -29,7 +29,7 @@ Deploy to apple appstore:
 6. In Xcode, click on sheltermanager project in left (leftmost view)
 7. Pick "sheltermanager" from TARGETS list
 8. Choose Team
-9. Select "Portrait" for device orientation for both iPhone and iPad
+9. Select all available orientations (portrait, landscape l/r, upside down)
 10. For iPad, choose "Requires full screen" (works around cordova bug)
 11. Click "Build Settings" at top
 12. Scroll to "Code Signing", choose my distribution key for Release and provisoning profile
