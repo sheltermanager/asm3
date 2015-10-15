@@ -94,6 +94,10 @@ $(function() {
                     format.date(a.ANIMALCONTROLINCIDENTDATE) + ' ' + 
                     a.ANIMALCONTROLINCIDENTNAME + '</b></td></tr>';
             }
+            var hold = "";
+            if (a.ISHOLD == 1 && a.HOLDUNTILDATE) {
+                hold = '<tr><td>' + _("Hold until") + ':</td><td><b>' + format.date(a.HOLDUNTILDATE) + '</b></td></tr>';
+            }
             var first_column = [
                 '<input type="hidden" id="animalid" value="' + a.ID + '" />',
                 '<div class="asm-grid">',
@@ -120,10 +124,11 @@ $(function() {
                 '</tr>',
                 animalcontrol,
                 '<tr>',
-                '<td id="hentshel">' + _("Entered shelter") + '</td><td><b>' + format.date(a.DATEBROUGHTIN),
+                '<td id="hentshel">' + _("Entered shelter") + ':</td><td><b>' + format.date(a.DATEBROUGHTIN),
                 format.time(a.DATEBROUGHTIN) != "00:00:00" ? ' ' + format.time(a.DATEBROUGHTIN) : '',
                 '</b></td>',
                 '</tr>',
+                hold,
                 '<tr>',
                 '<td id="hleftshel">' + _("Left shelter") + ':</td><td><b>' + (a.ARCHIVED == 1 ? format.date(a.ACTIVEMOVEMENTDATE) : "") + '</b></td>',
                 '</tr>',
