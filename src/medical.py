@@ -400,7 +400,9 @@ def get_vaccinations_two_dates(dbo, dbstart, dbend, locationfilter = ""):
 
 def get_vaccinations_expiring_two_dates(dbo, dbstart, dbend, locationfilter = ""):
     """
-    Returns vaccinations expiring between two dates:
+    Returns vaccinations expiring between two dates. 
+    A vacc is only considered truly expired if there isn't another vacc of the 
+    same type for the same animal with a newer required date.
     dbstart, dbend: ISO dates
     locationfilter is a comma separated list of internal locations to include animals in
     ID, ANIMALID, SHELTERCODE, ANIMALNAME, LOCATIONNAME, WEBSITEMEDIANAME, DATEREQUIRED, DATEOFVACCINATION, COMMENTS, VACCINATIONTYPE, VACCINATIONID
@@ -412,6 +414,9 @@ def get_vaccinations_expiring_two_dates(dbo, dbstart, dbend, locationfilter = ""
         shelterfilter = " AND (a.Archived = 0 OR a.ActiveMovementType = 2)"
     return db.query(dbo, get_vaccination_query(dbo) + \
         "WHERE av.DateExpires Is Not Null AND av.DateOfVaccination Is Not Null " \
+        "AND NOT EXISTS(SELECT av2.ID FROM animalvaccination av2 WHERE av2.ID <> av.ID " \
+            "AND av2.AnimalID = av.AnimalID AND av2.VaccinationID = av.VaccinationID " \
+            "AND av2.DateRequired > av.DateRequired) " \
         "AND a.DeceasedDate Is Null %s %s %s " \
         "ORDER BY av.DateExpires, a.AnimalName" % (shelterfilter, ec, locationfilter))
 
