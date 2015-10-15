@@ -73,6 +73,9 @@ class TestFinancial(unittest.TestCase):
     def test_get_licence_find_simple(self):
         financial.get_licence_find_simple(base.get_dbo(), "")
 
+    def test_get_licence(self):
+        financial.get_licence(base.get_dbo(), 1)
+
     def test_get_licenses(self):
         financial.get_licences(base.get_dbo())
 

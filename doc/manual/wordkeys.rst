@@ -435,9 +435,9 @@ rules apply as for vaccinations and medical records when accessing payments.
 payments. The Recent keyword looks for payments that have been received. 
 
 However, if you create an invoice/receipt document from the payment tab of a
-person or animal record, you can select multiple payments before creating the
-document and access the information by suffixing a number to the end of the
-keys listed below (eg: PaymentType1, PaymentComments2)
+person or animal record (or the payment book), you can select multiple payments
+before creating the document and access the information by suffixing a number
+to the end of the keys listed below (eg: PaymentType1, PaymentComments2)
 
 The fields are:
 
@@ -563,7 +563,8 @@ Person Keys
 -----------
 
 Person keys are available for documents generated from the owner and movement
-screens, they are also available for documents generated from the payment tab. 
+screens, they are also available for documents generated from the payment 
+and licence tabs. 
 
 OwnerTitle 
     The person's title
@@ -646,9 +647,9 @@ TrapComments
 Payment/Receipt/Invoice Keys
 ----------------------------
 
-Payment keys are available for documents generated for a single payment from
-the payment tab. Keys for the person making the payment are also present and if
-the payment is linked to an animal, animal keys are also present. 
+Payment keys are available for documents generated for a one or more payments
+from the payment tab. Keys for the person making the payment are also present
+and if the payment is linked to an animal, animal keys are also present. 
 
 PaymentID 
     The payment record ID (used to generate receipt number)
@@ -677,4 +678,26 @@ PaymentLastChangedBy
 PaymentLastChangedDate  
     The date this payment record was last changed
 
+Licence Keys
+------------
+
+Licence keys are only available for documents generated for a single licence
+under the licence tab or licencing book. Keys for the person purchasing the
+licence are also present and if the licence is linked to an animal, animal
+keys are also present.
+
+.. note:: You can use "Licence" or "License" when accessing these keys - either will work.
+
+LicenceTypeName
+    The type of licence purchased
+LicenceNumber
+    The unique number of the licence
+LicenceFee
+    The fee for the licence
+LicenceIssued
+    The date the licence was issued
+LicenceExpires
+    The date the licence expires
+LicenceComments
+    Any comments from the licence record
 

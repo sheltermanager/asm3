@@ -529,6 +529,28 @@ def donation_tags(dbo, donations):
     tags["PAYMENTTOTAL"] = format_currency_no_symbol(l, totals["total"])
     return tags
 
+def licence_tags(dbo, li):
+    """
+    Generates a list of tags from a licence result 
+    (from anything using financial.get_licence_query)
+    """
+    l = dbo.locale
+    tags = {
+        "LICENCETYPENAME":      li["LICENCETYPENAME"],
+        "LICENCENUMBER":        li["LICENCENUMBER"],
+        "LICENCEFEE":           li["LICENCEFEE"],
+        "LICENCEISSUED":        python2display(l, li["ISSUEDATE"]),
+        "LICENCEEXPIRES":       python2display(l, li["EXPIRYDATE"]),
+        "LICENCECOMMENTS":      li["COMMENTS"],
+        "LICENSETYPENAME":      li["LICENCETYPENAME"],
+        "LICENSENUMBER":        li["LICENCENUMBER"],
+        "LICENSEFEE":           li["LICENCEFEE"],
+        "LICENSEISSUED":        python2display(l, li["ISSUEDATE"]),
+        "LICENSEEXPIRES":       python2display(l, li["EXPIRYDATE"]),
+        "LICENSECOMMENTS":      li["COMMENTS"]
+    }
+    return tags
+
 def person_tags(dbo, p):
     """
     Generates a list of tags from a person result (the deep type from
@@ -851,4 +873,21 @@ def generate_donation_doc(dbo, template, donationids, username):
     tags = append_tags(tags, donation_tags(dbo, dons))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, template, tags)
+
+def generate_licence_doc(dbo, template, licenceid, username):
+    """
+    Generates a licence document from a template
+    template: The path/name of the template to use
+    licenceid: The licence to generate for
+    """
+    l = financial.get_licence(dbo, licenceid)
+    if l is None:
+        raise utils.ASMValidationError("%d is not a valid licence ID" % licenceid)
+    tags = person_tags(dbo, person.get_person(dbo, l["OWNERID"]))
+    if l["ANIMALID"] is not None and l["ANIMALID"] != 0:
+        tags = append_tags(tags, animal_tags(dbo, animal.get_animal(dbo, l["ANIMALID"])))
+    tags = append_tags(tags, licence_tags(dbo, l))
+    tags = append_tags(tags, org_tags(dbo, username))
+    return substitute_template(dbo, template, tags)
+
 

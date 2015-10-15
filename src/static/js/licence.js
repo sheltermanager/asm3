@@ -155,6 +155,8 @@ $(function() {
                              });
                      }
                  },
+                 { id: "document", text: _("Document"), icon: "document", enabled: "one", perm: "gaf", 
+                     tooltip: _("Generate document from this license"), type: "buttonmenu" },
                  { id: "offset", type: "dropdownfilter", 
                      options: [ "i7|" + _("Issued in the last week"), 
                         "i31|" + _("Issued in the last month"), 
@@ -180,6 +182,10 @@ $(function() {
             var s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
+            s += '<div id="button-document-body" class="asm-menu-body">' +
+                '<ul class="asm-menu-list">' +
+                edit_header.template_list(controller.templates, "LICENCE", 0) +
+                '</ul></div>';
             if (controller.name.indexOf("person_") == 0) {
                 s += edit_header.person_edit_header(controller.person, "licence", controller.tabcounts);
             }
@@ -198,6 +204,15 @@ $(function() {
         bind: function() {
             $(".asm-tabbar").asmtabs();
             $("#type").change(licence.type_change);
+
+            // Add click handlers to templates
+            $(".templatelink").click(function() {
+                // Update the href as it is clicked so default browser behaviour
+                // continues on to open the link in a new window
+                var template_name = $(this).attr("data");
+                $(this).prop("href", "document_gen?mode=LICENCE&id=" + tableform.table_selected_row(licence.table).ID + "&template=" + template_name);
+            });
+
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);

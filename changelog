@@ -1,6 +1,8 @@
 37
 ================
 
+15/10/15 Fix bug that caused payment documents to open in same window
+15/10/15 Add ability to generate licence documents to licence tab/book #274
 15/10/15 Show hold until date in animal banner
 15/10/15 Refactor wordprocessor.py faster/smaller code for desc/RECENT/LAST
 15/10/15 Hide expired vacc from calendar if newer of same type due #276

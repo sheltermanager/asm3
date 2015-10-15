@@ -1374,6 +1374,7 @@ class animal_licence:
         c = html.controller_str("name", "animal_licence")
         c += html.controller_json("rows", licences)
         c += html.controller_json("animal", a)
+        c += html.controller_json("templates", dbfs.get_document_templates(dbo))
         c += html.controller_json("tabcounts", extanimal.get_satellite_counts(dbo, a["ID"])[0])
         c += html.controller_json("licencetypes", extlookups.get_licence_types(dbo))
         s += html.controller(c)
@@ -2325,6 +2326,10 @@ class document_gen:
             loglinktype = extlog.PERSON
             logid = financial.get_donation(dbo, post.integer_list("id")[0])["OWNERID"]
             content = wordprocessor.generate_donation_doc(dbo, template, post.integer_list("id"), session.user)
+        elif mode == "LICENCE":
+            loglinktype = extlog.PERSON
+            logid = financial.get_licence(dbo, post.integer("id"))["OWNERID"]
+            content = wordprocessor.generate_licence_doc(dbo, template, post.integer("id"), session.user)
         if configuration.generate_document_log(dbo) and configuration.generate_document_log_type(dbo) > 0:
             extlog.add_log(dbo, session.user, loglinktype, logid, configuration.generate_document_log_type(dbo), _("Generated document '{0}'").format(templatename))
         if templatename.endswith(".html"):
@@ -2365,6 +2370,14 @@ class document_gen:
                 ownerid = d[0]["OWNERID"]
                 tempname += " - " + extperson.get_person_name(dbo, ownerid)
                 extmedia.create_document_media(dbo, session.user, extmedia.PERSON, ownerid, tempname, post["document"])
+                raise web.seeother("person_media?id=%d" % ownerid)
+            elif mode == "LICENCE":
+                l = financial.get_licence(dbo, recid)
+                if l is None:
+                    raise utils.ASMValidationError("%d is not a valid licence id" % recid)
+                ownerid = l["OWNERID"]
+                tempname += " - " + extperson.get_person_name(dbo, ownerid)
+                extmedia.create_document_media(dbo, session.user, extmedia.PERSON, recid, tempname, post["document"])
                 raise web.seeother("person_media?id=%d" % ownerid)
             else:
                 raise web.seeother("main")
@@ -3334,6 +3347,7 @@ class licence:
         s = html.header("", session)
         c = html.controller_str("name", "licence")
         c += html.controller_json("rows", licences)
+        c += html.controller_json("templates", dbfs.get_document_templates(dbo))
         c += html.controller_json("licencetypes", extlookups.get_licence_types(dbo))
         s += html.controller(c)
         s += html.footer()
@@ -4947,6 +4961,7 @@ class person_licence:
         c = html.controller_str("name", "person_licence")
         c += html.controller_json("rows", licences)
         c += html.controller_json("person", p)
+        c += html.controller_json("templates", dbfs.get_document_templates(dbo))
         c += html.controller_json("tabcounts", extperson.get_satellite_counts(dbo, p["ID"])[0])
         c += html.controller_json("licencetypes", extlookups.get_licence_types(dbo))
         s += html.controller(c)

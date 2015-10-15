@@ -3471,7 +3471,7 @@ msgstr ""
 msgid "Doberman Pinscher"
 msgstr ""
 
-#: person.js animal.js dbupdate.py
+#: person.js animal.js licence.js dbupdate.py
 msgid "Document"
 msgstr ""
 
@@ -4826,6 +4826,10 @@ msgstr ""
 
 #: animal_new.js animal.js
 msgid "Generate a random name for this animal"
+msgstr ""
+
+#: licence.js
+msgid "Generate document from this license"
 msgstr ""
 
 #: donations.js

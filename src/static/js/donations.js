@@ -385,15 +385,13 @@ $(function() {
                 }
             });
 
-            // Add click handlers to templates to figure out where to go based
-            // on the selected donations
+            // Add click handlers to templates
             $(".templatelink").click(function() {
+                // Update the href as it is clicked so default browser behaviour
+                // continues on to open the link in a new window
                 var template_name = $(this).attr("data");
-                $("#tableform input:checked").each(function() {
-                    var ids = tableform.table_ids(donations.table);
-                    common.route("document_gen?mode=DONATION&id=" + ids + "&template=" + template_name);
-                });
-                return false;
+                var ids = tableform.table_ids(donations.table);
+                $(this).prop("href", "document_gen?mode=DONATION&id=" + ids + "&template=" + template_name);
             });
         },
 

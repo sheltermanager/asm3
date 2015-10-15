@@ -500,6 +500,16 @@ def get_licence_find_simple(dbo, licnum, dummy = 0):
     return db.query(dbo, get_licence_query(dbo) + \
         "WHERE UPPER(ol.LicenceNumber) LIKE UPPER('%%%s%%')" % licnum.replace("'", "`"))
 
+def get_licence(dbo, licenceid):
+    """
+    Returns a single licence by id
+    """
+    rows = db.query(dbo, get_licence_query(dbo) + "WHERE ol.ID=%d" % licenceid)
+    if len(rows) > 0:
+        return rows[0]
+    else:
+        return None
+
 def get_licences(dbo, offset = "i31"):
     """
     Returns a recordset of licences 
