@@ -1158,6 +1158,10 @@ msgstr ""
 msgid "Animal Emblems"
 msgstr "Simboli dell'animale"
 
+#: lookups.py
+msgid "Animal Flags"
+msgstr ""
+
 #: options.js
 msgid "Animal Links"
 msgstr ""
@@ -2319,7 +2323,8 @@ msgid "Citations"
 msgstr ""
 
 #: waitinglist_results.js transport.js person.js incident.js incident_new.js
-#: person_new.js person_find_results.js common_personchooser.js html.py
+#: person_new.js person_find_results.js common_personchooser.js mobile.py
+#: html.py
 msgid "City"
 msgstr "Città"
 
@@ -2618,8 +2623,8 @@ msgstr "Coton de Tulear"
 msgid "Could not find animal with name '{0}'"
 msgstr ""
 
-#: mobile.py
-msgid "County"
+#: common.js header_edit_header.js
+msgid "Courtesy Listing"
 msgstr ""
 
 #: dbupdate.py
@@ -2767,7 +2772,7 @@ msgstr "Criteri:"
 msgid "Crossbreed"
 msgstr "Incrocio"
 
-#: common.js shelterview.js animal.js options.js publish.py
+#: common.js header_edit_header.js shelterview.js options.js publish.py
 msgid "Cruelty Case"
 msgstr "Caso di maltrattamento"
 
@@ -3503,7 +3508,7 @@ msgstr "Non mostrare"
 msgid "Doberman Pinscher"
 msgstr "Doberman Pinscher"
 
-#: person.js animal.js dbupdate.py
+#: person.js animal.js licence.js dbupdate.py
 msgid "Document"
 msgstr "Documento"
 
@@ -4629,7 +4634,8 @@ msgstr "Pesce"
 msgid "Flag"
 msgstr "Evidenzia"
 
-#: onlineform.js person.js person_find.js person_new.js common_personchooser.js
+#: onlineform.js person.js animal_find.js person_find.js animal.js
+#: person_new.js common_personchooser.js
 msgid "Flags"
 msgstr "Bandiere"
 
@@ -4873,6 +4879,10 @@ msgstr "Genera un nuovo codice animale"
 #: animal_new.js animal.js
 msgid "Generate a random name for this animal"
 msgstr "Produrre un nome casuale per questo animale"
+
+#: licence.js
+msgid "Generate document from this license"
+msgstr ""
 
 #: donations.js
 msgid "Generate document from this payment"
@@ -5228,13 +5238,14 @@ msgstr "Storia"
 msgid "Hold"
 msgstr "Tieni"
 
-#: animal.js
+#: animal_new.js animal.js
 msgid "Hold the animal until this date or blank to hold indefinitely"
 msgstr ""
 "Trattieni l'animale fino a questa data o lascia bianco per trattenerlo per "
 "un tempo indefinito."
 
-#: animal.js animal_find_results.js animal_bulk.js html.py
+#: header_edit_header.js animal_new.js animal.js animal_find_results.js
+#: animal_bulk.js html.py
 msgid "Hold until"
 msgstr "Trattieni fino a"
 
@@ -5564,10 +5575,6 @@ msgstr "Includi animali che non hanno foto"
 msgid "Include cruelty case animals"
 msgstr "Includere animali casi di maltrattamento"
 
-#: animal_find.js
-msgid "Include deceased"
-msgstr "Includere deceduti"
-
 #: publish_options.js
 msgid "Include fostered animals"
 msgstr "Includere animali in affido"
@@ -5589,10 +5596,6 @@ msgid ""
 "Include incomplete vaccination and test records when generating document "
 "templates"
 msgstr ""
-
-#: animal_find.js
-msgid "Include non-shelter"
-msgstr "Includere non rifugio"
 
 #: options.js
 msgid "Include off-shelter animals in medical calendar and books"
@@ -7158,7 +7161,7 @@ msgstr ""
 msgid "Noise"
 msgstr ""
 
-#: common.js animal_find.js animal_new.js animal.js options.js
+#: common.js header_edit_header.js animal_new.js options.js
 msgid "Non-Shelter"
 msgstr "Non rifugio"
 
@@ -7206,7 +7209,7 @@ msgstr "Non disponibile per l'adozione"
 msgid "Not Available for Adoption"
 msgstr "Non disponibile per l'adozione"
 
-#: common.js shelterview.js animal_find.js animal.js animal_bulk.js options.js
+#: common.js header_edit_header.js shelterview.js animal_bulk.js options.js
 #: publish.py
 msgid "Not For Adoption"
 msgstr "Non adottabile"
@@ -8000,10 +8003,6 @@ msgstr "Positivo/Negativo"
 msgid "Postage costs"
 msgstr "Costi postali"
 
-#: mobile.py
-msgid "Postcode"
-msgstr "CAP"
-
 #: dbupdate.py
 msgid "Pot Bellied"
 msgstr "Maiale Panciuto"
@@ -8049,6 +8048,10 @@ msgstr ""
 
 #: onlineform_incoming.js
 msgid "Print selected forms"
+msgstr ""
+
+#: header.js
+msgid "Printable Manual"
 msgstr ""
 
 #: options.js
@@ -8183,7 +8186,7 @@ msgstr "Quaker Parakeet"
 msgid "Quantity"
 msgstr ""
 
-#: common.js shelterview.js animal_find.js animal.js animal_find_results.js
+#: common.js header_edit_header.js shelterview.js animal_find_results.js
 #: options.js publish.py html.py
 msgid "Quarantine"
 msgstr "Quarantena"
@@ -9452,6 +9455,10 @@ msgid "Show the full diary (instead of just my notes) on the home page"
 msgstr "Mostra il diario completo( invece delle mie note) sulla home page"
 
 #: options.js
+msgid "Show the hold fields"
+msgstr ""
+
+#: options.js
 msgid "Show the internal location field"
 msgstr "Mostra il campo Posizione interna"
 
@@ -9695,7 +9702,7 @@ msgstr "South Russian Ovcharka"
 msgid "Spaniel"
 msgstr "Spaniel"
 
-#: animal.js animal_find_results.js mobile.py html.py
+#: common.js animal.js animal_find_results.js options.js mobile.py html.py
 msgid "Special Needs"
 msgstr "Esigenze particolari"
 
@@ -9813,7 +9820,8 @@ msgid "Starts"
 msgstr "Inizia"
 
 #: waitinglist_results.js transport.js person.js incident.js incident_new.js
-#: person_new.js person_find_results.js common_personchooser.js html.py
+#: person_new.js person_find_results.js common_personchooser.js mobile.py
+#: html.py
 msgid "State"
 msgstr "Stato"
 
@@ -10627,6 +10635,14 @@ msgstr ""
 msgid "This animal is currently held and cannot be adopted."
 msgstr ""
 
+#: movements.js move_adopt.js move_reclaim.js
+msgid "This animal is currently quarantined and should not leave the shelter."
+msgstr ""
+
+#: movements.js move_adopt.js
+msgid "This animal is marked not for adoption."
+msgstr ""
+
 #: animal.js
 msgid "This animal is microchipped"
 msgstr "Questo animale è microchippato"
@@ -10636,26 +10652,15 @@ msgstr "Questo animale è microchippato"
 msgid "This animal is not on the shelter."
 msgstr "Questo animale non è nel rifugio."
 
-#: animal.js
-msgid "This animal is part of a cruelty case against an owner"
-msgstr ""
-"Questo animale è coinvolto in un caso di maltrattamento contro il "
-"proprietario"
-
-#: animal.js
-msgid "This animal is quarantined"
+#: movements.js move_adopt.js move_reclaim.js
+msgid "This animal is part of a cruelty case and should not leave the shelter."
 msgstr ""
 
-#: animal.js
+#: animal_new.js animal.js
 msgid "This animal should be held in case it is reclaimed"
 msgstr ""
 
-#: animal.js
-msgid "This animal should not be included when publishing animals for adoption"
-msgstr ""
-"Questo animale non deve essere incluso nelle publicazioni di adozioni animali"
-
-#: animal_new.js animal.js
+#: animal_new.js
 msgid ""
 "This animal should not be shown in figures and is not in the custody of the "
 "shelter"
@@ -10966,7 +10971,7 @@ msgstr "Terrier Tibetano"
 msgid "Tiger"
 msgstr "Tigre"
 
-#: reports.js diary.js
+#: reports.js log_new.js log.js diary.js
 msgid "Time"
 msgstr "Ora"
 
@@ -11081,7 +11086,7 @@ msgstr "Testuggine"
 msgid "Tosa Inu"
 msgstr "Tosa Inu"
 
-#: stocklevel.js
+#: stocklevel.js common_widgets.js
 msgid "Total"
 msgstr ""
 
@@ -11096,10 +11101,6 @@ msgstr ""
 #: dbupdate.py
 msgid "Toucan"
 msgstr "Tucano"
-
-#: mobile.py
-msgid "Town"
-msgstr ""
 
 #: dbupdate.py
 msgid "Toy Fox Terrier"
@@ -12366,7 +12367,7 @@ msgstr ""
 #: incident_find_results.js waitinglist_results.js lostfound_find_results.js
 #: transport.js person.js incident.js incident_new.js lostfound_new.js
 #: lostfound_find.js person_new.js person_find_results.js incident_find.js
-#: common_personchooser.js lostfound.js html.py
+#: common_personchooser.js lostfound.js mobile.py html.py
 msgid "Zipcode"
 msgstr "Codice postale"
 
@@ -12416,6 +12417,10 @@ msgstr ""
 #: mailmerge.js
 msgid "inches"
 msgstr "pollici"
+
+#: shelterview.js
+msgid "invalid"
+msgstr ""
 
 #: animal_new.js animal.js
 msgid "kg"
@@ -13284,6 +13289,24 @@ msgstr ""
 #: i18n.py
 msgid "{plural3} years."
 msgstr ""
+
+#~ msgid "Postcode"
+#~ msgstr "CAP"
+
+#~ msgid "Include deceased"
+#~ msgstr "Includere deceduti"
+
+#~ msgid "Include non-shelter"
+#~ msgstr "Includere non rifugio"
+
+#~ msgid "This animal is part of a cruelty case against an owner"
+#~ msgstr ""
+#~ "Questo animale è coinvolto in un caso di maltrattamento contro il "
+#~ "proprietario"
+
+#~ msgid "This animal should not be included when publishing animals for adoption"
+#~ msgstr ""
+#~ "Questo animale non deve essere incluso nelle publicazioni di adozioni animali"
 
 #~ msgid "Allow entry of two payments on the Move menu screens"
 #~ msgstr "Permetti l'inserimento di due pagamenti sulle schermate di menù Move"

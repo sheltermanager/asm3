@@ -1160,6 +1160,10 @@ msgstr ""
 msgid "Animal Emblems"
 msgstr "Gyvūnų emblemos"
 
+#: lookups.py
+msgid "Animal Flags"
+msgstr ""
+
 #: options.js
 msgid "Animal Links"
 msgstr ""
@@ -2319,7 +2323,8 @@ msgid "Citations"
 msgstr ""
 
 #: waitinglist_results.js transport.js person.js incident.js incident_new.js
-#: person_new.js person_find_results.js common_personchooser.js html.py
+#: person_new.js person_find_results.js common_personchooser.js mobile.py
+#: html.py
 msgid "City"
 msgstr "Miestas"
 
@@ -2618,8 +2623,8 @@ msgstr "Tulearo bišonas"
 msgid "Could not find animal with name '{0}'"
 msgstr ""
 
-#: mobile.py
-msgid "County"
+#: common.js header_edit_header.js
+msgid "Courtesy Listing"
 msgstr ""
 
 #: dbupdate.py
@@ -2764,7 +2769,7 @@ msgstr "Kriterijai:"
 msgid "Crossbreed"
 msgstr "Maišytas su"
 
-#: common.js shelterview.js animal.js options.js publish.py
+#: common.js header_edit_header.js shelterview.js options.js publish.py
 msgid "Cruelty Case"
 msgstr "Byla dėl žiauraus elgesio"
 
@@ -3501,7 +3506,7 @@ msgstr "Nerodyti"
 msgid "Doberman Pinscher"
 msgstr "Dobermanas"
 
-#: person.js animal.js dbupdate.py
+#: person.js animal.js licence.js dbupdate.py
 msgid "Document"
 msgstr "Dokumentas"
 
@@ -4623,7 +4628,8 @@ msgstr "Žuvis"
 msgid "Flag"
 msgstr "Pažymėti"
 
-#: onlineform.js person.js person_find.js person_new.js common_personchooser.js
+#: onlineform.js person.js animal_find.js person_find.js animal.js
+#: person_new.js common_personchooser.js
 msgid "Flags"
 msgstr "Žymės"
 
@@ -4867,6 +4873,10 @@ msgstr "Generuoti naują gyvūno kodą"
 #: animal_new.js animal.js
 msgid "Generate a random name for this animal"
 msgstr "Parinkti vardą atsitiktine tvarka"
+
+#: licence.js
+msgid "Generate document from this license"
+msgstr ""
 
 #: donations.js
 msgid "Generate document from this payment"
@@ -5223,13 +5233,14 @@ msgstr "Istorija"
 msgid "Hold"
 msgstr "Laikinai neatiduodami"
 
-#: animal.js
+#: animal_new.js animal.js
 msgid "Hold the animal until this date or blank to hold indefinitely"
 msgstr ""
 "Laikinai neatiduoti gyvūno iki nurodytos datos, arba palikti tuščią, jei "
 "neatiduoti neapibrėžtą laiko tarpą"
 
-#: animal.js animal_find_results.js animal_bulk.js html.py
+#: header_edit_header.js animal_new.js animal.js animal_find_results.js
+#: animal_bulk.js html.py
 msgid "Hold until"
 msgstr "Laikinai neatiduoti iki"
 
@@ -5562,10 +5573,6 @@ msgstr "Įtraukti gyvūnus be nuotraukų"
 msgid "Include cruelty case animals"
 msgstr "Įtraukti žiaurų elgesį patyrusius gyvūnus"
 
-#: animal_find.js
-msgid "Include deceased"
-msgstr "Įtraukti nugaišusius"
-
 #: publish_options.js
 msgid "Include fostered animals"
 msgstr "Įtraukti pas laikinus globėjus esančius gyvūnus"
@@ -5587,10 +5594,6 @@ msgid ""
 "Include incomplete vaccination and test records when generating document "
 "templates"
 msgstr ""
-
-#: animal_find.js
-msgid "Include non-shelter"
-msgstr "Įtraukti ne prieglaudos"
 
 #: options.js
 msgid "Include off-shelter animals in medical calendar and books"
@@ -7160,7 +7163,7 @@ msgstr "Nėra teisių žiūrėti šią ataskaitą"
 msgid "Noise"
 msgstr ""
 
-#: common.js animal_find.js animal_new.js animal.js options.js
+#: common.js header_edit_header.js animal_new.js options.js
 msgid "Non-Shelter"
 msgstr "Ne prieglaudos"
 
@@ -7208,7 +7211,7 @@ msgstr "Neatiduodami"
 msgid "Not Available for Adoption"
 msgstr "Neatiduodami"
 
-#: common.js shelterview.js animal_find.js animal.js animal_bulk.js options.js
+#: common.js header_edit_header.js shelterview.js animal_bulk.js options.js
 #: publish.py
 msgid "Not For Adoption"
 msgstr "Neatiduodamas"
@@ -8003,10 +8006,6 @@ msgstr "Teigiamas/Neigiamas"
 msgid "Postage costs"
 msgstr "Pašto išlaidos"
 
-#: mobile.py
-msgid "Postcode"
-msgstr "Pašto kodas"
-
 #: dbupdate.py
 msgid "Pot Bellied"
 msgstr "Pot Bellied"
@@ -8052,6 +8051,10 @@ msgstr "Spausdinimo peržiūra"
 
 #: onlineform_incoming.js
 msgid "Print selected forms"
+msgstr ""
+
+#: header.js
+msgid "Printable Manual"
 msgstr ""
 
 #: options.js
@@ -8186,7 +8189,7 @@ msgstr "Kalita"
 msgid "Quantity"
 msgstr ""
 
-#: common.js shelterview.js animal_find.js animal.js animal_find_results.js
+#: common.js header_edit_header.js shelterview.js animal_find_results.js
 #: options.js publish.py html.py
 msgid "Quarantine"
 msgstr "Karantinas"
@@ -9460,6 +9463,10 @@ msgstr ""
 "naudotojui skirtas užduotis)"
 
 #: options.js
+msgid "Show the hold fields"
+msgstr ""
+
+#: options.js
 msgid "Show the internal location field"
 msgstr "Rodyti vidaus patalpos lauką"
 
@@ -9704,7 +9711,7 @@ msgstr "Pietų Rusijos aviganis"
 msgid "Spaniel"
 msgstr "Spanielis"
 
-#: animal.js animal_find_results.js mobile.py html.py
+#: common.js animal.js animal_find_results.js options.js mobile.py html.py
 msgid "Special Needs"
 msgstr "Ypatingi poreikiai"
 
@@ -9822,7 +9829,8 @@ msgid "Starts"
 msgstr "Prasideda"
 
 #: waitinglist_results.js transport.js person.js incident.js incident_new.js
-#: person_new.js person_find_results.js common_personchooser.js html.py
+#: person_new.js person_find_results.js common_personchooser.js mobile.py
+#: html.py
 msgid "State"
 msgstr "Savivaldybė"
 
@@ -10654,6 +10662,14 @@ msgstr ""
 msgid "This animal is currently held and cannot be adopted."
 msgstr ""
 
+#: movements.js move_adopt.js move_reclaim.js
+msgid "This animal is currently quarantined and should not leave the shelter."
+msgstr ""
+
+#: movements.js move_adopt.js
+msgid "This animal is marked not for adoption."
+msgstr ""
+
 #: animal.js
 msgid "This animal is microchipped"
 msgstr "Šis gyvūnas turi mikroschemą"
@@ -10663,25 +10679,17 @@ msgstr "Šis gyvūnas turi mikroschemą"
 msgid "This animal is not on the shelter."
 msgstr "Šis gyvūnas yra ne prieglaudoje."
 
-#: animal.js
-msgid "This animal is part of a cruelty case against an owner"
-msgstr "Šio gyvūno savininkui iškelta byla dėl žiauraus elgesio"
+#: movements.js move_adopt.js move_reclaim.js
+msgid "This animal is part of a cruelty case and should not leave the shelter."
+msgstr ""
 
-#: animal.js
-msgid "This animal is quarantined"
-msgstr "Šis gyvūnas karantinuojamas"
-
-#: animal.js
+#: animal_new.js animal.js
 msgid "This animal should be held in case it is reclaimed"
 msgstr ""
 "Šis gyvūnas turėtų būti laikinai neatiduodamas tam atvejui, jei atsirastų "
 "šeimininkai"
 
-#: animal.js
-msgid "This animal should not be included when publishing animals for adoption"
-msgstr "Šis gyvūnas neturėtų būti publikuojamas tarp atiduodamų gyvūnų"
-
-#: animal_new.js animal.js
+#: animal_new.js
 msgid ""
 "This animal should not be shown in figures and is not in the custody of the "
 "shelter"
@@ -10995,7 +11003,7 @@ msgstr "Tibeto terjeras"
 msgid "Tiger"
 msgstr "Tigrinė"
 
-#: reports.js diary.js
+#: reports.js log_new.js log.js diary.js
 msgid "Time"
 msgstr "Laikas"
 
@@ -11110,7 +11118,7 @@ msgstr "Sausumos vėžlys"
 msgid "Tosa Inu"
 msgstr "Tosa Inu"
 
-#: stocklevel.js
+#: stocklevel.js common_widgets.js
 msgid "Total"
 msgstr ""
 
@@ -11125,10 +11133,6 @@ msgstr ""
 #: dbupdate.py
 msgid "Toucan"
 msgstr "Tukanas"
-
-#: mobile.py
-msgid "Town"
-msgstr ""
 
 #: dbupdate.py
 msgid "Toy Fox Terrier"
@@ -12405,7 +12409,7 @@ msgstr ""
 #: incident_find_results.js waitinglist_results.js lostfound_find_results.js
 #: transport.js person.js incident.js incident_new.js lostfound_new.js
 #: lostfound_find.js person_new.js person_find_results.js incident_find.js
-#: common_personchooser.js lostfound.js html.py
+#: common_personchooser.js lostfound.js mobile.py html.py
 msgid "Zipcode"
 msgstr "Pašto kodas"
 
@@ -12459,6 +12463,10 @@ msgstr ""
 #: mailmerge.js
 msgid "inches"
 msgstr "coliai"
+
+#: shelterview.js
+msgid "invalid"
+msgstr ""
 
 #: animal_new.js animal.js
 msgid "kg"
@@ -13341,6 +13349,24 @@ msgstr "{plural3} savaitės."
 #: i18n.py
 msgid "{plural3} years."
 msgstr "{plural3} metai."
+
+#~ msgid "Postcode"
+#~ msgstr "Pašto kodas"
+
+#~ msgid "Include deceased"
+#~ msgstr "Įtraukti nugaišusius"
+
+#~ msgid "Include non-shelter"
+#~ msgstr "Įtraukti ne prieglaudos"
+
+#~ msgid "This animal is part of a cruelty case against an owner"
+#~ msgstr "Šio gyvūno savininkui iškelta byla dėl žiauraus elgesio"
+
+#~ msgid "This animal is quarantined"
+#~ msgstr "Šis gyvūnas karantinuojamas"
+
+#~ msgid "This animal should not be included when publishing animals for adoption"
+#~ msgstr "Šis gyvūnas neturėtų būti publikuojamas tarp atiduodamų gyvūnų"
 
 #~ msgid "Eligible for gift aid"
 #~ msgstr "Tinkamas neatlygintinai paslaugai"

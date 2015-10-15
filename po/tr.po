@@ -1163,6 +1163,10 @@ msgstr "Hayvan Kontrol Mağduru"
 msgid "Animal Emblems"
 msgstr "Hayvan Amblemleri"
 
+#: lookups.py
+msgid "Animal Flags"
+msgstr ""
+
 #: options.js
 msgid "Animal Links"
 msgstr ""
@@ -2325,7 +2329,8 @@ msgid "Citations"
 msgstr "Alıntılar"
 
 #: waitinglist_results.js transport.js person.js incident.js incident_new.js
-#: person_new.js person_find_results.js common_personchooser.js html.py
+#: person_new.js person_find_results.js common_personchooser.js mobile.py
+#: html.py
 msgid "City"
 msgstr "Şehir"
 
@@ -2625,8 +2630,8 @@ msgstr "Coton de Tulear"
 msgid "Could not find animal with name '{0}'"
 msgstr "'{0}' isimli hayvan bulunamadı."
 
-#: mobile.py
-msgid "County"
+#: common.js header_edit_header.js
+msgid "Courtesy Listing"
 msgstr ""
 
 #: dbupdate.py
@@ -2773,7 +2778,7 @@ msgstr "Kriterler:"
 msgid "Crossbreed"
 msgstr "Crossbreed"
 
-#: common.js shelterview.js animal.js options.js publish.py
+#: common.js header_edit_header.js shelterview.js options.js publish.py
 msgid "Cruelty Case"
 msgstr "Şiddet Olayı"
 
@@ -3511,7 +3516,7 @@ msgstr "Gösterme"
 msgid "Doberman Pinscher"
 msgstr "Doberman Pinscher"
 
-#: person.js animal.js dbupdate.py
+#: person.js animal.js licence.js dbupdate.py
 msgid "Document"
 msgstr "Doküman"
 
@@ -4637,7 +4642,8 @@ msgstr "Balık"
 msgid "Flag"
 msgstr "Bayrak/İşaret"
 
-#: onlineform.js person.js person_find.js person_new.js common_personchooser.js
+#: onlineform.js person.js animal_find.js person_find.js animal.js
+#: person_new.js common_personchooser.js
 msgid "Flags"
 msgstr "Bayraklar/İşaretler"
 
@@ -4881,6 +4887,10 @@ msgstr "Yeni bir hayvan kodu oluşturu."
 #: animal_new.js animal.js
 msgid "Generate a random name for this animal"
 msgstr "Bu hayvan için rasgele bir isim oluştur."
+
+#: licence.js
+msgid "Generate document from this license"
+msgstr ""
 
 #: donations.js
 msgid "Generate document from this payment"
@@ -5238,11 +5248,12 @@ msgstr "Geçmiş"
 msgid "Hold"
 msgstr "Muhafaza altına al"
 
-#: animal.js
+#: animal_new.js animal.js
 msgid "Hold the animal until this date or blank to hold indefinitely"
 msgstr "Hayvanı bu tarihe kadar tut ya da belirsiz üre tutmak için boş bırak."
 
-#: animal.js animal_find_results.js animal_bulk.js html.py
+#: header_edit_header.js animal_new.js animal.js animal_find_results.js
+#: animal_bulk.js html.py
 msgid "Hold until"
 msgstr "kadar tut"
 
@@ -5574,10 +5585,6 @@ msgstr "Fotoğrafları olmayan hayvanları dahil et."
 msgid "Include cruelty case animals"
 msgstr "Şiddete maruz kalmış hayvanları dahil et"
 
-#: animal_find.js
-msgid "Include deceased"
-msgstr "Vefat eden hayvanları dahil et."
-
 #: publish_options.js
 msgid "Include fostered animals"
 msgstr "Geçici yuvada bakılan hayvanları dahil et."
@@ -5599,10 +5606,6 @@ msgid ""
 "Include incomplete vaccination and test records when generating document "
 "templates"
 msgstr ""
-
-#: animal_find.js
-msgid "Include non-shelter"
-msgstr "Barınakta olmayanları dahil et."
 
 #: options.js
 msgid "Include off-shelter animals in medical calendar and books"
@@ -7174,7 +7177,7 @@ msgstr "Bu rapor için görüntüleme yetkisi yok."
 msgid "Noise"
 msgstr "Gürültü"
 
-#: common.js animal_find.js animal_new.js animal.js options.js
+#: common.js header_edit_header.js animal_new.js options.js
 msgid "Non-Shelter"
 msgstr "Barınak Dışı (Non-Shelter)"
 
@@ -7222,7 +7225,7 @@ msgstr "Sahiplendirme İçin Uygun Değil"
 msgid "Not Available for Adoption"
 msgstr "Sahiplendirme İçin Uygun Değil"
 
-#: common.js shelterview.js animal_find.js animal.js animal_bulk.js options.js
+#: common.js header_edit_header.js shelterview.js animal_bulk.js options.js
 #: publish.py
 msgid "Not For Adoption"
 msgstr "Sahiplendirme İçin Değil"
@@ -8020,10 +8023,6 @@ msgstr "Pozitif/Negatif"
 msgid "Postage costs"
 msgstr "Posta Gideri"
 
-#: mobile.py
-msgid "Postcode"
-msgstr "Posta kodu"
-
 #: dbupdate.py
 msgid "Pot Bellied"
 msgstr "Pot Bellied"
@@ -8069,6 +8068,10 @@ msgstr "Yazdırma Önizleme"
 #: onlineform_incoming.js
 msgid "Print selected forms"
 msgstr "Seçili formları yazdır."
+
+#: header.js
+msgid "Printable Manual"
+msgstr ""
 
 #: options.js
 msgid "Printing word processor documents uses hidden iframe and window.print"
@@ -8204,7 +8207,7 @@ msgstr "Quaker Parakeet"
 msgid "Quantity"
 msgstr "Miktar"
 
-#: common.js shelterview.js animal_find.js animal.js animal_find_results.js
+#: common.js header_edit_header.js shelterview.js animal_find_results.js
 #: options.js publish.py html.py
 msgid "Quarantine"
 msgstr "Karantina"
@@ -9487,6 +9490,10 @@ msgid "Show the full diary (instead of just my notes) on the home page"
 msgstr "Tüm günlükleri ( sadece benim notlarım yerine) , ana sayfada göster."
 
 #: options.js
+msgid "Show the hold fields"
+msgstr ""
+
+#: options.js
 msgid "Show the internal location field"
 msgstr "İç yerleşke alanını göster."
 
@@ -9732,7 +9739,7 @@ msgstr "South Russian Ovcharka"
 msgid "Spaniel"
 msgstr "Spaniel"
 
-#: animal.js animal_find_results.js mobile.py html.py
+#: common.js animal.js animal_find_results.js options.js mobile.py html.py
 msgid "Special Needs"
 msgstr "Özel İhtiyaçlar"
 
@@ -9854,7 +9861,8 @@ msgid "Starts"
 msgstr "Başlar"
 
 #: waitinglist_results.js transport.js person.js incident.js incident_new.js
-#: person_new.js person_find_results.js common_personchooser.js html.py
+#: person_new.js person_find_results.js common_personchooser.js mobile.py
+#: html.py
 msgid "State"
 msgstr "Eyalet"
 
@@ -10691,6 +10699,14 @@ msgstr ""
 msgid "This animal is currently held and cannot be adopted."
 msgstr "Bu hayvan, şu anda barınakta tutulmaktadır ve sahiplendirilemez."
 
+#: movements.js move_adopt.js move_reclaim.js
+msgid "This animal is currently quarantined and should not leave the shelter."
+msgstr ""
+
+#: movements.js move_adopt.js
+msgid "This animal is marked not for adoption."
+msgstr ""
+
 #: animal.js
 msgid "This animal is microchipped"
 msgstr "Bu hayvanın mikroçipi vardır."
@@ -10700,25 +10716,17 @@ msgstr "Bu hayvanın mikroçipi vardır."
 msgid "This animal is not on the shelter."
 msgstr "Bu hayvan barınakta değil."
 
-#: animal.js
-msgid "This animal is part of a cruelty case against an owner"
-msgstr "Bu hayvan sahibinden işkence görmüştür."
+#: movements.js move_adopt.js move_reclaim.js
+msgid "This animal is part of a cruelty case and should not leave the shelter."
+msgstr ""
 
-#: animal.js
-msgid "This animal is quarantined"
-msgstr "Bu hayvan karantina altındadır."
-
-#: animal.js
+#: animal_new.js animal.js
 msgid "This animal should be held in case it is reclaimed"
 msgstr ""
 "Bu hayvan, sahibi tarafından yeniden talep edilme durumun karşın barınakta "
 "muhafaza edilmeli."
 
-#: animal.js
-msgid "This animal should not be included when publishing animals for adoption"
-msgstr "Bu hayvan, yayınlanan sahip bekleyen hayvanlar listesinde olmamalıdır."
-
-#: animal_new.js animal.js
+#: animal_new.js
 msgid ""
 "This animal should not be shown in figures and is not in the custody of the "
 "shelter"
@@ -11027,7 +11035,7 @@ msgstr "Tibetan Terrier"
 msgid "Tiger"
 msgstr "Tiger"
 
-#: reports.js diary.js
+#: reports.js log_new.js log.js diary.js
 msgid "Time"
 msgstr "Süre"
 
@@ -11143,7 +11151,7 @@ msgstr "Kaplumbağa"
 msgid "Tosa Inu"
 msgstr "Tosa Inu"
 
-#: stocklevel.js
+#: stocklevel.js common_widgets.js
 msgid "Total"
 msgstr "Toplam"
 
@@ -11158,10 +11166,6 @@ msgstr "Toplam Ödeme"
 #: dbupdate.py
 msgid "Toucan"
 msgstr "Toucan"
-
-#: mobile.py
-msgid "Town"
-msgstr ""
 
 #: dbupdate.py
 msgid "Toy Fox Terrier"
@@ -12447,7 +12451,7 @@ msgstr ""
 #: incident_find_results.js waitinglist_results.js lostfound_find_results.js
 #: transport.js person.js incident.js incident_new.js lostfound_new.js
 #: lostfound_find.js person_new.js person_find_results.js incident_find.js
-#: common_personchooser.js lostfound.js html.py
+#: common_personchooser.js lostfound.js mobile.py html.py
 msgid "Zipcode"
 msgstr "Posta Kodu"
 
@@ -12501,6 +12505,10 @@ msgstr ""
 #: mailmerge.js
 msgid "inches"
 msgstr "inç"
+
+#: shelterview.js
+msgid "invalid"
+msgstr ""
 
 #: animal_new.js animal.js
 msgid "kg"
@@ -13377,6 +13385,24 @@ msgstr "{plural3} hafta"
 #: i18n.py
 msgid "{plural3} years."
 msgstr "{plural3} yıl"
+
+#~ msgid "Postcode"
+#~ msgstr "Posta kodu"
+
+#~ msgid "Include deceased"
+#~ msgstr "Vefat eden hayvanları dahil et."
+
+#~ msgid "Include non-shelter"
+#~ msgstr "Barınakta olmayanları dahil et."
+
+#~ msgid "This animal is part of a cruelty case against an owner"
+#~ msgstr "Bu hayvan sahibinden işkence görmüştür."
+
+#~ msgid "This animal is quarantined"
+#~ msgstr "Bu hayvan karantina altındadır."
+
+#~ msgid "This animal should not be included when publishing animals for adoption"
+#~ msgstr "Bu hayvan, yayınlanan sahip bekleyen hayvanlar listesinde olmamalıdır."
 
 #~ msgid "Deposit account"
 #~ msgstr "Mevduat hesabı"
