@@ -348,7 +348,7 @@ def animal_tags(dbo, a):
                 tags["CURRENTOWNEREMAIL"] = p["EMAILADDRESS"]
 
     # Additional fields
-    add = additional.get_additional_fields(dbo, int(a["ID"]), "animal")
+    add = additional.get_additional_fields(dbo, a["ID"], "animal")
     for af in add:
         val = af["VALUE"]
         if af["FIELDTYPE"] == additional.YESNO:
@@ -361,504 +361,101 @@ def animal_tags(dbo, a):
     include_incomplete_medical = configuration.include_incomplete_medical_doc(dbo)
     
     # Vaccinations
+    d = {
+        "VACCINATIONNAME":          "VACCINATIONTYPE",
+        "VACCINATIONREQUIRED":      "d:DATEREQUIRED",
+        "VACCINATIONGIVEN":         "d:DATEOFVACCINATION",
+        "VACCINATIONEXPIRES":       "d:DATEEXPIRES",
+        "VACCINATIONBATCH":         "BATCHNUMBER",
+        "VACCINATIONMANUFACTURER":  "MANUFACTURER",
+        "VACCINATIONCOST":          "c:COST",
+        "VACCINATIONCOMMENTS":      "COMMENTS",
+        "VACCINATIONDESCRIPTION":   "VACCINATIONDESCRIPTION"
+    }
+    tags.update(table_tags(dbo, d, medical.get_vaccinations(dbo, a["ID"], not include_incomplete_vacc), "VACCINATIONTYPE", "DATEOFVACCINATION"))
     tags["ANIMALISVACCINATED"] = medical.get_vaccinated(dbo, a["ID"]) and _("Yes", l) or _("No", l)
-    vaccasc = medical.get_vaccinations(dbo, int(a["ID"]), not include_incomplete_vacc)
-    vaccdesc = medical.get_vaccinations(dbo, int(a["ID"]), not include_incomplete_vacc, medical.DESCENDING_REQUIRED)
-    for idx in range(1, 101):
-        tags["VACCINATIONNAME" + str(idx)] = ""
-        tags["VACCINATIONREQUIRED" + str(idx)] = ""
-        tags["VACCINATIONGIVEN" + str(idx)] = ""
-        tags["VACCINATIONEXPIRES" + str(idx)] = ""
-        tags["VACCINATIONBATCH" + str(idx)] = ""
-        tags["VACCINATIONMANUFACTURER" + str(idx)] = ""
-        tags["VACCINATIONCOST" + str(idx)] = ""
-        tags["VACCINATIONCOMMENTS" + str(idx)] = ""
-        tags["VACCINATIONDESCRIPTION" + str(idx)] = ""
-        tags["VACCINATIONNAMELAST" + str(idx)] = ""
-        tags["VACCINATIONREQUIREDLAST" + str(idx)] = ""
-        tags["VACCINATIONGIVENLAST" + str(idx)] = ""
-        tags["VACCINATIONEXPIRESLAST" + str(idx)] = ""
-        tags["VACCINATIONBATCHLAST" + str(idx)] = ""
-        tags["VACCINATIONMANUFACTURERLAST" + str(idx)] = ""
-        tags["VACCINATIONCOSTLAST" + str(idx)] = ""
-        tags["VACCINATIONCOMMENTSLAST" + str(idx)] = ""
-        tags["VACCINATIONDESCRIPTIONLAST" + str(idx)] = ""
-    idx = 1
-    for v in vaccasc:
-        tags["VACCINATIONNAME" + str(idx)] = v["VACCINATIONTYPE"]
-        tags["VACCINATIONREQUIRED" + str(idx)] = python2display(l, v["DATEREQUIRED"])
-        tags["VACCINATIONGIVEN" + str(idx)] = python2display(l, v["DATEOFVACCINATION"])
-        tags["VACCINATIONEXPIRES" + str(idx)] = python2display(l, v["DATEEXPIRES"])
-        tags["VACCINATIONBATCH" + str(idx)] = v["BATCHNUMBER"]
-        tags["VACCINATIONMANUFACTURER" + str(idx)] = v["MANUFACTURER"]
-        tags["VACCINATIONCOST" + str(idx)] = format_currency_no_symbol(l, v["COST"])
-        tags["VACCINATIONCOMMENTS" + str(idx)] = v["COMMENTS"]
-        tags["VACCINATIONDESCRIPTION" + str(idx)] = v["VACCINATIONDESCRIPTION"]
-        idx += 1
-    idx = 1
-    uniquetypes = {}
-    recentgiven = {}
-    for v in vaccdesc:
-        tags["VACCINATIONNAMELAST" + str(idx)] = v["VACCINATIONTYPE"]
-        tags["VACCINATIONREQUIREDLAST" + str(idx)] = python2display(l, v["DATEREQUIRED"])
-        tags["VACCINATIONGIVENLAST" + str(idx)] = python2display(l, v["DATEOFVACCINATION"])
-        tags["VACCINATIONEXPIRESLAST" + str(idx)] = python2display(l, v["DATEEXPIRES"])
-        tags["VACCINATIONBATCHLAST" + str(idx)] = v["BATCHNUMBER"]
-        tags["VACCINATIONMANUFACTURERLAST" + str(idx)] = v["MANUFACTURER"]
-        tags["VACCINATIONCOSTLAST" + str(idx)] = format_currency_no_symbol(l, v["COST"])
-        tags["VACCINATIONCOMMENTSLAST" + str(idx)] = v["COMMENTS"]
-        tags["VACCINATIONDESCRIPTIONLAST" + str(idx)] = v["VACCINATIONDESCRIPTION"]
-        idx += 1
-        # If this is the first of this type of vacc we've seen, make
-        # some keys based on its name.
-        if not uniquetypes.has_key(v["VACCINATIONTYPE"]):
-            vname = v["VACCINATIONTYPE"].upper().replace(" ", "").replace("/", "")
-            uniquetypes[v["VACCINATIONTYPE"]] = v
-            tags["VACCINATIONNAME" + vname] = v["VACCINATIONTYPE"]
-            tags["VACCINATIONREQUIRED" + vname] = python2display(l, v["DATEREQUIRED"])
-            tags["VACCINATIONGIVEN" + vname] = python2display(l, v["DATEOFVACCINATION"])
-            tags["VACCINATIONEXPIRES" + vname] = python2display(l, v["DATEEXPIRES"])
-            tags["VACCINATIONBATCH" + vname] = v["BATCHNUMBER"]
-            tags["VACCINATIONMANUFACTURER" + vname] = v["MANUFACTURER"]
-            tags["VACCINATIONCOST" + vname] = format_currency_no_symbol(l, v["COST"])
-            tags["VACCINATIONCOMMENTS" + vname] = v["COMMENTS"]
-            tags["VACCINATIONDESCRIPTION" + vname] = v["VACCINATIONDESCRIPTION"]
-        # If this is the first of this type of vacc we've seen that's been given
-        # make some keys based on its name
-        if not recentgiven.has_key(v["VACCINATIONTYPE"]) and v["DATEOFVACCINATION"] is not None:
-            vname = v["VACCINATIONTYPE"].upper().replace(" ", "").replace("/", "")
-            recentgiven[v["VACCINATIONTYPE"]] = v
-            tags["VACCINATIONNAMERECENT" + vname] = v["VACCINATIONTYPE"]
-            tags["VACCINATIONREQUIREDRECENT" + vname] = python2display(l, v["DATEREQUIRED"])
-            tags["VACCINATIONGIVENRECENT" + vname] = python2display(l, v["DATEOFVACCINATION"])
-            tags["VACCINATIONEXPIRESRECENT" + vname] = python2display(l, v["DATEEXPIRES"])
-            tags["VACCINATIONBATCHRECENT" + vname] = v["BATCHNUMBER"]
-            tags["VACCINATIONMANUFACTURERRECENT" + vname] = v["MANUFACTURER"]
-            tags["VACCINATIONCOSTRECENT" + vname] = format_currency_no_symbol(l, v["COST"])
-            tags["VACCINATIONCOMMENTSRECENT" + vname] = v["COMMENTS"]
-            tags["VACCINATIONDESCRIPTIONRECENT" + vname] = v["VACCINATIONDESCRIPTION"]
 
     # Tests
-    testasc = medical.get_tests(dbo, int(a["ID"]), not include_incomplete_vacc)
-    testdesc = medical.get_tests(dbo, int(a["ID"]), not include_incomplete_vacc, medical.DESCENDING_REQUIRED)
-    for idx in range(1, 101):
-        tags["TESTNAME" + str(idx)] = ""
-        tags["TESTRESULT" + str(idx)] = ""
-        tags["TESTREQUIRED" + str(idx)] = ""
-        tags["TESTGIVEN" + str(idx)] = ""
-        tags["TESTCOST" + str(idx)] = ""
-        tags["TESTCOMMENTS" + str(idx)] = ""
-        tags["TESTDESCRIPTION" + str(idx)] = ""
-        tags["TESTNAMELAST" + str(idx)] = ""
-        tags["TESTREQUIREDLAST" + str(idx)] = ""
-        tags["TESTGIVENLAST" + str(idx)] = ""
-        tags["TESTCOSTLAST" + str(idx)] = ""
-        tags["TESTCOMMENTSLAST" + str(idx)] = ""
-        tags["TESTDESCRIPTIONLAST" + str(idx)] = ""
-    idx = 1
-    for t in testasc:
-        tags["TESTNAME" + str(idx)] = t["TESTNAME"]
-        tags["TESTRESULT" + str(idx)] = t["RESULTNAME"]
-        tags["TESTREQUIRED" + str(idx)] = python2display(l, t["DATEREQUIRED"])
-        tags["TESTGIVEN" + str(idx)] = python2display(l, t["DATEOFTEST"])
-        tags["TESTCOST" + str(idx)] = format_currency_no_symbol(l, t["COST"])
-        tags["TESTCOMMENTS" + str(idx)] = t["COMMENTS"]
-        tags["TESTDESCRIPTION" + str(idx)] = t["TESTDESCRIPTION"]
-        idx += 1
-    idx = 1
-    uniquetypes = {}
-    recentgiven = {}
-    for t in testdesc:
-        tags["TESTNAMELAST" + str(idx)] = t["TESTNAME"]
-        tags["TESTRESULTLAST" + str(idx)] = t["RESULTNAME"]
-        tags["TESTREQUIREDLAST" + str(idx)] = python2display(l, t["DATEREQUIRED"])
-        tags["TESTGIVENLAST" + str(idx)] = python2display(l, t["DATEOFTEST"])
-        tags["TESTCOSTLAST" + str(idx)] = format_currency_no_symbol(l, t["COST"])
-        tags["TESTCOMMENTSLAST" + str(idx)] = t["COMMENTS"]
-        tags["TESTDESCRIPTIONLAST" + str(idx)] = t["TESTDESCRIPTION"]
-        idx += 1
-        # If this is the first of this type of test we've seen, make
-        # some keys based on its name.
-        if not uniquetypes.has_key(t["TESTNAME"]):
-            tname = t["TESTNAME"].upper().replace(" ", "").replace("/", "")
-            uniquetypes[t["TESTNAME"]] = t
-            tags["TESTNAME" + tname] = t["TESTNAME"]
-            tags["TESTRESULT" + tname] = t["RESULTNAME"]
-            tags["TESTREQUIRED" + tname] = python2display(l, t["DATEREQUIRED"])
-            tags["TESTGIVEN" + tname] = python2display(l, t["DATEOFTEST"])
-            tags["TESTCOST" + tname] = format_currency_no_symbol(l, t["COST"])
-            tags["TESTCOMMENTS" + tname] = t["COMMENTS"]
-            tags["TESTDESCRIPTION" + tname] = t["TESTDESCRIPTION"]
-        # If this is the first of this type of test we've seen that's been given
-        # make some keys based on its name
-        if not recentgiven.has_key(t["TESTNAME"]) and t["DATEOFTEST"] is not None:
-            tname = t["TESTNAME"].upper().replace(" ", "").replace("/", "")
-            recentgiven[t["TESTNAME"]] = t
-            tags["TESTNAMERECENT" + tname] = t["TESTNAME"]
-            tags["TESTRESULTRECENT" + tname] = t["RESULTNAME"]
-            tags["TESTREQUIREDRECENT" + tname] = python2display(l, t["DATEREQUIRED"])
-            tags["TESTGIVENRECENT" + tname] = python2display(l, t["DATEOFTEST"])
-            tags["TESTCOSTRECENT" + tname] = format_currency_no_symbol(l, t["COST"])
-            tags["TESTCOMMENTSRECENT" + tname] = t["COMMENTS"]
-            tags["TESTDESCRIPTIONRECENT" + tname] = t["TESTDESCRIPTION"]
+    d = {
+        "TESTNAME":                 "TESTNAME",
+        "TESTRESULT":               "RESULTNAME",
+        "TESTREQUIRED":             "d:DATEREQUIRED",
+        "TESTGIVEN":                "d:DATEOFTEST",
+        "TESTCOST":                 "c:COST",
+        "TESTCOMMENTS":             "COMMENTS",
+        "TESTDESCRIPTION":          "TESTDESCRIPTION"
+    }
+    tags.update(table_tags(dbo, d, medical.get_tests(dbo, a["ID"], not include_incomplete_vacc), "TESTNAME", "DATEOFTEST"))
 
     # Medical
-    medasc = medical.get_regimens(dbo, int(a["ID"]), not include_incomplete_medical)
-    meddesc = medical.get_regimens(dbo, int(a["ID"]), not include_incomplete_medical, medical.DESCENDING_REQUIRED)
-    for idx in range(1, 101):
-        tags["MEDICALNAME" + str(idx)] = ""
-        tags["MEDICALCOMMENTS" + str(idx)] = ""
-        tags["MEDICALFREQUENCY" + str(idx)] = ""
-        tags["MEDICALNUMBEROFTREATMENTS" + str(idx)] = ""
-        tags["MEDICALSTATUS" + str(idx)] = ""
-        tags["MEDICALDOSAGE" + str(idx)] = ""
-        tags["MEDICALSTARTDATE" + str(idx)] = ""
-        tags["MEDICALTREATMENTSGIVEN" + str(idx)] = ""
-        tags["MEDICALTREATMENTSREMAINING" + str(idx)] = ""
-        tags["MEDICALCOST" + str(idx)] = ""
-        tags["MEDICALNAMELAST" + str(idx)] = ""
-        tags["MEDICALCOMMENTSLAST" + str(idx)] = ""
-        tags["MEDICALFREQUENCYLAST" + str(idx)] = ""
-        tags["MEDICALNUMBEROFTREATMENTSLAST" + str(idx)] = ""
-        tags["MEDICALSTATUSLAST" + str(idx)] = ""
-        tags["MEDICALDOSAGELAST" + str(idx)] = ""
-        tags["MEDICALSTARTDATELAST" + str(idx)] = ""
-        tags["MEDICALTREATMENTSGIVENLAST" + str(idx)] = ""
-        tags["MEDICALTREATMENTSREMAININGLAST" + str(idx)] = ""
-        tags["MEDICALNEXTTREATMENTDUE" + str(idx)] = ""
-        tags["MEDICALLASTTREATMENTGIVEN" + str(idx)] = ""
-        tags["MEDICALCOSTLAST" + str(idx)] = ""
-    idx = 1
-    for m in medasc:
-        tags["MEDICALNAME" + str(idx)] = m["TREATMENTNAME"]
-        tags["MEDICALCOMMENTS" + str(idx)] = m["COMMENTS"]
-        tags["MEDICALFREQUENCY" + str(idx)] = m["NAMEDFREQUENCY"]
-        tags["MEDICALNUMBEROFTREATMENTS" + str(idx)] = m["NAMEDNUMBEROFTREATMENTS"]
-        tags["MEDICALSTATUS" + str(idx)] = m["NAMEDSTATUS"]
-        tags["MEDICALDOSAGE" + str(idx)] = m["DOSAGE"]
-        tags["MEDICALSTARTDATE" + str(idx)] = python2display(l, m["STARTDATE"])
-        tags["MEDICALTREATMENTSGIVEN" + str(idx)] = str(m["TREATMENTSGIVEN"])
-        tags["MEDICALTREATMENTSREMAINING" + str(idx)] = str(m["TREATMENTSREMAINING"])
-        tags["MEDICALNEXTTREATMENTDUE" + str(idx)] = python2display(l, m["NEXTTREATMENTDUE"])
-        tags["MEDICALLASTTREATMENTGIVEN" + str(idx)] = python2display(l, m["LASTTREATMENTGIVEN"])
-        tags["MEDICALCOST" + str(idx)] = format_currency_no_symbol(l, m["COST"])
-        idx += 1
-    idx = 1
-    uniquetypes = {}
-    recentgiven = {}
-    for m in meddesc:
-        tags["MEDICALNAMELAST" + str(idx)] = m["TREATMENTNAME"]
-        tags["MEDICALCOMMENTSLAST" + str(idx)] = m["COMMENTS"]
-        tags["MEDICALFREQUENCYLAST" + str(idx)] = m["NAMEDFREQUENCY"]
-        tags["MEDICALNUMBEROFTREATMENTSLAST" + str(idx)] = m["NAMEDNUMBEROFTREATMENTS"]
-        tags["MEDICALSTATUSLAST" + str(idx)] = m["NAMEDSTATUS"]
-        tags["MEDICALDOSAGELAST" + str(idx)] = m["DOSAGE"]
-        tags["MEDICALSTARTDATELAST" + str(idx)] = python2display(l, m["STARTDATE"])
-        tags["MEDICALTREATMENTSGIVENLAST" + str(idx)] = str(m["TREATMENTSGIVEN"])
-        tags["MEDICALTREATMENTSREMAININGLAST" + str(idx)] = str(m["TREATMENTSREMAINING"])
-        tags["MEDICALNEXTTREATMENTDUELAST" + str(idx)] = python2display(l, m["NEXTTREATMENTDUE"])
-        tags["MEDICALLASTTREATMENTGIVENLAST" + str(idx)] = python2display(l, m["LASTTREATMENTGIVEN"])
-        tags["MEDICALCOSTLAST" + str(idx)] = format_currency_no_symbol(l, m["COST"])
-        idx += 1
-        # If this is the first of this type of med we've seen, make
-        # some keys based on its name.
-        if not uniquetypes.has_key(m["TREATMENTNAME"]):
-            tname = m["TREATMENTNAME"].upper().replace(" ", "").replace("/", "")
-            uniquetypes[m["TREATMENTNAME"]] = m
-            tags["MEDICALNAME" + tname] = m["TREATMENTNAME"]
-            tags["MEDICALCOMMENTS" + tname] = m["COMMENTS"]
-            tags["MEDICALFREQUENCY" + tname] = m["NAMEDFREQUENCY"]
-            tags["MEDICALNUMBEROFTREATMENTS" + tname] = m["NAMEDNUMBEROFTREATMENTS"]
-            tags["MEDICALSTATUS" + tname] = m["NAMEDSTATUS"]
-            tags["MEDICALDOSAGE" + tname] = m["DOSAGE"]
-            tags["MEDICALSTARTDATE" + tname] = python2display(l, m["STARTDATE"])
-            tags["MEDICALTREATMENTSGIVEN" + tname] = str(m["TREATMENTSGIVEN"])
-            tags["MEDICALTREATMENTSREMAINING" + tname] = str(m["TREATMENTSREMAINING"])
-            tags["MEDICALNEXTTREATMENTDUE" + tname] = python2display(l, m["NEXTTREATMENTDUE"])
-            tags["MEDICALLASTTREATMENTGIVEN" + tname] = python2display(l, m["LASTTREATMENTGIVEN"])
-            tags["MEDICALCOST" + tname] = format_currency_no_symbol(l, m["COST"])
-        # If this is the first of this type of med we've seen that's complete
-        if not recentgiven.has_key(m["TREATMENTNAME"]) and m["STATUS"] == 2:
-            tname = m["TREATMENTNAME"].upper().replace(" ", "").replace("/", "")
-            recentgiven[m["TREATMENTNAME"]] = m
-            tags["MEDICALNAMERECENT" + tname] = m["TREATMENTNAME"]
-            tags["MEDICALCOMMENTSRECENT" + tname] = m["COMMENTS"]
-            tags["MEDICALFREQUENCYRECENT" + tname] = m["NAMEDFREQUENCY"]
-            tags["MEDICALNUMBEROFTREATMENTSRECENT" + tname] = m["NAMEDNUMBEROFTREATMENTS"]
-            tags["MEDICALSTATUSRECENT" + tname] = m["NAMEDSTATUS"]
-            tags["MEDICALDOSAGERECENT" + tname] = m["DOSAGE"]
-            tags["MEDICALSTARTDATERECENT" + tname] = python2display(l, m["STARTDATE"])
-            tags["MEDICALTREATMENTSGIVENRECENT" + tname] = str(m["TREATMENTSGIVEN"])
-            tags["MEDICALTREATMENTSREMAININGRECENT" + tname] = str(m["TREATMENTSREMAINING"])
-            tags["MEDICALNEXTTREATMENTDUERECENT" + tname] = python2display(l, m["NEXTTREATMENTDUE"])
-            tags["MEDICALLASTTREATMENTGIVENRECENT" + tname] = python2display(l, m["LASTTREATMENTGIVEN"])
-            tags["MEDICALCOSTRECENT" + tname] = format_currency_no_symbol(l, m["COST"])
+    d = {
+        "MEDICALNAME":              "TREATMENTNAME",
+        "MEDICALCOMMENTS":          "COMMENTS",
+        "MEDICALFREQUENCY":         "NAMEDFREQUENCY",
+        "MEDICALNUMBEROFTREATMENTS": "NAMEDNUMBEROFTREATMENTS",
+        "MEDICALSTATUS":            "NAMEDSTATUS",
+        "MEDICALDOSAGE":            "DOSAGE",
+        "MEDICALSTARTDATE":         "d:STARTDATE",
+        "MEDICALTREATMENTSGIVEN":   "TREATMENTSGIVEN",
+        "MEDICALTREATMENTSREMAINING": "TREATMENTSREMAINING",
+        "MEDICALNEXTTREATMENTDUE":  "d:NEXTTREATMENTDUE",
+        "MEDICALLASTTREATMENTGIVEN": "d:LASTTREATMENTGIVEN",
+        "MEDICALCOST":              "c:COST"
+    }
+    tags.update(table_tags(dbo, d, medical.get_regimens(dbo, a["ID"], not include_incomplete_medical), "TREATMENTNAME", "STATUS"))
 
     # Diet
-    dietasc = animal.get_diets(dbo, int(a["ID"]))
-    dietdesc = animal.get_diets(dbo, int(a["ID"]), animal.DESCENDING)
-    for idx in range(1, 101):
-        tags["DIETNAME" + str(idx)] = ""
-        tags["DIETDESCRIPTION" + str(idx)] = ""
-        tags["DIETDATESTARTED" + str(idx)] = ""
-        tags["DIETCOMMENTS" + str(idx)] = ""
-        tags["DIETNAMELAST" + str(idx)] = ""
-        tags["DIETDESCRIPTIONLAST" + str(idx)] = ""
-        tags["DIETDATESTARTEDLAST" + str(idx)] = ""
-        tags["DIETCOMMENTSLAST" + str(idx)] = ""
-    idx = 1
-    for d in dietasc:
-        tags["DIETNAME" + str(idx)] = d["DIETNAME"]
-        tags["DIETDESCRIPTION" + str(idx)] = d["DIETDESCRIPTION"]
-        tags["DIETDATESTARTED" + str(idx)] = python2display(l, d["DATESTARTED"])
-        tags["DIETCOMMENTS" + str(idx)] = d["COMMENTS"]
-        idx += 1
-    idx = 1
-    for d in dietdesc:
-        tags["DIETNAMELAST" + str(idx)] = d["DIETNAME"]
-        tags["DIETDESCRIPTIONLAST" + str(idx)] = d["DIETDESCRIPTION"]
-        tags["DIETDATESTARTEDLAST" + str(idx)] = python2display(l, d["DATESTARTED"])
-        tags["DIETCOMMENTSLAST" + str(idx)] = d["COMMENTS"]
-        idx += 1
+    d = {
+        "DIETNAME":                 "DIETNAME",
+        "DIETDESCRIPTION":          "DIETDESCRIPTION",
+        "DIETDATESTARTED":          "d:DATESTARTED",
+        "DIETCOMMENTS":             "COMMENTS"
+    }
+    tags.update(table_tags(dbo, d, animal.get_diets(dbo, a["ID"]), "DIETNAME", "DATESTARTED"))
 
     # Donations
-    donasc = financial.get_animal_donations(dbo, int(a["ID"]))
-    dondesc = financial.get_animal_donations(dbo, int(a["ID"]), financial.DESCENDING)
-    for idx in range(1, 101):
-        tags["RECEIPTNUM" + str(idx)] = ""
-        tags["DONATIONTYPE" + str(idx)] = ""
-        tags["DONATIONPAYMENTTYPE" + str(idx)] = ""
-        tags["DONATIONDATE" + str(idx)] = ""
-        tags["DONATIONDATEDUE" + str(idx)] = ""
-        tags["DONATIONAMOUNT" + str(idx)] = ""
-        tags["DONATIONCOMMENTS" + str(idx)] = ""
-        tags["DONATIONGIFTAID" + str(idx)] = ""
-        tags["RECEIPTNUMLAST" + str(idx)] = ""
-        tags["DONATIONTYPELAST" + str(idx)] = ""
-        tags["DONATIONDATELAST" + str(idx)] = ""
-        tags["DONATIONDATEDUELAST" + str(idx)] = ""
-        tags["DONATIONAMOUNTLAST" + str(idx)] = ""
-        tags["DONATIONCOMMENTSLAST" + str(idx)] = ""
-        tags["DONATIONGIFTAIDLAST" + str(idx)] = ""
-        tags["PAYMENTTYPE" + str(idx)] = ""
-        tags["PAYMENTMETHOD" + str(idx)] = ""
-        tags["PAYMENTDATE" + str(idx)] = ""
-        tags["PAYMENTDATEDUE" + str(idx)] = ""
-        tags["PAYMENTAMOUNT" + str(idx)] = ""
-        tags["PAYMENTCOMMENTS" + str(idx)] = ""
-        tags["PAYMENTGIFTAID" + str(idx)] = ""
-        tags["PAYMENTVAT" + str(idx)] = ""
-        tags["PAYMENTTAX" + str(idx)] = ""
-        tags["PAYMENTVATRATE" + str(idx)] = ""
-        tags["PAYMENTTAXRATE" + str(idx)] = ""
-        tags["PAYMENTVATAMOUNT" + str(idx)] = ""
-        tags["PAYMENTTAXAMOUNT" + str(idx)] = ""
-        tags["PAYMENTTYPELAST" + str(idx)] = ""
-        tags["PAYMENTMETHODLAST" + str(idx)] = ""
-        tags["PAYMENTDATELAST" + str(idx)] = ""
-        tags["PAYMENTDATEDUELAST" + str(idx)] = ""
-        tags["PAYMENTAMOUNTLAST" + str(idx)] = ""
-        tags["PAYMENTCOMMENTSLAST" + str(idx)] = ""
-        tags["PAYMENTGIFTAIDLAST" + str(idx)] = ""
-        tags["PAYMENTVATLAST" + str(idx)] = ""
-        tags["PAYMENTTAXLAST" + str(idx)] = ""
-        tags["PAYMENTVATRATELAST" + str(idx)] = ""
-        tags["PAYMENTTAXRATELAST" + str(idx)] = ""
-        tags["PAYMENTVATAMOUNTLAST" + str(idx)] = ""
-        tags["PAYMENTTAXAMOUNTLAST" + str(idx)] = ""
-
-    idx = 1
-    for d in donasc:
-        tags["RECEIPTNUM" + str(idx)] = d["RECEIPTNUMBER"]
-        tags["DONATIONTYPE" + str(idx)] = d["DONATIONNAME"]
-        tags["DONATIONPAYMENTTYPE" + str(idx)] = d["PAYMENTNAME"]
-        tags["DONATIONDATE" + str(idx)] = python2display(l, d["DATE"])
-        tags["DONATIONDATEDUE" + str(idx)] = python2display(l, d["DATEDUE"])
-        tags["DONATIONAMOUNT" + str(idx)] = format_currency_no_symbol(l, d["DONATION"])
-        tags["DONATIONCOMMENTS" + str(idx)] = d["COMMENTS"]
-        tags["DONATIONGIFTAID" + str(idx)] = d["ISGIFTAID"] == 1 and _("Yes", l) or _("No", l)
-        tags["PAYMENTTYPE" + str(idx)] = d["DONATIONNAME"]
-        tags["PAYMENTMETHOD" + str(idx)] = d["PAYMENTNAME"]
-        tags["PAYMENTDATE" + str(idx)] = python2display(l, d["DATE"])
-        tags["PAYMENTDATEDUE" + str(idx)] = python2display(l, d["DATEDUE"])
-        tags["PAYMENTAMOUNT" + str(idx)] = format_currency_no_symbol(l, d["DONATION"])
-        tags["PAYMENTCOMMENTS" + str(idx)] = d["COMMENTS"]
-        tags["PAYMENTGIFTAID" + str(idx)] = d["ISGIFTAID"] == 1 and _("Yes", l) or _("No", l)
-        tags["PAYMENTVAT" + str(idx)] = d["ISVAT"] == 1 and _("Yes", l) or _("No", l)
-        tags["PAYMENTTAX" + str(idx)] = d["ISVAT"] == 1 and _("Yes", l) or _("No", l)
-        tags["PAYMENTVATRATE" + str(idx)] = "%0.2f" % utils.cfloat(d["VATRATE"])
-        tags["PAYMENTTAXRATE" + str(idx)] = "%0.2f" % utils.cfloat(d["VATRATE"])
-        tags["PAYMENTVATAMOUNT" + str(idx)] = format_currency_no_symbol(l, d["VATAMOUNT"])
-        tags["PAYMENTTAXAMOUNT" + str(idx)] = format_currency_no_symbol(l, d["VATAMOUNT"])
-
-    idx = 1
-    uniquetypes = {}
-    recentrec = {}
-    for d in dondesc:
-        tags["RECEIPTNUMLAST" + str(idx)] = d["RECEIPTNUMBER"]
-        tags["DONATIONTYPELAST" + str(idx)] = d["DONATIONNAME"]
-        tags["DONATIONPAYMENTTYPELAST" + str(idx)] = d["PAYMENTNAME"]
-        tags["DONATIONDATELAST" + str(idx)] = python2display(l, d["DATE"])
-        tags["DONATIONDATEDUELAST" + str(idx)] = python2display(l, d["DATEDUE"])
-        tags["DONATIONAMOUNTLAST" + str(idx)] = format_currency_no_symbol(l, d["DONATION"])
-        tags["DONATIONCOMMENTSLAST" + str(idx)] = d["COMMENTS"]
-        tags["DONATIONGIFTAIDLAST" + str(idx)] = d["ISGIFTAID"] == 1 and _("Yes", l) or _("No", l)
-        tags["PAYMENTTYPELAST" + str(idx)] = d["DONATIONNAME"]
-        tags["PAYMENTMETHODLAST" + str(idx)] = d["PAYMENTNAME"]
-        tags["PAYMENTDATELAST" + str(idx)] = python2display(l, d["DATE"])
-        tags["PAYMENTDATEDUELAST" + str(idx)] = python2display(l, d["DATEDUE"])
-        tags["PAYMENTAMOUNTLAST" + str(idx)] = format_currency_no_symbol(l, d["DONATION"])
-        tags["PAYMENTCOMMENTSLAST" + str(idx)] = d["COMMENTS"]
-        tags["PAYMENTGIFTAIDLAST" + str(idx)] = d["ISGIFTAID"] == 1 and _("Yes", l) or _("No", l)
-        tags["PAYMENTVATLAST" + str(idx)] = d["ISVAT"] == 1 and _("Yes", l) or _("No", l)
-        tags["PAYMENTTAXLAST" + str(idx)] = d["ISVAT"] == 1 and _("Yes", l) or _("No", l)
-        tags["PAYMENTVATRATELAST" + str(idx)] = "%0.2f" % utils.cfloat(d["VATRATE"])
-        tags["PAYMENTTAXRATELAST" + str(idx)] = "%0.2f" % utils.cfloat(d["VATRATE"])
-        tags["PAYMENTVATAMOUNTLAST" + str(idx)] = format_currency_no_symbol(l, d["VATAMOUNT"])
-        tags["PAYMENTTAXAMOUNTLAST" + str(idx)] = format_currency_no_symbol(l, d["VATAMOUNT"])
-
-        idx += 1
-        # If this is the first of this type of donation we've seen, make
-        # some keys based on its name.
-        if not uniquetypes.has_key(d["DONATIONNAME"]):
-            dname = d["DONATIONNAME"].upper().replace(" ", "").replace("/", "")
-            uniquetypes[d["DONATIONNAME"]] = d
-            tags["RECEIPTNUM" + dname] = d["RECEIPTNUMBER"]
-            tags["DONATIONTYPE" + dname] = d["DONATIONNAME"]
-            tags["DONATIONPAYMENTTYPE" + dname] = d["PAYMENTNAME"]
-            tags["DONATIONDATE" + dname] = python2display(l, d["DATE"])
-            tags["DONATIONDATEDUE" + dname] = python2display(l, d["DATEDUE"])
-            tags["DONATIONAMOUNT" + dname] = format_currency_no_symbol(l, d["DONATION"])
-            tags["DONATIONCOMMENTS" + dname] = d["COMMENTS"]
-            tags["DONATIONGIFTAID" + dname] = d["ISGIFTAID"] == 1 and _("Yes", l) or _("No", l)
-            tags["PAYMENTTYPE" + dname] = d["DONATIONNAME"]
-            tags["PAYMENTMETHOD" + dname] = d["PAYMENTNAME"]
-            tags["PAYMENTDATE" + dname] = python2display(l, d["DATE"])
-            tags["PAYMENTDATEDUE" + dname] = python2display(l, d["DATEDUE"])
-            tags["PAYMENTAMOUNT" + dname] = format_currency_no_symbol(l, d["DONATION"])
-            tags["PAYMENTCOMMENTS" + dname] = d["COMMENTS"]
-            tags["PAYMENTGIFTAID" + dname] = d["ISGIFTAID"] == 1 and _("Yes", l) or _("No", l)
-            tags["PAYMENTVAT" + dname] = d["ISVAT"] == 1 and _("Yes", l) or _("No", l)
-            tags["PAYMENTTAX" + dname] = d["ISVAT"] == 1 and _("Yes", l) or _("No", l)
-            tags["PAYMENTVATRATE" + dname] = "%0.2f" % utils.cfloat(d["VATRATE"])
-            tags["PAYMENTTAXRATE" + dname] = "%0.2f" % utils.cfloat(d["VATRATE"])
-            tags["PAYMENTVATAMOUNT" + dname] = format_currency_no_symbol(l, d["VATAMOUNT"])
-            tags["PAYMENTTAXAMOUNT" + dname] = format_currency_no_symbol(l, d["VATAMOUNT"])
-
-        # If this is the first of this type of donation we've seen that's received
-        if not recentrec.has_key(d["DONATIONNAME"]) and d["DATE"] is not None:
-            dname = d["DONATIONNAME"].upper().replace(" ", "").replace("/", "")
-            recentrec[d["DONATIONNAME"]] = d
-            tags["RECEIPTNUMRECENT" + dname] = d["RECEIPTNUMBER"]
-            tags["DONATIONTYPERECENT" + dname] = d["DONATIONNAME"]
-            tags["DONATIONPAYMENTTYPERECENT" + dname] = d["PAYMENTNAME"]
-            tags["DONATIONDATERECENT" + dname] = python2display(l, d["DATE"])
-            tags["DONATIONDATEDUERECENT" + dname] = python2display(l, d["DATEDUE"])
-            tags["DONATIONAMOUNTRECENT" + dname] = format_currency_no_symbol(l, d["DONATION"])
-            tags["DONATIONCOMMENTSRECENT" + dname] = d["COMMENTS"]
-            tags["DONATIONGIFTAIDRECENT" + dname] = d["ISGIFTAID"] == 1 and _("Yes", l) or _("No", l)
-            tags["PAYMENTTYPERECENT" + dname] = d["DONATIONNAME"]
-            tags["PAYMENTMETHODRECENT" + dname] = d["PAYMENTNAME"]
-            tags["PAYMENTDATERECENT" + dname] = python2display(l, d["DATE"])
-            tags["PAYMENTDATEDUERECENT" + dname] = python2display(l, d["DATEDUE"])
-            tags["PAYMENTAMOUNTRECENT" + dname] = format_currency_no_symbol(l, d["DONATION"])
-            tags["PAYMENTCOMMENTSRECENT" + dname] = d["COMMENTS"]
-            tags["PAYMENTGIFTAIDRECENT" + dname] = d["ISGIFTAID"] == 1 and _("Yes", l) or _("No", l)
-            tags["PAYMENTVATRECENT" + dname] = d["ISVAT"] == 1 and _("Yes", l) or _("No", l)
-            tags["PAYMENTTAXRECENT" + dname] = d["ISVAT"] == 1 and _("Yes", l) or _("No", l)
-            tags["PAYMENTVATRATERECENT" + dname] = "%0.2f" % utils.cfloat(d["VATRATE"])
-            tags["PAYMENTTAXRATERECENT" + dname] = "%0.2f" % utils.cfloat(d["VATRATE"])
-            tags["PAYMENTVATAMOUNTRECENT" + dname] = format_currency_no_symbol(l, d["VATAMOUNT"])
-            tags["PAYMENTTAXAMOUNTRECENT" + dname] = format_currency_no_symbol(l, d["VATAMOUNT"])
+    d = {
+        "RECEIPTNUM":               "RECEIPTNUMBER",
+        "DONATIONTYPE":             "DONATIONNAME",
+        "DONATIONPAYMENTTYPE":      "PAYMENTNAME",
+        "DONATIONDATE":             "d:DATE",
+        "DONATIONDATEDUE":          "d:DATEDUE",
+        "DONATIONAMOUNT":           "c:DONATION",
+        "DONATIONCOMMENTS":         "COMMENTS",
+        "DONATIONGIFTAID":          "y:ISGIFTAID",
+        "PAYMENTTYPE":              "DONATIONNAME",
+        "PAYMENTMETHOD":            "PAYMENTNAME",
+        "PAYMENTDATE":              "d:DATE",
+        "PAYMENTDATEDUE":           "d:DATEDUE",
+        "PAYMENTAMOUNT":            "c:DONATION",
+        "PAYMENTCOMMENTS":          "COMMENTS",
+        "PAYMENTGIFTAID":           "y:ISGIFTAID",
+        "PAYMENTVAT":               "y:ISVAT",
+        "PAYMENTTAX":               "y:ISVAT",
+        "PAYMENTVATRATE":           "f:VATRATE",
+        "PAYMENTTAXRATE":           "f:TAXRATE",
+        "PAYMENTVATAMOUNT":         "c:VATAMOUNT",
+        "PAYMENTTAXAMOUNT":         "c:VATAMOUNT"
+    }
+    tags.update(table_tags(dbo, d, financial.get_animal_donations(dbo, a["ID"]), "DONATIONNAME", "DATE"))
 
     # Costs
-    costasc = animal.get_costs(dbo, int(a["ID"]))
-    costdesc = animal.get_costs(dbo, int(a["ID"]), animal.DESCENDING)
-    for idx in range(1, 101):
-        tags["COSTTYPE" + str(idx)] = ""
-        tags["COSTDATE" + str(idx)] = ""
-        tags["COSTDATEPAID" + str(idx)] = ""
-        tags["COSTAMOUNT" + str(idx)] = ""
-        tags["COSTDESCRIPTION" + str(idx)] = ""
-        tags["COSTTYPELAST" + str(idx)] = ""
-        tags["COSTDATELAST" + str(idx)] = ""
-        tags["COSTDATEPAIDLAST" + str(idx)] = ""
-        tags["COSTAMOUNTLAST" + str(idx)] = ""
-        tags["COSTDESCRIPTIONLAST" + str(idx)] = ""
-
-    idx = 1
-    for c in costasc:
-        tags["COSTTYPE" + str(idx)] = c["COSTTYPENAME"]
-        tags["COSTDATE" + str(idx)] = python2display(l, c["COSTDATE"])
-        tags["COSTDATEPAID" + str(idx)] = python2display(l, c["COSTPAIDDATE"])
-        tags["COSTAMOUNT" + str(idx)] = format_currency_no_symbol(l, c["COSTAMOUNT"])
-        tags["COSTDESCRIPTION" + str(idx)] = c["DESCRIPTION"]
-
-    idx = 1
-    uniquetypes = {}
-    recentrec = {}
-    for c in costdesc:
-        tags["COSTTYPELAST" + str(idx)] = c["COSTTYPENAME"]
-        tags["COSTDATELAST" + str(idx)] = python2display(l, c["COSTDATE"])
-        tags["COSTDATEPAIDLAST" + str(idx)] = python2display(l, c["COSTPAIDDATE"])
-        tags["COSTAMOUNTLAST" + str(idx)] = format_currency_no_symbol(l, c["COSTAMOUNT"])
-        tags["COSTDESCRIPTIONLAST" + str(idx)] = c["DESCRIPTION"]
-
-        idx += 1
-        # If this is the first of this type of cost we've seen, make
-        # some keys based on its name.
-        if not uniquetypes.has_key(c["COSTTYPENAME"]):
-            cname = c["COSTTYPENAME"].upper().replace(" ", "").replace("/", "")
-            uniquetypes[c["COSTTYPENAME"]] = c
-            tags["COSTTYPE" + cname] = c["COSTTYPENAME"]
-            tags["COSTDATE" + cname] = python2display(l, c["COSTDATE"])
-            tags["COSTDATEPAID" + cname] = python2display(l, c["COSTPAIDDATE"])
-            tags["COSTAMOUNT" + cname] = format_currency_no_symbol(l, c["COSTAMOUNT"])
-            tags["COSTDESCRIPTION" + cname] = c["DESCRIPTION"]
-        # If this is the first of this type of cost we've seen that's received
-        if not recentrec.has_key(c["COSTTYPENAME"]) and c["COSTPAIDDATE"] is not None:
-            cname = c["COSTTYPENAME"].upper().replace(" ", "").replace("/", "")
-            recentrec[c["COSTTYPENAME"]] = c
-            tags["COSTTYPERECENT" + cname] = c["COSTTYPENAME"]
-            tags["COSTDATERECENT" + cname] = python2display(l, c["COSTDATE"])
-            tags["COSTDATEPAIDRECENT" + cname] = python2display(l, c["COSTPAIDDATE"])
-            tags["COSTAMOUNTRECENT" + cname] = format_currency_no_symbol(l, c["COSTAMOUNT"])
-            tags["COSTDESCRIPTIONRECENT" + cname] = c["DESCRIPTION"]
+    d = {
+        "COSTTYPE":                 "COSTTYPENAME",
+        "COSTDATE":                 "d:COSTDATE",
+        "COSTDATEPAID":             "d:COSTPAIDDATE",
+        "COSTAMOUNT":               "c:COSTAMOUNT",
+        "COSTDESCRIPTION":          "DESCRIPTION"
+    }
+    tags.update(table_tags(dbo, d, animal.get_costs(dbo, a["ID"]), "COSTTYPENAME", "COSTPAIDDATE"))
 
     # Logs
-    logasc = log.get_logs(dbo, log.ANIMAL, int(a["ID"]), 0, log.ASCENDING)
-    logdesc = log.get_logs(dbo, log.ANIMAL, int(a["ID"]), 0, log.DESCENDING)
-    for idx in range(1, 101):
-        tags["LOGNAME" + str(idx)] = ""
-        tags["LOGDATE" + str(idx)] = ""
-        tags["LOGCOMMENTS" + str(idx)] = ""
-        tags["LOGNAMELAST" + str(idx)] = ""
-        tags["LOGDATELAST" + str(idx)] = ""
-        tags["LOGCOMMENTSLAST" + str(idx)] = ""
-    idx = 1
-    for o in logasc:
-        tags["LOGNAME" + str(idx)] = o["LOGTYPENAME"]
-        tags["LOGDATE" + str(idx)] = python2display(l, o["DATE"])
-        tags["LOGCOMMENTS" + str(idx)] = o["COMMENTS"]
-        idx += 1
-    idx = 1
-    uniquetypes = {}
-    for o in logdesc:
-        tags["LOGNAMELAST" + str(idx)] = o["LOGTYPENAME"]
-        tags["LOGDATELAST" + str(idx)] = python2display(l, o["DATE"])
-        tags["LOGCOMMENTSLAST" + str(idx)] = o["COMMENTS"]
-        idx += 1
-        # If this is the first of this type of log we've seen, make
-        # some keys based on its name.
-        if not uniquetypes.has_key(o["LOGTYPENAME"]):
-            lname = o["LOGTYPENAME"].upper().replace(" ", "").replace("/", "")
-            uniquetypes[o["LOGTYPENAME"]] = o
-            tags["LOGNAME" + lname] = o["LOGTYPENAME"]
-            tags["LOGDATE" + lname] = python2display(l, o["DATE"])
-            tags["LOGCOMMENTS" + lname] = o["COMMENTS"]
-            tags["LOGNAMERECENT" + lname] = o["LOGTYPENAME"]
-            tags["LOGDATERECENT" + lname] = python2display(l, o["DATE"])
-            tags["LOGCOMMENTSRECENT" + lname] = o["COMMENTS"]
+    d = {
+        "LOGNAME":                  "LOGTYPENAME",
+        "LOGDATE":                  "d:DATE",
+        "LOGCOMMENTS":              "COMMENTS"
+    }
+    tags.update(table_tags(dbo, d, log.get_logs(dbo, log.ANIMAL, a["ID"], 0, log.ASCENDING), "LOGTYPENAME", "DATE"))
 
     return tags
 
@@ -993,61 +590,33 @@ def person_tags(dbo, p):
     }
 
     # Additional fields
-    add = additional.get_additional_fields(dbo, int(p["ID"]), "person")
+    add = additional.get_additional_fields(dbo, p["ID"], "person")
     for af in add:
         val = af["VALUE"]
         if af["FIELDTYPE"] == additional.YESNO:
             val = additional_yesno(l, af)
         tags[af["FIELDNAME"].upper()] = val
 
+    # Logs
+    d = {
+        "PERSONLOGNAME":            "LOGTYPENAME",
+        "PERSONLOGDATE":            "d:DATE",
+        "PERSONLOGCOMMENTS":        "COMMENTS"
+    }
+    tags.update(table_tags(dbo, d, log.get_logs(dbo, log.PERSON, p["ID"], 0, log.ASCENDING), "LOGTYPENAME", "DATE"))
+
     # Trap loans
-    trapasc = animalcontrol.get_person_traploans(dbo, int(p["ID"]), animalcontrol.ASCENDING)
-    trapdesc = animalcontrol.get_person_traploans(dbo, int(p["ID"]), animalcontrol.DESCENDING)
-    for idx in range(1, 101):
-        tags["TRAPTYPENAME" + str(idx)] = ""
-        tags["TRAPLOANDATE" + str(idx)] = ""
-        tags["TRAPDEPOSITAMOUNT" + str(idx)] = ""
-        tags["TRAPDEPOSITRETURNDATE" + str(idx)] = ""
-        tags["TRAPNUMBER" + str(idx)] = ""
-        tags["TRAPRETURNDUEDATE" + str(idx)] = ""
-        tags["TRAPRETURNDATE" + str(idx)] = ""
-        tags["TRAPCOMMENTS" + str(idx)] = ""
-    idx = 1
-    for t in trapasc:
-        tags["TRAPTYPENAME" + str(idx)] = t["TRAPTYPENAME"]
-        tags["TRAPLOANDATE" + str(idx)] = python2display(l, t["LOANDATE"])
-        tags["TRAPDEPOSITAMOUNT" + str(idx)] = format_currency_no_symbol(l, t["DEPOSITAMOUNT"])
-        tags["TRAPDEPOSITRETURNDATE" + str(idx)] = python2display(l, t["DEPOSITRETURNDATE"])
-        tags["TRAPNUMBER" + str(idx)] = t["TRAPNUMBER"]
-        tags["TRAPRETURNDUEDATE" + str(idx)] = python2display(l, t["RETURNDUEDATE"])
-        tags["TRAPRETURNDATE" + str(idx)] = python2display(l, t["RETURNDATE"])
-        tags["TRAPCOMMENTS" + str(idx)] = t["COMMENTS"]
-        idx += 1
-    idx = 1
-    uniquetypes = {}
-    for t in trapdesc:
-        tags["TRAPTYPENAMELAST" + str(idx)] = t["TRAPTYPENAME"]
-        tags["TRAPLOANDATELAST" + str(idx)] = python2display(l, t["LOANDATE"])
-        tags["TRAPDEPOSITAMOUNTLAST" + str(idx)] = format_currency_no_symbol(l, t["DEPOSITAMOUNT"])
-        tags["TRAPDEPOSITRETURNDATELAST" + str(idx)] = python2display(l, t["DEPOSITRETURNDATE"])
-        tags["TRAPNUMBERLAST" + str(idx)] = t["TRAPNUMBER"]
-        tags["TRAPRETURNDUEDATELAST" + str(idx)] = python2display(l, t["RETURNDUEDATE"])
-        tags["TRAPRETURNDATELAST" + str(idx)] = python2display(l, t["RETURNDATE"])
-        tags["TRAPCOMMENTSLAST" + str(idx)] = t["COMMENTS"]
-        idx += 1
-        # If this is the first of this type of traploan we've seen, make
-        # some keys based on its name.
-        if not uniquetypes.has_key(t["TRAPTYPENAME"]):
-            tname = t["TRAPTYPENAME"].upper().replace(" ", "").replace("/", "")
-            uniquetypes[t["TRAPTYPENAME"]] = t
-            tags["TRAPTYPENAME" + tname] = t["TRAPTYPENAME"]
-            tags["TRAPLOANDATE" + tname] = python2display(l, t["LOANDATE"])
-            tags["TRAPDEPOSITAMOUNT" + tname] = format_currency_no_symbol(l, t["DEPOSITAMOUNT"])
-            tags["TRAPDEPOSITRETURNDATE" + tname] = python2display(l, t["DEPOSITRETURNDATE"])
-            tags["TRAPNUMBER" + tname] = t["TRAPNUMBER"]
-            tags["TRAPRETURNDUEDATE" + tname] = python2display(l, t["RETURNDUEDATE"])
-            tags["TRAPRETURNDATE" + tname] = python2display(l, t["RETURNDATE"])
-            tags["TRAPCOMMENTS" + tname] = t["COMMENTS"]
+    d = {
+        "TRAPTYPENAME":             "TRAPTYPENAME",
+        "TRAPLOANDATE":             "d:LOANDATE",
+        "TRAPDEPOSITAMOUNT":        "c:DEPOSITAMOUNT",
+        "TRAPDEPOSITRETURNDATE":    "d:DEPOSITRETURNDATE",
+        "TRAPNUMBER":               "TRAPNUMBER",
+        "TRAPRETURNDUEDATE":        "d:RETURNDUEDATE",
+        "TRAPRETURNDATE":           "d:RETURNDATE",
+        "TRAPCOMMENTS":             "COMMENTS"
+    }
+    tags.update(table_tags(dbo, d, animalcontrol.get_person_traploans(dbo, p["ID"], animalcontrol.ASCENDING), "TRAPTYPENAME", "RETURNDATE"))
 
     return tags
 
@@ -1059,6 +628,92 @@ def append_tags(tags1, tags2):
     tags = {}
     tags.update(tags1)
     tags.update(tags2)
+    return tags
+
+def table_get_value(l, row, k):
+    """
+    Returns row[k], looking for a type prefix in k -
+    c: currency, d: date
+    """
+    if k.find("d:") != -1: 
+        s = python2display(l, row[k.replace("d:", "")])
+    elif k.find("c:") != -1:
+        s = format_currency_no_symbol(l, row[k.replace("c:", "")])
+    elif k.find("y:") != -1:
+        s = row[k.replace("y:", "")] == 1 and _("Yes", l) or _("No", l)
+    elif k.find("f:") != -1:
+        s = "%0.2f" % row[k.replace("f:", "")]
+    else:
+        s = str(row[k])
+    return s
+
+def table_tags(dbo, d, rows, typefield = "", recentdatefield = ""):
+    """
+    For a collection of table rows, generates the LAST/RECENT and indexed tags.
+
+    d: A dictionary of tag names to field expressions. If the field is
+       preceded with d:, it is formatted as a date, c: a currency
+       eg: { "VACCINATIONNAME" : "VACCINATIONTYPE", "VACCINATIONREQUIRED", "d:DATEREQUIRED" }
+
+    typefield: The name of the field in rows that contains the type for
+       creating tags with the type as a suffix
+
+    recentdatefield: The name of the field in rows that contains the date
+        the last thing was received/given for RECENT tags.
+
+    rows: The table rows
+    """
+    l = dbo.locale
+    tags = {}
+
+    # Create the indexed rows
+    for i, r in enumerate(rows, 1):
+        for k, v in d.iteritems():
+            tags[k + str(i)] = table_get_value(l, r, v)
+
+    uniquetypes = {}
+    recentgiven = {}
+
+    # Go backwards through rows
+    for i, r in enumerate(reversed(rows), 1):
+
+        # Create reversed index tags
+        for k, v in d.iteritems():
+            tags[k + "LAST" + str(i)] = table_get_value(l, r, v)
+
+        # Type suffixed tags
+        if typefield != "":
+            t = r[typefield]
+            # Is this the first of this type we've seen?
+            # If so, create the tags with type as a suffix
+            if not uniquetypes.has_key(t):
+                uniquetypes[t] = r
+                t = t.upper().replace(" ", "").replace("/", "")
+                for k, v in d.iteritems():
+                    tags[k + t] = table_get_value(l, r, v)
+
+        # Recent suffixed tags
+        if recentdatefield != "":
+            # STATUS is an edge case for medical rows only - all the
+            # others have some kind of date
+            if recentdatefield == "STATUS":
+                t = r[typefield]
+                # Is this the first type with STATUS==2 we've seen?
+                # If so, create the tags with recent as a suffix.
+                if not recentgiven.has_key(t) and r[recentdatefield] == 2:
+                    recentgiven[t] = r
+                    t = t.upper().replace(" ", "").replace("/", "")
+                    for k, v in d.iteritems():
+                        tags[k + "RECENT" + t] = table_get_value(l, r, v)
+            else:
+                t = r[typefield]
+                # Is this the first type with a date we've seen?
+                # If so, create the tags with recent as a suffix
+                if not recentgiven.has_key(t) and r[recentdatefield] is not None:
+                    recentgiven[t] = r
+                    t = t.upper().replace(" ", "").replace("/", "")
+                    for k, v in d.iteritems():
+                        tags[k + "RECENT" + t] = table_get_value(l, r, v)
     return tags
 
 def substitute_tags_plain(searchin, tags):
@@ -1157,9 +812,9 @@ def generate_animal_doc(dbo, template, animalid, username):
     if a is None: raise utils.ASMValidationError("%d is not a valid animal ID" % animalid)
     tags = animal_tags(dbo, a)
     if a["CURRENTOWNERID"] is not None and a["CURRENTOWNERID"] != 0:
-        tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, int(a["CURRENTOWNERID"]))))
+        tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, a["CURRENTOWNERID"])))
     elif a["RESERVEDOWNERID"] is not None and a["RESERVEDOWNERID"] != 0:
-        tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, int(a["RESERVEDOWNERID"]))))
+        tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, a["RESERVEDOWNERID"])))
     if a["ACTIVEMOVEMENTID"] is not None and a["ACTIVEMOVEMENTID"] != 0:
         md = financial.get_movement_donation(dbo, a["ACTIVEMOVEMENTID"])
         if md is not None and md > 0: 
@@ -1190,7 +845,7 @@ def generate_donation_doc(dbo, template, donationids, username):
     if len(dons) == 0: 
         raise utils.ASMValidationError("%s does not contain any valid donation IDs" % donationids)
     d = dons[0]
-    tags = person_tags(dbo, person.get_person(dbo, int(d["OWNERID"])))
+    tags = person_tags(dbo, person.get_person(dbo, d["OWNERID"]))
     if d["ANIMALID"] is not None and d["ANIMALID"] != 0:
         tags = append_tags(tags, animal_tags(dbo, animal.get_animal(dbo, d["ANIMALID"])))
     tags = append_tags(tags, donation_tags(dbo, dons))
