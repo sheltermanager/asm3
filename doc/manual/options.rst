@@ -116,6 +116,8 @@ choose some extra fields for the new animal screen.
 
 * Show the brought in by field: Allow brought in by to be set
 
+* Show the hold fields: Allow hold and hold until date to be set
+
 * Warn if the animal is similar to one entered recently: Pop up a warning
   dialog if the animal's name is the same as one entered recently to help
   prevent possible duplicates.

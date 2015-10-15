@@ -86,6 +86,7 @@ DEFAULTS = {
     "AddAnimalsShowDateBroughtIn": "Yes",
     "AddAnimalsShowEntryCategory": "Yes",
     "AddAnimalsShowFosterer": "Yes",
+    "AddAnimalsShowHold": "Yes",
     "AddAnimalsShowLocation": "Yes",
     "AddAnimalsShowLocationUnit": "Yes",
     "AddAnimalsShowMicrochip": "No",

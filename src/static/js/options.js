@@ -295,6 +295,7 @@ $(function() {
                 '<input data="AddAnimalsShowTimeBroughtIn" id="aashowtimebroughtin" class="asm-checkbox" type="checkbox" /> <label for="aashowtimebroughtin">' + _("Show the time brought in field") + '</label><br />',
                 '<input data="AddAnimalsShowOriginalOwner" id="aashoworiginalowner" class="asm-checkbox" type="checkbox" /> <label for="aashoworiginalowner">' + _("Show the original owner field") + '</label><br />',
                 '<input data="AddAnimalsShowBroughtInBy" id="aashowbroughtinby" class="asm-checkbox" type="checkbox" /> <label for="aashowbroughtinby">' + _("Show the brought in by field") + '</label><br />',
+                '<input data="AddAnimalsShowHold" id="aashowhold" class="asm-checkbox" type="checkbox" /> <label for="aashowhold">' + _("Show the hold fields") + '</label><br />',
                 '<input data="WarnSimilarAnimalName" id="warnsimilaranimal" class="asm-checkbox" type="checkbox" /> <label for="warnsimilaranimal">' + _("Warn if the name of the new animal is similar to one entered recently") + '</label>',
                 '</p>',
                 '</div>'

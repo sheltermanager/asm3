@@ -21,6 +21,18 @@ $(function() {
                 '"' + html.title(_("This animal should not be shown in figures and is not in the custody of the shelter")) + '"',
                 ' data="nonshelter" id="nonshelter" /><label for="nonshelter">' + _("Non-Shelter") + '</label></td>',
                 '</tr>',
+                '<tr id="holdrow">',
+                '<td></td>',
+                '<td>',
+                '<span style="white-space: nowrap">',
+                '<input class="asm-checkbox" type="checkbox" id="hold" data-post="hold" title=',
+                '"' + html.title(_("This animal should be held in case it is reclaimed")) + '" />',
+                '<label for="hold">' + _("Hold until") + '</label>',
+                '<input class="asm-halftextbox asm-datebox" id="holduntil" data-post="holduntil" title=',
+                '"' + html.title(_("Hold the animal until this date or blank to hold indefinitely")) + '" />',
+                '</span>',
+                '</td>',
+                '</tr>',
                 '<tr id="nsownerrow">',
                 '<td><label for="nsowner">' + _("Owner") + '</label></td>',
                 '<td>',
@@ -302,6 +314,15 @@ $(function() {
                 $("#button-litterjoin").button("disable");
             }
 
+            // If the user ticked hold, there's no hold until date and
+            // we have an auto remove days period, default the date
+            if ($("#hold").is(":checked") && $("#holduntil").val() == "" && config.integer("AutoRemoveHoldDays") > 0) {
+                var holddate = format.date_js(controller.animal.DATEBROUGHTIN).getTime();
+                holddate += config.integer("AutoRemoveHoldDays") * 86400000;
+                holddate = format.date( new Date(holddate) );
+                $("#holduntil").val(holddate);
+            }
+
             // Setting non-shelter should assign the non-shelter animal type
             // and show the original owner field as well as getting rid of
             // any fields that aren't relevant to non-shelter animals
@@ -309,7 +330,7 @@ $(function() {
                 $("#nsownerrow").fadeIn();
                 var nst = config.integer("AFNonShelterType");
                 if ($("#animaltype option[value='" + nst + "']").length > 0) { $("#animaltype").select("value", nst); }
-                $("#locationrow, #locationunitrow, #fostererrow, #litterrow, #entryreasonrow, #broughtinbyrow, #originalownerrow").fadeOut();
+                $("#holdrow, #locationrow, #locationunitrow, #fostererrow, #litterrow, #entryreasonrow, #broughtinbyrow, #originalownerrow").fadeOut();
             }
             else {
                 $("#nsownerrow").fadeOut();
@@ -318,6 +339,7 @@ $(function() {
                 if (config.bool("AddAnimalsShowOriginalOwner")) { $("#originalownerrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowEntryCategory")) { $("#entryreasonrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowFosterer")) { $("#fostererrow").fadeIn(); }
+                if (config.bool("AddAnimalsShowHold")) { $("#holdrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowLocation")) { $("#locationrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowLocationUnit")) { $("#locationunitrow").fadeIn(); }
             }
@@ -497,6 +519,7 @@ $(function() {
             if (!config.bool("AddAnimalsShowDateBroughtIn")) { $("#datebroughtinrow").hide(); }
             if (!config.bool("AddAnimalsShowEntryCategory")) { $("#entryreasonrow").hide(); }
             if (!config.bool("AddAnimalsShowFosterer")) { $("#fostererrow").hide(); }
+            if (!config.bool("AddAnimalsShowHold")) { $("#holdrow").hide(); }
             if (!config.bool("AddAnimalsShowLocation")) { $("#locationrow").hide(); }
             if (!config.bool("AddAnimalsShowLocationUnit")) { $("#locationunitrow").hide(); }
             if (!config.bool("AddAnimalsShowMicrochip")) { $("#microchiprow").hide(); }
@@ -548,6 +571,7 @@ $(function() {
             $("#internallocation").change(animal_new.update_units);
             $("#crossbreed").change(animal_new.enable_widgets);
             $("#nonshelter").change(animal_new.enable_widgets);
+            $("#hold").change(animal_new.enable_widgets);
             animal_new.enable_widgets();
 
             // Default species has been set, update the available breeds
