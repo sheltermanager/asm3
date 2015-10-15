@@ -1,6 +1,7 @@
 37
 ================
 
+15/10/15 Add dog_license sample template
 15/10/15 Fix bug that caused payment documents to open in same window
 15/10/15 Add ability to generate licence documents to licence tab/book #274
 15/10/15 Show hold until date in animal banner
