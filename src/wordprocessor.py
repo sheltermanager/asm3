@@ -433,7 +433,7 @@ def animal_tags(dbo, a):
         "PAYMENTVAT":               "y:ISVAT",
         "PAYMENTTAX":               "y:ISVAT",
         "PAYMENTVATRATE":           "f:VATRATE",
-        "PAYMENTTAXRATE":           "f:TAXRATE",
+        "PAYMENTTAXRATE":           "f:VATRATE",
         "PAYMENTVATAMOUNT":         "c:VATAMOUNT",
         "PAYMENTTAXAMOUNT":         "c:VATAMOUNT"
     }
