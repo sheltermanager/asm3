@@ -723,13 +723,13 @@ def check_and_scale_pdfs(dbo, force = False):
         mp = db.query(dbo, \
             "SELECT ID, MediaName FROM media WHERE LOWER(MediaName) LIKE '%.pdf' AND " \
             "LOWER(MediaName) NOT LIKE '%_scaled.pdf'")
-    for m in mp:
+    for i, m in enumerate(mp):
         filepath = db.query_string(dbo, "SELECT Path FROM dbfs WHERE Name='%s'" % m["MEDIANAME"])
         original_name = str(m["MEDIANAME"])
         new_name = str(m["ID"]) + "_scaled.pdf"
         odata = dbfs.get_string(dbo, original_name)
         data = scale_pdf(odata)
-        al.debug("%s: old size %d, new size %d" % (new_name, len(odata), len(data)), "check_and_scale_pdfs", dbo)
+        al.debug("scaling %s (%d of %d): old size %d, new size %d" % (new_name, i, len(mp), len(odata), len(data)), "check_and_scale_pdfs", dbo)
         # Update the media entry with the new name
         db.execute(dbo, "UPDATE media SET MediaName = '%s' WHERE ID = %d" % ( new_name, m["ID"]))
         # Update the dbfs entry from old name to new name (will be overwritten in a minute but safer than delete)
