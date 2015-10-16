@@ -734,8 +734,9 @@ def check_and_scale_pdfs(dbo, force = False):
         db.execute(dbo, "UPDATE media SET MediaName = '%s' WHERE ID = %d" % ( new_name, m["ID"]))
         # Update the dbfs entry from old name to new name (will be overwritten in a minute but safer than delete)
         dbfs.rename_file(dbo, filepath, original_name, new_name)
-        # Store the PDF file data with the new name
-        dbfs.put_string(dbo, new_name, filepath, data)
+        # Store the PDF file data with the new name - if there was a need to change it
+        if len(data) < len(odata):
+            dbfs.put_string(dbo, new_name, filepath, data)
     al.debug("found and scaled %d pdfs" % len(mp), "media.check_and_scale_pdfs", dbo)
 
 def scale_animal_images(dbo):
