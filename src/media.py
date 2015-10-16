@@ -718,11 +718,11 @@ def check_and_scale_pdfs(dbo, force = False):
         return
     if force:
         mp = db.query(dbo, \
-            "SELECT ID, MediaName FROM media WHERE LOWER(MediaName) LIKE '%.pdf'")
+            "SELECT ID, MediaName FROM media WHERE LOWER(MediaName) LIKE '%.pdf' ORDER BY ID DESC")
     else:
         mp = db.query(dbo, \
             "SELECT ID, MediaName FROM media WHERE LOWER(MediaName) LIKE '%.pdf' AND " \
-            "LOWER(MediaName) NOT LIKE '%_scaled.pdf'")
+            "LOWER(MediaName) NOT LIKE '%_scaled.pdf' ORDER BY ID DESC")
     for i, m in enumerate(mp):
         filepath = db.query_string(dbo, "SELECT Path FROM dbfs WHERE Name='%s'" % m["MEDIANAME"])
         original_name = str(m["MEDIANAME"])
