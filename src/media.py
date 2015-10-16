@@ -14,7 +14,7 @@ import os
 import tempfile
 import utils
 from cStringIO import StringIO
-from sitedefs import SCALE_PDF_DURING_ATTACH, SCALE_PDF_DURING_BATCH, SCALE_PDF_CMD
+from sitedefs import SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD
 
 ANIMAL = 0
 LOSTANIMAL = 1
@@ -705,34 +705,36 @@ def scale_pdf_file(inputfile, outputfile):
     """
     os.system(SCALE_PDF_CMD % { "output": outputfile, "input": inputfile})
    
-def check_and_scale_pdfs(dbo):
+def check_and_scale_pdfs(dbo, force = False):
     """
     Goes through all PDFs in the database to see if they have been
     scaled (have a suffix of _scaled.pdf) and scales down any unscaled
     ones.
+    If force is set, then all PDFs are checked and scaled again even
+    if they've been scaled before.
     """
-    if not SCALE_PDF_DURING_BATCH:
-        al.warn("SCALE_PDF_DURING_BATCH is disabled, not scaling pdfs", "media.check_and_scale_pdfs", dbo)
-        return
     if not configuration.scale_pdfs(dbo):
         al.warn("ScalePDFs config option disabled in this database, not scaling pdfs", "media.check_and_scale_pdfs", dbo)
         return
-    mp = db.query(dbo, \
-        "SELECT MediaName FROM media WHERE LOWER(MediaName) LIKE '%.pdf' AND " \
-        "LOWER(MediaName) NOT LIKE '%_scaled.pdf'")
+    if force:
+        mp = db.query(dbo, \
+            "SELECT ID, MediaName FROM media WHERE LOWER(MediaName) LIKE '%.pdf'")
+    else:
+        mp = db.query(dbo, \
+            "SELECT ID, MediaName FROM media WHERE LOWER(MediaName) LIKE '%.pdf' AND " \
+            "LOWER(MediaName) NOT LIKE '%_scaled.pdf'")
     for m in mp:
         filepath = db.query_string(dbo, "SELECT Path FROM dbfs WHERE Name='%s'" % m["MEDIANAME"])
         original_name = str(m["MEDIANAME"])
-        new_name = str(m["MEDIANAME"])
-        new_name = new_name[0:len(new_name)-4] + "_scaled.pdf"
+        new_name = str(m["ID"]) + "_scaled.pdf"
         odata = dbfs.get_string(dbo, original_name)
         data = scale_pdf(odata)
+        al.debug("%s: old size %d, new size %d" % (new_name, len(odata), len(data)), "check_and_scale_pdfs", dbo)
         # Update the media entry with the new name
-        db.execute(dbo, "UPDATE media SET MediaName = '%s' WHERE MediaName = '%s'" % \
-            ( new_name, original_name))
-        # Update the dbfs entry with the new name
+        db.execute(dbo, "UPDATE media SET MediaName = '%s' WHERE ID = %d" % ( new_name, m["ID"]))
+        # Update the dbfs entry from old name to new name (will be overwritten in a minute but safer than delete)
         dbfs.rename_file(dbo, filepath, original_name, new_name)
-        # Update the PDF file data
+        # Store the PDF file data with the new name
         dbfs.put_string(dbo, new_name, filepath, data)
     al.debug("found and scaled %d pdfs" % len(mp), "media.check_and_scale_pdfs", dbo)
 

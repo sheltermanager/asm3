@@ -26,7 +26,7 @@ import smcom
 import users
 import utils
 import waitinglist
-from sitedefs import LOCALE, TIMEZONE, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_MAP
+from sitedefs import LOCALE, TIMEZONE, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_MAP, SCALE_PDF_DURING_BATCH
 
 def daily(dbo):
     """
@@ -113,7 +113,8 @@ def daily(dbo):
         onlineform.auto_remove_old_incoming_forms(dbo)
 
         # See if any new PDFs have been attached that we can scale down
-        media.check_and_scale_pdfs(dbo)
+        if SCALE_PDF_DURING_BATCH:
+            media.check_and_scale_pdfs(dbo)
 
     except:
         em = str(sys.exc_info()[0])
@@ -534,6 +535,15 @@ def maint_scale_animal_images(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_scale_animal_images: %s" % em, "cron.maint_scale_animal_images", dbo, sys.exc_info())
 
+def maint_scale_pdfs(dbo):
+    try:
+        media.check_and_scale_pdfs(dbo, True)
+        if dbo.dbtype == "POSTGRESQL":
+            db.execute(dbo, "VACUUM FULL dbfs")
+    except:
+        em = str(sys.exc_info()[0])
+        al.error("FAIL: uncaught error running maint_scale_pdfs: %s" % em, "cron.maint_scale_pdfs", dbo, sys.exc_info())
+
 def run(dbo, mode):
     # If the task is maint_db_install, then there won't be a 
     # locale or timezone to read
@@ -602,6 +612,8 @@ def run(dbo, mode):
         maint_recode_shelter(dbo)
     elif mode == "maint_scale_animal_images":
         maint_scale_animal_images(dbo)
+    elif mode == "maint_scale_animal_pdfs":
+        maint_scale_pdfs(dbo)
     elif mode == "maint_variable_data":
         maint_variable_data(dbo)
     elif mode == "maint_animal_figures":
@@ -709,6 +721,7 @@ def print_usage():
     print "       maint_recode_shelter - regenerate animals codes for all shelter animals"
     print "       maint_reinstall_default_media - re-adds default document/publishing templates"
     print "       maint_scale_animal_images - re-scales all the animal images in the database"
+    print "       maint_scale_pdfs - re-scales all the PDFs in the database"
     print "       maint_variable_data - calculate variable data for the day"
 
 if __name__ == "__main__": 
