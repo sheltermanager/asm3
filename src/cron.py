@@ -538,8 +538,6 @@ def maint_scale_animal_images(dbo):
 def maint_scale_pdfs(dbo):
     try:
         media.check_and_scale_pdfs(dbo, True)
-        if dbo.dbtype == "POSTGRESQL":
-            db.execute(dbo, "VACUUM FULL dbfs")
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_scale_pdfs: %s" % em, "cron.maint_scale_pdfs", dbo, sys.exc_info())
@@ -612,7 +610,7 @@ def run(dbo, mode):
         maint_recode_shelter(dbo)
     elif mode == "maint_scale_animal_images":
         maint_scale_animal_images(dbo)
-    elif mode == "maint_scale_animal_pdfs":
+    elif mode == "maint_scale_pdfs":
         maint_scale_pdfs(dbo)
     elif mode == "maint_variable_data":
         maint_variable_data(dbo)
