@@ -578,7 +578,8 @@
     $.widget("asm.payments", {
         options: {
             count: 0,
-            controller: null
+            controller: null,
+            giftaid: false
         },
         _create: function() {
             var self = this;
@@ -647,7 +648,8 @@
                 '</select>',
                 '</td>',
                 '<td class="giftaid centered">',
-                '<input id="giftaid{i}" data="giftaid{i}" type="checkbox" class="asm-checkbox" />',
+                '<input id="giftaid{i}" data="giftaid{i}" type="checkbox" class="asm-checkbox"',
+                (this.options.giftaid ? ' checked="checked"' : '') + ' />',
                 '</td>',
                 '<td class="vat centered nowrap">',
                 '<input id="vat{i}" data="vat{i}" type="checkbox" class="asm-checkbox" />',

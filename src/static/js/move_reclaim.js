@@ -202,8 +202,9 @@ $(function() {
             $("#person").personchooser().bind("personchooserchange", function(event, rec) {
                 current_person = rec;
 
-                // Set the gift aid box if they are registered
-                $("#giftaid").select("value", rec.ISGIFTAID);
+                // Default giftaid if the person is registered
+                $("#payment").payments("option", "giftaid", rec.ISGIFTAID == 1);
+                $("#giftaid1").prop("checked", rec.ISGIFTAID == 1);
 
             });
 
