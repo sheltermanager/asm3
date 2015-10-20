@@ -115,16 +115,7 @@ def query(dbo, sql):
             # Intialise a map for each row
             rowmap = {}
             for i in xrange(0, len(row)):
-                v = row[i]
-                if type(v) == unicode:
-                    if v is not None:
-                        v = v.encode("ascii", "xmlcharrefreplace")
-                        v = v.replace("`", "'")
-                        v = v.replace("\x92", "'")
-                if type(v) == str:
-                    if v is not None:
-                        v = v.replace("`", "'")
-                        v = v.replace("\x92", "'")
+                v = encode_str(row[i])
                 rowmap[cols[i]] = v
             l.append(rowmap)
         connect_cursor_close(dbo, c, s)
@@ -449,7 +440,7 @@ def query_string(dbo, sql):
     r = query_tuple(dbo, sql)
     try :
         v = r[0][0].replace("`", "'")
-        return v.encode('ascii', 'xmlcharrefreplace')
+        return encode_str(v)
     except:
         return str("")
 
@@ -460,6 +451,22 @@ def query_date(dbo, sql):
         return v
     except:
         return None
+
+def encode_str(v):
+    """
+    Returns v from a query result.
+    If v is unicode, returns it as a str with XML entities
+    If v is a str, removes any non-printable chars
+    If it is any other type, returns v as is.
+    """
+    if type(v) == unicode:
+        if v is not None:
+            v = v.encode("ascii", "xmlcharrefreplace")
+    if type(v) == str:
+        if v is not None:
+            v = v.replace("`", "'")
+            v = v.replace("\x92", "'")
+    return v
 
 def split_queries(sql):
     """

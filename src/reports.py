@@ -1254,7 +1254,7 @@ class Report:
         if len(rs[0]) == 2 and mode.startswith("pie"):
             values = []
             for r in rs:
-                values.append("{ label: '%s (%s)', data: %s }" % ( str(r[0]), str(r[1]), str(r[1]) ))
+                values.append("{ label: '%s (%s)', data: %s }" % ( db.encode_str(r[0]), str(r[1]), str(r[1]) ))
             self._Append(",".join(values))
             self._Append("]")
             # Handle using pie chart plugin if selected 
@@ -1268,9 +1268,9 @@ class Report:
             values = []
             for r in rs:
                 values.append("[%d, %s]" % (i, str(r[1])))
-                ticks.append("[%d, '%s']" % (i, str(r[0])))
+                ticks.append("[%d, '%s']" % (i, db.encode_str(r[0])))
                 i += 1
-            self._Append("{ label: '%s', \n" % cols[1])
+            self._Append("{ label: '%s', \n" % db.encode_str(cols[1]))
             self._Append("data: [%s], \n%s\n }" % (",".join(values), mode))
             self._Append("""\n], {
                 xaxis: {
@@ -1289,9 +1289,9 @@ class Report:
             for r in rs:
                 if not values.has_key(r[0]):
                     values[r[0]] = []
-                values[r[0]].append("[%s, %s]" % (str(r[1]), str(r[2])))
+                values[r[0]].append("[%s, %s]" % (db.encode_str(r[1]), str(r[2])))
             for k, v in values.iteritems():
-                self._Append("{ label: '%s', \n" % k)
+                self._Append("{ label: '%s', \n" % db.encode_str(k))
                 self._Append("data: [%s], \n%s\n },\n" % (",".join(v), mode))
             # Remove trailing comma
             self.output = self.output[0:len(self.output)-1]

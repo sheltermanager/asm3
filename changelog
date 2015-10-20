@@ -1,6 +1,7 @@
 37
 ================
 
+20/10/15 Fix unicode bug in generating charts
 20/10/15 Fix bug with receipt numbers being reused after first issued
 20/10/15 Fix payment book so received today is today, received in last day
 16/10/15 Fix giftaid flag defaulting if person is gift aid registered
