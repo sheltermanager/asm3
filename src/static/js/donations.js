@@ -142,6 +142,7 @@ $(function() {
                         }
                         $("#type").select("value", config.integer("AFDefaultDonationType"));
                         $("#giftaid").select("value", "0");
+                        $("#receiptnumber").val("");
                         $("#receiptnumber").closest("tr").hide();
                         donations.type_change();
                         $("#vatrate").closest("tr").hide();
@@ -200,6 +201,7 @@ $(function() {
                      tooltip: _("Generate document from this payment"), type: "buttonmenu" },
                  { id: "offset", type: "dropdownfilter", 
                      options: [ 
+                        "m0|" + _("Received today"),
                         "m1|" + _("Received in last day"),
                         "m7|" + _("Received in last week"), 
                         "m31|" + _("Received in last month"),

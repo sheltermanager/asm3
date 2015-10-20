@@ -357,7 +357,7 @@ def get_next_receipt_number(dbo):
 def get_donations(dbo, offset = "m31"):
     """
     Returns a recordset of donations
-    offset is m to go backwards, or p to go forwards with a number of days.
+    offset is m for received backwards in days, p for due forwards in days
     ID, DONATIONTYPEID, DONATIONNAME, DATE, DATEDUE, DONATION,
     ISGIFTAID, FREQUENCY, FREQUENCYNAME, NEXTCREATED, COMMENTS, OWNERNAME, 
     ANIMALNAME, SHELTERCODE, OWNERID, ANIMALID

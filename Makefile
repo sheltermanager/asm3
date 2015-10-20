@@ -56,12 +56,12 @@ compilepy:
 
 smcom-dev: version clean minify
 	@echo "[smcom dev] ========================="
-	rsync --exclude '*.pyc' --delete -r src/* root@rawsoaa2.miniserver.com:/usr/local/lib/asm_dev.new
+	rsync --progress --exclude '*.pyc' --delete -r src/* root@rawsoaa2.miniserver.com:/usr/local/lib/asm_dev.new
 	ssh root@rawsoaa2.miniserver.com "/root/sheltermanager_update_asm_dev.sh"
 
 smcom-stable: version clean minify
 	@echo "[smcom stable] ========================="
-	rsync --exclude '*.pyc' --delete -r src/* root@rawsoaa2.miniserver.com:/usr/local/lib/asm_stable.new
+	rsync --progress --exclude '*.pyc' --delete -r src/* root@rawsoaa2.miniserver.com:/usr/local/lib/asm_stable.new
 	ssh root@rawsoaa2.miniserver.com "/root/sheltermanager_update_asm_stable.sh"
 
 smcom-stable-sessions: version clean minify

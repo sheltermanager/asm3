@@ -2536,7 +2536,7 @@ class donation:
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_DONATION)
         dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0, offset = "m1"), session.locale)
+        post = utils.PostedData(web.input(id = 0, offset = "m0"), session.locale)
         donations = financial.get_donations(dbo, post["offset"])
         al.debug("got %d donations" % (len(donations)), "code.donation", dbo)
         s = html.header("", session)

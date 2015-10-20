@@ -1,6 +1,8 @@
 37
 ================
 
+20/10/15 Fix bug with receipt numbers being reused after first issued
+20/10/15 Fix payment book so received today is today, received in last day
 16/10/15 Fix giftaid flag defaulting if person is gift aid registered
 15/10/15 Add dog_license sample template
 15/10/15 Fix bug that caused payment documents to open in same window
