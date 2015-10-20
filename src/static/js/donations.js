@@ -200,7 +200,7 @@ $(function() {
                      tooltip: _("Generate document from this payment"), type: "buttonmenu" },
                  { id: "offset", type: "dropdownfilter", 
                      options: [ 
-                        "m1|" + _("Received today"),
+                        "m1|" + _("Received in last day"),
                         "m7|" + _("Received in last week"), 
                         "m31|" + _("Received in last month"),
                         "m365|" + _("Received in last year"),
