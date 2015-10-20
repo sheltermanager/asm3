@@ -2,7 +2,7 @@ Payment Receipt
 ###
 Financial
 ###
-3000/Any
+33712/Any
 ###
 Produce a receipt for payments received from a person between two dates
 ###
@@ -12,7 +12,7 @@ SELECT o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode,
 (SELECT itemvalue FROM configuration WHERE itemname LIKE 'Organisation') AS OrgName, 
 (SELECT itemvalue FROM configuration WHERE itemname LIKE 'OrganisationAddress') AS OrgAddress,
 (SELECT itemvalue FROM configuration WHERE itemname LIKE 'OrganisationTelephone') AS OrgTel,
-'$CURRENT_DATE$' AS CurrentDate
+'$CURRENT_DATE$' AS CurrentDate, od.ReceiptNumber
 FROM owner o
 INNER JOIN ownerdonation od ON od.OwnerID = o.ID
 INNER JOIN donationtype dt ON dt.ID = od.DonationTypeID 
@@ -44,7 +44,8 @@ $ORGTEL
 </td>
 <td>
 <h2>RECEIPT</h2>
-Date: $CURRENTDATE
+<p>Date: $CURRENTDATE<br/>
+No: $RECEIPTNUMBER</p>
 </td>
 </table>
 <p>&nbsp;</p>
