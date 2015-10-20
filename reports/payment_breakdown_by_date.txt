@@ -99,9 +99,9 @@ GROUP$$
 $$BODY
 <tr>
 <td>$date</td>
+<td>$receiptnumber</td>
 <td>$ownername</td>
 <td>$donationname</td>
-<td>$receiptnumber</td>
 <td>$amt</td>
 </tr>
 BODY$$
