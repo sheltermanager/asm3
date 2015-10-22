@@ -611,7 +611,7 @@ def make_insert_user_sql(dbo, table, username, s, stampRecordVersion = True):
     """
     l = list(s)
     l.append(("CreatedBy", ds(username)))
-    l.append(("CreatedDate", ddt(i18n.now())))
+    l.append(("CreatedDate", ddt(i18n.now(dbo.timezone))))
     l.append(("LastChangedBy", ds(username)))
     l.append(("LastChangedDate", ddt(i18n.now(dbo.timezone))))
     if stampRecordVersion: l.append(("RecordVersion", di(recordversion())))
