@@ -84,8 +84,7 @@ document.addEventListener("deviceready", function() {
 
     });
 
-    alert("device.platform=" + device.platform);
-    if (device.platform == "ios") {
+    if (device.platform == "iOS") {
         $("#button-signup").hide();
     }
     else {
