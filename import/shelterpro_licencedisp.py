@@ -164,12 +164,15 @@ for row in canimal:
     animals.append(a)
     ppa[row["ANIMALKEY"]] = a
     a.AnimalTypeID = gettype(row["ANIMLDES"])
+    a.generateCode()
+    if row["REGISTRATI"] == "": a.ShortCode = row["REGISTRATI"]
     a.SpeciesID = asm.species_id_for_name(row["ANIMLDES"].split(" ")[0])
     a.AnimalName = row["PETNAME"]
     if a.AnimalName.strip() == "":
         a.AnimalName = "(unknown)"
     age = row["AGE"].split(" ")[0]
-    a.DateOfBirth = getdateage(age, row["ADDEDDATET"])
+    a.DateOfBirth = asm.getdate_yyyymmdd(row["DOB"])
+    if a.DateOfBirth is None: a.DateOfBirth = asm.now()
     a.DateBroughtIn = asm.getdate_yyyymmdd(row["ADDEDDATET"])
     if a.DateBroughtIn is None:
         sys.stderr.write("Bad datebroughtin: '%s'\n" % row["ADDEDDATET"])
@@ -184,6 +187,7 @@ for row in canimal:
     a.Size = getsize(asm.fw(row["WEIGHT"]))
     a.BaseColourID = asm.colour_id_for_names(asm.fw(row["FURCOLR1"]), asm.fw(row["FURCOLR2"]))
     a.IdentichipNumber = row["MICROCHIP"]
+    if a.IdentichipNumber != "": a.Identichipped = 1
     comments = "Original breed: " + row["BREED1"] + "/" + row["CROSSBREED"] + ", age: " + age
     comments += ",Color: " + asm.fw(row["FURCOLR1"]) + "/" + asm.fw(row["FURCOLR2"])
     comments += ", Coat: " + row["COAT"]

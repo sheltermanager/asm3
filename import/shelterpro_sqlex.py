@@ -115,6 +115,8 @@ for row in canimal:
         a.AnimalName = "(unknown)"
     age = row["AGE"].split(" ")[0]
     a.DateOfBirth = getdateage(age, row["ADDEDDATETIME"])
+    # TODO: some have DOB
+    # a.DateOfBirth = asm.getdate_yyyymmdd(row["DOB"])
     a.DateBroughtIn = asm.getdate_mmddyy(row["ADDEDDATETIME"])
     if a.DateBroughtIn is None:
         sys.stderr.write("Bad datebroughtin: '%s'\n" % row["ADDEDDATETIME"])

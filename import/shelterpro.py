@@ -111,6 +111,8 @@ for row in canimal:
     if a.AnimalName.strip() == "":
         a.AnimalName = "(unknown)"
     age = row["AGE"].split(" ")[0]
+    # TODO: some have DOB
+    # a.DateOfBirth = asm.getdate_yyyymmdd(row["DOB"])
     a.DateOfBirth = getdateage(age, row["ADDEDDATET"])
     a.DateBroughtIn = asm.getdate_yyyymmdd(row["ADDEDDATET"])
     if a.DateBroughtIn is None:
