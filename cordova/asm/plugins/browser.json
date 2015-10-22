@@ -1,0 +1,55 @@
+{
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {
+            "config.xml": {
+                "parents": {
+                    "/*": [
+                        {
+                            "xml": "<feature name=\"Camera\"><param name=\"browser-package\" value=\"Camera\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Device\"><param name=\"browser-package\" value=\"Device\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<preference name=\"AndroidPersistentFileLocation\" value=\"Internal\" />",
+                            "count": 1
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "installed_plugins": {
+        "cordova-plugin-camera": {
+            "PACKAGE_NAME": "com.sheltermanager.asm"
+        },
+        "cordova-plugin-console": {
+            "PACKAGE_NAME": "com.sheltermanager.asm"
+        },
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "com.sheltermanager.asm"
+        },
+        "cordova-plugin-dialogs": {
+            "PACKAGE_NAME": "com.sheltermanager.asm"
+        },
+        "cordova-plugin-file": {
+            "PACKAGE_NAME": "com.sheltermanager.asm"
+        },
+        "cordova-plugin-file-transfer": {
+            "PACKAGE_NAME": "com.sheltermanager.asm"
+        },
+        "cordova-plugin-inappbrowser": {
+            "PACKAGE_NAME": "com.sheltermanager.asm"
+        },
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "com.sheltermanager.asm"
+        }
+    },
+    "dependent_plugins": {}
+}
