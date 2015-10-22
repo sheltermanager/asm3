@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, alert */
+/*global $, alert, device */
 
 document.addEventListener("deviceready", function() {
 
@@ -13,6 +13,20 @@ document.addEventListener("deviceready", function() {
             );
         };
     }
+
+    $("#account").blur(function() {
+        var a = $("#account").val();
+        a = $.trim(a);
+        a = a.toLowerCase();
+        $("#account").val(a);
+    });
+
+    $("#username").blur(function() {
+        var u = $("#username").val();
+        u = $.trim(u);
+        u = u.toLowerCase();
+        $("#username").val(u);
+    });
 
     $("#button-login").click(function() {
         
@@ -70,14 +84,21 @@ document.addEventListener("deviceready", function() {
 
     });
 
-    $("#button-signup").click(function() {
-        window.open("https://sheltermanager.com/site/en_signup.html", "_system");
-    });
+    alert("device.platform=" + device.platform);
+    if (device.platform == "ios") {
+        $("#button-signup").hide();
+    }
+    else {
+        $("#button-signup").click(function() {
+            window.open("https://sheltermanager.com/site/en_signup.html", "_system");
+        });
+    }
 
     var account = window.localStorage.getItem("asm_account"),
         username = window.localStorage.getItem("asm_username"),
         password = window.localStorage.getItem("asm_password"),
         ui = window.localStorage.getItem("asm_ui");
+
     if (account && username && password) {
         $("#account").val(account);
         $("#username").val(username);

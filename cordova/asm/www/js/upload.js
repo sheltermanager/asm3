@@ -38,10 +38,14 @@ document.addEventListener("deviceready", function() {
             return result * sortOrder;
         };
     };
-   
+ 
+    var enable_buttons = function(enable) {
+        $("#button-take, #button-gallery").prop("disabled", !enable);
+    };
+  
     var show_loading = function(msg) {
         $("#spinner").show();
-        $("#button-take, #button-gallery").prop("disabled", true);
+        enable_buttons(false);
         if (msg) {
             $("#spinner-message").html(msg);
         }
@@ -49,7 +53,7 @@ document.addEventListener("deviceready", function() {
 
     var hide_loading = function() {
         $("#spinner").hide();
-        $("#button-take, #button-gallery").prop("disabled", false);
+        enable_buttons(true);
         $("#spinner-message").html("");
     };
 
@@ -76,12 +80,14 @@ document.addEventListener("deviceready", function() {
                 });
                 $("#animal").html(h.join("\n"));
                 hide_loading();
+                enable_buttons(false);
             });
     };
 
     var success = function() {
         hide_loading();
         $("#thumbnail").hide();
+        alert("Photo successfully uploaded");
     };
 
     var fail_selection = function(message) {
@@ -117,6 +123,10 @@ document.addEventListener("deviceready", function() {
         var ft = new FileTransfer();
         ft.upload(imageURI, UPLOAD_URL.replace("{s}", server), success, fail_upload, options);
     };
+
+    $("#animal").change(function() {
+        enable_buttons($("#animal").val() != "");
+    });
 
     $("#button-take").click(function() {
         if (!$("#animal").val()) { return; }
