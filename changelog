@@ -1,6 +1,7 @@
 37
 ================
 
+24/10/15 Add DB_EXEC_LOG sitedef for efficient incremental backups
 22/10/15 Fix created date not obeying timezone
 20/10/15 Fix unicode bug in generating charts
 20/10/15 Fix bug with receipt numbers being reused after first issued

@@ -6,7 +6,7 @@ import datetime
 import i18n
 import sys
 import utils
-from sitedefs import DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HAS_ASM2_PK_TABLE, DB_PK_STRATEGY, DB_DECODE_HTML_ENTITIES, CACHE_COMMON_QUERIES, MULTIPLE_DATABASES_MAP
+from sitedefs import DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HAS_ASM2_PK_TABLE, DB_PK_STRATEGY, DB_DECODE_HTML_ENTITIES, DB_EXEC_LOG, CACHE_COMMON_QUERIES, MULTIPLE_DATABASES_MAP
 
 
 try:
@@ -289,6 +289,9 @@ def execute(dbo, sql, override_lock = False):
         rv = s.rowcount
         c.commit()
         connect_cursor_close(dbo, c, s)
+        if DB_EXEC_LOG != "":
+            with open(DB_EXEC_LOG.replace("{database}", dbo.database), "a") as f:
+                f.write("-- %s\n%s;\n" % (nowsql(), sql))
         return rv
     except Exception,err:
         al.error(str(err), "db.execute", dbo, sys.exc_info())

@@ -54,6 +54,10 @@ DB_PK_STRATEGY = "max"
 # (storage is more efficient as UTF8 should be used for 2 bytes/char instead of 5)
 DB_DECODE_HTML_ENTITIES = True
 
+# If set, all calls to db.execute will be logged to the file
+# named. Use {database} to substitute database name.
+DB_EXEC_LOG = ""
+
 # URLs for ASM services
 URL_NEWS = "http://sheltermanager.com/repo/asm_news.html"
 URL_REPORTS = "http://sheltermanager.com/repo/reports.txt"
