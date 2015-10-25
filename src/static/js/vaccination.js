@@ -364,6 +364,9 @@ $(function() {
                     .always(function() {
                         $("#dialog-given").dialog("close");
                         $("#dialog-given").enable_dialog_buttons();
+                        if (controller.name == "animal_vaccination") {
+                            common.route_reload();
+                        }
                     });
             };
             givenbuttons[_("Cancel")] = function() {

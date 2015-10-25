@@ -1,6 +1,7 @@
 37
 ================
 
+25/10/15 Force reload after give dialog on animal vacc tab to show rescheduled
 25/10/15 Hide deceased from home page should include stats
 25/10/15 Lower flood protection to 15 seconds (too high for app uploader)
 24/10/15 Add DB_EXEC_LOG sitedef for efficient incremental backups
