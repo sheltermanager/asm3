@@ -339,7 +339,7 @@ def handler(post, remoteip, referer):
         return set_cached_response(cache_key, "application/rss+xml", 3600, 3600, html.timeline_rss(dbo))
 
     elif method == "upload_animal_image":
-        flood_protect("upload_animal_image", remoteip, 60)
+        flood_protect("upload_animal_image", remoteip, 15)
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.ADD_MEDIA)
         media.attach_file_from_form(dbo, username, media.ANIMAL, int(animalid), post)
         return ("text/plain", 0, "OK")
@@ -355,7 +355,7 @@ def handler(post, remoteip, referer):
         return set_cached_response(cache_key, "text/json; charset=utf-8", 30, 30, onlineform.get_onlineform_json(dbo, formid))
 
     elif method == "online_form_post":
-        flood_protect("online_form_post", remoteip, 60)
+        flood_protect("online_form_post", remoteip, 15)
         onlineform.insert_onlineformincoming_from_form(dbo, post, remoteip)
         redirect = post["redirect"]
         if redirect == "":

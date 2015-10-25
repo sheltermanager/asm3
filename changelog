@@ -1,6 +1,8 @@
 37
 ================
 
+25/10/15 Hide deceased from home page should include stats
+25/10/15 Lower flood protection to 15 seconds (too high for app uploader)
 24/10/15 Add DB_EXEC_LOG sitedef for efficient incremental backups
 22/10/15 Fix created date not obeying timezone
 20/10/15 Fix unicode bug in generating charts

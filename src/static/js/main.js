@@ -464,7 +464,7 @@ $(function() {
                     _("{plural3} animals were transferred to other shelters")
                     ]) + '<br />';
             }
-            if (stats.PTS > 0 && common.has_permission("va")) {
+            if (stats.PTS > 0 && common.has_permission("va") && config.bool("ShowDeceasedHomePage")) {
                 s += html.icon("death") + ' ' + common.ntranslate(stats.PTS, [
                     _("{plural0} animal was euthanized"),
                     _("{plural1} animals were euthanized"),
@@ -472,7 +472,7 @@ $(function() {
                     _("{plural3} animals were euthanized")
                     ]) + '<br />';
             }
-            if (stats.DIED > 0 && common.has_permission("va")) {
+            if (stats.DIED > 0 && common.has_permission("va") && config.bool("ShowDeceasedHomePage")) {
                 s += html.icon("death") + ' ' + common.ntranslate(stats.DIED, [
                     _("{plural0} animal died"),
                     _("{plural1} animals died"),
