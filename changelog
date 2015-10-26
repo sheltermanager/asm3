@@ -1,6 +1,7 @@
 37
 ================
 
+26/10/15 Reload animal_medical after treatment(s) given
 26/10/15 Don't autofocus first field when using the mobile app to save confusion
 25/10/15 Force reload after give dialog on animal vacc tab to show rescheduled
 25/10/15 Hide deceased from home page should include stats
