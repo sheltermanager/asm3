@@ -20,7 +20,6 @@ $(function() {
                 edit_perm: 'ocod',
                 close_on_ok: false,
                 hide_read_only: true,
-                width: 750,
                 helper_text: _("Payments need at least one date, an amount and a person."),
                 columns: 2,
                 fields: [

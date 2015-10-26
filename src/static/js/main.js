@@ -677,7 +677,7 @@ $(function() {
 
             $("#dialog-addmessage").dialog({
                 autoOpen: false,
-                width: 500,
+                width: 750,
                 modal: true,
                 dialogClass: "dialogshadow",
                 show: dlgfx.add_show,
@@ -699,7 +699,7 @@ $(function() {
 
             $("#dialog-welcome").dialog({
                 autoOpen: false,
-                width: 500,
+                width: 750,
                 modal: true,
                 dialogClass: "dialogshadow",
                 show: dlgfx.add_show,

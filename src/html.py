@@ -225,7 +225,7 @@ def bare_header(title, theme = "ui-lightness", locale = LOCALE, config_db = "asm
         '<head>\n' \
         '<title>%(title)s</title>\n' \
         '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />\n' \
-        '<meta name="viewport" content="width=device-width, initial-scale=1">\n' \
+        '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0">\n' \
         '<link rel="shortcut icon" href="static/images/logo/icon-16.png" />\n' \
         '<link rel="icon" href="static/images/logo/icon-32.png" sizes="32x32"/>\n' \
         '<link rel="icon" href="static/images/logo/icon-48.png" sizes="48x48"/>\n' \

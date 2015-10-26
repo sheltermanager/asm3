@@ -6,6 +6,14 @@ body {
     font-size: 75%;
 }
 
+/*
+@media screen and (min-width: 1824px) {
+    body {
+        font-size: 95%;
+    }
+}
+*/
+
 a {
     text-decoration: none;
 }
