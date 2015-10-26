@@ -501,7 +501,7 @@
                 errhandler("animation", exanim);
             }
             common.module_running = o;
-            if (o.autofocus) {
+            if (o.autofocus && !asm.mobileapp) {
                 setTimeout(function() { $(o.autofocus).focus(); }, 750);
             }
         },
