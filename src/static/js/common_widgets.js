@@ -756,7 +756,7 @@
             this.options.button = button;
             
             // Add display arrow span
-            var n = "<span style=\"display: inline\" class=\"ui-button-text ui-icon ui-icon-triangle-1-e\">&nbsp;&nbsp;&nbsp;</span>";
+            var n = "<span style=\"display: inline-block; width: 16px; height: 16px; vertical-align: middle\" class=\"ui-button-text ui-icon ui-icon-triangle-1-e\"></span>";
             this.element.append(n);
             
             // If the menu is empty, disable it
