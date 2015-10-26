@@ -6,12 +6,18 @@ import asm
 Import script for PetPoint databases exported as CSV
 (requires AnimalIntakeWithResultsExtended.csv)
 
-3rd March, 2015
+Can optionally import vacc and tests too, the PP reports
+are MedicalVaccineExpress and MedicalTestsExpress
+
+3rd March - 26th October, 2015
 """
 
 # The shelter's petfinder ID for grabbing animal images for adoptable animals
 PETFINDER_ID = ""
-FILENAME = "data/pp_mz0901.csv"
+
+INTAKE_FILENAME = "data/pp_mz0901.csv"
+VACC_FILENAME = "data/pp_mz0901_vacc.csv"
+TEST_FILENAME = "data/pp_mz0901_test.csv"
 
 def findowner(ownername = ""):
     """ Looks for an owner with the given name in the collection
@@ -26,27 +32,33 @@ def findowner(ownername = ""):
 owners = []
 movements = []
 animals = []
+animaltests = []
+animalvaccinations = []
 ppa = {}
 
 asm.setid("animal", 100)
+asm.setid("animaltest", 100)
+asm.setid("animalvaccination", 100)
 asm.setid("owner", 100)
 asm.setid("adoption", 100)
-asm.setid("media", 100)
-asm.setid("dbfs", 200)
 
 print "\\set ON_ERROR_STOP\nBEGIN;"
 print "DELETE FROM internallocation;"
 print "DELETE FROM animal WHERE ID >= 100;"
-print "DELETE FROM media WHERE ID >= 100;"
-print "DELETE FROM dbfs WHERE ID >= 200;"
+print "DELETE FROM animaltest WHERE ID >= 100;"
+print "DELETE FROM animalvaccination WHERE ID >= 100;"
 print "DELETE FROM owner WHERE ID >= 100;"
 print "DELETE FROM adoption WHERE ID >= 100;"
 
 pf = ""
 if PETFINDER_ID != "":
+    asm.setid("media", 100)
+    asm.setid("dbfs", 200)
+    print "DELETE FROM media WHERE ID >= 100;"
+    print "DELETE FROM dbfs WHERE ID >= 200;"
     pf = asm.petfinder_get_adoptable(PETFINDER_ID)
 
-data = asm.csv_to_list(FILENAME)
+data = asm.csv_to_list(INTAKE_FILENAME)
 
 for d in data:
     # Each row contains an animal, intake and outcome
@@ -77,7 +89,7 @@ for d in data:
         if d["Intake Type"] == "Transfer In":
             a.IsTransfer = 1
         a.generateCode()
-        a.ShortCode = d["ARN"]
+        a.ShortCode = d["Animal ID"]
         a.Markings = d["Distinguishing Markings"]
         a.IsNotAvailableForAdoption = 0
         a.ShelterLocation = asm.location_id_for_name(d["Location"])
@@ -207,11 +219,84 @@ for d in data:
     if a.Archived == 0 and PETFINDER_ID != "" and pf != "":
         asm.petfinder_image(pf, a.ID, a.AnimalName)
 
+vacc = asm.csv_to_list(VACC_FILENAME)
+if vacc is not None:
+    for v in vacc:
+        if ppa.has_key(v["AnimalID"]):
+            a = ppa[v["AnimalID"]]
+            av = asm.AnimalVaccination()
+            animalvaccinations.append(av)
+            vaccdate = asm.getdate_mmddyyyy(v["Date"])
+            if vaccdate is None:
+                vaccdate = a.DateBroughtIn
+            av.AnimalID = a.ID
+            av.VaccinationID = 8
+            vacctype = v["RecordType3"]
+            vaccmap = {
+                "Bordatella": 6,
+                "Bordetella": 6,
+                "6-in-1 Canine": 8,
+                "5-in-1 Canine": 8,
+                "4-in-1 Canine": 8,
+                "D-A2-P": 8,
+                "Rabies": 4,
+                "FeLV": 12,
+                "FVRCP": 14,
+                "Distemper": 1
+            }
+            for k, i in vaccmap.iteritems():
+                if vacctype.find(k) != -1: av.VaccinationID = i
+            av.DateRequired = vaccdate
+            av.DateOfVaccination = vaccdate
+            av.Comments = "Type: %s" % vacctype
+
+test = asm.csv_to_list(TEST_FILENAME)
+if test is not None:
+    for t in test:
+        if ppa.has_key(t["AnimalID"]):
+            a = ppa[t["AnimalID"]]
+            at = asm.AnimalTest()
+            animaltests.append(at)
+            at.AnimalID = a.ID
+            testdate = asm.getdate_mmddyyyy(t["ItemStatusDateTime"])
+            if testdate is None:
+                testdate = a.DateBroughtIn
+            at.DateRequired = testdate
+            at.DateOfTest = testdate
+            testtype = t["TestForCondition"]
+            result = t["Result"]
+            asmresult = 0
+            if result == "Negative": asmresult = 1
+            if result == "Positive": asmresult = 2
+            at.TestResultID = asmresult + 1
+            if testtype == "Heartworm":
+                a.HeartwormTested = 1
+                a.HeartwormTestDate = testdate
+                a.HeartwormTestResult = asmresult
+                at.TestTypeID = 3
+            elif testtype == "FIV":
+                a.CombiTested = 1
+                a.CombiTestDate = testdate
+                a.CombiTestResult = asmresult
+                at.TestTypeID = 1
+            elif testtype == "FELV":
+                a.CombiTested = 1
+                a.CombiTestDate = testdate
+                a.FLVResult = asmresult
+                at.TestTypeID = 2
+            else:
+                at.TestTypeID = 1
+                at.Comments = "Test for %s" % testtype
+
 # Now that everything else is done, output stored records
 for k,v in asm.locations.iteritems():
     print v
 for a in animals:
     print a
+for at in animaltests:
+    print at
+for av in animalvaccinations:
+    print av
 for o in owners:
     print o
 for m in movements:

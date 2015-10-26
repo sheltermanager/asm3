@@ -94,7 +94,10 @@ def csv_to_list(fname, strip = False, remove_control = False):
     with the first row used as the keys.
     strip: If True, removes whitespace from all fields
     remove_control: If True, removes all ascii chars < 32
+    returns a list of maps
+    returns None if the file does not exist
     """
+    if not os.path.exists(fname): return None
     o = []
     reader = csv.DictReader(open(fname, "r"))
     for row in reader:
@@ -1488,6 +1491,41 @@ class AnimalControl:
             ( "LastChangedDate", dd(self.LastChangedDate) )
             )
         return makesql("animalcontrol", s)
+
+class AnimalTest:
+    ID = 0
+    AnimalID = 0
+    TestTypeID = 0
+    TestResultID = 0
+    DateOfTest = None
+    DateRequired = today()
+    Comments = ""
+    Cost = 0
+    RecordVersion = 0
+    CreatedBy = "conversion"
+    CreatedDate = today()
+    LastChangedBy = "conversion"
+    LastChangedDate = today()
+    def __init__(self, ID = 0):
+        self.ID = ID
+        if ID == 0: self.ID = getid("animaltest")
+    def __str__(self):
+        s = (
+            ( "ID", di(self.ID) ),
+            ( "AnimalID", di(self.AnimalID) ),
+            ( "TestTypeID", di(self.TestTypeID) ),
+            ( "TestResultID", di(self.TestResultID) ),
+            ( "DateOfTest", dd(self.DateOfTest) ),
+            ( "DateRequired", dd(self.DateRequired) ),
+            ( "Comments", ds(self.Comments) ),
+            ( "Cost", di(self.Cost) ),
+            ( "RecordVersion", di(self.RecordVersion) ),
+            ( "CreatedBy", ds(self.CreatedBy) ),
+            ( "CreatedDate", dd(self.CreatedDate) ),
+            ( "LastChangedBy", ds(self.LastChangedBy) ),
+            ( "LastChangedDate", dd(self.LastChangedDate) )
+            )
+        return makesql("animaltest", s)
 
 class AnimalVaccination:
     ID = 0
