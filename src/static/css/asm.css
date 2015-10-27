@@ -36,54 +36,6 @@ img {
 /** JQuery UI buttons can wrap in Chrome 22 onwards, we don't want that! */
 .ui-button { white-space: nowrap }
 
-/** JQuery UI tooltips to be styled in a modern way with arrows. 
- *  Specify a tooltipClass of left/right/bottom/top accordingly
- *  (not currently used due to reliability issues)
- */
-.ui-tooltip {
-    background: #333;
-    color: white;
-    border: none;
-    min-height: 48px;
-    padding: 0;
-    opacity: 1;
-}
-.ui-tooltip-content {
-    position: relative;
-    padding: 1em;
-}
-.ui-tooltip-content::after {
-    content: '';
-    position: absolute;
-    border-style: solid;
-    display: block;
-    width: 0;
-}
-.right .ui-tooltip-content::after {
-    top: 15px;
-    left: -10px;
-    border-color: transparent #333;
-    border-width: 10px 10px 10px 0;
-}
-.left .ui-tooltip-content::after {
-    top: 15px;
-    right: -10px;
-    border-color: transparent #333;
-    border-width: 10px 0 10px 10px;
-}
-.top .ui-tooltip-content::after {
-    bottom: -10px;
-    left: 72px;
-    border-color: #333 transparent;
-    border-width: 10px 10px 0;
-}
-.bottom .ui-tooltip-content::after {
-    top: -10px;
-    left: 42px;
-    border-color: #333 transparent;
-    border-width: 0 10px 10px;
-}
-
 .hidden {
     display: none;
 }
