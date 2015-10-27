@@ -2172,6 +2172,10 @@ $(function() {
     if (common.msie_version() == 8) { $("html").addClass("ie8"); }
     if (common.msie_version() == 9) { $("html").addClass("ie9"); }
 
+    // add a class to the html element for desktop or mobile
+    if (asm.mobileapp) { $("html").addClass("mobile"); }
+    else { $("html").addClass("desktop"); }
+
     // Prevent annoying Firefox errors where it tries to parse all
     // ajax responses that don't have a mimetype as XML - override
     // it to assume plain text

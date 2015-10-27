@@ -2,17 +2,13 @@
     font-family: sans-serif !important; 
 }
 
-body {
+.desktop body {
     font-size: 75%;
 }
 
-/*
-@media screen and (min-width: 1824px) {
-    body {
-        font-size: 95%;
-    }
+.mobile body {
+    font-size: 95%;
 }
-*/
 
 a {
     text-decoration: none;
