@@ -811,6 +811,15 @@ $(function() {
             if (asm.build != controller.build) {
                 common.route_reload(true);
             }
+            // add a class to the html element for desktop or mobile
+            if (asm.mobileapp) { 
+                $("html").removeClass("desktop");
+                $("html").addClass("mobile"); 
+            }
+            else { 
+                $("html").removeClass("mobile");
+                $("html").addClass("desktop"); 
+            }
         },
 
         destroy: function() {
