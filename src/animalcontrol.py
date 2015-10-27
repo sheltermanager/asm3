@@ -43,6 +43,7 @@ def get_traploan_query(dbo):
     return "SELECT ot.ID, ot.TrapTypeID, ot.LoanDate, tt.TrapTypeName, ot.TrapNumber, " \
         "ot.DepositAmount, ot.DepositReturnDate, ot.ReturnDueDate, ot.ReturnDate, " \
         "ot.OwnerID, ot.Comments, " \
+        "ot.CreatedBy, ot.CreatedDate, ot.LastChangedBy, ot.LastChangedDate, " \
         "o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName " \
         "FROM ownertraploan ot " \
         "INNER JOIN traptype tt ON tt.ID = ot.TrapTypeID " \

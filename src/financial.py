@@ -37,6 +37,7 @@ def get_citation_query(dbo):
     return "SELECT oc.ID, oc.CitationTypeID, oc.CitationDate, oc.Comments, ct.CitationName, " \
         "oc.FineAmount, oc.FineDueDate, oc.FinePaidDate, oc.AnimalControlID, " \
         "oc.OwnerID, ti.IncidentName, " \
+        "oc.CreatedBy, oc.CreatedDate, oc.LastChangedBy, oc.LastChangedDate, " \
         "o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName " \
         "FROM ownercitation oc " \
         "INNER JOIN citationtype ct ON ct.ID = oc.CitationTypeID " \
@@ -90,6 +91,7 @@ def get_donation_query(dbo):
 def get_licence_query(dbo):
     return "SELECT ol.ID, ol.LicenceTypeID, ol.IssueDate, ol.ExpiryDate, lt.LicenceTypeName, " \
         "ol.LicenceNumber, ol.LicenceFee, ol.Comments, ol.OwnerID, ol.AnimalID, " \
+        "ol.CreatedBy, ol.CreatedDate, ol.LastChangedBy, ol.LastChangedDate, " \
         "a.AnimalName, a.ShelterCode, a.ShortCode, " \
         "o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, " \
         "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, " \

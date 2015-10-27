@@ -1320,7 +1320,8 @@ def get_costs(dbo, animalid, sort = ASCENDING):
     Returns cost records for the given animal:
     COSTTYPEID, COSTTYPENAME, COSTDATE, DESCRIPTION
     """
-    sql = "SELECT a.ID, a.CostTypeID, a.CostAmount, a.CostDate, a.CostPaidDate, c.CostTypeName, a.Description " \
+    sql = "SELECT a.ID, a.CostTypeID, a.CostAmount, a.CostDate, a.CostPaidDate, c.CostTypeName, a.Description, " \
+        "a.CreatedBy, a.CreatedDate, a.LastChangedBy, a.LastChangedDate " \
         "FROM animalcost a INNER JOIN costtype c ON c.ID = a.CostTypeID " \
         "WHERE a.AnimalID = %d" % animalid
     if sort == ASCENDING:
@@ -1349,7 +1350,8 @@ def get_diets(dbo, animalid, sort = ASCENDING):
     Returns diet records for the given animal:
     DIETNAME, DIETDESCRIPTION, DATESTARTED, COMMENTS
     """
-    sql = "SELECT a.ID, a.DietID, d.DietName, d.DietDescription, a.DateStarted, a.Comments " \
+    sql = "SELECT a.ID, a.DietID, d.DietName, d.DietDescription, a.DateStarted, a.Comments, " \
+        "a.CreatedBy, a.CreatedDate, a.LastChangedBy, a.LastChangedDate " \
         "FROM animaldiet a INNER JOIN diet d ON d.ID = a.DietID " \
         "WHERE a.AnimalID = %d" % animalid
     if sort == ASCENDING:
