@@ -927,7 +927,7 @@
          * record gets its own browser tab, but links within it still work.
          */
         inject_target: function() {
-            var recpages = [ "animal", "person", "waitinglist", "lostanimal", "foundanimal" ];
+            var recpages = [ "animal", "incident", "person", "waitinglist", "lostanimal", "foundanimal" ];
             var href, anchor, targetname, r;
             if (config.bool("RecordNewBrowserTab")) {
                 $("a").each(function() {

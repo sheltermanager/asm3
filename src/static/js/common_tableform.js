@@ -726,10 +726,27 @@
                 hide: dlgfx.edit_hide,
                 buttons: b,
                 open: function() {
+                    
                     var bp = $("#dialog-tableform").parent().find(".ui-dialog-buttonpane");
+                    
+                    if (bp.find("#dialog-tableform-activity").size() == 0 && row.CREATEDBY && row.CREATEDDATE && row.LASTCHANGEDBY && row.LASTCHANGEDDATE) {
+                        var activity = 
+                            _("Added by {0} on {1}").replace("{0}", row.CREATEDBY)
+                                .replace("{1}", format.date(row.CREATEDDATE) + " " + format.time(row.LASTCHANGEDDATE)) + '<br/>' +
+                            _("Last changed by {0} on {1}").replace("{0}", row.LASTCHANGEDBY)
+                                .replace("{1}", format.date(row.LASTCHANGEDDATE) + " " + format.time(row.LASTCHANGEDDATE));
+                        bp.append('<button id="button-dialog-tableform-activity" title="' + 
+                            html.title(activity.replace("<br/>", "\n")) +
+                            '"><span class="asm-icon asm-icon-users"></span></button>');
+                        $("#button-dialog-tableform-activity").button().click(function() {
+                            tableform.dialog_info(activity);
+                        });
+                    }
+                    
                     if (bp.find("#dialog-tableform-spinner").size() == 0) {
                         bp.append('<img id="dialog-tableform-spinner" style="display: none" src="static/images/wait/wait16trans.gif" />');
                     }
+                    
                     tableform.dialog_enable_buttons();
                 },
                 close: function() {
