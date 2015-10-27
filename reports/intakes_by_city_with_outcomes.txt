@@ -13,7 +13,8 @@ a.AnimalName, a.ShelterCode, a.DateOfBirth, s.SpeciesName, atp.AnimalType,
 a.BreedName, e.ReasonName, o.OwnerName, a.DateBroughtIn, m.MovementDate,
 a.NeuteredDate, a.IdentichipNumber, 
 bo.OwnerName AS BroughtInOwner, bo.OwnerTown AS BroughtInCity, bo.OwnerAddress AS BroughtInAddress, bo.OwnerPostcode AS BroughtInPostcode,
-CASE WHEN a.DeceasedDate Is Not Null AND PutToSleep = 0 THEN 'Died' 
+CASE WHEN a.DeceasedDate Is Not Null AND PutToSleep = 0 AND IsDOA = 0 THEN 'Died' 
+WHEN a.DeceasedDate Is Not Null AND IsDOA = 1 THEN 'DOA' 
 WHEN a.DeceasedDate Is Not Null AND PutToSleep = 1 THEN 'Euthanasia' 
 WHEN a.ActiveMovementDate Is Not Null THEN (SELECT MovementType FROM lksmovementtype WHERE ID = a.ActiveMovementType) 
 ELSE 'On Shelter' END AS OutcomeName,
