@@ -305,7 +305,6 @@ $(function() {
             else if (viewmode == "type") {
                 this.render_view("ANIMALTYPENAME", "ANIMALTYPENAME,ANIMALNAME", false, true);
             }
-            common.bind_tooltips();
         },
 
         /** Adds the ADOPTIONSTATUS column */
