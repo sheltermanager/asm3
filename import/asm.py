@@ -1008,10 +1008,8 @@ def truncate(s, length = 100):
     HTML entities count as one character
     """
     if s is None: s = ""
-    s = strip_html_tags(s)
-    s = strip_unicode(s)
-    if len(decode_html(s)) < length: return s
-    return substring(s, 0, length) + "..."
+    if len(s) < length: return s
+    return s[0:length] + "..."
 
 def find_row(d, fieldname, value):
     """
