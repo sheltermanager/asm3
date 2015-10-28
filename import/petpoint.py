@@ -13,11 +13,11 @@ are MedicalVaccineExpress and MedicalTestsExpress
 """
 
 # The shelter's petfinder ID for grabbing animal images for adoptable animals
-PETFINDER_ID = ""
+PETFINDER_ID = "WI424"
 
-INTAKE_FILENAME = "data/pp_mz0901.csv"
-VACC_FILENAME = "data/pp_mz0901_vacc.csv"
-TEST_FILENAME = "data/pp_mz0901_test.csv"
+INTAKE_FILENAME = "data/pp_up0882.csv"
+VACC_FILENAME = ""
+TEST_FILENAME = ""
 
 def findowner(ownername = ""):
     """ Looks for an owner with the given name in the collection
@@ -76,12 +76,12 @@ for d in data:
         if a.AnimalName.strip() == "":
             a.AnimalName = "(unknown)"
         if d["Date Of Birth"].strip() == "":
-            a.DateOfBirth = asm.getdate_yyyymmdd(d["Date Of Birth"])
+            a.DateOfBirth = asm.getdate_mmddyyyy(d["Date Of Birth"])
         else:
-            a.DateOfBirth = asm.getdate_yyyymmdd(d["Date Of Birth"])
+            a.DateOfBirth = asm.getdate_mmddyyyy(d["Date Of Birth"])
         if a.DateOfBirth is None:
             a.DateOfBirth = asm.today()
-        a.DateBroughtIn = asm.getdate_yyyymmdd(d["Intake Date"])
+        a.DateBroughtIn = asm.getdate_mmddyyyy(d["Intake Date"])
         a.CreatedDate = a.DateBroughtIn
         a.LastChangedDate = a.DateBroughtIn
         if a.DateBroughtIn is None:
@@ -97,7 +97,7 @@ for d in data:
         a.Size = 2
         a.Neutered = d["Altered"] == "Yes" and 1 or 0
         a.ReasonForEntry = d["Reason"]
-        a.IdentichipDate = asm.getdate_yyyymmdd(d["Microchip Issue Date"])
+        a.IdentichipDate = asm.getdate_mmddyyyy(d["Microchip Issue Date"])
         a.IdentichipNumber = d["Microchip Number"]
         a.IsGoodWithCats = 2
         a.IsGoodWithDogs = 2
@@ -147,7 +147,7 @@ for d in data:
 
     ot = d["Outcome Type"]
     ost = d["Outcome Subtype"]
-    od = asm.getdate_yyyymmdd(d["Outcome Date"])
+    od = asm.getdate_mmddyyyy(d["Outcome Date"])
     if (ot == "Transfer Out" and ost == "Potential Adopter") or ot == "Adoption":
         if a is None or o is None: continue
         m = asm.Movement()

@@ -179,6 +179,24 @@ def publish_ap(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running adoptapet publisher: %s" % em, "cron.publish_ap", dbo, sys.exc_info())
 
+def publish_fa(dbo):
+    try :
+
+        pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
+        publishers = configuration.publishers_enabled(dbo)
+        if smcom.active():
+            pc.ignoreLock = True
+
+        if publishers.find("fa") != -1:
+            al.info("start foundanimals publisher", "cron.publish_fa", dbo)
+            ap = publish.FoundAnimalsPublisher(dbo, pc)
+            ap.run()
+            al.info("end foundanimals publisher", "cron.publish_fa", dbo)
+
+    except:
+        em = str(sys.exc_info()[0])
+        al.error("FAIL: uncaught error running foundanimals publisher: %s" % em, "cron.publish_fa", dbo, sys.exc_info())
+
 def publish_mp(dbo):
     try :
 
@@ -578,6 +596,8 @@ def run(dbo, mode):
         reports_email(dbo)
     elif mode == "publish_ap":
         publish_ap(dbo)
+    elif mode == "publish_fa":
+        publish_fa(dbo)
     elif mode == "publish_hlp":
         publish_hlp(dbo)
     elif mode == "publish_html":
@@ -691,6 +711,7 @@ def print_usage():
     print "       reports - update cached copies of some long running reports"
     print "       reports_email - email reports with dailyemail set (run this target once per hour)"
     print "       publish_ap - publish to adoptapet.com"
+    print "       publish_fa - update foundanimals.org"
     print "       publish_hlp - publish to helpinglostpets.com"
     print "       publish_html - publish html/ftp"
     print "       publish_mp - publish to meetapet.com"
