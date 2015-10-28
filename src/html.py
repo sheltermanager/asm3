@@ -721,6 +721,7 @@ def json_menu(l, reports, mailmerges):
             ("", "", "", "publish?mode=vear", "asm-icon-blank", "Register animals with AKC Reunite Microchips (via VetEnvoy)"),
             ("", "", "", "publish?mode=abuk", "asm-icon-blank", "Register animals with idENTICHIP/Anibase UK Microchips"),
             ("", "", "", "publish?mode=ptuk", "asm-icon-blank", "Register animals with AVID/PETtrac UK Microchips"),
+            ("", "", "", "publish?mode=fa", "asm-icon-blank", "Register animal microchips with FoundAnimals.org"),
             ("", "", "", "publish?mode=veha", "asm-icon-blank", "Register animals with HomeAgain Microchips (via VetEnvoy)"),
             ("", "", "", "publish?mode=pl", "asm-icon-blank", "Register animals with PetLink Microchips"),
             ("", "", "", "publish?mode=st", "asm-icon-blank", "Register animals with SmartTag Pet ID"),

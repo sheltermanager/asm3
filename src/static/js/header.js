@@ -251,9 +251,10 @@ $(function() {
                 ep.replace("pl", "");
             }
 
-            // AdoptAPet, Pets911, RescueGroups, SmartTag and VetEnvoy/US are US only
+            // AdoptAPet, FoundAnimals, Pets911, RescueGroups, SmartTag and VetEnvoy/US are US only
             if (asm.locale != "en") {
                 ep.replace("ap", "");
+                ep.replace("fa", "");
                 ep.replace("p911", "");
                 ep.replace("rg", "");
                 ep.replace("st", "");
@@ -276,6 +277,7 @@ $(function() {
             if (ep.indexOf("pf") == -1) { $("#asm-menu-publishing-body [href='publish?mode=pf']").closest("li").hide(); }
             if (ep.indexOf("abuk") == -1) { $("#asm-menu-publishing-body [href='publish?mode=abuk']").closest("li").hide(); }
             if (ep.indexOf("ap") == -1) { $("#asm-menu-publishing-body [href='publish?mode=ap']").closest("li").hide(); }
+            if (ep.indexOf("fa") == -1) { $("#asm-menu-publishing-body [href='publish?mode=fa']").closest("li").hide(); }
             if (ep.indexOf("p911") == -1) { $("#asm-menu-publishing-body [href='publish?mode=p9']").closest("li").hide(); }
             if (ep.indexOf("rg") == -1) { $("#asm-menu-publishing-body [href='publish?mode=rg']").closest("li").hide(); }
             if (ep.indexOf("mp") == -1) { $("#asm-menu-publishing-body [href='publish?mode=mp']").closest("li").hide(); }
