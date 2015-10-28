@@ -20,6 +20,7 @@ $(function() {
                 '<li class="localeus"><a href="#tab-rescuegroups">RescueGroups Publisher</a></li>',
                 '<li class="localegb"><a href="#tab-anibase">Anibase UK Microchips</a></li>',
                 '<li class="localegb"><a href="#tab-pettrac">AVID/PETtrac UK Microchips</a></li>',
+                '<li class="localeus hasfoundanimals"><a href="#tab-foundanimals">FoundAnimals Microchips</a></li>',
                 '<li class="localeus localeca localemx"><a href="#tab-petlink">PetLink Microchips</a></li>',
                 '<li class="localeus hassmarttag"><a href="#tab-smarttag">SmartTag Tags/Microchips</a></li>',
                 '<li class="localeus hasvevendor"><a href="#tab-vetenvoy">VetEnvoy Microchips</a></li>',
@@ -579,6 +580,22 @@ $(function() {
             ].join("\n");
         },
 
+        render_foundanimals: function() {
+            return [
+                '<div id="tab-foundanimals">',
+                html.info('Find out more at <a href="http://microchipregistry.foundanimals.org">microchipregistry.foundanimals.org</a><br/>' +
+                    'Contact foundanimals.org to register your shelter and get a folder for automatic registration of microchips'),
+                '<p><input id="enabledfa" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledfa">' + _("Enabled") + '</label></p>',
+                '<table>',
+                '<tr>',
+                '<td><label for="fafolder">Folder</label></td>',
+                '<td><input id="fafolder" type="text" class="asm-textbox cfg" data="FoundAnimalsFolder" /></td>',
+                '</tr>',
+                '</table>',
+                '</div>'
+            ].join("\n");
+        },
+
         render_meetapet: function() {
             return [
                 '<div id="tab-meetapet">',
@@ -745,6 +762,7 @@ $(function() {
                 this.render_petslocated(),
                 this.render_rescuegroups(),
                 this.render_adoptapet(),
+                this.render_foundanimals(),
                 this.render_meetapet(),
                 this.render_helpinglostpets(),
                 this.render_smarttag(),
@@ -832,6 +850,7 @@ $(function() {
                 if ($("#enabledpf").is(":checked")) { ep += " pf"; }
                 if ($("#enabledabuk").is(":checked")) { ep += " abuk"; }
                 if ($("#enabledap").is(":checked")) { ep += " ap"; }
+                if ($("#enabledfa").is(":checked")) { ep += " fa"; }
                 if ($("#enabledrg").is(":checked")) { ep += " rg"; }
                 if ($("#enabledmp").is(":checked")) { ep += " mp"; }
                 if ($("#enabledhlp").is(":checked")) { ep += " hlp"; }
@@ -907,6 +926,11 @@ $(function() {
             // Enable tab sections for Mexican publishers
             if (asm.locale == "en_MX" || asm.locale == "es_MX") {
                 $(".localemx").show();
+            }
+
+            // Disable FoundAnimals if it's not setup in sitedefs
+            if (!controller.hasfoundanimals) {
+                $(".hasfoundanimals").hide();
             }
 
             // Disable PetsLocated if it's not setup in sitedefs
@@ -997,6 +1021,7 @@ $(function() {
             if (pe.indexOf("html") != -1) { $("#enabledhtml").attr("checked", true); }
             if (pe.indexOf("pf") != -1) { $("#enabledpf").attr("checked", true); }
             if (pe.indexOf("ap") != -1) { $("#enabledap").attr("checked", true); }
+            if (pe.indexOf("fa") != -1) { $("#enabledfa").attr("checked", true); }
             if (pe.indexOf("rg") != -1) { $("#enabledrg").attr("checked", true); }
             if (pe.indexOf("mp") != -1) { $("#enabledmp").attr("checked", true); }
             if (pe.indexOf("hlp") != -1) { $("#enabledhlp").attr("checked", true); }

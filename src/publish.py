@@ -32,7 +32,7 @@ import threading
 import users
 import utils
 import wordprocessor
-from sitedefs import BASE_URL, MULTIPLE_DATABASES_PUBLISH_DIR, MULTIPLE_DATABASES_PUBLISH_FTP, MULTIPLE_DATABASES_PUBLISH_URL, ADOPTAPET_FTP_HOST, ANIBASE_BASE_URL, ANIBASE_API_USER, ANIBASE_API_KEY, HELPINGLOSTPETS_FTP_HOST, PETFINDER_FTP_HOST, PETRESCUE_FTP_HOST, PETSLOCATED_FTP_HOST, PETSLOCATED_FTP_USER, PETSLOCATED_FTP_PASSWORD, RESCUEGROUPS_FTP_HOST, SMARTTAG_FTP_HOST, SMARTTAG_FTP_USER, SMARTTAG_FTP_PASSWORD, PETTRAC_UK_POST_URL, MEETAPET_BASE_URL, PETLINK_BASE_URL, SERVICE_URL, VETENVOY_US_VENDOR_USERID, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_HOMEAGAIN_RECIPIENTID, VETENVOY_US_AKC_REUNITE_RECIPIENTID, VETENVOY_US_BASE_URL, VETENVOY_US_SYSTEM_ID
+from sitedefs import BASE_URL, MULTIPLE_DATABASES_PUBLISH_DIR, MULTIPLE_DATABASES_PUBLISH_FTP, MULTIPLE_DATABASES_PUBLISH_URL, ADOPTAPET_FTP_HOST, ANIBASE_BASE_URL, ANIBASE_API_USER, ANIBASE_API_KEY, FOUNDANIMALS_FTP_HOST, FOUNDANIMALS_FTP_USER, FOUNDANIMALS_FTP_PASSWORD, HELPINGLOSTPETS_FTP_HOST, PETFINDER_FTP_HOST, PETRESCUE_FTP_HOST, PETSLOCATED_FTP_HOST, PETSLOCATED_FTP_USER, PETSLOCATED_FTP_PASSWORD, RESCUEGROUPS_FTP_HOST, SMARTTAG_FTP_HOST, SMARTTAG_FTP_USER, SMARTTAG_FTP_PASSWORD, PETTRAC_UK_POST_URL, MEETAPET_BASE_URL, PETLINK_BASE_URL, SERVICE_URL, VETENVOY_US_VENDOR_USERID, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_HOMEAGAIN_RECIPIENTID, VETENVOY_US_AKC_REUNITE_RECIPIENTID, VETENVOY_US_BASE_URL, VETENVOY_US_SYSTEM_ID
 
 class PublishCriteria:
     """
@@ -1722,6 +1722,127 @@ class AnibaseUKPublisher(AbstractPublisher):
 
         self.saveLog()
         self.setPublisherComplete()
+
+class FoundAnimalsPublisher(FTPPublisher):
+    """
+    Handles publishing to foundanimals.org
+    """
+    def __init__(self, dbo, publishCriteria):
+        self.publisherName = "FoundAnimals Publisher"
+        self.setLogName("foundanimals")
+        publishCriteria.uploadDirectly = True
+        publishCriteria.thumbnails = False
+        FTPPublisher.__init__(self, dbo, publishCriteria, 
+            FOUNDANIMALS_FTP_HOST, FOUNDANIMALS_FTP_USER, FOUNDANIMALS_FTP_PASSWORD)
+
+    def run(self):
+        
+        if self.isPublisherExecuting(): return
+        self.updatePublisherProgress(0)
+        self.setLastError("")
+        self.setStartPublishing()
+
+        folder = configuration.foundanimals_folder(self.dbo)
+        if folder == "":
+            self.setLastError("No FoundAnimals folder has been set.")
+            self.cleanup()
+            return
+
+        animals = get_microchip_data(self.dbo, ["a.Identichipped = 1 AND a.IdentichipNumber <> ''",], "foundanimals")
+        if len(animals) == 0:
+            self.setLastError("No animals found to publish.")
+            self.cleanup()
+            return
+
+        if not self.openFTPSocket(): 
+            self.setLastError("Failed to open FTP socket.")
+            if self.logBuffer.find("530 Login") != -1:
+                self.log("Found 530 Login incorrect: disabling FoundAnimals publisher.")
+                configuration.publishers_enabled_disable(self.dbo, "fa")
+            self.cleanup()
+            return
+
+        # foundanimals.org want data files called mmddyyyy_HHMMSS.csv in the shelter's own folder
+        dateportion = i18n.format_date("%m%d%Y_%H%M%S", i18n.now(self.dbo.timezone))
+        outputfile = "%s.csv" % dateportion
+        self.mkdir(folder)
+        self.chdir(folder)
+
+        csv = []
+
+        anCount = 0
+        for an in animals:
+            try:
+                line = []
+                anCount += 1
+                self.log("Processing: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                self.updatePublisherProgress(self.getProgress(anCount, len(animals)))
+
+                # If the user cancelled, stop now
+                if self.shouldStopPublishing(): 
+                    self.log("User cancelled publish. Stopping.")
+                    self.resetPublisherProgress()
+                    self.cleanup()
+                    return
+
+                # First Name
+                line.append("\"%s\"" % an["CURRENTOWNERFORENAMES"])
+                # Last Name
+                line.append("\"%s\"" % an["CURRENTOWNERSURNAME"])
+                # Email Address
+                line.append("\"%s\"" % an["CURRENTOWNEREMAILADDRESS"])
+                # Address 1
+                line.append("\"%s\"" % an["CURRENTOWNERADDRESS"])
+                # Address 2
+                line.append("\"\"")
+                # City
+                line.append("\"%s\"" % an["CURRENTOWNERTOWN"])
+                # State
+                line.append("\"%s\"" % an["CURRENTOWNERCOUNTY"])
+                # Zip Code
+                line.append("\"%s\"" % an["CURRENTOWNERPOSTCODE"])
+                # Home Phone
+                line.append("\"%s\"" % an["CURRENTOWNERHOMETELEPHONE"])
+                # Work Phone
+                line.append("\"%s\"" % an["CURRENTOWNERWORKTELEPHONE"])
+                # Cell Phone
+                line.append("\"%s\"" % an["CURRENTOWNERMOBILETELEPHONE"])
+                # Pet Name
+                line.append("\"%s\"" % an["ANIMALNAME"])
+                # Microchip Number
+                line.append("\"%s\"" % an["IDENTICHIPNUMBER"])
+                # Service Date
+                line.append("\"%s\"" % i18n.format_date("%m/%d/%Y", an["ACTIVEMOVEMENTDATE"]))
+                # Date of Birth
+                line.append("\"%s\"" % i18n.format_date("%m/%d/%Y", an["DATEOFBIRTH"]))
+                # Species
+                line.append("\"%s\"" % an["PETFINDERSPECIES"])
+                # Sex
+                line.append("\"%s\"" % an["SEXNAME"])
+                # Spayed/Neutered
+                line.append("\"%s\"" % an["NEUTERED"] == 1 and "Yes" or "No")
+                # Primary Breed
+                line.append("\"%s\"" % an["PETFINDERBREED"])
+                # Secondary Breed
+                line.append("\"%s\"" % an["PETFINDERBREED2"])
+                # Add to our CSV file
+                csv.append(",".join(line))
+                # Mark success in the log
+                self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+            except Exception,err:
+                self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
+
+        # Mark published
+        self.markAnimalsPublished(animals)
+
+        header = "First Name,Last Name,Email Address,Address 1,Address 2,City,State,Zip Code," \
+            "Home Phone,Work Phone,Cell Phone,Pet Name,Microchip Number,Service Date," \
+            "Date of Birth,Species,Sex,Spayed/Neutered,Primary Breed,Secondary Breed\n"
+        self.saveFile(os.path.join(self.publishDir, outputfile), header + "\n".join(csv))
+        self.log("Uploading datafile %s" % outputfile)
+        self.upload(outputfile)
+        self.log("Uploaded %s" % outputfile)
+        self.cleanup()
 
 class HelpingLostPetsPublisher(FTPPublisher):
     """
