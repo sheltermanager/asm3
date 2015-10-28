@@ -2173,7 +2173,7 @@ $(function() {
     if (common.msie_version() == 9) { $("html").addClass("ie9"); }
 
     // add a class to the html element for desktop or mobile
-    if (asm.mobileapp) { 
+    if (typeof asm !== "undefined" && asm.mobileapp) { 
         $("html").removeClass("desktop");
         $("html").addClass("mobile"); 
     }

@@ -812,7 +812,7 @@ $(function() {
                 common.route_reload(true);
             }
             // add a class to the html element for desktop or mobile
-            if (asm.mobileapp) { 
+            if (typeof asm !== "undefined" && asm.mobileapp) { 
                 $("html").removeClass("desktop");
                 $("html").addClass("mobile"); 
             }
