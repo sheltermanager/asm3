@@ -81,8 +81,8 @@ asm.setid("animalvaccination", 300)
 asm.setid("owner", 300)
 asm.setid("ownerlicence", 300)
 asm.setid("adoption", 300)
-asm.setid("media", 300)
-asm.setid("dbfs", 300)
+#asm.setid("media", 300)
+#asm.setid("dbfs", 300)
 
 # Remove existing
 print "\\set ON_ERROR_STOP\nBEGIN;"
@@ -91,8 +91,8 @@ print "DELETE FROM animalvaccination WHERE ID >= 300;"
 print "DELETE FROM owner WHERE ID >= 300;"
 print "DELETE FROM ownerlicence WHERE ID >= 300;"
 print "DELETE FROM adoption WHERE ID >= 300;"
-print "DELETE FROM media WHERE ID >= 300;"
-print "DELETE FROM dbfs WHERE ID >= 300;"
+#print "DELETE FROM media WHERE ID >= 300;"
+#print "DELETE FROM dbfs WHERE ID >= 300;"
 
 # Create a transfer owner
 o = asm.Owner()
@@ -163,9 +163,15 @@ for row in canimal:
     a = asm.Animal()
     animals.append(a)
     ppa[row["ANIMALKEY"]] = a
+    a.DateBroughtIn = asm.getdate_yyyymmdd(row["ADDEDDATET"])
+    if a.DateBroughtIn is None:
+        sys.stderr.write("Bad datebroughtin: '%s'\n" % row["ADDEDDATET"])
+        a.DateBroughtIn = datetime.datetime.today()    
     a.AnimalTypeID = gettype(row["ANIMLDES"])
-    a.generateCode()
-    if row["REGISTRATI"] == "": a.ShortCode = row["REGISTRATI"]
+    a.generateCode(gettypeletter(a.AnimalTypeID))
+    if row["REGISTRATI"] != "": 
+        a.ShelterCode = "%s (%s)" % (row["REGISTRATI"], row["ANIMALKEY"])
+        a.ShortCode = row["REGISTRATI"]
     a.SpeciesID = asm.species_id_for_name(row["ANIMLDES"].split(" ")[0])
     a.AnimalName = row["PETNAME"]
     if a.AnimalName.strip() == "":
@@ -173,12 +179,7 @@ for row in canimal:
     age = row["AGE"].split(" ")[0]
     a.DateOfBirth = asm.getdate_yyyymmdd(row["DOB"])
     if a.DateOfBirth is None: a.DateOfBirth = asm.now()
-    a.DateBroughtIn = asm.getdate_yyyymmdd(row["ADDEDDATET"])
-    if a.DateBroughtIn is None:
-        sys.stderr.write("Bad datebroughtin: '%s'\n" % row["ADDEDDATET"])
-        a.DateBroughtIn = datetime.datetime.today()    
     a.EntryReasonID = 4
-    a.generateCode(gettypeletter(a.AnimalTypeID))
     a.Neutered = asm.cint(row["FIX"])
     a.Declawed = asm.cint(row["DECLAWED"])
     a.IsNotAvailableForAdoption = 0
@@ -188,6 +189,7 @@ for row in canimal:
     a.BaseColourID = asm.colour_id_for_names(asm.fw(row["FURCOLR1"]), asm.fw(row["FURCOLR2"]))
     a.IdentichipNumber = row["MICROCHIP"]
     if a.IdentichipNumber != "": a.Identichipped = 1
+    if len(a.IdentichipNumber) == 8: a.IdentichipNumber = "0" + a.IdentichipNumber
     comments = "Original breed: " + row["BREED1"] + "/" + row["CROSSBREED"] + ", age: " + age
     comments += ",Color: " + asm.fw(row["FURCOLR1"]) + "/" + asm.fw(row["FURCOLR2"])
     comments += ", Coat: " + row["COAT"]
@@ -209,38 +211,13 @@ for row in canimal:
         a.DeceasedDate = a.DateBroughtIn
     elif row["PERSOWNR"] != "0" and row["PERSOWNR"].strip() != "":
         # Is there an adopter link?
-        m = asm.Movement()
-        m.AnimalID = a.ID
-        m.OwnerID = ppo[row["PERSOWNR"]].ID
-        m.MovementType = 1
-        m.MovementDate = a.DateBroughtIn
-        a.Archived = 1
-        a.ActiveMovementID = m.ID
-        a.ActiveMovementDate = m.MovementDate
-        a.ActiveMovementType = 1
-        movements.append(m)
+        asm.adopt_to(a, ppo[row["PERSOWNR"]].ID)
     else:
         # Create a fake adoption to an unknown owner get this animal off shelter
-        m = asm.Movement()
-        m.AnimalID = a.ID
-        m.OwnerID = uo.ID
-        m.MovementType = 1
-        m.MovementDate = a.DateBroughtIn
-        a.Archived = 1
-        a.ActiveMovementID = m.ID
-        a.ActiveMovementDate = m.MovementDate
-        a.ActiveMovementType = 1
-        movements.append(m)
+        asm.adopt_to(a, uo.ID)
     # Does this animal have an image? If so, add media/dbfs entries for it
-    imdata = None
-    if os.path.exists(PATH + "/images/%s.jpg" % row["ANIMALKEY"]):
-        f = open(PATH + "/images/%s.jpg" % row["ANIMALKEY"], "rb")
-        imdata = f.read()
-        f.close()
-    elif os.path.exists(PATH + "/images/%s.JPG" % row["ANIMALKEY"]):
-        f = open(PATH + "/images/%s.JPG" % row["ANIMALKEY"], "rb")
-        imdata = f.read()
-        f.close()
+    imdata = asm.load_image_from_file(PATH + "/images/%s.jpg" % row["ANIMALKEY"])
+    if imdata is None: imdata = asm.load_image_from_file(PATH + "/images/%s.JPG" % row["ANIMALKEY"])
     if imdata is not None:
         asm.animal_image(a.ID, imdata)
 

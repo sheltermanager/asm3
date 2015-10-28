@@ -43,6 +43,7 @@ Also has some useful helper functions for reading CSVs and parsing values, eg:
     asm.find_row (list_of_dicts, fieldname, value)
     asm.find_value (list_of_dicts, fieldname, value, fieldtoreturn)
     asm.animal_image(animalid, imagedata)
+    asm.adopt_to(a, ownerid)
     asm.load_image_from_file(filename)
     
 """
@@ -1118,6 +1119,28 @@ def additional_field(fieldname, linktypeid, linkid, value):
     print "INSERT INTO additional (LinkType, LinkID, AdditionalFieldID, Value) VALUES (" \
         "%d, %d, (SELECT ID FROM additionalfield WHERE FieldName LIKE '%s'), %s);" % \
         ( linktypeid, linkid, fieldname, ds(value))
+
+
+def adopt_to(a, ownerid, movementtype = 1, movementdate = None):
+    """ Writes an adoption movement insert 
+        a: The animal object to adopt
+        ownerid: The ownerid to adopt to
+        movementtype: movement type to create (1 = adoption)
+        movementdate: movement date, if None, DateBroughtIn is used
+    """
+    m = Movement()
+    m.AnimalID = a.ID
+    m.OwnerID = ownerid
+    m.MovementType = movementtype
+    m.MovementDate = movementdate
+    if movementdate is None:
+        m.MovementDate = a.DateBroughtIn
+    a.Archived = 1
+    a.ActiveMovementID = m.ID
+    a.ActiveMovementDate = m.MovementDate
+    a.ActiveMovementType = m.MovementType
+    print m
+    return m
 
 def animal_image(animalid, imagedata):
     """ Writes the media and dbfs entries to add an image to an animal """
