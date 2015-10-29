@@ -14,7 +14,7 @@ $(function() {
     var QUICKLINKS_SET = {
         1: ["animal_find", "asm-icon-animal-find", _("Find animal")],
         2: ["animal_new", "asm-icon-animal-add", _("Add a new animal")],
-        3: ["log_new", "asm-icon-log", _("Add a log entry")],
+        3: ["log_new?mode=animal", "asm-icon-log", _("Add a log entry")],
         4: ["litters", "asm-icon-litter", _("Edit litters")],
         5: ["person_find", "asm-icon-person-find", _("Find person")],
         6: ["person_new", "asm-icon-person-add", _("Add a new person")],

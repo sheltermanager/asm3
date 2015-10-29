@@ -9,7 +9,7 @@ from sitedefs import LOCALE, TIMEZONE
 QUICKLINKS_SET = {
     1: ("animal_find", "asm-icon-animal-find", i18n._("Find animal")),
     2: ("animal_new", "asm-icon-animal-add", i18n._("Add a new animal")),
-    3: ("log_new", "asm-icon-log", i18n._("Add a log entry")),
+    3: ("log_new?mode=animal", "asm-icon-log", i18n._("Add a log entry")),
     4: ("litters", "asm-icon-litter", i18n._("Edit litters")),
     5: ("person_find", "asm-icon-person-find", i18n._("Find person")),
     6: ("person_new", "asm-icon-person-add", i18n._("Add a new person")),

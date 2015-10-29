@@ -102,7 +102,7 @@ $(function() {
         autofocus: "#asm-content button:first",
         title: function() { return _("Add a new log"); },
         routes: {
-            "log_new": function() { common.module_loadandstart("log_new", "log_new"); }
+            "log_new": function() { common.module_loadandstart("log_new", "log_new?mode=" + this.qs.mode); }
         }
 
     };
