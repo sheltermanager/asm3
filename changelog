@@ -1,6 +1,7 @@
 37
 ================
 
+29/10/15 Fix license dialog breaking after duplicate number error #293
 29/10/15 Final tweaks to foundanimals.org microchip registration #284
 29/10/15 Allow callers of post payment widget to include zero trx
 29/10/15 Allow payment widget to take negative transactions again
