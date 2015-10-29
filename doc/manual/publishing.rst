@@ -359,6 +359,20 @@ sends their information and new owner info to Anibase to update their records.
 ASM tracks the date Anibase was last updated, so if the animal is returned and
 adopted again, another update will be done automatically.
 
+FoundAnimals
+-------
+
+ASM can register microchips with microchipregistry.foundanimals.org, a
+non-profit organisation that supplies microchips to shelters.
+
+Their microchip registry is completely free and accepts microchips from any
+provider. To signup, just get in touch and request a folder name from them
+to configure in ASM.
+
+ASM will attempt to register all microchips with foundanimals.org and as with
+the other chip registration publishers, will track when it last updated a
+chip with them in case of subsequent adoption or reclaim.
+
 PetLink
 -------
 
