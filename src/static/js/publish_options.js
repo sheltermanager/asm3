@@ -584,7 +584,7 @@ $(function() {
             return [
                 '<div id="tab-foundanimals">',
                 html.info('Find out more at <a href="http://microchipregistry.foundanimals.org">microchipregistry.foundanimals.org</a><br/>' +
-                    'Contact foundanimals.org to register your shelter and get a folder for automatic registration of microchips'),
+                    'Contact customerservice@foundanimals.org to register your shelter and get a folder for automatic registration of microchips'),
                 '<p><input id="enabledfa" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledfa">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',

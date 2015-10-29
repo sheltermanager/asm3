@@ -1,7 +1,10 @@
 37
 ================
 
-28/10/15 Add foundanimals.org microchip registration
+29/10/15 Final tweaks to foundanimals.org microchip registration #284
+29/10/15 Allow callers of post payment widget to include zero trx
+29/10/15 Allow payment widget to take negative transactions again
+28/10/15 Add foundanimals.org microchip registration #284
 27/10/15 Show user activity where available in tableform dialogs
 27/10/15 Animal control incidents should be given a new tab if option is on
 26/10/15 Reload animal_medical after treatment(s) given

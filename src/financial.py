@@ -537,8 +537,8 @@ def get_vouchers(dbo, personid):
     return db.query(dbo, get_voucher_query(dbo) + \
         "WHERE ov.OwnerID = %d ORDER BY ov.DateIssued" % int(personid))
 
-def insert_donations_from_form(dbo, username, post, donationdate, force_receive = False, personid = 0, animalid = 0, movementid = 0):
-    """
+def insert_donations_from_form(dbo, username, post, donationdate, force_receive = False, personid = 0, animalid = 0, movementid = 0, ignorezero = True):
+    """f
     Used for post handlers with the payments widget where
     multiple payments can be sent.
     """
@@ -547,30 +547,30 @@ def insert_donations_from_form(dbo, username, post, donationdate, force_receive 
     if post["receiptnumber"] == "":
         post.data["receiptnumber"] = get_next_receipt_number(dbo)
     for i in xrange(1, 100):
-        if post.integer("amount%d" % i) > 0:
-            due = ""
-            received = donationdate
-            if not force_receive and configuration.movement_donations_default_due(dbo):
-                due = donationdate
-                received = ""
-            don_dict = {
-                "person"                : str(personid),
-                "animal"                : str(animalid),
-                "movement"              : str(movementid),
-                "type"                  : post["donationtype%d" % i],
-                "payment"               : post["payment%d" % i],
-                "destaccount"           : post["destaccount%d" % i],
-                "frequency"             : "0",
-                "amount"                : post["amount%d" % i],
-                "due"                   : due,
-                "received"              : received,
-                "giftaid"               : post["giftaid"],
-                "receiptnumber"         : post["receiptnumber"],
-                "vat"                   : post["vat%d" % i],
-                "vatrate"               : post["vatrate%d" % i],
-                "vatamount"             : post["vatamount%d" % i]
-            }
-            created.append(str(insert_donation_from_form(dbo, username, utils.PostedData(don_dict, l))))
+        if post.integer("amount%d" % i) == 0 and ignorezero: continue
+        due = ""
+        received = donationdate
+        if not force_receive and configuration.movement_donations_default_due(dbo):
+            due = donationdate
+            received = ""
+        don_dict = {
+            "person"                : str(personid),
+            "animal"                : str(animalid),
+            "movement"              : str(movementid),
+            "type"                  : post["donationtype%d" % i],
+            "payment"               : post["payment%d" % i],
+            "destaccount"           : post["destaccount%d" % i],
+            "frequency"             : "0",
+            "amount"                : post["amount%d" % i],
+            "due"                   : due,
+            "received"              : received,
+            "giftaid"               : post["giftaid"],
+            "receiptnumber"         : post["receiptnumber"],
+            "vat"                   : post["vat%d" % i],
+            "vatrate"               : post["vatrate%d" % i],
+            "vatamount"             : post["vatamount%d" % i]
+        }
+        created.append(str(insert_donation_from_form(dbo, username, utils.PostedData(don_dict, l))))
     return ",".join(created)
 
 def insert_donation_from_form(dbo, username, post):

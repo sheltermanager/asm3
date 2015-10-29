@@ -1742,6 +1742,7 @@ class FoundAnimalsPublisher(FTPPublisher):
         self.setLastError("")
         self.setStartPublishing()
 
+        org = configuration.organisation(self.dbo)
         folder = configuration.foundanimals_folder(self.dbo)
         if folder == "":
             self.setLastError("No FoundAnimals folder has been set.")
@@ -1825,6 +1826,10 @@ class FoundAnimalsPublisher(FTPPublisher):
                 line.append("\"%s\"" % an["PETFINDERBREED"])
                 # Secondary Breed
                 line.append("\"%s\"" % an["PETFINDERBREED2"])
+                # Color
+                line.append("\"%s\"" % an["BASECOLOURNAME"])
+                # Implanting Organization
+                line.append("\"%s\"" % org)
                 # Add to our CSV file
                 csv.append(",".join(line))
                 # Mark success in the log

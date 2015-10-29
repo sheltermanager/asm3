@@ -2597,7 +2597,7 @@ class donation_receive:
         post = utils.PostedData(web.input(mode="create"), session.locale)
         mode = post["mode"]
         if mode == "create":
-            return financial.insert_donations_from_form(session.dbo, session.user, post, post["received"], True, post["person"], post["animal"])
+            return financial.insert_donations_from_form(session.dbo, session.user, post, post["received"], True, post["person"], post["animal"], False)
 
 class foundanimal:
     def GET(self):
