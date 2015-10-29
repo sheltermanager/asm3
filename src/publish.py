@@ -4211,7 +4211,7 @@ class RescueGroupsPublisher(FTPPublisher):
                 line.append("\"\"")
                 # courtesy
                 if an["ISCOURTESY"] == 1:
-                    line.append("\"1\"")
+                    line.append("\"Yes\"")
                 else:
                     line.append("\"\"")
                 # Description
