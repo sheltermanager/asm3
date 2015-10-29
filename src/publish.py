@@ -1528,6 +1528,10 @@ class AdoptAPetPublisher(FTPPublisher):
             self.upload("import.cfg")
         else:
             self.log("import.cfg upload is DISABLED")
+        self.log("-- FILE DATA --(csv)")
+        self.log("\n".join(csv))
+        self.log("-- FILE DATA --(map)")
+        self.log(mapfile)
         self.cleanup()
 
 class AnibaseUKPublisher(AbstractPublisher):
@@ -1842,11 +1846,14 @@ class FoundAnimalsPublisher(FTPPublisher):
 
         header = "First Name,Last Name,Email Address,Address 1,Address 2,City,State,Zip Code," \
             "Home Phone,Work Phone,Cell Phone,Pet Name,Microchip Number,Service Date," \
-            "Date of Birth,Species,Sex,Spayed/Neutered,Primary Breed,Secondary Breed\n"
+            "Date of Birth,Species,Sex,Spayed/Neutered,Primary Breed,Secondary Breed," \
+            "Color,Implanting Organization\n"
         self.saveFile(os.path.join(self.publishDir, outputfile), header + "\n".join(csv))
         self.log("Uploading datafile %s" % outputfile)
         self.upload(outputfile)
         self.log("Uploaded %s" % outputfile)
+        self.log("-- FILE DATA --")
+        self.log(header + "\n".join(csv))
         self.cleanup()
 
 class HelpingLostPetsPublisher(FTPPublisher):
@@ -2057,6 +2064,8 @@ class HelpingLostPetsPublisher(FTPPublisher):
         self.log("Uploading datafile %s" % filename)
         self.upload(filename)
         self.log("Uploaded %s" % filename)
+        self.log("-- FILE DATA --")
+        self.log(header + "\n".join(csv))
         # Clean up
         self.closeFTPSocket()
         self.deletePublishDirectory()
@@ -3172,6 +3181,10 @@ class PetFinderPublisher(FTPPublisher):
         self.upload(shelterid)
         self.upload(shelterid + "import.cfg")
         self.log("Uploaded %s %s" % ( shelterid, shelterid + "import.cfg"))
+        self.log("-- FILE DATA -- (csv)")
+        self.log("\n".join(csv))
+        self.log("-- FILE DATA -- (map)")
+        self.log(mapfile)
         self.cleanup()
 
 class PetLinkPublisher(AbstractPublisher):
@@ -3568,6 +3581,8 @@ class PetRescuePublisher(FTPPublisher):
         self.log("Uploading datafile %s" % "pets.csv")
         self.upload("pets.csv")
         self.log("Uploaded %s" % "pets.csv")
+        self.log("-- FILE DATA --")
+        self.log(header + "\n".join(csv))
         self.cleanup()
 
 class PetsLocatedUKPublisher(FTPPublisher):
@@ -3893,6 +3908,8 @@ class PetsLocatedUKPublisher(FTPPublisher):
         self.log("Uploading datafile %s" % filename)
         self.upload(filename)
         self.log("Uploaded %s" % filename)
+        self.log("-- FILE DATA --")
+        self.log(header + "\n".join(csv))
         # Clean up
         self.closeFTPSocket()
         self.deletePublishDirectory()
@@ -4233,6 +4250,8 @@ class RescueGroupsPublisher(FTPPublisher):
         self.chdir("..", "import")
         self.upload("pets.csv")
         self.log("Uploaded %s" % "pets.csv")
+        self.log("-- FILE DATA --")
+        self.log(header + "\n".join(csv))
         self.cleanup()
 
 class SmartTagPublisher(FTPPublisher):
@@ -4431,6 +4450,8 @@ class SmartTagPublisher(FTPPublisher):
         self.log("Uploading datafile %s" % outputfile)
         self.upload(outputfile)
         self.log("Uploaded %s" % outputfile)
+        self.log("-- FILE DATA --")
+        self.log(header + "\n".join(csv))
         self.cleanup()
 
 class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
