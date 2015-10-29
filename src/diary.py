@@ -62,19 +62,22 @@ def email_uncompleted_upto_today(dbo):
                 utils.send_email(dbo, "noreply@sheltermanager.com", u["EMAILADDRESS"], "", 
                     i18n._("Diary notes for: {0}", l).format(i18n.python2display(l, i18n.now(dbo.timezone))), s)
 
-def user_role_where_clause(dbo, user = ""):
+def user_role_where_clause(dbo, user = "", includecreatedby = True):
     """
     Returns a suitable where clause for filtering diary notes
     to the given user or any roles the user is in. If user is
     blank, the where clause return is empty.
+    includecreatedby: If true includes diary notes this user created as well as those for them.
     """
     if user == "": return "DiaryForName LIKE '%'"
     roles = users.get_roles_for_user(dbo, user)
-    if len(roles) == 0: return "DiaryForName = '%s' OR CreatedBy = '%s'" % (user, user)
+    createdby = ""
+    if includecreatedby: createdby = "OR CreatedBy = '%s'" % user
+    if len(roles) == 0: return "DiaryForName = '%s' %s" % (user, createdby)
     sroles = []
     for r in roles:
         sroles.append("'" + r.replace("'", "`") + "'")
-    return "(CreatedBy = '%s' OR DiaryForName = '%s' OR DiaryForName IN (%s))" % (user, user, ",".join(sroles))
+    return "(DiaryForName = '%s' %s OR DiaryForName IN (%s))" % (user, createdby, ",".join(sroles))
 
 def get_between_two_dates(dbo, user, dbstart, dbend):
     """
@@ -88,7 +91,7 @@ def get_between_two_dates(dbo, user, dbstart, dbend):
         "AND DateCompleted Is Null AND DiaryDateTime >= '%s' AND DiaryDateTime <= '%s'" \
         "ORDER BY DiaryDateTime DESC" % (user_role_where_clause(dbo, user), dbstart, dbend))
 
-def get_uncompleted_upto_today(dbo, user = ""):
+def get_uncompleted_upto_today(dbo, user = "", includecreatedby = False):
     """
     Gets a list of uncompleted diary notes upto and including
     today for the user supplied (or all users if no user passed)
@@ -100,7 +103,7 @@ def get_uncompleted_upto_today(dbo, user = ""):
     return db.query(dbo, "SELECT *, cast(DiaryDateTime AS time) AS DiaryTime " \
         "FROM diary WHERE %s " \
         "AND DateCompleted Is Null AND DiaryDateTime <= %s AND DiaryDateTime >= %s" \
-        "ORDER BY DiaryDateTime DESC" % (user_role_where_clause(dbo, user), db.ddt(alltoday), db.ddt(sixmonths)))
+        "ORDER BY DiaryDateTime DESC" % (user_role_where_clause(dbo, user, includecreatedby), db.ddt(alltoday), db.ddt(sixmonths)))
 
 def get_completed_upto_today(dbo, user = ""):
     """

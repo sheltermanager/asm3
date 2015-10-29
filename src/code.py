@@ -762,9 +762,9 @@ class main:
         # Diary Notes
         dm = None
         if configuration.all_diary_home_page(dbo): 
-            dm = extdiary.get_uncompleted_upto_today(dbo)
+            dm = extdiary.get_uncompleted_upto_today(dbo, "", False)
         else:
-            dm = extdiary.get_uncompleted_upto_today(dbo, session.user)
+            dm = extdiary.get_uncompleted_upto_today(dbo, session.user, False)
         # Create controller
         c = html.controller_bool("showwelcome", showwelcome)
         c += html.controller_str("build", BUILD)
