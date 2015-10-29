@@ -212,7 +212,7 @@ $(function() {
                 var permission = vm[0], name = vm[1], display = vm[2], items = vm[3];
                 if (asm.superuser || asm.securitymap.indexOf(permission + " ") != -1) {
                     // Render the menu button and body
-                    menu.push("<span id=\"asm-menu-" + name + "\" class=\"asm-menu-icon\">" + display + "</span>");
+                    menu.push("<div id=\"asm-menu-" + name + "\" class=\"asm-menu-icon\">" + display + "</div>");
                     menus.push("<div id=\"asm-menu-" + name + "-body\" class=\"asm-menu-body\">");
                     // If the option is on, render report and mail merge menus
                     // in accordions by category instead
@@ -225,7 +225,7 @@ $(function() {
                     menus.push("</div>");
                 }
             });
-            return [ "<div id=\"asm-menu\" style=\"display: none\">\n" + menu.join("") + "</div>\n", menus.join("\n") ];
+            return [ menu.join(""), menus.join("\n") ];
         },
 
         /** Finds all menu widgets (have classes of asm-menu-icon and asm-menu-body) and
@@ -357,7 +357,7 @@ $(function() {
                 }
             }
             catch (nc) {}
-            $("#asm-menu").show();
+            $(".asm-menu-icon").show();
         },
 
         /**
@@ -396,9 +396,8 @@ $(function() {
                     '<div class="topline-element">',
                         '<a id="asm-topline-logo" href="main" title="' + _("Home") + '"><img src="' + homeicon + '" /></a>',
                     '</div> ',
-                    '<div class="topline-element">',
-                        menubuttons,
-                    '</div> ',
+                    menubuttons,
+                    ' ',
                     '<div class="topline-element">',
                         '<span style="white-space: nowrap">',
                         '<input id="topline-q" name="q" type="text" class="asm-textbox" title="' + _("Search") + '" value="' + _("Search") + '" />',
@@ -407,7 +406,8 @@ $(function() {
                         '"><span class="asm-icon asm-icon-search"></span></a>',
                         '</span>',
                     '</div>',
-                    '<div class="topline-user-element">',
+                    '&nbsp;&nbsp;',
+                    '<div class="topline-element">',
                         '<span id="asm-topline-user" class="asm-menu-icon"><img id="asm-topline-flag" /> <span id="asm-topline-username"></span></span>',
                     '</div>',
                 '</div>',
