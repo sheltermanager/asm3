@@ -395,20 +395,19 @@ $(function() {
                 '<div id="asm-topline" class="no-print" style="display: none">',
                     '<div class="topline-element">',
                         '<a id="asm-topline-logo" href="main" title="' + _("Home") + '"><img src="' + homeicon + '" /></a>',
-                    '</div> ',
+                    '</div>',
                     menubuttons,
                     ' ',
                     '<div class="topline-element">',
                         '<span style="white-space: nowrap">',
                         '<input id="topline-q" name="q" type="text" class="asm-textbox" title="' + _("Search") + '" value="' + _("Search") + '" />',
-                        '<a id="searchgo" title="',
+                        '<button id="searchgo">',
                         _("filters: a:animal, p:person, wl:waitinglist, la:lostanimal, fa:foundanimal keywords: onshelter/os, notforadoption, donors, deceased, vets, retailers, staff, fosterers, volunteers, homecheckers, members, activelost, activefound"),
-                        '"><span class="asm-icon asm-icon-search"></span></a>',
+                        '</button>',
                         '</span>',
                     '</div>',
-                    '&nbsp;&nbsp;',
                     '<div class="topline-element">',
-                        '<span id="asm-topline-user" class="asm-menu-icon"><img id="asm-topline-flag" /> <span id="asm-topline-username"></span></span>',
+                        '<div id="asm-topline-user" class="asm-menu-icon"><img id="asm-topline-flag" /> <span id="asm-topline-username"></span></div>',
                     '</div>',
                 '</div>',
                 menubodies,
@@ -657,10 +656,10 @@ $(function() {
 
             // If the option is on, show the go button for searching
             if (config.has() && config.bool("ShowSearchGo")) {
-                $("#searchgo").show();
-                $("#searchgo").click(function() {
-                    dosearch();
-                });
+                $("#searchgo")
+                    .button({ icons: { primary: "ui-icon-search" }, text: false })
+                    .click(dosearch)
+                    .show();
             }
         }
 

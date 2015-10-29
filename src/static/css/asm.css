@@ -183,14 +183,7 @@ img {
     width: 150px;
     padding: 4px;
     color: #000;
-}
-
-#searchgo {
-    position: relative;
-    left: -25px;
-    margin-right: -21px;
-    cursor: pointer;
-    display: none;
+    vertical-align: middle;
 }
 
 #asm-topline {
@@ -201,12 +194,6 @@ img {
 #asm-topline .topline-element {
     display: inline-block;
     vertical-align: middle;
-}
-
-#asm-topline .topline-user-element {
-    position: absolute; 
-    right: 6px; 
-    top: 15px; 
 }
 
 #asm-topline img {
@@ -221,11 +208,8 @@ img {
     height: 32px;
 }
 
-#asm-topline-user, #asm-topline-advanced {
-    display: inline;
-    cursor: pointer;
+#asm-topline-user {
     font-weight: bold;
-    padding: 5px;
 }
 
 /** MAIN =========================== */
