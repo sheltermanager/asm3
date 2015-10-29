@@ -287,24 +287,7 @@ def animal_tags(dbo, a):
         "ANIMALISADOPTABLE"     : publish.is_adoptable(dbo, a["ID"]) and _("Yes", l) or _("No", l),
         "ANIMALISRESERVED"      : yes_no(l, a["HASACTIVERESERVE"] == 1),
         "ADOPTIONSTATUS"        : publish.get_adoption_status(dbo, a),
-        "ADOPTIONID"            : a["ACTIVEMOVEMENTADOPTIONNUMBER"],
-        "ADOPTIONNUMBER"        : a["ACTIVEMOVEMENTADOPTIONNUMBER"],
-        "INSURANCENUMBER"       : a["ACTIVEMOVEMENTINSURANCENUMBER"],
-        "RESERVATIONDATE"       : python2display(l, a["ACTIVEMOVEMENTRESERVATIONDATE"]),
-        "RESERVATIONSTATUS"     : a["RESERVATIONSTATUSNAME"],
-        "RETURNDATE"            : python2display(l, a["ACTIVEMOVEMENTRETURNDATE"]),
-        "ADOPTIONDATE"          : python2display(l, a["ACTIVEMOVEMENTDATE"]),
-        "FOSTEREDDATE"          : a["ACTIVEMOVEMENTTYPE"] == movement.FOSTER and python2display(l, a["ACTIVEMOVEMENTDATE"]) or "",
-        "TRANSFERDATE"          : a["ACTIVEMOVEMENTTYPE"] == movement.TRANSFER and python2display(l, a["ACTIVEMOVEMENTDATE"]) or "",
-        "TRIALENDDATE"          : a["ACTIVEMOVEMENTTYPE"] == movement.ADOPTION and python2display(l, a["ACTIVEMOVEMENTTRIALENDDATE"]) or "",
-        "MOVEMENTDATE"          : python2display(l, a["ACTIVEMOVEMENTDATE"]),
-        "MOVEMENTTYPE"          : a["ACTIVEMOVEMENTTYPENAME"],
-        "ADOPTIONDONATION"      : format_currency_no_symbol(l, a["ACTIVEMOVEMENTDONATION"]),
-        "ADOPTIONCREATEDBY"     : a["ACTIVEMOVEMENTCREATEDBY"],
-        "ADOPTIONCREATEDBYNAME" : a["ACTIVEMOVEMENTCREATEDBYNAME"],
-        "ADOPTIONCREATEDDATE"   : python2display(l, a["ACTIVEMOVEMENTCREATEDDATE"]),
-        "ADOPTIONLASTCHANGEDBY" : a["ACTIVEMOVEMENTLASTCHANGEDBY"],
-        "ADOPTIONLASTCHANGEDDATE" : python2display(l, a["ACTIVEMOVEMENTLASTCHANGEDDATE"])
+        "ADOPTIONID"            : a["ACTIVEMOVEMENTADOPTIONNUMBER"]
     }
 
     # Set original owner to be current owner on non-shelter animals
@@ -413,7 +396,7 @@ def animal_tags(dbo, a):
     }
     tags.update(table_tags(dbo, d, animal.get_diets(dbo, a["ID"]), "DIETNAME", "DATESTARTED"))
 
-    # Donations
+    # Donations (only add if this animal doesn't have an active movement)
     d = {
         "RECEIPTNUM":               "RECEIPTNUMBER",
         "DONATIONTYPE":             "DONATIONNAME",
@@ -437,7 +420,8 @@ def animal_tags(dbo, a):
         "PAYMENTVATAMOUNT":         "c:VATAMOUNT",
         "PAYMENTTAXAMOUNT":         "c:VATAMOUNT"
     }
-    tags.update(table_tags(dbo, d, financial.get_animal_donations(dbo, a["ID"]), "DONATIONNAME", "DATE"))
+    if a["ACTIVEMOVEMENTID"] is None or a["ACTIVEMOVEMENTID"] == 0:
+        tags.update(table_tags(dbo, d, financial.get_animal_donations(dbo, a["ID"]), "DONATIONNAME", "DATE"))
 
     # Costs
     d = {
@@ -550,6 +534,45 @@ def licence_tags(dbo, li):
         "LICENSECOMMENTS":      li["COMMENTS"]
     }
     return tags
+
+def movement_tags(dbo, m):
+    """
+    Generates a list of tags from a movement result
+    (anything using movement.get_movement_query)
+    """
+    l = dbo.locale
+    tags = {
+        "MOVEMENTTYPE":                 m["MOVEMENTNAME"],
+        "MOVEMENTDATE":                 python2display(l, m["MOVEMENTDATE"]),
+        "MOVEMENTNUMBER":               m["ADOPTIONNUMBER"],
+        "ADOPTIONNUMBER":               m["ADOPTIONNUMBER"],
+        "ADOPTIONDONATION":             format_currency_no_symbol(l, m["DONATION"]),
+        "MOVEMENTPAYMENTTOTAL":         format_currency_no_symbol(l, m["DONATION"]),
+        "INSURANCENUMBER":              m["INSURANCENUMBER"],
+        "RETURNDATE":                   python2display(l, m["RETURNDATE"]),
+        "RETURNNOTES":                  m["REASONFORRETURN"],
+        "RETURNREASON":                 m["RETURNDATE"] is not None and m["RETURNEDREASONNAME"] or "",
+        "RESERVATIONDATE":              m["RESERVATIONDATE"],
+        "RESERVATIONCANCELLEDDATE":     m["RESERVATIONCANCELLEDDATE"],
+        "RESERVATIONSTATUS":            m["RESERVATIONSTATUSNAME"],
+        "MOVEMENTISTRIAL":              m["ISTRIAL"] == 1 and _("Yes", l) or _("No", l),
+        "MOVEMENTISPERMANENTFOSTER":    m["ISPERMANENTFOSTER"] == 1 and _("Yes", l) or _("No", l),
+        "TRIALENDDATE":                 python2display(l, m["TRIALENDDATE"]),
+        "MOVEMENTCOMMENTS":             m["COMMENTS"],
+        "MOVEMENTCREATEDBY":            m["CREATEDBY"],
+        "MOVEMENTLASTCHANGEDBY":        m["LASTCHANGEDBY"],
+        "MOVEMENTCREATEDDATE":          python2display(l, m["CREATEDDATE"]),
+        "MOVEMENTLASTCHANGEDDATE":      python2display(l, m["LASTCHANGEDDATE"]),
+        "ADOPTIONCREATEDBY":            m["CREATEDBY"],
+        "ADOPTIONLASTCHANGEDBY":        m["LASTCHANGEDBY"],
+        "ADOPTIONCREATEDDATE":          python2display(l, m["CREATEDDATE"]),
+        "ADOPTIONLASTCHANGEDDATE":      python2display(l, m["LASTCHANGEDDATE"]),
+        "ADOPTIONDATE":                 m["MOVEMENTTYPE"] == movement.ADOPTION and python2display(l, m["MOVEMENTDATE"]) or "",
+        "FOSTEREDDATE":                 m["MOVEMENTTYPE"] == movement.FOSTER and python2display(l, m["MOVEMENTDATE"]) or "",
+        "TRANSFERDATE":                 m["MOVEMENTTYPE"] == movement.TRANSFER and python2display(l, m["MOVEMENTDATE"]) or "",
+        "TRIALENDDATE":                 m["MOVEMENTTYPE"] == movement.ADOPTION and python2display(l, m["TRIALENDDATE"]) or ""
+    }
+    return tags    
 
 def person_tags(dbo, p):
     """
@@ -838,9 +861,12 @@ def generate_animal_doc(dbo, template, animalid, username):
     elif a["RESERVEDOWNERID"] is not None and a["RESERVEDOWNERID"] != 0:
         tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, a["RESERVEDOWNERID"])))
     if a["ACTIVEMOVEMENTID"] is not None and a["ACTIVEMOVEMENTID"] != 0:
-        md = financial.get_movement_donation(dbo, a["ACTIVEMOVEMENTID"])
-        if md is not None and md > 0: 
-            tags = append_tags(tags, donation_tags(dbo, [md,]))
+        m = movement.get_movement(dbo, a["ACTIVEMOVEMENTID"])
+        md = financial.get_movement_donations(dbo, a["ACTIVEMOVEMENTID"])
+        if m is not None and len(m) > 0:
+            tags = append_tags(tags, movement_tags(dbo, m))
+        if len(md) > 0: 
+            tags = append_tags(tags, donation_tags(dbo, md))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, template, tags, im)
 
@@ -890,4 +916,20 @@ def generate_licence_doc(dbo, template, licenceid, username):
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, template, tags)
 
+def generate_movement_doc(dbo, template, movementid, username):
+    """
+    Generates a movement document from a template
+    template: The path/name of the template to use
+    movementid: The movement to generate for
+    """
+    m = movement.get_movement(dbo, movementid)
+    if m is None:
+        raise utils.ASMValidationError("%d is not a valid movement ID" % movementid)
+    tags = animal_tags(dbo, animal.get_animal(dbo, m["ANIMALID"]))
+    if m["OWNERID"] is not None and m["OWNERID"] != 0:
+        tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, m["OWNERID"])))
+    tags = append_tags(tags, movement_tags(dbo, m))
+    tags = append_tags(tags, donation_tags(dbo, financial.get_movement_donations(dbo, movementid)))
+    tags = append_tags(tags, org_tags(dbo, username))
+    return substitute_template(dbo, template, tags)
 

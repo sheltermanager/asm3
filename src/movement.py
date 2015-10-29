@@ -94,6 +94,14 @@ def get_movements(dbo, movementtype):
         "AND a.DeceasedDate Is Null " \
         "ORDER BY m.MovementDate DESC" % (int(movementtype), db.dd(i18n.now(dbo.timezone))))
 
+def get_movement(dbo, movementid):
+    """
+    Returns a single movement by id. Returns None if it does not exist.
+    """
+    m = db.query(dbo, get_movement_query(dbo) + " WHERE m.ID = %d" % movementid)
+    if len(m) == 0: return None
+    return m[0]
+
 def get_active_reservations(dbo, age = 0):
     """
     Gets the list of uncancelled reservation movements.

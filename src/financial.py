@@ -352,6 +352,12 @@ def get_movement_donation(dbo, mid):
     if len(r) == 0: return None
     return r[0]
 
+def get_movement_donations(dbo, mid):
+    """
+    Returns all donations for a movement
+    """
+    return db.query(dbo, get_donation_query(dbo) + "WHERE od.MovementID = %d ORDER BY Date DESC" % int(mid))
+
 def get_next_receipt_number(dbo):
     """ Returns the next receipt number for the frontend """
     return utils.padleft(configuration.receipt_number_next(dbo), 8)

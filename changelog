@@ -1,6 +1,8 @@
 37
 ================
 
+29/10/15 Fix animal doc type to pull all payments from active movement
+29/10/15 Add MOVEMENT as document type, pull in movement payments #285
 29/10/15 Show notes you've created in my notes again #290
 29/10/15 Show all notes on diary calendar if user has permission #290
 29/10/15 Fix add person log entry showing animal chooser #291

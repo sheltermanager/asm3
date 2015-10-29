@@ -2332,6 +2332,10 @@ class document_gen:
             loglinktype = extlog.PERSON
             logid = financial.get_licence(dbo, post.integer("id"))["OWNERID"]
             content = wordprocessor.generate_licence_doc(dbo, template, post.integer("id"), session.user)
+        elif mode == "MOVEMENT":
+            loglinktype = extlog.PERSON
+            logid = extmovement.get_movement(dbo, post.integer("id"))["OWNERID"]
+            content = wordprocessor.generate_movement_doc(dbo, template, post.integer("id"), session.user)
         if configuration.generate_document_log(dbo) and configuration.generate_document_log_type(dbo) > 0:
             extlog.add_log(dbo, session.user, loglinktype, logid, configuration.generate_document_log_type(dbo), _("Generated document '{0}'").format(templatename))
         if templatename.endswith(".html"):
@@ -2381,8 +2385,20 @@ class document_gen:
                 tempname += " - " + extperson.get_person_name(dbo, ownerid)
                 extmedia.create_document_media(dbo, session.user, extmedia.PERSON, recid, tempname, post["document"])
                 raise web.seeother("person_media?id=%d" % ownerid)
+            elif mode == "MOVEMENT":
+                m = extmovement.get_movement(dbo, recid)
+                if m is None:
+                    raise utils.ASMValidationError("%d is not a valid movement id" % recid)
+                # ASM2 created the saved doc under both animal and person, however ASM3
+                # historically only ever created against the animal. 
+                # This commented out code is here in case we ever want to reinstate the original ASM2 behaviour.
+                #tempname += " - " + extperson.get_person_name(dbo, m["OWNERID"])
+                #extmedia.create_document_media(dbo, session.user, extmedia.PERSON, recid, tempname, post["document"])
+                tempname += " - " + extanimal.get_animal_namecode(dbo, m["ANIMALID"])
+                extmedia.create_document_media(dbo, session.user, extmedia.ANIMAL, recid, tempname, post["document"])
+                raise web.seeother("animal_media?id=%d" % recid)
             else:
-                raise web.seeother("main")
+                raise utils.ASMValidationError("Mode '%s' is invalid, cannot save" % mode)
         elif post["savemode"] == "pdf":
             web.header("Content-Type", "application/pdf")
             disposition = configuration.pdf_inline(dbo) and "inline; filename=\"doc.pdf\"" or "attachment; filename=\"doc.pdf\""

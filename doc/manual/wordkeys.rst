@@ -35,7 +35,7 @@ Animal Keys
 -----------
 
 Animal keys are available for documents generated from the animal details and
-movement tab of the animal screens. 
+movement screens.
 
 DocumentImgLink
     An <img> tag containing a link to the animal's preferred document image.
@@ -523,41 +523,52 @@ Movement Keys
 
 Movement keys are available for documents generated either from the Move->Adopt
 screen, or from the animal details screen (in which case the animal's active
-movement is assumed if it has one). Since movements tie together animals and
-owners, all of the animal and owner keys are also available for movements. 
+movement is assumed if it has one) or movement tabs. Since movements tie together 
+animals and owners, all of the animal and owner keys are also available for 
+movements. 
 
-AdoptionID
-    The adoption number 
-AdoptionDate
-    The date of the adoption 
-ReservationDate
-    The date the animal was reserved (if it's a reserve record) 
-ReturnDate
-    The date the animal was returned from this movement 
-FosteredDate
-    The date the animal was fostered (if applicable) 
-TransferDate
-    The date the animal was transferred (if applicable) 
-TrialEndDate
-    The date the trial adoption ends (if applicable)
 MovementDate
     The date the animal was moved (whatever the type) 
 MovementType
     The movement type (eg: Adoption, Foster, Transfer, etc) 
-AdoptionNumber
-    The adoption number 
-AdoptionDonation
-    The amount donated for the adoption 
-AdoptionCreatedBy
-    The user who created the movement record (AdoptionCreatedByName) 
-AdoptionCreatedDate
-    The date the movement was created 
-AdoptionLastChangedBy
-    The user who last changed the movement (AdoptionLastChangedByName) 
-AdoptionLastChangedDate
-    The date the movement was last changed 
+MovementNumber
+    The movement number 
 InsuranceNumber
     If your shelter insures animals as they are adopted, the insurance number 
+ReservationDate
+    The date the animal was reserved (if it's a reserve record)
+ReservationCancelledDate
+    The date the reservation was cancelled
+ReservationStatus
+    The status of the selected reservation
+ReturnDate
+    The date the animal was returned from this movement 
+ReturnNotes
+    The reason for return notes
+ReturnReason
+    The return category
+AdoptionDate
+    The date of the adoption (if this is an adoption, alias for MovementDate)
+FosteredDate
+    The date the animal was fostered (if this is a foster, alias for MovementDate)) 
+TransferDate
+    The date the animal was transferred (if this is a transfer, alias for MovementDate) 
+TrialEndDate
+    The date the trial adoption ends
+MovementIsTrial
+    Yes if this movement is a trial adoption
+MovementIsPermanentFoster
+    Yes if this movement is a permanent foster
+MovementPaymentTotal
+    The total of any payments for this movement
+MovementCreatedBy
+    The user who created the movement record (AdoptionCreatedByName) 
+MovementCreatedDate
+    The date the movement was created 
+MovementLastChangedBy
+    The user who last changed the movement (AdoptionLastChangedByName) 
+MovementLastChangedDate
+    The date the movement was last changed 
 
 Person Keys
 -----------

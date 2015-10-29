@@ -315,7 +315,7 @@ templates, wrapped in double angle-brackets. Eg: &lt;&lt;AnimalName&gt;&gt;</p>
 <div class="section" id="animal-keys">
 <h2>Animal Keys<a class="headerlink" href="#animal-keys" title="Permalink to this headline">¶</a></h2>
 <p>Animal keys are available for documents generated from the animal details and
-movement tab of the animal screens.</p>
+movement screens.</p>
 <dl class="docutils">
 <dt>DocumentImgLink</dt>
 <dd>An &lt;img&gt; tag containing a link to the animal&#8217;s preferred document image.</dd>
@@ -797,41 +797,52 @@ fields are:</p>
 <h2>Movement Keys<a class="headerlink" href="#movement-keys" title="Permalink to this headline">¶</a></h2>
 <p>Movement keys are available for documents generated either from the Move-&gt;Adopt
 screen, or from the animal details screen (in which case the animal&#8217;s active
-movement is assumed if it has one). Since movements tie together animals and
-owners, all of the animal and owner keys are also available for movements.</p>
+movement is assumed if it has one) or movement tabs. Since movements tie together
+animals and owners, all of the animal and owner keys are also available for
+movements.</p>
 <dl class="docutils">
-<dt>AdoptionID</dt>
-<dd>The adoption number</dd>
-<dt>AdoptionDate</dt>
-<dd>The date of the adoption</dd>
-<dt>ReservationDate</dt>
-<dd>The date the animal was reserved (if it&#8217;s a reserve record)</dd>
-<dt>ReturnDate</dt>
-<dd>The date the animal was returned from this movement</dd>
-<dt>FosteredDate</dt>
-<dd>The date the animal was fostered (if applicable)</dd>
-<dt>TransferDate</dt>
-<dd>The date the animal was transferred (if applicable)</dd>
-<dt>TrialEndDate</dt>
-<dd>The date the trial adoption ends (if applicable)</dd>
 <dt>MovementDate</dt>
 <dd>The date the animal was moved (whatever the type)</dd>
 <dt>MovementType</dt>
 <dd>The movement type (eg: Adoption, Foster, Transfer, etc)</dd>
-<dt>AdoptionNumber</dt>
-<dd>The adoption number</dd>
-<dt>AdoptionDonation</dt>
-<dd>The amount donated for the adoption</dd>
-<dt>AdoptionCreatedBy</dt>
-<dd>The user who created the movement record (AdoptionCreatedByName)</dd>
-<dt>AdoptionCreatedDate</dt>
-<dd>The date the movement was created</dd>
-<dt>AdoptionLastChangedBy</dt>
-<dd>The user who last changed the movement (AdoptionLastChangedByName)</dd>
-<dt>AdoptionLastChangedDate</dt>
-<dd>The date the movement was last changed</dd>
+<dt>MovementNumber</dt>
+<dd>The movement number</dd>
 <dt>InsuranceNumber</dt>
 <dd>If your shelter insures animals as they are adopted, the insurance number</dd>
+<dt>ReservationDate</dt>
+<dd>The date the animal was reserved (if it&#8217;s a reserve record)</dd>
+<dt>ReservationCancelledDate</dt>
+<dd>The date the reservation was cancelled</dd>
+<dt>ReservationStatus</dt>
+<dd>The status of the selected reservation</dd>
+<dt>ReturnDate</dt>
+<dd>The date the animal was returned from this movement</dd>
+<dt>ReturnNotes</dt>
+<dd>The reason for return notes</dd>
+<dt>ReturnReason</dt>
+<dd>The return category</dd>
+<dt>AdoptionDate</dt>
+<dd>The date of the adoption (if this is an adoption, alias for MovementDate)</dd>
+<dt>FosteredDate</dt>
+<dd>The date the animal was fostered (if this is a foster, alias for MovementDate))</dd>
+<dt>TransferDate</dt>
+<dd>The date the animal was transferred (if this is a transfer, alias for MovementDate)</dd>
+<dt>TrialEndDate</dt>
+<dd>The date the trial adoption ends</dd>
+<dt>MovementIsTrial</dt>
+<dd>Yes if this movement is a trial adoption</dd>
+<dt>MovementIsPermanentFoster</dt>
+<dd>Yes if this movement is a permanent foster</dd>
+<dt>MovementPaymentTotal</dt>
+<dd>The total of any payments for this movement</dd>
+<dt>MovementCreatedBy</dt>
+<dd>The user who created the movement record (AdoptionCreatedByName)</dd>
+<dt>MovementCreatedDate</dt>
+<dd>The date the movement was created</dd>
+<dt>MovementLastChangedBy</dt>
+<dd>The user who last changed the movement (AdoptionLastChangedByName)</dd>
+<dt>MovementLastChangedDate</dt>
+<dd>The date the movement was last changed</dd>
 </dl>
 </div>
 <div class="section" id="person-keys">

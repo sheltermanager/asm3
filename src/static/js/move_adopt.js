@@ -410,7 +410,7 @@ $(function() {
                         header.hide_loading();
 
                         var u = "move_gendoc?" +
-                            "mode=ANIMAL&id=" + $("#animal").val() +
+                            "mode=MOVEMENT&id=" + data +
                             "&message=" + encodeURIComponent(common.base64_encode(_("Adoption successfully created.") + " " + 
                                 $(".animalchooser-display").html() + " " + html.icon("right") + " " +
                                 $(".personchooser-display .justlink").html() ));
