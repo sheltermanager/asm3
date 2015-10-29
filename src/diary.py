@@ -91,7 +91,7 @@ def get_between_two_dates(dbo, user, dbstart, dbend):
         "AND DateCompleted Is Null AND DiaryDateTime >= '%s' AND DiaryDateTime <= '%s'" \
         "ORDER BY DiaryDateTime DESC" % (user_role_where_clause(dbo, user), dbstart, dbend))
 
-def get_uncompleted_upto_today(dbo, user = "", includecreatedby = False):
+def get_uncompleted_upto_today(dbo, user = "", includecreatedby = True):
     """
     Gets a list of uncompleted diary notes upto and including
     today for the user supplied (or all users if no user passed)
