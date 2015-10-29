@@ -1911,7 +1911,9 @@ class calendarview:
             # Find data for the month
             if "d" in ev and users.check_permission_bool(session, users.VIEW_DIARY):
                 user = session.user
-                if configuration.all_diary_home_page(dbo):
+                # Show all diary notes on the calendar if the user chose to see all
+                # on the home page, or they have permission to view all notes
+                if configuration.all_diary_home_page(dbo) or users.check_permission_bool(session, users.EDIT_ALL_DIARY_NOTES):
                     user = ""
                 for d in extdiary.get_between_two_dates(dbo, user, post["start"], post["end"]):
                     allday = False

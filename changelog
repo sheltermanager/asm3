@@ -1,6 +1,7 @@
 37
 ================
 
+29/10/15 Show all notes on diary calendar if user has permission #290
 29/10/15 Fix add person log entry showing animal chooser #291
 29/10/15 Fix license dialog breaking after duplicate number error #293
 29/10/15 Final tweaks to foundanimals.org microchip registration #284
