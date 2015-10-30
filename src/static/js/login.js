@@ -193,10 +193,12 @@ $(function() {
                 }
             }
             else {
+                /*
                 var MAX_SPLASH = 21;
                 var splash = Math.floor(Math.random() * MAX_SPLASH);
+                */
                 $("#asm-login-window").css({
-                    "background-image": "url(static/images/splash/splash" + splash + ".jpg)"
+                    "background-image": "url(static/images/splash/splash_logo.jpg)"
                 });
             }
             

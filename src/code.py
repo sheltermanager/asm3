@@ -2310,9 +2310,9 @@ class document_gen:
         utils.check_loggedin(session, web)
         users.check_permission(session, users.GENERATE_DOCUMENTS)
         dbo = session.dbo
-        post = utils.PostedData(web.input(mode = "ANIMAL", id = 0, template = 0), session.locale)
+        post = utils.PostedData(web.input(mode = "ANIMAL", id = "0", template = "0"), session.locale)
         mode = post["mode"]
-        if post["id"] == "": raise utils.ASMValidationError("no id parameter")
+        if post["id"] == "" or post["id"] == "0": raise utils.ASMValidationError("no id parameter")
         template = post.integer("template")
         templatename = dbfs.get_name_for_id(dbo, template)
         title = templatename
