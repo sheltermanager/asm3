@@ -230,6 +230,7 @@ def bare_header(title, theme = "ui-lightness", locale = LOCALE, config_db = "asm
         '<link rel="icon" href="static/images/logo/icon-32.png" sizes="32x32"/>\n' \
         '<link rel="icon" href="static/images/logo/icon-48.png" sizes="48x48"/>\n' \
         '<link rel="icon" href="static/images/logo/icon-128.png" sizes="128x128"/>\n' \
+        '<!--[if lte IE 9]> <meta http-equiv="refresh" content="0;url=static/pages/unsupported_ie.html"> <![endif]-->\n' \
         '%(scripts)s\n' \
         '</head>\n' \
         '<body style="background-color: %(bgcol)s">\n' \

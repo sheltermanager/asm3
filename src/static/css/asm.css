@@ -36,12 +36,8 @@ img {
     display: none;
 }
 
-.boxshadow, .dialogshadow, .menushadow, .thumbnailshadow {
+.dialogshadow, .menushadow, .thumbnailshadow {
     box-shadow: 3px 3px 5px #888;
-}
-
-.ie8 .dialogshadow, .ie8 .menushadow, .ie8 .thumbnailshadow {
-    filter: progid:DXImageTransform.Microsoft.DropShadow(color='#aaaaaa', offX='3', offY='3');
 }
 
 .centered {
@@ -58,7 +54,6 @@ img {
 
 .transparent {
     zoom: 1;
-    filter: alpha(opacity=50);
     opacity: 0.5;
 }
 
@@ -123,12 +118,6 @@ img {
     display: inline-block;
     width: auto;
 }
-
-/** auto width does not work on IE8 and produces odd results */
-.ie8 .asm-menu-column {
-    width: 350px;
-}
-
 
 .asm-menu-list {
     list-style-type: none;
@@ -238,12 +227,10 @@ img {
     display: inline-block;
     text-align: center;
     opacity: 0.5; 
-    filter: alpha(opacity = 50); 
     zoom: 1;
 }
 .asm-animalchoosermulti-selected {
     opacity: 1.0; 
-    filter: alpha(opacity = 100); 
     zoom: 1;
 }
 
@@ -383,7 +370,7 @@ img {
 .asm-table td.first, .asm-table th.first { border-left-width: 0px !important; }
 .asm-table a { font-weight: bold; }
 .asm-table a:hover { text-decoration: underline !important; }
-.asm-completerow { opacity: 0.3; filter: alpha(opacity = 30); zoom: 1;}
+.asm-completerow { opacity: 0.3; zoom: 1;}
 .asm-overduerow { font-style: italic !important; color: #ff0000 !important; }
 .asm-warningrow { color: #ff0000; }
 #header-fixed { left: 16px; border-collapse: collapse; }
@@ -567,7 +554,7 @@ img {
     color: #000;
 }
 
-.boxshadow .controlshadow {
+.controlshadow {
     box-shadow: 0 1px 2px #DDD;
 }
 
