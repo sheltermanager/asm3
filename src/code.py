@@ -2312,6 +2312,7 @@ class document_gen:
         dbo = session.dbo
         post = utils.PostedData(web.input(mode = "ANIMAL", id = 0, template = 0), session.locale)
         mode = post["mode"]
+        if post["id"] == "": raise utils.ASMValidationError("no id parameter")
         template = post.integer("template")
         templatename = dbfs.get_name_for_id(dbo, template)
         title = templatename

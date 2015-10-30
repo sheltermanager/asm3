@@ -100,14 +100,18 @@ $(function() {
                 common.ajax_post("donation_receive", formdata)
                     .then(function(result) { 
                         header.hide_loading();
-                        var msg = _("Payment of {0} successfully received ({1}).")
-                                .replace("{0}", $("#totalamount").html())
-                                .replace("{1}", $("#received").val());
-                        var u = "move_gendoc?" +
-                            "mode=DONATION&id=" + result +
-                            "&message=" + encodeURIComponent(common.base64_encode(msg));
-                        common.route(u);
-
+                        if (!result) {
+                            header.show_error(_("Failed to create payment.")); 
+                        }
+                        else {
+                            var msg = _("Payment of {0} successfully received ({1}).")
+                                    .replace("{0}", $("#totalamount").html())
+                                    .replace("{1}", $("#received").val());
+                            var u = "move_gendoc?" +
+                                "mode=DONATION&id=" + result +
+                                "&message=" + encodeURIComponent(common.base64_encode(msg));
+                            common.route(u);
+                        }
                     })
                     .always(function() {
                         $("#receive").button("enable");

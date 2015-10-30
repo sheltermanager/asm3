@@ -501,7 +501,9 @@ def donation_tags(dbo, donations):
             totals["total"] += p["VATAMOUNT"] + p["DONATION"]
         if p["DATE"] is None: 
             totals["due"] += p["DONATION"]
-    add_to_tags("", donations[0]) 
+    # Add a copy of the donation tags without an index for compatibility
+    if len(donations) > 0:
+        add_to_tags("", donations[0]) 
     for i, d in enumerate(donations):
         add_to_tags(str(i+1), d)
     tags["PAYMENTTOTALDUE"] = format_currency_no_symbol(l, totals["due"])
