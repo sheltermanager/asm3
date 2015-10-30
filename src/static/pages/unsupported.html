@@ -1,6 +1,9 @@
 <html>
 <head>
 <title>Unsupported Browser</title>
+<style>
+* { font-family: sans-serif; }
+</style>
 </head>
 
 <body>
@@ -10,8 +13,25 @@
 <h1>We're sorry...</h1>
 
 <p>Animal Shelter Manager has lots of features that require a modern, 
-standards compliant browser and javascript to work. <br />
-You can use any of the following browsers:</p>
+standards compliant browser and javascript to work.</p>
+
+<script>
+    var url_param = function(param) {
+        var s = String(window.location);
+        var p = s.indexOf(param + "=");
+        if (p == -1) { return ""; }
+        var e = s.indexOf("&", p);
+        if (e == -1) { e = s.length; }
+        return s.substring(p + param.length + 1, e);
+    };
+    var r = decodeURIComponent(url_param("r")), g = decodeURIComponent(url_param("g"));
+    if (r && g) {
+        document.write("<p>ASM requires the following advanced browser features:</p><h2>" + r + "</h2>");
+        document.write("<p>Your browser returned the following feature list:</p><h2>" + g + "</h2>");
+    }
+</script>
+
+<p>You can use any of the following browsers:</p>
 
 <ul>
 <li><a href="http://www.mozilla.com">Mozilla Firefox</a></li>

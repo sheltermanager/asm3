@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, console, jQuery, Mousetrap, Path */
+/*global $, console, jQuery, Modernizr, Mousetrap, Path */
 /*global alert, asm, atob, btoa, header, _, escape, unescape */
 /*global consts: true, common: true, config: true, controller: true, dlgfx: true, format: true, html: true, log: true, validate: true */
 
@@ -2161,14 +2161,27 @@
 
 $(function() {
 
-    // Refuse to deal with IE < 8 - lack of inline-block support
-    // will break most of our page layouts
-    if (common.msie_version() < 8) {
-        window.location = "static/pages/unsupported.html";
-    }
+    // Make sure our browser has the features we require
+    // IE9 and lower do not support these features
+    var required = "canvas checked contenteditable cookies cors datauri filereader history json localstorage opacity todataurljpeg xhrresponsetypetext";
+    var blist = [];
+    $.each($("html").prop("class").split(" "), function(i, v) {
+        if (v.indexOf("no-") == -1) { blist.push(v); }
+    });
+    /*
+     * TODO: Change over during November
+    $.each(required.split(" "), function(i, v) {
+        if ($.inArray(v, blist) == -1) {
+            window.location = "static/pages/unsupported.html?r=" + encodeURIComponent(required) + "&g=" + encodeURIComponent(blist.join(" "));
+        }
+    });
+    */
+
+    if (common.msie_version() < 8) { window.location = "static/pages/unsupported.html"; }
 
     // If this is IE8 or IE9, add a special class to the html element so
     // we can apply any CSS hacks via the stylesheet
+    // TODO: Not used/needed along with msie_version and ie specific styles in asm.css
     if (common.msie_version() == 8) { $("html").addClass("ie8"); }
     if (common.msie_version() == 9) { $("html").addClass("ie9"); }
 

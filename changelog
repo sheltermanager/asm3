@@ -1,6 +1,7 @@
 37
 ================
 
+30/10/15 Update modernizr, add feature-detection based code
 29/10/15 Fix topline layout for mobile devices with limited res #296
 29/10/15 Fix animal doc type to pull all payments from active movement
 29/10/15 Add MOVEMENT as document type, pull in movement payments #285

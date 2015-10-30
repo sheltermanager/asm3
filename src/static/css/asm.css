@@ -36,7 +36,7 @@ img {
     display: none;
 }
 
-.boxshadow .dialogshadow, .boxshadow .menushadow, .boxshadow .thumbnailshadow {
+.boxshadow, .dialogshadow, .menushadow, .thumbnailshadow {
     box-shadow: 3px 3px 5px #888;
 }
 
