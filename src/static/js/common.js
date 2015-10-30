@@ -78,22 +78,17 @@
          * page passing the list of features required and supported.
          */
         check_browser_features: function() {
-            // Some tests, like datauri run async and may not have 
-            // finished by the time this function gets called, so we use 
-            // setTimeout to delay running of the browser tests.
-            setTimeout(function() {
-                var required = "atob-btoa boxshadow canvas checked contenteditable cookies cors datauri filereader " +
-                    "history json localstorage opacity todataurljpeg xhrresponsetypetext";
-                var blist = [];
-                $.each($("html").prop("class").split(" "), function(i, v) {
-                    if (v.indexOf("no-") == -1) { blist.push(v); }
-                });
-                $.each(required.split(" "), function(i, v) {
-                    if ($.inArray(v, blist) == -1) {
-                        window.location = "static/pages/unsupported_feature.html?r=" + encodeURIComponent(required) + "&g=" + encodeURIComponent(blist.join(" "));
-                    }
-                });
-            }, 500);
+            var required = "atob-btoa boxshadow canvas checked contenteditable cookies filereader " +
+                           "history json localstorage opacity";
+            var blist = [];
+            $.each($("html").prop("class").split(" "), function(i, v) {
+                if (v.indexOf("no-") == -1) { blist.push(v); }
+            });
+            $.each(required.split(" "), function(i, v) {
+                if ($.inArray(v, blist) == -1) {
+                    window.location = "static/pages/unsupported_feature.html?r=" + encodeURIComponent(required) + "&g=" + encodeURIComponent(blist.join(" "));
+                }
+            });
         },
 
         cookie_set: function(name, value, days) {
