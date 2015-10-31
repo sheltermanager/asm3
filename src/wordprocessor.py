@@ -689,7 +689,7 @@ def table_get_value(l, row, k):
     elif k.find("y:") != -1:
         s = row[k.replace("y:", "")] == 1 and _("Yes", l) or _("No", l)
     elif k.find("f:") != -1:
-        s = "%0.2f" % row[k.replace("f:", "")]
+        s = "%0.2f" % utils.cfloat(row[k.replace("f:", "")])
     else:
         s = str(row[k])
     return s
