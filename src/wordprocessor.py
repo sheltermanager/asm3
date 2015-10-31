@@ -287,7 +287,9 @@ def animal_tags(dbo, a):
         "ANIMALISADOPTABLE"     : publish.is_adoptable(dbo, a["ID"]) and _("Yes", l) or _("No", l),
         "ANIMALISRESERVED"      : yes_no(l, a["HASACTIVERESERVE"] == 1),
         "ADOPTIONSTATUS"        : publish.get_adoption_status(dbo, a),
-        "ADOPTIONID"            : a["ACTIVEMOVEMENTADOPTIONNUMBER"]
+        "ADOPTIONID"            : a["ACTIVEMOVEMENTADOPTIONNUMBER"],
+        "OUTCOMEDATE"           : a["DECEASEDDATE"] is None and python2display(l, a["ACTIVEMOVEMENTDATE"]) or python2display(l, a["DECEASEDDATE"]),
+        "OUTCOMETYPE"           : a["ARCHIVED"] == 1 and a["DISPLAYLOCATIONNAME"] or ""
     }
 
     # Set original owner to be current owner on non-shelter animals

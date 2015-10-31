@@ -1,6 +1,7 @@
 37
 ================
 
+31/10/15 Add OutcomeDate/OutcomeType wordkeys for publishers
 30/10/15 Remove IE8/9 specific cruft, add conditional comment detector #298
 30/10/15 Update modernizr, add feature-detection based code
 29/10/15 Fix topline layout for mobile devices with limited res #296

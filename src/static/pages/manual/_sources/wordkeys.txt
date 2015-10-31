@@ -328,6 +328,10 @@ AnimalIsReserved
     "Yes" if the animal has been reserved
 AnimalIsVaccinated
     "Yes" if the animal has at least one vaccination given and no vaccinations due before today that have not been given
+OutcomeDate
+    If the animal has left the care of the shelter, the date it left
+OutcomeType
+    How the animal left the shelter (can be a movement type or deceased reason if the animal died)
 
 Vaccination Keys
 ----------------
