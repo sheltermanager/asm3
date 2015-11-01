@@ -54,7 +54,7 @@ $(function() {
                     '</button>',
                 '</div>',
                 '<div class="centered" style="margin-bottom: 5px">',
-                    '<span id="forgottenpassword" style="display: none; margin-top: 5px"><a href="#"></a></span>',
+                    '<span id="forgottenpassword" style="display: none; margin-top: 5px;"><a href="#"></a></span>',
                 '</div>',
                 '<div class="centered asm-login-fail" style="display: none">',
                     '<div class="ui-state-error">',
