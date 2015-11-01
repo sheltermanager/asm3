@@ -227,6 +227,7 @@ MICROCHIP_MANUFACTURERS = [
 ]
 
 VISUAL_THEMES = [
+    ( "asm", "ASM" ),
     ( "black-tie", "Black Tie" ),
     ( "blitzer", "Blitzer" ),
     ( "cupertino", "Cupertino") ,

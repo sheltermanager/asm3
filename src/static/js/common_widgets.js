@@ -899,16 +899,15 @@
     });
 
     $.fn.textarea = function() {
-        var pos = "left: -32px; top: -8px;";
-        if (common.is_msie()) { pos = "left: -36px;"; }
+        var style = "margin-left: -56px; margin-top: -24px; height: 16px";
         this.each(function() {
             var t = $(this);
             if (t.attr("data-zoom")) { return; }
             t.attr("data-zoom", "true");
             var zbid = t.attr("id") + "-zb";
             t.wrap("<span style='white-space: nowrap'></span>");
-            t.after("<a style='position: relative; " + pos + " ' id='" + zbid + "' href='#'><span class='asm-icon asm-icon-edit'></span></a>");
-            $("#" + zbid).click(function() {
+            t.after("<button id='" + zbid + "' style='" + style + "'></button>");
+            $("#" + zbid).button({ text: false, icons: { primary: "ui-icon-zoomin" }}).click(function() {
                 // If the textarea is disabled, don't do anything
                 if (t.is(":disabled")) { return; }
                 if (t.attr("maxlength") !== undefined) { $("#textarea-zoom-area").attr("maxlength", t.attr("maxlength")); }
