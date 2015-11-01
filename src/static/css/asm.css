@@ -1,9 +1,9 @@
 * { 
-    font-family: sans-serif !important; 
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif !important; 
 }
 
 .desktop body {
-    font-size: 80%;
+    font-size: 90%;
 }
 
 .mobile body {

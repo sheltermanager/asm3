@@ -4,6 +4,8 @@
 $(function() {
 
     var BACKGROUND_COLOURS = {
+        "asm":              "#ffffff",
+        "bootstrap":        "#ffffff",
         "black-tie":        "#333333",
         "blitzer":          "#cc0000",
         "cupertino":        "#deedf7",
