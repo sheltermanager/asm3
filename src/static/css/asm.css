@@ -74,7 +74,7 @@ select[disabled="disabled"], input[disabled="disabled"], textarea[disabled="disa
 #asm-login-window {
     padding: 0px;
     width: 400px;
-    background-color: #eeeeee;
+    background-color: #fff;
     background-repeat: no-repeat;
     border: 1px solid #555;
 }

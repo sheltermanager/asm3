@@ -49,8 +49,8 @@ $(function() {
                 '</table>',
 
                 '<div class="centered" style="padding: 5px">',
-                    '<button id="loginbutton" class="ui-priority-primary">' + _("Login"),
-                    '<img id="loginspinner" src="static/images/wait/wait16trans.gif" style="display: none" />',
+                    '<button id="loginbutton" class="ui-priority-primary asm-dialog-actionbutton">' + _("Login"),
+                        '<img id="loginspinner" src="static/images/wait/wait16trans.gif" style="display: none" />',
                     '</button>',
                 '</div>',
                 '<div class="centered" style="margin-bottom: 5px">',

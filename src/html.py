@@ -197,7 +197,7 @@ def table(results):
     s += "</tbody>\n"
     return s
 
-def bare_header(title, theme = "ui-lightness", locale = LOCALE, config_db = "asm", config_ts = "0"):
+def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config_ts = "0"):
     """
     A bare header with just the script files needed for the program.
     title: The page title
