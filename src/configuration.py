@@ -242,7 +242,7 @@ DEFAULTS = {
     "ShowWeightInLbs": "Yes",
     "SMTPPort": "25",
     "StickyTableHeaders": "Yes",
-    "SystemTheme": "smoothness",
+    "SystemTheme": "asm",
     "TableHeadersVisible": "Yes",
     "ThemeChangeWarning": "Yes",
     "Timezone": "-5",
@@ -934,7 +934,7 @@ def smtp_server_tls(dbo):
     return cboolean(dbo, "SMTPServerUseTLS")
 
 def system_theme(dbo):
-    return cstring(dbo, "SystemTheme", "smoothness")
+    return cstring(dbo, "SystemTheme", "asm")
 
 def use_short_shelter_codes(dbo):
     return cboolean(dbo, "UseShortShelterCodes")

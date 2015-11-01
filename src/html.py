@@ -21,7 +21,6 @@ BACKGROUND_COLOURS = {
     "asm":              "#ffffff",
     "black-tie":        "#333333",
     "blitzer":          "#cc0000",
-    "bootstrap":        "#ffffff",
     "cupertino":        "#deedf7",
     "dark-hive":        "#444444",
     "dot-luv":          "#0b3e6f",
