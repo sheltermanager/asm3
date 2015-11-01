@@ -1,7 +1,7 @@
 37
 ================
 
-01/11/15 Start of new asm theme based on bootstrap #299
+01/11/15 New asm theme based on bootstrap style #299
 01/11/15 Upgrade to JQuery 2 #298
 31/10/15 Add OutcomeDate/OutcomeType wordkeys for publishers
 30/10/15 Remove IE8/9 specific cruft, add conditional comment detector #298

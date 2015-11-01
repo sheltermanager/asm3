@@ -1,13 +1,13 @@
 * { 
-    font-family: Helvetica Neue, Helvetica, Arial, sans-serif !important; 
+    font-family: sans-serif !important; 
 }
 
 .desktop body {
-    font-size: 90%;
+    font-size: 80%;
 }
 
 .mobile body {
-    font-size: 100%;
+    font-size: 90%;
 }
 
 a {
@@ -24,6 +24,10 @@ label {
 
 img {
     border: 0;
+}
+
+select[disabled="disabled"], input[disabled="disabled"], textarea[disabled="disabled"] {
+    color: #999;
 }
 
 /** Used by JQueryUI dialogs - set a dialogClass of dialog-no-title to hide the titlebar */
@@ -185,7 +189,7 @@ img {
     vertical-align: middle;
 }
 
-#asm-topline img {
+#asm-topline input, #asm-topline a, #asm-topline img, #asm-topline .asm-menu-icon {
     vertical-align: middle;
 }
 
@@ -622,11 +626,6 @@ img {
     border: 1px solid #555;
 }
 
-
-select[disabled="disabled"], input[disabled="disabled"], textarea[disabled="disabled"] {
-    color: #999;
-}
-
 .asm-checkbox {
 }
 
@@ -684,7 +683,15 @@ select[disabled="disabled"], input[disabled="disabled"], textarea[disabled="disa
 
 .asm-redbutton {
     background: red !important;
+    border: 1px solid red !important;
     color: #fff !important;
+}
+
+.asm-redbutton:hover {
+    background: red !important;
+    border: 1px solid red !important;
+    color: #fff !important;
+    opacity: 0.7;   
 }
 
 .asm-underlined-rows {
@@ -697,6 +704,9 @@ select[disabled="disabled"], input[disabled="disabled"], textarea[disabled="disa
 
 .asm-toolbar {
     padding: 5px;
+}
+
+.asm-toolbar button, .asm-toolbar .asm-menu-icon {
     vertical-align: middle;
 }
 

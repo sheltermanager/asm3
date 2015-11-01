@@ -63,11 +63,11 @@
                     b += '</select></span>';
                 }
                 else if (v.type == "buttonmenu") {
-                    b += '<span id="button-' + v.id + '" class="asm-menu-icon" title="' + html.title(v.tooltip) + '">' + html.icon(v.icon);
+                    b += '<div id="button-' + v.id + '" class="asm-menu-icon" title="' + html.title(v.tooltip) + '">' + html.icon(v.icon);
                     if (v.text) {
                         b += " " + v.text;
                     }
-                    b += '</span>';
+                    b += '</div>';
                     // If no options are supplied, don't create the menu body
                     if (v.options) {
                         var menu = '<div id="button-' + v.id + '-body" class="asm-menu-body"><ul class="asm-menu-list">';
@@ -603,16 +603,20 @@
                 }
             });
 
-            b[_("Add")] = function() {
-                if (tableform.fields_validate(dialog.fields)) {
-                    if (dialog.close_on_ok) {
-                        $(this).dialog("close");
+            b[_("Add")] = {
+                text: _("Add"),
+                "class": 'asm-dialog-actionbutton',
+                click: function() {
+                    if (tableform.fields_validate(dialog.fields)) {
+                        if (dialog.close_on_ok) {
+                            $(this).dialog("close");
+                        }
+                        else {
+                            tableform.dialog_disable_buttons();
+                        }
+                        if (callback) { callback(); }
+                        deferred.resolve();
                     }
-                    else {
-                        tableform.dialog_disable_buttons();
-                    }
-                    if (callback) { callback(); }
-                    deferred.resolve();
                 }
             };
 
@@ -695,18 +699,22 @@
                 };
             }
             if (!dialog.edit_perm || (dialog.edit_perm && common.has_permission(dialog.edit_perm))) {
-                b[_("Change")] = function() {
-                    if (tableform.fields_validate(dialog.fields)) {
-                        if (dialog.close_on_ok) {
-                            $(this).dialog("close");
+                b[_("Change")] = {
+                    text: _("Change"),
+                    "class": 'asm-dialog-actionbutton',
+                    click: function() {
+                        if (tableform.fields_validate(dialog.fields)) {
+                            if (dialog.close_on_ok) {
+                                $(this).dialog("close");
+                            }
+                            else {
+                                tableform.dialog_disable_buttons();
+                            }
+                            if (changecallback) {
+                                changecallback(row);
+                            }
+                            deferred.resolve(row);
                         }
-                        else {
-                            tableform.dialog_disable_buttons();
-                        }
-                        if (changecallback) {
-                            changecallback(row);
-                        }
-                        deferred.resolve(row);
                     }
                 };
             }

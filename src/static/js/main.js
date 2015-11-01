@@ -682,10 +682,14 @@ $(function() {
             });
 
             var wb = {};
-            wb[_("I've finished, Don't show me this popup again.")] = function() {
-                var formdata = "mode=showfirsttimescreen";
-                common.ajax_post("main", formdata);
-                $(this).dialog("close");
+            wb[_("I've finished, Don't show me this popup again.")] = {
+                text: _("I've finished, Don't show me this popup again."),
+                "class": "asm-dialog-actionbutton",
+                click: function() {
+                    var formdata = "mode=showfirsttimescreen";
+                    common.ajax_post("main", formdata);
+                    $(this).dialog("close");
+                }
             };
             wb[_("Close")] = function() { $(this).dialog("close"); };
 
