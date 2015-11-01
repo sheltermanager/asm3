@@ -515,7 +515,7 @@ $(function() {
                 $("#tips").show();
             }
             if (config.has() && config.bool("ThemeChangeWarning") && config.str("SystemTheme") == asm.theme && 
-                $.inArray(config.str("SystemTheme"), [ "smoothness", "ui-lightness" ]) == -1) {
+                $.inArray(config.str("SystemTheme"), [ "asm" ]) == -1) {
                 $("#overtheme").show();
             }
         },
