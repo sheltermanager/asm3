@@ -639,7 +639,7 @@
                 open: function() {
                     var bp = $("#dialog-tableform").parent().find(".ui-dialog-buttonpane");
                     if (bp.find("#dialog-tableform-spinner").size() == 0) {
-                        bp.append('<img id="dialog-tableform-spinner" style="display: none" src="static/images/wait/wait16trans.gif" />');
+                        bp.append('<img id="dialog-tableform-spinner" style="display: none; height: 16px" src="static/images/wait/rolling_3a87cd.svg" />');
                     }
                     tableform.dialog_enable_buttons();
                 },
@@ -752,7 +752,7 @@
                     }
                     
                     if (bp.find("#dialog-tableform-spinner").size() == 0) {
-                        bp.append('<img id="dialog-tableform-spinner" style="display: none" src="static/images/wait/wait16trans.gif" />');
+                        bp.append('<img id="dialog-tableform-spinner" style="display: none; height: 16px" src="static/images/wait/rolling_3a87cd.svg" />');
                     }
                     
                     tableform.dialog_enable_buttons();

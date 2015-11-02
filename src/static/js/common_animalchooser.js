@@ -41,7 +41,7 @@
                 '<div class="animalchooser-find" style="display: none" title="' + html.title(_("Find animal")) + '">',
                 '<input type="text" class="asm-textbox" />',
                 '<button>' + _("Search") + '</button>',
-                '<img src="static/images/wait/wait16trans.gif" />',
+                '<img style="height: 16px" src="static/images/wait/rolling_3a87cd.svg" />',
                 '<table width="100%">',
                 '<thead>',
                     '<tr class="ui-widget-header">',

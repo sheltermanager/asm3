@@ -44,7 +44,7 @@
                 '<div class="totalselected">',
                 html.info(_("{0} selected").replace("{0}", "0")),
                 '</div>',
-                '<img class="spinner" src="static/images/wait/wait16trans.gif" />',
+                '<img style="height: 16px" src="static/images/wait/rolling_3a87cd.svg" />',
                 '<table style="border-bottom: 1px solid #aaa; width: 100%">',
                 '<tr>',
                 '<td>' + _("Locations") + ':</td>',

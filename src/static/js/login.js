@@ -50,7 +50,7 @@ $(function() {
 
                 '<div class="centered" style="padding: 5px">',
                     '<button id="loginbutton" class="ui-priority-primary asm-dialog-actionbutton">' + _("Login"),
-                        '<img id="loginspinner" src="static/images/wait/wait16trans.gif" style="display: none" />',
+                        '<img id="loginspinner" src="static/images/wait/rolling_white.svg" style="display: none; height: 16px" />',
                     '</button>',
                 '</div>',
                 '<div class="centered" style="margin-bottom: 5px">',

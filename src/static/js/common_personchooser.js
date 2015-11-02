@@ -86,7 +86,7 @@
                 '<div class="personchooser-find" style="display: none" title="' + title + '">',
                 '<input class="asm-textbox" type="text" />',
                 '<button>' + _("Search") + '</button>',
-                '<img src="static/images/wait/wait16trans.gif" />',
+                '<img style="height: 16px" src="static/images/wait/rolling_3a87cd.svg" />',
                 '<table width="100%">',
                 '<thead>',
                     '<tr class="ui-widget-header">',
