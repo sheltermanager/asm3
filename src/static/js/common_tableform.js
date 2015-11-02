@@ -501,6 +501,7 @@
             d.push("<span class=\"ui-icon ui-icon-info\" style=\"float: left; margin-right: .3em;\"></span>");
             d.push("<span id=\"dialog-tableform-info-text\"></span>");
             d.push("</p></div></div>");
+            d.push("<div id=\"dialog-tableform-fields\" style=\"margin-top: 5px\"></span>");
             if (dialog.html_form_action) {
                 d.push("<form id=\"form-tableform\" method=\"post\" action=\"" + dialog.html_form_action + "\"");
                 if (dialog.html_form_enctype) { d.push(" enctype=\"" + dialog.html_form_enctype + "\""); }
@@ -516,6 +517,7 @@
             if (dialog.html_form_action) {
                 d.push("</form>");
             }
+            d.push("</div>");
             d.push("</div>");
             return d.join("\n");
         },

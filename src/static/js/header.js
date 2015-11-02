@@ -463,7 +463,7 @@ $(function() {
                         '</p>',
                     '</div>',
                 '</div>',
-                '<div id="linkstips" class="no-print ui-state-highlight ui-corner-all" style="display: none; margin-top: 5px; padding-left: 5px; padding-right: 5px">',
+                '<div id="linkstips" class="no-print ui-state-highlight ui-corner-all" style="display: none; padding-left: 5px; padding-right: 5px">',
                     '<p id="quicklinks" class="asm-quicklinks" style="display: none"><span class="ui-icon ui-icon-bookmark" style="float: left; margin-right: .3em;"></span>',
                         _("Quick Links"),
                         this.quicklinks_html(),

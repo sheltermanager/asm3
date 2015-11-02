@@ -186,6 +186,7 @@ select[disabled="disabled"], input[disabled="disabled"], textarea[disabled="disa
 #asm-topline {
     text-align: left;
     width: 100%;
+    margin-bottom: 5px;
 }
 
 #asm-topline .topline-element {
