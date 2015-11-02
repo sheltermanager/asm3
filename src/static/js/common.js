@@ -79,7 +79,7 @@
          */
         check_browser_features: function() {
             var required = "atob-btoa boxshadow canvas checked contenteditable cookies filereader " +
-                           "history json localstorage opacity";
+                           "history json localstorage opacity svgasimg";
             var blist = [];
             $.each($("html").prop("class").split(" "), function(i, v) {
                 if (v.indexOf("no-") == -1) { blist.push(v); }
