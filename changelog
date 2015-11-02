@@ -1,6 +1,7 @@
 37
 ================
 
+02/11/15 More UI cleanup, remove login nav and qr code
 02/11/15 Ditch old gif ajax spinners in favour of SVG
 01/11/15 New asm theme based on bootstrap style #299
 01/11/15 Upgrade to JQuery 2 #298

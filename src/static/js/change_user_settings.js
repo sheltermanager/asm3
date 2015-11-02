@@ -89,7 +89,7 @@ $(function() {
                     '<select id="olocale" data="locale" class="asm-doubleselectbox asm-iconselectmenu">',
                     '<option value="" data-style="background-image: url(static/images/flags/' + config.str("Locale") + '.png)">' + _("(use system)") + '</option>',
                     this.two_pair_options(controller.locales, true),
-                    '</select> <span id="localeflag"></span>',
+                    '</select>',
                     '</td>',
                 '</tr>',
                 '<tr>',
@@ -108,17 +108,6 @@ $(function() {
                 '</div>',
                 html.content_footer()
             ].join("\n");
-        },
-
-        update_flag: function() {
-            if (!$("#olocale").val()) {
-                $("#localeflag").html("");
-                return;
-            }
-            var h = "<img style='position: relative; vertical-align: middle; left: -48px; top: -10px' src='static/images/flags/" + 
-                $("#olocale").val() + ".png' title='" + 
-                $("#olocale").val() + "' />";
-            $("#localeflag").html(h);
         },
 
         bind: function() {
@@ -159,8 +148,6 @@ $(function() {
                     });
             });
 
-            $("#olocale").change(this.update_flag);
-
             // When the visual theme is changed, switch the CSS file so the
             // theme updates immediately.
             $("#systemtheme").change(function() {
@@ -192,7 +179,6 @@ $(function() {
                 $("#existingsig").hide();
                 $("#signature").show();
             }
-            this.update_flag();
         },
 
         name: "change_user_settings",

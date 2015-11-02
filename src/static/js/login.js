@@ -6,11 +6,6 @@ $(function() {
     login = {
         render: function() {
             var h = [
-                '<div id="asm-login-nav" style="display: none">',
-                    '<a href="mobile_login' + (controller.smaccount ? '?smaccount=' + controller.smaccount : '') + '">' + _("Mobile") + '</a>',
-                    '<img id="flag" />',
-                '</div>',
-                '<img id="qr" align="right" style="display: none" />',
                 '<div id="asm-login-window" class="dialogshadow" style="display: none">',
                 '<div id="asm-login-splash" />',
                 '<table width="100%" style="margin-left: auto; margin-right: auto; text-align: right; padding: 10px">',
@@ -49,8 +44,10 @@ $(function() {
                 '</table>',
 
                 '<div class="centered" style="padding: 5px">',
-                    '<button id="loginbutton" class="ui-priority-primary asm-dialog-actionbutton">' + _("Login"),
-                        '<img id="loginspinner" src="static/images/wait/rolling_white.svg" style="display: none; height: 16px" />',
+                    '<button id="loginbutton" class="ui-priority-primary asm-dialog-actionbutton">',
+                        '<img id="flag" style="vertical-align: middle;" />',
+                        _("Login"),
+                        '<img id="loginspinner" src="static/images/wait/rolling_white.svg" style="display: none; vertical-align: middle; height: 16px" />',
                     '</button>',
                 '</div>',
                 '<div class="centered" style="margin-bottom: 5px">',
@@ -193,10 +190,6 @@ $(function() {
                 }
             }
             else {
-                /*
-                var MAX_SPLASH = 21;
-                var splash = Math.floor(Math.random() * MAX_SPLASH);
-                */
                 $("#asm-login-window").css({
                     "background-image": "url(static/images/splash/splash_logo.jpg)"
                 });
@@ -207,28 +200,10 @@ $(function() {
                 .attr("src", "static/images/flags/" + controller.locale + ".png")
                 .attr("title", controller.locale);
 
-            // Set the qr code image
-            if (controller.smcom) {
-                // Use static image for sheltermanager.com
-                $("#qr").attr("src", "static/images/ui/qr_m_sheltermanager_com.png");
-            }
-            else {
-                // Get Google to generate QR for us
-                var qrurl = String(window.location);
-                qrurl = qrurl.substring(0, qrurl.lastIndexOf("/")) + "/mobile_login";
-                var qr = controller.qrimg.replace("%(url)s", qrurl).replace("%(size)s", "120x120");
-                $("#qr")
-                    .attr("src", qr)
-                    .attr("alt", "QR code for mobile devices")
-                    .attr("title", qrurl);
-            }
-
             // Show the tip if there are no animals in the db
             if (!controller.hasanimals) { $(".asm-login-tip").fadeIn("slow"); }
 
             // Show things
-            $("#asm-login-nav").delay(2000).slideDown("slow");
-            $("#qr").delay(2500).fadeIn("slow");
             $("#asm-login-window").fadeIn("slow");
 
             if (controller.forgottenpassword) {

@@ -100,7 +100,7 @@ LOCALES = [
     ( "hu", "Hungarian"),
     ( "it", "Italian"),
     ( "lt", "Lithuanian"),
-    ( "nb", "Norweigan"),
+    ( "nb", "Norwegian"),
     ( "pl", "Polish"),
     ( "pt", "Portugese"),
     ( "ru", "Russian"),

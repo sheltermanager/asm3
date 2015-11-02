@@ -73,7 +73,8 @@ select[disabled="disabled"], input[disabled="disabled"], textarea[disabled="disa
 /** LOGIN SCREEN ============= */
 #asm-login-window {
     padding: 0px;
-    width: 400px;
+    width: 100%;
+    max-width: 400px;
     background-color: #fff;
     background-repeat: no-repeat;
     border: 1px solid #555;
@@ -84,7 +85,7 @@ select[disabled="disabled"], input[disabled="disabled"], textarea[disabled="disa
 }
 
 #asm-login-splash {
-    width: 400px;
+    width: 100%;
     height: 200px;
 }
 

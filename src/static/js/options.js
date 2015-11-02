@@ -139,7 +139,6 @@ $(function() {
                 '<td><select id="olocale" type="text" class="asm-doubleselectbox asm-iconselectmenu" data="Locale">',
                 options.two_pair_options(controller.locales, true),
                 '</select>',
-                '<span id="localeflag"></span>',
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -1078,14 +1077,6 @@ $(function() {
                 return encodeURIComponent(mappings);
             };
 
-            var update_flag = function() {
-                var h = "<img style='position: relative; vertical-align: middle; left: -48px; top: -10px' src='static/images/flags/" + 
-                    $("#olocale").val() + ".png' title='" + 
-                    $("#olocale").val() + "' />";
-                $("#localeflag").html(h);
-            };
-            $("#olocale").change(update_flag);
-
             // Toolbar buttons
             $("#button-save").button().click(function() {
                 $("#button-save").button("disable");
@@ -1167,9 +1158,6 @@ $(function() {
                     $("#mapac" + idx).select("value", ac);
                 });
             }
-
-            // Set flag for current locale
-            update_flag();
 
             // Hide options not applicable for some locales
             if (asm.locale != "en") {
