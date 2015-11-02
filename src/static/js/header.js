@@ -384,7 +384,7 @@ $(function() {
          * Render HTML components of the header
          */
         render: function() {
-            var homeicon = "static/images/logo/icon-64.png",
+            var homeicon = "static/images/logo/icon.svg",
                 mh = this.menu_html(),
                 menubuttons = mh[0],
                 menubodies = mh[1];
