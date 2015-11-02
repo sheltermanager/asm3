@@ -90,8 +90,9 @@ def update_stocklevel_from_form(dbo, post, username):
         raise utils.ASMValidationError(_("Stock level must have a name", l))
     if post["unitname"] == "":
         raise utils.ASMValidationError(_("Stock level must have a unit", l))
-
     preaudit = db.query(dbo, "SELECT * FROM stocklevel WHERE ID = %d" % slid)
+    if len(preaudit) == 0:
+        raise utils.ASMValidationError("stocklevel %d does not exist, cannot adjust" % slid)
     db.execute(dbo, db.make_update_sql("stocklevel", "ID=%d" % slid, (
         ( "Name", post.db_string("name") ),
         ( "Description", post.db_string("description") ),
