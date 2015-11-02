@@ -78,8 +78,8 @@
          * page passing the list of features required and supported.
          */
         check_browser_features: function() {
-            var required = "atob-btoa boxshadow canvas checked contenteditable cookies filereader " +
-                           "history json localstorage opacity svgasimg";
+            var required = "boxshadow canvas checked contenteditable cookies " +
+                           "json localstorage opacity svgasimg";
             var blist = [];
             $.each($("html").prop("class").split(" "), function(i, v) {
                 if (v.indexOf("no-") == -1) { blist.push(v); }
