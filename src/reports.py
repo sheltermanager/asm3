@@ -585,7 +585,7 @@ class Report:
         Reads the report info from the database and populates
         our local class variables
         """
-        rs = db.query(self.dbo, "SELECT Title, HTMLBody, SQLCommand, OmitCriteria, " \
+        rs = db.query(self.dbo, "SELECT Title, Category, HTMLBody, SQLCommand, OmitCriteria, " \
             "OmitHeaderFooter FROM customreport WHERE ID = %s" % str(reportId))
         
         # Can't do anything if the ID was invalid
