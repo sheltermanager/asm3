@@ -247,13 +247,16 @@
          * We have this because Safari seems to end up with "Internal Server Error"
          * as the response variable instead of the real error message.
          */
-        get_error_response: function(jqxhr, response) {
+        get_error_response: function(jqxhr, textstatus, response) {
             var errmessage = String(response);
             if (response.indexOf("Internal Server") != -1) {
                 errmessage = jqxhr.responseText;
                 if (errmessage.indexOf("<p>") != -1) {
                     errmessage = errmessage.substring(errmessage.indexOf("<p>")+3, errmessage.indexOf("</p>")+4);
                 }
+            }
+            if (!errmessage && textstatus) {
+                errmessage = textstatus;
             }
             return errmessage;
         },
@@ -442,7 +445,7 @@
                         header.hide_loading();
                     }
                     catch (ex) {}
-                    var errmessage = common.get_error_response(jqxhr, response);
+                    var errmessage = common.get_error_response(jqxhr, textstatus, response);
                     header.show_error(errmessage);
                 }
             });
@@ -585,7 +588,7 @@
                         header.hide_loading();
                     }
                     catch (ex) {}
-                    var errmessage = common.get_error_response(jqxhr, response);
+                    var errmessage = common.get_error_response(jqxhr, textstatus, response);
                     header.show_error(errmessage);
                     if (errorfunc) {
                         errorfunc(errmessage);
@@ -2178,6 +2181,8 @@ $(function() {
     common.check_browser_features();
 
     // add a class to the html element for desktop or mobile
+    // this allows asm.css to change some elements if it is running
+    // inside the mobile app context
     if (typeof asm !== "undefined" && asm.mobileapp) { 
         $("html").removeClass("desktop");
         $("html").addClass("mobile"); 

@@ -1262,7 +1262,7 @@
                     deferred.resolve(result);
                 },
                 error: function(jqxhr, textstatus, response) {
-                    var errmessage = common.get_error_response(jqxhr, response);
+                    var errmessage = common.get_error_response(jqxhr, textstatus, response);
                     tableform.dialog_error(errmessage);
                     if (errorcallback) { errorcallback(errmessage); }
                     deferred.reject(response);
