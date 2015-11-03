@@ -2194,7 +2194,13 @@ $(function() {
     // Prevent annoying Firefox errors where it tries to parse all
     // ajax responses that don't have a mimetype as XML - override
     // it to assume plain text
-    $.ajaxSetup({ mimeType: "text/plain" });
+    // Also, do not cache any GET requests (adds an extra parameter)
+    // as there is no scenario where ASM would make an Ajax GET
+    // for something where a cached copy would do.
+    $.ajaxSetup({ 
+        mimeType: "text/plain",
+        cache: false
+    });
 
     // We use mousetrap for hotkey sequences and by default, it will
     // not respond to keyevents when a textarea or input field has
