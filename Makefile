@@ -80,10 +80,8 @@ translation:
 
 icons:
 	@echo "[icons] ==========================="
-	cd src/static/images/icons && rm -f asm-icon.png
-	cd src/static/images/icons && ./z_makesprite.sh
+	cd src/static/images/icons && ./z_makecss.sh
 	mv src/static/images/icons/asm-icon.css src/static/css
-	rm -f src/static/images/icons/test.html
 
 manual:
 	@echo "[manual] =========================="

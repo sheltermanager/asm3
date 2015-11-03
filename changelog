@@ -1,6 +1,7 @@
 37
 ================
 
+03/11/15 Use data uris for icons so format can be changed
 02/11/15 Use useragent sniffing on server to redirect old IE
 02/11/15 More UI cleanup, remove login nav and qr code
 02/11/15 Ditch old gif ajax spinners in favour of SVG
