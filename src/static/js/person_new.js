@@ -232,6 +232,10 @@ $(function() {
             $("#flags").change();
         },
 
+        destroy: function() {
+            common.widget_destroy("#dialog-similar");
+        },
+
         name: "person_new",
         animation: "newdata",
         autofocus: "#ownertype",
