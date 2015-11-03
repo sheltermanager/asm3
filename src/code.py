@@ -660,7 +660,8 @@ class mobile_logout:
         url = "mobile_login"
         if MULTIPLE_DATABASES and session.dbo is not None and session.dbo.alias != None:
             url = "mobile_login?smaccount=" + session.dbo.alias
-        users.logout(session.dbo, session.user)
+        users.update_user_activity(session.dbo, session.user, False)
+        al.info("%s logged out" % session.user, "code.mobile_logout", session.dbo)
         session.user = None
         session.kill()
         raise web.seeother(url)
@@ -752,7 +753,7 @@ class main:
             animallinks = extpublish.get_animal_data(dbo, pc)
         # Users and roles, active users
         usersandroles = users.get_users_and_roles(dbo)
-        activeusers = users.get_activeusers(dbo)
+        activeusers = users.get_active_users(dbo)
         # Alerts
         alerts = extanimal.get_alerts(dbo, session.locationfilter)
         if len(alerts) > 0: 
@@ -773,11 +774,11 @@ class main:
         c += html.controller_str("version", get_version())
         c += html.controller_str("emergencynotice", emergency_notice())
         c += html.controller_str("linkname", linkname)
+        c += html.controller_str("activeusers", activeusers)
         c += html.controller_json("usersandroles", usersandroles)
         c += html.controller_json("alerts", alerts)
         c += html.controller_json("recent", extanimal.get_timeline(dbo, 10))
         c += html.controller_json("stats", extanimal.get_stats(dbo))
-        c += html.controller_json("activeusers", activeusers)
         c += html.controller_json("animallinks", extanimal.get_animals_brief(animallinks))
         c += html.controller_json("diary", dm)
         c += html.controller_json("mess", mess)
@@ -891,7 +892,8 @@ class logout:
         url = "login"
         if MULTIPLE_DATABASES and session.dbo is not None and session.dbo.alias != None:
             url = "login?smaccount=" + session.dbo.alias
-        users.logout(session.dbo, session.user)
+        users.update_user_activity(session.dbo, session.user, False)
+        al.info("%s logged out" % session.user, "code.logout", session.dbo)
         session.user = None
         session.kill()
         raise web.seeother(url)

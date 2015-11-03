@@ -23,7 +23,6 @@ import person
 import publish
 import reports as extreports
 import smcom
-import users
 import utils
 import waitinglist
 from sitedefs import LOCALE, TIMEZONE, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_MAP, SCALE_PDF_DURING_BATCH
@@ -49,8 +48,6 @@ def daily(dbo):
                 dbupdate.install_db_sequences(dbo)
             # Get the latest news from sheltermanager.com
             dbfs.update_asm_news(dbo)
-            # Shouldn't be anyone logged in at this point
-            users.auto_logout(dbo)
         except:
             em = str(sys.exc_info()[0])
             al.error("FAIL: running database preparation tasks: %s" % em, "cron.daily", dbo, sys.exc_info())

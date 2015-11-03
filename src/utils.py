@@ -615,6 +615,9 @@ def check_loggedin(session, web, loginpage = "/login"):
         if path.startswith("/"): path = path[1:]
         query = str(web.ctx.query)
         raise web.seeother(loginpage + "?target=" + path + query)
+    else:
+        # update the last user activity
+        users.update_user_activity(session.dbo, session.user)
 
 def is_loggedin(session):
     """

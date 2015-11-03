@@ -2,8 +2,8 @@
 
 import al
 import audit
+import cachemem
 import configuration
-import datetime, time
 import db
 import dbupdate
 import hashlib
@@ -233,35 +233,6 @@ def add_security_flag(securitymap, flag):
         securitymap += flag + " *"
     return securitymap
 
-def login(dbo, username):
-    """
-    Marks the given user as logged in
-    """
-    logout(dbo, username)
-    db.execute(dbo, "DELETE FROM activeuser WHERE UPPER(UserName) LIKE '%s'" % str(username.upper()))
-    db.execute(dbo, db.make_insert_sql("activeuser", (
-        ( "UserName", db.ds(username)),
-        ( "Since", db.ddt(i18n.now())),
-        ( "Messages", db.ds("asm3"))
-        )))
-    al.info("%s logged in" % username, "users.login", dbo)
-
-def logout(dbo, username):
-    """
-    Marks the given user as logged out
-    """
-    if dbo is None: return
-    db.execute(dbo, "DELETE FROM activeuser WHERE username LIKE '%s'" % username)
-    al.info("%s logged out" % username, "users.logout", dbo)
-
-def auto_logout(dbo):
-    """
-    Marks all users logged out who have been logged in for longer than 
-    8 hours to account for people not logging out manually.
-    """
-    cutoff = i18n.now() - datetime.timedelta(hours = -8)
-    db.execute(dbo, "DELETE FROM activeuser WHERE Since <= %s" % db.dd(cutoff))
-
 def authenticate(dbo, username, password):
     """
     Authenticates whether a username and password are valid.
@@ -420,12 +391,30 @@ def get_users(dbo, user='%'):
         u["ROLES"] = "|".join(rolenames)
     return users
 
-def get_activeusers(dbo):
+def get_active_users(dbo):
     """
     Returns a list of active users on the system
     USERNAME, SINCE, MESSAGES
     """
-    return db.query(dbo, "SELECT * FROM activeuser")
+    cachekey = "%s_activity" % dbo.database
+    return utils.nulltostr(cachemem.get(cachekey))
+
+def update_user_activity(dbo, user, timenow = True):
+    """
+    If timenow is True, updates this user's last activity time to now.
+    If timenow is False, removes this user from the active list.
+    """
+    cachekey = "%s_activity" % dbo.database
+    ac = utils.nulltostr(cachemem.get(cachekey))
+    # First remove the current user from the set
+    nc = []
+    for a in ac.split(","):
+        if a != "":
+            u, d = a.split("=")
+            if u != user: nc.append(a)
+    # Add this user with the new time 
+    if timenow: nc.append("%s=%s" % (user, i18n.now(dbo.timezone)))
+    cachemem.put(cachekey, ",".join(nc), 3600 * 8)
 
 def get_personid(dbo, user):
     """
@@ -587,7 +576,7 @@ def update_session(session):
             db.query_int(dbo, "SELECT COUNT(*) FROM animal") > 2000
     session.locale = locale
     session.theme = theme
-    session.config_ts = time.strftime("%Y%m%d%H%M%S", datetime.datetime.today().timetuple())
+    session.config_ts = i18n.format_date("%Y%m%d%H%M%S", i18n.now())
 
 def web_login(post, session, remoteip, path):
     """
@@ -686,10 +675,8 @@ def web_login(post, session, remoteip, path):
         except:
             al.error("failed updating database: %s" % str(sys.exc_info()[0]), "users.web_login", dbo, sys.exc_info())
         try:
-            # Log out any old users that have been hanging around
-            auto_logout(dbo)
-            # Let this user through
-            login(dbo, user["USERNAME"])
+            al.info("%s logged in" % user["USERNAME"], "users.login", dbo)
+            update_user_activity(dbo, user["USERNAME"])
         except:
             al.error("failed updating activeuser table: %s" % str(sys.exc_info()[0]), "users.web_login", dbo, sys.exc_info())
             return "FAIL"

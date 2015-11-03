@@ -7,8 +7,9 @@ $(function() {
 
         render_active_users: function() {
             var s = "", loggedin = _("Active users: {0}"), userlist = [];
-            $.each(controller.activeusers, function(i, u) {
-                userlist.push("<a class='activeuser' title='" + html.title(u.SINCE) + "' href='#'>" + u.USERNAME + "</a>");
+            $.each(controller.activeusers.split(","), function(i, u) {
+                var since = u.split("=")[1], user = u.split("=")[0];
+                userlist.push("<a class='activeuser' title='" + html.title(since) + "' href='#'>" + user + "</a>");
             });
             s += '<table width="100%" style="font-size: 0.75em; border-top: 1px solid #aaa"><tr><td align="left">' + common.substitute(loggedin, { "0": userlist.join(", ")}) + '</td>';
             s += common.substitute('<td align="right"><a href="static/pages/changelog.txt">{asm} {version} {user}@{org}</a></td></tr></table>', {
