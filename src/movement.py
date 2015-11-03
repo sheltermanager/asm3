@@ -561,12 +561,15 @@ def insert_foster_from_form(dbo, username, post):
     l = dbo.locale
     if None == post.date("fosterdate"):
         raise utils.ASMValidationError(i18n._("Foster movements must have a valid foster date.", l))
-
     # Is this animal already on foster? If so, return that foster first
     fm = get_animal_movements(dbo, post.integer("animal"))
     for m in fm:
         if m["MOVEMENTTYPE"] == FOSTER and m["RETURNDATE"] is None:
-            return_movement(dbo, m["ID"], post.integer("animal"), post.date("fosterdate"))
+            # if the existing foster is to this person, bail
+            if m["OWNERID"] == post.integer("person"):
+                raise utils.ASMValidationError(i18n._("Already fostered to this person.", l))
+            else:
+                return_movement(dbo, m["ID"], post.integer("animal"), post.date("fosterdate"))
     # Create the foster movement
     move_dict = {
         "person"                : post["person"],
