@@ -79,7 +79,7 @@
          */
         check_browser_features: function() {
             var required = "boxshadow canvas checked contenteditable cookies " +
-                           "hashchange json localstorage opacity svgasimg";
+                           "fileinput filereader history json localstorage opacity svgasimg";
             var blist = [];
             $.each($("html").prop("class").split(" "), function(i, v) {
                 if (v.indexOf("no-") == -1) { blist.push(v); }
@@ -373,10 +373,6 @@
 
             // We're sending everything to server, reload the page
             if (common.route_mode == "server" || forceserver) { window.location.reload(); return; }
-
-            // The browser doesn't support the history api, reload the page (ie8/9)
-            // This is because setting the current route again won't fire onhashchange
-            if ($("html").hasClass("no-history")) { window.location.reload(); return; }
 
             // Reload the current route on the client
             Path.reload();

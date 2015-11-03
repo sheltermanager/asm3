@@ -805,9 +805,9 @@ class login:
         has_animals = True
         custom_splash = False
         post = utils.PostedData(web.input(smaccount = "", username = "", password = "", target = "", nologconnection = ""), l)
-        # Filter out IE8 and below right now - they just aren't good enough
+        # Filter out IE9 and below right now - they just aren't good enough
         ua = web.ctx.env.get("HTTP_USER_AGENT", "")
-        if ua.find("MSIE 6") != -1 or ua.find("MSIE 7") != -1 or ua.find("MSIE 8") != -1:
+        if ua.find("MSIE 6") != -1 or ua.find("MSIE 7") != -1 or ua.find("MSIE 8") != -1 or ua.find("MSIE 9") != -1:
             raise web.seeother("static/pages/unsupported_ie.html")
         # Figure out how to get the default locale and any overridden splash screen
         # Single database
