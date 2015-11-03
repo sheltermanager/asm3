@@ -5814,6 +5814,7 @@ class shelterview:
         al.debug("got %d animals for shelterview" % (len(animals)), "code.shelterview", dbo)
         s = html.header("", session)
         c = html.controller_json("animals", extanimal.get_animals_brief(animals))
+        c += html.controller_json("fosterers", extperson.get_fosterers(dbo))
         c += html.controller_json("locations", extlookups.get_internal_locations(dbo, session.locationfilter))
         c += html.controller_int("perrow", perrow)
         s += html.controller(c)
@@ -5830,7 +5831,12 @@ class shelterview:
         if mode == "moveunit":
             users.check_permission(session, users.CHANGE_ANIMAL)
             extanimal.update_location_unit(session.dbo, session.user, post.integer("animalid"), post.integer("locationid"), post["unit"])
-
+        if mode == "movefoster":
+            users.check_permission(session, users.ADD_MOVEMENT)
+            post.data["person"] = post["personid"]
+            post.data["animal"] = post["animalid"]
+            post.data["fosterdate"] = python2display(session.locale, now(session.dbo.timezone))
+            return extmovement.insert_foster_from_form(session.dbo, session.user, post)
 
 class sql:
     def check_disabled(self, dbo, dumptype):

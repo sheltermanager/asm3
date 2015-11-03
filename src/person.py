@@ -105,6 +105,12 @@ def get_person_name_code(dbo, personid):
     if len(r) == 0: return ""
     return "%s - %s" % (r[0]["OWNERNAME"], r[0]["OWNERCODE"])
 
+def get_fosterers(dbo):
+    """
+    Returns all fosterers
+    """
+    return db.query(dbo, get_person_query(dbo) + " WHERE o.IsFosterer = 1 ORDER BY o.OwnerName")
+
 def get_staff_volunteers(dbo):
     """
     Returns all staff and volunteers
@@ -575,6 +581,7 @@ def update_person_from_form(dbo, post, username):
         ( "IsACO", db.di(aco)),
         ( "IsStaff", db.di(staff)),
         ( "IsFosterer", db.di(fosterer)),
+        ( "FosterCapacity", post.db_integer("fostercapacity")),
         ( "IsRetailer", db.di(retailer)),
         ( "IsVet", db.di(vet)),
         ( "IsGiftAid", db.di(giftaid)),
@@ -713,6 +720,7 @@ def insert_person_from_form(dbo, post, username):
         ( "IsACO", db.di(aco)),
         ( "IsStaff", db.di(staff)),
         ( "IsFosterer", db.di(fosterer)),
+        ( "FosterCapacity", db.di(d("fostercapacity"))),
         ( "IsRetailer", db.di(retailer)),
         ( "IsVet", db.di(vet)),
         ( "IsGiftAid", db.di(giftaid)),

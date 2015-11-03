@@ -8,11 +8,10 @@ $(function() {
         /**
          * Renders an animal thumbnail
          */
-        render_animal: function(a, showunit) {
+        render_animal: function(a, showunit, allowdrag) {
             var h = [];
             h.push('<div ');
-            // Only on shelter animals that are physically present can be dragged
-            if (!a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0) {
+            if (allowdrag) {
                 h.push('class="asm-shelterview-animal animaldragtarget" ');
             }
             else {
@@ -41,7 +40,7 @@ $(function() {
                     var boxinner = [], classes = "unitdroptarget asm-shelterview-unit";
                     $.each(controller.animals, function(ia, a) {
                         if (a.ACTIVEMOVEMENTID == 0 && a.SHELTERLOCATION == l.ID) {
-                            boxinner.push(shelterview.render_animal(a, false));
+                            boxinner.push(shelterview.render_animal(a, false, !a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0));
                         }
                     });
                     // Show the unit as available if there are no animals in it
@@ -60,7 +59,7 @@ $(function() {
                         var boxinner = [], classes = "unitdroptarget asm-shelterview-unit";
                         $.each(controller.animals, function(ia, a) {
                             if (a.ACTIVEMOVEMENTID == 0 && a.SHELTERLOCATION == l.ID && a.SHELTERLOCATIONUNIT == u) {
-                                boxinner.push(shelterview.render_animal(a, false));    
+                                boxinner.push(shelterview.render_animal(a, false, !a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0));    
                             }
                         });
                         // Show the unit as available if there are no animals in it
@@ -87,7 +86,7 @@ $(function() {
                             }
                         });
                         if (!validunit) {
-                            badunit.push(shelterview.render_animal(a, true));
+                            badunit.push(shelterview.render_animal(a, true, !a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0));
                         }
                     });
                     if (badunit.length > 0) {
@@ -132,6 +131,62 @@ $(function() {
                 });
             }
 
+        },
+
+        /**
+         * Renders a specialised shelter view that shows all fosterers with their
+         * capacity and allows dragging/dropping between fosterers.
+         */
+        render_foster_available: function() {
+            var h = [];
+            $.each(controller.fosterers, function(ip, p) {
+                // Output the fosterers
+                var loclink = "person_movements?id=" + p.ID, fh = [], nofosters = 0, extraclasses;
+                // Find any animals who are with this fosterer
+                $.each(controller.animals, function(ia, a) {
+                    // Skip animals not in this location
+                    if (a.CURRENTOWNERID != p.ID) { return; }
+                    nofosters += 1;
+                    fh.push(shelterview.render_animal(a, true, a.ACTIVEMOVEMENTTYPE == 2));
+                });
+                if (nofosters < p.FOSTERCAPACITY) { extraclasses = "asm-shelterview-unit-available"; }
+                h.push('<p class="asm-menu-category"><a href="' + loclink + '">' + 
+                    p.OWNERNAME + ' (' + nofosters + '/' + p.FOSTERCAPACITY + ')</a></p>' +
+                    '<div style="min-height: 110px" class="persondroptarget ' + extraclasses + '" data-person="' + p.ID + '">' +
+                    fh.join("\n") +
+                    '</div>');
+            });
+
+            // Load the whole thing into the DOM
+            $("#viewcontainer").html(h.join("\n"));
+
+            if (config.bool("ShelterViewDragDrop") && !asm.mobileapp) {
+                $(".animaldragtarget").draggable();
+                $(".persondroptarget").droppable({
+                    over: function(event, ui) {
+                        $(this).addClass("transparent");
+                    },
+                    out: function(event, ui) {
+                        $(this).removeClass("transparent");
+                    },
+                    drop: function(event, ui) {
+                        var personid = $(this).attr("data-person");
+                        var animalid = $(ui.draggable).attr("data");
+                        var droptarget = $(this);
+                        header.show_loading(_("Moving..."));
+                        common.ajax_post("shelterview", "mode=movefoster&personid=" + personid + "&animalid=" + animalid)
+                            .always(function() {
+                                $.each(controller.animals, function(i, a) {
+                                    if (a.ID == animalid) {
+                                        a.CURRENTOWNERID = personid;
+                                        return false;
+                                    }
+                                });
+                                shelterview.reload();
+                            });
+                    }
+                });
+            }
         },
 
         /**
@@ -213,7 +268,7 @@ $(function() {
                         h.push('<div>');
                     }
                 }
-                h.push(shelterview.render_animal(a, true));
+                h.push(shelterview.render_animal(a, true, !a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0));
                 runningtotal += 1;
             });
             if (lastgrp != "") { 
@@ -285,7 +340,7 @@ $(function() {
                 this.render_view("ENTRYREASONNAME", "ENTRYREASONNAME,ANIMALNAME", false, false);
             }
             else if (viewmode == "fosterer") {
-                this.render_view("CURRENTOWNERNAME", "CURRENTOWNERNAME,ANIMALNAME", false, false);
+                this.render_foster_available();
             }
             else if (viewmode == "location") {
                 this.render_view("DISPLAYLOCATIONNAME", "DISPLAYLOCATIONNAME,ANIMALNAME", true, false);

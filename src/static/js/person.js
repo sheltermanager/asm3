@@ -194,6 +194,10 @@ $(function() {
                 '<td><label for="membershipexpires">' + _("Membership Expiry") + '</label></td>',
                 '<td><input type="textbox" id="membershipexpires" data-json="MEMBERSHIPEXPIRYDATE" data-post="membershipexpires" title="' + html.title(_("If this person is a member, the date that membership expires.")) + '" class="asm-textbox asm-datebox" /></td>',
                 '</tr>',
+                '<tr>',
+                '<td><label for="fostercapacity">' + _("Foster Capacity") + '</label></td>',
+                '<td><input type="textbox" id="fostercapacity" data-json="FOSTERCAPACITY" data-post="fostercapacity" title="' + html.title(_("If this person is a fosterer, the maximum number of animals they can care for.")) + '" class="asm-textbox asm-numberbox" /></td>',
+                '</tr>',
                 '</table>',
                 '</td>',
                 '<td>',
@@ -640,6 +644,13 @@ $(function() {
                 $("#flags").change();
             };
 
+            var set_fosterer_flag = function() {
+                if (format.to_int($("#fostercapacity").val())) {
+                    $("#flags option[value='fosterer']").prop("selected", "selected");
+                    $("#flags").change();
+                }
+            };
+
             $("#homecheckedby").personchooser().bind("personchooserchange", function(event, rec) {
                 set_homechecked_flag();
             });
@@ -651,6 +662,7 @@ $(function() {
             $("#homechecked").change(set_homechecked_flag);
             $("#membershipnumber").keyup(set_membership_flag).change(set_membership_flag);
             $("#membershipexpires").change(set_membership_flag);
+            $("#fostercapacity").keyup(set_fosterer_flag).change(set_fosterer_flag);
 
             $("#flags").change(function() {
                 // if the member flag is selected and membership number is blank,
