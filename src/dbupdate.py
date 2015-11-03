@@ -2462,10 +2462,14 @@ def diagnostic(dbo):
 
     return {
         "orphaned adoptions": orphan("adoption", "animal", "adoption.AnimalID", "animal.ID"),
-        "orphaned vacc": orphan("animalvaccination", "animal", "animalvaccination.AnimalID", "animal.ID"),
-        "orphaned tests": orphan("animaltest", "animal", "animaltest.AnimalID", "animal.ID"),
+        "orphaned found animals": orphan("animalfound", "owner", "animalfound.OwnerID", "owner.ID"),
+        "orphaned lost animals": orphan("animallost", "owner", "animallost.OwnerID", "owner.ID"),
         "orphaned medical": orphan("animalmedical", "animal", "animalmedical.AnimalID", "animal.ID"),
+        "orphaned payments": orphan("ownerdonation", "owner", "ownerdonation.OwnerID", "owner.ID"),
+        "orphaned tests": orphan("animaltest", "animal", "animaltest.AnimalID", "animal.ID"),
         "orphaned treatments": orphan("animalmedicaltreatment", "animal", "animalmedicaltreatment.AnimalID", "animal.ID"),
+        "orphaned vacc": orphan("animalvaccination", "animal", "animalvaccination.AnimalID", "animal.ID"),
+        "orphaned waiting list animals": orphan("animalwaitinglist", "owner", "animalwaitinglist.OwnerID", "owner.ID"),
         "duplicate preferred images": mediapref()
     }
 
