@@ -1243,6 +1243,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "Torbie=Domestic Shorthair\n" \
             "Tortoiseshell=Domestic Shorthair\n" \
             "Tuxedo=Domestic Shorthair\n" \
+            "Chinchilla=Chinchilla, Standard\n" \
             "English Lop=Lop, English\n" \
             "French-Lop=Lop, French\n" \
             "Hotot=Blanc de Hotot\n" \
@@ -1340,6 +1341,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "Torbie=Domestic Shorthair\n" \
             "Tortoiseshell=Domestic Shorthair\n" \
             "Tuxedo=Domestic Shorthair\n" \
+            "Chinchilla=Chinchilla, Standard\n" \
             "English Lop=Lop, English\n" \
             "French-Lop=Lop, French\n" \
             "Hotot=Blanc de Hotot\n" \
