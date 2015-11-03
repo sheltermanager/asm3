@@ -568,6 +568,7 @@ class Report:
     queries = []
     params = []
     title = ""
+    category = ""
     sql = ""
     html = ""
     omitCriteria = False
@@ -592,6 +593,7 @@ class Report:
 
         r = rs[0]
         self.title = r["TITLE"]
+        self.category = r["CATEGORY"]
         self.html = r["HTMLBODY"]
         self.sql = r["SQLCOMMAND"]
         self.omitCriteria = r["OMITCRITERIA"] > 0
@@ -969,6 +971,7 @@ class Report:
         """
         l = self.dbo.locale
         s = s.replace("$$TITLE$$", self.title)
+        s = s.replace("$$CATEGORY$$", self.category)
         s = s.replace("$$DATE$$", i18n.python2display(l, i18n.now(self.dbo.timezone)))
         s = s.replace("$$TIME$$", i18n.format_time_now(self.dbo.timezone))
         s = s.replace("$$DATETIME$$", i18n.python2display(l, i18n.now(self.dbo.timezone)) + " " + i18n.format_time_now(self.dbo.timezone))

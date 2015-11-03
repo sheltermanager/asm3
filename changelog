@@ -1,6 +1,7 @@
 37
 ================
 
+03/11/15 Add $$CATEGORY$$ header/footer key for reports
 03/11/15 Fix standard "chinchilla" rabbit breed to standard for adoptapet
 03/11/15 Foster capacity and new shelterview fosterer mode/dnd #159
 03/11/15 Active users with last access time now completely accurate #295
