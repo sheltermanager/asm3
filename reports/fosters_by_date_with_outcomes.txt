@@ -13,11 +13,16 @@ a.AnimalName, a.ShelterCode, a.DateOfBirth,
 e.ReasonName, o.OwnerName, m.MovementDate,
 a.NeuteredDate,
 CASE WHEN a.DeceasedDate Is Not Null THEN 'Died' WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType = 1 THEN 'Adopted' ELSE 'None' END AS OutcomeName,
-CASE WHEN a.DeceasedDate Is Not Null THEN a.DeceasedDate WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType = 1 THEN a.ActiveMovementDate ELSE Null END AS OutcomeDate
+CASE WHEN a.DeceasedDate Is Not Null THEN a.DeceasedDate WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType = 1 THEN a.ActiveMovementDate ELSE Null END AS OutcomeDate,
+no.OwnerName AS OutcomePerson, no.OwnerAddress AS OutcomeAddress, no.OwnerTown AS OutcomeTown, no.OwnerCounty AS OutcomeCounty,
+no.OwnerPostcode AS OutcomePostcode, no.HomeTelephone AS OutcomeHomeTelephone, no.WorkTelephone AS OutcomeWorkTelephone,
+no.MobileTelephone AS OutcomeMobileTelephone, no.EmailAddress AS OutcomeEmail
 FROM animal a
 INNER JOIN adoption m ON m.AnimalID = a.ID
 INNER JOIN owner o ON m.OwnerID = o.ID 
 INNER JOIN entryreason e ON a.EntryReasonID = e.ID 
+LEFT OUTER JOIN adoption ma ON ma.ID = a.ActiveMovementID
+LEFT OUTER JOIN owner no ON no.ID = ma.OwnerID
 WHERE m.MovementType = 2 AND m.MovementDate >= '$ASK DATE Enter from date$' AND m.MovementDate <= '$ASK DATE Enter to date$' 
 ORDER BY m.MovementDate
 ###
@@ -33,6 +38,7 @@ $$HEADER
 <th>Neutered/Spayed</th>
 <th>Outcome</th>
 <th>Outcome date</th>
+<th>Outcome person</th>
 </tr>
 HEADER$$
 
@@ -47,6 +53,11 @@ $$BODY
 <td>$NEUTEREDDATE</td>
 <td>$OUTCOMENAME</td>
 <td>$OUTCOMEDATE</td>
+<td><b>$OUTCOMEPERSON</b><br/>
+$OUTCOMEADDRESS<br/>
+$OUTCOMETOWN $OUTCOMECOUNTY $OUTCOMEPOSTCODE<br/>
+$OUTCOMEHOMETELEPHONE $OUTCOMEWORKTELEPHONE $OUTCOMEMOBILETELEPHONE
+<i>$OUTCOMEEMAIL</i></td>
 </tr>
 BODY$$
 
