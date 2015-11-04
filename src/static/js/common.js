@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, console, jQuery, Mousetrap, Path */
+/*global $, console, jQuery, Modernizr, Mousetrap, Path */
 /*global alert, asm, atob, btoa, header, _, escape, unescape */
 /*global consts: true, common: true, config: true, controller: true, dlgfx: true, format: true, html: true, log: true, validate: true */
 
@@ -73,14 +73,12 @@
             return text;
         },
 
-        /** Verifies this browser has all the features needed to run
-         * asm. If it does not, it redirects to the unsupported_feature
-         * page passing the list of features required and supported.
+        /** Verifies this browser has one or more Modernizr features and if it does
+         *  not, sends it off to an unsupported feature page with the missing
+         *  feature and what the browser returned.
+         *  Eg: common.check_browser_has("history hashchange json")
          */
-        check_browser_features: function() {
-            var required = "canvas checked contenteditable cookies " +
-                           "history json localstorage opacity";
-            // svgasimg removed temporarily due to iOS9.1/iPad problems
+        check_browser_has: function(required) {
             var blist = [];
             $.each($("html").prop("class").split(" "), function(i, v) {
                 if (v.indexOf("no-") == -1) { blist.push(v); }
@@ -378,8 +376,13 @@
             // We're sending everything to server, reload the page
             if (common.route_mode == "server" || forceserver) { window.location.reload(); return; }
 
+            // If the browser doesn't support the history api, reload the page
+            // as Path.reload does not work with hash changes.
+            if (!Modernizr.history) { window.location.reload(); return; }
+
             // Reload the current route on the client
             Path.reload();
+
         },
 
         /** Loaded modules */
@@ -2178,19 +2181,14 @@
 
 $(function() {
 
-    // check our browser is capable before we even start
-    common.check_browser_features();
-
     // add a class to the html element for desktop or mobile
     // this allows asm.css to change some elements if it is running
     // inside the mobile app context
     if (typeof asm !== "undefined" && asm.mobileapp) { 
-        $("html").removeClass("desktop");
-        $("html").addClass("mobile"); 
+        $("html").removeClass("desktop").addClass("mobile");
     }
     else { 
-        $("html").removeClass("mobile");
-        $("html").addClass("desktop"); 
+        $("html").removeClass("mobile").addClass("desktop");
     }
 
     // Prevent annoying Firefox errors where it tries to parse all

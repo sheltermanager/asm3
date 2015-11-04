@@ -1,6 +1,8 @@
 37
 ================
 
+04/11/15 There's no need to exclude MSIE9 as it has features needed
+04/11/15 Remove modernizr feature gate as async tests checked too early
 04/11/15 Allow shelter view to group by pickup location
 04/11/15 Include movement attached to selected donation on receipt document
 04/11/15 Include last movement tags for person document
