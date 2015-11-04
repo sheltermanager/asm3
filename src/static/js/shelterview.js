@@ -137,7 +137,7 @@ $(function() {
          * Renders a specialised shelter view that shows all fosterers with their
          * capacity and allows dragging/dropping between fosterers.
          */
-        render_foster_available: function() {
+        render_foster_available: function(activeonly) {
             var h = [];
             $.each(controller.fosterers, function(ip, p) {
                 // Output the fosterers
@@ -150,6 +150,7 @@ $(function() {
                     fh.push(shelterview.render_animal(a, true, a.ACTIVEMOVEMENTTYPE == 2));
                 });
                 if (nofosters < p.FOSTERCAPACITY) { extraclasses = "asm-shelterview-unit-available"; }
+                if (nofosters == 0 && activeonly) { return; }
                 h.push('<p class="asm-menu-category"><a href="' + loclink + '">' + 
                     p.OWNERNAME + ' (' + nofosters + '/' + p.FOSTERCAPACITY + ')</a></p>' +
                     '<div style="min-height: 110px" class="persondroptarget ' + extraclasses + '" data-person="' + p.ID + '">' +
@@ -342,6 +343,9 @@ $(function() {
             else if (viewmode == "fosterer") {
                 this.render_foster_available();
             }
+            else if (viewmode == "fostereractive") {
+                this.render_foster_available(true);
+            }
             else if (viewmode == "location") {
                 this.render_view("DISPLAYLOCATIONNAME", "DISPLAYLOCATIONNAME,ANIMALNAME", true, false);
             }
@@ -386,6 +390,7 @@ $(function() {
             h.push('<select id="viewmode" style="float: right;" class="asm-selectbox">');
             h.push('<option value="entrycategory">' + _("Entry Category") + '</option>');
             h.push('<option value="fosterer">' + _("Fosterer") + '</option>');
+            h.push('<option value="fostereractive">' + _("Fosterer (Active Only)") + '</option>');
             h.push('<option value="location">' + _("Location") + '</option>');
             h.push('<option value="locationspecies">' + _("Location and Species") + '</option>');
             h.push('<option value="locationunit">' + _("Location and Unit") + '</option>');

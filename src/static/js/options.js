@@ -940,6 +940,7 @@ $(function() {
                 '<select id="shelterviewdefault" class="asm-selectbox" data="ShelterViewDefault">',
                 '<option value="entrycategory">' + _("Entry Category") + '</option>',
                 '<option value="fosterer">' + _("Fosterer") + '</option>',
+                '<option value="fostereractive">' + _("Fosterer (Active Only)") + '</option>',
                 '<option value="location">' + _("Location") + '</option>',
                 '<option value="locationspecies">' + _("Location and Species") + '</option>',
                 '<option value="locationunit">' + _("Location and Unit") + '</option>',

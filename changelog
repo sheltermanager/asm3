@@ -1,6 +1,7 @@
 37
 ================
 
+04/11/15 Shelter view for only active fosterers
 04/11/15 Fix bug with ANIMALNEUTERED csv import column
 04/11/15 Fix uploading dialog hanging around on drag/drop file error
 04/11/15 Use modernizr for todataurljpeg instead of Safari 5 tests

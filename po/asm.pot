@@ -4680,6 +4680,10 @@ msgstr ""
 msgid "Fosterer"
 msgstr ""
 
+#: shelterview.js options.js
+msgid "Fosterer (Active Only)"
+msgstr ""
+
 #: header_edit_header.js search.js
 msgid "Found"
 msgstr ""
@@ -7796,7 +7800,8 @@ msgstr ""
 msgid "Pickup"
 msgstr ""
 
-#: incident.js incident_new.js animal.js incident_find.js
+#: shelterview.js incident.js incident_new.js animal.js incident_find.js
+#: options.js
 msgid "Pickup Location"
 msgstr ""
 
