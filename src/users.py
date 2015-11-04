@@ -404,6 +404,7 @@ def update_user_activity(dbo, user, timenow = True):
     If timenow is True, updates this user's last activity time to now.
     If timenow is False, removes this user from the active list.
     """
+    if dbo is None or user is None: return
     cachekey = "%s_activity" % dbo.database
     ac = utils.nulltostr(cachemem.get(cachekey))
     # First remove the current user from the set

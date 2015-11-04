@@ -12,13 +12,19 @@ SELECT
 a.AnimalName, a.ShelterCode, a.DateOfBirth,
 e.ReasonName, o.OwnerName, m.MovementDate,
 a.NeuteredDate,
-CASE WHEN a.DeceasedDate Is Not Null THEN 'Died' WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType = 1 THEN 'Adopted' ELSE 'None' END AS OutcomeName,
-CASE WHEN a.DeceasedDate Is Not Null THEN a.DeceasedDate WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType = 1 THEN a.ActiveMovementDate ELSE Null END AS OutcomeDate
+CASE WHEN a.DeceasedDate Is Not Null THEN 'Died' WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType > 0 THEN mt.MovementType ELSE 'None' END AS OutcomeName,
+CASE WHEN a.DeceasedDate Is Not Null THEN a.DeceasedDate WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType = 1 THEN a.ActiveMovementDate ELSE Null END AS OutcomeDate,
+no.OwnerName AS OutcomePerson, no.OwnerAddress AS OutcomeAddress, no.OwnerTown AS OutcomeTown, no.OwnerCounty AS OutcomeCounty,
+no.OwnerPostcode AS OutcomePostcode, no.HomeTelephone AS OutcomeHomeTelephone, no.WorkTelephone AS OutcomeWorkTelephone,
+no.MobileTelephone AS OutcomeMobileTelephone, no.EmailAddress AS OutcomeEmail
 FROM animal a
 INNER JOIN adoption m ON m.AnimalID = a.ID
 INNER JOIN owner o ON m.OwnerID = o.ID 
 INNER JOIN entryreason e ON a.EntryReasonID = e.ID 
-WHERE m.MovementType = 2 AND m.MovementDate >= '$ASK DATE Enter from date$' AND m.MovementDate <= '$ASK DATE Enter to date$' 
+LEFT OUTER JOIN lksmovementtype mt ON a.ActiveMovementType = mt.ID
+LEFT OUTER JOIN adoption ma ON ma.ID = a.ActiveMovementID
+LEFT OUTER JOIN owner no ON no.ID = ma.OwnerID
+WHERE m.MovementType = 2 AND a.ActiveMovementType <> 2 AND m.MovementDate >= '$ASK DATE Enter from date$' AND m.MovementDate <= '$ASK DATE Enter to date$' 
 ORDER BY m.MovementDate
 ###
 $$HEADER
@@ -33,6 +39,7 @@ $$HEADER
 <th>Neutered/Spayed</th>
 <th>Outcome</th>
 <th>Outcome date</th>
+<th>Outcome person</th>
 </tr>
 HEADER$$
 
@@ -47,9 +54,86 @@ $$BODY
 <td>$NEUTEREDDATE</td>
 <td>$OUTCOMENAME</td>
 <td>$OUTCOMEDATE</td>
+<td><b>$OUTCOMEPERSON</b><br/>
+$OUTCOMEADDRESS<br/>
+$OUTCOMETOWN $OUTCOMECOUNTY $OUTCOMEPOSTCODE<br/>
+$OUTCOMEHOMETELEPHONE $OUTCOMEWORKTELEPHONE $OUTCOMEMOBILETELEPHONE
+<i>$OUTCOMEEMAIL</i></td>
 </tr>
 BODY$$
 
 $$FOOTER
 </table>
+FOOTER$$
+&&&
+Fosters by Date and Fosterer with Outcomes
+###
+Auditing
+###
+Any
+###
+Foster animals between two dates with their final outcomes by fosterer
+###
+en
+###
+SELECT
+a.AnimalName, a.ShelterCode, a.DateOfBirth,
+e.ReasonName, o.OwnerName, m.MovementDate,
+a.NeuteredDate,
+CASE WHEN a.DeceasedDate Is Not Null THEN 'Died' WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType > 0 THEN mt.MovementType ELSE 'None' END AS OutcomeName,
+CASE WHEN a.DeceasedDate Is Not Null THEN a.DeceasedDate WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType = 1 THEN a.ActiveMovementDate ELSE Null END AS OutcomeDate,
+no.OwnerName AS OutcomePerson, no.OwnerAddress AS OutcomeAddress, no.OwnerTown AS OutcomeTown, no.OwnerCounty AS OutcomeCounty,
+no.OwnerPostcode AS OutcomePostcode, no.HomeTelephone AS OutcomeHomeTelephone, no.WorkTelephone AS OutcomeWorkTelephone,
+no.MobileTelephone AS OutcomeMobileTelephone, no.EmailAddress AS OutcomeEmail
+FROM animal a
+INNER JOIN adoption m ON m.AnimalID = a.ID
+INNER JOIN owner o ON m.OwnerID = o.ID 
+INNER JOIN entryreason e ON a.EntryReasonID = e.ID 
+LEFT OUTER JOIN lksmovementtype mt ON a.ActiveMovementType = mt.ID
+LEFT OUTER JOIN adoption ma ON ma.ID = a.ActiveMovementID
+LEFT OUTER JOIN owner no ON no.ID = ma.OwnerID
+WHERE m.MovementType = 2 AND a.ActiveMovementType <> 2 AND m.MovementDate >= '$ASK DATE Enter from date$' AND m.MovementDate <= '$ASK DATE Enter to date$' 
+ORDER BY m.MovementDate
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_OwnerName
+$$HEAD
+<table border="1">
+<tr>
+<th>Animal</th>
+<th>Code</th>
+<th>DOB</th>
+<th>Entry category</th>
+<th>Foster Date</th>
+<th>Neutered/Spayed</th>
+<th>Outcome</th>
+<th>Outcome date</th>
+<th>Outcome person</th>
+</tr>
+$$FOOT
+</table>
+<h2>Total $OwnerName: {COUNT.OwnerName}</h2>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$ANIMALNAME</td>
+<td>$SHELTERCODE</td>
+<td>$DATEOFBIRTH</td>
+<td>$REASONNAME</td>
+<td>$MOVEMENTDATE</td>
+<td>$NEUTEREDDATE</td>
+<td>$OUTCOMENAME</td>
+<td>$OUTCOMEDATE</td>
+<td><b>$OUTCOMEPERSON</b><br/>
+$OUTCOMEADDRESS<br/>
+$OUTCOMETOWN $OUTCOMECOUNTY $OUTCOMEPOSTCODE<br/>
+$OUTCOMEHOMETELEPHONE $OUTCOMEWORKTELEPHONE $OUTCOMEMOBILETELEPHONE
+<i>$OUTCOMEEMAIL</i></td>
+</tr>
+BODY$$
+
+$$FOOTER
 FOOTER$$

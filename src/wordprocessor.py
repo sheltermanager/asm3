@@ -885,6 +885,10 @@ def generate_person_doc(dbo, template, personid, username):
     if p is None: raise utils.ASMValidationError("%d is not a valid person ID" % personid)
     tags = person_tags(dbo, p)
     tags = append_tags(tags, org_tags(dbo, username))
+    m = movement.get_person_movements(dbo, personid)
+    if len(m) > 0: 
+        tags = append_tags(tags, movement_tags(dbo, m[0]))
+        tags = append_tags(tags, animal_tags(dbo, animal.get_animal(dbo, m[0]["ANIMALID"])))
     return substitute_template(dbo, template, tags, im)
 
 def generate_donation_doc(dbo, template, donationids, username):
@@ -900,6 +904,8 @@ def generate_donation_doc(dbo, template, donationids, username):
     tags = person_tags(dbo, person.get_person(dbo, d["OWNERID"]))
     if d["ANIMALID"] is not None and d["ANIMALID"] != 0:
         tags = append_tags(tags, animal_tags(dbo, animal.get_animal(dbo, d["ANIMALID"])))
+    if d["MOVEMENTID"] is not None and d["MOVEMENTID"] != 0:
+        tags = append_tags(tags, movement_tags(dbo, movement.get_movement(dbo, d["MOVEMENTID"])))
     tags = append_tags(tags, donation_tags(dbo, dons))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, template, tags)
