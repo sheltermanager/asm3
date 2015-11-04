@@ -109,12 +109,20 @@ def gkb(m, f):
     return True
 
 def gkbi(m, f):
-    """ reads boolean field f from map m, returning 1
-        for true, 0 for false """
+    """ reads boolean field f from map m, returning 1 for yes or 0 for no """
     if gkb(m,f):
-        return 1
+        return "1"
     else:
-        return 0
+        return "0"
+
+
+def gkbc(m, f):
+    """ reads boolean field f from map m, returning a fake checkbox 
+        field of blank for no, "on" for yes """
+    if gkb(m,f):
+        return "on"
+    else:
+        return ""
 
 def gkynu(m, f):
     """ reads field f from map m, returning a tri-state
@@ -320,9 +328,9 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
                 a["dateofbirth"] = "" # if we had an age and dob was blank, prefer the age
             a["datebroughtin"] = gkd(dbo, row, "ANIMALENTRYDATE", True)
             a["deceaseddate"] = gkd(dbo, row, "ANIMALDECEASEDDATE")
-            a["neutered"] = gkbi(row, "ANIMALNEUTERED")
+            a["neutered"] = gkbc(row, "ANIMALNEUTERED")
             a["neutereddate"] = gkd(dbo, row, "ANIMALNEUTEREDDATE")
-            if a["neutereddate"] != "": a["neutered"] = 1
+            if a["neutereddate"] != "": a["neutered"] = "on"
             a["microchipnumber"] = gks(row, "ANIMALMICROCHIP")
             if a["microchipnumber"] != "": a["microchipped"] = 1
             # If an original owner is specified, create a person record
