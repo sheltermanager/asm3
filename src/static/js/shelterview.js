@@ -351,6 +351,9 @@ $(function() {
             else if (viewmode == "locationunit") {
                 this.render_units_available();
             }
+            else if (viewmode == "pickuplocation") {
+                this.render_view("PICKUPLOCATIONNAME", "PICKUPLOCATIONNAME,ANIMALNAME", false, false);
+            }
             else if (viewmode == "species") {
                 this.render_view("SPECIESNAME", "SPECIESNAME,ANIMALNAME", false, false);
             }
@@ -386,6 +389,7 @@ $(function() {
             h.push('<option value="location">' + _("Location") + '</option>');
             h.push('<option value="locationspecies">' + _("Location and Species") + '</option>');
             h.push('<option value="locationunit">' + _("Location and Unit") + '</option>');
+            h.push('<option value="pickuplocation">' + _("Pickup Location") + '</option>');
             h.push('<option value="species">' + _("Species") + '</option>');
             h.push('<option value="status">' + _("Status") + '</option>');
             h.push('<option value="type">' + _("Type") + '</option>');

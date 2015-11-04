@@ -943,6 +943,7 @@ $(function() {
                 '<option value="location">' + _("Location") + '</option>',
                 '<option value="locationspecies">' + _("Location and Species") + '</option>',
                 '<option value="locationunit">' + _("Location and Unit") + '</option>',
+                '<option value="pickuplocation">' + _("Pickup Location") + '</option>',
                 '<option value="species">' + _("Species") + '</option>',
                 '<option value="status">' + _("Status") + '</option>',
                 '<option value="type">' + _("Type") + '</option>',
