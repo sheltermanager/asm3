@@ -903,6 +903,7 @@
         this.each(function() {
             var t = $(this);
             if (t.attr("data-zoom")) { return; }
+            if (!t.attr("id")) { return; }
             t.attr("data-zoom", "true");
             var zbid = t.attr("id") + "-zb";
             t.wrap("<span style='white-space: nowrap'></span>");
@@ -979,14 +980,14 @@
     // Helper to disable jquery ui dialog buttons
     $.fn.disable_dialog_buttons = function() {
         this.each(function() {
-            $(this).parent().find("button").button("disable");
+            $(this).parent().find(".ui-dialog-buttonset button").button("disable");
         });
     };
 
     // Helper to enable jquery ui dialog buttons
     $.fn.enable_dialog_buttons = function() {
         this.each(function() {
-            $(this).parent().find("button").button("enable");
+            $(this).parent().find(".ui-dialog-buttonset button").button("enable");
         });
     };
 

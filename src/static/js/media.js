@@ -509,7 +509,10 @@ $(function() {
 
             $(".asm-tabbar").asmtabs();
             $("#tipattach").show();
-            $("#signature").signature({ guideline: true });
+
+            if (Modernizr.canvas) {
+                $("#signature").signature({ guideline: true });
+            }
 
             $(".asm-mediaicons").on("change", "input[type='checkbox']", function() {
 
@@ -756,6 +759,11 @@ $(function() {
                 $("#button-new").button("option", "disabled", true);
             }
 
+            // If this browser doesn't support canvas, hide the sign on screen link
+            if (!Modernizr.canvas) {
+                $("#button-signscreen").hide();
+            }
+
             $("#button-web").button({disabled: true}).click(function() {
                 $("#button-web").button("disable");
                 var formdata = "mode=web&ids=" + $(".asm-mediaicons input").tableCheckedData();
@@ -825,7 +833,6 @@ $(function() {
                     });
                 return false;
             });
-
 
             $("#button-signscreen").click(function() {
                 $("#button-sign").asmmenu("hide_all");
