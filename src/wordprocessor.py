@@ -888,6 +888,7 @@ def generate_person_doc(dbo, template, personid, username):
     m = movement.get_person_movements(dbo, personid)
     if len(m) > 0: 
         tags = append_tags(tags, movement_tags(dbo, m[0]))
+        tags = append_tags(tags, animal_tags(dbo, animal.get_animal(dbo, m[0]["ANIMALID"])))
     return substitute_template(dbo, template, tags, im)
 
 def generate_donation_doc(dbo, template, donationids, username):
