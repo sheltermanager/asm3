@@ -78,7 +78,7 @@
          * page passing the list of features required and supported.
          */
         check_browser_features: function() {
-            var required = "boxshadow canvas checked contenteditable cookies " +
+            var required = "canvas checked contenteditable cookies " +
                            "history json localstorage opacity";
             // svgasimg removed temporarily due to iOS9.1/iPad problems
             var blist = [];
