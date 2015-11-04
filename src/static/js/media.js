@@ -180,9 +180,9 @@ $(function() {
             var h = [];
             h.push('<div class="asm-mediaicons">');
 
-            // Show our drag and drop target for uploading files if the FileReader API is available
+            // Show our drag and drop target for uploading files if the right APIs are available
             // and we're not in mobile app mode
-            if (Modernizr.filereader && !asm.mobileapp) {
+            if (Modernizr.canvas && Modernizr.filereader && Modernizr.todataurljpeg && !asm.mobileapp) {
                 h.push('<div class="asm-mediadroptarget"><p>' + _("Drop files here...") + '</p></div>');
             }
 
@@ -277,7 +277,7 @@ $(function() {
          */
         attach_files: function(files) {
             var i = 0, promises = [];
-            if (!Modernizr.filereader) { return; }
+            if (!Modernizr.filereader || !Modernizr.canvas || !Modernizr.todataurljpeg) { return; }
             header.show_loading(_("Uploading..."));
             for (i = 0; i < files.length; i += 1) {
                 promises.push(media.attach_file(files[i])); 
@@ -289,7 +289,7 @@ $(function() {
         },
 
         /**
-         * Uploads a single file using the HTML5 file APIs. 
+         * Uploads a single file using the FileReader API. 
          * If the file is an image, scales it down first.
          * returns a promise.
          */
@@ -304,7 +304,7 @@ $(function() {
             if ( !media.is_extension(file.name, "jpg") && !media.is_extension(file.name, "jpeg") && 
                  !media.is_extension(file.name, "pdf") && !media.is_extension(file.name, "html") ) {
                 header.show_error(_("Only PDF, HTML and JPG image files can be attached."));
-                deferred.reject();
+                deferred.resolve();
                 return deferred.promise();
             }
 
@@ -347,17 +347,7 @@ $(function() {
                     ctx.drawImage(img, 0, 0, img_width, img_height);
                     var finalfile = canvas.toDataURL("image/jpeg");
 
-                    // Older versions of Chrome, Chromium and Android < 3.2 
-                    // cannot encode canvas as a jpeg. If we detect that's
-                    // happened, just use the original file contents for
-                    // scaling on the server instead.
-                    if (finalfile == "data:,") {
-                        log.error("Failed exporting scaled canvas as image/jpeg, " +
-                            "this is a Chromium and Android Browser < 3.2 problem, sending full file data instead");
-                        finalfile = filedata;
-                    }
-
-                    // Post the scaled image via AJAX
+                    // Post the scaled image
                     var formdata = "linkid=" + controller.linkid + "&linktypeid=" + controller.linktypeid + 
                         "&comments=" + encodeURIComponent(comments) + 
                         "&filename=" + encodeURIComponent(file.name) +
@@ -434,8 +424,8 @@ $(function() {
             }
         },
 
-        /** Posts the image back to the server. If HTML5 File APIs are available,
-           uses a Canvas to scale the image first. */
+        /** Posts the file back to the server. If the option is on and we have the
+         *  relevant HTML5 APIs and this is a jpeg image, scales it first */
         post_file: function() {
             
             // If we don't have a file, fail validation
@@ -451,12 +441,6 @@ $(function() {
 
             $("#dialog-add").disable_dialog_buttons();
 
-            // If we don't support the HTML5 FileReader APIs, fall back gracefully
-            if (!Modernizr.filereader) { 
-                $("#addform").submit();
-                return;
-            }
-
             // Grab the selected file
             var selectedfile = $("#filechooser")[0].files[0];
 
@@ -466,9 +450,16 @@ $(function() {
                 return;
             }
 
-            // If the config option is on to disable HTML5 
-            // client side scaling, do the normal post instead
+            // If the config option is on to disable 
+            // client side scaling, do the normal form post instead
             if (config.bool("DontUseHTML5Scaling")) {
+                $("#addform").submit();
+                return;
+            }
+
+            // We need the right APIs to scale an image, if we don't
+            // have them just send the file to the backend
+            if (!Modernizr.filereader || !Modernizr.canvas || !Modernizr.todataurljpeg) { 
                 $("#addform").submit();
                 return;
             }

@@ -1,6 +1,8 @@
 37
 ================
 
+04/11/15 Fix uploading dialog hanging around on drag/drop file error
+04/11/15 Use modernizr for todataurljpeg instead of Safari 5 tests
 04/11/15 There's no need to exclude MSIE9 as it has features needed
 04/11/15 Remove modernizr feature gate as async tests checked too early
 04/11/15 Allow shelter view to group by pickup location
