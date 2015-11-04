@@ -977,6 +977,10 @@ msgstr ""
 msgid "Already Signed"
 msgstr ""
 
+#: movement.py
+msgid "Already fostered to this person."
+msgstr ""
+
 #: animal_new.js animal.js animal_find_results.js animal_bulk.js html.py
 msgid "Altered"
 msgstr ""
@@ -12175,7 +12179,7 @@ msgstr ""
 msgid "You must supply a code."
 msgstr ""
 
-#: media.js mobile.py
+#: mobile.py
 msgid "You will need to upgrade to iOS 6 or higher to upload files."
 msgstr ""
 

@@ -1,6 +1,6 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, edit_header, format, header, html, log, tableform, validate */
-/*global escape, FileReader */
+/*global escape, FileReader, Modernizr */
 
 $(function() {
 
@@ -12,11 +12,6 @@ $(function() {
                 '<div id="tipattach" class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
                 '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
                 _("Please select a PDF, HTML or JPG image file to attach"),
-                '</p>',
-                '</div>',
-                '<div id="tipios6" class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
-                '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>',
-                _("You will need to upgrade to iOS 6 or higher to upload files."),
                 '</p>',
                 '</div>',
                 '<form id="addform" method="post" enctype="multipart/form-data" action="' + controller.name + '">',
@@ -185,9 +180,9 @@ $(function() {
             var h = [];
             h.push('<div class="asm-mediaicons">');
 
-            // Show our drag and drop target for uploading files if the HTML5 File API is available
+            // Show our drag and drop target for uploading files if the FileReader API is available
             // and we're not in mobile app mode
-            if (media.html5_file_api() && !asm.mobileapp) {
+            if (Modernizr.filereader && !asm.mobileapp) {
                 h.push('<div class="asm-mediadroptarget"><p>' + _("Drop files here...") + '</p></div>');
             }
 
@@ -276,26 +271,13 @@ $(function() {
             return h.join("\n");
         },
 
-        /** Returns true if the html5 file api is available */
-        html5_file_api: function() {
-            if (!window.File && !window.FileReader && !window.FileList) { return false; }
-            // FileReader isn't supported in Safari below version 6.0, but
-            // the FileReader object/type does exist in Safari 5, so it 
-            // only fails when you try to instantiate one.
-            try { var safaritest = new FileReader(); }
-            catch(ex) {
-                return false;
-            }
-            return true;
-        },
-
         /**
          * Called by our drag/drop upload widget (which only appears if
          * HTML5 File APIs are available
          */
         attach_files: function(files) {
             var i = 0, promises = [];
-            if (!media.html5_file_api()) { return; }
+            if (!Modernizr.filereader) { return; }
             header.show_loading(_("Uploading..."));
             for (i = 0; i < files.length; i += 1) {
                 promises.push(media.attach_file(files[i])); 
@@ -469,8 +451,8 @@ $(function() {
 
             $("#dialog-add").disable_dialog_buttons();
 
-            // If we don't support the HTML5 File APIs, fall back gracefully
-            if (!media.html5_file_api()) { 
+            // If we don't support the HTML5 FileReader APIs, fall back gracefully
+            if (!Modernizr.filereader) { 
                 $("#addform").submit();
                 return;
             }
@@ -536,22 +518,7 @@ $(function() {
 
             $(".asm-tabbar").asmtabs();
             $("#tipattach").show();
-            $("#tipios6").hide();
-
-            try {
-                // Can fail on IE8/9 without canvas support
-                $("#signature").signature({ guideline: true });
-            }
-            catch (excanvas) {
-                log.error("failed creating signature canvas");   
-            }
-
-            // If this is an idevice and the file upload box is
-            // disabled, it needs upgrading to iOS6 or better.
-            if (common.is_idevice() && $("#filechooser").attr("disabled")) {
-                $("#tipattach").hide();
-                $("#tipios6").show();
-            }
+            $("#signature").signature({ guideline: true });
 
             $(".asm-mediaicons").on("change", "input[type='checkbox']", function() {
 
@@ -791,6 +758,11 @@ $(function() {
                 $("#button-web").hide();
                 $("#button-doc").hide();
                 $("#button-video").hide();
+            }
+
+            // If this browser doesn't support fileinput, disable the attach button
+            if (!Modernizr.fileinput) {
+                $("#button-new").button("option", "disabled", true);
             }
 
             $("#button-web").button({disabled: true}).click(function() {
