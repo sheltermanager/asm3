@@ -1,6 +1,8 @@
 37
 ================
 
+04/11/15 Include movement attached to selected donation on receipt document
+04/11/15 Include last movement tags for person document
 03/11/15 Add extra diagnostic orphaned record checks #220
 03/11/15 Add $$CATEGORY$$ header/footer key for reports
 03/11/15 Fix standard "chinchilla" rabbit breed to standard for adoptapet
