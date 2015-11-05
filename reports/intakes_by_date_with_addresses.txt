@@ -22,7 +22,7 @@ INNER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
 INNER JOIN species ON species.ID = animal.SpeciesID
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 LEFT OUTER JOIN owner oo ON animal.OriginalOwnerID = oo.ID
-WHERE DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' ORDER BY DateBroughtIn
+WHERE DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$ 23:59:59' ORDER BY DateBroughtIn
 ###
 $$HEADER
 <table border=1><tr>

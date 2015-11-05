@@ -12,7 +12,7 @@ SELECT AuditDate, UserName, TableName, Description
 FROM audittrail
 WHERE
 UserName LIKE '$ASK STRING Enter a username$' 
-AND AuditDate >= '$ASK DATE Enter the from date$' AND AuditDate <= '$ASK DATE Enter the to date$'
+AND AuditDate >= '$ASK DATE Enter the from date$' AND AuditDate <= '$ASK DATE Enter the to date$ 23:59:59'
 ORDER BY UserName, AuditDate
 ###
 $$HEADER

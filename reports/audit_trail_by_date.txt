@@ -11,7 +11,7 @@ en
 SELECT AuditDate, UserName, TableName, Description
 FROM audittrail
 WHERE
-AuditDate >= '$ASK DATE Enter the from date$' AND AuditDate <= '$ASK DATE Enter the to date$'
+AuditDate >= '$ASK DATE Enter the from date$' AND AuditDate <= '$ASK DATE Enter the to date$ 23:59:59'
 ORDER BY UserName, AuditDate
 ###
 $$HEADER

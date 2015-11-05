@@ -31,7 +31,7 @@ LEFT OUTER JOIN owner o ON m.OwnerID = o.ID
 LEFT OUTER JOIN owner oo ON a.OriginalOwnerID = oo.ID
 LEFT OUTER JOIN owner bo ON a.BroughtInByOwnerID = bo.ID
 INNER JOIN entryreason e ON a.EntryReasonID = e.ID 
-WHERE a.DateBroughtIn >= '$ASK DATE Enter from date$' AND a.DateBroughtIn <= '$ASK DATE Enter to date$'
+WHERE a.DateBroughtIn >= '$ASK DATE Enter from date$' AND a.DateBroughtIn <= '$ASK DATE Enter to date$ 23:59:59'
 AND bo.OwnerPostcode LIKE '%$ASK STRING Enter partial postal code$%'
 AND NonShelterAnimal = 0 
 ORDER BY a.DateBroughtIn

@@ -157,9 +157,10 @@ def get_animalcontrol_find_advanced(dbo, criteria, limit = 0):
 
     def adddate(cfieldfrom, cfieldto, field): 
         if hk(cfieldfrom) and hk(cfieldto): 
+            post.data["dayend"] = "23:59:59"
             c.append("%s >= %s AND %s <= %s" % ( 
-            field, db.dd(display2python(l, crit(cfieldfrom))), 
-            field, db.dd(display2python(l, crit(cfieldto)))))
+                field, post.db_date(cfieldfrom),
+                field, post.db_datetime(cfieldto, "dayend")))
 
     def addcomp(cfield, value, condition):
         if hk(cfield) and crit(cfield) == value: 
