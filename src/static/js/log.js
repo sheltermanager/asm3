@@ -173,12 +173,12 @@ $(function() {
         },
 
         routes: {
-            "animal_log": function() { common.module_loadandstart("log", "animal_log?id=" + this.qs.id); },
-            "foundanimal_log": function() { common.module_loadandstart("log", "foundanimal_log?id=" + this.qs.id); },
-            "incident_log": function() { common.module_loadandstart("log", "incident_log?id=" + this.qs.id); },
-            "lostanimal_log": function() { common.module_loadandstart("log", "lostanimal_log?id=" + this.qs.id); },
-            "person_log": function() { common.module_loadandstart("log", "person_log?id=" + this.qs.id); },
-            "waitinglist_log": function() { common.module_loadandstart("log", "waitinglist_log?id=" + this.qs.id); }
+            "animal_log": function() { common.module_loadandstart("log", "animal_log?" + this.rawqs); },
+            "foundanimal_log": function() { common.module_loadandstart("log", "foundanimal_log?" + this.rawqs); },
+            "incident_log": function() { common.module_loadandstart("log", "incident_log?" + this.rawqs); },
+            "lostanimal_log": function() { common.module_loadandstart("log", "lostanimal_log?" + this.rawqs); },
+            "person_log": function() { common.module_loadandstart("log", "person_log?" + this.rawqs); },
+            "waitinglist_log": function() { common.module_loadandstart("log", "waitinglist_log?" + this.rawqs); }
         }
 
 

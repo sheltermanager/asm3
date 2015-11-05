@@ -1,6 +1,7 @@
 37
 ================
 
+05/11/15 Fix routing bug with log screen that prevented filters working
 04/11/15 Fix for textarea zoom bug when no id attribute is present
 04/11/15 Shelter view for only active fosterers
 04/11/15 Fix bug with ANIMALNEUTERED csv import column
