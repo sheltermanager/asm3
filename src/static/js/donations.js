@@ -140,7 +140,7 @@ $(function() {
                             donations.update_movements(controller.person.ID);
                         }
                         $("#type").select("value", config.integer("AFDefaultDonationType"));
-                        $("#giftaid").select("value", "0");
+                        $("#giftaid").prop("checked", false);
                         $("#receiptnumber").val("");
                         $("#receiptnumber").closest("tr").hide();
                         donations.type_change();
@@ -357,13 +357,13 @@ $(function() {
             $("#person").personchooser().bind("personchooserchange", function(event, rec) {
                 donations.lastperson = rec;
                 donations.update_movements(rec.ID);
-                $("#giftaid").select("value", rec.ISGIFTAID);
+                $("#giftaid").prop("checked", rec.ISGIFTAID == 1);
             });
 
             $("#person").personchooser().bind("personchooserloaded", function(event, rec) {
                 donations.lastperson = rec;
                 if (donations.create_semaphore) {
-                    $("#giftaid").select("value", rec.ISGIFTAID);
+                    $("#giftaid").prop("checked", rec.ISGIFTAID == 1);
                 }
             });
 
