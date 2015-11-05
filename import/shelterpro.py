@@ -140,6 +140,8 @@ for row in canimal:
         if a.Breed2ID == 1: a.Breed2ID = 442
         a.BreedName = "%s / %s" % ( asm.breed_name_for_id(a.BreedID), asm.breed_name_for_id(a.Breed2ID) )
     a.HiddenAnimalDetails = comments
+    # Make everything non-shelter until it's in the shelter file
+    a.NonShelterAnimal = 1
     a.Archived = 1
     # Does this animal have an image? If so, add media/dbfs entries for it
     imdata = None
@@ -227,6 +229,7 @@ for row in cshelter:
         arivdate = asm.getdate_yyyymmdd(row["ARIVDATE"])
         a.ShortCode = asm.fw(row["FIELDCARD"])
         a.ShelterLocationUnit = asm.fw(row["KENNEL"])
+        a.NonShelterAnimal = 0
         if arivdate is not None:
             a.DateBroughtIn = arivdate
             a.generateCode(gettypeletter(a.AnimalTypeID))

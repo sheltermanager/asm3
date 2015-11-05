@@ -89,12 +89,13 @@ def atoi(s):
     except:
         return 0
 
-def csv_to_list(fname, strip = False, remove_control = False):
+def csv_to_list(fname, strip = False, remove_control = False, uppercasekeys = False):
     """
     Reads the csv file fname and returns it as a list of maps 
     with the first row used as the keys.
     strip: If True, removes whitespace from all fields
     remove_control: If True, removes all ascii chars < 32
+    lowercasekeys: If True, runs lower() on headings/map keys
     returns a list of maps
     returns None if the file does not exist
     """
@@ -102,7 +103,6 @@ def csv_to_list(fname, strip = False, remove_control = False):
     o = []
     reader = csv.DictReader(open(fname, "r"))
     for row in reader:
-        o.append(row)
         if strip:
             for k, v in row.iteritems():
                 row[k] = v.strip()
@@ -110,6 +110,9 @@ def csv_to_list(fname, strip = False, remove_control = False):
             for k, v in row.iteritems():
                 v = ''.join(c for c in v if ord(c) >= 32)
                 row[k]= v.strip()
+        if uppercasekeys:
+            row = {k.upper(): v for k, v in row.iteritems()}
+        o.append(row)
     return o
 
 def cint(s):

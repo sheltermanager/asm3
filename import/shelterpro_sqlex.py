@@ -48,7 +48,7 @@ def getdateage(age, arrivaldate):
     """ Returns a date adjusted for age. Age can be one of
         ADULT, PUPPY, KITTEN, SENIOR """
     d = asm.getdate_mmddyy(arrivaldate)
-    if d == None: d = datetime.datetime.today()
+    if d == None: d = asm.now()
     if age == "ADULT":
         d = d - datetime.timedelta(days = 365 * 2)
     if age == "SENIOR":
@@ -95,13 +95,13 @@ o.OwnerSurname = "Other Shelter"
 o.OwnerName = o.OwnerSurname
 
 # Load up data files
-caddress = asm.csv_to_list("%s/address.csv" % PATH)
-caddrlink = asm.csv_to_list("%s/addrlink.csv" % PATH)
-canimal = asm.csv_to_list("%s/animal.csv" % PATH)
-clicense = asm.csv_to_list("%s/license.csv" % PATH)
-cperson = asm.csv_to_list("%s/person.csv" % PATH)
-cshelter = asm.csv_to_list("%s/shelter.csv" % PATH)
-cvacc = asm.csv_to_list("%s/vacc.csv" % PATH)
+caddress = asm.csv_to_list("%s/address.csv" % PATH, uppercasekeys=True, strip=True)
+caddrlink = asm.csv_to_list("%s/addrlink.csv" % PATH, uppercasekeys=True, strip=True)
+canimal = asm.csv_to_list("%s/animal.csv" % PATH, uppercasekeys=True, strip=True)
+clicense = asm.csv_to_list("%s/license.csv" % PATH, uppercasekeys=True, strip=True)
+cperson = asm.csv_to_list("%s/person.csv" % PATH, uppercasekeys=True, strip=True)
+cshelter = asm.csv_to_list("%s/shelter.csv" % PATH, uppercasekeys=True, strip=True)
+cvacc = asm.csv_to_list("%s/vacc.csv" % PATH, uppercasekeys=True, strip=True)
 
 # Start with animals
 for row in canimal:
@@ -120,9 +120,11 @@ for row in canimal:
     a.DateBroughtIn = asm.getdate_mmddyy(row["ADDEDDATETIME"])
     if a.DateBroughtIn is None:
         sys.stderr.write("Bad datebroughtin: '%s'\n" % row["ADDEDDATETIME"])
-        a.DateBroughtIn = datetime.datetime.today()    
+        a.DateBroughtIn = asm.now()
     a.EntryReasonID = 4
-    a.generateCode(gettypeletter(a.AnimalTypeID))
+    #a.generateCode(gettypeletter(a.AnimalTypeID))
+    a.ShelterCode = "SP%s" % row["ANIMALKEY"]
+    a.ShortCode = a.ShelterCode
     a.Neutered = asm.cint(row["FIX"])
     a.Declawed = asm.cint(row["DECLAWED"])
     a.IsNotAvailableForAdoption = 0
@@ -132,9 +134,10 @@ for row in canimal:
     a.BaseColourID = asm.colour_id_for_names(asm.fw(row["FURCOLR1"]), asm.fw(row["FURCOLR2"]))
     a.IdentichipNumber = row["MICROCHIP"]
     comments = "Original breed: " + row["BREED1"] + "/" + row["CROSSBREED"] + ", age: " + age
-    comments += ",Color: " + asm.fw(row["FURCOLR1"]) + "/" + asm.fw(row["FURCOLR2"])
-    comments += ", Coat: " + row["COAT"]
-    comments += ", Collar: " + row["COLLRTYP"]
+    comments += "\nLicense: " + row["LICENSE"]
+    comments += "\nColor: " + asm.fw(row["FURCOLR1"]) + "/" + asm.fw(row["FURCOLR2"])
+    comments += "\nCoat: " + row["COAT"]
+    comments += "\nCollar: " + row["COLLRTYP"]
     a.BreedID = asm.breed_id_for_name(row["BREED1"])
     a.Breed2ID = a.BreedID
     a.BreedName = asm.breed_name_for_id(a.BreedID)
@@ -143,6 +146,8 @@ for row in canimal:
         if a.Breed2ID == 1: a.Breed2ID = 442
         a.BreedName = "%s / %s" % ( asm.breed_name_for_id(a.BreedID), asm.breed_name_for_id(a.Breed2ID) )
     a.HiddenAnimalDetails = comments
+    # Mark everything non-shelter until we've seen it in the shelter file
+    a.NonShelterAnimal = 1
     a.Archived = 1
     # Does this animal have an image? If so, add media/dbfs entries for it
     imdata = None
@@ -181,10 +186,10 @@ for row in cvacc:
 # Next, addresses
 for row in caddress:
     addresses[row["ADDRESSKEY"]] = {
-        "address": row["ADDRESSSTREETNUMBER"] + " " + row["ADDRESSSECONDLINE"],
-        "city": row["ADDRESSCITY"],
-        "state": row["ADDRESSSTATE"],
-        "zip": row["ADDRESSPOSTAL"]
+        "ADDRESS": row["ADDRESSSTREETNUMBER"] + " " + row["ADDRESSSECONDLINE"],
+        "CITY": row["ADDRESSCITY"],
+        "STATE": row["ADDRESSSTATE"],
+        "ZIP": row["ADDRESSPOSTAL"]
     }
 
 # The link between addresses and people
@@ -204,10 +209,10 @@ for row in cperson:
         addrkey = addrlink[row["PERSONKEY"]]
         if addresses.has_key(addrkey):
             add = addresses[addrkey]
-            o.OwnerAddress = add["address"]
-            o.OwnerTown = add["city"]
-            o.OwnerCounty = add["state"]
-            o.OwnerPostcode = add["zip"]
+            o.OwnerAddress = add["ADDRESS"]
+            o.OwnerTown = add["CITY"]
+            o.OwnerCounty = add["STATE"]
+            o.OwnerPostcode = add["ZIP"]
     o.EmailAddress = row["EMAIL"]
     o.HomeTelephone = row["HOME_PH"]
     o.WorkTelephone = row["WORK_PH"]
@@ -229,11 +234,12 @@ for row in cshelter:
         a = ppa[row["ANIMALKEY"]]
         arivdate = asm.getdate_mmddyy(row["ARIVDATE"])
         a.ShortCode = asm.fw(row["FIELDCARD"])
-        a.ShelterLocationUnit = asm.fw(row["KENNEL"])
+        #a.ShelterLocationUnit = asm.fw(row["KENNEL"])
+        a.NonShelterAnimal = 0
         if arivdate is not None:
             a.DateBroughtIn = arivdate
-            a.generateCode(gettypeletter(a.AnimalTypeID))
-            a.ShortCode = asm.fw(row["FIELDCARD"])
+            if asm.fw(row["FIELDCARD"]) != "":
+                a.ShortCode = asm.fw(row["FIELDCARD"])
     o = None
     if ppo.has_key(row["OWNERATDISPOSITION"]):
         o = ppo[row["OWNERATDISPOSITION"]]
@@ -340,7 +346,9 @@ for row in clicense:
         ol.OwnerID = o.ID
         ol.IssueDate = asm.getdate_mmddyy(row["LICENSEEFFECTIVEDATE"])
         ol.ExpiryDate = asm.getdate_mmddyy(row["LICENSEEXPIRATIONDATE"])
-        ol.LicenceNumber = asm.fw(row["LICENSE"])
+        if ol.IssueDate is None: ol.IssueDate = asm.now()
+        if ol.ExpiryDate is None: ol.ExpiryDate = asm.now()
+        ol.LicenceNumber = "%s (ASM%d)" % (asm.fw(row["LICENSE"]), ol.ID)
         ol.LicenceTypeID = 2 # Unaltered dog
         if row["LICENSEFIX"] == "1":
             ol.LicenceTypeID = 1 # Altered dog
