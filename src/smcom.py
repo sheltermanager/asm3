@@ -1,11 +1,14 @@
 #!/usr/bin/python
 
 import al
-import datetime
+import base64
+import datetime, time
 import db
+import hashlib
 import os
 import re
 import utils
+import web
 from sitedefs import MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE
 
 # Regex to remove invalid chars from an entered database
@@ -82,6 +85,35 @@ def _get_account_info(alias):
         f.close()
         return lines
     return None
+
+def get_sso_token(session):
+    """
+    Generates a one-time use token, active for the smcom account/database
+    in the session for the next hour.
+    """
+    if not session.has_key("user") or session.user is None:
+        return None
+    try:
+        user = session.user
+        d = datetime.datetime.today()
+        h = time.strftime("%Y%m%d%H", d.timetuple())
+        m = hashlib.md5()
+        m.update(user + h)
+        s = m.hexdigest()
+        token = base64.b64encode("%s:%s" % (user, s))
+        return token
+    except:
+        return None
+
+def go_smcom_my(session):
+    """
+    Goes to the my account page
+    """
+    token = get_sso_token(session)
+    if token is not None:
+        raise web.seeother("https://sheltermanager.com/my/login?b=" + token)
+    else:
+        raise web.HTTPError("could not generate SSO token")
 
 def resolve_alias(alias):
     """

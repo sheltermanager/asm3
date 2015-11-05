@@ -421,7 +421,7 @@ $(function() {
                         '<li class="asm-menu-item asm-manual asm-manualvideo"><a href="#" target="_blank"><nobr><span class="asm-icon asm-icon-youtube"></span> ' + _("View Training Videos") + '</nobr></a></li>',
                         '<li class="asm-menu-item asm-manual asm-manualfaq"><a href="#" target="_blank"><nobr><span class="asm-icon asm-icon-faq"></span> ' + _("Frequently Asked Questions") + '</nobr></a></li>',
                         '<li class="asm-menu-category">' + asm.user + '</li>',
-                        '<li id="asm-mysmcom" class="asm-menu-item"><a href="https://sheltermanager.com/my" target="_blank"><nobr><span class="asm-icon asm-icon-logo"></span> ' + _("My sheltermanager.com account") + '</nobr></a></li>',
+                        '<li id="asm-mysmcom" class="asm-menu-item"><a href="smcom_my" target="_blank"><nobr><span class="asm-icon asm-icon-logo"></span> ' + _("My sheltermanager.com account") + '</nobr></a></li>',
                         '<li class="asm-menu-item"><a href="change_password"><nobr><span class="asm-icon asm-icon-auth"></span> ' + _("Change Password") + '</nobr></a></li>',
                         '<li class="asm-menu-item"><a href="change_user_settings"><nobr><span class="asm-icon asm-icon-settings"></span> ' + _("Change User Settings") + '</nobr></a></li>',
                         '<li id="asm-logout" class="asm-menu-item"><a href="logout"><nobr><span class="asm-icon asm-icon-logout"></span> ' + _("Logout") + '</nobr></a></li>',
@@ -582,8 +582,9 @@ $(function() {
             $("#asm-topline-error").hide();
             $("#asm-topline-info").hide();
 
-            // Hide the My sheltermanager.com menu option for non-smcom and non-superusers
-            if (!asm.smcom || !asm.superuser) {
+            // Hide the My sheltermanager.com menu option for non-smcom and if this
+            // user isn't the master user (same username as the database)
+            if (!asm.smcom || asm.user != asm.useraccount) {
                 $("#asm-mysmcom").hide();
             }
 

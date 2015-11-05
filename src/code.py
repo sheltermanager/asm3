@@ -189,6 +189,7 @@ urls = (
     "/search", "search",
     "/service", "service",
     "/shelterview", "shelterview",
+    "/smcom_my", "smcom_my",
     "/staff_rota", "staff_rota", 
     "/stocklevel", "stocklevel",
     "/sql", "sql",
@@ -5837,6 +5838,10 @@ class shelterview:
             post.data["animal"] = post["animalid"]
             post.data["fosterdate"] = python2display(session.locale, now(session.dbo.timezone))
             return extmovement.insert_foster_from_form(session.dbo, session.user, post)
+
+class smcom_my:
+    def GET(self):
+        smcom.go_smcom_my(session)
 
 class sql:
     def check_disabled(self, dbo, dumptype):
