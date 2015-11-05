@@ -234,12 +234,12 @@ for row in cshelter:
         a = ppa[row["ANIMALKEY"]]
         arivdate = asm.getdate_mmddyy(row["ARIVDATE"])
         a.ShortCode = asm.fw(row["FIELDCARD"])
+        if asm.fw(row["FIELDCARD"]) != "":
+            a.ShortCode = asm.fw(row["FIELDCARD"])
         #a.ShelterLocationUnit = asm.fw(row["KENNEL"])
         a.NonShelterAnimal = 0
         if arivdate is not None:
             a.DateBroughtIn = arivdate
-            if asm.fw(row["FIELDCARD"]) != "":
-                a.ShortCode = asm.fw(row["FIELDCARD"])
     o = None
     if ppo.has_key(row["OWNERATDISPOSITION"]):
         o = ppo[row["OWNERATDISPOSITION"]]
