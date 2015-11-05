@@ -71,7 +71,7 @@ def get_media_by_seq(dbo, linktype, linkid, seq):
         Empty list is returned if the item doesn't exist
     """
     rows = db.query(dbo, "SELECT * FROM media WHERE LinkTypeID = %d AND " \
-        "LinkID = %d AND LOWER(MediaName) LIKE '%%.jpg' AND ExcludeFromPublish = 0 " \
+        "LinkID = %d AND LOWER(MediaName) LIKE '%%.jpg' AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null)" \
         "ORDER BY WebsitePhoto DESC, ID" % (linktype, linkid))
     if len(rows) >= seq:
         return [rows[seq-1],]
@@ -80,7 +80,7 @@ def get_media_by_seq(dbo, linktype, linkid, seq):
 
 def get_total_seq(dbo, linktype, linkid):
     return db.query_int(dbo, "SELECT COUNT(ID) FROM media WHERE LinkTypeID = %d AND " \
-        "LinkID = %d AND LOWER(MediaName) LIKE '%%.jpg' AND ExcludeFromPublish = 0" % (linktype, linkid))
+        "LinkID = %d AND LOWER(MediaName) LIKE '%%.jpg' AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null)" % (linktype, linkid))
 
 def set_video_preferred(dbo, username, mid):
     """
