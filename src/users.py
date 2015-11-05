@@ -407,14 +407,23 @@ def update_user_activity(dbo, user, timenow = True):
     if dbo is None or user is None: return
     cachekey = "%s_activity" % dbo.database
     ac = utils.nulltostr(cachemem.get(cachekey))
-    # First remove the current user from the set
+    # Prune old activity and remove the current user
     nc = []
     for a in ac.split(","):
         if a != "":
             u, d = a.split("=")
-            if u != user: nc.append(a)
+            # if the last seen value was more than an hour ago, 
+            # don't bother adding that user
+            p = i18n.parse_date("%Y-%m-%d %H:%M:%S", d)
+            if i18n.subtract_hours(i18n.now(dbo.timezone), 1) > p:
+                continue
+            # Don't add the current user
+            if u == user:
+                continue
+            nc.append(a)
     # Add this user with the new time 
-    if timenow: nc.append("%s=%s" % (user, i18n.now(dbo.timezone)))
+    if timenow: 
+        nc.append("%s=%s" % (user, i18n.format_date("%Y-%m-%d %H:%M:%S", i18n.now(dbo.timezone))))
     cachemem.put(cachekey, ",".join(nc), 3600 * 8)
 
 def get_personid(dbo, user):

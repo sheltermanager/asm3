@@ -4,8 +4,8 @@ import datetime
 import json
 import time
 
-VERSION = "37u [Thu  5 Nov 15:20:01 GMT 2015]"
-BUILD = "11051520"
+VERSION = "37u [Thu  5 Nov 16:01:55 GMT 2015]"
+BUILD = "11051601"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -398,6 +398,13 @@ def add_days(date, nodays = 1):
     """
     if date is None: return None
     return date + datetime.timedelta(days = nodays)
+
+def subtract_hours(date, nohours = 1):
+    """
+    Subtract hours from date, returning a new datetime
+    """
+    if date is None: return None
+    return date - datetime.timedelta(hours = nohours)
 
 def subtract_days(date, nodays = 1):
     """
