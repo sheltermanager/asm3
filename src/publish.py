@@ -658,12 +658,12 @@ class AbstractPublisher(threading.Thread):
         """
         return db.query_date(self.dbo, "SELECT SentDate FROM animalpublished WHERE AnimalID = %d AND PublishedTo = '%s'" % (animalid, self.publisherKey))
 
-    def markAnimalPublished(self, animalid):
+    def markAnimalPublished(self, animalid, datevalue = None):
         """
         Marks an animal published at the current date/time for this publisher
         animalid:    The animal id to update
         """
-        datevalue = i18n.now(self.dbo.timezone)
+        if datevalue is None: datevalue = i18n.now(self.dbo.timezone)
         self.markAnimalUnpublished(animalid)
         db.execute(self.dbo, "INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate) VALUES (%d, '%s', %s)" %
             (animalid, self.publisherKey, db.dd(datevalue)))
@@ -3270,13 +3270,18 @@ class PetLinkPublisher(AbstractPublisher):
             self.log("Found session cookie: %s" % sessionid)
             self.log("Logging in to PetLink.net... ")
             r = utils.post_form(LOGIN_URL, fields, cookies = { "JSESSIONID": sessionid})
-            self.log("response: headers=%s, body=%s" % (r["headers"], r["response"]))
             if r["response"].find("incorrect user name or password") != -1:
                 self.setLastError("Login failed (invalid username or password)")
                 self.saveLog()
                 return
-            if r["response"].find("Hello") == -1:
+            elif r["response"].find("Hello") == -1:
                 self.setLastError("Login failed (no Hello found).")
+                self.log("response: headers=%s, body=%s" % (r["headers"], r["response"]))
+                self.saveLog()
+                return
+            else:
+                self.setLastError("Login failed (did not understand response).")
+                self.log("response: headers=%s, body=%s" % (r["headers"], r["response"]))
                 self.saveLog()
                 return
         except Exception,err:
@@ -3382,13 +3387,37 @@ class PetLinkPublisher(AbstractPublisher):
         self.log("Uploading data file to %s..." % (UPLOAD_URL))
         try:
             r = utils.post_multipart(UPLOAD_URL, fields, files, cookies = { "JSESSIONID": sessionid})
-            self.log("req hdr: %s, \nreq data: %s, \nresponse hdr: %s, \nresponse: %s" % (r["requestheaders"], r["requestbody"], r["headers"], r["response"]))
+            self.log("req hdr: %s, \nreq data: %s" % (r["requestheaders"], r["requestbody"]))
+
+            # Look for any errors in the response
+            for e in utils.regex_multi("id=(\d+?), transponder: (.+?)</li>", r["response"]):
+                chip = e[0]
+                message = e[1]
+
+                # Iterate over a copy of the processed list so we can remove this animal from it
+                for an in processed_animals[:]:
+                    if an["IDENTICHIPNUMBER"] == chip:
+                        # Remove this animal from the processed list
+                        processed_animals.remove(an)
+                        self.logError("%s: %s (%s) - Received error message from PetLink: %s" % \
+                            (an["SHELTERCODE"], an["ANIMALNAME"], an["IDENTICHIPNUMBER"], message))
+
+                # If the message was that the chip is already registered,
+                # mark the animal as published but at the intake date -
+                # this will force this publisher to put it through as a transfer
+                # next time
+                if message.startswith("This microchip code has already been registered"):
+                    self.markAnimalPublished(an["ID"], an["DATEBROUGHTIN"])
+                    self.logError("%s: %s (%s) - Already registered, marking as PetLink TRANSFER for next publish" % \
+                        (an["SHELTERCODE"], an["ANIMALNAME"], an["IDENTICHIPNUMBER"]))
+
             if r["response"].find("Upload Completed") != -1:
                 # Mark published
-                self.log("got successful response, marking animals as sent to petlink today")
+                self.log("Got successful upload response, marking processed animals as sent to petlink")
                 self.markAnimalsPublished(processed_animals)
             else:
-                self.log("didn't find successful response, abandoning.")
+                self.logError("didn't find successful response, abandoning.")
+                self.log("response hdr: %s, \nresponse: %s" % (r["headers"], r["response"]))
         except Exception,err:
             self.logError("Failed uploading data file: %s" % err)
 

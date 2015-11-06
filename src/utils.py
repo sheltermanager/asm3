@@ -331,6 +331,21 @@ def list_overlap(l1, l2):
             return True
     return False
 
+def regex_multi(pattern, findin):
+    """
+    Returns all matches for pattern in findin
+    """
+    return re.findall(pattern, findin)
+
+def regex_one(pattern, findin):
+    """
+    Returns the first match for pattern in findin or an empty
+    string for no match.
+    """
+    r = regex_multi(pattern, findin)
+    if len(r) == 0: return ""
+    return r[0]
+
 class ASMValidationError(web.HTTPError):
     """
     Custom error thrown by data modules when validation fails
