@@ -3261,15 +3261,16 @@ class PetLinkPublisher(AbstractPublisher):
             self.log("Getting PetLink welcome page...")
             r = utils.get_url(WELCOME_URL)
             try:
-                sessionid = r["cookies"]["JSESSIONID"]
+                rcookies = r["cookies"]
+                sessionid = rcookies["JSESSIONID"]
             except KeyError:
-                self.setLastError("Login failed (no auth cookie).")
+                self.setLastError("Login failed (no JSESSIONID cookie).")
                 self.saveLog()
                 return
             self.log("Homepage returned headers: %s" % r["headers"])
             self.log("Found session cookie: %s" % sessionid)
             self.log("Logging in to PetLink.net... ")
-            r = utils.post_form(LOGIN_URL, fields, cookies = { "JSESSIONID": sessionid})
+            r = utils.post_form(LOGIN_URL, fields, cookies = rcookies)
             if r["response"].find("incorrect user name or password") != -1:
                 self.setLastError("Login failed (invalid username or password)")
                 self.saveLog()
@@ -3279,6 +3280,8 @@ class PetLinkPublisher(AbstractPublisher):
                 self.log("response: headers=%s, body=%s" % (r["headers"], r["response"]))
                 self.saveLog()
                 return
+            else:
+                self.log("Login to PetLink successful.")
         except Exception,err:
             self.logError("Failed logging in: %s" % err, sys.exc_info())
             self.setLastError("Login failed (error during HTTP request).")
@@ -3373,15 +3376,20 @@ class PetLinkPublisher(AbstractPublisher):
             except Exception,err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
+        # If we excluded our only animals and have nothing to send, stop now
+        if len(csv) == 1:
+            self.log("No animals left to send to PetLink.")
+            self.saveLog()
+            self.setPublisherComplete()
+            return
+
         # POST the csv file
-        fields = {}
-        csvblob = "\n".join(csv)
         files = {
-            "file": ( "import.csv", csvblob, "text/csv")
+            "file": ( "import.csv", "\n".join(csv), "text/csv")
         }
         self.log("Uploading data file to %s..." % (UPLOAD_URL))
         try:
-            r = utils.post_multipart(UPLOAD_URL, fields, files, cookies = { "JSESSIONID": sessionid})
+            r = utils.post_multipart(UPLOAD_URL, {}, files, cookies = rcookies)
             self.log("req hdr: %s, \nreq data: %s" % (r["requestheaders"], r["requestbody"]))
 
             # Look for any errors in the response
@@ -3396,15 +3404,14 @@ class PetLinkPublisher(AbstractPublisher):
                         processed_animals.remove(an)
                         self.logError("%s: %s (%s) - Received error message from PetLink: %s" % \
                             (an["SHELTERCODE"], an["ANIMALNAME"], an["IDENTICHIPNUMBER"], message))
-
-                # If the message was that the chip is already registered,
-                # mark the animal as published but at the intake date -
-                # this will force this publisher to put it through as a transfer
-                # next time
-                if message.startswith("This microchip code has already been registered"):
-                    self.markAnimalPublished(an["ID"], an["DATEBROUGHTIN"])
-                    self.logError("%s: %s (%s) - Already registered, marking as PetLink TRANSFER for next publish" % \
-                        (an["SHELTERCODE"], an["ANIMALNAME"], an["IDENTICHIPNUMBER"]))
+                        # If the message was that the chip is already registered,
+                        # mark the animal as published but at the intake date -
+                        # this will force this publisher to put it through as a transfer
+                        # next time
+                        if message.startswith("This microchip code has already been registered"):
+                            self.markAnimalPublished(an["ID"], an["DATEBROUGHTIN"])
+                            self.log("%s: %s (%s) - Already registered, marking as PetLink TRANSFER for next publish" % \
+                                (an["SHELTERCODE"], an["ANIMALNAME"], an["IDENTICHIPNUMBER"]))
 
             if r["response"].find("Upload Completed") != -1:
                 # Mark published

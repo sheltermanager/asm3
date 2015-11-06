@@ -1,6 +1,8 @@
 37
 ================
 
+06/11/15 Switch smoothness and ui-lightness on existing to new asm theme
+06/11/15 Fix PetLink publisher to send all cookies (AWS load balancing)
 06/11/15 Fix PetLink publisher to send transfers for already registered chips
 06/11/15 Better default online form style, fix index in import
 05/11/15 Fix active user time tooltip, remove inactive after an hour
