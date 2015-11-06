@@ -410,17 +410,22 @@ def update_user_activity(dbo, user, timenow = True):
     # Prune old activity and remove the current user
     nc = []
     for a in ac.split(","):
-        if a != "":
-            u, d = a.split("=")
-            # if the last seen value was more than an hour ago, 
-            # don't bother adding that user
-            p = i18n.parse_date("%Y-%m-%d %H:%M:%S", d)
-            if i18n.subtract_hours(i18n.now(dbo.timezone), 1) > p:
-                continue
-            # Don't add the current user
-            if u == user:
-                continue
-            nc.append(a)
+        # If there are any errors reading or parsing
+        # the entry, skip it
+        try:
+            if a != "":
+                u, d = a.split("=")
+                # if the last seen value was more than an hour ago, 
+                # don't bother adding that user
+                p = i18n.parse_date("%Y-%m-%d %H:%M:%S", d)
+                if i18n.subtract_hours(i18n.now(dbo.timezone), 1) > p:
+                    continue
+                # Don't add the current user
+                if u == user:
+                    continue
+                nc.append(a)
+        except:
+            continue
     # Add this user with the new time 
     if timenow: 
         nc.append("%s=%s" % (user, i18n.format_date("%Y-%m-%d %H:%M:%S", i18n.now(dbo.timezone))))
