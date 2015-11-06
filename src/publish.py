@@ -3279,11 +3279,6 @@ class PetLinkPublisher(AbstractPublisher):
                 self.log("response: headers=%s, body=%s" % (r["headers"], r["response"]))
                 self.saveLog()
                 return
-            else:
-                self.setLastError("Login failed (did not understand response).")
-                self.log("response: headers=%s, body=%s" % (r["headers"], r["response"]))
-                self.saveLog()
-                return
         except Exception,err:
             self.logError("Failed logging in: %s" % err, sys.exc_info())
             self.setLastError("Login failed (error during HTTP request).")
