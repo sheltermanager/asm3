@@ -269,6 +269,7 @@ def import_onlineform_json(dbo, j):
             "fieldname": f["name"],
             "fieldtype": str(FIELDTYPE_MAP[f["type"]]),
             "label": f["label"],
+            "displayindex": f["index"],
             "mandatory": f["mandatory"] and "1" or "0",
             "lookups": f["lookups"],
             "tooltip": f["tooltip"]
@@ -282,6 +283,10 @@ def get_onlineform_header(dbo):
        "<title>$$TITLE$$</title>\n" \
        "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n" \
        "</head>\n" \
+       "<style\n" \
+       ".asm-onlineform-td:first-child { max-width: 200px; }\n" \
+       "textarea { width: 300px; height: 150px; }\n" \
+       "</style>\n" \
        "<body>"
     return header
 
