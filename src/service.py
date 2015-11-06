@@ -32,8 +32,8 @@ from sitedefs import BASE_URL, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, CACH
 # Service methods that require authentication
 AUTH_METHODS = [ 
     "csv_mail", "csv_report", "html_report", "rss_timeline", "upload_animal_image", 
-    "xml_adoptable_animals", "json_adoptable_animals",
-    "xml_recent_adoptions", "json_recent_adoptions", 
+    "xml_adoptable_animals", "json_adoptable_animals", "jsonp_adoptable_animals",
+    "xml_recent_adoptions", "json_recent_adoptions", "jsonp_recent_adoptions", 
     "xml_shelter_animals", "json_shelter_animals", "jsonp_shelter_animals"
 ]
 
@@ -288,6 +288,12 @@ def handler(post, remoteip, referer):
         rs = publish.get_animal_data(dbo, pc, True)
         return set_cached_response(cache_key, "application/json", 3600, 3600, html.json(rs))
 
+    elif method == "jsonp_adoptable_animals":
+        users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
+        pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
+        rs = publish.get_animal_data(dbo, pc, True)
+        return ("application/javascript", 0, "%s(%s);" % (post["callback"], html.json(rs)))
+
     elif method == "xml_adoptable_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
@@ -298,6 +304,11 @@ def handler(post, remoteip, referer):
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         rs = movement.get_recent_adoptions(dbo)
         return set_cached_response(cache_key, "application/json", 3600, 3600, html.json(rs))
+
+    elif method == "jsonp_recent_adoptions":
+        users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
+        rs = movement.get_recent_adoptions(dbo)
+        return ("application/javascript", 0, "%s(%s);" % (post["callback"], html.json(rs)))
 
     elif method == "xml_recent_adoptions":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)

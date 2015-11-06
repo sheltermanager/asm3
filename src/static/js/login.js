@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, _, common, controller, login: true */
+/*global $, _, common, controller, login: true, Modernizr */
 
 $(function() {
 
@@ -110,6 +110,8 @@ $(function() {
             var formdata = { "database": database, 
                          "username" : username, 
                          "password" : password,
+                         // DISABLED: This may be useful for iPad/iPhone if we can't get our app through again
+                         // "mobile"   : Modernizr.touchevents ? "true" : "false",
                          "nologconnection" : controller.nologconnection };
             $.ajax({
                 type: "POST",

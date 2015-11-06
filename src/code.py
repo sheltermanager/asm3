@@ -861,7 +861,7 @@ class login:
         return s
 
     def POST(self):
-        post = utils.PostedData(web.input( database = "", username = "", password = "", nologconnection = "" ), LOCALE)
+        post = utils.PostedData(web.input( database = "", username = "", password = "", nologconnection = "", mobile = "" ), LOCALE)
         return users.web_login(post, session, remote_ip(), PATH)
 
 class login_jsonp:
