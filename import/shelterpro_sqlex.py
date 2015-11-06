@@ -365,6 +365,9 @@ for m in movements:
 for ol in ownerlicences:
     print ol
 
+print "update ownerlicence set licencetypeid = 5;"
+print "update ownerlicence set licencetypeid = 6 where extract(day from expirydate - issuedate)::integer > 400;"
+
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"
 
