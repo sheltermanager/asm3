@@ -2,9 +2,9 @@ Vaccination Diary (On Shelter by Species)
 ###
 Diary
 ###
-PostgreSQL MySQL SQLite
+33012/Any
 ###
-Vaccinations required to date for shelter animals, broken down by location.
+Vaccinations required to date for shelter animals, broken down by species.
 ###
 en
 ###
@@ -56,7 +56,7 @@ Vaccination Diary (On Shelter by Species, Date Range)
 ###
 Diary
 ###
-PostgreSQL MySQL SQLite
+33012/Any
 ###
 Vaccinations required between two dates for shelter animals, broken down by species.
 ###

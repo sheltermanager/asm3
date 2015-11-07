@@ -2,14 +2,14 @@ Vaccination Diary (On Shelter by Location)
 ###
 Diary
 ###
-PostgreSQL MySQL SQLite
+33012/Any
 ###
 Vaccinations required to date for shelter animals, broken down by location.
 ###
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName,
+a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName, a.ShelterLocationUnit, 
 v.VaccinationType, av.DateRequired, av.Comments,
 CASE
 WHEN a.ActiveMovementType = 2 THEN (SELECT MovementType FROM lksmovementtype WHERE ID = a.ActiveMovementType)
@@ -36,6 +36,7 @@ $$HEAD
 <table border=1><tr>
 <td><b>Code</b></td>
 <td><b>Name</b></td>
+<td><b>Unit</b></td>
 <td><b>Type</b></td>
 <td><b>Vaccination Type</b></td>
 <td><b>Required</b></td>
@@ -48,6 +49,7 @@ GROUP$$
 $$BODY<tr>
 <td>$SHELTERCODE</td>
 <td>$ANIMALNAME</td>
+<td>$SHELTERLOCATIONUNIT</td>
 <td>$ANIMALTYPE</td>
 <td>$VACCINATIONTYPE</td>
 <td>$DATEREQUIRED</td>
@@ -62,14 +64,14 @@ Vaccination Diary (On Shelter by Location, Date Range)
 ###
 Diary
 ###
-PostgreSQL MySQL SQLite
+33012/Any
 ###
 Vaccinations required between two dates for shelter animals, broken down by location.
 ###
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName,
+a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName, a.ShelterLocationUnit, 
 v.VaccinationType, av.DateRequired, av.Comments,
 CASE
 WHEN a.ActiveMovementType = 2 THEN (SELECT MovementType FROM lksmovementtype WHERE ID = a.ActiveMovementType)
@@ -97,6 +99,7 @@ $$HEAD
 <table border=1><tr>
 <td><b>Code</b></td>
 <td><b>Name</b></td>
+<td><b>Unit</b></td>
 <td><b>Type</b></td>
 <td><b>Vaccination Type</b></td>
 <td><b>Required</b></td>
@@ -109,6 +112,7 @@ GROUP$$
 $$BODY<tr>
 <td>$SHELTERCODE</td>
 <td>$ANIMALNAME</td>
+<td>$SHELTERLOCATIONUNIT</td>
 <td>$ANIMALTYPE</td>
 <td>$VACCINATIONTYPE</td>
 <td>$DATEREQUIRED</td>

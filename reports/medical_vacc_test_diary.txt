@@ -2,7 +2,7 @@ Medical, Vaccination and Test Diary
 ###
 Diary
 ###
-3309/Any
+33012/Any
 ###
 The medical, vaccination and test diary for today in one report
 ###
@@ -14,7 +14,7 @@ SELECT * FROM
 
 SELECT
 'Medical' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID,
-t.AnimalType, s.SpeciesName, il.LocationName, 
+t.AnimalType, s.SpeciesName, il.LocationName, a.ShelterLocationUnit, 
 am.TreatmentName, am.Dosage, amt.TreatmentNumber, 
 amt.TotalTreatments, amt.DateRequired, am.Comments
 FROM animal a
@@ -29,7 +29,7 @@ AND a.Archived = 0
 
 UNION SELECT
 'Vaccination' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
-t.AnimalType, sp.SpeciesName, il.LocationName,
+t.AnimalType, sp.SpeciesName, il.LocationName, a.ShelterLocationUnit, 
 v.VaccinationType AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber,
 '1' AS TotalTreatments, av.DateRequired, av.Comments
 FROM animal a
@@ -44,7 +44,7 @@ AND a.Archived = 0
 
 UNION SELECT
 'Test' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
-t.AnimalType, sp.SpeciesName, il.LocationName,
+t.AnimalType, sp.SpeciesName, il.LocationName, a.ShelterLocationUnit, 
 tt.TestName AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber,
 '1' AS TotalTreatments, at.DateRequired, at.Comments
 FROM animal a
@@ -79,7 +79,7 @@ $$BODY<tr>
 <td><a target="_blank" href="animal?id=$AID">$SHELTERCODE $ANIMALNAME</a></td>
 <td>$ANIMALTYPE</td>
 <td>$SPECIESNAME</td>
-<td>$LOCATIONNAME</td>
+<td>$LOCATIONNAME $SHELTERLOCATIONUNIT</td>
 <td><b>$MTYPE: $TREATMENTNAME</b></td>
 <td>$DOSAGE</td>
 <td>$TREATMENTNUMBER / $TOTALTREATMENTS</td>

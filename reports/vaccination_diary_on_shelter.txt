@@ -2,14 +2,14 @@ Vaccination Diary (On Shelter)
 ###
 Diary
 ###
-Any
+33012/Any
 ###
 Vaccinations required to date for shelter animals.
 ###
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName,
+a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName, a.ShelterLocationUnit, 
 v.VaccinationType, av.DateRequired, av.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
@@ -37,7 +37,7 @@ $$BODY<tr>
 <td>$SHELTERCODE</td>
 <td>$ANIMALNAME</td>
 <td>$ANIMALTYPE</td>
-<td>$LOCATIONNAME</td>
+<td>$LOCATIONNAME $SHELTERLOCATIONUNIT</td>
 <td>$VACCINATIONTYPE</td>
 <td>$DATEREQUIRED</td>
 <td>$COMMENTS</td>
@@ -59,7 +59,7 @@ Vaccinations required between two dates for shelter animals.
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName,
+a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName, a.ShelterLocationUnit, 
 v.VaccinationType, av.DateRequired, av.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
@@ -88,7 +88,7 @@ $$BODY<tr>
 <td>$SHELTERCODE</td>
 <td>$ANIMALNAME</td>
 <td>$ANIMALTYPE</td>
-<td>$LOCATIONNAME</td>
+<td>$LOCATIONNAME $SHELTERLOCATIONUNIT</td>
 <td>$VACCINATIONTYPE</td>
 <td>$DATEREQUIRED</td>
 <td>$COMMENTS</td>

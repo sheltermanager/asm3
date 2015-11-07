@@ -2,14 +2,14 @@ Test Diary (On Shelter)
 ###
 Diary
 ###
-3309/Any
+33012/Any
 ###
 Tests required to date for shelter animals.
 ###
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName,
+a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName, a.ShelterLocationUnit, 
 tt.TestName, at.DateRequired, at.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
@@ -37,7 +37,7 @@ $$BODY<tr>
 <td>$SHELTERCODE</td>
 <td>$ANIMALNAME</td>
 <td>$ANIMALTYPE</td>
-<td>$LOCATIONNAME</td>
+<td>$LOCATIONNAME $SHELTERLOCATIONUNIT</td>
 <td>$TESTNAME</td>
 <td>$DATEREQUIRED</td>
 <td>$COMMENTS</td>
@@ -59,7 +59,7 @@ Tests required between two dates for shelter animals.
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName,
+a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName, a.ShelterLocationUnit, 
 tt.TestName, at.DateRequired, at.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
@@ -88,7 +88,7 @@ $$BODY<tr>
 <td>$SHELTERCODE</td>
 <td>$ANIMALNAME</td>
 <td>$ANIMALTYPE</td>
-<td>$LOCATIONNAME</td>
+<td>$LOCATIONNAME $SHELTERLOCATIONUNIT</td>
 <td>$TESTNAME</td>
 <td>$DATEREQUIRED</td>
 <td>$COMMENTS</td>

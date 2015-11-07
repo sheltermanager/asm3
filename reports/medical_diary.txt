@@ -2,7 +2,7 @@ Medical Diary
 ###
 Diary
 ###
-Any
+33012/Any
 ###
 Generates the medical diary for today.
 ###
@@ -11,7 +11,7 @@ en
 SELECT
 a.ShelterCode, a.AnimalName,
 t.AnimalType, s.SpeciesName,
-il.LocationName, am.TreatmentName,
+il.LocationName, a.ShelterLocationUnit, am.TreatmentName,
 am.Dosage, amt.TreatmentNumber, amt.TotalTreatments,
 amt.DateRequired, am.Comments AS RegimeComments, amt.Comments
 FROM animal a
@@ -46,7 +46,7 @@ $$BODY<tr>
 <td>$ANIMALNAME</td>
 <td>$ANIMALTYPE</td>
 <td>$SPECIESNAME</td>
-<td>$LOCATIONNAME</td>
+<td>$LOCATIONNAME $SHELTERLOCATIONUNIT</td>
 <td>$TREATMENTNAME</td>
 <td>$DOSAGE</td>
 <td>$TREATMENTNUMBER / $TOTALTREATMENTS</td>
