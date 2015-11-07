@@ -131,7 +131,7 @@ ASK
 Ask is quite a detailed key, which requests information from the user at
 generation time. The basic syntax is this::
 
-    $ASK [DATE | [ALL]ANIMAL | LITTER | SPECIES | LOCATION | LOGTYPE | TYPE | NUMBER | STRING] [Message]$
+    $ASK [TYPE] [Message]$
 
 .. note:: If you are substituting any kind of string value (ASK DATE or ASK STRING), you must wrap the ASK key inside string delimiters (the apostrophe ') otherwise you will get SQL errors. 
 
@@ -144,7 +144,11 @@ The types are outlined below:
 
 * $ASK ANIMAL$ - requests an animal. The value substituted is the animal ID. 
 
+* $ASK ANIMALFLAG$ - requests an animal flag.
+
 * $ASK PERSON$ - requests an person. The value substituted is the person ID. 
+
+* $ASK PERSONFLAG$ - requests a person flag.
 
 * $ASK LITTER$ - requests a litter identifier. A popup displays a list of the
   recent, active litters on the system. The value returned is the litter ID as
@@ -184,7 +188,7 @@ VAR works just like ASK, the only difference is that instead of substituting
 the value into the SQL, it stores it to a variable name. You can then
 substitute the variable multiple times in your SQL::
 
-    $VAR <varname> [DATE | [ALL]ANIMAL | LITTER | SPECIES | LOCATION | LOGTYPE | TYPE | NUMBER | STRING] [Message]$
+    $VAR <varname> [TYPE] [Message]$
 
 The VAR tag should appear in your SQL before you reference the variable
 created. The variable is substituted with $@varname$ 

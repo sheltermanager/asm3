@@ -2,7 +2,7 @@ People with Flag Map
 ###
 Maps
 ###
-33310/PostgreSQL
+33716/PostgreSQL
 ###
 A map of all people with the selected person flag.
 ###
@@ -10,7 +10,7 @@ en
 ###
 SELECT latlong, ownername || '<br>' || owneraddress
 FROM owner o
-WHERE o.ExcludeFromBulkEmail = 0 AND o.IsDeceased = 0 AND o.AdditionalFlags LIKE '%$ASK STRING Person flag$%'
+WHERE o.ExcludeFromBulkEmail = 0 AND o.IsDeceased = 0 AND o.AdditionalFlags LIKE '%$ASK PERSONFLAG$%'
 ORDER BY o.OwnerSurname
 ###
 MAP

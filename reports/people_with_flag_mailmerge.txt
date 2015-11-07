@@ -2,7 +2,7 @@ People with Flag
 ###
 Membership
 ###
-33310/Any
+33716/Any
 ###
 Person info for all people with the selected person flag.
 ###
@@ -12,7 +12,7 @@ SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerP
 o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.OwnerTitle, o.OwnerForenames,
 o.OwnerSurname, o.MembershipExpiryDate
 FROM owner o
-WHERE o.ExcludeFromBulkEmail = 0 AND o.IsDeceased = 0 AND o.AdditionalFlags LIKE '%$ASK STRING Person flag$%'
+WHERE o.ExcludeFromBulkEmail = 0 AND o.IsDeceased = 0 AND o.AdditionalFlags LIKE '%$ASK PERSONFLAG$%'
 ORDER BY o.OwnerSurname
 ###
 MAIL

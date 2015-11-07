@@ -388,7 +388,7 @@ is 1 cent/pence/etc).</li>
 <h3>ASK<a class="headerlink" href="#ask" title="Permalink to this headline">¶</a></h3>
 <p>Ask is quite a detailed key, which requests information from the user at
 generation time. The basic syntax is this:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ASK [DATE | [ALL]ANIMAL | LITTER | SPECIES | LOCATION | LOGTYPE | TYPE | NUMBER | STRING] [Message]$
+<div class="highlight-python"><div class="highlight"><pre>$ASK [TYPE] [Message]$
 </pre></div>
 </div>
 <div class="admonition note">
@@ -402,7 +402,9 @@ containing the message and the user is given an ASM date control to use to
 select the date. The value substituted is the date selected by the user in
 SQL string format appropriate for the database you are using.</li>
 <li>$ASK ANIMAL$ - requests an animal. The value substituted is the animal ID.</li>
+<li>$ASK ANIMALFLAG$ - requests an animal flag.</li>
 <li>$ASK PERSON$ - requests an person. The value substituted is the person ID.</li>
+<li>$ASK PERSONFLAG$ - requests a person flag.</li>
 <li>$ASK LITTER$ - requests a litter identifier. A popup displays a list of the
 recent, active litters on the system. The value returned is the litter ID as
 a string.</li>
@@ -432,7 +434,7 @@ given a text box to enter the string in. The value substituted is the string.</l
 <p>VAR works just like ASK, the only difference is that instead of substituting
 the value into the SQL, it stores it to a variable name. You can then
 substitute the variable multiple times in your SQL:</p>
-<div class="highlight-python"><div class="highlight"><pre>$VAR &lt;varname&gt; [DATE | [ALL]ANIMAL | LITTER | SPECIES | LOCATION | LOGTYPE | TYPE | NUMBER | STRING] [Message]$
+<div class="highlight-python"><div class="highlight"><pre>$VAR &lt;varname&gt; [TYPE] [Message]$
 </pre></div>
 </div>
 <p>The VAR tag should appear in your SQL before you reference the variable

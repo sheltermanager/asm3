@@ -1046,6 +1046,13 @@ def options_agegroups(dbo, includeAll = False, includeUnknown = False, selected 
         s += option(a, a, a == selected)
     return s
 
+def options_animal_flags(dbo):
+    s = ""
+    pf = lookups.get_animal_flags(dbo)
+    for p in pf:
+        s += option(p["FLAG"])
+    return s
+
 def options_animals(dbo, includeAll = False, selected = -1):
     s = ""
     l = dbo.locale
@@ -1497,6 +1504,16 @@ def report_criteria(dbo, crit, locationfilter = ""):
             <input class="asm-animalchooser" id="report-%s" data-post="%s" type="hidden" />
             </td>
             </tr>""" % ( _("Animal", l), name, name )
+        elif rtype == "ANIMALFLAG":
+            s += """
+            <tr>
+            <td>%s</td>
+            <td>
+            <select class="asm-selectbox" id="report-%s" data-post="%s">
+            %s
+            </select>
+            </td>
+            </tr>""" % ( _("Flag", l), name, name, options_animal_flags(dbo))
         elif rtype == "PERSON":
             s += """
             <tr>
@@ -1505,6 +1522,16 @@ def report_criteria(dbo, crit, locationfilter = ""):
             <input class="asm-personchooser" id="report-%s" data-post="%s" type="hidden" />
             </td>
             </tr>""" % ( _("Person", l), name, name )
+        elif rtype == "PERSONFLAG":
+            s += """
+            <tr>
+            <td>%s</td>
+            <td>
+            <select class="asm-selectbox" id="report-%s" data-post="%s">
+            %s
+            </select>
+            </td>
+            </tr>""" % ( _("Flag", l), name, name, options_person_flags(dbo))
         elif rtype == "LITTER":
             s += """
             <tr>
