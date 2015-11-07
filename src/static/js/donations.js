@@ -291,12 +291,14 @@ $(function() {
         },
 
         calculate_total: function() {
-            var tot = 0, due = 0;
+            var tot = 0, due = 0, vat = 0;
             $.each(controller.rows, function(i, v) {
                 if (v.DATE) { tot += v.DONATION; }
                 else { due += v.DONATION; }
+                if (v.VATAMOUNT) { vat += v.VATAMOUNT; }
             });
             $("#donationtotal").html(format.currency(tot) + " / " + format.currency(due));
+            $("#vattotal").html(format.currency(vat));
         },
 
         render: function() {
@@ -320,7 +322,10 @@ $(function() {
             s += tableform.table_render(this.table);
             s += '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">';
             s += '<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>';
-            s += _("Total payments") + ': <span class="strong" id="donationtotal"></span>';
+            s += _("Total payments") + ': <span class="strong" id="donationtotal"></span> ';
+            if (config.bool("VATEnabled")) {
+                s += _("Sales Tax") + ': <span class="strong" id="vattotal"></span> ';
+            }
             s += '</p></div>';
             s += html.content_footer();
             return s;
