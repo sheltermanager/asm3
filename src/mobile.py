@@ -273,7 +273,7 @@ def page(dbo, session, username):
     if len(med) > 0 and pb(users.CHANGE_MEDICAL):
         items.append(jqm_listitem_link("#med", _("Medicate Animal", l), "medical", len(med)))
     if osa and pb(users.ADD_LOG):
-        items.append(jqm_listitem_link("#log", _("Add Log to Animal", l), "log", -1, "dialog"))
+        items.append(jqm_listitem_link("#log", _("Add Log to Animal", l), "log", -1, ""))
     if pb(users.ADD_INCIDENT) or pb(users.CHANGE_INCIDENT) or pb(users.VIEW_LICENCE):
         items.append(jqm_list_divider(_("Animal Control", l)))
     if pb(users.ADD_INCIDENT):
@@ -285,7 +285,7 @@ def page(dbo, session, username):
     if len(infp) > 0 and pb(users.CHANGE_INCIDENT):
         items.append(jqm_listitem_link("#infp", _("Incidents Requiring Followup", l), "call", len(infp)))
     if pb(users.VIEW_LICENCE):
-        items.append(jqm_listitem_link("#checklicence", _("Check License", l), "licence", -1, "dialog"))
+        items.append(jqm_listitem_link("#checklicence", _("Check License", l), "licence", -1, ""))
     if pb(users.ADD_DIARY) or pb(users.EDIT_MY_DIARY_NOTES):
         items.append(jqm_list_divider(_("Diary", l)))
     if pb(users.ADD_DIARY):
@@ -299,7 +299,7 @@ def page(dbo, session, username):
     if pb(users.CHANGE_PERSON):
         items.append(jqm_list_divider(_("Person", l)))
     if len(hck) > 0 and pb(users.CHANGE_PERSON):
-        items.append(jqm_listitem_link("#homecheck", _("Perform Homecheck", l), "person", -1, "dialog"))
+        items.append(jqm_listitem_link("#homecheck", _("Perform Homecheck", l), "person", -1, ""))
 
     h.append(jqm_list("\n".join(items)))
     h.append(jqm_page_footer())
@@ -483,7 +483,7 @@ def page_vaccinations(l, homelink, vacc):
         pageid = "v" + str(v["ID"])
         vlist.append(jqm_listitem_link("#" + pageid, 
             "%s - %s (%s)" % (v["ANIMALNAME"], v["SHELTERCODE"], v["VACCINATIONTYPE"]),
-            "vaccination", -1, "dialog"))
+            "vaccination", -1, ""))
         vforms.append(jqm_page_header(pageid, v["VACCINATIONTYPE"], homelink))
         vforms.append(jqm_table())
         vforms.append(jqm_tablerow( _("Animal", l), 
@@ -512,7 +512,7 @@ def page_tests(l, homelink, test, testresults):
         pageid = "t" + str(t["ID"])
         tlist.append(jqm_listitem_link("#" + pageid, 
             "%s - %s (%s)" % (t["ANIMALNAME"], t["SHELTERCODE"], t["TESTNAME"]),
-            "vaccination", -1, "dialog"))
+            "vaccination", -1, ""))
         tforms.append(jqm_page_header(pageid, t["TESTNAME"], homelink))
         tforms.append(jqm_table())
         tforms.append(jqm_tablerow( _("Animal", l), 
@@ -544,7 +544,7 @@ def page_medication(l, homelink, med):
         pageid = "m" + str(m["TREATMENTID"])
         mlist.append(jqm_listitem_link("#" + pageid,
             "%s - %s (%s)" % (m["ANIMALNAME"], m["SHELTERCODE"], m["TREATMENTNAME"]),
-            "medical", -1, "dialog"))
+            "medical", -1, ""))
         mforms.append(jqm_page_header(pageid, m["TREATMENTNAME"], homelink))
         mforms.append(jqm_table());
         mforms.append(jqm_tablerow(_("Animal", l),
@@ -584,7 +584,7 @@ def page_diary(l, homelink, dia):
         pageid = "d" + str(d["ID"])
         dlist.append(jqm_listitem_link("#" + pageid,
             "%s (%s)" % (d["SUBJECT"], d["LINKINFO"]),
-            "diary", -1, "dialog"))
+            "diary", -1, ""))
         dforms.append(jqm_page_header(pageid, d["SUBJECT"], homelink))
         dforms.append(jqm_table());
         dforms.append(jqm_tablerow(_("Subject", l), d["SUBJECT"]))
