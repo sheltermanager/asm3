@@ -113,16 +113,22 @@ def get_onlineform_html(dbo, formid, completedocument = True):
                         });
                     } catch (ex) {}
                     $("input[type='submit']").click(function() {
+                        var rv;
                         $(".asm-onlineform-signature").each(function() {
                             try {
                                 var img = $(this).find("canvas").get(0).toDataURL("image/png");
                                 var fieldname = $(this).attr("data-name");
                                 $("input[name='" + fieldname + "']").val(img);
+                                if ($(this).signature("isEmpty") && $(this).parent().find(".asm-onlineform-required").length > 0) {
+                                    alert("Signature is required.");
+                                    rv = false;
+                                }
                             }
                             catch (exo) {
                                 if (window.console) { console.log(exo); }
                             }
                         });
+                        return rv;
                     });
                 });
                 </script>
@@ -283,7 +289,7 @@ def get_onlineform_header(dbo):
        "<title>$$TITLE$$</title>\n" \
        "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n" \
        "</head>\n" \
-       "<style\n" \
+       "<style>\n" \
        ".asm-onlineform-td:first-child { max-width: 200px; }\n" \
        "textarea { width: 300px; height: 150px; }\n" \
        "</style>\n" \
