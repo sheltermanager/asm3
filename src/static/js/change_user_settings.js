@@ -141,7 +141,7 @@ $(function() {
                 }
                 common.ajax_post("change_user_settings", formdata)
                     .then(function(result) { 
-                        common.route("main");
+                        common.route("main", true);
                     })
                     .fail(function() {
                         $(".asm-content button").button("enable");
