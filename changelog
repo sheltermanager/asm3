@@ -1,6 +1,7 @@
 37
 ================
 
+07/11/15 Show litter ID in medical books #205
 07/11/15 ASK ANIMALFLAG and ASK PERSONFLAG report tokens #128
 07/11/15 Allow signatures on online forms to be mandatory #289
 07/11/15 Remove jquery mobile dialogs as they're broken and self-close on iOS

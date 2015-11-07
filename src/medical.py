@@ -34,7 +34,7 @@ DESCENDING_REQUIRED = 1
 DESCENDING_GIVEN = 2
 
 def get_medicaltreatment_query(dbo):
-    return "SELECT a.ShelterCode, a.ShortCode, a.AnimalName, a.Archived, a.ActiveMovementType, a.DeceasedDate, " \
+    return "SELECT a.ShelterCode, a.ShortCode, a.AnimalName, a.Archived, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
         "a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, " \
         "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
@@ -100,7 +100,7 @@ def get_medicaltreatment_query(dbo):
             }
 
 def get_test_query(dbo):
-    return "SELECT at.*, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementType, a.DeceasedDate, " \
+    return "SELECT at.*, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
         "a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, " \
         "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
@@ -141,7 +141,7 @@ def get_test_query(dbo):
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation "
 
 def get_vaccination_query(dbo):
-    return "SELECT av.*, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementType, a.DeceasedDate, " \
+    return "SELECT av.*, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
         "a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, " \
         "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \

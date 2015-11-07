@@ -120,6 +120,11 @@ $(function() {
                             if (controller.animal) { return true; }
                         }
                     },
+                    { field: "ACCEPTANCENUMBER", display: _("Litter"),
+                        hideif: function(row) {
+                            return config.bool("DontShowLitterID");
+                        }
+                    },
                     { field: "LOCATIONNAME", display: _("Location"),
                         formatter: function(row) {
                             var s = row.LOCATIONNAME;
