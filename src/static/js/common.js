@@ -90,6 +90,20 @@
             });
         },
 
+        /** Returns true if this is a mobile browser */
+        is_mobile_browser: function() {
+            if (navigator.userAgent.match(/Android/i)
+                || navigator.userAgent.match(/webOS/i)
+                || navigator.userAgent.match(/iPhone/i)
+                || navigator.userAgent.match(/iPad/i)
+                || navigator.userAgent.match(/iPod/i)
+                || navigator.userAgent.match(/BlackBerry/i)
+                || navigator.userAgent.match(/Windows Phone/i)) {
+                return true;
+            }
+            return false;
+        },
+
         cookie_set: function(name, value, days) {
             var expires = "";
             if (days) {

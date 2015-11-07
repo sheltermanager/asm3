@@ -108,11 +108,11 @@ $(function() {
             var password = $("input#password").val();
             var database = $("input#database").val();
             var formdata = { "database": database, 
-                         "username" : username, 
-                         "password" : password,
-                         // DISABLED: This may be useful for iPad/iPhone if we can't get our app through again
-                         // "mobile"   : Modernizr.touchevents ? "true" : "false",
-                         "nologconnection" : controller.nologconnection };
+                             "username" : username, 
+                             "password" : password,
+                             // TODO: disabled for now
+                             // "mobile"   : common.is_mobile_browser(),
+                             "nologconnection" : controller.nologconnection };
             $.ajax({
                 type: "POST",
                 url: "login",
