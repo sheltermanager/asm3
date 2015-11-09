@@ -510,6 +510,9 @@ def escape_tinymce(content):
     c = c.replace("&lt;", "&amp;lt;")
     c = c.replace("<", "&lt;")
     c = c.replace(">", "&gt;")
+    # TODO: this is a fix from a period where online form default header was broken
+    # and can be deleted one day.
+    c = c.replace("<style\n", "<style>\n")
     return c
 
 class UnicodeCSVWriter:

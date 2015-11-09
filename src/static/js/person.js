@@ -442,12 +442,12 @@ $(function() {
             if ($("#matchactive").val() == "0") {
                 $(".lft").closest("tr").fadeOut();
                 $(".lfs").closest("tr").fadeOut();
-                $("#button-lookingfor").fadeOut();
+                $("#button-lookingfor").button("option", "disabled", true);
             }
             else {
                 $(".lft").closest("tr").fadeIn();
                 $(".lfs").closest("tr").fadeIn();
-                $("#button-lookingfor").fadeIn();
+                $("#button-lookingfor").button("option", "disabled", false);
             }
 
             // If it's an organisation, only show the org fields,
