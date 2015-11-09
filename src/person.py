@@ -1029,7 +1029,7 @@ def send_email_from_form(dbo, username, post):
         log.add_log(dbo, username, log.PERSON, post.integer("personid"), logtype, body)
     return rv
 
-def lookingfor_report(dbo, username = "system"):
+def lookingfor_report(dbo, username = "system", personid = 0):
     """
     Generates the person looking for report
     """
@@ -1040,6 +1040,10 @@ def lookingfor_report(dbo, username = "system"):
     def p(s): return "<p>%s</p>" % s
     def td(s): return "<td>%s</td>" % s
     def hr(): return "<hr />"
+
+    idclause = ""
+    if personid != 0:
+        idclause = " AND owner.ID=%d" % personid
   
     people = db.query(dbo, "SELECT owner.*, " \
         "(SELECT Size FROM lksize WHERE ID = owner.MatchSize) AS MatchSizeName, " \
@@ -1049,8 +1053,8 @@ def lookingfor_report(dbo, username = "system"):
         "(SELECT AnimalType FROM animaltype WHERE ID = owner.MatchAnimalType) AS MatchAnimalTypeName, " \
         "(SELECT SpeciesName FROM species WHERE ID = owner.MatchSpecies) AS MatchSpeciesName " \
         "FROM owner WHERE MatchActive = 1 AND " \
-        "(MatchExpires Is Null OR MatchExpires > %s)" \
-        "ORDER BY OwnerName" % db.dd(now(dbo.timezone)))
+        "(MatchExpires Is Null OR MatchExpires > %s)%s " \
+        "ORDER BY OwnerName" % (db.dd(now(dbo.timezone)), idclause))
 
     ah = []
     ah.append(hr())

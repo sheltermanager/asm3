@@ -1,6 +1,7 @@
 37
 ================
 
+09/11/15 Allow running of "person looking for" from person toolbar #200
 07/11/15 Force reload after changing user settings #294
 07/11/15 Show VAT/Sales Tax total in payment book/tab #270
 07/11/15 Show litter ID in medical books #205

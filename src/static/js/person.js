@@ -392,6 +392,7 @@ $(function() {
                 { id: "merge", text: _("Merge"), icon: "copy", tooltip: _("Merge another person into this one") },
                 { id: "document", text: _("Document"), type: "buttonmenu", icon: "document", tooltip: _("Generate a document from this person") },
                 { id: "diarytask", text: _("Diary Task"), type: "buttonmenu", icon: "diary-task", tooltip: _("Create diary notes from a task") },
+                { id: "lookingfor", text: _("Looking For"), icon: "animal-find", tooltip: _("Find animals matching the looking for criteria of this person") },
                 { id: "map", text: _("Map"), icon: "map", tooltip: _("Find this address on a map") },
                 { id: "email", text: _("Email"), icon: "email", tooltip: _("Email this person") }
             ]);
@@ -441,10 +442,12 @@ $(function() {
             if ($("#matchactive").val() == "0") {
                 $(".lft").closest("tr").fadeOut();
                 $(".lfs").closest("tr").fadeOut();
+                $("#button-lookingfor").fadeOut();
             }
             else {
                 $(".lft").closest("tr").fadeIn();
                 $(".lfs").closest("tr").fadeIn();
+                $("#button-lookingfor").fadeIn();
             }
 
             // If it's an organisation, only show the org fields,
@@ -734,6 +737,10 @@ $(function() {
                      hide: dlgfx.delete_hide,
                      buttons: mb
                 });
+            });
+
+            $("#button-lookingfor").button().click(function() {
+                common.route("person_lookingfor?ajax=false&personid=" + controller.person.ID);
             });
 
             $("#button-email").button().click(function() {

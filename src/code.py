@@ -5051,9 +5051,13 @@ class person_lookingfor:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.VIEW_PERSON)
+        post = utils.PostedData(web.input(), session.locale)
         dbo = session.dbo
         web.header("Content-Type", "text/html")
-        return dbfs.get_string_filepath(dbo, "/reports/daily/lookingfor.html")
+        if post.integer("personid") == 0:
+            return dbfs.get_string_filepath(dbo, "/reports/daily/lookingfor.html")
+        else:
+            return extperson.lookingfor_report(dbo, session.user, post.integer("personid"))
 
 class person_links:
     def GET(self):
