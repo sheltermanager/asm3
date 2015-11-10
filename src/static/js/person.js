@@ -740,7 +740,9 @@ $(function() {
             });
 
             $("#button-lookingfor").button().click(function() {
-                common.route("person_lookingfor?ajax=false&personid=" + controller.person.ID);
+                validate.save(function() {
+                    common.route("person_lookingfor?ajax=false&personid=" + controller.person.ID);
+                });
             });
 
             $("#button-email").button().click(function() {
