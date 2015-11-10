@@ -22,7 +22,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.header import Header
 from email import Charset, Encoders
-from i18n import _, display2python
+from i18n import _, display2python, format_currency, python2display
 from cStringIO import StringIO
 from sitedefs import SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF
 
@@ -100,6 +100,11 @@ class PostedData(object):
         for k,v in self.data.iteritems():
             x.append("%s:%s" % (k, v.encode("ascii", "xmlcharrefreplace")))
         return ", ".join(x)
+
+def is_currency(f):
+    """ Returns true if the field with name f is a currency field """
+    CURRENCY_FIELDS = "AMT AMOUNT DONATION DAILYBOARDINGCOST COSTAMOUNT COST FEE LICENCEFEE DEPOSITAMOUNT FINEAMOUNT VATAMOUNT"
+    return f.upper().startswith("MONEY") or CURRENCY_FIELDS.find(f.upper()) != -1
 
 def is_numeric(s):
     """
@@ -549,7 +554,7 @@ class UnicodeCSVWriter:
         for row in rows:
             self.writerow(row)
 
-def csv(rows, cols = None, includeheader = True):
+def csv(l, rows, cols = None, includeheader = True):
     """
     Creates a CSV file from a set of resultset rows. If cols has been 
     supplied as a list of strings, fields will be output in that
@@ -568,7 +573,12 @@ def csv(rows, cols = None, includeheader = True):
     for r in rows:
         rd = []
         for c in cols:
-            rd.append(decode_html(r[c]))
+            if is_currency(c):
+                rd.append(decode_html(format_currency(l, r[c])))
+            elif type(r[c]) == datetime.datetime:
+                rd.append(decode_html(python2display(l, r[c])))
+            else:
+                rd.append(decode_html(r[c]))
         out.writerow(rd)
     return strio.getvalue()
 

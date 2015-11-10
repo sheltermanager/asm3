@@ -579,7 +579,6 @@ class Report:
     omitHeaderFooter = False
     isSubReport = False
     output = ""
-    CURRENCY_FIELDS = "AMT AMOUNT DONATION DAILYBOARDINGCOST COSTAMOUNT COST FEE LICENCEFEE DEPOSITAMOUNT FINEAMOUNT VATAMOUNT"
     
     def __init__(self, dbo):
         self.dbo = dbo
@@ -688,17 +687,11 @@ class Report:
             else:
                 return "%s %s" % (i18n.python2display(l, v), i18n.format_time(v))
 
-        if self._IsCurrency(k):
+        if utils.is_currency(k):
             return i18n.format_currency(l, v)
 
         return str(v)
-
-    def _IsCurrency(self, f):
-        """
-        Returns true if fieldname f is a currency field
-        """
-        return f.upper().startswith("MONEY") or self.CURRENCY_FIELDS.find(f.upper()) != -1
-
+    
     def _OutputGroupBlock(self, gd, headfoot, rs):
         """
         Outputs a group block, 'gd' is the group descriptor,
@@ -749,7 +742,7 @@ class Report:
                 for i in range(gd.lastGroupStartPosition, gd.lastGroupEndPosition + 1):
                     try:
                         fv = float(rs[i][calcfield])
-                        if self._IsCurrency(fields[1]):
+                        if utils.is_currency(fields[1]):
                             fv /= 100
                         total += fv
                     except Exception, e:
@@ -780,7 +773,7 @@ class Report:
                 for i in range(gd.lastGroupStartPosition, gd.lastGroupEndPosition + 1):
                     try:
                         fv = float(rs[i][calcfield])
-                        if self._IsCurrency(fields[1]):
+                        if utils.is_currency(fields[1]):
                             fv /= 100
                         total += fv
                         num += 1
@@ -832,7 +825,7 @@ class Report:
                     except Exception, e:
                         # Ignore errors
                         pass
-                if self._IsCurrency(fields[1]):
+                if utils.is_currency(fields[1]):
                     value = str(minval / 100.0)
                 else:
                     value = str(minval)
@@ -851,7 +844,7 @@ class Report:
                     except Exception, e:
                         # Ignore errors
                         pass
-                if self._IsCurrency(fields[1]):
+                if utils.is_currency(fields[1]):
                     value = str(maxval / 100.0)
                 else:
                     value = str(maxval)
@@ -862,7 +855,7 @@ class Report:
                 fields = key.lower().split(".")
                 calcfield = fields[1].upper()
                 value = str(rs[gd.lastGroupStartPosition][calcfield])
-                if self._IsCurrency(calcfield):
+                if utils.is_currency(calcfield):
                     value = str(float(value) / 100)
 
             # {LAST.field}
@@ -871,7 +864,7 @@ class Report:
                 fields = key.lower().split(".")
                 calcfield = fields[1].upper()
                 value = str(rs[gd.lastGroupStartPosition][calcfield])
-                if self._IsCurrency(calcfield):
+                if utils.is_currency(calcfield):
                     value = str(float(value) / 100)
 
             # {SQL.sql} - arbitrary sql command, output first

@@ -3886,6 +3886,7 @@ class mailmerge:
 
     def POST(self):
         utils.check_loggedin(session, web)
+        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(mode="csv"), session.locale)
         mode = post["mode"]
@@ -3912,7 +3913,7 @@ class mailmerge:
             web.header("Content-Type", "text/csv")
             web.header("Content-Disposition", u"attachment; filename=" + utils.decode_html(session.mergetitle) + u".csv")
             includeheader = 1 == post.boolean("includeheader")
-            return utils.csv(rows, cols, includeheader)
+            return utils.csv(l, rows, cols, includeheader)
 
 class medical:
     def GET(self):
@@ -5627,7 +5628,7 @@ class report_export:
                 rows, cols = extreports.execute_query(dbo, crid, session.user, [])
                 web.header("Content-Type", "text/csv")
                 web.header("Content-Disposition", u"attachment; filename=" + utils.decode_html(filename) + u".csv")
-                return utils.csv(rows, cols, True)
+                return utils.csv(l, rows, cols, True)
             # If we're in criteria mode (and there are some to get here), ask for them
             title = extreports.get_title(dbo, crid)
             al.debug("building criteria form for report %d %s" % (crid, title), "code.report", dbo)
@@ -5650,7 +5651,7 @@ class report_export:
             rows, cols = extreports.execute_query(dbo, crid, session.user, p)
             web.header("Content-Type", "text/csv")
             web.header("Content-Disposition", u"attachment; filename=" + utils.decode_html(filename) + u".csv")
-            return utils.csv(rows, cols, True)
+            return utils.csv(l, rows, cols, True)
 
 class report_images:
     def GET(self):
@@ -5864,6 +5865,7 @@ class sql:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.USE_SQL_INTERFACE)
+        l = session.locale
         dbo = session.dbo
         post = utils.PostedData(web.input(mode="iface"), session.locale)
         mode = post["mode"]
@@ -5908,12 +5910,12 @@ class sql:
             al.debug("%s executed CSV animal dump" % str(session.user), "code.sql", dbo)
             web.header("Content-Type", "text/plain")
             web.header("Content-Disposition", "attachment; filename=\"animal.csv\"")
-            return utils.csv(extanimal.get_animal_find_advanced(dbo, { "logicallocation" : "all", "includedeceased": "true", "includenonshelter": "true" }))
+            return utils.csv(l, extanimal.get_animal_find_advanced(dbo, { "logicallocation" : "all", "includedeceased": "true", "includenonshelter": "true" }))
         elif mode == "personcsv":
             al.debug("%s executed CSV person dump" % str(session.user), "code.sql", dbo)
             web.header("Content-Type", "text/plain")
             web.header("Content-Disposition", "attachment; filename=\"person.csv\"")
-            return utils.csv(extperson.get_person_find_simple(dbo, "", "all", True, 0))
+            return utils.csv(l, extperson.get_person_find_simple(dbo, "", "all", True, 0))
 
     def POST(self):
         utils.check_loggedin(session, web)
