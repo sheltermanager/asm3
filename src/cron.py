@@ -543,6 +543,13 @@ def maint_db_reset(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_reset: %s" % em, "cron.maint_db_reset", dbo, sys.exc_info())
 
+def maint_deduplicate_people(dbo):
+    try:
+        person.merge_duplicate_people(dbo, "cron")
+    except:
+        em = str(sys.exc_info()[0])
+        al.error("FAIL: uncaught error running maint_deduplicate_people: %s" % em, "cron.maint_deduplicate_people", dbo, sys.exc_info())
+
 def maint_scale_animal_images(dbo):
     try:
         media.scale_animal_images(dbo)
@@ -657,6 +664,8 @@ def run(dbo, mode):
         maint_db_reinstall(dbo)
     elif mode == "maint_db_reset":
         maint_db_reset(dbo)
+    elif mode == "maint_deduplicate_people":
+        maint_deduplicate_people(dbo)
 
 def run_all_map_databases(mode):
     for alias in MULTIPLE_DATABASES_MAP.iterkeys():
@@ -733,6 +742,7 @@ def print_usage():
     print "       maint_db_dump_smcom - produce an SQL dump for import into sheltermanager.com"
     print "       maint_db_install - install structure/data into a new empty database"
     print "       maint_db_reinstall - wipe the db and reinstall default data"
+    print "       maint_deduplicate_people - automatically merge duplicate people records"
     print "       maint_recode_all - regenerate all animal codes"
     print "       maint_recode_shelter - regenerate animals codes for all shelter animals"
     print "       maint_reinstall_default_media - re-adds default document/publishing templates"

@@ -856,6 +856,21 @@ def merge_person(dbo, username, personid, mergepersonid):
     audit.delete(dbo, username, "owner", str(db.query(dbo, "SELECT * FROM owner WHERE ID=%d" % mergepersonid)))
     db.execute(dbo, "DELETE FROM owner WHERE ID = %d" % mergepersonid)
 
+def merge_duplicate_people(dbo, username):
+    """
+    Runs through every person in the database and attempts to find other people
+    with the same first name, last name and address. If any are found, they are
+    merged into this person via a call to merge_person
+    """
+    merged = 0
+    for p in db.query(dbo, "SELECT ID, OwnerForeNames, OwnerSurname, OwnerAddress FROM owner ORDER BY ID"):
+        dupsql = "SELECT ID FROM owner WHERE ID <> %d AND OwnerForeNames = %s AND OwnerSurname = %s AND OwnerAddress = %s" % \
+            (p["ID"], db.ds(p["OWNERFORENAMES"]), db.ds(p["OWNERSURNAME"]), db.ds(p["OWNERADDRESS"]))
+        for mp in db.query(dbo, dupsql):
+            merged += 1
+            merge_person(dbo, username, p["ID"], mp["ID"])
+    al.info("Merged %d duplicate people records" % merged, "person.merge_duplicate_people", dbo)
+
 def update_pass_homecheck(dbo, user, personid, comments):
     """
     Marks a person as homechecked and appends any comments supplied to their record.
