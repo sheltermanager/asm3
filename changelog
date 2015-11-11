@@ -1,6 +1,7 @@
 37
 ================
 
+11/11/15 Add TemplateTypeBaby and TemplateTypeSpecies for juveniles #304
 10/11/15 Output currency and date fields correctly in CSV export #83
 09/11/15 Allow running of "person looking for" from person toolbar #200
 07/11/15 Force reload after changing user settings #294

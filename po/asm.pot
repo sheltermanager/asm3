@@ -4482,7 +4482,7 @@ msgid "Find animal control incidents returned {0} results."
 msgstr ""
 
 #: person.js
-msgid "Find animals this person might be looking for"
+msgid "Find animals matching the looking for criteria of this person"
 msgstr ""
 
 #: common_personchooser.js

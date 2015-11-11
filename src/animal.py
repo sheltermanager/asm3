@@ -1857,7 +1857,7 @@ def insert_animal_from_form(dbo, post, username):
             str(kf("weight")))
 
     # Do we have a matching template animal we can copy some satellite info from?
-    clone_from_template(dbo, username, nextid, ki("animaltype"), ki("species"))
+    clone_from_template(dbo, username, nextid, dob, ki("animaltype"), ki("species"))
 
     extension.route(dbo, "after", "insert_animal_from_form", post)
     return (nextid, get_code(dbo, nextid))
@@ -2436,26 +2436,43 @@ def clone_animal(dbo, username, animalid):
     update_variable_animal_data(dbo, nid)
     return nid
 
-def clone_from_template(dbo, username, animalid, animaltypeid, speciesid):
+def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
     """
     Tries to locate a non-shelter animal called "TemplateType" with animaltypeid,
     if it doesn't find one, it looks for a non-shelter animal called "TemplateSpecies"
     with speciesid. If one is not found, does nothing.
+    If the animal is deemed to be a baby according to the baby split defined for the
+    annual figures report, will check for "TemplateTypeBaby" or "TemplateTypeSpecies" first.
     Clones appropriate medical, cost and diet info from the template animal.
     """
-    cloneanimalid = db.query_int(dbo, "SELECT ID FROM animal " \
-        "WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatetype' AND AnimalTypeID = %d" % animaltypeid)
-    if cloneanimalid == 0:
-        cloneanimalid = db.query_int(dbo, "SELECT ID FROM animal " \
-            "WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatespecies' AND SpeciesID = %d" % speciesid)
+    babyqueries = [
+        "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatetypebaby' AND AnimalTypeID = %d" % animaltypeid,
+        "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatespeciesbaby' AND SpeciesID = %d" % speciesid,
+        "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatetype' AND AnimalTypeID = %d" % animaltypeid,
+        "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatespecies' AND SpeciesID = %d" % speciesid
+    ]
+    adultqueries = [ 
+        "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatetype' AND AnimalTypeID = %d" % animaltypeid,
+        "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatespecies' AND SpeciesID = %d" % speciesid
+    ]
+    queries = adultqueries
+    # If this is a baby animal as defined by its age, use the babyqueries to look for a template
+    babymonths = configuration.annual_figures_baby_months(dbo)
+    if date_diff_days(dob, now()) < (babymonths * 31):
+        queries = babyqueries
+    # Use our queries to find a potential template
+    for q in queries:
+        cloneanimalid = db.query_int(dbo, q)
+        if cloneanimalid != 0: break
+    # Give up if we didn't find a template animal
     if cloneanimalid == 0:
         return
     dbtoday = db.dd(now(dbo.timezone))
     # Any animal fields that should be copied to the new record
     cloneanimalfee = db.query_int(dbo, "SELECT Fee FROM animal WHERE ID = %d" % cloneanimalid)
     db.execute(dbo, "UPDATE animal SET Fee = %d WHERE ID = %d" % (cloneanimalfee, animalid))
-    # Additional Fields
-    for af in db.query(dbo, "SELECT * FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (cloneanimalid, additional.ANIMAL_IN)):
+    # Additional Fields (don't include mandatory ones as they are already set by new animal screen)
+    for af in db.query(dbo, "SELECT a.* FROM additional a INNER JOIN additionalfield af ON af.ID = a.AdditionalFieldID WHERE af.Mandatory <> 1 AND a.LinkID = %d AND a.LinkType IN (%s)" % (cloneanimalid, additional.ANIMAL_IN)):
         sql = db.make_insert_sql("additional", (
             ( "LinkType", db.di(af["LINKTYPE"]) ),
             ( "LinkID", db.di(animalid) ),

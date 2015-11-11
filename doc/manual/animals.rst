@@ -387,3 +387,8 @@ When copying from a template animal, ASM will copy the following items:
 * Diets
 * Costs
 
+In addition, you can further define a template animal for baby animals (puppies
+and kittens). If the animal's age is under the system defined "baby split" of 6
+months by default, the system will first look for templates called
+TemplateTypeBaby and TemplateSpeciesBaby before falling back to TemplateType
+and TemplateSpecies.
