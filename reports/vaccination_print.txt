@@ -2,7 +2,7 @@ Vaccination Print
 ###
 Auditing
 ###
-Any
+33503/Any
 ###
 Vaccinations for a selected shelter animal.
 ###
@@ -11,7 +11,7 @@ en
 SELECT
 a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName,
 v.VaccinationType, av.DateRequired,
-av.DateOfVaccination, av.Comments
+av.DateOfVaccination, av.DateExpires, av.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN animalvaccination av ON a.ID = av.AnimalID
@@ -26,6 +26,7 @@ $$HEADER
 <td><b>Vaccination Type</b></td>
 <td><b>Required</b></td>
 <td><b>Given</b></td>
+<td><b>Expires</b></td>
 <td><b>Comments</b></td>
 </tr>
 HEADER$$
@@ -34,6 +35,7 @@ $$BODY<tr>
 <td>$VACCINATIONTYPE</td>
 <td>$DATEREQUIRED</td>
 <td>$DATEOFVACCINATION</td>
+<td>$DATEEXPIRES</td>
 <td>$COMMENTS</td>
 </tr>
 BODY$$

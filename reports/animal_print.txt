@@ -185,6 +185,7 @@ SELECT vaccinationtype.VaccinationType,
 animalvaccination.Cost,
 animalvaccination.DateRequired,
 animalvaccination.DateOfVaccination,
+animalvaccination.DateExpires,
 animalvaccination.Comments AS VaccComments
 FROM animalvaccination
 INNER JOIN vaccinationtype ON vaccinationtype.ID = animalvaccination.VaccinationID
@@ -193,10 +194,10 @@ ORDER BY DateOfVaccination
 +++
 $$HEADER
 <table cellpadding="5">
-<tr><th>Type</th><th>Required</th><th>Cost</th><th>Given</th><th>Comments</th></tr>
+<tr><th>Type</th><th>Required</th><th>Cost</th><th>Given</th><th>Expires</th><th>Comments</th></tr>
 HEADER$$
 $$BODY
-<tr><td>$VACCINATIONTYPE</td><td>$DATEREQUIRED</td><td>$COST</td><td>$DATEOFVACCINATION</td><td>$VACCCOMMENTS</td></tr>
+<tr><td>$VACCINATIONTYPE</td><td>$DATEREQUIRED</td><td>$COST</td><td>$DATEOFVACCINATION</td><td>$DATEEXPIRES</td><td>$VACCCOMMENTS</td></tr>
 BODY$$
 $$FOOTER
 </table>

@@ -2,7 +2,7 @@ Vaccinations Given by Date
 ###
 Auditing
 ###
-Any
+33503/Any
 ###
 Vaccinations given between two dates.
 ###
@@ -10,7 +10,7 @@ en
 ###
 SELECT
 a.ShelterCode, a.AnimalName,
-v.VaccinationType, av.DateOfVaccination, 
+v.VaccinationType, av.DateOfVaccination, av.DateExpires, 
 av.Cost, av.Comments
 FROM animal a
 
@@ -29,6 +29,7 @@ $$HEADER
 <td><b>Name</b></td>
 <td><b>Type</b></td>
 <td><b>Date</b></td>
+<td><b>Expires</b></td>
 <td><b>Cost</b></td>
 <td><b>Comments</b></td>
 </tr>
@@ -39,6 +40,7 @@ $$BODY<tr>
 <td>$ANIMALNAME</td>
 <td>$VACCINATIONTYPE</td>
 <td>$DATEOFVACCINATION</td>
+<td>$DATEEXPIRES</td>
 <td>$COST</td>
 <td>$COMMENTS</td>
 </tr>
