@@ -2397,14 +2397,16 @@ class document_gen:
                 m = extmovement.get_movement(dbo, recid)
                 if m is None:
                     raise utils.ASMValidationError("%d is not a valid movement id" % recid)
+                animalid = m["ANIMALID"]
+                ownerid = m["OWNERID"]
                 # ASM2 created the saved doc under both animal and person, however ASM3
                 # historically only ever created against the animal. 
                 # This commented out code is here in case we ever want to reinstate the original ASM2 behaviour.
-                #tempname += " - " + extperson.get_person_name(dbo, m["OWNERID"])
-                #extmedia.create_document_media(dbo, session.user, extmedia.PERSON, recid, tempname, post["document"])
-                tempname += " - " + extanimal.get_animal_namecode(dbo, m["ANIMALID"])
-                extmedia.create_document_media(dbo, session.user, extmedia.ANIMAL, recid, tempname, post["document"])
-                raise web.seeother("animal_media?id=%d" % recid)
+                #tempname += " - " + extperson.get_person_name(dbo, ownerid)
+                #extmedia.create_document_media(dbo, session.user, extmedia.PERSON, ownerid, tempname, post["document"])
+                tempname += " - " + extanimal.get_animal_namecode(dbo, animalid)
+                extmedia.create_document_media(dbo, session.user, extmedia.ANIMAL, animalid, tempname, post["document"])
+                raise web.seeother("animal_media?id=%d" % animalid)
             else:
                 raise utils.ASMValidationError("Mode '%s' is invalid, cannot save" % mode)
         elif post["savemode"] == "pdf":
