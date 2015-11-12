@@ -765,7 +765,7 @@ def merge_person_details(dbo, username, personid, d):
     p = get_person(dbo, personid)
     def merge(dictfield, fieldname):
         if not d.has_key(dictfield): return
-        if p[fieldname] == "" or p[fieldname] is None:
+        if p[fieldname] is None or p[fieldname] == "":
             db.execute(dbo, "UPDATE owner SET %s = %s, LastChangedBy = %s, LastChangedDate = %s WHERE ID = %d" % \
                 (fieldname, db.ds(d[dictfield]), db.ds(username), db.ddt(now(dbo.timezone)), personid))
     merge("address", "OWNERADDRESS")
@@ -863,11 +863,15 @@ def merge_duplicate_people(dbo, username):
     merged into this person via a call to merge_person
     """
     merged = 0
-    for p in db.query(dbo, "SELECT ID, OwnerForeNames, OwnerSurname, OwnerAddress FROM owner ORDER BY ID"):
+    people = db.query(dbo, "SELECT ID, OwnerForeNames, OwnerSurname, OwnerAddress FROM owner ORDER BY ID")
+    al.info("Checking for duplicate people (%d records)" % len(people), "person.merge_duplicate_people", dbo)
+    for i, p in enumerate(people):
         dupsql = "SELECT ID FROM owner WHERE ID <> %d AND OwnerForeNames = %s AND OwnerSurname = %s AND OwnerAddress = %s" % \
             (p["ID"], db.ds(p["OWNERFORENAMES"]), db.ds(p["OWNERSURNAME"]), db.ds(p["OWNERADDRESS"]))
         for mp in db.query(dbo, dupsql):
             merged += 1
+            al.debug("found duplicate %s %s (%d of %d), merging" % (p["OWNERFORENAMES"], p["OWNERSURNAME"], i, len(people)), \
+                "person.merge_duplicate_people", dbo)
             merge_person(dbo, username, p["ID"], mp["ID"])
     al.info("Merged %d duplicate people records" % merged, "person.merge_duplicate_people", dbo)
 
