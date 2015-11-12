@@ -864,18 +864,20 @@ def merge_duplicate_people(dbo, username):
     merged into this person via a call to merge_person
     """
     merged = 0
+    removed = [] # track people we've already merged and removed so we can skip them
     people = db.query(dbo, "SELECT ID, OwnerForeNames, OwnerSurname, OwnerAddress FROM owner ORDER BY ID")
     al.info("Checking for duplicate people (%d records)" % len(people), "person.merge_duplicate_people", dbo)
     for i, p in enumerate(people):
+        if p["ID"] in removed: continue
         dupsql = "SELECT ID FROM owner WHERE ID <> %d AND OwnerForeNames = %s AND OwnerSurname = %s AND OwnerAddress = %s" % \
             (p["ID"], db.ds(p["OWNERFORENAMES"]), db.ds(p["OWNERSURNAME"]), db.ds(p["OWNERADDRESS"]))
         for mp in db.query(dbo, dupsql):
-            if p["ID"] == mp["ID"]: continue
             merged += 1
             al.debug("found duplicate %s %s (%d of %d) id=%d, dupid=%d, merging" % \
                 (p["OWNERFORENAMES"], p["OWNERSURNAME"], i, len(people), p["ID"], mp["ID"]), \
                 "person.merge_duplicate_people", dbo)
             merge_person(dbo, username, p["ID"], mp["ID"])
+            removed.append(mp["ID"])
     al.info("Merged %d duplicate people records" % merged, "person.merge_duplicate_people", dbo)
 
 def update_pass_homecheck(dbo, user, personid, comments):
