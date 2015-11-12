@@ -869,7 +869,7 @@ def merge_duplicate_people(dbo, username):
     al.info("Checking for duplicate people (%d records)" % len(people), "person.merge_duplicate_people", dbo)
     for i, p in enumerate(people):
         if p["ID"] in removed: continue
-        dupsql = "SELECT ID FROM owner WHERE ID <> %d AND OwnerForeNames = %s AND OwnerSurname = %s AND OwnerAddress = %s" % \
+        dupsql = "SELECT ID FROM owner WHERE ID > %d AND OwnerForeNames = %s AND OwnerSurname = %s AND OwnerAddress = %s" % \
             (p["ID"], db.ds(p["OWNERFORENAMES"]), db.ds(p["OWNERSURNAME"]), db.ds(p["OWNERADDRESS"]))
         for mp in db.query(dbo, dupsql):
             merged += 1
