@@ -870,8 +870,10 @@ def merge_duplicate_people(dbo, username):
         dupsql = "SELECT ID FROM owner WHERE ID <> %d AND OwnerForeNames = %s AND OwnerSurname = %s AND OwnerAddress = %s" % \
             (p["ID"], db.ds(p["OWNERFORENAMES"]), db.ds(p["OWNERSURNAME"]), db.ds(p["OWNERADDRESS"]))
         for mp in db.query(dbo, dupsql):
+            if p["ID"] == mp["ID"]: continue
             merged += 1
-            al.debug("found duplicate %s %s (%d of %d), merging" % (p["OWNERFORENAMES"], p["OWNERSURNAME"], i, len(people)), \
+            al.debug("found duplicate %s %s (%d of %d) id=%d, dupid=%d, merging" % \
+                (p["OWNERFORENAMES"], p["OWNERSURNAME"], i, len(people), p["ID"], mp["ID"]), \
                 "person.merge_duplicate_people", dbo)
             merge_person(dbo, username, p["ID"], mp["ID"])
     al.info("Merged %d duplicate people records" % merged, "person.merge_duplicate_people", dbo)
