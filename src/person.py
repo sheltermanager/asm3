@@ -763,6 +763,7 @@ def merge_person_details(dbo, username, personid, d):
     from the dictionary are used instead and updated on the record.
     """
     p = get_person(dbo, personid)
+    if p is None: return
     def merge(dictfield, fieldname):
         if not d.has_key(dictfield): return
         if p[fieldname] is None or p[fieldname] == "":
