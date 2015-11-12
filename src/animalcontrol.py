@@ -183,6 +183,7 @@ def get_animalcontrol_find_advanced(dbo, criteria, limit = 0):
     addid("citationtype", "ac.CitationTypeID")
     addstr("address", "ac.DispatchAddress")
     addstr("postcode", "ac.DispatchPostcode")
+    addstr("callnotes", "ac.CallNotes")
     addstr("description", "ac.AnimalDescription")
     if (crit("agegroup") != "-1"): addstr("agegroup", "ac.AgeGroup")
     addid("sex", "ac.Sex")

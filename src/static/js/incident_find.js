@@ -133,6 +133,16 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
+                
+                '<tr>',
+                '<td>',
+                '<label for="callnotes">' + _("Notes") + '</label>',
+                '</td>',
+                '<td>',
+                '<input id="callnotes" data="callnotes" class="asm-textbox" />',
+                '</td>',
+                '<td>',
+                '</tr>',
 
                 '<tr>',
                 '<td><label for="incidentfrom">' + _("Incident Between") + '</label></td>',
