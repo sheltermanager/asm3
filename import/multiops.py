@@ -78,6 +78,7 @@ canimalintakes = asm.csv_to_list("%s/tblAnimalIntakesDispositions.csv" % PATH)
 canimalsnotes = asm.csv_to_list("%s/tblAnimalsNotes.csv" % PATH)
 ccomplaints = asm.csv_to_list("%s/tblComplaints.csv" % PATH)
 ccomplaintsanimals = asm.csv_to_list("%s/tblComplaintsAnimals.csv" % PATH)
+ccomplaintsnotes = asm.csv_to_list("%s/tblComplaintsNotes.csv" % PATH)
 ccomplaintspeople = asm.csv_to_list("%s/tblComplaintsKnownPersons.csv" % PATH)
 ccomplainttypes = asm.csv_to_list("%s/sysComplaintTypes.csv" % PATH)
 cmedicalhistory = asm.csv_to_list("%s/tblMedicalHistory.csv" % PATH)
@@ -492,6 +493,17 @@ for row in ccomplaintspeople:
     if itype == "1": ac.CallerID = o.ID # Complainant
     elif itype == "2" or itype == "5": ac.OwnerID = o.ID # Animal Owner or Suspect
     elif itype == "4": ac.VictimID = o.ID # Victim
+
+for row in ccomplaintsnotes:
+    if not ppo.has_key(row["tblComplaintsID"]): continue
+    a = ppac[row["tblComplaintsID"]]
+    l = asm.Log()
+    logs.append(l)
+    l.LogTypeID = 6
+    l.LinkID = a.ID
+    l.LinkType = 1
+    l.Date = asm.now()
+    l.Comments = row["Note"]
 
 # Now that everything else is done, output stored records
 for a in animals:
