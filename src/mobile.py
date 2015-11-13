@@ -342,6 +342,9 @@ def page_sign(dbo, session, username):
             $("#sig-clear").click(function() {
                 $("#signature").signature("clear");
             });
+            $("#sig-home").click(function() {
+                window.location = "mobile";
+            });
             $("#sig-refresh").click(function() {
                 location.reload();
             });
@@ -396,6 +399,7 @@ def page_sign(dbo, session, username):
     if ids.strip() == "":
         h.append('<p>%s</p>' % _("Waiting for documents...", l))
         h.append('<p><button id="sig-refresh">' + _("Reload", l) + '</button></p>')
+        #h.append('<p><button id="sig-home">' + _("Home", l) + '</button></p>')
         if not session.mobileapp:
             h.append('</p><button id="sig-logout">' + _("Logout", l) + '</button></p>')
     else:
