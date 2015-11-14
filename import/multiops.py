@@ -495,14 +495,15 @@ for row in ccomplaintspeople:
     elif itype == "4": ac.VictimID = o.ID # Victim
 
 for row in ccomplaintsnotes:
-    if not ppo.has_key(row["tblComplaintsID"]): continue
+    if not ppac.has_key(row["tblComplaintsID"]): continue
     a = ppac[row["tblComplaintsID"]]
     l = asm.Log()
     logs.append(l)
-    l.LogTypeID = 6
+    l.LogTypeID = 3
     l.LinkID = a.ID
-    l.LinkType = 1
-    l.Date = asm.now()
+    l.LinkType = 6
+    l.Date = asm.getdate_mmddyy(row["LastUpdate"])
+    if l.Date is None: l.Date = asm.now()
     l.Comments = row["Note"]
 
 # Now that everything else is done, output stored records
