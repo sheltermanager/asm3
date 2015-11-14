@@ -1151,6 +1151,7 @@ def handler_viewincident(l, dbo, a, amls, cit, dia, logs, homelink, post):
     h.append(tr( _("Call Date/Time", l), dt(a["CALLDATETIME"])))
     h.append(tr( _("Taken By", l), a["CALLTAKER"]))
     h.append(tr( _("Caller", l), a["CALLERNAME"]))
+    h.append(tr( _("Phone", l), "%s %s %s" % (a["HOMETELEPHONE"], a["WORKTELEPHONE"], a["MOBILETELEPHONE"])))
     h.append(tr( _("Victim", l), a["VICTIMNAME"]))
     h.append(table_end())
    
