@@ -3897,7 +3897,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 # lostfound
                 line.append("\"L\"")
                 # pettype
-                line.append("\"%s\"" % self.plcSpecies(an["SPECIESNAME"], an["PETFINDERSPECIES"]))
+                line.append("\"%s\"" % self.plcSpecies(an["SPECIESNAME"], an["SPECIESNAME"]))
                 # breed
                 line.append("\"%s\"" % an["BREEDNAME"])
                 # sexofpet
@@ -3963,7 +3963,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 # lostfound
                 line.append("\"F\"")
                 # pettype
-                line.append("\"%s\"" % self.plcSpecies(an["SPECIESNAME"], an["PETFINDERSPECIES"]))
+                line.append("\"%s\"" % self.plcSpecies(an["SPECIESNAME"], an["SPECIESNAME"]))
                 # breed
                 line.append("\"%s\"" % an["BREEDNAME"])
                 # sexofpet
