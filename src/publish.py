@@ -3802,19 +3802,31 @@ class PetsLocatedUKPublisher(FTPPublisher):
         if colourmap.has_key(s): return colourmap[s]
         return "Black"
 
-    def plcSpecies(self, s):
+    def plcSpecies(self, s, ps):
         speciesmap = {
             "Barnyard": "Goat", 
             "Bird": "Bird", 
             "Cat": "Cat",
+            "Chinchilla": "Chinchilla",
+            "Degu": "Degu",
             "Dog": "Dog",
+            "Ferret": "Ferret",
+            "Goat": "Goat",
+            "Guinea Pig": "Guinea Pig",
+            "Hamster": "Hamster",
             "Horse": "Horse", 
             "Pig": "Pig",
             "Rabbit": "Rabbit",
             "Reptile": "Snake/Reptile",
+            "Snake": "Snake/Reptile",
+            "Spider": "Spider",
+            "Terrapin": "Tortoise/Terrapin/Turtle",
+            "Tortoise": "Tortoise/Terrapin/Turtle",
+            "Turtle": "Tortoise/Terrapin/Turtle",
             "Small&Furry": "Mouse/Rat"
         }
         if speciesmap.has_key(s): return speciesmap[s]
+        if speciesmap.has_key(ps): return speciesmap[ps]
         return "Cat"
 
     def run(self):
@@ -3885,9 +3897,9 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 # lostfound
                 line.append("\"L\"")
                 # pettype
-                line.append("\"%s\"" % self.plcSpecies(an["PETFINDERSPECIES"]))
+                line.append("\"%s\"" % self.plcSpecies(an["SPECIESNAME"], an["PETFINDERSPECIES"]))
                 # breed
-                line.append("\"%s\"" % an["PETFINDERBREED"])
+                line.append("\"%s\"" % an["BREEDNAME"])
                 # sexofpet
                 line.append("\"%s\"" % self.plcSex(an["SEX"]))
                 # neutered
@@ -3951,9 +3963,9 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 # lostfound
                 line.append("\"F\"")
                 # pettype
-                line.append("\"%s\"" % self.plcSpecies(an["PETFINDERSPECIES"]))
+                line.append("\"%s\"" % self.plcSpecies(an["SPECIESNAME"], an["PETFINDERSPECIES"]))
                 # breed
-                line.append("\"%s\"" % an["PETFINDERBREED"])
+                line.append("\"%s\"" % an["BREEDNAME"])
                 # sexofpet
                 line.append("\"%s\"" % self.plcSex(an["SEX"]))
                 # neutered
@@ -4020,9 +4032,9 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 # lostfound
                 line.append("\"F\"")
                 # pettype
-                line.append("\"%s\"" % self.plcSpecies(an["PETFINDERSPECIES"]))
+                line.append("\"%s\"" % self.plcSpecies(an["SPECIESNAME"], an["PETFINDERSPECIES"]))
                 # breed
-                line.append("\"%s\"" % an["PETFINDERBREED"])
+                line.append("\"%s\"" % an["BREEDNAME"])
                 # sexofpet
                 line.append("\"%s\"" % self.plcSex(an["SEX"]))
                 # neutered
