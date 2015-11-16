@@ -3627,6 +3627,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         publishCriteria.checkSocket = True
+        publishCriteria.includeColours = True
         publishCriteria.scaleImages = 1
         self.publisherName = i18n._("PetsLocated UK Publisher", l)
         self.setLogName("petslocated")
@@ -3671,33 +3672,150 @@ class PetsLocatedUKPublisher(FTPPublisher):
             return "Long"
         return "Not Applicable"
 
-    def plcColour(self, an):
-        if an["SPECIESNAME"] == "Cat":
-            catcolours = [ "Mainly/All Black", "Mainly/All White", "Black and White",
-                "Brown/Chocolate", "Grey", "Blue", "Beige/Cream", "Ginger/Orange",
-                "Tabby", "Tortoiseshell", "Calico", "Leopard Skin", "Spotted",
-                "Black", "White" ]
-            for c in catcolours:
-                if c.find(an["BASECOLOURNAME"]) != -1:
-                    return c
-                return "Black and White"
-        elif an["SPECIESNAME"] == "Dog":
-            dogcolours = [ "Mainly/All Black", "Mainly/All White", "Black and White",
-                "Brown and White", "Black and Tan", "Brown/Town", "Grey/Silver/Blue",
-                "Golden/Sandy/Apricot", "Red", "Tri-colour", "Brindle",
-                "Black", "White", "Other" ]
-            for d in dogcolours:
-                if d.find(an["BASECOLOURNAME"]) != -1:
-                    return d
-                return "Other"
-        else:
-            return an["BASECOLOURNAME"]
+    def plcColour(self, s):
+        colourmap = {
+            "Black": "Mainly/All Black",
+            "Black - with Tan, Yellow or Fawn": "Mainly/All Black",
+            "Black - with White": "Black and White",
+            "Brindle": "Brindle",
+            "Brindle - with White": "Brindle",
+            "Brown/Chocolate": "Brown/Chocolate",
+            "Brown/Chocolate - with Black": "Brown/Chocolate",
+            "Brown/Chocolate - with White": "Brown/Chocolate",
+            "Red/Golden/Orange/Chestnut": "Golden/Sandy/Apricot",
+            "Red/Golden/Orange/Chestnut - with Black": "Golden/Sandy/Apricot",
+            "Red/Golden/Orange/Chestnut - with White": "Golden/Sandy/Apricot",
+            "Silver & Tan (Yorkie colors)": "Tri-colour",
+            "Tan/Yellow/Fawn": "Golden/Sandy/Apricot",
+            "Tan/Yellow/Fawn - with White": "Golden/Sandy/Apricot",
+            "Tricolor (Tan/Brown & Black & White)": "Tri-colour",
+            "White": "White",
+            "White - with Black": "Mainly/All White",
+            "White - with Brown or Chocolate": "Mainly/All White",
+            "Black - with Brown, Red, Golden, Orange or Chestnut": "Mainly/All Black",
+            "Black - with Gray or Silver": "Mainly/All Black",
+            "Brown/Chocolate - with Tan": "Brown/Tan",
+            "Gray/Blue/Silver/Salt & Pepper": "Grey/Silver/Blue",
+            "Gray/Silver/Salt & Pepper - with White": "Grey/Silver/Blue",
+            "Gray/Silver/Salt & Pepper - with Black": "Grey/Silver/Blue",
+            "Merle": "Mainly/All White",
+            "Tan/Yellow/Fawn - with Black": "Brown/Tan",
+            "White - with Tan, Yellow or Fawn": "Mainly/All White",
+            "White - with Red, Golden, Orange or Chestnut": "Mainly/All White",
+            "White - with Gray or Silver": "Mainly/All White",
+            "Black (All)": "Mainly/All Black",
+            "Cream or Ivory": "Beige/Cream",
+            "Cream or Ivory (Mostly)": "Beige/Cream",
+            "Spotted Tabby/Leopard Spotted": "Spotted",
+            "Black (Mostly)": "Mainly/All Black",
+            "Black & White or Tuxedo": "Black and White",
+            "Brown or Chocolate": "Brown/Chocolate",
+            "Brown or Chocolate (Mostly)": "Brown/Chocolate",
+            "Brown Tabby": "Tabby",
+            "Calico or Dilute Calico": "Calico",
+            "Gray or Blue ": "Blue",
+            "Gray or Blue (Mostly)": "Blue",
+            "Gray, Blue or Silver Tabby": "Tabby",
+            "Orange or Red": "Ginger/Orange",
+            "Orange or Red (Mostly)": "Ginger/Orange",
+            "Orange or Red Tabby": "Ginger/Orange",
+            "Tan or Fawn ": "Beige/Cream",
+            "Tan or Fawn (Mostly)": "Beige/Cream",
+            "Tan or Fawn Tabby": "Tabby",
+            "Tiger Striped": "Tabby",
+            "Tortoiseshell": "Tortoiseshell",
+            "White": "White",
+            "White (Mostly)": "Mainly/All White",
+            "Palomino": "White",
+            "Gray": "White",
+            "Dun": "White",
+            "Cremello": "White",
+            "Chestnut/Sorrel": "Brown",
+            "Champagne": "White",
+            "Buckskin": "Brown",
+            "Black": "Black",
+            "Bay": "Brown",
+            "Appy": "Brown",
+            "Grullo": "Brown",
+            "White": "White",
+            "Roan": "White",
+            "Perlino": "White",
+            "Paint": "White",
+            "Gray": "Grey/Silver",
+            "Green": "Green",
+            "Olive": "Green",
+            "Orange": "Red",
+            "Pink": "Pink",
+            "Purple/Violet": "Pink",
+            "Red": "Red",
+            "Rust": "Red",
+            "Tan": "Brown",
+            "Buff": "Brown",
+            "Yellow": "Gold/Yellow",
+            "White": "White",
+            "Black": "Black",
+            "Blue": "Blue",
+            "Brown": "Brown",
+            "Sable": "White",
+            "Albino or Red-Eyed White": "White",
+            "Blue": "Grey/Silver",
+            "Black": "Black",
+            "Blond/Golden": "Gold",
+            "Chinchilla": "Brown",
+            "Chocolate": "Brown",
+            "Cinnamon": "Brown",
+            "Copper": "Brown",
+            "Cream": "White",
+            "Dutch": "White",
+            "Fawn": "Brown",
+            "Grey/Silver": "Grey/Seilver",
+            "Harlequin": "White",
+            "Lilac": "Grey/Silver",
+            "Multi": "Multi-Coloured",
+            "Orange": "Ginger",
+            "Red": "Ginger",
+            "Agouti": "Ginger",
+            "Siamese": "Black",
+            "Tan": "Brown",
+            "Tortoise": "Multi-Coloured",
+            "Tri-color": "Multi-Coloured",
+            "White": "White",
+            "Yellow": "Gold",
+            "White": "White",
+            "Tortoiseshell": "Multi-Coloured",
+            "Tan or Beige": "Brown",
+            "Silver or Gray": "Grey/Silver",
+            "Sable": "White",
+            "Red": "Ginger", 
+            "Orange": "Ginger",
+            "Multi": "Multi-Coloured",
+            "Lilac": "White",
+            "Golden": "Gold",
+            "Cream": "White",
+            "Calico": "Multi-Coloured",
+            "Buff": "White",
+            "Brown or Chocolate": "Black",
+            "Blonde": "Gold",
+            "Black": "Black",
+            "Albino or Red-Eyed White": "White"
+        }
+        if colourmap.has_key(s): return colourmap[s]
+        return "Black"
 
     def plcSpecies(self, s):
-        if s == "Rat": return "Mouse/Rat"
-        if s == "Tortoise" or s == "Terrapin" or s == "Turtle": return "Tortoise/Terrapin/Turtle"
-        if s == "Snake" or s == "Reptile": return "Snake/Reptile"
-        return s
+        speciesmap = {
+            "Barnyard": "Goat", 
+            "Bird": "Bird", 
+            "Cat": "Cat",
+            "Dog": "Dog",
+            "Horse": "Horse", 
+            "Pig": "Pig",
+            "Rabbit": "Rabbit",
+            "Reptile": "Snake/Reptile",
+            "Small&Furry": "Mouse/Rat"
+        }
+        if speciesmap.has_key(s): return speciesmap[s]
+        return "Cat"
 
     def run(self):
         
@@ -3709,6 +3827,19 @@ class PetsLocatedUKPublisher(FTPPublisher):
         customerid = configuration.petslocated_customerid(self.dbo)
         if customerid == "":
             self.setLastError("No petslocated.com customer ID has been set.")
+            return
+
+        if not self.checkMappedSpecies():
+            self.setLastError("Not all species have been mapped.")
+            self.cleanup()
+            return
+        if not self.checkMappedBreeds():
+            self.setLastError("Not all breeds have been mapped.")
+            self.cleanup()
+            return
+        if self.pc.includeColours and not self.checkMappedColours():
+            self.setLastError("Not all colours have been mapped and sending colours is enabled")
+            self.cleanup()
             return
 
         lostanimals = lostfound.get_lostanimal_find_advanced(self.dbo, {})
@@ -3754,9 +3885,9 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 # lostfound
                 line.append("\"L\"")
                 # pettype
-                line.append("\"%s\"" % self.plcSpecies(an["SPECIESNAME"]))
+                line.append("\"%s\"" % self.plcSpecies(an["PETFINDERSPECIES"]))
                 # breed
-                line.append("\"%s\"" % an["BREEDNAME"])
+                line.append("\"%s\"" % an["PETFINDERBREED"])
                 # sexofpet
                 line.append("\"%s\"" % self.plcSex(an["SEX"]))
                 # neutered
@@ -3770,7 +3901,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 # hairtype
                 line.append("\"%s\"" % self.plcHairType(an))
                 # petcoloursall
-                line.append("\"%s\"" % self.plcColour(an))
+                line.append("\"%s\"" % self.plcColour(an["ADOPTAPETCOLOUR"]))
                 # chipchecked
                 line.append("\"1\"")
                 # chipno
@@ -3820,9 +3951,9 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 # lostfound
                 line.append("\"F\"")
                 # pettype
-                line.append("\"%s\"" % self.plcSpecies(an["SPECIESNAME"]))
+                line.append("\"%s\"" % self.plcSpecies(an["PETFINDERSPECIES"]))
                 # breed
-                line.append("\"%s\"" % an["BREEDNAME"])
+                line.append("\"%s\"" % an["PETFINDERBREED"])
                 # sexofpet
                 line.append("\"%s\"" % self.plcSex(an["SEX"]))
                 # neutered
@@ -3836,7 +3967,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 # hairtype
                 line.append("\"%s\"" % self.plcHairType(an))
                 # petcoloursall
-                line.append("\"%s\"" % self.plcColour(an))
+                line.append("\"%s\"" % self.plcColour(an["ADOPTAPETCOLOUR"]))
                 # chipchecked
                 line.append("\"1\"")
                 # chipno
@@ -3889,9 +4020,9 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 # lostfound
                 line.append("\"F\"")
                 # pettype
-                line.append("\"%s\"" % self.plcSpecies(an["SPECIESNAME"]))
+                line.append("\"%s\"" % self.plcSpecies(an["PETFINDERSPECIES"]))
                 # breed
-                line.append("\"%s\"" % an["BREEDNAME"])
+                line.append("\"%s\"" % an["PETFINDERBREED"])
                 # sexofpet
                 line.append("\"%s\"" % self.plcSex(an["SEX"]))
                 # neutered
@@ -3905,7 +4036,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 # hairtype
                 line.append("\"%s\"" % self.plcHairType(an))
                 # petcoloursall
-                line.append("\"%s\"" % self.plcColour(an))
+                line.append("\"%s\"" % self.plcColour(an["ADOPTAPETCOLOUR"]))
                 # chipchecked
                 line.append("\"%d\"" % self.plcChipChecked(an["IDENTICHIPPED"]))
                 # chipno
