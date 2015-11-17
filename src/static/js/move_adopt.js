@@ -235,25 +235,25 @@ $(function() {
                     $("#adopt").button("disable");
                 }
 
-                if (rec.ACTIVEMOVEMENTTYPE == "2") {
+                if (rec.ACTIVEMOVEMENTTYPE == 2) {
                     $("#fosterinfo").fadeIn();
                 }
 
-                if (rec.ACTIVEMOVEMENTTYPE == "8") {
+                if (rec.ACTIVEMOVEMENTTYPE == 8) {
                     $("#retailerinfo").fadeIn();
                 }
 
-                if (rec.HASACTIVERESERVE == "1" && config.bool("CancelReservesOnAdoption")) {
+                if (rec.HASACTIVERESERVE == 1 && config.bool("CancelReservesOnAdoption")) {
                     $("#reserveinfo").fadeIn();
                 }
 
                 // Check for bonded animals and warn
-                if (rec.BONDEDANIMALID != "0" || rec.BONDEDANIMAL2ID != "0") {
+                if (rec.BONDEDANIMALID || rec.BONDEDANIMAL2ID) {
                     var bw = "";
-                    if (rec.BONDEDANIMAL1ARCHIVED == 0 && rec.BONDEDANIMAL1NAME != "" && rec.BONDEDANIMAL1NAME != null) {
+                    if (rec.BONDEDANIMAL1ARCHIVED == 0 && rec.BONDEDANIMAL1NAME) {
                         bw += rec.BONDEDANIMAL1CODE + " - " + rec.BONDEDANIMAL1NAME;
                     }
-                    if (rec.BONDEDANIMAL2ARCHIVED == 0 && rec.BONDEDANIMAL2NAME != "" && rec.BONDEDANIMAL2NAME != null) {
+                    if (rec.BONDEDANIMAL2ARCHIVED == 0 && rec.BONDEDANIMAL2NAME) {
                         if (bw != "") { bw += ", "; }
                         bw += rec.BONDEDANIMAL2CODE + " - " + rec.BONDEDANIMAL2NAME;
                     }
