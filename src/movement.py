@@ -467,13 +467,14 @@ def insert_adoption_from_form(dbo, username, post, creating = []):
     creating.append(a["ID"])
     # If the animal is bonded to other animals, we call this function
     # again with a copy of the data and the bonded animal substituted
-    # so we can create their adoption records too.
-    if a["BONDEDANIMALID"] is not None and a["BONDEDANIMALID"] != 0 and a["BONDEDANIMALID"] not in creating:
+    # so we can create their adoption records too. We only do this if
+    # the other animals are still on shelter (therefore alive).
+    if a["BONDEDANIMALID"] is not None and a["BONDEDANIMALID"] != 0 and a["BONDEDANIMAL1ARCHIVED"] == 0 and a["BONDEDANIMALID"] not in creating:
         al.debug("Found bond to animal %d, creating adoption..." % a["BONDEDANIMALID"], "movement.insert_adoption_from_form", dbo)
         newdata = dict(post.data)
         newdata["animal"] = str(a["BONDEDANIMALID"])
         insert_adoption_from_form(dbo, username, utils.PostedData(newdata, dbo.locale), creating)
-    if a["BONDEDANIMAL2ID"] is not None and a["BONDEDANIMAL2ID"] != 0 and a["BONDEDANIMAL2ID"] not in creating:
+    if a["BONDEDANIMAL2ID"] is not None and a["BONDEDANIMAL2ID"] != 0 and a["BONDEDANIMAL2ARCHIVED"] == 0 and a["BONDEDANIMAL2ID"] not in creating:
         al.debug("Found bond to animal %d, creating adoption..." % a["BONDEDANIMAL2ID"], "movement.insert_adoption_from_form", dbo)
         newdata = dict(post.data)
         newdata["animal"] = str(a["BONDEDANIMAL2ID"])

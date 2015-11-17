@@ -250,10 +250,10 @@ $(function() {
                 // Check for bonded animals and warn
                 if (rec.BONDEDANIMALID != "0" || rec.BONDEDANIMAL2ID != "0") {
                     var bw = "";
-                    if (rec.BONDEDANIMAL1NAME != "" && rec.BONDEDANIMAL1NAME != null) {
+                    if (rec.BONDEDANIMAL1ARCHIVED == 0 && rec.BONDEDANIMAL1NAME != "" && rec.BONDEDANIMAL1NAME != null) {
                         bw += rec.BONDEDANIMAL1CODE + " - " + rec.BONDEDANIMAL1NAME;
                     }
-                    if (rec.BONDEDANIMAL2NAME != "" && rec.BONDEDANIMAL2NAME != null) {
+                    if (rec.BONDEDANIMAL2ARCHIVED == 0 && rec.BONDEDANIMAL2NAME != "" && rec.BONDEDANIMAL2NAME != null) {
                         if (bw != "") { bw += ", "; }
                         bw += rec.BONDEDANIMAL2CODE + " - " + rec.BONDEDANIMAL2NAME;
                     }

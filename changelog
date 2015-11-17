@@ -1,6 +1,7 @@
 37
 ================
 
+17/11/15 Make sure bonded animals are alive/on shelter before adopting #307
 16/11/15 Better PetsLocated mappings to tighten up what we send
 12/11/15 Fix bug saving movement documents
 12/11/15 Make incident notes searchable

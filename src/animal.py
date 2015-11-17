@@ -31,8 +31,10 @@ def get_animal_query(dbo):
         "at.AnimalType AS AnimalTypeName, " \
         "ba1.AnimalName AS BondedAnimal1Name, " \
         "ba1.ShelterCode AS BondedAnimal1Code, " \
+        "ba1.Archived AS BondedAnimal1Archived, " \
         "ba2.AnimalName AS BondedAnimal2Name, " \
         "ba2.ShelterCode AS BondedAnimal2Code, " \
+        "ba2.Archived AS BondedAnimal2Archived, " \
         "bc.BaseColour AS BaseColourName, " \
         "bc.AdoptAPetColour, " \
         "sp.SpeciesName AS SpeciesName, " \
