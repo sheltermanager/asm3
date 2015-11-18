@@ -32,6 +32,11 @@ document.addEventListener("deviceready", function() {
         
         var base, params, url = "https://sheltermanager.com/service/findserver?a=" + $("#account").val();
 
+        if (!$("#account").val() || !$("#username").val() || !$("#password").val()) {
+            window.alert("Account, username and password must be supplied");
+            return;
+        }
+
         $("#button-login span").show();
 
         $.getJSON(url + "&callback=?")
@@ -103,6 +108,7 @@ document.addEventListener("deviceready", function() {
         $("#account").val(account);
         $("#ui").val(ui);
         $("#username, #password").val("");
+        $("#remember").prop("checked", remember);
         if (remember) {
             $("#username").val(username);
             $("#password").val(password);
