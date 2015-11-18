@@ -51,9 +51,35 @@ $(function() {
                                  tableform.fields_update_row(dialog.fields, row);
                                  controller.rows.push(row);
                                  tableform.table_update(table);
+                             })
+                             .always(function() {
+                                 tableform.dialog_close();
                              });
                      } 
                  },
+                 { id: "clone", text: _("Clone"), icon: "copy", enabled: "one", 
+                     click: function() { 
+                         tableform.dialog_show_add(dialog, 
+                            function() {
+                                tableform.fields_post(dialog.fields, "mode=create", "htmltemplates")
+                                    .then(function(response) {
+                                        var row = {};
+                                        tableform.fields_update_row(dialog.fields, row);
+                                        controller.rows.push(row);
+                                        tableform.table_update(table);
+                                    })
+                                    .always(function() {
+                                        tableform.dialog_close();
+                                    });
+                            },
+                            function() {
+                                 var row = tableform.table_selected_row(table);
+                                 tableform.fields_populate_from_json(dialog.fields, row);
+                                 $("#templatename").val($("#templatename").val() + "_copy");
+                            });
+                     } 
+                 },
+
                  { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
                      click: function() { 
                          tableform.delete_dialog()
