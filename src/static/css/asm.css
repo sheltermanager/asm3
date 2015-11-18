@@ -26,8 +26,9 @@ img {
     border: 0;
 }
 
-select[disabled="disabled"], input[disabled="disabled"], textarea[disabled="disabled"] {
-    color: #999;
+select:disabled, input:disabled, textarea:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 
 /** Used by JQueryUI dialogs - set a dialogClass of dialog-no-title to hide the titlebar */
