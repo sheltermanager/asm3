@@ -14,6 +14,25 @@ document.addEventListener("deviceready", function() {
         };
     }
 
+    var load_stored_credentials = function() {
+        var account = window.localStorage.getItem("asm_account"),
+            username = window.localStorage.getItem("asm_username"),
+            password = window.localStorage.getItem("asm_password"),
+            ui = window.localStorage.getItem("asm_ui"),
+            remember = window.localStorage.getItem("asm_remember") == "true";
+
+        if (account) {
+            $("#account").val(account);
+            $("#ui").val(ui);
+            $("#username, #password").val("");
+            $("#remember").prop("checked", remember);
+            if (remember) {
+                $("#username").val(username);
+                $("#password").val(password);
+            }
+        }
+    };
+
     $("#account").blur(function() {
         var a = $("#account").val();
         a = $.trim(a);
@@ -73,7 +92,10 @@ document.addEventListener("deviceready", function() {
 
                     var ui = $("#ui").val();
                     if (ui == "mobile" || ui == "main") {
-                        window.open(base + ui, "_blank", "location=yes,toolbar=yes,hardwareback=yes,zoom=no,closebuttoncaption=Close");
+                        var iab = window.open(base + ui, "_blank", "location=yes,toolbar=yes,hardwareback=yes,zoom=no,closebuttoncaption=Close");
+                        iab.addEventListener('exit', function() { 
+                            load_stored_credentials();
+                        });
                     }
                     else if (ui == "upload") {
                         window.location = "upload.html";
@@ -98,21 +120,6 @@ document.addEventListener("deviceready", function() {
         });
     }
 
-    var account = window.localStorage.getItem("asm_account"),
-        username = window.localStorage.getItem("asm_username"),
-        password = window.localStorage.getItem("asm_password"),
-        ui = window.localStorage.getItem("asm_ui"),
-        remember = window.localStorage.getItem("asm_remember") == "true";
-
-    if (account) {
-        $("#account").val(account);
-        $("#ui").val(ui);
-        $("#username, #password").val("");
-        $("#remember").prop("checked", remember);
-        if (remember) {
-            $("#username").val(username);
-            $("#password").val(password);
-        }
-    }
+    load_stored_credentials();
 
 }, false);
