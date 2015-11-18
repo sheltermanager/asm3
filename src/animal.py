@@ -277,6 +277,7 @@ def get_animals_brief(animals):
             "ACTIVEMOVEMENTID": a["ACTIVEMOVEMENTID"],
             "ACTIVEMOVEMENTTYPE": a["ACTIVEMOVEMENTTYPE"],
             "ADDITIONALFLAGS": a["ADDITIONALFLAGS"],
+            "AGEGROUP": a["AGEGROUP"],
             "ANIMALCOMMENTS": a["ANIMALCOMMENTS"],
             "ANIMALAGE": a["ANIMALAGE"],
             "ANIMALNAME" : a["ANIMALNAME"],

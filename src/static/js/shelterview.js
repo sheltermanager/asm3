@@ -195,13 +195,17 @@ $(function() {
          * sorton: Comma separated list of fields to sort on
          * dragdrop: Whether dragging and dropping is on and moves between locations
          * translategroup: Whether the group field needs to be translated
+         * filterfunction: A function to call to decide whether or not to include an animal
          */
-        render_view: function(groupfield, sorton, dragdrop, translategroup) {
+        render_view: function(groupfield, sorton, dragdrop, translategroup, filterfunction) {
             var h = [], lastgrp = "", grpdisplay = "", grplink = "", runningtotal = 0, i, 
                 locationsused = [], showunit = (groupfield == "DISPLAYLOCATIONNAME");
             // Sort the rows for the view
             controller.animals.sort( common.sort_multi(sorton) );
             $.each(controller.animals, function(i, a) {
+                // If a filter function was specified, call it and drop out
+                // of this iteration if the return value was false
+                if (filterfunction && !filterfunction(a)) { return; }
                 if (lastgrp != a[groupfield]) {
                     if (lastgrp != "") { h.push("</div>"); }
                     // Find the last total token and update it
@@ -337,7 +341,10 @@ $(function() {
         },
 
         switch_view: function(viewmode) {
-            if (viewmode == "entrycategory") {
+            if (viewmode == "agegroup") {
+                this.render_view("AGEGROUP", "AGEGROUP,ANIMALNAME", false, false);
+            }
+            else if (viewmode == "entrycategory") {
                 this.render_view("ENTRYREASONNAME", "ENTRYREASONNAME,ANIMALNAME", false, false);
             }
             else if (viewmode == "fosterer") {
@@ -357,6 +364,9 @@ $(function() {
             }
             else if (viewmode == "pickuplocation") {
                 this.render_view("PICKUPLOCATIONNAME", "PICKUPLOCATIONNAME,ANIMALNAME", false, false);
+            }
+            else if (viewmode == "retailer") {
+                this.render_view("CURRENTOWNERNAME", "CURRENTOWNERNAME,ANIMALNAME", false, false, function(a) { return a.ACTIVEMOVEMENTTYPE == 8; });
             }
             else if (viewmode == "species") {
                 this.render_view("SPECIESNAME", "SPECIESNAME,ANIMALNAME", false, false);
@@ -388,6 +398,7 @@ $(function() {
             var h = [];
             h.push('<div id="asm-content" class="ui-helper-reset ui-widget-content ui-corner-all" style="padding: 10px;">');
             h.push('<select id="viewmode" style="float: right;" class="asm-selectbox">');
+            h.push('<option value="agegroup">' + _("Age Group") + '</option>');
             h.push('<option value="entrycategory">' + _("Entry Category") + '</option>');
             h.push('<option value="fosterer">' + _("Fosterer") + '</option>');
             h.push('<option value="fostereractive">' + _("Fosterer (Active Only)") + '</option>');
@@ -395,6 +406,7 @@ $(function() {
             h.push('<option value="locationspecies">' + _("Location and Species") + '</option>');
             h.push('<option value="locationunit">' + _("Location and Unit") + '</option>');
             h.push('<option value="pickuplocation">' + _("Pickup Location") + '</option>');
+            h.push('<option value="retailer">' + _("Retailer") + '</option>');
             h.push('<option value="species">' + _("Species") + '</option>');
             h.push('<option value="status">' + _("Status") + '</option>');
             h.push('<option value="type">' + _("Type") + '</option>');
