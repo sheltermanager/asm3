@@ -535,7 +535,7 @@ def match_report(dbo, username = "system", lostanimalid = 0, foundanimalid = 0, 
                 lastid = m.lid
             h.append("<tr>")
             h.append(td(m.fid))
-            h.append(td("%s %s %s %s" % (m.fagegroup, m.fbasecolourname, m.fsexname, m.fspeciesname)))
+            h.append(td("%s %s %s %s %s" % (m.fagegroup, m.fbasecolourname, m.fsexname, m.fspeciesname, m.fbreedname)))
             h.append(td(m.fareafound))
             h.append(td(m.fareapostcode))
             h.append(td(python2display(l, m.fdatefound)))

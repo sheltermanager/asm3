@@ -1,6 +1,7 @@
 37
 ================
 
+18/11/15 Add found animal breed to match report
 18/11/15 Add ability to clone HTML publishing templates #142
 18/11/15 Make disabled fields more obvious
 18/11/15 Allow search of incidents by dispatch city, show in results #308
