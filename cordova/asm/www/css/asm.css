@@ -48,8 +48,8 @@ body {
   border-top-right-radius: 0;
 }
 .form-signin #remember {
-    transform: scale(3);
-    margin: 10px 20px 20px 20px;
+    transform: scale(2);
+    margin: 10px 10px 20px 20px;
 }
 
 
