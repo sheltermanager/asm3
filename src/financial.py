@@ -283,8 +283,8 @@ def get_transactions(dbo, accountid, datefrom, dateto, reconciled):
         "WHEN EXISTS(SELECT ItemValue FROM configuration WHERE ItemName Like 'UseShortShelterCodes' AND ItemValue = 'Yes') " \
         "THEN aca.ShelterCode ELSE aca.ShortCode END AS CostAnimalCode " \
         "FROM accountstrx t " \
-        "INNER JOIN accounts srcac ON srcac.ID = t.SourceAccountID " \
-        "INNER JOIN accounts destac ON destac.ID = t.DestinationAccountID " \
+        "LEFT OUTER JOIN accounts srcac ON srcac.ID = t.SourceAccountID " \
+        "LEFT OUTER JOIN accounts destac ON destac.ID = t.DestinationAccountID " \
         "LEFT OUTER JOIN ownerdonation od ON od.ID = t.OwnerDonationID " \
         "LEFT OUTER JOIN owner o ON o.ID = od.OwnerID " \
         "LEFT OUTER JOIN animal a ON a.ID = od.AnimalID " \

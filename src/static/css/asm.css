@@ -451,6 +451,7 @@ select[disabled="disabled"], input[disabled="disabled"], textarea[disabled="disa
 
 /** ACCOUNTS ========================== */
 #table-trx { border-collapse: collapse; }
+#table-trx a { color: #000; }
 #table-trx .newrow { border-top: 1px solid #aaa; }
 #table-trx .left { text-align: left; }
 #table-trx .right { text-align: right; }
