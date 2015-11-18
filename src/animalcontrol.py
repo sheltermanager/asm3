@@ -118,6 +118,7 @@ def get_animalcontrol_find_advanced(dbo, criteria, limit = 0):
        completedtype - -1 for all or ID
        citationtype - -1 for all or ID
        address - string partial pattern
+       city - string partial pattern
        postcode - string partial pattern
        pickuplocation - -1 for all or ID
        description - string partial pattern
@@ -182,6 +183,7 @@ def get_animalcontrol_find_advanced(dbo, criteria, limit = 0):
     addid("completedtype", "ac.IncidentCompletedID")
     addid("citationtype", "ac.CitationTypeID")
     addstr("address", "ac.DispatchAddress")
+    addstr("city", "ac.DispatchTown")
     addstr("postcode", "ac.DispatchPostcode")
     addstr("callnotes", "ac.CallNotes")
     addstr("description", "ac.AnimalDescription")

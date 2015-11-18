@@ -21,6 +21,7 @@ $(function() {
                 '<th>' + _("Number") + '</th>',
                 '<th>' + _("Incident Date/Time") + '</th>',
                 '<th>' + _("Address") + '</th>',
+                '<th>' + _("City") + '</th>',
                 '<th>' + _("Zipcode") + '</th>',
                 '<th>' + _("Location") + '</th>',
                 '<th>' + _("Suspect") + '</th>',
@@ -49,6 +50,7 @@ $(function() {
                 h.push('<td>' + format.padleft(r.ID, 6) + '</td>');
                 h.push('<td>' + format.date(r.INCIDENTDATETIME) + ' ' + format.time(r.INCIDENTDATETIME) + '</td>');
                 h.push('<td>' + common.nulltostr(r.DISPATCHADDRESS) + '</td>');
+                h.push('<td>' + common.nulltostr(r.DISPATCHTOWN) + '</td>');
                 h.push('<td>' + common.nulltostr(r.DISPATCHPOSTCODE) + '</td>');
                 h.push('<td>' + common.nulltostr(r.LOCATIONNAME) + '</td>');
                 h.push('<td>');
