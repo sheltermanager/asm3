@@ -59,10 +59,12 @@ document.addEventListener("deviceready", function() {
                     window.alert("This account is disabled");
                 }
                 else {
+                    
                     window.localStorage.setItem("asm_account", $("#account").val());
                     window.localStorage.setItem("asm_username", $("#username").val());
                     window.localStorage.setItem("asm_password", $("#password").val());
                     window.localStorage.setItem("asm_ui", $("#ui").val());
+                    window.localStorage.setItem("asm_remember", $("#remember").is(":checked") ? "true" : "false");
 
                     var ui = $("#ui").val();
                     if (ui == "mobile" || ui == "main") {
@@ -84,10 +86,8 @@ document.addEventListener("deviceready", function() {
 
     });
 
-    if (device.platform == "iOS") {
-        $("#button-signup").hide();
-    }
-    else {
+    if (device.platform != "iOS") {
+        $("#button-signup").show();
         $("#button-signup").click(function() {
             window.open("https://sheltermanager.com/site/en_signup.html", "_system");
         });
@@ -96,13 +96,17 @@ document.addEventListener("deviceready", function() {
     var account = window.localStorage.getItem("asm_account"),
         username = window.localStorage.getItem("asm_username"),
         password = window.localStorage.getItem("asm_password"),
-        ui = window.localStorage.getItem("asm_ui");
+        ui = window.localStorage.getItem("asm_ui"),
+        remember = window.localStorage.getItem("asm_remember") == "true";
 
-    if (account && username && password) {
+    if (account) {
         $("#account").val(account);
-        $("#username").val(username);
-        $("#password").val(password);
         $("#ui").val(ui);
+        $("#username, #password").val("");
+        if (remember) {
+            $("#username").val(username);
+            $("#password").val(password);
+        }
     }
 
 }, false);

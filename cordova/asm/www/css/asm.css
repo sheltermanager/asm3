@@ -4,6 +4,9 @@ body {
   background-color: #eee;
 }
 
+
+
+
 .form-signin {
   max-width: 330px;
   padding: 15px;
@@ -12,12 +15,8 @@ body {
 .form-signin-heading {
   text-align: center;
 }
-.form-signin .form-signin-heading,
-.form-signin .checkbox {
+.form-signin .form-signin-heading {
   margin-bottom: 10px;
-}
-.form-signin .checkbox {
-  font-weight: normal;
 }
 .form-signin .form-control {
   position: relative;
@@ -48,9 +47,42 @@ body {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
-.form-signin #animal {
+.form-signin #remember {
+    transform: scale(3);
+    margin: 10px 10px 20px 20px;
+}
+
+
+
+
+
+
+.form-upload {
+  max-width: 330px;
+  padding: 15px;
+  margin: 0 auto;
+}
+.form-upload .form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-upload .form-control:focus {
+  z-index: 2;
+}
+.form-upload #animal {
   margin-bottom: 10px;
 }
+
+
+
+
+
+
 
 .glyphicon-refresh-animate {
     -animation: spin .7s infinite linear;

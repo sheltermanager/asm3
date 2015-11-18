@@ -147,7 +147,12 @@ document.addEventListener("deviceready", function() {
     });
 
     $("#button-logout").click(function() {
-        window.location = "index.html";
+        if (navigator.app) {
+            navigator.app.backHistory();
+        }
+        else {
+            history.go(-1);
+        }
     });
 
     load_animals();
