@@ -217,8 +217,7 @@ def get_balance_to_date(dbo, accountid, todate):
     if deposit is None: deposit = 0
     if withdrawal is None: withdrawal = 0
     balance = deposit - withdrawal
-    if r["ACCOUNTTYPE"] == INCOME or r["ACCOUNTTYPE"] == EXPENSE:
-        balance = abs(balance)
+    #if r["ACCOUNTTYPE"] == INCOME or r["ACCOUNTTYPE"] == EXPENSE: balance = abs(balance)
     return balance
 
 def get_balance_fromto_date(dbo, accountid, fromdate, todate):
@@ -237,8 +236,7 @@ def get_balance_fromto_date(dbo, accountid, fromdate, todate):
     if deposit is None: deposit = 0
     if withdrawal is None: withdrawal = 0
     balance = deposit - withdrawal
-    if r["ACCOUNTTYPE"] == INCOME or r["ACCOUNTTYPE"] == EXPENSE:
-        balance = abs(balance)
+    #if r["ACCOUNTTYPE"] == INCOME or r["ACCOUNTTYPE"] == EXPENSE: balance = abs(balance)
     return balance
 
 def mark_reconciled(dbo, trxid):

@@ -1,6 +1,7 @@
 37
 ================
 
+18/11/15 Don't abs() balance to date when displaying on screen
 17/11/15 Make sure bonded animals are alive/on shelter before adopting #307
 16/11/15 Better PetsLocated mappings to tighten up what we send
 12/11/15 Fix bug saving movement documents
