@@ -319,6 +319,7 @@ def get_person_find_simple(dbo, query, classfilter="all", includeStaff = False, 
     for w in words:
         onac.append("(%s)" % utils.where_text_filter(dbo, "o.OwnerName", w))
     ors.append("(%s)" % " AND ".join(onac))
+    ors.append(add(get_person_code_query(dbo)))
     ors.append(add("o.OwnerAddress"))
     ors.append(add("o.OwnerTown"))
     ors.append(add("o.OwnerCounty"))
