@@ -378,7 +378,7 @@ $(function() {
                 }
                 s += '<a href="#" class="activeuser">' + m.CREATEDBY + '</a>';
                 if (m.FORNAME != "*") {
-                    s += '<img src="static/images/icons/right.gif" />' + m.FORNAME;
+                    s += html.icon("right") + m.FORNAME;
                 }
                 s += '</span></td>';
                 s += '<td><span style="white-space: nowrap; padding-right: 5px;">';
@@ -749,7 +749,7 @@ $(function() {
                 var ldv = $("#long" + data).val();
                 var sdv = $("#short" + data).val();
                 if (ldv.length != sdv.length) {
-                    $(this).text(moretext);
+                    $(this).html(moretext);
                 }
             });
 
@@ -766,14 +766,14 @@ $(function() {
                         mt.fadeOut(function() {
                             mt.html(ldv);
                             mt.fadeIn();
-                            ar.text(lesstext);
+                            ar.html(lesstext);
                         });
                     }
                     else {
                         mt.fadeOut(function() {
                             mt.html(sdv);
                             mt.fadeIn();
-                            ar.text(moretext);
+                            ar.html(moretext);
                         });
                     }
                 }

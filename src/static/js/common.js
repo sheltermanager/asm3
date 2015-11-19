@@ -1870,7 +1870,10 @@
          */
         title: function(s) {
             if (s == null || s === undefined) { return ""; }
-            return String(s).replace("\"", "&quot;").replace("'", "&pos;"); 
+            s = String(s);
+            s = common.replace_all(s, "\"", "&quot;");
+            s = common.replace_all(s, "'", "&apos;");
+            return s;
         },
 
         /**
