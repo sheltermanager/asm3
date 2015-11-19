@@ -70,8 +70,10 @@ def get_media_by_seq(dbo, linktype, linkid, seq):
         Element 1 is always the preferred.
         Empty list is returned if the item doesn't exist
     """
-    rows = db.query(dbo, "SELECT * FROM media WHERE LinkTypeID = %d AND " \
-        "LinkID = %d AND LOWER(MediaName) LIKE '%%.jpg' AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null)" \
+    rows = db.query(dbo, "SELECT * FROM media " \
+        "WHERE LinkTypeID = %d AND LinkID = %d " \
+        "AND (LOWER(MediaName) LIKE '%%.jpg' OR LOWER(MediaName) LIKE '%%.jpeg') " \
+        "AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) " \
         "ORDER BY WebsitePhoto DESC, ID" % (linktype, linkid))
     if len(rows) >= seq:
         return [rows[seq-1],]
@@ -79,8 +81,9 @@ def get_media_by_seq(dbo, linktype, linkid, seq):
         return []
 
 def get_total_seq(dbo, linktype, linkid):
-    return db.query_int(dbo, "SELECT COUNT(ID) FROM media WHERE LinkTypeID = %d AND " \
-        "LinkID = %d AND LOWER(MediaName) LIKE '%%.jpg' AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null)" % (linktype, linkid))
+    return db.query_int(dbo, "SELECT COUNT(ID) FROM media WHERE LinkTypeID = %d AND LinkID = %d " \
+        "AND (LOWER(MediaName) LIKE '%%.jpg' OR LOWER(MediaName) LIKE '%%.jpeg') " \
+        "AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null)" % (linktype, linkid))
 
 def set_video_preferred(dbo, username, mid):
     """
@@ -242,9 +245,11 @@ def get_media_by_id(dbo, mid):
 
 def get_image_media(dbo, linktype, linkid, ignoreexcluded = False):
     if not ignoreexcluded:
-        return db.query(dbo, "SELECT * FROM media WHERE LinkTypeID = %d AND LinkID = %d AND (LOWER(MediaName) Like '%%.jpg' OR LOWER(MediaName) Like '%%.jpeg')" % ( linktype, linkid ))
+        return db.query(dbo, "SELECT * FROM media WHERE LinkTypeID = %d AND LinkID = %d " \
+            "AND (LOWER(MediaName) Like '%%.jpg' OR LOWER(MediaName) Like '%%.jpeg')" % ( linktype, linkid ))
     else:
-        return db.query(dbo, "SELECT * FROM media WHERE (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) AND LinkTypeID = %d AND LinkID = %d AND (LOWER(MediaName) Like '%%.jpg' OR LOWER(MediaName) Like '%%.jpeg')" % ( linktype, linkid ))
+        return db.query(dbo, "SELECT * FROM media WHERE (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) " \
+            "AND LinkTypeID = %d AND LinkID = %d AND (LOWER(MediaName) Like '%%.jpg' OR LOWER(MediaName) Like '%%.jpeg')" % ( linktype, linkid ))
 
 def attach_file_from_form(dbo, username, linktype, linkid, post):
     """
