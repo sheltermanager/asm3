@@ -2258,9 +2258,13 @@ class HTMLPublisher(FTPPublisher):
 
         try:
             cutoff = i18n.subtract_days(i18n.now(self.dbo.timezone), self.pc.outputAdoptedDays)
+            orderby = "a.AnimalName"
+            if self.pc.order == 0: orderby = "a.ActiveMovementDate DESC"
+            elif self.pc.order == 1: orderby = "a.ActiveMovementDate"
+            elif self.pc.order == 2: orderby = "a.AnimalName"
             animals = db.query(self.dbo, animal.get_animal_query(self.dbo) + " WHERE a.ActiveMovementType = 1 AND " \
                 "a.ActiveMovementDate >= %s AND a.DeceasedDate Is Null AND a.NonShelterAnimal = 0 "
-                "ORDER BY a.AnimalName" % db.dd(cutoff))
+                "ORDER BY %s" % (db.dd(cutoff), orderby))
             totalAnimals = len(animals)
             header = self.substituteHFTag(self.getHeader(), -1, user, i18n._("Recently adopted", l))
             footer = self.substituteHFTag(self.getFooter(), -1, user, i18n._("Recently adopted", l))
