@@ -7,7 +7,7 @@ import os, sys
 from i18n import _, BUILD
 from sitedefs import DB_PK_STRATEGY
 
-LATEST_VERSION = 33716
+LATEST_VERSION = 33717
 VERSIONS = ( 
     2870, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3050,
     3051, 3081, 3091, 3092, 3093, 3094, 3110, 3111, 3120, 3121, 3122, 3123, 3200,
@@ -19,7 +19,8 @@ VERSIONS = (
     33310, 33311, 33312, 33313, 33314, 33315, 33316, 33401, 33402, 33501, 33502,
     33503, 33504, 33505, 33506, 33507, 33508, 33600, 33601, 33602, 33603, 33604,
     33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702, 33703, 33704, 33705,
-    33706, 33707, 33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716
+    33706, 33707, 33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716,
+    33717
 )
 
 # All ASM3 tables
@@ -4132,4 +4133,70 @@ def update_33715(dbo):
 def update_33716(dbo):
     # Switch ui-lightness and smoothness to the new asm replacement theme
     db.execute_dbupdate(dbo, "UPDATE configuration SET itemvalue='asm' WHERE itemvalue = 'smoothness' OR itemvalue = 'ui-lightness'")
+
+def update_33717(dbo):
+    # Add default colour mappings to existing colours if they
+    # have not been mapped already
+    defmap = {
+        1: "Black",
+        2: "White",
+        3: "Black - with White",
+        4: "Red/Golden/Orange/Chestnut",
+        5: "White - with Black",
+        6: "Tortoiseshell",
+        7: "Brown Tabby",
+        8: "Tan/Yellow/Fawn",
+        9: "Black - with Tan, Yellow or Fawn",
+        10: "Black - with Tan, Yellow or Fawn",
+        11: "Brown/Chocolate",
+        12: "Brown/Chocolate - with Black",
+        13: "Brown/Chocolate - with White",
+        14: "Brindle",
+        15: "Brindle",
+        16: "Brindle - with White",
+        17: "Black - with Tan, Yellow or Fawn",
+        18: "White - with Tan, Yelow or Fawn",
+        19: "Tricolor (Tan/Brown & Black & White)",
+        20: "Brown/Chocolate",
+        21: "Brown/Chocolate - with White",
+        22: "Brown/Chocolate - with White",
+        23: "White",
+        24: "White - with Tan, Yellow or Fawn",
+        26: "White - with Tan, Yellow or Fawn",
+        27: "Tortoiseshell",
+        28: "Brown Tabby",
+        29: "Red/Golden/Orange/Chestnut - with White",
+        30: "Gray/Blue/Silver/Salt & Pepper",
+        31: "Gray/Silver/Salt & Pepper - with White",
+        32: "Gray/Silver/Salt & Pepper - with White",
+        33: "Tortoiseshell",
+        35: "Brown/Chocolate - with White",
+        36: "Gray or Blue",
+        37: "White",
+        38: "Tan/Yellow/Fawn",
+        39: "Tan/Yellow/Fawn",
+        40: "Brown/Chocolate - with White",
+        41: "Green",
+        42: "Red/Golden/Orange/Chestnut",
+        43: "Tortoiseshell",
+        44: "Tortoiseshell",
+        45: "Brown/Chocolate",
+        46: "Tortoiseshell",
+        47: "Red/Golden/Orange/Chestnut",
+        48: "Tortoiseshell",
+        49: "Tan/Yellow/Fawn",
+        50: "Tortoiseshell",
+        51: "Red/Golden/Orange/Chestnut",
+        52: "Red/Golden/Orange/Chestnut",
+        53: "Gray/Blue/Silver/Salt & Pepper",
+        54: "Tortoiseshell",
+        55: "Red/Golden/Orange/Chestnut",
+        56: "Tan/Yellow/Fawn",
+        57: "Gray/Blue/Silver/Salt & Pepper",
+        58: "Red/Golden/Orange/Chestnut",
+        59: "Tortoiseshell",
+    }
+    for c in db.query(dbo, "SELECT ID FROM basecolour WHERE ID <= 59 AND (AdoptAPetColour Is Null OR AdoptAPetColour = '')"):
+        if defmap.has_key(c["ID"]):
+            db.execute_dbupdate(dbo, "UPDATE basecolour SET AdoptAPetColour=%s WHERE ID=%d" % (db.ds(defmap[c["ID"]]), c["ID"]))
 
