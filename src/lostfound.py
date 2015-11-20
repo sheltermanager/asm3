@@ -45,7 +45,7 @@ class LostFoundMatch:
 def get_foundanimal_query(dbo):
     dummy = dbo
     return "SELECT a.*, a.ID AS LFID, s.SpeciesName, b.BreedName, " \
-        "c.BaseColour AS BaseColourName, x.Sex AS SexName, " \
+        "c.BaseColour AS BaseColourName, c.AdoptAPetColour, x.Sex AS SexName, " \
         "o.OwnerSurname, o.OwnerForeNames, o.OwnerTitle, o.OwnerInitials, " \
         "o.OwnerName, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone " \
         "FROM animalfound a " \
@@ -58,7 +58,7 @@ def get_foundanimal_query(dbo):
 def get_lostanimal_query(dbo):
     dummy = dbo
     return "SELECT a.*, a.ID AS LFID, s.SpeciesName, b.BreedName, " \
-        "c.BaseColour AS BaseColourName, x.Sex AS SexName, " \
+        "c.BaseColour AS BaseColourName, c.AdoptAPetColour, x.Sex AS SexName, " \
         "o.OwnerSurname, o.OwnerForeNames, o.OwnerTitle, o.OwnerInitials, " \
         "o.OwnerName, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone " \
         "FROM animallost a " \
