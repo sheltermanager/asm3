@@ -263,7 +263,7 @@ $(function() {
             html.person_flag_options(null, controller.flags, $("#flags"), false);
             // Now remove irrelevant built in flags (staff/volunteer are a given,
             // banned, donor, deceased and homechecked don't make sense)
-            $.each([ "staff", "volunteer", "banned", "deceased", "donor", "homechecked" ], function(i, v) {
+            $.each([ "banned", "deceased", "donor", "homechecked" ], function(i, v) {
                 $("#flags option[value='" + v + "']").remove();
             });
             $("#flags").change();
