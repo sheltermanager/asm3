@@ -648,12 +648,17 @@ def attach_animal(dbo, username, collationid):
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
     animalname = ""
+    sheltercode = ""
     for f in fields:
-        if f["FIELDNAME"] == "animalname": animalname = f["VALUE"]
-    if animalname == "":
+        if f["FIELDNAME"] == "animalname": 
+            bits = f["VALUE"].split("::")
+            if len(bits) == 2:
+                animalname = bits[0]
+                sheltercode = bits[1]
+    if sheltercode == "" or animalname == "":
         raise utils.ASMValidationError(i18n._("There is not enough information in the form to attach to a shelter animal record (need an animal name).", l))
     # Find the animal
-    aid = db.query_int(dbo, "SELECT ID FROM animal WHERE LOWER(AnimalName) LIKE '%s' ORDER BY ID DESC" % animalname.lower())
+    aid = db.query_int(dbo, "SELECT ID FROM animal WHERE ShelterCode = '%s' ORDER BY ID DESC" % sheltercode)
     if aid == 0:
         raise utils.ASMValidationError(i18n._("Could not find animal with name '{0}'", l).format(animalname))
     formname = get_onlineformincoming_name(dbo, collationid)
