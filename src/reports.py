@@ -682,7 +682,7 @@ class Report:
 
         if type(v) == datetime.datetime or str(v).find("00:00:00.00") != -1:
             # If the time is midnight, omit it
-            if str(v).find("00:00") != -1:
+            if str(v).find("00:00:00") != -1:
                 return i18n.python2display(l, v)
             else:
                 return "%s %s" % (i18n.python2display(l, v), i18n.format_time(v))
