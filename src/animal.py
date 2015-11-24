@@ -951,14 +951,14 @@ def calc_time_on_shelter(dbo, animalid, a = None):
     l = dbo.locale
     return format_diff(l, calc_days_on_shelter(dbo, animalid, a))
 
-def calc_total_time_on_shelter(dbo, animalid, a = None):
+def calc_total_time_on_shelter(dbo, animalid, a = None, movements = None):
     """
     Returns the length of time the animal has been on the shelter as a 
     formatted string, eg: "6 weeks and 3 days"
     (int) animalid: The animal to calculate time on shelter for
     """
     l = dbo.locale
-    return format_diff(l, calc_total_days_on_shelter(dbo, animalid, a))
+    return format_diff(l, calc_total_days_on_shelter(dbo, animalid, a, movements))
 
 def calc_days_on_shelter(dbo, animalid, a = None):
     """
@@ -982,10 +982,12 @@ def calc_days_on_shelter(dbo, animalid, a = None):
 
     return date_diff_days(mre, stop)
 
-def calc_total_days_on_shelter(dbo, animalid, a = None):
+def calc_total_days_on_shelter(dbo, animalid, a = None, movements = None):
     """
     Returns the total number of days an animal has been on the shelter (counting all stays) as an int
     (int) animalid: The animal to get the number of days on shelter for
+    a: The animal already loaded, needs Archived, DateBroughtIn, DeceasedDate, ActiveMovementDate
+    movements: A list of movements that includes MovementDate and ReturnDate for this (and possibly other) animal(s) ordered by animalid
     """
     stop = now()
     if a is None:
@@ -1005,8 +1007,22 @@ def calc_total_days_on_shelter(dbo, animalid, a = None):
 
     # Now, go through historic movements for this animal and deduct
     # all the time the animal has been off the shelter
-    for m in db.query(dbo, "SELECT MovementDate, ReturnDate FROM adoption WHERE AnimalID = %d AND MovementDate Is Not Null AND ReturnDate Is Not Null ORDER BY ID" % animalid):
-        daysonshelter -= date_diff_days(m["MOVEMENTDATE"], m["RETURNDATE"])
+    if movements is None:
+        movements = db.query(dbo, "SELECT AnimalID, MovementDate, ReturnDate " \
+            "FROM adoption " \
+            "WHERE AnimalID = %d " \
+            "AND MovementDate Is Not Null AND ReturnDate Is Not Null " \
+            "ORDER BY AnimalID" % animalid)
+    seen = False
+    for m in movements:
+        if m["ANIMALID"] == animalid:
+            seen = True
+            daysonshelter -= date_diff_days(m["MOVEMENTDATE"], m["RETURNDATE"])
+        else:
+            # Stop iterating the list if we don't have a match and we previously
+            # saw our animal id. Any movement list passed in should order by animalid
+            if seen:
+                break
 
     return daysonshelter
 
@@ -2764,7 +2780,7 @@ def delete_litter(dbo, username, lid):
     audit.delete(dbo, username, "animallitter", str(db.query(dbo, "SELECT * FROM animallitter WHERE ID=%d" % int(lid))))
     db.execute(dbo, "DELETE FROM animallitter WHERE ID = %d" % int(lid))
 
-def update_variable_animal_data(dbo, animalid, a = None, animalupdatebatch = None, bands = None):
+def update_variable_animal_data(dbo, animalid, a = None, animalupdatebatch = None, bands = None, movements = None):
     """
     Updates the variable data animal fields,
     MostRecentEntryDate, TimeOnShelter, DaysOnShelter, AgeGroup, AnimalAge,
@@ -2772,6 +2788,8 @@ def update_variable_animal_data(dbo, animalid, a = None, animalupdatebatch = Non
     (int) animalid: The animal to update
     a: An animal result to use instead of looking it up from the id
     animalupdatebatch: A batch of update parameters
+    bands: List of loaded age group bands
+    movements: List of loaded movements
     """
     if animalupdatebatch is not None:
         animalupdatebatch.append((
@@ -2779,8 +2797,8 @@ def update_variable_animal_data(dbo, animalid, a = None, animalupdatebatch = Non
             calc_age_group(dbo, animalid, a, bands),
             calc_age(dbo, animalid, a),
             calc_days_on_shelter(dbo, animalid, a),
-            calc_total_time_on_shelter(dbo, animalid, a),
-            calc_total_days_on_shelter(dbo, animalid, a),
+            calc_total_time_on_shelter(dbo, animalid, a, movements),
+            calc_total_days_on_shelter(dbo, animalid, a, movements),
             animalid
         ))
     else:
@@ -2799,22 +2817,31 @@ def update_all_variable_animal_data(dbo):
     Updates variable animal data for all animals
     """
     l = dbo.locale
+    
     # We only need to do this once a day, skip if it's already
     # been run
     if configuration.variable_data_updated_today(dbo):
         al.debug("already done today", "animal.update_all_variable_animal_data", dbo)
         return
 
+    animalupdatebatch = []
+
     # Load age group bands now to save repeated looped lookups
     bands = db.query(dbo, "SELECT ItemName, ItemValue FROM configuration WHERE ItemName LIKE 'AgeGroup%' ORDER BY ItemName")
 
     # Update variable data for all animals who are still alive
-    animalupdatebatch = []
     animals = db.query(dbo, "SELECT ID, DateBroughtIn, DeceasedDate, Archived, ActiveMovementDate, " \
         "MostRecentEntryDate, DateOfBirth FROM animal " \
         "WHERE DeceasedDate Is Null")
+
+    # Get a single lookup of movements for animals who are still alive
+    movements = db.query(dbo, "SELECT ad.AnimalID, ad.MovementDate, ad.ReturnDate " \
+        "FROM adoption ad INNER JOIN animal a ON a.ID = ad.AnimalID " \
+        "WHERE ad.MovementDate Is Not Null AND ad.ReturnDate Is Not Null AND a.DeceasedDate Is Null " \
+        "ORDER BY AnimalID")
+
     for a in animals:
-        update_variable_animal_data(dbo, int(a["ID"]), a, animalupdatebatch, bands)
+        update_variable_animal_data(dbo, int(a["ID"]), a, animalupdatebatch, bands, movements)
 
     db.execute_many(dbo, "UPDATE animal SET " \
         "TimeOnShelter = %s, " \
