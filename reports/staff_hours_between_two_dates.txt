@@ -13,7 +13,7 @@ $VAR to DATE Enter to date$
 
 SELECT o.OwnerName,
 ort.StartDateTime, ort.EndDateTime, ort.Comments, rt.RotaType,
-EXTRACT(HOUR FROM EndDateTime - StartDateTime)::integer  AS hours,
+EXTRACT(HOUR FROM EndDateTime - StartDateTime)::real + (EXTRACT(MINUTE FROM EndDateTime - StartDateTime)::real / 60)  AS hours,
 EXTRACT(DAY FROM EndDateTime - StartDateTime)::integer  AS days
 FROM ownerrota ort
 INNER JOIN owner o ON o.ID = ort.OwnerID
