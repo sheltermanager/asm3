@@ -16,7 +16,7 @@ import lookups
 import media
 import movement
 import utils
-from i18n import _, date_diff, date_diff_days, now, today, python2display, subtract_years, subtract_months, add_days, subtract_days, monday_of_week, first_of_month, last_of_month, first_of_year
+from i18n import _, date_diff, date_diff_days, format_diff, now, today, python2display, subtract_years, subtract_months, add_days, subtract_days, monday_of_week, first_of_month, last_of_month, first_of_year
 from random import choice
 
 ASCENDING = 0
@@ -949,24 +949,16 @@ def calc_time_on_shelter(dbo, animalid, a = None):
     (int) animalid: The animal to calculate time on shelter for
     """
     l = dbo.locale
-    stop = now()
-    if a is None:
-        a = db.query(dbo, "SELECT Archived, DeceasedDate, ActiveMovementDate, MostRecentEntryDate FROM animal WHERE ID = %d" % animalid)
-        if len(a) == 0: return
-        a = a[0]
+    return format_diff(l, calc_days_on_shelter(dbo, animalid, a))
 
-    mre = a["MOSTRECENTENTRYDATE"]
-
-    # If the animal is dead, use that as our cutoff
-    if a["DECEASEDDATE"] is not None:
-        stop = a["DECEASEDDATE"]
-
-    # If the animal has left the shelter, use that as our stop date
-    elif a["ACTIVEMOVEMENTDATE"] is not None and a["ARCHIVED"] == 1:
-        stop = a["ACTIVEMOVEMENTDATE"]
-
-    # Format it as time period
-    return date_diff(l, mre, stop)
+def calc_total_time_on_shelter(dbo, animalid, a = None):
+    """
+    Returns the length of time the animal has been on the shelter as a 
+    formatted string, eg: "6 weeks and 3 days"
+    (int) animalid: The animal to calculate time on shelter for
+    """
+    l = dbo.locale
+    return format_diff(l, calc_total_days_on_shelter(dbo, animalid, a))
 
 def calc_days_on_shelter(dbo, animalid, a = None):
     """
@@ -989,6 +981,34 @@ def calc_days_on_shelter(dbo, animalid, a = None):
         stop = a["ACTIVEMOVEMENTDATE"]
 
     return date_diff_days(mre, stop)
+
+def calc_total_days_on_shelter(dbo, animalid, a = None):
+    """
+    Returns the total number of days an animal has been on the shelter (counting all stays) as an int
+    (int) animalid: The animal to get the number of days on shelter for
+    """
+    stop = now()
+    if a is None:
+        a = db.query(dbo, "SELECT Archived, DateBroughtIn, DeceasedDate, ActiveMovementDate FROM animal WHERE ID = %d" % animalid)
+        if len(a) == 0: return 0
+        a = a[0]
+
+    start = a["DATEBROUGHTIN"]
+
+    # If the animal is dead, or is off the shelter
+    # use that date as our final date instead
+    if a["DECEASEDDATE"] is not None:
+        stop = a["DECEASEDDATE"]
+    elif a["ACTIVEMOVEMENTDATE"] is not None and a["ARCHIVED"] == 1:
+        stop = a["ACTIVEMOVEMENTDATE"]
+    daysonshelter = date_diff_days(start, stop)
+
+    # Now, go through historic movements for this animal and deduct
+    # all the time the animal has been off the shelter
+    for m in db.query(dbo, "SELECT MovementDate, ReturnDate FROM adoption WHERE AnimalID = %d AND MovementDate Is Not Null AND ReturnDate Is Not Null ORDER BY ID" % animalid):
+        daysonshelter -= date_diff_days(m["MOVEMENTDATE"], m["RETURNDATE"])
+
+    return daysonshelter
 
 def calc_age_group(dbo, animalid, a = None, bands = None):
     """
@@ -2747,8 +2767,8 @@ def delete_litter(dbo, username, lid):
 def update_variable_animal_data(dbo, animalid, a = None, animalupdatebatch = None, bands = None):
     """
     Updates the variable data animal fields,
-    MostRecentEntryDate, TimeOnShelter, AgrGroup, AnimalAge
-    and DaysOnShelter
+    MostRecentEntryDate, TimeOnShelter, DaysOnShelter, AgeGroup, AnimalAge,
+    TotalTimeOnShelter, TotalDaysOnShelter
     (int) animalid: The animal to update
     a: An animal result to use instead of looking it up from the id
     animalupdatebatch: A batch of update parameters
@@ -2759,6 +2779,8 @@ def update_variable_animal_data(dbo, animalid, a = None, animalupdatebatch = Non
             calc_age_group(dbo, animalid, a, bands),
             calc_age(dbo, animalid, a),
             calc_days_on_shelter(dbo, animalid, a),
+            calc_total_time_on_shelter(dbo, animalid, a),
+            calc_total_days_on_shelter(dbo, animalid, a),
             animalid
         ))
     else:
@@ -2766,7 +2788,9 @@ def update_variable_animal_data(dbo, animalid, a = None, animalupdatebatch = Non
             ( "TimeOnShelter", db.ds(calc_time_on_shelter(dbo, animalid, a))),
             ( "AgeGroup", db.ds(calc_age_group(dbo, animalid, a))),
             ( "AnimalAge", db.ds(calc_age(dbo, animalid, a))),
-            ( "DaysOnShelter", db.di(calc_days_on_shelter(dbo, animalid, a))) 
+            ( "DaysOnShelter", db.di(calc_days_on_shelter(dbo, animalid, a))),
+            ( "TotalTimeOnShelter", db.ds(calc_total_time_on_shelter(dbo, animalid, a))),
+            ( "TotalDaysOnShelter", db.di(calc_total_days_on_shelter(dbo, animalid, a)))
         ))
         db.execute(dbo, s)
 
@@ -2796,7 +2820,9 @@ def update_all_variable_animal_data(dbo):
         "TimeOnShelter = %s, " \
         "AgeGroup = %s, " \
         "AnimalAge = %s, " \
-        "DaysOnShelter = %s " \
+        "DaysOnShelter = %s, " \
+        "TotalTimeOnShelter = %s, " \
+        "TotalDaysOnShelter = %s " \
         "WHERE ID = %s", animalupdatebatch)
 
     al.debug("updated variable data for %d animals (locale %s)" % (len(animals), l), "animal.update_all_variable_animal_data", dbo)

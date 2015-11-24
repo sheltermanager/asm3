@@ -4,8 +4,8 @@ import datetime
 import json
 import time
 
-VERSION = "37u [Mon 23 Nov 18:17:18 GMT 2015]"
-BUILD = "11231817"
+VERSION = "37u [Tue 24 Nov 10:47:58 GMT 2015]"
+BUILD = "11241047"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -526,6 +526,13 @@ def date_diff(l, date1, date2):
     (datetime) date2
     """
     days = int(date_diff_days(date1, date2))
+    return format_diff(l, days)
+
+def format_diff(l, days):
+    """
+    Returns a formatted diff from a number of days.
+    Eg: 6 weeks, 5 months.
+    """
     if days < 0: days = 0
     weeks = int(days / 7)
     months = int(days / 30.5)

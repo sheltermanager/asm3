@@ -7,7 +7,7 @@ import os, sys
 from i18n import _, BUILD
 from sitedefs import DB_PK_STRATEGY
 
-LATEST_VERSION = 33717
+LATEST_VERSION = 33718
 VERSIONS = ( 
     2870, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3050,
     3051, 3081, 3091, 3092, 3093, 3094, 3110, 3111, 3120, 3121, 3122, 3123, 3200,
@@ -20,7 +20,7 @@ VERSIONS = (
     33503, 33504, 33505, 33506, 33507, 33508, 33600, 33601, 33602, 33603, 33604,
     33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702, 33703, 33704, 33705,
     33706, 33707, 33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716,
-    33717
+    33717, 33718
 )
 
 # All ASM3 tables
@@ -315,7 +315,9 @@ def sql_structure(dbo):
         fstr("DisplayLocation", True),
         fdate("MostRecentEntryDate"),
         fstr("TimeOnShelter", True),
+        fstr("TotalTimeOnShelter", True),
         fint("DaysOnShelter", True),
+        fint("TotalDaysOnShelter", True),
         fint("DailyBoardingCost", True),
         fstr("AnimalAge", True) ))
     sql += index("animal_AnimalShelterCode", "animal", "ShelterCode", True)
@@ -4199,4 +4201,10 @@ def update_33717(dbo):
     for c in db.query(dbo, "SELECT ID FROM basecolour WHERE ID <= 59 AND (AdoptAPetColour Is Null OR AdoptAPetColour = '')"):
         if defmap.has_key(c["ID"]):
             db.execute_dbupdate(dbo, "UPDATE basecolour SET AdoptAPetColour=%s WHERE ID=%d" % (db.ds(defmap[c["ID"]]), c["ID"]))
+
+def update_33718(dbo):
+    # Add TotalTimeOnShelter, TotalDaysOnShelter
+    add_column(dbo, "animal", "TotalDaysOnShelter", "INTEGER")
+    add_column(dbo, "animal", "TotalTimeOnShelter", shorttext(dbo))
+    db.execute_dbupdate(dbo, "UPDATE animal SET TotalDaysOnShelter=0, TotalTimeOnShelter=''")
 
