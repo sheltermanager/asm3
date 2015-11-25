@@ -386,7 +386,7 @@ def get_onlineformincoming_html_print(dbo, ids):
     footercontent = footer[0:footer.find("</body>")]
     h = []
     h.append(header)
-    for collationid in ids:
+    for i, collationid in enumerate(ids):
         h.append(headercontent)
         formheader = get_onlineformincoming_formheader(dbo, collationid)
         h.append(formheader)
@@ -394,7 +394,8 @@ def get_onlineformincoming_html_print(dbo, ids):
         formfooter = get_onlineformincoming_formfooter(dbo, collationid)
         h.append(formfooter)
         h.append(footercontent)
-        h.append('<div style="page-break-before: always;"></div>')
+        if i < len(ids)-1:
+            h.append('<div style="page-break-before: always;"></div>')
     h.append("</body></html>")
     return "\n".join(h)
 
