@@ -313,9 +313,11 @@ $(function() {
 
                 // Figure out the size we're scaling to
                 var media_scaling = config.str("IncomingMediaScaling");
-                if (!media_scaling) { media_scaling = "320x200"; }
+                if (!media_scaling || media_scaling == "None") { media_scaling = "640x640"; }
                 var max_width = format.to_int(media_scaling.split("x")[0]);
                 var max_height = format.to_int(media_scaling.split("x")[1]);
+                if (!max_width) { max_width = 640; }
+                if (!max_height) { max_height = 640; }
 
                 // Read the file to an image tag, then render it to
                 // an HTML5 canvas to scale it
