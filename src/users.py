@@ -693,7 +693,7 @@ def web_login(post, session, remoteip, path):
             al.info("%s logged in" % user["USERNAME"], "users.login", dbo)
             update_user_activity(dbo, user["USERNAME"])
         except:
-            al.error("failed updating activeuser table: %s" % str(sys.exc_info()[0]), "users.web_login", dbo, sys.exc_info())
+            al.error("failed updating user activity: %s" % str(sys.exc_info()[0]), "users.web_login", dbo, sys.exc_info())
             return "FAIL"
     else:
         al.error("database:%s username:%s password:%s failed authentication from %s" % (database, username, password, remoteip), "users.web_login", dbo)

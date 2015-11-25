@@ -5848,7 +5848,8 @@ class shelterview:
 
 class smcom_my:
     def GET(self):
-        smcom.go_smcom_my(session)
+        utils.check_loggedin(session, web)
+        if session.superuser == 1: smcom.go_smcom_my(session.dbo)
 
 class sql:
     def check_disabled(self, dbo, dumptype):
