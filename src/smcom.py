@@ -81,7 +81,7 @@ def set_last_connected(dbo):
     Sets the last connected date on a database to today
     """
     al.debug("Setting last connected to now for %s" % dbo.database, "smcom.set_last_connected", dbo)
-    response = smcom_client.set_last_connected(dbo.database)
+    response = smcom_client.update_last_connected(dbo.database)
     if response != "OK":
         al.error("Failed setting last connection: %s" % response, "smcom.set_last_connected", dbo)
 
