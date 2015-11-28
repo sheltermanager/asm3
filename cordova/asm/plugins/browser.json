@@ -49,6 +49,9 @@
         },
         "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.sheltermanager.asm"
+        },
+        "cordova-plugin-media": {
+            "PACKAGE_NAME": "com.sheltermanager.asm"
         }
     },
     "dependent_plugins": {}

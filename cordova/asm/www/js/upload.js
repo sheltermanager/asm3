@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, alert */
+/*global $, alert, device, Media */
 /*global FileTransfer, FileUploadOptions */
 
 document.addEventListener("deviceready", function() {
@@ -8,6 +8,7 @@ document.addEventListener("deviceready", function() {
         username = window.localStorage.getItem("asm_username"),
         password = window.localStorage.getItem("asm_password"),
         server = window.localStorage.getItem("asm_server"),
+        lastsound = window.localStorage.getItem("asm_lastsound"),
         SHELTER_ANIMALS_URL = "https://{s}.sheltermanager.com/service?method={m}&account={a}&username={u}&password={p}&callback=?",
         UPLOAD_URL = "https://{s}.sheltermanager.com/service";
 
@@ -155,6 +156,16 @@ document.addEventListener("deviceready", function() {
         }
     });
 
+    $("#button-sound").click(function() {
+        if ($("#sound").val() == "") { return; }
+        window.localStorage.setItem("asm_lastsound", $("#sound").val());
+        var url = "audio/" + $("#sound").val();
+        if (device.platform == "Android") { url = "/android_asset/www/" + url; } // Android needs extra path prefix
+        var media = new Media(url, null, function(e) { alert("Error playing media: " + e); });
+        media.play();
+    });
+
     load_animals();
+    $("#sound").val(window.localStorage.getItem("asm_lastsound"));
 
 });
