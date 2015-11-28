@@ -644,6 +644,7 @@ def json_menu(l, reports, mailmerges):
             ( users.VIEW_INCIDENT, "", "taganimalcontrol", "incident_map", "asm-icon-map", _("Map of active incidents", l) ),
             ( users.VIEW_TRAPLOAN, "", "tagtraploan", "traploan?filter=active", "asm-icon-traploan", _("Trap loans", l) ),
             ( users.VIEW_LICENCE, "", "taganimalcontrol", "licence?offset=i31", "asm-icon-licence", _("Licensing", l) ),
+            ( users.ADD_LICENCE, "", "taganimalcontrol", "licence_renewal", "asm-icon-blank", _("Renew license", l) ),
             ( users.VIEW_INCIDENT, "", "taganimalcontrol", "calendarview?ev=ol", "asm-icon-calendar", _("Animal control calendar", l) ),
             ( "", "", "", "--cat", "asm-icon-diary", _("Diary", l) ),
             ( users.ADD_DIARY, "", "", "diary_edit_my?newnote=1", "asm-icon-blank", _("Add a diary note", l) ),
