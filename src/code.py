@@ -3417,11 +3417,12 @@ class licence_renewal:
     def POST(self):
         utils.check_loggedin(session, web)
         post = utils.PostedData(web.input(mode="create"), session.locale)
+        dbo = session.dbo
         mode = post["mode"]
         if mode == "create":
             users.check_permission(session, users.ADD_LICENCE)
+            financial.insert_donations_from_form(dbo, session.user, post, post["issuedate"], False, post["person"], post["animal"]) 
             return financial.insert_licence_from_form(session.dbo, session.user, post)
-
 
 class litters:
     def GET(self):
