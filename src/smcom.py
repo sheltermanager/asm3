@@ -38,7 +38,8 @@ def get_database_info(alias):
     dbo.alias = alias
     a = _get_account_info(alias)
     if a is None: 
-        return "FAIL"
+        dbo.database = "FAIL"
+        return dbo
     dbo.database = str(a["user"])
     dbo.username = dbo.database
     dbo.password = dbo.database
