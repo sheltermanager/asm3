@@ -140,6 +140,11 @@ $(function() {
                             }, licence.type_change);
                      }
                  },
+                 { id: "renew", text: _("Renew license"), icon: "licence", enabled: "always", perm: "aaf",
+                    click: function() {
+                        common.route("licence_renewal");    
+                    }
+                 },
                  { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dapl",
                      click: function() { 
                          tableform.delete_dialog()

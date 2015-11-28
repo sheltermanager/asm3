@@ -1092,7 +1092,7 @@ msgstr ""
 msgid "Animal '{0}' successfully marked deceased."
 msgstr ""
 
-#: donation_receive.js licence.js
+#: donation_receive.js licence.js licence_renewal.js
 msgid "Animal (optional)"
 msgstr ""
 
@@ -2295,9 +2295,9 @@ msgstr ""
 msgid "Citations"
 msgstr ""
 
-#: waitinglist_results.js transport.js person.js incident.js incident_new.js
-#: person_new.js person_find_results.js common_personchooser.js mobile.py
-#: html.py
+#: incident_find_results.js waitinglist_results.js transport.js person.js
+#: incident.js incident_new.js person_new.js person_find_results.js
+#: incident_find.js common_personchooser.js mobile.py html.py
 msgid "City"
 msgstr ""
 
@@ -2323,7 +2323,7 @@ msgid "Clear tables before importing"
 msgstr ""
 
 #: onlineforms.js document_templates.js reports.js staff_rota.js animal.js
-#: stocklevel.js roles.js
+#: stocklevel.js htmltemplates.js roles.js
 msgid "Clone"
 msgstr ""
 
@@ -2720,7 +2720,8 @@ msgstr ""
 
 #: log_new.js move_retailer.js incident_new.js lostfound_new.js animal_new.js
 #: donation_receive.js person_new.js move_reserve.js move_foster.js
-#: move_transfer.js move_adopt.js waitinglist_new.js move_reclaim.js
+#: move_transfer.js move_adopt.js licence_renewal.js waitinglist_new.js
+#: move_reclaim.js
 msgid "Creating..."
 msgstr ""
 
@@ -4254,7 +4255,7 @@ msgstr ""
 msgid "Expires"
 msgstr ""
 
-#: person_find_results.js stocklevel.js
+#: person_find_results.js stocklevel.js licence_renewal.js
 msgid "Expiry"
 msgstr ""
 
@@ -4362,6 +4363,10 @@ msgstr ""
 msgid "Failed to create payment."
 msgstr ""
 
+#: licence_renewal.js
+msgid "Failed to renew license."
+msgstr ""
+
 #: dbupdate.py
 msgid "Fawn"
 msgstr ""
@@ -4387,7 +4392,7 @@ msgstr ""
 msgid "February"
 msgstr ""
 
-#: licence.js
+#: licence.js licence_renewal.js
 msgid "Fee"
 msgstr ""
 
@@ -5758,7 +5763,7 @@ msgstr ""
 msgid "Issue a new insurance number for this animal/adoption"
 msgstr ""
 
-#: person_vouchers.js licence.js
+#: person_vouchers.js licence.js licence_renewal.js
 msgid "Issued"
 msgstr ""
 
@@ -5994,6 +5999,10 @@ msgstr ""
 msgid "Liability"
 msgstr ""
 
+#: licence_renewal.js
+msgid "Licence for {0} successfully renewed {1} - {2}"
+msgstr ""
+
 #: header_edit_header.js search.js
 msgid "License"
 msgstr ""
@@ -6012,6 +6021,18 @@ msgstr ""
 
 #: search.py
 msgid "License numbers matching '{0}'."
+msgstr ""
+
+#: licence_renewal.js
+msgid "License requires a number"
+msgstr ""
+
+#: licence_renewal.js
+msgid "License requires a person"
+msgstr ""
+
+#: licence_renewal.js
+msgid "License requires issued and expiry dates"
 msgstr ""
 
 #: roles.js
@@ -7230,7 +7251,8 @@ msgstr ""
 
 #: incident_find_results.js person_vouchers.js lostfound_find_results.js
 #: incident.js lostfound_find.js person_find_results.js incident_find.js
-#: lostfound.js waitinglist.js lostfound.py dbupdate.py mobile.py
+#: licence_renewal.js lostfound.js waitinglist.js lostfound.py dbupdate.py
+#: mobile.py
 msgid "Number"
 msgstr ""
 
@@ -7734,8 +7756,8 @@ msgstr ""
 
 #: donations.js header_edit_header.js citations.js movements.js diarytasks.js
 #: log_new.js rota.js person.js search.js onlineform_incoming.js staff_rota.js
-#: donation_receive.js licence.js traploan.js reports.py dbupdate.py mobile.py
-#: html.py
+#: donation_receive.js licence.js traploan.js licence_renewal.js reports.py
+#: dbupdate.py mobile.py html.py
 msgid "Person"
 msgstr ""
 
@@ -8553,6 +8575,14 @@ msgstr ""
 
 #: document_templates.js report_images.js
 msgid "Rename"
+msgstr ""
+
+#: licence_renewal.js
+msgid "Renew licence"
+msgstr ""
+
+#: licence.js licence_renewal.js
+msgid "Renew license"
 msgstr ""
 
 #: reports.js reports.py
@@ -11208,7 +11238,8 @@ msgstr ""
 #: person_links.js accounts.js log.js mailmerge.js animal.js animal_diet.js
 #: licence.js document_repository.js traploan.js animal_find_results.js
 #: animal_bulk.js common_animalchooser.js additional.js common_widgets.js
-#: options.js vaccination.js reports.py mobile.py lookups.py html.py
+#: licence_renewal.js options.js vaccination.js reports.py mobile.py lookups.py
+#: html.py
 msgid "Type"
 msgstr ""
 

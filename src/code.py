@@ -114,6 +114,7 @@ urls = (
     "/incident_find_results", "incident_find_results",
     "/latency", "latency",
     "/licence", "licence",
+    "/licence_renewal", "licence_renewal",
     "/litters", "litters", 
     "/log_new", "log_new",
     "/lookups", "lookups",
@@ -2625,6 +2626,7 @@ class donation_receive:
         post = utils.PostedData(web.input(mode="create"), session.locale)
         mode = post["mode"]
         if mode == "create":
+            users.check_permission(session, users.ADD_DONATION)
             return financial.insert_donations_from_form(session.dbo, session.user, post, post["received"], True, post["person"], post["animal"], False)
 
 class foundanimal:
@@ -3395,6 +3397,31 @@ class licence:
             users.check_permission(session, users.DELETE_LICENCE)
             for lid in post.integer_list("ids"):
                 financial.delete_licence(session.dbo, session.user, lid)
+
+class licence_renewal:
+    def GET(self):
+        utils.check_loggedin(session, web)
+        users.check_permission(session, users.ADD_LICENCE)
+        dbo = session.dbo
+        post = utils.PostedData(web.input(), session.locale)
+        s = html.header("", session)
+        al.debug("renewing licence", "code.licence_renewal", dbo)
+        c = html.controller_json("donationtypes", extlookups.get_donation_types(dbo))
+        c += html.controller_json("licencetypes", extlookups.get_licence_types(dbo))
+        c += html.controller_json("paymenttypes", extlookups.get_payment_types(dbo))
+        c += html.controller_json("accounts", financial.get_accounts(dbo))
+        s += html.controller(c)
+        s += html.footer()
+        return full_or_json("licence_renewal", s, c, post["json"] == "true")
+
+    def POST(self):
+        utils.check_loggedin(session, web)
+        post = utils.PostedData(web.input(mode="create"), session.locale)
+        mode = post["mode"]
+        if mode == "create":
+            users.check_permission(session, users.ADD_LICENCE)
+            return financial.insert_licence_from_form(session.dbo, session.user, post)
+
 
 class litters:
     def GET(self):

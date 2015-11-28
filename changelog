@@ -1,6 +1,7 @@
 37
 ================
 
+28/11/15 Add dedicated licence renewal screen #278
 25/11/15 Remove nasty smcom file access in favour of new smcom_client module
 25/11/15 Fix for attaching media in case IncomingMediaScaling is trashed
 25/11/15 Remove trailing page break in online form output
