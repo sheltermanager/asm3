@@ -327,7 +327,7 @@ def handler(post, remoteip, referer):
         crid = reports.get_id(dbo, title)
         p = reports.get_criteria_params(dbo, crid, post.data)
         rows, cols = reports.execute_query(dbo, crid, username, p)
-        mcsv = utils.csv(rows, cols, True)
+        mcsv = utils.csv(l, rows, cols, True)
         return set_cached_response(cache_key, "text/csv", 3600, 3600, mcsv)
 
     elif method == "jsonp_shelter_animals":
