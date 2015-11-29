@@ -10,6 +10,7 @@ $(function() {
         { "ID": 10, "NAME": _("Date") },
         { "ID": 2, "NAME": _("Notes") },
         { "ID": 3, "NAME": _("Lookup") },
+        { "ID": 14, "NAME": _("Lookup (Multiple Select)") },
         { "ID": 12, "NAME": _("Radio Buttons") },
         { "ID": 4, "NAME": _("Shelter Animal") },
         { "ID": 5, "NAME": _("Adoptable Animal") },
@@ -116,7 +117,7 @@ $(function() {
           */
         check_lookups: function() {
             var ft = $("#fieldtype").select("value");
-            if (ft == 3 || ft == 12) {
+            if (ft == 3 || ft == 12 || ft == 14) {
                 $("#lookups").closest("tr").fadeIn();
             }
             else {

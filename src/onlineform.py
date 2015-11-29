@@ -17,7 +17,7 @@ import person
 import publish
 import utils
 import waitinglist
-from sitedefs import BASE_URL, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, SIGNATURE_JS, TOUCHPUNCH_JS
+from sitedefs import BASE_URL, ASMSELECT_CSS, ASMSELECT_JS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, SIGNATURE_JS, TOUCHPUNCH_JS
 
 FIELDTYPE_YESNO = 0
 FIELDTYPE_TEXT = 1
@@ -33,6 +33,7 @@ FIELDTYPE_DATE = 10
 FIELDTYPE_CHECKBOX = 11
 FIELDTYPE_RADIOGROUP = 12
 FIELDTYPE_SIGNATURE = 13
+FIELDTYPE_LOOKUP_MULTI = 14
 
 # Types as used in JSON representations
 FIELDTYPE_MAP = {
@@ -49,7 +50,8 @@ FIELDTYPE_MAP = {
     "DATE": 10,
     "CHECKBOX": 11,
     "RADIOGROUP": 12,
-    "SIGNATURE": 13
+    "SIGNATURE": 13,
+    "LOOKUP_MULTI": 14
 }
 
 FIELDTYPE_MAP_REVERSE = {v: k for k, v in FIELDTYPE_MAP.items()}
@@ -93,7 +95,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
     # and have it applied to all date fields.
     needjqui = False
     for f in formfields:
-        if f["FIELDTYPE"] == FIELDTYPE_DATE or f["FIELDTYPE"] == FIELDTYPE_SIGNATURE:
+        if f["FIELDTYPE"] == FIELDTYPE_DATE or f["FIELDTYPE"] == FIELDTYPE_SIGNATURE or f["FIELDTYPE"] == FIELDTYPE_LOOKUP_MULTI:
             needjqui = True
     if completedocument:
         header = get_onlineform_header(dbo)
@@ -112,6 +114,15 @@ def get_onlineform_html(dbo, formid, completedocument = True):
                             $("div[data-name='" + signame + "']").signature("clear");
                         });
                     } catch (ex) {}
+                    $(".asm-onlineform-lookupmulti").asmSelect({
+                        animate: true,
+                        sortable: true,
+                        removeLabel: '<strong>&times;</strong>',
+                        listClass: 'bsmList-custom',  
+                        listItemClass: 'bsmListItem-custom',
+                        listItemLabelClass: 'bsmListItemLabel-custom',
+                        removeClass: 'bsmListItemRemove-custom'
+                    });
                     $("input[type='submit']").click(function() {
                         var rv;
                         $(".asm-onlineform-signature").each(function() {
@@ -128,15 +139,27 @@ def get_onlineform_html(dbo, formid, completedocument = True):
                                 if (window.console) { console.log(exo); }
                             }
                         });
+                        $(".asm-onlineform-lookupmulti").each(function() {
+                            var fieldname = $(this).attr("data-name"),
+                                v = $(this).val();
+                            $("input[name='" + fieldname + "']").val(v);
+                            if (!v) {
+                                alert("You must choose at least one option");
+                                rv = false;
+                            }
+
+                        });
                         return rv;
                     });
                 });
                 </script>
                 </head>""" % (html.css_tag(JQUERY_UI_CSS.replace("%(theme)s", "smoothness")) + \
+                    html.css_tag(ASMSELECT_CSS) + \
                     html.script_tag(JQUERY_JS) + \
                     html.script_tag(JQUERY_UI_JS) + \
                     html.script_tag(TOUCHPUNCH_JS) + \
-                    html.script_tag(SIGNATURE_JS),
+                    html.script_tag(SIGNATURE_JS) + \
+                    html.script_tag(ASMSELECT_JS),
                     df))
         h.append(header.replace("$$TITLE$$", form["NAME"]))
         h.append('<h2 class="asm-onlineform-title">%s</h2>' % form["NAME"])
@@ -183,6 +206,12 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             h.append('<textarea class="asm-onlineform-notes" name="%s" title="%s" %s></textarea>' % ( html.escape(fname), utils.nulltostr(f["TOOLTIP"]), required))
         elif f["FIELDTYPE"] == FIELDTYPE_LOOKUP:
             h.append('<select class="asm-onlineform-lookup" name="%s" title="%s" %s>' % ( html.escape(fname), utils.nulltostr(f["TOOLTIP"]), required))
+            for lv in utils.nulltostr(f["LOOKUPS"]).split("|"):
+                h.append('<option>%s</option>' % lv)
+            h.append('</select>')
+        elif f["FIELDTYPE"] == FIELDTYPE_LOOKUP_MULTI:
+            h.append('<input type="hidden" name="%s" value="" />' % html.escape(fname))
+            h.append('<select class="asm-onlineform-lookupmulti" multiple="multiple" data-name="%s" title="%s">' % ( html.escape(fname), utils.nulltostr(f["TOOLTIP"])))
             for lv in utils.nulltostr(f["LOOKUPS"]).split("|"):
                 h.append('<option>%s</option>' % lv)
             h.append('</select>')
@@ -288,11 +317,12 @@ def get_onlineform_header(dbo):
        "<head>\n" \
        "<title>$$TITLE$$</title>\n" \
        "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n" \
-       "</head>\n" \
        "<style>\n" \
        ".asm-onlineform-td:first-child { max-width: 200px; }\n" \
+       ".asm-onlineform-td:nth-child(2) { white-space: nowrap; }\n" \
        "textarea { width: 300px; height: 150px; }\n" \
        "</style>\n" \
+       "</head>\n" \
        "<body>"
     return header
 
