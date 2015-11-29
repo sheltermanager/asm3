@@ -568,7 +568,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     if configuration.online_form_verify_jskey(dbo):
         if post[JSKEY_NAME] != JSKEY_VALUE:
             raise utils.ASMValidationError("Invalid verification key")
-    IGNORE_FIELDS = [ JSKEY_NAME, "formname", "flags", "redirect", "account", "filechooser", "method" ]
+    IGNORE_FIELDS = [ JSKEY_NAME, "formname", "flags", "redirect", "account", "filechooser", "method", "asmSelect0", "asmSelect1", "asmSelect2" ]
     collationid = db.query_int(dbo, "SELECT MAX(CollationID) FROM onlineformincoming") + 1
     formname = post["formname"]
     posteddate = i18n.now(dbo.timezone)
