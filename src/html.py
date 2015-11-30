@@ -352,6 +352,7 @@ def graph_header(title):
         <html>
         <head>
         <title>%(title)s</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <link href="static/css/asm.css" rel="stylesheet" />
         %(jquery)s
         %(flot)s
@@ -370,6 +371,7 @@ def map_header(title):
         <html>
         <head>
         <title>%(title)s</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <link href="static/css/asm.css" rel="stylesheet" />
         %(jquery)s
         %(mousetrap)s
