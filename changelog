@@ -1,6 +1,7 @@
 37
 ================
 
+30/11/15 Fixed bug saving giftaid flag from payment widget
 30/11/15 Asilomar figures should use deceased rather than intake date for euth
 30/11/15 Include weight units in log when logging
 30/11/15 When logging events like weight change/email/etc include the time

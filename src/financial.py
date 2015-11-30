@@ -568,7 +568,7 @@ def insert_donations_from_form(dbo, username, post, donationdate, force_receive 
             "amount"                : post["amount%d" % i],
             "due"                   : due,
             "received"              : received,
-            "giftaid"               : post["giftaid"],
+            "giftaid"               : post["giftaid%d" % i],
             "receiptnumber"         : post["receiptnumber"],
             "vat"                   : post["vat%d" % i],
             "vatrate"               : post["vatrate%d" % i],
