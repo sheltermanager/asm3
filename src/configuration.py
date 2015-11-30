@@ -909,6 +909,9 @@ def show_cost_paid(dbo):
 def show_stats_home_page(dbo):
     return cstring(dbo, "ShowStatsHomePage", DEFAULTS["ShowStatsHomePage"])
 
+def show_weight_in_lbs(dbo):
+    return cboolean(dbo, "ShowWeightInLbs", DEFAULTS["ShowWeightInLbs"] == "Yes")
+
 def signpad_ids(dbo, user, newval = ""):
     if newval == "":
         return cstring(dbo, "SignpadIds%s" % user, "")
