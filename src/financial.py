@@ -542,7 +542,7 @@ def get_vouchers(dbo, personid):
         "WHERE ov.OwnerID = %d ORDER BY ov.DateIssued" % int(personid))
 
 def insert_donations_from_form(dbo, username, post, donationdate, force_receive = False, personid = 0, animalid = 0, movementid = 0, ignorezero = True):
-    """f
+    """
     Used for post handlers with the payments widget where
     multiple payments can be sent.
     """
