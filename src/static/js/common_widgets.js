@@ -583,6 +583,8 @@
         },
         _create: function() {
             var self = this;
+            // If the user does not have permission to add payments, do nothing
+            if (!common.has_permission("oaod")) { return; }
             this.element.append([
                 html.content_header(_("Payment"), true),
                 '<table class="asm-table-layout">',
