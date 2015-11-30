@@ -24,7 +24,7 @@ def add_log(dbo, username, linktype, linkid, logtypeid, logtext):
         ( "LogTypeID", db.di(logtypeid) ),
         ( "LinkID", db.di(linkid) ),
         ( "LinkType", db.di(linktype) ),
-        ( "Date", db.dd(i18n.now(dbo.timezone)) ),
+        ( "Date", db.ddt(i18n.now(dbo.timezone)) ),
         ( "Comments", db.ds(logtext) )
         ))
     db.execute(dbo, sql)

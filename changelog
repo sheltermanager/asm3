@@ -1,6 +1,7 @@
 37
 ================
 
+30/11/15 When logging events like weight change/email/etc include the time
 29/11/15 Add online form multi-select lookup #175
 29/11/15 csv_mail/csv_report were broken due to utils.csv change
 28/11/15 Add dedicated licence renewal screen #278
