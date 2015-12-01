@@ -1893,9 +1893,11 @@ def insert_animal_from_form(dbo, post, username):
     # If a weight was specified and we're logging, mark it in the log
     if configuration.weight_change_log(dbo) and kf("weight") > 0:
         weight = str(kf("weight"))
-        units = configuration.show_weight_in_lbs(dbo) and "lb" or "kg"
+        units = ""
+        if configuration.show_weight_units_in_log(dbo):
+            units = configuration.show_weight_in_lbs(dbo) and " lb" or " kg"
         log.add_log(dbo, username, log.ANIMAL, nextid, configuration.weight_change_log_type(dbo),
-            "%s %s" % (weight, units))
+            "%s%s" % (weight, units))
 
     # Do we have a matching template animal we can copy some satellite info from?
     clone_from_template(dbo, username, nextid, dob, ki("animaltype"), ki("species"))
@@ -1983,9 +1985,11 @@ def update_animal_from_form(dbo, post, username):
         oldweight = db.query_float(dbo, "SELECT Weight FROM animal WHERE ID=%d" % ki("id"))
         if kf("weight") != oldweight:
             weight = str(kf("weight"))
-            units = configuration.show_weight_in_lbs(dbo) and "lb" or "kg"
+            units = ""
+            if configuration.show_weight_units_in_log(dbo):
+                units = configuration.show_weight_in_lbs(dbo) and " lb" or " kg"
             log.add_log(dbo, username, log.ANIMAL, ki("id"), configuration.weight_change_log_type(dbo),
-                "%s %s" % (weight, units))
+                "%s%s" % (weight, units))
 
     # Sort out any flags
     flags = post["flags"].split(",")
