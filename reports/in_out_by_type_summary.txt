@@ -325,7 +325,7 @@ FROM animal
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$' AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND IsDOA = 1
 
 ) dummy
-WHERE thedate >= '$@from$' AND thedate <= '$@to$'
+WHERE thedate >= '$@from$' AND thedate <= '$@to$ 23:59:59'
 ORDER BY OutOrIn, CategoryName, AnimalTypeName, thedate
 ###
 $$HEADER
