@@ -1,6 +1,7 @@
 37
 ================
 
+01/11/15 Use 23:59:59 as time when calculating end date of asilomar/figures
 01/11/15 Add location and type shelterview
 30/11/15 Hide payment section if user doesn't have add payment permission #321
 30/11/15 Fixed bug saving giftaid flag from payment widget

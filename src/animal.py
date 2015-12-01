@@ -3363,6 +3363,7 @@ def update_animal_figures(dbo, month = 0, year = 0):
     l = dbo.locale
     fom = datetime.datetime(year, month, 1)
     lom = last_of_month(fom)
+    lom = lom.replace(hour=23, minute=59, second=59)
     firstofmonth = db.dd(fom)
     lastofmonth = db.dd(lom)
     daysinmonth = lom.day
@@ -3884,7 +3885,7 @@ def update_animal_figures_annual(dbo, year = 0):
 
     # Work out the full year
     foy = datetime.datetime(year, 1, 1)
-    loy = datetime.datetime(year, 12, 31)
+    loy = datetime.datetime(year, 12, 31, 23, 59, 59)
     firstofyear = db.dd(foy)
     lastofyear = db.dd(loy)
 
@@ -4450,7 +4451,7 @@ def update_animal_figures_asilomar(dbo, year = 0):
 
     # Work out the full year
     foy = datetime.datetime(year, 1, 1)
-    loy = datetime.datetime(year, 12, 31)
+    loy = datetime.datetime(year, 12, 31, 23, 59, 59)
     firstofyear = db.dd(foy)
     lastofyear = db.dd(loy)
 
@@ -4718,6 +4719,7 @@ def update_animal_figures_monthly_asilomar(dbo, month = 0, year = 0):
 
     fom = datetime.datetime(year, month, 1)
     lom = last_of_month(fom)
+    lom = lom.replace(hour=23, minute=59, second=59)
     firstofmonth = db.dd(fom)
     lastofmonth = db.dd(lom)
 
