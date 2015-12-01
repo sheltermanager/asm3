@@ -944,6 +944,7 @@ $(function() {
                 '<option value="fostereractive">' + _("Fosterer (Active Only)") + '</option>',
                 '<option value="location">' + _("Location") + '</option>',
                 '<option value="locationspecies">' + _("Location and Species") + '</option>',
+                '<option value="locationtype">' + _("Location and Type") + '</option>',
                 '<option value="locationunit">' + _("Location and Unit") + '</option>',
                 '<option value="pickuplocation">' + _("Pickup Location") + '</option>',
                 '<option value="retailer">' + _("Retailer") + '</option>',

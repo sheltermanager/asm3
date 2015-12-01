@@ -1,6 +1,7 @@
 37
 ================
 
+01/11/15 Add location and type shelterview
 30/11/15 Hide payment section if user doesn't have add payment permission #321
 30/11/15 Fixed bug saving giftaid flag from payment widget
 30/11/15 Asilomar figures should use deceased rather than intake date for euth

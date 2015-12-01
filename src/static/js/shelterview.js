@@ -359,6 +359,9 @@ $(function() {
             else if (viewmode == "locationspecies") {
                 this.render_view("DISPLAYLOCATIONNAME", "DISPLAYLOCATIONNAME,SPECIESNAME,ANIMALNAME", true, false);
             }
+            else if (viewmode == "locationtype") {
+                this.render_view("DISPLAYLOCATIONNAME", "DISPLAYLOCATIONNAME,ANIMALTYPENAME,ANIMALNAME", true, false);
+            }
             else if (viewmode == "locationunit") {
                 this.render_units_available();
             }
@@ -404,6 +407,7 @@ $(function() {
             h.push('<option value="fostereractive">' + _("Fosterer (Active Only)") + '</option>');
             h.push('<option value="location">' + _("Location") + '</option>');
             h.push('<option value="locationspecies">' + _("Location and Species") + '</option>');
+            h.push('<option value="locationtype">' + _("Location and Type") + '</option>');
             h.push('<option value="locationunit">' + _("Location and Unit") + '</option>');
             h.push('<option value="pickuplocation">' + _("Pickup Location") + '</option>');
             h.push('<option value="retailer">' + _("Retailer") + '</option>');

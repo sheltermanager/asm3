@@ -6147,6 +6147,10 @@ msgid "Location and Species"
 msgstr ""
 
 #: options.js shelterview.js
+msgid "Location and Type"
+msgstr ""
+
+#: options.js shelterview.js
 msgid "Location and Unit"
 msgstr ""
 
