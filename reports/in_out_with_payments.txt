@@ -29,7 +29,7 @@ AnimalAge,
 'Animals In' AS OutOrIn,
 COALESCE((SELECT SUM(Donation) FROM ownerdonation WHERE OwnerID = animal.OriginalOwnerID AND ownerdonation.AnimalID = animal.ID), 0) AS donation
 FROM animal
-WHERE IsTransfer = 0 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' AND NonShelterAnimal = 0
+WHERE IsTransfer = 0 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$ 23:59:59' AND NonShelterAnimal = 0
 
 UNION SELECT DateBroughtIn AS thedate,
 (SELECT ReasonName FROM entryreason WHERE ID = animal.EntryReasonID) AS Reason,
@@ -46,7 +46,7 @@ AnimalAge,
 'Animals In' AS OutOrIn,
 COALESCE((SELECT SUM(Donation) FROM ownerdonation WHERE OwnerID = animal.OriginalOwnerID AND ownerdonation.AnimalID = animal.ID), 0) AS donation
 FROM animal
-WHERE IsTransfer = 1 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' AND NonShelterAnimal = 0
+WHERE IsTransfer = 1 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$ 23:59:59' AND NonShelterAnimal = 0
 
 UNION SELECT adoption.ReturnDate AS thedate,
 (SELECT ReasonName FROM entryreason WHERE ID = adoption.ReturnedReasonID) AS Reason,
