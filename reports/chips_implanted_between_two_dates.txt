@@ -1,0 +1,44 @@
+Microchips implanted between two dates
+###
+Auditing
+###
+3000/Any
+###
+Shelter animals implanted with microchips between two dates
+###
+en
+###
+SELECT a.AnimalName, a.ShelterCode, t.AnimalType, a.DisplayLocation, a.IdentichipNumber, a.IdentichipDate
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+WHERE a.Identichipped = 1 
+AND a.IdentichipDate >= '$ASK DATE Animals implanted between$' AND a.IdentichipDate <= '$ASK DATE and$' 
+ORDER BY a.IdentichipDate, t.AnimalType, a.AnimalName
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Date</th>
+<th>Name</th>
+<th>Code</th>
+<th>Type</th>
+<th>Location</th>
+<th>Number</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$IDENTICHIPDATE</td>
+<td>$ANIMALNAME</td>
+<td>$SHELTERCODE</td>
+<td>$ANIMALTYPE</td>
+<td>$DISPLAYLOCATION</td>
+<td>$IDENTICHIPNUMBER</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+
