@@ -3172,7 +3172,7 @@ def get_number_animals_on_shelter(dbo, date, speciesid = 0, animaltypeid = 0, in
     else:
         sql += "AnimalTypeID = %d" % animaltypeid
     sql += " AND DateBroughtIn <= %s AND NonShelterAnimal = 0" % sdate
-    sql += " AND (DeceasedDate > %s OR DeceasedDate Is Null)" % sdate
+    sql += " AND (DeceasedDate Is Null OR DeceasedDate > %s)" % sdate
     if internallocationid != 0:
         sql += " AND ShelterLocation = %d" % internallocationid
     if ageselection == 1:
@@ -3180,7 +3180,7 @@ def get_number_animals_on_shelter(dbo, date, speciesid = 0, animaltypeid = 0, in
     if ageselection == 2:
         sql += " AND DateOfBirth < %s" % sixmonthsago
     sql += " AND 0 = (SELECT COUNT(adoption.ID) FROM adoption " \
-        "WHERE AnimalID = animal.ID AND MovementDate Is Not Null AND " \
+        "WHERE AnimalID = animal.ID AND MovementType <> 2 AND MovementDate Is Not Null AND " \
         "MovementDate <= %s AND (ReturnDate Is Null OR ReturnDate > %s))" % (sdate, sdate)
     return db.query_int(dbo, sql)
 
@@ -3189,7 +3189,7 @@ def get_number_litters_on_shelter(dbo, date, speciesid = 0):
     Returns the number of active litters at a given date, optionally
     for a single species.
     """
-    sdate = db.dd(date)
+    sdate = db.ddt(date)
     sql = "SELECT COUNT(a.ID) FROM animallitter a " \
         "WHERE a.Date <= %s " % sdate
     if speciesid != 0:
@@ -3201,7 +3201,7 @@ def get_number_animals_on_foster(dbo, date, speciesid = 0, animaltypeid = 0):
     """
     Returns the number of animals on foster at a given date for a species or type
     """
-    sdate = db.dd(date)
+    sdate = db.ddt(date)
     sql = "SELECT COUNT(ID) FROM animal " \
         "WHERE "
     if speciesid != 0:
