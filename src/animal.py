@@ -3164,7 +3164,7 @@ def get_number_animals_on_shelter(dbo, date, speciesid = 0, animaltypeid = 0, in
     Returns the number of animals on shelter at a given date for a species, type,
     location and optionally for an ageselection - 0 = allages, 1 = under six months, 2 = over six months
     """
-    sdate = db.dd(date)
+    sdate = db.ddt(date)
     sixmonthsago = db.dd(subtract_days(date, 182))
     sql = "SELECT COUNT(ID) FROM animal WHERE "
     if speciesid != 0:
