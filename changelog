@@ -1,6 +1,7 @@
 37
 ================
 
+03/12/15 Show accordion menu if there are more than 90 items
 03/12/15 Show second grouping in shelterview (location/species/type) #323
 03/12/15 Allow comments for rescheduled vaccinations #194
 02/12/15 get_number_animals_on_shelter should use 23:59:59 for intake times

@@ -214,9 +214,9 @@ $(function() {
                     // Render the menu button and body
                     menu.push("<div id=\"asm-menu-" + name + "\" class=\"asm-menu-icon\">" + display + "</div>");
                     menus.push("<div id=\"asm-menu-" + name + "-body\" class=\"asm-menu-body\">");
-                    // If the option is on, render report and mail merge menus
-                    // in accordions by category instead
-                    if (config.bool("ReportMenuAccordion") && (name == "reports" || name == "mailmerge")) {
+                    // If the option is on or there are more than 90 items to show, 
+                    // render report and mail merge menus in accordions by category instead
+                    if ((config.bool("ReportMenuAccordion") || items.length > 90) && (name == "reports" || name == "mailmerge")) {
                         self.menu_html_accordion_renderer(menus, items, name);
                     }
                     else {
