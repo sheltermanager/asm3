@@ -197,8 +197,8 @@ $(function() {
          * translategroup: Whether the group field needs to be translated
          * filterfunction: A function to call to decide whether or not to include an animal
          */
-        render_view: function(groupfield, sorton, dragdrop, translategroup, filterfunction) {
-            var h = [], lastgrp = "", grpdisplay = "", grplink = "", runningtotal = 0, i, 
+        render_view: function(groupfield, groupfield2, sorton, dragdrop, translategroup, filterfunction) {
+            var h = [], lastgrp = "", lastgrp2 = "", grpdisplay = "", grplink = "", runningtotal = 0, i, 
                 locationsused = [], showunit = (groupfield == "DISPLAYLOCATIONNAME");
             // Sort the rows for the view
             controller.animals.sort( common.sort_multi(sorton) );
@@ -206,7 +206,9 @@ $(function() {
                 // If a filter function was specified, call it and drop out
                 // of this iteration if the return value was false
                 if (filterfunction && !filterfunction(a)) { return; }
+                // Change of group
                 if (lastgrp != a[groupfield]) {
+                    if (groupfield2 && lastgrp2 != "") { h.push("</div>"); }
                     if (lastgrp != "") { h.push("</div>"); }
                     // Find the last total token and update it
                     for (i = 0; i < h.length; i += 1) {
@@ -214,9 +216,10 @@ $(function() {
                             h[i] = h[i].replace("##LASTTOTAL", runningtotal);
                         }
                     }
-                    // Reset the counter for the new category
+                    // Reset the counter for the new category and second group
                     runningtotal = 0;
                     lastgrp = a[groupfield];
+                    lastgrp2 = "";
                     // Produce an appropriate link based on the group field
                     grplink = "#";
                     if (groupfield == "DISPLAYLOCATIONNAME") {
@@ -265,13 +268,26 @@ $(function() {
                     }
                     h.push('<p class="asm-menu-category"><a href="' + grplink + '">' + 
                         grpdisplay + ' (##LASTTOTAL)</a></p>');
-                    // Foster and trial adoptions can't be drop targets and drag/drop must be on for this view
-                    if (a.ACTIVEMOVEMENTTYPE != 2 && a.HASTRIALADOPTION == 0 && dragdrop) {
+                    // Foster, trial adoptions and retailers can't be drop targets and drag/drop must be on for this view
+                    if ((a.ACTIVEMOVEMENTTYPE != 2 && a.ACTIVEMOVEMENTTYPE != 8) && a.HASTRIALADOPTION == 0 && dragdrop) {
                         h.push('<div class="locationdroptarget" data-location="' + a.SHELTERLOCATION + '">');
                     }
                     else {
                         h.push('<div>');
                     }
+                }
+                // Change of second level group if set
+                /*
+                if (groupfield2 && lastgrp2 != a[groupfield2]) {
+                    lastgrp2 = a[groupfield2];
+                    h.push('<div class="asm-shelterview-secondgroup">' + lastgrp2 + html.icon("right") + '</div>');
+                }
+                */
+                if (groupfield2 && lastgrp2 != a[groupfield2]) {
+                    if (lastgrp2 != "") { h.push("</div>"); }
+                    lastgrp2 = a[groupfield2];
+                    h.push('<div class="asm-shelterview-unit">');
+                    h.push('<div><span class="asm-shelterview-secondgroup">' + lastgrp2 + '</span></div>');
                 }
                 h.push(shelterview.render_animal(a, true, !a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0));
                 runningtotal += 1;
@@ -342,10 +358,10 @@ $(function() {
 
         switch_view: function(viewmode) {
             if (viewmode == "agegroup") {
-                this.render_view("AGEGROUP", "AGEGROUP,ANIMALNAME", false, false);
+                this.render_view("AGEGROUP", "", "AGEGROUP,ANIMALNAME", false, false);
             }
             else if (viewmode == "entrycategory") {
-                this.render_view("ENTRYREASONNAME", "ENTRYREASONNAME,ANIMALNAME", false, false);
+                this.render_view("ENTRYREASONNAME", "", "ENTRYREASONNAME,ANIMALNAME", false, false);
             }
             else if (viewmode == "fosterer") {
                 this.render_foster_available();
@@ -354,31 +370,31 @@ $(function() {
                 this.render_foster_available(true);
             }
             else if (viewmode == "location") {
-                this.render_view("DISPLAYLOCATIONNAME", "DISPLAYLOCATIONNAME,ANIMALNAME", true, false);
+                this.render_view("DISPLAYLOCATIONNAME", "", "DISPLAYLOCATIONNAME,ANIMALNAME", true, false);
             }
             else if (viewmode == "locationspecies") {
-                this.render_view("DISPLAYLOCATIONNAME", "DISPLAYLOCATIONNAME,SPECIESNAME,ANIMALNAME", true, false);
+                this.render_view("DISPLAYLOCATIONNAME", "SPECIESNAME", "DISPLAYLOCATIONNAME,SPECIESNAME,ANIMALNAME", true, false);
             }
             else if (viewmode == "locationtype") {
-                this.render_view("DISPLAYLOCATIONNAME", "DISPLAYLOCATIONNAME,ANIMALTYPENAME,ANIMALNAME", true, false);
+                this.render_view("DISPLAYLOCATIONNAME", "ANIMALTYPENAME", "DISPLAYLOCATIONNAME,ANIMALTYPENAME,ANIMALNAME", true, false);
             }
             else if (viewmode == "locationunit") {
                 this.render_units_available();
             }
             else if (viewmode == "pickuplocation") {
-                this.render_view("PICKUPLOCATIONNAME", "PICKUPLOCATIONNAME,ANIMALNAME", false, false);
+                this.render_view("PICKUPLOCATIONNAME", "", "PICKUPLOCATIONNAME,ANIMALNAME", false, false);
             }
             else if (viewmode == "retailer") {
-                this.render_view("CURRENTOWNERNAME", "CURRENTOWNERNAME,ANIMALNAME", false, false, function(a) { return a.ACTIVEMOVEMENTTYPE == 8; });
+                this.render_view("CURRENTOWNERNAME", "", "CURRENTOWNERNAME,ANIMALNAME", false, false, function(a) { return a.ACTIVEMOVEMENTTYPE == 8; });
             }
             else if (viewmode == "species") {
-                this.render_view("SPECIESNAME", "SPECIESNAME,ANIMALNAME", false, false);
+                this.render_view("SPECIESNAME", "", "SPECIESNAME,ANIMALNAME", false, false);
             }
             else if (viewmode == "status") {
-                this.render_view("ADOPTIONSTATUS", "ADOPTIONSTATUS,ANIMALNAME", false, true);
+                this.render_view("ADOPTIONSTATUS", "", "ADOPTIONSTATUS,ANIMALNAME", false, true);
             }
             else if (viewmode == "type") {
-                this.render_view("ANIMALTYPENAME", "ANIMALTYPENAME,ANIMALNAME", false, true);
+                this.render_view("ANIMALTYPENAME", "", "ANIMALTYPENAME,ANIMALNAME", false, true);
             }
         },
 
