@@ -1,6 +1,7 @@
 37
 ================
 
+03/12/15 When calculating asilomar start, do not include movements on date
 03/12/15 Add rspca_dog_advice_leaflet default template
 03/12/15 Show accordion menu if there are more than 90 items
 03/12/15 Show second grouping in shelterview (location/species/type) #323

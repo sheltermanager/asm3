@@ -3159,32 +3159,36 @@ def update_animal_status(dbo, animalid, a = None, animalupdatebatch = None, diar
             ( "MostRecentEntryDate", db.dd(mostrecententrydate) )
             )))
 
-def get_number_animals_on_shelter(dbo, date, speciesid = 0, animaltypeid = 0, internallocationid = 0, ageselection = 0):
+def get_number_animals_on_shelter(dbo, date, speciesid = 0, animaltypeid = 0, internallocationid = 0, ageselection = 0, startofday = False):
     """
     Returns the number of animals on shelter at a given date for a species, type,
     location and optionally for an ageselection - 0 = allages, 1 = under six months, 2 = over six months
-    idate is the intake date (and has a time component for datebroughtin comparison)
-    mdate is the move date and has no time component
+    startofday: movements that took place on date are not counted if true
     """
-    idate = db.ddt(date)
-    mdate = db.dd(date)
+    sdate = db.dd(date.replace(hour=0,minute=0,second=0))
+    if not startofday:
+        sdate = db.dd(date.replace(hour=23,minute=59,second=59))
     sixmonthsago = db.dd(subtract_days(date, 182))
     sql = "SELECT COUNT(ID) FROM animal WHERE "
     if speciesid != 0:
         sql += "SpeciesID = %d" % speciesid
     else:
         sql += "AnimalTypeID = %d" % animaltypeid
-    sql += " AND DateBroughtIn <= %s AND NonShelterAnimal = 0" % idate
-    sql += " AND (DeceasedDate Is Null OR DeceasedDate > %s)" % mdate
+    sql += " AND DateBroughtIn <= %s AND NonShelterAnimal = 0" % sdate
+    sql += " AND (DeceasedDate Is Null OR DeceasedDate > %s)" % sdate
     if internallocationid != 0:
         sql += " AND ShelterLocation = %d" % internallocationid
     if ageselection == 1:
         sql += " AND DateOfBirth >= %s" % sixmonthsago
     if ageselection == 2:
         sql += " AND DateOfBirth < %s" % sixmonthsago
-    sql += " AND 0 = (SELECT COUNT(adoption.ID) FROM adoption " \
+    movementclause = "MovementDate <= %s" % sdate
+    if startofday:
+        # Movements on the day don't count for startofday, so look before
+        movementclause = "MovementDate < %s" % db.dd(date)
+    sql += " AND NOT EXISTS (SELECT adoption.ID FROM adoption " \
         "WHERE AnimalID = animal.ID AND MovementType <> 2 AND MovementDate Is Not Null AND " \
-        "MovementDate <= %s AND (ReturnDate Is Null OR ReturnDate > %s))" % (mdate, mdate)
+        "%s AND (ReturnDate Is Null OR ReturnDate > %s))" % (movementclause, sdate)
     return db.query_int(dbo, sql)
 
 def get_number_litters_on_shelter(dbo, date, speciesid = 0):
@@ -3202,26 +3206,23 @@ def get_number_litters_on_shelter(dbo, date, speciesid = 0):
 
 def get_number_animals_on_foster(dbo, date, speciesid = 0, animaltypeid = 0):
     """
-    Returns the number of animals on foster at a given date for a species or type
-    idate is the intake date (and has a time component for datebroughtin comparison)
-    mdate is the move date and has no time component
+    Returns the number of animals on foster at the end of a given date for a species or type
     """
-    idate = db.ddt(date)
-    mdate = db.dd(date)
+    sdate = db.dd(date)
     sql = "SELECT COUNT(ID) FROM animal " \
         "WHERE "
     if speciesid != 0:
         sql += "SpeciesID = %d" % speciesid
     else:
         sql += "AnimalTypeID = %d" % animaltypeid
-    sql += " AND DateBroughtIn <= %s" % idate
+    sql += " AND DateBroughtIn <= %s" % sdate
     sql += " AND NonShelterAnimal = 0"
-    sql += " AND (DeceasedDate > %s OR DeceasedDate Is Null)" % mdate
+    sql += " AND (DeceasedDate > %s OR DeceasedDate Is Null)" % sdate
     sql += " AND EXISTS(SELECT AdoptionNumber FROM adoption WHERE "
     sql += " MovementType = %d" % movement.FOSTER
-    sql += " AND MovementDate <= %s" % mdate
+    sql += " AND MovementDate <= %s" % sdate
     sql += " AND AnimalID = animal.ID"
-    sql += " AND (ReturnDate > %s OR ReturnDate Is Null))" % mdate
+    sql += " AND (ReturnDate > %s OR ReturnDate Is Null))" % sdate
     return db.query_int(dbo, sql)
 
 def update_animal_figures(dbo, month = 0, year = 0):
@@ -4457,13 +4458,13 @@ def update_animal_figures_asilomar(dbo, year = 0):
 
     # Work out the full year
     foy = datetime.datetime(year, 1, 1)
-    loy = datetime.datetime(year, 12, 31, 23, 59, 59)
+    loy = datetime.datetime(year, 12, 31)
     firstofyear = db.dd(foy)
     lastofyear = db.dd(loy)
 
     # A Beginning of year shelter count
-    dogsub = get_number_animals_on_shelter(dbo, foy, 1)
-    catsub = get_number_animals_on_shelter(dbo, foy, 2)
+    dogsub = get_number_animals_on_shelter(dbo, foy, 1, startofday=True)
+    catsub = get_number_animals_on_shelter(dbo, foy, 2, startofday=True)
     add_row("A", "BEGINNING SHELTER COUNT", 1, catsub, dogsub)
 
     # B Intake from the public
@@ -4595,8 +4596,8 @@ def update_animal_figures_asilomar(dbo, year = 0):
     add_total("TU", "Total Outcomes [T + U]", "V")
 
     # W End of year shelter count
-    dogsub = get_number_animals_on_shelter(dbo, loy, 1)
-    catsub = get_number_animals_on_shelter(dbo, loy, 2)
+    dogsub = get_number_animals_on_shelter(dbo, loy, 1, startofday=False)
+    catsub = get_number_animals_on_shelter(dbo, loy, 2, startofday=False)
     add_row("W", "ENDING SHELTER COUNT", 1, catsub, dogsub)
 
     # Write out all our changes in one go
@@ -4725,13 +4726,12 @@ def update_animal_figures_monthly_asilomar(dbo, month = 0, year = 0):
 
     fom = datetime.datetime(year, month, 1)
     lom = last_of_month(fom)
-    lom = lom.replace(hour=23, minute=59, second=59)
     firstofmonth = db.dd(fom)
     lastofmonth = db.dd(lom)
 
     # A Beginning of year shelter count
-    dogsub = get_number_animals_on_shelter(dbo, fom, 1)
-    catsub = get_number_animals_on_shelter(dbo, fom, 2)
+    dogsub = get_number_animals_on_shelter(dbo, fom, 1, startofday=True)
+    catsub = get_number_animals_on_shelter(dbo, fom, 2, startofday=True)
     add_row("A", "BEGINNING SHELTER COUNT", 1, catsub, dogsub)
 
     # B Intake from the public
@@ -4863,8 +4863,8 @@ def update_animal_figures_monthly_asilomar(dbo, month = 0, year = 0):
     add_total("TU", "Total Outcomes [T + U]", "V")
 
     # W End of year shelter count
-    dogsub = get_number_animals_on_shelter(dbo, lom, 1)
-    catsub = get_number_animals_on_shelter(dbo, lom, 2)
+    dogsub = get_number_animals_on_shelter(dbo, lom, 1, startofday=False)
+    catsub = get_number_animals_on_shelter(dbo, lom, 2, startofday=False)
     add_row("W", "ENDING SHELTER COUNT", 1, catsub, dogsub)
 
     # Write out all our changes in one go
