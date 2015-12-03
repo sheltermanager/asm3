@@ -3163,16 +3163,19 @@ def get_number_animals_on_shelter(dbo, date, speciesid = 0, animaltypeid = 0, in
     """
     Returns the number of animals on shelter at a given date for a species, type,
     location and optionally for an ageselection - 0 = allages, 1 = under six months, 2 = over six months
+    idate is the intake date (and has a time component for datebroughtin comparison)
+    mdate is the move date and has no time component
     """
-    sdate = db.ddt(date)
+    idate = db.ddt(date)
+    mdate = db.dd(date)
     sixmonthsago = db.dd(subtract_days(date, 182))
     sql = "SELECT COUNT(ID) FROM animal WHERE "
     if speciesid != 0:
         sql += "SpeciesID = %d" % speciesid
     else:
         sql += "AnimalTypeID = %d" % animaltypeid
-    sql += " AND DateBroughtIn <= %s AND NonShelterAnimal = 0" % sdate
-    sql += " AND (DeceasedDate Is Null OR DeceasedDate > %s)" % sdate
+    sql += " AND DateBroughtIn <= %s AND NonShelterAnimal = 0" % idate
+    sql += " AND (DeceasedDate Is Null OR DeceasedDate > %s)" % mdate
     if internallocationid != 0:
         sql += " AND ShelterLocation = %d" % internallocationid
     if ageselection == 1:
@@ -3181,7 +3184,7 @@ def get_number_animals_on_shelter(dbo, date, speciesid = 0, animaltypeid = 0, in
         sql += " AND DateOfBirth < %s" % sixmonthsago
     sql += " AND 0 = (SELECT COUNT(adoption.ID) FROM adoption " \
         "WHERE AnimalID = animal.ID AND MovementType <> 2 AND MovementDate Is Not Null AND " \
-        "MovementDate <= %s AND (ReturnDate Is Null OR ReturnDate > %s))" % (sdate, sdate)
+        "MovementDate <= %s AND (ReturnDate Is Null OR ReturnDate > %s))" % (mdate, mdate)
     return db.query_int(dbo, sql)
 
 def get_number_litters_on_shelter(dbo, date, speciesid = 0):
@@ -3200,22 +3203,25 @@ def get_number_litters_on_shelter(dbo, date, speciesid = 0):
 def get_number_animals_on_foster(dbo, date, speciesid = 0, animaltypeid = 0):
     """
     Returns the number of animals on foster at a given date for a species or type
+    idate is the intake date (and has a time component for datebroughtin comparison)
+    mdate is the move date and has no time component
     """
-    sdate = db.ddt(date)
+    idate = db.ddt(date)
+    mdate = db.dd(date)
     sql = "SELECT COUNT(ID) FROM animal " \
         "WHERE "
     if speciesid != 0:
         sql += "SpeciesID = %d" % speciesid
     else:
         sql += "AnimalTypeID = %d" % animaltypeid
-    sql += " AND DateBroughtIn <= %s" % sdate
+    sql += " AND DateBroughtIn <= %s" % idate
     sql += " AND NonShelterAnimal = 0"
-    sql += " AND (DeceasedDate > %s OR DeceasedDate Is Null)" % sdate
+    sql += " AND (DeceasedDate > %s OR DeceasedDate Is Null)" % mdate
     sql += " AND EXISTS(SELECT AdoptionNumber FROM adoption WHERE "
     sql += " MovementType = %d" % movement.FOSTER
-    sql += " AND MovementDate <= %s" % sdate
+    sql += " AND MovementDate <= %s" % mdate
     sql += " AND AnimalID = animal.ID"
-    sql += " AND (ReturnDate > %s OR ReturnDate Is Null))" % sdate
+    sql += " AND (ReturnDate > %s OR ReturnDate Is Null))" % mdate
     return db.query_int(dbo, sql)
 
 def update_animal_figures(dbo, month = 0, year = 0):
