@@ -3161,7 +3161,7 @@ def update_animal_status(dbo, animalid, a = None, animalupdatebatch = None, diar
 
 def get_number_animals_on_shelter(dbo, date, speciesid = 0, animaltypeid = 0, internallocationid = 0, ageselection = 0, startofday = False):
     """
-    Returns the number of animals on shelter at a given date for a species, type,
+    Returns the number of animals on shelter at the end of a given date for a species, type,
     location and optionally for an ageselection - 0 = allages, 1 = under six months, 2 = over six months
     startofday: movements that took place on date are not counted if true
     """
@@ -3184,7 +3184,7 @@ def get_number_animals_on_shelter(dbo, date, speciesid = 0, animaltypeid = 0, in
         sql += " AND DateOfBirth < %s" % sixmonthsago
     movementclause = "MovementDate <= %s" % sdate
     if startofday:
-        # Movements on the day don't count for startofday, so look before
+        # Movements on the day don't count for startofday, so only before but not today counts
         movementclause = "MovementDate < %s" % db.dd(date)
     sql += " AND NOT EXISTS (SELECT adoption.ID FROM adoption " \
         "WHERE AnimalID = animal.ID AND MovementType <> 2 AND MovementDate Is Not Null AND " \
