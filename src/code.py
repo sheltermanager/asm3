@@ -1824,10 +1824,11 @@ class animal_vaccination:
             users.check_permission(session, users.BULK_COMPLETE_VACCINATION)
             newdate = post.date("newdate")
             rescheduledate = post.date("rescheduledate")
+            reschedulecomments = post["reschedulecomments"]
             for vid in post.integer_list("ids"):
                 extmedical.complete_vaccination(session.dbo, session.user, vid, newdate)
                 if rescheduledate is not None:
-                    extmedical.reschedule_vaccination(session.dbo, session.user, vid, rescheduledate)
+                    extmedical.reschedule_vaccination(session.dbo, session.user, vid, rescheduledate, reschedulecomments)
                 if post.integer("item") != -1:
                     extmedical.update_vaccination_batch_stock(session.dbo, session.user, vid, post.integer("item"))
             if post.integer("item") != -1:
@@ -6261,10 +6262,11 @@ class vaccination:
             users.check_permission(session, users.BULK_COMPLETE_VACCINATION)
             newdate = post.date("newdate")
             rescheduledate = post.date("rescheduledate")
+            reschedulecomments = post["reschedulecomments"]
             for vid in post.integer_list("ids"):
                 extmedical.complete_vaccination(session.dbo, session.user, vid, newdate)
                 if rescheduledate is not None:
-                    extmedical.reschedule_vaccination(session.dbo, session.user, vid, rescheduledate)
+                    extmedical.reschedule_vaccination(session.dbo, session.user, vid, rescheduledate, reschedulecomments)
                 if post.integer("item") != -1:
                     extmedical.update_vaccination_batch_stock(session.dbo, session.user, vid, post.integer("item"))
             if post.integer("item") != -1:

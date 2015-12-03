@@ -563,7 +563,7 @@ def complete_test(dbo, username, testid, newdate, testresult):
     # ASM2_COMPATIBILITY
     update_asm2_tests(dbo, testid)
 
-def reschedule_vaccination(dbo, username, vaccinationid, newdate):
+def reschedule_vaccination(dbo, username, vaccinationid, newdate, comments):
     """
     Marks a vaccination completed today (if it's not already completed) 
     and reschedules it for newdate
@@ -582,7 +582,7 @@ def reschedule_vaccination(dbo, username, vaccinationid, newdate):
         ( "DateRequired", db.dd(newdate)),
         ( "Cost", db.di(av["COST"])),
         ( "CostPaidDate", db.dd(None)),
-        ( "Comments", db.ds("")))))
+        ( "Comments", db.ds(comments)))))
 
     audit.create(dbo, username, "animalvaccination", str(nvaccid))
 
