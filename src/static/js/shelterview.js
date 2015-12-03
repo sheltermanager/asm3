@@ -277,12 +277,6 @@ $(function() {
                     }
                 }
                 // Change of second level group if set
-                /*
-                if (groupfield2 && lastgrp2 != a[groupfield2]) {
-                    lastgrp2 = a[groupfield2];
-                    h.push('<div class="asm-shelterview-secondgroup">' + lastgrp2 + html.icon("right") + '</div>');
-                }
-                */
                 if (groupfield2 && lastgrp2 != a[groupfield2]) {
                     if (lastgrp2 != "") { h.push("</div>"); }
                     lastgrp2 = a[groupfield2];
