@@ -3165,9 +3165,9 @@ def get_number_animals_on_shelter(dbo, date, speciesid = 0, animaltypeid = 0, in
     location and optionally for an ageselection - 0 = allages, 1 = under six months, 2 = over six months
     startofday: movements that took place on date are not counted if true
     """
-    sdate = db.dd(date.replace(hour=0,minute=0,second=0))
+    sdate = db.dd(date)
     if not startofday:
-        sdate = db.dd(date.replace(hour=23,minute=59,second=59))
+        sdate = db.ddt(date.replace(hour=23,minute=59,second=59))
     sixmonthsago = db.dd(subtract_days(date, 182))
     sql = "SELECT COUNT(ID) FROM animal WHERE "
     if speciesid != 0:
@@ -3182,10 +3182,10 @@ def get_number_animals_on_shelter(dbo, date, speciesid = 0, animaltypeid = 0, in
         sql += " AND DateOfBirth >= %s" % sixmonthsago
     if ageselection == 2:
         sql += " AND DateOfBirth < %s" % sixmonthsago
-    movementclause = "MovementDate <= %s" % sdate
     if startofday:
-        # Movements on the day don't count for startofday, so only before but not today counts
-        movementclause = "MovementDate < %s" % db.dd(date)
+        movementclause = "MovementDate < %s" % db.dd(date) # start of day, movements today excluded
+    else:
+        movementclause = "MovementDate <= %s" % sdate # end of day, movements today included
     sql += " AND NOT EXISTS (SELECT adoption.ID FROM adoption " \
         "WHERE AnimalID = animal.ID AND MovementType <> 2 AND MovementDate Is Not Null AND " \
         "%s AND (ReturnDate Is Null OR ReturnDate > %s))" % (movementclause, sdate)
