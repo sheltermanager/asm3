@@ -495,10 +495,11 @@ def clone_rota_week(dbo, username, startdate, newdate, flags):
             "comments":  r["COMMENTS"]
         }, l))
 
-def calculate_owner_name(dbo, title = "", initials = "", first = "", last = "", nameformat = ""):
+def calculate_owner_name(dbo, personclass= 0, title = "", initials = "", first = "", last = "", nameformat = ""):
     """
     Calculates the owner name field based on the current format.
     """
+    if personclass == 2: return last # for organisations, just return the org name
     if nameformat == "": nameformat = configuration.owner_name_format(dbo)
     # If something went wrong and we have a broken format for any reason, substitute our default
     if nameformat is None or nameformat == "" or nameformat == "null": nameformat = "{ownertitle} {ownerforenames} {ownersurname}"
@@ -514,11 +515,11 @@ def update_owner_names(dbo):
     Regenerates all owner name fields based on the current format.
     """
     al.debug("regenerating owner names...", "person.update_owner_names", dbo)
-    own = db.query(dbo, "SELECT ID, OwnerTitle, OwnerInitials, OwnerForeNames, OwnerSurname FROM owner")
+    own = db.query(dbo, "SELECT ID, OwnerType, OwnerTitle, OwnerInitials, OwnerForeNames, OwnerSurname FROM owner")
     nameformat = configuration.owner_name_format(dbo)
     for o in own:
         db.execute(dbo, "UPDATE owner SET OwnerName = %s WHERE ID = %d" % \
-            (db.ds(calculate_owner_name(dbo, o["OWNERTITLE"], o["OWNERINITIALS"], o["OWNERFORENAMES"], o["OWNERSURNAME"], nameformat)), o["ID"]))
+            (db.ds(calculate_owner_name(dbo, o["OWNERTYPE"], o["OWNERTITLE"], o["OWNERINITIALS"], o["OWNERFORENAMES"], o["OWNERSURNAME"], nameformat)), o["ID"]))
     al.debug("regenerated %d owner names" % len(own), "person.update_owner_names", dbo)
 
 def update_person_from_form(dbo, post, username):
@@ -552,7 +553,7 @@ def update_person_from_form(dbo, post, username):
 
     sql = db.make_update_user_sql(dbo, "owner", username, "ID=%d" % pid, (
         ( "OwnerType", post.db_integer("ownertype") ),
-        ( "OwnerName", db.ds(calculate_owner_name(dbo, post["title"], post["initials"], post["forenames"], post["surname"] ))),
+        ( "OwnerName", db.ds(calculate_owner_name(dbo, post.integer("ownertype"), post["title"], post["initials"], post["forenames"], post["surname"] ))),
         ( "OwnerTitle", post.db_string("title")),
         ( "OwnerInitials", post.db_string("initials")),
         ( "OwnerForenames", post.db_string("forenames")),
@@ -690,7 +691,7 @@ def insert_person_from_form(dbo, post, username):
     pid = db.get_id(dbo, "owner")
     sql = db.make_insert_user_sql(dbo, "owner", username, (
         ( "ID", db.di(pid) ),
-        ( "OwnerName", db.ds(calculate_owner_name(dbo, post["title"], post["initials"], post["forenames"], post["surname"] ))),
+        ( "OwnerName", db.ds(calculate_owner_name(dbo, post.integer("ownertype"), post["title"], post["initials"], post["forenames"], post["surname"] ))),
         ( "OwnerType", post.db_integer("ownertype") ),
         ( "OwnerTitle", db.ds(d("title", "") )),
         ( "OwnerInitials", db.ds(d("initials", "") )),
