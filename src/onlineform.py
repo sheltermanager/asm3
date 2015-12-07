@@ -318,6 +318,7 @@ def get_onlineform_header(dbo):
        "<title>$$TITLE$$</title>\n" \
        "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n" \
        "<style>\n" \
+       "* { font-family: sans-serif; }\n" \
        ".asm-onlineform-td:first-child { max-width: 200px; }\n" \
        ".asm-onlineform-td:nth-child(2) { white-space: nowrap; }\n" \
        "textarea { width: 300px; height: 150px; }\n" \
