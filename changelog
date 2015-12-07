@@ -1,6 +1,8 @@
 37
 ================
 
+07/12/15 Fix MostRecentEntryDate to include time if available
+07/12/15 Show MostRecentEntryDate in animal banner for entered shelter
 05/12/15 Do not use person name format for organisations
 03/12/15 When calculating asilomar start, do not include movements on date
 03/12/15 Add rspca_dog_advice_leaflet default template

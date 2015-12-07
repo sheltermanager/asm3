@@ -1866,7 +1866,7 @@ def insert_animal_from_form(dbo, post, username):
         ( "Archived", db.di(0)),
         ( "ActiveMovementID", db.di(0)),
         ( "HasActiveReserve", db.di(0)),
-        ( "MostRecentEntryDate", db.dd(now()))
+        ( "MostRecentEntryDate", db.ddt(now()))
     ))
     db.execute(dbo, sql)
     audit.create(dbo, username, "animal", sheltercode + " " + t("animalname"))
@@ -2258,7 +2258,7 @@ def clone_animal(dbo, username, animalid):
         ( "BroughtInByOwnerID", db.di(a["BROUGHTINBYOWNERID"])),
         ( "ReasonForEntry", db.ds(a["REASONFORENTRY"])),
         ( "ReasonNO", db.ds(a["REASONNO"])),
-        ( "DateBroughtIn", db.dd(a["DATEBROUGHTIN"])),
+        ( "DateBroughtIn", db.ddt(a["DATEBROUGHTIN"])),
         ( "EntryReasonID", db.di(a["ENTRYREASONID"])),
         ( "AsilomarIsTransferExternal", db.di(a["ASILOMARISTRANSFEREXTERNAL"])),
         ( "AsilomarIntakeCategory", db.di(a["ASILOMARINTAKECATEGORY"])),
@@ -2292,7 +2292,7 @@ def clone_animal(dbo, username, animalid):
         ( "ActiveMovementID", db.di(0)),
         ( "ActiveMovementType", db.di(0)),
         ( "HasActiveReserve", db.di(0)),
-        ( "MostRecentEntryDate", db.dd(a["MOSTRECENTENTRYDATE"]))
+        ( "MostRecentEntryDate", db.ddt(a["MOSTRECENTENTRYDATE"]))
         ))
     db.execute(dbo, sql)
     # Additional Fields
@@ -3156,7 +3156,7 @@ def update_animal_status(dbo, animalid, a = None, animalupdatebatch = None, diar
             ( "HasActiveReserve", db.di(b2i(has_reserve)) ),
             ( "HasTrialAdoption", db.di(b2i(has_trial)) ),
             ( "HasPermanentFoster", db.di(b2i(has_permanent_foster)) ),
-            ( "MostRecentEntryDate", db.dd(mostrecententrydate) )
+            ( "MostRecentEntryDate", db.ddt(mostrecententrydate) )
             )))
 
 def get_number_animals_on_shelter(dbo, date, speciesid = 0, animaltypeid = 0, internallocationid = 0, ageselection = 0, startofday = False):
