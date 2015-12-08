@@ -537,6 +537,7 @@ PETFINDER_BREEDS = (
     "Maine Coon",
     "Manx",
     "Munchkin",
+    "Nebelung", 
     "Norwegian Forest Cat",
     "Ocicat",
     "Oriental Long Hair",
