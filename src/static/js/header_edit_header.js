@@ -139,7 +139,15 @@ $(function() {
                 '</div>'
             ].join("\n");
             if (a.NONSHELTERANIMAL == 1) {
-                second_column = '<div class="asm-grid-col-3" />';
+                second_column = [ 
+                    '<div class="asm-grid-col-3">',
+                    '<table>',
+                    '<tr>',
+                    animalcontrol,
+                    '</tr>',
+                    '</table>',
+                    '</div>'
+                ].join("\n");
             }
             var third_column = [
                 '<div class="asm-grid-col-3">',
