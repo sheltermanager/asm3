@@ -2378,8 +2378,8 @@ class HTMLPublisher(FTPPublisher):
             if childadult and species:
                 spec = lookups.get_species(self.dbo)
                 for sp in spec:
-                    defaultpages.append("adult" + sp["SPECIESNAME"])
-                    defaultpages.append("baby" + sp["SPECIESNAME"])
+                    defaultpages.append("adult%s" % sp["SPECIESNAME"])
+                    defaultpages.append("baby%s" % sp["SPECIESNAME"])
             elif childadult:
                 defaultpages = [ "adult", "baby" ]
             elif species:
@@ -2387,10 +2387,10 @@ class HTMLPublisher(FTPPublisher):
                 for sp in spec:
                     defaultpages.append(sp["SPECIESNAME"])
             for dp in defaultpages:
-                pages[dp + "." + self.pc.extension] = header
+                pages["%s.%s" % (dp, self.pc.extension)] = header
 
             # Create an all page
-            allpage = "all." + self.pc.extension
+            allpage = "all.%s" % self.pc.extension
             pages[allpage] = header
 
         except Exception, err:
@@ -2421,15 +2421,15 @@ class HTMLPublisher(FTPPublisher):
                 self.uploadImages(an, True)
                 
                 # Calculate the new page name
-                pagename = "." + self.pc.extension
+                pagename = ".%s" % self.pc.extension
                 if species:
-                    pagename = an["SPECIESNAME"] + pagename
+                    pagename = "%s%s" % (an["SPECIESNAME"], pagename)
                 if childadult:
                     days = i18n.date_diff_days(an["DATEOFBIRTH"], i18n.now(self.dbo.timezone))
                     if days < childAdultSplitDays:
-                        pagename = "baby" + pagename
+                        pagename = "baby%s" % pagename
                     else:
-                        pagename = "adult" + pagename
+                        pagename = "adult%s" % pagename
 
                 # Does this page exist?
                 if not pages.has_key(pagename):
@@ -2513,7 +2513,7 @@ class HTMLPublisher(FTPPublisher):
                     self.navbar += "<a href=\"%d.%s\">%d</a>&nbsp;" % ( i, self.pc.extension, i )
 
             # Start a new page with a header
-            thisPageName = "1." + self.pc.extension
+            thisPageName = "1.%s" % self.pc.extension
             currentPage = 1
             itemsOnPage = 0
 
@@ -2716,10 +2716,10 @@ class HTMLPublisher(FTPPublisher):
             for atype in lookups.get_animal_types(self.dbo):
                 defaultpages.append(atype["ANIMALTYPE"])
             for dp in defaultpages:
-                pages[dp + "." + self.pc.extension] = header
+                pages["%s.%s" % (dp, self.pc.extension)] = header
 
             # Create an all page
-            allpage = "all." + self.pc.extension
+            allpage = "all.%s" % self.pc.extension
             pages[allpage] = header
 
         except Exception, err:
@@ -2750,7 +2750,7 @@ class HTMLPublisher(FTPPublisher):
                 self.uploadImages(an, True)
                 
                 # Calculate the new page name
-                pagename = an["ANIMALTYPENAME"] + "." + self.pc.extension
+                pagename = "%s.%s" % (an["ANIMALTYPENAME"], self.pc.extension)
 
                 # Does this page exist?
                 if not pages.has_key(pagename):

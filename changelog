@@ -1,6 +1,7 @@
 37
 ================
 
+09/12/15 Blank types or species go to None prefix page during publish
 09/12/15 Show incident link on non-shelter animals
 07/12/15 Fix MostRecentEntryDate to include time if available
 07/12/15 Show MostRecentEntryDate in animal banner for entered shelter
