@@ -20,6 +20,9 @@ cp -rf ../../src/* sheltermanager3/usr/lib/sheltermanager3/
 # Add docs
 cp ../../README sheltermanager3/usr/share/doc/sheltermanager3
 
+# Add logging
+echo "local3.*                          -/var/log/asm3.log" > /etc/rsyslog.d/asm3.conf
+
 # Add our repository to the list file
 echo "deb http://public.sheltermanager.com/deb/ ./" > sheltermanager3/etc/apt/sources.list.d/sheltermanager3.list
 

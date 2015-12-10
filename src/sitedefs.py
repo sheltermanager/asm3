@@ -16,7 +16,7 @@ TIMEZONE = 0
 
 # Where ASM directs log output to, one of:
 # stderr  - the standard error stream
-# syslog  - the UNIX syslogger (with USER facility)
+# syslog  - the UNIX syslogger (to LOCAL3 facility)
 # ntevent - the Windows event logger
 # <file>  - The path to a file to log to
 LOG_LOCATION = "syslog"
