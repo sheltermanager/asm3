@@ -15,7 +15,7 @@ if LOG_LOCATION == "stderr":
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 elif LOG_LOCATION == "syslog":
-    handler = logging.handlers.SysLogHandler(address = "/dev/log", facility = logging.handlers.SysLogHandler.LOG_USER)
+    handler = logging.handlers.SysLogHandler(address = "/dev/log", facility = logging.handlers.SysLogHandler.LOG_LOCAL3)
     formatter = logging.Formatter("%(levelname)s %(message)s")
     handler.setFormatter(formatter)
     logger.addHandler(handler)

@@ -1,6 +1,7 @@
 37
 ================
 
+10/12/15 Use LOCAL3 log facility by default
 09/12/15 Blank types or species go to None prefix page during publish
 09/12/15 Show incident link on non-shelter animals
 07/12/15 Fix MostRecentEntryDate to include time if available
