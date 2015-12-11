@@ -248,8 +248,8 @@ def session_manager():
     web.config.session_parameters["cookie_name"] = "asm_session_id"
     web.config.session_parameters["cookie_path"] = "/"
     web.config.session_parameters["timeout"] = 3600 * 24
-    web.config.session_parameters["ignore_expiry"] = True
     web.config.session_parameters["ignore_change_ip"] = True
+    web.config.session_parameters["secure"] = True
     sess = None
     if utils.websession is None:
         # Disable noisy logging from session db
@@ -358,13 +358,13 @@ def full_or_json(modulename, s, c, json = False):
     otherwise return the full page in s and add an inline
     script to load the correct module.
     """
+    web.header("X-Frame-Options", "SAMEORIGIN")
+    web.header("Cache-Control", "no-cache, no-store, must-revalidate")
     if not json:
-        web.header("Cache-Control", "no-cache, no-store, must-revalidate")
         web.header("Content-Type", "text/html")
         extra = "<script>\n$(document).ready(function() { common.route_listen(); common.module_start(\"%s\"); });\n</script>\n</body>" % modulename
         return s.replace("</body>",  extra)
     else:
-        web.header("Cache-Control", "no-cache, no-store, must-revalidate")
         web.header("Content-Type", "application/json")
         if c.endswith(","): c = c[0:len(c)-1]
         return "{ %s }" % c
@@ -859,6 +859,7 @@ class login:
         s += '<script>\n$(document).ready(function() { $("body").append(login.render()); login.bind(); });\n</script>'
         s += html.footer()
         web.header("Content-Type", "text/html")
+        web.header("X-Frame-Options", "SAMEORIGIN")
         return s
 
     def POST(self):
