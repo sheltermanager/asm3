@@ -2395,6 +2395,7 @@ def clone_animal(dbo, username, animalid):
             ( "OwnerID", db.di(dt["OWNERID"])),
             ( "MovementID", db.di(0)),
             ( "DonationTypeID", db.di(dt["DONATIONTYPEID"])),
+            ( "DonationPaymentID", db.di(dt["DONATIONPAYMENTID"])),
             ( "Date", db.dd(dt["DATE"])),
             ( "DateDue", db.dd(dt["DATEDUE"])),
             ( "Donation", db.di(dt["DONATION"])),
