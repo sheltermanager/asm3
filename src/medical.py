@@ -369,9 +369,17 @@ def get_vaccinations_outstanding(dbo, offset = "m31", locationfilter = ""):
     if offset.startswith("p"):
         ec = " AND av.DateRequired >= %s AND av.DateRequired <= %s AND av.DateOfVaccination Is Null" % (db.dd(now(dbo.timezone)), db.dd( add_days(now(dbo.timezone), offsetdays)))
     if offset.startswith("xm"):
-        ec = " AND av.DateExpires >= %s AND av.DateExpires <= %s AND av.DateOfVaccination Is Not Null" % (db.dd( subtract_days(now(dbo.timezone), offsetdays)), db.dd(now(dbo.timezone)))
+        ec = " AND av.DateExpires >= %s AND av.DateExpires <= %s AND av.DateOfVaccination Is Not Null " \
+            "AND NOT EXISTS(SELECT av2.ID FROM animalvaccination av2 WHERE av2.ID <> av.ID " \
+            "AND av2.AnimalID = av.AnimalID AND av2.VaccinationID = av.VaccinationID " \
+            "AND av2.DateRequired > av.DateRequired)" \
+                % (db.dd( subtract_days(now(dbo.timezone), offsetdays)), db.dd(now(dbo.timezone)))
     if offset.startswith("xp"):
-        ec = " AND av.DateExpires >= %s AND av.DateExpires <= %s AND av.DateOfVaccination Is Not Null" % (db.dd(now(dbo.timezone)), db.dd( add_days(now(dbo.timezone), offsetdays)))
+        ec = " AND av.DateExpires >= %s AND av.DateExpires <= %s AND av.DateOfVaccination Is Not Null " \
+            "AND NOT EXISTS(SELECT av2.ID FROM animalvaccination av2 WHERE av2.ID <> av.ID " \
+            "AND av2.AnimalID = av.AnimalID AND av2.VaccinationID = av.VaccinationID " \
+            "AND av2.DateRequired > av.DateRequired)" \
+                % (db.dd(now(dbo.timezone)), db.dd( add_days(now(dbo.timezone), offsetdays)))
     if locationfilter != "": locationfilter = " AND " + animal.get_location_filter_clause(locationfilter)
     shelterfilter = ""
     if not configuration.include_off_shelter_medical(dbo):
