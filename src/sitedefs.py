@@ -72,6 +72,9 @@ DEPLOYMENT_TYPE = "wsgi"
 # use the above database even if MULTIPLE_DATABASES is on below.
 SESSION_STORE = "database" # database or memcached
 
+# Whether the session cookie should be secure (only valid for https)
+SESSION_SECURE_COOKIE = False
+
 # The host/port that memcached is running on if it is to be used.
 # If memcache is not available, an in memory dictionary will be
 # used instead.
