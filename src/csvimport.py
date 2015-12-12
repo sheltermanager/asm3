@@ -282,6 +282,8 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
     rowno = 1
     for row in data:
 
+        al.debug("import csv: row %d of %d" % (rowno, len(data)), "csvimport.csvimport", dbo)
+
         # Do we have animal data to read?
         animalid = 0
         if hasanimal and gks(row, "ANIMALNAME") != "":

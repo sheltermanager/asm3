@@ -1,6 +1,8 @@
 37
 ================
 
+12/12/15 Show progress in log during csvimport
+12/12/15 Make secure cookie a sitedef
 11/12/15 Exclude later vacc of type from xp/xm expired vacc list
 11/12/15 Set secure flag on session cookie, X-Frame-Options protection
 10/12/15 Use LOCAL3 log facility by default
