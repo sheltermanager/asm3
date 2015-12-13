@@ -322,6 +322,7 @@ def get_onlineform_header(dbo):
        "<style>\n" \
        "body { font-family: \"Lato\",\"proxima-nova\",\"Helvetica Neue\",Arial,sans-serif; }\n" \
        "input:focus, textarea:focus, select:focus { box-shadow: 0 0 5px #3a87cd; border: 1px solid #3a87cd; }\n" \
+       "input, textarea, select { border: 1px solid #aaa; }\n" \
        ".asm-onlineform-title, .asm-onlineform-description { text-align: center; }\n" \
        ".asm-onlineform-table { margin-left: auto; margin-right: auto }\n" \
        ".asm-onlineform-td:first-child { max-width: 200px; }\n" \
