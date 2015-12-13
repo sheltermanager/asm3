@@ -1,6 +1,7 @@
 37
 ================
 
+13/12/15 Nicer font in online form header, remove hard set width table style
 12/12/15 Show progress in log during csvimport
 12/12/15 Make secure cookie a sitedef
 11/12/15 Exclude later vacc of type from xp/xm expired vacc list

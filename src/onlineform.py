@@ -172,7 +172,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
     h.append('<input type="hidden" name="redirect" value="%s" />' % form["REDIRECTURLAFTERPOST"])
     h.append('<input type="hidden" name="flags" value="%s" />' % form["SETOWNERFLAGS"])
     h.append('<input type="hidden" name="formname" value="%s" />' % html.escape(form["NAME"]))
-    h.append('<table width="100%" class="asm-onlineform-table">')
+    h.append('<table class="asm-onlineform-table">')
     for f in formfields:
         fname = f["FIELDNAME"] + "_" + str(f["ID"])
         h.append('<tr class="asm-onlineform-tr">')
@@ -313,12 +313,16 @@ def import_onlineform_json(dbo, j):
 
 def get_onlineform_header(dbo):
     header = dbfs.get_string_filepath(dbo, "/onlineform/head.html")
-    if header == "": header = "<html>\n" \
+    if header == "": header = "<!DOCTYPE html>\n" \
+        "<html>\n" \
        "<head>\n" \
        "<title>$$TITLE$$</title>\n" \
        "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n" \
+       "<link type=\"text/css\" href=\"https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700\" rel=\"stylesheet\">\n" \
        "<style>\n" \
        "* { font-family: sans-serif; }\n" \
+       "body { font-family: \"Lato\",\"proxima-nova\",\"Helvetica Neue\",Arial,sans-serif}\n" \
+       ".asm-onlineform-table { margin-left: auto; margin-right: auto }\n" \
        ".asm-onlineform-td:first-child { max-width: 200px; }\n" \
        ".asm-onlineform-td:nth-child(2) { white-space: nowrap; }\n" \
        "textarea { width: 300px; height: 150px; }\n" \
