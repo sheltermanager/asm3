@@ -2,16 +2,15 @@ Long Term Animals
 ###
 Figures
 ###
-Any
+3215/Any
 ###
 Animals who have been on the shelter longer than 3 months.
 ###
 en
 ###
-SELECT a.AnimalName, a.ShelterCode, t.AnimalType, i.LocationName,
-s.SpeciesName, a.MostRecentEntryDate
+SELECT a.AnimalName, a.ShelterCode, t.AnimalType, a.DisplayLocation,
+s.SpeciesName, a.MostRecentEntryDate, a.AnimalAge, a.BreedName
 FROM animal a
-INNER JOIN internallocation i ON i.ID = a.ShelterLocation
 INNER JOIN species s ON s.ID = a.SpeciesID
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 WHERE a.Archived = 0 AND DaysOnShelter > 92
@@ -23,8 +22,10 @@ $$HEADER
 <th>Name</th>
 <th>Code</th>
 <th>Type</th>
-<th>Location</th>
 <th>Species</th>
+<th>Breed</th>
+<th>Age</th>
+<th>Location</th>
 <th>Entry Date</th>
 </tr>
 HEADER$$
@@ -34,8 +35,10 @@ $$BODY
 <td>$ANIMALNAME</td>
 <td>$SHELTERCODE</td>
 <td>$ANIMALTYPE</td>
-<td>$LOCATIONNAME</td>
 <td>$SPECIESNAME</td>
+<td>$BREEDNAME</td>
+<td>$ANIMALAGE</td>
+<td>$DISPLAYLOCATION</td>
 <td>$MOSTRECENTENTRYDATE</td>
 </tr>
 BODY$$
