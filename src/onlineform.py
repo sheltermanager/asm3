@@ -320,8 +320,7 @@ def get_onlineform_header(dbo):
        "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n" \
        "<link type=\"text/css\" href=\"https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700\" rel=\"stylesheet\">\n" \
        "<style>\n" \
-       "* { font-family: sans-serif; }\n" \
-       "body { font-family: \"Lato\",\"proxima-nova\",\"Helvetica Neue\",Arial,sans-serif}\n" \
+       "body { font-family: \"Lato\",\"proxima-nova\",\"Helvetica Neue\",Arial,sans-serif; }\n" \
        ".asm-onlineform-title, .asm-onlineform-description { text-align: center; }\n" \
        ".asm-onlineform-table { margin-left: auto; margin-right: auto }\n" \
        ".asm-onlineform-td:first-child { max-width: 200px; }\n" \
