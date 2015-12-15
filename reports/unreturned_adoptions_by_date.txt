@@ -69,5 +69,6 @@ BODY$$
 
 $$FOOTER
 </table>
+<h2>Total: {COUNT.Sheltercode} unreturned adoptions</h2>
 FOOTER$$
 
