@@ -114,6 +114,12 @@ ROLLUP_JS = False
 # service calls from this domain, or comma separated list of domains
 IMAGE_HOTLINKING_ONLY_FROM_DOMAIN = ""
 
+# Use Transfer-Encoding: chunked for large files. Note that
+# this does not work with mod_wsgi. Turning it off will cause
+# web.py to buffer the output, which can cause problems with
+# dumps of large databases.
+LARGE_FILES_CHUNKED = True
+
 # QR code provider. "url" and "size" tokens will be substituted
 QR_IMG_SRC = "//chart.googleapis.com/chart?cht=qr&chl=%(url)s&chs=%(size)s"
 
