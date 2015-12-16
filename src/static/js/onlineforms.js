@@ -135,7 +135,7 @@ $(function() {
                 return '<option value="' + post + '">' + label + '</option>\n';
             };
             var flag_option = function(flag) {
-                return '<option>' + flag + '</option>';
+                return '<option value="' + html.title(flag) + '">' + flag + '</option>';
             };
             var h = [
                 field_option("aco", _("ACO")),

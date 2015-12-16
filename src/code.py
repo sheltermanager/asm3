@@ -5966,29 +5966,25 @@ class sql_dump:
         post = utils.PostedData(web.input(), session.locale)
         mode = post["mode"]
         web.header("Content-Type", "text/plain")
-        web.header("Tranasfer-Encoding", "chunked")
+        web.header("Transfer-Encoding", "chunked")
         if mode == "dumpsql":
             al.info("%s executed SQL database dump" % str(session.user), "code.sql", dbo)
             web.header("Content-Disposition", "attachment; filename=\"dump.sql\"")
-            for x in dbupdate.dump(dbo):
-                yield x
+            for x in dbupdate.dump(dbo): yield x
         elif mode == "dumpsqlnomedia":
             al.info("%s executed SQL database dump (without media)" % str(session.user), "code.sql", dbo)
             web.header("Content-Disposition", "attachment; filename=\"dump.sql\"")
-            for x in dbupdate.dump(dbo, includeDBFS = False):
-                yield x
+            for x in dbupdate.dump(dbo, includeDBFS = False): yield x
         elif mode == "dumpsqlasm2":
             # ASM2_COMPATIBILITY
             al.info("%s executed SQL database dump (ASM2 HSQLDB)" % str(session.user), "code.sql", dbo)
             web.header("Content-Disposition", "attachment; filename=\"asm2.sql\"")
-            for x in dbupdate.dump_hsqldb(dbo):
-                yield x
+            for x in dbupdate.dump_hsqldb(dbo): yield x
         elif mode == "dumpsqlasm2nomedia":
             # ASM2_COMPATIBILITY
             al.info("%s executed SQL database dump (ASM2 HSQLDB, without media)" % str(session.user), "code.sql", dbo)
             web.header("Content-Disposition", "attachment; filename=\"asm2.sql\"")
-            for x in dbupdate.dump_hsqldb(dbo, includeDBFS = False):
-                yield x
+            for x in dbupdate.dump_hsqldb(dbo, includeDBFS = False): yield x
         elif mode == "animalcsv":
             al.debug("%s executed CSV animal dump" % str(session.user), "code.sql", dbo)
             web.header("Content-Disposition", "attachment; filename=\"animal.csv\"")

@@ -1,6 +1,7 @@
 37
 ================
 
+16/12/15 Fix loading of flags into editing online forms #330
 16/12/15 Use generator functions to implement dumps, remove DUMP_OVERRIDES
 13/12/15 Nicer font in online form header, remove hard set width table style
 12/12/15 Show progress in log during csvimport

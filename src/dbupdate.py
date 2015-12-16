@@ -2314,7 +2314,7 @@ def install(dbo):
 
 def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = True, \
         includeNonASM2 = True, includeUsers = True, deleteDBV = False, deleteFirst = True, deleteViewSeq = False, \
-        escapeCR = "", uppernames = False):
+        escapeCR = "", uppernames = False, wrapTransaction = True):
     """
     Dumps all of the data in the database as DELETE/INSERT statements.
     includeConfig - include the config table
@@ -2325,8 +2325,12 @@ def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = Tr
     deleteFirst - issue DELETE FROM statements before INSERTs
     deleteViewSeq - issue DELETE DBViewSeqVersion from config after dump
     escapeCR - A substitute for any \n characters found in values
+    uppernames - upper case table names in the output
+    wrapTransaction - wrap a transaction around the dump
+
     This is a generator function to save memory.
     """
+    if wrapTransaction: yield "BEGIN;\n"
     for t in TABLES:
         if not includeDBFS and t == "dbfs": continue
         if not includeCustomReport and t == "customreport": continue
@@ -2347,6 +2351,7 @@ def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = Tr
             sys.stderr.write("%s: WARN: %s\n" % (t, em))
     if deleteViewSeq: yield "DELETE FROM configuration WHERE ItemName LIKE 'DBViewSeqVersion';\n"
     if deleteDBV: yield "DELETE FROM configuration WHERE ItemName LIKE 'DBV';\n"
+    if wrapTransaction: yield "COMMIT;\n"
 
 def dump_dbfs_stdout(dbo):
     """
@@ -2368,7 +2373,7 @@ def dump_hsqldb(dbo, includeDBFS = True):
     hdbo = db.DatabaseInfo()
     hdbo.dbtype = "HSQLDB"
     yield sql_structure(hdbo)
-    for x in dump(dbo, includeNonASM2 = False, includeDBFS = includeDBFS, escapeCR = " "):
+    for x in dump(dbo, includeNonASM2 = False, includeDBFS = includeDBFS, escapeCR = " ", wrapTransaction = False):
         yield x
 
 def dump_smcom(dbo):
