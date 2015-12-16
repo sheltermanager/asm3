@@ -210,19 +210,6 @@ MULTIPLE_DATABASES_PUBLISH_URL = ""
 #MULTIPLE_DATABASES_PUBLISH_FTP = { "host": "ftp.host.com", "user": "user", "pass": "pass", "port": 21, "chdir": "/home/{alias}", "passive": True }
 MULTIPLE_DATABASES_PUBLISH_FTP = None
 
-# What to do when a user requests database dumps in various
-# formats. Leave blank to enable the system to handle it. 
-# Set to "disabled" to prevent that item and remove it from the UI
-# altogether. Or, use a URL to redirect the user to another location 
-# where the dump can be downloaded. Valid tags are:
-# {alias} {database} {username} {password} {md5pass}
-DUMP_OVERRIDES = {
-    "dumpsql": "",
-    "dumpsqlnomedia": "",
-    "dumpsqlasm2": "",
-    "dumpsqlasm2nomedia": ""
-}
-
 # Options available under the share button
 SHARE_BUTTON = "shareweb,shareemail"
 

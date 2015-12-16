@@ -2325,8 +2325,8 @@ def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = Tr
     deleteFirst - issue DELETE FROM statements before INSERTs
     deleteViewSeq - issue DELETE DBViewSeqVersion from config after dump
     escapeCR - A substitute for any \n characters found in values
+    This is a generator function to save memory.
     """
-    s = []
     for t in TABLES:
         if not includeDBFS and t == "dbfs": continue
         if not includeCustomReport and t == "customreport": continue
@@ -2336,16 +2336,17 @@ def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = Tr
         if not includeNonASM2 and t not in TABLES_ASM2 : continue
         outtable = t
         if uppernames: outtable = t.upper()
-        if deleteFirst: s.append("DELETE FROM %s;\n" % outtable)
+        if deleteFirst: 
+            yield "DELETE FROM %s;\n" % outtable
         try:
             sys.stderr.write("dumping %s.., \n" % t)
-            s.append(db.rows_to_insert_sql(outtable, db.query(dbo, "SELECT * FROM %s" % t), escapeCR))
+            for x in db.query_to_insert_sql(dbo, "SELECT * FROM %s" % t, outtable, escapeCR):
+                yield x
         except:
             em = str(sys.exc_info()[0])
             sys.stderr.write("%s: WARN: %s\n" % (t, em))
-    if deleteViewSeq: s.append("DELETE FROM configuration WHERE ItemName LIKE 'DBViewSeqVersion';\n")
-    if deleteDBV: s.append("DELETE FROM configuration WHERE ItemName LIKE 'DBV';\n")
-    return "".join(s)
+    if deleteViewSeq: yield "DELETE FROM configuration WHERE ItemName LIKE 'DBViewSeqVersion';\n"
+    if deleteDBV: yield "DELETE FROM configuration WHERE ItemName LIKE 'DBV';\n"
 
 def dump_dbfs_stdout(dbo):
     """
@@ -2361,19 +2362,20 @@ def dump_dbfs_stdout(dbo):
 def dump_hsqldb(dbo, includeDBFS = True):
     """
     Produces a dump in hsqldb format for use with ASM2
+    generator function.
     """
     # ASM2_COMPATIBILITY
     hdbo = db.DatabaseInfo()
     hdbo.dbtype = "HSQLDB"
-    s = sql_structure(hdbo)
-    s += dump(dbo, includeNonASM2 = False, includeDBFS = includeDBFS, escapeCR = " ")
-    return s
+    yield sql_structure(hdbo)
+    yield dump(dbo, includeNonASM2 = False, includeDBFS = includeDBFS, escapeCR = " ")
 
 def dump_smcom(dbo):
     """
     Dumps the database in a convenient format for import to sheltermanager.com
+    generator function.
     """
-    return dump(dbo, includeConfig = False, includeUsers = False, deleteDBV = True, deleteViewSeq = True)
+    yield dump(dbo, includeConfig = False, includeUsers = False, deleteDBV = True, deleteViewSeq = True)
 
 def dump_merge(dbo, deleteViewSeq = True):
     """

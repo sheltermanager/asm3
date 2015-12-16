@@ -43,7 +43,7 @@ import utils
 import waitinglist as extwaitinglist
 import web
 import wordprocessor
-from sitedefs import BASE_URL, DEPLOYMENT_TYPE, DUMP_OVERRIDES, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, FORGOTTEN_PASSWORD, FORGOTTEN_PASSWORD_LABEL, LOCALE, GEO_PROVIDER, GEO_PROVIDER_KEY, JQUERY_UI_CSS, LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_PUBLISH_URL, MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETRESCUE_FTP_HOST, PETSLOCATED_FTP_USER, QR_IMG_SRC, SERVICE_URL, SESSION_STORE, SESSION_SECURE_COOKIE, SHARE_BUTTON, SMARTTAG_FTP_USER, SMTP_SERVER, SMCOM_PAYMENT_LINK, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_VENDOR_USERID
+from sitedefs import BASE_URL, DEPLOYMENT_TYPE, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, FORGOTTEN_PASSWORD, FORGOTTEN_PASSWORD_LABEL, LOCALE, GEO_PROVIDER, GEO_PROVIDER_KEY, JQUERY_UI_CSS, LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_PUBLISH_URL, MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETRESCUE_FTP_HOST, PETSLOCATED_FTP_USER, QR_IMG_SRC, SERVICE_URL, SESSION_STORE, SESSION_SECURE_COOKIE, SHARE_BUTTON, SMARTTAG_FTP_USER, SMTP_SERVER, SMCOM_PAYMENT_LINK, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_VENDOR_USERID
 
 # URL to class mappings
 urls = (
@@ -194,6 +194,7 @@ urls = (
     "/staff_rota", "staff_rota", 
     "/stocklevel", "stocklevel",
     "/sql", "sql",
+    "/sql_dump", "sql_dump", 
     "/systemusers", "systemusers",
     "/test", "test",
     "/timeline", "timeline",
@@ -5882,73 +5883,18 @@ class smcom_my:
         if session.superuser == 1: smcom.go_smcom_my(session.dbo)
 
 class sql:
-    def check_disabled(self, dbo, dumptype):
-        if DUMP_OVERRIDES[dumptype] == "disabled":
-            al.error("attempted %s and it is disabled" % dumptype, "code.sql", dbo)
-            raise utils.ASMPermissionError("%s is disabled" % dumptype)
-
-    def check_url(self, dbo, dumptype):
-        url = DUMP_OVERRIDES[dumptype]
-        if not url.startswith("http"): return
-        url = url.replace("{alias}", dbo.alias).replace("{database}", dbo.database)
-        url = url.replace("{username}", dbo.username).replace("{password}", dbo.password)
-        url = url.replace("{md5pass}", users.hash_password(dbo.password))
-        raise web.seeother(url)
-
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.USE_SQL_INTERFACE)
         l = session.locale
         dbo = session.dbo
-        post = utils.PostedData(web.input(mode="iface"), session.locale)
-        mode = post["mode"]
-        if mode == "iface":
-            al.debug("%s opened SQL interface" % str(session.user), "code.sql", dbo)
-            s = html.header("", session)
-            c = html.controller_json("tables", dbupdate.TABLES + dbupdate.VIEWS)
-            s += html.controller(c)
-            s += html.footer()
-            return full_or_json("sql", s, c, post["json"] == "true")
-        elif mode == "dumpsql":
-            self.check_disabled(dbo, "dumpsql")
-            self.check_url(dbo, "dumpsql")
-            al.info("%s executed SQL database dump" % str(session.user), "code.sql", dbo)
-            web.header("Content-Type", "text/plain")
-            web.header("Content-Disposition", "attachment; filename=\"dump.sql\"")
-            return dbupdate.dump(dbo)
-        elif mode == "dumpsqlnomedia":
-            self.check_disabled(dbo, "dumpsqlnomedia")
-            self.check_url(dbo, "dumpsqlnomedia")
-            al.info("%s executed SQL database dump (without media)" % str(session.user), "code.sql", dbo)
-            web.header("Content-Type", "text/plain")
-            web.header("Content-Disposition", "attachment; filename=\"dump.sql\"")
-            return dbupdate.dump(dbo, includeDBFS = False)
-        elif mode == "dumpsqlasm2":
-            self.check_disabled(dbo, "dumpsqlasm2")
-            self.check_url(dbo, "dumpsqlasm2")
-            # ASM2_COMPATIBILITY
-            al.info("%s executed SQL database dump (ASM2 HSQLDB)" % str(session.user), "code.sql", dbo)
-            web.header("Content-Type", "text/plain")
-            web.header("Content-Disposition", "attachment; filename=\"asm2.sql\"")
-            return dbupdate.dump_hsqldb(dbo)
-        elif mode == "dumpsqlasm2nomedia":
-            self.check_disabled(dbo, "dumpsqlasm2nomedia")
-            self.check_url(dbo, "dumpsqlasm2nomedia")
-            # ASM2_COMPATIBILITY
-            al.info("%s executed SQL database dump (ASM2 HSQLDB, without media)" % str(session.user), "code.sql", dbo)
-            web.header("Content-Type", "text/plain")
-            web.header("Content-Disposition", "attachment; filename=\"asm2.sql\"")
-            return dbupdate.dump_hsqldb(dbo, includeDBFS = False)
-        elif mode == "animalcsv":
-            al.debug("%s executed CSV animal dump" % str(session.user), "code.sql", dbo)
-            web.header("Content-Type", "text/plain")
-            web.header("Content-Disposition", "attachment; filename=\"animal.csv\"")
-            return utils.csv(l, extanimal.get_animal_find_advanced(dbo, { "logicallocation" : "all", "includedeceased": "true", "includenonshelter": "true" }))
-        elif mode == "personcsv":
-            al.debug("%s executed CSV person dump" % str(session.user), "code.sql", dbo)
-            web.header("Content-Type", "text/plain")
-            web.header("Content-Disposition", "attachment; filename=\"person.csv\"")
-            return utils.csv(l, extperson.get_person_find_simple(dbo, "", "all", True, 0))
+        post = utils.PostedData(web.input(), l)
+        al.debug("%s opened SQL interface" % str(session.user), "code.sql", dbo)
+        s = html.header("", session)
+        c = html.controller_json("tables", dbupdate.TABLES + dbupdate.VIEWS)
+        s += html.controller(c)
+        s += html.footer()
+        return full_or_json("sql", s, c, post["json"] == "true")
 
     def POST(self):
         utils.check_loggedin(session, web)
@@ -6010,6 +5956,47 @@ class sql:
                 al.error("%s" % str(err), "code.sql", dbo)
                 output.append("ERROR: %s" % str(err))
         return "\n\n".join(output)
+
+class sql_dump:
+    def GET(self):
+        utils.check_loggedin(session, web)
+        users.check_permission(session, users.USE_SQL_INTERFACE)
+        l = session.locale
+        dbo = session.dbo
+        post = utils.PostedData(web.input(), session.locale)
+        mode = post["mode"]
+        web.header("Content-Type", "text/plain")
+        web.header("Tranasfer-Encoding", "chunked")
+        if mode == "dumpsql":
+            al.info("%s executed SQL database dump" % str(session.user), "code.sql", dbo)
+            web.header("Content-Disposition", "attachment; filename=\"dump.sql\"")
+            for x in dbupdate.dump(dbo):
+                yield x
+        elif mode == "dumpsqlnomedia":
+            al.info("%s executed SQL database dump (without media)" % str(session.user), "code.sql", dbo)
+            web.header("Content-Disposition", "attachment; filename=\"dump.sql\"")
+            for x in dbupdate.dump(dbo, includeDBFS = False):
+                yield x
+        elif mode == "dumpsqlasm2":
+            # ASM2_COMPATIBILITY
+            al.info("%s executed SQL database dump (ASM2 HSQLDB)" % str(session.user), "code.sql", dbo)
+            web.header("Content-Disposition", "attachment; filename=\"asm2.sql\"")
+            for x in dbupdate.dump_hsqldb(dbo):
+                yield x
+        elif mode == "dumpsqlasm2nomedia":
+            # ASM2_COMPATIBILITY
+            al.info("%s executed SQL database dump (ASM2 HSQLDB, without media)" % str(session.user), "code.sql", dbo)
+            web.header("Content-Disposition", "attachment; filename=\"asm2.sql\"")
+            for x in dbupdate.dump_hsqldb(dbo, includeDBFS = False):
+                yield x
+        elif mode == "animalcsv":
+            al.debug("%s executed CSV animal dump" % str(session.user), "code.sql", dbo)
+            web.header("Content-Disposition", "attachment; filename=\"animal.csv\"")
+            yield utils.csv(l, extanimal.get_animal_find_advanced(dbo, { "logicallocation" : "all", "includedeceased": "true", "includenonshelter": "true" }))
+        elif mode == "personcsv":
+            al.debug("%s executed CSV person dump" % str(session.user), "code.sql", dbo)
+            web.header("Content-Disposition", "attachment; filename=\"person.csv\"")
+            yield utils.csv(l, extperson.get_person_find_simple(dbo, "", "all", True, 0))
 
 class stocklevel:
     def GET(self):

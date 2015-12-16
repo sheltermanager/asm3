@@ -172,6 +172,66 @@ def query_columns(dbo, sql):
         except:
             pass
 
+def query_generator(dbo, sql):
+    """
+        Runs the query given and returns the resultset
+        as a list of dictionaries. All fieldnames are
+	    uppercased when returned.
+        generator function version that uses a forward cursor.
+    """
+    try:
+        c, s = connect_cursor_open(dbo)
+        # Run the query and retrieve all rows
+        s.execute(sql)
+        c.commit()
+        cols = []
+        # Get the list of column names
+        for i in s.description:
+            cols.append(i[0].upper())
+        row = s.fetchone()
+        while row:
+            # Intialise a map for each row
+            rowmap = {}
+            for i in xrange(0, len(row)):
+                v = encode_str(row[i])
+                rowmap[cols[i]] = v
+            yield rowmap
+            row = s.fetchone()
+        connect_cursor_close(dbo, c, s)
+    except Exception,err:
+        al.error(str(err), "db.query", dbo, sys.exc_info())
+        raise err
+    finally:
+        try:
+            connect_cursor_close(dbo, c, s)
+        except:
+            pass
+
+def query_to_insert_sql(dbo, sql, table, escapeCR = ""):
+    """
+    Generator function that Writes an INSERT query for the list of rows 
+    returned by running sql (a list containing dictionaries)
+    """
+    fields = []
+    donefields = False
+    for r in query_generator(dbo, sql):
+        values = []
+        for k in sorted(r.iterkeys()):
+            if not donefields:
+                fields.append(k)
+            v = r[k]
+            if v is None:
+                values.append("null")
+            elif type(v) == unicode or type(v) == str:
+                if escapeCR != "": v = v.replace("\n", escapeCR).replace("\r", "")
+                values.append(ds(v))
+            elif type(v) == datetime.datetime:
+                values.append(ddt(v))
+            else:
+                values.append(di(v))
+        donefields = True
+        yield "INSERT INTO %s (%s) VALUES (%s);\n" % (table, ",".join(fields), ",".join(values))
+
 def query_tuple(dbo, sql):
     """
         Runs the query given and returns the resultset
@@ -656,9 +716,9 @@ def make_update_user_sql(dbo, table, username, cond, s, stampRecordVersion = Tru
 
 def rows_to_insert_sql(table, rows, escapeCR = ""):
     """
-    Writes an INSERT query for a list of rows (a list containing dictionaries)
+    function that Writes an INSERT query for a list of rows (a list containing dictionaries)
     """
-    ins = []
+    l = []
     fields = []
     donefields = False
     for r in rows:
@@ -677,5 +737,6 @@ def rows_to_insert_sql(table, rows, escapeCR = ""):
             else:
                 values.append(di(v))
         donefields = True
-        ins.append("INSERT INTO %s (%s) VALUES (%s);\n" % (table, ",".join(fields), ",".join(values)))
-    return "".join(ins)
+        l.append("INSERT INTO %s (%s) VALUES (%s);\n" % (table, ",".join(fields), ",".join(values)))
+    return l
+
