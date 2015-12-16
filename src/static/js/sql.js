@@ -10,7 +10,8 @@ $(function() {
                 this.render_scriptdialog(),
                 html.content_header(_("SQL Interface")),
                 '<div id="dialog-dump" class="hidden" title="' + html.title(_("Confirm")) + '">',
-                _("This can take some time and generate a large file, are you sure?") + '</div>',
+                _("Exporting the complete database can take some time and generate a very large file, are you sure?") + "<br />" +
+                _("The database will be inaccessible to all users while the export is in progress.") + '</div>',
                 '<div class="asm-toolbar">',
                 tableform.buttons_render([
                     { id: "exec", text: _("Execute"), tooltip: _("Execute the SQL in the box below"), icon: "sql" },
