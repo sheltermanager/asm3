@@ -5966,7 +5966,9 @@ class sql_dump:
         post = utils.PostedData(web.input(), session.locale)
         mode = post["mode"]
         web.header("Content-Type", "text/plain")
-        web.header("Transfer-Encoding", "chunked")
+        # TODO: mod_wsgi does not working with chunked encoding, turning it off
+        #       seems to work, but it must be buffering somewhere.
+        # web.header("Transfer-Encoding", "chunked")
         if mode == "dumpsql":
             al.info("%s executed SQL database dump" % str(session.user), "code.sql", dbo)
             web.header("Content-Disposition", "attachment; filename=\"dump.sql\"")
