@@ -2368,7 +2368,8 @@ def dump_hsqldb(dbo, includeDBFS = True):
     hdbo = db.DatabaseInfo()
     hdbo.dbtype = "HSQLDB"
     yield sql_structure(hdbo)
-    yield dump(dbo, includeNonASM2 = False, includeDBFS = includeDBFS, escapeCR = " ")
+    for x in dump(dbo, includeNonASM2 = False, includeDBFS = includeDBFS, escapeCR = " "):
+        yield x
 
 def dump_smcom(dbo):
     """
