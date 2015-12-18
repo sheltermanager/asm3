@@ -627,7 +627,10 @@ def check_recordversion(dbo, table, tid, version):
     Verifies that the record with ID tid in table still has
     RecordVersion = version.
     If not, returns False otherwise True
+    If version is a negative number, that overrides the test and returns true (useful for unit tests
+    and any other time we would want to disable optimistic locking)
     """
+    if version < 0: return True
     return version == query_int(dbo, "SELECT RecordVersion FROM %s WHERE ID = %d" % (table, tid))
 
 def escape(s):

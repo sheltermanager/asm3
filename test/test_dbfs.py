@@ -62,9 +62,9 @@ class TestDBFS(unittest.TestCase):
         dbfs.delete_old_publish_logs(base.get_dbo())
 
     def test_create_html_template(self):
-        dbfsid = dbfs.create_document_template(base.get_dbo(), "test", ".html", "<p>TEST</p>")
+        dbfsid = dbfs.create_document_template(base.get_dbo(), "test", "test", ".html", "<p>TEST</p>")
         assert "test.html" == dbfs.get_name_for_id(base.get_dbo(), dbfsid)
-        dbfsid2 = dbfs.clone_document_template(base.get_dbo(), dbfsid, "test2")
+        dbfsid2 = dbfs.clone_document_template(base.get_dbo(), "test", dbfsid, "test2")
         assert "test2.html" == dbfs.get_name_for_id(base.get_dbo(), dbfsid2)
         dbfs.delete_id(base.get_dbo(), dbfsid)
         dbfs.delete_id(base.get_dbo(), dbfsid2)

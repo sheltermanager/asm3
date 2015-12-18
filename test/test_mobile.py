@@ -9,6 +9,7 @@ class FakeSession:
     user = "test"
     roles = ""
     superuser = 1
+    mobileapp = False
 
 class TestMobile(unittest.TestCase):
 

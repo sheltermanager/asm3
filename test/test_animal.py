@@ -137,7 +137,8 @@ class TestAnimal(unittest.TestCase):
             "animaltype": "1",
             "entryreason": "1",
             "species": "1",
-            "sheltercode": "ICHANGED"
+            "sheltercode": "ICHANGED",
+            "recordversion": "-1"
         }
         post = utils.PostedData(data, "en")
         animal.update_animal_from_form(base.get_dbo(), post, "test")
@@ -161,8 +162,8 @@ class TestAnimal(unittest.TestCase):
     def test_update_deceased_from_form(self):
         animal.update_deceased_from_form(base.get_dbo(), "test", utils.PostedData({ "animal": self.nid }, "en"))
 
-    def test_update_location(self):
-        animal.update_location(base.get_dbo(), "test", self.nid, 1)
+    def test_update_location_unit(self):
+        animal.update_location_unit(base.get_dbo(), "test", self.nid, 1)
 
     def test_clone_animal(self):
         nid = animal.clone_animal(base.get_dbo(), "test", self.nid)
