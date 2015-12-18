@@ -542,7 +542,7 @@ $(function() {
                 '<td><input id="apftppass" type="text" class="asm-textbox cfg" data="SaveAPetFTPPassword" /></td>',
                 '</tr>',
                 '<tr>',
-                '<td><label for="includecolours">Include colors in column 9</label></td>',
+                '<td><label for="includecolours">Include colors (not recommended, requires detailed mappings)</label></td>',
                 '<td><select id="includecolours" class="asm-selectbox pbool preset" data="includecolours">',
                 '<option value="0">' + _("No") + '</option>',
                 '<option value="1">' + _("Yes") + '</option>',

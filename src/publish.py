@@ -1348,24 +1348,13 @@ class AdoptAPetPublisher(FTPPublisher):
             "Holland Lop=Lop, Holland\n" \
             "Mini-Lop=Mini Lop\n" \
             "Bunny Rabbit=Other/Unknown\n" \
-            "#5:Age=Age\n" \
-            "#6:Name=Name\n" \
-            "#7:Size=Size\n" \
-            "#8:Sex=Sex\n"
+            "#5:Purebred=Purebred\n" \
+            "#6:Age=Age\n" \
+            "#7:Name=Name\n" \
+            "#8:Size=Size\n" \
+            "#9:Sex=Sex\n"
         if not includecolours:
-            defmap += "#9:Description=Description\n" \
-            "#10:Status=Status\n" \
-            "#11:GoodWKids=GoodWKids\n" \
-            "#12:GoodWCats=GoodWCats\n" \
-            "#13:GoodWDogs=GoodWDogs\n" \
-            "#14:SpayedNeutered=SpayedNeutered\n" \
-            "#15:ShotsCurrent=ShotsCurrent\n" \
-            "#16:Housetrained=Housetrained\n" \
-            "#17:Declawed=Declawed\n" \
-            "#18:SpecialNeeds=SpecialNeeds"
-        else:
-            defmap += "#9:Color=Color\n" \
-            "#10:Description=Description\n" \
+            defmap += "#10:Description=Description\n" \
             "#11:Status=Status\n" \
             "#12:GoodWKids=GoodWKids\n" \
             "#13:GoodWCats=GoodWCats\n" \
@@ -1375,6 +1364,18 @@ class AdoptAPetPublisher(FTPPublisher):
             "#17:Housetrained=Housetrained\n" \
             "#18:Declawed=Declawed\n" \
             "#19:SpecialNeeds=SpecialNeeds"
+        else:
+            defmap += "#10:Color=Color\n" \
+            "#11:Description=Description\n" \
+            "#12:Status=Status\n" \
+            "#13:GoodWKids=GoodWKids\n" \
+            "#14:GoodWCats=GoodWCats\n" \
+            "#15:GoodWDogs=GoodWDogs\n" \
+            "#16:SpayedNeutered=SpayedNeutered\n" \
+            "#17:ShotsCurrent=ShotsCurrent\n" \
+            "#18:Housetrained=Housetrained\n" \
+            "#19:Declawed=Declawed\n" \
+            "#20:SpecialNeeds=SpecialNeeds"
         return defmap
 
     def run(self):
@@ -1454,6 +1455,8 @@ class AdoptAPetPublisher(FTPPublisher):
                 line.append("\"%s\"" % an["PETFINDERBREED"])
                 # Breed 2
                 line.append("\"%s\"" % self.getPublisherBreed(an, 2))
+                # Purebred
+                line.append("\"%s\"" % self.apYesNo(an["CROSSBREED"] == 0))
                 # Age, one of Adult, Baby, Senior and Young
                 ageinyears = i18n.date_diff_days(an["DATEOFBIRTH"], i18n.now(self.dbo.timezone))
                 ageinyears /= 365.0
