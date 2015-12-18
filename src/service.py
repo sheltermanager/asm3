@@ -249,9 +249,10 @@ def handler(post, remoteip, referer):
             return ("text/plain", 0, "ERROR: Invalid username and password")
         securitymap = users.get_security_map(dbo, user["USERNAME"])
 
-    # Get the preferred locale for the site
+    # Get the preferred locale and timezone for the site
     l = configuration.locale(dbo)
     dbo.locale = l
+    dbo.timezone = configuration.timezone(dbo)
     al.info("call %s->%s [%s %s]" % (username, method, str(animalid), title), "service.handler", dbo)
 
     if method =="animal_image":
