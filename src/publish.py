@@ -1456,7 +1456,7 @@ class AdoptAPetPublisher(FTPPublisher):
                 # Breed 2
                 line.append("\"%s\"" % self.getPublisherBreed(an, 2))
                 # Purebred
-                line.append("\"%s\"" % self.apYesNo(an["CROSSBREED"] == 0))
+                line.append(self.apYesNo(an["CROSSBREED"] == 0))
                 # Age, one of Adult, Baby, Senior and Young
                 ageinyears = i18n.date_diff_days(an["DATEOFBIRTH"], i18n.now(self.dbo.timezone))
                 ageinyears /= 365.0
