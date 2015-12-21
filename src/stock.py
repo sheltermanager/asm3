@@ -181,13 +181,18 @@ def stock_take_from_mobile_form(dbo, username, post):
     """
     Post should contain sl{ID} values for new balances.
     """
-    for k, v in post.data.iteritems():
+    if post.integer("usagetype") == 0:
+        raise utils.ASMValidationError("No usage type passed")
+    for k in post.data.iterkeys():
         if k.startswith("sl"):
             slid = utils.cint(k.replace("sl", ""))
-            slv = utils.cint(v)
             sl = get_stocklevel(dbo, slid)
+            slb = utils.cfloat(sl["BALANCE"]) # balance
+            sln = post.floating(k)            # new balance
+            # If the balance hasn't changed, do nothing
+            if slb == sln: continue
             # Update the level
-            db.execute(dbo, "UPDATE stocklevel SET Balance = %d WHERE ID = %d" % ( slv, slid ))
-            # Write a stock usage
-            insert_stockusage(dbo, username, slid, slv - sl["BALANCE"], now(dbo.timezone), 5, "")
+            db.execute(dbo, "UPDATE stocklevel SET Balance = %f WHERE ID = %d" % ( sln, slid ))
+            # Write a stock usage record for the difference
+            insert_stockusage(dbo, username, slid, sln - slb, now(dbo.timezone), post.integer("usagetype"), "")
 

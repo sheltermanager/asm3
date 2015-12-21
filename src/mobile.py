@@ -164,10 +164,10 @@ def jqm_options_next_month(l):
     days.append(jqm_option(python2display(l,d)))
     return "\n".join(days)
 
-def jqm_options(rs, valuefield, displayfield):
+def jqm_options(rs, valuefield, displayfield, selectedvalue = ""):
     res = []
     for r in rs:
-        res.append(jqm_option(str(r[valuefield]), str(r[displayfield])))
+        res.append(jqm_option(str(r[valuefield]), str(r[displayfield]), selectedvalue == str(r[valuefield])))
     return "\n".join(res)
 
 def jqm_p(s):
@@ -870,7 +870,8 @@ def handler(dbo, user, locationfilter, post):
     elif mode == "st":
         # Display a page to adjust stock levels for id
         sl = stock.get_stocklevels(dbo, pid)
-        return handler_stocklocation(l, homelink, lookups.get_stock_location_name(dbo, pid), sl)
+        su = lookups.get_stock_usage_types(dbo)
+        return handler_stocklocation(l, homelink, lookups.get_stock_location_name(dbo, pid), sl, su)
 
     elif mode == "stu":
         # Update the stock levels from the posted values
@@ -1222,16 +1223,17 @@ def handler_viewincident(l, dbo, a, amls, cit, dia, logs, homelink, post):
     h.append("</body></html>")
     return "\n".join(h)
 
-def handler_stocklocation(l, homelink, locationname, sl):
+def handler_stocklocation(l, homelink, locationname, sl, su):
     """
     Generate a page that allows adjusting stock levels in the 
-    records sl
+    records sl. su is a list of stock usages for the dropdown
     """
     h = []
     h.append(header(l))
     h.append(jqm_page_header("", locationname, homelink))
-    h.append(jqm_form("st"))
+    h.append(jqm_form("st", ajax="false"))
     h.append(jqm_hidden("posttype", "stu"))
+    h.append(jqm_fieldcontain("usagetype", _("Usage Type", l) , jqm_select("usagetype", jqm_options(su, "ID", "USAGETYPENAME", "6"))))
     for s in sl:
         h.append(jqm_fieldcontain("sl%d" % s["SLID"], s["NAME"], jqm_slider("sl%d" % s["SLID"], 0, s["TOTAL"], s["BALANCE"])))
     h.append(jqm_submit(_("Save", l)))
