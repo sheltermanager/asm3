@@ -32,7 +32,7 @@ def get_database_info(alias):
     """
     alias = re.sub(INVALID_REMOVE, '', alias).lower()
     dbo = db.DatabaseInfo()
-    dbo.host = "localhost"
+    dbo.host = "/var/run/postgresql/" # Use UNIX sockets to connect to local pgbouncer
     dbo.port = 6432
     dbo.dbtype = "POSTGRESQL"
     dbo.alias = alias
