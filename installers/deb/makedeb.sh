@@ -11,6 +11,7 @@ mkdir -p sheltermanager3/usr/lib/sheltermanager3
 mkdir -p sheltermanager3/etc/apt/sources.list.d
 mkdir -p sheltermanager3/etc/cron.daily
 mkdir -p sheltermanager3/etc/init.d
+mkdir -p sheltermanager3/etc/logrotate.d
 mkdir -p sheltermanager3/etc/rsyslog.d
 mkdir -p sheltermanager3/etc/systemd/system
 mkdir -p sheltermanager3/DEBIAN
@@ -23,6 +24,20 @@ cp ../../README sheltermanager3/usr/share/doc/sheltermanager3
 
 # Add logging
 echo "local3.*                          -/var/log/asm3.log" > sheltermanager3/etc/rsyslog.d/asm3.conf
+
+# Log rotate
+echo "/var/log/asm3.log
+{
+        rotate 7
+        daily
+        missingok
+        notifempty
+        delaycompress
+        compress
+        postrotate
+                invoke-rc.d rsyslog rotate > /dev/null
+        endscript
+}" > /etc/logrotate.d/asm3
 
 # Add our repository to the list file
 echo "deb http://public.sheltermanager.com/deb/ ./" > sheltermanager3/etc/apt/sources.list.d/sheltermanager3.list
