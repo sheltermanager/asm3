@@ -361,8 +361,11 @@ def get_animal_view(dbo, animalid):
     """
     Constructs the animal view page to the template.
     """
-    a = animal.get_animal(dbo, animalid)
+    # If the animal is not adoptable, bail out
+    if not is_adoptable(dbo, animalid):
+        raise utils.ASMPermissionError("animal is not adoptable")
     # If the option is on, use animal comments as the notes
+    a = animal.get_animal(dbo, animalid)
     if configuration.publisher_use_comments(dbo):
         a["WEBSITEMEDIANOTES"] = a["ANIMALCOMMENTS"]
     head = dbfs.get_string(dbo, "head.html", "/internet/animalview")
