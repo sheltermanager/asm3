@@ -168,7 +168,7 @@ def deduct_stocklevel_from_form(dbo, username, post):
     the stocklevel.
     """
     item = post.integer("item")
-    quantity = post.floating("quantity") * -1
+    quantity = post.floating("quantity")
     usagetype = post.integer("usagetype")
     usagedate = post.date("usagedate")
     comments = post["usagecomments"]
