@@ -1,6 +1,7 @@
 38
 ================
 
+29/12/15 smcom use unix sockets to connect to pgbouncer
 28/12/15 animal_view should only apply to currently adoptable animals #338
 
 37
