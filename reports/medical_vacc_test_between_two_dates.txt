@@ -168,7 +168,7 @@ $$HEADER
 <td><b>Therapy</b></td>
 <td><b>Dosage</b></td>
 <td><b>Number</b></td>
-<td><b>Date Required</b></td>
+<td><b>Date Given</b></td>
 <td><b>Comments</b></td>
 </tr>
 HEADER$$
@@ -181,7 +181,7 @@ $$BODY<tr>
 <td><b>$MTYPE: $TREATMENTNAME</b></td>
 <td>$DOSAGE</td>
 <td>$TREATMENTNUMBER / $TOTALTREATMENTS</td>
-<td>$DATEREQUIRED</td>
+<td>$DATEGIVEN</td>
 <td>$COMMENTS</td>
 </tr>
 BODY$$
