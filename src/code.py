@@ -836,7 +836,9 @@ class login:
         # Sheltermanager.com
         elif MULTIPLE_DATABASES and MULTIPLE_DATABASES_TYPE == "smcom" and post["smaccount"] != "":
             dbo = smcom.get_database_info(post["smaccount"])
-            if dbo.database != "FAIL" and dbo.database != "DISABLED" and dbo.database != "WRONGSERVER":
+            if dbo.database == "WRONGSERVER":
+                raise web.seeother("https://sheltermanager.com/service/asmlogin")
+            elif dbo.database != "FAIL" and dbo.database != "DISABLED":
                 custom_splash = dbfs.file_exists(dbo, "splash.jpg")
                 l = configuration.locale(dbo)
         title = _("Animal Shelter Manager Login", l)
