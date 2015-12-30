@@ -708,8 +708,11 @@ class main:
         post = utils.PostedData(web.input(), session.locale)
         # Do we need to request a password change?
         if session.passchange:
-            raise web.seeother("/change_password?suggest=1")
+            raise web.seeother("change_password?suggest=1")
         s = html.header("", session)
+        # If there's something wrong with the database, logout
+        if not db.has_structure(dbo):
+            raise web.seeother("logout")
         # Database update checks
         dbmessage = ""
         if dbupdate.check_for_updates(dbo):
