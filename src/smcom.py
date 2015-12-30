@@ -28,7 +28,8 @@ def get_database_info(alias):
     """
     Returns the dbo object for a sheltermanager.com account or alias.  
     Also returns a dbo with a database property of "DISABLED" for a 
-    disabled account, or "FAIL" for a problem.
+    disabled account, "FAIL" for a problem or "WRONGSERVER" to indicate
+    that the database does not exist on this server.
     """
     alias = re.sub(INVALID_REMOVE, '', alias).lower()
     dbo = db.DatabaseInfo()
