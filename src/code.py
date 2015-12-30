@@ -5665,7 +5665,7 @@ class report_export:
                 al.debug("report %d has no criteria, exporting to CSV" % post.integer("id"), "code.report_export", dbo)
                 rows, cols = extreports.execute_query(dbo, crid, session.user, [])
                 web.header("Content-Type", "text/csv")
-                web.header("Content-Disposition", u"attachment; filename=" + utils.decode_html(filename) + u".csv")
+                web.header("Content-Disposition", u"attachment; filename=\"" + utils.decode_html(filename) + u".csv\"")
                 return utils.csv(l, rows, cols, True)
             # If we're in criteria mode (and there are some to get here), ask for them
             title = extreports.get_title(dbo, crid)
@@ -5688,7 +5688,7 @@ class report_export:
             p = extreports.get_criteria_params(dbo, crid, post)
             rows, cols = extreports.execute_query(dbo, crid, session.user, p)
             web.header("Content-Type", "text/csv")
-            web.header("Content-Disposition", u"attachment; filename=" + utils.decode_html(filename) + u".csv")
+            web.header("Content-Disposition", u"attachment; filename=\"" + utils.decode_html(filename) + u".csv\"")
             return utils.csv(l, rows, cols, True)
 
 class report_images:
