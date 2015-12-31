@@ -294,7 +294,7 @@ LEFT OUTER JOIN animal ON ownerdonation.AnimalID = animal.ID
 LEFT OUTER JOIN species ON animal.SpeciesID = species.ID
 LEFT OUTER JOIN lksex ON animal.Sex = lksex.ID
 WHERE ownerdonation.Date >= '$@from$' AND ownerdonation.Date <= '$@to$' 
-ORDER BY donationtype.DonationName, owner.OwnerName
+ORDER BY donationtype.DonationName, ownerdonation.Date
 ###
 $$HEADER
 HEADER$$
