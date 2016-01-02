@@ -42,8 +42,8 @@ $$BODY<tr>
 <td>$ANIMALNAME</td>
 <td>$theType</td>
 <td>$BreedName</td>
-<td>$ReasonName</td>
 <td>$DateBroughtIn</td>
+<td>$ReasonName</td>
 <td>$TimeOnShelter ($DaysOnShelter days)</td>
 <td><i>$OOName</i><br/>
 $OOAddress<br/>
