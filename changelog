@@ -1,6 +1,7 @@
 38
 ================
 
+04/01/16 Open records in new tab wasn't applying to shelter view #341
 30/12/15 Fixed Chrome unquoted content-disposition header bug
 30/12/15 Fix WRONGSERVER bug with splash screens on smcom
 29/12/15 Fix bug with double negative stock deduction from vacc
