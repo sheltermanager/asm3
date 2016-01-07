@@ -153,6 +153,7 @@ DEFAULTS = {
     "EmailDiaryNotes": "Yes", 
     "EmailMessages": "Yes", 
     "EmblemAlwaysLocation": "No",
+    "EmblemBonded": "Yes",
     "EmblemCrueltyCase": "Yes",
     "EmblemDeceased": "Yes",
     "EmblemHold": "Yes",

@@ -1456,6 +1456,9 @@
                     s.push(html.icon("movement", a.DISPLAYLOCATIONNAME + " / " + a.CURRENTOWNERNAME));
                 }
             }
+            if (config.bool("EmblemBonded") && (a.BONDEDANIMALID || a.BONDEDANIMAL2ID)) {
+                s.push(html.icon("bonded", _("Bonded")));
+            }
             if (config.bool("EmblemLongTerm") && a.ARCHIVED == 0 && (a.DAYSONSHELTER > config.integer("LongTermMonths") * 30))  {
                 s.push(html.icon("calendar", _("Long term")));
             }

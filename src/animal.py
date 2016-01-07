@@ -283,6 +283,8 @@ def get_animals_brief(animals):
             "ANIMALNAME" : a["ANIMALNAME"],
             "ANIMALTYPENAME" : a["ANIMALTYPENAME"],
             "ARCHIVED" : a["ARCHIVED"],
+            "BONDEDANIMALID": a["BONDEDANIMALID"],
+            "BONDEDANIMAL2ID": a["BONDEDANIMAL2ID"],
             "BREEDNAME": a["BREEDNAME"],
             "CODE": a["CODE"],
             "COMBITESTED": a["COMBITESTED"],
