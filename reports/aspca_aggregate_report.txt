@@ -203,7 +203,7 @@ CASE WHEN DeceasedDate Is Not Null AND a.AsilomarOwnerRequestedEuthanasia = 0 AN
 0 AS AlternativePlacements
 FROM animal a
 LEFT OUTER JOIN adoption ad ON ad.AnimalID = a.ID
-WHERE (MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$') OR (DeceasedDate >= '$PARENTARG1$' AND DeceasedDate <= '$PARENTARG2$')
+WHERE (MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$') OR (DeceasedDate >= '$PARENTARG1$' AND DeceasedDate <= '$PARENTARG2$' AND DiedOffShelter = 0)
 AND NonShelterAnimal = 0
 AND SpeciesID IN (1, 2)
 ORDER BY AgeGroup
