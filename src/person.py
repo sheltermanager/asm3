@@ -278,7 +278,6 @@ def get_links(dbo, pid):
         "ti.IncidentName AS LINKDISPLAY, " \
         "a.CallNotes AS FIELD2, '' AS DMOD FROM animalcontrol a " \
         "INNER JOIN incidenttype ti ON ti.ID = a.IncidentTypeID WHERE a.VictimID = %d " \
-        "ORDER BY DDATE DESC, LINKDISPLAY " \
         "UNION SELECT 'AT' AS TYPE, " \
         "%s AS TYPEDISPLAY, a.PickupDateTime AS DDATE, a.AnimalID AS LINKID, " \
         "a.DropOffAddress AS LINKDISPLAY, " \
