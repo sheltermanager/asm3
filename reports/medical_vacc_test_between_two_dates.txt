@@ -114,7 +114,7 @@ SELECT
 'Medical' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID,
 t.AnimalType, s.SpeciesName, il.LocationName, 
 am.TreatmentName, am.Dosage, amt.TreatmentNumber, 
-amt.TotalTreatments, amt.DateGiven, am.Comments
+amt.TotalTreatments, amt.DateGiven, amt.GivenBy, am.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN species s ON s.ID = a.SpeciesID
@@ -129,7 +129,7 @@ UNION SELECT
 'Vaccination' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
 t.AnimalType, sp.SpeciesName, il.LocationName,
 v.VaccinationType AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber,
-'1' AS TotalTreatments, av.DateOfVaccination AS DateGiven, av.Comments
+'1' AS TotalTreatments, av.DateOfVaccination AS DateGiven, av.LastChangedBy AS GivenBy, av.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN animalvaccination av ON a.ID = av.AnimalID
@@ -144,7 +144,7 @@ UNION SELECT
 'Test' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
 t.AnimalType, sp.SpeciesName, il.LocationName,
 tt.TestName AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber,
-'1' AS TotalTreatments, at.DateOfTest AS DateGiven, at.Comments
+'1' AS TotalTreatments, at.DateOfTest AS DateGiven, at.LastChangedBy AS GivenBy, at.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN animaltest at ON a.ID = at.AnimalID
@@ -169,6 +169,7 @@ $$HEADER
 <td><b>Dosage</b></td>
 <td><b>Number</b></td>
 <td><b>Date Given</b></td>
+<td><b>By</b></td>
 <td><b>Comments</b></td>
 </tr>
 HEADER$$
@@ -182,6 +183,7 @@ $$BODY<tr>
 <td>$DOSAGE</td>
 <td>$TREATMENTNUMBER / $TOTALTREATMENTS</td>
 <td>$DATEGIVEN</td>
+<td>$GIVENBY</td>
 <td>$COMMENTS</td>
 </tr>
 BODY$$
