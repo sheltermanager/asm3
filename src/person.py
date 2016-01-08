@@ -279,10 +279,11 @@ def get_links(dbo, pid):
         "a.CallNotes AS FIELD2, '' AS DMOD FROM animalcontrol a " \
         "INNER JOIN incidenttype ti ON ti.ID = a.IncidentTypeID WHERE a.VictimID = %d " \
         "UNION SELECT 'AT' AS TYPE, " \
-        "%s AS TYPEDISPLAY, a.PickupDateTime AS DDATE, a.AnimalID AS LINKID, " \
-        "a.DropOffAddress AS LINKDISPLAY, " \
-        "a.PickupAddress AS FIELD2, '' AS DMOD FROM animaltransport a " \
-        "WHERE a.DriverOwnerID = %d " \
+        "%s AS TYPEDISPLAY, t.PickupDateTime AS DDATE, t.AnimalID AS LINKID, " \
+        "%s LINKDISPLAY, " \
+        "t.DropOffAddress AS FIELD2, '' AS DMOD FROM animaltransport t " \
+        "INNER JOIN animal a ON a.ID = t.AnimalID " \
+        "WHERE t.DriverOwnerID = %d " \
         "ORDER BY DDATE DESC, LINKDISPLAY" \
         % ( db.ds(_("Original Owner", l)), linkdisplay, animalextra, int(pid), 
         db.ds(_("Brought In By", l)), linkdisplay, animalextra, int(pid),
@@ -295,7 +296,7 @@ def get_links(dbo, pid):
         db.ds(_("Animal Control Incident", l)), int(pid), int(pid), int(pid), 
         db.ds(_("Animal Control Caller", l)), int(pid), 
         db.ds(_("Animal Control Victim", l)), int(pid),
-        db.ds(_("Driver", l)), int(pid) )
+        db.ds(_("Driver", l)), linkdisplay, int(pid) )
     return db.query(dbo, sql)
 
 def get_investigation(dbo, personid, sort = ASCENDING):
