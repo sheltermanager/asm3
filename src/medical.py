@@ -60,7 +60,7 @@ def get_medicaltreatment_query(dbo):
         "am.*, amt.DateRequired, amt.DateGiven, amt.Comments AS TreatmentComments, " \
         "amt.TreatmentNumber, amt.TotalTreatments, ma.MediaName AS WebsiteMediaName, " \
         "am.ID AS RegimenID, amt.ID AS TreatmentID, " \
-        "amt.GivenBy, am.Comments AS RegimenComments, " \
+        "amt.GivenBy, amt.AdministeringVetID, adv.OwnerName AS AdministeringVetName, am.Comments AS RegimenComments, " \
         "CASE WHEN a.ActiveMovementType Is Not Null AND a.ActiveMovementType > 0 THEN " \
         "(SELECT mt.MovementType FROM lksmovementtype mt WHERE mt.ID = a.ActiveMovementType) " \
         "ELSE il.LocationName END AS LocationName, " \
@@ -89,6 +89,7 @@ def get_medicaltreatment_query(dbo):
         "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
         "INNER JOIN animalmedical am ON a.ID = am.AnimalID " \
         "INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID " \
+        "LEFT OUTER JOIN owner adv ON adv.ID = amt.AdministeringVetID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " % \
             { 
                 "compositeid": db.concat(dbo, ["am.ID", "'_'", "amt.ID"]),
@@ -170,12 +171,14 @@ def get_vaccination_query(dbo):
         "ELSE il.LocationName END AS LocationName, " \
         "CASE WHEN a.ActiveMovementType Is Not Null AND a.ActiveMovementType > 0 THEN " \
         "'' ELSE a.ShelterLocationUnit END AS LocationUnit, " \
-        "il.LocationName AS ShelterLocationName, a.ShelterLocationUnit " \
+        "il.LocationName AS ShelterLocationName, a.ShelterLocationUnit, " \
+        "av.AdministeringVetID, adv.OwnerName AS AdministeringVetName " \
         "FROM animal a " \
         "LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID " \
         "LEFT OUTER JOIN owner co ON co.ID = ad.OwnerID " \
         "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
         "INNER JOIN animalvaccination av ON a.ID = av.AnimalID " \
+        "LEFT OUTER JOIN owner adv ON adv.ID = av.AdministeringVetID " \
         "INNER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation "
 
@@ -551,13 +554,13 @@ def calculate_given_remaining(dbo, amid):
         "TreatmentsGiven = %d, TreatmentsRemaining = " \
         "((TotalNumberOfTreatments * TimingRule) - %d) WHERE ID = %d" % (given, given, amid))
 
-def complete_vaccination(dbo, username, vaccinationid, newdate):
+def complete_vaccination(dbo, username, vaccinationid, newdate, vetid = 0):
     """
     Marks a vaccination completed on newdate
     """
-    db.execute(dbo, "UPDATE animalvaccination SET DateOfVaccination = %s, " \
+    db.execute(dbo, "UPDATE animalvaccination SET DateOfVaccination = %s, AdministeringVetID = %s, " \
         "LastChangedBy = %s, LastChangedDate = %s WHERE ID = %d" % \
-        ( db.dd(newdate), db.ds(username), db.ddt(now(dbo.timezone)), vaccinationid))
+        ( db.dd(newdate), db.di(vetid), db.ds(username), db.ddt(now(dbo.timezone)), vaccinationid))
     audit.edit(dbo, username, "animalvaccination", str(vaccinationid) + " => given " + str(newdate))
 
 def complete_test(dbo, username, testid, newdate, testresult):
@@ -801,6 +804,7 @@ def insert_vaccination_from_form(dbo, username, post):
         ( "ID", db.di(nvaccid)),
         ( "AnimalID", post.db_integer("animal")),
         ( "VaccinationID", post.db_integer("type")),
+        ( "AdministeringVetID", post.db_integer("administeringvet")),
         ( "DateOfVaccination", post.db_date("given")),
         ( "DateRequired", post.db_date("required")),
         ( "DateExpires", post.db_date("expires")),
@@ -826,6 +830,7 @@ def update_vaccination_from_form(dbo, username, post):
     sql = db.make_update_user_sql(dbo, "animalvaccination", username, "ID=%d" % vaccid, ( 
         ( "AnimalID", post.db_integer("animal")),
         ( "VaccinationID", post.db_integer("type")),
+        ( "AdministeringVetID", post.db_integer("administeringvet")),
         ( "DateOfVaccination", post.db_date("given")),
         ( "DateRequired", post.db_date("required")),
         ( "DateExpires", post.db_date("expires")),
@@ -1100,13 +1105,14 @@ def update_treatment_today(dbo, username, amtid):
     # medical record appropriately
     update_medical_treatments(dbo, username, amid)
 
-def update_treatment_given(dbo, username, amtid, newdate):
+def update_treatment_given(dbo, username, amtid, newdate, vetid = 0):
     """
     Marks a treatment record as given on newdate, assuming
     that newdate is valid.
     """
     amid = db.query_int(dbo, "SELECT AnimalMedicalID FROM animalmedicaltreatment WHERE ID = %d" % amtid)
     db.execute(dbo, db.make_update_user_sql(dbo, "animalmedicaltreatment", username, "ID = %d" % amtid, (
+        ( "AdministeringVetID", db.di(vetid) ), 
         ( "DateGiven", db.dd(newdate) ), 
         ( "GivenBy", db.ds(username))
         )))

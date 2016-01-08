@@ -570,7 +570,6 @@ def sql_structure(dbo):
         fid(),
         fint("AnimalID"),
         fint("MedicalProfileID"),
-        fint("AdministeringVetID", True),
         fstr("TreatmentName"),
         fdate("StartDate"),
         fstr("Dosage", True),
@@ -586,7 +585,6 @@ def sql_structure(dbo):
         fint("Status"),
         flongstr("Comments") ))
     sql += index("animalmedical_AnimalID", "animalmedical", "AnimalID")
-    sql += index("animalmedical_AdministeringVetID", "animalmedical", "AdministeringVetID")
     sql += index("animalmedical_MedicalProfileID", "animalmedical", "MedicalProfileID")
     sql += index("animalmedical_CostPaidDate", "animalmedical", "CostPaidDate")
 
@@ -594,6 +592,7 @@ def sql_structure(dbo):
         fid(),
         fint("AnimalID"),
         fint("AnimalMedicalID"),
+        fint("AdministeringVetID", True),
         fdate("DateRequired"),
         fdate("DateGiven", True),
         fint("TreatmentNumber"),
@@ -602,6 +601,7 @@ def sql_structure(dbo):
         flongstr("Comments") ))
     sql += index("animalmedicaltreatment_AnimalID", "animalmedicaltreatment", "AnimalID")
     sql += index("animalmedicaltreatment_AnimalMedicalID", "animalmedicaltreatment", "AnimalMedicalID")
+    sql += index("animalmedicaltreatment_AdministeringVetID", "animalmedicaltreatment", "AdministeringVetID")
     sql += index("animalmedicaltreatment_DateRequired", "animalmedicaltreatment", "DateRequired")
 
     sql += table("animalname", (
@@ -1347,7 +1347,7 @@ def sql_default_data(dbo, skip_config = False):
     def lookup2(tablename, fieldname, tid, name):
         return "INSERT INTO %s (ID, %s) VALUES (%s, '%s')|=\n" % ( tablename, fieldname, str(tid), db.escape(name) )
     def lookup2money(tablename, fieldname, tid, name, money = 0):
-        return "INSERT INTO %s (ID, %s, DefaultCost) VALUES (%s, '%s', '%s', %d)|=\n" % ( tablename, fieldname, str(tid), db.escape(name), "", money)
+        return "INSERT INTO %s (ID, %s, DefaultCost) VALUES (%s, '%s', %d)|=\n" % ( tablename, fieldname, str(tid), db.escape(name), money)
     def account(tid, code, desc, atype, dtype, ctype):
         return "INSERT INTO accounts VALUES (%s, '%s', '%s', 0, %s, %s, %s, 0, '%s', %s, '%s', %s)|=\n" % ( str(tid), db.escape(code), db.escape(desc), str(atype), str(ctype), str(dtype), 'default', db.todaysql(), 'default', db.todaysql())
     def breed(tid, name, petfinder, speciesid):
@@ -4256,14 +4256,14 @@ def update_33800(dbo):
         db.execute_dbupdate(dbo, "UPDATE %s SET IsRetired = 0" % t)
 
 def update_33801(dbo):
-    # Add animal.PickupAddress, animalvaccination.AdministeringVetID and animalmedical.AdministeringVetID
+    # Add animal.PickupAddress, animalvaccination.AdministeringVetID and animalmedicaltreatment.AdministeringVetID
     add_column(dbo, "animal", "PickupAddress", shorttext(dbo))
-    add_column(dbo, "animalmedical", "AdministeringVetID", "INTEGER")
+    add_column(dbo, "animalmedicaltreatment", "AdministeringVetID", "INTEGER")
     add_column(dbo, "animalvaccination", "AdministeringVetID", "INTEGER")
     add_index(dbo, "animal_PickupAddress", "animal", "PickupAddress")
-    add_index(dbo, "animalmedical_AdministeringVetID", "animalmedical", "AdministeringVetID")
+    add_index(dbo, "animalmedicaltreatment_AdministeringVetID", "animalmedicaltreatment", "AdministeringVetID")
     add_index(dbo, "animalvaccination_AdministeringVetID", "animalvaccination", "AdministeringVetID")
     db.execute_dbupdate(dbo, "UPDATE animal SET PickupAddress = ''")
-    db.execute_dbupdate(dbo, "UPDATE animalmedical SET AdministeringVetID = 0")
+    db.execute_dbupdate(dbo, "UPDATE animalmedicaltreatment SET AdministeringVetID = 0")
     db.execute_dbupdate(dbo, "UPDATE animalvaccination SET AdministeringVetID = 0")
 

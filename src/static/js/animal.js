@@ -306,6 +306,14 @@ $(function() {
                 html.list_to_options(controller.pickuplocations, "ID", "LOCATIONNAME"),
                 '</select></td>',
                 '</tr>',
+                '<tr id="pickupaddressrow">',
+                '<td>',
+                '<label for="pickupaddress">' + _("Pickup Address") + '</label>',
+                '</td>',
+                '<td>',
+                '<input class="asm-textbox" type="text" id="pickupaddress" data-json="PICKUPADDRESS" data-post="pickupaddress" />',
+                '</td>',
+                '</tr>',
                 '<tr id="pickedupbyrow">',
                 '<td valign="top">',
                 '<label for="pickedupby">' + _("Picked Up By") + '</label>',
@@ -825,7 +833,7 @@ $(function() {
             $("#fivltestdate, #fivresult, #flvresult").toggle($("#fivltested").is(":checked"));
 
             // Show pickup fields if the animal is a pickup
-            $("#pickedupbyrow, #pickuplocationrow").toggle($("#pickedup").is(":checked"));
+            $("#pickedupbyrow, #pickupaddressrow, #pickuplocationrow").toggle($("#pickedup").is(":checked"));
 
             // If the user ticked hold, there's no hold until date and
             // we have an auto remove days period, default the date
@@ -963,11 +971,8 @@ $(function() {
             if (config.bool("DontShowMicrochip")) { $("#microchiprow").hide(); }
             if (config.bool("DontShowTattoo")) { $("#tattoorow").hide(); }
             if (config.str("SmartTagFTPURL") == "") { $("#smarttagrow").hide(); }
-            if (config.bool("DontShowBonded")) { $("#bondedwith1row").hide(); }
-            if (config.bool("DontShowBonded")) { $("#bondedwith2row").hide(); }
-            if (config.bool("DontShowPickup")) { $("#pickeduprow").hide(); }
-            if (config.bool("DontShowPickup")) { $("#pickuplocationrow").hide(); }
-            if (config.bool("DontShowPickup")) { $("#pickedupbyrow").hide(); }
+            if (config.bool("DontShowBonded")) { $("#bondedwith1row, #bondedwith2row").hide(); }
+            if (config.bool("DontShowPickup")) { $("#pickeduprow, #pickupaddressrow, #pickuplocationrow").hide(); }
             if (config.bool("DontShowNeutered")) { $("#neuteredrow").hide(); }
             if (config.bool("DontShowDeclawed")) { $("#declawed").closest("tr").hide(); }
             if (config.bool("DontShowGoodWith")) { $(".goodwith").hide(); }

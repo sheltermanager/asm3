@@ -152,7 +152,12 @@ $(function() {
                     },
                     { field: "DATEREQUIRED", display: _("Required"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
                     { field: "DATEGIVEN", display: _("Given"), formatter: tableform.format_date },
-                    { field: "GIVENBY", display: _("By") },
+                    { field: "GIVENBY", display: _("By"), 
+                        formatter: function(row) {
+                            if (!row.ADMINISTERINGVETID) { return row.GIVENBY; }
+                            return '<a href="person?id=' + row.ADMINISTERINGVETID + '">' + row.ADMINISTERINGVETNAME + '</a>';
+                        }
+                    },
                     { field: "COMMENTS", display: _("Comments") }
                 ]
             };
@@ -397,6 +402,10 @@ $(function() {
                 '<tr>',
                 '<td><label for="newdate">' + _("Given") + '</label></td>',
                 '<td><input id="newdate" data="newdate" type="textbox" class="asm-textbox asm-datebox asm-field" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="givenvet">' + _("Administering Vet") + '</label></td>',
+                '<td><input id="givenvet" data="givenvet" type="hidden" class="asm-personchooser asm-field" data-filter="vet" /></td>',
                 '</tr>',
                 '<tr class="tagstock"><td></td><td>' + html.info(_("These fields allow you to deduct stock for the treatment(s) given. This single deduction should cover the selected treatments being administered.")) + '</td></tr>',
                 '<tr class="tagstock">',
@@ -661,6 +670,7 @@ $(function() {
             common.widget_destroy("#dialog-required");
             common.widget_destroy("#animal");
             common.widget_destroy("#animals");
+            common.widget_destroy("#givenvet");
             tableform.dialog_destroy();
             this.lastanimal = null;
         },

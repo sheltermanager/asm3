@@ -1621,8 +1621,9 @@ class animal_medical:
         elif mode == "given":
             users.check_permission(session, users.BULK_COMPLETE_MEDICAL)
             newdate = post.date("newdate")
+            vet = post.integer("givenvet")
             for mid in post.integer_list("ids"):
-                extmedical.update_treatment_given(session.dbo, session.user, mid, newdate)
+                extmedical.update_treatment_given(session.dbo, session.user, mid, newdate, vet)
             if post.integer("item") != -1:
                 extstock.deduct_stocklevel_from_form(session.dbo, session.user, post)
         elif mode == "required":
@@ -1832,8 +1833,9 @@ class animal_vaccination:
             newdate = post.date("newdate")
             rescheduledate = post.date("rescheduledate")
             reschedulecomments = post["reschedulecomments"]
+            vet = post.integer("givenvet")
             for vid in post.integer_list("ids"):
-                extmedical.complete_vaccination(session.dbo, session.user, vid, newdate)
+                extmedical.complete_vaccination(session.dbo, session.user, vid, newdate, vet)
                 if rescheduledate is not None:
                     extmedical.reschedule_vaccination(session.dbo, session.user, vid, rescheduledate, reschedulecomments)
                 if post.integer("item") != -1:
@@ -4002,8 +4004,9 @@ class medical:
         elif mode == "given":
             users.check_permission(session, users.BULK_COMPLETE_MEDICAL)
             newdate = post.date("newdate")
+            vet = post.integer("givenvet")
             for mid in post.integer_list("ids"):
-                extmedical.update_treatment_given(session.dbo, session.user, mid, newdate)
+                extmedical.update_treatment_given(session.dbo, session.user, mid, newdate, vet)
             if post.integer("item") != -1:
                 extstock.deduct_stocklevel_from_form(session.dbo, session.user, post)
         elif mode == "required":
@@ -6251,10 +6254,11 @@ class vaccination:
         elif mode == "given":
             users.check_permission(session, users.BULK_COMPLETE_VACCINATION)
             newdate = post.date("newdate")
+            vet = post.integer("givenvet")
             rescheduledate = post.date("rescheduledate")
             reschedulecomments = post["reschedulecomments"]
             for vid in post.integer_list("ids"):
-                extmedical.complete_vaccination(session.dbo, session.user, vid, newdate)
+                extmedical.complete_vaccination(session.dbo, session.user, vid, newdate, vet)
                 if rescheduledate is not None:
                     extmedical.reschedule_vaccination(session.dbo, session.user, vid, rescheduledate, reschedulecomments)
                 if post.integer("item") != -1:

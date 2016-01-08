@@ -6,6 +6,7 @@ $(function() {
     var vaccination = {
 
         lastanimal: null, 
+        lastvet: null, 
 
         model: function() {
             var dialog = {
@@ -24,6 +25,7 @@ $(function() {
                         options: { displayfield: "VACCINATIONTYPE", valuefield: "ID", rows: controller.vaccinationtypes }},
                     { json_field: "DATEREQUIRED", post_field: "required", label: _("Required"), type: "date", validation: "notblank" },
                     { json_field: "DATEOFVACCINATION", post_field: "given", label: _("Given"), type: "date" },
+                    { json_field: "ADMINISTERINGVETID", post_field: "administeringvet", label: _("Administering Vet"), type: "person", personfilter: "vet" },
                     { json_field: "DATEEXPIRES", post_field: "expires", label: _("Expires"), type: "date" },
                     { json_field: "BATCHNUMBER", post_field: "batchnumber", label: _("Batch Number"), type: "text" },
                     { json_field: "MANUFACTURER", post_field: "manufacturer", label: _("Manufacturer"), type: "text" },
@@ -44,6 +46,7 @@ $(function() {
                         $("#animal").closest("tr").show();
                     }
                     $("#animals").closest("tr").hide();
+                    $("#administeringvet").personchooser("clear");
                     vaccination.enable_default_cost = false;
                     tableform.fields_populate_from_json(dialog.fields, row);
                     vaccination.enable_default_cost = true;
@@ -112,6 +115,12 @@ $(function() {
                     },
                     { field: "DATEREQUIRED", display: _("Required"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
                     { field: "DATEOFVACCINATION", display: _("Given"), formatter: tableform.format_date },
+                    { field: "ADMINISTERINGVET", display: _("Vet"), 
+                        formatter: function(row) {
+                            if (!row.ADMINISTERINGVETID) { return ""; }
+                            return '<a href="person?id=' + row.ADMINISTERINGVETID + '">' + row.ADMINISTERINGVETNAME + '</a>';
+                        }
+                    },
                     { field: "DATEEXPIRES", display: _("Expires"), formatter: tableform.format_date },
                     { field: "MANUFACTURER", display: _("Manufacturer") },
                     { field: "COST", display: _("Cost"), formatter: tableform.format_currency,
@@ -265,6 +274,7 @@ $(function() {
                 $("#animal").animalchooser("clear");
             }
             $("#animals").closest("tr").hide();
+            $("#administeringvet").personchooser("clear");
             $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
             $("#type").select("value", config.str("AFDefaultVaccinationType"));
             vaccination.enable_default_cost = true;
@@ -310,6 +320,10 @@ $(function() {
                 '<tr>',
                 '<td><label for="newdateg">' + _("Given") + '</label></td>',
                 '<td><input id="newdateg" data="newdate" type="text" class="asm-textbox asm-datebox asm-field" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="givenvet">' + _("Administering Vet") + '</label></td>',
+                '<td><input id="givenvet" data="givenvet" type="hidden" class="asm-personchooser asm-field" data-filter="vet" /></td>',
                 '</tr>',
                 '<tr><td></td><td>' + html.info(_("Specifying a reschedule date will make copies of the selected vaccinations and mark them to be given on the reschedule date. Example: If this vaccination needs to be given every year, set the reschedule date to be 1 year from today.")) + '</td></tr>',
                 '<tr>',
@@ -411,6 +425,12 @@ $(function() {
             $("#animal").bind("animalchooserchange", function(event, rec) { vaccination.lastanimal = rec; });
             $("#animal").bind("animalchooserloaded", function(event, rec) { vaccination.lastanimal = rec; });
 
+            // Same for the vet
+            $("#administeringvet").bind("personchooserchange", function(event, rec) { vaccination.lastvet = rec; });
+            $("#administeringvet").bind("personchooserloaded", function(event, rec) { vaccination.lastvet = rec; });
+            $("#givenvet").bind("personchooserchange", function(event, rec) { vaccination.lastvet = rec; });
+            $("#givenvet").bind("personchooserloaded", function(event, rec) { vaccination.lastvet = rec; });
+
             if (controller.newvacc == 1) {
                 this.new_vacc();
             }
@@ -466,6 +486,8 @@ $(function() {
                 row.SHELTERCODE = vaccination.lastanimal.SHELTERCODE;
                 row.WEBSITEMEDIANAME = vaccination.lastanimal.WEBSITEMEDIANAME;
             }
+            row.ADMINISTERINGVETNAME = "";
+            if (row.ADMINISTERINGVETID && vaccination.lastvet) { row.ADMINISTERINGVETNAME = vaccination.lastvet.OWNERNAME; }
             row.VACCINATIONTYPE = common.get_field(controller.vaccinationtypes, row.VACCINATIONID, "VACCINATIONTYPE");
         },
 
@@ -474,8 +496,11 @@ $(function() {
             common.widget_destroy("#dialog-given");
             common.widget_destroy("#animal");
             common.widget_destroy("#animals");
+            common.widget_destroy("#administeringvet");
+            common.widget_destroy("#givenvet");
             tableform.dialog_destroy();
             this.lastanimal = null;
+            this.lastvet = null;
         },
 
         name: "vaccination",
