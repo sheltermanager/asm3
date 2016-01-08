@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
-"PO-Revision-Date: 2015-11-28 14:01+0000\n"
-"Last-Translator: Robin <support@sheltermanager.com>\n"
+"PO-Revision-Date: 2016-01-03 19:15+0000\n"
+"Last-Translator: Andi <andi@gowling.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: en_GB\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.5.1.1\n"
 "X-Launchpad-Export-Date: 2015-03-02 05:20+0000\n"
-"X-POOTLE-MTIME: 1448719270.000000\n"
+"X-POOTLE-MTIME: 1451848546.000000\n"
 
 #: options.js
 msgid " days."
@@ -4324,6 +4324,14 @@ msgstr "Export Reports as CSV"
 msgid "Export this database in various formats"
 msgstr "Export this database in various formats"
 
+#: sql.js
+msgid ""
+"Exporting the complete database can take some time and generate a very large "
+"file, are you sure?"
+msgstr ""
+"Exporting the complete database can take some time and generate a very large "
+"file, are you sure?"
+
 #: reports.js
 msgid "Extra Images"
 msgstr "Extra Images"
@@ -4535,7 +4543,7 @@ msgstr "Find animal control incidents returned {0} results."
 
 #: person.js
 msgid "Find animals matching the looking for criteria of this person"
-msgstr ""
+msgstr "Find animals matching the looking for criteria of this person"
 
 #: common_personchooser.js
 msgid "Find donor"
@@ -6071,7 +6079,7 @@ msgstr "Liability"
 
 #: licence_renewal.js
 msgid "Licence for {0} successfully renewed {1} - {2}"
-msgstr ""
+msgstr "Licence for {0} successfully renewed {1} - {2}"
 
 #: header_edit_header.js search.js
 msgid "License"
@@ -6218,6 +6226,10 @@ msgid "Location and Species"
 msgstr "Location and Species"
 
 #: shelterview.js options.js
+msgid "Location and Type"
+msgstr "Location and Type"
+
+#: shelterview.js options.js
 msgid "Location and Unit"
 msgstr "Location and Unit"
 
@@ -6286,9 +6298,8 @@ msgid "Longest On Shelter"
 msgstr "Longest On Shelter"
 
 #: person.js
-#, fuzzy
 msgid "Looking For"
-msgstr "Looking for"
+msgstr "Looking For"
 
 #: person.js person.py
 msgid "Looking for"
@@ -6297,6 +6308,10 @@ msgstr "Looking for"
 #: onlineform.js dbupdate.py
 msgid "Lookup"
 msgstr "Lookup"
+
+#: onlineform.js
+msgid "Lookup (Multiple Select)"
+msgstr "Lookup (Multiple Select)"
 
 #: additional.js
 msgid "Lookup Values"
@@ -8669,9 +8684,9 @@ msgstr "Rename"
 
 #: licence_renewal.js
 msgid "Renew licence"
-msgstr ""
+msgstr "Renew licence"
 
-#: licence.js licence_renewal.js
+#: licence_renewal.js html.py
 msgid "Renew license"
 msgstr "Renew licence"
 
@@ -10284,6 +10299,14 @@ msgstr "The base color of this animal"
 msgid "The coat type of this animal"
 msgstr "The coat type of this animal"
 
+#: sql.js
+msgid ""
+"The database will be inaccessible to all users while the export is in "
+"progress."
+msgstr ""
+"The database will be inaccessible to all users while the export is in "
+"progress."
+
 #: lostfound_new.js lostfound.js
 msgid "The date reported to the shelter"
 msgstr "The date reported to the shelter"
@@ -10783,10 +10806,6 @@ msgstr "This animal was picked up"
 #: animal.js
 msgid "This animal was transferred from another shelter"
 msgstr "This animal was transferred from another shelter"
-
-#: sql.js
-msgid "This can take some time and generate a large file, are you sure?"
-msgstr "This can take some time and generate a large file, are you sure?"
 
 #: animal.py
 msgid "This code has already been used."
@@ -13414,6 +13433,9 @@ msgstr "{plural3} weeks."
 #: i18n.py
 msgid "{plural3} years."
 msgstr "{plural3} years."
+
+#~ msgid "This can take some time and generate a large file, are you sure?"
+#~ msgstr "This can take some time and generate a large file, are you sure?"
 
 #~ msgid "Mobile"
 #~ msgstr "Mobile"

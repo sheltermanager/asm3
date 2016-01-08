@@ -4318,6 +4318,12 @@ msgstr ""
 msgid "Export this database in various formats"
 msgstr "Експорт на базата данни във различни формати"
 
+#: sql.js
+msgid ""
+"Exporting the complete database can take some time and generate a very large "
+"file, are you sure?"
+msgstr ""
+
 #: reports.js
 msgid "Extra Images"
 msgstr "Допълнителни изображения"
@@ -6205,6 +6211,10 @@ msgid "Location and Species"
 msgstr "Местонахождение и вид животно"
 
 #: shelterview.js options.js
+msgid "Location and Type"
+msgstr ""
+
+#: shelterview.js options.js
 msgid "Location and Unit"
 msgstr "Местонахождение и локация"
 
@@ -6283,6 +6293,10 @@ msgstr "Търси"
 #: onlineform.js dbupdate.py
 msgid "Lookup"
 msgstr "Търсене"
+
+#: onlineform.js
+msgid "Lookup (Multiple Select)"
+msgstr ""
 
 #: additional.js
 msgid "Lookup Values"
@@ -8654,7 +8668,7 @@ msgstr ""
 msgid "Renew licence"
 msgstr ""
 
-#: licence.js licence_renewal.js
+#: licence_renewal.js html.py
 msgid "Renew license"
 msgstr ""
 
@@ -10263,6 +10277,12 @@ msgstr "Основният цват на животното"
 msgid "The coat type of this animal"
 msgstr "Типа окосмяване на животното"
 
+#: sql.js
+msgid ""
+"The database will be inaccessible to all users while the export is in "
+"progress."
+msgstr ""
+
 #: lostfound_new.js lostfound.js
 msgid "The date reported to the shelter"
 msgstr "Дата, на която е съобщено в приюта"
@@ -10754,11 +10774,6 @@ msgstr ""
 #: animal.js
 msgid "This animal was transferred from another shelter"
 msgstr "Животното е прехвърлено от друг приют"
-
-#: sql.js
-msgid "This can take some time and generate a large file, are you sure?"
-msgstr ""
-"Операцията може да отнеме време, за да генерира голям файл. Сигурни ли сте?"
 
 #: animal.py
 msgid "This code has already been used."
@@ -13372,6 +13387,10 @@ msgstr "{plural3} седмици."
 #: i18n.py
 msgid "{plural3} years."
 msgstr "{plural3} години."
+
+#~ msgid "This can take some time and generate a large file, are you sure?"
+#~ msgstr ""
+#~ "Операцията може да отнеме време, за да генерира голям файл. Сигурни ли сте?"
 
 #~ msgid "Mobile"
 #~ msgstr "Мобилен"

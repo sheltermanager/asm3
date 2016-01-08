@@ -4354,6 +4354,12 @@ msgstr ""
 msgid "Export this database in various formats"
 msgstr "Eksportuoti šią duomenų bazę įvairiais formatais"
 
+#: sql.js
+msgid ""
+"Exporting the complete database can take some time and generate a very large "
+"file, are you sure?"
+msgstr ""
+
 #: reports.js
 msgid "Extra Images"
 msgstr "Papildomi vaizdai"
@@ -6258,6 +6264,10 @@ msgid "Location and Species"
 msgstr "Patalpa ir rūšis"
 
 #: shelterview.js options.js
+msgid "Location and Type"
+msgstr ""
+
+#: shelterview.js options.js
 msgid "Location and Unit"
 msgstr "Patalpa ir laikymo vieta"
 
@@ -6336,6 +6346,10 @@ msgstr "Ieško"
 #: onlineform.js dbupdate.py
 msgid "Lookup"
 msgstr "Sąrašas"
+
+#: onlineform.js
+msgid "Lookup (Multiple Select)"
+msgstr ""
 
 #: additional.js
 msgid "Lookup Values"
@@ -8725,7 +8739,7 @@ msgstr "Pervadinti"
 msgid "Renew licence"
 msgstr ""
 
-#: licence.js licence_renewal.js
+#: licence_renewal.js html.py
 msgid "Renew license"
 msgstr ""
 
@@ -10352,6 +10366,12 @@ msgstr "Pagrindinė gyvūno spalva"
 msgid "The coat type of this animal"
 msgstr "Šio gyvūno kailio tipas"
 
+#: sql.js
+msgid ""
+"The database will be inaccessible to all users while the export is in "
+"progress."
+msgstr ""
+
 #: lostfound_new.js lostfound.js
 msgid "The date reported to the shelter"
 msgstr "Data, kada pranešta prieglaudai"
@@ -10845,10 +10865,6 @@ msgstr ""
 #: animal.js
 msgid "This animal was transferred from another shelter"
 msgstr "Šis gyvūnas buvo priimtas iš kitos prieglaudos"
-
-#: sql.js
-msgid "This can take some time and generate a large file, are you sure?"
-msgstr "Didelio failo sugeneravimas gali užtrukti, ar tikrai norite tęsti?"
 
 #: animal.py
 msgid "This code has already been used."
@@ -13509,6 +13525,9 @@ msgstr "{plural3} savaitės."
 #: i18n.py
 msgid "{plural3} years."
 msgstr "{plural3} metai."
+
+#~ msgid "This can take some time and generate a large file, are you sure?"
+#~ msgstr "Didelio failo sugeneravimas gali užtrukti, ar tikrai norite tęsti?"
 
 #~ msgid "Mobile"
 #~ msgstr "Mobilusis telefonas"

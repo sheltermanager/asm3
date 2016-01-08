@@ -4329,6 +4329,12 @@ msgstr ""
 msgid "Export this database in various formats"
 msgstr "Esporta questo database in vari formati"
 
+#: sql.js
+msgid ""
+"Exporting the complete database can take some time and generate a very large "
+"file, are you sure?"
+msgstr ""
+
 #: reports.js
 msgid "Extra Images"
 msgstr "Immagini extra"
@@ -6217,6 +6223,10 @@ msgid "Location and Species"
 msgstr "Posizione e specie"
 
 #: shelterview.js options.js
+msgid "Location and Type"
+msgstr ""
+
+#: shelterview.js options.js
 msgid "Location and Unit"
 msgstr ""
 
@@ -6295,6 +6305,10 @@ msgstr "Cercando"
 #: onlineform.js dbupdate.py
 msgid "Lookup"
 msgstr "Cercare"
+
+#: onlineform.js
+msgid "Lookup (Multiple Select)"
+msgstr ""
 
 #: additional.js
 msgid "Lookup Values"
@@ -8665,7 +8679,7 @@ msgstr ""
 msgid "Renew licence"
 msgstr ""
 
-#: licence.js licence_renewal.js
+#: licence_renewal.js html.py
 msgid "Renew license"
 msgstr ""
 
@@ -10269,6 +10283,12 @@ msgstr "Il colore di base di questo animale"
 msgid "The coat type of this animal"
 msgstr "Il tipo mantello di questo animale"
 
+#: sql.js
+msgid ""
+"The database will be inaccessible to all users while the export is in "
+"progress."
+msgstr ""
+
 #: lostfound_new.js lostfound.js
 msgid "The date reported to the shelter"
 msgstr "La data segnalato al rifugio"
@@ -10747,12 +10767,6 @@ msgstr ""
 #: animal.js
 msgid "This animal was transferred from another shelter"
 msgstr "Questo animale è arrivato da un'altro rifugio"
-
-#: sql.js
-msgid "This can take some time and generate a large file, are you sure?"
-msgstr ""
-"Questa operazione potrebbe richiedere diverso tempo e generare un file di "
-"grandi dimensioni, sei sicuro?"
 
 #: animal.py
 msgid "This code has already been used."
@@ -13355,6 +13369,11 @@ msgstr ""
 #: i18n.py
 msgid "{plural3} years."
 msgstr ""
+
+#~ msgid "This can take some time and generate a large file, are you sure?"
+#~ msgstr ""
+#~ "Questa operazione potrebbe richiedere diverso tempo e generare un file di "
+#~ "grandi dimensioni, sei sicuro?"
 
 #~ msgid "Mobile"
 #~ msgstr "Cellulare"

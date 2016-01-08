@@ -4313,6 +4313,12 @@ msgstr ""
 msgid "Export this database in various formats"
 msgstr "Exportera denna databas i olika format"
 
+#: sql.js
+msgid ""
+"Exporting the complete database can take some time and generate a very large "
+"file, are you sure?"
+msgstr ""
+
 #: reports.js
 msgid "Extra Images"
 msgstr "Extra bilder"
@@ -6205,6 +6211,10 @@ msgid "Location and Species"
 msgstr "Plats och arter"
 
 #: shelterview.js options.js
+msgid "Location and Type"
+msgstr ""
+
+#: shelterview.js options.js
 msgid "Location and Unit"
 msgstr ""
 
@@ -6283,6 +6293,10 @@ msgstr "Letar efter"
 #: onlineform.js dbupdate.py
 msgid "Lookup"
 msgstr "Sök"
+
+#: onlineform.js
+msgid "Lookup (Multiple Select)"
+msgstr ""
 
 #: additional.js
 msgid "Lookup Values"
@@ -8657,7 +8671,7 @@ msgstr ""
 msgid "Renew licence"
 msgstr ""
 
-#: licence.js licence_renewal.js
+#: licence_renewal.js html.py
 msgid "Renew license"
 msgstr ""
 
@@ -10263,6 +10277,12 @@ msgstr "Djuret färg"
 msgid "The coat type of this animal"
 msgstr "Djuret pälstyp"
 
+#: sql.js
+msgid ""
+"The database will be inaccessible to all users while the export is in "
+"progress."
+msgstr ""
+
 #: lostfound_new.js lostfound.js
 msgid "The date reported to the shelter"
 msgstr "Datumet som rapporterades till djurhem"
@@ -10745,10 +10765,6 @@ msgstr ""
 #: animal.js
 msgid "This animal was transferred from another shelter"
 msgstr "Detta djur överfördes från ettannat djurhem"
-
-#: sql.js
-msgid "This can take some time and generate a large file, are you sure?"
-msgstr "Detta kan ta lite tid och genererar en stor fil, är du säker?"
 
 #: animal.py
 msgid "This code has already been used."
@@ -13343,6 +13359,9 @@ msgstr ""
 #: i18n.py
 msgid "{plural3} years."
 msgstr ""
+
+#~ msgid "This can take some time and generate a large file, are you sure?"
+#~ msgstr "Detta kan ta lite tid och genererar en stor fil, är du säker?"
 
 #~ msgid "Mobile"
 #~ msgstr "Mobiltelefon"

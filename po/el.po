@@ -4405,6 +4405,12 @@ msgstr "Εξαγωγή Εκθέσεων ως CSV"
 msgid "Export this database in various formats"
 msgstr "Εξαγωγή αυτής της βάσης δεδομένων σε ποικίλες μορφές"
 
+#: sql.js
+msgid ""
+"Exporting the complete database can take some time and generate a very large "
+"file, are you sure?"
+msgstr ""
+
 #: reports.js
 msgid "Extra Images"
 msgstr "Επιπρόσθετες Εικόνες"
@@ -6327,6 +6333,10 @@ msgid "Location and Species"
 msgstr ""
 
 #: shelterview.js options.js
+msgid "Location and Type"
+msgstr ""
+
+#: shelterview.js options.js
 msgid "Location and Unit"
 msgstr ""
 
@@ -6406,6 +6416,10 @@ msgstr "Αναζήτηση για"
 #: onlineform.js dbupdate.py
 msgid "Lookup"
 msgstr "Αναζήτηση"
+
+#: onlineform.js
+msgid "Lookup (Multiple Select)"
+msgstr ""
 
 #: additional.js
 msgid "Lookup Values"
@@ -8836,7 +8850,7 @@ msgstr "Μετονομασία"
 msgid "Renew licence"
 msgstr ""
 
-#: licence.js licence_renewal.js
+#: licence_renewal.js html.py
 msgid "Renew license"
 msgstr ""
 
@@ -10504,6 +10518,12 @@ msgstr "Το κύριο χρώμα αυτού του ζώου"
 msgid "The coat type of this animal"
 msgstr ""
 
+#: sql.js
+msgid ""
+"The database will be inaccessible to all users while the export is in "
+"progress."
+msgstr ""
+
 #: lostfound_new.js lostfound.js
 msgid "The date reported to the shelter"
 msgstr ""
@@ -10994,10 +11014,6 @@ msgstr ""
 #, fuzzy
 msgid "This animal was transferred from another shelter"
 msgstr "{plural1} ζώα μεταφέρθηκαν σε άλλα καταφύγια"
-
-#: sql.js
-msgid "This can take some time and generate a large file, are you sure?"
-msgstr ""
 
 #: animal.py
 msgid "This code has already been used."

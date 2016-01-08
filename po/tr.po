@@ -4339,6 +4339,12 @@ msgstr ""
 msgid "Export this database in various formats"
 msgstr "Bu veritabanını, farklı formatlara dışa aktar."
 
+#: sql.js
+msgid ""
+"Exporting the complete database can take some time and generate a very large "
+"file, are you sure?"
+msgstr ""
+
 #: reports.js
 msgid "Extra Images"
 msgstr "Ekstra Resimler"
@@ -6237,6 +6243,10 @@ msgid "Location and Species"
 msgstr "Yerleşke ve Türler"
 
 #: shelterview.js options.js
+msgid "Location and Type"
+msgstr ""
+
+#: shelterview.js options.js
 msgid "Location and Unit"
 msgstr "Yerleşke ve Birim"
 
@@ -6316,6 +6326,10 @@ msgstr "Arıyor"
 #: onlineform.js dbupdate.py
 msgid "Lookup"
 msgstr "Arama"
+
+#: onlineform.js
+msgid "Lookup (Multiple Select)"
+msgstr ""
 
 #: additional.js
 msgid "Lookup Values"
@@ -8711,7 +8725,7 @@ msgstr "Yeniden Adlandır"
 msgid "Renew licence"
 msgstr ""
 
-#: licence.js licence_renewal.js
+#: licence_renewal.js html.py
 msgid "Renew license"
 msgstr ""
 
@@ -10335,6 +10349,12 @@ msgstr "Hayvanın ana rengi (base color)"
 msgid "The coat type of this animal"
 msgstr "Hayvanın tüy tipi"
 
+#: sql.js
+msgid ""
+"The database will be inaccessible to all users while the export is in "
+"progress."
+msgstr ""
+
 #: lostfound_new.js lostfound.js
 msgid "The date reported to the shelter"
 msgstr "Barınağa raporlandığı tarih"
@@ -10833,12 +10853,6 @@ msgstr "Bu hayvan alındı. (picked up)"
 #: animal.js
 msgid "This animal was transferred from another shelter"
 msgstr "Bu hayvan, başka bir barınaktan gelmiştir."
-
-#: sql.js
-msgid "This can take some time and generate a large file, are you sure?"
-msgstr ""
-"Bu işlem, uzun bir süre alabilir ve büyük bir dosya üretecektir. Emin "
-"misiniz?"
 
 #: animal.py
 msgid "This code has already been used."
@@ -13477,6 +13491,11 @@ msgstr "{plural3} hafta"
 #: i18n.py
 msgid "{plural3} years."
 msgstr "{plural3} yıl"
+
+#~ msgid "This can take some time and generate a large file, are you sure?"
+#~ msgstr ""
+#~ "Bu işlem, uzun bir süre alabilir ve büyük bir dosya üretecektir. Emin "
+#~ "misiniz?"
 
 #~ msgid "Mobile"
 #~ msgstr "Mobil"
