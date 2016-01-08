@@ -1,6 +1,7 @@
 38
 ================
 
+08/01/16 Add PickupAddress and AdministeringVetID to medical/vacc #340
 08/01/16 Add IsRetired column to all lookups and to lookup descriptors #55
 08/01/16 Show drivers in person links #342
 07/01/16 Show emblem for bonded animals #343

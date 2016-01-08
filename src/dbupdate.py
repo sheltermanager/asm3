@@ -7,7 +7,7 @@ import os, sys
 from i18n import _, BUILD
 from sitedefs import DB_PK_STRATEGY
 
-LATEST_VERSION = 33719
+LATEST_VERSION = 33801
 VERSIONS = ( 
     2870, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3050,
     3051, 3081, 3091, 3092, 3093, 3094, 3110, 3111, 3120, 3121, 3122, 3123, 3200,
@@ -20,7 +20,7 @@ VERSIONS = (
     33503, 33504, 33505, 33506, 33507, 33508, 33600, 33601, 33602, 33603, 33604,
     33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702, 33703, 33704, 33705,
     33706, 33707, 33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716,
-    33717, 33718, 33719
+    33717, 33718, 33800, 33801
 )
 
 # All ASM3 tables
@@ -281,6 +281,7 @@ def sql_structure(dbo):
         fint("IsPickup", True),
         fint("PickedUpByOwnerID", True),
         fint("PickupLocationID", True),
+        fstr("PickupAddress", True),
         flongstr("HealthProblems"),
         fint("PutToSleep"),
         flongstr("PTSReason"),
@@ -350,6 +351,7 @@ def sql_structure(dbo):
     sql += index("animal_OwnersVetID", "animal", "OwnersVetID")
     sql += index("animal_PickedUpByOwnerID", "animal", "PickedUpByOwnerID")
     sql += index("animal_PickupLocationID", "animal", "PickupLocationID")
+    sql += index("animal_PickupAddress", "animal", "PickupAddress")
     sql += index("animal_PutToSleep", "animal", "PutToSleep")
     sql += index("animal_PTSReasonID", "animal", "PTSReasonID")
     sql += index("animal_RabiesTag", "animal", "RabiesTag")
@@ -568,6 +570,7 @@ def sql_structure(dbo):
         fid(),
         fint("AnimalID"),
         fint("MedicalProfileID"),
+        fint("AdministeringVetID", True),
         fstr("TreatmentName"),
         fdate("StartDate"),
         fstr("Dosage", True),
@@ -583,6 +586,7 @@ def sql_structure(dbo):
         fint("Status"),
         flongstr("Comments") ))
     sql += index("animalmedical_AnimalID", "animalmedical", "AnimalID")
+    sql += index("animalmedical_AdministeringVetID", "animalmedical", "AdministeringVetID")
     sql += index("animalmedical_MedicalProfileID", "animalmedical", "MedicalProfileID")
     sql += index("animalmedical_CostPaidDate", "animalmedical", "CostPaidDate")
 
@@ -668,6 +672,7 @@ def sql_structure(dbo):
         fid(),
         fint("AnimalID"),
         fint("VaccinationID"),
+        fint("AdministeringVetID", True),
         fdate("DateOfVaccination", True),
         fdate("DateRequired"),
         fdate("DateExpires", True),
@@ -677,6 +682,7 @@ def sql_structure(dbo):
         fdate("CostPaidDate", True),
         flongstr("Comments") ))
     sql += index("animalvaccination_AnimalID", "animalvaccination", "AnimalID")
+    sql += index("animalvaccination_AdministeringVetID", "animalvaccination", "AdministeringVetID")
     sql += index("animalvaccination_DateRequired", "animalvaccination", "DateRequired")
     sql += index("animalvaccination_CostPaidDate", "animalvaccination", "CostPaidDate")
     sql += index("animalvaccination_Manufacturer", "animalvaccination", "Manufacturer")
@@ -4238,7 +4244,7 @@ def update_33718(dbo):
     add_column(dbo, "animal", "TotalTimeOnShelter", shorttext(dbo))
     db.execute_dbupdate(dbo, "UPDATE animal SET TotalDaysOnShelter=0, TotalTimeOnShelter=''")
 
-def update_33719(dbo):
+def update_33800(dbo):
     # Add IsRetired field to lookups
     retirablelookups = [ "animaltype", "basecolour", "breed", "citationtype", "costtype", 
         "deathreason", "diet", "donationpayment", "donationtype", "entryreason", "incidentcompleted", 
@@ -4248,4 +4254,16 @@ def update_33719(dbo):
     for t in retirablelookups:
         add_column(dbo, t, "IsRetired", "INTEGER")
         db.execute_dbupdate(dbo, "UPDATE %s SET IsRetired = 0" % t)
+
+def update_33801(dbo):
+    # Add animal.PickupAddress, animalvaccination.AdministeringVetID and animalmedical.AdministeringVetID
+    add_column(dbo, "animal", "PickupAddress", shorttext(dbo))
+    add_column(dbo, "animalmedical", "AdministeringVetID", "INTEGER")
+    add_column(dbo, "animalvaccination", "AdministeringVetID", "INTEGER")
+    add_index(dbo, "animal_PickupAddress", "animal", "PickupAddress")
+    add_index(dbo, "animalmedical_AdministeringVetID", "animalmedical", "AdministeringVetID")
+    add_index(dbo, "animalvaccination_AdministeringVetID", "animalvaccination", "AdministeringVetID")
+    db.execute_dbupdate(dbo, "UPDATE animal SET PickupAddress = ''")
+    db.execute_dbupdate(dbo, "UPDATE animalmedical SET AdministeringVetID = 0")
+    db.execute_dbupdate(dbo, "UPDATE animalvaccination SET AdministeringVetID = 0")
 
