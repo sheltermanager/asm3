@@ -7,7 +7,7 @@ import os, sys
 from i18n import _, BUILD
 from sitedefs import DB_PK_STRATEGY
 
-LATEST_VERSION = 33718
+LATEST_VERSION = 33719
 VERSIONS = ( 
     2870, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3050,
     3051, 3081, 3091, 3092, 3093, 3094, 3110, 3111, 3120, 3121, 3122, 3123, 3200,
@@ -20,7 +20,7 @@ VERSIONS = (
     33503, 33504, 33505, 33506, 33507, 33508, 33600, 33601, 33602, 33603, 33604,
     33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702, 33703, 33704, 33705,
     33706, 33707, 33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716,
-    33717, 33718
+    33717, 33718, 33719
 )
 
 # All ASM3 tables
@@ -661,7 +661,8 @@ def sql_structure(dbo):
     sql += table("animaltype", (
         fid(),
         fstr("AnimalType"),
-        fstr("AnimalDescription", True) ), False)
+        fstr("AnimalDescription", True),
+        fint("IsRetired", True) ), False)
 
     sql += table("animalvaccination", (
         fid(),
@@ -719,20 +720,23 @@ def sql_structure(dbo):
         fid(),
         fstr("BaseColour"),
         fstr("BaseColourDescription", True),
-        fstr("AdoptAPetColour", True) ), False)
+        fstr("AdoptAPetColour", True),
+        fint("IsRetired", True) ), False)
 
     sql += table("breed", (
         fid(),
         fstr("BreedName"),
         fstr("BreedDescription", True),
         fstr("PetFinderBreed", True),
-        fint("SpeciesID", True) ), False)
+        fint("SpeciesID", True),
+        fint("IsRetired", True) ), False)
 
     sql += table("citationtype", (
         fid(),
         fstr("CitationName"),
         fstr("CitationDescription", True),
-        fint("DefaultCost", True)), False)
+        fint("DefaultCost", True),
+        fint("IsRetired", True) ), False)
 
     sql += table("configuration", (
         fstr("ItemName"),
@@ -743,7 +747,8 @@ def sql_structure(dbo):
         fid(),
         fstr("CostTypeName"),
         fstr("CostTypeDescription"),
-        fint("DefaultCost", True)), False)
+        fint("DefaultCost", True),
+        fint("IsRetired", True) ), False)
 
     sql += table("customreport", (
         fid(),
@@ -775,7 +780,8 @@ def sql_structure(dbo):
     sql += table("deathreason", (
         fid(),
         fstr("ReasonName"),
-        fstr("ReasonDescription", True) ), False)
+        fstr("ReasonDescription", True),
+        fint("IsRetired", True) ), False)
 
     sql += table("diary", (
         fid(),
@@ -809,45 +815,53 @@ def sql_structure(dbo):
     sql += table("diet", (
         fid(),
         fstr("DietName"),
-        fstr("DietDescription", True) ), False)
+        fstr("DietDescription", True),
+        fint("IsRetired", True) ), False)
 
     sql += table("donationtype", (
         fid(),
         fstr("DonationName"),
         fstr("DonationDescription", True),
-        fint("DefaultCost", True)), False)
+        fint("DefaultCost", True),
+        fint("IsRetired", True) ), False)
 
     sql += table("donationpayment", (
         fid(),
         fstr("PaymentName"),
-        fstr("PaymentDescription", True) ), False)
+        fstr("PaymentDescription", True),
+        fint("IsRetired", True) ), False)
 
     sql += table("entryreason", (
         fid(),
         fstr("ReasonName"),
-        fstr("ReasonDescription", True) ), False)
+        fstr("ReasonDescription", True),
+        fint("IsRetired", True) ), False)
 
     sql += table("incidentcompleted", (
         fid(),
         fstr("CompletedName"),
-        fstr("CompletedDescription", True) ), False)
+        fstr("CompletedDescription", True),
+        fint("IsRetired", True) ), False)
 
     sql += table("incidenttype", (
         fid(),
         fstr("IncidentName"),
-        fstr("IncidentDescription", True) ), False)
+        fstr("IncidentDescription", True),
+        fint("IsRetired", True) ), False)
 
     sql += table("internallocation", (
         fid(),
         fstr("LocationName"),
         fstr("LocationDescription", True),
-        flongstr("Units", True) ), False)
+        flongstr("Units", True),
+        fint("IsRetired", True) ), False)
 
     sql += table("licencetype", (
         fid(),
         fstr("LicenceTypeName"),
         fstr("LicenceTypeDescription", True),
-        fint("DefaultCost", True) ), False)
+        fint("DefaultCost", True),
+        fint("IsRetired", True) ), False)
 
     sql += table("lksaccounttype", (
         fid(), fstr("AccountType") ), False)
@@ -919,7 +933,8 @@ def sql_structure(dbo):
     sql += table("logtype", (
         fid(),
         fstr("LogTypeName"),
-        fstr("LogTypeDescription", True) ), False)
+        fstr("LogTypeDescription", True),
+        fint("IsRetired", True) ), False)
 
     sql += table("media", (
         fid(),
@@ -1188,7 +1203,8 @@ def sql_structure(dbo):
     sql += table("pickuplocation", (
         fid(),
         fstr("LocationName"),
-        fstr("LocationDescription", True) ), False)
+        fstr("LocationDescription", True),
+        fint("IsRetired", True) ), False)
 
     sql += table("primarykey", (
         fstr("TableName"),
@@ -1198,8 +1214,8 @@ def sql_structure(dbo):
     sql += table("reservationstatus", (
         fid(),
         fstr("StatusName"),
-        flongstr("StatusDescription", True)
-        ), False)
+        flongstr("StatusDescription", True),
+        fint("IsRetired", True) ), False)
 
     sql += table("role", (
         fid(),
@@ -1211,8 +1227,8 @@ def sql_structure(dbo):
         fid(),
         fstr("SpeciesName"),
         fstr("SpeciesDescription", True),
-        fstr("PetFinderSpecies", True)
-        ), False)
+        fstr("PetFinderSpecies", True),
+        fint("IsRetired", True) ), False)
 
     sql += table("stocklevel", (
         fid(),
@@ -1235,8 +1251,8 @@ def sql_structure(dbo):
     sql += table("stocklocation", (
         fid(),
         fstr("LocationName"),
-        flongstr("LocationDescription", True)
-        ), False)
+        flongstr("LocationDescription", True),
+        fint("IsRetired", True) ), False)
     sql += index("stocklocation_LocationName", "stocklocation", "LocationName", True)
 
     sql += table("stockusage", (
@@ -1253,27 +1269,29 @@ def sql_structure(dbo):
     sql += table("stockusagetype", (
         fid(),
         fstr("UsageTypeName"),
-        flongstr("UsageTypeDescription", True)
-        ), False)
+        flongstr("UsageTypeDescription", True),
+        fint("IsRetired", True) ), False)
     sql += index("stockusagetype_UsageTypeName", "stockusagetype", "UsageTypeName")
 
     sql += table("testtype", (
         fid(),
         fstr("TestName"),
         fstr("TestDescription", True),
-        fint("DefaultCost", True) ), False)
+        fint("DefaultCost", True),
+        fint("IsRetired", True) ), False)
 
     sql += table("testresult", (
         fid(),
         fstr("ResultName"),
-        fstr("ResultDescription", True)
-        ), False)
+        fstr("ResultDescription", True),
+        fint("IsRetired", True) ), False)
 
     sql += table("traptype", (
         fid(),
         fstr("TrapTypeName"),
         fstr("TrapTypeDescription", True),
-        fint("DefaultCost", True) ), False)
+        fint("DefaultCost", True),
+        fint("IsRetired", True) ), False)
 
     sql += table("users", (
         fid(),
@@ -1301,13 +1319,15 @@ def sql_structure(dbo):
         fid(),
         fstr("VoucherName"),
         fstr("VoucherDescription", True),
-        fint("DefaultCost", True)), False)
+        fint("DefaultCost", True),
+        fint("IsRetired", True) ), False)
 
     sql += table("vaccinationtype", (
         fid(),
         fstr("VaccinationType"),
         fstr("VaccinationDescription", True),
-        fint("DefaultCost", True) ), False)
+        fint("DefaultCost", True),
+        fint("IsRetired", True) ), False)
     return sql
 
 def sql_default_data(dbo, skip_config = False):
@@ -1315,23 +1335,23 @@ def sql_default_data(dbo, skip_config = False):
     Returns the SQL for the default data set
     """
     def config(key, value):
-        return "INSERT INTO configuration VALUES ('%s', '%s')|=\n" % ( db.escape(key), db.escape(value) )
-    def lookup1(tablename, tid, name):
-        return "INSERT INTO %s VALUES (%s, '%s')|=\n" % ( tablename, str(tid), db.escape(name) )
-    def lookup2(tablename, tid, name):
-        return "INSERT INTO %s VALUES (%s, '%s', '%s')|=\n" % ( tablename, str(tid), db.escape(name), "")
-    def lookup2money(tablename, tid, name, money = 0):
-        return "INSERT INTO %s VALUES (%s, '%s', '%s', %d)|=\n" % ( tablename, str(tid), db.escape(name), "", money)
+        return "INSERT INTO configuration (ItemName, ItemValue) VALUES ('%s', '%s')|=\n" % ( db.escape(key), db.escape(value) )
+    def lookup1(tablename, fieldname, tid, name):
+        return "INSERT INTO %s (ID, %s) VALUES (%s, '%s')|=\n" % ( tablename, fieldname, str(tid), db.escape(name) )
+    def lookup2(tablename, fieldname, tid, name):
+        return "INSERT INTO %s (ID, %s) VALUES (%s, '%s')|=\n" % ( tablename, fieldname, str(tid), db.escape(name) )
+    def lookup2money(tablename, fieldname, tid, name, money = 0):
+        return "INSERT INTO %s (ID, %s, DefaultCost) VALUES (%s, '%s', '%s', %d)|=\n" % ( tablename, fieldname, str(tid), db.escape(name), "", money)
     def account(tid, code, desc, atype, dtype, ctype):
         return "INSERT INTO accounts VALUES (%s, '%s', '%s', 0, %s, %s, %s, 0, '%s', %s, '%s', %s)|=\n" % ( str(tid), db.escape(code), db.escape(desc), str(atype), str(ctype), str(dtype), 'default', db.todaysql(), 'default', db.todaysql())
     def breed(tid, name, petfinder, speciesid):
-        return "INSERT INTO breed VALUES (%s, '%s', '', '%s', %s)|=\n" % ( str(tid), db.escape(name), petfinder, str(speciesid) )
+        return "INSERT INTO breed (ID, BreedName, BreedDescription, PetFinderBreed, SpeciesID) VALUES (%s, '%s', '', '%s', %s)|=\n" % ( str(tid), db.escape(name), petfinder, str(speciesid) )
     def basecolour(tid, name, adoptapet):
-        return "INSERT INTO basecolour VALUES (%s, '%s', '', '%s')|=\n" % (str(tid), db.escape(name), adoptapet)
+        return "INSERT INTO basecolour (ID, BaseColour, BaseColourDescription, AdoptAPetColour) VALUES (%s, '%s', '', '%s')|=\n" % (str(tid), db.escape(name), adoptapet)
     def internallocation(lid, name):
         return "INSERT INTO internallocation (ID, LocationName, LocationDescription, Units) VALUES (%s, '%s', '', '')|=\n" % ( str(lid), db.escape(name) )
     def species(tid, name, petfinder):
-        return "INSERT INTO species VALUES (%s, '%s', '', '%s')|=\n" % ( str(tid), db.escape(name), petfinder )
+        return "INSERT INTO species (ID, SpeciesName, SpeciesDescription, PetFinderSpecies) VALUES (%s, '%s', '', '%s')|=\n" % ( str(tid), db.escape(name), petfinder )
 
     l = dbo.locale
     sql = ""
@@ -1389,14 +1409,14 @@ def sql_default_data(dbo, skip_config = False):
     sql += account(18, _("Expenses::Stationary", l), _("Stationary costs", l), 4, 0, 0)
     sql += account(19, _("Expenses::Food", l), _("Animal food costs"), 4, 0, 0)
     sql += account(20, _("Expenses::Board", l), _("Animal board costs"), 4, 0, 1)
-    sql += lookup2("animaltype", 2, _("D (Dog)", l))
-    sql += lookup2("animaltype", 10, _("A (Stray Dog)", l))
-    sql += lookup2("animaltype", 11, _("U (Unwanted Cat)", l))
-    sql += lookup2("animaltype", 12, _("S (Stray Cat)", l))
-    sql += lookup2("animaltype", 20, _("F (Feral Cat)", l))
-    sql += lookup2("animaltype", 13, _("M (Miscellaneous)", l))
-    sql += lookup2("animaltype", 40, _("N (Non-Shelter Animal)", l))
-    sql += lookup2("animaltype", 41, _("B (Boarding Animal)", l))
+    sql += lookup2("animaltype", "AnimalType", 2, _("D (Dog)", l))
+    sql += lookup2("animaltype", "AnimalType", 10, _("A (Stray Dog)", l))
+    sql += lookup2("animaltype", "AnimalType", 11, _("U (Unwanted Cat)", l))
+    sql += lookup2("animaltype", "AnimalType", 12, _("S (Stray Cat)", l))
+    sql += lookup2("animaltype", "AnimalType", 20, _("F (Feral Cat)", l))
+    sql += lookup2("animaltype", "AnimalType", 13, _("M (Miscellaneous)", l))
+    sql += lookup2("animaltype", "AnimalType", 40, _("N (Non-Shelter Animal)", l))
+    sql += lookup2("animaltype", "AnimalType", 41, _("B (Boarding Animal)", l))
     sql += basecolour(1, _("Black", l), "Black")
     sql += basecolour(2, _("White", l), "White")
     sql += basecolour(3, _("Black and White", l), "Black - with White")
@@ -1859,196 +1879,196 @@ def sql_default_data(dbo, skip_config = False):
     sql += breed(440, _("Llama", l), "Llama", 16)
     sql += breed(441, _("Pig (Farm)", l), "Pig (Farm)", 28)
     sql += breed(442, _("Crossbreed", l), "Terrier", 1)
-    sql += lookup2money("citationtype", 1, _("First offence", l))
-    sql += lookup2money("citationtype", 2, _("Second offence", l))
-    sql += lookup2money("citationtype", 3, _("Third offence", l))
-    sql += lookup2money("costtype", 1, _("Board and Food", l))
-    sql += lookup2("deathreason", 1, _("Dead On Arrival", l))
-    sql += lookup2("deathreason", 2, _("Died", l))
-    sql += lookup2("deathreason", 3, _("Healthy", l))
-    sql += lookup2("deathreason", 4, _("Sick/Injured", l))
-    sql += lookup2("deathreason", 5, _("Requested", l))
-    sql += lookup2("deathreason", 6, _("Culling", l))
-    sql += lookup2("deathreason", 7, _("Feral", l))
-    sql += lookup2("deathreason", 8, _("Biting", l))
-    sql += lookup2("diet", 1, _("Standard", l))
-    sql += lookup2("donationpayment", 1, _("Cash", l))
-    sql += lookup2("donationpayment", 2, _("Cheque", l))
-    sql += lookup2("donationpayment", 3, _("Credit Card", l))
-    sql += lookup2("donationpayment", 4, _("Debit Card", l))
-    sql += lookup2money("donationtype", 1, _("Donation", l))
-    sql += lookup2money("donationtype", 2, _("Adoption Fee", l))
-    sql += lookup2money("donationtype", 3, _("Waiting List Donation", l))
-    sql += lookup2money("donationtype", 4, _("Entry Donation", l))
-    sql += lookup2money("donationtype", 5, _("Animal Sponsorship", l))
-    sql += lookup2("entryreason", 1, _("Marriage/Relationship split", l))
-    sql += lookup2("entryreason", 2, _("Allergies", l))
-    sql += lookup2("entryreason", 3, _("Biting", l))
-    sql += lookup2("entryreason", 4, _("Unable to Cope", l))
-    sql += lookup2("entryreason", 5, _("Unsuitable Accomodation", l))
-    sql += lookup2("entryreason", 6, _("Died", l))
-    sql += lookup2("entryreason", 7, _("Stray", l))
-    sql += lookup2("entryreason", 8, _("Sick/Injured", l))
-    sql += lookup2("entryreason", 9, _("Unable to Afford", l))
-    sql += lookup2("entryreason", 10, _("Abuse", l))
-    sql += lookup2("entryreason", 11, _("Abandoned", l))
-    sql += lookup2("entryreason", 12, _("Boarding", l))
-    sql += lookup2("entryreason", 13, _("Born in Shelter", l))
-    sql += lookup2("entryreason", 14, _("TNR - Trap/Neuter/Release", l))
-    sql += lookup2("entryreason", 15, _("Transfer from Other Shelter", l))
-    sql += lookup2("entryreason", 16, _("Transfer from Municipal Shelter", l))
-    sql += lookup2("incidentcompleted", 1, _("Animal destroyed", l))
-    sql += lookup2("incidentcompleted", 2, _("Animal picked up", l))
-    sql += lookup2("incidentcompleted", 3, _("Owner given citation", l))
-    sql += lookup2("incidenttype", 1, _("Aggression", l))
-    sql += lookup2("incidenttype", 2, _("Animal defecation", l))
-    sql += lookup2("incidenttype", 3, _("Animals at large", l))
-    sql += lookup2("incidenttype", 4, _("Animals left in vehicle", l))
-    sql += lookup2("incidenttype", 5, _("Bite", l))
-    sql += lookup2("incidenttype", 6, _("Dead animal", l))
-    sql += lookup2("incidenttype", 7, _("Neglect", l))
-    sql += lookup2("incidenttype", 8, _("Noise", l))
-    sql += lookup2("incidenttype", 9, _("Number of pets", l))
-    sql += lookup2("incidenttype", 10, _("Sick/injured animal", l))
+    sql += lookup2money("citationtype", "CitationName", 1, _("First offence", l))
+    sql += lookup2money("citationtype", "CitationName", 2, _("Second offence", l))
+    sql += lookup2money("citationtype", "CitationName", 3, _("Third offence", l))
+    sql += lookup2money("costtype", "CostTypeName", 1, _("Board and Food", l))
+    sql += lookup2("deathreason", "ReasonName", 1, _("Dead On Arrival", l))
+    sql += lookup2("deathreason", "ReasonName", 2, _("Died", l))
+    sql += lookup2("deathreason", "ReasonName", 3, _("Healthy", l))
+    sql += lookup2("deathreason", "ReasonName", 4, _("Sick/Injured", l))
+    sql += lookup2("deathreason", "ReasonName", 5, _("Requested", l))
+    sql += lookup2("deathreason", "ReasonName", 6, _("Culling", l))
+    sql += lookup2("deathreason", "ReasonName", 7, _("Feral", l))
+    sql += lookup2("deathreason", "ReasonName", 8, _("Biting", l))
+    sql += lookup2("diet", "DietName", 1, _("Standard", l))
+    sql += lookup2("donationpayment", "PaymentName", 1, _("Cash", l))
+    sql += lookup2("donationpayment", "PaymentName", 2, _("Cheque", l))
+    sql += lookup2("donationpayment", "PaymentName", 3, _("Credit Card", l))
+    sql += lookup2("donationpayment", "PaymentName", 4, _("Debit Card", l))
+    sql += lookup2money("donationtype", "DonationName", 1, _("Donation", l))
+    sql += lookup2money("donationtype", "DonationName", 2, _("Adoption Fee", l))
+    sql += lookup2money("donationtype", "DonationName", 3, _("Waiting List Donation", l))
+    sql += lookup2money("donationtype", "DonationName", 4, _("Entry Donation", l))
+    sql += lookup2money("donationtype", "DonationName", 5, _("Animal Sponsorship", l))
+    sql += lookup2("entryreason", "ReasonName", 1, _("Marriage/Relationship split", l))
+    sql += lookup2("entryreason", "ReasonName", 2, _("Allergies", l))
+    sql += lookup2("entryreason", "ReasonName", 3, _("Biting", l))
+    sql += lookup2("entryreason", "ReasonName", 4, _("Unable to Cope", l))
+    sql += lookup2("entryreason", "ReasonName", 5, _("Unsuitable Accomodation", l))
+    sql += lookup2("entryreason", "ReasonName", 6, _("Died", l))
+    sql += lookup2("entryreason", "ReasonName", 7, _("Stray", l))
+    sql += lookup2("entryreason", "ReasonName", 8, _("Sick/Injured", l))
+    sql += lookup2("entryreason", "ReasonName", 9, _("Unable to Afford", l))
+    sql += lookup2("entryreason", "ReasonName", 10, _("Abuse", l))
+    sql += lookup2("entryreason", "ReasonName", 11, _("Abandoned", l))
+    sql += lookup2("entryreason", "ReasonName", 12, _("Boarding", l))
+    sql += lookup2("entryreason", "ReasonName", 13, _("Born in Shelter", l))
+    sql += lookup2("entryreason", "ReasonName", 14, _("TNR - Trap/Neuter/Release", l))
+    sql += lookup2("entryreason", "ReasonName", 15, _("Transfer from Other Shelter", l))
+    sql += lookup2("entryreason", "ReasonName", 16, _("Transfer from Municipal Shelter", l))
+    sql += lookup2("incidentcompleted", "CompletedName", 1, _("Animal destroyed", l))
+    sql += lookup2("incidentcompleted", "CompletedName", 2, _("Animal picked up", l))
+    sql += lookup2("incidentcompleted", "CompletedName", 3, _("Owner given citation", l))
+    sql += lookup2("incidenttype", "IncidentName", 1, _("Aggression", l))
+    sql += lookup2("incidenttype", "IncidentName", 2, _("Animal defecation", l))
+    sql += lookup2("incidenttype", "IncidentName", 3, _("Animals at large", l))
+    sql += lookup2("incidenttype", "IncidentName", 4, _("Animals left in vehicle", l))
+    sql += lookup2("incidenttype", "IncidentName", 5, _("Bite", l))
+    sql += lookup2("incidenttype", "IncidentName", 6, _("Dead animal", l))
+    sql += lookup2("incidenttype", "IncidentName", 7, _("Neglect", l))
+    sql += lookup2("incidenttype", "IncidentName", 8, _("Noise", l))
+    sql += lookup2("incidenttype", "IncidentName", 9, _("Number of pets", l))
+    sql += lookup2("incidenttype", "IncidentName", 10, _("Sick/injured animal", l))
     sql += internallocation(1, _("Shelter", l))
-    sql += lookup2money("licencetype", 1, _("Altered Dog - 1 year", l))
-    sql += lookup2money("licencetype", 2, _("Unaltered Dog - 1 year", l))
-    sql += lookup2money("licencetype", 3, _("Altered Dog - 3 year", l))
-    sql += lookup2money("licencetype", 4, _("Unaltered Dog - 3 year", l))
-    sql += lookup1("lksex", 0, _("Female", l))
-    sql += lookup1("lksex", 1, _("Male", l))
-    sql += lookup1("lksex", 2, _("Unknown", l))
-    sql += lookup1("lksize", 0, _("Very Large", l))
-    sql += lookup1("lksize", 1, _("Large", l))
-    sql += lookup1("lksize", 2, _("Medium", l))
-    sql += lookup1("lksize", 3, _("Small", l))
-    sql += lookup1("lkcoattype", 0, _("Short", l))
-    sql += lookup1("lkcoattype", 1, _("Long", l))
-    sql += lookup1("lkcoattype", 2, _("Rough", l))
-    sql += lookup1("lkcoattype", 3, _("Curly", l))
-    sql += lookup1("lkcoattype", 4, _("Corded", l))
-    sql += lookup1("lkcoattype", 5, _("Hairless", l))
-    sql += lookup1("lksaccounttype", 1, _("Bank", l))
-    sql += lookup1("lksaccounttype", 2, _("Credit Card", l))
-    sql += lookup1("lksaccounttype", 3, _("Loan", l))
-    sql += lookup1("lksaccounttype", 4, _("Expense", l))
-    sql += lookup1("lksaccounttype", 5, _("Income", l))
-    sql += lookup1("lksaccounttype", 6, _("Pension", l))
-    sql += lookup1("lksaccounttype", 7, _("Shares", l))
-    sql += lookup1("lksaccounttype", 8, _("Asset", l))
-    sql += lookup1("lksaccounttype", 9, _("Liability", l))
-    sql += lookup1("lksmovementtype", 0, _("None", l))
-    sql += lookup1("lksmovementtype", 1, _("Adoption", l))
-    sql += lookup1("lksmovementtype", 2, _("Foster", l))
-    sql += lookup1("lksmovementtype", 3, _("Transfer", l))
-    sql += lookup1("lksmovementtype", 4, _("Escaped", l))
-    sql += lookup1("lksmovementtype", 5, _("Reclaimed", l))
-    sql += lookup1("lksmovementtype", 6, _("Stolen", l))
-    sql += lookup1("lksmovementtype", 7, _("Released To Wild", l))
-    sql += lookup1("lksmovementtype", 8, _("Retailer", l))
-    sql += lookup1("lksmovementtype", 9, _("Reservation", l))
-    sql += lookup1("lksmovementtype", 10, _("Cancelled Reservation", l))
-    sql += lookup1("lksmovementtype", 11, _("Trial Adoption", l))
-    sql += lookup1("lksmovementtype", 12, _("Permanent Foster", l))
-    sql += lookup1("lksmedialink", 0, _("Animal", l))
-    sql += lookup1("lksmedialink", 1, _("Lost Animal", l))
-    sql += lookup1("lksmedialink", 2, _("Found Animal", l))
-    sql += lookup1("lksmedialink", 3, _("Owner", l))
-    sql += lookup1("lksmedialink", 4, _("Movement", l))
-    sql += lookup1("lksmedialink", 5, _("Incident", l))
-    sql += lookup1("lksmediatype", 0, _("File", l))
-    sql += lookup1("lksmediatype", 1, _("Document Link", l))
-    sql += lookup1("lksmediatype", 2, _("Video Link", l))
-    sql += lookup1("lksdiarylink", 0, _("None", l))
-    sql += lookup1("lksdiarylink", 1, _("Animal", l))
-    sql += lookup1("lksdiarylink", 2, _("Owner", l))
-    sql += lookup1("lksdiarylink", 3, _("Lost Animal", l))
-    sql += lookup1("lksdiarylink", 4, _("Found Animal", l))
-    sql += lookup1("lksdiarylink", 5, _("Waiting List", l))
-    sql += lookup1("lksdiarylink", 6, _("Movement", l))
-    sql += lookup1("lksdiarylink", 7, _("Incident", l))
-    sql += lookup1("lksdonationfreq", 0, _("One-Off", l))
-    sql += lookup1("lksdonationfreq", 1, _("Weekly", l))
-    sql += lookup1("lksdonationfreq", 2, _("Monthly", l))
-    sql += lookup1("lksdonationfreq", 3, _("Quarterly", l))
-    sql += lookup1("lksdonationfreq", 4, _("Half-Yearly", l))
-    sql += lookup1("lksdonationfreq", 5, _("Annually", l))
-    sql += lookup1("lksfieldlink", 0, _("Animal - Additional", l))
-    sql += lookup1("lksfieldlink", 2, _("Animal - Details", l))
-    sql += lookup1("lksfieldlink", 3, _("Animal - Notes", l))
-    sql += lookup1("lksfieldlink", 4, _("Animal - Entry", l))
-    sql += lookup1("lksfieldlink", 5, _("Animal - Health and Identification", l))
-    sql += lookup1("lksfieldlink", 6, _("Animal - Death", l))
-    sql += lookup1("lksfieldlink", 1, _("Person - Additional", l))
-    sql += lookup1("lksfieldlink", 7, _("Person - Name and Address", l))
-    sql += lookup1("lksfieldlink", 8, _("Person - Type", l))
-    sql += lookup1("lksfieldlink", 9, _("Lost Animal - Additional", l))
-    sql += lookup1("lksfieldlink", 10, _("Lost Animal - Details", l))
-    sql += lookup1("lksfieldlink", 11, _("Found Animal - Additional", l))
-    sql += lookup1("lksfieldlink", 12, _("Found Animal - Details", l))
-    sql += lookup1("lksfieldlink", 13, _("Waiting List - Additional", l))
-    sql += lookup1("lksfieldlink", 14, _("Waiting List - Details", l))
-    sql += lookup1("lksfieldlink", 15, _("Waiting List - Removal", l))
-    sql += lookup1("lksfieldlink", 16, _("Incident - Details", l))
-    sql += lookup1("lksfieldlink", 17, _("Incident - Dispatch", l))
-    sql += lookup1("lksfieldlink", 18, _("Incident - Owner", l))
-    sql += lookup1("lksfieldlink", 19, _("Incident - Citation", l))
-    sql += lookup1("lksfieldlink", 20, _("Incident - Additional", l))
-    sql += lookup1("lksfieldtype", 0, _("Yes/No", l))
-    sql += lookup1("lksfieldtype", 1, _("Text", l))
-    sql += lookup1("lksfieldtype", 2, _("Notes", l))
-    sql += lookup1("lksfieldtype", 3, _("Number", l))
-    sql += lookup1("lksfieldtype", 4, _("Date", l))
-    sql += lookup1("lksfieldtype", 5, _("Money", l))
-    sql += lookup1("lksfieldtype", 6, _("Lookup", l))
-    sql += lookup1("lksfieldtype", 7, _("Multi-Lookup", l))
-    sql += lookup1("lksfieldtype", 8, _("Animal", l))
-    sql += lookup1("lksfieldtype", 9, _("Person", l))
-    sql += lookup1("lksloglink", 0, _("Animal", l))
-    sql += lookup1("lksloglink", 1, _("Owner", l))
-    sql += lookup1("lksloglink", 2, _("Lost Animal", l))
-    sql += lookup1("lksloglink", 3, _("Found Animal", l))
-    sql += lookup1("lksloglink", 4, _("Waiting List", l))
-    sql += lookup1("lksloglink", 5, _("Movement", l))
-    sql += lookup1("lksloglink", 6, _("Incident", l))
-    sql += lookup1("lksyesno", 0, _("No", l))
-    sql += lookup1("lksyesno", 1, _("Yes", l))
-    sql += lookup1("lksynun", 0, _("Yes", l))
-    sql += lookup1("lksynun", 1, _("No", l))
-    sql += lookup1("lksynun", 2, _("Unknown", l))
-    sql += lookup1("lksposneg", 0, _("Unknown", l))
-    sql += lookup1("lksposneg", 1, _("Negative", l))
-    sql += lookup1("lksposneg", 2, _("Positive", l))
-    sql += lookup1("lksrotatype", 1, _("Shift", l))
-    sql += lookup1("lksrotatype", 2, _("Overtime", l))
-    sql += lookup1("lksrotatype", 11, _("Public Holiday", l))
-    sql += lookup1("lksrotatype", 12, _("Vacation", l))
-    sql += lookup1("lksrotatype", 13, _("Leave of absence", l))
-    sql += lookup1("lksrotatype", 14, _("Maternity", l))
-    sql += lookup1("lksrotatype", 15, _("Personal", l))
-    sql += lookup1("lksrotatype", 16, _("Rostered day off", l))
-    sql += lookup1("lksrotatype", 17, _("Sick leave", l))
-    sql += lookup1("lksrotatype", 18, _("Training", l))
-    sql += lookup1("lksrotatype", 19, _("Unavailable", l))
-    sql += lookup1("lkurgency", 1, _("Urgent", l))
-    sql += lookup1("lkurgency", 2, _("High", l))
-    sql += lookup1("lkurgency", 3, _("Medium", l))
-    sql += lookup1("lkurgency", 4, _("Low", l))
-    sql += lookup1("lkurgency", 5, _("Lowest", l))
-    sql += lookup2("logtype", 1, _("Bite", l))
-    sql += lookup2("logtype", 2, _("Complaint", l))
-    sql += lookup2("logtype", 3, _("History", l))
-    sql += lookup2("logtype", 4, _("Weight", l))
-    sql += lookup2("logtype", 5, _("Document", l))
-    sql += lookup2("pickuplocation", 1, _("Shelter", l))
-    sql += lookup2("reservationstatus", 1, _("More Info Needed", l))
-    sql += lookup2("reservationstatus", 2, _("Pending Vet Check", l))
-    sql += lookup2("reservationstatus", 3, _("Pending Apartment Verification", l))
-    sql += lookup2("reservationstatus", 4, _("Pending Home Visit", l))
-    sql += lookup2("reservationstatus", 5, _("Pending Adoption", l))
-    sql += lookup2("reservationstatus", 6, _("Changed Mind", l))
-    sql += lookup2("reservationstatus", 7, _("Denied", l))
-    sql += lookup2("reservationstatus", 8, _("Approved", l))
+    sql += lookup2money("licencetype", "LicenceTypeName", 1, _("Altered Dog - 1 year", l))
+    sql += lookup2money("licencetype", "LicenceTypeName", 2, _("Unaltered Dog - 1 year", l))
+    sql += lookup2money("licencetype", "LicenceTypeName", 3, _("Altered Dog - 3 year", l))
+    sql += lookup2money("licencetype", "LicenceTypeName", 4, _("Unaltered Dog - 3 year", l))
+    sql += lookup1("lksex", "Sex", 0, _("Female", l))
+    sql += lookup1("lksex", "Sex", 1, _("Male", l))
+    sql += lookup1("lksex", "Sex", 2, _("Unknown", l))
+    sql += lookup1("lksize", "Size", 0, _("Very Large", l))
+    sql += lookup1("lksize", "Size", 1, _("Large", l))
+    sql += lookup1("lksize", "Size", 2, _("Medium", l))
+    sql += lookup1("lksize", "Size", 3, _("Small", l))
+    sql += lookup1("lkcoattype", "CoatType", 0, _("Short", l))
+    sql += lookup1("lkcoattype", "CoatType", 1, _("Long", l))
+    sql += lookup1("lkcoattype", "CoatType", 2, _("Rough", l))
+    sql += lookup1("lkcoattype", "CoatType", 3, _("Curly", l))
+    sql += lookup1("lkcoattype", "CoatType", 4, _("Corded", l))
+    sql += lookup1("lkcoattype", "CoatType", 5, _("Hairless", l))
+    sql += lookup1("lksaccounttype", "AccountType", 1, _("Bank", l))
+    sql += lookup1("lksaccounttype", "AccountType", 2, _("Credit Card", l))
+    sql += lookup1("lksaccounttype", "AccountType", 3, _("Loan", l))
+    sql += lookup1("lksaccounttype", "AccountType", 4, _("Expense", l))
+    sql += lookup1("lksaccounttype", "AccountType", 5, _("Income", l))
+    sql += lookup1("lksaccounttype", "AccountType", 6, _("Pension", l))
+    sql += lookup1("lksaccounttype", "AccountType", 7, _("Shares", l))
+    sql += lookup1("lksaccounttype", "AccountType", 8, _("Asset", l))
+    sql += lookup1("lksaccounttype", "AccountType", 9, _("Liability", l))
+    sql += lookup1("lksmovementtype", "MovementType", 0, _("None", l))
+    sql += lookup1("lksmovementtype", "MovementType", 1, _("Adoption", l))
+    sql += lookup1("lksmovementtype", "MovementType", 2, _("Foster", l))
+    sql += lookup1("lksmovementtype", "MovementType", 3, _("Transfer", l))
+    sql += lookup1("lksmovementtype", "MovementType", 4, _("Escaped", l))
+    sql += lookup1("lksmovementtype", "MovementType", 5, _("Reclaimed", l))
+    sql += lookup1("lksmovementtype", "MovementType", 6, _("Stolen", l))
+    sql += lookup1("lksmovementtype", "MovementType", 7, _("Released To Wild", l))
+    sql += lookup1("lksmovementtype", "MovementType", 8, _("Retailer", l))
+    sql += lookup1("lksmovementtype", "MovementType", 9, _("Reservation", l))
+    sql += lookup1("lksmovementtype", "MovementType", 10, _("Cancelled Reservation", l))
+    sql += lookup1("lksmovementtype", "MovementType", 11, _("Trial Adoption", l))
+    sql += lookup1("lksmovementtype", "MovementType", 12, _("Permanent Foster", l))
+    sql += lookup1("lksmedialink", "LinkType", 0, _("Animal", l))
+    sql += lookup1("lksmedialink", "LinkType", 1, _("Lost Animal", l))
+    sql += lookup1("lksmedialink", "LinkType", 2, _("Found Animal", l))
+    sql += lookup1("lksmedialink", "LinkType", 3, _("Owner", l))
+    sql += lookup1("lksmedialink", "LinkType", 4, _("Movement", l))
+    sql += lookup1("lksmedialink", "LinkType", 5, _("Incident", l))
+    sql += lookup1("lksmediatype", "MediaType", 0, _("File", l))
+    sql += lookup1("lksmediatype", "MediaType", 1, _("Document Link", l))
+    sql += lookup1("lksmediatype", "MediaType", 2, _("Video Link", l))
+    sql += lookup1("lksdiarylink", "LinkType", 0, _("None", l))
+    sql += lookup1("lksdiarylink", "LinkType", 1, _("Animal", l))
+    sql += lookup1("lksdiarylink", "LinkType", 2, _("Owner", l))
+    sql += lookup1("lksdiarylink", "LinkType", 3, _("Lost Animal", l))
+    sql += lookup1("lksdiarylink", "LinkType", 4, _("Found Animal", l))
+    sql += lookup1("lksdiarylink", "LinkType", 5, _("Waiting List", l))
+    sql += lookup1("lksdiarylink", "LinkType", 6, _("Movement", l))
+    sql += lookup1("lksdiarylink", "LinkType", 7, _("Incident", l))
+    sql += lookup1("lksdonationfreq", "Frequency", 0, _("One-Off", l))
+    sql += lookup1("lksdonationfreq", "Frequency", 1, _("Weekly", l))
+    sql += lookup1("lksdonationfreq", "Frequency", 2, _("Monthly", l))
+    sql += lookup1("lksdonationfreq", "Frequency", 3, _("Quarterly", l))
+    sql += lookup1("lksdonationfreq", "Frequency", 4, _("Half-Yearly", l))
+    sql += lookup1("lksdonationfreq", "Frequency", 5, _("Annually", l))
+    sql += lookup1("lksfieldlink", "LinkType", 0, _("Animal - Additional", l))
+    sql += lookup1("lksfieldlink", "LinkType", 2, _("Animal - Details", l))
+    sql += lookup1("lksfieldlink", "LinkType", 3, _("Animal - Notes", l))
+    sql += lookup1("lksfieldlink", "LinkType", 4, _("Animal - Entry", l))
+    sql += lookup1("lksfieldlink", "LinkType", 5, _("Animal - Health and Identification", l))
+    sql += lookup1("lksfieldlink", "LinkType", 6, _("Animal - Death", l))
+    sql += lookup1("lksfieldlink", "LinkType", 1, _("Person - Additional", l))
+    sql += lookup1("lksfieldlink", "LinkType", 7, _("Person - Name and Address", l))
+    sql += lookup1("lksfieldlink", "LinkType", 8, _("Person - Type", l))
+    sql += lookup1("lksfieldlink", "LinkType", 9, _("Lost Animal - Additional", l))
+    sql += lookup1("lksfieldlink", "LinkType", 10, _("Lost Animal - Details", l))
+    sql += lookup1("lksfieldlink", "LinkType", 11, _("Found Animal - Additional", l))
+    sql += lookup1("lksfieldlink", "LinkType", 12, _("Found Animal - Details", l))
+    sql += lookup1("lksfieldlink", "LinkType", 13, _("Waiting List - Additional", l))
+    sql += lookup1("lksfieldlink", "LinkType", 14, _("Waiting List - Details", l))
+    sql += lookup1("lksfieldlink", "LinkType", 15, _("Waiting List - Removal", l))
+    sql += lookup1("lksfieldlink", "LinkType", 16, _("Incident - Details", l))
+    sql += lookup1("lksfieldlink", "LinkType", 17, _("Incident - Dispatch", l))
+    sql += lookup1("lksfieldlink", "LinkType", 18, _("Incident - Owner", l))
+    sql += lookup1("lksfieldlink", "LinkType", 19, _("Incident - Citation", l))
+    sql += lookup1("lksfieldlink", "LinkType", 20, _("Incident - Additional", l))
+    sql += lookup1("lksfieldtype", "FieldType", 0, _("Yes/No", l))
+    sql += lookup1("lksfieldtype", "FieldType", 1, _("Text", l))
+    sql += lookup1("lksfieldtype", "FieldType", 2, _("Notes", l))
+    sql += lookup1("lksfieldtype", "FieldType", 3, _("Number", l))
+    sql += lookup1("lksfieldtype", "FieldType", 4, _("Date", l))
+    sql += lookup1("lksfieldtype", "FieldType", 5, _("Money", l))
+    sql += lookup1("lksfieldtype", "FieldType", 6, _("Lookup", l))
+    sql += lookup1("lksfieldtype", "FieldType", 7, _("Multi-Lookup", l))
+    sql += lookup1("lksfieldtype", "FieldType", 8, _("Animal", l))
+    sql += lookup1("lksfieldtype", "FieldType", 9, _("Person", l))
+    sql += lookup1("lksloglink", "LinkType", 0, _("Animal", l))
+    sql += lookup1("lksloglink", "LinkType", 1, _("Owner", l))
+    sql += lookup1("lksloglink", "LinkType", 2, _("Lost Animal", l))
+    sql += lookup1("lksloglink", "LinkType", 3, _("Found Animal", l))
+    sql += lookup1("lksloglink", "LinkType", 4, _("Waiting List", l))
+    sql += lookup1("lksloglink", "LinkType", 5, _("Movement", l))
+    sql += lookup1("lksloglink", "LinkType", 6, _("Incident", l))
+    sql += lookup1("lksyesno", "Name", 0, _("No", l))
+    sql += lookup1("lksyesno", "Name", 1, _("Yes", l))
+    sql += lookup1("lksynun", "Name", 0, _("Yes", l))
+    sql += lookup1("lksynun", "Name", 1, _("No", l))
+    sql += lookup1("lksynun", "Name", 2, _("Unknown", l))
+    sql += lookup1("lksposneg", "Name", 0, _("Unknown", l))
+    sql += lookup1("lksposneg", "Name", 1, _("Negative", l))
+    sql += lookup1("lksposneg", "Name", 2, _("Positive", l))
+    sql += lookup1("lksrotatype", "RotaType", 1, _("Shift", l))
+    sql += lookup1("lksrotatype", "RotaType", 2, _("Overtime", l))
+    sql += lookup1("lksrotatype", "RotaType", 11, _("Public Holiday", l))
+    sql += lookup1("lksrotatype", "RotaType", 12, _("Vacation", l))
+    sql += lookup1("lksrotatype", "RotaType", 13, _("Leave of absence", l))
+    sql += lookup1("lksrotatype", "RotaType", 14, _("Maternity", l))
+    sql += lookup1("lksrotatype", "RotaType", 15, _("Personal", l))
+    sql += lookup1("lksrotatype", "RotaType", 16, _("Rostered day off", l))
+    sql += lookup1("lksrotatype", "RotaType", 17, _("Sick leave", l))
+    sql += lookup1("lksrotatype", "RotaType", 18, _("Training", l))
+    sql += lookup1("lksrotatype", "RotaType", 19, _("Unavailable", l))
+    sql += lookup1("lkurgency", "Urgency", 1, _("Urgent", l))
+    sql += lookup1("lkurgency", "Urgency", 2, _("High", l))
+    sql += lookup1("lkurgency", "Urgency", 3, _("Medium", l))
+    sql += lookup1("lkurgency", "Urgency", 4, _("Low", l))
+    sql += lookup1("lkurgency", "Urgency", 5, _("Lowest", l))
+    sql += lookup2("logtype", "LogTypeName", 1, _("Bite", l))
+    sql += lookup2("logtype", "LogTypeName", 2, _("Complaint", l))
+    sql += lookup2("logtype", "LogTypeName", 3, _("History", l))
+    sql += lookup2("logtype", "LogTypeName", 4, _("Weight", l))
+    sql += lookup2("logtype", "LogTypeName", 5, _("Document", l))
+    sql += lookup2("pickuplocation", "LocationName", 1, _("Shelter", l))
+    sql += lookup2("reservationstatus", "StatusName", 1, _("More Info Needed", l))
+    sql += lookup2("reservationstatus", "StatusName", 2, _("Pending Vet Check", l))
+    sql += lookup2("reservationstatus", "StatusName", 3, _("Pending Apartment Verification", l))
+    sql += lookup2("reservationstatus", "StatusName", 4, _("Pending Home Visit", l))
+    sql += lookup2("reservationstatus", "StatusName", 5, _("Pending Adoption", l))
+    sql += lookup2("reservationstatus", "StatusName", 6, _("Changed Mind", l))
+    sql += lookup2("reservationstatus", "StatusName", 7, _("Denied", l))
+    sql += lookup2("reservationstatus", "StatusName", 8, _("Approved", l))
     sql += species(1, _("Dog", l), "Dog")
     sql += species(2, _("Cat", l), "Cat")
     sql += species(3, _("Bird", l), "Bird")
@@ -2077,36 +2097,36 @@ def sql_default_data(dbo, skip_config = False):
     sql += species(26, _("Donkey", l), "Horse")
     sql += species(27, _("Llama", l), "Horse")
     sql += species(28, _("Pig", l), "Barnyard")
-    sql += lookup2("stocklocation", 1, _("Stores", l))
-    sql += lookup2("stockusagetype", 1, _("Administered", l))
-    sql += lookup2("stockusagetype", 2, _("Consumed", l))
-    sql += lookup2("stockusagetype", 3, _("Donated", l))
-    sql += lookup2("stockusagetype", 4, _("Purchased", l))
-    sql += lookup2("stockusagetype", 5, _("Sold", l))
-    sql += lookup2("stockusagetype", 6, _("Stocktake", l))
-    sql += lookup2("stockusagetype", 7, _("Wasted", l))
-    sql += lookup2("testresult", 1, _("Unknown", l))
-    sql += lookup2("testresult", 2, _("Negative", l))
-    sql += lookup2("testresult", 3, _("Positive", l))
-    sql += lookup2money("testtype", 1, _("FIV", l))
-    sql += lookup2money("testtype", 2, _("FLV", l))
-    sql += lookup2money("testtype", 3, _("Heartworm", l))
-    sql += lookup2money("traptype", 1, _("Cat", l))
-    sql += lookup2money("voucher", 1, _("Neuter/Spay", l))
-    sql += lookup2money("vaccinationtype", 1, _("Distemper", l))
-    sql += lookup2money("vaccinationtype", 2, _("Hepatitis", l))
-    sql += lookup2money("vaccinationtype", 3, _("Leptospirosis", l))
-    sql += lookup2money("vaccinationtype", 4, _("Rabies", l))
-    sql += lookup2money("vaccinationtype", 5, _("Parainfluenza", l))
-    sql += lookup2money("vaccinationtype", 6, _("Bordetella", l))
-    sql += lookup2money("vaccinationtype", 7, _("Parvovirus", l))
-    sql += lookup2money("vaccinationtype", 8, _("DHLPP", l))
-    sql += lookup2money("vaccinationtype", 9, _("FVRCP", l))
-    sql += lookup2money("vaccinationtype", 10, _("Chlamydophila", l))
-    sql += lookup2money("vaccinationtype", 11, _("FIV", l))
-    sql += lookup2money("vaccinationtype", 12, _("FeLV", l))
-    sql += lookup2money("vaccinationtype", 13, _("FIPV", l))
-    sql += lookup2money("vaccinationtype", 14, _("FECV/FeCoV", l))
+    sql += lookup2("stocklocation", "LocationName", 1, _("Stores", l))
+    sql += lookup2("stockusagetype", "UsageTypeName", 1, _("Administered", l))
+    sql += lookup2("stockusagetype", "UsageTypeName", 2, _("Consumed", l))
+    sql += lookup2("stockusagetype", "UsageTypeName", 3, _("Donated", l))
+    sql += lookup2("stockusagetype", "UsageTypeName", 4, _("Purchased", l))
+    sql += lookup2("stockusagetype", "UsageTypeName", 5, _("Sold", l))
+    sql += lookup2("stockusagetype", "UsageTypeName", 6, _("Stocktake", l))
+    sql += lookup2("stockusagetype", "UsageTypeName", 7, _("Wasted", l))
+    sql += lookup2("testresult", "ResultName", 1, _("Unknown", l))
+    sql += lookup2("testresult", "ResultName", 2, _("Negative", l))
+    sql += lookup2("testresult", "ResultName", 3, _("Positive", l))
+    sql += lookup2money("testtype", "TestName", 1, _("FIV", l))
+    sql += lookup2money("testtype", "TestName", 2, _("FLV", l))
+    sql += lookup2money("testtype", "TestName", 3, _("Heartworm", l))
+    sql += lookup2money("traptype", "TrapTypeName", 1, _("Cat", l))
+    sql += lookup2money("voucher", "VoucherName", 1, _("Neuter/Spay", l))
+    sql += lookup2money("vaccinationtype", "VaccinationType", 1, _("Distemper", l))
+    sql += lookup2money("vaccinationtype", "VaccinationType", 2, _("Hepatitis", l))
+    sql += lookup2money("vaccinationtype", "VaccinationType", 3, _("Leptospirosis", l))
+    sql += lookup2money("vaccinationtype", "VaccinationType", 4, _("Rabies", l))
+    sql += lookup2money("vaccinationtype", "VaccinationType", 5, _("Parainfluenza", l))
+    sql += lookup2money("vaccinationtype", "VaccinationType", 6, _("Bordetella", l))
+    sql += lookup2money("vaccinationtype", "VaccinationType", 7, _("Parvovirus", l))
+    sql += lookup2money("vaccinationtype", "VaccinationType", 8, _("DHLPP", l))
+    sql += lookup2money("vaccinationtype", "VaccinationType", 9, _("FVRCP", l))
+    sql += lookup2money("vaccinationtype", "VaccinationType", 10, _("Chlamydophila", l))
+    sql += lookup2money("vaccinationtype", "VaccinationType", 11, _("FIV", l))
+    sql += lookup2money("vaccinationtype", "VaccinationType", 12, _("FeLV", l))
+    sql += lookup2money("vaccinationtype", "VaccinationType", 13, _("FIPV", l))
+    sql += lookup2money("vaccinationtype", "VaccinationType", 14, _("FECV/FeCoV", l))
     return sql
 
 def install_db_structure(dbo):
@@ -4217,4 +4237,15 @@ def update_33718(dbo):
     add_column(dbo, "animal", "TotalDaysOnShelter", "INTEGER")
     add_column(dbo, "animal", "TotalTimeOnShelter", shorttext(dbo))
     db.execute_dbupdate(dbo, "UPDATE animal SET TotalDaysOnShelter=0, TotalTimeOnShelter=''")
+
+def update_33719(dbo):
+    # Add IsRetired field to lookups
+    retirablelookups = [ "animaltype", "basecolour", "breed", "citationtype", "costtype", 
+        "deathreason", "diet", "donationpayment", "donationtype", "entryreason", "incidentcompleted", 
+        "incidenttype", "internallocation", "licencetype", "logtype", "pickuplocation", 
+        "reservationstatus", "species", "stocklocation", "stockusagetype", "testtype", 
+        "testresult", "traptype", "vaccinationtype", "voucher" ]
+    for t in retirablelookups:
+        add_column(dbo, t, "IsRetired", "INTEGER")
+        db.execute_dbupdate(dbo, "UPDATE %s SET IsRetired = 0" % t)
 

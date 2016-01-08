@@ -8,45 +8,45 @@ import utils
 from i18n import _, add_days, now
 
 # Look up tables map
-# tablename : ( tablelabel, namefield, namelabel, descfield, hasspecies, haspfspecies, haspfbreed, hasapcolour, hasdefaultcost, hasunits, canadd, candelete, (foreignkeys) )
+# tablename : ( tablelabel, namefield, namelabel, descfield, hasspecies, haspfspecies, haspfbreed, hasapcolour, hasdefaultcost, hasunits, canadd, candelete, canretire,(foreignkeys) )
 LOOKUP_TABLES = {
-    "lksaccounttype":   (_("Account Types"), "AccountType", _("Type"), "", 0, 0, 0, 0, 0, 0, 0, 0, ("accounts.AccountType",)),
-    "lkanimalflags":    (_("Animal Flags"), "Flag", _("Flag"), "", 0, 0, 0, 0, 0, 0, 1, 1, ""),
-    "animaltype":       (_("Animal Types"), "AnimalType", _("Type"), "AnimalDescription", 0, 0, 0, 0, 0, 0, 1, 1, ("animal.AnimalTypeID",)),
-    "basecolour":       (_("Colors"), "BaseColour", _("Color"), "BaseColourDescription", 0, 0, 0, 1, 0, 0, 1, 1, ("animal.BaseColourID", "animallost.BaseColourID", "animalfound.BaseColourID")),
-    "breed":            (_("Breeds"), "BreedName", _("Breed"), "BreedDescription", 1, 0, 1, 0, 0, 0, 1, 1, ("animal.BreedID", "animal.Breed2ID", "animallost.BreedID", "animalfound.BreedID")),
-    "lkcoattype":       (_("Coat Types"), "CoatType", _("Coat Type"), "", 0, 0, 0, 0, 0, 0, 1, 1, ("animal.CoatType",)),
-    "citationtype":     (_("Citation Types"), "CitationName", _("Citation Type"), "CitationDescription", 0, 0, 0, 0, 1, 0, 1, 1, ("ownercitation.CitationTypeID",)),
-    "costtype":         (_("Cost Types"), "CostTypeName", _("Cost Type"), "CostTypeDescription", 0, 0, 0, 0, 1, 0, 1, 1, ("animalcost.CostTypeID",)),
-    "deathreason":      (_("Death Reasons"), "ReasonName", _("Reason"), "ReasonDescription", 0, 0, 0, 0, 0, 0, 1, 1, ("animal.PTSReasonID",)),
-    "diet":             (_("Diets"), "DietName", _("Diet"), "DietDescription", 0, 0, 0, 0, 0, 0, 1, 1, ("animaldiet.DietID",)),
-    "donationpayment":  (_("Payment Methods"), "PaymentName", _("Type"), "PaymentDescription", 0, 0, 0, 0, 0, 0, 1, 1, ("ownerdonation.DonationPaymentID",)),
-    "donationtype":     (_("Payment Types"), "DonationName", _("Type"), "DonationDescription", 0, 0, 0, 0, 1, 0, 1, 1, ("ownerdonation.DonationTypeID", "accounts.DonationTypeID")),
-    "entryreason":      (_("Entry Reasons"), "ReasonName", _("Reason"), "ReasonDescription", 0, 0, 0, 0, 0, 0, 1, 1, ("animal.EntryReasonID", "adoption.ReturnedReasonID") ),
-    "incidentcompleted":(_("Incident Completed Types"), "CompletedName", _("Completed Type"), "CompletedDescription", 0, 0, 0, 0, 0, 0, 1, 1, ("animalcontrol.IncidentCompletedID",)),
-    "incidenttype":     (_("Incident Types"), "IncidentName", _("Type"), "IncidentDescription", 0, 0, 0, 0, 0, 0, 1, 1, ("animalcontrol.IncidentTypeID",)),
-    "internallocation": (_("Internal Locations"), "LocationName", _("Location"), "LocationDescription", 0, 0, 0, 0, 0, 1, 1, 1, ("animal.ShelterLocation",)),
-    "licencetype":      (_("License Types"), "LicenceTypeName", _("Type"), "LicenceTypeDescription", 0, 0, 0, 0, 1, 0, 1, 1, ("ownerlicence.LicenceTypeID",)),
-    "logtype":          (_("Log Types"), "LogTypeName", _("Type"), "LogTypeDescription", 0, 0, 0, 0, 0, 0, 1, 1, ("log.LogTypeID",)),
-    "lksmovementtype":  (_("Movement Types"), "MovementType", _("Type"), "", 0, 0, 0, 0, 0, 0, 0, 0, ("adoption.MovementType", "animal.ActiveMovementType",)),
-    "lkownerflags":     (_("Person Flags"), "Flag", _("Flag"), "", 0, 0, 0, 0, 0, 0, 1, 1, ""),
-    "lksrotatype":      (_("Rota Types"), "RotaType", _("Type"), "", 0, 0, 0, 0, 0, 0, 0, 0, ("ownerrota.RotaTypeID",)),
-    "lksex":            (_("Sexes"), "Sex", _("Sex"), "", 0, 0, 0, 0, 0, 0, 0, 0, ("animal.Sex", "animallost.Sex", "animalfound.Sex")),
-    "lksize":           (_("Sizes"), "Size", _("Size"), "", 0, 0, 0, 0, 0, 0, 0, 0, ("animal.Size",)),
-    "lksyesno":         (_("Yes/No"), "Name", _("Yes/No"), "", 0, 0, 0, 0, 0, 0, 0, 0, ("animal.Neutered",)),
-    "lksynun":          (_("Yes/No/Unknown"), "Name", _("Yes/No/Unknown"), "", 0, 0, 0, 0, 0, 0, 0, 0, ("animal.IsHouseTrained",)),
-    "lksposneg":        (_("Positive/Negative"), "Name", _("Positive/Negative"), "", 0, 0, 0, 0, 0, 0, 0, 0, ("animal.CombiTestResult",)),
-    "pickuplocation":   (_("Pickup Locations"), "LocationName", _("Location"), "LocationDescription", 0, 0, 0, 0, 0, 0, 1, 1, ("animal.PickupLocationID",)),
-    "reservationstatus": (_("Reservation Statuses"), "StatusName", _("Status"), "StatusDescription", 0, 0, 0, 0, 0, 0, 1, 1, ("adoption.ReservationStatusID",)),
-    "species":          (_("Species"), "SpeciesName", _("Species"), "SpeciesDescription", 0, 1, 0, 0, 0, 0, 1, 1, ("animal.SpeciesID", "animallost.AnimalTypeID", "animalfound.AnimalTypeID")),
-    "stocklocation":    (_("Stock Locations"), "LocationName", _("Location"), "LocationDescription", 0, 0, 0, 0, 0, 0, 1, 1, ("stocklevel.StockLocationID",)),
-    "stockusagetype":   (_("Stock Usage Type"), "UsageTypeName", _("Usage Type"), "UsageTypeDescription", 0, 0, 0, 0, 0, 0, 1, 1, ("stockusage.StockUsageTypeID",)),
-    "lkurgency":        (_("Urgencies"), "Urgency", _("Urgency"), "", 0, 0, 0, 0, 0, 0, 0, 0, ("animalwaitinglist.Urgency",)),
-    "testtype":         (_("Test Types"), "TestName", _("Type"), "TestDescription", 0, 0, 0, 0, 1, 0, 1, 1, ("animaltest.TestTypeID",)),
-    "testresult":       (_("Test Results"), "ResultName", _("Result"), "ResultDescription", 0, 0, 0, 0, 0, 0, 1, 1, ("animaltest.TestResultID",)),
-    "traptype":         (_("Trap Types"), "TrapTypeName", _("Type"), "TrapTypeDescription", 0, 0, 0, 0, 1, 0, 1, 1, ("ownertraploan.TrapTypeID",)),
-    "vaccinationtype":  (_("Vaccination Types"), "VaccinationType", _("Type"), "VaccinationDescription", 0, 0, 0, 0, 1, 0, 1, 1, ("animalvaccination.VaccinationID",)),
-    "voucher":          (_("Voucher Types"), "VoucherName", _("Type"), "VoucherDescription", 0, 0, 0, 0, 1, 0, 1, 1, ("ownervoucher.VoucherID",))
+    "lksaccounttype":   (_("Account Types"), "AccountType", _("Type"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, ("accounts.AccountType",)),
+    "lkanimalflags":    (_("Animal Flags"), "Flag", _("Flag"), "", 0, 0, 0, 0, 0, 0, 1, 1, 0, ""),
+    "animaltype":       (_("Animal Types"), "AnimalType", _("Type"), "AnimalDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animal.AnimalTypeID",)),
+    "basecolour":       (_("Colors"), "BaseColour", _("Color"), "BaseColourDescription", 0, 0, 0, 1, 0, 0, 1, 1, 1, ("animal.BaseColourID", "animallost.BaseColourID", "animalfound.BaseColourID")),
+    "breed":            (_("Breeds"), "BreedName", _("Breed"), "BreedDescription", 1, 0, 1, 0, 0, 0, 1, 1, 1, ("animal.BreedID", "animal.Breed2ID", "animallost.BreedID", "animalfound.BreedID")),
+    "lkcoattype":       (_("Coat Types"), "CoatType", _("Coat Type"), "", 0, 0, 0, 0, 0, 0, 1, 1, 0, ("animal.CoatType",)),
+    "citationtype":     (_("Citation Types"), "CitationName", _("Citation Type"), "CitationDescription", 0, 0, 0, 0, 1, 0, 1, 1, 1, ("ownercitation.CitationTypeID",)),
+    "costtype":         (_("Cost Types"), "CostTypeName", _("Cost Type"), "CostTypeDescription", 0, 0, 0, 0, 1, 0, 1, 1, 1, ("animalcost.CostTypeID",)),
+    "deathreason":      (_("Death Reasons"), "ReasonName", _("Reason"), "ReasonDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animal.PTSReasonID",)),
+    "diet":             (_("Diets"), "DietName", _("Diet"), "DietDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animaldiet.DietID",)),
+    "donationpayment":  (_("Payment Methods"), "PaymentName", _("Type"), "PaymentDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("ownerdonation.DonationPaymentID",)),
+    "donationtype":     (_("Payment Types"), "DonationName", _("Type"), "DonationDescription", 0, 0, 0, 0, 1, 0, 1, 1, 1, ("ownerdonation.DonationTypeID", "accounts.DonationTypeID")),
+    "entryreason":      (_("Entry Reasons"), "ReasonName", _("Reason"), "ReasonDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animal.EntryReasonID", "adoption.ReturnedReasonID") ),
+    "incidentcompleted":(_("Incident Completed Types"), "CompletedName", _("Completed Type"), "CompletedDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animalcontrol.IncidentCompletedID",)),
+    "incidenttype":     (_("Incident Types"), "IncidentName", _("Type"), "IncidentDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animalcontrol.IncidentTypeID",)),
+    "internallocation": (_("Internal Locations"), "LocationName", _("Location"), "LocationDescription", 0, 0, 0, 0, 0, 1, 1, 1, 1, ("animal.ShelterLocation",)),
+    "licencetype":      (_("License Types"), "LicenceTypeName", _("Type"), "LicenceTypeDescription", 0, 0, 0, 0, 1, 0, 1, 1, 1, ("ownerlicence.LicenceTypeID",)),
+    "logtype":          (_("Log Types"), "LogTypeName", _("Type"), "LogTypeDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("log.LogTypeID",)),
+    "lksmovementtype":  (_("Movement Types"), "MovementType", _("Type"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, ("adoption.MovementType", "animal.ActiveMovementType",)),
+    "lkownerflags":     (_("Person Flags"), "Flag", _("Flag"), "", 0, 0, 0, 0, 0, 0, 1, 1, 0, ""),
+    "lksrotatype":      (_("Rota Types"), "RotaType", _("Type"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, ("ownerrota.RotaTypeID",)),
+    "lksex":            (_("Sexes"), "Sex", _("Sex"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, ("animal.Sex", "animallost.Sex", "animalfound.Sex")),
+    "lksize":           (_("Sizes"), "Size", _("Size"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, ("animal.Size",)),
+    "lksyesno":         (_("Yes/No"), "Name", _("Yes/No"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, ("animal.Neutered",)),
+    "lksynun":          (_("Yes/No/Unknown"), "Name", _("Yes/No/Unknown"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, ("animal.IsHouseTrained",)),
+    "lksposneg":        (_("Positive/Negative"), "Name", _("Positive/Negative"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, ("animal.CombiTestResult",)),
+    "pickuplocation":   (_("Pickup Locations"), "LocationName", _("Location"), "LocationDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animal.PickupLocationID",)),
+    "reservationstatus": (_("Reservation Statuses"), "StatusName", _("Status"), "StatusDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("adoption.ReservationStatusID",)),
+    "species":          (_("Species"), "SpeciesName", _("Species"), "SpeciesDescription", 0, 1, 0, 0, 0, 0, 1, 1, 1, ("animal.SpeciesID", "animallost.AnimalTypeID", "animalfound.AnimalTypeID")),
+    "stocklocation":    (_("Stock Locations"), "LocationName", _("Location"), "LocationDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("stocklevel.StockLocationID",)),
+    "stockusagetype":   (_("Stock Usage Type"), "UsageTypeName", _("Usage Type"), "UsageTypeDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("stockusage.StockUsageTypeID",)),
+    "lkurgency":        (_("Urgencies"), "Urgency", _("Urgency"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, ("animalwaitinglist.Urgency",)),
+    "testtype":         (_("Test Types"), "TestName", _("Type"), "TestDescription", 0, 0, 0, 0, 1, 0, 1, 1, 1, ("animaltest.TestTypeID",)),
+    "testresult":       (_("Test Results"), "ResultName", _("Result"), "ResultDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animaltest.TestResultID",)),
+    "traptype":         (_("Trap Types"), "TrapTypeName", _("Type"), "TrapTypeDescription", 0, 0, 0, 0, 1, 0, 1, 1, 1, ("ownertraploan.TrapTypeID",)),
+    "vaccinationtype":  (_("Vaccination Types"), "VaccinationType", _("Type"), "VaccinationDescription", 0, 0, 0, 0, 1, 0, 1, 1, 1, ("animalvaccination.VaccinationID",)),
+    "voucher":          (_("Voucher Types"), "VoucherName", _("Type"), "VoucherDescription", 0, 0, 0, 0, 1, 0, 1, 1, 1, ("ownervoucher.VoucherID",))
 }
 LOOKUP_TABLELABEL = 0
 LOOKUP_NAMEFIELD = 1
@@ -60,7 +60,8 @@ LOOKUP_HASCOST = 8
 LOOKUP_HASUNITS = 9
 LOOKUP_CANADD = 10
 LOOKUP_CANDELETE = 11
-LOOKUP_FOREIGNKEYS = 12
+LOOKUP_CANRETIRE = 12
+LOOKUP_FOREIGNKEYS = 13
 
 LOCALES = [
     ( "en", "English (United States)"),

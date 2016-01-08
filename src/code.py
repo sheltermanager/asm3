@@ -3522,6 +3522,7 @@ class lookups:
         c += html.controller_bool("hasunits", table[9] == 1)
         c += html.controller_bool("canadd", table[10] == 1)
         c += html.controller_bool("candelete", table[11] == 1)
+        c += html.controller_bool("canretire", table[12] == 1)
         c += html.controller_json("species", extlookups.get_species(dbo))
         c += html.controller_json("tables", html.json_lookup_tables(l))
         s += html.controller(c)
