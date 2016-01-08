@@ -171,6 +171,7 @@ def get_satellite_counts(dbo, personid):
         "(SELECT COUNT(*) FROM animalwaitinglist WHERE OwnerID = o.ID) + " \
         "(SELECT COUNT(*) FROM animalfound WHERE OwnerID = o.ID) + " \
         "(SELECT COUNT(*) FROM animallost WHERE OwnerID = o.ID) + " \
+        "(SELECT COUNT(*) FROM animaltransport WHERE DriverID = o.ID) + " \
         "(SELECT COUNT(*) FROM animalcontrol WHERE CallerID = o.ID OR VictimID = o.ID " \
         "OR OwnerID = o.ID OR Owner2ID = o.ID or Owner3ID = o.ID)) AS links " \
         "FROM owner o WHERE o.ID = %d" \
@@ -278,6 +279,12 @@ def get_links(dbo, pid):
         "a.CallNotes AS FIELD2, '' AS DMOD FROM animalcontrol a " \
         "INNER JOIN incidenttype ti ON ti.ID = a.IncidentTypeID WHERE a.VictimID = %d " \
         "ORDER BY DDATE DESC, LINKDISPLAY" \
+        "UNION SELECT 'AT' AS TYPE, " \
+        "%s AS TYPEDISPLAY, a.PickupDateTime AS DDATE, a.AnimalID AS LINKID, " \
+        "a.DropOffAddress AS LINKDISPLAY, " \
+        "a.PickupAddress AS FIELD2, '' AS DMOD FROM animaltransport a " \
+        "WHERE a.DriverID = %d " \
+        "ORDER BY DDATE DESC, LINKDISPLAY" \
         % ( db.ds(_("Original Owner", l)), linkdisplay, animalextra, int(pid), 
         db.ds(_("Brought In By", l)), linkdisplay, animalextra, int(pid),
         db.ds(_("Picked Up By", l)), linkdisplay, animalextra, int(pid),
@@ -288,7 +295,8 @@ def get_links(dbo, pid):
         db.ds(_("Found Animal Contact", l)), int(pid),
         db.ds(_("Animal Control Incident", l)), int(pid), int(pid), int(pid), 
         db.ds(_("Animal Control Caller", l)), int(pid), 
-        db.ds(_("Animal Control Victim", l)), int(pid) )
+        db.ds(_("Animal Control Victim", l)), int(pid),
+        db.ds(_("Driver", l)), int(pid) )
     return db.query(dbo, sql)
 
 def get_investigation(dbo, personid, sort = ASCENDING):
