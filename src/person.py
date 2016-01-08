@@ -171,7 +171,7 @@ def get_satellite_counts(dbo, personid):
         "(SELECT COUNT(*) FROM animalwaitinglist WHERE OwnerID = o.ID) + " \
         "(SELECT COUNT(*) FROM animalfound WHERE OwnerID = o.ID) + " \
         "(SELECT COUNT(*) FROM animallost WHERE OwnerID = o.ID) + " \
-        "(SELECT COUNT(*) FROM animaltransport WHERE DriverID = o.ID) + " \
+        "(SELECT COUNT(*) FROM animaltransport WHERE DriverOwnerID = o.ID) + " \
         "(SELECT COUNT(*) FROM animalcontrol WHERE CallerID = o.ID OR VictimID = o.ID " \
         "OR OwnerID = o.ID OR Owner2ID = o.ID or Owner3ID = o.ID)) AS links " \
         "FROM owner o WHERE o.ID = %d" \
@@ -283,7 +283,7 @@ def get_links(dbo, pid):
         "%s AS TYPEDISPLAY, a.PickupDateTime AS DDATE, a.AnimalID AS LINKID, " \
         "a.DropOffAddress AS LINKDISPLAY, " \
         "a.PickupAddress AS FIELD2, '' AS DMOD FROM animaltransport a " \
-        "WHERE a.DriverID = %d " \
+        "WHERE a.DriverOwnerID = %d " \
         "ORDER BY DDATE DESC, LINKDISPLAY" \
         % ( db.ds(_("Original Owner", l)), linkdisplay, animalextra, int(pid), 
         db.ds(_("Brought In By", l)), linkdisplay, animalextra, int(pid),
