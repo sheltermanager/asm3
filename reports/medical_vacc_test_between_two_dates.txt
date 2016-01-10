@@ -1,6 +1,6 @@
 Medical, Vaccination and Tests due between two dates
 ###
-Diary
+Medical
 ###
 3309/Any
 ###
@@ -96,7 +96,7 @@ FOOTER$$
 &&&
 Medical, Vaccination and Tests given between two dates
 ###
-Diary
+Medical
 ###
 3309/Any
 ###
