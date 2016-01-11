@@ -8395,9 +8395,8 @@ msgid "Received"
 msgstr "Received"
 
 #: donations.js
-#, fuzzy
 msgid "Received in last day"
-msgstr "Received in last year"
+msgstr "Received in last day"
 
 #: donations.js
 msgid "Received in last month"

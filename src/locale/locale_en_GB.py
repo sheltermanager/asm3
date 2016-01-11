@@ -372,7 +372,7 @@ val = {"" : "Project-Id-Version: \nReport-Msgid-Bugs-To: db@sheltermanager.com\n
 "{plural1} animals have holds ending today" : "{plural1} animals have holds ending today",
 "Bank" : "Bank",
 "Find a found animal" : "Find a found animal",
-"Received in last day" : "Received in last year",
+"Received in last day" : "Received in last day",
 "Bulk Complete Diary" : "Bulk Complete Diary",
 "Bull Terrier" : "Bull Terrier",
 "Reports" : "Reports",
