@@ -248,6 +248,10 @@ $(function() {
                 $("#datefound").val(format.date(new Date()));
             }
             $("#datereported").val(format.date(new Date()));
+
+            // Remove any retired lookups from the lists
+            $(".asm-selectbox").select("removeRetiredOptions");
+
         },
 
         destroy: function() {

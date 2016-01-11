@@ -230,6 +230,10 @@ $(function() {
             $(".asm-personchooser").personchooser("clear");
             $("#flags option").prop("selected", false);
             $("#flags").change();
+
+            // Remove any retired lookups from the lists
+            $(".asm-selectbox").select("removeRetiredOptions");
+
         },
 
         destroy: function() {

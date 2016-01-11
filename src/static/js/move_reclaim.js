@@ -227,6 +227,9 @@ $(function() {
             // Set default values
             $("#movementdate").datepicker("setDate", new Date());
 
+            // Remove any retired lookups from the lists
+            $(".asm-selectbox").select("removeRetiredOptions");
+
             $("#reclaim").button().click(function() {
                 if (!validation()) { return; }
                 $("#reclaim").button("disable");

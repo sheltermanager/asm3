@@ -411,6 +411,9 @@ $(function() {
             $("#size").val(config.str("AFDefaultSize"));
             $("#sex").val("2"); // Unknown
 
+            // Remove any retired lookups from the lists
+            $(".asm-selectbox").select("removeRetiredOptions");
+
             // Set date/time defaults
             $("#datebroughtin").val(format.date(new Date()));
             if (config.bool("AddAnimalsShowTimeBroughtIn")) {

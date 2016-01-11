@@ -114,6 +114,9 @@ $(function() {
             // Set default values
             $("#transferdate").datepicker("setDate", new Date());
 
+            // Remove any retired lookups from the lists
+            $(".asm-selectbox").select("removeRetiredOptions");
+
             $("#transfer").button().click(function() {
                 if (!validation()) { return; }
                 $("#transfer").button("disable");

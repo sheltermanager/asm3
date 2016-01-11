@@ -376,11 +376,8 @@
 
     // Select box
     $.fn.select = function(method, newval) {
-        var rv = "";
-        if (method === undefined) {
-            method = "create";
-        }
-        if (method == "create") {
+        var rv = "", tv;
+        if (!method || method == "create") {
             $(this).each(function() {
                 if ( $(this).hasClass("asm-iconselectmenu") ) {
                     $(this).iconselectmenu({
@@ -400,13 +397,12 @@
                 }
             });
         }
-        if (method == "firstvalue") {
+        else if (method == "firstvalue") {
             $(this).each(function() {
                 $(this).val( $(this).find("option:first").val() );
             });
         }
-        if (method == "value") {
-            rv = "";
+        else if (method == "value") {
             $(this).each(function() {
                 if (newval !== undefined) {
                     $(this).val(newval);
@@ -419,28 +415,37 @@
                 }
                 else {
                     rv = $(this).val();
-                    return;
                 }
             });
-            return rv;
         }
-        if (method == "label") {
+        else if (method == "removeRetiredOptions") {
+            $(this).each(function() {
+                tv = $(this);
+                tv.find("option").each(function() {
+                    // Note that we never remove the selected item, even if it's retired
+                    if (!$(this).prop("selected") && $(this).attr("data-retired") == "1") {
+                        $(this).remove();
+                    }
+                });
+            });
+        }
+        else if (method == "label") {
             rv = "";
             $(this).each(function() {
                 rv = $(this).find("option:selected").html();    
             });
-            return rv;
         }
-        if (method == "disable") {
+        else if (method == "disable") {
             $(this).each(function() {
                 $(this).attr("disabled", "disabled");
             });
         }
-        if (method == "enable") {
+        else if (method == "enable") {
             $(this).each(function() {
                 $(this).removeAttr("disabled");
             });
         }
+        return rv;
     };
 
     /** 

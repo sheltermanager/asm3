@@ -150,6 +150,9 @@ $(function() {
         sync: function() {
             $("#issuedate").datepicker("setDate", new Date());
             licence_renewal.type_change();
+
+            // Remove any retired lookups from the lists
+            $(".asm-selectbox").select("removeRetiredOptions");
         },
 
         destroy: function() {

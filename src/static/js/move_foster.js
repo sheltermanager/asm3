@@ -126,6 +126,9 @@ $(function() {
             // Set default values
             $("#fosterdate").datepicker("setDate", new Date());
 
+            // Remove any retired lookups from the lists
+            $(".asm-selectbox").select("removeRetiredOptions");
+
             $("#foster").button().click(function() {
                 if (!validation()) { return; }
                 $("#foster").button("disable");

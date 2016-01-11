@@ -591,10 +591,20 @@
             tableform.dialog_destroy();
 
             var b = {}; 
+
+            // Find any select fields in the dialog and reload their lookups. 
+            // This is necessary in case opening a previous record removed a retired lookup element.
+            $.each(dialog.fields, function(i, v) {
+                if (v.options && v.options.rows) {
+                    $("#" + v.post_field).html( html.list_to_options(v.options.rows, v.options.valuefield, v.options.displayfield) );
+                }
+            });
+            
             // Set fields to their default values
             if (dialog.use_default_values === undefined || dialog.use_default_values === true) {
                 tableform.fields_default(dialog.fields);
             }
+
             // Find any fields marked readonly and enable them
             $.each(dialog.fields, function(i, v) {
                 if (v.readonly) { 
@@ -602,6 +612,13 @@
                     if (dialog.hide_read_only) {
                         $("#" + v.post_field).closest("tr").show(); 
                     }
+                }
+            });
+
+            // Remove any retired lookups
+            $.each(dialog.fields, function(i, v) {
+                if (v.type == "select") {
+                    $("#" + v.post_field).select("removeRetiredOptions");
                 }
             });
 
@@ -674,7 +691,23 @@
             // Make sure any existing dialog is destroyed before starting
             tableform.dialog_destroy();
 
+            // Find any select fields in the dialog and reload their lookups. 
+            // This is necessary in case opening a previous record removed a retired lookup element.
+            $.each(dialog.fields, function(i, v) {
+                if (v.options && v.options.rows) {
+                    $("#" + v.post_field).html( html.list_to_options(v.options.rows, v.options.valuefield, v.options.displayfield) );
+                }
+            });
+
+            // Load the values from storage into the fields
             this.fields_populate_from_json(dialog.fields, row);
+
+            // Remove any retired lookups
+            $.each(dialog.fields, function(i, v) {
+                if (v.type == "select") {
+                    $("#" + v.post_field).select("removeRetiredOptions");
+                }
+            });
 
             // Find any fields marked readonly and disable/hide them
             $.each(dialog.fields, function(i, v) {
@@ -932,9 +965,7 @@
                     }
                     else if (v.options && v.options.rows) {
                         // Assume we have rows, valuefield and displayfield properties
-                        $.each(v.options.rows, function(io, vo) {
-                            d += "<option value=\"" + vo[v.options.valuefield] + "\">" + vo[v.options.displayfield] + "</option>";
-                        });
+                        d += html.list_to_options(v.options.rows, v.options.valuefield, v.options.displayfield);
                     }
                     d += "</select>";
                     if (!v.justwidget) { d += "</td></tr>"; }

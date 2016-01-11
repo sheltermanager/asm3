@@ -171,6 +171,10 @@ $(function() {
             $(".asm-checkbox").prop("checked", false).change();
             $(".asm-personchooser").personchooser("clear");
             $("#dateputon").val(format.date(new Date()));
+
+            // Remove any retired lookups from the lists
+            $(".asm-selectbox").select("removeRetiredOptions");
+
         },
 
         destroy: function() {

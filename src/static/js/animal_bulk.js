@@ -145,6 +145,10 @@ $(function() {
                         $("#bulk").button("enable");
                     });
             });
+
+            // Remove any retired lookups from the lists
+            $(".asm-selectbox").select("removeRetiredOptions");
+
         },
 
         destroy: function() {

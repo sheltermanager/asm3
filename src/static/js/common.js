@@ -1830,13 +1830,15 @@
          * displayprop: The name of the display property
          */
         list_to_options: function(l, valueprop, displayprop) {
-            var h = "";
+            var h = "", retired = "";
             $.each(l, function(i, v) {
                 if (!valueprop) {
                     h += "<option>" + v + "</option>";
                 }
                 else {
-                    h += "<option value=\"" + v[valueprop] + "\">" + v[displayprop] + "</option>\n";
+                    retired = "";
+                    if (v.ISRETIRED && v.ISRETIRED == 1) { retired = "data-retired=\"1\""; }
+                    h += "<option " + retired + " value=\"" + v[valueprop] + "\">" + v[displayprop] + "</option>\n";
                 }
             });
             return h;
@@ -1847,7 +1849,7 @@
          * option group for each species
          */
         list_to_options_breeds: function(l) {
-            var h = [], spid = 0;
+            var h = [], spid = 0, retired = "";
             $.each(l, function(i, v) {
                 if (v.SPECIESID != spid) {
                     if (spid != 0) {
@@ -1856,7 +1858,9 @@
                     spid = v.SPECIESID;
                     h.push("<optgroup id='ngp-" + v.SPECIESID + "' label='" + v.SPECIESNAME + "'>");
                 }
-                h.push("<option value=\"" + v.ID + "\">" + v.BREEDNAME + "</option>\n");
+                retired = "";
+                if (v.ISRETIRED && v.ISRETIRED == 1) { retired = "data-retired=\"1\""; }
+                h.push("<option " + retired + " value=\"" + v.ID + "\">" + v.BREEDNAME + "</option>\n");
             });
             return h.join("\n");
         },

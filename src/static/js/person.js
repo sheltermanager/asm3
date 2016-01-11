@@ -762,6 +762,9 @@ $(function() {
             // Load the data into the controls for the screen
             $("#asm-content input, #asm-content select, #asm-content textarea").fromJSON(controller.person);
 
+            // Remove any retired lookups from the lists
+            $(".asm-selectbox").select("removeRetiredOptions");
+
             // Load person flags
             html.person_flag_options(controller.person, controller.flags, $("#flags"));
 

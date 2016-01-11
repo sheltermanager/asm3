@@ -596,6 +596,9 @@ $(function() {
             // Load the data into the controls for the screen
             $("#asm-content input, #asm-content select, #asm-content textarea").fromJSON(controller.incident);
 
+            // Remove any retired lookups from the lists
+            $(".asm-selectbox").select("removeRetiredOptions");
+
             // Update on-screen fields from the data and display the screen
             incident.enable_widgets();
             incident.load_animallinks();

@@ -79,6 +79,9 @@ $(function() {
             // Set default values
             $("#logdate").datepicker("setDate", new Date());
 
+            // Remove any retired lookups from the lists
+            $(".asm-selectbox").select("removeRetiredOptions");
+
             $("#log").button().click(function() {
                 if (!validation()) { return; }
                 $("#log").button("disable");

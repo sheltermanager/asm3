@@ -1402,6 +1402,9 @@ $(function() {
             animal.update_breed_list();
             $("#breed1, #breed2").fromJSON(controller.animal);
 
+            // Remove any retired lookups from the lists
+            $(".asm-selectbox").select("removeRetiredOptions");
+
             // Load animal flags
             html.animal_flag_options(controller.animal, controller.flags, $("#flags"));
 

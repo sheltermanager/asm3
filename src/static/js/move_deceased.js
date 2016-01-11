@@ -88,6 +88,9 @@ $(function() {
             // Set default values
             $("#deceaseddate").datepicker("setDate", new Date());
 
+            // Remove any retired lookups from the lists
+            $(".asm-selectbox").select("removeRetiredOptions");
+
             $("#deceased").button().click(function() {
                 if (!validation()) { return; }
                 $("#deceased").button("disable");
