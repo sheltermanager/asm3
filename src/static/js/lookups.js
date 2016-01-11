@@ -25,6 +25,9 @@ $(function() {
                 width: 550,
                 fields: [
                     { json_field: controller.namefield, post_field: "lookupname", label: controller.namelabel, type: "text", validation: "notblank" },
+                    { hideif: function() { return !controller.canretire; },
+                        json_field: "ISRETIRED", post_field: "retired", label: _("Active"), defaultval: "0", type: "select",
+                        options: '<option value="0">' + _("Yes") + '</option><option value="1">' + _("No") + '</option>' },
                     { hideif: function() { return !controller.hasspecies; }, 
                         json_field: "SPECIESID", post_field: "species", label: _("Species"), type: "select", 
                         options: { displayfield: "SPECIESNAME", valuefield: "ID", rows: controller.species }},
@@ -67,6 +70,10 @@ $(function() {
                             tableform.table_update(table);
                             tableform.dialog_close();
                         });
+                },
+                complete: function(row) {
+                    if (row.ISRETIRED && row.ISRETIRED == 1) { return true; }
+                    return false;
                 },
                 columns: [
                     { field: controller.namefield, display: controller.namelabel, initialsort: true },

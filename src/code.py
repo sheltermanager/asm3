@@ -3539,11 +3539,11 @@ class lookups:
         if mode == "create":
             users.check_permission(session, users.MODIFY_LOOKUPS)
             return extlookups.insert_lookup(dbo, post["lookup"], post["lookupname"], post["lookupdesc"], \
-                post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("defaultcost"))
+                post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("defaultcost"), post.integer("retired"))
         elif mode == "update":
             users.check_permission(session, users.MODIFY_LOOKUPS)
             extlookups.update_lookup(dbo, post.integer("id"), post["lookup"], post["lookupname"], post["lookupdesc"], \
-                post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("defaultcost"))
+                post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("defaultcost"), post.integer("retired"))
         elif mode == "delete":
             users.check_permission(session, users.MODIFY_LOOKUPS)
             for lid in post.integer_list("ids"):

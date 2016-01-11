@@ -1,6 +1,7 @@
 38
 ================
 
+11/01/16 Add UI fields to lookup data screen to manage IsRetired flag #55
 08/01/16 Add UI fields for PickupAddress, AdministeringVetID #340
 08/01/16 Add PickupAddress and AdministeringVetID to medical/vacc #340
 08/01/16 Add IsRetired column to all lookups and to lookup descriptors #55

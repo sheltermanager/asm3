@@ -989,31 +989,31 @@ def get_lookup(dbo, tablename, namefield):
         return db.query(dbo, "SELECT b.*, s.SpeciesName FROM breed b LEFT OUTER JOIN species s ON s.ID = b.SpeciesID ORDER BY b.BreedName")
     return db.query(dbo, "SELECT * FROM %s ORDER BY %s" % ( tablename, namefield ))
 
-def insert_lookup(dbo, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", defaultcost=0):
+def insert_lookup(dbo, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", defaultcost=0, retired=0):
     t = LOOKUP_TABLES[lookup]
     sql = ""
     nid = 0
     if lookup == "basecolour":
         nid = db.get_id(dbo, "basecolour")
-        sql = "INSERT INTO basecolour (ID, BaseColour, BaseColourDescription, AdoptAPetColour) VALUES (%s, %s, %s, %s)" % (
-            db.di(nid), db.ds(name), db.ds(desc), db.ds(apcolour))
+        sql = "INSERT INTO basecolour (ID, BaseColour, BaseColourDescription, AdoptAPetColour, IsRetired) VALUES (%s, %s, %s, %s, %s)" % (
+            db.di(nid), db.ds(name), db.ds(desc), db.ds(apcolour), db.di(retired))
     elif lookup == "breed":
         nid = db.get_id(dbo, "breed")
-        sql = "INSERT INTO breed (ID, BreedName, BreedDescription, PetFinderBreed, SpeciesID) VALUES (%s, %s, %s, %s, %s)" % (
-            db.di(nid), db.ds(name), db.ds(desc), db.ds(pfbreed), db.di(speciesid))
+        sql = "INSERT INTO breed (ID, BreedName, BreedDescription, PetFinderBreed, SpeciesID, IsRetired) VALUES (%s, %s, %s, %s, %s, %s)" % (
+            db.di(nid), db.ds(name), db.ds(desc), db.ds(pfbreed), db.di(speciesid), db.di(retired))
     elif lookup == "internallocation":
         nid = db.get_id(dbo, "internallocation")
-        sql = "INSERT INTO internallocation (ID, LocationName, LocationDescription, Units) VALUES (%s, %s, %s, %s)" % (
-            db.di(nid), db.ds(name), db.ds(desc), db.ds(units))
+        sql = "INSERT INTO internallocation (ID, LocationName, LocationDescription, Units, IsRetired) VALUES (%s, %s, %s, %s, %s)" % (
+            db.di(nid), db.ds(name), db.ds(desc), db.ds(units), db.di(retired))
     elif lookup == "species":
         nid = db.get_id(dbo, "species")
-        sql = "INSERT INTO species (ID, SpeciesName, SpeciesDescription, PetFinderSpecies) VALUES (%s, %s, %s, %s)" % (
-            db.di(nid), db.ds(name), db.ds(desc), db.ds(pfspecies))
+        sql = "INSERT INTO species (ID, SpeciesName, SpeciesDescription, PetFinderSpecies, IsRetired) VALUES (%s, %s, %s, %s, %s)" % (
+            db.di(nid), db.ds(name), db.ds(desc), db.ds(pfspecies), db.di(retired))
     elif lookup == "donationtype" or lookup == "costtype" or lookup == "testtype" or lookup == "voucher" or lookup == "vaccinationtype" \
         or lookup == "traptype" or lookup == "licencetype" or lookup == "citationtype":
         nid = db.get_id(dbo, lookup)
-        sql = "INSERT INTO %s (ID, %s, %s, DefaultCost) VALUES (%s, %s, %s, %s)" % (
-            lookup, t[LOOKUP_NAMEFIELD], t[LOOKUP_DESCFIELD], db.di(nid), db.ds(name), db.ds(desc), db.ds(defaultcost))
+        sql = "INSERT INTO %s (ID, %s, %s, DefaultCost, IsRetired) VALUES (%s, %s, %s, %s, %s)" % (
+            lookup, t[LOOKUP_NAMEFIELD], t[LOOKUP_DESCFIELD], db.di(nid), db.ds(name), db.ds(desc), db.ds(defaultcost), db.di(retired))
         # Create a matching account if we have a donation type
         if lookup == "donationtype" and configuration.create_donation_trx(dbo):
             financial.insert_account_from_donationtype(dbo, nid, name, desc)
@@ -1023,43 +1023,59 @@ def insert_lookup(dbo, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies
     elif t[LOOKUP_DESCFIELD] == "":
         # No description
         nid = db.get_id(dbo, lookup)
-        sql = "INSERT INTO %s (ID, %s) VALUES (%s, %s)" % (
-            lookup, t[LOOKUP_NAMEFIELD], db.di(nid), db.ds(name))
+        if t[LOOKUP_CANRETIRE] == 1:
+            sql = "INSERT INTO %s (ID, %s, IsRetired) VALUES (%s, %s, %s)" % (
+                lookup, t[LOOKUP_NAMEFIELD], db.di(nid), db.ds(name), db.di(retired))
+        else:
+            sql = "INSERT INTO %s (ID, %s) VALUES (%s, %s)" % (
+                lookup, t[LOOKUP_NAMEFIELD], db.di(nid), db.ds(name))
     else:
         # Name/Description
         nid = db.get_id(dbo, lookup)
-        sql = "INSERT INTO %s (ID, %s, %s) VALUES (%s, %s, %s)" % (
-            lookup, t[LOOKUP_NAMEFIELD], t[LOOKUP_DESCFIELD], db.di(nid), db.ds(name), db.ds(desc))
+        if t[LOOKUP_CANRETIRE] == 1:
+            sql = "INSERT INTO %s (ID, %s, %s, IsRetired) VALUES (%s, %s, %s, %s)" % (
+                lookup, t[LOOKUP_NAMEFIELD], t[LOOKUP_DESCFIELD], db.di(nid), db.ds(name), db.ds(desc), db.di(retired))
+        else:
+            sql = "INSERT INTO %s (ID, %s, %s) VALUES (%s, %s, %s)" % (
+                lookup, t[LOOKUP_NAMEFIELD], t[LOOKUP_DESCFIELD], db.di(nid), db.ds(name), db.ds(desc))
     db.execute(dbo, sql)
     return nid
 
-def update_lookup(dbo, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", defaultcost=0):
+def update_lookup(dbo, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", defaultcost=0, retired=0):
     t = LOOKUP_TABLES[lookup]
     sql = ""
     if lookup == "basecolour":
-        sql = "UPDATE basecolour SET BaseColour=%s, BaseColourDescription=%s, AdoptAPetColour=%s WHERE ID=%s" % (
-            db.ds(name), db.ds(desc), db.ds(apcolour), db.di(iid))
+        sql = "UPDATE basecolour SET BaseColour=%s, BaseColourDescription=%s, AdoptAPetColour=%s, IsRetired=%s WHERE ID=%s" % (
+            db.ds(name), db.ds(desc), db.ds(apcolour), db.di(retired), db.di(iid))
     elif lookup == "breed":
-        sql = "UPDATE breed SET BreedName=%s, BreedDescription=%s, PetFinderBreed=%s, SpeciesID=%s WHERE ID=%s" % (
-            db.ds(name), db.ds(desc), db.ds(pfbreed), db.di(speciesid), db.di(iid))
+        sql = "UPDATE breed SET BreedName=%s, BreedDescription=%s, PetFinderBreed=%s, SpeciesID=%s, IsRetired=%s WHERE ID=%s" % (
+            db.ds(name), db.ds(desc), db.ds(pfbreed), db.di(speciesid), db.di(retired), db.di(iid))
     elif lookup == "internallocation":
-        sql = "UPDATE %s SET %s = %s, %s = %s, Units = %s WHERE ID=%s" % (
-            lookup, t[LOOKUP_NAMEFIELD], db.ds(name), t[LOOKUP_DESCFIELD], db.ds(desc), db.ds(units), db.di(iid))
+        sql = "UPDATE %s SET %s = %s, %s = %s, Units = %s, IsRetired = %s WHERE ID=%s" % (
+            lookup, t[LOOKUP_NAMEFIELD], db.ds(name), t[LOOKUP_DESCFIELD], db.ds(desc), db.ds(units), db.di(retired), db.di(iid))
     elif lookup == "species":
-        sql = "UPDATE species SET SpeciesName=%s, SpeciesDescription=%s, PetFinderSpecies=%s WHERE ID=%s" % (
-            db.ds(name), db.ds(desc), db.ds(pfspecies), db.di(iid))
+        sql = "UPDATE species SET SpeciesName=%s, SpeciesDescription=%s, PetFinderSpecies=%s, IsRetired=%s WHERE ID=%s" % (
+            db.ds(name), db.ds(desc), db.ds(pfspecies), db.di(retired), db.di(iid))
     elif lookup == "donationtype" or lookup == "costtype" or lookup == "testtype" or lookup == "voucher" or lookup == "vaccinationtype" \
         or lookup == "traptype" or lookup == "licencetype" or lookup == "citationtype":
-        sql = "UPDATE %s SET %s = %s, %s = %s, DefaultCost = %s WHERE ID=%s" % (
-            lookup, t[LOOKUP_NAMEFIELD], db.ds(name), t[LOOKUP_DESCFIELD], db.ds(desc), db.di(defaultcost), db.di(iid))
+        sql = "UPDATE %s SET %s = %s, %s = %s, DefaultCost = %s, IsRetired = %s WHERE ID=%s" % (
+            lookup, t[LOOKUP_NAMEFIELD], db.ds(name), t[LOOKUP_DESCFIELD], db.ds(desc), db.di(defaultcost), db.di(retired), db.di(iid))
     elif t[LOOKUP_DESCFIELD] == "":
         # No description
-        sql = "UPDATE %s SET %s=%s WHERE ID=%s" % (
-            lookup, t[LOOKUP_NAMEFIELD], db.ds(name), db.di(iid))
+        if t[LOOKUP_CANRETIRE] == 1:
+            sql = "UPDATE %s SET %s=%s, IsRetired=%s WHERE ID=%s" % (
+                lookup, t[LOOKUP_NAMEFIELD], db.ds(name), db.di(retired), db.di(iid))
+        else:
+            sql = "UPDATE %s SET %s=%s WHERE ID=%s" % (
+                lookup, t[LOOKUP_NAMEFIELD], db.ds(name), db.di(iid))
     else:
         # Name/Description
-        sql = "UPDATE %s SET %s=%s, %s=%s WHERE ID=%s" % (
-            lookup, t[LOOKUP_NAMEFIELD], db.ds(name), t[LOOKUP_DESCFIELD], db.ds(desc), db.di(iid))
+        if t[LOOKUP_CANRETIRE] == 1:
+            sql = "UPDATE %s SET %s=%s, %s=%s, IsRetired=%s WHERE ID=%s" % (
+                lookup, t[LOOKUP_NAMEFIELD], db.ds(name), t[LOOKUP_DESCFIELD], db.ds(desc), db.di(retired), db.di(iid))
+        else:
+            sql = "UPDATE %s SET %s=%s, %s=%s WHERE ID=%s" % (
+                lookup, t[LOOKUP_NAMEFIELD], db.ds(name), t[LOOKUP_DESCFIELD], db.ds(desc), db.di(iid))
     db.execute(dbo, sql)
 
 def delete_lookup(dbo, lookup, iid):
