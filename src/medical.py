@@ -172,7 +172,7 @@ def get_vaccination_query(dbo):
         "CASE WHEN a.ActiveMovementType Is Not Null AND a.ActiveMovementType > 0 THEN " \
         "'' ELSE a.ShelterLocationUnit END AS LocationUnit, " \
         "il.LocationName AS ShelterLocationName, a.ShelterLocationUnit, " \
-        "av.AdministeringVetID, adv.OwnerName AS AdministeringVetName " \
+        "adv.OwnerName AS AdministeringVetName " \
         "FROM animal a " \
         "LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID " \
         "LEFT OUTER JOIN owner co ON co.ID = ad.OwnerID " \
