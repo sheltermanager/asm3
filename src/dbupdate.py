@@ -2151,8 +2151,11 @@ def install_db_views(dbo):
     Installs all the database views.
     """
     def create_view(viewname, sql):
-        db.execute_dbupdate(dbo, "DROP VIEW IF EXISTS %s" % viewname)
-        db.execute_dbupdate(dbo, "CREATE VIEW %s AS %s" % (viewname, sql))
+        try:
+            db.execute_dbupdate(dbo, "DROP VIEW IF EXISTS %s" % viewname)
+            db.execute_dbupdate(dbo, "CREATE VIEW %s AS %s" % (viewname, sql))
+        except Exception,err:
+            al.error("error creating view %s: %s" % (viewname, err), "dbupdate.install_db_views", dbo)
 
     # Set us upto date to stop race condition/other clients trying
     # to install
