@@ -1,6 +1,7 @@
 38
 ================
 
+12/01/16 petslocated: fall back to contact postcode prefixes if area blank
 11/01/16 Add select.removeRetiredOptions and calls to screens/tableform #55
 11/01/16 Add UI fields to lookup data screen to manage IsRetired flag #55
 08/01/16 Add UI fields for PickupAddress, AdministeringVetID #340

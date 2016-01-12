@@ -3667,6 +3667,14 @@ class PetsLocatedUKPublisher(FTPPublisher):
             return "n"
         return "u"
 
+    def plcPostcode(self, postcode1, postcode2 = "", postcode3 = ""):
+        """ Returns the postcode prefix of the first non-blank value given """
+        postcode = postcode1
+        if postcode is None or postcode == "": postcode = postcode2
+        if postcode is None or postcode == "": postcode = postcode3
+        if postcode.find(" ") == -1: return postcode
+        return postcode[0:postcode.find(" ")]
+
     def plcSex(self, sexID):
         if sexID == 0: return "f"
         if sexID == 1: return "m"
@@ -3935,7 +3943,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 # lastlocation
                 line.append("\"%s\"" % an["AREALOST"])
                 # locationpostcode
-                line.append("\"%s\"" % an["AREAPOSTCODE"])
+                line.append("\"%s\"" % self.plcPostcode(an["AREAPOSTCODE"], an["OWNERPOSTCODE"]))
                 # datelostfound
                 line.append("\"%s\"" % i18n.python2display(self.locale, an["DATELOST"]))
                 # otherdetails
@@ -4001,7 +4009,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 # lastlocation
                 line.append("\"%s\"" % an["AREAFOUND"])
                 # locationpostcode
-                line.append("\"%s\"" % an["AREAPOSTCODE"])
+                line.append("\"%s\"" % self.plcPostcode(an["AREAPOSTCODE"], an["OWNERPOSTCODE"]))
                 # datelostfound
                 line.append("\"%s\"" % i18n.python2display(self.locale, an["DATEFOUND"]))
                 # otherdetails
@@ -4070,7 +4078,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 # lastlocation
                 line.append("\"\"")
                 # locationpostcode
-                line.append("\"\"")
+                line.append("\"%s\"" % self.plcPostcode(an["BROUGHTINBYOWNERPOSTCODE"]))
                 # datelostfound
                 line.append("\"%s\"" % i18n.python2display(self.locale, an["DATEBROUGHTIN"]))
                 # otherdetails
