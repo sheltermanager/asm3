@@ -752,7 +752,7 @@ def sql_structure(dbo):
     sql += table("costtype", (
         fid(),
         fstr("CostTypeName"),
-        fstr("CostTypeDescription"),
+        fstr("CostTypeDescription", True),
         fint("DefaultCost", True),
         fint("IsRetired", True) ), False)
 
@@ -1345,19 +1345,19 @@ def sql_default_data(dbo, skip_config = False):
     def lookup1(tablename, fieldname, tid, name):
         return "INSERT INTO %s (ID, %s) VALUES (%s, '%s')|=\n" % ( tablename, fieldname, str(tid), db.escape(name) )
     def lookup2(tablename, fieldname, tid, name):
-        return "INSERT INTO %s (ID, %s) VALUES (%s, '%s')|=\n" % ( tablename, fieldname, str(tid), db.escape(name) )
+        return "INSERT INTO %s (ID, %s, IsRetired) VALUES (%s, '%s', 0)|=\n" % ( tablename, fieldname, str(tid), db.escape(name) )
     def lookup2money(tablename, fieldname, tid, name, money = 0):
-        return "INSERT INTO %s (ID, %s, DefaultCost) VALUES (%s, '%s', %d)|=\n" % ( tablename, fieldname, str(tid), db.escape(name), money)
+        return "INSERT INTO %s (ID, %s, DefaultCost, IsRetired) VALUES (%s, '%s', %d, 0)|=\n" % ( tablename, fieldname, str(tid), db.escape(name), money)
     def account(tid, code, desc, atype, dtype, ctype):
         return "INSERT INTO accounts VALUES (%s, '%s', '%s', 0, %s, %s, %s, 0, '%s', %s, '%s', %s)|=\n" % ( str(tid), db.escape(code), db.escape(desc), str(atype), str(ctype), str(dtype), 'default', db.todaysql(), 'default', db.todaysql())
     def breed(tid, name, petfinder, speciesid):
-        return "INSERT INTO breed (ID, BreedName, BreedDescription, PetFinderBreed, SpeciesID) VALUES (%s, '%s', '', '%s', %s)|=\n" % ( str(tid), db.escape(name), petfinder, str(speciesid) )
+        return "INSERT INTO breed (ID, BreedName, BreedDescription, PetFinderBreed, SpeciesID, IsRetired) VALUES (%s, '%s', '', '%s', %s, 0)|=\n" % ( str(tid), db.escape(name), petfinder, str(speciesid) )
     def basecolour(tid, name, adoptapet):
-        return "INSERT INTO basecolour (ID, BaseColour, BaseColourDescription, AdoptAPetColour) VALUES (%s, '%s', '', '%s')|=\n" % (str(tid), db.escape(name), adoptapet)
+        return "INSERT INTO basecolour (ID, BaseColour, BaseColourDescription, AdoptAPetColour, IsRetired) VALUES (%s, '%s', '', '%s', 0)|=\n" % (str(tid), db.escape(name), adoptapet)
     def internallocation(lid, name):
-        return "INSERT INTO internallocation (ID, LocationName, LocationDescription, Units) VALUES (%s, '%s', '', '')|=\n" % ( str(lid), db.escape(name) )
+        return "INSERT INTO internallocation (ID, LocationName, LocationDescription, Units, IsRetired) VALUES (%s, '%s', '', '', 0)|=\n" % ( str(lid), db.escape(name) )
     def species(tid, name, petfinder):
-        return "INSERT INTO species (ID, SpeciesName, SpeciesDescription, PetFinderSpecies) VALUES (%s, '%s', '', '%s')|=\n" % ( str(tid), db.escape(name), petfinder )
+        return "INSERT INTO species (ID, SpeciesName, SpeciesDescription, PetFinderSpecies, IsRetired) VALUES (%s, '%s', '', '%s', 0)|=\n" % ( str(tid), db.escape(name), petfinder )
 
     l = dbo.locale
     sql = ""
