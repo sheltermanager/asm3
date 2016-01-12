@@ -13,7 +13,7 @@ $VAR to DATE Enter month end date$
 
 SELECT 
 '$@from$' AS FromDate, 
-'$@to$' AS ToDate
+'$@to$ 23:59:59' AS ToDate
 
 ###
 $$HEADER
