@@ -3548,6 +3548,15 @@ class lookups:
             users.check_permission(session, users.MODIFY_LOOKUPS)
             for lid in post.integer_list("ids"):
                 extlookups.delete_lookup(dbo, post["lookup"], lid)
+        elif mode == "active":
+            users.check_permission(session, users.MODIFY_LOOKUPS)
+            for lid in post.integer_list("ids"):
+                extlookups.update_lookup_retired(dbo, post["lookup"], lid, 0)
+        elif mode == "inactive":
+            users.check_permission(session, users.MODIFY_LOOKUPS)
+            for lid in post.integer_list("ids"):
+                extlookups.update_lookup_retired(dbo, post["lookup"], lid, 1)
+
 
 class lostanimal:
     def GET(self):

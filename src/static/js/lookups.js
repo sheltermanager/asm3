@@ -129,6 +129,30 @@ $(function() {
                              });
                      } 
                  },
+                 { id: "active", text: _("Active"), icon: "tick", enabled: "multi", hideif: function() { return !controller.canretire; },
+                     click: function() {
+                         var ids = tableform.table_ids(table);
+                         common.ajax_post("lookups", "mode=active&lookup=" + controller.tablename + "&ids=" + ids)
+                             .then(function() {
+                                 $.each(tableform.table_selected_rows(table), function(i, v) {
+                                     v.ISRETIRED = 0;
+                                 });
+                                 tableform.table_update(table);
+                             });
+                     }
+                 },
+                 { id: "inactive", text: _("Inactive"), icon: "cross", enabled: "multi", hideif: function() { return !controller.canretire; },
+                     click: function() {
+                         var ids = tableform.table_ids(table);
+                         common.ajax_post("lookups", "mode=inactive&lookup=" + controller.tablename + "&ids=" + ids)
+                             .then(function() {
+                                 $.each(tableform.table_selected_rows(table), function(i, v) {
+                                     v.ISRETIRED = 1;
+                                 });
+                                 tableform.table_update(table);
+                             });
+                     }
+                 },
                  { id: "lookup", type: "dropdownfilter", options: tablelist, click: function(newval) {
                     common.route("lookups?tablename=" + newval);
                  }}

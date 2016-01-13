@@ -1,6 +1,7 @@
 38
 ================
 
+13/01/16 Ability to mass change active/inactive status of lookups #344
 13/01/16 Make sure empty retired locations don't appear on shelterview #346
 12/01/16 fix to set IsRetired on database create #55
 12/01/16 petslocated: fall back to contact postcode prefixes if area blank

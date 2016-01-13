@@ -1078,6 +1078,10 @@ def update_lookup(dbo, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfsp
                 lookup, t[LOOKUP_NAMEFIELD], db.ds(name), t[LOOKUP_DESCFIELD], db.ds(desc), db.di(iid))
     db.execute(dbo, sql)
 
+def update_lookup_retired(dbo, lookup, iid, retired):
+    """ Updates lookup item with ID=iid, setting IsRetired=retired """
+    db.execute(dbo, "UPDATE %s SET IsRetired=%d WHERE ID=%d" % (lookup, retired, iid))
+
 def delete_lookup(dbo, lookup, iid):
     l = dbo.locale
     t = LOOKUP_TABLES[lookup]
