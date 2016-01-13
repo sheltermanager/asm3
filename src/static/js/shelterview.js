@@ -31,6 +31,8 @@ $(function() {
         render_units_available: function() {
             var h = [];
             $.each(controller.locations, function(il, l) {
+                // If the location is empty and this one is retired, stop now
+                if (shelterview.location_is_empty(il.ID) && il.ISRETIRED && il.ISRETIRED == 1) { return; }
                 // Output the location
                 var loclink = "animal_find_results?logicallocation=onshelter&shelterlocation=" + l.ID;
                 h.push('<p class="asm-menu-category"><a href="' + loclink + '">' + 
@@ -296,10 +298,10 @@ $(function() {
                 h.push("</div>"); 
             }
             // If we're sorting on location, find any locations that were unused
-            // and output a section for them.
+            // and output a section for them - unless they're retired
             if (groupfield == "DISPLAYLOCATIONNAME" && config.bool("ShelterViewShowEmpty")) {
                 $.each(controller.locations, function(i, v) {
-                    if ($.inArray(v.ID, locationsused) == -1) {
+                    if ($.inArray(v.ID, locationsused) == -1 && !v.ISRETIRED) {
                         var loclink = "animal_find_results?logicallocation=onshelter&shelterlocation=" + v.ID;
                         h.push('<p class="asm-menu-category"><a href="' + loclink + '">' + 
                             v.LOCATIONNAME + ' (0)</a></p>');
@@ -344,6 +346,23 @@ $(function() {
                 });
             }
 
+        },
+
+        /** Returns a location object for the id given */
+        location_for_id: function(id) {
+            return common.get_row(controller.locations, id, "ID");
+        },
+
+        /** Returns true if location id has no animals in it */
+        location_is_empty: function(id) {
+            var empty = true;
+            $.each(controller.animals, function(ia, a) {
+                if (a.ACTIVEMOVEMENTID == 0 && a.SHELTERLOCATION == id) {
+                    empty = false;
+                    return false;
+                }
+            });
+            return empty;
         },
 
         reload: function() {
