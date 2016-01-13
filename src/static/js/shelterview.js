@@ -32,7 +32,7 @@ $(function() {
             var h = [];
             $.each(controller.locations, function(il, l) {
                 // If the location is empty and this one is retired, stop now
-                if (shelterview.location_is_empty(il.ID) && il.ISRETIRED && il.ISRETIRED == 1) { return; }
+                if (shelterview.location_is_empty(l.ID) && l.ISRETIRED && l.ISRETIRED == 1) { return; }
                 // Output the location
                 var loclink = "animal_find_results?logicallocation=onshelter&shelterlocation=" + l.ID;
                 h.push('<p class="asm-menu-category"><a href="' + loclink + '">' + 
