@@ -644,9 +644,15 @@
                 deferred.reject();
             };
 
+            var dw = dialog.width || "auto";
+            if (asm.mobileapp) {
+                dw = dialog.width || 1024;
+                dw = Math.min(dw, $(window).width());
+            }
+
             $("#dialog-tableform").dialog({
                 resizable: false,
-                width: (dialog.width || "auto"),
+                width: dw,
                 height: (dialog.height || "auto"),
                 modal: true,
                 dialogClass: "dialogshadow",
@@ -753,13 +759,21 @@
                     }
                 };
             }
+
             b[_("Cancel")] = function() { 
                 $(this).dialog("close");
                 deferred.reject();
             };
+
+            var dw = dialog.width || "auto";
+            if (asm.mobileapp) {
+                dw = dialog.width || 1024;
+                dw = Math.min(dw, $(window).width());
+            }
+
             $("#dialog-tableform").dialog({
                 resizable: false,
-                width: (dialog.width || "auto"),
+                width: dw,
                 height: (dialog.height || "auto"),
                 modal: true,
                 dialogClass: "dialogshadow",
