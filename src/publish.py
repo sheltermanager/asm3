@@ -3681,22 +3681,22 @@ class PetsLocatedUKPublisher(FTPPublisher):
         return "u"
 
     def plcHairType(self, an):
+        HAIRLESS = [ "Bird", "Reptile", "Fish", "Snake", "Hedgehog", "Tortoise", "Terrapin", 
+            "Chicken", "Owl", "Cockatiel", "Goose", "Goldfish" ]
         # Dogs
-        speciesid = 0
-        if an.has_key("SPECIESID"): speciesid = an["SPECIESID"]
-        else: speciesid = an["ANIMALTYPEID"]
-        if speciesid == 1:
+        speciesname = an["SPECIESNAME"]
+        if speciesname == "Dog":
             if an.has_key("COATTYPENAME") and an["COATTYPENAME"] == "Long": return "Long"
             elif an.has_key("COATTYPENAME") and an["COATTYPENAME"] == "Hairless": return "Not Applicable"
             else: return "Short"
         # Cats
-        elif speciesid == 2:
+        elif speciesname == "Cat":
             if an["BREEDNAME"].find("Short") != -1 or an["BREEDNAME"].find("DSH") != -1: return "Short"
             elif an["BREEDNAME"].find("Medium") != -1 or an["BREEDNAME"].find("DMH") != -1: return "Medium"
             elif an["BREEDNAME"].find("Long") != -1 or an["BREEDNAME"].find("DLH") != -1: return "Long"
             else: return "Short"
-        # Birds/Reptiles/Fish don't have hair
-        elif speciesid in ( 3, 11, 12, 13, 14, 15, 17, 21, 28 ): return "Not Applicable"
+        # Species that don't have hair
+        elif speciesname in HAIRLESS: return "Not Applicable"
         else:
             return "Short"
 
