@@ -3682,7 +3682,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
 
     def plcHairType(self, an):
         HAIRLESS = [ "Bird", "Reptile", "Fish", "Snake", "Hedgehog", "Tortoise", "Terrapin", 
-            "Chicken", "Owl", "Cockatiel", "Goose", "Goldfish" ]
+            "Lizard", "Chicken", "Owl", "Cockatiel", "Goose", "Goldfish" ]
         # Dogs
         speciesname = an["SPECIESNAME"]
         if speciesname == "Dog":
