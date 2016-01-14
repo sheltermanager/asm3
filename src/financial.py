@@ -346,7 +346,7 @@ def get_movement_donation(dbo, mid):
     """
     Returns the most recent donation with movement id mid
     """
-    r = db.query(dbo, get_donation_query(dbo) + "WHERE od.MovementID = %d ORDER BY Date DESC" % int(mid))
+    r = db.query(dbo, get_donation_query(dbo) + "WHERE od.MovementID = %d ORDER BY Date DESC, od.ID DESC" % int(mid))
     if len(r) == 0: return None
     return r[0]
 
@@ -354,7 +354,7 @@ def get_movement_donations(dbo, mid):
     """
     Returns all donations for a movement
     """
-    return db.query(dbo, get_donation_query(dbo) + "WHERE od.MovementID = %d ORDER BY Date DESC" % int(mid))
+    return db.query(dbo, get_donation_query(dbo) + "WHERE od.MovementID = %d ORDER BY Date DESC, od.ID DESC" % int(mid))
 
 def get_next_receipt_number(dbo):
     """ Returns the next receipt number for the frontend """
