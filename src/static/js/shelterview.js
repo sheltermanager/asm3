@@ -395,7 +395,7 @@ $(function() {
                 this.render_units_available();
             }
             else if (viewmode == "pickuplocation") {
-                this.render_view("PICKUPLOCATIONNAME", "", "PICKUPLOCATIONNAME,ANIMALNAME", false, false);
+                this.render_view("PICKUPLOCATIONNAME", "", "PICKUPLOCATIONNAME,ANIMALNAME", false, false, function(a) { return a.ISPICKUP == 1; });
             }
             else if (viewmode == "retailer") {
                 this.render_view("CURRENTOWNERNAME", "", "CURRENTOWNERNAME,ANIMALNAME", false, false, function(a) { return a.ACTIVEMOVEMENTTYPE == 8; });

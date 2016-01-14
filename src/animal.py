@@ -310,6 +310,7 @@ def get_animals_brief(animals):
             "IDENTICHIPPED": a["IDENTICHIPPED"],
             "ISHOLD": a["ISHOLD"],
             "ISNOTAVAILABLEFORADOPTION": a["ISNOTAVAILABLEFORADOPTION"],
+            "ISPICKUP": a["ISPICKUP"], 
             "ISQUARANTINE": a["ISQUARANTINE"],
             "LASTCHANGEDDATE": a["LASTCHANGEDDATE"],
             "LASTCHANGEDBY": a["LASTCHANGEDBY"],
