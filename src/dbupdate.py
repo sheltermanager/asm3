@@ -4269,5 +4269,7 @@ def update_33801(dbo):
 def update_33802(dbo):
     # Remove the Incident - Citation link from additional fields as it's no longer valid
     db.execute_dbupdate(dbo, "DELETE FROM lksfieldlink WHERE ID = 19")
+    # Move PickedUpByOwnerID to BroughtInByOwnerID and remove it
+    db.execute_dbupdate(dbo, "UPDATE animal SET BroughtInByOwnerID = PickedUpByOwnerID WHERE BroughtInByOwnerID = 0 AND PickedUpByOwnerID <> 0")
     drop_column(dbo, "animal", "PickedUpByOwnerID")
 
