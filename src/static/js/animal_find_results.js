@@ -169,6 +169,9 @@ $(function() {
                 "IsNotAvailableForAdoption":  _("Not Available for Adoption"),
                 "IsHold":  _("Hold"),
                 "HoldUntilDate": _("Hold until"),
+                "IsPickup": _("Picked Up"),
+                "PickupAddress": _("Pickup Address"),
+                "PickupLocationID": _("Pickup Location"), 
                 "IsQuarantine":  _("Quarantine"),
                 "HasSpecialNeeds":  _("Special Needs"),
                 "ShelterLocation":  _("Location"),
@@ -210,10 +213,10 @@ $(function() {
                 "NeuteredDate", "CombiTestDate", "HeartwormTestDate", "DateBroughtIn", "HoldUntilDate" ],
             STRING_FIELDS = [ "AnimalName", "BreedName", "Markings", "AcceptanceNumber", 
                 "AgeGroup", "IdentichipNumber", "TattooNumber", "HiddenAnimalDetails", 
-                "AnimalComments", "ReasonForEntry", "HealthProblems", "PTSReason", 
+                "AnimalComments", "ReasonForEntry", "HealthProblems", "PTSReason", "PickupAddress", 
                 "RabiesTag", "TimeOnShelter", "DaysOnShelter", "AnimalAge", "ShelterLocationUnit" ],
             YES_NO_UNKNOWN_FIELDS = [ "IsGoodWithCats", "IsGoodWithDogs", "IsGoodWithChildren",
-                "IsHouseTrained", "IsNotAvailableForAdoption", "IsHold", "IsQuarantine" ],
+                "IsHouseTrained", "IsNotAvailableForAdoption", "IsHold", "IsPickup", "IsQuarantine" ],
             YES_NO_FIELDS = [ "Neutered", "CombiTested", "HeartwormTested", "Declawed", 
                 "HasActiveReserve", "HasSpecialNeeds" ],
             POS_NEG_UNKNOWN_FIELDS = [ "CombiTestResult", "FLVResult", "HeartwormTestResult" ],
@@ -224,6 +227,7 @@ $(function() {
             else if ( name == "CoatType") { rv = row.COATTYPENAME; }
             else if ( name == "Sex") { rv = row.SEXNAME; }
             else if ( name == "EntryReasonID") { rv = row.ENTRYREASONNAME; }
+            else if ( name == "PickupLocationID") { rv = row.PICKUPLOCATIONNAME; }
             else if ( name == "PTSReasonID") { rv = row.DECEASEDDATE ? row.PTSREASONNAME : ""; }
             else if ( name == "ShelterLocation") { 
                 rv = row.DISPLAYLOCATIONNAME; 

@@ -362,6 +362,7 @@ def get_animal_find_simple(dbo, query, classfilter = "all", limit = 0, locationf
     ors.append(add("a.RabiesTag"))
     ors.append(add("il.LocationName"))
     ors.append(add("a.ShelterLocationUnit"))
+    ors.append(add("a.PickupAddress"))
     ors.append(u"EXISTS(SELECT ad.Value FROM additional ad " \
         "INNER JOIN additionalfield af ON af.ID = ad.AdditionalFieldID AND af.Searchable = 1 " \
         "WHERE ad.LinkID=a.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE '%%%s%%')" % (additional.ANIMAL_IN, query.lower()))
@@ -443,6 +444,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = ""):
        microchip - string partial pattern
        insuranceno - string partial pattern
        rabiestag - string partial pattern
+       pickupaddress - string partial pattern
        hiddencomments - partial word/string pattern
        originalowner - string partial pattern
        medianotes - partial word/string pattern
@@ -523,6 +525,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = ""):
         c.append(get_location_filter_clause(locationfilter, "a"))
     addstr("microchip", "a.IdentichipNumber")
     addstr("rabiestag", "a.RabiesTag")
+    addstr("pickupaddress", "a.PickupAddress")
     addid("sex", "a.Sex")
     addid("size", "a.Size")
     addid("colour", "a.BaseColourID")
