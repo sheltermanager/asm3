@@ -1,6 +1,7 @@
 38
 ================
 
+14/01/16 Remove unused PickedUpByOwnerID column
 14/01/16 Change Brought In By label for pickups/transfers #333
 14/01/16 Remove Incident - Citation additional link as not valid
 13/01/16 Make dialogs responsive for mobile app #345

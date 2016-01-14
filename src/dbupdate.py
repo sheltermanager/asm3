@@ -279,7 +279,6 @@ def sql_structure(dbo):
         fint("AsilomarIntakeCategory", True),
         fint("AsilomarOwnerRequestedEuthanasia", True),
         fint("IsPickup", True),
-        fint("PickedUpByOwnerID", True),
         fint("PickupLocationID", True),
         fstr("PickupAddress", True),
         flongstr("HealthProblems"),
@@ -349,7 +348,6 @@ def sql_structure(dbo):
     sql += index("animal_MostRecentEntryDate", "animal", "MostRecentEntryDate")
     sql += index("animal_OriginalOwnerID", "animal", "OriginalOwnerID")
     sql += index("animal_OwnersVetID", "animal", "OwnersVetID")
-    sql += index("animal_PickedUpByOwnerID", "animal", "PickedUpByOwnerID")
     sql += index("animal_PickupLocationID", "animal", "PickupLocationID")
     sql += index("animal_PickupAddress", "animal", "PickupAddress")
     sql += index("animal_PutToSleep", "animal", "PutToSleep")
@@ -2430,7 +2428,7 @@ def dump_merge(dbo, deleteViewSeq = True):
                     r[f] += ID_OFFSET
         s.append(db.rows_to_insert_sql(table, rows, ""))
     fix_and_dump("adoption", [ "ID", "AnimalID", "AdoptionNumber", "OwnerID", "RetailerID", "OriginalRetailerMovementID" ])
-    fix_and_dump("animal", [ "ID", "AnimalTypeID", "ShelterLocation", "ShelterCode", "BondedAnimalID", "BondedAnimal2ID", "OwnersVetID", "CurrentVetID", "OriginalOwnerID", "BroughtInByOwnerID", "PickedUpByOwnerID", "ActiveMovementID" ])
+    fix_and_dump("animal", [ "ID", "AnimalTypeID", "ShelterLocation", "ShelterCode", "BondedAnimalID", "BondedAnimal2ID", "OwnersVetID", "CurrentVetID", "OriginalOwnerID", "BroughtInByOwnerID", "ActiveMovementID" ])
     fix_and_dump("animalcontrol", [ "ID", "CallerID", "VictimID", "OwnerID", "Owner2ID", "Owner3ID", "AnimalID" ])
     fix_and_dump("animalcost", [ "ID", "AnimalID", "CostTypeID" ])
     fix_and_dump("costtype", [ "ID", ])
@@ -3842,9 +3840,7 @@ def update_33501(dbo):
     l = dbo.locale
     add_column(dbo, "animal", "IsPickup", "INTEGER")
     add_column(dbo, "animal", "PickupLocationID", "INTEGER")
-    add_column(dbo, "animal", "PickedUpByOwnerID", "INTEGER")
     add_index(dbo, "animal_PickupLocationID", "animal", "PickupLocationID")
-    add_index(dbo, "animal_PickedUpByOwnerID", "animal", "PickedUpByOwnerID")
     sql = "CREATE TABLE pickuplocation ( ID INTEGER NOT NULL, " \
         "LocationName %(short)s NOT NULL, " \
         "LocationDescription %(long)s )" % { "short": shorttext(dbo), "long": longtext(dbo) }
@@ -4273,4 +4269,5 @@ def update_33801(dbo):
 def update_33802(dbo):
     # Remove the Incident - Citation link from additional fields as it's no longer valid
     db.execute_dbupdate(dbo, "DELETE FROM lksfieldlink WHERE ID = 19")
+    drop_column(dbo, "animal", "PickedUpByOwnerID")
 
