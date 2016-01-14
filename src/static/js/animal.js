@@ -1312,6 +1312,7 @@ $(function() {
             $("#microchipnumber").keyup(animal.enable_widgets);
             $("#microchipdate").change(animal.enable_widgets);
             $("#pickedup").click(animal.enable_widgets).keyup(animal.enable_widgets);
+            $("#transferin").click(animal.enable_widgets).keyup(animal.enable_widgets);
 
             validate.save = function(callback) {
                 if (!animal.validation()) { header.hide_loading(); return; }
