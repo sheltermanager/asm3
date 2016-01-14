@@ -3686,8 +3686,8 @@ class PetsLocatedUKPublisher(FTPPublisher):
         if an.has_key("SPECIESID"): speciesid = an["SPECIESID"]
         else: speciesid = an["ANIMALTYPEID"]
         if speciesid == 1:
-            if an["COATTYPENAME"] == "Long": return "Long"
-            elif an["COATTYPENAME"] == "Hairless": return "Not Applicable"
+            if an.has_key("COATTYPENAME") and an["COATTYPENAME"] == "Long": return "Long"
+            elif an.has_key("COATTYPENAME") and an["COATTYPENAME"] == "Hairless": return "Not Applicable"
             else: return "Short"
         # Cats
         elif speciesid == 2:
