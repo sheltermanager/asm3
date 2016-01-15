@@ -1,6 +1,7 @@
 38
 ================
 
+15/01/16 Do split on animalname db before choosing for performance
 14/01/16 Allow pickup fields to be shown as search result columns
 14/01/16 Basic and advanced find animal can now search pickup address
 14/01/16 get_movement_donation(s) secondary ID sort for correct ordering

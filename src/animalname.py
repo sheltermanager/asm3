@@ -4811,7 +4811,7 @@ Zuku
 Zylonna 
 Zypp 
 Zzo
-"""
+""".split("\n")
 
 def get_random_name():
-    return random.choice(NAMES.split("\n"))
+    return random.choice(NAMES)
