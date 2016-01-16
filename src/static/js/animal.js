@@ -837,10 +837,19 @@ $(function() {
             // Show pickup fields if the animal is a pickup
             $("#pickedupbyrow, #pickupaddressrow, #pickuplocationrow").toggle($("#pickedup").is(":checked"));
 
-            // Change the Brought In By text if this record is a pickup or transfer
-            if ($("#pickedup").is(":checked")) { $("label[for='broughtinby']").html(_("Picked Up By")); }
-            else if ($("#transferin").is(":checked")) { $("label[for='broughtinby']").html(_("Transferred From")); }
-            else { $("label[for='broughtinby']").html(_("Brought In By")); }
+            // Change the Brought In By text and filter if this record is a pickup or transfer
+            if ($("#pickedup").is(":checked")) { 
+                $("label[for='broughtinby']").html(_("Picked Up By")); 
+                $("#broughtinby").personchooser("set_filter", "aco");
+            }
+            else if ($("#transferin").is(":checked")) { 
+                $("label[for='broughtinby']").html(_("Transferred From")); 
+                $("#broughtinby").personchooser("set_filter", "shelter");
+            }
+            else { 
+                $("label[for='broughtinby']").html(_("Brought In By")); 
+                $("#broughtinby").personchooser("set_filter", "all");
+            }
 
             // If the user ticked hold, there's no hold until date and
             // we have an auto remove days period, default the date

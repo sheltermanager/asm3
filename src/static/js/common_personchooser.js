@@ -22,6 +22,7 @@
      *            cleared (after user clicks the clear button)
      */
     $.widget("asm.personchooser", {
+        
         options: {
             id: 0,
             rec: {},
@@ -35,32 +36,21 @@
             towncounties: "",
             personflags: [],
             filter: "all",
-            mode: "full"
+            mode: "full",
+            title: _("Find person")
         },
+
         _create: function() {
             var self = this;
-            var title = _("Find person");
-            // Set the filter
+
             if (this.element.attr("data-filter")) { 
-                this.options.filter = this.element.attr("data-filter");
+                this.set_filter(this.element.attr("data-filter"));
             }
+
             if (this.element.attr("data-mode")) {
                 this.options.mode = this.element.attr("data-mode");
             }
-            // Choose the title from the filter
-            if (this.options.filter == "vet") { title = _("Find vet"); }
-            if (this.options.filter == "retailer") { title = _("Find retailer"); }
-            if (this.options.filter == "staff") { title = _("Find staff"); }
-            if (this.options.filter == "fosterer") { title = _("Find fosterer"); }
-            if (this.options.filter == "volunteer") { title = _("Find volunteer"); }
-            if (this.options.filter == "volunteerandstaff") { title = _("Find staff/volunteer"); }
-            if (this.options.filter == "shelter") { title = _("Find shelter"); }
-            if (this.options.filter == "aco") { title = _("Find aco"); }
-            if (this.options.filter == "homechecked") { title = _("Find homechecked"); }
-            if (this.options.filter == "homechecker") { title = _("Find homechecker"); }
-            if (this.options.filter == "member") { title = _("Find member"); }
-            if (this.options.filter == "donor") { title = _("Find donor"); }
-            if (this.options.filter == "driver") { title = _("Find driver"); }
+
             var h = [
                 '<div class="personchooser">',
                 '<input class="personchooser-banned" type="hidden" value="" />',
@@ -83,7 +73,7 @@
                     '<span class="similar-person"></span>',
                     '</p>',
                 '</div>',
-                '<div class="personchooser-find" style="display: none" title="' + title + '">',
+                '<div class="personchooser-find" style="display: none" title="' + this.title + '">',
                 '<input class="asm-textbox" type="text" />',
                 '<button>' + _("Search") + '</button>',
                 '<img style="height: 16px" src="static/images/wait/rolling_3a87cd.svg" />',
@@ -175,16 +165,19 @@
                 '</div>',
                 '</div>'
             ].join("\n");
+            
             var node = $(h);
             this.options.node = node;
             var dialog = node.find(".personchooser-find");
             var dialogadd = node.find(".personchooser-add");
             var dialogsimilar = node.find(".personchooser-similar");
+            
             this.options.dialog = dialog;
             this.options.dialogadd = dialogadd;
             this.options.dialogsimilar = dialogsimilar;
             this.options.display = node.find(".personchooser-display");
             this.element.parent().append(node);
+            
             // Create the find dialog
             var pcbuttons = {};
             pcbuttons[_("Cancel")] = function() { $(this).dialog("close"); };
@@ -202,6 +195,7 @@
             dialog.find("input").keydown(function(event) { if (event.keyCode == 13) { self.find(); return false; }});
             dialog.find("button").button().click(function() { self.find(); });
             dialog.find("img").hide();
+            
             // Create the add dialog
             var check_org = function() {
                 // If it's an organisation, only show the org fields,
@@ -216,7 +210,9 @@
                 }
             };
             dialogadd.find("[data='ownertype']").change(check_org);
+            
             var pcaddbuttons = {};
+            
             pcaddbuttons[_("Create this person")] = function() {
                 var valid = true, dialogadd = self.options.dialogadd;
                 // Validate fields that can't be blank
@@ -238,6 +234,7 @@
             pcaddbuttons[_("Cancel")] = function() {
                 $(this).dialog("close");
             };
+
             dialogadd.dialog({
                 autoOpen: false,
                 width: 400,
@@ -257,24 +254,25 @@
                     dialogadd.enable_dialog_buttons();
                 }
             });
-            // Bind the find button
+            
             node.find(".personchooser-link-find")
                 .button({ icons: { primary: "ui-icon-search" }, text: false })
                 .click(function() {
                     dialog.dialog("open");
                 });
-            // Bind the new button
+            
             node.find(".personchooser-link-new")
                 .button({ icons: { primary: "ui-icon-plus" }, text: false })
                 .click(function() {
                     dialogadd.dialog("open");
                 });
-            // Bind the clear button
+            
             node.find(".personchooser-link-clear")
                 .button({ icons: { primary: "ui-icon-trash" }, text: false })
                 .click(function() {
                     self.clear(true);
                 });
+
             /// Go to the backend to get the towns, counties and person flags  
             $.ajax({
                 type: "GET",
@@ -324,11 +322,13 @@
                 }
             });
         },
+
         destroy: function() {
             try { this.options.dialog.dialog("destroy"); } catch (ex) {}
             try { this.options.dialogadd.dialog("destroy"); } catch (exa) {}
             try { this.options.dialogsimilar.dialog("destroy"); } catch (exs) {}
         },
+
         /**
          * Load a person record from its ID
          */
@@ -368,6 +368,7 @@
                 }
             });
         },
+
         /**
          * Does the backend find and updates the onscreen table
          * in the find dialog
@@ -437,6 +438,7 @@
                 }
             });
         },
+
         /**
          * Updates the geocode for a new person
          */
@@ -456,6 +458,7 @@
                     }
                 });
         },
+
         /**
          * Posts the add dialog to the backend to create the owner
          */
@@ -499,6 +502,7 @@
                 }
             });
         },
+
         /**
          * Pops up the similar dialog box to prompt the user to decide
          * whether they want to create the owner or not. If they do,
@@ -529,6 +533,7 @@
                  }
             });
         },
+
         /**
          * Checks to see whether we have a similar person
          * on file. If we do, calls show_siilar to popup the
@@ -570,17 +575,52 @@
                 }
             });
         },
+
         clear: function(fireclearedevent) {
             this.element.val("0");
             this.options.display.html("");
             if (fireclearedevent) { this._trigger("cleared", null); }
         },
+
         /**
          * Returns the selected person record. If there's nothing
          * selected, undefined/null is returned
          */
         get_selected: function() {
             return this.selected;
+        },
+
+        /**
+         * Changes the find filter to f.
+         */
+        set_filter: function(f) {
+
+            var title = "";
+
+            this.options.filter = f;
+
+            // Choose the title from the filter
+            if (f == "vet") { title = _("Find vet"); }
+            else if (f == "retailer") { title = _("Find retailer"); }
+            else if (f == "staff") { title = _("Find staff"); }
+            else if (f == "fosterer") { title = _("Find fosterer"); }
+            else if (f == "volunteer") { title = _("Find volunteer"); }
+            else if (f == "volunteerandstaff") { title = _("Find staff/volunteer"); }
+            else if (f == "shelter") { title = _("Find shelter"); }
+            else if (f == "aco") { title = _("Find aco"); }
+            else if (f == "homechecked") { title = _("Find homechecked"); }
+            else if (f == "homechecker") { title = _("Find homechecker"); }
+            else if (f == "member") { title = _("Find member"); }
+            else if (f == "donor") { title = _("Find donor"); }
+            else if (f == "driver") { title = _("Find driver"); }
+            else { title = _("Find person"); }
+
+            this.options.title = title;
+            
+            if (this.options.dialog) {
+                this.options.dialog.dialog("option", "title", title);
+            }
+
         }
 
     });

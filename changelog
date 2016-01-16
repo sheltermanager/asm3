@@ -1,6 +1,7 @@
 38
 ================
 
+16/01/16 Change brought in by filter for transfers/pickups #350
 15/01/16 Do split on animalname db before choosing for performance
 14/01/16 Allow pickup fields to be shown as search result columns
 14/01/16 Basic and advanced find animal can now search pickup address
