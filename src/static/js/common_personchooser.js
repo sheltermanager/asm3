@@ -73,7 +73,7 @@
                     '<span class="similar-person"></span>',
                     '</p>',
                 '</div>',
-                '<div class="personchooser-find" style="display: none" title="' + this.title + '">',
+                '<div class="personchooser-find" style="display: none" title="' + this.options.title + '">',
                 '<input class="asm-textbox" type="text" />',
                 '<button>' + _("Search") + '</button>',
                 '<img style="height: 16px" src="static/images/wait/rolling_3a87cd.svg" />',
