@@ -4,8 +4,8 @@ import datetime
 import json
 import time
 
-VERSION = "38u [Sat 16 Jan 19:03:11 GMT 2016]"
-BUILD = "01161903"
+VERSION = "38u [Mon 18 Jan 11:57:19 GMT 2016]"
+BUILD = "01181157"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )

@@ -5,6 +5,9 @@ $(function() {
 
     var animal_new = {
 
+        /** Only attempt to set the non-shelter animal type once per reset */
+        set_nonsheltertype_once: false,
+
         render: function() {
             return [
                 '<div id="dialog-similar" style="display: none" title="' + _("Similar Animal") + '">',
@@ -328,8 +331,10 @@ $(function() {
             // any fields that aren't relevant to non-shelter animals
             if ($("#nonshelter").is(":checked")) {
                 $("#nsownerrow").fadeIn();
-                var nst = config.integer("AFNonShelterType");
-                if ($("#animaltype option[value='" + nst + "']").length > 0) { $("#animaltype").select("value", nst); }
+                if ($("#animaltype option[value='" + config.integer("AFNonShelterType") + "']").length > 0 && !animal_new.set_nonsheltertype_once) { 
+                    animal_new.set_nonsheltertype_once = true;
+                    $("#animaltype").select("value", config.integer("AFNonShelterType")); 
+                }
                 $("#holdrow, #locationrow, #locationunitrow, #fostererrow, #litterrow, #entryreasonrow, #broughtinbyrow, #originalownerrow").fadeOut();
             }
             else {
@@ -402,6 +407,7 @@ $(function() {
 
             // Set select box default values
             $("#animaltype").val(config.str("AFDefaultType"));
+            animal_new.set_nonsheltertype_once = false;
             $("#species").val(config.str("AFDefaultSpecies"));
             animal_new.update_breed_select();
             $("#breed1, #breed2").val(config.str("AFDefaultBreed"));
