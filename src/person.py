@@ -173,9 +173,12 @@ def get_satellite_counts(dbo, personid):
         "(SELECT COUNT(*) FROM animallost WHERE OwnerID = o.ID) + " \
         "(SELECT COUNT(*) FROM animaltransport WHERE DriverOwnerID = o.ID) + " \
         "(SELECT COUNT(*) FROM animalcontrol WHERE CallerID = o.ID OR VictimID = o.ID " \
-        "OR OwnerID = o.ID OR Owner2ID = o.ID or Owner3ID = o.ID)) AS links " \
+        "OR OwnerID = o.ID OR Owner2ID = o.ID or Owner3ID = o.ID) + " \
+        "(SELECT COUNT(*) FROM additional af INNER JOIN additionalfield aff ON aff.ID = af.AdditionalFieldID " \
+        "WHERE aff.FieldType = %d AND af.Value = '%d') " \
+        ") AS links " \
         "FROM owner o WHERE o.ID = %d" \
-        % (media.PERSON, diary.PERSON, log.PERSON, int(personid))
+        % (media.PERSON, diary.PERSON, log.PERSON, additional.PERSON_LOOKUP, int(personid), int(personid))
     return db.query(dbo, sql)
 
 def get_reserves_without_homechecks(dbo):
@@ -273,6 +276,19 @@ def get_links(dbo, pid):
         "t.DropOffAddress AS FIELD2, '' AS DMOD FROM animaltransport t " \
         "INNER JOIN animal a ON a.ID = t.AnimalID " \
         "WHERE t.DriverOwnerID = %d " \
+        "UNION SELECT 'AP' AS TYPE, " \
+        "aff.FieldLabel AS TYPEDISPLAY, a.LastChangedDate AS DDATE, a.ID AS LINKID, " \
+        "%s LINKDISPLAY, " \
+        "%s AS FIELD2, " \
+        "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
+        "FROM additional af " \
+        "INNER JOIN additionalfield aff ON aff.ID = af.AdditionalFieldID " \
+        "INNER JOIN animal a ON a.ID = af.LinkID " \
+        "INNER JOIN species s ON s.ID = a.SpeciesID " \
+        "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
+        "LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType " \
+        "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
+        "WHERE af.Value = '%d' AND aff.FieldType = %s AND aff.LinkType IN (%s) " \
         "ORDER BY DDATE DESC, LINKDISPLAY" \
         % ( db.ds(_("Original Owner", l)), linkdisplay, animalextra, int(pid), 
         db.ds(_("Brought In By", l)), linkdisplay, animalextra, int(pid),
@@ -284,7 +300,8 @@ def get_links(dbo, pid):
         db.ds(_("Animal Control Incident", l)), int(pid), int(pid), int(pid), 
         db.ds(_("Animal Control Caller", l)), int(pid), 
         db.ds(_("Animal Control Victim", l)), int(pid),
-        db.ds(_("Driver", l)), linkdisplay, int(pid) )
+        db.ds(_("Driver", l)), linkdisplay, int(pid),
+        linkdisplay, animalextra, int(pid), additional.PERSON_LOOKUP, additional.clause_for_linktype("animal") ) 
     return db.query(dbo, sql)
 
 def get_investigation(dbo, personid, sort = ASCENDING):
