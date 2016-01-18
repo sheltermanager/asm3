@@ -1,6 +1,7 @@
 38
 ================
 
+18/01/16 Fix auto logout to use page visibility #351
 18/01/16 Show additional people lookups linked to animals #353
 18/01/16 Only set non-shelter type once per animal new reset #347
 16/01/16 Change brought in by filter for transfers/pickups #350

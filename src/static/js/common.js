@@ -913,8 +913,14 @@
         inactive_time: 0,
 
         /** Called every time a minute has elapsed. If we go over our 
-         *  timeout value, we logout */
+         *  timeout value, we logout. 
+         *  If the browser does not support the page visibility API 
+         *  or this tab of the application isn't visible, don't do anything
+         *  to prevent another tab surprising the user with logout.
+         */
         inactive_time_increment: function() {
+            if (!Modernizr.pagevisibility) { return; }
+            if (document.hidden) { return; }
             common.inactive_time += 1;
             if (common.inactive_time > config.integer("InactivityTimeout")) {
                 common.inactivity_logout();
