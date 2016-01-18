@@ -1,6 +1,7 @@
 38
 ================
 
+18/01/16 Add MOVEMENTRETURNDATE to csv import
 18/01/16 Fix for required attribute with radio (thanks dbjorge)
 18/01/16 Fix auto logout to use page visibility #351
 18/01/16 Show additional people lookups linked to animals #353

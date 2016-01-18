@@ -31,7 +31,7 @@ VALID_FIELDS = [
     "ORIGINALOWNERSTATE", "ORIGINALOWNERZIPCODE", "ORIGINALOWNERHOMEPHONE",
     "ORIGINALOWNERWORKPHONE", "ORIGINALOWNERCELLPHONE", "ORIGINALOWNEREMAIL",
     "DONATIONDATE", "DONATIONAMOUNT", "DONATIONCOMMENTS", "DONATIONTYPE", "DONATIONPAYMENT", 
-    "MOVEMENTTYPE", "MOVEMENTDATE", "MOVEMENTCOMMENTS",
+    "MOVEMENTTYPE", "MOVEMENTDATE", "MOVEMENTCOMMENTS", "MOVEMENTRETURNDATE", 
     "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME", "PERSONNAME",
     "PERSONADDRESS", "PERSONCITY", "PERSONSTATE",
     "PERSONZIPCODE", "PERSONMEMBER", "PERSONFOSTERER", "PERSONDONOR",
@@ -441,6 +441,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
             if movetype == "": movetype = "1" # Default to adoption if not supplied
             m["type"] = str(movetype)
             m["movementdate"] = gkd(dbo, row, "MOVEMENTDATE", True)
+            m["returndate"] = gkd(dbo, row, "MOVEMENTRETURNDATE")
             m["comments"] = gks(row, "MOVEMENTCOMMENTS")
             m["returncategory"] = str(configuration.default_entry_reason(dbo))
             try:
