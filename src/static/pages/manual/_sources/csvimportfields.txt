@@ -73,6 +73,8 @@ MOVEMENTTYPE
     The type of movement for this line (1 = Adoption, 2 = Foster, 3 = Transfer, 4 = Escaped, 5 = Reclaimed, 6 = Stolen, 7 = Released to Wild, 8 = Moved to Retailer. If MOVEMENTTYPE is not specified, but a MOVEMENTDATE has been given, ASM will default the type to adoption.
 MOVEMENTDATE
     The date of the movement
+MOVEMENTRETURNDATE
+    The return date of the movement
 MOVEMENTCOMMENTS
     Any comments for the movement
 ORIGINALOWNERTITLE
