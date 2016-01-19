@@ -604,7 +604,10 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                             if utils.nulltostr(fld[0]["TOOLTIP"]) != "":
                                 flags += fld[0]["TOOLTIP"]
                                 db.execute(dbo, "UPDATE onlineformincoming SET Flags = %s WHERE CollationID = %d" % (db.ds(flags), collationid))
-
+            # Remove any html tags in incoming values to defend against XSS and
+            # there should be no reason for people to be including tags
+            v = utils.strip_html_tags(v)
+            # Do the insert
             sql = db.make_insert_sql("onlineformincoming", ( 
                 ( "CollationID", db.di(collationid)),
                 ( "FormName", db.ds(formname)),

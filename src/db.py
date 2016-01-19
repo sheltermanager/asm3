@@ -502,7 +502,7 @@ def query_float(dbo, sql):
 def query_string(dbo, sql):
     r = query_tuple(dbo, sql)
     try :
-        v = r[0][0].replace("`", "'")
+        v = unescape(r[0][0])
         return encode_str(v)
     except:
         return str("")
@@ -527,7 +527,7 @@ def encode_str(v):
             v = v.encode("ascii", "xmlcharrefreplace")
     if type(v) == str:
         if v is not None:
-            v = v.replace("`", "'")
+            v = unescape(v)
             v = v.replace("\x92", "'")
     return v
 
@@ -588,9 +588,9 @@ def ds(s):
     elif type(s) != str and type(s) != unicode:
         return u"'%s'" % str(s)
     elif not DB_DECODE_HTML_ENTITIES:
-        return u"'%s'" % utils.encode_html(s).replace("'", "`").replace("\\", "\\\\")
+        return u"'%s'" % escape(utils.encode_html(s))
     else:
-        return u"'%s'" % utils.decode_html(s.replace("'", "`").replace("\\", "\\\\"))
+        return u"'%s'" % utils.decode_html(escape(s))
 
 def df(f):
     """ Formats a value as a float for the database """
@@ -635,7 +635,17 @@ def check_recordversion(dbo, table, tid, version):
 
 def escape(s):
     """ Makes a value safe for queries """
-    return s.replace("'", "`")
+    if s is None: return ""
+    s = s.replace("'", "`")
+    s = s.replace("\\", "\\\\")
+    return s
+
+def unescape(s):
+    """ unescapes query values """
+    if s is None: return ""
+    s = s.replace("`", "'")
+    s = s.replace("\\\\", "\\")
+    return s
 
 def recordversion():
     """
