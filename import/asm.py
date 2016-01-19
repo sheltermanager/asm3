@@ -95,21 +95,27 @@ def csv_to_list(fname, strip = False, remove_control = False, uppercasekeys = Fa
     with the first row used as the keys.
     strip: If True, removes whitespace from all fields
     remove_control: If True, removes all ascii chars < 32
-    lowercasekeys: If True, runs lower() on headings/map keys
+    uppercasekeys: If True, runs upper() on headings/map keys
     returns a list of maps
     returns None if the file does not exist
     """
     if not os.path.exists(fname): return None
     o = []
-    reader = csv.DictReader(open(fname, "r"))
+    if remove_control:
+        with open(fname, "rb") as f:
+            lines = f.readlines()
+            f.close()
+        with open(fname, "wb") as f:
+            for s in lines:
+                f.write(''.join(c for c in s if ord(c) >= 32))
+                f.write("\n")
+            f.flush()
+            f.close()
+    reader = csv.DictReader(open(fname, "rb"))
     for row in reader:
         if strip:
             for k, v in row.iteritems():
                 row[k] = v.strip()
-        if remove_control:
-            for k, v in row.iteritems():
-                v = ''.join(c for c in v if ord(c) >= 32)
-                row[k]= v.strip()
         if uppercasekeys:
             row = {k.upper(): v for k, v in row.iteritems()}
         o.append(row)

@@ -4,6 +4,8 @@ import asm, datetime, sys, os
 
 """
 Import script for Shelterpro databases exported as CSV
+If you use http://dbfconv.com, a special getdate function is needed (below)
+
 (requires shelter.csv, animal.csv, person.csv, address.csv, addrlink.csv, license.csv, vacc.csv)
 
 Will also look in PATH/images/ANIMALKEY.[jpg|JPG] for animal photos if available.
@@ -11,7 +13,7 @@ Will also look in PATH/images/ANIMALKEY.[jpg|JPG] for animal photos if available
 6th Oct, 2014 - 8th April, 2015
 """
 
-PATH = "data/shelterpro_bc0884"
+PATH = "data/shelterpro_westerly"
 
 def gettype(animaldes):
     spmap = {
@@ -41,10 +43,17 @@ def getsize(size):
     else:
         return 3
 
+def getdate(d):
+    if d == "": return None
+    if d.find(" ") != -1: d = d[0:d.find(" ")]
+    d = d.split("-")
+    if len(d) != 3: return None
+    return datetime.datetime( 2000 + int(d[2]), int(d[1]), int(d[0]) )
+
 def getdateage(age, arrivaldate):
     """ Returns a date adjusted for age. Age can be one of
         ADULT, PUPPY, KITTEN, SENIOR """
-    d = asm.getdate_yyyymmdd(arrivaldate)
+    d = getdate(arrivaldate)
     if d == None: d = datetime.datetime.today()
     if age == "ADULT":
         d = d - datetime.timedelta(days = 365 * 2)
@@ -92,13 +101,13 @@ o.OwnerSurname = "Other Shelter"
 o.OwnerName = o.OwnerSurname
 
 # Load up data files
-caddress = asm.csv_to_list("%s/address.csv" % PATH)
-caddrlink = asm.csv_to_list("%s/addrlink.csv" % PATH)
-canimal = asm.csv_to_list("%s/animal.csv" % PATH)
-clicense = asm.csv_to_list("%s/license.csv" % PATH)
-cperson = asm.csv_to_list("%s/person.csv" % PATH)
-cshelter = asm.csv_to_list("%s/shelter.csv" % PATH)
-cvacc = asm.csv_to_list("%s/vacc.csv" % PATH)
+caddress = asm.csv_to_list("%s/address.csv" % PATH, strip=True, remove_control=True, uppercasekeys=True)
+caddrlink = asm.csv_to_list("%s/addrlink.csv" % PATH, strip=True, remove_control=True, uppercasekeys=True)
+canimal = asm.csv_to_list("%s/animal.csv" % PATH, strip=True, remove_control=True, uppercasekeys=True)
+clicense = asm.csv_to_list("%s/license.csv" % PATH, strip=True, remove_control=True, uppercasekeys=True)
+cperson = asm.csv_to_list("%s/person.csv" % PATH, strip=True, remove_control=True, uppercasekeys=True)
+cshelter = asm.csv_to_list("%s/shelter.csv" % PATH, strip=True, remove_control=True, uppercasekeys=True)
+cvacc = asm.csv_to_list("%s/vacc.csv" % PATH, strip=True, remove_control=True, uppercasekeys=True)
 
 # Start with animals
 for row in canimal:
@@ -111,10 +120,10 @@ for row in canimal:
     if a.AnimalName.strip() == "":
         a.AnimalName = "(unknown)"
     age = row["AGE"].split(" ")[0]
-    # TODO: some have DOB
-    # a.DateOfBirth = asm.getdate_yyyymmdd(row["DOB"])
-    a.DateOfBirth = getdateage(age, row["ADDEDDATET"])
-    a.DateBroughtIn = asm.getdate_yyyymmdd(row["ADDEDDATET"])
+    # TODO: DOB is not always present in these things
+    a.DateOfBirth = getdate(row["DOB"])
+    if a.DateOfBirth is None: a.DateOfBirth = getdateage(age, row["ADDEDDATET"])
+    a.DateBroughtIn = getdate(row["ADDEDDATET"])
     if a.DateBroughtIn is None:
         sys.stderr.write("Bad datebroughtin: '%s'\n" % row["ADDEDDATET"])
         a.DateBroughtIn = datetime.datetime.today()    
@@ -163,7 +172,7 @@ for row in cvacc:
     # Each row contains a vaccination
     av = asm.AnimalVaccination()
     animalvaccinations.append(av)
-    vaccdate = asm.getdate_yyyymmdd(row["VACCEFFECT"])
+    vaccdate = getdate(row["VACCEFFECT"])
     if vaccdate is None:
         vaccdate = a.DateBroughtIn
     av.AnimalID = a.ID
@@ -226,7 +235,7 @@ for row in cshelter:
     a = None
     if ppa.has_key(row["ANIMALKEY"]):
         a = ppa[row["ANIMALKEY"]]
-        arivdate = asm.getdate_yyyymmdd(row["ARIVDATE"])
+        arivdate = getdate(row["ARIVDATE"])
         a.ShortCode = asm.fw(row["FIELDCARD"])
         a.ShelterLocationUnit = asm.fw(row["KENNEL"])
         a.NonShelterAnimal = 0
@@ -254,7 +263,7 @@ for row in cshelter:
         m.AnimalID = a.ID
         m.OwnerID = o.ID
         m.MovementType = 1
-        m.MovementDate = asm.getdate_yyyymmdd(row["DISPDATE"])
+        m.MovementDate = getdate(row["DISPDATE"])
         a.Archived = 1
         a.ActiveMovementID = m.ID
         a.ActiveMovementDate = m.MovementDate
@@ -268,7 +277,7 @@ for row in cshelter:
         m.AnimalID = a.ID
         m.OwnerID = o.ID
         m.MovementType = 5
-        m.MovementDate = asm.getdate_yyyymmdd(row["DISPDATE"])
+        m.MovementDate = getdate(row["DISPDATE"])
         a.Archived = 1
         a.ActiveMovementID = m.ID
         a.ActiveMovementDate = m.MovementDate
@@ -282,7 +291,7 @@ for row in cshelter:
         m.AnimalID = a.ID
         m.OwnerID = 0
         m.MovementType = 7
-        m.MovementDate = asm.getdate_yyyymmdd(row["DISPDATE"])
+        m.MovementDate = getdate(row["DISPDATE"])
         m.Comments = row["DISPMETH"]
         a.Archived = 1
         a.ActiveMovementDate = m.MovementDate
@@ -297,12 +306,12 @@ for row in cshelter:
 
     # Deceased
     elif row["DISPMETH"] == "DECEASED":
-        a.DeceasedDate = asm.getdate_yyyymmdd(row["DISPDATE"])
+        a.DeceasedDate = getdate(row["DISPDATE"])
         a.Archived = 1
 
     # Euthanized
     elif row["DISPMETH"] == "EUTHANIZED":
-        a.DeceasedDate = asm.getdate_yyyymmdd(row["DISPDATE"])
+        a.DeceasedDate = getdate(row["DISPDATE"])
         a.PutToSleep = 1
         a.Archived = 1
 
@@ -317,7 +326,7 @@ for row in cshelter:
         m.AnimalID = a.ID
         m.OwnerID = 100
         m.MovementType = 3
-        m.MovementDate = asm.getdate_yyyymmdd(row["DISPDATE"])
+        m.MovementDate = getdate(row["DISPDATE"])
         m.Comments = row["DISPMETH"]
         a.Archived = 1
         a.ActiveMovementID = m.ID
@@ -332,14 +341,14 @@ for row in clicense:
     if ppo.has_key(row["LICENSEOWN"]):
         o = ppo[row["LICENSEOWN"]]
     if a is not None and o is not None:
-        if asm.getdate_yyyymmdd(row["LICENSEEFF"]) is None:
+        if getdate(row["LICENSEEFF"]) is None:
             continue
         ol = asm.OwnerLicence()
         ownerlicences.append(ol)
         ol.AnimalID = a.ID
         ol.OwnerID = o.ID
-        ol.IssueDate = asm.getdate_yyyymmdd(row["LICENSEEFF"])
-        ol.ExpiryDate = asm.getdate_yyyymmdd(row["LICENSEEXP"])
+        ol.IssueDate = getdate(row["LICENSEEFF"])
+        ol.ExpiryDate = getdate(row["LICENSEEXP"])
         ol.LicenceNumber = asm.fw(row["LICENSE"])
         ol.LicenceTypeID = 2 # Unaltered dog
         if row["LICENSEFIX"] == "1":
