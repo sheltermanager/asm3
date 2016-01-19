@@ -2059,7 +2059,7 @@ class change_password:
         post = utils.PostedData(web.input(oldpassword = "", newpassword = ""), session.locale)
         oldpass = post["oldpassword"]
         newpass = post["newpassword"]
-        al.debug("%s changed password %s -> %s" % (session.user, oldpass, newpass), "code.change_password", dbo)
+        al.debug("%s changed password" % (session.user), "code.change_password", dbo)
         users.change_password(dbo, session.user, oldpass, newpass)
 
 class change_user_settings:
