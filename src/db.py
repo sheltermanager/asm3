@@ -581,16 +581,22 @@ def dd(d):
     if d is None: return "NULL"
     return "'%04d-%02d-%02d 00:00:00'" % ( d.year, d.month, d.day )
 
-def ds(s):
+def ds(s, sanitise_xss = True):
     """ Formats a value as a string for the database """
     if s is None: 
         return u"NULL"
     elif type(s) != str and type(s) != unicode:
         return u"'%s'" % str(s)
     elif not DB_DECODE_HTML_ENTITIES:
-        return u"'%s'" % escape(utils.encode_html(s))
+        s = utils.encode_html(s)            # Turn any leftover unicode chars into HTML entities
+        s = escape(s)                       # DB/SQL injection safe
+        if sanitise_xss: s = escape_xss(s)  # XSS
+        return u"'%s'" % s
     else:
-        return u"'%s'" % utils.decode_html(escape(s))
+        s = utils.decode_html(s)            # Turn HTML entities into unicode symbols
+        s = escape(s)                       # DB/SQL Injection safe
+        if sanitise_xss: s = escape_xss(s)  # XSS
+        return u"'%s'" % s
 
 def df(f):
     """ Formats a value as a float for the database """
@@ -634,10 +640,22 @@ def check_recordversion(dbo, table, tid, version):
     return version == query_int(dbo, "SELECT RecordVersion FROM %s WHERE ID = %d" % (table, tid))
 
 def escape(s):
-    """ Makes a value safe for queries """
+    """ Makes a value safe for database queries
+    """
     if s is None: return ""
     s = s.replace("'", "`")
     s = s.replace("\\", "\\\\")
+    # TODO: Investigate mysql.escape_string/psycopg2.mogrify here to mitigate unicode SQL inject attacks
+    return s
+
+def escape_xss(s):
+    """ Make a value safe from XSS attacks
+        TODO: Investigate other tools/approaches for XSS defence, 
+              this is a really quick/dirty hack for now
+    """
+    s = s.replace("<script>", "")
+    s = s.replace("<script", "")
+    s = s.replace("</script>", "")
     return s
 
 def unescape(s):

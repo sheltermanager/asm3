@@ -451,9 +451,9 @@ def insert_onlineform_from_form(dbo, username, post):
         ( "RedirectUrlAfterPOST", post.db_string("redirect")),
         ( "SetOwnerFlags", post.db_string("flags")),
         ( "EmailAddress", post.db_string("email")),
-        ( "Header", post.db_string("header")),
-        ( "Footer", post.db_string("footer")),
-        ( "Description", post.db_string("description"))
+        ( "Header", db.ds(post["header"], False) ),
+        ( "Footer", db.ds(post["footer"], False) ),
+        ( "Description", db.ds(post["description"], False) )
         ))
     db.execute(dbo, sql)
     audit.create(dbo, username, "onlineform", str(formid))
@@ -469,9 +469,9 @@ def update_onlineform_from_form(dbo, username, post):
         ( "RedirectUrlAfterPOST", post.db_string("redirect")),
         ( "SetOwnerFlags", post.db_string("flags")),
         ( "EmailAddress", post.db_string("email")),
-        ( "Header", post.db_string("header")),
-        ( "Footer", post.db_string("footer")),
-        ( "Description", post.db_string("description"))
+        ( "Header", db.ds(post["header"], False) ),
+        ( "Footer", db.ds(post["footer"], False) ),
+        ( "Description", db.ds(post["description"], False) )
         ))
     preaudit = db.query(dbo, "SELECT * FROM onlineform WHERE ID = %d" % formid)
     db.execute(dbo, sql)
@@ -497,9 +497,9 @@ def clone_onlineform(dbo, username, formid):
         ( "RedirectUrlAfterPOST", db.ds(f["REDIRECTURLAFTERPOST"])),
         ( "SetOwnerFlags", db.ds(f["SETOWNERFLAGS"])),
         ( "EmailAddress", db.ds(f["EMAILADDRESS"])),
-        ( "Header", db.ds(f["HEADER"])),
-        ( "Footer", db.ds(f["FOOTER"])),
-        ( "Description", db.ds(f["DESCRIPTION"]))
+        ( "Header", db.ds(f["HEADER"], False)),
+        ( "Footer", db.ds(f["FOOTER"], False)),
+        ( "Description", db.ds(f["DESCRIPTION"], False))
         ))
     db.execute(dbo, sql)
     for ff in get_onlineformfields(dbo, formid):
@@ -604,9 +604,6 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                             if utils.nulltostr(fld[0]["TOOLTIP"]) != "":
                                 flags += fld[0]["TOOLTIP"]
                                 db.execute(dbo, "UPDATE onlineformincoming SET Flags = %s WHERE CollationID = %d" % (db.ds(flags), collationid))
-            # Remove any html tags in incoming values to defend against XSS and
-            # there should be no reason for people to be including tags
-            v = utils.strip_html_tags(v)
             # Do the insert
             sql = db.make_insert_sql("onlineformincoming", ( 
                 ( "CollationID", db.di(collationid)),

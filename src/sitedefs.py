@@ -49,10 +49,11 @@ DB_HAS_ASM2_PK_TABLE = False
 DB_PK_STRATEGY = "max"
 
 # If False, HTML entities (all unicode chars) will be stored as is in the database.
-# (this is better for databases with non Unicode collation/storage)
+# (this is better for databases with non Unicode collation/storage and less of
+#  a security risk for Unicode SQL/XSS attacks)
 # If True, HTML entities will be decoded to Unicode before storing in the database
 # (storage is more efficient as UTF8 should be used for 2 bytes/char instead of 5)
-DB_DECODE_HTML_ENTITIES = True
+DB_DECODE_HTML_ENTITIES = False
 
 # If set, all calls to db.execute will be logged to the file
 # named. Use {database} to substitute database name.

@@ -1,7 +1,8 @@
 38
 ================
 
-19/01/16 Defend against XSS in incoming online form data by stripping html
+19/01/16 Add XSS sanitise hooks to db.ds #358
+19/01/16 Fix potential unicode SQL injection/XSS via ds/decode_html #358
 19/01/16 Refactor db.ds to use escape, add unescape
 18/01/16 Add MOVEMENTRETURNDATE to csv import
 18/01/16 Fix for required attribute with radio (thanks dbjorge)
