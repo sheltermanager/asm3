@@ -242,13 +242,14 @@ def authenticate(dbo, username, password):
     pypassword = hash_password(password)
     javapassword = hash_password(password, True)
 
-    # Do not use any inputs directly in database queries
-    for u in db.query(dbo, "SELECT * FROM users"):
+    # Do not use any login inputs directly in database queries
+    for u in db.query(dbo, "SELECT ID, UserName, Password FROM users"):
         if username != u["USERNAME"].upper():
             continue
         dbpass = u["PASSWORD"].strip()
         if dbpass == pypassword or dbpass == javapassword:
-            return u
+            u = db.query(dbo, "SELECT * FROM users WHERE ID=%d" % u["ID"])
+            if len(u) == 1: return u[0]
     return None
 
 def authenticate_ip(user, remoteip):
