@@ -611,14 +611,8 @@ def escape(s):
     return s
 
 def escape_xss(s):
-    """ Make a value safe from XSS attacks
-        TODO: Investigate other tools/approaches for XSS defence, 
-              this is a really quick/dirty hack for now
-    """
-    s = s.replace("<script>", "")
-    s = s.replace("<script", "")
-    s = s.replace("</script>", "")
-    return s
+    """ Make a value safe from XSS attacks by encoding tag delimiters """
+    return s.replace(">", "&gt;").replace("<", "&lt;")
 
 def unescape(s):
     """ unescapes query values """
