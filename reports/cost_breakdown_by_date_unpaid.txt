@@ -78,6 +78,7 @@ animal.AnimalName AS name,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animaltransport.Cost AS amt,
+animaltransport.CostPaidDate,
 'Transport to' AS description1,
 owner.OwnerAddress AS description2
 FROM animal
