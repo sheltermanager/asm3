@@ -447,13 +447,15 @@ def return_movement(dbo, movementid, animalid = 0, returndate = None):
     db.execute(dbo, "UPDATE adoption SET ReturnDate = %s WHERE ID = %d" % (db.dd(returndate), int(movementid)))
     animal.update_animal_status(dbo, int(animalid))
 
-def insert_adoption_from_form(dbo, username, post, creating = []):
+def insert_adoption_from_form(dbo, username, post, creating = [], create_payments = True):
     """
     Inserts a movement from the workflow adopt an animal screen.
     Returns the new movement id
     creating is an ongoing list of animals we're already going to
     create adoptions for. It prevents a never ending recursive loop
     of animal1 being bonded to animal2 that's bonded to animal1, etc.
+    create_payments is True if we should create payments - don't do this
+    for bonded animals or we'll double up all the payments.
     """
     l = dbo.locale
     # Validate that we have a movement date before doing anthing
@@ -473,12 +475,12 @@ def insert_adoption_from_form(dbo, username, post, creating = []):
         al.debug("Found bond to animal %d, creating adoption..." % a["BONDEDANIMALID"], "movement.insert_adoption_from_form", dbo)
         newdata = dict(post.data)
         newdata["animal"] = str(a["BONDEDANIMALID"])
-        insert_adoption_from_form(dbo, username, utils.PostedData(newdata, dbo.locale), creating)
+        insert_adoption_from_form(dbo, username, utils.PostedData(newdata, dbo.locale), creating, create_payments = False)
     if a["BONDEDANIMAL2ID"] is not None and a["BONDEDANIMAL2ID"] != 0 and a["BONDEDANIMAL2ARCHIVED"] == 0 and a["BONDEDANIMAL2ID"] not in creating:
         al.debug("Found bond to animal %d, creating adoption..." % a["BONDEDANIMAL2ID"], "movement.insert_adoption_from_form", dbo)
         newdata = dict(post.data)
         newdata["animal"] = str(a["BONDEDANIMAL2ID"])
-        insert_adoption_from_form(dbo, username, utils.PostedData(newdata, dbo.locale), creating)
+        insert_adoption_from_form(dbo, username, utils.PostedData(newdata, dbo.locale), creating, create_payments = False)
     cancel_reserves = configuration.cancel_reserves_on_adoption(dbo)
     # Prepare a dictionary of data for the movement table via insert_movement_from_form
     move_dict = {
@@ -537,7 +539,8 @@ def insert_adoption_from_form(dbo, username, post, creating = []):
     else:
         movementid = insert_movement_from_form(dbo, username, utils.PostedData(move_dict, l))
     # Create any payments
-    financial.insert_donations_from_form(dbo, username, post, post["movementdate"], False, post["person"], post["animal"], movementid) 
+    if create_payments:
+        financial.insert_donations_from_form(dbo, username, post, post["movementdate"], False, post["person"], post["animal"], movementid) 
     # Then any boarding cost record
     cost_amount = post.integer("costamount")
     cost_type = post["costtype"]
