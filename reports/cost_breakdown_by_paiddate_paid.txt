@@ -119,6 +119,7 @@ $$FOOTER
 <td></td>
 <td></td>
 <td></td>
+<td></td>
 <td><b>{SUM.AMT.2}</b></td>
 <td></td>
 </tr>
