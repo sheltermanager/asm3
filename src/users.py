@@ -238,12 +238,14 @@ def authenticate(dbo, username, password):
     Authenticates whether a username and password are valid.
     Returns None if authentication failed, or a user row
     """
-    username = db.escape(username).replace("\\", "")
+    username = db.escape(username).replace("\\", "").upper()
     pypassword = hash_password(password)
     javapassword = hash_password(password, True)
 
-    users = db.query(dbo, "SELECT * FROM users WHERE UPPER(UserName) LIKE UPPER(" + db.ds(username) + ")")
-    for u in users:
+    # Do not use any inputs directly in database queries
+    for u in db.query(dbo, "SELECT * FROM users"):
+        if username != u["USERNAME"].upper():
+            continue
         dbpass = u["PASSWORD"].strip()
         if dbpass == pypassword or dbpass == javapassword:
             return u
