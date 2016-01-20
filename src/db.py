@@ -595,14 +595,17 @@ def escape(s):
     """ Makes a value safe for database queries
     """
     if s is None: return ""
+    
     # This is historic - ASM2 switched backtick for apostrophes, so we retain
     # it for compatibility as lots of data relies on it now
     s = s.replace("'", "`")
-    # If the database driver can help us out, use their value escaping technique 
+
+    # Use the database driver's own value escaping technique
     # to encode backslashes/other disallowed items and mitigate 
-    # SQL injection encoding attacks
+    # SQL injection encoding attacks.
+    # This is a stopgap measure as we should be using parameterised queries.
     if DB_TYPE == "POSTGRESQL": 
-        s = unicode(psycopg2.extensions.adapt(s))
+        s = psycopg2.extensions.adapt(s).adapted
     elif DB_TYPE == "MYSQL": 
         s = MySQLdb.escape_string(s)
     return s

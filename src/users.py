@@ -238,18 +238,17 @@ def authenticate(dbo, username, password):
     Authenticates whether a username and password are valid.
     Returns None if authentication failed, or a user row
     """
-    username = db.escape(username).replace("\\", "").upper()
+    username = username.upper()
     pypassword = hash_password(password)
     javapassword = hash_password(password, True)
 
     # Do not use any login inputs directly in database queries
     for u in db.query(dbo, "SELECT ID, UserName, Password FROM users"):
-        if username != u["USERNAME"].upper():
-            continue
-        dbpass = u["PASSWORD"].strip()
-        if dbpass == pypassword or dbpass == javapassword:
-            u = db.query(dbo, "SELECT * FROM users WHERE ID=%d" % u["ID"])
-            if len(u) == 1: return u[0]
+        if username == u["USERNAME"].upper():
+            dbpass = u["PASSWORD"].strip()
+            if dbpass == pypassword or dbpass == javapassword:
+                u = db.query(dbo, "SELECT * FROM users WHERE ID=%d" % u["ID"])
+                if len(u) == 1: return u[0]
     return None
 
 def authenticate_ip(user, remoteip):
