@@ -1,6 +1,7 @@
 38
 ================
 
+20/01/16 Hide adoption fee on non-shelter animals
 20/01/16 Stop bonded animals creating double payments from move_adopt
 20/01/16 Use psycopg2 and mysqldb driver escaping #358
 20/01/16 Remove db.query_json - not used and non-standard
