@@ -280,54 +280,6 @@ def query_tuple_columns(dbo, sql):
         except:
             pass
 
-def query_json(dbo, sql):
-    """
-        Runs the query given and returns the resultset
-        as a JSON array with column names. This is
-        more efficient than having query() marshall into
-        dictionaries and then iterating those, so if
-        you're querying to get JSON, use this instead of
-        json(query(dbo, "SQL"))
-    """
-    try:
-        c, s = connect_cursor_open(dbo)
-        # Run the query
-        s.execute(sql)
-        c.commit()
-        # Loop round the rows
-        rows = ""
-        while 1:
-            d = s.fetchone()
-            if d is None: break
-
-            row = "{"
-            for i in xrange(0, len(d)):
-                if row != "{": row += ", "
-                # if it's null
-                if d[i] is None: 
-                    value = "null"
-                # if it's numeric
-                elif is_number(d[i]): 
-                    value = str(d[i])
-                # if it's a string
-                else:
-                    value = "\"" + str(d[i]).replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t").replace("`", "'").replace("\"", "\\\"") + "\""
-                row += "\"%s\" : %s" % ( s.description[i][0].upper(), value )
-            row += "}"
-            if rows != "": rows += ",\n"
-            rows += row
-        json = "[\n" + rows + "\n]"
-        connect_cursor_close(dbo, c, s)
-        return json
-    except Exception,err:
-        al.error(str(err), "db.query_json", dbo, sys.exc_info())
-        raise err
-    finally:
-        try:
-            connect_cursor_close(dbo, c, s)
-        except:
-            pass
-    
 def execute_dbupdate(dbo, sql):
     """
     Runs an action query for a dbupdate script (sets override_lock
@@ -643,9 +595,16 @@ def escape(s):
     """ Makes a value safe for database queries
     """
     if s is None: return ""
+    # This is historic - ASM2 switched backtick for apostrophes, so we retain
+    # it for compatibility as lots of data relies on it now
     s = s.replace("'", "`")
-    s = s.replace("\\", "\\\\")
-    # TODO: Investigate mysql.escape_string/psycopg2.mogrify here to mitigate unicode SQL inject attacks
+    # If the database driver can help us out, use their value escaping technique 
+    # to encode backslashes/other disallowed items and mitigate 
+    # SQL injection encoding attacks
+    if DB_TYPE == "POSTGRESQL": 
+        s = unicode(psycopg2.extensions.adapt(s))
+    elif DB_TYPE == "MYSQL": 
+        s = MySQLdb.escape_string(s)
     return s
 
 def escape_xss(s):
@@ -662,7 +621,6 @@ def unescape(s):
     """ unescapes query values """
     if s is None: return ""
     s = s.replace("`", "'")
-    s = s.replace("\\\\", "\\")
     return s
 
 def recordversion():

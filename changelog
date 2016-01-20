@@ -1,6 +1,8 @@
 38
 ================
 
+20/01/16 Use psycopg2 and mysqldb driver escaping #358
+20/01/16 Remove db.query_json - not used and non-standard
 19/01/16 Add XSS sanitise hooks to db.ds #358
 19/01/16 Fix potential unicode SQL injection/XSS via ds/decode_html #358
 19/01/16 Refactor db.ds to use escape, add unescape
