@@ -95,7 +95,7 @@ $(function() {
                 '<td></td>',
                 '<td>',
                 '<input type="checkbox" id="excludefrombulkemail" data-json="EXCLUDEFROMBULKEMAIL" data-post="excludefrombulkemail" class="asm-checkbox" />',
-                '<label for="excludefrombulkemail">' + _("Exclude from bulk email") + '</label>',
+                '<label for="excludefrombulkemail">' + _("Exclude from bulk mail") + '</label>',
                 '</td>',
                 '</tr>',
                 '<tr>',

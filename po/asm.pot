@@ -4175,7 +4175,7 @@ msgid "Exclude animals who are aged under"
 msgstr ""
 
 #: person.js
-msgid "Exclude from bulk email"
+msgid "Exclude from bulk mail"
 msgstr ""
 
 #: media.js
