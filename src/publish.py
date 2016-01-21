@@ -3899,7 +3899,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
             return
 
         csv = []
-        header = "customerurn,importkey,lostfound,pettype,breed,sexofpet,neutered,petname,internalref,petage,hairtype,petcoloursall,chipchecked,chipno,petfeatures,lastlocationst,lastlocation,locationpostcode,datelostfound,otherdetails,privatenotes,showonsite\n"
+        header = "customerurn,importkey,lostfound,pettype,breed,sexofpet,neutered,petname,internalref,petage,hairtype,petcoloursall,chipchecked,chipno,petfeatures,lastlocationst,lastlocation,locationpostcode,datelostfound,otherdetails,privatenotes,showonsite,rawpettype,rawbreed,rawcolour\n"
 
         # Lost Animals - DISABLED ON REQUEST FROM PETSLOCATED.COM
         # In their business model, animal losers pay 10 pounds to list
@@ -3962,6 +3962,12 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 line.append("\"%s\"" % an["COMMENTS"])
                 # showonsite
                 line.append("\"1\"")
+                # rawpettype
+                line.append("\"%s\"" % an["SPECIESNAME"])
+                # rawbreed
+                line.append("\"%s\"" % an["BREEDNAME"])
+                # rawcolour
+                line.append("\"%s\"" % an["BASECOLOURNAME"])
                 # Add to our CSV file
                 csv.append(",".join(line))
                 # Mark success in the log
@@ -4028,6 +4034,12 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 line.append("\"%s\"" % an["COMMENTS"])
                 # showonsite
                 line.append("\"1\"")
+                # rawpettype
+                line.append("\"%s\"" % an["SPECIESNAME"])
+                # rawbreed
+                line.append("\"%s\"" % an["BREEDNAME"])
+                # rawcolour
+                line.append("\"%s\"" % an["BASECOLOURNAME"])
                 # Add to our CSV file
                 csv.append(",".join(line))
                 # Mark success in the log
@@ -4097,6 +4109,12 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 line.append("\"%s\"" % an["HIDDENANIMALDETAILS"])
                 # showonsite
                 line.append("\"1\"")
+                # rawpettype
+                line.append("\"%s\"" % an["SPECIESNAME"])
+                # rawbreed
+                line.append("\"%s\"" % an["BREEDNAME"])
+                # rawcolour
+                line.append("\"%s\"" % an["BASECOLOURNAME"])
                 # Add to our CSV file
                 csv.append(",".join(line))
                 # Mark success in the log
