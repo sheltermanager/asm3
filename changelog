@@ -1,6 +1,7 @@
 38
 ================
 
+21/01/16 Add PBKDF2 support and make it the default for passwords #356
 21/01/16 Add raw species/breed/colour to pets located publisher
 20/01/16 Hide adoption fee on non-shelter animals
 20/01/16 Stop bonded animals creating double payments from move_adopt

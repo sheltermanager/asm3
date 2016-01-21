@@ -2,12 +2,15 @@
 
 import al
 import audit
+import base64
 import cachemem
 import configuration
 import db
 import dbupdate
 import hashlib
 import i18n
+import os
+import pbkdf2
 import smcom
 import sys
 import utils
@@ -239,14 +242,11 @@ def authenticate(dbo, username, password):
     Returns None if authentication failed, or a user row
     """
     username = username.upper()
-    pypassword = hash_password(password)
-    javapassword = hash_password(password, True)
-
     # Do not use any login inputs directly in database queries
     for u in db.query(dbo, "SELECT ID, UserName, Password FROM users"):
         if username == u["USERNAME"].upper():
-            dbpass = u["PASSWORD"].strip()
-            if dbpass == pypassword or dbpass == javapassword:
+            dbpassword = u["PASSWORD"].strip()
+            if verify_password(password, dbpassword):
                 u = db.query(dbo, "SELECT * FROM users WHERE ID=%d" % u["ID"])
                 if len(u) == 1: return u[0]
     return None
@@ -289,16 +289,36 @@ def authenticate_ip(user, remoteip):
             return True
     return False
 
-def hash_password(password, javaCompatible = False):
+def hash_password(plaintext, scheme = "pbkdf2"):
     """
-    Returns an md5 hash of a password string
-    javaCompatible: Return an MD5 hash compatible with Java MD5
+    Returns a one-way hash of a password string.
+    plaintext: The password to hash
+    scheme:    md5, md5java, pbkdf2
     """
-    m = hashlib.md5()
-    m.update(password)
-    s = m.hexdigest()
-    if javaCompatible and s.startswith("0"): s = s[1:]
-    return s
+    if scheme is None: scheme = ""
+    if scheme == "pbkdf2":
+        PBKDF2_ITERATIONS = 10000
+        salt = base64.b64encode(os.urandom(16))
+        h = pbkdf2.pbkdf2_hex(plaintext, salt, PBKDF2_ITERATIONS)
+        return "pbkdf2:%s:%d:%s" % (salt, PBKDF2_ITERATIONS, h)
+    elif scheme == "" or scheme == "md5" or scheme == "md5java":
+        h = hashlib.md5(plaintext).hexdigest()
+        if scheme == "md5java" and h.startswith("0"): h = h[1:]
+    return h
+
+def verify_password(plaintext, passwordhash):
+    """
+    Verifies whether or not password "plaintext" hashes to the same 
+    value as passwordhash.
+    Hash scheme is auto detected from passwordhash itself.
+    """
+    if passwordhash.startswith("pbkdf2:"):
+        scheme, salt, iterations, phash = passwordhash.split(":")
+        return pbkdf2.pbkdf2_hex(plaintext, salt, int(iterations)) == phash
+    else:
+        md5py = hash_password(plaintext, "md5")
+        md5java = hash_password(plaintext, "md5java")
+        return passwordhash == md5py or passwordhash == md5java
 
 def change_password(dbo, username, oldpassword, newpassword):
     """
@@ -307,14 +327,14 @@ def change_password(dbo, username, oldpassword, newpassword):
     l = dbo.locale
     if None == authenticate(dbo, username, oldpassword):
         raise utils.ASMValidationError(i18n._("Password is incorrect.", l))
-    db.execute(dbo, "UPDATE users SET Password = '%s' WHERE UserName Like '%s'" % (hash_password(newpassword, True), username))
+    db.execute(dbo, "UPDATE users SET Password = '%s' WHERE UserName Like '%s'" % (hash_password(newpassword), username))
 
 def get_locale_override(dbo, username):
     """
     Returns a user's locale override, or empty string if it doesn't have one
     """
     try:
-        return db.query_string(dbo, "SELECT LocaleOverride FROM users WHERE UserName Like '%s'" % username)
+            return db.query_string(dbo, "SELECT LocaleOverride FROM users WHERE UserName Like '%s'" % username)
     except:
         return ""
 
@@ -462,7 +482,7 @@ def insert_user_from_form(dbo, username, post):
         ( "UserName", post.db_string("username")),
         ( "RealName", post.db_string("realname")),
         ( "EmailAddress", post.db_string("email")),
-        ( "Password", db.ds(hash_password(post["password"], True))),
+        ( "Password", db.ds(hash_password(post["password"]))),
         ( "SuperUser", post.db_integer("superuser")),
         ( "RecordVersion", db.di(0)),
         ( "SecurityMap", db.ds("dummy")),
@@ -570,7 +590,7 @@ def reset_password(dbo, userid, password):
     """
     Resets the password for the given user to "password"
     """
-    db.execute(dbo, "UPDATE users SET Password = '%s' WHERE ID = %d" % ( hash_password(password, True), int(userid)))
+    db.execute(dbo, "UPDATE users SET Password = '%s' WHERE ID = %d" % ( hash_password(password), int(userid)))
 
 def update_session(session):
     """
