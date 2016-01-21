@@ -300,7 +300,7 @@ def hash_password(plaintext, scheme = "pbkdf2"):
         PBKDF2_ITERATIONS = 10000
         PBKDF2_ALGORITHM = "sha1"
         salt = base64.b64encode(os.urandom(16))
-        h = pbkdf2.pbkdf2_hex(plaintext, salt, iterations=PBKDF2_ITERATIONS,hashfunc=PBKDF2_ALGORITHM)
+        h = pbkdf2.pbkdf2_hex(plaintext, salt, iterations=PBKDF2_ITERATIONS, hashfunc=getattr(hashlib, PBKDF2_ALGORITHM))
         return "pbkdf2:%s:%s:%d:%s" % (PBKDF2_ALGORITHM, salt, PBKDF2_ITERATIONS, h)
     elif scheme == "" or scheme == "md5" or scheme == "md5java":
         h = hashlib.md5(plaintext).hexdigest()
@@ -315,7 +315,7 @@ def verify_password(plaintext, passwordhash):
     """
     if passwordhash.startswith("pbkdf2:"):
         scheme, algorithm, salt, iterations, phash = passwordhash.split(":")
-        return pbkdf2.pbkdf2_hex(plaintext, salt, iterations=int(iterations), hashfunc=algorithm) == phash
+        return pbkdf2.pbkdf2_hex(plaintext, salt, iterations=int(iterations), hashfunc=getattr(hashlib, algorithm)) == phash
     else:
         md5py = hash_password(plaintext, "md5")
         md5java = hash_password(plaintext, "md5java")
