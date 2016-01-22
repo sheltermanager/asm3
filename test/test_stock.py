@@ -66,7 +66,8 @@ class TestStock(unittest.TestCase):
 
     def test_stock_take_from_mobile_form(self):
         data = {
-            "sl%d" % self.nid: "5"
+            "sl%d" % self.nid: "5",
+            "usagetype": "1"
         }
         post = utils.PostedData(data, "en")
         stock.stock_take_from_mobile_form(base.get_dbo(), "test", post)

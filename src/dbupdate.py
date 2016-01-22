@@ -1360,8 +1360,8 @@ def sql_default_data(dbo, skip_config = False):
     l = dbo.locale
     sql = ""
     if not skip_config:
-        sql += "INSERT INTO users VALUES (1,'user','Default system user', '', 'd107d09f5bbe40cade3de5c71e9e9b7', 1, 0,'', '', '', '', '', '', 0)|=\n"
-        sql += "INSERT INTO users VALUES (2,'guest','Default guest user', '', '84e0343a0486ff05530df6c705c8bb4', 0, 0,'', '', '', '', '', '', 0)|=\n"
+        sql += "INSERT INTO users VALUES (1,'user','Default system user', '', 'plain:letmein', 1, 0,'', '', '', '', '', '', 0)|=\n"
+        sql += "INSERT INTO users VALUES (2,'guest','Default guest user', '', 'plain:guest', 0, 0,'', '', '', '', '', '', 0)|=\n"
         sql += "INSERT INTO role VALUES (1, '" + _("Other Organisation", l) + "', 'vac *va *vavet *vav *mvam *dvad *cvad *vamv *vo *volk *vle *vvov *vdn *vla *vfa *vwl *vcr *vll *')|=\n"
         sql += "INSERT INTO role VALUES (2, '" + _("Staff", l) + "', 'aa *ca *va *vavet *da *cloa *gaf *aam *cam *dam *vam *mand *aav *vav *cav *dav *bcav *maam *mcam *mdam *mvam *bcam *daad *dcad *ddad *dvad *caad *cdad *cvad *aamv *camv *vamv *damv *ao *co *vo *do *emo *mo *volk *ale *cle *dle *vle *vaov *vcov *vvov *oaod *ocod *odod *ovod *vdn *edt *adn *eadn *emdn *ecdn *bcn *ddn *pdn *pvd *ala *cla *dla *vla *afa *cfa *dfa *vfa *mlaf *vwl *awl *cwl *dwl *bcwl *all *cll *vll *dll *excr *vcr *')|=\n"
         sql += "INSERT INTO role VALUES (3, '" + _("Accountant", l) + "', 'aac *vac *cac *ctrx *dac *vaov *vcov *vdov *vvov *oaod *ocod *odod *ovod *')|=\n"

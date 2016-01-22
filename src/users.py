@@ -293,19 +293,20 @@ def hash_password(plaintext, scheme = "pbkdf2"):
     """
     Returns a one-way hash of a password string.
     plaintext: The password to hash
-    scheme:    md5, md5java, pbkdf2
+    scheme:    md5, md5java, pbkdf2 or plain (no hash)
     """
-    if scheme is None: scheme = ""
-    if scheme == "pbkdf2":
+    if scheme is None or scheme == "" or scheme == "plain":
+        return "plain:%s" % plaintext
+    elif scheme == "pbkdf2":
         PBKDF2_ITERATIONS = 10000
         PBKDF2_ALGORITHM = "sha1"
         salt = base64.b64encode(os.urandom(16))
         h = pbkdf2.pbkdf2_hex(plaintext, salt, iterations=PBKDF2_ITERATIONS, hashfunc=getattr(hashlib, PBKDF2_ALGORITHM))
         return "pbkdf2:%s:%s:%d:%s" % (PBKDF2_ALGORITHM, salt, PBKDF2_ITERATIONS, h)
-    elif scheme == "" or scheme == "md5" or scheme == "md5java":
+    elif scheme == "md5" or scheme == "md5java":
         h = hashlib.md5(plaintext).hexdigest()
         if scheme == "md5java" and h.startswith("0"): h = h[1:]
-    return h
+        return "%s:%s" % (scheme, h)
 
 def verify_password(plaintext, passwordhash):
     """
@@ -316,9 +317,17 @@ def verify_password(plaintext, passwordhash):
     if passwordhash.startswith("pbkdf2:"):
         scheme, algorithm, salt, iterations, phash = passwordhash.split(":")
         return pbkdf2.pbkdf2_hex(plaintext, salt, iterations=int(iterations), hashfunc=getattr(hashlib, algorithm)) == phash
+    elif passwordhash.startswith("plain:"):
+        return plaintext == passwordhash[passwordhash.find(":")+1:]
+    elif passwordhash.startswith("md5:"):
+        return hash_password(plaintext, "md5") == passwordhash
+    elif passwordhash.startswith("md5java:"):
+        return hash_password(plaintext, "md5java") == passwordhash
     else:
-        md5py = hash_password(plaintext, "md5")
-        md5java = hash_password(plaintext, "md5java")
+        # Fall back to assuming historic undecorated md5
+        md5py = hashlib.md5(plaintext).hexdigest()
+        md5java = md5py
+        if md5java.startswith("0"): md5java = md5java[1:]
         return passwordhash == md5py or passwordhash == md5java
 
 def change_password(dbo, username, oldpassword, newpassword):
