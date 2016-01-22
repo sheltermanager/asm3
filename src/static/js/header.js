@@ -402,7 +402,7 @@ $(function() {
                     '<div class="topline-element">',
                         '<span style="white-space: nowrap">',
                         '<input id="topline-q" name="q" type="text" class="asm-textbox" title="' + 
-                            html.title(_("filters: a:animal, p:person, wl:waitinglist, la:lostanimal, fa:foundanimal keywords: onshelter/os, notforadoption, donors, deceased, vets, retailers, staff, fosterers, volunteers, homecheckers, members, activelost, activefound")) +
+                            html.title("ALT+SHIFT+S " + _("filters: a:animal, p:person, wl:waitinglist, la:lostanimal, fa:foundanimal keywords: onshelter/os, notforadoption, donors, deceased, vets, retailers, staff, fosterers, volunteers, homecheckers, members, activelost, activefound")) +
                             '" value="' + _("Search") + '" />',
                         '<button id="searchgo" style="display: none">' + _("Search") + '</button>',
                         '</span>',
@@ -635,6 +635,12 @@ $(function() {
                     dosearch();
                     return false;
                 }
+            });
+
+            // Make ALT+SHIFT+S focus the search widget
+            Mousetrap.bind([ "alt+shift+s" ], function() {
+                $("#topline-q").focus();
+                return false;
             });
 
             // Set the font to a lighter colour in the search box

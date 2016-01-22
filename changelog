@@ -1,6 +1,7 @@
 38
 ================
 
+22/01/16 Allow ALT+SHIFT+S to focus the search box #352
 22/01/16 Add password hash unit tests and plain scheme for defaults
 21/01/16 Add PBKDF2 support and make it the default for passwords #356
 21/01/16 Add raw species/breed/colour to pets located publisher
