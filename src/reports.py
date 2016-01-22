@@ -254,7 +254,7 @@ def insert_report_from_form(dbo, username, post):
         ( "ID", db.di(reportid)),
         ( "Title", post.db_string("title")),
         ( "Category", post.db_string("category")),
-        ( "SQLCommand", post.db_string("sql")),
+        ( "SQLCommand", db.ds(post["sql"], False) ),
         ( "HTMLBody", db.ds(htmlbody, False) ),
         ( "DailyEmail", post.db_string("dailyemail")),
         ( "DailyEmailHour", post.db_integer("dailyemailhour")),
@@ -277,7 +277,7 @@ def update_report_from_form(dbo, username, post):
     sql = db.make_update_user_sql(dbo, "customreport", username, "ID=%d" % reportid, ( 
         ( "Title", post.db_string("title")),
         ( "Category", post.db_string("category")),
-        ( "SQLCommand", post.db_string("sql")),
+        ( "SQLCommand", db.ds(post["sql"], False) ),
         ( "HTMLBody", db.ds(post["html"], False) ),
         ( "DailyEmail", post.db_string("dailyemail")),
         ( "DailyEmailHour", post.db_integer("dailyemailhour")),

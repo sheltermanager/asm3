@@ -3899,7 +3899,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
             return
 
         csv = []
-        header = "customerurn,importkey,lostfound,pettype,breed,sexofpet,neutered,petname,internalref,petage,hairtype,petcoloursall,chipchecked,chipno,petfeatures,lastlocationst,lastlocation,locationpostcode,datelostfound,otherdetails,privatenotes,showonsite,rawpettype,rawbreed,rawcolour\n"
+        header = "customerurn,importkey,lostfound,pettype,breed,sexofpet,neutered,petname,internalref,petage,hairtype,petcoloursall,chipchecked,chipno,petfeatures,lastlocationst,lastlocation,locationpostcode,datelostfound,otherdetails,privatenotes,showonsite,rawpettype,rawbreed,rawcolour,rawcoat\n"
 
         # Lost Animals - DISABLED ON REQUEST FROM PETSLOCATED.COM
         # In their business model, animal losers pay 10 pounds to list
@@ -3968,6 +3968,8 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 line.append("\"%s\"" % an["BREEDNAME"])
                 # rawcolour
                 line.append("\"%s\"" % an["BASECOLOURNAME"])
+                # rawcoat
+                line.append("\"\"")
                 # Add to our CSV file
                 csv.append(",".join(line))
                 # Mark success in the log
@@ -4040,6 +4042,8 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 line.append("\"%s\"" % an["BREEDNAME"])
                 # rawcolour
                 line.append("\"%s\"" % an["BASECOLOURNAME"])
+                # rawcoat
+                line.append("\"\"")
                 # Add to our CSV file
                 csv.append(",".join(line))
                 # Mark success in the log
@@ -4115,6 +4119,8 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 line.append("\"%s\"" % an["BREEDNAME"])
                 # rawcolour
                 line.append("\"%s\"" % an["BASECOLOURNAME"])
+                # rawcoat
+                line.append("\"%s\"" % an["COATTYPENAME"])
                 # Add to our CSV file
                 csv.append(",".join(line))
                 # Mark success in the log
