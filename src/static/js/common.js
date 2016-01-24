@@ -909,9 +909,6 @@
             }
         },
 
-        /** Number of minutes of inactivity */
-        inactive_time: 0,
-
         /** Called every time a minute has elapsed. If we go over our 
          *  timeout value, we logout. 
          *  If the browser does not support the page visibility API 
@@ -919,21 +916,21 @@
          *  to prevent another tab surprising the user with logout.
          */
         inactive_time_increment: function() {
-            if (!Modernizr.pagevisibility) { return; }
-            if (document.hidden) { return; }
-            common.inactive_time += 1;
-            if (common.inactive_time > config.integer("InactivityTimeout")) {
+            var inactive_mins = format.to_int(common.local_get("inactive_mins")) + 1;
+            common.local_set("inactive_mins", String(inactive_mins));
+            if (inactive_mins > config.integer("InactivityTimeout")) {
                 common.inactivity_logout();
             }
         },
 
         /** Called when keyboard/mouse activity happens to reset the inactive time */
         inactivity_reset: function() {
-            common.inactive_time = 0;
+            common.local_set("inactive_mins", "0");
         },
 
         /** Called when the inactivity time is up */
         inactivity_logout: function() {
+            common.local_delete("inactive_mins");
             var a = "";
             if (asm.useraccount) { a = "?smaccount=" + asm.useraccount; }
             window.location = "logout" + a;
@@ -942,6 +939,7 @@
         /** Starts the inactivity timer and binds to key/mouse events. If no timeout
          *  value has been configured, does nothing. */
         start_inactivity_timer: function() {
+            common.local_delete("inactive_mins");
             if (!config.bool("InactivityTimer") || config.integer("InactivityTimeout") == 0) { return; }
             setInterval(common.inactive_time_increment, 60000);
             $(document).keypress(common.inactivity_reset);
