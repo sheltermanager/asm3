@@ -5,6 +5,8 @@ $(function() {
 
     var sql = {
 
+        editor: null, 
+
         render: function() {
             return [
                 this.render_scriptdialog(),
@@ -38,7 +40,7 @@ $(function() {
                 '</select>',
                 '</span>',
                 '</div>',
-                '<textarea id="sql" class="asm-textarea" style="font-family: monospace" data="sql" rows="10"></textarea>',
+                '<textarea id="sql" class="asm-sqleditor" data="sql" rows="10"></textarea>',
                 '<hr />',
                 '<table id="sql-results"></table>',
                 html.content_footer()
@@ -111,7 +113,7 @@ $(function() {
             });
 
             $("#columns").change(function() {
-                $("#sql").val( $("#sql").val() + $("#columns").val() + ", " );
+                $("#sql").sqleditor("append", $("#columns").val() + ", ");
             });
 
             var dbuttons = {};
@@ -182,6 +184,7 @@ $(function() {
 
         destroy: function() {
             common.widget_destroy("#dialog-script");
+            common.widget_destroy("#sql");
         },
 
         routes: {

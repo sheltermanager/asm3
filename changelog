@@ -1,6 +1,7 @@
 38
 ================
 
+24/01/16 Add codemirror and SQL syntax highlight to SQL interface #359
 24/01/16 pagevisibility wrong, use localStorage for auto logout #351
 22/01/16 petslocated: Add rawcoat field
 22/01/16 Allow ALT+SHIFT+S to focus the search box #352

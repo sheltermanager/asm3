@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, regexp: true, sloppy: true, vars: true, nomen: true */
-/*global $, console, jQuery */
+/*global $, console, jQuery, CodeMirror */
 /*global asm, common, config, dlgfx, format, html, header, validate, _, escape, unescape */
 
 (function($) {
@@ -930,6 +930,99 @@
             });
         });
     };
+
+    $.widget("asm.htmleditor", {
+        options: {
+            editor: null
+        },
+
+        _create: function() {
+            var self = this;
+            setTimeout(function() {
+                self.options.editor = CodeMirror.fromTextArea($("#sql")[0], {
+                    lineNumbers: true,
+                    mode: "htmlmixed",
+                    matchBrackets: true,
+                    autofocus: true
+                });
+                // When the editor loses focus, update the original textarea element
+                self.options.editor.on("blur", function() {
+                    self.element.val( self.options.editor.getValue() );
+                });
+            }, 500);
+        },
+
+        append: function(s) {
+            this.options.editor.setValue(this.options.editor.getValue() + s);
+        },
+
+        destroy: function() {
+            this.options.editor.destroy();
+        },
+
+        refresh: function() {
+            this.options.editor.refresh();
+        },
+
+        value: function(newval) {
+            if (!newval) {
+                return this.options.editor.getValue();
+            }
+            this.options.editor.setValue(newval);
+        }
+
+    });
+
+
+    $.widget("asm.sqleditor", {
+        options: {
+            editor: null
+        },
+
+        _create: function() {
+            var self = this;
+            setTimeout(function() {
+                self.options.editor = CodeMirror.fromTextArea($("#sql")[0], {
+                    lineNumbers: true,
+                    mode: "text/x-sql",
+                    matchBrackets: true,
+                    autofocus: true,
+                    extraKeys: { "Ctrl-Space": "autocomplete" },
+                    // tables should be a dictionary of dictionaries, each table 
+                    // is a dictionary of columns with column name: null
+                    // eg: tables: { animal: { animalname: null, sheltercode: null } }
+                    hintOptions: {
+                        tables: {}
+                    }
+                });
+                // When the editor loses focus, update the original textarea element
+                self.options.editor.on("blur", function() {
+                    self.element.val( self.options.editor.getValue() );
+                });
+            }, 500);
+        },
+
+        append: function(s) {
+            this.options.editor.setValue(this.options.editor.getValue() + s);
+        },
+
+        destroy: function() {
+            this.options.editor.destroy();
+        },
+
+        refresh: function() {
+            this.options.editor.refresh();
+        },
+
+        value: function(newval) {
+            if (!newval) {
+                return this.options.editor.getValue();
+            }
+            this.options.editor.setValue(newval);
+        }
+
+    });
+
 
     // Styles a textbox that should only contain currency
     $.fn.currency = function(cmd, newval) {

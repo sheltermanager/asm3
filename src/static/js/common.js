@@ -850,6 +850,8 @@
             $(".asm-animalchooser").animalchooser();
             $(".asm-animalchoosermulti").animalchoosermulti();
             $(".asm-personchooser").personchooser();
+            $(".asm-htmleditor").htmleditor();
+            $(".asm-sqleditor").sqleditor();
             $(".asm-textbox, .asm-halftextbox, .asm-doubletextbox").textbox();
             $(".asm-textarea, .asm-textareafixed, .asm-textareafixeddouble").textarea();
             if (_) {
@@ -980,6 +982,12 @@
                 }
                 else if (type == "emailform") {
                     $(selector).emailform("destroy").remove();
+                }
+                else if (type == "htmleditor") {
+                    $(selector).htmleditor("destroy").remove();
+                }
+                else if (type == "sqleditor") {
+                    $(selector).sqleditor("destroy").remove();
                 }
                 else if (type == "dialog") {
                     if (noremove) {
