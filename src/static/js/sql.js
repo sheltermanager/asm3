@@ -40,7 +40,7 @@ $(function() {
                 '</select>',
                 '</span>',
                 '</div>',
-                '<textarea id="sql" class="asm-sqleditor" data="sql" rows="10"></textarea>',
+                '<textarea id="sql" class="asm-sqleditor" data-height="150px" data="sql" rows="10"></textarea>',
                 '<hr />',
                 '<table id="sql-results"></table>',
                 html.content_footer()

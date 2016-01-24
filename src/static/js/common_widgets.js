@@ -945,6 +945,13 @@
                     matchBrackets: true,
                     autofocus: true
                 });
+                // Override height and width if they were set as attributes of the text area
+                if (self.element.attr("data-width")) {
+                    self.element.next().css("width", self.element.attr("data-width"));
+                }
+                else if (self.element.attr("data-height")) {
+                    self.element.next().css("height", self.element.attr("data-height"));
+                }
                 // When the editor loses focus, update the original textarea element
                 self.options.editor.on("blur", function() {
                     self.element.val( self.options.editor.getValue() );
@@ -986,15 +993,15 @@
                     lineNumbers: true,
                     mode: "text/x-sql",
                     matchBrackets: true,
-                    autofocus: true,
-                    extraKeys: { "Ctrl-Space": "autocomplete" },
-                    // tables should be a dictionary of dictionaries, each table 
-                    // is a dictionary of columns with column name: null
-                    // eg: tables: { animal: { animalname: null, sheltercode: null } }
-                    hintOptions: {
-                        tables: {}
-                    }
+                    autofocus: true
                 });
+                // Override height and width if they were set as attributes of the text area
+                if (self.element.attr("data-width")) {
+                    self.element.next().css("width", self.element.attr("data-width"));
+                }
+                else if (self.element.attr("data-height")) {
+                    self.element.next().css("height", self.element.attr("data-height"));
+                }
                 // When the editor loses focus, update the original textarea element
                 self.options.editor.on("blur", function() {
                     self.element.val( self.options.editor.getValue() );

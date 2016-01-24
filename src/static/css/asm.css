@@ -575,6 +575,10 @@ select:disabled, input:disabled, textarea:disabled {
     color: #000;
 }
 
+.asm-htmleditor, .asm-sqleditor {
+    display: none;
+}
+
 .controlshadow {
     box-shadow: 0 1px 2px #DDD;
 }
