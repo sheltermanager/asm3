@@ -193,12 +193,10 @@ def get_diarytask_details(dbo, headid):
     """
     Returns the detail rows for a diary task
     """
-    def fix(s):
-        return s.replace("<", "&lt;").replace(">", "&gt;")
     rows = db.query(dbo, "SELECT * FROM diarytaskdetail WHERE DiaryTaskHeadID=%d" % int(headid))
     for r in rows:
-        r["SUBJECT"] = fix(r["SUBJECT"])
-        r["NOTE"] = fix(r["NOTE"])
+        r["SUBJECT"] = r["SUBJECT"]
+        r["NOTE"] = r["NOTE"]
     return rows
 
 def get_diary(dbo, diaryid):

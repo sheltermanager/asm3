@@ -168,9 +168,9 @@ def xml(results):
             if v is None:
                 v = "null"
             v = str(v)
+            v = v.replace("&", "&amp;")
             v = v.replace(">", "&gt;")
             v = v.replace("<", "&lt;")
-            v = v.replace("&", "&amp;")
             cr += "        <" + k.lower() + ">"
             cr += str(v)
             cr += "</" + k.lower() + ">\n"

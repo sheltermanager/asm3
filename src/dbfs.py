@@ -256,8 +256,6 @@ def get_html_publisher_templates_files(dbo):
     This call can only be used for grabbing them for the UI. It turns < and > into
     &lt; and &gt; so that json encoding the result doesn't blow up the browser.
     """
-    def fix(s):
-        return s.replace("<", "&lt;").replace(">", "&gt;")
     templates = []
     available = get_html_publisher_templates(dbo)
     for name in available:
@@ -268,7 +266,7 @@ def get_html_publisher_templates_files(dbo):
             if body == "": body = get_string(dbo, "pib.dat", "/internet/%s" % name)
             foot = get_string(dbo, "foot.html", "/internet/%s" % name)
             if foot == "": foot = get_string(dbo, "pif.dat", "/internet/%s" % name)
-            templates.append({ "NAME": name, "HEADER": fix(head), "BODY": fix(body), "FOOTER": fix(foot)})
+            templates.append({ "NAME": name, "HEADER": head, "BODY": body, "FOOTER": foot})
     return templates
 
 def update_html_publisher_template(dbo, username, name, header, body, footer):

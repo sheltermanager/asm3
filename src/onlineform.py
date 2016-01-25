@@ -532,7 +532,7 @@ def insert_onlineformfield_from_form(dbo, username, post):
         ( "DisplayIndex", post.db_integer("displayindex")),
         ( "Mandatory", post.db_boolean("mandatory")),
         ( "Lookups", post.db_string("lookups")),
-        ( "Tooltip", post.db_string("tooltip"))
+        ( "Tooltip", db.ds(post["tooltip"], False))
         ))
     db.execute(dbo, sql)
     audit.create(dbo, username, "onlineformfield", str(formfieldid))
@@ -550,7 +550,7 @@ def update_onlineformfield_from_form(dbo, username, post):
         ( "DisplayIndex", post.db_integer("displayindex")),
         ( "Mandatory", post.db_boolean("mandatory")),
         ( "Lookups", post.db_string("lookups")),
-        ( "Tooltip", post.db_string("tooltip"))
+        ( "Tooltip", db.ds(post["tooltip"], False))
         ))
     preaudit = db.query(dbo, "SELECT * FROM onlineformfield WHERE ID = %d" % formfieldid)
     db.execute(dbo, sql)

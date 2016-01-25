@@ -939,17 +939,17 @@
         _create: function() {
             var self = this;
             setTimeout(function() {
-                self.options.editor = CodeMirror.fromTextArea($("#sql")[0], {
+                self.options.editor = CodeMirror.fromTextArea(self.element[0], {
                     lineNumbers: true,
                     mode: "htmlmixed",
                     matchBrackets: true,
-                    autofocus: true
+                    autofocus: false
                 });
                 // Override height and width if they were set as attributes of the text area
                 if (self.element.attr("data-width")) {
                     self.element.next().css("width", self.element.attr("data-width"));
                 }
-                else if (self.element.attr("data-height")) {
+                if (self.element.attr("data-height")) {
                     self.element.next().css("height", self.element.attr("data-height"));
                 }
                 // When the editor loses focus, update the original textarea element
@@ -976,6 +976,7 @@
                 return this.options.editor.getValue();
             }
             this.options.editor.setValue(newval);
+            this.options.editor.refresh();
         }
 
     });
@@ -989,17 +990,17 @@
         _create: function() {
             var self = this;
             setTimeout(function() {
-                self.options.editor = CodeMirror.fromTextArea($("#sql")[0], {
+                self.options.editor = CodeMirror.fromTextArea(self.element[0], {
                     lineNumbers: true,
                     mode: "text/x-sql",
                     matchBrackets: true,
-                    autofocus: true
+                    autofocus: false
                 });
                 // Override height and width if they were set as attributes of the text area
                 if (self.element.attr("data-width")) {
                     self.element.next().css("width", self.element.attr("data-width"));
                 }
-                else if (self.element.attr("data-height")) {
+                if (self.element.attr("data-height")) {
                     self.element.next().css("height", self.element.attr("data-height"));
                 }
                 // When the editor loses focus, update the original textarea element
@@ -1026,6 +1027,7 @@
                 return this.options.editor.getValue();
             }
             this.options.editor.setValue(newval);
+            this.options.editor.refresh();
         }
 
     });

@@ -666,6 +666,15 @@
                     if (bp.find("#dialog-tableform-spinner").size() == 0) {
                         bp.append('<img id="dialog-tableform-spinner" style="display: none; height: 16px" src="static/images/wait/rolling_3a87cd.svg" />');
                     }
+                    // Any code editor widgets need to be refreshed on load
+                    $.each(dialog.fields, function(i, v) {
+                        if (v.type == "htmleditor") {
+                            $("#" + v.post_field).htmleditor("refresh");
+                        }
+                        if (v.type == "sqleditor") {
+                            $("#" + v.post_field).sqleditor("refresh");
+                        }
+                    });
                     tableform.dialog_enable_buttons();
                 },
                 close: function() {
@@ -803,6 +812,16 @@
                     if (bp.find("#dialog-tableform-spinner").size() == 0) {
                         bp.append('<img id="dialog-tableform-spinner" style="display: none; height: 16px" src="static/images/wait/rolling_3a87cd.svg" />');
                     }
+
+                    // Any code editor widgets need to be refreshed on load
+                    $.each(dialog.fields, function(i, v) {
+                        if (v.type == "htmleditor") {
+                            $("#" + v.post_field).htmleditor("refresh");
+                        }
+                        if (v.type == "sqleditor") {
+                            $("#" + v.post_field).sqleditor("refresh");
+                        }
+                    });
                     
                     tableform.dialog_enable_buttons();
                 },
@@ -833,6 +852,7 @@
          *        halfsize: false, (use the asm-halftextbox class)
          *        justwidget: false, (output tr/td/label)
          *        defaultval: expression or function to evaluate.
+         *        height/width: "css expr",
          *        validation: "notblank|notzero",
          *        classes: "extraclass anotherone",
          *        tooltip: _("Text"), 
@@ -894,6 +914,46 @@
                     }
                     if (!v.rows) { v.rows = 5; }
                     d += "<textarea id=\"" + v.post_field + "\" class=\"asm-textarea " + v.classes + "\" rows=\"" + v.rows + "\" ";
+                    d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
+                    if (v.readonly) { d += " data-noedit=\"true\" "; }
+                    if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
+                    if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
+                    d += "></textarea>";
+                    if (!v.justwidget) { d += "</td></tr>"; }
+                }
+                else if (v.type == "htmleditor") {
+                     if (!v.justwidget) {
+                        if (v.labelpos && v.labelpos == "above") {
+                            d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label><br />";
+                        }
+                        else {
+                            d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label></td><td>";
+                        }
+                    }
+                    if (!v.width) { v.width = "100%"; }
+                    if (!v.height) { v.height = "150px"; }
+                    d += "<textarea id=\"" + v.post_field + "\" class=\"asm-htmleditor " + v.classes + "\" ";
+                    d += "data-width=\"" + v.width + "\" data-height=\"" + v.height + "\" ";
+                    d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
+                    if (v.readonly) { d += " data-noedit=\"true\" "; }
+                    if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
+                    if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
+                    d += "></textarea>";
+                    if (!v.justwidget) { d += "</td></tr>"; }
+                }
+                else if (v.type == "sqleditor") {
+                     if (!v.justwidget) {
+                        if (v.labelpos && v.labelpos == "above") {
+                            d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label><br />";
+                        }
+                        else {
+                            d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label></td><td>";
+                        }
+                    }
+                    if (!v.width) { v.width = "100%"; }
+                    if (!v.height) { v.height = "150px"; }
+                    d += "<textarea id=\"" + v.post_field + "\" class=\"asm-sqleditor " + v.classes + "\" ";
+                    d += "data-width=\"" + v.width + "\" data-height=\"" + v.height + "\" ";
                     d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                     if (v.readonly) { d += " data-noedit=\"true\" "; }
                     if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
@@ -1101,6 +1161,8 @@
                         return;
                     }
                     if (v.type == "textarea") { $("#" + v.post_field).val("");  return; }
+                    if (v.type == "htmleditor") { $("#" + v.post_field).htmleditor("value", ""); return; }
+                    if (v.type == "sqleditor") { $("#" + v.post_field).sqleditor("value", ""); return; }
                     if (v.type != "select" && v.type != "nextcol") { $("#" + v.post_field).val(""); }
                 }
                 else {
@@ -1119,6 +1181,8 @@
                     if (v.type == "person") { $("#" + v.post_field).personchooser("loadbyid", dval); return; }
                     if (v.type == "select") { $("#" + v.post_field).select("value", dval); return; }
                     if (v.type == "textarea") { $("#" + v.post_field).val(dval); return; }
+                    if (v.type == "htmleditor") { $("#" + v.post_field).htmleditor("value", dval); return; }
+                    if (v.type == "sqleditor") { $("#" + v.post_field).sqleditor("value", dval); return; }
                     if (v.type != "nextcol") { $("#" + v.post_field).val(dval); }
                 }
             });
@@ -1174,6 +1238,12 @@
                     if (!s) { s = ""; }
                     s = s.replace(/</g, "&lt;").replace(/>/g, "&gt;");
                     n.val(html.decode(s));
+                }
+                else if (v.type == "htmleditor") {
+                    n.htmleditor("value", row[v.json_field]);
+                }
+                else if (v.type == "sqleditor") {
+                    n.sqleditor("value", row[v.json_field]);
                 }
                 else {
                     n.val(html.decode(row[v.json_field]));

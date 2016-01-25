@@ -1,6 +1,8 @@
 38
 ================
 
+25/01/16 Use new editor widgets for html templates, online forms, reports #359
+25/01/16 Add htmleditor/sqleditor tableform types #359
 25/01/16 Add {CHIPMANUFACTURER} report token #195
 24/01/16 Add codemirror and SQL syntax highlight to SQL interface #359
 24/01/16 pagevisibility wrong, use localStorage for auto logout #351

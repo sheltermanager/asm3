@@ -81,8 +81,8 @@ $(function() {
                         options: { rows: controller.roles, valuefield: "ID", displayfield: "ROLENAME" }},
                     { type: "raw", label: "", markup: '<button id="button-checksql">' + _("Syntax check this SQL") + '</button>' +
                         '<button id="button-genhtml">' + _("Generate HTML from this SQL") + '</button>' },
-                    { json_field: "SQLCOMMAND", post_field: "sql", label: _("SQL"), rows: 10, type: "textarea", validation: "notblank" },
-                    { json_field: "HTMLBODY", post_field: "html", label: _("HTML"), rows: 10, type: "textarea" }
+                    { json_field: "SQLCOMMAND", post_field: "sql", label: _("SQL"), rows: 10, type: "sqleditor", validation: "notblank", height: "150px", width: "680px" },
+                    { json_field: "HTMLBODY", post_field: "html", label: _("HTML"), rows: 10, type: "htmleditor", height: "150px", width: "680px" }
                 ]
             };
 
@@ -406,7 +406,7 @@ $(function() {
                 header.show_loading();
                 common.ajax_post("reports", formdata)
                     .then(function(result) { 
-                        $("#html").val(result);
+                        $("#html").htmleditor("value", result);
                     })
                     .fail(function(err) {
                         tableform.dialog_error(err);

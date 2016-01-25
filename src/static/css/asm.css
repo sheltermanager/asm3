@@ -37,6 +37,9 @@ select:disabled, input:disabled, textarea:disabled {
 /** JQuery UI buttons can wrap in Chrome 22 onwards, we don't want that! */
 .ui-button { white-space: nowrap }
 
+/** Put a border on codemirror editors */
+.CodeMirror { border: 1px solid #aaa; }
+
 .hidden {
     display: none;
 }

@@ -4632,11 +4632,6 @@ class onlineforms:
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         onlineforms = extonlineform.get_onlineforms(dbo)
-        # Escape any angle brackets in form header/footers
-        for r in onlineforms:
-            r["HEADER"] = html.escape_angle(r["HEADER"])
-            r["DESCRIPTION"] = html.escape_angle(r["DESCRIPTION"])
-            r["FOOTER"] = html.escape_angle(r["FOOTER"])
         al.debug("got %d online forms" % len(onlineforms), "code.onlineforms", dbo)
         s = html.header("", session)
         c = html.controller_json("rows", onlineforms)
@@ -5740,9 +5735,6 @@ class reports:
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         reports = extreports.get_reports(dbo)
-        # Sanitise the HTMLBODY for sending to the front end
-        for r in reports:
-            r["HTMLBODY"] = html.escape_angle(r["HTMLBODY"])
         header = dbfs.get_string(dbo, "head.html", "/reports")
         if header == "": header = dbfs.get_string(dbo, "head.dat", "/reports")
         footer = dbfs.get_string(dbo, "foot.html", "/reports")

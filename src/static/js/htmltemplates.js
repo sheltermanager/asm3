@@ -11,12 +11,12 @@ $(function() {
                 edit_title: _("Edit template"),
                 close_on_ok: false,
                 columns: 1,
-                width: 550,
+                width: 800,
                 fields: [
                     { json_field: "NAME", post_field: "templatename", readonly: true, label: _("Name"), type: "text", validation: "notblank" },
-                    { json_field: "HEADER", post_field: "header", label: _("Header"), type: "textarea", validation: "notblank" },
-                    { json_field: "BODY", post_field: "body", label: _("Body"), type: "textarea", validation: "notblank" },
-                    { json_field: "FOOTER", post_field: "footer", label: _("Footer"), type: "textarea", validation: "notblank" }
+                    { json_field: "HEADER", post_field: "header", label: _("Header"), type: "htmleditor", validation: "notblank", height: "150px", width: "720px" },
+                    { json_field: "BODY", post_field: "body", label: _("Body"), type: "htmleditor", validation: "notblank", height: "150px", width: "720px" },
+                    { json_field: "FOOTER", post_field: "footer", label: _("Footer"), type: "htmleditor", validation: "notblank", height: "150px", width: "720px" }
                 ]
             };
 

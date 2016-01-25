@@ -13,18 +13,18 @@ $(function() {
                 helper_text: _("Forms need a name."),
                 close_on_ok: false,
                 columns: 1,
-                width: 550,
+                width: 800,
                 fields: [
                     { json_field: "NAME", post_field: "name", label: _("Name"), type: "text", validation: "notblank" },
                     { json_field: "REDIRECTURLAFTERPOST", post_field: "redirect", label: _("Redirect to URL after POST"), 
                         type: "text", 
                         tooltip: _("After the user presses submit and ASM has accepted the form, redirect the user to this URL") },
                     { json_field: "SETOWNERFLAGS", post_field: "flags", label: _("Person Flags"), type: "selectmulti" },
-                    { json_field: "EMAILADDRESS", post_field: "email", label: _("Email submissions to"), type: "textarea",
+                    { json_field: "EMAILADDRESS", post_field: "email", label: _("Email submissions to"), type: "textarea", rows: "2", 
                         tooltip: _("Email incoming form submissions to this comma separated list of email addresses") }, 
-                    { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "textarea" },
-                    { json_field: "HEADER", post_field: "header", label: _("Header"), type: "textarea" },
-                    { json_field: "FOOTER", post_field: "footer", label: _("Footer"), type: "textarea" }
+                    { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "htmleditor", height: "100px", width: "600px" },
+                    { json_field: "HEADER", post_field: "header", label: _("Header"), type: "htmleditor", height: "100px", width: "600px" },
+                    { json_field: "FOOTER", post_field: "footer", label: _("Footer"), type: "htmleditor", height: "100px", width: "600px" }
                 ]
             };
 
