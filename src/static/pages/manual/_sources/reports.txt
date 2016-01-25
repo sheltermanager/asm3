@@ -90,7 +90,8 @@ HTML for you in a simple table format. It is worthwhile running this and then
 modifying the HTML afterwards. 
 
 The editor will highlight the syntax of both languages for you, and if you
-press F11, will allow you to edit in full screen mode.
+press :kbd:`F11`, will allow you to edit in full screen mode. For SQL, you can use
+:kbd:`CTRL+SPACE` to get context-sensitive help with ASM's tables and columns.
 
 For some excellent beginner tutorials on both SQL and HTML, see
 www.w3schools.com 

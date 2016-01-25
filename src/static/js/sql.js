@@ -29,16 +29,6 @@ $(function() {
                         "animalcsv|" + _("CSV of animal/adopter data"), 
                         "personcsv|" + _("CSV of person data") ]}
                 ], true),
-                '<span style="float: right">',
-                '<label for="tables">' + _("Table") + '</label>',
-                '<select id="tables" data="table" class="asm-selectbox">',
-                '<option></option>',
-                sql.render_table_options(),
-                '</select>',
-                '<label for="columns">' + _("Column") + '</label>',
-                '<select id="columns" class="asm-selectbox">',
-                '</select>',
-                '</span>',
                 '</div>',
                 '<textarea id="sql" class="asm-sqleditor" data-height="150px" data="sql" rows="10"></textarea>',
                 '<hr />',
@@ -56,14 +46,6 @@ $(function() {
                 '</form>',
                 '</div>'
             ].join("\n");
-        },
-
-        render_table_options: function() {
-            var h = [];
-            $.each(controller.tables, function(i, v) {
-                h.push("<option>" + v + "</option>");
-            });
-            return h.join("\n");
         },
 
         /** One of the three dump button choices so once the confirm dialog has been agreed
@@ -94,27 +76,8 @@ $(function() {
         },
 
         bind: function() {
+            
             this.bind_scriptdialog();
-            $("#tables").change(function() {
-                var formdata = "mode=cols&" + $("#tables").toPOST();
-                header.show_loading(_("Loading..."));
-                common.ajax_post("sql", formdata)
-                    .then(function(result) { 
-                        var cols = result.split("|");
-                        var h = "<option></option>";
-                        $.each(cols, function(i, v) {
-                            h += "<option>" + v + "</option>";
-                        });
-                        $("#columns").html(h);
-                    })
-                    .always(function() {
-                        header.hide_loading();
-                    });
-            });
-
-            $("#columns").change(function() {
-                $("#sql").sqleditor("append", $("#columns").val() + ", ");
-            });
 
             var dbuttons = {};
             dbuttons[_("Yes")] = function() {

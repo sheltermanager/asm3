@@ -214,6 +214,8 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
         return "<script type=\"text/javascript\" src=\"i18n.js?l=%s&k=%s\"></script>\n" % (l, BUILD)
     def script_config():
         return "<script type=\"text/javascript\" src=\"config.js?db=%s&ts=%s\"></script>\n" % (config_db, config_ts)
+    def script_schema():
+        return "<script type=\"text/javascript\" src=\"schema.js?db=%s&ts=%s\"></script>\n" % (config_db, config_ts)
     # Use the default if we have no locale
     if locale is None: locale = LOCALE
     # Load the asm scripts
@@ -245,6 +247,7 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
                 css_tag(ASMSELECT_CSS) + 
                 css_tag(CODEMIRROR_CSS) + 
                 css_tag(CODEMIRROR_BASE + "addon/display/fullscreen.css") + 
+                css_tag(CODEMIRROR_BASE + "addon/hint/show-hint.css") + 
                 css_tag(FULLCALENDAR_CSS) +
                 css_tag(TABLESORTER_CSS) + 
                 css_tag(TIMEPICKER_CSS) + 
@@ -260,6 +263,8 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
                 script_tag(BASE64_JS) + 
                 script_tag(CODEMIRROR_JS) + 
                 script_tag(CODEMIRROR_BASE + "addon/display/fullscreen.js") + 
+                script_tag(CODEMIRROR_BASE + "addon/hint/show-hint.js") + 
+                script_tag(CODEMIRROR_BASE + "addon/hint/sql-hint.js") + 
                 script_tag(CODEMIRROR_BASE + "mode/javascript/javascript.js") + 
                 script_tag(CODEMIRROR_BASE + "mode/xml/xml.js") + 
                 script_tag(CODEMIRROR_BASE + "mode/htmlmixed/htmlmixed.js") + 
@@ -271,6 +276,7 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
                 script_tag(TIMEPICKER_JS) +
                 script_tag(PATH_JS) + 
                 script_config() + 
+                script_schema() + 
                 script_i18n(locale) + 
                 asm_scripts,
               "bgcol": bgcol }

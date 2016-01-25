@@ -187,6 +187,7 @@ urls = (
     "/report_images", "report_images",
     "/reports", "reports",
     "/roles", "roles",
+    "/schema.js", "schemajs",
     "/search", "search",
     "/service", "service",
     "/shelterview", "shelterview",
@@ -5816,6 +5817,28 @@ class roles:
             users.check_permission(session, users.EDIT_USER)
             for rid in post.integer_list("ids"):
                 users.delete_role(session.dbo, session.user, rid)
+
+class schemajs:
+    def GET(self):
+        # Return schema of all database tables
+        if utils.is_loggedin(session) and session.dbo is not None:
+            dbo = session.dbo
+            web.header("Content-Type", "text/javascript")
+            web.header("Cache-Control", "max-age=86400")
+            tobj = {}
+            for t in dbupdate.TABLES:
+                try:
+                    rows = db.query(dbo, "SELECT * FROM %s LIMIT 1" % t)
+                    if len(rows) != 0:
+                        tobj[t] = rows[0]
+                except Exception,err:
+                    al.error("%s" % str(err), "code.schemajs", dbo)
+            return "schema = %s;" % html.json(tobj)
+        else:
+            # Not logged in
+            web.header("Content-Type", "text/javascript")
+            web.header("Cache-Control", "no-cache")
+            return ""
 
 class search:
     def GET(self):

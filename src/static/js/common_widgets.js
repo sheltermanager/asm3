@@ -1,6 +1,6 @@
 /*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, regexp: true, sloppy: true, vars: true, nomen: true */
 /*global $, console, jQuery, CodeMirror */
-/*global asm, common, config, dlgfx, format, html, header, validate, _, escape, unescape */
+/*global asm, common, config, dlgfx, format, html, header, schema, validate, _, escape, unescape */
 
 (function($) {
 
@@ -1009,8 +1009,10 @@
                         },
                         "Esc": function(cm) {
                             if (cm.getOption("fullScreen")) { cm.setOption("fullScreen", false); }
-                        }
-                    }
+                        },
+                        "Ctrl-Space": "autocomplete"
+                    },
+                    hintOptions: { tables: schema }
                 });
                 // Override height and width if they were set as attributes of the text area
                 if (self.element.attr("data-width")) {

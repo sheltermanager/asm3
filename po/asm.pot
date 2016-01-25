@@ -2419,10 +2419,6 @@ msgstr ""
 msgid "Colors"
 msgstr ""
 
-#: sql.js
-msgid "Column"
-msgstr ""
-
 #: mailmerge.js
 msgid "Columns"
 msgstr ""
@@ -6138,7 +6134,7 @@ msgstr ""
 msgid "Llama"
 msgstr ""
 
-#: common.js onlineform_incoming.js sql.js header.js
+#: common.js onlineform_incoming.js header.js
 msgid "Loading..."
 msgstr ""
 
@@ -10034,10 +10030,6 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Tabby and White"
-msgstr ""
-
-#: sql.js
-msgid "Table"
 msgstr ""
 
 #: common_widgets.js
