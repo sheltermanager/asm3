@@ -225,11 +225,11 @@ $(function() {
                 '<tr>',
                 '<td valign="top">',
                 '<label for="rhead">' + _("Header") + '</label><br />',
-                '<textarea id="rhead" data="header" class="asm-textarea headfoot" style="font-family: monospace" rows="10">',
+                '<textarea id="rhead" data="header" class="asm-htmleditor headfoot" data-height="250px" data-width="750px">',
                 controller.header,
                 '</textarea>',
                 '<label for="rfoot">' + _("Footer") + '</label><br />',
-                '<textarea id="rfoot" data="footer" class="asm-textarea headfoot" style="font-family: monospace" rows="10">',
+                '<textarea id="rfoot" data="footer" class="asm-htmleditor headfoot" data-height="250px" data-width="750px">',
                 controller.footer,
                 '</textarea>',
                 '</td>',
@@ -318,7 +318,10 @@ $(function() {
                 dialogClass: "dialogshadow",
                 show: dlgfx.add_show,
                 hide: dlgfx.add_hide,
-                buttons: headfootbuttons
+                buttons: headfootbuttons,
+                open: function() {
+                    $("#rhead, #rfoot").htmleditor("refresh");
+                }
             });
         },
 

@@ -8028,6 +8028,10 @@ msgstr ""
 msgid "Presa Canario"
 msgstr ""
 
+#: main.js
+msgid "Press F11 in HTML or SQL code editing boxes to edit in fullscreen mode"
+msgstr ""
+
 #: onlineform_incoming.js
 msgid "Preview"
 msgstr ""

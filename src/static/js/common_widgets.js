@@ -943,7 +943,15 @@
                     lineNumbers: true,
                     mode: "htmlmixed",
                     matchBrackets: true,
-                    autofocus: false
+                    autofocus: false,
+                    extraKeys: {
+                        "F11": function(cm) {
+                            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+                        },
+                        "Esc": function(cm) {
+                            if (cm.getOption("fullScreen")) { cm.setOption("fullScreen", false); }
+                        }
+                    }
                 });
                 // Override height and width if they were set as attributes of the text area
                 if (self.element.attr("data-width")) {
@@ -956,7 +964,7 @@
                 self.options.editor.on("blur", function() {
                     self.element.val( self.options.editor.getValue() );
                 });
-            }, 500);
+            }, 1000);
         },
 
         append: function(s) {
@@ -994,7 +1002,15 @@
                     lineNumbers: true,
                     mode: "text/x-sql",
                     matchBrackets: true,
-                    autofocus: false
+                    autofocus: false,
+                    extraKeys: {
+                        "F11": function(cm) {
+                            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+                        },
+                        "Esc": function(cm) {
+                            if (cm.getOption("fullScreen")) { cm.setOption("fullScreen", false); }
+                        }
+                    }
                 });
                 // Override height and width if they were set as attributes of the text area
                 if (self.element.attr("data-width")) {
@@ -1007,7 +1023,7 @@
                 self.options.editor.on("blur", function() {
                     self.element.val( self.options.editor.getValue() );
                 });
-            }, 500);
+            }, 1000);
         },
 
         append: function(s) {

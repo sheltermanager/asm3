@@ -1,6 +1,7 @@
 38
 ================
 
+25/01/16 Add F11 fullscreen to editor widget, fix json escaping of </ #359
 25/01/16 Use new editor widgets for html templates, online forms, reports #359
 25/01/16 Add htmleditor/sqleditor tableform types #359
 25/01/16 Add {CHIPMANUFACTURER} report token #195

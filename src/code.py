@@ -363,8 +363,12 @@ def full_or_json(modulename, s, c, json = False):
     web.header("Cache-Control", "no-cache, no-store, must-revalidate")
     if not json:
         web.header("Content-Type", "text/html")
-        extra = "<script>\n$(document).ready(function() { common.route_listen(); common.module_start(\"%s\"); });\n</script>\n</body>" % modulename
-        return s.replace("</body>",  extra)
+        extra = "<script>\n$(document).ready(function() { common.route_listen(); common.module_start(\"%s\"); });\n</script>\n</body></html>" % modulename
+        bodypos = s.rfind("</body>")
+        if bodypos == -1:
+            return s
+        s = s[0:bodypos] + extra
+        return s
     else:
         web.header("Content-Type", "application/json")
         if c.endswith(","): c = c[0:len(c)-1]
@@ -4594,7 +4598,8 @@ class onlineform:
         formid = post.integer("formid")
         formname = extonlineform.get_onlineform_name(dbo, formid)
         fields = extonlineform.get_onlineformfields(dbo, formid)
-        # Escape any angle brackets in raw markup output
+        # Escape any angle brackets in raw markup output. This is needed
+        # to target tooltip as a textarea
         for r in fields:
             if r["FIELDTYPE"] == extonlineform.FIELDTYPE_RAWMARKUP:
                r["TOOLTIP"] = html.escape_angle(r["TOOLTIP"]) 
@@ -4636,8 +4641,8 @@ class onlineforms:
         s = html.header("", session)
         c = html.controller_json("rows", onlineforms)
         c += html.controller_json("flags", extlookups.get_person_flags(dbo))
-        c += html.controller_json("header", html.escape_angle(extonlineform.get_onlineform_header(dbo)))
-        c += html.controller_json("footer", html.escape_angle(extonlineform.get_onlineform_footer(dbo)))
+        c += html.controller_json("header", extonlineform.get_onlineform_header(dbo))
+        c += html.controller_json("footer", extonlineform.get_onlineform_footer(dbo))
         s += html.controller(c)
         s += html.footer()
         return full_or_json("onlineforms", s, c, post["json"] == "true")
@@ -5653,9 +5658,6 @@ class report_export:
         # No report param passed, show the list of reports for export
         if crid == 0:
             reports = extreports.get_available_reports(dbo)
-            # Sanitise the HTMLBODY for sending to the front end
-            for r in reports:
-                r["HTMLBODY"] = html.escape_angle(r["HTMLBODY"])
             al.debug("exporting %d reports" % len(reports), "code.report_export", dbo)
             s = html.header("", session)
             c = html.controller_json("rows", reports)
@@ -5742,8 +5744,8 @@ class reports:
         al.debug("editing %d reports" % len(reports), "code.reports", dbo)
         s = html.header("", session)
         c = html.controller_json("categories", "|".join(extreports.get_categories(dbo)))
-        c += html.controller_json("header", html.escape_angle(header))
-        c += html.controller_json("footer", html.escape_angle(footer))
+        c += html.controller_json("header", header)
+        c += html.controller_json("footer", footer)
         c += html.controller_json("roles", users.get_roles(dbo))
         c += html.controller_json("rows", reports)
         s += html.controller(c)
