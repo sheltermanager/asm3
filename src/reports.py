@@ -899,6 +899,14 @@ class Report:
                 if len(fields) > 2: seq = "&seq=" + fields[2]
                 value = "image?mode=animal&id=%s%s" % (animalid, seq)
 
+            # {CHIPMANUFACTURER.chipno} - substitutes the microchip
+            # manufacturer for the chip number specified
+            if key.lower().startswith("chipmanufacturer"):
+                valid = True
+                fields = key.lower().split(".")
+                chipno = fields[1]
+                value = lookups.get_microchip_manufacturer(self.dbo.locale, chipno)
+
             # {QR.animalid[.size]} - substitutes a link to the
             # google charting api to generate a QR code that
             # links back to an animal's record.
@@ -1626,6 +1634,14 @@ class Report:
                     seq = ""
                     if len(fields) > 2: seq = "&seq=" + fields[2]
                     value = "image?mode=animal&id=%s%s" % (animalid, seq)
+
+                # {CHIPMANUFACTURER.chipno} - substitutes the microchip
+                # manufacturer for the chip number specified
+                if key.lower().startswith("chipmanufacturer"):
+                    valid = True
+                    fields = key.lower().split(".")
+                    chipno = fields[1]
+                    value = lookups.get_microchip_manufacturer(self.dbo.locale, chipno)
 
                 # {QR.animalid[.size]} - substitutes a link to the
                 # google charting api to generate a QR code that

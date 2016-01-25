@@ -265,6 +265,9 @@ $$FOOT blocks and the main $$FOOTER block. These are:
   is invalid, or the animal doesn't have a preferred image the default system
   nopic.jpg file is used instead.
 
+* {CHIPMANUFACTURER.<chipno>} - (also valid in $$BODY) Returns the name of
+  the microchip manufacturer of the given chip number.
+
 * {QR.<animalid>[.size]} – (also valid in $$BODY) Returns a URL to the google
   charting api to generate a QR code with a link to this animal's record for
   mobile devices. If size is not set, then 150x150 is used. Eg:
