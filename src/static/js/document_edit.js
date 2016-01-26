@@ -80,6 +80,13 @@ $(function() {
                     $("iframe").contents().find("body").removeAttr("contenteditable");
                     ed.addShortcut('ctrl+s', '', function () {});
                 }
+
+                // Handle saving ourself so we can set the right savemode
+                ed.addCommand("mceSave", function() {
+                    $("input[name='savemode']").val("save");
+                    $("form").submit();
+                });
+
             }, 1000);
 
             // Mobile devices cannot support TinyMCE's use of sending the content
