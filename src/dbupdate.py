@@ -7,7 +7,7 @@ import os, sys
 from i18n import _, BUILD
 from sitedefs import DB_PK_STRATEGY
 
-LATEST_VERSION = 33802
+LATEST_VERSION = 33803
 VERSIONS = ( 
     2870, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3050,
     3051, 3081, 3091, 3092, 3093, 3094, 3110, 3111, 3120, 3121, 3122, 3123, 3200,
@@ -20,7 +20,7 @@ VERSIONS = (
     33503, 33504, 33505, 33506, 33507, 33508, 33600, 33601, 33602, 33603, 33604,
     33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702, 33703, 33704, 33705,
     33706, 33707, 33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716,
-    33717, 33718, 33800, 33801, 33802
+    33717, 33718, 33800, 33801, 33802, 33803
 )
 
 # All ASM3 tables
@@ -2312,6 +2312,7 @@ def install_default_media(dbo, removeFirst = False):
     dbfs.put_file(dbo, "fancy_cage_card.html", "/templates", path + "media/templates/fancy_cage_card.html")
     dbfs.put_file(dbo, "half_a4_cage_card.html", "/templates", path + "media/templates/half_a4_cage_card.html")
     dbfs.put_file(dbo, "homecheck_form.html", "/templates", path + "media/templates/homecheck_form.html")
+    dbfs.put_file(dbo, "incident_information.html", "/templates", path + "media/templates/incident_information.html")
     dbfs.put_file(dbo, "invoice.html", "/templates", path + "media/templates/invoice.html")
     dbfs.put_file(dbo, "microchip_form.html", "/templates", path + "media/templates/microchip_form.html")
     dbfs.put_file(dbo, "petplan.html", "/templates", path + "media/templates/petplan.html")
@@ -2662,6 +2663,7 @@ def update_3000(dbo):
     dbfs.put_file(dbo, "fancy_cage_card.html", "/templates", path + "media/templates/fancy_cage_card.html")
     dbfs.put_file(dbo, "half_a4_cage_card.html", "/templates", path + "media/templates/half_a4_cage_card.html")
     dbfs.put_file(dbo, "homecheck_form.html", "/templates", path + "media/templates/homecheck_form.html")
+    dbfs.put_file(dbo, "incident_information.html", "/templates", path + "media/templates/incident_information.html")
     dbfs.put_file(dbo, "invoice.html", "/templates", path + "media/templates/invoice.html")
     dbfs.put_file(dbo, "microchip_form.html", "/templates", path + "media/templates/microchip_form.html")
     dbfs.put_file(dbo, "petplan.html", "/templates", path + "media/templates/petplan.html")
@@ -4272,4 +4274,9 @@ def update_33802(dbo):
     # Move PickedUpByOwnerID to BroughtInByOwnerID and remove it
     db.execute_dbupdate(dbo, "UPDATE animal SET BroughtInByOwnerID = PickedUpByOwnerID WHERE BroughtInByOwnerID = 0 AND PickedUpByOwnerID <> 0")
     drop_column(dbo, "animal", "PickedUpByOwnerID")
+
+def update_33803(dbo):
+    # Install new incident information template
+    path = dbo.installpath
+    dbfs.put_file(dbo, "incident_information.html", "/templates", path + "media/templates/incident_information.html")
 
