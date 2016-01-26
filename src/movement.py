@@ -284,7 +284,7 @@ def validate_movement_form_data(dbo, post):
         changed = db.execute(dbo, sql)
         al.debug("movement is an adoption, returning outstanding fosters (%d)." % changed, "movement.validate_movement_form_data", dbo)
     # Can't have multiple open movements
-    if movementdate is not None:
+    if movementdate is not None and returndate is None:
         existingopen = db.query_int(dbo, "SELECT COUNT(*) FROM adoption WHERE MovementDate Is Not Null AND " \
             "ReturnDate Is Null AND AnimalID = %d AND ID <> %d" % (animalid, movementid))
         if existingopen > 0:
@@ -292,7 +292,7 @@ def validate_movement_form_data(dbo, post):
             raise utils.ASMValidationError(i18n._("An animal cannot have multiple open movements.", l))
     # If we have a movement and return, is there another movement with a 
     # movementdate between the movement and return date on this one?
-    if movementdate is not None and returndate != None:
+    if movementdate is not None and returndate is not None:
         clash = db.query_int(dbo, "SELECT COUNT(*) FROM adoption WHERE " \
         "AnimalID = %d AND ID <> %d AND ((ReturnDate > %s AND ReturnDate < %s) " \
         "OR (MovementDate < %s AND MovementDate > %s))" % ( animalid, movementid, 
