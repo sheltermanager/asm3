@@ -8,7 +8,7 @@ import diary
 import log
 import media
 import utils
-from i18n import _, now, subtract_days, display2python, python2display, format_time_now
+from i18n import _, now, subtract_days, python2display, format_time_now
 
 ASCENDING = 0
 DESCENDING = 1
@@ -17,6 +17,7 @@ def get_animalcontrol_query(dbo):
     return "SELECT ac.*, ac.ID AS ACID, s.SpeciesName, x.Sex AS SexName, " \
         "co.OwnerName AS CallerName, co.HomeTelephone, co.WorkTelephone, co.MobileTelephone, " \
         "o1.OwnerName AS OwnerName, o1.OwnerName AS OwnerName1, o2.OwnerName AS OwnerName2, o3.OwnerName AS OwnerName3, " \
+        "o1.OwnerName AS SuspectName, o1.OwnerAddress AS SuspectAddress, o1.OwnerTown AS SuspectTown, o1.OwnerCounty AS SuspectCounty, o1.OwnerPostcode AS SuspectPostcode, " \
         "vo.OwnerName AS VictimName, ti.IncidentName, ci.CompletedName, pl.LocationName " \
         "FROM animalcontrol ac " \
         "LEFT OUTER JOIN species s ON s.ID = ac.SpeciesID " \

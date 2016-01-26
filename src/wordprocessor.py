@@ -439,9 +439,94 @@ def animal_tags(dbo, a):
     d = {
         "LOGNAME":                  "LOGTYPENAME",
         "LOGDATE":                  "d:DATE",
-        "LOGCOMMENTS":              "COMMENTS"
+        "LOGCOMMENTS":              "COMMENTS",
+        "LOGCREATEDBY":             "CREATEDBY"
     }
     tags.update(table_tags(dbo, d, log.get_logs(dbo, log.ANIMAL, a["ID"], 0, log.ASCENDING), "LOGTYPENAME", "DATE"))
+
+    return tags
+
+def animalcontrol_tags(dbo, ac):
+    """
+    Generates a list of tags from an animalcontrol incident.
+    ac: An animalcontrol incident record
+    """
+    l = dbo.locale
+    tags = {
+        "INCIDENTDATE":         python2display(l, ac["INCIDENTDATETIME"]),
+        "INCIDENTTIME":         format_time(ac["INCIDENTDATETIME"]),
+        "INCIDENTTYPENAME":     ac["INCIDENTNAME"],
+        "CALLDATE":             python2display(l, ac["CALLDATETIME"]),
+        "CALLTIME":             format_time(ac["CALLDATETIME"]),
+        "CALLNOTES":            ac["CALLNOTES"],
+        "CALLTAKER":            ac["CALLTAKER"],
+        "DISPATCHDATE":         python2display(l, ac["DISPATCHDATETIME"]),
+        "DISPATCHTIME":         format_time(ac["DISPATCHDATETIME"]),
+        "DISPATCHADDRESS":      ac["DISPATCHADDRESS"],
+        "DISPATCHTOWN":         ac["DISPATCHTOWN"],
+        "DISPATCHCITY":         ac["DISPATCHTOWN"],
+        "DISPATCHCOUNTY":       ac["DISPATCHCOUNTY"],
+        "DISPATCHSTATE":        ac["DISPATCHCOUNTY"],
+        "DISPATCHPOSTCODE":     ac["DISPATCHPOSTCODE"],
+        "DISPATCHZIPCODE":      ac["DISPATCHPOSTCODE"],
+        "DISPATCHEDACO":        ac["DISPATCHEDACO"],
+        "PICKUPLOCATIONNAME":   ac["LOCATIONNAME"],
+        "RESPONDEDDATE":        python2display(l, ac["RESPONDEDDATETIME"]),
+        "RESPONDEDTIME":        format_time(ac["RESPONDEDDATETIME"]),
+        "FOLLOWUPDATE":         python2display(l, ac["FOLLOWUPDATETIME"]),
+        "FOLLOWUPTIME":         format_time(ac["FOLLOWUPDATETIME"]),
+        "COMPLETEDDATE":        python2display(l, ac["COMPLETEDDATE"]),
+        "COMPLETEDTYPENAME":    ac["COMPLETEDNAME"],
+        "ANIMALDESCRIPTION":    ac["ANIMALDESCRIPTION"],
+        "SPECIESNAME":          ac["SPECIESNAME"],
+        "SEX":                  ac["SEXNAME"],
+        "AGEGROUP":             ac["AGEGROUP"],
+        "CALLERNAME":           ac["CALLERNAME"],
+        "CALLERHOMETELEPHONE":  ac["HOMETELEPHONE"],
+        "CALLERWORKTELEPHONE":  ac["WORKTELEPHONE"],
+        "CALLERMOBILETELEPHONE": ac["MOBILETELEPHONE"],
+        "CALLERCELLTELEPHONE":  ac["MOBILETELEPHONE"],
+        "SUSPECTNAME":          ac["SUSPECTNAME"],
+        "SUSPECTADDRESS":       ac["SUSPECTADDRESS"],
+        "SUSPECTTOWN":          ac["SUSPECTTOWN"],
+        "SUSPECTCITY":          ac["SUSPECTTOWN"],
+        "SUSPECTCOUNTY":        ac["SUSPECTCOUNTY"],
+        "SUSPECTSTATE":         ac["SUSPECTCOUNTY"],
+        "SUSPECTPOSTCODE":      ac["SUSPECTPOSTCODE"],
+        "SUSPECTZIPCODE":       ac["SUSPECTPOSTCODE"],
+        "SUSPECT1NAME":         ac["OWNERNAME1"],
+        "SUSPECT2NAME":         ac["OWNERNAME2"],
+        "SUSPECT3NAME":         ac["OWNERNAME3"],
+        "VICTIMNAME":           ac["VICTIMNAME"]
+    }
+
+    # Additional fields
+    add = additional.get_additional_fields(dbo, ac["ID"], "incident")
+    for af in add:
+        val = af["VALUE"]
+        if af["FIELDTYPE"] == additional.YESNO:
+            val = additional_yesno(l, af)
+        tags[af["FIELDNAME"].upper()] = val
+
+    # Citations
+    d = {
+        "CITATIONNAME":         "CITATIONNAME",
+        "CITATIONDATE":         "d:CITATIONDATE",
+        "COMMENTS":             "COMMENTS",
+        "FINEAMOUNT":           "c:FINEAMOUNT",
+        "FINEDUEDATE":          "d:FINEDUEDATE",
+        "FINEPAIDDATE":         "d:FINEPAIDDATE"
+    }
+    tags.update(table_tags(dbo, d, financial.get_incident_citations(dbo, ac["ID"]), "CITATIONNAME", "CITATIONDATE"))
+
+    # Logs
+    d = {
+        "INCIDENTLOGNAME":            "LOGTYPENAME",
+        "INCIDENTLOGDATE":            "d:DATE",
+        "INCIDENTLOGCOMMENTS":        "COMMENTS",
+        "INCIDENTLOGCREATEDBY":       "CREATEDBY"
+    }
+    tags.update(table_tags(dbo, d, log.get_logs(dbo, log.ANIMALCONTROL, ac["ID"], 0, log.ASCENDING), "LOGTYPENAME", "DATE"))
 
     return tags
 
@@ -646,11 +731,23 @@ def person_tags(dbo, p):
             val = additional_yesno(l, af)
         tags[af["FIELDNAME"].upper()] = val
 
+    # Citations
+    d = {
+        "CITATIONNAME":         "CITATIONNAME",
+        "CITATIONDATE":         "d:CITATIONDATE",
+        "COMMENTS":             "COMMENTS",
+        "FINEAMOUNT":           "c:FINEAMOUNT",
+        "FINEDUEDATE":          "d:FINEDUEDATE",
+        "FINEPAIDDATE":         "d:FINEPAIDDATE"
+    }
+    tags.update(table_tags(dbo, d, financial.get_incident_citations(dbo, ac["ID"]), "CITATIONNAME", "CITATIONDATE"))
+
     # Logs
     d = {
         "PERSONLOGNAME":            "LOGTYPENAME",
         "PERSONLOGDATE":            "d:DATE",
-        "PERSONLOGCOMMENTS":        "COMMENTS"
+        "PERSONLOGCOMMENTS":        "COMMENTS",
+        "PERSONLOGCREATEDBY":       "CREATEDBY"
     }
     tags.update(table_tags(dbo, d, log.get_logs(dbo, log.PERSON, p["ID"], 0, log.ASCENDING), "LOGTYPENAME", "DATE"))
 
@@ -873,6 +970,17 @@ def generate_animal_doc(dbo, template, animalid, username):
             tags = append_tags(tags, donation_tags(dbo, md))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, template, tags, im)
+
+def generate_animalcontrol_doc(dbo, template, acid, username):
+    """
+    Generates an animal control incident document from a template
+    template: The path/name of the template to use
+    acid:     The incident id to generate for
+    """
+    ac = animalcontrol.get_animalcontrol(dbo, acid)
+    if ac is None: raise utils.ASMValidationError("%d is not a valid incident ID" % acid)
+    tags = animalcontrol_tags(dbo, ac)
+    return substitute_template(dbo, template, tags)
 
 def generate_person_doc(dbo, template, personid, username):
     """

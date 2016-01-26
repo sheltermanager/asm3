@@ -2345,6 +2345,9 @@ class document_gen:
         if mode == "ANIMAL":
             loglinktype = extlog.ANIMAL
             content = wordprocessor.generate_animal_doc(dbo, template, post.integer("id"), session.user)
+        elif mode == "ANIMALCONTROL":
+            loglinktype = extlog.ANIMALCONTROL
+            content = wordprocessor.generate_animalcontrol_doc(dbo, template, post.integer("id"), session.user)
         elif mode == "PERSON":
             loglinktype = extlog.PERSON
             content = wordprocessor.generate_person_doc(dbo, template, post.integer("id"), session.user)
@@ -2389,6 +2392,10 @@ class document_gen:
                 tempname += " - " + extanimal.get_animal_namecode(dbo, recid)
                 extmedia.create_document_media(dbo, session.user, extmedia.ANIMAL, recid, tempname, post["document"])
                 raise web.seeother("animal_media?id=%d" % recid)
+            elif mode == "ANIMALCONTROL":
+                tempname += " - " + utils.padleft(recid, 6)
+                extmedia.create_document_media(dbo, session.user, extmedia.ANIMALCONTROL, recid, tempname, post["document"])
+                raise web.seeother("incident_media?id=%d" % recid)
             elif mode == "PERSON":
                 tempname += " - " + extperson.get_person_name(dbo, recid)
                 extmedia.create_document_media(dbo, session.user, extmedia.PERSON, recid, tempname, post["document"])
@@ -3021,6 +3028,7 @@ class incident:
         c += html.controller_json("species", extlookups.get_species(dbo))
         c += html.controller_json("sexes", extlookups.get_sexes(dbo))
         c += html.controller_json("tabcounts", extanimalcontrol.get_animalcontrol_satellite_counts(dbo, a["ACID"])[0])
+        c += html.controller_json("templates", dbfs.get_document_templates(dbo))
         c += html.controller_json("users", users.get_users(dbo))
         s += html.controller(c)
         s += html.footer()
@@ -3561,7 +3569,6 @@ class lookups:
             users.check_permission(session, users.MODIFY_LOOKUPS)
             for lid in post.integer_list("ids"):
                 extlookups.update_lookup_retired(dbo, post["lookup"], lid, 1)
-
 
 class lostanimal:
     def GET(self):

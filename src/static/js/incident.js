@@ -278,6 +278,11 @@ $(function() {
 
         render: function() {
             return [
+                '<div id="button-document-body" class="asm-menu-body">',
+                '<ul class="asm-menu-list">',
+                edit_header.template_list(controller.templates, "ANIMALCONTROL", controller.incident.ID),
+                '</ul>',
+                '</div>',
                 '<div id="dialog-email" style="display: none" title="' + html.title(_("Email incident notes to ACO"))  + '">',
                 '<table width="100%">',
                 '<tr>',
@@ -312,6 +317,7 @@ $(function() {
                     { id: "save", text: _("Save"), icon: "save", tooltip: _("Save this incident") },
                     { id: "delete", text: _("Delete"), icon: "delete", tooltip: _("Delete this incident") },
                     //{ id: "toanimal", text: _("Create Animal"), icon: "animal-add", tooltip: _("Create a new animal from this incident") }
+                    { id: "document", text: _("Document"), type: "buttonmenu", icon: "document", tooltip: _("Generate a document from this incident") },
                     { id: "email", text: _("Email"), icon: "email", tooltip: _("Email incident notes to ACO") },
                     { id: "dispatch", text: _("Dispatch"), icon: "calendar", tooltip: _("Mark dispatched now") },
                     { id: "respond", text: _("Respond"), icon: "calendar", tooltip: _("Mark responded now") }
@@ -341,6 +347,7 @@ $(function() {
             if (!common.has_permission("caci")) { $("#button-save").hide(); }
             if (!common.has_permission("aa")) { $("#button-toanimal").hide(); }
             if (!common.has_permission("daci")) { $("#button-delete").hide(); }
+            if (!common.has_permission("gaf")) { $("#button-document").hide(); }
 
             // If a dispatch time is already set, disable the dispatch button
             if ($("#dispatchtime").val()) {
@@ -560,6 +567,9 @@ $(function() {
                     validate.dirty(true);
                 }
             });
+
+            // Setup the document menu button
+            $("#button-document").asmmenu();
 
             $("#button-respond").button().click(function() {
                 if (!$("#respondedtime").val()) {

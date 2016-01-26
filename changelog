@@ -1,6 +1,7 @@
 38
 ================
 
+26/01/16 Allow documents to be generated from incidents #94
 26/01/16 Fixed being unable to save templates after PDF generation
 26/01/16 Open movement validation wasn't checking return date
 25/01/16 Use code complete CTRL+Space in sqleditor for db/fields #359
