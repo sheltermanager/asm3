@@ -614,7 +614,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                 ( "Label", db.ds(label)),
                 ( "DisplayIndex", db.di(displayindex)),
                 ( "Host", db.ds(remoteip)),
-                ( "Value", db.ds(v))
+                ( "Value", fld[0]["FIELDTYPE"] == FIELDTYPE_RAWMARKUP and db.ds(v, False) or db.ds(v))
                 ))
             db.execute(dbo, sql)
     # Sort out the preview of the first few fields
