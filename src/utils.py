@@ -143,6 +143,12 @@ def cfloat(s):
     except:
         return float(0)
 
+def iif(c, t, f):
+    """
+    Evaluates c and returns t for True or f for False
+    """
+    return c and t or f
+
 def nulltostr(s):
     try:
         if s is None: return ""

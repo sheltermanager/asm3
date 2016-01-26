@@ -133,16 +133,16 @@ def animal_tags(dbo, a):
         "TATTOONUMBER"          : a["TATTOONUMBER"],
         "COMBITESTED"           : a["COMBITESTEDNAME"],
         "FIVLTESTED"            : a["COMBITESTEDNAME"],
-        "COMBITESTDATE"         : a["COMBITESTED"] == 1 and python2display(l, a["COMBITESTDATE"]) or "",
-        "FIVLTESTDATE"          : a["COMBITESTED"] == 1 and python2display(l, a["COMBITESTDATE"]) or "",
-        "COMBITESTRESULT"       : a["COMBITESTED"] == 1 and a["COMBITESTRESULTNAME"] or "",
-        "FIVTESTRESULT"         : a["COMBITESTED"] == 1 and a["COMBITESTRESULTNAME"] or "",
-        "FIVRESULT"             : a["COMBITESTED"] == 1 and a["COMBITESTRESULTNAME"] or "",
-        "FLVTESTRESULT"         : a["COMBITESTED"] == 1 and a["FLVRESULTNAME"] or "",
-        "FLVRESULT"             : a["COMBITESTED"] == 1 and a["FLVRESULTNAME"] or "",
+        "COMBITESTDATE"         : utils.iif(a["COMBITESTED"] == 1, python2display(l, a["COMBITESTDATE"]), ""),
+        "FIVLTESTDATE"          : utils.iif(a["COMBITESTED"] == 1, python2display(l, a["COMBITESTDATE"]), ""),
+        "COMBITESTRESULT"       : utils.iif(a["COMBITESTED"] == 1, a["COMBITESTRESULTNAME"], ""),
+        "FIVTESTRESULT"         : utils.iif(a["COMBITESTED"] == 1, a["COMBITESTRESULTNAME"], ""),
+        "FIVRESULT"             : utils.iif(a["COMBITESTED"] == 1, a["COMBITESTRESULTNAME"], ""),
+        "FLVTESTRESULT"         : utils.iif(a["COMBITESTED"] == 1, a["FLVRESULTNAME"], ""),
+        "FLVRESULT"             : utils.iif(a["COMBITESTED"] == 1, a["FLVRESULTNAME"], ""),
         "HEARTWORMTESTED"       : a["HEARTWORMTESTEDNAME"],
-        "HEARTWORMTESTDATE"     : a["HEARTWORMTESTED"] == 1 and python2display(l, a["HEARTWORMTESTDATE"]) or "",
-        "HEARTWORMTESTRESULT"   : a["HEARTWORMTESTED"] == 1 and a["HEARTWORMTESTRESULTNAME"] or "",
+        "HEARTWORMTESTDATE"     : utils.iif(a["HEARTWORMTESTED"] == 1, python2display(l, a["HEARTWORMTESTDATE"]), ""),
+        "HEARTWORMTESTRESULT"   : utils.iif(a["HEARTWORMTESTED"] == 1, a["HEARTWORMTESTRESULTNAME"], ""),
         "HIDDENANIMALDETAILS"   : a["HIDDENANIMALDETAILS"],
         "HIDDENANIMALDETAILSBR" : br(a["HIDDENANIMALDETAILS"]),
         "ANIMALLASTCHANGEDBY"   : a["LASTCHANGEDBY"],
@@ -284,12 +284,12 @@ def animal_tags(dbo, a):
         "ANIMALONFOSTER"        : yes_no(l, a["ACTIVEMOVEMENTTYPE"] == movement.FOSTER),
         "ANIMALPERMANENTFOSTER" : yes_no(l, a["HASPERMANENTFOSTER"] == 1),
         "ANIMALATRETAILER"      : yes_no(l, a["ACTIVEMOVEMENTTYPE"] == movement.RETAILER),
-        "ANIMALISADOPTABLE"     : publish.is_adoptable(dbo, a["ID"]) and _("Yes", l) or _("No", l),
+        "ANIMALISADOPTABLE"     : utils.iif(publish.is_adoptable(dbo, a["ID"]), _("Yes", l), _("No", l)),
         "ANIMALISRESERVED"      : yes_no(l, a["HASACTIVERESERVE"] == 1),
         "ADOPTIONSTATUS"        : publish.get_adoption_status(dbo, a),
         "ADOPTIONID"            : a["ACTIVEMOVEMENTADOPTIONNUMBER"],
-        "OUTCOMEDATE"           : a["DECEASEDDATE"] is None and python2display(l, a["ACTIVEMOVEMENTDATE"]) or python2display(l, a["DECEASEDDATE"]),
-        "OUTCOMETYPE"           : a["ARCHIVED"] == 1 and a["DISPLAYLOCATIONNAME"] or ""
+        "OUTCOMEDATE"           : utils.iif(a["DECEASEDDATE"] is None, python2display(l, a["ACTIVEMOVEMENTDATE"]), python2display(l, a["DECEASEDDATE"])),
+        "OUTCOMETYPE"           : utils.iif(a["ARCHIVED"] == 1, a["DISPLAYLOCATIONNAME"], "")
     }
 
     # Set original owner to be current owner on non-shelter animals
@@ -358,7 +358,7 @@ def animal_tags(dbo, a):
         "VACCINATIONDESCRIPTION":   "VACCINATIONDESCRIPTION"
     }
     tags.update(table_tags(dbo, d, medical.get_vaccinations(dbo, a["ID"], not include_incomplete_vacc), "VACCINATIONTYPE", "DATEOFVACCINATION"))
-    tags["ANIMALISVACCINATED"] = medical.get_vaccinated(dbo, a["ID"]) and _("Yes", l) or _("No", l)
+    tags["ANIMALISVACCINATED"] = utils.iif(medical.get_vaccinated(dbo, a["ID"]), _("Yes", l), _("No", l))
 
     # Tests
     d = {
@@ -455,7 +455,7 @@ def animalcontrol_tags(dbo, ac):
     tags = {
         "INCIDENTDATE":         python2display(l, ac["INCIDENTDATETIME"]),
         "INCIDENTTIME":         format_time(ac["INCIDENTDATETIME"]),
-        "INCIDENTTYPENAME":     ac["INCIDENTNAME"],
+        "INCIDENTTYPENAME":     utils.nulltostr(ac["INCIDENTNAME"]),
         "CALLDATE":             python2display(l, ac["CALLDATETIME"]),
         "CALLTIME":             format_time(ac["CALLDATETIME"]),
         "CALLNOTES":            ac["CALLNOTES"],
@@ -470,34 +470,34 @@ def animalcontrol_tags(dbo, ac):
         "DISPATCHPOSTCODE":     ac["DISPATCHPOSTCODE"],
         "DISPATCHZIPCODE":      ac["DISPATCHPOSTCODE"],
         "DISPATCHEDACO":        ac["DISPATCHEDACO"],
-        "PICKUPLOCATIONNAME":   ac["LOCATIONNAME"],
+        "PICKUPLOCATIONNAME":   utils.nulltostr(ac["LOCATIONNAME"]),
         "RESPONDEDDATE":        python2display(l, ac["RESPONDEDDATETIME"]),
         "RESPONDEDTIME":        format_time(ac["RESPONDEDDATETIME"]),
         "FOLLOWUPDATE":         python2display(l, ac["FOLLOWUPDATETIME"]),
         "FOLLOWUPTIME":         format_time(ac["FOLLOWUPDATETIME"]),
         "COMPLETEDDATE":        python2display(l, ac["COMPLETEDDATE"]),
-        "COMPLETEDTYPENAME":    ac["COMPLETEDNAME"],
+        "COMPLETEDTYPENAME":    utils.nulltostr(ac["COMPLETEDNAME"]),
         "ANIMALDESCRIPTION":    ac["ANIMALDESCRIPTION"],
-        "SPECIESNAME":          ac["SPECIESNAME"],
-        "SEX":                  ac["SEXNAME"],
-        "AGEGROUP":             ac["AGEGROUP"],
-        "CALLERNAME":           ac["CALLERNAME"],
-        "CALLERHOMETELEPHONE":  ac["HOMETELEPHONE"],
-        "CALLERWORKTELEPHONE":  ac["WORKTELEPHONE"],
-        "CALLERMOBILETELEPHONE": ac["MOBILETELEPHONE"],
-        "CALLERCELLTELEPHONE":  ac["MOBILETELEPHONE"],
-        "SUSPECTNAME":          ac["SUSPECTNAME"],
-        "SUSPECTADDRESS":       ac["SUSPECTADDRESS"],
-        "SUSPECTTOWN":          ac["SUSPECTTOWN"],
-        "SUSPECTCITY":          ac["SUSPECTTOWN"],
-        "SUSPECTCOUNTY":        ac["SUSPECTCOUNTY"],
-        "SUSPECTSTATE":         ac["SUSPECTCOUNTY"],
-        "SUSPECTPOSTCODE":      ac["SUSPECTPOSTCODE"],
-        "SUSPECTZIPCODE":       ac["SUSPECTPOSTCODE"],
-        "SUSPECT1NAME":         ac["OWNERNAME1"],
-        "SUSPECT2NAME":         ac["OWNERNAME2"],
-        "SUSPECT3NAME":         ac["OWNERNAME3"],
-        "VICTIMNAME":           ac["VICTIMNAME"]
+        "SPECIESNAME":          utils.nulltostr(ac["SPECIESNAME"]),
+        "SEX":                  utils.nulltostr(ac["SEXNAME"]),
+        "AGEGROUP":             utils.nulltostr(ac["AGEGROUP"]),
+        "CALLERNAME":           utils.nulltostr(ac["CALLERNAME"]),
+        "CALLERHOMETELEPHONE":  utils.nulltostr(ac["HOMETELEPHONE"]),
+        "CALLERWORKTELEPHONE":  utils.nulltostr(ac["WORKTELEPHONE"]),
+        "CALLERMOBILETELEPHONE": utils.nulltostr(ac["MOBILETELEPHONE"]),
+        "CALLERCELLTELEPHONE":  utils.nulltostr(ac["MOBILETELEPHONE"]),
+        "SUSPECTNAME":          utils.nulltostr(ac["SUSPECTNAME"]),
+        "SUSPECTADDRESS":       utils.nulltostr(ac["SUSPECTADDRESS"]),
+        "SUSPECTTOWN":          utils.nulltostr(ac["SUSPECTTOWN"]),
+        "SUSPECTCITY":          utils.nulltostr(ac["SUSPECTTOWN"]),
+        "SUSPECTCOUNTY":        utils.nulltostr(ac["SUSPECTCOUNTY"]),
+        "SUSPECTSTATE":         utils.nulltostr(ac["SUSPECTCOUNTY"]),
+        "SUSPECTPOSTCODE":      utils.nulltostr(ac["SUSPECTPOSTCODE"]),
+        "SUSPECTZIPCODE":       utils.nulltostr(ac["SUSPECTPOSTCODE"]),
+        "SUSPECT1NAME":         utils.nulltostr(ac["OWNERNAME1"]),
+        "SUSPECT2NAME":         utils.nulltostr(ac["OWNERNAME2"]),
+        "SUSPECT3NAME":         utils.nulltostr(ac["OWNERNAME3"]),
+        "VICTIMNAME":           utils.nulltostr(ac["VICTIMNAME"])
     }
 
     # Additional fields
@@ -565,8 +565,8 @@ def donation_tags(dbo, donations):
             "PAYMENTCOMMENTS"+i     : p["COMMENTS"],
             "PAYMENTCOMMENTSFW"+i   : fw(p["COMMENTS"]),
             "PAYMENTGIFTAID"+i      : p["ISGIFTAIDNAME"],
-            "PAYMENTVAT"+i          : p["ISVAT"] == 1 and _("Yes", l) or _("No", l),
-            "PAYMENTTAX"+i          : p["ISVAT"] == 1 and _("Yes", l) or _("No", l),
+            "PAYMENTVAT"+i          : utils.iif(p["ISVAT"] == 1, _("Yes", l), _("No", l)),
+            "PAYMENTTAX"+i          : utils.iif(p["ISVAT"] == 1, _("Yes", l), _("No", l)),
             "PAYMENTVATRATE"+i      : "%0.2f" % utils.cfloat(p["VATRATE"]),
             "PAYMENTTAXRATE"+i      : "%0.2f" % utils.cfloat(p["VATRATE"]),
             "PAYMENTVATAMOUNT"+i    : format_currency_no_symbol(l, p["VATAMOUNT"]),
@@ -640,12 +640,12 @@ def movement_tags(dbo, m):
         "INSURANCENUMBER":              m["INSURANCENUMBER"],
         "RETURNDATE":                   python2display(l, m["RETURNDATE"]),
         "RETURNNOTES":                  m["REASONFORRETURN"],
-        "RETURNREASON":                 m["RETURNDATE"] is not None and m["RETURNEDREASONNAME"] or "",
+        "RETURNREASON":                 utils.iif(m["RETURNDATE"] is not None, m["RETURNEDREASONNAME"], ""),
         "RESERVATIONDATE":              m["RESERVATIONDATE"],
         "RESERVATIONCANCELLEDDATE":     m["RESERVATIONCANCELLEDDATE"],
         "RESERVATIONSTATUS":            m["RESERVATIONSTATUSNAME"],
-        "MOVEMENTISTRIAL":              m["ISTRIAL"] == 1 and _("Yes", l) or _("No", l),
-        "MOVEMENTISPERMANENTFOSTER":    m["ISPERMANENTFOSTER"] == 1 and _("Yes", l) or _("No", l),
+        "MOVEMENTISTRIAL":              utils.iif(m["ISTRIAL"] == 1, _("Yes", l), _("No", l)),
+        "MOVEMENTISPERMANENTFOSTER":    utils.iif(m["ISPERMANENTFOSTER"] == 1, _("Yes", l), _("No", l)),
         "TRIALENDDATE":                 python2display(l, m["TRIALENDDATE"]),
         "MOVEMENTCOMMENTS":             m["COMMENTS"],
         "MOVEMENTCREATEDBY":            m["CREATEDBY"],
@@ -656,10 +656,10 @@ def movement_tags(dbo, m):
         "ADOPTIONLASTCHANGEDBY":        m["LASTCHANGEDBY"],
         "ADOPTIONCREATEDDATE":          python2display(l, m["CREATEDDATE"]),
         "ADOPTIONLASTCHANGEDDATE":      python2display(l, m["LASTCHANGEDDATE"]),
-        "ADOPTIONDATE":                 m["MOVEMENTTYPE"] == movement.ADOPTION and python2display(l, m["MOVEMENTDATE"]) or "",
-        "FOSTEREDDATE":                 m["MOVEMENTTYPE"] == movement.FOSTER and python2display(l, m["MOVEMENTDATE"]) or "",
-        "TRANSFERDATE":                 m["MOVEMENTTYPE"] == movement.TRANSFER and python2display(l, m["MOVEMENTDATE"]) or "",
-        "TRIALENDDATE":                 m["MOVEMENTTYPE"] == movement.ADOPTION and python2display(l, m["TRIALENDDATE"]) or ""
+        "ADOPTIONDATE":                 utils.iif(m["MOVEMENTTYPE"] == movement.ADOPTION, python2display(l, m["MOVEMENTDATE"]), ""),
+        "FOSTEREDDATE":                 utils.iif(m["MOVEMENTTYPE"] == movement.FOSTER, python2display(l, m["MOVEMENTDATE"]), ""),
+        "TRANSFERDATE":                 utils.iif(m["MOVEMENTTYPE"] == movement.TRANSFER, python2display(l, m["MOVEMENTDATE"]), ""),
+        "TRIALENDDATE":                 utils.iif(m["MOVEMENTTYPE"] == movement.ADOPTION, python2display(l, m["TRIALENDDATE"]), "")
     }
     return tags    
 
@@ -713,7 +713,7 @@ def person_tags(dbo, p):
         "OWNERLASTCHANGEDBY"    : p["LASTCHANGEDBY"],
         "OWNERLASTCHANGEDBYNAME" : p["LASTCHANGEDBY"],
         "OWNERLASTCHANGEDDATE"  : python2display(l, p["LASTCHANGEDDATE"]),
-        "IDCHECK"               : (p["IDCHECK"] == 1 and _("Yes", l) or _("No", l)),
+        "IDCHECK"               : utils.iif(p["IDCHECK"] == 1, _("Yes", l), _("No", l)),
         "HOMECHECKEDBYNAME"     : p["HOMECHECKEDBYNAME"],
         "HOMECHECKEDBYEMAIL"    : p["HOMECHECKEDBYEMAIL"],
         "HOMECHECKEDBYHOMETELEPHONE": p["HOMECHECKEDBYHOMETELEPHONE"],
@@ -740,7 +740,7 @@ def person_tags(dbo, p):
         "FINEDUEDATE":          "d:FINEDUEDATE",
         "FINEPAIDDATE":         "d:FINEPAIDDATE"
     }
-    tags.update(table_tags(dbo, d, financial.get_incident_citations(dbo, ac["ID"]), "CITATIONNAME", "CITATIONDATE"))
+    tags.update(table_tags(dbo, d, financial.get_person_citations(dbo, p["ID"]), "CITATIONNAME", "CITATIONDATE"))
 
     # Logs
     d = {
@@ -786,7 +786,7 @@ def table_get_value(l, row, k):
     elif k.find("c:") != -1:
         s = format_currency_no_symbol(l, row[k.replace("c:", "")])
     elif k.find("y:") != -1:
-        s = row[k.replace("y:", "")] == 1 and _("Yes", l) or _("No", l)
+        s = utils.iif(row[k.replace("y:", "")] == 1, _("Yes", l), _("No", l))
     elif k.find("f:") != -1:
         s = "%0.2f" % utils.cfloat(row[k.replace("f:", "")])
     else:
@@ -980,6 +980,7 @@ def generate_animalcontrol_doc(dbo, template, acid, username):
     ac = animalcontrol.get_animalcontrol(dbo, acid)
     if ac is None: raise utils.ASMValidationError("%d is not a valid incident ID" % acid)
     tags = animalcontrol_tags(dbo, ac)
+    tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, template, tags)
 
 def generate_person_doc(dbo, template, personid, username):

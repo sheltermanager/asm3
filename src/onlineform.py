@@ -284,7 +284,7 @@ def get_onlineform_json(dbo, formid):
     ff = []
     for f in formfields:
         ff.append({ "name": f["FIELDNAME"], "label": f["LABEL"], "type": FIELDTYPE_MAP_REVERSE[f["FIELDTYPE"]],
-            "mandatory": f["MANDATORY"] == 1 and True or False, "index": f["DISPLAYINDEX"],
+            "mandatory": utils.iif(f["MANDATORY"] == 1, True, False), "index": f["DISPLAYINDEX"],
             "lookups": f["LOOKUPS"], "tooltip": f["TOOLTIP"]})
     fd["fields"] = ff
     return html.json(fd, True)
@@ -305,7 +305,7 @@ def import_onlineform_json(dbo, j):
             "fieldtype": str(FIELDTYPE_MAP[f["type"]]),
             "label": f["label"],
             "displayindex": f["index"],
-            "mandatory": f["mandatory"] and "1" or "0",
+            "mandatory": utils.iif(f["mandatory"], "1", "0"),
             "lookups": f["lookups"],
             "tooltip": f["tooltip"]
         }
@@ -614,7 +614,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                 ( "Label", db.ds(label)),
                 ( "DisplayIndex", db.di(displayindex)),
                 ( "Host", db.ds(remoteip)),
-                ( "Value", fld[0]["FIELDTYPE"] == FIELDTYPE_RAWMARKUP and db.ds(v, False) or db.ds(v))
+                ( "Value", utils.iif(fld[0]["FIELDTYPE"] == FIELDTYPE_RAWMARKUP, db.ds(v, False), db.ds(v)) )
                 ))
             db.execute(dbo, sql)
     # Sort out the preview of the first few fields
