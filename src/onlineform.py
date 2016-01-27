@@ -576,10 +576,12 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         if post[JSKEY_NAME] != JSKEY_VALUE:
             raise utils.ASMValidationError("Invalid verification key")
     IGNORE_FIELDS = [ JSKEY_NAME, "formname", "flags", "redirect", "account", "filechooser", "method", "asmSelect0", "asmSelect1", "asmSelect2" ]
+    l = dbo.locale
     collationid = db.query_int(dbo, "SELECT MAX(CollationID) FROM onlineformincoming") + 1
     formname = post["formname"]
     posteddate = i18n.now(dbo.timezone)
     flags = post["flags"]
+    submitteremail = ""
     for k, v in post.data.iteritems():
         if k not in IGNORE_FIELDS:
             label = ""
@@ -590,6 +592,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
             if k.find("_") != -1:
                 fid = utils.cint(k[k.rfind("_")+1:])
                 fieldname = k[0:k.rfind("_")]
+                if fieldname == "emailaddress": submitteremail = v.strip()
                 if fid != 0:
                     fld = db.query(dbo, "SELECT FieldType, Label, Tooltip, DisplayIndex FROM onlineformfield WHERE ID = %d" % fid)
                     if len(fld) > 0:
@@ -627,13 +630,19 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
             fieldssofar += 1
             preview.append( fld["LABEL"] + ": " + fld["VALUE"] )
     db.execute(dbo, "UPDATE onlineformincoming SET Preview = %s WHERE CollationID = %s" % ( db.ds(", ".join(preview)), db.di(collationid) ))
+    # Do we have a valid emailaddress for the submitter? If so, send them a copy
+    # of their submission
+    if submitteremail != "" and submitteremail.find("@") != -1:
+        utils.send_email(dbo, configuration.email(dbo), submitteremail, "", i18n._("Submission received: {0}", l).format(formname), 
+            get_onlineformincoming_html_print(dbo, [collationid,]), "html")
     # Did the original form specify some email addresses to send 
     # incoming submissions to?
     email = db.query_string(dbo, "SELECT o.EmailAddress FROM onlineform o " \
         "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
         "WHERE oi.CollationID = %d" % int(collationid))
     if email is not None and email.strip() != "":
-        utils.send_email(dbo, configuration.email(dbo), email, "", "%s - %s" % (formname, ", ".join(preview)), get_onlineformincoming_html_print(dbo, [collationid,]), "html")
+        utils.send_email(dbo, configuration.email(dbo), email, "", "%s - %s" % (formname, ", ".join(preview)), 
+            get_onlineformincoming_html_print(dbo, [collationid,]), "html")
     return collationid
 
 def delete_onlineformincoming(dbo, username, collationid):
