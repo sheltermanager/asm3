@@ -521,6 +521,8 @@ LogDate
     The date of the log  
 LogComments
     The log entry
+LogCreatedBy
+    The person who created the log entry
 
 Movement Keys
 -------------
@@ -634,6 +636,28 @@ MembershipNumber
 MembershipExpiryDate 
     The date this person's membership with the shelter expires
 
+Citation Keys
+-------------
+
+The same rules apply as for vaccinations, but for accessing citations.
+Each citation is indexed with a number for ascending (eg: CitationName1),
+LastX for descending (eg: CitationNameLast1) and with the type name for the
+most recent citation of that type for the person (eg: FineAmountFirstOffence).
+Citation keys can be accessed from a person document or an incident document.
+
+CitationName
+    The type of citation being issued
+CitationDate
+    The date of the citation
+Comments
+    Any comments on the citation
+FineAmount
+    The fine amount
+FineDueDate
+    The date the fine is due to be paid
+FinePaidDate
+    The date the fine was paid
+
 Traploan Keys
 -------------
 
@@ -715,4 +739,88 @@ LicenceExpires
     The date the licence expires
 LicenceComments
     Any comments from the licence record
+
+Incident Keys
+-------------
+
+Incident keys are only available for documents generated with the document button
+on a single incident.
+
+IncidentNumber
+    The unique incident number
+IncidentDate
+    The date of the incident
+IncidentTime
+    The time of the incident
+IncidentTypeName
+    The type of incident
+CallDate
+    The date of the call
+CallTime
+    The time of the call
+CallerName
+    The name of the caller
+CallerHomeTelephone
+    The caller's home number
+CallerWorkTelephone
+    The caller's work number
+CallerMobileTelephone / CallerCellTelephone
+    The caller's mobile number
+CallNotes
+    Any notes about the call
+CallTaker
+    The username of the staff member that took the call
+DispatchDate
+    The date an ACO was dispatched
+DispatchTime    
+    The dispatch time
+DispatchAddress
+    The address an ACO was dispatched to
+DispatchTown / DispatchCity
+    The city an ACO was dispatched to
+DispatchCounty / DispatchState
+    The state an ACO was dispatched to
+DispatchPostcode / DispatchZipcode
+    The zipcode an ACO was dispatched to
+PickupLocationName
+    The pickup location set on the incident
+RespondedDate
+    The date the incident was attended by an ACO
+RespondedTime
+    The time the incident was attended by an ACO
+FollowupDate
+    The date the incident is due for followup
+FollowupTime
+    The time the incident is due for followup
+CompletedDate
+    The date the incident was completed
+CompletedTypeName
+    The completion code/name
+AnimalDescription
+    A description of any animals involved in the incident
+SpeciesName
+    The species of animal(s) involved in the incident
+Sex
+    The sex of the animal(s) involved in the incident
+AgeGroup
+    The age group of the animal(s) involved in the incident
+SuspectName
+    The name of the main suspect
+SuspectAddress
+    The suspect's address
+SuspectTown / SuspectCity
+    The suspect's city
+SuspectCounty / SuspectState
+    The suspect's state
+SuspectPostcode / SuspectZipcode
+    The suspect's postal/zip code
+Suspect1Name
+    The name of the first suspect
+Suspect2Name
+    The name of the second suspect
+Suspect3Name
+    The name of the third suspect
+VictimName
+    The name of the victim
+
 

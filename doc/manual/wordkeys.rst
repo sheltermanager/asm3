@@ -746,6 +746,8 @@ Incident Keys
 Incident keys are only available for documents generated with the document button
 on a single incident.
 
+IncidentNumber
+    The unique incident number
 IncidentDate
     The date of the incident
 IncidentTime

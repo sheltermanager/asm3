@@ -221,9 +221,11 @@
 <li class="toctree-l2"><a class="reference internal" href="#log-keys">Log Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#movement-keys">Movement Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#person-keys">Person Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#citation-keys">Citation Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#traploan-keys">Traploan Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#payment-receipt-invoice-keys">Payment/Receipt/Invoice Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#licence-keys">Licence Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#incident-keys">Incident Keys</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Appendix: Frequently Asked Questions</a><ul>
@@ -795,6 +797,8 @@ fields are:</p>
 <dd>The date of the log</dd>
 <dt>LogComments</dt>
 <dd>The log entry</dd>
+<dt>LogCreatedBy</dt>
+<dd>The person who created the log entry</dd>
 </dl>
 </div>
 <div class="section" id="movement-keys">
@@ -909,6 +913,28 @@ and licence tabs.</p>
 <dd>The date this person&#8217;s membership with the shelter expires</dd>
 </dl>
 </div>
+<div class="section" id="citation-keys">
+<h2>Citation Keys<a class="headerlink" href="#citation-keys" title="Permalink to this headline">¶</a></h2>
+<p>The same rules apply as for vaccinations, but for accessing citations.
+Each citation is indexed with a number for ascending (eg: CitationName1),
+LastX for descending (eg: CitationNameLast1) and with the type name for the
+most recent citation of that type for the person (eg: FineAmountFirstOffence).
+Citation keys can be accessed from a person document or an incident document.</p>
+<dl class="docutils">
+<dt>CitationName</dt>
+<dd>The type of citation being issued</dd>
+<dt>CitationDate</dt>
+<dd>The date of the citation</dd>
+<dt>Comments</dt>
+<dd>Any comments on the citation</dd>
+<dt>FineAmount</dt>
+<dd>The fine amount</dd>
+<dt>FineDueDate</dt>
+<dd>The date the fine is due to be paid</dd>
+<dt>FinePaidDate</dt>
+<dd>The date the fine was paid</dd>
+</dl>
+</div>
 <div class="section" id="traploan-keys">
 <h2>Traploan Keys<a class="headerlink" href="#traploan-keys" title="Permalink to this headline">¶</a></h2>
 <p>The same rules apply as for vaccinations, but for accessing trap loans. Each
@@ -991,6 +1017,89 @@ keys are also present.</p>
 <dd>The date the licence expires</dd>
 <dt>LicenceComments</dt>
 <dd>Any comments from the licence record</dd>
+</dl>
+</div>
+<div class="section" id="incident-keys">
+<h2>Incident Keys<a class="headerlink" href="#incident-keys" title="Permalink to this headline">¶</a></h2>
+<p>Incident keys are only available for documents generated with the document button
+on a single incident.</p>
+<dl class="docutils">
+<dt>IncidentNumber</dt>
+<dd>The unique incident number</dd>
+<dt>IncidentDate</dt>
+<dd>The date of the incident</dd>
+<dt>IncidentTime</dt>
+<dd>The time of the incident</dd>
+<dt>IncidentTypeName</dt>
+<dd>The type of incident</dd>
+<dt>CallDate</dt>
+<dd>The date of the call</dd>
+<dt>CallTime</dt>
+<dd>The time of the call</dd>
+<dt>CallerName</dt>
+<dd>The name of the caller</dd>
+<dt>CallerHomeTelephone</dt>
+<dd>The caller&#8217;s home number</dd>
+<dt>CallerWorkTelephone</dt>
+<dd>The caller&#8217;s work number</dd>
+<dt>CallerMobileTelephone / CallerCellTelephone</dt>
+<dd>The caller&#8217;s mobile number</dd>
+<dt>CallNotes</dt>
+<dd>Any notes about the call</dd>
+<dt>CallTaker</dt>
+<dd>The username of the staff member that took the call</dd>
+<dt>DispatchDate</dt>
+<dd>The date an ACO was dispatched</dd>
+<dt>DispatchTime</dt>
+<dd>The dispatch time</dd>
+<dt>DispatchAddress</dt>
+<dd>The address an ACO was dispatched to</dd>
+<dt>DispatchTown / DispatchCity</dt>
+<dd>The city an ACO was dispatched to</dd>
+<dt>DispatchCounty / DispatchState</dt>
+<dd>The state an ACO was dispatched to</dd>
+<dt>DispatchPostcode / DispatchZipcode</dt>
+<dd>The zipcode an ACO was dispatched to</dd>
+<dt>PickupLocationName</dt>
+<dd>The pickup location set on the incident</dd>
+<dt>RespondedDate</dt>
+<dd>The date the incident was attended by an ACO</dd>
+<dt>RespondedTime</dt>
+<dd>The time the incident was attended by an ACO</dd>
+<dt>FollowupDate</dt>
+<dd>The date the incident is due for followup</dd>
+<dt>FollowupTime</dt>
+<dd>The time the incident is due for followup</dd>
+<dt>CompletedDate</dt>
+<dd>The date the incident was completed</dd>
+<dt>CompletedTypeName</dt>
+<dd>The completion code/name</dd>
+<dt>AnimalDescription</dt>
+<dd>A description of any animals involved in the incident</dd>
+<dt>SpeciesName</dt>
+<dd>The species of animal(s) involved in the incident</dd>
+<dt>Sex</dt>
+<dd>The sex of the animal(s) involved in the incident</dd>
+<dt>AgeGroup</dt>
+<dd>The age group of the animal(s) involved in the incident</dd>
+<dt>SuspectName</dt>
+<dd>The name of the main suspect</dd>
+<dt>SuspectAddress</dt>
+<dd>The suspect&#8217;s address</dd>
+<dt>SuspectTown / SuspectCity</dt>
+<dd>The suspect&#8217;s city</dd>
+<dt>SuspectCounty / SuspectState</dt>
+<dd>The suspect&#8217;s state</dd>
+<dt>SuspectPostcode / SuspectZipcode</dt>
+<dd>The suspect&#8217;s postal/zip code</dd>
+<dt>Suspect1Name</dt>
+<dd>The name of the first suspect</dd>
+<dt>Suspect2Name</dt>
+<dd>The name of the second suspect</dd>
+<dt>Suspect3Name</dt>
+<dd>The name of the third suspect</dd>
+<dt>VictimName</dt>
+<dd>The name of the victim</dd>
 </dl>
 </div>
 </div>
