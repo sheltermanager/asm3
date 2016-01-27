@@ -1,6 +1,8 @@
 38
 ================
 
+27/01/16 Substitute $@from$ $@to$ common VAR tokens for dates in check-sql
+27/01/16 Fix check-sql bug before clicking SQL window (widget value bug)
 26/01/16 Add default incident_information template #94
 26/01/16 Allow documents to be generated from incidents #94
 26/01/16 Fixed being unable to save templates after PDF generation

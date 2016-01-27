@@ -81,8 +81,8 @@ $(function() {
                         options: { rows: controller.roles, valuefield: "ID", displayfield: "ROLENAME" }},
                     { type: "raw", label: "", markup: '<button id="button-checksql">' + _("Syntax check this SQL") + '</button>' +
                         '<button id="button-genhtml">' + _("Generate HTML from this SQL") + '</button>' },
-                    { json_field: "SQLCOMMAND", post_field: "sql", label: _("SQL"), rows: 10, type: "sqleditor", validation: "notblank", height: "150px", width: "680px" },
-                    { json_field: "HTMLBODY", post_field: "html", label: _("HTML"), rows: 10, type: "htmleditor", height: "150px", width: "680px" }
+                    { json_field: "SQLCOMMAND", post_field: "sql", label: _("SQL"), type: "sqleditor", height: "150px", width: "680px" },
+                    { json_field: "HTMLBODY", post_field: "html", label: _("HTML"), type: "htmleditor", height: "150px", width: "680px" }
                 ]
             };
 
@@ -386,7 +386,7 @@ $(function() {
             $("#button-checksql")
                 .button({ icons: { primary: "ui-icon-check" }, text: false })
                 .click(function() {
-                var formdata = "mode=sql&sql=" + encodeURIComponent($("#sql").val());
+                var formdata = "mode=sql&sql=" + encodeURIComponent($("#sql").sqleditor("value"));
                 $("#asm-report-error").fadeOut();
                 header.show_loading();
                 common.ajax_post("reports", formdata)
@@ -404,7 +404,7 @@ $(function() {
             $("#button-genhtml")
                 .button({ icons: { primary: "ui-icon-wrench" }, text: false })
                 .click(function() {
-                var formdata = "mode=genhtml&sql=" + encodeURIComponent($("#sql").val());
+                var formdata = "mode=genhtml&sql=" + encodeURIComponent($("#sql").sqleditor("value"));
                 $("#asm-report-error").fadeOut();
                 header.show_loading();
                 common.ajax_post("reports", formdata)
@@ -473,6 +473,8 @@ $(function() {
         },
 
         validation: function() {
+            $("#sql").sqleditor("change");
+            $("#html").htmleditor("change");
             var rv = validate.notblank([ "category", "title", "sql" ]);
             if (!rv) { return false; }
             if ($("#type").val() == "REPORT" && $("#html").val() == "") { 

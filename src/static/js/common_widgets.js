@@ -962,13 +962,18 @@
                 }
                 // When the editor loses focus, update the original textarea element
                 self.options.editor.on("blur", function() {
-                    self.element.val( self.options.editor.getValue() );
+                    self.change();
                 });
+
             }, 1000);
         },
 
         append: function(s) {
             this.options.editor.setValue(this.options.editor.getValue() + s);
+        },
+
+        change: function() {
+            this.element.val( this.options.editor.getValue() );
         },
 
         destroy: function() {
@@ -980,11 +985,12 @@
         },
 
         value: function(newval) {
-            if (!newval) {
+            if (newval === undefined) {
                 return this.options.editor.getValue();
             }
             this.options.editor.setValue(newval);
             this.options.editor.refresh();
+            this.change();
         }
 
     });
@@ -1023,13 +1029,18 @@
                 }
                 // When the editor loses focus, update the original textarea element
                 self.options.editor.on("blur", function() {
-                    self.element.val( self.options.editor.getValue() );
+                    self.change();
                 });
+
             }, 1000);
         },
 
         append: function(s) {
             this.options.editor.setValue(this.options.editor.getValue() + s);
+        },
+
+        change: function() {
+            this.element.val( this.options.editor.getValue() );
         },
 
         destroy: function() {
@@ -1041,11 +1052,12 @@
         },
 
         value: function(newval) {
-            if (!newval) {
+            if (newval === undefined) {
                 return this.options.editor.getValue();
             }
             this.options.editor.setValue(newval);
             this.options.editor.refresh();
+            this.change();
         }
 
     });

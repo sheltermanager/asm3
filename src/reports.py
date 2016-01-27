@@ -311,6 +311,7 @@ def check_sql(dbo, username, sql):
     sanitised and in a ready-to-run state.
     If there is a problem with the query, an ASMValidationError is raised
     """
+    COMMON_DATE_TOKENS = ( "$CURRENT_DATE", "$@from", "$@to", "$@thedate" )
     queries = sql.split(";")
     lastquery = queries[-1]
     # Clean up and substitute some tags
@@ -318,15 +319,12 @@ def check_sql(dbo, username, sql):
     i = lastquery.find("$")
     while (i != -1):
         end = lastquery.find("$", i+1)
+        token = lastquery[i:end]
         sub = ""
-        if lastquery[i:i+4] == "$VAR":
+        if token.startswith("$VAR"):
             # VAR tags don't need a substitution
             sub = ""
-        elif len(lastquery) > (i + 9) and lastquery[i:i+9] == "$ASK DATE":
-            # Use an old date
-            sub = "2001-01-01"
-        elif len(lastquery) > (i + 13) and lastquery[i:i+13] == "$CURRENT_DATE":
-            # Use an old date
+        elif token.startswith("$ASK DATE") or token in COMMON_DATE_TOKENS:
             sub = "2001-01-01"
         else:
             sub = "0"

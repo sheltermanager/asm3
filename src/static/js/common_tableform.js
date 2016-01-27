@@ -1275,6 +1275,12 @@
                 else if (v.type == "check") {
                     row[v.json_field] = n.is(":checked") ? 1 : 0;
                 }
+                else if (v.type == "htmleditor") {
+                    row[v.json_field] = n.htmleditor("value");
+                }
+                else if (v.type == "sqleditor") {
+                    row[v.json_field] = n.sqleditor("value");
+                }
                 else if (v.type == "selectmulti") {
                     if (!n.val()) { 
                         row[v.json_field] = ""; 
