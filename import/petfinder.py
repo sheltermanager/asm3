@@ -7,14 +7,14 @@ Import module to scrape the PetFinder website. Requires CSV
 export of all data from the shelter as PFID.csv
 """
 
-SHELTER = "MO578" # Will read SHELTER.csv for IDs to scrape
+SHELTER = "WI424" # Will read SHELTER.csv for IDs to scrape
 #DEFAULT_BREED = 261 # default to dsh
 DEFAULT_BREED = 30 # default to black lab
 
-nextid = 100
-mediaid = 100
-nextownerid = 100
-nextmoveid = 100
+nextid = 500
+mediaid = 200
+nextownerid = 500
+nextmoveid = 500
 dbfsid = 500
 
 cols = None
@@ -233,7 +233,8 @@ def pfimport(petid, adopted=False):
         animalletter = "D"
     a.AnimalTypeID = animaltype
     a.SpeciesID = asm.species_id_for_name(species)
-    a.generateCode(animalletter)
+    a.ShelterCode = "PF%s" % petid
+    a.ShortCode = a.ShelterCode
     a.AnimalName = name
     dob = broughtin
     if age.find("Baby") != -1:

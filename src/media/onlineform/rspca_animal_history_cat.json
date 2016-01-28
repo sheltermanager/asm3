@@ -6,7 +6,7 @@
     { "name": "animalname", "label": "Animal`s Name", "type": "TEXT", 
         "mandatory": true, "index": 10,  "lookups": "", "tooltip": ""},
     { "name": "species", "label": "Species", "type": "SPECIES", 
-        "mandatory": true, "index": 20,  "lookups": "", "" },
+        "mandatory": true, "index": 20,  "lookups": "", "tooltip": "" },
     { "name": "sex", "label": "Gender", "type": "LOOKUP", 
         "mandatory": true, "index": 30,  "lookups": "Male|Female", "tooltip": ""},
     { "name": "colour", "label": "Colour", "type": "COLOUR", 
