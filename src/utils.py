@@ -750,9 +750,9 @@ def read_text_file(name):
 def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", contenttype = "plain", attachmentdata = None, attachmentfname = ""):
     """
     Sends an email.
-    fromadd is an RFC821 address
-    toadd is a comma separated list of RFC821 addresses
-    ccadd is a comma separated list of RFC821 addresses
+    fromadd is a single email address
+    toadd is a comma separated list of email addresses 
+    ccadd is a comma separated list of email addresses
     subject, body are strings
     contenttype is either "plain" or "html"
     attachmentdata: If an attachment should be added, the unencoded data

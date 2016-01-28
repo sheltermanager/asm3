@@ -1517,7 +1517,7 @@ class animal_media:
                 content = dbfs.get_string(dbo, m["MEDIANAME"])
                 if m["MEDIANAME"].endswith("html"):
                     content = utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], post["emailnote"], "html", content, m["MEDIANOTES"] + m["MEDIANAME"])
+                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], post["emailnote"], "html", content, m["MEDIANAME"])
             return emailadd
         elif mode == "emailpdf":
             users.check_permission(session, users.EMAIL_PERSON)
@@ -2871,8 +2871,9 @@ class foundanimal_media:
                 if len(m) == 0: raise web.notfound()
                 m = m[0]
                 content = dbfs.get_string(dbo, m["MEDIANAME"])
-                content = utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], content, "html")
+                if m["MEDIANAME"].endswith("html"):
+                    content = utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
+                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], post["emailnote"], "html", content, m["MEDIANAME"])
             return emailadd
         elif mode == "emailpdf":
             users.check_permission(session, users.EMAIL_PERSON)
@@ -3284,8 +3285,9 @@ class incident_media:
                 if len(m) == 0: raise web.notfound()
                 m = m[0]
                 content = dbfs.get_string(dbo, m["MEDIANAME"])
-                content = utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], content, "html")
+                if m["MEDIANAME"].endswith("html"):
+                    content = utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
+                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], post["emailnote"], "html", content, m["MEDIANAME"])
             return emailadd
         elif mode == "emailpdf":
             users.check_permission(session, users.EMAIL_PERSON)
@@ -3784,8 +3786,9 @@ class lostanimal_media:
                 if len(m) == 0: raise web.notfound()
                 m = m[0]
                 content = dbfs.get_string(dbo, m["MEDIANAME"])
-                content = utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], content, "html")
+                if m["MEDIANAME"].endswith("html"):
+                    content = utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
+                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], post["emailnote"], "html", content, m["MEDIANAME"])
             return emailadd
         elif mode == "emailpdf":
             users.check_permission(session, users.EMAIL_PERSON)
@@ -5199,7 +5202,7 @@ class person_media:
                 content = dbfs.get_string(dbo, m["MEDIANAME"])
                 if m["MEDIANAME"].endswith("html"):
                     content = utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], post["emailnote"], "html", content, m["MEDIANOTES"] + m["MEDIANAME"])
+                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], post["emailnote"], "html", content, m["MEDIANAME"])
             return emailadd
         elif mode == "emailpdf":
             users.check_permission(session, users.EMAIL_PERSON)
@@ -6483,8 +6486,9 @@ class waitinglist_media:
                 if len(m) == 0: raise web.notfound()
                 m = m[0]
                 content = dbfs.get_string(dbo, m["MEDIANAME"])
-                content = utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], content, "html")
+                if m["MEDIANAME"].endswith("html"):
+                    content = utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
+                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], post["emailnote"], "html", content, m["MEDIANAME"])
             return emailadd
         elif mode == "emailpdf":
             users.check_permission(session, users.EMAIL_PERSON)
