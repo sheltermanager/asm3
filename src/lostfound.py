@@ -214,7 +214,7 @@ def get_lostanimal_find_advanced(dbo, criteria, limit = 0):
     adddate("datefrom", "dateto", "a.DateLost")
     if crit("excludecomplete") == "1":
         c.append("a.DateFound Is Null")
-    if crit("completefrom") == "":
+    elif crit("completefrom") == "":
         c.append("a.DateFound Is Null")
     else:
         adddate("completefrom", "completeto", "a.DateFound")
@@ -281,7 +281,7 @@ def get_foundanimal_find_advanced(dbo, criteria, limit = 0):
     adddate("datefrom", "dateto", "a.DateFound")
     if crit("excludecomplete") == "1":
         c.append("a.ReturnToOwnerDate Is Null")
-    if crit("completefrom") == "":
+    elif crit("completefrom") == "":
         c.append("a.ReturnToOwnerDate Is Null")
     else:
         adddate("completefrom", "completeto", "a.ReturnToOwnerDate")
