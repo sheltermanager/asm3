@@ -214,9 +214,7 @@ def get_lostanimal_find_advanced(dbo, criteria, limit = 0):
     adddate("datefrom", "dateto", "a.DateLost")
     if crit("excludecomplete") == "1":
         c.append("a.DateFound Is Null")
-    elif crit("completefrom") == "":
-        c.append("a.DateFound Is Null")
-    else:
+    elif crit("completefrom") != "" and crit("completeto") != "":
         adddate("completefrom", "completeto", "a.DateFound")
     where = " WHERE " + " AND ".join(c)
     sql = get_lostanimal_query(dbo) + where + " ORDER BY a.ID"
@@ -281,9 +279,7 @@ def get_foundanimal_find_advanced(dbo, criteria, limit = 0):
     adddate("datefrom", "dateto", "a.DateFound")
     if crit("excludecomplete") == "1":
         c.append("a.ReturnToOwnerDate Is Null")
-    elif crit("completefrom") == "":
-        c.append("a.ReturnToOwnerDate Is Null")
-    else:
+    elif crit("completefrom") != "" and crit("completeto") != "":
         adddate("completefrom", "completeto", "a.ReturnToOwnerDate")
     where = " WHERE " + " AND ".join(c)
     sql = get_foundanimal_query(dbo) + where + " ORDER BY a.ID"
