@@ -319,14 +319,14 @@ def handler(post, remoteip, referer):
     elif method == "html_report":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_REPORT)
         crid = reports.get_id(dbo, title)
-        p = reports.get_criteria_params(dbo, crid, post.data)
+        p = reports.get_criteria_params(dbo, crid, post)
         rhtml = reports.execute(dbo, crid, username, p)
         return set_cached_response(cache_key, "text/html", 3600, 3600, rhtml)
 
     elif method == "csv_mail" or method == "csv_report":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_REPORT)
         crid = reports.get_id(dbo, title)
-        p = reports.get_criteria_params(dbo, crid, post.data)
+        p = reports.get_criteria_params(dbo, crid, post)
         rows, cols = reports.execute_query(dbo, crid, username, p)
         mcsv = utils.csv(l, rows, cols, True)
         return set_cached_response(cache_key, "text/csv", 3600, 3600, mcsv)
