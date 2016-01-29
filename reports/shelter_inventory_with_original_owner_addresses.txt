@@ -19,7 +19,7 @@ FROM animal a
 LEFT OUTER JOIN animaltype y ON y.ID = a.AnimalTypeID
 LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
 LEFT OUTER JOIN internallocation i ON i.ID = a.ShelterLocation
-LEFT OUTER JOIN owner oo ON animal.OriginalOwnerID = oo.ID
+LEFT OUTER JOIN owner oo ON a.OriginalOwnerID = oo.ID
 WHERE a.Archived = 0 
 ORDER BY 
 CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' ELSE i.LocationName END, s.SpeciesName, a.DateBroughtIn
