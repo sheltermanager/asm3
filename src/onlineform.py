@@ -587,6 +587,8 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
             label = ""
             displayindex = 0
             fieldname = k
+            fieldtype = FIELDTYPE_TEXT
+            tooltip = ""
             # Form fields should have a _ONLINEFORMFIELD.ID suffix we can use to get the
             # original label and display position.
             if k.find("_") != -1:
@@ -598,14 +600,16 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                     if len(fld) > 0:
                         label = fld[0]["LABEL"]
                         displayindex = fld[0]["DISPLAYINDEX"]
+                        fieldtype = fld[0]["FIELDTYPE"]
+                        tooltip = fld[0]["TOOLTIP"]
                         # If it's a raw markup field, store the markup as the value
-                        if fld[0]["FIELDTYPE"] == FIELDTYPE_RAWMARKUP:
-                            v = "RAW::%s" % fld[0]["TOOLTIP"]
+                        if fieldtype == FIELDTYPE_RAWMARKUP:
+                            v = "RAW::%s" % tooltip
                         # If we have a checkbox field with a tooltip, it contains additional
                         # person flags, add them to our set
-                        if fld[0]["FIELDTYPE"] == FIELDTYPE_CHECKBOX:
-                            if utils.nulltostr(fld[0]["TOOLTIP"]) != "":
-                                flags += fld[0]["TOOLTIP"]
+                        if fieldtype == FIELDTYPE_CHECKBOX:
+                            if utils.nulltostr(tooltip) != "":
+                                flags += tooltip
                                 db.execute(dbo, "UPDATE onlineformincoming SET Flags = %s WHERE CollationID = %d" % (db.ds(flags), collationid))
             # Do the insert
             sql = db.make_insert_sql("onlineformincoming", ( 
@@ -617,7 +621,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                 ( "Label", db.ds(label)),
                 ( "DisplayIndex", db.di(displayindex)),
                 ( "Host", db.ds(remoteip)),
-                ( "Value", utils.iif(fld[0]["FIELDTYPE"] == FIELDTYPE_RAWMARKUP, db.ds(v, False), db.ds(v)) )
+                ( "Value", utils.iif(fieldtype == FIELDTYPE_RAWMARKUP, db.ds(v, False), db.ds(v)) )
                 ))
             db.execute(dbo, sql)
     # Sort out the preview of the first few fields
