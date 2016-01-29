@@ -822,5 +822,19 @@ Suspect3Name
     The name of the third suspect
 VictimName
     The name of the victim
+VictimAddress
+    The address of the victim
+VictimTown / VictimCity
+    The victim's city
+VictimCounty / VictimState
+    The victim's state
+VictimPostcode / VictimZipcode
+    The victim's postal/zip code
+VictimHomeTelephone
+    The victim's home number
+VictimWorkTelephone
+    The victim's work number
+VictimMobileTelephone / VictimCellTelephone
+    The victim's mobile number
 
 

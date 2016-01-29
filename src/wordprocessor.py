@@ -498,7 +498,17 @@ def animalcontrol_tags(dbo, ac):
         "SUSPECT1NAME":         utils.nulltostr(ac["OWNERNAME1"]),
         "SUSPECT2NAME":         utils.nulltostr(ac["OWNERNAME2"]),
         "SUSPECT3NAME":         utils.nulltostr(ac["OWNERNAME3"]),
-        "VICTIMNAME":           utils.nulltostr(ac["VICTIMNAME"])
+        "VICTIMNAME":           utils.nulltostr(ac["VICTIMNAME"]),
+        "VICTIMADDRESS":        utils.nulltostr(ac["VICTIMADDRESS"]),
+        "VICTIMTOWN":           utils.nulltostr(ac["VICTIMTOWN"]),
+        "VICTIMCITY":           utils.nulltostr(ac["VICTIMTOWN"]),
+        "VICTIMCOUNTY":         utils.nulltostr(ac["VICTIMCOUNTY"]),
+        "VICTIMSTATE":          utils.nulltostr(ac["VICTIMCOUNTY"]),
+        "VICTIMPOSTCODE":       utils.nulltostr(ac["VICTIMPOSTCODE"]),
+        "VICTIMHOMETELEPHONE":  utils.nulltostr(ac["VICTIMHOMETELEPHONE"]),
+        "VICTIMWORKTELEPHONE":  utils.nulltostr(ac["VICTIMWORKTELEPHONE"]),
+        "VICTIMMOBILETELEPHONE":  utils.nulltostr(ac["VICTIMMOBILETELEPHONE"]),
+        "VICTIMCELLTELEPHONE":  utils.nulltostr(ac["VICTIMMOBILETELEPHONE"])
     }
 
     # Additional fields
