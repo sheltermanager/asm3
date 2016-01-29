@@ -249,8 +249,9 @@ $$FOOT blocks and the main $$FOOTER block. These are:
 * {SUM.<field>[.round]} - Calculates the total of a given field for a group.
   Optionally, you can specify the number of decimal places to round to. 
 
-* {COUNT.<field>} - Calculates the number of records in a group (the field is
-  ignored) 
+* {COUNT.<field>[.distinct]} - Returns the number of records in the group.
+  If the optional distinct parameter is set, returns the number of unique
+  values of <field> within the group.
 
 * {AVG.<field>[.round]} - Calculates the average of a group, based on the total
   of the field and the number of records. Optionally, you can specify the

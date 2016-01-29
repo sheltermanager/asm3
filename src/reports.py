@@ -749,10 +749,20 @@ class Report:
                 fstr = "%0." + str(roundto) + "f"
                 value = fstr % total
 
-            # {COUNT.field}
+            # {COUNT.field[.distinct]}
             if key.lower().startswith("count"):
                 valid = True
-                value = str(gd.lastGroupEndPosition - gd.lastGroupStartPosition + 1)
+                fields = key.lower().split(".")
+                countfield = fields[1].upper()
+                if len(fields) > 2 and fields[2].lower() == "distinct":
+                    # distinct set, return the number of unique values of field in the group
+                    countitems = []
+                    for i in range(gd.lastGroupStartPosition, gd.lastGroupEndPosition + 1):
+                        countitems.append(rs[i][countfield])
+                    value = str(len(set(countitems)))
+                else:
+                    # no distinct flag, just return how many records there are in the group
+                    value = str(gd.lastGroupEndPosition - gd.lastGroupStartPosition + 1)
 
             # {AVG.field[.round]}
             if key.lower().startswith("avg"):
