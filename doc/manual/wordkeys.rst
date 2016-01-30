@@ -814,6 +814,12 @@ SuspectCounty / SuspectState
     The suspect's state
 SuspectPostcode / SuspectZipcode
     The suspect's postal/zip code
+SuspectHomeTelephone
+    The suspect's home number
+SuspectWorkTelephone
+    The suspect's work number
+SuspectMobileTelephone / SuspectCellTelephone
+    The suspect's mobile number
 Suspect1Name
     The name of the first suspect
 Suspect2Name
