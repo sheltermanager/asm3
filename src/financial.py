@@ -630,7 +630,6 @@ def update_donation_from_form(dbo, username, post):
         ( "Donation", post.db_integer("amount")),
         ( "DateDue", post.db_date("due")),
         ( "Date", post.db_date("received")),
-        ( "NextCreated", db.di(0)),
         ( "ReceiptNumber", post.db_string("receiptnumber")),
         ( "IsGiftAid", post.db_boolean("giftaid")),
         ( "IsVAT", post.db_boolean("vat")),
