@@ -219,6 +219,12 @@ def jqm_tablerow(cell1, cell2 = "", cell3 = "", cell4 = ""):
 def jqm_text(name, value = ""):
     return "<input id=\"%(name)s\" name=\"%(name)s\" value=\"%(value)s\" type=\"text\" />\n" % { "name": name, "value": value }
 
+def person_flags(fl):
+    s = []
+    for f in fl.split("|"):
+        if f != "": s.append(f)
+    return ", ".join(s)
+
 def page(dbo, session, username):
     """
     Generates the main mobile web page
@@ -299,6 +305,8 @@ def page(dbo, session, username):
         items.append(jqm_listitem_link("#stl", _("Stock Take", l), "stock", len(stl)))
     if pb(users.CHANGE_PERSON):
         items.append(jqm_list_divider(_("Person", l)))
+    if pb(users.VIEW_PERSON):
+        items.append(jqm_listitem_link("#findperson", _("Find Person", l), "person", -1, ""))
     if len(hck) > 0 and pb(users.CHANGE_PERSON):
         items.append(jqm_listitem_link("#homecheck", _("Perform Homecheck", l), "person", -1, ""))
 
@@ -320,6 +328,7 @@ def page(dbo, session, username):
     h += page_incidents(l, homelink, inmy, "inmy", _("My Incidents", l))
     h += page_incidents(l, homelink, inop, "inop", _("Open Incidents", l))
     h += page_incidents(l, homelink, infp, "infp", _("Incidents Requiring Followup", l))
+    h += page_find_person(l, homelink)
 
     h.append("</body></html>")
     return "\n".join(h)
@@ -624,6 +633,16 @@ def page_diary_add(l, homelink, dbo):
     h.append(jqm_page_footer())
     return h
 
+def page_find_person(l, homelink):
+    h = []
+    h.append(jqm_page_header("findperson", _("Find Person", l), homelink))
+    h.append(jqm_form("findpersonform"))
+    h.append(jqm_hidden("posttype", "fp"))
+    h.append(jqm_fieldcontain("q", _("Search", l), jqm_text("q")))
+    h.append(jqm_submit(_("Search", l)))
+    h.append(jqm_page_footer())
+    return h
+
 def page_log_add(l, homelink, dbo):
     h = []
     h.append(jqm_page_header("log", _("Add Log", l), homelink))
@@ -821,6 +840,24 @@ def handler(dbo, user, locationfilter, post):
         nid = animalcontrol.insert_animalcontrol_from_form(dbo, post, user)
         return "GO mobile_post?posttype=vinc&id=%d" % nid
 
+    elif mode == "fp":
+        q = post["q"]
+        matches = []
+        if q.strip() != "": 
+            matches = person.get_person_find_simple(dbo, q, False, 100)
+        h = []
+        alin = []
+        h.append(header(l))
+        h.append(jqm_page_header("", _("Results", l), homelink))
+        for p in matches:
+            alin.append(jqm_listitem_link("mobile_post?posttype=vp&id=%d" % p["ID"],
+                "%s - %s" % (p["OWNERNAME"], p["OWNERADDRESS"]),
+                "person"))
+        h.append(jqm_list("\n".join(alin), True))
+        h.append(jqm_page_footer())
+        h.append("</body></html>")
+        return "\n".join(h)
+
     elif mode == "lc":
         q = post["licence"]
         matches = []
@@ -866,6 +903,13 @@ def handler(dbo, user, locationfilter, post):
         # Add a log to the incident of id with logtype and logtext
         log.add_log(dbo, user, log.ANIMALCONTROL, pid, post.integer("logtype"), post["logtext"])
         return "GO mobile_post?posttype=vinc&id=%d" % pid
+
+    elif mode == "vp":
+        # Display a page containing the selected person by id
+        p = person.get_person(dbo, pid)
+        af = additional.get_additional_fields(dbo, pid, "person")
+        logs = log.get_logs(dbo, log.PERSON, pid)
+        return handler_viewperson(l, dbo, p, af, logs, homelink, post)
 
     elif mode == "st":
         # Display a page to adjust stock levels for id
@@ -1222,6 +1266,81 @@ def handler_viewincident(l, dbo, a, amls, cit, dia, logs, homelink, post):
     h.append(jqm_page_footer())
     h.append("</body></html>")
     return "\n".join(h)
+
+def handler_viewperson(l, dbo, p, af, logs, homelink, post):
+    """
+    Generate the view person mobile page.
+    l:  The locale
+    a:  An animal record
+    af: Additional fields for the animal record
+    logs: Logs for the animal
+    homelink: Link to the home menu
+    post: The posted values
+    """
+    def table():
+        return "<table style='width: 100%; border-bottom: 1px solid black;'>"
+    def table_end():
+        return "</table>"
+    def hd(label):
+        return "<tr><td style='font-weight: bold; width: 150px'>%s</td></tr>" % label
+    def tr(label, value, value2 = "", value3 = ""):
+        if value is None or str(value).startswith("None "): value = ""
+        if value2 is None or str(value2).startswith("None"): value2 = ""
+        if value2 is not None and value2 != "": value2 = "<td>%s</td>" % value2
+        if value3 is not None and value3 != "": value3 = "<td>%s</td>" % value3
+        return "<tr><td style='font-weight: bold; width: 150px'>%s</td><td>%s</td>%s%s</tr>" % (label, value, value2, value3)
+    h = []
+    h.append(header(l))
+    h.append(jqm_page_header("", "%s" % p["OWNERNAME"], homelink))
+    h.append(table())
+    h.append("<tr><td><img src='%s' class='asm-thumbnail' /></td>" % html.thumbnail_img_src(p, "personthumb"))
+    h.append("<td><h2 style='margin: 2px;'>%s - %s</h2>" % (p["OWNERNAME"], p["OWNERADDRESS"]))
+    h.append("%s</td>" % person_flags(p["ADDITIONALFLAGS"]))
+    h.append("</tr></table>")
+
+    h.append(table())
+    h.append(tr( _("Name", l), p["OWNERNAME"]))
+    h.append(tr( _("Address", l), p["OWNERADDRESS"]))
+    h.append(tr( _("City", l), p["OWNERTOWN"]))
+    h.append(tr( _("State", l), p["OWNERCOUNTY"]))
+    h.append(tr( _("Zipcode", l), p["OWNERPOSTCODE"]))
+    h.append(tr( _("Home Phone", l), p["HOMETELEPHONE"]))
+    h.append(tr( _("Work Phone", l), p["WORKTELEPHONE"]))
+    h.append(tr( _("Cell Phone", l), p["MOBILETELEPHONE"]))
+    h.append(tr( _("Email", l), p["EMAILADDRESS"]))
+    h.append(tr( _("Exclude from bulk email", l), utils.iif(p["EXCLUDEFROMBULKEMAIL"] == 1, _("Yes", l), _("No", l))))
+    h.append(table_end())
+    h.append(table())
+    h.append(tr( _("Comments", l), p["COMMENTS"]))
+    h.append(tr( _("Membership Number", l), p["MEMBERSHIPNUMBER"]))
+    h.append(tr( _("Membership Expiry", l), python2display(l, p["MEMBERSHIPEXPIRYDATE"])))
+    h.append(tr( _("Foster Capacity", l), str(p["FOSTERCAPACITY"])))
+    h.append(table_end())
+    
+    if len(af) > 0:
+        h.append(table())
+        for d in af:
+            if d["FIELDTYPE"] == additional.ANIMAL_LOOKUP:
+                h.append(tr(d["FIELDLABEL"], animal.get_animal_namecode(dbo, utils.cint(d["VALUE"]))))
+            elif d["FIELDTYPE"] == additional.PERSON_LOOKUP:
+                h.append(tr(d["FIELDLABEL"], person.get_person_name_code(dbo, utils.cint(d["VALUE"]))))
+            elif d["FIELDTYPE"] == additional.MONEY:
+                h.append(tr(d["FIELDLABEL"], format_currency(l, d["VALUE"])))
+            elif d["FIELDTYPE"] == additional.YESNO:
+                h.append(tr(d["FIELDLABEL"], d["VALUE"] == "1" and _("Yes", l) or _("No", l)))
+            else:
+                h.append(tr(d["FIELDLABEL"], d["VALUE"]))
+        h.append(table_end())
+    
+    h.append(table())
+    h.append(hd(_("Log", l)))
+    for lo in logs:
+        h.append(tr(python2display(l, lo["DATE"]), lo["LOGTYPENAME"], lo["COMMENTS"]))
+    h.append(table_end())
+    h.append(jqm_page_footer())
+    h.append("</body></html>")
+    return "\n".join(h)
+
 
 def handler_stocklocation(l, homelink, locationname, sl, su):
     """

@@ -1,6 +1,7 @@
 38
 ================
 
+01/02/16 mobile find person basic functionality #52
 01/02/16 Editing a payment should not clear nextcreated flag
 30/01/16 Add extra suspect phone number wordkeys for incident documents
 29/01/16 Add {COUNT.field.DISTINCT} for reports
