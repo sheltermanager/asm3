@@ -1339,8 +1339,8 @@ def handler_viewperson(l, dbo, p, af, logs, homelink, post):
     h.append(table_end())
     h.append(jqm_page_footer())
     h.append("</body></html>")
+    dummy = str(post)
     return "\n".join(h)
-
 
 def handler_stocklocation(l, homelink, locationname, sl, su):
     """

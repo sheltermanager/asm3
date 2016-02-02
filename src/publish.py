@@ -1623,13 +1623,22 @@ class AnibaseUKPublisher(AbstractPublisher):
                     self.resetPublisherProgress()
                     return
 
-                # Validate certain items aren't blank that will cause
-                # 500 errors due to XSD validation errors
+                # Validate certain items aren't blank so we aren't registering bogus data
+                if utils.nulltostr(an["CURRENTOWNERADDRESS"].strip()) == "":
+                    self.logError("Address for the new owner is blank, cannot process")
+                    continue 
+
                 if utils.nulltostr(an["CURRENTOWNERPOSTCODE"].strip()) == "":
                     self.logError("Postal code for the new owner is blank, cannot process")
                     continue
+
                 if an["IDENTICHIPDATE"] is None:
                     self.logError("Microchip date cannot be blank, cannot process")
+                    continue
+
+                # Make sure the length is actually suitable
+                if not len(an["IDENTICHIPNUMBER"]) in (9, 10, 15):
+                    self.logError("Microchip length is not 9, 10 or 15, cannot process")
                     continue
 
                 # Construct the XML document
@@ -1797,6 +1806,24 @@ class FoundAnimalsPublisher(FTPPublisher):
                     self.resetPublisherProgress()
                     self.cleanup()
                     return
+
+                # Validate certain items aren't blank so we aren't registering bogus data
+                if utils.nulltostr(an["CURRENTOWNERADDRESS"].strip()) == "":
+                    self.logError("Address for the new owner is blank, cannot process")
+                    continue 
+
+                if utils.nulltostr(an["CURRENTOWNERPOSTCODE"].strip()) == "":
+                    self.logError("Postal code for the new owner is blank, cannot process")
+                    continue
+
+                if an["IDENTICHIPDATE"] is None:
+                    self.logError("Microchip date cannot be blank, cannot process")
+                    continue
+
+                # Make sure the length is actually suitable
+                if not len(an["IDENTICHIPNUMBER"]) in (9, 10, 15):
+                    self.logError("Microchip length is not 9, 10 or 15, cannot process")
+                    continue
 
                 # First Name
                 line.append("\"%s\"" % an["CURRENTOWNERFORENAMES"])
@@ -3322,7 +3349,20 @@ class PetLinkPublisher(AbstractPublisher):
                     self.logError("Chip number failed validation (%s not 15 digits), skipping." % an["IDENTICHIPNUMBER"])
                     continue
 
-                # If there's no email or home phone, PetLink won't accept
+                # Validate certain items aren't blank so we aren't registering bogus data
+                if utils.nulltostr(an["CURRENTOWNERADDRESS"].strip()) == "":
+                    self.logError("Address for the new owner is blank, cannot process")
+                    continue 
+
+                if utils.nulltostr(an["CURRENTOWNERPOSTCODE"].strip()) == "":
+                    self.logError("Postal code for the new owner is blank, cannot process")
+                    continue
+
+                if an["IDENTICHIPDATE"] is None:
+                    self.logError("Microchip date cannot be blank, cannot process")
+                    continue
+
+                # If there's no email or home phone, PetLink won't accept it
                 email = utils.nulltostr(an["CURRENTOWNEREMAILADDRESS"]).strip()
                 homephone = utils.nulltostr(an["CURRENTOWNERHOMETELEPHONE"]).strip()
                 if email == "" and homephone == "":
@@ -4191,6 +4231,24 @@ class PETtracUKPublisher(AbstractPublisher):
                     self.resetPublisherProgress()
                     return
 
+                # Validate certain items aren't blank so we aren't registering bogus data
+                if utils.nulltostr(an["CURRENTOWNERADDRESS"].strip()) == "":
+                    self.logError("Address for the new owner is blank, cannot process")
+                    continue 
+
+                if utils.nulltostr(an["CURRENTOWNERPOSTCODE"].strip()) == "":
+                    self.logError("Postal code for the new owner is blank, cannot process")
+                    continue
+
+                if an["IDENTICHIPDATE"] is None:
+                    self.logError("Microchip date cannot be blank, cannot process")
+                    continue
+
+                # Make sure the length is actually suitable
+                if not len(an["IDENTICHIPNUMBER"]) in (9, 10, 15):
+                    self.logError("Microchip length is not 9, 10 or 15, cannot process")
+                    continue
+
                 # Sort out breed
                 breed = an["BREEDNAME"]
                 if breed.find("Domestic Long") != -1: breed = "DLH"
@@ -4771,8 +4829,11 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
                     self.resetPublisherProgress()
                     return
 
-                # Validate certain items aren't blank that will cause
-                # 500 errors due to XSD validation errors
+                # Validate certain items aren't blank so we aren't registering bogus data
+                if utils.nulltostr(an["CURRENTOWNERADDRESS"].strip()) == "":
+                    self.logError("Address for the new owner is blank, cannot process")
+                    continue 
+
                 if utils.nulltostr(an["CURRENTOWNERPOSTCODE"].strip()) == "":
                     self.logError("Postal code for the new owner is blank, cannot process")
                     continue

@@ -530,15 +530,16 @@ $(function() {
         render_adoptapet: function() {
             return [
                 '<div id="tab-adoptapet">',
-                html.info('Signup at <a href="http://www.adoptapet.com">www.adoptapet.com</a>'),
+                html.info('Signup at <a href="http://www.adoptapet.com">www.adoptapet.com</a>.<br />' +
+                    'Use the Shelter/Rescue menu after logging in to adoptapet to manage/setup your autoupload account for ASM'),
                 '<p><input id="enabledap" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledap">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',
-                '<td><label for="apftpuser">AdoptAPet FTP username</label></td>',
+                '<td><label for="apftpuser">Autoupload FTP username</label></td>',
                 '<td><input id="apftpuser" type="text" class="asm-textbox cfg" data="SaveAPetFTPUser" /></td>',
                 '</tr>',
                 '<tr>',
-                '<td><label for="apftppass">AdoptAPet FTP password</label></td>',
+                '<td><label for="apftppass">Autoupload FTP password</label></td>',
                 '<td><input id="apftppass" type="text" class="asm-textbox cfg" data="SaveAPetFTPPassword" /></td>',
                 '</tr>',
                 '<tr>',

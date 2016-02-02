@@ -1,6 +1,8 @@
 38
 ================
 
+02/02/16 All chip publishers should throw out owner records with no address
+02/02/16 Clearer wording for adoptapet autoupload credentials
 01/02/16 mobile find person basic functionality #52
 01/02/16 Editing a payment should not clear nextcreated flag
 30/01/16 Add extra suspect phone number wordkeys for incident documents
