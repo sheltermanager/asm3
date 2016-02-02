@@ -4,8 +4,8 @@ import datetime
 import json
 import time
 
-VERSION = "38u [Tue  2 Feb 08:30:35 GMT 2016]"
-BUILD = "02020830"
+VERSION = "38u [Tue  2 Feb 10:57:29 GMT 2016]"
+BUILD = "02021057"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -45,6 +45,7 @@ def PLURAL_SLAVIC(n):
     return 2
 
 # Maps of locale to currency/date format
+# date format, currency symbol, plural function, currency prefix/suffix, currency decimal places
 locale_maps = {
     "en":       ( MDY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_GB":    ( DMY, POUND, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),

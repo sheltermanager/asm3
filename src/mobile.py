@@ -103,6 +103,10 @@ def jqm_collapsible(s, icon = ""):
 def jqm_collapsible_set(s):
     return "<div data-role=\"collapsible-set\">%s</div>\n" % s
 
+def jqm_email(e):
+    if e is None or e.strip() == "": return ""
+    return '<a href="mailto:%s">%s</a>' % (html.escape(e), e)
+
 def jqm_fieldcontain(name, label, inner):
     return "<div data-role=\"fieldcontain\"><label for=\"%(name)s\">%(label)s</label>%(inner)s</div>" % { "name": name, "label": label, "inner": inner }
 
@@ -215,6 +219,14 @@ def jqm_tablerow(cell1, cell2 = "", cell3 = "", cell4 = ""):
     if cell4 != "": s += "<td>%s</td>\n" % cell4
     s += "</tr>\n"
     return s
+
+def jqm_tel(l, no):
+    if no is None or no.strip() == "": return ""
+    dialno = no
+    if l in ( "en", "en_CA") and not no.startswith("+"): dialno = "+1%s" % dialno
+    if l == "en_GB" and not no.startswith("+"): dialno = "+44%s" % dialno
+    if l == "en_IE" and not no.startswith("+"): dialno = "+353%s" % dialno
+    return '<a href="tel:%s">%s</a>' % (html.escape(dialno), no)
 
 def jqm_text(name, value = ""):
     return "<input id=\"%(name)s\" name=\"%(name)s\" value=\"%(value)s\" type=\"text\" />\n" % { "name": name, "value": value }
@@ -1096,7 +1108,7 @@ def handler_viewanimal(l, dbo, a, af, diet, vacc, test, med, logs, homelink, pos
     h.append(tr( _("Health Problems", l), a["HEALTHPROBLEMS"]))
     h.append(tr( _("Rabies Tag", l), a["RABIESTAG"]))
     h.append(tr( _("Special Needs", l), a["HASSPECIALNEEDSNAME"]))
-    h.append(tr( _("Current Vet", l), a["CURRENTVETNAME"], a["CURRENTVETWORKTELEPHONE"]))
+    h.append(tr( _("Current Vet", l), a["CURRENTVETNAME"], jqm_tel(l, a["CURRENTVETWORKTELEPHONE"])))
     h.append(table_end())
     
     if len(af) > 0:
@@ -1198,7 +1210,7 @@ def handler_viewincident(l, dbo, a, amls, cit, dia, logs, homelink, post):
     h.append(tr( _("Call Date/Time", l), dt(a["CALLDATETIME"])))
     h.append(tr( _("Taken By", l), a["CALLTAKER"]))
     h.append(tr( _("Caller", l), a["CALLERNAME"]))
-    h.append(tr( _("Phone", l), "%s %s %s" % (a["HOMETELEPHONE"], a["WORKTELEPHONE"], a["MOBILETELEPHONE"])))
+    h.append(tr( _("Phone", l), "%s %s %s" % (jqm_tel(l, a["HOMETELEPHONE"]), jqm_tel(l, a["WORKTELEPHONE"]), jqm_tel(l, a["MOBILETELEPHONE"]))))
     h.append(tr( _("Victim", l), a["VICTIMNAME"]))
     h.append(table_end())
    
@@ -1277,6 +1289,7 @@ def handler_viewperson(l, dbo, p, af, logs, homelink, post):
     homelink: Link to the home menu
     post: The posted values
     """
+    dummy = post # TODO: Remove if used
     def table():
         return "<table style='width: 100%; border-bottom: 1px solid black;'>"
     def table_end():
@@ -1304,10 +1317,10 @@ def handler_viewperson(l, dbo, p, af, logs, homelink, post):
     h.append(tr( _("City", l), p["OWNERTOWN"]))
     h.append(tr( _("State", l), p["OWNERCOUNTY"]))
     h.append(tr( _("Zipcode", l), p["OWNERPOSTCODE"]))
-    h.append(tr( _("Home Phone", l), p["HOMETELEPHONE"]))
-    h.append(tr( _("Work Phone", l), p["WORKTELEPHONE"]))
-    h.append(tr( _("Cell Phone", l), p["MOBILETELEPHONE"]))
-    h.append(tr( _("Email", l), p["EMAILADDRESS"]))
+    h.append(tr( _("Home Phone", l), jqm_tel(l, p["HOMETELEPHONE"])))
+    h.append(tr( _("Work Phone", l), jqm_tel(l, p["WORKTELEPHONE"])))
+    h.append(tr( _("Cell Phone", l), jqm_tel(l, p["MOBILETELEPHONE"])))
+    h.append(tr( _("Email", l), jqm_email(p["EMAILADDRESS"])))
     h.append(tr( _("Exclude from bulk email", l), utils.iif(p["EXCLUDEFROMBULKEMAIL"] == 1, _("Yes", l), _("No", l))))
     h.append(table_end())
     h.append(table())
@@ -1331,7 +1344,9 @@ def handler_viewperson(l, dbo, p, af, logs, homelink, post):
             else:
                 h.append(tr(d["FIELDLABEL"], d["VALUE"]))
         h.append(table_end())
-    
+
+    # TODO, licence, citations and links
+
     h.append(table())
     h.append(hd(_("Log", l)))
     for lo in logs:
@@ -1339,7 +1354,6 @@ def handler_viewperson(l, dbo, p, af, logs, homelink, post):
     h.append(table_end())
     h.append(jqm_page_footer())
     h.append("</body></html>")
-    dummy = str(post)
     return "\n".join(h)
 
 def handler_stocklocation(l, homelink, locationname, sl, su):
