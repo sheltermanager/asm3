@@ -264,9 +264,9 @@ def get_animal_data_query(dbo, pc, animalid = 0):
     # Always include courtesy post non-shelter animals
     moveor.append("(a.NonShelterAnimal = 1 AND a.IsCourtesy = 1)")
     if len(pc.internalLocations) > 0 and pc.internalLocations[0].strip() != "null":
-        moveor.append("(a.Archived = 0 AND a.ShelterLocation IN (%s))" % ",".join(pc.internalLocations))
+        moveor.append("(a.Archived = 0 AND a.ActiveMovementID = 0 AND a.ShelterLocation IN (%s))" % ",".join(pc.internalLocations))
     else:
-        moveor.append("(a.Archived = 0)")
+        moveor.append("(a.Archived = 0 AND a.ActiveMovementID = 0)")
     if pc.includeRetailerAnimals:
         moveor.append("(a.ActiveMovementType = %d)" % movement.RETAILER)
     if pc.includeFosterAnimals:
