@@ -2422,10 +2422,9 @@ class document_gen:
                     raise utils.ASMValidationError("%d is not a valid movement id" % recid)
                 animalid = m["ANIMALID"]
                 ownerid = m["OWNERID"]
-                otempname = "%s -%s " % (tempname, extperson.get_person_name(dbo, ownerid))
-                extmedia.create_document_media(dbo, session.user, extmedia.PERSON, ownerid, otempname, post["document"])
-                atempname = "%s - %s" % (tempname, extanimal.get_animal_namecode(dbo, animalid))
-                extmedia.create_document_media(dbo, session.user, extmedia.ANIMAL, animalid, atempname, post["document"])
+                tempname = "%s - %s::%s" % (tempname, extanimal.get_animal_namecode(dbo, animalid), extperson.get_person_name(dbo, ownerid))
+                extmedia.create_document_media(dbo, session.user, extmedia.PERSON, ownerid, tempname, post["document"])
+                extmedia.create_document_media(dbo, session.user, extmedia.ANIMAL, animalid, tempname, post["document"])
                 raise web.seeother("person_media?id=%d" % ownerid)
             else:
                 raise utils.ASMValidationError("Mode '%s' is invalid, cannot save" % mode)
