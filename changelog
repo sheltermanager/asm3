@@ -1,6 +1,7 @@
 38
 ================
 
+03/02/16 Reinstate ASM2 behavior of move docs attaching to person and animal
 03/02/16 Fixed bug that always included fosterers when publishing
 02/02/16 Entered (oldest first) should map to Adopted (oldest first) 
 02/02/16 Add email/tel links for mobiles on view person #52
