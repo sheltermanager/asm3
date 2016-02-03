@@ -920,8 +920,12 @@ def handler(dbo, user, locationfilter, post):
         # Display a page containing the selected person by id
         p = person.get_person(dbo, pid)
         af = additional.get_additional_fields(dbo, pid, "person")
+        cit = financial.get_person_citations(dbo, pid)
+        dia = diary.get_diaries(dbo, diary.PERSON, pid)
+        lic = financial.get_person_licences(dbo, pid)
+        links = person.get_links(dbo, pid)
         logs = log.get_logs(dbo, log.PERSON, pid)
-        return handler_viewperson(l, dbo, p, af, logs, homelink, post)
+        return handler_viewperson(l, dbo, p, af, cit, dia, lic, links, logs, homelink, post)
 
     elif mode == "st":
         # Display a page to adjust stock levels for id
@@ -1279,12 +1283,15 @@ def handler_viewincident(l, dbo, a, amls, cit, dia, logs, homelink, post):
     h.append("</body></html>")
     return "\n".join(h)
 
-def handler_viewperson(l, dbo, p, af, logs, homelink, post):
+def handler_viewperson(l, dbo, p, af, cit, dia, lic, links, logs, homelink, post):
     """
     Generate the view person mobile page.
     l:  The locale
-    a:  An animal record
-    af: Additional fields for the animal record
+    o:  A person record
+    af: Additional fields for the person record
+    cit: Citations for the person
+    dia: Diary notes for the person
+    lic: Licenses for the person
     logs: Logs for the animal
     homelink: Link to the home menu
     post: The posted values
@@ -1345,7 +1352,23 @@ def handler_viewperson(l, dbo, p, af, logs, homelink, post):
                 h.append(tr(d["FIELDLABEL"], d["VALUE"]))
         h.append(table_end())
 
-    # TODO, licence, citations and links
+    h.append(table())
+    h.append(hd(_("Citations", l)))
+    for c in cit:
+        h.append(tr(python2display(l, c["CITATIONDATE"]), c["CITATIONNAME"], c["COMMENTS"]))
+    h.append(table_end())
+
+    h.append(table())
+    h.append(hd(_("Diary", l)))
+    for d in dia:
+        h.append(tr(python2display(l, d["DIARYDATETIME"]), d["SUBJECT"], d["NOTE"]))
+    h.append(table_end())
+
+    h.append(table())
+    h.append(hd(_("License", l)))
+    for i in lic:
+        h.append(tr(python2display(l, i["ISSUEDATE"]), python2display(l, i["EXPIRYDATE"]), i["LICENCENUMBER"]))
+    h.append(table_end())
 
     h.append(table())
     h.append(hd(_("Log", l)))
