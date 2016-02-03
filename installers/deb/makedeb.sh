@@ -57,7 +57,7 @@ echo '#!/bin/sh
 # Description:       Controls the main sheltermanager3 server daemon
 ### END INIT INFO
 DAEMON=/usr/bin/env
-RUNAS=nobody
+RUNAS=www-data
 ARGS="python /usr/lib/sheltermanager3/code.py 5000"
 PIDFILE="/var/run/sheltermanager3.pid"
 WD=/usr/lib/sheltermanager3
@@ -95,8 +95,8 @@ Type=simple
 ExecStart=/usr/bin/python code.py 5000
 Restart=on-failure
 WorkingDirectory=/usr/lib/sheltermanager3
-User=nobody
-Group=nobody
+User=www-data
+Group=www-data
 StandardOutput=syslog
 StandardError=syslog
 
