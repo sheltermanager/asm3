@@ -2426,7 +2426,7 @@ class document_gen:
                 extmedia.create_document_media(dbo, session.user, extmedia.PERSON, ownerid, otempname, post["document"])
                 atempname = "%s - %s" % (tempname, extanimal.get_animal_namecode(dbo, animalid))
                 extmedia.create_document_media(dbo, session.user, extmedia.ANIMAL, animalid, atempname, post["document"])
-                raise web.seeother("animal_media?id=%d" % animalid)
+                raise web.seeother("person_media?id=%d" % ownerid)
             else:
                 raise utils.ASMValidationError("Mode '%s' is invalid, cannot save" % mode)
         elif post["savemode"] == "pdf":
