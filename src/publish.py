@@ -3694,15 +3694,18 @@ class PetsLocatedUKPublisher(FTPPublisher):
 
     def plcAgeYears(self, agegroup = "", dob = None):
         """
-        Returns an age in years as a float from either an agegroup
+        Returns an age in years as a float/string from either an agegroup
         or a date of birth.
         """
+        years = 1
         if dob is not None:
-            td = i18n.now(self.dbo.timezoned) - dob
+            td = i18n.now(self.dbo.timezone) - dob
             if type(td) == datetime.timedelta:
-                return td.days / 365.0
+                years = td.days / 365.0
         else:
-           return configuration.age_group_for_name(self.dbo, agegroup) 
+           years = configuration.age_group_for_name(self.dbo, agegroup) 
+           if years == 0: years = 1
+        return "%0.1f" % years
 
     def plcChipChecked(self, chipped):
         if chipped == 1:
