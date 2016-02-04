@@ -19,8 +19,7 @@ Animal Selection
 
 The Animal Selection tab allows you to control which animals are considered
 adoptable by ASM's internet publishers. In addition to items you select here,
-any animal which has both the "Non-Shelter" and "Courtesy Listing" flags
-will also be included.
+any animal which has the "Courtesy Listing" flag will also be included.
 
 * Include [category] animals: Select “yes” to include animals fitting the
   category.
