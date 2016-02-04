@@ -401,6 +401,13 @@ def advanced_find_animal_on_shelter(dbo):
 def age_group(dbo, band):
     return cfloat(dbo, "AgeGroup%d" % band)
 
+def age_group_for_name(dbo, name):
+    for i in range(1, 9):
+        groupname = cstring(dbo, "AgeGroup%dName" % i)
+        if groupname == name:
+            return cfloat(dbo, "AgeGroup%d" % i)
+    return 0
+
 def age_groups(dbo):
     groups = []
     for i in range(1, 9):

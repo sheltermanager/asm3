@@ -3692,6 +3692,18 @@ class PetsLocatedUKPublisher(FTPPublisher):
         else:
             return "Older"
 
+    def plcAgeYears(self, agegroup = "", dob = None):
+        """
+        Returns an age in years as a float from either an agegroup
+        or a date of birth.
+        """
+        if dob is not None:
+            td = i18n.now(self.dbo.timezoned) - dob
+            if type(td) == datetime.timedelta:
+                return td.days / 365.0
+        else:
+           return configuration.age_group_for_name(self.dbo, agegroup) 
+
     def plcChipChecked(self, chipped):
         if chipped == 1:
             return 2
@@ -3939,7 +3951,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
             return
 
         csv = []
-        header = "customerurn,importkey,lostfound,pettype,breed,sexofpet,neutered,petname,internalref,petage,hairtype,petcoloursall,chipchecked,chipno,petfeatures,lastlocationst,lastlocation,locationpostcode,datelostfound,otherdetails,privatenotes,showonsite,rawpettype,rawbreed,rawcolour,rawcoat\n"
+        header = "customerurn,importkey,lostfound,pettype,breed,sexofpet,neutered,petname,internalref,petage,hairtype,petcoloursall,chipchecked,chipno,petfeatures,lastlocationst,lastlocation,locationpostcode,datelostfound,otherdetails,privatenotes,showonsite,rawpettype,rawbreed,rawcolour,rawcoat,rawageyears\n"
 
         # Lost Animals - DISABLED ON REQUEST FROM PETSLOCATED.COM
         # In their business model, animal losers pay 10 pounds to list
@@ -4010,6 +4022,8 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 line.append("\"%s\"" % an["BASECOLOURNAME"])
                 # rawcoat
                 line.append("\"\"")
+                # rawageyears
+                line.append("\"%s\"" % self.plcAgeYears(agegroup=an["AGEGROUP"]))
                 # Add to our CSV file
                 csv.append(",".join(line))
                 # Mark success in the log
@@ -4084,6 +4098,8 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 line.append("\"%s\"" % an["BASECOLOURNAME"])
                 # rawcoat
                 line.append("\"\"")
+                # rawageyears
+                line.append("\"%s\"" % self.plcAgeYears(agegroup=an["AGEGROUP"]))
                 # Add to our CSV file
                 csv.append(",".join(line))
                 # Mark success in the log
@@ -4161,6 +4177,8 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 line.append("\"%s\"" % an["BASECOLOURNAME"])
                 # rawcoat
                 line.append("\"%s\"" % an["COATTYPENAME"])
+                # rawageyears
+                line.append("\"%s\"" % self.plcAgeYears(dob=an["DATEOFBIRTH"]))
                 # Add to our CSV file
                 csv.append(",".join(line))
                 # Mark success in the log
