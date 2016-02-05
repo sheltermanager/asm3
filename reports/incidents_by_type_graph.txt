@@ -13,7 +13,7 @@ ti.IncidentName, COUNT(ti.IncidentName)
 FROM animalcontrol ac
 INNER JOIN incidenttype ti ON ti.ID = ac.IncidentTypeID
 WHERE ac.IncidentDateTime >= '$ASK DATE Enter the from date$'
-AND ac.IncidentDateTime <= '$ASK DATE Enter the to date$'
+AND ac.IncidentDateTime <= '$ASK DATE Enter the to date$ 23:59:59'
 GROUP BY ti.IncidentName
 ORDER BY ti.IncidentName
 ###
