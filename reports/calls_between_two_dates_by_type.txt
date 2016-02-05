@@ -23,7 +23,7 @@ LEFT OUTER JOIN owner vo ON vo.ID = ac.VictimID
 LEFT OUTER JOIN incidenttype ti ON ti.ID = ac.IncidentTypeID
 LEFT OUTER JOIN incidentcompleted ci ON ci.ID = ac.IncidentCompletedID
 WHERE ac.CallDateTime >= '$ASK DATE Enter the from date$'
-AND ac.CallDateTime <= '$ASK DATE Enter the to date$'
+AND ac.CallDateTime <= '$ASK DATE Enter the to date$ 23:59:59'
 ORDER BY ti.IncidentName, ac.CallDateTime
 ###
 $$HEADER
