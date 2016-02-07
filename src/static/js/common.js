@@ -1602,7 +1602,7 @@
 
             $.each(h, function(i, v) {
                 // Skip if this flag only applies to on-shelter animals only
-                if (v.onshelter && a.ARCHIVED == 1 && a.ACTIVEMOVEMENTTYPE != 2 && a.NONSHELTERANIMAL == 0) {
+                if (v.onshelter && a && a.ARCHIVED == 1 && a.ACTIVEMOVEMENTTYPE != 2 && a.NONSHELTERANIMAL == 0) {
                     return;
                 }
                 opt.push(v.html);    
