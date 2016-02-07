@@ -1793,6 +1793,7 @@ class FoundAnimalsPublisher(FTPPublisher):
         csv = []
 
         anCount = 0
+        success = []
         for an in animals:
             try:
                 line = []
@@ -1873,11 +1874,12 @@ class FoundAnimalsPublisher(FTPPublisher):
                 csv.append(",".join(line))
                 # Mark success in the log
                 self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                success.append(an)
             except Exception,err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
         # Mark published
-        self.markAnimalsPublished(animals)
+        self.markAnimalsPublished(success)
 
         header = "First Name,Last Name,Email Address,Address 1,Address 2,City,State,Zip Code," \
             "Home Phone,Work Phone,Cell Phone,Pet Name,Microchip Number,Service Date," \
