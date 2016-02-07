@@ -183,7 +183,7 @@ $(function() {
                 '<a class="asm-embed-name" href="animal_find_results?logicallocation=onshelter&shelterlocation=' + controller.animal.SHELTERLOCATION + '">' + controller.animal.SHELTERLOCATIONNAME + ' ' + common.nulltostr(controller.animal.SHELTERLOCATIONUNIT) + '</a>',
                 '</td>',
                 '</tr>',
-                '<tr id="onshelterflags">',
+                '<tr id="animalflags">',
                 '<td><label for="flags">' + _("Flags") + '</label></td>',
                 '<td>',
                 '<select id="flags" data="flags" class="asm-bsmselect" multiple="multiple">',
@@ -892,11 +892,6 @@ $(function() {
                 $("#lastlocation").hide();
             }
 
-            // Hide the on shelter flags if the animal is off the shelter
-            if (controller.animal.ARCHIVED == 1 && controller.animal.ACTIVEMOVEMENTTYPE != 2 && controller.animal.NONSHELTERANIMAL == 0) {
-                $("#onshelterflags").hide();
-            }
-
             // If the animal is non-shelter, don't show the location, 
             // transfer/pickup, brought in by owner, bonded with, reasons or asilomar
             if ($("#flags option[value='nonshelter']").is(":selected")) {
@@ -1423,7 +1418,7 @@ $(function() {
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions");
 
-            // Load animal flags
+            // Load animal flags (note some will not be added if animal is not on shelter)
             html.animal_flag_options(controller.animal, controller.flags, $("#flags"));
 
             // Update the unit autocomplete to match the selected location

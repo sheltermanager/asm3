@@ -1583,11 +1583,11 @@
             };
 
             var h = [
-                { label: _("Courtesy Listing"), html: field_option("ISCOURTESY", "courtesy", _("Courtesy Listing")) },
-                { label: _("Cruelty Case"), html: field_option("CRUELTYCASE", "crueltycase", _("Cruelty Case")) },
-                { label: _("Non-Shelter"), html: field_option("NONSHELTERANIMAL", "nonshelter", _("Non-Shelter")) },
-                { label: _("Not For Adoption"), html: field_option("ISNOTAVAILABLEFORADOPTION", "notforadoption", _("Not For Adoption")) },
-                { label: _("Quarantine"), html: field_option("ISQUARANTINE", "quarantine", _("Quarantine")) }
+                { onshelter: false, label: _("Courtesy Listing"), html: field_option("ISCOURTESY", "courtesy", _("Courtesy Listing")) },
+                { onshelter: true, label: _("Cruelty Case"), html: field_option("CRUELTYCASE", "crueltycase", _("Cruelty Case")) },
+                { onshelter: true, label: _("Non-Shelter"), html: field_option("NONSHELTERANIMAL", "nonshelter", _("Non-Shelter")) },
+                { onshelter: true, label: _("Not For Adoption"), html: field_option("ISNOTAVAILABLEFORADOPTION", "notforadoption", _("Not For Adoption")) },
+                { onshelter: true, label: _("Quarantine"), html: field_option("ISQUARANTINE", "quarantine", _("Quarantine")) }
             ];
 
             $.each(flags, function(i, v) {
@@ -1601,6 +1601,10 @@
             }
 
             $.each(h, function(i, v) {
+                // Skip if this flag only applies to on-shelter animals only
+                if (v.onshelter && a.ARCHIVED == 1 && a.ACTIVEMOVEMENTTYPE != 2 && a.NONSHELTERANIMAL == 0) {
+                    return;
+                }
                 opt.push(v.html);    
             });
 
