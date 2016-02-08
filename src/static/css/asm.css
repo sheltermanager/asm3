@@ -691,6 +691,14 @@ select:disabled, input:disabled, textarea:disabled {
     box-shadow: 3px 3px 5px #888;
 }
 
+.asm-thumbnail-male {
+    background-color: #e5f7ff;
+}
+
+.asm-thumbnail-female {
+    background-color: #ffe5ff;
+}
+
 .asm-textbox, .asm-selectbox {
     border: 1px solid #555;
     padding: 2px;

@@ -1423,9 +1423,10 @@
                 "5": a.BREEDNAME,
                 "6": a.SPECIESNAME,
                 "7": a.ANIMALAGE});
-            s.push(common.substitute('<a href="animal?id={id}"><img title="{title}" src="{imgsrc}" class="asm-thumbnail thumbnailshadow" /></a><br />', {
+            s.push(common.substitute('<a href="animal?id={id}"><img title="{title}" src="{imgsrc}" class="asm-thumbnail {thumbnailclass} thumbnailshadow" /></a><br />', {
                 "id" : a.ID,
                 "title" : html.title(title),
+                "thumbnailclass": (a.SEX == 0 ? "asm-thumbnail-male" : (a.SEX == 1 ? "asm-thumbnail-female" : "")),
                 "imgsrc" : html.thumbnail_src(a, "animalthumb") }));
             var emblems = html.animal_emblems(a, o);
             s.push(emblems);
