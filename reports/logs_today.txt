@@ -1,10 +1,10 @@
-Logs between two dates by type
+Logs today
 ###
 Auditing
 ###
 PostgreSQL
 ###
-All logs between two dates by type.
+All logs added today by type.
 ###
 en
 ###
@@ -19,8 +19,8 @@ when l.linktype = 5 then (select a.sheltercode || ' - ' || a.animalname from ani
 end as link
 FROM log l
 INNER JOIN logtype lt ON lt.ID = l.logtypeid
-WHERE l.date >= '$ASK DATE Enter the from date$'
-AND l.date <= '$ASK DATE Enter the to date$ 23:59:59'
+WHERE l.date >= '$CURRENT_DATE$'
+AND l.date <= '$CURRENT_DATE$ 23:59:59'
 ORDER BY lt.logtypename, l.date desc
 ###
 $$HEADER
