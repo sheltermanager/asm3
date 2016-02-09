@@ -232,6 +232,7 @@ def jqm_text(name, value = ""):
     return "<input id=\"%(name)s\" name=\"%(name)s\" value=\"%(value)s\" type=\"text\" />\n" % { "name": name, "value": value }
 
 def person_flags(fl):
+    if fl is None: return ""
     s = []
     for f in fl.split("|"):
         if f != "": s.append(f)
@@ -1351,6 +1352,12 @@ def handler_viewperson(l, dbo, p, af, cit, dia, lic, links, logs, homelink, post
             else:
                 h.append(tr(d["FIELDLABEL"], d["VALUE"]))
         h.append(table_end())
+
+    h.append(table())
+    h.append(hd(_("Links", l)))
+    for k in links:
+        h.append(tr(python2display(l, k["DDATE"]), k["TYPEDISPLAY"], k["LINKDISPLAY"]))
+    h.append(table_end())
 
     h.append(table())
     h.append(hd(_("Citations", l)))
