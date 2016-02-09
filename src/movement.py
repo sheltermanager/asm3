@@ -27,7 +27,7 @@ def get_movement_query(dbo):
     return "SELECT DISTINCT m.*, o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, " \
         "o.OwnerAddress, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, " \
         "rs.StatusName AS ReservationStatusName, " \
-        "a.ShelterCode, a.ShortCode, a.AgeGroup, a.AnimalName, a.Sex, a.Neutered, a.DeceasedDate, a.HasActiveReserve, " \
+        "a.ShelterCode, a.ShortCode, a.AgeGroup, a.AnimalName, a.Neutered, a.DeceasedDate, a.HasActiveReserve, " \
         "a.HasTrialAdoption, a.IsHold, a.IsQuarantine, a.HoldUntilDate, a.CrueltyCase, a.NonShelterAnimal, " \
         "a.ActiveMovementType, a.Archived, a.IsNotAvailableForAdoption, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
