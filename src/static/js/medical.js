@@ -75,7 +75,6 @@ $(function() {
                     $("#animals").closest("tr").hide();
                     $("#profileid").closest("tr").hide();
                     $("#treatmentrulecalc").hide();
-                    $("#status").closest("tr").show();
                     tableform.fields_populate_from_json(dialog.fields, row);
                     tableform.dialog_show_edit(dialog, row)
                         .then(function() {
@@ -357,7 +356,6 @@ $(function() {
             $("#profileid").closest("tr").show();
             $("#profileid").select("value", "");
             $("#treatmentrulecalc").show();
-            $("#status").closest("tr").hide();
             tableform.dialog_show_add(dialog)
                 .then(function() {
                     tableform.dialog_disable_buttons();   
@@ -379,7 +377,6 @@ $(function() {
             $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
             $("#profileid").closest("tr").show();
             $("#treatmentrulecalc").show();
-            $("#status").closest("tr").hide();
             tableform.dialog_show_add(medical.dialog)
                 .then(function() {
                     tableform.dialog_disable_buttons();   

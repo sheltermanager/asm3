@@ -748,7 +748,7 @@ def insert_regimen_from_form(dbo, username, post):
         ( "TreatmentName", post.db_string("treatmentname")),
         ( "Dosage", post.db_string("dosage")),
         ( "StartDate", post.db_date("startdate")),
-        ( "Status", db.di(0)),
+        ( "Status", db.di(0)), 
         ( "Cost", post.db_integer("cost")),
         ( "CostPaidDate", post.db_date("costpaid")),
         ( "TimingRule", db.di(timingrule)),
@@ -763,6 +763,19 @@ def insert_regimen_from_form(dbo, username, post):
     db.execute(dbo, sql)
     audit.create(dbo, username, "animalmedical", str(nregid) + ": " + post["treatmentname"] + " " + post["dosage"])
     update_medical_treatments(dbo, username, nregid)
+
+    # If the user chose a completed status, mark the regimen completed
+    # and mark any treatments we created as given on the start date
+    if post.integer("status") == 2:
+        db.execute(dbo, "UPDATE animalmedical SET Status = 2 WHERE ID = %d" % nregid)
+        for t in db.query(dbo, "SELECT ID FROM animalmedicaltreatment WHERE AnimalMedicalID = %d" % nregid):
+            update_treatment_given(dbo, username, t["ID"], post.date("startdate"))
+
+    # If they picked a held status, we've still created the first treatment, 
+    # set the status so we don't create any more
+    elif post.integer("status") == 1:
+        db.execute(dbo, "UPDATE animalmedical SET Status = 1 WHERE ID = %d" % nregid)
+
     return nregid
 
 def update_regimen_from_form(dbo, username, post):
