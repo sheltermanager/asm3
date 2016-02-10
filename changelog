@@ -1,6 +1,7 @@
 39
 ================
 
+10/02/16 Fix for broken default vacc/test type #367
 10/02/16 Allow completed medicals to be created with given treatments #364
 10/02/16 Update publisher log times to show local time instead of server time
 10/02/16 Remove line breaks from email headers

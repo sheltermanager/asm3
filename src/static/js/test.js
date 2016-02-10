@@ -199,57 +199,57 @@ $(function() {
 
         new_test: function() { 
             var dialog = test.dialog, table = test.table;
-            if (controller.animal) {
-                $("#animal").animalchooser("loadbyid", controller.animal.ID);
-                $("#animal").closest("tr").hide();
-            }
-            else {
-                $("#animal").closest("tr").show();
-                $("#animal").animalchooser("clear");
-            }
-            $("#animals").closest("tr").hide();
-            $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
-            $("#type").select("value", config.str("AFDefaultTestType"));
-            test.enable_default_cost = true;
-            test.set_default_cost();
-            tableform.dialog_show_add(dialog)
-                .then(function() {
-                    return tableform.fields_post(dialog.fields, "mode=create", controller.name);
-                })
-                .then(function(response) {
-                    var row = {};
-                    row.ID = response;
-                    tableform.fields_update_row(dialog.fields, row);
-                    test.set_extra_fields(row);
-                    controller.rows.push(row);
-                    tableform.table_update(table);
-                    tableform.dialog_close();
-                })
-                .fail(function() {
-                    tableform.dialog_enable_buttons();   
-                });
+            tableform.dialog_show_add(dialog, function() {
+                tableform.fields_post(dialog.fields, "mode=create", controller.name)
+                    .then(function(response) {
+                        var row = {};
+                        row.ID = response;
+                        tableform.fields_update_row(dialog.fields, row);
+                        test.set_extra_fields(row);
+                        controller.rows.push(row);
+                        tableform.table_update(table);
+                        tableform.dialog_close();
+                    })
+                    .fail(function() {
+                        tableform.dialog_enable_buttons();   
+                    });
+            }, function() {
+                if (controller.animal) {
+                    $("#animal").animalchooser("loadbyid", controller.animal.ID);
+                    $("#animal").closest("tr").hide();
+                }
+                else {
+                    $("#animal").closest("tr").show();
+                    $("#animal").animalchooser("clear");
+                }
+                $("#animals").closest("tr").hide();
+                $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
+                $("#type").select("value", config.str("AFDefaultTestType"));
+                test.enable_default_cost = true;
+                test.set_default_cost();
+            });
         },
 
         new_bulk_test: function() { 
             var dialog = test.dialog, table = test.table;
-            $("#animal").closest("tr").hide();
-            $("#animals").closest("tr").show();
-            $("#animals").animalchoosermulti("clear");
-            $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
-            $("#type").select("value", config.str("AFDefaultTestType"));
-            test.enable_default_cost = true;
-            test.set_default_cost();
-            tableform.dialog_show_add(dialog)
-                .then(function() {
-                    return tableform.fields_post(dialog.fields, "mode=createbulk", controller.name);
-                })
-                .then(function(response) {
-                    tableform.dialog_close();
-                    common.route_reload();
-                })
-                .fail(function() {
-                    tableform.dialog_enable_buttons();   
-                });
+            tableform.dialog_show_add(dialog, function() {
+                tableform.fields_post(dialog.fields, "mode=createbulk", controller.name)
+                    .then(function(response) {
+                        tableform.dialog_close();
+                        common.route_reload();
+                    })
+                    .fail(function() {
+                        tableform.dialog_enable_buttons();   
+                    });
+            }, function() {
+                $("#animal").closest("tr").hide();
+                $("#animals").closest("tr").show();
+                $("#animals").animalchoosermulti("clear");
+                $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
+                $("#type").select("value", config.str("AFDefaultTestType"));
+                test.enable_default_cost = true;
+                test.set_default_cost();
+            });
         },
 
         render_givendialog: function() {
