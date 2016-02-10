@@ -777,10 +777,13 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
         return address
 
     def add_header(msg, header, value):
-        # Adds a header to the message, expands any HTML entities
-        # and re-encodes as utf-8 before adding to the message if necessary.
-        # If the message doesn't contain HTML entities, then it is just
-        # added normally as 7-bit ascii
+        """
+        Adds a header to the message, expands any HTML entities
+        and re-encodes as utf-8 before adding to the message if necessary.
+        If the message doesn't contain HTML entities, then it is just
+        added normally as 7-bit ascii
+        """
+        value = value.replace("\n", "") # line breaks are not allowed in headers
         if value.find("&#") != -1:
             # Is this, To/From/Cc ? If so, parse the addresses and 
             # encode the descriptions
