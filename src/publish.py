@@ -757,7 +757,7 @@ class AbstractPublisher(threading.Thread):
         the current date/time.
         """
         self.publisherKey = publisherKey
-        d = datetime.datetime.today()
+        d = i18n.now(self.dbo.timezone)
         s = "%d-%02d-%02d_%02d:%02d_%s.txt" % ( d.year, d.month, d.day, d.hour, d.minute, publisherKey )
         self.logName = s
 
