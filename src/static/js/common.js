@@ -1586,7 +1586,7 @@
             var h = [
                 { onshelter: false, label: _("Courtesy Listing"), html: field_option("ISCOURTESY", "courtesy", _("Courtesy Listing")) },
                 { onshelter: true, label: _("Cruelty Case"), html: field_option("CRUELTYCASE", "crueltycase", _("Cruelty Case")) },
-                { onshelter: true, label: _("Non-Shelter"), html: field_option("NONSHELTERANIMAL", "nonshelter", _("Non-Shelter")) },
+                { onshelter: false, label: _("Non-Shelter"), html: field_option("NONSHELTERANIMAL", "nonshelter", _("Non-Shelter")) },
                 { onshelter: true, label: _("Not For Adoption"), html: field_option("ISNOTAVAILABLEFORADOPTION", "notforadoption", _("Not For Adoption")) },
                 { onshelter: true, label: _("Quarantine"), html: field_option("ISQUARANTINE", "quarantine", _("Quarantine")) }
             ];
