@@ -886,14 +886,14 @@ class Report:
                         x = db.query_tuple(self.dbo, asql)
                         value = str(x[0][0])
                     except Exception, e:
-                        value = e
+                        value = str(e)
                 else:
                     # Action query, run it
                     try:
                         value = ""
                         db.execute(self.dbo, asql)
                     except Exception, e:
-                        value = e
+                        value = str(e)
 
             # {IMAGE.animalid[.seq]} - substitutes a link to the image
             # page to direct the browser to retrieve an image. seq is
@@ -1617,14 +1617,14 @@ class Report:
                             x = db.query_tuple(self.dbo, asql)
                             value = str(x[0][0])
                         except Exception, e:
-                            value = e
+                            value = str(e)
                     else:
                         # Action query, run it
                         try:
                             value = ""
                             db.execute(self.dbo, asql)
                         except Exception, e:
-                            value = e
+                            value = str(e)
 
                 # {IMAGE.animalid[.seq]} - substitutes a link to the image
                 # page to direct the browser to retrieve an image. seq is
