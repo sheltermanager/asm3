@@ -1095,11 +1095,11 @@ class AdoptAPetPublisher(FTPPublisher):
         publishCriteria.checkSocket = True
         publishCriteria.scaleImages = 1
         publishCriteria.thumbnails = False
-        self.publisherName = "AdoptAPet Publisher"
-        self.setLogName("adoptapet")
         FTPPublisher.__init__(self, dbo, publishCriteria, 
             ADOPTAPET_FTP_HOST, configuration.adoptapet_user(dbo), 
             configuration.adoptapet_password(dbo))
+        self.publisherName = "AdoptAPet Publisher"
+        self.setLogName("adoptapet")
 
     def apYesNo(self, condition):
         """
@@ -1548,11 +1548,11 @@ class AnibaseUKPublisher(AbstractPublisher):
     (which uses VetXML)
     """
     def __init__(self, dbo, publishCriteria):
+        publishCriteria.uploadDirectly = True
+        publishCriteria.thumbnails = False
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.publisherName = "Anibase UK Publisher"
         self.setLogName("anibaseuk")
-        publishCriteria.uploadDirectly = True
-        publishCriteria.thumbnails = False
 
     def get_vetxml_species(self, asmspeciesid):
         SPECIES_MAP = {
@@ -1749,12 +1749,12 @@ class FoundAnimalsPublisher(FTPPublisher):
     Handles publishing to foundanimals.org
     """
     def __init__(self, dbo, publishCriteria):
-        self.publisherName = "FoundAnimals Publisher"
-        self.setLogName("foundanimals")
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         FTPPublisher.__init__(self, dbo, publishCriteria, 
             FOUNDANIMALS_FTP_HOST, FOUNDANIMALS_FTP_USER, FOUNDANIMALS_FTP_PASSWORD)
+        self.publisherName = "FoundAnimals Publisher"
+        self.setLogName("foundanimals")
 
     def run(self):
         
@@ -1903,11 +1903,11 @@ class HelpingLostPetsPublisher(FTPPublisher):
         publishCriteria.thumbnails = False
         publishCriteria.checkSocket = True
         publishCriteria.scaleImages = 1
-        self.publisherName = i18n._("HelpingLostPets Publisher", l)
-        self.setLogName("helpinglostpets")
         FTPPublisher.__init__(self, dbo, publishCriteria, 
             HELPINGLOSTPETS_FTP_HOST, configuration.helpinglostpets_user(dbo), 
             configuration.helpinglostpets_password(dbo))
+        self.publisherName = i18n._("HelpingLostPets Publisher", l)
+        self.setLogName("helpinglostpets")
 
     def hlpYesNo(self, condition):
         """
@@ -2120,9 +2120,6 @@ class HTMLPublisher(FTPPublisher):
 
     def __init__(self, dbo, publishCriteria, user):
         l = dbo.locale
-        self.user = user
-        self.publisherName = i18n._("HTML/FTP Publisher", l)
-        self.setLogName("html")
         # If we have a database override and it's not been ignored, use it
         if MULTIPLE_DATABASES_PUBLISH_FTP is not None and not configuration.publisher_ignore_ftp_override(dbo):
             c = MULTIPLE_DATABASES_PUBLISH_FTP
@@ -2139,12 +2136,15 @@ class HTMLPublisher(FTPPublisher):
             FTPPublisher.__init__(self, dbo, publishCriteria, 
                 configuration.ftp_host(dbo), configuration.ftp_user(dbo), configuration.ftp_password(dbo),
                 configuration.ftp_port(dbo), configuration.ftp_root(dbo), configuration.ftp_passive(dbo))
+        self.user = user
+        self.publisherName = i18n._("HTML/FTP Publisher", l)
+        self.setLogName("html")
 
     def escapePageName(self, s):
         suppress = [ " ", "(", ")", "/", "\\", "!", "?", "*" ]
         for x in suppress:
             s = s.replace(x, "_")
-        return s
+            return s
 
     def getPathFromStyle(self):
         """
@@ -2828,11 +2828,11 @@ class MeetAPetPublisher(AbstractPublisher):
     Handles publishing to MeetAPet.com
     """
     def __init__(self, dbo, publishCriteria):
+        publishCriteria.uploadDirectly = True
+        publishCriteria.thumbnails = False
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.publisherName = "MeetAPet Publisher"
         self.setLogName("meetapet")
-        publishCriteria.uploadDirectly = True
-        publishCriteria.thumbnails = False
 
     def mpYesNo(self, condition):
         """
@@ -3043,11 +3043,11 @@ class PetFinderPublisher(FTPPublisher):
         publishCriteria.checkSocket = True
         publishCriteria.scaleImages = 1
         publishCriteria.uploadAllImages = True
-        self.publisherName = "PetFinder Publisher"
-        self.setLogName("petfinder")
         FTPPublisher.__init__(self, dbo, publishCriteria, 
             PETFINDER_FTP_HOST, configuration.petfinder_user(dbo), 
             configuration.petfinder_password(dbo))
+        self.publisherName = "PetFinder Publisher"
+        self.setLogName("petfinder")
 
     def pfYesNo(self, condition):
         """
@@ -3233,11 +3233,11 @@ class PetLinkPublisher(AbstractPublisher):
     Handles publishing of updated microchip info to PetLink.net
     """
     def __init__(self, dbo, publishCriteria):
+        publishCriteria.uploadDirectly = True
+        publishCriteria.thumbnails = False
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.publisherName = "PetLink Publisher"
         self.setLogName("petlink")
-        publishCriteria.uploadDirectly = True
-        publishCriteria.thumbnails = False
 
     def plYesNo(self, condition):
         """
@@ -3483,8 +3483,6 @@ class PetRescuePublisher(FTPPublisher):
     Handles publishing to petrescue.com.au
     """
     def __init__(self, dbo, publishCriteria):
-        self.publisherName = "PetRescue Publisher"
-        self.setLogName("petrescue")
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         publishCriteria.checkSocket = True
@@ -3492,6 +3490,8 @@ class PetRescuePublisher(FTPPublisher):
         FTPPublisher.__init__(self, dbo, publishCriteria, 
             PETRESCUE_FTP_HOST, configuration.petrescue_user(dbo), 
             configuration.petrescue_password(dbo), 21, "", True)
+        self.publisherName = "PetRescue Publisher"
+        self.setLogName("petrescue")
 
     def prTrueFalse(self, condition):
         """
@@ -3681,10 +3681,10 @@ class PetsLocatedUKPublisher(FTPPublisher):
         publishCriteria.checkSocket = True
         publishCriteria.includeColours = True
         publishCriteria.scaleImages = 1
-        self.publisherName = i18n._("PetsLocated UK Publisher", l)
-        self.setLogName("petslocated")
         FTPPublisher.__init__(self, dbo, publishCriteria, 
             PETSLOCATED_FTP_HOST, PETSLOCATED_FTP_USER, PETSLOCATED_FTP_PASSWORD)
+        self.publisherName = i18n._("PetsLocated UK Publisher", l)
+        self.setLogName("petslocated")
 
     def plcAge(self, agegroup):
         if agegroup is None: return "Older"
@@ -4212,11 +4212,11 @@ class PETtracUKPublisher(AbstractPublisher):
     Handles updating animal microchips with AVID PETtrac UK
     """
     def __init__(self, dbo, publishCriteria):
+        publishCriteria.uploadDirectly = True
+        publishCriteria.thumbnails = False
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.publisherName = "PETtrac UK Publisher"
         self.setLogName("pettracuk")
-        publishCriteria.uploadDirectly = True
-        publishCriteria.thumbnails = False
 
     def run(self):
         
@@ -4354,8 +4354,6 @@ class RescueGroupsPublisher(FTPPublisher):
     Note: RG only accept Active FTP connections
     """
     def __init__(self, dbo, publishCriteria):
-        self.publisherName = "RescueGroups Publisher"
-        self.setLogName("rescuegroups")
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         publishCriteria.checkSocket = True
@@ -4365,6 +4363,8 @@ class RescueGroupsPublisher(FTPPublisher):
         FTPPublisher.__init__(self, dbo, publishCriteria, 
             RESCUEGROUPS_FTP_HOST, configuration.rescuegroups_user(dbo), 
             configuration.rescuegroups_password(dbo), 21, "", False)
+        self.publisherName = "RescueGroups Publisher"
+        self.setLogName("rescuegroups")
 
     def rgYesNo(self, condition):
         """
@@ -4568,12 +4568,12 @@ class SmartTagPublisher(FTPPublisher):
     Handles publishing to SmartTag PETID
     """
     def __init__(self, dbo, publishCriteria):
-        self.publisherName = "SmartTag Publisher"
-        self.setLogName("smarttag")
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         FTPPublisher.__init__(self, dbo, publishCriteria, 
             SMARTTAG_FTP_HOST, SMARTTAG_FTP_USER, SMARTTAG_FTP_PASSWORD)
+        self.publisherName = "SmartTag Publisher"
+        self.setLogName("smarttag")
 
     def stYesNo(self, condition):
         """
@@ -4769,13 +4769,13 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
     the VetEnvoy system in the US
     """
     def __init__(self, dbo, publishCriteria, publisherName, publisherKey, recipientId, microchipPatterns):
+        publishCriteria.uploadDirectly = True
+        publishCriteria.thumbnails = False
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.publisherName = publisherName
         self.setLogName(publisherKey)
         self.recipientId = recipientId
         self.microchipPatterns = microchipPatterns
-        publishCriteria.uploadDirectly = True
-        publishCriteria.thumbnails = False
 
     def getHeader(self, headers, header):
         """ Returns a header from the headers list of a get_url call """
