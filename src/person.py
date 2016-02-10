@@ -321,7 +321,7 @@ def get_person_find_simple(dbo, query, classfilter="all", includeStaff = False, 
     Returns rows for simple person searches.
     query: The search criteria
     classfilter: One of all, vet, retailer, staff, fosterer, volunteer, shelter, 
-                 aco, homechecked, homechecker, member, donor, driver, volunteerandstaff
+                 aco, banned, homechecked, homechecker, member, donor, driver, volunteerandstaff
     """
     ors = []
     query = query.replace("'", "`")
@@ -367,6 +367,8 @@ def get_person_find_simple(dbo, query, classfilter="all", includeStaff = False, 
         cf = " AND o.IsShelter = 1"
     elif classfilter == "aco":
         cf = " AND o.IsACO = 1"
+    elif classfilter == "banned":
+        cf = " AND o.IsBanned = 1"
     elif classfilter == "homechecked":
         cf = " AND o.IDCheck = 1"
     elif classfilter == "homechecker":

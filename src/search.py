@@ -36,10 +36,11 @@ def search(dbo, session, q):
     sort:mr     Sort results most recently changed first
     sort:lr     Sort results least recently changed first
 
-
+    -- update this list in header.js/bind_search/keywords
+    activelost, activefound, 
     onshelter/os, notforadoption, hold, holdtoday, quarantine, deceased, 
     forpublish, people, vets, retailers, staff, fosterers, volunteers, 
-    shelters, aco, homechecked, homecheckers, members, donors, drivers,
+    shelters, aco, banned, homechecked, homecheckers, members, donors, drivers,
     reservenohomecheck, notmicrochipped
 
     returns a tuple of:
@@ -296,6 +297,10 @@ def search(dbo, session, q):
         explain = _("All animal care officers on file.", l)
         if users.check_permission_bool(session, users.VIEW_PERSON):
             ar(person.get_person_find_simple(dbo, "", "aco", users.check_permission_bool(session, users.VIEW_STAFF), limit), "PERSON", personsort)
+    elif q == "banned":
+        explain = _("All banned owners on file.", l)
+        if users.check_permission_bool(session, users.VIEW_PERSON):
+            ar(person.get_person_find_simple(dbo, "", "banned", users.check_permission_bool(session, users.VIEW_STAFF), limit), "PERSON", personsort)
     elif q == "homechecked":
         explain = _("All homechecked owners on file.", l)
         if users.check_permission_bool(session, users.VIEW_PERSON):

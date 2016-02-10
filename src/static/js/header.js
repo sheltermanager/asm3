@@ -402,7 +402,7 @@ $(function() {
                     '<div class="topline-element">',
                         '<span style="white-space: nowrap">',
                         '<input id="topline-q" name="q" type="text" class="asm-textbox" title="' + 
-                            html.title("ALT+SHIFT+S " + _("filters: a:animal, p:person, wl:waitinglist, la:lostanimal, fa:foundanimal keywords: onshelter/os, notforadoption, donors, deceased, vets, retailers, staff, fosterers, volunteers, homecheckers, members, activelost, activefound")) +
+                            html.title("ALT+SHIFT+S " + _("filters: a:animal, p:person, wl:waitinglist, la:lostanimal, fa:foundanimal keywords: onshelter/os, notforadoption, aco, banned, donors, deceased, vets, retailers, staff, fosterers, volunteers, homecheckers, members, activelost, activefound")) +
                             '" value="' + _("Search") + '" />',
                         '<button id="searchgo" style="display: none">' + _("Search") + '</button>',
                         '</span>',
@@ -610,9 +610,12 @@ $(function() {
 
         bind_search: function() {
 
-            var keywords = [ "activelost", "activefound", "donors", "deceased", 
-                "onshelter", "forpublish", "fosterers", "homecheckers", "members", "notforadoption", "staff", 
+            var keywords = [ "activelost", "activefound", "donors", "deceased", "hold", "holdtoday", 
+                "notforadoption", "onshelter", "quarantine", "forpublish", "reservenohomecheck", "notmicrochipped",
+                "aco", "banned", "donors", "drivers", "homechecked", "homecheckers", 
+                "fosterers", "homecheckers", "members", "people", "retailers", "shelters", "staff", 
                 "vets", "volunteers" ] ;
+
             var previous = common.local_get("asmsearch").split("|");
             var searches = keywords.concat(previous);
 
