@@ -68,7 +68,7 @@ $(function() {
                 '<input id="dateofbirth" data="dateofbirth" class="asm-textbox asm-datebox" title=',
                 '"' + html.title(_("The date the animal was born")) + '" />',
                 ' <label for="estimatedage">' + _("or estimated age in years") + '</label> ',
-                '<input type="text" id="estimatedage" data="estimatedage" class="asm-textbox asm-numberbox" value="1.0" />',
+                '<input type="text" id="estimatedage" data="estimatedage" class="asm-textbox asm-numberbox" value="" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -405,6 +405,12 @@ $(function() {
             $(".asm-checkbox").prop("checked", false).change();
             $(".asm-personchooser").personchooser("clear");
 
+            // Set estimated age
+            $("#estimatedage").val("");
+            if (config.str("DefaultAnimalAge") != "0") {
+                $("#estimatedage").val(config.str("DefaultAnimalAge"));
+            }
+
             // Set select box default values
             $("#animaltype").val(config.str("AFDefaultType"));
             animal_new.set_nonsheltertype_once = false;
@@ -425,9 +431,6 @@ $(function() {
             if (config.bool("AddAnimalsShowTimeBroughtIn")) {
                 $("#timebroughtin").val(format.time(new Date()));
             }
-
-            // Estimated age default
-            $("#estimatedage").val("1.0");
         },
 
         validation: function() {

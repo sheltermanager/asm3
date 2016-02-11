@@ -1,6 +1,8 @@
 39
 ================
 
+11/02/16 Allow microchip registration to the shelter on intake #300
+11/02/16 Hidden DefaultAnimalAge config switch #332
 10/02/16 Add banned search keyword, fix missing on autocomplete #373
 10/02/16 Fix for broken default vacc/test type #367
 10/02/16 Allow completed medicals to be created with given treatments #364

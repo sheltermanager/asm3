@@ -147,6 +147,7 @@ $(function() {
                 '<tr>',
                 '<td><label for="regmic">' + _("Register microchips after") + '</label></td>',
                 '<td><select id="regmic" class="asm-bsmselect cfg" multiple="multiple" data="MicrochipRegisterMovements">',
+                '<option value="0">' + _("Intake") + '</option>',
                 '<option value="1">' + _("Adoption") + '</option>',
                 '<option value="2">' + _("Foster") + '</option>',
                 '<option value="3">' + _("Transfer") + '</option>',

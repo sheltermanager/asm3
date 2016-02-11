@@ -130,6 +130,7 @@ DEFAULTS = {
     "CreateDonationTrx": "Yes",
     "CodingFormat": "TYYYNNN",
     "ShortCodingFormat": "NNT",
+    "DefaultAnimalAge": "1.0", 
     "DefaultDailyBoardingCost": "2000",
     "DefaultDateBroughtIn": "Yes",
     "DefaultIncidentType": "1",
@@ -780,6 +781,15 @@ def organisation(dbo):
 
 def organisation_address(dbo):
     return cstring(dbo, "OrganisationAddress")
+
+def organisation_town(dbo):
+    return cstring(dbo, "OrganisationTown")
+
+def organisation_county(dbo):
+    return cstring(dbo, "OrganisationCounty")
+
+def organisation_postcode(dbo):
+    return cstring(dbo, "OrganisationPostcode")
 
 def organisation_telephone(dbo):
     return cstring(dbo, "OrganisationTelephone")

@@ -300,10 +300,17 @@ def get_microchip_data(dbo, patterns, publishername):
         rows = db.query(dbo, get_microchip_data_query(dbo, patterns, publishername, movementtypes))
     except Exception,err:
         al.error(str(err), "publisher.get_microchip_data", dbo, sys.exc_info())
-    # Transfer original owner data into the current owner fields for rows
-    # where it is a non-shelter animal so we can still register microchips
-    # for non-shelter animals.
+    organisation = configuration.organisation(dbo)
+    orgaddress = configuration.organisation_address(dbo)
+    orgtown = configuration.organisation_town(dbo)
+    orgcounty = configuration.organisation_county(dbo)
+    orgpostcode = configuration.organisation_postcode(dbo)
+    orgtelephone = configuration.organisation_telephone(dbo)
+    email = configuration.email(dbo)
     for r in rows:
+        # Transfer original owner data into the current owner fields for rows
+        # where it is a non-shelter animal so we can still register microchips
+        # for non-shelter animals.
         if r["NONSHELTERANIMAL"] == 1 and r["ORIGINALOWNERNAME"] is not None and r["ORIGINALOWNERNAME"] != "":
             r["CURRENTOWNERNAME"] = r["ORIGINALOWNERNAME"]
             r["CURRENTOWNERTITLE"] = r["ORIGINALOWNERTITLE"]
@@ -323,6 +330,27 @@ def get_microchip_data(dbo, patterns, publishername):
             r["CURRENTOWNERMOBILEPHONE"] = r["ORIGINALOWNERMOBILETELEPHONE"]
             r["CURRENTOWNERCELLPHONE"] = r["ORIGINALOWNERMOBILETELEPHONE"]
             r["CURRENTOWNEREMAILADDRESS"] = r["ORIGINALOWNEREMAILADDRESS"]
+        # Transfer shelter info into current owner fields for rows where
+        # the animal is still on shelter and part of intake.
+        if r["ARCHIVED"] == 0 and r["ACTIVEMOVEMENTID"] == 0:
+            r["CURRENTOWNERNAME"] = organisation
+            r["CURRENTOWNERTITLE"] = ""
+            r["CURRENTOWNERINITIALS"] = ""
+            r["CURRENTOWNERFORENAMES"] = ""
+            r["CURRENTOWNERSURNAME"] = organisation
+            r["CURRENTOWNERADDRESS"] = orgaddress
+            r["CURRENTOWNERTOWN"] = orgtown
+            r["CURRENTOWNERCOUNTY"] = orgcounty
+            r["CURRENTOWNERPOSTCODE"] = orgpostcode
+            r["CURRENTOWNERCITY"] = orgtown
+            r["CURRENTOWNERSTATE"] = orgcounty
+            r["CURRENTOWNERZIPCODE"] = orgpostcode
+            r["CURRENTOWNERHOMETELEPHONE"] = orgtelephone
+            r["CURRENTOWNERPHONE"] = orgtelephone
+            r["CURRENTOWNERWORKPHONE"] = orgtelephone
+            r["CURRENTOWNERMOBILEPHONE"] = orgtelephone
+            r["CURRENTOWNERCELLPHONE"] = orgtelephone
+            r["CURRENTOWNEREMAILADDRESS"] = email
     return rows
 
 def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1"):
@@ -331,6 +359,8 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1"):
     It does this by looking for animals who have microchips matching the pattern where
         they either have an activemovement of a type with a date newer than sent in the published table
         OR they have a datebroughtin with a date newer than sent in the published table and they're a non-shelter animal
+        (if intake is selected as movementtype 0)
+        OR they have a datebroughtin with a date newer than sent in the published table and they're currently on shelter
     patterns:      A list of either microchip prefixes or SQL clauses to OR
                    together in the preamble, eg: [ '977', "a.SmartTag = 1 AND a.SmartTagNumber <> ''" ]
     publishername: The name of the microchip registration publisher, eg: pettracuk
@@ -345,15 +375,26 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1"):
     trialclause = ""
     if movementtypes.find("11") == -1:
         trialclause = "AND a.HasTrialAdoption = 0"
+    intakeclause = ""
+    if movementtypes.find("0") == -1:
+        # Note: Use of MostRecentEntryDate will pick up returns as well as intake
+        intakeclause = "OR (a.NonShelterAnimal = 0 AND a.Archived = 0 AND a.ActiveMovementID = 0 " \
+            "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
+            "AND AnimalID = a.ID AND SentDate >= a.MostRecentEntryDate))" % { "publishername": publishername }
+    nonshelterclause = "OR (a.NonShelterAnimal = 1 AND a.OriginalOwnerID Is Not Null AND a.OriginalOwnerID > 0 AND a.IdentichipDate Is Not Null " \
+        "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
+        "AND AnimalID = a.ID AND SentDate >= a.IdentichipDate))" % { "publishername": publishername }
     return animal.get_animal_query(dbo) + " WHERE (%(patterns)s) AND (" \
         "(a.ActiveMovementID > 0 AND (a.ActiveMovementType IN (%(movementtypes)s)) %(trialclause)s " \
         "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
         "AND AnimalID = a.ID AND SentDate >= a.ActiveMovementDate)) " \
-        "OR (a.NonShelterAnimal = 1 AND a.OriginalOwnerID Is Not Null AND a.OriginalOwnerID > 0 AND a.IdentichipDate Is Not Null " \
-        "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
-        "AND AnimalID = a.ID AND SentDate >= a.IdentichipDate))) " % { 
+        "%(nonshelterclause)s " \
+        "%(intakeclause)s " \
+        ")" % { 
             "patterns": " OR ".join(pclauses),
             "movementtypes": movementtypes, 
+            "intakeclause": intakeclause,
+            "nonshelterclause": nonshelterclause,
             "trialclause": trialclause,
             "publishername": publishername }
 
