@@ -376,7 +376,7 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1"):
     if movementtypes.find("11") == -1:
         trialclause = "AND a.HasTrialAdoption = 0"
     intakeclause = ""
-    if movementtypes.find("0") == -1:
+    if movementtypes.find("0") != -1:
         # Note: Use of MostRecentEntryDate will pick up returns as well as intake
         intakeclause = "OR (a.NonShelterAnimal = 0 AND a.Archived = 0 AND a.ActiveMovementID = 0 " \
             "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
@@ -384,7 +384,7 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1"):
     nonshelterclause = "OR (a.NonShelterAnimal = 1 AND a.OriginalOwnerID Is Not Null AND a.OriginalOwnerID > 0 AND a.IdentichipDate Is Not Null " \
         "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
         "AND AnimalID = a.ID AND SentDate >= a.IdentichipDate))" % { "publishername": publishername }
-    return animal.get_animal_query(dbo) + " WHERE (%(patterns)s) AND (" \
+    where = " WHERE (%(patterns)s) AND (" \
         "(a.ActiveMovementID > 0 AND (a.ActiveMovementType IN (%(movementtypes)s)) %(trialclause)s " \
         "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
         "AND AnimalID = a.ID AND SentDate >= a.ActiveMovementDate)) " \
@@ -397,6 +397,8 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1"):
             "nonshelterclause": nonshelterclause,
             "trialclause": trialclause,
             "publishername": publishername }
+    sql = animal.get_animal_query(dbo) + where
+    return sql
 
 def get_animal_view(dbo, animalid):
     """

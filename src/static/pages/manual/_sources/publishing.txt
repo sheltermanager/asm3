@@ -49,6 +49,9 @@ The All Publishers tab allows you to set options common to all internet publishe
   the owner information with the registry after these types of movements.
   Non-shelter animals will always be registered with their original owner
   information if present, using the microchip date as a trigger.
+  A special "Intake" option allows registering of microchips to the shelter's
+  contact info for animals currently in the care of the shelter. This includes
+  animals brought to the shelter as well as those returned from a previous movement.
 
 * Reupload animal images every time: Ticking this box will tell the publisher
   to reupload images for all the animals published. Normally, ASM will not
