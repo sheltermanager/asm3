@@ -28,7 +28,7 @@ animal.CreatedBy, animal.LastChangedBy, animal.CreatedDate, animal.LastChangedDa
 FROM animal
 WHERE IsTransfer = 0 AND DateBroughtIn >= '$CURRENT_DATE$' AND DateBroughtIn <= '$CURRENT_DATE$ 23:59:59' AND NonShelterAnimal = 0
 
-UNION SELECT DateBroughtIn AS thedate,
+UNION ALL SELECT DateBroughtIn AS thedate,
 (SELECT ReasonName FROM entryreason WHERE ID = animal.EntryReasonID) AS Reason,
 ShelterCode,
 IdentichipNumber,
@@ -45,7 +45,7 @@ animal.CreatedBy, animal.LastChangedBy, animal.CreatedDate, animal.LastChangedDa
 FROM animal
 WHERE IsTransfer = 1 AND DateBroughtIn >= '$CURRENT_DATE$' AND DateBroughtIn <= '$CURRENT_DATE$ 23:59:59' AND NonShelterAnimal = 0
 
-UNION SELECT adoption.ReturnDate AS thedate,
+UNION ALL SELECT adoption.ReturnDate AS thedate,
 (SELECT ReasonName FROM entryreason WHERE ID = adoption.ReturnedReasonID) AS Reason,
 ShelterCode,
 IdentichipNumber,
@@ -63,7 +63,7 @@ FROM animal
 INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 1 AND adoption.MovementDate Is Not Null AND adoption.IsTrial = 0 AND adoption.ReturnDate >= '$CURRENT_DATE$' AND adoption.ReturnDate <= '$CURRENT_DATE$' AND NonShelterAnimal = 0
 
-UNION SELECT adoption.ReturnDate AS thedate,
+UNION ALL SELECT adoption.ReturnDate AS thedate,
 (SELECT ReasonName FROM entryreason WHERE ID = adoption.ReturnedReasonID) AS Reason,
 ShelterCode,
 IdentichipNumber,
@@ -81,7 +81,7 @@ FROM animal
 INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 1 AND adoption.MovementDate Is Not Null AND adoption.IsTrial = 1 AND adoption.ReturnDate >= '$CURRENT_DATE$' AND adoption.ReturnDate <= '$CURRENT_DATE$' AND NonShelterAnimal = 0
 
-UNION SELECT adoption.ReturnDate AS thedate,
+UNION ALL SELECT adoption.ReturnDate AS thedate,
 CASE WHEN DeceasedDate Is Null OR DeceasedDate > adoption.ReturnDate THEN 'Foster Return' ELSE 'Died On Foster' END AS Reason,
 ShelterCode,
 IdentichipNumber,
@@ -99,7 +99,7 @@ FROM animal
 INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 2 AND adoption.MovementDate Is Not Null AND adoption.ReturnDate >= '$CURRENT_DATE$' AND adoption.ReturnDate <= '$CURRENT_DATE$' AND NonShelterAnimal = 0
 
-UNION SELECT adoption.ReturnDate AS thedate,
+UNION ALL SELECT adoption.ReturnDate AS thedate,
 (SELECT ReasonName FROM entryreason WHERE ID = adoption.ReturnedReasonID) AS Reason,
 ShelterCode,
 IdentichipNumber,
@@ -117,7 +117,7 @@ FROM animal
 INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 3 AND adoption.MovementDate Is Not Null AND adoption.ReturnDate >= '$CURRENT_DATE$' AND adoption.ReturnDate <= '$CURRENT_DATE$' AND NonShelterAnimal = 0
 
-UNION SELECT adoption.ReturnDate AS thedate,
+UNION ALL SELECT adoption.ReturnDate AS thedate,
 (SELECT ReasonName FROM entryreason WHERE ID = adoption.ReturnedReasonID) AS Reason,
 ShelterCode,
 IdentichipNumber,
@@ -135,7 +135,7 @@ FROM animal
 INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType NOT IN (1, 2, 3) AND adoption.MovementDate Is Not Null AND adoption.ReturnDate >= '$CURRENT_DATE$' AND adoption.ReturnDate <= '$CURRENT_DATE$' AND NonShelterAnimal = 0
 
-UNION SELECT adoption.MovementDate AS thedate,
+UNION ALL SELECT adoption.MovementDate AS thedate,
 '' AS Reason,
 ShelterCode,
 IdentichipNumber,
@@ -154,7 +154,7 @@ INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 1 AND adoption.IsTrial = 0 AND 
 adoption.MovementDate >= '$CURRENT_DATE$' AND adoption.MovementDate <= '$CURRENT_DATE$' AND NonShelterAnimal = 0
 
-UNION SELECT adoption.MovementDate AS thedate,
+UNION ALL SELECT adoption.MovementDate AS thedate,
 '' AS Reason,
 ShelterCode,
 IdentichipNumber,
@@ -173,7 +173,7 @@ INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 1 AND adoption.IsTrial = 1 AND 
 adoption.MovementDate >= '$CURRENT_DATE$' AND adoption.MovementDate <= '$CURRENT_DATE$' AND NonShelterAnimal = 0
 
-UNION SELECT adoption.MovementDate AS thedate,
+UNION ALL SELECT adoption.MovementDate AS thedate,
 '' AS Reason,
 ShelterCode,
 IdentichipNumber,
@@ -192,7 +192,7 @@ INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 2 AND
 adoption.MovementDate >= '$CURRENT_DATE$' AND adoption.MovementDate <= '$CURRENT_DATE$' AND NonShelterAnimal = 0
 
-UNION SELECT adoption.MovementDate AS thedate,
+UNION ALL SELECT adoption.MovementDate AS thedate,
 '' AS Reason,
 ShelterCode,
 IdentichipNumber,
@@ -211,7 +211,7 @@ INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 3 AND
 adoption.MovementDate >= '$CURRENT_DATE$' AND adoption.MovementDate <= '$CURRENT_DATE$' AND NonShelterAnimal = 0
 
-UNION SELECT adoption.MovementDate AS thedate,
+UNION ALL SELECT adoption.MovementDate AS thedate,
 '' AS Reason,
 ShelterCode,
 IdentichipNumber,
@@ -230,7 +230,7 @@ INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 4 AND
 adoption.MovementDate >= '$CURRENT_DATE$' AND adoption.MovementDate <= '$CURRENT_DATE$' AND NonShelterAnimal = 0
 
-UNION SELECT adoption.MovementDate AS thedate,
+UNION ALL SELECT adoption.MovementDate AS thedate,
 '' AS Reason,
 ShelterCode,
 IdentichipNumber,
@@ -250,7 +250,7 @@ WHERE adoption.MovementType = 5 AND
 adoption.MovementDate >= '$CURRENT_DATE$' AND adoption.MovementDate <= '$CURRENT_DATE$' AND NonShelterAnimal = 0
 
 
-UNION SELECT adoption.MovementDate AS thedate,
+UNION ALL SELECT adoption.MovementDate AS thedate,
 '' AS Reason,
 ShelterCode,
 IdentichipNumber,
@@ -269,7 +269,7 @@ INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 6 AND
 adoption.MovementDate >= '$CURRENT_DATE$' AND adoption.MovementDate <= '$CURRENT_DATE$' AND NonShelterAnimal = 0
 
-UNION SELECT adoption.MovementDate AS thedate,
+UNION ALL SELECT adoption.MovementDate AS thedate,
 '' AS Reason,
 ShelterCode,
 IdentichipNumber,
@@ -288,7 +288,7 @@ INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 7 AND
 adoption.MovementDate >= '$CURRENT_DATE$' AND adoption.MovementDate <= '$CURRENT_DATE$' AND NonShelterAnimal = 0
 
-UNION SELECT DeceasedDate AS thedate,
+UNION ALL SELECT DeceasedDate AS thedate,
 '' AS Reason,
 ShelterCode,
 IdentichipNumber,
@@ -305,7 +305,7 @@ animal.CreatedBy, animal.LastChangedBy, animal.CreatedDate, animal.LastChangedDa
 FROM animal
 WHERE DeceasedDate >= '$CURRENT_DATE$' AND DeceasedDate <= '$CURRENT_DATE$' AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND PutToSleep = 0 AND IsDOA = 0
 
-UNION SELECT DeceasedDate AS thedate,
+UNION ALL SELECT DeceasedDate AS thedate,
 (SELECT ReasonName FROM deathreason WHERE ID = animal.PTSReasonID) AS Reason,
 ShelterCode,
 IdentichipNumber,
@@ -322,7 +322,7 @@ animal.CreatedBy, animal.LastChangedBy, animal.CreatedDate, animal.LastChangedDa
 FROM animal
 WHERE DeceasedDate >= '$CURRENT_DATE$' AND DeceasedDate <= '$CURRENT_DATE$' AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND PutToSleep = 1 AND IsDOA = 0
 
-UNION SELECT DeceasedDate AS thedate,
+UNION ALL SELECT DeceasedDate AS thedate,
 (SELECT ReasonName FROM deathreason WHERE ID = animal.PTSReasonID) AS Reason,
 ShelterCode,
 IdentichipNumber,
