@@ -5594,6 +5594,7 @@ class publish_options:
         c += html.controller_bool("haspetrescue", PETRESCUE_FTP_HOST != "")
         c += html.controller_json("logtypes", extlookups.get_log_types(dbo))
         c += html.controller_json("styles", dbfs.get_html_publisher_templates(dbo))
+        c += html.controller_json("users", users.get_users(dbo))
         s += html.controller(c)
         s += html.footer()
         al.debug("loaded lookups", "code.publish_options", dbo)

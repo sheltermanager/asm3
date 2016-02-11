@@ -471,6 +471,9 @@ def auto_not_for_adoption(dbo):
 def auto_remove_incoming_forms_days(dbo):
     return cint(dbo, "AutoRemoveIncomingFormsDays", int(DEFAULTS["AutoRemoveIncomingFormsDays"]))
 
+def avid_auth_user(dbo):
+    return cstring(dbo, "AvidAuthUser")
+
 def avid_org_postcode(dbo):
     return cstring(dbo, "AvidOrgPostcode")
 

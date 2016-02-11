@@ -198,7 +198,7 @@ $(function() {
         render_pettrac: function() {
             return [
                 '<div id="tab-pettrac">',
-                html.info('These settings are for uploading new owner information to the AVID PETtrac UK microchip database. <br/>' + 
+                html.info('These settings are for registering microchips with new owner information to the AVID PETtrac UK database. <br/>' + 
                     'Find out more at <a href="http://www.pettrac.co.uk">www.pettrac.co.uk</a>'),
                 '<p><input id="enabledptuk" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledptuk">' + _("Enabled") + '</label></p>',
                 '<table>',
@@ -217,6 +217,21 @@ $(function() {
                 '<tr>',
                 '<td><label for="avidorgpassword">Password</label></td>',
                 '<td><input data="AvidOrgPassword" id="avidorgpassword" type="text" class="asm-doubletextbox cfg" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="avidauthuser">Authorised User</label></td>',
+                '<td><select data="AvidAuthUser" id="avidauthuser" class="asm-selectbox cfg">',
+                html.list_to_options(controller.users, "USERNAME", "USERNAME"),
+                '</select>',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td></td><td>',
+                html.info("An authorised user must be chosen and they must have an electronic signature on file.<br/>" + 
+                    "Their details will be used on an authorisation document transmitted to AVID when " +
+                    "re-registering previously registered microchips.<br/>Please also make sure the authorised " +
+                    "user has a real name on file."),
+                '</td>',
                 '</tr>',
                 '</table>',
                 '</div>'
