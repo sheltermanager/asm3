@@ -2187,7 +2187,7 @@ class HTMLPublisher(FTPPublisher):
         suppress = [ " ", "(", ")", "/", "\\", "!", "?", "*" ]
         for x in suppress:
             s = s.replace(x, "_")
-            return s
+        return s
 
     def getPathFromStyle(self):
         """
