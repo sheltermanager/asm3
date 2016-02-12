@@ -5,10 +5,10 @@ ASM allows you to setup online forms that you can use to take information from
 members of the public through your website (if your ASM is publically
 accessible, or you are using sheltermanager.com). 
 
-This is very useful for things like adoption and waiting list application
-forms, questionnaires, taking lost or found animal information from people,
-complaints, etc. They can be used for any situation where you'd like to take
-information from web site visitors.
+This is very useful for handling adoption and waiting list application forms,
+questionnaires, taking lost or found animal information from people,
+complaints, behavioural assessments, etc. They can be used for any situation
+where you'd like to take information from web site visitors.
 
 Forms need a name and a description. The description will be shown to the user
 while they are filling out the form. You can also specify a page you'd like to
@@ -16,10 +16,13 @@ redirect the user to after they've completed the form.
 
 If you use certain key fields (which the system will autocomplete for you), the
 system can create person, lost animal, found animal, animal control incident or
-waiting list records directly from submitted form data. If you set some person
-flags on your form, any person record created from the form data will
-automatically have those flags. The "checkbox" field type allows you to enter
-some additional person flags to set if that field is checked during submission.
+waiting list records directly from submitted form data. You can also attach
+form submissions to animal records.
+
+If you set some person flags on your form, any person record created from the
+form data will automatically have those flags. In addition to that, the
+"checkbox" field type allows you to enter some additional person flags to set
+if that checkbox is checked during submission.
 
 .. image:: images/onlineform_edit.png
 
@@ -41,14 +44,29 @@ To create any record, you will need at least a lastname or surname field. Lost
 animal records need an arealost and description, found animal records need an
 areafound and description, waiting list records need a description.
 
+The "lookup", "radio" or "multi-lookup" field types require a list of
+values. You should separate these with the pipe character. Eg:
+Option 1|Option 2|Option 3
+
+The "signature" field type allows the person completing the form to sign
+electronically with a touchscreen.
+
+A "raw markup" field type allows you to insert your own HTML sections within
+the form. This is useful for adding contract clauses, headings, or any sort
+of extra formatting. 
+
 When forms are submitted through the website they come through to the “View
 Incoming Forms” screen, where the values can be inspected by clicking the name
 of the form submission. The screen shows a preview of the incoming data and the
 IP address that submitted it.
 
+If a field called "emailaddress" is supplied as part of the form submission,
+the complete submission will be emailed automatically to the person who
+completed it for their records.
+
 .. image:: images/onlineform_incoming.png
 
-Selecting a form allows you to create a records from the data, or attach the
+Selecting a form allows you to create records from the data, or attach the
 form to existing records. 
 
 * Attach Person: Prompts for a single person record and attaches a copy of the
