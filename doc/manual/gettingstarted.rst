@@ -122,7 +122,8 @@ follows:
    could create a location called "Dog Block A" with units "1, 2, 3, 4, 5" to
    have 5 numbered pens.  When you use shelter view, you can have it group by
    the location or the location and unit and it will allow you to drag and drop
-   animals between pens and locations to move them around.
+   animals between pens and locations to move them around. It will also 
+   highlight empty pens so you can see capacity at a glance.
 
 4. Go to :menuselection:`Settings --> Lookup Data --> Breeds` - Remove any
    unwanted breeds and species from the database that your shelter does not
