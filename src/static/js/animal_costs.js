@@ -54,7 +54,7 @@ $(function() {
             var buttons = [
                  { id: "new", text: _("New Cost"), icon: "new", enabled: "always", perm: "caad",
                      click: function() { 
-                         tableform.dialog_show_add(dialog, null, animal_costs.costtype_change)
+                         tableform.dialog_show_add(dialog, { onload: animal_costs.costtype_change })
                              .then(function() {
                                  return tableform.fields_post(dialog.fields, "mode=create&animalid="  + controller.animal.ID, "animal_costs");
                              })

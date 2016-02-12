@@ -113,31 +113,34 @@ $(function() {
                          if (controller.animal) {
                             $("#animal").animalchooser("loadbyid", controller.animal.ID);
                          }
-                         tableform.dialog_show_add(dialog, function() {
-                            tableform.fields_post(dialog.fields, "mode=create", controller.name)
-                                 .then(function(response) {
-                                     var row = {};
-                                     row.ID = response;
-                                     tableform.fields_update_row(dialog.fields, row);
-                                     row.LICENCETYPENAME = common.get_field(controller.licencetypes, row.LICENCETYPEID, "LICENCETYPENAME");
-                                     row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
-                                     if (row.ANIMALID && row.ANIMALID != "0") {
-                                         row.ANIMALNAME = $("#animal").animalchooser("get_selected").ANIMALNAME;
-                                         row.SHELTERCODE = $("#animal").animalchooser("get_selected").SHELTERCODE;
-                                     }
-                                     else {
-                                         row.ANIMALID = 0;
-                                         row.ANIMALNAME = "";
-                                         row.SHELTERCODE = "";
-                                     }
-                                     controller.rows.push(row);
-                                     tableform.table_update(table);
-                                     tableform.dialog_close();
-                                 })
-                                 .always(function() {
-                                     tableform.dialog_enable_buttons();
-                                 });
-                            }, licence.type_change);
+                         tableform.dialog_show_add(dialog, {
+                             onadd: function() {
+                                 tableform.fields_post(dialog.fields, "mode=create", controller.name)
+                                     .then(function(response) {
+                                         var row = {};
+                                         row.ID = response;
+                                         tableform.fields_update_row(dialog.fields, row);
+                                         row.LICENCETYPENAME = common.get_field(controller.licencetypes, row.LICENCETYPEID, "LICENCETYPENAME");
+                                         row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
+                                         if (row.ANIMALID && row.ANIMALID != "0") {
+                                             row.ANIMALNAME = $("#animal").animalchooser("get_selected").ANIMALNAME;
+                                             row.SHELTERCODE = $("#animal").animalchooser("get_selected").SHELTERCODE;
+                                         }
+                                         else {
+                                             row.ANIMALID = 0;
+                                             row.ANIMALNAME = "";
+                                             row.SHELTERCODE = "";
+                                         }
+                                         controller.rows.push(row);
+                                         tableform.table_update(table);
+                                         tableform.dialog_close();
+                                     })
+                                     .always(function() {
+                                         tableform.dialog_enable_buttons();
+                                     });
+                             },
+                             onload: licence.type_change
+                         });
                      }
                  },
                  { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dapl",

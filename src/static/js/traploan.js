@@ -77,7 +77,7 @@ $(function() {
                          if (controller.person) {
                              $("#person").personchooser("loadbyid", controller.person.ID);
                          }
-                         tableform.dialog_show_add(dialog, null, traploan.type_change)
+                         tableform.dialog_show_add(dialog, { onload: traploan.type_change })
                              .then(function() {
                                  return tableform.fields_post(dialog.fields, "mode=create", controller.name);
                              })

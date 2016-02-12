@@ -186,24 +186,28 @@ $(function() {
                 var personid = $(this).attr("data-person");
                 var date = $(this).attr("data-date");
                 if (!personid && !date) { return; }
-                tableform.dialog_show_add(dialog, function() {
-                    tableform.fields_post(dialog.fields, "mode=create", controller.name, function(response) {
-                        var row = {};
-                        row.ID = response;
-                        tableform.fields_update_row(dialog.fields, row);
-                        row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
-                        row.ROTATYPENAME = common.get_field(controller.rotatypes, row.ROTATYPEID, "ROTATYPE");
-                        controller.rows.push(row);
-                        staff_rota.generate_table();
-                        tableform.dialog_close();
-                    });
-                }, function() {
-                    $("#startdate").val(date);
-                    $("#enddate").val(date);
-                    $("#starttime").val(config.str("DefaultShiftStart"));
-                    $("#endtime").val(config.str("DefaultShiftEnd"));
-                    $("#person").personchooser("loadbyid", personid);
-                    $("#type").val(1);
+                tableform.dialog_show_add(dialog, {
+                    onadd: function() {
+                        tableform.fields_post(dialog.fields, "mode=create", controller.name)
+                            .then(function(response) {
+                                var row = {};
+                                row.ID = response;
+                                tableform.fields_update_row(dialog.fields, row);
+                                row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
+                                row.ROTATYPENAME = common.get_field(controller.rotatypes, row.ROTATYPEID, "ROTATYPE");
+                                controller.rows.push(row);
+                                staff_rota.generate_table();
+                                tableform.dialog_close();
+                            });
+                    },
+                    onload: function() {
+                        $("#startdate").val(date);
+                        $("#enddate").val(date);
+                        $("#starttime").val(config.str("DefaultShiftStart"));
+                        $("#endtime").val(config.str("DefaultShiftEnd"));
+                        $("#person").personchooser("loadbyid", personid);
+                        $("#type").val(1);
+                    }
                 });
             });
 

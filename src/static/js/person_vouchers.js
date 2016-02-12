@@ -59,7 +59,7 @@ $(function() {
             var buttons = [
                  { id: "new", text: _("New Voucher"), icon: "new", enabled: "always", perm: "vaov", 
                      click: function() { 
-                         tableform.dialog_show_add(dialog, null, person_vouchers.vouchertype_change)
+                         tableform.dialog_show_add(dialog, { onload: person_vouchers.vouchertype_change })
                              .then(function() {
                                  return tableform.fields_post(dialog.fields, "mode=create&personid=" + controller.person.ID, "person_vouchers");
                              })

@@ -265,53 +265,63 @@ $(function() {
 
         new_vacc: function() { 
             var table = vaccination.table, dialog = vaccination.dialog;
-            tableform.dialog_show_add(dialog, function() {
-                tableform.fields_post(dialog.fields, "mode=create", controller.name, function(response) {
-                    var row = {};
-                    row.ID = response;
-                    tableform.fields_update_row(dialog.fields, row);
-                    vaccination.set_extra_fields(row);
-                    controller.rows.push(row);
-                    tableform.table_update(table);
-                    tableform.dialog_close();
-                }, function() {
-                    tableform.dialog_enable_buttons();   
-                });
-            }, function() {
-                if (controller.animal) {
-                    $("#animal").animalchooser("loadbyid", controller.animal.ID);
-                    $("#animal").closest("tr").hide();
+            tableform.dialog_show_add(dialog, {
+                onadd: function() {
+                    tableform.fields_post(dialog.fields, "mode=create", controller.name)
+                        .then(function(response) {
+                            var row = {};
+                            row.ID = response;
+                            tableform.fields_update_row(dialog.fields, row);
+                            vaccination.set_extra_fields(row);
+                            controller.rows.push(row);
+                            tableform.table_update(table);
+                            tableform.dialog_close();
+                        })
+                        .fail(function() {
+                            tableform.dialog_enable_buttons();
+                        });
+                },
+                onload: function() {
+                    if (controller.animal) {
+                        $("#animal").animalchooser("loadbyid", controller.animal.ID);
+                        $("#animal").closest("tr").hide();
+                    }
+                    else {
+                        $("#animal").closest("tr").show();
+                        $("#animal").animalchooser("clear");
+                    }
+                    $("#animals").closest("tr").hide();
+                    $("#administeringvet").personchooser("clear");
+                    $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
+                    $("#type").select("value", config.str("AFDefaultVaccinationType"));
+                    vaccination.enable_default_cost = true;
+                    vaccination.set_default_cost();
                 }
-                else {
-                    $("#animal").closest("tr").show();
-                    $("#animal").animalchooser("clear");
-                }
-                $("#animals").closest("tr").hide();
-                $("#administeringvet").personchooser("clear");
-                $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
-                $("#type").select("value", config.str("AFDefaultVaccinationType"));
-                vaccination.enable_default_cost = true;
-                vaccination.set_default_cost();
             });
         },
 
         new_bulk_vacc: function() {
             var dialog = vaccination.dialog;
-            tableform.dialog_show_add(dialog, function() {
-                tableform.fields_post(dialog.fields, "mode=createbulk", controller.name, function(response) {
-                    tableform.dialog_close();
-                    common.route_reload();
-                }, function() {
-                    tableform.dialog_enable_buttons();   
-                });
-            }, function() {
-                $("#animal").closest("tr").hide();
-                $("#animals").closest("tr").show();
-                $("#animals").animalchoosermulti("clear");
-                $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
-                $("#type").select("value", config.str("AFDefaultVaccinationType"));
-                vaccination.enable_default_cost = true;
-                vaccination.set_default_cost();
+            tableform.dialog_show_add(dialog, {
+                onadd: function() {
+                    tableform.fields_post(dialog.fields, "mode=createbulk", controller.name)
+                        .then(function(response) {
+                            tableform.dialog_close();
+                            common.route_reload();
+                        })
+                        .fail(function() {
+                            tableform.dialog_enable_buttons();   
+                        });
+                },
+                onload: function() {
+                    $("#animal").closest("tr").hide();
+                    $("#animals").closest("tr").show();
+                    $("#animals").animalchoosermulti("clear");
+                    $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
+                    $("#type").select("value", config.str("AFDefaultVaccinationType"));
+                    vaccination.enable_default_cost = true;
+                    vaccination.set_default_cost();
+                }
             });
         },
 

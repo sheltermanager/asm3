@@ -33,7 +33,7 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row, null, additional.check_type)
+                    tableform.dialog_show_edit(dialog, row, { onload: additional.check_type })
                         .then(function() {
                             tableform.fields_update_row(dialog.fields, row);
                             row.FIELDTYPENAME = common.get_field(controller.fieldtypes, row.FIELDTYPE, "FIELDTYPE");
@@ -59,7 +59,7 @@ $(function() {
             var buttons = [
                  { id: "new", text: _("New Field"), icon: "new", enabled: "always", 
                      click: function() { 
-                         tableform.dialog_show_add(dialog, null, additional.check_type)
+                         tableform.dialog_show_add(dialog, { onload: additional.check_type })
                              .then(function() {
                                  return tableform.fields_post(dialog.fields, "mode=create", "additional");
                              })

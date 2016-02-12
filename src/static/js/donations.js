@@ -129,40 +129,44 @@ $(function() {
             var buttons = [
                 { id: "new", text: _("New Payment"), icon: "new", enabled: "always", perm: "oaod",
                      click: function() { 
-                        donations.create_semaphore = true;
-                        $("#animal").animalchooser("clear");
-                        $("#person").personchooser("clear");
-                        if (controller.animal) {
-                            $("#animal").animalchooser("loadbyid", controller.animal.ID);
-                        }
-                        if (controller.person) {
-                            $("#person").personchooser("loadbyid", controller.person.ID);
-                            donations.update_movements(controller.person.ID);
-                        }
-                        $("#type").select("value", config.integer("AFDefaultDonationType"));
-                        $("#giftaid").prop("checked", false);
-                        $("#receiptnumber").val("");
-                        $("#receiptnumber").closest("tr").hide();
-                        donations.type_change();
-                        $("#vatrate").closest("tr").hide();
-                        $("#vatamount").closest("tr").hide();
-                        tableform.dialog_show_add(dialog, function() {
-                            if (!donations.validation()) { tableform.dialog_enable_buttons(); return; }
-                            tableform.fields_post(dialog.fields, "mode=create", controller.name)
-                                .then(function(response) {
-                                    var row = {};
-                                    row.ID = response;
-                                    tableform.fields_update_row(dialog.fields, row);
-                                    donations.set_extra_fields(row);
-                                    row.RECEIPTNUMBER = format.padleft(row.ID, 8);
-                                    controller.rows.push(row);
-                                    tableform.table_update(table);
-                                    donations.calculate_total();
-                                    tableform.dialog_close();
-                                })
-                                .fail(function() {
-                                    tableform.dialog_enable_buttons();   
-                                });
+                        tableform.dialog_show_add(dialog, {
+                            onadd: function() {
+                                if (!donations.validation()) { tableform.dialog_enable_buttons(); return; }
+                                tableform.fields_post(dialog.fields, "mode=create", controller.name)
+                                    .then(function(response) {
+                                        var row = {};
+                                        row.ID = response;
+                                        tableform.fields_update_row(dialog.fields, row);
+                                        donations.set_extra_fields(row);
+                                        row.RECEIPTNUMBER = format.padleft(row.ID, 8);
+                                        controller.rows.push(row);
+                                        tableform.table_update(table);
+                                        donations.calculate_total();
+                                        tableform.dialog_close();
+                                    })
+                                    .fail(function() {
+                                        tableform.dialog_enable_buttons();   
+                                    });
+                            },
+                            onload: function() {
+                                donations.create_semaphore = true;
+                                $("#animal").animalchooser("clear");
+                                $("#person").personchooser("clear");
+                                if (controller.animal) {
+                                    $("#animal").animalchooser("loadbyid", controller.animal.ID);
+                                }
+                                if (controller.person) {
+                                    $("#person").personchooser("loadbyid", controller.person.ID);
+                                    donations.update_movements(controller.person.ID);
+                                }
+                                $("#type").select("value", config.integer("AFDefaultDonationType"));
+                                $("#giftaid").prop("checked", false);
+                                $("#receiptnumber").val("");
+                                $("#receiptnumber").closest("tr").hide();
+                                donations.type_change();
+                                $("#vatrate").closest("tr").hide();
+                                $("#vatamount").closest("tr").hide();
+                            }
                         });
                      } 
                  },

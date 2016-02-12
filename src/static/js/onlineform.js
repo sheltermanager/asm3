@@ -49,7 +49,7 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row, null, onlineform.check_lookups)
+                    tableform.dialog_show_edit(dialog, row, { onload: onlineform.check_lookups })
                         .then(function() {
                             tableform.fields_update_row(dialog.fields, row);
                             return tableform.fields_post(dialog.fields, "mode=update&formfieldid=" + row.ID, "onlineform");
@@ -75,7 +75,7 @@ $(function() {
             var buttons = [
                  { id: "new", text: _("New form field"), icon: "new", enabled: "always", 
                      click: function() { 
-                         tableform.dialog_show_add(dialog, null, onlineform.check_lookups)
+                         tableform.dialog_show_add(dialog, { onload: onlineform.check_lookups })
                              .then(function() {
                                 return tableform.fields_post(dialog.fields, "mode=create&formid=" + controller.formid, "onlineform");
                              })

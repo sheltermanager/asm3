@@ -32,11 +32,13 @@ $(function() {
             var buttons = [
                  { id: "new", text: _("New"), icon: "document", tooltip: _("Create a new template"), enabled: "always", 
                      click: function() { 
-                         tableform.dialog_show_add(dialog, function() {
-                             tableform.fields_post(dialog.fields, "mode=create", "document_templates", function(response) {
+                         tableform.dialog_show_add(dialog)
+                             .then(function() {
+                                 return tableform.fields_post(dialog.fields, "mode=create", "document_templates");
+                             })
+                             .then(function(response) {
                                  common.route("document_edit?template=" + response);
                              });
-                         });
                      } 
                  },
                  { id: "newodt", text: _("Upload ODT"), icon: "media-add", tooltip: _("Upload a new OpenOffice template"), enabled: "always", 

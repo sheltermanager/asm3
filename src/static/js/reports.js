@@ -91,18 +91,21 @@ $(function() {
                 idcolumn: "ID",
                 edit: function(row) {
                     tableform.dialog_error("");
-                    tableform.dialog_show_edit(dialog, row, function() {
-                        if (!reports.validation()) { tableform.dialog_enable_buttons(); return; }
-                        tableform.fields_update_row(dialog.fields, row);
-                        tableform.fields_post(dialog.fields, "mode=update&reportid=" + row.ID, "reports", function(response) {
-                            tableform.table_update(table);
-                            tableform.dialog_close();
-                        });
-                    }, function(row) {
-                        var type = "REPORT";
-                        if (row.HTMLBODY.indexOf("GRAPH") == 0 || row.HTMLBODY.indexOf("MAIL") == 0 || row.HTMLBODY.indexOf("MAP") == 0) { type = row.HTMLBODY; }
-                        $("#type").select("value", type);
-                        reports.change_type();
+                    tableform.dialog_show_edit(dialog, row, {
+                        onchange: function() {
+                            if (!reports.validation()) { tableform.dialog_enable_buttons(); return; }
+                            tableform.fields_update_row(dialog.fields, row);
+                            tableform.fields_post(dialog.fields, "mode=update&reportid=" + row.ID, "reports", function(response) {
+                                tableform.table_update(table);
+                                tableform.dialog_close();
+                            });
+                        },
+                        onload: function(row) {
+                            var type = "REPORT";
+                            if (row.HTMLBODY.indexOf("GRAPH") == 0 || row.HTMLBODY.indexOf("MAIL") == 0 || row.HTMLBODY.indexOf("MAP") == 0) { type = row.HTMLBODY; }
+                            $("#type").select("value", type);
+                            reports.change_type();
+                        }
                     });
                 },
                 columns: [
@@ -134,43 +137,51 @@ $(function() {
                  { id: "new", text: _("New Report"), icon: "new", enabled: "always", 
                      click: function() { 
                         tableform.dialog_error("");
-                         tableform.dialog_show_add(dialog, function() {
-                             if (!reports.validation()) { tableform.dialog_enable_buttons(); return; }
-                             tableform.fields_post(dialog.fields, "mode=create", "reports", function(response) {
-                                 var row = {};
-                                 row.ID = response;
-                                 row.VIEWROLES = "";
-                                 tableform.fields_update_row(dialog.fields, row);
-                                 controller.rows.push(row);
-                                 tableform.table_update(table);
-                                 tableform.dialog_close();
-                             });
-                         }, function() {
-                            $("#type").select("value", "REPORT");
-                            reports.change_type();
+                         tableform.dialog_show_add(dialog, {
+                             onadd: function() {
+                                 if (!reports.validation()) { tableform.dialog_enable_buttons(); return; }
+                                 tableform.fields_post(dialog.fields, "mode=create", "reports")
+                                     .then(function(response) {
+                                         var row = {};
+                                         row.ID = response;
+                                         row.VIEWROLES = "";
+                                         tableform.fields_update_row(dialog.fields, row);
+                                         controller.rows.push(row);
+                                         tableform.table_update(table);
+                                         tableform.dialog_close();
+                                     });
+                             },
+                            onload: function() {
+                                $("#type").select("value", "REPORT");
+                                reports.change_type();
+                            }
                          });
                      } 
                  },
                  { id: "clone", text: _("Clone"), icon: "copy", enabled: "one", 
                      click: function() { 
                          tableform.dialog_error("");
-                         tableform.dialog_show_add(dialog, function() {
-                             if (!reports.validation()) { tableform.dialog_enable_buttons(); return; }
-                             tableform.fields_post(dialog.fields, "mode=create", "reports", function(response) {
-                                 var row = {};
-                                 row.ID = response;
-                                 tableform.fields_update_row(dialog.fields, row);
-                                 controller.rows.push(row);
-                                 tableform.table_update(table);
-                                 tableform.dialog_close();
-                             });
-                         }, function() {
-                             var row = tableform.table_selected_row(table);
-                             tableform.fields_populate_from_json(dialog.fields, row);
-                             $("#title").val(_("Copy of {0}").replace("{0}", $("#title").val()));
-                             var type = "REPORT";
-                             if (row.HTMLBODY.indexOf("GRAPH") == 0 || row.HTMLBODY.indexOf("MAIL") == 0 || row.HTMLBODY.indexOf("MAP") == 0) { type = row.HTMLBODY; }
-                             $("#type").select("value", type);
+                         tableform.dialog_show_add(dialog, {
+                             onadd: function() {
+                                 if (!reports.validation()) { tableform.dialog_enable_buttons(); return; }
+                                 tableform.fields_post(dialog.fields, "mode=create", "reports")
+                                     .then(function(response) {
+                                         var row = {};
+                                         row.ID = response;
+                                         tableform.fields_update_row(dialog.fields, row);
+                                         controller.rows.push(row);
+                                         tableform.table_update(table);
+                                         tableform.dialog_close();
+                                     });
+                             },
+                             onload: function() {
+                                 var row = tableform.table_selected_row(table);
+                                 tableform.fields_populate_from_json(dialog.fields, row);
+                                 $("#title").val(_("Copy of {0}").replace("{0}", $("#title").val()));
+                                 var type = "REPORT";
+                                 if (row.HTMLBODY.indexOf("GRAPH") == 0 || row.HTMLBODY.indexOf("MAIL") == 0 || row.HTMLBODY.indexOf("MAP") == 0) { type = row.HTMLBODY; }
+                                 $("#type").select("value", type);
+                             }
                          });
                      } 
                  },

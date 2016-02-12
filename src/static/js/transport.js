@@ -62,40 +62,43 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row, function() {
-                        tableform.fields_update_row(dialog.fields, row);
-                        row.ANIMALNAME = $("#animal").animalchooser("get_selected").ANIMALNAME;
-                        row.SHELTERCODE = $("#animal").animalchooser("get_selected").SHELTERCODE;
-                        if (row.DRIVEROWNERID && row.DRIVEROWNERID != "0") { 
-                            row.DRIVEROWNERNAME = $("#driver").personchooser("get_selected").OWNERNAME; 
-                            row.DRIVEROWNERADDRESS = $("#driver").personchooser("get_selected").OWNERADDRESS; 
-                            row.DRIVEROWNERTOWN = $("#driver").personchooser("get_selected").OWNERTOWN; 
-                            row.DRIVEROWNERCOUNTY = $("#driver").personchooser("get_selected").OWNERCOUNTY; 
-                            row.DRIVEROWNERPOSTCODE = $("#driver").personchooser("get_selected").OWNERPOSTCODE; 
+                    tableform.dialog_show_edit(dialog, row, {
+                        onchange: function() {
+                            tableform.fields_update_row(dialog.fields, row);
+                            row.ANIMALNAME = $("#animal").animalchooser("get_selected").ANIMALNAME;
+                            row.SHELTERCODE = $("#animal").animalchooser("get_selected").SHELTERCODE;
+                            if (row.DRIVEROWNERID && row.DRIVEROWNERID != "0") { 
+                                row.DRIVEROWNERNAME = $("#driver").personchooser("get_selected").OWNERNAME; 
+                                row.DRIVEROWNERADDRESS = $("#driver").personchooser("get_selected").OWNERADDRESS; 
+                                row.DRIVEROWNERTOWN = $("#driver").personchooser("get_selected").OWNERTOWN; 
+                                row.DRIVEROWNERCOUNTY = $("#driver").personchooser("get_selected").OWNERCOUNTY; 
+                                row.DRIVEROWNERPOSTCODE = $("#driver").personchooser("get_selected").OWNERPOSTCODE; 
+                            }
+                            if (row.PICKUPOWNERID && row.PICKUPOWNERID != "0") { 
+                                row.PICKUPOWNERNAME = $("#pickup").personchooser("get_selected").OWNERNAME; 
+                                row.PICKUPOWNERADDRESS = $("#pickup").personchooser("get_selected").OWNERADDRESS; 
+                                row.PICKUPOWNERTOWN = $("#pickup").personchooser("get_selected").OWNERTOWN; 
+                                row.PICKUPOWNERCOUNTY = $("#pickup").personchooser("get_selected").OWNERCOUNTY; 
+                                row.PICKUPOWNERPOSTCODE = $("#pickup").personchooser("get_selected").OWNERPOSTCODE; 
+                            }
+                            if (row.DROPOFFOWNERID && row.DROPOFFOWNERID != "0") { 
+                                row.DROPOFFOWNERNAME = $("#dropoff").personchooser("get_selected").OWNERNAME; 
+                                row.DROPOFFOWNERADDRESS = $("#dropoff").personchooser("get_selected").OWNERADDRESS; 
+                                row.DROPOFFOWNERTOWN = $("#dropoff").personchooser("get_selected").OWNERTOWN; 
+                                row.DROPOFFOWNERCOUNTY = $("#dropoff").personchooser("get_selected").OWNERCOUNTY; 
+                                row.DROPOFFOWNERPOSTCODE = $("#dropoff").personchooser("get_selected").OWNERPOSTCODE; 
+                            }
+                            tableform.fields_post(dialog.fields, "mode=update&transportid=" + row.ID, controller.name, function(response) {
+                                tableform.table_update(table);
+                                tableform.dialog_close();
+                            }, function() { 
+                                tableform.dialog_enable_buttons();
+                            });
+                        },
+                        onload: function() {
+                            $("#animal").closest("tr").show();
+                            $("#animals").closest("tr").hide();
                         }
-                        if (row.PICKUPOWNERID && row.PICKUPOWNERID != "0") { 
-                            row.PICKUPOWNERNAME = $("#pickup").personchooser("get_selected").OWNERNAME; 
-                            row.PICKUPOWNERADDRESS = $("#pickup").personchooser("get_selected").OWNERADDRESS; 
-                            row.PICKUPOWNERTOWN = $("#pickup").personchooser("get_selected").OWNERTOWN; 
-                            row.PICKUPOWNERCOUNTY = $("#pickup").personchooser("get_selected").OWNERCOUNTY; 
-                            row.PICKUPOWNERPOSTCODE = $("#pickup").personchooser("get_selected").OWNERPOSTCODE; 
-                        }
-                        if (row.DROPOFFOWNERID && row.DROPOFFOWNERID != "0") { 
-                            row.DROPOFFOWNERNAME = $("#dropoff").personchooser("get_selected").OWNERNAME; 
-                            row.DROPOFFOWNERADDRESS = $("#dropoff").personchooser("get_selected").OWNERADDRESS; 
-                            row.DROPOFFOWNERTOWN = $("#dropoff").personchooser("get_selected").OWNERTOWN; 
-                            row.DROPOFFOWNERCOUNTY = $("#dropoff").personchooser("get_selected").OWNERCOUNTY; 
-                            row.DROPOFFOWNERPOSTCODE = $("#dropoff").personchooser("get_selected").OWNERPOSTCODE; 
-                        }
-                        tableform.fields_post(dialog.fields, "mode=update&transportid=" + row.ID, controller.name, function(response) {
-                            tableform.table_update(table);
-                            tableform.dialog_close();
-                        }, function() { 
-                            tableform.dialog_enable_buttons();
-                        });
-                    }, function() {
-                        $("#animal").closest("tr").show();
-                        $("#animals").closest("tr").hide();
                     });
                 },
                 complete: function(row) {

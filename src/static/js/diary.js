@@ -31,39 +31,42 @@ $(function() {
                 idcolumn: "ID",
                 edit: function(row) {
                     tableform.fields_populate_from_json(dialog.fields, row);
-                    tableform.dialog_show_edit(dialog, row, function() {
-                        tableform.fields_update_row(dialog.fields, row);
-                        tableform.fields_post(dialog.fields, "mode=update&diaryid=" + row.ID, controller.name, function(response) {
-                            tableform.table_update(table);
-                            tableform.dialog_close();
+                    tableform.dialog_show_edit(dialog, row, {
+                        onchange: function() {
+                            tableform.fields_update_row(dialog.fields, row);
+                            tableform.fields_post(dialog.fields, "mode=update&diaryid=" + row.ID, controller.name)
+                                .then(function(response) {
+                                    tableform.table_update(table);
+                                    tableform.dialog_close();
+                                })
+                                .fail(function(response) {
+                                    tableform.dialog_error(response);
+                                    tableform.dialog_enable_buttons();
+                                });
                         },
-                        function(response) {
-                            tableform.dialog_error(response);
-                            tableform.dialog_enable_buttons();
-                        });
-                    }, function(row) {
-                       
-                        // If this is my/all diary notes, and the user does not
-                        // have the edit all diary notes permission and is not
-                        // the person who created the diary note, they should only 
-                        // be able to edit the comments.
-                        if ((controller.name.indexOf("diary_edit") == 0) && (row.CREATEDBY != asm.user) && (!common.has_permission("eadn"))) {
-                            $("#subjecttext").remove();
-                            $("#notetext").remove();
-                            $("#note").closest("span").hide();
-                            $("#subject").hide();
-                            $("#note").closest("td").append("<span id='notetext'>" + row.NOTE + "</span>");
-                            $("#subject").closest("td").append("<span id='subjecttext'>" + row.SUBJECT + "</span>");
-                        }
-                        else {
-                            $("#subjecttext").remove();
-                            $("#notetext").remove();
-                            $("#subject").show();
-                            $("#note").closest("span").show();
-                        }
+                        onload: function(row) {
+                            // If this is my/all diary notes, and the user does not
+                            // have the edit all diary notes permission and is not
+                            // the person who created the diary note, they should only 
+                            // be able to edit the comments.
+                            if ((controller.name.indexOf("diary_edit") == 0) && (row.CREATEDBY != asm.user) && (!common.has_permission("eadn"))) {
+                                $("#subjecttext").remove();
+                                $("#notetext").remove();
+                                $("#note").closest("span").hide();
+                                $("#subject").hide();
+                                $("#note").closest("td").append("<span id='notetext'>" + row.NOTE + "</span>");
+                                $("#subject").closest("td").append("<span id='subjecttext'>" + row.SUBJECT + "</span>");
+                            }
+                            else {
+                                $("#subjecttext").remove();
+                                $("#notetext").remove();
+                                $("#subject").show();
+                                $("#note").closest("span").show();
+                            }
 
-                        // Allow editing of the comments once the diary is created
-                        $("#comments").closest("tr").show();
+                            // Allow editing of the comments once the diary is created
+                            $("#comments").closest("tr").show();
+                        }
                     });
                 },
                 complete: function(row) {
@@ -208,16 +211,20 @@ $(function() {
         },
 
         new_note: function() {
-            tableform.dialog_show_add(diary.dialog, function() {
-                tableform.fields_post(diary.dialog.fields, "mode=create&linkid=" + controller.linkid, controller.name, function(response) {
-                    var row = {};
-                    row.ID = response;
-                    tableform.fields_update_row(diary.dialog.fields, row);
-                    diary.set_extra_fields(row);
-                    controller.rows.push(row);
-                    tableform.table_update(diary.table);
-                    tableform.dialog_close();
-                }, function() {
+            tableform.dialog_show_add(diary.dialog, {
+                onadd: function() {
+                    tableform.fields_post(diary.dialog.fields, "mode=create&linkid=" + controller.linkid, controller.name)
+                        .then(function(response) {
+                            var row = {};
+                            row.ID = response;
+                            tableform.fields_update_row(diary.dialog.fields, row);
+                            diary.set_extra_fields(row);
+                            controller.rows.push(row);
+                            tableform.table_update(diary.table);
+                            tableform.dialog_close();
+                        });
+                },
+                onload: function() {
 
                     tableform.dialog_enable_buttons(); 
 
@@ -229,7 +236,7 @@ $(function() {
 
                     // Hide the comments field for new diary notes
                     $("#comments").closest("tr").hide();
-                });
+                }
             });
         },
 

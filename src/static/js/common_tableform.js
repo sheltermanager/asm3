@@ -580,10 +580,11 @@
          * Shows the dialog in add mode 
          * 
          * dialog: (see dialog_render)
-         * callback: function to run when the user clicks the add button (after validation)
-         * onloadcallback: function to run when the form has loaded and been displayed
+         * o: options/events - 
+         *  onadd: function to run when the user clicks the add button (after validation)
+         *  onload: function to run when the form has loaded and been displayed
          */
-        dialog_show_add: function(dialog, callback, onloadcallback) {
+        dialog_show_add: function(dialog, o) {
 
             var deferred = $.Deferred();
 
@@ -633,7 +634,7 @@
                         else {
                             tableform.dialog_disable_buttons();
                         }
-                        if (callback) { callback(); }
+                        if (o && o.onadd) { o.onadd(); }
                         deferred.resolve();
                     }
                 }
@@ -684,8 +685,8 @@
             });
             this.dialog_error("");
             $("#dialog-tableform").dialog("open");
-            if (onloadcallback) {
-                onloadcallback();
+            if (o && o.onload) {
+                o.onload();
             }
             return deferred.promise();
         },
@@ -695,11 +696,12 @@
          * 
          * dialog: (see dialog_render)
          * row: The row to edit
-         * changecallback: function to run when the user clicks the change button (after validation)
-         * loadcallback: function to run after the form has been loaded and displayed
-         * deletecallback: function to run after the delete button is clicked
+         * o: options/events -
+         *  onchange: function to run when the user clicks the change button (after validation)
+         *  onload: function to run after the form has been loaded and displayed
+         *  ondelete: function to run after the delete button is clicked
          */
-        dialog_show_edit: function(dialog, row, changecallback, loadcallback, deletecallback) {
+        dialog_show_edit: function(dialog, row, o) {
 
             var deferred = $.Deferred();
 
@@ -741,8 +743,8 @@
                     "class": 'asm-redbutton',
                     click: function() {
                         tableform.dialog_disable_buttons();
-                        if (deletecallback) {
-                            deletecallback(row);
+                        if (o && o.ondelete) {
+                            o.ondelete(row);
                         }
                         deferred.reject("delete", row);
                     }
@@ -760,8 +762,8 @@
                             else {
                                 tableform.dialog_disable_buttons();
                             }
-                            if (changecallback) {
-                                changecallback(row);
+                            if (o && o.onchange) {
+                                o.onchange(row);
                             }
                             deferred.resolve(row);
                         }
@@ -832,8 +834,8 @@
             });
             this.dialog_error("");
             $("#dialog-tableform").dialog("open");
-            if (loadcallback) {
-                loadcallback(row);
+            if (o && o.onload) {
+                o.onload(row);
             }
             return deferred.promise();
         },

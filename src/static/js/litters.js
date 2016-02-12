@@ -78,8 +78,10 @@ $(function() {
                         var formdata = "mode=nextlitterid";
                         common.ajax_post("litters", formdata)
                             .then(function(result) { 
-                                return tableform.dialog_show_add(dialog, null, function() {
-                                    $("#litterref").val(result);
+                                return tableform.dialog_show_add(dialog, { 
+                                    onload: function() {
+                                        $("#litterref").val(result);
+                                    }
                                 });
                             })
                             .then(function() {

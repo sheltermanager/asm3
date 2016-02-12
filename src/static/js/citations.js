@@ -88,7 +88,7 @@ $(function() {
                          if (controller.incident && controller.incident.OWNERID) {
                              $("#person").personchooser("loadbyid", controller.incident.OWNERID);
                          }
-                         tableform.dialog_show_add(dialog, null, citations.type_change)
+                         tableform.dialog_show_add(dialog, { onload: citations.type_change })
                              .then(function() {
                                  var incid = "";
                                  if (controller.incident) { incid = controller.incident.ACID; }

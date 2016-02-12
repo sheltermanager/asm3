@@ -184,62 +184,65 @@ $(function() {
             var buttons = [
                 { id: "new", text: _("New Movement"), icon: "new", enabled: "always", perm: "aamv", 
                      click: function() { 
-                        tableform.dialog_show_add(dialog, function() {
-                            if (!movements.validation()) { tableform.dialog_enable_buttons(); return; }
-                            tableform.fields_post(dialog.fields, "mode=create", controller.name)
-                                .then(function(response) {
-                                    var row = {};
-                                    row.ID = response;
-                                    tableform.fields_update_row(dialog.fields, row);
-                                    movements.set_extra_fields(row);
-                                    row.ADOPTIONNUMBER = format.padleft(response, 6);
-                                    controller.rows.push(row);
-                                    tableform.table_update(table);
-                                    tableform.dialog_close();
-                                })
-                                .fail(function() {
-                                    tableform.dialog_enable_buttons();   
-                                });
-                        }, function() {
-                            // Setup the dialog for a new record
-                            $("#animal").animalchooser("clear");
-                            $("#person").personchooser("clear");
-                            $("#retailer").personchooser("clear");
-                            if (controller.animal) {
-                                $("#animal").animalchooser("loadbyid", controller.animal.ID);
-                            }
-                            if (controller.person) {
-                                $("#person").personchooser("loadbyid", controller.person.ID);
-                            }
-                            $("#type").select("value", "0");
-                            $("#returncategory").select("value", config.str("AFDefaultReturnReason"));
-                            $("#reservationstatus").select("value", config.str("AFDefaultReservationStatus"));
-                            $("#adoptionno").closest("tr").hide();
+                        tableform.dialog_show_add(dialog, {
+                            onadd: function() {
+                                if (!movements.validation()) { tableform.dialog_enable_buttons(); return; }
+                                tableform.fields_post(dialog.fields, "mode=create", controller.name)
+                                    .then(function(response) {
+                                        var row = {};
+                                        row.ID = response;
+                                        tableform.fields_update_row(dialog.fields, row);
+                                        movements.set_extra_fields(row);
+                                        row.ADOPTIONNUMBER = format.padleft(response, 6);
+                                        controller.rows.push(row);
+                                        tableform.table_update(table);
+                                        tableform.dialog_close();
+                                    })
+                                    .fail(function() {
+                                        tableform.dialog_enable_buttons();   
+                                    });
+                            },
+                            onload: function() {
+                                // Setup the dialog for a new record
+                                $("#animal").animalchooser("clear");
+                                $("#person").personchooser("clear");
+                                $("#retailer").personchooser("clear");
+                                if (controller.animal) {
+                                    $("#animal").animalchooser("loadbyid", controller.animal.ID);
+                                }
+                                if (controller.person) {
+                                    $("#person").personchooser("loadbyid", controller.person.ID);
+                                }
+                                $("#type").select("value", "0");
+                                $("#returncategory").select("value", config.str("AFDefaultReturnReason"));
+                                $("#reservationstatus").select("value", config.str("AFDefaultReservationStatus"));
+                                $("#adoptionno").closest("tr").hide();
 
-                            // Choose an appropriate default type based on our controller
-                            if (controller.name == "move_book_foster") { $("#type").select("value", "2"); }
-                            if (controller.name == "move_book_recent_adoption") { $("#type").select("value", "1"); }
-                            if (controller.name == "move_book_recent_transfer") { $("#type").select("value", "3"); }
-                            if (controller.name == "move_book_retailer") { $("#type").select("value", "8"); }
-                            if (controller.name == "move_book_trial_adoption") { 
-                                $("#type").select("value", "1"); 
-                                $("#trial").prop("checked", true);
-                            }
+                                // Choose an appropriate default type based on our controller
+                                if (controller.name == "move_book_foster") { $("#type").select("value", "2"); }
+                                if (controller.name == "move_book_recent_adoption") { $("#type").select("value", "1"); }
+                                if (controller.name == "move_book_recent_transfer") { $("#type").select("value", "3"); }
+                                if (controller.name == "move_book_retailer") { $("#type").select("value", "8"); }
+                                if (controller.name == "move_book_trial_adoption") { 
+                                    $("#type").select("value", "1"); 
+                                    $("#trial").prop("checked", true);
+                                }
 
-                            // If we're in a book other than the reservation book, set the movement date to today
-                            if (controller.name.indexOf("move_book") == 0 && controller.name != "move_book_reservation") {
-                                $("#movementdate").val(format.date(new Date()));
-                            }
+                                // If we're in a book other than the reservation book, set the movement date to today
+                                if (controller.name.indexOf("move_book") == 0 && controller.name != "move_book_reservation") {
+                                    $("#movementdate").val(format.date(new Date()));
+                                }
 
-                            // If we're in the reservation book, create the reserve for today
-                            if (controller.name == "move_book_reservation") {
-                                $("#reservationdate").val(format.date(new Date()));
-                            }
+                                // If we're in the reservation book, create the reserve for today
+                                if (controller.name == "move_book_reservation") {
+                                    $("#reservationdate").val(format.date(new Date()));
+                                }
 
-                            tableform.dialog_error();
-                            movements.type_change();
-                            $("#returndate").val("");
-                            movements.returndate_change();
+                                tableform.dialog_error();
+                                movements.type_change();
+                                $("#returndate").val("");
+                                movements.returndate_change();
+                            }
                         });
                      } 
                  },
@@ -267,24 +270,26 @@ $(function() {
                         tableform.fields_populate_from_json(dialog.fields, row);
                         movements.type_change(); 
                         movements.returndate_change();
-                        tableform.dialog_show_edit(dialog, row, function() {
-                            if (!movements.validation()) { tableform.dialog_enable_buttons(); return; }
-                            tableform.fields_update_row(dialog.fields, row);
-                            movements.set_extra_fields(row);
-                            tableform.fields_post(dialog.fields, "mode=update&movementid=" + row.ID, controller.name, function(response) {
-                                tableform.table_update(table);
-                                tableform.dialog_close();
+                        tableform.dialog_show_edit(dialog, row, {
+                            onchange: function() {
+                                if (!movements.validation()) { tableform.dialog_enable_buttons(); return; }
+                                tableform.fields_update_row(dialog.fields, row);
+                                movements.set_extra_fields(row);
+                                tableform.fields_post(dialog.fields, "mode=update&movementid=" + row.ID, controller.name, function(response) {
+                                    tableform.table_update(table);
+                                    tableform.dialog_close();
+                                },
+                                function(response) {
+                                    tableform.dialog_error(response);
+                                    tableform.dialog_enable_buttons();
+                                });
                             },
-                            function(response) {
-                                tableform.dialog_error(response);
-                                tableform.dialog_enable_buttons();
-                            });
-                        },
-                        function() {
-                            $("#type").select("value", "1");
-                            $("#movementdate").val(format.date(new Date()));
-                            movements.type_change(); 
-                            movements.returndate_change();
+                            onload: function() {
+                                $("#type").select("value", "1");
+                                $("#movementdate").val(format.date(new Date()));
+                                movements.type_change(); 
+                                movements.returndate_change();
+                            }
                         });
                      }
                  },
@@ -298,22 +303,24 @@ $(function() {
                         tableform.fields_populate_from_json(dialog.fields, row);
                         movements.type_change(); 
                         movements.returndate_change();
-                        tableform.dialog_show_edit(dialog, row, function() {
-                            if (!movements.validation()) { tableform.dialog_enable_buttons(); return; }
-                            tableform.fields_update_row(dialog.fields, row);
-                            movements.set_extra_fields(row);
-                            tableform.fields_post(dialog.fields, "mode=update&movementid=" + row.ID, controller.name, function(response) {
-                                tableform.table_update(table);
-                                tableform.dialog_close();
+                        tableform.dialog_show_edit(dialog, row, { 
+                            onchange: function() {
+                                if (!movements.validation()) { tableform.dialog_enable_buttons(); return; }
+                                tableform.fields_update_row(dialog.fields, row);
+                                movements.set_extra_fields(row);
+                                tableform.fields_post(dialog.fields, "mode=update&movementid=" + row.ID, controller.name, function(response) {
+                                    tableform.table_update(table);
+                                    tableform.dialog_close();
+                                },
+                                function(response) {
+                                    tableform.dialog_error(response);
+                                    tableform.dialog_enable_buttons();
+                                });
                             },
-                            function(response) {
-                                tableform.dialog_error(response);
-                                tableform.dialog_enable_buttons();
-                            });
-                        },
-                        function() {
-                            $("#returndate").val(format.date(new Date()));
-                            movements.returndate_change();
+                            onload: function() {
+                                $("#returndate").val(format.date(new Date()));
+                                movements.returndate_change();
+                            }
                         });
                      }
                  }
