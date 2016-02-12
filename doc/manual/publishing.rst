@@ -349,6 +349,13 @@ information and new owner info to PETtrac to update their records. ASM tracks
 the date PETtrac was last updated, so if the animal is returned and adopted
 again, another update will be done automatically.
 
+In order to handle re-registrations, you will need to nominate one of your
+system users as the "authorised user". This user account needs to have a real
+name and an electronic signature on file. When re-registrations are generated,
+ASM will create a signed PDF disclaimer document to transmit to AVID,
+explaining that the shelter has done all it can to find the previous owner of
+the animal.
+
 idENTICHIP/Anibase UK
 ---------------------
 

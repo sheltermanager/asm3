@@ -45,7 +45,7 @@ There are a number of special keyword terms you can use:
 * forpublish – all animals available for adoption and matching publishing
   options
 * people – all people
-* fosterers, volunteers, shelters, aco, staff, retailers, vets, homechecked,
+* fosterers, volunteers, shelters, aco, banned, staff, retailers, vets, homechecked,
   homecheckers, drivers, members and donors – all people with those flags set
 * reservenohomecheck - active reservations where a homecheck has not been done
 * activelost – all lost animals who have not been found yet

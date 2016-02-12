@@ -99,14 +99,16 @@ The animal details tab contains all the basic information about the animal,
 including it's breed, species, name, age, location within the shelter,
 identifying code etc. 
 
-A special option appears for “Non-Shelter Animal” (as shown in the screenshot).
-Tick this box if the animal is nothing to do with your shelter, but you want to
-utilise ASM's facilities in managing vaccinations, etc. This is very useful for
-shelters that run their own clinics which are open to members of the public
-(and of course it allows clinics and vets to run their operations with ASM too
-if they don't handle adoptions, etc).
+A number of flags are available from a dropdown, including “Non-Shelter
+Animal”.  Set this flag if the animal is nothing to do with your shelter, but
+you want to utilise ASM's facilities in managing vaccinations, registering
+microchips, etc.  This is very useful for shelters that run their own clinics
+which are open to members of the public. Non-shelter animals are also useful in
+combination with the courtesy listing flag, which allows you to manage adoption
+listings for other shelters or owners without having those animals in your
+figures.
 
-You can also tick a “not for adoption” flag, which enables you to hide this
+You can also set a “not for adoption” flag, which enables you to hide this
 animal from the internet publishers. Using the Hold and Quarantine flags will
 also hide the animal from publishing and add an emblem (a little icon) when you
 see the animal.

@@ -4390,7 +4390,9 @@ class PETtracUKPublisher(AbstractPublisher):
                     "petspecies": species,
                     "petbreed": breed,
                     "petneutered": an["NEUTERED"] == 1 and "true" or "false",
-                    "petcolour": an["BASECOLOURNAME"]
+                    "petcolour": an["BASECOLOURNAME"],
+                    "selfreg": "true", # register the shelter as alternative contact
+                    "test": "false" # if true, tells avid not to make any data changes
                 }
 
                 self.log("HTTP POST request %s: %s" % (PETTRAC_UK_POST_URL, str(fields)))

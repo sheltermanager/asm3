@@ -103,23 +103,40 @@ follows:
 1. If you want to use your own animal classifications, you can use the
    :menuselection:`Settings --> Lookup Data --> Animal Types` to alter the
    standard ASM ones - ASM assumes your shelter deals with dogs and cats and
-   wants to differentiate between stray and abandoned animals. After doing
-   that, select your new defaults in the correct place on the defaults tab of
-   the Settings->Options screen.
+   wants to differentiate between stray, feral and abandoned animals. It also
+   has an extra type for boarding, which allows you to generate separate figures
+   for boarding animals. 
+   After doing that, select your new defaults in the correct place on the
+   :menuselection:`Settings --> Options --> Defaults` screen.
 
 2. Go to the :menuselection:`Settings --> Options --> Details` screen and enter
    your shelter's details. You can set all of the systemwide behaviours for ASM
-   and control the format of generated animal codes from this screen as well.
+   and control the format of generated animal codes from the other tabs on this 
+   screen as well.
 
-3. Go to :menuselection:`Settings --> Lookup Data --> Breeds` - Remove any
+3. Go to :menuselection:`Settings --> Lookup Data --> Locations` to setup your
+   available shelter locations. A location can have multiple units, which you
+   list in the "units" box of the location, separated by a comma. Locations can
+   be anything you want - eg: a room, an area of a room, a building. Units are
+   individual areas, pens or cages within that location.  For example, you
+   could create a location called "Dog Block A" with units "1, 2, 3, 4, 5" to
+   have 5 numbered pens.  When you use shelter view, you can have it group by
+   the location or the location and unit and it will allow you to drag and drop
+   animals between pens and locations to move them around.
+
+4. Go to :menuselection:`Settings --> Lookup Data --> Breeds` - Remove any
    unwanted breeds and species from the database that your shelter does not
    deal with.
 
-4. Go to :menuselection:`Settings --> Reports --> Browse sheltermanager.com` and
-   install some reports.
+5. Go to :menuselection:`Settings --> Reports --> Browse sheltermanager.com` and
+   install some reports. The "Select Recommended" button allows you to quickly
+   choose our recommended set for installation.
 
-5. Create usernames and passwords for your shelter staff in the
+6. Create usernames and passwords for all your shelter staff in the
    :menuselection:`Settings --> System User Accounts` screen. Once you have
-   your own username and password, delete the default “user” user.
+   your own username and password, delete the default “user” user. It is
+   advised that everyone has their own username and password rather than
+   using a shared account as it makes it easier to revoke individual permissions
+   or remove the account when staff leave without disrupting everyone else.
 
 
