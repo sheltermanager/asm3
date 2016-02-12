@@ -311,19 +311,9 @@ $(function() {
                 '<label for="pickupaddress">' + _("Pickup Address") + '</label>',
                 '</td>',
                 '<td>',
-                '<input class="asm-textbox" type="text" id="pickupaddress" data-json="PICKUPADDRESS" data-post="pickupaddress" />',
+                '<input class="asm-textbox" style="width: 98%" id="pickupaddress" data-json="PICKUPADDRESS" data-post="pickupaddress" />',
                 '</td>',
                 '</tr>',
-                /*
-                '<tr id="pickedupbyrow">',
-                '<td valign="top">',
-                '<label for="pickedupby">' + _("Picked Up By") + '</label>',
-                '</td>',
-                '<td valign="top">',
-                '<input id="pickedupby" data-json="PICKEDUPBYOWNERID" data-post="pickedupby" data-filter="aco" type="hidden" class="asm-personchooser" />',
-                '</td>',
-                '</tr>',
-                */
                 '<tr id="holdrow">',
                 '<td></td>',
                 '<td>',
@@ -836,7 +826,7 @@ $(function() {
             $("#fivltestdate, #fivresult, #flvresult").toggle($("#fivltested").is(":checked"));
 
             // Show pickup fields if the animal is a pickup
-            $("#pickedupbyrow, #pickupaddressrow, #pickuplocationrow").toggle($("#pickedup").is(":checked"));
+            $("#pickupaddressrow, #pickuplocationrow").toggle($("#pickedup").is(":checked"));
 
             // Change the Brought In By text and filter if this record is a pickup or transfer
             if ($("#pickedup").is(":checked")) { 
