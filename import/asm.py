@@ -191,6 +191,10 @@ def getdate_ddmmyy(s):
     s = remove_time(s)
     return parse_date(s, "%d/%m/%y")
 
+def getdate_ddmmyyyy(s):
+    s = remove_time(s)
+    return parse_date(s, "%d/%m/%Y")
+
 def getdate_ddmmmyy(s):
     s = remove_time(s)
     return parse_date(s, "%d-%b-%y")
@@ -1407,16 +1411,19 @@ class VaccinationType:
     ID = 0
     Name = ""
     Description = None
-    def __init__(self, ID = 0, Name = "", Description = ""):
+    DefaultCost = 0
+    def __init__(self, ID = 0, Name = "", Description = "", DefaultCost = 0):
         self.ID = ID
         if ID == 0: self.ID = getid("vaccinationtype")
         self.Name = Name
         self.Description = Description
+        self.DefaultCost = 0
     def __str__(self):
         s = (
             ( "ID", di(self.ID) ),
             ( "VaccinationType", ds(self.Name) ),
-            ( "VaccinationDescription", ds(self.Description) )
+            ( "VaccinationDescription", ds(self.Description) ),
+            ( "DefaultCost", df(self.DefaultCost) ),
             )
         return makesql("vaccinationtype", s)
 
@@ -1424,16 +1431,19 @@ class DonationType:
     ID = 0
     Name = ""
     Description = None
-    def __init__(self, ID = 0, Name = "", Description = ""):
+    DefaultCost = 0
+    def __init__(self, ID = 0, Name = "", Description = "", DefaultCost = 0):
         self.ID = ID
         if ID == 0: self.ID = getid("donationtype")
         self.Name = Name
         self.Description = Description
+        self.DefaultCost = DefaultCost
     def __str__(self):
         s = (
             ( "ID", di(self.ID) ),
             ( "DonationName", ds(self.Name) ),
-            ( "DonationDescription", ds(self.Description) )
+            ( "DonationDescription", ds(self.Description) ),
+            ( "DefaultCost", df(self.DefaultCost) )
             )
         return makesql("donationtype", s)
 
