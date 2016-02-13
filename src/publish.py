@@ -4430,7 +4430,8 @@ class PETtracUKPublisher(AbstractPublisher):
                         else:
                             self.logError("Problem with data encountered, not marking processed")
                     else:
-                        self.logError("re-registration support is disabled, leaving unprocessed")
+                        self.logError("re-registration support is disabled, marking processed for compatibility")
+                        processed_animals.append(an)
                 # There's a problem with the data we sent, flag it
                 else:
                     self.logError("Problem with data encountered, not marking processed")

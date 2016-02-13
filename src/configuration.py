@@ -122,7 +122,7 @@ DEFAULTS = {
     "AFDefaultTestType": "1",
     "AFDefaultVaccinationType": "1",
     "AFNonShelterType": "40",
-    "AvidReRegistration": "Yes", 
+    "AvidReRegistration": "No", 
     "BoardingCostType": "1",
     "CancelReservesOnAdoption": "Yes",
     "CostSourceAccount": "9",
