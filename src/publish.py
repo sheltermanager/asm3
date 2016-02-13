@@ -4268,7 +4268,7 @@ class PETtracUKPublisher(AbstractPublisher):
         """
         h = "<h2>Change of Registered Owner/Keeper</h2>"
         h += "<table border=\"1\"><tr>"
-        for k, v in fields.itervalues():
+        for k, v in fields.iteritems():
             h += "<td>%s</td><td>%s</td>" % (k, v)
         h += "</tr></table>"
         h += "<p>I/We confirm that every effort has been made to reunite the animal with its owner/keeper, or that the previous " \
@@ -4296,6 +4296,7 @@ class PETtracUKPublisher(AbstractPublisher):
         orgname = configuration.avid_org_name(self.dbo)
         orgserial = configuration.avid_org_serial(self.dbo)
         orgpassword = configuration.avid_org_password(self.dbo)
+        avidrereg = configuration.avid_reregistration(self.dbo)
 
         if orgpostcode == "" or orgname == "" or orgserial == "" or orgpassword == "":
             self.setLastError("orgpostcode, orgname, orgserial and orgpassword all need to be set for AVID publisher")
@@ -4303,11 +4304,11 @@ class PETtracUKPublisher(AbstractPublisher):
 
         authuser = configuration.avid_auth_user(self.dbo)
         user = users.get_users(self.dbo, authuser)
-        if len(user) == 0:
+        if avidrereg and len(user) == 0:
             self.setLastError("no authorised user is set, cannot re-register chips")
             return
 
-        if utils.nulltostr(user[0]["SIGNATURE"]):
+        if avidrereg and utils.nulltostr(user[0]["SIGNATURE"]) == "":
             self.setLastError("authorised user '%s' does not have an electronic signature on file" % authuser)
             return
 
@@ -4408,24 +4409,28 @@ class PETtracUKPublisher(AbstractPublisher):
 
                 # If AVID tell us the microchip is already registered, attempt to re-register
                 elif r["response"].find("already registered") != -1:
-                    self.log("microchip already registered response, re-registering")
-                    pdfname = "%s-%s-%s.pdf" % (i18n.format_date("%Y%m%d", i18n.now(self.dbo.timezone)), orgserial, an["IDENTICHIPNUMBER"])
-                    fields["filenameupload"] = pdfname
-                    pdf = self.reregistrationPDF(fields, user[0]["SIGNATURE"], user[0]["REALNAME"])
+                    if avidrereg:
+                        self.log("microchip already registered response, re-registering")
 
-                    reregurl = PETTRAC_UK_POST_URL.replace("onlineregistration", "onlinereregistration")
-                    self.log("HTTP multipart POST request %s: %s" % (reregurl, str(fields)))
-                    r = utils.post_multipart(reregurl, fields, { pdfname: (pdfname, pdf, "application/pdf" )} )
-                    self.log("HTTP response: %s" % r["response"])
+                        pdfname = "%s-%s-%s.pdf" % (i18n.format_date("%Y%m%d", i18n.now(self.dbo.timezone)), orgserial, an["IDENTICHIPNUMBER"])
+                        fields["filenameupload"] = pdfname
+                        pdf = self.reregistrationPDF(fields, user[0]["SIGNATURE"], user[0]["REALNAME"])
+                        self.log("generated re-registration PDF %s (%d bytes)" % (pdfname, len(pdf)))
 
-                    if r["response"].find("successfully") != -1:
-                        self.log("successful re-registration response, marking processed")
-                        processed_animals.append(an)
-                        # Mark success in the log
-                        self.logSuccess("Processed: %s: %s (%d of %d) (rereg)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                        reregurl = PETTRAC_UK_POST_URL.replace("onlineregistration", "onlinereregistration")
+                        self.log("HTTP multipart POST request %s: %s" % (reregurl, str(fields)))
+                        r = utils.post_multipart(reregurl, fields, { pdfname: (pdfname, pdf, "application/pdf" )} )
+                        self.log("HTTP response: %s" % r["response"])
+
+                        if r["response"].find("successfully") != -1:
+                            self.log("successful re-registration response, marking processed")
+                            processed_animals.append(an)
+                            # Mark success in the log
+                            self.logSuccess("Processed: %s: %s (%d of %d) (rereg)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                        else:
+                            self.logError("Problem with data encountered, not marking processed")
                     else:
-                        self.logError("Problem with data encountered, not marking processed")
-
+                        self.logError("re-registration support is disabled, leaving unprocessed")
                 # There's a problem with the data we sent, flag it
                 else:
                     self.logError("Problem with data encountered, not marking processed")

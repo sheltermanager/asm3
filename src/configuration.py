@@ -122,6 +122,7 @@ DEFAULTS = {
     "AFDefaultTestType": "1",
     "AFDefaultVaccinationType": "1",
     "AFNonShelterType": "40",
+    "AvidReRegistration": "Yes", 
     "BoardingCostType": "1",
     "CancelReservesOnAdoption": "Yes",
     "CostSourceAccount": "9",
@@ -485,6 +486,9 @@ def avid_org_serial(dbo):
 
 def avid_org_password(dbo):
     return cstring(dbo, "AvidOrgPassword")
+
+def avid_reregistration(dbo):
+    return cboolean(dbo, "AvidReRegistration", DEFAULTS["AvidReRegistration"] == "Yes")
 
 def cancel_reserves_on_adoption(dbo):
     return cboolean(dbo, "CancelReservesOnAdoption", DEFAULTS["CancelReservesOnAdoption"] == "Yes")
