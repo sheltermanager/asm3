@@ -52,6 +52,8 @@ The All Publishers tab allows you to set options common to all internet publishe
   A special "Intake" option allows registering of microchips to the shelter's
   contact info for animals currently in the care of the shelter. This includes
   animals brought to the shelter as well as those returned from a previous movement.
+  Animals who are marked as held awaiting reclaim will *not* be registered until
+  after the hold is removed.
 
 * Reupload animal images every time: Ticking this box will tell the publisher
   to reupload images for all the animals published. Normally, ASM will not
