@@ -360,7 +360,7 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1"):
         they either have an activemovement of a type with a date newer than sent in the published table
         OR they have a datebroughtin with a date newer than sent in the published table and they're a non-shelter animal
         (if intake is selected as movementtype 0)
-        OR they have a datebroughtin with a date newer than sent in the published table and they're currently on shelter
+        OR they have a datebroughtin with a date newer than sent in the published table, they're currently on shelter/not held
     patterns:      A list of either microchip prefixes or SQL clauses to OR
                    together in the preamble, eg: [ '977', "a.SmartTag = 1 AND a.SmartTagNumber <> ''" ]
     publishername: The name of the microchip registration publisher, eg: pettracuk
@@ -378,7 +378,7 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1"):
     intakeclause = ""
     if movementtypes.find("0") != -1:
         # Note: Use of MostRecentEntryDate will pick up returns as well as intake
-        intakeclause = "OR (a.NonShelterAnimal = 0 AND a.Archived = 0 AND a.ActiveMovementID = 0 " \
+        intakeclause = "OR (a.NonShelterAnimal = 0 AND a.IsHold = 0 AND a.Archived = 0 AND a.ActiveMovementID = 0 " \
             "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
             "AND AnimalID = a.ID AND SentDate >= a.MostRecentEntryDate))" % { "publishername": publishername }
     nonshelterclause = "OR (a.NonShelterAnimal = 1 AND a.OriginalOwnerID Is Not Null AND a.OriginalOwnerID > 0 AND a.IdentichipDate Is Not Null " \

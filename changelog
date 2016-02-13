@@ -1,6 +1,7 @@
 39
 ================
 
+13/02/16 Intake chip registration should not apply to held animals #376
 12/02/16 Use textarea width on pickup address for extra space
 12/02/16 Fix bug in payment book/tab with default payment type 
 12/02/16 Refactor dialog_show_add/edit events to use objects for clarity
