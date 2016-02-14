@@ -227,5 +227,8 @@
         }
     ],
     "name": "Found Animal Questionnaire",
-    "description": ""
+    "description": "",
+    "header": "",
+    "footer": ""
+
 }

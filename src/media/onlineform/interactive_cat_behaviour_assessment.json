@@ -1,0 +1,269 @@
+{
+    "header": "<script>\n$(document).ready(function() {\n    \n     // Returns true if QXAY is chosen\n     var yesq = function(q) {\n       var found = false;\n       $(\"option:selected\").each(function() {\n               var sel = $(this).val();\n               if (sel.indexOf(\"{\") != -1) {\n                   sel = sel.substring(sel.indexOf(\"{\")+1, sel.indexOf(\"}\"));\n                   var sb = sel.split(\",\");\n                   if (sb[0].indexOf(q) != -1) {\n                       found = true;\n                       return false;\n                   }\n               }\n          });\n          return found;\n     };\n     \n     // Sets the textbox with name k to value v\n     var set = function(k, v) {\n         $(\"input[name^='\" + k + \"']\").val(v);  \n     };\n     \n     // Calculates social/adapt scores and completes\n     // the recommendations and totals\n     var calc = function() {\n        var social = 0, adapt = 0;\n        $(\"option:selected\").each(function() {\n             var sel = $(this).val();\n             if (sel.indexOf(\"{\") != -1) {\n                 sel = sel.substring(sel.indexOf(\"{\")+1, sel.indexOf(\"}\"));\n                 var sb = sel.split(\",\");\n                 social += parseInt(sb[1]);\n                 adapt += parseInt(sb[2]);\n             }\n        });\n       \n        if (yesq(\"Q6A7\") || yesq(\"Q6A8\") || yesq(\"Q6A9\")) { set(\"resultstroking\", \"Dislikes Stroking\"); }\n        else if (yesq(\"Q6A6\")) { set(\"resultstroking\", \"Tolerates Stroking\"); }\n        else { set(\"resultstroking\", \"Likes Stroking\"); }\n       \n        if (yesq(\"Q7A6\") || yesq(\"Q7A7\") || yesq(\"Q7A8\") || yesq(\"Q7A9\")) { set(\"resultholding\", \"Dislikes Holding\"); }\n        else if (yesq(\"Q7A5\")) { set(\"resultholding\", \"Dislikes Holding\"); }\n        else if (yesq(\"Q7A4\")) { set(\"resultholding\", \"Tolerates Holding\"); }\n        else { set(\"resultholding\", \"Likes Holding\"); }\n       \n        if (yesq(\"Q7A7\") || yesq(\"Q7A8\") || yesq(\"Q7A9\")) { set(\"resultchildren\", \"No Children\"); }\n        else if (yesq(\"Q8A6\") || yesq(\"Q8A7\")) { set(\"resultchildren\", \"No Children\"); }\n        else if (yesq(\"Q8A5\")) { set(\"resultchildren\", \"Over 12's\"); }\n        else if (yesq(\"Q8A4\")) { set(\"resultchildren\", \"Over 5's\"); }\n        else { set(\"resultchildren\", \"All Children\"); }\n       \n        if (yesq(\"Q9A1\") || yesq(\"Q9A2\")) { set(\"resultplaying\", \"Interested in toys\"); }\n        else if (yesq(\"Q9A3\") || yesq(\"Q9A4\")) { set(\"resultplaying\", \"Ambivalent about toys\"); }\n        else if (yesq(\"Q9A5\") || yesq(\"Q9A6\")) { set(\"resultplaying\", \"Disinterested in toys\"); }\n       \n        set(\"resulttoys\", $(\"select[data-name^='q10interested']\").val());\n       \n        if (yesq(\"Q11A1\")) { set(\"resultcats\", \"No other cats\"); }\n        else if (yesq(\"Q11A2\")) { set(\"resultcats\", \"Other cats\"); }\n        else if (yesq(\"Q11A3\")) { set(\"resultcats\", \"Unknown other cats\"); }\n       \n        if (social < 11) { set(\"resultdependence\", \"Independent (\" + social + \")\"); }\n        else if (social <= 20) { set(\"resultdependence\", \"Sociable (\" + social + \")\"); }\n        else if (social < 50) { set(\"resultdependence\", \"Very Sociable (\" + social + \")\"); }\n       \n        if (adapt <= 12) { set(\"resultadaptability\", \"Slower to adapt (\" + adapt + \")\"); }\n        else if (adapt <= 27) { set(\"resultadaptability\", \"Adaptable (\" + adapt + \")\"); }\n        else if (adapt >= 28) { set(\"resultadaptability\", \"Very Adaptable (\" + adapt + \")\"); }\n       \n        if (social < -99) { set(\"recommendation\", \"End evaluation, re-test in 7 days\"); }\n        else if (social <= 2 ) { set(\"recommendation\", \"De-stress and re-evaluate in 48 hours\"); }\n        else { set(\"recommendation\", \"\"); }\n       \n    };\n    \n     $(\".asm-onlineform-lookup, .asm-onlineform-lookupmulti\").change(calc);\n     $(\"input[name^='recommend']\").css({ width: \"400px\", color: \"red\", \"font-weight\": \"bold\" });\n  \n});\n<\/script>",
+    "footer": "",
+    "name": "Interactive Cat Behaviour Assessment",
+    "fields": [
+        {
+            "index": 1,
+            "lookups": "",
+            "mandatory": true,
+            "name": "cat",
+            "tooltip": "",
+            "label": "Cat",
+            "type": "SHELTERANIMAL"
+        },
+        {
+            "index": 4,
+            "lookups": "",
+            "mandatory": true,
+            "name": "testno",
+            "tooltip": "",
+            "label": "Test No",
+            "type": "TEXT"
+        },
+        {
+            "index": 5,
+            "lookups": "",
+            "mandatory": false,
+            "name": "testedby",
+            "tooltip": "",
+            "label": "Tested By",
+            "type": "TEXT"
+        },
+        {
+            "index": 8,
+            "lookups": "",
+            "mandatory": true,
+            "name": "date",
+            "tooltip": "",
+            "label": "Date",
+            "type": "DATE"
+        },
+        {
+            "index": 9,
+            "lookups": "",
+            "mandatory": false,
+            "name": "heading1",
+            "tooltip": "<h2>While the cat is in the cage/pen<\/h2>",
+            "label": "While the cat is in the cage/pen",
+            "type": "RAWMARKUP"
+        },
+        {
+            "index": 10,
+            "lookups": "|Relaxed and unconcerned {Q1A1,1,0}|Body tense with flicking tail {Q1A2,1,0}|Flattened body, pupils dilated {Q1A3,-1,0}|CHARGES AT YOU {Q1A4,-99,-99}",
+            "mandatory": true,
+            "name": "q1frontofpen",
+            "tooltip": "",
+            "label": "Approach the pen and stand quietly in front. Record the behaviour of the cat - CHOOSE ONE",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 20,
+            "lookups": "|Comes to front of the pen seeking attention by rubbing, chirping etc. {Q2A1,3,0}|Comes to the front of pen at your encouragement {Q2A2,2,0}|Does not approach but meows, chirps or blinks {Q2A3,1,0}|Does not approach at all {Q2A4,0,0}|Attempts to hide {Q2A5,-1,0}|Hisses or Growls {Q2A6,-2,0}|CHARGES AT YOU {Q2A7,-99,-99}",
+            "mandatory": true,
+            "name": "q2speaking",
+            "tooltip": "",
+            "label": "Speak to the cat in a soft tone of voice - CHOOSE ONE",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 30,
+            "lookups": "|Remains relaxed soft, approaches {Q3A1,1,0}|Remains relaxed and soft, does not approach {Q3A2,0,0}|Becomes stiff with tight tail flicks {Q3A3,1,0}|Crouches, body stiff {Q3A4,-1,0}|CHARGES AT YOU {Q3A5,-99,-99}",
+            "mandatory": true,
+            "name": "q3opendoor",
+            "tooltip": "",
+            "label": "Open the cage door without talking - CHOOSE ONE",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 40,
+            "lookups": "",
+            "mandatory": false,
+            "name": "heading2",
+            "tooltip": "<h2>Enter the cat's pen and sit on the floor<\/h2>",
+            "label": "Enter the cat's pen and sit on the floor",
+            "type": "RAWMARKUP"
+        },
+        {
+            "index": 50,
+            "lookups": "Makes direct eye contact {Q4A1,1,1}|Does not make eye contact {Q4A2,-1,-1}|Approaches {Q4A3,3,3}|Sniffs or head bumps {Q4A4,3,3}|Rolls on back or rolls over {Q4A5,2,2}|Meows, purrs or chirps {Q4A6,1,1}|Watches but makes no approach {Q4A7,0,0}|Retreats {Q4A8,-1,-1}|Hisses or Grows {Q4A9,-2,-2}",
+            "mandatory": true,
+            "name": "q4callcat",
+            "tooltip": "",
+            "label": "Call the cat to you in a friendly manner - CHOOSE ALL THAT APPLY",
+            "type": "LOOKUP_MULTI"
+        },
+        {
+            "index": 60,
+            "lookups": "Sniffs or head bumps {Q5A1,0,3}|Licks or rubs face on hand {Q5A2,0,3}|Rolls on back or rolls over {Q5A3,0,2}|Meows, purrs or chirps {Q5A4,0,2}|Retreats/takes defensive position {Q5A5,0,-1}|Hisses and/or Growls {Q5A6,0,-2}|Swipes/attempts to swipe hand {Q5A7,0,-2}|Bites/attempts to bite hand {Q5A8,-99,-99}",
+            "mandatory": true,
+            "name": "q5extendhand",
+            "tooltip": "",
+            "label": "While still crouching, extend an open hand to the cat. If the cat does not approach, move closer - CHOOSE ALL THAT APPLY",
+            "type": "LOOKUP_MULTI"
+        },
+        {
+            "index": 70,
+            "lookups": "Rubs against legs or hand {Q6A1,0,3}|Head bumps {Q6A2,0,3}|Circles you attentively {Q6A3,0,2}|Meows, purrs or chirps {Q6A4,0,2}|Rolls on back or rolls over {Q6A5,0,2}|Shows initial fear, but then relaxes {Q6A6,0,0}|Retreats/takes defensive position {Q6A7,0,-1}|Hisses and/or Growls {Q6A8,0,-2}|Swipes/attempts to swipe hand {Q6A9,0,-2}|Bites/attempts to bite hand {Q6A10,-99,-99}",
+            "mandatory": true,
+            "name": "q6stroke",
+            "tooltip": "",
+            "label": "Stroke the cat in long strokes along the head, back and sides. Continue for at least 4-5 long strokes if possible - CHOOSE ALL THAT APPLY",
+            "type": "LOOKUP_MULTI"
+        },
+        {
+            "index": 80,
+            "lookups": "Is relaxed {Q7A1,3,0}|Extends paw in a friendly manner {Q7A2,3,0}|Meows, purrs or chirps {Q7A3,2,0}|Accepts hold but remains tense {Q7A4,2,0}|Struggles to escape {Q7A5,-1,0}|Hisses and/or growls {Q7A8,-2,0}|Stiffens and extends claws {Q7A9,-2,0}|Swipes/attempts to swipe hand {Q7A10,-3,0}|Bites/attempts to bite hand {Q7A11,-3,0}",
+            "mandatory": true,
+            "name": "q7pickup",
+            "tooltip": "",
+            "label": "Stroke the cat again and if she is calm, pick her up and hug gently to your chest for 2 seconds - CHOOSE ALL THAT APPLY",
+            "type": "LOOKUP_MULTI"
+        },
+        {
+            "index": 90,
+            "lookups": "Rolls onto back or rolls over {Q8A1,3,0}|Shows no reaction {Q8A2,3,0}|Meows, purrs or chirps {Q8A3,1,0}|Struggles to escape {Q8A4,0,0}|Hisses and/or growls {Q8A5,-1,0}|Swipes/attempts to swipe hand {Q8A6,-2,0}|Bites/attempts to bite hand {Q8A7,-3,0}",
+            "mandatory": true,
+            "name": "q8pulltail",
+            "tooltip": "",
+            "label": "Sit on the floor next to the cat. Stroke along her back and gently hold the base of the tail and pull up to almost lift her back feet of the floor. Hold for 1 second - CHOOSE ALL THAT APPLY",
+            "type": "LOOKUP_MULTI"
+        },
+        {
+            "index": 100,
+            "lookups": "",
+            "mandatory": false,
+            "name": "heading3",
+            "tooltip": "<h2>Interest in Play<\/h2>",
+            "label": "Interest in play",
+            "type": "RAWMARKUP"
+        },
+        {
+            "index": 110,
+            "lookups": "Crouches and watches intently {Q9A1,3,3}|Chase toy and plays {Q9A2,3,3}|Comes back for stroking {Q9A3,2,2}|Chases toy then ignores it {Q9A4,0,0}|Attends to something else {Q9A5,-1,-1}|Ignores toys entirely {Q9A6-1,-1}",
+            "mandatory": true,
+            "name": "q9engageplay",
+            "tooltip": "",
+            "label": "Using a variety of toys such as feather, string, toy mouse, ball, catnip (try catnip toys last) etc. engage the cat in play. CHOOSE ALL THAT APPLY",
+            "type": "LOOKUP_MULTI"
+        },
+        {
+            "index": 120,
+            "lookups": "Feather|String|Ball|Toy Mouse|Wand|Maze|Catnip",
+            "mandatory": false,
+            "name": "q10interested",
+            "tooltip": "",
+            "label": "Is interested in - CHOOSE ALL THAT APPLY",
+            "type": "LOOKUP_MULTI"
+        },
+        {
+            "index": 130,
+            "lookups": "",
+            "mandatory": false,
+            "name": "heading4",
+            "tooltip": "<h2>Tolerance of other cats<\/h2>",
+            "label": "Tolerance of other cats",
+            "type": "RAWMARKUP"
+        },
+        {
+            "index": 140,
+            "lookups": "|Negative reaction - hisses/growls/fluffs up/arches {Q11A1,0,0}|Positive reaction - Tail up {Q11A2,0,0}|No reaction - Ignores entirely {Q11A3,0,0}",
+            "mandatory": true,
+            "name": "q11tolerance",
+            "tooltip": "",
+            "label": "Let the cat explore the corridor and note the response to other cats - CHOOSE ONE",
+            "type": "LOOKUP"
+        },
+        {
+            "index": 150,
+            "lookups": "",
+            "mandatory": false,
+            "name": "heading5",
+            "tooltip": "<h2>Results<\/h2>",
+            "label": "Results",
+            "type": "RAWMARKUP"
+        },
+        {
+            "index": 160,
+            "lookups": "",
+            "mandatory": false,
+            "name": "resultdependence",
+            "tooltip": "",
+            "label": "Dependence",
+            "type": "TEXT"
+        },
+        {
+            "index": 170,
+            "lookups": "",
+            "mandatory": false,
+            "name": "resultadaptability",
+            "tooltip": "",
+            "label": "Adaptability",
+            "type": "TEXT"
+        },
+        {
+            "index": 180,
+            "lookups": "",
+            "mandatory": false,
+            "name": "resultstroking",
+            "tooltip": "",
+            "label": "Stroking",
+            "type": "TEXT"
+        },
+        {
+            "index": 190,
+            "lookups": "",
+            "mandatory": false,
+            "name": "resultholding",
+            "tooltip": "",
+            "label": "Holding",
+            "type": "TEXT"
+        },
+        {
+            "index": 200,
+            "lookups": "",
+            "mandatory": false,
+            "name": "resultchildren",
+            "tooltip": "",
+            "label": "Children",
+            "type": "TEXT"
+        },
+        {
+            "index": 210,
+            "lookups": "",
+            "mandatory": false,
+            "name": "resultcats",
+            "tooltip": "",
+            "label": "Cats",
+            "type": "TEXT"
+        },
+        {
+            "index": 220,
+            "lookups": "",
+            "mandatory": false,
+            "name": "resultplaying",
+            "tooltip": "",
+            "label": "Playing",
+            "type": "TEXT"
+        },
+        {
+            "index": 230,
+            "lookups": "",
+            "mandatory": false,
+            "name": "resulttoys",
+            "tooltip": "",
+            "label": "Toys",
+            "type": "TEXT"
+        },
+        {
+            "index": 250,
+            "lookups": "",
+            "mandatory": false,
+            "name": "recommendation",
+            "tooltip": "",
+            "label": "Recommendation",
+            "type": "TEXT"
+        }
+    ],
+    "description": ""
+}

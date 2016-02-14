@@ -1,6 +1,8 @@
 {
     "name": "RSPCA 5 and 10 Day Observations: Dog",
     "description": "",
+    "header": "",
+    "footer": "",
 
     "fields": [
     { "name": "animalname", "label": "Animal`s Name", "type": "SHELTERANIMAL", 

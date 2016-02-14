@@ -443,5 +443,7 @@
         }
     ],
     "name": "RSPCA Staff Health Check Form",
-    "description": ""
+    "description": "",
+    "header": "",
+    "footer": ""
 }

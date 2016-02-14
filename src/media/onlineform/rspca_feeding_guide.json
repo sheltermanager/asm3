@@ -83,5 +83,8 @@
         }
     ],
     "name": "RSPCA Feeding Guide",
-    "description": ""
+    "description": "",
+    "header": "",
+    "footer": ""
+
 }

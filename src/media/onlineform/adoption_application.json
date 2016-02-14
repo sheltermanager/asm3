@@ -794,5 +794,7 @@
         }
     ],
     "name": "Adoption Application",
-    "description": ""
+    "description": "",
+    "header": "",
+    "footer": ""
 }

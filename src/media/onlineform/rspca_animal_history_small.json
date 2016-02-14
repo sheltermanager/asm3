@@ -1,6 +1,9 @@
 {
     "name": "RSPCA Animal History: Small Animal",
     "description": "",
+    "header": "",
+    "footer": "",
+
 
     "fields": [
     { "name": "animalname", "label": "Animal`s Name", "type": "TEXT", 

@@ -173,5 +173,8 @@
         }
     ],
     "name": "RSPCA 5 and 10 Day Recommendations: Small Animal",
-    "description": ""
+    "description": "",
+    "header": "",
+    "footer": ""
+
 }
