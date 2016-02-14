@@ -398,5 +398,8 @@
         }
     ],
     "name": "RSPCA Entry Assessment: Dog",
-    "description": "Answering these questions honestly will not stop the RSPCA from admitting your animal but will ensure that we are able to provide the correct care for your animal.  Please help us to help your animal."
+    "description": "Answering these questions honestly will not stop the RSPCA from admitting your animal but will ensure that we are able to provide the correct care for your animal.  Please help us to help your animal.",
+    "header": "",
+    "footer": ""
+
 }

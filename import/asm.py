@@ -191,6 +191,10 @@ def getdate_ddmmyy(s):
     s = remove_time(s)
     return parse_date(s, "%d/%m/%y")
 
+def getdate_ddmmyyyy(s):
+    s = remove_time(s)
+    return parse_date(s, "%d/%m/%Y")
+
 def getdate_ddmmmyy(s):
     s = remove_time(s)
     return parse_date(s, "%d-%b-%y")
@@ -1129,7 +1133,6 @@ def additional_field(fieldname, linktypeid, linkid, value):
         "%d, %d, (SELECT ID FROM additionalfield WHERE FieldName LIKE '%s'), %s);" % \
         ( linktypeid, linkid, fieldname, ds(value))
 
-
 def adopt_to(a, ownerid, movementtype = 1, movementdate = None):
     """ Writes an adoption movement insert 
         a: The animal object to adopt
@@ -1389,34 +1392,39 @@ class TestType:
     ID = 0
     Name = ""
     Description = None
-    def __init__(self, ID = 0, Name = "", Description = ""):
+    DefaultCost = 0
+    def __init__(self, ID = 0, Name = "", Description = "", DefaultCost = 0):
         self.ID = ID
         if ID == 0: self.ID = getid("testtype")
         self.Name = Name
         self.Description = Description
+        self.DefaultCost = 0
     def __str__(self):
         s = (
             ( "ID", di(self.ID) ),
             ( "TestName", ds(self.Name) ),
             ( "TestDescription", ds(self.Description) )
+            ( "DefaultCost", df(self.DefaultCost) ),
             )
         return makesql("testtype", s)
-
 
 class VaccinationType:
     ID = 0
     Name = ""
     Description = None
-    def __init__(self, ID = 0, Name = "", Description = ""):
+    DefaultCost = 0
+    def __init__(self, ID = 0, Name = "", Description = "", DefaultCost = 0):
         self.ID = ID
         if ID == 0: self.ID = getid("vaccinationtype")
         self.Name = Name
         self.Description = Description
+        self.DefaultCost = 0
     def __str__(self):
         s = (
             ( "ID", di(self.ID) ),
             ( "VaccinationType", ds(self.Name) ),
-            ( "VaccinationDescription", ds(self.Description) )
+            ( "VaccinationDescription", ds(self.Description) ),
+            ( "DefaultCost", df(self.DefaultCost) ),
             )
         return makesql("vaccinationtype", s)
 
@@ -1424,16 +1432,19 @@ class DonationType:
     ID = 0
     Name = ""
     Description = None
-    def __init__(self, ID = 0, Name = "", Description = ""):
+    DefaultCost = 0
+    def __init__(self, ID = 0, Name = "", Description = "", DefaultCost = 0):
         self.ID = ID
         if ID == 0: self.ID = getid("donationtype")
         self.Name = Name
         self.Description = Description
+        self.DefaultCost = DefaultCost
     def __str__(self):
         s = (
             ( "ID", di(self.ID) ),
             ( "DonationName", ds(self.Name) ),
-            ( "DonationDescription", ds(self.Description) )
+            ( "DonationDescription", ds(self.Description) ),
+            ( "DefaultCost", df(self.DefaultCost) )
             )
         return makesql("donationtype", s)
 
@@ -2067,6 +2078,7 @@ class Owner:
 
 class OwnerDonation:
     ID = 0
+    ReceiptNumber = ""
     AnimalID = 0
     OwnerID = 0
     MovementID = 0
@@ -2088,8 +2100,11 @@ class OwnerDonation:
         self.ID = ID
         if ID == 0: self.ID = getid("ownerdonation")
     def __str__(self):
+        if self.ReceiptNumber == "":
+            self.ReceiptNumber = padleft(self.ID, 8)
         s = (
             ( "ID", di(self.ID) ),
+            ( "ReceiptNumber", ds(self.ReceiptNumber) ),
             ( "AnimalID", di(self.AnimalID) ),
             ( "OwnerID", di(self.OwnerID) ),
             ( "MovementID", di(self.MovementID) ),

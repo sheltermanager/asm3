@@ -236,5 +236,8 @@
         }
     ],
     "name": "RSPCA 5 and 10 Day Observations: Small Animal",
-    "description": ""
+    "description": "",
+    "header": "",
+    "footer": ""
+
 }

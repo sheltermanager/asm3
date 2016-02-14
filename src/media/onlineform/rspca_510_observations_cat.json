@@ -155,5 +155,8 @@
         }
     ],
     "name": "RSPCA 5 and 10 Day Observations: Cat",
-    "description": ""
+    "description": "",
+    "header": "",
+    "footer": ""
+
 }

@@ -191,5 +191,8 @@
         }
     ],
     "name": "RSPCA 5 and 10 Day Recommendations: Dog",
-    "description": ""
+    "description": "",
+    "header": "",
+    "footer": ""
+
 }

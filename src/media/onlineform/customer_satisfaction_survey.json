@@ -362,5 +362,8 @@
         }
     ],
     "name": "Customer Satisfaction Survey",
-    "description": ""
+    "description": "",
+    "header": "",
+    "footer": ""
+
 }

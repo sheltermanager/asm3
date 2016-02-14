@@ -1,6 +1,8 @@
 {
     "name": "RSPCA Animal History: Cat",
     "description": "",
+    "header": "",
+    "footer": "",
 
     "fields": [
     { "name": "animalname", "label": "Animal`s Name", "type": "TEXT", 

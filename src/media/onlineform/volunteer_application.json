@@ -416,5 +416,8 @@
         }
     ],
     "name": "Volunteer Application",
-    "description": "Thank you for offering your time, once submitted you will be contacted by email with our next orientation date and a request for confirmation."
+    "description": "Thank you for offering your time, once submitted you will be contacted by email with our next orientation date and a request for confirmation.",
+    "header": "",
+    "footer": ""
+
 }

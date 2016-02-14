@@ -137,5 +137,8 @@
         }
     ],
     "name": "RSPCA Pre Observation Sheet: Dog",
-    "description": ""
+    "description": "",
+    "header": "",
+    "footer": ""
+
 }

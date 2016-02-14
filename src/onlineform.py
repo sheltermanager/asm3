@@ -280,7 +280,7 @@ def get_onlineform_json(dbo, formid):
         raise utils.ASMValidationError("Online form %d does not exist")
     form = form[0]
     formfields = get_onlineformfields(dbo, formid)
-    fd = { "name": form["NAME"], "description": form["DESCRIPTION"] }
+    fd = { "name": form["NAME"], "description": form["DESCRIPTION"], "header": form["HEADER"], "footer": form["FOOTER"] }
     ff = []
     for f in formfields:
         ff.append({ "name": f["FIELDNAME"], "label": f["LABEL"], "type": FIELDTYPE_MAP_REVERSE[f["FIELDTYPE"]],
@@ -296,7 +296,9 @@ def import_onlineform_json(dbo, j):
     fd = html.json_parse(j)
     data = {
         "name": fd["name"],
-        "description": fd["description"]
+        "description": fd["description"],
+        "header": fd["header"],
+        "footer": fd["footer"]
     }
     fid = insert_onlineform_from_form(dbo, "import", utils.PostedData(data, dbo.locale))
     for f in fd["fields"]:
