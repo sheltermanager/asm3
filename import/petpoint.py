@@ -9,13 +9,13 @@ Import script for PetPoint databases exported as CSV
 Can optionally import vacc and tests too, the PP reports
 are MedicalVaccineExpress and MedicalTestsExpress
 
-3rd March - 26th October, 2015
+3rd March - 14th February, 2016
 """
 
 # The shelter's petfinder ID for grabbing animal images for adoptable animals
-PETFINDER_ID = "WI424"
+PETFINDER_ID = "MA116"
 
-INTAKE_FILENAME = "data/pp_up0882.csv"
+INTAKE_FILENAME = "data/pp_ma1011.csv"
 VACC_FILENAME = ""
 TEST_FILENAME = ""
 
@@ -39,7 +39,7 @@ ppa = {}
 asm.setid("animal", 100)
 asm.setid("animaltest", 100)
 asm.setid("animalvaccination", 100)
-asm.setid("owner", 100)
+asm.setid("owner", 13000)
 asm.setid("adoption", 100)
 
 print "\\set ON_ERROR_STOP\nBEGIN;"
@@ -47,7 +47,7 @@ print "DELETE FROM internallocation;"
 print "DELETE FROM animal WHERE ID >= 100;"
 print "DELETE FROM animaltest WHERE ID >= 100;"
 print "DELETE FROM animalvaccination WHERE ID >= 100;"
-print "DELETE FROM owner WHERE ID >= 100;"
+print "DELETE FROM owner WHERE ID >= 13000;"
 print "DELETE FROM adoption WHERE ID >= 100;"
 
 pf = ""
