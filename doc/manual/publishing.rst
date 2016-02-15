@@ -374,7 +374,7 @@ FoundAnimals
 -------
 
 ASM can register microchips with microchipregistry.foundanimals.org, a
-non-profit organisation that supplies microchips to shelters.
+non-profit organisation that supplies microchips to US shelters.
 
 Their microchip registry is completely free and accepts microchips from any
 provider. To signup, just get in touch and request a folder name from them
