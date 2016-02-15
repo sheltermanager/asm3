@@ -4266,12 +4266,24 @@ class PETtracUKPublisher(AbstractPublisher):
         Generates a reregistration PDF document containing the authorised user's
         electronic signature.
         """
+        gender = fields["petgender"]
+        if gender == "M": gender = "Male"
+        elif gender == "F": gender = "Female"
         h = "<p align=\"right\"><b>%s</b><br />%s<br />%s, %s<br />%s</p>" % (orgname, orgaddress, orgtown, orgcounty, orgpostcode)
         h += "<h2>Change of Registered Owner/Keeper</h2>"
-        h += "<table border=\"1\"><tr>"
-        for k, v in fields.iteritems():
-            h += "<td>%s:</td><td>%s</td>" % (k, v)
-        h += "</tr></table>"
+        h += "<table border=\"1\">"
+        h += "<tr><td>Chip:</td><td><b>%s</b></td></tr>" % fields["microchip"]
+        h += "<tr><td>Implanted:</td><td>%s</td></tr>" % fields["implantdate"]
+        h += "<tr><td>Animal:</td><td>%s</td></tr>" % fields["petname"]
+        h += "<tr><td>DOB:</td><td>%s</td></tr>" % fields["petdob"]
+        h += "<tr><td>Type:</td><td>%s %s %s</td></tr>" % (gender, fields["petbreed"], fields["petspecies"])
+        h += "<tr><td>Colour:</td><td>%s</td></tr>" % fields["petcolour"]
+        h += "<tr><td>Neutered:</td><td>%s</td></tr>" % fields["petneutered"]
+        h += "<tr><td>New Owner:</td><td>%s %s %s</td></tr>" % (fields["prefix"], fields["firstname"], fields["surname"])
+        h += "<tr><td>Address:</td><td>%s<br/>%s<br/>%s %s</td></tr>" % (fields["address1"], fields["city"], fields["county"], fields["postcode"])
+        h += "<tr><td>Telephone:</td><td>H: %s<br/>W: %s<br/>M: %s</td></tr>" % (fields["telhome"], fields["telwork"], fields["telmobile"])
+        h += "<tr><td>Email:</td><td>%s</td></tr>" % fields["email"]
+        h += "</table>"
         h += "<p>I/We confirm that every effort has been made to reunite the animal with its owner/keeper, or that the previous " \
             "owner has relinquished ownership/keepership.</p>\n"
         h += "<p>If the animal was a stray then the animal has been in our care for the minimum required time period before " \
