@@ -1554,6 +1554,16 @@ def report_criteria(dbo, crit, locationfilter = ""):
             </select>
             </td>
             </tr>""" % ( _("Flag", l), name, name, options_person_flags(dbo))
+        elif rtype == "DONATIONTYPE":
+            s += """
+            <tr>
+            <td>%s</td>
+            <td>
+            <select class="asm-selectbox" id="report-%s" data-post="%s">
+            %s
+            </select>
+            </td>
+            </tr>""" % ( _("Payment Type", l), name, name, options_donation_types(dbo) )
         elif rtype == "LITTER":
             s += """
             <tr>

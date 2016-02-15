@@ -182,6 +182,8 @@ def get_criteria_params(dbo, customreportid, post):
             p.append( ( name, i18n._("Animal", l), post[name], animal.get_animal_namecode(dbo, post[name])) )
         elif rtype == "ANIMALFLAG":
             p.append( ( name, i18n._("Flag", l), post[name], post[name] ) )
+        elif rtype == "DONATIONTYPE":
+            p.append( ( name, i18n._("Payment Type", l), post[name], lookups.get_donationtype_name(dbo, post.integer(name) )) )
         elif rtype == "PERSON":
             p.append( ( name, i18n._("Person", l), post[name], person.get_person_name(dbo, post[name])) )
         elif rtype == "PERSONFLAG":
@@ -1080,7 +1082,7 @@ class Report:
         'reportId' is the ID of the report to get parameters for.
         Returns a list of parameters, each item is a list containing a
         variable name (or ASK with a number for a one-shot ask), a type 
-        (DATE, ANIMAL, ANIMALFLAG, LITTER, SPECIES, LOCATION, PERSONFLAG,TYPE, NUMBER, STRING)
+        (DATE, ANIMAL, ANIMALFLAG, DONATIONTYPE, LITTER, SPECIES, LOCATION, PERSONFLAG,TYPE, NUMBER, STRING)
         and a question string.
         """
         self._ReadReport(reportId)

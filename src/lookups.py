@@ -931,11 +931,15 @@ def get_donation_frequencies(dbo):
 def get_donation_types(dbo):
     return db.query(dbo, "SELECT * FROM donationtype ORDER BY DonationName")
 
+def get_donationtype_name(dbo, did):
+    if did is None: return ""
+    return db.query_string(dbo, "SELECT DonationName FROM donationtype WHERE ID = %d" % did)
+
 def get_entryreasons(dbo):
     return db.query(dbo, "SELECT * FROM entryreason ORDER BY ReasonName")
 
 def get_entryreason_name(dbo, rid):
-    if id is None: return ""
+    if rid is None: return ""
     return db.query_string(dbo, "SELECT ReasonName FROM entryreason WHERE ID = %d" % rid)
 
 def get_incident_completed_types(dbo):

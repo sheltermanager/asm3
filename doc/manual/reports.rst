@@ -170,6 +170,9 @@ The types are outlined below:
 * $ASK DIET$ - requests a diet from the user in the same manner as $ASK
   SPECIES$ 
 
+* $ASK DONATIONTYPE$ - requests a payment/donation type from the user in the
+  same manner as $ASK SPECIES$
+
 * $ASK LOGTYPE$ - requests a log type from the user in the same manner as $ASK
   SPECIES$
 
