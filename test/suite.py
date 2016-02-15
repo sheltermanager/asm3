@@ -78,6 +78,10 @@ import test_person
 suiteperson = unittest.makeSuite(test_person.TestPerson, 'test')
 fullsuite.append(suiteperson)
 
+import test_publish
+suitepublish = unittest.makeSuite(test_publish.TestPublish, 'test')
+fullsuite.append(suitepublish)
+
 import test_search
 suitesearch = unittest.makeSuite(test_search.TestSearch, 'test')
 fullsuite.append(suitesearch)

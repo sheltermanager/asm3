@@ -5184,10 +5184,4 @@ class AKCReunitePublisher(VetEnvoyUSMicrochipPublisher):
             ['0006', '0007', '956'])
 
 
-if __name__ == "__main__":
-    p = PETtracUKPublisher(db.DatabaseInfo(), PublishCriteria())
-    s = p.reregistrationPDF({ "breed": "Labrador" }, "", "Testington Test", "Test Org", "123 Test Street", "Rotherham", "S Yorkshire", "S60 5LP")
-    f = open("/home/robin/test.pdf", "wb")
-    f.write(s)
-    f.flush()
-    f.close()
+
