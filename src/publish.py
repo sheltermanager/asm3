@@ -4261,15 +4261,16 @@ class PETtracUKPublisher(AbstractPublisher):
         self.publisherName = "PETtrac UK Publisher"
         self.setLogName("pettracuk")
 
-    def reregistrationPDF(self, fields, sig, realname):
+    def reregistrationPDF(self, fields, sig, realname, orgname, orgaddress, orgtown, orgcounty, orgpostcode):
         """
         Generates a reregistration PDF document containing the authorised user's
         electronic signature.
         """
-        h = "<h2>Change of Registered Owner/Keeper</h2>"
+        h = "<p align=\"right\"><b>%s</b><br />%s<br />%s, %s<br />%s</p>" % (orgname, orgaddress, orgtown, orgcounty, orgpostcode)
+        h += "<h2>Change of Registered Owner/Keeper</h2>"
         h += "<table border=\"1\"><tr>"
         for k, v in fields.iteritems():
-            h += "<td>%s</td><td>%s</td>" % (k, v)
+            h += "<td>%s:</td><td>%s</td>" % (k, v)
         h += "</tr></table>"
         h += "<p>I/We confirm that every effort has been made to reunite the animal with its owner/keeper, or that the previous " \
             "owner has relinquished ownership/keepership.</p>\n"
@@ -4297,6 +4298,10 @@ class PETtracUKPublisher(AbstractPublisher):
         orgserial = configuration.avid_org_serial(self.dbo)
         orgpassword = configuration.avid_org_password(self.dbo)
         avidrereg = configuration.avid_reregistration(self.dbo)
+
+        orgaddress = configuration.organisation_address(self.dbo)
+        orgtown = configuration.organisation_town(self.dbo)
+        orgcounty = configuration.organisation_county(self.dbo)
 
         if orgpostcode == "" or orgname == "" or orgserial == "" or orgpassword == "":
             self.setLastError("orgpostcode, orgname, orgserial and orgpassword all need to be set for AVID publisher")
@@ -4414,7 +4419,7 @@ class PETtracUKPublisher(AbstractPublisher):
 
                         pdfname = "%s-%s-%s.pdf" % (i18n.format_date("%Y%m%d", i18n.now(self.dbo.timezone)), orgserial, an["IDENTICHIPNUMBER"])
                         fields["filenameupload"] = pdfname
-                        pdf = self.reregistrationPDF(fields, user[0]["SIGNATURE"], user[0]["REALNAME"])
+                        pdf = self.reregistrationPDF(fields, user[0]["SIGNATURE"], user[0]["REALNAME"], orgname, orgaddress, orgtown, orgcounty, orgpostcode)
                         self.log("generated re-registration PDF %s (%d bytes)" % (pdfname, len(pdf)))
 
                         reregurl = PETTRAC_UK_POST_URL.replace("onlineregistration", "onlinereregistration")
@@ -5178,3 +5183,11 @@ class AKCReunitePublisher(VetEnvoyUSMicrochipPublisher):
         VetEnvoyUSMicrochipPublisher.__init__(self, dbo, publishCriteria, "AKC Reunite Publisher", "akcreunite", VETENVOY_US_AKC_REUNITE_RECIPIENTID, 
             ['0006', '0007', '956'])
 
+
+if __name__ == "__main__":
+    p = PETtracUKPublisher(db.DatabaseInfo(), PublishCriteria())
+    s = p.reregistrationPDF({ "breed": "Labrador" }, "", "Testington Test", "Test Org", "123 Test Street", "Rotherham", "S Yorkshire", "S60 5LP")
+    f = open("/home/robin/test.pdf", "wb")
+    f.write(s)
+    f.flush()
+    f.close()
