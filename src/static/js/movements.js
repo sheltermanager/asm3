@@ -613,8 +613,8 @@ $(function() {
         /** Fires when the return date is changed */
         returndate_change: function() {
             // Show return category/reason for movements that need them 
-            // (fosters do not)
-            if ($("#returndate").val() && $("#type").val() != 2) {
+            // (adoptions and reclaims)
+            if ($("#returndate").val() && ( $("#type").val() == 1 || $("#type").val() == 5 )) {
                 $("#returncategory").closest("tr").fadeIn();
                 $("#reason").closest("tr").fadeIn();
             }

@@ -1,6 +1,7 @@
 39
 ================
 
+17/02/16 Return category on movements only valid for adoption and reclaim
 17/02/16 calc_days_on_shelter should take died off shelter into account
 15/02/16 Add DONATIONTYPE report criteria
 15/02/16 Expand data sent on avid re-reg a little

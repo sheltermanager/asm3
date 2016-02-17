@@ -998,7 +998,7 @@ def calc_total_days_on_shelter(dbo, animalid, a = None, movements = None):
     """
     stop = now()
     if a is None:
-        a = db.query(dbo, "SELECT Archived, DateBroughtIn, DeceasedDate, ActiveMovementDate FROM animal WHERE ID = %d" % animalid)
+        a = db.query(dbo, "SELECT Archived, DateBroughtIn, DeceasedDate, DiedOffShelter, ActiveMovementDate FROM animal WHERE ID = %d" % animalid)
         if len(a) == 0: return 0
         a = a[0]
 
