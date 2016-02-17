@@ -982,7 +982,7 @@ def calc_days_on_shelter(dbo, animalid, a = None):
 
     # If the animal is dead, or has left the shelter
     # use that date as our cutoff instead
-    if a["DECEASEDDATE"] is not None and a["DiedOffShelter"] == 0:
+    if a["DECEASEDDATE"] is not None and a["DIEDOFFSHELTER"] == 0:
         stop = a["DECEASEDDATE"]
     elif a["ACTIVEMOVEMENTDATE"] is not None and a["ARCHIVED"] == 1:
         stop = a["ACTIVEMOVEMENTDATE"]
@@ -1006,7 +1006,7 @@ def calc_total_days_on_shelter(dbo, animalid, a = None, movements = None):
 
     # If the animal is dead, or is off the shelter
     # use that date as our final date instead
-    if a["DECEASEDDATE"] is not None:
+    if a["DECEASEDDATE"] is not None and a["DIEDOFFSHELTER"] == 0:
         stop = a["DECEASEDDATE"]
     elif a["ACTIVEMOVEMENTDATE"] is not None and a["ARCHIVED"] == 1:
         stop = a["ACTIVEMOVEMENTDATE"]
