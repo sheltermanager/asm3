@@ -942,8 +942,10 @@ def handler(dbo, user, locationfilter, post):
     elif mode == "sign":
         # We're electronically signing a document
         for mid in post.integer_list("ids"):
-            media.sign_document(dbo, user, mid, post["sig"], post["signdate"])
-            configuration.signpad_ids(dbo, user, " ")
+            try:
+                media.sign_document(dbo, user, mid, post["sig"], post["signdate"])
+            finally:
+                configuration.signpad_ids(dbo, user, "")
         return "ok"
 
 def handler_addanimal(l, homelink, dbo):

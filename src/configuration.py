@@ -529,8 +529,8 @@ def db_unlock(dbo):
     """
     cset_db(dbo, "DBLock", "No")
 
-def db_view_seq_version(dbo, newval = ""):
-    if newval == "":
+def db_view_seq_version(dbo, newval = None):
+    if newval is None:
         return cstring(dbo, "DBViewSeqVersion")
     else:
         cset(dbo, "DBViewSeqVersion", newval)
@@ -885,8 +885,8 @@ def publishers_enabled_disable(dbo, publishertodisable):
     pe = pe.replace(" " + publishertodisable, "")
     cset(dbo, "PublishersEnabled", pe)
 
-def quicklinks_id(dbo, newval = ""):
-    if newval == "":
+def quicklinks_id(dbo, newval = None):
+    if newval is None:
         return cstring(dbo, "QuicklinksID", DEFAULTS["QuicklinksID"])
     else:
         cset(dbo, "QuicklinksID", newval)
@@ -941,8 +941,8 @@ def show_weight_in_lbs(dbo):
 def show_weight_units_in_log(dbo):
     return cboolean(dbo, "ShowWeightUnitsInLog", DEFAULTS["ShowWeightUnitsInLog"] == "Yes")
 
-def signpad_ids(dbo, user, newval = ""):
-    if newval == "":
+def signpad_ids(dbo, user, newval = None):
+    if newval is None:
         return cstring(dbo, "SignpadIds%s" % user, "")
     else:
         cset(dbo, "SignpadIds%s" % user, newval)
