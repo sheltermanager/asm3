@@ -288,16 +288,17 @@ def get_animal_data_query(dbo, pc, animalid = 0):
         sql += " LIMIT %d" % pc.limit
     return sql
 
-def get_microchip_data(dbo, patterns, publishername):
+def get_microchip_data(dbo, patterns, publishername, allowintake = True):
     """
     Returns a list of animals with unpublished microchips.
     patterns:      A list of either microchip prefixes or SQL clauses to OR together
                    together in the preamble, eg: [ '977', "a.SmartTag = 1 AND a.SmartTagNumber <> ''" ]
     publishername: The name of the microchip registration publisher, eg: pettracuk
+    allowintake:   True if the provider is ok with registering to the shelter's details on intake
     """
     movementtypes = configuration.microchip_register_movements(dbo)
     try:
-        rows = db.query(dbo, get_microchip_data_query(dbo, patterns, publishername, movementtypes))
+        rows = db.query(dbo, get_microchip_data_query(dbo, patterns, publishername, movementtypes, allowintake))
     except Exception,err:
         al.error(str(err), "publisher.get_microchip_data", dbo, sys.exc_info())
     organisation = configuration.organisation(dbo)
@@ -353,7 +354,7 @@ def get_microchip_data(dbo, patterns, publishername):
             r["CURRENTOWNEREMAILADDRESS"] = email
     return rows
 
-def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1"):
+def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1", allowintake = True):
     """
     Generates a query for unpublished microchips.
     It does this by looking for animals who have microchips matching the pattern where
@@ -376,7 +377,7 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1"):
     if movementtypes.find("11") == -1:
         trialclause = "AND a.HasTrialAdoption = 0"
     intakeclause = ""
-    if movementtypes.find("0") != -1:
+    if movementtypes.find("0") != -1 and allowintake:
         # Note: Use of MostRecentEntryDate will pick up returns as well as intake
         intakeclause = "OR (a.NonShelterAnimal = 0 AND a.IsHold = 0 AND a.Archived = 0 AND a.ActiveMovementID = 0 " \
             "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
@@ -4329,7 +4330,7 @@ class PETtracUKPublisher(AbstractPublisher):
             self.setLastError("authorised user '%s' does not have an electronic signature on file" % authuser)
             return
 
-        animals = get_microchip_data(self.dbo, ['977%',], "pettracuk")
+        animals = get_microchip_data(self.dbo, ['977%',], "pettracuk", allowintake = False)
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
             return
@@ -4355,10 +4356,6 @@ class PETtracUKPublisher(AbstractPublisher):
 
                 if utils.nulltostr(an["CURRENTOWNERPOSTCODE"].strip()) == "":
                     self.logError("Postal code for the new owner is blank, cannot process")
-                    continue
-
-                if an["IDENTICHIPDATE"] is None:
-                    self.logError("Microchip date cannot be blank, cannot process")
                     continue
 
                 # Make sure the length is actually suitable
