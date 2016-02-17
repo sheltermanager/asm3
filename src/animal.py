@@ -216,7 +216,7 @@ def get_animal_query(dbo):
 
 def get_animal_status_query(dbo):
     dummy = dbo
-    return "SELECT a.ID, a.ShelterCode, a.ShortCode, a.AnimalName, a.DeceasedDate, a.PutToSleep, " \
+    return "SELECT a.ID, a.ShelterCode, a.ShortCode, a.AnimalName, a.DeceasedDate, a.DiedOffShelter, a.PutToSleep, " \
         "dr.ReasonName AS PTSReasonName, " \
         "il.LocationName AS ShelterLocationName, " \
         "a.ShelterLocationUnit, " \
@@ -974,7 +974,7 @@ def calc_days_on_shelter(dbo, animalid, a = None):
     """
     stop = now()
     if a is None:
-        a = db.query(dbo, "SELECT Archived, MostRecentEntryDate, DeceasedDate, ActiveMovementDate FROM animal WHERE ID = %d" % animalid)
+        a = db.query(dbo, "SELECT Archived, MostRecentEntryDate, DeceasedDate, DiedOffShelter, ActiveMovementDate FROM animal WHERE ID = %d" % animalid)
         if len(a) == 0: return
         a = a[0]
 
@@ -982,7 +982,7 @@ def calc_days_on_shelter(dbo, animalid, a = None):
 
     # If the animal is dead, or has left the shelter
     # use that date as our cutoff instead
-    if a["DECEASEDDATE"] is not None:
+    if a["DECEASEDDATE"] is not None and a["DiedOffShelter"] == 0:
         stop = a["DECEASEDDATE"]
     elif a["ACTIVEMOVEMENTDATE"] is not None and a["ARCHIVED"] == 1:
         stop = a["ACTIVEMOVEMENTDATE"]
