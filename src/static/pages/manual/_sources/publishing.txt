@@ -358,6 +358,8 @@ ASM will create a signed PDF disclaimer document to transmit to AVID,
 explaining that the shelter has done all it can to find the previous owner of
 the animal.
 
+.. warning:: If you have the "Intake" option set of "Register microchips after", the AVID publisher will ignore it. Instead, AVID have a "selfreg" parameter, which ASM will always set so the shelter is always logged as the secondary contact on a chip.
+
 idENTICHIP/Anibase UK
 ---------------------
 
