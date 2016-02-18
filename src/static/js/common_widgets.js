@@ -988,6 +988,7 @@
             if (newval === undefined) {
                 return this.options.editor.getValue();
             }
+            if (!newval) { newval = ""; }
             this.options.editor.setValue(newval);
             this.options.editor.refresh();
             this.change();
@@ -1055,6 +1056,7 @@
             if (newval === undefined) {
                 return this.options.editor.getValue();
             }
+            if (!newval) { newval = ""; }
             this.options.editor.setValue(newval);
             this.options.editor.refresh();
             this.change();
