@@ -2850,7 +2850,7 @@ def update_all_variable_animal_data(dbo, include_deceased=False):
     where = ""
     if not include_deceased:
         where = "WHERE DeceasedDate Is Null"
-    animals = db.query(dbo, "SELECT ID, DateBroughtIn, DeceasedDate, Archived, ActiveMovementDate, " \
+    animals = db.query(dbo, "SELECT ID, DateBroughtIn, DeceasedDate, DiedOffShelter, Archived, ActiveMovementDate, " \
         "MostRecentEntryDate, DateOfBirth FROM animal %s" % where)
 
     # Get a single lookup of movements for animals who are still alive
