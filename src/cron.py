@@ -443,7 +443,7 @@ def maint_recode_all(dbo):
 def maint_variable_data(dbo):
     try:
         configuration.set_variable_data_updated_blank(dbo)
-        animal.update_all_variable_animal_data(dbo)
+        animal.update_all_variable_animal_data(dbo, True)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_variable_data: %s" % em, "cron.maint_variable_data", dbo, sys.exc_info())
@@ -750,7 +750,7 @@ def print_usage():
     print "       maint_reinstall_default_media - re-adds default document/publishing templates"
     print "       maint_scale_animal_images - re-scales all the animal images in the database"
     print "       maint_scale_pdfs - re-scales all the PDFs in the database"
-    print "       maint_variable_data - calculate variable data for the day"
+    print "       maint_variable_data - recalculate all variable data for all animals"
 
 if __name__ == "__main__": 
     if len(sys.argv) == 2 and not MULTIPLE_DATABASES:

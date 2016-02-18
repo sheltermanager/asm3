@@ -2829,7 +2829,7 @@ def update_variable_animal_data(dbo, animalid, a = None, animalupdatebatch = Non
         ))
         db.execute(dbo, s)
 
-def update_all_variable_animal_data(dbo):
+def update_all_variable_animal_data(dbo, include_deceased=False):
     """
     Updates variable animal data for all animals
     """
@@ -2846,10 +2846,12 @@ def update_all_variable_animal_data(dbo):
     # Load age group bands now to save repeated looped lookups
     bands = db.query(dbo, "SELECT ItemName, ItemValue FROM configuration WHERE ItemName LIKE 'AgeGroup%' ORDER BY ItemName")
 
-    # Update variable data for all animals who are still alive
+    # Update variable data for either all or non-deceased animals
+    where = ""
+    if not include_deceased:
+        where = "WHERE DeceasedDate Is Null"
     animals = db.query(dbo, "SELECT ID, DateBroughtIn, DeceasedDate, Archived, ActiveMovementDate, " \
-        "MostRecentEntryDate, DateOfBirth FROM animal " \
-        "WHERE DeceasedDate Is Null")
+        "MostRecentEntryDate, DateOfBirth FROM animal %s" % where)
 
     # Get a single lookup of movements for animals who are still alive
     movements = db.query(dbo, "SELECT ad.AnimalID, ad.MovementDate, ad.ReturnDate " \
