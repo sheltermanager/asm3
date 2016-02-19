@@ -1,6 +1,7 @@
 39
 ================
 
+19/02/16 Include email sig when emailing media/pdf #337
 17/02/16 Fix for mobile signing docs from non-animal media tabs #380
 17/02/16 AVID allow blank implant dates, but don't want reg after intake
 17/02/16 Return category on movements only valid for adoption and reclaim

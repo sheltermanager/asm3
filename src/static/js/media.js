@@ -783,6 +783,10 @@ $(function() {
                 if (controller.person) {
                     $("#emailto").val(controller.person.EMAILADDRESS);
                 }
+                // Default the email sig
+                if (config.str("EmailSignature")) {
+                    $("#emailnote").html("\n--\n" + config.str("EmailSignature")); 
+                }
                 tableform.show_okcancel_dialog("#dialog-email", _("Send"), { width: 550, notblank: [ "emailto" ] })
                     .then(function() {
                         var formdata = "mode=email&email=" + encodeURIComponent($("#emailto").val()) + 
@@ -799,6 +803,10 @@ $(function() {
                 // If we have a person, default the email address
                 if (controller.person) {
                     $("#emailpdfto").val(controller.person.EMAILADDRESS);
+                }
+                // Default the email sig
+                if (config.str("EmailSignature")) {
+                    $("#emailpdfnote").html("\n--\n" + config.str("EmailSignature")); 
                 }
                 tableform.show_okcancel_dialog("#dialog-emailpdf", _("Send"), { width: 550, notblank: [ "emailpdfto" ] })
                     .then(function() {
