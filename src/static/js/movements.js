@@ -87,11 +87,15 @@ $(function() {
                 },
                 complete: function(row) {
                     // If this is the trial book, completion is determined by trial end date passing
-                    if (row.ISTRIAL == 1 && controller.name == "move_book_trial_adoption" && row.TRIALENDDATE && format.date_js(row.TRIALENDDATE) <= new Date()) {
+                    if (controller.name == "move_book_trial_adoption" && row.ISTRAIL == 1 && row.TRIALENDDATE && format.date_js(row.TRIALENDDATE) <= new Date()) {
                         return true;
                     }
-                    // Otherwise, it's whether the animal has been returned or is a cancelled reservation
-                    if (row.RESERVATIONCANCELLEDDATE != null || (row.RETURNDATE != null && format.date_js(row.RETURNDATE) <= new Date())) {
+                    // If this is a cancelled reservation
+                    if (row.MOVEMENTTYPE == 0 && row.RESERVATIONCANCELLEDDATE != null) {
+                        return true;
+                    }
+                    // If the movement is returned and not in the future
+                    if (row.MOVEMENTTYPE > 0 && row.RETURNDATE && format.date_js(row.RETURNDATE) <= new Date()) {
                         return true;
                     }
                 },
