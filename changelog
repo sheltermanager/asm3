@@ -1,6 +1,7 @@
 39
 ================
 
+23/02/16 Fix for switching web preferred with extension .jpeg
 19/02/16 Tweak to only show greyed out cancelled reserves if they're reserves
 19/02/16 Include email sig when emailing media/pdf #337
 17/02/16 Fix for mobile signing docs from non-animal media tabs #380

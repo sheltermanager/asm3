@@ -400,7 +400,7 @@ $(function() {
             var newweb, newdoc, hasweb, hasdoc;
             if (!controller.showpreferred) { return false; }
             $.each(controller.media, function(i, v) {
-                if (v.MEDIANAME.indexOf(".jpg") != -1) { 
+                if (v.MEDIANAME.indexOf(".jpg") != -1 || v.MEDIANAME.indexOf(".jpeg")) { 
                     if (!newweb) { newweb = v.ID; }
                     if (!newdoc) { newdoc = v.ID; }
                     if (v.WEBSITEPHOTO) { hasweb = true; }
