@@ -199,7 +199,7 @@ $(function() {
                         linkimage = "static/images/ui/document-media.png";
                     }
                     else if (m.MEDIATYPE == 2) {
-                        if (m.MEDIANAME.indexOf("youtube.com") != -1) {
+                        if (m.MEDIANAME.indexOf("youtube.com") != -1 || m.MEDIANAME.indexOf("youtu.be") != -1) {
                             linkimage = media.youtube_thumbnail(m.MEDIANAME);
                             if (!linkimage) {
                                 linkimage = "static/images/ui/file-video.png";
@@ -484,10 +484,12 @@ $(function() {
          * s: A youtube URL www.youtube.com/watch?v=ID
          */
         youtube_thumbnail: function(s) {
-            var eqpos = s.lastIndexOf("="),
-                yid = "";
-            if (eqpos != -1) {
-                yid = s.substring(eqpos+1);
+            var yid = "";
+            if (s.indexOf("youtube") != -1 && s.indexOf("=") != -1) {
+                yid = s.substring(s.indexOf("=") +1);
+            }
+            if (s.indexOf("youtu.be") != -1 && s.lastIndexOf("/") != -1) {
+                yid = s.substring(s.lastIndexOf("/") +1);
             }
             if (yid) {
                 return "https://img.youtube.com/vi/" + yid + "/default.jpg";
