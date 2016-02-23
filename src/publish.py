@@ -1458,10 +1458,15 @@ class AdoptAPetPublisher(FTPPublisher):
         returns a blank if u is not a youtube URL
         """
         if u is None: return ""
-        if u.find("youtube") == -1: return ""
-        if u.startswith("//"): u = "https:%s" % u
-        if not u.startswith("https://"): u = "https://%s" % u
-        return u
+        if u.find("youtube") == -1 and u.find("youtu.be") == -1: return ""
+        watch = ""
+        if u.find("watch?v=") != -1:
+            watch = u[u.rfind("v=")+2:]
+        if u.find("youtu.be/") != -1:
+            watch = u[u.rfind("/")+1:]
+        if watch == "":
+            return ""
+        return "https://www.youtube.com/watch?v=%s" % watch
 
     def run(self):
         
