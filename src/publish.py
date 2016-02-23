@@ -1459,6 +1459,7 @@ class AdoptAPetPublisher(FTPPublisher):
         """
         if u is None: return ""
         if u.find("youtube") == -1: return ""
+        if u.startswith("//"): u = "https:%s" % u
         if not u.startswith("https://"): u = "https://%s" % u
         return u
 
