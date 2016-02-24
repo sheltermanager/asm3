@@ -6,14 +6,14 @@ import asm, datetime, sys, os
 Import script for Shelterpro databases exported as CSV
 If you use http://dbfconv.com, a special getdate function is needed (below)
 
-(requires shelter.csv, animal.csv, person.csv, address.csv, addrlink.csv, license.csv, vacc.csv)
+(requires address.csv, addrlink.csv, animal.csv, license.csv, person.csv, shelter.csv, vacc.csv)
 
 Will also look in PATH/images/ANIMALKEY.[jpg|JPG] for animal photos if available.
 
-6th Oct, 2014 - 8th April, 2015
+6th Oct, 2014 - 24th February, 2016
 """
 
-PATH = "data/shelterpro_mt0993"
+PATH = "data/shelterpro_wa1003"
 
 def gettype(animaldes):
     spmap = {
