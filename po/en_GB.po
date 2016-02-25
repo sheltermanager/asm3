@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
-"PO-Revision-Date: 2016-01-17 16:07+0000\n"
-"Last-Translator: Andi <andi@gowling.com>\n"
+"PO-Revision-Date: 2016-02-25 08:34+0000\n"
+"Last-Translator: Robin <support@sheltermanager.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: en_GB\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.5.1.1\n"
 "X-Launchpad-Export-Date: 2015-03-02 05:20+0000\n"
-"X-POOTLE-MTIME: 1453046875.000000\n"
+"X-POOTLE-MTIME: 1456389268.000000\n"
 
 #: options.js
 msgid " days."
@@ -889,6 +889,10 @@ msgstr "All animals who have been on the shelter longer than {0} months."
 #: search.py
 msgid "All animals who have not been microchipped"
 msgstr "All animals who have not been microchipped"
+
+#: search.py
+msgid "All banned owners on file."
+msgstr "All banned owners on file."
 
 #: header.js configuration.py html.py
 msgid "All diary notes"
@@ -2249,6 +2253,10 @@ msgstr "Check"
 msgid "Check License"
 msgstr "Check Licence"
 
+#: donations.js
+msgid "Check No"
+msgstr "Cheque No"
+
 #: onlineform.js
 msgid "Checkbox"
 msgstr "Checkbox"
@@ -2334,8 +2342,9 @@ msgid "Citations"
 msgstr "Citations"
 
 #: person.js person_new.js incident_find.js incident_new.js incident.js
-#: person_find_results.js waitinglist_results.js common_personchooser.js
-#: transport.js incident_find_results.js mobile.py html.py
+#: options.js person_find_results.js waitinglist_results.js
+#: common_personchooser.js transport.js incident_find_results.js mobile.py
+#: html.py
 msgid "City"
 msgstr "Town"
 
@@ -4896,7 +4905,7 @@ msgstr "Generate a document from this animal"
 
 #: incident.js
 msgid "Generate a document from this incident"
-msgstr ""
+msgstr "Generate a document from this animal"
 
 #: person.js
 msgid "Generate a document from this person"
@@ -5780,6 +5789,10 @@ msgstr "Insurance"
 msgid "Insurance No"
 msgstr "Insurance No"
 
+#: publish_options.js
+msgid "Intake"
+msgstr "Intake"
+
 #: animal.py
 msgid "Intakes {0}"
 msgstr "Intakes {0}"
@@ -6092,7 +6105,7 @@ msgstr "Liability"
 msgid "Licence for {0} successfully renewed {1} - {2}"
 msgstr "Licence for {0} successfully renewed {1} - {2}"
 
-#: search.js header_edit_header.js
+#: search.js header_edit_header.js mobile.py
 msgid "License"
 msgstr "Licence"
 
@@ -6164,7 +6177,7 @@ msgstr "Link to an external web resource"
 msgid "Link to this animal"
 msgstr "Link to this animal"
 
-#: header_edit_header.js
+#: header_edit_header.js mobile.py
 msgid "Links"
 msgstr "Links"
 
@@ -7739,7 +7752,7 @@ msgstr "Payment From"
 msgid "Payment Methods"
 msgstr "Payment Methods"
 
-#: accounts.js
+#: accounts.js html.py reports.py
 msgid "Payment Type"
 msgstr "Payment Type"
 
@@ -8117,7 +8130,7 @@ msgstr "Presa Canario"
 
 #: main.js
 msgid "Press F11 in HTML or SQL code editing boxes to edit in fullscreen mode"
-msgstr ""
+msgstr "Press F11 in HTML or SQL code editing boxes to edit in fullscreen mode"
 
 #: onlineform_incoming.js
 msgid "Preview"
@@ -8267,11 +8280,15 @@ msgstr "Puppies (under {0} months)"
 msgid "Purchased"
 msgstr "Purchased"
 
+#: donations.js
+msgid "Qty"
+msgstr "Qty"
+
 #: dbupdate.py
 msgid "Quaker Parakeet"
 msgstr "Quaker Parakeet"
 
-#: vaccination.js test.js medical.js stocklevel.js
+#: vaccination.js donations.js test.js medical.js stocklevel.js
 msgid "Quantity"
 msgstr "Quantity"
 
@@ -9929,9 +9946,9 @@ msgstr "Started"
 msgid "Starts"
 msgstr "Starts"
 
-#: person.js person_new.js incident_new.js incident.js person_find_results.js
-#: waitinglist_results.js common_personchooser.js transport.js mobile.py
-#: html.py
+#: person.js person_new.js incident_new.js incident.js options.js
+#: person_find_results.js waitinglist_results.js common_personchooser.js
+#: transport.js mobile.py html.py
 msgid "State"
 msgstr "County"
 
@@ -10042,7 +10059,7 @@ msgstr "Subject"
 
 #: onlineform.py
 msgid "Submission received: {0}"
-msgstr ""
+msgstr "Submission received: {0}"
 
 #: publish_logs.js
 msgid "Success"
@@ -11517,6 +11534,10 @@ msgstr "Under {0} weeks old"
 msgid "Unit"
 msgstr "Unit"
 
+#: donations.js
+msgid "Unit Price"
+msgstr "Unit Price"
+
 #: animal_new.js animal.js
 msgid "Unit within the location, eg: pen or cage number"
 msgstr "Unit within the location, eg: pen or cage number"
@@ -12257,6 +12278,10 @@ msgstr ""
 "of all animal descriptions"
 
 #: options.js
+msgid "When receiving payments, allow a quantity and unit price to be set"
+msgstr "When receiving payments, allow a quantity and unit price to be set"
+
+#: options.js
 msgid "When receiving payments, allow recording of sales tax with a default rate of"
 msgstr "When receiving payments, allow recording of VAT with a default rate of"
 
@@ -12523,9 +12548,10 @@ msgstr ""
 "Your sheltermanager.com account is due to expire on {0}, please renew {1}"
 
 #: lostfound_find_results.js lostfound.js person.js lostfound_find.js
-#: person_new.js incident_find.js incident_new.js incident.js lostfound_new.js
-#: person_find_results.js waitinglist_results.js common_personchooser.js
-#: transport.js incident_find_results.js mobile.py html.py
+#: person_new.js incident_find.js incident_new.js incident.js options.js
+#: lostfound_new.js person_find_results.js waitinglist_results.js
+#: common_personchooser.js transport.js incident_find_results.js mobile.py
+#: html.py
 msgid "Zipcode"
 msgstr "Postcode"
 
@@ -12568,12 +12594,14 @@ msgstr "estimate"
 #: header.js
 msgid ""
 "filters: a:animal, p:person, wl:waitinglist, la:lostanimal, fa:foundanimal "
-"keywords: onshelter/os, notforadoption, donors, deceased, vets, retailers, "
-"staff, fosterers, volunteers, homecheckers, members, activelost, activefound"
+"keywords: onshelter/os, notforadoption, aco, banned, donors, deceased, vets, "
+"retailers, staff, fosterers, volunteers, homecheckers, members, activelost, "
+"activefound"
 msgstr ""
 "filters: a:animal, p:person, wl:waitinglist, la:lostanimal, fa:foundanimal "
-"keywords: onshelter/os, notforadoption, donors, deceased, vets, retailers, "
-"staff, fosterers, volunteers, homecheckers, members, activelost, activefound"
+"keywords: onshelter/os, notforadoption, aco, banned, donors, deceased, vets, "
+"retailers, staff, fosterers, volunteers, homecheckers, members, activelost, "
+"activefound"
 
 #: mailmerge.js
 msgid "inches"
@@ -13453,6 +13481,15 @@ msgstr "{plural3} weeks."
 #: i18n.py
 msgid "{plural3} years."
 msgstr "{plural3} years."
+
+#~ msgid ""
+#~ "filters: a:animal, p:person, wl:waitinglist, la:lostanimal, fa:foundanimal "
+#~ "keywords: onshelter/os, notforadoption, donors, deceased, vets, retailers, "
+#~ "staff, fosterers, volunteers, homecheckers, members, activelost, activefound"
+#~ msgstr ""
+#~ "filters: a:animal, p:person, wl:waitinglist, la:lostanimal, fa:foundanimal "
+#~ "keywords: onshelter/os, notforadoption, donors, deceased, vets, retailers, "
+#~ "staff, fosterers, volunteers, homecheckers, members, activelost, activefound"
 
 #~ msgid "Column"
 #~ msgstr "Column"

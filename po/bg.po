@@ -889,6 +889,10 @@ msgstr ""
 msgid "All animals who have not been microchipped"
 msgstr ""
 
+#: search.py
+msgid "All banned owners on file."
+msgstr ""
+
 #: header.js configuration.py html.py
 msgid "All diary notes"
 msgstr "Всички бележки в дневника"
@@ -2246,6 +2250,10 @@ msgstr ""
 msgid "Check License"
 msgstr ""
 
+#: donations.js
+msgid "Check No"
+msgstr ""
+
 #: onlineform.js
 msgid "Checkbox"
 msgstr ""
@@ -2331,8 +2339,9 @@ msgid "Citations"
 msgstr ""
 
 #: person.js person_new.js incident_find.js incident_new.js incident.js
-#: person_find_results.js waitinglist_results.js common_personchooser.js
-#: transport.js incident_find_results.js mobile.py html.py
+#: options.js person_find_results.js waitinglist_results.js
+#: common_personchooser.js transport.js incident_find_results.js mobile.py
+#: html.py
 msgid "City"
 msgstr "Град"
 
@@ -5765,6 +5774,10 @@ msgstr "Застраховка"
 msgid "Insurance No"
 msgstr "Номер на застраховка"
 
+#: publish_options.js
+msgid "Intake"
+msgstr ""
+
 #: animal.py
 msgid "Intakes {0}"
 msgstr "Приети {0}"
@@ -6077,7 +6090,7 @@ msgstr "Задължение"
 msgid "Licence for {0} successfully renewed {1} - {2}"
 msgstr ""
 
-#: search.js header_edit_header.js
+#: search.js header_edit_header.js mobile.py
 msgid "License"
 msgstr ""
 
@@ -6149,7 +6162,7 @@ msgstr "Линк към външен уеб ресурс"
 msgid "Link to this animal"
 msgstr ""
 
-#: header_edit_header.js
+#: header_edit_header.js mobile.py
 msgid "Links"
 msgstr "Връзки"
 
@@ -7721,7 +7734,7 @@ msgstr ""
 msgid "Payment Methods"
 msgstr ""
 
-#: accounts.js
+#: accounts.js html.py reports.py
 msgid "Payment Type"
 msgstr "Средство за плащане"
 
@@ -8247,11 +8260,15 @@ msgstr "Кученца (под {0} месеца)"
 msgid "Purchased"
 msgstr ""
 
+#: donations.js
+msgid "Qty"
+msgstr ""
+
 #: dbupdate.py
 msgid "Quaker Parakeet"
 msgstr "Quaker Parakeet"
 
-#: vaccination.js test.js medical.js stocklevel.js
+#: vaccination.js donations.js test.js medical.js stocklevel.js
 msgid "Quantity"
 msgstr ""
 
@@ -9906,9 +9923,9 @@ msgstr "Начало"
 msgid "Starts"
 msgstr "Начало"
 
-#: person.js person_new.js incident_new.js incident.js person_find_results.js
-#: waitinglist_results.js common_personchooser.js transport.js mobile.py
-#: html.py
+#: person.js person_new.js incident_new.js incident.js options.js
+#: person_find_results.js waitinglist_results.js common_personchooser.js
+#: transport.js mobile.py html.py
 msgid "State"
 msgstr "Област"
 
@@ -11477,6 +11494,10 @@ msgstr ""
 msgid "Unit"
 msgstr "Локация"
 
+#: donations.js
+msgid "Unit Price"
+msgstr ""
+
 #: animal_new.js animal.js
 msgid "Unit within the location, eg: pen or cage number"
 msgstr "Локация в местонахождението, пр: клетка, къщичка и т.н."
@@ -12212,6 +12233,10 @@ msgstr ""
 "публикуване в сайтове за осиновяване"
 
 #: options.js
+msgid "When receiving payments, allow a quantity and unit price to be set"
+msgstr ""
+
+#: options.js
 msgid "When receiving payments, allow recording of sales tax with a default rate of"
 msgstr ""
 
@@ -12480,9 +12505,10 @@ msgid "Your sheltermanager.com account is due to expire on {0}, please renew {1}
 msgstr "Абонамента Ви за sheltermanager.co, изтича на {0}. Моле подновете {1}"
 
 #: lostfound_find_results.js lostfound.js person.js lostfound_find.js
-#: person_new.js incident_find.js incident_new.js incident.js lostfound_new.js
-#: person_find_results.js waitinglist_results.js common_personchooser.js
-#: transport.js incident_find_results.js mobile.py html.py
+#: person_new.js incident_find.js incident_new.js incident.js options.js
+#: lostfound_new.js person_find_results.js waitinglist_results.js
+#: common_personchooser.js transport.js incident_find_results.js mobile.py
+#: html.py
 msgid "Zipcode"
 msgstr "Пощенски код"
 
@@ -12525,12 +12551,10 @@ msgstr "estimate"
 #: header.js
 msgid ""
 "filters: a:animal, p:person, wl:waitinglist, la:lostanimal, fa:foundanimal "
-"keywords: onshelter/os, notforadoption, donors, deceased, vets, retailers, "
-"staff, fosterers, volunteers, homecheckers, members, activelost, activefound"
+"keywords: onshelter/os, notforadoption, aco, banned, donors, deceased, vets, "
+"retailers, staff, fosterers, volunteers, homecheckers, members, activelost, "
+"activefound"
 msgstr ""
-"filters: a:animal, p:person, wl:waitinglist, la:lostanimal, fa:foundanimal "
-"keywords: onshelter/os, notforadoption, donors, deceased, vets, retailers, "
-"staff, fosterers, volunteers, homecheckers, members, activelost, activefound"
 
 #: mailmerge.js
 msgid "inches"
@@ -13407,6 +13431,15 @@ msgstr "{plural3} седмици."
 #: i18n.py
 msgid "{plural3} years."
 msgstr "{plural3} години."
+
+#~ msgid ""
+#~ "filters: a:animal, p:person, wl:waitinglist, la:lostanimal, fa:foundanimal "
+#~ "keywords: onshelter/os, notforadoption, donors, deceased, vets, retailers, "
+#~ "staff, fosterers, volunteers, homecheckers, members, activelost, activefound"
+#~ msgstr ""
+#~ "filters: a:animal, p:person, wl:waitinglist, la:lostanimal, fa:foundanimal "
+#~ "keywords: onshelter/os, notforadoption, donors, deceased, vets, retailers, "
+#~ "staff, fosterers, volunteers, homecheckers, members, activelost, activefound"
 
 #~ msgid "Column"
 #~ msgstr "Колона"

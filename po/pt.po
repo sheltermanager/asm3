@@ -895,6 +895,10 @@ msgstr ""
 msgid "All animals who have not been microchipped"
 msgstr ""
 
+#: search.py
+msgid "All banned owners on file."
+msgstr ""
+
 #: header.js configuration.py html.py
 msgid "All diary notes"
 msgstr "Todas as notas de diário"
@@ -2251,6 +2255,10 @@ msgstr ""
 msgid "Check License"
 msgstr ""
 
+#: donations.js
+msgid "Check No"
+msgstr ""
+
 #: onlineform.js
 msgid "Checkbox"
 msgstr ""
@@ -2336,8 +2344,9 @@ msgid "Citations"
 msgstr ""
 
 #: person.js person_new.js incident_find.js incident_new.js incident.js
-#: person_find_results.js waitinglist_results.js common_personchooser.js
-#: transport.js incident_find_results.js mobile.py html.py
+#: options.js person_find_results.js waitinglist_results.js
+#: common_personchooser.js transport.js incident_find_results.js mobile.py
+#: html.py
 msgid "City"
 msgstr ""
 
@@ -5818,6 +5827,10 @@ msgstr "Seguro"
 msgid "Insurance No"
 msgstr "Seguro"
 
+#: publish_options.js
+msgid "Intake"
+msgstr ""
+
 #: animal.py
 msgid "Intakes {0}"
 msgstr ""
@@ -6134,7 +6147,7 @@ msgstr "Responsabilidade"
 msgid "Licence for {0} successfully renewed {1} - {2}"
 msgstr ""
 
-#: search.js header_edit_header.js
+#: search.js header_edit_header.js mobile.py
 msgid "License"
 msgstr ""
 
@@ -6206,7 +6219,7 @@ msgstr ""
 msgid "Link to this animal"
 msgstr ""
 
-#: header_edit_header.js
+#: header_edit_header.js mobile.py
 msgid "Links"
 msgstr "Ligações"
 
@@ -7798,7 +7811,7 @@ msgstr ""
 msgid "Payment Methods"
 msgstr ""
 
-#: accounts.js
+#: accounts.js html.py reports.py
 msgid "Payment Type"
 msgstr ""
 
@@ -8324,11 +8337,15 @@ msgstr ""
 msgid "Purchased"
 msgstr ""
 
+#: donations.js
+msgid "Qty"
+msgstr ""
+
 #: dbupdate.py
 msgid "Quaker Parakeet"
 msgstr "Quaker Parakeet"
 
-#: vaccination.js test.js medical.js stocklevel.js
+#: vaccination.js donations.js test.js medical.js stocklevel.js
 msgid "Quantity"
 msgstr ""
 
@@ -9998,9 +10015,9 @@ msgstr ""
 msgid "Starts"
 msgstr "Estado"
 
-#: person.js person_new.js incident_new.js incident.js person_find_results.js
-#: waitinglist_results.js common_personchooser.js transport.js mobile.py
-#: html.py
+#: person.js person_new.js incident_new.js incident.js options.js
+#: person_find_results.js waitinglist_results.js common_personchooser.js
+#: transport.js mobile.py html.py
 #, fuzzy
 msgid "State"
 msgstr "Estado"
@@ -11543,6 +11560,10 @@ msgstr ""
 msgid "Unit"
 msgstr ""
 
+#: donations.js
+msgid "Unit Price"
+msgstr ""
+
 #: animal_new.js animal.js
 msgid "Unit within the location, eg: pen or cage number"
 msgstr ""
@@ -12276,6 +12297,10 @@ msgid ""
 msgstr ""
 
 #: options.js
+msgid "When receiving payments, allow a quantity and unit price to be set"
+msgstr ""
+
+#: options.js
 msgid "When receiving payments, allow recording of sales tax with a default rate of"
 msgstr ""
 
@@ -12514,9 +12539,10 @@ msgid "Your sheltermanager.com account is due to expire on {0}, please renew {1}
 msgstr ""
 
 #: lostfound_find_results.js lostfound.js person.js lostfound_find.js
-#: person_new.js incident_find.js incident_new.js incident.js lostfound_new.js
-#: person_find_results.js waitinglist_results.js common_personchooser.js
-#: transport.js incident_find_results.js mobile.py html.py
+#: person_new.js incident_find.js incident_new.js incident.js options.js
+#: lostfound_new.js person_find_results.js waitinglist_results.js
+#: common_personchooser.js transport.js incident_find_results.js mobile.py
+#: html.py
 msgid "Zipcode"
 msgstr ""
 
@@ -12560,8 +12586,9 @@ msgstr "Estimar"
 #: header.js
 msgid ""
 "filters: a:animal, p:person, wl:waitinglist, la:lostanimal, fa:foundanimal "
-"keywords: onshelter/os, notforadoption, donors, deceased, vets, retailers, "
-"staff, fosterers, volunteers, homecheckers, members, activelost, activefound"
+"keywords: onshelter/os, notforadoption, aco, banned, donors, deceased, vets, "
+"retailers, staff, fosterers, volunteers, homecheckers, members, activelost, "
+"activefound"
 msgstr ""
 
 #: mailmerge.js
