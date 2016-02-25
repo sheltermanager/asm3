@@ -88,6 +88,10 @@ for row in asm.csv_to_list(PATH + "invoices.csv"):
     od.Date = asm.getdate_ddmmyyyy(row["Date"])
     od.Donation = asm.get_currency(row["Amount"])
     od.Quantity = asm.cint(row["Qty"])
+    try:
+        od.UnitPrice = od.Donation / od.Quantity
+    except:
+        od.UnitPrice = od.Donation
     od.Comments = row["Desc"]
 
 # Now that everything else is done, output stored records
