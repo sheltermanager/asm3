@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Appendix: Wordkeys &mdash; ASM 38 documentation</title>
+  <title>Appendix: Wordkeys &mdash; ASM 39u documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   
 
   
-    <link rel="top" title="ASM 38 documentation" href="index.html"/>
+    <link rel="top" title="ASM 39u documentation" href="index.html"/>
         <link rel="next" title="Appendix: Frequently Asked Questions" href="faq.html"/>
         <link rel="prev" title="Options" href="options.html"/> 
 
@@ -723,6 +723,8 @@ to the end of the keys listed below (eg: PaymentType1, PaymentComments2)</p>
 <dl class="docutils">
 <dt>ReceiptNum</dt>
 <dd>If you issue receipts for donations, the receipt number</dd>
+<dt>CheckNum / ChequeNum</dt>
+<dd>The cheque number for the payment</dd>
 <dt>PaymentType</dt>
 <dd>The payment type</dd>
 <dt>PaymentMethod</dt>
@@ -732,7 +734,11 @@ to the end of the keys listed below (eg: PaymentType1, PaymentComments2)</p>
 <dt>PaymentDateDue</dt>
 <dd>If this is a recurring payment, the date it is due</dd>
 <dt>PaymentAmount</dt>
-<dd>The amount of the payment</dd>
+<dd>The total amount of the payment</dd>
+<dt>PaymentQuantity</dt>
+<dd>(if quantities are enabled) The number of items the payment covers</dd>
+<dt>PaymentUnitPrice</dt>
+<dd>(if quantities are enabled) The price per item</dd>
 <dt>PaymentGiftAid</dt>
 <dd>Yes or No if this payment is eligible for UK giftaid</dd>
 <dt>PaymentTax / PaymentVAT</dt>
@@ -1162,7 +1168,7 @@ on a single incident.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'38',
+            VERSION:'39u',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

@@ -1,6 +1,7 @@
 39
 ================
 
+25/02/16 Allow payments to support quantities and cheque numbers #385, #386
 23/02/16 Add support for YouTube URL and Hair Length to adoptapet publisher
 23/02/16 Never register the microchip of a dead animal
 23/02/16 Fix for switching web preferred with extension .jpeg

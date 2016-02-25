@@ -447,6 +447,8 @@ The fields are:
 
 ReceiptNum
     If you issue receipts for donations, the receipt number 
+CheckNum / ChequeNum
+    The cheque number for the payment
 PaymentType
     The payment type
 PaymentMethod
@@ -456,7 +458,11 @@ PaymentDate
 PaymentDateDue
     If this is a recurring payment, the date it is due 
 PaymentAmount 
-    The amount of the payment
+    The total amount of the payment
+PaymentQuantity
+    (if quantities are enabled) The number of items the payment covers
+PaymentUnitPrice
+    (if quantities are enabled) The price per item
 PaymentGiftAid
     Yes or No if this payment is eligible for UK giftaid
 PaymentTax / PaymentVAT

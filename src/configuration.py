@@ -147,6 +147,7 @@ DEFAULTS = {
     "DisableOnlineForms": "No",
     "DisableRetailer": "No",
     "DocumentWordProcessor": "HTML",
+    "DonationQuantities": "No",
     "DonationTargetAccount": "9",
     "DonationTrxOverride": "No",
     "DonationOnMoveReserve": "Yes",

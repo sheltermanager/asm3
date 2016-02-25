@@ -48,8 +48,9 @@ def get_citation_query(dbo):
 def get_donation_query(dbo):
     return "SELECT od.ID, od.DonationTypeID, od.DonationPaymentID, dt.DonationName, od.Date, od.DateDue, " \
         "od.Donation, p.PaymentName, od.IsGiftAid, lk.Name AS IsGiftAidName, od.Frequency, " \
+        "od.Quantity, od.UnitPrice, " \
         "fr.Frequency AS FrequencyName, od.NextCreated, " \
-        "od.ReceiptNumber, od.IsVAT, od.VATRate, od.VATAmount, " \
+        "od.ReceiptNumber, od.ChequeNumber, od.IsVAT, od.VATRate, od.VATAmount, " \
         "od.CreatedBy, od.CreatedDate, od.LastChangedBy, od.LastChangedDate, " \
         "od.Comments, o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, " \
         "o.OwnerName, a.AnimalName, a.ShelterCode, a.ShortCode, a.ID AS AnimalID, o.ID AS OwnerID, " \
@@ -565,10 +566,13 @@ def insert_donations_from_form(dbo, username, post, donationdate, force_receive 
             "payment"               : post["payment%d" % i],
             "destaccount"           : post["destaccount%d" % i],
             "frequency"             : "0",
+            "quantity"              : post["quantity%d" % i],
+            "unitprice"             : post["unitprice%d" % i],
             "amount"                : post["amount%d" % i],
             "due"                   : due,
             "received"              : received,
             "giftaid"               : post["giftaid%d" % i],
+            "chequenumber"          : post["chequenumber%d" % i],
             "receiptnumber"         : post["receiptnumber"],
             "vat"                   : post["vat%d" % i],
             "vatrate"               : post["vatrate%d" % i],
@@ -592,10 +596,13 @@ def insert_donation_from_form(dbo, username, post):
         ( "DonationTypeID", post.db_integer("type")),
         ( "DonationPaymentID", post.db_integer("payment")),
         ( "Frequency", post.db_integer("frequency")),
+        ( "Quantity", post.db_integer("quantity")), 
+        ( "UnitPrice", post.db_integer("unitprice")),
         ( "Donation", post.db_integer("amount")),
         ( "DateDue", post.db_date("due")),
         ( "Date", post.db_date("received")),
         ( "NextCreated", db.di(0)),
+        ( "ChequeNumber", post.db_string("chequenumber")), 
         ( "ReceiptNumber", post.db_string("receiptnumber")),
         ( "IsGiftAid", post.db_boolean("giftaid")),
         ( "IsVAT", post.db_boolean("vat")),
@@ -627,9 +634,12 @@ def update_donation_from_form(dbo, username, post):
         ( "DonationTypeID", post.db_integer("type")),
         ( "DonationPaymentID", post.db_integer("payment")),
         ( "Frequency", post.db_integer("frequency")),
+        ( "Quantity", post.db_integer("quantity")),
+        ( "UnitPrice", post.db_integer("unitprice")),
         ( "Donation", post.db_integer("amount")),
         ( "DateDue", post.db_date("due")),
         ( "Date", post.db_date("received")),
+        ( "ChequeNumber", post.db_string("chequenumber")),
         ( "ReceiptNumber", post.db_string("receiptnumber")),
         ( "IsGiftAid", post.db_boolean("giftaid")),
         ( "IsVAT", post.db_boolean("vat")),
@@ -706,11 +716,14 @@ def check_create_next_donation(dbo, username, odid):
             ( "DonationTypeID", db.di(d["DONATIONTYPEID"])),
             ( "DateDue", db.dd(nextdue)),
             ( "Date", db.dd(None)),
+            ( "Quantity", db.di(d["QUANTITY"])),
+            ( "UnitPrice", db.di(d["UNITPRICE"])), 
             ( "Donation", db.di(d["DONATION"])),
             ( "IsGiftAid", db.di(d["ISGIFTAID"])),
             ( "DonationPaymentID", db.di(d["DONATIONPAYMENTID"])),
             ( "Frequency", db.di(d["FREQUENCY"])),
             ( "NextCreated", db.di(0)),
+            ( "ChequeNumber", db.ds("")), 
             ( "ReceiptNumber", db.ds(utils.padleft(did, 8))),
             ( "IsVAT", db.di(d["ISVAT"])),
             ( "VATRate", db.df(d["VATRATE"])),

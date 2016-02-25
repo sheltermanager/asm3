@@ -45,6 +45,10 @@ ASM contains a full double entry accounting package. The options here are:
   donation will be applied to (the withdrawal account is always the donation
   type's matching income account).
 
+* When receiving payments, allow a quantity and unit price to be set: When
+  adding payments to the system, allow a quantity and unit price to be included
+  for multiple item purchases/payments.
+
 * When receiving payments, allow recording of sales tax with a default rate of %:
   ASM can calculate and store sales tax/VAT/GST amounts on payments you receive
   for taxable goods. Enabling this option will add a tickbox to all payment

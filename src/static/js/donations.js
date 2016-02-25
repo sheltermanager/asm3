@@ -28,11 +28,16 @@ $(function() {
                     { json_field: "FREQUENCY", post_field: "frequency", label: _("Frequency"), type: "select", options: { displayfield: "FREQUENCY", valuefield: "ID", rows: controller.frequencies }},
                     { json_field: "DATEDUE", post_field: "due", label: _("Due"), type: "date" },
                     { json_field: "DATE", post_field: "received", label: _("Received"), type: "date" },
+                    { json_field: "QUANTITY", post_field: "quantity", label: _("Quantity"), type: "number", 
+                        hideif: function() { return !config.bool("DonationQuantities"); } },
+                    { json_field: "UNITPRICE", post_field: "unitprice", label: _("Unit Price"), type: "currency", 
+                        hideif: function() { return !config.bool("DonationQuantities"); } },
                     { json_field: "DONATION", post_field: "amount", label: _("Amount"), type: "currency" },
                     { json_field: "", post_field: "destaccount", label: _("Deposit Account"), 
                         hideif: function() { return !config.bool("DonationTrxOverride"); }, 
                         defaultval: config.integer("DonationTargetAccount"),
                         type: "select", options: { displayfield: "CODE", valuefield: "ID", rows: controller.accounts }},
+                    { json_field: "CHEQUENUMBER", post_field: "chequenumber", label: _("Check No"), type: "text" },
                     { json_field: "RECEIPTNUMBER", post_field: "receiptnumber", label: _("Receipt No"), type: "text" },
                     { json_field: "ISGIFTAID", post_field: "giftaid", label: _("Gift Aid"), type: "check" },
                     { json_field: "ISVAT", post_field: "vat", label: _("Sales Tax"), type: "check", 
@@ -98,6 +103,7 @@ $(function() {
                     { field: "DATEDUE", display: _("Due"), formatter: tableform.format_date },
                     { field: "DATE", display: _("Received"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
                     { field: "RECEIPTNUMBER", display: _("Receipt No") },
+                    { field: "QUANTITY", display: _("Qty"), hideif: function() { return !config.bool("DonationQuantities"); } },
                     { field: "DONATION", display: _("Amount"), formatter: tableform.format_currency },
                     { field: "VATAMOUNT", display: _("Tax"), formatter: tableform.format_currency, hideif: function() { return !config.bool("VATEnabled"); } },
                     { field: "PERSON", display: _("Person"),
@@ -159,6 +165,7 @@ $(function() {
                                     $("#person").personchooser("loadbyid", controller.person.ID);
                                     donations.update_movements(controller.person.ID);
                                 }
+                                $("#quantity").val("1");
                                 $("#type").select("value", config.integer("AFDefaultDonationType"));
                                 $("#giftaid").prop("checked", false);
                                 $("#receiptnumber").val("");
@@ -378,6 +385,10 @@ $(function() {
 
             $("#type").change(function() {
                 donations.type_change();
+            });
+
+            $("#quantity, #unitprice").blur(function() {
+                $("#amount").currency("value", format.to_int($("#quantity").val()) * $("#unitprice").currency("value"));
             });
 
             $("#vat").change(function() {
