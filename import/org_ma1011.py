@@ -87,10 +87,8 @@ for row in asm.csv_to_list(PATH + "invoices.csv"):
     od.DonationTypeID = dt.ID
     od.Date = asm.getdate_ddmmyyyy(row["Date"])
     od.Donation = asm.get_currency(row["Amount"])
-    if row["Qty"] == "1":
-        od.Comments = row["Desc"]
-    else:
-        od.Comments = "%s (x %s)" % (row["Desc"], row["Qty"])
+    od.Quantity = asm.cint(row["Qty"])
+    od.Comments = row["Desc"]
 
 # Now that everything else is done, output stored records
 for o in owners:

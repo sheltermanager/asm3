@@ -2079,6 +2079,7 @@ class Owner:
 class OwnerDonation:
     ID = 0
     ReceiptNumber = ""
+    ChequeNumber = ""
     AnimalID = 0
     OwnerID = 0
     MovementID = 0
@@ -2086,7 +2087,9 @@ class OwnerDonation:
     DonationPaymentID = 1
     Date = None
     DateDue = None
-    Donation = 0.0
+    Quantity = 0
+    UnitPrice = 0
+    Donation = 0
     IsGiftAid = 0
     Frequency = 0
     NextCreated = 0
@@ -2105,6 +2108,7 @@ class OwnerDonation:
         s = (
             ( "ID", di(self.ID) ),
             ( "ReceiptNumber", ds(self.ReceiptNumber) ),
+            ( "ChequeNumber", ds(self.ChequeNumber) ),
             ( "AnimalID", di(self.AnimalID) ),
             ( "OwnerID", di(self.OwnerID) ),
             ( "MovementID", di(self.MovementID) ),
@@ -2112,6 +2116,8 @@ class OwnerDonation:
             ( "DonationPaymentID", di(self.DonationPaymentID) ),
             ( "Date", dd(self.Date) ),
             ( "DateDue", dd(self.DateDue) ),
+            ( "Quantity", di(self.Quantity) ),
+            ( "UnitPrice", di(self.UnitPrice) ),
             ( "Donation", df(self.Donation) ),
             ( "IsGiftAid", di(self.IsGiftAid) ),
             ( "Frequency", di(self.Frequency) ),
