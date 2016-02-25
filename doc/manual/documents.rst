@@ -52,6 +52,11 @@ be inserted by going to Tools->Source Code in the document editor::
     
 To set the papersize to a4. Other options are a3, a5 and letter::
 
+    <!-- pdf papersize exact 89mmx36mm end -->
+
+To set the papersize to an exact measurement (in this case 89mm x 36mm
+width x height, which is the size used by the Dymo 450 label printer)::
+
     <!-- pdf orientation landscape --> 
 
 To set the orientation to landscape. Portrait is the default but can be

@@ -926,22 +926,20 @@ def html_to_pdf(htmldata, baseurl = "", account = ""):
     # Allow orientation and papersize to be set
     # with directives in the document source - eg: <!-- pdf orientation landscape, pdf papersize letter -->
     orientation = "portrait"
-    papersize = "a4"
+    # Sort out page size arguments
+    papersize = "--page-size a4"
     if htmldata.find("pdf orientation landscape") != -1: orientation = "landscape"
     if htmldata.find("pdf orientation portrait") != -1: orientation = "portrait"
-    if htmldata.find("pdf papersize a5") != -1: papersize = "a5"
-    if htmldata.find("pdf papersize a4") != -1: papersize = "a4"
-    if htmldata.find("pdf papersize a3") != -1: papersize = "a3"
-    if htmldata.find("pdf papersize letter") != -1: papersize = "letter"
-    header = """<!DOCTYPE HTML>
-    <html>
-    <head>
-    <style type='text/css'>
-    @page {
-        size: %s %s;
-        margin: 1cm;
-    }
-    </style>""" % (papersize, orientation)
+    if htmldata.find("pdf papersize a5") != -1: papersize = "--page-size a5"
+    if htmldata.find("pdf papersize a4") != -1: papersize = "--page-size a4"
+    if htmldata.find("pdf papersize a3") != -1: papersize = "--page-size a3"
+    if htmldata.find("pdf papersize letter") != -1: papersize = "--page-size letter"
+    # Eg: <!-- pdf papersize exact 52mmx86mm end -->
+    ps = regex_one("pdf papersize exact (.+?) end", htmldata) 
+    if ps != "":
+        w, h = ps.split("x")
+        papersize = "--page-width %s --page-height %s" % (w, h)
+    header = "<!DOCTYPE HTML>\n<html>\n<head>"
     header += '<meta http-equiv="content-type" content="text/html; charset=utf-8">\n'
     header += "</head><body>"
     footer = "</body></html>"
