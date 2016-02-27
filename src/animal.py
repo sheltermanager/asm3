@@ -930,7 +930,7 @@ def get_timeline(dbo, limit = 500):
         ") dummy " \
         "WHERE EventDate <= %(today)s " \
         "ORDER BY EventDate DESC, ID " \
-        "LIMIT %(limit)s" % { "today": db.dd(now(dbo.timezone)), "limit": str(limit) }
+        "LIMIT %(limit)s" % { "today": db.ddt(now(dbo.timezone)), "limit": str(limit) }
     return embellish_timeline(dbo.locale, db.query_cache(dbo, sql, 120))
 
 def calc_most_recent_entry(dbo, animalid, a = None):
