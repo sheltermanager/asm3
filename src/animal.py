@@ -719,9 +719,9 @@ def get_stats(dbo):
     countfrom = db.dd(statdate)
     sql = "SELECT " \
         "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %(from)s) AS Entered," \
-        "(SELECT COUNT(*) FROM animal WHERE ActiveMovementDate >= %(from)s AND ActiveMovementType = %(adoption)d) AS Adopted," \
-        "(SELECT COUNT(*) FROM animal WHERE ActiveMovementDate >= %(from)s AND ActiveMovementType = %(reclaimed)d) AS Reclaimed, " \
-        "(SELECT COUNT(*) FROM animal WHERE ActiveMovementDate >= %(from)s AND ActiveMovementType = %(transfer)d) AS Transferred, " \
+        "(SELECT COUNT(*) FROM adoption WHERE MovementDate >= %(from)s AND MovementType = %(adoption)d) AS Adopted," \
+        "(SELECT COUNT(*) FROM adoption WHERE MovementDate >= %(from)s AND MovementType = %(reclaimed)d) AS Reclaimed, " \
+        "(SELECT COUNT(*) FROM adoption WHERE MovementDate >= %(from)s AND MovementType = %(transfer)d) AS Transferred, " \
         "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DeceasedDate >= %(from)s AND PutToSleep = 1) AS PTS, " \
         "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DeceasedDate >= %(from)s AND PutToSleep = 0) AS Died, " \
         "(SELECT SUM(Donation) FROM ownerdonation WHERE Date >= %(from)s) AS Donations, " \
