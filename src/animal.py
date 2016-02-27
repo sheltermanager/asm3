@@ -762,7 +762,12 @@ def embellish_timeline(l, rows):
           "AVAILABLE": ( _("{0} {1}: available for adoption", l), "notforadoption" ),
           "VACC": ( _("{0} {1}: received {2}", l), "vaccination" ),
           "TEST": ( _("{0} {1}: received {2}", l), "test" ),
-          "MEDICAL": ( _("{0} {1}: received {2}", l), "medical" )
+          "MEDICAL": ( _("{0} {1}: received {2}", l), "medical" ),
+          "INCIDENTOPEN": ( _("{0}: opened {1}", l), "call" ),
+          "INCIDENTCLOSE": ( _("{0}: closed {1} ({2})", l), "call" ),
+          "LOST": ( _("{2}: lost in {1}: {0}", l), "animal-lost" ),
+          "FOUND": ( _("{2}: found in {1}: {0}", l), "animal-found" ),
+          "WAITINGLIST": ( _("{0}: waiting list - {1}", l), "waitinglist" )
     }
     for r in rows:
         desc, icon = td[r["CATEGORY"]]
@@ -901,6 +906,27 @@ def get_timeline(dbo, limit = 500):
             "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID " \
             "WHERE NonShelterAnimal = 0 AND DateGiven Is Not Null " \
             "ORDER BY DateGiven DESC, animal.ID LIMIT %(limit)s) " \
+        "UNION ALL (SELECT 'incident' AS LinkTarget, 'INCIDENTOPEN' AS Category, IncidentDateTime AS EventDate, animalcontrol.ID, " \
+            "IncidentName AS Text1, DispatchAddress AS Text2, '' AS Text3, LastChangedBy FROM animalcontrol " \
+            "INNER JOIN incidenttype ON incidenttype.ID = animalcontrol.IncidentTypeID " \
+            "ORDER BY IncidentDateTime DESC, animalcontrol.ID LIMIT %(limit)s) " \
+        "UNION ALL (SELECT 'incident' AS LinkTarget, 'INCIDENTCLOSE' AS Category, CompletedDate AS EventDate, animalcontrol.ID, " \
+            "IncidentName AS Text1, DispatchAddress AS Text2, CompletedName AS Text3, LastChangedBy FROM animalcontrol " \
+            "INNER JOIN incidenttype ON incidenttype.ID = animalcontrol.IncidentTypeID " \
+            "INNER JOIN incidentcompleted ON incidentcompleted.ID = animalcontrol.IncidentCompletedID " \
+            "ORDER BY CompletedDate DESC, animalcontrol.ID LIMIT %(limit)s) " \
+        "UNION ALL (SELECT 'lostanimal' AS LinkTarget, 'LOST' AS Category, DateLost AS EventDate, animallost.ID, " \
+            "DistFeat AS Text1, AreaLost AS Text2, SpeciesName AS Text3, LastChangedBy FROM animallost " \
+            "INNER JOIN species ON animallost.AnimalTypeID = species.ID " \
+            "ORDER BY DateLost DESC, animallost.ID LIMIT %(limit)s) " \
+        "UNION ALL (SELECT 'foundanimal' AS LinkTarget, 'FOUND' AS Category, DateFound AS EventDate, animalfound.ID, " \
+            "DistFeat AS Text1, AreaFound AS Text2, SpeciesName AS Text3, LastChangedBy FROM animalfound " \
+            "INNER JOIN species ON animalfound.AnimalTypeID = species.ID " \
+            "ORDER BY DateFound DESC, animalfound.ID LIMIT %(limit)s) " \
+        "UNION ALL (SELECT 'waitinglist' AS LinkTarget, 'WAITINGLIST' AS Category, DatePutOnList AS EventDate, animalwaitinglist.ID, " \
+            "AnimalDescription AS Text1, lkurgency.Urgency AS Text2, '' AS Text3, LastChangedBy FROM animalwaitinglist " \
+            "INNER JOIN lkurgency ON lkurgency.ID = animalwaitinglist.Urgency " \
+            "ORDER BY DatePutOnList DESC, animalwaitinglist.ID LIMIT %(limit)s) " \
         ") dummy " \
         "WHERE EventDate <= %(today)s " \
         "ORDER BY EventDate DESC, ID " \

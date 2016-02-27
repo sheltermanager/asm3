@@ -1,6 +1,7 @@
 39
 ================
 
+27/02/16 Show lost/found, waitinglist and incidents on timeline #369
 27/02/16 Fix get_stats bug that didn't count re-adoptions #383
 25/02/16 Allow custom PDF paper sizes #387
 25/02/16 Allow payments to support quantities and cheque numbers #385, #386
