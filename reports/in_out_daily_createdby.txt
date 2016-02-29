@@ -118,7 +118,7 @@ INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 3 AND adoption.MovementDate Is Not Null AND adoption.ReturnDate >= '$CURRENT_DATE$' AND adoption.ReturnDate <= '$CURRENT_DATE$' AND NonShelterAnimal = 0
 
 UNION ALL SELECT adoption.ReturnDate AS thedate,
-(SELECT ReasonName FROM entryreason WHERE ID = adoption.ReturnedReasonID) AS Reason,
+'' AS Reason,
 ShelterCode,
 IdentichipNumber,
 AnimalName,
