@@ -1320,7 +1320,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "Holland Lop=Lop, Holland\n" \
             "Mini-Lop=Mini Lop\n" \
             "Bunny Rabbit=Other/Unknown\n" \
-            "Pot Bellied=Pig (Pot Bellied)\n" \
+            "Pot Bellied=Pig (Potbellied)\n" \
             "#4:Breed2=Breed2\n" \
             "Appenzell Mountain Dog=Shepherd (Unknown Type)\n" \
             "Australian Cattle Dog/Blue Heeler=Australian Cattle Dog\n" \
@@ -1419,7 +1419,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "Holland Lop=Lop, Holland\n" \
             "Mini-Lop=Mini Lop\n" \
             "Bunny Rabbit=Other/Unknown\n" \
-            "Pot Bellied=Pig (Pot Bellied)\n" \
+            "Pot Bellied=Pig (Potbellied)\n" \
             "#5:Purebred=Purebred\n" \
             "#6:Age=Age\n" \
             "#7:Name=Name\n" \
