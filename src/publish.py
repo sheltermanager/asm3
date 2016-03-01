@@ -1905,10 +1905,6 @@ class FoundAnimalsPublisher(FTPPublisher):
                     self.logError("Postal code for the new owner is blank, cannot process")
                     continue
 
-                if an["IDENTICHIPDATE"] is None:
-                    self.logError("Microchip date cannot be blank, cannot process")
-                    continue
-
                 # Make sure the length is actually suitable
                 if not len(an["IDENTICHIPNUMBER"]) in (9, 10, 15):
                     self.logError("Microchip length is not 9, 10 or 15, cannot process")
