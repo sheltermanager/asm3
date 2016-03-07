@@ -3221,11 +3221,13 @@ def get_number_animals_on_shelter(dbo, date, speciesid = 0, animaltypeid = 0, in
         sql += " AND DateOfBirth < %s" % sixmonthsago
     if startofday:
         movementclause = "MovementDate < %s" % db.dd(date) # start of day, movements today excluded
+        returnclause = "ReturnDate > %s" % db.dd(date) # start of day, returns today excluded
     else:
         movementclause = "MovementDate <= %s" % sdate # end of day, movements today included
+        returnclause = "ReturnDate > %s" % sdate # end of day, returns today included
     sql += " AND NOT EXISTS (SELECT adoption.ID FROM adoption " \
         "WHERE AnimalID = animal.ID AND MovementType <> 2 AND MovementDate Is Not Null AND " \
-        "%s AND (ReturnDate Is Null OR ReturnDate > %s))" % (movementclause, sdate)
+        "%s AND (ReturnDate Is Null OR %s))" % (movementclause, returnclause)
     return db.query_int(dbo, sql)
 
 def get_number_litters_on_shelter(dbo, date, speciesid = 0):
