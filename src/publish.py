@@ -2323,7 +2323,7 @@ class HTMLPublisher(FTPPublisher):
         notes += configuration.third_party_publisher_sig(self.dbo)
         # Preserve line endings in the bio
         notes = notes.replace("\n", "**le**")
-        tags["WEBMEDIANOTES"] = notes 
+        tags["WEBSITEMEDIANOTES"] = notes 
         output = wordprocessor.substitute_tags(searchin, tags, True, "$$", "$$")
         output = output.replace("**le**", "<br />")
         return output
