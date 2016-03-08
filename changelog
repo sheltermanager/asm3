@@ -1,6 +1,7 @@
 39
 ================
 
+08/03/16 Fix bug with returns not being included in endofday figs
 05/03/16 Fix bug with js breakage in charts
 04/03/16 Add shortcut key for incoming forms
 29/02/16 Add adoptapet Pot Bellied Pig mapping
