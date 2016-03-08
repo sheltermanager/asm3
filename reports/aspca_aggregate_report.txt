@@ -195,11 +195,11 @@ WHEN a.SpeciesID = 2 THEN 'Feline neonates' END AS AgeGroup,
 CASE WHEN ad.MovementType = 5 THEN 1 ELSE 0 END AS ReturnedToOwner,
 CASE WHEN ad.MovementType = 1 THEN 1 ELSE 0 END AS Adopted,
 CASE WHEN ad.MovementType = 7 THEN 1 ELSE 0 END AS ReturnToField,
-CASE WHEN DeceasedDate Is Not Null AND a.AsilomarOwnerRequestedEuthanasia = 1 AND a.PutToSleep = 1 AND a.IsDOA = 0 THEN 1 ELSE 0 END AS EuthanizedAtOwnerReq,
-CASE WHEN DeceasedDate Is Not Null AND a.AsilomarOwnerRequestedEuthanasia = 0 AND a.PutToSleep = 1 AND a.IsDOA = 0 THEN 1 ELSE 0 END AS EuthanizedOther,
-CASE WHEN DeceasedDate Is Not Null AND a.AsilomarOwnerRequestedEuthanasia = 0 AND a.PutToSleep = 0 AND a.IsDOA = 0 THEN 1 ELSE 0 END AS DiedInCare,
+CASE WHEN DeceasedDate Is Not Null AND a.AsilomarOwnerRequestedEuthanasia = 1 AND a.DiedOffShelter = 0 AND a.PutToSleep = 1 AND a.IsDOA = 0 THEN 1 ELSE 0 END AS EuthanizedAtOwnerReq,
+CASE WHEN DeceasedDate Is Not Null AND a.AsilomarOwnerRequestedEuthanasia = 0 AND a.DiedOffShelter = 0 AND a.PutToSleep = 1 AND a.IsDOA = 0 THEN 1 ELSE 0 END AS EuthanizedOther,
+CASE WHEN DeceasedDate Is Not Null AND a.AsilomarOwnerRequestedEuthanasia = 0 AND a.DiedOffShelter = 0 AND a.PutToSleep = 0 AND a.IsDOA = 0 THEN 1 ELSE 0 END AS DiedInCare,
 CASE WHEN ad.MovementType IN (4, 6) THEN 1 ELSE 0 END AS LostInCare,
-CASE WHEN DeceasedDate Is Not Null AND a.AsilomarOwnerRequestedEuthanasia = 0 AND a.PutToSleep = 0 AND a.IsDOA = 1 THEN 1 ELSE 0 END AS DOA,
+CASE WHEN DeceasedDate Is Not Null AND a.AsilomarOwnerRequestedEuthanasia = 0 AND a.DiedOffShelter = 0 AND a.PutToSleep = 0 AND a.IsDOA = 1 THEN 1 ELSE 0 END AS DOA,
 0 AS AlternativePlacements
 FROM animal a
 LEFT OUTER JOIN adoption ad ON ad.AnimalID = a.ID
