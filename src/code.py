@@ -5895,7 +5895,7 @@ class shelterview:
         al.debug("got %d animals for shelterview" % (len(animals)), "code.shelterview", dbo)
         s = html.header("", session)
         c = html.controller_json("animals", extanimal.get_animals_brief(animals))
-        c += html.controller_json("fosterers", extperson.get_fosterers(dbo))
+        c += html.controller_json("fosterers", extperson.get_shelterview_fosterers(dbo))
         c += html.controller_json("locations", extlookups.get_internal_locations(dbo, session.locationfilter))
         c += html.controller_int("perrow", perrow)
         s += html.controller(c)

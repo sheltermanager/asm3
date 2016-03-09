@@ -111,6 +111,12 @@ def get_fosterers(dbo):
     """
     return db.query(dbo, get_person_query(dbo) + " WHERE o.IsFosterer = 1 ORDER BY o.OwnerName")
 
+def get_shelterview_fosterers(dbo):
+    """
+    Returns all fosterers with the just the minimum info required for shelterview
+    """
+    return db.query(dbo, "SELECT o.ID, o.OwnerName, o.FosterCapacity FROM owner o WHERE o.IsFosterer = 1 ORDER BY o.OwnerName")
+
 def get_staff_volunteers(dbo):
     """
     Returns all staff and volunteers
