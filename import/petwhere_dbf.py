@@ -202,7 +202,7 @@ for c in DBF("%s/COMPLNTS.DBF" % PATH):
     if type(comments) == unicode: comments = comments.encode("ascii", "xmlcharrefreplace")
     ac.CallNotes = comments
     if c["ANIMALNO"] != "Unspecified" and ppa.has_key(c["ANIMALNO"]):
-        animalcontrolanimal.append("INSERT INTO animalcontrolanimal (AnimalID, AnimalControlID) VALUES (%d, %d)" % (ppa[c["ANIMALNO"]].ID, ac.ID))
+        animalcontrolanimal.append("INSERT INTO animalcontrolanimal (AnimalID, AnimalControlID) VALUES (%d, %d);" % (ppa[c["ANIMALNO"]].ID, ac.ID))
 
 for a in animals:
     print a
