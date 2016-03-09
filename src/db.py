@@ -130,7 +130,7 @@ def query(dbo, sql):
         if DB_TIME_QUERIES:
             tt = time.time() - start
             if tt > DB_TIME_LOG_OVER:
-                al.debug("(%0.2f ms) %s" % (tt, sql), "db.query", dbo)
+                al.debug("(%0.2f sec) %s" % (tt, sql), "db.query", dbo)
         return l
     except Exception,err:
         al.error(str(err), "db.query", dbo, sys.exc_info())
