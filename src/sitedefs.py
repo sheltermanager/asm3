@@ -65,6 +65,10 @@ DB_EXPLAIN_QUERIES = False
 # Record the time taken to run each query
 DB_TIME_QUERIES = False
 
+# If DB_TIME_QUERIES is on, only log queries that take longer 
+# than X seconds to run (or 0 to log all)
+DB_TIME_LOG_OVER = 0
+
 # URLs for ASM services
 URL_NEWS = "http://sheltermanager.com/repo/asm_news.html"
 URL_REPORTS = "http://sheltermanager.com/repo/reports.txt"
