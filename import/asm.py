@@ -1671,6 +1671,7 @@ class Animal:
     IsTransfer = 0
     IsPickup = 0
     PickupLocationID = 0
+    PickupAddress = ""
     IsGoodWithCats = 2
     IsGoodWithDogs = 2
     IsGoodWithChildren = 2
@@ -1802,6 +1803,7 @@ class Animal:
             ( "IsTransfer", di(self.IsTransfer) ),
             ( "IsPickup", di(self.IsPickup) ),
             ( "PickupLocationID", di(self.PickupLocationID) ),
+            ( "PickupAddress", ds(self.PickupAddress) ),
             ( "IsGoodWithCats", di(self.IsGoodWithCats) ),
             ( "IsGoodWithDogs", di(self.IsGoodWithDogs) ),
             ( "IsGoodWithChildren", di(self.IsGoodWithChildren) ),
