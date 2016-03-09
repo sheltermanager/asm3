@@ -1,6 +1,7 @@
 39
 ================
 
+09/03/16 Add trace sitedefs to explain and time queries #390
 08/03/16 Fix bug with returns not being included in endofday figs
 05/03/16 Fix bug with js breakage in charts
 04/03/16 Add shortcut key for incoming forms

@@ -59,6 +59,12 @@ DB_DECODE_HTML_ENTITIES = False
 # named. Use {database} to substitute database name.
 DB_EXEC_LOG = ""
 
+# Produce an EXPLAIN for each query in the log before running it
+DB_EXPLAIN_QUERIES = False
+
+# Record the time taken to run each query
+DB_TIME_QUERIES = False
+
 # URLs for ASM services
 URL_NEWS = "http://sheltermanager.com/repo/asm_news.html"
 URL_REPORTS = "http://sheltermanager.com/repo/reports.txt"

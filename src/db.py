@@ -5,8 +5,9 @@ import cachemem
 import datetime
 import i18n
 import sys
+import time
 import utils
-from sitedefs import DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HAS_ASM2_PK_TABLE, DB_PK_STRATEGY, DB_DECODE_HTML_ENTITIES, DB_EXEC_LOG, CACHE_COMMON_QUERIES, MULTIPLE_DATABASES_MAP
+from sitedefs import DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HAS_ASM2_PK_TABLE, DB_PK_STRATEGY, DB_DECODE_HTML_ENTITIES, DB_EXEC_LOG, DB_EXPLAIN_QUERIES, DB_TIME_QUERIES, CACHE_COMMON_QUERIES, MULTIPLE_DATABASES_MAP
 
 
 try:
@@ -102,6 +103,13 @@ def query(dbo, sql):
     """
     try:
         c, s = connect_cursor_open(dbo)
+        # Explain the query if the option is on
+        if DB_EXPLAIN_QUERIES:
+            esql = "EXPLAIN %s" % sql
+            al.debug(esql, "db.query", dbo)
+            al.debug(query_string(dbo, esql), "db.query", dbo)
+        # Record start time
+        start = time.time()
         # Run the query and retrieve all rows
         s.execute(sql)
         c.commit()
@@ -119,6 +127,8 @@ def query(dbo, sql):
                 rowmap[cols[i]] = v
             l.append(rowmap)
         connect_cursor_close(dbo, c, s)
+        if DB_TIME_QUERIES:
+            al.debug("(%s ms) %s" % (time.time() - start, sql), "db.query", dbo)
         return l
     except Exception,err:
         al.error(str(err), "db.query", dbo, sys.exc_info())
