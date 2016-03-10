@@ -1,6 +1,7 @@
 39
 ================
 
+10/03/16 Fix for extra quotes in neutered when sending to HLP
 09/03/16 Return just the minimum amount of foster info for shelterview
 09/03/16 Add trace sitedefs to explain and time queries #390
 08/03/16 Fix bug with returns not being included in endofday figs

@@ -2149,7 +2149,7 @@ class HelpingLostPetsPublisher(FTPPublisher):
                 else: agename = "Senior"
                 line.append("\"%s\"" % agename)
                 # Altered
-                line.append("\"%s\"" % self.hlpYesNo(an["NEUTERED"] == 1))
+                line.append("%s" % self.hlpYesNo(an["NEUTERED"] == 1))
                 # Size, one of Small, Medium or Large or X-Large
                 ansize = "Medium"
                 if an["SIZE"] == 0 : ansize = "X-Large"
