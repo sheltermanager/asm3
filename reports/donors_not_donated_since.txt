@@ -1,4 +1,4 @@
-Donors who have not donated since a date
+Donors who have not donated since date
 ###
 Financial
 ###
@@ -34,5 +34,6 @@ $EMAILADDRESS</td>
 BODY$$
 
 $$FOOTER
+</table>
 FOOTER$$
 
