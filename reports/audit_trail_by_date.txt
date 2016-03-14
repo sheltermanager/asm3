@@ -2,6 +2,60 @@ Audit Trail: All Changes by Date
 ###
 Auditing
 ###
+33902/Any
+###
+All record creations, changes and deletions between two dates, grouped by user.
+###
+en
+###
+SELECT AuditDate, UserName, TableName, LinkID, Description,
+CASE WHEN Action = 0 THEN 'ADD'
+CASE WHEN Action = 1 THEN 'EDIT'
+CASE WHEN Action = 2 THEN 'DELETE'
+CASE WHEN Action = 3 THEN 'MOVE'
+CASE WHEN Action = 4 THEN 'LOGIN'
+CASE WHEN Action = 5 THEN 'LOGOUT'
+END AS Action
+FROM audittrail
+WHERE
+AuditDate >= '$ASK DATE Enter the from date$' AND AuditDate <= '$ASK DATE Enter the to date$ 23:59:59'
+ORDER BY UserName, AuditDate
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_UserName
+$$HEAD
+<h2>$UserName</h2>
+<table>
+<tr>
+<td><b>Date</b></td>
+<td><b>Action</b></td>
+<td><b>Table</b></td>
+<td><b>ID</b></td>
+<td></td>
+</tr>
+$$FOOT
+</table>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$AUDITDATE</td>
+<td>$ACTION</td>
+<td>$TABLENAME</td>
+<td>$LINKID</td>
+<td>$DESCRIPTION</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
+&&&
+Audit Trail: All Changes by Date
+###
+Auditing
+###
 2721/Any
 ###
 All record creations, changes and deletions between two dates, grouped by user.
