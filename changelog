@@ -1,6 +1,9 @@
 39
 ================
 
+14/03/16 Record login/logout events in the audit trail #316
+14/03/16 AuditTrail LinkID field #75
+14/03/16 Option to have online forms email the submitter #392
 14/03/16 Fix for non-required online form multilookups behaving as required
 10/03/16 Fix for extra quotes in neutered when sending to HLP
 09/03/16 Return just the minimum amount of foster info for shelterview

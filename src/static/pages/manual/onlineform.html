@@ -305,6 +305,10 @@ form submissions to animal records.</p>
 form data will automatically have those flags. In addition to that, the
 &#8220;checkbox&#8221; field type allows you to enter some additional person flags to set
 if that checkbox is checked during submission.</p>
+<p>If you set the &#8220;Send confirmation email to form submitter&#8221; checkbox for an
+online form, the system will look for a field called &#8220;emailaddress&#8221; during
+submission. If that field exists and is populated with an email address, a copy
+of the form submission will be sent to that address.</p>
 <img alt="_images/onlineform_edit.png" src="_images/onlineform_edit.png" />
 <p>As you can see in the screenshot, each form has a “Form URL”. This is the web
 link you can use on your website to link people to the form. You can also click
@@ -317,7 +321,7 @@ it directly there in the UI to test your form.</p>
 information the report will take.</p>
 <img alt="_images/onlineform_fields.png" src="_images/onlineform_fields.png" />
 <p>The dialog will autocomplete the known fields that ASM can look for when
-importing records. For details, see <a class="reference internal" href="onlineformfields.html#onlineformfields"><em>Appendix: Online Form import fields</em></a></p>
+creating records from form submissions. For details, see <a class="reference internal" href="onlineformfields.html#onlineformfields"><em>Appendix: Online Form import fields</em></a></p>
 <p>To create any record, you will need at least a lastname or surname field. Lost
 animal records need an arealost and description, found animal records need an
 areafound and description, waiting list records need a description.</p>

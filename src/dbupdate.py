@@ -7,7 +7,7 @@ import os, sys
 from i18n import _, BUILD
 from sitedefs import DB_PK_STRATEGY
 
-LATEST_VERSION = 33900
+LATEST_VERSION = 33901
 VERSIONS = ( 
     2870, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3050,
     3051, 3081, 3091, 3092, 3093, 3094, 3110, 3111, 3120, 3121, 3122, 3123, 3200,
@@ -20,7 +20,7 @@ VERSIONS = (
     33503, 33504, 33505, 33506, 33507, 33508, 33600, 33601, 33602, 33603, 33604,
     33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702, 33703, 33704, 33705,
     33706, 33707, 33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716,
-    33717, 33718, 33800, 33801, 33802, 33803, 33900
+    33717, 33718, 33800, 33801, 33802, 33803, 33900, 33901, 33902
 )
 
 # All ASM3 tables
@@ -714,11 +714,13 @@ def sql_structure(dbo):
         fdate("AuditDate"),
         fstr("UserName"),
         fstr("TableName"),
+        fint("LinkID", True),
         flongstr("Description", False) ), False)
     sql += index("audittrail_Action", "audittrail", "Action")
     sql += index("audittrail_AuditDate", "audittrail", "AuditDate")
     sql += index("audittrail_UserName", "audittrail", "UserName")
     sql += index("audittrail_TableName", "audittrail", "TableName")
+    sql += index("audittrail_LinkID", "audittrail", "LinkID")
 
     sql += table("basecolour", (
         fid(),
@@ -997,6 +999,7 @@ def sql_structure(dbo):
         fstr("Name"),
         fstr("RedirectUrlAfterPOST", True),
         fstr("SetOwnerFlags", True),
+        fint("EmailSubmitter", True),
         flongstr("EmailAddress", True),
         flongstr("Header", True),
         flongstr("Footer", True),
@@ -4297,4 +4300,15 @@ def update_33900(dbo):
     add_column(dbo, "ownerdonation", "ChequeNumber", shorttext(dbo))
     add_index(dbo, "ownerdonation_ChequeNumber", "ownerdonation", "ChequeNumber")
     db.execute_dbupdate(dbo, "UPDATE ownerdonation SET Quantity = 1, UnitPrice = Donation, ChequeNumber = ''")
+
+def update_33901(dbo):
+    # Add audittrail.LinkID field
+    add_column(dbo, "audittrail", "LinkID", "INTEGER")
+    add_index(dbo, "audittrail_LinkID", "audittrail", "LinkID")
+    db.execute_dbupdate(dbo, "UPDATE audittrail SET LinkID = 0")
+
+def update_33902(dbo):
+    # Add onlineform.EmailSubmitter field
+    add_column(dbo, "onlineform", "EmailSubmitter", "INTEGER")
+    db.execute_dbupdate(dbo, "UPDATE onlineform SET EmailSubmitter = 1")
 

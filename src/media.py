@@ -92,7 +92,7 @@ def set_video_preferred(dbo, username, mid):
     link = db.query(dbo, "SELECT LinkID, LinkTypeID FROM media WHERE ID = %d" % int(mid))[0]
     db.execute(dbo, "UPDATE media SET WebsiteVideo = 0 WHERE LinkID = %d AND LinkTypeID = %d" % ( int(link["LINKID"]), int(link["LINKTYPEID"])))
     db.execute(dbo, "UPDATE media SET WebsiteVideo = 1 WHERE ID = %d" % int(mid))
-    audit.edit(dbo, username, "media", str(id) + ": video preferred for " + str(link["LINKID"]) + "/" + str(link["LINKTYPEID"]))
+    audit.edit(dbo, username, "media", mid, str(mid) + ": video preferred for " + str(link["LINKID"]) + "/" + str(link["LINKTYPEID"]))
 
 def set_web_preferred(dbo, username, mid):
     """
@@ -101,7 +101,7 @@ def set_web_preferred(dbo, username, mid):
     link = db.query(dbo, "SELECT LinkID, LinkTypeID FROM media WHERE ID = %d" % int(mid))[0]
     db.execute(dbo, "UPDATE media SET WebsitePhoto = 0 WHERE LinkID = %d AND LinkTypeID = %d" % ( int(link["LINKID"]), int(link["LINKTYPEID"])))
     db.execute(dbo, "UPDATE media SET WebsitePhoto = 1, Date = %s WHERE ID = %d" % (db.dd(i18n.now(dbo.timezone)), int(mid) ))
-    audit.edit(dbo, username, "media", str(id) + ": web preferred for " + str(link["LINKID"]) + "/" + str(link["LINKTYPEID"]))
+    audit.edit(dbo, username, "media", mid, str(mid) + ": web preferred for " + str(link["LINKID"]) + "/" + str(link["LINKTYPEID"]))
 
 def set_doc_preferred(dbo, username, mid):
     """
@@ -110,14 +110,14 @@ def set_doc_preferred(dbo, username, mid):
     link = db.query(dbo, "SELECT LinkID, LinkTypeID FROM media WHERE ID = %d" % int(mid))[0]
     db.execute(dbo, "UPDATE media SET DocPhoto = 0 WHERE LinkID = %d AND LinkTypeID = %d" % ( int(link["LINKID"]), int(link["LINKTYPEID"])))
     db.execute(dbo, "UPDATE media SET DocPhoto = 1 WHERE ID = %d" % int(mid))
-    audit.edit(dbo, username, "media", str(mid) + ": document preferred for " + str(link["LINKID"]) + "/" + str(link["LINKTYPEID"]))
+    audit.edit(dbo, username, "media", mid, str(mid) + ": document preferred for " + str(link["LINKID"]) + "/" + str(link["LINKTYPEID"]))
 
 def set_excluded(dbo, username, mid, exclude = 1):
     """
     Marks the media with id excluded from publishing.
     """
     db.execute(dbo, "UPDATE media SET ExcludeFromPublish = %d WHERE ID = %d" % (exclude, mid))
-    audit.edit(dbo, username, "media", str(mid) + ": excluded from publishing")
+    audit.edit(dbo, username, "media", mid, str(mid) + ": excluded from publishing")
 
 def get_name_for_id(dbo, mid):
     return db.query_string(dbo, "SELECT MediaName FROM media WHERE ID = %d" % mid)
@@ -337,7 +337,7 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
         ( "Date", db.dd(i18n.now(dbo.timezone)))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "media", str(mediaid) + ": for " + str(linkid) + "/" + str(linktype))
+    audit.create(dbo, username, "media", mediaid, str(mediaid) + ": for " + str(linkid) + "/" + str(linktype))
 
     if ispicture and checkpref:
         check_default_web_doc_pic(dbo, mediaid, linkid, linktype)
@@ -374,7 +374,7 @@ def attach_link_from_form(dbo, username, linktype, linkid, post):
         ( "Date", db.nowsql() )
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "media", str(mediaid) + ": for " + str(linkid) + "/" + str(linktype) + ": link to " + post["linktarget"])
+    audit.create(dbo, username, "media", mediaid, str(mediaid) + ": for " + str(linkid) + "/" + str(linktype) + ": link to " + post["linktarget"])
 
 def check_default_web_doc_pic(dbo, mediaid, linkid, linktype):
     """
@@ -428,7 +428,7 @@ def create_blank_document_media(dbo, username, linktype, linkid):
     path += "/" + str(linkid)
     name = str(mediaid) + ".html"
     dbfs.put_string(dbo, name, path, "")
-    audit.create(dbo, username, "media", str(mediaid) + ": for " + str(linkid) + "/" + str(linktype))
+    audit.create(dbo, username, "media", mediaid, str(mediaid) + ": for " + str(linkid) + "/" + str(linktype))
     return mediaid
 
 def create_document_media(dbo, username, linktype, linkid, template, content):
@@ -470,7 +470,7 @@ def create_document_media(dbo, username, linktype, linkid, template, content):
     path += "/" + str(linkid)
     name = str(mediaid) + ".html"
     dbfs.put_string(dbo, name, path, content)
-    audit.create(dbo, username, "media", str(mediaid) + ": for " + str(linkid) + "/" + str(linktype))
+    audit.create(dbo, username, "media", mediaid, str(mediaid) + ": for " + str(linkid) + "/" + str(linktype))
 
 def sign_document(dbo, username, mid, sigurl, signdate):
     """
@@ -509,7 +509,7 @@ def update_file_content(dbo, username, mid, content):
     """
     dbfs.replace_string(dbo, content, get_name_for_id(dbo, mid))
     db.execute(dbo, "UPDATE media SET Date = %s WHERE ID = %d" % ( db.nowsql(), int(mid) ))
-    audit.edit(dbo, username, "media", str(mid) + " changed file contents")
+    audit.edit(dbo, username, "media", mid, str(mid) + " changed file contents")
 
 def update_media_notes(dbo, username, mid, notes):
     sql = db.make_update_sql("media", "ID=%d" % int(mid), (
@@ -519,7 +519,7 @@ def update_media_notes(dbo, username, mid, notes):
         ( "UpdatedSinceLastPublish", db.di(1))
         ))
     db.execute(dbo, sql)
-    audit.edit(dbo, username, "media", str(mid) + "notes => " + notes)
+    audit.edit(dbo, username, "media", mid, str(mid) + "notes => " + notes)
 
 def delete_media(dbo, username, mid):
     """
@@ -529,7 +529,7 @@ def delete_media(dbo, username, mid):
     if len(mr) == 0: return
     mr = mr[0]
     mn = mr["MEDIANAME"]
-    audit.delete(dbo, username, "media", str(mr))
+    audit.delete(dbo, username, "media", mid, str(mr))
     dbfs.delete(dbo, mn)
     db.execute(dbo, "DELETE FROM media WHERE ID = %d" % int(mid))
     # Was it the web or doc preferred? If so, make the first image for the link
@@ -567,7 +567,7 @@ def rotate_media(dbo, username, mid, clockwise = True):
     dbfs.put_string(dbo, mn, path, imagedata)
     # Update the date stamp on the media record
     db.execute(dbo, "UPDATE media SET Date = %s WHERE ID = %d" % (db.nowsql(), mid))
-    audit.edit(dbo, username, "media", "media id %d rotated, clockwise=%s" % (mid, str(clockwise)))
+    audit.edit(dbo, username, "media", mid, "media id %d rotated, clockwise=%s" % (mid, str(clockwise)))
 
 def scale_image(imagedata, resizespec):
     """

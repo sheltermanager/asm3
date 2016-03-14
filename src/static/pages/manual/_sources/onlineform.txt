@@ -24,6 +24,11 @@ form data will automatically have those flags. In addition to that, the
 "checkbox" field type allows you to enter some additional person flags to set
 if that checkbox is checked during submission.
 
+If you set the "Send confirmation email to form submitter" checkbox for an
+online form, the system will look for a field called "emailaddress" during
+submission. If that field exists and is populated with an email address, a copy
+of the form submission will be sent to that address.
+
 .. image:: images/onlineform_edit.png
 
 As you can see in the screenshot, each form has a “Form URL”. This is the web
@@ -38,7 +43,7 @@ information the report will take.
 .. image:: images/onlineform_fields.png
 
 The dialog will autocomplete the known fields that ASM can look for when
-importing records. For details, see :ref:`onlineformfields`
+creating records from form submissions. For details, see :ref:`onlineformfields`
 
 To create any record, you will need at least a lastname or surname field. Lost
 animal records need an arealost and description, found animal records need an

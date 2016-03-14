@@ -453,12 +453,13 @@ def insert_onlineform_from_form(dbo, username, post):
         ( "RedirectUrlAfterPOST", post.db_string("redirect")),
         ( "SetOwnerFlags", post.db_string("flags")),
         ( "EmailAddress", post.db_string("email")),
+        ( "EmailSubmitter", post.db_boolean("emailsubmitter")),
         ( "Header", db.ds(post["header"], False) ),
         ( "Footer", db.ds(post["footer"], False) ),
         ( "Description", db.ds(post["description"], False) )
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "onlineform", str(formid))
+    audit.create(dbo, username, "onlineform", formid, audit.dump_row(dbo, "onlineform", formid))
     return formid
 
 def update_onlineform_from_form(dbo, username, post):
@@ -471,6 +472,7 @@ def update_onlineform_from_form(dbo, username, post):
         ( "RedirectUrlAfterPOST", post.db_string("redirect")),
         ( "SetOwnerFlags", post.db_string("flags")),
         ( "EmailAddress", post.db_string("email")),
+        ( "EmailSubmitter", post.db_boolean("emailsubmitter")),
         ( "Header", db.ds(post["header"], False) ),
         ( "Footer", db.ds(post["footer"], False) ),
         ( "Description", db.ds(post["description"], False) )
@@ -478,13 +480,13 @@ def update_onlineform_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM onlineform WHERE ID = %d" % formid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM onlineform WHERE ID = %d" % formid)
-    audit.edit(dbo, username, "onlineform", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "onlineform", formid, audit.map_diff(preaudit, postaudit))
 
 def delete_onlineform(dbo, username, formid):
     """
     Deletes the specified onlineform and fields
     """
-    audit.delete(dbo, username, "onlineform", str(db.query(dbo, "SELECT * FROM onlineform WHERE ID=%d" % int(formid))))
+    audit.delete(dbo, username, "onlineform", formid, audit.dump_row(dbo, "onlineform", formid))
     db.execute(dbo, "DELETE FROM onlineformfield WHERE OnlineFormID = %d" % int(formid))
     db.execute(dbo, "DELETE FROM onlineform WHERE ID = %d" % int(formid))
 
@@ -499,6 +501,7 @@ def clone_onlineform(dbo, username, formid):
         ( "RedirectUrlAfterPOST", db.ds(f["REDIRECTURLAFTERPOST"])),
         ( "SetOwnerFlags", db.ds(f["SETOWNERFLAGS"])),
         ( "EmailAddress", db.ds(f["EMAILADDRESS"])),
+        ( "EmailSubmitter", db.di(f["EMAILSUBMITTER"])),
         ( "Header", db.ds(f["HEADER"], False)),
         ( "Footer", db.ds(f["FOOTER"], False)),
         ( "Description", db.ds(f["DESCRIPTION"], False))
@@ -518,7 +521,7 @@ def clone_onlineform(dbo, username, formid):
             ( "Tooltip", db.ds(ff["TOOLTIP"]))
             ))
         db.execute(dbo, sql)
-    audit.create(dbo, username, "onlineform", str(nfid) + " cloned from " + str(formid))
+    audit.create(dbo, username, "onlineform", nfid, audit.dump_row(dbo, "onlineform", nfid))
 
 def insert_onlineformfield_from_form(dbo, username, post):
     """
@@ -537,7 +540,7 @@ def insert_onlineformfield_from_form(dbo, username, post):
         ( "Tooltip", db.ds(post["tooltip"], False))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "onlineformfield", str(formfieldid))
+    audit.create(dbo, username, "onlineformfield", formfieldid, audit.dump_row(dbo, "onlineformfield", formfieldid))
     return formfieldid
 
 def update_onlineformfield_from_form(dbo, username, post):
@@ -557,13 +560,13 @@ def update_onlineformfield_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM onlineformfield WHERE ID = %d" % formfieldid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM onlineformfield WHERE ID = %d" % formfieldid)
-    audit.edit(dbo, username, "onlineformfield", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "onlineformfield", formfieldid, audit.map_diff(preaudit, postaudit))
 
 def delete_onlineformfield(dbo, username, fieldid):
     """
     Deletes the specified onlineformfield
     """
-    audit.delete(dbo, username, "onlineformfield", str(db.query(dbo, "SELECT * FROM onlineformfield WHERE ID=%d" % int(fieldid))))
+    audit.delete(dbo, username, "onlineformfield", fieldid, audit.dump_row(dbo, "onlineformfield", fieldid))
     db.execute(dbo, "DELETE FROM onlineformfield WHERE ID = %d" % int(fieldid))
 
 def insert_onlineformincoming_from_form(dbo, post, remoteip):
@@ -636,9 +639,12 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
             fieldssofar += 1
             preview.append( fld["LABEL"] + ": " + fld["VALUE"] )
     db.execute(dbo, "UPDATE onlineformincoming SET Preview = %s WHERE CollationID = %s" % ( db.ds(", ".join(preview)), db.di(collationid) ))
-    # Do we have a valid emailaddress for the submitter? If so, send them a copy
-    # of their submission
-    if submitteremail != "" and submitteremail.find("@") != -1:
+    # Do we have a valid emailaddress for the submitter and EmailSubmitter is set? 
+    # If so, send them a copy of their submission
+    emailsubmitter = db.query_int(dbo, "SELECT o.EmailSubmitter FROM onlineform o " \
+        "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
+        "WHERE oi.CollationID = %d" % int(collationid))
+    if submitteremail != "" and submitteremail.find("@") != -1 and emailsubmitter == 1:
         utils.send_email(dbo, configuration.email(dbo), submitteremail, "", i18n._("Submission received: {0}", l).format(formname), 
             get_onlineformincoming_html_print(dbo, [collationid,]), "html")
     # Did the original form specify some email addresses to send 
@@ -655,7 +661,7 @@ def delete_onlineformincoming(dbo, username, collationid):
     """
     Deletes the specified onlineformincoming set
     """
-    audit.delete(dbo, username, "onlineformincoming", str(db.query(dbo, "SELECT * FROM onlineformincoming WHERE CollationID=%d" % int(collationid))))
+    audit.delete(dbo, username, "onlineformincoming", collationid, str(db.query(dbo, "SELECT * FROM onlineformincoming WHERE CollationID=%d" % int(collationid))))
     db.execute(dbo, "DELETE FROM onlineformincoming WHERE CollationID = %d" % int(collationid))
 
 def guess_agegroup(dbo, s):

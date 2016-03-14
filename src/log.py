@@ -28,7 +28,7 @@ def add_log(dbo, username, linktype, linkid, logtypeid, logtext):
         ( "Comments", db.ds(logtext) )
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "log", str(logid))
+    audit.create(dbo, username, "log", logid, audit.dump_row(dbo, "log", logid))
     return logid
 
 def get_logs(dbo, linktypeid, linkid, logtype = 0, sort = DESCENDING):
@@ -66,7 +66,7 @@ def insert_log_from_form(dbo, username, linktypeid, linkid, post):
         ( "Comments", post.db_string("entry"))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "log", str(logid))
+    audit.create(dbo, username, "log", logid, audit.dump_row(dbo, "log", logid))
     return logid
 
 def update_log_from_form(dbo, username, post):
@@ -85,12 +85,12 @@ def update_log_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM log WHERE ID=%d" % logid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM log WHERE ID=%d" % logid)
-    audit.edit(dbo, username, "log", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "log", logid, audit.map_diff(preaudit, postaudit))
 
 def delete_log(dbo, username, logid):
     """
     Deletes a log
     """
-    audit.delete(dbo, username, "log", str(db.query(dbo, "SELECT * FROM log WHERE ID = %d" % int(logid))))
+    audit.delete(dbo, username, "log", logid, audit.dump_row(dbo, "log", logid))
     db.execute(dbo, "DELETE FROM log WHERE ID = %d" % int(logid))
 

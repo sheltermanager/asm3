@@ -633,7 +633,7 @@ def update_person_from_form(dbo, post, username):
     preaudit = db.query(dbo, "SELECT * FROM owner WHERE ID=%d" % pid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM owner WHERE ID=%d" % pid)
-    audit.edit(dbo, username, "owner", audit.map_diff(preaudit, postaudit, [ "OWNERNAME", ]))
+    audit.edit(dbo, username, "owner", pid, audit.map_diff(preaudit, postaudit, [ "OWNERNAME", ]))
 
     # Save any additional field values given
     additional.save_values_for_link(dbo, post, pid, "person")
@@ -770,7 +770,7 @@ def insert_person_from_form(dbo, post, username):
         ( "MatchCommentsContain", db.ds(d("matchcommentscontain") )
     )))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "owner", str(pid) + " %s %s %s" % (d("title"), d("forenames"), d("surname")))
+    audit.create(dbo, username, "owner", pid, audit.dump_row(dbo, "owner", pid))
 
     # Save any additional field values given
     additional.save_values_for_link(dbo, post, pid, "person")
@@ -877,7 +877,7 @@ def merge_person(dbo, username, personid, mergepersonid):
     reparent("media", "LinkID", "LinkTypeID", media.PERSON)
     reparent("diary", "LinkID", "LinkType", diary.PERSON)
     reparent("log", "LinkID", "LinkType", log.PERSON)
-    audit.delete(dbo, username, "owner", str(db.query(dbo, "SELECT * FROM owner WHERE ID=%d" % mergepersonid)))
+    audit.delete(dbo, username, "owner", mergepersonid, audit.dump_row(dbo, "owner", mergepersonid))
     db.execute(dbo, "DELETE FROM owner WHERE ID = %d" % mergepersonid)
 
 def merge_duplicate_people(dbo, username):
@@ -952,7 +952,7 @@ def delete_person(dbo, username, personid):
     if db.query_int(dbo, "SELECT COUNT(ID) FROM animaltransport WHERE DriverOwnerID=%d OR PickupOwnerID=%d OR DropoffOwnerID=%d" % (personid, personid, personid)):
         raise utils.ASMValidationError(_("This person is linked to animal transportation and cannot be removed.", l))
     animals = db.query(dbo, "SELECT AnimalID FROM adoption WHERE OwnerID = %d" % personid)
-    audit.delete(dbo, username, "owner", str(db.query(dbo, "SELECT * FROM owner WHERE ID=%d" % personid)))
+    audit.delete(dbo, username, "owner", personid, audit.dump_row(dbo, "owner", personid))
     db.execute(dbo, "DELETE FROM media WHERE LinkID = %d AND LinkTypeID = %d" % (personid, 1))
     db.execute(dbo, "DELETE FROM diary WHERE LinkID = %d AND LinkType = %d" % (personid, 2))
     db.execute(dbo, "DELETE FROM log WHERE LinkID = %d AND LinkType = %d" % (personid, 1))
@@ -982,7 +982,7 @@ def insert_rota_from_form(dbo, username, post):
         ( "Comments", post.db_string("comments"))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "ownerrota", str(nrota))
+    audit.create(dbo, username, "ownerrota", nrota, audit.dump_row(dbo, "ownerrota", nrota))
     return nrota
 
 def update_rota_from_form(dbo, username, post):
@@ -1000,13 +1000,13 @@ def update_rota_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM ownerrota WHERE ID = %d" % rotaid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM ownerrota WHERE ID = %d" % rotaid)
-    audit.edit(dbo, username, "ownerrota", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "ownerrota", rotaid, audit.map_diff(preaudit, postaudit))
 
 def delete_rota(dbo, username, rid):
     """
     Deletes the selected rota record
     """
-    audit.delete(dbo, username, "ownerrota", str(db.query(dbo, "SELECT * FROM ownerrota WHERE ID=%d" % int(rid))))
+    audit.delete(dbo, username, "ownerrota", rid, audit.dump_row(dbo, "ownerrota", rid))
     db.execute(dbo, "DELETE FROM ownerrota WHERE ID = %d" % int(rid))
 
 def delete_rota_week(dbo, username, startdate):
@@ -1016,7 +1016,7 @@ def delete_rota_week(dbo, username, startdate):
     startdate: A python date representing the start of the week
     """
     enddate = add_days(startdate, 7)
-    audit.delete(dbo, username, "ownerrota", \
+    audit.delete(dbo, username, "ownerrota", 0,  \
         str(db.query(dbo, "SELECT * FROM ownerrota " \
         "WHERE StartDateTime >= %s AND StartDateTime <= %s" % (db.dd(startdate), db.dd(enddate)))))
     db.execute(dbo, "DELETE FROM ownerrota WHERE " \
@@ -1034,7 +1034,7 @@ def insert_investigation_from_form(dbo, username, post):
         ( "Notes", post.db_string("notes"))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "ownerinvestigation", str(ninv))
+    audit.create(dbo, username, "ownerinvestigation", ninv, audit.dump_row(dbo, "ownerinvestigation", ninv))
     return ninv
 
 def update_investigation_from_form(dbo, username, post):
@@ -1049,13 +1049,13 @@ def update_investigation_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM ownerinvestigation WHERE ID = %d" % investigationid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM ownerinvestigation WHERE ID = %d" % investigationid)
-    audit.edit(dbo, username, "ownerinvestigation", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "ownerinvestigation", investigationid, audit.map_diff(preaudit, postaudit))
 
 def delete_investigation(dbo, username, iid):
     """
     Deletes the selected investigation record
     """
-    audit.delete(dbo, username, "ownerinvestigation", str(db.query(dbo, "SELECT * FROM ownerinvestigation WHERE ID=%d" % int(iid))))
+    audit.delete(dbo, username, "ownerinvestigation", iid, audit.dump_row(dbo, "ownerinvestigation", iid))
     db.execute(dbo, "DELETE FROM ownerinvestigation WHERE ID = %d" % int(iid))
 
 def send_email_from_form(dbo, username, post):

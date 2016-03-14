@@ -164,7 +164,7 @@ def delete_waitinglist(dbo, username, wid):
     """
     Deletes a waiting list record
     """
-    audit.delete(dbo, username, "animalwaitinglist", str(db.query(dbo, "SELECT * FROM animalwaitinglist WHERE ID=%d" % wid)))
+    audit.delete(dbo, username, "animalwaitinglist", wid, audit.dump_row(dbo, "animalwaitinglist", wid))
     db.execute(dbo, "DELETE FROM animalwaitinglist WHERE ID = %d" % wid)
     db.execute(dbo, "DELETE FROM media WHERE LinkID = %d AND LinkTypeID = %d" % (wid, media.WAITINGLIST))
     db.execute(dbo, "DELETE FROM diary WHERE LinkID = %d AND LinkType = %d" % (wid, diary.WAITINGLIST))
@@ -194,7 +194,7 @@ def update_waitinglist_remove(dbo, username, wid):
     Marks a waiting list record as removed
     """
     db.execute(dbo, "UPDATE animalwaitinglist SET DateRemovedFromList = %s WHERE ID = %d" % ( db.dd(now(dbo.timezone)), int(wid) ))
-    audit.edit(dbo, username, "animalwaitinglist", "%s: DateRemovedFromList ==> %s" % ( str(wid), python2display(dbo.locale, now(dbo.timezone))))
+    audit.edit(dbo, username, "animalwaitinglist", wid, "%s: DateRemovedFromList ==> %s" % ( str(wid), python2display(dbo.locale, now(dbo.timezone))))
 
 def update_waitinglist_highlight(dbo, wlid, himode):
     """
@@ -304,7 +304,7 @@ def update_waitinglist_from_form(dbo, post, username):
         )))
     additional.save_values_for_link(dbo, post, wlid, "waitinglist")
     postaudit = db.query(dbo, "SELECT * FROM animalwaitinglist WHERE ID = %d" % wlid)
-    audit.edit(dbo, username, "animalwaitinglist", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "animalwaitinglist", wlid, audit.map_diff(preaudit, postaudit))
 
 def insert_waitinglist_from_form(dbo, post, username):
     """
@@ -337,7 +337,7 @@ def insert_waitinglist_from_form(dbo, post, username):
         ( "UrgencyLastUpdatedDate", db.dd(now(dbo.timezone))),
         ( "UrgencyUpdateDate", db.dd(add_days(now(dbo.timezone), configuration.waiting_list_urgency_update_period(dbo))))
         )))
-    audit.create(dbo, username, "animalwaitinglist", str(nwlid))
+    audit.create(dbo, username, "animalwaitinglist", nwlid, audit.dump_row(dbo, "animalwaitinglist", nwlid))
 
     # Save any additional field values given
     additional.save_values_for_link(dbo, post, nwlid, "waitinglist")

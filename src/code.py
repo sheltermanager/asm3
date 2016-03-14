@@ -669,9 +669,7 @@ class mobile_logout:
         if MULTIPLE_DATABASES and session.dbo is not None and session.dbo.alias != None:
             url = "mobile_login?smaccount=" + session.dbo.alias
         users.update_user_activity(session.dbo, session.user, False)
-        al.info("%s logged out" % session.user, "code.mobile_logout", session.dbo)
-        session.user = None
-        session.kill()
+        users.logout(session.dbo)
         raise web.seeother(url)
 
 class mobile_post:
@@ -907,9 +905,7 @@ class logout:
         if MULTIPLE_DATABASES and session.dbo is not None and session.dbo.alias != None:
             url = "login?smaccount=" + session.dbo.alias
         users.update_user_activity(session.dbo, session.user, False)
-        al.info("%s logged out" % session.user, "code.logout", session.dbo)
-        session.user = None
-        session.kill()
+        users.logout(session.dbo)
         raise web.seeother(url)
 
 class accounts:

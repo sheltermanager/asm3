@@ -106,7 +106,7 @@ def update_stocklevel_from_form(dbo, post, username):
     postaudit = db.query(dbo, "SELECT * FROM stocklevel WHERE ID = %d" % slid)
     diff = postaudit[0]["BALANCE"] - preaudit[0]["BALANCE"]
     if diff != 0: insert_stockusage(dbo, username, slid, diff, post.date("usagedate"), post.integer("usagetype"), post["comments"])
-    audit.edit(dbo, username, "animalcontrol", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "animalcontrol", slid, audit.map_diff(preaudit, postaudit))
 
 def insert_stocklevel_from_form(dbo, post, username):
     """
@@ -135,14 +135,14 @@ def insert_stocklevel_from_form(dbo, post, username):
         ( "CreatedDate", db.todaysql() )
     )))
     insert_stockusage(dbo, username, slid, post.floating("balance"), post.date("usagedate"), post.integer("usagetype"), post["comments"])
-    audit.create(dbo, username, "stocklevel", str(nid))
+    audit.create(dbo, username, "stocklevel", nid, audit.dump_row(dbo, "stocklevel", nid))
     return nid
 
 def delete_stocklevel(dbo, username, slid):
     """
     Deletes a stocklevel record
     """
-    audit.delete(dbo, username, "stocklevel", str(db.query(dbo, "SELECT * FROM stocklevel WHERE ID=%d" % slid)))
+    audit.delete(dbo, username, "stocklevel", slid, audit.dump_row(dbo, "stocklevel", slid))
     db.execute(dbo, "DELETE FROM stockusage WHERE StockLevelID = %d" % slid)
     db.execute(dbo, "DELETE FROM stocklevel WHERE ID = %d" % slid)
 
@@ -159,7 +159,7 @@ def insert_stockusage(dbo, username, slid, diff, usagedate, usagetype, comments)
         ( "Quantity", db.df(diff) ),
         ( "Comments", db.ds(comments) )
     )))
-    audit.create(dbo, username, "stockusage", str(nid))
+    audit.create(dbo, username, "stockusage", nid, audit.dump_row(dbo, "stockusage", nid))
 
 def deduct_stocklevel_from_form(dbo, username, post):
     """

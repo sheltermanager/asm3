@@ -531,7 +531,7 @@ def update_test_today(dbo, username, testid, resultid):
         ( "DateOfTest", db.dd(now(dbo.timezone)) ), 
         ( "TestResultID", db.di(resultid) )
         )))
-    audit.edit(dbo, username, "animaltest", str(testid) + " => given " + str(db.dd(now(dbo.timezone))))
+    audit.edit(dbo, username, "animaltest", testid, str(testid) + " => given " + str(db.dd(now(dbo.timezone))))
     # ASM2_COMPATIBILITY
     update_asm2_tests(dbo, testid)
 
@@ -542,7 +542,7 @@ def update_vaccination_today(dbo, username, vaccid):
     db.execute(dbo, db.make_update_user_sql(dbo, "animalvaccination", username, "ID = %d" % vaccid, (
         ( "DateOfVaccination", db.dd(now(dbo.timezone)) ),
         )))
-    audit.edit(dbo, username, "animalvaccination", str(vaccid) + " => given " + str(db.dd(now(dbo.timezone))))
+    audit.edit(dbo, username, "animalvaccination", vaccid, str(vaccid) + " => given " + str(db.dd(now(dbo.timezone))))
 
 def calculate_given_remaining(dbo, amid):
     """
@@ -561,7 +561,7 @@ def complete_vaccination(dbo, username, vaccinationid, newdate, vetid = 0):
     db.execute(dbo, "UPDATE animalvaccination SET DateOfVaccination = %s, AdministeringVetID = %s, " \
         "LastChangedBy = %s, LastChangedDate = %s WHERE ID = %d" % \
         ( db.dd(newdate), db.di(vetid), db.ds(username), db.ddt(now(dbo.timezone)), vaccinationid))
-    audit.edit(dbo, username, "animalvaccination", str(vaccinationid) + " => given " + str(newdate))
+    audit.edit(dbo, username, "animalvaccination", vaccinationid, str(vaccinationid) + " => given " + str(newdate))
 
 def complete_test(dbo, username, testid, newdate, testresult):
     """
@@ -570,7 +570,7 @@ def complete_test(dbo, username, testid, newdate, testresult):
     db.execute(dbo, "UPDATE animaltest SET DateOfTest = %s, " \
         "LastChangedBy = %s, LastChangedDate = %s, TestResultID = %d WHERE ID = %d" % \
         ( db.dd(newdate), db.ds(username), db.ddt(now(dbo.timezone)), testresult, testid))
-    audit.edit(dbo, username, "animaltest", "%d => performed on %s (result: %d)" % (testid, str(newdate), testresult))
+    audit.edit(dbo, username, "animaltest", testid, "%d => performed on %s (result: %d)" % (testid, str(newdate), testresult))
     # ASM2_COMPATIBILITY
     update_asm2_tests(dbo, testid)
 
@@ -595,7 +595,7 @@ def reschedule_vaccination(dbo, username, vaccinationid, newdate, comments):
         ( "CostPaidDate", db.dd(None)),
         ( "Comments", db.ds(comments)))))
 
-    audit.create(dbo, username, "animalvaccination", str(nvaccid))
+    audit.create(dbo, username, "animalvaccination", nvaccid, audit.dump_row(dbo, "animalvaccination", nvaccid))
 
 def update_medical_treatments(dbo, username, amid):
     """
@@ -761,7 +761,7 @@ def insert_regimen_from_form(dbo, username, post):
         ( "Comments", post.db_string("comments"))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "animalmedical", str(nregid) + ": " + post["treatmentname"] + " " + post["dosage"])
+    audit.create(dbo, username, "animalmedical", nregid, audit.dump_row(dbo, "animalmedical", nregid))
     update_medical_treatments(dbo, username, nregid)
 
     # If the user chose a completed status, mark the regimen completed
@@ -798,7 +798,7 @@ def update_regimen_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM animalmedical WHERE ID=%d" % regimenid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM animalmedical WHERE ID=%d" % regimenid)
-    audit.edit(dbo, username, "animalmedical", audit.map_diff(preaudit, postaudit, [ "TREATMENTNAME", "DOSAGE" ]))
+    audit.edit(dbo, username, "animalmedical", regimenid, audit.map_diff(preaudit, postaudit, [ "TREATMENTNAME", "DOSAGE" ]))
     update_medical_treatments(dbo, username, post.integer("regimenid"))
 
 def insert_vaccination_from_form(dbo, username, post):
@@ -828,7 +828,7 @@ def insert_vaccination_from_form(dbo, username, post):
         ( "Comments", post.db_string("comments"))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "animalvaccination", str(nvaccid))
+    audit.create(dbo, username, "animalvaccination", nvaccid, audit.dump_row(dbo, "animalvaccination", nvaccid))
     return nvaccid
 
 def update_vaccination_from_form(dbo, username, post):
@@ -856,7 +856,7 @@ def update_vaccination_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM animalvaccination WHERE ID = %d" % vaccid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM animalvaccination WHERE ID = %d" % vaccid)
-    audit.edit(dbo, username, "animalvaccination", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "animalvaccination", vaccid, audit.map_diff(preaudit, postaudit))
 
 def update_vaccination_batch_stock(dbo, username, vid, slid):
     """
@@ -895,7 +895,7 @@ def insert_test_from_form(dbo, username, post):
         ( "Comments", post.db_string("comments"))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "animaltest", str(ntestid))
+    audit.create(dbo, username, "animaltest", ntestid, audit.dump_row(dbo, "animaltest", ntestid))
     # ASM2_COMPATIBILITY
     update_asm2_tests(dbo, ntestid, "insert")
     return ntestid
@@ -922,7 +922,7 @@ def update_test_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM animaltest WHERE ID = %d" % testid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM animaltest WHERE ID = %d" % testid)
-    audit.edit(dbo, username, "animaltest", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "animaltest", testid, audit.map_diff(preaudit, postaudit))
     # ASM2_COMPATIBILITY
     update_asm2_tests(dbo, testid, "update")
 
@@ -975,7 +975,7 @@ def delete_regimen(dbo, username, amid):
     """
     Deletes a regimen
     """
-    audit.delete(dbo, username, "animalmedical", str(db.query(dbo, "SELECT * FROM animalmedical WHERE ID = %d" % int(amid))))
+    audit.delete(dbo, username, "animalmedical", amid, audit.dump_row(dbo, "animalmedical", amid))
     db.execute(dbo, "DELETE FROM animalmedicaltreatment WHERE AnimalMedicalID = %d" % amid)
     db.execute(dbo, "DELETE FROM animalmedical WHERE ID = %d" % amid)
 
@@ -983,7 +983,7 @@ def delete_treatment(dbo, username, amtid):
     """
     Deletes a treatment record
     """
-    audit.delete(dbo, username, "animalmedicaltreatment", str(db.query(dbo, "SELECT * FROM animalmedicaltreatment WHERE ID = %d" % int(amtid))))
+    audit.delete(dbo, username, "animalmedicaltreatment", amtid, audit.dump_row(dbo, "animalmedicaltreatment", amtid))
     amid = db.query_int(dbo, "SELECT AnimalMedicalID FROM animalmedicaltreatment WHERE ID = %d" % int(amtid))
     db.execute(dbo, "DELETE FROM animalmedicaltreatment WHERE ID = %d" % amtid)
     # Was that the last treatment for the regimen? If so, remove the regimen as well
@@ -997,7 +997,7 @@ def delete_test(dbo, username, testid):
     """
     Deletes a test record
     """
-    audit.delete(dbo, username, "animaltest", str(db.query(dbo, "SELECT * FROM animaltest WHERE ID = %d" % int(testid))))
+    audit.delete(dbo, username, "animaltest", testid, audit.dump_row(dbo, "animaltest", testid))
     # ASM2_COMPATIBILITY
     update_asm2_tests(dbo, testid, "delete")
     db.execute(dbo, "DELETE FROM animaltest WHERE ID = %d" % testid)
@@ -1006,7 +1006,7 @@ def delete_vaccination(dbo, username, vaccinationid):
     """
     Deletes a vaccination record
     """
-    audit.delete(dbo, username, "animalvaccination", str(db.query(dbo, "SELECT * FROM animalvaccination WHERE ID = %d" % int(vaccinationid))))
+    audit.delete(dbo, username, "animalvaccination", vaccinationid, audit.dump_row(dbo, "animalvaccination", vaccinationid))
     db.execute(dbo, "DELETE FROM animalvaccination WHERE ID = %d" % vaccinationid)
 
 def insert_profile_from_form(dbo, username, post):
@@ -1050,7 +1050,7 @@ def insert_profile_from_form(dbo, username, post):
         ( "Comments", post.db_string("comments"))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "medicalprofile", str(nprofid) + ": " + post["treatmentname"] + " " + post["dosage"])
+    audit.create(dbo, username, "medicalprofile", nprofid, audit.dump_row(dbo, "medicalprofile", nprofid))
     return nprofid
 
 def update_profile_from_form(dbo, username, post):
@@ -1091,13 +1091,13 @@ def update_profile_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM medicalprofile WHERE ID=%d" % profileid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM medicalprofile WHERE ID=%d" % profileid)
-    audit.edit(dbo, username, "medicalprofile", audit.map_diff(preaudit, postaudit, [ "TREATMENTNAME", "DOSAGE" ]))
+    audit.edit(dbo, username, "medicalprofile", profileid, audit.map_diff(preaudit, postaudit, [ "TREATMENTNAME", "DOSAGE" ]))
 
 def delete_profile(dbo, username, pfid):
     """
     Deletes a profile
     """
-    audit.delete(dbo, username, "medicalprofile", str(db.query(dbo, "SELECT * FROM medicalprofile WHERE ID = %d" % pfid)))
+    audit.delete(dbo, username, "medicalprofile", pfid, audit.dump_row(dbo, "medicalprofile", pfid))
     db.execute(dbo, "DELETE FROM medicalprofile WHERE ID = %d" % pfid)
 
 def update_treatment_today(dbo, username, amtid):
@@ -1109,7 +1109,7 @@ def update_treatment_today(dbo, username, amtid):
         ( "DateGiven", db.dd(now(dbo.timezone)) ), 
         ( "GivenBy", db.ds(username))
         )))
-    audit.edit(dbo, username, "animalmedicaltreatment", "%d => given" % amtid)
+    audit.edit(dbo, username, "animalmedicaltreatment", amtid, "%d => given" % amtid)
 
     # Update number of treatments given and remaining
     calculate_given_remaining(dbo, amid)
@@ -1129,7 +1129,7 @@ def update_treatment_given(dbo, username, amtid, newdate, vetid = 0):
         ( "DateGiven", db.dd(newdate) ), 
         ( "GivenBy", db.ds(username))
         )))
-    audit.edit(dbo, username, "animalmedicaltreatment", "%d given => %s" % (amtid, str(newdate)))
+    audit.edit(dbo, username, "animalmedicaltreatment", amtid, "%d given => %s" % (amtid, str(newdate)))
 
     # Update number of treatments given and remaining
     calculate_given_remaining(dbo, amid)
@@ -1144,7 +1144,7 @@ def update_treatment_required(dbo, username, amtid, newdate):
     that newdate is valid.
     """
     db.execute(dbo, "UPDATE animalmedicaltreatment SET DateRequired = %s WHERE ID = %d" % (db.dd(newdate), amtid))
-    audit.edit(dbo, username, "animalmedicaltreatment", "%d required => %s" % (amtid, str(newdate)))
+    audit.edit(dbo, username, "animalmedicaltreatment", amtid, "%d required => %s" % (amtid, str(newdate)))
 
 def update_vaccination_required(dbo, username, vaccid, newdate):
     """
@@ -1154,5 +1154,5 @@ def update_vaccination_required(dbo, username, vaccid, newdate):
     db.execute(dbo, db.make_update_user_sql(dbo, "animalvaccination", username, "ID = %d" % vaccid, (
         ( "DateRequired", db.dd(newdate) ), 
         )))
-    audit.edit(dbo, username, "animalvaccination", "%d required => %s" % (vaccid, str(newdate)))
+    audit.edit(dbo, username, "animalvaccination", vaccid, "%d required => %s" % (vaccid, str(newdate)))
 

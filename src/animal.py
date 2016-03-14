@@ -1904,7 +1904,7 @@ def insert_animal_from_form(dbo, post, username):
         ( "MostRecentEntryDate", db.ddt(now()))
     ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "animal", sheltercode + " " + t("animalname"))
+    audit.create(dbo, username, "animal", nextid, audit.dump_row(dbo, "animal", nextid))
 
     # Save any additional field values given
     additional.save_values_for_link(dbo, post, nextid, "animal")
@@ -2124,7 +2124,7 @@ def update_animal_from_form(dbo, post, username):
         ( "PTSReason", t("ptsreason"))
     )))
     postaudit = db.query(dbo, "SELECT * FROM animal WHERE ID = %d" % ki("id"))
-    audit.edit(dbo, username, "animal", audit.map_diff(preaudit, postaudit, [ "SHELTERCODE", "ANIMALNAME" ]))
+    audit.edit(dbo, username, "animal", ki("id"), audit.map_diff(preaudit, postaudit, [ "SHELTERCODE", "ANIMALNAME" ]))
 
     # Save any additional field values given
     additional.save_values_for_link(dbo, post, ki("id"), "animal")
@@ -2184,7 +2184,7 @@ def update_deceased_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM animal WHERE ID = %d" % animalid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM animal WHERE ID = %d" % animalid)
-    audit.edit(dbo, username, "animal", audit.map_diff(preaudit, postaudit, [ "ANIMALNAME", ]))
+    audit.edit(dbo, username, "animal", animalid, audit.map_diff(preaudit, postaudit, [ "ANIMALNAME", ]))
     # Update denormalised fields after the deceased change
     update_animal_status(dbo, animalid)
     update_variable_animal_data(dbo, animalid)
@@ -2513,7 +2513,7 @@ def clone_animal(dbo, username, animalid):
             ( "Comments", db.ds(lo["COMMENTS"]))
         ))
         db.execute(dbo, sql)
-    audit.create(dbo, username, "animal", str(nid) + " cloned from " + str(a["ID"]))
+    audit.create(dbo, username, "animal", nid, audit.dump_row(dbo, "animal", nid))
     update_animal_status(dbo, nid)
     update_variable_animal_data(dbo, nid)
     return nid
@@ -2653,7 +2653,7 @@ def delete_animal(dbo, username, animalid):
     l = dbo.locale
     if db.query_int(dbo, "SELECT COUNT(ID) FROM adoption WHERE AnimalID=%d" % animalid):
         raise utils.ASMValidationError(_("This animal has movements and cannot be removed.", l))
-    audit.delete(dbo, username, "animal", str(db.query(dbo, "SELECT * FROM animal WHERE ID=%d" % animalid)))
+    audit.delete(dbo, username, "animal", animalid, audit.dump_row(dbo, "animal", animalid))
     db.execute(dbo, "DELETE FROM media WHERE LinkID = %d AND LinkTypeID = %d" % (animalid, 0))
     db.execute(dbo, "DELETE FROM diary WHERE LinkID = %d AND LinkType = %d" % (animalid, 1))
     db.execute(dbo, "DELETE FROM log WHERE LinkID = %d AND LinkType = %d" % (animalid, 0))
@@ -2673,7 +2673,7 @@ def update_daily_boarding_cost(dbo, username, animalid, cost):
     """
     oldcost = db.query_string(dbo, "SELECT DailyBoardingCost FROM animal WHERE ID = %d" % int(animalid) )
     db.execute(dbo, "UPDATE animal SET DailyBoardingCost = %s WHERE ID = %d" % ( str(cost), int(animalid) ))
-    audit.edit(dbo, username, "animal", "%s: DailyBoardingCost %s ==> %s" % ( str(animalid), oldcost, str(cost) ))
+    audit.edit(dbo, username, "animal", animalid, "%s: DailyBoardingCost %s ==> %s" % ( str(animalid), oldcost, str(cost) ))
 
 def update_preferred_web_media_notes(dbo, username, animalid, newnotes):
     """
@@ -2685,7 +2685,7 @@ def update_preferred_web_media_notes(dbo, username, animalid, newnotes):
     if mediaid > 0:
         db.execute(dbo, "UPDATE media SET MediaNotes = '%s', UpdatedSinceLastPublish = 1 WHERE " \
             "ID = %d" % (db.escape(newnotes), mediaid))
-        audit.edit(dbo, username, "media", str(mediaid) + "notes => " + newnotes)
+        audit.edit(dbo, username, "media", mediaid, str(mediaid) + "notes => " + newnotes)
  
 def insert_diet_from_form(dbo, username, post):
     """
@@ -2700,7 +2700,7 @@ def insert_diet_from_form(dbo, username, post):
         ( "Comments", post.db_string("comments"))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "animaldiet", str(ndietid))
+    audit.create(dbo, username, "animaldiet", ndietid, audit.dump_row(dbo, "animaldiet", ndietid))
     return ndietid
 
 def update_diet_from_form(dbo, username, post):
@@ -2716,13 +2716,13 @@ def update_diet_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM animaldiet WHERE ID = %d" % dietid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM animaldiet WHERE ID = %d" % dietid)
-    audit.edit(dbo, username, "animaldiet", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "animaldiet", dietid, audit.map_diff(preaudit, postaudit))
 
 def delete_diet(dbo, username, did):
     """
     Deletes the selected diet
     """
-    audit.delete(dbo, username, "animaldiet", str(db.query(dbo, "SELECT * FROM animaldiet WHERE ID=%d" % int(did))))
+    audit.delete(dbo, username, "animaldiet", did, audit.dump_row(dbo, "animaldiet", did))
     db.execute(dbo, "DELETE FROM animaldiet WHERE ID = %d" % int(did))
 
 def insert_cost_from_form(dbo, username, post):
@@ -2743,7 +2743,7 @@ def insert_cost_from_form(dbo, username, post):
         ( "Description", post.db_string("description"))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "animalcost", str(ncostid))
+    audit.create(dbo, username, "animalcost", ncostid, audit.dump_row(dbo, "animalcost", ncostid))
     financial.update_matching_cost_transaction(dbo, username, ncostid)
     return ncostid
 
@@ -2762,14 +2762,14 @@ def update_cost_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM animalcost WHERE ID = %d" % costid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM animalcost WHERE ID = %d" % costid)
-    audit.edit(dbo, username, "animalcost", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "animalcost", costid, audit.map_diff(preaudit, postaudit))
     financial.update_matching_cost_transaction(dbo, username, costid)
 
 def delete_cost(dbo, username, cid):
     """
     Deletes a cost record
     """
-    audit.delete(dbo, username, "animalcost", str(db.query(dbo, "SELECT * FROM animalcost WHERE ID = %d" % cid)))
+    audit.delete(dbo, username, "animalcost", cid, audit.dump_row(dbo, "animalcost", cid))
     db.execute(dbo, "DELETE FROM animalcost WHERE ID = %d" % cid)
 
 def insert_litter_from_form(dbo, username, post):
@@ -2790,7 +2790,7 @@ def insert_litter_from_form(dbo, username, post):
         ( "RecordVersion", db.di(0))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "animallitter", str(nid))
+    audit.create(dbo, username, nid, "animallitter", audit.dump_row(dbo, "animallitter", nid))
     update_active_litters(dbo)
     return nid
 
@@ -2813,14 +2813,14 @@ def update_litter_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM animallitter WHERE ID = %d" % litterid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM animallitter WHERE ID = %d" % litterid)
-    audit.edit(dbo, username, "animallitter", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "animallitter", litterid, audit.map_diff(preaudit, postaudit))
     update_active_litters(dbo)
 
 def delete_litter(dbo, username, lid):
     """
     Deletes the selected litter
     """
-    audit.delete(dbo, username, "animallitter", str(db.query(dbo, "SELECT * FROM animallitter WHERE ID=%d" % int(lid))))
+    audit.delete(dbo, username, "animallitter", lid, audit.dump_row(dbo, "animallitter", lid))
     db.execute(dbo, "DELETE FROM animallitter WHERE ID = %d" % int(lid))
 
 def update_variable_animal_data(dbo, animalid, a = None, animalupdatebatch = None, bands = None, movements = None):

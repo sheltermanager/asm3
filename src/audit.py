@@ -8,6 +8,8 @@ ADD = 0
 EDIT = 1
 DELETE = 2
 MOVE = 3
+LOGIN = 4
+LOGOUT = 5
 
 def map_diff(row1, row2, ref = []):
     """
@@ -43,19 +45,28 @@ def map_diff(row1, row2, ref = []):
             s += k + " removed, "
     return s
 
-def create(dbo, username, tablename, description):
-    action(dbo, ADD, username, tablename, description)
+def dump_row(dbo, tablename, rowid):
+    return str(db.query(dbo, "SELECT * FROM %s WHERE ID = %s" % (tablename, rowid)))
 
-def edit(dbo, username, tablename, description):
-    action(dbo, EDIT, username, tablename, description)
+def create(dbo, username, tablename, linkid, description):
+    action(dbo, ADD, username, tablename, linkid, description)
 
-def delete(dbo, username, tablename, description):
-    action(dbo, DELETE, username, tablename, description)
+def edit(dbo, username, tablename, linkid, description):
+    action(dbo, EDIT, username, tablename, linkid, description)
 
-def move(dbo, username, tablename, description):
-    action(dbo, MOVE, username, tablename, description)
+def delete(dbo, username, tablename, linkid, description):
+    action(dbo, DELETE, username, tablename, linkid, description)
 
-def action(dbo, action, username, tablename, description):
+def move(dbo, username, tablename, linkid, description):
+    action(dbo, MOVE, username, tablename, linkid, description)
+
+def login(dbo, username):
+    action(dbo, LOGIN, username, "users", 0, "login")
+
+def logout(dbo, username):
+    action(dbo, LOGOUT, username, "users", 0, "logout")
+
+def action(dbo, action, username, tablename, linkid, description):
     """
     Adds an audit record
     """
@@ -68,6 +79,7 @@ def action(dbo, action, username, tablename, description):
         ( "AuditDate", db.ddt(i18n.now(dbo.timezone)) ),
         ( "UserName", db.ds(username) ),
         ( "TableName", db.ds(tablename) ),
+        ( "LinkID", db.di(linkid) ),
         ( "Description", db.ds(description) )
         ))
     db.execute(dbo, sql)

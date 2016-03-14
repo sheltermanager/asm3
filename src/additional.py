@@ -138,7 +138,7 @@ def insert_field_from_form(dbo, username, post):
         ( "DisplayIndex", post.db_integer("displayindex"))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "additionalfield", post["name"])
+    audit.create(dbo, username, "additionalfield", nid, audit.dump_row(dbo, "additionalfield", nid))
     return nid
 
 def update_field_from_form(dbo, username, post):
@@ -163,13 +163,13 @@ def update_field_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM additionalfield WHERE ID = %d" % aid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM additionalfield WHERE ID = %d" % aid)
-    audit.edit(dbo, username, "additionalfield", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "additionalfield", aid, audit.map_diff(preaudit, postaudit))
 
 def delete_field(dbo, username, fid):
     """
     Deletes the selected additional field, along with all data held by it.
     """
-    audit.delete(dbo, username, "additionalfield", str(db.query(dbo, "SELECT * FROM additionalfield WHERE ID=%d" % int(fid))))
+    audit.delete(dbo, username, "additionalfield", fid, audit.dump_row(dbo, "additionalfield", fid))
     db.execute(dbo, "DELETE FROM additionalfield WHERE ID = %d" % int(fid))
     db.execute(dbo, "DELETE FROM additional WHERE AdditionalFieldID = %d" % int(fid))
 

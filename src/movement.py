@@ -382,7 +382,7 @@ def insert_movement_from_form(dbo, username, post):
         ( "Comments", post.db_string("comments"))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "adoption", str(movementid))
+    audit.create(dbo, username, "adoption", movementid, audit.dump_row(dbo, "adoption", movementid))
     animal.update_animal_status(dbo, animalid)
     animal.update_variable_animal_data(dbo, animalid)
     update_movement_donation(dbo, movementid)
@@ -418,7 +418,7 @@ def update_movement_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM adoption WHERE ID = %d" % movementid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM adoption WHERE ID = %d" % movementid)
-    audit.edit(dbo, username, "adoption", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "adoption", movementid, audit.map_diff(preaudit, postaudit))
     animal.update_animal_status(dbo, post.integer("animal"))
     animal.update_variable_animal_data(dbo, post.integer("animal"))
     update_movement_donation(dbo, movementid)
@@ -431,7 +431,7 @@ def delete_movement(dbo, username, mid):
     if animalid == 0:
         raise utils.ASMError("Trying to delete a movement that does not exist")
     db.execute(dbo, "UPDATE ownerdonation SET MovementID = 0 WHERE MovementID = %d" % int(mid))
-    audit.delete(dbo, username, "adoption", str(db.query(dbo, "SELECT * FROM adoption WHERE ID=%d" % int(mid))))
+    audit.delete(dbo, username, "adoption", mid, audit.dump_row(dbo, "adoption", mid))
     db.execute(dbo, "DELETE FROM adoption WHERE ID = %d" % int(mid))
     animal.update_animal_status(dbo, animalid)
     animal.update_variable_animal_data(dbo, animalid)
@@ -805,7 +805,7 @@ def insert_transport_from_form(dbo, username, post):
         ( "Comments", post.db_string("comments"))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "animaltransport", str(transportid))
+    audit.create(dbo, username, "animaltransport", transportid, audit.dump_row(dbo, "animaltransport", transportid))
     return transportid
 
 def update_transport_from_form(dbo, username, post):
@@ -837,7 +837,7 @@ def update_transport_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM animaltransport WHERE ID = %d" % transportid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM animaltransport WHERE ID = %d" % transportid)
-    audit.edit(dbo, username, "animaltransport", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "animaltransport", transportid, audit.map_diff(preaudit, postaudit))
 
 def delete_transport(dbo, username, tid):
     """
@@ -846,7 +846,7 @@ def delete_transport(dbo, username, tid):
     animalid = db.query_int(dbo, "SELECT AnimalID FROM animaltransport WHERE ID = %d" % int(tid))
     if animalid == 0:
         raise utils.ASMError("Trying to delete a transport that does not exist")
-    audit.delete(dbo, username, "animaltransport", str(db.query(dbo, "SELECT * FROM animaltransport WHERE ID=%d" % int(tid))))
+    audit.delete(dbo, username, "animaltransport", tid, audit.dump_row(dbo, "animaltransport", tid))
     db.execute(dbo, "DELETE FROM animaltransport WHERE ID = %d" % int(tid))
 
 def generate_insurance_number(dbo):

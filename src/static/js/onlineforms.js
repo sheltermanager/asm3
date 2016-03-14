@@ -22,6 +22,8 @@ $(function() {
                     { json_field: "SETOWNERFLAGS", post_field: "flags", label: _("Person Flags"), type: "selectmulti" },
                     { json_field: "EMAILADDRESS", post_field: "email", label: _("Email submissions to"), type: "textarea", rows: "2", 
                         tooltip: _("Email incoming form submissions to this comma separated list of email addresses") }, 
+                    { json_field: "EMAILSUBMITTER", post_field: "emailsubmitter", label: _("Send confirmation email to form submitter"), type: "check",
+                        tooltip: _("If this form has a populated emailaddress field during submission, email a copy of the completed form to it") },
                     { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "htmleditor", height: "100px", width: "600px" },
                     { json_field: "HEADER", post_field: "header", label: _("Header"), type: "htmleditor", height: "100px", width: "600px" },
                     { json_field: "FOOTER", post_field: "footer", label: _("Footer"), type: "htmleditor", height: "100px", width: "600px" }

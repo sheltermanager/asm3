@@ -378,7 +378,7 @@ def csave(dbo, username, post):
         else:
             # Must be a string
             cset(dbo, k, v)
-    audit.edit(dbo, username, "configuration", str(post))
+    audit.edit(dbo, username, "configuration", 0, str(post))
 
 def account_period_totals(dbo):
     return cboolean(dbo, "AccountPeriodTotals")

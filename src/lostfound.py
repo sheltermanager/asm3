@@ -613,7 +613,7 @@ def update_lostanimal_from_form(dbo, post, username):
         )))
     additional.save_values_for_link(dbo, post, lfid, "lostanimal")
     postaudit = db.query(dbo, "SELECT * FROM animallost WHERE ID = %d" % lfid)
-    audit.edit(dbo, username, "animallost", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "animallost", lfid, audit.map_diff(preaudit, postaudit))
 
 def insert_lostanimal_from_form(dbo, post, username):
     """
@@ -645,7 +645,7 @@ def insert_lostanimal_from_form(dbo, post, username):
         ( "OwnerID", post.db_integer("owner")),
         ( "Comments", post.db_string("comments"))
         )))
-    audit.create(dbo, username, "animallost", str(nid))
+    audit.create(dbo, username, "animallost", nid, audit.dump_row(dbo, "animallost", nid))
 
     # Save any additional field values given
     additional.save_values_for_link(dbo, post, nid, "lostanimal")
@@ -688,7 +688,7 @@ def update_foundanimal_from_form(dbo, post, username):
         )))
     additional.save_values_for_link(dbo, post, lfid, "foundanimal")
     postaudit = db.query(dbo, "SELECT * FROM animalfound WHERE ID = %d" % lfid)
-    audit.edit(dbo, username, "animalfound", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "animalfound", lfid, audit.map_diff(preaudit, postaudit))
 
 def insert_foundanimal_from_form(dbo, post, username):
     """
@@ -720,7 +720,7 @@ def insert_foundanimal_from_form(dbo, post, username):
         ( "OwnerID", post.db_integer("owner")),
         ( "Comments", post.db_string("comments"))
         )))
-    audit.create(dbo, username, "animalfound", str(nid))
+    audit.create(dbo, username, "animalfound", nid, audit.dump_row(dbo, "animalfound", nid))
 
     # Save any additional field values given
     additional.save_values_for_link(dbo, post, nid, "foundanimal")
@@ -781,7 +781,7 @@ def delete_lostanimal(dbo, username, aid):
     """
     Deletes a lost animal
     """
-    audit.delete(dbo, username, "animallost", str(db.query(dbo, "SELECT * FROM animallost WHERE ID=%d" % aid)))
+    audit.delete(dbo, username, "animallost", aid, audit.dump_row(dbo, "animallost", aid))
     db.execute(dbo, "DELETE FROM animallost WHERE ID = %d" % aid)
     db.execute(dbo, "DELETE FROM media WHERE LinkID = %d AND LinkTypeID = %d" % (aid, media.LOSTANIMAL))
     db.execute(dbo, "DELETE FROM diary WHERE LinkID = %d AND LinkType = %d" % (aid, diary.LOSTANIMAL))
@@ -792,7 +792,7 @@ def delete_foundanimal(dbo, username, aid):
     """
     Deletes a found animal
     """
-    audit.delete(dbo, username, "animalfound", str(db.query(dbo, "SELECT * FROM animalfound WHERE ID=%d" % aid)))
+    audit.delete(dbo, username, "animalfound", aid, audit.dump_row(dbo, "animalfound", aid))
     db.execute(dbo, "DELETE FROM animalfound WHERE ID = %d" % aid)
     db.execute(dbo, "DELETE FROM media WHERE LinkID = %d AND LinkTypeID = %d" % (aid, media.FOUNDANIMAL))
     db.execute(dbo, "DELETE FROM diary WHERE LinkID = %d AND LinkType = %d" % (aid, diary.FOUNDANIMAL))

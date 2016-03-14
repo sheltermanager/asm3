@@ -431,6 +431,18 @@ def get_active_users(dbo):
     cachekey = "%s_activity" % dbo.database
     return utils.nulltostr(cachemem.get(cachekey))
 
+def logout(session):
+    """
+    Logs the user session out
+    """
+    try:
+        al.info("%s logged out" % session.user, "users.logout", session.dbo)
+        audit.logout(session.dbo, session.user)
+        session.user = None
+        session.kill()
+    except:
+        pass
+
 def update_user_activity(dbo, user, timenow = True):
     """
     If timenow is True, updates this user's last activity time to now.
@@ -501,7 +513,7 @@ def insert_user_from_form(dbo, username, post):
         ( "IPRestriction", post.db_string("iprestriction"))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "users", str(nuserid))
+    audit.create(dbo, username, "users", nuserid, audit.dump_row(dbo, "users", nuserid))
     roles = post["roles"].strip()
     if roles != "":
         for rid in roles.split(","):
@@ -518,10 +530,10 @@ def update_user_settings(dbo, username, email = "", realname = "", locale = "", 
         ( "LocaleOverride", db.ds(locale) ),
         ( "Signature", db.ds(signature) )
     ))
-    preaudit = db.query(dbo, "SELECT * FROM users WHERE ID = %d" % int(userid))[0]
+    preaudit = db.query(dbo, "SELECT * FROM users WHERE ID = %d" % int(userid))
     db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM users WHERE ID = %d" % int(userid))[0]
-    audit.edit(dbo, username, "users", audit.map_diff(preaudit, postaudit, [ "USERNAME", ]))
+    postaudit = db.query(dbo, "SELECT * FROM users WHERE ID = %d" % int(userid))
+    audit.edit(dbo, username, "users", userid, audit.map_diff(preaudit, postaudit, [ "USERNAME", ]))
 
 def update_user_from_form(dbo, username, post):
     """
@@ -541,7 +553,7 @@ def update_user_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM users WHERE ID = %d" % userid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM users WHERE ID = %d" % userid)
-    audit.edit(dbo, username, "users", audit.map_diff(preaudit, postaudit, [ "USERNAME", ]))
+    audit.edit(dbo, username, "users", userid, audit.map_diff(preaudit, postaudit, [ "USERNAME", ]))
     db.execute(dbo, "DELETE FROM userrole WHERE UserID = %d" % userid)
     roles = post["roles"].strip()
     if roles != "":
@@ -553,7 +565,7 @@ def delete_user(dbo, username, uid):
     """
     Deletes the selected user
     """
-    audit.delete(dbo, username, "users", str(db.query(dbo, "SELECT * FROM users WHERE ID=%d" % int(uid))))
+    audit.delete(dbo, username, "users", uid, audit.dump_row(dbo, "users", uid))
     db.execute(dbo, "DELETE FROM users WHERE ID = %d" % int(uid))
     db.execute(dbo, "DELETE FROM userrole WHERE UserID = %d" % int(uid))
 
@@ -568,7 +580,7 @@ def insert_role_from_form(dbo, username, post):
         ( "SecurityMap", post.db_string("securitymap"))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "role", str(nroleid))
+    audit.create(dbo, username, "role", nroleid, audit.dump_row(dbo, "role", nroleid))
 
 def update_role_from_form(dbo, username, post):
     """
@@ -582,7 +594,7 @@ def update_role_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM role WHERE ID = %d" % roleid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM role WHERE ID = %d" % roleid)
-    audit.edit(dbo, username, "role", audit.map_diff(preaudit, postaudit, [ "ROLENAME", ]))
+    audit.edit(dbo, username, "role", roleid, audit.map_diff(preaudit, postaudit, [ "ROLENAME", ]))
 
 def delete_role(dbo, username, rid):
     """
@@ -591,7 +603,7 @@ def delete_role(dbo, username, rid):
     l = dbo.locale
     if db.query_int(dbo, "SELECT COUNT(*) FROM userrole WHERE RoleID = %d" % int(rid)) > 0:
         raise utils.ASMValidationError(i18n._("Role is in use and cannot be deleted.", l))
-    audit.delete(dbo, username, "role", str(db.query(dbo, "SELECT * FROM role WHERE ID=%d" % int(rid))))
+    audit.delete(dbo, username, "role", rid, audit.dump_row(dbo, "role", rid))
     db.execute(dbo, "DELETE FROM accountsrole WHERE RoleID = %d" % int(rid))
     db.execute(dbo, "DELETE FROM customreportrole WHERE RoleID = %d" % int(rid))
     db.execute(dbo, "DELETE FROM role WHERE ID = %d" % int(rid))
@@ -710,6 +722,8 @@ def web_login(post, session, remoteip, path):
         except:
             pass
         try:
+            # Mark the user logged in
+            audit.login(dbo, username)
             # Check to see if any updates need performing on this database
             if dbupdate.check_for_updates(dbo):
                 dbupdate.perform_updates(dbo)

@@ -611,7 +611,7 @@ def insert_donation_from_form(dbo, username, post):
         ( "Comments", post.db_string("comments"))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "ownerdonation", str(donationid))
+    audit.create(dbo, username, "ownerdonation", donationid, audit.dump_row(dbo, "ownerdonation", donationid))
     if configuration.donation_trx_override(dbo):
         update_matching_donation_transaction(dbo, username, donationid, post.integer("destaccount"))
     else:
@@ -650,7 +650,7 @@ def update_donation_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM ownerdonation WHERE ID = %d" % donationid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM ownerdonation WHERE ID = %d" % donationid)
-    audit.edit(dbo, username, "ownerdonation", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "ownerdonation", donationid, audit.map_diff(preaudit, postaudit))
     if configuration.donation_trx_override(dbo):
         update_matching_donation_transaction(dbo, username, donationid, post.integer("destaccount"))
     else:
@@ -662,7 +662,7 @@ def delete_donation(dbo, username, did):
     """
     Deletes a donation record
     """
-    audit.delete(dbo, username, "ownerdonation", str(db.query(dbo, "SELECT * FROM ownerdonation WHERE ID=%d" % int(did))))
+    audit.delete(dbo, username, "ownerdonation", did, audit.dump_row(dbo, "ownerdonation", did))
     movementid = db.query_int(dbo, "SELECT MovementID FROM ownerdonation WHERE ID = %d" % int(did))
     db.execute(dbo, "DELETE FROM ownerdonation WHERE ID = %d" % int(did))
     # Delete any existing transaction for this donation if there is one
@@ -675,7 +675,7 @@ def receive_donation(dbo, username, did):
     """
     if id is None or did == "": return
     db.execute(dbo, "UPDATE ownerdonation SET Date = %s WHERE ID = %d" % ( db.dd(i18n.now(dbo.timezone)), int(did)))
-    audit.edit(dbo, username, "ownerdonation", str(did) + ": received")
+    audit.edit(dbo, username, "ownerdonation", did, str(did) + ": received")
     update_matching_donation_transaction(dbo, username, int(did))
     check_create_next_donation(dbo, username, did)
 
@@ -900,7 +900,7 @@ def insert_account_from_costtype(dbo, ctid, name, desc):
         ( "Description", db.ds(desc))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, "system", "accounts", str(aid))
+    audit.create(dbo, "system", "accounts", aid, audit.dump_row(dbo, "accounts", aid))
     return aid
 
 def insert_account_from_donationtype(dbo, dtid, name, desc):
@@ -920,7 +920,7 @@ def insert_account_from_donationtype(dbo, dtid, name, desc):
         ( "Description", db.ds(desc))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, "system", "accounts", str(aid))
+    audit.create(dbo, "system", "accounts", aid, audit.dump_row(dbo, "accounts", aid))
     return aid
 
 def insert_account_from_form(dbo, username, post):
@@ -944,7 +944,7 @@ def insert_account_from_form(dbo, username, post):
         ( "Description", post.db_string("description"))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "accounts", str(aid))
+    audit.create(dbo, username, "accounts", aid, audit.dump_row(dbo, "accounts", aid))
     accountid = post.integer("accountid")
     for rid in post.integer_list("viewroles"):
         db.execute(dbo, "INSERT INTO accountsrole (AccountID, RoleID, CanView, CanEdit) VALUES (%d, %d, 1, 0)" % (accountid, rid))
@@ -977,7 +977,7 @@ def update_account_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM accounts WHERE ID = %d" % accountid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM accounts WHERE ID = %d" % accountid)
-    audit.edit(dbo, username, "accounts", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "accounts", accountid, audit.map_diff(preaudit, postaudit))
     db.execute(dbo, "DELETE FROM accountsrole WHERE AccountID = %d" % accountid)
     for rid in post.integer_list("viewroles"):
         db.execute(dbo, "INSERT INTO accountsrole (AccountID, RoleID, CanView, CanEdit) VALUES (%d, %d, 1, 0)" % (accountid, rid))
@@ -991,7 +991,7 @@ def delete_account(dbo, username, aid):
     """
     Deletes an account
     """
-    audit.delete(dbo, username, "accounts", str(db.query(dbo, "SELECT * FROM accounts WHERE ID=%d" % int(aid))))
+    audit.delete(dbo, username, "accounts", aid, audit.dump_row(dbo, "accounts", aid))
     db.execute(dbo, "DELETE FROM accountstrx WHERE SourceAccountID = %d OR DestinationAccountID = %d" % ( int(aid), int(aid) ))
     db.execute(dbo, "DELETE FROM accountsrole WHERE AccountID = %d" % int(aid))
     db.execute(dbo, "DELETE FROM accounts WHERE ID = %d" % int(aid))
@@ -1030,7 +1030,7 @@ def insert_trx_from_form(dbo, username, post):
         ( "OwnerDonationID", db.di(0))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "accountstrx", str(tid) + ": " + post["description"])
+    audit.create(dbo, username, "accountstrx", tid, audit.dump_row(dbo, "accountstrx", tid))
     return tid
 
 def update_trx_from_form(dbo, username, post):
@@ -1067,13 +1067,13 @@ def update_trx_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM accountstrx WHERE ID = %d" % trxid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM accountstrx WHERE ID = %d" % trxid)
-    audit.edit(dbo, username, "accountstrx", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "accountstrx", trxid, audit.map_diff(preaudit, postaudit))
 
 def delete_trx(dbo, username, tid):
     """
     Deletes a transaction
     """
-    audit.delete(dbo, username, "accountstrx", str(db.query(dbo, "SELECT * FROM accountstrx WHERE ID=%d" % int(tid))))
+    audit.delete(dbo, username, "accountstrx", tid, audit.dump_row(dbo, "accountstrx", tid))
     db.execute(dbo, "DELETE FROM accountstrx WHERE ID = %d" % int(tid))
 
 def insert_voucher_from_form(dbo, username, post):
@@ -1091,7 +1091,7 @@ def insert_voucher_from_form(dbo, username, post):
         ( "Comments", post.db_string("comments"))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "ownervoucher", str(voucherid))
+    audit.create(dbo, username, "ownervoucher", voucherid, audit.dump_row(dbo, "ownervoucher", voucherid))
     return voucherid
 
 def update_voucher_from_form(dbo, username, post):
@@ -1109,13 +1109,13 @@ def update_voucher_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM ownervoucher WHERE ID = %d" % voucherid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM ownervoucher WHERE ID = %d" % voucherid)
-    audit.edit(dbo, username, "ownervoucher", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "ownervoucher", voucherid, audit.map_diff(preaudit, postaudit))
 
 def delete_voucher(dbo, username, vid):
     """
     Deletes a voucher record
     """
-    audit.delete(dbo, username, "ownervoucher", str(db.query(dbo, "SELECT * FROM ownervoucher WHERE ID=%d" % int(vid))))
+    audit.delete(dbo, username, "ownervoucher", vid, audit.dump_row(dbo, "ownervoucher", vid))
     db.execute(dbo, "DELETE FROM ownervoucher WHERE ID = %d" % int(vid))
 
 def insert_citation_from_form(dbo, username, post):
@@ -1135,7 +1135,7 @@ def insert_citation_from_form(dbo, username, post):
         ( "Comments", post.db_string("comments"))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "ownercitation", str(citationid))
+    audit.create(dbo, username, "ownercitation", citationid, audit.dump_row(dbo, "ownercitation", citationid))
     return citationid
 
 def update_citation_from_form(dbo, username, post):
@@ -1154,13 +1154,13 @@ def update_citation_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM ownercitation WHERE ID = %d" % citationid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM ownercitation WHERE ID = %d" % citationid)
-    audit.edit(dbo, username, "ownercitation", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "ownercitation", citationid, audit.map_diff(preaudit, postaudit))
 
 def delete_citation(dbo, username, cid):
     """
     Deletes a citation record
     """
-    audit.delete(dbo, username, "ownercitation", str(db.query(dbo, "SELECT * FROM ownercitation WHERE ID=%d" % int(cid))))
+    audit.delete(dbo, username, "ownercitation", cid, audit.dump_row(dbo, "ownercitation", cid))
     db.execute(dbo, "DELETE FROM ownercitation WHERE ID = %d" % int(cid))
 
 def insert_licence_from_form(dbo, username, post):
@@ -1182,7 +1182,7 @@ def insert_licence_from_form(dbo, username, post):
         ( "Comments", post.db_string("comments"))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "ownerlicence", str(licenceid))
+    audit.create(dbo, username, "ownerlicence", licenceid, audit.dump_row(dbo, "ownerlicence", licenceid))
     return licenceid
 
 def update_licence_from_form(dbo, username, post):
@@ -1205,13 +1205,13 @@ def update_licence_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM ownerlicence WHERE ID = %d" % licenceid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM ownercitation WHERE ID = %d" % licenceid)
-    audit.edit(dbo, username, "ownerlicence", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "ownerlicence", licenceid, audit.map_diff(preaudit, postaudit))
 
 def delete_licence(dbo, username, lid):
     """
     Deletes a licence record
     """
-    audit.delete(dbo, username, "ownerlicence", str(db.query(dbo, "SELECT * FROM ownerlicence WHERE ID=%d" % int(lid))))
+    audit.delete(dbo, username, "ownerlicence", lid, audit.dump_row(dbo, "ownerlicence", lid))
     db.execute(dbo, "DELETE FROM ownerlicence WHERE ID = %d" % int(lid))
 
 def giftaid_spreadsheet(dbo, path, fromdate, todate):

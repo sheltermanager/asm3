@@ -260,7 +260,7 @@ def update_animalcontrol_completenow(dbo, acid, username, completetype):
     Updates an animal control incident record, marking it completed now with the type specified
     """
     db.execute(dbo, "UPDATE animalcontrol SET IncidentCompletedID=%s, CompletedDate=%s WHERE ID=%d" % (db.di(completetype), db.dd(now(dbo.timezone)), acid))
-    audit.edit(dbo, username, "animalcontrol", "completetype=%s, completedate=%s" % (completetype, now(dbo.timezone)))
+    audit.edit(dbo, username, "animalcontrol", acid, "completetype=%s, completedate=%s" % (completetype, now(dbo.timezone)))
 
 def update_animalcontrol_dispatchnow(dbo, acid, username):
     """
@@ -268,14 +268,14 @@ def update_animalcontrol_dispatchnow(dbo, acid, username):
     now with the current user as ACO.
     """
     db.execute(dbo, "UPDATE animalcontrol SET DispatchedACO=%s, DispatchDateTime=%s WHERE ID=%d" % (db.ds(username), db.ddt(now(dbo.timezone)), acid))
-    audit.edit(dbo, username, "animalcontrol", "aco=%s, dispatch=%s" % (username, now(dbo.timezone)))
+    audit.edit(dbo, username, "animalcontrol", acid, "aco=%s, dispatch=%s" % (username, now(dbo.timezone)))
 
 def update_animalcontrol_respondnow(dbo, acid, username):
     """
     Updates an animal control incident record, marking it responded to now
     """
     db.execute(dbo, "UPDATE animalcontrol SET RespondedDateTime=%s WHERE ID=%d" % (db.ddt(now(dbo.timezone)), acid))
-    audit.edit(dbo, username, "animalcontrol", "responded=%s" % now(dbo.timezone))
+    audit.edit(dbo, username, "animalcontrol", acid, "responded=%s" % now(dbo.timezone))
 
 def update_animalcontrol_from_form(dbo, post, username):
     """
@@ -327,7 +327,7 @@ def update_animalcontrol_from_form(dbo, post, username):
     )))
     additional.save_values_for_link(dbo, post, acid, "incident")
     postaudit = db.query(dbo, "SELECT * FROM animalcontrol WHERE ID = %d" % acid)
-    audit.edit(dbo, username, "animalcontrol", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "animalcontrol", acid, audit.map_diff(preaudit, postaudit))
 
 def update_animalcontrol_addlink(dbo, username, acid, animalid):
     """
@@ -337,14 +337,14 @@ def update_animalcontrol_addlink(dbo, username, acid, animalid):
     if 0 != db.query_int(dbo, "SELECT COUNT(*) FROM animalcontrolanimal WHERE AnimalControlID = %d AND AnimalID = %d" % (acid, animalid)):
         raise utils.ASMValidationError(_("That animal is already linked to the incident", l))
     db.execute(dbo, "INSERT INTO animalcontrolanimal (AnimalControlID, AnimalID) VALUES (%d, %d)" % (acid, animalid))
-    audit.create(dbo, username, "animalcontrolanimal", "incident %d linked to animal %d" % (acid, animalid))
+    audit.create(dbo, username, "animalcontrolanimal", acid, "incident %d linked to animal %d" % (acid, animalid))
 
 def update_animalcontrol_removelink(dbo, username, acid, animalid):
     """
     Removes a link between an animal and an incident.
     """
     db.execute(dbo, "DELETE FROM animalcontrolanimal WHERE AnimalControlID = %d AND AnimalID = %d" % (acid, animalid))
-    audit.delete(dbo, username, "animalcontrolanimal", "incident %d no longer linked to animal %d" % (acid, animalid))
+    audit.delete(dbo, username, "animalcontrolanimal", acid, "incident %d no longer linked to animal %d" % (acid, animalid))
 
 def insert_animalcontrol_from_form(dbo, post, username):
     """
@@ -390,7 +390,7 @@ def insert_animalcontrol_from_form(dbo, post, username):
         ( "Sex", post.db_integer("sex")),
         ( "AgeGroup", post.db_string("agegroup"))
         )))
-    audit.create(dbo, username, "animalcontrol", str(nid))
+    audit.create(dbo, username, "animalcontrol", nid, audit.dump_row(dbo, "animalcontrol", nid))
 
     # Save any additional field values given
     additional.save_values_for_link(dbo, post, nid, "incident")
@@ -401,7 +401,7 @@ def delete_animalcontrol(dbo, username, acid):
     """
     Deletes an animal control record
     """
-    audit.delete(dbo, username, "animalcontrol", str(db.query(dbo, "SELECT * FROM animalcontrol WHERE ID=%d" % acid)))
+    audit.delete(dbo, username, "animalcontrol", acid, audit.dump_row(dbo, "animalcontrol", acid))
     db.execute(dbo, "DELETE FROM animalcontrol WHERE ID = %d" % acid)
     db.execute(dbo, "DELETE FROM media WHERE LinkID = %d AND LinkTypeID = %d" % (acid, media.ANIMALCONTROL))
     db.execute(dbo, "DELETE FROM diary WHERE LinkID = %d AND LinkType = %d" % (acid, diary.ANIMALCONTROL))
@@ -441,7 +441,7 @@ def insert_traploan_from_form(dbo, username, post):
         ( "Comments", post.db_string("comments"))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "ownertraploan", str(traploanid))
+    audit.create(dbo, username, "ownertraploan", traploanid, audit.dump_row(dbo, "ownertraploan", traploanid))
     return traploanid
 
 def update_traploan_from_form(dbo, username, post):
@@ -463,13 +463,13 @@ def update_traploan_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM ownertraploan WHERE ID = %d" % traploanid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM ownertraploan WHERE ID = %d" % traploanid)
-    audit.edit(dbo, username, "ownertraploan", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "ownertraploan", traploanid, audit.map_diff(preaudit, postaudit))
 
 def delete_traploan(dbo, username, tid):
     """
     Deletes a traploan record
     """
-    audit.delete(dbo, username, "ownertraploan", str(db.query(dbo, "SELECT * FROM ownertraploan WHERE ID=%d" % int(tid))))
+    audit.delete(dbo, username, "ownertraploan", tid, audit.dump_row(dbo, "ownertraploan", tid))
     db.execute(dbo, "DELETE FROM ownertraploan WHERE ID = %d" % int(tid))
 
 def update_dispatch_latlong(dbo, incidentid, latlong):

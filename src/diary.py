@@ -145,14 +145,14 @@ def complete_diary_note(dbo, username, diaryid):
     Marks a diary note completed as of right now
     """
     db.execute(dbo, "UPDATE diary SET DateCompleted = %s WHERE ID = %d" % (db.dd(i18n.now(dbo.timezone)), int(diaryid)))
-    audit.edit(dbo, username, "diary", str(diaryid) + " => complete")
+    audit.edit(dbo, username, "diary", diaryid, str(diaryid) + " => complete")
 
 def rediarise_diary_note(dbo, username, diaryid, newdate):
     """
     Moves a diary note on to the date supplied (newdate is a python date)
     """
     db.execute(dbo, "UPDATE diary SET DiaryDateTime = %s WHERE ID = %d" % (db.dd(newdate), int(diaryid)))
-    audit.edit(dbo, username, "diary", str(diaryid) + " => moved on to " + str(newdate))
+    audit.edit(dbo, username, "diary", diaryid, str(diaryid) + " => moved on to " + str(newdate))
 
 def get_animal_tasks(dbo):
     """
@@ -209,7 +209,7 @@ def delete_diary(dbo, username, diaryid):
     """
     Deletes a diary record
     """
-    audit.delete(dbo, username, "diary", str(db.query(dbo, "SELECT * FROM diary WHERE ID = %d" % int(diaryid))))
+    audit.delete(dbo, username, "diary", diaryid, audit.dump_row(dbo, "diary", diaryid))
     db.execute(dbo, "DELETE FROM diary WHERE ID = %d" % int(diaryid))
 
 def get_diaries(dbo, linktypeid, linkid):
@@ -278,7 +278,7 @@ def insert_diary_from_form(dbo, username, linktypeid, linkid, post):
         ( "DateCompleted", post.db_date("completed"))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "diary", str(diaryid))
+    audit.create(dbo, username, "diary", diaryid, audit.dump_row(dbo, "diary", diaryid))
     return diaryid
 
 def insert_diary(dbo, username, linktypeid, linkid, diarydate, diaryfor, subject, note):
@@ -306,7 +306,7 @@ def insert_diary(dbo, username, linktypeid, linkid, diarydate, diaryfor, subject
         ( "DateCompleted", db.dd(None) )
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "diary", str(diaryid))
+    audit.create(dbo, username, "diary", diaryid, audit.dump_row(dbo, "diary", diaryid))
     return diaryid
 
 def update_diary_from_form(dbo, username, post):
@@ -341,7 +341,7 @@ def update_diary_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM diary WHERE ID=%d" % diaryid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM diary WHERE ID=%d" % diaryid)
-    audit.edit(dbo, username, "diary", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "diary", diaryid, audit.map_diff(preaudit, postaudit))
 
 def execute_diary_task(dbo, username, tasktype, taskid, linkid, selecteddate):
     """
@@ -385,7 +385,7 @@ def insert_diarytaskhead_from_form(dbo, username, post):
         ( "RecordVersion", db.di(0))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "diarytaskhead", str(nid))
+    audit.create(dbo, username, "diarytaskhead", nid, audit.dump_row(dbo, "diarytaskhead", nid))
     return nid
 
 def update_diarytaskhead_from_form(dbo, username, post):
@@ -400,13 +400,13 @@ def update_diarytaskhead_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM diarytaskhead WHERE ID=%d" % tid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM diarytaskhead WHERE ID=%d" % tid)
-    audit.edit(dbo, username, "diarytaskhead", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "diarytaskhead", tid, audit.map_diff(preaudit, postaudit))
 
 def delete_diarytask(dbo, username, taskid):
     """
     Deletes a diary task
     """
-    audit.delete(dbo, username, "diarytaskhead", str(db.query(dbo, "SELECT * FROM diarytaskhead WHERE ID = %d" % int(taskid))))
+    audit.delete(dbo, username, "diarytaskhead", taskid, audit.dump_row(dbo, "diarytaskhead", taskid))
     db.execute(dbo, "DELETE FROM diarytaskdetail WHERE DiaryTaskHeadID = %d" % int(taskid))
     db.execute(dbo, "DELETE FROM diarytaskhead WHERE ID = %d" % int(taskid))
 
@@ -425,7 +425,7 @@ def insert_diarytaskdetail_from_form(dbo, username, post):
         ( "RecordVersion", db.di(0))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, "diarytaskdetail", str(nid))
+    audit.create(dbo, username, "diarytaskdetail", nid, audit.dump_row(dbo, "diarytaskdetail", nid))
     return nid
 
 def update_diarytaskdetail_from_form(dbo, username, post):
@@ -442,13 +442,13 @@ def update_diarytaskdetail_from_form(dbo, username, post):
     preaudit = db.query(dbo, "SELECT * FROM diarytaskdetail WHERE ID=%d" % did)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM diarytaskdetail WHERE ID=%d" % did)
-    audit.edit(dbo, username, "diarytaskhead", audit.map_diff(preaudit, postaudit))
+    audit.edit(dbo, username, "diarytaskhead", did, audit.map_diff(preaudit, postaudit))
 
 def delete_diarytaskdetail(dbo, username, did):
     """
     Deletes a diary task detail record
     """
-    audit.delete(dbo, username, "diarytaskdetail", str(db.query(dbo, "SELECT * FROM diarytaskdetail WHERE ID = %d" % int(did))))
+    audit.delete(dbo, username, "diarytaskdetail", did, audit.dump_row(dbo, "diarytaskdetail", did))
     db.execute(dbo, "DELETE FROM diarytaskdetail WHERE ID = %d" % int(did))
 
 
