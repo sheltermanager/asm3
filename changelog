@@ -1,6 +1,7 @@
 39
 ================
 
+14/03/16 Fix for non-required online form multilookups behaving as required
 10/03/16 Fix for extra quotes in neutered when sending to HLP
 09/03/16 Return just the minimum amount of foster info for shelterview
 09/03/16 Add trace sitedefs to explain and time queries #390

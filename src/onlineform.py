@@ -143,7 +143,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
                             var fieldname = $(this).attr("data-name"),
                                 v = $(this).val();
                             $("input[name='" + fieldname + "']").val(v);
-                            if (!v) {
+                            if (!v && $(this).attr("data-required")) {
                                 alert("You must choose at least one option");
                                 rv = false;
                             }
@@ -211,7 +211,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             h.append('</select>')
         elif f["FIELDTYPE"] == FIELDTYPE_LOOKUP_MULTI:
             h.append('<input type="hidden" name="%s" value="" />' % html.escape(fname))
-            h.append('<select class="asm-onlineform-lookupmulti" multiple="multiple" data-name="%s" title="%s">' % ( html.escape(fname), utils.nulltostr(f["TOOLTIP"])))
+            h.append('<select class="asm-onlineform-lookupmulti" multiple="multiple" data-name="%s" data-required="%s" title="%s">' % ( html.escape(fname), utils.iif(required != "", "required", ""), utils.nulltostr(f["TOOLTIP"])))
             for lv in utils.nulltostr(f["LOOKUPS"]).split("|"):
                 h.append('<option>%s</option>' % lv)
             h.append('</select>')
