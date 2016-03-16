@@ -1,6 +1,7 @@
 39
 ================
 
+16/03/16 Fix for calculation of H (F NOT G) of asilomar figures
 14/03/16 Record login/logout events in the audit trail #316
 14/03/16 AuditTrail LinkID field #75
 14/03/16 Option to have online forms email the submitter #392
