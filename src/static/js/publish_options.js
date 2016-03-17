@@ -374,6 +374,13 @@ $(function() {
                 '</select></td>',
                 '</tr>',
                 '<tr>',
+                '<td><label for="outputdeceased">' + _("Output a deceased animals page") + '</label></td>',
+                '<td><select id="outputdeceased" class="asm-selectbox pbool preset" data="outputdeceased">',
+                '<option value="0">' + _("No") + '</option>',
+                '<option value="1">' + _("Yes") + '</option>',
+                '</select></td>',
+                '</tr>',
+                '<tr>',
                 '<td><label for="outputforms">' + _("Output a page with links to available online forms") + '</label></td>',
                 '<td><select id="outputforms" class="asm-selectbox pbool preset" data="outputforms">',
                 '<option value="0">' + _("No") + '</option>',
@@ -1010,7 +1017,7 @@ $(function() {
                     "bondedassingle", "clearexisting", "uploadall", "forcereupload", 
                     "generatejavascriptdb","thumbnails", "checksocket", "uploaddirectly", 
                     "htmlbychildadult", "htmlbyspecies", "htmlbytype", "outputadopted", 
-                    "outputrss", "noimportfile" ], 
+                    "outputdeceased", "outputrss", "noimportfile" ], 
                 function(bi, bo) {
                     if (bo == o) { $("[data='" + bo + "']").select("value", "1"); }
                 });

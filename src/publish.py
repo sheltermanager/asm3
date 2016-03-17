@@ -67,6 +67,7 @@ class PublishCriteria:
     htmlByType = False # True if html pages should be output with type name
     outputAdopted = False # True if html publisher should output an adopted.html page
     outputAdoptedDays = 30 # The number of days to go back when considering adopted animals
+    outputDeceased = False # True if html publisher should output a deceased.html page
     outputForms = False # True if html publisher should output a forms.html page
     outputRSS = False # True if html publisher should output an rss.xml page
     limit = 0
@@ -117,6 +118,7 @@ class PublishCriteria:
             if s == "htmlbyspecies": self.htmlBySpecies = True
             if s == "htmlbytype": self.htmlByType = True
             if s == "outputadopted": self.outputAdopted = True
+            if s == "outputdeceased": self.outputDeceased = True
             if s == "outputforms": self.outputForms = True
             if s == "outputrss": self.outputRSS = True
             if s.startswith("outputadopteddays"): self.outputAdoptedDays = self.get_int(s)
@@ -160,6 +162,7 @@ class PublishCriteria:
         if self.htmlByType: s += " htmlbytype"
         if self.htmlByChildAdult: s += " htmlbychildadult"
         if self.outputAdopted: s += " outputadopted"
+        if self.outputDeceased: s += " outputdeceased"
         if self.outputForms: s += " outputforms"
         if self.outputRSS: s += " outputrss"
         s += " order=" + str(self.order)
@@ -2356,6 +2359,8 @@ class HTMLPublisher(FTPPublisher):
             self.executeType(self.user)
         if self.pc.outputAdopted:
             self.executeAdoptedPage()
+        if self.pc.outputDeceased:
+            self.executeDeceasedPage()
         if self.pc.outputForms:
             self.executeFormsPage()
         if self.pc.outputRSS:
@@ -2392,6 +2397,71 @@ class HTMLPublisher(FTPPublisher):
         except Exception, err:
             self.setLastError("Error setting up adopted page: %s" % err)
             self.logError("Error setting up adopted page: %s" % err, sys.exc_info())
+            return
+
+        anCount = 0
+        for an in animals:
+            try:
+                anCount += 1
+                self.log("Processing: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, totalAnimals))
+                self.updatePublisherProgress(self.getProgress(anCount, len(animals)))
+
+                # If the user cancelled, stop now
+                if self.shouldStopPublishing(): 
+                    self.log("User cancelled publish. Stopping.")
+                    self.resetPublisherProgress()
+                    self.cleanup()
+                    return
+
+                # upload images for this animal to our current FTP
+                self.uploadImages(an, True)
+
+                # Add to the page
+                thisPage += self.substituteBodyTags(body, an)
+                self.log("Finished processing: %s" % an["SHELTERCODE"])
+
+            except Exception,err:
+                self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
+
+        # Append the footer, flush and upload the page
+        thisPage += footer
+        self.log("Saving page to disk: %s (%d bytes)" % (thisPageName, len(thisPage)))
+        self.saveFile(os.path.join(self.publishDir, thisPageName), thisPage)
+        self.log("Saved page to disk: %s" % thisPageName)
+        if self.pc.uploadDirectly:
+            self.log("Uploading page: %s" % thisPageName)
+            self.upload(thisPageName)
+            self.log("Uploaded page: %s" % thisPageName)
+
+    def executeDeceasedPage(self):
+        """
+        Generates and uploads the page of recently deceased animals
+        """
+        self.log("Generating deceased animals page...")
+
+        user = self.user
+        thisPage = ""
+        thisPageName = "deceased.%s" % self.pc.extension
+        totalAnimals = 0
+        l = self.dbo.locale
+
+        try:
+            cutoff = i18n.subtract_days(i18n.now(self.dbo.timezone), self.pc.outputAdoptedDays)
+            orderby = "a.AnimalName"
+            if self.pc.order == 0: orderby = "a.DeceasedDate"
+            elif self.pc.order == 1: orderby = "a.DeceasedDate DESC"
+            elif self.pc.order == 2: orderby = "a.AnimalName"
+            animals = db.query(self.dbo, animal.get_animal_query(self.dbo) + " WHERE a.DeceasedDate Is Not Null AND " \
+                "a.DeceasedDate >= %s AND a.NonShelterAnimal = 0 AND a.DiedOffShelter = 0 " \
+                "ORDER BY %s" % (db.dd(cutoff), orderby))
+            totalAnimals = len(animals)
+            header = self.substituteHFTag(self.getHeader(), -1, user, i18n._("Recently deceased", l))
+            footer = self.substituteHFTag(self.getFooter(), -1, user, i18n._("Recently deceased", l))
+            body = self.getBody()
+            thisPage = header
+        except Exception, err:
+            self.setLastError("Error setting up deceased page: %s" % err)
+            self.logError("Error setting up deceased page: %s" % err, sys.exc_info())
             return
 
         anCount = 0

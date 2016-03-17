@@ -33,8 +33,8 @@ last one has left the shelter through any means other than fostering (if the
 cancelled. It will also be treated as cancelled if the expiry date is set and
 passed.
 
-From the litter logger main screen, you can highlight a litter and call up all
-the animals in that litter. The litter logger main screen will also show you
+From the Edit Litters screen, you can highlight a litter and call up all
+the animals in that litter. The screen will also show you
 how many of the litter animals are currently left on the shelter. 
 
 

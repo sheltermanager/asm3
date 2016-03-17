@@ -123,6 +123,10 @@ feed readers.
 * Output an adopted animals page: If set to yes, a file named adopted.EXTENSION
   will be output that you can use to reference recently adopted animals.
 
+* Output a deceased animals page: If set to yes, a file named deceased.EXTENSION
+  will be output that you can use to reference recently deceased animals
+  as a tribute page.
+
 * Output a page with links to available online forms: If set to yes, a file
   named forms.EXTENSION will be output that contains a link to all the online
   forms in the database.

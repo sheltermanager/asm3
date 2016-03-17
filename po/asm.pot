@@ -7522,6 +7522,10 @@ msgid "Out SubTotal"
 msgstr ""
 
 #: publish_options.js
+msgid "Output a deceased animals page"
+msgstr ""
+
+#: publish_options.js
 msgid "Output a page with links to available online forms"
 msgstr ""
 
@@ -8388,7 +8392,7 @@ msgstr ""
 msgid "Recently adopted"
 msgstr ""
 
-#: header.js configuration.py
+#: header.js configuration.py publish.py
 msgid "Recently deceased"
 msgstr ""
 
