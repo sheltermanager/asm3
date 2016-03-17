@@ -2792,6 +2792,9 @@ def insert_litter_from_form(dbo, username, post):
     db.execute(dbo, sql)
     audit.create(dbo, username, nid, "animallitter", audit.dump_row(dbo, "animallitter", nid))
     update_active_litters(dbo)
+    # if a list of littermates were given, set the litterid on those animal records
+    for i in post.integer_list("animals"):
+        db.execute(dbo, "UPDATE animal SET AcceptanceNumber = %s WHERE ID = %d" % (post.db_string("litterref"), i))
     return nid
 
 def update_litter_from_form(dbo, username, post):

@@ -14,11 +14,13 @@ $(function() {
                 edit_perm: 'cll',
                 helper_text: _("Litters need at least a required date and number."),
                 close_on_ok: false,
+                hide_read_only: true, 
                 columns: 1,
                 fields: [
                     { json_field: "ACCEPTANCENUMBER", post_field: "litterref", label: _("Litter Reference"), type: "text",
                         tooltip: _("A unique reference for this litter"), validation: "notblank" },
                     { json_field: "PARENTANIMALID", post_field: "animal", label: _("Mother"), type: "animal", animalfilter: "female" },
+                    { json_field: "ANIMALS", post_field: "animals", label: _("Littermates"), type: "animalmulti", readonly: true },
                     { json_field: "SPECIESID", post_field: "species", label: _("Species"), type: "select", 
                         options: { rows: controller.species, valuefield: "ID", displayfield: "SPECIESNAME" }},
                     { json_field: "DATE", post_field: "startdate", label: _("Start date"), 
@@ -33,6 +35,7 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
+                    $("#animal").animalchooser("clear");
                     tableform.fields_populate_from_json(dialog.fields, row);
                     tableform.dialog_show_edit(dialog, row)
                         .then(function() {
@@ -49,14 +52,7 @@ $(function() {
                     return (row.INVALIDDATE && format.date_js(row.INVALIDATE) <= new Date()) || row.CACHEDANIMALSLEFT == 0;
                 },
                 columns: [
-                    { field: "ACCEPTANCENUMBER", display: _("Litter Ref"), formatter: function(row) {
-                        return "<span style=\"white-space: nowrap\">" +
-                            "<input type=\"checkbox\" data-id=\"" + row.ID + "\" title=\"" + html.title(_("Select")) + "\" />" +
-                            "<a href=\"#\" class=\"link-edit\" data-id=\"" + row.ID + "\">" + row.ACCEPTANCENUMBER + "</a>" +
-                            "<a href=\"animal_find_results?mode=ADVANCED&q=&litterid=" + row.ACCEPTANCENUMBER + "\">" + 
-                            html.icon("animal", _("View the animals in this litter")) + "</a>" + 
-                            "</span>";
-                    }},
+                    { field: "ACCEPTANCENUMBER", display: _("Litter Ref") },
                     { field: "PARENTANIMALID", display: _("Parent"), formatter: function(row) {
                         if (row.PARENTANIMALID) {
                             return '<a href="animal?id=' + row.PARENTANIMALID + '">' + row.MOTHERNAME + ' - ' + row.MOTHERCODE + '</a>';
@@ -80,7 +76,9 @@ $(function() {
                             .then(function(result) { 
                                 return tableform.dialog_show_add(dialog, { 
                                     onload: function() {
+                                        litters.lastanimal = null;
                                         $("#litterref").val(result);
+                                        $("#animal").animalchooser("clear");
                                     }
                                 });
                             })
@@ -111,6 +109,12 @@ $(function() {
                                  tableform.table_update(table);
                              });
                      } 
+                 },
+                 { id: "littermates", text: _("Littermates"), icon: "litter", enabled: "one", perm: "va", 
+                     click: function() { 
+                         var row = tableform.table_selected_row(table);
+                         common.route("animal_find_results?mode=ADVANCED&q=&litterid=" + row.ACCEPTANCENUMBER);
+                     }
                  }
             ];
             this.dialog = dialog;
