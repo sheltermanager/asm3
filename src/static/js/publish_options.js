@@ -761,11 +761,11 @@ $(function() {
                 '<table>',
                 '<tr>',
                 '<td><label for="veuserid">VetEnvoy User ID</label></td>',
-                '<td><input id="veuserid" type="text" class="asm-doubletextbox cfg" data="VetEnvoyUserId" /></td>',
+                '<td><input id="veuserid" type="text" class="asm-doubletextbox cfg" disabled="disabled" data="VetEnvoyUserId" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="veuserpassword">VetEnvoy User Password</label></td>',
-                '<td><input id="veuserpassword" type="text" class="asm-doubletextbox cfg" data="VetEnvoyUserPassword" /></td>',
+                '<td><input id="veuserpassword" type="text" class="asm-doubletextbox cfg" disabled="disabled" data="VetEnvoyUserPassword" /></td>',
                 '</tr>',
                 '</table>',
                 '</div>'

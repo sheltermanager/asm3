@@ -1,6 +1,7 @@
 39
 ================
 
+18/03/16 Don't allow direct editing of VetEnvoy GUID fields
 17/03/16 Add deceased.html publisher page #366
 17/03/16 Litter improvements, mate selection and viewing #339
 16/03/16 Fix for calculation of H (F NOT G) of asilomar figures
