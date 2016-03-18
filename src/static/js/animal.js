@@ -973,7 +973,7 @@ $(function() {
             if (config.bool("DontShowWeight")) { $("#kilosrow, #poundsrow").hide(); }
             if (config.bool("DontShowMicrochip")) { $("#microchiprow").hide(); }
             if (config.bool("DontShowTattoo")) { $("#tattoorow").hide(); }
-            if (config.str("SmartTagFTPURL") == "") { $("#smarttagrow").hide(); }
+            if (config.str("SmartTagFTPUser") == "") { $("#smarttagrow").hide(); }
             if (config.bool("DontShowBonded")) { $("#bondedwith1row, #bondedwith2row").hide(); }
             if (config.bool("DontShowPickup")) { $("#pickeduprow, #pickupaddressrow, #pickuplocationrow").hide(); }
             if (config.bool("DontShowNeutered")) { $("#neuteredrow").hide(); }
