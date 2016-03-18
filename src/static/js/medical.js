@@ -356,6 +356,7 @@ $(function() {
             $("#profileid").closest("tr").show();
             $("#profileid").select("value", "");
             $("#treatmentrulecalc").show();
+            $("#status").select("value", "0");
             tableform.dialog_show_add(dialog)
                 .then(function() {
                     tableform.dialog_disable_buttons();   
@@ -377,6 +378,7 @@ $(function() {
             $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
             $("#profileid").closest("tr").show();
             $("#treatmentrulecalc").show();
+            $("#status").select("value", "0");
             tableform.dialog_show_add(medical.dialog)
                 .then(function() {
                     tableform.dialog_disable_buttons();   
