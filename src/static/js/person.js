@@ -144,12 +144,15 @@ $(function() {
                 '<input type="text" id="postcode" data-json="OWNERPOSTCODE" data-post="postcode" class="asm-textbox" />',
                 '</td>',
                 '</tr>',
+                '<tr id="latlongrow">',
+                '<td></td>',
+                '<td><input type="text" class="asm-textbox" id="latlong" data-json="LATLONG" data-post="latlong" /></td>',
+                '</tr>',
                 '<!-- end right table -->',
                 '</table>',
                 '<!-- Third column, embedded map placeholder -->',
                 '</td>',
                 '<td width="35%">',
-                '<input type="hidden" id="latlong" data-json="LATLONG" data-post="latlong" />',
                 '<div id="embeddedmap" style="width: 100%; height: 300px; color: #000" />',
                 '<!-- end outer table -->',
                 '</td>',
@@ -470,9 +473,8 @@ $(function() {
             }
 
             // CONFIG ===========================
-            if (config.bool("HideTownCounty")) {
-                $(".towncounty").hide();
-            }
+            $(".towncounty").toggle( !config.bool("HideTownCounty") );
+            $("#latlongrow").toggle( config.bool("ShowLatLong") );
 
             // SECURITY =============================================================
 

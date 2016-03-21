@@ -71,7 +71,7 @@
         _nominatim_get_lat_long: function(address, town, city, postcode, callback) {
             var add = encodeURIComponent(address.replace("\n", ",") + "," + town).replace(/ /g, "+");
             $.getJSON("http://nominatim.openstreetmap.org/search?format=json&q=" + add + "&json_callback=?", function(data) {
-                if (!data) {
+                if (!data || !data[0] || !data[0].lat) {
                     callback(0, 0);
                 }
                 else {

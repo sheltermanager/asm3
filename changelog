@@ -1,6 +1,7 @@
 39
 ================
 
+21/03/16 Hidden ShowLatLong option to allow editing of geocodes
 18/03/16 Fix smarttag fields not appearing (old key)
 18/03/16 Don't allow direct editing of VetEnvoy GUID fields
 17/03/16 Add deceased.html publisher page #366
