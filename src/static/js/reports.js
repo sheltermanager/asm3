@@ -351,7 +351,7 @@ $(function() {
             $("#button-checkall")
                 .button({ icons: { primary: "ui-icon-check" }})
                 .click(function() {
-                    $("#table-smcom input").attr("checked", true);
+                    $("#table-smcom input:visible").attr("checked", true);
                     $("#table-smcom td").addClass("ui-state-highlight");
                     $("#button-install").button("enable");
                 });
