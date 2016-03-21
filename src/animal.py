@@ -1517,6 +1517,7 @@ def is_animal_in_location_filter(a, locationfilter):
     Returns True if the animal a is included in the locationfilter
     """
     if locationfilter == "": return True
+    if a["NONSHELTERANIMAL"] == 1: return True
     locs = locationfilter.split(",")
     if str(a["SHELTERLOCATION"]) in locs: return True
     if a["ACTIVEMOVEMENTTYPE"] == 1 and "-1" in locs: return True
