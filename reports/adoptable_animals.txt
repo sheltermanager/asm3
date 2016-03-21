@@ -27,7 +27,7 @@ AnimalComments,
 SpeciesName
 FROM v_animal
 WHERE Archived = 0 AND IsNotAvailableForAdoption = 0 AND HasTrialAdoption = 0
-ORDER BY AnimalName
+ORDER BY SpeciesName, AnimalName
 ###
 $$HEADER
 HEADER$$ 
