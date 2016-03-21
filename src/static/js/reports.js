@@ -47,6 +47,21 @@ $(function() {
         { display: "23:00", value: 23 }
     ];
 
+    var emailfreq = [
+        { ID: 0, DISPLAY: _("Every day") },
+        { ID: 1, DISPLAY: _("Monday") },
+        { ID: 2, DISPLAY: _("Tuesday") },
+        { ID: 3, DISPLAY: _("Wednesday") },
+        { ID: 4, DISPLAY: _("Thursday") },
+        { ID: 5, DISPLAY: _("Friday") },
+        { ID: 6, DISPLAY: _("Saturday") },
+        { ID: 7, DISPLAY: _("Sunday") },
+        { ID: 8, DISPLAY: _("Beginning of month") },
+        { ID: 9, DISPLAY: _("End of month") },
+        { ID: 10, DISPLAY: _("Start of year") },
+        { ID: 11, DISPLAY: _("End of year") }
+    ];
+
     var reports = {
 
         model: function() {
@@ -71,9 +86,10 @@ $(function() {
                     { json_field: "CATEGORY", post_field: "category", classes: "asm-doubletextbox", label: _("Category"), type: "text", validation: "notblank" },
                     { json_field: "TITLE", post_field: "title", classes: "asm-doubletextbox", label: _("Report Title"), type: "text", validation: "notblank" },
                     { json_field: "DESCRIPTION", post_field: "description", classes: "asm-doubletextbox", label: _("Description"), type: "text" },
-                    { json_field: "DAILYEMAIL", post_field: "dailyemail", classes: "asm-doubletextbox", label: _("Daily Email To"), type: "text",
-                        tooltip: _("An optional comma separated list of email addresses to send the output of this report to each day")},
-                    { json_field: "DAILYEMAILHOUR", post_field: "dailyemailhour", label: _("Time"), type: "select",
+                    { json_field: "DAILYEMAIL", post_field: "dailyemail", classes: "asm-doubletextbox", label: _("Email To"), type: "text",
+                        tooltip: _("An optional comma separated list of email addresses to send the output of this report to")},
+                    { json_field: "DAILYEMAILFREQUENCY", post_field: "dailyemailfrequency", label: _("When"), type: "select", options: html.list_to_options(emailfreq, "ID", "DISPLAY") },
+                    { json_field: "DAILYEMAILHOUR", post_field: "dailyemailhour", label: _("at"), type: "select",
                         options: { displayfield: "display", valuefield: "value", rows: emailhours }},
                     { json_field: "OMITHEADERFOOTER", post_field: "omitheaderfooter", label: _("Omit header/footer"), type: "check" },
                     { json_field: "OMITCRITERIA", post_field: "omitcriteria", label: _("Omit criteria"), type: "check" },

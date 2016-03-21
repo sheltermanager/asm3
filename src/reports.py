@@ -260,6 +260,7 @@ def insert_report_from_form(dbo, username, post):
         ( "HTMLBody", db.ds(htmlbody, False) ),
         ( "DailyEmail", post.db_string("dailyemail")),
         ( "DailyEmailHour", post.db_integer("dailyemailhour")),
+        ( "DailyEmailFrequency", post.db_integer("dailyemailfrequency")),
         ( "Description", post.db_string("description")),
         ( "OmitHeaderFooter", post.db_boolean("omitheaderfooter")),
         ( "OmitCriteria", post.db_boolean("omitcriteria"))
@@ -283,6 +284,7 @@ def update_report_from_form(dbo, username, post):
         ( "HTMLBody", db.ds(post["html"], False) ),
         ( "DailyEmail", post.db_string("dailyemail")),
         ( "DailyEmailHour", post.db_integer("dailyemailhour")),
+        ( "DailyEmailFrequency", post.db_integer("dailyemailfrequency")),
         ( "Description", post.db_string("description")),
         ( "OmitHeaderFooter", post.db_boolean("omitheaderfooter")),
         ( "OmitCriteria", post.db_boolean("omitcriteria"))
@@ -480,24 +482,39 @@ def get_mailmerges_menu(dbo, roleids = "", superuser = False):
             mv.append( [ users.MAIL_MERGE, "", "", "mailmerge?id=%d" % m["ID"], "", m["TITLE"] ] )
     return mv
 
-def email_daily_reports(dbo, hour = -1):
+def email_daily_reports(dbo, now = None):
     """
     Finds all reports that have addresses set in DailyEmail 
     and no criteria. It will execute each of those reports in 
     turn and email them to the addresses set.
-    hour: The server hour we are at right now (GMT for sheltermanager.com
-          servers). If the hour is not -1 it will be adjusted
-          according to configuration.timezone before comparison.
+    It also takes into account the hour of the day set if any and 
+    a frequency, so instead of emailing every day, it can be set to
+    a particular weekday or the first/last of the month/year.
+    now: The time right now in local time. If now is None, then we run anything
+         with a dailyemailhour of -1, which is "batch".
     """
-    if hour != -1: 
-        hour = i18n.adjust_hour(hour, configuration.timezone(dbo))
     rs = get_available_reports(dbo, False)
     for r in rs:
         emails = utils.nulltostr(r["DAILYEMAIL"])
         runhour = r["DAILYEMAILHOUR"]
-        if emails != "" and runhour == hour:
-            body = execute(dbo, r["ID"], "dailyemail")
-            utils.send_email(dbo, configuration.email(dbo), emails, "", r["TITLE"], body, "html")
+        freq = r["DAILYEMAILFREQUENCY"]
+        if emails == "": continue # No emails to send to, don't do anything
+        if freq == 1 and now.weekday() != 0: continue # Freq is Mon and that's not today
+        if freq == 2 and now.weekday() != 1: continue # Freq is Tue and that's not today
+        if freq == 3 and now.weekday() != 2: continue # Freq is Wed and that's not today
+        if freq == 4 and now.weekday() != 3: continue # Freq is Thu and that's not today
+        if freq == 5 and now.weekday() != 4: continue # Freq is Fri and that's not today
+        if freq == 6 and now.weekday() != 5: continue # Freq is Sat and that's not today
+        if freq == 7 and now.weekday() != 6: continue # Freq is Sun and that's not today
+        if freq == 8 and now.day != 1: continue # Freq is beginning of month and it's not the 1st
+        if freq == 9 and now.day != i18n.last_of_month(now): continue # Freq is end of month and it's not the last day of the month
+        if freq == 10 and now.day != 1 and now.month != 1: continue # Freq is beginning of year and its not 1st Jan
+        if freq == 11 and now.day != 31 and now.month != 12: continue # Freq is end of year and its not 31st Dec
+        if now is None and runhour != -1: continue # We're running for the batch, but an hour is set on the report
+        if now is not None and now.hour != runhour: continue # It's not the right hour to send
+        # If we get here, we're good to send
+        body = execute(dbo, r["ID"], "dailyemail")
+        utils.send_email(dbo, configuration.email(dbo), emails, "", r["TITLE"], body, "html")
 
 def execute_title(dbo, title, username = "system", params = None):
     """

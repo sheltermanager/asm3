@@ -10,11 +10,11 @@ import al
 import audit
 import animal
 import configuration
-import datetime
 import db
 import dbfs
 import dbupdate
 import diary
+import i18n
 import lostfound
 import media
 import movement
@@ -139,7 +139,7 @@ def reports(dbo):
         al.error("FAIL: running lostfound match: %s" % em, "cron.reports", dbo, sys.exc_info())
     try:
         # Email any reports set to run with batch
-        extreports.email_daily_reports(dbo, -1)
+        extreports.email_daily_reports(dbo)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: running daily email of reports: %s" % em, "cron.reports", dbo, sys.exc_info())
@@ -151,8 +151,8 @@ def reports_email(dbo):
     """
     al.info("start batch reports_email", "cron.reports_email", dbo)
     try:
-        # Email any daily reports for the current hour
-        extreports.email_daily_reports(dbo, datetime.datetime.today().hour)
+        # Email any daily reports for local time of now
+        extreports.email_daily_reports(dbo, i18n.now(dbo.timezone))
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: running daily email of reports_email: %s" % em, "cron.reports_email", dbo, sys.exc_info())

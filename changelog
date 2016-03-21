@@ -1,6 +1,7 @@
 39
 ================
 
+21/03/16 Allow report emails to be scheduled for days of week/month #215
 21/03/16 Make browse reports/select all only select visible #365
 21/03/16 Hidden ShowLatLong option to allow editing of geocodes
 18/03/16 Fix smarttag fields not appearing (old key)
