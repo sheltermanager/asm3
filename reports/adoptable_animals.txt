@@ -30,6 +30,10 @@ WHERE Archived = 0 AND IsNotAvailableForAdoption = 0 AND HasTrialAdoption = 0
 ORDER BY AnimalName
 ###
 $$HEADER
+HEADER$$ 
+
+$$GROUP_SpeciesName
+$$HEAD
 <h2>$SpeciesName</h2>
 <table border="1" width="100%">
 <tr>
@@ -46,7 +50,10 @@ $$HEADER
 <th>Picture</th>
 <th>Comments</th>
 </tr>
-HEADER$$
+$$FOOT
+</table>
+<p>Total $SpeciesName: {COUNT.ANIMALID}</p>
+GROUP$$
 
 $$BODY
 <tr>
