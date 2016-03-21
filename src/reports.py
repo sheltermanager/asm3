@@ -499,6 +499,7 @@ def email_daily_reports(dbo, now = None):
         runhour = r["DAILYEMAILHOUR"]
         freq = r["DAILYEMAILFREQUENCY"]
         if emails == "": continue # No emails to send to, don't do anything
+        # Could be written as freq != now.weekday() + 1, but not very readable
         if freq == 1 and now.weekday() != 0: continue # Freq is Mon and that's not today
         if freq == 2 and now.weekday() != 1: continue # Freq is Tue and that's not today
         if freq == 3 and now.weekday() != 2: continue # Freq is Wed and that's not today
