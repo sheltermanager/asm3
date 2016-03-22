@@ -248,7 +248,8 @@ $(function() {
 
         type_change: function() {
             var dc = common.get_field(controller.donationtypes, $("#type").select("value"), "DEFAULTCOST");
-            $("#amount").currency("value", dc);
+            $("#unitprice").currency("value", dc);
+            $("#amount").currency("value", format.to_int($("#quantity").val()) * $("#unitprice").currency("value"));
         },
 
         update_movements: function(personid) {
