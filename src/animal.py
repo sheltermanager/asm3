@@ -1499,6 +1499,8 @@ def get_location_filter_clause(locationfilter, tablequalifier = ""):
     locationfilter: comma separated list of internallocation IDs and special values
         -1: animals on a trial adoption
         -2: animals in a foster home
+        -8: animals in a retailer
+        -9: non-shelter animals (excluded from this functionality)
     """
     # Don't do anything if there's no filter
     if locationfilter == "": return ""
@@ -1517,12 +1519,12 @@ def is_animal_in_location_filter(a, locationfilter):
     Returns True if the animal a is included in the locationfilter
     """
     if locationfilter == "": return True
-    if a["NONSHELTERANIMAL"] == 1: return True
     locs = locationfilter.split(",")
     if str(a["SHELTERLOCATION"]) in locs: return True
     if a["ACTIVEMOVEMENTTYPE"] == 1 and "-1" in locs: return True
     if a["ACTIVEMOVEMENTTYPE"] == 2 and "-2" in locs: return True
     if a["ACTIVEMOVEMENTTYPE"] == 8 and "-8" in locs: return True
+    if a["NONSHELTERANIMAL"] == 1 and "-9" in locs: return True
     return False
 
 def get_number_animals_on_file(dbo):
