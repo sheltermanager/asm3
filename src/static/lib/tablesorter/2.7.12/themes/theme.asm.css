@@ -7,7 +7,7 @@ ASM Theme
 }
 
 /** ASM: Reduce size of filter inputs when shown */
-.tablesorter .tablesorter-filter { width: 100px; }
+.tablesorter .tablesorter-filter { width: 100%; border: 1px solid #999; }
 
 /* header */
 .tablesorter-default th,

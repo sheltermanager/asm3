@@ -1,6 +1,7 @@
 39
 ================
 
+22/03/16 Show filter lines in tables that have more than 10 rows #363
 21/03/16 Non-shelter animals should be a location filter option
 21/03/16 Allow report emails to be scheduled for days of week/month #215
 21/03/16 Make browse reports/select all only select visible #365

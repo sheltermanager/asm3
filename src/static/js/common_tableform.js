@@ -193,6 +193,7 @@
          *
          * table = { rows: {json containing rows}, 
          *   idcolumn: "ID",
+         *   showfilter: false, // whether to allow searching of columns
          *   edit: function(row) { callback for when a row is edited with the row data }
          *   complete: function(row) { return true if the row should be drawn as complete },
          *   overdue: function(row) { return true if the row should be drawn as overdue },
@@ -346,7 +347,9 @@
             });
 
             // Apply tablesorter widget
-            $("#tableform").table();
+            var options = {};
+            if (table.showfilter || (table.rows && table.rows.length > 9)) { options.filter = true; }
+            $("#tableform").table(options);
 
             // And the default sort
             this.table_apply_sort(table);
