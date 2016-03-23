@@ -4626,7 +4626,7 @@ def update_animal_figures_asilomar(dbo, year = 0):
     # S Adjusted Total Euthanasia 
     sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
         "WHERE NonShelterAnimal = 0 AND DeceasedDate >= %s AND DeceasedDate <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 " \
-        "AND AsilomarIntakeCategory <> 3 AND AsilomarOwnerRequestedEuthanasia = 0 " \
+        "AND NOT (AsilomarIntakeCategory = 3 AND AsilomarOwnerRequestedEuthanasia = 1) " \
         "GROUP BY SpeciesID" % (firstofyear, lastofyear)
     add_subtotal(sql, "Adjusted Total Euthanasia [Q minus R]", "S")
 
@@ -4895,7 +4895,7 @@ def update_animal_figures_monthly_asilomar(dbo, month = 0, year = 0):
     # S Adjusted Total Euthanasia 
     sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
         "WHERE NonShelterAnimal = 0 AND DeceasedDate >= %s AND DeceasedDate <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 " \
-        "AND AsilomarIntakeCategory <> 3 AND AsilomarOwnerRequestedEuthanasia = 0 " \
+        "AND NOT (AsilomarIntakeCategory = 3 AND AsilomarOwnerRequestedEuthanasia = 1) " \
         "GROUP BY SpeciesID" % (firstofmonth, lastofmonth)
     add_subtotal(sql, "Adjusted Total Euthanasia [Q minus R]", "S")
 

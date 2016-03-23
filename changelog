@@ -1,6 +1,7 @@
 39
 ================
 
+23/03/16 Fix for asilomar line S logic
 22/03/16 Default payment type value should be assigned to unit price
 22/03/16 Show filter lines in tables that have more than 10 rows #363
 21/03/16 Non-shelter animals should be a location filter option
