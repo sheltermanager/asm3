@@ -378,7 +378,7 @@ FOOTER$$
 SUBREPORT_AnimalPrintMovement
 +++
 SELECT ad.*, mt.MovementType,
-o.OwnerName, o.OwnerAddress, o.OwnerPostcode, o.HomeTelephone, o.EmailAddress 
+o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.MobileTelephone, o.EmailAddress 
 FROM adoption ad
 INNER JOIN lksmovementtype mt ON mt.ID = ad.MovementType
 LEFT OUTER JOIN owner o ON o.ID = ad.OwnerID
@@ -390,7 +390,7 @@ $$HEADER
 <tr><th>Number</th><th>Owner</th><th>Reservation</th><th>Cancelled</th><th>Movement</th><th>Type</th><th>Returned</th><th>Reason</th><th>Comments</th></tr>
 HEADER$$
 $$BODY
-<tr><td>$ADOPTIONNUMBER</td><td><b>$OWNERNAME</b><br />$OWNERADDRESS</br />$OWNERPOSTCODE<br />$HOMETELEPHONE<br />$EMAILADDRESS</td>
+<tr><td>$ADOPTIONNUMBER</td><td><b>$OWNERNAME</b><br />$OWNERADDRESS</br />$OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br />H: $HOMETELEPHONE<br />M: $MOBILETELEPHONE<br />$EMAILADDRESS</td>
 <td>$RESERVATIONDATE</td><td>$RESERVATIONCANCELLEDDATE</td><td>$MOVEMENTDATE</td><td>$MOVEMENTTYPE</td><td>$RETURNDATE</td><td>$REASONFORRETURN</td><td>$COMMENTS</td></tr>
 BODY$$
 $$FOOTER
