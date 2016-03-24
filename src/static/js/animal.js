@@ -630,6 +630,7 @@ $(function() {
                 else if (p == "meetapet") { t = "Published to meetapet.com"; }
                 else if (p == "helpinglostpets") { t = "Published to helpinglostpets.com"; }
                 else if (p == "petrescue") { t = "Published to petrescue.com.au"; }
+                else if (p == "petslocated") { t = "Published to petslocated.com"; }
                 
                 else if (p == "petlink") { t = html.icon("microchip") + " Microchip registered with PetLink"; }
                 else if (p == "pettracuk") { t = html.icon("microchip") + " Microchip registered with AVID/PETtrac UK"; }
