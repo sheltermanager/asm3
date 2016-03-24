@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, regexp: true, sloppy: true, vars: true, nomen: true */
-/*global $, console, jQuery, CodeMirror */
+/*global $, console, jQuery, CodeMirror, Mousetrap */
 /*global asm, common, config, dlgfx, format, html, header, schema, validate, _, escape, unescape */
 
 (function($) {
@@ -905,31 +905,50 @@
         }
     });
 
-    $.fn.textarea = function() {
-        var style = "margin-left: -56px; margin-top: -24px; height: 16px";
-        this.each(function() {
-            var t = $(this);
+    $.widget("asm.textarea", {
+        
+        options: {
+            disabled: false
+        },
+
+        _create: function() {
+            
+            var style = "margin-left: -56px; margin-top: -24px; height: 16px",
+                t = $(this.element[0]),
+                self = this;
+
             if (t.attr("data-zoom")) { return; }
             if (!t.attr("id")) { return; }
+
             t.attr("data-zoom", "true");
             var zbid = t.attr("id") + "-zb";
+
             t.wrap("<span style='white-space: nowrap'></span>");
             t.after("<button id='" + zbid + "' style='" + style + "'></button>");
-            $("#" + zbid).button({ text: false, icons: { primary: "ui-icon-zoomin" }}).click(function() {
-                // If the textarea is disabled, don't do anything
-                if (t.is(":disabled")) { return; }
-                if (t.attr("maxlength") !== undefined) { $("#textarea-zoom-area").attr("maxlength", t.attr("maxlength")); }
-                $("#textarea-zoom-id").val( t.attr("id") );
-                $("#textarea-zoom-area").val( t.val() );
-                $("#textarea-zoom-area").css({ "font-family": t.css("font-family") });
-                var title = "";
-                if (t.attr("title")) { title = String(t.attr("title")); }
-                $("#dialog-textarea-zoom").dialog("option", "title", title);
-                $("#dialog-textarea-zoom").dialog("open");
-                return false;
-            });
-        });
-    };
+
+            // When zoom button is clicked
+            $("#" + zbid).button({ text: false, icons: { primary: "ui-icon-zoomin" }}).click(this.zoom);
+
+        },
+
+        zoom: function() {
+            var t = $(this.element[0]);
+
+            if (t.is(":disabled")) { return; }
+            if (t.attr("maxlength") !== undefined) { $("#textarea-zoom-area").attr("maxlength", t.attr("maxlength")); }
+
+            $("#textarea-zoom-id").val( t.attr("id") );
+            $("#textarea-zoom-area").val( t.val() );
+            $("#textarea-zoom-area").css({ "font-family": t.css("font-family") });
+
+            var title = "";
+            if (t.attr("title")) { title = String(t.attr("title")); }
+            $("#dialog-textarea-zoom").dialog("option", "title", title);
+            $("#dialog-textarea-zoom").dialog("open");
+
+            return false;
+        }
+    });
 
     $.widget("asm.htmleditor", {
         options: {
