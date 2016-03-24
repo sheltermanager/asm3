@@ -93,6 +93,7 @@ DEFAULTS = {
     "AddAnimalsShowNeutered": "No",
     "AddAnimalsShowOriginalOwner": "No",
     "AddAnimalsShowSize": "No",
+    "AddAnimalsShowTattoo": "No",
     "AddAnimalsShowTimeBroughtIn": "No",
     "AddAnimalsShowWeight": "No",
     "AnimalFiguresSplitEntryReason": "No",

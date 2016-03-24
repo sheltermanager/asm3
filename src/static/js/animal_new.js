@@ -208,6 +208,17 @@ $(function() {
                 '<input type="text" id="microchipnumber" data="microchipnumber" class="asm-textbox" title="' + html.title(_("The microchip number")) + '" />',
                 '</td>',
                 '</tr>',
+                '<tr id="tattoorow">',
+                '<td>',
+                '<label for="tattoodate">' + _("Tattoo") + '</label>',
+                '</td>',
+                '<td>',
+                '<input id="tattoo" data="tattoo" type="checkbox" class="asm-checkbox" />',
+                '<input id="tattoodate" data="tattoodate" class="asm-textbox asm-datebox" title="' + html.title(_("The date the animal was tattooed")) + '" />',
+                '<input type="text" id="tattoonumber" data="tattoonumber" class="asm-textbox" title="' + html.title(_("The tattoo number")) + '" />',
+                '</td>',
+                '</tr>',
+
                 '<tr id="litterrow">',
                 '<td>',
                 '<label for="litterid">' + _("Litter") + '</label>',
@@ -537,6 +548,7 @@ $(function() {
             if (!config.bool("AddAnimalsShowMicrochip")) { $("#microchiprow").hide(); }
             if (!config.bool("AddAnimalsShowNeutered")) { $("#neuteredrow").hide(); }
             if (!config.bool("AddAnimalsShowSize")) { $("#sizerow").hide(); }
+            if (!config.bool("AddAnimalsShowTattoo")) { $("#tattoorow").hide(); }
             if (!config.bool("AddAnimalsShowTimeBroughtIn")) { $("#timebroughtinrow").hide(); }
             if (!config.bool("AddAnimalsShowWeight")) { $("#kilosrow, #poundsrow").hide(); }
             if (config.bool("UseSingleBreedField")) {
@@ -577,6 +589,13 @@ $(function() {
             $("#microchipdate").change(function() {
                 if ($("#microchipdate").val()) {
                     $("#microchipped").prop("checked", true);
+                }
+            });
+
+            // Changing the tattoo date sets a hidden version of the checkbox
+            $("#tattoodate").change(function() {
+                if ($("#tattoodate").val()) {
+                    $("#tattoo").prop("checked", true);
                 }
             });
 

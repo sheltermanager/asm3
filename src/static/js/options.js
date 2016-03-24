@@ -305,6 +305,7 @@ $(function() {
                 '<input data="AddAnimalsShowWeight" id="aashowweight" class="asm-checkbox" type="checkbox" /> <label for="aashowweight">' + _("Show the weight field") + '</label><br />',
                 '<input data="AddAnimalsShowNeutered" id="aashowneutered" class="asm-checkbox" type="checkbox" /> <label for="aashowneutered">' + _("Show the altered fields") + '</label><br />',
                 '<input data="AddAnimalsShowMicrochip" id="aashowmicrochip" class="asm-checkbox" type="checkbox" /> <label for="aashowmicrochip">' + _("Show the microchip fields") + '</label><br />',
+                '<input data="AddAnimalsShowTattoo" id="aashowtattoo" class="asm-checkbox" type="checkbox" /> <label for="aashowtattoo">' + _("Show the tattoo fields") + '</label><br />',
                 '<input data="AddAnimalsShowEntryCategory" id="aashowentrycategory" class="asm-checkbox" type="checkbox" /> <label for="aashowentrycategory">' + _("Show the entry category field") + '</label><br />',
                 '<input data="AddAnimalsShowDateBroughtIn" id="aashowdatebroughtin" class="asm-checkbox" type="checkbox" /> <label for="aashowdatebroughtin">' + _("Show the date brought in field") + '</label><br />',
                 '<input data="AddAnimalsShowTimeBroughtIn" id="aashowtimebroughtin" class="asm-checkbox" type="checkbox" /> <label for="aashowtimebroughtin">' + _("Show the time brought in field") + '</label><br />',

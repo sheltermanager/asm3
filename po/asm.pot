@@ -9553,6 +9553,10 @@ msgid "Show the size field"
 msgstr ""
 
 #: options.js
+msgid "Show the tattoo fields"
+msgstr ""
+
+#: options.js
 msgid "Show the time brought in field"
 msgstr ""
 
@@ -10122,7 +10126,7 @@ msgstr ""
 msgid "Tan and White"
 msgstr ""
 
-#: animal.js animal_find_results.js mobile.py
+#: animal_new.js animal.js animal_find_results.js mobile.py
 msgid "Tattoo"
 msgstr ""
 
@@ -10318,7 +10322,7 @@ msgstr ""
 msgid "The date the animal was reclaimed"
 msgstr ""
 
-#: animal.js
+#: animal_new.js animal.js
 msgid "The date the animal was tattooed"
 msgstr ""
 
@@ -10486,7 +10490,7 @@ msgstr ""
 msgid "The species of this animal"
 msgstr ""
 
-#: animal.js
+#: animal_new.js animal.js
 msgid "The tattoo number"
 msgstr ""
 
