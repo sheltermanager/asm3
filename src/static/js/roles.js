@@ -89,6 +89,7 @@ $(function() {
                 cr("ao", _("Add Person")),
                 cr("vo", _("View Person")),
                 cr("vso", _("View Staff Person Records")),
+                cr("vvo", _("View Volunteer Person Records")),
                 cr("volk", _("View Person Links")),
                 cr("co", _("Change Person")),
                 cr("emo", _("Email Person")),

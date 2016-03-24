@@ -4743,6 +4743,8 @@ class person:
         if p is None: raise web.notfound()
         if p["ISSTAFF"] == 1:
             users.check_permission(session, users.VIEW_STAFF)
+        if p["ISVOLUNTEER"] == 1:
+            users.check_permission(session, users.VIEW_VOLUNTEER)
         al.debug("opened person '%s'" % p["OWNERNAME"], "code.person", dbo)
         s = html.header("", session)
         c = html.controller_json("additional", extadditional.get_additional_fields(dbo, p["ID"], "person"))
@@ -4939,7 +4941,7 @@ class person_embed:
         q = post["q"]
         web.header("Content-Type", "application/json")
         if mode == "find":
-            rows = extperson.get_person_find_simple(dbo, q, post["filter"], users.check_permission_bool(session, users.VIEW_STAFF), 100)
+            rows = extperson.get_person_find_simple(dbo, q, post["filter"], users.check_permission_bool(session, users.VIEW_STAFF), users.check_permission_bool(session, users.VIEW_VOLUNTEER), 100)
             al.debug("find '%s' got %d rows" % (str(web.ctx.query), len(rows)), "code.person_embed", dbo)
             return html.json(rows)
         elif mode == "id":
@@ -4991,7 +4993,7 @@ class person_find_results:
         mode = post["mode"]
         q = post["q"]
         if mode == "SIMPLE":
-            results = extperson.get_person_find_simple(dbo, q, "all", users.check_permission_bool(session, users.VIEW_STAFF), configuration.record_search_limit(dbo))
+            results = extperson.get_person_find_simple(dbo, q, "all", users.check_permission_bool(session, users.VIEW_STAFF), users.check_permission_bool(session, users.VIEW_VOLUNTEER), configuration.record_search_limit(dbo))
         else:
             results = extperson.get_person_find_advanced(dbo, post.data, users.check_permission_bool(session, users.VIEW_STAFF), configuration.record_search_limit(dbo))
         add = None
@@ -6041,7 +6043,7 @@ class sql_dump:
         elif mode == "personcsv":
             al.debug("%s executed CSV person dump" % str(session.user), "code.sql", dbo)
             web.header("Content-Disposition", "attachment; filename=\"person.csv\"")
-            yield utils.csv(l, extperson.get_person_find_simple(dbo, "", "all", True, 0))
+            yield utils.csv(l, extperson.get_person_find_simple(dbo, "", "all", True, True, 0))
 
 class stocklevel:
     def GET(self):

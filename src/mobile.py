@@ -857,7 +857,7 @@ def handler(dbo, user, locationfilter, post):
         q = post["q"]
         matches = []
         if q.strip() != "": 
-            matches = person.get_person_find_simple(dbo, q, False, 100)
+            matches = person.get_person_find_simple(dbo, q, False, True, 100)
         h = []
         alin = []
         h.append(header(l))

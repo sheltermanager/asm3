@@ -519,7 +519,7 @@ def maint_db_dump_animalcsv(dbo):
 
 def maint_db_dump_personcsv(dbo):
     try:
-        print utils.csv(dbo.locale, person.get_person_find_simple(dbo, "", "all", True, 0))
+        print utils.csv(dbo.locale, person.get_person_find_simple(dbo, "", "all", True, True, 0))
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump_personcsv: %s" % em, "cron.maint_db_dump_personcsv", dbo, sys.exc_info())

@@ -322,7 +322,7 @@ def get_investigation(dbo, personid, sort = ASCENDING):
         sql += " ORDER BY o.Date DESC"
     return db.query(dbo, sql)
 
-def get_person_find_simple(dbo, query, classfilter="all", includeStaff = False, limit = 0):
+def get_person_find_simple(dbo, query, classfilter="all", includeStaff = False, includeVolunteers = False, limit = 0):
     """
     Returns rows for simple person searches.
     query: The search criteria
@@ -354,7 +354,6 @@ def get_person_find_simple(dbo, query, classfilter="all", includeStaff = False, 
     if not dbo.is_large_db:
         ors.append(add(get_person_code_query(dbo)))
     cf = ""
-    sf = ""
     if classfilter == "all":
         pass
     elif classfilter == "vet":
@@ -386,8 +385,10 @@ def get_person_find_simple(dbo, query, classfilter="all", includeStaff = False, 
     elif classfilter == "driver":
         cf = " AND o.IsDriver = 1"
     if not includeStaff:
-        sf = " AND o.IsStaff = 0"
-    sql = unicode(get_person_query(dbo)) + " WHERE (" + u" OR ".join(ors) + ")" + cf + sf + " ORDER BY o.OwnerName"
+        cf = " AND o.IsStaff = 0"
+    if not includeVolunteers:
+        cf = " AND o.IsVolunteer = 0"
+    sql = unicode(get_person_query(dbo)) + " WHERE (" + u" OR ".join(ors) + ")" + cf + " ORDER BY o.OwnerName"
     if limit > 0: sql += " LIMIT " + str(limit)
     return db.query(dbo, sql)
 

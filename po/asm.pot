@@ -11856,6 +11856,10 @@ msgid "View Vaccinations"
 msgstr ""
 
 #: roles.js
+msgid "View Volunteer Person Records"
+msgstr ""
+
+#: roles.js
 msgid "View Vouchers"
 msgstr ""
 
