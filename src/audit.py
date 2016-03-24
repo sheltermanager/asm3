@@ -11,6 +11,10 @@ MOVE = 3
 LOGIN = 4
 LOGOUT = 5
 
+def get_audit_for_link(dbo, tablename, linkid):
+    """ Returns the audit records for a particular link and table """
+    return db.query(dbo, "SELECT * FROM audittrail WHERE tablename = %s AND linkid = %s ORDER BY AuditDate DESC" % (db.ds(tablename), db.di(linkid)))
+
 def map_diff(row1, row2, ref = []):
     """
     For two maps, return a string containing the differences. Useful for 

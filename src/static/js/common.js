@@ -1615,6 +1615,44 @@
         },
 
         /**
+         * Renders an accordion panel that contains audit information from
+         * the controller
+         */
+        audit_trail_accordion: function(controller) {
+            if (!controller.hasOwnProperty("audit") || !common.has_permission("vatr") || controller.audit.length == 0) {
+                return "";
+            }
+            var h = [
+                '<h3><a href="#">' + _("Audit Trail") + '</a></h3>',
+                '<div>',
+                '<table>',
+                '<tr>',
+                '<th>Date</th>',
+                '<th>User</th>',
+                '<th>Action</th>',
+                '<th>Details</th>',
+                '</tr>'
+            ], readableaction = {
+                0: _("Add"),
+                1: _("Edit"),
+                2: _("Delete"),
+                3: _("Move"),
+                4: _("Login"),
+                5: _("Logout")
+            };
+            $.each(controller.audit, function(i, v) {
+                h.push('<tr>');
+                h.push('<td>' + format.date(v.AUDITDATE) + ' ' + format.time(v.AUDITDATE) + '</td>');
+                h.push('<td>' + v.USERNAME + '</td>');
+                h.push('<td>' + readableaction[v.ACTION] + '</td>');
+                h.push('<td>' + v.DESCRIPTION + '</td>');
+            });
+            h.push('</table>');
+            h.push('</div>');
+            return h.join("\n");
+        },
+
+        /**
          * Renders a list of <option> tags for person flags.
          * It mixes in any additional person flags to the regular
          * set, sorts them all alphabetically and applies them

@@ -122,6 +122,7 @@ RUN_DB_UPDATE                   = "rdbu"
 RUN_DB_DIAGNOSTIC               = "rdbd"
 USE_SQL_INTERFACE               = "usi"
 USE_INTERNET_PUBLISHER          = "uipb"
+VIEW_AUDIT_TRAIL                = "vatr"
 
 ADD_REPORT                      = "ccr"
 VIEW_REPORT                     = "vcr"

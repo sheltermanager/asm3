@@ -199,6 +199,7 @@ $(function() {
                 cr("usi", _("Use SQL Interface")),
                 cr("uipb", _("Publish Animals to the Internet")),
                 cr("mmeo", _("Send mass emails and perform mail merges")),
+                cr("vatr", _("View Audit Trail")),
                 cl(_("Users")),
                 cr("asu", _("Add Users")),
                 cr("esu", _("Edit Users")),

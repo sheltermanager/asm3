@@ -729,6 +729,7 @@ $(function() {
                 this.render_health_and_identification(),
                 this.render_death(),
                 this.render_publish_history(),
+                html.audit_trail_accordion(controller),
                 '</div>', // accordion
                 '</div>', // asmcontent
                 '</div>'  // tabs

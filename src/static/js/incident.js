@@ -330,6 +330,7 @@ $(function() {
                 '</div>',
                 this.render_dispatch(),
                 this.render_owner(),
+                html.audit_trail_accordion(controller),
                 '</div> <!-- accordion -->',
                 html.content_footer()
             ].join("\n");

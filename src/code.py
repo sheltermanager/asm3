@@ -14,6 +14,7 @@ import additional as extadditional
 import animal as extanimal
 import animalcontrol as extanimalcontrol
 import async
+import audit
 import cachemem
 import configuration
 import csvimport as extcsvimport
@@ -1056,6 +1057,8 @@ class animal:
         c += html.controller_plain("activelitters", html.json_autocomplete_litters(dbo))
         c += html.controller_json("additional", extadditional.get_additional_fields(dbo, a["ID"], "animal"))
         c += html.controller_json("animaltypes", extlookups.get_animal_types(dbo))
+        if users.check_permission_bool(session, users.VIEW_AUDIT_TRAIL):
+            c += html.controller_json("audit", audit.get_audit_for_link(dbo, "animal", a["ID"]))
         c += html.controller_json("species", extlookups.get_species(dbo))
         c += html.controller_json("breeds", extlookups.get_breeds_by_species(dbo))
         c += html.controller_json("coattypes", extlookups.get_coattypes(dbo))
@@ -2657,6 +2660,8 @@ class foundanimal:
         c += html.controller_str("name", "foundanimal")
         c += html.controller_json("additional", extadditional.get_additional_fields(dbo, a["ID"], "foundanimal"))
         c += html.controller_json("agegroups", configuration.age_groups(dbo))
+        if users.check_permission_bool(session, users.VIEW_AUDIT_TRAIL):
+            c += html.controller_json("audit", audit.get_audit_for_link(dbo, "animalfound", a["ID"]))
         c += html.controller_json("breeds", extlookups.get_breeds_by_species(dbo))
         c += html.controller_json("colours", extlookups.get_basecolours(dbo))
         c += html.controller_json("logtypes", extlookups.get_log_types(dbo))
@@ -3013,6 +3018,8 @@ class incident:
         s = html.header("", session)
         c = html.controller_json("agegroups", configuration.age_groups(dbo))
         c += html.controller_json("additional", extadditional.get_additional_fields(dbo, a["ACID"], "incident"))
+        if users.check_permission_bool(session, users.VIEW_AUDIT_TRAIL):
+            c += html.controller_json("audit", audit.get_audit_for_link(dbo, "animalcontrol", a["ACID"]))
         c += html.controller_json("incident", a)
         c += html.controller_json("animallinks", extanimalcontrol.get_animalcontrol_animals(dbo, post.integer("id")))
         c += html.controller_json("incidenttypes", extlookups.get_incident_types(dbo))
@@ -3578,6 +3585,8 @@ class lostanimal:
         c += html.controller_str("name", "lostanimal")
         c += html.controller_json("additional", extadditional.get_additional_fields(dbo, a["ID"], "lostanimal"))
         c += html.controller_json("agegroups", configuration.age_groups(dbo))
+        if users.check_permission_bool(session, users.VIEW_AUDIT_TRAIL):
+            c += html.controller_json("audit", audit.get_audit_for_link(dbo, "animallost", a["ID"]))
         c += html.controller_json("breeds", extlookups.get_breeds_by_species(dbo))
         c += html.controller_json("colours", extlookups.get_basecolours(dbo))
         c += html.controller_json("logtypes", extlookups.get_log_types(dbo))
@@ -4738,6 +4747,8 @@ class person:
         s = html.header("", session)
         c = html.controller_json("additional", extadditional.get_additional_fields(dbo, p["ID"], "person"))
         c += html.controller_json("animaltypes", extlookups.get_animal_types(dbo))
+        if users.check_permission_bool(session, users.VIEW_AUDIT_TRAIL):
+            c += html.controller_json("audit", audit.get_audit_for_link(dbo, "owner", p["ID"]))
         c += html.controller_json("species", extlookups.get_species(dbo))
         c += html.controller_json("breeds", extlookups.get_breeds_by_species(dbo))
         c += html.controller_json("colours", extlookups.get_basecolours(dbo))
@@ -6312,6 +6323,8 @@ class waitinglist:
         s = html.header("", session)
         c = html.controller_json("animal", a)
         c += html.controller_json("additional", extadditional.get_additional_fields(dbo, a["ID"], "waitinglist"))
+        if users.check_permission_bool(session, users.VIEW_AUDIT_TRAIL):
+            c += html.controller_json("audit", audit.get_audit_for_link(dbo, "animalwaitinglist", a["ID"]))
         c += html.controller_json("logtypes", extlookups.get_log_types(dbo))
         c += html.controller_json("sizes", extlookups.get_sizes(dbo))
         c += html.controller_json("species", extlookups.get_species(dbo))

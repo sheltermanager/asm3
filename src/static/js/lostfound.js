@@ -148,6 +148,7 @@ $(function() {
                 '<div>',
                 additional.additional_fields(controller.additional),
                 '</div>',
+                html.audit_trail_accordion(controller),
                 '</div> <!-- accordion -->',
                 html.content_footer()
             ].join("\n");

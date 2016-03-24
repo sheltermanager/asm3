@@ -267,7 +267,7 @@ msgstr ""
 msgid "Active users: {0}"
 msgstr ""
 
-#: accounts_trx.js common_tableform.js mobile.py
+#: common.js accounts_trx.js common_tableform.js mobile.py
 msgid "Add"
 msgstr ""
 
@@ -1403,6 +1403,10 @@ msgstr ""
 
 #: onlineform_incoming.js
 msgid "Attach this form to an existing person"
+msgstr ""
+
+#: common.js
+msgid "Audit Trail"
 msgstr ""
 
 #: common.js calendarview.js
@@ -3134,12 +3138,12 @@ msgstr ""
 msgid "Defaults formats for code and shortcode are TYYYYNNN and NNT"
 msgstr ""
 
-#: test.js onlineforms.js donations.js citations.js media.js movements.js
-#: document_templates.js reports.js waitinglist_results.js diarytasks.js
-#: person_vouchers.js rota.js transport.js onlineform.js person.js incident.js
-#: onlineform_incoming.js accounts_trx.js users.js animal_costs.js
-#: medicalprofile.js staff_rota.js accounts.js log.js animal.js animal_diet.js
-#: stocklevel.js htmltemplates.js licence.js diarytask.js
+#: test.js onlineforms.js common.js donations.js citations.js media.js
+#: movements.js document_templates.js reports.js waitinglist_results.js
+#: diarytasks.js person_vouchers.js rota.js transport.js onlineform.js
+#: person.js incident.js onlineform_incoming.js accounts_trx.js users.js
+#: animal_costs.js medicalprofile.js staff_rota.js accounts.js log.js animal.js
+#: animal_diet.js stocklevel.js htmltemplates.js licence.js diarytask.js
 #: document_repository.js traploan.js common_tableform.js main.js additional.js
 #: lostfound.js vaccination.js report_images.js diary.js roles.js litters.js
 #: lookups.js waitinglist.js person_investigation.js
@@ -3672,6 +3676,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Eclectus"
+msgstr ""
+
+#: common.js
+msgid "Edit"
 msgstr ""
 
 #: roles.js
@@ -6251,11 +6259,11 @@ msgstr ""
 msgid "Log successfully added."
 msgstr ""
 
-#: login.js mobile.py
+#: common.js login.js mobile.py
 msgid "Login"
 msgstr ""
 
-#: header.js mobile.py
+#: common.js header.js mobile.py
 msgid "Logout"
 msgstr ""
 
@@ -6832,7 +6840,7 @@ msgstr ""
 msgid "Mouse"
 msgstr ""
 
-#: move_retailer.js html.py
+#: common.js move_retailer.js html.py
 msgid "Move"
 msgstr ""
 
@@ -7200,6 +7208,10 @@ msgstr ""
 
 #: header_edit_header.js search.js
 msgid "Non-Shelter Animal"
+msgstr ""
+
+#: users.js
+msgid "Non-shelter"
 msgstr ""
 
 #: dbupdate.py
@@ -11701,6 +11713,10 @@ msgstr ""
 
 #: roles.js
 msgid "View Animals"
+msgstr ""
+
+#: roles.js
+msgid "View Audit Trail"
 msgstr ""
 
 #: roles.js

@@ -431,6 +431,7 @@ $(function() {
                 '</div>',
                 person.render_homechecker(),
                 person.render_lookingfor(),
+                html.audit_trail_accordion(controller),
                 '</div> <!-- accordion -->',
                 '</div> <!-- asmcontent -->',
                 '</div> <!-- tabs -->'
