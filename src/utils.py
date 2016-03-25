@@ -751,8 +751,8 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
     """
     Sends an email.
     fromadd is a single email address
-    toadd is a comma separated list of email addresses 
-    ccadd is a comma separated list of email addresses
+    toadd is a comma/semi-colon separated list of email addresses 
+    ccadd is a comma/semi-colon separated list of email addresses
     subject, body are strings
     contenttype is either "plain" or "html"
     attachmentdata: If an attachment should be added, the unencoded data
@@ -854,9 +854,9 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
         usetls = SMTP_SERVER["usetls"]
      
     # Construct the list of to addresses
-    tolist = [strip_email(x) for x in toadd.split(",")]
+    tolist = [strip_email(x) for x in toadd.replace(";", ",").split(",")]
     if ccadd != "":
-        tolist += [strip_email(x) for x in ccadd.split(",")]
+        tolist += [strip_email(x) for x in ccadd.replace(";", ",").split(",")]
 
     try:
         smtp = smtplib.SMTP(server, port)
