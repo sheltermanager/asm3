@@ -927,7 +927,9 @@
             t.after("<button id='" + zbid + "' style='" + style + "'></button>");
 
             // When zoom button is clicked
-            $("#" + zbid).button({ text: false, icons: { primary: "ui-icon-zoomin" }}).click(this.zoom);
+            $("#" + zbid).button({ text: false, icons: { primary: "ui-icon-zoomin" }}).click(function() {
+                self.zoom();
+            });
 
         },
 
