@@ -7,7 +7,7 @@ import os, sys
 from i18n import _, BUILD
 from sitedefs import DB_PK_STRATEGY
 
-LATEST_VERSION = 33903
+LATEST_VERSION = 33904
 VERSIONS = ( 
     2870, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3050,
     3051, 3081, 3091, 3092, 3093, 3094, 3110, 3111, 3120, 3121, 3122, 3123, 3200,
@@ -20,23 +20,23 @@ VERSIONS = (
     33503, 33504, 33505, 33506, 33507, 33508, 33600, 33601, 33602, 33603, 33604,
     33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702, 33703, 33704, 33705,
     33706, 33707, 33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716,
-    33717, 33718, 33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903
+    33717, 33718, 33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904
 )
 
 # All ASM3 tables
 TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalfield",
     "adoption", "animal", "animalcontrol", "animalcost", "animaldiet", "animalfigures", "animalfiguresannual", 
     "animalfiguresasilomar", "animalfiguresmonthlyasilomar", "animalfound", "animalcontrolanimal", "animallitter", 
-    "animallost", "animalmedical", "animalmedicaltreatment", "animalname", "animalpublished", "animaltype", 
-    "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", "basecolour", 
-    "breed", "citationtype", "configuration", "costtype", "customreport", "customreportrole", "dbfs", 
+    "animallost", "animallostfoundmatch", "animalmedical", "animalmedicaltreatment", "animalname", "animalpublished", 
+    "animaltype", "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", 
+    "basecolour", "breed", "citationtype", "configuration", "costtype", "customreport", "customreportrole", "dbfs", 
     "deathreason", "diary", "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", "donationtype", 
     "entryreason", "incidentcompleted", "incidenttype", "internallocation", "licencetype", "lkanimalflags", "lkcoattype", 
     "lkownerflags", "lksaccounttype", "lksdiarylink", "lksdonationfreq", "lksex", "lksfieldlink", "lksfieldtype", 
     "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", "lksposneg", "lksrotatype", 
     "lksyesno", "lksynun", "lkurgency", "log", "logtype", "media", "medicalprofile", "messages", "onlineform", 
     "onlineformfield", "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
-    "ownerlicence", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", 
+    "ownerlicence", "ownerlookingfor", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", 
     "reservationstatus", "role", "species", "stocklevel", "stocklocation", "stockusage", "stockusagetype", 
     "testtype", "testresult", "traptype", "userrole", "users", "vaccinationtype", "voucher" )
 
@@ -55,7 +55,8 @@ TABLES_ASM2 = ( "accounts", "accountsrole", "accountstrx", "additional", "additi
 
 # Tables that don't have an ID column (we don't create PostgreSQL sequences for them for pseq pk)
 TABLES_NO_ID_COLUMN = ( "accountsrole", "additional", "audittrail", "animalcontrolanimal", 
-    "animalpublished", "configuration", "customreportrole", "onlineformincoming", "userrole" )
+    "animallostfoundmatch", "animalpublished", "configuration", "customreportrole", 
+    "onlineformincoming", "ownerlookingfor", "userrole" )
 
 VIEWS = ( "v_adoption", "v_animal", "v_animalcontrol", "v_animalfound", "v_animallost", 
     "v_animalmedicaltreatment", "v_animaltest", "v_animalvaccination", "v_animalwaitinglist", 
@@ -563,6 +564,36 @@ def sql_structure(dbo):
     sql += index("animallost_AnimalTypeID", "animallost", "AnimalTypeID")
     sql += index("animallost_AreaLost", "animallost", "AreaLost")
     sql += index("animallost_AreaPostcode", "animallost", "AreaPostcode")
+
+    sql += table("animallostfoundmatch", (
+        fint("AnimalLostID"),
+        fint("AnimalFoundID", True),
+        fint("AnimalID", True),
+        fstr("LostContactName", True),
+        fstr("LostContactNumber", True),
+        fstr("LostPostcode", True),
+        fstr("LostAgeGroup", True),
+        fint("LostSex", True),
+        fint("LostSpeciesID", True),
+        fint("LostBreedID", True),
+        flongstr("LostFeatures", True),
+        fint("LostBaseColourID", True),
+        fdate("LostDate", True),
+        fstr("FoundContactName", True),
+        fstr("FoundContactNumber", True),
+        fstr("FoundPostcode", True),
+        fstr("FoundAgeGroup", True),
+        fint("FoundSex", True),
+        fint("FoundSpeciesID", True),
+        fint("FoundBreedID", True),
+        flongstr("FoundFeatures", True),
+        fint("FoundBaseColourID", True),
+        fdate("FoundDate", True),
+        fint("MatchPoints") ))
+
+    sql += index("animallostfoundmatch_AnimalLostID", "animallostfoundmatch", "AnimalLostID")
+    sql += index("animallostfoundmatch_AnimalFoundID", "animallostfoundmatch", "AnimalFoundID")
+    sql += index("animallostfoundmatch_AnimalID", "animallostfoundmatch", "AnimalID")
 
     sql += table("animalmedical", (
         fid(),
@@ -1147,6 +1178,14 @@ def sql_structure(dbo):
     sql += index("ownerdonation_ChequeNumber", "ownerdonation", "ChequeNumber")
     sql += index("ownerdonation_Date", "ownerdonation", "Date")
     sql += index("ownerdonation_IsVAT", "ownerdonation", "IsVAT")
+
+    sql += table("ownerlookingfor", (
+        fint("OwnerID"),
+        fint("AnimalID"),
+        flongstr("MatchSummary") ))
+
+    sql += index("ownerlookingfor_OwnerID", "ownerlookingfor", "OwnerID")
+    sql += index("ownerlookingfor_AnimalID", "ownerlookingfor", "AnimalID")
 
     sql += table("ownerinvestigation", (
         fid(),
@@ -4317,4 +4356,46 @@ def update_33903(dbo):
     # Add customreport.DailyEmailFrequency
     add_column(dbo, "customreport", "DailyEmailFrequency", "INTEGER")
     db.execute_dbupdate(dbo, "UPDATE customreport SET DailyEmailFrequency = 0")
+
+def update_33904(dbo):
+    # Add ownerlookingfor table
+    sql = "CREATE TABLE ownerlookingfor ( " \
+        "OwnerID INTEGER NOT NULL, " \
+        "AnimalID INTEGER NOT NULL, " \
+        "MatchSummary %s NOT NULL)" % longtext(dbo)
+    db.execute_dbupdate(dbo, sql)
+    add_index(dbo, "ownerlookingfor_OwnerID", "ownerlookingfor", "OwnerID")
+    add_index(dbo, "ownerlookingfor_AnimalID", "ownerlookingfor", "AnimalID")
+    # Add animallostfoundmatch table
+    sql = "CREATE TABLE animallostfoundmatch ( " \
+        "AnimalLostID INTEGER NOT NULL, " \
+        "AnimalFoundID INTEGER, " \
+        "AnimalID INTEGER, " \
+        "LostContactName %(short)s, " \
+        "LostContactNumber %(short)s, " \
+        "LostArea %(short)s, " \
+        "LostPostcode %(short)s, " \
+        "LostAgeGroup %(short)s, " \
+        "LostSex INTEGER, " \
+        "LostSpeciesID INTEGER, " \
+        "LostBreedID INTEGER, " \
+        "LostFeatures %(long)s, " \
+        "LostBaseColourID INTEGER, " \
+        "LostDate %(date)s, " \
+        "FoundContactName %(short)s, " \
+        "FoundContactNumber %(short)s, " \
+        "FoundArea %(short)s, " \
+        "FoundPostcode %(short)s, " \
+        "FoundAgeGroup %(short)s, " \
+        "FoundSex INTEGER, " \
+        "FoundSpeciesID INTEGER, " \
+        "FoundBreedID INTEGER, " \
+        "FoundFeatures %(long)s, " \
+        "FoundBaseColourID INTEGER, " \
+        "FoundDate %(date)s, " \
+        "MatchPoints INTEGER NOT NULL)" % { "short": shorttext(dbo), "long": longtext(dbo), "date": datetype(dbo) }
+    db.execute_dbupdate(dbo, sql)
+    add_index(dbo, "animallostfoundmatch_AnimalLostID", "animallostfoundmatch", "AnimalLostID")
+    add_index(dbo, "animallostfoundmatch_AnimalFoundID", "animallostfoundmatch", "AnimalFoundID")
+    add_index(dbo, "animallostfoundmatch_AnimalID", "animallostfoundmatch", "AnimalID")
 
