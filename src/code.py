@@ -1318,7 +1318,8 @@ class animal_embed:
             rows = extanimal.get_animal_find_simple(dbo, "", "all", configuration.record_search_limit(dbo), session.locationfilter)
             locations = extlookups.get_internal_locations(dbo)
             species = extlookups.get_species(dbo)
-            rv = { "rows": rows, "locations": locations, "species": species }
+            litters = extanimal.get_litters(dbo)
+            rv = { "rows": rows, "locations": locations, "species": species, "litters": litters }
             return html.json(rv)
         elif mode == "id":
             a = extanimal.get_animal(dbo, post.integer("id"))

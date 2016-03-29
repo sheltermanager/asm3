@@ -14,6 +14,7 @@
      *            change (after user has clicked select button)
      */
     $.widget("asm.animalchoosermulti", {
+
         options: {
             ids: "",
             rows: [],
@@ -25,9 +26,12 @@
             results: null,
             locations: null,
             species: null,
+            litters: null,
             loaded: false
         },
+
         _create: function() {
+
             var h = [
                 '<div class="animalchoosermulti">',
                 '<table style="margin-left: 0px; margin-right: 0px; width: 100%">',
@@ -54,22 +58,31 @@
                 '<td>' + _("Species") + ':</td>',
                 '<td class="animalchoosermulti-species"></td>',
                 '</tr>',
+                '<tr>',
+                '<td>' + _("Litters") + ':</td>',
+                '<td class="animalchoosermulti-litters"></td>',
+                '</tr>',
                 '</table>',
                 '<div class="animalchoosermulti-results">',
                 '</div>',
                 '</div>', 
                 '</div>'
             ].join("\n");
+
             var node = $(h);
             var self = this;
+
             this.options.node = node;
             var dialog = node.find(".animalchoosermulti-find");
             this.options.dialog = dialog;
+
             this.options.display = node.find(".animalchoosermulti-display");
             this.options.locations = node.find(".animalchoosermulti-locations");
             this.options.species = node.find(".animalchoosermulti-species");
+            this.options.litters = node.find(".animalchoosermulti-litters");
             this.options.results = node.find(".animalchoosermulti-results");
             this.element.parent().append(node);
+
             // Create the dialog
             var acbuttons = {};
             acbuttons[_("Select")] = function() { self.select(); };
@@ -92,13 +105,16 @@
                     }
                 }
             });
+
             dialog.find("img").hide();
+
             // Bind the find button
             node.find(".animalchoosermulti-link-find")
                 .button({ icons: { primary: "ui-icon-search" }, text: false })
                 .click(function() {
                     dialog.dialog("open");
                 });
+
             // Bind the clear button
             node.find(".animalchoosermulti-link-clear")
                 .button({ icons: { primary: "ui-icon-trash" }, text: false })
@@ -106,6 +122,7 @@
                     self.clear();
                 });
         },
+
         /**
          * Empties the widget
          */
@@ -117,12 +134,14 @@
             this.options.species.find(":checked").prop("checked", false);
             this.options.results.find(":checked").prop("checked", false);
         },
+
         destroy: function() {
             try {
                 this.options.dialog.dialog("destroy"); 
             }
             catch (ex) {}
         },
+
         /**
          * Returns the animal row with ID aid
          */
@@ -135,6 +154,7 @@
             });
             return rv;
         },
+
         /**
          * Returns true if a row has idval in column fname
          */
@@ -147,6 +167,7 @@
             });
             return rv;
         },
+
         /**
          * Converts the selected items into a list of ids, sets it as the
          * element value and puts links in the display area
@@ -165,6 +186,7 @@
             self._trigger("change", null, self.element.val());
             dialog.dialog("close");
         },
+
         /**
          * Updates the info strip at the top to show how many animals selected
          */
@@ -177,6 +199,7 @@
                 tn.closest(".asm-animalchoosermulti-result").addClass("asm-animalchoosermulti-selected");
             });
         },
+
         /**
          * Selects animals based on a comma separated list of ids as a string
          */
@@ -190,10 +213,22 @@
             });
             self._trigger("change", null, animalids);
         },
+
+        /**
+         * Turns a user's litter ID into an escaped version for putting
+         * in a data attribute
+         */
+        litterid_escape: function(s) {
+           s = common.replace_all(s, " ", "_"); 
+           s = common.replace_all(s, "'", "_"); 
+           s = common.replace_all(s, "\"", "_"); 
+           return s;
+        },
+
         load: function() {
             var self = this;
             var dialog = this.options.dialog, node = this.options.node, results = this.options.results, 
-                locations = this.options.locations, species = this.options.species;
+                locations = this.options.locations, species = this.options.species, litters = this.options.litters;
             dialog.find("img").show();
             var formdata = "mode=multiselect";
             $.ajax({
@@ -202,23 +237,28 @@
                 data: formdata,
                 dataType: "text",
                 success: function(data, textStatus, jqXHR) {
+
                     var h = "";
                     var rv = jQuery.parseJSON(data);
                     self.rows = rv.rows;
                     self.rowlocations = rv.locations;
                     self.rowspecies = rv.species;
+                    self.rowlitters = rv.litters;
+
                     // Add a thumbnail for each shelter animal to the results
                     $.each(self.rows, function(i, a) {
                         results.append( '<div class="asm-animalchoosermulti-result">' + 
                             html.animal_link_thumb(a, { showselector: true, showunit: true, showlocation: true }) + 
                             '<input type="hidden" class="locationid" data="{locid}" />'.replace("{locid}", a.SHELTERLOCATION) +
                             '<input type="hidden" class="speciesid" data="{speciesid}" />'.replace("{speciesid}", a.SPECIESID) +
+                            '<input type="hidden" class="litterid" data="{litterid}" />'.replace("{litterid}", self.litterid_escape(a.ACCEPTANCENUMBER)) +
                         '</div>' );
                     });
                     results.off("click", "input[type='checkbox']");
                     results.on("click", "input[type='checkbox']", function(e) {
                         self.update_status();
                     });
+
                     // Add a checkbox for each location and make clicking it auto select those animals
                     $.each(self.rowlocations, function(i, l) {
                         if (self.id_used("SHELTERLOCATION", l.ID)) {
@@ -234,6 +274,7 @@
                         });
                         self.update_status();
                     });
+
                     // Add a checkbox for each species and make clicking it auto select those animals
                     $.each(self.rowspecies, function(i, s) {
                         if (self.id_used("SPECIESID", s.ID)) {
@@ -249,13 +290,34 @@
                         });
                         self.update_status();
                     });
+
+                    // Add a checkbox for each litter and make clicking it auto select those animals
+                    $.each(self.rowlitters, function(i, l) {
+                        if (self.id_used("ACCEPTANCENUMBER", l.ACCEPTANCENUMBER)) {
+                            litters.append('<span style="white-space: nowrap"><input type="checkbox" class="litcheck" data="' + 
+                                self.litterid_escape(l.ACCEPTANCENUMBER) + '" id="lit' + l.ID + '" />' +
+                                '<label for="lit' + l.ID + '">' + 
+                                l.MOTHERCODE + ' ' + l.MOTHERNAME + ' ' + l.ACCEPTANCENUMBER + ' - ' + l.SPECIESNAME + '</label></span> ');
+                        }
+                    });
+                    litters.off("click", "input[type='checkbox']");
+                    litters.on("click", "input[type='checkbox']", function(e) {
+                        var tn = $(this);
+                        var aset = results.find(".litterid[data='" + tn.attr("data") + "']").each(function() {
+                            $(this).closest("div").find(".animalselect").prop("checked", tn.prop("checked"));
+                        });
+                        self.update_status();
+                    });
+
                     // Remove the spinner
                     dialog.find(".spinner").hide();
+
                     // Was there a value already set by the markup? If so, use it
                     if (self.element.val() != "") {
                         self.selectbyids(self.element.val());
                         self._trigger("select", null, self.element.val());
                     }
+
                 },
                 error: function(jqxhr, textstatus, response) {
                     dialog.dialog("close");

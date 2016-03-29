@@ -6156,7 +6156,7 @@ msgstr ""
 msgid "Littermates"
 msgstr ""
 
-#: roles.js litters.js animal.py
+#: common_animalchoosermulti.js roles.js litters.js animal.py
 msgid "Litters"
 msgstr ""
 
