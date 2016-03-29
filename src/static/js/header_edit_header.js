@@ -411,7 +411,7 @@ $(function() {
                 '</a>',
                 '</td>',
                 '<td>',
-                '<h2>' + html.icon("person", _("Person")) + p.OWNERNAME + '</h2>',
+                '<h2>' + html.icon("person", _("Person")) + p.OWNERNAME + ' - ' + p.OWNERCODE + '</h2>',
                 '<p><span style="font-style: italic">' + flags + '</span><br/>',
                 html.truncate(p.COMMENTS) + '</p>',
                 '</td>',

@@ -1,6 +1,7 @@
 39
 ================
 
+29/03/16 Show person code in banner on person records
 29/03/16 Add ownerlookingfor and animallostfoundmatch tables #327
 29/03/16 Animal multi chooser can select litters #182
 24/03/16 Allow email addresses to be split with semi-colons
