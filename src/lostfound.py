@@ -16,31 +16,73 @@ import waitinglist
 from i18n import _, date_diff_days, now, subtract_days, subtract_years, python2display, display2python
 
 class LostFoundMatch:
+    dbo = None
     lid = 0
     lcontactname = ""
     lcontactnumber = ""
     larealost = ""
     lareapostcode = ""
     lagegroup = ""
+    lsexid = 0
     lsexname = ""
+    lspeciesid = 0
     lspeciesname = ""
+    lbreedid = 0
     lbreedname = ""
     ldistinguishingfeatures = ""
+    lbasecolourid = 0
     lbasecolourname = ""
     ldatelost = None
-    fid = ""
+    fid = 0
+    fanimalid = 0
     fcontactname = ""
     fcontactnumber = ""
     fareafound = ""
     fareapostcode = ""
     fagegroup = ""
+    fsexid = 0
     fsexname = ""
+    fspeciesid = 0
     fspeciesname = ""
+    fbreedid = 0
     fbreedname = ""
     fdistinguishingfeatures = ""
+    fbasecolourid = 0
     fbasecolourname = ""
     fdatefound = None
     matchpoints = 0
+    def __init__(self, dbo):
+        self.dbo = dbo
+    def toDB(self):
+        """ Writes a lostfoundmatch record from this object """
+        sql = db.make_insert_sql("animallostfoundmatch", (
+            ( "AnimalLostID", db.di(self.lid) ),
+            ( "AnimalFoundID", db.di(self.fid) ),
+            ( "AnimalID", db.di(self.fanimalid) ),
+            ( "LostContactName", db.ds(self.lcontactname) ),
+            ( "LostContactNumber", db.ds(self.lcontactnumber) ),
+            ( "LostArea", db.ds(self.larealost) ),
+            ( "LostPostcode", db.ds(self.lareapostcode) ),
+            ( "LostAgeGroup", db.ds(self.lagegroup) ),
+            ( "LostSex", db.di(self.lsexid) ),
+            ( "LostSpeciesID", db.di(self.lspeciesid) ),
+            ( "LostBreedID", db.di(self.lbreedid) ),
+            ( "LostFeatures", db.ds(self.ldistinguishingfeatures) ),
+            ( "LostBaseColourID", db.di(self.lbasecolourid) ),
+            ( "LostDate", db.dd(self.ldatelost) ),
+            ( "FoundContactName", db.ds(self.fcontactname) ),
+            ( "FoundContactNumber", db.ds(self.fcontactnumber) ),
+            ( "FoundArea", db.ds(self.fareafound) ),
+            ( "FoundPostcode", db.ds(self.fareapostcode) ),
+            ( "FoundAgeGroup", db.ds(self.fagegroup) ),
+            ( "FoundSex", db.di(self.fsexid) ),
+            ( "FoundSpeciesID", db.di(self.fspeciesid) ),
+            ( "FoundBreedID", db.di(self.fbreedid) ),
+            ( "FoundFeatures", db.ds(self.fdistinguishingfeatures) ),
+            ( "FoundBaseColourID", db.di(self.fbasecolourid) ),
+            ( "FoundDate", db.dd(self.fdatefound) ),
+            ( "MatchPoints", db.di(self.matchpoints) ) ))
+        db.execute(self.dbo, sql)
 
 def get_foundanimal_query(dbo):
     dummy = dbo
@@ -353,7 +395,7 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0):
     lostanimalid:   Compare this lost animal against all found animals
     foundanimalid:  Compare all lost animals against this found animal
     animalid:       Compare all lost animals against this shelter animal
-    returns a list LostFoundMatch objects
+    returns a list of LostFoundMatch objects
     """
     l = dbo.locale
     matches = []
@@ -405,6 +447,10 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0):
         else:
             shelteranimals = db.query(dbo, animal.get_animal_query(dbo) + " WHERE a.ID = %d" % animalid)
 
+    # We're doing a full match, clear down the lostfoundmatch table
+    if animalid == 0 and lostanimalid == 0 and foundanimalid == 0:
+        db.execute(dbo, "DELETE FROM animallostfoundmatch")
+
     for la in lostanimals:
         # Found animals (if an animal id has been given don't
         # check found animals)
@@ -422,33 +468,44 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0):
                 if date_diff_days(la["DATELOST"], fa["DATEFOUND"]) <= 14: matchpoints += matchdatewithin2weeks
                 if matchpoints > matchmax: matchpoints = matchmax
                 if matchpoints >= matchpointfloor:
-                    m = LostFoundMatch()
+                    m = LostFoundMatch(dbo)
                     m.lid = la["ID"]
                     m.lcontactname = la["OWNERNAME"]
                     m.lcontactnumber = la["HOMETELEPHONE"]
                     m.larealost = la["AREALOST"]
                     m.lareapostcode = la["AREAPOSTCODE"]
                     m.lagegroup = la["AGEGROUP"]
+                    m.lsexid = la["SEX"]
                     m.lsexname = la["SEXNAME"]
+                    m.lspeciesid = la["ANIMALTYPEID"]
                     m.lspeciesname = la["SPECIESNAME"]
+                    m.lbreedid = la["BREEDID"]
                     m.lbreedname = la["BREEDNAME"]
                     m.ldistinguishingfeatures = la["DISTFEAT"]
+                    m.lbasecolourid = la["BASECOLOURID"]
                     m.lbasecolourname = la["BASECOLOURNAME"]
                     m.ldatelost = la["DATELOST"]
-                    m.fid = str(fa["ID"])
+                    m.fid = fa["ID"]
+                    m.fanimalid = 0
                     m.fcontactname = fa["OWNERNAME"]
                     m.fcontactnumber = fa["HOMETELEPHONE"]
                     m.fareafound = fa["AREAFOUND"]
                     m.fareapostcode = fa["AREAPOSTCODE"]
                     m.fagegroup = fa["AGEGROUP"]
+                    m.fsexid = fa["SEX"]
                     m.fsexname = fa["SEXNAME"]
+                    m.fspeciesid = fa["ANIMALTYPEID"]
                     m.fspeciesname = fa["SPECIESNAME"]
+                    m.fbreedid = fa["BREEDID"]
                     m.fbreedname = fa["BREEDNAME"]
                     m.fdistinguishingfeatures = fa["DISTFEAT"]
+                    m.fbasecolourid = fa["BASECOLOURID"]
                     m.fbasecolourname = fa["BASECOLOURNAME"]
                     m.fdatefound = fa["DATEFOUND"]
                     m.matchpoints = int((float(matchpoints) / float(matchmax)) * 100.0)
                     matches.append(m)
+                    if animalid == 0 and lostanimalid == 0 and foundanimalid == 0:
+                        m.toDB()
 
         # Shelter animals
         if includeshelter:
@@ -465,33 +522,45 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0):
                 if date_diff_days(la["DATELOST"], a["DATEBROUGHTIN"]) <= 14: matchpoints += matchdatewithin2weeks
                 if matchpoints > matchmax: matchpoints = matchmax
                 if matchpoints >= matchpointfloor:
-                    m = LostFoundMatch()
+                    m = LostFoundMatch(dbo)
                     m.lid = la["ID"]
                     m.lcontactname = la["OWNERNAME"]
                     m.lcontactnumber = la["HOMETELEPHONE"]
                     m.larealost = la["AREALOST"]
                     m.lareapostcode = la["AREAPOSTCODE"]
                     m.lagegroup = la["AGEGROUP"]
+                    m.lsexid = la["SEX"]
                     m.lsexname = la["SEXNAME"]
+                    m.lspeciesid = la["ANIMALTYPEID"]
                     m.lspeciesname = la["SPECIESNAME"]
+                    m.lbreedid = la["BREEDID"]
                     m.lbreedname = la["BREEDNAME"]
                     m.ldistinguishingfeatures = la["DISTFEAT"]
+                    m.lbasecolourid = la["BASECOLOURID"]
                     m.lbasecolourname = la["BASECOLOURNAME"]
                     m.ldatelost = la["DATELOST"]
-                    m.fid = a["CODE"]
+                    m.fid = 0
+                    m.fanimalid = a["ID"]
                     m.fcontactname = _("Shelter animal {0} '{1}'", l).format(a["CODE"], a["ANIMALNAME"])
                     m.fcontactnumber = a["SPECIESNAME"]
                     m.fareafound = _("On Shelter", l)
                     m.fareapostcode = a["ORIGINALOWNERPOSTCODE"]
                     m.fagegroup = a["AGEGROUP"]
+                    m.fsexid = a["SEX"]
                     m.fsexname = a["SEXNAME"]
+                    m.fspeciesid = a["SPECIESID"]
                     m.fspeciesname = a["SPECIESNAME"]
+                    m.fbreedid = a["BREEDID"]
                     m.fbreedname = a["BREEDNAME"]
                     m.fdistinguishingfeatures = a["MARKINGS"]
+                    m.fbasecolourid = a["BASECOLOURID"]
                     m.fbasecolourname = a["BASECOLOURNAME"]
                     m.fdatefound = a["DATEBROUGHTIN"]
                     m.matchpoints = int((float(matchpoints) / float(matchmax)) * 100.0)
                     matches.append(m)
+                    if animalid == 0 and lostanimalid == 0 and foundanimalid == 0:
+                        m.toDB()
+
     return matches
 
 def match_report(dbo, username = "system", lostanimalid = 0, foundanimalid = 0, animalid = 0):
@@ -530,7 +599,7 @@ def match_report(dbo, username = "system", lostanimalid = 0, foundanimalid = 0, 
                 h.append("</tr>")
                 lastid = m.lid
             h.append("<tr>")
-            h.append(td(m.fid))
+            h.append(td(str(m.fid)))
             h.append(td("%s %s %s %s %s" % (m.fagegroup, m.fbasecolourname, m.fsexname, m.fspeciesname, m.fbreedname)))
             h.append(td(m.fareafound))
             h.append(td(m.fareapostcode))
@@ -542,19 +611,14 @@ def match_report(dbo, username = "system", lostanimalid = 0, foundanimalid = 0, 
         h.append("</tr></table>")
     else:
         h.append(p(_("No matches found.", l)))
-    h.append( "<!-- $AM%d^ animal matches -->" % len(matches))
     h.append(reports.get_report_footer(dbo, title, username))
     return "\n".join(h)
 
 def lostfound_last_match_count(dbo):
     """
-    Inspects the cached version of the lost and found match report and
-    returns the number of animal matches.
+    Returns the number of lost/found matches from the last run
     """
-    s = dbfs.get_string_filepath(dbo, "/reports/daily/lost_found_match.html")
-    sp = s.find("$AM")
-    if sp == -1: return 0
-    return utils.cint(s[sp+3:s.find("^", sp)])
+    return db.query_int(dbo, "SELECT COUNT(*) FROM animallostfoundmatch")
 
 def update_match_report(dbo):
     """

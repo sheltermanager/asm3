@@ -1104,6 +1104,10 @@ def lookingfor_report(dbo, username = "system", personid = 0):
         "(MatchExpires Is Null OR MatchExpires > %s)%s " \
         "ORDER BY OwnerName" % (db.dd(now(dbo.timezone)), idclause))
 
+    # Empty ownerlookingfor before we start
+    if personid == 0:
+        db.execute(dbo, "DELETE FROM ownerlookingfor")
+
     ah = []
     ah.append(hr())
     ah.append("<table border=\"1\" width=\"100%\"><tr>")
@@ -1159,8 +1163,10 @@ def lookingfor_report(dbo, username = "system", personid = 0):
         if p["MATCHCOMMENTSCONTAIN"] is not None and p["MATCHCOMMENTSCONTAIN"] != "": c.append(_("Comments Contain", l) + ": " + p["MATCHCOMMENTSCONTAIN"])
         if p["COMMENTS"] != "" and p["COMMENTS"] is not None: 
             h.append( "<p style='font-size: 8pt'>%s</p>" % p["COMMENTS"])
+        summary = ""
         if len(c) > 0:
-            h.append( "<p style='font-size: 8pt'>(%s: %s)</p>" % (_("Looking for", l), ", ".join(x for x in c if x is not None)))
+            summary = ", ".join(x for x in c if x is not None)
+            h.append( "<p style='font-size: 8pt'>(%s: %s)</p>" % (_("Looking for", l), summary) )
 
         outputheader = False
         for a in animals:
@@ -1183,6 +1189,14 @@ def lookingfor_report(dbo, username = "system", personid = 0):
             h.append( td(a["ISHOUSETRAINEDNAME"]))
             h.append( td(a["ANIMALCOMMENTS"]))
 
+            # Add an entry to ownerlookingfor for other reports
+            if personid == 0:
+                sql = db.make_insert_sql("ownerlookingfor", (
+                    ( "AnimalID", db.di(a["ID"]) ),
+                    ( "OwnerID", db.di(p["ID"]) ),
+                    ( "MatchSummary", db.ds(summary) ) ))
+                db.execute(dbo, sql)
+
         if outputheader:
             h.append( "</table>")
         h.append( hr())
@@ -1190,19 +1204,14 @@ def lookingfor_report(dbo, username = "system", personid = 0):
     if len(people) == 0:
         h.append( p(_("No matches found.", l)))
 
-    h.append( "<!-- $AM%d^ animal matches -->" % totalmatches)
     h.append( reports.get_report_footer(dbo, title, username))
     return "".join(h)
 
 def lookingfor_last_match_count(dbo):
     """
-    Inspects the cached version of the looking for report and
-    returns the number of animal matches.
+    Returns the number of matches the last time lookingfor was run
     """
-    s = dbfs.get_string_filepath(dbo, "/reports/daily/lookingfor.html")
-    sp = s.find("$AM")
-    if sp == -1: return 0
-    return utils.cint(s[sp+3:s.find("^", sp)])
+    return db.query_int(dbo, "SELECT COUNT(*) FROM ownerlookingfor")
 
 def update_missing_geocodes(dbo):
     """
