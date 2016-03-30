@@ -10,11 +10,11 @@ en
 ###
 SELECT AuditDate, UserName, TableName, LinkID, Description,
 CASE WHEN Action = 0 THEN 'ADD'
-CASE WHEN Action = 1 THEN 'EDIT'
-CASE WHEN Action = 2 THEN 'DELETE'
-CASE WHEN Action = 3 THEN 'MOVE'
-CASE WHEN Action = 4 THEN 'LOGIN'
-CASE WHEN Action = 5 THEN 'LOGOUT'
+WHEN Action = 1 THEN 'EDIT'
+WHEN Action = 2 THEN 'DELETE'
+WHEN Action = 3 THEN 'MOVE'
+WHEN Action = 4 THEN 'LOGIN'
+WHEN Action = 5 THEN 'LOGOUT'
 END AS Action
 FROM audittrail
 WHERE
