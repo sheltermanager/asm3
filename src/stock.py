@@ -101,7 +101,9 @@ def update_stocklevel_from_form(dbo, post, username):
         ( "Total", post.db_floating("total") ),
         ( "Balance", post.db_floating("balance") ),
         ( "Expiry", post.db_date("expiry") ),
-        ( "BatchNumber", post.db_string("batchnumber") )
+        ( "BatchNumber", post.db_string("batchnumber") ),
+        ( "Cost", post.db_integer("cost") ),
+        ( "UnitPrice", post.db_integer("unitprice") )
     )))
     postaudit = db.query(dbo, "SELECT * FROM stocklevel WHERE ID = %d" % slid)
     diff = postaudit[0]["BALANCE"] - preaudit[0]["BALANCE"]
@@ -132,6 +134,8 @@ def insert_stocklevel_from_form(dbo, post, username):
         ( "Balance", post.db_floating("balance") ),
         ( "Expiry", post.db_date("expiry") ),
         ( "BatchNumber", post.db_string("batchnumber") ),
+        ( "Cost", post.db_integer("cost") ),
+        ( "UnitPrice", post.db_integer("unitprice") ),
         ( "CreatedDate", db.todaysql() )
     )))
     insert_stockusage(dbo, username, slid, post.floating("balance"), post.date("usagedate"), post.integer("usagetype"), post["comments"])

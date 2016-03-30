@@ -103,7 +103,7 @@ class PostedData(object):
 
 def is_currency(f):
     """ Returns true if the field with name f is a currency field """
-    CURRENCY_FIELDS = "AMT AMOUNT DONATION DAILYBOARDINGCOST COSTAMOUNT COST FEE LICENCEFEE DEPOSITAMOUNT FINEAMOUNT VATAMOUNT"
+    CURRENCY_FIELDS = "AMT AMOUNT DONATION DAILYBOARDINGCOST COSTAMOUNT COST FEE LICENCEFEE DEPOSITAMOUNT FINEAMOUNT UNITPRICE VATAMOUNT"
     return f.upper().startswith("MONEY") or CURRENCY_FIELDS.find(f.upper()) != -1
 
 def is_numeric(s):

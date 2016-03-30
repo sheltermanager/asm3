@@ -32,6 +32,10 @@ $(function() {
                         tooltip: _("If this stock record is for a drug, the batch number from the container") },
                     { json_field: "EXPIRY", post_field: "expiry", label: _("Expiry"), type: "date",
                         tooltip: _("If this stock record is for a perishable good, the expiry date on the container") },
+                    { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency",
+                        tooltip: _("The wholesale/trade price the container was bought for") },
+                    { json_field: "UNITPRICE", post_field: "unitprice", label: _("Unit Price"), type: "currency",
+                        tooltip: _("The retail/resale price per unit") },
                     { type: "raw", label: "", markup: html.info(_("Usage explains why this stock record was created or adjusted. Usage records will only be created if the balance changes.")) },
                     { json_field: "", post_field: "usagetype", label: _("Usage Type"), type: "select",
                         options: { displayfield: "USAGETYPENAME", valuefield: "ID", rows: controller.stockusagetypes }},
@@ -80,6 +84,8 @@ $(function() {
                     { field: "UNITNAME", display: _("Unit") },
                     { field: "TOTAL", display: _("Total") },
                     { field: "BALANCE", display: _("Balance") },
+                    { field: "COST", display: _("Cost") },
+                    { field: "UNITPRICE", display: _("Unit Price") },
                     { field: "BATCHNUMBER", display: _("Batch") },
                     { field: "EXPIRY", display: _("Expiry"), formatter: tableform.format_date, initialsort: controller.sortexp == 1 }
                 ]
