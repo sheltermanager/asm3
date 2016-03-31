@@ -123,7 +123,7 @@ def query(dbo, sql):
             # Intialise a map for each row
             rowmap = {}
             for i in xrange(0, len(row)):
-                v = encode_str(row[i])
+                v = encode_str(dbo, row[i])
                 rowmap[cols[i]] = v
             l.append(rowmap)
         connect_cursor_close(dbo, c, s)
@@ -205,7 +205,7 @@ def query_generator(dbo, sql):
             # Intialise a map for each row
             rowmap = {}
             for i in xrange(0, len(row)):
-                v = encode_str(row[i])
+                v = encode_str(dbo, row[i])
                 rowmap[cols[i]] = v
             yield rowmap
             row = s.fetchone()
@@ -479,7 +479,7 @@ def query_string(dbo, sql):
     r = query_tuple(dbo, sql)
     try :
         v = unescape(r[0][0])
-        return encode_str(v)
+        return encode_str(dbo, v)
     except:
         return str("")
 
@@ -491,22 +491,27 @@ def query_date(dbo, sql):
     except:
         return None
 
-def encode_str(v):
+def encode_str(dbo, v):
     """
     Returns v from a query result.
-    If v is unicode, returns it as a str with XML entities
-    If v is a str, removes any non-ascii chars
-    If it is any other type, returns v as is.
+    If v is unicode, encodes it as an ascii str with XML entities
+    If v is already a str, removes any non-ascii chars
+    If it is any other type, returns v untouched
     """
-    if type(v) == unicode:
-        if v is not None:
+    try:
+        if v is None: 
+            return v
+        elif type(v) == unicode:
             v = unescape(v)
-            v = v.encode("ascii", "xmlcharrefreplace")
-    elif type(v) == str:
-        if v is not None:
+            return v.encode("ascii", "xmlcharrefreplace")
+        elif type(v) == str:
             v = unescape(v)
-            v = v.decode("ascii", "ignore").encode("ascii", "ignore")
-    return v
+            return v.decode("ascii", "ignore").encode("ascii", "ignore")
+        else:
+            return v
+    except Exception,err:
+        al.error(str(err), "db.encode_str", dbo, sys.exc_info())
+        raise err
 
 def split_queries(sql):
     """

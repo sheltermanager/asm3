@@ -52,11 +52,10 @@ def error(msg, location = "[]", dbo = None, ei=None):
     ei: Exception info from sys.exc_info() for stacktrace
     """
     lines = []
-    if ei != None:
-        lines = traceback.format_exception(*ei)
-        if ei[2]: 
-            lines[1:1] = traceback.format_stack(ei[2].tb_frame.f_back)
-    msg += " " + "".join(lines)
+    if ei is not None and len(ei) == 3:
+        lines = traceback.format_exception(ei[0], ei[1], ei[2])
+        if lines[0].startswith("Traceback"): lines = lines[1:] # Remove redundant first line if present
+        msg += " " + " ".join(x.strip() for x in lines)
     logmsg(3, msg, location, dbo)
 
 def logmsg(mtype, msg, location, dbo):
