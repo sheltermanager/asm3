@@ -521,7 +521,7 @@
             }
             if (o.title) { 
                 try {
-                    $(document).attr("title", o.title()); 
+                    $(document).attr("title", html.decode(o.title())); 
                 }
                 catch (extitle) {
                     errhandler("title", extitle);
@@ -1802,7 +1802,7 @@
             if (common.is_array(o)) {
                 var oa = [];
                 $.each(o, function(i, v) {
-                    if (v.label) {
+                    if (v.hasOwnProperty("label")) {
                         // It's an object with a label property
                         v.label = decode_str(v.label);
                         oa.push(v);
