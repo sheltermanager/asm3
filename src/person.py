@@ -436,7 +436,7 @@ def get_person_find_advanced(dbo, criteria, includeStaff = False, limit = 0):
                 ))
 
     addstr("code", get_person_code_query(dbo))
-    addstr("name", "o.OwnerName")
+    addwords("name", "o.OwnerName")
     addstr("address", "o.OwnerAddress")
     addstr("town", "o.OwnerTown")
     addstr("county", "o.OwnerCounty")
