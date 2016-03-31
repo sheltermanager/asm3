@@ -505,8 +505,7 @@ def encode_str(v):
         if v is not None:
             v = unescape(v)
             v = v.replace("\x92", "'") # smart apostrophe
-            v = v.replace("\xe5", "o") # sv/nb o
-            v = v.replace("\xd8", "a") # sv/nb a
+            v = utils.strip_non_ascii(v)
     return v
 
 def split_queries(sql):

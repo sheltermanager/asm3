@@ -82,7 +82,7 @@ def parse_nominatim(dbo, jr, j, q):
         al.debug("no response from nominatim for %s (response %s)" % (q, str(jr)), "geo.parse_nominatim", dbo)
         return None
     try:
-        latlon = "%s,%s,%s" % (str(utils.strip_unicode(j[0]["lat"])), str(utils.strip_unicode(j[0]["lon"])), "na")
+        latlon = "%s,%s,%s" % (str(utils.strip_non_ascii(j[0]["lat"])), str(utils.strip_non_ascii(j[0]["lon"])), "na")
         al.debug("contacted nominatim to get geocode for %s = %s" % (q, latlon), "geo.parse_nominatim", dbo)
         return latlon
     except Exception,err:

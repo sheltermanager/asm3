@@ -56,7 +56,7 @@ def gks(m, f):
     """ reads field f from map m, returning a string. 
         string is empty if key not present """
     if not m.has_key(f): return ""
-    return str(utils.strip_unicode(m[f]))
+    return str(utils.strip_non_ascii(m[f]))
 
 def gkd(dbo, m, f, usetoday = False):
     """ reads field f from map m, returning a display date. 

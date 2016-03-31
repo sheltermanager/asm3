@@ -244,7 +244,7 @@ def truncate(s, length = 100):
     """
     if s is None: s = ""
     s = strip_html_tags(s)
-    s = strip_unicode(s)
+    s = strip_non_ascii(s)
     if len(decode_html(s)) < length: return s
     return substring(s, 0, length) + "..."
 
@@ -267,7 +267,7 @@ def strip_html_tags(s):
     """
     return re.sub('<.*?>', '', s)
 
-def strip_unicode(s):
+def strip_non_ascii(s):
     """
     Remove any unicode characters
     """
