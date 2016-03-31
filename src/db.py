@@ -495,17 +495,17 @@ def encode_str(v):
     """
     Returns v from a query result.
     If v is unicode, returns it as a str with XML entities
-    If v is a str, removes any non-printable chars
+    If v is a str, removes any non-ascii chars
     If it is any other type, returns v as is.
     """
     if type(v) == unicode:
         if v is not None:
+            v = unescape(v)
             v = v.encode("ascii", "xmlcharrefreplace")
-    if type(v) == str:
+    elif type(v) == str:
         if v is not None:
             v = unescape(v)
-            v = v.replace("\x92", "'") # smart apostrophe
-            v = utils.strip_non_ascii(v)
+            v = v.decode("ascii", "ignore").encode("ascii", "ignore")
     return v
 
 def split_queries(sql):

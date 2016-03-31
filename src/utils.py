@@ -269,7 +269,7 @@ def strip_html_tags(s):
 
 def strip_non_ascii(s):
     """
-    Remove any unicode characters
+    Remove any non-ascii characters from a string str
     """
     return "".join(i for i in s if ord(i)<128)
 
