@@ -1288,7 +1288,7 @@ class Report:
         i = 0
 
         def label(s):
-            s = db.encode_str(s) # turn unicode into str/xml/ascii
+            s = db.encode_str(self.dbo, s) # turn unicode into str/xml/ascii
             s = str(s).replace("'", "\\'") # fix apostrophes breaking javascript
             return s
 
@@ -1331,7 +1331,7 @@ class Report:
             for r in rs:
                 if not values.has_key(r[0]):
                     values[r[0]] = []
-                values[r[0]].append("[%s, %s]" % (db.encode_str(r[1]), str(r[2])))
+                values[r[0]].append("[%s, %s]" % (db.encode_str(self.dbo, r[1]), str(r[2])))
             for k, v in values.iteritems():
                 self._Append("{ label: '%s', \n" % label(k))
                 self._Append("data: [%s], \n%s\n },\n" % (",".join(v), mode))
