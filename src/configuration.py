@@ -215,6 +215,7 @@ DEFAULTS = {
         "OwnerTown,OwnerCounty,OwnerPostcode,HomeTelephone,WorkTelephone," \
         "MobileTelephone,EmailAddress",
     "PetRescueLocationRegionID": "No",
+    "PetsLocatedIncludeShelter": "No",
     "PicturesInBooks": "Yes",
     "PDFInline": "Yes",
     "PublisherUseComments": "Yes",
