@@ -343,6 +343,25 @@ publishers.
 
 .. warning:: The RescueGroups.org publisher uses the publisher breeds and species mappings, so you should make sure that you have mappings for all your breeds and species before using the publisher (the publisher will give an error message if any species or breeds do not have mappings).
 
+petslocated.com
+---------------
+
+ASM can integrate with petslocated.com, a lost/found matching database for
+shelters in the UK.
+
+To configure ASM, you will need to go to :menuselection:`Publish --> Set
+Publishing Options` and enter your petslocated.com customer number. Once the
+petslocated.com publisher is enabled, ASM will automatically send all active
+found animal records to them with the overnight batch.
+
+The petslocated.com publisher also has a pair of additional options you can set
+for "Include shelter animals" and "Only shelter animals with this flag". 
+
+If you set "Include shelter animals" to "Yes", you will need to specify a flag.
+You should create an animal flag (:menuselection:`Settings --> Lookup Data`) to
+tag shelter animals that you would like to be sent to petslocated - typically
+strays and animals that have come via dog wardens, etc.
+
 AVID/PETtrac UK
 ---------------
 
