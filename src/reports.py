@@ -1050,7 +1050,7 @@ class Report:
             if lf == "":
                 ils = [ ]
                 for il in lookups.get_internal_locations(self.dbo):
-                    ils.append(il["ID"])
+                    ils.append(str(il["ID"]))
                 lf = ",".join(ils)
             s = s.replace("$LOCATIONFILTER$", lf)
         self.sql = s
