@@ -1599,6 +1599,7 @@ class animal_medical:
         c += html.controller_json("tabcounts", extanimal.get_satellite_counts(dbo, a["ID"])[0])
         c += html.controller_json("stockitems", extstock.get_stock_items(dbo))
         c += html.controller_json("stockusagetypes", extlookups.get_stock_usage_types(dbo))
+        c += html.controller_json("users", users.get_users(dbo))
         c += html.controller_json("animal", a)
         s += html.controller(c)
         s += html.footer()
@@ -1628,8 +1629,9 @@ class animal_medical:
             users.check_permission(session, users.BULK_COMPLETE_MEDICAL)
             newdate = post.date("newdate")
             vet = post.integer("givenvet")
+            by = post["givenby"]
             for mid in post.integer_list("ids"):
-                extmedical.update_treatment_given(session.dbo, session.user, mid, newdate, vet)
+                extmedical.update_treatment_given(session.dbo, session.user, mid, newdate, by, vet)
             if post.integer("item") != -1:
                 extstock.deduct_stocklevel_from_form(session.dbo, session.user, post)
         elif mode == "required":
@@ -3999,6 +4001,7 @@ class medical:
         c += html.controller_str("name", "medical")
         c += html.controller_json("stockitems", extstock.get_stock_items(dbo))
         c += html.controller_json("stockusagetypes", extlookups.get_stock_usage_types(dbo))
+        c += html.controller_json("users", users.get_users(dbo))
         s += html.controller(c)
         s += html.footer()
         return full_or_json("medical", s, c, post["json"] == "true")
@@ -4032,8 +4035,9 @@ class medical:
             users.check_permission(session, users.BULK_COMPLETE_MEDICAL)
             newdate = post.date("newdate")
             vet = post.integer("givenvet")
+            by = post["givenby"]
             for mid in post.integer_list("ids"):
-                extmedical.update_treatment_given(session.dbo, session.user, mid, newdate, vet)
+                extmedical.update_treatment_given(session.dbo, session.user, mid, newdate, by, vet)
             if post.integer("item") != -1:
                 extstock.deduct_stocklevel_from_form(session.dbo, session.user, post)
         elif mode == "required":

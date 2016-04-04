@@ -221,6 +221,7 @@ $(function() {
                         $("#usagedate").datepicker("setDate", new Date());
                         $("#usagedate").closest("tr").hide();
                         $("#quantity").val("0");
+                        $("#givenby").select("value", asm.user);
                         $("#dialog-given").dialog("open");
                      }
                  },
@@ -401,6 +402,14 @@ $(function() {
                 '<tr>',
                 '<td><label for="newdate">' + _("Given") + '</label></td>',
                 '<td><input id="newdate" data="newdate" type="textbox" class="asm-textbox asm-datebox asm-field" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="givenby">' + _("By") + '</label></td>',
+                '<td>',
+                '<select id="givenby" data="givenby" type="hidden" class="asm-selectbox asm-field">',
+                html.list_to_options(controller.users, "USERNAME", "USERNAME"),
+                '</select>',
+                '</td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="givenvet">' + _("Administering Vet") + '</label></td>',

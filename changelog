@@ -1,6 +1,7 @@
 39
 ================
 
+04/04/16 allow Medical->Give to allow overriding of given by #239
 04/04/16 petslocated: disable sending of shelter animals by default
 04/04/16 Allow bulk changes animals to add flags #288
 04/04/16 Allow bulk change animals to update current/owners vet #234
