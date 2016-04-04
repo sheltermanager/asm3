@@ -1042,6 +1042,17 @@ class Report:
         s = self.sql
         s = s.replace("$CURRENT_DATE$", db.python2db(i18n.now(self.dbo.timezone)))
         s = s.replace("$USER$", self.user)
+        # Substitute the location filter, but only if the report actually
+        # references it to save unnecessary database lookups
+        if s.find("$LOCATIONFILTER$") != -1:
+            lf = db.query_string(self.dbo, "SELECT LocationFilter FROM users WHERE UserName = %s" % db.ds(self.user))
+            # If the locationfilter is blank, make it a list of all possible internal location IDs
+            if lf == "":
+                ils = [ ]
+                for il in lookups.get_internal_locations(self.dbo):
+                    ils.append(il["ID"])
+                lf = ",".join(ils)
+            s = s.replace("$LOCATIONFILTER$", lf)
         self.sql = s
         # If we don't have any parameters, no point trying to deal with these
         if params is None: return

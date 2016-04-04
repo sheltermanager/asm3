@@ -1,6 +1,7 @@
 39
 ================
 
+04/04/16 Add $LOCATIONFILTER$ report token #388
 04/04/16 Add AdministeringVet wordkeys #374
 04/04/16 Add Administering Vet to tests #374
 04/04/16 petslocated: only allow sending shelter animals with flag
