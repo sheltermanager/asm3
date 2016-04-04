@@ -46,7 +46,8 @@ LOOKUP_TABLES = {
     "testresult":       (_("Test Results"), "ResultName", _("Result"), "ResultDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animaltest.TestResultID",)),
     "traptype":         (_("Trap Types"), "TrapTypeName", _("Type"), "TrapTypeDescription", 0, 0, 0, 0, 1, 0, 1, 1, 1, ("ownertraploan.TrapTypeID",)),
     "vaccinationtype":  (_("Vaccination Types"), "VaccinationType", _("Type"), "VaccinationDescription", 0, 0, 0, 0, 1, 0, 1, 1, 1, ("animalvaccination.VaccinationID",)),
-    "voucher":          (_("Voucher Types"), "VoucherName", _("Type"), "VoucherDescription", 0, 0, 0, 0, 1, 0, 1, 1, 1, ("ownervoucher.VoucherID",))
+    "voucher":          (_("Voucher Types"), "VoucherName", _("Type"), "VoucherDescription", 0, 0, 0, 0, 1, 0, 1, 1, 1, ("ownervoucher.VoucherID",)),
+    "lkworktype":       (_("Work Types"), "WorkType", _("Type"), "", 0, 0, 0, 0, 0, 0, 1, 1, 0, ("ownerrota.WorkTypeID",))
 }
 LOOKUP_TABLELABEL = 0
 LOOKUP_NAMEFIELD = 1
@@ -1194,6 +1195,9 @@ def get_vaccination_types(dbo):
 
 def get_voucher_types(dbo):
     return db.query(dbo, "SELECT * FROM voucher ORDER BY VoucherName")
+
+def get_work_types(dbo):
+    return db.query(dbo, "SELECT * FROM lkworktype ORDER BY ID")
 
 def get_yesno(dbo):
     return db.query(dbo, "SELECT * FROM lksyesno ORDER BY Name")

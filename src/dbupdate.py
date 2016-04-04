@@ -7,7 +7,7 @@ import os, sys
 from i18n import _, BUILD
 from sitedefs import DB_PK_STRATEGY
 
-LATEST_VERSION = 33905
+LATEST_VERSION = 33906
 VERSIONS = ( 
     2870, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3050,
     3051, 3081, 3091, 3092, 3093, 3094, 3110, 3111, 3120, 3121, 3122, 3123, 3200,
@@ -21,7 +21,7 @@ VERSIONS = (
     33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702, 33703, 33704, 33705,
     33706, 33707, 33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716,
     33717, 33718, 33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904,
-    33905
+    33905, 33906
 )
 
 # All ASM3 tables
@@ -959,6 +959,9 @@ def sql_structure(dbo):
     sql += table("lksposneg", (
         fid(), fstr("Name") ), False)
 
+    sql += table("lkworktype", (
+        fid(), fstr("WorkType") ), False)
+
     sql += table("log", (
         fid(),
         fint("LogTypeID"),
@@ -1218,11 +1221,13 @@ def sql_structure(dbo):
         fdate("StartDateTime"),
         fdate("EndDateTime"),
         fint("RotaTypeID"),
+        fint("WorkTypeID", True),
         flongstr("Comments", True) ))
     sql += index("ownerrota_OwnerID", "ownerrota", "OwnerID")
     sql += index("ownerrota_StartDateTime", "ownerrota", "StartDateTime")
     sql += index("ownerrota_EndDateTime", "ownerrota", "EndDateTime")
     sql += index("ownerrota_RotaTypeID", "ownerrota", "RotaTypeID")
+    sql += index("ownerrota_WorkTypeID", "ownerrota", "WorkTypeID")
 
     sql += table("ownertraploan", (
         fid(),
@@ -2109,6 +2114,11 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup1("lkurgency", "Urgency", 3, _("Medium", l))
     sql += lookup1("lkurgency", "Urgency", 4, _("Low", l))
     sql += lookup1("lkurgency", "Urgency", 5, _("Lowest", l))
+    sql += lookup1("lkworktype", "WorkType", 1, _("General", l))
+    sql += lookup1("lkworktype", "WorkType", 2, _("Kennel", l))
+    sql += lookup1("lkworktype", "WorkType", 3, _("Cattery", l))
+    sql += lookup1("lkworktype", "WorkType", 4, _("Reception", l))
+    sql += lookup1("lkworktype", "WorkType", 5, _("Office", l))
     sql += lookup2("logtype", "LogTypeName", 1, _("Bite", l))
     sql += lookup2("logtype", "LogTypeName", 2, _("Complaint", l))
     sql += lookup2("logtype", "LogTypeName", 3, _("History", l))
@@ -2500,6 +2510,7 @@ def dump_merge(dbo, deleteViewSeq = True):
     fix_and_dump("internallocation", [ "ID", ])
     fix_and_dump("lkanimalflags", [ "ID", ])
     fix_and_dump("lkownerflags", [ "ID", ])
+    fix_and_dump("lkworktype", [ "ID", ])
     fix_and_dump("log", [ "ID", "LinkID" ])
     fix_and_dump("owner", [ "ID", "HomeCheckedBy" ])
     fix_and_dump("ownercitation", [ "ID", "OwnerID", "AnimalControlID" ])
@@ -4407,4 +4418,20 @@ def update_33905(dbo):
     add_column(dbo, "stocklevel", "Cost", "INTEGER")
     add_column(dbo, "stocklevel", "UnitPrice", "INTEGER")
     db.execute_dbupdate(dbo, "UPDATE stocklevel SET Cost = 0, UnitPrice = 0")
+
+def update_33906(dbo):
+    l = dbo.locale
+    # Add ownerrota.WorkTypeID
+    add_column(dbo, "ownerrota", "WorkTypeID", "INTEGER")
+    add_index(dbo, "ownerrota_WorkTypeID", "ownerrota", "WorkTypeID")
+    db.execute_dbupdate(dbo, "UPDATE ownerrota SET WorkTypeID = 1")
+    # Add lkworktype
+    sql = "CREATE TABLE lkworktype ( ID INTEGER NOT NULL PRIMARY KEY, " \
+        "WorkType %(short)s NOT NULL)" % { "short": shorttext(dbo) }
+    db.execute_dbupdate(dbo, sql)
+    db.execute_dbupdate(dbo, "INSERT INTO lkworktype (ID, WorkType) VALUES (%d, %s)" % (1, db.ds(_("General", l))))
+    db.execute_dbupdate(dbo, "INSERT INTO lkworktype (ID, WorkType) VALUES (%d, %s)" % (2, db.ds(_("Kennel", l))))
+    db.execute_dbupdate(dbo, "INSERT INTO lkworktype (ID, WorkType) VALUES (%d, %s)" % (3, db.ds(_("Cattery", l))))
+    db.execute_dbupdate(dbo, "INSERT INTO lkworktype (ID, WorkType) VALUES (%d, %s)" % (4, db.ds(_("Reception", l))))
+    db.execute_dbupdate(dbo, "INSERT INTO lkworktype (ID, WorkType) VALUES (%d, %s)" % (5, db.ds(_("Office", l))))
 

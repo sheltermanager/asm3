@@ -20,6 +20,8 @@ $(function() {
                         label: _("Person"), type: "person", validation: "notzero" },
                     { json_field: "ROTATYPEID", post_field: "type", label: _("Type"), type: "select", 
                         options: { displayfield: "ROTATYPE", valuefield: "ID", rows: controller.rotatypes }},
+                    { json_field: "WORKTYPEID", post_field: "worktype", label: _("Work"), type: "select", 
+                        options: { displayfield: "WORKTYPE", valuefield: "ID", rows: controller.worktypes }},
                     { json_field: "STARTDATETIME", post_field: "startdate", label: _("Starts"), type: "date", validation: "notblank", defaultval: new Date() },
                     { json_field: "STARTDATETIME", post_field: "starttime", label: _("at"), type: "time", validation: "notblank", defaultval: config.str("DefaultShiftStart") },
                     { json_field: "ENDDATETIME", post_field: "enddate", label: _("Ends"), type: "date", validation: "notblank", defaultval: new Date() },
@@ -114,7 +116,8 @@ $(function() {
                                 if (r.ROTATYPEID == 1) { css = 'asm-staff-rota-shift'; }
                                 if (r.ROTATYPEID == 2) { css = 'asm-staff-rota-overtime'; }
                                 h.push('<a class="' + css + '" href="#" data-id="' + r.ID + '">' + 
-                                    period + '</a><br />');
+                                    period + '<br />');
+                                h.push('<span class="asm-staff-rota-shift-work">' + r.WORKTYPENAME + '</span></a><br/>');
                             }
                             else { 
                                 h.push('<a class="asm-staff-rota-timeoff" href="#" data-id="' + r.ID + 
@@ -148,6 +151,10 @@ $(function() {
             ].join("\n");
         },
 
+        type_change: function() {
+            $("#worktype").closest("tr").toggle(format.to_int($("#type").val()) <= 10);
+        },
+
         bind: function() {
 
             var dialog = this.dialog;
@@ -156,11 +163,12 @@ $(function() {
             $(".asm-staff-rota").on("click", "a", function(e) {
                 var id = $(this).attr("data-id");
                 var row = common.get_row(controller.rows, id, "ID");
-                tableform.dialog_show_edit(dialog, row)
+                tableform.dialog_show_edit(dialog, row, { onload: function() { staff_rota.type_change(); }} )
                     .then(function() {
                         tableform.fields_update_row(dialog.fields, row);
                         row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
                         row.ROTATYPENAME = common.get_field(controller.rotatypes, row.ROTATYPEID, "ROTATYPE");
+                        row.WORKTYPENAME = common.get_field(controller.worktypes, row.WORKTYPEID, "WORKTYPE");
                         return tableform.fields_post(dialog.fields, "mode=update&rotaid=" + row.ID, controller.name);
                     })
                     .then(function(response) {
@@ -195,6 +203,7 @@ $(function() {
                                 tableform.fields_update_row(dialog.fields, row);
                                 row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
                                 row.ROTATYPENAME = common.get_field(controller.rotatypes, row.ROTATYPEID, "ROTATYPE");
+                                row.WORKTYPENAME = common.get_field(controller.worktypes, row.WORKTYPEID, "WORKTYPE");
                                 controller.rows.push(row);
                                 staff_rota.generate_table();
                                 tableform.dialog_close();
@@ -207,6 +216,7 @@ $(function() {
                         $("#endtime").val(config.str("DefaultShiftEnd"));
                         $("#person").personchooser("loadbyid", personid);
                         $("#type").val(1);
+                        staff_rota.type_change();
                     }
                 });
             });
@@ -260,6 +270,8 @@ $(function() {
             $("#flags").change(function() {
                 staff_rota.generate_table(); 
             });
+
+            $("#type").change(staff_rota.type_change);
         },
 
         sync: function() {

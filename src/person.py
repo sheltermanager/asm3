@@ -59,9 +59,10 @@ def get_rota_query(dbo):
     """
     Returns the SELECT and JOIN commands necessary for selecting from rota hours
     """
-    return "SELECT r.*, o.OwnerName, o.AdditionalFlags, rt.RotaType AS RotaTypeName " \
+    return "SELECT r.*, o.OwnerName, o.AdditionalFlags, rt.RotaType AS RotaTypeName, wt.WorkType AS WorkTypeName " \
         "FROM ownerrota r " \
         "LEFT OUTER JOIN lksrotatype rt ON rt.ID = r.RotaTypeID " \
+        "LEFT OUTER JOIN lkworktype wt ON wt.ID = r.WorkTypeID " \
         "INNER JOIN owner o ON o.ID = r.OwnerID "
 
 def get_person(dbo, personid):
@@ -514,6 +515,7 @@ def clone_rota_week(dbo, username, startdate, newdate, flags):
             "enddate":   python2display(l, ed),
             "endtime":   format_time(ed),
             "type":      str(r["ROTATYPEID"]),
+            "worktype":  str(r["WORKTYPEID"]),
             "comments":  r["COMMENTS"]
         }, l))
 
@@ -980,6 +982,7 @@ def insert_rota_from_form(dbo, username, post):
         ( "StartDateTime", post.db_datetime("startdate", "starttime")),
         ( "EndDateTime", post.db_datetime("enddate", "endtime")),
         ( "RotaTypeID", post.db_integer("type")),
+        ( "WorkTypeID", post.db_integer("worktype")),
         ( "Comments", post.db_string("comments"))
         ))
     db.execute(dbo, sql)
@@ -996,6 +999,7 @@ def update_rota_from_form(dbo, username, post):
         ( "StartDateTime", post.db_datetime("startdate", "starttime")),
         ( "EndDateTime", post.db_datetime("enddate", "endtime")),
         ( "RotaTypeID", post.db_integer("type")),
+        ( "WorkTypeID", post.db_integer("worktype")),
         ( "Comments", post.db_string("comments"))
         ))
     preaudit = db.query(dbo, "SELECT * FROM ownerrota WHERE ID = %d" % rotaid)

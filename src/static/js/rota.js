@@ -17,6 +17,7 @@ $(function() {
                     { json_field: "OWNERID", post_field: "person", personmode: "brief", personfilter: "volunteerandstaff", 
                         label: _("Person"), type: "person", validation: "notzero" },
                     { json_field: "ROTATYPEID", post_field: "type", label: _("Type"), type: "select", options: { displayfield: "ROTATYPE", valuefield: "ID", rows: controller.rotatypes }},
+                    { json_field: "WORKTYPEID", post_field: "worktype", label: _("Work"), type: "select", options: { displayfield: "WORKTYPE", valuefield: "ID", rows: controller.worktypes }},
                     { json_field: "STARTDATETIME", post_field: "startdate", label: _("Starts"), type: "date", validation: "notblank", defaultval: new Date() },
                     { json_field: "STARTDATETIME", post_field: "starttime", label: _("at"), type: "time", validation: "notblank", defaultval: config.str("DefaultShiftStart") },
                     { json_field: "ENDDATETIME", post_field: "enddate", label: _("Ends"), type: "date", validation: "notblank", defaultval: new Date() },
@@ -29,11 +30,12 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row)
+                    tableform.dialog_show_edit(dialog, row, { onload: function() { rota.type_change(); }} )
                         .then(function() {
                             tableform.fields_update_row(dialog.fields, row);
                             row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
                             row.ROTATYPENAME = common.get_field(controller.rotatypes, row.ROTATYPEID, "ROTATYPE");
+                            row.WORKTYPENAME = common.get_field(controller.worktypes, row.WORKTYPEID, "WORKTYPE");
                             return tableform.fields_post(dialog.fields, "mode=update&rotaid=" + row.ID, controller.name);
                         })
                         .then(function(response) {
@@ -46,6 +48,12 @@ $(function() {
                 },
                 columns: [
                     { field: "ROTATYPENAME", display: _("Type") },
+                    { field: "WORKTYPENAME", display: _("Work"), 
+                        formatter: function(row) { 
+                            if (row.ROTATYPEID <= 10) { return row.WORKTYPENAME; }
+                            return "";
+                        }
+                    },
                     { field: "PERSON", display: _("Person"),
                         formatter: function(row) {
                             if (row.OWNERID) {
@@ -70,7 +78,7 @@ $(function() {
                          if (controller.person) {
                              $("#person").personchooser("loadbyid", controller.person.ID);
                          }
-                         tableform.dialog_show_add(dialog)
+                         tableform.dialog_show_add(dialog, { onload: function() { rota.type_change(); }} )
                              .then(function() {
                                 return tableform.fields_post(dialog.fields, "mode=create", controller.name);
                              })
@@ -80,6 +88,7 @@ $(function() {
                                  tableform.fields_update_row(dialog.fields, row);
                                  row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
                                  row.ROTATYPENAME = common.get_field(controller.rotatypes, row.ROTATYPEID, "ROTATYPE");
+                                 row.WORKTYPENAME = common.get_field(controller.worktypes, row.WORKTYPEID, "WORKTYPE");
                                  controller.rows.push(row);
                                  tableform.table_update(table);
                                  tableform.dialog_close();
@@ -110,6 +119,10 @@ $(function() {
 
         },
 
+        type_change: function() {
+            $("#worktype").closest("tr").toggle(format.to_int($("#type").val()) <= 10);
+        },
+
         render: function() {
             var s = "";
             this.model();
@@ -131,9 +144,13 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
+
             $("#startdate").change(function() {
                 $("#enddate").val($("#startdate").val());
             });
+
+            $("#type").change(rota.type_change);
+
         },
 
         destroy: function() {
