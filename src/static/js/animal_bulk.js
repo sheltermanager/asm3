@@ -118,6 +118,34 @@ $(function() {
                 '</td>',
                 '</tr>',
 
+                '<tr id="currentvetrow">',
+                '<td>',
+                '<label for="currentvet">' + _("Current Vet") + '</label>',
+                '</td>',
+                '<td>',
+                '<input id="currentvet" data-post="currentvet" type="hidden" data-filter="vet" class="asm-personchooser" />',
+                '</td>',
+                '</tr>',
+
+                '<tr id="ownersvetrow">',
+                '<td>',
+                '<label for="ownersvet">' + _("Owners Vet") + '</label>',
+                '</td>',
+                '<td>',
+                '<input id="ownersvet" data-post="ownersvet" type="hidden" data-filter="vet" class="asm-personchooser"  />',
+                '</td>',
+                '</tr>',
+
+                '<tr id="animalflagsrow">',
+                '<td><label for="addflag">' + _("Add Flag") + '</label></td>',
+                '<td>',
+                '<select id="addflag" data-post="addflag" class="asm-selectbox">',
+                '<option value=""></option>',
+                html.list_to_options(controller.flags, "FLAG", "FLAG"),
+                '</select>',
+                '</td>',
+                '</tr>',
+
                 '</table>',
                 '<div class="centered">',
                 '<button id="bulk">' + html.icon("animal") + ' ' + _("Update") + '</button>',
@@ -153,6 +181,8 @@ $(function() {
 
         destroy: function() {
             common.widget_destroy("#animals");
+            common.widget_destroy("#currentvet", "personchooser");
+            common.widget_destroy("#ownersvet", "personchooser");
         },
 
         name: "animal_bulk",

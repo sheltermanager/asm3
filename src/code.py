@@ -1123,6 +1123,7 @@ class animal_bulk:
         c = html.controller_json("ynun", extlookups.get_ynun(dbo))
         c += html.controller_json("animaltypes", extlookups.get_animal_types(dbo))
         c += html.controller_plain("autolitters", html.json_autocomplete_litters(dbo))
+        c += html.controller_json("flags", extlookups.get_animal_flags(dbo))
         c += html.controller_json("internallocations", extlookups.get_internal_locations(dbo, session.locationfilter))
         s += html.controller(c)
         s += html.footer()

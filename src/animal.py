@@ -2169,6 +2169,16 @@ def update_animals_from_form(dbo, post, username):
         db.execute(dbo, "UPDATE animal SET IsHouseTrained = %d WHERE ID IN (%s)" % (post.integer("housetrained"), post["animals"]))
     if post["neutereddate"] != "":
         db.execute(dbo, "UPDATE animal SET Neutered = 1, NeuteredDate = %s WHERE ID IN (%s)" % (post.db_date("neutereddate"), post["animals"]))
+    if post["currentvet"] != "" and post["currentvet"] != "0":
+        db.execute(dbo, "UPDATE animal SET CurrentVetID = %d WHERE ID IN (%s)" % (post.integer("currentvet"), post["animals"]))
+    if post["ownersvet"] != "" and post["ownersvet"] != "0":
+        db.execute(dbo, "UPDATE animal SET OwnersVetID = %d WHERE ID IN (%s)" % (post.integer("ownersvet"), post["animals"]))
+    if post["addflag"] != "":
+        animals = db.query(dbo, "SELECT ID, AdditionalFlags FROM animal WHERE ID IN (%s)" % post["animals"])
+        for a in animals:
+            if a["ADDITIONALFLAGS"] is None: a["ADDITIONALFLAGS"] = ""
+            if a["ADDITIONALFLAGS"].find("%s|" % post["addflag"]) == -1:
+                db.execute(dbo, "UPDATE animal SET AdditionalFlags = %s WHERE ID = %d" % ( db.ds("%s%s|" % (a["ADDITIONALFLAGS"], post["addflag"])), a["ID"] ))
     return len(post.integer_list("animals"))
 
 def update_deceased_from_form(dbo, username, post):

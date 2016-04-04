@@ -1,6 +1,8 @@
 39
 ================
 
+04/04/16 Allow bulk changes animals to add flags #288
+04/04/16 Allow bulk change animals to update current/owners vet #234
 04/04/16 Rota shift category/work types #331
 31/03/16 Decode HTML entities in document titles
 31/03/16 Use word matching for advanced find person name search #306

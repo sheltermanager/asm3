@@ -35,7 +35,7 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "entryreason", "incidentcompleted", "incidenttype", "internallocation", "licencetype", "lkanimalflags", "lkcoattype", 
     "lkownerflags", "lksaccounttype", "lksdiarylink", "lksdonationfreq", "lksex", "lksfieldlink", "lksfieldtype", 
     "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", "lksposneg", "lksrotatype", 
-    "lksyesno", "lksynun", "lkurgency", "log", "logtype", "media", "medicalprofile", "messages", "onlineform", 
+    "lksyesno", "lksynun", "lkurgency", "lkworktype", "log", "logtype", "media", "medicalprofile", "messages", "onlineform", 
     "onlineformfield", "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
     "ownerlicence", "ownerlookingfor", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", 
     "reservationstatus", "role", "species", "stocklevel", "stocklocation", "stockusage", "stockusagetype", 
