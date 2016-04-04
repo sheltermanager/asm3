@@ -5602,6 +5602,7 @@ class publish_options:
         s = html.header("", session)
         c = html.controller_json("locations", extlookups.get_internal_locations(dbo))
         c += html.controller_str("publishurl", MULTIPLE_DATABASES_PUBLISH_URL)
+        c += html.controller_json("flags", extlookups.get_animal_flags(dbo))
         c += html.controller_bool("hasftpoverride", MULTIPLE_DATABASES_PUBLISH_FTP is not None and not configuration.publisher_ignore_ftp_override(dbo))
         c += html.controller_bool("hasfoundanimals", FOUNDANIMALS_FTP_USER != "")
         c += html.controller_bool("haspetslocated", PETSLOCATED_FTP_USER != "")

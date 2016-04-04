@@ -216,6 +216,7 @@ DEFAULTS = {
         "MobileTelephone,EmailAddress",
     "PetRescueLocationRegionID": "No",
     "PetsLocatedIncludeShelter": "No",
+    "PetsLocatedAnimalFlag": "",
     "PicturesInBooks": "Yes",
     "PDFInline": "Yes",
     "PublisherUseComments": "Yes",
@@ -863,6 +864,9 @@ def petslocated_customerid(dbo):
 
 def petslocated_includeshelter(dbo):
     return cboolean(dbo, "PetsLocatedIncludeShelter", DEFAULTS["PetsLocatedIncludeShelter"] == "Yes")
+
+def petslocated_animalflag(dbo):
+    return cstring(dbo, "PetsLocatedAnimalFlag", DEFAULTS["PetsLocatedAnimalFlag"])
 
 def publisher_use_comments(dbo):
     return cboolean(dbo, "PublisherUseComments", DEFAULTS["PublisherUseComments"] == "Yes")

@@ -4095,10 +4095,20 @@ class PetsLocatedUKPublisher(FTPPublisher):
 
         includelost = False # Don't publish lost animals - losers pay 12 pounds to post for 12 months
         includeshelter = configuration.petslocated_includeshelter(self.dbo)
+        shelterwithflag = configuration.petslocated_animalflag(self.dbo)
+
+        if shelterwithflag == "" and includeshelter:
+            self.setLastError("Include shelter animals set, but no flag chosen")
+            self.cleanup()
+            return
 
         lostanimals = lostfound.get_lostanimal_find_advanced(self.dbo, {})
         foundanimals = lostfound.get_foundanimal_find_advanced(self.dbo, {})
-        animals = self.getMatchingAnimals()
+        animals = []
+
+        if includeshelter:
+            animals = db.query(self.dbo, animal.get_animal_query(self.dbo) + " WHERE a.Archived = 0 AND " \
+                "a.AdditionalFlags LIKE '%%%s|%%'" % (shelterwithflag))
 
         if len(animals) == 0 and len(foundanimals) == 0 and len(lostanimals) == 0:
             self.setLastError("No animals found to publish.")
