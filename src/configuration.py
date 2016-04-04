@@ -860,6 +860,9 @@ def pets911_source(dbo):
 def petslocated_customerid(dbo):
     return cstring(dbo, "PetsLocatedCustomerID")
 
+def petslocated_includeshelter(dbo):
+    return cboolean(dbo, "PetsLocatedIncludeShelter", "No")
+
 def publisher_use_comments(dbo):
     return cboolean(dbo, "PublisherUseComments", DEFAULTS["PublisherUseComments"] == "Yes")
 

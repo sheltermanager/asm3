@@ -285,6 +285,15 @@ $(function() {
                 '<td><label for="pcukcustid">petslocated.com customer number</label></td>',
                 '<td><input id="pcukcustid" type="text" class="asm-textbox cfg" data="PetsLocatedCustomerID" /></td>',
                 '</tr>',
+                '<tr>',
+                '<td><label for="pcukincludeshelter">Include adoptable shelter animals</label></td>',
+                '<td><select id="pcukincludeshelter" class="asm-selectbox cfg" data="PetsLocatedIncludeShelter">',
+                '<option value="No">' + _("No") + '</option>',
+                '<option value="Yes">' + _("Yes") + '</option>',
+                '</select>',
+                '</td>',
+                '</tr>',
+
                 '</table>',
                 '</div>'
             ].join("\n");

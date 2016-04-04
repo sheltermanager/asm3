@@ -4093,9 +4093,13 @@ class PetsLocatedUKPublisher(FTPPublisher):
             self.cleanup()
             return
 
+        includelost = False # Don't publish lost animals - losers pay 12 pounds to post for 12 months
+        includeshelter = configuration.petslocated_includeshelter(self.dbo)
+
         lostanimals = lostfound.get_lostanimal_find_advanced(self.dbo, {})
         foundanimals = lostfound.get_foundanimal_find_advanced(self.dbo, {})
         animals = self.getMatchingAnimals()
+
         if len(animals) == 0 and len(foundanimals) == 0 and len(lostanimals) == 0:
             self.setLastError("No animals found to publish.")
             self.cleanup()
@@ -4112,84 +4116,81 @@ class PetsLocatedUKPublisher(FTPPublisher):
         csv = []
         header = "customerurn,importkey,lostfound,pettype,breed,sexofpet,neutered,petname,internalref,petage,hairtype,petcoloursall,chipchecked,chipno,petfeatures,lastlocationst,lastlocation,locationpostcode,datelostfound,otherdetails,privatenotes,showonsite,rawpettype,rawbreed,rawcolour,rawcoat,rawageyears\n"
 
-        # Lost Animals - DISABLED ON REQUEST FROM PETSLOCATED.COM
-        # In their business model, animal losers pay 10 pounds to list
-        # their lost animal for 12 months.
-        """
-        anCount = 0
-        for an in lostanimals:
-            try:
-                line = []
-                anCount += 1
-                self.log("Processing Lost Animal: %d: %s (%d of %d)" % ( an["ID"], an["COMMENTS"], anCount, len(foundanimals)))
+        # Lost Animals
+        if includelost:
+            anCount = 0
+            for an in lostanimals:
+                try:
+                    line = []
+                    anCount += 1
+                    self.log("Processing Lost Animal: %d: %s (%d of %d)" % ( an["ID"], an["COMMENTS"], anCount, len(foundanimals)))
 
-                # If the user cancelled, stop now
-                if self.shouldStopPublishing(): 
-                    self.log("User cancelled publish. Stopping.")
-                    self.resetPublisherProgress()
-                    return
+                    # If the user cancelled, stop now
+                    if self.shouldStopPublishing(): 
+                        self.log("User cancelled publish. Stopping.")
+                        self.resetPublisherProgress()
+                        return
 
-                # customerurn
-                line.append("\"%s\"" % customerid)
-                # importkey
-                line.append("\"L%s\"" % an["ID"])
-                # lostfound
-                line.append("\"L\"")
-                # pettype
-                line.append("\"%s\"" % self.plcSpecies(an["SPECIESNAME"], an["SPECIESNAME"]))
-                # breed
-                line.append("\"%s\"" % an["BREEDNAME"])
-                # sexofpet
-                line.append("\"%s\"" % self.plcSex(an["SEX"]))
-                # neutered
-                line.append("\"%s\"" % (self.plcNeutered(an["DISTFEAT"])))
-                # petname
-                line.append("\"\"")
-                # internalref
-                line.append("\"L%s\"" % an["ID"])
-                # petage
-                line.append("\"%s\"" % self.plcAge(an["AGEGROUP"]))
-                # hairtype
-                line.append("\"%s\"" % self.plcHairType(an))
-                # petcoloursall
-                line.append("\"%s\"" % self.plcColour(an["ADOPTAPETCOLOUR"]))
-                # chipchecked
-                line.append("\"1\"")
-                # chipno
-                line.append("\"\"")
-                # petfeatures
-                line.append("\"%s\"" % an["DISTFEAT"])
-                # lastlocationst
-                line.append("\"\"")
-                # lastlocation
-                line.append("\"%s\"" % an["AREALOST"])
-                # locationpostcode
-                line.append("\"%s\"" % self.plcPostcode(an["AREAPOSTCODE"], an["OWNERPOSTCODE"]))
-                # datelostfound
-                line.append("\"%s\"" % i18n.python2display(self.locale, an["DATELOST"]))
-                # otherdetails
-                line.append("\"\"")
-                # privatenotes
-                line.append("\"%s\"" % an["COMMENTS"])
-                # showonsite
-                line.append("\"1\"")
-                # rawpettype
-                line.append("\"%s\"" % an["SPECIESNAME"])
-                # rawbreed
-                line.append("\"%s\"" % an["BREEDNAME"])
-                # rawcolour
-                line.append("\"%s\"" % an["BASECOLOURNAME"])
-                # rawcoat
-                line.append("\"\"")
-                # rawageyears
-                line.append("\"%s\"" % self.plcAgeYears(agegroup=an["AGEGROUP"]))
-                # Add to our CSV file
-                csv.append(",".join(line))
-                # Mark success in the log
-                self.logSuccess("Processed Lost Animal: %d: %s (%d of %d)" % ( an["ID"], an["COMMENTS"], anCount, len(foundanimals)))
-            except Exception,err:
-                self.logError("Failed processing lost animal: %s, %s" % (str(an["ID"]), err), sys.exc_info())
-        """
+                    # customerurn
+                    line.append("\"%s\"" % customerid)
+                    # importkey
+                    line.append("\"L%s\"" % an["ID"])
+                    # lostfound
+                    line.append("\"L\"")
+                    # pettype
+                    line.append("\"%s\"" % self.plcSpecies(an["SPECIESNAME"], an["SPECIESNAME"]))
+                    # breed
+                    line.append("\"%s\"" % an["BREEDNAME"])
+                    # sexofpet
+                    line.append("\"%s\"" % self.plcSex(an["SEX"]))
+                    # neutered
+                    line.append("\"%s\"" % (self.plcNeutered(an["DISTFEAT"])))
+                    # petname
+                    line.append("\"\"")
+                    # internalref
+                    line.append("\"L%s\"" % an["ID"])
+                    # petage
+                    line.append("\"%s\"" % self.plcAge(an["AGEGROUP"]))
+                    # hairtype
+                    line.append("\"%s\"" % self.plcHairType(an))
+                    # petcoloursall
+                    line.append("\"%s\"" % self.plcColour(an["ADOPTAPETCOLOUR"]))
+                    # chipchecked
+                    line.append("\"1\"")
+                    # chipno
+                    line.append("\"\"")
+                    # petfeatures
+                    line.append("\"%s\"" % an["DISTFEAT"])
+                    # lastlocationst
+                    line.append("\"\"")
+                    # lastlocation
+                    line.append("\"%s\"" % an["AREALOST"])
+                    # locationpostcode
+                    line.append("\"%s\"" % self.plcPostcode(an["AREAPOSTCODE"], an["OWNERPOSTCODE"]))
+                    # datelostfound
+                    line.append("\"%s\"" % i18n.python2display(self.locale, an["DATELOST"]))
+                    # otherdetails
+                    line.append("\"\"")
+                    # privatenotes
+                    line.append("\"%s\"" % an["COMMENTS"])
+                    # showonsite
+                    line.append("\"1\"")
+                    # rawpettype
+                    line.append("\"%s\"" % an["SPECIESNAME"])
+                    # rawbreed
+                    line.append("\"%s\"" % an["BREEDNAME"])
+                    # rawcolour
+                    line.append("\"%s\"" % an["BASECOLOURNAME"])
+                    # rawcoat
+                    line.append("\"\"")
+                    # rawageyears
+                    line.append("\"%s\"" % self.plcAgeYears(agegroup=an["AGEGROUP"]))
+                    # Add to our CSV file
+                    csv.append(",".join(line))
+                    # Mark success in the log
+                    self.logSuccess("Processed Lost Animal: %d: %s (%d of %d)" % ( an["ID"], an["COMMENTS"], anCount, len(foundanimals)))
+                except Exception,err:
+                    self.logError("Failed processing lost animal: %s, %s" % (str(an["ID"]), err), sys.exc_info())
 
         # Found Animals
         anCount = 0
@@ -4267,86 +4268,87 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 self.logError("Failed processing found animal: %s, %s" % (str(an["ID"]), err), sys.exc_info())
 
         # Shelter animals
-        anCount = 0
-        for an in animals:
-            try:
-                line = []
-                anCount += 1
-                self.log("Processing: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
-                self.updatePublisherProgress(self.getProgress(anCount, len(animals)))
+        if includeshelter:
+            anCount = 0
+            for an in animals:
+                try:
+                    line = []
+                    anCount += 1
+                    self.log("Processing: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                    self.updatePublisherProgress(self.getProgress(anCount, len(animals)))
 
-                # If the user cancelled, stop now
-                if self.shouldStopPublishing(): 
-                    self.log("User cancelled publish. Stopping.")
-                    self.resetPublisherProgress()
-                    return
+                    # If the user cancelled, stop now
+                    if self.shouldStopPublishing(): 
+                        self.log("User cancelled publish. Stopping.")
+                        self.resetPublisherProgress()
+                        return
 
-                # Upload one image for this animal
-                # self.uploadImage(an, an["WEBSITEMEDIANAME"], an["SHELTERCODE"] + ".jpg")
+                    # Upload one image for this animal
+                    # self.uploadImage(an, an["WEBSITEMEDIANAME"], an["SHELTERCODE"] + ".jpg")
 
-                # customerurn
-                line.append("\"%s\"" % customerid)
-                # importkey
-                line.append("\"A%s\"" % an["ID"])
-                # lostfound
-                line.append("\"F\"")
-                # pettype
-                line.append("\"%s\"" % self.plcSpecies(an["SPECIESNAME"], an["PETFINDERSPECIES"]))
-                # breed
-                line.append("\"%s\"" % an["BREEDNAME"])
-                # sexofpet
-                line.append("\"%s\"" % self.plcSex(an["SEX"]))
-                # neutered
-                line.append("\"%s\"" % self.plcNeutered(an["NEUTERED"]))
-                # petname
-                line.append("\"%s\"" % an["ANIMALNAME"])
-                # internalref
-                line.append("\"A%s\"" % an["ID"])
-                # petage
-                line.append("\"%s\"" % self.plcAge(an["AGEGROUP"]))
-                # hairtype
-                line.append("\"%s\"" % self.plcHairType(an))
-                # petcoloursall
-                line.append("\"%s\"" % self.plcColour(an["ADOPTAPETCOLOUR"]))
-                # chipchecked
-                line.append("\"%d\"" % self.plcChipChecked(an["IDENTICHIPPED"]))
-                # chipno
-                line.append("\"%s\"" % an["IDENTICHIPNUMBER"])
-                # petfeatures
-                line.append("\"%s\"" % an["MARKINGS"])
-                # lastlocationst
-                line.append("\"\"")
-                # lastlocation
-                line.append("\"\"")
-                # locationpostcode
-                line.append("\"%s\"" % self.plcPostcode(an["BROUGHTINBYOWNERPOSTCODE"]))
-                # datelostfound
-                line.append("\"%s\"" % i18n.python2display(self.locale, an["DATEBROUGHTIN"]))
-                # otherdetails
-                line.append("\"%s\"" % an["ANIMALCOMMENTS"])
-                # privatenotes
-                line.append("\"%s\"" % an["HIDDENANIMALDETAILS"])
-                # showonsite
-                line.append("\"1\"")
-                # rawpettype
-                line.append("\"%s\"" % an["SPECIESNAME"])
-                # rawbreed
-                line.append("\"%s\"" % an["BREEDNAME"])
-                # rawcolour
-                line.append("\"%s\"" % an["BASECOLOURNAME"])
-                # rawcoat
-                line.append("\"%s\"" % an["COATTYPENAME"])
-                # rawageyears
-                line.append("\"%s\"" % self.plcAgeYears(dob=an["DATEOFBIRTH"]))
-                # Add to our CSV file
-                csv.append(",".join(line))
-                # Mark success in the log
-                self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
-            except Exception,err:
-                self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
+                    # customerurn
+                    line.append("\"%s\"" % customerid)
+                    # importkey
+                    line.append("\"A%s\"" % an["ID"])
+                    # lostfound
+                    line.append("\"F\"")
+                    # pettype
+                    line.append("\"%s\"" % self.plcSpecies(an["SPECIESNAME"], an["PETFINDERSPECIES"]))
+                    # breed
+                    line.append("\"%s\"" % an["BREEDNAME"])
+                    # sexofpet
+                    line.append("\"%s\"" % self.plcSex(an["SEX"]))
+                    # neutered
+                    line.append("\"%s\"" % self.plcNeutered(an["NEUTERED"]))
+                    # petname
+                    line.append("\"%s\"" % an["ANIMALNAME"])
+                    # internalref
+                    line.append("\"A%s\"" % an["ID"])
+                    # petage
+                    line.append("\"%s\"" % self.plcAge(an["AGEGROUP"]))
+                    # hairtype
+                    line.append("\"%s\"" % self.plcHairType(an))
+                    # petcoloursall
+                    line.append("\"%s\"" % self.plcColour(an["ADOPTAPETCOLOUR"]))
+                    # chipchecked
+                    line.append("\"%d\"" % self.plcChipChecked(an["IDENTICHIPPED"]))
+                    # chipno
+                    line.append("\"%s\"" % an["IDENTICHIPNUMBER"])
+                    # petfeatures
+                    line.append("\"%s\"" % an["MARKINGS"])
+                    # lastlocationst
+                    line.append("\"\"")
+                    # lastlocation
+                    line.append("\"\"")
+                    # locationpostcode
+                    line.append("\"%s\"" % self.plcPostcode(an["BROUGHTINBYOWNERPOSTCODE"]))
+                    # datelostfound
+                    line.append("\"%s\"" % i18n.python2display(self.locale, an["DATEBROUGHTIN"]))
+                    # otherdetails
+                    line.append("\"%s\"" % an["ANIMALCOMMENTS"])
+                    # privatenotes
+                    line.append("\"%s\"" % an["HIDDENANIMALDETAILS"])
+                    # showonsite
+                    line.append("\"1\"")
+                    # rawpettype
+                    line.append("\"%s\"" % an["SPECIESNAME"])
+                    # rawbreed
+                    line.append("\"%s\"" % an["BREEDNAME"])
+                    # rawcolour
+                    line.append("\"%s\"" % an["BASECOLOURNAME"])
+                    # rawcoat
+                    line.append("\"%s\"" % an["COATTYPENAME"])
+                    # rawageyears
+                    line.append("\"%s\"" % self.plcAgeYears(dob=an["DATEOFBIRTH"]))
+                    # Add to our CSV file
+                    csv.append(",".join(line))
+                    # Mark success in the log
+                    self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                except Exception,err:
+                    self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
-        # Mark published
-        self.markAnimalsPublished(animals)
+            # Mark published
+            self.markAnimalsPublished(animals)
 
         filename = "%s_%s.csv" % (customerid, self.dbo.database)
         self.saveFile(os.path.join(self.publishDir, filename), header + "\n".join(csv))
