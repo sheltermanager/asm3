@@ -371,6 +371,9 @@ only show animals of a particular species, etc?</p>
 information, or information requested from the user at report generation time.</p>
 <ul class="simple">
 <li>$USER$ - Substitutes the current user&#8217;s name.</li>
+<li>$LOCATIONFILTER$ - Substitutes the current user&#8217;s location filter (a comma
+separated string of internal location IDs) or a list of all internal location
+IDs if the user does not have a location filter.</li>
 <li>$CURRENT_DATE$ - Substitutes today&#8217;s date in an appropriate string SQL format
 for the current database. This saves you having to use NOW() or
 CURRENT_DATE() or various other SQL functions specific to one database.</li>

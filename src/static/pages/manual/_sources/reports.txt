@@ -108,6 +108,10 @@ information, or information requested from the user at report generation time.
 
 * $USER$ - Substitutes the current user's name. 
 
+* $LOCATIONFILTER$ - Substitutes the current user's location filter (a comma
+  separated string of internal location IDs) or a list of all internal location
+  IDs if the user does not have a location filter.
+
 * $CURRENT_DATE$ - Substitutes today's date in an appropriate string SQL format
   for the current database. This saves you having to use NOW() or
   CURRENT_DATE() or various other SQL functions specific to one database.
