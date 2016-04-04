@@ -7,7 +7,6 @@ import os, sys
 from i18n import _, BUILD
 from sitedefs import DB_PK_STRATEGY
 
-LATEST_VERSION = 33906
 VERSIONS = ( 
     2870, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3050,
     3051, 3081, 3091, 3092, 3093, 3094, 3110, 3111, 3120, 3121, 3122, 3123, 3200,
@@ -21,8 +20,10 @@ VERSIONS = (
     33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702, 33703, 33704, 33705,
     33706, 33707, 33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716,
     33717, 33718, 33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904,
-    33905, 33906
+    33905, 33906, 33907
 )
+
+LATEST_VERSION = VERSIONS[-1]
 
 # All ASM3 tables
 TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalfield",
@@ -652,11 +653,13 @@ def sql_structure(dbo):
         fint("AnimalID"),
         fint("TestTypeID"),
         fint("TestResultID"),
+        fint("AdministeringVetID", True),
         fdate("DateOfTest", True),
         fdate("DateRequired"),
         fint("Cost"),
         fdate("CostPaidDate", True),
         flongstr("Comments") ))
+    sql += index("animaltest_AdministeringVetID", "animaltest", "AdministeringVetID")
     sql += index("animaltest_AnimalID", "animaltest", "AnimalID")
     sql += index("animaltest_DateRequired", "animaltest", "DateRequired")
     sql += index("animaltest_CostPaidDate", "animaltest", "CostPaidDate")
@@ -4434,4 +4437,10 @@ def update_33906(dbo):
     db.execute_dbupdate(dbo, "INSERT INTO lkworktype (ID, WorkType) VALUES (%d, %s)" % (3, db.ds(_("Cattery", l))))
     db.execute_dbupdate(dbo, "INSERT INTO lkworktype (ID, WorkType) VALUES (%d, %s)" % (4, db.ds(_("Reception", l))))
     db.execute_dbupdate(dbo, "INSERT INTO lkworktype (ID, WorkType) VALUES (%d, %s)" % (5, db.ds(_("Office", l))))
+
+def update_33907(dbo):
+    # Add animaltest.AdministeringVetID
+    add_column(dbo, "animaltest", "AdministeringVetID", "INTEGER")
+    add_index(dbo, "animaltest_AdministeringVetID", "animaltest", "AdministeringVetID")
+    db.execute_dbupdate(dbo, "UPDATE animaltest SET AdministeringVetID = 0")
 

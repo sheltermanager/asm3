@@ -354,6 +354,8 @@ VaccinationManufacturer
     The manufacturer of the vaccine
 VaccinationCost
     The cost of this vaccine
+VaccinationAdministeringVet
+    The name of the vet who administered the vaccination
 VaccinationComments
     The vaccination comments
 VaccinationDescription
@@ -393,6 +395,8 @@ TestGiven
     The date the test was performed 
 TestCost
     The cost of the test
+TestAdministeringVet
+    The name of the vet who performed the test
 TestComments
     The test comments
 TestDescription

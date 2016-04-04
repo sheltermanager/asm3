@@ -355,6 +355,7 @@ def animal_tags(dbo, a):
         "VACCINATIONMANUFACTURER":  "MANUFACTURER",
         "VACCINATIONCOST":          "c:COST",
         "VACCINATIONCOMMENTS":      "COMMENTS",
+        "VACCINATIONADMINISTERINGVET": "ADMINISTERINGVETNAME",
         "VACCINATIONDESCRIPTION":   "VACCINATIONDESCRIPTION"
     }
     tags.update(table_tags(dbo, d, medical.get_vaccinations(dbo, a["ID"], not include_incomplete_vacc), "VACCINATIONTYPE", "DATEOFVACCINATION"))
@@ -368,6 +369,7 @@ def animal_tags(dbo, a):
         "TESTGIVEN":                "d:DATEOFTEST",
         "TESTCOST":                 "c:COST",
         "TESTCOMMENTS":             "COMMENTS",
+        "TESTADMINISTERINGVET":     "ADMINISTERINGVETNAME",
         "TESTDESCRIPTION":          "TESTDESCRIPTION"
     }
     tags.update(table_tags(dbo, d, medical.get_tests(dbo, a["ID"], not include_incomplete_vacc), "TESTNAME", "DATEOFTEST"))

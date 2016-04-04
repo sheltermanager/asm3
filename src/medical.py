@@ -131,7 +131,8 @@ def get_test_query(dbo):
         "ELSE il.LocationName END AS LocationName, " \
         "CASE WHEN a.ActiveMovementType Is Not Null AND a.ActiveMovementType > 0 THEN " \
         "'' ELSE a.ShelterLocationUnit END AS LocationUnit, " \
-        "il.LocationName AS ShelterLocationName, a.ShelterLocationUnit " \
+        "il.LocationName AS ShelterLocationName, a.ShelterLocationUnit, " \
+        "adv.OwnerName AS AdministeringVetName " \
         "FROM animal a " \
         "LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID " \
         "LEFT OUTER JOIN owner co ON co.ID = ad.OwnerID " \
@@ -139,6 +140,7 @@ def get_test_query(dbo):
         "INNER JOIN animaltest at ON a.ID = at.AnimalID " \
         "INNER JOIN testtype tt ON tt.ID = at.TestTypeID " \
         "LEFT OUTER JOIN testresult tr ON tr.ID = at.TestResultID " \
+        "LEFT OUTER JOIN owner adv ON adv.ID = at.AdministeringVetID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation "
 
 def get_vaccination_query(dbo):
@@ -563,13 +565,13 @@ def complete_vaccination(dbo, username, vaccinationid, newdate, vetid = 0):
         ( db.dd(newdate), db.di(vetid), db.ds(username), db.ddt(now(dbo.timezone)), vaccinationid))
     audit.edit(dbo, username, "animalvaccination", vaccinationid, str(vaccinationid) + " => given " + str(newdate))
 
-def complete_test(dbo, username, testid, newdate, testresult):
+def complete_test(dbo, username, testid, newdate, testresult, vetid = 0):
     """
     Marks a test performed on newdate with testresult
     """
-    db.execute(dbo, "UPDATE animaltest SET DateOfTest = %s, " \
+    db.execute(dbo, "UPDATE animaltest SET DateOfTest = %s, AdministeringVetID = %s, " \
         "LastChangedBy = %s, LastChangedDate = %s, TestResultID = %d WHERE ID = %d" % \
-        ( db.dd(newdate), db.ds(username), db.ddt(now(dbo.timezone)), testresult, testid))
+        ( db.dd(newdate), db.di(vetid), db.ds(username), db.ddt(now(dbo.timezone)), testresult, testid))
     audit.edit(dbo, username, "animaltest", testid, "%d => performed on %s (result: %d)" % (testid, str(newdate), testresult))
     # ASM2_COMPATIBILITY
     update_asm2_tests(dbo, testid)
@@ -888,6 +890,7 @@ def insert_test_from_form(dbo, username, post):
         ( "AnimalID", post.db_integer("animal")),
         ( "TestTypeID", post.db_integer("type")),
         ( "TestResultID", post.db_integer("result")),
+        ( "AdministeringVetID", post.db_integer("administeringvet")),
         ( "DateOfTest", post.db_date("given")),
         ( "DateRequired", post.db_date("required")),
         ( "Cost", post.db_integer("cost")),
@@ -913,6 +916,7 @@ def update_test_from_form(dbo, username, post):
         ( "AnimalID", post.db_integer("animal")),
         ( "TestTypeID", post.db_integer("type")),
         ( "TestResultID", post.db_integer("result")),
+        ( "AdministeringVetID", post.db_integer("administeringvet")),
         ( "DateOfTest", post.db_date("given")),
         ( "DateRequired", post.db_date("required")),
         ( "Cost", post.db_integer("cost")),

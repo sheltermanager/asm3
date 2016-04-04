@@ -1759,9 +1759,10 @@ class animal_test:
         elif mode == "perform":
             users.check_permission(session, users.CHANGE_TEST)
             newdate = post.date("newdate")
+            vet = post.integer("givenvet")
             testresult = post.integer("testresult")
             for vid in post.integer_list("ids"):
-                extmedical.complete_test(session.dbo, session.user, vid, newdate, testresult)
+                extmedical.complete_test(session.dbo, session.user, vid, newdate, testresult, vet)
             if post.integer("item") != -1:
                 extstock.deduct_stocklevel_from_form(session.dbo, session.user, post)
 
@@ -6171,9 +6172,10 @@ class test:
         elif mode == "perform":
             users.check_permission(session, users.CHANGE_TEST)
             newdate = post.date("newdate")
+            vet = post.integer("givenvet")
             testresult = post.integer("testresult")
             for vid in post.integer_list("ids"):
-                extmedical.complete_test(session.dbo, session.user, vid, newdate, testresult)
+                extmedical.complete_test(session.dbo, session.user, vid, newdate, testresult, vet)
             if post.integer("item") != -1:
                 extstock.deduct_stocklevel_from_form(session.dbo, session.user, post)
 

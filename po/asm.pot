@@ -658,7 +658,7 @@ msgstr ""
 msgid "Administered"
 msgstr ""
 
-#: medical.js vaccination.js
+#: test.js medical.js vaccination.js
 msgid "Administering Vet"
 msgstr ""
 
@@ -11714,8 +11714,8 @@ msgstr ""
 msgid "Very Large"
 msgstr ""
 
-#: onlineforms.js common.js header_edit_header.js person_find_results.js
-#: vaccination.js dbupdate.py html.py
+#: test.js onlineforms.js common.js header_edit_header.js
+#: person_find_results.js vaccination.js dbupdate.py html.py
 msgid "Vet"
 msgstr ""
 

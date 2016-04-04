@@ -6,6 +6,7 @@ $(function() {
     var test = {
 
         lastanimal: null,
+        lastvet: null,
 
         model: function() {
             var dialog = {
@@ -26,6 +27,7 @@ $(function() {
                     { json_field: "DATEOFTEST", post_field: "given", label: _("Performed"), type: "date" },
                     { json_field: "TESTRESULTID", post_field: "result", label: _("Result"), type: "select", 
                         options: { displayfield: "RESULTNAME", valuefield: "ID", rows: controller.testresults }},
+                    { json_field: "ADMINISTERINGVETID", post_field: "administeringvet", label: _("Administering Vet"), type: "person", personfilter: "vet" },
                     { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency", hideif: function() { return !config.bool("ShowCostAmount"); } },
                     { json_field: "COSTPAIDDATE", post_field: "costpaid", label: _("Paid"), type: "date", hideif: function() { return !config.bool("ShowCostPaid"); } },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
@@ -43,6 +45,7 @@ $(function() {
                         $("#animal").closest("tr").show();
                     }
                     $("#animals").closest("tr").hide();
+                    $("#administeringvet").personchooser("clear");
                     test.enable_default_cost = false;
                     tableform.fields_populate_from_json(dialog.fields, row);
                     test.enable_default_cost = true;
@@ -115,6 +118,12 @@ $(function() {
                             }
                             return "";
                         }},
+                    { field: "ADMINISTERINGVET", display: _("Vet"), 
+                        formatter: function(row) {
+                            if (!row.ADMINISTERINGVETID) { return ""; }
+                            return '<a href="person?id=' + row.ADMINISTERINGVETID + '">' + row.ADMINISTERINGVETNAME + '</a>';
+                        }
+                    },
                     { field: "COST", display: _("Cost"), formatter: tableform.format_currency,
                         hideif: function() { return !config.bool("ShowCostAmount"); }
                     },
@@ -225,6 +234,7 @@ $(function() {
                         $("#animal").animalchooser("clear");
                     }
                     $("#animals").closest("tr").hide();
+                    $("#administeringvet").personchooser("clear");
                     $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
                     $("#type").select("value", config.str("AFDefaultTestType"));
                     test.enable_default_cost = true;
@@ -272,6 +282,10 @@ $(function() {
                 html.list_to_options(controller.testresults, "ID", "RESULTNAME"),
                 '</select>',
                 '</td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="givenvet">' + _("Administering Vet") + '</label></td>',
+                '<td><input id="givenvet" data="givenvet" type="hidden" class="asm-personchooser asm-field" data-filter="vet" /></td>',
                 '</tr>',
                 '<tr class="tagstock"><td></td><td>' + html.info(_("These fields allow you to deduct stock for the test(s) given. This single deduction should cover the selected tests being performed.")) + '</td></tr>',
                 '<tr class="tagstock">',
@@ -362,6 +376,12 @@ $(function() {
             $("#animal").bind("animalchooserchange", function(event, rec) { test.lastanimal = rec; });
             $("#animal").bind("animalchooserloaded", function(event, rec) { test.lastanimal = rec; });
 
+            // Same for the vet
+            $("#administeringvet").bind("personchooserchange", function(event, rec) { test.lastvet = rec; });
+            $("#administeringvet").bind("personchooserloaded", function(event, rec) { test.lastvet = rec; });
+            $("#givenvet").bind("personchooserchange", function(event, rec) { test.lastvet = rec; });
+            $("#givenvet").bind("personchooserloaded", function(event, rec) { test.lastvet = rec; });
+
             if (controller.newtest == 1) {
                 this.new_test();
             }
@@ -415,14 +435,18 @@ $(function() {
             }
             row.TESTNAME = common.get_field(controller.testtypes, row.TESTTYPEID, "TESTNAME");
             row.RESULTNAME = common.get_field(controller.testresults, row.TESTRESULTID, "RESULTNAME");
+            row.ADMINISTERINGVETNAME = "";
+            if (row.ADMINISTERINGVETID && test.lastvet) { row.ADMINISTERINGVETNAME = test.lastvet.OWNERNAME; }
         },
 
         destroy: function() {
             common.widget_destroy("#dialog-given");
             common.widget_destroy("#animal");
             common.widget_destroy("#animals");
+            common.widget_destroy("#administeringvet");
             tableform.dialog_destroy();
             this.lastanimal = null;
+            this.lastvet = null;
         },
 
         name: "test",
