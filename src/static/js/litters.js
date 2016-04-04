@@ -60,7 +60,7 @@ $(function() {
                         return "";
                     }},
                     { field: "SPECIESNAME", display: _("Species") },
-                    { field: "DATE", display: _("Starts"), formatter: tableform.format_date, initialsort: true },
+                    { field: "DATE", display: _("Starts"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
                     { field: "INVALIDDATE", display: _("Expires"), formatter: tableform.format_date },
                     { field: "NUMBERINLITTER", display: _("Number in litter") },
                     { field: "CACHEDANIMALSLEFT", display: _("Remaining") },

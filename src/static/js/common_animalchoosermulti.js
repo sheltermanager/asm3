@@ -297,7 +297,8 @@
                             litters.append('<span style="white-space: nowrap"><input type="checkbox" class="litcheck" data="' + 
                                 self.litterid_escape(l.ACCEPTANCENUMBER) + '" id="lit' + l.ID + '" />' +
                                 '<label for="lit' + l.ID + '">' + 
-                                l.MOTHERCODE + ' ' + l.MOTHERNAME + ' ' + l.ACCEPTANCENUMBER + ' - ' + l.SPECIESNAME + '</label></span> ');
+                                common.nulltostr(l.MOTHERCODE) + ' ' + common.nulltostr(l.MOTHERNAME) + 
+                                ' ' + l.ACCEPTANCENUMBER + ' - ' + l.SPECIESNAME + '</label></span> ');
                         }
                     });
                     litters.off("click", "input[type='checkbox']");
