@@ -421,12 +421,24 @@
         else if (method == "removeRetiredOptions") {
             $(this).each(function() {
                 tv = $(this);
-                tv.find("option").each(function() {
-                    // Note that we never remove the selected item, even if it's retired
-                    if (!$(this).prop("selected") && $(this).attr("data-retired") == "1") {
-                        $(this).remove();
-                    }
-                });
+                // newval contains a "mode". If mode == all, then we remove all retired items
+                // (behaviour you want when adding records)
+                if (newval !== undefined && newval == "all") {
+                    tv.find("option").each(function() {
+                        if ($(this).attr("data-retired") == "1") {
+                            $(this).remove();
+                        }
+                    });
+                }
+                // mode isn't set - don't remove the selected item if it's retired
+                // (behaviour you want when editing records)
+                else {
+                    tv.find("option").each(function() {
+                        if (!$(this).prop("selected") && $(this).attr("data-retired") == "1") {
+                            $(this).remove();
+                        }
+                    });
+                }
             });
         }
         else if (method == "label") {

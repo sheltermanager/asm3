@@ -622,7 +622,7 @@
             // Remove any retired lookups
             $.each(dialog.fields, function(i, v) {
                 if (v.type == "select") {
-                    $("#" + v.post_field).select("removeRetiredOptions");
+                    $("#" + v.post_field).select("removeRetiredOptions", "all");
                 }
             });
 
