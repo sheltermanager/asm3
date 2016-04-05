@@ -1,6 +1,7 @@
 39
 ================
 
+05/04/16 Fix bug where locked db.execute would return None
 04/04/16 Fix for first element in list being inactive in new records
 04/04/16 Litters should sort desc on date, fix nulls in multiselect
 04/04/16 Add $LOCATIONFILTER$ report token #388

@@ -318,7 +318,7 @@ def execute(dbo, sql, override_lock = False):
         we don't do anything. This makes it easy to lock the database
         for writes, but keep databases upto date.
     """
-    if not override_lock and dbo.locked: return
+    if not override_lock and dbo.locked: return 0
     try:
         c, s = connect_cursor_open(dbo)
         s.execute(sql)
