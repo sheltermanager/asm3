@@ -718,7 +718,7 @@ def post_form(url, fields, headers = {}, cookies = {}):
     r = requests.post(url, data=fields, headers=headers, cookies=cookies)
     return { "cookies": r.cookies, "headers": r.headers, "response": r.text, "status": r.status_code, "requestheaders": r.request.headers, "requestbody": r.request.body }
 
-def post_multipart(url, fields, files, headers = {}, cookies = {}):
+def post_multipart(url, fields = None, files = None, headers = {}, cookies = {}):
     """
     Does a multipart form post
     url: The http url to post to
@@ -728,7 +728,15 @@ def post_multipart(url, fields, files, headers = {}, cookies = {}):
     return value is the http headers (a map) and server's response as a string
     """
     r = requests.post(url, files=files, data=fields, headers=headers, cookies=cookies)
-    return { "cookies": r.cookies, "headers": r.headers, "response": r.text, "status": r.status_code, "requestheaders": r.request.headers, "requestbody": r.request.body }
+    return { 
+        "cookies": r.cookies, 
+        "headers": r.headers, 
+        "response": r.text, 
+        "status": r.status_code, 
+        "redirects": len(r.history), 
+        "requestheaders": r.request.headers, 
+        "requestbody": r.request.body 
+    }
 
 def post_xml(url, xml, headers = {}):
     """

@@ -3593,10 +3593,10 @@ class PetLinkPublisher(AbstractPublisher):
         files = {
             "file": ( "import.csv", "\n".join(csv), "text/csv")
         }
-        self.log("Uploading data file to %s..." % (UPLOAD_URL))
+        self.log("Uploading data file (%d csv lines) to %s..." % (len(csv), UPLOAD_URL))
         try:
-            r = utils.post_multipart(UPLOAD_URL, {}, files, cookies = rcookies)
-            self.log("req hdr: %s, \nreq data: %s" % (r["requestheaders"], r["requestbody"]))
+            r = utils.post_multipart(url=UPLOAD_URL, files=files, cookies=rcookies)
+            self.log("(%s redirects) req hdr: %s, \nreq data: %s" % (r["redirects"], r["requestheaders"], r["requestbody"]))
 
             # Look for any errors in the response
             for e in utils.regex_multi("id=(\d+?), transponder: (.+?)</li>", r["response"]):
