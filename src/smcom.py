@@ -38,7 +38,7 @@ def get_database_info(alias):
     dbo.dbtype = "POSTGRESQL"
     dbo.alias = alias
     a = _get_account_info(alias)
-    if a is None: 
+    if a is None or not a.has_key("user"):
         dbo.database = "FAIL"
         return dbo
     dbo.database = str(a["user"])
@@ -67,7 +67,7 @@ def get_expiry_date(dbo):
 
 def _get_account_info(alias):
     """
-    Returns the account file info as a list of strings.
+    Returns the account file info as a dictionary.
     Returns None if the account doesn't exist.
     """
     return smcom_client.get_account(alias)
