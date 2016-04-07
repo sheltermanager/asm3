@@ -601,6 +601,7 @@ $(function() {
             '<p class="asm-menu-category">',
             '<a id="newstoggle" href="#">',
             _("ASM News"),
+            '<span id="newsunread"></span>',
             '<span id="newsnav" class="ui-icon ui-icon-triangle-1-e" style="float: left"></span>',
             '</a>',
             '</p>',
@@ -786,6 +787,10 @@ $(function() {
                     $("#newsnav").removeClass("ui-icon-triangle-1-e");
                     $("#newsnav").addClass("ui-icon-triangle-1-s");
                     $("#newswrapper").fadeIn();
+                    // Mark all news seen for this user
+                    main.max_news_user = main.max_news_story;
+                    common.local_set(asm.user + "_news", main.max_news_story);
+                    $("#newsunread").html("(0)");
                 }
                 else {
                     $("#newsnav").removeClass("ui-icon-triangle-1-s");
@@ -803,12 +808,20 @@ $(function() {
             }
         },
 
+        /** The highest story number from the news feed */
+        max_news_story: 0,
+
+        /** The highest story number the current user has seen */
+        max_news_user: 0,
+
         sync: function() {
+
             // If there's been a new deployment of ASM since we last
             // downloaded it to the browser, force a page reload to get the new code.
             if (asm.build != controller.build) {
                 common.route_reload(true);
             }
+
             // add a class to the html element for desktop or mobile
             if (typeof asm !== "undefined" && asm.mobileapp) { 
                 $("html").removeClass("desktop");
@@ -818,6 +831,16 @@ $(function() {
                 $("html").removeClass("mobile");
                 $("html").addClass("desktop"); 
             }
+
+            // What's the highest news story available in the DOM/newsfeed?
+            $("#newswrapper p").each(function() {
+                var t = $(this), ds = format.to_int(t.attr("data-story"));
+                if (ds > main.max_news_story) { main.max_news_story = ds; }
+            });
+
+            // What's the highest news story this person has seen?
+            main.max_news_user = format.to_int(common.local_get(asm.user + "_news"));
+            $("#newsunread").html( "(" + (main.max_news_story - main.max_news_user) + ")" );
         },
 
         destroy: function() {
