@@ -23,6 +23,35 @@ $(function() {
             return h.join("\n");
         },
 
+        /** 
+         * Renders a specialised shelterview that shows each custom
+         * flag added by users and all animals that have that flag.
+         * It's a special view because the same animal can appear
+         * multiple times in this one if it has multiple flags.
+         */
+        render_flags: function() {
+            var h = [];
+            $.each(controller.flags, function(i, f) {
+                // Output the flag
+                h.push('<p class="asm-menu-category">' + f.FLAG + '</p>');
+                // Output every animal who has this flag
+                $.each(controller.animals, function(ia, a) {
+                    if (a.ADDITIONALFLAGS && a.ADDITIONALFLAGS.indexOf(f.FLAG + "|") != -1) {
+                        h.push(shelterview.render_animal(a, false, !a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0));
+                    }
+                });
+            });
+            // Output all animals who don't have any flags
+            h.push('<p class="asm-menu-category">' + _("(none)") + '</p>');
+            $.each(controller.animals, function(ia, a) {
+                if (!a.ADDITIONALFLAGS || a.ADDITIONALFLAGS == '|') {
+                    h.push(shelterview.render_animal(a, false, !a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0));
+                }
+            });
+            // Load the whole thing into the DOM
+            $("#viewcontainer").html(h.join("\n"));
+        },
+
         /**
          * Renders a specialised shelterview that shows all locations, then
          * all units within those locations. Available units are highlighted
@@ -376,6 +405,9 @@ $(function() {
             else if (viewmode == "entrycategory") {
                 this.render_view("ENTRYREASONNAME", "", "ENTRYREASONNAME,ANIMALNAME", false, false);
             }
+            else if (viewmode == "flags") {
+                this.render_flags();
+            }
             else if (viewmode == "fosterer") {
                 this.render_foster_available();
             }
@@ -434,6 +466,7 @@ $(function() {
             h.push('<select id="viewmode" style="float: right;" class="asm-selectbox">');
             h.push('<option value="agegroup">' + _("Age Group") + '</option>');
             h.push('<option value="entrycategory">' + _("Entry Category") + '</option>');
+            h.push('<option value="flags">' + _("Flags") + '</option>');
             h.push('<option value="fosterer">' + _("Fosterer") + '</option>');
             h.push('<option value="fostereractive">' + _("Fosterer (Active Only)") + '</option>');
             h.push('<option value="location">' + _("Location") + '</option>');
