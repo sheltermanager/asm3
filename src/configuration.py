@@ -233,6 +233,8 @@ DEFAULTS = {
     "SearchColumns": "AnimalName,Image,ShelterCode,ShelterLocation,SpeciesID,BreedName," \
         "Sex, AnimalAge, Size, BaseColourID, Markings, IdentichipNumber, DateBroughtIn",
     "SearchSort": "3",
+    "ServiceEnabled": "Yes",
+    "ServiceAuthEnabled": "Yes", 
     "ShelterViewDefault": "location",
     "ShelterViewDragDrop": "Yes",
     "ShelterViewShowCodes": "No",
@@ -923,6 +925,12 @@ def scale_pdfs(dbo):
 
 def search_sort(dbo):
     return cint(dbo, "SearchSort", 3)
+
+def service_enabled(dbo):
+    return cboolean(dbo, "ServiceEnabled", DEFAULTS["ServiceEnabled"] == "Yes")
+
+def service_auth_enabled(dbo):
+    return cboolean(dbo, "ServiceAuthEnabled", DEFAULTS["ServiceAuthEnabled"] == "Yes")
 
 def set_variable_data_updated_blank(dbo):
     cset_db(dbo, "VariableAnimalDataUpdated", "")

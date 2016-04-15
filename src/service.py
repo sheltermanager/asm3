@@ -235,6 +235,11 @@ def handler(post, remoteip, referer):
                 al.error("auth failed - invalid smaccount %s from %s" % (account, remoteip), "service.handler", dbo)
                 return ("text/plain", 0, "ERROR: Invalid database")
 
+    # If the database has disabled the service API, stop now
+    if not configuration.service_enabled(dbo):
+        al.error("Service API is disabled (%s)" % method, "service.handler", dbo)
+        return ("text/plain", 0, "ERROR: Service API is disabled")
+
     # Do any database updates need doing in this db?
     if dbupdate.check_for_updates(dbo):
         dbupdate.perform_updates(dbo)
@@ -243,6 +248,10 @@ def handler(post, remoteip, referer):
     user = None
     securitymap = ""
     if method in AUTH_METHODS:
+        # If the database has authenticated service methods disabled, stop now
+        if not configuration.service_auth_enabled(dbo):
+            al.error("Service API for auth methods is disabled (%s)" % method, "service.handler", dbo)
+            return ("text/plain", 0, "ERROR: Service API for authenticated methods is disabled")
         user = users.authenticate(dbo, username, password)
         if user is None:
             al.error("auth failed - %s/%s is not a valid username/password from %s" % (username, password, remoteip), "service.handler", dbo)
