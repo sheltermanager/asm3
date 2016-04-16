@@ -544,8 +544,8 @@ def format_diff(l, days):
     # If it's less than a week, show as days
     if days < 7:
         return ntranslate(days, [ _("{plural0} day.", l), _("{plural1} days.", l), _("{plural2} days.", l), _("{plural3} days.")], l)
-    # If it's 16 weeks or less, show as weeks
-    elif weeks <= 16:
+    # If it's 26 weeks or less, show as weeks
+    elif weeks <= 26:
         return ntranslate(weeks, [ _("{plural0} week.", l), _("{plural1} weeks.", l), _("{plural2} weeks.", l), _("{plural3} weeks.")], l)
     # If it's a year or less, show as months
     elif weeks <= 52:
