@@ -312,10 +312,19 @@ def get_microchip_data(dbo, patterns, publishername, allowintake = True):
     orgtelephone = configuration.organisation_telephone(dbo)
     email = configuration.email(dbo)
     for r in rows:
-        # Transfer original owner data into the current owner fields for rows
-        # where it is a non-shelter animal so we can still register microchips
-        # for non-shelter animals.
+        use_original_owner_info = False
+        use_shelter_info = False
+        # If this is a non-shelter animal, use the original owner info
         if r["NONSHELTERANIMAL"] == 1 and r["ORIGINALOWNERNAME"] is not None and r["ORIGINALOWNERNAME"] != "":
+            use_original_owner_info = True
+        # If this is an on-shelter animal with no active movement, use the shelter info
+        elif r["ARCHIVED"] == 0 and r["ACTIVEMOVEMENTID"] == 0:
+            use_shelter_info = True
+        # If this is a shelter animal on foster, but register on intake is set and foster is not, use the shelter info
+        elif r["ARCHIVED"] == 0 and r["ACTIVEMOVEMENTTYPE"] == 2 and movementtypes.find("0") != -1 and movementtypes.find("2") == -1:
+            use_shelter_info = True
+        # Otherwise, leave CURRENTOWNER* fields as they are for active movement
+        if use_original_owner_info:
             r["CURRENTOWNERNAME"] = r["ORIGINALOWNERNAME"]
             r["CURRENTOWNERTITLE"] = r["ORIGINALOWNERTITLE"]
             r["CURRENTOWNERINITIALS"] = r["ORIGINALOWNERINITIALS"]
@@ -334,9 +343,7 @@ def get_microchip_data(dbo, patterns, publishername, allowintake = True):
             r["CURRENTOWNERMOBILEPHONE"] = r["ORIGINALOWNERMOBILETELEPHONE"]
             r["CURRENTOWNERCELLPHONE"] = r["ORIGINALOWNERMOBILETELEPHONE"]
             r["CURRENTOWNEREMAILADDRESS"] = r["ORIGINALOWNEREMAILADDRESS"]
-        # Transfer shelter info into current owner fields for rows where
-        # the animal is still on shelter and part of intake.
-        if r["ARCHIVED"] == 0 and r["ACTIVEMOVEMENTID"] == 0:
+        if use_shelter_info:
             r["CURRENTOWNERNAME"] = organisation
             r["CURRENTOWNERTITLE"] = ""
             r["CURRENTOWNERINITIALS"] = ""
@@ -382,7 +389,7 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1", 
     intakeclause = ""
     if movementtypes.find("0") != -1 and allowintake:
         # Note: Use of MostRecentEntryDate will pick up returns as well as intake
-        intakeclause = "OR (a.NonShelterAnimal = 0 AND a.IsHold = 0 AND a.Archived = 0 AND a.ActiveMovementID = 0 " \
+        intakeclause = "OR (a.NonShelterAnimal = 0 AND a.IsHold = 0 AND a.Archived = 0 AND (a.ActiveMovementID = 0 OR a.ActiveMovementType = 2) " \
             "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
             "AND AnimalID = a.ID AND SentDate >= a.MostRecentEntryDate))" % { "publishername": publishername }
     nonshelterclause = "OR (a.NonShelterAnimal = 1 AND a.OriginalOwnerID Is Not Null AND a.OriginalOwnerID > 0 AND a.IdentichipDate Is Not Null " \
