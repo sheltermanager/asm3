@@ -736,20 +736,27 @@ def page_login(l, post):
         _("Password", l), html.escape(post["password"]),
         _("Login", l) )
 
-def handler(dbo, user, locationfilter, post):
+def handler(session, post):
     """
     Handles posts from the frontend. Depending on the type we either
     return more HTML for the javascript to inject, or GO URL to have
     the controller redirect to URL
     """
-    l = dbo.locale
+    l = session.locale
+    user = session.user
+    locationfilter = session.locationfilter
+    dbo = session.dbo
     homelink = "<a href='mobile' data-ajax='false' class='ui-btn-right' data-icon='home' data-theme='b'>%s</a>" % _("Home", l)
     mode = post["posttype"]
     pid = post.integer("id")
     animalid = post.integer("animalid")
 
+    def pc(p):
+        users.check_permission(session, p)
+
     if mode == "vacc":
         # We're vaccinating an animal
+        pc(users.CHANGE_VACCINATION)
         a = animal.get_animal(dbo, animalid)
         medical.update_vaccination_today(dbo, user, pid)
         return jqm_page_header("", _("Vaccination Given", l), homelink) + \
@@ -759,6 +766,7 @@ def handler(dbo, user, locationfilter, post):
 
     if mode == "test":
         # We're performing a test on an animal
+        pc(users.CHANGE_TEST)
         a = animal.get_animal(dbo, animalid)
         medical.update_test_today(dbo, user, pid, post.integer("resultid"))
         return jqm_page_header("", _("Test Performed", l), homelink) + \
@@ -768,6 +776,7 @@ def handler(dbo, user, locationfilter, post):
 
     elif mode == "med":
         # We're treating an animal
+        pc(users.CHANGE_MEDICAL)
         a = animal.get_animal(dbo, animalid)
         medical.update_treatment_today(dbo, user, pid)
         return jqm_page_header("", _("Treatment Given", l), homelink) + \
@@ -777,6 +786,7 @@ def handler(dbo, user, locationfilter, post):
 
     elif mode == "dia":
         # We're completing a diary task
+        pc(users.EDIT_MY_DIARY_NOTES)
         d = diary.get_diary(dbo, pid)
         if post["on"] == "0":
             diary.complete_diary_note(dbo, user, pid)
@@ -793,6 +803,7 @@ def handler(dbo, user, locationfilter, post):
 
     elif mode == "dianew":
         # We're adding a diary note
+        pc(users.ADD_DIARY)
         diary.insert_diary(dbo, user, 0, 0, post.date("diarydate"), 
             post["diaryfor"], post["subject"], post["note"])
         return "GO mobile"
@@ -803,18 +814,21 @@ def handler(dbo, user, locationfilter, post):
         return "GO mobile"
 
     elif mode == "log":
+        pc(users.ADD_LOG)
         # We're adding a log to an animal
         a = animal.get_animal(dbo, animalid)
         log.add_log(dbo, user, log.ANIMAL, animalid, post.integer("logtypeid"), post["logtext"])
         return "GO mobile"
 
     elif mode == "hc":
+        pc(users.CHANGE_PERSON)
         # We're marking an owner homechecked
         person.update_pass_homecheck(dbo, user, post.integer("personid"), post["comments"])
         return "GO mobile"
 
     elif mode == "vsa":
         # Return a list of the shelter animals
+        pc(users.VIEW_ANIMAL)
         h = []
         alin = []
         h.append(header(l))
@@ -830,21 +844,26 @@ def handler(dbo, user, locationfilter, post):
         return "\n".join(h)
 
     elif mode == "uai":
+        pc(users.ADD_MEDIA)
         # Upload an animal image
         media.attach_file_from_form(dbo, user, media.ANIMAL, animalid, post)
         return "GO mobile_post?posttype=va&id=%d&success=true" % animalid
 
     elif mode == "aas":
+        pc(users.ADD_ANIMAL)
         return handler_addanimal(l, homelink, dbo)
 
     elif mode == "aa":
+        pc(users.ADD_ANIMAL)
         nid, ncode = animal.insert_animal_from_form(dbo, post, user)
         return "GO mobile_post?posttype=va&id=%d" % nid
 
     elif mode == "aincs":
+        pc(users.ADD_INCIDENT)
         return handler_addincident(l, homelink, dbo)
 
     elif mode == "ainc":
+        pc(users.ADD_INCIDENT)
         post.data["incidentdate"] = python2display(l, now(dbo.timezone))
         post.data["incidenttime"] = format_time(now(dbo.timezone))
         post.data["calldate"] = post.data["incidentdate"]
@@ -854,6 +873,7 @@ def handler(dbo, user, locationfilter, post):
         return "GO mobile_post?posttype=vinc&id=%d" % nid
 
     elif mode == "fp":
+        pc(users.VIEW_PERSON)
         q = post["q"]
         matches = []
         if q.strip() != "": 
@@ -872,6 +892,8 @@ def handler(dbo, user, locationfilter, post):
         return "\n".join(h)
 
     elif mode == "lc":
+        pc(users.VIEW_LICENCE)
+        q = post["q"]
         q = post["licence"]
         matches = []
         if q.strip() != "": matches = financial.get_licence_find_simple(dbo, q)
@@ -879,6 +901,7 @@ def handler(dbo, user, locationfilter, post):
 
     elif mode == "va":
         # Display a page containing the selected animal by id
+        pc(users.VIEW_ANIMAL)
         a = animal.get_animal(dbo, pid)
         af = additional.get_additional_fields(dbo, pid, "animal")
         diet = animal.get_diets(dbo, pid)
@@ -886,39 +909,45 @@ def handler(dbo, user, locationfilter, post):
         test = medical.get_tests(dbo, pid)
         med = medical.get_regimens(dbo, pid)
         logs = log.get_logs(dbo, log.ANIMAL, pid)
-        return handler_viewanimal(l, dbo, a, af, diet, vacc, test, med, logs, homelink, post)
+        return handler_viewanimal(session, l, dbo, a, af, diet, vacc, test, med, logs, homelink, post)
 
     elif mode == "vinc":
         # Display a page containing the selected incident by id
+        pc(users.VIEW_INCIDENT)
         a = animalcontrol.get_animalcontrol(dbo, pid)
         amls = animalcontrol.get_animalcontrol_animals(dbo, pid)
         cit = financial.get_incident_citations(dbo, pid)
         dia = diary.get_diaries(dbo, diary.ANIMALCONTROL, pid)
         logs = log.get_logs(dbo, log.ANIMALCONTROL, pid)
-        return handler_viewincident(l, dbo, a, amls, cit, dia, logs, homelink, post)
+        return handler_viewincident(session, l, dbo, a, amls, cit, dia, logs, homelink, post)
 
     elif mode == "vinccomp":
         # Mark the incident with pid completed with type=ct
+        pc(users.CHANGE_INCIDENT)
         animalcontrol.update_animalcontrol_completenow(dbo, pid, user, post.integer("ct"))
         return "GO mobile_post?posttype=vinc&id=%d" % pid
 
     elif mode == "vincdisp":
         # Mark the incident with id dispatched now with the current user as aco
+        pc(users.CHANGE_INCIDENT)
         animalcontrol.update_animalcontrol_dispatchnow(dbo, pid, user)
         return "GO mobile_post?posttype=vinc&id=%d" % pid
 
     elif mode == "vincresp":
+        pc(users.CHANGE_INCIDENT)
         # Mark the incident with id responded to now
         animalcontrol.update_animalcontrol_respondnow(dbo, pid, user)
         return "GO mobile_post?posttype=vinc&id=%d" % pid
 
     elif mode == "vinclog":
         # Add a log to the incident of id with logtype and logtext
+        pc(users.ADD_LOG)
         log.add_log(dbo, user, log.ANIMALCONTROL, pid, post.integer("logtype"), post["logtext"])
         return "GO mobile_post?posttype=vinc&id=%d" % pid
 
     elif mode == "vp":
         # Display a page containing the selected person by id
+        pc(users.VIEW_PERSON)
         p = person.get_person(dbo, pid)
         af = additional.get_additional_fields(dbo, pid, "person")
         cit = financial.get_person_citations(dbo, pid)
@@ -926,15 +955,18 @@ def handler(dbo, user, locationfilter, post):
         lic = financial.get_person_licences(dbo, pid)
         links = person.get_links(dbo, pid)
         logs = log.get_logs(dbo, log.PERSON, pid)
-        return handler_viewperson(l, dbo, p, af, cit, dia, lic, links, logs, homelink, post)
+        return handler_viewperson(session, l, dbo, p, af, cit, dia, lic, links, logs, homelink, post)
 
     elif mode == "st":
         # Display a page to adjust stock levels for id
+        pc(users.VIEW_STOCKLEVEL)
         sl = stock.get_stocklevels(dbo, pid)
         su = lookups.get_stock_usage_types(dbo)
         return handler_stocklocation(l, homelink, lookups.get_stock_location_name(dbo, pid), sl, su)
 
     elif mode == "stu":
+        pc(users.CHANGE_STOCKLEVEL)
+        sl = stock.get_stocklevels(dbo, pid)
         # Update the stock levels from the posted values
         stock.stock_take_from_mobile_form(dbo, user, post)
         return "GO mobile"
@@ -1013,9 +1045,10 @@ def handler_check_licence(l, homelink, q, matches):
     h.append("</body></html>")
     return "\n".join(h)
 
-def handler_viewanimal(l, dbo, a, af, diet, vacc, test, med, logs, homelink, post):
+def handler_viewanimal(session, l, dbo, a, af, diet, vacc, test, med, logs, homelink, post):
     """
     Generate the view animal mobile page.
+    session: The session
     l:  The locale
     a:  An animal record
     af: Additional fields for the animal record
@@ -1097,8 +1130,9 @@ def handler_viewanimal(l, dbo, a, af, diet, vacc, test, med, logs, homelink, pos
     h.append(tr( _("Housetrained", l), a["ISHOUSETRAINEDNAME"]))
     h.append(table_end())
     h.append(table())
-    h.append(tr( _("Original Owner", l), a["ORIGINALOWNERNAME"]))
-    h.append(tr( _("Brought In By", l), a["BROUGHTINBYOWNERNAME"]))
+    if users.check_permission_bool(session, users.VIEW_PERSON):
+        h.append(tr( _("Original Owner", l), a["ORIGINALOWNERNAME"]))
+        h.append(tr( _("Brought In By", l), a["BROUGHTINBYOWNERNAME"]))
     h.append(tr( _("Date Brought In", l), python2display(l, a["DATEBROUGHTIN"])))
     h.append(tr( _("Bonded With", l), "%s %s %s %s" % (a["BONDEDANIMAL1CODE"], a["BONDEDANIMAL1NAME"], a["BONDEDANIMAL2CODE"], a["BONDEDANIMAL2NAME"])))
     h.append(tr( _("Transfer?", l), a["ISTRANSFERNAME"] == 1))
@@ -1133,42 +1167,49 @@ def handler_viewanimal(l, dbo, a, af, diet, vacc, test, med, logs, homelink, pos
                 h.append(tr(d["FIELDLABEL"], d["VALUE"]))
         h.append(table_end())
     
-    h.append(table())
-    h.append(hd(_("Diet", l)))
-    for d in diet:
-        h.append(tr(python2display(l, d["DATESTARTED"]), d["DIETNAME"], d["COMMENTS"]))
-    h.append(table_end())
+    if users.check_permission_bool(session, users.VIEW_DIET):
+        h.append(table())
+        h.append(hd(_("Diet", l)))
+        for d in diet:
+            h.append(tr(python2display(l, d["DATESTARTED"]), d["DIETNAME"], d["COMMENTS"]))
+        h.append(table_end())
 
-    h.append(table())
-    h.append(hd(_("Vaccination", l)))
-    for v in vacc:
-        h.append(tr(python2display(l, v["DATEREQUIRED"]), python2display(l, v["DATEOFVACCINATION"]), v["VACCINATIONTYPE"]))
-    h.append(table_end())
+    if users.check_permission_bool(session, users.VIEW_VACCINATION):
+        h.append(table())
+        h.append(hd(_("Vaccination", l)))
+        for v in vacc:
+            h.append(tr(python2display(l, v["DATEREQUIRED"]), python2display(l, v["DATEOFVACCINATION"]), v["VACCINATIONTYPE"]))
+        h.append(table_end())
 
-    h.append(table())
-    h.append(hd(_("Test", l)))
-    for t in test:
-        h.append(tr(python2display(l, t["DATEREQUIRED"]), python2display(l, t["DATEOFTEST"]), t["TESTNAME"], t["RESULTNAME"]))
-    h.append(table_end())
+    if users.check_permission_bool(session, users.VIEW_TEST):
+        h.append(table())
+        h.append(hd(_("Test", l)))
+        for t in test:
+            h.append(tr(python2display(l, t["DATEREQUIRED"]), python2display(l, t["DATEOFTEST"]), t["TESTNAME"], t["RESULTNAME"]))
+        h.append(table_end())
 
-    h.append(table())
-    h.append(hd(_("Medical", l)))
-    for m in med:
-        h.append(tr(python2display(l, m["STARTDATE"]), m["TREATMENTNAME"], m["DOSAGE"]))
-    h.append(table_end())
+    if users.check_permission_bool(session, users.VIEW_MEDICAL):
+        h.append(table())
+        h.append(hd(_("Medical", l)))
+        for m in med:
+            h.append(tr(python2display(l, m["STARTDATE"]), m["TREATMENTNAME"], m["DOSAGE"]))
+        h.append(table_end())
 
-    h.append(table())
-    h.append(hd(_("Log", l)))
-    for lo in logs:
-        h.append(tr(python2display(l, lo["DATE"]), lo["LOGTYPENAME"], lo["COMMENTS"]))
-    h.append(table_end())
+    if users.check_permission_bool(session, users.VIEW_LOG):
+        h.append(table())
+        h.append(hd(_("Log", l)))
+        for lo in logs:
+            h.append(tr(python2display(l, lo["DATE"]), lo["LOGTYPENAME"], lo["COMMENTS"]))
+        h.append(table_end())
+
     h.append(jqm_page_footer())
     h.append("</body></html>")
     return "\n".join(h)
 
-def handler_viewincident(l, dbo, a, amls, cit, dia, logs, homelink, post):
+def handler_viewincident(session, l, dbo, a, amls, cit, dia, logs, homelink, post):
     """
     Generate the view incident mobile page.
+    session: The session
     l:  The locale
     a:   An incident record
     amls: Any linked animals for the incident
@@ -1216,9 +1257,10 @@ def handler_viewincident(l, dbo, a, amls, cit, dia, logs, homelink, post):
     h.append(tr( _("Completion Type", l), comptp))
     h.append(tr( _("Call Date/Time", l), dt(a["CALLDATETIME"])))
     h.append(tr( _("Taken By", l), a["CALLTAKER"]))
-    h.append(tr( _("Caller", l), a["CALLERNAME"]))
-    h.append(tr( _("Phone", l), "%s %s %s" % (jqm_tel(l, a["HOMETELEPHONE"]), jqm_tel(l, a["WORKTELEPHONE"]), jqm_tel(l, a["MOBILETELEPHONE"]))))
-    h.append(tr( _("Victim", l), a["VICTIMNAME"]))
+    if users.check_permission_bool(session, users.VIEW_PERSON):
+        h.append(tr( _("Caller", l), a["CALLERNAME"]))
+        h.append(tr( _("Phone", l), "%s %s %s" % (jqm_tel(l, a["HOMETELEPHONE"]), jqm_tel(l, a["WORKTELEPHONE"]), jqm_tel(l, a["MOBILETELEPHONE"]))))
+        h.append(tr( _("Victim", l), a["VICTIMNAME"]))
     h.append(table_end())
    
     h.append(table())
@@ -1243,11 +1285,12 @@ def handler_viewincident(l, dbo, a, amls, cit, dia, logs, homelink, post):
     h.append(tr( _("Followup Date/Time", l), dt(a["FOLLOWUPDATETIME3"])))
     h.append(table_end())
 
-    h.append(table())
-    h.append(hd(_("Suspect/Animal", l)))
-    h.append(tr( _("Suspect 1", l), a["OWNERNAME1"]))
-    h.append(tr( _("Suspect 2", l), a["OWNERNAME2"]))
-    h.append(tr( _("Suspect 3", l), a["OWNERNAME3"]))
+    if users.check_permission_bool(session, users.VIEW_PERSON):
+        h.append(table())
+        h.append(hd(_("Suspect/Animal", l)))
+        h.append(tr( _("Suspect 1", l), a["OWNERNAME1"]))
+        h.append(tr( _("Suspect 2", l), a["OWNERNAME2"]))
+        h.append(tr( _("Suspect 3", l), a["OWNERNAME3"]))
     for m in amls:
         h.append(tr( _("Animal", l), '<a href="mobile_post?posttype=va&id=%d">%s - %s</a>' % (m["ANIMALID"], m["SHELTERCODE"], m["ANIMALNAME"])))
     h.append(tr( _("Species", l), a["SPECIESNAME"]))
@@ -1256,11 +1299,12 @@ def handler_viewincident(l, dbo, a, amls, cit, dia, logs, homelink, post):
     h.append(tr( _("Description", l), a["ANIMALDESCRIPTION"]))
     h.append(table_end())
 
-    h.append(table())
-    h.append(hd(_("Citations", l)))
-    for c in cit:
-        h.append(tr(python2display(l, c["CITATIONDATE"]), c["CITATIONNAME"], c["COMMENTS"]))
-    h.append(table_end())
+    if users.check_permission_bool(session, users.VIEW_CITATION):
+        h.append(table())
+        h.append(hd(_("Citations", l)))
+        for c in cit:
+            h.append(tr(python2display(l, c["CITATIONDATE"]), c["CITATIONNAME"], c["COMMENTS"]))
+        h.append(table_end())
 
     h.append(table())
     h.append(hd(_("Diary", l)))
@@ -1268,11 +1312,12 @@ def handler_viewincident(l, dbo, a, amls, cit, dia, logs, homelink, post):
         h.append(tr(python2display(l, d["DIARYDATETIME"]), d["SUBJECT"], d["NOTE"]))
     h.append(table_end())
 
-    h.append(table())
-    h.append(hd(_("Log", l)))
-    for lo in logs:
-        h.append(tr(python2display(l, lo["DATE"]), lo["LOGTYPENAME"], lo["COMMENTS"]))
-    h.append(table_end())
+    if users.check_permission_bool(session, users.VIEW_LOG):
+        h.append(table())
+        h.append(hd(_("Log", l)))
+        for lo in logs:
+            h.append(tr(python2display(l, lo["DATE"]), lo["LOGTYPENAME"], lo["COMMENTS"]))
+        h.append(table_end())
 
     h.append(jqm_form("aclog", ajax="false"))
     h.append(jqm_hidden("id", str(a["ID"])))
@@ -1286,9 +1331,10 @@ def handler_viewincident(l, dbo, a, amls, cit, dia, logs, homelink, post):
     h.append("</body></html>")
     return "\n".join(h)
 
-def handler_viewperson(l, dbo, p, af, cit, dia, lic, links, logs, homelink, post):
+def handler_viewperson(session, l, dbo, p, af, cit, dia, lic, links, logs, homelink, post):
     """
     Generate the view person mobile page.
+    session: The session
     l:  The locale
     o:  A person record
     af: Additional fields for the person record
@@ -1361,29 +1407,34 @@ def handler_viewperson(l, dbo, p, af, cit, dia, lic, links, logs, homelink, post
         h.append(tr(python2display(l, k["DDATE"]), k["TYPEDISPLAY"], k["LINKDISPLAY"]))
     h.append(table_end())
 
-    h.append(table())
-    h.append(hd(_("Citations", l)))
-    for c in cit:
-        h.append(tr(python2display(l, c["CITATIONDATE"]), c["CITATIONNAME"], c["COMMENTS"]))
-    h.append(table_end())
+    if users.check_permission_bool(session, users.VIEW_CITATION):
+        h.append(table())
+        h.append(hd(_("Citations", l)))
+        for c in cit:
+            h.append(tr(python2display(l, c["CITATIONDATE"]), c["CITATIONNAME"], c["COMMENTS"]))
+        h.append(table_end())
 
-    h.append(table())
-    h.append(hd(_("Diary", l)))
-    for d in dia:
-        h.append(tr(python2display(l, d["DIARYDATETIME"]), d["SUBJECT"], d["NOTE"]))
-    h.append(table_end())
+    if users.check_permission_bool(session, users.VIEW_DIARY):
+        h.append(table())
+        h.append(hd(_("Diary", l)))
+        for d in dia:
+            h.append(tr(python2display(l, d["DIARYDATETIME"]), d["SUBJECT"], d["NOTE"]))
+        h.append(table_end())
 
-    h.append(table())
-    h.append(hd(_("License", l)))
-    for i in lic:
-        h.append(tr(python2display(l, i["ISSUEDATE"]), python2display(l, i["EXPIRYDATE"]), i["LICENCENUMBER"]))
-    h.append(table_end())
+    if users.check_permission_bool(session, users.VIEW_LICENCE):
+        h.append(table())
+        h.append(hd(_("License", l)))
+        for i in lic:
+            h.append(tr(python2display(l, i["ISSUEDATE"]), python2display(l, i["EXPIRYDATE"]), i["LICENCENUMBER"]))
+        h.append(table_end())
 
-    h.append(table())
-    h.append(hd(_("Log", l)))
-    for lo in logs:
-        h.append(tr(python2display(l, lo["DATE"]), lo["LOGTYPENAME"], lo["COMMENTS"]))
-    h.append(table_end())
+    if users.check_permission_bool(session, users.VIEW_LOG):
+        h.append(table())
+        h.append(hd(_("Log", l)))
+        for lo in logs:
+            h.append(tr(python2display(l, lo["DATE"]), lo["LOGTYPENAME"], lo["COMMENTS"]))
+        h.append(table_end())
+
     h.append(jqm_page_footer())
     h.append("</body></html>")
     return "\n".join(h)

@@ -56,7 +56,8 @@
                 '<input class="personchooser-banned" type="hidden" value="" />',
                 '<input class="personchooser-postcode" type="hidden" value = "" />',
                 '<input class="personchooser-idcheck" type="hidden" value = "" />',
-                '<table style="margin-left: 0px; margin-right: 0px; width: 100%">',
+                '<div class="personchooser-noperm" style="display: none">' + _("Forbidden") + '</div>',
+                '<table class="personchooser-perm" style="margin-left: 0px; margin-right: 0px; width: 100%">',
                 '<tr>',
                 '<td class="personchooser-display"></td>',
                 '<td valign="top" align="right">',
@@ -177,6 +178,12 @@
             this.options.dialogsimilar = dialogsimilar;
             this.options.display = node.find(".personchooser-display");
             this.element.parent().append(node);
+
+            // Disable based on view person permission
+            if (!common.has_permission("vo")) {
+                node.find(".personchooser-perm").hide();
+                node.find(".personchooser-noperm").show();
+            }
             
             // Create the find dialog
             var pcbuttons = {};

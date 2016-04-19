@@ -677,7 +677,7 @@ class mobile_post:
     def handle(self):
         utils.check_loggedin(session, web, "/mobile_login")
         post = utils.PostedData(web.input(posttype = "", id = "0", animalid = "0", medicalid = "0", logtypeid = "0", logtext = "", filechooser = {}, success = ""), session.locale)
-        s = extmobile.handler(session.dbo, session.user, session.locationfilter, post)
+        s = extmobile.handler(session, post)
         if s is None:
             raise utils.ASMValidationError("mobile handler failed.")
         elif s.startswith("GO "):

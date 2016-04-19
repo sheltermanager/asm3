@@ -1,6 +1,9 @@
 39
 ================
 
+19/04/16 Hide sections from mobile person/animal/incident for permissions
+19/04/16 Hide diary tasks button for roles without create diary
+19/04/16 Hide embedded person for roles without view_person permission
 18/04/16 Include fosters with register-after-intake, but shelter info #408
 16/04/16 Use 26 weeks as age cut off to months
 07/04/16 Shelter view can group by animal flag #403

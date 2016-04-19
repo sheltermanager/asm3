@@ -482,6 +482,7 @@ $(function() {
             if (!common.has_permission("co")) { $("#button-save").hide(); }
             if (!common.has_permission("do")) { $("#button-delete").hide(); }
             if (!common.has_permission("gaf")) { $("#button-document").hide(); }
+            if (!common.has_permission("adn")) { $("#button-diarytask").hide(); }
             if (!common.has_permission("mo")) { $("#button-merge").hide(); }
 
             // ACCORDION ICONS =======================================================

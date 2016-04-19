@@ -993,6 +993,7 @@ $(function() {
             if (!common.has_permission("aa")) { $("#button-clone").hide(); }
             if (!common.has_permission("da")) { $("#button-delete").hide(); }
             if (!common.has_permission("gaf")) { $("#button-document").hide(); }
+            if (!common.has_permission("adn")) { $("#button-diarytask").hide(); }
             if (!common.has_permission("vo")) { $("#button-currentowner").hide(); }
             if (!common.has_permission("mlaf")) { $("#button-match").hide(); }
             if (!common.has_permission("vll")) { $("#button-littermates").hide(); }
