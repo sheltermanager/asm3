@@ -1,0 +1,24 @@
+Incidents for Type
+###
+Maps
+###
+33300/PostgreSQL
+###
+Incidents between two dates for a particular type plotted on a map
+###
+en
+###
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+$VAR type STRING Enter the partial incident type$
+
+SELECT ac.LatLong, 
+'<a href="incident?id=' || ac.ID::varchar || '">' || ac.DispatchAddress || '</a>'
+FROM animalcontrol ac
+INNER JOIN incidenttype t ON t.ID = ac.IncidentTypeID
+WHERE IncidentDateTime >= '$@from$' AND IncidentDateTime <= '$@to$'
+AND t.IncidentName LIKE '%$@type$%' 
+AND ac.LatLong <> '' 
+ORDER BY ac.DispatchAddress
+###
+MAP
