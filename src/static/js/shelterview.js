@@ -172,7 +172,7 @@ $(function() {
             var h = [];
             $.each(controller.fosterers, function(ip, p) {
                 // Output the fosterers
-                var loclink = "person_movements?id=" + p.ID, fh = [], nofosters = 0, extraclasses;
+                var loclink = "person_movements?id=" + p.ID, fh = [], nofosters = 0, capacity = p.FOSTERCAPACITY, extraclasses;
                 // Find any animals who are with this fosterer
                 $.each(controller.animals, function(ia, a) {
                     // Skip animals not in this location
@@ -180,10 +180,11 @@ $(function() {
                     nofosters += 1;
                     fh.push(shelterview.render_animal(a, true, a.ACTIVEMOVEMENTTYPE == 2));
                 });
-                if (nofosters < p.FOSTERCAPACITY) { extraclasses = "asm-shelterview-unit-available"; }
+                if (!capacity) { capacity = 0; }
+                if (nofosters < capacity) { extraclasses = "asm-shelterview-unit-available"; }
                 if (nofosters == 0 && activeonly) { return; }
                 h.push('<p class="asm-menu-category"><a href="' + loclink + '">' + 
-                    p.OWNERNAME + ' (' + nofosters + '/' + p.FOSTERCAPACITY + ')</a></p>' +
+                    p.OWNERNAME + ' (' + nofosters + '/' + capacity + ')</a></p>' +
                     '<div style="min-height: 110px" class="persondroptarget ' + extraclasses + '" data-person="' + p.ID + '">' +
                     fh.join("\n") +
                     '</div>');
