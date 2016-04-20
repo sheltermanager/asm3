@@ -1,6 +1,7 @@
 39
 ================
 
+20/04/16 Fix bug where batch report time would never run
 19/04/16 Hide sections from mobile person/animal/incident for permissions
 19/04/16 Hide diary tasks button for roles without create diary
 19/04/16 Hide embedded person for roles without view_person permission
