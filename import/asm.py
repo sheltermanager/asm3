@@ -970,6 +970,13 @@ def type_from_db(name, default = 2):
     """ Looks up the type in the db when the conversion is run, assign to AnimalTypeID """
     return "COALESCE((SELECT ID FROM animaltype WHERE lower(AnimalType) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
 
+def strip(s):
+    """
+    Remove any unicode or control characters and whitespace
+    """
+    if type(s) != str and type(s) != unicode: return s
+    return ("".join(i for i in s if ord(i) >= 32 and ord(i)<128)).strip()
+
 def strip_unicode(s):
     """
     Remove any unicode characters

@@ -10,7 +10,7 @@ copy parseC in FieldParser.py and rename it parseV, then remove
 encoding so it's just a binary string that can be ignored.
 
 
-Requires address.dbf, addrlink.dbf, animal.dbf, license.dbf, person.dbf, shelter.dbf, vacc.dbf
+Requires address.dbf, addrlink.dbf, animal.dbf, incident.dbf, license.dbf, note.dbf, person.dbf, shelter.dbf, vacc.dbf
 
 Will also look in PATH/images/ANIMALKEY.[jpg|JPG] for animal photos if available.
 
@@ -67,13 +67,16 @@ ownerlicences = []
 movements = []
 animals = []
 animalvaccinations = []
+animalcontrol = []
 
 ppa = {}
 ppo = {}
 addresses = {}
 addrlink = {}
+notes = {}
 
 asm.setid("animal", 100)
+asm.setid("animalcontrol", 100)
 asm.setid("animalvaccination", 100)
 asm.setid("owner", 100)
 asm.setid("ownerlicence", 100)
@@ -84,6 +87,7 @@ asm.setid("dbfs", 300)
 # Remove existing
 print "\\set ON_ERROR_STOP\nBEGIN;"
 print "DELETE FROM animal WHERE ID >= 100;"
+print "DELETE FROM animalcontrol WHERE ID >= 100;"
 print "DELETE FROM animalvaccination WHERE ID >= 100;"
 print "DELETE FROM owner WHERE ID >= 100;"
 print "DELETE FROM ownerlicence WHERE ID >= 100;"
@@ -111,6 +115,8 @@ clicense = dbfread.DBF("%s/license.dbf" % PATH)
 cperson = dbfread.DBF("%s/person.dbf" % PATH)
 cshelter = dbfread.DBF("%s/shelter.dbf" % PATH)
 cvacc = dbfread.DBF("%s/vacc.dbf" % PATH)
+cincident = dbfread.DBF("%s/incident.dbf" % PATH)
+cnote = dbfread.DBF("%s/note.dbf" % PATH)
 
 # Start with animals
 for row in canimal:
@@ -119,7 +125,7 @@ for row in canimal:
     ppa[row["ANIMALKEY"]] = a
     a.AnimalTypeID = gettype(row["ANIMLDES"])
     a.SpeciesID = asm.species_id_for_name(row["ANIMLDES"].split(" ")[0])
-    a.AnimalName = asm.fw(row["PETNAME"])
+    a.AnimalName = asm.strip(row["PETNAME"])
     if a.AnimalName.strip() == "":
         a.AnimalName = "(unknown)"
     age = row["AGE"].split(" ")[0]
@@ -136,19 +142,19 @@ for row in canimal:
     a.Declawed = asm.cint(row["DECLAWED"])
     a.IsNotAvailableForAdoption = 0
     a.ShelterLocation = 1
-    a.Sex = asm.getsex_mf(asm.fw(row["GENDER"]))
-    a.Size = getsize(asm.fw(row["WEIGHT"]))
-    a.BaseColourID = asm.colour_id_for_names(asm.fw(row["FURCOLR1"]), asm.fw(row["FURCOLR2"]))
-    a.IdentichipNumber = asm.fw(row["MICROCHIP"])
-    comments = "Original breed: " + asm.fw(row["BREED1"]) + "/" + asm.fw(row["CROSSBREED"]) + ", age: " + age
-    comments += ",Color: " + asm.fw(row["FURCOLR1"]) + "/" + asm.fw(row["FURCOLR2"])
-    comments += ", Coat: " + row["COAT"]
-    comments += ", Collar: " + row["COLLRTYP"]
-    a.BreedID = asm.breed_id_for_name(row["BREED1"])
+    a.Sex = asm.getsex_mf(asm.strip(row["GENDER"]))
+    a.Size = getsize(asm.strip(row["WEIGHT"]))
+    a.BaseColourID = asm.colour_id_for_names(asm.strip(row["FURCOLR1"]), asm.strip(row["FURCOLR2"]))
+    a.IdentichipNumber = asm.strip(row["MICROCHIP"])
+    comments = "Original breed: " + asm.strip(row["BREED1"]) + "/" + asm.strip(row["CROSSBREED"]) + ", age: " + age
+    comments += ",Color: " + asm.strip(row["FURCOLR1"]) + "/" + asm.strip(row["FURCOLR2"])
+    comments += ", Coat: " + asm.strip(row["COAT"])
+    comments += ", Collar: " + asm.strip(row["COLLRTYP"])
+    a.BreedID = asm.breed_id_for_name(asm.strip(row["BREED1"]))
     a.Breed2ID = a.BreedID
     a.BreedName = asm.breed_name_for_id(a.BreedID)
     if row["PUREBRED"] == "0":
-        a.Breed2ID = asm.breed_id_for_name(row["CROSSBREED"])
+        a.Breed2ID = asm.breed_id_for_name(asm.strip(row["CROSSBREED"]))
         if a.Breed2ID == 1: a.Breed2ID = 442
         a.BreedName = "%s / %s" % ( asm.breed_name_for_id(a.BreedID), asm.breed_name_for_id(a.Breed2ID) )
     a.HiddenAnimalDetails = comments
@@ -192,10 +198,10 @@ for row in cvacc:
 # Next, addresses
 for row in caddress:
     addresses[row["ADDRESSKEY"]] = {
-        "address": row["ADDRESSSTR"] + " " + row["ADDRESSST2"] + " " + row["ADDRESSST3"],
-        "city": row["ADDRESSCIT"],
-        "state": row["ADDRESSSTA"],
-        "zip": row["ADDRESSPOS"]
+        "address": asm.strip(row["ADDRESSSTR"]) + " " + asm.strip(row["ADDRESSST2"]) + " " + asm.strip(row["ADDRESSST3"]),
+        "city": asm.strip(row["ADDRESSCIT"]),
+        "state": asm.strip(row["ADDRESSSTA"]),
+        "zip": asm.strip(row["ADDRESSPOS"])
     }
 
 # The link between addresses and people
@@ -207,8 +213,8 @@ for row in cperson:
     o = asm.Owner()
     owners.append(o)
     ppo[row["PERSONKEY"]] = o
-    o.OwnerForeNames = asm.fw(row["FNAME"])
-    o.OwnerSurname = row["LNAME"]
+    o.OwnerForeNames = asm.strip(row["FNAME"])
+    o.OwnerSurname = asm.strip(row["LNAME"])
     o.OwnerName = o.OwnerTitle + " " + o.OwnerForeNames + " " + o.OwnerSurname
     # Find the address
     if addrlink.has_key(row["PERSONKEY"]):
@@ -219,10 +225,10 @@ for row in cperson:
             o.OwnerTown = add["city"]
             o.OwnerCounty = add["state"]
             o.OwnerPostcode = add["zip"]
-    o.EmailAddress = row["EMAIL"]
-    o.HomeTelephone = row["HOME_PH"]
-    o.WorkTelephone = row["WORK_PH"]
-    o.MobileTelephone = row["THIRD_PH"]
+    if asm.strip(row["EMAIL"]) != "(": o.EmailAddress = asm.strip(row["EMAIL"])
+    if row["HOME_PH"] != 0: o.HomeTelephone = asm.strip(row["HOME_PH"])
+    if row["WORK_PH"] != 0: o.WorkTelephone = asm.strip(row["WORK_PH"])
+    if row["THIRD_PH"] != 0: o.MobileTelephone = asm.strip(row["THIRD_PH"])
     o.IsACO = asm.cint(row["ACO_IND"])
     o.IsStaff = asm.cint(row["STAFF_IND"])
     o.IsVolunteer = asm.cint(row["VOL_IND"])
@@ -239,13 +245,13 @@ for row in cshelter:
     if ppa.has_key(row["ANIMALKEY"]):
         a = ppa[row["ANIMALKEY"]]
         arivdate = row["ARIVDATE"]
-        a.ShortCode = asm.fw(row["FIELDCARD"])
-        a.ShelterLocationUnit = asm.fw(row["KENNEL"])
+        a.ShortCode = asm.strip(row["FIELDCARD"])
+        a.ShelterLocationUnit = asm.strip(row["KENNEL"])
         a.NonShelterAnimal = 0
         if arivdate is not None:
             a.DateBroughtIn = arivdate
             a.generateCode(gettypeletter(a.AnimalTypeID))
-            a.ShortCode = asm.fw(row["FIELDCARD"])
+            a.ShortCode = asm.strip(row["FIELDCARD"])
     o = None
     if ppo.has_key(row["OWNERATDIS"]):
         o = ppo[row["OWNERATDIS"]]
@@ -352,16 +358,47 @@ for row in clicense:
         ol.OwnerID = o.ID
         ol.IssueDate = row["LICENSEEFF"]
         ol.ExpiryDate = row["LICENSEEXP"]
-        ol.LicenceNumber = asm.fw(row["LICENSE"])
+        ol.LicenceNumber = asm.strip(row["LICENSE"])
         ol.LicenceTypeID = 2 # Unaltered dog
         #if row["LICENSEFIX"] == "1": # Not always present
         #    ol.LicenceTypeID = 1 # Altered dog
 
+# Incident notes
+for row in cnote:
+    if row["EVENTTYPE"] == 2:
+        notes[row["EVENTKEY"]] = row["NOTEMEMO"]
+
+# Incidents
+for row in cincident:
+    ac = asm.AnimalControl()
+    animalcontrol.append(ac)
+    calldate = row["DATETIMEAS"]
+    if calldate is None: calldate = row["DATETIMEOR"]
+    if calldate is None: calldate = asm.now()
+    ac.CallDateTime = calldate
+    ac.IncidentDateTime = calldate
+    ac.DispatchDateTime = calldate
+    ac.CompletedDate = row["DATETIMEOU"]
+    if ppo.has_key(row["CITIZENMAK"]):
+        ac.CallerID = ppo[row["CITIZENMAK"]].ID
+    if ppo.has_key(row["OWNERATORI"]):
+        ac.OwnerID = ppo[row["OWNERATORI"]].ID
+    ac.IncidentCompletedID = 2
+    if row["FINALOUTCO"] == "ANIMAL PICKED UP":
+        ac.IncidentCompletedID = 2
+    elif row["FINALOUTCO"] == "OTHER":
+        ac.IncidentCompletedID = 6 # Does not exist in default data
+    ac.IncidentTypeID = 1
+    comments = "outcome: %s\n" % row["FINALOUTCO"]
+    comments += "precinct: %s\n" % row["PRECINCT"]
+    if notes.has_key(row["INCIDENTKE"]):
+        comments += notes[row["INCIDENTKE"]]
+    ac.CallNotes = comments
+    ac.Sex = 2
+
 # Run back through the animals, if we have any that are still
-# on shelter, add an adoption to an unknown owner
-"""
+# on shelter after 2 years, add an adoption to an unknown owner
 for a in animals:
-    # For older than 2 years
     if a.Archived == 0 and a.DateBroughtIn < asm.subtract_days(asm.now(), 365*2):
         m = asm.Movement()
         m.AnimalID = a.ID
@@ -373,7 +410,6 @@ for a in animals:
         a.ActiveMovementDate = a.DateBroughtIn
         a.ActiveMovementType = 1
         movements.append(m)
-"""
 
 # Now that everything else is done, output stored records
 for a in animals:
@@ -386,8 +422,10 @@ for m in movements:
     print m
 for ol in ownerlicences:
     print ol
+for ac in animalcontrol:
+    print ac
 
-asm.stderr_summary(animals=animals, animalvaccinations=animalvaccinations, owners=owners, movements=movements, ownerlicences=ownerlicences)
+asm.stderr_summary(animals=animals, animalvaccinations=animalvaccinations, owners=owners, movements=movements, ownerlicences=ownerlicences, animalcontrol=animalcontrol)
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"
