@@ -136,6 +136,8 @@ for row in canimal:
     if a.DateBroughtIn is None:
         asm.stderr("Bad datebroughtin: '%s'" % row["ADDEDDATET"])
         a.DateBroughtIn = datetime.datetime.today()    
+    a.LastChangedDate = a.DateBroughtIn
+    a.CreatedDate = a.DateBroughtIn
     a.EntryReasonID = 4
     a.generateCode(gettypeletter(a.AnimalTypeID))
     a.Neutered = asm.cint(row["FIX"])
@@ -250,6 +252,8 @@ for row in cshelter:
         a.NonShelterAnimal = 0
         if arivdate is not None:
             a.DateBroughtIn = arivdate
+            a.LastChangedDate = a.DateBroughtIn
+            a.CreatedDate = a.DateBroughtIn
             a.generateCode(gettypeletter(a.AnimalTypeID))
             a.ShortCode = asm.strip(row["FIELDCARD"])
     o = None
