@@ -219,7 +219,7 @@ for ac in animalcontrol:
 for aca in animalcontrolanimal:
     print aca
 
-asm.stderr("Summary: %d animals, %d people, %d incidents" % (len(animals), len(owners), len(animalcontrol)))
+asm.stderr_summary(animals=animals, owners=owners, animalcontrol=animalcontrol)
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"

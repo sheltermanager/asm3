@@ -606,7 +606,7 @@ for m in movements:
 for ac in animalcontrols:
     print ac
 
-asm.stderr("Summary: %d animals, %d people, %d movements, %d payments, %d incidents" % (len(animals), len(owners), len(movements), len(ownerdonations), len(animalcontrols)))
+asm.stderr_summary(animals=animals, owners=owners, movements=movements, ownerdonations=ownerdonations, animalcontrol=animalcontrols)
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"

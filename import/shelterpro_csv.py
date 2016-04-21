@@ -366,7 +366,7 @@ for m in movements:
 for ol in ownerlicences:
     print ol
 
-asm.stderr("Summary: %d animals, %d vacc, %d people, %d movements, %d licences" % (len(animals), len(animalvaccinations), len(owners), len(movements), len(ownerlicences)))
+asm.stderr_summary(animals=animals, animalvaccinations=animalvaccinations, owner=owners, movements=movements, ownerlicences=ownerlicences)
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"

@@ -97,6 +97,12 @@ owners.append(o)
 o.OwnerSurname = "Other Shelter"
 o.OwnerName = o.OwnerSurname
 
+# Create an unknown owner
+uo = asm.Owner()
+owners.append(uo)
+uo.OwnerSurname = "Unknown Owner"
+uo.OwnerName = uo.OwnerSurname
+
 # Load up data files
 caddress = dbfread.DBF("%s/address.dbf" % PATH)
 caddrlink = dbfread.DBF("%s/addrlink.dbf" % PATH)
@@ -134,7 +140,7 @@ for row in canimal:
     a.Size = getsize(asm.fw(row["WEIGHT"]))
     a.BaseColourID = asm.colour_id_for_names(asm.fw(row["FURCOLR1"]), asm.fw(row["FURCOLR2"]))
     a.IdentichipNumber = asm.fw(row["MICROCHIP"])
-    comments = "Original breed: " + row["BREED1"] + "/" + row["CROSSBREED"] + ", age: " + age
+    comments = "Original breed: " + asm.fw(row["BREED1"]) + "/" + asm.fw(row["CROSSBREED"]) + ", age: " + age
     comments += ",Color: " + asm.fw(row["FURCOLR1"]) + "/" + asm.fw(row["FURCOLR2"])
     comments += ", Coat: " + row["COAT"]
     comments += ", Collar: " + row["COLLRTYP"]
@@ -351,6 +357,24 @@ for row in clicense:
         #if row["LICENSEFIX"] == "1": # Not always present
         #    ol.LicenceTypeID = 1 # Altered dog
 
+# Run back through the animals, if we have any that are still
+# on shelter, add an adoption to an unknown owner
+"""
+for a in animals:
+    # For older than 2 years
+    if a.Archived == 0 and a.DateBroughtIn < asm.subtract_days(asm.now(), 365*2):
+        m = asm.Movement()
+        m.AnimalID = a.ID
+        m.OwnerID = uo.ID
+        m.MovementType = 1
+        m.MovementDate = a.DateBroughtIn
+        a.Archived = 1
+        a.ActiveMovementID = m.ID
+        a.ActiveMovementDate = a.DateBroughtIn
+        a.ActiveMovementType = 1
+        movements.append(m)
+"""
+
 # Now that everything else is done, output stored records
 for a in animals:
     print a
@@ -363,7 +387,7 @@ for m in movements:
 for ol in ownerlicences:
     print ol
 
-asm.stderr("Summary: %d animals, %d vacc, %d people, %d movements, %d licences" % (len(animals), len(animalvaccinations), len(owners), len(movements), len(ownerlicences)))
+asm.stderr_summary(animals=animals, animalvaccinations=animalvaccinations, owners=owners, movements=movements, ownerlicences=ownerlicences)
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"

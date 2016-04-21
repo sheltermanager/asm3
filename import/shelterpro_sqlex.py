@@ -368,7 +368,7 @@ for ol in ownerlicences:
 print "update ownerlicence set licencetypeid = 5;"
 print "update ownerlicence set licencetypeid = 6 where extract(day from expirydate - issuedate)::integer > 400;"
 
-asm.stderr("Summary: %d animals, %d vacc, %d people, %d movements, %d licences" % (len(animals), len(animalvaccinations), len(owners), len(movements), len(ownerlicences)))
+asm.stderr_summary(animals=animals, animalvaccinations=animalvaccinations, owners=owners, movements=movements, ownerlicences=ownerlicences)
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"

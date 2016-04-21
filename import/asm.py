@@ -223,6 +223,34 @@ def now():
 def stderr(s):
     sys.stderr.write("%s\n" % s)
 
+def stderr_summary(animals=[], animalvaccinations=[], animaltests=[], owners=[], ownerlicences=[], ownerdonations=[], animalcontrol=[], movements=[], logs=[]):
+    def o(l, d):
+        if len(l) > 0:
+            stderr("%d %s" % (len(l), d))
+    if len(animals) != 0:
+        onshelter = 0
+        offshelter = 0
+        dead = 0
+        euth = 0
+        for a in animals:
+            if a.Archived == 0:
+                onshelter += 1
+            elif a.Archived == 1 and a.DeceasedDate is None:
+                offshelter += 1
+            elif a.DeceasedDate is not None and a.PutToSleep == 0:
+                dead += 1
+            elif a.DeceasedDate is not None and a.PutToSleep == 1:
+                euth += 1
+        stderr("%d animals (%d on-shelter, %d off-shelter, %d dead, %d euthanised)" % (len(animals), onshelter, offshelter, dead, euth))
+    o(animalvaccinations, "vaccinations")
+    o(animaltests, "tests")
+    o(owners, "people")
+    o(logs, "logs")
+    o(movements, "movements")
+    o(ownerlicences, "licences")
+    o(ownerdonations, "payments")
+    o(animalcontrol, "incidents")
+
 def today():
     """ Returns today as a Python date """
     return datetime.datetime.today()
