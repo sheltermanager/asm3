@@ -524,6 +524,8 @@ for ac in animalcontrol:
 for ac in animalcontrolanimals:
     print ac
 
+asm.stderr("Summary: %d animals, %d vacc, %d logs, %d people, %d movements, %d licences, %d incidents" % (len(animals), len(animalvaccinations), len(logs), len(owners), len(movements), len(ownerlicences), len(animalcontrol)))
+
 # Move all animals without a matching location off shelter
 print "UPDATE animal SET Archived = 1 WHERE Archived = 0 AND ActiveMovementID = 0 AND ShelterLocation = 1;"
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"

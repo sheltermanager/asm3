@@ -122,7 +122,7 @@ for row in canimal:
     if a.DateOfBirth is None: a.DateOfBirth = getdateage(age, row["ADDEDDATET"])
     a.DateBroughtIn = row["ADDEDDATET"]
     if a.DateBroughtIn is None:
-        sys.stderr.write("Bad datebroughtin: '%s'\n" % row["ADDEDDATET"])
+        asm.stderr("Bad datebroughtin: '%s'" % row["ADDEDDATET"])
         a.DateBroughtIn = datetime.datetime.today()    
     a.EntryReasonID = 4
     a.generateCode(gettypeletter(a.AnimalTypeID))
@@ -362,6 +362,8 @@ for m in movements:
     print m
 for ol in ownerlicences:
     print ol
+
+asm.stderr("Summary: %d animals, %d vacc, %d people, %d movements, %d licences" % (len(animals), len(animalvaccinations), len(owners), len(movements), len(ownerlicences)))
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"

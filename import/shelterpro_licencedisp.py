@@ -165,7 +165,7 @@ for row in canimal:
     ppa[row["ANIMALKEY"]] = a
     a.DateBroughtIn = asm.getdate_yyyymmdd(row["ADDEDDATET"])
     if a.DateBroughtIn is None:
-        sys.stderr.write("Bad datebroughtin: '%s'\n" % row["ADDEDDATET"])
+        asm.stderr("Bad datebroughtin: '%s'" % row["ADDEDDATET"])
         a.DateBroughtIn = datetime.datetime.today()    
     a.AnimalTypeID = gettype(row["ANIMLDES"])
     a.generateCode(gettypeletter(a.AnimalTypeID))
@@ -274,6 +274,8 @@ for m in movements:
     print m
 for ol in ownerlicences:
     print ol
+
+asm.stderr("Summary: %d animals, %d vacc, %d people, %d movements, %d licences" % (len(animals), len(animalvaccinations), len(owners), len(movements), len(ownerlicences)))
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"

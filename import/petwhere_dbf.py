@@ -219,6 +219,8 @@ for ac in animalcontrol:
 for aca in animalcontrolanimal:
     print aca
 
+asm.stderr("Summary: %d animals, %d people, %d incidents" % (len(animals), len(owners), len(animalcontrol)))
+
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"
 

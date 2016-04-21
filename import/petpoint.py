@@ -301,6 +301,9 @@ for o in owners:
     print o
 for m in movements:
     print m
+
+asm.stderr("Summary: %d animals, %d vacc, %d tests, %d people, %d movements" % (len(animals), len(animalvaccinations), len(animaltests), len(owners), len(movements)))
+
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"
 

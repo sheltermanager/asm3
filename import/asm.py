@@ -45,6 +45,7 @@ Also has some useful helper functions for reading CSVs and parsing values, eg:
     asm.animal_image(animalid, imagedata)
     asm.adopt_to(a, ownerid)
     asm.load_image_from_file(filename)
+    asm.stderr()
     
 """
 
@@ -218,6 +219,9 @@ def getsex_mf(s):
 
 def now():
     return datetime.datetime.today()
+
+def stderr(s):
+    sys.stderr.write("%s\n" % s)
 
 def today():
     """ Returns today as a Python date """

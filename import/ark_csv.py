@@ -200,6 +200,8 @@ for ol in ownerlicences:
 for ac in animalcontrol:
     print ac
 
+asm.stderr("Summary: %d animals, %d people, %d movements, %d payments, %d licences, %d incidents" % (len(animals), len(owners), len(movements), len(ownerdonations), len(ownerlicences), len(animalcontrol)))
+
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 # TODO: Most recent customer wanted all ark data as historic - this should be 
 # removed for future conversions

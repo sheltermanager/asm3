@@ -119,7 +119,7 @@ for row in canimal:
     # a.DateOfBirth = asm.getdate_yyyymmdd(row["DOB"])
     a.DateBroughtIn = asm.getdate_mmddyy(row["ADDEDDATETIME"])
     if a.DateBroughtIn is None:
-        sys.stderr.write("Bad datebroughtin: '%s'\n" % row["ADDEDDATETIME"])
+        asm.stderr("Bad datebroughtin: '%s'" % row["ADDEDDATET"])
         a.DateBroughtIn = asm.now()
     a.EntryReasonID = 4
     #a.generateCode(gettypeletter(a.AnimalTypeID))
@@ -367,6 +367,8 @@ for ol in ownerlicences:
 
 print "update ownerlicence set licencetypeid = 5;"
 print "update ownerlicence set licencetypeid = 6 where extract(day from expirydate - issuedate)::integer > 400;"
+
+asm.stderr("Summary: %d animals, %d vacc, %d people, %d movements, %d licences" % (len(animals), len(animalvaccinations), len(owners), len(movements), len(ownerlicences)))
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"

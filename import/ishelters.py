@@ -193,6 +193,8 @@ for m in movements:
 for k, v in asm.vaccinationtypes.iteritems():
     print v
 
+asm.stderr("Summary: %d animals, %d vacc, %d people, %d movements, %d payments" % (len(animals), len(animalvaccinations), len(owners), len(movements), len(ownerdonations)))
+
 print "DELETE FROM configuration WHERE ItemName Like 'VariableAnimalDataUpdated';"
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"
