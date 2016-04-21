@@ -379,6 +379,7 @@ for row in cincident:
     ac.IncidentDateTime = calldate
     ac.DispatchDateTime = calldate
     ac.CompletedDate = row["DATETIMEOU"]
+    if ac.CompletedDate is None: ac.CompletedDate = calldate
     if ppo.has_key(row["CITIZENMAK"]):
         ac.CallerID = ppo[row["CITIZENMAK"]].ID
     if ppo.has_key(row["OWNERATORI"]):
