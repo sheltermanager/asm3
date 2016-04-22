@@ -336,6 +336,7 @@ def animal_tags(dbo, a):
     add = additional.get_additional_fields(dbo, a["ID"], "animal")
     for af in add:
         val = af["VALUE"]
+        if val is None: val = ""
         if af["FIELDTYPE"] == additional.YESNO:
             val = additional_yesno(l, af)
         if af["FIELDTYPE"] == additional.MONEY:
@@ -520,8 +521,11 @@ def animalcontrol_tags(dbo, ac):
     add = additional.get_additional_fields(dbo, ac["ID"], "incident")
     for af in add:
         val = af["VALUE"]
+        if val is None: val = ""
         if af["FIELDTYPE"] == additional.YESNO:
             val = additional_yesno(l, af)
+        if af["FIELDTYPE"] == additional.MONEY:
+            val = format_currency_no_symbol(l, af["VALUE"])
         tags[af["FIELDNAME"].upper()] = val
 
     # Citations
@@ -749,8 +753,11 @@ def person_tags(dbo, p):
     add = additional.get_additional_fields(dbo, p["ID"], "person")
     for af in add:
         val = af["VALUE"]
+        if val is None: val = ""
         if af["FIELDTYPE"] == additional.YESNO:
             val = additional_yesno(l, af)
+        if af["FIELDTYPE"] == additional.MONEY:
+            val = format_currency_no_symbol(l, af["VALUE"])
         tags[af["FIELDNAME"].upper()] = val
 
     # Citations
