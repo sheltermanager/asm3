@@ -688,6 +688,9 @@
             this.element.find("#paymentlines").append(common.substitute(h.join("\n"), {
                 i: this.options.count
             }));
+            // Remove any retired payment types and methods
+            $("#donationtype" + i).select("removeRetiredOptions", "all");
+            $("#payment" + i).select("removeRetiredOptions", "all");
             // Change the default amount when the payment type changes
             $("#donationtype" + i).change(function() {
                 var dc = common.get_field(self.options.controller.donationtypes, $("#donationtype" + i).select("value"), "DEFAULTCOST");

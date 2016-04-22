@@ -1,6 +1,7 @@
 39
 ================
 
+22/04/16 Remove retired items from payment widget type/methods #407
 20/04/16 Fix null fostercapacity in shelterview
 20/04/16 Fix bug where batch report time would never run
 19/04/16 Hide sections from mobile person/animal/incident for permissions
