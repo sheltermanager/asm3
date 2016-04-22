@@ -3951,6 +3951,7 @@ class mailmerge:
             c = html.controller_json("fields", fields)
             c += html.controller_int("numrows", len(rows))
             c += html.controller_json("rows", rows)
+            c += html.controller_json("templates", dbfs.get_document_templates(dbo))
             s += html.controller(c)
             s += html.footer()
             return full_or_json("mailmerge", s, c, post["json"] == "true")
@@ -3970,7 +3971,22 @@ class mailmerge:
             contenttype = post.boolean("html") == 1 and "html" or "plain"
             utils.send_bulk_email(dbo, fromadd, subject, body, rows, contenttype)
         elif mode == "document":
-            pass
+            templateid = post.integer("templateid")
+            template = dbfs.get_string_id(dbo, templateid)
+            templatename = dbfs.get_name_for_id(dbo, templateid)
+            if not templatename.endswith(".html"):
+                raise utils.ASMValidationError("Only html templates are allowed")
+            # Generate a document from the template for each row
+            org_tags = wordprocessor.org_tags(dbo, session.user)
+            c = []
+            for d in rows:
+                c.append( wordprocessor.substitute_tags(template, wordprocessor.append_tags(d, org_tags)) )
+            content = '<div class="mce-pagebreak" style="page-break-before: always; clear: both; border: 0">&nbsp;</div>'.join(c)
+            web.header("Content-Type", "text/html")
+            web.header("Cache-Control", "no-cache")
+            return html.tinymce_header(templatename, "document_edit.js", configuration.js_window_print(dbo)) + \
+                html.tinymce_main(dbo.locale, "", recid=0, mode="", \
+                    template="", content=utils.escape_tinymce(content))
         elif mode == "labels":
             web.header("Content-Type", "application/pdf")
             disposition = configuration.pdf_inline(dbo) and "inline; filename=%s" or "attachment; filename=%s"

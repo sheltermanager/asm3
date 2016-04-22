@@ -4924,12 +4924,12 @@ msgstr ""
 msgid "Generate documentation"
 msgstr ""
 
-#: publish_options.js
-msgid "Generate image thumbnails as tn_$$IMAGE$$"
+#: mailmerge.js
+msgid "Generate documents"
 msgstr ""
 
-#: mailmerge.js
-msgid "Generate letters"
+#: publish_options.js
+msgid "Generate image thumbnails as tn_$$IMAGE$$"
 msgstr ""
 
 #: code.py

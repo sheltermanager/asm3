@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, validate */
+/*global $, jQuery, _, asm, common, config, controller, dlgfx, edit_header, format, header, html, validate */
 
 $(function() {
 
@@ -130,16 +130,16 @@ $(function() {
                 '<p class="centered"><button id="button-email">' + _("Send Emails") + '</button></p>',
                 '</div>',
 
-                '<!--',
-                '<h3><a href="#">' + _("Generate letters") + '</a></h3>',
+                '<h3><a href="#">' + _("Generate documents") + '</a></h3>',
                 '<div>',
-                '<form action="mailmerge" method="post">',
+                '<form id="mailmerge-letters" action="mailmerge" method="post">',
+                '<input type="hidden" name="mode" value="document" />',
+                '<input type="hidden" id="templateid" name="templateid" value = "" />',
                 '<ul class="asm-menu-list">',
-                // templates
+                edit_header.template_list(controller.templates, "#", 0),
                 '</ul>',
                 '</form>',
                 '</div>',
-                '-->',
 
                 '<h3><a href="#">' + _("View matching records") + '</a></h3>',
                 '<div id="matching">',
@@ -198,6 +198,17 @@ $(function() {
                         header.show_info(_("Messages successfully sent"));
                         $("#asm-mailmerge-accordion").hide();
                     });
+            });
+
+            $("#mailmerge-letters .templatelink").each(function() {
+                // When a template is clicked, copy the template ID
+                // into a hidden field and submit it
+                $(this).attr("href", "#");
+                $(this).click(function() {
+                    $("#templateid").val( $(this).attr("data") );
+                    $("#mailmerge-letters").submit();
+                    return false;
+                });
             });
 
             if (controller && controller.numrows == 0) {
