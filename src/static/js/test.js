@@ -427,8 +427,12 @@ $(function() {
                 row.WEBSITEMEDIANAME = controller.animal.WEBSITEMEDIANAME;
             }
             else if (test.lastanimal) {
-                row.LOCATIONUNIT = test.lastanimal.SHELTERLOCATIONUNIT;
-                row.LOCATIONNAME = test.lastanimal.SHELTERLOCATIONNAME;
+                // Only switch the location for new records to prevent
+                // movementtypes being changed to internal locations on existing records
+                if (!row.LOCATIONNAME) {
+                    row.LOCATIONUNIT = test.lastanimal.SHELTERLOCATIONUNIT;
+                    row.LOCATIONNAME = test.lastanimal.SHELTERLOCATIONNAME;
+                }
                 row.ANIMALNAME = test.lastanimal.ANIMALNAME;
                 row.SHELTERCODE = test.lastanimal.SHELTERCODE;
                 row.WEBSITEMEDIANAME = test.lastanimal.WEBSITEMEDIANAME;

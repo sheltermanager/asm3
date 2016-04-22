@@ -492,8 +492,12 @@ $(function() {
                 row.WEBSITEMEDIANAME = controller.animal.WEBSITEMEDIANAME;
             }
             else if (vaccination.lastanimal) {
-                row.LOCATIONUNIT = vaccination.lastanimal.SHELTERLOCATIONUNIT;
-                row.LOCATIONNAME = vaccination.lastanimal.SHELTERLOCATIONNAME;
+                // Only switch the location for new records to prevent
+                // movementtypes being changed to internal locations on existing records
+                if (!row.LOCATIONNAME) {
+                    row.LOCATIONUNIT = vaccination.lastanimal.SHELTERLOCATIONUNIT;
+                    row.LOCATIONNAME = vaccination.lastanimal.SHELTERLOCATIONNAME;
+                }
                 row.ANIMALNAME = vaccination.lastanimal.ANIMALNAME;
                 row.SHELTERCODE = vaccination.lastanimal.SHELTERCODE;
                 row.WEBSITEMEDIANAME = vaccination.lastanimal.WEBSITEMEDIANAME;
