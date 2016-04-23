@@ -1,6 +1,7 @@
 39
 ================
 
+23/04/16 Use html5 placeholder attribute for search input instead of js
 22/04/16 Allow creation of documents from mailmerge data #391
 22/04/16 Use an empty string instead of None for template additional fields
 22/04/16 Changing medical/test/vacc book breaks location for fosters #409

@@ -403,7 +403,7 @@ $(function() {
                         '<span style="white-space: nowrap">',
                         '<input id="topline-q" name="q" type="text" class="asm-textbox" title="' + 
                             html.title("ALT+SHIFT+S " + _("filters: a:animal, p:person, wl:waitinglist, la:lostanimal, fa:foundanimal keywords: onshelter/os, notforadoption, aco, banned, donors, deceased, vets, retailers, staff, fosterers, volunteers, homecheckers, members, activelost, activefound")) +
-                            '" value="' + _("Search") + '" />',
+                            '" placeholder="' + html.title(_("Search")) + '" />',
                         '<button id="searchgo" style="display: none">' + _("Search") + '</button>',
                         '</span>',
                     '</div>',
@@ -644,27 +644,6 @@ $(function() {
             Mousetrap.bind([ "alt+shift+s" ], function() {
                 $("#topline-q").focus();
                 return false;
-            });
-
-            // Set the font to a lighter colour in the search box
-            // and remember the default text in there
-            $("#topline-q").css("color", "#aaa");
-            var defaultSearchText = $("#topline-q").val();
-            
-            // Remove the default text and change the colour on focus
-            $("#topline-q").focus(function() {
-                if ($("#topline-q").val() == defaultSearchText) {
-                    $("#topline-q").css("color", "#000");
-                    $("#topline-q").val("");
-                }
-            });
-
-            // Restore the default search text when we lose the focus if empty
-            $("#topline-q").focusout(function() {
-                if ($("#topline-q").val() == "") {
-                    $("#topline-q").css("color", "#aaa");
-                    $("#topline-q").val(defaultSearchText);
-                }
             });
 
             // If the option is on, show the go button for searching
