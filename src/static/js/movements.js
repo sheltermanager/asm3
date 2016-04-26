@@ -175,6 +175,7 @@ $(function() {
                             return config.bool("DisableRetailer") || controller.name == "move_book_transport" || controller.name == "move_book_foster";
                         }
                     },
+                    { field: "ANIMALAGE", display: _("Age"), hideif: function(row) { return controller.name != "move_book_unneutered"; } },
                     { field: "OWNERADDRESS", display: _("Address"), hideif: function(row) { return controller.name == "move_book_transport"; } },
                     { field: "HOMETELEPHONE", display: _("Phone"), hideif: function(row) { return controller.name == "move_book_transport"; },
                         formatter: function(row) {
