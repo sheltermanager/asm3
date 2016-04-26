@@ -4740,6 +4740,7 @@ class options:
         c += html.controller_json("testtypes", extlookups.get_test_types(dbo))
         c += html.controller_json("types", extlookups.get_animal_types(dbo))
         c += html.controller_json("urgencies", extlookups.get_urgencies(dbo))
+        c += html.controller_json("usersandroles", users.get_users_and_roles(dbo))
         c += html.controller_json("vaccinationtypes", extlookups.get_vaccination_types(dbo))
         c += html.controller_plain("waitinglistcolumns", html.json_waitinglistcolumns(dbo))
         al.debug("lookups loaded", "code.options", dbo)

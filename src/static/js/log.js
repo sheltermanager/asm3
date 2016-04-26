@@ -53,7 +53,10 @@ $(function() {
 
             var buttons = [
                 { id: "new", text: _("New Log"), icon: "new", enabled: "always", perm: "ale", click: function() { 
-                    tableform.dialog_show_add(dialog)
+                    tableform.dialog_show_add(dialog, {
+                        onload: function() {
+                            $("#type").select("value", config.integer("AFDefaultLogType"));    
+                        }})
                         .then(function() {
                             return tableform.fields_post(dialog.fields, "mode=create&linkid=" + controller.linkid, controller.name);
                         })

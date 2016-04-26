@@ -236,6 +236,11 @@ $(function() {
 
                     // Hide the comments field for new diary notes
                     $("#comments").closest("tr").hide();
+
+                    // If a default diary person is set, choose them
+                    if (config.str("AFDefaultDiaryPerson")) {
+                        $("#diaryfor").select("value", config.str("AFDefaultDiaryPerson"));
+                    }
                 }
             });
         },
