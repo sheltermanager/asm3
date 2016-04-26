@@ -813,7 +813,7 @@ $(function() {
         name: "person",
         animation: "formtab",
         autofocus: "#ownertype",
-        title: function() { return controller.person.OWNERNAME; },
+        title: function() { return controller.person.OWNERCODE + ' - ' + controller.person.OWNERNAME; },
         routes: {
             "person": function() { common.module_loadandstart("person", "person?id=" + this.qs.id); }
         }
