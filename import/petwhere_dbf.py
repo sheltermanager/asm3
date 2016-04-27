@@ -6,15 +6,17 @@ from dbfread import DBF
 """
 Import script for Petwhere DBF databases, 
 
-covers animal, people, addresses, complaints
+covers animal, people, addresses, bites, complaints, licences, payments
 
 note that this is currently animal control focused and will create
-non-shelter animals.
+non-shelter animals for incident records and with originalowner links.
 
-9th March, 2016
+Pay attention to the encoding - we had one where ascii was fine, but the last import was latin1
+
+9th March, 2016 - 27th April, 2016
 """
 
-PATH = "data/petwhere_wa1003"
+PATH = "data/petwhere_tg1077"
 
 owners = []
 ownerlicence = []
@@ -132,34 +134,48 @@ for d in DBF("%s/ANIMAL.DBF" % PATH):
     a.HiddenAnimalDetails = comments
     a.LastChangedDate = a.DateBroughtIn
     a.NonShelterAnimal = 1
+    a.Archived = 1
 
-"""
+# Mark the orignal owner of the animal based on the ownershp table
+for s in DBF("%s/OWNERSHP.DBF" % PATH):
+    a = None
+    o = None
+    if ppo.has_key(s["PERSONNO"]):
+        o = ppo[s["PERSONNO"]]
+    if ppa.has_key(s["ANIMALNO"]):
+        a = ppa[s["ANIMALNO"]]
+    if a is not None and o is not None and s["RELATIONSH"].find("Owner") != -1:
+        a.OriginalOwnerID = o.ID
+
 for p in DBF("%s/PAYMENTS.DBF" % PATH):
     od = asm.OwnerDonation()
-    ownerdonations.append(od)
-    if ppo.has_key(p["PMNT_ID"]):
-        o = ppo[p["PMNT_ID"]]
+    ownerdonation.append(od)
+    if ppo.has_key(p["PERSONNO"]):
+        o = ppo[p["PERSONNO"]]
+        od.ReceiptNumber = p["PAYMENTNO"]
         od.OwnerID = o.ID
-        od.Donation = int(p["AMOUNT"] * 100)
-        od.Date = p["PMNT_DATE"]
-        od.DonationTypeID = 4 # Surrender
-        if p["PMNT_CODE"] == "ADP":
-            od.DonationTypeID = 2
+        od.Donation = int(p["PAIDAMT"] * 100)
+        od.Date = p["DATE"]
+        od.DonationTypeID = 1
+        od.DonationPaymentID = 1 # Cash
+        if p["CHECKAMT"] > 0: od.DonationPaymentID = 2 # Cheque
+        if p["CHARGEAMT"] > 0: od.DonationPaymentID = 3 # CC
+        if p["CHECKREF"].strip() != "": od.ChequeNumber = p["CHECKREF"]
 
-for l in DBF("%s/LICENSE.DBF" % PATH):
-    ol = asm.OwnerLicence()
-    ownerlicences.append(ol)
-    if ppo.has_key(l["OWNER_ID"]):
-        o = ppo[l["OWNER_ID"]]
-        ol.OwnerID = o.ID
-        ol.LicenceTypeID = 1
-        ol.LicenceNumber = l["LIC_NUM"]
-        ol.LicenceFee = int(l["FEE"] * 100)
-        ol.IssueDate = l["LIC_DATE"]
-        if ol.IssueDate is None: ol.IssueDate = asm.parse_date("2015-01-01", "%Y-%m-%d")
-        ol.ExpiryDate = l["LIC_EXDATE"]
-        if ol.ExpiryDate is None: ol.ExpiryDate = asm.parse_date("2015-01-01", "%Y-%m-%d")
-"""
+for l in DBF("%s/LICENSES.DBF" % PATH):
+    if l["LUPTDT"] is None or l["LICENSENO"].strip() == "": continue
+    if ppa.has_key(l["ANIMALNO"]):
+        a = ppa[l["ANIMALNO"]]
+        if a.OriginalOwnerID > 0:
+            ol = asm.OwnerLicence()
+            ownerlicence.append(ol)
+            ol.OwnerID = a.OriginalOwnerID
+            ol.LicenceTypeID = 1
+            ol.LicenceNumber = "%s (%d)" % (l["LICENSENO"], ol.ID)
+            ol.LicenceFee = 0
+            ol.IssueDate = l["LUPTDT"]
+            ol.ExpiryDate = l["EXPIRATION"]
+            if ol.ExpiryDate is None: ol.ExpiryDate = asm.add_days(ol.IssueDate, 365)
 
 typemap = {
     "ABANDONMENT": 7,
@@ -178,27 +194,58 @@ typemap = {
     "STRAY": 7
 }
 
-for c in DBF("%s/COMPLNTS.DBF" % PATH):
+try:
+    for c in DBF("%s/COMPLNTS.DBF" % PATH, encoding="latin1"):
+        ac = asm.AnimalControl()
+        animalcontrol.append(ac)
+        if c["COMPLANANT"] != "Unspecified" and ppo.has_key(c["COMPLANANT"]):
+            ac.CallerID = ppo[c["COMPLANANT"]].ID
+        if c["OWNER"] != "Unspecified" and ppo.has_key(c["OWNER"]):
+            ac.OwnerID = ppo[c["OWNER"]].ID
+        ac.CallDateTime = c["OPENDT"]
+        if ac.CallDateTime is None: ac.CallDateTime = c["LUPTDT"]
+        if ac.CallDateTime is None: ac.CallDateTime = asm.now()
+        ac.IncidentDateTime = ac.CallDateTime
+        ac.DispatchDateTime = ac.CallDateTime
+        ac.CompletedDate = c["CLOSEDT"]
+        ac.IncidentTypeID = 3
+        if typemap.has_key(c["CASETYPE"]):
+            ac.IncidentTypeID = typemap[c["CASETYPE"]]
+        ac.DispatchAddress = c["COMPADDR"]
+        comments = asm.nulltostr(c["CASEDESC"])
+        comments += "\nBeat: %s" % c["BEAT"]
+        comments += "\nOfficer: %s" % c["OFFICER"]
+        comments += "\nType: %s" % c["CASETYPE"]
+        comments += "\nValid: %s" % c["COMPVALID"]
+        comments += "\nCondition: %s" % c["ANMLCOND"]
+        if type(comments) == unicode: comments = comments.encode("ascii", "xmlcharrefreplace")
+        ac.CallNotes = comments
+        if c["ANIMALNO"] != "Unspecified" and ppa.has_key(c["ANIMALNO"]):
+            animalcontrolanimal.append("INSERT INTO animalcontrolanimal (AnimalID, AnimalControlID) VALUES (%d, %d);" % (ppa[c["ANIMALNO"]].ID, ac.ID))
+except:
+    pass # we had a corrupted file from a customer, that's why this is here
+
+for c in DBF("%s/BITES.DBF" % PATH, encoding="latin1"):
     ac = asm.AnimalControl()
     animalcontrol.append(ac)
-    if c["COMPLANANT"] != "Unspecified" and ppo.has_key(c["COMPLANANT"]):
-        ac.CallerID = ppo[c["COMPLANANT"]].ID
+    if c["VICTIMNO"] != "Unspecified" and ppo.has_key(c["VICTIMNO"]):
+        ac.CallerID = ppo[c["VICTIMNO"]].ID
+        ac.VictimID = ppo[c["VICTIMNO"]].ID
     if c["OWNER"] != "Unspecified" and ppo.has_key(c["OWNER"]):
         ac.OwnerID = ppo[c["OWNER"]].ID
     ac.CallDateTime = c["OPENDT"]
+    if ac.CallDateTime is None: ac.CallDateTime = c["LUPTDT"]
+    if ac.CallDateTime is None: ac.CallDateTime = asm.now()
     ac.IncidentDateTime = ac.CallDateTime
     ac.DispatchDateTime = ac.CallDateTime
     ac.CompletedDate = c["CLOSEDT"]
-    ac.IncidentTypeID = 3
-    if typemap.has_key(c["CASETYPE"]):
-        ac.IncidentTypeID = typemap[c["CASETYPE"]]
-    ac.DispatchAddress = c["COMPADDR"]
-    comments = asm.nulltostr(c["CASEDESC"])
-    comments += "\nBeat: %s" % c["BEAT"]
+    ac.IncidentTypeID = 5
+    ac.DispatchAddress = c["BITEADDR"]
+    comments = asm.nulltostr(c["BITEMEMO"])
+    comments += "\nReport By: %s" % c["REPORTBY"]
     comments += "\nOfficer: %s" % c["OFFICER"]
-    comments += "\nType: %s" % c["CASETYPE"]
-    comments += "\nValid: %s" % c["COMPVALID"]
-    comments += "\nCondition: %s" % c["ANMLCOND"]
+    comments += "\nSeverity: %s" % c["SEVERITY"]
+    comments += "\nOwner Statement: %s" % c["OWNERSTMT"]
     if type(comments) == unicode: comments = comments.encode("ascii", "xmlcharrefreplace")
     ac.CallNotes = comments
     if c["ANIMALNO"] != "Unspecified" and ppa.has_key(c["ANIMALNO"]):
@@ -210,16 +257,16 @@ for o in owners:
     print o
 #for m in movements:
 #    print m
-#for od in ownerdonations:
-#    print od
-#for ol in ownerlicences:
-#    print ol
+for od in ownerdonation:
+    print od
+for ol in ownerlicence:
+    print ol
 for ac in animalcontrol:
     print ac
 for aca in animalcontrolanimal:
     print aca
 
-asm.stderr_summary(animals=animals, owners=owners, animalcontrol=animalcontrol)
+asm.stderr_summary(animals=animals, owners=owners, animalcontrol=animalcontrol, ownerlicences=ownerlicence, ownerdonations=ownerdonation)
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"
