@@ -360,7 +360,6 @@ def handler(post, remoteip, referer):
         return set_cached_response(cache_key, "application/rss+xml", 3600, 3600, html.timeline_rss(dbo))
 
     elif method == "upload_animal_image":
-        flood_protect("upload_animal_image", remoteip, 15)
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.ADD_MEDIA)
         media.attach_file_from_form(dbo, username, media.ANIMAL, int(animalid), post)
         return ("text/plain", 0, "OK")
