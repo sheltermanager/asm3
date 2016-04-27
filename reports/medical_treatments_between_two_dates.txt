@@ -38,7 +38,7 @@ $$HEAD
 </tr>
 $$FOOT
 </table>
-<p>Total $TreatmentName: {SUM.Cost.2} ({COUNT.Cost} treatments, average {AVG.Cost.2})</p>
+<p>Total $TreatmentName: {SUM.Cost.2} ({COUNT.Cost} treatments, average treatment cost {AVG.Cost.2})</p>
 </table>
 GROUP$$
 
@@ -58,5 +58,5 @@ BODY$$
 
 $$FOOTER
 </table>
-<h3>Total: {SUM.Cost.2} ({COUNT.Cost} treatments, average {AVG.Cost.2})</h3>
+<h3>Total: {SUM.Cost.2} ({COUNT.Cost} treatments, average treatment cost {AVG.Cost.2})</h3>
 FOOTER$$
