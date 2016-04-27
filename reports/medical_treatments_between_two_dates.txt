@@ -37,22 +37,10 @@ $$HEAD
 <th>Cost</th>
 </tr>
 $$FOOT
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td><b>{SUM.Cost.2} (average {AVG.Cost.2})<b/></td>
-</tr>
-
 </table>
-
+<p>Total $TreatmentName: {SUM.Cost.2} ({COUNT.Cost} treatments, average {AVG.Cost.2})</p>
+</table>
 GROUP$$
-HEADER$$
 
 $$BODY
 <tr>
@@ -70,5 +58,5 @@ BODY$$
 
 $$FOOTER
 </table>
-<h3>Total: {SUM.Cost.2} (average {AVG.Cost.2})</h3>
+<h3>Total: {SUM.Cost.2} ({COUNT.Cost} treatments, average {AVG.Cost.2})</h3>
 FOOTER$$
