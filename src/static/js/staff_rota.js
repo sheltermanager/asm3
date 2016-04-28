@@ -67,9 +67,22 @@ $(function() {
                 i, 
                 d = format.date_js(controller.startdate),
                 year = d.getFullYear(),
-                weekno = format.date_weeknumber(d);
+                thisweekno = format.date_weeknumber(d),
+                weekno = 1,
+                selattr = "",
+                w = format.first_iso_monday_of_year(d),
+                weekoptions = [];
 
-            h.push('<th>' + _("{0}, Week {1}").replace("{0}", year).replace("{1}", weekno) + '</th>');
+            // Generate a list of options for every week of the year
+            while (weekno <= 52) {
+                selattr = "";
+                if (weekno == thisweekno) { selattr = 'selected="selected"'; }
+                weekoptions.push('<option value="' + format.date(w) + '" ' + selattr + '>' + _("{0}, Week {1}").replace("{0}", format.date(w)).replace("{1}", weekno) + '</option>');
+                w.setDate(w.getDate() + 7);
+                weekno += 1;
+            }
+
+            h.push('<th><select id="weekselector" class="weekselector asm-selectbox">' + weekoptions.join("\n") + '</select></th>');
             staff_rota.days = [];
             for (i = 0; i < 7; i += 1) {
                 css = "";
@@ -221,6 +234,10 @@ $(function() {
                 });
             });
 
+            $(".asm-staff-rota").on("change", "#weekselector", function() {
+                common.route(controller.name + "?flags=" + staff_rota.get_flags_param() + "&start=" + $("#weekselector").select("value"));
+            });
+
             $("#startdate").change(function() {
                 $("#enddate").val($("#startdate").val());
             });
@@ -272,6 +289,7 @@ $(function() {
             });
 
             $("#type").change(staff_rota.type_change);
+
         },
 
         sync: function() {

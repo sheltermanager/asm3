@@ -1267,6 +1267,20 @@
         },
 
         /**
+         * Given a date, returns a date that corresponds to the first monday of the year
+         * according to ISO 8601 rules (the first week of the year has a thursday in it)
+         * d: js or iso date
+         */
+        first_iso_monday_of_year: function(d) {
+            var i = 1;
+            d = format.date_js(d);
+             // Move to the first Thursday of the year
+            while (new Date(d.getFullYear(), 0, i).getDay() != 4) { i++; }
+            // Move back to the Monday
+            return new Date(d.getFullYear(), 0, i - 3 , 0, 0, 0);
+        },
+
+        /**
          * Turns an iso or js date into a display time
          * empty string is returned if iso is undefined/null
          * f: the format to use, %H, %h, %M, %S are supported
