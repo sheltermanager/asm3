@@ -353,7 +353,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
                 p["emailaddress"] = gks(row, "ORIGINALOWNEREMAIL")
                 try:
                     if checkduplicates:
-                        dups = person.get_person_similar(dbo, p["surname"], p["forenames"], p["address"])
+                        dups = person.get_person_similar(dbo, p["emailaddress"], p["surname"], p["forenames"], p["address"])
                         if len(dups) > 0:
                             a["originalowner"] = str(dups[0]["ID"])
                     if not a.has_key("originalowner"):
@@ -415,7 +415,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
             p["comments"] = gks(row, "PERSONCOMMENTS")
             try:
                 if checkduplicates:
-                    dups = person.get_person_similar(dbo, p["surname"], p["forenames"], p["address"])
+                    dups = person.get_person_similar(dbo, p["emailaddress"], p["surname"], p["forenames"], p["address"])
                     if len(dups) > 0:
                         personid = dups[0]["ID"]
                         # Merge flags and any extra details

@@ -763,7 +763,7 @@ def create_person(dbo, username, collationid):
     # Does this person already exist?
     personid = 0
     if d.has_key("surname") and d.has_key("forenames") and d.has_key("address"):
-        similar = person.get_person_similar(dbo, d["surname"], d["forenames"], d["address"])
+        similar = person.get_person_similar(dbo, utils.iif(d.has_key("emailaddress"), d["emailaddress"], ""), d["surname"], d["forenames"], d["address"])
         if len(similar) > 0:
             personid = similar[0]["ID"]
             # Merge flags and any extra details

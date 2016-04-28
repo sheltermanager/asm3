@@ -76,9 +76,9 @@ def get_person(dbo, personid):
     else:
         return rows[0]
 
-def get_person_similar(dbo, surname = "", forenames = "", address = ""):
+def get_person_similar(dbo, email = "", surname = "", forenames = "", address = ""):
     """
-    Returns people with similar names and addresses to those supplied.
+    Returns people with similar email, names and addresses to those supplied.
     """
     # Consider the first word rather than first address line - typically house
     # number/name and unlikely to be the same for different people
@@ -89,8 +89,13 @@ def get_person_similar(dbo, surname = "", forenames = "", address = ""):
     forenames = forenames.replace("'", "`").lower().strip()
     if forenames.find(" ") != -1: forenames = forenames[0:forenames.find(" ")]
     surname = surname.replace("'", "`").lower().strip()
-    return db.query(dbo, get_person_query(dbo) + "WHERE LOWER(o.OwnerSurname) LIKE '%s' AND " \
+    email = email.replace("'", "`").lower().strip()
+    eq = []
+    if email != "":
+        eq = db.query(dbo, get_person_query(dbo) + "WHERE LOWER(o.EmailAddress) LIKE '%s'" % email)
+    per = db.query(dbo, get_person_query(dbo) + "WHERE LOWER(o.OwnerSurname) LIKE '%s' AND " \
         "LOWER(o.OwnerForeNames) LIKE '%s%%' AND LOWER(o.OwnerAddress) Like '%s%%'" % (surname, forenames, address))
+    return eq + per
 
 def get_person_name(dbo, personid):
     """

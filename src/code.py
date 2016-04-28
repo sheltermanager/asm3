@@ -4980,7 +4980,8 @@ class person_embed:
             surname = post["surname"]
             forenames = post["forenames"]
             address = post["address"]
-            p = extperson.get_person_similar(dbo, surname, forenames, address)
+            email = post["emailaddress"]
+            p = extperson.get_person_similar(dbo, email, surname, forenames, address)
             if len(p) == 0:
                 al.debug("No similar people found for %s, %s, %s" % (surname, forenames, address), "code.person_embed", dbo)
             else:

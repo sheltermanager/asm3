@@ -149,7 +149,7 @@ $(function() {
                     $("#asm-content button").button("enable"); 
                     return; 
                 }
-                var formdata = "mode=similar&" + $("#surname, #forenames, #address").toPOST();
+                var formdata = "mode=similar&" + $("#emailaddress, #surname, #forenames, #address").toPOST();
                 common.ajax_post("person_embed", formdata)
                     .then(function(result) { 
                         var people = jQuery.parseJSON(result);

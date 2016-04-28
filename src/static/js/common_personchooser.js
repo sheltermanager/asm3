@@ -548,7 +548,7 @@
          */
         check_similar: function() {
             var self = this, dialogadd = this.options.dialogadd, dialogsimilar = this.options.dialogsimilar;
-            var formdata = "mode=similar&" + dialogadd.find("input[data='surname'], input[data='forenames'], input[data='address']").toPOST();
+            var formdata = "mode=similar&" + dialogadd.find("input[data='emailaddress'], input[data='surname'], input[data='forenames'], input[data='address']").toPOST();
             $.ajax({
                 type: "POST",
                 url:  "person_embed",
