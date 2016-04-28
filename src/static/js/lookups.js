@@ -45,6 +45,9 @@ $(function() {
                         options: controller.adoptapetcolours },
                     { hideif: function() { return !controller.hasdefaultcost; },
                         json_field: "DEFAULTCOST", post_field: "defaultcost", label: _("Default Cost"), type: "currency" },
+                    { hideif: function() { return !controller.hassite; },
+                        json_field: "SITEID", post_field: "site", label: _("Site"), type: "select", 
+                        options: html.list_to_options(controller.sites, "ID", "SiteName") },
                     { hideif: function() { return !controller.hasunits; },
                         json_field: "UNITS", post_field: "units", label: _("Units"), type: "textarea", 
                         tooltip: _("Comma separated list of units for this location") },
@@ -185,6 +188,9 @@ $(function() {
                 $("#systemlookupwarn").delay(500).fadeIn();
             }
             $("#lookup").val(controller.tablename);
+            if (controller.hassite) {
+                $("#site").closest("tr").toggle( config.bool("MultiSiteEnabled") );
+            }
         },
 
         destroy: function() {

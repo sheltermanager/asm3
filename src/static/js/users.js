@@ -32,6 +32,8 @@ $(function() {
                         '<option value="1">' + _("Super user") + '</option>'},
                     { json_field: "ROLEIDS", post_field: "roles", label: _("Roles"), type: "selectmulti", 
                         options: { rows: controller.roles, valuefield: "ID", displayfield: "ROLENAME" }},
+                    { json_field: "SITEID", post_field: "site", label: _("Site"), type: "select", 
+                        options: html.list_to_options(controller.sites, "ID", "SiteName") },
                     { json_field: "OWNERID", post_field: "person", label: _("Staff record"), type: "person", personfilter: "staff" },
                     { json_field: "LOCATIONFILTER", post_field: "locationfilter", label: _("Location Filter"), type: "selectmulti", 
                         options: { rows: controller.internallocations, valuefield: "ID", displayfield: "LOCATIONNAME" }},
@@ -88,6 +90,7 @@ $(function() {
                             }
                             return _("No");
                         }},
+                    { field: "SITENAME", display: _("Site"), hideif: function() { return !config.bool("MultiSiteEnabled"); } }, 
                     { field: "LOCATIONFILTER", display: _("Location Filter"), formatter: function(row) {
                         var of = [], lf = common.nulltostr(row.LOCATIONFILTER);
                         if (!row.LOCATIONFILTER) { return ""; }
@@ -227,6 +230,7 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
+            $("#site").closest("tr").toggle( config.bool("MultiSiteEnabled") );
         },
 
         set_extra_fields: function(row) {

@@ -207,6 +207,7 @@ DEFAULTS = {
     "MicrochipRegisterMovements": "1,5",
     "MovementDonationsDefaultDue": "No",
     "MovementNumberOverride": "No",
+    "MultiSiteEnable": "No", 
     "JSWindowPrint": "Yes",
     "OnlineFormVerifyJSKey": "Yes",
     "OwnerAddressCheck": "Yes",

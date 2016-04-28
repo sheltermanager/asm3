@@ -8,46 +8,47 @@ import utils
 from i18n import _, add_days, now
 
 # Look up tables map
-# tablename : ( tablelabel, namefield, namelabel, descfield, hasspecies, haspfspecies, haspfbreed, hasapcolour, hasdefaultcost, hasunits, canadd, candelete, canretire,(foreignkeys) )
+# tablename : ( tablelabel, namefield, namelabel, descfield, hasspecies, haspfspecies, haspfbreed, hasapcolour, hasdefaultcost, hasunits, hassite, canadd, candelete, canretire,(foreignkeys) )
 LOOKUP_TABLES = {
-    "lksaccounttype":   (_("Account Types"), "AccountType", _("Type"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, ("accounts.AccountType",)),
-    "lkanimalflags":    (_("Animal Flags"), "Flag", _("Flag"), "", 0, 0, 0, 0, 0, 0, 1, 1, 0, ""),
-    "animaltype":       (_("Animal Types"), "AnimalType", _("Type"), "AnimalDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animal.AnimalTypeID",)),
-    "basecolour":       (_("Colors"), "BaseColour", _("Color"), "BaseColourDescription", 0, 0, 0, 1, 0, 0, 1, 1, 1, ("animal.BaseColourID", "animallost.BaseColourID", "animalfound.BaseColourID")),
-    "breed":            (_("Breeds"), "BreedName", _("Breed"), "BreedDescription", 1, 0, 1, 0, 0, 0, 1, 1, 1, ("animal.BreedID", "animal.Breed2ID", "animallost.BreedID", "animalfound.BreedID")),
-    "lkcoattype":       (_("Coat Types"), "CoatType", _("Coat Type"), "", 0, 0, 0, 0, 0, 0, 1, 1, 0, ("animal.CoatType",)),
-    "citationtype":     (_("Citation Types"), "CitationName", _("Citation Type"), "CitationDescription", 0, 0, 0, 0, 1, 0, 1, 1, 1, ("ownercitation.CitationTypeID",)),
-    "costtype":         (_("Cost Types"), "CostTypeName", _("Cost Type"), "CostTypeDescription", 0, 0, 0, 0, 1, 0, 1, 1, 1, ("animalcost.CostTypeID",)),
-    "deathreason":      (_("Death Reasons"), "ReasonName", _("Reason"), "ReasonDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animal.PTSReasonID",)),
-    "diet":             (_("Diets"), "DietName", _("Diet"), "DietDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animaldiet.DietID",)),
-    "donationpayment":  (_("Payment Methods"), "PaymentName", _("Type"), "PaymentDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("ownerdonation.DonationPaymentID",)),
-    "donationtype":     (_("Payment Types"), "DonationName", _("Type"), "DonationDescription", 0, 0, 0, 0, 1, 0, 1, 1, 1, ("ownerdonation.DonationTypeID", "accounts.DonationTypeID")),
-    "entryreason":      (_("Entry Reasons"), "ReasonName", _("Reason"), "ReasonDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animal.EntryReasonID", "adoption.ReturnedReasonID") ),
-    "incidentcompleted":(_("Incident Completed Types"), "CompletedName", _("Completed Type"), "CompletedDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animalcontrol.IncidentCompletedID",)),
-    "incidenttype":     (_("Incident Types"), "IncidentName", _("Type"), "IncidentDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animalcontrol.IncidentTypeID",)),
-    "internallocation": (_("Internal Locations"), "LocationName", _("Location"), "LocationDescription", 0, 0, 0, 0, 0, 1, 1, 1, 1, ("animal.ShelterLocation",)),
-    "licencetype":      (_("License Types"), "LicenceTypeName", _("Type"), "LicenceTypeDescription", 0, 0, 0, 0, 1, 0, 1, 1, 1, ("ownerlicence.LicenceTypeID",)),
-    "logtype":          (_("Log Types"), "LogTypeName", _("Type"), "LogTypeDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("log.LogTypeID",)),
-    "lksmovementtype":  (_("Movement Types"), "MovementType", _("Type"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, ("adoption.MovementType", "animal.ActiveMovementType",)),
-    "lkownerflags":     (_("Person Flags"), "Flag", _("Flag"), "", 0, 0, 0, 0, 0, 0, 1, 1, 0, ""),
-    "lksrotatype":      (_("Rota Types"), "RotaType", _("Type"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, ("ownerrota.RotaTypeID",)),
-    "lksex":            (_("Sexes"), "Sex", _("Sex"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, ("animal.Sex", "animallost.Sex", "animalfound.Sex")),
-    "lksize":           (_("Sizes"), "Size", _("Size"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, ("animal.Size",)),
-    "lksyesno":         (_("Yes/No"), "Name", _("Yes/No"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, ("animal.Neutered",)),
-    "lksynun":          (_("Yes/No/Unknown"), "Name", _("Yes/No/Unknown"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, ("animal.IsHouseTrained",)),
-    "lksposneg":        (_("Positive/Negative"), "Name", _("Positive/Negative"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, ("animal.CombiTestResult",)),
-    "pickuplocation":   (_("Pickup Locations"), "LocationName", _("Location"), "LocationDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animal.PickupLocationID",)),
-    "reservationstatus": (_("Reservation Statuses"), "StatusName", _("Status"), "StatusDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("adoption.ReservationStatusID",)),
-    "species":          (_("Species"), "SpeciesName", _("Species"), "SpeciesDescription", 0, 1, 0, 0, 0, 0, 1, 1, 1, ("animal.SpeciesID", "animallost.AnimalTypeID", "animalfound.AnimalTypeID")),
-    "stocklocation":    (_("Stock Locations"), "LocationName", _("Location"), "LocationDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("stocklevel.StockLocationID",)),
+    "lksaccounttype":   (_("Account Types"), "AccountType", _("Type"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ("accounts.AccountType",)),
+    "lkanimalflags":    (_("Animal Flags"), "Flag", _("Flag"), "", 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, ""),
+    "animaltype":       (_("Animal Types"), "AnimalType", _("Type"), "AnimalDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animal.AnimalTypeID",)),
+    "basecolour":       (_("Colors"), "BaseColour", _("Color"), "BaseColourDescription", 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, ("animal.BaseColourID", "animallost.BaseColourID", "animalfound.BaseColourID")),
+    "breed":            (_("Breeds"), "BreedName", _("Breed"), "BreedDescription", 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, ("animal.BreedID", "animal.Breed2ID", "animallost.BreedID", "animalfound.BreedID")),
+    "lkcoattype":       (_("Coat Types"), "CoatType", _("Coat Type"), "", 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, ("animal.CoatType",)),
+    "citationtype":     (_("Citation Types"), "CitationName", _("Citation Type"), "CitationDescription", 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, ("ownercitation.CitationTypeID",)),
+    "costtype":         (_("Cost Types"), "CostTypeName", _("Cost Type"), "CostTypeDescription", 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, ("animalcost.CostTypeID",)),
+    "deathreason":      (_("Death Reasons"), "ReasonName", _("Reason"), "ReasonDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animal.PTSReasonID",)),
+    "diet":             (_("Diets"), "DietName", _("Diet"), "DietDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animaldiet.DietID",)),
+    "donationpayment":  (_("Payment Methods"), "PaymentName", _("Type"), "PaymentDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("ownerdonation.DonationPaymentID",)),
+    "donationtype":     (_("Payment Types"), "DonationName", _("Type"), "DonationDescription", 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, ("ownerdonation.DonationTypeID", "accounts.DonationTypeID")),
+    "entryreason":      (_("Entry Reasons"), "ReasonName", _("Reason"), "ReasonDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animal.EntryReasonID", "adoption.ReturnedReasonID") ),
+    "incidentcompleted":(_("Incident Completed Types"), "CompletedName", _("Completed Type"), "CompletedDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animalcontrol.IncidentCompletedID",)),
+    "incidenttype":     (_("Incident Types"), "IncidentName", _("Type"), "IncidentDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animalcontrol.IncidentTypeID",)),
+    "internallocation": (_("Internal Locations"), "LocationName", _("Location"), "LocationDescription", 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, ("animal.ShelterLocation",)),
+    "licencetype":      (_("License Types"), "LicenceTypeName", _("Type"), "LicenceTypeDescription", 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, ("ownerlicence.LicenceTypeID",)),
+    "logtype":          (_("Log Types"), "LogTypeName", _("Type"), "LogTypeDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("log.LogTypeID",)),
+    "lksmovementtype":  (_("Movement Types"), "MovementType", _("Type"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ("adoption.MovementType", "animal.ActiveMovementType",)),
+    "lkownerflags":     (_("Person Flags"), "Flag", _("Flag"), "", 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, ""),
+    "lksrotatype":      (_("Rota Types"), "RotaType", _("Type"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ("ownerrota.RotaTypeID",)),
+    "lksex":            (_("Sexes"), "Sex", _("Sex"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ("animal.Sex", "animallost.Sex", "animalfound.Sex")),
+    "lksize":           (_("Sizes"), "Size", _("Size"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ("animal.Size",)),
+    "lksyesno":         (_("Yes/No"), "Name", _("Yes/No"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ("animal.Neutered",)),
+    "lksynun":          (_("Yes/No/Unknown"), "Name", _("Yes/No/Unknown"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ("animal.IsHouseTrained",)),
+    "lksposneg":        (_("Positive/Negative"), "Name", _("Positive/Negative"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ("animal.CombiTestResult",)),
+    "pickuplocation":   (_("Pickup Locations"), "LocationName", _("Location"), "LocationDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animal.PickupLocationID",)),
+    "reservationstatus": (_("Reservation Statuses"), "StatusName", _("Status"), "StatusDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("adoption.ReservationStatusID",)),
+    "site":             (_("Sites"), "SiteName", _("Site"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ("users.SiteID,internallocation.SiteID",)),
+    "species":          (_("Species"), "SpeciesName", _("Species"), "SpeciesDescription", 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, ("animal.SpeciesID", "animallost.AnimalTypeID", "animalfound.AnimalTypeID")),
+    "stocklocation":    (_("Stock Locations"), "LocationName", _("Location"), "LocationDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("stocklevel.StockLocationID",)),
     "stockusagetype":   (_("Stock Usage Type"), "UsageTypeName", _("Usage Type"), "UsageTypeDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("stockusage.StockUsageTypeID",)),
-    "lkurgency":        (_("Urgencies"), "Urgency", _("Urgency"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, ("animalwaitinglist.Urgency",)),
-    "testtype":         (_("Test Types"), "TestName", _("Type"), "TestDescription", 0, 0, 0, 0, 1, 0, 1, 1, 1, ("animaltest.TestTypeID",)),
-    "testresult":       (_("Test Results"), "ResultName", _("Result"), "ResultDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animaltest.TestResultID",)),
-    "traptype":         (_("Trap Types"), "TrapTypeName", _("Type"), "TrapTypeDescription", 0, 0, 0, 0, 1, 0, 1, 1, 1, ("ownertraploan.TrapTypeID",)),
-    "vaccinationtype":  (_("Vaccination Types"), "VaccinationType", _("Type"), "VaccinationDescription", 0, 0, 0, 0, 1, 0, 1, 1, 1, ("animalvaccination.VaccinationID",)),
-    "voucher":          (_("Voucher Types"), "VoucherName", _("Type"), "VoucherDescription", 0, 0, 0, 0, 1, 0, 1, 1, 1, ("ownervoucher.VoucherID",)),
-    "lkworktype":       (_("Work Types"), "WorkType", _("Type"), "", 0, 0, 0, 0, 0, 0, 1, 1, 0, ("ownerrota.WorkTypeID",))
+    "lkurgency":        (_("Urgencies"), "Urgency", _("Urgency"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ("animalwaitinglist.Urgency",)),
+    "testtype":         (_("Test Types"), "TestName", _("Type"), "TestDescription", 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, ("animaltest.TestTypeID",)),
+    "testresult":       (_("Test Results"), "ResultName", _("Result"), "ResultDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animaltest.TestResultID",)),
+    "traptype":         (_("Trap Types"), "TrapTypeName", _("Type"), "TrapTypeDescription", 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, ("ownertraploan.TrapTypeID",)),
+    "vaccinationtype":  (_("Vaccination Types"), "VaccinationType", _("Type"), "VaccinationDescription", 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, ("animalvaccination.VaccinationID",)),
+    "voucher":          (_("Voucher Types"), "VoucherName", _("Type"), "VoucherDescription", 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, ("ownervoucher.VoucherID",)),
+    "lkworktype":       (_("Work Types"), "WorkType", _("Type"), "", 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, ("ownerrota.WorkTypeID",))
 }
 LOOKUP_TABLELABEL = 0
 LOOKUP_NAMEFIELD = 1
@@ -59,10 +60,11 @@ LOOKUP_HASPFBREED = 6
 LOOKUP_HASAPCOLOUR = 7
 LOOKUP_HASCOST = 8
 LOOKUP_HASUNITS = 9
-LOOKUP_CANADD = 10
-LOOKUP_CANDELETE = 11
-LOOKUP_CANRETIRE = 12
-LOOKUP_FOREIGNKEYS = 13
+LOOKUP_HASSITE = 10
+LOOKUP_CANADD = 11
+LOOKUP_CANDELETE = 12
+LOOKUP_CANRETIRE = 13
+LOOKUP_FOREIGNKEYS = 14
 
 LOCALES = [
     ( "en", "English (United States)"),
@@ -997,7 +999,7 @@ def get_lookup(dbo, tablename, namefield):
         return db.query(dbo, "SELECT b.*, s.SpeciesName FROM breed b LEFT OUTER JOIN species s ON s.ID = b.SpeciesID ORDER BY b.BreedName")
     return db.query(dbo, "SELECT * FROM %s ORDER BY %s" % ( tablename, namefield ))
 
-def insert_lookup(dbo, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", defaultcost=0, retired=0):
+def insert_lookup(dbo, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", site=1, defaultcost=0, retired=0):
     t = LOOKUP_TABLES[lookup]
     sql = ""
     nid = 0
@@ -1011,8 +1013,8 @@ def insert_lookup(dbo, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies
             db.di(nid), db.ds(name), db.ds(desc), db.ds(pfbreed), db.di(speciesid), db.di(retired))
     elif lookup == "internallocation":
         nid = db.get_id(dbo, "internallocation")
-        sql = "INSERT INTO internallocation (ID, LocationName, LocationDescription, Units, IsRetired) VALUES (%s, %s, %s, %s, %s)" % (
-            db.di(nid), db.ds(name), db.ds(desc), db.ds(units), db.di(retired))
+        sql = "INSERT INTO internallocation (ID, LocationName, LocationDescription, Units, SiteID, IsRetired) VALUES (%s, %s, %s, %s, %s, %s)" % (
+            db.di(nid), db.ds(name), db.ds(desc), db.ds(units), db.di(site), db.di(retired))
     elif lookup == "species":
         nid = db.get_id(dbo, "species")
         sql = "INSERT INTO species (ID, SpeciesName, SpeciesDescription, PetFinderSpecies, IsRetired) VALUES (%s, %s, %s, %s, %s)" % (
@@ -1049,7 +1051,7 @@ def insert_lookup(dbo, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies
     db.execute(dbo, sql)
     return nid
 
-def update_lookup(dbo, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", defaultcost=0, retired=0):
+def update_lookup(dbo, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", site=1, defaultcost=0, retired=0):
     t = LOOKUP_TABLES[lookup]
     sql = ""
     if lookup == "basecolour":
@@ -1059,8 +1061,8 @@ def update_lookup(dbo, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfsp
         sql = "UPDATE breed SET BreedName=%s, BreedDescription=%s, PetFinderBreed=%s, SpeciesID=%s, IsRetired=%s WHERE ID=%s" % (
             db.ds(name), db.ds(desc), db.ds(pfbreed), db.di(speciesid), db.di(retired), db.di(iid))
     elif lookup == "internallocation":
-        sql = "UPDATE %s SET %s = %s, %s = %s, Units = %s, IsRetired = %s WHERE ID=%s" % (
-            lookup, t[LOOKUP_NAMEFIELD], db.ds(name), t[LOOKUP_DESCFIELD], db.ds(desc), db.ds(units), db.di(retired), db.di(iid))
+        sql = "UPDATE %s SET %s = %s, %s = %s, Units = %s, SiteID = %s, IsRetired = %s WHERE ID=%s" % (
+            lookup, t[LOOKUP_NAMEFIELD], db.ds(name), t[LOOKUP_DESCFIELD], db.ds(desc), db.ds(units), db.di(site), db.di(retired), db.di(iid))
     elif lookup == "species":
         sql = "UPDATE species SET SpeciesName=%s, SpeciesDescription=%s, PetFinderSpecies=%s, IsRetired=%s WHERE ID=%s" % (
             db.ds(name), db.ds(desc), db.ds(pfspecies), db.di(retired), db.di(iid))
@@ -1149,6 +1151,9 @@ def get_sex_name(dbo, sid):
 
 def get_sexes(dbo):
     return db.query(dbo, "SELECT * FROM lksex ORDER BY Sex")
+
+def get_sites(dbo):
+    return db.query(dbo, "SELECT * FROM site ORDER BY SiteName")
 
 def get_size_name(dbo, sid):
     if id is None: return ""

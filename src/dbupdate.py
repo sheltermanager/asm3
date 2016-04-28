@@ -20,7 +20,7 @@ VERSIONS = (
     33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702, 33703, 33704, 33705,
     33706, 33707, 33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716,
     33717, 33718, 33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904,
-    33905, 33906, 33907
+    33905, 33906, 33907, 33908
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -39,7 +39,7 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "lksyesno", "lksynun", "lkurgency", "lkworktype", "log", "logtype", "media", "medicalprofile", "messages", "onlineform", 
     "onlineformfield", "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
     "ownerlicence", "ownerlookingfor", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", 
-    "reservationstatus", "role", "species", "stocklevel", "stocklocation", "stockusage", "stockusagetype", 
+    "reservationstatus", "role", "site", "species", "stocklevel", "stocklocation", "stockusage", "stockusagetype", 
     "testtype", "testresult", "traptype", "userrole", "users", "vaccinationtype", "voucher" )
 
 # ASM2_COMPATIBILITY This is used for dumping tables in ASM2/HSQLDB format. 
@@ -896,6 +896,7 @@ def sql_structure(dbo):
         fstr("LocationName"),
         fstr("LocationDescription", True),
         flongstr("Units", True),
+        fint("SiteID", True), 
         fint("IsRetired", True) ), False)
 
     sql += table("licencetype", (
@@ -1283,6 +1284,10 @@ def sql_structure(dbo):
         flongstr("SecurityMap")), False)
     sql += index("role_Rolename", "role", "Rolename")
 
+    sql += table("site", (
+        fid(),
+        fstr("SiteName") ), False)
+
     sql += table("species", (
         fid(),
         fstr("SpeciesName"),
@@ -1368,6 +1373,7 @@ def sql_structure(dbo):
         flongstr("Signature", True),
         fstr("LocaleOverride", True),
         fstr("ThemeOverride", True),
+        fint("SiteID", True), 
         fstr("LocationFilter", True),
         fint("RecordVersion", True)), False)
     sql += index("users_UserName", "users", "UserName")
@@ -1411,15 +1417,15 @@ def sql_default_data(dbo, skip_config = False):
     def basecolour(tid, name, adoptapet):
         return "INSERT INTO basecolour (ID, BaseColour, BaseColourDescription, AdoptAPetColour, IsRetired) VALUES (%s, '%s', '', '%s', 0)|=\n" % (str(tid), db.escape(name), adoptapet)
     def internallocation(lid, name):
-        return "INSERT INTO internallocation (ID, LocationName, LocationDescription, Units, IsRetired) VALUES (%s, '%s', '', '', 0)|=\n" % ( str(lid), db.escape(name) )
+        return "INSERT INTO internallocation (ID, LocationName, LocationDescription, Units, SiteID, IsRetired) VALUES (%s, '%s', '', '', 1, 0)|=\n" % ( str(lid), db.escape(name) )
     def species(tid, name, petfinder):
         return "INSERT INTO species (ID, SpeciesName, SpeciesDescription, PetFinderSpecies, IsRetired) VALUES (%s, '%s', '', '%s', 0)|=\n" % ( str(tid), db.escape(name), petfinder )
 
     l = dbo.locale
     sql = ""
     if not skip_config:
-        sql += "INSERT INTO users VALUES (1,'user','Default system user', '', 'plain:letmein', 1, 0,'', '', '', '', '', '', 0)|=\n"
-        sql += "INSERT INTO users VALUES (2,'guest','Default guest user', '', 'plain:guest', 0, 0,'', '', '', '', '', '', 0)|=\n"
+        sql += "INSERT INTO users VALUES (1,'user','Default system user', '', 'plain:letmein', 1, 0,'', '', '', '', '', 1, '', 0)|=\n"
+        sql += "INSERT INTO users VALUES (2,'guest','Default guest user', '', 'plain:guest', 0, 0,'', '', '', '', '', 1, '', 0)|=\n"
         sql += "INSERT INTO role VALUES (1, '" + _("Other Organisation", l) + "', 'vac *va *vavet *vav *mvam *dvad *cvad *vamv *vo *volk *vle *vvov *vdn *vla *vfa *vwl *vcr *vll *')|=\n"
         sql += "INSERT INTO role VALUES (2, '" + _("Staff", l) + "', 'aa *ca *va *vavet *da *cloa *gaf *aam *cam *dam *vam *mand *aav *vav *cav *dav *bcav *maam *mcam *mdam *mvam *bcam *daad *dcad *ddad *dvad *caad *cdad *cvad *aamv *camv *vamv *damv *ao *co *vo *do *emo *mo *volk *ale *cle *dle *vle *vaov *vcov *vvov *oaod *ocod *odod *ovod *vdn *edt *adn *eadn *emdn *ecdn *bcn *ddn *pdn *pvd *ala *cla *dla *vla *afa *cfa *dfa *vfa *mlaf *vwl *awl *cwl *dwl *bcwl *all *cll *vll *dll *excr *vcr *vvo *')|=\n"
         sql += "INSERT INTO role VALUES (3, '" + _("Accountant", l) + "', 'aac *vac *cac *ctrx *dac *vaov *vcov *vdov *vvov *oaod *ocod *odod *ovod *')|=\n"
@@ -2136,6 +2142,7 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup2("reservationstatus", "StatusName", 6, _("Changed Mind", l))
     sql += lookup2("reservationstatus", "StatusName", 7, _("Denied", l))
     sql += lookup2("reservationstatus", "StatusName", 8, _("Approved", l))
+    sql += lookup1("site", "SiteName", 1, "main")
     sql += species(1, _("Dog", l), "Dog")
     sql += species(2, _("Cat", l), "Cat")
     sql += species(3, _("Bird", l), "Bird")
@@ -4443,4 +4450,17 @@ def update_33907(dbo):
     add_column(dbo, "animaltest", "AdministeringVetID", "INTEGER")
     add_index(dbo, "animaltest_AdministeringVetID", "animaltest", "AdministeringVetID")
     db.execute_dbupdate(dbo, "UPDATE animaltest SET AdministeringVetID = 0")
+
+def update_33908(dbo):
+    # Add site table
+    sql = "CREATE TABLE site (ID INTEGER NOT NULL PRIMARY KEY, " \
+        "SiteName %s NOT NULL)" % shorttext(dbo)
+    db.execute_dbupdate(dbo, sql)
+    db.execute_dbupdate(dbo, "INSERT INTO site VALUES (1, 'main')")
+    # Add internallocation.SiteID
+    add_column(dbo, "internallocation", "SiteID", "INTEGER")
+    db.execute_dbupdate(dbo, "UPDATE internallocation SET SiteID = 1")
+    # Add users.SiteID
+    add_column(dbo, "users", "SiteID", "INTEGER")
+    db.execute_dbupdate(dbo, "UPDATE users SET SiteID = 1")
 

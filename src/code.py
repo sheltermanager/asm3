@@ -3530,6 +3530,7 @@ class lookups:
         c += html.controller_json("adoptapetcolours", extlookups.ADOPTAPET_COLOURS)
         c += html.controller_json("petfinderspecies", extlookups.PETFINDER_SPECIES)
         c += html.controller_json("petfinderbreeds", extlookups.PETFINDER_BREEDS)
+        c += html.controller_json("sites", extlookups.get_sites(dbo))
         c += html.controller_str("tablename", tablename)
         c += html.controller_str("tablelabel", table[0])
         c += html.controller_str("namefield", table[1].upper())
@@ -3541,9 +3542,10 @@ class lookups:
         c += html.controller_bool("hasapcolour", table[7] == 1)
         c += html.controller_bool("hasdefaultcost", table[8] == 1)
         c += html.controller_bool("hasunits", table[9] == 1)
-        c += html.controller_bool("canadd", table[10] == 1)
-        c += html.controller_bool("candelete", table[11] == 1)
-        c += html.controller_bool("canretire", table[12] == 1)
+        c += html.controller_bool("hassite", table[10] == 1)
+        c += html.controller_bool("canadd", table[11] == 1)
+        c += html.controller_bool("candelete", table[12] == 1)
+        c += html.controller_bool("canretire", table[13] == 1)
         c += html.controller_json("species", extlookups.get_species(dbo))
         c += html.controller_json("tables", html.json_lookup_tables(l))
         s += html.controller(c)
@@ -3558,11 +3560,11 @@ class lookups:
         if mode == "create":
             users.check_permission(session, users.MODIFY_LOOKUPS)
             return extlookups.insert_lookup(dbo, post["lookup"], post["lookupname"], post["lookupdesc"], \
-                post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("defaultcost"), post.integer("retired"))
+                post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("defaultcost"), post.integer("retired"))
         elif mode == "update":
             users.check_permission(session, users.MODIFY_LOOKUPS)
             extlookups.update_lookup(dbo, post.integer("id"), post["lookup"], post["lookupname"], post["lookupdesc"], \
-                post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("defaultcost"), post.integer("retired"))
+                post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("defaultcost"), post.integer("retired"))
         elif mode == "delete":
             users.check_permission(session, users.MODIFY_LOOKUPS)
             for lid in post.integer_list("ids"):
