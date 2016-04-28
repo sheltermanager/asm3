@@ -1,6 +1,7 @@
 39
 ================
 
+28/04/16 Fix for missing escaping in where_text_filter
 28/04/16 Rota, allow skipping to weeks with dropdown #400
 28/04/16 Consider email address when creating/comparing similar people #393
 26/04/16 Show age in unneutered adopted book

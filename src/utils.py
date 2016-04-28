@@ -677,8 +677,9 @@ def where_text_filter(dbo, field, term):
     field: The field we're filtering on
     term:  The item we're filtering for
     """
-    normal = u"LOWER(%s) LIKE '%%%s%%'" % (field, term.lower())
-    decoded = u"LOWER(%s) LIKE  '%%%s%%'" % (field, decode_html(term.lower()))
+    term = term.lower().replace("'", "`")
+    normal = u"LOWER(%s) LIKE '%%%s%%'" % (field, term)
+    decoded = u"LOWER(%s) LIKE  '%%%s%%'" % (field, decode_html(term))
     wc = normal + u" OR " + decoded
     dummy = dbo.dbtype
     # postdec can't work - we can have postgresql decode the html entities before
