@@ -6129,6 +6129,7 @@ class systemusers:
         c = html.controller_json("rows", user)
         c += html.controller_json("roles", roles)
         c += html.controller_json("internallocations", extlookups.get_internal_locations(dbo))
+        c += html.controller_json("sites", extlookups.get_sites(dbo))
         s += html.controller(c)
         s += html.footer()
         return full_or_json("users", s, c, post["json"] == "true")

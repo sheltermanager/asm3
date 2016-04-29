@@ -34,7 +34,7 @@ $(function() {
                         options: { rows: controller.roles, valuefield: "ID", displayfield: "ROLENAME" }},
                     { json_field: "SITEID", post_field: "site", label: _("Site"), type: "select", 
                         options: '<option value="0">' + _("(all)") + '</option>' +  
-                            html.list_to_options(controller.sites, "ID", "SiteName") },
+                            html.list_to_options(controller.sites, "ID", "SITENAME") },
                     { json_field: "OWNERID", post_field: "person", label: _("Staff record"), type: "person", personfilter: "staff" },
                     { json_field: "LOCATIONFILTER", post_field: "locationfilter", label: _("Location Filter"), type: "selectmulti", 
                         options: { rows: controller.internallocations, valuefield: "ID", displayfield: "LOCATIONNAME" }},
@@ -91,7 +91,12 @@ $(function() {
                             }
                             return _("No");
                         }},
-                    { field: "SITENAME", display: _("Site"), hideif: function() { return !config.bool("MultiSiteEnabled"); } }, 
+                    { field: "SITEID", display: _("Site"), 
+                        formatter: function(row) {
+                            return common.nulltostr(common.get_field(controller.sites, row.SITEID, "SITENAME"));
+                        }, hideif: function(row) { 
+                            return !config.bool("MultiSiteEnabled"); 
+                        }},
                     { field: "LOCATIONFILTER", display: _("Location Filter"), formatter: function(row) {
                         var of = [], lf = common.nulltostr(row.LOCATIONFILTER);
                         if (!row.LOCATIONFILTER) { return ""; }

@@ -47,7 +47,7 @@ $(function() {
                         json_field: "DEFAULTCOST", post_field: "defaultcost", label: _("Default Cost"), type: "currency" },
                     { hideif: function() { return !controller.hassite; },
                         json_field: "SITEID", post_field: "site", label: _("Site"), type: "select", 
-                        options: html.list_to_options(controller.sites, "ID", "SiteName") },
+                        options: html.list_to_options(controller.sites, "ID", "SITENAME") },
                     { hideif: function() { return !controller.hasunits; },
                         json_field: "UNITS", post_field: "units", label: _("Units"), type: "textarea", 
                         tooltip: _("Comma separated list of units for this location") },
@@ -91,6 +91,13 @@ $(function() {
                         if (controller.hasapcolour) { return row.ADOPTAPETCOLOUR; }
                     }},
                     { field: controller.descfield, display: _("Description"), hideif: function(row) { return controller.descfield == ""; }},
+                    { field: "SITEID", display: _("Site"), 
+                        formatter: function(row) {
+                            return common.nulltostr(common.get_field(controller.sites, row.SITEID, "SITENAME"));
+                        }, hideif: function(row) { 
+                            return !controller.hasunits || !config.bool("MultiSiteEnabled"); 
+                        }
+                    },
                     { field: "UNITS", display: _("Units"), hideif: function(row) { return !controller.hasunits; }},
                     { field: "DEFAULTCOST", display: _("Default Cost"), formatter: tableform.format_currency,
                         hideif: function(row) { return !controller.hasdefaultcost; }}
@@ -188,8 +195,13 @@ $(function() {
                 $("#systemlookupwarn").delay(500).fadeIn();
             }
             $("#lookup").val(controller.tablename);
+            // Only show the site field if the lookup has it and multi site is on
             if (controller.hassite) {
                 $("#site").closest("tr").toggle( config.bool("MultiSiteEnabled") );
+            }
+            // Hide the sites lookup if multi site isn't on
+            if (!config.bool("MultiSiteEnabled")) {
+                $("#lookup").find("option[value='site']").remove();
             }
         },
 

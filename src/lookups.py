@@ -38,7 +38,7 @@ LOOKUP_TABLES = {
     "lksposneg":        (_("Positive/Negative"), "Name", _("Positive/Negative"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ("animal.CombiTestResult",)),
     "pickuplocation":   (_("Pickup Locations"), "LocationName", _("Location"), "LocationDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animal.PickupLocationID",)),
     "reservationstatus": (_("Reservation Statuses"), "StatusName", _("Status"), "StatusDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("adoption.ReservationStatusID",)),
-    "site":             (_("Sites"), "SiteName", _("Site"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ("users.SiteID,internallocation.SiteID",)),
+    "site":             (_("Sites"), "SiteName", _("Site"), "", 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, ("users.SiteID","internallocation.SiteID")),
     "species":          (_("Species"), "SpeciesName", _("Species"), "SpeciesDescription", 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, ("animal.SpeciesID", "animallost.AnimalTypeID", "animalfound.AnimalTypeID")),
     "stocklocation":    (_("Stock Locations"), "LocationName", _("Location"), "LocationDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("stocklevel.StockLocationID",)),
     "stockusagetype":   (_("Stock Usage Type"), "UsageTypeName", _("Usage Type"), "UsageTypeDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("stockusage.StockUsageTypeID",)),
