@@ -659,19 +659,23 @@ def get_alerts(dbo, locationfilter = "", siteid = 0):
     if not configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (Archived = 0 OR ActiveMovementType = 2)"
     sql = "SELECT " \
-        "(SELECT COUNT(*) FROM animalvaccination INNER JOIN animal ON animal.ID = animalvaccination.AnimalID WHERE " \
+        "(SELECT COUNT(*) FROM animalvaccination INNER JOIN animal ON animal.ID = animalvaccination.AnimalID " \
+            "LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation WHERE " \
             "DateOfVaccination Is Null AND DeceasedDate Is Null %(shelterfilter)s AND " \
             "DateRequired  >= %(oneyear)s AND DateRequired <= %(today)s %(locfilter)s) AS duevacc," \
-        "(SELECT COUNT(*) FROM animalvaccination av1 INNER JOIN animal ON animal.ID = av1.AnimalID WHERE " \
+        "(SELECT COUNT(*) FROM animalvaccination av1 INNER JOIN animal ON animal.ID = av1.AnimalID " \
+            "LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation WHERE " \
             "av1.DateOfVaccination Is Not Null AND DeceasedDate Is Null %(shelterfilter)s AND " \
             "av1.DateExpires  >= %(oneyear)s AND av1.DateExpires <= %(today)s %(locfilter)s AND " \
             "0 = (SELECT COUNT(*) FROM animalvaccination av2 WHERE av2.AnimalID = av1.AnimalID AND " \
             "av2.DateRequired > av1.DateRequired AND av2.VaccinationID = av1.VaccinationID)) AS expvacc," \
-        "(SELECT COUNT(*) FROM animaltest INNER JOIN animal ON animal.ID = animaltest.AnimalID WHERE " \
+        "(SELECT COUNT(*) FROM animaltest INNER JOIN animal ON animal.ID = animaltest.AnimalID " \
+            "LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation WHERE " \
             "DateOfTest Is Null AND DeceasedDate Is Null %(shelterfilter)s AND " \
             "DateRequired >= %(oneyear)s AND DateRequired <= %(today)s %(locfilter)s) AS duetest," \
         "(SELECT COUNT(*) FROM animalmedicaltreatment INNER JOIN animal ON animal.ID = animalmedicaltreatment.AnimalID " \
-            "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID WHERE " \
+            "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID " \
+            "LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation WHERE " \
             "DateGiven Is Null AND DeceasedDate Is Null %(shelterfilter)s AND " \
             "Status = 0 AND DateRequired  >= %(oneyear)s AND DateRequired <= %(today)s %(locfilter)s) AS duemed," \
         "(SELECT COUNT(*) FROM animalwaitinglist INNER JOIN owner ON owner.ID = animalwaitinglist.OwnerID " \
@@ -683,12 +687,13 @@ def get_alerts(dbo, locationfilter = "", siteid = 0):
         "(SELECT COUNT(*) FROM adoption INNER JOIN animal ON adoption.AnimalID = animal.ID WHERE " \
             "Archived = 0 AND DeceasedDate Is Null AND ReservationDate Is Not Null AND ReservationDate <= %(oneweek)s " \
             "AND ReservationCancelledDate Is Null AND MovementType = 0 AND MovementDate Is Null) AS longrsv," \
-        "(SELECT COUNT(*) FROM animal WHERE Neutered = 0 AND ActiveMovementType = 1 AND " \
+        "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
+            "WHERE Neutered = 0 AND ActiveMovementType = 1 AND " \
             "ActiveMovementDate > %(onemonth)s %(locfilter)s) AS notneu," \
-        "(SELECT COUNT(*) FROM animal WHERE Identichipped = 0 " \
-            "AND Archived = 0 %(locfilter)s) AS notchip, " \
-        "(SELECT COUNT(*) FROM animal WHERE IsNotAvailableForAdoption = 1 " \
-            "AND Archived = 0 %(locfilter)s) AS notadopt, " \
+        "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
+            "WHERE Identichipped = 0 AND Archived = 0 %(locfilter)s) AS notchip, " \
+        "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
+            "WHERE IsNotAvailableForAdoption = 1 AND Archived = 0 %(locfilter)s) AS notadopt, " \
         "(SELECT COUNT(*) FROM animal WHERE IsHold = 1 AND HoldUntilDate = %(today)s AND Archived = 0) AS holdtoday, " \
         "(SELECT COUNT(DISTINCT CollationID) FROM onlineformincoming) AS inform, " \
         "(SELECT COUNT(*) FROM ownercitation WHERE FineDueDate Is Not Null AND FineDueDate <= %(today)s AND FinePaidDate Is Null) AS acunfine, " \
@@ -1465,35 +1470,35 @@ def get_links_recently_adopted(dbo, limit = 5, locationfilter = "", siteid = 0):
     Returns link info for animals who were recently adopted
     """
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
-    return get_animals_ids(dbo, "a.ActiveMovementDate DESC", "SELECT ID FROM animal WHERE ActiveMovementType = 1 %s ORDER BY ActiveMovementDate DESC LIMIT %d" % (locationfilter, limit), 120)
+    return get_animals_ids(dbo, "a.ActiveMovementDate DESC", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE ActiveMovementType = 1 %s ORDER BY ActiveMovementDate DESC LIMIT %d" % (locationfilter, limit), 120)
 
 def get_links_recently_fostered(dbo, limit = 5, locationfilter = "", siteid = 0):
     """
     Returns link info for animals who were recently fostered
     """
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
-    return get_animals_ids(dbo, "a.ActiveMovementDate DESC", "SELECT ID FROM animal WHERE ActiveMovementType = 2 %s ORDER BY ActiveMovementDate DESC LIMIT %d" % (locationfilter, limit), 120)
+    return get_animals_ids(dbo, "a.ActiveMovementDate DESC", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE ActiveMovementType = 2 %s ORDER BY ActiveMovementDate DESC LIMIT %d" % (locationfilter, limit), 120)
 
 def get_links_recently_changed(dbo, limit = 5, locationfilter = "", siteid = 0):
     """
     Returns link info for animals who have recently been changed.
     """
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, whereprefix=True)
-    return get_animals_ids(dbo, "a.LastChangedDate DESC", "SELECT ID FROM animal %s ORDER BY LastChangedDate DESC LIMIT %d" % (locationfilter, limit), 120)
+    return get_animals_ids(dbo, "a.LastChangedDate DESC", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation %s ORDER BY LastChangedDate DESC LIMIT %d" % (locationfilter, limit), 120)
 
 def get_links_recently_entered(dbo, limit = 5, locationfilter = "", siteid = 0):
     """
     Returns link info for animals who recently entered the shelter.
     """
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
-    return get_animals_ids(dbo, "a.MostRecentEntryDate DESC", "SELECT ID FROM animal WHERE Archived = 0 %s ORDER BY MostRecentEntryDate DESC LIMIT %d" % (locationfilter, limit), 120)
+    return get_animals_ids(dbo, "a.MostRecentEntryDate DESC", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE Archived = 0 %s ORDER BY MostRecentEntryDate DESC LIMIT %d" % (locationfilter, limit), 120)
 
 def get_links_longest_on_shelter(dbo, limit = 5, locationfilter = "", siteid = 0):
     """
     Returns link info for animals who have been on the shelter the longest
     """
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
-    return get_animals_ids(dbo, "a.MostRecentEntryDate", "SELECT ID FROM animal WHERE Archived = 0 %s ORDER BY MostRecentEntryDate LIMIT %d" % (locationfilter, limit), 120)
+    return get_animals_ids(dbo, "a.MostRecentEntryDate", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE Archived = 0 %s ORDER BY MostRecentEntryDate LIMIT %d" % (locationfilter, limit), 120)
 
 def get_location_filter_clause(locationfilter = "", tablequalifier = "", siteid = 0, whereprefix = False, andprefix = False, andsuffix = False):
     """
@@ -1540,12 +1545,12 @@ def is_animal_in_location_filter(a, locationfilter, siteid = 0):
             return False
     if locationfilter != "":
         locs = locationfilter.split(",")
-        if str(a["SHELTERLOCATION"]) in locs: return True
-        if a["ACTIVEMOVEMENTTYPE"] == 1 and "-1" in locs: return True
-        if a["ACTIVEMOVEMENTTYPE"] == 2 and "-2" in locs: return True
-        if a["ACTIVEMOVEMENTTYPE"] == 8 and "-8" in locs: return True
-        if a["NONSHELTERANIMAL"] == 1 and "-9" in locs: return True
-    return False
+        if a["ACTIVEMOVEMENTTYPE"] == 1 and "-1" not in locs: return False
+        if a["ACTIVEMOVEMENTTYPE"] == 2 and "-2" not in locs: return False
+        if a["ACTIVEMOVEMENTTYPE"] == 8 and "-8" not in locs: return False
+        if a["NONSHELTERANIMAL"] == 1 and "-9" not in locs: return False
+        if str(a["SHELTERLOCATION"]) not in locs: return False
+    return True
 
 def get_number_animals_on_file(dbo):
     """
@@ -1738,7 +1743,7 @@ def get_shelterview_animals(dbo, locationfilter = "", siteid = 0):
     Returns all available animals for shelterview
     """
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
-    return get_animals_ids(dbo, "a.AnimalName", "SELECT ID FROM animal WHERE Archived = 0 %s ORDER BY HasPermanentFoster, ID DESC LIMIT %d" % (locationfilter, configuration.record_search_limit(dbo)))
+    return get_animals_ids(dbo, "a.AnimalName", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation WHERE Archived = 0 %s ORDER BY HasPermanentFoster, ID DESC LIMIT %d" % (locationfilter, configuration.record_search_limit(dbo)))
 
 def insert_animal_from_form(dbo, post, username):
     """
