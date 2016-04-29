@@ -1,6 +1,8 @@
 39
 ================
 
+29/04/16 Extended location filters to consider sites #412
+29/04/16 Add $SITE$ and $ASK SITE$ to report engine #412
 28/04/16 Add site lookup and UI for users and lookup #412
 28/04/16 Add site table and SiteID to internallocation/user #412
 28/04/16 Fix for missing escaping in where_text_filter

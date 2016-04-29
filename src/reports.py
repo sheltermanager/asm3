@@ -1063,6 +1063,10 @@ class Report:
                     ils.append(str(il["ID"]))
                 lf = ",".join(ils)
             s = s.replace("$LOCATIONFILTER$", lf)
+        # Same goes for site
+        if s.find("$SITE$") != -1:
+            sf = db.query_int(self.dbo, "SELECT SiteID FROM users WHERE UserName = %s" % db.ds(self.user))
+            s = s.replace("$SITE$", str(sf))
         self.sql = s
         # If we don't have any parameters, no point trying to deal with these
         if params is None: return

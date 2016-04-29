@@ -4462,5 +4462,5 @@ def update_33908(dbo):
     db.execute_dbupdate(dbo, "UPDATE internallocation SET SiteID = 1")
     # Add users.SiteID
     add_column(dbo, "users", "SiteID", "INTEGER")
-    db.execute_dbupdate(dbo, "UPDATE users SET SiteID = 1")
+    db.execute_dbupdate(dbo, "UPDATE users SET SiteID = 0")
 

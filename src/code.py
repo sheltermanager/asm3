@@ -547,6 +547,7 @@ class configjs:
             s += "securitymap:'%s'," % session.securitymap
             s += "superuser:%s," % (session.superuser and "true" or "false")
             s += "locationfilter:'%s'," % session.locationfilter
+            s += "siteid:%s," % session.siteid
             s += "roles:'%s'," % (session.roles.replace("'", "\\'"))
             s += "roleids:'%s'," % (session.roleids)
             s += "manualhtml:'%s'," % (MANUAL_HTML_URL)
@@ -743,19 +744,19 @@ class main:
         linkname = ""
         if linkmode == "recentlychanged":
             linkname = _("Recently Changed", l)
-            animallinks = extanimal.get_links_recently_changed(dbo, linkmax, session.locationfilter)
+            animallinks = extanimal.get_links_recently_changed(dbo, linkmax, session.locationfilter, session.siteid)
         elif linkmode == "recentlyentered":
             linkname = _("Recently Entered Shelter", l)
-            animallinks = extanimal.get_links_recently_entered(dbo, linkmax, session.locationfilter)
+            animallinks = extanimal.get_links_recently_entered(dbo, linkmax, session.locationfilter, session.siteid)
         elif linkmode == "recentlyadopted":
             linkname = _("Recently Adopted", l)
-            animallinks = extanimal.get_links_recently_adopted(dbo, linkmax, session.locationfilter)
+            animallinks = extanimal.get_links_recently_adopted(dbo, linkmax, session.locationfilter, session.siteid)
         elif linkmode == "recentlyfostered":
             linkname = _("Recently Fostered", l)
-            animallinks = extanimal.get_links_recently_fostered(dbo, linkmax, session.locationfilter)
+            animallinks = extanimal.get_links_recently_fostered(dbo, linkmax, session.locationfilter, session.siteid)
         elif linkmode == "longestonshelter":
             linkname = _("Longest On Shelter", l)
-            animallinks = extanimal.get_links_longest_on_shelter(dbo, linkmax, session.locationfilter)
+            animallinks = extanimal.get_links_longest_on_shelter(dbo, linkmax, session.locationfilter, session.siteid)
         elif linkmode == "adoptable":
             linkname = _("Up for adoption", l)
             pc = extpublish.PublishCriteria(configuration.publisher_presets(dbo))
@@ -765,7 +766,7 @@ class main:
         usersandroles = users.get_users_and_roles(dbo)
         activeusers = users.get_active_users(dbo)
         # Alerts
-        alerts = extanimal.get_alerts(dbo, session.locationfilter)
+        alerts = extanimal.get_alerts(dbo, session.locationfilter, session.siteid)
         if len(alerts) > 0: 
             alerts[0]["LOOKFOR"] = configuration.lookingfor_last_match_count(dbo)
             alerts[0]["LOSTFOUND"] = configuration.lostfound_last_match_count(dbo)
@@ -1049,8 +1050,8 @@ class animal:
         if a is None: raise web.notfound()
         # If a location filter is set, prevent the user opening this animal if it's
         # not in their location.
-        if not extanimal.is_animal_in_location_filter(a, session.locationfilter):
-            raise utils.ASMPermissionError("animal not in location filter")
+        if not extanimal.is_animal_in_location_filter(a, session.locationfilter, session.siteid):
+            raise utils.ASMPermissionError("animal not in location filter/site")
         al.debug("opened animal %s %s" % (a["CODE"], a["ANIMALNAME"]), "code.animal", dbo)
         s = html.header("", session)
         c = html.controller_json("animal", a)
@@ -1067,7 +1068,7 @@ class animal:
         c += html.controller_json("diarytasks", extdiary.get_animal_tasks(dbo))
         c += html.controller_json("entryreasons", extlookups.get_entryreasons(dbo))
         c += html.controller_json("flags", extlookups.get_animal_flags(dbo))
-        c += html.controller_json("internallocations", extlookups.get_internal_locations(dbo, session.locationfilter))
+        c += html.controller_json("internallocations", extlookups.get_internal_locations(dbo, session.locationfilter, session.siteid))
         c += html.controller_json("microchipmanufacturers", extlookups.MICROCHIP_MANUFACTURERS)
         c += html.controller_json("pickuplocations", extlookups.get_pickup_locations(dbo))
         c += html.controller_json("publishhistory", extanimal.get_publish_history(dbo, a["ID"]))
@@ -1124,7 +1125,7 @@ class animal_bulk:
         c += html.controller_json("animaltypes", extlookups.get_animal_types(dbo))
         c += html.controller_plain("autolitters", html.json_autocomplete_litters(dbo))
         c += html.controller_json("flags", extlookups.get_animal_flags(dbo))
-        c += html.controller_json("internallocations", extlookups.get_internal_locations(dbo, session.locationfilter))
+        c += html.controller_json("internallocations", extlookups.get_internal_locations(dbo, session.locationfilter, session.siteid))
         s += html.controller(c)
         s += html.footer()
         return full_or_json("animal_bulk", s, c, post["json"] == "true")
@@ -1312,11 +1313,11 @@ class animal_embed:
         mode = post["mode"]
         if mode == "find":
             q = post["q"]
-            rows = extanimal.get_animal_find_simple(dbo, q, post["filter"], 100, session.locationfilter)
+            rows = extanimal.get_animal_find_simple(dbo, q, post["filter"], 100, session.locationfilter, session.siteid)
             al.debug("got %d results for '%s'" % (len(rows), str(web.ctx.query)), "code.animal_embed", dbo)
             return html.json(rows)
         elif mode == "multiselect":
-            rows = extanimal.get_animal_find_simple(dbo, "", "all", configuration.record_search_limit(dbo), session.locationfilter)
+            rows = extanimal.get_animal_find_simple(dbo, "", "all", configuration.record_search_limit(dbo), session.locationfilter, session.siteid)
             locations = extlookups.get_internal_locations(dbo)
             species = extlookups.get_species(dbo)
             litters = extanimal.get_litters(dbo)
@@ -1344,7 +1345,7 @@ class animal_find:
         c += html.controller_json("breeds", extlookups.get_breeds_by_species(dbo))
         c += html.controller_json("flags", extlookups.get_animal_flags(dbo))
         c += html.controller_json("sexes", extlookups.get_sexes(dbo))
-        c += html.controller_json("internallocations", extlookups.get_internal_locations(dbo, session.locationfilter))
+        c += html.controller_json("internallocations", extlookups.get_internal_locations(dbo, session.locationfilter, session.siteid))
         c += html.controller_json("sizes", extlookups.get_sizes(dbo))
         c += html.controller_json("colours", extlookups.get_basecolours(dbo))
         s += html.controller(c)
@@ -1362,9 +1363,9 @@ class animal_find_results:
         q = post["q"]
         mode = post["mode"]
         if mode == "SIMPLE":
-            results = extanimal.get_animal_find_simple(dbo, q, "all", configuration.record_search_limit(dbo), session.locationfilter)
+            results = extanimal.get_animal_find_simple(dbo, q, "all", configuration.record_search_limit(dbo), session.locationfilter, session.siteid)
         else:
-            results = extanimal.get_animal_find_advanced(dbo, post.data, configuration.record_search_limit(dbo), session.locationfilter)
+            results = extanimal.get_animal_find_advanced(dbo, post.data, configuration.record_search_limit(dbo), session.locationfilter, session.siteid)
         add = None
         if len(results) > 0: 
             add = extadditional.get_additional_fields_ids(dbo, results, "animal")
@@ -1695,7 +1696,7 @@ class animal_new:
         c += html.controller_json("flags", extlookups.get_animal_flags(dbo))
         c += html.controller_json("sexes", extlookups.get_sexes(dbo))
         c += html.controller_json("entryreasons", extlookups.get_entryreasons(dbo))
-        c += html.controller_json("internallocations", extlookups.get_internal_locations(dbo, session.locationfilter))
+        c += html.controller_json("internallocations", extlookups.get_internal_locations(dbo, session.locationfilter, session.siteid))
         c += html.controller_json("sizes", extlookups.get_sizes(dbo))
         s += html.controller(c)
         s += html.footer()
@@ -1955,7 +1956,7 @@ class calendarview:
                         "icon": "diary",
                         "link": "diary_edit_my" })
             if "v" in ev and users.check_permission_bool(session, users.VIEW_VACCINATION):
-                for v in extmedical.get_vaccinations_two_dates(dbo, post["start"], post["end"], session.locationfilter):
+                for v in extmedical.get_vaccinations_two_dates(dbo, post["start"], post["end"], session.locationfilter, session.siteid):
                     sub = "%s - %s" % (v["VACCINATIONTYPE"], v["ANIMALNAME"])
                     tit = "%s - %s %s %s" % (v["VACCINATIONTYPE"], v["SHELTERCODE"], v["ANIMALNAME"], v["COMMENTS"])
                     events.append({ 
@@ -1965,7 +1966,7 @@ class calendarview:
                         "tooltip": tit, 
                         "icon": "vaccination",
                         "link": "animal_vaccination?id=%d" % v["ANIMALID"] })
-                for v in extmedical.get_vaccinations_expiring_two_dates(dbo, post["start"], post["end"], session.locationfilter):
+                for v in extmedical.get_vaccinations_expiring_two_dates(dbo, post["start"], post["end"], session.locationfilter, session.siteid):
                     sub = "%s - %s" % (v["VACCINATIONTYPE"], v["ANIMALNAME"])
                     tit = "%s - %s %s %s" % (v["VACCINATIONTYPE"], v["SHELTERCODE"], v["ANIMALNAME"], v["COMMENTS"])
                     events.append({ 
@@ -1976,7 +1977,7 @@ class calendarview:
                         "icon": "vaccination",
                         "link": "animal_vaccination?id=%d" % v["ANIMALID"] })
             if "m" in ev and users.check_permission_bool(session, users.VIEW_MEDICAL):
-                for m in extmedical.get_treatments_two_dates(dbo, post["start"], post["end"], session.locationfilter):
+                for m in extmedical.get_treatments_two_dates(dbo, post["start"], post["end"], session.locationfilter, session.siteid):
                     sub = "%s - %s" % (m["TREATMENTNAME"], m["ANIMALNAME"])
                     tit = "%s - %s %s %s %s" % (m["TREATMENTNAME"], m["SHELTERCODE"], m["ANIMALNAME"], m["DOSAGE"], m["COMMENTS"])
                     events.append({ 
@@ -1987,7 +1988,7 @@ class calendarview:
                         "icon": "medical",
                         "link": "animal_medical?id=%d" % m["ANIMALID"] })
             if "t" in ev and users.check_permission_bool(session, users.VIEW_TEST):
-                for t in extmedical.get_tests_two_dates(dbo, post["start"], post["end"], session.locationfilter):
+                for t in extmedical.get_tests_two_dates(dbo, post["start"], post["end"], session.locationfilter, session.siteid):
                     sub = "%s - %s" % (t["TESTNAME"], t["ANIMALNAME"])
                     tit = "%s - %s %s %s" % (t["TESTNAME"], t["SHELTERCODE"], t["ANIMALNAME"], t["COMMENTS"])
                     events.append({ 
@@ -4010,7 +4011,7 @@ class medical:
         users.check_permission(session, users.VIEW_MEDICAL)
         dbo = session.dbo
         post = utils.PostedData(web.input(newmed = "0", offset = "m365"), session.locale)
-        med = extmedical.get_treatments_outstanding(dbo, post["offset"], session.locationfilter)
+        med = extmedical.get_treatments_outstanding(dbo, post["offset"], session.locationfilter, session.siteid)
         profiles = extmedical.get_profiles(dbo)
         al.debug("got %d medical treatments" % len(med), "code.medical", dbo)
         s = html.header("", session)
@@ -5663,7 +5664,7 @@ class report:
         crid = post.integer("id")
         # Make sure this user has a role that can view the report
         extreports.check_view_permission(session, crid)
-        crit = extreports.get_criteria_controls(session.dbo, crid, locationfilter = session.locationfilter) 
+        crit = extreports.get_criteria_controls(session.dbo, crid, locationfilter = session.locationfilter, siteid = session.siteid) 
         web.header("Content-Type", "text/html")
         web.header("Cache-Control", "no-cache")
         # If the report doesn't take criteria, just show it
@@ -5929,14 +5930,14 @@ class shelterview:
         users.check_permission(session, users.VIEW_ANIMAL)
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
-        animals = extanimal.get_shelterview_animals(dbo, session.locationfilter)
+        animals = extanimal.get_shelterview_animals(dbo, session.locationfilter, session.siteid)
         perrow = configuration.main_screen_animal_link_max(dbo)
         al.debug("got %d animals for shelterview" % (len(animals)), "code.shelterview", dbo)
         s = html.header("", session)
         c = html.controller_json("animals", extanimal.get_animals_brief(animals))
         c += html.controller_json("flags", extlookups.get_animal_flags(dbo))
         c += html.controller_json("fosterers", extperson.get_shelterview_fosterers(dbo))
-        c += html.controller_json("locations", extlookups.get_internal_locations(dbo, session.locationfilter))
+        c += html.controller_json("locations", extlookups.get_internal_locations(dbo, session.locationfilter, session.siteid))
         c += html.controller_int("perrow", perrow)
         s += html.controller(c)
         s += html.footer()
@@ -6157,7 +6158,7 @@ class test:
         users.check_permission(session, users.VIEW_TEST)
         dbo = session.dbo
         post = utils.PostedData(web.input(newtest = "0", offset = "m365"), session.locale)
-        test = extmedical.get_tests_outstanding(dbo, post["offset"], session.locationfilter)
+        test = extmedical.get_tests_outstanding(dbo, post["offset"], session.locationfilter, session.siteid)
         al.debug("got %d tests" % len(test), "code.test", dbo)
         s = html.header("", session)
         c = html.controller_str("name", "test")
@@ -6292,7 +6293,7 @@ class vaccination:
         users.check_permission(session, users.VIEW_VACCINATION)
         dbo = session.dbo
         post = utils.PostedData(web.input(newvacc = "0", offset = "m365"), session.locale)
-        vacc = extmedical.get_vaccinations_outstanding(dbo, post["offset"], session.locationfilter)
+        vacc = extmedical.get_vaccinations_outstanding(dbo, post["offset"], session.locationfilter, session.siteid)
         al.debug("got %d vaccinations" % len(vacc), "code.vaccination", dbo)
         s = html.header("", session)
         c = html.controller_str("name", "vaccination")

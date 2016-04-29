@@ -511,6 +511,7 @@ def insert_user_from_form(dbo, username, post):
         ( "RecordVersion", db.di(0)),
         ( "SecurityMap", db.ds("dummy")),
         ( "OwnerID", post.db_integer("person")),
+        ( "SiteID", post.db_integer("site")),
         ( "LocationFilter", post.db_string("locationfilter")),
         ( "IPRestriction", post.db_string("iprestriction"))
         ))
@@ -549,6 +550,7 @@ def update_user_from_form(dbo, username, post):
         ( "EmailAddress", post.db_string("email")),
         ( "SuperUser", post.db_integer("superuser")),
         ( "OwnerID", post.db_integer("person")),
+        ( "SiteID", post.db_integer("site")),
         ( "LocationFilter", post.db_string("locationfilter")),
         ( "IPRestriction", post.db_string("iprestriction"))
         ))
@@ -707,6 +709,7 @@ def web_login(post, session, remoteip, path):
             ur = get_users(dbo, user["USERNAME"])[0]
             session.roles = ur["ROLES"]
             session.roleids = ur["ROLEIDS"]
+            session.siteid = user["SITEID"]
             session.locationfilter = utils.nulltostr(user["LOCATIONFILTER"])
         except:
             # Users coming from v2 won't have the
@@ -716,6 +719,7 @@ def web_login(post, session, remoteip, path):
             session.roles = ""
             session.roleids = ""
             session.locationfilter = ""
+            session.siteid = 0
         try:
             # If it's a sheltermanager.com database, try and update the
             # last time the user connected to today

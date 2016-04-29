@@ -952,9 +952,13 @@ def get_incident_completed_types(dbo):
 def get_incident_types(dbo):
     return db.query(dbo, "SELECT * FROM incidenttype ORDER BY IncidentName")
 
-def get_internal_locations(dbo, locationfilter = ""):
-    if locationfilter != "": locationfilter = "WHERE ID IN (%s)" % locationfilter
-    return db.query(dbo, "SELECT * FROM internallocation %s ORDER BY LocationName" % locationfilter)
+def get_internal_locations(dbo, locationfilter = "", siteid = 0):
+    clauses = []
+    if locationfilter != "": clauses.append("ID IN (%s)" % locationfilter)
+    if siteid != 0: clauses.append("SiteID = %s" % siteid)
+    c = " AND ".join(clauses)
+    if c != "": c = "WHERE %s" % c
+    return db.query(dbo, "SELECT * FROM internallocation %s ORDER BY LocationName" % c)
 
 def get_internallocation_name(dbo, lid):
     if lid is None: return ""
@@ -1155,8 +1159,12 @@ def get_sexes(dbo):
 def get_sites(dbo):
     return db.query(dbo, "SELECT * FROM site ORDER BY SiteName")
 
+def get_site_name(dbo, sid):
+    if sid is None: return ""
+    return db.query_string(dbo, "SELECT SiteName FROM site WHERE ID = %d" % sid)
+
 def get_size_name(dbo, sid):
-    if id is None: return ""
+    if sid is None: return ""
     return db.query_string(dbo, "SELECT Size FROM lksize WHERE ID = %d" % sid)
 
 def get_species(dbo):

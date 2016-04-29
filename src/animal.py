@@ -109,6 +109,8 @@ def get_animal_query(dbo):
         "dr.ReasonName AS PTSReasonName, " \
         "il.LocationName AS ShelterLocationName, " \
         "il.LocationDescription AS ShelterLocationDescription, " \
+        "il.SiteID AS SiteID, " \
+        "se.SiteName AS SiteName, " \
         "pl.LocationName AS PickupLocationName, " \
         "ac.ID AS AnimalControlIncidentID, " \
         "itn.IncidentName AS AnimalControlIncidentName, " \
@@ -189,6 +191,7 @@ def get_animal_query(dbo):
         "LEFT OUTER JOIN lksize sz ON sz.ID = a.Size " \
         "LEFT OUTER JOIN entryreason er ON er.ID = a.EntryReasonID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
+        "LEFT OUTER JOIN site se ON se.ID = il.SiteID " \
         "LEFT OUTER JOIN pickuplocation pl ON pl.ID = a.PickupLocationID " \
         "LEFT OUTER JOIN media web ON web.LinkID = a.ID AND web.LinkTypeID = 0 AND web.WebsitePhoto = 1 " \
         "LEFT OUTER JOIN media vid ON vid.LinkID = a.ID AND vid.LinkTypeID = 0 AND vid.WebsiteVideo = 1 " \
@@ -335,7 +338,7 @@ def get_animals_brief(animals):
         })
     return r
 
-def get_animal_find_simple(dbo, query, classfilter = "all", limit = 0, locationfilter = ""):
+def get_animal_find_simple(dbo, query, classfilter = "all", limit = 0, locationfilter = "", siteid = 0):
     """
     Returns rows for simple animal searches.
     query: The search criteria
@@ -345,8 +348,8 @@ def get_animal_find_simple(dbo, query, classfilter = "all", limit = 0, locationf
     # If no query has been given and we have a filter of shelter or all, 
     # do an on-shelter search instead
     if query == "" and (classfilter == "all" or classfilter == "shelter"):
-        if locationfilter != "": locationfilter = " AND " + get_location_filter_clause(locationfilter, "a")
-        sql = get_animal_query(dbo) + " WHERE a.Archived = 0 %s ORDER BY a.AnimalName" % locationfilter
+        locationfilter = get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid, andprefix=True)
+        sql = get_animal_query(dbo) + " WHERE a.Archived = 0 %s ORDER BY a.AnimalName" % (locationfilter)
         if limit > 0: sql += " LIMIT " + str(limit)
         return db.query(dbo, sql)
     ors = []
@@ -408,13 +411,12 @@ def get_animal_find_simple(dbo, query, classfilter = "all", limit = 0, locationf
         sql += u" a.Archived = 0 AND "
     elif classfilter == "female":
         sql += u" a.Sex = 0 AND "
-    if locationfilter != "":
-        sql += get_location_filter_clause(locationfilter, "a") + u" AND "
+    sql += get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid, andsuffix=True)
     sql += "(" + u" OR ".join(ors) + ") ORDER BY a.Archived, a.AnimalName"
     if limit > 0: sql += " LIMIT " + str(limit)
     return db.query(dbo, sql)
 
-def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = ""):
+def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", siteid = 0):
     """
     Returns rows for advanced animal searches.
     criteria: A dictionary of criteria
@@ -523,7 +525,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = ""):
     addid("shelterlocation", "a.ShelterLocation")
     # If we have a location filter and no location has been given, use the filter
     if locationfilter != "" and (not hk("shelterlocation") or crit("shelterlocation") == "-1"):
-        c.append(get_location_filter_clause(locationfilter, "a"))
+        c.append(get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid))
     addstr("microchip", "a.IdentichipNumber")
     addstr("rabiestag", "a.RabiesTag")
     addstr("pickupaddress", "a.PickupAddress")
@@ -643,7 +645,7 @@ def get_animals_recently_deceased(dbo):
         "OR a.ActiveMovementType = 2) " \
         "AND a.DeceasedDate > %s" % db.dd(recent))
 
-def get_alerts(dbo, locationfilter = ""):
+def get_alerts(dbo, locationfilter = "", siteid = 0):
     """
     Returns the alert totals for the main screen.
     """
@@ -652,7 +654,7 @@ def get_alerts(dbo, locationfilter = ""):
     onemonth = db.dd(subtract_days(now(dbo.timezone), 31))
     oneweek = db.dd(subtract_days(now(dbo.timezone), 7))
     today = db.dd(now(dbo.timezone))
-    if locationfilter != "": locationfilter = " AND " + get_location_filter_clause(locationfilter)
+    locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
     shelterfilter = ""
     if not configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (Archived = 0 OR ActiveMovementType = 2)"
@@ -1458,42 +1460,42 @@ def get_has_animal_on_shelter(dbo):
     """
     return db.query_int(dbo, "SELECT COUNT(ID) FROM animal a WHERE a.Archived = 0") > 0
 
-def get_links_recently_adopted(dbo, limit = 5, locationfilter = ""):
+def get_links_recently_adopted(dbo, limit = 5, locationfilter = "", siteid = 0):
     """
     Returns link info for animals who were recently adopted
     """
-    if locationfilter != "": locationfilter = "AND " + get_location_filter_clause(locationfilter)
+    locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
     return get_animals_ids(dbo, "a.ActiveMovementDate DESC", "SELECT ID FROM animal WHERE ActiveMovementType = 1 %s ORDER BY ActiveMovementDate DESC LIMIT %d" % (locationfilter, limit), 120)
 
-def get_links_recently_fostered(dbo, limit = 5, locationfilter = ""):
+def get_links_recently_fostered(dbo, limit = 5, locationfilter = "", siteid = 0):
     """
     Returns link info for animals who were recently fostered
     """
-    if locationfilter != "": locationfilter = "AND " + get_location_filter_clause(locationfilter)
+    locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
     return get_animals_ids(dbo, "a.ActiveMovementDate DESC", "SELECT ID FROM animal WHERE ActiveMovementType = 2 %s ORDER BY ActiveMovementDate DESC LIMIT %d" % (locationfilter, limit), 120)
 
-def get_links_recently_changed(dbo, limit = 5, locationfilter = ""):
+def get_links_recently_changed(dbo, limit = 5, locationfilter = "", siteid = 0):
     """
     Returns link info for animals who have recently been changed.
     """
-    if locationfilter != "": locationfilter = "WHERE " + get_location_filter_clause(locationfilter)
+    locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, whereprefix=True)
     return get_animals_ids(dbo, "a.LastChangedDate DESC", "SELECT ID FROM animal %s ORDER BY LastChangedDate DESC LIMIT %d" % (locationfilter, limit), 120)
 
-def get_links_recently_entered(dbo, limit = 5, locationfilter = ""):
+def get_links_recently_entered(dbo, limit = 5, locationfilter = "", siteid = 0):
     """
     Returns link info for animals who recently entered the shelter.
     """
-    if locationfilter != "": locationfilter = "AND " + get_location_filter_clause(locationfilter)
+    locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
     return get_animals_ids(dbo, "a.MostRecentEntryDate DESC", "SELECT ID FROM animal WHERE Archived = 0 %s ORDER BY MostRecentEntryDate DESC LIMIT %d" % (locationfilter, limit), 120)
 
-def get_links_longest_on_shelter(dbo, limit = 5, locationfilter = ""):
+def get_links_longest_on_shelter(dbo, limit = 5, locationfilter = "", siteid = 0):
     """
     Returns link info for animals who have been on the shelter the longest
     """
-    if locationfilter != "": locationfilter = "AND " + get_location_filter_clause(locationfilter)
+    locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
     return get_animals_ids(dbo, "a.MostRecentEntryDate", "SELECT ID FROM animal WHERE Archived = 0 %s ORDER BY MostRecentEntryDate LIMIT %d" % (locationfilter, limit), 120)
 
-def get_location_filter_clause(locationfilter, tablequalifier = ""):
+def get_location_filter_clause(locationfilter = "", tablequalifier = "", siteid = 0, whereprefix = False, andprefix = False, andsuffix = False):
     """
     Returns a where clause that excludes animals not in the locationfilter
     locationfilter: comma separated list of internallocation IDs and special values
@@ -1501,30 +1503,48 @@ def get_location_filter_clause(locationfilter, tablequalifier = ""):
         -2: animals in a foster home
         -8: animals in a retailer
         -9: non-shelter animals (excluded from this functionality)
+    tablequalifier: The animal table name
+    siteid: The animal's site, as linked to internallocation
+    andprefix: If true, add a prefix of " AND " to any filter
     """
     # Don't do anything if there's no filter
-    if locationfilter == "": return ""
+    if locationfilter == "" and siteid == 0: return ""
     if tablequalifier != "" and not tablequalifier.endswith("."): tablequalifier += "."
-    # If movement types are included in the filter, build another in clause
-    locs = locationfilter.split(",")
-    mtfilter = "0"
-    if "-1" in locs: mtfilter += ",1"
-    if "-2" in locs: mtfilter += ",2"
-    if "-8" in locs: mtfilter += ",8"
-    lc = "(%(tq)sShelterLocation IN (%(lf)s) OR %(tq)sActiveMovementType IN (%(mt)s))" % { "tq": tablequalifier, "lf": locationfilter, "mt": mtfilter }
-    return lc
+    clauses = []
+    if locationfilter != "":
+        # If movement types are included in the filter, build another in clause
+        locs = locationfilter.split(",")
+        mtfilter = "0"
+        if "-1" in locs: mtfilter += ",1"
+        if "-2" in locs: mtfilter += ",2"
+        if "-8" in locs: mtfilter += ",8"
+        clauses.append("(%(tq)sShelterLocation IN (%(lf)s) OR %(tq)sActiveMovementType IN (%(mt)s))" % { "tq": tablequalifier, "lf": locationfilter, "mt": mtfilter })
+    if siteid != 0:
+        clauses.append("il.SiteID = %s" % siteid)
+    c = " AND ".join(clauses)
+    if andprefix:
+        c = " AND %s" % c
+    if andsuffix:
+        c = "%s AND " % c
+    if whereprefix:
+        c = " WHERE %s" % c
+    return c
 
-def is_animal_in_location_filter(a, locationfilter):
+def is_animal_in_location_filter(a, locationfilter, siteid = 0):
     """
     Returns True if the animal a is included in the locationfilter
     """
-    if locationfilter == "": return True
-    locs = locationfilter.split(",")
-    if str(a["SHELTERLOCATION"]) in locs: return True
-    if a["ACTIVEMOVEMENTTYPE"] == 1 and "-1" in locs: return True
-    if a["ACTIVEMOVEMENTTYPE"] == 2 and "-2" in locs: return True
-    if a["ACTIVEMOVEMENTTYPE"] == 8 and "-8" in locs: return True
-    if a["NONSHELTERANIMAL"] == 1 and "-9" in locs: return True
+    if locationfilter == "" and siteid == 0: return True
+    if siteid != 0:
+        if a["SITEID"] != siteid: 
+            return False
+    if locationfilter != "":
+        locs = locationfilter.split(",")
+        if str(a["SHELTERLOCATION"]) in locs: return True
+        if a["ACTIVEMOVEMENTTYPE"] == 1 and "-1" in locs: return True
+        if a["ACTIVEMOVEMENTTYPE"] == 2 and "-2" in locs: return True
+        if a["ACTIVEMOVEMENTTYPE"] == 8 and "-8" in locs: return True
+        if a["NONSHELTERANIMAL"] == 1 and "-9" in locs: return True
     return False
 
 def get_number_animals_on_file(dbo):
@@ -1713,11 +1733,11 @@ def insert_publish_history(dbo, animalid, service):
     db.execute(dbo, "INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate) VALUES (%d, '%s', %s)" % \
         (animalid, service, db.dd(now())))
 
-def get_shelterview_animals(dbo, locationfilter = ""):
+def get_shelterview_animals(dbo, locationfilter = "", siteid = 0):
     """
     Returns all available animals for shelterview
     """
-    if locationfilter != "": locationfilter = "AND " + get_location_filter_clause(locationfilter)
+    locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
     return get_animals_ids(dbo, "a.AnimalName", "SELECT ID FROM animal WHERE Archived = 0 %s ORDER BY HasPermanentFoster, ID DESC LIMIT %d" % (locationfilter, configuration.record_search_limit(dbo)))
 
 def insert_animal_from_form(dbo, post, username):

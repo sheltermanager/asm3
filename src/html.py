@@ -1376,6 +1376,17 @@ def options_sizes(dbo, includeAll = False, selected = -1):
             int(sz["ID"]) == selected)
     return s
 
+def options_sites(dbo, includeAll = False, selected = -1):
+    l = dbo.locale
+    s = ""
+    if includeAll: s += option(_("(all)", l), "-1", False)
+    se = lookups.get_sites(dbo)
+    for i in se:
+        s += option(i["SITENAME"], 
+            str(i["ID"]), 
+            int(i["ID"]) == selected)
+    return s
+
 def options_smarttagtypes(dbo, includeAll = False, selected = -1):
     l = dbo.locale
     s = ""
@@ -1604,6 +1615,16 @@ def report_criteria(dbo, crit, locationfilter = ""):
             </select>
             </td>
             </tr>""" % ( _("Log Type", l), name, name, options_log_types(dbo, False, -1) )
+        elif rtype == "SITE":
+            s += """
+            <tr>
+            <td>%s</td>
+            <td>
+            <select class="asm-selectbox" id="report-%s" data-post="%s">
+            %s
+            </select>
+            </td>
+            </tr>""" % ( _("Site", l), name, name, options_sites(dbo, False, -1) )
         elif rtype == "TYPE":
             s += """
             <tr>

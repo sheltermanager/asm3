@@ -33,7 +33,8 @@ $(function() {
                     { json_field: "ROLEIDS", post_field: "roles", label: _("Roles"), type: "selectmulti", 
                         options: { rows: controller.roles, valuefield: "ID", displayfield: "ROLENAME" }},
                     { json_field: "SITEID", post_field: "site", label: _("Site"), type: "select", 
-                        options: html.list_to_options(controller.sites, "ID", "SiteName") },
+                        options: '<option value="0">' + _("(all)") + '</option>' +  
+                            html.list_to_options(controller.sites, "ID", "SiteName") },
                     { json_field: "OWNERID", post_field: "person", label: _("Staff record"), type: "person", personfilter: "staff" },
                     { json_field: "LOCATIONFILTER", post_field: "locationfilter", label: _("Location Filter"), type: "selectmulti", 
                         options: { rows: controller.internallocations, valuefield: "ID", displayfield: "LOCATIONNAME" }},
