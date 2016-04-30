@@ -97,7 +97,8 @@ $(function() {
                         options: { rows: controller.roles, valuefield: "ID", displayfield: "ROLENAME" }},
                     { type: "raw", label: "", markup: '<button id="button-checksql">' + _("Syntax check this SQL") + '</button>' +
                         '<button id="button-genhtml">' + _("Generate HTML from this SQL") + '</button>' },
-                    { json_field: "SQLCOMMAND", post_field: "sql", label: _("SQL"), type: "sqleditor", height: "150px", width: "680px" },
+                    { json_field: "SQLCOMMAND", post_field: "sql", label: _("SQL"), type: "sqleditor", height: "150px", width: "680px",
+                        callout: _("SQL editor: Press F11 to go full screen and press CTRL+SPACE to autocomplete table and column names") },
                     { json_field: "HTMLBODY", post_field: "html", label: _("HTML"), type: "htmleditor", height: "150px", width: "680px" }
                 ]
             };

@@ -1,6 +1,8 @@
 39
 ================
 
+30/04/16 Add callouts to SQL interface/report editing #377
+30/04/16 Add callout widget and apply to user accounts screen #377
 29/04/16 Extended location filters to consider sites #412
 29/04/16 Add $SITE$ and $ASK SITE$ to report engine #412
 28/04/16 Add site lookup and UI for users and lookup #412

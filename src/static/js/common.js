@@ -839,6 +839,7 @@
                 $(".ui-tabs-nav li a").css("float", "right");
             }
             // Create any form controls based on classes used
+            $(".asm-callout").callout();
             $(".asm-datebox").date();
             $(".asm-alphanumberbox").alphanumber();
             $(".asm-numberbox").number();
@@ -1869,7 +1870,7 @@
                 "<div class=\"ui-widget\" ",
                 containerid ? "id=\"" + containerid + "\" " : "",
                 ">",
-                "<div class=\"ui-state-highlight ui-corner-all\"><p>",
+                "<div class=\"ui-state-highlight ui-corner-all\"><p style=\"padding: 4px\">",
                 "<span class=\"ui-icon ui-icon-info\" style=\"float: left; margin-right: .3em;\"></span>",
                 s,
                 "</p></div></div>"

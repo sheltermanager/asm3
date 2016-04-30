@@ -16,6 +16,10 @@ $(function() {
                 _("The database will be inaccessible to all users while the export is in progress.") + '</div>',
                 '<div class="asm-toolbar">',
                 tableform.buttons_render([
+                    { type: "raw", markup: 
+                    '<span id="callout-sql" class="asm-callout">' + 
+                        _("SQL editor: Press F11 to go full screen and press CTRL+SPACE to autocomplete table and column names") + 
+                    '</span>'},
                     { id: "exec", text: _("Execute"), tooltip: _("Execute the SQL in the box below"), icon: "sql" },
                     { id: "script", text: _("Execute Script"), tooltip: _("Upload an SQL script"), icon: "sql" },
                     { id: "export", text: _("Export"), tooltip: _("Export this database in various formats"), icon: "database",

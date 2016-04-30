@@ -761,6 +761,69 @@
 
     });
 
+    /**
+     * Callout widget to allow a help bubble.
+     * Eg:
+     *     <span id="callout-something" class="asm-callout">This inner content can be HTML</span>
+     * 
+     * The popup div and cancel event are attached to #asm-content, so they will unload
+     * with the current form without having to be explicitly destroyed.
+     */
+    $.widget("asm.callout", {
+        options: {
+            button: null,
+            popup: null
+        },
+
+        _create: function() {
+            var self = this;
+            var button = this.element;
+            this.options.button = this.element;
+            var popupid = this.element.attr("id") + "-popup";
+
+            // Read the elements inner content then remove it
+            var content = button.html();
+            button.html("");
+
+            // Style the button by adding an actual button with icon
+            button.append(html.icon("callout"));
+
+            // Create the callout
+            $("#asm-content").append('<div id="' + popupid + '" class="menushadow">' + html.info(content) + '</div>');
+            var popup = $("#" + popupid);
+            this.options.popup = popup;
+            popup.css("display", "none");
+
+            // Hide the callout if we click elsewhere
+            $("#asm-content").click(function() {
+                self.hide();
+            });
+
+            button.click(function(e) {
+                var topval = button.offset().top + $(button).height() + 14;
+                var leftval = button.offset().left;
+                popup.css({
+                    "position": "absolute",
+                    "left": leftval + "px",
+                    "top": topval + "px",
+                    "z-index": "9999",
+                    "max-width": "500px"
+                });
+                popup.toggle();
+                return false; // prevent bubbling up to our click/hide event
+            });
+        },
+
+        hide: function() {
+            this.options.popup.hide();
+        },
+
+        destroy: function() {
+            this.options.popup.remove();
+        }
+
+    });
+
 
     /**
      * ASM menu widget (we have to use asmmenu so as not to clash
