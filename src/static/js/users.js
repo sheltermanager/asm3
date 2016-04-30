@@ -40,7 +40,7 @@ $(function() {
                         options: { rows: controller.internallocations, valuefield: "ID", displayfield: "LOCATIONNAME" },
                         callout: _("Setting a location filter will prevent this user seeing animals who are not in these locations on shelterview, find animal and search.")
                     },
-                    { json_field: "IPRESTRICTION", post_field: "iprestriction", label: _("IP Restriction"), type: "textarea", classes: "asm-ipbox",
+                    { json_field: "IPRESTRICTION", post_field: "iprestriction", label: _("IP Restriction"), type: "text", classes: "asm-ipbox",
                       callout: _("IP restriction is a space-separated list of IP netblocks in CIDR notation that this user is *only* permitted to login from (eg: 192.168.0.0/24 127.0.0.0/8). If left blank, the user can login from any address.")
                     }
                 ]
