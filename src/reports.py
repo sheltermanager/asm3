@@ -200,7 +200,7 @@ def get_criteria_params(dbo, customreportid, post):
             p.append( ( name, i18n._("Type", l), post[name], lookups.get_animaltype_name(dbo, post.integer(name) )) )
     return p
 
-def get_criteria_controls(dbo, customreportid, mode = "NORMAL", locationfilter = ""):
+def get_criteria_controls(dbo, customreportid, mode = "NORMAL", locationfilter = "", siteid = 0):
     """
     Renders criteria controls for the selected report as
     an html form. Returns an empty string for no criteria.

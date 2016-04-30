@@ -1245,11 +1245,11 @@ def options_incident_types(dbo, includeAll = False, selected = -1):
             int(e["ID"]) == selected)
     return s
 
-def options_internal_locations(dbo, includeAll = False, selected = -1, locationfilter = ""):
+def options_internal_locations(dbo, includeAll = False, selected = -1, locationfilter = "", siteid = 0):
     l = dbo.locale
     s = ""
     if includeAll: s += option(_("(all)", l), "-1", False)
-    lo = lookups.get_internal_locations(dbo, locationfilter)
+    lo = lookups.get_internal_locations(dbo, locationfilter, siteid)
     for l in lo:
         s += option(l["LOCATIONNAME"], 
             str(l["ID"]), 
@@ -1496,7 +1496,7 @@ def timeline_rss(dbo, limit = 500):
         h.append( rss_item( r["DESCRIPTION"], "%s/%s?id=%d" % (BASE_URL, r["LINKTARGET"], r["ID"]), "") )
     return rss("\n".join(h), _("Showing {0} timeline events.", l).format(limit), BASE_URL, "")
 
-def report_criteria(dbo, crit, locationfilter = ""):
+def report_criteria(dbo, crit, locationfilter = "", siteid = 0):
     """
     Renders report criteria as an HTML form
     crit: The criteria - a list of tuples containing name, type and a question
@@ -1604,7 +1604,7 @@ def report_criteria(dbo, crit, locationfilter = ""):
             %s
             </select>
             </td>
-            </tr>""" % ( _("Location", l), name, name, options_internal_locations(dbo, False, -1, locationfilter) )
+            </tr>""" % ( _("Location", l), name, name, options_internal_locations(dbo, False, -1, locationfilter, siteid) )
         elif rtype == "LOGTYPE":
             s += """
             <tr>
@@ -1638,10 +1638,10 @@ def report_criteria(dbo, crit, locationfilter = ""):
     s += "<tr><td></td><td><button id=\"submitcriteria\">%s</button></td></tr></table>" % _("Generate", l)
     return s
 
-def report_criteria_mobile(dbo, crit, locationfilter = ""):
+def report_criteria_mobile(dbo, crit, locationfilter = "", siteid = 0):
     """
     l: The locale
     crit: The criteria - a list of tuples containing name, type and a question
     """
-    return report_criteria(dbo, crit, locationfilter)
+    return report_criteria(dbo, crit, locationfilter, siteid)
 
