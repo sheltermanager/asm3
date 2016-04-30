@@ -514,8 +514,8 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
             words = crit(cfield).split(" ")
             for w in words:
                 c.append("(LOWER(%s) LIKE '%%%s%%' OR LOWER(%s) LIKE '%%%s%%')" % (
-                    field, w.lower(),
-                    field, utils.decode_html(w.lower())
+                    field, w.lower().replace("'", "`"),
+                    field, utils.decode_html(w.lower()).replace("'", "`")
                 ))
 
     addstr("animalname", "a.AnimalName")
