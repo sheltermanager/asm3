@@ -709,7 +709,7 @@ def web_login(post, session, remoteip, path):
             ur = get_users(dbo, user["USERNAME"])[0]
             session.roles = ur["ROLES"]
             session.roleids = ur["ROLEIDS"]
-            session.siteid = user["SITEID"]
+            session.siteid = utils.cint(user["SITEID"])
             session.locationfilter = utils.nulltostr(user["LOCATIONFILTER"])
         except:
             # Users coming from v2 won't have the
