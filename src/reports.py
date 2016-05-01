@@ -210,9 +210,9 @@ def get_criteria_controls(dbo, customreportid, mode = "NORMAL", locationfilter =
     crit = Report(dbo).GetParams(customreportid)
     if len(crit) == 0: return ""
     if mode == "NORMAL":
-        return html.report_criteria(dbo, crit, locationfilter)
+        return html.report_criteria(dbo, crit, locationfilter, siteid)
     else:
-        return html.report_criteria_mobile(dbo, crit, locationfilter)
+        return html.report_criteria_mobile(dbo, crit, locationfilter, siteid)
 
 def check_view_permission(session, customreportid):
     """
