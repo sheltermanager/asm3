@@ -144,28 +144,41 @@ the user by assigning roles.
 If you set an email address for the user and configure email, you can have the
 system send diary notes and messages via email to users.
 
-If you set a person record for the user, they will be forbidden from opening
+If you set a staff person record for the user, they will be forbidden from opening
 that person record. The idea is to prevent them from viewing their own person
 record. You can also set the role permission to forbid them opening any other
 person record with the “Staff” flag if you wish to lock a user from opening any
 staff person records.
 
-Setting a location filter (a group of internal locations) for a user will
-prevent them seeing animals who are not in those locations when:
+Setting an IP restriction will only allow that user account to login from IP
+addresses that match the set.
 
-* Viewing animal links on the home page.
+Location Filter
+^^^^^^^^^^^^^^^^
 
-* Viewing shelter view, search results or find animal results (basic or
+Setting a location filter (a group of internal locations) for a user account
+will prevent that account from seeing or opening animals who are not in those
+locations when:
+
+* Directly viewing an animal record.
+
+* Displaying animal links on the home page.
+
+* Displaying shelter view, search results or find animal results (basic or
   advanced). 
 
 * When adding or editing animals, the internal location dropdown will only show
   those locations.
 
-* When choosing report criteria, they will only be able to select one of those
-  locations for any $ASK LOCATION$ tags.
+* When choosing report criteria, they will only be able to select one of the
+  filter locations for any $ASK LOCATION$ tags.
 
-Setting an IP restriction will only allow that user account to login from IP
-addresses that match the set.
+If ASM has been configured with multi-site mode, a site dropdown will also
+appear on the user record, allowing a site to be assigned to the user. Each
+internal location belongs to a site and selecting a site is effectively a
+shorthand for setting a location filter for all the locations that belong to
+that site. It is an easy way of preventing a user from seeing animals who are
+not at that site without having to configure individual location filters.
 
 User roles
 ----------

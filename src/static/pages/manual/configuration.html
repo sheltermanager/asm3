@@ -406,24 +406,35 @@ system. If you choose &#8220;normal user&#8221;, you will need to set permission
 the user by assigning roles.</p>
 <p>If you set an email address for the user and configure email, you can have the
 system send diary notes and messages via email to users.</p>
-<p>If you set a person record for the user, they will be forbidden from opening
+<p>If you set a staff person record for the user, they will be forbidden from opening
 that person record. The idea is to prevent them from viewing their own person
 record. You can also set the role permission to forbid them opening any other
 person record with the “Staff” flag if you wish to lock a user from opening any
 staff person records.</p>
-<p>Setting a location filter (a group of internal locations) for a user will
-prevent them seeing animals who are not in those locations when:</p>
+<p>Setting an IP restriction will only allow that user account to login from IP
+addresses that match the set.</p>
+<div class="section" id="location-filter">
+<h3>Location Filter<a class="headerlink" href="#location-filter" title="Permalink to this headline">¶</a></h3>
+<p>Setting a location filter (a group of internal locations) for a user account
+will prevent that account from seeing or opening animals who are not in those
+locations when:</p>
 <ul class="simple">
-<li>Viewing animal links on the home page.</li>
-<li>Viewing shelter view, search results or find animal results (basic or
+<li>Directly viewing an animal record.</li>
+<li>Displaying animal links on the home page.</li>
+<li>Displaying shelter view, search results or find animal results (basic or
 advanced).</li>
 <li>When adding or editing animals, the internal location dropdown will only show
 those locations.</li>
-<li>When choosing report criteria, they will only be able to select one of those
-locations for any $ASK LOCATION$ tags.</li>
+<li>When choosing report criteria, they will only be able to select one of the
+filter locations for any $ASK LOCATION$ tags.</li>
 </ul>
-<p>Setting an IP restriction will only allow that user account to login from IP
-addresses that match the set.</p>
+<p>If ASM has been configured with multi-site mode, a site dropdown will also
+appear on the user record, allowing a site to be assigned to the user. Each
+internal location belongs to a site and selecting a site is effectively a
+shorthand for setting a location filter for all the locations that belong to
+that site. It is an easy way of preventing a user from seeing animals who are
+not at that site without having to configure individual location filters.</p>
+</div>
 </div>
 <div class="section" id="user-roles">
 <h2>User roles<a class="headerlink" href="#user-roles" title="Permalink to this headline">¶</a></h2>
