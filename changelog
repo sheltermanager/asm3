@@ -1,6 +1,7 @@
 39
 ================
 
+03/05/16 Add Finnish locale
 03/05/16 Fix report query testing and handle SQL comments #418
 03/05/16 Fix asilomar ending/beginning counts (again)
 30/04/16 Add callouts to SQL interface/report editing #377
