@@ -1,6 +1,8 @@
 39
 ================
 
+03/05/16 Fix report query testing and handle SQL comments #418
+03/05/16 Fix asilomar ending/beginning counts (again)
 30/04/16 Add callouts to SQL interface/report editing #377
 30/04/16 Add callout widget and apply to user accounts screen #377
 29/04/16 Extended location filters to consider sites #412

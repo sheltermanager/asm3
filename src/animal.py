@@ -4678,8 +4678,8 @@ def update_animal_figures_asilomar(dbo, year = 0):
     add_total("TU", "Total Outcomes [T + U]", "V")
 
     # W End of year shelter count
-    dogsub = get_number_animals_on_shelter(dbo, loy, 1, startofday=False)
-    catsub = get_number_animals_on_shelter(dbo, loy, 2, startofday=False)
+    dogsub = get_number_animals_on_shelter(dbo, add_days(loy, 1), 1, startofday=True)
+    catsub = get_number_animals_on_shelter(dbo, add_days(loy, 1), 2, startofday=True)
     add_row("W", "ENDING SHELTER COUNT", 1, catsub, dogsub)
 
     # Write out all our changes in one go
@@ -4811,7 +4811,7 @@ def update_animal_figures_monthly_asilomar(dbo, month = 0, year = 0):
     firstofmonth = db.dd(fom)
     lastofmonth = db.dd(lom)
 
-    # A Beginning of year shelter count
+    # A Beginning of month shelter count
     dogsub = get_number_animals_on_shelter(dbo, fom, 1, startofday=True)
     catsub = get_number_animals_on_shelter(dbo, fom, 2, startofday=True)
     add_row("A", "BEGINNING SHELTER COUNT", 1, catsub, dogsub)
@@ -4947,8 +4947,8 @@ def update_animal_figures_monthly_asilomar(dbo, month = 0, year = 0):
     add_total("TU", "Total Outcomes [T + U]", "V")
 
     # W End of year shelter count
-    dogsub = get_number_animals_on_shelter(dbo, lom, 1, startofday=False)
-    catsub = get_number_animals_on_shelter(dbo, lom, 2, startofday=False)
+    dogsub = get_number_animals_on_shelter(dbo, add_days(lom, 1), 1, startofday=True)
+    catsub = get_number_animals_on_shelter(dbo, add_days(lom, 1), 2, startofday=True)
     add_row("W", "ENDING SHELTER COUNT", 1, catsub, dogsub)
 
     # Write out all our changes in one go

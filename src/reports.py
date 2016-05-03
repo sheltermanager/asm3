@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import al
 import animal
 import audit
 import configuration
@@ -316,14 +317,12 @@ def check_sql(dbo, username, sql):
     If there is a problem with the query, an ASMValidationError is raised
     """
     COMMON_DATE_TOKENS = ( "$CURRENT_DATE", "$@from", "$@to", "$@thedate" )
-    queries = sql.split(";")
-    lastquery = queries[-1]
     # Clean up and substitute some tags
-    lastquery = lastquery.replace("$USER$", username)
-    i = lastquery.find("$")
+    sql = sql.replace("$USER$", username)
+    i = sql.find("$")
     while (i != -1):
-        end = lastquery.find("$", i+1)
-        token = lastquery[i:end]
+        end = sql.find("$", i+1)
+        token = sql[i:end]
         sub = ""
         if token.startswith("$VAR"):
             # VAR tags don't need a substitution
@@ -332,18 +331,34 @@ def check_sql(dbo, username, sql):
             sub = "2001-01-01"
         else:
             sub = "0"
-        lastquery = lastquery[0:i] + sub + lastquery[end+1:]
-        i = lastquery.find("$", i+1)
-    # Make sure the last query is a SELECT or (SELECT
-    if not lastquery.strip().lower().startswith("select") and \
-       not lastquery.strip().lower().startswith("(select"):
-        raise utils.ASMValidationError("There must be at least one SELECT query and it must be last to run")
+        sql = sql[0:i] + sub + sql[end+1:]
+        i = sql.find("$", i+1)
+    # Make sure the query is a valid one
+    if not is_valid_query(sql):
+        raise utils.ASMValidationError("Reports must be based on a SELECT query.")
     # Test the query
     try:
-        db.query_tuple(dbo, lastquery)
+        db.query_tuple(dbo, sql)
     except Exception,e:
         raise utils.ASMValidationError(str(e))
-    return lastquery
+    return sql
+
+def is_valid_query(sql):
+    """
+    Returns true if this is a valid report query.
+    """
+    sql = strip_sql_comments(sql)
+    return sql.lower().strip().startswith("select")
+
+def strip_sql_comments(sql):
+    """
+    Removes any single line SQL comments that start with --
+    """
+    lines = []
+    for x in sql.split("\n"):
+        if not x.strip().startswith("--"):
+            lines.append(x)
+    return "\n".join(lines)
 
 def generate_html(dbo, username, sql):
     """
@@ -1050,6 +1065,8 @@ class Report:
         The return value is the substituted SQL.
         """
         s = self.sql
+        # Throw away any SQL comments
+        s = strip_sql_comments(s)
         s = s.replace("$CURRENT_DATE$", db.python2db(i18n.now(self.dbo.timezone)))
         s = s.replace("$USER$", self.user)
         # Substitute the location filter, but only if the report actually
@@ -1220,6 +1237,10 @@ class Report:
         # Substitute our parameters in the SQL
         self._SubstituteSQLParameters(params)
 
+        # Make sure the report query is valid
+        if not is_valid_query(self.sql):
+            raise utils.ASMValidationError("Reports must be based on a SELECT query.")
+
         if self.html.upper().startswith("GRAPH"):
             return self._GenerateGraph()
         elif self.html.upper().startswith("MAP"):
@@ -1242,9 +1263,8 @@ class Report:
         # Substitute our parameters in the SQL
         self._SubstituteSQLParameters(params)
 
-        # Make sure our query is a SELECT or (SELECT
-        if not self.sql.strip().lower().startswith("select") and \
-           not self.sql.strip().lower().startswith("(select"):
+        # Make sure the report query is valid
+        if not is_valid_query(self.sql):
             raise utils.ASMValidationError("Reports must be based on a SELECT query.")
 
         # Run the query
@@ -1561,11 +1581,6 @@ class Report:
 
         # Output any criteria given at the top of the report
         self.OutputCriteria()
-
-        # Make sure our query is a SELECT or (SELECT
-        if not self.sql.strip().lower().startswith("select") and \
-           not self.sql.strip().lower().startswith("(select"):
-            raise utils.ASMValidationError("Reports must be based on a SELECT query.")
 
         # Run the query
         rs = None
