@@ -209,6 +209,12 @@ $(function() {
                         else if (v.FIELDTYPE == additional.MONEY) {
                             rv = format.currency(v.VALUE);
                         }
+                        else if (v.FIELDTYPE == additional.ANIMAL_LOOKUP) {
+                            rv = '<a href="animal?id=' + v.VALUE + '">' + v.ANIMALNAME + '</a>';
+                        }
+                        else if (v.FIELDTYPE == additional.PERSON_LOOKUP) {
+                            rv = '<a href="person?id=' + v.VALUE + '">' + v.OWNERNAME + '</a>';
+                        }
                         else {
                             rv = v.VALUE;
                         }
