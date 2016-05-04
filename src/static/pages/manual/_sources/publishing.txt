@@ -18,8 +18,7 @@ Animal Selection
 .. image:: images/animal_selection.png
 
 The Animal Selection tab allows you to control which animals are considered
-adoptable by ASM's internet publishers. In addition to items you select here,
-any animal which has the "Courtesy Listing" flag will also be included.
+adoptable by ASM's internet publishers. 
 
 * Include [category] animals: Select “yes” to include animals fitting the
   category.
@@ -37,6 +36,8 @@ any animal which has the "Courtesy Listing" flag will also be included.
 
 * Include animals in the following locations: Select the locations to include
   adoptable animals from. If none are selected, all locations will be used.
+
+.. note:: In addition to items you select here, any animal which has the "Courtesy Listing" flag will be automatically included.
 
 All Publishers
 --------------
