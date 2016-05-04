@@ -437,6 +437,10 @@ picture) to SmartTag so they can be identified in the event they are lost.  If
 an animal is returned and adopted out again later, ASM will register the tag
 again to the new owner.
 
+SmartTag also supply ISO microchips. ASM will also register SmartTag microchips
+(15 digits starting with 90007400) in a similar manner to ASM's other chip
+registration publishers.
+
 VetEnvoy US (HomeAgain and AKC Reunite)
 ---------------------------------------
 
