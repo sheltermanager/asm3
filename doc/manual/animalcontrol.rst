@@ -71,10 +71,10 @@ can be useful for route planning, spotting trends, etc.
 Trap Loans
 ----------
 
-ASM can keep track of traps loaned to people along with deposit amounts (if
-your shelter does trap rental, you can also use the payments tab to track
-rental payments). Active trap loans can be viewed from the menu and a trap loan
-tab will appear on each person record.
+ASM can keep track of traps or equipment loaned to people along with deposit
+amounts (if your shelter does trap/equipment rental, you can also use the
+payments tab to track rental payments). Active loans can be viewed from
+the menu and a trap loan tab will appear on each person record.
 
 .. image:: images/trap_loan.png
 

@@ -198,7 +198,11 @@ keep). Hit the merge button and choose the duplicate owner record.
 
 ASM will reparent all of the movements, links, media, etc from the duplicate
 person into the currently open record. When it's finished doing that, the
-duplicate person record will be removed. 
+duplicate person record will be removed.
+
+If the target person has any blank contact fields that are present on the
+duplicate person (address, telephone or email fields), they will be copied
+from the duplicate before it is deleted.
 
 .. note:: Person details are never copied during a merge, the merge just moves all the satellite data from the selected person to the open person before deleting the selected one. 
 

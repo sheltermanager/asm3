@@ -64,20 +64,18 @@ Bulk Email
 .. image:: images/mail_email.png
 
 In addition, Animal Shelter Manager allows you to bulk email any mail merge
-source directly - all you need is access to an SMTP. If you are using
-sheltermanager.com hosting, then your account will already be configured and
-using the hosted mail server and the option won't appear.
+source directly.
 
-All ASM needs to know is the return address you would like stamped on the
-outgoing emails and the IP address/hostname of the SMTP server to use (usually
-smtp.<your ISP name>.com). Set these in Settings-Options (under the Email tab).
-It can also support authentication and TLS if your provider requires it.
+ASM needs outbound email configured to use this option, which can be configured
+under :menuselection:`Settings --> Options --> Email`. 
+
+All of the mail merge sources you can install from sheltermanager.com will
+honour the "Exclude From Bulk Email" and "Deceased" person flags to prevent you
+emailing people who do not want mass emails or are no longer with us.
 
 In the merge screen, you can expand the email panel to send emails. It contains
 ASM's own internal email client with a list of tokens available so you can
 customise the email for each individual user.
-
-
 
 .. image:: images/mail_labels.png
 

@@ -339,13 +339,12 @@ OwnerTown, OwnerCounty, OwnerPostcode, then your template should contain
 <h2>Bulk Email<a class="headerlink" href="#bulk-email" title="Permalink to this headline">¶</a></h2>
 <img alt="_images/mail_email.png" src="_images/mail_email.png" />
 <p>In addition, Animal Shelter Manager allows you to bulk email any mail merge
-source directly - all you need is access to an SMTP. If you are using
-sheltermanager.com hosting, then your account will already be configured and
-using the hosted mail server and the option won&#8217;t appear.</p>
-<p>All ASM needs to know is the return address you would like stamped on the
-outgoing emails and the IP address/hostname of the SMTP server to use (usually
-smtp.&lt;your ISP name&gt;.com). Set these in Settings-Options (under the Email tab).
-It can also support authentication and TLS if your provider requires it.</p>
+source directly.</p>
+<p>ASM needs outbound email configured to use this option, which can be configured
+under <em class="menuselection">Settings ‣ Options ‣ Email</em>.</p>
+<p>All of the mail merge sources you can install from sheltermanager.com will
+honour the &#8220;Exclude From Bulk Email&#8221; and &#8220;Deceased&#8221; person flags to prevent you
+emailing people who do not want mass emails or are no longer with us.</p>
 <p>In the merge screen, you can expand the email panel to send emails. It contains
 ASM&#8217;s own internal email client with a list of tokens available so you can
 customise the email for each individual user.</p>

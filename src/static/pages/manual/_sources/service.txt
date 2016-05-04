@@ -10,9 +10,12 @@ sheltermanager.com, the URL will start https://sheltermanager.com/asm/service.
 If you are using sheltermanager.com, please be aware that service call
 responses are cached for performance. All requests for shelter/adoptable animal
 data will be cached for the next hour, with requests for online forms cached
-for the next couple of minutes. 
+for the next couple of minutes.
 
-The service requires the  following parameters:
+While the examples here show passing the parameters with HTTP GET requests, you
+can POST the parameters too if you prefer.
+
+The service requires the following parameters:
 
 * account: If this is a sheltermanager.com service call, the user's account
   number. Can be omitted for other installations.
