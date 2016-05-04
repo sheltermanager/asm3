@@ -105,8 +105,15 @@ $(function() {
                         initialsort: controller.name != "move_book_trial_adoption", 
                         initialsortdirection: controller.name == "move_book_reservation" ? "asc" : "desc", 
                         formatter: function(row, v) { 
-                            // If we're only a reservation, show that for the date instead
-                            if (row.MOVEMENTTYPE == 0) { return format.date(row.RESERVATIONDATE); }
+                            // If we're only a reservation, use the reserve date
+                            if (row.MOVEMENTTYPE == 0) { 
+                                // If the reserve date is the same as the created date, use created
+                                // date with the time component
+                                if (format.date(row.CREATEDDATE) == format.date(row.RESERVATIONDATE)) { 
+                                    return format.date(row.CREATEDDATE) + " " + format.time(row.CREATEDDATE);
+                                }
+                                return format.date(row.RESERVATIONDATE);
+                            }
                             return format.date(row.MOVEMENTDATE);
                         }
                     },

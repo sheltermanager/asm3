@@ -1,6 +1,7 @@
 39
 ================
 
+04/05/16 Show times on reservations so they can be in order of receipt
 03/05/16 Animal/people additional fields appear as links in results #413
 03/05/16 Add Finnish locale
 03/05/16 Fix report query testing and handle SQL comments #418
