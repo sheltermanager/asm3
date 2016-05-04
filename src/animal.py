@@ -491,9 +491,10 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
 
     def addstr(cfield, field): 
         if hk(cfield) and crit(cfield) != "": 
+            x = crit(cfield).lower().replace("'", "`")
             c.append("(LOWER(%s) LIKE '%%%s%%' OR LOWER(%s) LIKE '%%%s%%')" % ( 
-                field, crit(cfield).lower().replace("'", "`"),
-                field, utils.decode_html(crit(cfield).lower().replace(";", "`").replace("'", "`")) 
+                field, x, 
+                field, utils.decode_html(x) 
             ))
 
     def adddate(cfieldfrom, cfieldto, field): 
@@ -513,9 +514,10 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
         if hk(cfield) and crit(cfield) != "":
             words = crit(cfield).split(" ")
             for w in words:
+                x = w.lower().replace("'", "`")
                 c.append("(LOWER(%s) LIKE '%%%s%%' OR LOWER(%s) LIKE '%%%s%%')" % (
-                    field, w.lower().replace("'", "`"),
-                    field, utils.decode_html(w.lower()).replace("'", "`")
+                    field, x, 
+                    field, utils.decode_html(x)
                 ))
 
     addstr("animalname", "a.AnimalName")

@@ -427,18 +427,20 @@ def get_person_find_advanced(dbo, criteria, includeStaff = False, limit = 0):
 
     def addstr(cfield, field): 
         if hk(cfield) and criteria[cfield] != "": 
+            x = crit(cfield).lower().replace("'", "`")
             c.append("(LOWER(%s) LIKE '%%%s%%' OR LOWER(%s) LIKE '%%%s%%')" % ( 
-                field, crit(cfield).lower().replace("'", "`"),
-                field, utils.decode_html(crit(cfield).lower().replace(";", "`").replace("'", "`")) 
+                field, x,
+                field, utils.decode_html(x) 
             ))
 
     def addwords(cfield, field):
         if hk(cfield) and crit(cfield) != "":
             words = crit(cfield).split(" ")
             for w in words:
+                x = w.lower().replace("'", "`")
                 c.append("(LOWER(%s) LIKE '%%%s%%' OR LOWER(%s) LIKE '%%%s%%')" % (
-                    field, w.lower(),
-                    field, utils.decode_html(w.lower())
+                    field, x,
+                    field, utils.decode_html(x)
                 ))
 
     addstr("code", get_person_code_query(dbo))
