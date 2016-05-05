@@ -334,7 +334,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
             a["neutereddate"] = gkd(dbo, row, "ANIMALNEUTEREDDATE")
             if a["neutereddate"] != "": a["neutered"] = "on"
             a["microchipnumber"] = gks(row, "ANIMALMICROCHIP")
-            if a["microchipnumber"] != "": a["microchipped"] = 1
+            if a["microchipnumber"] != "": a["microchipped"] = "on"
             # If an original owner is specified, create a person record
             # for them and attach it to the animal as original owner
             if gks(row, "ORIGINALOWNERLASTNAME") != "":
