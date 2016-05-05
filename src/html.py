@@ -13,7 +13,7 @@ import os
 import person
 import users
 import utils
-from i18n import BUILD, _, translate, format_currency, now, python2display
+from i18n import BUILD, _, translate, format_currency, format_date, now, python2display
 from sitedefs import BASE_URL, LOCALE, MINIFY_JS, ROLLUP_JS
 from sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, CODEMIRROR_CSS, CODEMIRROR_JS, CODEMIRROR_BASE, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_4_JS, TOUCHPUNCH_JS
 
@@ -1662,7 +1662,7 @@ def report_criteria_mobile(dbo, crit, locationfilter = "", siteid = 0):
             <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
             <input type="date" id="report-%s" data-post="%s" value="%s" />
             </div>
-            """ % (name, question, name, name, python2display(l, now(dbo.timezone)))
+            """ % (name, question, name, name, format_date(now(dbo.timezone), "%Y-%m-%d"))
         elif rtype == "STRING":
             s += """
             <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>

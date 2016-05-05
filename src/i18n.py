@@ -4,8 +4,8 @@ import datetime
 import json
 import time
 
-VERSION = "39u [Thu  5 May 10:21:24 BST 2016]"
-BUILD = "05051021"
+VERSION = "39u [Thu  5 May 10:37:19 BST 2016]"
+BUILD = "05051037"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -330,8 +330,11 @@ def display2python(locale, d):
     Parses a display string back to python format. Can cope with
     2 or 4 digit years.
     'd' is a string. return value is the date or None if it
-    could not be parsed
+    could not be parsed.
+    If an ISO date YYYY-MM-DD is passed by mistake, it will cope with that too (handy for posts from html5 date input)
     """
+    if d is None: return None
+    if len(d) == 10 and d[4] == "-" and d[7] == "-": return datetime.datetime.strptime(d, "%Y-%m-%d")
     try:
         return datetime.datetime.strptime(d, get_display_date_format(locale, 2))
     except:
