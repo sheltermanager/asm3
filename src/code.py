@@ -694,10 +694,32 @@ class mobile_post:
 class mobile_report:
     def GET(self):
         utils.check_loggedin(session, web, "/mobile_login")
-        post = utils.PostedData(web.input(id = "0"), session.locale)
+        users.check_permission(session, users.VIEW_REPORT)
+        post = utils.PostedData(web.input(id = "0", mode = "criteria"), session.locale)
+        mode = post["mode"]
+        dbo = session.dbo
+        user = session.user
         crid = post.integer("id")
+        # Make sure this user has a role that can view the report
+        extreports.check_view_permission(session, crid)
+        crit = extreports.get_criteria_controls(session.dbo, crid, mode = "MOBILE", locationfilter = session.locationfilter, siteid = session.siteid) 
         web.header("Content-Type", "text/html")
-        return extmobile.report(session.dbo, crid, session.user)
+        web.header("Cache-Control", "no-cache")
+        # If the report doesn't take criteria, just show it
+        if crit == "":
+            al.debug("report %d has no criteria, displaying" % crid, "code.mobile_report", dbo)
+            return extreports.execute(dbo, crid, user)
+        # If we're in criteria mode (and there are some to get here), ask for them
+        elif mode == "criteria":
+            title = extreports.get_title(dbo, crid)
+            al.debug("building criteria form for report %d %s" % (crid, title), "code.mobile_report", dbo)
+            return extmobile.report_criteria(dbo, crid, title, crit)
+        # The user has entered the criteria and we're in exec mode, unpack
+        # the criteria and run the report
+        elif mode == "exec":
+            al.debug("got criteria (%s), executing report %d" % (str(post.data), crid), "code.report", dbo)
+            p = extreports.get_criteria_params(dbo, crid, post)
+            return extreports.execute(dbo, crid, user, p)
 
 class mobile_sign:
     def GET(self):

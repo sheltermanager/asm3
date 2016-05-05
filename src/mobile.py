@@ -68,6 +68,32 @@ def header(l):
                     "&animalid=" + $(this).attr("data-animal") + "&id=" + $(this).attr("data"));
             });
 
+            // If this is a report criteria page, attach the click handler 
+            // to the button and submit the criteria
+            $("#submitcriteria").click(function() {
+                var post = "";
+                $("select, input").each(function() {
+                    var t = $(this);
+                    var pname = t.attr("data-post");
+                    if (!pname) { pname = t.attr("data"); }
+                    if (!pname) { return; }
+                    if (t.hasClass("asm-currencybox")) {
+                        if (post != "") { post += "&"; }
+                        post += pname + "=" + encodeURIComponent(t.currency("value"));
+                    }
+                    else if (t.val()) {
+                        if (post != "") { post += "&"; }
+                        post += pname + "=" + encodeURIComponent(t.val());
+                    }
+                    else if (includeblanks) {
+                        if (post != "") { post += "&"; }
+                        post += pname + "=" + encodeURIComponent(t.val());
+                    }
+                });
+                window.location = "mobile_report?" + post;    
+            });
+
+            // Use slides for all links
             $("#home a").attr("data-transition", "slide");
 
         });
@@ -246,7 +272,7 @@ def page(dbo, session, username):
     l = dbo.locale
     nsa = animal.get_number_animals_on_shelter_now(dbo)
     osa = nsa > 0
-    ar = reports.get_available_reports(dbo, False)
+    ar = reports.get_available_reports(dbo)
     vacc = medical.get_vaccinations_outstanding(dbo)
     test = medical.get_tests_outstanding(dbo)
     med = medical.get_treatments_outstanding(dbo)
@@ -492,7 +518,7 @@ def page_reports(l, homelink, ar):
         if group != r["CATEGORY"]:
             group = r["CATEGORY"]
             rs.append(jqm_list_divider(group))
-        rs.append(jqm_listitem_link("mobile_report?id=%d" % r["ID"], r["TITLE"], "report"))
+        rs.append(jqm_listitem_link("mobile_report?id=%d" % r["ID"], r["TITLE"], "report", ajax="false"))
     h.append(jqm_list("\n".join(rs), True))
     h.append(jqm_page_footer())
     return h
@@ -1468,11 +1494,21 @@ def login(post, session, remoteip, path):
     else:
         return "mobile"
 
-def report(dbo, crid, user):
+def report_criteria(dbo, crid, title, crit):
     """
-    Generates a report for mobile devices. 
-    crid: The custom report id
-    user: The username of the user running the report
+    Generates the mobile report criteria page
     """
-    return reports.execute(dbo, crid, user)
+    h = []
+    l = dbo.locale
+    homelink = "<a href='mobile' data-ajax='false' class='ui-btn-right' data-icon='home' data-theme='b'>%s</a>" % _("Home", l)
+    h.append(header(l))
+    h.append(jqm_page_header("", title, homelink))
+    h.append("<div id=\"criteriaform\">")
+    h.append("<input data-post=\"id\" type=\"hidden\" value=\"%d\" />" % crid)
+    h.append("<input data-post=\"mode\" type=\"hidden\" value=\"exec\" />")
+    h.append(crit)
+    h.append("</div>")
+    h.append(jqm_page_footer())
+    h.append("</body></html>")
+    return "\n".join(h)
 

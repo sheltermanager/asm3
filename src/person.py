@@ -111,6 +111,12 @@ def get_person_name_code(dbo, personid):
     if len(r) == 0: return ""
     return "%s - %s" % (r[0]["OWNERNAME"], r[0]["OWNERCODE"])
 
+def get_person_name_addresses(dbo):
+    """
+    Returns the person name and address for everyone on file
+    """
+    return db.query(dbo, "SELECT o.ID, o.OwnerName, o.OwnerAddress FROM owner o ORDER BY o.OwnerName")
+
 def get_fosterers(dbo):
     """
     Returns all fosterers

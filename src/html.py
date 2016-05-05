@@ -1321,6 +1321,17 @@ def options_person_flags(dbo):
         s += option(p["FLAG"])
     return s
 
+def options_people(dbo, includeAll = False, selected = -1):
+    s = ""
+    l = dbo.locale
+    if includeAll: s += option(_("(all)", l), "-1", False)
+    pp = person.get_person_name_addresses(dbo)
+    for p in pp:
+        s += option("%s - %s" % ( p["OWNERNAME"], p["OWNERADDRESS"] ), 
+            str(p["ID"]), 
+            int(p["ID"]) == selected)
+    return s
+
 def options_people_not_homechecked(dbo, includeAll = False, selected = -1):
     s = ""
     l = dbo.locale
@@ -1643,5 +1654,105 @@ def report_criteria_mobile(dbo, crit, locationfilter = "", siteid = 0):
     l: The locale
     crit: The criteria - a list of tuples containing name, type and a question
     """
-    return report_criteria(dbo, crit, locationfilter, siteid)
+    l = dbo.locale
+    s = ""
+    for name, rtype, question in crit:
+        if rtype == "DATE":
+            s += """
+            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
+            <input type="date" id="report-%s" data-post="%s" value="%s" />
+            </div>
+            """ % (name, question, name, name, python2display(l, now(dbo.timezone)))
+        elif rtype == "STRING":
+            s += """
+            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
+            <input type="text" id="report-%s" data-post="%s" value="" />
+            </div>
+            """ % (name, question, name, name)
+        elif rtype == "NUMBER":
+            s += """
+            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
+            <input type="number" id="report-%s" data-post="%s" value="" />
+            </div>
+            """ % (name, question, name, name)
+        elif rtype == "ANIMAL":
+            s += """
+            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
+            <select id="report-%s" data-post="%s">%s</select>
+            </div>
+            """ % (name, _("Animal", l), name, name, options_animals_on_shelter(dbo))
+        elif rtype == "FSANIMAL":
+            s += """
+            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
+            <select id="report-%s" data-post="%s">%s</select>
+            </div>
+            """ % (name, _("Animal", l), name, name, options_animals_on_shelter_foster(dbo))
+        elif rtype == "ALLANIMAL":
+            s += """
+            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
+            <select id="report-%s" data-post="%s">%s</select>
+            </div>
+            """ % (name, _("Animal", l), name, name, options_animals(dbo))
+        elif rtype == "ANIMALFLAG":
+            s += """
+            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
+            <select id="report-%s" data-post="%s">%s</select>
+            </div>
+            """ % (name, _("Flag", l), name, name, options_animal_flags(dbo))
+        elif rtype == "PERSON":
+            s += """
+            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
+            <select id="report-%s" data-post="%s">%s</select>
+            </div>
+            """ % (name, _("Person", l), name, name, options_people(dbo))
+        elif rtype == "PERSONFLAG":
+            s += """
+            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
+            <select id="report-%s" data-post="%s">%s</select>
+            </div>
+            """ % (name, _("Flag", l), name, name, options_person_flags(dbo))
+        elif rtype == "DONATIONTYPE":
+            s += """
+            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
+            <select id="report-%s" data-post="%s">%s</select>
+            </div>
+            """ % (name, _("Payment Type", l), name, name, options_donation_types(dbo))
+        elif rtype == "LITTER":
+            s += """
+            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
+            <select id="report-%s" data-post="%s">%s</select>
+            </div>
+            """ % (name, _("Litter", l), name, name, options_litters(dbo))
+        elif rtype == "SPECIES":
+            s += """
+            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
+            <select id="report-%s" data-post="%s">%s</select>
+            </div>
+            """ % (name, _("Species", l), name, name, options_species(dbo))
+        elif rtype == "LOCATION":
+            s += """
+            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
+            <select id="report-%s" data-post="%s">%s</select>
+            </div>
+            """ % (name, _("Location", l), name, name, options_internal_locations(dbo, False, -1, locationfilter, siteid))
+        elif rtype == "LOGTYPE":
+            s += """
+            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
+            <select id="report-%s" data-post="%s">%s</select>
+            </div>
+            """ % (name, _("Log Type", l), name, name, options_log_types(dbo, False, -1))
+        elif rtype == "SITE":
+            s += """
+            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
+            <select id="report-%s" data-post="%s">%s</select>
+            </div>
+            """ % (name, _("Site", l), name, name, options_sites(dbo, False, -1))
+        elif rtype == "TYPE":
+            s += """
+            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
+            <select id="report-%s" data-post="%s">%s</select>
+            </div>
+            """ % (name, _("Type", l), name, name, options_animal_types(dbo))
+    s += "<input id=\"submitcriteria\" type=\"submit\" value=\"%s\" />" % _("Generate", l)
+    return s
 

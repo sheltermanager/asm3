@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-import al
 import animal
 import audit
 import configuration
