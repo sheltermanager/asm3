@@ -1,6 +1,7 @@
 39
 ================
 
+05/05/16 Include incident data as option for CSV export
 05/05/16 Smartphone interface can now request report criteria #154
 05/05/16 Fix fault setting microchipped tickbox on csv import
 04/05/16 Show times on reservations so they can be in order of receipt

@@ -31,7 +31,8 @@ $(function() {
                         "dumpsqlasm2|" + _("SQL dump (ASM2 HSQLDB Format)"),
                         "dumpsqlasm2nomedia|" + _("SQL dump (ASM2 HSQLDB Format, without media)"),
                         "animalcsv|" + _("CSV of animal/adopter data"), 
-                        "personcsv|" + _("CSV of person data") ]}
+                        "personcsv|" + _("CSV of person data"),
+                        "incidentcsv|" + _("CSV of incident data") ]}
                 ], true),
                 '</div>',
                 '<textarea id="sql" class="asm-sqleditor" data-height="150px" data="sql" rows="10"></textarea>',

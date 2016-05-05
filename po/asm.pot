@@ -1909,6 +1909,10 @@ msgid "CSV of animal/adopter data"
 msgstr ""
 
 #: sql.js
+msgid "CSV of incident data"
+msgstr ""
+
+#: sql.js
 msgid "CSV of person data"
 msgstr ""
 

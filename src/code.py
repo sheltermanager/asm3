@@ -6098,6 +6098,10 @@ class sql_dump:
             al.debug("%s executed CSV person dump" % str(session.user), "code.sql", dbo)
             web.header("Content-Disposition", "attachment; filename=\"person.csv\"")
             yield utils.csv(l, extperson.get_person_find_simple(dbo, "", "all", True, True, 0))
+        elif mode == "incidentcsv":
+            al.debug("%s executed CSV incident dump" % str(session.user), "code.sql", dbo)
+            web.header("Content-Disposition", "attachment; filename=\"incident.csv\"")
+            yield utils.csv(l, extanimalcontrol.get_animalcontrol_find_advanced(dbo, { "filter" : "" }, 0))
 
 class stocklevel:
     def GET(self):
