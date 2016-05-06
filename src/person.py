@@ -185,7 +185,7 @@ def get_satellite_counts(dbo, personid):
         "(SELECT COUNT(*) FROM ownerrota r WHERE r.OwnerID = o.ID) AS rota, " \
         "(SELECT COUNT(*) FROM ownertraploan ot WHERE ot.OwnerID = o.ID) AS traploan, " \
         "(SELECT COUNT(*) FROM ownervoucher ov WHERE ov.OwnerID = o.ID) AS vouchers, " \
-        "((SELECT COUNT(*) FROM animal WHERE BroughtInByOwnerID = o.ID OR OriginalOwnerID = o.ID OR CurrentVETID = o.ID OR OwnersVetID = o.ID) + " \
+        "((SELECT COUNT(*) FROM animal WHERE AdoptionCoordinatorID = o.ID OR BroughtInByOwnerID = o.ID OR OriginalOwnerID = o.ID OR CurrentVETID = o.ID OR OwnersVetID = o.ID) + " \
         "(SELECT COUNT(*) FROM animalwaitinglist WHERE OwnerID = o.ID) + " \
         "(SELECT COUNT(*) FROM animalfound WHERE OwnerID = o.ID) + " \
         "(SELECT COUNT(*) FROM animallost WHERE OwnerID = o.ID) + " \
@@ -250,6 +250,17 @@ def get_links(dbo, pid):
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
         "WHERE BroughtInByOwnerID = %d " \
+        "UNION SELECT 'AO' AS TYPE, " \
+        "%s AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
+        "%s AS LINKDISPLAY, " \
+        "%s AS FIELD2, " \
+        "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
+        "FROM animal a " \
+        "LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType " \
+        "INNER JOIN species s ON s.ID = a.SpeciesID " \
+        "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
+        "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
+        "WHERE AdoptionCoordinatorID = %d " \
         "UNION SELECT 'OV' AS TYPE, " \
         "%s AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
@@ -310,6 +321,7 @@ def get_links(dbo, pid):
         "ORDER BY DDATE DESC, LINKDISPLAY" \
         % ( db.ds(_("Original Owner", l)), linkdisplay, animalextra, int(pid), 
         db.ds(_("Brought In By", l)), linkdisplay, animalextra, int(pid),
+        db.ds(_("Adoption Coordinator", l)), linkdisplay, animalextra, int(pid),
         db.ds(_("Owner Vet", l)), linkdisplay, int(pid), 
         db.ds(_("Current Vet", l)), linkdisplay, int(pid),
         db.ds(_("Waiting List Contact", l)), int(pid), 
@@ -870,6 +882,7 @@ def merge_person(dbo, username, personid, mergepersonid):
     reparent("adoption", "RetailerID")
     reparent("animal", "OriginalOwnerID")
     reparent("animal", "BroughtInByOwnerID")
+    reparent("animal", "AdoptionCoordinatorID")
     reparent("animal", "OwnersVetID")
     reparent("animal", "CurrentVetID")
     reparent("animalcontrol", "CallerID")
@@ -945,7 +958,7 @@ def delete_person(dbo, username, personid):
     l = dbo.locale
     if db.query_int(dbo, "SELECT COUNT(ID) FROM adoption WHERE OwnerID=%d OR RetailerID=%d" % (personid, personid)):
         raise utils.ASMValidationError(_("This person has movements and cannot be removed.", l))
-    if db.query_int(dbo, "SELECT COUNT(ID) FROM animal WHERE BroughtInByOwnerID=%d OR OriginalOwnerID=%d OR CurrentVetID=%d OR OwnersVetID=%d" % (personid, personid, personid, personid)):
+    if db.query_int(dbo, "SELECT COUNT(ID) FROM animal WHERE AdoptionCoordinatorID=%d OR BroughtInByOwnerID=%d OR OriginalOwnerID=%d OR CurrentVetID=%d OR OwnersVetID=%d" % (personid, personid, personid, personid)):
         raise utils.ASMValidationError(_("This person is linked to an animal and cannot be removed.", l))
     if db.query_int(dbo, "SELECT COUNT(ID) FROM ownerdonation WHERE OwnerID=%d" % personid):
         raise utils.ASMValidationError(_("This person has payments and cannot be removed.", l))

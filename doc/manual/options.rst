@@ -104,6 +104,9 @@ choose some extra fields for the new animal screen.
 * Allow a fosterer to be selected: Allow new animals to be fostered straight
   away
 
+* Allow an adoption coordinator to be selected: Allow assignment of an adoption
+  coordinator
+
 * Show the litter ID field: Allow a litter ID
 
 * Show the size field: Allow entry of the size
@@ -606,6 +609,10 @@ Remove
   and an animal has a fee set, it will override the donation amount in the
   :menuselection:`Move --> Adopt an animal` and :menuselection:`Move -->
   Reserve an animal` screens.
+
+* Remove the adoption coordinator field from the animal entry screeen: If ticked,
+  ASM won't show the adoption coordinator field on the entry slider. Adoption
+  coordinators are generally used by smaller, distributed rescues.
 
 * Remove the Litter ID/Acceptance Number field from the animal screen: If
   ticked, ASM won't display the Litter ID or Acceptance Number field at the top

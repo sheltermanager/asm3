@@ -226,6 +226,14 @@ $(function() {
                 '<td width="50%">',
                 '<!-- left table -->',
                 '<table width="100%">',
+                '<tr id="coordinatorrow">',
+                '<td valign="top" class="bottomborder">',
+                '<label for="coordinator">' + _("Adoption Coordinator") + '</label>',
+                '</td>',
+                '<td valign="top" class="bottomborder">',
+                '<input id="coordinator" data-json="ADOPTIONCOORDINATORID" data-post="adoptioncoordinator" type="hidden" class="asm-personchooser" />',
+                '</td>',
+                '</tr>',
                 '<tr id="originalownerrow">',
                 '<td valign="top" class="bottomborder">',
                 '<label for="originalowner">' + _("Original Owner") + '</label>',
@@ -970,6 +978,7 @@ $(function() {
             if (config.bool("DontShowRabies")) { $("#rabiestag, label[for='rabiestag']").hide(); }
             if (config.bool("UseSingleBreedField")) { $("#secondbreedrow").hide(); }
             if (config.bool("DontShowAdoptionFee")) { $("#feerow").hide(); }
+            if (config.bool("DontShowAdoptionCoordinator")) { $("#coordinatorrow").hide(); }
             if (config.bool("DontShowCoatType")) { $("#coattyperow").hide(); }
             if (config.bool("DontShowSize")) { $("#sizerow").hide(); }
             if (config.bool("DontShowWeight")) { $("#kilosrow, #poundsrow").hide(); }
@@ -1437,6 +1446,7 @@ $(function() {
             common.widget_destroy("#bonded2", "animalchooser");
             common.widget_destroy("#originalowner", "personchooser");
             common.widget_destroy("#broughtinby", "personchooser");
+            common.widget_destroy("#coordinator", "personchooser");
             common.widget_destroy("#pickedupby", "personchooser");
             common.widget_destroy("#currentvet", "personchooser");
             common.widget_destroy("#ownersvet", "personchooser");

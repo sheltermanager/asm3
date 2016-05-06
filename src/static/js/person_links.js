@@ -30,6 +30,7 @@ $(function() {
                 s.push('<td ' + tdclass + '>');
                 if (li.TYPE == "OO") { s.push('<a href="animal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
                 if (li.TYPE == "BI") { s.push('<a href="animal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
+                if (li.TYPE == "AO") { s.push('<a href="animal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
                 if (li.TYPE == "PB") { s.push('<a href="animal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
                 if (li.TYPE == "OV") { s.push('<a href="animal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }
                 if (li.TYPE == "CV") { s.push('<a href="animal?id=' + li.LINKID + '">' + li.LINKDISPLAY + '</a>'); }

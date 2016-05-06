@@ -1,6 +1,8 @@
 39
 ================
 
+06/05/16 Add coordinator group to shelterview, options for add animal #420
+06/05/16 Add adoption coordinator field #420
 05/05/16 Include incident data as option for CSV export
 05/05/16 Smartphone interface can now request report criteria #154
 05/05/16 Fix fault setting microchipped tickbox on csv import

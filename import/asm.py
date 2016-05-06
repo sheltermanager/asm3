@@ -1698,6 +1698,7 @@ class Animal:
     CurrentVetID = 0
     OriginalOwnerID = 0
     BroughtInByOwnerID = 0
+    AdoptionCoordinatorID = 0
     ReasonForEntry = ""
     ReasonNO = ""
     DateBroughtIn = today()
@@ -1827,6 +1828,7 @@ class Animal:
             ( "CurrentVetID", di(self.CurrentVetID) ),
             ( "OriginalOwnerID", di(self.OriginalOwnerID) ),
             ( "BroughtInByOwnerID", di(self.BroughtInByOwnerID) ),
+            ( "AdoptionCoordinatorID", di(self.AdoptionCoordinatorID) ),
             ( "ReasonForEntry", ds(self.ReasonForEntry) ),
             ( "ReasonNO", ds(self.ReasonNO) ),
             ( "DateBroughtIn", dd(self.DateBroughtIn) ),

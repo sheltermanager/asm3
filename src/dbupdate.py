@@ -20,7 +20,7 @@ VERSIONS = (
     33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702, 33703, 33704, 33705,
     33706, 33707, 33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716,
     33717, 33718, 33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904,
-    33905, 33906, 33907, 33908
+    33905, 33906, 33907, 33908, 33909
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -274,6 +274,7 @@ def sql_structure(dbo):
         fint("CurrentVetID"),
         fint("OriginalOwnerID"),
         fint("BroughtInByOwnerID"),
+        fint("AdoptionCoordinatorID", True),
         flongstr("ReasonForEntry"),
         flongstr("ReasonNO"),
         fdate("DateBroughtIn"),
@@ -333,6 +334,7 @@ def sql_structure(dbo):
     sql += index("animal_ActiveMovementReturn", "animal", "ActiveMovementReturn")
     sql += index("animal_AcceptanceNumber", "animal", "AcceptanceNumber")
     sql += index("animal_ActiveMovementType", "animal", "ActiveMovementType")
+    sql += index("animal_AdoptionCoordinatorID", "animal", "AdoptionCoordinatorID")
     sql += index("animal_AgeGroup", "animal", "AgeGroup")
     sql += index("animal_BaseColourID", "animal", "BaseColourID")
     sql += index("animal_BondedAnimalID", "animal", "BondedAnimalID")
@@ -4463,4 +4465,10 @@ def update_33908(dbo):
     # Add users.SiteID
     add_column(dbo, "users", "SiteID", "INTEGER")
     db.execute_dbupdate(dbo, "UPDATE users SET SiteID = 0")
+
+def update_33909(dbo):
+    # Add adoption coordinator
+    add_column(dbo, "animal", "AdoptionCoordinatorID", "INTEGER")
+    add_index(dbo, "animal_AdoptionCoordinatorID", "animal", "AdoptionCoordinatorID")
+    db.execute_dbupdate(dbo, "UPDATE animal SET AdoptionCoordinatorID = 0")
 

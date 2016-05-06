@@ -83,6 +83,7 @@ DEFAULTS = {
     "AddAnimalsShowBreed": "Yes",
     "AddAnimalsShowBroughtInBy": "No",
     "AddAnimalsShowColour": "No",
+    "AddAnimalsShowCoordinator": "No",
     "AddAnimalsShowDateBroughtIn": "Yes",
     "AddAnimalsShowEntryCategory": "Yes",
     "AddAnimalsShowFosterer": "Yes",

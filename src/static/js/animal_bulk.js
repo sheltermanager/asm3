@@ -118,6 +118,15 @@ $(function() {
                 '</td>',
                 '</tr>',
 
+                '<tr id="coordinatorrow">',
+                '<td>',
+                '<label for="coordinator">' + _("Adoption Coordinator") + '</label>',
+                '</td>',
+                '<td>',
+                '<input id="coordinator" data-post="adoptioncoordinator" type="hidden" data-filter="vet" class="asm-personchooser" />',
+                '</td>',
+                '</tr>',
+
                 '<tr id="currentvetrow">',
                 '<td>',
                 '<label for="currentvet">' + _("Current Vet") + '</label>',
@@ -181,6 +190,7 @@ $(function() {
 
         destroy: function() {
             common.widget_destroy("#animals");
+            common.widget_destroy("#coordinator", "personchooser");
             common.widget_destroy("#currentvet", "personchooser");
             common.widget_destroy("#ownersvet", "personchooser");
         },

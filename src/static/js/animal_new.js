@@ -161,6 +161,16 @@ $(function() {
                 '</div>',
                 '</td>',
                 '</tr>',
+                '<tr id="coordinatorrow">',
+                '<td>',
+                '<label for="coordinator">' + _("Adoption Coordinator") + '</label>',
+                '</td>',
+                '<td>',
+                '<div style="margin: 0; width: 315px;">',
+                '<input id="coordinator" data="adoptioncoordinator" type="hidden" class="asm-personchooser" />',
+                '</div>',
+                '</td>',
+                '</tr>',
                 '<tr id="sizerow">',
                 '<td>',
                 '<label for="size">' + _("Size") + '</label>',
@@ -346,7 +356,7 @@ $(function() {
                     animal_new.set_nonsheltertype_once = true;
                     $("#animaltype").select("value", config.integer("AFNonShelterType")); 
                 }
-                $("#holdrow, #locationrow, #locationunitrow, #fostererrow, #litterrow, #entryreasonrow, #broughtinbyrow, #originalownerrow").fadeOut();
+                $("#holdrow, #locationrow, #locationunitrow, #fostererrow, #coordinatorrow, #litterrow, #entryreasonrow, #broughtinbyrow, #originalownerrow").fadeOut();
             }
             else {
                 $("#nsownerrow").fadeOut();
@@ -355,6 +365,7 @@ $(function() {
                 if (config.bool("AddAnimalsShowOriginalOwner")) { $("#originalownerrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowEntryCategory")) { $("#entryreasonrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowFosterer")) { $("#fostererrow").fadeIn(); }
+                if (config.bool("AddAnimalsShowCoordinator")) { $("#coordinatorrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowHold")) { $("#holdrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowLocation")) { $("#locationrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowLocationUnit")) { $("#locationunitrow").fadeIn(); }
@@ -537,6 +548,7 @@ $(function() {
             if (!config.bool("AddAnimalsShowAcceptance")) { $("#litterrow").hide(); }
             if (!config.bool("AddAnimalsShowBreed")) { $("#breedrow").hide(); }
             if (!config.bool("AddAnimalsShowBroughtInBy")) { $("#broughtinbyrow").hide(); }
+            if (!config.bool("AddAnimalsShowCoordinator")) { $("#coordinatorrow").hide(); }
             if (!config.bool("AddAnimalsShowOriginalOwner")) { $("#originalownerrow").hide(); }
             if (!config.bool("AddAnimalsShowColour")) { $("#colourrow").hide(); }
             if (!config.bool("AddAnimalsShowDateBroughtIn")) { $("#datebroughtinrow").hide(); }
@@ -642,6 +654,7 @@ $(function() {
         destroy: function() {
             common.widget_destroy("#dialog-similar");
             common.widget_destroy("#nsowner", "personchooser");
+            common.widget_destroy("#coordinator", "personchooser");
             common.widget_destroy("#fosterer", "personchooser");
             common.widget_destroy("#originalowner", "personchooser");
             common.widget_destroy("#broughtinby", "personchooser");

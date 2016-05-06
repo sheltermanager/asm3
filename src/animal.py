@@ -104,6 +104,9 @@ def get_animal_query(dbo):
         "ro.WorkTelephone AS ReservedOwnerWorkTelephone, " \
         "ro.MobileTelephone AS ReservedOwnerMobileTelephone, " \
         "ro.EmailAddress AS ReservedOwnerEmailAddress, " \
+        "ao.OwnerName AS AdoptionCoordinatorName, " \
+        "ao.HomeTelephone AS AdoptionCoordinatorHomeTelephone, " \
+        "ao.EmailAddress AS AdoptionCoordinatorEmailAddress, " \
         "ars.StatusName AS ReservationStatusName, " \
         "er.ReasonName AS EntryReasonName, " \
         "dr.ReasonName AS PTSReasonName, " \
@@ -205,6 +208,7 @@ def get_animal_query(dbo):
         "LEFT OUTER JOIN owner cv ON cv.ID = a.CurrentVetID " \
         "LEFT OUTER JOIN owner oo ON oo.ID = a.OriginalOwnerID " \
         "LEFT OUTER JOIN owner bo ON bo.ID = a.BroughtInByOwnerID " \
+        "LEFT OUTER JOIN owner ao ON ao.ID = a.AdoptionCoordinatorID " \
         "LEFT OUTER JOIN adoption am ON am.ID = a.ActiveMovementID " \
         "LEFT OUTER JOIN users au ON au.UserName = am.CreatedBy " \
         "LEFT OUTER JOIN owner co ON co.ID = am.OwnerID " \
@@ -280,6 +284,8 @@ def get_animals_brief(animals):
             "ACTIVEMOVEMENTID": a["ACTIVEMOVEMENTID"],
             "ACTIVEMOVEMENTTYPE": a["ACTIVEMOVEMENTTYPE"],
             "ADDITIONALFLAGS": a["ADDITIONALFLAGS"],
+            "ADOPTIONCOORDINATORID": a["ADOPTIONCOORDINATORID"],
+            "ADOPTIONCOORDINATORNAME": a["ADOPTIONCOORDINATORNAME"],
             "AGEGROUP": a["AGEGROUP"],
             "ANIMALCOMMENTS": a["ANIMALCOMMENTS"],
             "ANIMALAGE": a["ANIMALAGE"],
@@ -1898,6 +1904,7 @@ def insert_animal_from_form(dbo, post, username):
         ( "IsHouseTrained", db.di(housetrained)),
         ( "OriginalOwnerID", db.di(originalowner)),
         ( "BroughtInByOwnerID", db.di(dbb) ),
+        ( "AdoptionCoordinatorID", s("adoptioncoordinator") ),
         ( "ReasonNO", db.ds("")),
         ( "ReasonForEntry", t("reasonforentry")),
         ( "EntryReasonID", s("entryreason")),
@@ -2128,6 +2135,7 @@ def update_animal_from_form(dbo, post, username):
         ( "IsHouseTrained", s("housetrained")),
         ( "OriginalOwnerID", s("originalowner")),
         ( "BroughtInByOwnerID", s("broughtinby")),
+        ( "AdoptionCoordinatorID", s("adoptioncoordinator") ),
         ( "BondedAnimalID", s("bonded1")),
         ( "BondedAnimal2ID", s("bonded2")),
         ( "ReasonNO", t("reasonnotfromowner")),
@@ -2200,6 +2208,8 @@ def update_animals_from_form(dbo, post, username):
         db.execute(dbo, "UPDATE animal SET CurrentVetID = %d WHERE ID IN (%s)" % (post.integer("currentvet"), post["animals"]))
     if post["ownersvet"] != "" and post["ownersvet"] != "0":
         db.execute(dbo, "UPDATE animal SET OwnersVetID = %d WHERE ID IN (%s)" % (post.integer("ownersvet"), post["animals"]))
+    if post["adoptioncoordinator"] != "" and post["adoptioncoordinator"] != "0":
+        db.execute(dbo, "UPDATE animal SET AdoptionCoordinatorID = %d WHERE ID IN (%s)" % (post.integer("adoptioncoordinator"), post["animals"]))
     if post["addflag"] != "":
         animals = db.query(dbo, "SELECT ID, AdditionalFlags FROM animal WHERE ID IN (%s)" % post["animals"])
         for a in animals:
