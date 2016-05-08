@@ -2559,7 +2559,7 @@ def clone_animal(dbo, username, animalid):
             ( "LinkID", db.di(nid) ),
             ( "LinkType", db.di(log.ANIMAL) ),
             ( "LogTypeID", db.di(lo["LOGTYPEID"])),
-            ( "Date", db.dd(lo["DATE"])),
+            ( "Date", db.ddt(lo["DATE"])),
             ( "Comments", db.ds(lo["COMMENTS"]))
         ))
         db.execute(dbo, sql)
