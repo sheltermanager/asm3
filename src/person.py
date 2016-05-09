@@ -958,7 +958,7 @@ def delete_person(dbo, username, personid):
     l = dbo.locale
     if db.query_int(dbo, "SELECT COUNT(ID) FROM adoption WHERE OwnerID=%d OR RetailerID=%d" % (personid, personid)):
         raise utils.ASMValidationError(_("This person has movements and cannot be removed.", l))
-    if db.query_int(dbo, "SELECT COUNT(ID) FROM animal WHERE AdoptionCoordinatorID=%d OR BroughtInByOwnerID=%d OR OriginalOwnerID=%d OR CurrentVetID=%d OR OwnersVetID=%d" % (personid, personid, personid, personid)):
+    if db.query_int(dbo, "SELECT COUNT(ID) FROM animal WHERE AdoptionCoordinatorID=%d OR BroughtInByOwnerID=%d OR OriginalOwnerID=%d OR CurrentVetID=%d OR OwnersVetID=%d" % (personid, personid, personid, personid, personid)):
         raise utils.ASMValidationError(_("This person is linked to an animal and cannot be removed.", l))
     if db.query_int(dbo, "SELECT COUNT(ID) FROM ownerdonation WHERE OwnerID=%d" % personid):
         raise utils.ASMValidationError(_("This person has payments and cannot be removed.", l))
