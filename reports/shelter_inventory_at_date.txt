@@ -17,7 +17,8 @@ animaltype.AnimalType,
 species.SpeciesName,
 BreedName,
 AnimalAge, AgeGroup,
-internallocation.LocationName,
+CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = animal.ID AND MovementType = 2 AND MovementDate <= '$@thedate$' AND (ReturnDate Is Null OR ReturnDate > '$@thedate$'))
+THEN 'Foster' ELSE internallocation.LocationName END AS LocationName,
 lksmovementtype.MovementType AS LatestMovement,
 animal.ActiveMovementDate AS DateLeftShelter,
 owner.OwnerName
