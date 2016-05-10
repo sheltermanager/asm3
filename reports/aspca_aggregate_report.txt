@@ -22,6 +22,7 @@ $$HEADER
 HEADER$$
 
 $$BODY
+{SUBREPORT.SUBREPORT_ASPCAAggregateFosterHomes.FromDate.ToDate}
 {SUBREPORT.SUBREPORT_ASPCAAggregateCareCounts.FromDate.ToDate}
 {SUBREPORT.SUBREPORT_ASPCAAggregateIntakeCounts.FromDate.ToDate}
 {SUBREPORT.SUBREPORT_ASPCAAggregateTransferInCounts.FromDate.ToDate}
@@ -34,6 +35,25 @@ $$FOOTER
 </table>
 FOOTER$$
 ###
+SUBREPORT_ASPCAAggregateFosterHomes
++++
+SELECT COUNT(DISTINCT OwnerID) AS ActiveFosterHomes 
+FROM adoption WHERE MovementType = 2
+AND MovementDate <= '$PARENTARG2$' AND ReturnDate >= '$PARENTARG1$'
++++
+$$HEADER
+HEADER$$
+
+$$BODY
+<tr>
+<td>Active Foster Homes in Period</td>
+<td>$ActiveFosterHomes</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
++++
 SUBREPORT_ASPCAAggregateCareCounts
 +++
 SELECT 
