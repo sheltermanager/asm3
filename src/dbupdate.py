@@ -20,7 +20,7 @@ VERSIONS = (
     33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702, 33703, 33704, 33705,
     33706, 33707, 33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716,
     33717, 33718, 33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904,
-    33905, 33906, 33907, 33908, 33909, 33910
+    33905, 33906, 33907, 33908, 33909, 33911
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -4472,8 +4472,9 @@ def update_33909(dbo):
     add_index(dbo, "animal_AdoptionCoordinatorID", "animal", "AdoptionCoordinatorID")
     db.execute_dbupdate(dbo, "UPDATE animal SET AdoptionCoordinatorID = 0")
 
-def update_33910(dbo):
+def update_33911(dbo):
+    # NB: 33910 was broken so moved to 33911 and fixed
     # Extend animalwaitinglist.AnimalDescription
-    db.execute_dbupdate("DROP VIEW v_animalwaitinglist")
+    db.execute_dbupdate(dbo, "DROP VIEW v_animalwaitinglist")
     modify_column(dbo, "animalwaitinglist", "AnimalDescription", longtext(dbo))
 
