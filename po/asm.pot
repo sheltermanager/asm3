@@ -2539,6 +2539,10 @@ msgstr ""
 msgid "Confirm Password"
 msgstr ""
 
+#: onlineforms.js
+msgid "Confirmation message"
+msgstr ""
+
 #: transport.js
 msgid "Confirmed"
 msgstr ""
@@ -5412,8 +5416,8 @@ msgstr ""
 
 #: onlineforms.js
 msgid ""
-"If this form has a populated emailaddress field during submission, email a "
-"copy of the completed form to it"
+"If this form has a populated emailaddress field during submission, send a "
+"confirmation email to it"
 msgstr ""
 
 #: media.js
@@ -10337,6 +10341,12 @@ msgstr ""
 
 #: animal.js
 msgid "The coat type of this animal"
+msgstr ""
+
+#: onlineforms.js
+msgid ""
+"The confirmation message to send to the form submitter. Leave blank to send "
+"a copy of the completed form."
 msgstr ""
 
 #: sql.js

@@ -1,6 +1,7 @@
 39
 ================
 
+11/05/16 Custom email confirmation for online forms #401
 11/05/16 Add ttl support to default cachemem - fixes flood protect #422
 08/05/16 Clone logs should include times
 06/05/16 Add coordinator group to shelterview, options for add animal #420

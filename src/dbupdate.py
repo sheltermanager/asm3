@@ -20,7 +20,7 @@ VERSIONS = (
     33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702, 33703, 33704, 33705,
     33706, 33707, 33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716,
     33717, 33718, 33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904,
-    33905, 33906, 33907, 33908, 33909, 33911
+    33905, 33906, 33907, 33908, 33909, 33911, 33912
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1043,6 +1043,7 @@ def sql_structure(dbo):
         fstr("SetOwnerFlags", True),
         fint("EmailSubmitter", True),
         flongstr("EmailAddress", True),
+        flongstr("EmailMessage", True),
         flongstr("Header", True),
         flongstr("Footer", True),
         flongstr("Description", True)), False)
@@ -4477,4 +4478,9 @@ def update_33911(dbo):
     # Extend animalwaitinglist.AnimalDescription
     db.execute_dbupdate(dbo, "DROP VIEW v_animalwaitinglist")
     modify_column(dbo, "animalwaitinglist", "AnimalDescription", longtext(dbo))
+
+def update_33912(dbo):
+    # Add EmailConfirmationMessage
+    add_column(dbo, "onlineform", "EmailMessage", longtext(dbo))
+    db.execute_dbupdate(dbo, "UPDATE onlineform SET EmailMessage = ''")
 
