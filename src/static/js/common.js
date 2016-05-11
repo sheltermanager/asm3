@@ -855,6 +855,7 @@
             $(".asm-sqleditor").sqleditor();
             $(".asm-textbox, .asm-halftextbox, .asm-doubletextbox").textbox();
             $(".asm-textarea, .asm-textareafixed, .asm-textareafixeddouble").textarea();
+            $(".asm-richtextarea").richtextarea();
             if (_) {
                 $(".asm-bsmselect").attr("title", _("Select"));
             }
@@ -868,7 +869,7 @@
                 removeClass: 'bsmListItemRemove-custom'
             });
             // Add extra control styles
-            $(".asm-textbox, .asm-halftextbox, .asm-doubletextbox .asm-selectbox, .asm-textarea, .asm-textareafixed, .asm-textareafixeddouble").each(function() {
+            $(".asm-textbox, .asm-halftextbox, .asm-doubletextbox .asm-selectbox, .asm-richtextarea, .asm-textarea, .asm-textareafixed, .asm-textareafixeddouble").each(function() {
                 $(this).addClass("controlshadow").addClass("controlborder");
             });
             // Inject new target attributes for anchors if option is on

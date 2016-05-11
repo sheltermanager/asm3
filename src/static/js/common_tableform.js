@@ -852,7 +852,7 @@
          *        post_field: "name", 
          *        label: "label", 
          *        labelpos: "left", (or above, only really valid for textareas)
-         *        type: "check|text|textarea|date|currency|number|select|animal|person|raw|nextcol", 
+         *        type: "check|text|textarea|richtextarea|date|currency|number|select|animal|person|raw|nextcol", 
          *        readonly: false, (read only for editing, ok for creating)
          *        halfsize: false, (use the asm-halftextbox class)
          *        justwidget: false, (output tr/td/label)
@@ -929,6 +929,26 @@
                     if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                     if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
                     d += "></textarea>";
+                    if (!v.justwidget) { d += "</td></tr>"; }
+                }
+                else if (v.type == "richtextarea") {
+                    if (!v.justwidget) {
+                        if (v.labelpos && v.labelpos == "above") {
+                            d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "<br />";
+                        }
+                        else {
+                            d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>";
+                        }
+                    }
+                    if (!v.width) { v.width = "100%"; }
+                    if (!v.height) { v.height = "64px"; }
+                    d += "<div id=\"" + v.post_field + "\" class=\"asm-richtextarea " + v.classes + "\" ";
+                    d += "data-width=\"" + v.width + "\" data-height=\"" + v.height + "\" ";
+                    d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
+                    if (v.readonly) { d += " data-noedit=\"true\" "; }
+                    if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
+                    if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
+                    d += "></div>";
                     if (!v.justwidget) { d += "</td></tr>"; }
                 }
                 else if (v.type == "htmleditor") {
@@ -1171,6 +1191,7 @@
                         return;
                     }
                     if (v.type == "textarea") { $("#" + v.post_field).val("");  return; }
+                    if (v.type == "richtextarea") { $("#" + v.post_field).richtextarea("value", ""); return; }
                     if (v.type == "htmleditor") { $("#" + v.post_field).htmleditor("value", ""); return; }
                     if (v.type == "sqleditor") { $("#" + v.post_field).sqleditor("value", ""); return; }
                     if (v.type != "select" && v.type != "nextcol") { $("#" + v.post_field).val(""); }
@@ -1191,6 +1212,7 @@
                     if (v.type == "person") { $("#" + v.post_field).personchooser("loadbyid", dval); return; }
                     if (v.type == "select") { $("#" + v.post_field).select("value", dval); return; }
                     if (v.type == "textarea") { $("#" + v.post_field).val(dval); return; }
+                    if (v.type == "richtextarea") { $("#" + v.post_field).richtextarea("value", dval); return; }
                     if (v.type == "htmleditor") { $("#" + v.post_field).htmleditor("value", dval); return; }
                     if (v.type == "sqleditor") { $("#" + v.post_field).sqleditor("value", dval); return; }
                     if (v.type != "nextcol") { $("#" + v.post_field).val(dval); }
@@ -1249,6 +1271,9 @@
                     s = s.replace(/</g, "&lt;").replace(/>/g, "&gt;");
                     n.val(html.decode(s));
                 }
+                else if (v.type == "richtextarea") {
+                    n.richtextarea("value", row[v.json_field]);
+                }
                 else if (v.type == "htmleditor") {
                     n.htmleditor("value", row[v.json_field]);
                 }
@@ -1287,6 +1312,9 @@
                 }
                 else if (v.type == "htmleditor") {
                     row[v.json_field] = n.htmleditor("value");
+                }
+                else if (v.type == "richtextarea") {
+                    row[v.json_field] = n.richtextarea("value");
                 }
                 else if (v.type == "sqleditor") {
                     row[v.json_field] = n.sqleditor("value");
@@ -1371,6 +1399,10 @@
                     else {
                         post += v.post_field + "=off";
                     }
+                }
+                else if (v.type == "richtextarea") {
+                    if (post != "") { post += "&"; }
+                    post += v.post_field + "=" + encodeURIComponent(n.richtextarea("value"));
                 }
                 else if (v.type == "currency") {
                     if (post != "") { post += "&"; }

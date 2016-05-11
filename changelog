@@ -1,6 +1,9 @@
 39
 ================
 
+11/05/16 Fix bad CSS that overrode all fonts (incompatible with inline edit)
+11/05/16 Apply richtextarea to new onlineform email confirmation #63
+11/05/16 Add richtextarea widget for email #63
 11/05/16 Custom email confirmation for online forms #401
 11/05/16 Add ttl support to default cachemem - fixes flood protect #422
 08/05/16 Clone logs should include times

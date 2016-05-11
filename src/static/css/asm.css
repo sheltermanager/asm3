@@ -1,12 +1,11 @@
-* { 
-    font-family: sans-serif !important; 
-}
 
 .desktop body {
+    font-family: sans-serif;
     font-size: 80%;
 }
 
 .mobile body {
+    font-family: sans-serif;
     font-size: 90%;
 }
 
@@ -581,6 +580,13 @@ select:disabled, input:disabled, textarea:disabled {
     border: 1px solid #555;
     background-color: #fff;
     color: #000;
+}
+
+.asm-richtextarea {
+    border: 1px solid #555;
+    background-color: #fff;
+    color: #000;
+    overflow: scroll;
 }
 
 .asm-htmleditor, .asm-sqleditor {

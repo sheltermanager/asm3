@@ -274,6 +274,7 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
                 script_tag(TABLESORTER_JS) + 
                 script_tag(TABLESORTER_WIDGETS_JS) + 
                 script_tag(TIMEPICKER_JS) +
+                script_tag(TINYMCE_4_JS) +
                 script_tag(PATH_JS) + 
                 script_config() + 
                 script_schema() + 

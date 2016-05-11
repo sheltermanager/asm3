@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, regexp: true, sloppy: true, vars: true, nomen: true */
-/*global $, console, jQuery, CodeMirror, Mousetrap */
+/*global $, console, jQuery, CodeMirror, Mousetrap, tinymce */
 /*global asm, common, config, dlgfx, format, html, header, schema, validate, _, escape, unescape */
 
 (function($) {
@@ -981,6 +981,79 @@
                 this.disable();
             }
         }
+    });
+
+    /** This is necessary for the richtextarea below - it allows the tinymce dialogs
+     *  to work inside a JQuery UI dialog */
+    $.widget("ui.dialog", $.ui.dialog, {
+        _allowInteraction: function(event) {
+            return !!$(event.target).closest(".mce-container").length || this._super( event );
+        }
+    });
+
+    $.widget("asm.richtextarea", {
+
+        options: {
+            editor: null
+        },
+
+        _create: function() {
+            var self = this;
+            // Override height and width if they were set as attributes of the div
+            if (self.element.attr("data-width")) {
+                self.element.css("width", self.element.attr("data-width"));
+            }
+            if (self.element.attr("data-height")) {
+                self.element.css("height", self.element.attr("data-height"));
+            }
+            tinymce.init({
+                selector: "#" + this.element.attr("id"),
+                plugins: [
+                    "advlist autolink lists link image charmap ",
+                    "hr anchor searchreplace visualblocks visualchars ",
+                    "insertdatetime media nonbreaking table contextmenu directionality",
+                    "emoticons template paste textcolor"
+                    ],
+                theme: "modern",
+                schema: "html5",
+                inline: true,
+                menubar: false,
+                statusbar: false, 
+                add_unload_trigger: false,
+
+                toolbar_items_size: "small",
+                toolbar: "undo redo | fontselect fontsizeselect | bold italic forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | link image",
+
+                // enable browser spellchecking
+                gecko_spellcheck: true,
+                browser_spellcheck: true,
+
+                // stop tinymce stripping data url images
+                paste_data_images: true,
+
+                // Necessary for fontsizeselect to work
+                convert_fonts_to_spans: true,
+                fontsize_formats: "8pt 10pt 11pt 12pt 14pt 16pt 18pt 20pt 22pt 24pt 36pt 72pt",
+
+                setup: function(ed) {
+                    self.editor = ed;
+                }
+
+            });
+        },
+
+        destroy: function() {
+            tinymce.get(this.element.attr("id")).remove();
+        },
+
+        value: function(newval) {
+            if (newval === undefined) {
+                return this.element.html();
+            }
+            if (!newval) { newval = ""; }
+            this.element.html(newval);
+        }
+
     });
 
     $.widget("asm.textarea", {

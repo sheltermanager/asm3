@@ -454,7 +454,7 @@ def insert_onlineform_from_form(dbo, username, post):
         ( "SetOwnerFlags", post.db_string("flags")),
         ( "EmailAddress", post.db_string("email")),
         ( "EmailSubmitter", post.db_boolean("emailsubmitter")),
-        ( "EmailMessage", post.db_string("emailmessage")), 
+        ( "EmailMessage", db.ds(post["emailmessage"], False)),
         ( "Header", db.ds(post["header"], False) ),
         ( "Footer", db.ds(post["footer"], False) ),
         ( "Description", db.ds(post["description"], False) )
@@ -474,7 +474,7 @@ def update_onlineform_from_form(dbo, username, post):
         ( "SetOwnerFlags", post.db_string("flags")),
         ( "EmailAddress", post.db_string("email")),
         ( "EmailSubmitter", post.db_boolean("emailsubmitter")),
-        ( "EmailMessage", post.db_string("emailmessage")), 
+        ( "EmailMessage", db.ds(post["emailmessage"], False)),
         ( "Header", db.ds(post["header"], False) ),
         ( "Footer", db.ds(post["footer"], False) ),
         ( "Description", db.ds(post["description"], False) )
@@ -653,10 +653,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
             "WHERE oi.CollationID = %d" % int(collationid))
         if body is None or body == "": 
             body = get_onlineformincoming_html_print(dbo, [collationid,])
-        # If there is no html tag in the body, assume the user wanted plain text
-        emailmode = "html"
-        if body.find("<html") == -1: emailmode = "plain"
-        utils.send_email(dbo, configuration.email(dbo), submitteremail, "", i18n._("Submission received: {0}", l).format(formname), body, emailmode)
+        utils.send_email(dbo, configuration.email(dbo), submitteremail, "", i18n._("Submission received: {0}", l).format(formname), body, "html")
     # Did the original form specify some email addresses to send 
     # incoming submissions to?
     email = db.query_string(dbo, "SELECT o.EmailAddress FROM onlineform o " \
