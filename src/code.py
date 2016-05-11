@@ -3993,8 +3993,7 @@ class mailmerge:
             fromadd = post["from"]
             subject = post["subject"]
             body = post["body"]
-            contenttype = post.boolean("html") == 1 and "html" or "plain"
-            utils.send_bulk_email(dbo, fromadd, subject, body, rows, contenttype)
+            utils.send_bulk_email(dbo, fromadd, subject, body, rows, "html")
         elif mode == "document":
             templateid = post.integer("templateid")
             template = dbfs.get_string_id(dbo, templateid)

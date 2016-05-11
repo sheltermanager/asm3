@@ -87,6 +87,10 @@
                 if (post != "") { post += "&"; }
                 post += pname + "=" + encodeURIComponent(t.currency("value"));
             }
+            else if (t.hasClass("asm-richtextarea")) {
+                if (post != "") { post += "&"; }
+                post += pname + "=" + encodeURIComponent(t.richtextarea("value"));
+            }
             else if (t.val()) {
                 if (post != "") { post += "&"; }
                 post += pname + "=" + encodeURIComponent(t.val());

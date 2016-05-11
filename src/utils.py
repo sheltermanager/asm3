@@ -893,7 +893,7 @@ def send_bulk_email(dbo, fromadd, subject, body, rows, contenttype):
     def do_send():
         for r in rows:
             ssubject = substitute_tags(subject, r, False, opener = "<<", closer = ">>")
-            sbody = substitute_tags(body, r, False, opener = "<<", closer = ">>")
+            sbody = substitute_tags(body, r)
             toadd = r["EMAILADDRESS"]
             if toadd is None or toadd.strip() == "": continue
             al.debug("sending bulk email: to=%s, subject=%s" % (toadd, ssubject), "utils.send_bulk_email", dbo)

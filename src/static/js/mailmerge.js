@@ -107,14 +107,8 @@ $(function() {
                 '<td><input id="emailsubject" data="subject" type="text" class="asm-doubletextbox" /></td>',
                 '</tr>',
                 '<tr>',
-                '<td></td>',
-                '<td><input id="emailhtml" data="html" type="checkbox"',
-                'title="' + html.title(_("Set the email content-type header to text/html")) + '" ',
-                'class="asm-checkbox" /><label for="emailhtml">' + _("HTML") + '</label></td>',
-                '</tr>',
-                '<tr>',
                 '<td colspan="2">',
-                '<textarea id="emailbody" data="body" rows="15" class="asm-textarea"></textarea>',
+                '<div id="emailbody" data="body" data-height="300px" class="asm-richtextarea"></div>',
                 '</td>',
                 '<td>',
                 '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em;">',
@@ -192,7 +186,7 @@ $(function() {
             $("#button-csv, #button-pdflabels").button();
             $("#button-email").button().click(function() {
                 $("#button-email").button("disable");
-                var formdata = "mode=email&" + $("#sendemail input, #sendemail textarea").toPOST();
+                var formdata = "mode=email&" + $("#sendemail input, #sendemail div").toPOST();
                 common.ajax_post("mailmerge", formdata)
                     .then(function() { 
                         header.show_info(_("Messages successfully sent"));
@@ -228,7 +222,7 @@ $(function() {
             // Default the email signature for bulk emails
             var sig = config.str("EmailSignature");
             if (sig) {
-                $("#emailbody").val(html.decode("\n--\n" + sig));
+                $("#emailbody").richtextarea("value", html.decode("\n--\n" + sig));
             }
             // Create a table of matching rows
             var h = [];

@@ -5153,7 +5153,7 @@ msgstr ""
 msgid "HMRC Gift Aid Spreadsheet"
 msgstr ""
 
-#: reports.js mailmerge.js common_widgets.js
+#: reports.js common_widgets.js
 msgid "HTML"
 msgstr ""
 
@@ -9346,7 +9346,7 @@ msgstr ""
 msgid "Set publishing options"
 msgstr ""
 
-#: mailmerge.js common_widgets.js
+#: common_widgets.js
 msgid "Set the email content-type header to text/html"
 msgstr ""
 
