@@ -36,6 +36,17 @@ select:disabled, input:disabled, textarea:disabled {
 /** JQuery UI buttons can wrap in Chrome 22 onwards, we don't want that! */
 .ui-button { white-space: nowrap }
 
+/** JQuery UI themes can set their own fonts - stop that */
+.ui-widget {
+    font-family: sans-serif;
+}
+.ui-widget input,
+.ui-widget select,
+.ui-widget textarea,
+.ui-widget button {
+    font-family: sans-serif;
+}
+
 /** code editors */
 .CodeMirror { 
     border: 1px solid #aaa; 

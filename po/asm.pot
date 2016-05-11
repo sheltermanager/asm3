@@ -10345,8 +10345,8 @@ msgstr ""
 
 #: onlineforms.js
 msgid ""
-"The confirmation message to send to the form submitter. Leave blank to send "
-"a copy of the completed form."
+"The confirmation email message to send to the form submitter. Leave blank to "
+"send a copy of the completed form."
 msgstr ""
 
 #: sql.js

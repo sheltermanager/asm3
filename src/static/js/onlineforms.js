@@ -28,8 +28,8 @@ $(function() {
                         tooltip: _("If this form has a populated emailaddress field during submission, send a confirmation email to it"),
                         callout: _("If this form has a populated emailaddress field during submission, send a confirmation email to it") },
                     { json_field: "EMAILMESSAGE", post_field: "emailmessage", label: _("Confirmation message"), type: "richtextarea", height: "100px", width: "600px",
-                        tooltip: _("The confirmation message to send to the form submitter. Leave blank to send a copy of the completed form."),
-                        callout: _("The confirmation message to send to the form submitter. Leave blank to send a copy of the completed form.") }, 
+                        tooltip: _("The confirmation email message to send to the form submitter. Leave blank to send a copy of the completed form."),
+                        callout: _("The confirmation email message to send to the form submitter. Leave blank to send a copy of the completed form.") }, 
                     { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "htmleditor", height: "100px", width: "600px" },
                     { json_field: "HEADER", post_field: "header", label: _("Header"), type: "htmleditor", height: "100px", width: "600px" },
                     { json_field: "FOOTER", post_field: "footer", label: _("Footer"), type: "htmleditor", height: "100px", width: "600px" }
