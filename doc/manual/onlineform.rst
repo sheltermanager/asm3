@@ -26,8 +26,12 @@ if that checkbox is checked during submission.
 
 If you set the "Send confirmation email to form submitter" checkbox for an
 online form, the system will look for a field called "emailaddress" during
-submission. If that field exists and is populated with an email address, a copy
-of the form submission will be sent to that address.
+submission. If that field exists and is populated with an email address, a
+confirmation email will be sent to that address. If the confirmation message
+field is set, that will form the body of the email. HTML can be used, but
+it must be a complete HTML document that contains an <html> tag. If the
+confirmation message field is left blank, a copy of the form submission 
+itself will be sent.
 
 .. image:: images/onlineform_edit.png
 

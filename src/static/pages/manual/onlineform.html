@@ -309,8 +309,12 @@ form data will automatically have those flags. In addition to that, the
 if that checkbox is checked during submission.</p>
 <p>If you set the &#8220;Send confirmation email to form submitter&#8221; checkbox for an
 online form, the system will look for a field called &#8220;emailaddress&#8221; during
-submission. If that field exists and is populated with an email address, a copy
-of the form submission will be sent to that address.</p>
+submission. If that field exists and is populated with an email address, a
+confirmation email will be sent to that address. If the confirmation message
+field is set, that will form the body of the email. HTML can be used, but
+it must be a complete HTML document that contains an &lt;html&gt; tag. If the
+confirmation message field is left blank, a copy of the form submission
+itself will be sent.</p>
 <img alt="_images/onlineform_edit.png" src="_images/onlineform_edit.png" />
 <p>As you can see in the screenshot, each form has a “Form URL”. This is the web
 link you can use on your website to link people to the form. You can also click
