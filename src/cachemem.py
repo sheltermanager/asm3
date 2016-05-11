@@ -2,6 +2,8 @@
 
 from sitedefs import MEMCACHED_SERVER
 
+import time
+
 def get(key):
     """
     Retrieves a cache value. Returns None if
@@ -42,19 +44,22 @@ dict_client = {}
 def _dict_get(key):
     global dict_client
     if not dict_client.has_key(key): return None
-    return dict_client[key]
+    v = dict_client[key]
+    # return the value if we're within ttl
+    if time.time() < v[0]: return v[1]
+    # remove the item as it's out of ttl
+    _dict_delete(key)
+    return None
 
 def _dict_put(key, value, ttl):
     global dict_client
-    dict_client[key] = value
-    # TODO: ttl is ignored for this implementation
-    dummy = ttl
+    dict_client[key] = [time.time() + ttl, value]
 
 def _dict_increment(key):
     global dict_client
     v = _dict_get(key)
     if v is None: return None
-    dict_client[key] += 1
+    dict_client[key][1] += 1
     return v
 
 def _dict_delete(key):
