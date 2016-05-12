@@ -787,7 +787,7 @@ $(function() {
                 }
                 // Default the email sig
                 if (config.str("EmailSignature")) {
-                    $("#emailnote").html("<br/>--<br/>" + config.str("EmailSignature")); 
+                    $("#emailnote").richtextarea("value", config.str("EmailSignature"));
                 }
                 tableform.show_okcancel_dialog("#dialog-email", _("Send"), { width: 550, notblank: [ "emailto" ] })
                     .then(function() {
@@ -808,7 +808,7 @@ $(function() {
                 }
                 // Default the email sig
                 if (config.str("EmailSignature")) {
-                    $("#emailpdfnote").html("<br/>--<br/>" + config.str("EmailSignature")); 
+                    $("#emailpdfnote").richtextarea("value", config.str("EmailSignature"));
                 }
                 tableform.show_okcancel_dialog("#dialog-emailpdf", _("Send"), { width: 550, notblank: [ "emailpdfto" ] })
                     .then(function() {

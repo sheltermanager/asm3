@@ -702,7 +702,7 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="emailsig">' + _("Email signature") + '</label></td>',
-                '<td><textarea data="EmailSignature" id="emailsig" rows="10" class="asm-textareafixeddouble"></textarea></td>',
+                '<td><div data="EmailSignature" id="emailsig" data-height="200px" data-width="380px" class="asm-richtextarea"></div></td>',
                 '</tr>',
                 '</table>',
                 '</div>'
@@ -1098,7 +1098,7 @@ $(function() {
             $("#button-save").button().click(function() {
                 $("#button-save").button("disable");
                 validate.dirty(false);
-                var formdata = "mode=save&" + $("input, select, textarea").toPOST(true);
+                var formdata = "mode=save&" + $("input, select, textarea, .asm-richtextarea").toPOST(true);
                 formdata += "&DonationAccountMappings=" + get_donation_mappings();
                 header.show_loading(_("Saving..."));
                 common.ajax_post("options", formdata)

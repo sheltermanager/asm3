@@ -1,6 +1,7 @@
 39
 ================
 
+12/05/16 Allow email signature to be HTML too #63
 12/05/16 Make fully compliant HTML messages with Message-ID and plaintext
 12/05/16 Add sendmail support
 12/05/16 Add richtextarea to media emailing and emailform widget #63

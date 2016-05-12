@@ -581,7 +581,7 @@
             $("#emailto").val(html.decode(o.name) + " <" + o.email + ">");
             var sig = config.str("EmailSignature");
             if (sig != "") {
-                $("#emailbody").richtextarea("value", html.decode("<br/>--<br/>" + sig));
+                $("#emailbody").richtextarea("value", sig);
             }
             $("#emailsubject").focus();
         }

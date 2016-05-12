@@ -222,7 +222,7 @@ $(function() {
             // Default the email signature for bulk emails
             var sig = config.str("EmailSignature");
             if (sig) {
-                $("#emailbody").richtextarea("value", html.decode("<br/>--<br/>" + sig));
+                $("#emailbody").richtextarea("value", sig);
             }
             // Create a table of matching rows
             var h = [];
