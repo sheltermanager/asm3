@@ -851,6 +851,7 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
     add_header(msg, "Reply-To", replyadd)
     add_header(msg, "To", toadd)
     add_header(msg, "Message-ID", email.utils.make_msgid())
+    add_header(msg, "Date", email.utils.formatdate())
     if ccadd != "": add_header(msg, "Cc", ccadd)
     subject = truncate(subject, 69) # limit subject to 78 chars - "Subject: "
     add_header(msg, "Subject", subject)
