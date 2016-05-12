@@ -702,7 +702,7 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="emailsig">' + _("Email signature") + '</label></td>',
-                '<td><div data="EmailSignature" id="emailsig" data-height="200px" data-width="380px" class="asm-richtextarea"></div></td>',
+                '<td><div data="EmailSignature" id="emailsig" data-margin-top="24px" data-height="200px" data-width="380px" class="asm-richtextarea"></div></td>',
                 '</tr>',
                 '</table>',
                 '</div>'

@@ -317,26 +317,26 @@ def cfloat(dbo, key, default = 0.0):
     except:
         return float(0)
 
-def cset(dbo, key, value = "", ignoreDBLock = False):
+def cset(dbo, key, value = "", ignoreDBLock = False, sanitiseXSS = True):
     """
     Update a configuration item in the table.
     """
     # MySQL returns wrong affected value (AFFECTED_ROWS switch in newer), delete before insert
     if dbo.dbtype == "MYSQL":
         db.execute(dbo, "DELETE FROM configuration WHERE ItemName LIKE %s" % db.ds(key), ignoreDBLock)
-        db.execute(dbo, "INSERT INTO configuration (ItemName, ItemValue) VALUES (%s, %s)" % (db.ds(key), db.ds(value)), ignoreDBLock)
+        db.execute(dbo, "INSERT INTO configuration (ItemName, ItemValue) VALUES (%s, %s)" % (db.ds(key), db.ds(value, sanitiseXSS)), ignoreDBLock)
     else:
         # Otherwise, attempt the update and if no rows matched, do the insert
-        affected = db.execute(dbo, "UPDATE configuration SET ItemValue = %s WHERE ItemName LIKE %s" % (db.ds(value), db.ds(key)))
+        affected = db.execute(dbo, "UPDATE configuration SET ItemValue = %s WHERE ItemName LIKE %s" % (db.ds(value, sanitiseXSS), db.ds(key)))
         if affected == 0:
-            db.execute(dbo, "INSERT INTO configuration VALUES (%s, %s)" % ( db.ds(key), db.ds(value) ), ignoreDBLock)
+            db.execute(dbo, "INSERT INTO configuration VALUES (%s, %s)" % ( db.ds(key), db.ds(value, sanitiseXSS) ), ignoreDBLock)
 
 def cset_db(dbo, key, value = ""):
     """
     Updates a configuration entry that could take place during a
     database update, so needs to ignore the locked flag.
     """
-    cset(dbo, key, value, True)
+    cset(dbo, key, value, ignoreDBLock = True)
 
 def csave(dbo, username, post):
     """
@@ -357,6 +357,9 @@ def csave(dbo, username, post):
         v = post.string(k, False)
         if k == "mode":
             pass
+        elif k == "EmailSignature":
+            # It's HTML - don't XSS escape it
+            cset(dbo, k, v, sanitiseXSS = False)
         elif k == "CodingFormat":
             # If there's no valid N, X or U tokens in there, it's not valid so reset to
             # the default.
