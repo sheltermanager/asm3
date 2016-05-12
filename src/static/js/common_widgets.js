@@ -580,8 +580,8 @@
             $("#emailfrom").autocomplete("widget").css("z-index", 1000);
             $("#emailto").val(html.decode(o.name) + " <" + o.email + ">");
             var sig = config.str("EmailSignature");
-            if (sig != "") {
-                $("#emailbody").richtextarea("value", sig);
+            if (sig) {
+                $("#emailbody").richtextarea("value", "<p>&nbsp;</p>" + sig);
             }
             $("#emailsubject").focus();
         }
