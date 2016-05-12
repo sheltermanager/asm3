@@ -888,14 +888,14 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
     
     # Load the server config over default vars
     sendmail = True
-    server = ""
+    host = ""
     port = 25
     username = ""
     password = ""
     usetls = False
     if SMTP_SERVER is not None:
         if SMTP_SERVER.has_key("sendmail"): sendmail = SMTP_SERVER["sendmail"]
-        if SMTP_SERVER.has_key("server"): server = SMTP_SERVER["host"]
+        if SMTP_SERVER.has_key("host"): host = SMTP_SERVER["host"]
         if SMTP_SERVER.has_key("port"): port = SMTP_SERVER["port"]
         if SMTP_SERVER.has_key("username"): username = SMTP_SERVER["username"]
         if SMTP_SERVER.has_key("password"): password = SMTP_SERVER["password"]
@@ -912,7 +912,7 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
             return False
     else:
         try:
-            smtp = smtplib.SMTP(server, port)
+            smtp = smtplib.SMTP(host, port)
             if usetls:
                 smtp.starttls()
             if password.strip() != "":
