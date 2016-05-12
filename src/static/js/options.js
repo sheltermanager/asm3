@@ -1114,11 +1114,14 @@ $(function() {
             $("#button-save").button("disable");
 
             // Load default values from the config settings
-            $("input, select, textarea").each(function() {
+            $("input, select, textarea, .asm-richtextarea").each(function() {
                 if ($(this).attr("data")) {
                     var d = $(this).attr("data");
                     if ($(this).is(".asm-currencybox")) {
                         $(this).val( html.decode(config.currency(d)));
+                    }
+                    else if ($(this).is(".asm-richtextarea")) {
+                        $(this).richtextarea("value", config.str(d));
                     }
                     else if ($(this).is("input:text")) {
                         $(this).val( html.decode(config.str(d)));
