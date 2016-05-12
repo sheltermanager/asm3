@@ -108,7 +108,7 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td colspan="2">',
-                '<div id="emailbody" data="body" data-height="300px" class="asm-richtextarea"></div>',
+                '<div id="emailbody" data="body" data-height="300px" data-margin-top="24px" class="asm-richtextarea"></div>',
                 '</td>',
                 '<td>',
                 '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em;">',
@@ -186,7 +186,7 @@ $(function() {
             $("#button-csv, #button-pdflabels").button();
             $("#button-email").button().click(function() {
                 $("#button-email").button("disable");
-                var formdata = "mode=email&" + $("#sendemail input, #sendemail div").toPOST();
+                var formdata = "mode=email&" + $("#sendemail input, #sendemail .asm-richtextarea").toPOST();
                 common.ajax_post("mailmerge", formdata)
                     .then(function() { 
                         header.show_info(_("Messages successfully sent"));
@@ -222,7 +222,7 @@ $(function() {
             // Default the email signature for bulk emails
             var sig = config.str("EmailSignature");
             if (sig) {
-                $("#emailbody").richtextarea("value", html.decode("\n--\n" + sig));
+                $("#emailbody").richtextarea("value", html.decode("<br/>--<br/>" + sig));
             }
             // Create a table of matching rows
             var h = [];
@@ -254,6 +254,7 @@ $(function() {
         },
 
         destroy: function() {
+            common.widget_destroy("#emailbody", "richtextarea");
             // Criteria are manually inserted by the server side page loader
             $("#asm-content").remove();
         },

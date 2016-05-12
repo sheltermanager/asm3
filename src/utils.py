@@ -6,6 +6,7 @@ import configuration
 import csv as extcsv
 import datetime
 import db
+import email.utils
 import hashlib
 import htmlentitydefs
 import os
@@ -24,6 +25,7 @@ from email.header import Header
 from email import Charset, Encoders
 from i18n import _, display2python, format_currency, python2display
 from cStringIO import StringIO
+from subprocess import Popen, PIPE
 from sitedefs import SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF
 
 # Monkeypatch to allow SNI support in urllib3. This is necessary
@@ -756,6 +758,17 @@ def read_text_file(name):
         text = f.read()
     return text.encode("ascii", "xmlcharrefreplace")
 
+def html_email_to_plain(s):
+    """
+    Turns an HTML email into plain text by converting
+    paragraph closers and br tags into line breaks, then
+    removing the tags.
+    """
+    s = s.replace("</p>", "\n</p>")
+    s = s.replace("<br", "\n<br")
+    s = strip_html_tags(s)
+    return s
+
 def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", contenttype = "plain", attachmentdata = None, attachmentfname = ""):
     """
     Sends an email.
@@ -767,6 +780,9 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
     attachmentdata: If an attachment should be added, the unencoded data
     attachmentfname: If an attachment should be added, the file name to give it
     returns True on success
+
+    For HTML emails, a plaintext part is converted and added. If the HTML
+    does not have html/body tags, they are also added.
     """
     def parse_email(s):
         # Returns a tuple of description and address
@@ -818,6 +834,11 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
         body = body.replace("\n", "<br />")
         Charset.add_charset("utf-8", Charset.QP, Charset.QP, "utf-8")
 
+    # If the message is HTML, but does not contain an HTML tag, assume it's
+    # a document fragment and wrap it (this lowers spamassassin scores)
+    if body.find("<html") == -1 and contenttype == "html":
+        body = "<!DOCTYPE html>\n<html>\n<body>\n%s</body></html>" % body
+
     # Build the from address from our sitedef
     fromadd = FROM_ADDRESS
     fromadd = fromadd.replace("{organisation}", configuration.organisation(dbo))
@@ -825,62 +846,82 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
     fromadd = fromadd.replace("{database}", dbo.database)
 
     # Construct the mime message
-    msg = MIMEMultipart()
-    msgtext = MIMEText(body, contenttype)
+    msg = MIMEMultipart("alternative")
     add_header(msg, "From", fromadd)
     add_header(msg, "Reply-To", replyadd)
     add_header(msg, "To", toadd)
-    if ccadd != "": 
-        add_header(msg, "Cc", ccadd)
+    add_header(msg, "Message-ID", email.utils.make_msgid())
+    if ccadd != "": add_header(msg, "Cc", ccadd)
     subject = truncate(subject, 69) # limit subject to 78 chars - "Subject: "
     add_header(msg, "Subject", subject)
-    msg.attach(msgtext)
 
-    # If an attachment has been specified, add it to the message
+    # Attach the plaintext portion (html_email_to_plain on an already plaintext
+    # email does nothing).
+    msgtext = MIMEText(html_email_to_plain(body), "plain")
+    msg.attach(msgtext)
+    
+    # Attach the HTML portion if this is an HTML message - HTML should
+    # always come after the plaintext attachment
+    if contenttype == "html":
+        msgtext = MIMEText(body, "html")
+        msg.attach(msgtext)
+
+    # If a file attachment has been specified, add it to the message
     if attachmentdata is not None:
         part = MIMEBase('application', "octet-stream")
         part.set_payload( attachmentdata )
         Encoders.encode_base64(part)
         part.add_header('Content-Disposition', 'attachment; filename="%s"' % attachmentfname)
         msg.attach(part)
-     
-    # Grab the server config
-    server = ""
-    username = ""
-    password = ""
-    usetls = False
-    if SMTP_SERVER is None:
-        server = configuration.smtp_server(dbo)
-        port = configuration.smtp_port(dbo)
-        username = configuration.smtp_server_username(dbo)
-        password = configuration.smtp_server_password(dbo) 
-        usetls = configuration.smtp_server_tls(dbo)
-    else:
-        server = SMTP_SERVER["host"]
-        port = SMTP_SERVER["port"]
-        username = SMTP_SERVER["username"]
-        password = SMTP_SERVER["password"]
-        usetls = SMTP_SERVER["usetls"]
-     
-    # Construct the list of to addresses
+ 
+    # Construct the list of to addresses. We strip email addresses so
+    # only the you@domain.com portion remains. We also split the list
+    # by semi-colons as well as commas because Outlook users seem to make
+    # that mistake a lot and use it as a separator
     tolist = [strip_email(x) for x in toadd.replace(";", ",").split(",")]
     if ccadd != "":
         tolist += [strip_email(x) for x in ccadd.replace(";", ",").split(",")]
+    replyadd = strip_email(replyadd)
 
-    try:
-        smtp = smtplib.SMTP(server, port)
-        if usetls:
-            smtp.starttls()
-        if password.strip() != "":
-            smtp.login(username, password)
-        replyadd = strip_email(replyadd)
-        al.debug("from: %s, reply-to: %s, to: %s, subject: %s, body: %s" % \
-            (fromadd, replyadd, str(tolist), subject, body), "utils.send_email", dbo)
-        smtp.sendmail(fromadd, tolist, msg.as_string())
-        return True
-    except Exception,err:
-        al.error("%s" % str(err), "utils.send_email", dbo)
-        return False
+    al.debug("from: %s, reply-to: %s, to: %s, subject: %s, body: %s" % \
+        (fromadd, replyadd, str(tolist), subject, body), "utils.send_email", dbo)
+    
+    # Load the server config over default vars
+    sendmail = True
+    server = ""
+    port = 25
+    username = ""
+    password = ""
+    usetls = False
+    if SMTP_SERVER is not None:
+        if SMTP_SERVER.has_key("sendmail"): sendmail = SMTP_SERVER["sendmail"]
+        if SMTP_SERVER.has_key("server"): server = SMTP_SERVER["host"]
+        if SMTP_SERVER.has_key("port"): port = SMTP_SERVER["port"]
+        if SMTP_SERVER.has_key("username"): username = SMTP_SERVER["username"]
+        if SMTP_SERVER.has_key("password"): password = SMTP_SERVER["password"]
+        if SMTP_SERVER.has_key("usetls"): usetls = SMTP_SERVER["usetls"]
+     
+    # Use sendmail or SMTP for the transport depending on config
+    if sendmail:
+        try:
+            p = Popen(["/usr/sbin/sendmail", "-t", "-oi"], stdin=PIPE)
+            p.communicate(msg.as_string())
+            return True
+        except Exception,err:
+            al.error("sendmail: %s" % str(err), "utils.send_email", dbo)
+            return False
+    else:
+        try:
+            smtp = smtplib.SMTP(server, port)
+            if usetls:
+                smtp.starttls()
+            if password.strip() != "":
+                smtp.login(username, password)
+            smtp.sendmail(fromadd, tolist, msg.as_string())
+            return True
+        except Exception,err:
+            al.error("smtp: %s" % str(err), "utils.send_email", dbo)
+            return False
 
 def send_bulk_email(dbo, fromadd, subject, body, rows, contenttype):
     """

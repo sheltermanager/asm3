@@ -1098,13 +1098,12 @@ def send_email_from_form(dbo, username, post):
     emailto = post["to"]
     emailcc = post["cc"]
     subject = post["subject"]
-    ishtml = post.boolean("html")
     addtolog = post.boolean("addtolog")
     logtype = post.integer("logtype")
     body = post["body"]
-    rv = utils.send_email(dbo, emailfrom, emailto, emailcc, subject, body, ishtml == 1 and "html" or "plain")
+    rv = utils.send_email(dbo, emailfrom, emailto, emailcc, subject, body, "html")
     if addtolog == 1:
-        log.add_log(dbo, username, log.PERSON, post.integer("personid"), logtype, body)
+        log.add_log(dbo, username, log.PERSON, post.integer("personid"), logtype, utils.html_email_to_plain(body))
     return rv
 
 def lookingfor_report(dbo, username = "system", personid = 0):

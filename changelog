@@ -1,6 +1,9 @@
 39
 ================
 
+12/05/16 Make fully compliant HTML messages with Message-ID and plaintext
+12/05/16 Add sendmail support
+12/05/16 Add richtextarea to media emailing and emailform widget #63
 11/05/16 Add richtextarea to bulk email/mail merge #63
 11/05/16 Fix bad CSS that overrode all fonts (incompatible with inline edit)
 11/05/16 Apply richtextarea to new onlineform email confirmation #63

@@ -246,9 +246,10 @@ FORGOTTEN_PASSWORD_LABEL = ""
 # be displayed).
 EMERGENCY_NOTICE = ""
 
-# Override the SMTP settings and remove the controls from the options screen
-# SMTP_SERVER = { "host": "mail.yourdomain.com", "port": 25, "username": "userifauth", "password": "passifauth", "usetls": False }
-SMTP_SERVER = None
+# SMTP_SERVER = { "sendmail": False, "host": "mail.yourdomain.com", "port": 25, "username": "userifauth", "password": "passifauth", "usetls": False }
+# SMTP_SERVER = { "sendmail": False, "host": "mail.yourdomain.com", "port": 25, "username": "", "password": "", "usetls": False }
+SMTP_SERVER = { "sendmail": True }
+
 # The from address for all outgoing emails. The email address configured
 # in the database will be used as the Reply-To header to avoid
 # any issues with DKIM/SPF/DMARC spoofing

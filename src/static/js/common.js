@@ -961,6 +961,7 @@
             var types = {
                 "#animals": "animalchoosermulti",
                 "#animal": "animalchooser",
+                "#emailbody": "richtextarea",
                 "#owner": "personchooser",
                 "#person": "personchooser",
                 "#retailer": "personchooser",
@@ -987,6 +988,9 @@
                 }
                 else if (type == "htmleditor") {
                     $(selector).htmleditor("destroy").remove();
+                }
+                else if (type == "richtextarea") {
+                    $(selector).richtextarea("destroy").remove();
                 }
                 else if (type == "sqleditor") {
                     $(selector).sqleditor("destroy").remove();

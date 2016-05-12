@@ -17,7 +17,7 @@ $(function() {
                 fields: [
                     { json_field: "NAME", post_field: "name", label: _("Name"), type: "text", validation: "notblank" },
                     { json_field: "REDIRECTURLAFTERPOST", post_field: "redirect", label: _("Redirect to URL after POST"), 
-                        type: "text", 
+                        type: "text", classes: "asm-doubletextbox", 
                         tooltip: _("After the user presses submit and ASM has accepted the form, redirect the user to this URL"),
                         callout: _("After the user presses submit and ASM has accepted the form, redirect the user to this URL") },
                     { json_field: "SETOWNERFLAGS", post_field: "flags", label: _("Person Flags"), type: "selectmulti" },
@@ -27,7 +27,8 @@ $(function() {
                     { json_field: "EMAILSUBMITTER", post_field: "emailsubmitter", label: _("Send confirmation email to form submitter"), type: "check",
                         tooltip: _("If this form has a populated emailaddress field during submission, send a confirmation email to it"),
                         callout: _("If this form has a populated emailaddress field during submission, send a confirmation email to it") },
-                    { json_field: "EMAILMESSAGE", post_field: "emailmessage", label: _("Confirmation message"), type: "richtextarea", height: "100px", width: "600px",
+                    { json_field: "EMAILMESSAGE", post_field: "emailmessage", label: _("Confirmation message"), type: "richtextarea", 
+                        margintop: "0px", height: "100px", width: "600px",
                         tooltip: _("The confirmation email message to send to the form submitter. Leave blank to send a copy of the completed form."),
                         callout: _("The confirmation email message to send to the form submitter. Leave blank to send a copy of the completed form.") }, 
                     { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "htmleditor", height: "100px", width: "600px" },

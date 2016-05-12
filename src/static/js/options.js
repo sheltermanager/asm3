@@ -700,28 +700,6 @@ $(function() {
                 '<td><label for="emailaddress">' + _("Email address") + '</label></td>',
                 '<td><input data="EmailAddress" id="emailaddress" type="text" class="asm-doubletextbox" /></td>',
                 '</tr>',
-                '<tr class="smtp">',
-                '<td><label for="smtpserver">' + _("SMTP server") + '</label></td>',
-                '<td><input data="SMTPServer" id="smtpserver" type="text" class="asm-doubletextbox" /></td>',
-                '</tr>',
-                '<tr class="smtp">',
-                '<td><label for="smtpport">' + _("SMTP port") + '</label></td>',
-                '<td><input data="SMTPPort" id="smtpport" type="text" class="asm-doubletextbox" /></td>',
-                '</tr>',
-                '<tr class="smtp">',
-                '<td><label for="smtpusername">' + _("SMTP username") + '</label></td>',
-                '<td><input data="SMTPServerUsername" id="smtpusername" type="text" class="asm-doubletextbox" /></td>',
-                '</tr>',
-                '<tr class="smtp">',
-                '<td><label for="smtppassword">' + _("SMTP password") + '</label></td>',
-                '<td><input data="SMTPServerPassword" id="smtppassword" type="text" class="asm-doubletextbox" /></td>',
-                '</tr>',
-                '<tr class="smtp">',
-                '<td></td>',
-                '<td><input data="SMTPServerUseTLS" id="smtptls" type="checkbox" class="asm-checkbox" />',
-                '<label for="smtptls">' + _("Use TLS") + '</label>',
-                '</td>',
-                '</tr>',
                 '<tr>',
                 '<td><label for="emailsig">' + _("Email signature") + '</label></td>',
                 '<td><textarea data="EmailSignature" id="emailsig" rows="10" class="asm-textareafixeddouble"></textarea></td>',
@@ -1201,11 +1179,6 @@ $(function() {
             // Hide options not applicable for some locales
             if (asm.locale != "en") {
                 $(".us").hide();
-            }
-
-            // Hide smtp settings if they've been overridden
-            if (controller.hassmtpoverride) {
-                $(".smtp").hide();
             }
 
             validate.bind_dirty();

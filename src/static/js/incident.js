@@ -302,7 +302,7 @@ $(function() {
                 '<td><input id="emailsubject" data="subject" type="text" class="asm-doubletextbox" /></td>',
                 '</tr>',
                 '</table>',
-                '<textarea id="emailbody" data="body" rows="15" class="asm-textarea"></textarea>',
+                '<div id="emailbody" data="body" data-margin-top="24px" data-height="400px" class="asm-richtextarea"></div>',
                 '</div>',
                 '<div id="dialog-linkanimal" style="display: none" title="' + html.title(_("Link an animal")) + '">',
                 '<table width="100%">',
@@ -492,7 +492,7 @@ $(function() {
                 var b = {}; 
                 b[_("Send")] = function() { 
                     var formdata = "mode=email&" +
-                        $("#dialog-email input, #dialog-email select, #dialog-email textarea").toPOST();
+                        $("#dialog-email input, #dialog-email select, #dialog-email .asm-richtextarea").toPOST();
                     common.ajax_post("incident", formdata)
                         .then(function() { 
                             header.show_info(_("Message successfully sent"));
@@ -543,7 +543,7 @@ $(function() {
                     html.decode(_("Dispatch {0}: {1}")
                         .replace("{0}", format.padleft(controller.incident.ACID, 6))
                         .replace("{1}", $("#dispatchaddress").val()) ));
-                $("#emailbody").val(html.decode(msg));
+                $("#emailbody").richtextarea("value", "<p>" + common.replace_all(html.decode(msg), "\n", "<br/>") + "</p>");
                 $("#emailsubject").focus();
             });
 
@@ -629,6 +629,7 @@ $(function() {
             common.widget_destroy("#victim", "personchooser");
             common.widget_destroy("#dialog-email");
             common.widget_destroy("#dialog-linkanimal");
+            common.widget_destroy("#emailbody", "richtextarea");
         },
 
         name: "incident",

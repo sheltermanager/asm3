@@ -857,7 +857,7 @@
          *        halfsize: false, (use the asm-halftextbox class)
          *        justwidget: false, (output tr/td/label)
          *        defaultval: expression or function to evaluate.
-         *        height/width: "css expr",
+         *        height/width/margintop: "css expr",
          *        validation: "notblank|notzero",
          *        classes: "extraclass anotherone",
          *        tooltip: _("Text"), 
@@ -942,8 +942,9 @@
                     }
                     if (!v.width) { v.width = "100%"; }
                     if (!v.height) { v.height = "64px"; }
+                    if (!v.margintop) { v.margintop = "24px"; }
                     d += "<div id=\"" + v.post_field + "\" class=\"asm-richtextarea " + v.classes + "\" ";
-                    d += "data-width=\"" + v.width + "\" data-height=\"" + v.height + "\" ";
+                    d += "data-width=\"" + v.width + "\" data-height=\"" + v.height + "\" data-margin-top=\"" + v.margintop + "\" " ;
                     d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                     if (v.readonly) { d += " data-noedit=\"true\" "; }
                     if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }

@@ -514,12 +514,6 @@
                 '</tr>',
                 '<tr>',
                 '<td></td>',
-                '<td><input id="emailhtml" data="html" type="checkbox"',
-                'title="' + html.title(_("Set the email content-type header to text/html")) + '" ',
-                'class="asm-checkbox" /><label for="emailhtml">' + _("HTML") + '</label></td>',
-                '</tr>',
-                '<tr>',
-                '<td></td>',
                 '<td><input id="emailaddtolog" data="addtolog" type="checkbox"',
                 'title="' + html.title(_("Add details of this email to the log after sending")) + '" ',
                 'class="asm-checkbox" /><label for="emailaddtolog">' + _("Add to log") + '</label>',
@@ -528,13 +522,15 @@
                 '</td>',
                 '</tr>',
                 '</table>',
-                '<textarea id="emailbody" data="body" rows="15" class="asm-textarea"></textarea>',
+                '<div id="emailbody" data="body" data-margin-top="24px" data-height="300px" class="asm-richtextarea"></div>',
                 '</div>'
             ].join("\n"));
+            $("#emailbody").richtextarea();
         },
 
         destroy: function() {
             common.widget_destroy("#dialog-email", "dialog"); 
+            common.widget_destroy("#emailbody", "richtextarea");
         },
         
         /**
@@ -550,7 +546,7 @@
             var b = {}; 
             b[_("Send")] = function() { 
                 if (o.formdata) { o.formdata += "&"; }
-                o.formdata += $("#dialog-email input, #dialog-email select, #dialog-email textarea").toPOST();
+                o.formdata += $("#dialog-email input, #dialog-email select, #dialog-email .asm-richtextarea").toPOST();
                 common.ajax_post(o.post, o.formdata, function() { 
                     header.show_info(_("Message successfully sent"));
                     $("#dialog-email").dialog("close");
@@ -585,7 +581,7 @@
             $("#emailto").val(html.decode(o.name) + " <" + o.email + ">");
             var sig = config.str("EmailSignature");
             if (sig != "") {
-                $("#emailbody").val(html.decode("\n--\n" + sig));
+                $("#emailbody").richtextarea("value", html.decode("<br/>--<br/>" + sig));
             }
             $("#emailsubject").focus();
         }
@@ -1003,12 +999,15 @@
 
         _create: function() {
             var self = this;
-            // Override height and width if they were set as attributes of the div
+            // Override height, width and margin-top if they were set as attributes of the div
             if (self.element.attr("data-width")) {
                 self.element.css("width", self.element.attr("data-width"));
             }
             if (self.element.attr("data-height")) {
                 self.element.css("height", self.element.attr("data-height"));
+            }
+            if (self.element.attr("data-margin-top")) {
+                self.element.css("margin-top", self.element.attr("data-margin-top"));
             }
             tinymce.init({
                 selector: "#" + this.element.attr("id"),
@@ -1026,7 +1025,7 @@
                 add_unload_trigger: false,
 
                 toolbar_items_size: "small",
-                toolbar: "undo redo | fontselect fontsizeselect | bold italic forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | link image",
+                toolbar: "undo redo | fontselect fontsizeselect | bold italic underline forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | link image | source",
 
                 // enable browser spellchecking
                 gecko_spellcheck: true,

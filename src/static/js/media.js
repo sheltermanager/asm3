@@ -84,7 +84,7 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="emailnote">' + _("Message") + '</label></td>',
-                '<td><textarea id="emailnote" class="asm-textarea" rows="5"></textarea></td>',
+                '<td><div id="emailnote" class="asm-richtextarea" data-margin-top="24px" data-height="200px"></div></td>',
                 '</tr>',
                 '</table>',
                 '</div>',
@@ -97,7 +97,7 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="emailpdfnote">' + _("Message") + '</label></td>',
-                '<td><textarea id="emailpdfnote" class="asm-textarea" rows="5"></textarea></td>',
+                '<td><div id="emailpdfnote" class="asm-richtextarea" data-margin-top="24px" data-height="200px"></div></td>',
                 '</tr>',
                 '</table>',
                 '</div>',
@@ -787,12 +787,12 @@ $(function() {
                 }
                 // Default the email sig
                 if (config.str("EmailSignature")) {
-                    $("#emailnote").html("\n--\n" + config.str("EmailSignature")); 
+                    $("#emailnote").html("<br/>--<br/>" + config.str("EmailSignature")); 
                 }
                 tableform.show_okcancel_dialog("#dialog-email", _("Send"), { width: 550, notblank: [ "emailto" ] })
                     .then(function() {
                         var formdata = "mode=email&email=" + encodeURIComponent($("#emailto").val()) + 
-                            "&emailnote=" + encodeURIComponent($("#emailnote").val()) + 
+                            "&emailnote=" + encodeURIComponent($("#emailnote").richtextarea("value")) + 
                             "&ids=" + $(".asm-mediaicons input").tableCheckedData();
                         return common.ajax_post(controller.name, formdata);
                     })
@@ -808,12 +808,12 @@ $(function() {
                 }
                 // Default the email sig
                 if (config.str("EmailSignature")) {
-                    $("#emailpdfnote").html("\n--\n" + config.str("EmailSignature")); 
+                    $("#emailpdfnote").html("<br/>--<br/>" + config.str("EmailSignature")); 
                 }
                 tableform.show_okcancel_dialog("#dialog-emailpdf", _("Send"), { width: 550, notblank: [ "emailpdfto" ] })
                     .then(function() {
                         var formdata = "mode=emailpdf&email=" + encodeURIComponent($("#emailpdfto").val()) + 
-                            "&emailnote=" + encodeURIComponent($("#emailpdfnote").val()) + 
+                            "&emailnote=" + encodeURIComponent($("#emailpdfnote").richtextarea("value")) + 
                             "&ids=" + $(".asm-mediaicons input").tableCheckedData();
                         $("#dialog-emailpdf").dialog("close");
                         return common.ajax_post(controller.name, formdata);
@@ -946,6 +946,8 @@ $(function() {
             common.widget_destroy("#dialog-addlink");
             common.widget_destroy("#dialog-edit");
             common.widget_destroy("#dialog-sign");
+            common.widget_destroy("#emailnote", "richtextarea");
+            common.widget_destroy("#emailpdfnote", "richtextarea");
         },
 
         name: "media",
