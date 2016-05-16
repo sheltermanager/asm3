@@ -97,10 +97,12 @@ def sql_structure(dbo):
                 fdate("LastChangedDate", True))
             return "%s%s (%s);\n" % (createtable, name, ",".join(fields + cf))
         return "%s%s (%s);\n" % (createtable, name, ",".join(fields) )
-    def index(name, table, fieldlist, unique = False):
+    def index(name, table, fieldlist, unique = False, blob = False):
         uniquestr = ""
+        blobstr = ""
         if unique: uniquestr = "UNIQUE "
-        return "CREATE %sINDEX %s ON %s (%s);\n" % ( uniquestr, name, table, fieldlist)
+        if blob and dbo.dbtype == "MYSQL": blobstr = "(255)"
+        return "CREATE %sINDEX %s ON %s (%s%s);\n" % ( uniquestr, name, table, fieldlist, blobstr)
     def field(name, ftype = INTEGER, nullable = True, pk = False):
         nullstr = "NOT NULL"
         if nullable: nullstr = "NULL"
@@ -739,7 +741,7 @@ def sql_structure(dbo):
         flongstr("Comments"),
         fdate("UrgencyUpdateDate", True),
         fdate("UrgencyLastUpdatedDate", True) ))
-    sql += index("animalwaitinglist_AnimalDescription", "animalwaitinglist", "AnimalDescription")
+    sql += index("animalwaitinglist_AnimalDescription", "animalwaitinglist", "AnimalDescription", blob = True)
     sql += index("animalwaitinglist_OwnerID", "animalwaitinglist", "OwnerID")
     sql += index("animalwaitinglist_SpeciesID", "animalwaitinglist", "SpeciesID")
     sql += index("animalwaitinglist_Size", "animalwaitinglist", "Size")
@@ -2680,11 +2682,13 @@ def shorttext(dbo):
 def add_column(dbo, table, column, coltype):
     db.execute_dbupdate(dbo, "ALTER TABLE %s ADD %s %s" % (table, column, coltype))
 
-def add_index(dbo, indexname, tablename, fieldname, unique = False):
+def add_index(dbo, indexname, tablename, fieldname, unique = False, blob = False):
     try:
         u = ""
+        kl = ""
         if unique: u = "UNIQUE "
-        db.execute_dbupdate(dbo, "CREATE %sINDEX %s ON %s (%s)" % (u, indexname, tablename, fieldname))
+        if blob and dbo.dbtype == "MYSQL": kl = "(255)"
+        db.execute_dbupdate(dbo, "CREATE %sINDEX %s ON %s (%s%s)" % (u, indexname, tablename, fieldname, kl))
     except:
         pass
 
@@ -3508,7 +3512,7 @@ def update_33102(dbo):
     add_index(dbo, "animallost_AreaPostcode", "animallost", "AreaPostcode")
     add_index(dbo, "animalfound_AreaFound", "animalfound", "AreaFound")
     add_index(dbo, "animalfound_AreaPostcode", "animalfound", "AreaPostcode")
-    add_index(dbo, "animalwaitinglist_AnimalDescription", "animalwaitinglist", "AnimalDescription")
+    add_index(dbo, "animalwaitinglist_AnimalDescription", "animalwaitinglist", "AnimalDescription", blob = True)
     add_index(dbo, "animalwaitinglist_OwnerID", "animalwaitinglist", "OwnerID")
     add_index(dbo, "animalfound_AnimalTypeID", "animalfound", "AnimalTypeID")
     add_index(dbo, "animallost_AnimalTypeID", "animallost", "AnimalTypeID")
