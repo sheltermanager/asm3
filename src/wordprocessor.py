@@ -609,11 +609,11 @@ def donation_tags(dbo, donations):
         if p["VATRATE"] > totals["taxrate"]:
             totals["taxrate"] = p["VATRATE"]
         if p["DATE"] is not None: 
-            totals["received"] += p["DONATION"]
-            totals["vat"] += p["VATAMOUNT"]
-            totals["total"] += p["VATAMOUNT"] + p["DONATION"]
+            totals["received"] += utils.cint(p["DONATION"])
+            totals["vat"] += utils.cint(p["VATAMOUNT"])
+            totals["total"] += utils.cint(p["VATAMOUNT"]) + utils.cint(p["DONATION"])
         if p["DATE"] is None: 
-            totals["due"] += p["DONATION"]
+            totals["due"] += utils.cint(p["DONATION"])
     # Add a copy of the donation tags without an index for compatibility
     if len(donations) > 0:
         add_to_tags("", donations[0]) 
