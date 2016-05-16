@@ -40,10 +40,10 @@ select:disabled, input:disabled, textarea:disabled {
 .ui-widget {
     font-family: sans-serif;
 }
-.ui-widget input,
-.ui-widget select,
-.ui-widget textarea,
-.ui-widget button {
+input,
+select,
+textarea,
+button {
     font-family: sans-serif;
 }
 
