@@ -901,6 +901,7 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
         if SMTP_SERVER.has_key("username"): username = SMTP_SERVER["username"]
         if SMTP_SERVER.has_key("password"): password = SMTP_SERVER["password"]
         if SMTP_SERVER.has_key("usetls"): usetls = SMTP_SERVER["usetls"]
+        if SMTP_SERVER.has_key("abuse"): add_header(msg, "X-Report-Abuse-To", SMTP_SERVER["abuse"])
      
     # Use sendmail or SMTP for the transport depending on config
     if sendmail:
