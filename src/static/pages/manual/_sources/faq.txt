@@ -46,4 +46,46 @@ web browser:
 * Chrome: Untick the "Print headers and footers" box in the print preview
   screen.
 
+Why are ASM emails being sent from bounce+account@sheltermanager.com?
+---------------------------------------------------------------------
+
+In the early days of email, address spoofing was used by everyone. It was
+an easy way ensuring an email came back to you no matter what servers your
+message passed through.
+
+Unfortunately, this also made it easy for spammers to fake where their emails
+were coming from and to send a lot of backscatter (failure notices) to innocent
+victims.
+
+Most large email services today, such as gmail, hotmail and yahoo use
+technologies called SPF and DKIM. These allow a domain to state which mail
+servers are allowed to relay email on its behalf. For example, the hotmail.com
+domain states that nothing but the hotmail servers are allowed to send 
+any messages that come from a hotmail.com address.
+
+When a message arrives at an email server using these technologies, it checks
+the domain the email is from and then checks to see whether the server it
+received that message from is allowed to send email for that domain. If it
+isn't, the message is put straight into the spam folder of the recipient or in
+some cases, rejected outright.
+
+This is very helpful in filtering spam, but it means that ASM cannot send
+emails that appear to come from your address (particularly if you have a
+hotmail or gmail address) - otherwise most mail services will either refuse
+delivery of your message or put it straight in the spam folder for the
+recipient. 
+
+Instead, ASM sends emails from the fixed address you configured in sitedefs and
+trusts you know what you're doing.  sheltermanager.com sends emails from a
+bounce+account@sheltermanager.com address. Your real email address is set in
+the Reply-To email header, which email clients will honour when someone replies
+to your message. So while they'll see the message as appearing to come from
+bounce+account@sheltermanager.com, when they hit the reply button in their
+email client, the email they create will have a to address of you@youremail.com
+instead.
+
+In the case of sheltermanager.com, if someone does accidentally reply to a
+bounce+account@sheltermanager.com address, the sheltermanager email server will
+find your account and send the email through to you, or find a Reply-To header
+in the quoted message if one exists and send it to that.
 

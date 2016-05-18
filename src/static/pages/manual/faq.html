@@ -236,6 +236,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#where-do-i-get-some-reports">Where do I get some reports?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#why-am-i-seeing-animal-not-in-location-filter-site-when-i-open-a-record">Why am I seeing &#8220;animal not in location filter/site&#8221; when I open a record?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#why-do-i-get-page-1-of-1-in-the-header-when-i-print-documents">Why do I get &#8220;page 1 of 1&#8221; in the header when I print documents?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#why-are-asm-emails-being-sent-from-bounce-account-sheltermanager-com">Why are ASM emails being sent from bounce+account&#64;sheltermanager.com?</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="databasetables.html">Appendix: Database Tables/Columns</a><ul>
@@ -329,6 +330,42 @@ all the dropdowns in the Headers and Footers section.</li>
 <li>Chrome: Untick the &#8220;Print headers and footers&#8221; box in the print preview
 screen.</li>
 </ul>
+</div>
+<div class="section" id="why-are-asm-emails-being-sent-from-bounce-account-sheltermanager-com">
+<h2>Why are ASM emails being sent from <a class="reference external" href="mailto:bounce+account&#37;&#52;&#48;sheltermanager&#46;com">bounce+account<span>&#64;</span>sheltermanager<span>&#46;</span>com</a>?<a class="headerlink" href="#why-are-asm-emails-being-sent-from-bounce-account-sheltermanager-com" title="Permalink to this headline">¶</a></h2>
+<p>In the early days of email, address spoofing was used by everyone. It was
+an easy way ensuring an email came back to you no matter what servers your
+message passed through.</p>
+<p>Unfortunately, this also made it easy for spammers to fake where their emails
+were coming from and to send a lot of backscatter (failure notices) to innocent
+victims.</p>
+<p>Most large email services today, such as gmail, hotmail and yahoo use
+technologies called SPF and DKIM. These allow a domain to state which mail
+servers are allowed to relay email on its behalf. For example, the hotmail.com
+domain states that nothing but the hotmail servers are allowed to send
+any messages that come from a hotmail.com address.</p>
+<p>When a message arrives at an email server using these technologies, it checks
+the domain the email is from and then checks to see whether the server it
+received that message from is allowed to send email for that domain. If it
+isn&#8217;t, the message is put straight into the spam folder of the recipient or in
+some cases, rejected outright.</p>
+<p>This is very helpful in filtering spam, but it means that ASM cannot send
+emails that appear to come from your address (particularly if you have a
+hotmail or gmail address) - otherwise most mail services will either refuse
+delivery of your message or put it straight in the spam folder for the
+recipient.</p>
+<p>Instead, ASM sends emails from the fixed address you configured in sitedefs and
+trusts you know what you&#8217;re doing.  sheltermanager.com sends emails from a
+<a class="reference external" href="mailto:bounce+account&#37;&#52;&#48;sheltermanager&#46;com">bounce+account<span>&#64;</span>sheltermanager<span>&#46;</span>com</a> address. Your real email address is set in
+the Reply-To email header, which email clients will honour when someone replies
+to your message. So while they&#8217;ll see the message as appearing to come from
+<a class="reference external" href="mailto:bounce+account&#37;&#52;&#48;sheltermanager&#46;com">bounce+account<span>&#64;</span>sheltermanager<span>&#46;</span>com</a>, when they hit the reply button in their
+email client, the email they create will have a to address of <a class="reference external" href="mailto:you&#37;&#52;&#48;youremail&#46;com">you<span>&#64;</span>youremail<span>&#46;</span>com</a>
+instead.</p>
+<p>In the case of sheltermanager.com, if someone does accidentally reply to a
+<a class="reference external" href="mailto:bounce+account&#37;&#52;&#48;sheltermanager&#46;com">bounce+account<span>&#64;</span>sheltermanager<span>&#46;</span>com</a> address, the sheltermanager email server will
+find your account and send the email through to you, or find a Reply-To header
+in the quoted message if one exists and send it to that.</p>
 </div>
 </div>
 
