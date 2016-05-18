@@ -133,6 +133,8 @@ PERSONEMAIL
     The person's email address
 PERSONMEMBER
     Y or 1 in this column to indicate the person should have the membership flag set.
+PERSONMEMBERSHIPEXPIRY
+    A date for when this person's membership expires
 PERSONFOSTERER
     Y or 1 in this column to indicate the person should have the fosterer flag set.
 PERSONDONOR

@@ -34,9 +34,10 @@ VALID_FIELDS = [
     "MOVEMENTTYPE", "MOVEMENTDATE", "MOVEMENTCOMMENTS", "MOVEMENTRETURNDATE", 
     "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME", "PERSONNAME",
     "PERSONADDRESS", "PERSONCITY", "PERSONSTATE",
-    "PERSONZIPCODE", "PERSONMEMBER", "PERSONFOSTERER", "PERSONDONOR",
+    "PERSONZIPCODE", "PERSONFOSTERER", "PERSONDONOR",
     "PERSONFLAGS", "PERSONCOMMENTS", "PERSONHOMEPHONE", "PERSONWORKPHONE",
-    "PERSONCELLPHONE", "PERSONEMAIL", "PERSONCLASS"
+    "PERSONCELLPHONE", "PERSONEMAIL", "PERSONCLASS",
+    "PERSONMEMBER", "PERSONMEMBERSHIPEXPIRY"
 ]
 
 def gkc(m, f):
@@ -413,6 +414,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
             if gkb(row, "PERSONDONOR"): flags += ",donor"
             p["flags"] = flags
             p["comments"] = gks(row, "PERSONCOMMENTS")
+            p["membershipexpires"] = gkd(dbo, row, "PERSONMEMBERSHIPEXPIRY")
             try:
                 if checkduplicates:
                     dups = person.get_person_similar(dbo, p["emailaddress"], p["surname"], p["forenames"], p["address"])
