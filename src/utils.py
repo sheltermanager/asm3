@@ -846,7 +846,7 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
     fromadd = fromadd.replace("{database}", dbo.database)
 
     # Construct the mime message
-    msg = MIMEMultipart("alternative")
+    msg = MIMEMultipart("mixed")
     add_header(msg, "From", fromadd)
     add_header(msg, "Reply-To", replyadd)
     add_header(msg, "To", toadd)
@@ -856,16 +856,22 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
     subject = truncate(subject, 69) # limit subject to 78 chars - "Subject: "
     add_header(msg, "Subject", subject)
 
+    # Create an alternative part with plain text and html messages
+    msgbody = MIMEMultipart("alternative")
+
     # Attach the plaintext portion (html_email_to_plain on an already plaintext
     # email does nothing).
     msgtext = MIMEText(html_email_to_plain(body), "plain")
-    msg.attach(msgtext)
+    msgbody.attach(msgtext)
     
     # Attach the HTML portion if this is an HTML message - HTML should
     # always come after the plaintext attachment
     if contenttype == "html":
         msgtext = MIMEText(body, "html")
-        msg.attach(msgtext)
+        msgbody.attach(msgtext)
+
+    # Add the message text
+    msg.attach(msgbody)
 
     # If a file attachment has been specified, add it to the message
     if attachmentdata is not None:

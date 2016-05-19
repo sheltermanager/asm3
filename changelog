@@ -1,6 +1,7 @@
 39
 ================
 
+19/05/16 Use multipart/mixed for email (fix for Apple Mail)
 18/05/16 If a submitter email is set, use that as reply to for staff
 14/05/16 Stamp system configured email address on diary note emails
 12/05/16 Allow email signature to be HTML too #63
