@@ -1,0 +1,47 @@
+People added between two dates
+###
+Auditing
+###
+Any
+###
+People records added to the system between two dates
+###
+en
+###
+SELECT 
+CreatedDate, OwnerName, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode,
+HomeTelephone, WorkTelephone, MobileTelephone, EmailAddress,
+AdditionalFlags
+FROM owner
+WHERE CreatedDate >= '$ASK DATE People added between $' AND CreatedDate <= '$ASK DATE and$'
+ORDER BY CreatedDate DESC
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Added</th>
+<th>Name</th>
+<th>Address</th>
+<th>Tel</th>
+<th>Email</th>
+<th>Flags</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$CREATEDDATE</td>
+<td>$OWNERNAME</td>
+<td>$OWNERADDRESS<br/>
+$OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE</td>
+<td>H: $HOMETELEPHONE, W: $WORKTELEPHONE, C: $MOBILETELEPHONE</td>
+<td>$EMAILADDRESS</td>
+<td>$ADDITIONALFLAGS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<p>{COUNT.OWNERNAME} person records added.</p>
+FOOTER$$
+
