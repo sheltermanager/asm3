@@ -106,6 +106,8 @@ def get_animal_query(dbo):
         "ro.EmailAddress AS ReservedOwnerEmailAddress, " \
         "ao.OwnerName AS AdoptionCoordinatorName, " \
         "ao.HomeTelephone AS AdoptionCoordinatorHomeTelephone, " \
+        "ao.WorkTelephone AS AdoptionCoordinatorWorkTelephone, " \
+        "ao.MobileTelephone AS AdoptionCoordinatorMobileTelephone, " \
         "ao.EmailAddress AS AdoptionCoordinatorEmailAddress, " \
         "ars.StatusName AS ReservationStatusName, " \
         "er.ReasonName AS EntryReasonName, " \
