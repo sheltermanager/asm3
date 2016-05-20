@@ -17,6 +17,7 @@ import person
 import publish
 import utils
 import waitinglist
+import web
 from sitedefs import BASE_URL, ASMSELECT_CSS, ASMSELECT_JS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, SIGNATURE_JS, TOUCHPUNCH_JS
 
 FIELDTYPE_YESNO = 0
@@ -794,8 +795,9 @@ def create_person(dbo, username, collationid):
         if k.startswith("reserveanimalname"):
             try:
                 movement.insert_reserve_for_animal_name(dbo, username, personid, v)
-            except Exception,err:
-                al.warn("could not create reservation for %d on %s: %s" % (personid, v, err), "create_person", dbo)
+            except:
+                al.warn("could not create reservation for %d on %s" % (personid, v), "create_person", dbo)
+                web.ctx.status = "200 OK" # ASMValidationError sets status to 500
     return (collationid, personid, personname)
 
 def create_animalcontrol(dbo, username, collationid):
