@@ -859,17 +859,14 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
     # Create an alternative part with plain text and html messages
     msgbody = MIMEMultipart("alternative")
 
+    # Attach the HTML portion if this is an HTML message
+    if contenttype == "html":
+        msgbody.attach(MIMEText(body, "html"))
+
     # Attach the plaintext portion (html_email_to_plain on an already plaintext
     # email does nothing).
-    msgtext = MIMEText(html_email_to_plain(body), "plain")
-    msgbody.attach(msgtext)
+    msgbody.attach(MIMEText(html_email_to_plain(body), "plain"))
     
-    # Attach the HTML portion if this is an HTML message - HTML should
-    # always come after the plaintext attachment
-    if contenttype == "html":
-        msgtext = MIMEText(body, "html")
-        msgbody.attach(msgtext)
-
     # Add the message text
     msg.attach(msgbody)
 
