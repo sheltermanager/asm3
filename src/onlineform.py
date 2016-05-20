@@ -792,7 +792,10 @@ def create_person(dbo, username, collationid):
     # Was there a reserveanimalname field? If so, create reservation(s) to the person if possible
     for k, v in d.iteritems():
         if k.startswith("reserveanimalname"):
-            movement.insert_reserve_for_animal_name(dbo, username, personid, v)
+            try:
+                movement.insert_reserve_for_animal_name(dbo, username, personid, v)
+            except utils.ASMValidationError:
+                al.warn("could not create reservation for %d on %s" % (personid, v), "create_person", dbo)
     return (collationid, personid, personname)
 
 def create_animalcontrol(dbo, username, collationid):
@@ -944,10 +947,10 @@ def auto_remove_old_incoming_forms(dbo):
     """
     removeafter = configuration.auto_remove_incoming_forms_days(dbo)
     if removeafter <= 0:
-        al.debug("auto remove incoming forms is off.", "onlineform.auto_remove_old_incoming_forms")
+        al.debug("auto remove incoming forms is off.", "onlineform.auto_remove_old_incoming_forms", dbo)
         return
     removecutoff = i18n.subtract_days(i18n.now(dbo.timezone), removeafter)
-    al.debug("remove date: incoming forms < %s" % db.dd(removecutoff), "onlineform.auto_remove_old_incoming_forms")
+    al.debug("remove date: incoming forms < %s" % db.dd(removecutoff), "onlineform.auto_remove_old_incoming_forms", dbo)
     sql = "DELETE FROM onlineformincoming WHERE PostedDate < %s" % db.dd(removecutoff)
     count = db.execute(dbo, sql)
     al.debug("removed %d incoming forms older than %d days" % (count, int(removeafter)), "onlineform.auto_remove_old_incoming_forms", dbo)
