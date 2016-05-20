@@ -794,8 +794,8 @@ def create_person(dbo, username, collationid):
         if k.startswith("reserveanimalname"):
             try:
                 movement.insert_reserve_for_animal_name(dbo, username, personid, v)
-            except utils.ASMValidationError:
-                al.warn("could not create reservation for %d on %s" % (personid, v), "create_person", dbo)
+            except Exception,err:
+                al.warn("could not create reservation for %d on %s: %s" % (personid, v, err), "create_person", dbo)
     return (collationid, personid, personname)
 
 def create_animalcontrol(dbo, username, collationid):
