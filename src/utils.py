@@ -761,11 +761,12 @@ def read_text_file(name):
 def html_email_to_plain(s):
     """
     Turns an HTML email into plain text by converting
-    paragraph closers and br tags into line breaks, then
+    paragraph closers, br tags and rows into line breaks, then
     removing the tags.
     """
     s = s.replace("</p>", "\n</p>")
     s = s.replace("<br", "\n<br")
+    s = s.replace("</tr>", "\n</tr>")
     s = strip_html_tags(s)
     return s
 
@@ -859,13 +860,13 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
     # Create an alternative part with plain text and html messages
     msgbody = MIMEMultipart("alternative")
 
-    # Attach the HTML portion if this is an HTML message
-    if contenttype == "html":
-        msgbody.attach(MIMEText(body, "html"))
-
     # Attach the plaintext portion (html_email_to_plain on an already plaintext
     # email does nothing).
     msgbody.attach(MIMEText(html_email_to_plain(body), "plain"))
+
+    # Attach the HTML portion if this is an HTML message
+    if contenttype == "html":
+        msgbody.attach(MIMEText(body, "html"))
     
     # Add the message text
     msg.attach(msgbody)
