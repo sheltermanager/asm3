@@ -23,7 +23,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.header import Header
 from email import Charset, Encoders
-from i18n import _, display2python, format_currency, python2display
+from i18n import _, display2python, format_currency, python2display, VERSION
 from cStringIO import StringIO
 from subprocess import Popen, PIPE
 from sitedefs import SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF
@@ -853,6 +853,7 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
     add_header(msg, "To", toadd)
     add_header(msg, "Message-ID", email.utils.make_msgid())
     add_header(msg, "Date", email.utils.formatdate())
+    add_header(msg, "X-Mailer", "Animal Shelter Manager %s" % VERSION)
     if ccadd != "": add_header(msg, "Cc", ccadd)
     subject = truncate(subject, 69) # limit subject to 78 chars - "Subject: "
     add_header(msg, "Subject", subject)
