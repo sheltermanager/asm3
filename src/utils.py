@@ -855,6 +855,7 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
     add_header(msg, "Subject", subject)
     add_header(msg, "From", fromadd)
     add_header(msg, "Reply-To", replyadd)
+    add_header(msg, "Bounces-To", replyadd)
     add_header(msg, "To", toadd)
     if ccadd != "": add_header(msg, "Cc", ccadd)
 
@@ -906,7 +907,9 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
         if SMTP_SERVER.has_key("username"): username = SMTP_SERVER["username"]
         if SMTP_SERVER.has_key("password"): password = SMTP_SERVER["password"]
         if SMTP_SERVER.has_key("usetls"): usetls = SMTP_SERVER["usetls"]
-        if SMTP_SERVER.has_key("abuse"): add_header(msg, "X-Report-Abuse-To", SMTP_SERVER["abuse"])
+        if SMTP_SERVER.has_key("headers"): 
+            for k, v in SMTP_SERVER["headers"].iteritems():
+                add_header(msg, k, v)
      
     # Use sendmail or SMTP for the transport depending on config
     if sendmail:
