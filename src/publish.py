@@ -1964,6 +1964,8 @@ class FoundAnimalsPublisher(FTPPublisher):
                 line.append("\"%s\"" % an["BASECOLOURNAME"])
                 # Implanting Organization
                 line.append("\"%s\"" % org)
+                # Rescue Group Email
+                line.append("\"%s\"" % configuration.foundanimals_email(self.dbo))
                 # Add to our CSV file
                 csv.append(",".join(line))
                 # Mark success in the log
@@ -1978,7 +1980,7 @@ class FoundAnimalsPublisher(FTPPublisher):
         header = "First Name,Last Name,Email Address,Address 1,Address 2,City,State,Zip Code," \
             "Home Phone,Work Phone,Cell Phone,Pet Name,Microchip Number,Service Date," \
             "Date of Birth,Species,Sex,Spayed/Neutered,Primary Breed,Secondary Breed," \
-            "Color,Implanting Organization\n"
+            "Color,Implanting Organization,Rescue Group Email\n"
         self.saveFile(os.path.join(self.publishDir, outputfile), header + "\n".join(csv))
         self.log("Uploading datafile %s" % outputfile)
         self.upload(outputfile)

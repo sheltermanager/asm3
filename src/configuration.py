@@ -644,6 +644,9 @@ def email_messages(dbo):
 def foster_on_shelter(dbo):
     return cboolean(dbo, "FosterOnShelter", DEFAULTS["FosterOnShelter"] == "Yes")
 
+def foundanimals_email(dbo):
+    return cstring(dbo, "FoundAnimalsEmail")
+
 def foundanimals_folder(dbo):
     return cstring(dbo, "FoundAnimalsFolder")
 
