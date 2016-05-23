@@ -248,8 +248,10 @@ $(function() {
 
         type_change: function() {
             var dc = common.get_field(controller.donationtypes, $("#type").select("value"), "DEFAULTCOST");
-            $("#unitprice").currency("value", dc);
-            $("#amount").currency("value", format.to_int($("#quantity").val()) * $("#unitprice").currency("value"));
+            $("#unitprice, #amount").currency("value", dc);
+            if (config.bool("DonationQuantities")) {
+                $("#amount").currency("value", format.to_int($("#quantity").val()) * $("#unitprice").currency("value"));
+            }
         },
 
         update_movements: function(personid) {

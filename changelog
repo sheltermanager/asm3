@@ -1,6 +1,7 @@
 39
 ================
 
+23/05/16 Fix default payment type values on payment tab
 21/05/16 Fix send_email to obey standards, html_to_plain behaves with tables
 20/05/16 Carry on processing reserveanimalname if one fails
 19/05/16 Use multipart/mixed for email (fix for Apple Mail)
