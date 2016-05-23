@@ -631,8 +631,8 @@ $(function() {
         render_foundanimals: function() {
             return [
                 '<div id="tab-foundanimals">',
-                html.info('Find out more at <a href="http://microchipregistry.foundanimals.org">microchipregistry.foundanimals.org</a><br/>' +
-                    'Contact customerservice@foundanimals.org to get a folder for automatic batch registrations of microchips.'),
+                html.info('Find out more at <a href="http://www.found.org">www.found.org</a><br/>' +
+                    'Contact clientcare@found.org to get a folder for automatic batch registrations of microchips.'),
                 '<p><input id="enabledfa" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledfa">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',
@@ -645,7 +645,7 @@ $(function() {
                 '<span id="callout-faemail" class="asm-callout">',
                 'To stay on record for every pet you register as the permanent rescue contact, enter your group\'s Found Animals Registry ',
                 'account email in this field. If you do not have that type of account set up, visit ',
-                '<a href="http://found.org/start">found.org/start</a><br/>',
+                '<a href="http://www.found.org/start">www.found.org/start</a><br/>',
                 '</span>',
                 '</td>',
                 '</tr>',
