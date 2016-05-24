@@ -6,7 +6,6 @@ import configuration
 import csv as extcsv
 import datetime
 import db
-import email.utils
 import hashlib
 import htmlentitydefs
 import os
@@ -22,6 +21,7 @@ from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.header import Header
+from email.utils import make_msgid, formatdate
 from email import Charset, Encoders
 from i18n import _, display2python, format_currency, python2display, VERSION
 from cStringIO import StringIO
@@ -848,8 +848,8 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
 
     # Construct the mime message
     msg = MIMEMultipart("mixed")
-    add_header(msg, "Message-ID", email.utils.make_msgid())
-    add_header(msg, "Date", email.utils.formatdate())
+    add_header(msg, "Message-ID", make_msgid())
+    add_header(msg, "Date", formatdate())
     add_header(msg, "X-Mailer", "Animal Shelter Manager %s" % VERSION)
     subject = truncate(subject, 69) # limit subject to 78 chars - "Subject: "
     add_header(msg, "Subject", subject)

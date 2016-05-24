@@ -1,6 +1,7 @@
 39
 ================
 
+24/05/16 Add fix to comma separate checkbox flags when processing forms
 23/05/16 Add "Rescue Group Email" to foundanimals for perm contact #425
 23/05/16 Fix default payment type values on payment tab
 21/05/16 Fix send_email to obey standards, html_to_plain behaves with tables

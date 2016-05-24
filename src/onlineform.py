@@ -617,6 +617,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                         # person flags, add them to our set
                         if fieldtype == FIELDTYPE_CHECKBOX:
                             if utils.nulltostr(tooltip) != "":
+                                if flags != "": flags += ","
                                 flags += tooltip
                                 db.execute(dbo, "UPDATE onlineformincoming SET Flags = %s WHERE CollationID = %d" % (db.ds(flags), collationid))
             # Do the insert
