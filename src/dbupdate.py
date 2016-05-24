@@ -43,7 +43,8 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "testtype", "testresult", "traptype", "userrole", "users", "vaccinationtype", "voucher" )
 
 # ASM2_COMPATIBILITY This is used for dumping tables in ASM2/HSQLDB format. 
-# These are the tables present in ASM2.
+# These are the tables present in ASM2. users is not included due to the
+# difference in password formats.
 TABLES_ASM2 = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalfield",
     "adoption", "animal", "animalcost", "animaldiet", "animalfound", "animallitter", "animallost", 
     "animalmedical", "animalmedicaltreatment", "animalname", "animaltype", "animaltest", "animalvaccination", 
@@ -53,7 +54,7 @@ TABLES_ASM2 = ( "accounts", "accountsrole", "accountstrx", "additional", "additi
     "lksdonationfreq", "lksex", "lksfieldlink", "lksfieldtype", "lksize", "lksloglink", "lksmedialink", 
     "lksmediatype", "lksmovementtype", "lksposneg", "lksyesno", "lksynun", "lkurgency", "log", 
     "logtype", "media", "medicalprofile", "owner", "ownerdonation", "ownervoucher", "primarykey", 
-    "species", "users", "vaccinationtype", "voucher" )
+    "species", "vaccinationtype", "voucher" )
 
 # Tables that don't have an ID column (we don't create PostgreSQL sequences for them for pseq pk)
 TABLES_NO_ID_COLUMN = ( "accountsrole", "additional", "audittrail", "animalcontrolanimal", 
