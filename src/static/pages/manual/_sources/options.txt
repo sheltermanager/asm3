@@ -10,9 +10,6 @@ Shelter Details
 The shelter details tab allows you to enter contact information for your
 shelter. This is used with reporting and internet publishing.
 
-The “Visual Theme” option allows you to choose how the program looks. There are
-a multitude of preset themes to choose from.
-
 The “Server Adjustment” box allows you to set a time offset in hours from the
 server clock. This is only necessary if your client is in a different timezone
 from the server. For example, the main sheltermanager.com servers are in the
