@@ -532,6 +532,17 @@ def clone_rota_week(dbo, username, startdate, newdate, flags):
             "comments":  r["COMMENTS"]
         }, l))
 
+def calculate_owner_code(pid, surname):
+    """
+    Calculates the owner code field in the format SU000000
+    pid: The person ID
+    surname: The person's surname
+    """
+    prefix = "XX"
+    if len(surname) >= 2 and not surname.startswith("&"):
+        prefix = surname[0:2].upper()
+    return "%s%s" % (prefix, utils.padleft(pid, 6))
+
 def calculate_owner_name(dbo, personclass= 0, title = "", initials = "", first = "", last = "", nameformat = ""):
     """
     Calculates the owner name field based on the current format.
@@ -590,6 +601,7 @@ def update_person_from_form(dbo, post, username):
 
     sql = db.make_update_user_sql(dbo, "owner", username, "ID=%d" % pid, (
         ( "OwnerType", post.db_integer("ownertype") ),
+        ( "OwnerCode", db.ds(calculate_owner_code(pid, post["surname"]))),
         ( "OwnerName", db.ds(calculate_owner_name(dbo, post.integer("ownertype"), post["title"], post["initials"], post["forenames"], post["surname"] ))),
         ( "OwnerTitle", post.db_string("title")),
         ( "OwnerInitials", post.db_string("initials")),
@@ -728,6 +740,7 @@ def insert_person_from_form(dbo, post, username):
     pid = db.get_id(dbo, "owner")
     sql = db.make_insert_user_sql(dbo, "owner", username, (
         ( "ID", db.di(pid) ),
+        ( "OwnerCode", db.ds(calculate_owner_code(pid, post["surname"]))),
         ( "OwnerName", db.ds(calculate_owner_name(dbo, post.integer("ownertype"), post["title"], post["initials"], post["forenames"], post["surname"] ))),
         ( "OwnerType", post.db_integer("ownertype") ),
         ( "OwnerTitle", db.ds(d("title", "") )),
