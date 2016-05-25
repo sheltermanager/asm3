@@ -406,9 +406,9 @@ def get_animal_donations(dbo, aid, sort = ASCENDING):
     ISGIFTAID, FREQUENCY, FREQUENCYNAME, NEXTCREATED, COMMENTS, OWNERNAME, 
     ANIMALNAME, SHELTERCODE, OWNERID, ANIMALID
     """
-    order = "Date DESC"
+    order = "Date DESC, od.ID DESC"
     if sort == ASCENDING:
-        order = "Date"
+        order = "Date, od.ID"
     return db.query(dbo, get_donation_query(dbo) + \
         "WHERE od.AnimalID = %d " \
         "ORDER BY %s" % (int(aid), order))
@@ -420,9 +420,9 @@ def get_person_donations(dbo, oid, sort = ASCENDING):
     ISGIFTAID, FREQUENCY, FREQUENCYNAME, NEXTCREATED, COMMENTS, OWNERNAME, 
     ANIMALNAME, SHELTERCODE, OWNERID, ANIMALID
     """
-    order = "Date DESC"
+    order = "Date DESC, od.ID DESC"
     if sort == ASCENDING:
-        order = "Date"
+        order = "Date, od.ID"
     return db.query(dbo, get_donation_query(dbo) + \
         "WHERE od.OwnerID = %d " \
         "ORDER BY %s" % (int(oid), order))
