@@ -93,12 +93,13 @@ Why has my colour scheme reset?
 -------------------------------
 
 Originally, ASM allowed you to set a system-wide theme for all users. It no
-longer does this. We decided  to remove that behaviour so that users are all
+longer does this. We decided to remove that behaviour so that users are all
 given a consistent starting point and so that what users see on screen
 when they start using the system matches the screenshots in the documentation 
 and help videos.
 
 All users can override their theme if they would like something else by
 clicking on their username at the top right, and then the "Change User
-Settings" menu option.
+Settings" menu option. If a user had previously selected a theme in this
+screen, it will not change.
 
