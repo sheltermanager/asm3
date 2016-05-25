@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, _, asm, common, config, controller, dlgfx, additional, edit_header, format, header, html, social, tableform, validate */
+/*global $, _, asm, common, config, controller, dlgfx, additional, edit_header, format, header, html, log, social, tableform, validate */
 
 $(function() {
 
@@ -1129,6 +1129,18 @@ $(function() {
             if (asm.smcom) { share_url += "&account=" + asm.useraccount; share_image += "&account=" + asm.useraccount; }
             var share_title = controller.animal.ANIMALNAME;
             var share_description = controller.animal.WEBSITEMEDIANOTES;
+            
+            var enc_share_url = "", enc_share_description = "", enc_share_image = "", enc_share_title = "";
+
+            try {
+                enc_share_url = encodeURIComponent(share_url);
+                enc_share_description = encodeURIComponent(html.truncate(share_description, 113));
+                enc_share_image = encodeURIComponent(share_image);
+                enc_share_title = encodeURIComponent(share_title);
+            }
+            catch(e) {
+                log.error("failed creating uri encoded share links", e);
+            }
 
             if (config.bool("PublisherUseComments") || !share_description) {
                 share_description = controller.animal.ANIMALCOMMENTS;
@@ -1148,32 +1160,32 @@ $(function() {
 
             // Web and email
             $("#button-shareweb a").attr("href", share_url);
-            $("#button-shareemail a").attr("href", "mailto:?body=" + encodeURIComponent(share_url));
+            $("#button-shareemail a").attr("href", "mailto:?body=" + enc_share_url);
 
             // Facebook
             $("#button-facebook a").attr("href", "https://facebook.com/sharer/sharer.php?" +
-                "&u=" + encodeURIComponent(share_url));
+                "&u=" + enc_share_url);
 
             // Twitter
             $("#button-twitter a").attr("href", "https://twitter.com/share?" +
-                "text=" + encodeURIComponent(html.truncate(share_description, 113)) + 
-                "&url=" + encodeURIComponent(share_url));
+                "text=" + enc_share_description + 
+                "&url=" + enc_share_url);
 
             // Google Plus
             $("#button-gplus a").attr("href", "https://plus.google.com/share?" +
-                "&url=" + encodeURIComponent(share_url));
+                "&url=" + enc_share_url);
 
             // Pinterest
             $("#button-pinterest a").attr("href", "http://pinterest.com/pin/create/button/?" +
-                "url=" + encodeURIComponent(share_url) + 
-                "&media=" + encodeURIComponent(share_image) +
-                "&description=" + encodeURIComponent(html.truncate(share_description, 120)));
+                "url=" + enc_share_url + 
+                "&media=" + enc_share_image +
+                "&description=" + enc_share_description);
 
             // Tumblr
             $("#button-tumblr a").attr("href", "http://www.tumblr.com/share/link?" +
-                "url=" + encodeURIComponent(share_url) +
-                "&name=" + encodeURIComponent(share_title) +
-                "&description=" + encodeURIComponent(share_description));
+                "url=" + enc_share_url +
+                "&name=" + enc_share_title +
+                "&description=" + enc_share_description);
 
         },
 
