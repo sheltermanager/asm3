@@ -140,14 +140,6 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
-                /* SYSTHEME
-                '<tr>',
-                '<td><label for="systemtheme">' + _("Visual Theme") + '</label></td>',
-                '<td><select data="SystemTheme" id="systemtheme" class="asm-selectbox">',
-                options.two_pair_options(controller.themes),
-                '</select></td>',
-                '</tr>',
-                */
                 '<tr>',
                 '<td><label for="olocale">' + _("Locale") + '</label></td>',
                 '<td><select id="olocale" type="text" class="asm-doubleselectbox asm-iconselectmenu" data="Locale">',
