@@ -684,22 +684,13 @@ def where_text_filter(dbo, field, term):
     decoded = u"LOWER(%s) LIKE  '%%%s%%'" % (field, decode_html(term))
     wc = normal + u" OR " + decoded
     dummy = dbo.dbtype
-    # postdec can't work - we can have postgresql decode the html entities before
-    # comparison like this, but LOWER/UPPER rely on the collation order being set
-    # correctly, so if we have a language with a different charset, (this was done for 
-    # cyrillic originally), then UPPER and LOWER won't work as they're comparing for
-    # English and the only way to switch to cyrillic in PostgreSQL 8.x is for the whole 
-    # cluster.
-    # TODO: This is something we can revisit when we are using PostgreSQL 9.1 or better
-    #       as it allows you to specify collation in queries with the locale, 
-    #       eg: select a COLLATE "fr_FR"
-    # TODO: Another way to fix it is to have a lookup table of lowercase characters for
-    #       every cyrillic (or other charset) character and to replace those when
-    #       comparing. Not very efficient or realistic, case insensitive searching is
-    #       something we can't support in non-Latin alphabets at present.
-    #if dbo.dbtype == "POSTGRESQL" and not dbo.locale.startswith("en"):
-    #    postdec = u"LOWER(((xpath('/z/text()', ('<z>' || %s || '</z>')::xml))[1])::varchar) LIKE LOWER('%%%s%%')" % (field, decode_html(term))
-    #    wc += u" OR " + postdec
+    # If DB_DECODE_HTML_ENTITIES is true and you have a UTF collation
+    # on your database, case insensitive searching will work here
+    # for all languages.
+    # If DB_DECODE_HTML_ENTITIES is false (the default and for sm.com)
+    # case insensitive searching for non-English languages will 
+    # not work as unicode code points are stored in the database 
+    # HTML entities and LOWER() has no effect.
     return wc
 
 def get_url(url, headers = {}, cookies = {}):
