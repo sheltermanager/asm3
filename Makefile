@@ -69,6 +69,11 @@ smcom-stable-sessions: version clean minify
 	rsync --exclude '*.pyc' --delete -r src/* root@rawsoaa2.miniserver.com:/usr/local/lib/asm_stable.new
 	ssh root@rawsoaa2.miniserver.com "/root/sheltermanager_update_asm_stable.sh dumpsessions"
 
+smcom-tomorrow:
+	@echo "[smcom tomorrow] ========================"
+	echo "make smcom-dev smcom-stable-sessions" | at 07:55 tomorrow
+	atq
+
 pot:
 	@echo "[template] ========================="
 	python po/extract_strings.py > po/asm.pot
