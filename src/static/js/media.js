@@ -785,6 +785,9 @@ $(function() {
                 if (controller.person) {
                     $("#emailto").val(controller.person.EMAILADDRESS);
                 }
+                else if (controller.animal) {
+                    $("#emailto").val(controller.animal.CURRENTOWNEREMAILADDRESS);
+                }
                 // Default the email sig
                 if (config.str("EmailSignature")) {
                     $("#emailnote").richtextarea("value", "<p>&nbsp;</p>" + config.str("EmailSignature"));
@@ -805,6 +808,9 @@ $(function() {
                 // If we have a person, default the email address
                 if (controller.person) {
                     $("#emailpdfto").val(controller.person.EMAILADDRESS);
+                }
+                else if (controller.animal) {
+                    $("#emailto").val(controller.animal.CURRENTOWNEREMAILADDRESS);
                 }
                 // Default the email sig
                 if (config.str("EmailSignature")) {
