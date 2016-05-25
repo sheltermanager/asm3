@@ -28,20 +28,11 @@ def get_homechecked(dbo, personid):
     return db.query(dbo, "SELECT ID, OwnerName, DateLastHomeChecked, Comments FROM owner " \
         "WHERE HomeCheckedBy = %d" % int(personid))
 
-def get_person_code_query(dbo):
-    if dbo.dbtype == "MYSQL": 
-        return "CONCAT(SUBSTR(UPPER(o.OwnerSurname), 1, 2), LPAD(o.ID, 6, '0'))"
-    if dbo.dbtype == "POSTGRESQL": 
-        return "SUBSTRING(UPPER((XPATH('/z/text()', ('<z>' || replace(replace(replace(o.OwnerSurname, '&', ''), '<', ''), '>', '') || '</z>')::xml))[1]::text) FROM 0 FOR 3) || TO_CHAR(o.ID, 'FM000000')"
-    if dbo.dbtype == "SQLITE": 
-        return "SUBSTR(UPPER(o.OwnerSurname), 1, 2) || o.ID"
-
 def get_person_query(dbo):
     """
     Returns the SELECT and JOIN commands necessary for selecting
     person rows with resolved lookups.
     """
-    ownercode = get_person_code_query(dbo)
     return "SELECT DISTINCT o.*, o.ID AS PersonID, " \
         "ho.OwnerName AS HomeCheckedByName, ho.HomeTelephone AS HomeCheckedByHomeTelephone, " \
         "ho.MobileTelephone AS HomeCheckedByMobileTelephone, ho.EmailAddress AS HomeCheckedByEmail, " \
@@ -49,11 +40,10 @@ def get_person_query(dbo):
         "web.Date AS WebsiteMediaDate, " \
         "web.MediaNotes AS WebsiteMediaNotes, " \
         "(SELECT COUNT(oi.ID) FROM ownerinvestigation oi WHERE oi.OwnerID = o.ID) AS Investigation, " \
-        "(SELECT COUNT(ac.ID) FROM animalcontrol ac WHERE ac.OwnerID = o.ID OR ac.Owner2ID = o.ID or ac.Owner3ID = o.ID) AS Incident, " \
-        "%s AS OwnerCode " \
+        "(SELECT COUNT(ac.ID) FROM animalcontrol ac WHERE ac.OwnerID = o.ID OR ac.Owner2ID = o.ID or ac.Owner3ID = o.ID) AS Incident " \
         "FROM owner o " \
         "LEFT OUTER JOIN owner ho ON ho.ID = o.HomeCheckedBy " \
-        "LEFT OUTER JOIN media web ON web.LinkID = o.ID AND web.LinkTypeID = 3 AND web.WebsitePhoto = 1 " % ownercode
+        "LEFT OUTER JOIN media web ON web.LinkID = o.ID AND web.LinkTypeID = 3 AND web.WebsitePhoto = 1 "
 
 def get_rota_query(dbo):
     """
@@ -107,7 +97,7 @@ def get_person_name_code(dbo, personid):
     """
     Returns the person name and code for an id
     """
-    r = db.query(dbo, "SELECT o.OwnerName, %s AS OwnerCode FROM owner o WHERE o.ID = %d" % (get_person_code_query(dbo), int(personid)))
+    r = db.query(dbo, "SELECT o.OwnerName, o.OwnerCode FROM owner o WHERE o.ID = %d" % int(personid))
     if len(r) == 0: return ""
     return "%s - %s" % (r[0]["OWNERNAME"], r[0]["OWNERCODE"])
 
@@ -362,7 +352,7 @@ def get_person_find_simple(dbo, query, classfilter="all", includeStaff = False, 
     for w in words:
         onac.append("(%s)" % utils.where_text_filter(dbo, "o.OwnerName", w))
     ors.append("(%s)" % " AND ".join(onac))
-    ors.append(add(get_person_code_query(dbo)))
+    ors.append(add("o.OwnerCode"))
     ors.append(add("o.OwnerAddress"))
     ors.append(add("o.OwnerTown"))
     ors.append(add("o.OwnerCounty"))
@@ -375,8 +365,6 @@ def get_person_find_simple(dbo, query, classfilter="all", includeStaff = False, 
     ors.append(u"EXISTS(SELECT ad.Value FROM additional ad " \
         "INNER JOIN additionalfield af ON af.ID = ad.AdditionalFieldID AND af.Searchable = 1 " \
         "WHERE ad.LinkID=o.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE '%%%s%%')" % (additional.PERSON_IN, query.lower()))
-    if not dbo.is_large_db:
-        ors.append(add(get_person_code_query(dbo)))
     cf = ""
     if classfilter == "all":
         pass
@@ -461,7 +449,7 @@ def get_person_find_advanced(dbo, criteria, includeStaff = False, limit = 0):
                     field, utils.decode_html(x)
                 ))
 
-    addstr("code", get_person_code_query(dbo))
+    addstr("code", "o.OwnerCode")
     addwords("name", "o.OwnerName")
     addstr("address", "o.OwnerAddress")
     addstr("town", "o.OwnerTown")

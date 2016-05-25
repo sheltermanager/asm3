@@ -1,6 +1,7 @@
 39
 ================
 
+25/05/16 Add OwnerCode column to replace calculated column #428
 25/05/16 Fix random errors when publishing, fix non-stop polling
 25/05/16 Prevent bad share links from stopping an animal record opening
 25/05/16 No longer allow system theme, instead set on a per user basis
