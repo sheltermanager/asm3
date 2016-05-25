@@ -412,8 +412,8 @@ $(function() {
             var p = movements.lastperson, a = movements.lastanimal, warn = [];
             tableform.dialog_error("");
 
-            // None of these warnings are valid if this isn't an adoption or a reclaim
-            if ($("#type").val() != 1 && $("#type").val() != 5) { return; }
+            // None of these warnings are valid if this isn't a reservation, adoption or a reclaim
+            if ($("#type").val() != 0 && $("#type").val() != 1 && $("#type").val() != 5) { return; }
 
             // Person warnings
             if (p) {
