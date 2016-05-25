@@ -472,11 +472,13 @@ $(function() {
                         '<span style="font-weight: bold">' + _("Did you know?") + '</span><br/>',
                         '<span id="tip"></span>',
                     '</p>',
+                    /* SYSTHEME
                     '<p id="overtheme" style="display: none"><span class="ui-icon ui-icon-person" style="float: left; margin-right: .3em"></span>',
                         '<span>' + _("This theme has been set by your administrator. You can choose how the system looks for you with the Visual Theme option here: {0}")
                         .replace("{0}", '<a href="change_user_settings">' + _("Change User Settings") + '</a>'),
                         '</span>',
                     '</p>',
+                    */
                 '</div>',
                 '<div id="dialog-textarea-zoom" style="display: none" title="">',
                     '<input id="textarea-zoom-id" type="hidden" />',
@@ -515,10 +517,12 @@ $(function() {
             if (config.has() && !config.bool("DisableTips")) {
                 $("#tips").show();
             }
+            /* SYSTHEME
             if (config.has() && config.bool("ThemeChangeWarning") && config.str("SystemTheme") == asm.theme && 
                 $.inArray(config.str("SystemTheme"), [ "asm" ]) == -1) {
                 $("#overtheme").show();
             }
+            */
         },
 
         quicklinks_other: function() {
@@ -537,7 +541,8 @@ $(function() {
 
         quicklinks_show: function(path) {
             // Deal with whether we're showing quicklinks and tips
-            $("#linkstips, #quicklinks, #tips, #overtheme").hide();
+            // $("#linkstips, #quicklinks, #tips, #overtheme").hide(); SYSTHEME
+            $("#linkstips, #quicklinks, #tips").hide();
             if (!path) { path = common.current_url(); } 
             if (config.has() && path.indexOf("main") != -1) {
                 this.quicklinks_main();

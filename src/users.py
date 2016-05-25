@@ -624,7 +624,8 @@ def update_session(session):
     """
     dbo = session.dbo
     locale = configuration.locale(dbo)
-    theme = configuration.system_theme(dbo)
+    #theme = configuration.system_theme(dbo) # SYSTHEME
+    theme = "asm"
     loverride = get_locale_override(dbo, session.user)
     if loverride != "": 
         al.debug("user %s has locale override of %s set, switching." % (session.user, loverride), "users.update_session", dbo)

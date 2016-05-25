@@ -44,7 +44,7 @@ $(function() {
                 _("ASM can track detailed monthly and annual figures for your shelter. Install the Monthly Figures and Annual Figures reports from Settings-Reports-Browse sheltermanager.com"),
                 _("ASM comes with a dictionary of 4,000 animal names. Just click the generate random name button when adding an animal."),
                 _("You can set a default amount for different payment types in the Settings-Lookup Data screen. Very handy when creating adoptions."),
-                _("You can change how ASM looks by choosing a new theme under Settings-Options-Shelter Details-Visual Theme."),
+                // _("You can change how ASM looks by choosing a new theme under Settings-Options-Shelter Details-Visual Theme."), SYSTHEME
                 _("You can drag and drop animals in shelter view to change their locations."),
                 _("Lots of reports installed? Clean up the Reports menu with Settings-Options-Display-Show report menu items in collapsed categories."),
                 _("Press F11 in HTML or SQL code editing boxes to edit in fullscreen mode")

@@ -1,6 +1,7 @@
 39
 ================
 
+25/05/16 No longer allow system theme, instead set on a per user basis
 25/05/16 Email animal media should default current owner email #424
 24/05/16 Add fix to comma separate checkbox flags when processing forms
 23/05/16 Add "Rescue Group Email" to foundanimals for perm contact #425
