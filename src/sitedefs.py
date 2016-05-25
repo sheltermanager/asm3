@@ -69,6 +69,9 @@ DB_TIME_QUERIES = False
 # than X seconds to run (or 0 to log all)
 DB_TIME_LOG_OVER = 0
 
+# Time out queries that take longer than this (ms) to run (postgres only)
+DB_TIMEOUT = 60000
+
 # URLs for ASM services
 URL_NEWS = "http://sheltermanager.com/repo/asm_news.html"
 URL_REPORTS = "http://sheltermanager.com/repo/reports.txt"

@@ -7,7 +7,7 @@ import i18n
 import sys
 import time
 import utils
-from sitedefs import DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HAS_ASM2_PK_TABLE, DB_PK_STRATEGY, DB_DECODE_HTML_ENTITIES, DB_EXEC_LOG, DB_EXPLAIN_QUERIES, DB_TIME_QUERIES, DB_TIME_LOG_OVER, CACHE_COMMON_QUERIES, MULTIPLE_DATABASES_MAP
+from sitedefs import DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HAS_ASM2_PK_TABLE, DB_PK_STRATEGY, DB_DECODE_HTML_ENTITIES, DB_EXEC_LOG, DB_EXPLAIN_QUERIES, DB_TIME_QUERIES, DB_TIME_LOG_OVER, DB_TIMEOUT, CACHE_COMMON_QUERIES, MULTIPLE_DATABASES_MAP
 
 
 try:
@@ -68,16 +68,25 @@ def connection(dbo):
     except Exception,err:
         al.error(str(err), "db.connection", dbo, sys.exc_info())
 
-def connect_cursor_open(dbo):
+def connect_cursor_open(dbo, timeout = False):
     """
     Returns a tuple containing an open connection and cursor.
     If the dbo object contains an active connection, we'll just use
     that to get a cursor.
+    timeout: if set, applies DB_TIMEOUT timeout to the cursor
     """
     if dbo.connection is not None:
+        if dbo.dbtype == "POSTGRESQL" and timeout: 
+            dbo.connection.cursor().execute("SET statement_timeout=%d" % DB_TIMEOUT)
+        if dbo.dbtype == "MYSQL" and timeout: 
+            dbo.connection.cursor().execute("SET SESSION MAX_STATEMENT_TIME=%d" % DB_TIMEOUT)
         return dbo.connection, dbo.connection.cursor()
     else:
         c = connection(dbo)
+        if dbo.dbtype == "POSTGRESQL" and timeout: 
+            c.cursor().execute("SET statement_timeout=%d" % DB_TIMEOUT)
+        if dbo.dbtype == "MYSQL" and timeout: 
+            c.cursor().execute("SET SESSION MAX_STATEMENT_TIME=%d" % DB_TIMEOUT)
         return c, c.cursor()
 
 def connect_cursor_close(dbo, c, s):
@@ -102,7 +111,7 @@ def query(dbo, sql):
 	    uppercased when returned.
     """
     try:
-        c, s = connect_cursor_open(dbo)
+        c, s = connect_cursor_open(dbo, timeout=True)
         # Explain the query if the option is on
         if DB_EXPLAIN_QUERIES:
             esql = "EXPLAIN %s" % sql
@@ -165,7 +174,7 @@ def query_columns(dbo, sql):
         a list in the order they appeared in the query
     """
     try:
-        c, s = connect_cursor_open(dbo)
+        c, s = connect_cursor_open(dbo, timeout=True)
         # Run the query and retrieve all rows
         s.execute(sql)
         c.commit()
@@ -192,7 +201,7 @@ def query_generator(dbo, sql):
         generator function version that uses a forward cursor.
     """
     try:
-        c, s = connect_cursor_open(dbo)
+        c, s = connect_cursor_open(dbo, timeout=True)
         # Run the query and retrieve all rows
         s.execute(sql)
         c.commit()
@@ -262,7 +271,7 @@ def query_tuple(dbo, sql):
         as a grid of tuples
     """
     try:
-        c, s = connect_cursor_open(dbo)
+        c, s = connect_cursor_open(dbo, timeout=True)
         # Run the query and retrieve all rows
         s.execute(sql)
         d = s.fetchall()
@@ -284,7 +293,7 @@ def query_tuple_columns(dbo, sql):
         as a grid of tuples and a list of columnames
     """
     try:
-        c, s = connect_cursor_open(dbo)
+        c, s = connect_cursor_open(dbo, timeout=True)
         # Run the query and retrieve all rows
         s.execute(sql)
         d = s.fetchall()
