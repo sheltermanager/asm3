@@ -480,7 +480,7 @@ def sign_document(dbo, username, mid, sigurl, signdate):
     SIG_PLACEHOLDER = "signature:placeholder"
     date, medianame, mimetype, content = get_media_file_data(dbo, mid)
     # Is this an HTML document?
-    if content.find("<p") == -1:
+    if content.find("<p") == -1 and content.find("<td") == -1:
         raise utils.ASMValidationError("Cannot sign a non-HTML document")
     # Has this document already been signed? 
     if 0 != db.query_int(dbo, "SELECT COUNT(*) FROM media WHERE ID = %d AND SignatureHash Is Not Null AND SignatureHash <> ''" % mid):
