@@ -1,0 +1,26 @@
+Non-Neutered/Spayed Adopted Animals Aged Over 6 Months
+###
+Auditing
+###
+PostgreSQL
+###
+Adopted animals aged over 6 months who have not been neutered/spayed.
+###
+en
+###
+SELECT a.AnimalName, a.ShelterCode, t.AnimalType, i.LocationName, s.Sex,
+o.OwnerName, o.OwnerTitle, o.OwnerInitials, o.OwnerForeNames, o.OwnerSurname, 
+o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode,
+o.HomeTelephone, o.EmailAddress
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN internallocation i ON i.ID = a.ShelterLocation
+INNER JOIN lksex s ON s.ID = a.Sex
+WHERE a.Archived = 1 AND a.ActiveMovementType = 1
+AND a.NonShelterAnimal = 0 AND a.DeceasedDate Is Null 
+AND a.ActiveMovementDate >= '$ASK DATE Adopted between$'
+AND a.ActiveMovementDate <= '$ASK DATE and$'
+AND a.Neutered = 0 AND DateOfBirth <= (now() - interval '6 months')
+ORDER BY o.OwnerName
+###
+MAIL
