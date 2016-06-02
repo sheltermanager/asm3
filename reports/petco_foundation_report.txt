@@ -1,0 +1,220 @@
+Petco Foundation Report
+###
+Figures
+###
+33600/PostgreSQL
+###
+Annual figures for Petco Foundation grants
+###
+en
+###
+$VAR from DATE Enter month start date$
+$VAR to DATE Enter month end date$
+
+SELECT 
+'$@from$' AS FromDate, 
+'$@to$ 23:59:59' AS ToDate
+
+###
+$$HEADER
+<p>Puppies/Kittens: &lt; 5 months and under</p>
+<table border="1">
+HEADER$$
+
+$$BODY
+{SUBREPORT.SUBREPORT_PetcoOnHand.FromDate}
+{SUBREPORT.SUBREPORT_PetcoIntakeNumbers.FromDate.ToDate}
+{SUBREPORT.SUBREPORT_PetcoOutcomes.FromDate.ToDate}
+{SUBREPORT.SUBREPORT_PetcoOnHand.ToDate}
+{SUBREPORT.SUBREPORT_PetcoSpayNeuter.FromDate.ToDate}
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+###
+SUBREPORT_PetcoOnHand
++++
+SELECT 
+'$PARENTARG1$'::timestamp AS StartDate,
+CASE 
+WHEN a.SpeciesID = 1 AND a.DateOfBirth < '$PARENTARG1$'::timestamp - INTERVAL '5 months' THEN 'Dogs'
+WHEN a.SpeciesID = 1 THEN 'Puppies'
+WHEN a.SpeciesID = 2 AND a.DateOfBirth < '$PARENTARG1$'::timestamp - INTERVAL '5 months' THEN 'Cats'
+WHEN a.SpeciesID = 2 THEN 'Kittens' END AS AgeGroup,
+CASE WHEN NOT EXISTS(SELECT MovementDate FROM adoption WHERE MovementDate < '$PARENTARG1$' AND MovementType IN (2, 8) AND AnimalID = a.ID) THEN 1 ELSE 0 END AS NumberInShelter
+FROM animal a
+WHERE DateBroughtIn <= '$PARENTARG1$' AND (DeceasedDate Is Null OR DeceasedDate > '$PARENTARG1$')
+AND NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$PARENTARG1$' AND ReturnDate > '$PARENTARG1$' AND MovementType NOT IN (2, 8) AND AnimalID = a.ID)
+AND NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$PARENTARG1$' AND ReturnDate Is Null AND MovementType NOT IN (2, 8) AND AnimalID = a.ID)
+AND NonShelterAnimal = 0
+AND SpeciesID IN (1, 2)
+ORDER BY AgeGroup
++++
+$$HEADER
+<tr>
+<th></th>
+<th>On-hand (in care) as of $StartDate</th>
+</tr>
+HEADER$$
+
+$$GROUP_AgeGroup
+$$HEAD
+$$FOOT
+<tr>
+<td>$AGEGROUP</td>
+<td>{SUM.NumberInShelter.0}</td>
+</tr>
+GROUP$$
+
+$$BODY
+BODY$$
+
+$$FOOTER
+FOOTER$$
++++
+SUBREPORT_PetcoIntakeNumbers
++++
+SELECT 
+CASE 
+WHEN a.SpeciesID = 1 AND a.DateOfBirth < '$PARENTARG2$'::timestamp - INTERVAL '5 months' THEN 'Dogs'
+WHEN a.SpeciesID = 1 THEN 'Puppies'
+WHEN a.SpeciesID = 2 AND a.DateOfBirth < '$PARENTARG2$'::timestamp - INTERVAL '5 months' THEN 'Cats'
+WHEN a.SpeciesID = 2 THEN 'Kittens' END AS AgeGroup,
+CASE WHEN DateBroughtIn >= '$PARENTARG1$' THEN 1 ELSE 0 END AS AllSources,
+CASE WHEN DateBroughtIn >= '$PARENTARG1$' AND ReasonName LIKE '%Surrender%' THEN 1 ELSE 0 END AS OwnerSurrender,
+CASE WHEN DateBroughtIn >= '$PARENTARG1$' AND ReasonName LIKE '%Stray%' THEN 1 ELSE 0 END AS Stray,
+CASE WHEN DateBroughtIn >= '$PARENTARG1$' AND ReasonName LIKE '%Transfer%' THEN 1 ELSE 0 END AS Transfers,
+CASE WHEN DateBroughtIn >= '$PARENTARG1$' AND ReasonName NOT LIKE '%Surrender%' AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%Transfer%' THEN 1 ELSE 0 END AS OtherSources
+FROM animal a
+INNER JOIN entryreason er ON er.ID = a.EntryReasonID
+WHERE MostRecentEntryDate >= '$PARENTARG1$' AND MostRecentEntryDate <= '$PARENTARG2$'
+AND NonShelterAnimal = 0
+AND SpeciesID IN (1, 2)
+ORDER BY AgeGroup
++++
+$$HEADER
+<tr>
+<th>Intake Numbers</th>
+<th>Stray animals</th>
+<th>Owner surrenders</th>
+<th>Transfers from other organisations</th>
+<th>Other</th>
+</tr>
+HEADER$$
+
+$$GROUP_AgeGroup
+$$HEAD
+$$FOOT
+<tr>
+<td>$AGEGROUP</td>
+<td>{SUM.Stray.0}</td>
+<td>{SUM.OwnerSurrender.0}</td>
+<td>{SUM.Transfers.0}</td>
+<td>{SUM.OtherSources.0}</td>
+</tr>
+GROUP$$
+
+$$BODY
+BODY$$
+
+$$FOOTER
+FOOTER$$
++++
+SUBREPORT_PetcoOutcomes
++++
+SELECT 
+CASE 
+WHEN a.SpeciesID = 1 AND a.DateOfBirth < '$PARENTARG2$'::timestamp - INTERVAL '5 months' THEN 'Dogs'
+WHEN a.SpeciesID = 1 THEN 'Puppies'
+WHEN a.SpeciesID = 2 AND a.DateOfBirth < '$PARENTARG2$'::timestamp - INTERVAL '5 months' THEN 'Cats'
+WHEN a.SpeciesID = 2 THEN 'Kittens' END AS AgeGroup,
+CASE WHEN ad.MovementType = 5 THEN 1 ELSE 0 END AS ReturnedToOwner,
+CASE WHEN ad.MovementType = 1 THEN 1 ELSE 0 END AS Adopted,
+CASE WHEN ad.MovementType = 3 THEN 1 ELSE 0 END AS Transferred,
+CASE WHEN ad.MovementType = 7 THEN 1 ELSE 0 END AS ReturnToField,
+CASE WHEN DeceasedDate Is Not Null AND a.PutToSleep = 1 AND a.IsDOA = 0 THEN 1 ELSE 0 END AS Euthanized,
+CASE WHEN DeceasedDate Is Not Null AND a.PutToSleep = 0 AND a.IsDOA = 0 THEN 1 ELSE 0 END AS DiedInCare,
+CASE WHEN ad.MovementType NOT IN (5,1,3,7) AND DeceasedDate Is Not Null AND a.IsDOA = 1 THEN 1 ELSE 0 END AS Other
+FROM animal a
+LEFT OUTER JOIN adoption ad ON ad.AnimalID = a.ID
+WHERE (MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$') OR (DeceasedDate >= '$PARENTARG1$' AND DeceasedDate <= '$PARENTARG2$' AND DiedOffShelter = 0)
+AND NonShelterAnimal = 0
+AND SpeciesID IN (1, 2)
+ORDER BY AgeGroup
++++
+$$HEADER
+<tr>
+<th>Outcome Information</th>
+<th>Adopted</th>
+<th>Returned to Owner</th>
+<th>Transferred out to other organizations</th>
+<th>Died in Care</th>
+<th>Euthanized</th>
+<th>Other</th>
+</tr>
+HEADER$$
+
+$$GROUP_AgeGroup
+$$HEAD
+$$FOOT
+<tr>
+<td>$AGEGROUP</td>
+<td>{SUM.Adopted.0}</td>
+<td>{SUM.ReturnedToOwner.0}</td>
+<td>{SUM.Transferred.0}</td>
+<td>{SUM.DiedInCare.0}</td>
+<td>{SUM.Euthanized.0}</td>
+<td>{SUM.Other.0}</td>
+</tr>
+GROUP$$
+
+$$BODY
+BODY$$
+
+$$FOOTER
+FOOTER$$
++++
+SUBREPORT_PetcoSpayNeuter
++++
+SELECT 
+CASE 
+WHEN a.SpeciesID = 1 AND a.DateOfBirth < '$PARENTARG2$'::timestamp - INTERVAL '5 months' THEN 'Dogs'
+WHEN a.SpeciesID = 1 THEN 'Puppies'
+WHEN a.SpeciesID = 2 AND a.DateOfBirth < '$PARENTARG2$'::timestamp - INTERVAL '5 months' THEN 'Cats'
+WHEN a.SpeciesID = 2 THEN 'Kittens' END AS AgeGroup,
+CASE WHEN NonShelterAnimal = 0 AND NOT EXISTS(SELECT MovementDate FROM adoption WHERE MovementType = 8 AND AnimalID = a.ID AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$') THEN 1 ELSE 0 END AS ShelterAnimal,
+CASE WHEN NonShelterAnimal = 1 AND NOT EXISTS(SELECT MovementDate FROM adoption WHERE MovementType = 8 AND AnimalID = a.ID AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$') THEN 1 ELSE 0 END AS PublicAnimal,
+CASE WHEN SpeciesID = 2 AND NonShelterAnimal = 0 AND EXISTS(SELECT MovementDate FROM adoption WHERE MovementType = 8 AND AnimalID = a.ID AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$') THEN 1 ELSE 0 END AS TNR
+FROM animal a 
+INNER JOIN entryreason er ON er.ID = a.EntryReasonID
+WHERE Neutered = 1 AND NeuteredDate >= '$PARENTARG1$' AND NeuteredDate <= '$PARENTARG2$'
+AND SpeciesID IN (1, 2)
+ORDER BY AgeGroup
++++
+$$HEADER
+<tr>
+<th>Total spay/neuter surgeries during the year</th>
+<th>Shelter animals</th>
+<th>Public animals</th>
+<th>Feral cats</th>
+</tr>
+HEADER$$
+
+$$GROUP_AgeGroup
+$$HEAD
+$$FOOT
+<tr>
+<td>$AGEGROUP</td>
+<td>{SUM.ShelterAnimal.0}</td>
+<td>{SUM.PublicAnimal.0}</td>
+<td>{SUM.TNR.0}</td>
+</tr>
+GROUP$$
+
+$$BODY
+BODY$$
+
+$$FOOTER
+FOOTER$$
+
