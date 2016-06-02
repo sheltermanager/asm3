@@ -1,6 +1,7 @@
 39
 ================
 
+02/06/16 Pink/blue outline too faint for some monitors #432
 25/05/16 Use DB_TIMEOUT sitedef for reads instead of relying on server
 25/05/16 Add OwnerCode column to replace calculated column #428
 25/05/16 Fix random errors when publishing, fix non-stop polling

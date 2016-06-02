@@ -711,11 +711,11 @@ select:disabled, input:disabled, textarea:disabled {
 }
 
 .asm-thumbnail-male {
-    background-color: #ffe5ff;
+    background-color: #99c2ff;
 }
 
 .asm-thumbnail-female {
-    background-color: #e5f7ff;
+    background-color: #ffb3ff;
 }
 
 .asm-textbox, .asm-selectbox {

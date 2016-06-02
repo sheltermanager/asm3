@@ -718,10 +718,10 @@ def json_menu(l, reports, mailmerges):
         ("", "financial", _("Financial", l), (
             ( users.VIEW_ACCOUNT, "alt+shift+x", "tagaccounts", "accounts", "asm-icon-accounts", _("Accounts", l) ),
             ( users.VIEW_STOCKLEVEL, "", "tagstock", "stocklevel", "asm-icon-stock", _("Stock", l) ),
-            ( users.VIEW_DONATION, "", "tagaccounts", "--cat", "", "Payments" ),
-            ( users.VIEW_DONATION, "alt+shift+d", "tagaccounts", "donation", "asm-icon-donation", _("Payment book", l) ),
-            ( users.VIEW_DONATION, "", "tagaccounts", "calendarview?ev=p", "asm-icon-calendar", _("Payment calendar", l) ),
-            ( users.ADD_DONATION, "", "tagaccounts", "donation_receive", "asm-icon-blank", _("Receive a payment", l) ),
+            ( users.VIEW_DONATION, "", "", "--cat", "", "Payments" ),
+            ( users.VIEW_DONATION, "alt+shift+d", "", "donation", "asm-icon-donation", _("Payment book", l) ),
+            ( users.VIEW_DONATION, "", "", "calendarview?ev=p", "asm-icon-calendar", _("Payment calendar", l) ),
+            ( users.ADD_DONATION, "", "", "donation_receive", "asm-icon-blank", _("Receive a payment", l) ),
             ( users.VIEW_DONATION, "", "taggb", "--cat", "", "HMRC" ),
             ( users.VIEW_DONATION, "", "taggb", "giftaid_hmrc_spreadsheet", "asm-icon-report", "Generate HMRC Gift Aid spreadsheet" )
         )),
