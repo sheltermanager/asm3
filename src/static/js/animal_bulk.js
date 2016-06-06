@@ -123,7 +123,7 @@ $(function() {
                 '<label for="coordinator">' + _("Adoption Coordinator") + '</label>',
                 '</td>',
                 '<td>',
-                '<input id="coordinator" data-post="adoptioncoordinator" type="hidden" data-filter="vet" class="asm-personchooser" />',
+                '<input id="coordinator" data-post="adoptioncoordinator" type="hidden" data-filter="coordinator" class="asm-personchooser" />',
                 '</td>',
                 '</tr>',
 

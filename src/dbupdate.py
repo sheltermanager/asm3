@@ -20,7 +20,7 @@ VERSIONS = (
     33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702, 33703, 33704, 33705,
     33706, 33707, 33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716,
     33717, 33718, 33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904,
-    33905, 33906, 33907, 33908, 33909, 33911, 33912, 33913
+    33905, 33906, 33907, 33908, 33909, 33911, 33912, 33913, 33914
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1105,6 +1105,7 @@ def sql_structure(dbo):
         fint("IsMember", True),
         fdate("MembershipExpiryDate", True),
         fstr("MembershipNumber", True),
+        fint("IsAdoptionCoordinator", True),
         fint("IsDonor", True),
         fint("IsDriver", True),
         fint("IsShelter", True),
@@ -4502,4 +4503,8 @@ def update_33913(dbo):
         codefunc = "SUBSTRING(UPPER((XPATH('/z/text()', ('<z>' || replace(replace(replace(o.OwnerSurname, '&', ''), '<', ''), '>', '') || '</z>')::xml))[1]::text) FROM 0 FOR 3) || TO_CHAR(o.ID, 'FM000000')"
     db.execute_dbupdate(dbo, "UPDATE owner o SET OwnerCode = %s" % codefunc)
 
+def update_33914(dbo):
+    # Add owner.IsAdoptionCoordinator
+    add_column(dbo, "owner", "IsAdoptionCoordinator", "INTEGER")
+    db.execute_dbupdate(dbo, "UPDATE owner SET IsAdoptionCoordinator = 0")
 

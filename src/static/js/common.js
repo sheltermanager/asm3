@@ -1707,6 +1707,7 @@
 
             var h = [
                 { label: _("ACO"), html: field_option("ISACO", "aco", _("ACO")) },
+                { label: _("Adoption Coordinator"), html: field_option("ISADOPTIONCOORDINATOR", "coordinator", _("Adoption Coordinator")) },
                 { label: _("Banned"), html: field_option("ISBANNED", "banned", _("Banned")) },
                 { label: _("Deceased"), html: field_option("ISDECEASED", "deceased", _("Deceased")) },
                 { label: _("Donor"), html: field_option("ISDONOR", "donor", _("Donor")) },

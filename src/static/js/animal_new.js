@@ -167,7 +167,7 @@ $(function() {
                 '</td>',
                 '<td>',
                 '<div style="margin: 0; width: 315px;">',
-                '<input id="coordinator" data="adoptioncoordinator" type="hidden" class="asm-personchooser" />',
+                '<input id="coordinator" data="adoptioncoordinator" data-filter="coordinator" type="hidden" class="asm-personchooser" />',
                 '</div>',
                 '</td>',
                 '</tr>',

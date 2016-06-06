@@ -231,7 +231,7 @@ $(function() {
                 '<label for="coordinator">' + _("Adoption Coordinator") + '</label>',
                 '</td>',
                 '<td valign="top" class="bottomborder">',
-                '<input id="coordinator" data-json="ADOPTIONCOORDINATORID" data-post="adoptioncoordinator" type="hidden" class="asm-personchooser" />',
+                '<input id="coordinator" data-json="ADOPTIONCOORDINATORID" data-filter="coordinator" data-post="adoptioncoordinator" type="hidden" class="asm-personchooser" />',
                 '</td>',
                 '</tr>',
                 '<tr id="originalownerrow">',

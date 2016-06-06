@@ -368,6 +368,8 @@ def get_person_find_simple(dbo, query, classfilter="all", includeStaff = False, 
     cf = ""
     if classfilter == "all":
         pass
+    elif classfilter == "coordinator":
+        cf = " AND o.IsAdoptionCoordinator = 1"
     elif classfilter == "vet":
         cf = " AND o.IsVet = 1"
     elif classfilter == "retailer":
@@ -463,6 +465,7 @@ def get_person_find_advanced(dbo, criteria, includeStaff = False, limit = 0):
         for flag in crit("filter").split(","):
             if flag == "aco": c.append("o.IsACO=1")
             elif flag == "banned": c.append("o.IsBanned=1")
+            elif flag == "coordinator": c.append("o.IsAdoptionCoordinator=1")
             elif flag == "deceased": c.append("o.IsDeceased=1")
             elif flag == "donor": c.append("o.IsDonor=1")
             elif flag == "driver": c.append("o.IsDriver=1")
@@ -584,6 +587,7 @@ def update_person_from_form(dbo, post, username):
     def bi(b): return b and 1 or 0
     homechecked = bi("homechecked" in flags)
     banned = bi("banned" in flags)
+    coordinator = bi("coordinator" in flags)
     volunteer = bi("volunteer" in flags)
     member = bi("member" in flags)
     homechecker = bi("homechecker" in flags)
@@ -624,6 +628,7 @@ def update_person_from_form(dbo, post, username):
         ( "IsMember", db.di(member)),
         ( "MembershipExpiryDate", post.db_date("membershipexpires")),
         ( "MembershipNumber", post.db_string("membershipnumber")),
+        ( "IsAdoptionCoordinator", db.di(coordinator)),
         ( "IsHomeChecker", db.di(homechecker)),
         ( "IsDeceased", db.di(deceased)),
         ( "IsDonor", db.di(donor)),
@@ -673,6 +678,7 @@ def update_flags(dbo, username, personid, flags):
     def bi(b): return b and 1 or 0
     homechecked = bi("homechecked" in flags)
     banned = bi("banned" in flags)
+    coordinator = bi("coordinator" in flags)
     volunteer = bi("volunteer" in flags)
     member = bi("member" in flags)
     homechecker = bi("homechecker" in flags)
@@ -689,6 +695,7 @@ def update_flags(dbo, username, personid, flags):
     flagstr = "|".join(flags) + "|"
     sql = db.make_update_user_sql(dbo, "owner", username, "ID=%d" % personid, (
         ( "IDCheck", db.di(homechecked) ),
+        ( "IsAdoptionCoordinator", db.di(coordinator)), 
         ( "IsBanned", db.di(banned)),
         ( "IsVolunteer", db.di(volunteer)),
         ( "IsMember", db.di(member)),
@@ -725,6 +732,7 @@ def insert_person_from_form(dbo, post, username):
     volunteer = bi("volunteer" in flags)
     member = bi("member" in flags)
     homechecker = bi("homechecker" in flags)
+    coordinator = bi("coordinator" in flags)
     donor = bi("donor" in flags)
     driver = bi("driver" in flags)
     deceased = bi("deceased" in flags)
@@ -759,6 +767,7 @@ def insert_person_from_form(dbo, post, username):
         ( "ExcludeFromBulkEmail", post.db_boolean("excludefrombulkemail")),
         ( "IDCheck", db.di(homechecked) ),
         ( "Comments", db.ds(d("comments") )),
+        ( "IsAdoptionCoordinator", db.di(coordinator)),
         ( "IsBanned", db.di(banned)),
         ( "IsVolunteer", db.di(volunteer)),
         ( "IsMember", db.di(member)),

@@ -533,6 +533,9 @@ $(function() {
             if (p.ISDECEASED == 1) {
                 flags.push("<span style=\"color: red\">" + _("Deceased") + "</span>");
             }
+            if (p.ISADOPTIONCOORDINATOR == 1) {
+                flags.push(_("Adoption Coordinator"));
+            }
             if (p.ISDONOR == 1) {
                 flags.push(_("Donor"));
             }
@@ -567,7 +570,7 @@ $(function() {
                 flags.push(_("Volunteer"));
             }
             if (p.ADDITIONALFLAGS != null) {
-                var stock = [ "aco", "banned", "deceased", "donor", "driver", "fosterer", "homechecked", "homechecker", 
+                var stock = [ "aco", "banned", "coordinator", "deceased", "donor", "driver", "fosterer", "homechecked", "homechecker", 
                     "member", "shelter", "retailer", "staff", "giftaid", "vet", "volunteer"];
                 $.each(p.ADDITIONALFLAGS.split("|"), function(i, v) {
                     if (v != "" && $.inArray(v, stock) == -1) {
