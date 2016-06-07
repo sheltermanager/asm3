@@ -14,8 +14,10 @@ o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode,
 o.HomeTelephone, o.EmailAddress
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
-INNER JOIN internallocation i ON i.ID = a.ShelterLocation
+LEFT OUTER JOIN internallocation i ON i.ID = a.ShelterLocation
 INNER JOIN lksex s ON s.ID = a.Sex
+INNER JOIN adoption ad ON a.ActiveMovementID = ad.ID
+INNER JOIN owner o ON ad.OwnerID = o.ID
 WHERE a.Archived = 1 AND a.ActiveMovementType = 1
 AND a.NonShelterAnimal = 0 AND a.DeceasedDate Is Null 
 AND a.ActiveMovementDate >= '$ASK DATE Adopted between$'
