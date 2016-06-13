@@ -95,7 +95,7 @@ $(function() {
                              .then(function() {
                                  tableform.buttons_default_state(buttons);
                                  var ids = tableform.table_ids(table);
-                                 return common.ajax_post(controller.name, "mode=delete&ids=" + ids);
+                                 return common.ajax_post("medicalprofile", "mode=delete&ids=" + ids);
                              })
                              .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
