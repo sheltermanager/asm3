@@ -112,9 +112,9 @@ $(function() {
                 $("#feeinfo").fadeOut();
                 $("#reserve").button("enable");
 
-                // If the animal is not on the shelter and not fostered, show that warning
+                // If the animal is not on the shelter and not fostered or at a retailer, show that warning
                 // and stop everything else
-                if (rec.ARCHIVED == "1" && rec.ACTIVEMOVEMENTTYPE != 2) {
+                if (rec.ARCHIVED == 1 && rec.ACTIVEMOVEMENTTYPE != 2 && rec.ACTIVEMOVEMENTTYPE != 8) {
                     $("#notonshelter").fadeIn();
                     $("#reserve").button("disable");
                     return;
@@ -122,7 +122,7 @@ $(function() {
 
                 // If the animal has an active reserve, show the warning, but
                 // things can still continue
-                if (rec.HASACTIVERESERVE == "1") {
+                if (rec.HASACTIVERESERVE == 1) {
                     $("#multiplereserve").fadeIn();
                 }
 

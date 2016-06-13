@@ -1,6 +1,8 @@
 39
 ================
 
+13/06/16 Move->Reserve should still be allowed for retailers
+13/06/16 Fix bug deleting medical profiles
 06/06/16 Add adoption coordinator built in flag #430
 02/06/16 Financial->Payments should not disable with accounts #429
 02/06/16 Pink/blue outline too faint for some monitors #432
