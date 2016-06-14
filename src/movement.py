@@ -316,7 +316,7 @@ def validate_movement_form_data(dbo, post):
     # If this is a new reservation, make sure there's no open movement (fosters do not count)
     if movementid == 0 and movementtype == 0 and movementdate is None and reservationdate is not None:
         om = db.query_int(dbo, "SELECT COUNT(*) FROM adoption WHERE AnimalID = %d AND " \
-            "MovementDate Is Not Null AND ReturnDate Is Null AND MovementType <> 2" % animalid)
+            "MovementDate Is Not Null AND ReturnDate Is Null AND MovementType <> 2 AND MovementType <> 8" % animalid)
         if om > 0:
             al.debug("movement is a reservation but animal has active movement.", "movement.validate_movement_form_data", dbo)
             raise utils.ASMValidationError(i18n._("Can't reserve an animal that has an active movement.", l))
