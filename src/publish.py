@@ -5314,12 +5314,14 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
 class HomeAgainPublisher(VetEnvoyUSMicrochipPublisher):
     def __init__(self, dbo, publishCriteria):
         AbstractPublisher.__init__(self, dbo, publishCriteria)
+        if not configuration.vetenvoy_homeagain_enabled(dbo): return
         VetEnvoyUSMicrochipPublisher.__init__(self, dbo, publishCriteria, "HomeAgain Publisher", "homeagain", VETENVOY_US_HOMEAGAIN_RECIPIENTID, 
             ['985',])
 
 class AKCReunitePublisher(VetEnvoyUSMicrochipPublisher):
     def __init__(self, dbo, publishCriteria):
         AbstractPublisher.__init__(self, dbo, publishCriteria)
+        if not configuration.vetenvoy_akcreunite_enabled(dbo): return
         VetEnvoyUSMicrochipPublisher.__init__(self, dbo, publishCriteria, "AKC Reunite Publisher", "akcreunite", VETENVOY_US_AKC_REUNITE_RECIPIENTID, 
             ['0006', '0007', '956'])
 

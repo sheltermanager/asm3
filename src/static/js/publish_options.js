@@ -795,6 +795,16 @@ $(function() {
                 '<td><label for="veuserpassword">VetEnvoy User Password</label></td>',
                 '<td><input id="veuserpassword" type="text" class="asm-doubletextbox cfg" disabled="disabled" data="VetEnvoyUserPassword" /></td>',
                 '</tr>',
+                '<tr>',
+                '<td><label for="vehomeagain">Register HomeAgain Microchips</label></td>',
+                '<td><select id="vehomeagain" class="asm-selectbox cfg" disabled="disabled" data="VetEnvoyHomeAgainEnabled">',
+                '<option>Yes</option><option>No</option></select></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="veakc">Register AKC Reunite Microchips</label></td>',
+                '<td><select id="veakc" class="asm-selectbox cfg" disabled="disabled" data="VetEnvoyAKCReuniteEnabled">',
+                '<option>Yes</option><option>No</option></select></td>',
+                '</tr>',
                 '</table>',
                 '</div>'
             ].join("\n");

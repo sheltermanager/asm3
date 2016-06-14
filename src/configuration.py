@@ -264,6 +264,8 @@ DEFAULTS = {
     "UseShortShelterCodes": "Yes", 
     "VATEnabled": "Yes",
     "VATRate": "20",
+    "VetEnvoyHomeAgainEnabled": "Yes",
+    "VetEnvoyAKCReuniteEnabled": "Yes",
     "WaitingListViewColumns": "Rank,OwnerName,OwnerAddress," \
         "HomeTelephone,EmailAddress,DatePutOnList,TimeOnList," \
         "DateRemovedFromList,Urgency,SpeciesID,Size,AnimalDescription",
@@ -1015,6 +1017,12 @@ def vetenvoy_user_id(dbo):
 
 def vetenvoy_user_password(dbo):
     return cstring(dbo, "VetEnvoyUserPassword")
+
+def vetenvoy_homeagain_enabled(dbo):
+    return cboolean(dbo, "VetEnvoyHomeAgainEnabled", DEFAULTS["VetEnvoyHomeAgainEnabled"] == "Yes")
+
+def vetenvoy_akcreunite_enabled(dbo):
+    return cboolean(dbo, "VetEnvoyAKCReuniteEnabled", DEFAULTS["VetEnvoyAKCReuniteEnabled"] == "Yes")
 
 def waiting_list_default_urgency(dbo):
     return cint(dbo, "WaitingListDefaultUrgency")
