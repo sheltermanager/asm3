@@ -81,7 +81,7 @@ def get_person_similar(dbo, email = "", surname = "", forenames = "", address = 
     surname = surname.replace("'", "`").lower().strip()
     email = email.replace("'", "`").lower().strip()
     eq = []
-    if email != "":
+    if email != "" and email.find("@") != -1 and email.find(".") != -1:
         eq = db.query(dbo, get_person_query(dbo) + "WHERE LOWER(o.EmailAddress) LIKE '%s'" % email)
     per = db.query(dbo, get_person_query(dbo) + "WHERE LOWER(o.OwnerSurname) LIKE '%s' AND " \
         "LOWER(o.OwnerForeNames) LIKE '%s%%' AND LOWER(o.OwnerAddress) Like '%s%%'" % (surname, forenames, address))
