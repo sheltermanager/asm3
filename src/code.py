@@ -4026,8 +4026,7 @@ class mailmerge:
             includeheader = 1 == post.boolean("includeheader")
             return utils.csv(l, rows, cols, includeheader)
         elif mode == "preview":
-            al.debug("grabbing preview rows for %d" % session.mergereport, "code.mailmerge", dbo)
-            rows, cols = extreports.execute_query(dbo, session.mergereport, session.user, session.mergeparams)
+            al.debug("returning preview rows for %d" % session.mergereport, "code.mailmerge", dbo)
             return html.json(rows)
 
 
