@@ -1,6 +1,7 @@
 39
 ================
 
+16/06/16 Only load mail merge preview on click #435
 14/06/16 Allow HomeAgain/AKC to be disabled indepdent of VE
 13/06/16 Move->Reserve should still be allowed for retailers
 13/06/16 Fix bug deleting medical profiles

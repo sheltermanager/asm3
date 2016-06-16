@@ -3975,7 +3975,7 @@ class mailmerge:
             s = html.header(title, session)
             c = html.controller_json("fields", fields)
             c += html.controller_int("numrows", len(rows))
-            c += html.controller_json("rows", rows)
+            c += html.controller_bool("hasperson", "OWNERNAME" in fields and "OWNERADDRESS" in fields and "OWNERTOWN" in fields and "OWNERPOSTCODE" in fields)
             c += html.controller_json("templates", dbfs.get_document_templates(dbo))
             s += html.controller(c)
             s += html.footer()
@@ -4025,6 +4025,11 @@ class mailmerge:
             web.header("Content-Disposition", u"attachment; filename=" + utils.decode_html(session.mergetitle) + u".csv")
             includeheader = 1 == post.boolean("includeheader")
             return utils.csv(l, rows, cols, includeheader)
+        elif mode == "preview":
+            al.debug("grabbing preview rows for %d" % session.mergereport, "code.mailmerge", dbo)
+            rows, cols = extreports.execute_query(dbo, session.mergereport, session.user, session.mergeparams)
+            return html.json(rows)
+
 
 class medical:
     def GET(self):

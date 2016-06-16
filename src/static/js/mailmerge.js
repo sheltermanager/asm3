@@ -19,6 +19,8 @@ $(function() {
 
     var mailmerge = {
 
+        previewloaded: false,
+
         render: function() {
 
             // This can be called for mail merge criteria selection, 
@@ -135,7 +137,7 @@ $(function() {
                 '</form>',
                 '</div>',
 
-                '<h3><a href="#">' + _("View matching records") + '</a></h3>',
+                '<h3 id="lmatching"><a href="#">' + _("View matching records") + '</a></h3>',
                 '<div id="matching">',
                 '</div>',
                 
@@ -224,31 +226,37 @@ $(function() {
             if (sig) {
                 $("#emailbody").richtextarea("value", "<p>&nbsp;</p>" + sig);
             }
-            // Create a table of matching rows
-            var h = [];
-            h.push("<table><thead><tr>");
-            $.each(controller.fields, function(i, v) {
-                h.push("<th>" + v + "</th>");
-            });
-            h.push("</tr></thead><tbody>");
-            $.each(controller.rows, function(i, v) {
-                h.push("<tr>");
-                $.each(controller.fields, function(fi, fv) {
-                    h.push("<td>" + v[fv] + "</td>");
-                });
-                h.push("</tr>");
-            });
-            h.push("</tbody></table>");
-            $("#matching").html(h.join("\n"));
-            $("#matching table").table();
-            // If the rows don't have the appropriate columns, hide the label generating stuff
-            if (controller.rows.length > 0) {
-                var r = controller.rows[0];
-                if (!r.hasOwnProperty("OWNERNAME") || !r.hasOwnProperty("OWNERADDRESS") || 
-                    !r.hasOwnProperty("OWNERTOWN") || !r.hasOwnProperty("OWNERCOUNTY") || 
-                    !r.hasOwnProperty("OWNERPOSTCODE")) {
-                    $("#printlabel").hide().next().hide();
+
+            // When the preview slider is chosen, load the preview data
+            $("#asm-mailmerge-accordion").on("accordionactivate", function(event, ui) {
+                if (ui.newHeader.attr("id") == "lmatching" && !mailmerge.previewloaded) {
+                    mailmerge.previewloaded = true;
+                    header.show_loading();
+                    common.ajax_post("mailmerge", "mode=preview").then(function(data) {
+                        // Create a table of matching rows
+                        var h = [], d = jQuery.parseJSON(data);
+                        h.push("<table><thead><tr>");
+                        $.each(controller.fields, function(i, v) {
+                            h.push("<th>" + v + "</th>");
+                        });
+                        h.push("</tr></thead><tbody>");
+                        $.each(d, function(i, v) {
+                            h.push("<tr>");
+                            $.each(controller.fields, function(fi, fv) {
+                                h.push("<td>" + v[fv] + "</td>");
+                            });
+                            h.push("</tr>");
+                        });
+                        h.push("</tbody></table>");
+                        $("#matching").html(h.join("\n"));
+                        $("#matching table").table();
+                    });
                 }
+            });
+
+            // If the data don't have person columns, hide the label generating stuff
+            if (!controller.hasperson) {
+                $("#printlabel").hide().next().hide();
             }
 
         },
