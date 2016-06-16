@@ -903,6 +903,7 @@ $(function() {
                 $("#transferinrow").hide();
                 $("#pickeduprow").hide();
                 $("#holdrow").hide();
+                $("#coordinatorrow").hide();
                 $("#broughtinbyownerrow").hide();
                 $("#originalownerrow td").removeClass("bottomborder");
                 $("#bondedwith1row").hide();
