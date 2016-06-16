@@ -122,6 +122,10 @@ def sign_document_page(dbo, mid):
                 var img = $("#signature canvas").get(0).toDataURL("image/png");
                 var formdata = "account=%(account)s&method=sign_document&formid=%(id)s&sig=" + encodeURIComponent(img);
                 formdata += "&signdate=" + encodeURIComponent(moment().format("YYYY-MM-DD HH:mm:ss"));
+                if ($("#signature").signature("isEmpty")) {
+                    alert("Signature is required");
+                    return;
+                }
                 $.ajax({
                     type: "POST",
                     url: "service",
