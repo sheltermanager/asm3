@@ -2281,6 +2281,7 @@ def update_location_unit(dbo, username, animalid, newlocationid, newunit = ""):
                     newlocation += "-" + newunit
                 log.add_log(dbo, username, log.ANIMAL, animalid, configuration.location_change_log_type(dbo), 
                     _("{0} {1}: Moved from {2} to {3}", l).format(sheltercode, animalname, oldlocation, newlocation))
+                audit.edit(dbo, username, "animal", animalid, "%s: %s %s Moved from %s ==> %s" % ( animalid, sheltercode, animalname, oldlocation, newlocation ))
     # Change the location
     db.execute(dbo, "UPDATE animal SET ShelterLocation = %s, ShelterLocationUnit = %s WHERE ID = %s" % (db.di(newlocationid), db.ds(newunit), db.di(animalid)))
     update_animal_status(dbo, animalid)
