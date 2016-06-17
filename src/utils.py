@@ -837,6 +837,10 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
     fromadd = fromadd.replace("{alias}", dbo.alias)
     fromadd = fromadd.replace("{database}", dbo.database)
 
+    # Check for any problems in the reply address, such as unclosed address
+    if replyadd.find("<") != -1 and replyadd.find(">") == -1:
+        replyadd += ">"
+
     # Construct the mime message
     msg = MIMEMultipart("mixed")
     add_header(msg, "Message-ID", make_msgid())

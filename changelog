@@ -1,6 +1,7 @@
 39
 ================
 
+17/06/16 Fix email addresses during send if user deleted enclosing >
 17/06/16 Make sure drag/drop moves are in the audit trail
 16/06/16 Signature by email should be mandatory #437
 16/06/16 Only load mail merge preview on click #435
