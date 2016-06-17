@@ -20,7 +20,7 @@ ShelAnml.mdb:
 26th January, 2015, rewritten with new kit 27th October, 2015
 """
 
-PATH = "data/coulee/"
+PATH = "data/aaf_ak1106/"
 
 # For use with fields that just contain the sex
 def getincidenttype(ctype):
@@ -175,132 +175,7 @@ for row in asm.csv_to_list(PATH + "list1.csv", strip=True):
 
 # animalhistory.csv seems to have a lot of the same records as record.csv
 # so we disabled this section for the last customer
-if False:
-    for row in asm.csv_to_list(PATH + "animalhistory.csv", strip=True):
-        # Each row contains a new animal
-        a = asm.Animal(nextanimalid)
-        animals.append(a)
-        animalmap[row["RECORDNUMBER"]] = a
-        nextanimalid += 1
-        a.ExtraID = row["RECORDNUMBER"]
-
-        a.DateBroughtIn = asm.getdate_mmddyy(row["DATE"])
-        if a.DateBroughtIn is None:
-            a.DateBroughtIn = asm.now()
-        a.AnimalTypeID = gettype(row["SPECIES"])
-        if row["SPECIES"] == "Kitten":
-            a.SpeciesID = 1
-        elif row["SPECIES"] == "Puppy":
-            a.SpeciesID = 2
-        else:
-            a.SpeciesID = asm.species_id_for_name(row["SPECIES"])
-        a.generateCode(gettypeletter(a.AnimalTypeID))
-        a.ShortCode = row["FORMNUM"]
-        ob = row["BREEDID"]
-        a.CrossBreed = 0
-        if ob.find("Mix") != -1:
-            a.CrossBreed = 1
-            a.Breed2ID = 442
-            ob = ob.replace("Mix", "")
-        a.BreedID = asm.breed_id_for_name(ob)
-        a.BreedName = asm.breed_name(a.BreedID, a.Breed2ID)
-        a.Sex = asm.getsex_mf(row["SEX"])
-        a.Size = getsize(row["RSize"])
-        a.Neutered = asm.cint(row["SPAYED"])
-        a.NeuteredDate = asm.getdate_mmddyy(row["SPAYDATE"])
-        a.DateOfBirth = asm.getdate_mmddyy(row["DOB"])
-        if a.DateOfBirth is None: 
-            a.DateOfBirth = a.DateBroughtIn
-        a.BaseColourID = asm.colour_id_for_name(row["RColor"])
-        a.RabiesTag = row["TAG"]
-        a.IdentichipNumber = row["MICROCHIP"]
-        if a.IdentichipNumber.strip() != "": 
-            a.Identichipped = 1
-            a.IdentichipDate = a.DateBroughtIn
-        a.AnimalName = row["PETNAME"]
-        if a.AnimalName == "":
-            a.AnimalName = "(unknown)"
-        a.Markings = row["RDescr"]
-        #comments = ""
-        #if strip(row, GENERAL_CONDITION) != "": comments += "Condition: " + row[GENERAL_CONDITION]
-        #if strip(row, VICIOUS) != "": comments += ", Vicious: " + row[VICIOUS]
-        #if strip(row, DANGEROUS) != "": comments += ", Dangerous: " + row[DANGEROUS]
-        #a.HiddenAnimalDetails = bs(comments)
-        a.IsNotAvailableForAdoption = 0
-        a.ShelterLocation = 1
-        a.AnimalComments = asm.bs(row["MEMOPAD"])
-        a.ReasonForEntry = row["RSurrenderReason"]
-        a.IsHouseTrained = row["RHousebroken"] == 1 and 0 or 1
-        a.IsGoodWithChildren = row["RChildren"] == 1 and 0 or 1
-        a.IsGoodWithDogs = row["RAnimals"] == 1 and 0 or 1
-        a.IsGoodWithCats = row["RAnimals"] == 1 and 0 or 1
-        if row["DeclawType"] != "": a.Declawed = 1
-        origin = row["ROriginOfAnimal"]
-        if len(origin) < 3:
-            origin = "Surrender"
-        disp = row["RDisposition"]
-        a.EntryReasonID = asm.entryreason_id_for_name(origin, True)
-        if origin.startswith("Transfer"):
-            a.IsTransfer = 1
-        elif origin.startswith("Euthan"):
-            a.DeceasedDate = a.DateBroughtIn
-            a.PTSReason = origin
-            a.PutToSleep = 1
-            a.Archived = 1
-        if disp.startswith("Euthan"):
-            a.DeceasedDate = a.DateBroughtIn
-            a.PTSReason = disp
-            a.PutToSleep = 1
-            a.Archived = 1
-        if disp.startswith("DOA"):
-            a.DeceasedDate = a.DateBroughtIn
-            a.IsDOA = 1
-            a.Archived = 1
-        im = row["RIntakeMunicipality"]
-        im = im.replace("'", "").replace(";", "").replace("`", "").replace(".", "").replace("\"", "")
-        if im != "" and im != "y" and im != "l" and im != "v":
-            a.IsPickup = 1
-            a.PickupLocationID = asm.pickuplocation_id_for_name(im, True)
-        # Surrendering owner info if available
-        o = None
-        if row["NAME"] != "":
-            o = findowner(row["FNAME"], row["NAME"], row["ADD1"])
-            if o is None:
-                o = asm.Owner(nextownerid)
-                owners.append(o)
-                nextownerid += 1
-                o.OwnerForeNames = row["FNAME"]
-                o.OwnerSurname = row["NAME"]
-                if o.OwnerSurname == "": o.OwnerSurname = "(blank)"
-                o.OwnerName = o.OwnerForeNames + " " + o.OwnerSurname
-                o.OwnerAddress = row["ADD1"]
-                o.OwnerTown = row["CITY"]
-                o.OwnerCounty = row["STATE"]
-                o.OwnerPostcode = row["ZIP"]
-                o.HomeTelephone = row["HPHONE"]
-                o.WorkTelephone = row["BPHONE"]
-                ownermapbyname[o.OwnerName] = o
-                ownermapbykey[o.OwnerForeNames + " " + o.OwnerSurname + " " + asm.fw(o.OwnerAddress)] = o
-            a.OriginalOwnerID = o.ID
-        # If we have a disposition of reclaimed, create a reclaim movement
-        # to the original owner
-        if row["RDisposition"] == "RECLAIMED" and o is not None:
-            m = asm.Movement(nextmovementid)
-            nextmovementid += 1
-            m.AnimalID = a.ID
-            m.OwnerID = o.ID
-            m.MovementType = 5
-            m.MovementDate = a.DateBroughtIn
-            a.Archived = 1
-            a.ActiveMovementDate = a.DateBroughtIn
-            a.ActiveMovementID = m.ID
-            a.ActiveMovementType = 5
-            movements.append(m)
-
-# On shelter animals are kept in a separate database table called RECORD
-# with a slightly different layout to animalhistory
-for row in asm.csv_to_list(PATH + "record.csv", strip=True):
-
+for row in asm.csv_to_list(PATH + "animalhistory.csv", strip=True):
     # Each row contains a new animal
     a = asm.Animal(nextanimalid)
     animals.append(a)
@@ -421,6 +296,132 @@ for row in asm.csv_to_list(PATH + "record.csv", strip=True):
         a.ActiveMovementType = 5
         movements.append(m)
 
+# On shelter animals are kept in a separate database table called RECORD
+# with a slightly different layout to animalhistory
+# The last customer we had didn't give us ShelAnml so it couldn't be used
+if False:
+    for row in asm.csv_to_list(PATH + "record.csv", strip=True):
+
+        # Each row contains a new animal
+        a = asm.Animal(nextanimalid)
+        animals.append(a)
+        animalmap[row["RECORDNUMBER"]] = a
+        nextanimalid += 1
+        a.ExtraID = row["RECORDNUMBER"]
+
+        a.DateBroughtIn = asm.getdate_mmddyy(row["DATE"])
+        if a.DateBroughtIn is None:
+            a.DateBroughtIn = asm.now()
+        a.AnimalTypeID = gettype(row["SPECIES"])
+        if row["SPECIES"] == "Kitten":
+            a.SpeciesID = 1
+        elif row["SPECIES"] == "Puppy":
+            a.SpeciesID = 2
+        else:
+            a.SpeciesID = asm.species_id_for_name(row["SPECIES"])
+        a.generateCode(gettypeletter(a.AnimalTypeID))
+        a.ShortCode = row["FORMNUM"]
+        ob = row["BREEDID"]
+        a.CrossBreed = 0
+        if ob.find("Mix") != -1:
+            a.CrossBreed = 1
+            a.Breed2ID = 442
+            ob = ob.replace("Mix", "")
+        a.BreedID = asm.breed_id_for_name(ob)
+        a.BreedName = asm.breed_name(a.BreedID, a.Breed2ID)
+        a.Sex = asm.getsex_mf(row["SEX"])
+        a.Size = getsize(row["RSize"])
+        a.Neutered = asm.cint(row["SPAYED"])
+        a.NeuteredDate = asm.getdate_mmddyy(row["SPAYDATE"])
+        a.DateOfBirth = asm.getdate_mmddyy(row["DOB"])
+        if a.DateOfBirth is None: 
+            a.DateOfBirth = a.DateBroughtIn
+        a.BaseColourID = asm.colour_id_for_name(row["RColor"])
+        a.RabiesTag = row["TAG"]
+        a.IdentichipNumber = row["MICROCHIP"]
+        if a.IdentichipNumber.strip() != "": 
+            a.Identichipped = 1
+            a.IdentichipDate = a.DateBroughtIn
+        a.AnimalName = row["PETNAME"]
+        if a.AnimalName == "":
+            a.AnimalName = "(unknown)"
+        a.Markings = row["RDescr"]
+        #comments = ""
+        #if strip(row, GENERAL_CONDITION) != "": comments += "Condition: " + row[GENERAL_CONDITION]
+        #if strip(row, VICIOUS) != "": comments += ", Vicious: " + row[VICIOUS]
+        #if strip(row, DANGEROUS) != "": comments += ", Dangerous: " + row[DANGEROUS]
+        #a.HiddenAnimalDetails = bs(comments)
+        a.IsNotAvailableForAdoption = 0
+        a.ShelterLocation = 1
+        a.AnimalComments = bs(row["MEMOPAD"])
+        a.ReasonForEntry = row["RSurrenderReason"]
+        a.IsHouseTrained = row["RHousebroken"] == 1 and 0 or 1
+        a.IsGoodWithChildren = row["RChildren"] == 1 and 0 or 1
+        a.IsGoodWithDogs = row["RAnimals"] == 1 and 0 or 1
+        a.IsGoodWithCats = row["RAnimals"] == 1 and 0 or 1
+        if row["DeclawType"] != "": a.Declawed = 1
+        origin = row["ROriginOfAnimal"]
+        if len(origin) < 3:
+            origin = "Surrender"
+        disp = row["RDisposition"]
+        a.EntryReasonID = asm.entryreason_id_for_name(origin, True)
+        if origin.startswith("Transfer"):
+            a.IsTransfer = 1
+        elif origin.startswith("Euthan"):
+            a.DeceasedDate = a.DateBroughtIn
+            a.PTSReason = origin
+            a.PutToSleep = 1
+            a.Archived = 1
+        if disp.startswith("Euthan"):
+            a.DeceasedDate = a.DateBroughtIn
+            a.PTSReason = disp
+            a.PutToSleep = 1
+            a.Archived = 1
+        if disp.startswith("DOA"):
+            a.DeceasedDate = a.DateBroughtIn
+            a.IsDOA = 1
+            a.Archived = 1
+        im = row["RIntakeMunicipality"]
+        im = im.replace("'", "").replace(";", "").replace("`", "").replace(".", "").replace("\"", "")
+        if im != "" and im != "y" and im != "l" and im != "v":
+            a.IsPickup = 1
+            a.PickupLocationID = asm.pickuplocation_id_for_name(im, True)
+        # Surrendering owner info if available
+        o = None
+        if row["NAME"] != "":
+            o = findowner(row["FNAME"], row["NAME"], row["ADD1"])
+            if o is None:
+                o = asm.Owner(nextownerid)
+                owners.append(o)
+                nextownerid += 1
+                o.OwnerForeNames = row["FNAME"]
+                o.OwnerSurname = row["NAME"]
+                if o.OwnerSurname == "": o.OwnerSurname = "(blank)"
+                o.OwnerName = o.OwnerForeNames + " " + o.OwnerSurname
+                o.OwnerAddress = row["ADD1"]
+                o.OwnerTown = row["CITY"]
+                o.OwnerCounty = row["STATE"]
+                o.OwnerPostcode = row["ZIP"]
+                o.HomeTelephone = row["HPHONE"]
+                o.WorkTelephone = row["BPHONE"]
+                ownermapbyname[o.OwnerName] = o
+                ownermapbykey[o.OwnerForeNames + " " + o.OwnerSurname + " " + asm.fw(o.OwnerAddress)] = o
+            a.OriginalOwnerID = o.ID
+        # If we have a disposition of reclaimed, create a reclaim movement
+        # to the original owner
+        if row["RDisposition"] == "RECLAIMED" and o is not None:
+            m = asm.Movement(nextmovementid)
+            nextmovementid += 1
+            m.AnimalID = a.ID
+            m.OwnerID = o.ID
+            m.MovementType = 5
+            m.MovementDate = a.DateBroughtIn
+            a.Archived = 1
+            a.ActiveMovementDate = a.DateBroughtIn
+            a.ActiveMovementID = m.ID
+            a.ActiveMovementType = 5
+            movements.append(m)
+
 for row in asm.csv_to_list(PATH + "euthanasia.csv", strip=True):
     a = findanimal(row["EuthPetID"])
     if a is None: continue
@@ -486,27 +487,26 @@ for row in asm.csv_to_list(PATH + "appeals.csv", strip=True):
     od.DonationPaymentID = getpaymentmethod(row["Paymethod"])
     od.Comments = row["Anotes"]
 
-# Disabled as this apparently duplicates the data in appeals.csv
-if False:
-    for row in asm.csv_to_list(PATH + "payments.csv", strip=True):
-        # Skip junk data
-        if row["Customer"]: continue
-        if asm.get_currency(row["Paid"]) == 0: continue
+# For one customer, this duplicated appeals, but not in the last one I saw
+for row in asm.csv_to_list(PATH + "payments.csv", strip=True):
+    # Skip junk data
+    if row["Customer"]: continue
+    if asm.get_currency(row["Paid"]) == 0: continue
 
-        o = findowner(fullname = row["Customer"])
-        if o is None: continue
+    o = findowner(fullname = row["Customer"])
+    if o is None: continue
 
-        od = asm.OwnerDonation(nextownerdonationid)
-        ownerdonations.append(od)
-        nextownerdonationid += 1
-        od.OwnerID = o.ID
-        od.AnimalID = o.ExtraID
-        if od.AnimalID == "": od.AnimalID = 0
-        od.MovementID = 0
-        od.Date = asm.getdate_mmddyy(row["Date"])
-        od.Donation = asm.get_currency(row["Paid"])
-        od.DonationTypeID = 2
-        od.DonationPaymentID = getpaymentmethod(row["PaidBy"])
+    od = asm.OwnerDonation(nextownerdonationid)
+    ownerdonations.append(od)
+    nextownerdonationid += 1
+    od.OwnerID = o.ID
+    od.AnimalID = o.ExtraID
+    if od.AnimalID == "": od.AnimalID = 0
+    od.MovementID = 0
+    od.Date = asm.getdate_mmddyy(row["Date"])
+    od.Donation = asm.get_currency(row["Paid"])
+    od.DonationTypeID = 2
+    od.DonationPaymentID = getpaymentmethod(row["PaidBy"])
 
 for row in asm.csv_to_list(PATH + "complaints.csv", strip=True):
 
@@ -562,9 +562,9 @@ for row in asm.csv_to_list(PATH + "complaints.csv", strip=True):
     ac.Sex = 2
 
 for a in animals:
-    # If an animal has been on shelter longer than 6 weeks, adopt them
+    # If an animal has been on shelter longer than 4 weeks, adopt them
     # to the unknown owner to prevent a massive amount of on shelter animals
-    if a.Archived == 0 and a.DateBroughtIn.date() < datetime.date(2014, 11, 14):
+    if a.Archived == 0 and a.DateBroughtIn.date() < (datetime.date.today() - datetime.timedelta(days = 28)):
         adoptdate = a.DateBroughtIn + datetime.timedelta(days=31)
         m = asm.Movement(nextmovementid)
         nextmovementid += 1

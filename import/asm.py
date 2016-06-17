@@ -1979,6 +1979,7 @@ class Movement:
 class Owner:
     ID = 0
     OwnerType = 1
+    OwnerCode = ""
     OwnerTitle = ""
     OwnerInitials = ""
     OwnerForeNames = ""
@@ -2055,9 +2056,15 @@ class Owner:
     def __str__(self):
         if self.OwnerName.strip() == "":
             self.OwnerName = self.OwnerForeNames + " " + self.OwnerSurname
+        if self.OwnerCode.strip() == "":
+            prefix = "XX"
+            if len(self.OwnerSurname) >= 2 and not self.OwnerSurname.startswith("&"):
+                prefix = self.OwnerSurname[0:2].upper()
+            self.OwnerCode = "%s%s" % (prefix, padleft(self.ID, 6))
         s = (
             ( "ID", di(self.ID) ),
             ( "OwnerType", di(self.OwnerType) ),
+            ( "OwnerCode", ds(self.OwnerCode) ),
             ( "OwnerTitle", ds(self.OwnerTitle) ),
             ( "OwnerInitials", ds(self.OwnerInitials) ),
             ( "OwnerForeNames", ds(self.OwnerForeNames) ),
