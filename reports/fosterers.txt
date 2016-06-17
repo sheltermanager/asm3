@@ -1,0 +1,48 @@
+All Fosterers
+###
+Auditing
+###
+3000/Any
+###
+All fosterers with contact info and notes
+###
+en
+###
+SELECT
+OwnerName,
+OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, HomeTelephone, MobileTelephone,
+Comments,
+AdditionalFlags,
+(SELECT COUNT(*) FROM adoption WHERE OwnerID = owner.ID AND (ReturnDate Is Null OR ReturnDate > '$CURRENT_DATE$')) AS ActiveFosters,
+FosterCapacity
+FROM owner
+WHERE IsFosterer = 1 
+ORDER BY OwnerName
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Fosterer</th>
+<th>Contact</th>
+<th>Flags</th>
+<th>Comments</th>
+<th>Fosters</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$OWNERNAME</td>
+<td>$OWNERADDRESS<br/>
+$OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br/>
+H: $HOMETELEPHONE<br/>
+M: $MOBILETELEPHONE</td>
+<td>$ADDITIONALFLAGS</td>
+<td>$COMMENTS</td>
+<td>$ACTIVEFOSTERS / $FOSTERCAPACITY</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
