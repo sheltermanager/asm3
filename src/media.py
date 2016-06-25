@@ -13,6 +13,7 @@ from PIL import ExifTags, Image
 import os
 import tempfile
 import utils
+import zipfile
 from cStringIO import StringIO
 from sitedefs import SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD
 
@@ -702,6 +703,32 @@ def scale_pdf(filedata):
         return filedata
     return compressed
 
+def scale_odt(filedata):
+    """
+    Scales an ODT file down by stripping anything starting with the name "Object"
+    in the root or in the "ObjectReplacements" folder. Everything in the "Pictures"
+    folder is also removed.
+    """
+    odt = StringIO(filedata)
+    try:
+        zf = zipfile.ZipFile(odt, "r")
+    except zipfile.BadZipfile:
+        print "not a zip file"
+        return ""
+    # Write the replacement file
+    zo = StringIO()
+    zfo = zipfile.ZipFile(zo, "w", zipfile.ZIP_DEFLATED)
+    for info in zf.infolist():
+        # Skip any object or image files to save space
+        if info.filename.startswith("ObjectReplacements/Object ") or info.filename.startswith("Object ") or info.filename.endswith(".jpg") or info.filename.endswith(".png"):
+            pass
+        else:
+            zfo.writestr(info.filename, zf.open(info.filename).read())
+    zf.close()
+    zfo.close()
+    # Return the zip data
+    return zo.getvalue()
+
 def scale_pdf_file(inputfile, outputfile):
     """
     Scale a PDF file using the command line. There are different
@@ -761,6 +788,7 @@ def scale_animal_images(dbo):
         inputfile.close()
         outputfile.close()
         al.debug("scaling %s (%d of %d)" % (name, i, len(mp)), "media.scale_animal_images", dbo)
+        print "%s (%d of %d)" % (name, i, len(mp))
         scale_image_file(inputfile.name, outputfile.name, configuration.incoming_media_scaling(dbo))
         f = open(outputfile.name, "r")
         data = f.read()
@@ -770,4 +798,29 @@ def scale_animal_images(dbo):
         # Update the image file data
         dbfs.put_string(dbo, name, filepath, data)
     al.debug("scaled %d images" % len(mp), "media.scale_animal_images", dbo)
+
+def scale_all_odt(dbo):
+    """
+    Goes through all odt files attached to records in the database and 
+    scales them down (throws away images and objects so only the text remains to save space)
+    """
+    mo = db.query(dbo, "SELECT MediaName FROM media WHERE LOWER(MediaName) LIKE '%.odt'")
+    for i, m in enumerate(mo):
+        name = str(m["MEDIANAME"])
+        al.debug("scaling %s (%d of %d)" % (name, i, len(mo)), "media.scale_all_odt", dbo)
+        print "%s (%d of %d)" % (name, i, len(mo))
+        odata = dbfs.get_string(dbo, name)
+        if odata == "":
+            al.error("file %s does not exist" % name, "media.scale_all_odt", dbo)
+            print "file %s does not exist" % name
+            continue
+        path = db.query_string(dbo, "SELECT Path FROM dbfs WHERE Name='%s'" % name)
+        ndata = scale_odt(odata)
+        if len(ndata) < 512:
+            al.error("scaled odt %s came back at %d bytes, abandoning" % (name, len(ndata)), "scale_all_odt", dbo)
+            print "file too small < 512, doing nothing"
+        else:
+            print "old size: %d, new size: %d" % (len(odata), len(ndata))
+            dbfs.put_string(dbo, name, path, ndata)
+
 

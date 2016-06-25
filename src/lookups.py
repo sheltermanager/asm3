@@ -848,7 +848,9 @@ ADOPTAPET_COLOURS = (
     "Albino or Red-Eyed White"
 )
 
-def add_message(dbo, createdby, email, message, forname = "*", priority = 0, expires = add_days(now(), 7), added = now()):
+def add_message(dbo, createdby, email, message, forname = "*", priority = 0, expires = None, added = None):
+    if added is None: added = now(dbo.timezone)
+    if expires is None: expires = add_days(added, 7)
     l = dbo.locale
     mid = db.get_id(dbo, "messages")
     db.execute(dbo, db.make_insert_sql("messages", (

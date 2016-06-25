@@ -959,7 +959,7 @@ def substitute_template(dbo, template, tags, imdata = None):
             content = substitute_tags(content, tags)
             # Write the replacement file
             zo = StringIO()
-            zfo = zipfile.ZipFile(zo, "w")
+            zfo = zipfile.ZipFile(zo, "w", zipfile.ZIP_DEFLATED)
             for info in zf.infolist():
                 if info.filename == "content.xml":
                     zfo.writestr("content.xml", content)

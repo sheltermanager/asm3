@@ -1,6 +1,9 @@
 39
 ================
 
+25/06/16 Fix timezone when adding messages
+22/06/16 Add maintenance function to discard ODT images
+22/06/16 ODT files were not using ZIP_DEFLATE
 17/06/16 Fix email addresses during send if user deleted enclosing >
 17/06/16 Make sure drag/drop moves are in the audit trail
 16/06/16 Signature by email should be mandatory #437

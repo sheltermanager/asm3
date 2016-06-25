@@ -559,6 +559,13 @@ def maint_scale_animal_images(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_scale_animal_images: %s" % em, "cron.maint_scale_animal_images", dbo, sys.exc_info())
 
+def maint_scale_odts(dbo):
+    try:
+        media.scale_all_odt(dbo)
+    except:
+        em = str(sys.exc_info()[0])
+        al.error("FAIL: uncaught error running maint_scale_odts: %s" % em, "cron.maint_scale_odts", dbo, sys.exc_info())
+
 def maint_scale_pdfs(dbo):
     try:
         media.check_and_scale_pdfs(dbo, True)
@@ -636,6 +643,8 @@ def run(dbo, mode):
         maint_recode_shelter(dbo)
     elif mode == "maint_scale_animal_images":
         maint_scale_animal_images(dbo)
+    elif mode == "maint_scale_odts":
+        maint_scale_odts(dbo)
     elif mode == "maint_scale_pdfs":
         maint_scale_pdfs(dbo)
     elif mode == "maint_variable_data":
@@ -749,6 +758,7 @@ def print_usage():
     print "       maint_recode_shelter - regenerate animals codes for all shelter animals"
     print "       maint_reinstall_default_media - re-adds default document/publishing templates"
     print "       maint_scale_animal_images - re-scales all the animal images in the database"
+    print "       maint_scale_odts - re-scales all odt files attached to records (remove images)"
     print "       maint_scale_pdfs - re-scales all the PDFs in the database"
     print "       maint_variable_data - recalculate all variable data for all animals"
 
