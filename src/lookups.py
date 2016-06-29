@@ -191,6 +191,7 @@ MICROCHIP_MANUFACTURERS = [
     { "length": 10, "regex": r"^4C", "name": "HomeAgain", "locales": "" }, 
     { "length": 15, "regex": r"^360981", "name": "Novartis", "locales": "" },
     { "length": 15, "regex": r"^578098", "name": "Kruuse Norge", "locales": "" },
+    { "length": 15, "regex": r"^688", "name": "Serbia", "locales": "" },
     { "length": 15, "regex": r"^90007400", "name": "SmartTag", "locales": "" },
     { "length": 15, "regex": r"^90007900", "name": "PetLog", "locales": "en_GB" },
     { "length": 15, "regex": r"^900008", "name": "Orthana Intertrade", "locales": "" },
