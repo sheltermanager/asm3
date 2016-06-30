@@ -82,6 +82,9 @@ $$BODY
 </tr>
 </table>
 
+<h2>Linked Animals</h2>
+{SUBREPORT.SUBREPORT_IncidentPrintLinkedAnimals.INCIDENTNUMBER}
+
 <h2>Citations</h2>
 {SUBREPORT.SUBREPORT_IncidentPrintCitation.INCIDENTNUMBER}
 
@@ -99,6 +102,27 @@ BODY$$
 $$FOOTER
 FOOTER$$
 ###
+SUBREPORT_IncidentPrintLinkedAnimals
++++
+SELECT a.AnimalName, a.ShelterCode, a.ShortCode,
+s.SpeciesName, t.AnimalType, a.BreedName, a.AnimalAge
+FROM animal a
+INNER JOIN animalcontrolanimal aca ON aca.AnimalID = a.ID
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+WHERE aca.AnimalControlID = $PARENTKEY$
++++
+$$HEADER
+<table>
+<tr><th>Name</th><th>Code</th><th>Type</th><th>Species</th><th>Breed</th><th>Age</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$ANIMALNAME</td><td>$SHELTERCODE</td><td>$ANIMALTYPE</td><td>$SPECIESNAME</td><td>$BREEDNAME</td><td>$ANIMALAGE</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
 SUBREPORT_IncidentPrintCitation
 +++
 SELECT o.OwnerName, o.OwnerAddress, o.OwnerPostcode, o.HomeTelephone, o.EmailAddress,
