@@ -4112,7 +4112,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
             return
 
         lostanimals = lostfound.get_lostanimal_find_advanced(self.dbo, {})
-        foundanimals = lostfound.get_foundanimal_find_advanced(self.dbo, {})
+        foundanimals = lostfound.get_foundanimal_last_days(self.dbo, 90)
         animals = []
 
         if includeshelter:

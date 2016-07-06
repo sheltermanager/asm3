@@ -164,6 +164,12 @@ def get_lostanimal_find_simple(dbo, query = "", limit = 0):
     if limit > 0: sql += " LIMIT " + str(limit)
     return db.query(dbo, sql)
 
+def get_foundanimal_last_days(dbo, days = 90):
+    """
+    Returns found animals active for the last X days
+    """
+    return db.query(dbo, get_foundanimal_query(dbo) + " WHERE a.DateFound > %s AND a.ReturnToOwnerDate Is Null" % db.dd(subtract_days(now(dbo.timezone), days)))
+
 def get_foundanimal_find_simple(dbo, query = "", limit = 0):
     """
     Returns rows for simple found animal searches.

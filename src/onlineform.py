@@ -653,7 +653,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         body = db.query_string(dbo, "SELECT o.EmailMessage FROM onlineform o " \
             "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
             "WHERE oi.CollationID = %d" % int(collationid))
-        if body is None or body == "": 
+        if body is None or body.strip() == "": 
             body = get_onlineformincoming_html_print(dbo, [collationid,])
         utils.send_email(dbo, configuration.email(dbo), submitteremail, "", i18n._("Submission received: {0}", l).format(formname), body, "html")
     # Did the original form specify some email addresses to send 

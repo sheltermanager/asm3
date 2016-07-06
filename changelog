@@ -1,6 +1,8 @@
 39
 ================
 
+07/07/16 Fix whitespace confirmation sending blank emails
+06/07/16 PetsLocated only include last 90 days of found animals
 25/06/16 Fix timezone when adding messages
 22/06/16 Add maintenance function to discard ODT images
 22/06/16 ODT files were not using ZIP_DEFLATE
