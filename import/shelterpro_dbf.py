@@ -17,7 +17,7 @@ Will also look in PATH/images/ANIMALKEY.[jpg|JPG] for animal photos if available
 21st April, 2016
 """
 
-PATH = "data/shelterpro_fn1070"
+PATH = "data/shelterpro_ay1131"
 
 def gettype(animaldes):
     spmap = {
