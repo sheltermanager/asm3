@@ -116,7 +116,7 @@ cperson = dbfread.DBF("%s/person.dbf" % PATH)
 cshelter = dbfread.DBF("%s/shelter.dbf" % PATH)
 cvacc = dbfread.DBF("%s/vacc.dbf" % PATH)
 cincident = dbfread.DBF("%s/incident.dbf" % PATH)
-cnote = dbfread.DBF("%s/note.dbf" % PATH)
+#cnote = dbfread.DBF("%s/note.dbf" % PATH)
 
 # Start with animals
 for row in canimal:
@@ -368,9 +368,9 @@ for row in clicense:
         #    ol.LicenceTypeID = 1 # Altered dog
 
 # Incident notes
-for row in cnote:
-    if row["EVENTTYPE"] == 2:
-        notes[row["EVENTKEY"]] = row["NOTEMEMO"]
+#for row in cnote:
+#    if row["EVENTTYPE"] == 2:
+#        notes[row["EVENTKEY"]] = row["NOTEMEMO"]
 
 # Incidents
 for row in cincident:
