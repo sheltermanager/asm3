@@ -4340,7 +4340,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
                     # lastlocation
                     line.append("\"\"")
                     # locationpostcode
-                    line.append("\"%s\"" % self.plcPostcode(an["BROUGHTINBYOWNERPOSTCODE"]))
+                    line.append("\"%s\"" % self.plcPostcode(an["ORIGINALOWNERPOSTCODE"]))
                     # datelostfound
                     line.append("\"%s\"" % i18n.python2display(self.locale, an["DATEBROUGHTIN"]))
                     # otherdetails
