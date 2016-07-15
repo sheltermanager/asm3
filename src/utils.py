@@ -967,7 +967,7 @@ def send_user_email(dbo, sendinguser, user, subject, body):
     for u in allusers:
         # skip if we have no email address - we can't send it.
         if u["EMAILADDRESS"] is None or u["EMAILADDRESS"].strip() == "": continue
-        if user == _("(all)", l) or user == _("(everyone)", l):
+        if user == "*":
             send_email(dbo, fromadd, u["EMAILADDRESS"], "", subject, body)
         elif u["USERNAME"] == user:
             send_email(dbo, fromadd, u["EMAILADDRESS"], "", subject, body)

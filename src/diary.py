@@ -49,7 +49,7 @@ def email_uncompleted_upto_today(dbo):
             totalforuser = 0
             for n in notes:
                 # Is this note relevant for this user?
-                if (n["DIARYFORNAME"] == i18n._("(all)", l) or n["DIARYFORNAME"] == i18n._("(everyone)", l)) \
+                if (n["DIARYFORNAME"] == "*") \
                 or (n["DIARYFORNAME"] == u["USERNAME"]) \
                 or (u["ROLES"].find(n["DIARYFORNAME"]) != -1):
                     s += i18n.python2display(l, n["DIARYDATETIME"]) + " "
