@@ -962,6 +962,7 @@ def send_user_email(dbo, sendinguser, user, subject, body):
         fromadd = sendinguser[0]["EMAILADDRESS"]
         if fromadd is None or fromadd.strip() == "":
             fromadd = DEFAULT_EMAIL
+    al.debug("from: %s (%s), to: %s" % (sendinguser, fromadd, user), "utils.send_user_email", dbo)
     allusers = users.get_users(dbo)
     for u in allusers:
         # skip if we have no email address - we can't send it.
