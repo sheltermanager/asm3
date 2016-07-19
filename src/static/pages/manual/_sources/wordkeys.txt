@@ -792,6 +792,8 @@ DispatchCounty / DispatchState
     The state an ACO was dispatched to
 DispatchPostcode / DispatchZipcode
     The zipcode an ACO was dispatched to
+PickupAddress
+    The pickup address
 PickupLocationName
     The pickup location set on the incident
 RespondedDate

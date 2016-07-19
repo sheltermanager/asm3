@@ -475,6 +475,7 @@ def animalcontrol_tags(dbo, ac):
         "DISPATCHZIPCODE":      ac["DISPATCHPOSTCODE"],
         "DISPATCHEDACO":        ac["DISPATCHEDACO"],
         "PICKUPLOCATIONNAME":   utils.nulltostr(ac["LOCATIONNAME"]),
+        "PICKUPADDRESS":        utils.nulltostr(ac["PICKUPADDRESS"]),
         "RESPONDEDDATE":        python2display(l, ac["RESPONDEDDATETIME"]),
         "RESPONDEDTIME":        format_time(ac["RESPONDEDDATETIME"]),
         "FOLLOWUPDATE":         python2display(l, ac["FOLLOWUPDATETIME"]),
