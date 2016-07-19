@@ -166,6 +166,10 @@ Neutered
     "Yes" if the animal has been neutered/spayed (usually called "altered" or "fixed" in the US) 
 NeuteredDate
     The date the animal was neutered 
+PickupAddress
+    The pickup address
+PickupLocationName
+    The pickup location set on the animal
 BroughtInByAddress
     The address of the person who brought the animal in
 BroughtInByName
@@ -792,8 +796,6 @@ DispatchCounty / DispatchState
     The state an ACO was dispatched to
 DispatchPostcode / DispatchZipcode
     The zipcode an ACO was dispatched to
-PickupAddress
-    The pickup address
 PickupLocationName
     The pickup location set on the incident
 RespondedDate
