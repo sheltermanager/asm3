@@ -1,6 +1,7 @@
 39
 ================
 
+19/07/16 Fix nopic.jpg from image redirect to include db name for caching
 19/07/16 Add PickupAddress wordkey
 15/07/16 Fix (everyone) target for emailing messages
 07/07/16 Fix whitespace confirmation sending blank emails

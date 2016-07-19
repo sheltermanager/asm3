@@ -481,7 +481,7 @@ class image:
         else:
             web.header("Content-Type", "image/jpeg")
             web.header("Cache-Control", "no-cache")
-            raise web.seeother("image?mode=dbfs&id=/reports/nopic.jpg")
+            raise web.seeother("image?db=%s&mode=dbfs&id=/reports/nopic.jpg" % session.dbo.database)
 
 class rollupjs:
     def GET(self):
