@@ -597,10 +597,13 @@ def fix_relative_document_uris(s, baseurl, account = "" ):
     the ASM UI.
     """
     if account != "":
-        account = "&account=" + account
-    s = s.replace("image?mode=animal&amp;id=", baseurl + "/service?method=animal_image" + account + "&animalid=")
-    s = s.replace("image?mode=dbfs&amp;id=/reports/", baseurl + "/service?method=extra_image" + account + "&title=")
-    s = s.replace("image?mode=dbfs&amp;id=/animal/", baseurl + "/service?method=dbfs_image" + account + "&title=/animal/")
+        dbp = "db=%s&" % account
+        accountp = "&account=" + account
+    s = s.replace("image?mode=animal&amp;id=", baseurl + "/service?method=animal_image" + accountp + "&animalid=")
+    s = s.replace("image?mode=dbfs&amp;id=/reports/", baseurl + "/service?method=extra_image" + accountp + "&title=")
+    s = s.replace("image?" + dbp + "mode=dbfs&amp;id=/reports/", baseurl + "/service?method=extra_image" + accountp + "&title=")
+    s = s.replace("image?mode=dbfs&amp;id=/animal/", baseurl + "/service?method=dbfs_image" + accountp + "&title=/animal/")
+    s = s.replace("image?" + dbp + "mode=dbfs&amp;id=/animal/", baseurl + "/service?method=dbfs_image" + accountp + "&title=/animal/")
     return s
 
 def substitute_tags(searchin, tags, use_xml_escaping = True, opener = "&lt;&lt;", closer = "&gt;&gt;"):

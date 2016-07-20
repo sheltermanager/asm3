@@ -599,7 +599,7 @@ def img_src(row, mode):
             uri += "&date=" + str(row["WEBSITEMEDIADATE"].isoformat())
         return uri
 
-def doc_img_src(row, mode):
+def doc_img_src(dbo, row, mode):
     """
     Gets the img src attribute/link for a document picture. If the row
     doesn't have doc preferred media, the nopic src is returned instead.
@@ -607,7 +607,7 @@ def doc_img_src(row, mode):
     mode: The mode - animal or person
     """
     if row["DOCMEDIANAME"] is None or row["DOCMEDIANAME"] == "":
-        return "image?mode=dbfs&id=/reports/nopic.jpg"
+        return "image?db=" + dbo.database + "&mode=dbfs&id=/reports/nopic.jpg"
     else:
         path = ""
         if mode == "animal":
@@ -624,7 +624,7 @@ def doc_img_src(row, mode):
             path = "/person/%d/%s" % (idval, row["DOCMEDIANAME"])
         else:
             path = "/animal/%d/%s" % (row["ID"], row["DOCMEDIANAME"])
-        uri = "image?mode=dbfs&id=%s" % path
+        uri = "image?db=" + dbo.database + "&mode=dbfs&id=%s" % path
         return uri
 
 def json_menu(l, reports, mailmerges):
@@ -973,7 +973,7 @@ def findcolumns_selectedtofront(cols, vals):
                 break
     return vals
 
-def thumbnail_img_src(row, mode):
+def thumbnail_img_src(dbo, row, mode):
     """
     Gets the img src attribute for a thumbnail picture. If the row
     doesn't have preferred media, the nopic src is returned instead.
@@ -999,7 +999,7 @@ def thumbnail_img_src(row, mode):
                 idval = int(row["ID"])
         else:
             idval = int(row["ID"])
-        uri = "image?mode=" + mode + "&id=" + str(idval)
+        uri = "image?db=" + dbo.database + "&mode=" + mode + "&id=" + str(idval)
         if row.has_key("WEBSITEMEDIADATE") and row["WEBSITEMEDIADATE"] is not None:
             uri += "&date=" + str(row["WEBSITEMEDIADATE"].isoformat())
         return uri

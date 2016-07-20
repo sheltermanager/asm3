@@ -39,8 +39,12 @@ movement screens.
 
 DocumentImgLink
     An <img> tag containing a link to the animal's preferred document image.
+DocumentImgSrc
+    Just the src attribute value for an image link to the preferred document image.
 DocumentImgThumbLink
     An <img> tag containing a link to a thumbnail of the animal's preferred document image.
+DocumentImgThumbSrc
+    Just the src attribute value for a thumbnail link to the preferred document image.
 DocumentQRLink
     An <img> tag containing a link to QR code that references a URL to the animal's record within ASM.
 ShelterCode
