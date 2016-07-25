@@ -4,7 +4,7 @@ Statistics
 ###
 2721/PostgreSQL
 ###
-Shows time on shelter by age group for animals entering the shelter between two dates and have left.
+Shows time on shelter by age group for animals entering the shelter between two dates and have left with ages at entry and exit.
 ###
 en
 ###
@@ -12,7 +12,9 @@ SELECT
 a.AnimalName, a.ShelterCode,
 s.SpeciesName, e.ReasonName, a.AgeGroup,
 a.DateBroughtIn, a.TimeOnShelter, a.DaysOnShelter, a.AnimalAge, 
-CASE WHEN a.ActiveMovementType = 2 THEN Null ELSE a.ActiveMovementDate END AS DateExit
+CASE WHEN a.ActiveMovementType = 2 THEN Null ELSE a.ActiveMovementDate END AS DateExit,
+age(a.DateBroughtIn, a.DateOfBirth)::varchar AS AgeEntry,
+age(a.ActiveMovementDate, a.DateOfBirth)::varchar AS AgeExit
 FROM animal a
 INNER JOIN species s ON s.ID = a.SpeciesID
 INNER JOIN entryreason e ON e.ID = a.EntryReasonID
@@ -30,6 +32,7 @@ $$HEAD
 <tr>
 <th>Code</th>
 <th>Name</th>
+<th>Species</th>
 <th>Age</th>
 <th>Entry Category</th>
 <th>Entered</th>
@@ -45,7 +48,8 @@ $$BODY
 <tr>
 <td>$SHELTERCODE</td>
 <td>$ANIMALNAME</td>
-<td>$ANIMALAGE</td>
+<td>$SPECIESNAME</td>
+<td>$AGEENTRY (entry), $AGEEXIT (exit)</td>
 <td>$REASONNAME</td>
 <td>$DATEBROUGHTIN</td>
 <td>$DATEEXIT</td>
