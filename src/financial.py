@@ -341,7 +341,7 @@ def get_donations_by_ids(dbo, dids):
     """
     Returns multiple donations with a list of ids
     """
-    return db.query(dbo, get_donation_query(dbo) + "WHERE od.ID IN (%s)" % ",".join(str(x) for x in dids))
+    return db.query(dbo, get_donation_query(dbo) + "WHERE od.ID IN (%s) ORDER BY od.Date" % ",".join(str(x) for x in dids))
 
 def get_movement_donation(dbo, mid):
     """

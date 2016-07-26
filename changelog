@@ -1,6 +1,7 @@
 39
 ================
 
+26/07/16 Show payments on documents in received order
 20/07/16 Add DocumentImgSrc and DocumentImgThumbSrc wordkeys
 20/07/16 Report extra_images break CloudFlare caching #446
 19/07/16 Fix nopic.jpg from image redirect to include db name for caching
