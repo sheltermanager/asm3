@@ -1814,6 +1814,13 @@ class AnibaseUKPublisher(AbstractPublisher):
                             wassuccess = True
                             break
 
+                    # If we got a chipfound=false message, mark the chip as processed and a success
+                    # so we don't try and register it in future
+                    if str(r["response"]).find("<chipFound>false</chipFound>") != -1:
+                        self.log("chipFound=false response found, marking chip processed to prevent future sending")
+                        processed_animals.append(an)
+                        wassuccess = True
+
                     # If we saw an account not found message, there's no point sending 
                     # anything else as they will all trigger the same error
                     if str(r["headers"]).find("54101") != -1:
