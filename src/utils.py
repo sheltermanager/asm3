@@ -956,7 +956,6 @@ def send_user_email(dbo, sendinguser, user, subject, body):
     user:        can be an individual username, a rolename or the translated 
                  version of (all) or (everyone) to denote all users.
     """
-    l = dbo.locale
     DEFAULT_EMAIL = "noreply@sheltermanager.com"
     sendinguser = users.get_users(dbo, sendinguser)
     if len(sendinguser) == 0:
