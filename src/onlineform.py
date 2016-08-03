@@ -238,17 +238,20 @@ def get_onlineform_html(dbo, formid, completedocument = True):
         elif f["FIELDTYPE"] == FIELDTYPE_COLOUR:
             h.append('<select class="asm-onlineform-colour" name="%s" title="%s" %s>' % ( html.escape(fname), utils.nulltostr(f["TOOLTIP"]), required))
             for l in lookups.get_basecolours(dbo):
-                h.append('<option>%s</option>' % l["BASECOLOUR"])
+                if l["ISRETIRED"] != 1:
+                    h.append('<option>%s</option>' % l["BASECOLOUR"])
             h.append('</select>')
         elif f["FIELDTYPE"] == FIELDTYPE_BREED:
             h.append('<select class="asm-onlineform-breed" name="%s" title="%s" %s>' % ( html.escape(fname), utils.nulltostr(f["TOOLTIP"]), required))
             for l in lookups.get_breeds(dbo):
-                h.append('<option>%s</option>' % l["BREEDNAME"])
+                if l["ISRETIRED"] != 1:
+                    h.append('<option>%s</option>' % l["BREEDNAME"])
             h.append('</select>')
         elif f["FIELDTYPE"] == FIELDTYPE_SPECIES:
             h.append('<select class="asm-onlineform-species" name="%s" title="%s" %s>' % ( html.escape(fname), utils.nulltostr(f["TOOLTIP"]), required))
             for l in lookups.get_species(dbo):
-                h.append('<option>%s</option>' % l["SPECIESNAME"])
+                if l["ISRETIRED"] != 1:
+                    h.append('<option>%s</option>' % l["SPECIESNAME"])
             h.append('</select>')
         elif f["FIELDTYPE"] == FIELDTYPE_RAWMARKUP:
             h.append('<input type="hidden" name="%s" value="raw" />' % html.escape(fname))

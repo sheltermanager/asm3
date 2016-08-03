@@ -1,6 +1,7 @@
 39
 ================
 
+03/08/16 Hide retired lookups from online forms #448
 03/08/16 Show person addresses in movement books/tabs #444
 02/08/16 Mark anibase chipFound=false responses as processed
 26/07/16 Show payments on documents in received order
