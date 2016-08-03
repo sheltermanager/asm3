@@ -258,11 +258,12 @@
         /** 
          * Used for reading the error message from an AJAX response. 
          * We have this because Safari seems to end up with "Internal Server Error"
-         * as the response variable instead of the real error message.
+         * as the response variable instead of the real error message and 
+         * Chrome has just "error".
          */
         get_error_response: function(jqxhr, textstatus, response) {
             var errmessage = String(response);
-            if (response.indexOf("Internal Server") != -1) {
+            if (response.indexOf("Internal Server") != -1 || errmessage == "error") {
                 errmessage = jqxhr.responseText;
                 if (errmessage.indexOf("<p>") != -1) {
                     errmessage = errmessage.substring(errmessage.indexOf("<p>")+3, errmessage.indexOf("</p>")+4);
