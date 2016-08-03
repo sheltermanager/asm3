@@ -1285,7 +1285,7 @@ def handler_viewincident(session, l, dbo, a, amls, cit, dia, logs, homelink, pos
     h.append(tr( _("Taken By", l), a["CALLTAKER"]))
     if users.check_permission_bool(session, users.VIEW_PERSON):
         h.append(tr( _("Caller", l), a["CALLERNAME"]))
-        h.append(tr( _("Phone", l), "%s %s %s" % (jqm_tel(l, a["HOMETELEPHONE"]), jqm_tel(l, a["WORKTELEPHONE"]), jqm_tel(l, a["MOBILETELEPHONE"]))))
+        h.append(tr( _("Phone", l), "%s %s %s" % (jqm_tel(l, a["CALLERHOMETELEPHONE"]), jqm_tel(l, a["CALLERWORKTELEPHONE"]), jqm_tel(l, a["CALLERMOBILETELEPHONE"]))))
         h.append(tr( _("Victim", l), a["VICTIMNAME"]))
     h.append(table_end())
    
