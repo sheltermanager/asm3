@@ -25,7 +25,7 @@ PERMANENT_FOSTER = 12
 
 def get_movement_query(dbo):
     return "SELECT DISTINCT m.*, o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, " \
-        "o.OwnerAddress, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, " \
+        "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, " \
         "rs.StatusName AS ReservationStatusName, " \
         "a.ShelterCode, a.ShortCode, a.AnimalAge, a.AgeGroup, a.AnimalName, a.Neutered, a.DeceasedDate, a.HasActiveReserve, " \
         "a.HasTrialAdoption, a.IsHold, a.IsQuarantine, a.HoldUntilDate, a.CrueltyCase, a.NonShelterAnimal, " \
