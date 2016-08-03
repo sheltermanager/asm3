@@ -778,6 +778,14 @@ CallTime
     The time of the call
 CallerName
     The name of the caller
+CallerAddress
+    The address of the caller
+CallerTown / CallerCity
+    The city of the caller
+CallerCounty / CallerState
+    The state of the caller
+CallerPostcode / CallerZipcode
+    The zipcode of the caller
 CallerHomeTelephone
     The caller's home number
 CallerWorkTelephone
@@ -861,4 +869,27 @@ VictimWorkTelephone
 VictimMobileTelephone / VictimCellTelephone
     The victim's mobile number
 
+Incident Animal Keys
+--------------------
+
+Incident animal keys allow accessing of the animals linked to an incident. Each
+animal is indexed with a number for ascending (eg: AnimalName1) or LastX for
+descending (AnimalNameLast1).
+
+AnimalName
+    The animal's name
+ShelterCode
+    The animal's shelter code
+ShortCode
+    The animal's short shelter code
+AgeGroup
+    The animal's age group
+AnimalTypeName
+    The type of animal
+SpeciesName
+    The species of animal
+DateBroughtIn
+    The date the animal entered the shelter
+DeceasedDate
+    The date the animal died
 

@@ -490,10 +490,17 @@ def animalcontrol_tags(dbo, ac):
         "SEX":                  utils.nulltostr(ac["SEXNAME"]),
         "AGEGROUP":             utils.nulltostr(ac["AGEGROUP"]),
         "CALLERNAME":           utils.nulltostr(ac["CALLERNAME"]),
-        "CALLERHOMETELEPHONE":  utils.nulltostr(ac["HOMETELEPHONE"]),
-        "CALLERWORKTELEPHONE":  utils.nulltostr(ac["WORKTELEPHONE"]),
-        "CALLERMOBILETELEPHONE": utils.nulltostr(ac["MOBILETELEPHONE"]),
-        "CALLERCELLTELEPHONE":  utils.nulltostr(ac["MOBILETELEPHONE"]),
+        "CALLERADDRESS":        utils.nulltostr(ac["CALLERADDRESS"]),
+        "CALLERTOWN":           utils.nulltostr(ac["CALLERTOWN"]),
+        "CALLERCITY":           utils.nulltostr(ac["CALLERTOWN"]),
+        "CALLERCOUNTY":         utils.nulltostr(ac["CALLERCOUNTY"]),
+        "CALLERSTATE":          utils.nulltostr(ac["CALLERCOUNTY"]),
+        "CALLERPOSTCODE":       utils.nulltostr(ac["CALLERPOSTCODE"]),
+        "CALLERZIPCODE":        utils.nulltostr(ac["CALLERPOSTCODE"]),
+        "CALLERHOMETELEPHONE":  utils.nulltostr(ac["CALLERHOMETELEPHONE"]),
+        "CALLERWORKTELEPHONE":  utils.nulltostr(ac["CALLERWORKTELEPHONE"]),
+        "CALLERMOBILETELEPHONE": utils.nulltostr(ac["CALLERMOBILETELEPHONE"]),
+        "CALLERCELLTELEPHONE":  utils.nulltostr(ac["CALLERMOBILETELEPHONE"]),
         "SUSPECTNAME":          utils.nulltostr(ac["SUSPECTNAME"]),
         "SUSPECTADDRESS":       utils.nulltostr(ac["SUSPECTADDRESS"]),
         "SUSPECTTOWN":          utils.nulltostr(ac["SUSPECTTOWN"]),
@@ -520,6 +527,19 @@ def animalcontrol_tags(dbo, ac):
         "VICTIMMOBILETELEPHONE":  utils.nulltostr(ac["VICTIMMOBILETELEPHONE"]),
         "VICTIMCELLTELEPHONE":  utils.nulltostr(ac["VICTIMMOBILETELEPHONE"])
     }
+
+    # Linked animals
+    d = {
+        "ANIMALNAME":           "ANIMALNAME",
+        "SHELTERCODE":          "SHELTERCODE",
+        "SHORTCODE":            "SHORTCODE",
+        "AGEGROUP":             "AGEGROUP",
+        "ANIMALTYPENAME":       "ANIMALTYPENAME",
+        "SPECIESNAME":          "SPECIESNAME",
+        "DATEBROUGHTIN":        "d:DATEBROUGHTIN",
+        "DECEASEDDATE":         "d:DECEASEDDATE"
+    }
+    tags.update(table_tags(dbo, d, animalcontrol.get_animalcontrol_animals(dbo, ac["ID"]), "SPECIESNAME", "DATEBROUGHTIN"))
 
     # Additional fields
     add = additional.get_additional_fields(dbo, ac["ID"], "incident")

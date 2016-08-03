@@ -15,7 +15,8 @@ DESCENDING = 1
 
 def get_animalcontrol_query(dbo):
     return "SELECT ac.*, ac.ID AS ACID, s.SpeciesName, x.Sex AS SexName, " \
-        "co.OwnerName AS CallerName, co.HomeTelephone, co.WorkTelephone, co.MobileTelephone, " \
+        "co.OwnerName AS CallerName, co.OwnerAddress AS CallerAddress, co.OwnerTown AS CallerTown, co.OwnerCounty AS CallerCounty, co.OwnerPostcode AS CallerPostcode," \
+        "co.HomeTelephone AS CallerHomeTelephone, co.WorkTelephone AS CallerWorkTelephone, co.MobileTelephone AS CallerMobileTelephone, " \
         "o1.OwnerName AS OwnerName, o1.OwnerName AS OwnerName1, o2.OwnerName AS OwnerName2, o3.OwnerName AS OwnerName3, " \
         "o1.OwnerName AS SuspectName, o1.OwnerAddress AS SuspectAddress, o1.OwnerTown AS SuspectTown, o1.OwnerCounty AS SuspectCounty, o1.OwnerPostcode AS SuspectPostcode, " \
         "o1.HomeTelephone AS SuspectHomeTelephone, o1.WorkTelephone AS SuspectWorkTelephone, o1.MobileTelephone AS SuspectMobileTelephone, " \
@@ -36,12 +37,15 @@ def get_animalcontrol_query(dbo):
 
 def get_animalcontrol_animals_query(dbo):
     return "SELECT a.ID, aca.AnimalID, a.ShelterCode, a.ShortCode, a.AgeGroup, a.AnimalName, " \
-        "a.Neutered, a.DeceasedDate, a.HasActiveReserve, " \
+        "a.Neutered, a.DateBroughtIn, a.DeceasedDate, a.HasActiveReserve, " \
         "a.HasTrialAdoption, a.IsHold, a.IsQuarantine, a.HoldUntilDate, a.CrueltyCase, a.NonShelterAnimal, " \
         "a.ActiveMovementType, a.Archived, a.IsNotAvailableForAdoption, " \
-        "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult " \
+        "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
+        "s.SpeciesName, t.AnimalType AS AnimalTypeName " \
         "FROM animalcontrolanimal aca " \
-        "INNER JOIN animal a ON aca.AnimalID = a.ID"
+        "INNER JOIN animal a ON aca.AnimalID = a.ID " \
+        "INNER JOIN species s ON s.ID = a.SpeciesID " \
+        "INNER JOIN animaltype t ON t.ID = a.AnimalTypeID "
 
 def get_traploan_query(dbo):
     return "SELECT ot.ID, ot.TrapTypeID, ot.LoanDate, tt.TrapTypeName, ot.TrapNumber, " \
