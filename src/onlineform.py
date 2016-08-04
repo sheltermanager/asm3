@@ -702,7 +702,7 @@ def guess_colour(dbo, s):
 
 def guess_sex(dummy, s):
     """ Guesses a sex """
-    if s.lower().startswith("M"):
+    if s.lower().startswith("m"):
         return 1
     return 0
 
