@@ -274,6 +274,41 @@ AND NonShelterAnimal = 0) AS JuniorCatOtherIntake,
 
 
 
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType = 1
+AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
+AND SpeciesID = 1
+AND DateOfBirth < ReturnDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS AdultDogReturn,
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType = 1
+AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
+AND SpeciesID = 1
+AND DateOfBirth >= ReturnDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS JuniorDogReturn,
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType = 1
+AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
+AND SpeciesID = 2
+AND DateOfBirth < ReturnDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS AdultCatReturn,
+
+(SELECT COUNT(*) FROM animal
+INNER JOIN adoption ON animal.ID = adoption.AnimalID 
+WHERE MovementType = 1
+AND ReturnDate >= '$@from$' AND ReturnDate <= '$@to$' 
+AND SpeciesID = 2
+AND DateOfBirth >= ReturnDate - INTERVAL '5 months' 
+AND NonShelterAnimal = 0) AS JuniorCatReturn,
+
+
+
+
 
 
 (SELECT COUNT(*) FROM animal
@@ -718,6 +753,16 @@ $$BODY
 <td>0</td>
 <td>$AdultCatTransferIn</td>
 <td>$JuniorCatTransferIn</td>
+<td>0</td>
+</tr>
+
+<tr>
+<td>Intake: Returns</td>
+<td>$AdultDogOtherReturn</td>
+<td>$JuniorDogOtherReturn</td>
+<td>0</td>
+<td>$AdultCatOtherReturn</td>
+<td>$JuniorCatOtherReturn</td>
 <td>0</td>
 </tr>
 
