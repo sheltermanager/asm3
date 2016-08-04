@@ -887,10 +887,20 @@ class FTPPublisher(AbstractPublisher):
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.ftphost = ftphost
         self.ftpuser = ftpuser
-        self.ftppassword = ftppassword
+        self.ftppassword = self.unxssPass(ftppassword)
         self.ftpport = ftpport
         self.ftproot = ftproot
         self.passive = passive
+
+    def unxssPass(self, s):
+        """
+        Passwords stored in the config table are subject to XSS escaping, so
+        any >, < or & in the password will have been escaped - turn them back again
+        """
+        s = s.replace("&lt;", "<")
+        s = s.replace("&gt;", ">")
+        s = s.replace("&amp;", "&")
+        return s
 
     def openFTPSocket(self):
         """
