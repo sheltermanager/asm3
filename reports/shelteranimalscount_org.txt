@@ -758,11 +758,11 @@ $$BODY
 
 <tr>
 <td>Intake: Returns</td>
-<td>$AdultDogOtherReturn</td>
-<td>$JuniorDogOtherReturn</td>
+<td>$AdultDogReturn</td>
+<td>$JuniorDogReturn</td>
 <td>0</td>
-<td>$AdultCatOtherReturn</td>
-<td>$JuniorCatOtherReturn</td>
+<td>$AdultCatReturn</td>
+<td>$JuniorCatReturn</td>
 <td>0</td>
 </tr>
 
