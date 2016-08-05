@@ -3053,6 +3053,7 @@ class incident:
         c += html.controller_json("incidenttypes", extlookups.get_incident_types(dbo))
         c += html.controller_json("completedtypes", extlookups.get_incident_completed_types(dbo))
         c += html.controller_json("pickuplocations", extlookups.get_pickup_locations(dbo))
+        c += html.controller_json("roles", users.get_roles(dbo))
         c += html.controller_json("species", extlookups.get_species(dbo))
         c += html.controller_json("sexes", extlookups.get_sexes(dbo))
         c += html.controller_json("tabcounts", extanimalcontrol.get_animalcontrol_satellite_counts(dbo, a["ACID"])[0])
@@ -3149,7 +3150,7 @@ class incident_find_results:
         dbo = session.dbo
         l = session.locale
         post = utils.PostedData(web.input(mode = ""), session.locale)
-        results = extanimalcontrol.get_animalcontrol_find_advanced(dbo, post.data, configuration.record_search_limit(dbo))
+        results = extanimalcontrol.get_animalcontrol_find_advanced(dbo, post.data, session.user, configuration.record_search_limit(dbo))
         resultsmessage = _("Find animal control incidents returned {0} results.", l).format(len(results))
         al.debug("found %d results for %s" % (len(results), str(web.ctx.query)), "code.incident_find_results", dbo)
         s = html.header("", session)
@@ -3245,7 +3246,7 @@ class incident_map:
         users.check_permission(session, users.VIEW_INCIDENT)
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
-        rows = extanimalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "incomplete" })
+        rows = extanimalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "incomplete" }, session.user)
         al.debug("incident map, %d active" % (len(rows)), "code.incident_map", dbo)
         s = html.header("", session)
         c = html.controller_json("rows", rows);
@@ -3386,6 +3387,7 @@ class incident_new:
         c = html.controller_json("incidenttypes", extlookups.get_incident_types(dbo))
         c += html.controller_json("additional", extadditional.get_additional_fields(dbo, 0, "incident"))
         c += html.controller_json("pickuplocations", extlookups.get_pickup_locations(dbo))
+        c += html.controller_json("roles", users.get_roles(dbo))
         c += html.controller_json("users", users.get_users(dbo))
         s += html.controller(c)
         s += html.footer()

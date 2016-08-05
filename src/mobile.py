@@ -281,9 +281,9 @@ def page(dbo, session, username):
     mess = lookups.get_messages(dbo, session.user, session.roles, session.superuser)
     testresults = lookups.get_test_results(dbo)
     stl = stock.get_stock_locations_totals(dbo)
-    inmy = animalcontrol.get_animalcontrol_find_advanced(dbo, { "dispatchedaco": session.user, "filter": "incomplete" })
-    inop = animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "incomplete" })
-    infp = animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "requirefollowup" })
+    inmy = animalcontrol.get_animalcontrol_find_advanced(dbo, { "dispatchedaco": session.user, "filter": "incomplete" }, username)
+    inop = animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "incomplete" }, username)
+    infp = animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "requirefollowup" }, username)
     homelink = jqm_link("mobile", _("Home", l), "home", "ui-btn-right", "b")
     h = []
 

@@ -351,7 +351,7 @@ def search(dbo, session, q):
         q = q[q.find(":")+1:].strip()
         explain = _("Animal control incidents matching '{0}'.", l).format(q)
         if users.check_permission_bool(session, users.VIEW_INCIDENT):
-            ar( animalcontrol.get_animalcontrol_find_simple(dbo, q, limit), "ANIMALCONTROL", acsort )
+            ar( animalcontrol.get_animalcontrol_find_simple(dbo, q, session.user, limit), "ANIMALCONTROL", acsort )
     elif q.startswith("p:") or q.startswith("person:"):
         q = q[q.find(":")+1:].strip()
         explain = _("People matching '{0}'.", l).format(q)

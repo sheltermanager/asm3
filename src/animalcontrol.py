@@ -7,6 +7,7 @@ import db
 import diary
 import log
 import media
+import users
 import utils
 from i18n import _, now, subtract_days, python2display, format_time_now
 
@@ -61,11 +62,28 @@ def get_animalcontrol(dbo, acid):
     """
     Returns an animal control incident record
     """
-    rows = db.query(dbo, get_animalcontrol_query(dbo) + " WHERE ac.ID = %d" % int(acid))
+    rows = db.query(dbo, get_animalcontrol_query(dbo) + " WHERE ac.ID = %d" % acid)
     if rows == None or len(rows) == 0:
         return None
     else:
-        return rows[0]
+        ac = rows[0]
+        roles = db.query(dbo, "SELECT acr.*, r.RoleName FROM animalcontrolrole acr INNER JOIN role r ON acr.RoleID = r.ID WHERE acr.AnimalControlID = %d" % acid)
+        viewroleids = []
+        viewrolenames = []
+        editroleids = []
+        editrolenames = []
+        for r in roles:
+            if r["CANVIEW"] == 1:
+                viewroleids.append(str(r["ROLEID"]))
+                viewrolenames.append(str(r["ROLENAME"]))
+            if r["CANEDIT"] == 1:
+                editroleids.append(str(r["ROLEID"]))
+                editrolenames.append(str(r["ROLENAME"]))
+        ac["VIEWROLEIDS"] = "|".join(viewroleids)
+        ac["VIEWROLES"] = "|".join(viewrolenames)
+        ac["EDITROLEIDS"] = "|".join(editroleids)
+        ac["EDITROLES"] = "|".join(editrolenames)
+        return ac
 
 def get_animalcontrol_animals(dbo, acid):
     return db.query(dbo, get_animalcontrol_animals_query(dbo) + " WHERE aca.AnimalControlID = %d" % acid)
@@ -79,7 +97,7 @@ def get_followup_two_dates(dbo, dbstart, dbend):
         "(ac.FollowupDateTime2 >= '%(start)s' AND ac.FollowupDateTime2 <= '%(end)s' AND NOT ac.FollowupComplete2 = 1) OR " \
         "(ac.FollowupDateTime3 >= '%(start)s' AND ac.FollowupDateTime3 <= '%(end)s' AND NOT ac.FollowupComplete3 = 1)" % { "start": dbstart, "end": dbend })
 
-def get_animalcontrol_find_simple(dbo, query = "", limit = 0):
+def get_animalcontrol_find_simple(dbo, query = "", username = "", limit = 0):
     """
     Returns rows for simple animal control searches.
     query: The search criteria
@@ -111,9 +129,9 @@ def get_animalcontrol_find_simple(dbo, query = "", limit = 0):
             ors.append(add("ac.AnimalDescription"))
     sql = get_animalcontrol_query(dbo) + " WHERE " + " OR ".join(ors)
     if limit > 0: sql += " LIMIT " + str(limit)
-    return db.query(dbo, sql)
+    return reduce_find_results(dbo, username, db.query(dbo, sql))
 
-def get_animalcontrol_find_advanced(dbo, criteria, limit = 0):
+def get_animalcontrol_find_advanced(dbo, criteria, username, limit = 0):
     """
     Returns rows for advanced animal control searches.
     criteria: A dictionary of criteria
@@ -210,7 +228,38 @@ def get_animalcontrol_find_advanced(dbo, criteria, limit = 0):
         where = " WHERE " + " AND ".join(c)
     sql = get_animalcontrol_query(dbo) + where + " ORDER BY ac.ID"
     if limit > 0: sql += " LIMIT " + str(limit)
-    return db.query(dbo, sql)
+    return reduce_find_results(dbo, username, db.query(dbo, sql))
+
+def reduce_find_results(dbo, username, rows):
+    """
+    Given the results of a find operation, goes through the view roles
+    for the results and removes any results which the user does not
+    have permission to view
+    """
+    # Do nothing if there are no results
+    if len(rows) == 0: return rows
+    u = db.query(dbo, "SELECT * FROM users WHERE UserName = %s" % db.ds(username))
+    # Do nothing if we can't find the user
+    if len(u) == 0: return rows
+    # Do nothing if the user is a super user
+    u = u[0]
+    if u["SUPERUSER"] == 1: return rows
+    roles = users.get_roles_ids_for_user(dbo, username)
+    # Build an IN clause of result IDs
+    rids = []
+    for r in rows:
+        rids.append(r["ACID"])
+    viewroles = db.query(dbo, "SELECT * FROM animalcontrolrole WHERE AnimalControlID IN (%s)" % ",".join(rids))
+    # Remove rows where the user doesn't have that role
+    results = []
+    for r in rows:
+        rok = True
+        for v in viewroles:
+            if v["ANIMALCONTROLID"] == r["ACID"] and not v["ROLEID"] in roles:
+                rok = False
+        if rok:
+            results.append(r)
+    return results
 
 def get_animalcontrol_satellite_counts(dbo, acid):
     """
@@ -333,6 +382,16 @@ def update_animalcontrol_from_form(dbo, post, username):
     postaudit = db.query(dbo, "SELECT * FROM animalcontrol WHERE ID = %d" % acid)
     audit.edit(dbo, username, "animalcontrol", acid, audit.map_diff(preaudit, postaudit))
 
+    # Update view/edit roles
+    db.execute(dbo, "DELETE FROM animalcontrolrole WHERE AnimalControlID = %d" % acid)
+    for rid in post.integer_list("viewroles"):
+        db.execute(dbo, "INSERT INTO animalcontrolrole (AnimalControlID, RoleID, CanView, CanEdit) VALUES (%d, %d, 1, 0)" % (acid, rid))
+    for rid in post.integer_list("editroles"):
+        if rid in post.integer_list("viewroles"):
+            db.execute(dbo, "UPDATE animalcontrolrole SET CanEdit = 1 WHERE AnimalControlID = %d AND RoleID = %d" % (acid, rid))
+        else:
+            db.execute(dbo, "INSERT INTO animalcontrolrole (AnimalControlID, RoleID, CanView, CanEdit) VALUES (%d, %d, 0, 1)" % (acid, rid))
+
 def update_animalcontrol_addlink(dbo, username, acid, animalid):
     """
     Adds a link between an animal and an incident.
@@ -398,6 +457,16 @@ def insert_animalcontrol_from_form(dbo, post, username):
 
     # Save any additional field values given
     additional.save_values_for_link(dbo, post, nid, "incident")
+
+    # Update view/edit roles
+    db.execute(dbo, "DELETE FROM animalcontrolrole WHERE AnimalControlID = %d" % nid)
+    for rid in post.integer_list("viewroles"):
+        db.execute(dbo, "INSERT INTO animalcontrolrole (AnimalControlID, RoleID, CanView, CanEdit) VALUES (%d, %d, 1, 0)" % (nid, rid))
+    for rid in post.integer_list("editroles"):
+        if rid in post.integer_list("viewroles"):
+            db.execute(dbo, "UPDATE animalcontrolrole SET CanEdit = 1 WHERE AnimalControlID = %d AND RoleID = %d" % (nid, rid))
+        else:
+            db.execute(dbo, "INSERT INTO animalcontrolrole (AnimalControlID, RoleID, CanView, CanEdit) VALUES (%d, %d, 0, 1)" % (nid, rid))
 
     return nid
 

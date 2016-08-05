@@ -371,6 +371,16 @@ def get_roles(dbo):
     """
     return db.query(dbo, "SELECT * FROM role ORDER BY Rolename")
 
+def get_roles_ids_for_user(dbo, username):
+    """
+    Returns a list of role ids a user is in
+    """
+    rolesd = db.query(dbo, "SELECT RoleID FROM userrole INNER JOIN users ON users.ID = userrole.UserID WHERE users.UserName = %s" % db.ds(username))
+    roles = []
+    for r in rolesd:
+        roles.append(r["ROLEID"])
+    return roles
+
 def get_roles_for_user(dbo, user):
     """
     Returns a list of roles a user is in

@@ -20,16 +20,17 @@ VERSIONS = (
     33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702, 33703, 33704, 33705,
     33706, 33707, 33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716,
     33717, 33718, 33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904,
-    33905, 33906, 33907, 33908, 33909, 33911, 33912, 33913, 33914
+    33905, 33906, 33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915
 )
 
 LATEST_VERSION = VERSIONS[-1]
 
 # All ASM3 tables
 TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalfield",
-    "adoption", "animal", "animalcontrol", "animalcost", "animaldiet", "animalfigures", "animalfiguresannual", 
-    "animalfiguresasilomar", "animalfiguresmonthlyasilomar", "animalfound", "animalcontrolanimal", "animallitter", 
-    "animallost", "animallostfoundmatch", "animalmedical", "animalmedicaltreatment", "animalname", "animalpublished", 
+    "adoption", "animal", "animalcontrol", "animalcontrolanimal", "animalcontrolrole", "animalcost", 
+    "animaldiet", "animalfigures", "animalfiguresannual", "animalfiguresasilomar", "animalfiguresmonthlyasilomar", 
+    "animalfound", "animalcontrolanimal", "animallitter", "animallost", "animallostfoundmatch", 
+    "animalmedical", "animalmedicaltreatment", "animalname", "animalpublished", 
     "animaltype", "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", 
     "basecolour", "breed", "citationtype", "configuration", "costtype", "customreport", "customreportrole", "dbfs", 
     "deathreason", "diary", "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", "donationtype", 
@@ -45,7 +46,7 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
 # ASM2_COMPATIBILITY This is used for dumping tables in ASM2/HSQLDB format. 
 # These are the tables present in ASM2. users is not included due to the
 # difference in password formats.
-TABLES_ASM2 = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalfield",
+TABLES_ASM2 = ( "accounts", "accountstrx", "additional", "additionalfield",
     "adoption", "animal", "animalcost", "animaldiet", "animalfound", "animallitter", "animallost", 
     "animalmedical", "animalmedicaltreatment", "animalname", "animaltype", "animaltest", "animalvaccination", 
     "animalwaitinglist", "audittrail", "basecolour", "breed", "configuration", "costtype", 
@@ -58,7 +59,7 @@ TABLES_ASM2 = ( "accounts", "accountsrole", "accountstrx", "additional", "additi
 
 # Tables that don't have an ID column (we don't create PostgreSQL sequences for them for pseq pk)
 TABLES_NO_ID_COLUMN = ( "accountsrole", "additional", "audittrail", "animalcontrolanimal", 
-    "animallostfoundmatch", "animalpublished", "configuration", "customreportrole", 
+    "animalcontrolrole", "animallostfoundmatch", "animalpublished", "configuration", "customreportrole", 
     "onlineformincoming", "ownerlookingfor", "userrole" )
 
 VIEWS = ( "v_adoption", "v_animal", "v_animalcontrol", "v_animalfound", "v_animallost", 
@@ -428,6 +429,18 @@ def sql_structure(dbo):
     sql += index("animalcontrol_Owner3ID", "animalcontrol", "Owner3ID")
     sql += index("animalcontrol_VictimID", "animalcontrol", "VictimID")
 
+    sql += table("animalcontrolanimal", (
+        fint("AnimalControlID"),
+        fint("AnimalID") ), False)
+    sql += index("animalcontrolanimal_AnimalControlIDAnimalID", "animalcontrolanimal", "AnimalControlID, AnimalID", True)
+
+    sql += table("animalcontrolrole", (
+        fint("AnimalControlID"),
+        fint("RoleID"),
+        fint("CanView"),
+        fint("CanEdit") ))
+    sql += index("animalcontrolrole_AnimalControlIDRoleID", "animalcontrolrole", "AnimalControlID, RoleID")
+
     sql += table("animalcost", (
         fid(),
         fint("AnimalID"),
@@ -535,11 +548,6 @@ def sql_structure(dbo):
     sql += index("animalfound_AnimalTypeID", "animalfound", "AnimalTypeID")
     sql += index("animalfound_AreaFound", "animalfound", "AreaFound")
     sql += index("animalfound_AreaPostcode", "animalfound", "AreaPostcode")
-
-    sql += table("animalcontrolanimal", (
-        fint("AnimalControlID"),
-        fint("AnimalID") ), False)
-    sql += index("animalcontrolanimal_AnimalControlIDAnimalID", "animalcontrolanimal", "AnimalControlID, AnimalID", True)
 
     sql += table("animallitter", (
         fid(),
@@ -4507,4 +4515,10 @@ def update_33914(dbo):
     # Add owner.IsAdoptionCoordinator
     add_column(dbo, "owner", "IsAdoptionCoordinator", "INTEGER")
     db.execute_dbupdate(dbo, "UPDATE owner SET IsAdoptionCoordinator = 0")
+
+def update_33915(dbo):
+    # Add the animalcontrolrole table
+    db.execute_dbupdate(dbo, "CREATE TABLE animalcontrolrole (AnimalControlID INTEGER NOT NULL, " \
+        "RoleID INTEGER NOT NULL, CanView INTEGER NOT NULL, CanEdit INTEGER NOT NULL)")
+    db.execute_dbupdate(dbo, "CREATE UNIQUE INDEX animalcontrolrole_AnimalControlIDRoleID ON animalcontrolrole(AnimalControlID, RoleID)")
 
