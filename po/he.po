@@ -730,6 +730,10 @@ msgstr ""
 msgid "Adoption"
 msgstr "אימוץ"
 
+#: shelterview.js animal_new.js animal.js animal_bulk.js options.js person.py
+msgid "Adoption Coordinator"
+msgstr ""
+
 #: animal.js animal_bulk.js dbupdate.py
 msgid "Adoption Fee"
 msgstr "עמלת אימוץ"
@@ -1008,6 +1012,10 @@ msgstr "אלרגיות"
 
 #: options.js
 msgid "Allow a fosterer to be selected"
+msgstr ""
+
+#: options.js
+msgid "Allow an adoption coordinator to be selected"
 msgstr ""
 
 #: options.js
@@ -1967,6 +1975,10 @@ msgid "CSV of animal/adopter data"
 msgstr ""
 
 #: sql.js
+msgid "CSV of incident data"
+msgstr ""
+
+#: sql.js
 msgid "CSV of person data"
 msgstr ""
 
@@ -2593,6 +2605,10 @@ msgstr ""
 #: users.js change_password.js
 msgid "Confirm Password"
 msgstr "אישור הססמה"
+
+#: onlineforms.js
+msgid "Confirmation message"
+msgstr ""
 
 #: transport.js
 msgid "Confirmed"
@@ -5054,12 +5070,14 @@ msgid "Generate document from this payment"
 msgstr ""
 
 #: move_gendoc.js
+#, fuzzy
 msgid "Generate documentation"
-msgstr ""
+msgstr "יצירת מסמכים"
 
 #: mailmerge.js
+#, fuzzy
 msgid "Generate documents"
-msgstr ""
+msgstr "יצירת מסמכים"
 
 #: publish_options.js
 msgid "Generate image thumbnails as tn_$$IMAGE$$"
@@ -5268,7 +5286,7 @@ msgstr "פנינייה"
 msgid "HMRC Gift Aid Spreadsheet"
 msgstr ""
 
-#: reports.js mailmerge.js common_widgets.js
+#: reports.js common_widgets.js
 msgid "HTML"
 msgstr "HTML"
 
@@ -5538,8 +5556,8 @@ msgstr ""
 
 #: onlineforms.js
 msgid ""
-"If this form has a populated emailaddress field during submission, email a "
-"copy of the completed form to it"
+"If this form has a populated emailaddress field during submission, send a "
+"confirmation email to it"
 msgstr ""
 
 #: media.js
@@ -7406,8 +7424,9 @@ msgid "Non-Shelter Animal"
 msgstr "חיית מחמד לא מבית המחסה"
 
 #: users.js
+#, fuzzy
 msgid "Non-shelter"
-msgstr ""
+msgstr "לא מבית המחסה"
 
 #: dbupdate.py
 msgid "None"
@@ -8799,6 +8818,10 @@ msgid "Remove the Rabies Tag field from animal health details"
 msgstr "הסרת שדות העיקור מהפרטים הרפואיים של חיית המחמד"
 
 #: options.js
+msgid "Remove the adoption coordinator field from animal entry details"
+msgstr ""
+
+#: options.js
 #, fuzzy
 msgid "Remove the adoption fee field from animal details"
 msgstr "הסרת סוג הפרווה מפרטי חיית המחמד"
@@ -9544,7 +9567,7 @@ msgstr ""
 msgid "Set publishing options"
 msgstr "הגדרת אפשרויות פרסום"
 
-#: mailmerge.js common_widgets.js
+#: common_widgets.js
 msgid "Set the email content-type header to text/html"
 msgstr ""
 
@@ -9942,12 +9965,14 @@ msgid "Single Treatment"
 msgstr "טיפול חד־פעמי"
 
 #: users.js lookups.js lookups.py html.py
+#, fuzzy
 msgid "Site"
-msgstr ""
+msgstr "נשיכה"
 
 #: lookups.py
+#, fuzzy
 msgid "Sites"
-msgstr ""
+msgstr "גדלים"
 
 #: waitinglist_results.js person.js animal_find.js animal_new.js animal.js
 #: animal_find_results.js waitinglist_new.js waitinglist.js person.py mobile.py
@@ -10561,6 +10586,12 @@ msgstr ""
 
 #: animal.js
 msgid "The coat type of this animal"
+msgstr ""
+
+#: onlineforms.js
+msgid ""
+"The confirmation email message to send to the form submitter. Leave blank to "
+"send a copy of the completed form."
 msgstr ""
 
 #: sql.js

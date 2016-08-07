@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: sheltermanager\n"
 "Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
-"PO-Revision-Date: 2015-08-30 11:54+0000\n"
+"PO-Revision-Date: 2016-08-07 00:08+0000\n"
 "Last-Translator: Anonymous Pootle User\n"
 "Language-Team: Slovak <sk@li.org>\n"
 "Language: sk\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 "X-Generator: Pootle 2.5.1.1\n"
 "X-Launchpad-Export-Date: 2015-03-02 05:19+0000\n"
-"X-POOTLE-MTIME: 1440935667.000000\n"
+"X-POOTLE-MTIME: 1470528501.000000\n"
 
 #: options.js
 msgid " days."
@@ -714,6 +714,10 @@ msgstr ""
 msgid "Adoption"
 msgstr "Adopcia"
 
+#: shelterview.js animal_new.js animal.js animal_bulk.js options.js person.py
+msgid "Adoption Coordinator"
+msgstr ""
+
 #: animal.js animal_bulk.js dbupdate.py
 msgid "Adoption Fee"
 msgstr "Adopčný poplatok"
@@ -991,6 +995,10 @@ msgstr "Alergie"
 
 #: options.js
 msgid "Allow a fosterer to be selected"
+msgstr ""
+
+#: options.js
+msgid "Allow an adoption coordinator to be selected"
 msgstr ""
 
 #: options.js
@@ -1951,6 +1959,10 @@ msgid "CSV of animal/adopter data"
 msgstr ""
 
 #: sql.js
+msgid "CSV of incident data"
+msgstr ""
+
+#: sql.js
 msgid "CSV of person data"
 msgstr ""
 
@@ -2572,6 +2584,10 @@ msgstr ""
 
 #: users.js change_password.js
 msgid "Confirm Password"
+msgstr ""
+
+#: onlineforms.js
+msgid "Confirmation message"
 msgstr ""
 
 #: transport.js
@@ -5227,7 +5243,7 @@ msgstr "Perlička"
 msgid "HMRC Gift Aid Spreadsheet"
 msgstr ""
 
-#: reports.js mailmerge.js common_widgets.js
+#: reports.js common_widgets.js
 msgid "HTML"
 msgstr ""
 
@@ -5494,8 +5510,8 @@ msgstr ""
 
 #: onlineforms.js
 msgid ""
-"If this form has a populated emailaddress field during submission, email a "
-"copy of the completed form to it"
+"If this form has a populated emailaddress field during submission, send a "
+"confirmation email to it"
 msgstr ""
 
 #: media.js
@@ -7352,8 +7368,9 @@ msgid "Non-Shelter Animal"
 msgstr "Neumiestnené zvieratá"
 
 #: users.js
+#, fuzzy
 msgid "Non-shelter"
-msgstr ""
+msgstr "Neútulkové"
 
 #: dbupdate.py
 msgid "None"
@@ -8727,6 +8744,10 @@ msgid "Remove the Rabies Tag field from animal health details"
 msgstr ""
 
 #: options.js
+msgid "Remove the adoption coordinator field from animal entry details"
+msgstr ""
+
+#: options.js
 msgid "Remove the adoption fee field from animal details"
 msgstr ""
 
@@ -9462,7 +9483,7 @@ msgstr ""
 msgid "Set publishing options"
 msgstr ""
 
-#: mailmerge.js common_widgets.js
+#: common_widgets.js
 msgid "Set the email content-type header to text/html"
 msgstr ""
 
@@ -9856,12 +9877,14 @@ msgid "Single Treatment"
 msgstr "Jednorázové ošetrenie"
 
 #: users.js lookups.js lookups.py html.py
+#, fuzzy
 msgid "Site"
-msgstr ""
+msgstr "Uhryznutie"
 
 #: lookups.py
+#, fuzzy
 msgid "Sites"
-msgstr ""
+msgstr "Veľkosť"
 
 #: waitinglist_results.js person.js animal_find.js animal_new.js animal.js
 #: animal_find_results.js waitinglist_new.js waitinglist.js person.py mobile.py
@@ -10473,6 +10496,12 @@ msgstr ""
 
 #: animal.js
 msgid "The coat type of this animal"
+msgstr ""
+
+#: onlineforms.js
+msgid ""
+"The confirmation email message to send to the form submitter. Leave blank to "
+"send a copy of the completed form."
 msgstr ""
 
 #: sql.js
@@ -11394,8 +11423,9 @@ msgid "Transferred"
 msgstr "Premiestnené"
 
 #: animal.js
+#, fuzzy
 msgid "Transferred From"
-msgstr ""
+msgstr "Presunuté do útulku"
 
 #: animal.py
 msgid "Transferred In"

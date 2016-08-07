@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
-"PO-Revision-Date: 2016-05-01 07:32+0000\n"
+"PO-Revision-Date: 2016-05-14 21:55+0000\n"
 "Last-Translator: Andi <andi@gowling.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: en_GB\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.5.1.1\n"
 "X-Launchpad-Export-Date: 2015-03-02 05:20+0000\n"
-"X-POOTLE-MTIME: 1462087920.000000\n"
+"X-POOTLE-MTIME: 1463262906.000000\n"
 
 #: options.js
 msgid " days."
@@ -700,6 +700,10 @@ msgstr "Adopted Transferred In {0}"
 msgid "Adoption"
 msgstr "Adoption"
 
+#: shelterview.js animal_new.js animal.js animal_bulk.js options.js person.py
+msgid "Adoption Coordinator"
+msgstr "Adoption Coordinator"
+
 #: animal.js animal_bulk.js dbupdate.py
 msgid "Adoption Fee"
 msgstr "Adoption Fee"
@@ -973,6 +977,10 @@ msgstr "Allergies"
 #: options.js
 msgid "Allow a fosterer to be selected"
 msgstr "Allow a fosterer to be selected"
+
+#: options.js
+msgid "Allow an adoption coordinator to be selected"
+msgstr "Allow an adoption coordinator to be selected"
 
 #: options.js
 msgid "Allow creation of payments on the Move-Reserve screen"
@@ -1936,6 +1944,10 @@ msgid "CSV of animal/adopter data"
 msgstr "CSV of animal/adopter data"
 
 #: sql.js
+msgid "CSV of incident data"
+msgstr "CSV of incident data"
+
+#: sql.js
 msgid "CSV of person data"
 msgstr "CSV of person data"
 
@@ -2557,6 +2569,10 @@ msgstr "Confirm"
 #: users.js change_password.js
 msgid "Confirm Password"
 msgstr "Confirm Password"
+
+#: onlineforms.js
+msgid "Confirmation message"
+msgstr "Confirmation message"
 
 #: transport.js
 msgid "Confirmed"
@@ -5188,7 +5204,7 @@ msgstr "Guinea fowl"
 msgid "HMRC Gift Aid Spreadsheet"
 msgstr "HMRC Gift Aid Spreadsheet"
 
-#: reports.js mailmerge.js common_widgets.js
+#: reports.js common_widgets.js
 msgid "HTML"
 msgstr "HTML"
 
@@ -5458,11 +5474,11 @@ msgstr ""
 
 #: onlineforms.js
 msgid ""
-"If this form has a populated emailaddress field during submission, email a "
-"copy of the completed form to it"
+"If this form has a populated emailaddress field during submission, send a "
+"confirmation email to it"
 msgstr ""
-"If this form has a populated email address field during submission, email a "
-"copy of the completed form to it"
+"If this form has a populated email address field during submission, send a "
+"confirmation email to it"
 
 #: media.js
 msgid ""
@@ -8696,6 +8712,10 @@ msgid "Remove the Rabies Tag field from animal health details"
 msgstr "Remove the Rabies Tag field from animal health details"
 
 #: options.js
+msgid "Remove the adoption coordinator field from animal entry details"
+msgstr "Remove the adoption coordinator field from animal entry details"
+
+#: options.js
 msgid "Remove the adoption fee field from animal details"
 msgstr "Remove the adoption fee field from animal details"
 
@@ -9424,7 +9444,7 @@ msgstr "Server clock adjustment"
 msgid "Set publishing options"
 msgstr "Set publishing options"
 
-#: mailmerge.js common_widgets.js
+#: common_widgets.js
 msgid "Set the email content-type header to text/html"
 msgstr "Set the email content-type header to text/html"
 
@@ -10435,6 +10455,14 @@ msgstr "The base color of this animal"
 #: animal.js
 msgid "The coat type of this animal"
 msgstr "The coat type of this animal"
+
+#: onlineforms.js
+msgid ""
+"The confirmation email message to send to the form submitter. Leave blank to "
+"send a copy of the completed form."
+msgstr ""
+"The confirmation email message to send to the form submitter. Leave blank to "
+"send a copy of the completed form."
 
 #: sql.js
 msgid ""
@@ -13624,6 +13652,13 @@ msgstr "{plural3} weeks."
 #: i18n.py
 msgid "{plural3} years."
 msgstr "{plural3} years."
+
+#~ msgid ""
+#~ "If this form has a populated emailaddress field during submission, email a "
+#~ "copy of the completed form to it"
+#~ msgstr ""
+#~ "If this form has a populated email address field during submission, email a "
+#~ "copy of the completed form to it"
 
 #~ msgid "Generate letters"
 #~ msgstr "Generate letters"

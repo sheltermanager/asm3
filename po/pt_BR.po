@@ -322,8 +322,9 @@ msgid "Add Document to Repository"
 msgstr "Adicionar Documento ao Repositório"
 
 #: animal_bulk.js
+#, fuzzy
 msgid "Add Flag"
-msgstr ""
+msgstr "Adicionar Log"
 
 #: roles.js
 msgid "Add Found Animal"
@@ -705,6 +706,10 @@ msgstr "Adotado transferido em {0}"
 msgid "Adoption"
 msgstr "Adoção"
 
+#: shelterview.js animal_new.js animal.js animal_bulk.js options.js person.py
+msgid "Adoption Coordinator"
+msgstr ""
+
 #: animal.js animal_bulk.js dbupdate.py
 msgid "Adoption Fee"
 msgstr "Custo da Adoção"
@@ -976,6 +981,10 @@ msgstr "Alergias"
 
 #: options.js
 msgid "Allow a fosterer to be selected"
+msgstr ""
+
+#: options.js
+msgid "Allow an adoption coordinator to be selected"
 msgstr ""
 
 #: options.js
@@ -1630,8 +1639,9 @@ msgid "Birman"
 msgstr ""
 
 #: dbupdate.py
+#, fuzzy
 msgid "Bite"
-msgstr ""
+msgstr "Tamanho"
 
 #: dbupdate.py
 msgid "Biting"
@@ -1932,6 +1942,10 @@ msgstr "CC"
 
 #: sql.js
 msgid "CSV of animal/adopter data"
+msgstr ""
+
+#: sql.js
+msgid "CSV of incident data"
 msgstr ""
 
 #: sql.js
@@ -2559,6 +2573,10 @@ msgstr ""
 
 #: users.js change_password.js
 msgid "Confirm Password"
+msgstr ""
+
+#: onlineforms.js
+msgid "Confirmation message"
 msgstr ""
 
 #: transport.js
@@ -5246,7 +5264,7 @@ msgstr ""
 msgid "HMRC Gift Aid Spreadsheet"
 msgstr ""
 
-#: reports.js mailmerge.js common_widgets.js
+#: reports.js common_widgets.js
 msgid "HTML"
 msgstr ""
 
@@ -5509,8 +5527,8 @@ msgstr ""
 
 #: onlineforms.js
 msgid ""
-"If this form has a populated emailaddress field during submission, email a "
-"copy of the completed form to it"
+"If this form has a populated emailaddress field during submission, send a "
+"confirmation email to it"
 msgstr ""
 
 #: media.js
@@ -8026,8 +8044,9 @@ msgid "Person looking for report"
 msgstr ""
 
 #: person_new.js
+#, fuzzy
 msgid "Person successfully created"
-msgstr ""
+msgstr "Adoção criada com sucesso"
 
 #: dbupdate.py
 msgid "Personal"
@@ -8744,6 +8763,10 @@ msgstr ""
 
 #: options.js
 msgid "Remove the Rabies Tag field from animal health details"
+msgstr ""
+
+#: options.js
+msgid "Remove the adoption coordinator field from animal entry details"
 msgstr ""
 
 #: options.js
@@ -9481,7 +9504,7 @@ msgstr ""
 msgid "Set publishing options"
 msgstr ""
 
-#: mailmerge.js common_widgets.js
+#: common_widgets.js
 msgid "Set the email content-type header to text/html"
 msgstr ""
 
@@ -9871,12 +9894,14 @@ msgid "Single Treatment"
 msgstr ""
 
 #: users.js lookups.js lookups.py html.py
+#, fuzzy
 msgid "Site"
-msgstr ""
+msgstr "Tamanho"
 
 #: lookups.py
+#, fuzzy
 msgid "Sites"
-msgstr ""
+msgstr "Tamanho"
 
 #: waitinglist_results.js person.js animal_find.js animal_new.js animal.js
 #: animal_find_results.js waitinglist_new.js waitinglist.js person.py mobile.py
@@ -10478,6 +10503,12 @@ msgstr ""
 
 #: animal.js
 msgid "The coat type of this animal"
+msgstr ""
+
+#: onlineforms.js
+msgid ""
+"The confirmation email message to send to the form submitter. Leave blank to "
+"send a copy of the completed form."
 msgstr ""
 
 #: sql.js
@@ -11398,8 +11429,9 @@ msgid "Transferred"
 msgstr "Transferrido Em"
 
 #: animal.js
+#, fuzzy
 msgid "Transferred From"
-msgstr ""
+msgstr "Transferrido Em"
 
 #: animal.py
 msgid "Transferred In"
@@ -11964,8 +11996,9 @@ msgid "View Diets"
 msgstr ""
 
 #: mobile.py service.py
+#, fuzzy
 msgid "View Document"
-msgstr ""
+msgstr "Adicionar Movimento"
 
 #: roles.js
 msgid "View Document Repository"

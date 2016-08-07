@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: sheltermanager\n"
 "Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
-"PO-Revision-Date: 2015-07-12 20:50+0000\n"
-"Last-Translator: Venca <vbspam@centrum.cz>\n"
+"PO-Revision-Date: 2016-08-05 17:21+0000\n"
+"Last-Translator: jindrapetrik <jindra.petrik@gmail.com>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 "X-Generator: Pootle 2.5.1.1\n"
 "X-Launchpad-Export-Date: 2015-03-02 05:15+0000\n"
-"X-POOTLE-MTIME: 1436734207.000000\n"
+"X-POOTLE-MTIME: 1470417719.000000\n"
 
 #: options.js
 msgid " days."
@@ -106,9 +106,8 @@ msgid "6 months"
 msgstr "6 měsíců"
 
 #: publish_options.js
-#, fuzzy
 msgid "6 weeks"
-msgstr "2 týdny"
+msgstr "6 týdnů"
 
 #: publish_options.js
 msgid "8 weeks"
@@ -120,7 +119,7 @@ msgstr "9 měsíců"
 
 #: dbupdate.py
 msgid "A (Stray Dog)"
-msgstr ""
+msgstr "A (Zatoulaný pes)"
 
 #: waitinglist_new.js waitinglist.js
 msgid "A description or other information about the animal"
@@ -128,7 +127,7 @@ msgstr "Popis nebo jiná informace o zvířeti."
 
 #: person.js
 msgid "A list of areas this person will homecheck - eg: S60 S61"
-msgstr ""
+msgstr "Seznam oblastí, které tato osoba bude doma kontrolovat - např. S60 S61"
 
 #: movements.js
 msgid "A movement must have a reservation date or type."
@@ -166,7 +165,7 @@ msgstr "ACO"
 
 #: common_widgets.js
 msgid "AM"
-msgstr ""
+msgstr "ráno"
 
 #: main.js mobile.py html.py
 msgid "ASM"
@@ -186,6 +185,9 @@ msgid ""
 "the Monthly Figures and Annual Figures reports from Settings-Reports-Browse "
 "sheltermanager.com"
 msgstr ""
+"ASM může sledovat detailní mesíční a roční údaje vašeho útulku. Nainstalujte "
+"výkazy \"Monthly Figures\" a \"Annual Figures\" z Nastavení-Výkazy-"
+"Procházení sheltermanager.com"
 
 #: main.js
 msgid ""
@@ -316,8 +318,9 @@ msgid "Add Document to Repository"
 msgstr "Přidat dokument do úložiště"
 
 #: animal_bulk.js
+#, fuzzy
 msgid "Add Flag"
-msgstr ""
+msgstr "Přidat protokol"
 
 #: roles.js
 msgid "Add Found Animal"
@@ -365,7 +368,7 @@ msgstr "Přidat zprávu"
 
 #: roles.js
 msgid "Add Movement"
-msgstr "Přidat Pohyb"
+msgstr "Přidat Přesun"
 
 #: roles.js
 msgid "Add Payments"
@@ -381,11 +384,12 @@ msgstr "Přidat Report"
 
 #: roles.js
 msgid "Add Rota"
-msgstr ""
+msgstr "Přidat rozpis"
 
 #: roles.js
+#, fuzzy
 msgid "Add Stock"
-msgstr ""
+msgstr "Přidat kus"
 
 #: roles.js
 msgid "Add Tests"
@@ -545,7 +549,7 @@ msgstr "Přidat zprávu"
 
 #: movements.js
 msgid "Add movement"
-msgstr "Přidat Pohyb"
+msgstr "Přidat přesun"
 
 #: onlineforms.js
 msgid "Add online form"
@@ -569,7 +573,7 @@ msgstr "Přidat roli"
 
 #: rota.js staff_rota.js
 msgid "Add rota item"
-msgstr ""
+msgstr "Přidat položku rozpisu"
 
 #: stocklevel.js
 msgid "Add stock"
@@ -664,11 +668,11 @@ msgstr "Adresa obsahuje"
 
 #: dbupdate.py
 msgid "Administered"
-msgstr ""
+msgstr "Spravováno"
 
 #: test.js medical.js vaccination.js
 msgid "Administering Vet"
-msgstr ""
+msgstr "Spravující veterinář"
 
 #: move_adopt.js
 msgid "Adopt"
@@ -690,13 +694,18 @@ msgstr "Zvíře schopné adopce"
 msgid "Adopted"
 msgstr "Adoptováno"
 
+# (datum)
 #: animal.py
 msgid "Adopted Transferred In {0}"
-msgstr ""
+msgstr "Adoptovaný přesunut {0}"
 
 #: publish_options.js dbupdate.py
 msgid "Adoption"
 msgstr "Adopce"
+
+#: shelterview.js animal_new.js animal.js animal_bulk.js options.js person.py
+msgid "Adoption Coordinator"
+msgstr "Koordinátor adopce"
 
 #: animal.js animal_bulk.js dbupdate.py
 msgid "Adoption Fee"
@@ -732,7 +741,7 @@ msgstr "Pokročilé"
 
 #: options.js
 msgid "Advanced find animal screen defaults to on shelter"
-msgstr ""
+msgstr "Na obrazovce hledání zvířete je výchozí vybráno v útulku"
 
 #: dbupdate.py
 msgid "Affenpinscher"
@@ -849,9 +858,8 @@ msgid "All Publishers"
 msgstr "Všichni přispěvatelé"
 
 #: accounts.js
-#, fuzzy
 msgid "All accounts"
-msgstr "Přidat účet"
+msgstr "Všechny účty"
 
 #: search.py
 msgid "All animal care officers on file."
@@ -871,7 +879,7 @@ msgstr "Všechna zvířata v útulku"
 
 #: search.py
 msgid "All animals where the hold ends today."
-msgstr ""
+msgstr "Všechna zvířata kde zadržení končí dnes."
 
 #: search.py
 msgid "All animals who are currently held in case of reclaim."
@@ -891,11 +899,11 @@ msgstr "Všechny zvířata co jsou v útulku déle než {0} měsíců."
 
 #: search.py
 msgid "All animals who have not been microchipped"
-msgstr ""
+msgstr "Všechna zvířata která nebyla čipována"
 
 #: search.py
 msgid "All banned owners on file."
-msgstr ""
+msgstr "Všichni zablokovaní vlastníci v souboru."
 
 #: header.js configuration.py html.py
 msgid "All diary notes"
@@ -915,6 +923,8 @@ msgid ""
 "All existing data in your database will be REMOVED before importing the CSV "
 "file. This removal cannot be reversed."
 msgstr ""
+"Všechna existující data ve vaší databázi budou ODSTRANĚNA před importem CSV "
+"souboru. Toto odstranění nelze vrátit."
 
 #: main.js
 msgid "All fields should be completed."
@@ -926,7 +936,7 @@ msgstr "Všechny osoby pro dočasnou péči ve složce"
 
 #: search.py
 msgid "All homechecked owners on file."
-msgstr "Všichni doma zkontrolovaní majitelé ve složce"
+msgstr "Všichni doma kontrolovaní majitelé v souboru."
 
 #: search.py
 msgid "All homecheckers on file."
@@ -970,11 +980,15 @@ msgstr "Alergie"
 
 #: options.js
 msgid "Allow a fosterer to be selected"
-msgstr ""
+msgstr "Povolit zvolení dočasné péče"
+
+#: options.js
+msgid "Allow an adoption coordinator to be selected"
+msgstr "Povolit zvolení koordinátora adopce"
 
 #: options.js
 msgid "Allow creation of payments on the Move-Reserve screen"
-msgstr ""
+msgstr "Povolit vytvoření plateb na obrazovce Přesunout-Rezervovat"
 
 #: options.js
 msgid "Allow drag and drop to move animals between locations"
@@ -988,7 +1002,7 @@ msgstr "Všechny duplicitní čísla mikročipů"
 
 #: options.js
 msgid "Allow overriding of the movement number on the Move menu screens"
-msgstr ""
+msgstr "Povolit přepsání čísla přesunu na obrazovkách nabídky Přesun"
 
 #: options.js
 msgid "Allow use of OpenOffice document templates"
@@ -1004,11 +1018,11 @@ msgstr "Abecedně Z-A"
 
 #: service.py
 msgid "Already Signed"
-msgstr ""
+msgstr "Již přiřazeno"
 
 #: movement.py
 msgid "Already fostered to this person."
-msgstr ""
+msgstr "Již v dočasné péči u této osoby."
 
 #: animal_new.js animal.js animal_find_results.js animal_bulk.js html.py
 msgid "Altered"
@@ -1096,6 +1110,8 @@ msgid ""
 "An optional comma separated list of email addresses to send the output of "
 "this report to"
 msgstr ""
+"Volitelný čárkou oddělovaný seznam mailových adres, na které bude poslán "
+"výstup tohoto výkazu"
 
 #: dbupdate.py
 msgid "Anatolian Shepherd"
@@ -1155,23 +1171,23 @@ msgstr "Kódy zvířat"
 
 #: roles.js mobile.py html.py
 msgid "Animal Control"
-msgstr ""
+msgstr "Animal Control"
 
 #: person.py
 msgid "Animal Control Caller"
-msgstr ""
+msgstr "Osoba volající Animal Control"
 
 #: person.py
 msgid "Animal Control Incident"
-msgstr ""
+msgstr "Událost Animal Control"
 
 #: dbupdate.py
 msgid "Animal Control Officer"
-msgstr ""
+msgstr "Vedoucí Animal Control"
 
 #: person.py
 msgid "Animal Control Victim"
-msgstr ""
+msgstr "Oběť Animal Control"
 
 #: options.js
 msgid "Animal Emblems"
@@ -1179,11 +1195,11 @@ msgstr "Symboly zvířete"
 
 #: lookups.py
 msgid "Animal Flags"
-msgstr ""
+msgstr "Příznaky zvířete"
 
 #: options.js
 msgid "Animal Links"
-msgstr ""
+msgstr "Odkazy zvířete"
 
 #: publish_options.js
 msgid "Animal Name"
@@ -1211,12 +1227,11 @@ msgstr "Srst"
 
 #: lookups.py
 msgid "Animal Types"
-msgstr "Typy Zvířat"
+msgstr "Typy zvířat"
 
 #: dbupdate.py
-#, fuzzy
 msgid "Animal board costs"
-msgstr "Výdaje za krmení pro zvířata"
+msgstr "Výdaje za umístění zvířat"
 
 #: animal.py
 msgid "Animal cannot be deceased before it was brought to the shelter"
@@ -1229,11 +1244,11 @@ msgstr "Formát kódu zvířete"
 
 #: header.js configuration.py html.py
 msgid "Animal control calendar"
-msgstr ""
+msgstr "Kalendář Animal control"
 
 #: search.py
 msgid "Animal control incidents matching '{0}'."
-msgstr ""
+msgstr "Animal control události vyhovující '{0}'"
 
 #: dbupdate.py
 msgid "Animal defecation"
@@ -1252,6 +1267,8 @@ msgid ""
 "Animal emblems are the little icons that appear next to animal names in "
 "shelter view, the home page and search results."
 msgstr ""
+"Symboly zvířete jsou malé ikonky, které se objevují poblíž jmén zvířat v "
+"pohledu útulku, na hlavní straně a ve výsledcích vyhledávání."
 
 #: dbupdate.py
 msgid "Animal food costs"
@@ -1328,7 +1345,7 @@ msgstr "Applehead Siamese"
 
 #: dbupdate.py
 msgid "Approved"
-msgstr ""
+msgstr "Schváleno"
 
 #: common.js calendarview.js
 msgid "Apr"
@@ -1392,7 +1409,7 @@ msgstr "Připojit"
 
 #: onlineform_incoming.js
 msgid "Attach Animal"
-msgstr ""
+msgstr "Přiložit zvíře"
 
 #: media.js
 msgid "Attach File"
@@ -1404,7 +1421,7 @@ msgstr "Přiložit odkaz"
 
 #: onlineform_incoming.js
 msgid "Attach Person"
-msgstr ""
+msgstr "Přiložit osobu"
 
 #: media.js
 msgid "Attach a file"
@@ -1420,7 +1437,7 @@ msgstr "Přiložit odkaz"
 
 #: onlineform_incoming.js
 msgid "Attach selected forms to animal records"
-msgstr ""
+msgstr "Přiložit vybradné formuláře k záznamům zvířat"
 
 #: onlineform_incoming.js
 #, fuzzy
@@ -1433,7 +1450,7 @@ msgstr "Připojit tento formulář k existující osobě"
 
 #: common.js
 msgid "Audit Trail"
-msgstr ""
+msgstr "Auditní záznam"
 
 #: common.js calendarview.js
 msgid "Aug"
@@ -1482,6 +1499,8 @@ msgid ""
 "Automatically return any outstanding foster movements on an animal when it "
 "is adopted"
 msgstr ""
+"Automaticky vrátit jakékoli význačné přesuny člověka poskytujícího dočasnou "
+"péči u zvířete, které je adoptované"
 
 #: common.js header_edit_header.js publish.py
 msgid "Available for adoption"
@@ -1493,7 +1512,7 @@ msgstr "Dostupné reporty z sheltermanager.com"
 
 #: dbupdate.py
 msgid "B (Boarding Animal)"
-msgstr ""
+msgstr "B (Umísťování zvířete)"
 
 #: dbupdate.py
 msgid "Baby"
@@ -1562,7 +1581,7 @@ msgstr "Dávka"
 
 #: vaccination.js
 msgid "Batch Number"
-msgstr ""
+msgstr "Číslo dávky"
 
 #: dbupdate.py
 msgid "Beagle"
@@ -1582,7 +1601,7 @@ msgstr "Bedlingtonský Teriér"
 
 #: reports.js
 msgid "Beginning of month"
-msgstr ""
+msgstr "Začátek měsíce"
 
 #: dbupdate.py
 msgid "Belgian Hare"
@@ -1690,11 +1709,11 @@ msgstr "Bluetick Coonhound"
 
 #: dbupdate.py
 msgid "Board and Food"
-msgstr ""
+msgstr "Umístění a jídlo"
 
 #: dbupdate.py
 msgid "Boarding"
-msgstr ""
+msgstr "Umístění"
 
 #: move_adopt.js move_reclaim.js
 msgid "Boarding Cost"
@@ -1718,7 +1737,7 @@ msgstr "Bombay"
 
 #: common.js options.js
 msgid "Bonded"
-msgstr ""
+msgstr "Silně vázaný"
 
 #: animal.js mobile.py
 msgid "Bonded With"
@@ -1736,9 +1755,10 @@ msgstr "Border Kolie"
 msgid "Border Terrier"
 msgstr "Border Teriér"
 
+# bakteriální infekce, prý též známé jako "psincový kašel"
 #: dbupdate.py
 msgid "Bordetella"
-msgstr ""
+msgstr "Bordetella"
 
 #: dbupdate.py
 msgid "Born in Shelter"
@@ -1746,11 +1766,11 @@ msgstr "Narozen v útulku"
 
 #: animal.py
 msgid "Born on Foster {0}"
-msgstr ""
+msgstr "Narozeno v dočasné péči {0}"
 
 #: animal.py
 msgid "Born on Shelter {0}"
-msgstr ""
+msgstr "Narozeno v útulku {0}"
 
 #: dbupdate.py
 msgid "Borzoi"
@@ -1891,7 +1911,7 @@ msgstr "Hromadný test"
 
 #: transport.js
 msgid "Bulk Transport"
-msgstr ""
+msgstr "Hromadný transport"
 
 #: vaccination.js
 msgid "Bulk Vaccination"
@@ -1934,6 +1954,10 @@ msgid "CSV of animal/adopter data"
 msgstr "CSV s daty zvířete/adoptivního majitele"
 
 #: sql.js
+msgid "CSV of incident data"
+msgstr "CSV s daty události"
+
+#: sql.js
 msgid "CSV of person data"
 msgstr "CSV s daty osoby"
 
@@ -1957,9 +1981,10 @@ msgstr "Zobrazit kalendář"
 msgid "Calico"
 msgstr "Calico"
 
+# plemeno
 #: dbupdate.py
 msgid "Californian"
-msgstr ""
+msgstr "Californian"
 
 #: header_edit_header.js
 msgid "Call"
@@ -2019,6 +2044,7 @@ msgid ""
 "Cancel holds on animals this many days after the brought in date, or 0 to "
 "never cancel"
 msgstr ""
+"Zrušit zadržení zvířete tolik dní po datu přijetí nebo 0 pro nezrušení nikdy"
 
 #: options.js
 msgid "Cancel unadopted reservations after"
@@ -2066,7 +2092,7 @@ msgstr "Kočky"
 
 #: dbupdate.py
 msgid "Cattery"
-msgstr ""
+msgstr "Chovatelská stanice"
 
 #: dbupdate.py
 msgid "Cattle Dog"
@@ -2167,23 +2193,23 @@ msgstr "Upravit platební metody"
 
 #: roles.js
 msgid "Change Person"
-msgstr "Změnit Osobu"
+msgstr "Změnit osobu"
 
 #: roles.js
 msgid "Change Publishing Options"
-msgstr ""
+msgstr "Změnit nastavení publikování"
 
 #: roles.js
 msgid "Change Report"
-msgstr "Změnit Report"
+msgstr "Změnit report"
 
 #: roles.js
 msgid "Change Rota"
-msgstr ""
+msgstr "Změnit rozpis"
 
 #: roles.js
 msgid "Change Stock"
-msgstr ""
+msgstr "Změnit sklad"
 
 #: roles.js
 msgid "Change System Options"
@@ -2199,7 +2225,7 @@ msgstr "Upravit transakce"
 
 #: roles.js
 msgid "Change Transport"
-msgstr ""
+msgstr "Změnit transport"
 
 #: roles.js
 msgid "Change Trap Loans"
@@ -2263,15 +2289,15 @@ msgstr "Kontrola"
 
 #: mobile.py
 msgid "Check License"
-msgstr ""
+msgstr "Zkontrolovat licenci"
 
 #: donations.js
 msgid "Check No"
-msgstr ""
+msgstr "Číslo šeku"
 
 #: onlineform.js
 msgid "Checkbox"
-msgstr ""
+msgstr "Zaškrtávací políčko"
 
 #: person_find_results.js
 msgid "Checked By"
@@ -2313,9 +2339,10 @@ msgstr "Čínský Chocholatý pes"
 msgid "Chinese Foo Dog"
 msgstr "Chinese Foo Dog"
 
+# bakterie
 #: dbupdate.py
 msgid "Chlamydophila"
-msgstr ""
+msgstr "Chlamydophila"
 
 #: dbupdate.py
 msgid "Chocolate"
@@ -2374,7 +2401,7 @@ msgstr "Zrušit"
 
 #: change_user_settings.js
 msgid "Clear and sign again"
-msgstr ""
+msgstr "Vyprázdnit a podepsat znovu"
 
 #: csvimport.js
 msgid "Clear tables before importing"
@@ -2391,11 +2418,11 @@ msgstr "Duplikovat Zvířata"
 
 #: staff_rota.js
 msgid "Clone Rota"
-msgstr ""
+msgstr "Naklonovat rozpis"
 
 #: staff_rota.js
 msgid "Clone the rota this week to another week"
-msgstr ""
+msgstr "Naklonovat rozpis z tohoto týdne do dalšího týdne"
 
 #: onlineform_incoming.js animal_new.js main.js common_widgets.js
 msgid "Close"
@@ -2464,6 +2491,8 @@ msgstr "Barva"
 #: lookups.js
 msgid "Color to use when publishing to third party services and adoption sites"
 msgstr ""
+"Barva kterou použít při publikování do služeb třetích stran a adopčních "
+"stránek"
 
 #: lookups.py
 msgid "Colors"
@@ -2479,7 +2508,7 @@ msgstr "Zobrazené sloupce"
 
 #: lookups.js
 msgid "Comma separated list of units for this location"
-msgstr ""
+msgstr "Čárkou oddělený seznam jednotek pro tuto polohu"
 
 #: test.js donations.js header_edit_header.js citations.js movements.js
 #: waitinglist_results.js person_vouchers.js rota.js transport.js person.js
@@ -2522,7 +2551,7 @@ msgstr "Dokončeno"
 
 #: incident_find.js
 msgid "Completed Between"
-msgstr ""
+msgstr "Dokončeno během"
 
 #: incident_find.js lookups.py
 #, fuzzy
@@ -2552,6 +2581,10 @@ msgstr "Potvrdit"
 #: users.js change_password.js
 msgid "Confirm Password"
 msgstr "Potvrdit heslo"
+
+#: onlineforms.js
+msgid "Confirmation message"
+msgstr "Potvrzující zpráva"
 
 #: transport.js
 #, fuzzy
@@ -2618,7 +2651,7 @@ msgstr "Náklad"
 
 #: accounts_trx.js
 msgid "Cost For"
-msgstr ""
+msgstr "Cena pro"
 
 #: accounts.js lookups.py
 msgid "Cost Type"
@@ -2654,7 +2687,7 @@ msgstr "Nelze nalézt zvíře se jménem '{0}'"
 
 #: common.js header_edit_header.js
 msgid "Courtesy Listing"
-msgstr ""
+msgstr "Bezplatný výpis"
 
 #: dbupdate.py
 msgid "Cow"
@@ -2724,7 +2757,7 @@ msgstr "Vytvořit a editovat"
 
 #: onlineform_incoming.js
 msgid "Create animal control incident records from the selected forms"
-msgstr ""
+msgstr "Vytvořit události animal control zvolených formulářů"
 
 #: options.js
 msgid "Create boarding cost record when animal is adopted"
@@ -2744,7 +2777,7 @@ msgstr "Vytvořit záznam o ztraceném zvířeti ze zvolených formulářů"
 
 #: csvimport.js
 msgid "Create missing lookup values"
-msgstr ""
+msgstr "Vytvořit chybějící vyhledávací hodnoty"
 
 #: diarytask.js
 msgid "Create note this many days from today, or 9999 to ask"
@@ -3071,8 +3104,9 @@ msgid "Default Death Reason"
 msgstr "Výchozí důvod úhynu"
 
 #: options.js
+#, fuzzy
 msgid "Default Diary Person"
-msgstr ""
+msgstr "Výchozí důvod úhynu"
 
 #: options.js
 msgid "Default Entry Reason"
@@ -3091,8 +3125,9 @@ msgid "Default Log Filter"
 msgstr "Výchozí filtr protokolu"
 
 #: options.js
+#, fuzzy
 msgid "Default Log Type"
-msgstr ""
+msgstr "Výchozí typ srsti"
 
 #: options.js
 msgid "Default Payment Type"
@@ -3108,7 +3143,7 @@ msgstr "Výchozí důvod vrácení"
 
 #: options.js
 msgid "Default Rota Shift"
-msgstr ""
+msgstr "Výchozí směna rozpisu"
 
 #: options.js
 msgid "Default Size"
@@ -3288,7 +3323,7 @@ msgstr "Vymazat Report"
 
 #: roles.js
 msgid "Delete Rota"
-msgstr ""
+msgstr "Smazat rozpis"
 
 #: roles.js
 msgid "Delete Stock"
@@ -3324,7 +3359,7 @@ msgstr "Vymazat čekací listinu"
 
 #: staff_rota.js
 msgid "Delete all rota entries for this week"
-msgstr ""
+msgstr "Odstranit všechny záznamy rozpisu pro tento týden"
 
 #: animal.js
 msgid "Delete this animal"
@@ -3893,7 +3928,7 @@ msgstr "Upravit role"
 
 #: rota.js staff_rota.js
 msgid "Edit rota item"
-msgstr ""
+msgstr "Upravit položku rozpisu"
 
 #: stocklevel.js
 msgid "Edit stock"
@@ -3920,8 +3955,9 @@ msgid "Edit transaction"
 msgstr "Upravit transakci"
 
 #: transport.js
+#, fuzzy
 msgid "Edit transport"
-msgstr ""
+msgstr "Přidat dopravu"
 
 #: traploan.js
 msgid "Edit trap loan"
@@ -4004,8 +4040,9 @@ msgid "Email media"
 msgstr ""
 
 #: common_widgets.js
+#, fuzzy
 msgid "Email person"
-msgstr ""
+msgstr "Emailuj kopii vybraného HTML dokumentu jako PDF"
 
 #: options.js
 msgid "Email signature"
@@ -4164,6 +4201,8 @@ msgid ""
 "Entering 'fosterers', 'homecheckers', 'staff', 'volunteers', 'aco' or "
 "'members' in the search box will show you those groups of people."
 msgstr ""
+"Zadáním 'fosterers', 'homecheckers', 'staff', 'volunteers', 'aco' nebo "
+"'members' do vyhledávacího políčka zobrazí tyto skupiny lidí."
 
 #: main.js
 msgid ""
@@ -4601,7 +4640,7 @@ msgstr ""
 
 #: common_personchooser.js
 msgid "Find fosterer"
-msgstr ""
+msgstr "Najít dočasnou péči"
 
 #: code.py
 msgid "Find found animal returned {0} results."
@@ -4609,11 +4648,11 @@ msgstr "Vyhledání Nalezených zvířat nalezlo {0} výsledků"
 
 #: common_personchooser.js
 msgid "Find homechecked"
-msgstr ""
+msgstr "Najít doma kontrolovaného"
 
 #: common_personchooser.js
 msgid "Find homechecker"
-msgstr ""
+msgstr "Najít doma kontrovaného"
 
 #: html.py
 msgid "Find incident"
@@ -4788,11 +4827,11 @@ msgstr "Podporovat"
 #: onlineforms.js common.js header_edit_header.js shelterview.js animal_new.js
 #: person_find_results.js options.js html.py
 msgid "Fosterer"
-msgstr "Dočasná péče"
+msgstr "Poskytovatel dočasné péče"
 
 #: shelterview.js options.js
 msgid "Fosterer (Active Only)"
-msgstr ""
+msgstr "Poskytovatel dočasné péče (pouze aktivní)"
 
 #: header_edit_header.js search.js
 msgid "Found"
@@ -4920,8 +4959,9 @@ msgid "Gecko"
 msgstr "Gecko"
 
 #: dbupdate.py
+#, fuzzy
 msgid "General"
-msgstr ""
+msgstr "Vygenerovat"
 
 #: html.py
 msgid "Generate"
@@ -4944,8 +4984,9 @@ msgid "Generate a document from this animal"
 msgstr "Vygenerovat dokument z tohoto zvířete"
 
 #: incident.js
+#, fuzzy
 msgid "Generate a document from this incident"
-msgstr ""
+msgstr "Vygenerovat dokument z tohoto zvířete"
 
 #: person.js
 msgid "Generate a document from this person"
@@ -4964,8 +5005,9 @@ msgid "Generate a random name for this animal"
 msgstr "Vytvořit náhodné jméno pro toto zvíře"
 
 #: licence.js
+#, fuzzy
 msgid "Generate document from this license"
-msgstr ""
+msgstr "Vygenerovat dokument z této platby"
 
 #: donations.js
 msgid "Generate document from this payment"
@@ -4976,8 +5018,9 @@ msgid "Generate documentation"
 msgstr "Vytvořit dokumentaci"
 
 #: mailmerge.js
+#, fuzzy
 msgid "Generate documents"
-msgstr ""
+msgstr "Vytvořit Dokumenty"
 
 #: publish_options.js
 msgid "Generate image thumbnails as tn_$$IMAGE$$"
@@ -5183,7 +5226,7 @@ msgstr "Perlička kropenatá domácí"
 msgid "HMRC Gift Aid Spreadsheet"
 msgstr ""
 
-#: reports.js mailmerge.js common_widgets.js
+#: reports.js common_widgets.js
 msgid "HTML"
 msgstr "HTML"
 
@@ -5319,22 +5362,21 @@ msgstr "Historie"
 
 #: common.js shelterview.js transport.js animal_find.js animal_find_results.js
 #: options.js publish.py html.py
-#, fuzzy
 msgid "Hold"
 msgstr "Drženo"
 
 #: animal_new.js animal.js
 msgid "Hold the animal until this date or blank to hold indefinitely"
-msgstr "Zadržovat zvíře až do tohoto data; pokud nezadáno, držet neomezeně"
+msgstr "Držet zvíře až do tohoto data; pokud nezadáno, držet neomezeně"
 
 #: header_edit_header.js animal_new.js animal.js animal_find_results.js
 #: animal_bulk.js html.py
 msgid "Hold until"
-msgstr ""
+msgstr "Držet do"
 
 #: common.js
 msgid "Hold until {0}"
-msgstr ""
+msgstr "Držet do {0}"
 
 #: dbupdate.py
 msgid "Holland Lop"
@@ -5355,7 +5397,7 @@ msgstr "Domovská stránka"
 
 #: person.js html.py
 msgid "Homecheck Areas"
-msgstr ""
+msgstr "Domácí kontrola - Oblasti"
 
 #: html.py
 msgid "Homecheck Date"
@@ -5363,23 +5405,22 @@ msgstr "Domácí kontrola - Datum"
 
 #: person.js
 msgid "Homecheck History"
-msgstr ""
+msgstr "Domácí kontrola - Historie"
 
 #: person_find.js
 msgid "Homecheck areas"
-msgstr ""
+msgstr "Oblasti domácí kontroly"
 
 #: onlineforms.js common.js header_edit_header.js person_find_results.js
 #: html.py
 msgid "Homechecked"
-msgstr "Domácí Kontrola"
+msgstr "Doma kontrolovaní"
 
 #: html.py
 msgid "Homechecked By"
 msgstr "Domácí kontrolu provedl"
 
 #: person.js
-#, fuzzy
 msgid "Homechecked by"
 msgstr "Domácí kontrolu provedl"
 
@@ -5453,8 +5494,8 @@ msgstr ""
 
 #: onlineforms.js
 msgid ""
-"If this form has a populated emailaddress field during submission, email a "
-"copy of the completed form to it"
+"If this form has a populated emailaddress field during submission, send a "
+"confirmation email to it"
 msgstr ""
 
 #: media.js
@@ -5468,6 +5509,8 @@ msgid ""
 "If this person is a fosterer, the maximum number of animals they can care "
 "for."
 msgstr ""
+"Pokud je tato osoba poskytovatelem dočasné péče, maximální počet zvířat o "
+"která se může starat."
 
 #: person.js
 msgid "If this person is a member, the date that membership expires."
@@ -6362,8 +6405,9 @@ msgid "Longest On Shelter"
 msgstr ""
 
 #: person.js
+#, fuzzy
 msgid "Looking For"
-msgstr ""
+msgstr "Hledání"
 
 #: person.js person.py
 msgid "Looking for"
@@ -7114,7 +7158,7 @@ msgstr "Nové pole"
 
 #: move_foster.js
 msgid "New Fosterer"
-msgstr "Nová Dočasná Péče"
+msgstr "Nový poskytovatel dočasné péče"
 
 #: dbupdate.py
 msgid "New Guinea Singing Dog"
@@ -7181,8 +7225,9 @@ msgid "New Test"
 msgstr "Nový test"
 
 #: transport.js
+#, fuzzy
 msgid "New Transport"
-msgstr ""
+msgstr "Přidat dopravu"
 
 #: traploan.js
 msgid "New Trap Loan"
@@ -7300,8 +7345,9 @@ msgid "Non-Shelter Animal"
 msgstr "Zvíře není v útulku"
 
 #: users.js
+#, fuzzy
 msgid "Non-shelter"
-msgstr ""
+msgstr "Neútulkové"
 
 #: dbupdate.py
 msgid "None"
@@ -7472,7 +7518,7 @@ msgstr "Vynechat záhlaví/zápatí"
 
 #: animal.py
 msgid "On Foster (in figures)"
-msgstr ""
+msgstr "V dočasné péči (v údajích)"
 
 #: common.js animal_find.js animal_find_results.js lostfound.py animal.py
 msgid "On Shelter"
@@ -7648,8 +7694,9 @@ msgid "Out SubTotal"
 msgstr ""
 
 #: publish_options.js
+#, fuzzy
 msgid "Output a deceased animals page"
-msgstr ""
+msgstr "Výstupem bude stránka s adoptovanými zvířary"
 
 #: publish_options.js
 msgid "Output a page with links to available online forms"
@@ -8600,11 +8647,11 @@ msgstr ""
 
 #: batch.js
 msgid "Regenerate annual animal figures for"
-msgstr ""
+msgstr "Přegenerovat roční údaje zvířat pro"
 
 #: batch.js
 msgid "Regenerate monthly animal figures for"
-msgstr ""
+msgstr "Přegenerovat měsíční údaje zvířat pro"
 
 #: batch.js
 msgid "Regenerate person names in selected format"
@@ -8654,7 +8701,7 @@ msgstr "Odstranit"
 
 #: options.js
 msgid "Remove holds after"
-msgstr ""
+msgstr "Odebrat držené po"
 
 #: options.js
 msgid "Remove move menu and the movements tab from animal and person screens"
@@ -8685,12 +8732,17 @@ msgid "Remove the Rabies Tag field from animal health details"
 msgstr ""
 
 #: options.js
+msgid "Remove the adoption coordinator field from animal entry details"
+msgstr ""
+
+#: options.js
 msgid "Remove the adoption fee field from animal details"
 msgstr ""
 
 #: options.js
+#, fuzzy
 msgid "Remove the animal control functionality from menus and screens"
-msgstr ""
+msgstr "Odstranit funkcionalitu rozpisu z nabídek a obrazovek"
 
 #: options.js
 msgid "Remove the bonded with fields from animal entry details"
@@ -8746,27 +8798,30 @@ msgstr ""
 
 #: options.js
 msgid "Remove the rota functionality from menus and screens"
-msgstr ""
+msgstr "Odstranit funkcionalitu rozpisu z nabídek a obrazovek"
 
 #: options.js
 msgid "Remove the size field from animal details"
 msgstr ""
 
 #: options.js
+#, fuzzy
 msgid "Remove the stock control functionality from menus and screens"
-msgstr ""
+msgstr "Odstranit funkcionalitu rozpisu z nabídek a obrazovek"
 
 #: options.js
 msgid "Remove the tattoo fields from animal identification details"
 msgstr ""
 
 #: options.js
+#, fuzzy
 msgid "Remove the transport functionality from menus and screens"
-msgstr ""
+msgstr "Odstranit funkcionalitu rozpisu z nabídek a obrazovek"
 
 #: options.js
+#, fuzzy
 msgid "Remove the trap loan functionality from menus and screens"
-msgstr ""
+msgstr "Odstranit funkcionalitu rozpisu z nabídek a obrazovek"
 
 #: options.js
 msgid "Remove the weight field from animal details"
@@ -8861,7 +8916,7 @@ msgstr "Datum Rezervace"
 
 #: header.js configuration.py html.py
 msgid "Reservation book"
-msgstr "Kniha Rezervací"
+msgstr "Kniha rezervací"
 
 #: movement.py
 msgid "Reservation date cannot be after cancellation date."
@@ -9066,15 +9121,15 @@ msgstr ""
 
 #: header_edit_header.js roles.js
 msgid "Rota"
-msgstr ""
+msgstr "Rozpis"
 
 #: lookups.py
 msgid "Rota Types"
-msgstr ""
+msgstr "Typy rozpisu"
 
 #: staff_rota.js
 msgid "Rota cloned successfully."
-msgstr ""
+msgstr "Rozpis úspěšně naklonován."
 
 #: media.js
 msgid "Rotate image 90 degrees anticlockwise"
@@ -9421,7 +9476,7 @@ msgstr ""
 msgid "Set publishing options"
 msgstr ""
 
-#: mailmerge.js common_widgets.js
+#: common_widgets.js
 msgid "Set the email content-type header to text/html"
 msgstr ""
 
@@ -9637,20 +9692,23 @@ msgid "Show short shelter codes on screens"
 msgstr ""
 
 #: options.js
+#, fuzzy
 msgid "Show the altered fields"
-msgstr ""
+msgstr "Zobrazit držená pole"
 
 #: options.js
+#, fuzzy
 msgid "Show the breed fields"
-msgstr ""
+msgstr "Zobrazit držená pole"
 
 #: options.js
 msgid "Show the brought in by field"
 msgstr ""
 
 #: options.js
+#, fuzzy
 msgid "Show the color field"
-msgstr ""
+msgstr "Zobrazit držená pole"
 
 #: options.js
 msgid "Show the date brought in field"
@@ -9666,7 +9724,7 @@ msgstr "Ukázat celý diář (namísto pouze mých poznámek) na úvodní strán
 
 #: options.js
 msgid "Show the hold fields"
-msgstr ""
+msgstr "Zobrazit držená pole"
 
 #: options.js
 msgid "Show the internal location field"
@@ -9689,8 +9747,9 @@ msgid "Show the original owner field"
 msgstr ""
 
 #: options.js
+#, fuzzy
 msgid "Show the size field"
-msgstr ""
+msgstr "Zobrazit držená pole"
 
 #: options.js
 msgid "Show the tattoo fields"
@@ -9701,8 +9760,9 @@ msgid "Show the time brought in field"
 msgstr ""
 
 #: options.js
+#, fuzzy
 msgid "Show the weight field"
-msgstr ""
+msgstr "Zobrazit držená pole"
 
 #: options.js
 #, fuzzy
@@ -9818,12 +9878,14 @@ msgid "Single Treatment"
 msgstr "Jediné Ošetření"
 
 #: users.js lookups.js lookups.py html.py
+#, fuzzy
 msgid "Site"
-msgstr ""
+msgstr "Pokousání"
 
 #: lookups.py
+#, fuzzy
 msgid "Sites"
-msgstr ""
+msgstr "Velikosti"
 
 #: waitinglist_results.js person.js animal_find.js animal_new.js animal.js
 #: animal_find_results.js waitinglist_new.js waitinglist.js person.py mobile.py
@@ -9971,8 +10033,9 @@ msgid "Split baby/adult age at"
 msgstr ""
 
 #: publish_options.js
+#, fuzzy
 msgid "Split species pages with a baby/adult prefix"
-msgstr ""
+msgstr "Rozdělit stránky s mládě/dospělý prefix"
 
 #: dbupdate.py
 msgid "Sponsorship donations"
@@ -10073,6 +10136,8 @@ msgid ""
 "Stats show running figures for the selected period of animals entering and "
 "leaving the shelter on the home page."
 msgstr ""
+"Statistiky ukazují na hlavní straně běžící údaje za vybrané období, kdy "
+"zvířata přicházela a opouštěla útulek."
 
 #: movements.js shelterview.js transport.js person.js medicalprofile.js
 #: medical.js move_reserve.js options.js lookups.py
@@ -10432,6 +10497,12 @@ msgstr ""
 
 #: animal.js
 msgid "The coat type of this animal"
+msgstr ""
+
+#: onlineforms.js
+msgid ""
+"The confirmation email message to send to the form submitter. Leave blank to "
+"send a copy of the completed form."
 msgstr ""
 
 #: sql.js
@@ -10888,7 +10959,7 @@ msgstr ""
 msgid ""
 "This animal should not be shown in figures and is not in the custody of the "
 "shelter"
-msgstr ""
+msgstr "Toto zvíře by nemělo být zobrazováno v údajích a není v péči útulku"
 
 #: animal.js move_deceased.js
 msgid "This animal was dead on arrival to the shelter"
@@ -11027,8 +11098,8 @@ msgstr ""
 #: movement.py
 msgid "This person is not flagged as a fosterer and cannot foster animals."
 msgstr ""
-"Tato osoba není označena jako vhodná pro dočasnou péči a nemůže dostat zvíře "
-"do DP"
+"Tato osoba není označena jako poskytovatel dočasné péče a nemůže dostat "
+"zvíře do dočasné péče."
 
 #: movement.py
 msgid ""
@@ -11096,8 +11167,9 @@ msgid "This will permanently remove the selected roles, are you sure?"
 msgstr "Tento krok nevratně vymaže vybrané záznamy, opravdu chcete pokračovat?"
 
 #: users.js
+#, fuzzy
 msgid "This will permanently remove the selected user accounts. Are you sure?"
-msgstr ""
+msgstr "Tento krok nevratně vymaže vybrané záznamy, opravdu chcete pokračovat?"
 
 #: accounts.js
 msgid ""
@@ -11365,8 +11437,9 @@ msgid "Transferred"
 msgstr "Přesunuté"
 
 #: animal.js
+#, fuzzy
 msgid "Transferred From"
-msgstr ""
+msgstr "Přesun v"
 
 #: animal.py
 #, fuzzy
@@ -11576,12 +11649,14 @@ msgid "Unaltered Adopted Animals"
 msgstr ""
 
 #: dbupdate.py
+#, fuzzy
 msgid "Unaltered Dog - 1 year"
-msgstr ""
+msgstr "Kastrovaný pes/fena - jednoletý(á)"
 
 #: dbupdate.py
+#, fuzzy
 msgid "Unaltered Dog - 3 year"
-msgstr ""
+msgstr "Kastrovaný pes/fena - tříletý(á)"
 
 #: dbupdate.py
 msgid "Unavailable"
@@ -12048,8 +12123,9 @@ msgid "View Training Videos"
 msgstr ""
 
 #: roles.js
+#, fuzzy
 msgid "View Transport"
-msgstr ""
+msgstr "Přidat dopravu"
 
 #: roles.js
 #, fuzzy
@@ -12964,8 +13040,9 @@ msgid "{plural0} animal has a hold ending today"
 msgstr ""
 
 #: main.js
+#, fuzzy
 msgid "{plural0} animal has been on the shelter longer than {0} months"
-msgstr ""
+msgstr "Všechny zvířata co jsou v útulku déle než {0} měsíců."
 
 #: main.js
 msgid "{plural0} animal is not available for adoption"
@@ -13112,8 +13189,9 @@ msgid "{plural1} animals entered the shelter"
 msgstr ""
 
 #: main.js
+#, fuzzy
 msgid "{plural1} animals have been on the shelter longer than {0} months"
-msgstr ""
+msgstr "Všechny zvířata co jsou v útulku déle než {0} měsíců."
 
 #: main.js
 msgid "{plural1} animals have holds ending today"
@@ -13260,8 +13338,9 @@ msgid "{plural2} animals entered the shelter"
 msgstr ""
 
 #: main.js
+#, fuzzy
 msgid "{plural2} animals have been on the shelter longer than {0} months"
-msgstr ""
+msgstr "Všechny zvířata co jsou v útulku déle než {0} měsíců."
 
 #: main.js
 msgid "{plural2} animals have holds ending today"
@@ -13408,8 +13487,9 @@ msgid "{plural3} animals entered the shelter"
 msgstr ""
 
 #: main.js
+#, fuzzy
 msgid "{plural3} animals have been on the shelter longer than {0} months"
-msgstr ""
+msgstr "Všechny zvířata co jsou v útulku déle než {0} měsíců."
 
 #: main.js
 msgid "{plural3} animals have holds ending today"

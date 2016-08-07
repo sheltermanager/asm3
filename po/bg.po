@@ -7,15 +7,17 @@ msgstr ""
 "Project-Id-Version: sheltermanager\n"
 "Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
-"PO-Revision-Date: 2015-01-25 03:19+0000\n"
-"Last-Translator: Ivo Dimov <dimov.ivo@gmail.com>\n"
+"PO-Revision-Date: 2016-05-12 16:58+0000\n"
+"Last-Translator: Ivaylo <dimov.ivo@gmail.com>\n"
 "Language-Team: Bulgarian <bg@li.org>\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Launchpad (build 17361)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Pootle 2.5.1.1\n"
 "X-Launchpad-Export-Date: 2015-03-02 05:15+0000\n"
+"X-POOTLE-MTIME: 1463072280.000000\n"
 
 #: options.js
 msgid " days."
@@ -33,7 +35,7 @@ msgstr "(всеки)"
 
 #: animal_new.js animal.js
 msgid "(available)"
-msgstr ""
+msgstr "(налично)"
 
 #: person_find_results.js
 msgid "(blank)"
@@ -53,7 +55,7 @@ msgstr "(главен потребител, нередактируем)"
 
 #: animal_bulk.js
 msgid "(no change)"
-msgstr ""
+msgstr "(без промяна)"
 
 #: test.js medical.js vaccination.js
 msgid "(no deduction)"
@@ -105,7 +107,7 @@ msgstr "6 месеца"
 
 #: publish_options.js
 msgid "6 weeks"
-msgstr ""
+msgstr "6 седмици"
 
 #: publish_options.js
 msgid "8 weeks"
@@ -269,7 +271,7 @@ msgstr ""
 
 #: traploan.js
 msgid "Active Trap Loans"
-msgstr ""
+msgstr "Активни заеми на капани"
 
 #: main.js
 msgid "Active users: {0}"
@@ -284,8 +286,9 @@ msgid "Add Accounts"
 msgstr "Добави сметки"
 
 #: options.js mobile.py
+#, fuzzy
 msgid "Add Animal"
-msgstr ""
+msgstr "Добави животни"
 
 #: roles.js
 msgid "Add Animals"
@@ -293,11 +296,12 @@ msgstr "Добави животни"
 
 #: mobile.py
 msgid "Add Call"
-msgstr ""
+msgstr "Добави обаждане"
 
 #: roles.js
+#, fuzzy
 msgid "Add Citations"
-msgstr ""
+msgstr "Редактирай ваксинация"
 
 #: roles.js
 msgid "Add Cost"
@@ -316,8 +320,9 @@ msgid "Add Document to Repository"
 msgstr "Добави документ в Хранилището"
 
 #: animal_bulk.js
+#, fuzzy
 msgid "Add Flag"
-msgstr ""
+msgstr "Добави лог"
 
 #: roles.js
 msgid "Add Found Animal"
@@ -397,7 +402,7 @@ msgstr ""
 
 #: roles.js
 msgid "Add Trap Loans"
-msgstr ""
+msgstr "Добави заем на капан"
 
 #: roles.js
 msgid "Add Users"
@@ -476,8 +481,9 @@ msgid "Add an animal to the waiting list"
 msgstr "Добави животно в списъка с чакащи"
 
 #: citations.js
+#, fuzzy
 msgid "Add citation"
-msgstr ""
+msgstr "Редактирай ваксинация"
 
 #: animal_costs.js
 msgid "Add cost"
@@ -597,7 +603,7 @@ msgstr ""
 
 #: traploan.js
 msgid "Add trap loan"
-msgstr ""
+msgstr "Добави заем на капан"
 
 #: users.js
 msgid "Add user"
@@ -697,6 +703,10 @@ msgstr "Осиновено прехвърлено към"
 #: publish_options.js dbupdate.py
 msgid "Adoption"
 msgstr "Осиновяване"
+
+#: shelterview.js animal_new.js animal.js animal_bulk.js options.js person.py
+msgid "Adoption Coordinator"
+msgstr ""
 
 #: animal.js animal_bulk.js dbupdate.py
 msgid "Adoption Fee"
@@ -850,8 +860,9 @@ msgid "All Publishers"
 msgstr "Всички методи за публикуване"
 
 #: accounts.js
+#, fuzzy
 msgid "All accounts"
-msgstr ""
+msgstr "Добави сметка"
 
 #: search.py
 msgid "All animal care officers on file."
@@ -906,8 +917,9 @@ msgid "All donors on file."
 msgstr "Всички дарители в системата."
 
 #: search.py
+#, fuzzy
 msgid "All drivers on file."
-msgstr ""
+msgstr "Всички ветеринари в системата."
 
 #: csvimport.js
 msgid ""
@@ -969,6 +981,10 @@ msgstr "Алергии"
 
 #: options.js
 msgid "Allow a fosterer to be selected"
+msgstr ""
+
+#: options.js
+msgid "Allow an adoption coordinator to be selected"
 msgstr ""
 
 #: options.js
@@ -1210,8 +1226,9 @@ msgid "Animal Types"
 msgstr "Типове животни"
 
 #: dbupdate.py
+#, fuzzy
 msgid "Animal board costs"
-msgstr ""
+msgstr "Храна за кучета"
 
 #: animal.py
 msgid "Animal cannot be deceased before it was brought to the shelter"
@@ -1230,8 +1247,9 @@ msgid "Animal control incidents matching '{0}'."
 msgstr ""
 
 #: dbupdate.py
+#, fuzzy
 msgid "Animal defecation"
-msgstr ""
+msgstr "Избор на животни"
 
 #: publish_options.js
 msgid "Animal descriptions"
@@ -1421,8 +1439,9 @@ msgid "Attach selected forms to animal records"
 msgstr ""
 
 #: onlineform_incoming.js
+#, fuzzy
 msgid "Attach this form to an existing animal"
-msgstr ""
+msgstr "Прикачи този документ към съществуващ човек"
 
 #: onlineform_incoming.js
 msgid "Attach this form to an existing person"
@@ -1558,8 +1577,9 @@ msgid "Basset Hound"
 msgstr "Басет"
 
 #: batch.js stocklevel.js
+#, fuzzy
 msgid "Batch"
-msgstr ""
+msgstr "Съвпадение"
 
 #: vaccination.js
 msgid "Batch Number"
@@ -1892,8 +1912,9 @@ msgid "Bulk Transport"
 msgstr ""
 
 #: vaccination.js
+#, fuzzy
 msgid "Bulk Vaccination"
-msgstr ""
+msgstr "Нова ваксинация"
 
 #: animal_bulk.js html.py
 msgid "Bulk change animals"
@@ -1932,6 +1953,10 @@ msgid "CSV of animal/adopter data"
 msgstr "CSV файл с данни за животни/осиновители"
 
 #: sql.js
+msgid "CSV of incident data"
+msgstr ""
+
+#: sql.js
 msgid "CSV of person data"
 msgstr "CSV файл с данни за хора"
 
@@ -1960,8 +1985,9 @@ msgid "Californian"
 msgstr "Californian"
 
 #: header_edit_header.js
+#, fuzzy
 msgid "Call"
-msgstr ""
+msgstr "Мобилен"
 
 #: incident.js incident_new.js mobile.py
 msgid "Call Date/Time"
@@ -1976,8 +2002,9 @@ msgid "Caller Name"
 msgstr ""
 
 #: incident_find.js
+#, fuzzy
 msgid "Caller Phone"
-msgstr ""
+msgstr "Мобилен"
 
 #: dbupdate.py
 msgid "Camel"
@@ -2205,7 +2232,7 @@ msgstr ""
 
 #: roles.js
 msgid "Change Trap Loans"
-msgstr ""
+msgstr "Промени заем на капан"
 
 #: change_user_settings.js header.js
 msgid "Change User Settings"
@@ -2367,7 +2394,7 @@ msgstr "Градът съдържа"
 
 #: person.js person_new.js common_personchooser.js
 msgid "Class"
-msgstr ""
+msgstr "Категория"
 
 #: common.js media.js common_animalchoosermulti.js common_personchooser.js
 #: common_animalchooser.js mobile.py service.py onlineform.py
@@ -2554,9 +2581,14 @@ msgstr "Потвърди"
 msgid "Confirm Password"
 msgstr "Потвърди паролата"
 
-#: transport.js
-msgid "Confirmed"
+#: onlineforms.js
+msgid "Confirmation message"
 msgstr ""
+
+#: transport.js
+#, fuzzy
+msgid "Confirmed"
+msgstr "Потвърди"
 
 #: dbupdate.py
 msgid "Consumed"
@@ -2694,8 +2726,9 @@ msgid "Create a new animal from this found animal record"
 msgstr "Създай ново животно от този запис за намерено животно"
 
 #: incident.js
+#, fuzzy
 msgid "Create a new animal from this incident"
-msgstr ""
+msgstr "Създай нов документ от този списък с чакащи"
 
 #: waitinglist.js
 msgid "Create a new animal from this waiting list entry"
@@ -2751,8 +2784,9 @@ msgid "Create note this many days from today, or 9999 to ask"
 msgstr "Създай бележка след толкова на брой дни или въведи 9999 за да пита"
 
 #: onlineform_incoming.js
+#, fuzzy
 msgid "Create or attach person records from the selected forms"
-msgstr ""
+msgstr "Създай списък с чакащи от избраните документи"
 
 #: main.js
 msgid "Create this message"
@@ -3069,16 +3103,18 @@ msgid "Default Death Reason"
 msgstr "Причина за смъртта по подразбиране"
 
 #: options.js
+#, fuzzy
 msgid "Default Diary Person"
-msgstr ""
+msgstr "Причина за смъртта по подразбиране"
 
 #: options.js
 msgid "Default Entry Reason"
 msgstr "Причина за вписване по подразбиране"
 
 #: options.js
+#, fuzzy
 msgid "Default Incident Type"
-msgstr ""
+msgstr "Тип тест по подразбиране"
 
 #: options.js
 msgid "Default Location"
@@ -3089,12 +3125,14 @@ msgid "Default Log Filter"
 msgstr "Лог филтър по подразбиране"
 
 #: options.js
+#, fuzzy
 msgid "Default Log Type"
-msgstr ""
+msgstr "Окосмение по подразбиране"
 
 #: options.js
+#, fuzzy
 msgid "Default Payment Type"
-msgstr ""
+msgstr "Тип тест по подразбиране"
 
 #: options.js
 msgid "Default Reservation Status"
@@ -3269,8 +3307,9 @@ msgid "Delete Movement"
 msgstr "Изтрий движение"
 
 #: roles.js
+#, fuzzy
 msgid "Delete Payments"
-msgstr ""
+msgstr "Изтрий лечение"
 
 #: roles.js
 msgid "Delete Person"
@@ -3302,7 +3341,7 @@ msgstr ""
 
 #: roles.js
 msgid "Delete Trap Loans"
-msgstr ""
+msgstr "Изтрий заем на капан"
 
 #: medical.js
 msgid "Delete Treatments"
@@ -3358,7 +3397,7 @@ msgstr ""
 
 #: traploan.js
 msgid "Deposit Returned"
-msgstr ""
+msgstr "Дата на връщане на депозита"
 
 #: onlineforms.js reports.js waitinglist_results.js incident.js
 #: report_export.js accounts_trx.js animal_costs.js accounts.js animal_diet.js
@@ -3569,8 +3608,9 @@ msgid "Document templates"
 msgstr "Шаблони за документи"
 
 #: options.js
+#, fuzzy
 msgid "Documents"
-msgstr ""
+msgstr "Документ"
 
 #: dbupdate.py
 msgid "Dog"
@@ -3714,12 +3754,14 @@ msgid "Dwarf Eared"
 msgstr "Dwarf Eared"
 
 #: options.js
+#, fuzzy
 msgid "E = first letter of animal entry category"
-msgstr ""
+msgstr "TT = първата и втората буква от типа на животното"
 
 #: options.js
+#, fuzzy
 msgid "EE = first and second letter of animal entry category"
-msgstr ""
+msgstr "TT = първата и втората буква от типа на животното"
 
 #: dbupdate.py
 msgid "Eclectus"
@@ -3778,8 +3820,9 @@ msgid "Edit additional field"
 msgstr "Редактирай допълнително поле"
 
 #: citations.js
+#, fuzzy
 msgid "Edit citation"
-msgstr ""
+msgstr "Редактирай ваксинация"
 
 #: animal_costs.js
 msgid "Edit cost"
@@ -3923,7 +3966,7 @@ msgstr ""
 
 #: traploan.js
 msgid "Edit trap loan"
-msgstr ""
+msgstr "Редактирай заем на капан"
 
 #: users.js
 msgid "Edit user"
@@ -3964,8 +4007,9 @@ msgid "Email PDF"
 msgstr ""
 
 #: roles.js
+#, fuzzy
 msgid "Email Person"
-msgstr ""
+msgstr "Изпращане на писмо"
 
 #: reports.js
 msgid "Email To"
@@ -4291,12 +4335,14 @@ msgid "Expense"
 msgstr "Разход"
 
 #: financial.py
+#, fuzzy
 msgid "Expense::"
-msgstr ""
+msgstr "Разход"
 
 #: dbupdate.py
+#, fuzzy
 msgid "Expenses::Board"
-msgstr ""
+msgstr "Разходи: Храна"
 
 #: dbupdate.py
 msgid "Expenses::Electricity"
@@ -4327,12 +4373,14 @@ msgid "Expenses::Water"
 msgstr "Вазход: Вода"
 
 #: vaccination.js
+#, fuzzy
 msgid "Expire in next month"
-msgstr ""
+msgstr "Планирано за следващият месец"
 
 #: vaccination.js
+#, fuzzy
 msgid "Expired"
-msgstr ""
+msgstr "Изтича на"
 
 #: licence.js
 msgid "Expired in the last month"
@@ -4398,8 +4446,9 @@ msgid "FECV/FeCoV"
 msgstr ""
 
 #: dbupdate.py
+#, fuzzy
 msgid "FIPV"
-msgstr ""
+msgstr "FIV тестван"
 
 #: animal_find_results.js dbupdate.py
 msgid "FIV"
@@ -4410,8 +4459,9 @@ msgid "FIV Result"
 msgstr "FIV резултат"
 
 #: common.js animal_find.js
+#, fuzzy
 msgid "FIV+"
-msgstr ""
+msgstr "FIV тестван"
 
 #: html.py
 msgid "FIV/L Test Date"
@@ -4430,8 +4480,9 @@ msgid "FLV Result"
 msgstr "FLV резултат"
 
 #: common.js animal_find.js
+#, fuzzy
 msgid "FLV+"
-msgstr ""
+msgstr "FLV"
 
 #: publish_options.js
 msgid "FTP hostname"
@@ -4474,8 +4525,9 @@ msgid "Fawn Tortoiseshell"
 msgstr "Fawn Tortoiseshell"
 
 #: dbupdate.py
+#, fuzzy
 msgid "FeLV"
-msgstr ""
+msgstr "FLV"
 
 #: lostfound_find_results.js lostfound_new.js lostfound_find.js
 #: animal_find_results.js lostfound.js html.py
@@ -4917,8 +4969,9 @@ msgid "Gecko"
 msgstr "Gecko"
 
 #: dbupdate.py
+#, fuzzy
 msgid "General"
-msgstr ""
+msgstr "Генериране"
 
 #: html.py
 msgid "Generate"
@@ -4941,8 +4994,9 @@ msgid "Generate a document from this animal"
 msgstr "Генерирай документ за това животно"
 
 #: incident.js
+#, fuzzy
 msgid "Generate a document from this incident"
-msgstr ""
+msgstr "Генерирай документ за това животно"
 
 #: person.js
 msgid "Generate a document from this person"
@@ -4961,20 +5015,23 @@ msgid "Generate a random name for this animal"
 msgstr "Създай име на случаен принцип"
 
 #: licence.js
+#, fuzzy
 msgid "Generate document from this license"
-msgstr ""
+msgstr "Генерирай документ за това лице"
 
 #: donations.js
+#, fuzzy
 msgid "Generate document from this payment"
-msgstr ""
+msgstr "Генерирай документ за това лице"
 
 #: move_gendoc.js
 msgid "Generate documentation"
 msgstr "Генерирай документация"
 
 #: mailmerge.js
+#, fuzzy
 msgid "Generate documents"
-msgstr ""
+msgstr "Генерирай документи"
 
 #: publish_options.js
 msgid "Generate image thumbnails as tn_$$IMAGE$$"
@@ -5033,8 +5090,9 @@ msgid "Give Treatments"
 msgstr ""
 
 #: vaccination.js
+#, fuzzy
 msgid "Give Vaccination"
-msgstr ""
+msgstr "Още ваксинации"
 
 #: medical.js vaccination.js
 msgid "Given"
@@ -5180,7 +5238,7 @@ msgstr "Guinea fowl"
 msgid "HMRC Gift Aid Spreadsheet"
 msgstr ""
 
-#: reports.js mailmerge.js common_widgets.js
+#: reports.js common_widgets.js
 msgid "HTML"
 msgstr "HTML"
 
@@ -5249,8 +5307,9 @@ msgid "Heartworm Tested"
 msgstr "Тестван за дирофилария"
 
 #: common.js animal_find.js
+#, fuzzy
 msgid "Heartworm+"
-msgstr ""
+msgstr "Дирофилария"
 
 #: dbupdate.py
 msgid "Hedgehog"
@@ -5261,8 +5320,9 @@ msgid "Held"
 msgstr "Задържан"
 
 #: header.js
+#, fuzzy
 msgid "Help"
-msgstr ""
+msgstr "Задържан"
 
 #: publish.py
 msgid "HelpingLostPets Publisher"
@@ -5450,8 +5510,8 @@ msgstr ""
 
 #: onlineforms.js
 msgid ""
-"If this form has a populated emailaddress field during submission, email a "
-"copy of the completed form to it"
+"If this form has a populated emailaddress field during submission, send a "
+"confirmation email to it"
 msgstr ""
 
 #: media.js
@@ -5628,8 +5688,9 @@ msgid "Incident Types"
 msgstr ""
 
 #: incident.js animalcontrol.py
+#, fuzzy
 msgid "Incident date cannot be blank"
-msgstr ""
+msgstr "Датата в дневника не може да бъде празна"
 
 #: calendarview.js
 msgid "Incident followup"
@@ -5850,8 +5911,9 @@ msgid "Invalid microchip number length"
 msgstr ""
 
 #: common.js
+#, fuzzy
 msgid "Invalid time '{0}', times should be in 00:00 format"
-msgstr ""
+msgstr "Невалиден час. Трябва да е във формат ЧЧ:ММ"
 
 #: diary.py
 msgid "Invalid time, times should be in HH:MM format"
@@ -6062,8 +6124,9 @@ msgid "Large"
 msgstr "Едро"
 
 #: options.js
+#, fuzzy
 msgid "Last First"
-msgstr ""
+msgstr "Фамилия, Име"
 
 #: animal.js
 msgid "Last Location"
@@ -6290,16 +6353,18 @@ msgid "Location and Species"
 msgstr "Местонахождение и вид животно"
 
 #: shelterview.js options.js
+#, fuzzy
 msgid "Location and Type"
-msgstr ""
+msgstr "Местонахождение и локация"
 
 #: shelterview.js options.js
 msgid "Location and Unit"
 msgstr "Местонахождение и локация"
 
 #: common_animalchoosermulti.js
+#, fuzzy
 msgid "Locations"
-msgstr ""
+msgstr "Местонахождение"
 
 #: header_edit_header.js roles.js mobile.py
 msgid "Log"
@@ -6362,8 +6427,9 @@ msgid "Longest On Shelter"
 msgstr "Най-старото в приюта"
 
 #: person.js
+#, fuzzy
 msgid "Looking For"
-msgstr ""
+msgstr "Търси"
 
 #: person.js person.py
 msgid "Looking for"
@@ -6794,8 +6860,9 @@ msgid "Microchip Number"
 msgstr "Номер на микрочип"
 
 #: animal.py
+#, fuzzy
 msgid "Microchip number {0} has already been allocated to another animal."
-msgstr ""
+msgstr "Номер в приюта {0} вече е асоцииран с друго животно."
 
 #: animal_new.js animal.js mobile.py
 msgid "Microchipped"
@@ -7024,8 +7091,9 @@ msgid "Mynah"
 msgstr "Mynah"
 
 #: dbupdate.py
+#, fuzzy
 msgid "N (Non-Shelter Animal)"
-msgstr ""
+msgstr "Кучето не е на приюта"
 
 #: options.js
 msgid "NNN or NN = number unique for this type of animal for this year"
@@ -7186,7 +7254,7 @@ msgstr ""
 
 #: traploan.js
 msgid "New Trap Loan"
-msgstr ""
+msgstr "Нов заем на капан"
 
 #: users.js
 msgid "New User"
@@ -7300,8 +7368,9 @@ msgid "Non-Shelter Animal"
 msgstr "Кучето не е на приюта"
 
 #: users.js
+#, fuzzy
 msgid "Non-shelter"
-msgstr ""
+msgstr "Не-приютски"
 
 #: dbupdate.py
 msgid "None"
@@ -7349,8 +7418,9 @@ msgid "Not For Adoption"
 msgstr "Не става за осиновяване"
 
 #: common.js options.js
+#, fuzzy
 msgid "Not Microchipped"
-msgstr ""
+msgstr "Чипирано"
 
 #: accounts_trx.js
 msgid "Not Reconciled"
@@ -7434,8 +7504,9 @@ msgid "Number of fields"
 msgstr "Брой полета"
 
 #: dbupdate.py
+#, fuzzy
 msgid "Number of pets"
-msgstr ""
+msgstr "Брой полета"
 
 #: dbupdate.py
 msgid "Ocicat"
@@ -7902,8 +7973,9 @@ msgid "Percheron"
 msgstr "Percheron"
 
 #: test.js
+#, fuzzy
 msgid "Perform"
-msgstr ""
+msgstr "Направен"
 
 #: mobile.py
 msgid "Perform Homecheck"
@@ -7954,12 +8026,14 @@ msgid "Person looking for report"
 msgstr "Справка за търсещи хора"
 
 #: person_new.js
+#, fuzzy
 msgid "Person successfully created"
-msgstr ""
+msgstr "Успешно добавяне на осиновяване."
 
 #: dbupdate.py
+#, fuzzy
 msgid "Personal"
-msgstr ""
+msgstr "Лице"
 
 #: dbupdate.py
 msgid "Peruvian Inca Orchid"
@@ -8483,8 +8557,9 @@ msgid "Received"
 msgstr "Получено"
 
 #: donations.js
+#, fuzzy
 msgid "Received in last day"
-msgstr ""
+msgstr "Получени предишната година"
 
 #: donations.js
 msgid "Received in last month"
@@ -8519,8 +8594,9 @@ msgid "Recently Fostered"
 msgstr "Наскоро настанени в приемни домове"
 
 #: publish.py
+#, fuzzy
 msgid "Recently adopted"
-msgstr ""
+msgstr "Наскоро осиновени"
 
 #: header.js configuration.py publish.py
 msgid "Recently deceased"
@@ -8535,8 +8611,9 @@ msgid "Reception"
 msgstr ""
 
 #: publish_options.js move_reclaim.js
+#, fuzzy
 msgid "Reclaim"
-msgstr ""
+msgstr "Върнат"
 
 #: header.js move_reclaim.js configuration.py html.py
 msgid "Reclaim an animal"
@@ -8547,8 +8624,9 @@ msgid "Reclaim movements must have a valid reclaim date."
 msgstr ""
 
 #: move_reclaim.js
+#, fuzzy
 msgid "Reclaim successfully created."
-msgstr ""
+msgstr "Резервацията е успешно създадена."
 
 #: animal_find.js dbupdate.py
 msgid "Reclaimed"
@@ -8675,12 +8753,18 @@ msgid "Remove the Rabies Tag field from animal health details"
 msgstr "Премахни полето за медальон от медицинските данни за животното"
 
 #: options.js
-msgid "Remove the adoption fee field from animal details"
+msgid "Remove the adoption coordinator field from animal entry details"
 msgstr ""
 
 #: options.js
+#, fuzzy
+msgid "Remove the adoption fee field from animal details"
+msgstr "Премахни полето за локация от детайлите за животните"
+
+#: options.js
+#, fuzzy
 msgid "Remove the animal control functionality from menus and screens"
-msgstr ""
+msgstr "Премахни функционалността за заем на капан от менютата и екраните"
 
 #: options.js
 msgid "Remove the bonded with fields from animal entry details"
@@ -8732,36 +8816,41 @@ msgid "Remove the online form functionality from menus"
 msgstr "Премахни функционалността за интернет форми от менютата"
 
 #: options.js
+#, fuzzy
 msgid "Remove the picked up fields from animal entry details"
-msgstr ""
+msgstr "Премахни групирането на животни от детайлите на животните"
 
 #: options.js
+#, fuzzy
 msgid "Remove the rota functionality from menus and screens"
-msgstr ""
+msgstr "Премахни функционалността за заем на капан от менютата и екраните"
 
 #: options.js
 msgid "Remove the size field from animal details"
 msgstr "Премахни полето за размер от детайлите на животното"
 
 #: options.js
+#, fuzzy
 msgid "Remove the stock control functionality from menus and screens"
-msgstr ""
+msgstr "Премахни функционалността за заем на капан от менютата и екраните"
 
 #: options.js
 msgid "Remove the tattoo fields from animal identification details"
 msgstr "Премахни полето за татус от Здраве и отличителни белези"
 
 #: options.js
+#, fuzzy
 msgid "Remove the transport functionality from menus and screens"
-msgstr ""
+msgstr "Премахни функционалността за заем на капан от менютата и екраните"
 
 #: options.js
 msgid "Remove the trap loan functionality from menus and screens"
-msgstr ""
+msgstr "Премахни функционалността за заем на капан от менютата и екраните"
 
 #: options.js
+#, fuzzy
 msgid "Remove the weight field from animal details"
-msgstr ""
+msgstr "Премахни полето за размер от детайлите на животното"
 
 #: header_edit_header.js waitinglist_results.js
 msgid "Removed"
@@ -8840,12 +8929,14 @@ msgid "Reservation For"
 msgstr "Резервации за"
 
 #: movements.js
+#, fuzzy
 msgid "Reservation Status"
-msgstr ""
+msgstr "Дата на резервация"
 
 #: lookups.py
+#, fuzzy
 msgid "Reservation Statuses"
-msgstr ""
+msgstr "Дата на резервация"
 
 #: header.js configuration.py html.py
 msgid "Reservation book"
@@ -8941,8 +9032,9 @@ msgid "Retriever"
 msgstr "ретривър"
 
 #: movements.js
+#, fuzzy
 msgid "Return"
-msgstr ""
+msgstr "Върнати"
 
 #: movements.js
 msgid "Return Category"
@@ -9098,8 +9190,9 @@ msgid "S (Stray Cat)"
 msgstr "Улична котка"
 
 #: options.js
+#, fuzzy
 msgid "S = first letter of animal species"
-msgstr ""
+msgstr "T = първата буква от типа на животното"
 
 #: login.js mobile.py
 msgid "SM Account"
@@ -9160,8 +9253,9 @@ msgid "SQL is syntactically correct."
 msgstr "SQL кода е синтактично правилен"
 
 #: options.js
+#, fuzzy
 msgid "SS = first and second letter of animal species"
-msgstr ""
+msgstr "TT = първата и втората буква от типа на животното"
 
 #: common.js
 msgid "Sa"
@@ -9328,12 +9422,14 @@ msgid "Select an animal"
 msgstr "Избери куче"
 
 #: onlineform_incoming.js
+#, fuzzy
 msgid "Select an animal to attach this form to."
-msgstr ""
+msgstr "Изберете човек, към който да бъде прикачен"
 
 #: common_animalchoosermulti.js
+#, fuzzy
 msgid "Select animals"
-msgstr ""
+msgstr "Избери куче"
 
 #: person.js animal.js
 msgid "Select date for diary task"
@@ -9403,7 +9499,7 @@ msgstr "Настройка на часовника"
 msgid "Set publishing options"
 msgstr "Задай настройки на публикуване"
 
-#: mailmerge.js common_widgets.js
+#: common_widgets.js
 msgid "Set the email content-type header to text/html"
 msgstr "Задай типа на текста на писмото на text/html"
 
@@ -9465,8 +9561,9 @@ msgid "Shar Pei"
 msgstr "шар пей"
 
 #: animal.js
+#, fuzzy
 msgid "Share"
-msgstr ""
+msgstr "Акции"
 
 #: dbupdate.py
 msgid "Shares"
@@ -9485,8 +9582,9 @@ msgid "Shelter"
 msgstr "Приют"
 
 #: onlineform.js
+#, fuzzy
 msgid "Shelter Animal"
-msgstr ""
+msgstr "Животни в приюта"
 
 #: mobile.py
 msgid "Shelter Animals"
@@ -9614,8 +9712,9 @@ msgid "Show short shelter codes on screens"
 msgstr "Показвай късите номера на екраните"
 
 #: options.js
+#, fuzzy
 msgid "Show the altered fields"
-msgstr ""
+msgstr "Покажи полето за порода"
 
 #: options.js
 msgid "Show the breed fields"
@@ -9643,8 +9742,9 @@ msgstr ""
 "Покажи целият дневник (вместо само моите бележки) на заглавната страница"
 
 #: options.js
+#, fuzzy
 msgid "Show the hold fields"
-msgstr ""
+msgstr "Покажи полето за порода"
 
 #: options.js
 msgid "Show the internal location field"
@@ -9675,16 +9775,19 @@ msgid "Show the tattoo fields"
 msgstr ""
 
 #: options.js
+#, fuzzy
 msgid "Show the time brought in field"
-msgstr ""
+msgstr "Покажи полето за дата на приемане в приюта"
 
 #: options.js
+#, fuzzy
 msgid "Show the weight field"
-msgstr ""
+msgstr "Покажи полето за размера"
 
 #: options.js
+#, fuzzy
 msgid "Show timeline on the home page"
-msgstr ""
+msgstr "Показвай инструкции за работа със системата на началната страница"
 
 #: options.js
 msgid "Show tips on the home page"
@@ -9795,12 +9898,14 @@ msgid "Single Treatment"
 msgstr "Еднократно лечение"
 
 #: users.js lookups.js lookups.py html.py
+#, fuzzy
 msgid "Site"
-msgstr ""
+msgstr "Ухапване"
 
 #: lookups.py
+#, fuzzy
 msgid "Sites"
-msgstr ""
+msgstr "Размери"
 
 #: waitinglist_results.js person.js animal_find.js animal_new.js animal.js
 #: animal_find_results.js waitinglist_new.js waitinglist.js person.py mobile.py
@@ -9853,8 +9958,9 @@ msgid "Softbill (Other)"
 msgstr "Softbill (Other)"
 
 #: dbupdate.py
+#, fuzzy
 msgid "Sold"
-msgstr ""
+msgstr "Задържане"
 
 #: dbupdate.py
 msgid "Somali"
@@ -9950,8 +10056,9 @@ msgid "Split baby/adult age at"
 msgstr "Възрастова граница между бебета и възрастни"
 
 #: publish_options.js
+#, fuzzy
 msgid "Split species pages with a baby/adult prefix"
-msgstr ""
+msgstr "Префикс за разделяне на страниците за бебета и възрастни"
 
 #: dbupdate.py
 msgid "Sponsorship donations"
@@ -10410,6 +10517,12 @@ msgstr "Основният цват на животното"
 msgid "The coat type of this animal"
 msgstr "Типа окосмяване на животното"
 
+#: onlineforms.js
+msgid ""
+"The confirmation email message to send to the form submitter. Leave blank to "
+"send a copy of the completed form."
+msgstr ""
+
 #: sql.js
 msgid ""
 "The database will be inaccessible to all users while the export is in "
@@ -10453,8 +10566,9 @@ msgid "The date the animal was microchipped"
 msgstr "Дата на чипиране"
 
 #: move_reclaim.js
+#, fuzzy
 msgid "The date the animal was reclaimed"
-msgstr ""
+msgstr "Дата, на която животното е кастрирано"
 
 #: animal_new.js animal.js
 msgid "The date the animal was tattooed"
@@ -10993,48 +11107,57 @@ msgid "This person has not passed a homecheck."
 msgstr "Това лице не е минало успешно домашната инспекция."
 
 #: person.py
+#, fuzzy
 msgid "This person has payments and cannot be removed."
-msgstr ""
+msgstr "Този човек има движения и не може да бъде премахнат."
 
 #: person.py
+#, fuzzy
 msgid "This person is linked to a waiting list record and cannot be removed."
-msgstr ""
+msgstr "Този човек е свързан с животно и не може да бъде премахнат."
 
 #: person.py
 msgid "This person is linked to an animal and cannot be removed."
 msgstr "Този човек е свързан с животно и не може да бъде премахнат."
 
 #: person.py
+#, fuzzy
 msgid "This person is linked to an investigation and cannot be removed."
-msgstr ""
+msgstr "Този човек е свързан с животно и не може да бъде премахнат."
 
 #: person.py
+#, fuzzy
 msgid "This person is linked to animal control and cannot be removed."
-msgstr ""
+msgstr "Този човек е свързан с животно и не може да бъде премахнат."
 
 #: person.py
+#, fuzzy
 msgid "This person is linked to animal licenses and cannot be removed."
-msgstr ""
+msgstr "Този човек е свързан с животно и не може да бъде премахнат."
 
 #: person.py
+#, fuzzy
 msgid "This person is linked to animal transportation and cannot be removed."
-msgstr ""
+msgstr "Този човек е свързан с животно и не може да бъде премахнат."
 
 #: person.py
+#, fuzzy
 msgid "This person is linked to citations and cannot be removed."
-msgstr ""
+msgstr "Този човек е свързан с животно и не може да бъде премахнат."
 
 #: person.py
+#, fuzzy
 msgid "This person is linked to found animals and cannot be removed."
-msgstr ""
+msgstr "Този човек е свързан с животно и не може да бъде премахнат."
 
 #: person.py
+#, fuzzy
 msgid "This person is linked to lost animals and cannot be removed."
-msgstr ""
+msgstr "Този човек е свързан с животно и не може да бъде премахнат."
 
 #: person.py
 msgid "This person is linked to trap loans and cannot be removed."
-msgstr ""
+msgstr "Този човек е свързан с капан на заем и не може да бъде премахнат."
 
 #: movement.py
 msgid "This person is not flagged as a fosterer and cannot foster animals."
@@ -11112,8 +11235,9 @@ msgid "This will permanently remove the selected roles, are you sure?"
 msgstr "Сигурни ли сте, че искате да изтриете безвъзвратно тази роля?"
 
 #: users.js
+#, fuzzy
 msgid "This will permanently remove the selected user accounts. Are you sure?"
-msgstr ""
+msgstr "This will permanently remove the selected records, are you sure?"
 
 #: accounts.js
 msgid ""
@@ -11137,8 +11261,9 @@ msgid "This will permanently remove this animal, are you sure?"
 msgstr "This will permanently remove this animal, are you sure?"
 
 #: incident.js
+#, fuzzy
 msgid "This will permanently remove this incident, are you sure?"
-msgstr ""
+msgstr "This will permanently remove this animal, are you sure?"
 
 #: person.js
 msgid "This will permanently remove this person, are you sure?"
@@ -11199,8 +11324,9 @@ msgid "Time"
 msgstr "Време"
 
 #: animal_new.js animal.js
+#, fuzzy
 msgid "Time Brought In"
-msgstr ""
+msgstr "Дата на приемане"
 
 #: waitinglist_results.js html.py
 msgid "Time On List"
@@ -11378,8 +11504,9 @@ msgid "Transferred"
 msgstr "Прехвърлено"
 
 #: animal.js
+#, fuzzy
 msgid "Transferred From"
-msgstr ""
+msgstr "Прехвърлено към"
 
 #: animal.py
 msgid "Transferred In"
@@ -11419,27 +11546,28 @@ msgstr ""
 
 #: header_edit_header.js roles.js
 msgid "Trap Loans"
-msgstr ""
+msgstr "Заем на капани"
 
 #: traploan.js
 msgid "Trap Number"
-msgstr ""
+msgstr "Номер на капан"
 
 #: lookups.py
 msgid "Trap Types"
-msgstr ""
+msgstr "Тип на капан"
 
 #: calendarview.js
 msgid "Trap loan"
-msgstr ""
+msgstr "Заем на капан"
 
 #: header.js configuration.py html.py
 msgid "Trap loans"
-msgstr ""
+msgstr "Заем на капани"
 
 #: options.js
+#, fuzzy
 msgid "Treat animals at retailers as part of the shelter inventory"
-msgstr ""
+msgstr "Третирай пробно осиновените животни, като налични в приюта"
 
 #: options.js
 msgid "Treat foster animals as part of the shelter inventory"
@@ -11647,8 +11775,9 @@ msgid "Up for adoption"
 msgstr "Животни за осиновяване"
 
 #: animal_bulk.js
+#, fuzzy
 msgid "Update"
-msgstr ""
+msgstr "Обновено."
 
 #: publish_options.js
 msgid "Update publishing options"
@@ -11711,8 +11840,9 @@ msgstr ""
 "логото в горният ляв ъгъл на системата."
 
 #: media.js
+#, fuzzy
 msgid "Uploading..."
-msgstr ""
+msgstr "Зареждане..."
 
 #: lookups.py
 msgid "Urgencies"
@@ -11817,8 +11947,9 @@ msgstr ""
 "за супер потребител."
 
 #: dbupdate.py
+#, fuzzy
 msgid "Vacation"
-msgstr ""
+msgstr "Местонахождение"
 
 #: mobile.py
 msgid "Vaccinate"
@@ -11944,8 +12075,9 @@ msgid "View Diets"
 msgstr "Преглед на диета"
 
 #: mobile.py service.py
+#, fuzzy
 msgid "View Document"
-msgstr ""
+msgstr "Нов документ"
 
 #: roles.js
 msgid "View Document Repository"
@@ -12053,7 +12185,7 @@ msgstr ""
 
 #: roles.js
 msgid "View Trap Loans"
-msgstr ""
+msgstr "Преглед на заем на капани"
 
 #: roles.js
 msgid "View Vaccinations"
@@ -12724,8 +12856,9 @@ msgid "to"
 msgstr "на"
 
 #: timeline.js
+#, fuzzy
 msgid "today"
-msgstr ""
+msgstr "Днес"
 
 #: medicalprofile.js medical.js
 msgid "treatments"
@@ -12826,8 +12959,9 @@ msgid "{0} treatments every {1} months"
 msgstr "{0} treatments every {1} months"
 
 #: medical.py
+#, fuzzy
 msgid "{0} treatments every {1} weekdays"
-msgstr ""
+msgstr "{0} процедури всеки {1} седмици"
 
 #: medical.py
 msgid "{0} treatments every {1} weeks"
@@ -13088,8 +13222,9 @@ msgid "{plural0} transport does not have a driver assigned"
 msgstr ""
 
 #: main.js
+#, fuzzy
 msgid "{plural0} trap is overdue for return"
-msgstr ""
+msgstr "{plural0} капана са с просрочен заем"
 
 #: main.js
 msgid "{plural0} trial adoption has ended"
@@ -13237,7 +13372,7 @@ msgstr ""
 
 #: main.js
 msgid "{plural1} traps are overdue for return"
-msgstr ""
+msgstr "{plural1} капан е с просрочен заем"
 
 #: main.js
 msgid "{plural1} trial adoptions have ended"
@@ -13385,7 +13520,7 @@ msgstr ""
 
 #: main.js
 msgid "{plural2} traps are overdue for return"
-msgstr ""
+msgstr "{plural2} капана са с просрочен заем"
 
 #: main.js
 msgid "{plural2} trial adoptions have ended"
@@ -13532,8 +13667,9 @@ msgid "{plural3} transports do not have a driver assigned"
 msgstr ""
 
 #: main.js
+#, fuzzy
 msgid "{plural3} traps are overdue for return"
-msgstr ""
+msgstr "{plural3} капана са с просрочен заем"
 
 #: main.js
 msgid "{plural3} trial adoptions have ended"

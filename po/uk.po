@@ -7,15 +7,18 @@ msgstr ""
 "Project-Id-Version: sheltermanager\n"
 "Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
-"PO-Revision-Date: 2015-01-20 16:00+0000\n"
-"Last-Translator: Asalle Kim <Asaly12@ukr.net>\n"
+"PO-Revision-Date: 2016-08-07 00:08+0000\n"
+"Last-Translator: Anonymous Pootle User\n"
 "Language-Team: Ukrainian <uk@li.org>\n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Launchpad (build 17361)\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Pootle 2.5.1.1\n"
 "X-Launchpad-Export-Date: 2015-03-02 05:20+0000\n"
+"X-POOTLE-MTIME: 1470528532.000000\n"
 
 #: options.js
 msgid " days."
@@ -691,6 +694,10 @@ msgstr ""
 msgid "Adoption"
 msgstr ""
 
+#: shelterview.js animal_new.js animal.js animal_bulk.js options.js person.py
+msgid "Adoption Coordinator"
+msgstr ""
+
 #: animal.js animal_bulk.js dbupdate.py
 msgid "Adoption Fee"
 msgstr ""
@@ -957,6 +964,10 @@ msgstr ""
 
 #: options.js
 msgid "Allow a fosterer to be selected"
+msgstr ""
+
+#: options.js
+msgid "Allow an adoption coordinator to be selected"
 msgstr ""
 
 #: options.js
@@ -1608,8 +1619,9 @@ msgid "Birman"
 msgstr ""
 
 #: dbupdate.py
+#, fuzzy
 msgid "Bite"
-msgstr ""
+msgstr "Розмір"
 
 #: dbupdate.py
 msgid "Biting"
@@ -1807,8 +1819,9 @@ msgid "Brought In"
 msgstr "внесений"
 
 #: animal_new.js animal.js person.py mobile.py
+#, fuzzy
 msgid "Brought In By"
-msgstr ""
+msgstr "внесений"
 
 #: dbupdate.py
 msgid "Brown"
@@ -1906,6 +1919,10 @@ msgstr ""
 
 #: sql.js
 msgid "CSV of animal/adopter data"
+msgstr ""
+
+#: sql.js
+msgid "CSV of incident data"
 msgstr ""
 
 #: sql.js
@@ -2441,8 +2458,9 @@ msgid "Color to use when publishing to third party services and adoption sites"
 msgstr ""
 
 #: lookups.py
+#, fuzzy
 msgid "Colors"
-msgstr ""
+msgstr "Колір"
 
 #: mailmerge.js
 msgid "Columns"
@@ -2525,6 +2543,10 @@ msgstr ""
 
 #: users.js change_password.js
 msgid "Confirm Password"
+msgstr ""
+
+#: onlineforms.js
+msgid "Confirmation message"
 msgstr ""
 
 #: transport.js
@@ -2831,8 +2853,9 @@ msgid "Dandi Dinmont Terrier"
 msgstr ""
 
 #: csvimport.js html.py
+#, fuzzy
 msgid "Data"
-msgstr ""
+msgstr "Дата"
 
 #: login.js mobile.py
 msgid "Database"
@@ -2903,8 +2926,9 @@ msgid "Date lost cannot be blank."
 msgstr ""
 
 #: animal_new.js animal.js
+#, fuzzy
 msgid "Date of Birth"
-msgstr ""
+msgstr "Дата народження"
 
 #: animal_new.js animal.js animal.py
 msgid "Date of birth cannot be blank"
@@ -3451,12 +3475,14 @@ msgid "Died {0}"
 msgstr ""
 
 #: header_edit_header.js mobile.py lookups.py
+#, fuzzy
 msgid "Diet"
-msgstr ""
+msgstr "Вимерло"
 
 #: roles.js lookups.py
+#, fuzzy
 msgid "Diets"
-msgstr ""
+msgstr "Вимерло"
 
 #: animal_diet.js
 msgid "Diets need a start date."
@@ -3583,12 +3609,14 @@ msgid "Donated"
 msgstr ""
 
 #: dbupdate.py
+#, fuzzy
 msgid "Donation"
-msgstr ""
+msgstr "Місцерозташування"
 
 #: waitinglist_results.js html.py
+#, fuzzy
 msgid "Donation?"
-msgstr ""
+msgstr "Місцерозташування"
 
 #: dbupdate.py
 msgid "Donations for animals entering the shelter"
@@ -3664,8 +3692,9 @@ msgid "Due today"
 msgstr ""
 
 #: medicalprofile.js medical.js
+#, fuzzy
 msgid "Duration"
-msgstr ""
+msgstr "Місцерозташування"
 
 #: dbupdate.py
 msgid "Dutch"
@@ -4359,8 +4388,9 @@ msgid "FECV/FeCoV"
 msgstr ""
 
 #: dbupdate.py
+#, fuzzy
 msgid "FIPV"
-msgstr ""
+msgstr "FIV"
 
 #: animal_find_results.js dbupdate.py
 msgid "FIV"
@@ -4371,8 +4401,9 @@ msgid "FIV Result"
 msgstr ""
 
 #: common.js animal_find.js
+#, fuzzy
 msgid "FIV+"
-msgstr ""
+msgstr "FIV"
 
 #: html.py
 msgid "FIV/L Test Date"
@@ -4391,8 +4422,9 @@ msgid "FLV Result"
 msgstr ""
 
 #: common.js animal_find.js
+#, fuzzy
 msgid "FLV+"
-msgstr ""
+msgstr "FLV"
 
 #: publish_options.js
 msgid "FTP hostname"
@@ -4435,8 +4467,9 @@ msgid "Fawn Tortoiseshell"
 msgstr ""
 
 #: dbupdate.py
+#, fuzzy
 msgid "FeLV"
-msgstr ""
+msgstr "FLV"
 
 #: lostfound_find_results.js lostfound_new.js lostfound_find.js
 #: animal_find_results.js lostfound.js html.py
@@ -5137,7 +5170,7 @@ msgstr ""
 msgid "HMRC Gift Aid Spreadsheet"
 msgstr ""
 
-#: reports.js mailmerge.js common_widgets.js
+#: reports.js common_widgets.js
 msgid "HTML"
 msgstr ""
 
@@ -5400,8 +5433,8 @@ msgstr ""
 
 #: onlineforms.js
 msgid ""
-"If this form has a populated emailaddress field during submission, email a "
-"copy of the completed form to it"
+"If this form has a populated emailaddress field during submission, send a "
+"confirmation email to it"
 msgstr ""
 
 #: media.js
@@ -6241,8 +6274,9 @@ msgid "Location and Unit"
 msgstr ""
 
 #: common_animalchoosermulti.js
+#, fuzzy
 msgid "Locations"
-msgstr ""
+msgstr "Місцерозташування"
 
 #: header_edit_header.js roles.js mobile.py
 msgid "Log"
@@ -6738,8 +6772,9 @@ msgid "Microchip number {0} has already been allocated to another animal."
 msgstr ""
 
 #: animal_new.js animal.js mobile.py
+#, fuzzy
 msgid "Microchipped"
-msgstr ""
+msgstr "Мікрочіп"
 
 #: transport.js
 msgid "Miles"
@@ -7285,8 +7320,9 @@ msgid "Not For Adoption"
 msgstr ""
 
 #: common.js options.js
+#, fuzzy
 msgid "Not Microchipped"
-msgstr ""
+msgstr "Мікрочіп"
 
 #: accounts_trx.js
 msgid "Not Reconciled"
@@ -8603,6 +8639,10 @@ msgid "Remove the Rabies Tag field from animal health details"
 msgstr ""
 
 #: options.js
+msgid "Remove the adoption coordinator field from animal entry details"
+msgstr ""
+
+#: options.js
 msgid "Remove the adoption fee field from animal details"
 msgstr ""
 
@@ -9326,7 +9366,7 @@ msgstr ""
 msgid "Set publishing options"
 msgstr ""
 
-#: mailmerge.js common_widgets.js
+#: common_widgets.js
 msgid "Set the email content-type header to text/html"
 msgstr ""
 
@@ -9716,12 +9756,14 @@ msgid "Single Treatment"
 msgstr ""
 
 #: users.js lookups.js lookups.py html.py
+#, fuzzy
 msgid "Site"
-msgstr ""
+msgstr "Розмір"
 
 #: lookups.py
+#, fuzzy
 msgid "Sites"
-msgstr ""
+msgstr "Розмір"
 
 #: waitinglist_results.js person.js animal_find.js animal_new.js animal.js
 #: animal_find_results.js waitinglist_new.js waitinglist.js person.py mobile.py
@@ -9730,8 +9772,9 @@ msgid "Size"
 msgstr "Розмір"
 
 #: lookups.py
+#, fuzzy
 msgid "Sizes"
-msgstr ""
+msgstr "Розмір"
 
 #: dbupdate.py
 msgid "Skunk"
@@ -10321,6 +10364,12 @@ msgstr ""
 
 #: animal.js
 msgid "The coat type of this animal"
+msgstr ""
+
+#: onlineforms.js
+msgid ""
+"The confirmation email message to send to the form submitter. Leave blank to "
+"send a copy of the completed form."
 msgstr ""
 
 #: sql.js
@@ -11668,8 +11717,9 @@ msgid ""
 msgstr ""
 
 #: dbupdate.py
+#, fuzzy
 msgid "Vacation"
-msgstr ""
+msgstr "Місцерозташування"
 
 #: mobile.py
 msgid "Vaccinate"

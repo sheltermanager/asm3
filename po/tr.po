@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: sheltermanager\n"
 "Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
-"PO-Revision-Date: 2015-11-24 12:43+0000\n"
+"PO-Revision-Date: 2016-08-07 00:08+0000\n"
 "Last-Translator: Anonymous Pootle User\n"
 "Language-Team: Turkish <tr@li.org>\n"
 "Language: tr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Pootle 2.5.1.1\n"
 "X-Launchpad-Export-Date: 2015-03-02 05:20+0000\n"
-"X-POOTLE-MTIME: 1448369029.000000\n"
+"X-POOTLE-MTIME: 1470528528.000000\n"
 
 #: options.js
 msgid " days."
@@ -319,8 +319,9 @@ msgid "Add Document to Repository"
 msgstr "Doküman Ekleyin"
 
 #: animal_bulk.js
+#, fuzzy
 msgid "Add Flag"
-msgstr ""
+msgstr "Kayıt ekleyin."
 
 #: roles.js
 msgid "Add Found Animal"
@@ -701,6 +702,10 @@ msgstr "Sahiplenilern {0} da transfer edildi."
 msgid "Adoption"
 msgstr "Evlat Edinme"
 
+#: shelterview.js animal_new.js animal.js animal_bulk.js options.js person.py
+msgid "Adoption Coordinator"
+msgstr ""
+
 #: animal.js animal_bulk.js dbupdate.py
 msgid "Adoption Fee"
 msgstr "Sahiplendirme Ücreti"
@@ -976,6 +981,10 @@ msgstr "Alerjiler"
 
 #: options.js
 msgid "Allow a fosterer to be selected"
+msgstr ""
+
+#: options.js
+msgid "Allow an adoption coordinator to be selected"
 msgstr ""
 
 #: options.js
@@ -1943,6 +1952,10 @@ msgid "CSV of animal/adopter data"
 msgstr "Hayvan/Sahip verisinin CSV hali"
 
 #: sql.js
+msgid "CSV of incident data"
+msgstr ""
+
+#: sql.js
 msgid "CSV of person data"
 msgstr "Kişi bilgisinin CSV hali"
 
@@ -2567,6 +2580,10 @@ msgstr "Onayla"
 msgid "Confirm Password"
 msgstr "Şifreyi Onayla"
 
+#: onlineforms.js
+msgid "Confirmation message"
+msgstr ""
+
 #: transport.js
 #, fuzzy
 msgid "Confirmed"
@@ -3085,8 +3102,9 @@ msgid "Default Death Reason"
 msgstr "Varsayılan Ölüm Sebebi"
 
 #: options.js
+#, fuzzy
 msgid "Default Diary Person"
-msgstr ""
+msgstr "Varsayılan Ölüm Sebebi"
 
 #: options.js
 msgid "Default Entry Reason"
@@ -3105,8 +3123,9 @@ msgid "Default Log Filter"
 msgstr "Varsayılan Kayıt Filtresi"
 
 #: options.js
+#, fuzzy
 msgid "Default Log Type"
-msgstr ""
+msgstr "Varsayılan Tüy Tipi"
 
 #: options.js
 msgid "Default Payment Type"
@@ -4942,8 +4961,9 @@ msgid "Gecko"
 msgstr "Gecko"
 
 #: dbupdate.py
+#, fuzzy
 msgid "General"
-msgstr ""
+msgstr "Oluştur"
 
 #: html.py
 msgid "Generate"
@@ -4966,8 +4986,9 @@ msgid "Generate a document from this animal"
 msgstr "Bu hayvandan, bir doküman oluştur."
 
 #: incident.js
+#, fuzzy
 msgid "Generate a document from this incident"
-msgstr ""
+msgstr "Bu hayvandan, bir doküman oluştur."
 
 #: person.js
 msgid "Generate a document from this person"
@@ -4999,8 +5020,9 @@ msgid "Generate documentation"
 msgstr "Dokümantasyon oluştur."
 
 #: mailmerge.js
+#, fuzzy
 msgid "Generate documents"
-msgstr ""
+msgstr "Dokümanları Oluştur"
 
 #: publish_options.js
 msgid "Generate image thumbnails as tn_$$IMAGE$$"
@@ -5208,7 +5230,7 @@ msgstr "Guinea fowl"
 msgid "HMRC Gift Aid Spreadsheet"
 msgstr ""
 
-#: reports.js mailmerge.js common_widgets.js
+#: reports.js common_widgets.js
 msgid "HTML"
 msgstr "HTML"
 
@@ -5478,8 +5500,8 @@ msgstr ""
 
 #: onlineforms.js
 msgid ""
-"If this form has a populated emailaddress field during submission, email a "
-"copy of the completed form to it"
+"If this form has a populated emailaddress field during submission, send a "
+"confirmation email to it"
 msgstr ""
 
 #: media.js
@@ -6322,8 +6344,9 @@ msgid "Location and Species"
 msgstr "Yerleşke ve Türler"
 
 #: shelterview.js options.js
+#, fuzzy
 msgid "Location and Type"
-msgstr ""
+msgstr "Yerleşke ve Birim"
 
 #: shelterview.js options.js
 msgid "Location and Unit"
@@ -7334,8 +7357,9 @@ msgid "Non-Shelter Animal"
 msgstr "Barınak dışı hayvan"
 
 #: users.js
+#, fuzzy
 msgid "Non-shelter"
-msgstr ""
+msgstr "Barınak Dışı (Non-Shelter)"
 
 #: dbupdate.py
 msgid "None"
@@ -7688,8 +7712,9 @@ msgid "Out SubTotal"
 msgstr "Ara Toplamı Ver"
 
 #: publish_options.js
+#, fuzzy
 msgid "Output a deceased animals page"
-msgstr ""
+msgstr "Sahiplenilen hayvan sayfasının çıktısını ver."
 
 #: publish_options.js
 msgid "Output a page with links to available online forms"
@@ -8724,6 +8749,10 @@ msgid "Remove the Rabies Tag field from animal health details"
 msgstr "Kuduz Etiketi (Tag) alanını, hayvan sağlığı detaylarından kaldır."
 
 #: options.js
+msgid "Remove the adoption coordinator field from animal entry details"
+msgstr ""
+
+#: options.js
 msgid "Remove the adoption fee field from animal details"
 msgstr "Sahiplenme ücreti alanını, hayvan detaylarından kaldır."
 
@@ -9461,7 +9490,7 @@ msgstr "Sunucu saati ayarlaması"
 msgid "Set publishing options"
 msgstr "Yayınlama seçeneklerini ayarla"
 
-#: mailmerge.js common_widgets.js
+#: common_widgets.js
 msgid "Set the email content-type header to text/html"
 msgstr "E-posta içerik tipini header'dan text/html e çevir."
 
@@ -9859,12 +9888,14 @@ msgid "Single Treatment"
 msgstr "Te(Single) Tedavi"
 
 #: users.js lookups.js lookups.py html.py
+#, fuzzy
 msgid "Site"
-msgstr ""
+msgstr "Isırık"
 
 #: lookups.py
+#, fuzzy
 msgid "Sites"
-msgstr ""
+msgstr "Ebatlar"
 
 #: waitinglist_results.js person.js animal_find.js animal_new.js animal.js
 #: animal_find_results.js waitinglist_new.js waitinglist.js person.py mobile.py
@@ -10481,6 +10512,12 @@ msgstr "Hayvanın ana rengi (base color)"
 #: animal.js
 msgid "The coat type of this animal"
 msgstr "Hayvanın tüy tipi"
+
+#: onlineforms.js
+msgid ""
+"The confirmation email message to send to the form submitter. Leave blank to "
+"send a copy of the completed form."
+msgstr ""
 
 #: sql.js
 msgid ""
@@ -11462,8 +11499,9 @@ msgid "Transferred"
 msgstr "Taşındı"
 
 #: animal.js
+#, fuzzy
 msgid "Transferred From"
-msgstr ""
+msgstr "İçeri Transfer"
 
 #: animal.py
 msgid "Transferred In"

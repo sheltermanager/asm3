@@ -699,6 +699,10 @@ msgstr "Adoptoitu siirretään {0}"
 msgid "Adoption"
 msgstr "Adoptio"
 
+#: shelterview.js animal_new.js animal.js animal_bulk.js options.js person.py
+msgid "Adoption Coordinator"
+msgstr ""
+
 #: animal.js animal_bulk.js dbupdate.py
 msgid "Adoption Fee"
 msgstr "Adoptiomaksu"
@@ -969,6 +973,10 @@ msgstr "Allergiat"
 
 #: options.js
 msgid "Allow a fosterer to be selected"
+msgstr ""
+
+#: options.js
+msgid "Allow an adoption coordinator to be selected"
 msgstr ""
 
 #: options.js
@@ -1933,6 +1941,10 @@ msgid "CSV of animal/adopter data"
 msgstr "Eläimen/adoptoijan CSV-data"
 
 #: sql.js
+msgid "CSV of incident data"
+msgstr ""
+
+#: sql.js
 msgid "CSV of person data"
 msgstr "CSV henkilön tiedot"
 
@@ -2189,8 +2201,9 @@ msgid "Change System Options"
 msgstr ""
 
 #: roles.js
+#, fuzzy
 msgid "Change Tests"
-msgstr ""
+msgstr "Muuta hinta"
 
 #: roles.js
 msgid "Change Transactions"
@@ -2551,6 +2564,10 @@ msgstr ""
 msgid "Confirm Password"
 msgstr ""
 
+#: onlineforms.js
+msgid "Confirmation message"
+msgstr ""
+
 #: transport.js
 msgid "Confirmed"
 msgstr ""
@@ -2608,20 +2625,23 @@ msgstr ""
 
 #: test.js transport.js animal_costs.js medicalprofile.js medical.js
 #: stocklevel.js vaccination.js
+#, fuzzy
 msgid "Cost"
-msgstr ""
+msgstr "Turkki"
 
 #: accounts_trx.js
 msgid "Cost For"
 msgstr ""
 
 #: accounts.js lookups.py
+#, fuzzy
 msgid "Cost Type"
-msgstr ""
+msgstr "Turkkilaatu"
 
 #: lookups.py
+#, fuzzy
 msgid "Cost Types"
-msgstr ""
+msgstr "Turkkilaadut"
 
 #: animal.py
 msgid "Cost date must be a valid date"
@@ -2632,8 +2652,9 @@ msgid "Cost record"
 msgstr ""
 
 #: header_edit_header.js options.js roles.js
+#, fuzzy
 msgid "Costs"
-msgstr ""
+msgstr "Turkki"
 
 #: animal_costs.js
 msgid "Costs need a date and amount."
@@ -3232,8 +3253,9 @@ msgid "Delete Incoming Forms"
 msgstr ""
 
 #: roles.js
+#, fuzzy
 msgid "Delete Investigation"
-msgstr ""
+msgstr "Muuta tutkimuksia"
 
 #: roles.js
 msgid "Delete Licenses"
@@ -5092,8 +5114,9 @@ msgid "Go the system users screen and add user accounts for your staff."
 msgstr ""
 
 #: dbupdate.py
+#, fuzzy
 msgid "Goat"
-msgstr ""
+msgstr "Turkki"
 
 #: dbupdate.py
 msgid "Golden"
@@ -5203,7 +5226,7 @@ msgstr ""
 msgid "HMRC Gift Aid Spreadsheet"
 msgstr ""
 
-#: reports.js mailmerge.js common_widgets.js
+#: reports.js common_widgets.js
 msgid "HTML"
 msgstr ""
 
@@ -5466,8 +5489,8 @@ msgstr ""
 
 #: onlineforms.js
 msgid ""
-"If this form has a populated emailaddress field during submission, email a "
-"copy of the completed form to it"
+"If this form has a populated emailaddress field during submission, send a "
+"confirmation email to it"
 msgstr ""
 
 #: media.js
@@ -6058,8 +6081,9 @@ msgid "Label"
 msgstr ""
 
 #: dbupdate.py
+#, fuzzy
 msgid "Labrador Retriever"
-msgstr ""
+msgstr "Musta labradorinnoutaja"
 
 #: dbupdate.py
 msgid "Lakeland Terrier"
@@ -6210,8 +6234,9 @@ msgid "Lilac"
 msgstr ""
 
 #: dbupdate.py
+#, fuzzy
 msgid "Lilac Tortie"
-msgstr ""
+msgstr "Musta kilpikonna (kissa)"
 
 #: incident.js onlineform_incoming.js additional.js diary.js mobile.py
 msgid "Link"
@@ -6410,8 +6435,9 @@ msgid "Lory/Lorikeet"
 msgstr ""
 
 #: header_edit_header.js search.js
+#, fuzzy
 msgid "Lost"
-msgstr ""
+msgstr "Turkki"
 
 #: search.js onlineform_incoming.js dbupdate.py
 msgid "Lost Animal"
@@ -6585,8 +6611,9 @@ msgid "Mar"
 msgstr ""
 
 #: common.js calendarview.js
+#, fuzzy
 msgid "March"
-msgstr ""
+msgstr "Erä"
 
 #: dbupdate.py
 msgid "Maremma Sheepdog"
@@ -6645,8 +6672,9 @@ msgid "Mastiff"
 msgstr ""
 
 #: animal.js lostfound.js lostfound.py
+#, fuzzy
 msgid "Match"
-msgstr ""
+msgstr "Erä"
 
 #: roles.js
 msgid "Match Lost and Found"
@@ -7052,8 +7080,9 @@ msgid "Name"
 msgstr ""
 
 #: waitinglist_results.js
+#, fuzzy
 msgid "Name Contains"
-msgstr ""
+msgstr "Koodi sisältää"
 
 #: person.js
 msgid "Name and Address"
@@ -7064,8 +7093,9 @@ msgid "Name cannot be blank"
 msgstr ""
 
 #: person_find.js
+#, fuzzy
 msgid "Name contains"
-msgstr ""
+msgstr "Koodi sisältää"
 
 #: dbupdate.py
 msgid "Neapolitan Mastiff"
@@ -7357,12 +7387,14 @@ msgid "Norwich Terrier"
 msgstr ""
 
 #: html.py
+#, fuzzy
 msgid "Not Available For Adoption"
-msgstr ""
+msgstr "Adoptoitavissa"
 
 #: animal_find_results.js
+#, fuzzy
 msgid "Not Available for Adoption"
-msgstr ""
+msgstr "Adoptoitavissa"
 
 #: common.js header_edit_header.js shelterview.js animal_bulk.js options.js
 #: publish.py
@@ -7378,8 +7410,9 @@ msgid "Not Reconciled"
 msgstr ""
 
 #: header_edit_header.js
+#, fuzzy
 msgid "Not available for adoption"
-msgstr ""
+msgstr "Adoptoitavissa"
 
 #: incident_find.js
 msgid "Not dispatched"
@@ -8058,8 +8091,9 @@ msgid "Pionus"
 msgstr ""
 
 #: dbupdate.py
+#, fuzzy
 msgid "Pit Bull Terrier"
-msgstr ""
+msgstr "Bullterrieri"
 
 #: dbupdate.py
 msgid "Pixie-Bob"
@@ -8417,8 +8451,9 @@ msgid "Ragdoll"
 msgstr ""
 
 #: header_edit_header.js waitinglist_results.js html.py
+#, fuzzy
 msgid "Rank"
-msgstr ""
+msgstr "Pankki"
 
 #: dbupdate.py
 msgid "Rat"
@@ -8687,6 +8722,10 @@ msgstr ""
 
 #: options.js
 msgid "Remove the Rabies Tag field from animal health details"
+msgstr ""
+
+#: options.js
+msgid "Remove the adoption coordinator field from animal entry details"
 msgstr ""
 
 #: options.js
@@ -9415,7 +9454,7 @@ msgstr ""
 msgid "Set publishing options"
 msgstr ""
 
-#: mailmerge.js common_widgets.js
+#: common_widgets.js
 msgid "Set the email content-type header to text/html"
 msgstr ""
 
@@ -9805,22 +9844,26 @@ msgid "Single Treatment"
 msgstr ""
 
 #: users.js lookups.js lookups.py html.py
+#, fuzzy
 msgid "Site"
-msgstr ""
+msgstr "Purra"
 
 #: lookups.py
+#, fuzzy
 msgid "Sites"
-msgstr ""
+msgstr "Purra"
 
 #: waitinglist_results.js person.js animal_find.js animal_new.js animal.js
 #: animal_find_results.js waitinglist_new.js waitinglist.js person.py mobile.py
 #: lookups.py html.py
+#, fuzzy
 msgid "Size"
-msgstr ""
+msgstr "Purra"
 
 #: lookups.py
+#, fuzzy
 msgid "Sizes"
-msgstr ""
+msgstr "Purra"
 
 #: dbupdate.py
 msgid "Skunk"
@@ -10036,8 +10079,9 @@ msgid "State"
 msgstr ""
 
 #: person_find.js
+#, fuzzy
 msgid "State contains"
-msgstr ""
+msgstr "Koodi sisältää"
 
 #: dbupdate.py
 msgid "Stationary costs"
@@ -10341,8 +10385,9 @@ msgid "Test Results"
 msgstr ""
 
 #: lookups.py
+#, fuzzy
 msgid "Test Types"
-msgstr ""
+msgstr "Turkkilaadut"
 
 #: html.py
 msgid "Test book"
@@ -10410,6 +10455,12 @@ msgstr ""
 
 #: animal.js
 msgid "The coat type of this animal"
+msgstr ""
+
+#: onlineforms.js
+msgid ""
+"The confirmation email message to send to the form submitter. Leave blank to "
+"send a copy of the completed form."
 msgstr ""
 
 #: sql.js
@@ -12411,8 +12462,9 @@ msgid "YY or YYYY = current year"
 msgstr ""
 
 #: dbupdate.py
+#, fuzzy
 msgid "Yellow Labrador Retriever"
-msgstr ""
+msgstr "Musta labradorinnoutaja"
 
 #: dbupdate.py
 msgid "Yellow and Grey"
@@ -12543,8 +12595,9 @@ msgid "Zipcode"
 msgstr ""
 
 #: person_find.js
+#, fuzzy
 msgid "Zipcode contains"
-msgstr ""
+msgstr "Koodi sisältää"
 
 #: options.js
 msgid "[None]"

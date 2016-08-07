@@ -322,8 +322,9 @@ msgid "Add Document to Repository"
 msgstr "Προσθήκη Εγγράφου στο Αποθετήριο"
 
 #: animal_bulk.js
+#, fuzzy
 msgid "Add Flag"
-msgstr ""
+msgstr "Προσθήκη ιστορικού"
 
 #: roles.js
 msgid "Add Found Animal"
@@ -712,6 +713,10 @@ msgstr "Υιοθετήθηκε Μεταφέρθηκε στο {0}"
 msgid "Adoption"
 msgstr "Υιοθεσία"
 
+#: shelterview.js animal_new.js animal.js animal_bulk.js options.js person.py
+msgid "Adoption Coordinator"
+msgstr ""
+
 #: animal.js animal_bulk.js dbupdate.py
 msgid "Adoption Fee"
 msgstr "Τέλη υιοθεσίας"
@@ -988,6 +993,10 @@ msgstr "Αλλεργίες"
 
 #: options.js
 msgid "Allow a fosterer to be selected"
+msgstr ""
+
+#: options.js
+msgid "Allow an adoption coordinator to be selected"
 msgstr ""
 
 #: options.js
@@ -1972,6 +1981,10 @@ msgid "CSV of animal/adopter data"
 msgstr "Δεδομένα CSV του ζώου/αναδόχου"
 
 #: sql.js
+msgid "CSV of incident data"
+msgstr ""
+
+#: sql.js
 msgid "CSV of person data"
 msgstr "Αρχείο CSV των δεδομένων του ατόμου"
 
@@ -2605,6 +2618,10 @@ msgstr "Επιβεβαίωση"
 msgid "Confirm Password"
 msgstr "Επιβεβαίωση Συνθηματικού"
 
+#: onlineforms.js
+msgid "Confirmation message"
+msgstr ""
+
 #: transport.js
 #, fuzzy
 msgid "Confirmed"
@@ -3136,8 +3153,9 @@ msgid "Default Death Reason"
 msgstr "Προεπιλεγμένο Αίτιο Θανάτου"
 
 #: options.js
+#, fuzzy
 msgid "Default Diary Person"
-msgstr ""
+msgstr "Προεπιλεγμένο Αίτιο Θανάτου"
 
 #: options.js
 msgid "Default Entry Reason"
@@ -3157,8 +3175,9 @@ msgid "Default Log Filter"
 msgstr "Προκαθορισμένο Φίλτρο Καταγραφής"
 
 #: options.js
+#, fuzzy
 msgid "Default Log Type"
-msgstr ""
+msgstr "Προεπιλεγμένος Τύπος Τριχώματος"
 
 #: options.js
 msgid "Default Payment Type"
@@ -5013,8 +5032,9 @@ msgid "Gecko"
 msgstr "Σαύρα"
 
 #: dbupdate.py
+#, fuzzy
 msgid "General"
-msgstr ""
+msgstr "Δημιούργησε"
 
 #: html.py
 msgid "Generate"
@@ -5037,8 +5057,9 @@ msgid "Generate a document from this animal"
 msgstr "Δημιουργία εγγράφου από αυτό το ζώο"
 
 #: incident.js
+#, fuzzy
 msgid "Generate a document from this incident"
-msgstr ""
+msgstr "Δημιουργία εγγράφου από αυτό το ζώο"
 
 #: person.js
 msgid "Generate a document from this person"
@@ -5057,8 +5078,9 @@ msgid "Generate a random name for this animal"
 msgstr "Δημιούργησε ένα τυχαίο όνομα για αυτό το ζώο"
 
 #: licence.js
+#, fuzzy
 msgid "Generate document from this license"
-msgstr ""
+msgstr "Δημιουργία εγγράφου από αυτή την πληρωμή"
 
 #: donations.js
 msgid "Generate document from this payment"
@@ -5069,8 +5091,9 @@ msgid "Generate documentation"
 msgstr "Δημιουργία τεκμηρίωσης"
 
 #: mailmerge.js
+#, fuzzy
 msgid "Generate documents"
-msgstr ""
+msgstr "Δημιουργία Εγγράφων"
 
 #: publish_options.js
 msgid "Generate image thumbnails as tn_$$IMAGE$$"
@@ -5279,7 +5302,7 @@ msgstr "Πουλί της Γουινέας"
 msgid "HMRC Gift Aid Spreadsheet"
 msgstr ""
 
-#: reports.js mailmerge.js common_widgets.js
+#: reports.js common_widgets.js
 msgid "HTML"
 msgstr "HTML"
 
@@ -5560,8 +5583,8 @@ msgstr ""
 
 #: onlineforms.js
 msgid ""
-"If this form has a populated emailaddress field during submission, email a "
-"copy of the completed form to it"
+"If this form has a populated emailaddress field during submission, send a "
+"confirmation email to it"
 msgstr ""
 
 #: media.js
@@ -6482,8 +6505,9 @@ msgid "Longest On Shelter"
 msgstr ""
 
 #: person.js
+#, fuzzy
 msgid "Looking For"
-msgstr ""
+msgstr "Αναζήτηση για"
 
 #: person.js person.py
 msgid "Looking for"
@@ -7435,8 +7459,9 @@ msgid "Non-Shelter Animal"
 msgstr "Το ζώο δεν είναι του καταφυγίου."
 
 #: users.js
+#, fuzzy
 msgid "Non-shelter"
-msgstr ""
+msgstr "Όχι καταφυγίου"
 
 #: dbupdate.py
 msgid "None"
@@ -8846,6 +8871,10 @@ msgid "Remove the Rabies Tag field from animal health details"
 msgstr "Αφαίρεση του πεδίου τελών υιοθέτησης από τις λεπτομέρειες του ζώου"
 
 #: options.js
+msgid "Remove the adoption coordinator field from animal entry details"
+msgstr ""
+
+#: options.js
 msgid "Remove the adoption fee field from animal details"
 msgstr "Αφαίρεση του πεδίου τελών υιοθέτησης από τις λεπτομέρειες του ζώου"
 
@@ -9601,7 +9630,7 @@ msgstr "Ρύθμιση ρολογιού διακομιστή"
 msgid "Set publishing options"
 msgstr "Όρισε επιλογές δημοσίευσης"
 
-#: mailmerge.js common_widgets.js
+#: common_widgets.js
 msgid "Set the email content-type header to text/html"
 msgstr ""
 
@@ -9851,8 +9880,9 @@ msgid "Show the full diary (instead of just my notes) on the home page"
 msgstr ""
 
 #: options.js
+#, fuzzy
 msgid "Show the hold fields"
-msgstr ""
+msgstr "Προβολή των αλλαγμένων πεδίων"
 
 #: options.js
 msgid "Show the internal location field"
@@ -10007,12 +10037,14 @@ msgid "Single Treatment"
 msgstr "Απλή θεραπευτική αγωγή"
 
 #: users.js lookups.js lookups.py html.py
+#, fuzzy
 msgid "Site"
-msgstr ""
+msgstr "Δάγκωμα"
 
 #: lookups.py
+#, fuzzy
 msgid "Sites"
-msgstr ""
+msgstr "Μεγέθη"
 
 #: waitinglist_results.js person.js animal_find.js animal_new.js animal.js
 #: animal_find_results.js waitinglist_new.js waitinglist.js person.py mobile.py
@@ -10646,6 +10678,12 @@ msgstr "Το κύριο χρώμα αυτού του ζώου"
 
 #: animal.js
 msgid "The coat type of this animal"
+msgstr ""
+
+#: onlineforms.js
+msgid ""
+"The confirmation email message to send to the form submitter. Leave blank to "
+"send a copy of the completed form."
 msgstr ""
 
 #: sql.js
@@ -11609,8 +11647,9 @@ msgid "Transferred"
 msgstr "Μεταφέρθηκε"
 
 #: animal.js
+#, fuzzy
 msgid "Transferred From"
-msgstr ""
+msgstr "Μεταφέρθησαν εντός"
 
 #: animal.py
 msgid "Transferred In"

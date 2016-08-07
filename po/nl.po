@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
-"PO-Revision-Date: 2016-03-01 11:02+0000\n"
+"PO-Revision-Date: 2016-07-17 09:48+0000\n"
 "Last-Translator: Anonymous Pootle User\n"
 "Language-Team: Benedictus\n"
 "Language: nl\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.5.1.1\n"
 "X-Launchpad-Export-Date: 2015-03-02 05:15+0000\n"
-"X-POOTLE-MTIME: 1456830140.000000\n"
+"X-POOTLE-MTIME: 1468748882.000000\n"
 
 #: options.js
 msgid " days."
@@ -318,8 +318,9 @@ msgid "Add Document to Repository"
 msgstr "Voeg document toe aan opslaglocatie"
 
 #: animal_bulk.js
+#, fuzzy
 msgid "Add Flag"
-msgstr ""
+msgstr "Voeg logboek toe"
 
 #: roles.js
 msgid "Add Found Animal"
@@ -704,6 +705,10 @@ msgstr ""
 msgid "Adoption"
 msgstr "Adoptie"
 
+#: shelterview.js animal_new.js animal.js animal_bulk.js options.js person.py
+msgid "Adoption Coordinator"
+msgstr ""
+
 #: animal.js animal_bulk.js dbupdate.py
 msgid "Adoption Fee"
 msgstr "Adoptiekosten"
@@ -975,6 +980,10 @@ msgstr "Allergieën"
 
 #: options.js
 msgid "Allow a fosterer to be selected"
+msgstr ""
+
+#: options.js
+msgid "Allow an adoption coordinator to be selected"
 msgstr ""
 
 #: options.js
@@ -1937,6 +1946,10 @@ msgid "CSV of animal/adopter data"
 msgstr ""
 
 #: sql.js
+msgid "CSV of incident data"
+msgstr ""
+
+#: sql.js
 msgid "CSV of person data"
 msgstr ""
 
@@ -2558,6 +2571,10 @@ msgstr "Bevestig"
 msgid "Confirm Password"
 msgstr "Bevestig wachtwoord"
 
+#: onlineforms.js
+msgid "Confirmation message"
+msgstr ""
+
 #: transport.js
 #, fuzzy
 msgid "Confirmed"
@@ -3077,8 +3094,9 @@ msgid "Default Death Reason"
 msgstr "Standaarddoodsoorzaak"
 
 #: options.js
+#, fuzzy
 msgid "Default Diary Person"
-msgstr ""
+msgstr "Standaarddoodsoorzaak"
 
 #: options.js
 msgid "Default Entry Reason"
@@ -3098,8 +3116,9 @@ msgid "Default Log Filter"
 msgstr "Standaardlogboekfilter"
 
 #: options.js
+#, fuzzy
 msgid "Default Log Type"
-msgstr ""
+msgstr "Standaardvachttype"
 
 #: options.js
 #, fuzzy
@@ -4943,8 +4962,9 @@ msgid "Gecko"
 msgstr "Gekko"
 
 #: dbupdate.py
+#, fuzzy
 msgid "General"
-msgstr ""
+msgstr "Aanmaken"
 
 #: html.py
 msgid "Generate"
@@ -4998,12 +5018,14 @@ msgid "Generate document from this payment"
 msgstr "Maak een document aan van deze persoon"
 
 #: move_gendoc.js
+#, fuzzy
 msgid "Generate documentation"
-msgstr ""
+msgstr "Maak documenten aan"
 
 #: mailmerge.js
+#, fuzzy
 msgid "Generate documents"
-msgstr ""
+msgstr "Maak documenten aan"
 
 #: publish_options.js
 msgid "Generate image thumbnails as tn_$$IMAGE$$"
@@ -5212,7 +5234,7 @@ msgstr "Parelhoen"
 msgid "HMRC Gift Aid Spreadsheet"
 msgstr ""
 
-#: reports.js mailmerge.js common_widgets.js
+#: reports.js common_widgets.js
 msgid "HTML"
 msgstr "HTML"
 
@@ -5480,8 +5502,8 @@ msgstr ""
 
 #: onlineforms.js
 msgid ""
-"If this form has a populated emailaddress field during submission, email a "
-"copy of the completed form to it"
+"If this form has a populated emailaddress field during submission, send a "
+"confirmation email to it"
 msgstr ""
 
 #: media.js
@@ -7334,8 +7356,9 @@ msgid "Non-Shelter Animal"
 msgstr "Niet-centrumdier"
 
 #: users.js
+#, fuzzy
 msgid "Non-shelter"
-msgstr ""
+msgstr "Niet-centrum"
 
 #: dbupdate.py
 msgid "None"
@@ -8714,6 +8737,10 @@ msgid "Remove the Rabies Tag field from animal health details"
 msgstr "Verwijder het veld ´Gecastreerd´ uit de dierengezondheidsdetails"
 
 #: options.js
+msgid "Remove the adoption coordinator field from animal entry details"
+msgstr ""
+
+#: options.js
 #, fuzzy
 msgid "Remove the adoption fee field from animal details"
 msgstr "Verwijder het veld ´Vachttype´ uit de dierendetails"
@@ -9450,7 +9477,7 @@ msgstr "Serverklok aanpassen"
 msgid "Set publishing options"
 msgstr "Stel publicatieopties in"
 
-#: mailmerge.js common_widgets.js
+#: common_widgets.js
 msgid "Set the email content-type header to text/html"
 msgstr ""
 
@@ -9848,12 +9875,14 @@ msgid "Single Treatment"
 msgstr "Enkelvoudige behandeling"
 
 #: users.js lookups.js lookups.py html.py
+#, fuzzy
 msgid "Site"
-msgstr ""
+msgstr "Beet"
 
 #: lookups.py
+#, fuzzy
 msgid "Sites"
-msgstr ""
+msgstr "Grootte"
 
 #: waitinglist_results.js person.js animal_find.js animal_new.js animal.js
 #: animal_find_results.js waitinglist_new.js waitinglist.js person.py mobile.py
@@ -10467,6 +10496,12 @@ msgstr "Basiskleur van dier"
 #: animal.js
 msgid "The coat type of this animal"
 msgstr "Vachttype van dier"
+
+#: onlineforms.js
+msgid ""
+"The confirmation email message to send to the form submitter. Leave blank to "
+"send a copy of the completed form."
+msgstr ""
 
 #: sql.js
 msgid ""

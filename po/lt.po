@@ -323,8 +323,9 @@ msgid "Add Document to Repository"
 msgstr "Pridėti dokumentą į saugyklą"
 
 #: animal_bulk.js
+#, fuzzy
 msgid "Add Flag"
-msgstr ""
+msgstr "Pridėti žurnalą"
 
 #: roles.js
 msgid "Add Found Animal"
@@ -524,8 +525,9 @@ msgid "Add investigation"
 msgstr "Pridėti tyrimą"
 
 #: licence.js
+#, fuzzy
 msgid "Add license"
-msgstr ""
+msgstr "Pridėti licencijas"
 
 #: litters.js
 msgid "Add litter"
@@ -560,8 +562,9 @@ msgid "Add online form"
 msgstr "Pridėti internetinę formą"
 
 #: donations.js
+#, fuzzy
 msgid "Add payment"
-msgstr ""
+msgstr "Pridėti mokėjimus"
 
 #: common_personchooser.js
 msgid "Add person"
@@ -705,6 +708,10 @@ msgstr "Atiduoti priimtieji iš kitų prieglaudų {0}"
 #: publish_options.js dbupdate.py
 msgid "Adoption"
 msgstr "Atidavimas"
+
+#: shelterview.js animal_new.js animal.js animal_bulk.js options.js person.py
+msgid "Adoption Coordinator"
+msgstr ""
 
 #: animal.js animal_bulk.js dbupdate.py
 msgid "Adoption Fee"
@@ -982,6 +989,10 @@ msgstr "Alergija"
 
 #: options.js
 msgid "Allow a fosterer to be selected"
+msgstr ""
+
+#: options.js
+msgid "Allow an adoption coordinator to be selected"
 msgstr ""
 
 #: options.js
@@ -1949,6 +1960,10 @@ msgid "CSV of animal/adopter data"
 msgstr "Gyvūno / Naujojo šeimininko duomenų CSV"
 
 #: sql.js
+msgid "CSV of incident data"
+msgstr ""
+
+#: sql.js
 msgid "CSV of person data"
 msgstr "Asmens duomenų CSV"
 
@@ -2573,6 +2588,10 @@ msgstr "Patvirtinti"
 msgid "Confirm Password"
 msgstr "Slaptažodžio patvirtinimas"
 
+#: onlineforms.js
+msgid "Confirmation message"
+msgstr ""
+
 #: transport.js
 #, fuzzy
 msgid "Confirmed"
@@ -3091,8 +3110,9 @@ msgid "Default Death Reason"
 msgstr "Numatytoji mirties priežastis"
 
 #: options.js
+#, fuzzy
 msgid "Default Diary Person"
-msgstr ""
+msgstr "Numatytoji mirties priežastis"
 
 #: options.js
 msgid "Default Entry Reason"
@@ -3112,8 +3132,9 @@ msgid "Default Log Filter"
 msgstr "Numatytasis žurnalo filtras"
 
 #: options.js
+#, fuzzy
 msgid "Default Log Type"
-msgstr ""
+msgstr "Numatytasis kailio tipas"
 
 #: options.js
 #, fuzzy
@@ -3847,8 +3868,9 @@ msgid "Edit investigation"
 msgstr "Redaguoti tyrimą"
 
 #: licence.js
+#, fuzzy
 msgid "Edit license"
-msgstr ""
+msgstr "Pridėti licencijas"
 
 #: litters.js
 msgid "Edit litter"
@@ -3899,8 +3921,9 @@ msgid "Edit online form HTML header/footer"
 msgstr "Redaguoti internetinės formos HTML antraštę/poraštę"
 
 #: donations.js
+#, fuzzy
 msgid "Edit payment"
-msgstr ""
+msgstr "Pridėti mokėjimus"
 
 #: reports.js
 msgid "Edit report"
@@ -4957,8 +4980,9 @@ msgid "Gecko"
 msgstr "Gekonas"
 
 #: dbupdate.py
+#, fuzzy
 msgid "General"
-msgstr ""
+msgstr "Kurti"
 
 #: html.py
 msgid "Generate"
@@ -4981,8 +5005,9 @@ msgid "Generate a document from this animal"
 msgstr "Kurti dokumentą pagal šio gyvūno duomenis"
 
 #: incident.js
+#, fuzzy
 msgid "Generate a document from this incident"
-msgstr ""
+msgstr "Kurti dokumentą pagal šio gyvūno duomenis"
 
 #: person.js
 msgid "Generate a document from this person"
@@ -5015,8 +5040,9 @@ msgid "Generate documentation"
 msgstr "Generuoti dokumentaciją"
 
 #: mailmerge.js
+#, fuzzy
 msgid "Generate documents"
-msgstr ""
+msgstr "Generuoti dokumentus"
 
 #: publish_options.js
 msgid "Generate image thumbnails as tn_$$IMAGE$$"
@@ -5225,7 +5251,7 @@ msgstr "Perlinė višta"
 msgid "HMRC Gift Aid Spreadsheet"
 msgstr ""
 
-#: reports.js mailmerge.js common_widgets.js
+#: reports.js common_widgets.js
 msgid "HTML"
 msgstr "HTML"
 
@@ -5500,8 +5526,8 @@ msgstr ""
 
 #: onlineforms.js
 msgid ""
-"If this form has a populated emailaddress field during submission, email a "
-"copy of the completed form to it"
+"If this form has a populated emailaddress field during submission, send a "
+"confirmation email to it"
 msgstr ""
 
 #: media.js
@@ -6343,8 +6369,9 @@ msgid "Location and Species"
 msgstr "Patalpa ir rūšis"
 
 #: shelterview.js options.js
+#, fuzzy
 msgid "Location and Type"
-msgstr ""
+msgstr "Patalpa ir laikymo vieta"
 
 #: shelterview.js options.js
 msgid "Location and Unit"
@@ -6415,8 +6442,9 @@ msgid "Longest On Shelter"
 msgstr "Ilgiausiai prieglaudoje"
 
 #: person.js
+#, fuzzy
 msgid "Looking For"
-msgstr ""
+msgstr "Ieško"
 
 #: person.js person.py
 msgid "Looking for"
@@ -7357,8 +7385,9 @@ msgid "Non-Shelter Animal"
 msgstr "Ne prieglaudos gyvūnas"
 
 #: users.js
+#, fuzzy
 msgid "Non-shelter"
-msgstr ""
+msgstr "Ne prieglaudos"
 
 #: dbupdate.py
 msgid "None"
@@ -8548,8 +8577,9 @@ msgid "Received"
 msgstr "Gavimo data"
 
 #: donations.js
+#, fuzzy
 msgid "Received in last day"
-msgstr ""
+msgstr "Gauta šiais metais"
 
 #: donations.js
 msgid "Received in last month"
@@ -8740,6 +8770,10 @@ msgstr "Šalinti vados ID lauką iš duomenų apie gyvūną"
 #: options.js
 msgid "Remove the Rabies Tag field from animal health details"
 msgstr "Pašalinti pasiutligės ženklelio lauką iš duomenų apie gyvūno sveikatą"
+
+#: options.js
+msgid "Remove the adoption coordinator field from animal entry details"
+msgstr ""
 
 #: options.js
 #, fuzzy
@@ -9479,7 +9513,7 @@ msgstr "Serverio laikrodžio derinimas"
 msgid "Set publishing options"
 msgstr "Nustatyti publikavimo parinktis"
 
-#: mailmerge.js common_widgets.js
+#: common_widgets.js
 msgid "Set the email content-type header to text/html"
 msgstr "Nustatyti el. laiškų turinio tipo antraštę kaip text/html"
 
@@ -9878,12 +9912,14 @@ msgid "Single Treatment"
 msgstr "Vienkartinis vartojimas"
 
 #: users.js lookups.js lookups.py html.py
+#, fuzzy
 msgid "Site"
-msgstr ""
+msgstr "Įkandimai"
 
 #: lookups.py
+#, fuzzy
 msgid "Sites"
-msgstr ""
+msgstr "Dydžiai"
 
 #: waitinglist_results.js person.js animal_find.js animal_new.js animal.js
 #: animal_find_results.js waitinglist_new.js waitinglist.js person.py mobile.py
@@ -10498,6 +10534,12 @@ msgstr "Pagrindinė gyvūno spalva"
 #: animal.js
 msgid "The coat type of this animal"
 msgstr "Šio gyvūno kailio tipas"
+
+#: onlineforms.js
+msgid ""
+"The confirmation email message to send to the form submitter. Leave blank to "
+"send a copy of the completed form."
+msgstr ""
 
 #: sql.js
 msgid ""
@@ -11495,8 +11537,9 @@ msgid "Transferred"
 msgstr "Perkeltas į kitą prieglaudą"
 
 #: animal.js
+#, fuzzy
 msgid "Transferred From"
-msgstr ""
+msgstr "Priimti iš kitų prieglaudų"
 
 #: animal.py
 msgid "Transferred In"

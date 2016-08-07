@@ -318,8 +318,9 @@ msgid "Add Document to Repository"
 msgstr "Add Document to Repository"
 
 #: animal_bulk.js
+#, fuzzy
 msgid "Add Flag"
-msgstr ""
+msgstr "Add log"
 
 #: roles.js
 msgid "Add Found Animal"
@@ -700,6 +701,10 @@ msgstr "Adopted Transferred In {0}"
 msgid "Adoption"
 msgstr "Adoption"
 
+#: shelterview.js animal_new.js animal.js animal_bulk.js options.js person.py
+msgid "Adoption Coordinator"
+msgstr ""
+
 #: animal.js animal_bulk.js dbupdate.py
 msgid "Adoption Fee"
 msgstr "Adoption Fee"
@@ -973,6 +978,10 @@ msgstr "Allergies"
 #: options.js
 msgid "Allow a fosterer to be selected"
 msgstr "Allow a fosterer to be selected"
+
+#: options.js
+msgid "Allow an adoption coordinator to be selected"
+msgstr ""
 
 #: options.js
 msgid "Allow creation of payments on the Move-Reserve screen"
@@ -1934,6 +1943,10 @@ msgid "CSV of animal/adopter data"
 msgstr "CSV of animal/adopter data"
 
 #: sql.js
+msgid "CSV of incident data"
+msgstr ""
+
+#: sql.js
 msgid "CSV of person data"
 msgstr "CSV of person data"
 
@@ -2555,6 +2568,10 @@ msgstr "Confirm"
 msgid "Confirm Password"
 msgstr "Confirm Password"
 
+#: onlineforms.js
+msgid "Confirmation message"
+msgstr ""
+
 #: transport.js
 msgid "Confirmed"
 msgstr "Confirmed"
@@ -3072,8 +3089,9 @@ msgid "Default Death Reason"
 msgstr "Default Death Reason"
 
 #: options.js
+#, fuzzy
 msgid "Default Diary Person"
-msgstr ""
+msgstr "Default Death Reason"
 
 #: options.js
 msgid "Default Entry Reason"
@@ -3092,8 +3110,9 @@ msgid "Default Log Filter"
 msgstr "Default Log Filter"
 
 #: options.js
+#, fuzzy
 msgid "Default Log Type"
-msgstr ""
+msgstr "Default Coat Type"
 
 #: options.js
 msgid "Default Payment Type"
@@ -4922,8 +4941,9 @@ msgid "Gecko"
 msgstr "Gecko"
 
 #: dbupdate.py
+#, fuzzy
 msgid "General"
-msgstr ""
+msgstr "Generate"
 
 #: html.py
 msgid "Generate"
@@ -4978,8 +4998,9 @@ msgid "Generate documentation"
 msgstr "Generate documentation"
 
 #: mailmerge.js
+#, fuzzy
 msgid "Generate documents"
-msgstr ""
+msgstr "Generate Documents"
 
 #: publish_options.js
 msgid "Generate image thumbnails as tn_$$IMAGE$$"
@@ -5185,7 +5206,7 @@ msgstr "Guinea fowl"
 msgid "HMRC Gift Aid Spreadsheet"
 msgstr "HMRC Gift Aid Spreadsheet"
 
-#: reports.js mailmerge.js common_widgets.js
+#: reports.js common_widgets.js
 msgid "HTML"
 msgstr "HTML"
 
@@ -5455,8 +5476,8 @@ msgstr ""
 
 #: onlineforms.js
 msgid ""
-"If this form has a populated emailaddress field during submission, email a "
-"copy of the completed form to it"
+"If this form has a populated emailaddress field during submission, send a "
+"confirmation email to it"
 msgstr ""
 
 #: media.js
@@ -7315,8 +7336,9 @@ msgid "Non-Shelter Animal"
 msgstr "Non-Shelter Animal"
 
 #: users.js
+#, fuzzy
 msgid "Non-shelter"
-msgstr ""
+msgstr "Non-Shelter"
 
 #: dbupdate.py
 msgid "None"
@@ -7662,8 +7684,9 @@ msgid "Out SubTotal"
 msgstr "Out SubTotal"
 
 #: publish_options.js
+#, fuzzy
 msgid "Output a deceased animals page"
-msgstr ""
+msgstr "Output an adopted animals page"
 
 #: publish_options.js
 msgid "Output a page with links to available online forms"
@@ -8691,6 +8714,10 @@ msgid "Remove the Rabies Tag field from animal health details"
 msgstr "Remove the Rabies Tag field from animal health details"
 
 #: options.js
+msgid "Remove the adoption coordinator field from animal entry details"
+msgstr ""
+
+#: options.js
 msgid "Remove the adoption fee field from animal details"
 msgstr "Remove the adoption fee field from animal details"
 
@@ -9417,7 +9444,7 @@ msgstr "Server clock adjustment"
 msgid "Set publishing options"
 msgstr "Set publishing options"
 
-#: mailmerge.js common_widgets.js
+#: common_widgets.js
 msgid "Set the email content-type header to text/html"
 msgstr "Set the email content-type header to text/html"
 
@@ -9809,12 +9836,14 @@ msgid "Single Treatment"
 msgstr "Single Treatment"
 
 #: users.js lookups.js lookups.py html.py
+#, fuzzy
 msgid "Site"
-msgstr ""
+msgstr "Bite"
 
 #: lookups.py
+#, fuzzy
 msgid "Sites"
-msgstr ""
+msgstr "Sizes"
 
 #: waitinglist_results.js person.js animal_find.js animal_new.js animal.js
 #: animal_find_results.js waitinglist_new.js waitinglist.js person.py mobile.py
@@ -10428,6 +10457,12 @@ msgstr "The base color of this animal"
 #: animal.js
 msgid "The coat type of this animal"
 msgstr "The coat type of this animal"
+
+#: onlineforms.js
+msgid ""
+"The confirmation email message to send to the form submitter. Leave blank to "
+"send a copy of the completed form."
+msgstr ""
 
 #: sql.js
 msgid ""

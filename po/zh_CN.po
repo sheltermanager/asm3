@@ -7,15 +7,17 @@ msgstr ""
 "Project-Id-Version: sheltermanager\n"
 "Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
-"PO-Revision-Date: 2011-09-03 07:17+0000\n"
-"Last-Translator: thanatoid <Unknown>\n"
+"PO-Revision-Date: 2016-08-07 00:08+0000\n"
+"Last-Translator: Anonymous Pootle User\n"
 "Language-Team: Chinese (Simplified) <zh_CN@li.org>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Launchpad (build 17361)\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Pootle 2.5.1.1\n"
 "X-Launchpad-Export-Date: 2015-03-02 05:21+0000\n"
+"X-POOTLE-MTIME: 1470528536.000000\n"
 
 #: options.js
 msgid " days."
@@ -691,6 +693,10 @@ msgstr ""
 msgid "Adoption"
 msgstr ""
 
+#: shelterview.js animal_new.js animal.js animal_bulk.js options.js person.py
+msgid "Adoption Coordinator"
+msgstr ""
+
 #: animal.js animal_bulk.js dbupdate.py
 msgid "Adoption Fee"
 msgstr ""
@@ -957,6 +963,10 @@ msgstr ""
 
 #: options.js
 msgid "Allow a fosterer to be selected"
+msgstr ""
+
+#: options.js
+msgid "Allow an adoption coordinator to be selected"
 msgstr ""
 
 #: options.js
@@ -1767,8 +1777,9 @@ msgid "Breed to use when publishing to third party services and adoption sites"
 msgstr ""
 
 #: lookups.py
+#, fuzzy
 msgid "Breeds"
-msgstr ""
+msgstr "种类"
 
 #: dbupdate.py
 msgid "Briard"
@@ -1906,6 +1917,10 @@ msgstr ""
 
 #: sql.js
 msgid "CSV of animal/adopter data"
+msgstr ""
+
+#: sql.js
+msgid "CSV of incident data"
 msgstr ""
 
 #: sql.js
@@ -2441,8 +2456,9 @@ msgid "Color to use when publishing to third party services and adoption sites"
 msgstr ""
 
 #: lookups.py
+#, fuzzy
 msgid "Colors"
-msgstr ""
+msgstr "颜色"
 
 #: mailmerge.js
 msgid "Columns"
@@ -2525,6 +2541,10 @@ msgstr ""
 
 #: users.js change_password.js
 msgid "Confirm Password"
+msgstr ""
+
+#: onlineforms.js
+msgid "Confirmation message"
 msgstr ""
 
 #: transport.js
@@ -2831,8 +2851,9 @@ msgid "Dandi Dinmont Terrier"
 msgstr ""
 
 #: csvimport.js html.py
+#, fuzzy
 msgid "Data"
-msgstr ""
+msgstr "日期"
 
 #: login.js mobile.py
 msgid "Database"
@@ -3451,12 +3472,14 @@ msgid "Died {0}"
 msgstr ""
 
 #: header_edit_header.js mobile.py lookups.py
+#, fuzzy
 msgid "Diet"
-msgstr ""
+msgstr "死亡"
 
 #: roles.js lookups.py
+#, fuzzy
 msgid "Diets"
-msgstr ""
+msgstr "死亡"
 
 #: animal_diet.js
 msgid "Diets need a start date."
@@ -5137,7 +5160,7 @@ msgstr ""
 msgid "HMRC Gift Aid Spreadsheet"
 msgstr ""
 
-#: reports.js mailmerge.js common_widgets.js
+#: reports.js common_widgets.js
 msgid "HTML"
 msgstr ""
 
@@ -5400,8 +5423,8 @@ msgstr ""
 
 #: onlineforms.js
 msgid ""
-"If this form has a populated emailaddress field during submission, email a "
-"copy of the completed form to it"
+"If this form has a populated emailaddress field during submission, send a "
+"confirmation email to it"
 msgstr ""
 
 #: media.js
@@ -6738,8 +6761,9 @@ msgid "Microchip number {0} has already been allocated to another animal."
 msgstr ""
 
 #: animal_new.js animal.js mobile.py
+#, fuzzy
 msgid "Microchipped"
-msgstr ""
+msgstr "芯片"
 
 #: transport.js
 msgid "Miles"
@@ -7285,8 +7309,9 @@ msgid "Not For Adoption"
 msgstr ""
 
 #: common.js options.js
+#, fuzzy
 msgid "Not Microchipped"
-msgstr ""
+msgstr "芯片"
 
 #: accounts_trx.js
 msgid "Not Reconciled"
@@ -8603,6 +8628,10 @@ msgid "Remove the Rabies Tag field from animal health details"
 msgstr ""
 
 #: options.js
+msgid "Remove the adoption coordinator field from animal entry details"
+msgstr ""
+
+#: options.js
 msgid "Remove the adoption fee field from animal details"
 msgstr ""
 
@@ -9326,7 +9355,7 @@ msgstr ""
 msgid "Set publishing options"
 msgstr ""
 
-#: mailmerge.js common_widgets.js
+#: common_widgets.js
 msgid "Set the email content-type header to text/html"
 msgstr ""
 
@@ -10321,6 +10350,12 @@ msgstr ""
 
 #: animal.js
 msgid "The coat type of this animal"
+msgstr ""
+
+#: onlineforms.js
+msgid ""
+"The confirmation email message to send to the form submitter. Leave blank to "
+"send a copy of the completed form."
 msgstr ""
 
 #: sql.js
