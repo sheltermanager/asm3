@@ -1,6 +1,7 @@
 39
 ================
 
+08/08/16 Fix variable assignment bug when re-registering AVID
 08/08/16 Use .not() to exclude chooser fields when saving records
 08/08/16 Have incident/person searching filter by site #439
 08/08/16 Allow sites to be assigned to people and incidents #439

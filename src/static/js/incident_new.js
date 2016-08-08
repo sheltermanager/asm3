@@ -162,6 +162,9 @@ $(function() {
             if (!config.bool("MultiSiteEnabled")) {
                 $("#siterow").hide();
             }
+            else {
+                $("#site").select("value", asm.siteid);
+            }
 
         },
 

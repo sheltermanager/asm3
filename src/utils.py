@@ -596,6 +596,8 @@ def fix_relative_document_uris(s, baseurl, account = "" ):
     ones to the service so that documents will work outside of 
     the ASM UI.
     """
+    dbp = ""
+    accountp = ""
     if account != "":
         dbp = "db=%s&amp;" % account
         accountp = "&account=" + account

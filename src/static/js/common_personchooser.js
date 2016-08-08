@@ -265,6 +265,10 @@
                 buttons: pcaddbuttons,
                 open: function() {
                     check_org();
+                    // If we're in multi site mode, use the active user's site
+                    if (config.bool("MultiSiteEnabled")) {
+                        dialogadd.find(".personchooser-site").select("value", asm.siteid);
+                    }
                 },
                 close: function() {
                     dialogadd.find("input, textarea").val("");
