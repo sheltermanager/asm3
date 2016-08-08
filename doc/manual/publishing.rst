@@ -80,7 +80,8 @@ The All Publishers tab allows you to set options common to all internet publishe
   photo.
 
 * Add this text to all animal descriptions: Allows you to set a footer on every
-  animal description before it is published.
+  animal description before it is published. Note that this does not apply
+  to courtesy listings, allowing you to add additional contact info.
 
 HTML/FTP Publishing
 -------------------

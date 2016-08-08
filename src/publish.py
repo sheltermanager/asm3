@@ -692,8 +692,8 @@ class AbstractPublisher(threading.Thread):
         """
         # Note: WEBSITEMEDIANOTES becomes ANIMALCOMMENTS in get_animal_data when publisher_use_comments is on
         notes = utils.nulltostr(an["WEBSITEMEDIANOTES"])
-        # Add any extra text
-        notes += configuration.third_party_publisher_sig(self.dbo)
+        # Add any extra text as long as this isn't a courtesy listing
+        if an["ISCOURTESY"] != 1: notes += configuration.third_party_publisher_sig(self.dbo)
         # Replace any wp tags used in the notes
         notes = self.replaceAnimalTags(an, notes)
         # Escape carriage returns

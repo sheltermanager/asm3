@@ -1,6 +1,7 @@
 39
 ================
 
+08/08/16 Don't add extra text when publishing courtesy listings #454
 08/08/16 Fix view roles so any will pass, cope with none set #453
 05/08/16 View roles for incidents #453
 04/08/16 Unescape XSS protection on FTP passwords
