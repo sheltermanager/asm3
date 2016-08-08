@@ -1341,7 +1341,7 @@ $(function() {
                 var formdata = "mode=save" +
                     "&id=" + controller.animal.ID + 
                     "&recordversion=" + controller.animal.RECORDVERSION + 
-                    "&" + $("input, select, textarea").toPOST();
+                    "&" + $("input, select, textarea").not(".chooser").toPOST();
                 common.ajax_post("animal", formdata)
                     .then(callback)
                     .fail(function() {

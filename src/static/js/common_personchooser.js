@@ -34,6 +34,7 @@
             towns: "",
             counties: "",
             towncounties: "",
+            sites: [],
             personflags: [],
             filter: "all",
             mode: "full",
@@ -108,57 +109,64 @@
                 '</tr>',
                 '<tr class="tag-individual">',
                 '<td><label>' + _("Title") + '</label></td>',
-                '<td><input class="asm-textbox" data="title" type="textbox" /></td>',
+                '<td><input class="asm-textbox chooser" data="title" type="textbox" /></td>',
                 '</tr>',
                 '<tr class="tag-individual">',
                 '<td><label>' + _("Initials") + '</label></td>',
-                '<td><input class="asm-textbox" maxlength="50" data="initials" type="textbox" /></td>',
+                '<td><input class="asm-textbox chooser" maxlength="50" data="initials" type="textbox" /></td>',
                 '</tr>',
                 '<tr class="tag-individual">',
                 '<td><label>' + _("First name(s)") + '</label></td>',
-                '<td><input class="asm-textbox" maxlength="200" data="forenames" type="textbox" /></td>',
+                '<td><input class="asm-textbox chooser" maxlength="200" data="forenames" type="textbox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label class="tag-individual">' + _("Last name") + '</label>',
                 '<label class="tag-organisation">' + _("Organization name") + '</label></td>',
-                '<td><input class="asm-textbox" maxlength="100" data="surname" type="textbox" /></td>',
+                '<td><input class="asm-textbox chooser" maxlength="100" data="surname" type="textbox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label>' + _("Address") + '</label></td>',
-                '<td><textarea class="asm-textareafixed" data="address" rows="3"></textarea></td>',
+                '<td><textarea class="asm-textareafixed chooser" data="address" rows="3"></textarea></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label>' + _("City") + '</label></td>',
-                '<td><input class="asm-textbox personchooser-town" maxlength="100" data="town" type="textbox" /></td>',
+                '<td><input class="asm-textbox chooser personchooser-town" maxlength="100" data="town" type="textbox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label>' + _("State") + '</label></td>',
-                '<td><input class="asm-textbox personchooser-county" maxlength="100" data="county" type="textbox" /></td>',
+                '<td><input class="asm-textbox chooser personchooser-county" maxlength="100" data="county" type="textbox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label>' + _("Zipcode") + '</label></td>',
-                '<td><input class="asm-textbox" data="postcode" type="textbox" /></td>',
+                '<td><input class="asm-textbox chooser" data="postcode" type="textbox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label>' + _("Home Phone") + '</label></td>',
-                '<td><input class="asm-textbox" data="hometelephone" type="textbox" /></td>',
+                '<td><input class="asm-textbox chooser" data="hometelephone" type="textbox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label>' + _("Work Phone") + '</label></td>',
-                '<td><input class="asm-textbox" data="worktelephone" type="textbox" /></td>',
+                '<td><input class="asm-textbox chooser" data="worktelephone" type="textbox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label>' + _("Cell Phone") + '</label></td>',
-                '<td><input class="asm-textbox" data="mobiletelephone" type="textbox" /></td>',
+                '<td><input class="asm-textbox chooser" data="mobiletelephone" type="textbox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label>' + _("Email Address") + '</label></td>',
-                '<td><input class="asm-textbox" maxlength="200" data="emailaddress" type="textbox" /></td>',
+                '<td><input class="asm-textbox chooser" maxlength="200" data="emailaddress" type="textbox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label>' + _("Flags") + '</label></td>',
                 '<td>',
-                '<select class="personchooser-flags" data="flags" multiple="multiple">',
+                '<select class="personchooser-flags chooser" data="flags" multiple="multiple">',
+                '</select>',
+                '</td>',
+                '</tr>',
+                '<tr class="personchooser-siterow">',
+                '<td><label>' + _("Site") + '</label></td>',
+                '<td>',
+                '<select class="asm-selectbox chooser personchooser-site" data="site">',
                 '</select>',
                 '</td>',
                 '</tr>',
@@ -183,6 +191,11 @@
             if (!common.has_permission("vo")) {
                 node.find(".personchooser-perm").hide();
                 node.find(".personchooser-noperm").show();
+            }
+
+            // Hide sites for non-multi-site
+            if (!config.bool("MultiSiteEnabled")) {
+                dialogadd.find(".personchooser-siterow").hide();
             }
             
             // Create the find dialog
@@ -280,7 +293,7 @@
                     self.clear(true);
                 });
 
-            /// Go to the backend to get the towns, counties and person flags  
+            /// Go to the backend to get the towns, counties and person flags with lookup data
             $.ajax({
                 type: "GET",
                 url:  "person_embed",
@@ -293,6 +306,7 @@
                     self.options.counties = d.counties;
                     self.options.towncounties = d.towncounties;
                     self.options.personflags = d.flags;
+                    self.options.sites = d.sites;
                     // Add person flag options to the screen
                     html.person_flag_options(null, self.options.personflags, dialogadd.find(".personchooser-flags"));
                     // Setup autocomplete widgets with the towns/counties
@@ -319,6 +333,10 @@
                         listItemLabelClass: 'bsmListItemLabel-custom',
                         removeClass: 'bsmListItemRemove-custom'
                     });
+                    // Add sites
+                    dialogadd.find(".personchooser-site").html('<option value="0">' + _("(all)") + '</option>' + 
+                        html.list_to_options(self.options.sites, "ID", "SITENAME"));
+
                     // Was there a value already set by the markup? If so, use it
                     if (self.element.val() != "" && self.element.val() != "0") {
                         self.loadbyid(self.element.val());

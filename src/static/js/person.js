@@ -51,6 +51,15 @@ $(function() {
                 '<span class="asm-person-code">' + controller.person.OWNERCODE + '</span>',
                 '</td>',
                 '</tr>',
+                '<tr id="siterow">',
+                '<td><label for="site">' + _("Site") + '</label></td>',
+                '<td>',
+                '<select id="site" data-json="SITEID" data-post="site" class="asm-selectbox">',
+                '<option value="0">' + _("(all)") + '</option>',
+                html.list_to_options(controller.sites, "ID", "SITENAME"),
+                '</select>',
+                '</td>',
+                '</tr>',
                 '<tr>',
                 '<td><label for="ownertype">' + _("Class") + '</label></td>',
                 '<td>',
@@ -476,6 +485,7 @@ $(function() {
             // CONFIG ===========================
             $(".towncounty").toggle( !config.bool("HideTownCounty") );
             $("#latlongrow").toggle( config.bool("ShowLatLong") );
+            $("#siterow").toggle( config.bool("MultiSiteEnabled") );
 
             // SECURITY =============================================================
 
@@ -685,14 +695,10 @@ $(function() {
             validate.save = function(callback) {
                 if (!person.validation()) { header.hide_loading(); return; }
                 validate.dirty(false);
-                // Note we specify ownertype again at the end, otherwise the 
-                // values in the embedded person choosers will take precedence
-                // and wipe out the values. The same problem doesn't exist
-                // for textboxes because they're blank and therefore ignored.
                 var formdata = "mode=save" +
                     "&id=" + $("#personid").val() + 
                     "&recordversion=" + controller.person.RECORDVERSION + 
-                    "&" + $("input, select, textarea").toPOST() + "&" + $("#ownertype").toPOST();
+                    "&" + $("input, select, textarea").not(".chooser").toPOST();
                 common.ajax_post("person", formdata)
                     .then(callback)
                     .fail(function() { 

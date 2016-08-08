@@ -20,6 +20,15 @@ $(function() {
                 format.padleft(controller.incident.ACID, 6),
                 '</span></td>',
                 '</tr>',
+                '<tr id="siterow">',
+                '<td><label for="site">' + _("Site") + '</label></td>',
+                '<td>',
+                '<select id="site" data-json="SITEID" data-post="site" class="asm-selectbox">',
+                '<option value="0">' + _("(all)") + '</option>',
+                html.list_to_options(controller.sites, "ID", "SITENAME"),
+                '</select>',
+                '</td>',
+                '</tr>',
                 '<tr>',
                 '<td><label for="incidenttype">' + _("Type") + '</label></td>',
                 '<td><select id="incidenttype" data-json="INCIDENTTYPEID" data-post="incidenttype" class="asm-selectbox">',
@@ -28,7 +37,7 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="viewroles">' + _("View Roles") + '</label>',
-                '<span id="callout-viewroles" class="asm-callout">' + _("Only allow users with these roles to view this incident") + '</span>',
+                '<span id="callout-viewroles" class="asm-callout">' + _("Only allow users with one of these roles to view this incident") + '</span>',
                 '</td>',
                 '<td><select id="viewroles" data-json="VIEWROLEIDS" data-post="viewroles" class="asm-bsmselect" multiple="multiple">',
                 html.list_to_options(controller.roles, "ID", "ROLENAME"),
@@ -358,6 +367,9 @@ $(function() {
             if (!common.has_permission("daci")) { $("#button-delete").hide(); }
             if (!common.has_permission("gaf")) { $("#button-document").hide(); }
 
+            // Hide the site chooser if multi-site is off
+            $("#siterow").toggle( config.bool("MultiSiteEnabled") );
+
             // If a dispatch time is already set, disable the dispatch button
             if ($("#dispatchtime").val()) {
                 $("#button-dispatch").button("disable");
@@ -471,7 +483,7 @@ $(function() {
                 var formdata = "mode=save" +
                     "&id=" + $("#incidentid").val() + 
                     "&recordversion=" + controller.incident.RECORDVERSION + 
-                    "&" + $("input, select, textarea").toPOST();
+                    "&" + $("input, select, textarea").not(".chooser").toPOST();
                 common.ajax_post("incident", formdata)
                     .then(callback)
                     .fail(function() { 

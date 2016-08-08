@@ -20,7 +20,7 @@ VERSIONS = (
     33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702, 33703, 33704, 33705,
     33706, 33707, 33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716,
     33717, 33718, 33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904,
-    33905, 33906, 33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915
+    33905, 33906, 33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -398,6 +398,7 @@ def sql_structure(dbo):
         fint("FollowupComplete3", True),
         fdate("CompletedDate", True),
         fint("IncidentCompletedID", True),
+        fint("SiteID", True),
         fint("OwnerID", True),
         fint("Owner2ID", True),
         fint("Owner3ID", True),
@@ -427,6 +428,7 @@ def sql_structure(dbo):
     sql += index("animalcontrol_OwnerID", "animalcontrol", "OwnerID")
     sql += index("animalcontrol_Owner2ID", "animalcontrol", "Owner2ID")
     sql += index("animalcontrol_Owner3ID", "animalcontrol", "Owner3ID")
+    sql += index("animalcontrol_SiteID", "animalcontrol", "SiteID")
     sql += index("animalcontrol_VictimID", "animalcontrol", "VictimID")
 
     sql += table("animalcontrolanimal", (
@@ -1107,6 +1109,7 @@ def sql_structure(dbo):
         fint("ExcludeFromBulkEmail", True),
         fint("IDCheck", True),
         flongstr("Comments", True),
+        fint("SiteID", True),
         fint("IsBanned", True),
         fint("IsVolunteer", True),
         fint("IsHomeChecker", True),
@@ -1160,6 +1163,7 @@ def sql_structure(dbo):
     sql += index("owner_OwnerSurname", "owner", "OwnerSurname")
     sql += index("owner_OwnerTitle", "owner", "OwnerTitle")
     sql += index("owner_OwnerTown", "owner", "OwnerTown")
+    sql += index("owner_SiteID", "owner", "SiteID")
 
     sql += table("ownercitation", (
         fid(),
@@ -4521,4 +4525,13 @@ def update_33915(dbo):
     db.execute_dbupdate(dbo, "CREATE TABLE animalcontrolrole (AnimalControlID INTEGER NOT NULL, " \
         "RoleID INTEGER NOT NULL, CanView INTEGER NOT NULL, CanEdit INTEGER NOT NULL)")
     db.execute_dbupdate(dbo, "CREATE UNIQUE INDEX animalcontrolrole_AnimalControlIDRoleID ON animalcontrolrole(AnimalControlID, RoleID)")
+
+def update_33916(dbo):
+    # Add SiteID to people and incidents
+    add_column(dbo, "owner", "SiteID", "INTEGER")
+    add_index(dbo, "owner_SiteID", "owner", "SiteID")
+    add_column(dbo, "animalcontrol", "SiteID", "INTEGER")
+    add_index(dbo, "animalcontrol_SiteID", "animalcontrol", "SiteID")
+    db.execute_dbupdate(dbo, "UPDATE owner SET SiteID = 0")
+    db.execute_dbupdate(dbo, "UPDATE animalcontrol SET SiteID = 0")
 

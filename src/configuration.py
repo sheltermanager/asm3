@@ -208,7 +208,7 @@ DEFAULTS = {
     "MicrochipRegisterMovements": "1,5",
     "MovementDonationsDefaultDue": "No",
     "MovementNumberOverride": "No",
-    "MultiSiteEnable": "No", 
+    "MultiSiteEnabled": "No", 
     "JSWindowPrint": "Yes",
     "OnlineFormVerifyJSKey": "Yes",
     "OwnerAddressCheck": "Yes",
@@ -792,6 +792,9 @@ def microchip_register_movements(dbo):
 
 def movement_donations_default_due(dbo):
     return cboolean(dbo, "MovementDonationsDefaultDue", DEFAULTS["MovementDonationsDefaultDue"] == "Yes")
+
+def multi_site_enabled(dbo):
+    return cboolean(dbo, "MultiSiteEnabled", DEFAULTS["MultiSiteEnabled"] == "Yes")
 
 def non_shelter_type(dbo):
     return cint(dbo, "AFNonShelterType", 40)

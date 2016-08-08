@@ -272,60 +272,60 @@ def search(dbo, session, q):
             pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
             ar(publish.get_animal_data(dbo, pc), "ANIMAL", animalsort)
     elif q == "people":
-        ar(person.get_person_find_simple(dbo, "", "all", viewstaff, viewvolunteer, limit), "PERSON", personsort)
+        ar(person.get_person_find_simple(dbo, "", session.user, "all", viewstaff, viewvolunteer, limit), "PERSON", personsort)
         explain = _("All people on file.", l)
     elif q == "vets":
         explain = _("All vets on file.", l)
         if viewperson:
-            ar(person.get_person_find_simple(dbo, "", "vet", viewstaff, viewvolunteer, limit), "PERSON", personsort)
+            ar(person.get_person_find_simple(dbo, "", session.user, "vet", viewstaff, viewvolunteer, limit), "PERSON", personsort)
     elif q == "retailers":
         explain = _("All retailers on file.", l)
         if viewperson:
-            ar(person.get_person_find_simple(dbo, "", "retailer", viewstaff, viewvolunteer, limit), "PERSON", personsort)
+            ar(person.get_person_find_simple(dbo, "", session.user, "retailer", viewstaff, viewvolunteer, limit), "PERSON", personsort)
     elif q == "staff":
         explain = _("All staff on file.", l)
         if viewperson:
-            ar(person.get_person_find_simple(dbo, "", "staff", viewstaff, viewvolunteer, limit), "PERSON", personsort)
+            ar(person.get_person_find_simple(dbo, "", session.user, "staff", viewstaff, viewvolunteer, limit), "PERSON", personsort)
     elif q == "fosterers":
         explain = _("All fosterers on file.", l)
         if viewperson:
-            ar(person.get_person_find_simple(dbo, "", "fosterer", viewstaff, viewvolunteer, limit), "PERSON", personsort)
+            ar(person.get_person_find_simple(dbo, "", session.user, "fosterer", viewstaff, viewvolunteer, limit), "PERSON", personsort)
     elif q == "volunteers":
         explain = _("All volunteers on file.", l)
         if viewperson:
-            ar(person.get_person_find_simple(dbo, "", "volunteer", viewstaff, viewvolunteer, limit), "PERSON", personsort)
+            ar(person.get_person_find_simple(dbo, "", session.user, "volunteer", viewstaff, viewvolunteer, limit), "PERSON", personsort)
     elif q == "shelters":
         explain = _("All animal shelters on file.", l)
         if viewperson:
-            ar(person.get_person_find_simple(dbo, "", "shelter", viewstaff, viewvolunteer, limit), "PERSON", personsort)
+            ar(person.get_person_find_simple(dbo, "", session.user, "shelter", viewstaff, viewvolunteer, limit), "PERSON", personsort)
     elif q == "aco":
         explain = _("All animal care officers on file.", l)
         if viewperson:
-            ar(person.get_person_find_simple(dbo, "", "aco", viewstaff, viewvolunteer, limit), "PERSON", personsort)
+            ar(person.get_person_find_simple(dbo, "", session.user, "aco", viewstaff, viewvolunteer, limit), "PERSON", personsort)
     elif q == "banned":
         explain = _("All banned owners on file.", l)
         if viewperson:
-            ar(person.get_person_find_simple(dbo, "", "banned", viewstaff, viewvolunteer, limit), "PERSON", personsort)
+            ar(person.get_person_find_simple(dbo, "", session.user, "banned", viewstaff, viewvolunteer, limit), "PERSON", personsort)
     elif q == "homechecked":
         explain = _("All homechecked owners on file.", l)
         if viewperson:
-            ar(person.get_person_find_simple(dbo, "", "homechecked", viewstaff, viewvolunteer, limit), "PERSON", personsort)
+            ar(person.get_person_find_simple(dbo, "", session.user, "homechecked", viewstaff, viewvolunteer, limit), "PERSON", personsort)
     elif q == "homecheckers":
         explain = _("All homecheckers on file.", l)
         if viewperson:
-            ar(person.get_person_find_simple(dbo, "", "homechecker", viewstaff, viewvolunteer, limit), "PERSON", personsort)
+            ar(person.get_person_find_simple(dbo, "", session.user, "homechecker", viewstaff, viewvolunteer, limit), "PERSON", personsort)
     elif q == "members":
         explain = _("All members on file.", l)
         if viewperson:
-            ar(person.get_person_find_simple(dbo, "", "member", viewstaff, viewvolunteer, limit), "PERSON", personsort)
+            ar(person.get_person_find_simple(dbo, "", session.user, "member", viewstaff, viewvolunteer, limit), "PERSON", personsort)
     elif q == "donors":
         explain = _("All donors on file.", l)
         if viewperson:
-            ar(person.get_person_find_simple(dbo, "", "donor", viewstaff, viewvolunteer, limit), "PERSON", personsort)
+            ar(person.get_person_find_simple(dbo, "", session.user, "donor", viewstaff, viewvolunteer, limit), "PERSON", personsort)
     elif q == "drivers":
         explain = _("All drivers on file.", l)
         if viewperson:
-            ar(person.get_person_find_simple(dbo, "", "driver", viewstaff, viewvolunteer, limit), "PERSON", personsort)
+            ar(person.get_person_find_simple(dbo, "", session.user, "driver", viewstaff, viewvolunteer, limit), "PERSON", personsort)
     elif q == "reservenohomecheck":
         explain = _("People with active reservations, but no homecheck has been done.", l)
         if viewperson:
@@ -356,7 +356,7 @@ def search(dbo, session, q):
         q = q[q.find(":")+1:].strip()
         explain = _("People matching '{0}'.", l).format(q)
         if viewperson:
-            ar( person.get_person_find_simple(dbo, q, "all", viewstaff, viewvolunteer, limit), "PERSON", personsort )
+            ar( person.get_person_find_simple(dbo, q, session.user, "all", viewstaff, viewvolunteer, limit), "PERSON", personsort )
     elif q.startswith("wl:") or q.startswith("waitinglist:"):
         q = q[q.find(":")+1:].strip()
         explain = _("Waiting list entries matching '{0}'.", l).format(q)
@@ -383,9 +383,9 @@ def search(dbo, session, q):
         if viewanimal:
             ar( animal.get_animal_find_simple(dbo, q, "all", limit), "ANIMAL", animalsort )
         if users.check_permission_bool(session, users.VIEW_INCIDENT):
-            ar( animalcontrol.get_animalcontrol_find_simple(dbo, q, limit), "ANIMALCONTROL", acsort )
+            ar( animalcontrol.get_animalcontrol_find_simple(dbo, q, session.user, limit), "ANIMALCONTROL", acsort )
         if viewperson:
-            ar( person.get_person_find_simple(dbo, q, "all", viewstaff, viewvolunteer, limit), "PERSON", personsort )
+            ar( person.get_person_find_simple(dbo, q, session.user, "all", viewstaff, viewvolunteer, limit), "PERSON", personsort )
         if users.check_permission_bool(session, users.VIEW_WAITING_LIST):
             ar( waitinglist.get_waitinglist_find_simple(dbo, q, limit), "WAITINGLIST", wlsort )
         if users.check_permission_bool(session, users.VIEW_LOST_ANIMAL):

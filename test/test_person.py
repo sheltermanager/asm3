@@ -73,10 +73,10 @@ class TestPerson(unittest.TestCase):
         person.get_person_rota(base.get_dbo(), self.nid)
  
     def test_get_person_find_simple(self):
-        assert len(person.get_person_find_simple(base.get_dbo(), "Test")) > 0
+        assert len(person.get_person_find_simple(base.get_dbo(), "Test", "user")) > 0
 
     def test_get_person_find_advanced(self):
-        assert len(person.get_person_find_advanced(base.get_dbo(), { "name": "Test" })) > 0
+        assert len(person.get_person_find_advanced(base.get_dbo(), { "name": "Test" }, "user")) > 0
 
     def test_investigation_crud(self):
         data = {

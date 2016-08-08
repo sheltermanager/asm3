@@ -23,10 +23,10 @@ class TestAnimalControl(unittest.TestCase):
         animalcontrol.get_followup_two_dates(base.get_dbo(), "2014-01-01", "2014-01-31")
 
     def test_get_animalcontrol_find_simple(self):
-        animalcontrol.get_animalcontrol_find_simple(base.get_dbo(), "test")
+        animalcontrol.get_animalcontrol_find_simple(base.get_dbo(), "test", "user")
 
     def test_get_animalcontrol_find_advanced(self):
-        assert len(animalcontrol.get_animalcontrol_find_advanced(base.get_dbo(), { "number": str(self.nid) })) > 0
+        assert len(animalcontrol.get_animalcontrol_find_advanced(base.get_dbo(), { "number": str(self.nid) }, "user")) > 0
 
     def test_get_animalcontrol_satellite_counts(self):
         animalcontrol.get_animalcontrol_satellite_counts(base.get_dbo(), self.nid)

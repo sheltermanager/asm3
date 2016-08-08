@@ -232,18 +232,19 @@ def get_animalcontrol_find_advanced(dbo, criteria, username, limit = 0):
 
 def reduce_find_results(dbo, username, rows):
     """
-    Given the results of a find operation, goes through the view roles
-    for the results and removes any results which the user does not
-    have permission to view
+    Given the results of a find operation, goes through the results and removes 
+    any results which the user does not have permission to view.
+    1. Because there are one or more view roles on the incident and the user doesn't have any
+    2. Multi-site is on, there's a site on the incident that is not the users
     """
     # Do nothing if there are no results
     if len(rows) == 0: return rows
     u = db.query(dbo, "SELECT * FROM users WHERE UserName = %s" % db.ds(username))
     # Do nothing if we can't find the user
     if len(u) == 0: return rows
-    # Do nothing if the user is a super user
+    # Do nothing if the user is a super user and has no site
     u = u[0]
-    if u["SUPERUSER"] == 1: return rows
+    if u["SUPERUSER"] == 1 and u["SITEID"] == 0: return rows
     roles = users.get_roles_ids_for_user(dbo, username)
     # Build an IN clause of result IDs
     rids = []
@@ -254,9 +255,12 @@ def reduce_find_results(dbo, username, rows):
     results = []
     for r in rows:
         rok = False
+        # Compare the site ID on the incident to our user - to exclude the record,
+        # both user and incident must have a site ID and they must be different
+        if r["SITEID"] != 0 and u["SITEID"] != 0 and r["SITEID"] != u["SITEID"]: continue
         # Get the list of required view roles for this incident
         incroles = [ x for x in viewroles if r["ACID"] == x["ANIMALCONTROLID"] and x["CANVIEW"] == 1 ]
-        # If there aren't any, it's fine to view
+        # If there aren't any, it's fine to view the incident
         if len(incroles) == 0: 
             rok = True
         else:
@@ -377,6 +381,7 @@ def update_animalcontrol_from_form(dbo, post, username):
         ( "FollowupComplete3", post.db_boolean("followupcomplete3")),
         ( "CompletedDate", post.db_date("completeddate")),
         ( "IncidentCompletedID", post.db_integer("completedtype")),
+        ( "SiteID", post.db_integer("site")),
         ( "OwnerID", post.db_integer("owner")),
         ( "Owner2ID", post.db_integer("owner2")),
         ( "Owner3ID", post.db_integer("owner3")),
@@ -452,6 +457,7 @@ def insert_animalcontrol_from_form(dbo, post, username):
         ( "FollowupComplete3", post.db_boolean("followupcomplete3")),
         ( "CompletedDate", post.db_date("completeddate")),
         ( "IncidentCompletedID", post.db_integer("completedtype")),
+        ( "SiteID", post.db_integer("site")),
         ( "OwnerID", post.db_integer("owner")),
         ( "Owner2ID", post.db_integer("owner2")),
         ( "Owner3ID", post.db_integer("owner3")),

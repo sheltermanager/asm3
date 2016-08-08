@@ -3041,6 +3041,8 @@ class incident:
         dbo = session.dbo
         post = utils.PostedData(web.input(id = 0), session.locale)
         a = extanimalcontrol.get_animalcontrol(dbo, post.integer("id"))
+        if session.siteid != 0 and a["SITEID"] != 0 and session.siteid != a["SITEID"]:
+            raise utils.ASMPermissionError("incident not in user site")
         if a is None: raise web.notfound()
         al.debug("open incident %s %s %s" % (a["ACID"], a["INCIDENTNAME"], python2display(l, a["INCIDENTDATETIME"])), "code.incident", dbo)
         s = html.header("", session)
@@ -3056,6 +3058,7 @@ class incident:
         c += html.controller_json("roles", users.get_roles(dbo))
         c += html.controller_json("species", extlookups.get_species(dbo))
         c += html.controller_json("sexes", extlookups.get_sexes(dbo))
+        c += html.controller_json("sites", extlookups.get_sites(dbo))
         c += html.controller_json("tabcounts", extanimalcontrol.get_animalcontrol_satellite_counts(dbo, a["ACID"])[0])
         c += html.controller_json("templates", dbfs.get_document_templates(dbo))
         c += html.controller_json("users", users.get_users(dbo))
@@ -3388,6 +3391,7 @@ class incident_new:
         c += html.controller_json("additional", extadditional.get_additional_fields(dbo, 0, "incident"))
         c += html.controller_json("pickuplocations", extlookups.get_pickup_locations(dbo))
         c += html.controller_json("roles", users.get_roles(dbo))
+        c += html.controller_json("sites", extlookups.get_sites(dbo))
         c += html.controller_json("users", users.get_users(dbo))
         s += html.controller(c)
         s += html.footer()
@@ -4798,6 +4802,8 @@ class person:
             users.check_permission(session, users.VIEW_STAFF)
         if p["ISVOLUNTEER"] == 1:
             users.check_permission(session, users.VIEW_VOLUNTEER)
+        if session.siteid != 0 and p["SITEID"] != 0 and session.siteid != p["SITEID"]:
+            raise utils.ASMPermissionError("person not in user site")
         al.debug("opened person '%s'" % p["OWNERNAME"], "code.person", dbo)
         s = html.header("", session)
         c = html.controller_json("additional", extadditional.get_additional_fields(dbo, p["ID"], "person"))
@@ -4813,6 +4819,7 @@ class person:
         c += html.controller_json("homecheckhistory", extperson.get_homechecked(dbo, post.integer("id")))
         c += html.controller_json("logtypes", extlookups.get_log_types(dbo))
         c += html.controller_json("sexes", extlookups.get_sexes(dbo))
+        c += html.controller_json("sites", extlookups.get_sites(dbo))
         c += html.controller_json("sizes", extlookups.get_sizes(dbo))
         c += html.controller_str("towns", "|".join(extperson.get_towns(dbo)))
         c += html.controller_str("counties", "|".join(extperson.get_counties(dbo)))
@@ -4981,6 +4988,7 @@ class person_embed:
             rv["counties"] = "|".join(extperson.get_counties(dbo))
             rv["towncounties"] = "|".join(extperson.get_town_to_county(dbo))
             rv["flags"] = extlookups.get_person_flags(dbo)
+            rv["sites"] = extlookups.get_sites(dbo)
             web.header("Content-Type", "application/json")
             web.header("Cache-Control", "max-age=60")
             return html.json(rv)
@@ -4994,7 +5002,7 @@ class person_embed:
         q = post["q"]
         web.header("Content-Type", "application/json")
         if mode == "find":
-            rows = extperson.get_person_find_simple(dbo, q, post["filter"], users.check_permission_bool(session, users.VIEW_STAFF), users.check_permission_bool(session, users.VIEW_VOLUNTEER), 100)
+            rows = extperson.get_person_find_simple(dbo, q, session.user, post["filter"], users.check_permission_bool(session, users.VIEW_STAFF), users.check_permission_bool(session, users.VIEW_VOLUNTEER), 100)
             al.debug("find '%s' got %d rows" % (str(web.ctx.query), len(rows)), "code.person_embed", dbo)
             return html.json(rows)
         elif mode == "id":
@@ -5047,9 +5055,9 @@ class person_find_results:
         mode = post["mode"]
         q = post["q"]
         if mode == "SIMPLE":
-            results = extperson.get_person_find_simple(dbo, q, "all", users.check_permission_bool(session, users.VIEW_STAFF), users.check_permission_bool(session, users.VIEW_VOLUNTEER), configuration.record_search_limit(dbo))
+            results = extperson.get_person_find_simple(dbo, q, session.user, "all", users.check_permission_bool(session, users.VIEW_STAFF), users.check_permission_bool(session, users.VIEW_VOLUNTEER), configuration.record_search_limit(dbo))
         else:
-            results = extperson.get_person_find_advanced(dbo, post.data, users.check_permission_bool(session, users.VIEW_STAFF), configuration.record_search_limit(dbo))
+            results = extperson.get_person_find_advanced(dbo, post.data, session.user, users.check_permission_bool(session, users.VIEW_STAFF), configuration.record_search_limit(dbo))
         add = None
         if len(results) > 0: 
             add = extadditional.get_additional_fields_ids(dbo, results, "person")
@@ -5372,6 +5380,7 @@ class person_new:
         c += html.controller_str("towncounties", "|".join(extperson.get_town_to_county(dbo)))
         c += html.controller_json("additional", extadditional.get_additional_fields(dbo, 0, "person"))
         c += html.controller_json("flags", extlookups.get_person_flags(dbo))
+        c += html.controller_json("sites", extlookups.get_sites(dbo))
         s += html.controller(c)
         s += html.footer()
         al.debug("add person", "code.person_new", dbo)
@@ -6101,7 +6110,7 @@ class sql_dump:
         elif mode == "personcsv":
             al.debug("%s executed CSV person dump" % str(session.user), "code.sql", dbo)
             web.header("Content-Disposition", "attachment; filename=\"person.csv\"")
-            yield utils.csv(l, extperson.get_person_find_simple(dbo, "", "all", True, True, 0))
+            yield utils.csv(l, extperson.get_person_find_simple(dbo, "", session.user, "all", True, True, 0))
         elif mode == "incidentcsv":
             al.debug("%s executed CSV incident dump" % str(session.user), "code.sql", dbo)
             web.header("Content-Disposition", "attachment; filename=\"incident.csv\"")

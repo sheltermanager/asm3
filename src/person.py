@@ -336,7 +336,7 @@ def get_investigation(dbo, personid, sort = ASCENDING):
         sql += " ORDER BY o.Date DESC"
     return db.query(dbo, sql)
 
-def get_person_find_simple(dbo, query, classfilter="all", includeStaff = False, includeVolunteers = False, limit = 0):
+def get_person_find_simple(dbo, query, username="", classfilter="all", includeStaff = False, includeVolunteers = False, limit = 0):
     """
     Returns rows for simple person searches.
     query: The search criteria
@@ -404,9 +404,9 @@ def get_person_find_simple(dbo, query, classfilter="all", includeStaff = False, 
         cf = " AND o.IsVolunteer = 0"
     sql = unicode(get_person_query(dbo)) + " WHERE (" + u" OR ".join(ors) + ")" + cf + " ORDER BY o.OwnerName"
     if limit > 0: sql += " LIMIT " + str(limit)
-    return db.query(dbo, sql)
+    return reduce_find_results(dbo, username, db.query(dbo, sql))
 
-def get_person_find_advanced(dbo, criteria, includeStaff = False, limit = 0):
+def get_person_find_advanced(dbo, criteria, username, includeStaff = False, limit = 0):
     """
     Returns rows for advanced person searches.
     criteria: A dictionary of criteria
@@ -487,7 +487,30 @@ def get_person_find_advanced(dbo, criteria, includeStaff = False, limit = 0):
     else:
         sql = get_person_query(dbo) + " WHERE " + " AND ".join(c) + " ORDER BY o.OwnerName"
     if limit > 0: sql += " LIMIT " + str(limit)
-    return db.query(dbo, sql)
+    return reduce_find_results(dbo, username, db.query(dbo, sql))
+
+def reduce_find_results(dbo, username, rows):
+    """
+    Given the results of a find operation, goes through the results and removes 
+    any results which the user does not have permission to view. So far, this is because:
+    1. Multi-site is on, there's a site on the person that is not the current users
+    """
+    # Do nothing if there are no results
+    if len(rows) == 0: return rows
+    u = db.query(dbo, "SELECT * FROM users WHERE UserName = %s" % db.ds(username))
+    # Do nothing if we can't find the user
+    if len(u) == 0: return rows
+    # Do nothing if the user has no site
+    u = u[0]
+    if u["SITEID"] == 0: return rows
+    # Remove rows where the user doesn't have that site
+    results = []
+    for r in rows:
+        # Compare the site ID on the  person to our user - to exclude the record,
+        # both user and person must have a site ID and they must be different
+        if r["SITEID"] != 0 and r["SITEID"] != u["SITEID"]: continue
+        results.append(r)
+    return results
 
 def get_person_rota(dbo, personid):
     return db.query(dbo, get_rota_query(dbo) + " WHERE r.OwnerID = %d ORDER BY r.StartDateTime DESC LIMIT 100" % personid)
@@ -623,6 +646,7 @@ def update_person_from_form(dbo, post, username):
         ( "ExcludeFromBulkEmail", post.db_boolean("excludefrombulkemail")),
         ( "IDCheck", db.di(homechecked) ),
         ( "Comments", post.db_string("comments")),
+        ( "SiteID", post.db_integer("site")),
         ( "IsBanned", db.di(banned)),
         ( "IsVolunteer", db.di(volunteer)),
         ( "IsMember", db.di(member)),
@@ -767,6 +791,7 @@ def insert_person_from_form(dbo, post, username):
         ( "ExcludeFromBulkEmail", post.db_boolean("excludefrombulkemail")),
         ( "IDCheck", db.di(homechecked) ),
         ( "Comments", db.ds(d("comments") )),
+        ( "SiteID", post.db_integer("site")),
         ( "IsAdoptionCoordinator", db.di(coordinator)),
         ( "IsBanned", db.di(banned)),
         ( "IsVolunteer", db.di(volunteer)),

@@ -79,6 +79,15 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
+                '<tr id="siterow">',
+                '<td><label for="site">' + _("Site") + '</label></td>',
+                '<td>',
+                '<select id="site" data="site" class="asm-selectbox">',
+                '<option value="0">' + _("(all)") + '</option>',
+                html.list_to_options(controller.sites, "ID", "SITENAME"),
+                '</select>',
+                '</td>',
+                '</tr>',
                 additional.additional_mandatory_fields(controller.additional),
                 '</table>',
                 '<div class="centered">',
@@ -107,7 +116,7 @@ $(function() {
                     return; 
                 }
                 header.show_loading(_("Creating..."));
-                var formdata = $("input, textarea, select").toPOST();
+                var formdata = $("input, textarea, select").not(".chooser").toPOST();
                 common.ajax_post("person_new", formdata)
                     .then(function(personid) { 
                         if (personid && person_new.create_and_edit) { 
@@ -187,6 +196,10 @@ $(function() {
 
             if (config.bool("HideTownCounty")) {
                 $(".towncounty").hide();
+            }
+
+            if (!config.bool("MultiSiteEnabled")) {
+                $("#siterow").hide();
             }
 
             $("#town").autocomplete({ source: controller.towns.split("|") });

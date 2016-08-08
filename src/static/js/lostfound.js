@@ -234,7 +234,7 @@ $(function() {
                 var formdata = "mode=save" +
                     "&id=" + $("#lfid").val() + 
                     "&recordversion=" + controller.animal.RECORDVERSION + 
-                    "&" + $("input, select, textarea").toPOST();
+                    "&" + $("input, select, textarea").not(".chooser").toPOST();
                 common.ajax_post(controller.name, formdata)
                     .then(callback)
                     .fail(function() { 

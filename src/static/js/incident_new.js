@@ -17,7 +17,7 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="viewroles">' + _("View Roles") + '</label>',
-                '<span id="callout-viewroles" class="asm-callout">' + _("Only allow users with these roles to view this incident") + '</span>',
+                '<span id="callout-viewroles" class="asm-callout">' + _("Only allow users with one of these roles to view this incident") + '</span>',
                 '</td>',
                 '<td><select id="viewroles" data-json="VIEWROLESIDS" data-post="viewroles" class="asm-bsmselect" multiple="multiple">',
                 html.list_to_options(controller.roles, "ID", "ROLENAME"),
@@ -93,6 +93,15 @@ $(function() {
                 html.list_to_options(controller.pickuplocations, "ID", "LOCATIONNAME"),
                 '</select></td>',
                 '</tr>',
+                '<tr id="siterow">',
+                '<td><label for="site">' + _("Site") + '</label></td>',
+                '<td>',
+                '<select id="site" data="site" class="asm-selectbox">',
+                '<option value="0">' + _("(all)") + '</option>',
+                html.list_to_options(controller.sites, "ID", "SITENAME"),
+                '</select>',
+                '</td>',
+                '</tr>',
                 additional.additional_mandatory_fields(controller.additional),
                 '</table>',
                 '<div class="centered">',
@@ -121,7 +130,7 @@ $(function() {
                     return; 
                 }
                 header.show_loading(_("Creating..."));
-                var formdata = $("input, textarea, select").toPOST();
+                var formdata = $("input, textarea, select").not(".chooser").toPOST();
                 common.ajax_post("incident_new", formdata)
                     .then(function(incidentid) { 
                         if (mode == "addedit") {
@@ -149,6 +158,11 @@ $(function() {
             $("#reset").button().click(function() {
                 incident_new.reset();
             });
+
+            if (!config.bool("MultiSiteEnabled")) {
+                $("#siterow").hide();
+            }
+
         },
 
         sync: function() {
