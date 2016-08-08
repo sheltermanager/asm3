@@ -248,15 +248,22 @@ def reduce_find_results(dbo, username, rows):
     # Build an IN clause of result IDs
     rids = []
     for r in rows:
-        rids.append(r["ACID"])
+        rids.append(str(r["ACID"]))
     viewroles = db.query(dbo, "SELECT * FROM animalcontrolrole WHERE AnimalControlID IN (%s)" % ",".join(rids))
     # Remove rows where the user doesn't have that role
     results = []
     for r in rows:
-        rok = True
-        for v in viewroles:
-            if v["ANIMALCONTROLID"] == r["ACID"] and not v["ROLEID"] in roles:
-                rok = False
+        rok = False
+        # Get the list of required view roles for this incident
+        incroles = [ x for x in viewroles if r["ACID"] == x["ANIMALCONTROLID"] and x["CANVIEW"] == 1 ]
+        # If there aren't any, it's fine to view
+        if len(incroles) == 0: 
+            rok = True
+        else:
+            # If the user has any of the set view roles, we're good
+            for v in incroles:
+                if v["ROLEID"] in roles:
+                    rok = True
         if rok:
             results.append(r)
     return results
