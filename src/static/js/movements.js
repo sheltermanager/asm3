@@ -167,12 +167,15 @@ $(function() {
                             return "";
                         },
                         hideif: function(row) {
-                            return controller.name == "move_book_transport";
+                            return controller.name == "move_book_transport" || controller.name == "move_book_retailer";
                         }
                     },
                     { field: "RETAILER", display: _("Retailer"),
                         formatter: function(row) {
-                            if (row.RETAILERID) {
+                            if (controller.name == "move_book_retailer") {
+                                return html.person_link(row, row.OWNERID);
+                            }
+                            else if (row.RETAILERID) {
                                 return '<a href="person?id=' + row.RETAILERID + '">' + row.RETAILERNAME + '</a>';
                             }
                             return "";

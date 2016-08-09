@@ -1,6 +1,7 @@
 39
 ================
 
+09/08/16 Show retailer under retailer column in retailer book
 08/08/16 Fix variable assignment bug when re-registering AVID
 08/08/16 Use .not() to exclude chooser fields when saving records
 08/08/16 Have incident/person searching filter by site #439
