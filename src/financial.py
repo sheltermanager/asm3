@@ -1225,12 +1225,16 @@ def giftaid_spreadsheet(dbo, path, fromdate, todate):
     def housenumber(s):
         """
         If the first word of the address starts with a number, return
-        that as the house number
+        that as the house number, otherwise use the first line
         """
-        bits = s.strip().replace("\n", " ").split(" ")
         houseno = ""
-        if len(bits) > 0 and len(bits[0]) > 0 and utils.cint(bits[0][0]) > 0:
-            houseno = bits[0]
+        lines = s.strip().split("\n")
+        if len(lines) > 0:
+            bits = lines[0].strip().split(" ")
+            if len(bits) > 0 and len(bits[0]) > 0 and utils.cint(bits[0][0]) > 0:
+                houseno = bits[0]
+            else:
+                houseno = lines[0]
         return houseno
 
     def xmlescape(s):
