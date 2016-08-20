@@ -102,7 +102,7 @@
                 '<table width="100%">',
                 '<tr>',
                 '<td><label>' + _("Class") + '</label></td>',
-                '<td><select data="ownertype" class="asm-selectbox">',
+                '<td><select data="ownertype" class="asm-selectbox chooser">',
                 '<option value="1">' + _("Individual/Couple") + '</option>',
                 '<option value="2">' + _("Organization") + '</option>',
                 '</select></td>',
