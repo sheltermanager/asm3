@@ -39,7 +39,7 @@ $(function() {
         additional_fields: function(fields) {
             if (fields.length == 0) { return; }
             var add = [], other = [], addidx = 0;
-            add.push('<table width=\"100%\">\n<tr>\n');
+            add.push('<table class="asm-additional-fields-container" width=\"100%\">\n<tr>\n');
             other.push('<table class=\"additionalmove\" style=\"display: none\"><tr>\n');
             $.each(fields, function(i, f) {
                 // If this field is going to the additional tab on animal, animalcontrol, owner, lostanimal, foundanimal or waitinglist

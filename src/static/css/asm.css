@@ -586,6 +586,9 @@ select:disabled, input:disabled, textarea:disabled {
     border-bottom: 1px solid #aaa;
 }
 
+.asm-additional-fields-container {
+}
+
 .asm-textarea {
     width: 98%;
     border: 1px solid #555;

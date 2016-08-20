@@ -5,6 +5,8 @@
 .asmSelect {
 	/* the newly created regular 'select' */
 	display: inline; 
+    /* match ASM's selects */
+    max-width: 197px;
 }
 
 .asmOptionDisabled {
