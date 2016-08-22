@@ -7,6 +7,9 @@ $(function() {
 
     var lookups = {
 
+        // locales where the publisher column/fields appear
+        publisher_locales: [ "en", "en_AU", "en_CA", "en_GB", "en_MX", "es_MX" ],
+
         model: function() {
 
             // The list of tables has two elements for value/label,
@@ -60,7 +63,17 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    tableform.dialog_show_edit(dialog, row)
+                    tableform.dialog_show_edit(dialog, row, {
+                        onload: function() {
+                            // If we don't talk to any third party services in this locale, might as well hide
+                            // the publisher fields to avoid confusion
+                            if ($.inArray(asm.locale, lookups.publisher_locales) == -1) {
+                                $("#pfspecies").closest("tr").hide();
+                                $("#pfbreed").closest("tr").hide();
+                                $("#pfapcolour").closest("tr").hide();
+                            }
+                        }
+                        })
                         .then(function() {
                             tableform.fields_update_row(dialog.fields, row);
                             if (row.SPECIESID) {
@@ -84,7 +97,9 @@ $(function() {
                         return !controller.hasspecies;
                     }},
                     { field: "PUBLISHER", display: _("Publisher"), hideif: function(row) {
-                        return !(controller.haspfspecies || controller.haspfbreed || controller.hasapcolour);
+                        if (!(controller.haspfspecies || controller.haspfbreed || controller.hasapcolour)) { return true; }
+                        if ($.inArray(asm.locale, lookups.publisher_locales) == -1) { return true; }
+                        return false;
                     }, formatter: function(row) {
                         if (controller.haspfspecies) { return row.PETFINDERSPECIES; }
                         if (controller.haspfbreed) { return row.PETFINDERBREED; }
@@ -108,11 +123,13 @@ $(function() {
                  { id: "new", text: _("New"), icon: "new", enabled: "always", hideif: function() { return !controller.canadd; },
                      click: function() { 
                         tableform.dialog_show_add(dialog, {
-                            onadd: function() {
+                            onload: function() {
                                 // If we don't talk to any third party services in this locale, might as well hide
                                 // the publisher fields to avoid confusion
-                                if (!$.inArray(asm.locale, [ "en", "en_AU", "en_CA", "en_GB", "en_MX", "es_MX" ])) {
-                                    $("#pfspecies, #pfbreed, #apcolour").hide();
+                                if ($.inArray(asm.locale, lookups.publisher_locales) == -1) {
+                                    $("#pfspecies").closest("tr").hide();
+                                    $("#pfbreed").closest("tr").hide();
+                                    $("#pfapcolour").closest("tr").hide();
                                 }
                             }
                             })
