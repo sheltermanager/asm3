@@ -107,7 +107,15 @@ $(function() {
             var buttons = [
                  { id: "new", text: _("New"), icon: "new", enabled: "always", hideif: function() { return !controller.canadd; },
                      click: function() { 
-                        tableform.dialog_show_add(dialog)
+                        tableform.dialog_show_add(dialog, {
+                            onadd: function() {
+                                // If we don't talk to any third party services in this locale, might as well hide
+                                // the publisher fields to avoid confusion
+                                if (!$.inArray(asm.locale, [ "en", "en_AU", "en_CA", "en_GB", "en_MX", "es_MX" ])) {
+                                    $("#pfspecies, #pfbreed, #apcolour").hide();
+                                }
+                            }
+                            })
                             .then(function() {
                                 return tableform.fields_post(dialog.fields, 
                                      "mode=create&lookup=" + controller.tablename + "&namefield=" + controller.namefield, "lookups");
