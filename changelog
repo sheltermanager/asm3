@@ -1,6 +1,7 @@
 39
 ================
 
+23/08/16 Remove implant date restriction for petlink
 22/08/16 Suppress publisher field for invalid locales
 22/08/16 Show movement comments in books/tabs #456
 15/08/16 Use house name if number not available in HMRC gift aid

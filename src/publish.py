@@ -3540,10 +3540,6 @@ class PetLinkPublisher(AbstractPublisher):
                     self.logError("Postal code for the new owner is blank, cannot process")
                     continue
 
-                if an["IDENTICHIPDATE"] is None:
-                    self.logError("Microchip date cannot be blank, cannot process")
-                    continue
-
                 # If there's no email or home phone, PetLink won't accept it
                 email = utils.nulltostr(an["CURRENTOWNEREMAILADDRESS"]).strip()
                 homephone = utils.nulltostr(an["CURRENTOWNERHOMETELEPHONE"]).strip()
