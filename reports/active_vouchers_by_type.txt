@@ -13,7 +13,7 @@ FROM owner
 INNER JOIN ownervoucher ON ownervoucher.OwnerID = owner.ID
 INNER JOIN voucher ON ownervoucher.VoucherID = voucher.ID
 WHERE DateIssued < '$CURRENT_DATE$' AND DateExpired > '$CURRENT_DATE$'
-ORDER BY DateIssued
+ORDER BY VoucherName, DateIssued
 ###
 $$HEADER
 HEADER$$
