@@ -116,7 +116,6 @@ def gkbi(m, f):
     else:
         return "0"
 
-
 def gkbc(m, f):
     """ reads boolean field f from map m, returning a fake checkbox 
         field of blank for no, "on" for yes """

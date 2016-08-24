@@ -236,6 +236,17 @@ $(function() {
                 }
             }
             else if ( name == "Size") { rv = row.SIZENAME; }
+            else if ( name == "Weight") { 
+                if (config.bool("ShowWeightInLbs")) {
+                    var kg = format.to_float(row.WEIGHT),
+                        lb = format.to_int(row.WEIGHT),
+                        oz = (kg - lb) * 16.0;
+                    rv = lb + " lb, " + oz + " oz";
+                }
+                else {
+                    rv = row.WEIGHT + " kg";
+                }
+            }
             else if ( name == "ShelterCode") { rv = row.CODE; }
             else if ($.inArray(name, DATE_FIELDS) > -1) {
                 rv = format.date(value);

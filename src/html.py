@@ -827,6 +827,7 @@ def json_animalfindcolumns(dbo):
         ( "ShelterLocation", _("Location", l) ),
         ( "ShelterLocationUnit", _("Unit", l) ),
         ( "Size", _("Size", l) ),
+        ( "Weight", _("Weight", l) ), 
         ( "RabiesTag", _("RabiesTag", l) ),
         ( "TimeOnShelter", _("Time On Shelter", l) ),
         ( "DaysOnShelter", _("Days On Shelter", l) ),
