@@ -267,9 +267,9 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
     if filedata != "":
         checkpref = False
         filetype = post["filetype"]
-        if filetype.startswith("image"): ext = ".jpg"
-        elif filetype.find("pdf") != -1: ext = ".pdf"
-        elif filetype.find("html") != -1: ext = ".html"
+        if filetype.startswith("image") or filename.lower().endswith(".jpg"): ext = ".jpg"
+        elif filetype.find("pdf") != -1 or filename.lower().endswith(".pdf"): ext = ".pdf"
+        elif filetype.find("html") != -1 or filename.lower().endswith(".html"): ext = ".html"
         # Strip the data:mime prefix so we just have base64 data
         if filedata.startswith("data:"):
             filedata = filedata[filedata.find(",")+1:]
@@ -277,6 +277,10 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
             filedata = filedata.replace(" ", "+")
         filedata = base64.b64decode(filedata)
         al.debug("received HTML5 file data '%s' (%d bytes)" % (filename, len(filedata)), "media.attach_file_from_form", dbo)
+        if ext == "":
+            msg = "could not determine extension from file.type '%s', abandoning" % filetype
+            al.error(msg, "media.attach_file_from_form", dbo)
+            raise utils.ASMValidationError(msg)
     else:
         # It's a traditional form post with a filechooser, we should make
         # it the default web/doc picture after posting if none is available.
