@@ -271,6 +271,9 @@ $(function() {
                              });
                      } 
                  },
+                 { id: "document", text: _("Document"), icon: "document", enabled: "one", perm: "gaf", 
+                     tooltip: _("Generate a document from this movement"), type: "buttonmenu" 
+                 },
                  { id: "toadoption", text: _("To Adoption"), icon: "person", enabled: "one", perm: "camv",
                      tooltip: _("Convert this reservation to an adoption"),
                      hideif: function() {
@@ -345,6 +348,10 @@ $(function() {
             var s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
+            s += '<div id="button-document-body" class="asm-menu-body">' +
+                '<ul class="asm-menu-list">' +
+                edit_header.template_list(controller.templates, "MOVEMENT", 0) +
+                '</ul></div>';
             if (controller.name == "animal_movements") {
                 s += edit_header.animal_edit_header(controller.animal, "movements", controller.tabcounts);
             }
@@ -404,6 +411,14 @@ $(function() {
             if (config.bool("DontShowInsurance")) {
                 $("#insurance").closest("tr").hide();
             }
+
+            // Add click handlers to templates
+            $(".templatelink").click(function() {
+                // Update the href as it is clicked so default browser behaviour
+                // continues on to open the link in a new window
+                var template_name = $(this).attr("data");
+                $(this).prop("href", "document_gen?mode=MOVEMENT&id=" + tableform.table_selected_row(movements.table).ID + "&template=" + template_name);
+            });
 
         },
 

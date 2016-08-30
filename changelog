@@ -1,6 +1,7 @@
 39
 ================
 
+30/08/16 Generate movement documents from tabs and books #462
 26/08/16 Use file name to infer type as well as mime with FileReader
 24/08/16 Allow weight to be used in animal_find_results
 23/08/16 Remove implant date restriction for petlink
