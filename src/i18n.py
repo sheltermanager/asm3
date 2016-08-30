@@ -4,8 +4,8 @@ import datetime
 import json
 import time
 
-VERSION = "39u [Tue 30 Aug 14:55:29 BST 2016]"
-BUILD = "08301455"
+VERSION = "39u [Tue 30 Aug 18:27:05 BST 2016]"
+BUILD = "08301827"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -241,23 +241,21 @@ def format_currency(locale, value):
     except:
         pass
     f = f / 100
-    negative = False
-    if f < 0: 
-        negative = True
-        f = abs(f)
-    fstr = "%d"
-    if get_currency_dp(locale) > 0:
-        fstr = "%0." + str(get_currency_dp(locale)) + "f" 
-    if negative:
-        if locale_maps[locale][3] == CURRENCY_PREFIX:
-            return "(" + get_currency_symbol(locale) + (fstr % f) + ")"
-        else:
-            return "(" + (fstr % f) + get_currency_symbol(locale) + ")"
+    dp = str(get_currency_dp(locale))
+    symbol = get_currency_symbol(locale)
+    # Start with a basic currency format with comma groupings every 3 digits
+    # and the right number of decimal places for the locale
+    fstr = "{:,." + dp + "f}"
+    # Add the currency symbol to the format in the correct spot
+    if locale_maps[locale][3] == CURRENCY_PREFIX:
+        fstr = symbol + fstr
     else:
-        if locale_maps[locale][3] == CURRENCY_PREFIX:
-            return get_currency_symbol(locale) + fstr % f
-        else:
-            return fstr % f + get_currency_symbol(locale)
+        fstr += symbol
+    # If it's negative, wrap brackets around the format
+    if f < 0: 
+        f = abs(f)
+        fstr = "(" + fstr + ")"
+    return fstr.format(f)
 
 def format_currency_no_symbol(locale, value):
     """
@@ -265,18 +263,23 @@ def format_currency_no_symbol(locale, value):
     decimal places and returns it as a string
     """
     if value is None: value = 0
-    i = int(value)
-    f = float(i)
+    i = 0
+    f = 0.0
+    try:
+        i = int(value)
+        f = float(i)
+    except:
+        pass
     f = f / 100
-    negative = False
+    dp = str(get_currency_dp(locale))
+    # Start with a basic currency format with comma groupings every 3 digits
+    # and the right number of decimal places for the locale
+    fstr = "{:,." + dp + "f}"
+    # If it's negative, wrap brackets around the format
     if f < 0: 
-        negative = True
         f = abs(f)
-    fstr = "%0." + str(get_currency_dp(locale)) + "f" 
-    if negative:
-        return "(" + (fstr % f) + ")"
-    else:
-        return fstr % f
+        fstr = "(" + fstr + ")"
+    return fstr.format(f)
 
 def format_time(d):
     if d is None: return ""

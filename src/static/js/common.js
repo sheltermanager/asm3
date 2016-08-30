@@ -1119,14 +1119,24 @@
          * Formats a currency integer as money with the
          * correct currency symbol and decimal places.
          */
-        currency: function(v) {
+        currency: function(v, commagroups) {
             var nv = parseInt(v, 10) / 100,
-                cs = html.decode(asm.currencysymbol);
+                cs = html.decode(asm.currencysymbol),
+                rv = "";
             if (isNaN(nv)) { nv = 0; }
+            nv = nv.toFixed(asm.currencydp);
+            rv = nv.toString();
+            // add commas every 3 digits
+            var parts = nv.toString().split(".");
+            rv = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (parts[1] ? "." + parts[1] : "");
+            // tack the currency symbol onto the beginning or end according to locale
             if (asm.currencyprefix && asm.currencyprefix == "s") {
-                return nv.toFixed(asm.currencydp) + cs;
+                rv = rv + cs;
             }
-            return cs + nv.toFixed(asm.currencydp);
+            else {
+                rv = cs + rv;
+            }
+            return rv;
         },
 
         currency_to_float: function(c) {
