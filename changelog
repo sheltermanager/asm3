@@ -1,6 +1,7 @@
 39
 ================
 
+31/08/16 Correct mistake in followup date incident searching
 30/08/16 Use comma groupings on large currency numbers
 30/08/16 Generate movement documents from tabs and books #462
 26/08/16 Use file name to infer type as well as mime with FileReader

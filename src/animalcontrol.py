@@ -204,7 +204,7 @@ def get_animalcontrol_find_advanced(dbo, criteria, username, limit = 0):
     adddate("incidentfrom", "incidentto", "ac.IncidentDateTime")
     adddate("dispatchfrom", "dispatchto", "ac.DispatchDateTime")
     adddate("respondedfrom", "respondedto", "ac.RespondedDateTime")
-    adddate("followupfrom", "followupto", "ac.FollwupDateTime")
+    adddate("followupfrom", "followupto", "ac.FollowupDateTime")
     adddate("completedfrom", "completedto", "ac.CompletedDate")
     addid("completedtype", "ac.IncidentCompletedID")
     addid("citationtype", "ac.CitationTypeID")
