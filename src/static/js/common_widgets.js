@@ -200,7 +200,7 @@
 
     // Textbox that should only contain numbers
     $.fn.number = function() {
-        var allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.' ];
+        var allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '-' ];
         this.each(function() {
             $(this).keypress(function(e) {
                 var k = e.charCode || e.keyCode;
@@ -240,7 +240,7 @@
 
     // Textbox that should only contain integer numbers
     $.fn.intnumber = function() {
-        var allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ];
+        var allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-' ];
         this.each(function() {
             $(this).keypress(function(e) {
                 var k = e.charCode || e.keyCode;
