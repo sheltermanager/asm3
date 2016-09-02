@@ -105,6 +105,7 @@ $(function() {
                 additional.additional_mandatory_fields(controller.additional),
                 '</table>',
                 '<div class="centered">',
+                '<input type="hidden" data-post="species" value="' + config.integer("AFDefaultSpecies") + '" />',
                 '<button id="addedit">' + html.icon("call") + ' ' + _("Create and edit") + '</button>',
                 '<button id="add">' + html.icon("call") + ' ' + _("Create") + '</button>',
                 '<button id="reset">' + html.icon("delete") + ' ' + _("Reset") + '</button>',
