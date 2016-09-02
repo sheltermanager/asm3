@@ -1,6 +1,7 @@
 39
 ================
 
+02/09/16 Truncate movement comments in table display
 01/09/16 Number/intnumber widgets should accept minus
 31/08/16 Correct mistake in followup date incident searching
 30/08/16 Use comma groupings on large currency numbers

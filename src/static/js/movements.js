@@ -177,7 +177,7 @@ $(function() {
                             if (controller.name == "move_book_retailer") {
                                 return html.person_link(row, row.OWNERID);
                             }
-                            else if (row.RETAILERID) {
+                            if (row.RETAILERID) {
                                 return '<a href="person?id=' + row.RETAILERID + '">' + row.RETAILERNAME + '</a>';
                             }
                             return "";
@@ -189,7 +189,12 @@ $(function() {
                     },
                     { field: "ANIMALAGE", display: _("Age"), hideif: function(row) { return controller.name != "move_book_unneutered"; } },
                     { field: "ADOPTIONNUMBER", display: _("Movement Number") },
-                    { field: "COMMENTS", display: _("Comments") }                ]
+                    { field: "COMMENTS", display: _("Comments"), 
+                        formatter: function(row) {
+                            return html.truncate(row.COMMENTS, 80); 
+                        }
+                    }
+                ]
             };
 
             var buttons = [
