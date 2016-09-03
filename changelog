@@ -1,6 +1,7 @@
 39
 ================
 
+03/09/16 Fix autofocus media bug that can cause tinymce errors
 02/09/16 Set default species when creating incidents
 02/09/16 Truncate movement comments in table display
 01/09/16 Number/intnumber widgets should accept minus

@@ -27,7 +27,7 @@ $(function() {
                 '<td><label for="comments">' + _("Notes") + '</label>',
                 controller.name.indexOf("animal") == 0 ? '<button type="button" id="button-comments">' + _('Copy from animal comments') + '</button>' : "",
                 '</td>',
-                '<td><textarea id="addcomments" name="comments" rows="10" title=',
+                '<td><textarea id="addcomments" name="comments" rows="10" autofocus="autofocus" title=',
                 '"' + html.title(_("If this is the web preferred image, web publishers will use these notes as the animal description")) + '"',
                 ' class="asm-textarea"></textarea>',
                 '</td>',
