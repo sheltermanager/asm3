@@ -104,7 +104,7 @@ add the areas they are willing to check in the Areas box under the Homechecker
 panel.
 
 It is best to include both the area name and postal/zipcode in the box (eg:
-Rotherham S60). You can then use the find owner screen to enter the name of an
+Rotherham S60). You can then use the find person screen to enter the name of an
 area you want to check by postcode or name and you will receive a list of
 homecheckers who cover that area. 
 

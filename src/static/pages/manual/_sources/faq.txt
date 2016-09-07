@@ -29,6 +29,23 @@ animals who are not in one of those locations. To remove it, go to
 :menuselection:`Settings --> System user accounts` and remove the location
 filter items from your account.
 
+Why is my animal marked not available for adoption?
+---------------------------------------------------
+
+ASM assumes that any on shelter animal is adoptable, unless it has the "Not for
+adoption" flag explicitly set on it.
+
+There are then a set of rules applied to decide whether or not an animal is
+excluded from being adoptable. You can edit those rules under
+:menuselection:`Publishing --> Set Publishing Options --> Animal Selection`.
+The rules can exclude animals that don't have a photo, are in a foster home or
+part of a cruelty case, are under a certain age, etc.
+
+If an animal is not adoptable due to any of those rules, when you view its
+record, you will see the words "Not for adoption" in the banner at the top of
+the record and direct underneath that in brackets the rule that has excluded
+the animal from being adoptable.
+
 Why do I get "page 1 of 1" in the header when I print documents?
 ----------------------------------------------------------------
 
