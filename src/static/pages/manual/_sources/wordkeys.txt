@@ -485,6 +485,18 @@ PaymentTaxAmount / PaymentVATAmount
     The taxable amount charged
 PaymentComments 
     Any comments on the payment
+
+The following fields are only available to payments generated via
+invoice/receipt document: 
+
+PaymentAnimalName
+    The name of the animal the payment is linked to
+PaymentAnimalShelterCode
+    The full shelter code of the animal the payment is linked to
+PaymentAnimalShortCode
+    The short shelter code of the animal the payment is linked to
+PaymentPersonName
+    The name of the person the payment is linked to
 PaymentTotalDue
     The total of all selected payments that have a due date and no received date
 PaymentTotalReceived

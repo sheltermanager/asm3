@@ -43,7 +43,7 @@ part of a cruelty case, are under a certain age, etc.
 
 If an animal is not adoptable due to any of those rules, when you view its
 record, you will see the words "Not for adoption" in the banner at the top of
-the record and direct underneath that in brackets the rule that has excluded
+the record and directly underneath that in brackets the rule that has excluded
 the animal from being adoptable.
 
 Why do I get "page 1 of 1" in the header when I print documents?

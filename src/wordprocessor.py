@@ -626,7 +626,11 @@ def donation_tags(dbo, donations):
             "PAYMENTCREATEDDATE"+i  : python2display(l, p["CREATEDDATE"]),
             "PAYMENTLASTCHANGEDBY"+i: p["LASTCHANGEDBY"],
             "PAYMENTLASTCHANGEDBYNAME"+i : p["LASTCHANGEDBY"],
-            "PAYMENTLASTCHANGEDDATE"+i : python2display(l, p["LASTCHANGEDDATE"])
+            "PAYMENTLASTCHANGEDDATE"+i : python2display(l, p["LASTCHANGEDDATE"]),
+            "PAYMENTANIMALNAME"+i   : p["ANIMALNAME"],
+            "PAYMENTANIMALSHELTERCODE"+i : p["SHELTERCODE"],
+            "PAYMENTANIMALSHORTCODE"+i : p["SHORTCODE"],
+            "PAYMENTPERSONNAME"+i   : p["OWNERNAME"],
         }
         tags.update(x)
         if i == "": return # Don't add a total for the compatibility row
