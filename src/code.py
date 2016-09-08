@@ -1053,7 +1053,7 @@ class additional:
         mode = post["mode"]
         if mode == "create":
             users.check_permission(session, users.MODIFY_LOOKUPS)
-            extadditional.insert_field_from_form(session.dbo, session.user, post)
+            return extadditional.insert_field_from_form(session.dbo, session.user, post)
         elif mode == "update":
             users.check_permission(session, users.MODIFY_LOOKUPS)
             extadditional.update_field_from_form(session.dbo, session.user, post)
