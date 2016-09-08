@@ -9,7 +9,6 @@ import cachemem
 import json
 import threading
 import time
-import urllib2
 import utils
 from lookups import LOCALE_COUNTRY_NAME_MAP
 from sitedefs import BULK_GEO_PROVIDER, BULK_GEO_NOMINATIM_URL, BULK_GEO_GOOGLE_URL, BULK_GEO_LOOKUP_TIMEOUT, BULK_GEO_SLEEP_AFTER
@@ -43,7 +42,7 @@ def get_lat_long(dbo, address, town, county, postcode, country = None):
             url = BULK_GEO_NOMINATIM_URL.replace("{q}", q)
         elif BULK_GEO_PROVIDER == "google":
             q = normalise_google(address, town, county, postcode, country)
-            url = BULK_GEO_GOOGLE_URL.replace("{q}", q)            
+            url = BULK_GEO_GOOGLE_URL.replace("{q}", q)
         else:
             al.error("unrecognised geo provider: %s" % BULK_GEO_PROVIDER, "geo.get_lat_long", dbo)
 
@@ -55,7 +54,7 @@ def get_lat_long(dbo, address, town, county, postcode, country = None):
             al.debug("cache hit for address: %s = %s" % (q, v), "geo.get_lat_long", dbo)
             return v
 
-        jr = urllib2.urlopen(url, timeout = BULK_GEO_LOOKUP_TIMEOUT).read()
+        jr = utils.get_url(url, timeout = BULK_GEO_LOOKUP_TIMEOUT)["response"]
         j = json.loads(jr)
 
         latlon = None

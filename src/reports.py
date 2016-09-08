@@ -11,7 +11,6 @@ import i18n
 import lookups
 import html
 import person
-import urllib2
 import users
 import utils
 from sitedefs import BASE_URL, QR_IMG_SRC, URL_REPORTS
@@ -402,7 +401,7 @@ def get_smcom_reports(dbo):
         for lrec in loaded:
             if lrec["TITLE"] == title: return True
         return False
-    s = urllib2.urlopen(URL_REPORTS).read()
+    s = utils.get_url(URL_REPORTS)["response"]
     reps = s.split("&&&")
     reports = []
     i = 0

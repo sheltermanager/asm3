@@ -698,12 +698,14 @@ def where_text_filter(dbo, field, term):
     # HTML entities and LOWER() has no effect.
     return wc
 
-def get_url(url, headers = {}, cookies = {}):
+def get_url(url, headers = {}, cookies = {}, timeout = None):
     """
     Retrieves a URL
     return value is headers and response as a string
     """
-    r = requests.get(url, headers = headers, cookies=cookies)
+    # requests timeout is seconds/float, but some may call this with integer ms instead so convert
+    if timeout is not None and timeout > 1000: timeout = timeout / 1000.0
+    r = requests.get(url, headers = headers, cookies=cookies, timeout=timeout)
     return { "cookies": r.cookies, "headers": r.headers, "response": r.text, "status": r.status_code, "requestheaders": r.request.headers, "requestbody": r.request.body }
 
 def post_form(url, fields, headers = {}, cookies = {}):

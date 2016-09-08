@@ -7,7 +7,6 @@ import configuration
 import db
 import mimetypes
 import sys
-import urllib2
 import utils
 from sitedefs import URL_NEWS
 
@@ -495,7 +494,7 @@ def update_asm_news(dbo):
     """
     s = ""
     try:
-        s = urllib2.urlopen(URL_NEWS).read()
+        s = utils.get_url(URL_NEWS)["response"]
     except:
         em = str(sys.exc_info()[0])
         al.error("Failed reading ASM news: %s" % em, "dbfs.update_asm_news", dbo)
