@@ -124,7 +124,7 @@ SUM(ownerdonation.Donation) AS amt, owner.OwnerAddress, owner.OwnerTown,
 owner.OwnerCounty, owner.OwnerPostcode 
 FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
-WHERE ownerdonation.DateDue BETWEEN '$@from$' AND '$@to$' 
+WHERE ownerdonation.DateDue BETWEEN '$@from$' AND '$@to$' AND ownerdonation.Date Is Null
 GROUP BY owner.OwnerName, owner.OwnerAddress, owner.OwnerTown,
 owner.OwnerCounty, owner.OwnerPostcode
 ORDER BY owner.OwnerName
