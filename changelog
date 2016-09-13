@@ -1,6 +1,7 @@
 39
 ================
 
+13/09/16 Nicer death icon #472
 08/09/16 Add animal name, code and person name tags to donation documents #460
 08/09/16 additional.create not returning new ID, breaks edit after add #468
 08/09/16 Replace use of urllib2 in reports/dbfs/geo with get_url #466
