@@ -586,6 +586,7 @@ WHERE Neutered = 1 AND NeuteredDate >= '$@from$' AND NeuteredDate <= '$@to$'
 AND ReasonName NOT LIKE '%Trap%' AND ReasonName NOT LIKE '%TNR%'
 AND NonShelterAnimal = 0
 AND SpeciesID = 1
+AND NeuteredDate >= MostRecentEntryDate
 AND DateOfBirth < NeuteredDate - INTERVAL '5 months') AS AdultDogNeuterPreAdoption,
 
 (SELECT COUNT(*) FROM animal
@@ -594,6 +595,7 @@ WHERE Neutered = 1 AND NeuteredDate >= '$@from$' AND NeuteredDate <= '$@to$'
 AND ReasonName NOT LIKE '%Trap%' AND ReasonName NOT LIKE '%TNR%'
 AND NonShelterAnimal = 0
 AND SpeciesID = 1
+AND NeuteredDate >= MostRecentEntryDate
 AND DateOfBirth >= NeuteredDate - INTERVAL '5 months') AS JuniorDogNeuterPreAdoption,
 
 (SELECT COUNT(*) FROM animal
@@ -602,6 +604,7 @@ WHERE Neutered = 1 AND NeuteredDate >= '$@from$' AND NeuteredDate <= '$@to$'
 AND ReasonName NOT LIKE '%Trap%' AND ReasonName NOT LIKE '%TNR%'
 AND NonShelterAnimal = 0
 AND SpeciesID = 2
+AND NeuteredDate >= MostRecentEntryDate
 AND DateOfBirth < NeuteredDate - INTERVAL '5 months') AS AdultCatNeuterPreAdoption,
 
 (SELECT COUNT(*) FROM animal
@@ -610,6 +613,7 @@ WHERE Neutered = 1 AND NeuteredDate >= '$@from$' AND NeuteredDate <= '$@to$'
 AND ReasonName NOT LIKE '%Trap%' AND ReasonName NOT LIKE '%TNR%'
 AND NonShelterAnimal = 0
 AND SpeciesID = 2
+AND NeuteredDate >= MostRecentEntryDate
 AND DateOfBirth >= NeuteredDate - INTERVAL '5 months') AS JuniorCatNeuterPreAdoption,
 
 
@@ -620,24 +624,28 @@ AND DateOfBirth >= NeuteredDate - INTERVAL '5 months') AS JuniorCatNeuterPreAdop
 WHERE Neutered = 1 AND NeuteredDate >= '$@from$' AND NeuteredDate <= '$@to$'
 AND NonShelterAnimal = 1
 AND SpeciesID = 1
+AND NeuteredDate >= MostRecentEntryDate
 AND DateOfBirth < NeuteredDate - INTERVAL '5 months') AS AdultDogNeuterLowCostGP,
 
 (SELECT COUNT(*) FROM animal
 WHERE Neutered = 1 AND NeuteredDate >= '$@from$' AND NeuteredDate <= '$@to$'
 AND NonShelterAnimal = 1
 AND SpeciesID = 1
+AND NeuteredDate >= MostRecentEntryDate
 AND DateOfBirth >= NeuteredDate - INTERVAL '5 months') AS JuniorDogNeuterLowCostGP,
 
 (SELECT COUNT(*) FROM animal
 WHERE Neutered = 1 AND NeuteredDate >= '$@from$' AND NeuteredDate <= '$@to$'
 AND NonShelterAnimal = 1
 AND SpeciesID = 2
+AND NeuteredDate >= MostRecentEntryDate
 AND DateOfBirth < NeuteredDate - INTERVAL '5 months') AS AdultCatNeuterLowCostGP,
 
 (SELECT COUNT(*) FROM animal
 WHERE Neutered = 1 AND NeuteredDate >= '$@from$' AND NeuteredDate <= '$@to$'
 AND NonShelterAnimal = 1
 AND SpeciesID = 2
+AND NeuteredDate >= MostRecentEntryDate
 AND DateOfBirth >= NeuteredDate - INTERVAL '5 months') AS JuniorCatNeuterLowCostGP,
 
 
@@ -649,6 +657,7 @@ WHERE Neutered = 1 AND NeuteredDate >= '$@from$' AND NeuteredDate <= '$@to$'
 AND (ReasonName LIKE '%Trap%' OR ReasonName LIKE '%TNR%')
 AND NonShelterAnimal = 0
 AND SpeciesID = 1
+AND NeuteredDate >= MostRecentEntryDate
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months') AS AdultDogTNR,
 
 (SELECT COUNT(*) FROM animal
@@ -657,6 +666,7 @@ WHERE Neutered = 1 AND NeuteredDate >= '$@from$' AND NeuteredDate <= '$@to$'
 AND (ReasonName LIKE '%Trap%' OR ReasonName LIKE '%TNR%')
 AND NonShelterAnimal = 0
 AND SpeciesID = 1
+AND NeuteredDate >= MostRecentEntryDate
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months') AS JuniorDogTNR,
 
 (SELECT COUNT(*) FROM animal
@@ -665,6 +675,7 @@ WHERE Neutered = 1 AND NeuteredDate >= '$@from$' AND NeuteredDate <= '$@to$'
 AND (ReasonName LIKE '%Trap%' OR ReasonName LIKE '%TNR%')
 AND NonShelterAnimal = 0
 AND SpeciesID = 2
+AND NeuteredDate >= MostRecentEntryDate
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months') AS AdultCatTNR,
 
 (SELECT COUNT(*) FROM animal
@@ -673,6 +684,7 @@ WHERE Neutered = 1 AND NeuteredDate >= '$@from$' AND NeuteredDate <= '$@to$'
 AND (ReasonName LIKE '%Trap%' OR ReasonName LIKE '%TNR%')
 AND NonShelterAnimal = 0
 AND SpeciesID = 2
+AND NeuteredDate >= MostRecentEntryDate
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months') AS JuniorCatTNR
 
 
