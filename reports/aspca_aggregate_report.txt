@@ -112,7 +112,7 @@ WHEN a.SpeciesID = 2 AND a.DateOfBirth < a.DateBroughtIn - INTERVAL '5 months' T
 WHEN a.SpeciesID = 2 AND a.DateOfBirth < a.DateBroughtIn - INTERVAL '6 weeks' THEN 'Kittens'
 WHEN a.SpeciesID = 2 THEN 'Feline neonates' END AS AgeGroup,
 CASE WHEN DateBroughtIn >= '$PARENTARG1$' OR 
-  EXISTS(SELECT MovementDate FROM adoption WHERE ReturnDate >= '$PARENTARG1$' AND ReturnDate <= '$PARENTARG2$' AND MovementType = 1 AND AnimalID = a.ID AND MovementDate <= ReturnDate - INTERVAL '30 days')
+  EXISTS(SELECT MovementDate FROM adoption WHERE ReturnDate >= '$PARENTARG1$' AND ReturnDate <= '$PARENTARG2$' AND MovementType = 1 AND AnimalID = a.ID)
   THEN 1 ELSE 0 END AS AllSources,
 CASE WHEN (DateBroughtIn >= '$PARENTARG1$' AND ReasonName LIKE '%Surrender%') OR 
   EXISTS(SELECT MovementDate FROM adoption WHERE ReturnDate >= '$PARENTARG1$' AND ReturnDate <= '$PARENTARG2$' AND MovementType = 1 AND AnimalID = a.ID AND MovementDate <= ReturnDate - INTERVAL '30 days')
