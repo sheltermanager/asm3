@@ -104,6 +104,7 @@ def sql_structure(dbo):
         blobstr = ""
         if unique: uniquestr = "UNIQUE "
         if blob and dbo.dbtype == "MYSQL": blobstr = "(255)"
+        if blob and dbo.dbtype == "POSTGRESQL": fieldlist = "left(%s, 255)" % fieldlist
         return "CREATE %sINDEX %s ON %s (%s%s);\n" % ( uniquestr, name, table, fieldlist, blobstr)
     def field(name, ftype = INTEGER, nullable = True, pk = False):
         nullstr = "NOT NULL"
@@ -2704,6 +2705,7 @@ def add_index(dbo, indexname, tablename, fieldname, unique = False, blob = False
         kl = ""
         if unique: u = "UNIQUE "
         if blob and dbo.dbtype == "MYSQL": kl = "(255)"
+        if blob and dbo.dbtype == "POSTGRESQL": fieldname = "left(%s, 255)" % fieldname
         db.execute_dbupdate(dbo, "CREATE %sINDEX %s ON %s (%s%s)" % (u, indexname, tablename, fieldname, kl))
     except:
         pass
