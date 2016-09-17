@@ -612,6 +612,8 @@ $(function() {
 
             var dosearch = function() {
                 var term = $("#topline-q").val();
+                // If the term is blank, do nothing
+                if (!term) { return; }
                 // If we haven't seen this search term before, add it to our set
                 if ($.inArray(term, previous) == -1) {
                     previous.push(term);

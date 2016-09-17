@@ -1,6 +1,7 @@
 39
 ================
 
+17/09/16 Prevent global search with blank term
 16/09/16 Fix blob indexes to 255 char truncation for postgresql text fields
 13/09/16 Nicer death icon #472
 08/09/16 Add animal name, code and person name tags to donation documents #460
