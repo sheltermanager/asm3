@@ -2137,8 +2137,9 @@
             validate.active = true;
             $("#asm-content .asm-checkbox").change(dirtychange);
             $("#asm-content .asm-datebox").change(dirtychange);
-            $("#asm-content .asm-textbox, #asm-content .asm-doubletextbox, #asm-content .asm-halftextbox, #asm-content .asm-textarea, #asm-content .asm-textareafixed, #asm-content .asm-textareafixeddouble").keyup(dirtykey).bind("paste", dirtychange).bind("cut", dirtychange);
             $("#asm-content .asm-selectbox, #asm-content .asm-doubleselectbox, #asm-content .asm-halfselectbox, #asm-content .selectbox, #asm-content .asm-bsmselect").change(dirtychange);
+            $("#asm-content .asm-textbox, #asm-content .asm-doubletextbox, #asm-content .asm-halftextbox, #asm-content .asm-textarea, #asm-content .asm-textareafixed, #asm-content .asm-textareafixeddouble").change(dirtychange);
+            $("#asm-content .asm-textbox, #asm-content .asm-doubletextbox, #asm-content .asm-halftextbox, #asm-content .asm-textarea, #asm-content .asm-textareafixed, #asm-content .asm-textareafixeddouble").keyup(dirtykey).bind("paste", dirtychange).bind("cut", dirtychange);
             // Bind CTRL+S/META+S on Mac to clicking the save button
             Mousetrap.bind(["ctrl+s", "meta+s"], function(e) { $("#button-save").click(); return false; });
             // Watch for links being clicked and the page being navigated away from
