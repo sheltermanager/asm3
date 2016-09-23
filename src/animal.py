@@ -1455,10 +1455,14 @@ def get_display_location(dbo, animalid):
     """ Returns an animal's current display location """
     return db.query_string(dbo, "SELECT DisplayLocation FROM animal WHERE ID = %d" % utils.cint(animalid))
 
-def get_display_location_noq(dbo, animalid):
+def get_display_location_noq(dbo, animalid, loc = ""):
     """ Returns an animal's current display location without
-        the :: qualifier if present """
-    loc = db.query_string(dbo, "SELECT DisplayLocation FROM animal WHERE ID = %d" % utils.cint(animalid))
+        the :: qualifier if present 
+        animalid: The animal id
+        loc:      The display location if the caller can supply it
+    """
+    if loc == "":
+        loc = db.query_string(dbo, "SELECT DisplayLocation FROM animal WHERE ID = %d" % utils.cint(animalid))
     if loc.find("::") != -1:
         loc = loc[0:loc.find("::")]
     return loc
@@ -2252,7 +2256,7 @@ def update_diary_linkinfo(dbo, animalid, a = None, diaryupdatebatch = None):
     """
     if a is None:
         a = get_animal(dbo, animalid)
-    diaryloc = "%s %s - %s" % ( a["SHELTERCODE"], a["ANIMALNAME"], a["DISPLAYLOCATION"])
+    diaryloc = "%s - %s [%s]" % ( a["SHELTERCODE"], a["ANIMALNAME"], get_display_location_noq(dbo, animalid, a["DISPLAYLOCATION"]))
     if diaryupdatebatch is not None:
         diaryupdatebatch.append( (diaryloc, diary.ANIMAL, animalid) )
     else:
