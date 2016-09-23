@@ -4,8 +4,8 @@ import datetime
 import json
 import time
 
-VERSION = "39u [Mon 19 Sep 10:58:33 BST 2016]"
-BUILD = "09191058"
+VERSION = "39u [Fri 23 Sep 10:29:37 BST 2016]"
+BUILD = "09231029"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -53,6 +53,7 @@ locale_maps = {
     "en_BH":    ( MDY, "BD", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_CA":    ( MDY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_CN":    ( YMD, YEN, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
+    "en_CR":    ( DMY, "&#8353;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_CY":    ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_KW":    ( DMY, "KD", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_KY":    ( DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
@@ -77,6 +78,7 @@ locale_maps = {
     "el":       ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "es":       ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "es_CO":    ( DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
+    "es_CR":    ( DMY, "&#8353;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "es_EC":    ( DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "es_MX":    ( DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "et":       ( DMY, "kr", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
@@ -123,7 +125,7 @@ def real_locale(locale = "en"):
     if locale in ("de_AT", "de_LU"):
         locale = "de"
     # Spanish locales
-    if locale in ("es_CO", "es_EC", "es_MX"):
+    if locale in ("es_CO", "es_CR", "es_EC", "es_MX"):
         locale = "es"
     return locale
 

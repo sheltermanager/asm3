@@ -1,6 +1,7 @@
 39
 ================
 
+23/09/16 Add Costa Rica locale #474
 19/09/16 Fix bug with unit and fee changes not dirtying animal screen
 17/09/16 Prevent global search with blank term
 16/09/16 Fix blob indexes to 255 char truncation for postgresql text fields
