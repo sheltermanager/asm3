@@ -174,6 +174,16 @@ PickupAddress
     The pickup address
 PickupLocationName
     The pickup location set on the animal
+CoordinatorName
+    The name of the adoption coordinator
+CoordinatorHomePhone
+    The home phone number of the adoption coordinator
+CoordinatorWorkPhone
+    The work phone number of the adoption coordinator
+CoordinatorMobilePhone / CoordinatorCellPhone
+    The mobile phone number of the adoption coordinator
+CoordinatorEmail
+    The email address of the adoption coordinator
 BroughtInByAddress
     The address of the person who brought the animal in
 BroughtInByName

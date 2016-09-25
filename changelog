@@ -1,6 +1,7 @@
 39
 ================
 
+25/09/16 Add Coordinator* wordkeys
 23/09/16 Fix animal.update_diary_linkinfo to use same format as diary module
 23/09/16 Add Costa Rica locale #474
 19/09/16 Fix bug with unit and fee changes not dirtying animal screen
