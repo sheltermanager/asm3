@@ -82,7 +82,7 @@ class PublishCriteria:
         """
         Returns the val portion of key=val as an int
         """
-        return int(s.split("=")[1])
+        return utils.cint(s.split("=")[1])
 
     def get_str(self, s):
         """
