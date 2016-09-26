@@ -1463,6 +1463,8 @@ def get_display_location_noq(dbo, animalid, loc = ""):
     """
     if loc == "":
         loc = db.query_string(dbo, "SELECT DisplayLocation FROM animal WHERE ID = %d" % utils.cint(animalid))
+    if loc is None:
+        return ""
     if loc.find("::") != -1:
         loc = loc[0:loc.find("::")]
     return loc
