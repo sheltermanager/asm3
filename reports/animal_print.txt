@@ -234,7 +234,7 @@ CASE WHEN vo.OwnerName Is Not Null THEN vo.OwnerName ELSE animaltest.LastChanged
 FROM animaltest
 INNER JOIN testtype ON testtype.ID = animaltest.TestTypeID
 INNER JOIN testresult ON testresult.ID = animaltest.TestResultID
-LEFT OUTER JOIN vo ON vo.ID = animaltest.AdministeringVetID
+LEFT OUTER JOIN owner vo ON vo.ID = animaltest.AdministeringVetID
 WHERE animaltest.AnimalID = $PARENTKEY$
 ORDER BY DateOfTest
 +++
