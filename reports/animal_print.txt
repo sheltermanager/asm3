@@ -2,7 +2,7 @@ Print Animal Record
 ###
 Auditing
 ###
-33601/Any
+33907/Any
 ###
 A complete printout of an animal record.
 ###
@@ -186,18 +186,20 @@ animalvaccination.Cost,
 animalvaccination.DateRequired,
 animalvaccination.DateOfVaccination,
 animalvaccination.DateExpires,
-animalvaccination.Comments AS VaccComments
+animalvaccination.Comments AS VaccComments,
+CASE WHEN vo.OwnerName Is Not Null THEN vo.OwnerName ELSE animalvaccination.LastChangedBy END AS GivenBy
 FROM animalvaccination
 INNER JOIN vaccinationtype ON vaccinationtype.ID = animalvaccination.VaccinationID
+LEFT OUTER JOIN owner vo ON vo.ID = animalvaccination.AdministeringVetID
 WHERE animalvaccination.AnimalID = $PARENTKEY$
 ORDER BY DateOfVaccination
 +++
 $$HEADER
 <table cellpadding="5">
-<tr><th>Type</th><th>Required</th><th>Cost</th><th>Given</th><th>Expires</th><th>Comments</th></tr>
+<tr><th>Type</th><th>Required</th><th>Cost</th><th>Given</th><th>Expires</th><th>By</th><th>Comments</th></tr>
 HEADER$$
 $$BODY
-<tr><td>$VACCINATIONTYPE</td><td>$DATEREQUIRED</td><td>$COST</td><td>$DATEOFVACCINATION</td><td>$DATEEXPIRES</td><td>$VACCCOMMENTS</td></tr>
+<tr><td>$VACCINATIONTYPE</td><td>$DATEREQUIRED</td><td>$COST</td><td>$DATEOFVACCINATION</td><td>$DATEEXPIRES</td><td>$GIVENBY</td><td>$VACCCOMMENTS</td></tr>
 BODY$$
 $$FOOTER
 </table>
@@ -227,19 +229,21 @@ testresult.ResultName,
 animaltest.Cost,
 animaltest.DateRequired,
 animaltest.DateOfTest,
-animaltest.Comments AS TestComments
+animaltest.Comments AS TestComments,
+CASE WHEN vo.OwnerName Is Not Null THEN vo.OwnerName ELSE animaltest.LastChangedBy END AS GivenBy
 FROM animaltest
 INNER JOIN testtype ON testtype.ID = animaltest.TestTypeID
 INNER JOIN testresult ON testresult.ID = animaltest.TestResultID
+LEFT OUTER JOIN vo ON vo.ID = animaltest.AdministeringVetID
 WHERE animaltest.AnimalID = $PARENTKEY$
 ORDER BY DateOfTest
 +++
 $$HEADER
 <table cellpadding="5">
-<tr><th>Type</th><th>Required</th><th>Cost</th><th>Administered</th><th>Result</th><th>Comments</th></tr>
+<tr><th>Type</th><th>Required</th><th>Cost</th><th>Administered</th><th>By</th><th>Result</th><th>Comments</th></tr>
 HEADER$$
 $$BODY
-<tr><td>$TESTNAME</td><td>$DATEREQUIRED</td><td>$COST</td><td>$DATEOFTEST</td><td>$RESULTNAME</td><td>$TESTCOMMENTS</td></tr>
+<tr><td>$TESTNAME</td><td>$DATEREQUIRED</td><td>$COST</td><td>$DATEOFTEST</td><td>$GIVENBY</td><td>$RESULTNAME</td><td>$TESTCOMMENTS</td></tr>
 BODY$$
 $$FOOTER
 </table>
