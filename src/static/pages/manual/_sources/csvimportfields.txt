@@ -51,6 +51,8 @@ ANIMALNEUTEREDDATE
     The date the animal was neuteured. If supplied and not blank, ANIMALNEUTERED = Y is also assumed.
 ANIMALMICROCHIP
     If not blank, ASM will mark the animal microchipped with this as the microchip number.
+ANIMALMICROCHIPDATE
+    The date the microchip was implanted
 ANIMALENTRYDATE
     The date the animal entered the shelter (date brought in). Today's date will be used if this column is not present or the value is blank.
 ANIMALREASONFORENTRY

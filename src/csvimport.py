@@ -21,7 +21,7 @@ VALID_FIELDS = [
     "ANIMALNAME", "ANIMALSEX", "ANIMALTYPE", "ANIMALCOLOR", "ANIMALBREED1", 
     "ANIMALBREED2", "ANIMALDOB", "ANIMALLOCATION", "ANIMALUNIT", 
     "ANIMALSPECIES", "ANIMALAGE", 
-    "ANIMALCOMMENTS", "ANIMALNEUTERED", "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", 
+    "ANIMALCOMMENTS", "ANIMALNEUTERED", "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", "ANIMALMICROCHIPDATE", 
     "ANIMALENTRYDATE", "ANIMALDECEASEDDATE", "ANIMALCODE",
     "ANIMALREASONFORENTRY", "ANIMALHIDDENDETAILS", "ANIMALNOTFORADOPTION",
     "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS", 
@@ -335,6 +335,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
             if a["neutereddate"] != "": a["neutered"] = "on"
             a["microchipnumber"] = gks(row, "ANIMALMICROCHIP")
             if a["microchipnumber"] != "": a["microchipped"] = "on"
+            a["microchipdate"] = gkd(dbo, row, "ANIMALMICROCHIPDATE")
             # If an original owner is specified, create a person record
             # for them and attach it to the animal as original owner
             if gks(row, "ORIGINALOWNERLASTNAME") != "":
