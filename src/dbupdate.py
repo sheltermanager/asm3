@@ -2436,13 +2436,14 @@ def install(dbo):
     install_default_onlineforms(dbo)
 
 def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = True, \
-        includeNonASM2 = True, includeUsers = True, deleteDBV = False, deleteFirst = True, deleteViewSeq = False, \
+        includeNonASM2 = True, includeUsers = True, includeLKS = True, deleteDBV = False, deleteFirst = True, deleteViewSeq = False, \
         escapeCR = "", uppernames = False, wrapTransaction = True):
     """
     Dumps all of the data in the database as DELETE/INSERT statements.
     includeConfig - include the config table
     includeDBFS - include the dbfs table
     includeCustomReport - include the custom report table
+    includeLKS - include static lks tables
     includeUsers - include user and role tables
     deleteDBV - issue DELETE DBV from config after dump to force update/checks
     deleteFirst - issue DELETE FROM statements before INSERTs
@@ -2459,6 +2460,7 @@ def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = Tr
         if not includeCustomReport and t == "customreport": continue
         if not includeConfig and t == "configuration": continue
         if not includeUsers and (t == "users" or t == "userrole" or t == "role" or t == "accountsrole" or t == "customreportrole"): continue
+        if not includeLKS and t.startswith("lks"): continue
         # ASM2_COMPATIBILITY
         if not includeNonASM2 and t not in TABLES_ASM2 : continue
         outtable = t
@@ -2504,7 +2506,7 @@ def dump_smcom(dbo):
     Dumps the database in a convenient format for import to sheltermanager.com
     generator function.
     """
-    for x in dump(dbo, includeConfig = False, includeUsers = False, deleteDBV = True, deleteViewSeq = True, wrapTransaction = True):
+    for x in dump(dbo, includeConfig = False, includeUsers = False, includeLKS = False, deleteDBV = True, deleteViewSeq = True, wrapTransaction = True):
         yield x
 
 def dump_merge(dbo, deleteViewSeq = True):
