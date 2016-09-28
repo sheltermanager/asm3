@@ -2504,7 +2504,8 @@ def dump_smcom(dbo):
     Dumps the database in a convenient format for import to sheltermanager.com
     generator function.
     """
-    yield dump(dbo, includeConfig = False, includeUsers = False, deleteDBV = True, deleteViewSeq = True)
+    for x in dump(dbo, includeConfig = False, includeUsers = False, deleteDBV = True, deleteViewSeq = True, wrapTransaction = True):
+        yield x
 
 def dump_merge(dbo, deleteViewSeq = True):
     """
