@@ -2,7 +2,7 @@ Site In/Out
 ###
 Site
 ###
-3200/Any
+33908/Any
 ###
 All animals entering and leaving the site over a period (requires multi-site capability).
 ###
