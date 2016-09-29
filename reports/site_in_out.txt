@@ -29,7 +29,7 @@ AnimalAge,
 'Animals In' AS OutOrIn
 FROM animal
 WHERE IsTransfer = 0 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$ 23:59:59' AND NonShelterAnimal = 0
-AND $SITE$ = (SELECT SiteID FROM Location WHERE ID = animal.ShelterLocation)
+AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocation)
 
 UNION ALL SELECT DateBroughtIn AS thedate,
 (SELECT ReasonName FROM entryreason WHERE ID = animal.EntryReasonID) AS Reason,
@@ -46,7 +46,7 @@ AnimalAge,
 'Animals In' AS OutOrIn
 FROM animal
 WHERE IsTransfer = 1 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$ 23:59:59' AND NonShelterAnimal = 0
-AND $SITE$ = (SELECT SiteID FROM Location WHERE ID = animal.ShelterLocation)
+AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocation)
 
 UNION ALL SELECT adoption.ReturnDate AS thedate,
 (SELECT ReasonName FROM entryreason WHERE ID = adoption.ReturnedReasonID) AS Reason,
@@ -64,7 +64,7 @@ AnimalAge,
 FROM animal
 INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 1 AND adoption.MovementDate Is Not Null AND adoption.IsTrial = 0 AND adoption.ReturnDate >= '$@from$' AND adoption.ReturnDate <= '$@to$' AND NonShelterAnimal = 0
-AND $SITE$ = (SELECT SiteID FROM Location WHERE ID = animal.ShelterLocation)
+AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocation)
 
 UNION ALL SELECT adoption.ReturnDate AS thedate,
 (SELECT ReasonName FROM entryreason WHERE ID = adoption.ReturnedReasonID) AS Reason,
@@ -82,7 +82,7 @@ AnimalAge,
 FROM animal
 INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 1 AND adoption.MovementDate Is Not Null AND adoption.IsTrial = 1 AND adoption.ReturnDate >= '$@from$' AND adoption.ReturnDate <= '$@to$' AND NonShelterAnimal = 0
-AND $SITE$ = (SELECT SiteID FROM Location WHERE ID = animal.ShelterLocation)
+AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocation)
 
 UNION ALL SELECT adoption.ReturnDate AS thedate,
 CASE WHEN DeceasedDate Is Null OR DeceasedDate > adoption.ReturnDate THEN 'Foster Return' ELSE 'Died On Foster' END AS Reason,
@@ -100,7 +100,7 @@ AnimalAge,
 FROM animal
 INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 2 AND adoption.MovementDate Is Not Null AND adoption.ReturnDate >= '$@from$' AND adoption.ReturnDate <= '$@to$' AND NonShelterAnimal = 0
-AND $SITE$ = (SELECT SiteID FROM Location WHERE ID = animal.ShelterLocation)
+AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocation)
 
 UNION ALL SELECT adoption.ReturnDate AS thedate,
 (SELECT ReasonName FROM entryreason WHERE ID = adoption.ReturnedReasonID) AS Reason,
@@ -118,7 +118,7 @@ AnimalAge,
 FROM animal
 INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 3 AND adoption.MovementDate Is Not Null AND adoption.ReturnDate >= '$@from$' AND adoption.ReturnDate <= '$@to$' AND NonShelterAnimal = 0
-AND $SITE$ = (SELECT SiteID FROM Location WHERE ID = animal.ShelterLocation)
+AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocation)
 
 UNION ALL SELECT adoption.ReturnDate AS thedate,
 '' AS Reason,
@@ -136,7 +136,7 @@ AnimalAge,
 FROM animal
 INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType NOT IN (1, 2, 3) AND adoption.MovementDate Is Not Null AND adoption.ReturnDate >= '$@from$' AND adoption.ReturnDate <= '$@to$' AND NonShelterAnimal = 0
-AND $SITE$ = (SELECT SiteID FROM Location WHERE ID = animal.ShelterLocation)
+AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocation)
 
 UNION ALL SELECT adoption.MovementDate AS thedate,
 '' AS Reason,
@@ -155,7 +155,7 @@ FROM animal
 INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 1 AND adoption.IsTrial = 0 AND 
 adoption.MovementDate >= '$@from$' AND adoption.MovementDate <= '$@to$' AND NonShelterAnimal = 0
-AND $SITE$ = (SELECT SiteID FROM Location WHERE ID = animal.ShelterLocation)
+AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocation)
 
 UNION ALL SELECT adoption.MovementDate AS thedate,
 '' AS Reason,
@@ -174,7 +174,7 @@ FROM animal
 INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 1 AND adoption.IsTrial = 1 AND 
 adoption.MovementDate >= '$@from$' AND adoption.MovementDate <= '$@to$' AND NonShelterAnimal = 0
-AND $SITE$ = (SELECT SiteID FROM Location WHERE ID = animal.ShelterLocation)
+AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocation)
 
 UNION ALL SELECT adoption.MovementDate AS thedate,
 '' AS Reason,
@@ -193,7 +193,7 @@ FROM animal
 INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 2 AND
 adoption.MovementDate >= '$@from$' AND adoption.MovementDate <= '$@to$' AND NonShelterAnimal = 0
-AND $SITE$ = (SELECT SiteID FROM Location WHERE ID = animal.ShelterLocation)
+AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocation)
 
 UNION ALL SELECT adoption.MovementDate AS thedate,
 '' AS Reason,
@@ -212,7 +212,7 @@ FROM animal
 INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 3 AND
 adoption.MovementDate >= '$@from$' AND adoption.MovementDate <= '$@to$' AND NonShelterAnimal = 0
-AND $SITE$ = (SELECT SiteID FROM Location WHERE ID = animal.ShelterLocation)
+AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocation)
 
 UNION ALL SELECT adoption.MovementDate AS thedate,
 '' AS Reason,
@@ -231,7 +231,7 @@ FROM animal
 INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 4 AND
 adoption.MovementDate >= '$@from$' AND adoption.MovementDate <= '$@to$' AND NonShelterAnimal = 0
-AND $SITE$ = (SELECT SiteID FROM Location WHERE ID = animal.ShelterLocation)
+AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocation)
 
 UNION ALL SELECT adoption.MovementDate AS thedate,
 '' AS Reason,
@@ -250,7 +250,7 @@ FROM animal
 INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 5 AND
 adoption.MovementDate >= '$@from$' AND adoption.MovementDate <= '$@to$' AND NonShelterAnimal = 0
-AND $SITE$ = (SELECT SiteID FROM Location WHERE ID = animal.ShelterLocation)
+AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocation)
 
 
 UNION ALL SELECT adoption.MovementDate AS thedate,
@@ -270,7 +270,7 @@ FROM animal
 INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 6 AND
 adoption.MovementDate >= '$@from$' AND adoption.MovementDate <= '$@to$' AND NonShelterAnimal = 0
-AND $SITE$ = (SELECT SiteID FROM Location WHERE ID = animal.ShelterLocation)
+AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocation)
 
 UNION ALL SELECT adoption.MovementDate AS thedate,
 '' AS Reason,
@@ -289,7 +289,7 @@ FROM animal
 INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 7 AND
 adoption.MovementDate >= '$@from$' AND adoption.MovementDate <= '$@to$' AND NonShelterAnimal = 0
-AND $SITE$ = (SELECT SiteID FROM Location WHERE ID = animal.ShelterLocation)
+AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocation)
 
 UNION ALL SELECT DeceasedDate AS thedate,
 '' AS Reason,
@@ -306,7 +306,7 @@ AnimalAge,
 'Animals Out' AS OutOrIn
 FROM animal
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$' AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND PutToSleep = 0 AND IsDOA = 0
-AND $SITE$ = (SELECT SiteID FROM Location WHERE ID = animal.ShelterLocation)
+AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocation)
 
 UNION ALL SELECT DeceasedDate AS thedate,
 (SELECT ReasonName FROM deathreason WHERE ID = animal.PTSReasonID) AS Reason,
@@ -323,7 +323,7 @@ AnimalAge,
 'Animals Out' AS OutOrIn
 FROM animal
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$' AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND PutToSleep = 1 AND IsDOA = 0
-AND $SITE$ = (SELECT SiteID FROM Location WHERE ID = animal.ShelterLocation)
+AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocation)
 
 UNION ALL SELECT DeceasedDate AS thedate,
 (SELECT ReasonName FROM deathreason WHERE ID = animal.PTSReasonID) AS Reason,
@@ -340,7 +340,7 @@ AnimalAge,
 'Animals Out' AS OutOrIn
 FROM animal
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$' AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND IsDOA = 1
-AND $SITE$ = (SELECT SiteID FROM Location WHERE ID = animal.ShelterLocation)
+AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocation)
 
 ) dummy
 WHERE thedate >= '$@from$' AND thedate <= '$@to$ 23:59:59'
