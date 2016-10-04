@@ -259,6 +259,12 @@ $(function() {
                 $("#printlabel").hide().next().hide();
             }
 
+            // If there are more than MailMergeMaxEmails results, hide the 
+            // email section and replace it with a message explaining why.
+            if (controller.numrows > config.integer("MailMergeMaxEmails")) {
+                $("#sendemail").html( html.error( _("Please tighten the scope of your email campaign. Sending {0} emails is considered abusive and will damage the reputation of the email server.").replace("{0}", controller.numrows) ) );
+            }
+
         },
 
         destroy: function() {

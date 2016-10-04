@@ -189,6 +189,7 @@ DEFAULTS = {
     "LocationChangeLog": "Yes",
     "LocationChangeLogType": "3",
     "LongTermMonths": "6",
+    "MailMergeMaxEmails": "2000",
     "MainScreenAnimalLinkMode": "recentlychanged",
     "MainScreenAnimalLinkMax": "9",
     "ManualCodes": "No",
