@@ -1,6 +1,10 @@
 39
 ================
 
+04/10/16 Use default urgency when creating waiting list from online form #471
+04/10/16 Add abusive email threshold/limit on mail merges #480
+29/09/16 Add missing exotics to PetFinder map list
+29/09/16 Add site specific reports #415
 27/09/16 Add ANIMALMICROCHIPDATE csv import field
 25/09/16 Add Coordinator* wordkeys
 23/09/16 Fix animal.update_diary_linkinfo to use same format as diary module

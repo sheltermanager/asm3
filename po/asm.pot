@@ -8008,6 +8008,10 @@ msgstr ""
 msgid "Please select a PDF, HTML or JPG image file to attach"
 msgstr ""
 
+#: mailmerge.js
+msgid "Please tighten the scope of your email campaign to {0} emails or less."
+msgstr ""
+
 #: media.js
 msgid "Please use the links below to electronically sign these documents."
 msgstr ""
@@ -9309,6 +9313,12 @@ msgstr ""
 
 #: main.js mobile.py
 msgid "Send via email"
+msgstr ""
+
+#: mailmerge.js
+msgid ""
+"Sending {0} emails is considered abusive and will damage the reputation of "
+"the email server."
 msgstr ""
 
 #: dbupdate.py

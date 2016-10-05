@@ -189,6 +189,7 @@ DEFAULTS = {
     "LocationChangeLog": "Yes",
     "LocationChangeLogType": "3",
     "LongTermMonths": "6",
+    "MailMergeMaxEmails": "2000",
     "MainScreenAnimalLinkMode": "recentlychanged",
     "MainScreenAnimalLinkMax": "9",
     "ManualCodes": "No",
@@ -1028,7 +1029,7 @@ def vetenvoy_akcreunite_enabled(dbo):
     return cboolean(dbo, "VetEnvoyAKCReuniteEnabled", DEFAULTS["VetEnvoyAKCReuniteEnabled"] == "Yes")
 
 def waiting_list_default_urgency(dbo):
-    return cint(dbo, "WaitingListDefaultUrgency")
+    return cint(dbo, "WaitingListDefaultUrgency", DEFAULTS["WaitingListDefaultUrgency"])
 
 def waiting_list_rank_by_species(dbo):
     return cboolean(dbo, "WaitingListRankBySpecies")

@@ -927,7 +927,7 @@ def create_waitinglist(dbo, username, collationid):
     fields = get_onlineformincoming_detail(dbo, collationid)
     d = {}
     d["dateputon"] = i18n.python2display(l, i18n.now(dbo.timezone))
-    d["urgency"] = "5"
+    d["urgency"] = str(configuration.waiting_list_default_urgency(dbo))
     for f in fields:
         if f["FIELDNAME"] == "species": d["species"] = guess_species(dbo, f["VALUE"])
         if f["FIELDNAME"] == "description": d["description"] = f["VALUE"]
