@@ -157,7 +157,11 @@ $(function() {
                             return '<a href="person?id=' + row.ADMINISTERINGVETID + '">' + row.ADMINISTERINGVETNAME + '</a>';
                         }
                     },
-                    { field: "COMMENTS", display: _("Comments") }
+                    { field: "COMMENTS", display: _("Comments"), 
+                        formatter: function(row) {
+                            return row.COMMENTS + " " + row.TREATMENTCOMMENTS;
+                        }
+                    }
                 ]
             };
 
@@ -415,6 +419,11 @@ $(function() {
                 '<td><label for="givenvet">' + _("Administering Vet") + '</label></td>',
                 '<td><input id="givenvet" data="givenvet" type="hidden" class="asm-personchooser asm-field" data-filter="vet" /></td>',
                 '</tr>',
+                '<tr>',
+                '<td><label for="treatmentcomments">' + _("Comments") + '</label></td>',
+                '<td><textarea id="treatmentcomments" data="treatmentcomments" class="asm-textarea asm-field"></textarea>',
+                '</td>',
+                '</tr>',
                 '<tr class="tagstock"><td></td><td>' + html.info(_("These fields allow you to deduct stock for the treatment(s) given. This single deduction should cover the selected treatments being administered.")) + '</td></tr>',
                 '<tr class="tagstock">',
                 '<td><label for="item">' + _("Item") + '</label></td>',
@@ -464,6 +473,7 @@ $(function() {
                             if (tableform.table_id_selected(v.COMPOSITEID)) {
                                 v.DATEGIVEN = format.date_iso($("#newdate").val());
                                 if (!v.GIVENBY) { v.GIVENBY = asm.user; }
+                                v.TREATMENTCOMMENTS = $("#treatmentcomments").val();
                             }
                         });
                         tableform.table_update(medical.table);

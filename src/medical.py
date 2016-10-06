@@ -1122,7 +1122,7 @@ def update_treatment_today(dbo, username, amtid):
     # medical record appropriately
     update_medical_treatments(dbo, username, amid)
 
-def update_treatment_given(dbo, username, amtid, newdate, by = "", vetid = 0):
+def update_treatment_given(dbo, username, amtid, newdate, by = "", vetid = 0, comments = ""):
     """
     Marks a treatment record as given on newdate, assuming that newdate is valid.
     """
@@ -1131,7 +1131,8 @@ def update_treatment_given(dbo, username, amtid, newdate, by = "", vetid = 0):
     db.execute(dbo, db.make_update_user_sql(dbo, "animalmedicaltreatment", username, "ID = %d" % amtid, (
         ( "AdministeringVetID", db.di(vetid) ), 
         ( "DateGiven", db.dd(newdate) ), 
-        ( "GivenBy", db.ds(by))
+        ( "GivenBy", db.ds(by)),
+        ( "Comments", db.ds(comments))
         )))
     audit.edit(dbo, username, "animalmedicaltreatment", amtid, "%d given => %s" % (amtid, str(newdate)))
 

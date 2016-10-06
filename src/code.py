@@ -1653,8 +1653,9 @@ class animal_medical:
             newdate = post.date("newdate")
             vet = post.integer("givenvet")
             by = post["givenby"]
+            comments = post["treatmentcomments"]
             for mid in post.integer_list("ids"):
-                extmedical.update_treatment_given(session.dbo, session.user, mid, newdate, by, vet)
+                extmedical.update_treatment_given(session.dbo, session.user, mid, newdate, by, vet, comments)
             if post.integer("item") != -1:
                 extstock.deduct_stocklevel_from_form(session.dbo, session.user, post)
         elif mode == "required":
@@ -4088,8 +4089,9 @@ class medical:
             newdate = post.date("newdate")
             vet = post.integer("givenvet")
             by = post["givenby"]
+            comments = post["treatmentcomments"]
             for mid in post.integer_list("ids"):
-                extmedical.update_treatment_given(session.dbo, session.user, mid, newdate, by, vet)
+                extmedical.update_treatment_given(session.dbo, session.user, mid, newdate, by, vet, comments)
             if post.integer("item") != -1:
                 extstock.deduct_stocklevel_from_form(session.dbo, session.user, post)
         elif mode == "required":

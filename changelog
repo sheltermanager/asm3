@@ -1,6 +1,7 @@
 39
 ================
 
+06/10/16 Allow individual treatment comments to be set during give #79
 06/10/16 Prevent use of commas in flags #481
 04/10/16 Use default urgency when creating waiting list from online form #471
 04/10/16 Add abusive email threshold/limit on mail merges #480
