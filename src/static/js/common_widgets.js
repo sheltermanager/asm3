@@ -353,6 +353,7 @@
     $.fn.time = function() {
         var allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':' ];
         this.each(function() {
+            var t = $(this);
             $(this).timepicker({
                 hourText: _("Hours"),
                 minuteText: _("Minutes"),
@@ -367,6 +368,11 @@
             $(this).keypress(function(e) {
                 var k = e.charCode || e.keyCode;
                 var ch = String.fromCharCode(k);
+                // Fill in the time now if t (84) or n (78) are pressed
+                if (e.keyCode == 84 || e.keyCode == 78) {
+                    t.val(format.time(new Date()));
+                    e.preventDefault();
+                }
                 // Backspace, tab, ctrl, delete, arrow keys ok
                 if (k == 8 || k == 9 || k == 17 || k == 46 || (k >= 35 && k <= 40)) {
                     return true;
