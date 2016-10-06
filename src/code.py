@@ -1132,6 +1132,8 @@ class animal:
             utils.check_locked_db(session)
             nid = extanimal.clone_animal(dbo, session.user, post.integer("animalid"))
             return str(nid)
+        elif mode == "forgetpublish":
+            extanimal.delete_publish_history(dbo, post.integer("id"), post["service"])
         elif mode == "webnotes":
             users.check_permission(session, users.CHANGE_MEDIA)
             extanimal.update_preferred_web_media_notes(dbo, session.user, post.integer("id"), post["comments"])

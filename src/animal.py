@@ -1754,6 +1754,12 @@ def insert_publish_history(dbo, animalid, service):
     db.execute(dbo, "INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate) VALUES (%d, '%s', %s)" % \
         (animalid, service, db.dd(now())))
 
+def delete_publish_history(dbo, animalid, service):
+    """
+    Forgets an animal has been published to a particular service.
+    """
+    db.execute(dbo, "DELETE FROM animalpublished WHERE AnimalID = %d AND PublishedTo = '%s'" % (animalid, service))
+
 def get_shelterview_animals(dbo, locationfilter = "", siteid = 0):
     """
     Returns all available animals for shelterview

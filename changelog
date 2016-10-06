@@ -1,6 +1,7 @@
 39
 ================
 
+06/10/16 Allow re-registering of chips by forcing a forget #451
 06/10/16 Pressing "n" or "t" in a time field substitutes now #475
 06/10/16 Allow individual treatment comments to be set during give #79
 06/10/16 Prevent use of commas in flags #481

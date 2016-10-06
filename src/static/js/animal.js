@@ -648,6 +648,7 @@ $(function() {
                 else if (p == "homeagain") { t = html.icon("microchip") + " Microchip registered with HomeAgain"; }
                 else if (p == "foundanimals") { t = html.icon("microchip") + " Microchip registered with FoundAnimals"; }
 
+                else if (p == "shareweb") { t = html.icon("web") + " " + _("Shared weblink"); }
                 else if (p == "facebook") { t = html.icon("facebook") + " Shared on Facebook"; }
                 else if (p == "twitter") { t = html.icon("twitter") + " Shared on Twitter"; }
                 else if (p == "gplus") { t = html.icon("gplus") + " Shared on Google+"; }
@@ -663,7 +664,12 @@ $(function() {
 
             $.each(controller.publishhistory, function(i, v) {
                 var err = "";
-                if (v.EXTRA) { err = " : <span style='color: red'>" + v.EXTRA + "</span>"; }
+                if (v.EXTRA) { 
+                    err = " : <span style='color: red'>" + v.EXTRA + "</span>"; 
+                }
+                else if (common.has_permission("uipb")) { 
+                    err = ' <button type="button" class="forgetlink" data-service="' + v.PUBLISHEDTO + '">' + _("Forget") + '</button>'; 
+                }
                 h.push('<p>' + format.date(v.SENTDATE) + ' - ' + pname(v.PUBLISHEDTO) + err + '</p>');
             });
 
@@ -1393,27 +1399,37 @@ $(function() {
             $("#button-randomname")
                 .button({ icons: { primary: "ui-icon-tag" }, text: false })
                 .click(function() {
-                validate.dirty(false);
-                var formdata = "mode=randomname&sex=" + $("#sex").val();
-                common.ajax_post("animal", formdata)
-                    .then(function(result) { 
-                        $("#animalname").val(result);
-                        validate.dirty(true);
-                    });
-            });
+                    validate.dirty(false);
+                    var formdata = "mode=randomname&sex=" + $("#sex").val();
+                    common.ajax_post("animal", formdata)
+                        .then(function(result) { 
+                            $("#animalname").val(result);
+                            validate.dirty(true);
+                        });
+                });
 
             $("#button-commentstomedia")
                 .hide()
                 .button({ icons: { primary: "ui-icon-arrow-1-ne" }, text: false })
                 .click(function() {
-                $("#button-commentstomedia").button("disable");
-                var formdata = "mode=webnotes&id=" + $("#animalid").val() + "&" + $("#comments").toPOST();
-                common.ajax_post("animal", formdata)
-                    .then(function(result) { 
-                        $("#button-commentstomedia").button("enable");
-                        header.show_info(_("Comments copied to web preferred media."));
-                    });
-            });
+                    $("#button-commentstomedia").button("disable");
+                    var formdata = "mode=webnotes&id=" + $("#animalid").val() + "&" + $("#comments").toPOST();
+                    common.ajax_post("animal", formdata)
+                        .then(function(result) { 
+                            $("#button-commentstomedia").button("enable");
+                            header.show_info(_("Comments copied to web preferred media."));
+                        });
+                });
+
+            $(".forgetlink").button({ icons: { primary: "ui-icon-trash" }, text: false })
+                .click(function() {
+                    var t = $(this), service = $(this).attr("data-service");
+                    common.ajax_post("animal", "mode=forgetpublish&id=" + controller.animal.ID + "&service=" + service)
+                        .then(function() {
+                            t.closest("p").fadeOut();
+                        });
+                });
+
 
             // Events that trigger rechecking of the on-screen fields
             $("#crossbreed").click(function() {

@@ -4721,6 +4721,10 @@ msgstr ""
 msgid "Forenames"
 msgstr ""
 
+#: animal.js
+msgid "Forget"
+msgstr ""
+
 #: onlineforms.js
 msgid "Form URL"
 msgstr ""
@@ -9408,6 +9412,10 @@ msgstr ""
 
 #: animal.js
 msgid "Share"
+msgstr ""
+
+#: animal.js
+msgid "Shared weblink"
 msgstr ""
 
 #: dbupdate.py
