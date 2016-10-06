@@ -37,5 +37,6 @@ FROM animal
 INNER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
 WHERE DaysOnShelter > 0
 GROUP BY AnimalType, EXTRACT(YEAR FROM DateBroughtIn)
+ORDER BY AnimalType, EXTRACT(YEAR FROM DateBroughtIn)
 ###
 GRAPH LINES

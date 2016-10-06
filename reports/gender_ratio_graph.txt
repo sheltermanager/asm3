@@ -13,5 +13,6 @@ FROM animal a
 INNER JOIN lksex s ON s.ID = a.Sex
 WHERE a.DateBroughtIn >= '$ASK DATE Enter the from date$' AND a.DateBroughtIn <= '$ASK DATE Enter the to date$' AND NonShelterAnimal = 0
 GROUP BY s.Sex
+ORDER BY s.Sex
 ###
 GRAPH PIE

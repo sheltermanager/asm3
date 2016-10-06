@@ -13,5 +13,6 @@ FROM animal a
 INNER JOIN species s ON s.ID = a.SpeciesID
 WHERE a.DateBroughtIn >= '$ASK DATE Enter the from date$' AND a.DateBroughtIn <= '$ASK DATE Enter the to date$'
 GROUP BY s.SpeciesName
+ORDER BY s.SpeciesName
 ###
 GRAPH PIE

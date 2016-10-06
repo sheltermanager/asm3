@@ -37,5 +37,6 @@ FROM animal
 INNER JOIN internallocation ON internallocation.ID = animal.ShelterLocation
 WHERE DaysOnShelter > 0
 GROUP BY LocationName, EXTRACT(YEAR FROM DateBroughtIn)
+ORDER BY LocationName, EXTRACT(YEAR FROM DateBroughtIn)
 ###
 GRAPH LINES

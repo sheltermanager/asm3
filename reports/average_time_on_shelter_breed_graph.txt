@@ -35,5 +35,6 @@ CAST(AVG(DaysOnShelter) AS INTEGER) AS avtimeonshelter
 FROM animal
 WHERE DaysOnShelter > 0
 GROUP BY BreedName, EXTRACT(YEAR FROM DateBroughtIn)
+ORDER BY BreedName, EXTRACT(YEAR FROM DateBroughtIn)
 ###
 GRAPH LINES

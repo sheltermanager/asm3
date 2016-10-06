@@ -52,5 +52,6 @@ CAST(AVG(DaysOnShelter) AS INTEGER) AS avtimeonshelter
 FROM animal
 WHERE DaysOnShelter > 0
 GROUP BY EXTRACT(YEAR FROM DateBroughtIn)
+ORDER BY EXTRACT(YEAR FROM DateBroughtIn)
 ###
 GRAPH PIE
