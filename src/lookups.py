@@ -1087,6 +1087,11 @@ def insert_lookup(dbo, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies
         # Same goes for cost type
         if lookup == "costtype" and configuration.create_cost_trx(dbo):
             financial.insert_account_from_costtype(dbo, nid, name, desc)
+    elif lookup == "lkownerflags" or lookup == "lkanimalflags":
+        # Sanitise commas and pipes as they could break the multiselect
+        name = name.replace(",", " ").replace("|", " ")
+        sql = "INSERT INTO %s (ID, %s) VALUES (%s, %s)" % (
+            lookup, t[LOOKUP_NAMEFIELD], db.di(nid), db.ds(name))
     elif t[LOOKUP_DESCFIELD] == "":
         # No description
         nid = db.get_id(dbo, lookup)
