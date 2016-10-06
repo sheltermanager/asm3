@@ -368,10 +368,11 @@
             $(this).keypress(function(e) {
                 var k = e.charCode || e.keyCode;
                 var ch = String.fromCharCode(k);
-                // Fill in the time now if t (84) or n (78) are pressed
-                if (e.keyCode == 84 || e.keyCode == 78) {
+                // Fill in the time now if t or n are pressed
+                if (ch == 'n' || ch == 't') {
                     t.val(format.time(new Date()));
                     e.preventDefault();
+                    return false;
                 }
                 // Backspace, tab, ctrl, delete, arrow keys ok
                 if (k == 8 || k == 9 || k == 17 || k == 46 || (k >= 35 && k <= 40)) {
