@@ -236,6 +236,15 @@ under :menuselection:`Medical --> Vaccination Book`
 Vaccinations can also have a cost attached for use with reporting. The cost is
 for the individual vaccination. 
 
+Vaccinations have three date fields:
+
+* Required: This is the date that the vaccine is due to be administered to the animal
+* Given: This is the date that the vaccine was actually administered to the animal
+* Expires: This is the date that the vaccine "wears off" and needs to be administered again.
+
+Due vaccinations for the purposes of reporting, alerts and the medical book are
+those that have a required date, but no given date yet.
+
 Test
 ^^^^
 
