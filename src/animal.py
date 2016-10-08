@@ -52,12 +52,14 @@ def get_animal_query(dbo):
         "ov.OwnerCounty AS OwnersVetCounty, " \
         "ov.OwnerPostcode AS OwnersVetPostcode, " \
         "ov.WorkTelephone AS OwnersVetWorkTelephone, " \
+        "ov.EmailAddress AS OwnersVetEmailAddress, " \
         "cv.OwnerName AS CurrentVetName, " \
         "cv.OwnerAddress AS CurrentVetAddress, " \
         "cv.OwnerTown AS CurrentVetTown, " \
         "cv.OwnerCounty AS CurrentVetCounty, " \
         "cv.OwnerPostcode AS CurrentVetPostcode, " \
         "cv.WorkTelephone AS CurrentVetWorkTelephone, " \
+        "cv.EmailAddress AS CurrentVetEmailAddress, " \
         "oo.OwnerName AS OriginalOwnerName, " \
         "oo.OwnerTitle AS OriginalOwnerTitle, " \
         "oo.OwnerInitials AS OriginalOwnerInitials, " \
