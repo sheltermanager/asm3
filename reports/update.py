@@ -26,7 +26,7 @@ f.close()
 print "reports.txt written"
 
 # Upload to the server
-os.system("scp reports.txt root@rawsoaa2.miniserver.com:/var/www/sheltermanager.com/repo/")
+os.system("scp -C reports.txt root@rawsoaa2.miniserver.com:/var/www/sheltermanager.com/repo/")
 print "reports.txt uploaded to root@rawsoaa2.miniserver.com:/var/www/sheltermanager.com/repo/"
 
 # Remove the temp file
