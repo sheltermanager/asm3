@@ -1335,7 +1335,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "Chinchilla=Chinchilla, Standard\n" \
             "English Lop=Lop, English\n" \
             "French-Lop=Lop, French\n" \
-            "Havana=Havana Brown\n" \
+            "Havana=Havana\n" \
             "Hotot=Blanc de Hotot\n" \
             "Holland Lop=Lop, Holland\n" \
             "Mini-Lop=Mini Lop\n" \
@@ -1434,7 +1434,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "Chinchilla=Chinchilla, Standard\n" \
             "English Lop=Lop, English\n" \
             "French-Lop=Lop, French\n" \
-            "Havana=Havana Brown\n" \
+            "Havana=Havana\n" \
             "Hotot=Blanc de Hotot\n" \
             "Holland Lop=Lop, Holland\n" \
             "Mini-Lop=Mini Lop\n" \
