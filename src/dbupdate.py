@@ -1449,14 +1449,14 @@ def sql_default_data(dbo, skip_config = False):
         sql += "INSERT INTO users VALUES (1,'user','Default system user', '', 'plain:letmein', 1, 0,'', '', '', '', '', 1, '', 0)|=\n"
         sql += "INSERT INTO users VALUES (2,'guest','Default guest user', '', 'plain:guest', 0, 0,'', '', '', '', '', 1, '', 0)|=\n"
         sql += "INSERT INTO role VALUES (1, '" + _("Other Organisation", l) + "', 'vac *va *vavet *vav *mvam *dvad *cvad *vamv *vo *volk *vle *vvov *vdn *vla *vfa *vwl *vcr *vll *')|=\n"
-        sql += "INSERT INTO role VALUES (2, '" + _("Staff", l) + "', 'aa *ca *va *vavet *da *cloa *gaf *aam *cam *dam *vam *mand *aav *vav *cav *dav *bcav *maam *mcam *mdam *mvam *bcam *daad *dcad *ddad *dvad *caad *cdad *cvad *aamv *camv *vamv *damv *ao *co *vo *do *emo *mo *volk *ale *cle *dle *vle *vaov *vcov *vvov *oaod *ocod *odod *ovod *vdn *edt *adn *eadn *emdn *ecdn *bcn *ddn *pdn *pvd *ala *cla *dla *vla *afa *cfa *dfa *vfa *mlaf *vwl *awl *cwl *dwl *bcwl *all *cll *vll *dll *excr *vcr *vvo *')|=\n"
+        sql += "INSERT INTO role VALUES (2, '" + _("Staff", l) + "', 'aa *ca *va *vavet *cloa *gaf *aam *cam *dam *vam *mand *aav *vav *cav *dav *bcav *maam *mcam *mdam *mvam *bcam *daad *dcad *ddad *dvad *caad *cdad *cvad *aamv *camv *vamv *ao *co *vo *emo *mo *volk *ale *cle *dle *vle *vaov *vcov *vvov *oaod *ocod *odod *ovod *vdn *edt *adn *eadn *emdn *ecdn *bcn *ddn *pdn *pvd *ala *cla *vla *afa *cfa *vfa *mlaf *vwl *awl *cwl *bcwl *all *cll *vll *dll *excr *vcr *vvo *')|=\n"
         sql += "INSERT INTO role VALUES (3, '" + _("Accountant", l) + "', 'aac *vac *cac *ctrx *dac *vaov *vcov *vdov *vvov *oaod *ocod *odod *ovod *')|=\n"
         sql += "INSERT INTO role VALUES (4, '" + _("Vet", l) + "', 'va *vavet *aav *vav *cav *dav *bcav *maam *mcam *mdam *mvam *bcam *daad *dcad *ddad *dvad * ')|=\n"
         sql += "INSERT INTO role VALUES (5, '" + _("Publisher", l) + "', 'uipb *')|=\n"
         sql += "INSERT INTO role VALUES (6, '" + _("System Admin", l) + "', 'asm *cso *cpo *maf *mdt *ml *usi *rdbu *rdbd *asu *esu *ccr *vcr *hcr *dcr *tbp *excr *')|=\n"
         sql += "INSERT INTO role VALUES (7, '" + _("Marketer", l) + "', 'uipb *mmeo *emo *mmea *')|=\n"
         sql += "INSERT INTO role VALUES (8, '" + _("Investigator", l) + "', 'aoi *coi *doi *voi *')|=\n"
-        sql += "INSERT INTO role VALUES (9, '" + _("Animal Control Officer", l) + "', 'aaci *caci *daci *vaci *aacc *cacc *dacc *vacc *emo *')|=\n"
+        sql += "INSERT INTO role VALUES (9, '" + _("Animal Control Officer", l) + "', 'aaci *caci *vaci *aacc *cacc *dacc *vacc *emo *')|=\n"
         sql += "INSERT INTO userrole VALUES (2, 1)|=\n"
         sql += config("DBV", str(LATEST_VERSION))
         sql += config("DatabaseVersion", str(LATEST_VERSION))
