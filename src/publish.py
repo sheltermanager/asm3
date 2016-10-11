@@ -1316,7 +1316,6 @@ class AdoptAPetPublisher(FTPPublisher):
             "Domestic Short Hair -black and white=Domestic Shorthair\n" \
             "Exotic Shorthair=Exotic\n" \
             "Extra-Toes Cat (Hemingway Polydactyl)=Hemingway/Polydactyl\n" \
-            "Havana=Havana Brown\n" \
             "Oriental Long Hair=Oriental\n" \
             "Oriental Short Hair=Oriental\n" \
             "Oriental Tabby=Oriental\n" \
@@ -1336,6 +1335,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "Chinchilla=Chinchilla, Standard\n" \
             "English Lop=Lop, English\n" \
             "French-Lop=Lop, French\n" \
+            "Havana=Havana Brown\n" \
             "Hotot=Blanc de Hotot\n" \
             "Holland Lop=Lop, Holland\n" \
             "Mini-Lop=Mini Lop\n" \
@@ -1415,7 +1415,6 @@ class AdoptAPetPublisher(FTPPublisher):
             "Domestic Short Hair-black and white=Domestic Shorthair\n" \
             "Exotic Shorthair=Exotic\n" \
             "Extra-Toes Cat (Hemingway Polydactyl)=Hemingway/Polydactyl\n" \
-            "Havana=Havana Brown\n" \
             "Oriental Long Hair=Oriental\n" \
             "Oriental Short Hair=Oriental\n" \
             "Oriental Tabby=Oriental\n" \
@@ -1435,6 +1434,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "Chinchilla=Chinchilla, Standard\n" \
             "English Lop=Lop, English\n" \
             "French-Lop=Lop, French\n" \
+            "Havana=Havana Brown\n" \
             "Hotot=Blanc de Hotot\n" \
             "Holland Lop=Lop, Holland\n" \
             "Mini-Lop=Mini Lop\n" \
