@@ -312,7 +312,94 @@ LastChangedBy
 LastChangedDate 
     TIMESTAMP 
     Date this record was last changed 
-    
+
+animalcontrol
+-------------
+
+The animalcontrol table holds a row for every animal control incident on the system.
+
+ID 
+    INTEGER 
+    A unique, incrementing number that identifies this record 
+IncidentDateTime
+    TIMESTAMP
+    The date and time of the incident
+IncidentTypeID
+    INTEGER
+    A link to the incidenttype table for the type of incident
+CallDateTime
+    TIMESTAMP
+    The date and time the incident was reported
+CallNotes
+    VARCHAR
+    The incident description
+CallTaker
+    VARCHAR
+    The username of the system user who took the call
+CallerID
+    INTEGER
+    A link to the owner table for the person who called to report the incident
+VictimID
+    INTEGER
+    A link to the owner table for the person who was the victim (if any)
+DispatchAddress
+    VARCHAR
+    The address the incident occurred at
+DispatchTown
+    VARCHAR
+    The incident town/city
+DispatchCounty
+    VARCHAR
+    The incident county/state
+DispatchPostcode
+    VARCHAR
+    The incident postcode/zipcode
+DispatchLatLong
+    VARCHAR
+    A geocode containing the latitude and longitude of the dispatch address
+DispatchedACO
+    VARCHAR
+    The username of the system user representing the ACO
+PickupLocationID
+    INTEGER
+    A link to the pickuplocation table
+DispatchDateTime
+    TIMESTAMP
+    The date and time the ACO was dispatched to the incident
+RespondedDateTime
+    TIMESTAMP
+    The date and time the ACO arrived at the incident
+FollowupDateTime / FollowupDateTime2 / FollowupDateTime3
+    TIMESTAMP
+    The date and time the ACO should return to the incident to follow up
+FollowupComplete / FollowupComplete2 / FollowupComplete3
+    INTEGER
+    1 if the follow up has been done
+CompletedDate
+    TIMESTAMP
+    The date the incident was closed and completed
+IncidentCompletedID
+    INTEGER
+    A link to the incidentcompleted table
+SiteID
+    INTEGER
+    A link to the site table for multi-site setups
+OwnerID / Owner2ID / Owner3ID
+    INTEGER
+    A link to the owner table for the suspect
+AnimalDescription
+    VARCHAR
+    A description of the animal involved in the incident
+SpeciesID
+    INTEGER
+    A link to the species table for the animal involved in the incident
+Sex
+    INTEGER
+    A link to the lksex table for the animal involved in the incident
+AgeGroup
+    VARCHAR
+    The age group of the animal involved in the incident
+
 dbfs
 ----
 

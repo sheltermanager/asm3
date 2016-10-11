@@ -245,6 +245,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="">Appendix: Database Tables/Columns</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#adoption">adoption</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#animal">animal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#animalcontrol">animalcontrol</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#dbfs">dbfs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#media">media</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#owner">owner</a></li>
@@ -605,6 +606,93 @@ Name of user that last changed this record</dd>
 <dt>LastChangedDate</dt>
 <dd>TIMESTAMP
 Date this record was last changed</dd>
+</dl>
+</div>
+<div class="section" id="animalcontrol">
+<h2>animalcontrol<a class="headerlink" href="#animalcontrol" title="Permalink to this headline">¶</a></h2>
+<p>The animalcontrol table holds a row for every animal control incident on the system.</p>
+<dl class="docutils">
+<dt>ID</dt>
+<dd>INTEGER
+A unique, incrementing number that identifies this record</dd>
+<dt>IncidentDateTime</dt>
+<dd>TIMESTAMP
+The date and time of the incident</dd>
+<dt>IncidentTypeID</dt>
+<dd>INTEGER
+A link to the incidenttype table for the type of incident</dd>
+<dt>CallDateTime</dt>
+<dd>TIMESTAMP
+The date and time the incident was reported</dd>
+<dt>CallNotes</dt>
+<dd>VARCHAR
+The incident description</dd>
+<dt>CallTaker</dt>
+<dd>VARCHAR
+The username of the system user who took the call</dd>
+<dt>CallerID</dt>
+<dd>INTEGER
+A link to the owner table for the person who called to report the incident</dd>
+<dt>VictimID</dt>
+<dd>INTEGER
+A link to the owner table for the person who was the victim (if any)</dd>
+<dt>DispatchAddress</dt>
+<dd>VARCHAR
+The address the incident occurred at</dd>
+<dt>DispatchTown</dt>
+<dd>VARCHAR
+The incident town/city</dd>
+<dt>DispatchCounty</dt>
+<dd>VARCHAR
+The incident county/state</dd>
+<dt>DispatchPostcode</dt>
+<dd>VARCHAR
+The incident postcode/zipcode</dd>
+<dt>DispatchLatLong</dt>
+<dd>VARCHAR
+A geocode containing the latitude and longitude of the dispatch address</dd>
+<dt>DispatchedACO</dt>
+<dd>VARCHAR
+The username of the system user representing the ACO</dd>
+<dt>PickupLocationID</dt>
+<dd>INTEGER
+A link to the pickuplocation table</dd>
+<dt>DispatchDateTime</dt>
+<dd>TIMESTAMP
+The date and time the ACO was dispatched to the incident</dd>
+<dt>RespondedDateTime</dt>
+<dd>TIMESTAMP
+The date and time the ACO arrived at the incident</dd>
+<dt>FollowupDateTime / FollowupDateTime2 / FollowupDateTime3</dt>
+<dd>TIMESTAMP
+The date and time the ACO should return to the incident to follow up</dd>
+<dt>FollowupComplete / FollowupComplete2 / FollowupComplete3</dt>
+<dd>INTEGER
+1 if the follow up has been done</dd>
+<dt>CompletedDate</dt>
+<dd>TIMESTAMP
+The date the incident was closed and completed</dd>
+<dt>IncidentCompletedID</dt>
+<dd>INTEGER
+A link to the incidentcompleted table</dd>
+<dt>SiteID</dt>
+<dd>INTEGER
+A link to the site table for multi-site setups</dd>
+<dt>OwnerID / Owner2ID / Owner3ID</dt>
+<dd>INTEGER
+A link to the owner table for the suspect</dd>
+<dt>AnimalDescription</dt>
+<dd>VARCHAR
+A description of the animal involved in the incident</dd>
+<dt>SpeciesID</dt>
+<dd>INTEGER
+A link to the species table for the animal involved in the incident</dd>
+<dt>Sex</dt>
+<dd>INTEGER
+A link to the lksex table for the animal involved in the incident</dd>
+<dt>AgeGroup</dt>
+<dd>VARCHAR
+The age group of the animal involved in the incident</dd>
 </dl>
 </div>
 <div class="section" id="dbfs">
