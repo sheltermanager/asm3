@@ -1332,6 +1332,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "Torbie=Domestic Shorthair\n" \
             "Tortoiseshell=Domestic Shorthair\n" \
             "Tuxedo=Domestic Shorthair\n" \
+            "Angora Rabbit=Angora, English\n" \
             "Chinchilla=Chinchilla, Standard\n" \
             "Angora Rabbit=Angora, English\n" \
             "English Lop=Lop, English\n" \
@@ -1339,6 +1340,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "Havana=Havana\n" \
             "Hotot=Blanc de Hotot\n" \
             "Holland Lop=Lop, Holland\n" \
+            "Lop Eared=Lop-Eared\n" \
             "Mini-Lop=Mini Lop\n" \
             "Bunny Rabbit=Other/Unknown\n" \
             "Pot Bellied=Pig (Potbellied)\n" \
@@ -1432,6 +1434,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "Torbie=Domestic Shorthair\n" \
             "Tortoiseshell=Domestic Shorthair\n" \
             "Tuxedo=Domestic Shorthair\n" \
+            "Angora Rabbit=Angora, English\n" \
             "Chinchilla=Chinchilla, Standard\n" \
             "Angora Rabbit=Angora, English\n" \
             "English Lop=Lop, English\n" \
@@ -1439,6 +1442,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "Havana=Havana\n" \
             "Hotot=Blanc de Hotot\n" \
             "Holland Lop=Lop, Holland\n" \
+            "Lop Eared=Lop-Eared\n" \
             "Mini-Lop=Mini Lop\n" \
             "Bunny Rabbit=Other/Unknown\n" \
             "Pot Bellied=Pig (Potbellied)\n" \
