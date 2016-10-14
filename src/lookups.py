@@ -1088,6 +1088,7 @@ def insert_lookup(dbo, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies
         if lookup == "costtype" and configuration.create_cost_trx(dbo):
             financial.insert_account_from_costtype(dbo, nid, name, desc)
     elif lookup == "lkownerflags" or lookup == "lkanimalflags":
+        nid = db.get_id(dbo, lookup)
         # Sanitise commas and pipes as they could break the multiselect
         name = name.replace(",", " ").replace("|", " ")
         sql = "INSERT INTO %s (ID, %s) VALUES (%s, %s)" % (
@@ -1132,6 +1133,11 @@ def update_lookup(dbo, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfsp
         or lookup == "traptype" or lookup == "licencetype" or lookup == "citationtype":
         sql = "UPDATE %s SET %s = %s, %s = %s, DefaultCost = %s, IsRetired = %s WHERE ID=%s" % (
             lookup, t[LOOKUP_NAMEFIELD], db.ds(name), t[LOOKUP_DESCFIELD], db.ds(desc), db.di(defaultcost), db.di(retired), db.di(iid))
+    elif lookup == "lkownerflags" or lookup == "lkanimalflags":
+        # Sanitise commas and pipes as they could break the multiselect
+        name = name.replace(",", " ").replace("|", " ")
+        sql = "UPDATE %s SET %s=%s WHERE ID=%s" % (
+            lookup, t[LOOKUP_NAMEFIELD], db.ds(name), db.di(iid))
     elif t[LOOKUP_DESCFIELD] == "":
         # No description
         if t[LOOKUP_CANRETIRE] == 1:
