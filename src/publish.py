@@ -1337,7 +1337,6 @@ class AdoptAPetPublisher(FTPPublisher):
             "Angora Rabbit=Angora, English\n" \
             "English Lop=Lop, English\n" \
             "French-Lop=Lop, French\n" \
-            "Havana=Havana\n" \
             "Hotot=Blanc de Hotot\n" \
             "Holland Lop=Lop, Holland\n" \
             "Lop Eared=Lop-Eared\n" \
@@ -1439,7 +1438,6 @@ class AdoptAPetPublisher(FTPPublisher):
             "Angora Rabbit=Angora, English\n" \
             "English Lop=Lop, English\n" \
             "French-Lop=Lop, French\n" \
-            "Havana=Havana\n" \
             "Hotot=Blanc de Hotot\n" \
             "Holland Lop=Lop, Holland\n" \
             "Lop Eared=Lop-Eared\n" \
