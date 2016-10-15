@@ -1334,7 +1334,6 @@ class AdoptAPetPublisher(FTPPublisher):
             "Tuxedo=Domestic Shorthair\n" \
             "Angora Rabbit=Angora, English\n" \
             "Chinchilla=Chinchilla, Standard\n" \
-            "Angora Rabbit=Angora, English\n" \
             "English Lop=Lop, English\n" \
             "French-Lop=Lop, French\n" \
             "Hotot=Blanc de Hotot\n" \
@@ -1435,7 +1434,6 @@ class AdoptAPetPublisher(FTPPublisher):
             "Tuxedo=Domestic Shorthair\n" \
             "Angora Rabbit=Angora, English\n" \
             "Chinchilla=Chinchilla, Standard\n" \
-            "Angora Rabbit=Angora, English\n" \
             "English Lop=Lop, English\n" \
             "French-Lop=Lop, French\n" \
             "Hotot=Blanc de Hotot\n" \
