@@ -48,6 +48,9 @@ $(function() {
         convert_fonts_to_spans: true,
         fontsize_formats: "8pt 10pt 11pt 12pt 14pt 16pt 18pt 20pt 22pt 24pt 36pt 72pt",
 
+        // Allow inline style tags
+        valid_children: '+body[style]',
+
         setup: function(ed) {
 
             // Add a PDF button

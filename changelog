@@ -1,6 +1,7 @@
 40
 ================
 
+18/10/16 Allow embedded <style> tags in document templates
 11/10/16 Add missing adoptapet mappings, Angora, Lop Eared
 11/10/16 Remove delete animal/person/lost/found/waitinglist from Staff
 08/10/16 Add <<CurrentVetEmail>> and <<OwnersVetEmail>> wordkeys
