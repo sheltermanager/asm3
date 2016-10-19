@@ -74,7 +74,7 @@ $(function() {
 
             // When the tab key is pressed, insert some fixed width spaces
             // instead of tabbing to the next field (which doesn't exist).
-            ed.onKeyDown.add(function(ed, evt) {
+            ed.on("keydown", function(evt) {
                 if (evt.keyCode == 9){
                     ed.execCommand('mceInsertContent', false, '&emsp;&emsp;');
                     evt.preventDefault();
