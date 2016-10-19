@@ -72,6 +72,16 @@ $(function() {
                 });
             }, 1000);
 
+            // When the tab key is pressed, insert some fixed width spaces
+            // instead of tabbing to the next field (which doesn't exist).
+            ed.onKeyDown.add(function(ed, evt) {
+                if (evt.keyCode == 9){
+                    ed.execCommand('mceInsertContent', false, '&emsp;&emsp;');
+                    evt.preventDefault();
+                    return false;
+                }
+            });
+
             setTimeout(function() {
 
                 // Start in fullscreen mode
