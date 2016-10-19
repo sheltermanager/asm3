@@ -508,6 +508,7 @@ def clone_onlineform(dbo, username, formid):
         ( "SetOwnerFlags", db.ds(f["SETOWNERFLAGS"])),
         ( "EmailAddress", db.ds(f["EMAILADDRESS"])),
         ( "EmailSubmitter", db.di(f["EMAILSUBMITTER"])),
+        ( "EmailMessage", db.ds(f["EMAILMESSAGE"], False)),
         ( "Header", db.ds(f["HEADER"], False)),
         ( "Footer", db.ds(f["FOOTER"], False)),
         ( "Description", db.ds(f["DESCRIPTION"], False))
@@ -524,7 +525,7 @@ def clone_onlineform(dbo, username, formid):
             ( "DisplayIndex", db.di(ff["DISPLAYINDEX"])),
             ( "Mandatory", db.di(ff["MANDATORY"])),
             ( "Lookups", db.ds(ff["LOOKUPS"])),
-            ( "Tooltip", db.ds(ff["TOOLTIP"]))
+            ( "Tooltip", db.ds(ff["TOOLTIP"], False))
             ))
         db.execute(dbo, sql)
     audit.create(dbo, username, "onlineform", nfid, audit.dump_row(dbo, "onlineform", nfid))
