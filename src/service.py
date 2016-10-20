@@ -223,7 +223,7 @@ def handler(post, remoteip, referer):
 
     # Are we dealing with multiple databases, but no account was specified?
     if account == "" and MULTIPLE_DATABASES:
-        return ("text/plan", 0, "ERROR: No database/alias specified")
+        return ("text/plain", 0, "ERROR: No database/alias specified")
 
     # Are we dealing with multiple databases and an account was specified?
     if account != "":
