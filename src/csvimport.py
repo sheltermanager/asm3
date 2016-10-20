@@ -21,7 +21,7 @@ VALID_FIELDS = [
     "ANIMALNAME", "ANIMALSEX", "ANIMALTYPE", "ANIMALCOLOR", "ANIMALBREED1", 
     "ANIMALBREED2", "ANIMALDOB", "ANIMALLOCATION", "ANIMALUNIT", 
     "ANIMALSPECIES", "ANIMALAGE", 
-    "ANIMALCOMMENTS", "ANIMALNEUTERED", "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", "ANIMALMICROCHIPDATE", 
+    "ANIMALCOMMENTS", "ANIMALMARKINGS", "ANIMALNEUTERED", "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", "ANIMALMICROCHIPDATE", 
     "ANIMALENTRYDATE", "ANIMALDECEASEDDATE", "ANIMALCODE",
     "ANIMALREASONFORENTRY", "ANIMALHIDDENDETAILS", "ANIMALNOTFORADOPTION",
     "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS", 
@@ -316,6 +316,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
                 a["internallocation"] = str(configuration.default_location(dbo))
             a["unit"] = gks(row, "ANIMALUNIT")
             a["comments"] = gks(row, "ANIMALCOMMENTS")
+            a["markings"] = gks(row, "ANIMALMARKINGS")
             a["hiddenanimaldetails"] = gks(row, "ANIMALHIDDENDETAILS")
             a["healthproblems"] = gks(row, "ANIMALHEALTHPROBLEMS")
             a["notforadoption"] = gkbi(row, "ANIMALNOTFORADOPTION")

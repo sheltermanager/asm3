@@ -43,6 +43,8 @@ ANIMALCOMMENTS
     Some comments to put in the animal's comment field.
 ANIMALHIDDENDETAILS
     Some comments for the animal's hidden details field.
+ANIMALMARKINGS
+    Some comments for the animal's markings field.
 ANIMALHEALTHPROBLEMS
     Some comments for the animal's health problems field.
 ANIMALNEUTERED
