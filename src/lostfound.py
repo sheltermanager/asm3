@@ -524,7 +524,7 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0):
                 if la["SEX"] == a["SEX"]: matchpoints += matchsex
                 matchpoints += words(la["AREALOST"], a["ORIGINALOWNERADDRESS"], matcharealost)
                 matchpoints += words(la["DISTFEAT"], a["MARKINGS"], matchfeatures)
-                if str(a["ORIGINALOWNERPOSTCODE"]).find(la["AREAPOSTCODE"]): matchpoints += matchpostcode
+                if utils.nulltostr(a["ORIGINALOWNERPOSTCODE"]).find(la["AREAPOSTCODE"]) != -1: matchpoints += matchpostcode
                 if date_diff_days(la["DATELOST"], a["DATEBROUGHTIN"]) <= 14: matchpoints += matchdatewithin2weeks
                 if matchpoints > matchmax: matchpoints = matchmax
                 if matchpoints >= matchpointfloor:

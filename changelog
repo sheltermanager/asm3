@@ -1,6 +1,7 @@
 40
 ================
 
+21/10/16 Fix bad postcode comparison for lost/found match
 20/10/16 Add ANIMALMARKINGS column for CSV import
 19/10/16 Do not use XSS protection when cloning online form fields
 19/10/16 Sensible behaviour when word processor TAB key is pressed
