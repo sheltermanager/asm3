@@ -15,7 +15,7 @@ are MedicalVaccineExpress and MedicalTestsExpress
 # The shelter's petfinder ID for grabbing animal images for adoptable animals
 PETFINDER_ID = ""
 
-INTAKE_FILENAME = "data/pp_bk1217.csv"
+INTAKE_FILENAME = "data/pp_zg1185.csv"
 VACC_FILENAME = ""
 TEST_FILENAME = ""
 
