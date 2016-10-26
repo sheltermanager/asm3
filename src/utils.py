@@ -1013,6 +1013,8 @@ def html_to_pdf(htmldata, baseurl = "", account = ""):
     htmldata = htmldata.replace("font-size: x-large", "font-size: 24pt")
     htmldata = htmldata.replace("font-size: xx-large", "font-size: 36pt")
     htmldata = fix_relative_document_uris(htmldata, baseurl, account)
+    # Remove any img tags with signature:placeholder/user as the src
+    htmldata = re.sub('<img.*?signature\:.*?\/>', '', htmldata)
     # Use temp files
     inputfile = tempfile.NamedTemporaryFile(suffix=".html", delete=False)
     outputfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
