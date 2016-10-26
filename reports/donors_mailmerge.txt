@@ -12,7 +12,7 @@ SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerP
 o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.OwnerTitle, o.OwnerForenames,
 o.OwnerSurname, o.MembershipExpiryDate
 FROM owner o
-WHERE o.IsDonor = 1 AND o.ExcludeFromBulkEmail = 0
+WHERE o.IsDonor = 1 AND o.ExcludeFromBulkEmail = 0 AND o.IsDeceased = 0
 ORDER BY o.OwnerSurname
 ###
 MAIL
