@@ -1522,7 +1522,7 @@ def get_location_filter_clause(locationfilter = "", tablequalifier = "", siteid 
     """
     Returns a where clause that excludes animals not in the locationfilter
     locationfilter: comma separated list of internallocation IDs and special values
-        -1: animals on a trial adoption
+        -1: animals on a trial/full adoption
         -2: animals in a foster home
         -8: animals in a retailer
         -9: non-shelter animals (excluded from this functionality)

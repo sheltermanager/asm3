@@ -341,6 +341,12 @@ Display
   their browser open and idle for this many minutes, the system will
   automatically log them out.
 
+* Enable location filters: Location filters allow a user account to be
+  restricted to only viewing animals in set internal locations. With this
+  option enabled, a location filter field will appear on the system users
+  screen allowing you to set the locations a user account is restricted to
+  viewing.
+
 * When displaying person names in lists, use the format: In movement books,
   donation books, the waiting list, etc. when showing person names, ASM can use
   different formats if you want surname first for sorting, etc.

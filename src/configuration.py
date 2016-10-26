@@ -188,6 +188,7 @@ DEFAULTS = {
     "Locale": "en",
     "LocationChangeLog": "Yes",
     "LocationChangeLogType": "3",
+    "LocationFiltersEnabled": "No",
     "LongTermMonths": "6",
     "MailMergeMaxEmails": "2000",
     "MainScreenAnimalLinkMode": "recentlychanged",
@@ -205,7 +206,7 @@ DEFAULTS = {
     "MatchWithin2Weeks": "5",
     "MatchPointFloor": "20",
     "MaxMediaFileSize": "1000",
-    "MeetAPetKey" : "haRQPthLgW",
+    "MeetAPetKey": "haRQPthLgW",
     "MicrochipRegisterMovements": "1,5",
     "MovementDonationsDefaultDue": "No",
     "MovementNumberOverride": "No",
@@ -715,6 +716,9 @@ def location_change_log(dbo):
 
 def location_change_log_type(dbo):
     return cint(dbo, "LocationChangeLogType", DEFAULTS["LocationChangeLogType"])
+
+def location_filters_enabled(dbo):
+    return cboolean(dbo, "LocationFiltersEnabled", DEFAULTS["LocationFiltersEnabled"])
 
 def long_term_months(dbo):
     return cint(dbo, "LongTermMonths", DEFAULTS["LongTermMonths"])
