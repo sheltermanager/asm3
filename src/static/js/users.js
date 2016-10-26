@@ -38,7 +38,7 @@ $(function() {
                     { json_field: "OWNERID", post_field: "person", label: _("Staff record"), type: "person", personfilter: "staff" },
                     { json_field: "LOCATIONFILTER", post_field: "locationfilter", label: _("Location Filter"), type: "selectmulti", 
                         options: { rows: controller.internallocations, valuefield: "ID", displayfield: "LOCATIONNAME" },
-                        hideif: function() { return config.bool("LocationFiltersEnabled"); },
+                        hideif: function() { return !config.bool("LocationFiltersEnabled"); },
                         callout: _("Setting a location filter will prevent this user seeing animals who are not in these locations on shelterview, find animal and search.")
                     },
                     { json_field: "IPRESTRICTION", post_field: "iprestriction", label: _("IP Restriction"), type: "text", classes: "asm-ipbox",
@@ -99,7 +99,7 @@ $(function() {
                             return !config.bool("MultiSiteEnabled"); 
                         }},
                     { field: "LOCATIONFILTER", display: _("Location Filter"), 
-                        hideif: function() { return config.bool("LocationFiltersEnabled"); },
+                        hideif: function() { return !config.bool("LocationFiltersEnabled"); },
                         formatter: function(row) {
                             var of = [], lf = common.nulltostr(row.LOCATIONFILTER);
                             if (!row.LOCATIONFILTER) { return ""; }
