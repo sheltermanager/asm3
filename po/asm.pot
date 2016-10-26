@@ -4029,6 +4029,10 @@ msgid "Enable accounts functionality"
 msgstr ""
 
 #: options.js
+msgid "Enable location filters"
+msgstr ""
+
+#: options.js
 msgid "Enable lost and found functionality"
 msgstr ""
 
