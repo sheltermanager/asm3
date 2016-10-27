@@ -57,8 +57,8 @@ AnimalComments
     The animal comment box 
 HealthProblems
     The health problems field 
-AcceptanceNumber
-    The acceptance number 
+LitterID / AcceptanceNumber
+    The litter reference / acceptance number
 AddressOfPersonBroughtAnimalIn
     The full address of the person who brought the animal in 
 AnimalName
