@@ -51,6 +51,7 @@ Also has some useful helper functions for reading CSVs and parsing values, eg:
 
 import csv, datetime, re, time
 import os, sys, urllib2, base64
+from cStringIO import StringIO
 
 # Next year code to use for animals when generating shelter codes
 nextyearcode = 1
@@ -90,29 +91,33 @@ def atoi(s):
     except:
         return 0
 
-def csv_to_list(fname, strip = False, remove_control = False, uppercasekeys = False):
+def csv_to_list(fname, strip = False, remove_control = False, uppercasekeys = False, unicodehtml = False):
     """
     Reads the csv file fname and returns it as a list of maps 
     with the first row used as the keys.
     strip: If True, removes whitespace from all fields
     remove_control: If True, removes all ascii chars < 32
     uppercasekeys: If True, runs upper() on headings/map keys
+    unicodehtml: If True, interprets the file as utf8 and replaces unicode chars with HTML entities
     returns a list of maps
     returns None if the file does not exist
     """
     if not os.path.exists(fname): return None
     o = []
-    if remove_control:
-        with open(fname, "rb") as f:
-            lines = f.readlines()
-            f.close()
-        with open(fname, "wb") as f:
-            for s in lines:
-                f.write(''.join(c for c in s if ord(c) >= 32))
-                f.write("\n")
-            f.flush()
-            f.close()
-    reader = csv.DictReader(open(fname, "rb"))
+    # Read the file into memory buffer b first
+    # any raw transformations can be done on it there
+    b = StringIO()
+    with open(fname, "rb") as f:
+        for s in f.readlines():
+            if remove_control:
+                b.write(''.join(c for c in s if ord(c) >= 32))
+                b.write("\n")
+            elif unicodehtml:
+                b.write(s.decode("utf8").encode("ascii", "xmlcharrefreplace"))
+            else:
+                b.write(s)
+        f.close()
+    reader = csv.DictReader(StringIO(b.getvalue()))
     for row in reader:
         if strip:
             for k, v in row.iteritems():
@@ -387,6 +392,10 @@ def species_name_for_id(id):
         if int(sid) == id:
             return sname
     return "Dog"
+
+def species_from_db(name, default = 1):
+    """ Looks up the species in the db when the conversion is run, assign to SpeciesID """
+    return "COALESCE((SELECT ID FROM species WHERE lower(SpeciesName) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
 
 # These are breed keywords to match commonly used breeds
 breedkeywords = (
@@ -856,6 +865,10 @@ def breed_from_db(name, default = 2):
     """ Looks up the breed in the db when the conversion is run, assign to BreedID """
     return "COALESCE((SELECT ID FROM breed WHERE lower(BreedName) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
 
+def coattype_from_db(name, default = 1):
+    """ Looks up the size in the db when the conversion is run, assign to animal.CoatType """
+    return "COALESCE((SELECT ID FROM lkcoattype WHERE lower(CoatType) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
+
 def incidenttype_from_db(name, default = 1):
     """ Looks up the type in the db when the conversion is run, assign to IncidentTypeID """
     return "COALESCE((SELECT ID FROM incidenttype WHERE lower(IncidentName) LIKE lower(%s) LIMIT 1), %d)" % (ds(name.strip()), default)
@@ -908,6 +921,10 @@ def entryreason_from_db(name, default = 2):
     """ Looks up the entryreason in the db when the conversion is run, assign to EntryReasonID """
     return "COALESCE((SELECT ID FROM entryreason WHERE lower(ReasonName) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
 
+def size_from_db(name, default = 1):
+    """ Looks up the size in the db when the conversion is run, assign to animal.Size """
+    return "COALESCE((SELECT ID FROM lksize WHERE lower(Size) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
+
 def donationtype_id_for_name(name, createIfNotExist = True):
     global donationtypes
     if name.strip() == "": return 1
@@ -920,6 +937,10 @@ def donationtype_id_for_name(name, createIfNotExist = True):
 def donationtype_from_db(name, default = 2):
     """ Looks up the donationtype in the db when the conversion is run, assign to DonationID """
     return "COALESCE((SELECT ID FROM donationtype WHERE lower(DonationName) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
+
+def licencetype_from_db(name, default = 1):
+    """ Looks up the licencetype in the db when the conversion is run, assign to ownerlicence.LicenceTypeID """
+    return "COALESCE((SELECT ID FROM licencetype WHERE lower(LicenceName) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
 
 def testtype_id_for_name(name, createIfNotExist = True):
     global testtypes
