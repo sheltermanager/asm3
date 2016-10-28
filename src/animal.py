@@ -1403,8 +1403,8 @@ def get_breedname(dbo, breed1id, breed2id):
     breed1id: The first breed
     breed2id: The second breed
     """
-    if breed1id == 0 or breed2id == 0: return ""
-    if breed1id == breed2id:
+    if breed1id == 0: return ""
+    if breed1id == breed2id or breed2id == 0:
         return lookups.get_breed_name(dbo, breed1id)
     return lookups.get_breed_name(dbo, breed1id) + "/" + lookups.get_breed_name(dbo, breed2id)
 

@@ -1,6 +1,7 @@
 40
 ================
 
+28/10/16 Prevent empty/null second breed breaking breedname
 26/10/16 Strip empty signature placeholders when converting to pdf #492
 26/10/16 Put location filters on a config switch, off by default #486
 21/10/16 Fix bad postcode comparison for lost/found match
