@@ -8,7 +8,7 @@ Import script for SPA des Cantons
 15th April, 2016
 """
 
-PATH = "data/bc1195_sample.csv"
+PATH = "data/bc1195_excel.csv"
 
 def getdate(d):
     return asm.getdate_ddmmyy(d)
@@ -64,7 +64,7 @@ for row in cfile:
         a.AnimalName = "(unknown)"
     a.DateOfBirth = asm.getdate_yyyymmdd("1900/01/01")
     a.DateBroughtIn = a.DateOfBirth
-    a.IsNonShelterAnimal = 1
+    a.NonShelterAnimal = 1
     a.generateCode("A")
     a.BreedID = asm.breed_from_db(row["Breed"])
     a.Breed2ID = asm.breed_from_db(row["Crossbreed type"], 0)
@@ -90,10 +90,12 @@ for row in cfile:
     ol.OwnerID = o.ID
     ol.AnimalID = a.ID
     ol.LicenceTypeID = asm.licencetype_from_db(row["Licence Type"])
-    ol.LicenceNumber = row["Licence Number"]
+    ol.LicenceNumber = "%s (%s)" % (ol.ID, row["Licence Number"])
     ol.LicenceFee = asm.get_currency(row["Fee"])
     ol.IssueDate = asm.getdate_ddmmyyyy(row["Issued"])
     ol.ExpiryDate = asm.getdate_ddmmyyyy(row["Expired"])
+    if ol.IssueDate is None: ol.IssueDate = asm.today()
+    if ol.ExpiryDate is None: ol.ExpiryDate = asm.today()
     ol.Comments = row["Comments"]
 
 # Now that everything else is done, output stored records
@@ -103,6 +105,8 @@ for o in owners:
     print o
 for ol in ownerlicences:
     print ol
+
+asm.stderr_summary(animals=animals, ownerlicences=ownerlicences, owners=owners)
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"

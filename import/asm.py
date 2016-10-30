@@ -940,7 +940,7 @@ def donationtype_from_db(name, default = 2):
 
 def licencetype_from_db(name, default = 1):
     """ Looks up the licencetype in the db when the conversion is run, assign to ownerlicence.LicenceTypeID """
-    return "COALESCE((SELECT ID FROM licencetype WHERE lower(LicenceName) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
+    return "COALESCE((SELECT ID FROM licencetype WHERE lower(LicenceTypeName) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
 
 def testtype_id_for_name(name, createIfNotExist = True):
     global testtypes
