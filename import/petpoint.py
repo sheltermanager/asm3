@@ -126,6 +126,28 @@ for d in data:
             a.BreedName = "%s / %s" % ( asm.breed_name_for_id(a.BreedID), asm.breed_name_for_id(a.Breed2ID) )
         a.HiddenAnimalDetails = comments
 
+        if d["Admitter"] != "" and d["Intake Type"] == "Owner/Guardian Surrender":
+            o = findowner(d["Admitter"])
+            if o == None:
+                o = asm.Owner()
+                owners.append(o)
+                o.OwnerName = d["Admitter"]
+                bits = o.OwnerName.split(" ")
+                if len(bits) > 1:
+                    o.OwnerForeNames = bits[0]
+                    o.OwnerSurname = bits[len(bits)-1]
+                else:
+                    o.OwnerSurname = o.OwnerName
+                o.OwnerAddress = d["Street Number"] + " " + d["Street Name"] + " " + d["Street Type"] + " " + d["Street Direction"]
+                o.OwnerTown = d["City"]
+                o.OwnerCounty = d["Province"]
+                o.OwnerPostcode = d["Postal Code"]
+                o.EmailAddress = d["Admitter's Email"]
+                o.HomeTelephone = d["Admitter's Home Phone"]
+                o.MobileTelephone = d["Admitter's Cell Phone"]
+            a.OriginalOwnerID = o.ID
+            a.BroughtInByOwnerID = o.ID
+
     o = None
     if d["Outcome Person Name"].strip() != "":
         o = findowner(d["Outcome Person Name"])
@@ -223,7 +245,7 @@ for d in data:
 
 vacc = asm.csv_to_list(VACC_FILENAME)
 
-def process_vacc(animalno, vaccdate = None, vaccname = ""):
+def process_vacc(animalno, vaccdate = None, vaccexpires = None, vaccname = ""):
     """ Processes a vaccination record. PP have multiple formats of this data file """
     if ppa.has_key(animalno):
         a = ppa[animalno]
@@ -252,6 +274,7 @@ def process_vacc(animalno, vaccdate = None, vaccname = ""):
         if vaccname.find(k) != -1: av.VaccinationID = i
     av.DateRequired = vaccdate
     av.DateOfVaccination = vaccdate
+    av.DateExpires = vaccexpires
     av.Comments = "Type: %s" % vaccname
 
 if vacc is not None:
@@ -259,18 +282,20 @@ if vacc is not None:
         odd = True
         vaccname = ""
         vaccdate = None
+        vaccexpires = None
         animalno = ""
         for v in vacc:
             if odd:
                 animalno = v["Animal #"]
                 vaccname = v["Vaccination"]
+                vaccexpires = asm.getdate_yyyymmdd(v["Re-Vac Date/Time"])
             else:
                 vaccdate = asm.getdate_yyyymmdd(v["Status"])
-                process_vacc(animalno, vaccdate, vaccname)
+                process_vacc(animalno, vaccdate, vaccexpires, vaccname)
             odd = not odd
     else:
         for v in vacc:
-            process_vacc(v["AnimalID"], asm.getdate_mmddyyyy(v["Date"]), v["RecordType3"])
+            process_vacc(v["AnimalID"], asm.getdate_mmddyyyy(v["Date"]), None, v["RecordType3"])
 
 test = asm.csv_to_list(TEST_FILENAME)
 
