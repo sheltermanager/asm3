@@ -9,15 +9,17 @@ Import script for PetPoint databases exported as CSV
 Can optionally import vacc and tests too, the PP reports
 are MedicalVaccineExpress and MedicalTestsExpress
 
-3rd March - 14th February, 2016
+3rd March - 31st October, 2016
 """
 
 # The shelter's petfinder ID for grabbing animal images for adoptable animals
 PETFINDER_ID = ""
 
 INTAKE_FILENAME = "data/pp_zg1185.csv"
-VACC_FILENAME = ""
-TEST_FILENAME = ""
+VACC_FILENAME = "data/pp_zg1185_vacc.csv"
+TEST_FILENAME = "data/pp_zg1185_test.csv"
+# Whether or not the vaccine and test files are in two row stacked format
+MEDICAL_TWO_ROW_FORMAT = True
 
 def findowner(ownername = ""):
     """ Looks for an owner with the given name in the collection
@@ -82,10 +84,10 @@ for d in data:
         if a.DateOfBirth is None:
             a.DateOfBirth = asm.today()
         a.DateBroughtIn = asm.getdate_mmddyyyy(d["Intake Date"])
-        a.CreatedDate = a.DateBroughtIn
-        a.LastChangedDate = a.DateBroughtIn
         if a.DateBroughtIn is None:
             a.DateBroughtIn = asm.today()
+        a.CreatedDate = a.DateBroughtIn
+        a.LastChangedDate = a.DateBroughtIn
         if d["Intake Type"] == "Transfer In":
             a.IsTransfer = 1
         a.generateCode()
@@ -220,73 +222,114 @@ for d in data:
         asm.petfinder_image(pf, a.ID, a.AnimalName)
 
 vacc = asm.csv_to_list(VACC_FILENAME)
+
+def process_vacc(animalno, vaccdate = None, vaccname = ""):
+    """ Processes a vaccination record. PP have multiple formats of this data file """
+    if ppa.has_key(animalno):
+        a = ppa[animalno]
+    else:
+        asm.stderr("cannot process vacc %s, %s, %s, - no matching animal" % (animalno, vaccdate, vaccname))
+        return
+    av = asm.AnimalVaccination()
+    animalvaccinations.append(av)
+    if vaccdate is None:
+        vaccdate = a.DateBroughtIn
+    av.AnimalID = a.ID
+    av.VaccinationID = 8
+    vaccmap = {
+        "Bordatella": 6,
+        "Bordetella": 6,
+        "6-in-1 Canine": 8,
+        "5-in-1 Canine": 8,
+        "4-in-1 Canine": 8,
+        "D-A2-P": 8,
+        "Rabies": 4,
+        "FeLV": 12,
+        "FVRCP": 14,
+        "Distemper": 1
+    }
+    for k, i in vaccmap.iteritems():
+        if vaccname.find(k) != -1: av.VaccinationID = i
+    av.DateRequired = vaccdate
+    av.DateOfVaccination = vaccdate
+    av.Comments = "Type: %s" % vaccname
+
 if vacc is not None:
-    for v in vacc:
-        if ppa.has_key(v["AnimalID"]):
-            a = ppa[v["AnimalID"]]
-            av = asm.AnimalVaccination()
-            animalvaccinations.append(av)
-            vaccdate = asm.getdate_mmddyyyy(v["Date"])
-            if vaccdate is None:
-                vaccdate = a.DateBroughtIn
-            av.AnimalID = a.ID
-            av.VaccinationID = 8
-            vacctype = v["RecordType3"]
-            vaccmap = {
-                "Bordatella": 6,
-                "Bordetella": 6,
-                "6-in-1 Canine": 8,
-                "5-in-1 Canine": 8,
-                "4-in-1 Canine": 8,
-                "D-A2-P": 8,
-                "Rabies": 4,
-                "FeLV": 12,
-                "FVRCP": 14,
-                "Distemper": 1
-            }
-            for k, i in vaccmap.iteritems():
-                if vacctype.find(k) != -1: av.VaccinationID = i
-            av.DateRequired = vaccdate
-            av.DateOfVaccination = vaccdate
-            av.Comments = "Type: %s" % vacctype
+    if MEDICAL_TWO_ROW_FORMAT:
+        odd = True
+        vaccname = ""
+        vaccdate = None
+        animalno = ""
+        for v in vacc:
+            if odd:
+                animalno = v["Animal #"]
+                vaccname = v["Vaccination"]
+            else:
+                vaccdate = asm.getdate_yyyymmdd(v["Status"])
+                process_vacc(animalno, vaccdate, vaccname)
+            odd = not odd
+    else:
+        for v in vacc:
+            process_vacc(v["AnimalID"], asm.getdate_mmddyyyy(v["Date"]), v["RecordType3"])
 
 test = asm.csv_to_list(TEST_FILENAME)
+
+def process_test(animalno, testdate = None, testname = "", result = ""):
+    """ Process a test record """
+    if ppa.has_key(animalno):
+        a = ppa[animalno]
+    else:
+        asm.stderr("cannot process test %s, %s, %s, %s - no matching animal" % (animalno, testdate, testname, result))
+        return
+    at = asm.AnimalTest()
+    animaltests.append(at)
+    at.AnimalID = a.ID
+    if testdate is None:
+        testdate = a.DateBroughtIn
+    at.DateRequired = testdate
+    at.DateOfTest = testdate
+    asmresult = 0
+    if result == "Negative": asmresult = 1
+    if result == "Positive": asmresult = 2
+    at.TestResultID = asmresult + 1
+    if testname == "Heartworm":
+        a.HeartwormTested = 1
+        a.HeartwormTestDate = testdate
+        a.HeartwormTestResult = asmresult
+        at.TestTypeID = 3
+    elif testname == "FIV":
+        a.CombiTested = 1
+        a.CombiTestDate = testdate
+        a.CombiTestResult = asmresult
+        at.TestTypeID = 1
+    elif testname == "FELV":
+        a.CombiTested = 1
+        a.CombiTestDate = testdate
+        a.FLVResult = asmresult
+        at.TestTypeID = 2
+    else:
+        at.TestTypeID = 1
+        at.Comments = "Test for %s" % testname
+
 if test is not None:
-    for t in test:
-        if ppa.has_key(t["AnimalID"]):
-            a = ppa[t["AnimalID"]]
-            at = asm.AnimalTest()
-            animaltests.append(at)
-            at.AnimalID = a.ID
-            testdate = asm.getdate_mmddyyyy(t["ItemStatusDateTime"])
-            if testdate is None:
-                testdate = a.DateBroughtIn
-            at.DateRequired = testdate
-            at.DateOfTest = testdate
-            testtype = t["TestForCondition"]
-            result = t["Result"]
-            asmresult = 0
-            if result == "Negative": asmresult = 1
-            if result == "Positive": asmresult = 2
-            at.TestResultID = asmresult + 1
-            if testtype == "Heartworm":
-                a.HeartwormTested = 1
-                a.HeartwormTestDate = testdate
-                a.HeartwormTestResult = asmresult
-                at.TestTypeID = 3
-            elif testtype == "FIV":
-                a.CombiTested = 1
-                a.CombiTestDate = testdate
-                a.CombiTestResult = asmresult
-                at.TestTypeID = 1
-            elif testtype == "FELV":
-                a.CombiTested = 1
-                a.CombiTestDate = testdate
-                a.FLVResult = asmresult
-                at.TestTypeID = 2
+    if MEDICAL_TWO_ROW_FORMAT:
+        odd = True
+        testname = ""
+        testdate = None
+        animalno = ""
+        result = ""
+        for t in test:
+            if odd:
+                animalno = t["Animal #"]
+                testname = t["Test"]
             else:
-                at.TestTypeID = 1
-                at.Comments = "Test for %s" % testtype
+                testdate = asm.getdate_yyyymmdd(t["Status"])
+                result = t["Test For"]
+                process_test(animalno, testdate, testname, result)
+            odd = not odd
+    else:
+        for t in test:
+            process_test(t["AnimalID"], asm.getdate_mmddyyyy(t["ItemStatusDateTime"]), t["TestForCondition"], t["Result"])
 
 # Now that everything else is done, output stored records
 for k,v in asm.locations.iteritems():
