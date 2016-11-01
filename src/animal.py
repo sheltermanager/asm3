@@ -3481,7 +3481,7 @@ def update_animal_figures(dbo, month = 0, year = 0):
     lom = last_of_month(fom)
     lom = lom.replace(hour=23, minute=59, second=59)
     firstofmonth = db.dd(fom)
-    lastofmonth = db.dd(lom)
+    lastofmonth = db.ddt(lom)
     daysinmonth = lom.day
     loopdays = daysinmonth + 1
 
@@ -4837,8 +4837,9 @@ def update_animal_figures_monthly_asilomar(dbo, month = 0, year = 0):
 
     fom = datetime.datetime(year, month, 1)
     lom = last_of_month(fom)
+    lom = lom.replace(hour=23, minute=59, second=59)
     firstofmonth = db.dd(fom)
-    lastofmonth = db.dd(lom)
+    lastofmonth = db.ddt(lom)
 
     # A Beginning of month shelter count
     dogsub = get_number_animals_on_shelter(dbo, fom, 1, startofday=True)
