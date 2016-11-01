@@ -18,6 +18,7 @@ ownerlicences = []
 animals = []
 
 ppo = {}
+numused = {}
 
 asm.setid("owner", 100)
 asm.setid("ownerlicence", 100)
@@ -87,10 +88,17 @@ for row in cfile:
     # the licence
     ol = asm.OwnerLicence()
     ownerlicences.append(ol)
+    lt = row["Licence Type"]
     ol.OwnerID = o.ID
     ol.AnimalID = a.ID
-    ol.LicenceTypeID = asm.licencetype_from_db(row["Licence Type"])
-    ol.LicenceNumber = "%s (%s)" % (ol.ID, row["Licence Number"])
+    ol.LicenceTypeID = asm.licencetype_from_db(lt)
+    licnum = "%s%s-%s" % (lt[0:3].upper(), lt[len(lt)-2:], row["Licence Number"])
+    if numused.has_key(licnum):
+        licnum = licnum + "-2"
+    if numused.has_key(licnum) and licnum.endswith("-2"):
+        licnum = licnum[0:len(licnum)-2] + "-3"
+    ol.LicenceNumber = licnum
+    numused[licnum] = "X"
     ol.LicenceFee = asm.get_currency(row["Fee"])
     ol.IssueDate = asm.getdate_ddmmyyyy(row["Issued"])
     ol.ExpiryDate = asm.getdate_ddmmyyyy(row["Expired"])
