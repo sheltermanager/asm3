@@ -56,7 +56,7 @@ for row in cfile:
         o.EmailAddress = row["Email"]
 
     # next the animal, use name, sex and breed as a triplet key
-    animalkey = row["Name"] + row["Specie"] + row["Breed"] + row["Sex"]
+    animalkey = row["Name"] + row["Specie"] + row["Breed"] + row["Sex"] + row["Surname"] + row["Forename"] + row["Address #"]
     if ppa.has_key(animalkey):
         a = ppa[animalkey]
     else:
