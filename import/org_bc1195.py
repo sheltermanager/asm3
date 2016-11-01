@@ -18,6 +18,7 @@ ownerlicences = []
 animals = []
 
 ppo = {}
+ppa = {}
 numused = {}
 
 asm.setid("owner", 100)
@@ -54,36 +55,40 @@ for row in cfile:
         o.MobilePhone = row["Mobile Phone"]
         o.EmailAddress = row["Email"]
 
-    # next the animal, assume that these are all unique and there's only one entry per animal
-    # in this file.
-    a = asm.Animal()
-    animals.append(a)
-    a.AnimalTypeID = 13 # Autre/Other
-    a.SpeciesID = asm.species_from_db(row["Specie"])
-    a.AnimalName = row["Name"]
-    if a.AnimalName.strip() == "":
-        a.AnimalName = "(unknown)"
-    a.DateOfBirth = asm.getdate_yyyymmdd("1900/01/01")
-    a.DateBroughtIn = a.DateOfBirth
-    a.NonShelterAnimal = 1
-    a.generateCode("A")
-    a.BreedID = asm.breed_from_db(row["Breed"])
-    a.Breed2ID = asm.breed_from_db(row["Crossbreed type"], 0)
-    a.BreedName = row["Breed"]
-    if row["Crossbreed type"] != "": a.BreedName += " / " + row["Crossbreed type"]
-    a.BaseColourID = asm.colour_from_db(row["Colour"])
-    a.IdentichipNumber = row["Microchipped Number"]
-    if a.IdentichipNumber != "": a.Identichipped = 1
-    a.TattooNumber = row["Tattoo Number"]
-    if a.TattooNumber != "": a.Tattoo = 1
-    a.Neutered = asm.iif(row["Neutered/Spayed"] != "No", 1, 0)
-    a.ShelterLocation = 1
-    a.Markings = row["Marking"]
-    a.Weight = asm.cint(row["Weight"])
-    a.Sex = asm.getsex_mf(row["Sex"])
-    a.Size = asm.size_from_db(row["Size"])
-    a.CoatType = asm.coattype_from_db(row["Coat Type"])
-    a.Archived = 1
+    # next the animal, use name, sex and breed as a triplet key
+    animalkey = row["Name"] + row["Specie"] + row["Breed"] + row["Sex"]
+    if ppa.has_key(animalkey):
+        a = ppa[animalkey]
+    else:
+        a = asm.Animal()
+        animals.append(a)
+        ppa[animalkey] = a
+        a.AnimalTypeID = 13 # Autre/Other
+        a.SpeciesID = asm.species_from_db(row["Specie"])
+        a.AnimalName = row["Name"]
+        if a.AnimalName.strip() == "":
+            a.AnimalName = "(unknown)"
+        a.DateOfBirth = asm.getdate_yyyymmdd("1900/01/01")
+        a.DateBroughtIn = a.DateOfBirth
+        a.NonShelterAnimal = 1
+        a.generateCode("A")
+        a.BreedID = asm.breed_from_db(row["Breed"])
+        a.Breed2ID = asm.breed_from_db(row["Crossbreed type"], 0)
+        a.BreedName = row["Breed"]
+        if row["Crossbreed type"] != "": a.BreedName += " / " + row["Crossbreed type"]
+        a.BaseColourID = asm.colour_from_db(row["Colour"])
+        a.IdentichipNumber = row["Microchipped Number"]
+        if a.IdentichipNumber != "": a.Identichipped = 1
+        a.TattooNumber = row["Tattoo Number"]
+        if a.TattooNumber != "": a.Tattoo = 1
+        a.Neutered = asm.iif(row["Neutered/Spayed"] != "No", 1, 0)
+        a.ShelterLocation = 1
+        a.Markings = row["Marking"]
+        a.Weight = asm.cint(row["Weight"])
+        a.Sex = asm.getsex_mf(row["Sex"])
+        a.Size = asm.size_from_db(row["Size"])
+        a.CoatType = asm.coattype_from_db(row["Coat Type"])
+        a.Archived = 1
 
     # the licence
     ol = asm.OwnerLicence()
