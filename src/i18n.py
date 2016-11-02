@@ -4,8 +4,8 @@ import datetime
 import json
 import time
 
-VERSION = "40u [Wed  2 Nov 14:23:48 GMT 2016]"
-BUILD = "11021423"
+VERSION = "40u [Wed  2 Nov 15:41:07 GMT 2016]"
+BUILD = "11021541"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -119,7 +119,7 @@ def real_locale(locale = "en"):
     if locale in ("en_NZ",):
         locale = "en_AU"
     # French locales
-    if locale in ("fr_CA", "fr_LU"):
+    if locale in ("fr_LU"):
         locale = "fr"
     # German locales
     if locale in ("de_AT", "de_LU"):
