@@ -987,7 +987,7 @@ $(function() {
             }
 
             // Enable tab sections for Canadian publishers
-            if (asm.locale == "en_CA") {
+            if (asm.locale == "en_CA" || asm.locale == "fr_CA") {
                 $(".localeca").show();
             }
 

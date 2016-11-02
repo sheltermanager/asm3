@@ -1,6 +1,7 @@
 40
 ================
 
+02/11/16 Show Canadian publishers for fr_CA
 01/11/16 Use 23:59:59 time component in monthly figures/asilomar
 28/10/16 Prevent empty/null second breed breaking breedname
 26/10/16 Strip empty signature placeholders when converting to pdf #492

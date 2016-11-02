@@ -245,7 +245,7 @@ $(function() {
             catch(ip) {}
 
             // Meetapet, PetFinder and PetLink are US/Canada/Mexico
-            if (asm.locale != "en" && asm.locale != "en_CA" && asm.locale != "es_MX" && asm.locale != "en_MX") {
+            if (asm.locale != "en" && asm.locale != "en_CA" && asm.locale != "fr_CA" && asm.locale != "es_MX" && asm.locale != "en_MX") {
                 ep.replace("mp", "");
                 ep.replace("pf", "");
                 ep.replace("pl", "");
