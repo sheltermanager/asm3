@@ -191,10 +191,13 @@ def sign_document_page(dbo, mid):
     h.append("</body></html>")
     return "\n".join(h)
 
-def handler(post, remoteip, referer):
+def handler(post, remoteip, referer, querystring):
     """
     Handles the various service method types.
-    data: The GET/POST parameters 
+    post:        The GET/POST parameters 
+    remoteip:    The IP of the caller
+    referer:     The referer HTTP header
+    querystring: The complete querystring
     return value is a tuple containing MIME type, max-age, content
     """
     # Database info
@@ -209,16 +212,13 @@ def handler(post, remoteip, referer):
     formid = post.integer("formid")
     seq = post.integer("seq")
     title = post["title"]
-    cache_key = "a" + account + "u" + username + "p" + password + "m" + method + \
-        "i" + str(animalid) + "s" + str(seq) + "f" + str(formid) + "t" + title
-    
-    # cache keys aren't allowed spaces
-    cache_key = cache_key.replace(" ", "")
+
+    cache_key = querystring.replace(" ", "")
 
     # Do we have a cached response for these parameters?
     cached_response = get_cached_response(cache_key)
     if cached_response is not None:
-        al.debug("cache hit for %s/%s/%s/%s" % (account, method, animalid, title), "service.handler")
+        al.debug("cache hit for %s" % (cache_key), "service.handler")
         return cached_response
 
     # Are we dealing with multiple databases, but no account was specified?
