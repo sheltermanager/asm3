@@ -1069,7 +1069,8 @@ def calc_total_days_on_shelter(dbo, animalid, a = None, movements = None):
     for m in movements:
         if m["ANIMALID"] == animalid:
             seen = True
-            daysonshelter -= date_diff_days(m["MOVEMENTDATE"], m["RETURNDATE"])
+            if m["MOVEMENTDATE"] is not None and m["RETURNDATE"] is not None:
+                daysonshelter -= date_diff_days(m["MOVEMENTDATE"], m["RETURNDATE"])
         else:
             # Stop iterating the list if we don't have a match and we previously
             # saw our animal id. Any movement list passed in should order by animalid

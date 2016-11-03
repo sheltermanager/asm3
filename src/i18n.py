@@ -4,8 +4,8 @@ import datetime
 import json
 import time
 
-VERSION = "40u [Thu  3 Nov 11:06:25 GMT 2016]"
-BUILD = "11031106"
+VERSION = "40u [Thu  3 Nov 11:15:23 GMT 2016]"
+BUILD = "11031115"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -519,7 +519,7 @@ def date_diff_days(date1, date2):
     (datetime) date1
     (datetime) date2
     """
-    if date1 is None or date2 == None: return 0
+    if date1 is None or date2 is None: return 0
     try:
         ux1 = time.mktime(date1.timetuple())
         ux2 = time.mktime(date2.timetuple())
