@@ -1,6 +1,7 @@
 0
 ================
 
+03/11/16 Allow maint_variable_data to override config check
 03/11/16 Use complete querystring as cache key for service calls
 02/11/16 Add dedicated fr_CA translation
 02/11/16 Show Canadian publishers for fr_CA

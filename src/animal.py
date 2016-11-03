@@ -2925,7 +2925,7 @@ def update_variable_animal_data(dbo, animalid, a = None, animalupdatebatch = Non
         ))
         db.execute(dbo, s)
 
-def update_all_variable_animal_data(dbo, include_deceased=False):
+def update_all_variable_animal_data(dbo, include_deceased=False, check_config=True):
     """
     Updates variable animal data for all animals
     """
@@ -2933,7 +2933,7 @@ def update_all_variable_animal_data(dbo, include_deceased=False):
     
     # We only need to do this once a day, skip if it's already
     # been run
-    if configuration.variable_data_updated_today(dbo):
+    if check_config and configuration.variable_data_updated_today(dbo):
         al.debug("already done today", "animal.update_all_variable_animal_data", dbo)
         return
 

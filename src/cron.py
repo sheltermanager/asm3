@@ -443,7 +443,7 @@ def maint_recode_all(dbo):
 def maint_variable_data(dbo):
     try:
         configuration.set_variable_data_updated_blank(dbo)
-        animal.update_all_variable_animal_data(dbo, True)
+        animal.update_all_variable_animal_data(dbo, include_deceased=True, check_config=False)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_variable_data: %s" % em, "cron.maint_variable_data", dbo, sys.exc_info())
