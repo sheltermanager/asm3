@@ -950,9 +950,6 @@ def service_enabled(dbo):
 def service_auth_enabled(dbo):
     return cboolean(dbo, "ServiceAuthEnabled", DEFAULTS["ServiceAuthEnabled"] == "Yes")
 
-def set_variable_data_updated_blank(dbo):
-    cset_db(dbo, "VariableAnimalDataUpdated", "")
-
 def set_variable_data_updated_today(dbo):
     cset_db(dbo, "VariableAnimalDataUpdated", time.strftime("%Y%m%d", i18n.now().timetuple()))
 

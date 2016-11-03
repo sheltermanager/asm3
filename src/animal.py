@@ -1062,7 +1062,7 @@ def calc_total_days_on_shelter(dbo, animalid, a = None, movements = None):
     if movements is None:
         movements = db.query(dbo, "SELECT AnimalID, MovementDate, ReturnDate " \
             "FROM adoption " \
-            "WHERE AnimalID = %d " \
+            "WHERE AnimalID = %d AND MovementType <> 2 " \
             "AND MovementDate Is Not Null AND ReturnDate Is Not Null " \
             "ORDER BY AnimalID" % animalid)
     seen = False
@@ -2934,9 +2934,10 @@ def update_all_variable_animal_data(dbo, include_deceased=False, check_config=Tr
     
     # We only need to do this once a day, skip if it's already
     # been run
-    if check_config and configuration.variable_data_updated_today(dbo):
-        al.debug("already done today", "animal.update_all_variable_animal_data", dbo)
-        return
+    if check_config: 
+        if configuration.variable_data_updated_today(dbo):
+            al.debug("already done today", "animal.update_all_variable_animal_data", dbo)
+            return
 
     animalupdatebatch = []
 
@@ -2946,15 +2947,15 @@ def update_all_variable_animal_data(dbo, include_deceased=False, check_config=Tr
     # Update variable data for either all or non-deceased animals
     where = ""
     if not include_deceased:
-        where = "WHERE DeceasedDate Is Null"
+        where = "AND DeceasedDate Is Null"
     animals = db.query(dbo, "SELECT ID, DateBroughtIn, DeceasedDate, DiedOffShelter, Archived, ActiveMovementDate, " \
-        "MostRecentEntryDate, DateOfBirth FROM animal %s" % where)
+        "MostRecentEntryDate, DateOfBirth FROM animal WHERE ID>0 %s" % where)
 
-    # Get a single lookup of movements for animals who are still alive
+    # Get a single lookup of movements for our animals
     movements = db.query(dbo, "SELECT ad.AnimalID, ad.MovementDate, ad.ReturnDate " \
         "FROM adoption ad INNER JOIN animal a ON a.ID = ad.AnimalID " \
-        "WHERE ad.MovementDate Is Not Null AND ad.ReturnDate Is Not Null AND a.DeceasedDate Is Null " \
-        "ORDER BY AnimalID")
+        "WHERE ad.MovementType <> 2 AND ad.MovementDate Is Not Null AND ad.ReturnDate Is Not Null %s " \
+        "ORDER BY AnimalID" % where)
 
     for a in animals:
         update_variable_animal_data(dbo, int(a["ID"]), a, animalupdatebatch, bands, movements)
