@@ -18,7 +18,7 @@ INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN animalvaccination av ON a.ID = av.AnimalID
 INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID
 LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation
-LEFT OUTER JOIN owner vo ON vo.ID = animalvaccination.AdministeringVetID
+LEFT OUTER JOIN owner vo ON vo.ID = av.AdministeringVetID
 WHERE a.ID = $ASK ANIMAL$
 ORDER BY av.DateOfVaccination
 ###
