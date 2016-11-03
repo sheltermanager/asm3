@@ -2,7 +2,7 @@ Vaccination Print
 ###
 Auditing
 ###
-33503/Any
+33801/Any
 ###
 Vaccinations for a selected shelter animal.
 ###
@@ -11,12 +11,14 @@ en
 SELECT
 a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName,
 v.VaccinationType, av.DateRequired,
+CASE WHEN vo.OwnerName Is Not Null THEN vo.OwnerName ELSE av.LastChangedBy END AS GivenBy,
 av.DateOfVaccination, av.DateExpires, av.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN animalvaccination av ON a.ID = av.AnimalID
 INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID
-INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation
+LEFT OUTER JOIN owner vo ON vo.ID = animalvaccination.AdministeringVetID
 WHERE a.ID = $ASK ANIMAL$
 ORDER BY av.DateOfVaccination
 ###
@@ -26,6 +28,7 @@ $$HEADER
 <td><b>Vaccination Type</b></td>
 <td><b>Required</b></td>
 <td><b>Given</b></td>
+<td><b>By</b></td>
 <td><b>Expires</b></td>
 <td><b>Comments</b></td>
 </tr>
@@ -35,6 +38,7 @@ $$BODY<tr>
 <td>$VACCINATIONTYPE</td>
 <td>$DATEREQUIRED</td>
 <td>$DATEOFVACCINATION</td>
+<td>$GIVENBY</td>
 <td>$DATEEXPIRES</td>
 <td>$COMMENTS</td>
 </tr>
