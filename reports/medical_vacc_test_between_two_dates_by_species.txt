@@ -60,28 +60,34 @@ AND at.DateRequired >= '$@from$' AND at.DateRequired <= '$@to$'
 AND a.Archived = 0 AND a.DeceasedDate Is Null
 
 ) dummy
-ORDER BY DateRequired
+ORDER BY SpeciesName, DateRequired
 
 ###
 $$HEADER
+HEADER$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h2>$SpeciesName</h2>
 <table border=1><tr>
 <td><b>Animal</b></td>
 <td><b>Type</b></td>
-<td><b>Species</b></td>
-<td><b>Internal Loc</b></td>
+<td><b>Location</b></td>
 <td><b>Therapy</b></td>
 <td><b>Dosage</b></td>
 <td><b>Number</b></td>
 <td><b>Date Required</b></td>
 <td><b>Comments</b></td>
 </tr>
-HEADER$$
+$$FOOT
+</table>
+<p>Total $SpeciesName: {COUNT.SpeciesName}</p>
+GROUP$$
 
 $$BODY<tr>
 <td><a target="_blank" href="animal?id=$AID">$SHELTERCODE $ANIMALNAME</a></td>
 <td>$ANIMALTYPE</td>
-<td>$SPECIESNAME</td>
-<td>$LOCATIONNAME</td>
+<td>$DISPLAYLOCATION</td>
 <td><b>$MTYPE: $TREATMENTNAME</b></td>
 <td>$DOSAGE</td>
 <td>$TREATMENTNUMBER / $TOTALTREATMENTS</td>
@@ -91,16 +97,15 @@ $$BODY<tr>
 BODY$$
 
 $$FOOTER
-</table>
 FOOTER$$
 &&&
-Medical, Vaccination and Tests given between two dates
+Medical, Vaccination and Tests given between two dates by species
 ###
 Medical
 ###
 3309/Any
 ###
-Medical, vaccination and tests given to shelter animals between two dates in one report
+Medical, vaccination and tests given to shelter animals between two dates in one report by species
 ###
 en
 ###
@@ -153,7 +158,7 @@ AND at.DateOfTest >= '$@from$' AND at.DateOfTest <= '$@to$'
 AND a.DeceasedDate Is Null
 
 ) dummy
-ORDER BY DateGiven
+ORDER BY SpeciesName, DateGiven
 
 ###
 $$HEADER
