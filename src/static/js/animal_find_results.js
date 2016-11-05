@@ -176,6 +176,7 @@ $(function() {
                 "HasSpecialNeeds":  _("Special Needs"),
                 "ShelterLocation":  _("Location"),
                 "ShelterLocationUnit":  _("Unit"),
+                "Fosterer": _("Fosterer"),
                 "Size":  _("Size"),
                 "RabiesTag":  _("RabiesTag"),
                 "TimeOnShelter":  _("On Shelter"),
@@ -233,6 +234,11 @@ $(function() {
                 rv = row.DISPLAYLOCATIONNAME; 
                 if (row.SHELTERLOCATIONUNIT && !row.ACTIVEMOVEMENTID) {
                     rv += ' <span class="asm-search-locationunit">' + row.SHELTERLOCATIONUNIT + '</span>';
+                }
+            }
+            else if ( name == "Fosterer" ) {
+                if (row.ACTIVEMOVEMENTTYPE == 2) {
+                    rv = '<a href="person?id=' + row.CURRENTOWNERID + '">' + row.CURRENTOWNERNAME + '</a>';
                 }
             }
             else if ( name == "Size") { rv = row.SIZENAME; }

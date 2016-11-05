@@ -1,6 +1,7 @@
-0
+40
 ================
 
+04/11/16 Add fosterer as a find animal column
 03/11/16 Count fosters as total time on shelter
 03/11/16 Allow maint_variable_data to override config check
 03/11/16 Use complete querystring as cache key for service calls
