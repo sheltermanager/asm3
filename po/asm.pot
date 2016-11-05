@@ -4770,7 +4770,7 @@ msgid "Fostered"
 msgstr ""
 
 #: onlineforms.js common.js header_edit_header.js shelterview.js animal_new.js
-#: person_find_results.js options.js html.py
+#: person_find_results.js animal_find_results.js options.js html.py
 msgid "Fosterer"
 msgstr ""
 
@@ -5450,6 +5450,10 @@ msgid "If this person is a member, the date that membership expires."
 msgstr ""
 
 #: person.js
+msgid "If this person is a member, their membership number"
+msgstr ""
+
+#: person.js
 msgid "If this person is a member, their membership number."
 msgstr ""
 
@@ -6121,7 +6125,7 @@ msgstr ""
 msgid "License"
 msgstr ""
 
-#: licence.js mobile.py
+#: person.js licence.js mobile.py
 msgid "License Number"
 msgstr ""
 
@@ -10585,6 +10589,10 @@ msgstr ""
 
 #: stocklevel.js
 msgid "The type of unit in the container, eg: tablet, vial, etc."
+msgstr ""
+
+#: person.js
+msgid "The veterinary license number."
 msgstr ""
 
 #: stocklevel.js
