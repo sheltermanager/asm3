@@ -690,6 +690,24 @@ $(function() {
                             format.padleft($("#personid").val(), 10));
                     }
                 }
+
+                // If the vet flag is selected, change the membership number label
+                // and hide the expiry field so we can use membership for licence
+                if ($("#flags option[value='vet']").is(":selected")) {
+                    $("label[for='membershipnumber']").html(_("License Number"));
+                    $("#membershipnumber").attr("title", _("The veterinary license number."));
+                    $("#membershipexpires").closest("tr").fadeOut();
+                    $("#homecheckedby").closest("tr").fadeOut();
+                    $("#homechecked").closest("tr").fadeOut();
+                }
+                else {
+                    $("label[for='membershipnumber']").html(_("Membership Number"));
+                    $("#membershipnumber").attr("title", _("If this person is a member, their membership number"));
+                    $("#membershipexpires").closest("tr").fadeIn();
+                    $("#homecheckedby").closest("tr").fadeIn();
+                    $("#homechecked").closest("tr").fadeIn();
+                }
+
             });
 
             validate.save = function(callback) {

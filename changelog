@@ -1,6 +1,8 @@
 40
 ================
 
+05/11/16 Add <<CurrentVetLicence>> and <<OwnersVetLicence>> wordkeys
+05/11/16 Use person membership number for vet licence if vet flag active
 04/11/16 Add fosterer as a find animal column
 03/11/16 Count fosters as total time on shelter
 03/11/16 Allow maint_variable_data to override config check

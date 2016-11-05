@@ -53,6 +53,7 @@ def get_animal_query(dbo):
         "ov.OwnerPostcode AS OwnersVetPostcode, " \
         "ov.WorkTelephone AS OwnersVetWorkTelephone, " \
         "ov.EmailAddress AS OwnersVetEmailAddress, " \
+        "ov.MembershipNumber AS OwnersVetLicenceNumber, " \
         "cv.OwnerName AS CurrentVetName, " \
         "cv.OwnerAddress AS CurrentVetAddress, " \
         "cv.OwnerTown AS CurrentVetTown, " \
@@ -60,6 +61,7 @@ def get_animal_query(dbo):
         "cv.OwnerPostcode AS CurrentVetPostcode, " \
         "cv.WorkTelephone AS CurrentVetWorkTelephone, " \
         "cv.EmailAddress AS CurrentVetEmailAddress, " \
+        "cv.MembershipNumber AS CurrentVetLicenceNumber, " \
         "oo.OwnerName AS OriginalOwnerName, " \
         "oo.OwnerTitle AS OriginalOwnerTitle, " \
         "oo.OwnerInitials AS OriginalOwnerInitials, " \

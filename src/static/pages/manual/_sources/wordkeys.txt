@@ -272,6 +272,8 @@ CurrentVetPhone
     A phone number for the animal's current vet
 CurrentVetEmail
     The email address of the animal's current vet
+CurrentVetLicence / CurrentVetLicense
+    The veterinary licence number
 OwnersVetName
     The owner's vet
 OwnersVetAddress
@@ -286,6 +288,8 @@ OwnersVetPhone
     A phone number for the owner's vet
 OwnersVetEmail
     The email address of the owner's vet
+OwnersVetLicence / OwnersVetLicense
+    The veterinary licence number
 RabiesTag
     The animal's rabies tag 
 GoodWithCats
