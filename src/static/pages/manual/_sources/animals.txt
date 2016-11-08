@@ -385,8 +385,17 @@ different templates, the type will "win" and the new animal will get the
 records from the matching type template.
 
 Where records require dates (for example, the due date on medical treatments or
-vaccinations), the system will substitute today when cloning records 
-from the template.
+vaccinations), the system will calculate the new date based on the difference
+between the date brought in field of the template animal and the due/required
+date of the cloned records in question.
+
+For example:
+
+* Template brought in date: 1st January 2016
+* Required date of a vaccination on that template: 10th January 2016
+* Day difference: 10 days
+* Required date of that vaccination when added to the new animal will 
+  be today + 10 days
 
 When copying from a template animal, ASM will copy the following items:
 

@@ -2619,10 +2619,15 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
     # Give up if we didn't find a template animal
     if cloneanimalid == 0:
         return
-    dbtoday = db.dd(now(dbo.timezone))
     # Any animal fields that should be copied to the new record
+    broughtin = db.query_date(dbo, "SELECT DateBroughtIn FROM animal WHERE ID = %d" % cloneanimalid)
     cloneanimalfee = db.query_int(dbo, "SELECT Fee FROM animal WHERE ID = %d" % cloneanimalid)
     db.execute(dbo, "UPDATE animal SET Fee = %d WHERE ID = %d" % (cloneanimalfee, animalid))
+    # Helper function to work out the difference between intake and a date and add that
+    # difference to today to get a new date
+    def adjust_date(d):
+        dayoffset = date_diff_days(broughtin, d)
+        return add_days(now(dbo.timezone), dayoffset)
     # Additional Fields (don't include mandatory ones as they are already set by new animal screen)
     for af in db.query(dbo, "SELECT a.* FROM additional a INNER JOIN additionalfield af ON af.ID = a.AdditionalFieldID WHERE af.Mandatory <> 1 AND a.LinkID = %d AND a.LinkType IN (%s)" % (cloneanimalid, additional.ANIMAL_IN)):
         sql = db.make_insert_sql("additional", (
@@ -2633,12 +2638,13 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
         db.execute(dbo, sql)
     # Vaccinations
     for v in db.query(dbo, "SELECT * FROM animalvaccination WHERE AnimalID = %d" % cloneanimalid):
+        newdate = adjust_date(v["DATEREQUIRED"])
         sql = db.make_insert_user_sql(dbo, "animalvaccination", username, (
             ( "ID", db.di(db.get_id(dbo, "animalvaccination")) ),
             ( "AnimalID", db.di(animalid) ),
             ( "VaccinationID", db.di(v["VACCINATIONID"]) ),
             ( "DateOfVaccination", db.dd(None) ),
-            ( "DateRequired", dbtoday ),
+            ( "DateRequired", newdate ),
             ( "DateExpires", db.dd(None) ),
             ( "BatchNumber", db.ds(v["BATCHNUMBER"]) ),
             ( "Manufacturer", db.ds(v["MANUFACTURER"]) ),
@@ -2648,13 +2654,14 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
         db.execute(dbo, sql)
     # Tests
     for t in db.query(dbo, "SELECT * FROM animaltest WHERE AnimalID = %d" % cloneanimalid):
+        newdate = adjust_date(t["DATEREQUIRED"])
         sql = db.make_insert_user_sql(dbo, "animaltest", username, ( 
             ( "ID", db.di(db.get_id(dbo, "animaltest")) ),
             ( "AnimalID", db.di(animalid)),
             ( "TestTypeID", db.di(t["TESTTYPEID"]) ),
             ( "TestResultID", db.di(t["TESTRESULTID"]) ),
             ( "DateOfTest", db.dd(None) ),
-            ( "DateRequired", dbtoday ),
+            ( "DateRequired", newdate ),
             ( "Cost", db.di(t["COST"]) ),
             ( "Comments", db.ds(t["COMMENTS"]) )
             ))
@@ -2662,12 +2669,13 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
     # Medical
     for am in db.query(dbo, "SELECT * FROM animalmedical WHERE AnimalID = %d" % cloneanimalid):
         namid = db.get_id(dbo, "animalmedical")
+        newdate = adjust_date(am["STARTDATE"])
         sql = db.make_insert_user_sql(dbo, "animalmedical", username, (
             ( "ID", db.di(namid)),
             ( "AnimalID", db.di(animalid) ),
             ( "MedicalProfileID", db.di(am["MEDICALPROFILEID"]) ),
             ( "TreatmentName", db.ds(am["TREATMENTNAME"]) ),
-            ( "StartDate", dbtoday ),
+            ( "StartDate", newdate ),
             ( "Dosage", db.ds(am["DOSAGE"]) ),
             ( "Cost", db.di(am["COST"]) ),
             ( "TimingRule", db.di(am["TIMINGRULE"]) ),
@@ -2686,7 +2694,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
                 ( "ID", db.di(db.get_id(dbo, "animalmedicaltreatment")) ),
                 ( "AnimalID", db.di(animalid) ),
                 ( "AnimalMedicalID", db.di(namid) ),
-                ( "DateRequired", dbtoday ),
+                ( "DateRequired", newdate ),
                 ( "DateGiven", db.dd(None) ),
                 ( "TreatmentNumber", db.di(amt["TREATMENTNUMBER"])),
                 ( "TotalTreatments", db.di(amt["TOTALTREATMENTS"])),
@@ -2696,21 +2704,23 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
             db.execute(dbo, sql)
     # Diet
     for d in db.query(dbo, "SELECT * FROM animaldiet WHERE AnimalID = %d" % cloneanimalid):
+        newdate = adjust_date(d["DATESTARTED"])
         sql = db.make_insert_user_sql(dbo, "animaldiet", username, (
             ( "ID", db.di(db.get_id(dbo, "animaldiet")) ),
             ( "AnimalID", db.di(animalid) ),
             ( "DietID", db.di(d["DIETID"]) ),
-            ( "DateStarted", dbtoday ),
+            ( "DateStarted", newdate ),
             ( "Comments", db.ds(d["COMMENTS"]))
         ))
         db.execute(dbo, sql)
     # Costs
     for c in db.query(dbo, "SELECT * FROM animalcost WHERE AnimalID = %d" % cloneanimalid):
+        newdate = adjust_date(c["COSTDATE"])
         sql = db.make_insert_user_sql(dbo, "animalcost", username, (
             ( "ID", db.di(db.get_id(dbo, "animalcost")) ),
             ( "AnimalID", db.di(animalid) ),
             ( "CostTypeID", db.di(c["COSTTYPEID"])),
-            ( "CostDate", dbtoday ),
+            ( "CostDate", newdate ),
             ( "CostAmount", db.di(c["COSTAMOUNT"])),
             ( "Description", db.ds(c["DESCRIPTION"]))
         ))
