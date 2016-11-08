@@ -98,6 +98,10 @@ $(function() {
             if (a.ISHOLD == 1 && a.HOLDUNTILDATE) {
                 hold = '<tr><td>' + _("Hold until") + ':</td><td><b>' + format.date(a.HOLDUNTILDATE) + '</b></td></tr>';
             }
+            var coordinator = "";
+            if (a.ADOPTIONCOORDINATORID) {
+                coordinator = '<tr><td>' + _("Adoption Coordinator") + '</td><td><b><a href="person?id=' + a.ADOPTIONCOORDINATORID + '">' + a.ADOPTIONCOORDINATORNAME + '</a></b></td></tr>';
+            }
             var first_column = [
                 '<input type="hidden" id="animalid" value="' + a.ID + '" />',
                 '<div class="asm-grid">',
@@ -122,6 +126,7 @@ $(function() {
                 '<tr>',
                 '<td id="hloc">' + _("Location") + ':</td><td><b>' + displaylocation + '</b></td>',
                 '</tr>',
+                coordinator,
                 animalcontrol,
                 '<tr>',
                 '<td id="hentshel">' + _("Entered shelter") + ':</td><td><b>' + format.date(a.MOSTRECENTENTRYDATE),
