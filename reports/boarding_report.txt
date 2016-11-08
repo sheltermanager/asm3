@@ -9,7 +9,7 @@ Boarding animals entering between two dates with their leaving date, broken down
 en
 ###
 SELECT
-a.AnimalName, a.ShelterCode, a.DateOfBirth, a.AnimalAge, s.SpeciesName, atp.AnimalType, 
+a.ID AS AnimalID, a.AnimalName, a.ShelterCode, a.DateOfBirth, a.AnimalAge, s.SpeciesName, atp.AnimalType, 
 a.BreedName, o.OwnerName, a.MostRecentEntryDate, m.MovementDate,
 a.IdentichipNumber, oo.OwnerName AS OriginalOwner, il.LocationName, 
 m.MovementDate, 
@@ -51,12 +51,12 @@ GROUP$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$ANIMALID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$ANIMALTYPE / $BREEDNAME / $SPECIESNAME</td>
 <td>$IDENTICHIPNUMBER</td>
 <td>$DATEOFBIRTH ($ANIMALAGE)</td>
-<td><b><a href="person?id=$OWNERID">$OWNERNAME</a></b><br/>
+<td><b><a target="_blank" href="person?id=$OWNERID">$OWNERNAME</a></b><br/>
 $OWNERADDRESS<br/>
 $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br/>
 <i>$EMAILADDRESS</i><br/>
