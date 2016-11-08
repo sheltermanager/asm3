@@ -100,7 +100,7 @@ $(function() {
             }
             var coordinator = "";
             if (a.ADOPTIONCOORDINATORID) {
-                coordinator = '<tr><td>' + _("Adoption Coordinator") + '</td><td><b><a href="person?id=' + a.ADOPTIONCOORDINATORID + '">' + a.ADOPTIONCOORDINATORNAME + '</a></b></td></tr>';
+                coordinator = '<tr><td>' + _("Adoption Coordinator") + ':</td><td><b><a href="person?id=' + a.ADOPTIONCOORDINATORID + '">' + a.ADOPTIONCOORDINATORNAME + '</a></b></td></tr>';
             }
             var first_column = [
                 '<input type="hidden" id="animalid" value="' + a.ID + '" />',
