@@ -3164,8 +3164,8 @@ def update_animal_status(dbo, animalid, a = None, animalupdatebatch = None, diar
     if a["NONSHELTERANIMAL"] == 1:
         on_shelter = False
 
-    # If the animal is on the shelter, or is a nonshelter animal then it has no active movement
-    if not on_shelter and a["NONSHELTERANIMAL"] != 1:
+    # Active movements only apply to shelter animals who have left and are not dead
+    if not on_shelter and a["NONSHELTERANIMAL"] != 1 and a["DECEASEDDATE"] is None:
         
         # Find the latest movement for our animal
         latest = get_latest_movement(dbo, animalid)
@@ -3182,20 +3182,17 @@ def update_animal_status(dbo, animalid, a = None, animalupdatebatch = None, diar
 
             # If the active movement is a foster and we're treating fosters
             # as on shelter, we should mark the animal as on shelter
-            if latest["MOVEMENTTYPE"] == movement.FOSTER and configuration.foster_on_shelter(dbo) \
-                and a["DECEASEDDATE"] is None:
+            if latest["MOVEMENTTYPE"] == movement.FOSTER and configuration.foster_on_shelter(dbo):
                 on_shelter = True
 
             # If the active movement is a retailer and we're treating retailers
             # as on shelter, we should mark the animal as on shelter
-            if latest["MOVEMENTTYPE"] == movement.RETAILER and configuration.retailer_on_shelter(dbo) \
-                and a["DECEASEDDATE"] is None:
+            if latest["MOVEMENTTYPE"] == movement.RETAILER and configuration.retailer_on_shelter(dbo):
                 on_shelter = True
 
             # If the active movement is a trial adoption and we're treating
             # trial adoptions as on shelter, we should mark accordingly
-            if latest["MOVEMENTTYPE"] == movement.ADOPTION and latest["ISTRIAL"] == 1 \
-                and configuration.trial_on_shelter(dbo) and a["DECEASEDDATE"] is None:
+            if latest["MOVEMENTTYPE"] == movement.ADOPTION and latest["ISTRIAL"] == 1 and configuration.trial_on_shelter(dbo):
                 on_shelter = True
 
     # Calculate most recent entry date
