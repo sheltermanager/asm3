@@ -2627,7 +2627,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
     # difference to today to get a new date
     def adjust_date(d):
         dayoffset = date_diff_days(broughtin, d)
-        return add_days(now(dbo.timezone), dayoffset)
+        return db.dd(add_days(now(dbo.timezone), dayoffset))
     # Additional Fields (don't include mandatory ones as they are already set by new animal screen)
     for af in db.query(dbo, "SELECT a.* FROM additional a INNER JOIN additionalfield af ON af.ID = a.AdditionalFieldID WHERE af.Mandatory <> 1 AND a.LinkID = %d AND a.LinkType IN (%s)" % (cloneanimalid, additional.ANIMAL_IN)):
         sql = db.make_insert_sql("additional", (
