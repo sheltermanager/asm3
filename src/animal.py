@@ -2199,7 +2199,6 @@ def update_animals_from_form(dbo, post, username):
     """
     Batch updates multiple animal records from the bulk form
     """
-    dummy = username # TODO: Not audited
     if len(post.integer_list("animals")) == 0: return 0
     if post["litterid"] != "":
         db.execute(dbo, "UPDATE animal SET AcceptanceNumber = %s WHERE ID IN (%s)" % (post.db_string("litterid"), post["animals"]))
@@ -2235,6 +2234,28 @@ def update_animals_from_form(dbo, post, username):
             if a["ADDITIONALFLAGS"] is None: a["ADDITIONALFLAGS"] = ""
             if a["ADDITIONALFLAGS"].find("%s|" % post["addflag"]) == -1:
                 db.execute(dbo, "UPDATE animal SET AdditionalFlags = %s WHERE ID = %d" % ( db.ds("%s%s|" % (a["ADDITIONALFLAGS"], post["addflag"])), a["ID"] ))
+    if post.integer("movementtype") != -1:
+        default_return_reason = configuration.default_return_reason(dbo)
+        for animalid in post.integer_list("animals"):
+            # Is this animal already on foster? If so, return that foster first
+            fm = movement.get_animal_movements(dbo, animalid)
+            for m in fm:
+                if m["MOVEMENTTYPE"] == movement.FOSTER and m["RETURNDATE"] is None:
+                    # if the existing foster is to this person, ignore
+                    if m["OWNERID"] != post.integer("person"):
+                        movement.return_movement(dbo, m["ID"], animalid, post.date("movementdate"))
+            move_dict = {
+                "person"                : post["moveto"],
+                "animal"                : str(animalid),
+                "movementdate"          : post["movementdate"],
+                "permanentfoster"       : "0",
+                "adoptionno"            : "",
+                "returndate"            : "",
+                "type"                  : post["movementtype"],
+                "donation"              : 0,
+                "returncategory"        : str(default_return_reason)
+            }
+            movement.insert_movement_from_form(dbo, username, utils.PostedData(move_dict, dbo.locale))
     return len(post.integer_list("animals"))
 
 def update_deceased_from_form(dbo, username, post):

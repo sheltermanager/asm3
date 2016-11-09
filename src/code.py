@@ -1150,6 +1150,7 @@ class animal_bulk:
         c += html.controller_plain("autolitters", html.json_autocomplete_litters(dbo))
         c += html.controller_json("flags", extlookups.get_animal_flags(dbo))
         c += html.controller_json("internallocations", extlookups.get_internal_locations(dbo, session.locationfilter, session.siteid))
+        c += html.controller_json("movementtypes", extlookups.get_movement_types(dbo))
         s += html.controller(c)
         s += html.footer()
         return full_or_json("animal_bulk", s, c, post["json"] == "true")

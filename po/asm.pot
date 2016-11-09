@@ -356,7 +356,7 @@ msgstr ""
 msgid "Add Message"
 msgstr ""
 
-#: roles.js
+#: animal_bulk.js roles.js
 msgid "Add Movement"
 msgstr ""
 
@@ -12541,7 +12541,7 @@ msgstr ""
 msgid "more"
 msgstr ""
 
-#: transport.js person.js
+#: transport.js person.js animal_bulk.js
 msgid "on"
 msgstr ""
 
@@ -12557,7 +12557,7 @@ msgstr ""
 msgid "oz"
 msgstr ""
 
-#: accounts_trx.js
+#: accounts_trx.js animal_bulk.js
 msgid "to"
 msgstr ""
 

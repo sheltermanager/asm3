@@ -6,6 +6,15 @@ $(function() {
     var animal_bulk = {
 
         render: function() {
+            var choosetypes = [];
+            $.each(controller.movementtypes, function(i, v) {
+                if (v.ID == 8 && !config.bool("DisableRetailer")) {
+                    choosetypes.push(v);
+                }
+                else if (v.ID != 0 && v.ID !=8 && v.ID != 9 && v.ID != 10 && v.ID != 11 && v.ID != 12) {
+                    choosetypes.push(v);
+                }
+            });
             return [
                 html.content_header(_("Bulk change animals")),
                 '<table class="asm-table-layout" style="padding-bottom: 5px;">',
@@ -155,6 +164,28 @@ $(function() {
                 '</td>',
                 '</tr>',
 
+                '<tr id="moverow">',
+                '<td><label for="movementtype">' + _("Add Movement") + '</label></td>',
+                '<td>',
+                '<select id="movementtype" data-post="movementtype" class="asm-halfselectbox">',
+                '<option value="-1"></option>',
+                html.list_to_options(choosetypes, "ID", "MOVEMENTTYPE"),
+                '</select> ',
+                _("on"),
+                ' <input id="movementdate" data-post="movementdate" type="text" class="asm-datebox asm-halftextbox" />',
+                '</td>',
+                '</tr>',
+
+                '<tr id="movetorow">',
+                '<td>',
+                '<label for="moveto">' + _("to") + '</label>',
+                '</td>',
+                '<td>',
+                '<input id="moveto" data-post="moveto" type="hidden" data-filter="all" class="asm-personchooser" />',
+                '</td>',
+                '</tr>',
+
+
                 '</table>',
                 '<div class="centered">',
                 '<button id="bulk">' + html.icon("animal") + ' ' + _("Update") + '</button>',
@@ -193,6 +224,7 @@ $(function() {
             common.widget_destroy("#coordinator", "personchooser");
             common.widget_destroy("#currentvet", "personchooser");
             common.widget_destroy("#ownersvet", "personchooser");
+            common.widget_destroy("#moveto", "personchooser");
         },
 
         name: "animal_bulk",
