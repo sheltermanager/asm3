@@ -46,11 +46,11 @@ asm.setid("adoption", 100)
 
 print "\\set ON_ERROR_STOP\nBEGIN;"
 print "DELETE FROM internallocation;"
-print "DELETE FROM animal WHERE ID >= 100;"
-print "DELETE FROM animaltest WHERE ID >= 100;"
-print "DELETE FROM animalvaccination WHERE ID >= 100;"
-print "DELETE FROM owner WHERE ID >= 100;"
-print "DELETE FROM adoption WHERE ID >= 100;"
+print "DELETE FROM animal WHERE ID >= 100 AND CreatedBy = 'conversion';"
+print "DELETE FROM animaltest WHERE ID >= 100 AND CreatedBy = 'conversion';"
+print "DELETE FROM animalvaccination WHERE ID >= 100 AND CreatedBy = 'conversion';"
+print "DELETE FROM owner WHERE ID >= 100 AND CreatedBy = 'conversion';"
+print "DELETE FROM adoption WHERE ID >= 100 AND CreatedBy = 'conversion';"
 
 pf = ""
 if PETFINDER_ID != "":
@@ -78,12 +78,12 @@ for d in data:
         if a.AnimalName.strip() == "":
             a.AnimalName = "(unknown)"
         if d["Date Of Birth"].strip() == "":
-            a.DateOfBirth = asm.getdate_mmddyyyy(d["Date Of Birth"])
+            a.DateOfBirth = asm.getdate_yyyymmdd(d["Date Of Birth"])
         else:
-            a.DateOfBirth = asm.getdate_mmddyyyy(d["Date Of Birth"])
+            a.DateOfBirth = asm.getdate_yyyymmdd(d["Date Of Birth"])
         if a.DateOfBirth is None:
             a.DateOfBirth = asm.today()
-        a.DateBroughtIn = asm.getdate_mmddyyyy(d["Intake Date"])
+        a.DateBroughtIn = asm.getdate_yyyymmdd(d["Intake Date"])
         if a.DateBroughtIn is None:
             a.DateBroughtIn = asm.today()
         a.CreatedDate = a.DateBroughtIn
@@ -99,7 +99,7 @@ for d in data:
         a.Size = 2
         a.Neutered = d["Altered"] == "Yes" and 1 or 0
         a.ReasonForEntry = d["Reason"]
-        a.IdentichipDate = asm.getdate_mmddyyyy(d["Microchip Issue Date"])
+        a.IdentichipDate = asm.getdate_yyyymmdd(d["Microchip Issue Date"])
         a.IdentichipNumber = d["Microchip Number"]
         a.IsGoodWithCats = 2
         a.IsGoodWithDogs = 2
@@ -171,7 +171,7 @@ for d in data:
 
     ot = d["Outcome Type"]
     ost = d["Outcome Subtype"]
-    od = asm.getdate_mmddyyyy(d["Outcome Date"])
+    od = asm.getdate_yyyymmdd(d["Outcome Date"])
     if (ot == "Transfer Out" and ost == "Potential Adopter") or ot == "Adoption":
         if a is None or o is None: continue
         m = asm.Movement()
@@ -295,7 +295,7 @@ if vacc is not None:
             odd = not odd
     else:
         for v in vacc:
-            process_vacc(v["AnimalID"], asm.getdate_mmddyyyy(v["Date"]), None, v["RecordType3"])
+            process_vacc(v["AnimalID"], asm.getdate_yyyymmdd(v["Date"]), None, v["RecordType3"])
 
 test = asm.csv_to_list(TEST_FILENAME)
 
@@ -354,7 +354,7 @@ if test is not None:
             odd = not odd
     else:
         for t in test:
-            process_test(t["AnimalID"], asm.getdate_mmddyyyy(t["ItemStatusDateTime"]), t["TestForCondition"], t["Result"])
+            process_test(t["AnimalID"], asm.getdate_yyyymmdd(t["ItemStatusDateTime"]), t["TestForCondition"], t["Result"])
 
 # Now that everything else is done, output stored records
 for k,v in asm.locations.iteritems():
