@@ -310,7 +310,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 1
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < MostRecentEntryDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS AdultDogAdoption,
 
 (SELECT COUNT(*) FROM animal
@@ -318,7 +318,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 1
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= MostRecentEntryDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS JuniorDogAdoption,
 
 (SELECT COUNT(*) FROM animal
@@ -326,7 +326,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 1
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < MostRecentEntryDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS AdultCatAdoption,
 
 (SELECT COUNT(*) FROM animal
@@ -334,7 +334,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 1
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= MostRecentEntryDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS JuniorCatAdoption,
 
 
@@ -345,7 +345,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 5
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < MostRecentEntryDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS AdultDogReclaim,
 
 (SELECT COUNT(*) FROM animal
@@ -353,7 +353,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 5
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= MostRecentEntryDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS JuniorDogReclaim,
 
 (SELECT COUNT(*) FROM animal
@@ -361,7 +361,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 5
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < MostRecentEntryDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS AdultCatReclaim,
 
 (SELECT COUNT(*) FROM animal
@@ -369,7 +369,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType = 5
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= MostRecentEntryDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS JuniorCatReclaim,
 
 
@@ -380,7 +380,7 @@ INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < MostRecentEntryDate - INTERVAL '5 months' 
 AND (OwnerName LIKE '%County%' OR OwnerName LIKE '%City%')
 AND NonShelterAnimal = 0) AS AdultDogToMunicipal,
 
@@ -390,7 +390,7 @@ INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= MostRecentEntryDate - INTERVAL '5 months' 
 AND (OwnerName LIKE '%County%' OR OwnerName LIKE '%City%')
 AND NonShelterAnimal = 0) AS JuniorDogToMunicipal,
 
@@ -400,7 +400,7 @@ INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < MostRecentEntryDate - INTERVAL '5 months' 
 AND (OwnerName LIKE '%County%' OR OwnerName LIKE '%City%')
 AND NonShelterAnimal = 0) AS AdultCatToMunicipal,
 
@@ -410,7 +410,7 @@ INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= MostRecentEntryDate - INTERVAL '5 months' 
 AND (OwnerName LIKE '%County%' OR OwnerName LIKE '%City%')
 AND NonShelterAnimal = 0) AS JuniorCatToMunicipal,
 
@@ -422,7 +422,7 @@ INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < MostRecentEntryDate - INTERVAL '5 months' 
 AND OwnerName NOT LIKE '%County%' AND OwnerName NOT LIKE '%City%'
 AND NonShelterAnimal = 0) AS AdultDogToRescue,
 
@@ -432,7 +432,7 @@ INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= MostRecentEntryDate - INTERVAL '5 months' 
 AND OwnerName NOT LIKE '%County%' AND OwnerName NOT LIKE '%City%'
 AND NonShelterAnimal = 0) AS JuniorDogToRescue,
 
@@ -442,7 +442,7 @@ INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < MostRecentEntryDate - INTERVAL '5 months' 
 AND OwnerName NOT LIKE '%County%' AND OwnerName NOT LIKE '%City%'
 AND NonShelterAnimal = 0) AS AdultCatToRescue,
 
@@ -452,7 +452,7 @@ INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= MostRecentEntryDate - INTERVAL '5 months' 
 AND OwnerName NOT LIKE '%County%' AND OwnerName NOT LIKE '%City%'
 AND NonShelterAnimal = 0) AS JuniorCatToRescue,
 
@@ -463,7 +463,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType IN (4, 6, 7, 8)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < MostRecentEntryDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS AdultDogOtherLive,
 
 (SELECT COUNT(*) FROM animal
@@ -471,7 +471,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType IN (4, 6, 7, 8)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= MostRecentEntryDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS JuniorDogOtherLive,
 
 (SELECT COUNT(*) FROM animal
@@ -479,7 +479,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType IN (4, 6, 7, 8)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND DateOfBirth < MostRecentEntryDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS AdultCatOtherLive,
 
 (SELECT COUNT(*) FROM animal
@@ -487,7 +487,7 @@ INNER JOIN adoption ON animal.ID = adoption.AnimalID
 WHERE MovementType IN (4, 6, 7, 8)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND DateOfBirth >= MostRecentEntryDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS JuniorCatOtherLive,
 
 
@@ -498,28 +498,28 @@ WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID = 1
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS AdultDogDiedCare,
+AND DateOfBirth < MostRecentEntryDate - INTERVAL '5 months') AS AdultDogDiedCare,
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID = 1
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS JuniorDogDiedCare,
+AND DateOfBirth >= MostRecentEntryDate - INTERVAL '5 months') AS JuniorDogDiedCare,
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID = 2
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS AdultCatDiedCare,
+AND DateOfBirth < MostRecentEntryDate - INTERVAL '5 months') AS AdultCatDiedCare,
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 0 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID = 2
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS JuniorCatDiedCare,
+AND DateOfBirth >= MostRecentEntryDate - INTERVAL '5 months') AS JuniorCatDiedCare,
 
 
 
@@ -528,28 +528,28 @@ WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID = 1
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS AdultDogEuthanasia,
+AND DateOfBirth < MostRecentEntryDate - INTERVAL '5 months') AS AdultDogEuthanasia,
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID = 1
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS JuniorDogEuthanasia,
+AND DateOfBirth >= MostRecentEntryDate - INTERVAL '5 months') AS JuniorDogEuthanasia,
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID = 2
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS AdultCatEuthanasia,
+AND DateOfBirth < MostRecentEntryDate - INTERVAL '5 months') AS AdultCatEuthanasia,
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 0
 AND SpeciesID = 2
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS JuniorCatEuthanasia,
+AND DateOfBirth >= MostRecentEntryDate - INTERVAL '5 months') AS JuniorCatEuthanasia,
 
 
 
@@ -558,28 +558,28 @@ WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 1
 AND SpeciesID = 1
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS AdultDogOutReqEuth,
+AND DateOfBirth < MostRecentEntryDate - INTERVAL '5 months') AS AdultDogOutReqEuth,
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 1
 AND SpeciesID = 1
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS JuniorDogOutReqEuth,
+AND DateOfBirth >= MostRecentEntryDate - INTERVAL '5 months') AS JuniorDogOutReqEuth,
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 1
 AND SpeciesID = 2
-AND DateOfBirth < DeceasedDate - INTERVAL '5 months') AS AdultCatOutReqEuth,
+AND DateOfBirth < MostRecentEntryDate - INTERVAL '5 months') AS AdultCatOutReqEuth,
 
 (SELECT COUNT(*) FROM animal 
 WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$'
 AND NonShelterAnimal = 0 AND DiedOffShelter = 0
 AND PutToSleep = 1 AND AsilomarOwnerRequestedEuthanasia = 1
 AND SpeciesID = 2
-AND DateOfBirth >= DeceasedDate - INTERVAL '5 months') AS JuniorCatOutReqEuth,
+AND DateOfBirth >= MostRecentEntryDate - INTERVAL '5 months') AS JuniorCatOutReqEuth,
 
 
 
@@ -590,7 +590,7 @@ AND ReasonName NOT LIKE '%Trap%' AND ReasonName NOT LIKE '%TNR%'
 AND NonShelterAnimal = 0
 AND SpeciesID = 1
 AND NeuteredDate >= MostRecentEntryDate
-AND DateOfBirth < NeuteredDate - INTERVAL '5 months') AS AdultDogNeuterPreAdoption,
+AND DateOfBirth < MostRecentEntryDate - INTERVAL '5 months') AS AdultDogNeuterPreAdoption,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
@@ -599,7 +599,7 @@ AND ReasonName NOT LIKE '%Trap%' AND ReasonName NOT LIKE '%TNR%'
 AND NonShelterAnimal = 0
 AND SpeciesID = 1
 AND NeuteredDate >= MostRecentEntryDate
-AND DateOfBirth >= NeuteredDate - INTERVAL '5 months') AS JuniorDogNeuterPreAdoption,
+AND DateOfBirth >= MostRecentEntryDate - INTERVAL '5 months') AS JuniorDogNeuterPreAdoption,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
@@ -608,7 +608,7 @@ AND ReasonName NOT LIKE '%Trap%' AND ReasonName NOT LIKE '%TNR%'
 AND NonShelterAnimal = 0
 AND SpeciesID = 2
 AND NeuteredDate >= MostRecentEntryDate
-AND DateOfBirth < NeuteredDate - INTERVAL '5 months') AS AdultCatNeuterPreAdoption,
+AND DateOfBirth < MostRecentEntryDate - INTERVAL '5 months') AS AdultCatNeuterPreAdoption,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
@@ -617,7 +617,7 @@ AND ReasonName NOT LIKE '%Trap%' AND ReasonName NOT LIKE '%TNR%'
 AND NonShelterAnimal = 0
 AND SpeciesID = 2
 AND NeuteredDate >= MostRecentEntryDate
-AND DateOfBirth >= NeuteredDate - INTERVAL '5 months') AS JuniorCatNeuterPreAdoption,
+AND DateOfBirth >= MostRecentEntryDate - INTERVAL '5 months') AS JuniorCatNeuterPreAdoption,
 
 
 
@@ -628,28 +628,28 @@ WHERE Neutered = 1 AND NeuteredDate >= '$@from$' AND NeuteredDate <= '$@to$'
 AND NonShelterAnimal = 1
 AND SpeciesID = 1
 AND NeuteredDate >= MostRecentEntryDate
-AND DateOfBirth < NeuteredDate - INTERVAL '5 months') AS AdultDogNeuterLowCostGP,
+AND DateOfBirth < MostRecentEntryDate - INTERVAL '5 months') AS AdultDogNeuterLowCostGP,
 
 (SELECT COUNT(*) FROM animal
 WHERE Neutered = 1 AND NeuteredDate >= '$@from$' AND NeuteredDate <= '$@to$'
 AND NonShelterAnimal = 1
 AND SpeciesID = 1
 AND NeuteredDate >= MostRecentEntryDate
-AND DateOfBirth >= NeuteredDate - INTERVAL '5 months') AS JuniorDogNeuterLowCostGP,
+AND DateOfBirth >= MostRecentEntryDate - INTERVAL '5 months') AS JuniorDogNeuterLowCostGP,
 
 (SELECT COUNT(*) FROM animal
 WHERE Neutered = 1 AND NeuteredDate >= '$@from$' AND NeuteredDate <= '$@to$'
 AND NonShelterAnimal = 1
 AND SpeciesID = 2
 AND NeuteredDate >= MostRecentEntryDate
-AND DateOfBirth < NeuteredDate - INTERVAL '5 months') AS AdultCatNeuterLowCostGP,
+AND DateOfBirth < MostRecentEntryDate - INTERVAL '5 months') AS AdultCatNeuterLowCostGP,
 
 (SELECT COUNT(*) FROM animal
 WHERE Neutered = 1 AND NeuteredDate >= '$@from$' AND NeuteredDate <= '$@to$'
 AND NonShelterAnimal = 1
 AND SpeciesID = 2
 AND NeuteredDate >= MostRecentEntryDate
-AND DateOfBirth >= NeuteredDate - INTERVAL '5 months') AS JuniorCatNeuterLowCostGP,
+AND DateOfBirth >= MostRecentEntryDate - INTERVAL '5 months') AS JuniorCatNeuterLowCostGP,
 
 
 
@@ -661,7 +661,7 @@ AND (ReasonName LIKE '%Trap%' OR ReasonName LIKE '%TNR%')
 AND NonShelterAnimal = 0
 AND SpeciesID = 1
 AND NeuteredDate >= MostRecentEntryDate
-AND DateOfBirth < NeuteredDate - INTERVAL '5 months') AS AdultDogTNR,
+AND DateOfBirth < MostRecentEntryDate - INTERVAL '5 months') AS AdultDogTNR,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
@@ -670,7 +670,7 @@ AND (ReasonName LIKE '%Trap%' OR ReasonName LIKE '%TNR%')
 AND NonShelterAnimal = 0
 AND SpeciesID = 1
 AND NeuteredDate >= MostRecentEntryDate
-AND DateOfBirth >= NeuteredDate - INTERVAL '5 months') AS JuniorDogTNR,
+AND DateOfBirth >= MostRecentEntryDate - INTERVAL '5 months') AS JuniorDogTNR,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
@@ -679,7 +679,7 @@ AND (ReasonName LIKE '%Trap%' OR ReasonName LIKE '%TNR%')
 AND NonShelterAnimal = 0
 AND SpeciesID = 2
 AND NeuteredDate >= MostRecentEntryDate
-AND DateOfBirth < NeuteredDate - INTERVAL '5 months') AS AdultCatTNR,
+AND DateOfBirth < MostRecentEntryDate - INTERVAL '5 months') AS AdultCatTNR,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
@@ -688,7 +688,7 @@ AND (ReasonName LIKE '%Trap%' OR ReasonName LIKE '%TNR%')
 AND NonShelterAnimal = 0
 AND SpeciesID = 2
 AND NeuteredDate >= MostRecentEntryDate
-AND DateOfBirth >= NeuteredDate - INTERVAL '5 months') AS JuniorCatTNR
+AND DateOfBirth >= MostRecentEntryDate - INTERVAL '5 months') AS JuniorCatTNR
 
 
 
