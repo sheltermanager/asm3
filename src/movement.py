@@ -688,6 +688,7 @@ def insert_reserve_for_animal_name(dbo, username, personid, animalname):
     animalname can either be just the name of a shelter animal, or it
     can be in the form name::code. If a code is present, that will be
     used to locate the animal.
+    If the person is banned from adopting animals, an exception is raised.
     """
     l = dbo.locale
     if animalname.find("::") != -1:
@@ -695,8 +696,10 @@ def insert_reserve_for_animal_name(dbo, username, personid, animalname):
         aid = db.query_int(dbo, "SELECT ID FROM animal WHERE ShelterCode = %s ORDER BY ID DESC" % db.ds(animalcode))
     else:
         aid = db.query_int(dbo, "SELECT ID FROM animal WHERE LOWER(AnimalName) LIKE '%s' ORDER BY ID DESC" % animalname.lower())
-    # Bail out if we couldn't find a matching animal
-    if aid == 0: return
+    if 1 == db.query_int(dbo, "SELECT IsBanned FROM owner WHERE ID=%d" % personid):
+        raise utils.ASMValidationError("owner %s is banned from adopting animals - not creating reserve")
+    if aid == 0: 
+        raise utils.ASMValidationError("could not find an animal for '%s' - not creating reserve" % animalname)
     move_dict = {
         "person"                : str(personid),
         "animal"                : str(aid),
