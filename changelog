@@ -1,6 +1,7 @@
 40
 ================
 
+10/11/16 Fix bug where LostArea/FoundArea fields missing on new databases
 09/11/16 Allow movements to be added from bulk change animals #452
 08/11/16 Deceased animals should not have an active movement #501
 08/11/16 Adjust template animal dates during cloning to intake diff #485

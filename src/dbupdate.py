@@ -20,7 +20,8 @@ VERSIONS = (
     33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702, 33703, 33704, 33705,
     33706, 33707, 33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716,
     33717, 33718, 33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904,
-    33905, 33906, 33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916
+    33905, 33906, 33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916,
+    34000
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -589,6 +590,7 @@ def sql_structure(dbo):
         fint("AnimalID", True),
         fstr("LostContactName", True),
         fstr("LostContactNumber", True),
+        fstr("LostArea", True),
         fstr("LostPostcode", True),
         fstr("LostAgeGroup", True),
         fint("LostSex", True),
@@ -599,6 +601,7 @@ def sql_structure(dbo):
         fdate("LostDate", True),
         fstr("FoundContactName", True),
         fstr("FoundContactNumber", True),
+        fstr("FoundArea", True),
         fstr("FoundPostcode", True),
         fstr("FoundAgeGroup", True),
         fint("FoundSex", True),
@@ -4539,4 +4542,9 @@ def update_33916(dbo):
     add_index(dbo, "animalcontrol_SiteID", "animalcontrol", "SiteID")
     db.execute_dbupdate(dbo, "UPDATE owner SET SiteID = 0")
     db.execute_dbupdate(dbo, "UPDATE animalcontrol SET SiteID = 0")
+
+def update_34000(dbo):
+    # Add missing LostArea and FoundArea fields due to broken schema
+    add_column(dbo, "animallostfoundmatch", "LostArea", shorttext(dbo))
+    add_column(dbo, "animallostfoundmatch", "FoundArea", shorttext(dbo))
 
