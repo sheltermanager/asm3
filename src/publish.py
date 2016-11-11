@@ -3512,7 +3512,7 @@ class PetLinkPublisher(AbstractPublisher):
         anCount = 0
         csv = []
         processed_animals = []
-        csv.append("TransactionType,MicrochipID,FirstName,LastName,Address,City,State,ZipCode,Country," \
+        csv.append("Software,TransactionType,MicrochipID,FirstName,LastName,Address,City,State,ZipCode,Country," \
             "Phone1,Phone2,Phone3,Email,Password,Date_of_Implant,PetName,Species,Breed,Gender," \
             "Spayed_Neutered,ColorMarkings")
         for an in animals:
@@ -3555,6 +3555,8 @@ class PetLinkPublisher(AbstractPublisher):
                     email = "".join(c for c in homephone if c.isdigit())
                     email = email + "@petlink.tmp"
 
+                # Software
+                line.append("\"ASM\"")
                 # TransactionType
                 line.append("\"%s\"" % ( self.getLastPublishedDate(an["ID"]) is None and 'N' or 'T' ))
                 # MicrochipID
