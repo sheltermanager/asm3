@@ -1,17 +1,10 @@
-
-# ASM Translation Strings
-# Copyright (C) 2013 Robin Rawson-Tetley
-# This file is distributed under the same license as the ASM3 package.
-# Robin Rawson-Tetley <robin@rawsontetley.org>, 2013.
-#
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
-"Report-Msgid-Bugs-To: db@sheltermanager.com\n"
+"Report-Msgid-Bugs-To: support@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
-"Last-Translator: Robin Rawson-Tetley <robin@rawsontetley.org>\n"
-"Language-Team: en <robin@rawsontetley.org>\n"
+"Last-Translator: Robin Rawson-Tetley <support@sheltermanager.com>\n"
+"Language-Team: en <support@sheltermanager.com>\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -8741,6 +8734,10 @@ msgstr ""
 
 #: document_templates.js report_images.js
 msgid "Rename"
+msgstr ""
+
+#: licence.js
+msgid "Renew License"
 msgstr ""
 
 #: licence_renewal.js

@@ -1,31 +1,26 @@
-# ASM Translation Strings
-# Copyright (C) 2013 Robin Rawson-Tetley
-# This file is distributed under the same license as the ASM3 package.
-# Robin Rawson-Tetley <robin@rawsontetley.org>, 2013.
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: db@sheltermanager.com\n"
+"Project-Id-Version: Animal Shelter Manager\n"
+"Report-Msgid-Bugs-To: support@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
-"PO-Revision-Date: 2016-05-14 21:55+0000\n"
-"Last-Translator: Andi <andi@gowling.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2016-11-11 09:18-0000\n"
+"Last-Translator: Robin Rawson-Tetley <support@sheltermanager.com>\n"
+"Language-Team: LANGUAGE <support@sheltermanager.com>\n"
 "Language: en_GB\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Pootle 2.5.1.1\n"
-"X-Launchpad-Export-Date: 2015-03-02 05:20+0000\n"
+"X-Generator: Poedit 1.6.10\n"
 "X-POOTLE-MTIME: 1463262906.000000\n"
 
 #: options.js
 msgid " days."
 msgstr " days."
 
-#: common.js waitinglist_results.js animal_find.js users.js log.js
-#: lostfound_find.js incident_find.js stocklevel.js options.js diary.py html.py
-#: utils.py
+#: common.js waitinglist_results.js person.js animal_find.js incident.js
+#: incident_new.js users.js log.js lostfound_find.js person_new.js
+#: incident_find.js stocklevel.js common_personchooser.js options.js html.py
 msgid "(all)"
 msgstr "(all)"
 
@@ -45,7 +40,7 @@ msgstr "(blank)"
 msgid "(both)"
 msgstr "(both)"
 
-#: main.js diary.py html.py utils.py
+#: main.js html.py
 msgid "(everyone)"
 msgstr "(everyone)"
 
@@ -222,8 +217,8 @@ msgid "Access System Menu"
 msgstr "Access System Menu"
 
 #: report_images.js
-msgid "Access them via the url 'image?mode=dbfs&id=/reports/NAME'"
-msgstr "Access them via the URL 'image?mode=dbfs&id=/reports/NAME'"
+msgid "Access them via the url"
+msgstr "Access them via the url"
 
 #: accounts_trx.js
 msgid "Account"
@@ -365,7 +360,7 @@ msgstr "Add Medical Records"
 msgid "Add Message"
 msgstr "Add Message"
 
-#: roles.js
+#: animal_bulk.js roles.js
 msgid "Add Movement"
 msgstr "Add Movement"
 
@@ -649,10 +644,10 @@ msgstr "Additional fields"
 msgid "Additional fields need a name, label and type."
 msgstr "Additional fields need a name, label and type."
 
-#: header_edit_header.js movements.js incident_find_results.js
-#: waitinglist_results.js transport.js person.js incident.js incident_new.js
-#: person_new.js person_find_results.js incident_find.js
-#: common_personchooser.js options.js dbupdate.py mobile.py html.py
+#: header_edit_header.js incident_find_results.js waitinglist_results.js
+#: transport.js person.js incident.js incident_new.js person_new.js
+#: person_find_results.js incident_find.js common_personchooser.js options.js
+#: dbupdate.py mobile.py html.py
 msgid "Address"
 msgstr "Address"
 
@@ -700,7 +695,8 @@ msgstr "Adopted Transferred In {0}"
 msgid "Adoption"
 msgstr "Adoption"
 
-#: shelterview.js animal_new.js animal.js animal_bulk.js options.js person.py
+#: common.js header_edit_header.js shelterview.js animal_new.js animal.js
+#: animal_bulk.js options.js person.py
 msgid "Adoption Coordinator"
 msgstr "Adoption Coordinator"
 
@@ -1797,7 +1793,8 @@ msgstr "Breed"
 
 #: lookups.js
 msgid "Breed to use when publishing to third party services and adoption sites"
-msgstr "Breed to use when publishing to third-party services and adoption sites"
+msgstr ""
+"Breed to use when publishing to third-party services and adoption sites"
 
 #: lookups.py
 msgid "Breeds"
@@ -2041,7 +2038,8 @@ msgid "Cancel unadopted reservations after"
 msgstr "Cancel unadopted reservations after"
 
 #: options.js
-msgid "Cancel unadopted reservations after this many days, or 0 to never cancel"
+msgid ""
+"Cancel unadopted reservations after this many days, or 0 to never cancel"
 msgstr ""
 "Cancel unadopted reservations after this many days, or 0 to never cancel"
 
@@ -2788,7 +2786,8 @@ msgstr "Create waiting list records from the selected forms"
 
 #: options.js
 msgid "Creating cost and cost types creates matching accounts and transactions"
-msgstr "Creating cost and cost types creates matching accounts and transactions"
+msgstr ""
+"Creating cost and cost types creates matching accounts and transactions"
 
 #: options.js
 msgid ""
@@ -3210,11 +3209,11 @@ msgstr "Defaults formats for code and shortcode are TYYYYNNN and NNT"
 #: movements.js document_templates.js reports.js waitinglist_results.js
 #: diarytasks.js person_vouchers.js rota.js transport.js onlineform.js
 #: person.js incident.js onlineform_incoming.js accounts_trx.js users.js
-#: animal_costs.js medicalprofile.js staff_rota.js accounts.js log.js animal.js
-#: animal_diet.js stocklevel.js htmltemplates.js licence.js diarytask.js
-#: document_repository.js traploan.js common_tableform.js main.js additional.js
-#: lostfound.js vaccination.js report_images.js diary.js roles.js litters.js
-#: lookups.js waitinglist.js person_investigation.js
+#: animal_costs.js medicalprofile.js staff_rota.js accounts.js log.js
+#: animal.js animal_diet.js stocklevel.js htmltemplates.js licence.js
+#: diarytask.js document_repository.js traploan.js common_tableform.js main.js
+#: additional.js lostfound.js vaccination.js report_images.js diary.js
+#: roles.js litters.js lookups.js waitinglist.js person_investigation.js
 msgid "Delete"
 msgstr "Delete"
 
@@ -3561,7 +3560,7 @@ msgstr "Do not show"
 msgid "Doberman Pinscher"
 msgstr "Doberman Pinscher"
 
-#: person.js incident.js animal.js licence.js dbupdate.py
+#: movements.js person.js incident.js animal.js licence.js dbupdate.py
 msgid "Document"
 msgstr "Document"
 
@@ -4063,6 +4062,10 @@ msgstr "Enable FTP uploading"
 #: options.js
 msgid "Enable accounts functionality"
 msgstr "Enable accounts functionality"
+
+#: options.js
+msgid "Enable location filters"
+msgstr "Enable location filters"
 
 #: options.js
 msgid "Enable lost and found functionality"
@@ -4767,6 +4770,10 @@ msgstr "Forbidden"
 msgid "Forenames"
 msgstr "Forenames"
 
+#: animal.js
+msgid "Forget"
+msgstr "Forget"
+
 #: onlineforms.js
 msgid "Form URL"
 msgstr "Form URL"
@@ -4808,7 +4815,7 @@ msgid "Fostered"
 msgstr "Fostered"
 
 #: onlineforms.js common.js header_edit_header.js shelterview.js animal_new.js
-#: person_find_results.js options.js html.py
+#: person_find_results.js animal_find_results.js options.js html.py
 msgid "Fosterer"
 msgstr "Fosterer"
 
@@ -4967,6 +4974,10 @@ msgstr "Generate a document from this animal"
 #: incident.js
 msgid "Generate a document from this incident"
 msgstr "Generate a document from this animal"
+
+#: movements.js
+msgid "Generate a document from this movement"
+msgstr "Generate a document from this movement"
 
 #: person.js
 msgid "Generate a document from this person"
@@ -5204,7 +5215,7 @@ msgstr "Guinea fowl"
 msgid "HMRC Gift Aid Spreadsheet"
 msgstr "HMRC Gift Aid Spreadsheet"
 
-#: reports.js common_widgets.js
+#: reports.js
 msgid "HTML"
 msgstr "HTML"
 
@@ -5501,12 +5512,17 @@ msgid "If this person is a member, the date that membership expires."
 msgstr "If this person is a member, the date that membership expires."
 
 #: person.js
+msgid "If this person is a member, their membership number"
+msgstr "If this person is a member, their membership number"
+
+#: person.js
 msgid "If this person is a member, their membership number."
 msgstr "If this person is a member, their membership number."
 
 #: stocklevel.js
 msgid "If this stock record is for a drug, the batch number from the container"
-msgstr "If this stock record is for a drug, the batch number from the container"
+msgstr ""
+"If this stock record is for a drug, the batch number from the container"
 
 #: stocklevel.js
 msgid ""
@@ -6182,7 +6198,7 @@ msgstr "Licence for {0} successfully renewed {1} - {2}"
 msgid "License"
 msgstr "Licence"
 
-#: licence.js mobile.py
+#: person.js licence.js mobile.py
 msgid "License Number"
 msgstr "Licence Number"
 
@@ -6735,12 +6751,14 @@ msgid "Medical profiles"
 msgstr "Medical profiles"
 
 #: medicalprofile.js
-msgid "Medical profiles need a profile name, treatment, dosage and frequencies."
+msgid ""
+"Medical profiles need a profile name, treatment, dosage and frequencies."
 msgstr ""
 "Medical profiles need a profile name, treatment, dosage and frequencies."
 
 #: medical.js
-msgid "Medical regimens need an animal, name, dosage, a start date and frequencies."
+msgid ""
+"Medical regimens need an animal, name, dosage, a start date and frequencies."
 msgstr ""
 "Medical regimens need an animal, name, dosage, a start date and frequencies."
 
@@ -7565,6 +7583,10 @@ msgstr "Only PDF, HTML and JPG image files can be attached."
 msgid "Only active accounts"
 msgstr "Only active accounts"
 
+#: incident.js incident_new.js
+msgid "Only allow users with one of these roles to view this incident"
+msgstr "Only allow users with one of these roles to view this incident"
+
 #: publish_options.js
 msgid "Only publish a set number of animals"
 msgstr "Only publish a set number of animals"
@@ -7666,7 +7688,8 @@ msgid "Otterhound"
 msgstr "Otterhound"
 
 #: options.js
-msgid "Our shelter does trial adoptions, allow us to mark these on movement screens"
+msgid ""
+"Our shelter does trial adoptions, allow us to mark these on movement screens"
 msgstr ""
 "Our shelter does trial adoptions, allow us to mark these on movement screens"
 
@@ -8024,7 +8047,7 @@ msgstr "Pharaoh Hound"
 msgid "Pheasant"
 msgstr "Pheasant"
 
-#: movements.js mobile.py
+#: mobile.py
 msgid "Phone"
 msgstr "Phone"
 
@@ -8088,6 +8111,10 @@ msgstr "Pixie-Bob"
 #: media.js
 msgid "Please select a PDF, HTML or JPG image file to attach"
 msgstr "Please select a PDF, HTML or JPG image file to attach"
+
+#: mailmerge.js
+msgid "Please tighten the scope of your email campaign to {0} emails or less."
+msgstr "Please tighten the scope of your email campaign to {0} emails or less."
 
 #: media.js
 msgid "Please use the links below to electronically sign these documents."
@@ -8198,7 +8225,8 @@ msgid "Prairie Dog"
 msgstr "Prairie Dog"
 
 #: options.js
-msgid "Prefill new media notes for animal images with animal comments if left blank"
+msgid ""
+"Prefill new media notes for animal images with animal comments if left blank"
 msgstr ""
 "Prefill new media notes for animal images with animal comments if left blank"
 
@@ -8463,7 +8491,8 @@ msgstr "Read the manual for more information about Animal Shelter Manager."
 msgid "Real name"
 msgstr "Real name"
 
-#: header_edit_header.js movements.js waitinglist_results.js lookups.py html.py
+#: header_edit_header.js movements.js waitinglist_results.js lookups.py
+#: html.py
 msgid "Reason"
 msgstr "Reason"
 
@@ -8811,6 +8840,10 @@ msgstr "Removed"
 msgid "Rename"
 msgstr "Rename"
 
+#: licence.js
+msgid "Renew License"
+msgstr "Renew Licence"
+
 #: licence_renewal.js
 msgid "Renew licence"
 msgstr "Renew licence"
@@ -9144,22 +9177,6 @@ msgstr "S = first letter of animal species"
 msgid "SM Account"
 msgstr "SM Account"
 
-#: options.js
-msgid "SMTP password"
-msgstr "SMTP password"
-
-#: options.js
-msgid "SMTP port"
-msgstr "SMTP port"
-
-#: options.js
-msgid "SMTP server"
-msgstr "SMTP server"
-
-#: options.js
-msgid "SMTP username"
-msgstr "SMTP username"
-
 #: reports.js
 msgid "SQL"
 msgstr "SQL"
@@ -9240,9 +9257,10 @@ msgstr "Satin"
 msgid "Saturday"
 msgstr "Saturday"
 
-#: test.js change_user_settings.js onlineforms.js media.js reports.js person.js
-#: incident.js accounts_trx.js medical.js animal.js options.js lostfound.js
-#: vaccination.js publish_options.js roles.js waitinglist.js mobile.py
+#: test.js change_user_settings.js onlineforms.js media.js reports.js
+#: person.js incident.js accounts_trx.js medical.js animal.js options.js
+#: lostfound.js vaccination.js publish_options.js roles.js waitinglist.js
+#: mobile.py
 msgid "Save"
 msgstr "Save"
 
@@ -9416,6 +9434,14 @@ msgstr "Send mass emails and perform mail merges"
 msgid "Send via email"
 msgstr "Send via email"
 
+#: mailmerge.js
+msgid ""
+"Sending {0} emails is considered abusive and will damage the reputation of "
+"the email server."
+msgstr ""
+"Sending {0} emails is considered abusive and will damage the reputation of "
+"the email server."
+
 #: dbupdate.py
 msgid "Senior"
 msgstr "Senior"
@@ -9443,10 +9469,6 @@ msgstr "Server clock adjustment"
 #: header.js configuration.py html.py
 msgid "Set publishing options"
 msgstr "Set publishing options"
-
-#: common_widgets.js
-msgid "Set the email content-type header to text/html"
-msgstr "Set the email content-type header to text/html"
 
 #: waitinglist.js
 msgid "Set this to 0 to never automatically remove."
@@ -9510,6 +9532,10 @@ msgstr "Shar Pei"
 #: animal.js
 msgid "Share"
 msgstr "Share"
+
+#: animal.js
+msgid "Shared weblink"
+msgstr "Shared weblink"
 
 #: dbupdate.py
 msgid "Shares"
@@ -9835,7 +9861,8 @@ msgstr "Singapura"
 msgid "Single Treatment"
 msgstr "Single Treatment"
 
-#: users.js lookups.js lookups.py html.py
+#: person.js incident.js incident_new.js users.js person_new.js
+#: common_personchooser.js lookups.js lookups.py html.py
 msgid "Site"
 msgstr "Site"
 
@@ -9844,8 +9871,8 @@ msgid "Sites"
 msgstr "Sites"
 
 #: waitinglist_results.js person.js animal_find.js animal_new.js animal.js
-#: animal_find_results.js waitinglist_new.js waitinglist.js person.py mobile.py
-#: lookups.py html.py
+#: animal_find_results.js waitinglist_new.js waitinglist.js person.py
+#: mobile.py lookups.py html.py
 msgid "Size"
 msgstr "Size"
 
@@ -9968,7 +9995,8 @@ msgid "Species Z-A"
 msgstr "Species Z-A"
 
 #: lookups.js
-msgid "Species to use when publishing to third party services and adoption sites"
+msgid ""
+"Species to use when publishing to third party services and adoption sites"
 msgstr ""
 "Species to use when publishing to third party services and adoption sites"
 
@@ -10346,8 +10374,7 @@ msgstr "Template Name"
 
 #: document_templates.js
 msgid ""
-"Template names can include a path portion with /, eg: Vets/Rabies "
-"Certificate"
+"Template names can include a path portion with /, eg: Vets/Rabies Certificate"
 msgstr ""
 "Template names can include a path portion with /, eg: Vets/Rabies Certificate"
 
@@ -10436,7 +10463,8 @@ msgid "The SmartTag type"
 msgstr "The SmartTag type"
 
 #: media.js
-msgid "The URL is the address of a web resource, eg: www.youtube.com/watch?v=xxxxxx"
+msgid ""
+"The URL is the address of a web resource, eg: www.youtube.com/watch?v=xxxxxx"
 msgstr ""
 "The URL is the address of a web resource, eg: www.youtube.com/watch?v=xxxxxx"
 
@@ -10696,6 +10724,10 @@ msgstr "The tattoo number"
 msgid "The type of unit in the container, eg: tablet, vial, etc."
 msgstr "The type of unit in the container, eg: tablet, vial, etc."
 
+#: person.js
+msgid "The veterinary license number."
+msgstr "The veterinary license number."
+
 #: stocklevel.js
 msgid "The wholesale/trade price the container was bought for"
 msgstr "The wholesale/trade price the container was bought for"
@@ -10713,16 +10745,16 @@ msgid ""
 "There is not enough information in the form to create a found animal record "
 "(need a description and area found)."
 msgstr ""
-"There is not enough information in the form to create a found animal record ("
-"need a description and area found)."
+"There is not enough information in the form to create a found animal record "
+"(need a description and area found)."
 
 #: onlineform.py
 msgid ""
 "There is not enough information in the form to create a lost animal record "
 "(need a description and area lost)."
 msgstr ""
-"There is not enough information in the form to create a lost animal record ("
-"need a description and area lost)."
+"There is not enough information in the form to create a lost animal record "
+"(need a description and area lost)."
 
 #: onlineform.py
 msgid ""
@@ -10737,19 +10769,20 @@ msgid ""
 "There is not enough information in the form to create a waiting list record "
 "(need a description)."
 msgstr ""
-"There is not enough information in the form to create a waiting list record ("
-"need a description)."
+"There is not enough information in the form to create a waiting list record "
+"(need a description)."
 
 #: onlineform.py
 msgid ""
 "There is not enough information in the form to create an incident record "
 "(need call notes and dispatch address)."
 msgstr ""
-"There is not enough information in the form to create an incident record ("
-"need call notes and dispatch address)."
+"There is not enough information in the form to create an incident record "
+"(need call notes and dispatch address)."
 
 #: onlineforms.js
-msgid "These are the HTML headers and footers used when displaying online forms."
+msgid ""
+"These are the HTML headers and footers used when displaying online forms."
 msgstr ""
 "These are the HTML headers and footers used when displaying online forms."
 
@@ -10758,7 +10791,8 @@ msgid "These are the HTML headers and footers used when generating reports."
 msgstr "These are the HTML headers and footers used when generating reports."
 
 #: options.js
-msgid "These are the default values for these fields when creating new records."
+msgid ""
+"These are the default values for these fields when creating new records."
 msgstr ""
 "These are the default values for these fields when creating new records."
 
@@ -10811,7 +10845,8 @@ msgstr ""
 "and are given blocks of policy numbers to allocate."
 
 #: options.js
-msgid "These options change the behaviour of the search box at the top of the page."
+msgid ""
+"These options change the behaviour of the search box at the top of the page."
 msgstr ""
 "These options change the behaviour of the search box at the top of the page."
 
@@ -10893,8 +10928,7 @@ msgstr "This animal has special needs"
 
 #: animal_new.js
 msgid ""
-"This animal has the same name as another animal recently added to the "
-"system."
+"This animal has the same name as another animal recently added to the system."
 msgstr ""
 "This animal has the same name as another animal recently added to the system."
 
@@ -10923,7 +10957,8 @@ msgstr ""
 "first."
 
 #: move_adopt.js move_reclaim.js
-msgid "This animal is currently fostered, it will be automatically returned first."
+msgid ""
+"This animal is currently fostered, it will be automatically returned first."
 msgstr ""
 "This animal is currently fostered, it will be automatically returned first."
 
@@ -10950,7 +10985,8 @@ msgstr "This animal is not on the shelter."
 
 #: movements.js move_adopt.js move_reclaim.js
 msgid "This animal is part of a cruelty case and should not leave the shelter."
-msgstr "This animal is part of a cruelty case and should not leave the shelter."
+msgstr ""
+"This animal is part of a cruelty case and should not leave the shelter."
 
 #: animal_new.js animal.js
 msgid "This animal should be held in case it is reclaimed"
@@ -11147,14 +11183,6 @@ msgid ""
 msgstr ""
 "This screen allows you to add extra images to your database, for use in "
 "reports and documents."
-
-#: header.js
-msgid ""
-"This theme has been set by your administrator. You can choose how the system "
-"looks for you with the Visual Theme option here: {0}"
-msgstr ""
-"This theme has been set by your administrator. You can choose how the system "
-"looks for you with the Visual Theme option here: {0}"
 
 #: movements.js move_retailer.js move_reserve.js move_foster.js
 #: move_transfer.js move_adopt.js move_reclaim.js
@@ -11612,8 +11640,8 @@ msgstr "Twitter"
 #: person_links.js accounts.js log.js mailmerge.js animal.js animal_diet.js
 #: licence.js document_repository.js traploan.js animal_find_results.js
 #: animal_bulk.js common_animalchooser.js additional.js common_widgets.js
-#: licence_renewal.js options.js vaccination.js reports.py mobile.py lookups.py
-#: html.py
+#: licence_renewal.js options.js vaccination.js reports.py mobile.py
+#: lookups.py html.py
 msgid "Type"
 msgstr "Type"
 
@@ -11820,18 +11848,13 @@ msgstr "Use Automatic Insurance Numbers"
 
 #: options.js
 msgid ""
-"Use HTML5 client side image scaling where available to speed up image "
-"uploads"
+"Use HTML5 client side image scaling where available to speed up image uploads"
 msgstr ""
 "Use HTML5 client side image scaling where available to speed up image uploads"
 
 #: roles.js
 msgid "Use SQL Interface"
 msgstr "Use SQL Interface"
-
-#: options.js
-msgid "Use TLS"
-msgstr "Use TLS"
 
 #: options.js
 msgid "Use a single breed field"
@@ -12094,7 +12117,7 @@ msgstr "View Person Links"
 msgid "View Report"
 msgstr "View Report"
 
-#: reports.js accounts.js
+#: reports.js incident.js incident_new.js accounts.js
 msgid "View Roles"
 msgstr "View Roles"
 
@@ -12166,7 +12189,7 @@ msgstr "View media"
 msgid "View publishing logs"
 msgstr "View publishing logs"
 
-#: change_user_settings.js options.js
+#: change_user_settings.js
 msgid "Visual Theme"
 msgstr "Visual Theme"
 
@@ -12261,7 +12284,8 @@ msgid "Warn if the name of the new animal is similar to one entered recently"
 msgstr "Warn if the name of the new animal is similar to one entered recently"
 
 #: options.js
-msgid "Warn when adopting to a person who has been banned from adopting animals"
+msgid ""
+"Warn when adopting to a person who has been banned from adopting animals"
 msgstr ""
 "Warn when adopting to a person who has been banned from adopting animals"
 
@@ -12325,7 +12349,7 @@ msgstr "Week beginning {0}"
 msgid "Weekly"
 msgstr "Weekly"
 
-#: animal_new.js animal.js dbupdate.py
+#: animal_new.js animal.js dbupdate.py html.py
 msgid "Weight"
 msgstr "Weight"
 
@@ -12383,7 +12407,8 @@ msgstr ""
 
 #: options.js
 msgid "When I generate a document, make a note of it in the log with this type"
-msgstr "When I generate a document, make a note of it in the log with this type"
+msgstr ""
+"When I generate a document, make a note of it in the log with this type"
 
 #: options.js
 msgid "When a message is created, email it to each matching user"
@@ -12430,7 +12455,8 @@ msgid "When receiving payments, allow a quantity and unit price to be set"
 msgstr "When receiving payments, allow a quantity and unit price to be set"
 
 #: options.js
-msgid "When receiving payments, allow recording of sales tax with a default rate of"
+msgid ""
+"When receiving payments, allow recording of sales tax with a default rate of"
 msgstr "When receiving payments, allow recording of VAT with a default rate of"
 
 #: options.js
@@ -12579,21 +12605,13 @@ msgstr "Yorkshire Terrier Yorkie"
 
 #: main.js
 msgid ""
-"You can bookmark search results, animals, people and most data entry "
-"screens."
+"You can bookmark search results, animals, people and most data entry screens."
 msgstr ""
 "You can bookmark search results, animals, people and most data entry screens."
 
 #: main.js
 msgid ""
-"You can change how ASM looks by choosing a new theme under Settings-Options- "
-"Shelter Details-Visual Theme."
-msgstr ""
-"You can change how ASM looks by choosing a new theme under Settings-Options- "
-"Shelter Details-Visual Theme."
-
-#: main.js
-msgid "You can drag and drop animals in shelter view to change their locations."
+"You can drag and drop animals in shelter view to change their locations."
 msgstr ""
 "You can drag and drop animals in shelter view to change their locations."
 
@@ -12619,8 +12637,8 @@ msgid ""
 "p: to search only people, wl: to search waiting list entries, la: to search "
 "lost animals and fa: to search found animals."
 msgstr ""
-"You can prefix your term in the search box with a: to search only animals, p:"
-" to search only people, wl: to search waiting list entries, la: to search "
+"You can prefix your term in the search box with a: to search only animals, "
+"p: to search only people, wl: to search waiting list entries, la: to search "
 "lost animals and fa: to search found animals."
 
 #: main.js
@@ -12658,7 +12676,8 @@ msgid "You can't have a return without a movement."
 msgstr "You can't have a return without a movement."
 
 #: animal_find_results.js
-msgid "You didn't specify any search criteria, so an on-shelter search was assumed."
+msgid ""
+"You didn't specify any search criteria, so an on-shelter search was assumed."
 msgstr ""
 "You didn't specify any search criteria, so an on-shelter search was assumed."
 
@@ -12695,7 +12714,8 @@ msgstr ""
 "strongly suggest you choose a new password."
 
 #: main.js
-msgid "Your sheltermanager.com account is due to expire on {0}, please renew {1}"
+msgid ""
+"Your sheltermanager.com account is due to expire on {0}, please renew {1}"
 msgstr ""
 "Your sheltermanager.com account is due to expire on {0}, please renew {1}"
 
@@ -12782,7 +12802,7 @@ msgstr "months"
 msgid "more"
 msgstr "more"
 
-#: transport.js person.js
+#: transport.js person.js animal_bulk.js
 msgid "on"
 msgstr "on"
 
@@ -12798,7 +12818,7 @@ msgstr "or estimated age in years"
 msgid "oz"
 msgstr "oz"
 
-#: accounts_trx.js
+#: accounts_trx.js animal_bulk.js
 msgid "to"
 msgstr "to"
 
@@ -12849,7 +12869,8 @@ msgid "{0} - {1} {2}"
 msgstr "{0} - {1} {2}"
 
 #: lostfound.py
-msgid "{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}"
+msgid ""
+"{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}"
 msgstr ""
 "{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}"
 
@@ -13030,7 +13051,8 @@ msgid "{0}, Week {1}"
 msgstr "{0}, Week {1}"
 
 #: common.js
-msgid "{0}: Entered shelter {1}, Last changed on {2} by {3}. {4} {5} {6} aged {7}"
+msgid ""
+"{0}: Entered shelter {1}, Last changed on {2} by {3}. {4} {5} {6} aged {7}"
 msgstr ""
 "{0}: Entered shelter {1}, Last changed on {2} by {3}. {4} {5} {6} aged {7}"
 
@@ -13176,7 +13198,8 @@ msgstr "{plural0} trial adoption has ended"
 
 #: main.js
 msgid "{plural0} unaltered animal has been adopted in the last month"
-msgstr "{plural0} non-neutered/spayed animal has been adopted in the last month"
+msgstr ""
+"{plural0} non-neutered/spayed animal has been adopted in the last month"
 
 #: main.js
 msgid "{plural0} undispatched animal control call"
@@ -13653,12 +13676,47 @@ msgstr "{plural3} weeks."
 msgid "{plural3} years."
 msgstr "{plural3} years."
 
+#~ msgid "Access them via the url 'image?mode=dbfs&id=/reports/NAME'"
+#~ msgstr "Access them via the URL 'image?mode=dbfs&id=/reports/NAME'"
+
+#~ msgid "SMTP password"
+#~ msgstr "SMTP password"
+
+#~ msgid "SMTP port"
+#~ msgstr "SMTP port"
+
+#~ msgid "SMTP server"
+#~ msgstr "SMTP server"
+
+#~ msgid "SMTP username"
+#~ msgstr "SMTP username"
+
+#~ msgid "Set the email content-type header to text/html"
+#~ msgstr "Set the email content-type header to text/html"
+
 #~ msgid ""
-#~ "If this form has a populated emailaddress field during submission, email a "
-#~ "copy of the completed form to it"
+#~ "This theme has been set by your administrator. You can choose how the "
+#~ "system looks for you with the Visual Theme option here: {0}"
 #~ msgstr ""
-#~ "If this form has a populated email address field during submission, email a "
-#~ "copy of the completed form to it"
+#~ "This theme has been set by your administrator. You can choose how the "
+#~ "system looks for you with the Visual Theme option here: {0}"
+
+#~ msgid "Use TLS"
+#~ msgstr "Use TLS"
+
+#~ msgid ""
+#~ "You can change how ASM looks by choosing a new theme under Settings-"
+#~ "Options- Shelter Details-Visual Theme."
+#~ msgstr ""
+#~ "You can change how ASM looks by choosing a new theme under Settings-"
+#~ "Options- Shelter Details-Visual Theme."
+
+#~ msgid ""
+#~ "If this form has a populated emailaddress field during submission, email "
+#~ "a copy of the completed form to it"
+#~ msgstr ""
+#~ "If this form has a populated email address field during submission, email "
+#~ "a copy of the completed form to it"
 
 #~ msgid "Generate letters"
 #~ msgstr "Generate letters"
@@ -13677,13 +13735,15 @@ msgstr "{plural3} years."
 #~ msgstr "View the animals in this litter"
 
 #~ msgid ""
-#~ "filters: a:animal, p:person, wl:waitinglist, la:lostanimal, fa:foundanimal "
-#~ "keywords: onshelter/os, notforadoption, donors, deceased, vets, retailers, "
-#~ "staff, fosterers, volunteers, homecheckers, members, activelost, activefound"
+#~ "filters: a:animal, p:person, wl:waitinglist, la:lostanimal, fa:"
+#~ "foundanimal keywords: onshelter/os, notforadoption, donors, deceased, "
+#~ "vets, retailers, staff, fosterers, volunteers, homecheckers, members, "
+#~ "activelost, activefound"
 #~ msgstr ""
-#~ "filters: a:animal, p:person, wl:waitinglist, la:lostanimal, fa:foundanimal "
-#~ "keywords: onshelter/os, notforadoption, donors, deceased, vets, retailers, "
-#~ "staff, fosterers, volunteers, homecheckers, members, activelost, activefound"
+#~ "filters: a:animal, p:person, wl:waitinglist, la:lostanimal, fa:"
+#~ "foundanimal keywords: onshelter/os, notforadoption, donors, deceased, "
+#~ "vets, retailers, staff, fosterers, volunteers, homecheckers, members, "
+#~ "activelost, activefound"
 
 #~ msgid "Column"
 #~ msgstr "Column"
@@ -13718,8 +13778,10 @@ msgstr "{plural3} years."
 #~ msgid "This animal is quarantined"
 #~ msgstr "This animal is quarantined"
 
-#~ msgid "This animal should not be included when publishing animals for adoption"
-#~ msgstr "This animal should not be included when publishing animals for adoption"
+#~ msgid ""
+#~ "This animal should not be included when publishing animals for adoption"
+#~ msgstr ""
+#~ "This animal should not be included when publishing animals for adoption"
 
 #~ msgid "Deposit account"
 #~ msgstr "Deposit account"
@@ -13731,7 +13793,8 @@ msgstr "{plural3} years."
 #~ "Create a matching transaction for this payment and deposit it in this "
 #~ "account"
 #~ msgstr ""
-#~ "Create a matching transaction for this payment and deposit it in this account"
+#~ "Create a matching transaction for this payment and deposit it in this "
+#~ "account"
 
 #~ msgid "Eligible for gift aid"
 #~ msgstr "Eligible for gift aid"
@@ -13748,8 +13811,10 @@ msgstr "{plural3} years."
 #~ msgid "Electronically sign this document"
 #~ msgstr "Electronically sign this document"
 
-#~ msgid "Electronically sign this document with the signing pad mobile interface"
-#~ msgstr "Electronically sign this document with the signing pad mobile interface"
+#~ msgid ""
+#~ "Electronically sign this document with the signing pad mobile interface"
+#~ msgstr ""
+#~ "Electronically sign this document with the signing pad mobile interface"
 
 #~ msgid "Review"
 #~ msgstr "Review"
@@ -13788,11 +13853,11 @@ msgstr "{plural3} years."
 #~ msgstr "Template for Facebook posts"
 
 #~ msgid ""
-#~ "When posting an animal to Facebook, make a note of it in the log with this "
-#~ "type"
+#~ "When posting an animal to Facebook, make a note of it in the log with "
+#~ "this type"
 #~ msgstr ""
-#~ "When posting an animal to Facebook, make a note of it in the log with this "
-#~ "type"
+#~ "When posting an animal to Facebook, make a note of it in the log with "
+#~ "this type"
 
 #~ msgid "{0} {1}: posted to Facebook page {2} by {3}"
 #~ msgstr "{0} {1}: posted to Facebook page {2} by {3}"
@@ -13903,9 +13968,6 @@ msgstr "{plural3} years."
 #~ msgid "Bad found animal link"
 #~ msgstr "Bad found animal link"
 
-#~ msgid "Bad owner link"
-#~ msgstr "Bad owner link"
-
 #~ msgid "You must supply the date this entry was put on the list."
 #~ msgstr "You must supply the date this entry was put on the list."
 
@@ -13958,9 +14020,11 @@ msgstr "{plural3} years."
 #~ msgstr "You must enter a date of birth for the animal."
 
 #~ msgid ""
-#~ "This animal already has an open movement record. You cannot create another."
+#~ "This animal already has an open movement record. You cannot create "
+#~ "another."
 #~ msgstr ""
-#~ "This animal already has an open movement record. You cannot create another."
+#~ "This animal already has an open movement record. You cannot create "
+#~ "another."
 
 #~ msgid "You must enter a date the animal was brought into the shelter."
 #~ msgstr "You must enter a date the animal was brought into the shelter."
@@ -13989,18 +14053,18 @@ msgstr "{plural3} years."
 #~ "retailer movements."
 
 #~ msgid ""
-#~ "The owner you have selected is an animal retailer and can only have retailer "
-#~ "movements."
+#~ "The owner you have selected is an animal retailer and can only have "
+#~ "retailer movements."
 #~ msgstr ""
-#~ "The owner you have selected is an animal retailer and can only have retailer "
-#~ "movements."
+#~ "The owner you have selected is an animal retailer and can only have "
+#~ "retailer movements."
 
 #~ msgid ""
-#~ "You must give your custom report an HTML body. Press the autogenerate button "
-#~ "to automatically create one."
+#~ "You must give your custom report an HTML body. Press the autogenerate "
+#~ "button to automatically create one."
 #~ msgstr ""
-#~ "You must give your custom report an HTML body. Press the autogenerate button "
-#~ "to automatically create one."
+#~ "You must give your custom report an HTML body. Press the autogenerate "
+#~ "button to automatically create one."
 
 #~ msgid "Auto-archiving animal records..."
 #~ msgstr "Auto-archiving animal records..."
@@ -14032,11 +14096,11 @@ msgstr "{plural3} years."
 #~ "This animal is currently located off the shelter and cannot be reserved."
 
 #~ msgid ""
-#~ "The owner you have selected is not an animal fosterer and cannot have foster "
-#~ "movements."
+#~ "The owner you have selected is not an animal fosterer and cannot have "
+#~ "foster movements."
 #~ msgstr ""
-#~ "The owner you have selected is not an animal fosterer and cannot have foster "
-#~ "movements."
+#~ "The owner you have selected is not an animal fosterer and cannot have "
+#~ "foster movements."
 
 #~ msgid "You cannot cancel a reservation before it takes effect."
 #~ msgstr "You cannot cancel a reservation before it takes effect."
@@ -14058,11 +14122,11 @@ msgstr "{plural3} years."
 #~ "prior retailer movements."
 
 #~ msgid ""
-#~ "This movement clashes with the date range of an existing movement for this "
-#~ "animal."
+#~ "This movement clashes with the date range of an existing movement for "
+#~ "this animal."
 #~ msgstr ""
-#~ "This movement clashes with the date range of an existing movement for this "
-#~ "animal."
+#~ "This movement clashes with the date range of an existing movement for "
+#~ "this animal."
 
 #~ msgid "You must supply a start date for the diet."
 #~ msgstr "You must supply a start date for the diet."
@@ -14649,7 +14713,8 @@ msgstr "{plural3} years."
 #~ msgid "No animals match your criteria."
 #~ msgstr "No animals match your criteria."
 
-#~ msgid "All animals on the shelter of that species are older than six months."
+#~ msgid ""
+#~ "All animals on the shelter of that species are older than six months."
 #~ msgstr ""
 #~ "All animals on the shelter of that species are older than six months."
 
@@ -14788,7 +14853,8 @@ msgstr "{plural3} years."
 #~ msgid "Animal Search Results (generated on {0}) "
 #~ msgstr "Animal Search Results (generated on {0}) "
 
-#~ msgid "No animals have entered the shelter and been returned in this period."
+#~ msgid ""
+#~ "No animals have entered the shelter and been returned in this period."
 #~ msgstr ""
 #~ "No animals have entered the shelter and been returned in this period."
 
@@ -15763,7 +15829,8 @@ msgstr "{plural3} years."
 #~ msgstr "Video capture is currently only available for Linux platforms."
 
 #~ msgid "An error occurred capturing the image from the default video device."
-#~ msgstr "An error occurred capturing the image from the default video device."
+#~ msgstr ""
+#~ "An error occurred capturing the image from the default video device."
 
 #~ msgid "Tattoo:"
 #~ msgstr "Tattoo:"
@@ -15995,7 +16062,8 @@ msgstr "{plural3} years."
 #~ msgid "Omit Header/Footer"
 #~ msgstr "Omit Header/Footer"
 
-#~ msgid "Don't render standard report header/footer when generating the report"
+#~ msgid ""
+#~ "Don't render standard report header/footer when generating the report"
 #~ msgstr ""
 #~ "Don't render standard report header/footer when generating the report"
 
@@ -16387,7 +16455,8 @@ msgstr "{plural3} years."
 #~ "You need to configure your RescueGroups.org settings before publishing."
 
 #~ msgid "You need to configure your AdoptAPet.com settings before publishing."
-#~ msgstr "You need to configure your AdoptAPet.com settings before publishing."
+#~ msgstr ""
+#~ "You need to configure your AdoptAPet.com settings before publishing."
 
 #~ msgid "View Local Cache"
 #~ msgstr "View Local Cache"
@@ -17190,9 +17259,6 @@ msgstr "{plural3} years."
 #~ msgid "Still Reserved"
 #~ msgstr "Still Reserved"
 
-#~ msgid "Generate a document for this movement"
-#~ msgstr "Generate a document for this movement"
-
 #~ msgid "Edit Movement"
 #~ msgstr "Edit Movement"
 
@@ -17497,7 +17563,8 @@ msgstr "{plural3} years."
 #~ msgstr "Use an existing owner"
 
 #~ msgid "You cannot delete this owner as it is referenced from other records."
-#~ msgstr "You cannot delete this owner as it is referenced from other records."
+#~ msgstr ""
+#~ "You cannot delete this owner as it is referenced from other records."
 
 #~ msgid "Media notes contain:"
 #~ msgstr "Media notes contain:"
@@ -18584,11 +18651,11 @@ msgstr "{plural3} years."
 #~ msgstr "(estimated)"
 
 #~ msgid ""
-#~ "Your database is already local, if you want to copy it to another machine, "
-#~ "just copy the files {0}"
+#~ "Your database is already local, if you want to copy it to another "
+#~ "machine, just copy the files {0}"
 #~ msgstr ""
-#~ "Your database is already local, if you want to copy it to another machine, "
-#~ "just copy the files {0}"
+#~ "Your database is already local, if you want to copy it to another "
+#~ "machine, just copy the files {0}"
 
 #~ msgid ""
 #~ "ASM clients have been forbidden from updating the database structure and "
@@ -18600,16 +18667,18 @@ msgstr "{plural3} years."
 #~ "contact your system administrator to update the database."
 
 #~ msgid ""
-#~ "Do you want to include media files? If you have a lot, this operation will "
-#~ "take longer."
+#~ "Do you want to include media files? If you have a lot, this operation "
+#~ "will take longer."
 #~ msgstr ""
-#~ "Do you want to include media files? If you have a lot, this operation will "
-#~ "take longer."
+#~ "Do you want to include media files? If you have a lot, this operation "
+#~ "will take longer."
 
 #~ msgid ""
-#~ "{0} returned from other (transfers, released, escaped, stolen or reclaimed)"
+#~ "{0} returned from other (transfers, released, escaped, stolen or "
+#~ "reclaimed)"
 #~ msgstr ""
-#~ "{0} returned from other (transfers, released, escaped, stolen or reclaimed)"
+#~ "{0} returned from other (transfers, released, escaped, stolen or "
+#~ "reclaimed)"
 
 #~ msgid ""
 #~ "Non-neutered/spayed animals on the shelter aged 6 months or over at {0} "
@@ -18624,11 +18693,11 @@ msgstr "{plural3} years."
 #~ "report."
 
 #~ msgid ""
-#~ "This is based on the {0} completed waiting list entries on file, amounting "
-#~ "to a cumulative waiting time of {1} days."
+#~ "This is based on the {0} completed waiting list entries on file, "
+#~ "amounting to a cumulative waiting time of {1} days."
 #~ msgstr ""
-#~ "This is based on the {0} completed waiting list entries on file, amounting "
-#~ "to a cumulative waiting time of {1} days."
+#~ "This is based on the {0} completed waiting list entries on file, "
+#~ "amounting to a cumulative waiting time of {1} days."
 
 #~ msgid ""
 #~ "All animals on the shelter of the selected species are part of a litter."
@@ -18660,9 +18729,11 @@ msgstr "{plural3} years."
 #~ "automatically remove litters"
 
 #~ msgid ""
-#~ "{0} days, based on {1} retailer records, with a cumulative time of {2} days."
+#~ "{0} days, based on {1} retailer records, with a cumulative time of {2} "
+#~ "days."
 #~ msgstr ""
-#~ "{0} days, based on {1} retailer records, with a cumulative time of {2} days."
+#~ "{0} days, based on {1} retailer records, with a cumulative time of {2} "
+#~ "days."
 
 #~ msgid ""
 #~ "You are about to permanently delete the selected vaccination records.\n"
@@ -18680,12 +18751,12 @@ msgstr "{plural3} years."
 
 #~ msgid ""
 #~ "WARNING: This animal has no pending vaccinations on file. The system will "
-#~ "save the record anyway, but you should complete vaccination information for "
-#~ "this animal. Are you sure you wish to close?"
+#~ "save the record anyway, but you should complete vaccination information "
+#~ "for this animal. Are you sure you wish to close?"
 #~ msgstr ""
 #~ "WARNING: This animal has no pending vaccinations on file. The system will "
-#~ "save the record anyway, but you should complete vaccination information for "
-#~ "this animal. Are you sure you wish to close?"
+#~ "save the record anyway, but you should complete vaccination information "
+#~ "for this animal. Are you sure you wish to close?"
 
 #~ msgid ""
 #~ "Do you want to filter matches to only include animals found between two "
@@ -18695,11 +18766,11 @@ msgstr "{plural3} years."
 #~ "dates?"
 
 #~ msgid ""
-#~ "ASM could not locate the vgrabbj utility. You will need to install it from "
-#~ "XawTV to perform video capture."
+#~ "ASM could not locate the vgrabbj utility. You will need to install it "
+#~ "from XawTV to perform video capture."
 #~ msgstr ""
-#~ "ASM could not locate the vgrabbj utility. You will need to install it from "
-#~ "XawTV to perform video capture."
+#~ "ASM could not locate the vgrabbj utility. You will need to install it "
+#~ "from XawTV to perform video capture."
 
 #~ msgid ""
 #~ "Please enter a date for task {0} \n"
@@ -18716,9 +18787,11 @@ msgstr "{plural3} years."
 #~ "publishing)"
 
 #~ msgid ""
-#~ "This file is {0}Kb in size. ASM has been set not to allow files over {1}Kb."
+#~ "This file is {0}Kb in size. ASM has been set not to allow files over {1}"
+#~ "Kb."
 #~ msgstr ""
-#~ "This file is {0}Kb in size. ASM has been set not to allow files over {1}Kb."
+#~ "This file is {0}Kb in size. ASM has been set not to allow files over {1}"
+#~ "Kb."
 
 #~ msgid ""
 #~ "Create a CSV file from this report and view it in the default CSV editor"
@@ -18733,9 +18806,11 @@ msgstr "{plural3} years."
 #~ "Last changed {2} by {3}"
 
 #~ msgid ""
-#~ "Would you like to upload your changes to this media file back to the server?"
+#~ "Would you like to upload your changes to this media file back to the "
+#~ "server?"
 #~ msgstr ""
-#~ "Would you like to upload your changes to this media file back to the server?"
+#~ "Would you like to upload your changes to this media file back to the "
+#~ "server?"
 
 #~ msgid ""
 #~ "Web site creation completed.\n"
@@ -18745,20 +18820,20 @@ msgstr "{plural3} years."
 #~ "Would you like to view the pages now?"
 
 #~ msgid ""
-#~ "You cannot export to PetFinder as there are still species on your list which "
-#~ "have not been mapped to the correct PetFinder types.\n"
+#~ "You cannot export to PetFinder as there are still species on your list "
+#~ "which have not been mapped to the correct PetFinder types.\n"
 #~ "Would you like to edit them now?"
 #~ msgstr ""
-#~ "You cannot export to PetFinder as there are still species on your list which "
-#~ "have not been mapped to the correct PetFinder types.\n"
+#~ "You cannot export to PetFinder as there are still species on your list "
+#~ "which have not been mapped to the correct PetFinder types.\n"
 #~ "Would you like to edit them now?"
 
 #~ msgid ""
-#~ "You have changed the brought in date, making the animal''s current code of "
-#~ "{0} invalid. ASM will generate a new one."
+#~ "You have changed the brought in date, making the animal''s current code "
+#~ "of {0} invalid. ASM will generate a new one."
 #~ msgstr ""
-#~ "You have changed the brought in date, making the animal''s current code of "
-#~ "{0} invalid. ASM will generate a new one."
+#~ "You have changed the brought in date, making the animal''s current code "
+#~ "of {0} invalid. ASM will generate a new one."
 
 #~ msgid ""
 #~ "You have changed the type and the code previously generated no longer "
@@ -18780,11 +18855,11 @@ msgstr "{plural3} years."
 #~ "scheme"
 
 #~ msgid ""
-#~ "WARNING: This owner has the same address as a person that brought an animal "
-#~ "in (Animal {0} - {1}) - would you like to view the animal record?"
+#~ "WARNING: This owner has the same address as a person that brought an "
+#~ "animal in (Animal {0} - {1}) - would you like to view the animal record?"
 #~ msgstr ""
-#~ "WARNING: This owner has the same address as a person that brought an animal "
-#~ "in (Animal {0} - {1}) - would you like to view the animal record?"
+#~ "WARNING: This owner has the same address as a person that brought an "
+#~ "animal in (Animal {0} - {1}) - would you like to view the animal record?"
 
 #~ msgid ""
 #~ "The following owners are very similar to the one you are about to enter.\n"
@@ -18798,11 +18873,11 @@ msgstr "{plural3} years."
 #~ "You may view any of the owners in the list by double-clicking them."
 
 #~ msgid ""
-#~ "Automatically log the current user out after this many minutes of inactivity "
-#~ "or 0 to never logout"
+#~ "Automatically log the current user out after this many minutes of "
+#~ "inactivity or 0 to never logout"
 #~ msgstr ""
-#~ "Automatically log the current user out after this many minutes of inactivity "
-#~ "or 0 to never logout"
+#~ "Automatically log the current user out after this many minutes of "
+#~ "inactivity or 0 to never logout"
 
 #~ msgid ""
 #~ "Show Internal Location of animals who have left the shelter as logical "
@@ -18817,11 +18892,11 @@ msgstr "{plural3} years."
 #~ "The interval at which the waiting list urgencies should be updated in days"
 
 #~ msgid ""
-#~ "Warning: Rescanning will overwrite your current list of types. Are you sure "
-#~ "you want to do this?"
+#~ "Warning: Rescanning will overwrite your current list of types. Are you "
+#~ "sure you want to do this?"
 #~ msgstr ""
-#~ "Warning: Rescanning will overwrite your current list of types. Are you sure "
-#~ "you want to do this?"
+#~ "Warning: Rescanning will overwrite your current list of types. Are you "
+#~ "sure you want to do this?"
 
 #~ msgid ""
 #~ "If a reserved animal is not adopted after this many days, cancel the "
@@ -18862,18 +18937,18 @@ msgstr "{plural3} years."
 #~ "format, but not both at the same time."
 
 #~ msgid ""
-#~ "The HTTP URI to get the image from or a command to execute. The command will "
-#~ "be passed an output file name"
+#~ "The HTTP URI to get the image from or a command to execute. The command "
+#~ "will be passed an output file name"
 #~ msgstr ""
-#~ "The HTTP URI to get the image from or a command to execute. The command will "
-#~ "be passed an output file name"
+#~ "The HTTP URI to get the image from or a command to execute. The command "
+#~ "will be passed an output file name"
 
 #~ msgid ""
-#~ "How often ASM should heartbeat to the database to keep the connection open "
-#~ "(in ms) - 0=disable"
+#~ "How often ASM should heartbeat to the database to keep the connection "
+#~ "open (in ms) - 0=disable"
 #~ msgstr ""
-#~ "How often ASM should heartbeat to the database to keep the connection open "
-#~ "(in ms) - 0=disable"
+#~ "How often ASM should heartbeat to the database to keep the connection "
+#~ "open (in ms) - 0=disable"
 
 #~ msgid ""
 #~ "This record is currently in use in the database. \n"
@@ -18883,11 +18958,11 @@ msgstr "{plural3} years."
 #~ "You must remove all records using this record first."
 
 #~ msgid ""
-#~ "This movement record already has an insurance number. Remove it if you wish "
-#~ "to generate another."
+#~ "This movement record already has an insurance number. Remove it if you "
+#~ "wish to generate another."
 #~ msgstr ""
-#~ "This movement record already has an insurance number. Remove it if you wish "
-#~ "to generate another."
+#~ "This movement record already has an insurance number. Remove it if you "
+#~ "wish to generate another."
 
 #~ msgid ""
 #~ "Check this box if this owner is a retailer who adopts animals on your "
@@ -18904,19 +18979,19 @@ msgstr "{plural3} years."
 #~ "mark this movement as an adoption from that retailer?"
 
 #~ msgid ""
-#~ "This animal is still reserved to another owner(s). Would you like to cancel "
-#~ "these reservations now?"
+#~ "This animal is still reserved to another owner(s). Would you like to "
+#~ "cancel these reservations now?"
 #~ msgstr ""
-#~ "This animal is still reserved to another owner(s). Would you like to cancel "
-#~ "these reservations now?"
+#~ "This animal is still reserved to another owner(s). Would you like to "
+#~ "cancel these reservations now?"
 
 #~ msgid ""
-#~ "This animal already has an uncancelled reservation, are you sure you wish to "
-#~ "continue with this record?\n"
+#~ "This animal already has an uncancelled reservation, are you sure you wish "
+#~ "to continue with this record?\n"
 #~ "Clicking NO will close this screen and abandon the current record."
 #~ msgstr ""
-#~ "This animal already has an uncancelled reservation, are you sure you wish to "
-#~ "continue with this record?\n"
+#~ "This animal already has an uncancelled reservation, are you sure you wish "
+#~ "to continue with this record?\n"
 #~ "Clicking NO will close this screen and abandon the current record."
 
 #~ msgid ""
@@ -19014,11 +19089,11 @@ msgstr "{plural3} years."
 #~ msgstr "View Staff Owner Records"
 
 #~ msgid ""
-#~ "Notes about the animal, if you are using the internet plugin, these will be "
-#~ "used as the animal's description"
+#~ "Notes about the animal, if you are using the internet plugin, these will "
+#~ "be used as the animal's description"
 #~ msgstr ""
-#~ "Notes about the animal, if you are using the internet plug-in, these will be "
-#~ "used as the animal's description"
+#~ "Notes about the animal, if you are using the internet plug-in, these will "
+#~ "be used as the animal's description"
 
 #~ msgid ""
 #~ "You need to set up your email address and SMTP server.\n"
@@ -19468,7 +19543,8 @@ msgstr "{plural3} years."
 #~ msgid "The SmartTag PETID tag number"
 #~ msgstr "The SmartTag PETID tag number"
 
-#~ msgid "You need to configure your SmartTag PETID settings before publishing."
+#~ msgid ""
+#~ "You need to configure your SmartTag PETID settings before publishing."
 #~ msgstr ""
 #~ "You need to configure your SmartTag PETID settings before publishing."
 
@@ -19494,13 +19570,13 @@ msgstr "{plural3} years."
 #~ "A comma-separated list of fieldnames to be displayed when finding owners."
 
 #~ msgid ""
-#~ "You must have already created the database and loaded the database structure "
-#~ "from the {0} file. Select Yes if you have already done this, otherwise "
-#~ "select No to cancel the copy."
+#~ "You must have already created the database and loaded the database "
+#~ "structure from the {0} file. Select Yes if you have already done this, "
+#~ "otherwise select No to cancel the copy."
 #~ msgstr ""
-#~ "You must have already created the database and loaded the database structure "
-#~ "from the {0} file. Select Yes if you have already done this, otherwise "
-#~ "select No to cancel the copy."
+#~ "You must have already created the database and loaded the database "
+#~ "structure from the {0} file. Select Yes if you have already done this, "
+#~ "otherwise select No to cancel the copy."
 
 #~ msgid ""
 #~ "A comma separated list of fieldnames to be displayed when finding animals."
@@ -19548,11 +19624,11 @@ msgstr "{plural3} years."
 #~ "{8} medical totals recalculated correctly."
 
 #~ msgid ""
-#~ "You have not set FTP details for your website. ASM cannot publish directly "
-#~ "to the internet."
+#~ "You have not set FTP details for your website. ASM cannot publish "
+#~ "directly to the internet."
 #~ msgstr ""
-#~ "You have not set FTP details for your website. ASM cannot publish directly "
-#~ "to the internet."
+#~ "You have not set FTP details for your website. ASM cannot publish "
+#~ "directly to the internet."
 
 #~ msgid ""
 #~ "Creating donations and donation types creates matching accounts and "
@@ -19562,8 +19638,8 @@ msgstr "{plural3} years."
 #~ "transactions"
 
 #~ msgid ""
-#~ "Your coding format is invalid - if you have NNN codes, you must have a Y to "
-#~ "make it unique."
+#~ "Your coding format is invalid - if you have NNN codes, you must have a Y "
+#~ "to make it unique."
 #~ msgstr ""
-#~ "Your coding format is invalid - if you have NNN codes, you must have a Y to "
-#~ "make it unique."
+#~ "Your coding format is invalid - if you have NNN codes, you must have a Y "
+#~ "to make it unique."
