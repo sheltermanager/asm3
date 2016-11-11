@@ -1015,6 +1015,8 @@ def html_to_pdf(htmldata, baseurl = "", account = ""):
     htmldata = fix_relative_document_uris(htmldata, baseurl, account)
     # Remove any img tags with signature:placeholder/user as the src
     htmldata = re.sub('<img.*?signature\:.*?\/>', '', htmldata)
+    # Fix up any google QR codes where a protocol-less URI has been used
+    htmldata = htmldata.replace("\"//chart.googleapis.com", "\"http://chart.googleapis.com")
     # Use temp files
     inputfile = tempfile.NamedTemporaryFile(suffix=".html", delete=False)
     outputfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)

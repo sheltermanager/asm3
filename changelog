@@ -1,6 +1,7 @@
 40
 ================
 
+11/11/16 Fix QR codes in templates to work with PDF export #490
 11/11/16 Add renew licence button to copy previous licence #503
 10/11/16 Online forms should not create auto reserves to banned owners #473
 10/11/16 Fix bug where LostArea/FoundArea fields missing on new databases
