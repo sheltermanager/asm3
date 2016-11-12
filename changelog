@@ -1,6 +1,7 @@
 40
 ================
 
+12/11/16 Fill in for Safari/iOS/IE8 lack of HTML5 required attribute #496
 11/11/16 Add Software column to PetLink publisher
 11/11/16 Fix QR codes in templates to work with PDF export #490
 11/11/16 Add renew licence button to copy previous licence #503

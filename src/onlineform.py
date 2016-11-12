@@ -107,6 +107,9 @@ def get_onlineform_html(dbo, formid, completedocument = True):
                 %s
                 <script>
                 $(document).ready(function() {
+                    var is_safari = navigator.userAgent.indexOf("Safari") > -1 && navigator.userAgent.indexOf("Chrome") == -1;
+                    var is_ios = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;                    
+                    var is_ie8 = navigator.appName.indexOf("Internet Explorer") !=-1 && navigator.appVersion.indexOf("MSIE 8")== -1;
                     $(".asm-onlineform-date").datepicker({ dateFormat: '%s' });
                     try {
                         $(".asm-onlineform-signature").signature({ guideline: true });
@@ -134,12 +137,14 @@ def get_onlineform_html(dbo, formid, completedocument = True):
                                 if ($(this).signature("isEmpty") && $(this).parent().find(".asm-onlineform-required").length > 0) {
                                     alert("Signature is required.");
                                     rv = false;
+                                    return false;
                                 }
                             }
                             catch (exo) {
                                 if (window.console) { console.log(exo); }
                             }
                         });
+                        if (rv == false) { return false; }
                         $(".asm-onlineform-lookupmulti").each(function() {
                             var fieldname = $(this).attr("data-name"),
                                 v = $(this).val();
@@ -147,9 +152,22 @@ def get_onlineform_html(dbo, formid, completedocument = True):
                             if (!v && $(this).attr("data-required")) {
                                 alert("You must choose at least one option");
                                 rv = false;
+                                return false;
                             }
 
                         });
+                        if (rv == false) { return false; }
+                        // Only necessary for iOS and IE8 where required attribute is not supported
+                        if (is_ios || is_safari || is_ie8) {
+                            $(".asm-onlineform-date, .asm-onlineform-text, .asm-onlineform-lookup, .asm-onineform-notes").each(function() {
+                                if ($(this).attr("required") && !$(this).val()) {
+                                    alert("This field cannot be blank");
+                                    rv = false;
+                                    $(this).focus();
+                                    return false;
+                                }
+                            });
+                        }
                         return rv;
                     });
                 });
