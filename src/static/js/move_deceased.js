@@ -87,6 +87,7 @@ $(function() {
 
             // Set default values
             $("#deceaseddate").datepicker("setDate", new Date());
+            $("#deathcategory").select("value", config.str("AFDefaultDeathReason"));
 
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions");
