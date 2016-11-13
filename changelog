@@ -1,6 +1,7 @@
 40
 ================
 
+13/11/16 Use DMY data format for fr_CA
 12/11/16 Set default death category on move->deceased
 12/11/16 Fill in for Safari/iOS/IE8 lack of HTML5 required attribute #496
 11/11/16 Add Software column to PetLink publisher

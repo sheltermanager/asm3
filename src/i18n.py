@@ -4,8 +4,8 @@ import datetime
 import json
 import time
 
-VERSION = "40u [Sat 12 Nov 10:28:29 GMT 2016]"
-BUILD = "11121028"
+VERSION = "40u [Sun 13 Nov 14:12:40 GMT 2016]"
+BUILD = "11131412"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -85,7 +85,7 @@ locale_maps = {
     "fi":       ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2),
     "fr":       ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "fr_LU":    ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
-    "fr_CA":    ( MDY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
+    "fr_CA":    ( DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "he":       ( DMY, "&#x20aa;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "hu":       ( DMY, "Ft",  PLURAL_HUNGARIAN, CURRENCY_PREFIX, 2), 
     "it":       ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
