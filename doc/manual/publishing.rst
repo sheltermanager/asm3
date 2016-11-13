@@ -294,7 +294,7 @@ a blank secondary breed with the crossbreed flag set. Since ASM doesn't allow
 you to set an empty second breed field, there's a workaround - If you make the
 second breed the same as the first breed with the crossbreed flag set, ASM will
 send that second breed as a blank to PetFinder. This behaviour can also be
-triggered by setting your second breed to "Crossbreed".
+triggered by setting your second breed to "Crossbreed", "Unknown" or "Mix".
 
 .. warning:: You have to let PetFinder know that you are using ASM to upload your data. Do this by going to the Admin System Help Center, then Contact Us and send PetFinder Tech Support a message that you are using ASM to publish animal data via their FTP server. They should give you the FTP login information and make sure permissions and quotas are correct.
 
