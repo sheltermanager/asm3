@@ -2438,6 +2438,7 @@ def clone_animal(dbo, username, animalid):
             ( "DateRequired", db.dd(v["DATEREQUIRED"]) ),
             ( "DateExpires", db.dd(v["DATEEXPIRES"]) ),
             ( "BatchNumber", db.ds(v["BATCHNUMBER"]) ),
+            ( "AdministeringVetID", db.di(v["ADMINISTERINGVETID"]) ),
             ( "Manufacturer", db.ds(v["MANUFACTURER"]) ),
             ( "Cost", db.di(v["COST"]) ),
             ( "Comments", db.ds(v["COMMENTS"]) )
@@ -2452,6 +2453,7 @@ def clone_animal(dbo, username, animalid):
             ( "TestResultID", db.di(t["TESTRESULTID"]) ),
             ( "DateOfTest", db.dd(t["DATEOFTEST"]) ),
             ( "DateRequired", db.dd(t["DATEREQUIRED"]) ),
+            ( "AdministeringVetID", db.di(t["ADMINISTERINGVETID"]) ),
             ( "Cost", db.di(t["COST"]) ),
             ( "Comments", db.ds(t["COMMENTS"]) )
             ))
@@ -2487,6 +2489,7 @@ def clone_animal(dbo, username, animalid):
                 ( "DateGiven", db.dd(amt["DATEGIVEN"])),
                 ( "TreatmentNumber", db.di(amt["TREATMENTNUMBER"])),
                 ( "TotalTreatments", db.di(amt["TOTALTREATMENTS"])),
+                ( "AdministeringVetID", db.di(amt["ADMINISTERINGVETID"]) ),
                 ( "GivenBy", db.ds(amt["GIVENBY"])),
                 ( "Comments", db.ds(amt["COMMENTS"]))
                 ))
@@ -2667,6 +2670,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
             ( "DateOfVaccination", db.dd(None) ),
             ( "DateRequired", newdate ),
             ( "DateExpires", db.dd(None) ),
+            ( "AdministeringVetID", db.di(v["ADMINISTERINGVETID"]) ),
             ( "BatchNumber", db.ds(v["BATCHNUMBER"]) ),
             ( "Manufacturer", db.ds(v["MANUFACTURER"]) ),
             ( "Cost", db.di(v["COST"]) ),
@@ -2683,6 +2687,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
             ( "TestResultID", db.di(t["TESTRESULTID"]) ),
             ( "DateOfTest", db.dd(None) ),
             ( "DateRequired", newdate ),
+            ( "AdministeringVetID", db.di(t["ADMINISTERINGVETID"]) ),
             ( "Cost", db.di(t["COST"]) ),
             ( "Comments", db.ds(t["COMMENTS"]) )
             ))
@@ -2719,6 +2724,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
                 ( "DateGiven", db.dd(None) ),
                 ( "TreatmentNumber", db.di(amt["TREATMENTNUMBER"])),
                 ( "TotalTreatments", db.di(amt["TOTALTREATMENTS"])),
+                ( "AdministeringVetID", db.di(amt["ADMINISTERINGVETID"]) ),
                 ( "GivenBy", db.ds(amt["GIVENBY"])),
                 ( "Comments", db.ds(amt["COMMENTS"]))
                 ))
