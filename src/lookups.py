@@ -352,6 +352,7 @@ PETFINDER_BREEDS = (
     "English Toy Spaniel",
     "Entlebucher",
     "Eskimo Dog",
+    "Feist",
     "Field Spaniel",
     "Fila Brasileiro",
     "Finnish Lapphund",

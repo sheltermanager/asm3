@@ -1,6 +1,7 @@
 40
 ================
 
+16/11/16 Add Feist publisher breed
 16/11/16 Include AdministeringVetID when cloning test/vacc/treatment
 13/11/16 Use DMY data format for fr_CA
 12/11/16 Set default death category on move->deceased
