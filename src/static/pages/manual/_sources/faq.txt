@@ -124,3 +124,7 @@ longer does this. We decided to remove that behaviour for a number of reasons:
 All users can choose their theme/colour scheme by clicking on their username
 at the top right, and then the "Change User Settings" menu option.
 
+If I delete a user, will it delete everything they created?
+-----------------------------------------------------------
+
+No. You can safely delete user accounts and it will not delete any data.
