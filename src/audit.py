@@ -64,11 +64,11 @@ def delete(dbo, username, tablename, linkid, description):
 def move(dbo, username, tablename, linkid, description):
     action(dbo, MOVE, username, tablename, linkid, description)
 
-def login(dbo, username):
-    action(dbo, LOGIN, username, "users", 0, "login")
+def login(dbo, username, remoteip = ""):
+    action(dbo, LOGIN, username, "users", 0, "login from %s" % remoteip)
 
-def logout(dbo, username):
-    action(dbo, LOGOUT, username, "users", 0, "logout")
+def logout(dbo, username, remoteip = ""):
+    action(dbo, LOGOUT, username, "users", 0, "logout from %s" % remoteip)
 
 def action(dbo, action, username, tablename, linkid, description):
     """

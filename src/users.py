@@ -443,13 +443,13 @@ def get_active_users(dbo):
     cachekey = "%s_activity" % dbo.database
     return utils.nulltostr(cachemem.get(cachekey))
 
-def logout(session):
+def logout(session, remoteip = ""):
     """
     Logs the user session out
     """
     try:
         al.info("%s logged out" % session.user, "users.logout", session.dbo)
-        audit.logout(session.dbo, session.user)
+        audit.logout(session.dbo, session.user, remoteip)
         session.user = None
         session.kill()
     except:
@@ -739,7 +739,7 @@ def web_login(post, session, remoteip, path):
             pass
         try:
             # Mark the user logged in
-            audit.login(dbo, username)
+            audit.login(dbo, username, remoteip)
             # Check to see if any updates need performing on this database
             if dbupdate.check_for_updates(dbo):
                 dbupdate.perform_updates(dbo)

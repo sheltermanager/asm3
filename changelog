@@ -1,6 +1,8 @@
 40
 ================
 
+17/11/16 Fix broken users.logout not clearing old sessions
+17/11/16 Record IP in audit log for login/logout
 16/11/16 Add Feist publisher breed
 16/11/16 Include AdministeringVetID when cloning test/vacc/treatment
 13/11/16 Use DMY data format for fr_CA
