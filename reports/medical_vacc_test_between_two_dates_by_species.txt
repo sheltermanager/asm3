@@ -146,13 +146,14 @@ AND a.DeceasedDate Is Null
 UNION SELECT
 'Test' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
 t.AnimalType, sp.SpeciesName, a.DisplayLocation,
-tt.TestName AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber,
+tt.TestName AS TreatmentName, tr.ResultName AS Dosage, '1' AS TreatmentNumber,
 '1' AS TotalTreatments, at.DateOfTest AS DateGiven, at.LastChangedBy AS GivenBy, at.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN animaltest at ON a.ID = at.AnimalID
 INNER JOIN species sp ON sp.ID = a.SpeciesID
 INNER JOIN testtype tt ON at.TestTypeID = tt.ID
+INNER JOIN testresult tr ON tr.ID = at.TestResultID
 WHERE at.DateOfTest Is Not Null
 AND at.DateOfTest >= '$@from$' AND at.DateOfTest <= '$@to$'
 AND a.DeceasedDate Is Null
