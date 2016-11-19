@@ -2531,7 +2531,7 @@ msgstr "Zakończone pomiędzy"
 
 #: incident_find.js lookups.py
 msgid "Completed Type"
-msgstr "Typ zakończenia"
+msgstr "Sposób rozwiązania"
 
 #: diary.js
 msgid "Completed notes upto today"
@@ -2539,11 +2539,11 @@ msgstr ""
 
 #: incident.js mobile.py
 msgid "Completion Date"
-msgstr "Data zakończenia"
+msgstr "Data rozwiązania"
 
 #: incident.js mobile.py
 msgid "Completion Type"
-msgstr "Typ zakończenia"
+msgstr "Sposób rozwiązania"
 
 #: html.py
 msgid "Configuration"
@@ -2765,7 +2765,7 @@ msgstr ""
 
 #: common_personchooser.js
 msgid "Create this person"
-msgstr "Stwórz tę osobę"
+msgstr "Dodaj osobę"
 
 #: onlineform_incoming.js
 msgid "Create waiting list records from the selected forms"
@@ -3002,7 +3002,7 @@ msgstr "Zmarły przed przyjęciem"
 
 #: dbupdate.py
 msgid "Dead animal"
-msgstr ""
+msgstr "Zmarłe zwierzę"
 
 #: animal.js move_deceased.js
 msgid "Dead on arrival"
@@ -6106,7 +6106,7 @@ msgstr ""
 
 #: common.js
 msgid "Leave"
-msgstr ""
+msgstr "Opuść stronę"
 
 #: dbupdate.py
 msgid "Leave of absence"
@@ -7283,7 +7283,7 @@ msgstr "Brak uprawnień do obejrzenia raportu"
 
 #: dbupdate.py
 msgid "Noise"
-msgstr ""
+msgstr "Hałasy"
 
 #: common.js header_edit_header.js animal_new.js options.js
 msgid "Non-Shelter"
@@ -9196,7 +9196,7 @@ msgstr "Zapisz"
 
 #: common.js
 msgid "Save and leave"
-msgstr ""
+msgstr "Zapisz i opuść stronę"
 
 #: incident.js
 msgid "Save this incident"
@@ -9715,7 +9715,7 @@ msgstr "Chory/ranny"
 
 #: dbupdate.py
 msgid "Sick/injured animal"
-msgstr ""
+msgstr "Chore/ranne zwierzę"
 
 #: media.js mobile.py service.py
 msgid "Sign"
@@ -10047,7 +10047,7 @@ msgstr "Status"
 
 #: common.js
 msgid "Stay"
-msgstr ""
+msgstr "Zostań"
 
 #: stocklevel.js html.py
 msgid "Stock"
@@ -12475,7 +12475,7 @@ msgstr ""
 
 #: common.js header.js
 msgid "You have unsaved changes, are you sure you want to leave this page?"
-msgstr ""
+msgstr "Masz niezapisane zmiany, jak opuścisz stronę to zostanę one anulowane."
 
 #: animal.py
 msgid "You must supply a code."
