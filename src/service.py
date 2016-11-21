@@ -235,9 +235,9 @@ def handler(post, remoteip, referer, querystring):
             else:
                 # Look up the database info from our map
                 dbo  = db.get_multiple_database_info(account)
-            if dbo.database == "FAIL" or dbo.database == "DISABLED": 
-                al.error("auth failed - invalid smaccount %s from %s" % (account, remoteip), "service.handler", dbo)
-                return ("text/plain", 0, "ERROR: Invalid database")
+            if dbo.database in ( "FAIL", "DISABLED", "WRONGSERVER" ): 
+                al.error("auth failed - invalid smaccount %s from %s (%s)" % (account, remoteip, dbo.database), "service.handler", dbo)
+                return ("text/plain", 0, "ERROR: Invalid database (%s)" % dbo.database)
 
     # If the database has disabled the service API, stop now
     if not configuration.service_enabled(dbo):

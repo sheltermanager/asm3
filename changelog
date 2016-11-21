@@ -1,6 +1,7 @@
 40
 ================
 
+21/11/16 Fix unhandled exception with wrong account on service calls
 17/11/16 Fix broken users.logout not clearing old sessions
 17/11/16 Record IP in audit log for login/logout
 16/11/16 Add Feist publisher breed
