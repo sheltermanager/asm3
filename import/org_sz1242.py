@@ -53,7 +53,7 @@ for d in ccatinfo:
     a.DateOfBirth = asm.subtract_days(asm.now(), ea)
     if a.DateOfBirth is None:
         a.DateOfBirth = asm.today()
-    a.DateBroughtIn = asm.getdate_mmddyyyy(d["DateAcquired"])
+    a.DateBroughtIn = asm.getdate_mmddyy(d["DateAcquired"])
     if a.DateBroughtIn is None:
         a.DateBroughtIn = asm.today()
     a.CreatedDate = a.DateBroughtIn
@@ -66,7 +66,7 @@ for d in ccatinfo:
     a.Sex = asm.getsex_mf(d["CatGender"])
     a.Size = 2
     a.Neutered = d["Sterilized"] == "1" and 1 or 0
-    a.NeuteredDate = asm.getdate_mmddyyyy(d["SterilizedDate"])
+    a.NeuteredDate = asm.getdate_mmddyy(d["SterilizedDate"])
     a.ReasonForEntry = d["AcquiredType"] + "::" + d["AcquiredFrom"]
     a.IdentichipNumber = d["MicrochipNo"]
     if a.IdentichipNumber != "":
@@ -82,6 +82,7 @@ for d in ccatinfo:
     a.CrossBreed = 0
     if d["Deceased"] == "1":
         a.DeceasedDate = a.DateBroughtIn
+        a.Archived = 1
 
 for d in cadoptions:
     if d["AdoptedBy"].strip() != "" and asm.cint(d["AdoptedBy"]) == 0:
@@ -106,7 +107,7 @@ for d in cadoptions:
         m.AnimalID = a.ID
         m.OwnerID = o.ID
         m.MovementType = 1
-        m.MovementDate = asm.getdate_mmddyyyy("DateAdopted")
+        m.MovementDate = asm.getdate_mmddyy("DateAdopted")
         mc = ""
         if d["AdoptionCounsellor"] != "":
             mc = "Adoption counsellor: %s" % d["AdoptionCounsellor"]
@@ -122,7 +123,7 @@ for d in creturns:
         a = ppa[d["CatName"]]
         for m in movements:
             if m.AnimalID == a.ID and m.ReturnDate is None:
-                m.ReturnDate = asm.getdate_mmddyyyy(d["ReturnDate"])
+                m.ReturnDate = asm.getdate_mmddyy(d["ReturnDate"])
                 m.ReasonForReturn = d["Reason"]
 
 # Now that everything else is done, output stored records
