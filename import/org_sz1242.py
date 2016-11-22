@@ -42,6 +42,9 @@ for d in ccatinfo:
     a.AnimalName = d["CatName"]
     if a.AnimalName.strip() == "":
         a.AnimalName = "(unknown)"
+    a.DateBroughtIn = asm.getdate_mmddyy(d["DateAcquired"])
+    if a.DateBroughtIn is None:
+        a.DateBroughtIn = asm.today()
     ea = asm.cint(d["EstimatedAge"])
     eu = d["EstimatedAgeUnits"]
     if eu.startswith("Week"):
@@ -50,12 +53,9 @@ for d in ccatinfo:
         ea = ea * 30.5
     elif eu.startswith("Year"):
         ea = ea * 365
-    a.DateOfBirth = asm.subtract_days(asm.now(), ea)
+    a.DateOfBirth = asm.subtract_days(a.DateBroughtIn, ea)
     if a.DateOfBirth is None:
         a.DateOfBirth = asm.today()
-    a.DateBroughtIn = asm.getdate_mmddyy(d["DateAcquired"])
-    if a.DateBroughtIn is None:
-        a.DateBroughtIn = asm.today()
     a.CreatedDate = a.DateBroughtIn
     a.LastChangedDate = a.DateBroughtIn
     a.generateCode()
@@ -82,6 +82,7 @@ for d in ccatinfo:
     a.CrossBreed = 0
     if d["Deceased"] == "1":
         a.DeceasedDate = a.DateBroughtIn
+        a.PTSReasonID = 2
         a.Archived = 1
 
 for d in cadoptions:
