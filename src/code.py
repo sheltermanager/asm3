@@ -668,7 +668,10 @@ class mobile_login:
 class mobile_logout:
     def GET(self):
         url = "mobile_login"
-        if MULTIPLE_DATABASES and session.dbo is not None and session.dbo.alias != None:
+        post = utils.PostedData(web.input(smaccount=""), session.locale)
+        if post["smaccount"] != "":
+            url = "login?smaccount=" + post["smaccount"]
+        elif MULTIPLE_DATABASES and session.dbo is not None and session.dbo.alias != None:
             url = "mobile_login?smaccount=" + session.dbo.alias
         users.update_user_activity(session.dbo, session.user, False)
         users.logout(session, remote_ip())
@@ -926,7 +929,10 @@ class login_splash:
 class logout:
     def GET(self):
         url = "login"
-        if MULTIPLE_DATABASES and session.dbo is not None and session.dbo.alias != None:
+        post = utils.PostedData(web.input(smaccount=""), session.locale)
+        if post["smaccount"] != "":
+            url = "login?smaccount=" + post["smaccount"]
+        elif MULTIPLE_DATABASES and session.dbo is not None and session.dbo.alias != None:
             url = "login?smaccount=" + session.dbo.alias
         users.update_user_activity(session.dbo, session.user, False)
         users.logout(session, remote_ip())
