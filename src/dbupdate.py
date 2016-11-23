@@ -2485,12 +2485,14 @@ def dump_dbfs_stdout(dbo):
     """
     Dumps the DBFS table to stdout. For use with very large dbfs tables.
     """
+    print "BEGIN;"
     print "DELETE FROM dbfs;"
     rows = db.query(dbo, "SELECT ID, Name, Path FROM dbfs")
     for r in rows:
         content = db.query_string(dbo, "SELECT Content FROM dbfs WHERE ID=%d" % r["ID"])
         print "INSERT INTO dbfs (ID, Name, Path, Content) VALUES (%d, '%s', '%s', '%s');" % (r["ID"], r["NAME"], r["PATH"], content)
         del content
+    print "COMMIT;"
 
 def dump_hsqldb(dbo, includeDBFS = True):
     """
