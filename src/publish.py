@@ -2702,14 +2702,6 @@ class HTMLPublisher(FTPPublisher):
             self.setLastError("Failed opening FTP socket.")
             return
 
-        # Clear any existing uploaded images
-        if self.pc.forceReupload:
-            self.clearExistingImages()
-
-        # Clear any existing uploaded pages
-        if self.pc.clearExisting: 
-            self.clearExistingHTML()
-
         try:
             animals = self.getMatchingAnimals()
             self.totalAnimals = len(animals)
@@ -2739,6 +2731,11 @@ class HTMLPublisher(FTPPublisher):
             footer = self.substituteHFTag(normFooter, currentPage, user, i18n._("Available for adoption", l))
             thisPage = header
             anCount = 0
+
+            # Clear any existing uploaded images
+            if self.pc.forceReupload:
+                self.clearExistingImages()
+
         except Exception, err:
             self.setLastError("Error setting up page: %s" % err)
             self.logError("Error setting up page: %s" % err, sys.exc_info())
@@ -2799,6 +2796,10 @@ class HTMLPublisher(FTPPublisher):
         # Done with animals, store the final page
         thisPage += footer
         pages[thisPageName] = thisPage
+
+        # Clear any existing uploaded pages
+        if self.pc.clearExisting: 
+            self.clearExistingHTML()
 
         # Upload the new pages
         for k, v in pages.iteritems():
