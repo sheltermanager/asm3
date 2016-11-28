@@ -108,7 +108,7 @@ for d in cadoptions:
         m.AnimalID = a.ID
         m.OwnerID = o.ID
         m.MovementType = 1
-        m.MovementDate = asm.getdate_mmddyy("DateAdopted")
+        m.MovementDate = asm.getdate_mmddyy(d["DateAdopted"])
         mc = ""
         if d["AdoptionCounsellor"] != "":
             mc = "Adoption counsellor: %s" % d["AdoptionCounsellor"]
