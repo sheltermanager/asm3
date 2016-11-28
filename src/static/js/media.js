@@ -810,7 +810,7 @@ $(function() {
                     $("#emailpdfto").val(controller.person.EMAILADDRESS);
                 }
                 else if (controller.animal) {
-                    $("#emailto").val(controller.animal.CURRENTOWNEREMAILADDRESS);
+                    $("#emailpdfto").val(controller.animal.CURRENTOWNEREMAILADDRESS);
                 }
                 // Default the email sig
                 if (config.str("EmailSignature")) {

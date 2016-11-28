@@ -1,6 +1,7 @@
 40
 ================
 
+28/11/16 Fix error where email pdf not defaulting owner email address
 24/11/16 HTML publisher should only remove pages just before uploading new ones
 22/11/16 Logout handlers should use smaccount parameter if available
 21/11/16 Fix unhandled exception with wrong account on service calls
