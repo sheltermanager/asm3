@@ -13,7 +13,7 @@ import os
 import person
 import users
 import utils
-from i18n import BUILD, _, translate, format_currency, format_date, now, python2display
+from i18n import BUILD, _, translate, format_currency, format_date, now, python2display, python2unix
 from sitedefs import BASE_URL, LOCALE, MINIFY_JS, ROLLUP_JS
 from sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, CODEMIRROR_CSS, CODEMIRROR_JS, CODEMIRROR_BASE, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_4_JS, TOUCHPUNCH_JS
 
@@ -210,6 +210,10 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
     config_ts: A unique timestamp for when we last wanted the config (used for requesting config.js)
                This value changes when we update the config so the cache can be invalidated.
     """
+    # If these values aren't supplied, frontside cache services like cloudflare will cache the
+    # config.js and cause weird issues
+    if config_db == "asm" and config_ts == "0":
+        config_ts = python2unix(now())
     def script_i18n(l):
         return "<script type=\"text/javascript\" src=\"i18n.js?l=%s&k=%s\"></script>\n" % (l, BUILD)
     def script_config():

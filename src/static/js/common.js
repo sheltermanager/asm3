@@ -916,9 +916,8 @@
 
         /** Called every time a minute has elapsed. If we go over our 
          *  timeout value, we logout. 
-         *  If the browser does not support the page visibility API 
-         *  or this tab of the application isn't visible, don't do anything
-         *  to prevent another tab surprising the user with logout.
+         *  Store the inactive time in localStorage so that it is shared
+         *  among all open tabs of the application.
          */
         inactive_time_increment: function() {
             var inactive_mins = format.to_int(common.local_get("inactive_mins")) + 1;

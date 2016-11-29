@@ -1,6 +1,7 @@
 40
 ================
 
+29/11/16 Inactivity timeout bugs caused by caching of config.js from logging #91
 29/11/16 Creating an embedded owner should trigger the change event #92
 28/11/16 Fix error where email pdf not defaulting owner email address
 24/11/16 HTML publisher should only remove pages just before uploading new ones
