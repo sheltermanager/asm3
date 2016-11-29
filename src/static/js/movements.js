@@ -163,8 +163,8 @@ $(function() {
                         formatter: function(row) {
                             if (row.OWNERID) {
                                 return html.person_link(row, row.OWNERID) +
-                                    '<br/>' + row.OWNERADDRESS + '<br/>' + row.OWNERTOWN + '<br/>' + row.OWNERCOUNTY + ' ' + row.OWNERPOSTCODE + 
-                                    '<br/>' + row.HOMETELEPHONE + " " + row.WORKTELEPHONE + " " + row.MOBILETELEPHONE;
+                                    '<br/>' + common.nulltostr(row.OWNERADDRESS) + '<br/>' + common.nulltostr(row.OWNERTOWN) + '<br/>' + common.nulltostr(row.OWNERCOUNTY) + ' ' + common.nulltostr(row.OWNERPOSTCODE) + 
+                                    '<br/>' + common.nulltostr(row.HOMETELEPHONE) + " " + common.nulltostr(row.WORKTELEPHONE) + " " + common.nulltostr(row.MOBILETELEPHONE);
                             }
                             return "";
                         },

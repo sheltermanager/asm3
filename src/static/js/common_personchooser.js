@@ -483,7 +483,7 @@
                     if (lat) {
                         var latlong = lat + "," + lon + "," + addrhash;
                         var formdata = "personid=" + personid + "&latlong=" + latlong;
-                        common.ajax("person", formdata);
+                        common.ajax_post("person", formdata);
                     }
                 });
         },
@@ -504,6 +504,7 @@
                     var people = jQuery.parseJSON(result);
                     var rec = people[0];
                     self.element.val(rec.ID);
+                    self.selected = rec;
                     var disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + rec.OWNERNAME + "</a></span>";
                     if (self.options.mode == "full") {
                         disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
@@ -524,6 +525,7 @@
                     catch(es) { }
                     // Update the geocode for the newly created record
                     self.update_geo(rec.ID);
+                    self._trigger("change", null, rec);
                 },
                 error: function(jqxhr, textstatus, response) {
                     dialogadd.dialog("close");

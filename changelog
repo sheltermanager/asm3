@@ -1,6 +1,7 @@
 40
 ================
 
+29/11/16 Creating an embedded owner should trigger the change event #92
 28/11/16 Fix error where email pdf not defaulting owner email address
 24/11/16 HTML publisher should only remove pages just before uploading new ones
 22/11/16 Logout handlers should use smaccount parameter if available
@@ -11,6 +12,7 @@
 16/11/16 Include AdministeringVetID when cloning test/vacc/treatment
 13/11/16 Use DMY data format for fr_CA
 12/11/16 Set default death category on move->deceased
+12/11/16 Switch to github, issue tickets are renumbered -----------------
 12/11/16 Fill in for Safari/iOS/IE8 lack of HTML5 required attribute #496
 11/11/16 Add Software column to PetLink publisher
 11/11/16 Fix QR codes in templates to work with PDF export #490
