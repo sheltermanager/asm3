@@ -1,6 +1,7 @@
 40
 ================
 
+30/11/16 SmartTag: animalstatus to now be one of DECEASED/ADOPTED/NOT ADOPTED
 30/11/16 Nanochip brand regex was one zero too long
 29/11/16 Inactivity timeout bugs caused by caching of config.js from logging #91
 29/11/16 Creating an embedded owner should trigger the change event #92

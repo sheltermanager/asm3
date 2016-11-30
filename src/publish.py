@@ -4992,11 +4992,13 @@ class SmartTagPublisher(FTPPublisher):
                 line.append("\"%s\"" % an["AGEGROUP"])
                 # declawed
                 line.append("\"%s\"" % self.stYesNo(an["DECLAWED"] == 1))
-                # animalstatus (blank or D for Deceased)
+                # animalstatus (one of DECEASED, ADOPTED or NOT ADOPTED)
                 if an["DECEASEDDATE"] is not None:
-                    line.append("\"D\"")
+                    line.append("\"DECEASED\"")
+                elif an["ACTIVEMOVEMENTTYPE"] == 1 and an["ACTIVEMOVEMENTDATE"] is not None:
+                    line.append("\"ADOPTED\"")
                 else:
-                    line.append("\"\"")
+                    line.append("\"NOT ADOPTED\"")
                 # Add to our CSV file
                 csv.append(",".join(line))
                 # Mark success in the log
