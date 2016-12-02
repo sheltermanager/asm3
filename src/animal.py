@@ -668,6 +668,8 @@ def get_alerts(dbo, locationfilter = "", siteid = 0):
     onemonth = db.dd(subtract_days(now(dbo.timezone), 31))
     oneweek = db.dd(subtract_days(now(dbo.timezone), 7))
     today = db.dd(now(dbo.timezone))
+    endoftoday = now(dbo.timezone)
+    endoftoday = db.ddt(endoftoday.replace(hour = 23, minute = 59, second = 59))
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
     shelterfilter = ""
     if not configuration.include_off_shelter_medical(dbo):
@@ -714,16 +716,16 @@ def get_alerts(dbo, locationfilter = "", siteid = 0):
         "(SELECT COUNT(*) FROM animalcontrol WHERE CompletedDate Is Null AND DispatchDateTime Is Null AND CallDateTime Is Not Null) AS acundisp, " \
         "(SELECT COUNT(*) FROM animalcontrol WHERE CompletedDate Is Null) AS acuncomp, " \
         "(SELECT COUNT(*) FROM animalcontrol WHERE (" \
-            "(FollowupDateTime Is Not Null AND FollowupDateTime <= %(today)s AND NOT FollowupComplete = 1) OR " \
-            "(FollowupDateTime2 Is Not Null AND FollowupDateTime2 <= %(today)s AND NOT FollowupComplete2 = 1) OR " \
-            "(FollowupDateTime3 Is Not Null AND FollowupDateTime3 <= %(today)s) AND NOT FollowupComplete3 = 1)) AS acfoll, " \
+            "(FollowupDateTime Is Not Null AND FollowupDateTime <= %(endoftoday)s AND NOT FollowupComplete = 1) OR " \
+            "(FollowupDateTime2 Is Not Null AND FollowupDateTime2 <= %(endoftoday)s AND NOT FollowupComplete2 = 1) OR " \
+            "(FollowupDateTime3 Is Not Null AND FollowupDateTime3 <= %(endoftoday)s) AND NOT FollowupComplete3 = 1)) AS acfoll, " \
         "(SELECT COUNT(*) FROM ownertraploan WHERE ReturnDueDate Is Not Null AND ReturnDueDate <= %(today)s AND ReturnDate Is Null) AS tlover, " \
         "(SELECT COUNT(*) FROM stocklevel WHERE Balance > 0 AND Expiry Is Not Null AND Expiry > %(today)s AND Expiry <= %(futuremonth)s) AS stexpsoon, " \
         "(SELECT COUNT(*) FROM stocklevel WHERE Balance > 0 AND Expiry Is Not Null AND Expiry <= %(today)s) AS stexp, " \
         "(SELECT COUNT(*) FROM animaltransport WHERE (DriverOwnerID = 0 OR DriverOwnerID Is Null) AND Status < 10) AS trnodrv, " \
         "(SELECT COUNT(*) FROM animal WHERE Archived = 0 AND DaysOnShelter > 182) AS lngterm " \
         "FROM animal LIMIT 1" \
-            % { "today": today, "oneweek": oneweek, "oneyear": oneyear, "onemonth": onemonth, 
+            % { "today": today, "endoftoday": endoftoday, "oneweek": oneweek, "oneyear": oneyear, "onemonth": onemonth, 
                 "futuremonth": futuremonth, "locfilter": locationfilter, "shelterfilter": shelterfilter }
     return db.query_cache(dbo, sql)
 
