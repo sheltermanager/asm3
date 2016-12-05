@@ -126,6 +126,7 @@ for d in creturns:
             if m.AnimalID == a.ID and m.ReturnDate is None:
                 m.ReturnDate = asm.getdate_mmddyy(d["ReturnDate"])
                 m.ReasonForReturn = d["Reason"]
+                break
 
 # Now that everything else is done, output stored records
 for a in animals:
