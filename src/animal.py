@@ -2638,7 +2638,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
     babymonths = configuration.annual_figures_baby_months(dbo)
     babydays = babymonths * 30.5
     # 12 * 30.5 = 366 so it's one day out for a year
-    if babymonths = 12: babydays = 365
+    if babymonths == 12: babydays = 365
     if date_diff_days(dob, now()) < babydays:
         queries = babyqueries
     # Use our queries to find a potential template
