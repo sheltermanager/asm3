@@ -1,3 +1,5 @@
+DEPLOY_HOST=wwwdx.sheltermanager.com
+
 all:	compile clean tags minify
 
 dist:	version clean minify
@@ -56,18 +58,18 @@ compilepy:
 
 smcom-dev: version clean minify
 	@echo "[smcom dev] ========================="
-	rsync --progress --exclude '*.pyc' --delete -r src/* root@rawsoaa2.miniserver.com:/usr/local/lib/asm_dev.new
-	ssh root@rawsoaa2.miniserver.com "/root/sheltermanager_update_asm_dev.sh"
+	rsync --progress --exclude '*.pyc' --delete -r src/* root@$(DEPLOY_HOST):/usr/local/lib/asm_dev.new
+	ssh root@$(DEPLOY_HOST) "/root/sheltermanager_update_asm_dev.sh"
 
 smcom-stable: version clean minify
 	@echo "[smcom stable] ========================="
-	rsync --progress --exclude '*.pyc' --delete -r src/* root@rawsoaa2.miniserver.com:/usr/local/lib/asm_stable.new
-	ssh root@rawsoaa2.miniserver.com "/root/sheltermanager_update_asm_stable.sh"
+	rsync --progress --exclude '*.pyc' --delete -r src/* root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
+	ssh root@$(DEPLOY_HOST) "/root/sheltermanager_update_asm_stable.sh"
 
 smcom-stable-sessions: version clean minify
 	@echo "[smcom sessions] ========================"
-	rsync --exclude '*.pyc' --delete -r src/* root@rawsoaa2.miniserver.com:/usr/local/lib/asm_stable.new
-	ssh root@rawsoaa2.miniserver.com "/root/sheltermanager_update_asm_stable.sh dumpsessions"
+	rsync --exclude '*.pyc' --delete -r src/* root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
+	ssh root@$(DEPLOY_HOST) "/root/sheltermanager_update_asm_stable.sh dumpsessions"
 
 smcom-tomorrow:
 	@echo "[smcom tomorrow] ========================"
@@ -92,8 +94,8 @@ manual:
 	@echo "[manual] =========================="
 	cd doc/manual && $(MAKE) clean html latexpdf
 	cp -rf doc/manual/_build/html/* src/static/pages/manual/
-	scp doc/manual/_build/latex/asm3.pdf root@rawsoaa2.miniserver.com:/var/www/sheltermanager.com/repo/asm3_help.pdf
-	rsync -a doc/manual/_build/html/ root@rawsoaa2.miniserver.com:/var/www/sheltermanager.com/repo/asm3_help/
+	scp doc/manual/_build/latex/asm3.pdf root@$(DEPLOY_HOST):/var/www/sheltermanager.com/repo/asm3_help.pdf
+	rsync -a doc/manual/_build/html/ root@$(DEPLOY_HOST):/var/www/sheltermanager.com/repo/asm3_help/
 
 test: version
 	@echo "[test] ========================="
