@@ -1,6 +1,7 @@
 40
 ================
 
+06/12/16 requirefollowup ac filter should search to the end of today
 05/12/16 Fix for calculating baby split templates, make 12 months 365 days not 366
 02/12/16 Followup alerts should compare against the end of the current day
 30/11/16 SmartTag: animalstatus to now be one of DECEASED/ADOPTED/NOT ADOPTED

@@ -222,7 +222,7 @@ def get_animalcontrol_find_advanced(dbo, criteria, username, limit = 0):
         "(ac.FollowupDateTime Is Not Null AND ac.FollowupDateTime <= %(now)s AND NOT ac.FollowupComplete = 1) OR " \
         "(ac.FollowupDateTime2 Is Not Null AND ac.FollowupDateTime2 <= %(now)s AND NOT ac.FollowupComplete2 = 1) OR " \
         "(ac.FollowupDateTime3 Is Not Null AND ac.FollowupDateTime3 <= %(now)s AND NOT ac.FollowupComplete3 = 1) " \
-        ")" % { "now": db.dd(now(dbo.timezone))} )
+        ")" % { "now": db.ddt(now(dbo.timezone).replace(hour = 23, minute = 59, second = 59)) } )
     where = ""
     if len(c) > 0:
         where = " WHERE " + " AND ".join(c)
