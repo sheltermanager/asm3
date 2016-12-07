@@ -506,6 +506,7 @@ def email_daily_reports(dbo, now = None):
     now: The time right now in local time. If now is None, then we run anything
          with a dailyemailhour of -1, which is "batch".
     """
+    l = dbo.locale
     rs = get_available_reports(dbo, False)
     hour = -1
     weekday = -1
@@ -538,7 +539,9 @@ def email_daily_reports(dbo, now = None):
         if freq == 11 and day != 31 and month != 12: continue # Freq is end of year and its not 31st Dec
         # If we get here, we're good to send
         body = execute(dbo, r["ID"], "dailyemail")
-        utils.send_email(dbo, configuration.email(dbo), emails, "", r["TITLE"], body, "html")
+        # Only send if there's data on the report
+        if body.find(i18n._("No data to show on the report.", l)) == -1:
+            utils.send_email(dbo, configuration.email(dbo), emails, "", r["TITLE"], body, "html")
 
 def execute_title(dbo, title, username = "system", params = None):
     """
