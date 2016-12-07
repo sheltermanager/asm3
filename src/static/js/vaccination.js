@@ -106,6 +106,9 @@ $(function() {
                             if (row.LOCATIONUNIT) {
                                 s += ' <span class="asm-search-locationunit">' + row.LOCATIONUNIT + '</span>';
                             }
+                            if (row.ACTIVEMOVEMENTTYPE == 2 && row.CURRENTOWNERID && row.CURRENTOWNERNAME) {
+                                s += '<br/><a href="person?id=' + row.CURRENTOWNERID + '">' + row.CURRENTOWNERNAME + '</a>';
+                            }
                             return s;
                         },
                         hideif: function(row) {

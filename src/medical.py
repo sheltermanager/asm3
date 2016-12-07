@@ -56,7 +56,7 @@ def get_medicaltreatment_query(dbo):
         "ELSE " \
         "(SELECT LocationName FROM internallocation WHERE ID=a.ShelterLocation) " \
         "END AS DisplayLocationName, " \
-        "co.OwnerName AS CurrentOwnerName, " \
+        "co.ID AS CurrentOwnerID, co.OwnerName AS CurrentOwnerName, " \
         "am.*, amt.DateRequired, amt.DateGiven, amt.Comments AS TreatmentComments, " \
         "amt.TreatmentNumber, amt.TotalTreatments, ma.MediaName AS WebsiteMediaName, " \
         "am.ID AS RegimenID, amt.ID AS TreatmentID, " \
@@ -123,7 +123,7 @@ def get_test_query(dbo):
         "ELSE " \
         "(SELECT LocationName FROM internallocation WHERE ID=a.ShelterLocation) " \
         "END AS DisplayLocationName, " \
-        "co.OwnerName AS CurrentOwnerName, " \
+        "co.ID AS CurrentOwnerID, co.OwnerName AS CurrentOwnerName, " \
         "a.AnimalName, ma.MediaName AS WebsiteMediaName, tt.TestName, tt.TestDescription, " \
         "tr.ResultName, " \
         "CASE WHEN a.ActiveMovementType Is Not Null AND a.ActiveMovementType > 0 THEN " \
@@ -166,7 +166,7 @@ def get_vaccination_query(dbo):
         "ELSE " \
         "(SELECT LocationName FROM internallocation WHERE ID=a.ShelterLocation) " \
         "END AS DisplayLocationName, " \
-        "co.OwnerName AS CurrentOwnerName, " \
+        "co.ID AS CurrentOwnerID, co.OwnerName AS CurrentOwnerName, " \
         "a.AnimalName, ma.MediaName AS WebsiteMediaName, vt.VaccinationType, vt.VaccinationDescription, " \
         "CASE WHEN a.ActiveMovementType Is Not Null AND a.ActiveMovementType > 0 THEN " \
         "(SELECT mt.MovementType FROM lksmovementtype mt WHERE mt.ID = a.ActiveMovementType) " \
