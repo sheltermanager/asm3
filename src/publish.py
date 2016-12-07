@@ -4465,6 +4465,9 @@ class PETtracUKPublisher(AbstractPublisher):
         orgtown = configuration.organisation_town(self.dbo)
         orgcounty = configuration.organisation_county(self.dbo)
 
+        registeroverseas = configuration.avid_register_overseas(self.dbo)
+        overseasorigin = configuration.avid_overseas_origin_country(self.dbo)
+
         if orgpostcode == "" or orgname == "" or orgserial == "" or orgpassword == "":
             self.setLastError("orgpostcode, orgname, orgserial and orgpassword all need to be set for AVID publisher")
             return
@@ -4479,7 +4482,11 @@ class PETtracUKPublisher(AbstractPublisher):
             self.setLastError("authorised user '%s' does not have an electronic signature on file" % authuser)
             return
 
-        animals = get_microchip_data(self.dbo, ['977%',], "pettracuk", allowintake = False)
+        chipprefix = "977%" # AVID Europe
+        if registeroverseas: 
+            chipprefix = "%" # If overseas registration is on, send all chips to AVID
+
+        animals = get_microchip_data(self.dbo, [chipprefix,], "pettracuk", allowintake = False)
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
             return
@@ -4558,6 +4565,11 @@ class PETtracUKPublisher(AbstractPublisher):
                     "selfreg": "true", # register the shelter as alternative contact
                     "test": "false" # if true, tells avid not to make any data changes
                 }
+
+                # If we're registering overseas chips and this chip isn't an AVID
+                # one, set the origincountry parameter
+                if registeroverseas and not an["IDENTICHIPNUMBER"].startswith("977"):
+                    fields["origincountry"] = overseasorigin
 
                 self.log("HTTP POST request %s: %s" % (PETTRAC_UK_POST_URL, str(fields)))
                 r = utils.post_form(PETTRAC_UK_POST_URL, fields)

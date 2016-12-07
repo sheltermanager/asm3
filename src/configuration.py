@@ -127,6 +127,8 @@ DEFAULTS = {
     "AFDefaultVaccinationType": "1",
     "AFNonShelterType": "40",
     "AvidReRegistration": "No", 
+    "AvidRegisterOverseas": "No",
+    "AvidOverseasOriginCountry": "",
     "BoardingCostType": "1",
     "CancelReservesOnAdoption": "Yes",
     "CostSourceAccount": "9",
@@ -501,6 +503,12 @@ def avid_org_serial(dbo):
 
 def avid_org_password(dbo):
     return cstring(dbo, "AvidOrgPassword")
+
+def avid_register_overseas(dbo):
+    return cboolean(dbo, "AvidRegisterOverseas", DEFAULTS["AvidRegisterOverseas"] == "Yes")
+
+def avid_overseas_origin_country(dbo):
+    return cstring(dbo, "AvidOverseasOriginCountry", DEFAULTS["AvidOverseasOriginCountry"])
 
 def avid_reregistration(dbo):
     return cboolean(dbo, "AvidReRegistration", DEFAULTS["AvidReRegistration"] == "Yes")
