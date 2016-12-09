@@ -4484,7 +4484,7 @@ class PETtracUKPublisher(AbstractPublisher):
 
         chipprefix = "977%" # AVID Europe
         if registeroverseas: 
-            chipprefix = "%" # If overseas registration is on, send all chips to AVID
+            chipprefix = "a.IdentichipNumber LIKE '%'" # If overseas registration is on, send all chips to AVID
 
         animals = get_microchip_data(self.dbo, [chipprefix,], "pettracuk", allowintake = False)
         if len(animals) == 0:
