@@ -951,7 +951,7 @@ class Report:
                 animalid = fields[1]
                 seq = ""
                 if len(fields) > 2: seq = "&seq=" + fields[2]
-                value = "image?mode=animal&id=%s%s" % (animalid, seq)
+                value = "image?db=%s&mode=animal&id=%s%s" % (self.dbo.database, animalid, seq)
 
             # {CHIPMANUFACTURER.chipno} - substitutes the microchip
             # manufacturer for the chip number specified
@@ -1708,7 +1708,7 @@ class Report:
                     animalid = fields[1]
                     seq = ""
                     if len(fields) > 2: seq = "&seq=" + fields[2]
-                    value = "image?mode=animal&id=%s%s" % (animalid, seq)
+                    value = "image?db=%s&mode=animal&id=%s%s" % (self.dbo.database, animalid, seq)
 
                 # {CHIPMANUFACTURER.chipno} - substitutes the microchip
                 # manufacturer for the chip number specified

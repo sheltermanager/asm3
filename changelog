@@ -1,6 +1,7 @@
 40
 ================
 
+10/12/16 Include db= parameter in report {IMAGE} substitution
 07/12/16 Don't send regularly emailed reports if there's no data to show
 07/12/16 Show fosterer name/link in medical books
 07/12/16 AVID UK allow registration of overseas chips #100
