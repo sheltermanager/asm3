@@ -436,6 +436,12 @@ $(function() {
             else if (viewmode == "retailer") {
                 this.render_view("CURRENTOWNERNAME", "", "CURRENTOWNERNAME,ANIMALNAME", false, false, function(a) { return a.ACTIVEMOVEMENTTYPE == 8; });
             }
+            else if (viewmode == "sex") {
+                this.render_view("SEXNAME", "", "SEXNAME,ANIMALNAME", false, false);
+            }
+            else if (viewmode == "sexspecies") {
+                this.render_view("SEXNAME", "SPECIESNAME", "SEXNAME,SPECIESNAME,ANIMALNAME", false, false);
+            }
             else if (viewmode == "species") {
                 this.render_view("SPECIESNAME", "", "SPECIESNAME,ANIMALNAME", false, false);
             }
@@ -480,6 +486,8 @@ $(function() {
             h.push('<option value="locationunit">' + _("Location and Unit") + '</option>');
             h.push('<option value="pickuplocation">' + _("Pickup Location") + '</option>');
             h.push('<option value="retailer">' + _("Retailer") + '</option>');
+            h.push('<option value="sex">' + _("Sex") + '</option>');
+            h.push('<option value="sexspecies">' + _("Sex and Species") + '</option>');
             h.push('<option value="species">' + _("Species") + '</option>');
             h.push('<option value="status">' + _("Status") + '</option>');
             h.push('<option value="type">' + _("Type") + '</option>');

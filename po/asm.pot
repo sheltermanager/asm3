@@ -1,10 +1,17 @@
+
+# ASM Translation Strings
+# Copyright (C) 2013 Robin Rawson-Tetley
+# This file is distributed under the same license as the ASM3 package.
+# Robin Rawson-Tetley <robin@rawsontetley.org>, 2013.
+#
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
-"Report-Msgid-Bugs-To: support@sheltermanager.com\n"
+"Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
-"Last-Translator: Robin Rawson-Tetley <support@sheltermanager.com>\n"
-"Language-Team: en <support@sheltermanager.com>\n"
+"Last-Translator: Robin Rawson-Tetley <robin@rawsontetley.org>\n"
+"Language-Team: en <robin@rawsontetley.org>\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -9400,11 +9407,15 @@ msgstr ""
 msgid "Settings, System user accounts"
 msgstr ""
 
-#: lostfound_find_results.js person.js animal_find.js incident.js
-#: lostfound_new.js animal_new.js animal.js lostfound_find.js incident_find.js
-#: animal_find_results.js common_animalchooser.js lostfound.js person.py
-#: mobile.py lookups.py html.py
+#: shelterview.js lostfound_find_results.js person.js animal_find.js
+#: incident.js lostfound_new.js animal_new.js animal.js lostfound_find.js
+#: incident_find.js animal_find_results.js common_animalchooser.js options.js
+#: lostfound.js person.py mobile.py lookups.py html.py
 msgid "Sex"
+msgstr ""
+
+#: shelterview.js options.js
+msgid "Sex and Species"
 msgstr ""
 
 #: lookups.py

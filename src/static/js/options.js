@@ -954,6 +954,8 @@ $(function() {
                 '<option value="locationunit">' + _("Location and Unit") + '</option>',
                 '<option value="pickuplocation">' + _("Pickup Location") + '</option>',
                 '<option value="retailer">' + _("Retailer") + '</option>',
+                '<option value="sex">' + _("Sex") + '</option>',
+                '<option value="sexspecies">' + _("Sex and Species") + '</option>',
                 '<option value="species">' + _("Species") + '</option>',
                 '<option value="status">' + _("Status") + '</option>',
                 '<option value="type">' + _("Type") + '</option>',
