@@ -5,6 +5,8 @@ Creates the single "report.txt" file and uploads it to the sheltermanager.com
 server for users of the program to access and get new reports
 """
 
+HOST = "wwwdx.sheltermanager.com"
+
 import os
 
 de = os.listdir(".")
@@ -26,8 +28,8 @@ f.close()
 print "reports.txt written"
 
 # Upload to the server
-os.system("scp -C reports.txt root@rawsoaa2.miniserver.com:/var/www/sheltermanager.com/repo/")
-print "reports.txt uploaded to root@rawsoaa2.miniserver.com:/var/www/sheltermanager.com/repo/"
+os.system("scp -C reports.txt root@%s:/var/www/sheltermanager.com/repo/" % HOST)
+print "reports.txt uploaded to root@%s:/var/www/sheltermanager.com/repo/" % HOST
 
 # Remove the temp file
 os.system("rm -f reports.txt")
