@@ -1,6 +1,7 @@
 40
 ================
 
+18/12/16 Don't send blank service dates to foundanimals for intake registration
 11/12/16 Sex shelterview mode #87
 11/12/16 Entity name in medical books for any active movement, not just foster
 10/12/16 Include db= parameter in report {IMAGE} substitution

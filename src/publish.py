@@ -1966,7 +1966,7 @@ class FoundAnimalsPublisher(FTPPublisher):
                 # Microchip Number
                 line.append("\"%s\"" % an["IDENTICHIPNUMBER"])
                 # Service Date
-                line.append("\"%s\"" % i18n.format_date("%m/%d/%Y", an["ACTIVEMOVEMENTDATE"]))
+                line.append("\"%s\"" % i18n.format_date("%m/%d/%Y", an["ACTIVEMOVEMENTDATE"] or an["MOSTRECENTENTRYDATE"]))
                 # Date of Birth
                 line.append("\"%s\"" % i18n.format_date("%m/%d/%Y", an["DATEOFBIRTH"]))
                 # Species
