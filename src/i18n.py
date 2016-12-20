@@ -4,8 +4,8 @@ import datetime
 import json
 import time
 
-VERSION = "40u [Sun 18 Dec 16:30:32 GMT 2016]"
-BUILD = "12181630"
+VERSION = "40u [Tue 20 Dec 16:20:48 GMT 2016]"
+BUILD = "12201620"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -52,6 +52,7 @@ locale_maps = {
     "en_AU":    ( DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_BH":    ( MDY, "BD", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_CA":    ( MDY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
+    "en_CH":    ( DMY, "CHF", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_CN":    ( YMD, YEN, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_CR":    ( DMY, "&#8353;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_CY":    ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
@@ -73,6 +74,7 @@ locale_maps = {
     "bs":       ( DMY, "KM", PLURAL_ENGLISH, CURRENCY_PREFIX, 2),
     "cs":       ( YMD, "&#x004b;&#x010d;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "de":       ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
+    "de_CH":    ( DMY, "CHF", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "de_LU":    ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "de_AT":    ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "el":       ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
@@ -86,9 +88,11 @@ locale_maps = {
     "fr":       ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "fr_LU":    ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "fr_CA":    ( DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
+    "fr_CH":    ( DMY, "CHF", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "he":       ( DMY, "&#x20aa;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "hu":       ( DMY, "Ft",  PLURAL_HUNGARIAN, CURRENCY_PREFIX, 2), 
     "it":       ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
+    "it_CH":    ( DMY, "CHF", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "lt":       ( YMD, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "nb":       ( DMY, "kr", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "nl":       ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
@@ -112,18 +116,21 @@ def real_locale(locale = "en"):
     #   en    (US)
     #   en_AU (AUS)
     #   en_GB (UK)
-    if locale in ("en_CY", "en_IE", "en_IN", "en_LU", "en_NZ", "en_PH", "en_TH", "en_TW", "en_VN", "en_ZA"):
+    if locale in ("en_CH", "en_CY", "en_IE", "en_IN", "en_LU", "en_NZ", "en_PH", "en_TH", "en_TW", "en_VN", "en_ZA"):
         locale = "en_GB"
     if locale in ("en_CA", "en_CO", "en_KY", "en_KW", "en_BH", "en_IL", "en_MX"):
         locale = "en"
     if locale in ("en_NZ",):
         locale = "en_AU"
     # French locales
-    if locale in ("fr_LU",):
+    if locale in ("fr_CH", "fr_LU"):
         locale = "fr"
     # German locales
-    if locale in ("de_AT", "de_LU"):
+    if locale in ("de_AT", "de_CH", "de_LU"):
         locale = "de"
+    # Italian locales
+    if locale in ("it_CH",):
+        locale = "it"
     # Spanish locales
     if locale in ("es_CO", "es_CR", "es_EC", "es_MX"):
         locale = "es"
