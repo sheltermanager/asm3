@@ -745,7 +745,7 @@ def scale_pdf_file(inputfile, outputfile):
     KNOWN_ERRORS = [ 
         "Can't find CMap Identity-UTF16-H building a CIDDecoding resource. ", # Imagemagick/GS choke on Microsoft Print PDF due to missing fonts
     ]
-    code, output = utils.cmd(SCALE_PDF_CMD % { "output": outputfile, "input": inputfile}, shell=True)
+    code, output = utils.cmd(SCALE_PDF_CMD % { "output": outputfile, "input": inputfile})
     for e in KNOWN_ERRORS:
         # Any known errors in the output should return failure
         if output.find(e): 

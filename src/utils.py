@@ -1035,7 +1035,8 @@ def html_to_pdf(htmldata, baseurl = "", account = ""):
     inputfile.flush()
     inputfile.close()
     outputfile.close()
-    code, output = cmd(HTML_TO_PDF % { "output": outputfile.name, "input": inputfile.name, "orientation": orientation, "papersize": papersize }, shell=True)
+    cmdline = HTML_TO_PDF % { "output": outputfile.name, "input": inputfile.name, "orientation": orientation, "papersize": papersize }
+    code, output = cmd(cmdline)
     f = open(outputfile.name, "r")
     pdfdata = f.read()
     f.close()
