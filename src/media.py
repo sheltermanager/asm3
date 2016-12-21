@@ -693,7 +693,9 @@ def scale_pdf(filedata):
     inputfile.flush()
     inputfile.close()
     outputfile.close()
-    scale_pdf_file(inputfile.name, outputfile.name)
+    # If something went wrong during the scaling, use the original data
+    if not scale_pdf_file(inputfile.name, outputfile.name):
+        return filedata
     f = open(outputfile.name, "rb")
     compressed = f.read()
     f.close()
@@ -738,8 +740,22 @@ def scale_pdf_file(inputfile, outputfile):
     Scale a PDF file using the command line. There are different
     approaches to this and gs, imagemagick and pdftk (among others)
     can be used.
+    Returns True for success or False for failure.
     """
-    os.system(SCALE_PDF_CMD % { "output": outputfile, "input": inputfile})
+    KNOWN_ERRORS = [ 
+        "Can't find CMap Identity-UTF16-H building a CIDDecoding resource. ", # Imagemagick/GS choke on Microsoft Print PDF due to missing fonts
+    ]
+    code, output = utils.cmd(SCALE_PDF_CMD % { "output": outputfile, "input": inputfile}, shell=True)
+    for e in KNOWN_ERRORS:
+        # Any known errors in the output should return failure
+        if output.find(e): 
+            al.error("Abandon PDF scaling - found known error: %s" % e, "media.scale_pdf_file")
+            return False
+    # A nonzero exit code is a failure
+    if code > 0: 
+        al.error("Abandon PDF scaling - nonzero exit code (%s)" % code, "media.scale_pdf_file")
+        return False
+    return True
    
 def check_and_scale_pdfs(dbo, force = False):
     """

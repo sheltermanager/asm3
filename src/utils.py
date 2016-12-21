@@ -11,6 +11,7 @@ import htmlentitydefs
 import os
 import re
 import smtplib
+import subprocess
 import sys
 import tempfile
 import thread
@@ -25,7 +26,6 @@ from email.utils import make_msgid, formatdate
 from email import Charset, Encoders
 from i18n import _, display2python, format_currency, python2display, VERSION
 from cStringIO import StringIO
-from subprocess import Popen, PIPE
 from sitedefs import SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF
 
 # Monkeypatch to allow SNI support in urllib3. This is necessary
@@ -144,6 +144,17 @@ def cfloat(s):
         return float(s)
     except:
         return float(0)
+
+def cmd(c, shell=False):
+    """
+    Runs the command c and returns a tuple of return code and output
+    """
+    output = None
+    try:
+        output = subprocess.check_output(c.split(" "), stderr=subprocess.STDOUT, shell=shell)
+        return (0, output)
+    except subprocess.CalledProcessError,e:
+        return (e.returncode, e.output)
 
 def iif(c, t, f):
     """
@@ -916,7 +927,7 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
     # Use sendmail or SMTP for the transport depending on config
     if sendmail:
         try:
-            p = Popen(["/usr/sbin/sendmail", "-t", "-oi"], stdin=PIPE)
+            p = subprocess.Popen(["/usr/sbin/sendmail", "-t", "-oi"], stdin=subprocess.PIPE)
             p.communicate(msg.as_string())
             return True
         except Exception,err:
@@ -1024,7 +1035,7 @@ def html_to_pdf(htmldata, baseurl = "", account = ""):
     inputfile.flush()
     inputfile.close()
     outputfile.close()
-    os.system(HTML_TO_PDF % { "output": outputfile.name, "input": inputfile.name, "orientation": orientation, "papersize": papersize })
+    code, output = cmd(HTML_TO_PDF % { "output": outputfile.name, "input": inputfile.name, "orientation": orientation, "papersize": papersize }, shell=True)
     f = open(outputfile.name, "r")
     pdfdata = f.read()
     f.close()

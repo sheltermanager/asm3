@@ -1,6 +1,7 @@
 40
 ================
 
+21/12/16 Code around problems with missing CID fonts scaling output of Microsoft Print PDF
 20/12/16 Add swiss locales
 18/12/16 Don't send blank service dates to foundanimals for intake registration
 11/12/16 Sex shelterview mode #87
