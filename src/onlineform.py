@@ -66,7 +66,7 @@ FORM_FIELDS = [
     "title", "initials", "firstname", "forenames", "surname", "lastname", "address",
     "town", "city", "county", "state", "postcode", "zipcode", "hometelephone", 
     "worktelephone", "mobiletelephone", "celltelephone", "emailaddress", "excludefrombulkemail",
-    "description", "reason", "species", "breed", "agegroup", "color", "colour", 
+    "description", "reason", "size", "species", "breed", "agegroup", "color", "colour", 
     "arealost", "areafound", "areapostcode", "areazipcode",
     "animalname", "reserveanimalname",
     "callnotes", "dispatchaddress", "dispatchcity", "dispatchstate", "dispatchzipcode"
@@ -725,6 +725,13 @@ def guess_sex(dummy, s):
         return 1
     return 0
 
+def guess_size(dbo, s):
+    """ Guesses a size """
+    s = str(s).lower()
+    guess = db.query_int(dbo, "SELECT ID FROM lksize WHERE LOWER(Size) LIKE '%" + db.escape(s) + "%'")
+    if guess != 0: return guess
+    return configuration.default_size(dbo)
+
 def guess_species(dbo, s):
     """ Guesses a species, returns the default if no match is found """
     s = str(s).lower()
@@ -948,10 +955,12 @@ def create_waitinglist(dbo, username, collationid):
     d["dateputon"] = i18n.python2display(l, i18n.now(dbo.timezone))
     d["urgency"] = str(configuration.waiting_list_default_urgency(dbo))
     for f in fields:
+        if f["FIELDNAME"] == "size": d["size"] = guess_size(dbo, f["VALUE"])
         if f["FIELDNAME"] == "species": d["species"] = guess_species(dbo, f["VALUE"])
         if f["FIELDNAME"] == "description": d["description"] = f["VALUE"]
         if f["FIELDNAME"] == "reason": d["reasonforwantingtopart"] = f["VALUE"]
-    if not d.has_key("species"): d["species"] = guess_species(dbo, "")
+    if not d.has_key("size"): d["size"] = guess_size(dbo, "nomatchesusedefault")
+    if not d.has_key("species"): d["species"] = guess_species(dbo, "nomatchesusedefault")
     # Have we got enough info to create the waiting list record? We need a description
     if not d.has_key("description"):
         raise utils.ASMValidationError(i18n._("There is not enough information in the form to create a waiting list record (need a description).", l))
