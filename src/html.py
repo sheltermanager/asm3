@@ -867,7 +867,7 @@ def json_autocomplete_litters(dbo):
 def json_lookup_tables(l):
     aslist = []
     for k, v in lookups.LOOKUP_TABLES.iteritems():
-        if k.startswith("lks"):
+        if k.startswith("lks") and not k == "lksize":
             # static tables only appear in non-English locales
             # for translation purposes and to stop people messing 
             # with things and breaking them

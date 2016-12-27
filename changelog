@@ -1,6 +1,7 @@
 40
 ================
 
+27/12/16 lksize should be editable and is not like other lks tables
 27/12/16 Don't set membership flag when entering vet license number
 27/12/16 When merging people, include administering vet from test/vacc/medical
 22/12/16 Add size for onlineform/waiting list, defaults for size/species #103
