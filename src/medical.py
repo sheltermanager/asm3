@@ -786,12 +786,15 @@ def update_regimen_from_form(dbo, username, post):
     """
     l = dbo.locale
     regimenid = post.integer("regimenid")
+    if post.date("startdate") is None:
+        raise utils.ASMValidationError(_("Start date must be a valid date", l))
     if post["treatmentname"] == "":
         raise utils.ASMValidationError(_("Treatment name cannot be blank", l))
 
     sql = db.make_update_user_sql(dbo, "animalmedical", username, "ID=%d" % regimenid, ( 
         ( "TreatmentName", post.db_string("treatmentname")),
         ( "Dosage", post.db_string("dosage")),
+        ( "StartDate", post.db_date("startdate")),
         ( "Status", post.db_integer("status")),
         ( "Cost", post.db_integer("cost")),
         ( "CostPaidDate", post.db_date("costpaid")),
