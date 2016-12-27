@@ -648,8 +648,8 @@ $(function() {
 
             var set_membership_flag = function() {
                 // Called when the membership number field is changed - if it has something
-                // in it, then set the member flag
-                if ($("#membershipnumber").val() != "") {
+                // in it, then set the member flag (only for non-vets)
+                if ($("#membershipnumber").val() != "" && !$("#flags option[value='vet']").is(":selected")) {
                     $("#flags option[value='member']").prop("selected", "selected");
                     $("#flags").change();
                 }

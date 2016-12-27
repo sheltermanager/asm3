@@ -1,6 +1,8 @@
 40
 ================
 
+27/12/16 Don't set membership flag when entering vet license number
+27/12/16 When merging people, include administering vet from test/vacc/medical
 22/12/16 Add size for onlineform/waiting list, defaults for size/species #103
 21/12/16 Code around problems with missing CID fonts scaling output of Microsoft Print PDF
 20/12/16 Add swiss locales
