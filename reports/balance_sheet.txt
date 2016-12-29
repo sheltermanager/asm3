@@ -16,7 +16,7 @@ SELECT * FROM (
 SELECT 
 a.Code,
 COALESCE((SELECT SUM(Amount) FROM accountstrx
-WHERE accountstrx.DestinationAccountID = a.ID AND accountstrx.TrxDate BETWEEN '$@from$' AND '$@to$'), 0) - COALESCE((SELECT SUM(Amount) FROM accountstrx WHERE accountstrx.SourceAccountID = a.ID AND accountstrx.TrxDate BETWEEN '$@from$' AND '$@to$'), 0) AS amt,
+WHERE accountstrx.DestinationAccountID = a.ID AND accountstrx.TrxDate <= '$@to$'), 0) - COALESCE((SELECT SUM(Amount) FROM accountstrx WHERE accountstrx.SourceAccountID = a.ID AND accountstrx.TrxDate <= '$@to$'), 0) AS amt,
 a.AccountType AS atype,
 'Assets' AS type
 FROM accounts a
@@ -26,7 +26,7 @@ WHERE a.AccountType IN (1, 7, 8, 6)
 UNION SELECT 
 a.Code,
 ABS(COALESCE((SELECT SUM(Amount) FROM accountstrx
-WHERE accountstrx.DestinationAccountID = a.ID AND accountstrx.TrxDate BETWEEN '$@from$' AND '$@to$'), 0) - COALESCE((SELECT SUM(Amount) FROM accountstrx WHERE accountstrx.SourceAccountID = a.ID AND accountstrx.TrxDate BETWEEN '$@from$' AND '$@to$'), 0)) AS amt,
+WHERE accountstrx.DestinationAccountID = a.ID AND accountstrx.TrxDate <= '$@to$'), 0) - COALESCE((SELECT SUM(Amount) FROM accountstrx WHERE accountstrx.SourceAccountID = a.ID AND accountstrx.TrxDate <= '$@to$'), 0)) AS amt,
 a.AccountType AS atype,
 'Liabilities' AS type
 FROM accounts a
