@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import asm, datetime, dbfread, sys, os
+import asm, datetime, dbfread, os
 
 """
 Import script for Shelterpro databases in DBF format
@@ -14,10 +14,17 @@ Requires address.dbf, addrlink.dbf, animal.dbf, incident.dbf, license.dbf, note.
 
 Will also look in PATH/images/ANIMALKEY.[jpg|JPG] for animal photos if available.
 
-21st April, 2016
+29th December, 2016
 """
 
-PATH = "data/shelterpro_ay1131"
+PATH = "data/shelterpro_ac0916"
+
+START_ID = 2500
+
+INCIDENT_IMPORT = True
+LICENCE_IMPORT = True
+PICTURE_IMPORT = False
+VACCINATION_IMPORT = True
 
 def gettype(animaldes):
     spmap = {
@@ -33,7 +40,9 @@ def gettype(animaldes):
 def gettypeletter(aid):
     tmap = {
         2: "D",
-        11: "U"
+        10: "A",
+        11: "U",
+        12: "S"
     }
     return tmap[aid]
 
@@ -75,31 +84,32 @@ addresses = {}
 addrlink = {}
 notes = {}
 
-asm.setid("animal", 100)
-asm.setid("animalcontrol", 100)
-asm.setid("animalvaccination", 100)
-asm.setid("owner", 100)
-asm.setid("ownerlicence", 100)
-asm.setid("adoption", 100)
-asm.setid("media", 100)
-asm.setid("dbfs", 300)
+asm.setid("adoption", START_ID)
+asm.setid("animal", START_ID)
+asm.setid("animalcontrol", START_ID)
+asm.setid("owner", START_ID)
+
+if VACCINATION_IMPORT: asm.setid("animalvaccination", START_ID)
+if LICENCE_IMPORT: asm.setid("ownerlicence", START_ID)
+if PICTURE_IMPORT: asm.setid("media", START_ID)
+if PICTURE_IMPORT: asm.setid("dbfs", START_ID)
 
 # Remove existing
 print "\\set ON_ERROR_STOP\nBEGIN;"
-print "DELETE FROM animal WHERE ID >= 100;"
-print "DELETE FROM animalcontrol WHERE ID >= 100;"
-print "DELETE FROM animalvaccination WHERE ID >= 100;"
-print "DELETE FROM owner WHERE ID >= 100;"
-print "DELETE FROM ownerlicence WHERE ID >= 100;"
-print "DELETE FROM adoption WHERE ID >= 100;"
-print "DELETE FROM media WHERE ID >= 100;"
-print "DELETE FROM dbfs WHERE ID >= 300;"
+print "DELETE FROM adoption WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
+print "DELETE FROM animal WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
+print "DELETE FROM owner WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
+if INCIDENT_IMPORT: print "DELETE FROM animalcontrol WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
+if VACCINATION_IMPORT: print "DELETE FROM animalvaccination WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
+if LICENCE_IMPORT: print "DELETE FROM ownerlicence WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
+if PICTURE_IMPORT: print "DELETE FROM media WHERE ID >= %d;" % START_ID
+if PICTURE_IMPORT: print "DELETE FROM dbfs WHERE ID >= %d;" % START_ID
 
 # Create a transfer owner
-o = asm.Owner()
-owners.append(o)
-o.OwnerSurname = "Other Shelter"
-o.OwnerName = o.OwnerSurname
+to = asm.Owner()
+owners.append(to)
+to.OwnerSurname = "Other Shelter"
+to.OwnerName = to.OwnerSurname
 
 # Create an unknown owner
 uo = asm.Owner()
@@ -164,38 +174,40 @@ for row in canimal:
     a.NonShelterAnimal = 1
     a.Archived = 1
     # Does this animal have an image? If so, add media/dbfs entries for it
-    imdata = None
-    if os.path.exists(PATH + "/images/%s.jpg" % row["ANIMALKEY"]):
-        f = open(PATH + "/images/%s.jpg" % row["ANIMALKEY"], "rb")
-        imdata = f.read()
-        f.close()
-    elif os.path.exists(PATH + "/images/%s.JPG" % row["ANIMALKEY"]):
-        f = open(PATH + "/images/%s.JPG" % row["ANIMALKEY"], "rb")
-        imdata = f.read()
-        f.close()
-    if imdata is not None:
-        asm.animal_image(a.ID, imdata)
+    if PICTURE_IMPORT:
+        imdata = None
+        if os.path.exists(PATH + "/images/%s.jpg" % row["ANIMALKEY"]):
+            f = open(PATH + "/images/%s.jpg" % row["ANIMALKEY"], "rb")
+            imdata = f.read()
+            f.close()
+        elif os.path.exists(PATH + "/images/%s.JPG" % row["ANIMALKEY"]):
+            f = open(PATH + "/images/%s.JPG" % row["ANIMALKEY"], "rb")
+            imdata = f.read()
+            f.close()
+        if imdata is not None:
+            asm.animal_image(a.ID, imdata)
 
 # Vaccinations
-for row in cvacc:
-    if not ppa.has_key(row["ANIMALKEY"]): continue
-    a = ppa[row["ANIMALKEY"]]
-    # Each row contains a vaccination
-    av = asm.AnimalVaccination()
-    animalvaccinations.append(av)
-    vaccdate = row["VACCEFFECT"]
-    if vaccdate is None:
-        vaccdate = a.DateBroughtIn
-    av.AnimalID = a.ID
-    av.VaccinationID = 8
-    if row["VACCTYPE"].find("DHLPP") != -1: av.VaccinationID = 8
-    if row["VACCTYPE"].find("BORDETELLA") != -1: av.VaccinationID = 6
-    if row["VACCTYPE"].find("RABIES") != -1: av.VaccinationID = 4
-    av.DateRequired = vaccdate
-    av.DateOfVaccination = vaccdate
-    av.Manufacturer = row["VACCMANUFA"]
-    av.BatchNumber = row["VACCSERIAL"]
-    av.Comments = "Name: %s, Issue: %s" % (row["VACCDRUGNA"], row["VACCISSUED"])
+if VACCINATION_IMPORT:
+    for row in cvacc:
+        if not ppa.has_key(row["ANIMALKEY"]): continue
+        a = ppa[row["ANIMALKEY"]]
+        # Each row contains a vaccination
+        av = asm.AnimalVaccination()
+        animalvaccinations.append(av)
+        vaccdate = row["VACCEFFECT"]
+        if vaccdate is None:
+            vaccdate = a.DateBroughtIn
+        av.AnimalID = a.ID
+        av.VaccinationID = 8
+        if row["VACCTYPE"].find("DHLPP") != -1: av.VaccinationID = 8
+        if row["VACCTYPE"].find("BORDETELLA") != -1: av.VaccinationID = 6
+        if row["VACCTYPE"].find("RABIES") != -1: av.VaccinationID = 4
+        av.DateRequired = vaccdate
+        av.DateOfVaccination = vaccdate
+        av.Manufacturer = row["VACCMANUFA"]
+        av.BatchNumber = row["VACCSERIAL"]
+        av.Comments = "Name: %s, Issue: %s" % (row["VACCDRUGNA"], row["VACCISSUED"])
 
 # Next, addresses
 for row in caddress:
@@ -256,6 +268,10 @@ for row in cshelter:
             a.CreatedDate = a.DateBroughtIn
             a.generateCode(gettypeletter(a.AnimalTypeID))
             a.ShortCode = asm.strip(row["FIELDCARD"])
+    else:
+        # Couldn't find an animal record, bail
+        continue
+
     o = None
     if ppo.has_key(row["OWNERATDIS"]):
         o = ppo[row["OWNERATDIS"]]
@@ -265,8 +281,8 @@ for row in cshelter:
         a.IsQuarantine = 1
 
     elif row["ARIVREAS"] == "STRAY":
-        if a.AnimalTypeID == 2: a.AnimalTypeID == 10
-        if a.AnimalTypeID == 11: a.AnimalTypeID == 12
+        if a.AnimalTypeID == 2: a.AnimalTypeID = 10
+        if a.AnimalTypeID == 11: a.AnimalTypeID = 12
         a.EntryReasonID = 7
 
     # Adoptions
@@ -337,7 +353,7 @@ for row in cshelter:
         if a is None: continue
         m = asm.Movement()
         m.AnimalID = a.ID
-        m.OwnerID = 100
+        m.OwnerID = to.ID
         m.MovementType = 3
         m.MovementDate = row["DISPDATE"]
         m.Comments = row["DISPMETH"]
@@ -346,26 +362,28 @@ for row in cshelter:
         a.ActiveMovementType = 3
         movements.append(m)
 
-for row in clicense:
-    a = None
-    if ppa.has_key(row["ANIMALKEY"]):
-        a = ppa[row["ANIMALKEY"]]
-    o = None
-    if ppo.has_key(row["LICENSEOWN"]):
-        o = ppo[row["LICENSEOWN"]]
-    if a is not None and o is not None:
-        if row["LICENSEEFF"] is None:
-            continue
-        ol = asm.OwnerLicence()
-        ownerlicences.append(ol)
-        ol.AnimalID = a.ID
-        ol.OwnerID = o.ID
-        ol.IssueDate = row["LICENSEEFF"]
-        ol.ExpiryDate = row["LICENSEEXP"]
-        ol.LicenceNumber = asm.strip(row["LICENSE"])
-        ol.LicenceTypeID = 2 # Unaltered dog
-        #if row["LICENSEFIX"] == "1": # Not always present
-        #    ol.LicenceTypeID = 1 # Altered dog
+if LICENCE_IMPORT:
+    for row in clicense:
+        a = None
+        if ppa.has_key(row["ANIMALKEY"]):
+            a = ppa[row["ANIMALKEY"]]
+        o = None
+        if ppo.has_key(row["LICENSEOWN"]):
+            o = ppo[row["LICENSEOWN"]]
+        if a is not None and o is not None:
+            if row["LICENSEEFF"] is None:
+                continue
+            ol = asm.OwnerLicence()
+            ownerlicences.append(ol)
+            ol.AnimalID = a.ID
+            ol.OwnerID = o.ID
+            ol.IssueDate = row["LICENSEEFF"]
+            ol.ExpiryDate = row["LICENSEEXP"]
+            if ol.ExpiryDate is None: ol.ExpiryDate = ol.IssueDate
+            ol.LicenceNumber = asm.strip(row["LICENSE"]) + (" %s" % ol.ID)
+            ol.LicenceTypeID = 2 # Unaltered dog
+            if row.has_key("LICENSEFIX") and row["LICENSEFIX"] == "1": # Not always present
+                ol.LicenceTypeID = 1 # Altered dog
 
 # Incident notes
 #for row in cnote:
@@ -373,33 +391,34 @@ for row in clicense:
 #        notes[row["EVENTKEY"]] = row["NOTEMEMO"]
 
 # Incidents
-for row in cincident:
-    ac = asm.AnimalControl()
-    animalcontrol.append(ac)
-    calldate = row["DATETIMEAS"]
-    if calldate is None: calldate = row["DATETIMEOR"]
-    if calldate is None: calldate = asm.now()
-    ac.CallDateTime = calldate
-    ac.IncidentDateTime = calldate
-    ac.DispatchDateTime = calldate
-    ac.CompletedDate = row["DATETIMEOU"]
-    if ac.CompletedDate is None: ac.CompletedDate = calldate
-    if ppo.has_key(row["CITIZENMAK"]):
-        ac.CallerID = ppo[row["CITIZENMAK"]].ID
-    if ppo.has_key(row["OWNERATORI"]):
-        ac.OwnerID = ppo[row["OWNERATORI"]].ID
-    ac.IncidentCompletedID = 2
-    if row["FINALOUTCO"] == "ANIMAL PICKED UP":
+if INCIDENT_IMPORT:
+    for row in cincident:
+        ac = asm.AnimalControl()
+        animalcontrol.append(ac)
+        calldate = row["DATETIMEAS"]
+        if calldate is None: calldate = row["DATETIMEOR"]
+        if calldate is None: calldate = asm.now()
+        ac.CallDateTime = calldate
+        ac.IncidentDateTime = calldate
+        ac.DispatchDateTime = calldate
+        ac.CompletedDate = row["DATETIMEOU"]
+        if ac.CompletedDate is None: ac.CompletedDate = calldate
+        if ppo.has_key(row["CITIZENMAK"]):
+            ac.CallerID = ppo[row["CITIZENMAK"]].ID
+        if ppo.has_key(row["OWNERATORI"]):
+            ac.OwnerID = ppo[row["OWNERATORI"]].ID
         ac.IncidentCompletedID = 2
-    elif row["FINALOUTCO"] == "OTHER":
-        ac.IncidentCompletedID = 6 # Does not exist in default data
-    ac.IncidentTypeID = 1
-    comments = "outcome: %s\n" % row["FINALOUTCO"]
-    comments += "precinct: %s\n" % row["PRECINCT"]
-    if notes.has_key(row["INCIDENTKE"]):
-        comments += notes[row["INCIDENTKE"]]
-    ac.CallNotes = comments
-    ac.Sex = 2
+        if row["FINALOUTCO"] == "ANIMAL PICKED UP":
+            ac.IncidentCompletedID = 2
+        elif row["FINALOUTCO"] == "OTHER":
+            ac.IncidentCompletedID = 6 # Does not exist in default data
+        ac.IncidentTypeID = 1
+        comments = "outcome: %s\n" % row["FINALOUTCO"]
+        comments += "precinct: %s\n" % row["PRECINCT"]
+        if notes.has_key(row["INCIDENTKE"]):
+            comments += notes[row["INCIDENTKE"]]
+        ac.CallNotes = comments
+        ac.Sex = 2
 
 # Run back through the animals, if we have any that are still
 # on shelter after 2 years, add an adoption to an unknown owner
