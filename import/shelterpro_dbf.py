@@ -21,10 +21,12 @@ PATH = "data/shelterpro_ac0916"
 
 START_ID = 2500
 
-INCIDENT_IMPORT = True
+INCIDENT_IMPORT = False
 LICENCE_IMPORT = True
 PICTURE_IMPORT = False
 VACCINATION_IMPORT = True
+
+IMPORT_ANIMALS_WITH_NO_NAME = False
 
 def gettype(animaldes):
     spmap = {
@@ -130,6 +132,7 @@ cincident = dbfread.DBF("%s/incident.dbf" % PATH)
 
 # Start with animals
 for row in canimal:
+    if not IMPORT_ANIMALS_WITH_NO_NAME and row["PETNAME"].strip() == "": continue
     a = asm.Animal()
     animals.append(a)
     ppa[row["ANIMALKEY"]] = a
@@ -250,7 +253,7 @@ for row in cperson:
     o.IsMember = asm.cint(row["MEMBER_IND"])
     o.IsBanned = asm.cint(row["NOADOPT"] == "T" and "1" or "0")
     o.IsFosterer = asm.cint(row["FOSTERS"])
-    o.ExcludeFromBulkEmail = asm.cint(row["MAILINGSAM"])
+    # o.ExcludeFromBulkEmail = asm.cint(row["MAILINGSAM"]) # Not sure this is correct
 
 
 # Run through the shelter file and create any movements/euthanisation info
@@ -380,9 +383,9 @@ if LICENCE_IMPORT:
             ol.IssueDate = row["LICENSEEFF"]
             ol.ExpiryDate = row["LICENSEEXP"]
             if ol.ExpiryDate is None: ol.ExpiryDate = ol.IssueDate
-            ol.LicenceNumber = asm.strip(row["LICENSE"]) + (" %s" % ol.ID)
+            ol.LicenceNumber = asm.strip(row["LICENSE"])
             ol.LicenceTypeID = 2 # Unaltered dog
-            if row.has_key("LICENSEFIX") and row["LICENSEFIX"] == "1": # Not always present
+            if a.Neutered == 1:
                 ol.LicenceTypeID = 1 # Altered dog
 
 # Incident notes
