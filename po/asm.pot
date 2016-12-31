@@ -977,6 +977,10 @@ msgid "Allow drag and drop to move animals between locations"
 msgstr ""
 
 #: options.js
+msgid "Allow duplicate license numbers"
+msgstr ""
+
+#: options.js
 msgid "Allow duplicate microchip numbers"
 msgstr ""
 

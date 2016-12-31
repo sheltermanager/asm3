@@ -264,6 +264,7 @@ DEFAULTS = {
     "Timezone": "-5",
     "TrialAdoptions": "No",
     "TrialOnShelter": "No",
+    "UniqueLicenceNumbers": "Yes",
     "UseAutoInsurance": "No",
     "UseShortShelterCodes": "Yes", 
     "VATEnabled": "Yes",
@@ -1020,6 +1021,9 @@ def trial_adoptions(dbo):
 
 def trial_on_shelter(dbo):
     return cboolean(dbo, "TrialOnShelter", DEFAULTS["TrialOnShelter"] == "Yes")
+
+def unique_licence_numbers(dbo):
+    return cboolean(dbo, "UniqueLicenceNumbers", DEFAULTS["UniqueLicenceNumbers"] == "Yes")
 
 def variable_data_updated_today(dbo):
     todaystr = time.strftime("%Y%m%d", i18n.now().timetuple())

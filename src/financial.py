@@ -1167,7 +1167,7 @@ def insert_licence_from_form(dbo, username, post):
     """
     Creates a licence record from posted form data 
     """
-    if 0 != db.query_int(dbo, "SELECT COUNT(*) FROM ownerlicence WHERE LicenceNumber = %s" % post.db_string("number")):
+    if configuration.unique_licence_numbers(dbo) and 0 != db.query_int(dbo, "SELECT COUNT(*) FROM ownerlicence WHERE LicenceNumber = %s" % post.db_string("number")):
         raise utils.ASMValidationError(i18n._("License number '{0}' has already been issued.").format(post["number"]))
     licenceid = db.get_id(dbo, "ownerlicence")
     sql = db.make_insert_user_sql(dbo, "ownerlicence", username, ( 
@@ -1190,7 +1190,7 @@ def update_licence_from_form(dbo, username, post):
     Updates a licence record from posted form data
     """
     licenceid = post.integer("licenceid")
-    if 0 != db.query_int(dbo, "SELECT COUNT(*) FROM ownerlicence WHERE LicenceNumber = %s AND ID <> %d" % (post.db_string("number"), licenceid)):
+    if configuration.unique_licence_numbers(dbo) and 0 != db.query_int(dbo, "SELECT COUNT(*) FROM ownerlicence WHERE LicenceNumber = %s AND ID <> %d" % (post.db_string("number"), licenceid)):
         raise utils.ASMValidationError(i18n._("License number '{0}' has already been issued.").format(post["number"]))
     sql = db.make_update_user_sql(dbo, "ownerlicence", username, "ID=%d" % licenceid, ( 
         ( "OwnerID", post.db_integer("person")),

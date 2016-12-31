@@ -21,7 +21,7 @@ VERSIONS = (
     33706, 33707, 33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716,
     33717, 33718, 33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904,
     33905, 33906, 33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916,
-    34000
+    34000, 34001
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1240,7 +1240,7 @@ def sql_structure(dbo):
     sql += index("ownerlicence_OwnerID", "ownerlicence", "OwnerID")
     sql += index("ownerlicence_AnimalID", "ownerlicence", "AnimalID")
     sql += index("ownerlicence_LicenceTypeID", "ownerlicence", "LicenceTypeID")
-    sql += index("ownerlicence_LicenceNumber", "ownerlicence", "LicenceNumber", True)
+    sql += index("ownerlicence_LicenceNumber", "ownerlicence", "LicenceNumber")
     sql += index("ownerlicence_IssueDate", "ownerlicence", "IssueDate")
     sql += index("ownerlicence_ExpiryDate", "ownerlicence", "ExpiryDate")
 
@@ -2723,6 +2723,12 @@ def drop_column(dbo, table, column):
     if dbo.dbtype == "POSTGRESQL":
         cascade = " CASCADE"
     db.execute_dbupdate(dbo, "ALTER TABLE %s DROP COLUMN %s%s" % (table, column, cascade))
+
+def drop_index(dbo, indexname):
+    try:
+        db.execute_dbupdate(dbo, "DROP INDEX %s" % indexname)
+    except:
+        pass
 
 def modify_column(dbo, table, column, newtype, using =  ""):
     if dbo.dbtype == "MYSQL":
@@ -4549,4 +4555,9 @@ def update_34000(dbo):
     # Add missing LostArea and FoundArea fields due to broken schema
     add_column(dbo, "animallostfoundmatch", "LostArea", shorttext(dbo))
     add_column(dbo, "animallostfoundmatch", "FoundArea", shorttext(dbo))
+
+def update_34001(dbo):
+    # Remove the unique index on LicenceNumber and make it non-unique (optionally enforced by backend code)
+    drop_index(dbo, "ownerlicence_LicenceNumber")
+    add_index(dbo, "ownerlicence_LicenceNumber", "ownerlicence", "LicenceNumber")
 

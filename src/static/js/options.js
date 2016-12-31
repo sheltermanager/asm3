@@ -403,6 +403,8 @@ $(function() {
                 '<input data="LockCodes" id="lockcodes" type="checkbox" class="asm-checkbox" /> <label for="lockcodes">' + _("Once assigned, codes cannot be changed") + '</label>',
                 '<br />',
                 '<input data="AllowDuplicateMicrochip" id="duplicatechip" type="checkbox" class="asm-checkbox" /> <label for="duplicatechip">' + _("Allow duplicate microchip numbers") + '</label>',
+                '<br />',
+                '<input data="UniqueLicenceNumbers" id="uniquelicence" type="checkbox" class="asm-checkbox" /> <label for="uniquelicence">' + _("Allow duplicate license numbers") + '</label>',
                 '</p>',
                 '</div>'
             ].join("\n");
