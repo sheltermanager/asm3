@@ -482,7 +482,7 @@
                 .then(function(lat, lon) {
                     if (lat) {
                         var latlong = lat + "," + lon + "," + addrhash;
-                        var formdata = "personid=" + personid + "&latlong=" + latlong;
+                        var formdata = "mode=latlong&personid=" + personid + "&latlong=" + latlong;
                         common.ajax_post("person", formdata);
                     }
                 });

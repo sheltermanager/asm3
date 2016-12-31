@@ -90,6 +90,7 @@ $(function() {
                 '</tr>',
                 additional.additional_mandatory_fields(controller.additional),
                 '</table>',
+                '<input id="latlong" data="latlong" type="hidden" value="" />',
                 '<div class="centered">',
                 '<button id="addedit">' + html.icon("person-add") + ' ' + _("Create and edit") + '</button>',
                 '<button id="add">' + html.icon("person-add") + ' ' + _("Create") + '</button>',
@@ -116,8 +117,17 @@ $(function() {
                     return; 
                 }
                 header.show_loading(_("Creating..."));
-                var formdata = $("input, textarea, select").not(".chooser").toPOST();
-                common.ajax_post("person_new", formdata)
+                var address = $("#address").val(),
+                    town = $("#town").val(),
+                    county = $("#county").val(),
+                    postcode = $("#postcode").val();
+                var addrhash = geo.address_hash(address, town, county, postcode);
+                geo.get_lat_long(address, town, county, postcode)
+                    .then(function(lat, lon) {
+                        if (lat) { $("#latlong").val(lat + "," + lon + "," + addrhash); }
+                        var formdata = $("input, textarea, select").not(".chooser").toPOST();
+                        return common.ajax_post("person_new", formdata);
+                    })
                     .then(function(personid) { 
                         if (personid && person_new.create_and_edit) { 
                             common.route("person?id=" + personid); 
@@ -129,6 +139,7 @@ $(function() {
                     .always(function() {
                         $("#asm-content button").button("enable");
                     });
+
             };
 
             var similar_dialog = function() {

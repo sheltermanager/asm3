@@ -1,6 +1,8 @@
 40
 ================
 
+31/12/16 Update geocode during Add Person screen
+31/12/16 Fixed bug where updating geocode from create embedded person was broken
 31/12/16 Allow non-unique licence numbers
 27/12/16 Allow regimen start date to be edited since it can be on screen
 27/12/16 lksize should be editable and is not like other lks tables
