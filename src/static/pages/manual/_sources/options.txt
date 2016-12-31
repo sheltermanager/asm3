@@ -241,6 +241,11 @@ of the year.
   purposes some shelters prefer to create new animal records every time they
   see an animal regardless of whether it has been through the shelter before). 
 
+* Allow duplicate license numbers: By default, the system will prevent you
+  entering or saving licenses with a number that has already been used.
+  Some licensing regions use a tag number that stays with the animal for
+  life and need to allow duplicate licenses as a result.
+
 Costs
 -----
 
