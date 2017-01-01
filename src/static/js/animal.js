@@ -905,7 +905,7 @@ $(function() {
                 $("#lastlocation").hide();
                 $("#locationrow").hide();
                 $("#locationunitrow").hide();
-                $("#feerow").hide();
+                if ($("#animalname").val().indexOf("Template") != 0) { $("#feerow").hide(); } // Only hide the fee for non-shelter non-template animals
                 $("#transferinrow").hide();
                 $("#pickeduprow").hide();
                 $("#holdrow").hide();
