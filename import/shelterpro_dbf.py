@@ -176,11 +176,10 @@ for row in canimal:
     # Make everything non-shelter until it's in the shelter file
     a.NonShelterAnimal = 1
     a.Archived = 1
-    # If the flag is set for deceased, mark the animal deceased at broughtin (no date is kept in ShelterPro)
-    # This is inexact and got from examining records of deceased animals - they have chars \xaa and \x15
-    if row.has_key("_NullFlags"):
-        if row["_NullFlags"].find("\xaa") != -1 and row["_NullFlags"].find("\x15"):
-            a.DeceasedDate = a.DateBroughtIn
+    # Shelterpro records Deceased as Status == 2 as far as we can tell
+    if row["STATUS"] == 2:
+        a.DeceasedDate = a.DateBroughtIn
+        a.PTSReasonID = 2 # Died
     # Does this animal have an image? If so, add media/dbfs entries for it
     if PICTURE_IMPORT:
         imdata = None
@@ -344,12 +343,14 @@ for row in cshelter:
     # Deceased
     elif row["DISPMETH"] == "DECEASED":
         a.DeceasedDate = row["DISPDATE"]
+        a.PTSReasonID = 2 # Died
         a.Archived = 1
 
     # Euthanized
     elif row["DISPMETH"] == "EUTHANIZED":
         a.DeceasedDate = row["DISPDATE"]
         a.PutToSleep = 1
+        a.PTSReasonID = 4 # Sick/Injured
         a.Archived = 1
 
     # If the outcome is blank, it's on the shelter
