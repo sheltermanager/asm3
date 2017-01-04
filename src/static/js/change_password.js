@@ -8,7 +8,8 @@ $(function() {
         render: function() {
             return [
                 html.content_header(_("Change Password")),
-                html.error(_("The sheltermanager.com admin account password cannot be changed here, please visit {0}").replace("{0}", "<a href=\"/my/\">https://sheltermanager.com/my/</a>"), "mastererror"),
+                html.error(_("The sheltermanager.com admin account password cannot be changed here, please visit {0}").replace("{0}", 
+                    "<a href=\"https://sheltermanager.com/my/\">https://sheltermanager.com/my/</a>"), "mastererror"),
                 html.info(_("Your password is currently set to 'password'. This is highly insecure and we strongly suggest you choose a new password."), "suggestinfo"),
                 '<div id="changepassword">',
                 '<table class="asm-table-layout">',
