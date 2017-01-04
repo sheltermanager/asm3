@@ -26,7 +26,7 @@ LICENCE_IMPORT = True
 PICTURE_IMPORT = False
 VACCINATION_IMPORT = True
 
-IMPORT_ANIMALS_WITH_NO_NAME = False
+IMPORT_ANIMALS_WITH_NO_NAME = True
 
 def gettype(animaldes):
     spmap = {
