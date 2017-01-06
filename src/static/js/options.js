@@ -404,7 +404,7 @@ $(function() {
                 '<br />',
                 '<input data="AllowDuplicateMicrochip" id="duplicatechip" type="checkbox" class="asm-checkbox" /> <label for="duplicatechip">' + _("Allow duplicate microchip numbers") + '</label>',
                 '<br />',
-                '<input data="UniqueLicenceNumbers" id="uniquelicence" type="checkbox" class="asm-checkbox" /> <label for="uniquelicence">' + _("Allow duplicate license numbers") + '</label>',
+                '<input data="rc:UniqueLicenceNumbers" id="uniquelicence" type="checkbox" class="asm-checkbox" /> <label for="uniquelicence">' + _("Allow duplicate license numbers") + '</label>',
                 '</p>',
                 '</div>'
             ].join("\n");
