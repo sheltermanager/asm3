@@ -4069,7 +4069,7 @@ def update_animal_figures_annual(dbo, year = 0):
         species_line("SELECT a.DateBroughtIn AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
             "a.SpeciesID = %d AND a.DateBroughtIn >= %s AND a.DateBroughtIn <= %s " \
-            "a.NonShelterAnimal = 0 AND a.DateBroughtIn = a.DateOfBirth " \
+            "AND a.NonShelterAnimal = 0 AND a.DateBroughtIn = a.DateOfBirth " \
             "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
             sp["ID"], sp["SPECIESNAME"], "SP_BORNSHELTER", group, 20, showbabies, babymonths)
 
