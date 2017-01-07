@@ -4069,7 +4069,7 @@ def update_animal_figures_annual(dbo, year = 0):
         species_line("SELECT a.DateBroughtIn AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
             "a.SpeciesID = %d AND a.DateBroughtIn >= %s AND a.DateBroughtIn <= %s " \
-            "AND a.IsTransfer = 0 AND a.NonShelterAnimal = 0 AND a.DateBroughtIn = a.DateOfBirth " \
+            "a.NonShelterAnimal = 0 AND a.DateBroughtIn = a.DateOfBirth " \
             "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
             sp["ID"], sp["SPECIESNAME"], "SP_BORNSHELTER", group, 20, showbabies, babymonths)
 
@@ -4078,7 +4078,7 @@ def update_animal_figures_annual(dbo, year = 0):
         species_line("SELECT a.DateBroughtIn AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
             "a.SpeciesID = %d AND a.DateBroughtIn >= %s AND a.DateBroughtIn <= %s " \
-            "AND a.IsTransfer = 0 AND a.NonShelterAnimal = 0 AND a.DateBroughtIn = a.DateOfBirth " \
+            "AND a.NonShelterAnimal = 0 AND a.DateBroughtIn = a.DateOfBirth " \
             "AND EXISTS(SELECT m.ID FROM adoption m WHERE m.MovementDate = a.DateBroughtIn AND " \
                 "m.AnimalID = a.ID AND m.MovementType = 2) " \
             "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
@@ -4134,7 +4134,7 @@ def update_animal_figures_annual(dbo, year = 0):
         species_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
             "a.SpeciesID = %d AND ad.MovementDate >= %s AND ad.MovementDate <= %s " \
-            "AND a.IsTransfer = 0 AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
+            "AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
             "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear, movement.RECLAIMED),
             sp["ID"], sp["SPECIESNAME"], "SP_RECLAIMED", group, 90, showbabies, babymonths)
 
@@ -4143,7 +4143,7 @@ def update_animal_figures_annual(dbo, year = 0):
         species_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
             "a.SpeciesID = %d AND ad.MovementDate >= %s AND ad.MovementDate <= %s " \
-            "AND a.IsTransfer = 0 AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
+            "AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
             "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear, movement.TRANSFER),
             sp["ID"], sp["SPECIESNAME"], "SP_TRANSFEROUT", group, 100, showbabies, babymonths)
 
@@ -4152,7 +4152,7 @@ def update_animal_figures_annual(dbo, year = 0):
         species_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
             "a.SpeciesID = %d AND ad.MovementDate >= %s AND ad.MovementDate <= %s " \
-            "AND a.IsTransfer = 0 AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
+            "AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
             "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear, movement.ESCAPED),
             sp["ID"], sp["SPECIESNAME"], "SP_ESCAPED", group, 110, showbabies, babymonths)
 
@@ -4161,7 +4161,7 @@ def update_animal_figures_annual(dbo, year = 0):
         species_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
             "a.SpeciesID = %d AND ad.MovementDate >= %s AND ad.MovementDate <= %s " \
-            "AND a.IsTransfer = 0 AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
+            "AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
             "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear, movement.STOLEN),
             sp["ID"], sp["SPECIESNAME"], "SP_STOLEN", group, 120, showbabies, babymonths)
 
@@ -4170,7 +4170,7 @@ def update_animal_figures_annual(dbo, year = 0):
         species_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
             "a.SpeciesID = %d AND ad.MovementDate >= %s AND ad.MovementDate <= %s " \
-            "AND a.IsTransfer = 0 AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
+            "AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
             "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear, movement.RELEASED),
             sp["ID"], sp["SPECIESNAME"], "SP_STOLEN", group, 130, showbabies, babymonths)
 
@@ -4216,7 +4216,7 @@ def update_animal_figures_annual(dbo, year = 0):
         type_line("SELECT a.DateBroughtIn AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
             "a.AnimalTypeID = %d AND a.DateBroughtIn >= %s AND a.DateBroughtIn <= %s " \
-            "AND a.IsTransfer = 0 AND a.NonShelterAnimal = 0 AND a.DateBroughtIn = a.DateOfBirth " \
+            "AND a.NonShelterAnimal = 0 AND a.DateBroughtIn = a.DateOfBirth " \
             "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear),
             at["ID"], at["ANIMALTYPE"], "AT_BORNSHELTER", group, 20, at["SHOWSPLIT"], babymonths)
 
@@ -4225,7 +4225,7 @@ def update_animal_figures_annual(dbo, year = 0):
         type_line("SELECT a.DateBroughtIn AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
             "a.AnimalTypeID = %d AND a.DateBroughtIn >= %s AND a.DateBroughtIn <= %s " \
-            "AND a.IsTransfer = 0 AND a.NonShelterAnimal = 0 AND a.DateBroughtIn = a.DateOfBirth " \
+            "AND a.NonShelterAnimal = 0 AND a.DateBroughtIn = a.DateOfBirth " \
             "AND EXISTS(SELECT m.ID FROM adoption m WHERE m.MovementDate = a.DateBroughtIn AND " \
                 "m.AnimalID = a.ID AND m.MovementType = 2) " \
             "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear),
@@ -4290,7 +4290,7 @@ def update_animal_figures_annual(dbo, year = 0):
         type_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
             "a.AnimalTypeID = %d AND ad.MovementDate >= %s AND ad.MovementDate <= %s " \
-            "AND a.IsTransfer = 0 AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
+            "AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
             "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear, movement.TRANSFER),
             at["ID"], at["ANIMALTYPE"], "AT_TRANSFEROUT", group, 100, at["SHOWSPLIT"], babymonths)
 
@@ -4299,7 +4299,7 @@ def update_animal_figures_annual(dbo, year = 0):
         type_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
             "a.AnimalTypeID = %d AND ad.MovementDate >= %s AND ad.MovementDate <= %s " \
-            "AND a.IsTransfer = 0 AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
+            "AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
             "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear, movement.ESCAPED),
             at["ID"], at["ANIMALTYPE"], "AT_ESCAPED", group, 110, at["SHOWSPLIT"], babymonths)
 
@@ -4308,7 +4308,7 @@ def update_animal_figures_annual(dbo, year = 0):
         type_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
             "a.AnimalTypeID = %d AND ad.MovementDate >= %s AND ad.MovementDate <= %s " \
-            "AND a.IsTransfer = 0 AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
+            "AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
             "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear, movement.STOLEN),
             at["ID"], at["ANIMALTYPE"], "AT_STOLEN", group, 120, at["SHOWSPLIT"], babymonths)
 
@@ -4317,7 +4317,7 @@ def update_animal_figures_annual(dbo, year = 0):
         type_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
             "a.AnimalTypeID = %d AND ad.MovementDate >= %s AND ad.MovementDate <= %s " \
-            "AND a.IsTransfer = 0 AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
+            "AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
             "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear, movement.RELEASED),
             at["ID"], at["ANIMALTYPE"], "AT_STOLEN", group, 130, at["SHOWSPLIT"], babymonths)
 
@@ -4363,7 +4363,7 @@ def update_animal_figures_annual(dbo, year = 0):
         entryreason_line("SELECT a.DateBroughtIn AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
             "a.EntryReasonID = %d AND a.DateBroughtIn >= %s AND a.DateBroughtIn <= %s " \
-            "AND a.IsTransfer = 0 AND a.NonShelterAnimal = 0 AND a.DateBroughtIn = a.DateOfBirth " \
+            "AND a.NonShelterAnimal = 0 AND a.DateBroughtIn = a.DateOfBirth " \
             "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(er["ID"]), firstofyear, lastofyear),
             er["ID"], er["REASONNAME"], "ER_BORNSHELTER", group, 20, er["SHOWSPLIT"], babymonths)
 
@@ -4372,7 +4372,7 @@ def update_animal_figures_annual(dbo, year = 0):
         entryreason_line("SELECT a.DateBroughtIn AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
             "a.EntryReasonID = %d AND a.DateBroughtIn >= %s AND a.DateBroughtIn <= %s " \
-            "AND a.IsTransfer = 0 AND a.NonShelterAnimal = 0 AND a.DateBroughtIn = a.DateOfBirth " \
+            "AND a.NonShelterAnimal = 0 AND a.DateBroughtIn = a.DateOfBirth " \
             "AND EXISTS(SELECT m.ID FROM adoption m WHERE m.MovementDate = a.DateBroughtIn AND " \
                 "m.AnimalID = a.ID AND m.MovementType = 2) " \
             "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(er["ID"]), firstofyear, lastofyear),
@@ -4428,7 +4428,7 @@ def update_animal_figures_annual(dbo, year = 0):
         entryreason_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
             "a.EntryReasonID = %d AND ad.MovementDate >= %s AND ad.MovementDate <= %s " \
-            "AND a.IsTransfer = 0 AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
+            "AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
             "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(er["ID"]), firstofyear, lastofyear, movement.RECLAIMED),
             er["ID"], er["REASONNAME"], "ER_RECLAIMED", group, 90, er["SHOWSPLIT"], babymonths)
 
@@ -4437,7 +4437,7 @@ def update_animal_figures_annual(dbo, year = 0):
         entryreason_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
             "a.EntryReasonID = %d AND ad.MovementDate >= %s AND ad.MovementDate <= %s " \
-            "AND a.IsTransfer = 0 AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
+            "AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
             "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(er["ID"]), firstofyear, lastofyear, movement.TRANSFER),
             er["ID"], er["REASONNAME"], "ER_TRANSFEROUT", group, 100, er["SHOWSPLIT"], babymonths)
 
@@ -4446,7 +4446,7 @@ def update_animal_figures_annual(dbo, year = 0):
         entryreason_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
             "a.EntryReasonID = %d AND ad.MovementDate >= %s AND ad.MovementDate <= %s " \
-            "AND a.IsTransfer = 0 AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
+            "AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
             "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(er["ID"]), firstofyear, lastofyear, movement.ESCAPED),
             er["ID"], er["REASONNAME"], "ER_ESCAPED", group, 110, er["SHOWSPLIT"], babymonths)
 
@@ -4455,7 +4455,7 @@ def update_animal_figures_annual(dbo, year = 0):
         entryreason_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
             "a.EntryReasonID = %d AND ad.MovementDate >= %s AND ad.MovementDate <= %s " \
-            "AND a.IsTransfer = 0 AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
+            "AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
             "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(er["ID"]), firstofyear, lastofyear, movement.STOLEN),
             er["ID"], er["REASONNAME"], "ER_STOLEN", group, 120, er["SHOWSPLIT"], babymonths)
 
@@ -4464,7 +4464,7 @@ def update_animal_figures_annual(dbo, year = 0):
         entryreason_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
             "a.EntryReasonID = %d AND ad.MovementDate >= %s AND ad.MovementDate <= %s " \
-            "AND a.IsTransfer = 0 AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
+            "AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
             "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(er["ID"]), firstofyear, lastofyear, movement.RELEASED),
             er["ID"], er["REASONNAME"], "ER_STOLEN", group, 130, er["SHOWSPLIT"], babymonths)
 
