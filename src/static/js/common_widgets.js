@@ -616,11 +616,15 @@
                 '<tr>',
                 '<th>' + _("Type") + '</th>',
                 '<th>' + _("Method") + '</th>',
+                '<th>' + _("Check No") + '</th>',
+                '<th class="quantities">' + _("Quantity") + '</th>',
+                '<th class="quantities">' + _("Unit Price") + '</th>',
                 '<th>' + _("Amount") + '</th>',
                 '<th class="overrideaccount">' + _("Deposit Account") + '</th>',
                 '<th class="giftaid">' + _("Gift Aid") + '</th>',
                 '<th class="vat">' + _("Sales Tax") + '</th>',
                 '<th class="vat">' + _("Total") + '</th>',
+                '<th>' + _("Comments") + '</th>',
                 '</tr>',
                 '</thead>',
                 '<tbody id="paymentlines">',
@@ -630,11 +634,15 @@
                 '<td><button class="takepayment">' + _("Take another payment") + '</button>',
                 '<a class="takepayment" href="#">' + _("Take another payment") + '</a></td>',
                 '<td></td>',
+                '<td></td>',
+                '<td class="quantities"></td>',
+                '<td class="quantities"></td>',
                 '<td class="rightalign strong" id="totalamount"></td>',
                 '<td class="overrideaccount"></td>',
                 '<td class="giftaid"></td>',
                 '<td class="vat rightalign strong" id="totalvat"></td>',
                 '<td class="vat rightalign strong" id="totalall"></td>',
+                '<td></td>',
                 '</tr>',
                 '</tfoot>',
                 '</table>',
@@ -666,6 +674,15 @@
                 '</select>',
                 '</td>',
                 '<td>',
+                '<input id="chequenumber{i}" data="chequenumber{i}" class="asm-textbox asm-halftextbox" />',
+                '</td>',
+                '<td class="quantities">',
+                '<input id="quantity{i}" data="quantity{i}" class="rightalign asm-numberbox asm-textbox asm-halftextbox" value="1" />',
+                '</td>',
+                '<td class="quantities">',
+                '<input id="unitprice{i}" data="unitprice{i}" class="rightalign unitprice asm-currencybox asm-textbox asm-halftextbox" value="0" />',
+                '</td>',
+                '<td>',
                 '<input id="amount{i}" data="amount{i}" class="rightalign amount asm-currencybox asm-textbox asm-halftextbox" />',
                 '</td>',
                 '<td class="overrideaccount">',
@@ -687,6 +704,9 @@
                 '<td class="vat centered">',
                 '<input id="total{i}" data="{i}" class="rightalign totalamount asm-textbox asm-halftextbox asm-currencybox" disabled="disabled" />',
                 '</td>',
+                '<td>',
+                '<input id="comments{i}" data="comments{i}" class="asm-textbox" />',
+                '</td>',
                 '</tr>'
             ];
             // Construct and add our new payment fields to the DOM
@@ -701,7 +721,15 @@
             // Change the default amount when the payment type changes
             $("#donationtype" + i).change(function() {
                 var dc = common.get_field(self.options.controller.donationtypes, $("#donationtype" + i).select("value"), "DEFAULTCOST");
+                $("#quantity" + i).val("1");
+                $("#unitprice" + i).currency("value", dc);
                 $("#amount" + i).currency("value", dc);
+                self.update_totals();
+            });
+            // Recalculate when quantity or unit price changes
+            $("#quantity" + i + ", #unitprice" + i).change(function() {
+                var q = $("#quantity" + i).val(), u = $("#unitprice" + i).currency("value");
+                $("#amount" + i).currency("value", q * u);
                 self.update_totals();
             });
             // Recalculate when amount or VAT changes
@@ -743,6 +771,8 @@
             if (asm.locale != "en_GB") { $(".giftaid").hide(); }
             // Disable vat/tax if the option is off necessary
             if (!config.bool("VATEnabled")) { $(".vat").hide(); }
+            // Disable quantity/unit price if the option is off
+            if (!config.bool("DonationQuantities")) { $(".quantities").hide(); }
         },
 
         update_totals: function() {

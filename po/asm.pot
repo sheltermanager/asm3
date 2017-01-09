@@ -2257,7 +2257,7 @@ msgstr ""
 msgid "Check License"
 msgstr ""
 
-#: donations.js
+#: donations.js common_widgets.js
 msgid "Check No"
 msgstr ""
 
@@ -2477,9 +2477,9 @@ msgstr ""
 #: waitinglist_results.js person_vouchers.js rota.js transport.js person.js
 #: lostfound_new.js medicalprofile.js staff_rota.js accounts.js medical.js
 #: log.js animal.js person_find_results.js animal_diet.js stocklevel.js
-#: licence.js traploan.js animal_find_results.js lostfound.js vaccination.js
-#: waitinglist_new.js diary.js litters.js waitinglist.js person.py mobile.py
-#: html.py
+#: licence.js traploan.js animal_find_results.js common_widgets.js lostfound.js
+#: vaccination.js waitinglist_new.js diary.js litters.js waitinglist.js
+#: person.py mobile.py html.py
 msgid "Comments"
 msgstr ""
 
@@ -8312,7 +8312,8 @@ msgstr ""
 msgid "Quaker Parakeet"
 msgstr ""
 
-#: test.js donations.js medical.js stocklevel.js vaccination.js
+#: test.js donations.js medical.js stocklevel.js common_widgets.js
+#: vaccination.js
 msgid "Quantity"
 msgstr ""
 
@@ -11513,7 +11514,7 @@ msgstr ""
 msgid "Unit"
 msgstr ""
 
-#: donations.js stocklevel.js
+#: donations.js stocklevel.js common_widgets.js
 msgid "Unit Price"
 msgstr ""
 
