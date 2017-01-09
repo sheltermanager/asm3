@@ -51,6 +51,10 @@ ASM contains a full double entry accounting package. The options here are:
   for taxable goods. Enabling this option will add a tickbox to all payment
   screens allowing you to calculate the taxable value.
 
+* When receiving multiple payments, allow the due and received dates to be set:
+  If this option is on, due and received date columns will be shown when taking
+  payments from the Move screens and Receive a Payment screen.
+
 * Only show account totals for the current period, which starts on: If you wish
   to use accounting periods, put the start date in here. By enabling the show
   account totals for current period option, the totals shown on the account

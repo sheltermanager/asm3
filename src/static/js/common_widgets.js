@@ -615,6 +615,8 @@
                 '<thead>',
                 '<tr>',
                 '<th>' + _("Type") + '</th>',
+                '<th class="overridedates">' + _("Due") + '</th>',
+                '<th class="overridedates">' + _("Received") + '</th>',
                 '<th>' + _("Method") + '</th>',
                 '<th>' + _("Check No") + '</th>',
                 '<th class="quantities">' + _("Quantity") + '</th>',
@@ -633,6 +635,8 @@
                 '<tr>',
                 '<td><button class="takepayment">' + _("Take another payment") + '</button>',
                 '<a class="takepayment" href="#">' + _("Take another payment") + '</a></td>',
+                '<td class="overridedates"></td>',
+                '<td class="overridedates"></td>',
                 '<td></td>',
                 '<td></td>',
                 '<td class="quantities"></td>',
@@ -667,6 +671,12 @@
                 '<select id="donationtype{i}" data="donationtype{i}" class="asm-selectbox">',
                 html.list_to_options(this.options.controller.donationtypes, "ID", "DONATIONNAME"),
                 '</select>',
+                '</td>',
+                '<td class="overridedates">',
+                '<input id="due{i}" data="due{i}" class="asm-datebox asm-textbox asm-halftextbox" />',
+                '</td>',
+                '<td class="overridedates">',
+                '<input id="received{i}" data="received{i}" class="asm-datebox asm-textbox asm-halftextbox" />',
                 '</td>',
                 '<td>',
                 '<select id="payment{i}" data="payment{i}" class="asm-halfselectbox">',
@@ -773,6 +783,22 @@
             if (!config.bool("VATEnabled")) { $(".vat").hide(); }
             // Disable quantity/unit price if the option is off
             if (!config.bool("DonationQuantities")) { $(".quantities").hide(); }
+            // Disable dates if the option is off
+            if (!config.bool("DonationDateOverride")) { 
+                $(".overridedates").hide(); 
+            }
+            else {
+                // Set due or received date to today if the date override is on
+                if (config.bool("MovementDonationsDefaultDue")) {
+                    $("#due" + i).val(format.date(new Date()));
+                }
+                else {
+                    $("#received" + i).val(format.date(new Date()));
+                }
+                // Make sure the dates are turned into picker widgets
+                $("#due" + i).date();
+                $("#received" + i).date();
+            }
         },
 
         update_totals: function() {

@@ -553,11 +553,16 @@ def insert_donations_from_form(dbo, username, post, donationdate, force_receive 
         post.data["receiptnumber"] = get_next_receipt_number(dbo)
     for i in xrange(1, 100):
         if post.integer("amount%d" % i) == 0 and ignorezero: continue
-        due = ""
-        received = donationdate
-        if not force_receive and configuration.movement_donations_default_due(dbo):
-            due = donationdate
-            received = ""
+        due = post["due%d" % i]
+        received = post["received%d" % i]
+        # If due and received haven't been given, use the passed in date
+        # and set it depending on the force_receive flag or config
+        if due == "" and received == "":
+            due = ""
+            received = donationdate
+            if not force_receive and configuration.movement_donations_default_due(dbo):
+                due = donationdate
+                received = ""
         don_dict = {
             "person"                : str(personid),
             "animal"                : str(animalid),

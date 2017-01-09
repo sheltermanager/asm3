@@ -3664,7 +3664,7 @@ msgstr ""
 msgid "Duck"
 msgstr ""
 
-#: donations.js citations.js traploan.js
+#: donations.js citations.js traploan.js common_widgets.js
 msgid "Due"
 msgstr ""
 
@@ -8452,7 +8452,7 @@ msgstr ""
 msgid "Receive a payment"
 msgstr ""
 
-#: donations.js onlineform_incoming.js donation_receive.js
+#: donations.js onlineform_incoming.js donation_receive.js common_widgets.js
 msgid "Received"
 msgstr ""
 
@@ -12233,6 +12233,10 @@ msgstr ""
 msgid ""
 "When publishing to third party services, add this extra text to the bottom "
 "of all animal descriptions"
+msgstr ""
+
+#: options.js
+msgid "When receiving multiple payments, allow the due and received dates to be set"
 msgstr ""
 
 #: options.js

@@ -1,6 +1,7 @@
 40
 ================
 
+09/01/17 Allow due/receive dates to be overriden with payment widget #112
 09/01/17 Add extra payment fields to payment widget on Move screens #22
 07/01/17 Fix incorrect IsTransfer clause in annual figures #111
 06/01/17 Set LastChangedDate/By when using Receive donation/payment button
