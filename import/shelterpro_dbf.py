@@ -212,6 +212,7 @@ if VACCINATION_IMPORT:
         if row["VACCTYPE"].find("RABIES") != -1: av.VaccinationID = 4
         av.DateRequired = vaccdate
         av.DateOfVaccination = vaccdate
+        av.DateExpires = row["VACCEXPIRA"]
         av.Manufacturer = row["VACCMANUFA"]
         av.BatchNumber = row["VACCSERIAL"]
         av.Comments = "Name: %s, Issue: %s" % (row["VACCDRUGNA"], row["VACCISSUED"])
