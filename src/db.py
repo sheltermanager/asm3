@@ -646,8 +646,11 @@ def escape(s):
     # This is a stopgap measure as we should be using parameterised queries.
     if DB_TYPE == "POSTGRESQL": 
         s = psycopg2.extensions.adapt(s).adapted
-    elif DB_TYPE == "MYSQL": 
-        s = MySQLdb.escape_string(s)
+    elif DB_TYPE == "MYSQL":
+        if type(s) == str:
+            s = MySQLdb.escape_string(s)
+        elif type(s) == unicode:
+            s = MySQLdb.escape_string(s.encode("utf-8"))
     return s
 
 def escape_xss(s):

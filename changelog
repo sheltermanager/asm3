@@ -1,6 +1,7 @@
 40
 ================
 
+09/01/17 MySQLdb requires UTF-8 for escape_string rather than unicode #94
 09/01/17 Allow transfer in and adoption fee to show on add new animal #106, #109
 09/01/17 service html_report/csv_report|mail returns SQL error for an invalid report #110
 09/01/17 Allow due/receive dates to be overriden with payment widget #112
