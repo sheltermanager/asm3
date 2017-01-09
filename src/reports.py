@@ -630,13 +630,14 @@ class Report:
     def _ReadReport(self, reportId):
         """
         Reads the report info from the database and populates
-        our local class variables
+        our local class variables.
+        Returns True on success.
         """
         rs = db.query(self.dbo, "SELECT Title, Category, HTMLBody, SQLCommand, OmitCriteria, " \
             "OmitHeaderFooter FROM customreport WHERE ID = %s" % str(reportId))
         
         # Can't do anything if the ID was invalid
-        if len(rs) == 0: return
+        if len(rs) == 0: return False
 
         r = rs[0]
         self.title = r["TITLE"]
@@ -646,6 +647,7 @@ class Report:
         self.omitCriteria = r["OMITCRITERIA"] > 0
         self.omitHeaderFooter = r["OMITHEADERFOOTER"] > 0
         self.isSubReport = self.sql.find("PARENTKEY") != -1 or self.sql.find("PARENTARG") != -1
+        return True
 
     def _ReadHeader(self):
         """
@@ -1231,9 +1233,13 @@ class Report:
         Return value is the HTML output of the report.
         """
         self.user = username
-        if reportId != 0: self._ReadReport(reportId)
         self.params = params
         self.output = ""
+
+        # Attempt to read our report if an ID was specified
+        if reportId != 0: 
+            if not self._ReadReport(reportId):
+                raise utils.ASMValidationError("Report %s does not exist." % reportId)
 
         # Substitute our parameters in the SQL
         self._SubstituteSQLParameters(params)
@@ -1257,9 +1263,13 @@ class Report:
         the query results and column order.
         """
         self.user = username
-        if reportId != 0: self._ReadReport(reportId)
         self.params = params
         self.output = ""
+
+        # Attempt to read our report if an ID was specified
+        if reportId != 0: 
+            if not self._ReadReport(reportId):
+                raise utils.ASMValidationError("Report %s does not exist." % reportId)
 
         # Substitute our parameters in the SQL
         self._SubstituteSQLParameters(params)
