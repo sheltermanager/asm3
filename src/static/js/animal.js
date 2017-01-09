@@ -1220,8 +1220,9 @@ $(function() {
                 animal.update_breed_list();
             });
 
-            // Changing the location updates the unit autocomplete
-            $('#location').change(function() {
+            // Changing the location updates the unit autocomplete and clears the unit
+            $("#location").change(function() {
+                $("#unit").val("");
                 animal.update_units();
             });
 
