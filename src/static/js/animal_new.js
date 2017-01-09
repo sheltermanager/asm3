@@ -24,6 +24,14 @@ $(function() {
                 '"' + html.title(_("This animal should not be shown in figures and is not in the custody of the shelter")) + '"',
                 ' data="nonshelter" id="nonshelter" /><label for="nonshelter">' + _("Non-Shelter") + '</label></td>',
                 '</tr>',
+                '<tr id="transferinrow">',
+                '<td></td>',
+                '<td>',
+                '<input class="asm-checkbox" type="checkbox" id="transferin" data-json="ISTRANSFER" data-post="transferin" title=',
+                '"' + html.title(_("This animal was transferred from another shelter")) + '" />',
+                '<label for="transferin">' + _("Transfer In") + '</label>',
+                '</td>',
+                '</tr>',
                 '<tr id="holdrow">',
                 '<td></td>',
                 '<td>',
@@ -244,6 +252,10 @@ $(function() {
                 html.list_to_options(controller.entryreasons, "ID", "REASONNAME"),
                 '</select></td>',
                 '</tr>',
+                '<tr id="feerow">',
+                '<td><label for="fee">' + _("Adoption Fee") + '</label></td>',
+                '<td><input id="fee" data-json="FEE" data-post="fee" class="asm-currencybox asm-textbox" value="0" /></td>',
+                '</tr>',
                 '<tr id="originalownerrow">',
                 '<td><label for="originalowner">' + _("Original Owner") + '</label></td>',
                 '<td>',
@@ -356,20 +368,33 @@ $(function() {
                     animal_new.set_nonsheltertype_once = true;
                     $("#animaltype").select("value", config.integer("AFNonShelterType")); 
                 }
-                $("#holdrow, #locationrow, #locationunitrow, #fostererrow, #coordinatorrow, #litterrow, #entryreasonrow, #broughtinbyrow, #originalownerrow").fadeOut();
+                $("#holdrow, #locationrow, #locationunitrow, #fostererrow, #coordinatorrow, #litterrow, #entryreasonrow, #broughtinbyrow, #originalownerrow, #feerow, #transferinrow").fadeOut();
             }
             else {
                 $("#nsownerrow").fadeOut();
                 if (config.bool("AddAnimalsShowAcceptance")) { $("#litterrow").fadeIn(); }
+                if (config.bool("AddAnimalsShowTransferIn")) { $("#transferinrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowBroughtInBy")) { $("#broughtinbyrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowOriginalOwner")) { $("#originalownerrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowEntryCategory")) { $("#entryreasonrow").fadeIn(); }
+                if (config.bool("AddAnimalsShowFee")) { $("#feerow").fadeIn(); }
                 if (config.bool("AddAnimalsShowFosterer")) { $("#fostererrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowCoordinator")) { $("#coordinatorrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowHold")) { $("#holdrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowLocation")) { $("#locationrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowLocationUnit")) { $("#locationunitrow").fadeIn(); }
             }
+
+            // If transfer in is available and ticked, changed the broughtinby label
+            if (config.bool("AddAnimalsShowTransferIn") && $("#transferin").is(":checked")) { 
+                $("label[for='broughtinby']").html(_("Transferred From")); 
+                $("#broughtinby").personchooser("set_filter", "shelter");
+            }
+            else { 
+                $("label[for='broughtinby']").html(_("Brought In By")); 
+                $("#broughtinby").personchooser("set_filter", "all");
+            }
+
     
         },
 
@@ -427,6 +452,10 @@ $(function() {
             $(".asm-checkbox").prop("checked", false).change();
             $(".asm-personchooser").personchooser("clear");
 
+            // Set brought in by label back to non-transfer
+            $("label[for='broughtinby']").html(_("Brought In By")); 
+            $("#broughtinby").personchooser("set_filter", "all");
+
             // Set estimated age
             $("#estimatedage").val("");
             if (config.str("DefaultAnimalAge") != "0") {
@@ -453,6 +482,9 @@ $(function() {
             if (config.bool("AddAnimalsShowTimeBroughtIn")) {
                 $("#timebroughtin").val(format.time(new Date()));
             }
+
+            // Currency defaults
+            $("#fee").currency("value", 0);
         },
 
         validation: function() {
@@ -553,6 +585,7 @@ $(function() {
             if (!config.bool("AddAnimalsShowColour")) { $("#colourrow").hide(); }
             if (!config.bool("AddAnimalsShowDateBroughtIn")) { $("#datebroughtinrow").hide(); }
             if (!config.bool("AddAnimalsShowEntryCategory")) { $("#entryreasonrow").hide(); }
+            if (!config.bool("AddAnimalsShowFee")) { $("#feerow").hide(); }
             if (!config.bool("AddAnimalsShowFosterer")) { $("#fostererrow").hide(); }
             if (!config.bool("AddAnimalsShowHold")) { $("#holdrow").hide(); }
             if (!config.bool("AddAnimalsShowLocation")) { $("#locationrow").hide(); }
@@ -562,6 +595,7 @@ $(function() {
             if (!config.bool("AddAnimalsShowSize")) { $("#sizerow").hide(); }
             if (!config.bool("AddAnimalsShowTattoo")) { $("#tattoorow").hide(); }
             if (!config.bool("AddAnimalsShowTimeBroughtIn")) { $("#timebroughtinrow").hide(); }
+            if (!config.bool("AddAnimalsShowTransferIn")) { $("#transferinrow").hide(); }
             if (!config.bool("AddAnimalsShowWeight")) { $("#kilosrow, #poundsrow").hide(); }
             if (config.bool("UseSingleBreedField")) {
                 $("#crossbreedcol").hide();
@@ -614,6 +648,7 @@ $(function() {
             $("#internallocation").change(animal_new.update_units);
             $("#crossbreed").change(animal_new.enable_widgets);
             $("#nonshelter").change(animal_new.enable_widgets);
+            $("#transferin").change(animal_new.enable_widgets);
             $("#hold").change(animal_new.enable_widgets);
             animal_new.enable_widgets();
 

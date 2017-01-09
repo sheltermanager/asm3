@@ -98,6 +98,8 @@ choose some extra fields for the new animal screen.
 
 * Show the color field: Allow entry of a specific colour
 
+* Show the adoption fee field: Allow entry of an adoption fee
+
 * Show the internal location field: Allow entry of an internal location 
 
 * Show the location unit field: Allow a cage/pen/kennel/hutch number to be set
@@ -123,6 +125,8 @@ choose some extra fields for the new animal screen.
 * Show the original owner field: Allow original owner to be set
 
 * Show the brought in by field: Allow brought in by to be set
+
+* Show the transfer in field: Allow incoming transfers to be set
 
 * Show the hold fields: Allow hold and hold until date to be set
 

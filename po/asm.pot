@@ -696,7 +696,7 @@ msgstr ""
 msgid "Adoption Coordinator"
 msgstr ""
 
-#: animal.js animal_bulk.js dbupdate.py
+#: animal_new.js animal.js animal_bulk.js dbupdate.py
 msgid "Adoption Fee"
 msgstr ""
 
@@ -9584,6 +9584,10 @@ msgid "Show short shelter codes on screens"
 msgstr ""
 
 #: options.js
+msgid "Show the adoption fee field"
+msgstr ""
+
+#: options.js
 msgid "Show the altered fields"
 msgstr ""
 
@@ -9645,6 +9649,10 @@ msgstr ""
 
 #: options.js
 msgid "Show the time brought in field"
+msgstr ""
+
+#: options.js
+msgid "Show the transfer in field"
 msgstr ""
 
 #: options.js
@@ -10849,7 +10857,7 @@ msgstr ""
 msgid "This animal was picked up"
 msgstr ""
 
-#: animal.js
+#: animal_new.js animal.js
 msgid "This animal was transferred from another shelter"
 msgstr ""
 
@@ -11257,7 +11265,7 @@ msgstr ""
 msgid "Transfer"
 msgstr ""
 
-#: animal.js
+#: animal_new.js animal.js
 msgid "Transfer In"
 msgstr ""
 
@@ -11289,7 +11297,7 @@ msgstr ""
 msgid "Transferred"
 msgstr ""
 
-#: animal.js
+#: animal_new.js animal.js
 msgid "Transferred From"
 msgstr ""
 

@@ -1929,7 +1929,7 @@ def insert_animal_from_form(dbo, post, username):
         ( "ReasonNO", db.ds("")),
         ( "ReasonForEntry", t("reasonforentry")),
         ( "EntryReasonID", s("entryreason")),
-        ( "IsTransfer", db.di(0)),
+        ( "IsTransfer", c("transferin")),
         ( "IsPickup", c("pickedup")),
         ( "PickupLocationID", s("pickuplocation")),
         ( "PickupAddress", t("pickupaddress")),
