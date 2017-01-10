@@ -1041,7 +1041,7 @@ $(function() {
                         $(this).select("value", config.str(d));
                     }
                     else if ($(this).is("textarea")) {
-                        $(this).val(config.str(d));
+                        $(this).val(html.decode(config.str(d)));
                     }
                 }
             });

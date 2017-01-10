@@ -1,6 +1,7 @@
 40
 ================
 
+10/01/17 Fix unicode bug in display of publishing options #96
 09/01/17 Changing internal location does not clear unit #90
 09/01/17 MySQLdb requires UTF-8 for escape_string rather than unicode #94
 09/01/17 Allow transfer in and adoption fee to show on add new animal #106, #109

@@ -587,7 +587,7 @@ def ds(s, sanitise_xss = True):
     else:
         s = utils.decode_html(s)            # Turn HTML entities into unicode symbols
         s = escape(s)                       # DB/SQL Injection safe
-        #if sanitise_xss: s = escape_xss(s)  # XSS
+        if sanitise_xss: s = escape_xss(s)  # XSS
         return u"'%s'" % s
 
 def df(f):
