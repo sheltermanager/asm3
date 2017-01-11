@@ -4272,7 +4272,7 @@ def update_animal_figures_annual(dbo, year = 0):
         type_line("SELECT a.DeceasedDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
             "a.AnimalTypeID = %d AND a.DeceasedDate >= %s AND a.DeceasedDate <= %s " \
-            "a.DiedOffShelter = 0 AND AND a.PutToSleep = 0 AND a.IsDOA = 1 AND a.NonShelterAnimal = 0 " \
+            "AND a.DiedOffShelter = 0 AND AND a.PutToSleep = 0 AND a.IsDOA = 1 AND a.NonShelterAnimal = 0 " \
             "GROUP BY a.DeceasedDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear),
             at["ID"], at["ANIMALTYPE"], "AT_DOA", group, 80, at["SHOWSPLIT"], babymonths)
 
@@ -4401,7 +4401,7 @@ def update_animal_figures_annual(dbo, year = 0):
         entryreason_line("SELECT a.DeceasedDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
             "a.EntryReasonID = %d AND a.DeceasedDate >= %s AND a.DeceasedDate <= %s " \
-            "a.DiedOffShelter = 0 AND AND a.PutToSleep = 1 AND a.IsDOA = 0 AND a.NonShelterAnimal = 0 " \
+            "AND a.DiedOffShelter = 0 AND AND a.PutToSleep = 1 AND a.IsDOA = 0 AND a.NonShelterAnimal = 0 " \
             "GROUP BY a.DeceasedDate, a.DateOfBirth" % (int(er["ID"]), firstofyear, lastofyear),
             er["ID"], er["REASONNAME"], "ER_EUTHANIZED", group, 60, er["SHOWSPLIT"], babymonths)
 
@@ -4410,7 +4410,7 @@ def update_animal_figures_annual(dbo, year = 0):
         entryreason_line("SELECT a.DeceasedDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
             "a.EntryReasonID = %d AND a.DeceasedDate >= %s AND a.DeceasedDate <= %s " \
-            "a.DiedOffShelter = 0 AND AND a.PutToSleep = 0 AND a.IsDOA = 0 AND a.NonShelterAnimal = 0 " \
+            "AND a.DiedOffShelter = 0 AND AND a.PutToSleep = 0 AND a.IsDOA = 0 AND a.NonShelterAnimal = 0 " \
             "GROUP BY a.DeceasedDate, a.DateOfBirth" % (int(er["ID"]), firstofyear, lastofyear),
             er["ID"], er["REASONNAME"], "ER_DIED", group, 70, er["SHOWSPLIT"], babymonths)
 
@@ -4419,7 +4419,7 @@ def update_animal_figures_annual(dbo, year = 0):
         entryreason_line("SELECT a.DeceasedDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
             "a.EntryReasonID = %d AND a.DeceasedDate >= %s AND a.DeceasedDate <= %s " \
-            "a.DiedOffShelter = 0 AND AND a.PutToSleep = 0 AND a.IsDOA = 1 AND a.NonShelterAnimal = 0 " \
+            "AND a.DiedOffShelter = 0 AND AND a.PutToSleep = 0 AND a.IsDOA = 1 AND a.NonShelterAnimal = 0 " \
             "GROUP BY a.DeceasedDate, a.DateOfBirth" % (int(er["ID"]), firstofyear, lastofyear),
             er["ID"], er["REASONNAME"], "ER_DOA", group, 80, er["SHOWSPLIT"], babymonths)
 
