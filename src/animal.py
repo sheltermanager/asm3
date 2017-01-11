@@ -4263,7 +4263,7 @@ def update_animal_figures_annual(dbo, year = 0):
         type_line("SELECT a.DeceasedDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
             "a.AnimalTypeID = %d AND a.DeceasedDate >= %s AND a.DeceasedDate <= %s " \
-            "a.DiedOffShelter = 0 AND AND a.PutToSleep = 0 AND a.IsDOA = 0 AND a.NonShelterAnimal = 0 " \
+            "AND a.DiedOffShelter = 0 AND AND a.PutToSleep = 0 AND a.IsDOA = 0 AND a.NonShelterAnimal = 0 " \
             "GROUP BY a.DeceasedDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear),
             at["ID"], at["ANIMALTYPE"], "AT_DIED", group, 70, at["SHOWSPLIT"], babymonths)
 
