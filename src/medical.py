@@ -181,7 +181,7 @@ def get_vaccination_query(dbo):
         "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
         "INNER JOIN animalvaccination av ON a.ID = av.AnimalID " \
         "LEFT OUTER JOIN owner adv ON adv.ID = av.AdministeringVetID " \
-        "INNER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID " \
+        "LEFT OUTER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation "
 
 def get_vaccinations(dbo, animalid, onlygiven = False, sort = ASCENDING_REQUIRED):
