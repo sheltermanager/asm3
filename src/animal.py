@@ -4052,6 +4052,7 @@ def update_animal_figures_annual(dbo, year = 0):
     showbabies = configuration.annual_figures_show_babies(dbo)
     showbabiestype = configuration.annual_figures_show_babies_type(dbo)
     babymonths = configuration.annual_figures_baby_months(dbo)
+    splitadoptions = configuration.annual_figures_split_adoptions(dbo)
 
     # Species =====================================
     allspecies = lookups.get_species(dbo)
@@ -4095,11 +4096,12 @@ def update_animal_figures_annual(dbo, year = 0):
 
     group = _("Adoptions {0}", l).format(year)
     for sp in allspecies:
+        adoptionsplittransferclause = splitadoptions and "AND IsTransfer = 0 " or ""
         species_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
             "a.SpeciesID = %d AND ad.MovementDate >= %s AND ad.MovementDate <= %s " \
-            "AND a.IsTransfer = 0 AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
-            "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear, movement.ADOPTION),
+            "%sAND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
+            "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear, adoptionsplittransferclause, movement.ADOPTION),
             sp["ID"], sp["SPECIESNAME"], "SP_ADOPTED", group, 50, showbabies, babymonths)
 
     group = _("Euthanized {0}", l).format(year)
@@ -4183,14 +4185,15 @@ def update_animal_figures_annual(dbo, year = 0):
             "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
             sp["ID"], sp["SPECIESNAME"], "SP_TRANSFERIN", group, 140, showbabies, babymonths)
 
-    group = _("Adopted Transferred In {0}", l).format(year)
-    for sp in allspecies:
-        species_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
-            "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
-            "a.SpeciesID = %d AND ad.MovementDate >= %s AND ad.MovementDate <= %s " \
-            "AND a.IsTransfer = 1 AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
-            "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear, movement.ADOPTION),
-            sp["ID"], sp["SPECIESNAME"], "SP_TRANSFERINADOPTED", group, 150, showbabies, babymonths)
+    if splitadoptions:
+        group = _("Adopted Transferred In {0}", l).format(year)
+        for sp in allspecies:
+            species_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
+                "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
+                "a.SpeciesID = %d AND ad.MovementDate >= %s AND ad.MovementDate <= %s " \
+                "AND a.IsTransfer = 1 AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
+                "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear, movement.ADOPTION),
+                sp["ID"], sp["SPECIESNAME"], "SP_TRANSFERINADOPTED", group, 150, showbabies, babymonths)
 
     # Types =====================================
     alltypes = lookups.get_animal_types(dbo)
@@ -4242,11 +4245,12 @@ def update_animal_figures_annual(dbo, year = 0):
 
     group = _("Adoptions {0}", l).format(year)
     for at in alltypes:
+        adoptionsplittransferclause = splitadoptions and "AND IsTransfer = 0 " or ""
         type_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
             "a.AnimalTypeID = %d AND ad.MovementDate >= %s AND ad.MovementDate <= %s " \
-            "AND a.IsTransfer = 0 AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
-            "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear, movement.ADOPTION),
+            "%sAND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
+            "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear, adoptionsplittransferclause, movement.ADOPTION),
             at["ID"], at["ANIMALTYPE"], "AT_ADOPTED", group, 50, at["SHOWSPLIT"], babymonths)
 
     group = _("Euthanized {0}", l).format(year)
@@ -4330,14 +4334,15 @@ def update_animal_figures_annual(dbo, year = 0):
             "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear),
             at["ID"], at["ANIMALTYPE"], "AT_TRANSFERIN", group, 140, at["SHOWSPLIT"], babymonths)
 
-    group = _("Adopted Transferred In {0}", l).format(year)
-    for at in alltypes:
-        type_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
-            "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
-            "a.AnimalTypeID = %d AND ad.MovementDate >= %s AND ad.MovementDate <= %s " \
-            "AND a.IsTransfer = 1 AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
-            "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear, movement.ADOPTION),
-            at["ID"], at["ANIMALTYPE"], "AT_TRANSFERINADOPTED", group, 150, at["SHOWSPLIT"], babymonths)
+    if splitadoptions:
+        group = _("Adopted Transferred In {0}", l).format(year)
+        for at in alltypes:
+            type_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
+                "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
+                "a.AnimalTypeID = %d AND ad.MovementDate >= %s AND ad.MovementDate <= %s " \
+                "AND a.IsTransfer = 1 AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
+                "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear, movement.ADOPTION),
+                at["ID"], at["ANIMALTYPE"], "AT_TRANSFERINADOPTED", group, 150, at["SHOWSPLIT"], babymonths)
 
     # Entry Reasons =====================================
     allreasons = lookups.get_entryreasons(dbo)
@@ -4389,11 +4394,12 @@ def update_animal_figures_annual(dbo, year = 0):
 
     group = _("Adoptions {0}", l).format(year)
     for er in allreasons:
+        adoptionsplittransferclause = splitadoptions and "AND IsTransfer = 0 " or ""
         entryreason_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
             "a.EntryReasonID = %d AND ad.MovementDate >= %s AND ad.MovementDate <= %s " \
-            "AND a.IsTransfer = 0 AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
-            "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(er["ID"]), firstofyear, lastofyear, movement.ADOPTION),
+            "%sAND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
+            "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(er["ID"]), firstofyear, lastofyear, adoptionsplittransferclause, movement.ADOPTION),
             er["ID"], er["REASONNAME"], "ER_ADOPTED", group, 50, er["SHOWSPLIT"], babymonths)
 
     group = _("Euthanized {0}", l).format(year)
@@ -4477,14 +4483,15 @@ def update_animal_figures_annual(dbo, year = 0):
             "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(er["ID"]), firstofyear, lastofyear),
             er["ID"], er["REASONNAME"], "ER_TRANSFERIN", group, 140, er["SHOWSPLIT"], babymonths)
 
-    group = _("Adopted Transferred In {0}", l).format(year)
-    for er in allreasons:
-        entryreason_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
-            "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
-            "a.EntryReasonID = %d AND ad.MovementDate >= %s AND ad.MovementDate <= %s " \
-            "AND a.IsTransfer = 1 AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
-            "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(er["ID"]), firstofyear, lastofyear, movement.ADOPTION),
-            er["ID"], er["REASONNAME"], "ER_TRANSFERINADOPTED", group, 150, er["SHOWSPLIT"], babymonths)
+    if splitadoptions:
+        group = _("Adopted Transferred In {0}", l).format(year)
+        for er in allreasons:
+            entryreason_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
+                "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
+                "a.EntryReasonID = %d AND ad.MovementDate >= %s AND ad.MovementDate <= %s " \
+                "AND a.IsTransfer = 1 AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
+                "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(er["ID"]), firstofyear, lastofyear, movement.ADOPTION),
+                er["ID"], er["REASONNAME"], "ER_TRANSFERINADOPTED", group, 150, er["SHOWSPLIT"], babymonths)
 
     # Write out all our changes in one go
     update_db(year)

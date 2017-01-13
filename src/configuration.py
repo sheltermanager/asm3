@@ -101,6 +101,7 @@ DEFAULTS = {
     "AnnualFiguresShowBabies": "Yes",
     "AnnualFiguresShowBabiesType": "Yes",
     "AnnualFiguresBabyMonths" : "6",
+    "AnnualFiguresSplitAdoptions": "Yes",
     "AutoCancelReservesDays": "14",
     "AutoDefaultShelterCode": "Yes",
     "AutoInsuranceStart": "0",
@@ -469,6 +470,9 @@ def annual_figures_show_babies_type(dbo):
 
 def annual_figures_baby_months(dbo):
     return cint(dbo, "AnnualFiguresBabyMonths", int(DEFAULTS["AnnualFiguresBabyMonths"]))
+
+def annual_figures_split_adoptions(dbo):
+    return cboolean(dbo, "AnnualFiguresSplitAdoptions", DEFAULTS["AnnualFiguresSplitAdoptions"] == "Yes")
 
 def auto_cancel_reserves_days(dbo):
     return cint(dbo, "AutoCancelReservesDays", int(DEFAULTS["AutoCancelReservesDays"]))
