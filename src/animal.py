@@ -1262,7 +1262,7 @@ def calc_shelter_code(dbo, animaltypeid, entryreasonid, speciesid, datebroughtin
 
 def get_latest_movement(dbo, animalid):
     """
-    Returns the latest movement for an animal. The return
+    Returns the latest current movement for an animal. The return
     value is a resultset of the movement itself or None
     if the animal has no movements.
     """
@@ -1276,9 +1276,9 @@ def get_latest_movement(dbo, animalid):
         "mt.MovementType AS MovementTypeName FROM adoption ad " \
         "INNER JOIN lksmovementtype mt ON mt.ID = ad.MovementType " \
         "LEFT OUTER JOIN owner o ON o.ID = ad.OwnerID " \
-        "WHERE ad.AnimalID = %d AND ad.MovementDate Is Not Null AND " \
+        "WHERE ad.AnimalID = %d AND ad.MovementDate Is Not Null AND MovementDate <= %s AND " \
         "(ad.ReturnDate Is Null OR ad.ReturnDate > %s) " \
-        "ORDER BY ad.MovementDate DESC" % (animalid, db.dd(now(dbo.timezone))))
+        "ORDER BY ad.MovementDate DESC" % (animalid, db.dd(now(dbo.timezone)), db.dd(now(dbo.timezone))))
 
     # If we don't have any movements, use the latest reservation
     if len(move) == 0: 

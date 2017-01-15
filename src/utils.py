@@ -994,7 +994,6 @@ def send_user_email(dbo, sendinguser, user, subject, body):
 def html_to_pdf(htmldata, baseurl = "", account = ""):
     """
     Converts HTML content to PDF and returns the PDF file data.
-    Uses pisa for the conversion.
     """
     # Allow orientation and papersize to be set
     # with directives in the document source - eg: <!-- pdf orientation landscape, pdf papersize letter -->
@@ -1036,7 +1035,10 @@ def html_to_pdf(htmldata, baseurl = "", account = ""):
     inputfile.close()
     outputfile.close()
     cmdline = HTML_TO_PDF % { "output": outputfile.name, "input": inputfile.name, "orientation": orientation, "papersize": papersize }
-    code, output = cmd(cmdline)
+    code, output = cmd(cmdline, shell=True)
+    if code > 0:
+        al.error("code %s returned from PDF conversion: %s" % (code, output), "utils.html_to_pdf")
+        return "ERROR"
     f = open(outputfile.name, "r")
     pdfdata = f.read()
     f.close()
