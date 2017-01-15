@@ -1035,7 +1035,7 @@ def html_to_pdf(htmldata, baseurl = "", account = ""):
     inputfile.close()
     outputfile.close()
     cmdline = HTML_TO_PDF % { "output": outputfile.name, "input": inputfile.name, "orientation": orientation, "papersize": papersize }
-    code, output = cmd(cmdline, shell=True)
+    code, output = cmd(cmdline)
     if code > 0:
         al.error("code %s returned from '%s': %s" % (code, cmdline, output), "utils.html_to_pdf")
         return "ERROR"
