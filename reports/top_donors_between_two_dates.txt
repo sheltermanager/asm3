@@ -38,4 +38,46 @@ BODY$$
 $$FOOTER
 </table>
 FOOTER$$
+&&&
+Top Donors between two dates (for type)
+###
+Financial
+###
+33712/Any
+###
+A list of people in descending order of who donated the most of a particular type for a period
+###
+en
+###
+$VAR tp DONATIONTYPE$
+$VAR from DATE Donations received between$
+$VAR to DATE and$
+$VAR cutoff NUMBER Do not show total donations below (0 for all)$
+
+SELECT o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, SUM(od.Donation) AS MoneyTotal
+FROM ownerdonation od
+INNER JOIN owner o ON od.OwnerID = o.ID 
+WHERE od.Date >= '$@from$' AND od.Date <= '$@to$' AND od.DonationTypeID = $@tp$
+GROUP BY o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode
+HAVING SUM(od.Donation) > $@cutoff$ * 100
+ORDER BY SUM(od.Donation) DESC
+###
+$$HEADER
+<table border=1>
+<tr>
+<th><b>Donor</b></th>
+<th><b>Total Donations</b></th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$ownername, $owneraddress, $ownertown, $ownercounty, $ownerpostcode</td>
+<td>$moneytotal</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
 
