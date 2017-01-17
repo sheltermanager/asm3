@@ -779,6 +779,7 @@ def create_person(dbo, username, collationid):
     for f in fields:
         if flags is None: flags = f["FLAGS"]
         if f["FIELDNAME"] == "title": d["title"] = f["VALUE"]
+        if f["FIELDNAME"] == "initials": d["initials"] = f["VALUE"]
         if f["FIELDNAME"] == "forenames": d["forenames"] = f["VALUE"]
         if f["FIELDNAME"] == "firstname": d["forenames"] = f["VALUE"]
         if f["FIELDNAME"] == "surname": d["surname"] = f["VALUE"]
