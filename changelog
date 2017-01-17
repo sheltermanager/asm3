@@ -1,6 +1,7 @@
 40
 ================
 
+17/01/17 Format stock unit price/cost correctly, show value
 15/01/17 get_latest_movement should not return future movements #115
 15/01/17 Record errors during html_to_pdf
 13/01/17 Config to have annual figures not split adoptions by transferin

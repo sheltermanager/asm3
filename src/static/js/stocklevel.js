@@ -84,8 +84,14 @@ $(function() {
                     { field: "UNITNAME", display: _("Unit") },
                     { field: "TOTAL", display: _("Total") },
                     { field: "BALANCE", display: _("Balance") },
-                    { field: "COST", display: _("Cost") },
-                    { field: "UNITPRICE", display: _("Unit Price") },
+                    { field: "COST", display: _("Cost"), formatter: tableform.format_currency },
+                    { field: "UNITPRICE", display: _("Unit Price"), formatter: tableform.format_currency },
+                    { field: "VALUE", display: _("Value"), formatter: function(row) {
+                            if (row.UNITPRICE && row.BALANCE) {
+                                return format.currency(row.UNITPRICE * row.BALANCE);
+                            }
+                            return "";
+                        }},
                     { field: "BATCHNUMBER", display: _("Batch") },
                     { field: "EXPIRY", display: _("Expiry"), formatter: tableform.format_date, initialsort: controller.sortexp == 1 }
                 ]
