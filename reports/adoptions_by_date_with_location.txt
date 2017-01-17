@@ -63,6 +63,7 @@ $$FOOT
 </table>
 <p>Total adoptions from $LocationName: {COUNT.SHELTERCODE}</p>
 </table>
+GROUP$$
 
 $$BODY<tr>
 <td>$SHELTERCODE</td>
