@@ -144,7 +144,7 @@ def get_town_to_county(dbo):
     if rows is None: return []
     tc = []
     for r in rows:
-        tc.append(str(r["OWNERTOWN"]) + "^^" + str(r["OWNERCOUNTY"]))
+        tc.append("%s^^%s" % (r["OWNERTOWN"], r["OWNERCOUNTY"]))
     return tc
 
 def get_counties(dbo):
@@ -155,7 +155,7 @@ def get_counties(dbo):
     if rows is None: return []
     counties = []
     for r in rows:
-        counties.append(str(r["OWNERCOUNTY"]))
+        counties.append("%s" % r["OWNERCOUNTY"])
     return counties
 
 def get_satellite_counts(dbo, personid):
