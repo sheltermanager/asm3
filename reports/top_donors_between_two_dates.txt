@@ -12,11 +12,11 @@ $VAR from DATE Donations received between$
 $VAR to DATE and$
 $VAR cutoff NUMBER Do not show total donations below (0 for all)$
 
-SELECT o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, SUM(od.Donation) AS MoneyTotal
+SELECT o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.EmailAddress, SUM(od.Donation) AS MoneyTotal
 FROM ownerdonation od
 INNER JOIN owner o ON od.OwnerID = o.ID 
 WHERE od.Date >= '$@from$' AND od.Date <= '$@to$' 
-GROUP BY o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode
+GROUP BY o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.EmailAddress
 HAVING SUM(od.Donation) > $@cutoff$ * 100
 ORDER BY SUM(od.Donation) DESC
 ###
@@ -30,7 +30,7 @@ HEADER$$
 
 $$BODY
 <tr>
-<td>$ownername, $owneraddress, $ownertown, $ownercounty, $ownerpostcode</td>
+<td>$ownername, $owneraddress, $ownertown, $ownercounty, $ownerpostcode<br/>$emailaddress</td>
 <td>$moneytotal</td>
 </tr>
 BODY$$
@@ -54,11 +54,11 @@ $VAR from DATE Donations received between$
 $VAR to DATE and$
 $VAR cutoff NUMBER Do not show total donations below (0 for all)$
 
-SELECT o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, SUM(od.Donation) AS MoneyTotal
+SELECT o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.EmailAddress, SUM(od.Donation) AS MoneyTotal
 FROM ownerdonation od
 INNER JOIN owner o ON od.OwnerID = o.ID 
 WHERE od.Date >= '$@from$' AND od.Date <= '$@to$' AND od.DonationTypeID = $@tp$
-GROUP BY o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode
+GROUP BY o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.EmailAddress
 HAVING SUM(od.Donation) > $@cutoff$ * 100
 ORDER BY SUM(od.Donation) DESC
 ###
@@ -72,7 +72,7 @@ HEADER$$
 
 $$BODY
 <tr>
-<td>$ownername, $owneraddress, $ownertown, $ownercounty, $ownerpostcode</td>
+<td>$ownername, $owneraddress, $ownertown, $ownercounty, $ownerpostcode<br/>$emailaddress</td>
 <td>$moneytotal</td>
 </tr>
 BODY$$
