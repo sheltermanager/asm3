@@ -11,17 +11,17 @@ import threading
 import time
 import utils
 from lookups import LOCALE_COUNTRY_NAME_MAP
-from sitedefs import BULK_GEO_PROVIDER, BULK_GEO_NOMINATIM_URL, BULK_GEO_GOOGLE_URL, BULK_GEO_LOOKUP_TIMEOUT, BULK_GEO_SLEEP_AFTER
+from sitedefs import BULK_GEO_PROVIDER, BULK_GEO_PROVIDER_KEY, BULK_GEO_NOMINATIM_URL, BULK_GEO_GOOGLE_URL, BULK_GEO_LOOKUP_TIMEOUT, BULK_GEO_SLEEP_AFTER
 
 lat_long_lock = threading.Lock()
 
 def get_lat_long(dbo, address, town, county, postcode, country = None):
     """
     Looks up a latitude and longitude from an address using GEOCODE_URL
-    and returns them as lat,long,(first 3 chars of address)
+    and returns them as lat,long,hash
     Returns None if no results were found.
-    NB: dbo is only used for contextual reference in logging, no database
-        calls are made by any of this code.
+    NB: dbo is only used for contextual reference in logging and obtaining locale, 
+        no database calls are made by any of this code.
     """
 
     if address.strip() == "":
@@ -29,20 +29,23 @@ def get_lat_long(dbo, address, town, county, postcode, country = None):
 
     try:
         # Synchronise this process to a single thread to prevent
-        # abusing our geo provider and concurrent requests for the
-        # same address when opening an animal with the same
-        # original/brought in by owner, etc.
+        # abusing our geo provider
         lat_long_lock.acquire()
 
         url = ""
+        h = address_hash(address, town, county, postcode)
+
         if country is None: 
             country = LOCALE_COUNTRY_NAME_MAP[dbo.locale]
+
         if BULK_GEO_PROVIDER == "nominatim":
             q = normalise_nominatim(address, town, county, postcode, country)
             url = BULK_GEO_NOMINATIM_URL.replace("{q}", q)
         elif BULK_GEO_PROVIDER == "google":
             q = normalise_google(address, town, county, postcode, country)
             url = BULK_GEO_GOOGLE_URL.replace("{q}", q)
+            if BULK_GEO_PROVIDER_KEY != "": 
+                url += "&key=%s" % BULK_GEO_PROVIDER_KEY
         else:
             al.error("unrecognised geo provider: %s" % BULK_GEO_PROVIDER, "geo.get_lat_long", dbo)
 
@@ -59,9 +62,9 @@ def get_lat_long(dbo, address, town, county, postcode, country = None):
 
         latlon = None
         if BULK_GEO_PROVIDER == "nominatim":
-            latlon = parse_nominatim(dbo, jr, j, q)
+            latlon = parse_nominatim(dbo, jr, j, q, h)
         elif BULK_GEO_PROVIDER == "google":
-            latlon = parse_google(dbo, jr, j, q)
+            latlon = parse_google(dbo, jr, j, q, h)
 
         if BULK_GEO_SLEEP_AFTER > 0:
             time.sleep(BULK_GEO_SLEEP_AFTER)
@@ -76,25 +79,31 @@ def get_lat_long(dbo, address, town, county, postcode, country = None):
     finally:
         lat_long_lock.release()
 
-def parse_nominatim(dbo, jr, j, q):
+def address_hash(address, town, city, postcode):
+    addrhash = "%s%s%s%s" % (address, town, city, postcode)
+    addrhash = addrhash.replace(" ", "").replace(",", "").replace("\n", "");
+    if len(addrhash) > 220: addrhash = addrhash[0:220]
+    return addrhash
+
+def parse_nominatim(dbo, jr, j, q, h):
     if len(j) == 0:
         al.debug("no response from nominatim for %s (response %s)" % (q, str(jr)), "geo.parse_nominatim", dbo)
         return None
     try:
-        latlon = "%s,%s,%s" % (str(utils.strip_non_ascii(j[0]["lat"])), str(utils.strip_non_ascii(j[0]["lon"])), "na")
+        latlon = "%s,%s,%s" % (str(utils.strip_non_ascii(j[0]["lat"])), str(utils.strip_non_ascii(j[0]["lon"])), h)
         al.debug("contacted nominatim to get geocode for %s = %s" % (q, latlon), "geo.parse_nominatim", dbo)
         return latlon
     except Exception,err:
         al.error("couldn't find geocode in nominatim response: %s, %s" % (str(err), jr), "geo.parse_nominatim", dbo)
         return None
     
-def parse_google(dbo, jr, j, q):
+def parse_google(dbo, jr, j, q, h):
     if len(j) == 0:
         al.debug("no response from google for %s (response %s)" % (q, str(jr)), "geo.parse_google", dbo)
         return None
     try:
         loc = j["results"][0]["geometry"]["location"]
-        latlon = "%s,%s,%s" % (str(loc["lat"]), str(loc["lng"]), "na")
+        latlon = "%s,%s,%s" % (str(loc["lat"]), str(loc["lng"]), h)
         al.debug("contacted google to get geocode for %s = %s" % (q, latlon), "geo.parse_google", dbo)
         return latlon
     except Exception,err:

@@ -163,9 +163,13 @@ OSM_MAP_TILES = "http://{s}.tile.osm.org/{z}/{x}/{y}.png" # (can be switched for
 # Bulk geocode provider for server side geocoding of
 # historical data, can be "nominatim" or "google" or "" to disable.
 BULK_GEO_PROVIDER = "nominatim"
+BULK_GEO_PROVIDER_KEY = ""
 
 # Whether or not to try and complete blank geocodes as part of the batch
 BULK_GEO_BATCH = True
+
+# How many to do in the overnight batch each time
+BULK_GEO_LIMIT = 100
 
 # URLs for public geocoding services
 BULK_GEO_NOMINATIM_URL = "http://nominatim.openstreetmap.org/search?format=json&q={q}"

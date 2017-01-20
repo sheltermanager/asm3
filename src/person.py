@@ -16,7 +16,7 @@ import reports
 import users
 import utils
 from i18n import _, add_days, date_diff_days, format_time, python2display, subtract_years, now
-from sitedefs import BULK_GEO_BATCH
+from sitedefs import BULK_GEO_BATCH, BULK_GEO_LIMIT
 
 ASCENDING = 0
 DESCENDING = 1
@@ -1291,9 +1291,8 @@ def update_missing_geocodes(dbo):
     if not BULK_GEO_BATCH:
         al.warn("BULK_GEO_BATCH is False, skipping", "update_missing_geocodes", dbo)
         return
-    LIMIT = 50
     people = db.query(dbo, "SELECT ID, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode " \
-        "FROM owner WHERE LatLong Is Null OR LatLong = '' LIMIT %d" % LIMIT)
+        "FROM owner WHERE LatLong Is Null OR LatLong = '' LIMIT %d" % BULK_GEO_LIMIT)
     batch = []
     for p in people:
         latlong = geo.get_lat_long(dbo, p["OWNERADDRESS"], p["OWNERTOWN"], p["OWNERCOUNTY"], p["OWNERPOSTCODE"])

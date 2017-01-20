@@ -7,6 +7,7 @@ import audit
 import configuration
 import db
 import dbfs
+import geo
 import i18n
 import html
 import lookups
@@ -816,6 +817,10 @@ def create_person(dbo, username, collationid):
     # Create the person record if we didn't find one
     if personid == 0:
         personid = person.insert_person_from_form(dbo, utils.PostedData(d, dbo.locale), username)
+        # Since we created a brand new person, try and get a geocode for the address if present
+        if d.has_key("address") and d.has_key("town") and d.has_key("county") and d.has_key("postcode"):
+            latlon = geo.get_lat_long(dbo, d["address"], d["town"], d["county"], d["postcode"])
+            if latlon is not None: person.update_latlong(dbo, personid, latlon)
     personname = person.get_person_name_code(dbo, personid)
     # Attach the form to the person
     formname = get_onlineformincoming_name(dbo, collationid)
