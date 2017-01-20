@@ -1733,7 +1733,7 @@ def get_units_with_availability(dbo, locationid):
     a = []
     units = db.query_string(dbo, "SELECT Units FROM internallocation WHERE ID = %d" % utils.cint(locationid)).split(",")
     animals = db.query(dbo, "SELECT a.AnimalName, a.ShortCode, a.ShelterCode, a.ShelterLocationUnit " \
-        "FROM animal a WHERE a.Archived = 0 AND ShelterLocation = %d" % utils.cint(locationid))
+        "FROM animal a WHERE a.Archived = 0 AND ActiveMovementID = 0 AND ShelterLocation = %d" % utils.cint(locationid))
     useshortcodes = configuration.use_short_shelter_codes(dbo)
     for u in units:
         if u == "": continue
