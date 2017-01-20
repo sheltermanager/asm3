@@ -24,7 +24,7 @@ asm.setid("owner", 100)
 asm.setid("adoption", 100)
 
 print "\\set ON_ERROR_STOP\nBEGIN;"
-print "DELETE FROM animal WHERE ID >= 100 AND CreatedBy = 'conversion';"
+print "DELETE FROM animal WHERE ID >= 100 AND CreatedBy LIKE '%conversion';"
 print "DELETE FROM owner WHERE ID >= 100 AND CreatedBy = 'conversion';"
 print "DELETE FROM adoption WHERE ID >= 100 AND CreatedBy = 'conversion';"
 
@@ -63,12 +63,12 @@ for d in data:
     if a.DateBroughtIn is None:
         a.DateBroughtIn = asm.today()
     a.CreatedDate = asm.getdate_mmddyyyy(d["Added On"])
-    a.CreatedBy = d["Added By"]
+    a.CreatedBy = "%s/%s" %(d["Added By"], "conversion")
     a.LastChangedDate = asm.getdate_mmddyyyy(d["Updated On"])
     a.LastChangedBy = d["Last Updated By"]
     if d["Intake Type"] == "Shelter Transfer" or d["Intake Type"] == "Rescue Transfer":
         a.IsTransfer = 1
-    a.generateCode()
+    a.ShelterCode = d["Pet ID"]
     a.ShortCode = d["Pet ID"]
     a.Markings = d["Colors or Markings"]
     a.BaseColourID = asm.colour_id_for_name(d["Colors or Markings"], True)
@@ -111,7 +111,7 @@ for d in data:
     comments += ", age: " + d["Age"]
     comments += ", temperament: " + d["Temperament"]
     a.HiddenAnimalDetails = comments
-    description = d["Description/Story"].replace("<p>", "").replace("</p>", "\n")
+    description = d["Description/Story"].replace("<p>", "").replace("\n", "").replace("</p>", "\n")
     a.AnimalComments = description
 
     if d["Status"] == "Adopted":
@@ -122,6 +122,7 @@ for d in data:
         m.MovementDate = a.DateBroughtIn
         m.Comments = description
         a.Archived = 1
+        a.ActiveMovementDate = m.MovementDate
         a.ActiveMovementID = m.ID
         a.ActiveMovementType = 1
         a.LastChangedDate = m.MovementDate
