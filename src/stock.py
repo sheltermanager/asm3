@@ -112,17 +112,15 @@ def update_stocklevel_from_form(dbo, post, username):
 
 def insert_stocklevel_from_form(dbo, post, username):
     """
-    Inserts a stocklevel item from a dialog. The post should include
-    the ID of the stocklevel to adjust and a usage record will be
-    written so usage data should be sent too.
+    Inserts a stocklevel item from a dialog.
+    A usage record will be written, so usage data should be sent too.
     """
     l = dbo.locale
-    slid = post.integer("id")
     if post["name"] == "":
         raise utils.ASMValidationError(_("Stock level must have a name", l))
     if post["unitname"] == "":
         raise utils.ASMValidationError(_("Stock level must have a unit", l))
-
+    
     nid = db.get_id(dbo, "stocklevel")
     db.execute(dbo, db.make_insert_sql("stocklevel", (
         ( "ID", db.di(nid) ),
@@ -138,7 +136,7 @@ def insert_stocklevel_from_form(dbo, post, username):
         ( "UnitPrice", post.db_integer("unitprice") ),
         ( "CreatedDate", db.todaysql() )
     )))
-    insert_stockusage(dbo, username, slid, post.floating("balance"), post.date("usagedate"), post.integer("usagetype"), post["comments"])
+    insert_stockusage(dbo, username, nid, post.floating("balance"), post.date("usagedate"), post.integer("usagetype"), post["comments"])
     audit.create(dbo, username, "stocklevel", nid, audit.dump_row(dbo, "stocklevel", nid))
     return nid
 
