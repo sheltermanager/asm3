@@ -9,7 +9,7 @@ All current stocks held, broken down by location
 en
 ###
 SELECT 
-s.Name, s.Description, sl.LocationName, s.UnitName,
+s.Name, s.Description, s.CreatedDate, sl.LocationName, s.UnitName,
 s.BatchNumber, s.Expiry, s.Balance, s.Total
 FROM stocklevel s
 INNER JOIN stocklocation sl ON s.StockLocationID = sl.ID
@@ -27,6 +27,7 @@ $$HEAD
 <th>Name</th>
 <th>Description</th>
 <th>Batch</th>
+<th>Created</th>
 <th>Expiry</th>
 <th>Total</th>
 <th>Balance</th>
@@ -41,6 +42,7 @@ $$BODY
 <td>$NAME</td>
 <td>$DESCRIPTION</td>
 <td>$BATCHNUMBER</td>
+<td>$CREATEDDATE</td>
 <td>$EXPIRY</td>
 <td>$TOTAL</td>
 <td>$BALANCE</td>
