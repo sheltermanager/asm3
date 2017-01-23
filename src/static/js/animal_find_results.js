@@ -238,7 +238,7 @@ $(function() {
             }
             else if ( name == "Fosterer" ) {
                 if (row.ACTIVEMOVEMENTTYPE == 2) {
-                    rv = '<a href="person?id=' + row.CURRENTOWNERID + '">' + row.CURRENTOWNERNAME + '</a>';
+                    rv = html.person_link(row.CURRENTOWNERID, row.CURRENTOWNERNAME);
                 }
             }
             else if ( name == "Size") { rv = row.SIZENAME; }
@@ -293,7 +293,7 @@ $(function() {
                             rv = '<a href="animal?id=' + v.VALUE + '">' + v.ANIMALNAME + '</a>';
                         }
                         else if (v.FIELDTYPE == additional.PERSON_LOOKUP) {
-                            rv = '<a href="person?id=' + v.VALUE + '">' + v.OWNERNAME + '</a>';
+                            rv = html.person_link(v.VALUE, v.OWNERNAME);
                         }
                         else {
                             rv = v.VALUE;

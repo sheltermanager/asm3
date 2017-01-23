@@ -69,13 +69,13 @@ $(function() {
                         h.push('<span class="asm-search-nonshelter">' + _("Non-Shelter Animal"));
                         if (r.ORIGINALOWNERID && r.ORIGINALOWNERID > 0) {
                             h.push(" " + html.icon("right") + " ");
-                            h.push("<a href=\"person?id=" + r.ORIGINALOWNERID + "\">" + r.ORIGINALOWNERNAME + "</a>");
+                            h.push(html.person_link(r.ORIGINALOWNERID, r.ORIGINALOWNERNAME));
                         }
                         h.push('</span>');
                     }
                     else if (r.CURRENTOWNERID != null) {
                         h.push(r.DISPLAYLOCATIONNAME);
-                        h.push(html.icon("right") + ' <a href="person?id=' + r.CURRENTOWNERID + '">' + r.CURRENTOWNERNAME + '</a>');
+                        h.push(html.icon("right") + ' ' + html.person_link(r.CURRENTOWNERID, r.CURRENTOWNERNAME));
                     }
                     else {
                         h.push(r.DISPLAYLOCATIONNAME);
@@ -111,7 +111,7 @@ $(function() {
                     h.push('<p class="asm-search-result"><span class="asm-search-name">' +
                         '<img align="right" src="' + html.thumbnail_src(r, 'personthumb') + '" class="asm-thumbnail thumbnailshadow" />' +
                         html.icon("person", _("Person")));
-                    h.push('<a href="person?id=' + r.ID + '">' + r.OWNERNAME + ' - ' + r.OWNERCODE + '</a></span> ');
+                    h.push(html.person_link(r.ID, r.OWNERNAME + ' - ' + r.OWNERCODE) + '</span> ');
                     h.push('<a href="person_diary?id=' + r.ID + '">' + html.icon("diary", _("Jump to diary")) + '</a>');
                     h.push('<a href="person_donations?id=' + r.ID + '">' + html.icon("donation", _("Jump to donations")) + '</a>');
                     h.push('<a href="person_movements?id=' + r.ID + '">' + html.icon("movement", _("Jump to movements")) + '</a>');

@@ -54,9 +54,9 @@ $(function() {
                 h.push('<td>' + common.nulltostr(r.DISPATCHPOSTCODE) + '</td>');
                 h.push('<td>' + common.nulltostr(r.LOCATIONNAME) + '</td>');
                 h.push('<td>');
-                if (r.OWNERNAME1) { h.push('<a href="person?id=' + r.OWNERID + '">' + common.nulltostr(r.OWNERNAME1) + '</a> '); }
-                if (r.OWNERNAME2) { h.push('<br/><a href="person?id=' + r.OWNER2ID + '">' + common.nulltostr(r.OWNERNAME2) + '</a> '); }
-                if (r.OWNERNAME3) { h.push('<br/><a href="person?id=' + r.OWNER3ID + '">' + common.nulltostr(r.OWNERNAME3) + '</a>'); }
+                if (r.OWNERNAME1) { h.push(html.person_link(r.OWNERID, r.OWNERNAME1)); }
+                if (r.OWNERNAME2) { h.push('<br/>' + html.person_link(r.OWNER2ID, r.OWNERNAME2)); }
+                if (r.OWNERNAME3) { h.push('<br/>' + html.person_link(r.OWNER3ID, r.OWNERNAME3)); }
                 h.push('</td>');
                 h.push('<td>' + format.date(r.DISPATCHDATETIME) + ' ' + format.time(r.DISPATCHDATETIME) + '</td>');
                 h.push('<td>' + format.date(r.RESPONDEDDATETIME) + ' ' + format.time(r.RESPONDEDDATETIME) + '</td>');

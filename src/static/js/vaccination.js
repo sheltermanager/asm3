@@ -107,7 +107,7 @@ $(function() {
                                 s += ' <span class="asm-search-locationunit">' + row.LOCATIONUNIT + '</span>';
                             }
                             if (row.ACTIVEMOVEMENTID && row.CURRENTOWNERID && row.CURRENTOWNERNAME) {
-                                s += '<br/><a href="person?id=' + row.CURRENTOWNERID + '">' + row.CURRENTOWNERNAME + '</a>';
+                                s += '<br/>' + html.person_link(row.CURRENTOWNERID, row.CURRENTOWNERNAME);
                             }
                             return s;
                         },
@@ -121,7 +121,7 @@ $(function() {
                     { field: "ADMINISTERINGVET", display: _("Vet"), 
                         formatter: function(row) {
                             if (!row.ADMINISTERINGVETID) { return ""; }
-                            return '<a href="person?id=' + row.ADMINISTERINGVETID + '">' + row.ADMINISTERINGVETNAME + '</a>';
+                            return html.person_link(row.ADMINISTERINGVETID, row.ADMINISTERINGVETNAME);
                         }
                     },
                     { field: "DATEEXPIRES", display: _("Expires"), formatter: tableform.format_date },

@@ -1379,7 +1379,7 @@
             if (a.CRUELTYCASE == 1 && p.indexOf("includecase") == -1) { return [ false, _("Cruelty Case") ]; }
             if (a.HASACTIVERESERVE == 1 && a.RESERVEDOWNERID && p.indexOf("includereserved") == -1) {
                 return [ false, _("Reserved") + " " + html.icon("right") + " " + 
-                        "<a href=\"person?id=" + a.RESERVEDOWNERID + "\">" + a.RESERVEDOWNERNAME + "</a>" ];
+                        html.person_link(a.RESERVEDOWNERID, a.RESERVEDOWNERNAME) ];
             }
             if (a.HASACTIVERESERVE == 1 && p.indexOf("includereserved") == -1) { return [ false, _("Reserved") ]; }
             if (a.ISHOLD == 1 && a.HOLDUNTILDATE && p.indexOf("includehold") == -1) { 
@@ -1759,12 +1759,17 @@
         },
 
         /**
-         * Returns a link to a person
-         * row: A row containing the ownername field
-         * ownerid: The owner ID number for the link
+         * Returns a link to a person - but only if the view person permission is set
+         * to hide their name.
+         * personid: The person ID
+         * name: The person name
          */
-        person_link: function(row, ownerid) {
-            var h = '<a href="person?id=' + ownerid + '">' + row.OWNERNAME + '</a>';
+        person_link: function(personid, name) {
+            var h = "";
+            if (!name) { name = ""; }
+            if (common.has_permission("vo")) {
+                h = '<a href="person?id=' + personid + '">' + name + '</a>';
+            }
             return h;
         },
 

@@ -169,23 +169,23 @@ $(function() {
                     { field: "PERSON", display: _("Person"),
                         formatter: function(row) {
                             if (row.OWNERID) {
-                                return html.person_link(row, row.OWNERID) +
+                                return html.person_link(row.OWNERID, row.OWNERNAME) +
                                     '<br/>' + common.nulltostr(row.OWNERADDRESS) + '<br/>' + common.nulltostr(row.OWNERTOWN) + '<br/>' + common.nulltostr(row.OWNERCOUNTY) + ' ' + common.nulltostr(row.OWNERPOSTCODE) + 
                                     '<br/>' + common.nulltostr(row.HOMETELEPHONE) + " " + common.nulltostr(row.WORKTELEPHONE) + " " + common.nulltostr(row.MOBILETELEPHONE);
                             }
                             return "";
                         },
                         hideif: function(row) {
-                            return controller.name == "move_book_transport" || controller.name == "move_book_retailer";
+                            return controller.name == "move_book_retailer";
                         }
                     },
                     { field: "RETAILER", display: _("Retailer"),
                         formatter: function(row) {
                             if (controller.name == "move_book_retailer") {
-                                return html.person_link(row, row.OWNERID);
+                                return html.person_link(row.OWNERID, row.OWNERNAME);
                             }
                             if (row.RETAILERID) {
-                                return '<a href="person?id=' + row.RETAILERID + '">' + row.RETAILERNAME + '</a>';
+                                return html.person_link(row.RETAILERID, row.RETAILERNAME);
                             }
                             return "";
                         },

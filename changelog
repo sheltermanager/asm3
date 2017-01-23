@@ -1,6 +1,7 @@
 40
 ================
 
+23/01/17 Hide person names in banners if user lacks view person perm #105
 23/01/17 Include return reason and comments in movement display #114
 23/01/17 No need to show movement number and return date for some books #122
 21/01/17 Initial stock usage records were orphaned #120

@@ -39,7 +39,7 @@ $(function() {
             }
             var currentowner = "";
             if (a.CURRENTOWNERID != null) {
-                currentowner = " <a href=\"person?id=" + a.CURRENTOWNERID + "\">" + a.CURRENTOWNERNAME + "</a>";
+                currentowner = " " + html.person_link(a.CURRENTOWNERID, a.CURRENTOWNERNAME);
             }
             var available = "";
             if (a.NONSHELTERANIMAL == 1) {
@@ -47,7 +47,7 @@ $(function() {
                 available = _("Non-Shelter Animal");
                 if (a.ORIGINALOWNERID && a.ORIGINALOWNERID > 0) {
                     available += " " + html.icon("right") + " ";
-                    available += "<a href=\"person?id=" + a.ORIGINALOWNERID + "\">" + a.ORIGINALOWNERNAME + "</a>";
+                    available += html.person_link(a.ORIGINALOWNERID, a.ORIGINALOWNERNAME);
                 }
                 available = html.info(available);
             }
@@ -100,7 +100,7 @@ $(function() {
             }
             var coordinator = "";
             if (a.ADOPTIONCOORDINATORID) {
-                coordinator = '<tr><td>' + _("Adoption Coordinator") + ':</td><td><b><a href="person?id=' + a.ADOPTIONCOORDINATORID + '">' + a.ADOPTIONCOORDINATORNAME + '</a></b></td></tr>';
+                coordinator = '<tr><td>' + _("Adoption Coordinator") + ':</td><td><b>' + html.person_link(a.ADOPTIONCOORDINATORID, a.ADOPTIONCOORDINATORNAME) + '</b></td></tr>';
             }
             var first_column = [
                 '<input type="hidden" id="animalid" value="' + a.ID + '" />',

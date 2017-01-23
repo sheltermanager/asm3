@@ -136,8 +136,7 @@ $(function() {
                 }
                 desc = "";
                 if (t.PERSONNAME) {
-                    desc += '<a href="person?id=' + t.PERSONID + '">' +
-                        t.PERSONNAME + '</a>';
+                    desc += html.person_link(t.PERSONID, t.PERSONNAME);
                 }
                 if (t.DONATIONANIMALCODE) {
                     desc += " " + html.icon("right") + " " + 

@@ -139,7 +139,7 @@ $(function() {
                     },
                     { field: "DRIVER", display: _("Driver"), formatter: function(row) {
                             if (row.DRIVEROWNERID) {
-                                return '<a href="person?id=' + row.DRIVEROWNERID + '">' + row.DRIVEROWNERNAME + '</a><br />' +
+                                return html.person_link(row.DRIVEROWNERID, row.DRIVEROWNERNAME) + '<br />' +
                                     row.DRIVEROWNERADDRESS + "<br/>" + row.DRIVEROWNERTOWN + "<br />" + row.DRIVEROWNERCOUNTY + " " + row.DRIVEROWNERPOSTCODE;
                             }
                             return "";
@@ -147,7 +147,7 @@ $(function() {
                     },
                     { field: "PICKUP", display: _("Pickup"), formatter: function(row) {
                             if (row.PICKUPOWNERID && row.PICKUPOWNERID != "0") {
-                                return '<a href="person?id=' + row.PICKUPOWNERID + '">' + row.PICKUPOWNERNAME + '</a><br />' +
+                                return html.person_link(row.PICKUPOWNERID, row.PICKUPOWNERNAME) + '<br />' +
                                     row.PICKUPADDRESS + "<br/>" + row.PICKUPTOWN + "<br />" + row.PICKUPCOUNTY + " " + row.PICKUPPOSTCODE;
                             }
                             return row.PICKUPADDRESS + "<br/>" + row.PICKUPTOWN + "<br/>" + row.PICKUPCOUNTY + "<br/>" + row.PICKUPPOSTCODE;
@@ -160,7 +160,7 @@ $(function() {
                     },
                     { field: "DROPOFF", display: _("Dropoff"), formatter: function(row) {
                             if (row.DROPOFFOWNERID && row.DROPOFFOWNERID != "0") {
-                                return '<a href="person?id=' + row.DROPOFFOWNERID + '">' + row.DROPOFFOWNERNAME + '</a><br />' +
+                                return html.person_link(row.DROPOFFOWNERID, row.DROPOFFOWNERNAME) + '<br />' +
                                     row.DROPOFFADDRESS + "<br/>" + row.DROPOFFTOWN + "<br/>" + row.DROPOFFCOUNTY + "<br/>" + row.DROPOFFPOSTCODE;
                             }
                             return row.DROPOFFADDRESS + "<br/>" + row.DROPOFFTOWN + "<br/>" + row.DROPOFFCOUNTY + "<br/>" + row.DROPOFFPOSTCODE;
