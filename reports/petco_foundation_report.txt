@@ -22,10 +22,10 @@ $$HEADER
 HEADER$$
 
 $$BODY
-{SUBREPORT.SUBREPORT_PetcoOnHand.FromDate}
+{SUBREPORT.SUBREPORT_PetcoOnHandBegin.FromDate}
 {SUBREPORT.SUBREPORT_PetcoIntakeNumbers.FromDate.ToDate}
 {SUBREPORT.SUBREPORT_PetcoOutcomes.FromDate.ToDate}
-{SUBREPORT.SUBREPORT_PetcoOnHand.ToDate}
+{SUBREPORT.SUBREPORT_PetcoOnHandEnd.ToDate}
 {SUBREPORT.SUBREPORT_PetcoSpayNeuter.FromDate.ToDate}
 BODY$$
 
@@ -33,7 +33,48 @@ $$FOOTER
 </table>
 FOOTER$$
 ###
-SUBREPORT_PetcoOnHand
+SUBREPORT_PetcoOnHandBegin
++++
+SELECT 
+'$PARENTARG1$'::timestamp AS StartDate,
+CASE 
+WHEN a.SpeciesID = 1 AND a.DateOfBirth < '$PARENTARG1$'::timestamp - INTERVAL '5 months' THEN 'Dogs'
+WHEN a.SpeciesID = 1 THEN 'Puppies'
+WHEN a.SpeciesID = 2 AND a.DateOfBirth < '$PARENTARG1$'::timestamp - INTERVAL '5 months' THEN 'Cats'
+WHEN a.SpeciesID = 2 THEN 'Kittens' END AS AgeGroup,
+1 AS NumberInShelter
+FROM animal a
+WHERE DateBroughtIn < '$PARENTARG1$' AND (DeceasedDate Is Null OR DeceasedDate > '$PARENTARG1$')
+AND NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate < '$PARENTARG1$' AND ReturnDate > '$PARENTARG1$' AND MovementType NOT IN (2, 8) AND AnimalID = a.ID)
+AND NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate < '$PARENTARG1$' AND ReturnDate Is Null AND MovementType NOT IN (2, 8) AND AnimalID = a.ID)
+AND NonShelterAnimal = 0
+AND SpeciesID IN (1, 2)
+ORDER BY AgeGroup
++++
+$$HEADER
+<tr>
+<th></th>
+<th>On-hand (in care) as of $StartDate</th>
+</tr>
+HEADER$$
+
+$$GROUP_AgeGroup
+$$HEAD
+$$FOOT
+<tr>
+<td>$AGEGROUP</td>
+<td>{SUM.NumberInShelter.0}</td>
+</tr>
+GROUP$$
+
+$$BODY
+BODY$$
+
+$$FOOTER
+FOOTER$$
++++
+
+SUBREPORT_PetcoOnHandEnd
 +++
 SELECT 
 '$PARENTARG1$'::timestamp AS StartDate,
