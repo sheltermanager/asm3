@@ -76,7 +76,7 @@ $(function() {
             }
             var displaylocation = "";
             if (a.DECEASEDDATE != null) {
-                displaylocation = "<span style=\"color: red\">" + _("Deceased") + " " + html.icon("right") + " " + a.DISPLAYLOCATIONNAME + "</span>";
+                displaylocation = "<span style=\"color: red\">" + _("Deceased") + " " + html.icon("right") + " " + a.DISPLAYLOCATIONNAME + "</span> " + format.date(a.DECEASEDDATE);
             }
             else {
                 displaylocation = a.DISPLAYLOCATIONNAME;

@@ -3196,8 +3196,9 @@ def update_animal_status(dbo, animalid, a = None, animalupdatebatch = None, diar
     if a["NONSHELTERANIMAL"] == 1:
         on_shelter = False
 
-    # Active movements only apply to shelter animals who have left and are not dead
-    if not on_shelter and a["NONSHELTERANIMAL"] != 1 and a["DECEASEDDATE"] is None:
+    # Active movements only apply to shelter animals who have left and did not die on shelter
+    if not on_shelter and a["NONSHELTERANIMAL"] == 0 and a["DECEASEDDATE"] is None or \
+        (a["DECEASEDDATE"] is not None and a["DIEDOFFSHELTER"] == 1):
         
         # Find the latest movement for our animal
         latest = get_latest_movement(dbo, animalid)
