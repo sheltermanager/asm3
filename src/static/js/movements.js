@@ -126,7 +126,7 @@ $(function() {
                     { field: "RETURNDATE", display: _("Returned"), 
                         formatter: function(row) {
                             var rv = format.date(row.RETURNDATE);
-                            if (row.RETURNDATE && (row.MOVEMENTYPE == 1 || row.MOVEMENTTYPE == 5)) {
+                            if (row.RETURNDATE && (row.MOVEMENTTYPE == 1 || row.MOVEMENTTYPE == 5)) {
                                 rv += " <br/>" + row.RETURNEDREASONNAME;
                             }
                             return rv;
