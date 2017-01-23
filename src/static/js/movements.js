@@ -125,10 +125,10 @@ $(function() {
                     },
                     { field: "RETURNDATE", display: _("Returned"), formatter: tableform.format_date, 
                         hideif: function(row) {
-                            // Don't show this column if we aren't the trial adoption, reservation or foster book
-                            if (controller.name != "move_book_trial_adoption" && 
-                                controller.name != "move_book_reservation" && 
-                                controller.name != "move_book_foster") { return true; }
+                            // Don't show this column if we are the trial adoption, reservation or foster book
+                            if (controller.name == "move_book_trial_adoption" && 
+                                controller.name == "move_book_reservation" && 
+                                controller.name == "move_book_foster") { return true; }
                         }
                     },
                     { field: "TRIALENDDATE", display: _("Trial ends on"), formatter: tableform.format_date,
@@ -136,7 +136,7 @@ $(function() {
                         initialsortdirection: "desc",
                         hideif: function(row) {
                             // Don't show this column if we aren't in the trial adoption book
-                            if (controller.name == "move_book_trial_adoption") { return true; }
+                            if (controller.name != "move_book_trial_adoption") { return true; }
                         }
                     },
                     { field: "SPECIESNAME", display: _("Species"), 
@@ -192,13 +192,13 @@ $(function() {
                     { field: "ANIMALAGE", display: _("Age"), 
                         hideif: function(row) { 
                             // Age is only really of interest in non-neutered and foster book
-                            return controller.name != "move_book_unneutered" || controller.name != "move_book_foster" ; 
+                            return controller.name != "move_book_unneutered" && controller.name != "move_book_foster" ; 
                         } 
                     },
                     { field: "ADOPTIONNUMBER", display: _("Movement Number"),
                         hideif: function(row) {
                             // Movement numbers aren't really of interest in foster or reservation view
-                            return controller.name != "move_book_foster" || controller.name != "move_book_reservation";
+                            return controller.name == "move_book_foster" || controller.name == "move_book_reservation";
                         }
                     },
                     { field: "COMMENTS", display: _("Comments"), 
