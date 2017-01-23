@@ -123,12 +123,17 @@ $(function() {
                             return controller.name != "move_book_reservation";
                         }
                     },
-                    { field: "RETURNDATE", display: _("Returned"), formatter: tableform.format_date, 
+                    { field: "RETURNDATE", display: _("Returned"), 
+                        formatter: function(row) {
+                            if (row.RETURNDATE) {
+                                return format.date(row.RETURNDATE) + " <br/>" + row.RETURNEDREASONNAME;
+                            }
+                        },
                         hideif: function(row) {
                             // Don't show this column if we are the trial adoption, reservation or foster book
-                            if (controller.name == "move_book_trial_adoption" && 
-                                controller.name == "move_book_reservation" && 
-                                controller.name == "move_book_foster") { return true; }
+                             return controller.name == "move_book_trial_adoption" || 
+                                controller.name == "move_book_reservation" || 
+                                controller.name == "move_book_foster";
                         }
                     },
                     { field: "TRIALENDDATE", display: _("Trial ends on"), formatter: tableform.format_date,
@@ -136,13 +141,13 @@ $(function() {
                         initialsortdirection: "desc",
                         hideif: function(row) {
                             // Don't show this column if we aren't in the trial adoption book
-                            if (controller.name != "move_book_trial_adoption") { return true; }
+                            return controller.name != "move_book_trial_adoption";
                         }
                     },
                     { field: "SPECIESNAME", display: _("Species"), 
                         hideif: function(row) {
                             // Don't show this column for animal movements since species is in the banner
-                            if (controller.name == "animal_movements") { return true; }
+                            return controller.name == "animal_movements";
                         }
                     },
                     { field: "IMAGE", display: "", 
@@ -191,19 +196,19 @@ $(function() {
                     },
                     { field: "ANIMALAGE", display: _("Age"), 
                         hideif: function(row) { 
-                            // Age is only really of interest in non-neutered and foster book
+                            // Only show age in the adopted/unneutered and foster books
                             return controller.name != "move_book_unneutered" && controller.name != "move_book_foster" ; 
                         } 
                     },
                     { field: "ADOPTIONNUMBER", display: _("Movement Number"),
                         hideif: function(row) {
-                            // Movement numbers aren't really of interest in foster or reservation view
+                            // Don't show movement numbers for foster or reservation book
                             return controller.name == "move_book_foster" || controller.name == "move_book_reservation";
                         }
                     },
                     { field: "COMMENTS", display: _("Comments"), 
                         formatter: function(row) {
-                            return html.truncate(row.COMMENTS, 80); 
+                            return html.truncate(row.COMMENTS + " " + row.REASONFORRETURN, 80); 
                         }
                     }
                 ]
