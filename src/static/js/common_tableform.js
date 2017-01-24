@@ -231,6 +231,9 @@
                             extraclasses += " asm-overduerow";
                         }
                     }
+                    if (formatter === tableform.format_currency) {
+                        extraclasses += " rightalign";
+                    }
                     t.push("<td class=\"ui-widget-content " + extraclasses + "\">");
                     if (ic == 0 && formatter === undefined) {
                         t.push("<span style=\"white-space: nowrap\">");
