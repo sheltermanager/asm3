@@ -4,7 +4,7 @@ import asm
 
 """
 Import script for PetPoint databases exported as CSV
-(requires AnimalIntakeWithResultsExtended.csv and PersonByAssociationExtended.csv)
+(requires AnimalIntakeWithResultsExtended.csv, AnimalMemoHistory.csv and PersonByAssociationExtended.csv)
 
 Can optionally import vacc and tests too, the PP reports
 are MedicalVaccineExpress and MedicalTestsExpress
@@ -16,6 +16,7 @@ are MedicalVaccineExpress and MedicalTestsExpress
 PETFINDER_ID = ""
 
 INTAKE_FILENAME = "data/pp_zg1185.csv"
+MEMO_FILENAME = "data/pp_zg1185_memo.csv"
 PERSON_FILENAME = "data/pp_zg1185_person.csv"
 VACC_FILENAME = "data/pp_zg1185_vacc.csv"
 TEST_FILENAME = "data/pp_zg1185_test.csv"
@@ -37,12 +38,14 @@ movements = []
 animals = []
 animaltests = []
 animalvaccinations = []
+logs = []
 ppa = {}
 ppo = {}
 
 asm.setid("animal", 100)
 asm.setid("animaltest", 100)
 asm.setid("animalvaccination", 100)
+asm.setid("log", 100)
 asm.setid("owner", 100)
 asm.setid("adoption", 100)
 
@@ -268,6 +271,21 @@ for d in asm.csv_to_list(INTAKE_FILENAME):
     if a.Archived == 0 and PETFINDER_ID != "" and pf != "":
         asm.petfinder_image(pf, a.ID, a.AnimalName)
 
+# Turn memos into history logs
+if MEMO_FILENAME != "":
+    for d in asm.csv_to_list(MEMO_FILENAME):
+        if ppa.has_key(d["Animal ID"]):
+            a = ppa[d["Animal ID"]]
+            l = asm.Log()
+            logs.append(l)
+            l.LogTypeID = 3 # History
+            l.LinkID = a.ID
+            l.LinkType = 0
+            l.Date = asm.getdate_mmddyyyy(d["textbox20"])
+            if l.Date is None:
+                l.Date = asm.now()
+            l.Comments = d["textbox131"]
+
 vacc = asm.csv_to_list(VACC_FILENAME)
 
 def process_vacc(animalno, vaccdate = None, vaccexpires = None, vaccname = ""):
@@ -394,8 +412,10 @@ for o in owners:
     print o
 for m in movements:
     print m
+for l in logs:
+    print l
 
-asm.stderr_summary(animals=animals, animaltests=animaltests, animalvaccinations=animalvaccinations, owners=owners, movements=movements)
+asm.stderr_summary(animals=animals, animaltests=animaltests, animalvaccinations=animalvaccinations, logs=logs, owners=owners, movements=movements)
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"
