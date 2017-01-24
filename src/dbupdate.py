@@ -2010,6 +2010,7 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup2("entryreason", "ReasonName", 14, _("TNR - Trap/Neuter/Release", l))
     sql += lookup2("entryreason", "ReasonName", 15, _("Transfer from Other Shelter", l))
     sql += lookup2("entryreason", "ReasonName", 16, _("Transfer from Municipal Shelter", l))
+    sql += lookup2("entryreason", "ReasonName", 17, _("Surrender", l))
     sql += lookup2("incidentcompleted", "CompletedName", 1, _("Animal destroyed", l))
     sql += lookup2("incidentcompleted", "CompletedName", 2, _("Animal picked up", l))
     sql += lookup2("incidentcompleted", "CompletedName", 3, _("Owner given citation", l))
