@@ -4,18 +4,20 @@ import asm
 
 """
 Import script for PetPoint databases exported as CSV
-(requires AnimalIntakeWithResultsExtended.csv)
+(requires AnimalIntakeWithResultsExtended.csv, AnimalMemoHistory.csv and PersonByAssociationExtended.csv)
 
 Can optionally import vacc and tests too, the PP reports
 are MedicalVaccineExpress and MedicalTestsExpress
 
-3rd March - 31st October, 2016
+3rd March - 24th January, 2017
 """
 
 # The shelter's petfinder ID for grabbing animal images for adoptable animals
 PETFINDER_ID = ""
 
 INTAKE_FILENAME = "data/pp_zg1185.csv"
+MEMO_FILENAME = "data/pp_zg1185_memo.csv"
+PERSON_FILENAME = "data/pp_zg1185_person.csv"
 VACC_FILENAME = "data/pp_zg1185_vacc.csv"
 TEST_FILENAME = "data/pp_zg1185_test.csv"
 # Whether or not the vaccine and test files are in two row stacked format
@@ -36,11 +38,14 @@ movements = []
 animals = []
 animaltests = []
 animalvaccinations = []
+logs = []
 ppa = {}
+ppo = {}
 
 asm.setid("animal", 100)
 asm.setid("animaltest", 100)
 asm.setid("animalvaccination", 100)
+asm.setid("log", 100)
 asm.setid("owner", 100)
 asm.setid("adoption", 100)
 
@@ -60,9 +65,32 @@ if PETFINDER_ID != "":
     print "DELETE FROM dbfs WHERE ID >= 200;"
     pf = asm.petfinder_get_adoptable(PETFINDER_ID)
 
-data = asm.csv_to_list(INTAKE_FILENAME)
+# Deal with people first (if set)
+if PERSON_FILENAME != "":
+    for d in asm.csv_to_list(PERSON_FILENAME):
+        # Each row contains a person
+        o = asm.Owner()
+        owners.append(o)
+        ppo[d["Person ID"]] = o
+        o.OwnerForeNames = d["Name First"]
+        o.OwnerSurname = d["Name Last"]
+        o.OwnerName = o.OwnerForeNames + " " + o.OwnerSurname
+        o.OwnerAddress = "%s %s %s %s" % (d["Street Number"], d["Street Name"], d["Street Type"], d["Street Direction"])
+        o.OwnerTown = d["City"]
+        o.OwnerCounty = d["Province"]
+        o.OwnerPostcode = d["Postal Code"]
+        o.EmailAddress = d["Email"]
+        o.HomeTelephone = d["Phone Number"]
+        o.IsBanned = asm.iif(d["Assocation"] == "Do Not Adopt", 1, 0)
+        o.IsDonor = asm.iif(d["Assocation"] == "Donor", 1, 0)
+        o.IsMember = asm.iif(d["Assocation"] == "Mailing List", 1, 0)
+        o.IsFosterer = asm.iif(d["Assocation"] == "Foster", 1, 0)
+        o.IsStaff = asm.iif(d["Assocation"] == "Employee", 1, 0)
+        o.IsVet = asm.iif(d["Assocation"] == "Operation by" or d["Assocation"] == "Medical Personnel", 1, 0)
+        o.IsVolunteer = asm.iif(d["Assocation"] == "Volunteer", 1, 0)
+        o.ExcludeFromBulkEmail = asm.iif(d["Contact By Email"] == "Yes", 1, 0)
 
-for d in data:
+for d in asm.csv_to_list(INTAKE_FILENAME):
     # Each row contains an animal, intake and outcome
     if ppa.has_key(d["Animal ID"]):
         a = ppa[d["Animal ID"]]
@@ -243,6 +271,21 @@ for d in data:
     if a.Archived == 0 and PETFINDER_ID != "" and pf != "":
         asm.petfinder_image(pf, a.ID, a.AnimalName)
 
+# Turn memos into history logs
+if MEMO_FILENAME != "":
+    for d in asm.csv_to_list(MEMO_FILENAME):
+        if ppa.has_key(d["Animal ID"]):
+            a = ppa[d["Animal ID"]]
+            l = asm.Log()
+            logs.append(l)
+            l.LogTypeID = 3 # History
+            l.LinkID = a.ID
+            l.LinkType = 0
+            l.Date = asm.getdate_mmddyyyy(d["textbox20"])
+            if l.Date is None:
+                l.Date = asm.now()
+            l.Comments = d["textbox131"]
+
 vacc = asm.csv_to_list(VACC_FILENAME)
 
 def process_vacc(animalno, vaccdate = None, vaccexpires = None, vaccname = ""):
@@ -369,8 +412,10 @@ for o in owners:
     print o
 for m in movements:
     print m
+for l in logs:
+    print l
 
-asm.stderr_summary(animals=animals, animaltests=animaltests, animalvaccinations=animalvaccinations, owners=owners, movements=movements)
+asm.stderr_summary(animals=animals, animaltests=animaltests, animalvaccinations=animalvaccinations, logs=logs, owners=owners, movements=movements)
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"
