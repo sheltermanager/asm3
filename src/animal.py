@@ -4196,6 +4196,24 @@ def update_animal_figures_annual(dbo, year = 0):
                 "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear, movement.ADOPTION),
                 sp["ID"], sp["SPECIESNAME"], "SP_TRANSFERINADOPTED", group, 150, showbabies, babymonths)
 
+    group = _("Neutered/Spayed Shelter Animals In {0}", l).format(year)
+    for sp in allspecies:
+        species_line("SELECT a.NeuteredDate AS TheDate, a.DateOfBirth AS DOB, " \
+            "COUNT(a.ID) AS Total FROM animal a WHERE " \
+            "a.SpeciesID = %d AND a.NeuteredDate >= %s AND a.NeuteredDate <= %s " \
+            "AND a.NonShelterAnimal = 0 " \
+            "GROUP BY a.NeuteredDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            sp["ID"], sp["SPECIESNAME"], "SP_NEUTERSPAYSA", group, 160, showbabies, babymonths)
+
+    group = _("Neutered/Spayed Non-Shelter Animals In {0}", l).format(year)
+    for sp in allspecies:
+        species_line("SELECT a.NeuteredDate AS TheDate, a.DateOfBirth AS DOB, " \
+            "COUNT(a.ID) AS Total FROM animal a WHERE " \
+            "a.SpeciesID = %d AND a.NeuteredDate >= %s AND a.NeuteredDate <= %s " \
+            "AND a.NonShelterAnimal = 1 " \
+            "GROUP BY a.NeuteredDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            sp["ID"], sp["SPECIESNAME"], "SP_NEUTERSPAYNS", group, 170, showbabies, babymonths)
+
     # Types =====================================
     alltypes = lookups.get_animal_types(dbo)
     for at in alltypes:
