@@ -1158,6 +1158,9 @@ $(function() {
                     else if ($(this).is("textarea")) {
                         $(this).val( html.decode(config.str(d)));
                     }
+                    else if ($(this).is(".asm-richtextarea")) {
+                        $(this).richtextarea("value", config.str(d));
+                    }
                 }
             });
 
