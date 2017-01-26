@@ -19,7 +19,8 @@ def get_lat_long(dbo, address, town, county, postcode, country = None):
     """
     Looks up a latitude and longitude from an address using GEOCODE_URL
     and returns them as lat,long,hash
-    Returns None if no results were found.
+    If no results were found, a zero lat and long are returned so that
+    we know not to try and look this up again until the address hash changes.
     NB: dbo is only used for contextual reference in logging and obtaining locale, 
         no database calls are made by any of this code.
     """
@@ -88,19 +89,19 @@ def address_hash(address, town, city, postcode):
 def parse_nominatim(dbo, jr, j, q, h):
     if len(j) == 0:
         al.debug("no response from nominatim for %s (response %s)" % (q, str(jr)), "geo.parse_nominatim", dbo)
-        return None
+        return "0,0,%s" % h
     try:
         latlon = "%s,%s,%s" % (str(utils.strip_non_ascii(j[0]["lat"])), str(utils.strip_non_ascii(j[0]["lon"])), h)
         al.debug("contacted nominatim to get geocode for %s = %s" % (q, latlon), "geo.parse_nominatim", dbo)
         return latlon
     except Exception,err:
         al.error("couldn't find geocode in nominatim response: %s, %s" % (str(err), jr), "geo.parse_nominatim", dbo)
-        return None
+        return "0,0,%s" % h
     
 def parse_google(dbo, jr, j, q, h):
     if len(j) == 0:
         al.debug("no response from google for %s (response %s)" % (q, str(jr)), "geo.parse_google", dbo)
-        return None
+        return "0,0,%s" % h
     try:
         loc = j["results"][0]["geometry"]["location"]
         latlon = "%s,%s,%s" % (str(loc["lat"]), str(loc["lng"]), h)
@@ -108,7 +109,7 @@ def parse_google(dbo, jr, j, q, h):
         return latlon
     except Exception,err:
         al.error("couldn't find geocode in google response. Status was %s: %s, %s" % (j["status"], str(err), jr), "geo.parse_google", dbo)
-        return None
+        return "0,0,%s" % h
 
 def normalise_nominatim(address, town, county, postcode, country):
     q = address + "," + town + "," + country

@@ -1,6 +1,8 @@
 40
 ================
 
+26/01/17 Bulk geo batch should go for newer people first
+26/01/17 Remember failed geocodes as 0,0 to prevent trying again with addr hash
 24/01/17 When loading into options/richtextarea use value method
 24/01/17 Right-align account totals and any currency in tableform #7
 24/01/17 Include neuter/spay info in annual figures #116

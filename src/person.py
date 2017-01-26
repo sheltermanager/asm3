@@ -1292,12 +1292,11 @@ def update_missing_geocodes(dbo):
         al.warn("BULK_GEO_BATCH is False, skipping", "update_missing_geocodes", dbo)
         return
     people = db.query(dbo, "SELECT ID, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode " \
-        "FROM owner WHERE LatLong Is Null OR LatLong = '' LIMIT %d" % BULK_GEO_LIMIT)
+        "FROM owner WHERE LatLong Is Null OR LatLong = '' ORDER BY CreatedDate DESC LIMIT %d" % BULK_GEO_LIMIT)
     batch = []
     for p in people:
         latlong = geo.get_lat_long(dbo, p["OWNERADDRESS"], p["OWNERTOWN"], p["OWNERCOUNTY"], p["OWNERPOSTCODE"])
-        if latlong is not None:
-            batch.append((latlong, p["ID"]))
+        batch.append((latlong, p["ID"]))
     db.execute_many(dbo, "UPDATE owner SET LatLong = %s WHERE ID = %s", batch)
     al.debug("updated %d person geocodes" % len(batch), "person.update_missing_geocodes", dbo)
 

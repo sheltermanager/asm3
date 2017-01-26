@@ -19,7 +19,7 @@
         get_lat_long: function(address, town, city, postcode) {
             var deferred = $.Deferred();
             var callback = function(lat, lng) {
-                if (lat || lng) { 
+                if ($.isNumeric(lat) && $.isNumeric(lng)) { 
                     deferred.resolve(lat, lng); 
                 }
                 else { 
