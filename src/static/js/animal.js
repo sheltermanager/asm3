@@ -932,25 +932,29 @@ $(function() {
                 $("#button-gencode").hide();
                 $("#sheltercode").textbox("disable");
                 $("#shortcode").textbox("disable");
-                // Lock any fields used in the coding format
-                if (config.str("CodingFormat").indexOf("T") != -1 || 
-                    config.str("ShortCodingFormat").indexOf("T") != -1) {
-                    $("#animaltype").select("disable");
-                }
-                if (config.str("CodingFormat").indexOf("Y") != -1 ||
-                    config.str("CodingFormat").indexOf("M") != -1 ||
-                    config.str("ShortCodingFormat").indexOf("Y") != -1 ||
-                    config.str("ShortCodingFormat").indexOf("M") != -1) {
-                    $("#datebroughtin").textbox("disable");
-                    $("#timebroughtin").textbox("disable");
-                }
-                if (config.str("CodingFormat").indexOf("S") != -1 || 
-                    config.str("ShortCodingFormat").indexOf("S") != -1) {
-                    $("#species").select("disable");
-                }
-                if (config.str("CodingFormat").indexOf("E") != -1 || 
-                    config.str("ShortCodingFormat").indexOf("E") != -1) {
-                    $("#entryreason").select("disable");
+                // Lock any fields used in the coding format, but not if
+                // manual codes are on since manual codes are not dependent
+                // on any other fields.
+                if (!config.bool("ManualCodes")) {
+                    if (config.str("CodingFormat").indexOf("T") != -1 || 
+                        config.str("ShortCodingFormat").indexOf("T") != -1) {
+                        $("#animaltype").select("disable");
+                    }
+                    if (config.str("CodingFormat").indexOf("Y") != -1 ||
+                        config.str("CodingFormat").indexOf("M") != -1 ||
+                        config.str("ShortCodingFormat").indexOf("Y") != -1 ||
+                        config.str("ShortCodingFormat").indexOf("M") != -1) {
+                        $("#datebroughtin").textbox("disable");
+                        $("#timebroughtin").textbox("disable");
+                    }
+                    if (config.str("CodingFormat").indexOf("S") != -1 || 
+                        config.str("ShortCodingFormat").indexOf("S") != -1) {
+                        $("#species").select("disable");
+                    }
+                    if (config.str("CodingFormat").indexOf("E") != -1 || 
+                        config.str("ShortCodingFormat").indexOf("E") != -1) {
+                        $("#entryreason").select("disable");
+                    }
                 }
             }
 
