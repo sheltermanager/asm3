@@ -1075,20 +1075,19 @@
             tinymce.init({
                 selector: "#" + this.element.attr("id"),
                 plugins: [
-                    "advlist autolink lists link image charmap ",
+                    "advlist autolink lists link image charmap code ",
                     "hr anchor searchreplace visualblocks visualchars ",
                     "insertdatetime media nonbreaking table contextmenu directionality",
                     "emoticons template paste textcolor"
                     ],
                 theme: "modern",
-                schema: "html5",
                 inline: true,
                 menubar: false,
                 statusbar: false, 
                 add_unload_trigger: false,
 
                 toolbar_items_size: "small",
-                toolbar: "undo redo | fontselect fontsizeselect | bold italic underline forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | link image | source",
+                toolbar: "undo redo | fontselect fontsizeselect | bold italic underline forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | link image | code",
 
                 // enable browser spellchecking
                 gecko_spellcheck: true,
@@ -1100,6 +1099,8 @@
                 // Necessary for fontsizeselect to work
                 convert_fonts_to_spans: true,
                 fontsize_formats: "8pt 10pt 11pt 12pt 14pt 16pt 18pt 20pt 22pt 24pt 36pt 72pt",
+
+                entity_encoding: "raw",
 
                 setup: function(ed) {
                     self.editor = ed;

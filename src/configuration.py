@@ -697,14 +697,10 @@ def geo_provider_key_override(dbo):
     return cstring(dbo, "GeoProviderKeyOverride")
 
 def get_map(dbo):
-    def escape(s):
-        if s is None: return ""
-        s = str(s)
-        return s.replace("\"", "\\\"")
     rows = db.query(dbo, "SELECT ITEMNAME, ITEMVALUE FROM configuration ORDER BY ITEMNAME")
     cmap = DEFAULTS.copy()
     for r in rows:
-        cmap[r["ITEMNAME"]] = escape(r["ITEMVALUE"])
+        cmap[r["ITEMNAME"]] = r["ITEMVALUE"]
     return cmap
 
 def include_incomplete_medical_doc(dbo):
