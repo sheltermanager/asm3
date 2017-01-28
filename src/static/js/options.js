@@ -1125,8 +1125,6 @@ $(function() {
                         $(this).val( html.decode(config.currency(d)));
                     }
                     else if ($(this).is(".asm-richtextarea")) {
-                        alert(config.str(d));
-                        alert('this is how quotes look "');
                         $(this).richtextarea("value", config.str(d));
                     }
                     else if ($(this).is("input:text")) {
