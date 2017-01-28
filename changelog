@@ -1,6 +1,7 @@
 40
 ================
 
+28/01/17 Add publish_3pty target to do all 3rd party publishers sequentially
 27/01/17 validate.dirty should include richtextarea controls #125
 27/01/17 Remove redudant config escaping as breaking email sig formatting #125
 26/01/17 Don't lock type/species/intake date if lock and manual code options are on

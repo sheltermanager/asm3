@@ -158,6 +158,22 @@ def reports_email(dbo):
         al.error("FAIL: running daily email of reports_email: %s" % em, "cron.reports_email", dbo, sys.exc_info())
     al.info("end batch reports_email", "cron.reports_email", dbo)
 
+def publish_3pty(dbo):
+    publish_ap(dbo)
+    publish_fa(dbo)
+    publish_hlp(dbo)
+    publish_mp(dbo)
+    publish_pf(dbo)
+    publish_pl(dbo)
+    publish_pcuk(dbo)
+    publish_pr(dbo)
+    publish_rg(dbo)
+    publish_abuk(dbo)
+    publish_ptuk(dbo)
+    publish_st(dbo)
+    publish_vear(dbo)
+    publish_veha(dbo)
+
 def publish_ap(dbo):
     try :
 
@@ -588,24 +604,16 @@ def run(dbo, mode):
         daily(dbo)
         reports(dbo)
         reports_email(dbo)
-        publish_ap(dbo)
-        publish_hlp(dbo)
         publish_html(dbo)
-        publish_mp(dbo)
-        publish_pf(dbo)
-        publish_pl(dbo)
-        publish_pcuk(dbo)
-        publish_pr(dbo)
-        publish_abuk(dbo)
-        publish_ptuk(dbo)
-        publish_rg(dbo)
-        publish_st(dbo)
+        publish_3pty(dbo)
     elif mode == "daily":
         daily(dbo)
     elif mode == "reports":
         reports(dbo)
     elif mode == "reports_email":
         reports_email(dbo)
+    elif mode == "publish_3pty":
+        publish_3pty(dbo)
     elif mode == "publish_ap":
         publish_ap(dbo)
     elif mode == "publish_fa":
@@ -741,6 +749,7 @@ def print_usage():
     print "       publish_ptuk - update pettrac uk"
     print "       publish_pcuk - publish to petslocated.com uk"
     print "       publish_pr - update petrescue aus"
+    print "       publish_3pty - run ALL 3rd party publishers (all but html)"
     print "       maint_animal_figures - calculate all monthly/annual figures for all time"
     print "       maint_animal_figures_annual - calculate all annual figures for all time"
     print "       maint_db_diagnostic - run database diagnostics"
