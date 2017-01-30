@@ -599,6 +599,7 @@ def run(dbo, mode):
         dbo.locale = configuration.locale(dbo) 
         dbo.timezone = configuration.timezone(dbo)
     dbo.installpath = os.getcwd() + os.sep
+    dbo.timeout = 0 # Timeouts do not apply to processes run via cron
     al.debug("set locale and timezone for database: %s, %d" % (dbo.locale, dbo.timezone), "cron", dbo)
     if mode == "all":
         daily(dbo)
