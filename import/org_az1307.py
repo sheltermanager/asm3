@@ -11,6 +11,9 @@ Import script for Greyhound rescue database az1307
 
 db = web.database( dbn = "mysql", db = "greyhoun_db", user = "root", pw = "root" )
 
+def note_fix(s):
+    return s.encode("ascii", "xmlcharrefreplace")
+
 # --- START OF CONVERSION ---
 
 owners = []
@@ -51,7 +54,7 @@ for d in db.select("members").list():
     o.EmailAddress = d.email
     o.HomeTelephone = d.phone
     o.IsGiftAid = d.gift_aid
-    o.Comments = d.notes
+    o.Comments = note_fix(d.notes)
 
 # Secondary members - merge name and telephone number
 for d in db.select("secondary_members").list():
@@ -136,7 +139,7 @@ for d in db.query("select d.*, l.name as locationname from dogs d left outer joi
     a.Breed2ID = a.BreedID
     a.BreedName = asm.iif(d.breed == "Greyhound", "Greyhound", "Lurcher")
     a.HiddenAnimalDetails = comments
-    a.AnimalComments = d.notes
+    a.AnimalComments = note_fix(d.notes)
     if d.deceased == 1:
         a.DeceasedDate = a.DateBroughtIn
         a.Archived = 1
