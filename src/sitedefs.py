@@ -26,12 +26,12 @@ LOG_LOCATION = "syslog"
 LOG_DEBUG = True
 
 # Database info
-DB_TYPE = "SQLITE" # MYSQL, POSTGRESQL or SQLITE
+DB_TYPE = "MYSQL" # MYSQL, POSTGRESQL or SQLITE
 DB_HOST = "localhost"
 DB_PORT = 3306
 DB_USERNAME = "root"
 DB_PASSWORD = "root"
-DB_NAME = "/home/robin/asm.db"
+DB_NAME = "asm"
 
 # If you want to maintain compatibility with an ASM2 client
 # accessing your database, setting this will have ASM3
