@@ -430,6 +430,9 @@ $(function() {
             else if (viewmode == "locationunit") {
                 this.render_units_available();
             }
+            else if (viewmode == "name") {
+                this.render_view("FIRSTLETTER", "", "FIRSTLETTER,ANIMALNAME", false, false);
+            }
             else if (viewmode == "pickuplocation") {
                 this.render_view("PICKUPLOCATIONNAME", "", "PICKUPLOCATIONNAME,ANIMALNAME", false, false, function(a) { return a.ISPICKUP == 1; });
             }
@@ -458,7 +461,6 @@ $(function() {
         /** Adds the ADOPTIONSTATUS column */
         add_adoption_status: function() {
             $.each(controller.animals, function(i, a) {
-                var s = "";
                 if (a.ARCHIVED == 0 && a.CRUELTYCASE == 1) { a.ADOPTIONSTATUS = _("Cruelty Case"); return; }
                 if (a.ARCHIVED == 0 && a.ISQUARANTINE == 1) { a.ADOPTIONSTATUS = _("Quarantine"); return;  }
                 if (a.ARCHIVED == 0 && a.ISHOLD == 1) { a.ADOPTIONSTATUS = _("Hold"); return; }
@@ -466,7 +468,14 @@ $(function() {
                 if (a.ARCHIVED == 0 && a.HASPERMANENTFOSTER == 1) { a.ADOPTIONSTATUS = _("Permanent Foster"); return; }
                 if (html.is_animal_adoptable(a)[0]) { a.ADOPTIONSTATUS = _("Adoptable"); return; } 
                 a.ADOPTIONSTATUS = _("Not For Adoption"); 
-                return; 
+            });
+        },
+
+        /** Adds the FIRSTLETTER column */
+        add_first_letter: function() {
+            $.each(controller.animals, function(i, a) {
+                if (!a.ANIMALNAME) { a.FIRSTLETTER = "0"; return; }
+                a.FIRSTLETTER = html.decode(a.ANIMALNAME).substring(0, 1).toUpperCase();
             });
         },
 
@@ -484,6 +493,7 @@ $(function() {
             h.push('<option value="locationspecies">' + _("Location and Species") + '</option>');
             h.push('<option value="locationtype">' + _("Location and Type") + '</option>');
             h.push('<option value="locationunit">' + _("Location and Unit") + '</option>');
+            h.push('<option value="name">' + _("Name") + '</option>');
             h.push('<option value="pickuplocation">' + _("Pickup Location") + '</option>');
             h.push('<option value="retailer">' + _("Retailer") + '</option>');
             h.push('<option value="sex">' + _("Sex") + '</option>');
@@ -505,8 +515,9 @@ $(function() {
         },
 
         sync: function() {
-            // Generate the adoption status field
+            // Generate the adoption status and first letter fields
             shelterview.add_adoption_status();
+            shelterview.add_first_letter();
             // Clean up any null fields that we might want to group on later
             $.each(controller.animals, function(i, v) {
                 if (!v.CURRENTOWNERNAME) {

@@ -1,6 +1,7 @@
 40
 ================
 
+31/01/17 Add "Name" shelterview group, like an old phone book by letter #85
 31/01/17 Default current vet in vacc/test/med give dialogs #128
 31/01/17 Add OwnerFlags and AnimalFlags wordkeys #129
 31/01/17 Use simpler timeline for sqlite databases to retain compatibility
