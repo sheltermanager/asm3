@@ -81,6 +81,8 @@ DisplayLocation
     Either the internal location if the animal is on shelter, a movement type/person for animals leaving the shelter or a deceased reason if the animal is no longer alive
 CoatType
     The animal's coat type 
+AnimalFlags
+    A list of the flags assigned to an animal, separated by commas.
 AnimalComments
     The animal comments box 
 AnimalCreatedBy
@@ -627,7 +629,7 @@ MovementLastChangedDate
 Person Keys
 -----------
 
-Person keys are available for documents generated from the owner and movement
+Person keys are available for documents generated from the person and movement
 screens, they are also available for documents generated from the payment 
 and licence tabs. 
 
@@ -639,6 +641,8 @@ OwnerForenames
     (OwnerFirstNames for US users) 
 OwnerSurname 
     (OwnerLastName for US users) 
+OwnerFlags
+    A list of the flags assigned to a person, separated by commas.
 OwnerComments 
     Any comments on the person
 OwnerCreatedBy 
