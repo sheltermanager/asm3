@@ -26,7 +26,7 @@ LOG_LOCATION = "syslog"
 LOG_DEBUG = True
 
 # Database info
-DB_TYPE = "MYSQL" # MYSQL, POSTGRESQL, SQLITE
+DB_TYPE = "MYSQL" # MYSQL or POSTGRESQL
 DB_HOST = "localhost"
 DB_PORT = 3306
 DB_USERNAME = "root"
