@@ -229,6 +229,10 @@ $(function() {
                         $("#usagedate").closest("tr").hide();
                         $("#quantity").val("0");
                         $("#givenby").select("value", asm.user);
+                        // Default animal's current vet if set and this is an animal medical tab
+                        if (controller.animal && controller.animal.CURRENTVETID) { 
+                            $("#givenvet").personchooser("loadbyid", controller.animal.CURRENTVETID); 
+                        }
                         $("#dialog-given").dialog("open");
                      }
                  },

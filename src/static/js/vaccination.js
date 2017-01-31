@@ -169,6 +169,10 @@ $(function() {
                         $("#usagedate").datepicker("setDate", new Date());
                         $("#usagedate").closest("tr").hide();
                         $("#quantity").val("0");
+                        // Default animal's current vet if set and this is an animal vacc tab
+                        if (controller.animal && controller.animal.CURRENTVETID) { 
+                            $("#givenvet").personchooser("loadbyid", controller.animal.CURRENTVETID); 
+                        }
                         $("#dialog-given").dialog("open");
                      }
                  },
