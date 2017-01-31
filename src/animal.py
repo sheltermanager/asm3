@@ -954,6 +954,14 @@ def get_timeline(dbo, limit = 500):
         "WHERE EventDate <= %(today)s " \
         "ORDER BY EventDate DESC, ID " \
         "LIMIT %(limit)s" % { "today": db.ddt(now(dbo.timezone)), "limit": str(limit) }
+    if dbo.dbtype == "SQLITE":
+        # SQLITE can't support the subquery LIMIT clauses and breaks, give SQLite users
+        # a simpler timeline with just entering animals
+        sql = "SELECT 'animal' AS LinkTarget, 'ENTERED' AS Category, DateBroughtIn AS EventDate, ID, " \
+            "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
+            "WHERE NonShelterAnimal = 0 AND DateBroughtIn <= %(today)s " \
+            "ORDER BY DateBroughtIn DESC, ID LIMIT %(limit)s" % \
+            { "today": db.ddt(now(dbo.timezone)), "limit": str(limit) }
     return embellish_timeline(dbo.locale, db.query_cache(dbo, sql, 120))
 
 def calc_most_recent_entry(dbo, animalid, a = None):

@@ -1,6 +1,7 @@
 40
 ================
 
+31/01/17 Use simpler timeline for sqlite databases to retain compatibility
 30/01/17 Disable database timeouts for cron tasks
 28/01/17 Add publish_3pty target to do all 3rd party publishers sequentially
 27/01/17 validate.dirty should include richtextarea controls #125
