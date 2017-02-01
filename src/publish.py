@@ -1043,13 +1043,13 @@ class FTPPublisher(AbstractPublisher):
         except Exception, err:
             self.logError("warning: failed deleting from FTP server: %s" % err, sys.exc_info())
 
-    def cleanup(self):
+    def cleanup(self, save_log=True):
         """
         Call when the publisher has completed to tidy up.
         """
         self.closeFTPSocket()
         self.deletePublishDirectory()
-        self.saveLog()
+        if save_log: self.saveLog()
         self.setPublisherComplete()
 
     def uploadImage(self, a, medianame, imagename):
@@ -1712,9 +1712,7 @@ class AnibaseUKPublisher(AbstractPublisher):
             self.setLastError("Anibase vet code must be set")
             return
 
-        # TODO: Remove 999 pattern - not a live chip prefix and just being
-        #       used during testing.
-        animals = get_microchip_data(self.dbo, ['9851', '9861', '999'], "anibaseuk")
+        animals = get_microchip_data(self.dbo, ['9851', '9861'], "anibaseuk")
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
             return
@@ -1890,7 +1888,7 @@ class FoundAnimalsPublisher(FTPPublisher):
         animals = get_microchip_data(self.dbo, ["9", "0"], "foundanimals")
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
-            self.cleanup()
+            self.cleanup(save_log=False)
             return
 
         if not self.openFTPSocket(): 
@@ -4873,7 +4871,7 @@ class SmartTagPublisher(FTPPublisher):
         animals = get_microchip_data(self.dbo, ["a.SmartTag = 1 AND a.SmartTagNumber <> ''", '90007400'], "smarttag")
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
-            self.cleanup()
+            self.cleanup(save_log=False)
             return
 
         if not self.openFTPSocket(): 
