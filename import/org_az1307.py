@@ -11,6 +11,10 @@ Import script for Greyhound rescue database az1307
 
 db = web.database( dbn = "mysql", db = "greyhoun_db", user = "root", pw = "root" )
 
+DEFAULT_DATE_OF_BIRTH = asm.subtract_days(asm.today(), 365)
+DEFAULT_INTAKE_DATE = asm.subtract_days(asm.today(), 182)
+DEFAULT_ADOPTION_DATE = asm.subtract_days(asm.today(), 182)
+
 def note_fix(s):
     return s.encode("ascii", "xmlcharrefreplace")
 
@@ -33,9 +37,8 @@ asm.setid("adoption", 100)
 print "\\set ON_ERROR_STOP\nBEGIN;"
 print "DELETE FROM internallocation;"
 print "DELETE FROM animal WHERE ID >= 100 AND CreatedBy = 'conversion';"
-print "DELETE FROM animaltest WHERE ID >= 100 AND CreatedBy = 'conversion';"
-print "DELETE FROM animalvaccination WHERE ID >= 100 AND CreatedBy = 'conversion';"
 print "DELETE FROM owner WHERE ID >= 100 AND CreatedBy = 'conversion';"
+print "DELETE FROM ownerdonation WHERE ID >= 100 AND CreatedBy = 'conversion';"
 print "DELETE FROM adoption WHERE ID >= 100 AND CreatedBy = 'conversion';"
 
 # Deal with people first
@@ -93,6 +96,7 @@ for d in db.query("select d.*, l.name as locationname from dogs d left outer joi
     a = asm.Animal()
     animals.append(a)
     ppa[d.id] = a
+    has_intake = True
     a.AnimalTypeID = 2
     a.SpeciesID = 1
     a.AnimalName = d.name
@@ -103,10 +107,11 @@ for d in db.query("select d.*, l.name as locationname from dogs d left outer joi
     elif d.date_of_entry is not None and d.approx_age is not None:
         a.DateOfBirth = asm.subtract_days(d.date_of_entry, d.approx_age * 365)
     if a.DateOfBirth is None:
-        a.DateOfBirth = asm.today()
+        a.DateOfBirth = DEFAULT_DATE_OF_BIRTH
     a.DateBroughtIn = d.date_of_entry
     if a.DateBroughtIn is None:
-        a.DateBroughtIn = asm.today()
+        has_intake = False
+        a.DateBroughtIn = DEFAULT_INTAKE_DATE
     a.CreatedDate = a.DateBroughtIn
     a.LastChangedDate = a.DateBroughtIn
     if d.relinquishment_ownership == 0:
@@ -131,17 +136,17 @@ for d in db.query("select d.*, l.name as locationname from dogs d left outer joi
     a.Archived = 0
     a.EntryReasonID = asm.iif(a.IsTransfer == 1, 15, 17)
     a.ReasonForEntry = d.source
-    comments = "Racing name: " + d.racing_name
-    comments += "\nRGT: " + asm.iif(d.RGT == 1, "Yes", "No")
-    comments += "\nBreed: " + d.breed
-    comments += "\nHoused Location: " + d.housed_location
+    comments = "RGT: " + asm.iif(d.RGT == 1, "Yes", "No")
+    if d.racing_name != "": comments += "\nRacing name: " + d.racing_name
+    if d.housed_location != "": comments += "\nHoused Location: " + d.housed_location
+    if not has_intake: comments += "\nBlank intake date on original record"
     a.BreedID = asm.iif(d.breed == "Greyhound", 101, 443)
     a.Breed2ID = a.BreedID
     a.BreedName = asm.iif(d.breed == "Greyhound", "Greyhound", "Lurcher")
-    a.HiddenAnimalDetails = comments
-    a.AnimalComments = note_fix(d.notes)
+    a.HiddenAnimalDetails = "%s\n%s" % (comments, note_fix(d.notes))
     if d.deceased == 1:
         a.DeceasedDate = a.DateBroughtIn
+        a.PTSReasonID = 2
         a.Archived = 1
 
 for d in db.select("adopted_dogs"):
@@ -154,11 +159,20 @@ for d in db.select("adopted_dogs"):
     m.OwnerID = o.ID
     m.MovementType = 1
     m.MovementDate = d.date_from
+    if m.MovementDate is None:
+        m.MovementDate = DEFAULT_ADOPTION_DATE
     m.ReturnDate = d.date_to
-    m.Comments = "Given name: %s" % d.given_name
+    m.ReturnedReasonID = 4 # Unable to cope
+    comments = ""
+    if d.date_from is None:
+        comments = "Blank adoption date on original record"
+    if d.given_name != "":
+        comments += "\nGiven name: %s" % d.given_name
+    m.Comments = comments
     if m.ReturnDate is None:
         a.Archived = 1
         a.ActiveMovementID = m.ID
+        a.ActiveMovementDate = m.MovementDate
         a.ActiveMovementType = 1
     a.LastChangedDate = m.MovementDate
     movements.append(m)
@@ -184,6 +198,7 @@ for d in db.select("fostered_dogs"):
     if not ppa.has_key(d.dog_id): continue
     a = ppa[d.dog_id]
     o = ppo[d.member_id]
+    o.IsFosterer = 1
     m = asm.Movement()
     m.AnimalID = a.ID
     m.OwnerID = o.ID
@@ -192,7 +207,8 @@ for d in db.select("fostered_dogs"):
     m.ReturnDate = d.date_to
     if m.ReturnDate is None:
         a.ActiveMovementID = m.ID
-        a.ActiveMovementType = 1
+        a.ActiveMovementType = 2
+        a.ActiveMovementDate = m.MovementDate
     a.LastChangedDate = m.MovementDate
     movements.append(m)
 

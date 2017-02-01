@@ -1193,6 +1193,14 @@ def additional_field(fieldname, linktypeid, linkid, value):
         "%d, %d, (SELECT ID FROM additionalfield WHERE FieldName LIKE '%s'), %s);" % \
         ( linktypeid, linkid, fieldname, ds(value))
 
+def age_group(dob):
+    """ Returns the age group for a date of birth """
+    d = date_diff_days(dob, today())
+    if d < 182: return "Baby"
+    if d < 365*2: return "Young Adult"
+    if d < 365*7: return "Adult"
+    return "Senior"
+
 def adopt_to(a, ownerid, movementtype = 1, movementdate = None):
     """ Writes an adoption movement insert 
         a: The animal object to adopt
@@ -1819,6 +1827,7 @@ class Animal:
             ( "YearCodeID", di(self.YearCodeID) ),
             ( "AcceptanceNumber", ds(self.AcceptanceNumber) ),
             ( "DateOfBirth", dd(self.DateOfBirth) ),
+            ( "AgeGroup", ds( age_group(self.DateOfBirth)) ),
             ( "EstimatedDOB", di(self.EstimatedDOB) ),
             ( "DeceasedDate", dd(self.DeceasedDate) ),
             ( "Sex", di(self.Sex) ),
