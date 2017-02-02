@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import asm
+import asm, datetime
 import web
 
 """
@@ -11,9 +11,9 @@ Import script for Greyhound rescue database az1307
 
 db = web.database( dbn = "mysql", db = "greyhoun_db", user = "root", pw = "root" )
 
-DEFAULT_DATE_OF_BIRTH = asm.subtract_days(asm.today(), 365)
-DEFAULT_INTAKE_DATE = asm.subtract_days(asm.today(), 182)
-DEFAULT_ADOPTION_DATE = asm.subtract_days(asm.today(), 182)
+DEFAULT_INTAKE_DATE = datetime.datetime(2010, 01, 01)
+DEFAULT_DATE_OF_BIRTH = DEFAULT_INTAKE_DATE
+DEFAULT_ADOPTION_DATE = DEFAULT_INTAKE_DATE
 
 def note_fix(s):
     return s.encode("ascii", "xmlcharrefreplace")
@@ -98,20 +98,24 @@ for d in db.query("select d.*, l.name as locationname from dogs d left outer joi
     ppa[d.id] = a
     has_intake = True
     a.AnimalTypeID = 2
+    if d.RGT == 1: a.AnimalTypeID = 43 # RGT
     a.SpeciesID = 1
+    a.BaseColourID = asm.colour_id_for_name(d.colour)
     a.AnimalName = d.name
     if a.AnimalName.strip() == "":
         a.AnimalName = "(unknown)"
-    if d.dob is not None:
-        a.DateOfBirth = d.dob
-    elif d.date_of_entry is not None and d.approx_age is not None:
-        a.DateOfBirth = asm.subtract_days(d.date_of_entry, d.approx_age * 365)
-    if a.DateOfBirth is None:
-        a.DateOfBirth = DEFAULT_DATE_OF_BIRTH
     a.DateBroughtIn = d.date_of_entry
     if a.DateBroughtIn is None:
         has_intake = False
         a.DateBroughtIn = DEFAULT_INTAKE_DATE
+    if d.dob is not None:
+        a.DateOfBirth = d.dob
+    elif d.date_of_entry is not None and d.approx_age is not None:
+        a.DateOfBirth = asm.subtract_days(d.date_of_entry, d.approx_age * 365)
+    elif a.DateBroughtIn != DEFAULT_INTAKE_DATE:
+        a.DateOfBirth = asm.subtract_days(a.DateBroughtIn, 365*2)
+    else:
+        a.DateOfBirth = DEFAULT_DATE_OF_BIRTH
     a.CreatedDate = a.DateBroughtIn
     a.LastChangedDate = a.DateBroughtIn
     if d.relinquishment_ownership == 0:
@@ -121,7 +125,7 @@ for d in db.query("select d.*, l.name as locationname from dogs d left outer joi
     a.ShelterLocation = asm.location_id_for_name(d.locationname)
     a.Sex = asm.iif(d.sex == "Dog", 1, 0)
     a.Size = 2
-    a.Neutered = d.neutered
+    a.Neutered = 1
     a.NeuteredDate = d.neutering_date
     a.IdentichipNumber = d.microchip_no
     if a.IdentichipNumber != "": 
@@ -161,6 +165,10 @@ for d in db.select("adopted_dogs"):
     m.MovementDate = d.date_from
     if m.MovementDate is None:
         m.MovementDate = DEFAULT_ADOPTION_DATE
+    if a.DateBroughtIn == DEFAULT_INTAKE_DATE and d.date_from is not None:
+        a.DateBroughtIn = asm.subtract_days(m.MovementDate, 31*2) # If we have adoption date but no brought in, use adoption - 2 months
+    if a.DateOfBirth == DEFAULT_DATE_OF_BIRTH and d.date_from is not None:
+        a.DateOfBirth = asm.subtract_days(m.MovementDate, 365*2) # If we have adoption date but no DOB, use adoption - 2 years
     m.ReturnDate = d.date_to
     m.ReturnedReasonID = 4 # Unable to cope
     comments = ""
@@ -169,6 +177,7 @@ for d in db.select("adopted_dogs"):
     if d.given_name != "":
         comments += "\nGiven name: %s" % d.given_name
     m.Comments = comments
+    o.IDCheck = 1
     if m.ReturnDate is None:
         a.Archived = 1
         a.ActiveMovementID = m.ID
