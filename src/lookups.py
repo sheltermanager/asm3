@@ -416,6 +416,7 @@ PETFINDER_BREEDS = (
     "Mastiff",
     "McNab",
     "Miniature Pinscher",
+    "Mixed Breed",
     "Mountain Cur",
     "Mountain Dog",
     "Munsterlander",

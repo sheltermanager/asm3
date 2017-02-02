@@ -830,7 +830,7 @@ breeds = (
 ("439","Sheep"),
 ("440","Llama"),
 ("441","Pig (Farm)"),
-("442","Crossbreed")
+("442","Mixed Breed")
 )
 
 def breed_id_for_name(name, default = 1):

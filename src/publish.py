@@ -1260,7 +1260,8 @@ class AdoptAPetPublisher(FTPPublisher):
             "Fox Terrier=Fox Terrier (Smooth)\n" \
             "Hound=Hound (Unknown Type)\n" \
             "Illyrian Sheepdog=Shepherd (Unknown Type)\n" \
-            "McNab =Shepherd (Unknown Type)\n" \
+            "McNab=Shepherd (Unknown Type)\n" \
+            "Mixed Breed=Mixed Breed (Medium)\n" \
             "New Guinea Singing Dog=Shepherd (Unknown Type)\n" \
             "Newfoundland Dog=Newfoundland\n" \
             "Norweigan Lundehund=Shepherd (Unknown Type)\n" \
@@ -1360,7 +1361,8 @@ class AdoptAPetPublisher(FTPPublisher):
             "Fox Terrier=Fox Terrier (Smooth)\n" \
             "Hound=Hound (Unknown Type)\n" \
             "Illyrian Sheepdog=Shepherd (Unknown Type)\n" \
-            "McNab =Shepherd (Unknown Type)\n" \
+            "McNab=Shepherd (Unknown Type)\n" \
+            "Mixed Breed=Mixed Breed (Medium)\n" \
             "New Guinea Singing Dog=Shepherd (Unknown Type)\n" \
             "Newfoundland Dog=Newfoundland\n" \
             "Norweigan Lundehund=Shepherd (Unknown Type)\n" \
