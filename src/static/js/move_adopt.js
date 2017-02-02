@@ -300,7 +300,7 @@ $(function() {
 
                 // Show tickbox if owner not homechecked
                 if (rec.IDCHECK == 0) {
-                    $("#markhomechecked").attr("checked", true);
+                    $("#markhomechecked").attr("checked", false);
                     $("#homecheckrow").fadeIn();
                 }
 
