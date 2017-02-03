@@ -153,6 +153,27 @@ for d in db.query("select d.*, l.name as locationname from dogs d left outer joi
         a.PTSReasonID = 2
         a.Archived = 1
 
+# Process fosters first so that the behaviour where we close existing
+# movements never closes out a valid adoption
+for d in db.select("fostered_dogs"):
+    if not ppo.has_key(d.member_id): continue
+    if not ppa.has_key(d.dog_id): continue
+    a = ppa[d.dog_id]
+    o = ppo[d.member_id]
+    o.IsFosterer = 1
+    m = asm.Movement()
+    m.AnimalID = a.ID
+    m.OwnerID = o.ID
+    m.MovementType = 2
+    m.MovementDate = d.date_from
+    m.ReturnDate = d.date_to
+    if m.ReturnDate is None:
+        a.ActiveMovementID = m.ID
+        a.ActiveMovementType = 2
+        a.ActiveMovementDate = m.MovementDate
+    a.LastChangedDate = m.MovementDate
+    movements.append(m)
+
 for d in db.select("adopted_dogs"):
     if not ppo.has_key(d.member_id): continue
     if not ppa.has_key(d.dog_id): continue
@@ -201,25 +222,6 @@ for d in db.select("adopted_dogs"):
         od.Date = d.date_from
         od.DonationTypeID = 10 # RGT
         od.DonationPaymentID = 1 # Cash
-
-for d in db.select("fostered_dogs"):
-    if not ppo.has_key(d.member_id): continue
-    if not ppa.has_key(d.dog_id): continue
-    a = ppa[d.dog_id]
-    o = ppo[d.member_id]
-    o.IsFosterer = 1
-    m = asm.Movement()
-    m.AnimalID = a.ID
-    m.OwnerID = o.ID
-    m.MovementType = 2
-    m.MovementDate = d.date_from
-    m.ReturnDate = d.date_to
-    if m.ReturnDate is None:
-        a.ActiveMovementID = m.ID
-        a.ActiveMovementType = 2
-        a.ActiveMovementDate = m.MovementDate
-    a.LastChangedDate = m.MovementDate
-    movements.append(m)
 
 # Now that everything else is done, output stored records
 for k,v in asm.locations.iteritems():
