@@ -599,7 +599,6 @@ def run(dbo, mode):
         dbo.locale = configuration.locale(dbo) 
         dbo.timezone = configuration.timezone(dbo)
     dbo.installpath = os.getcwd() + os.sep
-    dbo.timeout = 0 # Timeouts do not apply to processes run via cron
     al.debug("set locale and timezone for database: %s, %d" % (dbo.locale, dbo.timezone), "cron", dbo)
     if mode == "all":
         daily(dbo)
@@ -689,11 +688,13 @@ def run(dbo, mode):
 def run_all_map_databases(mode):
     for alias in MULTIPLE_DATABASES_MAP.iterkeys():
         dbo = db.get_multiple_database_info(alias)
+        dbo.timeout = 0
         dbo.connection = db.connection(dbo)
         run(dbo, mode)
 
 def run_default_database(mode):
     dbo = db.DatabaseInfo()
+    dbo.timeout = 0
     dbo.connection = db.connection(dbo)
     run(dbo, mode)
 
@@ -703,6 +704,7 @@ def run_alias(mode, alias):
     elif MULTIPLE_DATABASES_TYPE == "map" and alias != "%":
         dbo  = db.get_multiple_database_info(alias)
     dbo.alias = alias
+    dbo.timeout = 0
     if dbo.database == "FAIL":
         print "Invalid database alias '%s'" % (alias)
         return
@@ -719,6 +721,7 @@ def run_override_database(mode, dbtype, host, port, username, password, database
     dbo.password = password
     dbo.database = database
     dbo.alias = alias
+    dbo.timeout = 0
     dbo.connection = db.connection(dbo)
     run(dbo, mode)
 
