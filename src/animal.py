@@ -724,7 +724,7 @@ def get_alerts(dbo, locationfilter = "", siteid = 0):
         "(SELECT COUNT(*) FROM stocklevel WHERE Balance > 0 AND Expiry Is Not Null AND Expiry <= %(today)s) AS stexp, " \
         "(SELECT COUNT(*) FROM animaltransport WHERE (DriverOwnerID = 0 OR DriverOwnerID Is Null) AND Status < 10) AS trnodrv, " \
         "(SELECT COUNT(*) FROM animal WHERE Archived = 0 AND DaysOnShelter > 182) AS lngterm " \
-        "FROM animal LIMIT 1" \
+        "FROM lksmovementtype LIMIT 1" \
             % { "today": today, "endoftoday": endoftoday, "oneweek": oneweek, "oneyear": oneyear, "onemonth": onemonth, 
                 "futuremonth": futuremonth, "locfilter": locationfilter, "shelterfilter": shelterfilter }
     return db.query_cache(dbo, sql)
@@ -753,7 +753,7 @@ def get_stats(dbo):
             "(SELECT SUM(Cost) FROM animaltest WHERE DateOfTest >= %(from)s) + " \
             "(SELECT SUM(Cost) FROM animalmedical WHERE StartDate >= %(from)s) + " \
             "(SELECT SUM(Cost) FROM animaltransport WHERE PickupDateTime >= %(from)s) AS Costs " \
-        "FROM animal LIMIT 1" \
+        "FROM lksmovementtype LIMIT 1" \
         % { "from": countfrom, "adoption": movement.ADOPTION, "reclaimed": movement.RECLAIMED, "transfer": movement.TRANSFER }
     return db.query_cache(dbo, sql, 120)
 
