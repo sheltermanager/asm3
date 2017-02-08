@@ -82,9 +82,9 @@ def connect_cursor_open(dbo):
         c = connection(dbo)
         s = c.cursor()
     # if timeout is non-zero, set it
-    if dbo.dbtype == "POSTGRESQL" and dbo.timeout != 0:
+    if dbo.dbtype == "POSTGRESQL" and dbo.timeout > 0:
         s.execute("SET statement_timeout=%d" % dbo.timeout)
-    if dbo.dbtype == "MYSQL" and dbo.timeout != 0:
+    if dbo.dbtype == "MYSQL" and dbo.timeout > 0:
         s.execute("SET SESSION max_execution_time=%d" % dbo.timeout)
     return c, s
 

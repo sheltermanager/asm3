@@ -704,11 +704,11 @@ def run_alias(mode, alias):
     elif MULTIPLE_DATABASES_TYPE == "map" and alias != "%":
         dbo  = db.get_multiple_database_info(alias)
     dbo.alias = alias
-    dbo.timeout = 0
     if dbo.database == "FAIL":
         print "Invalid database alias '%s'" % (alias)
         return
     else:
+        dbo.timeout = 0
         dbo.connection = db.connection(dbo)
         run(dbo, mode)
 
