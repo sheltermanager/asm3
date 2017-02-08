@@ -50,9 +50,9 @@ for d in db.select("members").list():
     o.OwnerForeNames = d.first_name
     o.OwnerSurname = d.last_name
     o.OwnerName = o.OwnerForeNames + " " + o.OwnerSurname
-    o.OwnerAddress = d.address_1
-    o.OwnerTown = d.address_2
-    o.OwnerCounty = d.address_3
+    o.OwnerAddress = asm.nulltostr(d.address_1) + " " + asm.nulltostr(d.address_2)
+    o.OwnerTown = d.address_3
+    o.OwnerCounty = d.address_4
     o.OwnerPostcode = d.post_code
     o.EmailAddress = d.email
     o.HomeTelephone = d.phone
@@ -90,6 +90,43 @@ for d in db.query("select m.*, r.name as renewaltypename from member_renewals m 
         if o.MembershipExpiryDate is None or o.MembershipExpiryDate < d.renewal_date:
             o.MembershipExpiryDate = d.renewal_date
 
+# Turn GRW categories into flags
+flags = {
+    "1 YR MEMBERSHIP": "1 Year Membership",
+    "SUPPORTER": "Supporter",
+    "LIFE": "Life Membership",
+    "SPONSOR": "Sponsor",
+    "ASSOCIATE": "Associate",
+    "MONTHLY DOG": "100 Club",
+    "HOME CHECKER": "homechecker",
+    "FRIEND": "Friend",
+    "SPONSOR SAK": "Sponsor SAK",
+    "FOSTER": "fosterer",
+    "5 YR MEMBERSHIP": "5 Year Membership",
+    "VOLUNTEER": "volunteer",
+    "SPONSOR SAD": "Sponsor SAD",
+    "SUBSCRIBERS": "Subscriber",
+    "ARCHIVED": "Archived",
+    "MAD SPONSOR": "MAD Sponsor",
+    "SHOP VOLUNTEER - BLACKWOOD": "Shop Volunteer - Blackwood",
+    "SHOP VOLUNTEER - RUTHIN": "Shop Volunteer - Ruthin",
+    "SHOP VOLUNTEER - CARDIFF": "Shop Volunteer - Cardiff",
+    "PATRON": "Patron",
+    "MEMORIAL DOG SPONSOR": "Memorial Dog Sponsor",
+    "HILLCREST SUPPER CLUB": "Hillcrest Supper Club Member"
+}
+for d in db.query("select member_id, name from member_categories inner join categories on categories.id = member_categories.category_id;").list():
+    if not ppo.has_key(d.member_id): continue
+    o = ppo[d.member_id]
+    if flags.has_key(d.name):
+        o.AdditionalFlags += d.name + "|"
+        if d.name == "FOSTER": 
+            o.IsFosterer = 1
+        elif d.name == "VOLUNTEER":
+            o.IsVolunteer = 1
+        elif d.name == "HOME CHECKER":
+            o.IsHomeChecker = 1
+
 # Now dogs
 for d in db.query("select d.*, l.name as locationname from dogs d left outer join locations l on l.id = d.location_id").list():
     # Each row contains an animal
@@ -100,7 +137,7 @@ for d in db.query("select d.*, l.name as locationname from dogs d left outer joi
     a.AnimalTypeID = 2
     if d.RGT == 1: a.AnimalTypeID = 43 # RGT
     a.SpeciesID = 1
-    a.BaseColourID = asm.colour_id_for_name(d.colour)
+    a.BaseColourID = asm.colour_from_db(d.colour)
     a.AnimalName = d.name
     if a.AnimalName.strip() == "":
         a.AnimalName = "(unknown)"
@@ -140,10 +177,13 @@ for d in db.query("select d.*, l.name as locationname from dogs d left outer joi
     a.Archived = 0
     a.EntryReasonID = asm.iif(a.IsTransfer == 1, 15, 17)
     a.ReasonForEntry = d.source
-    comments = "RGT: " + asm.iif(d.RGT == 1, "Yes", "No")
-    if d.racing_name != "": comments += "\nRacing name: " + d.racing_name
-    if d.housed_location != "": comments += "\nHoused Location: " + d.housed_location
-    if not has_intake: comments += "\nBlank intake date on original record"
+    comments = ""
+    if d.racing_name != "": 
+        asm.additional_field("racingname", 2, a.ID, d.racing_name)
+    if d.housed_location != "": 
+        comments = "Housed Location: " + d.housed_location
+    if not has_intake: 
+        comments += "\nBlank intake date on original record"
     a.BreedID = asm.iif(d.breed == "Greyhound", 101, 443)
     a.Breed2ID = a.BreedID
     a.BreedName = asm.iif(d.breed == "Greyhound", "Greyhound", "Lurcher")
@@ -197,6 +237,7 @@ for d in db.select("adopted_dogs"):
         comments = "Blank adoption date on original record"
     if d.given_name != "":
         comments += "\nGiven name: %s" % d.given_name
+        asm.additional_field("givenname", 2, a.ID, d.given_name)
     m.Comments = comments
     o.IDCheck = 1
     if m.ReturnDate is None:
