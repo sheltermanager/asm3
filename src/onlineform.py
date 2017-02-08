@@ -236,7 +236,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
                 h.append('<option>%s</option>' % lv)
             h.append('</select>')
         elif f["FIELDTYPE"] == FIELDTYPE_RADIOGROUP:
-            h.append('<div class="asm-online-radiogroup" style="display: inline-block">')
+            h.append('<div class="asm-onlineform-radiogroup" style="display: inline-block">')
             for lv in utils.nulltostr(f["LOOKUPS"]).split("|"):
                 h.append('<input type="radio" class="asm-onlineform-radio" name="%s" value="%s" %s /> %s<br />' % (html.escape(fname), lv, required, lv))
             h.append('</div>')
