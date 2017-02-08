@@ -1,6 +1,6 @@
 # pl.po
 
-val = {"" : "Project-Id-Version: sheltermanager\nReport-Msgid-Bugs-To: support@sheltermanager.com\nPOT-Creation-Date: 2013-01-24 10:55+0000\nPO-Revision-Date: 2015-04-20 22:22+0000\nLast-Translator: Hipolit <tomek@czarnaowca.org>\nLanguage-Team: Polish <pl@li.org>\nLanguage: pl\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\nX-Generator: Pootle 2.5.1.1\nX-Launchpad-Export-Date: 2015-03-02 05:18+0000\nX-POOTLE-MTIME: 1429568535.000000\n",
+val = {"" : "Project-Id-Version: sheltermanager\nReport-Msgid-Bugs-To: support@sheltermanager.com\nPOT-Creation-Date: 2013-01-24 10:55+0000\nPO-Revision-Date: 2016-11-19 16:12-0000\nLast-Translator: Robin Rawson-Tetley <robin@rawsontetley.org>\nLanguage-Team: Polish <pl@li.org>\nLanguage: pl\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\nX-Generator: Poedit 1.6.10\nX-Launchpad-Export-Date: 2015-03-02 05:18+0000\nX-POOTLE-MTIME: 1429568535.000000\n",
 "{plural3} people with active reservations have not been homechecked" : "",
 "Select recommended" : "",
 "Half-Yearly" : "Co p&#243;&#322; roku",
@@ -12,7 +12,6 @@ val = {"" : "Project-Id-Version: sheltermanager\nReport-Msgid-Bugs-To: support@s
 "License numbers matching '{0}'." : "",
 "Due today" : "Do wykonania dzisiaj",
 "You can prefix your term in the search box with a: to search only animals, p: to search only people, wl: to search waiting list entries, la: to search lost animals and fa: to search found animals." : "",
-"{0} {1}: not available for adoption" : "",
 "{0} fine, paid" : "",
 "Warnings" : "Ostrze&#380;enia",
 "Unknown microchip brand" : "",
@@ -2499,7 +2498,7 @@ val = {"" : "Project-Id-Version: sheltermanager\nReport-Msgid-Bugs-To: support@s
 "Turkey" : "Indyk",
 "Index" : "",
 "Diary note {0} marked completed" : "Notatka {0} zosta&#322;a oznaczona jako zako&#324;czona",
-"Stats" : "",
+"Stats" : "Statystyk",
 "Weimaraner" : "Wy&#380;e&#322; weimarski",
 "Bulk Test" : "",
 "Long" : "D&#322;uga",

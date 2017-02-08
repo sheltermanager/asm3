@@ -1,6 +1,6 @@
 # en_AU.po
 
-val = {"" : "Project-Id-Version: Animal Shelter Manager\nReport-Msgid-Bugs-To: support@sheltermanager.com\nPOT-Creation-Date: 2013-01-24 10:55+0000\nPO-Revision-Date: 2016-11-11 09:20-0000\nLast-Translator: Robin Rawson-Tetley <support@sheltermanager.com>\nLanguage-Team: English (Australia) <support@sheltermanager.com>\nLanguage: en_AU\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\nX-Generator: Poedit 1.6.10\nX-POOTLE-MTIME: 1456389497.000000\n",
+val = {"" : "Project-Id-Version: ASM3\nReport-Msgid-Bugs-To: db@sheltermanager.com\nPOT-Creation-Date: 2013-01-24 10:55+0000\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPO-Revision-Date: 2016-12-31 08:28-0500\nLast-Translator: Robin Rawson-Tetley <zanata@sheltermanager.com>\nLanguage-Team: English (Australia) <support@sheltermanager.com>\nLanguage: en-AU\nPlural-Forms: nplurals=2; plural=(n != 1);\nX-Generator: Zanata 3.9.6\nX-POOTLE-MTIME: 1456389497.000000\n",
 "{plural3} people with active reservations have not been homechecked" : "{plural3} people with active reservations have not been homechecked",
 "Select recommended" : "Select recommended",
 "Half-Yearly" : "Half-Yearly",
@@ -444,6 +444,7 @@ val = {"" : "Project-Id-Version: Animal Shelter Manager\nReport-Msgid-Bugs-To: s
 "Belgian Shepherd Malinois" : "Belgian Shepherd Malinois",
 "Peruvian Paso" : "Peruvian Paso",
 "Date of birth is not valid" : "Date of birth is not valid",
+"Allow duplicate license numbers" : "Allow duplicate licence numbers",
 "If this person is a member, their membership number" : "If this person is a member, their membership number",
 "Dispatch" : "Dispatch",
 "Change Movement" : "Change Movement",
@@ -754,6 +755,7 @@ val = {"" : "Project-Id-Version: Animal Shelter Manager\nReport-Msgid-Bugs-To: s
 "Points for matching breed" : "Points for matching breed",
 "Publishing History" : "Publishing History",
 "Personal" : "Personal",
+"Sex and Species" : "Sex and Species",
 "Budgie/Budgerigar" : "Budgie/Budgerigar",
 "Kittens (under {0} months)" : "Kittens (under {0} months)",
 "Japanese Chin" : "Japanese Chin",
