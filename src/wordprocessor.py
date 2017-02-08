@@ -901,6 +901,9 @@ def table_tags(dbo, d, rows, typefield = "", recentdatefield = ""):
         # Type suffixed tags
         if typefield != "":
             t = r[typefield]
+            # If the type is somehow null, we can't do anything
+            if t is None:
+                continue
             # Is this the first of this type we've seen?
             # If so, create the tags with type as a suffix
             if not uniquetypes.has_key(t):
