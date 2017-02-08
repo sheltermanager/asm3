@@ -51,11 +51,11 @@ for d in db.select("members").list():
     o.OwnerSurname = d.last_name
     o.OwnerName = o.OwnerForeNames + " " + o.OwnerSurname
     o.OwnerAddress = asm.nulltostr(d.address_1) + " " + asm.nulltostr(d.address_2)
-    o.OwnerTown = d.address_3
-    o.OwnerCounty = d.address_4
-    o.OwnerPostcode = d.post_code
-    o.EmailAddress = d.email
-    o.HomeTelephone = d.phone
+    o.OwnerTown = asm.nulltostr(d.address_3)
+    o.OwnerCounty = asm.nulltostr(d.address_4)
+    o.OwnerPostcode = asm.nulltostr(d.post_code)
+    o.EmailAddress = asm.nulltostr(d.email)
+    o.HomeTelephone = asm.nulltostr(d.phone)
     o.IsGiftAid = d.gift_aid
     o.Comments = note_fix(d.notes)
 
@@ -68,7 +68,7 @@ for d in db.select("secondary_members").list():
     if d.last_name is not None and d.last_name != o.OwnerSurname:
         o.OwnerSurname += " & " + d.last_name
     if d.phone is not None:
-        o.MobileTelephone = d.phone
+        o.MobileTelephone = asm.nulltostr(d.phone)
 
 # member renewals as payments, record latest renewal date as membership expiry
 for d in db.query("select m.*, r.name as renewaltypename from member_renewals m inner join renewal_types r on r.id = m.renewal_type_id;").list():
@@ -107,7 +107,7 @@ flags = {
     "SPONSOR SAD": "Sponsor SAD",
     "SUBSCRIBERS": "Subscriber",
     "ARCHIVED": "Archived",
-    "MAD SPONSOR": "MAD Sponsor",
+    "MAD SPONSOR": "MaD Sponsor",
     "SHOP VOLUNTEER - BLACKWOOD": "Shop Volunteer - Blackwood",
     "SHOP VOLUNTEER - RUTHIN": "Shop Volunteer - Ruthin",
     "SHOP VOLUNTEER - CARDIFF": "Shop Volunteer - Cardiff",
@@ -119,7 +119,7 @@ for d in db.query("select member_id, name from member_categories inner join cate
     if not ppo.has_key(d.member_id): continue
     o = ppo[d.member_id]
     if flags.has_key(d.name):
-        o.AdditionalFlags += d.name + "|"
+        o.AdditionalFlags += flags[d.name] + "|"
         if d.name == "FOSTER": 
             o.IsFosterer = 1
         elif d.name == "VOLUNTEER":
