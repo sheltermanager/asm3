@@ -1,6 +1,7 @@
 40
 ================
 
+09/02/17 Fix SQL injection bugs in user module
 08/02/17 Fix for upper() bug when type is none
 08/02/17 Update fr_CA translation
 02/02/17 "Mark homechecked" box on move->adopt should default to unchecked

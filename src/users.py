@@ -339,14 +339,14 @@ def change_password(dbo, username, oldpassword, newpassword):
     l = dbo.locale
     if None == authenticate(dbo, username, oldpassword):
         raise utils.ASMValidationError(i18n._("Password is incorrect.", l))
-    db.execute(dbo, "UPDATE users SET Password = '%s' WHERE UserName Like '%s'" % (hash_password(newpassword), username))
+    db.execute(dbo, "UPDATE users SET Password = '%s' WHERE UserName Like %s" % (hash_password(newpassword), db.ds(username)))
 
 def get_locale_override(dbo, username):
     """
     Returns a user's locale override, or empty string if it doesn't have one
     """
     try:
-            return db.query_string(dbo, "SELECT LocaleOverride FROM users WHERE UserName Like '%s'" % username)
+            return db.query_string(dbo, "SELECT LocaleOverride FROM users WHERE UserName Like %s" % db.ds(username))
     except:
         return ""
 
@@ -355,7 +355,7 @@ def get_theme_override(dbo, username):
     Returns a user's theme override, or empty string if it doesn't have one
     """
     try:
-        return db.query_string(dbo, "SELECT ThemeOverride FROM users WHERE UserName Like '%s'" % username)
+        return db.query_string(dbo, "SELECT ThemeOverride FROM users WHERE UserName Like %s" % db.ds(username))
     except:
         return ""
 
@@ -363,7 +363,7 @@ def get_real_name(dbo, username):
     """
     Returns a user's real name
     """
-    return db.query_string(dbo, "SELECT RealName FROM users WHERE UserName Like '%s'" % username)
+    return db.query_string(dbo, "SELECT RealName FROM users WHERE UserName Like %s" % db.ds(username))
 
 def get_roles(dbo):
     """
@@ -388,8 +388,8 @@ def get_roles_for_user(dbo, user):
     rows = db.query(dbo, "SELECT r.Rolename FROM role r " \
         "INNER JOIN userrole ur ON ur.RoleID = r.ID " \
         "INNER JOIN users u ON u.ID = ur.UserID " \
-        "WHERE u.UserName Like '%s' " \
-        "ORDER BY r.Rolename" % user)
+        "WHERE u.UserName Like %s " \
+        "ORDER BY r.Rolename" % db.ds(user))
     roles = []
     for r in rows:
         roles.append(r["ROLENAME"])
@@ -404,7 +404,7 @@ def get_security_map(dbo, username):
     maps = db.query(dbo, "SELECT role.SecurityMap FROM role " \
         "INNER JOIN userrole ON role.ID = userrole.RoleID " \
         "INNER JOIN users ON users.ID = userrole.UserID " \
-        "WHERE users.UserName Like '%s'" % username)
+        "WHERE users.UserName Like %s" % db.ds(username))
     for m in maps:
         rv += str(m["SECURITYMAP"])
     return rv
@@ -422,7 +422,7 @@ def get_users(dbo, user='%'):
     Returns a list of all (or selected) system users with a pipe
     separated list of their roles
     """
-    users = db.query(dbo, "SELECT * FROM users WHERE UserName Like '%s' ORDER BY UserName" % user)
+    users = db.query(dbo, "SELECT * FROM users WHERE UserName Like %s ORDER BY UserName" % db.ds(user))
     roles = db.query(dbo, "SELECT ur.*, r.RoleName FROM userrole ur INNER JOIN role r ON ur.RoleID = r.ID")
     for u in users:
         roleids = []
@@ -491,14 +491,14 @@ def get_personid(dbo, user):
     """
     Returns the personid for a user or 0 if it doesn't have one
     """
-    return db.query_int(dbo, "SELECT OwnerID FROM users WHERE UserName Like '%s'" % user)
+    return db.query_int(dbo, "SELECT OwnerID FROM users WHERE UserName Like %s" % db.ds(user))
 
 def get_location_filter(dbo, user):
     """
     Returns the location filter (comma separated list of IDs) 
     for a user, or "" if it doesn't have one.
     """
-    return db.query_string(dbo, "SELECT LocationFilter FROM users WHERE UserName LIKE '%s'" % user)
+    return db.query_string(dbo, "SELECT LocationFilter FROM users WHERE UserName LIKE %s" % db.ds(user))
 
 def insert_user_from_form(dbo, username, post):
     """
@@ -535,7 +535,7 @@ def insert_user_from_form(dbo, username, post):
     return nuserid
 
 def update_user_settings(dbo, username, email = "", realname = "", locale = "", theme = "", signature = ""):
-    userid = db.query_int(dbo, "SELECT ID FROM users WHERE Username = '%s'" % username)
+    userid = db.query_int(dbo, "SELECT ID FROM users WHERE Username = %s" % db.ds(username))
     sql = db.make_update_sql("users", "ID=%d" % userid, (
         ( "RealName", db.ds(realname) ),
         ( "EmailAddress", db.ds(email) ),
