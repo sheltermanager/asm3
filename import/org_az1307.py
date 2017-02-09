@@ -105,11 +105,11 @@ flags = {
     "5 YR MEMBERSHIP": "5 Year Membership",
     "VOLUNTEER": "volunteer",
     "SPONSOR SAD": "Sponsor SAD",
-    "SUBSCRIBERS": "Subscriber",
+    "SUBSCRIBER": "Subscriber",
     "ARCHIVED": "Archived",
     "MAD SPONSOR": "MaD Sponsor",
-    "SHOP VOLUNTEER - BLACKWOOD": "Shop Volunteer - Blackwood",
-    "SHOP VOLUNTEER - RUTHIN": "Shop Volunteer - Ruthin",
+    "SHOP VOLUNTERR - BLACKWOOD": "Shop Volunteer - Blackwood",
+    "SHOP VOLUNTERR - RUTHIN": "Shop Volunteer - Ruthin",
     "SHOP VOLUNTEER - CARDIFF": "Shop Volunteer - Cardiff",
     "PATRON": "Patron",
     "MEMORIAL DOG SPONSOR": "Memorial Dog Sponsor",
@@ -137,7 +137,7 @@ for d in db.query("select d.*, l.name as locationname from dogs d left outer joi
     a.AnimalTypeID = 2
     if d.RGT == 1: a.AnimalTypeID = 43 # RGT
     a.SpeciesID = 1
-    a.BaseColourID = asm.colour_from_db(d.colour)
+    a.BaseColourID = asm.colour_from_db(d.colour, 1)
     a.AnimalName = d.name
     if a.AnimalName.strip() == "":
         a.AnimalName = "(unknown)"
