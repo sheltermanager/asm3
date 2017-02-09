@@ -127,6 +127,50 @@ for d in db.query("select member_id, name from member_categories inner join cate
         elif d.name == "HOME CHECKER":
             o.IsHomeChecker = 1
 
+colours = {
+    "Brindle": 14,
+    "Fawn": 49,
+    "Black": 1,
+    "White/Black": 5,
+    "Blue/Grey": 67,
+    "Black/White": 5,
+    "Brindle/White": 16,
+    "White/Fawn Brindle": 63,
+    "Blue/White": 61,
+    "Black/Grey": 68,
+    "White/Fawn": 64,
+    "Tan": 8,
+    "White/Blue": 61,
+    "Fawn/Brindle": 63,
+    "Chocolate Brown/White": 35,
+    "Black/Brown": 13,
+    "Blue": 36,
+    "Blacl and White": 5,
+    "White/Brindle": 16,
+    "Black/Tan": 9,
+    "Black white flecks": 5,
+    "White/Orange": 69,
+    "Blue Brindle": 60,
+    "Tan/White": 24,
+    "Black and White": 3,
+    "White": 2,
+    "Cream/Tan": 70,
+    "Brown": 11,
+    "Fawn/white": 64,
+    "White/Brown": 40,
+    "Grey/White": 31,
+    "Tan/Brindle": 65,
+    "Grey": 30,
+    "Back": 1,
+    "Red fawn": 71,
+    "Tan and White": 24,
+    "White and Blue": 66,
+    "Black/brindle": 17,
+    "Blue/brindle": 60,
+    "Brown and white": 35,
+    "White / Brindle": 18
+}
+
 # Now dogs
 for d in db.query("select d.*, l.name as locationname from dogs d left outer join locations l on l.id = d.location_id").list():
     # Each row contains an animal
@@ -137,7 +181,8 @@ for d in db.query("select d.*, l.name as locationname from dogs d left outer joi
     a.AnimalTypeID = 2
     if d.RGT == 1: a.AnimalTypeID = 43 # RGT
     a.SpeciesID = 1
-    a.BaseColourID = asm.colour_from_db(d.colour, 1)
+    if colours.has_key(d.colour):
+        a.BaseColourID = colours[d.colour]
     a.AnimalName = d.name
     if a.AnimalName.strip() == "":
         a.AnimalName = "(unknown)"
