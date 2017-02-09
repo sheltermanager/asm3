@@ -680,9 +680,10 @@ def receive_donation(dbo, username, did):
     Marks a donation received
     """
     if id is None or did == "": return
+    receiptno = db.query_string(dbo, "SELECT ReceiptNumber FROM ownerdonation WHERE ID = %d" % did)
     db.execute(dbo, "UPDATE ownerdonation SET Date = %s, LastChangedBy = %s, LastChangedDate = %s WHERE ID = %d" % ( \
         db.dd(i18n.now(dbo.timezone)), db.ds(username), db.ddt(i18n.now(dbo.timezone)), int(did) ))
-    audit.edit(dbo, username, "ownerdonation", did, str(did) + ": received")
+    audit.edit(dbo, username, "ownerdonation", did, "receipt %s, id %s: received" % (receiptno, did))
     update_matching_donation_transaction(dbo, username, int(did))
     check_create_next_donation(dbo, username, did)
 
