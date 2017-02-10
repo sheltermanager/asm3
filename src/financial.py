@@ -593,7 +593,7 @@ def insert_donation_from_form(dbo, username, post):
     """
     donationid = db.get_id(dbo, "ownerdonation")
     if post["receiptnumber"] == "":
-        post.data["receiptnumber"] = utils.padleft(donationid, 8)
+        post.data["receiptnumber"] = get_next_receipt_number(dbo)
     sql = db.make_insert_user_sql(dbo, "ownerdonation", username, ( 
         ( "ID", db.di(donationid)),
         ( "OwnerID", post.db_integer("person")),

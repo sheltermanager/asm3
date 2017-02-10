@@ -1,6 +1,7 @@
 40
 ================
 
+10/02/17 Fix receipt number/ID numbering bug
 10/02/17 Add altered mode of shelter view
 10/02/17 Add en_LB (Lebanon) locale, pegged to US English
 09/02/17 Fix SQL injection bugs in user module
