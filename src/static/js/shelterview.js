@@ -400,7 +400,10 @@ $(function() {
         },
 
         switch_view: function(viewmode) {
-            if (viewmode == "agegroup") {
+            if (viewmode == "altered") {
+                this.render_view("NEUTEREDSTATUS", "", "NEUTEREDSTATUS,ANIMALNAME", false, false);
+            }
+            else if (viewmode == "agegroup") {
                 this.render_view("AGEGROUP", "", "AGEGROUP,ANIMALNAME", false, false);
             }
             else if (viewmode == "coordinator") {
@@ -479,10 +482,19 @@ $(function() {
             });
         },
 
+        /** Adds the NEUTEREDSTATUS column */
+        add_neutered_status: function() {
+            $.each(controller.animals, function(i, a) {
+                if (a.NEUTERED == 1) { a.NEUTEREDSTATUS = _("Altered"); return; }
+                a.NEUTEREDSTATUS = _("Unaltered");
+            });
+        },
+
         render: function() {
             var h = [];
             h.push('<div id="asm-content" class="ui-helper-reset ui-widget-content ui-corner-all" style="padding: 10px;">');
             h.push('<select id="viewmode" style="float: right;" class="asm-selectbox">');
+            h.push('<option value="altered">' + _("Altered") + '</option>');
             h.push('<option value="coordinator">' + _("Adoption Coordinator") + '</option>');
             h.push('<option value="agegroup">' + _("Age Group") + '</option>');
             h.push('<option value="entrycategory">' + _("Entry Category") + '</option>');
@@ -515,9 +527,10 @@ $(function() {
         },
 
         sync: function() {
-            // Generate the adoption status and first letter fields
+            // Generate extra columns for sort/display
             shelterview.add_adoption_status();
             shelterview.add_first_letter();
+            shelterview.add_neutered_status();
             // Clean up any null fields that we might want to group on later
             $.each(controller.animals, function(i, v) {
                 if (!v.CURRENTOWNERNAME) {

@@ -949,6 +949,7 @@ $(function() {
                 '<td><label for="shelterviewdefault">' + _("Default view") + '</label></td>',
                 '<td>',
                 '<select id="shelterviewdefault" class="asm-selectbox" data="ShelterViewDefault">',
+                '<option value="altered">' + _("Altered") + '</option>',
                 '<option value="coordinator">' + _("Adoption Coordinator") + '</option>',
                 '<option value="agegroup">' + _("Age Group") + '</option>',
                 '<option value="entrycategory">' + _("Entry Category") + '</option>',
