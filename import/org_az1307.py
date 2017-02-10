@@ -181,6 +181,7 @@ for d in db.query("select d.*, l.name as locationname from dogs d left outer joi
     a.AnimalTypeID = 2
     if d.RGT == 1: a.AnimalTypeID = 43 # RGT
     a.SpeciesID = 1
+    a.BaseColourID = 72 # Unknown
     if colours.has_key(d.colour):
         a.BaseColourID = colours[d.colour]
     a.AnimalName = d.name
