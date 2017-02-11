@@ -134,6 +134,7 @@ colours = {
     "White/Black": 5,
     "Blue/Grey": 67,
     "Black/White": 5,
+    "Black/white": 5,
     "Brindle/White": 16,
     "White/Fawn Brindle": 63,
     "Blue/White": 61,
