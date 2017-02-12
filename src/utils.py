@@ -8,6 +8,7 @@ import datetime
 import db
 import hashlib
 import htmlentitydefs
+import json
 import os
 import re
 import smtplib
@@ -98,10 +99,7 @@ class PostedData(object):
     def __getitem__(self, key):
         return self.string(key)
     def __repr__(self):
-        x = []
-        for k,v in self.data.iteritems():
-            x.append("%s:%s" % (k, v.encode("ascii", "xmlcharrefreplace")))
-        return ", ".join(x)
+        return json.dumps(self.data)
 
 def is_currency(f):
     """ Returns true if the field with name f is a currency field """

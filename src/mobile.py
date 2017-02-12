@@ -621,6 +621,7 @@ def page_check_licence(l, homelink):
     h.append(jqm_hidden("posttype", "lc"))
     h.append(jqm_fieldcontain("licence", _("License Number", l), jqm_text("licence")))
     h.append(jqm_submit(_("Check", l)))
+    h.append(jqm_form_end())
     h.append(jqm_page_footer())
     return h
 
