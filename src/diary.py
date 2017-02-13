@@ -72,12 +72,12 @@ def user_role_where_clause(dbo, user = "", includecreatedby = True):
     if user == "": return "DiaryForName LIKE '%'"
     roles = users.get_roles_for_user(dbo, user)
     createdby = ""
-    if includecreatedby: createdby = "OR CreatedBy = '%s'" % user
-    if len(roles) == 0: return "DiaryForName = '%s' %s" % (user, createdby)
+    if includecreatedby: createdby = "OR CreatedBy = %s" % db.ds(user)
+    if len(roles) == 0: return "DiaryForName = %s %s" % (db.ds(user), createdby)
     sroles = []
     for r in roles:
-        sroles.append("'" + r.replace("'", "`") + "'")
-    return "(DiaryForName = '%s' %s OR DiaryForName IN (%s))" % (user, createdby, ",".join(sroles))
+        sroles.append(db.ds(r))
+    return "(DiaryForName = %s %s OR DiaryForName IN (%s))" % (db.ds(user), createdby, ",".join(sroles))
 
 def get_between_two_dates(dbo, user, dbstart, dbend):
     """
