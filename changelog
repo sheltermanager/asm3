@@ -1,6 +1,7 @@
 40
 ================
 
+14/02/17 Include first time an animal was published in history #137
 13/02/17 Fix sql injection bug in diary.user_role_where_clause
 12/02/17 Fix check licence mobile form breaking add diary (no </form> closer)
 10/02/17 Fix receipt number/ID numbering bug

@@ -631,7 +631,8 @@ $(function() {
 
             var pname = function(p) {
                 var t = p;
-                if (p == "html") { t = html.icon("web") + " " + _("Published to Website"); }
+                if (p == "first") { t = _("Adoptable and published for the first time"); }
+                else if (p == "html") { t = html.icon("web") + " " + _("Published to Website"); }
                 else if (p == "petfinder") { t = "Published to petfinder.com"; }
                 else if (p == "adoptapet") { t = "Published to adoptapet.com"; }
                 else if (p == "rescuegroups") { t = "Published to rescuegroups.org"; }

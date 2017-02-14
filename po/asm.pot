@@ -679,6 +679,10 @@ msgstr ""
 msgid "Adoptable Animal"
 msgstr ""
 
+#: animal.js
+msgid "Adoptable and published for the first time"
+msgstr ""
+
 #: common.js animal_find.js animal.py
 msgid "Adopted"
 msgstr ""
@@ -1008,7 +1012,8 @@ msgstr ""
 msgid "Already fostered to this person."
 msgstr ""
 
-#: animal_new.js animal.js animal_find_results.js animal_bulk.js html.py
+#: shelterview.js animal_new.js animal.js animal_find_results.js animal_bulk.js
+#: options.js html.py
 msgid "Altered"
 msgstr ""
 
@@ -1361,10 +1366,6 @@ msgstr ""
 
 #: person_find_results.js
 msgid "Areas"
-msgstr ""
-
-#: movements.js
-msgid "Arrival"
 msgstr ""
 
 #: dbupdate.py
@@ -2787,7 +2788,7 @@ msgstr ""
 msgid "Criteria:"
 msgstr ""
 
-#: animal_new.js animal.js dbupdate.py
+#: animal_new.js animal.js
 msgid "Crossbreed"
 msgstr ""
 
@@ -6802,6 +6803,10 @@ msgstr ""
 msgid "Missouri Foxtrotter"
 msgstr ""
 
+#: dbupdate.py
+msgid "Mixed Breed"
+msgstr ""
+
 #: common.js
 msgid "Mo"
 msgstr ""
@@ -7004,11 +7009,12 @@ msgstr ""
 msgid "NNN or NN = number unique for this type of animal for this year"
 msgstr ""
 
-#: onlineforms.js waitinglist_results.js diarytasks.js onlineform.js
-#: animal_find.js onlineform_incoming.js medicalprofile.js animal_new.js
-#: medical.js animal.js person_find_results.js stocklevel.js htmltemplates.js
-#: common_personchooser.js animal_find_results.js common_animalchooser.js
-#: additional.js roles.js person.py mobile.py html.py
+#: onlineforms.js shelterview.js waitinglist_results.js diarytasks.js
+#: onlineform.js animal_find.js onlineform_incoming.js medicalprofile.js
+#: animal_new.js medical.js animal.js person_find_results.js stocklevel.js
+#: htmltemplates.js common_personchooser.js animal_find_results.js
+#: common_animalchooser.js additional.js options.js roles.js person.py
+#: mobile.py html.py
 msgid "Name"
 msgstr ""
 
@@ -7050,6 +7056,14 @@ msgstr ""
 
 #: mobile.py
 msgid "Neutered"
+msgstr ""
+
+#: animal.py
+msgid "Neutered/Spayed Non-Shelter Animals In {0}"
+msgstr ""
+
+#: animal.py
+msgid "Neutered/Spayed Shelter Animals In {0}"
 msgstr ""
 
 #: document_templates.js rota.js transport.js document_repository.js
@@ -10142,6 +10156,10 @@ msgstr ""
 msgid "Surname"
 msgstr ""
 
+#: dbupdate.py
+msgid "Surrender"
+msgstr ""
+
 #: incident_find_results.js incident.js incident_new.js
 msgid "Suspect"
 msgstr ""
@@ -11493,7 +11511,7 @@ msgstr ""
 msgid "Unable to Cope"
 msgstr ""
 
-#: common.js options.js
+#: common.js shelterview.js options.js
 msgid "Unaltered"
 msgstr ""
 
@@ -11780,6 +11798,10 @@ msgstr ""
 
 #: mailmerge.js
 msgid "Valid tokens for the subject and text"
+msgstr ""
+
+#: stocklevel.js
+msgid "Value"
 msgstr ""
 
 #: dbupdate.py
