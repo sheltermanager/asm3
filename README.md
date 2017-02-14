@@ -22,7 +22,7 @@ Extra, non-mandatory packages:
 
 Packages necessary for building static checkers, installers and manuals:
 
-* apt-get install nodejs pychecker python-sphinx python-sphinx-rtd-theme texlive-latex-base texlive-latex-extras
+* apt-get install nodejs pychecker python-sphinx python-sphinx-rtd-theme texlive-latex-base texlive-latex-extra
 
 If you're using Debian and want to do development, you can use "make deps"
 to install the needed dependencies.
