@@ -128,48 +128,47 @@ for d in db.query("select member_id, name from member_categories inner join cate
             o.IsHomeChecker = 1
 
 colours = {
-    "Brindle": 14,
-    "Fawn": 49,
-    "Black": 1,
-    "White/Black": 5,
-    "Blue/Grey": 67,
-    "Black/White": 5,
-    "Black/white": 5,
-    "Brindle/White": 16,
-    "White/Fawn Brindle": 63,
-    "Blue/White": 61,
-    "Black/Grey": 68,
-    "White/Fawn": 64,
-    "Tan": 8,
-    "White/Blue": 61,
-    "Fawn/Brindle": 63,
-    "Chocolate Brown/White": 35,
-    "Black/Brown": 13,
-    "Blue": 36,
-    "Blacl and White": 5,
-    "White/Brindle": 16,
-    "Black/Tan": 9,
-    "Black white flecks": 5,
-    "White/Orange": 69,
-    "Blue Brindle": 60,
-    "Tan/White": 24,
-    "Black and White": 3,
-    "White": 2,
-    "Cream/Tan": 70,
-    "Brown": 11,
-    "Fawn/white": 64,
-    "White/Brown": 40,
-    "Grey/White": 31,
-    "Tan/Brindle": 65,
-    "Grey": 30,
-    "Back": 1,
-    "Red fawn": 71,
-    "Tan and White": 24,
-    "White and Blue": 66,
-    "Black/brindle": 17,
-    "Blue/brindle": 60,
-    "Brown and white": 35,
-    "White / Brindle": 18
+    "brindle": 14,
+    "fawn": 49,
+    "black": 1,
+    "white/black": 5,
+    "blue/grey": 67,
+    "black/white": 5,
+    "brindle/white": 16,
+    "white/fawn brindle": 63,
+    "blue/white": 61,
+    "black/grey": 68,
+    "white/fawn": 64,
+    "tan": 8,
+    "white/blue": 61,
+    "fawn/brindle": 63,
+    "chocolate brown/white": 35,
+    "black/brown": 13,
+    "blue": 36,
+    "blacl and white": 5,
+    "white/brindle": 16,
+    "black/tan": 9,
+    "black white flecks": 5,
+    "white/orange": 69,
+    "blue brindle": 60,
+    "tan/white": 24,
+    "black and white": 3,
+    "white": 2,
+    "cream/tan": 70,
+    "brown": 11,
+    "fawn/white": 64,
+    "white/brown": 40,
+    "grey/white": 31,
+    "tan/brindle": 65,
+    "grey": 30,
+    "back": 1,
+    "red fawn": 71,
+    "tan and white": 24,
+    "white and blue": 66,
+    "black/brindle": 17,
+    "blue/brindle": 60,
+    "brown and white": 35,
+    "white / brindle": 18
 }
 
 # Now dogs
@@ -183,8 +182,8 @@ for d in db.query("select d.*, l.name as locationname from dogs d left outer joi
     if d.RGT == 1: a.AnimalTypeID = 43 # RGT
     a.SpeciesID = 1
     a.BaseColourID = 72 # Unknown
-    if colours.has_key(d.colour):
-        a.BaseColourID = colours[d.colour]
+    if colours.has_key(d.colour.lower()):
+        a.BaseColourID = colours[d.colour.lower()]
     a.AnimalName = d.name
     if a.AnimalName.strip() == "":
         a.AnimalName = "(unknown)"
