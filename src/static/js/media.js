@@ -785,7 +785,11 @@ $(function() {
                 if (controller.person) {
                     $("#emailto").val(controller.person.EMAILADDRESS);
                 }
-                else if (controller.animal) {
+                // Use the latest reservation/person if the animal is on shelter/foster and a reserve is available
+                else if (controller.animal && controller.animal.ARCHIVED == 0 && controller.animal.RESERVEDOWNEREMAILADDRESS) {
+                    $("#emailto").val(controller.animal.RESERVEDOWNEREMAILADDRESS);
+                }
+                else {
                     $("#emailto").val(controller.animal.CURRENTOWNEREMAILADDRESS);
                 }
                 // Default the email sig
