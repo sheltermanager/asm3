@@ -35,7 +35,7 @@ $(function() {
                 html.list_to_options(controller.incidenttypes, "ID", "INCIDENTNAME"),
                 '</td>',
                 '</tr>',
-                '<tr>',
+                '<tr id="viewrolesrow">',
                 '<td><label for="viewroles">' + _("View Roles") + '</label>',
                 '<span id="callout-viewroles" class="asm-callout">' + _("Only allow users with one of these roles to view this incident") + '</span>',
                 '</td>',
@@ -369,6 +369,11 @@ $(function() {
 
             // Hide the site chooser if multi-site is off
             $("#siterow").toggle( config.bool("MultiSiteEnabled") );
+
+            // Hide the view roles controls if incident permissions are off
+            if (!config.bool("IncidentPermissions")) {
+                $("#viewrolesrow").hide();
+            }
 
             // If a dispatch time is already set, disable the dispatch button
             if ($("#dispatchtime").val()) {

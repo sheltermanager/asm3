@@ -181,6 +181,7 @@ DEFAULTS = {
     "FancyTooltips": "No",
     "FirstDayOfWeek": "1",
     "FosterOnShelter": "Yes",
+    "IncidentPermissions": "No",
     "IncomingMediaScaling": "640x640",
     "GenerateDocumentLog": "No",
     "GenerateDocumentLogType": "5",

@@ -15,7 +15,7 @@ $(function() {
                 html.list_to_options(controller.incidenttypes, "ID", "INCIDENTNAME"),
                 '</td>',
                 '</tr>',
-                '<tr>',
+                '<tr id="viewrolesrow">',
                 '<td><label for="viewroles">' + _("View Roles") + '</label>',
                 '<span id="callout-viewroles" class="asm-callout">' + _("Only allow users with one of these roles to view this incident") + '</span>',
                 '</td>',
@@ -165,6 +165,10 @@ $(function() {
             }
             else {
                 $("#site").select("value", asm.siteid);
+            }
+
+            if (!config.bool("IncidentPermissions")) {
+                $("#viewrolesrow").hide();
             }
 
         },
