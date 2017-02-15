@@ -1,6 +1,7 @@
 40
 ================
 
+15/02/17 Notes additional fields not saving on add new animal #140
 15/02/17 Option to disable fine-grained incident permissions #132
 15/02/17 Refactor js out of mobile.py
 15/02/17 Allow online form fields to be set by querystring #133

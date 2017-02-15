@@ -127,7 +127,7 @@ $(function() {
                 $(".asm-content button").button("disable");
                 header.show_loading(_("Creating..."));
 
-                var formdata = $("input, select, textarea").toPOST();
+                var formdata = $("input, textarea, select").not(".chooser").toPOST();
                 common.ajax_post("waitinglist_new", formdata)
                     .then(function(createdID) {
                         if (mode == "add") {
