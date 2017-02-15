@@ -39,6 +39,9 @@ As you can see in the screenshot, each form has a “Form URL”. This is the we
 link you can use on your website to link people to the form. You can also click
 it directly there in the UI to test your form. 
 
+You may add extra parameters to the URL if you'd like to set default values
+for some of your form fields, by using the format fieldname=value.
+
 .. warning:: sheltermanager.com uses a short term 2 minute cache on forms, so if you make changes to a form you've recently viewed, you may have to wait 2 minutes for any changes you make to appear.
 
 Clicking on the form's name will allow you to edit the individual fields of

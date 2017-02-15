@@ -93,94 +93,23 @@ def get_onlineform_html(dbo, formid, completedocument = True):
         raise utils.ASMValidationError("Online form %d does not exist")
     form = form[0]
     formfields = get_onlineformfields(dbo, formid)
-    # If a date field has been used, we need to pull jquery ui into the header
-    # and have it applied to all date fields.
-    needjqui = False
-    for f in formfields:
-        if f["FIELDTYPE"] == FIELDTYPE_DATE or f["FIELDTYPE"] == FIELDTYPE_SIGNATURE or f["FIELDTYPE"] == FIELDTYPE_LOOKUP_MULTI:
-            needjqui = True
     if completedocument:
         header = get_onlineform_header(dbo)
-        if needjqui:
-            df = i18n.get_display_date_format(l)
-            df = df.replace("%Y", "yy").replace("%m", "mm").replace("%d", "dd")
-            header = header.replace("</head>", """
-                %s
-                <script>
-                $(document).ready(function() {
-                    var is_safari = navigator.userAgent.indexOf("Safari") > -1 && navigator.userAgent.indexOf("Chrome") == -1;
-                    var is_ios = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;                    
-                    var is_ie8 = navigator.appName.indexOf("Internet Explorer") !=-1 && navigator.appVersion.indexOf("MSIE 8")== -1;
-                    $(".asm-onlineform-date").datepicker({ dateFormat: '%s' });
-                    try {
-                        $(".asm-onlineform-signature").signature({ guideline: true });
-                        $(".asm-onlineform-signature-clear").click(function() {
-                            var signame = $(this).attr("data-clear");
-                            $("div[data-name='" + signame + "']").signature("clear");
-                        });
-                    } catch (ex) {}
-                    $(".asm-onlineform-lookupmulti").asmSelect({
-                        animate: true,
-                        sortable: true,
-                        removeLabel: '<strong>&times;</strong>',
-                        listClass: 'bsmList-custom',  
-                        listItemClass: 'bsmListItem-custom',
-                        listItemLabelClass: 'bsmListItemLabel-custom',
-                        removeClass: 'bsmListItemRemove-custom'
-                    });
-                    $("input[type='submit']").click(function() {
-                        var rv;
-                        $(".asm-onlineform-signature").each(function() {
-                            try {
-                                var img = $(this).find("canvas").get(0).toDataURL("image/png");
-                                var fieldname = $(this).attr("data-name");
-                                $("input[name='" + fieldname + "']").val(img);
-                                if ($(this).signature("isEmpty") && $(this).parent().find(".asm-onlineform-required").length > 0) {
-                                    alert("Signature is required.");
-                                    rv = false;
-                                    return false;
-                                }
-                            }
-                            catch (exo) {
-                                if (window.console) { console.log(exo); }
-                            }
-                        });
-                        if (rv == false) { return false; }
-                        $(".asm-onlineform-lookupmulti").each(function() {
-                            var fieldname = $(this).attr("data-name"),
-                                v = $(this).val();
-                            $("input[name='" + fieldname + "']").val(v);
-                            if (!v && $(this).attr("data-required")) {
-                                alert("You must choose at least one option");
-                                rv = false;
-                                return false;
-                            }
-
-                        });
-                        if (rv == false) { return false; }
-                        // Only necessary for iOS and IE8 where required attribute is not supported
-                        if (is_ios || is_safari || is_ie8) {
-                            $(".asm-onlineform-date, .asm-onlineform-text, .asm-onlineform-lookup, .asm-onineform-notes").each(function() {
-                                if ($(this).attr("required") && !$(this).val()) {
-                                    alert("This field cannot be blank");
-                                    rv = false;
-                                    $(this).focus();
-                                    return false;
-                                }
-                            });
-                        }
-                        return rv;
-                    });
-                });
-                </script>
-                </head>""" % (html.css_tag(JQUERY_UI_CSS.replace("%(theme)s", "smoothness")) + \
-                    html.css_tag(ASMSELECT_CSS) + \
-                    html.script_tag(JQUERY_JS) + \
-                    html.script_tag(JQUERY_UI_JS) + \
-                    html.script_tag(TOUCHPUNCH_JS) + \
-                    html.script_tag(SIGNATURE_JS) + \
-                    html.script_tag(ASMSELECT_JS),
-                    df))
+        # Calculate the date format and add our extra script
+        # references into the header block
+        df = i18n.get_display_date_format(l)
+        df = df.replace("%Y", "yy").replace("%m", "mm").replace("%d", "dd")
+        extra = "<script>\nIS_FORM = true; DATE_FORMAT = '%s';\n</script>\n" % df
+        extra += html.css_tag(JQUERY_UI_CSS.replace("%(theme)s", "smoothness")) + \
+            html.css_tag(ASMSELECT_CSS) + \
+            html.script_tag(JQUERY_JS) + \
+            html.script_tag(JQUERY_UI_JS) + \
+            html.script_tag(TOUCHPUNCH_JS) + \
+            html.script_tag(SIGNATURE_JS) + \
+            html.script_tag(ASMSELECT_JS) + \
+            html.asm_script_tag("onlineform_extra.js") + \
+            "</head>"
+        header = header.replace("</head>", extra)
         h.append(header.replace("$$TITLE$$", form["NAME"]))
         h.append('<h2 class="asm-onlineform-title">%s</h2>' % form["NAME"])
         if form["DESCRIPTION"] is not None and form["DESCRIPTION"] != "":

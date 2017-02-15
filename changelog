@@ -1,6 +1,8 @@
 40
 ================
 
+15/02/17 Refactor js out of mobile.py
+15/02/17 Allow online form fields to be set by querystring #133
 15/02/17 Default reserved owner email for shelter/foster animals #135
 14/02/17 Include first time an animal was published in history #137
 13/02/17 Fix sql injection bug in diary.user_role_where_clause

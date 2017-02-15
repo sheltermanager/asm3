@@ -32,72 +32,6 @@ def header(l):
     <meta name="viewport" content="width=device-width, initial-scale=1"> 
     %(css)s
     %(scripts)s
-    <script type="text/javascript">
-        $(document).ready(function() {
-
-            // Flag if we have an idevice
-            is_idevice = navigator.userAgent.toLowerCase().indexOf("ipod") != -1 || 
-                navigator.userAgent.toLowerCase().indexOf("ipad") != -1 ||
-                navigator.userAgent.toLowerCase().indexOf("iphone") != -1;
-
-            // Flag if we have old Android (1/2)
-            is_oldandroid = navigator.userAgent.indexOf("Android 2") != -1 ||
-                navigator.userAgent.indexOf("Android 1") != -1;
-
-            // If we're on the login page and all the boxes were filled in, 
-            // submit it
-            if ($("#loginform").size() > 0 && $("#username").val() && $("#password").val()) {
-                $("#loginform").submit();
-            }
-
-            // If the user sets a new diary date in the future, post it
-            $(".diaryon").change(function() {
-                $.mobile.changePage("mobile_post?posttype=dia&on=" + $(this).val() + "&id=" + $(this).attr("data"));
-            });
-
-            // If the user sets a new incident completed type, post it
-            $(".completedtype").change(function() {
-                var url = "mobile_post?posttype=vinccomp&ct=" + $(this).val() + "&id=" + $(this).attr("data");
-                //$.mobile.changePage(url);
-                window.location = url;
-            });
-
-            // If the user chooses a test result, post it
-            $(".testresult").change(function() {
-                $.mobile.changePage("mobile_post?posttype=test&resultid=" + $(this).val() + 
-                    "&animalid=" + $(this).attr("data-animal") + "&id=" + $(this).attr("data"));
-            });
-
-            // If this is a report criteria page, attach the click handler 
-            // to the button and submit the criteria
-            $("#submitcriteria").click(function() {
-                var post = "";
-                $("select, input").each(function() {
-                    var t = $(this);
-                    var pname = t.attr("data-post");
-                    if (!pname) { pname = t.attr("data"); }
-                    if (!pname) { return; }
-                    if (t.hasClass("asm-currencybox")) {
-                        if (post != "") { post += "&"; }
-                        post += pname + "=" + encodeURIComponent(t.currency("value"));
-                    }
-                    else if (t.val()) {
-                        if (post != "") { post += "&"; }
-                        post += pname + "=" + encodeURIComponent(t.val());
-                    }
-                    else if (includeblanks) {
-                        if (post != "") { post += "&"; }
-                        post += pname + "=" + encodeURIComponent(t.val());
-                    }
-                });
-                window.location = "mobile_report?" + post;    
-            });
-
-            // Use slides for all links
-            $("#home a").attr("data-transition", "slide");
-
-        });
-    </script>
     <style>
     .asm-thumbnail {
         max-width: 70px;
@@ -109,8 +43,10 @@ def header(l):
     """ % {
         "title":    _("Animal Shelter Manager", l),
         "css":      html.asm_css_tag("asm-icon.css"),
-        "scripts":  html.script_tag(JQUERY_JS) + 
-            html.css_tag(JQUERY_MOBILE_CSS) + html.script_tag(JQUERY_MOBILE_JS) 
+        "scripts":  html.script_tag(JQUERY_JS) + \
+            html.css_tag(JQUERY_MOBILE_CSS) + \
+            html.script_tag(JQUERY_MOBILE_JS) + \
+            html.asm_script_tag("mobile.js")
     }
 
 def jqm_button(href, text, icon = "", ajax = ""):
@@ -386,45 +322,6 @@ def page_sign(dbo, session, username):
     <meta name="viewport" content="width=device-width, initial-scale=1"> 
     %(css)s
     %(scripts)s
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $("#signature").signature({ guideline: true });
-            $("#sig-clear").click(function() {
-                $("#signature").signature("clear");
-            });
-            $("#sig-home").click(function() {
-                window.location = "mobile";
-            });
-            $("#sig-refresh").click(function() {
-                location.reload();
-            });
-            $("#sig-logout").click(function() {
-                window.location = "mobile_logout";
-            });
-            $("#sig-sign").click(function() {
-                var img = $("#signature canvas").get(0).toDataURL("image/png");
-                var formdata = "posttype=sign&ids=%(ids)s&sig=" + encodeURIComponent(img);
-                formdata += "&signdate=" + encodeURIComponent(moment().format("YYYY-MM-DD HH:mm:ss"));
-                $.ajax({
-                    type: "POST",
-                    url: "mobile_post",
-                    data: formdata,
-                    dataType: "text",
-                    mimeType: "textPlain",
-                    success: function(result) {
-                        location.reload();
-                    },
-                    error: function(jqxhr, textstatus, response) {
-                        $("body").append("<p>" + response + "</p>");
-                    }
-                });
-            });
-            $("#reviewlink").click(function() { 
-                $("#reviewlink").fadeOut();
-                $("#review").slideDown(); 
-            });
-        });
-    </script>
     <style>
     button { 
         padding: 10px; 
@@ -443,8 +340,12 @@ def page_sign(dbo, session, username):
         "title":    _("Signing Pad", l),
         "ids":      ids,
         "css":      html.asm_css_tag("asm-icon.css"),
-        "scripts":  html.script_tag(JQUERY_JS) + html.script_tag(JQUERY_UI_JS) + 
-            html.script_tag(TOUCHPUNCH_JS) + html.script_tag(SIGNATURE_JS) + html.script_tag(MOMENT_JS)
+        "scripts":  html.script_tag(JQUERY_JS) + \
+            html.script_tag(JQUERY_UI_JS) + \
+            html.script_tag(TOUCHPUNCH_JS) + \
+            html.script_tag(SIGNATURE_JS) + \
+            html.script_tag(MOMENT_JS) + \
+            html.asm_script_tag("mobile_sign.js")
     })
     if ids.strip() == "":
         h.append('<p>%s</p>' % _("Waiting for documents...", l))
@@ -1128,15 +1029,6 @@ def handler_viewanimal(session, l, dbo, a, af, diet, vacc, test, med, logs, home
                         _("You will need to upgrade to iOS 6 or higher to upload files.", l),
                          a["ID"], _("Send", l), uploadstatus))
     h.append(table_end())
-    h.append("""
-    <script type="text/javascript">
-        // If this is an idevice and the file upload box is
-        // disabled, it needs upgrading to iOS6 or better.
-        if (is_idevice && $("#fc%d").attr("disabled")) {
-            $(".tipios6").show();
-        }
-    </script>
-    """ % ( a["ID"] ))
     h.append(table())
     h.append(tr( _("Type", l), a["ANIMALTYPENAME"]))
     h.append(tr( _("Location", l), a["DISPLAYLOCATIONNAME"]))

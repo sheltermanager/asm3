@@ -88,7 +88,8 @@ def js_minified_name(filename):
     minifying is turned on and it's not a minified or third
     party file being requested.
     """
-    if MINIFY_JS and filename.find("/") == -1 and filename.find(".min") == -1: filename = "min/" + filename.replace(".js", ".min.js")
+    if MINIFY_JS and filename.find("/") == -1 and filename.find(".min") == -1: 
+        filename = "min/" + filename.replace(".js", ".min.js")
     return filename
 
 def css_tag(uri, idattr=""):
