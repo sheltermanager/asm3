@@ -4,8 +4,8 @@ import datetime
 import json
 import time
 
-VERSION = "40u [Wed 15 Feb 18:12:23 GMT 2017]"
-BUILD = "02151812"
+VERSION = "40u [Thu 16 Feb 15:15:09 GMT 2017]"
+BUILD = "02161515"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -49,6 +49,7 @@ def PLURAL_SLAVIC(n):
 locale_maps = {
     "en":       ( MDY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_GB":    ( DMY, POUND, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
+    "en_AW":    ( DMY, "Awg.", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_AU":    ( DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_BH":    ( MDY, "BD", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_CA":    ( MDY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
@@ -97,6 +98,7 @@ locale_maps = {
     "lt":       ( YMD, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "nb":       ( DMY, "kr", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "nl":       ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
+    "nl_AW":    ( DMY, "Awg.", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "pl":       ( DMY, "&#x007a;&#x0142;", PLURAL_POLISH, CURRENCY_PREFIX, 2 ),
     "pt":       ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "ru":       ( DMY, "&#1056;&#1059;&#1041;.", PLURAL_SLAVIC, CURRENCY_PREFIX, 2 ),
@@ -123,6 +125,9 @@ def real_locale(locale = "en"):
         locale = "en"
     if locale in ("en_NZ",):
         locale = "en_AU"
+    # Dutch locales
+    if locale in ("nl_AW",):
+        locale = "nl"
     # French locales
     if locale in ("fr_CH", "fr_LU"):
         locale = "fr"
