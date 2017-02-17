@@ -8,8 +8,8 @@ Adoptions between two dates with the adopters plotted on a map.
 ###
 en
 ###
-$VAR from DATE Enter from date$
-$VAR to DATE Enter to date$
+$VAR from DATE Adopted between$
+$VAR to DATE and$
 
 SELECT o.LatLong, 
 '<a href="animal?id=' || a.ID::varchar || '">' || a.AnimalName || ' - ' || a.ShelterCode || '</a>' ||
