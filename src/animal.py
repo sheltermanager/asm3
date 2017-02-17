@@ -745,8 +745,9 @@ def get_stats(dbo):
         "(SELECT COUNT(*) FROM adoption WHERE MovementDate >= %(from)s AND MovementType = %(adoption)d) AS Adopted," \
         "(SELECT COUNT(*) FROM adoption WHERE MovementDate >= %(from)s AND MovementType = %(reclaimed)d) AS Reclaimed, " \
         "(SELECT COUNT(*) FROM adoption WHERE MovementDate >= %(from)s AND MovementType = %(transfer)d) AS Transferred, " \
-        "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DeceasedDate >= %(from)s AND PutToSleep = 1) AS PTS, " \
-        "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DeceasedDate >= %(from)s AND PutToSleep = 0) AS Died, " \
+        "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND DeceasedDate >= %(from)s AND PutToSleep = 1) AS PTS, " \
+        "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND DeceasedDate >= %(from)s AND PutToSleep = 0 AND IsDOA = 0) AS Died, " \
+        "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND DeceasedDate >= %(from)s AND PutToSleep = 0 AND IsDOA = 1) AS DOA, " \
         "(SELECT SUM(Donation) FROM ownerdonation WHERE Date >= %(from)s) AS Donations, " \
         "(SELECT SUM(CostAmount) FROM animalcost WHERE CostDate >= %(from)s) + " \
             "(SELECT SUM(Cost) FROM animalvaccination WHERE DateOfVaccination >= %(from)s) + " \

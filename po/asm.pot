@@ -12866,6 +12866,10 @@ msgid "{2}: lost in {1}: {0}"
 msgstr ""
 
 #: main.js
+msgid "{plural0} animal as dead on arrival"
+msgstr ""
+
+#: main.js
 msgid "{plural0} animal control call due for followup today"
 msgstr ""
 
@@ -13042,6 +13046,10 @@ msgid "{plural1} animals were adopted"
 msgstr ""
 
 #: main.js
+msgid "{plural1} animals were dead on arrival"
+msgstr ""
+
+#: main.js
 msgid "{plural1} animals were euthanized"
 msgstr ""
 
@@ -13190,6 +13198,10 @@ msgid "{plural2} animals were adopted"
 msgstr ""
 
 #: main.js
+msgid "{plural2} animals were dead on arrival"
+msgstr ""
+
+#: main.js
 msgid "{plural2} animals were euthanized"
 msgstr ""
 
@@ -13335,6 +13347,10 @@ msgstr ""
 
 #: main.js
 msgid "{plural3} animals were adopted"
+msgstr ""
+
+#: main.js
+msgid "{plural3} animals were dead on arrival"
 msgstr ""
 
 #: main.js
