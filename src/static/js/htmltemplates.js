@@ -59,9 +59,9 @@ $(function() {
                  },
                  { id: "clone", text: _("Clone"), icon: "copy", enabled: "one", 
                      click: function() { 
-                         tableform.dialog_show_add(dialog, 
-                            function() {
-                                tableform.fields_post(dialog.fields, "mode=create", "htmltemplates")
+                         tableform.dialog_show_add(dialog, {
+                             onadd: function() {
+                                 tableform.fields_post(dialog.fields, "mode=create", "htmltemplates")
                                     .then(function(response) {
                                         var row = {};
                                         tableform.fields_update_row(dialog.fields, row);
@@ -71,12 +71,13 @@ $(function() {
                                     .always(function() {
                                         tableform.dialog_close();
                                     });
-                            },
-                            function() {
+                                },
+                             onload: function() {
                                  var row = tableform.table_selected_row(table);
                                  tableform.fields_populate_from_json(dialog.fields, row);
                                  $("#templatename").val($("#templatename").val() + "_copy");
-                            });
+                             }
+                         });
                      } 
                  },
 
