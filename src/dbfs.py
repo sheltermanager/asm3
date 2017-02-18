@@ -125,9 +125,9 @@ def storage_from_url(dbo, url):
     Creates and returns an appropriate storage object for the url given.
     """
     if url is None or url == "" or url.startswith("base64:"):
-        return super(B64DBStorage, B64DBStorage(dbo))
+        return B64DBStorage(dbo)
     elif url.startswith("file:"):
-        return super(FileStorage, FileStorage(dbo))
+        return FileStorage(dbo)
     else:
         raise DBFSError("Invalid storage URL: %s" % url)
 
@@ -136,9 +136,9 @@ def storage_from_mode(dbo):
     Creates and returns an appropriate storage object for the mode given
     """
     if DBFS_STORE == "database":
-        return super(B64DBStorage, B64DBStorage(dbo))
+        return B64DBStorage(dbo)
     elif DBFS_STORE == "file":
-        return super(FileStorage, FileStorage(dbo))
+        return FileStorage(dbo)
     else:
         raise DBFSError("Invalid storage mode: %s" % DBFS_STORE)
 
@@ -177,7 +177,7 @@ def get_string_id(dbo, dbfsid):
         raise DBFSError("No row found with ID %s" % dbfsid)
     r = r[0]
     o = storage_from_url(dbo, r["URL"])
-    return o.get(r["ID"])
+    return o.get(dbfsid)
 
 def rename_file(dbo, path, oldname, newname):
     """
