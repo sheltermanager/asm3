@@ -66,14 +66,14 @@ class FileStorage(DBFSStorage):
         if not p.endswith("/"): p += "/"
         try:
             os.mkdir("%s%s" % (p, self.dbo.database))
-        except OSError,err:
+        except OSError:
             pass # Directory already exists - ignore
         p = "%s%s/%s" % (p, self.dbo.database, dbfsid)
         return p
 
     def get(self, dbfsid):
         """ Returns the file data for a file:url """
-        url = db.query_string(dbo, "SELECT URL FROM dbfs WHERE ID=%d" % dbfsid)
+        url = db.query_string(self.dbo, "SELECT URL FROM dbfs WHERE ID=%d" % dbfsid)
         url = url.replace("file:", "")
         f = open(url, "rb")
         s = f.read()
