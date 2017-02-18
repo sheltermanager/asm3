@@ -408,14 +408,14 @@ def get_publish_logs(dbo):
     """
     CHECK_LAST = 10
     plogs = db.query(dbo, "SELECT ID, Name, Path FROM dbfs WHERE Path Like '/logs/publish%' ORDER BY Name DESC")
-    plogc = db.query(dbo, "SELECT Content FROM dbfs WHERE Path Like '/logs/publish%%' ORDER BY Name DESC LIMIT %d" % CHECK_LAST)
     for i in xrange(0, len(plogc)):
         if i >= CHECK_LAST:
             plogs[i]["ALERTS"] = 0
             plogs[i]["SUCCESS"] = 0
         else:
-            plogs[i]["ALERTS"] = base64.b64decode(plogc[i]["CONTENT"]).count("ALERT:")
-            plogs[i]["SUCCESS"] = base64.b64decode(plogc[i]["CONTENT"]).count("SUCCESS:")
+            log = get_string_id(dbo, plogs[i]["ID"])
+            plogs[i]["ALERTS"] = log.count("ALERT:")
+            plogs[i]["SUCCESS"] = log.count("SUCCESS:")
     return plogs
 
 def get_publish_alerts(dbo):
@@ -423,10 +423,10 @@ def get_publish_alerts(dbo):
     Returns the number of logs out of the last 10 that had
     errors (the token ALERT: appears in them)
     """
-    rows = db.query_cache(dbo, "SELECT Content FROM dbfs WHERE Path Like '/logs/publish%' ORDER BY Name DESC LIMIT 10", 120)
+    rows = db.query_cache(dbo, "SELECT ID FROM dbfs WHERE Path Like '/logs/publish%' ORDER BY Name DESC LIMIT 10", 120)
     alerts = 0
     for r in rows:
-        if base64.b64decode(r["CONTENT"]).find("ALERT:") != -1:
+        if get_string_id(dbo, r["ID"]).find("ALERT:") != -1:
             alerts += 1
     return alerts
 
