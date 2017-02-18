@@ -385,7 +385,7 @@ class ASMValidationError(web.HTTPError):
 
 class ASMPermissionError(web.HTTPError):
     """
-    Custom error thrown by data modules when validation fails
+    Custom error thrown by data modules when permission checks fail
     """
     def __init__(self, msg):
         status = '500 Internal Server Error'

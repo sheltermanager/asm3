@@ -95,6 +95,13 @@ SESSION_SECURE_COOKIE = False
 #MEMCACHED_SERVER = "127.0.0.1:11211"
 MEMCACHED_SERVER = ""
 
+# Where to store media files.
+# database - media files are base64 encoded in the dbfs.content db column
+# file - media files are stored in the folder defined in DBFS_STORE_PARAMS 
+#        (which must exist and ASM must have write permissions)
+DBFS_STORE = "database"
+DBFS_STORE_PARAMS = ""
+
 # The directory to use to cache elements on disk. Must already exist
 # as the application will not attempt to create it.
 DISK_CACHE = "/tmp/asm_disk_cache"

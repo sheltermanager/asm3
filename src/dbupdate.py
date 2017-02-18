@@ -21,7 +21,7 @@ VERSIONS = (
     33706, 33707, 33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716,
     33717, 33718, 33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904,
     33905, 33906, 33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916,
-    34000, 34001
+    34000, 34001, 34002
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -834,9 +834,11 @@ def sql_structure(dbo):
         fid(),
         fstr("Path"),
         fstr("Name"),
+        fstr("URL"),
         fclob("Content", True) ), False)
     sql += index("dbfs_Path", "dbfs", "Path")
     sql += index("dbfs_Name", "dbfs", "Name")
+    sql += index("dbfs_URL", "dbfs", "URL")
 
     sql += table("deathreason", (
         fid(),
@@ -4561,4 +4563,10 @@ def update_34001(dbo):
     # Remove the unique index on LicenceNumber and make it non-unique (optionally enforced by backend code)
     drop_index(dbo, "ownerlicence_LicenceNumber")
     add_index(dbo, "ownerlicence_LicenceNumber", "ownerlicence", "LicenceNumber")
+
+def update_34002(dbo):
+    # Add dbfs.URL field and index
+    add_column(dbo, "dbfs", "URL", shorttext(dbo))
+    add_index(dbo, "dbfs_URL", "dbfs", "URL")
+    db.execute_dbupdate(dbo, "UPDATE dbfs SET URL = 'base64:'")
 
