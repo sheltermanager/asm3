@@ -408,7 +408,7 @@ def get_publish_logs(dbo):
     """
     CHECK_LAST = 10
     plogs = db.query(dbo, "SELECT ID, Name, Path FROM dbfs WHERE Path Like '/logs/publish%' ORDER BY Name DESC")
-    for i in xrange(0, len(plogc)):
+    for i in xrange(0, len(plogs)):
         if i >= CHECK_LAST:
             plogs[i]["ALERTS"] = 0
             plogs[i]["SUCCESS"] = 0
