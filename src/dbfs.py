@@ -64,11 +64,17 @@ class FileStorage(DBFSStorage):
     def _get_path(self, dbfsid):
         p = DBFS_STORE_PARAMS
         if not p.endswith("/"): p += "/"
+        try:
+            os.mkdir("%s%s" % (p, self.dbo.database))
+        except OSError,err:
+            pass # Directory already exists - ignore
         p = "%s%s/%s" % (p, self.dbo.database, dbfsid)
         return p
 
-    def get(self, url):
+    def get(self, dbfsid):
         """ Returns the file data for a file:url """
+        url = db.query_string(dbo, "SELECT URL FROM dbfs WHERE ID=%d" % dbfsid)
+        url = url.replace("file:", "")
         f = open(url, "rb")
         s = f.read()
         f.close()
@@ -91,9 +97,7 @@ class FileStorage(DBFSStorage):
         os.unlink(p)
 
 class DBFSError(web.HTTPError):
-    """
-    Custom error thrown by dbfs modules 
-    """
+    """ Custom error thrown by dbfs modules """
     def __init__(self, msg):
         status = '500 Internal Server Error'
         headers = { 'Content-Type': "text/html" }
@@ -101,14 +105,11 @@ class DBFSError(web.HTTPError):
         web.HTTPError.__init__(self, status, headers, data)
 
 def create_path(dbo, path, name):
-    """
-    Creates a new DBFS folder
-    """
+    """ Creates a new DBFS folder """
     db.execute(dbo, "INSERT INTO dbfs (ID, Name, Path) VALUES (%d, '%s', '%s')" % (db.get_id(dbo, "dbfs"), name, path))
 
 def check_create_path(dbo, path):
-    """
-    Verifies that portions of a path exist and creates them if not
+    """ Verifies that portions of a path exist and creates them if not
     only goes to two levels deep as we never need more than that
     for anything within ASM.
     """
@@ -121,9 +122,7 @@ def check_create_path(dbo, path):
         check(pat[1], "/" + pat[0])
 
 def storage_from_url(dbo, url):
-    """
-    Creates and returns an appropriate storage object for the url given.
-    """
+    """ Creates and returns an appropriate storage object for the url given. """
     if url is None or url == "" or url.startswith("base64:"):
         return B64DBStorage(dbo)
     elif url.startswith("file:"):
@@ -132,9 +131,7 @@ def storage_from_url(dbo, url):
         raise DBFSError("Invalid storage URL: %s" % url)
 
 def storage_from_mode(dbo):
-    """
-    Creates and returns an appropriate storage object for the mode given
-    """
+    """ Creates and returns an appropriate storage object for the mode given """
     if DBFS_STORE == "database":
         return B64DBStorage(dbo)
     elif DBFS_STORE == "file":
@@ -162,7 +159,7 @@ def get_string(dbo, name, path = ""):
         path = " AND Path = '%s'" % path
     r = db.query(dbo, "SELECT ID, URL FROM dbfs WHERE Name ='%s'%s" % (name, path))
     if len(r) == 0:
-        return ""
+        return "" # compatibility with old behaviour - relied on by publishers
         #raise DBFSError("No element found for path=%s, name=%s" % (path, name))
     r = r[0]
     o = storage_from_url(dbo, r["URL"])
@@ -175,7 +172,7 @@ def get_string_id(dbo, dbfsid):
     """
     r = db.query(dbo, "SELECT URL FROM dbfs WHERE ID=%s" % dbfsid)
     if len(r) == 0:
-        return ""
+        return "" # compatibility with old behaviour - relied on by publishers
         #raise DBFSError("No row found with ID %s" % dbfsid)
     r = r[0]
     o = storage_from_url(dbo, r["URL"])
