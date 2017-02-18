@@ -82,7 +82,7 @@ INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 1 AND adoption.MovementDate Is Not Null AND adoption.IsTrial = 1 AND adoption.ReturnDate >= '$CURRENT_DATE$' AND adoption.ReturnDate <= '$CURRENT_DATE$' AND NonShelterAnimal = 0
 
 UNION ALL SELECT adoption.ReturnDate AS thedate,
-CASE WHEN DeceasedDate Is Null OR DeceasedDate > adoption.ReturnDate THEN 'Foster Return' ELSE 'Died On Foster' END AS Reason,
+CASE WHEN DeceasedDate Is Null OR DeceasedDate >= adoption.ReturnDate THEN 'Foster Return' ELSE 'Died On Foster' END AS Reason,
 ShelterCode,
 IdentichipNumber,
 AnimalName,
