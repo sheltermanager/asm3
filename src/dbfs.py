@@ -162,7 +162,8 @@ def get_string(dbo, name, path = ""):
         path = " AND Path = '%s'" % path
     r = db.query(dbo, "SELECT ID, URL FROM dbfs WHERE Name ='%s'%s" % (name, path))
     if len(r) == 0:
-        raise DBFSError("No element found for path=%s, name=%s" % (path, name))
+        return ""
+        #raise DBFSError("No element found for path=%s, name=%s" % (path, name))
     r = r[0]
     o = storage_from_url(dbo, r["URL"])
     return o.get(r["ID"])
@@ -174,7 +175,8 @@ def get_string_id(dbo, dbfsid):
     """
     r = db.query(dbo, "SELECT URL FROM dbfs WHERE ID=%s" % dbfsid)
     if len(r) == 0:
-        raise DBFSError("No row found with ID %s" % dbfsid)
+        return ""
+        #raise DBFSError("No row found with ID %s" % dbfsid)
     r = r[0]
     o = storage_from_url(dbo, r["URL"])
     return o.get(dbfsid)
