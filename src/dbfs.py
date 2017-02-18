@@ -11,7 +11,16 @@ import utils
 import web
 from sitedefs import DBFS_STORE, DBFS_STORE_PARAMS, URL_NEWS
 
-class B64DBStorage:
+class DBFSStorage:
+    """ DBFSStorage interface """
+    def get(self, dbfsid):
+        pass
+    def put(self, dbfsid, filedata):
+        pass
+    def delete(self, url):
+        pass
+
+class B64DBStorage(DBFSStorage):
     """ Storage class for base64 encoding media and storing them
         in the database """
     dbo = None
@@ -22,7 +31,7 @@ class B64DBStorage:
     def get(self, dbfsid):
         """ Returns the file data for dbfsid or blank if not found/error """
         s = ""
-        r = db.query_tuple(dbo, "SELECT Content FROM dbfs WHERE ID = '%d'" % dbfsid)
+        r = db.query_tuple(self.dbo, "SELECT Content FROM dbfs WHERE ID = '%d'" % dbfsid)
         if len(r) > 0 and len(r[0]) > 0:
             s = r[0][0]
         if s != "":
@@ -30,7 +39,7 @@ class B64DBStorage:
                 s = base64.b64decode(s)
             except:
                 em = str(sys.exc_info()[0])
-                al.error("Failed unpacking id=%d: %s" % (dbfsid, em), "dbfs.get_string_id", dbo)
+                al.error("Failed unpacking id=%d: %s" % (dbfsid, em), "dbfs.get_string_id", self.dbo)
                 s = ""
         return s
 
@@ -38,14 +47,14 @@ class B64DBStorage:
         """ Stores the file data and returns a URL """
         url = "base64:"
         s = base64.b64encode(filedata)
-        db.execute(dbo, "UPDATE dbfs SET URL = '%s', Content = '%s' WHERE ID = %d" % (url, s, dbfsid))
+        db.execute(self.dbo, "UPDATE dbfs SET URL = '%s', Content = '%s' WHERE ID = %d" % (url, s, dbfsid))
         return url
 
     def delete(self, url):
         """ Do nothing - removing the database row takes care of it """
         pass
 
-class FileStorage:
+class FileStorage(DBFSStorage):
     """ Storage class for putting media on disk """
     dbo = None
 
@@ -73,7 +82,7 @@ class FileStorage:
         f.write(filedata)
         f.flush()
         f.close()
-        db.execute(dbo, "UPDATE dbfs SET URL = '%s' WHERE ID = %d" % (url, dbfsid))
+        db.execute(self.dbo, "UPDATE dbfs SET URL = '%s' WHERE ID = %d" % (url, dbfsid))
         return url
 
     def delete(self, url):
@@ -116,9 +125,9 @@ def storage_from_url(dbo, url):
     Creates and returns an appropriate storage object for the url given.
     """
     if url is None or url == "" or url.startswith("base64:"):
-        return B64DBStorage(dbo)
+        return super(B64DBStorage, B64DBStorage(dbo))
     elif url.startswith("file:"):
-        return FileStorage(dbo)
+        return super(FileStorage, FileStorage(dbo))
     else:
         raise DBFSError("Invalid storage URL: %s" % url)
 
@@ -127,9 +136,9 @@ def storage_from_mode(dbo):
     Creates and returns an appropriate storage object for the mode given
     """
     if DBFS_STORE == "database":
-        return B64DBStorage(dbo)
+        return super(B64DBStorage, B64DBStorage(dbo))
     elif DBFS_STORE == "file":
-        return FileStorage(dbo)
+        return super(FileStorage, FileStorage(dbo))
     else:
         raise DBFSError("Invalid storage mode: %s" % DBFS_STORE)
 
@@ -149,7 +158,6 @@ def get_string(dbo, name, path = ""):
     If no path is supplied, just finds the first file with that name
     in the dbfs (useful for media files, which have unique names)
     """
-    s = ""
     if path != "":
         path = " AND Path = '%s'" % path
     r = db.query(dbo, "SELECT ID, URL FROM dbfs WHERE Name ='%s'%s" % (name, path))
@@ -211,7 +219,7 @@ def put_string(dbo, name, path, contents):
         dbfsid = db.get_id(dbo, "dbfs")
         db.execute(dbo, "INSERT INTO dbfs (ID, Name, Path) VALUES (%d, '%s', '%s')" % ( dbfsid, name, path ))
     o = storage_from_mode(dbo)
-    o.put(dbfsid, s)
+    o.put(dbfsid, contents)
     return dbfsid
 
 def put_string_id(dbo, dbfsid, contents):
@@ -236,7 +244,6 @@ def replace_string(dbo, content, name, path = ""):
     with the name and path given. If no path is given, looks it
     up by just the name.
     """
-    s = ""
     if path != "":
         path = " AND Path = '%s'" % path
     r = db.query(dbo, "SELECT ID, URL FROM dbfs WHERE Name ='%s'%s" % (name, path))
@@ -286,7 +293,7 @@ def delete_path(dbo, path):
     """
     Deletes all items matching the path given
     """
-    for r in db.query("SELECT ID, URL FROM dbfs WHERE Path LIKE '%s'" % path):
+    for r in db.query(dbo, "SELECT ID, URL FROM dbfs WHERE Path LIKE '%s'" % path):
         o = storage_from_url(dbo, r["URL"])
         o.delete(r["URL"])
 
@@ -297,7 +304,7 @@ def delete(dbo, name, path = ""):
     if path != "":
         path = " AND Path = '%s'" % path
     rows = db.query(dbo, "SELECT ID, URL FROM dbfs WHERE Name='%s'%s" % (name, path))
-    db.execute("DELETE FROM dbfs WHERE Name='%s'%s" % (name, path))
+    db.execute(dbo, "DELETE FROM dbfs WHERE Name='%s'%s" % (name, path))
     for r in rows:
         o = storage_from_url(dbo, r["URL"])
         o.delete(r["URL"])
@@ -317,7 +324,7 @@ def delete_id(dbo, dbfsid):
     url = db.query_string(dbo, "SELECT URL FROM dbfs WHERE ID=%d" % dbfsid)
     db.execute(dbo, "DELETE FROM dbfs WHERE ID = %d" % dbfsid)
     o = storage_from_url(dbo, url)
-    o.delete(r["URL"])
+    o.delete(url)
 
 def list_contents(dbo, path):
     """
