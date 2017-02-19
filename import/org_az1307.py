@@ -63,9 +63,9 @@ for d in db.select("members").list():
 for d in db.select("secondary_members").list():
     if not ppo.has_key(d.member_id): continue
     o = ppo[d.member_id]
-    if d.first_name is not None:
+    if d.first_name is not None and d.first_name != "":
         o.OwnerForeNames += " & " + d.first_name
-    if d.last_name is not None and d.last_name != o.OwnerSurname:
+    if d.last_name is not None and d.last_name != "" and d.last_name != o.OwnerSurname:
         o.OwnerSurname += " & " + d.last_name
     if d.phone is not None:
         o.MobileTelephone = asm.nulltostr(d.phone)
@@ -133,7 +133,7 @@ colours = {
     "black": 1,
     "white/black": 5,
     "blue/grey": 67,
-    "black/white": 5,
+    "black/white": 3,
     "brindle/white": 16,
     "white/fawn brindle": 63,
     "blue/white": 61,
@@ -145,7 +145,7 @@ colours = {
     "chocolate brown/white": 35,
     "black/brown": 13,
     "blue": 36,
-    "blacl and white": 5,
+    "blacl and white": 3,
     "white/brindle": 16,
     "black/tan": 9,
     "black white flecks": 5,
