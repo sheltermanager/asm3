@@ -627,4 +627,14 @@ def update_asm_news(dbo):
     else:
         replace_string(dbo, s, "asm.news")
 
+def switch_storage(dbo):
+    """ Goes through all files in dbfs and swaps them into the current storage scheme """
+    rows = db.query(dbo, "SELECT ID, Name, Path, URL FROM dbfs ORDER BY ID")
+    for i, r in enumerate(rows):
+        al.debug("Storage transfer %s/%s (%d of %d)" % (r["PATH"], r["NAME"], i, len(rows)), "dbfs.switch_storage", dbo)
+        source = DBFSStorage(dbo, r["URL"])
+        target = DBFSStorage(dbo)
+        filedata = source.get(r["ID"], r["URL"])
+        target.put(r["ID"], filedata)
+
 
