@@ -104,7 +104,7 @@ class FileStorage(DBFSStorage):
         return s
 
     def put(self, dbfsid, filedata):
-        """ Stores the file data and returns the URL """
+        """ Stores the file data (clearing the Content column) and returns the URL """
         try:
             path = "%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database)
             os.mkdir(path)
@@ -116,7 +116,7 @@ class FileStorage(DBFSStorage):
         f.write(filedata)
         f.flush()
         f.close()
-        db.execute(self.dbo, "UPDATE dbfs SET URL = '%s' WHERE ID = %d" % (url, dbfsid))
+        db.execute(self.dbo, "UPDATE dbfs SET URL = '%s', Content = '' WHERE ID = %d" % (url, dbfsid))
         return url
 
     def delete(self, url):
@@ -629,7 +629,7 @@ def update_asm_news(dbo):
 
 def switch_storage(dbo):
     """ Goes through all files in dbfs and swaps them into the current storage scheme """
-    rows = db.query(dbo, "SELECT ID, Name, Path, URL FROM dbfs ORDER BY ID")
+    rows = db.query(dbo, "SELECT ID, Name, Path, URL FROM dbfs WHERE Name LIKE '%.%' ORDER BY ID")
     for i, r in enumerate(rows):
         al.debug("Storage transfer %s/%s (%d of %d)" % (r["PATH"], r["NAME"], i, len(rows)), "dbfs.switch_storage", dbo)
         source = DBFSStorage(dbo, r["URL"])

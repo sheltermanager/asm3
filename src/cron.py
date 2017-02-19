@@ -588,6 +588,13 @@ def maint_scale_pdfs(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_scale_pdfs: %s" % em, "cron.maint_scale_pdfs", dbo, sys.exc_info())
 
+def maint_switch_dbfs_storage(dbo):
+    try:
+        dbfs.switch_storage(dbo)
+    except:
+        em = str(sys.exc_info()[0])
+        al.error("FAIL: uncaught error running maint_dbfs_switch_storage: %s" % em, "cron.maint_switch_dbfs_storage", dbo, sys.exc_info())
+
 def run(dbo, mode):
     # If the task is maint_db_install, then there won't be a 
     # locale or timezone to read
@@ -654,6 +661,8 @@ def run(dbo, mode):
         maint_scale_odts(dbo)
     elif mode == "maint_scale_pdfs":
         maint_scale_pdfs(dbo)
+    elif mode == "maint_switch_dbfs_storage":
+        maint_switch_dbfs_storage(dbo)
     elif mode == "maint_variable_data":
         maint_variable_data(dbo)
     elif mode == "maint_animal_figures":
@@ -772,6 +781,7 @@ def print_usage():
     print "       maint_scale_animal_images - re-scales all the animal images in the database"
     print "       maint_scale_odts - re-scales all odt files attached to records (remove images)"
     print "       maint_scale_pdfs - re-scales all the PDFs in the database"
+    print "       maint_switch_dbfs_storage - moves all existing dbfs files to the current DBFS_STORE"
     print "       maint_variable_data - recalculate all variable data for all animals"
 
 if __name__ == "__main__": 
