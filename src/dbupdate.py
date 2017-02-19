@@ -834,7 +834,7 @@ def sql_structure(dbo):
         fid(),
         fstr("Path"),
         fstr("Name"),
-        fstr("URL"),
+        fstr("URL", True),
         fclob("Content", True) ), False)
     sql += index("dbfs_Path", "dbfs", "Path")
     sql += index("dbfs_Name", "dbfs", "Name")

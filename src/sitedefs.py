@@ -29,8 +29,8 @@ LOG_DEBUG = True
 DB_TYPE = "MYSQL" # MYSQL, POSTGRESQL or SQLITE
 DB_HOST = "localhost"
 DB_PORT = 3306
-DB_USERNAME = "root"
-DB_PASSWORD = "root"
+DB_USERNAME = "robin"
+DB_PASSWORD = "robin"
 DB_NAME = "asm"
 
 # If you want to maintain compatibility with an ASM2 client
@@ -97,10 +97,12 @@ MEMCACHED_SERVER = ""
 
 # Where to store media files.
 # database - media files are base64 encoded in the dbfs.content db column
-# file - media files are stored in the folder defined in DBFS_STORE_PARAMS 
-#        (which must exist and ASM must have write permissions)
+# file - media files are stored in a folder 
 DBFS_STORE = "database"
-DBFS_STORE_PARAMS = ""
+
+# The folder where "file" mode of DBFS_STORE puts media files.
+# It must exist and ASM must have write permissions. It should never end with a /
+DBFS_FILESTORAGE_FOLDER = ""
 
 # The directory to use to cache elements on disk. Must already exist
 # as the application will not attempt to create it.

@@ -9,7 +9,7 @@ import mimetypes
 import os, sys
 import utils
 import web
-from sitedefs import DBFS_STORE, DBFS_STORE_PARAMS, URL_NEWS
+from sitedefs import DBFS_STORE, DBFS_FILESTORAGE_FOLDER, URL_NEWS
 
 class DBFSStorage(object):
     """ DBFSStorage factory """
@@ -86,29 +86,33 @@ class FileStorage(DBFSStorage):
     def __init__(self, dbo):
         self.dbo = dbo
 
-    def _get_path(self, dbfsid):
-        p = DBFS_STORE_PARAMS
+    def _get_full_path(self):
+        p = DBFS_FILESTORAGE_FOLDER
         if not p.endswith("/"): p += "/"
         try:
             os.mkdir("%s%s" % (p, self.dbo.database))
         except OSError:
             pass # Directory already exists - ignore
-        p = "%s%s/%s" % (p, self.dbo.database, dbfsid)
         return p
 
-    def get(self, dummy, url):
-        """ Returns the file data for a file:url """
-        url = url.replace("file:", "")
+    def get(self, dbfsid, dummy):
+        """ Returns the file data for a dbfsid """
+        url = "%s/%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database, dbfsid)
         f = open(url, "rb")
         s = f.read()
         f.close()
         return s
 
     def put(self, dbfsid, filedata):
-        """ Stores the file data and returns a URL """
-        p = self._get_path(dbfsid)
-        url = "file:%s" % p
-        f = open(p, "wb")
+        """ Stores the file data and returns the URL """
+        try:
+            path = "%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database)
+            os.mkdir(path)
+        except OSError:
+            pass # Directory already exists - ignore
+        filepath = "%s/%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database, dbfsid)
+        url = "file:"
+        f = open(filepath, "wb")
         f.write(filedata)
         f.flush()
         f.close()
