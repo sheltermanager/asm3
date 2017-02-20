@@ -9,7 +9,7 @@ import mimetypes
 import os, sys
 import utils
 import web
-from sitedefs import DBFS_STORE, DBFS_FILESTORAGE_FOLDER, URL_NEWS
+from sitedefs import DBFS_STORE, DBFS_FILESTORAGE_FOLDER, DBFS_S3_BUCKET, URL_NEWS
 
 class DBFSStorage(object):
     """ DBFSStorage factory """
@@ -52,6 +52,8 @@ class DBFSStorage(object):
     def delete(self, url):
         """ Delete filedata for url """
         return self.o.delete(url)
+    def url_prefix(self):
+        return self.o.url_prefix()
 
 class B64DBStorage(DBFSStorage):
     """ Storage class for base64 encoding media and storing them
@@ -83,6 +85,9 @@ class B64DBStorage(DBFSStorage):
     def delete(self, url):
         """ Do nothing - removing the database row takes care of it """
         pass
+
+    def url_prefix(self):
+        return "base64:"
 
 class FileStorage(DBFSStorage):
     """ Storage class for putting media on disk """
@@ -121,6 +126,59 @@ class FileStorage(DBFSStorage):
         """ Deletes the file data """
         filepath = "%s/%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database, url.replace("file:", ""))
         os.unlink(filepath)
+
+    def url_prefix(self):
+        return "file:"
+
+class S3Storage(DBFSStorage):
+    """ Storage class for putting media in Amazon S3 """
+    dbo = None
+    
+    def __init__(self, dbo):
+        self.dbo = dbo
+
+    def get(self, dbfsid, url):
+        """ Returns the file data for url """
+        dummy = dbfsid
+        name = url.replace("s3:", "")
+        remotepath = "s3://%s/%s/%s" % (DBFS_S3_BUCKET, self.dbo.database, name)
+        localpath = "/tmp/%s" % name
+        returncode, output = utils.cmd("aws s3 cp %s %s" % (remotepath, localpath))
+        if returncode == 0:
+            f = open(localpath, "rb")
+            s = f.read()
+            f.close()
+            os.unlink(localpath)
+            return s
+        raise DBFSError("Failed retrieving from S3: %s %s" % (returncode, output))
+
+    def put(self, dbfsid, filename, filedata):
+        """ Stores the file data (clearing the Content column) and returns the URL """
+        # S3 does not require folders to be created before upload as they are part of the filename
+        extension = self._extension_from_filename(filename)
+        remotepath = "s3://%s/%s/%s%s" % (DBFS_S3_BUCKET, self.dbo.database, dbfsid, extension)
+        localpath = "/tmp/%s%s" % (dbfsid, extension)
+        url = "s3:%s%s" % (dbfsid, extension)
+        f = open(localpath, "wb")
+        f.write(filedata)
+        f.flush()
+        f.close()
+        returncode, output = utils.cmd("aws s3 cp %s %s" % (localpath, remotepath))
+        if returncode == 0:
+            db.execute(self.dbo, "UPDATE dbfs SET URL = '%s', Content = '' WHERE ID = %d" % (url, dbfsid))
+            os.unlink(localpath)
+            return url
+        raise DBFSError("Failed storing in S3: %s %s" % (returncode, output))
+
+    def delete(self, url):
+        """ Deletes the file data """
+        remotepath = "s3://%s/%s/%s" % (DBFS_S3_BUCKET, self.dbo.database, url.replace("s3:", ""))
+        returncode, output = utils.cmd("aws s3 rm %s" % remotepath)
+        if returncode != 0:
+            raise DBFSError("Failed deleting from S3: %s %s" % (returncode, output))
+
+    def url_prefix(self):
+        return "s3:"
 
 class DBFSError(web.HTTPError):
     """ Custom error thrown by dbfs modules """
@@ -632,8 +690,14 @@ def switch_storage(dbo):
         al.debug("Storage transfer %s/%s (%d of %d)" % (r["PATH"], r["NAME"], i, len(rows)), "dbfs.switch_storage", dbo)
         source = DBFSStorage(dbo, r["URL"])
         target = DBFSStorage(dbo)
+        # Don't bother if the file is already stored in the target format
+        if source.url_prefix() == target.url_prefix():
+            al.debug("source is already %s, skipping" % source.url_prefix(), "dbfs.switch_storage", dbo)
+            continue
         filedata = source.get(r["ID"], r["URL"])
         target.put(r["ID"], r["NAME"], filedata)
+    # If this is a postgres database, do a full vacuum on dbfs to retrieve
+    # empty space from cleared Content column
     if dbo.dbtype == "POSTGRESQL":
         al.debug("VACUUM FULL dbfs", "dbfs.switch_storage", dbo)
         db.execute(dbo, "VACUUM FULL dbfs")

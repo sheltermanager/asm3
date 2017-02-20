@@ -98,11 +98,15 @@ MEMCACHED_SERVER = ""
 # Where to store media files.
 # database - media files are base64 encoded in the dbfs.content db column
 # file - media files are stored in a folder 
+# s3 - media files are stored in amazon s3
 DBFS_STORE = "database"
 
-# The folder where "file" mode of DBFS_STORE puts media files.
+# DBFS_STORE = file: The folder where media files are stored.
 # It must exist and ASM must have write permissions. It should never end with a /
 DBFS_FILESTORAGE_FOLDER = "/home/robin/tmp/dbfs"
+
+# DBFS_STORE = s3: The S3 bucket to store media in
+DBFS_S3_BUCKET = ""
 
 # The directory to use to cache elements on disk. Must already exist
 # as the application will not attempt to create it.
