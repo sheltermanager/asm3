@@ -88,9 +88,9 @@ def set_last_connected(dbo):
     if response != "OK":
         al.error("Failed setting last connection: %s" % response, "smcom.set_last_connected", dbo)
 
-def vacuum_full_dbfs(dbo):
-    """ Performs a full vacuum on the database """
-    os.system("psql -U %s -c \"VACUUM FULL dbfs;\"" % dbo.database)
+def vacuum_full(dbo):
+    """ Performs a full vacuum on the database via command line (transaction problems via db.py) """
+    os.system("psql -U %s -c \"VACUUM FULL;\"" % dbo.database)
 
 def route_customer_extension(dbo, when, caller, post):
     target = dbo.database + "_" + when + "_" + caller

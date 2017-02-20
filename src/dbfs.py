@@ -705,5 +705,5 @@ def switch_storage(dbo):
         except Exception,err:
             al.error("Error reading, skipping: %s" % str(err), "dbfs.switch_storage", dbo)
     # smcom only - perform postgresql full vacuum after switching
-    if smcom.active(): smcom.vacuum_full_dbfs(dbo)
+    if smcom.active(): smcom.vacuum_full(dbo)
 
