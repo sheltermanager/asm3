@@ -126,7 +126,10 @@ class FileStorage(DBFSStorage):
     def delete(self, url):
         """ Deletes the file data """
         filepath = "%s/%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database, url.replace("file:", ""))
-        os.unlink(filepath)
+        try:
+            os.unlink(filepath)
+        except Exception,err:
+            al.error("Failed deleting '%s': %s" % (url, err), "FileStorage.delete", self.dbo)
 
     def url_prefix(self):
         return "file:"
