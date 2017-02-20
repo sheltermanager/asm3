@@ -2503,7 +2503,9 @@ class document_edit:
         l = session.locale
         post = utils.PostedData(web.input(template = "", document = "", savemode = "save"), session.locale)
         if post["savemode"] == "save":
-            dbfs.put_string_id(dbo, post.integer("template"), post["document"])
+            template = post.integer("template")
+            templatename = dbfs.get_name_for_id(dbo, template)
+            dbfs.put_string_id(dbo, template, templatename, post["document"])
             raise web.seeother("document_templates")
         elif post["savemode"] == "pdf":
             web.header("Content-Type", "application/pdf")

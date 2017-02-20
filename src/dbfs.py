@@ -39,12 +39,16 @@ class DBFSStorage(object):
         else:
             raise DBFSError("Invalid storage mode: %s" % DBFS_STORE)
 
+    def _extension_from_filename(self, filename):
+        if filename is None or filename.find(".") == -1: return ""
+        return filename[filename.rfind("."):]
+
     def get(self, dbfsid, url):
         """ Get file data for dbfsid/url """
         return self.o.get(dbfsid, url)
-    def put(self, dbfsid, filedata):
+    def put(self, dbfsid, filename, filedata):
         """ Store filedata for dbfsid, returning a url """
-        return self.o.put(dbfsid, filedata)
+        return self.o.put(dbfsid, filename, filedata)
     def delete(self, url):
         """ Delete filedata for url """
         return self.o.delete(url)
@@ -68,8 +72,9 @@ class B64DBStorage(DBFSStorage):
             em = str(sys.exc_info()[0])
             raise DBFSError("Failed unpacking base64 content with ID %s: %s" % (dbfsid, em))
 
-    def put(self, dbfsid, filedata):
+    def put(self, dbfsid, filename, filedata):
         """ Stores the file data and returns a URL """
+        dummy = filename
         url = "base64:"
         s = base64.b64encode(filedata)
         db.execute(self.dbo, "UPDATE dbfs SET URL = '%s', Content = '%s' WHERE ID = %d" % (url, s, dbfsid))
@@ -82,36 +87,29 @@ class B64DBStorage(DBFSStorage):
 class FileStorage(DBFSStorage):
     """ Storage class for putting media on disk """
     dbo = None
-
+    
     def __init__(self, dbo):
         self.dbo = dbo
 
-    def _get_full_path(self):
-        p = DBFS_FILESTORAGE_FOLDER
-        if not p.endswith("/"): p += "/"
-        try:
-            os.mkdir("%s%s" % (p, self.dbo.database))
-        except OSError:
-            pass # Directory already exists - ignore
-        return p
-
-    def get(self, dbfsid, dummy):
-        """ Returns the file data for a dbfsid """
-        url = "%s/%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database, dbfsid)
-        f = open(url, "rb")
+    def get(self, dbfsid, url):
+        """ Returns the file data for url """
+        dummy = dbfsid
+        filepath = "%s/%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database, url.replace("file:", ""))
+        f = open(filepath, "rb")
         s = f.read()
         f.close()
         return s
 
-    def put(self, dbfsid, filedata):
+    def put(self, dbfsid, filename, filedata):
         """ Stores the file data (clearing the Content column) and returns the URL """
         try:
             path = "%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database)
             os.mkdir(path)
         except OSError:
             pass # Directory already exists - ignore
-        filepath = "%s/%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database, dbfsid)
-        url = "file:"
+        extension = self._extension_from_filename(filename)
+        filepath = "%s/%s/%s%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database, dbfsid, extension)
+        url = "file:%s%s" % (dbfsid, extension)
         f = open(filepath, "wb")
         f.write(filedata)
         f.flush()
@@ -121,8 +119,8 @@ class FileStorage(DBFSStorage):
 
     def delete(self, url):
         """ Deletes the file data """
-        p = url.replace("file:", "")
-        os.unlink(p)
+        filepath = "%s/%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database, url.replace("file:", ""))
+        os.unlink(filepath)
 
 class DBFSError(web.HTTPError):
     """ Custom error thrown by dbfs modules """
@@ -213,7 +211,7 @@ def put_file(dbo, name, path, filepath):
     dbfsid = db.get_id(dbo, "dbfs")
     db.execute(dbo, "INSERT INTO dbfs (ID, Name, Path) VALUES (%d, '%s', '%s')" % ( dbfsid, name, path ))
     o = DBFSStorage(dbo)
-    o.put(dbfsid, s)
+    o.put(dbfsid, name, s)
     return dbfsid
 
 def put_string(dbo, name, path, contents):
@@ -228,15 +226,15 @@ def put_string(dbo, name, path, contents):
         dbfsid = db.get_id(dbo, "dbfs")
         db.execute(dbo, "INSERT INTO dbfs (ID, Name, Path) VALUES (%d, '%s', '%s')" % ( dbfsid, name, path ))
     o = DBFSStorage(dbo)
-    o.put(dbfsid, contents)
+    o.put(dbfsid, name, contents)
     return dbfsid
 
-def put_string_id(dbo, dbfsid, contents):
+def put_string_id(dbo, dbfsid, name, contents):
     """
     Stores the file contents at the id given.
     """
     o = DBFSStorage(dbo)
-    o.put(dbfsid, contents)
+    o.put(dbfsid, name, contents)
     return dbfsid
 
 def put_string_filepath(dbo, filepath, contents):
@@ -255,12 +253,12 @@ def replace_string(dbo, content, name, path = ""):
     """
     if path != "":
         path = " AND Path = '%s'" % path
-    r = db.query(dbo, "SELECT ID, URL FROM dbfs WHERE Name ='%s'%s" % (name, path))
+    r = db.query(dbo, "SELECT ID, URL, Name FROM dbfs WHERE Name ='%s'%s" % (name, path))
     if len(r) == 0:
         raise DBFSError("No item found for path=%s, name=%s" % (path, name))
     r = r[0]
     o = DBFSStorage(dbo, r["URL"])
-    o.put(r["ID"], content)
+    o.put(r["ID"], r["NAME"], content)
     return r["ID"]
 
 def get_file(dbo, name, path, saveto):
@@ -635,6 +633,8 @@ def switch_storage(dbo):
         source = DBFSStorage(dbo, r["URL"])
         target = DBFSStorage(dbo)
         filedata = source.get(r["ID"], r["URL"])
-        target.put(r["ID"], filedata)
-
+        target.put(r["ID"], r["NAME"], filedata)
+    if dbo.dbtype == "POSTGRESQL":
+        al.debug("VACUUM FULL dbfs", "dbfs.switch_storage", dbo)
+        db.execute(dbo, "VACUUM FULL dbfs")
 

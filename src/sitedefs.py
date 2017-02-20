@@ -102,7 +102,7 @@ DBFS_STORE = "database"
 
 # The folder where "file" mode of DBFS_STORE puts media files.
 # It must exist and ASM must have write permissions. It should never end with a /
-DBFS_FILESTORAGE_FOLDER = ""
+DBFS_FILESTORAGE_FOLDER = "/home/robin/tmp/dbfs"
 
 # The directory to use to cache elements on disk. Must already exist
 # as the application will not attempt to create it.
