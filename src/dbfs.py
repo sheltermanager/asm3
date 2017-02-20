@@ -701,9 +701,9 @@ def switch_storage(dbo):
             continue
         try:
             filedata = source.get(r["ID"], r["URL"])
+            target.put(r["ID"], r["NAME"], filedata)
         except Exception,err:
             al.error("Error reading, skipping: %s" % str(err), "dbfs.switch_storage", dbo)
-        target.put(r["ID"], r["NAME"], filedata)
     # smcom only - perform postgresql full vacuum after switching
     if smcom.active(): smcom.vacuum_full_dbfs(dbo)
 
