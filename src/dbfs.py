@@ -17,7 +17,7 @@ class DBFSStorage(object):
     o = None
     def __init__(self, dbo, url = "default" ):
         """ Creates the correct storage object from mode or url """
-        if url is not None and url == "default":
+        if url == "default":
             self._storage_from_mode(dbo)
         else:
             self._storage_from_url(dbo, url)
