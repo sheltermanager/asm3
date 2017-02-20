@@ -16,7 +16,8 @@ sys.path.append("/root/asmdb")
 try:
     import smcom_client
 except:
-    sys.stderr.write("warn: no smcom_client\n")
+    #sys.stderr.write("warn: no smcom_client\n")
+    pass
 
 def active():
     """
