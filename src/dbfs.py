@@ -119,6 +119,7 @@ class FileStorage(DBFSStorage):
         f.write(filedata)
         f.flush()
         f.close()
+        os.chmod(filepath, 0666) # Make the file world read/write
         db.execute(self.dbo, "UPDATE dbfs SET URL = '%s', Content = '' WHERE ID = %d" % (url, dbfsid))
         return url
 
@@ -696,9 +697,4 @@ def switch_storage(dbo):
             continue
         filedata = source.get(r["ID"], r["URL"])
         target.put(r["ID"], r["NAME"], filedata)
-    # If this is a postgres database, do a full vacuum on dbfs to retrieve
-    # empty space from cleared Content column
-    if dbo.dbtype == "POSTGRESQL":
-        al.debug("VACUUM FULL dbfs", "dbfs.switch_storage", dbo)
-        db.execute(dbo, "VACUUM FULL dbfs")
 
