@@ -1233,7 +1233,7 @@ def animal_image(animalid, imagedata):
         "excludefrompublish, linkid, linktypeid, recordversion, date) VALUES (%d, '%s', %s, 1, 1, 0, 0, 0, %d, 0, 0, %s);" % \
         ( mediaid, medianame, ds(""), animalid, dd(datetime.datetime.today()) )
     print "INSERT INTO dbfs (id, name, path, content) VALUES (%d, '%s', '%s', '');" % ( getid("dbfs"), str(animalid), '/animal' )
-    print "INSERT INTO dbfs (id, name, path, content) VALUES (%d, '%s', '%s', '%s');" % (getid("dbfs"), medianame, "/animal/" + str(animalid), encoded)
+    print "INSERT INTO dbfs (id, name, path, url, content) VALUES (%d, '%s', '%s', 'base64:', '%s');" % (getid("dbfs"), medianame, "/animal/" + str(animalid), encoded)
 
 def animal_regimen_single(animalid, dategiven, treatmentname, dosage = "", comments = ""):
     """ Writes a regimen and treatment record for a single given treatment """
