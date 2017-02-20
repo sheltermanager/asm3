@@ -5,7 +5,7 @@ import datetime
 import db
 import re
 import utils
-import sys
+import os, sys
 import web
 from sitedefs import MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE
 
@@ -87,6 +87,10 @@ def set_last_connected(dbo):
     response = smcom_client.update_last_connected(dbo.database)
     if response != "OK":
         al.error("Failed setting last connection: %s" % response, "smcom.set_last_connected", dbo)
+
+def vacuum_full_dbfs(dbo):
+    """ Performs a full vacuum on the database """
+    os.system("psql -U %s -c \"VACUUM FULL dbfs;\"" % dbo.database)
 
 def route_customer_extension(dbo, when, caller, post):
     target = dbo.database + "_" + when + "_" + caller

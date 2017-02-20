@@ -7,6 +7,7 @@ import configuration
 import db
 import mimetypes
 import os, sys
+import smcom
 import utils
 import web
 from sitedefs import DBFS_STORE, DBFS_FILESTORAGE_FOLDER, DBFS_S3_BUCKET, URL_NEWS
@@ -700,4 +701,6 @@ def switch_storage(dbo):
             continue
         filedata = source.get(r["ID"], r["URL"])
         target.put(r["ID"], r["NAME"], filedata)
+    # smcom only - perform postgresql full vacuum after switching
+    if smcom.active(): smcom.vacuum_full_dbfs(dbo)
 
