@@ -699,7 +699,10 @@ def switch_storage(dbo):
         if source.url_prefix() == target.url_prefix():
             al.debug("source is already %s, skipping" % source.url_prefix(), "dbfs.switch_storage", dbo)
             continue
-        filedata = source.get(r["ID"], r["URL"])
+        try:
+            filedata = source.get(r["ID"], r["URL"])
+        except Exception,err:
+            al.error("Error reading, skipping: %s" % str(err), "dbfs.switch_storage", dbo)
         target.put(r["ID"], r["NAME"], filedata)
     # smcom only - perform postgresql full vacuum after switching
     if smcom.active(): smcom.vacuum_full_dbfs(dbo)
