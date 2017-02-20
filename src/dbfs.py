@@ -15,12 +15,12 @@ from sitedefs import DBFS_STORE, DBFS_FILESTORAGE_FOLDER, DBFS_S3_BUCKET, URL_NE
 class DBFSStorage(object):
     """ DBFSStorage factory """
     o = None
-    def __init__(self, dbo, url = None ):
+    def __init__(self, dbo, url = "default" ):
         """ Creates the correct storage object from mode or url """
-        if url is not None:
-            self._storage_from_url(dbo, url)
-        else:
+        if url is not None and url == "default":
             self._storage_from_mode(dbo)
+        else:
+            self._storage_from_url(dbo, url)
 
     def _storage_from_url(self, dbo, url):
         """ Creates an appropriate storage object for the url given. """
