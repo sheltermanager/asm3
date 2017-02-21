@@ -1,6 +1,8 @@
 40
 ================
 
+21/02/17 Add listMonth to calendar view #20
+21/02/17 Upgrade fullcalendar.js and moment.js #20
 20/02/17 Add Amazon S3 storage to dbfs #134
 19/02/17 Refactoring file storage, maint_switch_dbfs_storage #134
 18/02/17 Add file storage to dbfs #134

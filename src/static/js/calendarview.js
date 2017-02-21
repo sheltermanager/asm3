@@ -71,10 +71,11 @@ $(function() {
                 header: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'month,agendaWeek,agendaDay'
+                    right: 'month,agendaWeek,agendaDay,listMonth'
                 }, 
                 editable: false,
                 firstDay: config.integer("FirstDayOfWeek"),
+                eventLimit: true,
                 events: [],
                 eventRender: function(event, element) {
                     // Need to decode html entities in the title
@@ -94,7 +95,7 @@ $(function() {
                     }
                 },
                 // Use ASM's translations
-                buttonText: { day: _("Day"), today: _("Today"), month: _("Month"), week: _("Week") },
+                buttonText: { day: _("Day"), today: _("Today"), month: _("Month"), week: _("Week"), list: _("List") },
                 monthNames: [ _("January"), _("February"),_("March"),_("April"),_("May"),_("June"),
                 _("July"),_("August"),_("September"),_("October"),_("November"),_("December")],
                 monthNamesShort: [_("Jan"), _("Feb"), _("Mar"), _("Apr"), _("May"), _("Jun"),
