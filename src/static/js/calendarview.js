@@ -78,19 +78,19 @@ $(function() {
                 eventLimit: true,
                 events: [],
                 eventRender: function(event, element) {
+                    var title = element.find(".fc-title");
+                    var time = element.find(".fc-time");
                     // Need to decode html entities in the title
-                    element.find(".fc-event-title").html(event.title);
+                    title.html(event.title);
                     // We extend the default event object to support tooltips and icons
                     if (event.tooltip) { element.prop("title", html.decode(event.tooltip)); }
-                    if (event.link) { 
-                        element.find(".fc-event-title").wrap('<a style="color: #fff" href="' + event.link + '"></a>');
-                    }
+                    if (event.link) { title.wrap('<a style="color: #fff" href="' + event.link + '"></a>'); }
                     if (event.icon) { 
-                        if (element.find(".fc-event-time").length > 0) {
-                            element.find(".fc-event-time").prepend(html.icon(event.icon)); 
+                        if (time.length > 0) {
+                            time.prepend(html.icon(event.icon)); 
                         }
                         else {
-                            element.find(".fc-event-title").prepend(html.icon(event.icon)); 
+                            title.prepend(html.icon(event.icon)); 
                         }
                     }
                 },
