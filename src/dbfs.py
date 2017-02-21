@@ -227,8 +227,8 @@ def get_string(dbo, name, path = ""):
     in the dbfs (useful for media files, which have unique names)
     """
     if path != "":
-        path = " AND Path = '%s'" % path
-    r = db.query(dbo, "SELECT ID, URL FROM dbfs WHERE Name ='%s'%s" % (name, path))
+        path = " AND Path = %s" % db.ds(path)
+    r = db.query(dbo, "SELECT ID, URL FROM dbfs WHERE Name =%s%s" % (db.ds(name), path))
     if len(r) == 0:
         return "" # compatibility with old behaviour - relied on by publishers
         #raise DBFSError("No element found for path=%s, name=%s" % (path, name))
@@ -315,8 +315,8 @@ def replace_string(dbo, content, name, path = ""):
     up by just the name.
     """
     if path != "":
-        path = " AND Path = '%s'" % path
-    r = db.query(dbo, "SELECT ID, URL, Name FROM dbfs WHERE Name ='%s'%s" % (name, path))
+        path = " AND Path = %s" % db.ds(path)
+    r = db.query(dbo, "SELECT ID, URL, Name FROM dbfs WHERE Name =%s%s" % (db.ds(name), path))
     if len(r) == 0:
         raise DBFSError("No item found for path=%s, name=%s" % (path, name))
     r = r[0]
@@ -372,9 +372,9 @@ def delete(dbo, name, path = ""):
     Deletes all items matching the name and path given
     """
     if path != "":
-        path = " AND Path = '%s'" % path
-    rows = db.query(dbo, "SELECT ID, URL FROM dbfs WHERE Name='%s'%s" % (name, path))
-    db.execute(dbo, "DELETE FROM dbfs WHERE Name='%s'%s" % (name, path))
+        path = " AND Path = %s" % db.ds(path)
+    rows = db.query(dbo, "SELECT ID, URL FROM dbfs WHERE Name=%s%s" % (db.ds(name), path))
+    db.execute(dbo, "DELETE FROM dbfs WHERE Name=%s%s" % (db.ds(name), path))
     for r in rows:
         o = DBFSStorage(dbo, r["URL"])
         o.delete(r["URL"])
