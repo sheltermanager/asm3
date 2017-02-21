@@ -494,8 +494,11 @@ def get_publish_alerts(dbo):
     rows = db.query_cache(dbo, "SELECT ID FROM dbfs WHERE Path Like '/logs/publish%' ORDER BY Name DESC LIMIT 10", 120)
     alerts = 0
     for r in rows:
-        if get_string_id(dbo, r["ID"]).find("ALERT:") != -1:
-            alerts += 1
+        try:
+            if get_string_id(dbo, r["ID"]).find("ALERT:") != -1:
+                alerts += 1
+        except Exception,err:
+            al.error(err, "dbfs.get_publish_alerts", dbo)
     return alerts
 
 def delete_old_publish_logs(dbo):       
