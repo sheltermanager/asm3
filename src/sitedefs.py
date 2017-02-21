@@ -98,11 +98,15 @@ MEMCACHED_SERVER = ""
 # Where to store media files.
 # database - media files are base64 encoded in the dbfs.content db column
 # file - media files are stored in a folder 
+# s3 - media files are stored in amazon s3
 DBFS_STORE = "database"
 
-# The folder where "file" mode of DBFS_STORE puts media files.
+# DBFS_STORE = file: The folder where media files are stored.
 # It must exist and ASM must have write permissions. It should never end with a /
-DBFS_FILESTORAGE_FOLDER = ""
+DBFS_FILESTORAGE_FOLDER = "/home/robin/tmp/dbfs"
+
+# DBFS_STORE = s3: The S3 bucket to store media in
+DBFS_S3_BUCKET = ""
 
 # The directory to use to cache elements on disk. Must already exist
 # as the application will not attempt to create it.
@@ -290,8 +294,8 @@ CODEMIRROR_CSS = 'static/lib/codemirror/5.11/lib/codemirror.css'
 CODEMIRROR_BASE = 'static/lib/codemirror/5.11/'
 FLOT_JS = 'static/lib/flot/0.7/jquery.flot.min.js'
 FLOT_PIE_JS = 'static/lib/flot/0.7/jquery.flot.pie.min.js'
-FULLCALENDAR_CSS = 'static/lib/fullcalendar/2.0.0/fullcalendar.css'
-FULLCALENDAR_JS = 'static/lib/fullcalendar/2.0.0/fullcalendar.min.js'
+FULLCALENDAR_CSS = 'static/lib/fullcalendar/3.2.0/fullcalendar.min.css'
+FULLCALENDAR_JS = 'static/lib/fullcalendar/3.2.0/fullcalendar.min.js'
 JQUERY_UI_CSS = 'static/lib/jqueryui/jquery-ui-themes-1.11.2/themes/%(theme)s/jquery-ui.css'
 JQUERY_UI_JS = 'static/lib/jqueryui/jquery-ui-1.11.2/jquery-ui.min.js'
 JQUERY_JS = 'static/lib/jquery/2.1.4/jquery.min.js'
@@ -299,7 +303,7 @@ JQUERY_MOBILE_CSS = 'static/lib/jquerymobile/1.4.5/jquery.mobile.min.css'
 JQUERY_MOBILE_JS = 'static/lib/jquerymobile/1.4.5/jquery.mobile.min.js'
 LEAFLET_CSS = 'static/lib/leaflet/0.7.3/leaflet.css'
 LEAFLET_JS = 'static/lib/leaflet/0.7.3/leaflet.js'
-MOMENT_JS = 'static/lib/moment/2.7.0/moment.min.js'
+MOMENT_JS = 'static/lib/moment/2.17.1/moment.min.js'
 MOUSETRAP_JS = 'static/lib/mousetrap/1.4.6/mousetrap.min.js'
 PATH_JS = 'static/lib/pathjs/0.8.4.smcom/path.min.js'
 SIGNATURE_JS = 'static/lib/signature/1.1.1/jquery.signature.min.js'

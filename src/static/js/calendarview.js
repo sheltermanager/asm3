@@ -71,30 +71,31 @@ $(function() {
                 header: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'month,agendaWeek,agendaDay'
+                    right: 'month,agendaWeek,agendaDay,listMonth'
                 }, 
                 editable: false,
                 firstDay: config.integer("FirstDayOfWeek"),
+                eventLimit: true,
                 events: [],
                 eventRender: function(event, element) {
+                    var title = element.find(".fc-title");
+                    var time = element.find(".fc-time");
                     // Need to decode html entities in the title
-                    element.find(".fc-event-title").html(event.title);
+                    title.html(event.title);
                     // We extend the default event object to support tooltips and icons
                     if (event.tooltip) { element.prop("title", html.decode(event.tooltip)); }
-                    if (event.link) { 
-                        element.find(".fc-event-title").wrap('<a style="color: #fff" href="' + event.link + '"></a>');
-                    }
+                    if (event.link) { title.wrap('<a style="color: #fff" href="' + event.link + '"></a>'); }
                     if (event.icon) { 
-                        if (element.find(".fc-event-time").length > 0) {
-                            element.find(".fc-event-time").prepend(html.icon(event.icon)); 
+                        if (time.length > 0) {
+                            time.prepend(html.icon(event.icon)); 
                         }
                         else {
-                            element.find(".fc-event-title").prepend(html.icon(event.icon)); 
+                            title.prepend(html.icon(event.icon)); 
                         }
                     }
                 },
                 // Use ASM's translations
-                buttonText: { day: _("Day"), today: _("Today"), month: _("Month"), week: _("Week") },
+                buttonText: { day: _("Day"), today: _("Today"), month: _("Month"), week: _("Week"), list: _("List") },
                 monthNames: [ _("January"), _("February"),_("March"),_("April"),_("May"),_("June"),
                 _("July"),_("August"),_("September"),_("October"),_("November"),_("December")],
                 monthNamesShort: [_("Jan"), _("Feb"), _("Mar"), _("Apr"), _("May"), _("Jun"),

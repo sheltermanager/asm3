@@ -6204,6 +6204,10 @@ msgstr ""
 msgid "Links"
 msgstr ""
 
+#: calendarview.js
+msgid "List"
+msgstr ""
+
 #: animal.js medical.js animal_find.js test.js animal_new.js animal_bulk.js
 #: vaccination.js reports.py html.py
 msgid "Litter"

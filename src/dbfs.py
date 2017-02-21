@@ -7,19 +7,20 @@ import configuration
 import db
 import mimetypes
 import os, sys
+import smcom
 import utils
 import web
-from sitedefs import DBFS_STORE, DBFS_FILESTORAGE_FOLDER, URL_NEWS
+from sitedefs import DBFS_STORE, DBFS_FILESTORAGE_FOLDER, DBFS_S3_BUCKET, URL_NEWS
 
 class DBFSStorage(object):
     """ DBFSStorage factory """
     o = None
-    def __init__(self, dbo, url = None ):
+    def __init__(self, dbo, url = "default" ):
         """ Creates the correct storage object from mode or url """
-        if url is not None:
-            self._storage_from_url(dbo, url)
-        else:
+        if url == "default":
             self._storage_from_mode(dbo)
+        else:
+            self._storage_from_url(dbo, url)
 
     def _storage_from_url(self, dbo, url):
         """ Creates an appropriate storage object for the url given. """
@@ -39,15 +40,21 @@ class DBFSStorage(object):
         else:
             raise DBFSError("Invalid storage mode: %s" % DBFS_STORE)
 
+    def _extension_from_filename(self, filename):
+        if filename is None or filename.find(".") == -1: return ""
+        return filename[filename.rfind("."):]
+
     def get(self, dbfsid, url):
         """ Get file data for dbfsid/url """
         return self.o.get(dbfsid, url)
-    def put(self, dbfsid, filedata):
+    def put(self, dbfsid, filename, filedata):
         """ Store filedata for dbfsid, returning a url """
-        return self.o.put(dbfsid, filedata)
+        return self.o.put(dbfsid, filename, filedata)
     def delete(self, url):
         """ Delete filedata for url """
         return self.o.delete(url)
+    def url_prefix(self):
+        return self.o.url_prefix()
 
 class B64DBStorage(DBFSStorage):
     """ Storage class for base64 encoding media and storing them
@@ -68,8 +75,9 @@ class B64DBStorage(DBFSStorage):
             em = str(sys.exc_info()[0])
             raise DBFSError("Failed unpacking base64 content with ID %s: %s" % (dbfsid, em))
 
-    def put(self, dbfsid, filedata):
+    def put(self, dbfsid, filename, filedata):
         """ Stores the file data and returns a URL """
+        dummy = filename
         url = "base64:"
         s = base64.b64encode(filedata)
         db.execute(self.dbo, "UPDATE dbfs SET URL = '%s', Content = '%s' WHERE ID = %d" % (url, s, dbfsid))
@@ -79,50 +87,103 @@ class B64DBStorage(DBFSStorage):
         """ Do nothing - removing the database row takes care of it """
         pass
 
+    def url_prefix(self):
+        return "base64:"
+
 class FileStorage(DBFSStorage):
     """ Storage class for putting media on disk """
     dbo = None
-
+    
     def __init__(self, dbo):
         self.dbo = dbo
 
-    def _get_full_path(self):
-        p = DBFS_FILESTORAGE_FOLDER
-        if not p.endswith("/"): p += "/"
-        try:
-            os.mkdir("%s%s" % (p, self.dbo.database))
-        except OSError:
-            pass # Directory already exists - ignore
-        return p
-
-    def get(self, dbfsid, dummy):
-        """ Returns the file data for a dbfsid """
-        url = "%s/%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database, dbfsid)
-        f = open(url, "rb")
+    def get(self, dbfsid, url):
+        """ Returns the file data for url """
+        dummy = dbfsid
+        filepath = "%s/%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database, url.replace("file:", ""))
+        f = open(filepath, "rb")
         s = f.read()
         f.close()
         return s
 
-    def put(self, dbfsid, filedata):
+    def put(self, dbfsid, filename, filedata):
         """ Stores the file data (clearing the Content column) and returns the URL """
         try:
             path = "%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database)
             os.mkdir(path)
         except OSError:
             pass # Directory already exists - ignore
-        filepath = "%s/%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database, dbfsid)
-        url = "file:"
+        extension = self._extension_from_filename(filename)
+        filepath = "%s/%s/%s%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database, dbfsid, extension)
+        url = "file:%s%s" % (dbfsid, extension)
         f = open(filepath, "wb")
         f.write(filedata)
         f.flush()
         f.close()
+        os.chmod(filepath, 0666) # Make the file world read/write
         db.execute(self.dbo, "UPDATE dbfs SET URL = '%s', Content = '' WHERE ID = %d" % (url, dbfsid))
         return url
 
     def delete(self, url):
         """ Deletes the file data """
-        p = url.replace("file:", "")
-        os.unlink(p)
+        filepath = "%s/%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database, url.replace("file:", ""))
+        try:
+            os.unlink(filepath)
+        except Exception,err:
+            al.error("Failed deleting '%s': %s" % (url, err), "FileStorage.delete", self.dbo)
+
+    def url_prefix(self):
+        return "file:"
+
+class S3Storage(DBFSStorage):
+    """ Storage class for putting media in Amazon S3 """
+    dbo = None
+    
+    def __init__(self, dbo):
+        self.dbo = dbo
+
+    def get(self, dbfsid, url):
+        """ Returns the file data for url """
+        dummy = dbfsid
+        name = url.replace("s3:", "")
+        remotepath = "s3://%s/%s/%s" % (DBFS_S3_BUCKET, self.dbo.database, name)
+        localpath = "/tmp/%s" % name
+        returncode, output = utils.cmd("aws s3 cp %s %s" % (remotepath, localpath))
+        if returncode == 0:
+            f = open(localpath, "rb")
+            s = f.read()
+            f.close()
+            os.unlink(localpath)
+            return s
+        raise DBFSError("Failed retrieving from S3: %s %s" % (returncode, output))
+
+    def put(self, dbfsid, filename, filedata):
+        """ Stores the file data (clearing the Content column) and returns the URL """
+        # S3 does not require folders to be created before upload as they are part of the filename
+        extension = self._extension_from_filename(filename)
+        remotepath = "s3://%s/%s/%s%s" % (DBFS_S3_BUCKET, self.dbo.database, dbfsid, extension)
+        localpath = "/tmp/%s%s" % (dbfsid, extension)
+        url = "s3:%s%s" % (dbfsid, extension)
+        f = open(localpath, "wb")
+        f.write(filedata)
+        f.flush()
+        f.close()
+        returncode, output = utils.cmd("aws s3 cp %s %s" % (localpath, remotepath))
+        if returncode == 0:
+            db.execute(self.dbo, "UPDATE dbfs SET URL = '%s', Content = '' WHERE ID = %d" % (url, dbfsid))
+            os.unlink(localpath)
+            return url
+        raise DBFSError("Failed storing in S3: %s %s" % (returncode, output))
+
+    def delete(self, url):
+        """ Deletes the file data """
+        remotepath = "s3://%s/%s/%s" % (DBFS_S3_BUCKET, self.dbo.database, url.replace("s3:", ""))
+        returncode, output = utils.cmd("aws s3 rm %s" % remotepath)
+        if returncode != 0:
+            raise DBFSError("Failed deleting from S3: %s %s" % (returncode, output))
+
+    def url_prefix(self):
+        return "s3:"
 
 class DBFSError(web.HTTPError):
     """ Custom error thrown by dbfs modules """
@@ -166,8 +227,8 @@ def get_string(dbo, name, path = ""):
     in the dbfs (useful for media files, which have unique names)
     """
     if path != "":
-        path = " AND Path = '%s'" % path
-    r = db.query(dbo, "SELECT ID, URL FROM dbfs WHERE Name ='%s'%s" % (name, path))
+        path = " AND Path = %s" % db.ds(path)
+    r = db.query(dbo, "SELECT ID, URL FROM dbfs WHERE Name =%s%s" % (db.ds(name), path))
     if len(r) == 0:
         return "" # compatibility with old behaviour - relied on by publishers
         #raise DBFSError("No element found for path=%s, name=%s" % (path, name))
@@ -213,7 +274,7 @@ def put_file(dbo, name, path, filepath):
     dbfsid = db.get_id(dbo, "dbfs")
     db.execute(dbo, "INSERT INTO dbfs (ID, Name, Path) VALUES (%d, '%s', '%s')" % ( dbfsid, name, path ))
     o = DBFSStorage(dbo)
-    o.put(dbfsid, s)
+    o.put(dbfsid, name, s)
     return dbfsid
 
 def put_string(dbo, name, path, contents):
@@ -228,15 +289,15 @@ def put_string(dbo, name, path, contents):
         dbfsid = db.get_id(dbo, "dbfs")
         db.execute(dbo, "INSERT INTO dbfs (ID, Name, Path) VALUES (%d, '%s', '%s')" % ( dbfsid, name, path ))
     o = DBFSStorage(dbo)
-    o.put(dbfsid, contents)
+    o.put(dbfsid, name, contents)
     return dbfsid
 
-def put_string_id(dbo, dbfsid, contents):
+def put_string_id(dbo, dbfsid, name, contents):
     """
     Stores the file contents at the id given.
     """
     o = DBFSStorage(dbo)
-    o.put(dbfsid, contents)
+    o.put(dbfsid, name, contents)
     return dbfsid
 
 def put_string_filepath(dbo, filepath, contents):
@@ -254,13 +315,13 @@ def replace_string(dbo, content, name, path = ""):
     up by just the name.
     """
     if path != "":
-        path = " AND Path = '%s'" % path
-    r = db.query(dbo, "SELECT ID, URL FROM dbfs WHERE Name ='%s'%s" % (name, path))
+        path = " AND Path = %s" % db.ds(path)
+    r = db.query(dbo, "SELECT ID, URL, Name FROM dbfs WHERE Name =%s%s" % (db.ds(name), path))
     if len(r) == 0:
         raise DBFSError("No item found for path=%s, name=%s" % (path, name))
     r = r[0]
     o = DBFSStorage(dbo, r["URL"])
-    o.put(r["ID"], content)
+    o.put(r["ID"], r["NAME"], content)
     return r["ID"]
 
 def get_file(dbo, name, path, saveto):
@@ -311,9 +372,9 @@ def delete(dbo, name, path = ""):
     Deletes all items matching the name and path given
     """
     if path != "":
-        path = " AND Path = '%s'" % path
-    rows = db.query(dbo, "SELECT ID, URL FROM dbfs WHERE Name='%s'%s" % (name, path))
-    db.execute(dbo, "DELETE FROM dbfs WHERE Name='%s'%s" % (name, path))
+        path = " AND Path = %s" % db.ds(path)
+    rows = db.query(dbo, "SELECT ID, URL FROM dbfs WHERE Name=%s%s" % (db.ds(name), path))
+    db.execute(dbo, "DELETE FROM dbfs WHERE Name=%s%s" % (db.ds(name), path))
     for r in rows:
         o = DBFSStorage(dbo, r["URL"])
         o.delete(r["URL"])
@@ -634,7 +695,15 @@ def switch_storage(dbo):
         al.debug("Storage transfer %s/%s (%d of %d)" % (r["PATH"], r["NAME"], i, len(rows)), "dbfs.switch_storage", dbo)
         source = DBFSStorage(dbo, r["URL"])
         target = DBFSStorage(dbo)
-        filedata = source.get(r["ID"], r["URL"])
-        target.put(r["ID"], filedata)
-
+        # Don't bother if the file is already stored in the target format
+        if source.url_prefix() == target.url_prefix():
+            al.debug("source is already %s, skipping" % source.url_prefix(), "dbfs.switch_storage", dbo)
+            continue
+        try:
+            filedata = source.get(r["ID"], r["URL"])
+            target.put(r["ID"], r["NAME"], filedata)
+        except Exception,err:
+            al.error("Error reading, skipping: %s" % str(err), "dbfs.switch_storage", dbo)
+    # smcom only - perform postgresql full vacuum after switching
+    if smcom.active(): smcom.vacuum_full(dbo)
 

@@ -5,7 +5,7 @@ import datetime
 import db
 import re
 import utils
-import sys
+import os, sys
 import web
 from sitedefs import MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE
 
@@ -16,7 +16,8 @@ sys.path.append("/root/asmdb")
 try:
     import smcom_client
 except:
-    sys.stderr.write("warn: no smcom_client\n")
+    #sys.stderr.write("warn: no smcom_client\n")
+    pass
 
 def active():
     """
@@ -86,6 +87,10 @@ def set_last_connected(dbo):
     response = smcom_client.update_last_connected(dbo.database)
     if response != "OK":
         al.error("Failed setting last connection: %s" % response, "smcom.set_last_connected", dbo)
+
+def vacuum_full(dbo):
+    """ Performs a full vacuum on the database via command line (transaction problems via db.py) """
+    os.system("psql -U %s -c \"VACUUM FULL;\"" % dbo.database)
 
 def route_customer_extension(dbo, when, caller, post):
     target = dbo.database + "_" + when + "_" + caller
