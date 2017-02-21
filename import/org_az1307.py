@@ -107,7 +107,7 @@ flags = {
     "SPONSOR SAD": "Sponsor SAD",
     "SUBSCRIBER": "Subscriber",
     "ARCHIVED": "Archived",
-    "MAD SPONSOR": "MaD Sponsor",
+    "'MAD' SPONSOR": "MaD Sponsor",
     "SHOP VOLUNTERR - BLACKWOOD": "Shop Volunteer - Blackwood",
     "SHOP VOLUNTERR - RUTHIN": "Shop Volunteer - Ruthin",
     "SHOP VOLUNTEER - CARDIFF": "Shop Volunteer - Cardiff",
