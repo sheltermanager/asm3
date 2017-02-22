@@ -4048,7 +4048,6 @@ class mailmerge:
             al.debug("returning preview rows for %d" % session.mergereport, "code.mailmerge", dbo)
             return html.json(rows)
 
-
 class medical:
     def GET(self):
         utils.check_loggedin(session, web)
@@ -4144,6 +4143,7 @@ class move_adopt:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.ADD_MOVEMENT)
+        users.check_permission(session, users.ADD_DONATION)
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         s = html.header("", session)
@@ -4162,6 +4162,7 @@ class move_adopt:
         mode = post["mode"]
         if mode == "create":
             users.check_permission(session, users.ADD_MOVEMENT)
+            users.check_permission(session, users.ADD_DONATION)
             return str(extmovement.insert_adoption_from_form(session.dbo, session.user, post))
         elif mode == "cost":
             users.check_permission(session, users.VIEW_COST)
@@ -4502,6 +4503,7 @@ class move_reclaim:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.ADD_MOVEMENT)
+        users.check_permission(session, users.ADD_DONATION)
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         s = html.header("", session)
@@ -4520,6 +4522,7 @@ class move_reclaim:
         mode = post["mode"]
         if mode == "create":
             users.check_permission(session, users.ADD_MOVEMENT)
+            users.check_permission(session, users.ADD_DONATION)
             return str(extmovement.insert_reclaim_from_form(session.dbo, session.user, post))
         elif mode == "cost":
             users.check_permission(session, users.VIEW_COST)
@@ -4535,6 +4538,7 @@ class move_reserve:
     def GET(self):
         utils.check_loggedin(session, web)
         users.check_permission(session, users.ADD_MOVEMENT)
+        users.check_permission(session, users.ADD_DONATION)
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         s = html.header("", session)
@@ -4552,6 +4556,7 @@ class move_reserve:
         mode = post["mode"]
         if mode == "create":
             users.check_permission(session, users.ADD_MOVEMENT)
+            users.check_permission(session, users.ADD_DONATION)
             return str(extmovement.insert_reserve_from_form(session.dbo, session.user, post))
 
 class move_retailer:

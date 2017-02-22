@@ -20,7 +20,6 @@ from sitedefs import MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE
 ADD_ANIMAL                      = "aa"
 CHANGE_ANIMAL                   = "ca"
 VIEW_ANIMAL                     = "va"
-VIEW_ANIMAL_VET                 = "vavet"
 DELETE_ANIMAL                   = "da"
 CLONE_ANIMAL                    = "cloa"
 

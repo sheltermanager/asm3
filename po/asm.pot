@@ -11853,10 +11853,6 @@ msgid "View Accounts"
 msgstr ""
 
 #: roles.js
-msgid "View Animal Vet"
-msgstr ""
-
-#: roles.js
 msgid "View Animals"
 msgstr ""
 

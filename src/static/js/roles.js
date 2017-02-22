@@ -32,7 +32,6 @@ $(function() {
                 cr("aa", _("Add Animals")),
                 cr("ca", _("Change Animals")),
                 cr("va", _("View Animals")),
-                cr("vavet", _("View Animal Vet")),
                 cr("da", _("Delete Animals")),
                 cr("cloa", _("Clone Animals")),
                 cr("gaf", _("Generate Documents")),
