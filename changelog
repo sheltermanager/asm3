@@ -1,6 +1,7 @@
 40
 ================
 
+22/02/17 Signing ids were not being passed to the mobile signing pad
 21/02/17 Add listMonth to calendar view #20
 21/02/17 Upgrade fullcalendar.js and moment.js #20
 20/02/17 Add Amazon S3 storage to dbfs #134

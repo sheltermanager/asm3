@@ -321,6 +321,9 @@ def page_sign(dbo, session, username):
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1"> 
     %(css)s
+    <script>
+        ids = "%(ids)s";
+    </script>
     %(scripts)s
     <style>
     button { 
