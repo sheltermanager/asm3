@@ -11502,7 +11502,7 @@ msgstr ""
 msgid "UK Giftaid"
 msgstr ""
 
-#: media.js
+#: report_images.js media.js
 msgid "URL"
 msgstr ""
 

@@ -25,7 +25,12 @@ $(function() {
                     common.route("image?db=" + asm.useraccount + "&mode=dbfs&id=/reports/" + row.NAME);
                 },
                 columns: [
-                    { field: "NAME", display: _("Image file"), initialsort: true }
+                    { field: "NAME", display: _("Image file"), initialsort: true },
+                    { field: "NAME", display: _("URL"), 
+                        formatter: function(row) {
+                            return "image?db=" + asm.useraccount + "&mode=dbfs&id=/reports/" + row.NAME;
+                        }
+                    }
                 ]
             };
 
@@ -119,7 +124,6 @@ $(function() {
             s += tableform.dialog_render(this.dialog);
             s += html.content_header(_("Extra images"));
             s += html.info(_("This screen allows you to add extra images to your database, for use in reports and documents.") + "<br />" +
-                _("Access them via the url") + " 'image?db=" + asm.useraccount + "&mode=dbfs&id=/reports/NAME'" + "<br />" +
                 _("Upload splash.jpg and logo.jpg to override the login screen image and logo at the top left of ASM."));
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);
