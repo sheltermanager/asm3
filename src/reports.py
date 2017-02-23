@@ -896,7 +896,7 @@ class Report:
                 maxval = 0
                 for i in range(gd.lastGroupStartPosition, gd.lastGroupEndPosition + 1):
                     try:
-                        maxval = max(minval, rs[i][calcfield])
+                        maxval = max(maxval, rs[i][calcfield])
                     except Exception, e:
                         # Ignore errors
                         pass
