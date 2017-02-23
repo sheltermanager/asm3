@@ -4,12 +4,12 @@ import asm
 
 """
 Import script for ShelterBuddy MDB/SQL Server export with QueryExpress
-2nd June, 2012 - 7th July, 2015
+2nd June, 2012 - 23rd Feb, 2017
 """
 
-PATH = "data/shelterbuddy_uvhs/"
+PATH = "data/shelterbuddy_ag1328/"
 
-# Use gmdb2 to export these tables from Access
+# Use mdbtools/mdb-export to export these tables from Access
 # OR use queryexpress to do it from SQL Server Ex2005
 
 # animaltype
@@ -60,11 +60,11 @@ def getdate(s):
     return asm.getdate_mmddyy(s)
 
 def getsbnotes(animalid):
-    global cnotes
-    for r in cnotes:
-        if r["animalID"] == animalid and r["fieldText"] != "":
-            return r["fieldText"]
-    return ""
+    global animalnotes
+    if animalnotes.has_key(animalid):
+        return animalnotes[animalid]
+    else:
+        return ""
 
 def getsbpaymentmethod(pmid):
     global cpaymentmethods
@@ -135,13 +135,16 @@ print "\\set ON_ERROR_STOP\nBEGIN;"
 addresses = {}
 suburbs = {}
 vacctype = {}
+animalnotes = {}
 
 owners = []
+ownerdonations = []
 documents = {}
 ppo = {}
 ppa = {}
 movements = []
 animals = []
+animalvaccinations = []
 
 asm.setid("animal", 100)
 asm.setid("dbfs", 400)
@@ -171,6 +174,11 @@ cpaymentmethods = asm.csv_to_list(PATH + "tblpaymenttypes.csv")
 for row in asm.csv_to_list(PATH + "tbldocument.csv"):
     if row["objectypeid"] == "0" and row["extension"] == "jpg" and row["isDefault"] == "-1":
         documents[row["objectid"]] = PATH + "images/doc_%s.jpg" % row["docID"]
+
+# use a dictionary for speed looking up notes 
+for r in cnotes:
+    if r["fieldText"] != "":
+        animalnotes[r["animalID"]] = r["fieldText"]
 
 # tblsuburblist.csv
 for row in asm.csv_to_list(PATH + "tblsuburblist.csv"):
@@ -332,37 +340,41 @@ for row in asm.csv_to_list(PATH + "tblanimalvettreatments.csv"):
     if a == None: continue
     av.AnimalID = a.ID
     av.VaccinationID = int(row["vacc"].strip())
-    print av
+    animalvaccinations.append(av)
 
 # tblreceiptentry.csv
 for row in asm.csv_to_list(PATH + "tblreceiptentry.csv"):
     od = asm.OwnerDonation()
     od.DonationTypeID = 1
-    pm = getsbpaymentmethod(row["paymentmethod"])
+    pm = getsbpaymentmethod(row["dep_paymentMethod"])
     od.DonationPaymentID = 1
     if pm.find("Check") != -1: od.DonationPaymentID = 2
     if pm.find("Credit Card") != -1: od.DonationPaymentID = 3
     if pm.find("Debit Card") != -1: od.DonationPaymentID = 4
     od.Date = getdate(row["receiptdate"])
     od.OwnerID = findowner(row["recnum"]).ID
-    od.Donation = asm.get_currency(row["Amount"])
-    comments = "Check No: " + row["chequeno"]
+    od.Donation = asm.get_currency(row["dep_amount"])
+    comments = "Check No: " + row["dep_chequeNo"]
     comments += "\nMethod: " + pm
     comments += "\n" + row["NotesToPrint"]
     od.Comments = comments
-    print od
+    ownerdonations.append(od)
 
 # Now that everything else is done, output stored records
 print "DELETE FROM primarykey;"
 print "DELETE FROM configuration WHERE ItemName Like 'VariableAnimalDataUpdated';"
 for a in animals:
     print a
+for av in animalvaccinations:
+    print av
 for o in owners:
     print o
+for od in ownerdonations:
+    print od
 for m in movements:
     print m
 
-asm.stderr_summary(animals=animals, owners=owners, movements=movements)
+asm.stderr_summary(animals=animals, animalvaccinations=animalvaccinations, owners=owners, ownerdonations=ownerdonations, movements=movements)
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"
