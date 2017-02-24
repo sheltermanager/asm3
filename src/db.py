@@ -27,7 +27,7 @@ try:
 except:
     pass
 
-class DatabaseInfo():
+class DatabaseInfo(object):
     """
     Handles information on connecting to a database.
     Default values are supplied by the sitedefs.py file.
@@ -48,7 +48,7 @@ class DatabaseInfo():
     timeout = DB_TIMEOUT
     connection = None
     def __repr__(self):
-        return "DatabaseInfo->locale=%s:dbtype=%s:host=%s:port=%d:db=%s:alias=%s:user=%s:pass=%s" % ( self.locale, self.dbtype, self.host, self.port, self.database, self.alias, self.username, self.password )
+        return "DatabaseInfo->locale=%s:dbtype=%s:host=%s:port=%d:db=%s:user=%s:timeout=%s" % ( self.locale, self.dbtype, self.host, self.port, self.database, self.username, self.timeout )
 
 def connection(dbo):
     """

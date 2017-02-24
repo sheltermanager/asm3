@@ -34,7 +34,7 @@ import utils
 import wordprocessor
 from sitedefs import BASE_URL, MULTIPLE_DATABASES_PUBLISH_DIR, MULTIPLE_DATABASES_PUBLISH_FTP, MULTIPLE_DATABASES_PUBLISH_URL, ADOPTAPET_FTP_HOST, ANIBASE_BASE_URL, ANIBASE_API_USER, ANIBASE_API_KEY, FOUNDANIMALS_FTP_HOST, FOUNDANIMALS_FTP_USER, FOUNDANIMALS_FTP_PASSWORD, HELPINGLOSTPETS_FTP_HOST, PETFINDER_FTP_HOST, PETRESCUE_FTP_HOST, PETSLOCATED_FTP_HOST, PETSLOCATED_FTP_USER, PETSLOCATED_FTP_PASSWORD, RESCUEGROUPS_FTP_HOST, SMARTTAG_FTP_HOST, SMARTTAG_FTP_USER, SMARTTAG_FTP_PASSWORD, PETTRAC_UK_POST_URL, MEETAPET_BASE_URL, PETLINK_BASE_URL, SERVICE_URL, VETENVOY_US_VENDOR_USERID, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_HOMEAGAIN_RECIPIENTID, VETENVOY_US_AKC_REUNITE_RECIPIENTID, VETENVOY_US_BASE_URL, VETENVOY_US_SYSTEM_ID
 
-class PublishCriteria:
+class PublishCriteria(object):
     """
     Class containing publishing criteria. Has functions to 
     convert to and from a command line string
@@ -137,7 +137,8 @@ class PublishCriteria:
     def __str__(self):
         """
         Returns a string representation of the criteria (which corresponds
-        exactly to an ASM 2.x command line string to a publisher)
+        exactly to an ASM 2.x command line string to a publisher and is how
+        we store the defaults in the database)
         """
         s = ""
         if self.includeCaseAnimals: s += " includecase"

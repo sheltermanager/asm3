@@ -537,7 +537,7 @@ def escape_tinymce(content):
     c = c.replace("&lt;style\n", "&lt;style&gt;\n")
     return c
 
-class UnicodeCSVWriter:
+class UnicodeCSVWriter(object):
     """
     A CSV writer which will write rows to CSV file "f",
     which is encoded in the given encoding.
