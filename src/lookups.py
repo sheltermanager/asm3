@@ -45,6 +45,7 @@ LOOKUP_TABLES = {
     "lkurgency":        (_("Urgencies"), "Urgency", _("Urgency"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ("animalwaitinglist.Urgency",)),
     "testtype":         (_("Test Types"), "TestName", _("Type"), "TestDescription", 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, ("animaltest.TestTypeID",)),
     "testresult":       (_("Test Results"), "ResultName", _("Result"), "ResultDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animaltest.TestResultID",)),
+    "transporttype":    (_("Transport Types"), "TransportTypeName", _("Type"), "TransportTypeDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animaltransport.TransportTypeID",)),
     "traptype":         (_("Trap Types"), "TrapTypeName", _("Type"), "TrapTypeDescription", 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, ("ownertraploan.TrapTypeID",)),
     "vaccinationtype":  (_("Vaccination Types"), "VaccinationType", _("Type"), "VaccinationDescription", 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, ("animalvaccination.VaccinationID",)),
     "voucher":          (_("Voucher Types"), "VoucherName", _("Type"), "VoucherDescription", 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, ("ownervoucher.VoucherID",)),
@@ -1282,6 +1283,9 @@ def get_test_types(dbo):
 
 def get_test_results(dbo):
     return db.query(dbo, "SELECT * FROM testresult ORDER BY ResultName")
+
+def get_transport_types(dbo):
+    return db.query(dbo, "SELECT * FROM transporttype ORDER BY TransportTypeName")
 
 def get_vaccination_types(dbo):
     return db.query(dbo, "SELECT * FROM vaccinationtype ORDER BY VaccinationType")

@@ -410,6 +410,8 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, limi
     """
     Returns rows for advanced person searches.
     criteria: A dictionary of criteria
+       code - string partial pattern
+       createdby - string partial pattern
        name - string partial pattern
        address - string partial pattern
        town - string partial pattern
@@ -452,6 +454,7 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, limi
                 ))
 
     addstr("code", "o.OwnerCode")
+    addstr("createdby", "o.CreatedBy")
     addwords("name", "o.OwnerName")
     addstr("address", "o.OwnerAddress")
     addstr("town", "o.OwnerTown")

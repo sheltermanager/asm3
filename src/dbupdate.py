@@ -12,16 +12,17 @@ VERSIONS = (
     3051, 3081, 3091, 3092, 3093, 3094, 3110, 3111, 3120, 3121, 3122, 3123, 3200,
     3201, 3202, 3203, 3204, 3210, 3211, 3212, 3213, 3214, 3215, 3216, 3217, 3218,
     3220, 3221, 3222, 3223, 3224, 3225, 3300, 3301, 3302, 3303, 3304, 3305, 3306,
-    3307, 3308, 3309, 33010, 33011, 33012, 33013, 33014, 33015, 33016, 33017, 33018,
-    33019, 33101, 33102, 33104, 33105, 33106, 33201, 33202, 33203, 33204, 33205,
-    33206, 33300, 33301, 33302, 33303, 33304, 33305, 33306, 33307, 33308, 33309,
-    33310, 33311, 33312, 33313, 33314, 33315, 33316, 33401, 33402, 33501, 33502,
-    33503, 33504, 33505, 33506, 33507, 33508, 33600, 33601, 33602, 33603, 33604,
-    33605, 33606, 33607, 33608, 33609, 33700, 33701, 33702, 33703, 33704, 33705,
-    33706, 33707, 33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716,
-    33717, 33718, 33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904,
-    33905, 33906, 33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916,
-    34000, 34001, 34002
+    3307, 3308, 3309, 
+    33010, 33011, 33012, 33013, 33014, 33015, 33016, 33017, 33018, 33019, 33101, 
+    33102, 33104, 33105, 33106, 33201, 33202, 33203, 33204, 33205, 33206, 33300, 
+    33301, 33302, 33303, 33304, 33305, 33306, 33307, 33308, 33309, 33310, 33311, 
+    33312, 33313, 33314, 33315, 33316, 33401, 33402, 33501, 33502, 33503, 33504, 
+    33505, 33506, 33507, 33508, 33600, 33601, 33602, 33603, 33604, 33605, 33606, 
+    33607, 33608, 33609, 33700, 33701, 33702, 33703, 33704, 33705, 33706, 33707, 
+    33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716, 33717, 33718, 
+    33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904, 33905, 33906, 
+    33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
+    34002, 34003, 34004
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -42,7 +43,7 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "onlineformfield", "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
     "ownerlicence", "ownerlookingfor", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", 
     "reservationstatus", "role", "site", "species", "stocklevel", "stocklocation", "stockusage", "stockusagetype", 
-    "testtype", "testresult", "traptype", "userrole", "users", "vaccinationtype", "voucher" )
+    "testtype", "testresult", "transporttype", "traptype", "userrole", "users", "vaccinationtype", "voucher" )
 
 # ASM2_COMPATIBILITY This is used for dumping tables in ASM2/HSQLDB format. 
 # These are the tables present in ASM2. users is not included due to the
@@ -350,6 +351,8 @@ def sql_structure(dbo):
     sql += index("animal_BreedName", "animal", "BreedName")
     sql += index("animal_BroughtInByOwnerID", "animal", "BroughtInByOwnerID")
     sql += index("animal_CoatType", "animal", "CoatType")
+    sql += index("animal_CreatedBy", "animal", "CreatedBy")
+    sql += index("animal_CreatedDate", "animal", "CreatedDate")
     sql += index("animal_CurrentVetID", "animal", "CurrentVetID")
     sql += index("animal_DateBroughtIn", "animal", "DateBroughtIn")
     sql += index("animal_DeceasedDate", "animal", "DeceasedDate")
@@ -686,6 +689,7 @@ def sql_structure(dbo):
     sql += table("animaltransport", (
         fid(),
         fint("AnimalID"),
+        fint("TransportTypeID"),
         fint("DriverOwnerID"),
         fint("PickupOwnerID"),
         fstr("PickupAddress", True),
@@ -713,6 +717,7 @@ def sql_structure(dbo):
     sql += index("animaltransport_PickupDateTime", "animaltransport", "PickupDateTime")
     sql += index("animaltransport_DropoffDateTime", "animaltransport", "DropoffDateTime")
     sql += index("animaltransport_Status", "animaltransport", "Status")
+    sql += index("animaltransport_TransportTypeID", "animaltransport", "TransportTypeID")
 
     sql += table("animaltype", (
         fid(),
@@ -1154,6 +1159,8 @@ def sql_structure(dbo):
         fint("MatchGoodWithChildren", True),
         fint("MatchHouseTrained", True),
         fstr("MatchCommentsContain", True) ))
+    sql += index("owner_CreatedBy", "owner", "CreatedBy")
+    sql += index("owner_CreatedDate", "owner", "CreatedDate")
     sql += index("owner_MembershipNumber", "owner", "MembershipNumber")
     sql += index("owner_OwnerCode", "owner", "OwnerCode")
     sql += index("owner_OwnerName", "owner", "OwnerName")
@@ -1385,6 +1392,12 @@ def sql_structure(dbo):
         fstr("TrapTypeName"),
         fstr("TrapTypeDescription", True),
         fint("DefaultCost", True),
+        fint("IsRetired", True) ), False)
+
+    sql += table("transporttype", (
+        fid(),
+        fstr("TransportTypeName"),
+        fstr("TransportTypeDescription", True),
         fint("IsRetired", True) ), False)
 
     sql += table("users", (
@@ -2213,6 +2226,10 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup2money("testtype", "TestName", 1, _("FIV", l))
     sql += lookup2money("testtype", "TestName", 2, _("FLV", l))
     sql += lookup2money("testtype", "TestName", 3, _("Heartworm", l))
+    sql += lookup2("transporttype", "TransportTypeName", 1, _("Adoption Event", l))
+    sql += lookup2("transporttype", "TransportTypeName", 2, _("Foster Transfer", l))
+    sql += lookup2("transporttype", "TransportTypeName", 3, _("Surrender Pickup", l))
+    sql += lookup2("transporttype", "TransportTypeName", 4, _("Vet Visit", l))
     sql += lookup2money("traptype", "TrapTypeName", 1, _("Cat", l))
     sql += lookup2money("voucher", "VoucherName", 1, _("Neuter/Spay", l))
     sql += lookup2money("vaccinationtype", "VaccinationType", 1, _("Distemper", l))
@@ -4569,4 +4586,29 @@ def update_34002(dbo):
     add_column(dbo, "dbfs", "URL", shorttext(dbo))
     add_index(dbo, "dbfs_URL", "dbfs", "URL")
     db.execute_dbupdate(dbo, "UPDATE dbfs SET URL = 'base64:'")
+
+def update_34003(dbo):
+    # Add indexes to animal and owner created for find animal/person
+    add_index(dbo, "animal_CreatedBy", "animal", "CreatedBy")
+    add_index(dbo, "animal_CreatedDate", "animal", "CreatedDate")
+    add_index(dbo, "owner_CreatedBy", "owner", "CreatedBy")
+    add_index(dbo, "owner_CreatedDate", "owner", "CreatedDate")
+
+def update_34004(dbo):
+    l = dbo.locale
+    # Add the TransportTypeID column
+    add_column(dbo, "animaltransport", "TransportTypeID", "INTEGER")
+    add_index(dbo, "animaltransport_TransportTypeID", "animaltransport", "TransportTypeID")
+    db.execute_dbupdate(dbo, "UPDATE animaltransport SET TransportTypeID = 4") # Vet Visit
+    # Add the transporttype lookup table
+    sql = "CREATE TABLE transporttype ( ID INTEGER NOT NULL, " \
+        "TransportTypeName %(short)s NOT NULL, " \
+        "TransportTypeDescription %(long)s, " \
+        "IsRetired INTEGER)" % { "short": shorttext(dbo), "long": longtext(dbo) }
+    db.execute_dbupdate(dbo, sql)
+    db.execute_dbupdate(dbo, "INSERT INTO transporttype VALUES (1, '%s', '', 0)" % _("Adoption Event", l))
+    db.execute_dbupdate(dbo, "INSERT INTO transporttype VALUES (2, '%s', '', 0)" % _("Foster Transfer", l))
+    db.execute_dbupdate(dbo, "INSERT INTO transporttype VALUES (3, '%s', '', 0)" % _("Surrender Pickup", l))
+    db.execute_dbupdate(dbo, "INSERT INTO transporttype VALUES (4, '%s', '', 0)" % _("Vet Visit", l))
+
 

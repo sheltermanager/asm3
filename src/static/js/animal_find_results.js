@@ -128,6 +128,7 @@ $(function() {
                 "AnimalTypeID": _("Type"),
                 "AnimalName": _("Name"),
                 "BaseColourID": _("Color"),
+                "CreatedBy": _("Created By"),
                 "SpeciesID": _("Species"),
                 "BreedName":  _("Breed"),
                 "CoatType":  _("Coat Type"),
@@ -212,7 +213,7 @@ $(function() {
         format_column: function(row, name, value, add) {
             var DATE_FIELDS = [ "DateOfBirth", "DeceasedDate", "IdentichipDate", "TattooDate", 
                 "NeuteredDate", "CombiTestDate", "HeartwormTestDate", "DateBroughtIn", "HoldUntilDate" ],
-            STRING_FIELDS = [ "AnimalName", "BreedName", "Markings", "AcceptanceNumber", 
+            STRING_FIELDS = [ "AnimalName", "BreedName", "CreatedBy", "Markings", "AcceptanceNumber", 
                 "AgeGroup", "IdentichipNumber", "TattooNumber", "HiddenAnimalDetails", 
                 "AnimalComments", "ReasonForEntry", "HealthProblems", "PTSReason", "PickupAddress", 
                 "RabiesTag", "TimeOnShelter", "DaysOnShelter", "AnimalAge", "ShelterLocationUnit" ],

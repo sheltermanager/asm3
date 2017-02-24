@@ -31,6 +31,10 @@ msgstr ""
 msgid "(any)"
 msgstr ""
 
+#: person_find.js animal_find.js
+msgid "(anyone)"
+msgstr ""
+
 #: animal.js animal_new.js
 msgid "(available)"
 msgstr ""
@@ -210,10 +214,6 @@ msgstr ""
 
 #: roles.js
 msgid "Access System Menu"
-msgstr ""
-
-#: report_images.js
-msgid "Access them via the url"
 msgstr ""
 
 #: accounts_trx.js
@@ -698,6 +698,10 @@ msgstr ""
 #: options.js header_edit_header.js animal.js animal_new.js animal_bulk.js
 #: shelterview.js common.js person.py
 msgid "Adoption Coordinator"
+msgstr ""
+
+#: dbupdate.py
+msgid "Adoption Event"
 msgstr ""
 
 #: animal.js animal_new.js animal_bulk.js dbupdate.py
@@ -2760,6 +2764,11 @@ msgstr ""
 msgid "Create waiting list records from the selected forms"
 msgstr ""
 
+#: person_find_results.js person_find.js animal_find_results.js
+#: waitinglist_results.js animal_find.js html.py
+msgid "Created By"
+msgstr ""
+
 #: options.js
 msgid "Creating cost and cost types creates matching accounts and transactions"
 msgstr ""
@@ -4753,6 +4762,10 @@ msgstr ""
 
 #: person.js mobile.py
 msgid "Foster Capacity"
+msgstr ""
+
+#: dbupdate.py
+msgid "Foster Transfer"
 msgstr ""
 
 #: header.js move_foster.js html.py configuration.py
@@ -9283,7 +9296,7 @@ msgstr ""
 
 #: person.js common_animalchoosermulti.js animal.js roles.js reports.js
 #: accounts_trx.js users.js diarytasks.js accounts.js common_personchooser.js
-#: onlineforms.js transport.js common_tableform.js common.js
+#: onlineforms.js common_tableform.js common.js
 msgid "Select"
 msgstr ""
 
@@ -10165,6 +10178,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Surrender"
+msgstr ""
+
+#: dbupdate.py
+msgid "Surrender Pickup"
 msgstr ""
 
 #: incident_new.js incident.js incident_find_results.js
@@ -11354,6 +11371,10 @@ msgstr ""
 msgid "Transport Book"
 msgstr ""
 
+#: lookups.py
+msgid "Transport Types"
+msgstr ""
+
 #: html.py
 msgid "Transport book"
 msgstr ""
@@ -11484,7 +11505,7 @@ msgstr ""
 #: animal_costs.js animal.js mailmerge.js reports.js person_links.js log_new.js
 #: users.js incident.js media.js diarytasks.js person_vouchers.js
 #: animal_find.js accounts.js licence_renewal.js test.js common_widgets.js
-#: citations.js licence.js animal_new.js incident_find_results.js
+#: citations.js licence.js transport.js animal_new.js incident_find_results.js
 #: animal_bulk.js vaccination.js shelterview.js mobile.py reports.py html.py
 #: lookups.py
 msgid "Type"
@@ -11826,6 +11847,10 @@ msgstr ""
 #: person_find_results.js header_edit_header.js onlineforms.js test.js
 #: vaccination.js common.js html.py dbupdate.py
 msgid "Vet"
+msgstr ""
+
+#: dbupdate.py
+msgid "Vet Visit"
 msgstr ""
 
 #: incident_new.js incident.js mobile.py

@@ -68,7 +68,8 @@ def get_movement_query(dbo):
         "LEFT OUTER JOIN owner r ON m.RetailerID = r.ID "
 
 def get_transport_query(dbo):
-    return "SELECT DISTINCT t.*, d.OwnerName AS DriverOwnerName, p.OwnerName AS PickupOwnerName, dr.OwnerName AS DropoffOwnerName, " \
+    return "SELECT DISTINCT t.*, tt.TransportTypeName, " \
+        "d.OwnerName AS DriverOwnerName, p.OwnerName AS PickupOwnerName, dr.OwnerName AS DropoffOwnerName, " \
         "d.OwnerAddress AS DriverOwnerAddress, p.OwnerAddress AS PickupOwnerAddress, dr.OwnerAddress AS DropoffOwnerAddress, " \
         "d.OwnerTown AS DriverOwnerTown, p.OwnerTown AS PickupOwnerTown, dr.OwnerTown AS DropoffOwnerTown, " \
         "d.OwnerCounty AS DriverOwnerCounty, p.OwnerCounty AS PickupOwnerCounty, dr.OwnerCounty AS DropoffOwnerCounty, " \
@@ -77,6 +78,7 @@ def get_transport_query(dbo):
         "ma.MediaName AS WebsiteMediaName, ma.Date AS WebsiteMediaDate, " \
         "a.AnimalName, a.ShelterCode, a.ShortCode " \
         "FROM animaltransport t " \
+        "INNER JOIN transporttype tt ON tt.ID = t.TransportTypeID " \
         "LEFT OUTER JOIN animal a ON t.AnimalID = a.ID " \
         "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
         "LEFT OUTER JOIN owner d ON t.DriverOwnerID = d.ID " \
@@ -788,6 +790,7 @@ def insert_transport_from_form(dbo, username, post):
     sql = db.make_insert_user_sql(dbo, "animaltransport", username, ( 
         ( "ID", db.di(transportid)),
         ( "AnimalID", post.db_integer("animal")),
+        ( "TransportTypeID", post.db_integer("type")),
         ( "DriverOwnerID", post.db_integer("driver")),
         ( "PickupOwnerID", post.db_integer("pickup")),
         ( "PickupAddress", post.db_string("pickupaddress")),
@@ -818,6 +821,7 @@ def update_transport_from_form(dbo, username, post):
     transportid = post.integer("transportid")
     sql = db.make_update_user_sql(dbo, "animaltransport", username, "ID=%d" % transportid, ( 
         ( "AnimalID", post.db_integer("animal")),
+        ( "TransportTypeID", post.db_integer("type")),
         ( "DriverOwnerID", post.db_integer("driver")),
         ( "PickupOwnerID", post.db_integer("pickup")),
         ( "PickupAddress", post.db_string("pickupaddress")),

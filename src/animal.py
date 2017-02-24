@@ -434,6 +434,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
     criteria: A dictionary of criteria
        animalname - string partial pattern
        sheltercode - string partial pattern
+       createdby - string partial pattern
        litterid - string partial pattern
        animaltypeid - -1 for all or ID
        breedid - -1 for all or ID
@@ -567,6 +568,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
         addstr("agegroup", "a.AgeGroup")
     adddate("outbetweenfrom", "outbetweento", "a.ActiveMovementDate")
     addwords("medianotes", "web.MediaNotes")
+    addstr("createdby", "a.CreatedBy")
 
     if hk("agedbetweenfrom") and hk("agedbetweento"):
         c.append("%s >= %s AND %s <= %s" % (

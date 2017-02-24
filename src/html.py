@@ -783,6 +783,7 @@ def json_animalfindcolumns(dbo):
         ( "AnimalTypeID", _("Animal Type", l) ),
         ( "AnimalName", _("Name", l) ),
         ( "BaseColourID", _("Color", l) ),
+        ( "CreatedBy", _("Created By", l) ),
         ( "SpeciesID", _("Species", l) ),
         ( "BreedName", _("Breed", l) ),
         ( "CoatType", _("Coat", l) ),
@@ -881,6 +882,7 @@ def json_lookup_tables(l):
 def json_personfindcolumns(dbo):
     l = dbo.locale
     cols = [ 
+        ( "CreatedBy", _("Created By", l) ),
         ( "OwnerTitle", _("Title", l) ),
         ( "OwnerInitials", _("Initials", l) ),
         ( "OwnerForenames", _("First Names", l) ),
@@ -933,6 +935,7 @@ def json_quicklinks(dbo):
 def json_waitinglistcolumns(dbo):
     l = dbo.locale
     cols = [ 
+        ( "CreatedBy", _("Created By", l) ),
         ( "Rank", _("Rank", l) ),
         ( "SpeciesID", _("Species", l) ),
         ( "Size", _("Size", l) ),

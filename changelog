@@ -1,6 +1,9 @@
 40
 ================
 
+24/02/17 Allow search of Created By on animal/person find advanced #130
+24/02/17 Add Created By to find animal/person/waiting list available columns #130
+24/02/17 Add transport type field #108
 23/02/17 Show the URL for extra images for easy copying into documents
 23/02/17 Report MAX function broken and comparing minval
 22/02/17 Move->Adopt/Reserve/Reclaim should require payment permissions

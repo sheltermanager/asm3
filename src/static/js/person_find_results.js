@@ -119,6 +119,7 @@ $(function() {
          */
         column_label: function(name, add) {
             var labels = {
+                "CreatedBy": _("Created By"),
                 "OwnerTitle":  _("Title"),
                 "OwnerInitials":  _("Initials"),
                 "OwnerForenames":  _("Forenames"),
@@ -179,7 +180,7 @@ $(function() {
          */
         format_column: function(row, name, value, add) {
             var DATE_FIELDS = [ "MembershipExpiryDate", "DateLastHomeChecked" ],
-            STRING_FIELDS = [ "OwnerTitle", "OwnerInitials", "OwnerForenames", "OwnerSurname",
+            STRING_FIELDS = [ "CreatedBy", "OwnerTitle", "OwnerInitials", "OwnerForenames", "OwnerSurname",
                 "OwnerName", "OwnerAddress", "OwnerTown", "OwnerCounty", "OwnerPostcode",
                 "HomeTelephone", "WorkTelephone", "MobileTelephone", "EmailAddress",
                 "Comments", "MembershipNumber", "HomeCheckAreas", "HomeCheckedBy" ],

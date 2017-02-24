@@ -262,6 +262,7 @@ $(function() {
          */
         column_label: function(name) {
             var labels = {
+                "CreatedBy": _("Created By"),
                 "Rank": _("Rank"),
                 "SpeciesID": _("Species"),
                 "Size": _("Size"),
@@ -298,7 +299,7 @@ $(function() {
          */
         format_column: function(row, name, value) {
             var DATE_FIELDS = [ "DatePutOnList", "DateRemovedFromList" ],
-            STRING_FIELDS = [ "OwnerName", "OwnerAddress", "OwnerTown", "OwnerCounty", 
+            STRING_FIELDS = [ "CreatedBy", "OwnerName", "OwnerAddress", "OwnerTown", "OwnerCounty", 
                 "OwnerPostcode", "HomeTelephone", "WorkTelephone", "MobileTelephone", 
                 "EmailAddress", "AnimalDescription", "ReasonForWantingToPart", 
                 "ReasonForRemoval", "Comments", "Rank", "TimeOnList" ],

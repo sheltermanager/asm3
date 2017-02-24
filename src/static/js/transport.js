@@ -34,6 +34,7 @@ $(function() {
                     { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "animal" },
                     { json_field: "ANIMALS", post_field: "animals", label: _("Animals"), type: "animalmulti" },
                     { json_field: "DRIVEROWNERID", post_field: "driver", label: _("Driver"), type: "person", personfilter: "driver" },
+                    { json_field: "TRANSPORTTYPEID", post_field: "type", label: _("Type"), type: "select", options: { rows: controller.transporttypes, displayfield: "TRANSPORTTYPENAME", valuefield: "ID" }},
                     { json_field: "STATUS", post_field: "status", label: _("Status"), type: "select", options: { rows: statuses, displayfield: "NAME", valuefield: "ID" }},
                     { json_field: "MILES", post_field: "miles", label: _("Miles"), type: "number", defaultval: 0 },
                     { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency", hideif: function() { return !config.bool("ShowCostAmount"); } },
@@ -65,29 +66,7 @@ $(function() {
                     tableform.dialog_show_edit(dialog, row, {
                         onchange: function() {
                             tableform.fields_update_row(dialog.fields, row);
-                            row.ANIMALNAME = $("#animal").animalchooser("get_selected").ANIMALNAME;
-                            row.SHELTERCODE = $("#animal").animalchooser("get_selected").SHELTERCODE;
-                            if (row.DRIVEROWNERID && row.DRIVEROWNERID != "0") { 
-                                row.DRIVEROWNERNAME = $("#driver").personchooser("get_selected").OWNERNAME; 
-                                row.DRIVEROWNERADDRESS = $("#driver").personchooser("get_selected").OWNERADDRESS; 
-                                row.DRIVEROWNERTOWN = $("#driver").personchooser("get_selected").OWNERTOWN; 
-                                row.DRIVEROWNERCOUNTY = $("#driver").personchooser("get_selected").OWNERCOUNTY; 
-                                row.DRIVEROWNERPOSTCODE = $("#driver").personchooser("get_selected").OWNERPOSTCODE; 
-                            }
-                            if (row.PICKUPOWNERID && row.PICKUPOWNERID != "0") { 
-                                row.PICKUPOWNERNAME = $("#pickup").personchooser("get_selected").OWNERNAME; 
-                                row.PICKUPOWNERADDRESS = $("#pickup").personchooser("get_selected").OWNERADDRESS; 
-                                row.PICKUPOWNERTOWN = $("#pickup").personchooser("get_selected").OWNERTOWN; 
-                                row.PICKUPOWNERCOUNTY = $("#pickup").personchooser("get_selected").OWNERCOUNTY; 
-                                row.PICKUPOWNERPOSTCODE = $("#pickup").personchooser("get_selected").OWNERPOSTCODE; 
-                            }
-                            if (row.DROPOFFOWNERID && row.DROPOFFOWNERID != "0") { 
-                                row.DROPOFFOWNERNAME = $("#dropoff").personchooser("get_selected").OWNERNAME; 
-                                row.DROPOFFOWNERADDRESS = $("#dropoff").personchooser("get_selected").OWNERADDRESS; 
-                                row.DROPOFFOWNERTOWN = $("#dropoff").personchooser("get_selected").OWNERTOWN; 
-                                row.DROPOFFOWNERCOUNTY = $("#dropoff").personchooser("get_selected").OWNERCOUNTY; 
-                                row.DROPOFFOWNERPOSTCODE = $("#dropoff").personchooser("get_selected").OWNERPOSTCODE; 
-                            }
+                            transport.set_extra_fields(row);
                             tableform.fields_post(dialog.fields, "mode=update&transportid=" + row.ID, controller.name, function(response) {
                                 tableform.table_update(table);
                                 tableform.dialog_close();
@@ -108,14 +87,8 @@ $(function() {
                     return row.STATUS < COMPLETED_STATUSES && row.PICKUPDATETIME && format.date_js(row.PICKUPDATETIME) < new Date() && !row.DROPOFFDATETIME;
                 },
                 columns: [
-                    { field: "STATUS", display: _("Status"),
-                        formatter: function(row) {
-                            return "<span style=\"white-space: nowrap\">" +
-                                "<input type=\"checkbox\" data-id=\"" + row.ID + "\" title=\"" + html.title(_("Select")) + "\" />" +
-                                "<a href=\"#\" class=\"link-edit\" data-id=\"" + row.ID + "\">" + statusmap[row.STATUS] + "</a>" +
-                                "</span>";
-                        }
-                    },
+                    { field: "TRANSPORTTYPENAME", display: _("Type") },
+                    { field: "STATUS", display: _("Status"), formatter: function(row) { return statusmap[row.STATUS]; }},
                     { field: "IMAGE", display: "", 
                         formatter: function(row) {
                             if (!row.ANIMALID) { return ""; }
@@ -202,29 +175,7 @@ $(function() {
                                  var row = {};
                                  row.ID = response;
                                  tableform.fields_update_row(dialog.fields, row);
-                                 row.ANIMALNAME = $("#animal").animalchooser("get_selected").ANIMALNAME;
-                                 row.SHELTERCODE = $("#animal").animalchooser("get_selected").SHELTERCODE;
-                                 if (row.DRIVEROWNERID && row.DRIVEROWNERID != "0") { 
-                                     row.DRIVEROWNERNAME = $("#driver").personchooser("get_selected").OWNERNAME; 
-                                     row.DRIVEROWNERADDRESS = $("#driver").personchooser("get_selected").OWNERADDRESS; 
-                                     row.DRIVEROWNERTOWN = $("#driver").personchooser("get_selected").OWNERTOWN; 
-                                     row.DRIVEROWNERCOUNTY = $("#driver").personchooser("get_selected").OWNERCOUNTY; 
-                                     row.DRIVEROWNERPOSTCODE = $("#driver").personchooser("get_selected").OWNERPOSTCODE; 
-                                 }
-                                 if (row.PICKUPOWNERID && row.PICKUPOWNERID != "0") { 
-                                     row.PICKUPOWNERNAME = $("#pickup").personchooser("get_selected").OWNERNAME; 
-                                     row.PICKUPOWNERADDRESS = $("#pickup").personchooser("get_selected").OWNERADDRESS; 
-                                     row.PICKUPOWNERTOWN = $("#pickup").personchooser("get_selected").OWNERTOWN; 
-                                     row.PICKUPOWNERCOUNTY = $("#pickup").personchooser("get_selected").OWNERCOUNTY; 
-                                     row.PICKUPOWNERPOSTCODE = $("#pickup").personchooser("get_selected").OWNERPOSTCODE; 
-                                 }
-                                 if (row.DROPOFFOWNERID && row.DROPOFFOWNERID != "0") { 
-                                     row.DROPOFFOWNERNAME = $("#dropoff").personchooser("get_selected").OWNERNAME; 
-                                     row.DROPOFFOWNERADDRESS = $("#dropoff").personchooser("get_selected").OWNERADDRESS; 
-                                     row.DROPOFFOWNERTOWN = $("#dropoff").personchooser("get_selected").OWNERTOWN; 
-                                     row.DROPOFFOWNERCOUNTY = $("#dropoff").personchooser("get_selected").OWNERCOUNTY; 
-                                     row.DROPOFFOWNERPOSTCODE = $("#dropoff").personchooser("get_selected").OWNERPOSTCODE; 
-                                 }
+                                 transport.set_extra_fields(row);
                                  controller.rows.push(row);
                                  tableform.table_update(table);
                                  tableform.dialog_close();
@@ -287,6 +238,38 @@ $(function() {
             this.table = table;
             this.buttons = buttons;
         },
+
+        /**
+         * Sets extra json fields according to what the user has picked. Call
+         * this after updating a json row for entered fields to get the
+         * extra lookup fields.
+         */
+        set_extra_fields: function(row) {
+            row.ANIMALNAME = $("#animal").animalchooser("get_selected").ANIMALNAME;
+            row.SHELTERCODE = $("#animal").animalchooser("get_selected").SHELTERCODE;
+            row.TRANSPORTTYPENAME = common.get_field(controller.transporttypes, row.TRANSPORTTYPEID, "TRANSPORTTYPENAME");
+            if (row.DRIVEROWNERID && row.DRIVEROWNERID != "0") { 
+                row.DRIVEROWNERNAME = $("#driver").personchooser("get_selected").OWNERNAME; 
+                row.DRIVEROWNERADDRESS = $("#driver").personchooser("get_selected").OWNERADDRESS; 
+                row.DRIVEROWNERTOWN = $("#driver").personchooser("get_selected").OWNERTOWN; 
+                row.DRIVEROWNERCOUNTY = $("#driver").personchooser("get_selected").OWNERCOUNTY; 
+                row.DRIVEROWNERPOSTCODE = $("#driver").personchooser("get_selected").OWNERPOSTCODE; 
+            }
+            if (row.PICKUPOWNERID && row.PICKUPOWNERID != "0") { 
+                row.PICKUPOWNERNAME = $("#pickup").personchooser("get_selected").OWNERNAME; 
+                row.PICKUPOWNERADDRESS = $("#pickup").personchooser("get_selected").OWNERADDRESS; 
+                row.PICKUPOWNERTOWN = $("#pickup").personchooser("get_selected").OWNERTOWN; 
+                row.PICKUPOWNERCOUNTY = $("#pickup").personchooser("get_selected").OWNERCOUNTY; 
+                row.PICKUPOWNERPOSTCODE = $("#pickup").personchooser("get_selected").OWNERPOSTCODE; 
+            }
+            if (row.DROPOFFOWNERID && row.DROPOFFOWNERID != "0") { 
+                row.DROPOFFOWNERNAME = $("#dropoff").personchooser("get_selected").OWNERNAME; 
+                row.DROPOFFOWNERADDRESS = $("#dropoff").personchooser("get_selected").OWNERADDRESS; 
+                row.DROPOFFOWNERTOWN = $("#dropoff").personchooser("get_selected").OWNERTOWN; 
+                row.DROPOFFOWNERCOUNTY = $("#dropoff").personchooser("get_selected").OWNERCOUNTY; 
+                row.DROPOFFOWNERPOSTCODE = $("#dropoff").personchooser("get_selected").OWNERPOSTCODE; 
+            }
+        }, 
 
         render: function() {
             var s = "";
