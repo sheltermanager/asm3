@@ -204,6 +204,30 @@ $(function() {
                             });
                     }
                  },
+                 { id: "clone", text: _("Clone"), icon: "copy", enabled: "one", perm: "atr",
+                     hideif: function() { return controller.animal; }, 
+                     click: function() { 
+                        $("#animal").closest("tr").hide();
+                        $("#animals").closest("tr").show();
+                        $("#animals").animalchoosermulti("clear");
+                        $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
+                        tableform.dialog_show_add(dialog, {
+                                onload: function() {
+                                     var row = tableform.table_selected_row(table);
+                                     tableform.fields_populate_from_json(dialog.fields, row);
+                                }
+                            })
+                            .then(function() {
+                                return tableform.fields_post(dialog.fields, "mode=createbulk", controller.name);
+                            })
+                            .then(function(response) {
+                                common.route_reload();
+                            })
+                            .fail(function() {
+                                tableform.dialog_enable_buttons();   
+                            });
+                    }
+                 },
                  { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dtr",
                      click: function() { 
                          tableform.delete_dialog()
