@@ -98,10 +98,17 @@ for d in asm.csv_to_list(INTAKE_FILENAME):
         a = asm.Animal()
         animals.append(a)
         ppa[d["Animal ID"]] = a
-        a.AnimalTypeID = asm.iif(d["Animal Type"] == "Cat", 11, 2)
-        if a.AnimalTypeID == 11 and d["Intake Type"] == "Stray":
-            a.AnimalTypeID = 12
-        a.SpeciesID = asm.species_id_for_name(d["Animal Type"])
+        if d["Species"] == "Cat":
+            a.AnimalTypeID = 11 # Unwanted Cat
+            if d["Intake Type"] == "Stray":
+                a.AnimalTypeID = 12 # Stray Cat
+        elif d["Species"] == "Dog":
+            a.AnimalTypeID = 2 # Unwanted Dog
+            if d["Intake Type"] == "Stray":
+                a.AnimalTypeID = 10 # Stray Dog
+        else:
+            a.AnimalTypeID = 40 # Misc
+        a.SpeciesID = asm.species_id_for_name(d["Species"])
         a.AnimalName = d["Animal Name"]
         if a.AnimalName.strip() == "":
             a.AnimalName = "(unknown)"
@@ -126,6 +133,9 @@ for d in asm.csv_to_list(INTAKE_FILENAME):
         a.Sex = asm.getsex_mf(d["Gender"])
         a.Size = 2
         a.Neutered = d["Altered"] == "Yes" and 1 or 0
+        a.EntryReasonID = 17 # Surrender
+        if d["Intake Type"] == "Stray": a.EntryReasonID = 7 # Stray
+        if d["Intake Type"] == "Transfer In": a.EntryReasonID = 15 # Transfer from other shelter
         a.ReasonForEntry = d["Reason"]
         a.IdentichipDate = asm.getdate_yyyymmdd(d["Microchip Issue Date"])
         a.IdentichipNumber = d["Microchip Number"]
