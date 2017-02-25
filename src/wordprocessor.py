@@ -68,7 +68,7 @@ def weight_display(dbo, wv):
     """ formats the weight value wv for display (either kg or lb/oz) """
     kg = utils.cfloat(wv)
     lb = utils.cint(wv)
-    oz = round((kg - lb) * 16.0, 2)
+    oz = utils.cint((kg - lb) * 16.0)
     l = dbo.locale
     if configuration.show_weight_in_lbs(dbo):
         return "%s %s %s %s" % ( lb, _("lb"), oz, _("oz") )
