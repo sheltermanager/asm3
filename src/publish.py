@@ -471,6 +471,22 @@ def is_adoptable(dbo, animalid):
     rows = db.query(dbo, sql)
     return len(rows) > 0
 
+def delete_old_publish_logs(dbo):
+    """ Deletes all publishing logs older than 14 days """
+    KEEP_DAYS = 14
+    where = "WHERE PublishDateTime < %s" % db.dd(i18n.subtract_days(i18n.now(dbo.timezone), KEEP_DAYS))
+    count = db.query_int(dbo, "SELECT COUNT(*) FROM publishlog %s" % where)
+    al.debug("removing %d publishing logs (keep for %d days)." % (count, KEEP_DAYS), "publish.delete_old_publish_logs", dbo)
+    db.execute(dbo, "DELETE FROM publishlog %s" % where)
+
+def get_publish_logs(dbo):
+    """ Returns all publishing logs """
+    return db.query(dbo, "SELECT ID, PublishDateTime, Name, Success, Alerts FROM publishlog ORDER BY PublishDateTime DESC")
+
+def get_publish_log(dbo, plid):
+    """ Returns the log for a publish log ID """
+    return db.query_string(dbo, "SELECT LogData FROM publishlog WHERE ID = %d" % plid)
+
 class AbstractPublisher(threading.Thread):
     """
     Base class for all publishers
@@ -480,12 +496,14 @@ class AbstractPublisher(threading.Thread):
     totalAnimals = 0
     publisherName = ""
     publisherKey = ""
+    publishDateTime = None
+    successes = 0
+    alerts = 0
     publishDir = ""
     tempPublishDir = True
     locale = "en"
     lastError = ""
     logBuffer = ""
-    logName = ""
 
     def __init__(self, dbo, publishCriteria):
         threading.Thread.__init__(self)
@@ -627,7 +645,7 @@ class AbstractPublisher(threading.Thread):
         Creates a temporary publish directory if one isn't set, or uses
         the one set in the criteria.
         """
-        if self.logName.endswith("html.txt"):
+        if self.publisherKey == "html":
             # It's HTML publishing - we have some special rules
             # If the publishing directory has been overridden, set it
             if MULTIPLE_DATABASES_PUBLISH_DIR != "":
@@ -798,6 +816,14 @@ class AbstractPublisher(threading.Thread):
         except Exception,err:
             self.logError(str(err), sys.exc_info())
 
+    def initLog(self, publisherKey, publisherName):
+        """
+        Initialises the log 
+        """
+        self.publisherKey = publisherKey
+        self.publishDateTime = i18n.now(self.dbo.timezone)
+        self.publisherName = publisherName
+
     def log(self, msg):
         """
         Logs a message
@@ -812,6 +838,7 @@ class AbstractPublisher(threading.Thread):
         """
         self.log("ALERT: %s" % msg)
         al.error(msg, self.publisherName, self.dbo, ie)
+        self.alerts += 1
 
     def logSuccess(self, msg):
         """
@@ -819,22 +846,22 @@ class AbstractPublisher(threading.Thread):
         """
         self.log("SUCCESS: %s" % msg)
         al.info(msg, self.publisherName, self.dbo)
-
-    def setLogName(self, publisherKey):
-        """
-        Sets the logname based on the publisher type given and
-        the current date/time.
-        """
-        self.publisherKey = publisherKey
-        d = i18n.now(self.dbo.timezone)
-        s = "%d-%02d-%02d_%02d:%02d_%s.txt" % ( d.year, d.month, d.day, d.hour, d.minute, publisherKey )
-        self.logName = s
+        self.successes += 1
 
     def saveLog(self):
         """
-        Saves the log to the dbfs
+        Saves the log to the publishlog table
         """
-        dbfs.put_string_filepath(self.dbo, "/logs/publish/%s" % self.logName, self.logBuffer)
+        plid = db.get_id(self.dbo, "publishlog")
+        sql = db.make_insert_sql("publishlog", ( 
+            ( "ID", db.di(plid) ), 
+            ( "PublishDateTime", db.ddt(self.publishDateTime) ),
+            ( "Name", db.ds(self.publisherKey) ),
+            ( "Success", db.di(self.successes) ),
+            ( "Alerts", db.di(self.alerts) ),
+            ( "LogData", db.ds(self.logBuffer, False) )
+            ))
+        db.execute(self.dbo, sql)
 
     def isImage(self, path):
         """
@@ -1177,8 +1204,7 @@ class AdoptAPetPublisher(FTPPublisher):
         FTPPublisher.__init__(self, dbo, publishCriteria, 
             ADOPTAPET_FTP_HOST, configuration.adoptapet_user(dbo), 
             configuration.adoptapet_password(dbo))
-        self.publisherName = "AdoptAPet Publisher"
-        self.setLogName("adoptapet")
+        self.initLog("adoptapet", "AdoptAPet Publisher")
 
     def apYesNo(self, condition):
         """
@@ -1678,8 +1704,7 @@ class AnibaseUKPublisher(AbstractPublisher):
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         AbstractPublisher.__init__(self, dbo, publishCriteria)
-        self.publisherName = "Anibase UK Publisher"
-        self.setLogName("anibaseuk")
+        self.initLog("anibaseuk", "Anibase UK Publisher")
 
     def get_vetxml_species(self, asmspeciesid):
         SPECIES_MAP = {
@@ -1885,8 +1910,7 @@ class FoundAnimalsPublisher(FTPPublisher):
         publishCriteria.thumbnails = False
         FTPPublisher.__init__(self, dbo, publishCriteria, 
             FOUNDANIMALS_FTP_HOST, FOUNDANIMALS_FTP_USER, FOUNDANIMALS_FTP_PASSWORD)
-        self.publisherName = "FoundAnimals Publisher"
-        self.setLogName("foundanimals")
+        self.initLog("foundanimals", "FoundAnimals Publisher")
 
     def run(self):
         
@@ -2036,8 +2060,7 @@ class HelpingLostPetsPublisher(FTPPublisher):
         FTPPublisher.__init__(self, dbo, publishCriteria, 
             HELPINGLOSTPETS_FTP_HOST, configuration.helpinglostpets_user(dbo), 
             configuration.helpinglostpets_password(dbo))
-        self.publisherName = i18n._("HelpingLostPets Publisher", l)
-        self.setLogName("helpinglostpets")
+        self.initLog("helpinglostpets", i18n._("HelpingLostPets Publisher", l))
 
     def hlpYesNo(self, condition):
         """
@@ -2267,8 +2290,7 @@ class HTMLPublisher(FTPPublisher):
                 configuration.ftp_host(dbo), configuration.ftp_user(dbo), configuration.ftp_password(dbo),
                 configuration.ftp_port(dbo), configuration.ftp_root(dbo), configuration.ftp_passive(dbo))
         self.user = user
-        self.publisherName = i18n._("HTML/FTP Publisher", l)
-        self.setLogName("html")
+        self.initLog("html", i18n._("HTML/FTP Publisher", l))
 
     def escapePageName(self, s):
         suppress = [ " ", "(", ")", "/", "\\", "!", "?", "*" ]
@@ -3029,8 +3051,7 @@ class MeetAPetPublisher(AbstractPublisher):
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         AbstractPublisher.__init__(self, dbo, publishCriteria)
-        self.publisherName = "MeetAPet Publisher"
-        self.setLogName("meetapet")
+        self.initLog("meetapet", "MeetAPet Publisher")
 
     def mpYesNo(self, condition):
         """
@@ -3245,8 +3266,7 @@ class PetFinderPublisher(FTPPublisher):
         FTPPublisher.__init__(self, dbo, publishCriteria, 
             PETFINDER_FTP_HOST, configuration.petfinder_user(dbo), 
             configuration.petfinder_password(dbo))
-        self.publisherName = "PetFinder Publisher"
-        self.setLogName("petfinder")
+        self.initLog("petfinder", "PetFinder Publisher")
 
     def pfYesNo(self, condition):
         """
@@ -3435,8 +3455,7 @@ class PetLinkPublisher(AbstractPublisher):
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         AbstractPublisher.__init__(self, dbo, publishCriteria)
-        self.publisherName = "PetLink Publisher"
-        self.setLogName("petlink")
+        self.initLog("petlink", "PetLink Publisher")
 
     def plYesNo(self, condition):
         """
@@ -3687,8 +3706,7 @@ class PetRescuePublisher(FTPPublisher):
         FTPPublisher.__init__(self, dbo, publishCriteria, 
             PETRESCUE_FTP_HOST, configuration.petrescue_user(dbo), 
             configuration.petrescue_password(dbo), 21, "", True)
-        self.publisherName = "PetRescue Publisher"
-        self.setLogName("petrescue")
+        self.initLog("petrescue", "PetRescue Publisher")
 
     def prTrueFalse(self, condition):
         """
@@ -3872,7 +3890,6 @@ class PetsLocatedUKPublisher(FTPPublisher):
     Handles publishing to petslocated.com in the UK
     """
     def __init__(self, dbo, publishCriteria):
-        l = dbo.locale
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         publishCriteria.checkSocket = True
@@ -3880,8 +3897,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
         publishCriteria.scaleImages = 1
         FTPPublisher.__init__(self, dbo, publishCriteria, 
             PETSLOCATED_FTP_HOST, PETSLOCATED_FTP_USER, PETSLOCATED_FTP_PASSWORD)
-        self.publisherName = i18n._("PetsLocated UK Publisher", l)
-        self.setLogName("petslocated")
+        self.initLog("petslocated", "PetsLocated UK Publisher")
 
     def plcAge(self, agegroup):
         if agegroup is None: return "Older"
@@ -4424,8 +4440,7 @@ class PETtracUKPublisher(AbstractPublisher):
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         AbstractPublisher.__init__(self, dbo, publishCriteria)
-        self.publisherName = "PETtrac UK Publisher"
-        self.setLogName("pettracuk")
+        self.initLog("pettracuk", "PETtrac UK Publisher")
 
     def reregistrationPDF(self, fields, sig, realname, orgname, orgaddress, orgtown, orgcounty, orgpostcode):
         """
@@ -4652,8 +4667,7 @@ class RescueGroupsPublisher(FTPPublisher):
         FTPPublisher.__init__(self, dbo, publishCriteria, 
             RESCUEGROUPS_FTP_HOST, configuration.rescuegroups_user(dbo), 
             configuration.rescuegroups_password(dbo), 21, "", False)
-        self.publisherName = "RescueGroups Publisher"
-        self.setLogName("rescuegroups")
+        self.initLog("rescuegroups", "RescueGroups Publisher")
 
     def rgYesNo(self, condition):
         """
@@ -4861,8 +4875,7 @@ class SmartTagPublisher(FTPPublisher):
         publishCriteria.thumbnails = False
         FTPPublisher.__init__(self, dbo, publishCriteria, 
             SMARTTAG_FTP_HOST, SMARTTAG_FTP_USER, SMARTTAG_FTP_PASSWORD)
-        self.publisherName = "SmartTag Publisher"
-        self.setLogName("smarttag")
+        self.initLog("smarttag", "SmartTag Publisher")
 
     def stYesNo(self, condition):
         """
@@ -5063,8 +5076,7 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         AbstractPublisher.__init__(self, dbo, publishCriteria)
-        self.publisherName = publisherName
-        self.setLogName(publisherKey)
+        self.initLog(publisherKey, publisherName)
         self.recipientId = recipientId
         self.microchipPatterns = microchipPatterns
 

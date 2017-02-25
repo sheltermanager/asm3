@@ -1,10 +1,13 @@
 #!/usr/bin/python
 
+import al
 import audit
 import db
 import i18n
+import sys
 import time
-from sitedefs import LOCALE, TIMEZONE
+import utils
+from sitedefs import LOCALE, TIMEZONE, URL_NEWS
 
 QUICKLINKS_SET = {
     1: ("animal_find", "asm-icon-animal-find", i18n._("Find animal")),
@@ -475,6 +478,18 @@ def annual_figures_baby_months(dbo):
 def annual_figures_split_adoptions(dbo):
     return cboolean(dbo, "AnnualFiguresSplitAdoptions", DEFAULTS["AnnualFiguresSplitAdoptions"] == "Yes")
 
+def asm_news(dbo, update=False):
+    s = cstring(dbo, "ASMNews")
+    if s == "" or update:
+        try:
+            s = utils.get_url(URL_NEWS)["response"]
+            al.debug("Updated ASM news, got %d bytes" % len(s), "configuration.asm_news", dbo)
+            cset(dbo, "ASMNews", s, sanitiseXSS = False)
+        except:
+            em = str(sys.exc_info()[0])
+            al.error("Failed reading ASM news: %s" % em, "configuration.asm_news", dbo)
+    return s
+
 def auto_cancel_reserves_days(dbo):
     return cint(dbo, "AutoCancelReservesDays", int(DEFAULTS["AutoCancelReservesDays"]))
 
@@ -740,11 +755,23 @@ def lookingfor_last_match_count(dbo, newcount = -1):
     else:
         cset(dbo, "LookingForLastMatchCount", "%d" % newcount)
 
+def lookingfor_report(dbo, newval = ""):
+    if newval == "":
+        return cstring(dbo, "LookingForReport")
+    else:
+        cset(dbo, "LookingForReport", newval, sanitiseXSS = False)
+
 def lostfound_last_match_count(dbo, newcount = -1):
     if newcount == -1:
         return cint(dbo, "LostFoundLastMatchCount", 0)
     else:
         cset(dbo, "LostFoundLastMatchCount", "%d" % newcount)
+
+def lostfound_report(dbo, newval = ""):
+    if newval == "":
+        return cstring(dbo, "LostFoundReport")
+    else:
+        cset(dbo, "LostFoundReport", newval, sanitiseXSS = False)
 
 def main_screen_animal_link_mode(dbo):
     return cstring(dbo, "MainScreenAnimalLinkMode", DEFAULTS["MainScreenAnimalLinkMode"])

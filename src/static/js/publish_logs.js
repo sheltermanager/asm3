@@ -9,10 +9,11 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    common.route("publish_logs?ajax=false&view=" + row.PATH + "/" + row.NAME);
+                    common.route("publish_logs?ajax=false&view=" + row.ID);
                 },
                 columns: [
-                    { field: "NAME", display: _("File"), initialsort: true },
+                    { field: "NAME", display: _("Publisher") },
+                    { field: "PUBLISHDATETIME", display: _("Date"), formatter: tableform.format_datetime, initialsort: true, initialsortdirection: "desc" },
                     { field: "SUCCESS", display: _("Success") },
                     { field: "ALERTS", display: _("Alerts") }
                 ]

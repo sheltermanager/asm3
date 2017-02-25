@@ -1305,11 +1305,10 @@ def update_missing_geocodes(dbo):
 
 def update_lookingfor_report(dbo):
     """
-    Updates the latest version of the looking for report in the dbfs
+    Updates the latest version of the looking for report 
     """
     al.debug("updating lookingfor report", "person.update_lookingfor_report", dbo)
-    s = lookingfor_report(dbo)
-    dbfs.put_string_filepath(dbo, "/reports/daily/lookingfor.html", s)
+    configuration.lookingfor_report(dbo, lookingfor_report(dbo))
     configuration.lookingfor_last_match_count(dbo, lookingfor_last_match_count(dbo))
 
 

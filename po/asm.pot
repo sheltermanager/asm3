@@ -2379,7 +2379,7 @@ msgid "Clear tables before importing"
 msgstr ""
 
 #: staff_rota.js animal.js roles.js htmltemplates.js reports.js
-#: document_templates.js onlineforms.js stocklevel.js
+#: document_templates.js onlineforms.js stocklevel.js transport.js
 msgid "Clone"
 msgstr ""
 
@@ -2873,8 +2873,8 @@ msgstr ""
 #: lostfound_find_results.js onlineform.js movements.js move_transfer.js
 #: person.js diary.js traploan.js animal_find_results.js log.js move_reclaim.js
 #: animal_costs.js person_investigation.js animal.js person_links.js log_new.js
-#: accounts_trx.js move_adopt.js move_retailer.js move_reserve.js citations.js
-#: move_foster.js mobile.py dbupdate.py
+#: accounts_trx.js publish_logs.js move_adopt.js move_retailer.js
+#: move_reserve.js citations.js move_foster.js mobile.py dbupdate.py
 msgid "Date"
 msgstr ""
 
@@ -4515,7 +4515,7 @@ msgstr ""
 msgid "Fila Brasileiro"
 msgstr ""
 
-#: media.js publish_logs.js dbupdate.py
+#: media.js dbupdate.py
 msgid "File"
 msgstr ""
 
@@ -7978,10 +7978,6 @@ msgstr ""
 msgid "Petit Basset Griffon Vendeen"
 msgstr ""
 
-#: publish.py
-msgid "PetsLocated UK Publisher"
-msgstr ""
-
 #: dbupdate.py
 msgid "Pharaoh Hound"
 msgstr ""
@@ -8271,7 +8267,7 @@ msgstr ""
 msgid "Published to Website"
 msgstr ""
 
-#: lookups.js dbupdate.py
+#: publish_logs.js lookups.js dbupdate.py
 msgid "Publisher"
 msgstr ""
 

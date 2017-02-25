@@ -22,7 +22,7 @@ VERSIONS = (
     33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716, 33717, 33718, 
     33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904, 33905, 33906, 
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
-    34002, 34003, 34004
+    34002, 34003, 34004, 34005
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -41,7 +41,7 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", "lksposneg", "lksrotatype", 
     "lksyesno", "lksynun", "lkurgency", "lkworktype", "log", "logtype", "media", "medicalprofile", "messages", "onlineform", 
     "onlineformfield", "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
-    "ownerlicence", "ownerlookingfor", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", 
+    "ownerlicence", "ownerlookingfor", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", "publishlog", 
     "reservationstatus", "role", "site", "species", "stocklevel", "stocklocation", "stockusage", "stockusagetype", 
     "testtype", "testresult", "transporttype", "traptype", "userrole", "users", "vaccinationtype", "voucher" )
 
@@ -1305,6 +1305,16 @@ def sql_structure(dbo):
         fstr("TableName"),
         fint("NextID") ), False)
     sql += index("primarykey_TableName", "primarykey", "TableName")
+
+    sql += table("publishlog", (
+        fid(),
+        fdate("PublishDateTime"),
+        fstr("Name"),
+        fint("Success"),
+        fint("Alerts"),
+        flongstr("LogData") ), False)
+    sql += index("publishlog_PublishDateTime", "publishlog", "PublishDateTime")
+    sql += index("publishlog_Name", "publishlog", "Name")
 
     sql += table("reservationstatus", (
         fid(),
@@ -4611,4 +4621,18 @@ def update_34004(dbo):
     db.execute_dbupdate(dbo, "INSERT INTO transporttype VALUES (3, '%s', '', 0)" % _("Surrender Pickup", l))
     db.execute_dbupdate(dbo, "INSERT INTO transporttype VALUES (4, '%s', '', 0)" % _("Vet Visit", l))
 
-
+def update_34005(dbo):
+    # Add the publishlog table
+    sql = "CREATE TABLE publishlog ( ID INTEGER NOT NULL, " \
+        "PublishDateTime %(date)s NOT NULL, " \
+        "Name %(short)s NOT NULL, " \
+        "Success INTEGER NOT NULL, " \
+        "Alerts INTEGER NOT NULL, " \
+        "LogData %(long)s NOT NULL)" % { "date": datetype(dbo), "short": shorttext(dbo), "long": longtext(dbo) }
+    db.execute_dbupdate(dbo, sql)
+    add_index(dbo, "publishlog_PublishDateTime", "publishlog", "PublishDateTime")
+    add_index(dbo, "publishlog_Name", "publishlog", "Name")
+    # Remove old publish logs, reports and asm news from the dbfs
+    dbfs.delete_path(dbo, "/logs")
+    dbfs.delete_path(dbo, "/reports/daily")
+    dbfs.delete(dbo, "asm.news")

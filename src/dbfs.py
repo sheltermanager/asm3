@@ -363,7 +363,9 @@ def delete_path(dbo, path):
     """
     Deletes all items matching the path given
     """
-    for r in db.query(dbo, "SELECT ID, URL FROM dbfs WHERE Path LIKE '%s'" % path):
+    rows = db.query(dbo, "SELECT ID, URL FROM dbfs WHERE Path LIKE '%s'" % path)
+    db.execute(dbo, "DELETE FROM dbfs WHERE Path LIKE '%s'" % path)
+    for r in rows:
         o = DBFSStorage(dbo, r["URL"])
         o.delete(r["URL"])
 
@@ -469,52 +471,6 @@ def delete_html_publisher_template(dbo, username, name):
     delete(dbo, name, "/internet")
     al.debug("%s deleted html template %s" % (username, name), "dbfs.update_html_publisher_template", dbo)
     audit.delete(dbo, username, "htmltemplate", 0, "remove html template '%s'" % name)
-
-def get_publish_logs(dbo):
-    """
-    Returns a list of all publisher log files
-    """
-    CHECK_LAST = 10
-    plogs = db.query(dbo, "SELECT ID, Name, Path FROM dbfs WHERE Path Like '/logs/publish%' ORDER BY Name DESC")
-    for i in xrange(0, len(plogs)):
-        if i >= CHECK_LAST:
-            plogs[i]["ALERTS"] = 0
-            plogs[i]["SUCCESS"] = 0
-        else:
-            log = get_string_id(dbo, plogs[i]["ID"])
-            plogs[i]["ALERTS"] = log.count("ALERT:")
-            plogs[i]["SUCCESS"] = log.count("SUCCESS:")
-    return plogs
-
-def get_publish_alerts(dbo):
-    """
-    Returns the number of logs out of the last 10 that had
-    errors (the token ALERT: appears in them)
-    """
-    rows = db.query_cache(dbo, "SELECT ID FROM dbfs WHERE Path Like '/logs/publish%' ORDER BY Name DESC LIMIT 10", 120)
-    alerts = 0
-    for r in rows:
-        try:
-            if get_string_id(dbo, r["ID"]).find("ALERT:") != -1:
-                alerts += 1
-        except Exception,err:
-            al.error(err, "dbfs.get_publish_alerts", dbo)
-    return alerts
-
-def delete_old_publish_logs(dbo):       
-    """
-    Retains only the last MAX_LOGS publish logs
-    """
-    MAX_LOGS = 50
-    rows = db.query(dbo, "SELECT Name FROM dbfs WHERE Path Like '/logs/publish%%' ORDER BY Name DESC LIMIT %d" % MAX_LOGS)
-    if len(rows) < MAX_LOGS: return
-    names = []
-    for r in rows: names.append("'" + r["NAME"] + "'")
-    notin = ",".join(names)
-    count = db.query_int(dbo, "SELECT COUNT(*) FROM dbfs WHERE Path Like '/logs/publish%%' AND Name NOT IN (%s)" % notin)
-    al.debug("removing %d publishing logs (keep latest 30)." % count, "dbfs.delete_old_publish_logs", dbo)
-    rq = "DELETE FROM dbfs WHERE Path Like '/logs/publish%%' AND Name NOT IN (%s)" % notin
-    db.execute(dbo, rq)
 
 def sanitise_path(path):
     """ Strips disallowed chars from new paths """
@@ -661,35 +617,6 @@ def has_html_document_templates(dbo):
     Returns True if there are some html document templates in the database
     """
     return len(get_html_document_templates(dbo)) > 0
-
-def get_asm_news(dbo):
-    """
-    Reads the latest asm news from the file /asm.news and returns it.
-    If the file doesn't exist, calls update_asm_news to create it
-    """
-    s = get_string(dbo, "asm.news")
-    if s == "": 
-        update_asm_news(dbo)
-        return get_string(dbo, "asm.news")
-    return s
-
-def update_asm_news(dbo):
-    """
-    Reads the latest asm news and stores it in the dbfs
-    """
-    s = ""
-    try:
-        s = utils.get_url(URL_NEWS)["response"]
-    except:
-        em = str(sys.exc_info()[0])
-        al.error("Failed reading ASM news: %s" % em, "dbfs.update_asm_news", dbo)
-    else:
-        al.debug("Updated ASM news, got %d bytes" % len(s), "dbfs.update_asm_news", dbo)
-    x = get_string(dbo, "asm.news")
-    if x == "":
-        put_string(dbo, "asm.news", "/", s)
-    else:
-        replace_string(dbo, s, "asm.news")
 
 def switch_storage(dbo):
     """ Goes through all files in dbfs and swaps them into the current storage scheme """

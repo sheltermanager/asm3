@@ -6,7 +6,6 @@ import animal
 import audit
 import configuration
 import db
-import dbfs
 import diary
 import log
 import media
@@ -628,11 +627,10 @@ def lostfound_last_match_count(dbo):
 
 def update_match_report(dbo):
     """
-    Updates the latest version of the lost/found match report in the dbfs
+    Updates the latest version of the lost/found match report 
     """
     al.debug("updating lost/found match report", "lostfound.update_match_report", dbo)
-    s = match_report(dbo)
-    dbfs.put_string_filepath(dbo, "/reports/daily/lost_found_match.html", s)
+    configuration.lostfound_report(dbo, match_report(dbo))
     configuration.lostfound_last_match_count(dbo, lostfound_last_match_count(dbo))
 
 def get_lost_person_name(dbo, aid):

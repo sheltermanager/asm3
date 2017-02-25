@@ -755,7 +755,7 @@ class main:
             dbupdate.install_db_sequences(dbo)
             dbupdate.install_db_stored_procedures(dbo)
         # News
-        news = dbfs.get_asm_news(dbo)
+        news = configuration.asm_news(dbo)
         # Welcome dialog
         showwelcome = False
         if configuration.show_first_time_screen(dbo) and session.superuser == 1:
@@ -795,7 +795,6 @@ class main:
         if len(alerts) > 0: 
             alerts[0]["LOOKFOR"] = configuration.lookingfor_last_match_count(dbo)
             alerts[0]["LOSTFOUND"] = configuration.lostfound_last_match_count(dbo)
-            alerts[0]["PUBLISH"] = dbfs.get_publish_alerts(dbo)
         # Diary Notes
         dm = None
         if configuration.all_diary_home_page(dbo): 
@@ -3939,7 +3938,7 @@ class lostfound_match:
         # If no parameters have been given, use the cached daily copy of the match report
         if lostanimalid == 0 and foundanimalid == 0 and animalid == 0:
             al.debug("no parameters given, using cached report at /reports/daily/lost_found_match.html", "code.lostfound_match", dbo)
-            return dbfs.get_string_filepath(dbo, "/reports/daily/lost_found_match.html")
+            return configuration.lostfound_report(dbo)
         else:
             al.debug("match lost=%d, found=%d, animal=%d" % (lostanimalid, foundanimalid, animalid), "code.lostfound_match", dbo)
             return extlostfound.match_report(dbo, session.user, lostanimalid, foundanimalid, animalid)
@@ -5209,7 +5208,7 @@ class person_lookingfor:
         dbo = session.dbo
         web.header("Content-Type", "text/html")
         if post.integer("personid") == 0:
-            return dbfs.get_string_filepath(dbo, "/reports/daily/lookingfor.html")
+            return configuration.lookingfor_report(dbo)
         else:
             return extperson.lookingfor_report(dbo, session.user, post.integer("personid"))
 
@@ -5662,7 +5661,7 @@ class publish_logs:
         post = utils.PostedData(web.input(view = ""), session.locale)
         if post["view"] == "":
             s = html.header("", session)
-            logs = dbfs.get_publish_logs(dbo)
+            logs = extpublish.get_publish_logs(dbo)
             al.debug("viewing %d publishing logs" % len(logs), "code.publish_logs", dbo)
             c = html.controller_json("rows", logs)
             s += html.controller(c)
@@ -5673,7 +5672,7 @@ class publish_logs:
             web.header("Content-Type", "text/plain")
             web.header("Cache-Control", "max-age=10000000")
             web.header("Content-Disposition", "inline; filename=\"%s\"" % post["view"])
-            return dbfs.get_string_filepath(dbo, post["view"])
+            return extpublish.get_publish_log(dbo, post.integer("view"))
 
 class publish_options:
     def GET(self):

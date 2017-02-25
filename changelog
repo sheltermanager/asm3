@@ -1,6 +1,12 @@
 40
 ================
 
+25/02/17 Move looking for and lost/found match reports into configuration #149
+25/02/17 cron.py: remove extra exception handling as it hides stack traces
+25/02/17 Move asm.news into configuration #149
+25/02/17 Log retention to 14 days, record all success/alerts #149
+25/02/17 Rewrite publish_logs to use new table #149
+25/02/17 Move publishing logs into their own table #149
 24/02/17 Ability to clone transports for multiple animals #131
 24/02/17 Allow search of Created By on animal/person find advanced #130
 24/02/17 Add Created By to find animal/person/waiting list available columns #130
