@@ -314,6 +314,8 @@ Size
     The animal's size 
 Weight
     The animal's weight
+DisplayWeight
+    The animal's weight, shown as either kg or lb/oz according to system display options
 SpeciesName
     The animal's species 
 ReclaimedDate

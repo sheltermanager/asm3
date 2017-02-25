@@ -64,6 +64,17 @@ def additional_yesno(l, af):
     else:
         return yes_no(l, af["VALUE"] == "1")
 
+def weight_display(dbo, wv):
+    """ formats the weight value wv for display (either kg or lb/oz) """
+    kg = utils.cfloat(wv)
+    lb = utils.cint(wv)
+    oz = round((kg - lb) * 16.0, 2)
+    l = dbo.locale
+    if configuration.show_weight_in_lbs(dbo):
+        return "%s %s %s %s" % ( lb, _("lb"), oz, _("oz") )
+    else:
+        return "%s %s" % (kg, _("kg"))
+
 def br(s):
     """ Returns s with linebreaks turned to <br/> tags """
     if s is None: return ""
@@ -271,6 +282,7 @@ def animal_tags(dbo, a):
         "SEX"                   : a["SEXNAME"],
         "SIZE"                  : a["SIZENAME"],
         "WEIGHT"                : utils.nulltostr(a["WEIGHT"]),
+        "DISPLAYWEIGHT"         : weight_display(dbo, a["WEIGHT"]),
         "SPECIESNAME"           : a["SPECIESNAME"],
         "ANIMALFLAGS"           : utils.nulltostr(a["ADDITIONALFLAGS"]).replace("|", ", "),
         "ANIMALCOMMENTS"        : a["ANIMALCOMMENTS"],
