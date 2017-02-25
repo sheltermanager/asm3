@@ -783,7 +783,6 @@ class Report:
                 if len(fields) > 2:
                     roundto = int(fields[2])
 
-                # Loop from start of group to end of group
                 total = 0.0
                 for i in range(gd.lastGroupStartPosition, gd.lastGroupEndPosition + 1):
                     try:
@@ -823,7 +822,6 @@ class Report:
                 if len(fields) > 2:
                     roundto = int(fields[2])
 
-                # Loop from start of group to end of group
                 total = 0.0
                 num = 0
                 for i in range(gd.lastGroupStartPosition, gd.lastGroupEndPosition + 1):
@@ -853,7 +851,6 @@ class Report:
                 if len(fields) > 3:
                     roundto = int(fields[3])
 
-                # Loop from start of group to end of group
                 matched = 0
                 for i in range(gd.lastGroupStartPosition, gd.lastGroupEndPosition + 1):
                     try:
@@ -873,14 +870,14 @@ class Report:
                 fields = key.lower().split(".")
                 calcfield = fields[1].upper()
                 
-                # Loop from start of group to end of group
-                minval = 0
+                minval = 9999999
                 for i in range(gd.lastGroupStartPosition, gd.lastGroupEndPosition + 1):
                     try:
                         minval = min(minval, rs[i][calcfield])
                     except Exception, e:
                         # Ignore errors
                         pass
+                if minval == 9999999: minval = 0
                 if utils.is_currency(fields[1]):
                     value = str(minval / 100.0)
                 else:
@@ -892,7 +889,6 @@ class Report:
                 fields = key.lower().split(".")
                 calcfield = fields[1].upper()
                
-                # Loop from start of group to end of group
                 maxval = 0
                 for i in range(gd.lastGroupStartPosition, gd.lastGroupEndPosition + 1):
                     try:
