@@ -869,15 +869,16 @@ class Report:
                 valid = True
                 fields = key.lower().split(".")
                 calcfield = fields[1].upper()
-                
-                minval = 9999999
+               
+                HIGH_MINVAL = 9999999
+                minval = HIGH_MINVAL
                 for i in range(gd.lastGroupStartPosition, gd.lastGroupEndPosition + 1):
                     try:
                         minval = min(minval, rs[i][calcfield])
                     except Exception, e:
                         # Ignore errors
                         pass
-                if minval == 9999999: minval = 0
+                if minval == HIGH_MINVAL: minval = 0
                 if utils.is_currency(fields[1]):
                     value = str(minval / 100.0)
                 else:
