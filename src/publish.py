@@ -503,7 +503,7 @@ class AbstractPublisher(threading.Thread):
     tempPublishDir = True
     locale = "en"
     lastError = ""
-    logBuffer = ""
+    logBuffer = []
 
     def __init__(self, dbo, publishCriteria):
         threading.Thread.__init__(self)
@@ -828,7 +828,7 @@ class AbstractPublisher(threading.Thread):
         """
         Logs a message
         """
-        self.logBuffer += msg + "\n"
+        self.logBuffer.append(msg)
         al.debug(utils.truncate(msg, 1023), self.publisherName, self.dbo)
 
     def logError(self, msg, ie=None):
@@ -839,6 +839,10 @@ class AbstractPublisher(threading.Thread):
         self.log("ALERT: %s" % msg)
         al.error(msg, self.publisherName, self.dbo, ie)
         self.alerts += 1
+
+    def logSearch(self, needle):
+        """ Does a find on logBuffer """
+        return "\n".join(self.logBuffer).find(needle)
 
     def logSuccess(self, msg):
         """
@@ -859,7 +863,7 @@ class AbstractPublisher(threading.Thread):
             ( "Name", db.ds(self.publisherKey) ),
             ( "Success", db.di(self.successes) ),
             ( "Alerts", db.di(self.alerts) ),
-            ( "LogData", db.ds(self.logBuffer, False) )
+            ( "LogData", db.ds("\n".join(self.logBuffer), False) )
             ))
         db.execute(self.dbo, sql)
 
@@ -1570,7 +1574,7 @@ class AdoptAPetPublisher(FTPPublisher):
 
         if not self.openFTPSocket(): 
             self.setLastError("Failed opening FTP socket.")
-            if self.logBuffer.find("530 Login") != -1:
+            if self.logSearch("530 Login") != -1:
                 self.log("Found 530 Login incorrect: disabling AdoptAPet publisher.")
                 configuration.publishers_enabled_disable(self.dbo, "ap")
             self.cleanup()
@@ -1934,7 +1938,7 @@ class FoundAnimalsPublisher(FTPPublisher):
 
         if not self.openFTPSocket(): 
             self.setLastError("Failed to open FTP socket.")
-            if self.logBuffer.find("530 Login") != -1:
+            if self.logSearch("530 Login") != -1:
                 self.log("Found 530 Login incorrect: disabling FoundAnimals publisher.")
                 configuration.publishers_enabled_disable(self.dbo, "fa")
             self.cleanup()
@@ -2091,7 +2095,7 @@ class HelpingLostPetsPublisher(FTPPublisher):
 
         if not self.openFTPSocket(): 
             self.setLastError("Failed opening FTP socket.")
-            if self.logBuffer.find("530 Login") != -1:
+            if self.logSearch("530 Login") != -1:
                 self.log("Found 530 Login incorrect: disabling HelpingLostPets publisher.")
                 configuration.publishers_enabled_disable(self.dbo, "hlp")
             self.cleanup()
@@ -3307,7 +3311,7 @@ class PetFinderPublisher(FTPPublisher):
 
         if not self.openFTPSocket(): 
             self.setLastError("Failed opening FTP socket.")
-            if self.logBuffer.find("530 Login") != -1:
+            if self.logSearch("530 Login") != -1:
                 self.log("Found 530 Login incorrect: disabling PetFinder publisher.")
                 configuration.publishers_enabled_disable(self.dbo, "pf")
             self.cleanup()
@@ -3765,7 +3769,7 @@ class PetRescuePublisher(FTPPublisher):
 
         if not self.openFTPSocket(): 
             self.setLastError("Failed opening FTP socket.")
-            if self.logBuffer.find("530 Login") != -1:
+            if self.logSearch("530 Login") != -1:
                 self.log("Found 530 Login incorrect: disabling PetRescue.com.au publisher.")
                 configuration.publishers_enabled_disable(self.dbo, "pr")
             self.cleanup()
@@ -4176,7 +4180,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
 
         if not self.openFTPSocket(): 
             self.setLastError("Failed opening FTP socket.")
-            if self.logBuffer.find("530 Login") != -1:
+            if self.logSearch("530 Login") != -1:
                 self.log("Found 530 Login incorrect: disabling PetsLocated UK publisher.")
                 configuration.publishers_enabled_disable(self.dbo, "pcuk")
             self.cleanup()
@@ -4716,7 +4720,7 @@ class RescueGroupsPublisher(FTPPublisher):
 
         if not self.openFTPSocket(): 
             self.setLastError("Failed opening FTP socket.")
-            if self.logBuffer.find("530 Login") != -1:
+            if self.logSearch("530 Login") != -1:
                 self.log("Found 530 Login incorrect: disabling RescueGroups publisher.")
                 configuration.publishers_enabled_disable(self.dbo, "rg")
             self.cleanup()
@@ -4907,7 +4911,7 @@ class SmartTagPublisher(FTPPublisher):
 
         if not self.openFTPSocket(): 
             self.setLastError("Failed to open FTP socket.")
-            if self.logBuffer.find("530 Login") != -1:
+            if self.logSearch("530 Login") != -1:
                 self.log("Found 530 Login incorrect: disabling SmartTag publisher.")
                 configuration.publishers_enabled_disable(self.dbo, "st")
             self.cleanup()
