@@ -117,6 +117,7 @@
                         if (v.click) {
                             var dataval = $(this).attr("data");
                             $(this).click(function() {
+                                $("#button-" + v.id).asmmenu("hide_all");
                                 v.click(dataval);
                                 return false;
                             });

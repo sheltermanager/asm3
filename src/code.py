@@ -1834,6 +1834,9 @@ class animal_transport:
             users.check_permission(session, users.DELETE_TRANSPORT)
             for mid in post.integer_list("ids"):
                 extmovement.delete_transport(session.dbo, session.user, mid)
+        elif mode == "setstatus":
+            users.check_permission(session, users.CHANGE_TRANSPORT)
+            extmovement.update_transport_statuses(dbo, session.user, post.integer_list("ids"), post.integer("newstatus"))
 
 class animal_vaccination:
     def GET(self):
@@ -6316,6 +6319,9 @@ class transport:
             users.check_permission(session, users.DELETE_TRANSPORT)
             for mid in post.integer_list("ids"):
                 extmovement.delete_transport(session.dbo, session.user, mid)
+        elif mode == "setstatus":
+            users.check_permission(session, users.CHANGE_TRANSPORT)
+            extmovement.update_transport_statuses(session.dbo, session.user, post.integer_list("ids"), post.integer("newstatus"))
 
 class traploan:
     def GET(self):

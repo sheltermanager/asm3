@@ -19,6 +19,15 @@ $(function() {
         { ID: 10, NAME: _("Cancelled") },
         { ID: 11, NAME: _("Completed") }
     ];
+    var statusmenu = [
+        "1|" + _("New"),
+        "2|" + _("Confirmed"),
+        "3|" + _("Hold"),
+        "4|" + _("Scheduled"),
+        "10|" + _("Cancelled"),
+        "11|" + _("Completed")
+    ];
+
     var COMPLETED_STATUSES = 10;
 
     var transport = {
@@ -241,6 +250,18 @@ $(function() {
                                  tableform.table_update(table);
                              });
                      } 
+                 },
+                 { id: "setstatus", text: _("Status"), icon: "complete", type: "buttonmenu", options: statusmenu, enabled: "multi", perm: "ctr", 
+                    click: function(newstatus) {
+                        var ids = tableform.table_ids(table);
+                        common.ajax_post(controller.name, "mode=setstatus&ids=" + ids + "&newstatus=" + newstatus)
+                            .then(function() {
+                                $.each(tableform.table_selected_rows(table), function(i, v) {
+                                    v.STATUS = newstatus;
+                                });
+                                tableform.table_update(table);
+                            });
+                    }
                  },
                  { id: "offset", type: "dropdownfilter", 
                      options: [ "item|" + _("Due today"), "item2|" + _("Due in next week") ],

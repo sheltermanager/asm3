@@ -846,6 +846,14 @@ def update_transport_from_form(dbo, username, post):
     postaudit = db.query(dbo, "SELECT * FROM animaltransport WHERE ID = %d" % transportid)
     audit.edit(dbo, username, "animaltransport", transportid, audit.map_diff(preaudit, postaudit))
 
+def update_transport_statuses(dbo, username, ids, newstatus):
+    """ Updates all transports in list ids to newstatus """
+    for i in ids:
+        db.execute(dbo, db.make_update_user_sql(dbo, "animaltransport", username, "ID = %d" % i, (
+            ( "Status", db.di(newstatus) ), 
+            )))
+        audit.edit(dbo, username, "animaltransport", i, "%d => status %d" % (i, newstatus))
+
 def delete_transport(dbo, username, tid):
     """
     Deletes a transport record

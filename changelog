@@ -1,6 +1,7 @@
 40
 ================
 
+25/02/17 Allow bulk changing of transport status #99
 25/02/17 Add DisplayWeight wordkey to show kg or lb/oz in documents
 25/02/17 Move looking for and lost/found match reports into configuration #149
 25/02/17 cron.py: remove extra exception handling as it hides stack traces

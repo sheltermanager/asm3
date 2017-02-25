@@ -12593,11 +12593,11 @@ msgstr ""
 msgid "invalid"
 msgstr ""
 
-#: animal.js animal_new.js
+#: animal.js animal_new.js wordprocessor.py
 msgid "kg"
 msgstr ""
 
-#: animal.js animal_new.js
+#: animal.js animal_new.js wordprocessor.py
 msgid "lb"
 msgstr ""
 
@@ -12625,7 +12625,7 @@ msgstr ""
 msgid "or estimated age in years"
 msgstr ""
 
-#: animal.js animal_new.js
+#: animal.js animal_new.js wordprocessor.py
 msgid "oz"
 msgstr ""
 
