@@ -505,7 +505,7 @@ def delete_old_publish_logs(dbo):
     """
     Retains only the last MAX_LOGS publish logs
     """
-    MAX_LOGS = 30
+    MAX_LOGS = 50
     rows = db.query(dbo, "SELECT Name FROM dbfs WHERE Path Like '/logs/publish%%' ORDER BY Name DESC LIMIT %d" % MAX_LOGS)
     if len(rows) < MAX_LOGS: return
     names = []
