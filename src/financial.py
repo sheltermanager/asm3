@@ -710,6 +710,8 @@ def check_create_next_donation(dbo, username, odid):
         if d["FREQUENCY"] == 3:
             nextdue = i18n.add_months(nextdue, 3)
         if d["FREQUENCY"] == 4:
+            nextdue = i18n.add_months(nextdue, 6)
+        if d["FREQUENCY"] == 5:
             nextdue = i18n.add_years(nextdue, 1)
         al.debug("Next donation due %s" % str(nextdue), "financial.check_create_next_donation", dbo)
         # Update nextcreated flag for this donation

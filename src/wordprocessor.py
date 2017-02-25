@@ -71,9 +71,9 @@ def weight_display(dbo, wv):
     oz = utils.cint((kg - lb) * 16.0)
     l = dbo.locale
     if configuration.show_weight_in_lbs(dbo):
-        return "%s %s %s %s" % ( lb, _("lb"), oz, _("oz") )
+        return "%s %s %s %s" % ( lb, _("lb", l), oz, _("oz", l) )
     else:
-        return "%s %s" % (kg, _("kg"))
+        return "%s %s" % (kg, _("kg", l))
 
 def br(s):
     """ Returns s with linebreaks turned to <br/> tags """

@@ -1836,7 +1836,7 @@ class animal_transport:
                 extmovement.delete_transport(session.dbo, session.user, mid)
         elif mode == "setstatus":
             users.check_permission(session, users.CHANGE_TRANSPORT)
-            extmovement.update_transport_statuses(dbo, session.user, post.integer_list("ids"), post.integer("newstatus"))
+            extmovement.update_transport_statuses(session.dbo, session.user, post.integer_list("ids"), post.integer("newstatus"))
 
 class animal_vaccination:
     def GET(self):
