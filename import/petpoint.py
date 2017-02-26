@@ -17,7 +17,7 @@ PETFINDER_ID = ""
 
 INTAKE_FILENAME = "data/pp_zg1185.csv"
 MEMO_FILENAME = "data/pp_zg1185_memo.csv"
-PERSON_FILENAME = "data/pp_zg1185_person.csv"
+PERSON_FILENAME = ""
 VACC_FILENAME = "data/pp_zg1185_vacc.csv"
 TEST_FILENAME = "data/pp_zg1185_test.csv"
 # Whether or not the vaccine and test files are in two row stacked format
@@ -45,7 +45,7 @@ ppo = {}
 asm.setid("animal", 100)
 asm.setid("animaltest", 100)
 asm.setid("animalvaccination", 100)
-asm.setid("log", 100)
+asm.setid("log", 3000)
 asm.setid("owner", 100)
 asm.setid("adoption", 100)
 
@@ -294,7 +294,7 @@ if MEMO_FILENAME != "":
             l.Date = asm.getdate_mmddyyyy(d["textbox20"])
             if l.Date is None:
                 l.Date = asm.now()
-            l.Comments = d["textbox131"]
+            l.Comments = d["Textbox131"]
 
 vacc = asm.csv_to_list(VACC_FILENAME)
 
