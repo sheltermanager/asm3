@@ -823,6 +823,7 @@ class AbstractPublisher(threading.Thread):
         self.publisherKey = publisherKey
         self.publishDateTime = i18n.now(self.dbo.timezone)
         self.publisherName = publisherName
+        self.logBuffer = []
 
     def log(self, msg):
         """
