@@ -5599,54 +5599,22 @@ class publish:
             # If a publishing mode is requested, start that publisher
             # running on a background thread
             pc = extpublish.PublishCriteria(configuration.publisher_presets(dbo))
-            if mode == "ftp":
-                h = extpublish.HTMLPublisher(dbo, pc, session.user)
-                h.start()
-            elif mode == "pf": 
-                pf = extpublish.PetFinderPublisher(dbo, pc)
-                pf.start()
-            elif mode == "ap": 
-                ap = extpublish.AdoptAPetPublisher(dbo, pc)
-                ap.start()
-            elif mode == "rg": 
-                rg = extpublish.RescueGroupsPublisher(dbo, pc)
-                rg.start()
-            elif mode == "mp": 
-                mp = extpublish.MeetAPetPublisher(dbo, pc)
-                mp.start()
-            elif mode == "hlp": 
-                mp = extpublish.HelpingLostPetsPublisher(dbo, pc)
-                mp.start()
-            elif mode == "pl": 
-                mp = extpublish.PetLinkPublisher(dbo, pc)
-                mp.start()
-            elif mode == "pr": 
-                mp = extpublish.PetRescuePublisher(dbo, pc)
-                mp.start()
-            elif mode == "p9": 
-                pn = extpublish.Pets911Publisher(dbo, pc)
-                pn.start()
-            elif mode == "st": 
-                st = extpublish.SmartTagPublisher(dbo, pc)
-                st.start()
-            elif mode == "abuk": 
-                mp = extpublish.AnibaseUKPublisher(dbo, pc)
-                mp.start()
-            elif mode == "fa":
-                mp = extpublish.FoundAnimalsPublisher(dbo, pc)
-                mp.start()
-            elif mode == "pcuk": 
-                mp = extpublish.PetsLocatedUKPublisher(dbo, pc)
-                mp.start()
-            elif mode == "ptuk": 
-                mp = extpublish.PETtracUKPublisher(dbo, pc)
-                mp.start()
-            elif mode == "veha":
-                mp = extpublish.HomeAgainPublisher(dbo, pc)
-                mp.start()
-            elif mode == "vear":
-                mp = extpublish.AKCReunitePublisher(dbo, pc)
-                mp.start()
+            if mode == "ftp":    extpublish.HTMLPublisher(dbo, pc, session.user).start()
+            elif mode == "pf":   extpublish.PetFinderPublisher(dbo, pc).start()
+            elif mode == "ap":   extpublish.AdoptAPetPublisher(dbo, pc).start()
+            elif mode == "rg":   extpublish.RescueGroupsPublisher(dbo, pc).start()
+            elif mode == "mp":   extpublish.MeetAPetPublisher(dbo, pc).start()
+            elif mode == "hlp":  extpublish.HelpingLostPetsPublisher(dbo, pc).start()
+            elif mode == "pl":   extpublish.PetLinkPublisher(dbo, pc).start()
+            elif mode == "pr":   extpublish.PetRescuePublisher(dbo, pc).start()
+            elif mode == "p9":   extpublish.Pets911Publisher(dbo, pc).start()
+            elif mode == "st":   extpublish.SmartTagPublisher(dbo, pc).start()
+            elif mode == "abuk": extpublish.AnibaseUKPublisher(dbo, pc).start()
+            elif mode == "fa":   extpublish.FoundAnimalsPublisher(dbo, pc).start()
+            elif mode == "pcuk": extpublish.PetsLocatedUKPublisher(dbo, pc).start()
+            elif mode == "ptuk": extpublish.PETtracUKPublisher(dbo, pc).start()
+            elif mode == "veha": extpublish.HomeAgainPublisher(dbo, pc).start()
+            elif mode == "vear": extpublish.AKCReunitePublisher(dbo, pc).start()
         s = html.header("", session)
         c = html.controller_bool("failed", failed)
         s += html.controller(c)
