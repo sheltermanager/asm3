@@ -52,49 +52,75 @@ $(function() {
                         common.route("onlineform_incoming?ajax=false&mode=print&ids=" + encodeURIComponent(tableform.table_ids(table)));
                     }
                 },
-                { id: "attachperson", text: _("Attach Person"), icon: "person-find", enabled: "one", tooltip: _("Attach this form to an existing person"), 
-                    click: function() {
-                        $("#dialog-attach-person").dialog("open");
-                    }
-                },
-                { id: "attachanimal", text: _("Attach Animal"), icon: "animal-find", enabled: "one", tooltip: _("Attach this form to an existing animal"), 
-                    click: function() {
-                        $("#dialog-attach-animal").dialog("open");
-                    }
-                },
-                { id: "animal", text: _("Animal"), icon: "animal-find", enabled: "multi", tooltip: _("Attach selected forms to animal records"),
-                    click: function() {
-                        onlineform_incoming.create_record("animal");
-                    }
-                },
-                { id: "person", text: _("Person"), icon: "person-add", enabled: "multi", tooltip: _("Create or attach person records from the selected forms"),
-                    click: function() {
-                        onlineform_incoming.create_record("person");
-                    }
-                },
-                { id: "lostanimal", text: _("Lost Animal"), icon: "animal-lost-add", enabled: "multi", tooltip: _("Create lost animal records from the selected forms"),
-                    click: function() {
-                        onlineform_incoming.create_record("lostanimal");
-                    }
-                },
-                { id: "foundanimal", text: _("Found Animal"), icon: "animal-found-add", enabled: "multi", tooltip: _("Create found animal records from the selected forms"),
-                    click: function() {
-                        onlineform_incoming.create_record("foundanimal");
-                    }
-                },
-                { id: "incident", text: _("Incident"), icon: "call", enabled: "multi", tooltip: _("Create animal control incident records from the selected forms"),
-                    click: function() {
-                        onlineform_incoming.create_record("incident");
-                    }
-                },
-                { id: "waitinglist", text: _("Waiting List"), icon: "waitinglist", enabled: "multi", tooltip: _("Create waiting list records from the selected forms"),
-                    click: function() {
-                        onlineform_incoming.create_record("waitinglist");
-                    }
-                }
+                { id: "attach", icon: "link", text: _("Attach"), enabled: "one", type: "buttonmenu" },
+                { id: "create", icon: "complete", text: _("Create"), enabled: "multi", type: "buttonmenu" }
+
             ];
             this.table = table;
             this.buttons = buttons;
+        },
+
+        render_buttonmenus: function() {
+            var h = [
+                '<div id="button-attach-body" class="asm-menu-body">',
+                '<ul class="asm-menu-list">',
+                    '<li id="button-attachperson" class="asm-menu-item"><a '
+                        + '" href="#">' + html.icon("person-find") + ' ' + _("Person") + '</a></li>',
+                    '<li id="button-attachanimal" class="asm-menu-item"><a '
+                        + '" href="#">' + html.icon("animal-find") + ' ' + _("Animal") + '</a></li>',
+                '</ul>',
+                '</div>',
+                '<div id="button-create-body" class="asm-menu-body">',
+                '<ul class="asm-menu-list">',
+                    '<li id="button-animal" class="asm-menu-item"><a '
+                        + '" href="#">' + html.icon("animal-find") + ' ' + _("Animal") + '</a></li>',
+                    '<li id="button-person" class="asm-menu-item"><a '
+                        + '" href="#">' + html.icon("person-add") + ' ' + _("Person") + '</a></li>',
+                    '<li id="button-lostanimal" class="asm-menu-item"><a '
+                        + '" href="#">' + html.icon("animal-lost-add") + ' ' + _("Lost Animal") + '</a></li>',
+                    '<li id="button-foundanimal" class="asm-menu-item"><a '
+                        + '" href="#">' + html.icon("animal-found-add") + ' ' + _("Found Animal") + '</a></li>',
+                    '<li id="button-incident" class="asm-menu-item"><a '
+                        + '" href="#">' + html.icon("call") + ' ' + _("Incident") + '</a></li>',
+                    '<li id="button-transport" class="asm-menu-item"><a '
+                        + '" href="#">' + html.icon("transport") + ' ' + _("Transport") + '</a></li>',
+                    '<li id="button-waitinglist" class="asm-menu-item"><a '
+                        + '" href="#">' + html.icon("waitinglist") + ' ' + _("Waiting List") + '</a></li>',
+                '</ul>',
+                '</div>'
+
+            ];
+            return h.join("\n");
+        },
+
+        bind_buttonmenus: function() {
+            $("#button-attachperson").click(function() {
+                $("#dialog-attach-person").dialog("open");
+            });
+            $("#button-attachanimal").click(function() {
+                $("#dialog-attach-animal").dialog("open");
+            });
+            $("#button-animal").click(function() {
+                onlineform_incoming.create_record("animal", "animal");
+            });
+            $("#button-person").click(function() {
+                onlineform_incoming.create_record("person", "person");
+            });
+            $("#button-lostanimal").click(function() {
+                onlineform_incoming.create_record("lostanimal", "lostanimal");
+            });
+            $("#button-foundanimal").click(function() {
+                onlineform_incoming.create_record("foundanimal", "foundanimal");
+            });
+            $("#button-incident").click(function() {
+                onlineform_incoming.create_record("incident", "incident");
+            });
+            $("#button-transport").click(function() {
+                onlineform_incoming.create_record("transport", "animal_transport");
+            });
+            $("#button-waitinglist").click(function() {
+                onlineform_incoming.create_record("waitinglist", "waitinglist");
+            });
         },
 
         render_viewer: function() {
@@ -229,9 +255,9 @@ $(function() {
         /**
          * Make an AJAX post to create a record.
          * mode: The type of record to create - person, lostanimal, foundanimal, waitinglist
-         *       (also used to choose the url target for created records)
+         * url:  The url to link to the target created record
          */
-        create_record: function(mode) {
+        create_record: function(mode, target) {
              header.hide_error();
              var table = onlineform_incoming.table, ids = tableform.table_ids(table);
              common.ajax_post("onlineform_incoming", "mode=" + mode + "&ids=" + ids)
@@ -241,7 +267,7 @@ $(function() {
                          $.each(result.split("^$"), function(ir, vr) {
                              var vb = vr.split("|");
                              if (vb[0] == v.COLLATIONID) {
-                                 v.LINK = '<a target="_blank" href="' + mode + '?id=' + vb[1] + '">' + vb[2] + '</a>';
+                                 v.LINK = '<a target="_blank" href="' + target + '?id=' + vb[1] + '">' + vb[2] + '</a>';
                              }
                          });
                      });
@@ -255,6 +281,7 @@ $(function() {
             s += this.render_viewer();
             s += this.render_attach_person();
             s += this.render_attach_animal();
+            s += this.render_buttonmenus();
             s += html.content_header(_("Incoming Forms"));
             s += html.info(_("Incoming forms are online forms that have been completed and submitted by people on the web.") + 
                 "<br />" + _("You can use incoming forms to create new records or attach them to existing records."));
@@ -270,6 +297,7 @@ $(function() {
             this.bind_viewer();
             this.bind_attach_animal();
             this.bind_attach_person();
+            this.bind_buttonmenus();
         },
 
         sync: function() {

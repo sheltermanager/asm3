@@ -70,7 +70,9 @@ FORM_FIELDS = [
     "description", "reason", "size", "species", "breed", "agegroup", "color", "colour", 
     "arealost", "areafound", "areapostcode", "areazipcode",
     "animalname", "reserveanimalname",
-    "callnotes", "dispatchaddress", "dispatchcity", "dispatchstate", "dispatchzipcode"
+    "callnotes", "dispatchaddress", "dispatchcity", "dispatchstate", "dispatchzipcode",
+    "pickupaddress", "pickupcity", "pickupstate", "pickupzipcode", "pickupdate", "pickuptime",
+    "dropoffaddress", "dropoffcity", "dropoffstate", "dropoffzipcode", "dropoffdate", "dropofftime"
 ]
 
 def get_onlineform(dbo, formid):
@@ -394,6 +396,15 @@ def get_onlineformincoming_name(dbo, collationid):
     """ Returns the form name for a collation id """
     return db.query_string(dbo, "SELECT FormName FROM onlineformincoming WHERE CollationID = %d LIMIT 1" % int(collationid))
 
+def get_animal_id_from_field(dbo, name):
+    """ Used for ADOPTABLE/SHELTER animal fields, gets the ID from the value """
+    if name.find("::") != -1:
+        animalcode = name.split("::")[1]
+        aid = db.query_int(dbo, "SELECT ID FROM animal WHERE ShelterCode = %s ORDER BY ID DESC" % db.ds(animalcode))
+    else:
+        aid = db.query_int(dbo, "SELECT ID FROM animal WHERE LOWER(AnimalName) LIKE '%s' ORDER BY ID DESC" % name.lower())
+    return aid
+
 def insert_onlineform_from_form(dbo, username, post):
     """
     Create an onlineform record from posted data
@@ -665,9 +676,16 @@ def guess_size(dbo, s):
 def guess_species(dbo, s):
     """ Guesses a species, returns the default if no match is found """
     s = str(s).lower()
-    guess = db.query_int(dbo, "SELECT ID FROM species WHERE LOWER(SpeciesName) LIKE '%" + db.escape(s) + "%'")
+    guess = db.query_int(dbo, "SELECT ID FROM species WHERE LOWER(SpeciesName) LIKE %s" % db.ds(s))
     if guess != 0: return guess
     return configuration.default_species(dbo)
+
+def guess_transporttype(dbo, s):
+    """ Guesses a transporttype """
+    s = str(s).lower()
+    guess = db.query_int(dbo, "SELECT ID FROM transporttype WHERE LOWER(TransportTypeName) LIKE %s" % db.ds(s))
+    if guess != 0: return guess
+    return db.query_int(dbo, "SELECT ID FROM transporttype ORDER BY ID LIMIT 1")
 
 def attach_animal(dbo, username, collationid):
     """
@@ -678,23 +696,22 @@ def attach_animal(dbo, username, collationid):
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
     animalname = ""
-    sheltercode = ""
+    has_name = False
+    animalid = 0
     for f in fields:
         if f["FIELDNAME"] == "animalname": 
-            bits = f["VALUE"].split("::")
-            if len(bits) == 2:
-                animalname = bits[0]
-                sheltercode = bits[1]
-    if sheltercode == "" or animalname == "":
+            animalname = f["VALUE"]
+            animalid = get_animal_id_from_field(dbo, animalname)
+            has_name = True
+            break
+    if not has_name:
         raise utils.ASMValidationError(i18n._("There is not enough information in the form to attach to a shelter animal record (need an animal name).", l))
-    # Find the animal
-    aid = db.query_int(dbo, "SELECT ID FROM animal WHERE ShelterCode = '%s' ORDER BY ID DESC" % sheltercode)
-    if aid == 0:
+    if animalid == 0:
         raise utils.ASMValidationError(i18n._("Could not find animal with name '{0}'", l).format(animalname))
     formname = get_onlineformincoming_name(dbo, collationid)
     formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
-    media.create_document_media(dbo, username, media.ANIMAL, aid, formname, formhtml )
-    return (collationid, aid, animal.get_animal_namecode(dbo, aid))
+    media.create_document_media(dbo, username, media.ANIMAL, animalid, formname, formhtml )
+    return (collationid, animalid, animal.get_animal_namecode(dbo, animalid))
 
 def create_person(dbo, username, collationid):
     """
@@ -878,7 +895,52 @@ def create_foundanimal(dbo, username, collationid):
     formhtml = get_onlineformincoming_html(dbo, collationid)
     media.create_document_media(dbo, username, media.FOUNDANIMAL, foundanimalid, formname, formhtml )
     return (collationid, foundanimalid, utils.padleft(foundanimalid, 6) + " - " + personname)
-  
+
+def create_transport(dbo, username, collationid):
+    """
+    Creates a transport record from the incoming form data with collationid.
+    Also, attaches the form to the animal as media.
+    """
+    l = dbo.locale
+    fields = get_onlineformincoming_detail(dbo, collationid)
+    d = {}
+    animalid = 0
+    animalname = ""
+    for f in fields:
+        if f["FIELDNAME"] == "animalname": 
+            animalname = f["VALUE"]
+            animalid = get_animal_id_from_field(dbo, animalname)
+            d["animal"] = str(animalid)
+        if f["FIELDNAME"] == "description": d["description"] = f["VALUE"]
+        if f["FIELDNAME"] == "pickupaddress": d["pickupaddress"] = f["VALUE"]
+        if f["FIELDNAME"] == "pickuptown": d["pickuptown"] = f["VALUE"]
+        if f["FIELDNAME"] == "pickupcounty": d["pickupcounty"] = f["VALUE"]
+        if f["FIELDNAME"] == "pickupzipcode": d["pickuppostcode"] = f["VALUE"]
+        if f["FIELDNAME"] == "pickupdate": d["pickupdate"] = f["VALUE"]
+        if f["FIELDNAME"] == "pickuptime": d["pickuptime"] = f["VALUE"]
+        if f["FIELDNAME"] == "dropoffaddress": d["dropoffaddress"] = f["VALUE"]
+        if f["FIELDNAME"] == "dropofftown": d["dropofftown"] = f["VALUE"]
+        if f["FIELDNAME"] == "dropoffcounty": d["dropoffcounty"] = f["VALUE"]
+        if f["FIELDNAME"] == "dropoffzipcode": d["dropoffpostcode"] = f["VALUE"]
+        if f["FIELDNAME"] == "dropoffdate": d["dropoffdate"] = f["VALUE"]
+        if f["FIELDNAME"] == "dropofftime": d["dropofftime"] = f["VALUE"]
+    if not d.has_key("type"):
+        d["type"] = guess_transporttype(dbo, "nomatchesusedefault")
+    # Have we got enough info to create the transport record? We need an animal to attach to
+    if not d.has_key("animal"):
+        raise utils.ASMValidationError(i18n._("There is not enough information in the form to create a transport record (need animalname).", l))
+    if not d.has_key("pickupdate") or not d.has_key("dropoffdate") or d["pickupdate"] == "" or d["dropoffdate"] == "":
+        raise utils.ASMValidationError(i18n._("There is not enough information in the form to create a transport record (need pickupdate and dropoffdate).", l))
+    if animalid == 0:
+        raise utils.ASMValidationError(i18n._("Could not find animal with name '{0}'", l).format(animalname))
+    # Create the transport
+    movement.insert_transport_from_form(dbo, username, utils.PostedData(d, dbo.locale))
+    # Attach the form to the animal
+    formname = get_onlineformincoming_name(dbo, collationid)
+    formhtml = get_onlineformincoming_html(dbo, collationid)
+    media.create_document_media(dbo, username, media.ANIMAL, animalid, formname, formhtml )
+    return (collationid, animalid, animal.get_animal_namecode(dbo, animalid))
+
 def create_waitinglist(dbo, username, collationid):
     """
     Creates a waitinglist record from the incoming form data with collationid.

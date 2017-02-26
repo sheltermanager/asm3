@@ -1388,20 +1388,12 @@ msgstr ""
 msgid "Attach"
 msgstr ""
 
-#: onlineform_incoming.js
-msgid "Attach Animal"
-msgstr ""
-
 #: media.js
 msgid "Attach File"
 msgstr ""
 
 #: media.js
 msgid "Attach Link"
-msgstr ""
-
-#: onlineform_incoming.js
-msgid "Attach Person"
 msgstr ""
 
 #: media.js
@@ -1414,18 +1406,6 @@ msgstr ""
 
 #: media.js
 msgid "Attach link"
-msgstr ""
-
-#: onlineform_incoming.js
-msgid "Attach selected forms to animal records"
-msgstr ""
-
-#: onlineform_incoming.js
-msgid "Attach this form to an existing animal"
-msgstr ""
-
-#: onlineform_incoming.js
-msgid "Attach this form to an existing person"
 msgstr ""
 
 #: common.js
@@ -2663,7 +2643,7 @@ msgid "Cream"
 msgstr ""
 
 #: lostfound_new.js incident_new.js roles.js waitinglist_new.js person_new.js
-#: common_personchooser.js animal_new.js
+#: common_personchooser.js onlineform_incoming.js animal_new.js
 msgid "Create"
 msgstr ""
 
@@ -2720,24 +2700,12 @@ msgstr ""
 msgid "Create and edit"
 msgstr ""
 
-#: onlineform_incoming.js
-msgid "Create animal control incident records from the selected forms"
-msgstr ""
-
 #: options.js
 msgid "Create boarding cost record when animal is adopted"
 msgstr ""
 
 #: person.js animal.js
 msgid "Create diary notes from a task"
-msgstr ""
-
-#: onlineform_incoming.js
-msgid "Create found animal records from the selected forms"
-msgstr ""
-
-#: onlineform_incoming.js
-msgid "Create lost animal records from the selected forms"
 msgstr ""
 
 #: csvimport.js
@@ -2748,20 +2716,12 @@ msgstr ""
 msgid "Create note this many days from today, or 9999 to ask"
 msgstr ""
 
-#: onlineform_incoming.js
-msgid "Create or attach person records from the selected forms"
-msgstr ""
-
 #: main.js
 msgid "Create this message"
 msgstr ""
 
 #: common_personchooser.js
 msgid "Create this person"
-msgstr ""
-
-#: onlineform_incoming.js
-msgid "Create waiting list records from the selected forms"
 msgstr ""
 
 #: person_find_results.js person_find.js animal_find_results.js
@@ -10684,6 +10644,18 @@ msgstr ""
 
 #: onlineform.py
 msgid ""
+"There is not enough information in the form to create a transport record "
+"(need animalname)."
+msgstr ""
+
+#: onlineform.py
+msgid ""
+"There is not enough information in the form to create a transport record "
+"(need pickupdate and dropoffdate)."
+msgstr ""
+
+#: onlineform.py
+msgid ""
 "There is not enough information in the form to create a waiting list record "
 "(need a description)."
 msgstr ""
@@ -11359,7 +11331,8 @@ msgstr ""
 msgid "Transfers must have a valid transfer date."
 msgstr ""
 
-#: header_edit_header.js roles.js calendarview.js dbupdate.py
+#: header_edit_header.js roles.js calendarview.js onlineform_incoming.js
+#: dbupdate.py
 msgid "Transport"
 msgstr ""
 

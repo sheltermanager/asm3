@@ -15,9 +15,9 @@ while they are filling out the form. You can also specify a page you'd like to
 redirect the user to after they've completed the form.
 
 If you use certain key fields (which the system will autocomplete for you), the
-system can create person, lost animal, found animal, animal control incident or
-waiting list records directly from submitted form data. You can also attach
-form submissions to animal records.
+system can create person, lost animal, found animal, animal control incident,
+transport or waiting list records directly from the submitted form data. You
+can also choose to attach form submissions to animal and people records.
 
 If you set some person flags on your form, any person record created from the
 form data will automatically have those flags. In addition to that, the
@@ -78,39 +78,42 @@ completed it for their records.
 
 .. image:: images/onlineform_incoming.png
 
-Selecting a form allows you to create records from the data, or attach the
-form to existing records. 
+Selecting a form allows you to intelligently create or attach records from the
+data, or explicitly attach the form to existing records. 
 
 * Attach Person: Prompts for a single person record and attaches a copy of the
-  form to them.
+  form to them as media.
 
 * Attach Animal: Prompts for a single animal record and attaches a copy of the
-  form to them.
+  form to them as media.
 
-* Animal: Requires an “animalname” field in the form. Attaches selected forms
-  to their matching shelter animal.
+* Create Animal: Requires an “animalname” field in the form. Intelligently
+  attaches selected forms to their matching shelter animal.
 
-* Person: Searches for a person record matching the firstname, lastname and
-  address fields on the form. If a match is found, the form is attached to that
-  person. If not match is found, a new person record is created. If a
-  “reserveanimalname” field was found on the form as well, a reservation to the
-  matching animal is created to the person (these can be all viewed under
-  :menuselection:`Move --> Reservation Book`).
+* Create Person: Searches for a person record matching either the email address
+  if present, or the firstname, lastname and address fields on the form. If a
+  match is found, the form is attached to that person. If no match is found, a
+  new person record is created. If a “reserveanimalname” field was found on the
+  form as well, a reservation to the matching animal is created to the person
+  (these can be all viewed under :menuselection:`Move --> Reservation Book`).
 
-* Lost Animal: Runs through the same steps as Person so needs enough
+* Create Lost Animal: Runs through the same steps as Person so needs enough
   information to create/find a person as well. “description” and “arealost”
   fields are the minimum required to create the lost animal record.
 
-* Found Animal: Runs through the same steps as Person so needs enough
+* Create Found Animal: Runs through the same steps as Person so needs enough
   information to create/find a person as well. “description” and “areafound”
   fields are the minimum required to create the found animal record.
 
-* Incident: Runs through the same steps as Person so needs enough information
-  to create/find a person as well. That person becomes the “caller”.
-  “callnotes” and “dispatchaddress” fields are the minimum required to create
-  the incident record.
+* Create Incident: Runs through the same steps as Person so needs enough
+  information to create/find a person as well. That person becomes the
+  “caller”.  “callnotes” and “dispatchaddress” fields are the minimum required
+  to create the incident record.
 
-* Waiting List: Runs through the same steps as Person so needs enough
+* Create Transport: Runs through the same steps as Animal, so needs
+  an "animalname" field to figure out who to attach the transport to.
+
+* Create Waiting List: Runs through the same steps as Person so needs enough
   information to create/find a person as well. A “description” field is the
   minimum required to create the waiting list record.
 

@@ -4674,6 +4674,13 @@ class onlineform_incoming:
                 collationid, incidentid, personname = extonlineform.create_animalcontrol(session.dbo, session.user, pid)
                 rv.append("%d|%d|%s" % (collationid, incidentid, personname))
             return "^$".join(rv)
+        elif mode == "transport":
+            users.check_permission(session, users.ADD_TRANSPORT)
+            rv = []
+            for pid in post.integer_list("ids"):
+                collationid, animalid, animalname = extonlineform.create_transport(session.dbo, session.user, pid)
+                rv.append("%d|%d|%s" % (collationid, animalid, animalname))
+            return "^$".join(rv)
         elif mode == "waitinglist":
             users.check_permission(session, users.ADD_WAITING_LIST)
             rv = []
