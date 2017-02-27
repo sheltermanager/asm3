@@ -1057,7 +1057,7 @@ $(function() {
             var cl = config.str("PublisherPresets");
             $.each(cl.split(" "), function(i, o) {
                 // Deal with boolean flags in command line
-                $.each( [ "includecase", "includereserved", "includefosters", "includewithoutimage", 
+                $.each( [ "includecase", "includereserved", "includefosters", "includewithoutimage", "includenonneutered", 
                     "includecolours", "includeretailer", "includehold", "includequarantine", "includetrial",
                     "bondedassingle", "clearexisting", "uploadall", "forcereupload", 
                     "generatejavascriptdb","thumbnails", "checksocket", "uploaddirectly", 
