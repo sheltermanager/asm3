@@ -446,7 +446,7 @@ $(function() {
                 '<input id="neutereddate" data-json="NEUTEREDDATE" data-post="neutereddate" class="asm-halftextbox asm-datebox" title="' + html.title(_("The date the animal was altered")) + '" />',
                 '</td>',
                 '</tr>',
-                '<tr>',
+                '<tr id="declawedrow">',
                 '<td>',
                 '<input class="asm-checkbox" type="checkbox" id="declawed" data-json="DECLAWED" data-post="declawed" title="' + html.title(_("This animal has been declawed")) + '" />',
                 '<label id="declawed-label" for="declawed">' + _("Declawed") + '</label>',
@@ -834,6 +834,12 @@ $(function() {
                 $("#ptsreason").closest("div").fadeIn();
             }
 
+            // Only show declawed and fiv/l for cats
+            $("#declawedrow, #fivlrow").toggle( $("#species").select("value") == 2 );
+
+            // Only show heartworm tested and rabies tag for dogs
+            $("#heartwormrow, #rabiestagrow").toggle( $("#species").select("value") == 1 );
+
             // Enable/disable health and identification fields based on checkboxes
             $("#microchipdate, #microchipnumber").toggle($("#microchipped").is(":checked"));
             $("#tattoodate, #tattoonumber").toggle($("#tattoo").is(":checked"));
@@ -987,7 +993,7 @@ $(function() {
 
             if (config.bool("DontShowLitterID")) { $("#litteridrow").hide(); }
             if (config.bool("DontShowLocationUnit")) { $("#locationunitrow").hide(); }
-            if (config.bool("DontShowRabies")) { $("#rabiestag, label[for='rabiestag']").hide(); }
+            if (config.bool("DontShowRabies")) { $("#rabiestagrow").hide(); }
             if (config.bool("UseSingleBreedField")) { $("#secondbreedrow").hide(); }
             if (config.bool("DontShowAdoptionFee")) { $("#feerow").hide(); }
             if (config.bool("DontShowAdoptionCoordinator")) { $("#coordinatorrow").hide(); }
@@ -1346,6 +1352,8 @@ $(function() {
             $("#microchipdate").change(animal.enable_widgets);
             $("#pickedup").click(animal.enable_widgets).keyup(animal.enable_widgets);
             $("#transferin").click(animal.enable_widgets).keyup(animal.enable_widgets);
+            $("#crossbreed").click(animal.enable_widgets).keyup(animal.enable_widgets);
+            $("#species").click(animal.enable_widgets).keyup(animal.enable_widgets);
 
             validate.save = function(callback) {
                 if (!animal.validation()) { header.hide_loading(); return; }
@@ -1437,10 +1445,6 @@ $(function() {
                 });
 
 
-            // Events that trigger rechecking of the on-screen fields
-            $("#crossbreed").click(function() {
-                animal.enable_widgets();
-            });
 
         },
 
