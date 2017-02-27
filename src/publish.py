@@ -40,6 +40,7 @@ class PublishCriteria(object):
     convert to and from a command line string
     """
     includeCaseAnimals = False
+    includeNonNeutered = False
     includeReservedAnimals = False
     includeRetailerAnimals = False
     includeFosterAnimals = False
@@ -97,6 +98,7 @@ class PublishCriteria(object):
         if fromstring == "": return
         for s in fromstring.split(" "):
             if s == "includecase": self.includeCaseAnimals = True
+            if s == "includenonneutered": self.includeNonNeutered = True
             if s == "includereserved": self.includeReservedAnimals = True
             if s == "includeretailer": self.includeRetailerAnimals = True
             if s == "includefosters": self.includeFosterAnimals = True
@@ -142,6 +144,7 @@ class PublishCriteria(object):
         """
         s = ""
         if self.includeCaseAnimals: s += " includecase"
+        if self.includeNonNeutered: s += " includenonneutered"
         if self.includeReservedAnimals: s += " includereserved"
         if self.includeRetailerAnimals: s += " includeretailer"
         if self.includeFosterAnimals: s += " includefosters"
@@ -245,6 +248,8 @@ def get_animal_data_query(dbo, pc, animalid = 0):
         sql += " WHERE a.ID = %d" % animalid
     if not pc.includeCaseAnimals: 
         sql += " AND a.CrueltyCase = 0"
+    if not pc.includeNonNeutered:
+        sql += " AND a.Neutered = 0"
     if not pc.includeWithoutImage: 
         sql += " AND EXISTS(SELECT ID FROM media WHERE WebsitePhoto = 1 AND LinkID = a.ID AND LinkTypeID = 0)"
     if not pc.includeReservedAnimals: 

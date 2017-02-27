@@ -5674,6 +5674,10 @@ msgstr ""
 msgid "Include this image when publishing"
 msgstr ""
 
+#: publish_options.js
+msgid "Include unaltered animals"
+msgstr ""
+
 #: dbupdate.py
 msgid "Income"
 msgstr ""

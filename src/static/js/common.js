@@ -1377,6 +1377,7 @@
             if (a.NONSHELTERANIMAL == 1) { return [ false, _("Non-Shelter") ]; }
             if (a.DECEASEDDATE) { return [ false, _("Deceased") ]; }
             if (a.CRUELTYCASE == 1 && p.indexOf("includecase") == -1) { return [ false, _("Cruelty Case") ]; }
+            if (a.NEUTERED == 0 && p.indexOf("includenonneutered") == -1) { return [ false, _("Unaltered") ]; }
             if (a.HASACTIVERESERVE == 1 && a.RESERVEDOWNERID && p.indexOf("includereserved") == -1) {
                 return [ false, _("Reserved") + " " + html.icon("right") + " " + 
                         html.person_link(a.RESERVEDOWNERID, a.RESERVEDOWNERNAME) ];
