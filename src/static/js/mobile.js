@@ -5,15 +5,6 @@
 
 $(document).ready(function() {
 
-    // Set if we have an idevice
-    var is_idevice = navigator.userAgent.toLowerCase().indexOf("ipod") != -1 || 
-        navigator.userAgent.toLowerCase().indexOf("ipad") != -1 ||
-        navigator.userAgent.toLowerCase().indexOf("iphone") != -1;
-
-    // Set if we have old Android (1/2)
-    var is_oldandroid = navigator.userAgent.indexOf("Android 2") != -1 ||
-        navigator.userAgent.indexOf("Android 1") != -1;
-
     // mobile login:
     // if all the boxes were filled in (because they were passed by parameters
     // when the backend constructed the page), submit it automatically
@@ -61,12 +52,6 @@ $(document).ready(function() {
         });
         window.location = "mobile_report?" + post;    
     });
-
-    // If this is an idevice and the file upload box is
-    // disabled, it needs upgrading to iOS6 or better
-    if (is_idevice && $("input[type='file']").attr("disabled")) {
-        $(".tipios6").show();
-    }
 
     // Use slide transitions for all links
     $("#home a").attr("data-transition", "slide");

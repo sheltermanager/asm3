@@ -1024,12 +1024,10 @@ def handler_viewanimal(session, l, dbo, a, af, diet, vacc, test, med, logs, home
         <input type="hidden" name="comments" value="" />
         <input type="hidden" name="base64image" value="" />
         <input type="file" data-role='none' accept="image/*" capture="camera" name="filechooser" id="fc%d" />
-        <span class=".tipios6" style="display: none">%s</span>
         <input id='sfc%d' type='submit' data-icon='arrow-u' data-inline='true' data-mini='true' value='%s' />
         </form>
         <span class="tip">%s</span>
         </td></tr>""" % (_("Upload Photo", l), a["ID"], a["ID"], 
-                        _("You will need to upgrade to iOS 6 or higher to upload files.", l),
                          a["ID"], _("Send", l), uploadstatus))
     h.append(table_end())
     h.append(table())
