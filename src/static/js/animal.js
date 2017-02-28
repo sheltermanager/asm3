@@ -837,8 +837,11 @@ $(function() {
             // Only show declawed and fiv/l for cats
             $("#declawedrow, #fivlrow").toggle( $("#species").select("value") == 2 );
 
-            // Only show heartworm tested and rabies tag for dogs
-            $("#heartwormrow, #rabiestagrow").toggle( $("#species").select("value") == 1 );
+            // Only show heartworm tested for dogs
+            $("#heartwormrow").toggle( $("#species").select("value") == 1 );
+
+            // Only show rabies tag for cats and dogs
+            $("#rabiestagrow").toggle( $("#species").select("value") == 1 || $("#species").select("value") == 2 );
 
             // Enable/disable health and identification fields based on checkboxes
             $("#microchipdate, #microchipnumber").toggle($("#microchipped").is(":checked"));
