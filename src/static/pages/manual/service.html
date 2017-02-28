@@ -187,9 +187,15 @@ called.</li>
 <p>The following method values are supported:</p>
 <p><strong>animal_image</strong></p>
 <p>Returns an animal&#8217;s preferred image. Send the id of the animal:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=animal_image&amp;animalid=520
+<div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=animal_image&amp;animalid=520&amp;seq=1
 </pre></div>
 </div>
+<p>An optional &#8220;seq&#8221; parameter can be included to return the animal&#8217;s other
+available images. seq=1 returns the preferred image (and will be assumed if
+that parameter is omitted), seq=2 returns the second available image, etc. seq
+is a 1-based count and can be used with the &#8220;WebsiteImageCount&#8221; property
+included in animal records (which contains the number of images an animal has)
+to programatically grab all the images for a particular animal.</p>
 <p><strong>extra_image</strong></p>
 <p>Returns an extra image (see <span class="menuselection">Settings-&gt;Reports-&gt;Extra Images</span>).
 Pass the name of the image in the title parameter:</p>

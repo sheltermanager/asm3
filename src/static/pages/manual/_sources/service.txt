@@ -38,7 +38,14 @@ The following method values are supported:
 
 Returns an animal's preferred image. Send the id of the animal::
 
-    http://localhost:5000/service?method=animal_image&animalid=520
+    http://localhost:5000/service?method=animal_image&animalid=520&seq=1
+
+An optional "seq" parameter can be included to return the animal's other
+available images. seq=1 returns the preferred image (and will be assumed if
+that parameter is omitted), seq=2 returns the second available image, etc. seq
+is a 1-based count and can be used with the "WebsiteImageCount" property
+included in animal records (which contains the number of images an animal has)
+to programatically grab all the images for a particular animal.
 
 **extra_image**
 
