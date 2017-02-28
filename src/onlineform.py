@@ -138,8 +138,10 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             h.append('</td>')
             h.append('<td class="asm-onlineform-td">')
         required = ""
+        requiredtext = ""
         if f["MANDATORY"] == 1: 
             required = "required=\"required\""
+            requiredtext = "required=\"required\" pattern=\".*\S+.*\""
             h.append('<span class="asm-onlineform-required" style="color: #ff0000;">*</span>')
         else:
             h.append('<span class="asm-onlineform-notrequired" style="visibility: hidden">*</span>')
@@ -150,11 +152,11 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             h.append('<input class="asm-onlineform-check" type="checkbox" name="%s" %s /> <label for="f%d">%s</label>' % \
                 ( html.escape(fname), required, f["ID"], f["LABEL"]))
         elif f["FIELDTYPE"] == FIELDTYPE_TEXT:
-            h.append('<input class="asm-onlineform-text" type="text" name="%s" title="%s" %s />' % ( html.escape(fname), utils.nulltostr(f["TOOLTIP"]), required))
+            h.append('<input class="asm-onlineform-text" type="text" name="%s" title="%s" %s />' % ( html.escape(fname), utils.nulltostr(f["TOOLTIP"]), requiredtext))
         elif f["FIELDTYPE"] == FIELDTYPE_DATE:
-            h.append('<input class="asm-onlineform-date" type="text" name="%s" title="%s" %s />' % ( html.escape(fname), utils.nulltostr(f["TOOLTIP"]), required))
+            h.append('<input class="asm-onlineform-date" type="text" name="%s" title="%s" %s />' % ( html.escape(fname), utils.nulltostr(f["TOOLTIP"]), requiredtext))
         elif f["FIELDTYPE"] == FIELDTYPE_NOTES:
-            h.append('<textarea class="asm-onlineform-notes" name="%s" title="%s" %s></textarea>' % ( html.escape(fname), utils.nulltostr(f["TOOLTIP"]), required))
+            h.append('<textarea class="asm-onlineform-notes" name="%s" title="%s" %s></textarea>' % ( html.escape(fname), utils.nulltostr(f["TOOLTIP"]), requiredtext))
         elif f["FIELDTYPE"] == FIELDTYPE_LOOKUP:
             h.append('<select class="asm-onlineform-lookup" name="%s" title="%s" %s>' % ( html.escape(fname), utils.nulltostr(f["TOOLTIP"]), required))
             for lv in utils.nulltostr(f["LOOKUPS"]).split("|"):

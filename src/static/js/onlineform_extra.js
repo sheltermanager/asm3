@@ -61,11 +61,14 @@ $(document).ready(function() {
         var rv = true;
         if (is_ios || is_safari || is_ie8) {
             $(".asm-onlineform-date, .asm-onlineform-text, .asm-onlineform-lookup, .asm-onlineform-notes").each(function() {
-                if ($(this).attr("required") && !$(this).val()) {
-                    alert("This field cannot be blank");
-                    rv = false;
-                    $(this).focus();
-                    return false;
+                if ($(this).attr("required")) {
+                    var v = $.trim(String($(this).val())); // Throw away whitespace before checking
+                    if (!v) {
+                        alert("This field cannot be blank");
+                        rv = false;
+                        $(this).focus();
+                        return false;
+                    }
                 }
             });
         }
