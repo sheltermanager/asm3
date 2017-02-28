@@ -12,8 +12,9 @@ $(document).ready(function() {
     if (typeof IS_FORM === "undefined") { return; }
 
     var is_safari = navigator.userAgent.indexOf("Safari") > -1 && navigator.userAgent.indexOf("Chrome") == -1;
-    var is_ios = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;                    
-    var is_ie8 = navigator.appName.indexOf("Internet Explorer") !=-1 && navigator.appVersion.indexOf("MSIE 8")== -1;
+    var is_ios = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    // NB: None of this js will load for IE8 and older due to JQuery 2 being required
+    var is_ie9 = navigator.appName.indexOf("Internet Explorer") !=-1 && navigator.appVersion.indexOf("MSIE 9")== -1;
 
     // Validates that all mandatory signature fields have something in them.
     // returns false for failure.
@@ -56,10 +57,10 @@ $(document).ready(function() {
 
 
     // Validate HTML5 required input fields 
-    // (only does anything for iOS and IE8 where the required attribute is not supported)
+    // (only does anything for iOS and IE9 where the required attribute is not supported)
     var validate_required = function() {
         var rv = true;
-        if (is_ios || is_safari || is_ie8) {
+        if (is_ios || is_safari || is_ie9) {
             $(".asm-onlineform-date, .asm-onlineform-text, .asm-onlineform-lookup, .asm-onlineform-notes").each(function() {
                 if ($(this).attr("required")) {
                     var v = $.trim(String($(this).val())); // Throw away whitespace before checking
