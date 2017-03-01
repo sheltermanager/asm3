@@ -2365,6 +2365,7 @@ def clone_animal(dbo, username, animalid):
         ( "Archived", db.di(0)),
         ( "ActiveMovementID", db.di(0)),
         ( "ActiveMovementType", db.di(0)),
+        ( "DiedOffShelter", db.di(a["DIEDOFFSHELTER"]) ),
         ( "HasActiveReserve", db.di(0)),
         ( "MostRecentEntryDate", db.ddt(a["MOSTRECENTENTRYDATE"]))
         ))
