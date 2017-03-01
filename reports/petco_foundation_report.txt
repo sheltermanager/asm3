@@ -118,9 +118,9 @@ SUBREPORT_PetcoIntakeNumbers
 +++
 SELECT 
 CASE 
-WHEN a.SpeciesID = 1 AND a.DateOfBirth < '$PARENTARG2$'::timestamp - INTERVAL '5 months' THEN 'Dogs'
+WHEN a.SpeciesID = 1 AND a.DateOfBirth < a.DateBroughtIn - INTERVAL '5 months' THEN 'Dogs'
 WHEN a.SpeciesID = 1 THEN 'Puppies'
-WHEN a.SpeciesID = 2 AND a.DateOfBirth < '$PARENTARG2$'::timestamp - INTERVAL '5 months' THEN 'Cats'
+WHEN a.SpeciesID = 2 AND a.DateOfBirth < a.DateBroughtIn - INTERVAL '5 months' THEN 'Cats'
 WHEN a.SpeciesID = 2 THEN 'Kittens' END AS AgeGroup,
 CASE WHEN DateBroughtIn >= '$PARENTARG1$' THEN 1 ELSE 0 END AS AllSources,
 CASE WHEN DateBroughtIn >= '$PARENTARG1$' AND ReasonName LIKE '%Surrender%' THEN 1 ELSE 0 END AS OwnerSurrender,
@@ -166,9 +166,11 @@ SUBREPORT_PetcoOutcomes
 +++
 SELECT 
 CASE 
-WHEN a.SpeciesID = 1 AND a.DateOfBirth < '$PARENTARG2$'::timestamp - INTERVAL '5 months' THEN 'Dogs'
+WHEN a.SpeciesID = 1 AND ad.MovementDate Is Not NULL AND a.DateOfBirth < ad.MovementDate - INTERVAL '5 months' THEN 'Dogs'
+WHEN a.SpeciesID = 1 AND ad.DeceasedDate Is Not NULL AND a.DateOfBirth < ad.DeceasedDate - INTERVAL '5 months' THEN 'Dogs'
 WHEN a.SpeciesID = 1 THEN 'Puppies'
-WHEN a.SpeciesID = 2 AND a.DateOfBirth < '$PARENTARG2$'::timestamp - INTERVAL '5 months' THEN 'Cats'
+WHEN a.SpeciesID = 2 AND ad.MovementDate Is Not NULL AND a.DateOfBirth < ad.MovementDate - INTERVAL '5 months' THEN 'Cats'
+WHEN a.SpeciesID = 2 AND ad.DeceasedDate Is Not Null AND a.DateOfBirth < ad.DeceasedDate - INTERVAL '5 months' THEN 'Cats'
 WHEN a.SpeciesID = 2 THEN 'Kittens' END AS AgeGroup,
 CASE WHEN ad.MovementType = 5 THEN 1 ELSE 0 END AS ReturnedToOwner,
 CASE WHEN ad.MovementType = 1 THEN 1 ELSE 0 END AS Adopted,
@@ -220,9 +222,9 @@ SUBREPORT_PetcoSpayNeuter
 +++
 SELECT 
 CASE 
-WHEN a.SpeciesID = 1 AND a.DateOfBirth < '$PARENTARG2$'::timestamp - INTERVAL '5 months' THEN 'Dogs'
+WHEN a.SpeciesID = 1 AND a.DateOfBirth < a.NeuteredDate - INTERVAL '5 months' THEN 'Dogs'
 WHEN a.SpeciesID = 1 THEN 'Puppies'
-WHEN a.SpeciesID = 2 AND a.DateOfBirth < '$PARENTARG2$'::timestamp - INTERVAL '5 months' THEN 'Cats'
+WHEN a.SpeciesID = 2 AND a.DateOfBirth < a.NeuteredDate - INTERVAL '5 months' THEN 'Cats'
 WHEN a.SpeciesID = 2 THEN 'Kittens' END AS AgeGroup,
 CASE WHEN NonShelterAnimal = 0 AND NOT EXISTS(SELECT MovementDate FROM adoption WHERE MovementType = 8 AND AnimalID = a.ID AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$') THEN 1 ELSE 0 END AS ShelterAnimal,
 CASE WHEN NonShelterAnimal = 1 AND NOT EXISTS(SELECT MovementDate FROM adoption WHERE MovementType = 8 AND AnimalID = a.ID AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$') THEN 1 ELSE 0 END AS PublicAnimal,
