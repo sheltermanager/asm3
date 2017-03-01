@@ -249,7 +249,7 @@ def get_animal_data_query(dbo, pc, animalid = 0):
     if not pc.includeCaseAnimals: 
         sql += " AND a.CrueltyCase = 0"
     if not pc.includeNonNeutered:
-        sql += " AND a.Neutered = 0"
+        sql += " AND a.Neutered = 1"
     if not pc.includeWithoutImage: 
         sql += " AND EXISTS(SELECT ID FROM media WHERE WebsitePhoto = 1 AND LinkID = a.ID AND LinkTypeID = 0)"
     if not pc.includeReservedAnimals: 
