@@ -91,6 +91,15 @@ def daily(dbo):
         # auto remove online forms
         onlineform.auto_remove_old_incoming_forms(dbo)
 
+        # Update the generated looking for report
+        person.update_lookingfor_report(dbo)
+
+        # Update the generated lost/found match report
+        lostfound.update_match_report(dbo)
+
+        # Email any reports set to run with batch
+        extreports.email_daily_reports(dbo)
+
         # See if any new PDFs have been attached that we can scale down
         if SCALE_PDF_DURING_BATCH:
             media.check_and_scale_pdfs(dbo)
@@ -101,28 +110,6 @@ def daily(dbo):
 
     # We're done, hurrah!
     al.info("end daily tasks", "cron.daily", dbo)
-
-def reports(dbo):
-    """
-    Batch reports to run.
-    """
-    al.info("start batch reports", "cron.reports", dbo)
-    
-    try:
-        # Update the generated looking for report
-        person.update_lookingfor_report(dbo)
-
-        # Update the generated lost/found match report
-        lostfound.update_match_report(dbo)
-
-        # Email any reports set to run with batch
-        extreports.email_daily_reports(dbo)
-
-    except:
-        em = str(sys.exc_info()[0])
-        al.error("FAIL: running reports: %s" % em, "cron.reports", dbo, sys.exc_info())
-
-    al.info("end batch reports", "cron.reports", dbo)
 
 def reports_email(dbo):
     """
@@ -588,14 +575,11 @@ def run(dbo, mode):
     al.debug("set locale and timezone for database: %s, %d" % (dbo.locale, dbo.timezone), "cron", dbo)
     if mode == "all":
         daily(dbo)
-        reports(dbo)
         reports_email(dbo)
         publish_html(dbo)
         publish_3pty(dbo)
     elif mode == "daily":
         daily(dbo)
-    elif mode == "reports":
-        reports(dbo)
     elif mode == "reports_email":
         reports_email(dbo)
     elif mode == "publish_3pty":
@@ -724,7 +708,6 @@ def print_usage():
     print "mode is one of:"
     print "       all - runs daily and all publish_* tasks"
     print "       daily - daily batch tasks"
-    print "       reports - update cached copies of some long running reports"
     print "       reports_email - email reports with dailyemail set (run this target once per hour)"
     print "       publish_ap - publish to adoptapet.com"
     print "       publish_fa - update foundanimals.org"
