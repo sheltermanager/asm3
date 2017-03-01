@@ -116,22 +116,41 @@ FOOTER$$
 +++
 SUBREPORT_PetcoIntakeNumbers
 +++
+SELECT * FROM (
 SELECT 
 CASE 
 WHEN a.SpeciesID = 1 AND a.DateOfBirth < a.DateBroughtIn - INTERVAL '5 months' THEN 'Dogs'
 WHEN a.SpeciesID = 1 THEN 'Puppies'
 WHEN a.SpeciesID = 2 AND a.DateOfBirth < a.DateBroughtIn - INTERVAL '5 months' THEN 'Cats'
 WHEN a.SpeciesID = 2 THEN 'Kittens' END AS AgeGroup,
-CASE WHEN DateBroughtIn >= '$PARENTARG1$' THEN 1 ELSE 0 END AS AllSources,
-CASE WHEN DateBroughtIn >= '$PARENTARG1$' AND ReasonName LIKE '%Surrender%' THEN 1 ELSE 0 END AS OwnerSurrender,
-CASE WHEN DateBroughtIn >= '$PARENTARG1$' AND ReasonName LIKE '%Stray%' THEN 1 ELSE 0 END AS Stray,
-CASE WHEN DateBroughtIn >= '$PARENTARG1$' AND ReasonName LIKE '%Transfer%' THEN 1 ELSE 0 END AS Transfers,
-CASE WHEN DateBroughtIn >= '$PARENTARG1$' AND ReasonName NOT LIKE '%Surrender%' AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%Transfer%' THEN 1 ELSE 0 END AS OtherSources
+1 AS AllSources,
+CASE WHEN ReasonName LIKE '%Surrender%' THEN 1 ELSE 0 END AS OwnerSurrender,
+CASE WHEN ReasonName LIKE '%Stray%' THEN 1 ELSE 0 END AS Stray,
+CASE WHEN ReasonName LIKE '%Transfer%' THEN 1 ELSE 0 END AS Transfers,
+CASE WHEN ReasonName NOT LIKE '%Surrender%' AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%Transfer%' THEN 1 ELSE 0 END AS OtherSources
 FROM animal a
 INNER JOIN entryreason er ON er.ID = a.EntryReasonID
-WHERE MostRecentEntryDate >= '$PARENTARG1$' AND MostRecentEntryDate <= '$PARENTARG2$'
+WHERE DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$'
 AND NonShelterAnimal = 0
 AND SpeciesID IN (1, 2)
+UNION ALL 
+SELECT 
+CASE 
+WHEN a.SpeciesID = 1 AND a.DateOfBirth < ad.ReturnDate - INTERVAL '5 months' THEN 'Dogs'
+WHEN a.SpeciesID = 1 THEN 'Puppies'
+WHEN a.SpeciesID = 2 AND a.DateOfBirth < ad.ReturnDate - INTERVAL '5 months' THEN 'Cats'
+WHEN a.SpeciesID = 2 THEN 'Kittens' END AS AgeGroup,
+1 AS AllSources,
+1 AS OwnerSurrender,
+0 AS Stray,
+0 AS Transfers,
+0 AS OtherSources
+FROM adoption ad
+INNER JOIN animal a ON ad.AnimalID = a.ID
+WHERE ad.ReturnDate Is Not Null AND ad.ReturnDate >= '$PARENTARG1$' AND ad.ReturnDate <= '$PARENTARG2$' AND ad.MovementType IN (1,3,4,5,6)
+AND NonShelterAnimal = 0
+AND SpeciesID IN (1, 2)
+) dummy
 ORDER BY AgeGroup
 +++
 $$HEADER
