@@ -2129,7 +2129,6 @@ def update_animal_from_form(dbo, post, username):
         ( "PTSReasonID", s("deathcategory")),
         ( "PutToSleep", c("puttosleep")),
         ( "IsDOA", c("deadonarrival")),
-        ( "DiedOffShelter", c("diedoffshelter")),
         ( "PTSReason", t("ptsreason"))
     )))
     postaudit = db.query(dbo, "SELECT * FROM animal WHERE ID = %d" % ki("id"))
@@ -2220,7 +2219,6 @@ def update_deceased_from_form(dbo, username, post):
         ( "PTSReasonID", post.db_integer("deathcategory")),
         ( "PutToSleep", post.db_boolean("puttosleep")),
         ( "IsDOA", post.db_boolean("deadonarrival")),
-        ( "DiedOffShelter", post.db_boolean("diedoffshelter")),
         ( "PTSReason", post.db_string("ptsreason"))
     ))
     preaudit = db.query(dbo, "SELECT * FROM animal WHERE ID = %d" % animalid)
@@ -2360,7 +2358,6 @@ def clone_animal(dbo, username, animalid):
         ( "HasSpecialNeeds", db.di(a["HASSPECIALNEEDS"])),
         ( "ShelterLocation", db.di(a["SHELTERLOCATION"])),
         ( "ShelterLocationUnit", db.ds(a["SHELTERLOCATIONUNIT"])),
-        ( "DiedOffShelter", db.di(a["DIEDOFFSHELTER"])),
         ( "Size", db.di(a["SIZE"])),
         ( "RabiesTag", db.ds(a["RABIESTAG"])),
         ( "BondedAnimalID", db.di(0)),
