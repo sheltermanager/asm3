@@ -1,6 +1,11 @@
 40
 ================
 
+01/03/17 update_foster_animal_statuses is redudant with foster on shelter #152
+01/03/17 Remove died off shelter tickbox, add it to banner #152
+01/03/17 Optimised update_animal_status to load movements/cfg on start #152
+01/03/17 Rewrite update_animal_status to single pass, sets died off shelter #152
+01/03/17 Died off shelter is now a read-only denormalised field #152
 01/03/17 Merge cron.reports into cron.daily
 28/02/17 Rabies tag should be shown for both cats and dogs #30
 28/02/17 HTML5 validation is not supported on IE9

@@ -342,24 +342,26 @@ def animal_tags(dbo, a):
     # movement with a future date on it, look up the owner and use that 
     # instead so that we can still generate paperwork for future adoptions.
     if a["CURRENTOWNERID"] is None or a["CURRENTOWNERID"] == 0:
-        latest = animal.get_latest_movement(dbo, a["ID"])
-        if latest is not None:
-            p = person.get_person(dbo, latest["OWNERID"])
-            if p is not None:
-                tags["CURRENTOWNERNAME"] = p["OWNERNAME"]
-                tags["CURRENTOWNERADDRESS"] = p["OWNERADDRESS"]
-                tags["CURRENTOWNERTOWN"] = p["OWNERTOWN"]
-                tags["CURRENTOWNERCOUNTY"] = p["OWNERCOUNTY"]
-                tags["CURRENTOWNERPOSTCODE"] = p["OWNERPOSTCODE"]
-                tags["CURRENTOWNERCITY"] = p["OWNERTOWN"]
-                tags["CURRENTOWNERSTATE"] = p["OWNERCOUNTY"]
-                tags["CURRENTOWNERZIPCODE"] = p["OWNERPOSTCODE"]
-                tags["CURRENTOWNERHOMEPHONE"] = p["HOMETELEPHONE"]
-                tags["CURRENTOWNERPHONE"] = p["HOMETELEPHONE"]
-                tags["CURRENTOWNERWORKPHONE"] = p["WORKTELEPHONE"]
-                tags["CURRENTOWNERMOBILEPHONE"] = p["MOBILETELEPHONE"]
-                tags["CURRENTOWNERCELLPHONE"] = p["MOBILETELEPHONE"]
-                tags["CURRENTOWNEREMAIL"] = p["EMAILADDRESS"]
+        latest = movement.get_animal_movements(dbo, a["ID"])
+        if len(latest) > 0:
+            latest = latest[0]
+            if latest["MOVEMENTDATE"] is not None and latest["RETURNDATE"] is None:
+                p = person.get_person(dbo, latest["OWNERID"])
+                if p is not None:
+                    tags["CURRENTOWNERNAME"] = p["OWNERNAME"]
+                    tags["CURRENTOWNERADDRESS"] = p["OWNERADDRESS"]
+                    tags["CURRENTOWNERTOWN"] = p["OWNERTOWN"]
+                    tags["CURRENTOWNERCOUNTY"] = p["OWNERCOUNTY"]
+                    tags["CURRENTOWNERPOSTCODE"] = p["OWNERPOSTCODE"]
+                    tags["CURRENTOWNERCITY"] = p["OWNERTOWN"]
+                    tags["CURRENTOWNERSTATE"] = p["OWNERCOUNTY"]
+                    tags["CURRENTOWNERZIPCODE"] = p["OWNERPOSTCODE"]
+                    tags["CURRENTOWNERHOMEPHONE"] = p["HOMETELEPHONE"]
+                    tags["CURRENTOWNERPHONE"] = p["HOMETELEPHONE"]
+                    tags["CURRENTOWNERWORKPHONE"] = p["WORKTELEPHONE"]
+                    tags["CURRENTOWNERMOBILEPHONE"] = p["MOBILETELEPHONE"]
+                    tags["CURRENTOWNERCELLPHONE"] = p["MOBILETELEPHONE"]
+                    tags["CURRENTOWNEREMAIL"] = p["EMAILADDRESS"]
 
     # Additional fields
     add = additional.get_additional_fields(dbo, a["ID"], "animal")

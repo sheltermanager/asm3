@@ -33,8 +33,6 @@ $(function() {
                 '<input class="asm-checkbox" type="checkbox" id="puttosleep" data-json="PUTTOSLEEP" data-post="puttosleep" title="' + html.title(_("This animal was euthanized")) + '" />',
                 '<label for="deadonarrival">' + _("Dead on arrival") + '</label>',
                 '<input class="asm-checkbox" type="checkbox" id="deadonarrival" data-json="ISDOA" data-post="deadonarrival" title="' + html.title(_("This animal was dead on arrival to the shelter")) + '" />',
-                '<label for="diedoffshelter">' + _("Died off shelter") + '</label>',
-                '<input class="asm-checkbox" type="checkbox" id="diedoffshelter" data-json="DIEDOFFSHELTER" data-post="diedoffshelter" title="' + html.title(_("This animal died outside the care of the shelter, and the death should be kept out of reports")) + '" />',
                 '</td>',
                 '</tr>',
                 '</table>',
@@ -1327,16 +1325,6 @@ $(function() {
             // Same goes for any of our person choosers
             $(".asm-personchooser").personchooser().bind("personchoosercleared", function(event, rec) {
                 validate.dirty(true);
-            });
-
-            // If the deceased date is changed and now has a value, check to see if the
-            // animal is off shelter and helpfully tick the died off shelter box
-            $("#deceaseddate").change(function(e) {
-                if ($("#deceaseddate").val()) {
-                    if (controller.animal.ARCHIVED == 1)  {
-                        $("#diedoffshelter").prop("checked", true);
-                    }
-                }
             });
 
             // Controls that update the screen when changed

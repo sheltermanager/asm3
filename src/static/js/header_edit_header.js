@@ -76,7 +76,9 @@ $(function() {
             }
             var displaylocation = "";
             if (a.DECEASEDDATE != null) {
-                displaylocation = "<span style=\"color: red\">" + _("Deceased") + " " + html.icon("right") + " " + a.DISPLAYLOCATIONNAME + "</span> " + format.date(a.DECEASEDDATE);
+                var deathreason = a.DISPLAYLOCATIONNAME;
+                if (a.DIEDOFFSHELTER == 1) { deathreason = _("Died off shelter"); }
+                displaylocation = "<span style=\"color: red\">" + _("Deceased") + " " + html.icon("right") + " " + deathreason + "</span> " + format.date(a.DECEASEDDATE);
             }
             else {
                 displaylocation = a.DISPLAYLOCATIONNAME;

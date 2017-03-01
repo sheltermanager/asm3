@@ -240,6 +240,16 @@ def get_animal_status_query(dbo):
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation "
 
+def get_animal_movement_status_query(dbo):
+    dummy = dbo
+    return "SELECT m.ID, m.MovementType, m.MovementDate, m.ReturnDate, " \
+        "mt.MovementType AS MovementTypeName, " \
+        "m.ReservationDate, m.ReservationCancelledDate, m.IsTrial, m.IsPermanentFoster, " \
+        "m.AnimalID, m.OwnerID, o.OwnerName " \
+        "FROM adoption m " \
+        "INNER JOIN lksmovementtype mt ON mt.ID = m.MovementType " \
+        "LEFT OUTER JOIN owner o ON m.OwnerID = o.ID "
+
 def get_animal(dbo, animalid):
     """
     Returns a complete animal row by id, or None if not found
@@ -968,48 +978,6 @@ def get_timeline(dbo, limit = 500):
             { "today": db.ddt(now(dbo.timezone)), "limit": str(limit) }
     return embellish_timeline(dbo.locale, db.query_cache(dbo, sql, 120))
 
-def calc_most_recent_entry(dbo, animalid, a = None):
-    """
-    Returns the date the animal last entered the shelter
-    (int) animalid: The animal to find the most recent entry date for
-    """
-    s = "SELECT MovementType, IsTrial, ReturnDate FROM adoption "
-    s += "WHERE AnimalID = %d AND ReturnDate Is Not Null " % animalid
-    s += "ORDER BY ReturnDate DESC"
-    rows = db.query(dbo, s)
-
-    # If there were no movement records, return the brought in date
-    if len(rows) == 0:
-        if a is not None:
-            return a["DATEBROUGHTIN"]
-        else:
-            return get_date_brought_in(dbo, animalid)
-
-    for r in rows:
-        # Are we treating foster as on shelter? If so, skip
-        # to the next movement instead
-        if configuration.foster_on_shelter(dbo) and r["MOVEMENTTYPE"] == movement.FOSTER:
-            continue
-
-        # Are we treating retailers as on shelter? If so, skip
-        # to the next movement instead
-        if configuration.retailer_on_shelter(dbo) and r["MOVEMENTTYPE"] == movement.RETAILER:
-            continue
-
-        # Are we treating trial adoptions as on shelter? If so, skip
-        # to the next movement instead
-        if configuration.trial_on_shelter(dbo) and r["MOVEMENTTYPE"] == movement.ADOPTION and r["ISTRIAL"] == 1:
-            continue
-
-        # Otherwise, this will be the latest return date
-        return r["RETURNDATE"]
-
-    # If we got here, there was only foster movements
-    if a is not None:
-        return a["DATEBROUGHTIN"]
-    else:
-        return get_date_brought_in(dbo, animalid)
-
 def calc_time_on_shelter(dbo, animalid, a = None):
     """
     Returns the length of time the animal has been on the shelter as a 
@@ -1271,36 +1239,6 @@ def calc_shelter_code(dbo, animaltypeid, entryreasonid, speciesid, datebroughtin
         (code, shortcode, animaltype, entryreason, species, datebroughtin),
         "animal.calc_shelter_code", dbo)
     return (code, shortcode, highestever, highesttyear)
-
-def get_latest_movement(dbo, animalid):
-    """
-    Returns the latest current movement for an animal. The return
-    value is a resultset of the movement itself or None
-    if the animal has no movements.
-    """
-    l = dbo.locale
-    reserve = db.query(dbo, "SELECT ad.*, o.ID AS CurrentOwnerID, o.OwnerName AS CurrentOwnerName, " \
-        "%s AS MovementTypeName FROM adoption ad " \
-        "INNER JOIN owner o ON o.ID = ad.OwnerID " \
-        "WHERE ad.AnimalID = %d AND ad.ReservationDate Is Not Null " \
-        "ORDER BY ad.ReservationDate DESC" % (db.ds(_("Reserved", l)), animalid))
-    move = db.query(dbo, "SELECT ad.*, o.ID AS CurrentOwnerID, o.OwnerName AS CurrentOwnerName, " \
-        "mt.MovementType AS MovementTypeName FROM adoption ad " \
-        "INNER JOIN lksmovementtype mt ON mt.ID = ad.MovementType " \
-        "LEFT OUTER JOIN owner o ON o.ID = ad.OwnerID " \
-        "WHERE ad.AnimalID = %d AND ad.MovementDate Is Not Null AND MovementDate <= %s AND " \
-        "(ad.ReturnDate Is Null OR ad.ReturnDate > %s) " \
-        "ORDER BY ad.MovementDate DESC" % (animalid, db.dd(now(dbo.timezone)), db.dd(now(dbo.timezone))))
-
-    # If we don't have any movements, use the latest reservation
-    if len(move) == 0: 
-        if len(reserve) > 0:
-            return reserve[0]
-        else:
-            return None
-    else:
-        # Use the latest movement
-        return move[0]
 
 def get_is_on_shelter(dbo, animalid):
     """
@@ -2950,6 +2888,32 @@ def delete_litter(dbo, username, lid):
     audit.delete(dbo, username, "animallitter", lid, audit.dump_row(dbo, "animallitter", lid))
     db.execute(dbo, "DELETE FROM animallitter WHERE ID = %d" % int(lid))
 
+def update_animal_check_bonds(dbo, animalid):
+    """
+    Checks the bonds on animalid and if necessary, creates
+    links back to animalid from the bonded animals
+    """
+
+    def addbond(tanimalid, bondid):
+        tbond = db.query(dbo, "SELECT BondedAnimalID, BondedAnimal2ID FROM animal WHERE ID = %d" % int(tanimalid))
+        if len(tbond) == 0: return
+        # If a bond already exists, don't do anything
+        if tbond[0]["BONDEDANIMALID"] == bondid: return
+        if tbond[0]["BONDEDANIMAL2ID"] == bondid: return
+        # Add a bond if we have a free slot
+        if tbond[0]["BONDEDANIMALID"] == 0:
+            db.execute(dbo, "UPDATE animal SET BondedAnimalID = %d WHERE ID = %d" % ( int(bondid), int(tanimalid) ))
+            return
+        if tbond[0]["BONDEDANIMAL2ID"] == 0:
+            db.execute(dbo, "UPDATE animal SET BondedAnimal2ID = %d WHERE ID = %d" % ( int(bondid), int(tanimalid) ))
+
+    bonds = db.query(dbo, "SELECT BondedAnimalID, BondedAnimal2ID FROM animal WHERE ID = %d" % int(animalid))
+    if len(bonds) == 0: return
+    bond1 = bonds[0]["BONDEDANIMALID"]
+    bond2 = bonds[0]["BONDEDANIMAL2ID"]
+    if bond1 != 0: addbond(bond1, animalid)
+    if bond2 != 0: addbond(bond2, animalid)
+
 def update_variable_animal_data(dbo, animalid, a = None, animalupdatebatch = None, bands = None, movements = None):
     """
     Updates the variable data animal fields,
@@ -3035,11 +2999,12 @@ def update_all_animal_statuses(dbo):
     Updates statuses for all animals
     """
     animals = db.query(dbo, get_animal_status_query(dbo))
+    movements = db.query(dbo, get_animal_movement_status_query(dbo) + " ORDER BY MovementDate DESC")
     animalupdatebatch = []
     diaryupdatebatch = []
 
     for a in animals:
-        update_animal_status(dbo, int(a["ID"]), a, animalupdatebatch, diaryupdatebatch)
+        update_animal_status(dbo, int(a["ID"]), a, movements, animalupdatebatch, diaryupdatebatch)
 
     db.execute_many(dbo, "UPDATE animal SET " \
         "Archived = %s, " \
@@ -3047,6 +3012,7 @@ def update_all_animal_statuses(dbo):
         "ActiveMovementDate = %s, " \
         "ActiveMovementType = %s, " \
         "ActiveMovementReturn = %s, " \
+        "DiedOffShelter = %s, " \
         "DisplayLocation = %s, " \
         "HasActiveReserve = %s, " \
         "HasTrialAdoption = %s, " \
@@ -3058,14 +3024,19 @@ def update_all_animal_statuses(dbo):
 
 def update_foster_animal_statuses(dbo):
     """
-    Updates statuses for all animals on foster
+    Updates statuses for all animals on foster. 
+    This function is redundant if foster_on_shelter is set as they 
+    will already be updated by update_on_shelter_animal_statuses.
+    To counter that, this function only considers fosters/off shelter
     """
-    animals = db.query(dbo, get_animal_status_query(dbo) + " WHERE a.ActiveMovementType = 2")
+    animals = db.query(dbo, get_animal_status_query(dbo) + " WHERE a.ActiveMovementType = 2 AND a.Archived = 1")
+    movements = db.query(dbo, get_animal_movement_status_query(dbo) + \
+        " WHERE AnimalID IN (SELECT ID FROM animal WHERE ActiveMovementType = 2) ORDER BY MovementDate DESC")
     animalupdatebatch = []
     diaryupdatebatch = []
 
     for a in animals:
-        update_animal_status(dbo, int(a["ID"]), a, animalupdatebatch, diaryupdatebatch)
+        update_animal_status(dbo, int(a["ID"]), a, movements, animalupdatebatch, diaryupdatebatch)
 
     db.execute_many(dbo, "UPDATE animal SET " \
         "Archived = %s, " \
@@ -3073,6 +3044,7 @@ def update_foster_animal_statuses(dbo):
         "ActiveMovementDate = %s, " \
         "ActiveMovementType = %s, " \
         "ActiveMovementReturn = %s, " \
+        "DiedOffShelter = %s, " \
         "DisplayLocation = %s, " \
         "HasActiveReserve = %s, " \
         "HasTrialAdoption = %s, " \
@@ -3087,12 +3059,16 @@ def update_on_shelter_animal_statuses(dbo):
     Updates statuses for all animals currently on shelter 
     or scheduled for return from yesterday or newer.
     """
-    animals = db.query(dbo, get_animal_status_query(dbo) + " WHERE a.Archived = 0 OR (a.Archived = 1 AND a.ActiveMovementReturn > %s)" % db.dd(subtract_days(now(dbo.timezone), 1)))
+    cutoff = subtract_days(now(dbo.timezone), 1)
+    animals = db.query(dbo, get_animal_status_query(dbo) + " WHERE a.Archived = 0 OR (a.Archived = 1 AND a.ActiveMovementReturn > %s)" % db.dd(cutoff))
+    movements = db.query(dbo, get_animal_movement_status_query(dbo) + \
+        " WHERE AnimalID IN (SELECT ID FROM animal WHERE Archived = 0 OR (Archived = 1 AND ActiveMovementReturn > %s)) ORDER BY MovementDate DESC" % db.dd(cutoff))
+
     animalupdatebatch = []
     diaryupdatebatch = []
 
     for a in animals:
-        update_animal_status(dbo, int(a["ID"]), a, animalupdatebatch, diaryupdatebatch)
+        update_animal_status(dbo, int(a["ID"]), a, movements, animalupdatebatch, diaryupdatebatch)
 
     db.execute_many(dbo, "UPDATE animal SET " \
         "Archived = %s, " \
@@ -3100,6 +3076,7 @@ def update_on_shelter_animal_statuses(dbo):
         "ActiveMovementDate = %s, " \
         "ActiveMovementType = %s, " \
         "ActiveMovementReturn = %s, " \
+        "DiedOffShelter = %s, " \
         "DisplayLocation = %s, " \
         "HasActiveReserve = %s, " \
         "HasTrialAdoption = %s, " \
@@ -3109,49 +3086,26 @@ def update_on_shelter_animal_statuses(dbo):
     aff = db.execute_many(dbo, "UPDATE diary SET LinkInfo = %s WHERE LinkType = %s AND LinkID = %s", diaryupdatebatch)
     al.debug("updated %d on shelter animal statuses (%d)" % (aff, len(animals)), "animal.update_on_shelter_animal_statuses", dbo)
 
-def update_animal_check_bonds(dbo, animalid):
-    """
-    Checks the bonds on animalid and if necessary, creates
-    links back to animalid from the bonded animals
-    """
-
-    def addbond(tanimalid, bondid):
-        tbond = db.query(dbo, "SELECT BondedAnimalID, BondedAnimal2ID FROM animal WHERE ID = %d" % int(tanimalid))
-        if len(tbond) == 0: return
-        # If a bond already exists, don't do anything
-        if tbond[0]["BONDEDANIMALID"] == bondid: return
-        if tbond[0]["BONDEDANIMAL2ID"] == bondid: return
-        # Add a bond if we have a free slot
-        if tbond[0]["BONDEDANIMALID"] == 0:
-            db.execute(dbo, "UPDATE animal SET BondedAnimalID = %d WHERE ID = %d" % ( int(bondid), int(tanimalid) ))
-            return
-        if tbond[0]["BONDEDANIMAL2ID"] == 0:
-            db.execute(dbo, "UPDATE animal SET BondedAnimal2ID = %d WHERE ID = %d" % ( int(bondid), int(tanimalid) ))
-
-    bonds = db.query(dbo, "SELECT BondedAnimalID, BondedAnimal2ID FROM animal WHERE ID = %d" % int(animalid))
-    if len(bonds) == 0: return
-    bond1 = bonds[0]["BONDEDANIMALID"]
-    bond2 = bonds[0]["BONDEDANIMAL2ID"]
-    if bond1 != 0: addbond(bond1, animalid)
-    if bond2 != 0: addbond(bond2, animalid)
-
-def update_animal_status(dbo, animalid, a = None, animalupdatebatch = None, diaryupdatebatch = None):
+def update_animal_status(dbo, animalid, a = None, movements = None, animalupdatebatch = None, diaryupdatebatch = None):
     """
     Updates the movement status fields on an animal record: 
-        ActiveMovement*, HasActiveReserve, HasTrialAdoption, MostRecentEntryDate, Archived and DisplayLocation.
+        ActiveMovement*, HasActiveReserve, HasTrialAdoption, MostRecentEntryDate, 
+        DiedOffShelter, Archived and DisplayLocation.
 
     a can be an already loaded animal record
+    movements is a list of movements for this animal (and can be for other animals too)
     animalupdatebatch and diaryupdatebatch are lists of parameters that can be passed to
     db.execute_many to do all updates in one hit where necessary. If they are passed, we'll
     append our changes to them. If they aren't passed, then we do any database updates now.
     """
 
     l = dbo.locale
-    on_shelter = True
-    has_reserve = False
-    has_trial = False
-    has_permanent_foster = False
-    last_return = None
+    onshelter = True
+    diedoffshelter = False
+    hasreserve = False
+    hastrial = False
+    haspermanentfoster = False
+    lastreturn = None
     mostrecententrydate = None
     activemovementid = 0
     activemovementdate = None
@@ -3160,88 +3114,90 @@ def update_animal_status(dbo, animalid, a = None, animalupdatebatch = None, diar
     activemovementreturn = None
     currentownerid = None
     currentownername = None
+    today = now(dbo.timezone)
     b2i = lambda x: x and 1 or 0
 
     if a is None:
         a = get_animal(dbo, animalid)
         if a is None: return
 
-    movements = db.query(dbo, "SELECT ID, MovementType, MovementDate, ReturnDate, " \
-        "ReservationDate, ReservationCancelledDate, IsTrial, IsPermanentFoster FROM adoption " \
-        "WHERE AnimalID = %d ORDER BY MovementDate DESC" % animalid)
+    if movements is None: 
+        movements = db.query(dbo, get_animal_movement_status_query(dbo) + \
+            " WHERE AnimalID = %d ORDER BY MovementDate DESC" % animalid)
+
+    # Start at first intake for most recent entry date
+    mostrecententrydate = a["DATEBROUGHTIN"]
+
+    # Just look these up once
+    cfg_foster_on_shelter = configuration.foster_on_shelter(dbo)
+    cfg_retailer_on_shelter = configuration.retailer_on_shelter(dbo)
+    cfg_trial_on_shelter = configuration.trial_on_shelter(dbo)
 
     for m in movements:
 
-        # If there's an open movement today, our animal can't be on the shelter
-        if (m["MOVEMENTDATE"] is not None and m["MOVEMENTDATE"] <= now() and m["RETURNDATE"] is None) or \
-            (m["MOVEMENTDATE"] is not None and m["MOVEMENTDATE"] <= now() and m["RETURNDATE"] > now()):
-            on_shelter = False
+        # Ignore movements that aren't for this animal
+        if m["ANIMALID"] != animalid: continue
 
-        # Does it have an active reservation?
+        # Is this an "exit" type movement? ie. A movement that could take the
+        # animal out of the care of the shelter? Depending on what system options
+        # are set, some movement types do or don't
+        exitmovement = False
+        if m["MOVEMENTTYPE"] > 0: exitmovement = True
+        if m["MOVEMENTTYPE"] == movement.FOSTER and cfg_foster_on_shelter: exitmovement = False
+        elif m["MOVEMENTTYPE"] == movement.RETAILER and cfg_retailer_on_shelter: exitmovement = False
+        elif m["MOVEMENTTYPE"] == movement.ADOPTION and m["ISTRIAL"] == 1 and cfg_trial_on_shelter: exitmovement = False
+
+        # Is this movement active right now?
+        if (m["MOVEMENTDATE"] is not None and m["MOVEMENTDATE"] <= today and m["RETURNDATE"] is None) or \
+            (m["MOVEMENTDATE"] is not None and m["MOVEMENTDATE"] <= today and m["RETURNDATE"] > today):
+
+            activemovementid = m["ID"]
+            activemovementdate = m["MOVEMENTDATE"]
+            activemovementtype = m["MOVEMENTTYPE"]
+            activemovementtypename = m["MOVEMENTTYPENAME"]
+            activemovementreturn = m["RETURNDATE"]
+            currentownerid = m["OWNERID"]
+            currentownername = m["OWNERNAME"]
+
+            # If this is an exit movement, take the animal off shelter
+            # If this active movement is not an exit movement, keep the animal onshelter
+            if exitmovement: onshelter = False
+
+            # Is this an active trial adoption?
+            if m["MOVEMENTTYPE"] == movement.ADOPTION and m["ISTRIAL"] == 1:
+                hastrial = True
+
+            # Is this a permanent foster?
+            if m["MOVEMENTTYPE"] == movement.FOSTER and m["ISPERMANENTFOSTER"] == 1:
+                haspermanentfoster = True
+
+            # If the animal is dead, and this is an open exit movement,
+            # set the diedoffshelter flag for reports
+            if a["DECEASEDDATE"] is not None and exitmovement:
+                diedoffshelter = True
+
+        # Is this movement an active reservation?
         if m["RETURNDATE"] is None and m["MOVEMENTTYPE"] == movement.NO_MOVEMENT \
             and m["MOVEMENTDATE"] is None and m["RESERVATIONCANCELLEDDATE"] == None and \
-            m["RESERVATIONDATE"] is not None:
-            has_reserve = True
-
-        # Does it have an active trial adoption?
-        if m["MOVEMENTTYPE"] == movement.ADOPTION and m["ISTRIAL"] == 1 and \
-            (m["RETURNDATE"] is None or m["RETURNDATE"] > now()):
-            has_trial = True
-
-        # Does it have an active permanent foster?
-        if m["MOVEMENTTYPE"] == movement.FOSTER and m["ISPERMANENTFOSTER"] == 1 and \
-            (m["RETURNDATE"] is None or m["RETURNDATE"] > now()):
-            has_permanent_foster = True
+            m["RESERVATIONDATE"] is not None and m["RESERVATIONDATE"] <= today:
+            hasreserve = True
 
         # Update the last time the animal was returned
         if m["RETURNDATE"] is not None:
-            if last_return is None: last_return = m["RETURNDATE"]
-            if m["RETURNDATE"] > last_return: last_return = m["RETURNDATE"]
+            if lastreturn is None: lastreturn = m["RETURNDATE"]
+            if m["RETURNDATE"] > lastreturn: lastreturn = m["RETURNDATE"]
 
-    # Override the other flags if the animal is dead
-    if a["DECEASEDDATE"] is not None:
-        on_shelter = False
-        has_trial = False
-        has_reserve = False
+        # Update the mostrecententrydate if this is a returned exit movement
+        # that is returned later than the current date we have
+        if exitmovement and m["RETURNDATE"] is not None and m["RETURNDATE"] > mostrecententrydate and m["RETURNDATE"] <= today:
+            mostrecententrydate = m["RETURNDATE"]
 
-    # Override the on shelter flag if the animal is a non-shelter animal
-    if a["NONSHELTERANIMAL"] == 1:
-        on_shelter = False
-
-    # Active movements only apply to shelter animals who have left and did not die on shelter
-    if not on_shelter and a["NONSHELTERANIMAL"] == 0 and a["DECEASEDDATE"] is None or \
-        (a["DECEASEDDATE"] is not None and a["DIEDOFFSHELTER"] == 1):
-        
-        # Find the latest movement for our animal
-        latest = get_latest_movement(dbo, animalid)
-
-        # We got one, load some data for storing on our animal record
-        if latest is not None:
-            activemovementid = latest["ID"]
-            activemovementdate = latest["MOVEMENTDATE"]
-            activemovementtype = latest["MOVEMENTTYPE"]
-            activemovementtypename = latest["MOVEMENTTYPENAME"]
-            activemovementreturn = latest["RETURNDATE"]
-            currentownerid = latest["CURRENTOWNERID"]
-            currentownername = latest["CURRENTOWNERNAME"]
-
-            # If the active movement is a foster and we're treating fosters
-            # as on shelter, we should mark the animal as on shelter
-            if latest["MOVEMENTTYPE"] == movement.FOSTER and configuration.foster_on_shelter(dbo):
-                on_shelter = True
-
-            # If the active movement is a retailer and we're treating retailers
-            # as on shelter, we should mark the animal as on shelter
-            if latest["MOVEMENTTYPE"] == movement.RETAILER and configuration.retailer_on_shelter(dbo):
-                on_shelter = True
-
-            # If the active movement is a trial adoption and we're treating
-            # trial adoptions as on shelter, we should mark accordingly
-            if latest["MOVEMENTTYPE"] == movement.ADOPTION and latest["ISTRIAL"] == 1 and configuration.trial_on_shelter(dbo):
-                on_shelter = True
-
-    # Calculate most recent entry date
-    mostrecententrydate = calc_most_recent_entry(dbo, animalid, a)
+    # Override the other flags if this animal is dead or non-shelter
+    if a["DECEASEDDATE"] is not None or a["NONSHELTERANIMAL"] == 1:
+        onshelter = False
+        hastrial = False
+        hasreserve = False
+        haspermanentfoster = False
 
     # Calculate location and qualified display location
     loc = ""
@@ -3264,28 +3220,30 @@ def update_animal_status(dbo, animalid, a = None, animalupdatebatch = None, diar
         qlocname = loc
 
     # Has anything actually changed?
-    if a["ARCHIVED"] == b2i(not on_shelter) and \
+    if a["ARCHIVED"] == b2i(not onshelter) and \
        a["ACTIVEMOVEMENTID"] == activemovementid and \
        a["ACTIVEMOVEMENTDATE"] == activemovementdate and \
        a["ACTIVEMOVEMENTTYPE"] == activemovementtype and \
        a["ACTIVEMOVEMENTRETURN"] == activemovementreturn and \
-       a["HASACTIVERESERVE"] == b2i(has_reserve) and \
-       a["HASTRIALADOPTION"] == b2i(has_trial) and \
-       a["HASPERMANENTFOSTER"] == b2i(has_permanent_foster) and \
+       a["DIEDOFFSHELTER"] == b2i(diedoffshelter) and \
+       a["HASACTIVERESERVE"] == b2i(hasreserve) and \
+       a["HASTRIALADOPTION"] == b2i(hastrial) and \
+       a["HASPERMANENTFOSTER"] == b2i(haspermanentfoster) and \
        a["MOSTRECENTENTRYDATE"] == mostrecententrydate and \
        a["DISPLAYLOCATION"] == qlocname:
         # No - don't do anything
         return
 
     # Update our in memory animal
-    a["ARCHIVED"] = b2i(not on_shelter)
+    a["ARCHIVED"] = b2i(not onshelter)
     a["ACTIVEMOVEMENTID"] = activemovementid
     a["ACTIVEMOVEMENTDATE"] = activemovementdate
     a["ACTIVEMOVEMENTTYPE"] = activemovementtype
     a["ACTIVEMOVEMENTRETURN"] = activemovementreturn
-    a["HASACTIVERESERVE"] = b2i(has_reserve)
-    a["HASTRIALADOPTION"] = b2i(has_trial)
-    a["HASPERMANENTFOSTER"] = b2i(has_permanent_foster)
+    a["DIEDOFFSHELTER"] = b2i(diedoffshelter)
+    a["HASACTIVERESERVE"] = b2i(hasreserve)
+    a["HASTRIALADOPTION"] = b2i(hastrial)
+    a["HASPERMANENTFOSTER"] = b2i(haspermanentfoster)
     a["MOSTRECENTENTRYDATE"] = mostrecententrydate
     a["DISPLAYLOCATION"] = qlocname
 
@@ -3295,30 +3253,32 @@ def update_animal_status(dbo, animalid, a = None, animalupdatebatch = None, diar
     # If we have an animal batch going, append to it
     if animalupdatebatch is not None:
         animalupdatebatch.append((
-            b2i(not on_shelter),
+            b2i(not onshelter),
             activemovementid,
             activemovementdate,
             activemovementtype,
             activemovementreturn,
+            b2i(diedoffshelter),
             qlocname,
-            b2i(has_reserve),
-            b2i(has_trial),
-            b2i(has_permanent_foster),
+            b2i(hasreserve),
+            b2i(hastrial),
+            b2i(haspermanentfoster),
             mostrecententrydate,
             animalid
         ))
     else:
         # Just do the DB update now
         db.execute(dbo, db.make_update_sql("animal", "ID=%d" % animalid, (
-            ( "Archived", db.di(b2i(not on_shelter)) ),
+            ( "Archived", db.di(b2i(not onshelter)) ),
             ( "ActiveMovementID", db.di(activemovementid) ),
             ( "ActiveMovementDate", db.dd(activemovementdate) ),
             ( "ActiveMovementType", db.di(activemovementtype) ),
             ( "ActiveMovementReturn", db.dd(activemovementreturn) ),
+            ( "DiedOffShelter", db.di(b2i(diedoffshelter)) ),
             ( "DisplayLocation", db.ds(qlocname) ),
-            ( "HasActiveReserve", db.di(b2i(has_reserve)) ),
-            ( "HasTrialAdoption", db.di(b2i(has_trial)) ),
-            ( "HasPermanentFoster", db.di(b2i(has_permanent_foster)) ),
+            ( "HasActiveReserve", db.di(b2i(hasreserve)) ),
+            ( "HasTrialAdoption", db.di(b2i(hastrial)) ),
+            ( "HasPermanentFoster", db.di(b2i(haspermanentfoster)) ),
             ( "MostRecentEntryDate", db.ddt(mostrecententrydate) )
             )))
 
@@ -4780,7 +4740,7 @@ def update_animal_figures_asilomar(dbo, year = 0):
    
     # U Died Or Lost in Shelter/Care
     sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DeceasedDate >= %s AND DeceasedDate <= %s AND DeceasedDate Is Not Null AND PutToSleep = 0 " \
+        "WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND DeceasedDate >= %s AND DeceasedDate <= %s AND DeceasedDate Is Not Null AND PutToSleep = 0 " \
         "GROUP BY SpeciesID" % (firstofyear, lastofyear)
     add_subtotal(sql, "Died Or Lost in Shelter/Care", "U")
 
@@ -5050,7 +5010,7 @@ def update_animal_figures_monthly_asilomar(dbo, month = 0, year = 0):
    
     # U Died Or Lost in Shelter/Care
     sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DeceasedDate >= %s AND DeceasedDate <= %s AND DeceasedDate Is Not Null AND PutToSleep = 0 " \
+        "WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND DeceasedDate >= %s AND DeceasedDate <= %s AND DeceasedDate Is Not Null AND PutToSleep = 0 " \
         "GROUP BY SpeciesID" % (firstofmonth, lastofmonth)
     add_subtotal(sql, "Died Or Lost in Shelter/Care", "U")
 
