@@ -3003,7 +3003,7 @@ def update_all_animal_statuses(dbo):
     for a in animals:
         update_animal_status(dbo, int(a["ID"]), a, movements, animalupdatebatch, diaryupdatebatch)
 
-    db.execute_many(dbo, "UPDATE animal SET " \
+    aff = db.execute_many(dbo, "UPDATE animal SET " \
         "Archived = %s, " \
         "ActiveMovementID = %s, " \
         "ActiveMovementDate = %s, " \
@@ -3016,7 +3016,7 @@ def update_all_animal_statuses(dbo):
         "HasPermanentFoster = %s, " \
         "MostRecentEntryDate = %s " \
         "WHERE ID = %s", animalupdatebatch)
-    aff = db.execute_many(dbo, "UPDATE diary SET LinkInfo = %s WHERE LinkType = %s AND LinkID = %s", diaryupdatebatch)
+    db.execute_many(dbo, "UPDATE diary SET LinkInfo = %s WHERE LinkType = %s AND LinkID = %s", diaryupdatebatch)
     al.debug("updated %d animal statuses (%d)" % (aff, len(animals)), "animal.update_all_animal_statuses", dbo)
 
 def update_foster_animal_statuses(dbo):
@@ -3035,7 +3035,7 @@ def update_foster_animal_statuses(dbo):
     for a in animals:
         update_animal_status(dbo, int(a["ID"]), a, movements, animalupdatebatch, diaryupdatebatch)
 
-    db.execute_many(dbo, "UPDATE animal SET " \
+    aff = db.execute_many(dbo, "UPDATE animal SET " \
         "Archived = %s, " \
         "ActiveMovementID = %s, " \
         "ActiveMovementDate = %s, " \
@@ -3048,7 +3048,7 @@ def update_foster_animal_statuses(dbo):
         "HasPermanentFoster = %s, " \
         "MostRecentEntryDate = %s " \
         "WHERE ID = %s", animalupdatebatch)
-    aff = db.execute_many(dbo, "UPDATE diary SET LinkInfo = %s WHERE LinkType = %s AND LinkID = %s", diaryupdatebatch)
+    db.execute_many(dbo, "UPDATE diary SET LinkInfo = %s WHERE LinkType = %s AND LinkID = %s", diaryupdatebatch)
     al.debug("updated %d fostered animal statuses (%d)" % (aff, len(animals)), "animal.update_foster_animal_statuses", dbo)
 
 def update_on_shelter_animal_statuses(dbo):
@@ -3067,7 +3067,7 @@ def update_on_shelter_animal_statuses(dbo):
     for a in animals:
         update_animal_status(dbo, int(a["ID"]), a, movements, animalupdatebatch, diaryupdatebatch)
 
-    db.execute_many(dbo, "UPDATE animal SET " \
+    aff = db.execute_many(dbo, "UPDATE animal SET " \
         "Archived = %s, " \
         "ActiveMovementID = %s, " \
         "ActiveMovementDate = %s, " \
@@ -3080,7 +3080,7 @@ def update_on_shelter_animal_statuses(dbo):
         "HasPermanentFoster = %s, " \
         "MostRecentEntryDate = %s " \
         "WHERE ID = %s", animalupdatebatch)
-    aff = db.execute_many(dbo, "UPDATE diary SET LinkInfo = %s WHERE LinkType = %s AND LinkID = %s", diaryupdatebatch)
+    db.execute_many(dbo, "UPDATE diary SET LinkInfo = %s WHERE LinkType = %s AND LinkID = %s", diaryupdatebatch)
     al.debug("updated %d on shelter animal statuses (%d)" % (aff, len(animals)), "animal.update_on_shelter_animal_statuses", dbo)
 
 def update_animal_status(dbo, animalid, a = None, movements = None, animalupdatebatch = None, diaryupdatebatch = None):
