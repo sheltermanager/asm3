@@ -20,9 +20,6 @@ $(function() {
                     { json_field: "TREATMENTNAME", post_field: "treatmentname", label: _("Name"), type: "text", validation: "notblank" },
                     { json_field: "DOSAGE", post_field: "dosage", label: _("Dosage"), type: "text", validation: "notblank" },
                     { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency" },
-                    { json_field: "STATUS", post_field: "status", label: _("Status"), type: "select",
-                        options: '<option value="0">' + _("Active") + '</option><option value="1">' 
-                            + _("Held") + '</option><option value="2">' + _("Completed") + '</option>' },
                     { post_field: "singlemulti", label: _("Frequency"), type: "select",  
                         options: '<option value="0">' + _("Single Treatment") + '</option>' +
                         '<option value="1" selected="selected">' + _("Multiple Treatments") + '</option>' },
@@ -58,7 +55,7 @@ $(function() {
                 idcolumn: "ID",
                 edit: function(row) {
                     tableform.fields_populate_from_json(dialog.fields, row);
-                    $("#singlemulti").select("value", row.TIMINGRULE);
+                    $("#singlemulti").select("value", (row.TOTALNUMBEROFTREATMENTS == 1 ? 0 : 1));
                     $("#treatmentrule").select("value", row.TREATMENTRULE);
                     medicalprofile.change_singlemulti();
                     medicalprofile.change_values();

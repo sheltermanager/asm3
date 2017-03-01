@@ -1,6 +1,8 @@
 40
 ================
 
+01/03/17 Medical profile, loading single/multi broken #150
+01/03/17 Status field does not belong on medical profile #150
 01/03/17 Remove died off shelter from move_deceased #152
 01/03/17 Add indexes for DiedOffShelter/NonShelterAnimal #151
 01/03/17 update_foster_animal_statuses is redudant with foster on shelter #152
