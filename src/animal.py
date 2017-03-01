@@ -3000,9 +3000,14 @@ def update_all_animal_statuses(dbo):
     movements = db.query(dbo, get_animal_movement_status_query(dbo) + " ORDER BY MovementDate DESC")
     animalupdatebatch = []
     diaryupdatebatch = []
+    cfg = {
+        "foster_on_shelter": configuration.foster_on_shelter(dbo),
+        "retailer_on_shelter": configuration.retailer_on_shelter(dbo),
+        "trial_on_shelter": configuration.trial_on_shelter(dbo)
+    }
 
     for a in animals:
-        update_animal_status(dbo, int(a["ID"]), a, movements, animalupdatebatch, diaryupdatebatch)
+        update_animal_status(dbo, int(a["ID"]), a, movements, animalupdatebatch, diaryupdatebatch, cfg)
 
     aff = db.execute_many(dbo, "UPDATE animal SET " \
         "Archived = %s, " \
@@ -3032,9 +3037,14 @@ def update_foster_animal_statuses(dbo):
         " WHERE AnimalID IN (SELECT ID FROM animal WHERE ActiveMovementType = 2) ORDER BY MovementDate DESC")
     animalupdatebatch = []
     diaryupdatebatch = []
+    cfg = {
+        "foster_on_shelter": configuration.foster_on_shelter(dbo),
+        "retailer_on_shelter": configuration.retailer_on_shelter(dbo),
+        "trial_on_shelter": configuration.trial_on_shelter(dbo)
+    }
 
     for a in animals:
-        update_animal_status(dbo, int(a["ID"]), a, movements, animalupdatebatch, diaryupdatebatch)
+        update_animal_status(dbo, int(a["ID"]), a, movements, animalupdatebatch, diaryupdatebatch, cfg)
 
     aff = db.execute_many(dbo, "UPDATE animal SET " \
         "Archived = %s, " \
@@ -3061,12 +3071,16 @@ def update_on_shelter_animal_statuses(dbo):
     animals = db.query(dbo, get_animal_status_query(dbo) + " WHERE a.Archived = 0 OR (a.Archived = 1 AND a.ActiveMovementReturn > %s)" % db.dd(cutoff))
     movements = db.query(dbo, get_animal_movement_status_query(dbo) + \
         " WHERE AnimalID IN (SELECT ID FROM animal WHERE Archived = 0 OR (Archived = 1 AND ActiveMovementReturn > %s)) ORDER BY MovementDate DESC" % db.dd(cutoff))
-
     animalupdatebatch = []
     diaryupdatebatch = []
+    cfg = {
+        "foster_on_shelter": configuration.foster_on_shelter(dbo),
+        "retailer_on_shelter": configuration.retailer_on_shelter(dbo),
+        "trial_on_shelter": configuration.trial_on_shelter(dbo)
+    }
 
     for a in animals:
-        update_animal_status(dbo, int(a["ID"]), a, movements, animalupdatebatch, diaryupdatebatch)
+        update_animal_status(dbo, int(a["ID"]), a, movements, animalupdatebatch, diaryupdatebatch, cfg)
 
     aff = db.execute_many(dbo, "UPDATE animal SET " \
         "Archived = %s, " \
@@ -3084,7 +3098,7 @@ def update_on_shelter_animal_statuses(dbo):
     db.execute_many(dbo, "UPDATE diary SET LinkInfo = %s WHERE LinkType = %s AND LinkID = %s", diaryupdatebatch)
     al.debug("updated %d on shelter animal statuses (%d)" % (aff, len(animals)), "animal.update_on_shelter_animal_statuses", dbo)
 
-def update_animal_status(dbo, animalid, a = None, movements = None, animalupdatebatch = None, diaryupdatebatch = None):
+def update_animal_status(dbo, animalid, a = None, movements = None, animalupdatebatch = None, diaryupdatebatch = None, cfg = None):
     """
     Updates the movement status fields on an animal record: 
         ActiveMovement*, HasActiveReserve, HasTrialAdoption, MostRecentEntryDate, 
@@ -3127,9 +3141,14 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
     mostrecententrydate = a["DATEBROUGHTIN"]
 
     # Just look these up once
-    cfg_foster_on_shelter = configuration.foster_on_shelter(dbo)
-    cfg_retailer_on_shelter = configuration.retailer_on_shelter(dbo)
-    cfg_trial_on_shelter = configuration.trial_on_shelter(dbo)
+    if cfg is None:
+        cfg_foster_on_shelter = configuration.foster_on_shelter(dbo)
+        cfg_retailer_on_shelter = configuration.retailer_on_shelter(dbo)
+        cfg_trial_on_shelter = configuration.trial_on_shelter(dbo)
+    else:
+        cfg_foster_on_shelter = cfg["foster_on_shelter"]
+        cfg_retailer_on_shelter = cfg["retailer_on_shelter"]
+        cfg_trial_on_shelter = cfg["trial_on_shelter"]
 
     for m in movements:
 
