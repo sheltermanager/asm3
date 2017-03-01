@@ -135,6 +135,7 @@ print "\\set ON_ERROR_STOP\nBEGIN;"
 addresses = {}
 suburbs = {}
 vacctype = {}
+medtype = {}
 animalnotes = {}
 
 owners = []
@@ -196,6 +197,10 @@ for row in asm.csv_to_list(PATH + "tblanimalvacc.csv"):
     vt = row["description"]
     vacctype[vc] = vt
     print "INSERT INTO vaccinationtype VALUES (%s, '%s');" % (vc, vt.replace("'", "`"))
+
+# lookupconsultmedications.csv
+for row in asm.csv_to_list(PATH + "lookupconsultmedications.csv"):
+    medtype[row["ID"]] = row["description"]
 
 # tbladdress.csv
 for row in asm.csv_to_list(PATH + "tbladdress.csv"):
@@ -337,10 +342,21 @@ for row in asm.csv_to_list(PATH + "tblanimalvettreatments.csv"):
         av.DateRequired = getdate(row["addDateTime"])
     av.DateOfVaccination = getdate(row["dateGiven"])
     a = findanimal(row["animalid"])
-    if a == None: continue
+    if a is None: continue
     av.AnimalID = a.ID
     av.VaccinationID = int(row["vacc"].strip())
     animalvaccinations.append(av)
+
+# tblmedications.csv
+for row in asm.csv_to_list(PATH + "tblmedications.csv"):
+    a = findanimal(row["animalID"])
+    if a is None: continue
+    startdate = getdate(row["datefrom"])
+    treatmentname = medtype[row["medicationID"]]
+    dosage = row["notes"]
+    comments = row["notes"]
+    if startdate is not None:
+        asm.animal_regimen_single(a.ID, startdate, treatmentname, dosage, comments)
 
 # tblreceiptentry.csv
 for row in asm.csv_to_list(PATH + "tblreceiptentry.csv"):
