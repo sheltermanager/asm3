@@ -167,10 +167,10 @@ SUBREPORT_PetcoOutcomes
 SELECT 
 CASE 
 WHEN a.SpeciesID = 1 AND ad.MovementDate Is Not NULL AND a.DateOfBirth < ad.MovementDate - INTERVAL '5 months' THEN 'Dogs'
-WHEN a.SpeciesID = 1 AND ad.DeceasedDate Is Not NULL AND a.DateOfBirth < ad.DeceasedDate - INTERVAL '5 months' THEN 'Dogs'
+WHEN a.SpeciesID = 1 AND a.DeceasedDate Is Not NULL AND a.DateOfBirth < a.DeceasedDate - INTERVAL '5 months' THEN 'Dogs'
 WHEN a.SpeciesID = 1 THEN 'Puppies'
 WHEN a.SpeciesID = 2 AND ad.MovementDate Is Not NULL AND a.DateOfBirth < ad.MovementDate - INTERVAL '5 months' THEN 'Cats'
-WHEN a.SpeciesID = 2 AND ad.DeceasedDate Is Not Null AND a.DateOfBirth < ad.DeceasedDate - INTERVAL '5 months' THEN 'Cats'
+WHEN a.SpeciesID = 2 AND a.DeceasedDate Is Not Null AND a.DateOfBirth < a.DeceasedDate - INTERVAL '5 months' THEN 'Cats'
 WHEN a.SpeciesID = 2 THEN 'Kittens' END AS AgeGroup,
 CASE WHEN ad.MovementType = 5 THEN 1 ELSE 0 END AS ReturnedToOwner,
 CASE WHEN ad.MovementType = 1 THEN 1 ELSE 0 END AS Adopted,
