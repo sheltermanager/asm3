@@ -1,6 +1,7 @@
 40
 ================
 
+01/03/17 Add indexes for DiedOffShelter/NonShelterAnimal #151
 01/03/17 update_foster_animal_statuses is redudant with foster on shelter #152
 01/03/17 Remove died off shelter tickbox, add it to banner #152
 01/03/17 Optimised update_animal_status to load movements/cfg on start #152

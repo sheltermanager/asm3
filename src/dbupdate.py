@@ -22,7 +22,7 @@ VERSIONS = (
     33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716, 33717, 33718, 
     33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904, 33905, 33906, 
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
-    34002, 34003, 34004, 34005, 34006
+    34002, 34003, 34004, 34005, 34006, 34007
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -356,10 +356,12 @@ def sql_structure(dbo):
     sql += index("animal_CurrentVetID", "animal", "CurrentVetID")
     sql += index("animal_DateBroughtIn", "animal", "DateBroughtIn")
     sql += index("animal_DeceasedDate", "animal", "DeceasedDate")
+    sql += index("animal_DiedOffShelter", "animal", "DiedOffShelter")
     sql += index("animal_EntryReasonID", "animal", "EntryReasonID")
     sql += index("animal_IdentichipNumber", "animal", "IdentichipNumber")
     sql += index("animal_LastChangedDate", "animal", "LastChangedDate")
     sql += index("animal_MostRecentEntryDate", "animal", "MostRecentEntryDate")
+    sql += index("animal_NonShelterAnimal", "animal", "NonShelterAnimal")
     sql += index("animal_OriginalOwnerID", "animal", "OriginalOwnerID")
     sql += index("animal_OwnersVetID", "animal", "OwnersVetID")
     sql += index("animal_PickupLocationID", "animal", "PickupLocationID")
@@ -4642,4 +4644,9 @@ def update_34006(dbo):
     s = configuration.publisher_presets(dbo)
     s += " includenonneutered"
     db.execute_dbupdate(dbo, "UPDATE configuration SET ItemValue = %s WHERE ItemName = 'PublisherPresets'" % db.ds(s))
+
+def update_34007(dbo):
+    # Add missing indexes to DiedOffShelter / NonShelterAnimal
+    add_index(dbo, "animal_DiedOffShelter", "animal", "DiedOffShelter")
+    add_index(dbo, "animal_NonShelterAnimal", "animal", "NonShelterAnimal")
 
