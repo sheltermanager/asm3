@@ -88,10 +88,16 @@ If you click the column heading again, it will be sorted in descending order
 instead.  Hold down shift while clicking to sort on multiple columns at the
 same time.
 
-A system setting allows the table headers to float at the top when you scroll
-the screen if desired. In addition, if you need to select any items in a table,
-tickboxes will appear down the left hand side. Any actions you can take on
-selected items in a table will be via buttons above the table.
+A system setting :menuselection:`Settings --> Options --> Display --> Keep
+table headers visible when scrolling` allows the table headers to float at the
+top when you scroll the screen if desired. 
+
+In addition, if you need to select any items in a table, tickboxes will appear
+down the left hand side. Any actions you can take on selected items in a table
+will be via buttons above the table.
+
+The keyboard shortcut :kbd:`CTRL + A` can be used to select all items in the
+currently visible table.
 
 Initial Setup
 -------------
