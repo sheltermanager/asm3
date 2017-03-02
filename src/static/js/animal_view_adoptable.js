@@ -11,7 +11,6 @@ var thumbnail_template = [
             'class="asm3-adoptable-link" ',
             'href="{baseurl}/service?account={account}&method=animal_view&animalid={animalid}">',
         '<img class="asm3-adoptable-thumbnail" ',
-            'height="100px" ',
             'src="{baseurl}/service?account={account}&method=animal_thumbnail&animalid={animalid}" />',
         '<br />',
         '<span class="asm3-adoptable-name">{animalname}</span>',
