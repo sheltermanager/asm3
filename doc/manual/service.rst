@@ -47,6 +47,15 @@ is a 1-based count and can be used with the "WebsiteImageCount" property
 included in animal records (which contains the number of images an animal has)
 to programatically grab all the images for a particular animal.
 
+**animal_thumbnail**
+
+Returns an animal's preferred image as a thumbnail. Send the id of the animal::
+    
+    http://localhost:5000/service?method=animal_thumbnail&animalid=520
+
+The thumbnail will be sized to whatever the main application is using
+(typically 100 pixels along the longest side).
+
 **animal_view**
 
 Returns a webpage with information for one animal, constructed from the animal_view
@@ -62,9 +71,9 @@ it is this service call that the system redirects you to.
 
 Returns a javascript file that when executed injects thumbnails of all
 adoptable animals into the page with links to the animal_view service call.
-The page must contain a div called "asm3-adoptables", where the adoptable
-animal thumbnails will appear. If div#asm3-adoptables cannot be found, a popup
-error message will appear.
+The page must contain a div with an id attribute of "asm3-adoptables", where
+the adoptable animal thumbnails are to appear. If div#asm3-adoptables cannot be
+found, a popup error message will appear.
 
 Here's an example page showing how to inject your adoptable animal list::
 

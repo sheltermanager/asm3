@@ -11,8 +11,8 @@ var thumbnail_template = [
             'class="asm3-adoptable-link" ',
             'href="{baseurl}/service?account={account}&method=animal_view&animalid={animalid}">',
         '<img class="asm3-adoptable-thumbnail" ',
-            'height="120px" ',
-            'src="{baseurl}/service?account={account}&method=animal_image&animalid={animalid}" />',
+            'height="100px" ',
+            'src="{baseurl}/service?account={account}&method=animal_thumbnail&animalid={animalid}" />',
         '<br />',
         '<span class="asm3-adoptable-name">{animalname}</span>',
         '</a>',
@@ -58,7 +58,7 @@ function onReady( event ) {
 }
 
 // Only do something if we've been setup
-if (baseurl != "{TOKEN_BASE_URL}") {
+if (baseurl.indexOf("{TOKEN") == -1) {
     if (document.addEventListener) {
         document.addEventListener("DOMContentLoaded", onReady, false);
         // Use window.onload as fallback

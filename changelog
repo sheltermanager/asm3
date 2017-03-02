@@ -1,6 +1,8 @@
 40
 ================
 
+02/03/17 Make thumbnail default size 100x100 instead so they can be browser scaled
+02/03/17 Add animal_thumbnail service call #24
 02/03/17 Add animal_view_adoptable_js service call #24
 01/03/17 Medical profile, loading single/multi broken #150
 01/03/17 Status field does not belong on medical profile #150

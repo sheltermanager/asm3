@@ -657,10 +657,10 @@ def rotate_image(imagedata, clockwise = True):
 
 def scale_thumbnail(imagedata):
     """
-    Scales the given imagedata down to our thumbnail size 
-    (70px on the longest side)
+    Scales the given imagedata down to slightly larger than our thumbnail size 
+    (150px on the longest side)
     """
-    return scale_image(imagedata, "70x70")
+    return scale_image(imagedata, "150x150")
 
 def scale_image_file(inimage, outimage, resizespec):
     """
