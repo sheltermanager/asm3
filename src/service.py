@@ -277,7 +277,6 @@ def handler(post, path, remoteip, referer, querystring):
                 return set_cached_response(cache_key, "image/jpeg", 86400, 120, dbfs.get_string(dbo, mm[0]["MEDIANAME"]))
 
     elif method =="animal_thumbnail":
-        hotlink_protect("animal_thumbnail", referer)
         if animalid == "" or utils.cint(animalid) == 0:
             al.error("animal_thumbnail failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
             return ("text/plain", 0, "ERROR: Invalid animalid")
