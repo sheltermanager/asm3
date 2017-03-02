@@ -1,0 +1,294 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Appendix: Integrating with Your Website &mdash; ASM 40u documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="ASM 40u documentation" href="index.html"/>
+        <link rel="next" title="Appendix: Online Form import fields" href="onlineformfields.html"/>
+        <link rel="prev" title="Appendix: Entity Relationship Diagrams" href="relationships.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ASM
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                40u
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="foreword.html">Foreword</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="searching.html">Search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="animals.html">Animals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="people.html">People</a></li>
+<li class="toctree-l1"><a class="reference internal" href="movements.html">Movements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documents.html">Documents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="animalcontrol.html">Animal Control</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lostandfound.html">Lost and Found</a></li>
+<li class="toctree-l1"><a class="reference internal" href="waitinglist.html">Waiting List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generaldiary.html">General Diary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="accounts.html">Accounts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stockcontrol.html">Stock Control</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="litters.html">Litters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rota.html">Rota</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mobile.html">Mobile Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="service.html">Service API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="publishing.html">Publishing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mailmerge.html">Mail Merge Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="options.html">Options</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Appendix: Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csvimportfields.html">Appendix: CSV file import fields</a></li>
+<li class="toctree-l1"><a class="reference internal" href="databasetables.html">Appendix: Database Tables/Columns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="relationships.html">Appendix: Entity Relationship Diagrams</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Appendix: Integrating with Your Website</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#javascript-include">Javascript Include</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#wordpress">Wordpress</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#static-html-website">Static HTML Website</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#service-api-data-calls">Service API Data Calls</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="onlineformfields.html">Appendix: Online Form import fields</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wordkeys.html">Appendix: Wordkeys</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">ASM</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Appendix: Integrating with Your Website</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/website.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="appendix-integrating-with-your-website">
+<span id="websiteintegration"></span><h1>Appendix: Integrating with Your Website<a class="headerlink" href="#appendix-integrating-with-your-website" title="Permalink to this headline">¶</a></h1>
+<p>ASM offers a number of methods of integrating your adoptable animal data with
+your website.</p>
+<div class="section" id="javascript-include">
+<h2>Javascript Include<a class="headerlink" href="#javascript-include" title="Permalink to this headline">¶</a></h2>
+<p>The animal_view_adoptable_js method of ASM&#8217;s <a class="reference internal" href="service.html#serviceapi"><span class="std std-ref">Service API</span></a>
+can generate a list of adoptable animal thumbnails for embedding straight into
+a div container on a page of your website.</p>
+<p>Clicking on the thumbnails will call the animal_view method of the Service API
+for the animal. You can edit the HTML of how that page looks and what
+information appears on it by editing the animal_view template under
+<span class="menuselection">Publishing ‣ Edit HTML publishing templates</span></p>
+<p>The code snippet required to embed the adoptable animal list in a page on your
+website looks like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;asm3-adoptables&quot;</span> <span class="o">/&gt;</span>
+<span class="o">&lt;</span><span class="n">script</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;https://sheltermanager.com/service/asmservice?method=animal_view_adoptable_js&amp;account=ACCOUNT&quot;</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>This example is for sheltermanager.com, substitute your own URL in the script
+src if you are hosting ASM yourself. Also, if you are using sheltermanager.com,
+change ACCOUNT in the src for your sheltermanager.com account.</p>
+<div class="section" id="wordpress">
+<h3>Wordpress<a class="headerlink" href="#wordpress" title="Permalink to this headline">¶</a></h3>
+<p>To embed your adoptable animals in a Wordpress page, edit the page and add the
+javascript include snippet shown above where you&#8217;d like your adoptable animals
+to appear on the page:</p>
+<img alt="_images/wordpress_1.png" src="_images/wordpress_1.png" />
+<img alt="_images/wordpress_2.png" src="_images/wordpress_2.png" />
+</div>
+</div>
+<div class="section" id="static-html-website">
+<h2>Static HTML Website<a class="headerlink" href="#static-html-website" title="Permalink to this headline">¶</a></h2>
+<p>ASM can generate a set of static pages from your data with its
+<a class="reference internal" href="publishing.html#htmlftppublisher"><span class="std std-ref">HTML/FTP Publishing</span></a>. You can configure it under
+<span class="menuselection">Publishing ‣ Set Publishing Options ‣ HTML/FTP Publisher</span>.</p>
+<p>The HTML/FTP publisher constructs the static pages using HTML templates, which
+you can create under <span class="menuselection">Publishing ‣ Edit HTML publishing
+templates</span></p>
+<p>Once the site has been created, you can either link directly to it, or embed it
+on your website with an iframe tag.</p>
+<p>For example, to embed a static HTML website generated by sheltermanager.com
+(don&#8217;t forget to swap ACCOUNT for your sheltermanager.com account number):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">iframe</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;https://public.sheltermanager.com/animals/ACCOUNT&quot;</span> <span class="n">width</span><span class="o">=</span><span class="s2">&quot;100%&quot;</span> <span class="n">height</span><span class="o">=</span><span class="s2">&quot;600px&quot;</span> <span class="o">/&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="service-api-data-calls">
+<h2>Service API Data Calls<a class="headerlink" href="#service-api-data-calls" title="Permalink to this headline">¶</a></h2>
+<p>Finally, you can use ASM&#8217;s Service API to retrieve the adoptable animal
+information and images programatically yourself and use that information to
+construct a site in any way you wish.</p>
+<p>More information can be found in the section on the <a class="reference internal" href="service.html#serviceapi"><span class="std std-ref">Service API</span></a></p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="onlineformfields.html" class="btn btn-neutral float-right" title="Appendix: Online Form import fields" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="relationships.html" class="btn btn-neutral" title="Appendix: Entity Relationship Diagrams" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Sheltermanager, Ltd.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'40u',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
