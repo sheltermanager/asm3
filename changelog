@@ -1,6 +1,7 @@
 40
 ================
 
+02/03/17 Add species/age/gender selector to animal_view_adoptable_js #24
 02/03/17 Make thumbnail default size 150x150 instead so they can be browser scaled
 02/03/17 Add animal_thumbnail service call #24
 02/03/17 Add animal_view_adoptable_js service call #24
