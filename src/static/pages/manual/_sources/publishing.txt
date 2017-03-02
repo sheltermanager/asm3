@@ -83,6 +83,8 @@ The All Publishers tab allows you to set options common to all internet publishe
   animal description before it is published. Note that this does not apply
   to courtesy listings, allowing you to add additional contact info.
 
+.. _htmlftppublisher:
+
 HTML/FTP Publishing
 -------------------
 

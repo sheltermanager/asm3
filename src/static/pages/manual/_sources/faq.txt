@@ -46,6 +46,11 @@ record, you will see the words "Not for adoption" in the banner at the top of
 the record and directly underneath that in brackets the rule that has excluded
 the animal from being adoptable.
 
+How do I integrate my adoptable animals with my website?
+--------------------------------------------------------
+
+See :ref:`websiteintegration`.
+
 Why do I get "page 1 of 1" in the header when I print documents?
 ----------------------------------------------------------------
 

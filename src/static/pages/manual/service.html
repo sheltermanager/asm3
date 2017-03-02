@@ -108,12 +108,13 @@
 <li class="toctree-l1"><a class="reference internal" href="mailmerge.html">Mail Merge Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="options.html">Options</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wordkeys.html">Appendix: Wordkeys</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Appendix: Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csvimportfields.html">Appendix: CSV file import fields</a></li>
 <li class="toctree-l1"><a class="reference internal" href="databasetables.html">Appendix: Database Tables/Columns</a></li>
 <li class="toctree-l1"><a class="reference internal" href="relationships.html">Appendix: Entity Relationship Diagrams</a></li>
-<li class="toctree-l1"><a class="reference internal" href="csvimportfields.html">Appendix: CSV file import fields</a></li>
+<li class="toctree-l1"><a class="reference internal" href="website.html">Appendix: Integrating with Your Website</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onlineformfields.html">Appendix: Online Form import fields</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wordkeys.html">Appendix: Wordkeys</a></li>
 </ul>
 
             
@@ -159,7 +160,7 @@
            <div itemprop="articleBody">
             
   <div class="section" id="service-api">
-<h1>Service API<a class="headerlink" href="#service-api" title="Permalink to this headline">¶</a></h1>
+<span id="serviceapi"></span><h1>Service API<a class="headerlink" href="#service-api" title="Permalink to this headline">¶</a></h1>
 <p>ASM includes a service API that you can call from other software via HTTP. To
 call the API you construct a URL to the service controller. The service
 controller is /service, so if you are accessing a local ASM from your local
@@ -204,18 +205,18 @@ to programatically grab all the images for a particular animal.</p>
 <p>The thumbnail will be sized to whatever the main application is using
 (typically 150 pixels along the longest side).</p>
 <p><strong>animal_view</strong></p>
-<p>Returns a webpage with information for one animal, constructed from the animal_view
-HTML publishing template (see <span class="menuselection">Publishing-&gt;Edit HTML publishing
-templates</span>). Pass the id of the animal:</p>
+<p>Returns a webpage with information for one animal, constructed from the
+animal_view HTML publishing template (editable at <span class="menuselection">Publishing -&gt;
+Edit HTML publishing templates</span>). Pass the id of the animal:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=animal_view&amp;animalid=520
 </pre></div>
 </div>
-<p>When you use <span class="menuselection">Share-&gt;Link to this animal</span> on an animal&#8217;s record,
+<p>When you use <span class="menuselection">Share ‣ Link to this animal</span> on an animal&#8217;s record,
 it is this service call that the system redirects you to.</p>
 <p><strong>animal_view_adoptable_js</strong></p>
 <p>Returns a javascript file that when executed injects thumbnails of all
-adoptable animals into the page with links to the animal_view service call.
-The page must contain a div with an id attribute of &#8220;asm3-adoptables&#8221;, where
+adoptable animals into the page with links to the animal_view service call.</p>
+<p>The page must contain a div with an id attribute of &#8220;asm3-adoptables&#8221;, where
 the adoptable animal thumbnails are to appear. If div#asm3-adoptables cannot be
 found, a popup error message will appear.</p>
 <p>Here&#8217;s an example page showing how to inject your adoptable animal list:</p>
@@ -232,10 +233,10 @@ found, a popup error message will appear.</p>
 &lt;/html&gt;
 </pre></div>
 </div>
-<p>The output is unstyled and very basic - just a thumbnail with a name/link below
-and two lines of brief text containing some basic information about the animal.
-You can style this information by adding CSS to your stylesheets for the
-following classes:</p>
+<p>The output is unstyled - just a thumbnail with a name/link below and two lines
+of brief text containing some basic information about the animal.  You can
+style this information by adding CSS to your stylesheets for the following
+classes:</p>
 <ul class="simple">
 <li>asm3-adoptable-item : The div surrounding each item</li>
 <li>asm3-adoptable-link : The a tag enclosing the thumbnail and animal name</li>

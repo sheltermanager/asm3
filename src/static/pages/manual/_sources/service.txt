@@ -1,3 +1,5 @@
+.. _serviceapi:
+
 Service API
 ===========
 
@@ -58,19 +60,20 @@ The thumbnail will be sized to whatever the main application is using
 
 **animal_view**
 
-Returns a webpage with information for one animal, constructed from the animal_view
-HTML publishing template (see :menuselection:`Publishing->Edit HTML publishing
-templates`). Pass the id of the animal::
+Returns a webpage with information for one animal, constructed from the
+animal_view HTML publishing template (editable at :menuselection:`Publishing ->
+Edit HTML publishing templates`). Pass the id of the animal::
 
     http://localhost:5000/service?method=animal_view&animalid=520
 
-When you use :menuselection:`Share->Link to this animal` on an animal's record, 
+When you use :menuselection:`Share --> Link to this animal` on an animal's record, 
 it is this service call that the system redirects you to.
 
 **animal_view_adoptable_js**
 
 Returns a javascript file that when executed injects thumbnails of all
 adoptable animals into the page with links to the animal_view service call.
+
 The page must contain a div with an id attribute of "asm3-adoptables", where
 the adoptable animal thumbnails are to appear. If div#asm3-adoptables cannot be
 found, a popup error message will appear.
@@ -89,10 +92,10 @@ Here's an example page showing how to inject your adoptable animal list::
     </body>
     </html>
 
-The output is unstyled and very basic - just a thumbnail with a name/link below
-and two lines of brief text containing some basic information about the animal.
-You can style this information by adding CSS to your stylesheets for the
-following classes:
+The output is unstyled - just a thumbnail with a name/link below and two lines
+of brief text containing some basic information about the animal.  You can
+style this information by adding CSS to your stylesheets for the following
+classes:
 
 * asm3-adoptable-item : The div surrounding each item
 * asm3-adoptable-link : The a tag enclosing the thumbnail and animal name
