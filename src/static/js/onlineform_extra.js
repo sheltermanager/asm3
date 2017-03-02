@@ -6,11 +6,6 @@
 
 $(document).ready(function() {
 
-    // If this script is not being loaded from the context of a form and
-    // the IS_FORM variable is therefore not defined, do nothing
-    // to prevent reference errors on globals like DATE_FORMAT
-    if (typeof IS_FORM === "undefined") { return; }
-
     var is_safari = navigator.userAgent.indexOf("Safari") > -1 && navigator.userAgent.indexOf("Chrome") == -1;
     var is_ios = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     // NB: None of this js will load for IE8 and older due to JQuery 2 being required

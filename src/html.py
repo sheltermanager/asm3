@@ -119,7 +119,8 @@ def asm_script_tags(path):
     jsfiles = [ "common.js", "common_map.js", "common_widgets.js", "common_animalchooser.js",
         "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "header.js",
         "header_additional.js", "header_edit_header.js" ]
-    exclude = [ "document_edit.js", ]
+    exclude = [ "animal_view_adoptable.js", "document_edit.js", "mobile.js", "mobile_sign.js", 
+        "onlineform_extra.js" ]
     # Read our available js files and append them to this list, not including ones
     # we've explicitly added above (since they are in correct load order)
     for i in os.listdir(path + "static/js"):
@@ -138,7 +139,8 @@ def asm_rollup_scripts(path):
     jsfiles = [ "common.js", "common_map.js", "common_widgets.js", "common_animalchooser.js",
         "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "header.js",
         "header_additional.js", "header_edit_header.js" ]
-    exclude = [ "document_edit.js", ]
+    exclude = [ "animal_view_adoptable.js", "document_edit.js", "mobile.js", "mobile_sign.js", 
+        "onlineform_extra.js" ]
     # Read our available js files and append them to this list, not including ones
     # we've explicitly added above (since they are in correct load order)
     for i in os.listdir(path + "static/js"):

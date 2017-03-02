@@ -56,11 +56,9 @@ function onReady( event ) {
     inject_adoptables();
 }
 
-// Only do something if we've been setup
-if (baseurl.indexOf("{TOKEN") == -1) {
-    if (document.addEventListener) {
-        document.addEventListener("DOMContentLoaded", onReady, false);
-        // Use window.onload as fallback
-        window.addEventListener("load", onReady);
-    }
+if (document.addEventListener) {
+    document.addEventListener("DOMContentLoaded", onReady, false);
+    // Use window.onload as fallback
+    window.addEventListener("load", onReady);
 }
+

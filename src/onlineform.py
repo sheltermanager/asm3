@@ -101,7 +101,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
         # references into the header block
         df = i18n.get_display_date_format(l)
         df = df.replace("%Y", "yy").replace("%m", "mm").replace("%d", "dd")
-        extra = "<script>\nIS_FORM = true; DATE_FORMAT = '%s';\n</script>\n" % df
+        extra = "<script>\nDATE_FORMAT = '%s';\n</script>\n" % df
         extra += html.css_tag(JQUERY_UI_CSS.replace("%(theme)s", "smoothness")) + \
             html.css_tag(ASMSELECT_CSS) + \
             html.script_tag(JQUERY_JS) + \
