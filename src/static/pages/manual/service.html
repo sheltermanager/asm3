@@ -196,6 +196,13 @@ that parameter is omitted), seq=2 returns the second available image, etc. seq
 is a 1-based count and can be used with the &#8220;WebsiteImageCount&#8221; property
 included in animal records (which contains the number of images an animal has)
 to programatically grab all the images for a particular animal.</p>
+<p><strong>animal_thumbnail</strong></p>
+<p>Returns an animal&#8217;s preferred image as a thumbnail. Send the id of the animal:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=animal_thumbnail&amp;animalid=520
+</pre></div>
+</div>
+<p>The thumbnail will be sized to whatever the main application is using
+(typically 150 pixels along the longest side).</p>
 <p><strong>animal_view</strong></p>
 <p>Returns a webpage with information for one animal, constructed from the animal_view
 HTML publishing template (see <span class="menuselection">Publishing-&gt;Edit HTML publishing
@@ -208,9 +215,9 @@ it is this service call that the system redirects you to.</p>
 <p><strong>animal_view_adoptable_js</strong></p>
 <p>Returns a javascript file that when executed injects thumbnails of all
 adoptable animals into the page with links to the animal_view service call.
-The page must contain a div called &#8220;asm3-adoptables&#8221;, where the adoptable
-animal thumbnails will appear. If div#asm3-adoptables cannot be found, a popup
-error message will appear.</p>
+The page must contain a div with an id attribute of &#8220;asm3-adoptables&#8221;, where
+the adoptable animal thumbnails are to appear. If div#asm3-adoptables cannot be
+found, a popup error message will appear.</p>
 <p>Here&#8217;s an example page showing how to inject your adoptable animal list:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>&lt;!DOCTYPE html&gt;
 &lt;html&gt;

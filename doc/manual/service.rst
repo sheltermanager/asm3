@@ -54,7 +54,7 @@ Returns an animal's preferred image as a thumbnail. Send the id of the animal::
     http://localhost:5000/service?method=animal_thumbnail&animalid=520
 
 The thumbnail will be sized to whatever the main application is using
-(typically 100 pixels along the longest side).
+(typically 150 pixels along the longest side).
 
 **animal_view**
 
