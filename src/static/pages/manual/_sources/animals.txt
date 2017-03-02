@@ -181,13 +181,10 @@ is deceased. The most important field is the deceased date, as a value in this
 field is used by the system to indicate that the animal is dead. 
 
 In addition, an icon will be shown at the side of the death tab if the animal
-is dead. The animal's location will also appear as Deceased with the reason if
-set.
-
-A special field “Died Off Shelter” can be set if you know a particular animal
-that is located off the shelter has died. This ensures that the animal's death
-is not included in figures reports, but still shows the animal as dead
-everywhere. 
+is dead. The animal's location will also appear as Deceased with the reason.
+The reason will be shown as "Died off shelter" if the animal was not in the
+care of the shelter at the time of its death, and the death will not be
+included in any figures or reports.
 
 Diet
 ^^^^

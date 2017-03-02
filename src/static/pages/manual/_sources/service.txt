@@ -47,6 +47,51 @@ is a 1-based count and can be used with the "WebsiteImageCount" property
 included in animal records (which contains the number of images an animal has)
 to programatically grab all the images for a particular animal.
 
+**animal_view**
+
+Returns a webpage with information for one animal, constructed from the animal_view
+HTML publishing template (see :menuselection:`Publishing->Edit HTML publishing
+templates`). Pass the id of the animal::
+
+    http://localhost:5000/service?method=animal_view&animalid=520
+
+When you use :menuselection:`Share->Link to this animal` on an animal's record, 
+it is this service call that the system redirects you to.
+
+**animal_view_adoptable_js**
+
+Returns a javascript file that when executed injects thumbnails of all
+adoptable animals into the page with links to the animal_view service call.
+The page must contain a div called "asm3-adoptables", where the adoptable
+animal thumbnails will appear. If div#asm3-adoptables cannot be found, a popup
+error message will appear.
+
+Here's an example page showing how to inject your adoptable animal list::
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <title>Adoptable Animals</title>
+    <body>
+    
+    <div id="asm3-adoptables" />
+    <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
+
+    </body>
+    </html>
+
+The output is unstyled and very basic - just a thumbnail with a name/link below
+and two lines of brief text containing some basic information about the animal.
+You can style this information by adding CSS to your stylesheets for the
+following classes:
+
+* asm3-adoptable-item : The div surrounding each item
+* asm3-adoptable-link : The a tag enclosing the thumbnail and animal name
+* asm3-adoptable-thumbnail : The thumbnail img tag
+* asm3-adoptable-name : The animal's name
+* asm3-adoptable-tagline : The brief animal information
+* asm3-adoptable-age : The animal's age
+
 **extra_image**
 
 Returns an extra image (see :menuselection:`Settings->Reports->Extra Images`).

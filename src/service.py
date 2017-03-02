@@ -38,9 +38,7 @@ AUTH_METHODS = [
 ]
 
 def flood_protect(method, remoteip, ttl, message = ""):
-    """
-    Checks to see if we've had a request for method from 
-    remoteip since ttl seconds ago.
+    """ Checks to see if we've had a request for method from remoteip since ttl seconds ago.
     If we haven't, we record this as the last time we saw a request
     from this ip address for that method. Otherwise, an error is thrown.
     method: The service method we're protecting
@@ -58,6 +56,7 @@ def flood_protect(method, remoteip, ttl, message = ""):
         raise utils.ASMError(message)
 
 def hotlink_protect(method, referer):
+    """ Protect a method from having any referer other than the one we set """
     domains = IMAGE_HOTLINKING_ONLY_FROM_DOMAIN.split(",")
     fromhldomain = False
     for d in domains:
@@ -66,8 +65,7 @@ def hotlink_protect(method, referer):
         raise utils.ASMPermissionError("Hotlinking to %s from %s is forbidden" % (method, referer))
 
 def get_cached_response(cache_key):
-    """
-    Gets a service call response from the cache based on its key.
+    """ Gets a service call response from the cache based on its key.
     If no entry is found, None is returned.
     """
     if not CACHE_SERVICE_RESPONSES: return None
@@ -77,10 +75,8 @@ def get_cached_response(cache_key):
     return response
 
 def set_cached_response(cache_key, mime, clientage, serverage, content):
-    """
-    Sets a service call response in the cache and returns
-    the response so methods can use this as a passthrough
-    to return the response.
+    """ Sets a service call response in the cache and returns it
+    methods can use this as a passthrough to return the response.
     cache_key: The constructed cache key from the parameters
     mime: The mime type to return in the response
     clientage: The max-age to set for the client to cache the response (seconds)
@@ -94,9 +90,7 @@ def set_cached_response(cache_key, mime, clientage, serverage, content):
     return response
 
 def sign_document_page(dbo, mid):
-    """
-    Outputs a page that allows signing of document mid
-    """
+    """ Outputs a page that allows signing of document with media id mid"""
     l = dbo.locale
     if media.has_signature(dbo, mid):
         return "<!DOCTYPE html><head><title>%s</title></head>" \
@@ -191,10 +185,10 @@ def sign_document_page(dbo, mid):
     h.append("</body></html>")
     return "\n".join(h)
 
-def handler(post, remoteip, referer, querystring):
-    """
-    Handles the various service method types.
+def handler(post, path, remoteip, referer, querystring):
+    """ Handles the various service method types.
     post:        The GET/POST parameters 
+    path:        The current system path/code.PATH
     remoteip:    The IP of the caller
     referer:     The referer HTTP header
     querystring: The complete querystring
@@ -245,6 +239,7 @@ def handler(post, remoteip, referer, querystring):
         return ("text/plain", 0, "ERROR: Service API is disabled")
 
     # Do any database updates need doing in this db?
+    dbo.installpath = path
     if dbupdate.check_for_updates(dbo):
         dbupdate.perform_updates(dbo)
 
@@ -287,6 +282,9 @@ def handler(post, remoteip, referer, querystring):
             return ("text/plain", 0, "ERROR: Invalid animalid")
         else:
             return set_cached_response(cache_key, "text/html", 120, 120, publish.get_animal_view(dbo, int(animalid)))
+
+    elif method == "animal_view_adoptable_js":
+        return set_cached_response(cache_key, "application/javascript", 120, 120, publish.get_animal_view_adoptable_js(dbo))
 
     elif method =="dbfs_image":
         hotlink_protect("dbfs_image", referer)

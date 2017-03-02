@@ -418,9 +418,7 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1", 
     return sql
 
 def get_animal_view(dbo, animalid):
-    """
-    Constructs the animal view page to the template.
-    """
+    """ Constructs the animal view page to the template. """
     # If the animal is not adoptable, bail out
     if not is_adoptable(dbo, animalid):
         raise utils.ASMPermissionError("animal is not adoptable")
@@ -452,6 +450,16 @@ def get_animal_view(dbo, animalid):
     s = wordprocessor.substitute_tags(s, tags, True, "$$", "$$")
     s = s.replace("**le**", "<br />")
     return s
+
+def get_animal_view_adoptable_js(dbo):
+    """ Returns js that outputs adoptable animals into a host div """
+    js = utils.read_text_file("%s/static/js/animal_view_adoptable.js" % dbo.installpath)
+    # inject adoptable animals, account and base url
+    pc = PublishCriteria(configuration.publisher_presets(dbo))
+    js = js.replace("{TOKEN_ACCOUNT}", dbo.database)
+    js = js.replace("{TOKEN_BASE_URL}", BASE_URL)
+    js = js.replace("\"{TOKEN_ADOPTABLES}\"", html.json(get_animal_data(dbo, pc, True)))
+    return js
 
 def get_adoption_status(dbo, a):
     """
