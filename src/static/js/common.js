@@ -263,7 +263,7 @@
          */
         get_error_response: function(jqxhr, textstatus, response) {
             var errmessage = String(response);
-            if (jqxhr && jqxhr.responseText && jqxhr.responseText.indexOf("Validation") != -1) {
+            if (jqxhr && jqxhr.responseText && jqxhr.responseText.indexOf("Error</h1>") != -1) {
                 errmessage = jqxhr.responseText;
                 if (errmessage.indexOf("<p>") != -1) {
                     errmessage = errmessage.substring(errmessage.indexOf("<p>")+3, errmessage.indexOf("</p>")+4);

@@ -1,6 +1,7 @@
 40
 ================
 
+03/03/17 Detect all ASM/HTTPError subclasses, not just validation #3
 03/03/17 Add en_BG locale for English/Bulgaria
 03/03/17 Increased app thumbnails to 85px, removed redundant IE CSS expression()
 02/03/17 Add species/age/gender selector to animal_view_adoptable_js #24
