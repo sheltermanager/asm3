@@ -103,7 +103,20 @@
 <li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rota.html">Rota</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mobile.html">Mobile Interface</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Service API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Service API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#animal-image">animal_image</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#animal-thumbnail">animal_thumbnail</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#animal-view">animal_view</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#animal-view-adoptable-js">animal_view_adoptable_js</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#csv-mail-and-csv-report">csv_mail and csv_report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#extra-image">extra_image</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#html-report">html_report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#json-adoptable-animals-and-xml-adoptable-animals">json_adoptable_animals and xml_adoptable_animals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#json-recent-adoptions-and-xml-recent-adoptions">json_recent_adoptions and xml_recent_adoptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#json-shelter-animals-and-xml-shelter-animals">json_shelter_animals and xml_shelter_animals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rss-timeline">rss_timeline</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="publishing.html">Publishing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mailmerge.html">Mail Merge Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
@@ -186,7 +199,8 @@ your data or view anything you don&#8217;t want them to.</li>
 called.</li>
 </ul>
 <p>The following method values are supported:</p>
-<p><strong>animal_image</strong></p>
+<div class="section" id="animal-image">
+<h2>animal_image<a class="headerlink" href="#animal-image" title="Permalink to this headline">¶</a></h2>
 <p>Returns an animal&#8217;s preferred image. Send the id of the animal:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=animal_image&amp;animalid=520&amp;seq=1
 </pre></div>
@@ -197,14 +211,18 @@ that parameter is omitted), seq=2 returns the second available image, etc. seq
 is a 1-based count and can be used with the &#8220;WebsiteImageCount&#8221; property
 included in animal records (which contains the number of images an animal has)
 to programatically grab all the images for a particular animal.</p>
-<p><strong>animal_thumbnail</strong></p>
+</div>
+<div class="section" id="animal-thumbnail">
+<h2>animal_thumbnail<a class="headerlink" href="#animal-thumbnail" title="Permalink to this headline">¶</a></h2>
 <p>Returns an animal&#8217;s preferred image as a thumbnail. Send the id of the animal:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=animal_thumbnail&amp;animalid=520
 </pre></div>
 </div>
 <p>The thumbnail will be sized to whatever the main application is using
 (typically 150 pixels along the longest side).</p>
-<p><strong>animal_view</strong></p>
+</div>
+<div class="section" id="animal-view">
+<h2>animal_view<a class="headerlink" href="#animal-view" title="Permalink to this headline">¶</a></h2>
 <p>Returns a webpage with information for one animal, constructed from the
 animal_view HTML publishing template (editable at <span class="menuselection">Publishing -&gt;
 Edit HTML publishing templates</span>). Pass the id of the animal:</p>
@@ -213,9 +231,12 @@ Edit HTML publishing templates</span>). Pass the id of the animal:</p>
 </div>
 <p>When you use <span class="menuselection">Share ‣ Link to this animal</span> on an animal&#8217;s record,
 it is this service call that the system redirects you to.</p>
-<p><strong>animal_view_adoptable_js</strong></p>
+</div>
+<div class="section" id="animal-view-adoptable-js">
+<h2>animal_view_adoptable_js<a class="headerlink" href="#animal-view-adoptable-js" title="Permalink to this headline">¶</a></h2>
 <p>Returns a javascript file that when executed injects thumbnails of all
-adoptable animals into the page with links to the animal_view service call.</p>
+adoptable animals into the page with links to the animal_view service call. It
+is most useful as the src attribute for a &lt;script&gt; tag.</p>
 <p>The page must contain a div with an id attribute of &#8220;asm3-adoptables&#8221;, where
 the adoptable animal thumbnails are to appear. If div#asm3-adoptables cannot be
 found, a popup error message will appear.</p>
@@ -224,6 +245,9 @@ found, a popup error message will appear.</p>
 &lt;html&gt;
 &lt;head&gt;
 &lt;title&gt;Adoptable Animals&lt;/title&gt;
+&lt;style&gt;
+.asm3-adoptable-thumbnail { border-radius: 8px; }
+&lt;/style&gt;
 &lt;body&gt;
 
 &lt;div id=&quot;asm3-adoptables&quot; /&gt;
@@ -238,30 +262,41 @@ of brief text containing some basic information about the animal.  You can
 style this information by adding CSS to your stylesheets for the following
 classes:</p>
 <ul class="simple">
-<li>asm3-adoptable-item : The div surrounding each item</li>
+<li>asm3-filters : The div surrounding the dropdown filters</li>
+<li>asm3-adoptable-list: The div surrounding all the animal thumbnails</li>
+<li>asm3-adoptable-item : The div surrounding each animal thumbnail</li>
 <li>asm3-adoptable-link : The a tag enclosing the thumbnail and animal name</li>
 <li>asm3-adoptable-thumbnail : The thumbnail img tag</li>
 <li>asm3-adoptable-name : The animal&#8217;s name</li>
 <li>asm3-adoptable-tagline : The brief animal information</li>
 <li>asm3-adoptable-age : The animal&#8217;s age</li>
 </ul>
-<p><strong>extra_image</strong></p>
+<p>Eg: To add rounded corners to the thumbnails and show the animal&#8217;s name in
+bold, add this to your CSS:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">asm3</span><span class="o">-</span><span class="n">adoptable</span><span class="o">-</span><span class="n">name</span> <span class="p">{</span> <span class="n">font</span><span class="o">-</span><span class="n">weight</span><span class="p">:</span> <span class="n">bold</span><span class="p">;</span> <span class="p">}</span>
+<span class="o">.</span><span class="n">asm3</span><span class="o">-</span><span class="n">adoptable</span><span class="o">-</span><span class="n">thumbnail</span> <span class="p">{</span> <span class="n">border</span><span class="o">-</span><span class="n">radius</span><span class="p">:</span> <span class="mi">8</span><span class="n">px</span><span class="p">;</span> <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="csv-mail-and-csv-report">
+<h2>csv_mail and csv_report<a class="headerlink" href="#csv-mail-and-csv-report" title="Permalink to this headline">¶</a></h2>
+<p>Returns a CSV file containing a mail merge or report. Pass the name of the mail
+merge/report in the title attribute and if the merge requires any parameters,
+you can pass those too just like with html_report:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=csv_report&amp;username=user&amp;password=letmein&amp;title=Detailed+Shelter+Inventory
+</pre></div>
+</div>
+</div>
+<div class="section" id="extra-image">
+<h2>extra_image<a class="headerlink" href="#extra-image" title="Permalink to this headline">¶</a></h2>
 <p>Returns an extra image (see <span class="menuselection">Settings-&gt;Reports-&gt;Extra Images</span>).
 Pass the name of the image in the title parameter:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=extra_image&amp;title=splash.jpg
 </pre></div>
 </div>
-<p><strong>json_adoptable_animals | xml_adoptable_animals</strong></p>
-<p>Returns a dataset containing all animals available for adoption. The method
-determines whether the format returned is JSON or XML:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_adoptable_animals&amp;username=user&amp;password=letmein
-</pre></div>
 </div>
-<p><strong>json_recent_adoptions | xml_recent_adoptions</strong></p>
-<p>Returns a dataset containing all recently adopted animals with their new owner
-information. The method name determines whether the format returned is JSON or
-XML.</p>
-<p><strong>html_report</strong></p>
+<div class="section" id="html-report">
+<h2>html_report<a class="headerlink" href="#html-report" title="Permalink to this headline">¶</a></h2>
 <p>Returns an HTML document containing a report. Pass the name of the report in
 the title attribute. If the report requires any parameters, you can pass those
 too. VAR parameters are just their name, ASK parameters are ASKn where n is the
@@ -270,17 +305,38 @@ see the parameters it requires in the address bar:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=html_report&amp;username=user&amp;password=letmein&amp;title=Detailed+Shelter+Inventory
 </pre></div>
 </div>
-<p><strong>csv_mail</strong> or <strong>csv_report</strong></p>
-<p>Returns a CSV file containing a mail merge or report. Pass the name of the mail
-merge/report in the title attribute and if the merge requires any parameters,
-you can pass those too just like with html_report.</p>
-<p><strong>json_shelter_animals | xml_shelter_animals</strong></p>
+</div>
+<div class="section" id="json-adoptable-animals-and-xml-adoptable-animals">
+<h2>json_adoptable_animals and xml_adoptable_animals<a class="headerlink" href="#json-adoptable-animals-and-xml-adoptable-animals" title="Permalink to this headline">¶</a></h2>
+<p>Returns a dataset containing all animals available for adoption. The method
+determines whether the format returned is JSON or XML:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_adoptable_animals&amp;username=user&amp;password=letmein
+</pre></div>
+</div>
+</div>
+<div class="section" id="json-recent-adoptions-and-xml-recent-adoptions">
+<h2>json_recent_adoptions and xml_recent_adoptions<a class="headerlink" href="#json-recent-adoptions-and-xml-recent-adoptions" title="Permalink to this headline">¶</a></h2>
+<p>Returns a dataset containing all recently adopted animals with their new owner
+information. The method name determines whether the format returned is JSON or
+XML:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_recent_adoptions&amp;username=user&amp;password=letmein
+</pre></div>
+</div>
+</div>
+<div class="section" id="json-shelter-animals-and-xml-shelter-animals">
+<h2>json_shelter_animals and xml_shelter_animals<a class="headerlink" href="#json-shelter-animals-and-xml-shelter-animals" title="Permalink to this headline">¶</a></h2>
 <p>Returns a dataset containing all shelter animals. The method determines whether
-the format returned is JSON or XML.</p>
-<p><strong>rss_timeline</strong></p>
-<p>Returns an RSS feed of the timeline:</p>
+the format returned is JSON or XML:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_shelter_animals&amp;username=user&amp;password=letmein
+</pre></div>
+</div>
+</div>
+<div class="section" id="rss-timeline">
+<h2>rss_timeline<a class="headerlink" href="#rss-timeline" title="Permalink to this headline">¶</a></h2>
+<p>Returns an RSS feed of the timeline for use with feed aggregators:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=rss_timeline&amp;username=user&amp;password=letmein
 </pre></div>
+</div>
 </div>
 </div>
 

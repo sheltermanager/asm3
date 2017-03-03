@@ -36,7 +36,8 @@ The service requires the following parameters:
 
 The following method values are supported:
 
-**animal_image**
+animal_image
+------------
 
 Returns an animal's preferred image. Send the id of the animal::
 
@@ -49,7 +50,8 @@ is a 1-based count and can be used with the "WebsiteImageCount" property
 included in animal records (which contains the number of images an animal has)
 to programatically grab all the images for a particular animal.
 
-**animal_thumbnail**
+animal_thumbnail
+----------------
 
 Returns an animal's preferred image as a thumbnail. Send the id of the animal::
     
@@ -58,7 +60,8 @@ Returns an animal's preferred image as a thumbnail. Send the id of the animal::
 The thumbnail will be sized to whatever the main application is using
 (typically 150 pixels along the longest side).
 
-**animal_view**
+animal_view
+-----------
 
 Returns a webpage with information for one animal, constructed from the
 animal_view HTML publishing template (editable at :menuselection:`Publishing ->
@@ -69,10 +72,12 @@ Edit HTML publishing templates`). Pass the id of the animal::
 When you use :menuselection:`Share --> Link to this animal` on an animal's record, 
 it is this service call that the system redirects you to.
 
-**animal_view_adoptable_js**
+animal_view_adoptable_js
+------------------------
 
 Returns a javascript file that when executed injects thumbnails of all
-adoptable animals into the page with links to the animal_view service call.
+adoptable animals into the page with links to the animal_view service call. It
+is most useful as the src attribute for a <script> tag.
 
 The page must contain a div with an id attribute of "asm3-adoptables", where
 the adoptable animal thumbnails are to appear. If div#asm3-adoptables cannot be
@@ -84,6 +89,9 @@ Here's an example page showing how to inject your adoptable animal list::
     <html>
     <head>
     <title>Adoptable Animals</title>
+    <style>
+    .asm3-adoptable-thumbnail { border-radius: 8px; }
+    </style>
     <body>
     
     <div id="asm3-adoptables" />
@@ -97,34 +105,40 @@ of brief text containing some basic information about the animal.  You can
 style this information by adding CSS to your stylesheets for the following
 classes:
 
-* asm3-adoptable-item : The div surrounding each item
+* asm3-filters : The div surrounding the dropdown filters
+* asm3-adoptable-list: The div surrounding all the animal thumbnails
+* asm3-adoptable-item : The div surrounding each animal thumbnail
 * asm3-adoptable-link : The a tag enclosing the thumbnail and animal name
 * asm3-adoptable-thumbnail : The thumbnail img tag
 * asm3-adoptable-name : The animal's name
 * asm3-adoptable-tagline : The brief animal information
 * asm3-adoptable-age : The animal's age
 
-**extra_image**
+Eg: To add rounded corners to the thumbnails and show the animal's name in
+bold, add this to your CSS::
+
+    .asm3-adoptable-name { font-weight: bold; }
+    .asm3-adoptable-thumbnail { border-radius: 8px; }
+
+csv_mail and csv_report
+----------------------
+
+Returns a CSV file containing a mail merge or report. Pass the name of the mail
+merge/report in the title attribute and if the merge requires any parameters,
+you can pass those too just like with html_report::
+
+    http://localhost:5000/service?method=csv_report&username=user&password=letmein&title=Detailed+Shelter+Inventory
+
+extra_image
+-----------
 
 Returns an extra image (see :menuselection:`Settings->Reports->Extra Images`).
 Pass the name of the image in the title parameter::
 
     http://localhost:5000/service?method=extra_image&title=splash.jpg
 
-**json_adoptable_animals | xml_adoptable_animals**
-
-Returns a dataset containing all animals available for adoption. The method
-determines whether the format returned is JSON or XML::
-
-    http://localhost:5000/service?method=xml_adoptable_animals&username=user&password=letmein
-
-**json_recent_adoptions | xml_recent_adoptions**
-
-Returns a dataset containing all recently adopted animals with their new owner
-information. The method name determines whether the format returned is JSON or
-XML.
-
-**html_report**
+html_report
+-----------
 
 Returns an HTML document containing a report. Pass the name of the report in
 the title attribute. If the report requires any parameters, you can pass those
@@ -134,20 +148,35 @@ see the parameters it requires in the address bar::
 
     http://localhost:5000/service?method=html_report&username=user&password=letmein&title=Detailed+Shelter+Inventory
 
-**csv_mail** or **csv_report**
+json_adoptable_animals and xml_adoptable_animals
+------------------------------------------------
 
-Returns a CSV file containing a mail merge or report. Pass the name of the mail
-merge/report in the title attribute and if the merge requires any parameters,
-you can pass those too just like with html_report.
+Returns a dataset containing all animals available for adoption. The method
+determines whether the format returned is JSON or XML::
 
-**json_shelter_animals | xml_shelter_animals**
+    http://localhost:5000/service?method=xml_adoptable_animals&username=user&password=letmein
+
+json_recent_adoptions and xml_recent_adoptions
+----------------------------------------------
+
+Returns a dataset containing all recently adopted animals with their new owner
+information. The method name determines whether the format returned is JSON or
+XML::
+    
+    http://localhost:5000/service?method=xml_recent_adoptions&username=user&password=letmein
+
+json_shelter_animals and xml_shelter_animals
+--------------------------------------------
 
 Returns a dataset containing all shelter animals. The method determines whether
-the format returned is JSON or XML.
+the format returned is JSON or XML::
 
-**rss_timeline**
+    http://localhost:5000/service?method=xml_shelter_animals&username=user&password=letmein
 
-Returns an RSS feed of the timeline::
+rss_timeline
+------------
+
+Returns an RSS feed of the timeline for use with feed aggregators::
     
     http://localhost:5000/service?method=rss_timeline&username=user&password=letmein
 
