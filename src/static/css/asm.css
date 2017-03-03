@@ -704,10 +704,8 @@ select:disabled, input:disabled, textarea:disabled {
     border: 1px solid #555;
     padding: 5px;
     margin: 5px;
-    max-width: 70px;
-    max-height: 70px;
-    width: expression(this.width > 70 ? "70px" : true);
-    height: expression(this.height > 70 ? "70px" : true);
+    max-width: 85px;
+    max-height: 85px;
     background-color: #fff;
     border-radius: 2px;
     box-shadow: 3px 3px 5px #888;
