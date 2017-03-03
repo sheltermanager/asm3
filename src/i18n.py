@@ -4,8 +4,8 @@ import datetime
 import json
 import time
 
-VERSION = "40u [Fri  3 Mar 08:12:16 GMT 2017]"
-BUILD = "03030812"
+VERSION = "40u [Fri  3 Mar 12:08:49 GMT 2017]"
+BUILD = "03031208"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -51,6 +51,7 @@ locale_maps = {
     "en_GB":    ( DMY, POUND, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_AW":    ( DMY, "Awg.", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_AU":    ( DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
+    "en_BG":    ( DMY, "&#x043b;&#x0432;", PLURAL_ENGLISH, CURRENCY_SUFFIX, 2),
     "en_BH":    ( MDY, "BD", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_CA":    ( MDY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_CH":    ( DMY, "CHF", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
@@ -119,7 +120,7 @@ def real_locale(locale = "en"):
     #   en    (US)
     #   en_AU (AUS)
     #   en_GB (UK)
-    if locale in ("en_CH", "en_CY", "en_IE", "en_IN", "en_LU", "en_NZ", "en_PH", "en_TH", "en_TW", "en_VN", "en_ZA"):
+    if locale in ("en_BG", "en_CH", "en_CY", "en_IE", "en_IN", "en_LU", "en_NZ", "en_PH", "en_TH", "en_TW", "en_VN", "en_ZA"):
         locale = "en_GB"
     if locale in ("en_BH", "en_CA", "en_CO", "en_KY", "en_KW", "en_IL", "en_LB", "en_MX"):
         locale = "en"
