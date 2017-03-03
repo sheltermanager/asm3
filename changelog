@@ -1,6 +1,7 @@
 40
 ================
 
+03/03/17 Person links to non-shelter should not show location #154
 03/03/17 Detect all ASM/HTTPError subclasses, not just validation #3
 03/03/17 Add en_BG locale for English/Bulgaria
 03/03/17 Increased app thumbnails to 85px, removed redundant IE CSS expression()

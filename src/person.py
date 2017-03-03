@@ -215,6 +215,7 @@ def get_links(dbo, pid):
     linkdisplay = db.concat(dbo, ("a.ShelterCode", "' - '", "a.AnimalName"))
     animalextra = db.concat(dbo, ("a.BreedName", "' '", "s.SpeciesName", "' ('", 
         "CASE WHEN a.Archived = 0 AND a.ActiveMovementType = 2 THEN mt.MovementType " \
+        "WHEN a.NonShelterAnimal = 1 THEN '' " \
         "WHEN a.Archived = 1 AND a.DeceasedDate Is Not Null AND a.ActiveMovementID = 0 THEN dr.ReasonName " \
         "WHEN a.Archived = 1 AND a.DeceasedDate Is Null AND a.ActiveMovementID <> 0 THEN mt.MovementType " \
         "ELSE il.LocationName END", "')'"))
