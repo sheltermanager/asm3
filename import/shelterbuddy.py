@@ -13,19 +13,22 @@ PATH = "data/shelterbuddy_ag1328/"
 # OR use queryexpress to do it from SQL Server Ex2005
 
 # animaltype
-# tbladdress.csv
-# tbladoption.csv
-# tblanimal.csv
-# tblanimalbreeds.csv
-# tblanimalvacc.csv
-# tblanimalvettreatments.csv
-# tbldocument.csv
-# tblnotes.csv
-# tblpaymenttypes.csv
-# tblperson.csv
-# tblreceiptentry.csv
-# tblspecies.csv
-# tblsuburblist.csv
+# lookupconsultmedications
+# tbladdress
+# tbladoption
+# tblanimal
+# tblanimalbreeds
+# tblanimalvacc
+# tblanimalvettreatments
+# tbldocument
+# tblmedications
+# tblnotes
+# tblpaymenttypes
+# tblperson
+# tblreceiptentry
+# tblspecies
+# tblsuburblist
+# users
 
 # If the shelterbuddy docs_* folders are available, dump all the jpgs
 # in a folder called images in the path and delete any matching doc*_th_*.jpg
@@ -137,6 +140,7 @@ suburbs = {}
 vacctype = {}
 medtype = {}
 animalnotes = {}
+users = {}
 
 owners = []
 ownerdonations = []
@@ -202,6 +206,10 @@ for row in asm.csv_to_list(PATH + "tblanimalvacc.csv"):
 for row in asm.csv_to_list(PATH + "lookupconsultmedications.csv"):
     medtype[row["ID"]] = row["description"]
 
+# users.csv
+for row in asm.csv_to_list(PATH + "users.csv"):
+    users[row["UserID"]] = row["Username"]
+
 # tbladdress.csv
 for row in asm.csv_to_list(PATH + "tbladdress.csv"):
     s = SBAddress()
@@ -248,13 +256,13 @@ for row in asm.csv_to_list(PATH + "tblanimal.csv"):
         if a.DateBroughtIn is None:
             a.DateBroughtIn = getdate(row["AddDateTime"])
             if a.DateBroughtIn is None:
-                print "BOLLOCKS: " + str(row)
+                a.DateBroughtIn = asm.now()
     if row["DateOUT"].strip() != "":
         a.ActiveMovementDate = getdate(row["DateOUT"])
         if a.ActiveMovementDate is not None:
             a.ActiveMovementType = 1
             a.Archived = 1
-        elif a.DateBroughtIn.year < 2015:
+        elif a.DateBroughtIn.year < asm.now().year - 1:
             a.Archived = 1
     a.Neutered = row["desexdate"].strip() != "" and 1 or 0
     a.NeuteredDate = getdate(row["desexdate"])
@@ -292,12 +300,17 @@ for row in asm.csv_to_list(PATH + "tblanimal.csv"):
         a.PTSReasonID = 4
     if row["crueltyCase"] == "TRUE":
         a.CrueltyCase = 1
+    a.CreatedBy = "conversion/%s" % users[row["AddAdminID"]]
+    print "UPDATE animal SET CreatedBy = '%s' WHERE ID = %d; -- %s" % (a.CreatedBy, a.ID, a.AnimalName)
     a.LastChangedDate = getdate(row["AddDateTime"])
     # Do we have a default image for this animal in the images folder and document table?
     if documents.has_key(row["AnimalID"]):
         imagedata = asm.load_image_from_file(documents[row["AnimalID"]])
         if imagedata is not None:
             asm.animal_image(a.ID, imagedata)
+
+import sys
+sys.exit(0)
 
 # tblperson.csv
 for row in asm.csv_to_list(PATH + "tblperson.csv"):
