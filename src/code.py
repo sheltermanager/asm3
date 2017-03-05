@@ -5034,7 +5034,9 @@ class person_embed:
         q = post["q"]
         web.header("Content-Type", "application/json")
         if mode == "find":
-            rows = extperson.get_person_find_simple(dbo, q, session.user, post["filter"], users.check_permission_bool(session, users.VIEW_STAFF), users.check_permission_bool(session, users.VIEW_VOLUNTEER), 100)
+            rows = extperson.get_person_find_simple(dbo, q, session.user, post["filter"], \
+                users.check_permission_bool(session, users.VIEW_STAFF), \
+                users.check_permission_bool(session, users.VIEW_VOLUNTEER), 100)
             al.debug("find '%s' got %d rows" % (str(web.ctx.query), len(rows)), "code.person_embed", dbo)
             return html.json(rows)
         elif mode == "id":
@@ -5088,7 +5090,10 @@ class person_find_results:
         mode = post["mode"]
         q = post["q"]
         if mode == "SIMPLE":
-            results = extperson.get_person_find_simple(dbo, q, session.user, "all", users.check_permission_bool(session, users.VIEW_STAFF), users.check_permission_bool(session, users.VIEW_VOLUNTEER), configuration.record_search_limit(dbo))
+            results = extperson.get_person_find_simple(dbo, q, session.user, "all", \
+                users.check_permission_bool(session, users.VIEW_STAFF), \
+                users.check_permission_bool(session, users.VIEW_VOLUNTEER), \
+                configuration.record_search_limit(dbo))
         else:
             results = extperson.get_person_find_advanced(dbo, post.data, session.user, users.check_permission_bool(session, users.VIEW_STAFF), configuration.record_search_limit(dbo))
         add = None

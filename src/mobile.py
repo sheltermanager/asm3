@@ -808,7 +808,9 @@ def handler(session, post):
         q = post["q"]
         matches = []
         if q.strip() != "": 
-            matches = person.get_person_find_simple(dbo, q, False, True, 100)
+            matches = person.get_person_find_simple(dbo, q, user, "all", \
+                users.check_permission_bool(session, users.VIEW_STAFF), \
+                users.check_permission_bool(session, users.VIEW_VOLUNTEER), 100)
         h = []
         alin = []
         h.append(header(l))
