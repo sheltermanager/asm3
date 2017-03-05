@@ -8,7 +8,7 @@ All logs between two dates by type.
 ###
 en
 ###
-SELECT l.date, lt.logtypename, l.comments,
+SELECT l.date, lt.logtypename, l.comments, l.createdby, 
 case 
 when l.linktype = 0 then (select a.sheltercode || ' - ' || a.animalname from animal a where a.id = l.linkid)
 when l.linktype = 1 then (select o.ownername from owner o where o.id = l.linkid)
@@ -30,6 +30,12 @@ $$GROUP_LOGTYPENAME
 $$HEAD
 <h2>$LOGTYPENAME</h2>
 <table border="1">
+<tr>
+<th>Date</th>
+<th>By</th>
+<th>Link</th>
+<th></th>
+</tr>
 $$FOOT
 </table>
 GROUP$$
@@ -37,6 +43,7 @@ GROUP$$
 $$BODY
 <tr>
 <td>$DATE</td>
+<td>$CREATEDBY</td>
 <td>$LINK</td>
 <td>$COMMENTS</td>
 </tr>
