@@ -319,7 +319,7 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-search-result {
     padding: 5px;
     border-bottom: 1px solid #999;
-    min-height: 70px;
+    min-height: 85px;
 }
 
 .asm-search-personflags {
