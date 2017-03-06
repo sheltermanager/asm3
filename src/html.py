@@ -289,10 +289,15 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
                 asm_scripts,
               "bgcol": bgcol }
 
-def tinymce_header(title, js, jswindowprint = True, onlysavewhendirty = False, readonly = False):
+def tinymce_header(title, js, jswindowprint = True, pdfenabled = True, onlysavewhendirty = False, readonly = False):
     """
     Outputs a header for tinymce pages.
     js: The name of the script file to load.
+    jswindowprint: If true, a hidden iframe with window.print is used for printing (tinymce's default behaviour)
+                   If false, a postback is done to redirect to a page containing just the content
+    pdfenabled:    Whether the PDF button is available
+    onlysavewhendirty: The save button only becomes active when a change is made
+    readonly:      If true, does not allow editing, all toolbar buttons but print and pdf are available
     """
     return """<!DOCTYPE html>
         <html>
@@ -306,6 +311,7 @@ def tinymce_header(title, js, jswindowprint = True, onlysavewhendirty = False, r
         var buildno = '%(buildno)s';
         var jswindowprint = %(jswindowprint)s;
         var onlysavewhendirty = %(onlysavewhendirty)s;
+        var pdfenabled = %(pdfenabled)s;
         var readonly = %(readonly)s;
         </script>
         %(tinymce)s
@@ -318,9 +324,10 @@ def tinymce_header(title, js, jswindowprint = True, onlysavewhendirty = False, r
            "script": asm_script_tag(js),
            "baseurl": BASE_URL,
            "buildno": BUILD,
-           "readonly": readonly and "true" or "false",
            "jswindowprint": jswindowprint and "true" or "false",
-           "onlysavewhendirty": onlysavewhendirty and "true" or "false" }
+           "onlysavewhendirty": onlysavewhendirty and "true" or "false", 
+           "pdfenabled": pdfenabled and "true" or "false",
+           "readonly": readonly and "true" or "false"}
 
 def tinymce_print_header(title):
     """

@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true */
-/*global $, baseurl, buildno, onlysavewhendirty, jswindowprint, readonly, tinymce, tinyMCE */
+/*global $, baseurl, buildno, jswindowprint, onlysavewhendirty, pdfenabled, readonly, tinymce, tinyMCE */
 
 $(function() {
    
@@ -54,14 +54,16 @@ $(function() {
         setup: function(ed) {
 
             // Add a PDF button
-            ed.addButton("pdf", {
-                title: "PDF",
-                image: "static/images/icons/pdf.png",
-                onclick: function() {
-                    $("input[name='savemode']").val("pdf");
-                    $("form").submit();
-                }
-            });
+            if (pdfenabled) {
+                ed.addButton("pdf", {
+                    title: "PDF",
+                    image: "static/images/icons/pdf.png",
+                    onclick: function() {
+                        $("input[name='savemode']").val("pdf");
+                        $("form").submit();
+                    }
+                });
+            }
 
             // Override normal page break behaviour. Note that there's a race condition
             // and the normal plugin command gets registered after this, so we have to

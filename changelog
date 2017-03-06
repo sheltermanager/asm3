@@ -1,6 +1,7 @@
 40
 ================
 
+06/03/17 mailmerge: generate documents should not support pdf/save #159
 05/03/17 Mobile interface not honoring view staff/volunteer permissions #155
 03/03/17 Person links to non-shelter should not show location #154
 03/03/17 Detect all ASM/HTTPError subclasses, not just validation #3
