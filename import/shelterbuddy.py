@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import asm
+import asm, os
 
 """
 Import script for ShelterBuddy MDB/SQL Server export with QueryExpress
@@ -8,27 +8,12 @@ Import script for ShelterBuddy MDB/SQL Server export with QueryExpress
 """
 
 PATH = "data/shelterbuddy_ag1328/"
+MDB_FILE = "4Paws.mdb"
+TABLES = "animaltype lookupconsultmedications tbladdress tbladoption tblanimal tblanimalbreeds tblanimalvacc tblanimalvettreatments tbldocument tblmedications tblnotes tblpaymenttypes tblperson tblreceiptentry tblspecies tblsuburblist tbltaghistory users"
 
-# Use mdbtools/mdb-export to export these tables from Access
-# OR use queryexpress to do it from SQL Server Ex2005
-
-# animaltype
-# lookupconsultmedications
-# tbladdress
-# tbladoption
-# tblanimal
-# tblanimalbreeds
-# tblanimalvacc
-# tblanimalvettreatments
-# tbldocument
-# tblmedications
-# tblnotes
-# tblpaymenttypes
-# tblperson
-# tblreceiptentry
-# tblspecies
-# tblsuburblist
-# users
+# Unpack the MDB before we start (needs doing manually if we've got a SQLExpress version)
+if MDB_FILE != "": 
+    os.system("cd %s && for i in %s; do mdb-export %s $i > $i.csv; done" % (PATH, TABLES, MDB_FILE))
 
 # If the shelterbuddy docs_* folders are available, dump all the jpgs
 # in a folder called images in the path and delete any matching doc*_th_*.jpg
@@ -301,16 +286,12 @@ for row in asm.csv_to_list(PATH + "tblanimal.csv"):
     if row["crueltyCase"] == "TRUE":
         a.CrueltyCase = 1
     a.CreatedBy = "conversion/%s" % users[row["AddAdminID"]]
-    print "UPDATE animal SET CreatedBy = '%s' WHERE ID = %d; -- %s" % (a.CreatedBy, a.ID, a.AnimalName)
     a.LastChangedDate = getdate(row["AddDateTime"])
     # Do we have a default image for this animal in the images folder and document table?
     if documents.has_key(row["AnimalID"]):
         imagedata = asm.load_image_from_file(documents[row["AnimalID"]])
         if imagedata is not None:
             asm.animal_image(a.ID, imagedata)
-
-import sys
-sys.exit(0)
 
 # tblperson.csv
 for row in asm.csv_to_list(PATH + "tblperson.csv"):
@@ -388,6 +369,14 @@ for row in asm.csv_to_list(PATH + "tblreceiptentry.csv"):
     comments += "\n" + row["NotesToPrint"]
     od.Comments = comments
     ownerdonations.append(od)
+
+"""
+# Used to populate an additional field called Tag with any SB tag number set
+for row in asm.csv_to_list(PATH + "tbltaghistory.csv"):
+    a = findanimal(row["animalId"])
+    if a is not None: 
+        asm.additional_field("Tag", 2, a.ID, row["tagNumber"])
+"""
 
 # Now that everything else is done, output stored records
 print "DELETE FROM primarykey;"
