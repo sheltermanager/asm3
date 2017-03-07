@@ -6,14 +6,14 @@ dist:	version clean minify
 	rm -rf build
 	mkdir build
 	tar -czvf build/sheltermanager3-`cat VERSION`-src.tar.gz AUTHORS changelog COPYING src README
-	cd installers/deb && ./makedeb.sh && mv *.deb ../../build
+	cd install/deb && ./makedeb.sh && mv *.deb ../../build
 
 distwin32: dist
-	cd installers/win32 && ./make.sh && mv sheltermanager*exe ../../build/sheltermanager3-`cat ../../VERSION`-win32.exe
+	cd install/win32 && ./make.sh && mv sheltermanager*exe ../../build/sheltermanager3-`cat ../../VERSION`-win32.exe
 
 tags:
 	@echo "[tags] ============================"
-	rm -f tags
+	rm -f tag
 	ctags -f tags src/*.py
 
 cscope:
@@ -43,13 +43,13 @@ minify:
 	# Generate minified versions of all javascript in min folder
 	@echo "[minify] ============================="
 	mkdir -p src/static/js/min
-	for i in src/static/js/*.js; do echo $$i; cat $$i | jsmin/jsmin > src/static/js/min/`basename $$i .js`.min.js; done
+	for i in src/static/js/*.js; do echo $$i; cat $$i | scripts/jsmin/jsmin > src/static/js/min/`basename $$i .js`.min.js; done
 
 compile: compilejs compilepy
 
 compilejs:
 	@echo "[compile javascript] ================="
-	cd jslint && ./run.py
+	cd scripts/jslint && ./run.py
 
 compilepy:
 	@echo "[compile python] ====================="

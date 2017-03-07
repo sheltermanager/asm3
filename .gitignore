@@ -3,9 +3,9 @@
 *.apk
 build
 tags
-installers/deb/sheltermanager3
+install/deb/sheltermanager3
 src/static/pages/changelog.txt
-jsmin/jsmin
+scripts/jsmin/jsmin
 src/static/js/min
 import/data
 doc/manual/_build
