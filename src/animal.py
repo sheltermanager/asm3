@@ -2521,9 +2521,10 @@ def clone_animal(dbo, username, animalid):
             ( "Date", db.dd(me["DATE"]))
             ))
         db.execute(dbo, sql)
-        # Now clone the dbfs item pointed to by this media item
-        filedata = dbfs.get_string(dbo, me["MEDIANAME"])
-        dbfs.put_string(dbo, medianame, "/animal/%d" % animalid, filedata)
+        # Now clone the dbfs item pointed to by this media item if it's a file
+        if me["MEDIATYPE"] == media.MEDIATYPE_FILE:
+            filedata = dbfs.get_string(dbo, me["MEDIANAME"])
+            dbfs.put_string(dbo, medianame, "/animal/%d" % animalid, filedata)
     # Movements
     for mv in db.query(dbo, "SELECT * FROM adoption WHERE AnimalID = %d" % animalid):
         nadid = db.get_id(dbo, "adoption")
