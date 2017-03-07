@@ -1,28 +1,32 @@
-*. Make sure VERSION has no u suffix
+*. Update VERSION and remove u suffix
 
 *. Generate manual - html and pdf for the program with make manual
 
-*. Update the translations
+*. Update the translations - (download from zanata, make translations)
 
 *. Run make to compile/check, then make dist to build
 
 *. Verify installation works with an empty MySQL database
 
-*. Commit any changes made as the release
+*. Commit any changes made so far
 
-*. Copy all sheltermanager* files to rawsoaa8:/var/www/deb
+*. Copy all sheltermanager* files to public.sheltermanager.com:/var/www/deb
 
-*. Update news page on site
+*. Update site/en_news.html site/rss.xml site/en_header.t (new version number)
+
+*. Update repo/asm_smcom_news.html repo/asm_news.html site/rss.xml
 
 *. Update changelog3.txt on site
 
-*. Update version on site
-
-*. Mark milestone complete in trac
+*. Mark milestone complete in github
 
 *. Update twitter and facebook
 
 *. Update manual with lulu
+
+*. run "git tag 41" to create a tag for the release number
+
+*. Update VERSION, update doc/manual/conf.py
 
 *. Return to trunk working folder, update dev env version number, update manual version in /doc/manual/*py
 
