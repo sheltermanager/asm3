@@ -116,7 +116,8 @@ $(function() {
                             if (controller.animal) { return true; }
                         }
                     },
-                    { field: "DATEREQUIRED", display: _("Required"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
+                    { field: "DATEREQUIRED", display: _("Required"), formatter: tableform.format_date, initialsort: true,
+                        initialsortdirection: controller.name == "vaccination" ? "asc" : "desc" },
                     { field: "DATEOFVACCINATION", display: _("Given"), formatter: tableform.format_date },
                     { field: "ADMINISTERINGVET", display: _("Vet"), 
                         formatter: function(row) {

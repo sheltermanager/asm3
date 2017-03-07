@@ -152,7 +152,8 @@ $(function() {
                     { field: "COSTPAIDDATE", display: _("Paid"), formatter: tableform.format_date,
                         hideif: function() { return !config.bool("ShowCostPaid"); }
                     },
-                    { field: "DATEREQUIRED", display: _("Required"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
+                    { field: "DATEREQUIRED", display: _("Required"), formatter: tableform.format_date, initialsort: true, 
+                        initialsortdirection: controller.name == "medical" ? "asc" : "desc" },
                     { field: "DATEGIVEN", display: _("Given"), formatter: tableform.format_date },
                     { field: "GIVENBY", display: _("By"), 
                         formatter: function(row) {

@@ -113,7 +113,8 @@ $(function() {
                             if (controller.animal) { return true; }
                         }
                     },
-                    { field: "DATEREQUIRED", display: _("Required"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
+                    { field: "DATEREQUIRED", display: _("Required"), formatter: tableform.format_date, initialsort: true, 
+                        initialsortdirection: controller.name == "test" ? "asc" : "desc" },
                     { field: "DATEOFTEST", display: _("Performed"), formatter: tableform.format_date },
                     { field: "RESULTNAME", display: _("Result"), formatter: function(row) {
                             if (row.DATEOFTEST) {

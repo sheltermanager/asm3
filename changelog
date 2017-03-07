@@ -1,6 +1,7 @@
 40
 ================
 
+07/03/17 Order medical books by required ascending #161
 07/03/17 When cloning animal media, only copy dbfs for file media
 06/03/17 mailmerge: generate documents should not support pdf/save #159
 05/03/17 Mobile interface not honoring view staff/volunteer permissions #155
