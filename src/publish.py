@@ -1311,6 +1311,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "Cane Corso Mastiff=Cane Corso\n" \
             "Chinese Crested Dog=Chinese Crested\n" \
             "Chinese Foo Dog=Shepherd (Unknown Type)\n" \
+            "Chocolate Labrador Retriever=Labrador Retriever\n" \
             "Cow=Cow or Bull\n" \
             "Dandi Dinmont Terrier=Dandie Dinmont Terrier\n" \
             "English Cocker Spaniel=Cocker Spaniel\n" \
@@ -1413,6 +1414,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "Cane Corso Mastiff=Cane Corso\n" \
             "Chinese Crested Dog=Chinese Crested\n" \
             "Chinese Foo Dog=Shepherd (Unknown Type)\n" \
+            "Chocolate Labrador Retriever=Labrador Retriever\n" \
             "Dandi Dinmont Terrier=Dandie Dinmont Terrier\n" \
             "English Cocker Spaniel=Cocker Spaniel\n" \
             "English Coonhound=English (Redtick) Coonhound\n" \
