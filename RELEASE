@@ -1,4 +1,4 @@
-*. Update VERSION and remove u suffix
+*. Update VERSION and remove u suffix, update /doc/manual/conf.py and remove u suffix.
 
 *. Generate manual - html and pdf for the program with make manual
 
@@ -14,7 +14,7 @@
 
 *. Update site/en_news.html site/rss.xml site/en_header.t (new version number)
 
-*. Update repo/asm_smcom_news.html repo/asm_news.html site/rss.xml
+*. Update repo/asm_smcom_news.html repo/asm_news.html
 
 *. Update changelog3.txt on site
 
@@ -24,9 +24,10 @@
 
 *. Update manual with lulu
 
-*. run "git tag 41" to create a tag for the release number
+*. run "git tag -f -a 41" to create a tag for the release number, followed by "git push && git push -f --tags" 
+   (-f is only necessary for replacing a tag)
 
-*. Update VERSION, update doc/manual/conf.py
+*. In github, go to Releases and add changelog/release info for the new tag
 
-*. Return to trunk working folder, update dev env version number, update manual version in /doc/manual/*py
+*. Update VERSION, update doc/manual/conf.py to next release number with a u suffix - and commit
 
