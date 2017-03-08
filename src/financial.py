@@ -142,7 +142,7 @@ def get_account_id(dbo, code):
     """
     Returns the id for an account code
     """
-    return db.query_int(dbo, "SELECT ID FROM accounts WHERE Code = '%s'" % str(code))
+    return db.query_int(dbo, "SELECT ID FROM accounts WHERE Code = %" % db.ds(code))
     
 def get_accounts(dbo, onlyactive = False):
     """
