@@ -71,8 +71,8 @@ FORM_FIELDS = [
     "arealost", "areafound", "areapostcode", "areazipcode",
     "animalname", "reserveanimalname",
     "callnotes", "dispatchaddress", "dispatchcity", "dispatchstate", "dispatchzipcode",
-    "pickupaddress", "pickupcity", "pickupstate", "pickupzipcode", "pickupdate", "pickuptime",
-    "dropoffaddress", "dropoffcity", "dropoffstate", "dropoffzipcode", "dropoffdate", "dropofftime"
+    "transporttype", "pickupaddress", "pickuptown", "pickupcity", "pickupcounty", "pickupstate", "pickuppostcode", "pickupzipcode", "pickupdate", "pickuptime",
+    "dropoffaddress", "dropofftown", "dropoffcity", "dropoffcounty", "dropoffstate", "dropoffpostcode", "dropoffzipcode", "dropoffdate", "dropofftime"
 ]
 
 def get_onlineform(dbo, formid):
@@ -913,19 +913,26 @@ def create_transport(dbo, username, collationid):
             animalname = f["VALUE"]
             animalid = get_animal_id_from_field(dbo, animalname)
             d["animal"] = str(animalid)
-        if f["FIELDNAME"] == "description": d["description"] = f["VALUE"]
+        if f["FIELDNAME"] == "description": d["comments"] = f["VALUE"]
         if f["FIELDNAME"] == "pickupaddress": d["pickupaddress"] = f["VALUE"]
+        if f["FIELDNAME"] == "pickupcity": d["pickuptown"] = f["VALUE"]
         if f["FIELDNAME"] == "pickuptown": d["pickuptown"] = f["VALUE"]
         if f["FIELDNAME"] == "pickupcounty": d["pickupcounty"] = f["VALUE"]
+        if f["FIELDNAME"] == "pickupstate": d["pickupcounty"] = f["VALUE"]
+        if f["FIELDNAME"] == "pickuppostcode": d["pickuppostcode"] = f["VALUE"]
         if f["FIELDNAME"] == "pickupzipcode": d["pickuppostcode"] = f["VALUE"]
         if f["FIELDNAME"] == "pickupdate": d["pickupdate"] = f["VALUE"]
         if f["FIELDNAME"] == "pickuptime": d["pickuptime"] = f["VALUE"]
         if f["FIELDNAME"] == "dropoffaddress": d["dropoffaddress"] = f["VALUE"]
+        if f["FIELDNAME"] == "dropoffcity": d["dropofftown"] = f["VALUE"]
         if f["FIELDNAME"] == "dropofftown": d["dropofftown"] = f["VALUE"]
         if f["FIELDNAME"] == "dropoffcounty": d["dropoffcounty"] = f["VALUE"]
+        if f["FIELDNAME"] == "dropoffstate": d["dropoffcounty"] = f["VALUE"]
+        if f["FIELDNAME"] == "dropoffpostcode": d["dropoffpostcode"] = f["VALUE"]
         if f["FIELDNAME"] == "dropoffzipcode": d["dropoffpostcode"] = f["VALUE"]
         if f["FIELDNAME"] == "dropoffdate": d["dropoffdate"] = f["VALUE"]
         if f["FIELDNAME"] == "dropofftime": d["dropofftime"] = f["VALUE"]
+        if f["FIELDNAME"] == "transporttype": d["type"] = guess_transporttype(dbo, f["VALUE"])
     if not d.has_key("type"):
         d["type"] = guess_transporttype(dbo, "nomatchesusedefault")
     # Have we got enough info to create the transport record? We need an animal to attach to
