@@ -6101,6 +6101,22 @@ class sql_dump:
             al.info("%s executed SQL database dump (without media)" % str(session.user), "code.sql", dbo)
             web.header("Content-Disposition", "attachment; filename=\"dump.sql\"")
             for x in dbupdate.dump(dbo, includeDBFS = False): yield x
+        if mode == "dumpddlmysql":
+            al.info("%s executed DDL dump MySQL" % str(session.user), "code.sql", dbo)
+            web.header("Content-Disposition", "attachment; filename=\"ddl_mysql.sql\"")
+            dbo2 = db.DatabaseInfo()
+            dbo2.locale = dbo.locale
+            dbo2.dbtype = "MYSQL"
+            yield dbupdate.sql_structure(dbo2)
+            yield dbupdate.sql_default_data(dbo2)
+        if mode == "dumpddlpostgres":
+            al.info("%s executed DDL dump PostgreSQL" % str(session.user), "code.sql", dbo)
+            web.header("Content-Disposition", "attachment; filename=\"ddl_postgresql.sql\"")
+            dbo2 = db.DatabaseInfo()
+            dbo2.locale = dbo.locale
+            dbo2.dbtype = "POSTGRESQL"
+            yield dbupdate.sql_structure(dbo2)
+            yield dbupdate.sql_default_data(dbo2)
         elif mode == "dumpsqlasm2":
             # ASM2_COMPATIBILITY
             al.info("%s executed SQL database dump (ASM2 HSQLDB)" % str(session.user), "code.sql", dbo)
@@ -6123,6 +6139,14 @@ class sql_dump:
             al.debug("%s executed CSV incident dump" % str(session.user), "code.sql", dbo)
             web.header("Content-Disposition", "attachment; filename=\"incident.csv\"")
             yield utils.csv(l, extanimalcontrol.get_animalcontrol_find_advanced(dbo, { "filter" : "" }, 0))
+        elif mode == "licencecsv":
+            al.debug("%s executed CSV licence dump" % str(session.user), "code.sql", dbo)
+            web.header("Content-Disposition", "attachment; filename=\"licence.csv\"")
+            yield utils.csv(l, financial.get_licence_find_simple(dbo, ""))
+        elif mode == "paymentcsv":
+            al.debug("%s executed CSV payment dump" % str(session.user), "code.sql", dbo)
+            web.header("Content-Disposition", "attachment; filename=\"payment.csv\"")
+            yield utils.csv(l, financial.get_donations(dbo, "m10000"))
 
 class stocklevel:
     def GET(self):
