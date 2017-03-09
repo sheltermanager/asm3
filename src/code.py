@@ -6108,7 +6108,7 @@ class sql_dump:
             dbo2.locale = dbo.locale
             dbo2.dbtype = "MYSQL"
             yield dbupdate.sql_structure(dbo2)
-            yield dbupdate.sql_default_data(dbo2)
+            yield dbupdate.sql_default_data(dbo2).replace("|=", ";")
         if mode == "dumpddlpostgres":
             al.info("%s executed DDL dump PostgreSQL" % str(session.user), "code.sql", dbo)
             web.header("Content-Disposition", "attachment; filename=\"ddl_postgresql.sql\"")
@@ -6116,7 +6116,7 @@ class sql_dump:
             dbo2.locale = dbo.locale
             dbo2.dbtype = "POSTGRESQL"
             yield dbupdate.sql_structure(dbo2)
-            yield dbupdate.sql_default_data(dbo2)
+            yield dbupdate.sql_default_data(dbo2).replace("|=", ";")
         elif mode == "dumpsqlasm2":
             # ASM2_COMPATIBILITY
             al.info("%s executed SQL database dump (ASM2 HSQLDB)" % str(session.user), "code.sql", dbo)
