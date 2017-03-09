@@ -28,7 +28,7 @@ $(function() {
                         "dumpsql|" + _("SQL dump"), 
                         "dumpsqlnomedia|" + _("SQL dump (without media)"),
                         "dumpddlmysql|" + _("DDL dump (MySQL)"),
-                        "dumpddlpostgres|" + _("DDL dump (PostgreSQL)",
+                        "dumpddlpostgres|" + _("DDL dump (PostgreSQL)"),
                         // ASM2_COMPATIBILITY
                         "dumpsqlasm2|" + _("SQL dump (ASM2 HSQLDB Format)"),
                         "dumpsqlasm2nomedia|" + _("SQL dump (ASM2 HSQLDB Format, without media)"),
