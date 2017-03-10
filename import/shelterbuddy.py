@@ -108,19 +108,23 @@ class SBAddress:
     id = 0
     streetNum = ""
     streetName = ""
+    streetDir = ""
+    streetType = ""
     extraAddress = ""
     postcode = ""
     city = ""
     state = ""
     def address(self):
-        s = self.streetNum + " " + self.streetName
-        if self.extraAddress.strip() != "": s = self.extraAddress
-        return s
+        s = "%s %s %s %s" % (self.streetNum.strip(), self.streetDir.strip(), self.streetName.strip(), self.streetType.strip())
+        if s.strip() == "" and self.extraAddress.strip() != "": 
+            s = self.extraAddress
+        return s.strip()
 
 # --- START OF CONVERSION ---
 print "\\set ON_ERROR_STOP\nBEGIN;"
 
 addresses = {}
+streets = {}
 suburbs = {}
 vacctype = {}
 medtype = {}
@@ -159,13 +163,12 @@ cbreeds = asm.csv_to_list(PATH + "tblanimalbreeds.csv")
 ctypes = asm.csv_to_list(PATH + "animaltype.csv")
 cpaymentmethods = asm.csv_to_list(PATH + "tblpaymenttypes.csv")
 
-# parse a fast version of the document table where we can lookup
-# the image name for an animal's preferred picture
+# tbldocument.csv
 for row in asm.csv_to_list(PATH + "tbldocument.csv"):
     if row["objectypeid"] == "0" and row["extension"] == "jpg" and row["isDefault"] == "-1":
         documents[row["objectid"]] = PATH + "images/doc_%s.jpg" % row["docID"]
 
-# use a dictionary for speed looking up notes 
+# tblnotes
 for r in cnotes:
     if r["fieldText"] != "":
         animalnotes[r["animalID"]] = r["fieldText"]
@@ -178,6 +181,10 @@ for row in asm.csv_to_list(PATH + "tblsuburblist.csv"):
     s.postcode = row["postcode"]
     s.state = row["state"]
     suburbs[s.id] = s
+
+# tblstreets.csv
+for row in asm.csv_to_list(PATH + "tblstreets.csv"):
+    streets[row["type_id"]] = row["name"]
     
 # tblanimalvacc.csv
 print "DELETE FROM vaccinationtype WHERE ID > 200;"
@@ -201,6 +208,9 @@ for row in asm.csv_to_list(PATH + "tbladdress.csv"):
     s.id = row["id"].strip()
     s.streetNum = row["streetNum"]
     s.streetName = row["streetName"]
+    s.streetDir = row["dirOne"]
+    if row["streetType"] in streets:
+        s.streetType = streets[row["streetType"]]
     s.extraAddress = row["extraAddress"]
     s.postcode = row["postcode"]
     if suburbs.has_key(row["suburbId"]):
