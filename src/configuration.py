@@ -1043,7 +1043,7 @@ def third_party_publisher_sig(dbo):
     return cstring(dbo, "TPPublisherSig")
 
 def timezone(dbo):
-    return cint(dbo, "Timezone", TIMEZONE)
+    return cfloat(dbo, "Timezone", TIMEZONE)
 
 def trial_adoptions(dbo):
     return cboolean(dbo, "TrialAdoptions", DEFAULTS["TrialAdoptions"] == "Yes")

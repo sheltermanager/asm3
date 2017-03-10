@@ -544,7 +544,14 @@ $(function() {
             if (timezone.indexOf("-") == -1) {
                 timezone = "+" + timezone;
             }
-            timezone += ":00";
+            if (timezone.indexOf(".") == -1) {
+                timezone += ":00";
+            }
+            else {
+                timezone = timezone.replace(".25", ":15");
+                timezone = timezone.replace(".5", ":30");
+                timezone = timezone.replace(".75", ":45");
+            }
 
             // Set flag icon
             $("#asm-topline-flag")

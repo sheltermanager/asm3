@@ -1,6 +1,9 @@
 40
 ================
 
+10/03/17 Add en_CA locale based on en_GB #164
+10/03/17 Removed unused adjust_hour function #164
+10/03/17 Add non-whole hour timezones along with fraction support #164
 09/03/17 Add DDL dump and licence/payment data dump #165
 08/03/17 online form: create transport bugs (type and city/state)
 07/03/17 Chocolate Labrador Retriever mapping missing for adoptapet.com

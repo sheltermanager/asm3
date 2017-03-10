@@ -4,8 +4,8 @@ import datetime
 import json
 import time
 
-VERSION = "40u [Thu  9 Mar 17:43:03 GMT 2017]"
-BUILD = "03091743"
+VERSION = "40u [Fri 10 Mar 12:01:19 GMT 2017]"
+BUILD = "03101201"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -118,11 +118,12 @@ def real_locale(locale = "en"):
     # need for a full translation:
     # Our core English locales (with actual differences) are:
     #   en    (US)
-    #   en_AU (AUS)
+    #   en_AU (Australia)
+    #   en_CA (Canada)
     #   en_GB (UK)
     if locale in ("en_BG", "en_CH", "en_CY", "en_IE", "en_IN", "en_LU", "en_NZ", "en_PH", "en_TH", "en_TW", "en_VN", "en_ZA"):
         locale = "en_GB"
-    if locale in ("en_BH", "en_CA", "en_CO", "en_KY", "en_KW", "en_IL", "en_LB", "en_MX"):
+    if locale in ("en_BH", "en_CO", "en_KY", "en_KW", "en_IL", "en_LB", "en_MX"):
         locale = "en"
     if locale in ("en_NZ",):
         locale = "en_AU"
@@ -301,7 +302,7 @@ def format_time(d):
     if d is None: return ""
     return time.strftime("%H:%M:%S", d.timetuple())
 
-def format_time_now(offset = 0):
+def format_time_now(offset = 0.0):
     return format_time(now(offset))
 
 def http_date(dt):
@@ -386,19 +387,6 @@ def yes_no_unknown_blank(l, v):
     if v == 0: return _("Yes", l)
     elif v == 1: return _("No", l)
     else: return ""
-
-def adjust_hour(hour, offset = 0):
-    """
-    Given an hour as an integer, applies the offset to get
-    a new hour.
-    """
-    d = datetime.datetime.now()
-    d = datetime.datetime(d.year, d.month, d.day, hour, 0, 0)
-    if offset < 0:
-        d -= datetime.timedelta(hours = abs(offset))
-    else:
-        d += datetime.timedelta(hours = offset)
-    return d.hour
 
 def add_months(date, months = 1):
     """
@@ -579,7 +567,7 @@ def format_diff(l, days):
         return ntranslate(years, [ _("{plural0} year.", l), _("{plural1} years.", l), _("{plural2} years.", l), _("{plural3} years.")], l).replace(".", "") + \
             " " + ntranslate(months, [ _("{plural0} month.", l), _("{plural1} months.", l), _("{plural2} months.", l), _("{plural3} months.")], l)
 
-def now(offset = 0):
+def now(offset = 0.0):
     """
     Returns a python date representing now
     offset: A UTC offset to apply in hours
