@@ -1,8 +1,8 @@
-Transports without a Driver
+Transports without a driver
 ###
 Transport
 ###
-33601/Any
+34004
 ###
 Incomplete transports with no driver assigned
 ###
@@ -13,6 +13,7 @@ d.OwnerName AS DriverName, d.OwnerAddress AS DriverAddress, d.OwnerTown AS Drive
 p.OwnerName AS PickupName, t.PickupAddress, t.PickupTown, t.PickupCounty, t.PickupPostcode,
 dr.OwnerName AS DropoffName, t.DropoffAddress, t.DropoffTown, t.DropoffCounty, t.DropoffPostcode,
 a.AnimalName, a.ShelterCode, s.SpeciesName, a.BreedName,
+tt.TransportTypeName AS TransportType,
 CASE WHEN t.Status = 1 THEN 'New' 
 WHEN t.Status = 2 THEN 'Confirmed'
 WHEN t.Status = 3 THEN 'Hold'
@@ -25,6 +26,7 @@ LEFT OUTER JOIN species s ON a.SpeciesID = s.ID
 LEFT OUTER JOIN owner d ON d.ID = t.DriverOwnerID
 LEFT OUTER JOIN owner p ON p.ID = t.PickupOwnerID
 LEFT OUTER JOIN owner dr ON dr.ID = t.DropoffOwnerID
+INNER JOIN transporttype tt ON tt.ID = t.TransportTypeID
 WHERE t.Status < 10 AND (t.DriverOwnerID Is Null OR t.DriverOwnerID = 0)
 ORDER BY t.PickupDateTime
 ###
@@ -32,6 +34,7 @@ $$HEADER
 <table border="1">
 <tr>
 <th>Animal</th>
+<th>TransportType</th>
 <th>Driver</th>
 <th>Pickup</th>
 <th>from</th>
@@ -47,6 +50,7 @@ HEADER$$
 $$BODY
 <tr>
 <td>$ANIMALNAME - $SHELTERCODE ($BREEDNAME $SPECIESNAME)</td>
+<td>$TRANSPORTTYPE</td>
 <td>$DRIVERNAME<br/>$DRIVERADDRESS<br/>$DRIVERTOWN $DRIVERCOUNTY $DRIVERPOSTCODE</td>
 <td>$PICKUPNAME<br/>$PICKUPADDRESS<br/>$PICKUPTOWN $PICKUPCOUNTY $PICKUPPOSTCODE</td>
 <td>$PICKUPDATETIME</td>

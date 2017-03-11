@@ -1,10 +1,10 @@
-Transports scheduled
+Transports completed between two dates by transport type
 ###
 Transport
 ###
 34004
 ###
-Incomplete scheduled transports
+Transports completed between two dates grouped by transport type
 ###
 en
 ###
@@ -12,8 +12,7 @@ SELECT t.*,
 d.OwnerName AS DriverName, d.OwnerAddress AS DriverAddress, d.OwnerTown AS DriverTown, d.OwnerCounty AS DriverCounty, d.OwnerPostcode AS DriverPostcode, d.HomeTelephone AS DriverTelephone, 
 p.OwnerName AS PickupName, t.PickupAddress, t.PickupTown, t.PickupCounty, t.PickupPostcode,
 dr.OwnerName AS DropoffName, t.DropoffAddress, t.DropoffTown, t.DropoffCounty, t.DropoffPostcode,
-a.AnimalName, a.ShelterCode, s.SpeciesName, a.BreedName, 
-tt.transporttypename AS TransportType,
+a.AnimalName, a.ShelterCode, s.SpeciesName, a.BreedName, tt.transporttypename,
 CASE WHEN t.Status = 1 THEN 'New' 
 WHEN t.Status = 2 THEN 'Confirmed'
 WHEN t.Status = 3 THEN 'Hold'
@@ -27,14 +26,18 @@ LEFT OUTER JOIN owner d ON d.ID = t.DriverOwnerID
 LEFT OUTER JOIN owner p ON p.ID = t.PickupOwnerID
 LEFT OUTER JOIN owner dr ON dr.ID = t.DropoffOwnerID
 INNER JOIN transporttype tt ON tt.ID = t.TransportTypeID
-WHERE t.Status < 10 AND t.DriverOwnerID <> 0
-ORDER BY t.PickupDateTime
+WHERE t.Status = 11 AND t.DropoffDateTime >= '$ASK DATE Enter date from$' AND t.DropoffDateTime <= '$ASK DATE Enter date to$' 
+ORDER BY t.DropoffDateTime
 ###
 $$HEADER
+HEADER$$
+
+$$GROUP_TransportTypeName
+$$HEAD
+<h2>$TransportTypeName</h2>
 <table border="1">
 <tr>
 <th>Animal</th>
-<th>TransportType</th>
 <th>Driver</th>
 <th>Pickup</th>
 <th>from</th>
@@ -45,12 +48,12 @@ $$HEADER
 <th>Cost</th>
 <th>Comments</th>
 </tr>
-HEADER$$
-
+$$FOOT
+</table>
+GROUP$$
 $$BODY
 <tr>
 <td>$ANIMALNAME - $SHELTERCODE ($BREEDNAME $SPECIESNAME)</td>
-<td>$TRANSPORTTYPE</td>
 <td>$DRIVERNAME<br/>$DRIVERADDRESS<br/>$DRIVERTOWN $DRIVERCOUNTY $DRIVERPOSTCODE</td>
 <td>$PICKUPNAME<br/>$PICKUPADDRESS<br/>$PICKUPTOWN $PICKUPCOUNTY $PICKUPPOSTCODE</td>
 <td>$PICKUPDATETIME</td>
@@ -59,10 +62,11 @@ $$BODY
 <td>$STATUSNAME</td>
 <td>$MILES</td>
 <td>$COST</td>
-<td>$COMMENTS</td></tr>
+<td>$COMMENTS</td>
 </tr>
 BODY$$
 
 $$FOOTER
 </table>
 FOOTER$$
+

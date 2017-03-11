@@ -1,10 +1,10 @@
-Transports scheduled
+Transports between two dates by animal type
 ###
 Transport
 ###
 34004
 ###
-Incomplete scheduled transports
+Transports between two dates grouped by animal type
 ###
 en
 ###
@@ -12,8 +12,8 @@ SELECT t.*,
 d.OwnerName AS DriverName, d.OwnerAddress AS DriverAddress, d.OwnerTown AS DriverTown, d.OwnerCounty AS DriverCounty, d.OwnerPostcode AS DriverPostcode, d.HomeTelephone AS DriverTelephone, 
 p.OwnerName AS PickupName, t.PickupAddress, t.PickupTown, t.PickupCounty, t.PickupPostcode,
 dr.OwnerName AS DropoffName, t.DropoffAddress, t.DropoffTown, t.DropoffCounty, t.DropoffPostcode,
-a.AnimalName, a.ShelterCode, s.SpeciesName, a.BreedName, 
-tt.transporttypename AS TransportType,
+a.AnimalName, a.ShelterCode, s.SpeciesName, a.BreedName, at.animaltype,
+tt.TransportTypeName AS TransportType,
 CASE WHEN t.Status = 1 THEN 'New' 
 WHEN t.Status = 2 THEN 'Confirmed'
 WHEN t.Status = 3 THEN 'Hold'
@@ -26,11 +26,17 @@ LEFT OUTER JOIN species s ON a.SpeciesID = s.ID
 LEFT OUTER JOIN owner d ON d.ID = t.DriverOwnerID
 LEFT OUTER JOIN owner p ON p.ID = t.PickupOwnerID
 LEFT OUTER JOIN owner dr ON dr.ID = t.DropoffOwnerID
+INNER JOIN animaltype at ON at.ID = a.AnimalTypeID
 INNER JOIN transporttype tt ON tt.ID = t.TransportTypeID
-WHERE t.Status < 10 AND t.DriverOwnerID <> 0
-ORDER BY t.PickupDateTime
+WHERE t.Status = 11 AND t.DropoffDateTime >= '$ASK DATE Enter date from$' AND t.DropoffDateTime <= '$ASK DATE Enter date to$' 
+ORDER BY t.DropoffDateTime
 ###
 $$HEADER
+HEADER$$
+
+$$GROUP_AnimalType
+$$HEAD
+<h2>$AnimalType</h2>
 <table border="1">
 <tr>
 <th>Animal</th>
@@ -45,7 +51,9 @@ $$HEADER
 <th>Cost</th>
 <th>Comments</th>
 </tr>
-HEADER$$
+$$FOOT
+</table>
+GROUP$$
 
 $$BODY
 <tr>
