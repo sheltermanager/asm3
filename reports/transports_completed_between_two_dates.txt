@@ -34,7 +34,7 @@ $$HEADER
 <table border="1">
 <tr>
 <th>Animal</th>
-<th>TransportType</th>
+<th>Type</th>
 <th>Driver</th>
 <th>Pickup</th>
 <th>from</th>
