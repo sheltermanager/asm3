@@ -120,6 +120,24 @@ bold, add this to your CSS::
     .asm3-adoptable-name { font-weight: bold; }
     .asm3-adoptable-thumbnail { border-radius: 8px; }
 
+Another trick you can do is to translate any of the text output by the
+adoptable list on the fly. By default, it only uses elements from your database
+so they will match the language of your database. 
+
+You can add on-the-fly translation by adding a script tag with a dictionary
+called asm3_adoptable_translations above the script that makes the service
+call. Eg to translate English values to French::
+
+    <script>
+    asm3_adoptable_translations = {
+        "Dog": "Chien",
+        "Cat": "Chat",
+        "Pig": "Cochon"
+    }
+    </script>
+    <div id="asm3-adoptables" />
+    <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
+
 csv_mail and csv_report
 ----------------------
 
