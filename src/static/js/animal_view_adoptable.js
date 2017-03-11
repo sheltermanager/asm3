@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global alert */
+/*global alert, asm3_adoptable_translations */
 
 (function() {
 
@@ -32,6 +32,23 @@
         '</div>'
     ].join("");
 
+    var decode_div = document.createElement('div');
+    var decode = function(s) {
+        decode_div.innerHTML = s;
+        s = decode_div.textContent;
+        decode_div.textContent = '';
+        return s;
+    };
+
+    var translate = function(s) {
+        if (typeof asm3_adoptable_translations !== 'undefined') {
+            if (asm3_adoptable_translations.hasOwnProperty(s)) {
+                return asm3_adoptable_translations[s];
+            }
+        }
+        return s;
+    };
+
     var substitute = function(str, sub) {
         /*jslint regexp: true */
         return str.replace(/\{(.+?)\}/g, function($0, $1) {
@@ -59,7 +76,7 @@
         adoptables.sort(sort_single(labelfield));
         adoptables.forEach(function(item, index, arr) {
             if (!seenvalues.hasOwnProperty(item[valuefield])) {
-                h.push('<option value="' + item[valuefield] + '">' + item[labelfield] + '</option>');
+                h.push('<option value="' + item[valuefield] + '">' + translate(item[labelfield]) + '</option>');
                 seenvalues[item[valuefield]] = 1;
             }
         });
@@ -77,19 +94,19 @@
         adoptables.forEach(function(item, index, arr) {
 
             if (selspecies && item.SPECIESID != selspecies) { return; }
-            if (selagegroup && item.AGEGROUP != selagegroup) { return; }
+            if (selagegroup && decode(item.AGEGROUP) != decode(selagegroup)) { return; }
             if (selgender && item.SEX != selgender) {return; }
             
             h.push(substitute(thumbnail_template, {
                 account: account,
                 baseurl: baseurl,
                 age: item.ANIMALAGE,
-                agegroup: item.AGEGROUP,
+                agegroup: translate(item.AGEGROUP),
                 animalid: item.ID,
-                animalname: item.ANIMALNAME,
-                breed: item.BREEDNAME,
-                sex: item.SEXNAME,
-                species: item.SPECIESNAME
+                animalname: translate(item.ANIMALNAME),
+                breed: translate(item.BREEDNAME),
+                sex: translate(item.SEXNAME),
+                species: translate(item.SPECIESNAME)
             }));
 
         });

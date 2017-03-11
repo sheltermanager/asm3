@@ -1,6 +1,8 @@
 40
 ================
 
+11/03/17 Fix for adoptable_js comparing age groups with unicode
+11/03/17 Support for asm3_adoptable_translate dictionary with adoptable_js
 10/03/17 Add en_CA locale based on en_GB #164
 10/03/17 Removed unused adjust_hour function #164
 10/03/17 Add non-whole hour timezones along with fraction support #164
