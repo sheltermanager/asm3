@@ -454,7 +454,7 @@ def get_multiple_database_info(alias):
     Gets the database info for the alias from our configured map.
     """
     dbo = DatabaseInfo()
-    if not MULTIPLE_DATABASES_MAP.has_key(alias):
+    if alias not in MULTIPLE_DATABASES_MAP:
         dbo.database = "FAIL"
         return dbo
     mapinfo = MULTIPLE_DATABASES_MAP[alias]

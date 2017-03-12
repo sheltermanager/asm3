@@ -4386,7 +4386,7 @@ def update_33717(dbo):
         59: "Tortoiseshell",
     }
     for c in db.query(dbo, "SELECT ID FROM basecolour WHERE ID <= 59 AND (AdoptAPetColour Is Null OR AdoptAPetColour = '')"):
-        if defmap.has_key(c["ID"]):
+        if c["ID"] in defmap:
             db.execute_dbupdate(dbo, "UPDATE basecolour SET AdoptAPetColour=%s WHERE ID=%d" % (db.ds(defmap[c["ID"]]), c["ID"]))
 
 def update_33718(dbo):

@@ -16,7 +16,7 @@ sys.path.append("/root/asmdb")
 try:
     import smcom_client
 except:
-    #sys.stderr.write("warn: no smcom_client\n")
+    # sys.stderr.write("warn: no smcom_client\n")
     pass
 
 def active():
@@ -39,7 +39,7 @@ def get_database_info(alias):
     dbo.dbtype = "POSTGRESQL"
     dbo.alias = alias
     a = _get_account_info(alias)
-    if a is None or not a.has_key("user"):
+    if a is None or "user" not in a:
         dbo.database = "FAIL"
         return dbo
     dbo.database = str(a["user"])

@@ -169,7 +169,7 @@ def get_criteria_params(dbo, customreportid, post):
     p = []
     l = dbo.locale
     for name, rtype, question in crit:
-        if not post.has_key(name):
+        if name not in post:
             raise utils.ASMValidationError("Missing parameter: %s" % name)
         if rtype == "DATE":
             p.append( ( name , question, db.python2db(i18n.display2python(l, post[name])), post[name]) )  
@@ -997,7 +997,7 @@ class Report:
                 for x in xrange(2, len(fields)):
                     fieldname = fields[x].upper()
                     fieldvalue = ""
-                    if not rs[row].has_key(fieldname):
+                    if fieldname not in rs[row]:
                         self._p("Subreport field '" + fields[x] + "' doesn't exist.")
                         valid = False
                     else:
@@ -1382,7 +1382,7 @@ class Report:
         else:
             values = {}
             for r in rs:
-                if not values.has_key(r[0]):
+                if r[0] not in values:
                     values[r[0]] = []
                 values[r[0]].append("[%s, %s]" % (db.encode_str(self.dbo, r[1]), str(r[2])))
             for k, v in values.iteritems():
@@ -1629,7 +1629,7 @@ class Report:
                 # we need to force finishing of its inner groups.
                 for gd in groups:
                     # Check the group field exists
-                    if not rs[row].has_key(gd.fieldName):
+                    if gd.fieldName not in rs[row]:
                         self._p("Cannot construct group, field '%s' does not exist" % gd.fieldName)
                         return
                     if cascade or not gd.lastFieldValue == rs[row][gd.fieldName]:
@@ -1766,7 +1766,7 @@ class Report:
                     for x in xrange(2, len(fields)):
                         fieldname = fields[x].upper()
                         fieldvalue = ""
-                        if not rs[row].has_key(fieldname):
+                        if fieldname not in rs[row]:
                             self._p("Subreport field '" + fields[x] + "' doesn't exist.")
                             valid = False
                         else:

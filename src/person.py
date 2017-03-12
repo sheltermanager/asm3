@@ -748,7 +748,7 @@ def insert_person_from_form(dbo, post, username):
     Returns the ID of the new record
     """
     def d(key, default = None): 
-        if post.data.has_key(key):
+        if key in post.data:
             return post[key]
         else:
             return default
@@ -855,7 +855,7 @@ def merge_person_details(dbo, username, personid, d):
     p = get_person(dbo, personid)
     if p is None: return
     def merge(dictfield, fieldname):
-        if not d.has_key(dictfield): return
+        if dictfield not in d: return
         if p[fieldname] is None or p[fieldname] == "":
             db.execute(dbo, "UPDATE owner SET %s = %s, LastChangedBy = %s, LastChangedDate = %s WHERE ID = %d" % \
                 (fieldname, db.ds(d[dictfield]), db.ds(username), db.ddt(now(dbo.timezone)), personid))

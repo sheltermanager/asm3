@@ -297,8 +297,8 @@ def embellish_regimen(l, rows):
     """
     for r in rows:
         st = 0
-        if r.has_key("REGIMENID"): r["COMPOSITEID"] = "%d_%d" % (r["REGIMENID"], r["TREATMENTID"])
-        if r.has_key("STATUS"): st = int(r["STATUS"])
+        if "REGIMENID" in r: r["COMPOSITEID"] = "%d_%d" % (r["REGIMENID"], r["TREATMENTID"])
+        if "STATUS" in r: st = int(r["STATUS"])
         tr = int(r["TIMINGRULE"])
         trr = int(r["TREATMENTRULE"])
         trf = int(r["TIMINGRULEFREQUENCY"])

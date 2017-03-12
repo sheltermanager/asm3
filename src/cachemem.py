@@ -34,8 +34,6 @@ def delete(key):
     if _memcache_available(): return _memcache_delete(key)
     return _dict_delete(key)
 
-
-
 # ==============================================
 # Dict implementation of memory cache
 # ==============================================
@@ -43,7 +41,7 @@ dict_client = {}
 
 def _dict_get(key):
     global dict_client
-    if not dict_client.has_key(key): return None
+    if key not in dict_client: return None
     v = dict_client[key]
     # return the value if we're within ttl
     if time.time() < v[0]: return v[1]

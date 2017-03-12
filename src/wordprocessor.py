@@ -920,7 +920,7 @@ def table_tags(dbo, d, rows, typefield = "", recentdatefield = ""):
                 continue
             # Is this the first of this type we've seen?
             # If so, create the tags with type as a suffix
-            if not uniquetypes.has_key(t):
+            if t not in uniquetypes:
                 uniquetypes[t] = r
                 t = t.upper().replace(" ", "").replace("/", "")
                 for k, v in d.iteritems():
@@ -934,7 +934,7 @@ def table_tags(dbo, d, rows, typefield = "", recentdatefield = ""):
                 t = r[typefield]
                 # Is this the first type with STATUS==2 we've seen?
                 # If so, create the tags with recent as a suffix.
-                if not recentgiven.has_key(t) and r[recentdatefield] == 2:
+                if t not in recentgiven and r[recentdatefield] == 2:
                     recentgiven[t] = r
                     t = t.upper().replace(" ", "").replace("/", "")
                     for k, v in d.iteritems():
@@ -943,7 +943,7 @@ def table_tags(dbo, d, rows, typefield = "", recentdatefield = ""):
                 t = r[typefield]
                 # Is this the first type with a date we've seen?
                 # If so, create the tags with recent as a suffix
-                if not recentgiven.has_key(t) and r[recentdatefield] is not None:
+                if t not in recentgiven and r[recentdatefield] is not None:
                     recentgiven[t] = r
                     t = t.upper().replace(" ", "").replace("/", "")
                     for k, v in d.iteritems():
@@ -976,7 +976,7 @@ def substitute_tags(searchin, tags, use_xml_escaping = True, opener = "&lt;&lt;"
         if ep != -1:
             matchtag = s[sp + len(opener):ep].upper()
             newval = ""
-            if tags.has_key(matchtag):
+            if matchtag in tags:
                 newval = tags[matchtag]
                 if newval is not None:
                     newval = str(newval)

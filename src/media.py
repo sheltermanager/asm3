@@ -54,7 +54,7 @@ def mime_type(filename):
         "avi"           : "video/avi"
     }
     ext = filename[filename.rfind(".")+1:]
-    if types.has_key(ext):
+    if ext in types:
         return types[ext]
     return "application/octet-stream"
 

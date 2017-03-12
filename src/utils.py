@@ -85,17 +85,17 @@ class PostedData(object):
     def db_string(self, field):
         return df_t(self.data, field)
     def filename(self):
-        if self.data.has_key("filechooser"):
+        if "filechooser" in self.data:
             return encode_html(self.data.filechooser.filename)
         return ""
     def filedata(self):
-        if self.data.has_key("filechooser"):
+        if "filechooser" in self.data:
             return self.data.filechooser.value
         return ""
     def __contains__(self, key):
-        return self.data.has_key(key)
+        return key in self.data
     def has_key(self, key):
-        return self.data.has_key(key)
+        return key in self.data
     def __getitem__(self, key):
         return self.string(key)
     def __repr__(self):
@@ -319,7 +319,7 @@ def decode_html(s):
         hits.remove(amp)
     for hit in hits:
         name = hit[1:-1]
-        if htmlentitydefs.name2codepoint.has_key(name):
+        if name in htmlentitydefs.name2codepoint:
             s = s.replace(hit, unichr(htmlentitydefs.name2codepoint[name]))
     s = s.replace(amp, "&")
     return s
@@ -405,7 +405,7 @@ class ASMError(web.HTTPError):
 
 def df_c(data, field):
     """ Returns a checkbox field for the database """
-    if not data.has_key(field): 
+    if field not in data:
         return db.di(0)
     if data[field] == "checked" or data[field] == "on":
         return db.di(1)
@@ -415,7 +415,7 @@ def df_c(data, field):
 def df_t(data, field):
     """ Returns a posted text field for the database, turns it from unicode into
         ascii with XML entities to represent codepoints > 128 """
-    if data.has_key(field):
+    if field in data:
         if type(data[field]) == str: 
             s = unicode(data[field], "utf8").encode("ascii", "xmlcharrefreplace")
         else:
@@ -426,14 +426,14 @@ def df_t(data, field):
 
 def df_s(data, field):
     """ Returns a select field for the database """
-    if data.has_key(field):
+    if field in data:
         return db.di(data[field])
     else:
         return "0"
 
 def df_d(data, field, l):
     """ Returns a date field for the database """
-    if data.has_key(field):
+    if field in data:
         return db.dd(display2python(l, data[field]))
     else:
         return "Null"
@@ -444,7 +444,7 @@ def df_dt(data, datefield, timefield, l):
 
 def df_kc(data, field):
     """ Returns a checkbox field """
-    if not data.has_key(field): 
+    if field not in data:
         return 0
     if data[field] == "checked" or data[field] == "on":
         return 1
@@ -453,21 +453,21 @@ def df_kc(data, field):
 
 def df_ki(data, field):
     """ Returns an integer key from a datafield """
-    if data.has_key(field):
+    if field in data:
         return cint(data[field])
     else:
         return 0
 
 def df_kf(data, field):
     """ Returns a float key from a datafield """
-    if data.has_key(field):
+    if field in data:
         return cfloat(data[field])
     else:
         return float(0)
 
 def df_ks(data, field, strip = True):
     """ Returns a string key from a datafield """
-    if data.has_key(field):
+    if field in data:
         s = encode_html(data[field])
         if strip: s = s.strip()
         return s
@@ -476,17 +476,17 @@ def df_ks(data, field, strip = True):
 
 def df_kd(data, field, l):
     """ Returns a date key from a datafield """
-    if data.has_key(field):
+    if field in data:
         return display2python(l, data[field])
     else:
         return None
 
 def df_kdt(data, datefield, timefield, l):
     """ Returns a datetime field """
-    if data.has_key(datefield):
+    if datefield in data:
         d = display2python(l, data[datefield])
         if d is None: return None
-        if data.has_key(timefield):
+        if timefield in data:
             tbits = data[timefield].split(":")
             hour = 0
             minute = 0
@@ -508,7 +508,7 @@ def df_kl(data, field):
     Returns a list of integers from a datafield that contains
     comma separated numbers.
     """
-    if data.has_key(field):
+    if field in data:
         s = df_ks(data, field)
         items = s.split(",")
         ids = []
@@ -635,7 +635,7 @@ def substitute_tags(searchin, tags, use_xml_escaping = True, opener = "&lt;&lt;"
         if ep != -1:
             matchtag = s[sp + len(opener):ep].upper()
             newval = ""
-            if tags.has_key(matchtag):
+            if matchtag in tags:
                 newval = tags[matchtag]
                 if newval is not None:
                     newval = str(newval)
@@ -673,7 +673,7 @@ def is_loggedin(session):
     """
     Returns true if the user is logged in
     """
-    return session.has_key("user") and session.user is not None
+    return "user" in session and session.user is not None
 
 def md5_hash(s):
     """
@@ -912,13 +912,13 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
     password = ""
     usetls = False
     if SMTP_SERVER is not None:
-        if SMTP_SERVER.has_key("sendmail"): sendmail = SMTP_SERVER["sendmail"]
-        if SMTP_SERVER.has_key("host"): host = SMTP_SERVER["host"]
-        if SMTP_SERVER.has_key("port"): port = SMTP_SERVER["port"]
-        if SMTP_SERVER.has_key("username"): username = SMTP_SERVER["username"]
-        if SMTP_SERVER.has_key("password"): password = SMTP_SERVER["password"]
-        if SMTP_SERVER.has_key("usetls"): usetls = SMTP_SERVER["usetls"]
-        if SMTP_SERVER.has_key("headers"): 
+        if "sendmail" in SMTP_SERVER: sendmail = SMTP_SERVER["sendmail"]
+        if "host" in SMTP_SERVER: host = SMTP_SERVER["host"]
+        if "port" in SMTP_SERVER: port = SMTP_SERVER["port"]
+        if "username" in SMTP_SERVER: username = SMTP_SERVER["username"]
+        if "password" in SMTP_SERVER: password = SMTP_SERVER["password"]
+        if "usetls" in SMTP_SERVER: usetls = SMTP_SERVER["usetls"]
+        if "headers" in SMTP_SERVER: 
             for k, v in SMTP_SERVER["headers"].iteritems():
                 add_header(msg, k, v)
      

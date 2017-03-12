@@ -597,19 +597,19 @@ def img_src(row, mode):
     else:
         idval = 0
         if mode == "animal":
-            if row.has_key("ANIMALID"):
+            if "ANIMALID" in row:
                 idval = int(row["ANIMALID"])
-            elif row.has_key("ID"):
+            elif "ID" in row:
                 idval = int(row["ID"])
         elif mode == "person":
-            if row.has_key("PERSONID"):
+            if "PERSONID" in row:
                 idval = int(row["PERSONID"])
-            elif row.has_key("ID"):
+            elif "ID" in row:
                 idval = int(row["ID"])
         else:
             idval = int(row["ID"])
         uri = "image?mode=" + mode + "&id=" + str(idval)
-        if row.has_key("WEBSITEMEDIADATE") and row["WEBSITEMEDIADATE"] is not None:
+        if "WEBSITEMEDIADATE" in row and row["WEBSITEMEDIADATE"] is not None:
             uri += "&date=" + str(row["WEBSITEMEDIADATE"].isoformat())
         return uri
 
@@ -625,15 +625,15 @@ def doc_img_src(dbo, row, mode):
     else:
         path = ""
         if mode == "animal":
-            if row.has_key("ANIMALID"):
+            if "ANIMALID" in row:
                 idval = row["ANIMALID"]
-            elif row.has_key("ID"):
+            elif "ID" in row:
                 idval = row["ID"]
             path = "/animal/%d/%s" % (idval, row["DOCMEDIANAME"])
         elif mode == "person":
-            if row.has_key("PERSONID"):
+            if "PERSONID" in row:
                 idval = row["PERSONID"]
-            elif row.has_key("ID"):
+            elif "ID" in row:
                 idval = row["ID"]
             path = "/person/%d/%s" % (idval, row["DOCMEDIANAME"])
         else:
@@ -1007,19 +1007,19 @@ def thumbnail_img_src(dbo, row, mode):
     else:
         idval = 0
         if mode == "animalthumb":
-            if row.has_key("ANIMALID"):
+            if "ANIMALID" in row:
                 idval = int(row["ANIMALID"])
-            elif row.has_key("ID"):
+            elif "ID" in row:
                 idval = int(row["ID"])
         elif mode == "personthumb":
-            if row.has_key("PERSONID"):
+            if "PERSONID" in row:
                 idval = int(row["PERSONID"])
-            elif row.has_key("ID"):
+            elif "ID" in row:
                 idval = int(row["ID"])
         else:
             idval = int(row["ID"])
         uri = "image?db=" + dbo.database + "&mode=" + mode + "&id=" + str(idval)
-        if row.has_key("WEBSITEMEDIADATE") and row["WEBSITEMEDIADATE"] is not None:
+        if "WEBSITEMEDIADATE" in row and row["WEBSITEMEDIADATE"] is not None:
             uri += "&date=" + str(row["WEBSITEMEDIADATE"].isoformat())
         return uri
 

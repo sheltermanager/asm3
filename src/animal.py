@@ -1783,13 +1783,13 @@ def insert_animal_from_form(dbo, post, username):
 
     # Default good with
     goodwithcats = 2
-    if post.has_key("goodwithcats"): goodwithcats = ki("goodwithcats")
+    if "goodwithcats" in post: goodwithcats = ki("goodwithcats")
     goodwithdogs = 2
-    if post.has_key("goodwithdogs"): goodwithdogs = ki("goodwithdogs")
+    if "goodwithdogs" in post: goodwithdogs = ki("goodwithdogs")
     goodwithkids = 2
-    if post.has_key("goodwithkids"): goodwithkids = ki("goodwithkids")
+    if "goodwithkids" in post: goodwithkids = ki("goodwithkids")
     housetrained = 2
-    if post.has_key("housetrained"): housetrained = ki("housetrained")
+    if "housetrained" in post: housetrained = ki("housetrained")
     unknown = 0
 
     # Validate form fields
@@ -1813,7 +1813,7 @@ def insert_animal_from_form(dbo, post, username):
 
     # Set not for adoption if the option is on
     notforadoption = 0
-    if post.has_key("notforadoption"):
+    if "notforadoption" in post:
         notforadoption = ki("notforadoption")
     elif configuration.auto_not_for_adoption(dbo):
         notforadoption = 1        
@@ -3392,23 +3392,23 @@ def update_animal_figures(dbo, month = 0, year = 0):
     def add_days(listdays):
         """ Adds up a list of day dictionaries """
         d = {}
-        for i in xrange(1, 32):
+        for i in range(1, 32):
             d["D%d" % i] = 0
         for cd in listdays:
-            if not cd.has_key("D29"): cd["D29"] = 0
-            if not cd.has_key("D30"): cd["D30"] = 0
-            if not cd.has_key("D31"): cd["D31"] = 0
-            for i in xrange(1, 32):
+            if "D29" not in cd: cd["D29"] = 0
+            if "D30" not in cd: cd["D30"] = 0
+            if "D31" not in cd: cd["D31"] = 0
+            for i in range(1, 32):
                 dk = "D%d" % i
-                if cd.has_key(dk):
+                if dk in cd:
                     d[dk] = int(d[dk]) + int(cd[dk])
         return d
 
     def is_zero_days(days):
         """ Returns true if a map of day counts is all zero """
-        for i in xrange(1, 32):
+        for i in range(1, 32):
             dk = "D%d" % i
-            if days.has_key(dk) and int(days[dk]) > 0:
+            if dk in days and int(days[dk]) > 0:
                 return False
         return True
 
@@ -3416,28 +3416,28 @@ def update_animal_figures(dbo, month = 0, year = 0):
         """ Subtracts day dictionary subdic from initdic """
         d = initdic.copy()
         cd = subdic
-        if not d.has_key("D29"): d["D29"] = 0
-        if not d.has_key("D30"): d["D30"] = 0
-        if not d.has_key("D31"): d["D31"] = 0
-        if not cd.has_key("D29"): cd["D29"] = 0
-        if not cd.has_key("D30"): cd["D30"] = 0
-        if not cd.has_key("D31"): cd["D31"] = 0
-        for i in xrange(1, 32):
+        if "D29" not in d: d["D29"] = 0
+        if "D30" not in d: d["D30"] = 0
+        if "D31" not in d: d["D31"] = 0
+        if "D29" not in cd: cd["D29"] = 0
+        if "D30" not in cd: cd["D30"] = 0
+        if "D31" not in cd: cd["D31"] = 0
+        for i in range(1, 32):
             dk = "D%d" % i
             d[dk] = int(d[dk]) - int(cd[dk])
         return d
 
     def add_row(orderindex, code, animaltypeid, speciesid, maxdaysinmonth, heading, bold, calctotal, days):
         """ Adds a row to the animalfigures table """
-        if not days.has_key("D29"): days["D29"] = 0
-        if not days.has_key("D30"): days["D30"] = 0
-        if not days.has_key("D31"): days["D31"] = 0
+        if "D29" not in days: days["D29"] = 0
+        if "D30" not in days: days["D30"] = 0
+        if "D31" not in days: days["D31"] = 0
         avg = 0.0
         tot = 0
         total = ""
-        for i in xrange(1, maxdaysinmonth + 1):
+        for i in range(1, maxdaysinmonth + 1):
             avg += int(days["D%d" % i])
-            tot += int(days["D%d" %i])
+            tot += int(days["D%d" % i])
         avg = round(float(float(avg) / float(maxdaysinmonth)), 1)
         if calctotal: 
             total = str(tot)
@@ -4595,7 +4595,7 @@ def update_animal_figures_asilomar(dbo, year = 0):
         catsub = 0
         dogsub = 0
         for l in selrows:
-            if asrows.has_key(l):
+            if l in asrows:
                 cur = asrows[l]
                 catsub += cur[0]
                 dogsub += cur[1]
@@ -4864,7 +4864,7 @@ def update_animal_figures_monthly_asilomar(dbo, month = 0, year = 0):
         catsub = 0
         dogsub = 0
         for l in selrows:
-            if asrows.has_key(l):
+            if l in asrows:
                 cur = asrows[l]
                 catsub += cur[0]
                 dogsub += cur[1]

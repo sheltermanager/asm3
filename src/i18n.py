@@ -4,8 +4,8 @@ import datetime
 import json
 import time
 
-VERSION = "40u [Sun 12 Mar 08:35:43 GMT 2017]"
-BUILD = "03120835"
+VERSION = "40u [Sun 12 Mar 10:26:43 GMT 2017]"
+BUILD = "03121026"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -175,7 +175,7 @@ def translate(english, locale = "en"):
         return english
 
     # If the string isn't in our locale dictionary, fall back to English
-    if not lang.val.has_key(english): return english
+    if english not in lang.val: return english
 
     # If the value hasn't been translated, fall back to English
     s = lang.val[english]

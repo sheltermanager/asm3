@@ -261,7 +261,7 @@ def authenticate_ip(user, remoteip):
     user: A row from the user table
     remoteip: The user's remote ip address
     """
-    if not user.has_key("IPRESTRICTION"):
+    if "IPRESTRICTION" not in user:
         return True
     if user["IPRESTRICTION"] is None or user["IPRESTRICTION"] == "":
         return True

@@ -63,7 +63,7 @@ def logmsg(mtype, msg, location, dbo):
     # Prepend location
     msg = fixed_chars(location, 30) + " " + msg
     # If we have a dbo, prepend the database name to the message
-    if dbo != None:
+    if dbo is not None:
         msg = fixed_chars(dbo.database, 6) + " " + msg
     try:
         if mtype == 0:

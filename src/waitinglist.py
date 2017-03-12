@@ -40,7 +40,7 @@ def get_waitinglist_by_id(dbo, wid):
     if len(rows) == 0: return None
     r = rows[0]
     ranks = get_waitinglist_ranks(dbo)
-    if ranks.has_key(r["WLID"]):
+    if r["WLID"] in ranks:
         r["RANK"] = ranks[r["WLID"]]
     else:
         r["RANK"] = ""
@@ -115,7 +115,7 @@ def get_waitinglist(dbo, priorityfloor = 5, species = -1, size = -1, addresscont
                 if wid == str(r["WLID"]).strip():
                     r["HIGHLIGHT"] = h
                     break
-        if ranks.has_key(r["WLID"]):
+        if r["WLID"] in ranks:
             r["RANK"] = ranks[r["WLID"]]
         else:
             r["RANK"] = ""

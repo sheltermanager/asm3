@@ -235,7 +235,7 @@ def remote_ip():
     reverse proxies
     """
     remoteip = web.ctx['ip']
-    if web.ctx.env.has_key("HTTP_X_FORWARDED_FOR"):
+    if "HTTP_X_FORWARDED_FOR" in web.ctx.env:
         xf = web.ctx.env["HTTP_X_FORWARDED_FOR"]
         if xf is not None and str(xf).strip() != "":
             remoteip = xf
@@ -373,7 +373,7 @@ def full_or_json(modulename, s, c, json = False):
         return s
     else:
         web.header("Content-Type", "application/json")
-        if c.endswith(","): c = c[0:len(c)-1]
+        if c.endswith(","): c = c[0:len(c) - 1]
         return "{ %s }" % c
 
 # SSL for the server can be passed as an extra startup argument, eg:
@@ -471,7 +471,7 @@ class image:
         post = utils.PostedData(web.input(mode = "animal", id = "0", seq = -1), session.locale)
         try:
             lastmod, imagedata = extmedia.get_image_file_data(session.dbo, post["mode"], post["id"], post.integer("seq"), False)
-        except Exception,err:
+        except Exception as err:
             al.error("%s" % str(err), "code.image", session.dbo)
             return ""
         if imagedata != "NOPIC":
@@ -671,7 +671,7 @@ class mobile_logout:
         post = utils.PostedData(web.input(smaccount=""), session.locale)
         if post["smaccount"] != "":
             url = "login?smaccount=" + post["smaccount"]
-        elif MULTIPLE_DATABASES and session.dbo is not None and session.dbo.alias != None:
+        elif MULTIPLE_DATABASES and session.dbo is not None and session.dbo.alias is not None:
             url = "mobile_login?smaccount=" + session.dbo.alias
         users.update_user_activity(session.dbo, session.user, False)
         users.logout(session, remote_ip())
@@ -921,7 +921,7 @@ class login_splash:
             web.header("Content-Type", "image/jpeg")
             web.header("Cache-Control", "max-age=86400")
             return dbfs.get_string_filepath(dbo, "/reports/splash.jpg")
-        except Exception,err:
+        except Exception as err:
             al.error("%s" % str(err), "code.login_splash", session.dbo)
             return ""
 
@@ -931,7 +931,7 @@ class logout:
         post = utils.PostedData(web.input(smaccount=""), session.locale)
         if post["smaccount"] != "":
             url = "login?smaccount=" + post["smaccount"]
-        elif MULTIPLE_DATABASES and session.dbo is not None and session.dbo.alias != None:
+        elif MULTIPLE_DATABASES and session.dbo is not None and session.dbo.alias is not None:
             url = "login?smaccount=" + session.dbo.alias
         users.update_user_activity(session.dbo, session.user, False)
         users.logout(session, remote_ip())
@@ -1009,8 +1009,8 @@ class accounts_trx:
         c = html.controller_json("rows", transactions)
         c += html.controller_json("codes", "|".join(financial.get_account_codes(dbo, accountcode)))
         c += html.controller_int("accountid", post.integer("accountid"))
-        c += html.controller_str("accountcode", accountcode);
-        c += html.controller_str("accounteditroles", "|".join(accounteditroles));
+        c += html.controller_str("accountcode", accountcode)
+        c += html.controller_str("accounteditroles", "|".join(accounteditroles))
         c += html.controller_str("fromdate", python2display(l, fromdate))
         c += html.controller_str("todate", python2display(l, todate))
         s += html.controller(c)
@@ -1109,7 +1109,7 @@ class animal:
         s += html.controller(c)
         s += html.footer()
         return full_or_json("animal", s, c, post["json"] == "true")
-        
+
     def POST(self):
         utils.check_loggedin(session, web)
         dbo = session.dbo
@@ -1917,44 +1917,44 @@ class batch:
                 extanimal.update_animal_figures_annual(dbo, post.date("figyear").year)
                 extanimal.update_animal_figures_asilomar(dbo, post.date("figyear").year)
                 return "0"
-            except Exception,err:
+            except Exception as err:
                 return str(err)
         elif post["mode"] == "genfigmonth":
             try:
                 extanimal.update_animal_figures(dbo, post.date("figmonth").month, post.date("figmonth").year)
                 extanimal.update_animal_figures_monthly_asilomar(dbo, post.date("figmonth").month, post.date("figmonth").year)
                 return "0"
-            except Exception,err:
+            except Exception as err:
                 return str(err)
         elif post["mode"] == "genshelterpos":
             try:
                 extanimal.update_on_shelter_animal_statuses(dbo)
                 return "0"
-            except Exception,err:
+            except Exception as err:
                 return str(err)
         elif post["mode"] == "genallpos":
             try:
                 extanimal.update_all_animal_statuses(dbo)
                 return "0"
-            except Exception,err:
+            except Exception as err:
                 return str(err)
         elif post["mode"] == "genlookingfor":
             try:
                 extperson.update_lookingfor_report(dbo)
                 return "0"
-            except Exception,err:
+            except Exception as err:
                 return str(err)
         elif post["mode"] == "genownername":
             try:
                 extperson.update_owner_names(dbo)
                 return "0"
-            except Exception,err:
+            except Exception as err:
                 return str(err)
         elif post["mode"] == "genlostfound":
             try:
                 extlostfound.update_match_report(dbo)
                 return "0"
-            except Exception,err:
+            except Exception as err:
                 return str(err)
 
 class calendarview:
@@ -2200,7 +2200,7 @@ class csvimport:
             s += html.controller(c)
             s += html.footer()
             return full_or_json("csvimport", s, c, False)
-        except Exception,err:
+        except Exception as err:
             al.error("error in CSV data: %s" % str(err), "csvimport.csvimport", dbo, sys.exc_info())
             if str(err).find("no attribute 'value'") != -1:
                 err = "No CSV file was uploaded"
@@ -3270,7 +3270,7 @@ class incident_map:
         rows = extanimalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "incomplete" }, session.user)
         al.debug("incident map, %d active" % (len(rows)), "code.incident_map", dbo)
         s = html.header("", session)
-        c = html.controller_json("rows", rows);
+        c = html.controller_json("rows", rows)
         s += html.controller(c)
         s += html.footer()
         return full_or_json("incident_map", s, c, post["json"] == "true")
@@ -3436,8 +3436,7 @@ class latency:
 
     def POST(self):
         utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(), session.locale)
-        post.has_key("junk")
+        utils.PostedData(web.input(), session.locale)
         web.header("Content-Type", "text/plain")
         web.header("Cache-Control", "no-cache")
         return "pong"
@@ -3991,7 +3990,7 @@ class mailmerge:
             session.mergetitle = title.replace(" ", "_").replace("\"", "").replace("'", "").lower()
             # construct a list of field tokens for the email helper
             fields = []
-            if len(rows) >  0:
+            if len(rows) > 0:
                 for fname in sorted(rows[0].iterkeys()):
                     fields.append(fname)
             # send the selection form
@@ -4704,7 +4703,7 @@ class onlineform:
         # to target tooltip as a textarea
         for r in fields:
             if r["FIELDTYPE"] == extonlineform.FIELDTYPE_RAWMARKUP:
-               r["TOOLTIP"] = html.escape_angle(r["TOOLTIP"]) 
+                r["TOOLTIP"] = html.escape_angle(r["TOOLTIP"]) 
         title = _("Online Form: {0}", l).format(formname)
         al.debug("got %d online form fields" % len(fields), "code.onlineform", dbo)
         s = html.header("", session)
@@ -5921,7 +5920,7 @@ class schemajs:
                     rows = db.query(dbo, "SELECT * FROM %s LIMIT 1" % t)
                     if len(rows) != 0:
                         tobj[t] = rows[0]
-                except Exception,err:
+                except Exception as err:
                     al.error("%s" % str(err), "code.schemajs", dbo)
             return "schema = %s;" % html.json(tobj)
         else:
@@ -6033,7 +6032,7 @@ class sql:
                 rows = db.query(dbo, "SELECT * FROM %s LIMIT 1" % post["table"])
                 if len(rows) == 0: return ""
                 return "|".join(sorted(rows[0].iterkeys()))
-            except Exception,err:
+            except Exception as err:
                 al.error("%s" % str(err), "code.sql", dbo)
                 raise utils.ASMValidationError(str(err))
         elif mode == "exec":
@@ -6061,7 +6060,7 @@ class sql:
                     rowsaffected += db.execute(dbo, q)
                     configuration.db_view_seq_version(dbo, "0")
             return _("{0} rows affected.", l).format(rowsaffected)
-        except Exception,err:
+        except Exception as err:
             al.error("%s" % str(err), "code.sql", dbo)
             raise utils.ASMValidationError(str(err))
 
@@ -6078,7 +6077,7 @@ class sql:
                     rowsaffected = db.execute(dbo, q)
                     configuration.db_view_seq_version(dbo, "0")
                     output.append(_("{0} rows affected.", l).format(rowsaffected))
-            except Exception,err:
+            except Exception as err:
                 al.error("%s" % str(err), "code.sql", dbo)
                 output.append("ERROR: %s" % str(err))
         return "\n\n".join(output)
@@ -6174,7 +6173,7 @@ class stocklevel:
         mode = post["mode"]
         if mode == "create":
             users.check_permission(session, users.ADD_STOCKLEVEL)
-            for dummy in xrange(0, post.integer("quantity")):
+            for dummy in range(0, post.integer("quantity")):
                 extstock.insert_stocklevel_from_form(session.dbo, post, session.user)
         elif mode == "update":
             users.check_permission(session, users.CHANGE_STOCKLEVEL)
@@ -6283,7 +6282,7 @@ class timeline:
         evts = extanimal.get_timeline(dbo, 500)
         s = html.header("", session)
         c = html.controller_json("recent", evts)
-        c += html.controller_str("explain", _("Showing {0} timeline events.", l).format(len(evts)));
+        c += html.controller_str("explain", _("Showing {0} timeline events.", l).format(len(evts)))
         s += html.controller(c)
         s += html.footer()
         al.debug("timeline events, run by %s, got %d events" % (session.user, len(evts)), "code.timeline", dbo)

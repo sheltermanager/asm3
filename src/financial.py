@@ -791,7 +791,7 @@ def update_matching_cost_transaction(dbo, username, acid, destinationaccount = 0
         # to a destination other than the default?
         # TODO: If requested in future possibly, not present right now
         # maps = configuration.cost_account_mappings(dbo)
-        #if maps.has_key(str(c["COSTTYPEID"])):
+        #if str(c["COSTTYPEID"]) in maps:
         #    target = maps[str(c["COSTTYPEID"])]
         #    al.debug("Found override for costtype %s, got new target account %s" % (str(c["COSTTYPEID"]), str(target)), "financial.update_matching_cost_transaction", dbo)
     # Is the cost for a negative amount? If so, flip the accounts
@@ -866,7 +866,7 @@ def update_matching_donation_transaction(dbo, username, odid, destinationaccount
         # Has a mapping been created by the user for this donation type
         # to a destination other than the default?
         maps = configuration.donation_account_mappings(dbo)
-        if maps.has_key(str(d["DONATIONTYPEID"])):
+        if str(d["DONATIONTYPEID"]) in maps:
             target = maps[str(d["DONATIONTYPEID"])]
             al.debug("Found override for donationtype %s, got new target account %s" % (str(d["DONATIONTYPEID"]), str(target)), "financial.update_matching_donation_transaction", dbo)
     # Is the donation for a negative amount? If so, flip the accounts

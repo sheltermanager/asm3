@@ -805,7 +805,7 @@ class AbstractPublisher(threading.Thread):
         # build a list of IDs and deduplicate them
         for a in animals:
             m = ""
-            if a.has_key("FAILMESSAGE"):
+            if "FAILMESSAGE" in a:
                 m = a["FAILMESSAGE"]
             inclause[str(a["ID"])] = m
         # build a batch for inserting animalpublished entries into the table
@@ -1751,7 +1751,7 @@ class AnibaseUKPublisher(AbstractPublisher):
             25: "Equine",
             26: "Donkey"
         }
-        if SPECIES_MAP.has_key(asmspeciesid):
+        if asmspeciesid in SPECIES_MAP:
             return SPECIES_MAP[asmspeciesid]
         return "Miscellaneous"
 
@@ -2706,7 +2706,7 @@ class HTMLPublisher(FTPPublisher):
                         pagename = "adult%s" % pagename
 
                 # Does this page exist?
-                if not pages.has_key(pagename):
+                if pagename not in pages:
                     # No, create it and add the header
                     page = header
                 else:
@@ -3028,7 +3028,7 @@ class HTMLPublisher(FTPPublisher):
                 pagename = "%s.%s" % (an["ANIMALTYPENAME"], self.pc.extension)
 
                 # Does this page exist?
-                if not pages.has_key(pagename):
+                if pagename not in pages:
                     # No, create it and add the header
                     page = header
                 else:
@@ -3976,8 +3976,8 @@ class PetsLocatedUKPublisher(FTPPublisher):
         # Dogs
         speciesname = an["SPECIESNAME"]
         if speciesname == "Dog":
-            if an.has_key("COATTYPENAME") and an["COATTYPENAME"] == "Long": return "Long"
-            elif an.has_key("COATTYPENAME") and an["COATTYPENAME"] == "Hairless": return "Not Applicable"
+            if "COATTYPENAME" in an and an["COATTYPENAME"] == "Long": return "Long"
+            elif "COATTYPENAME" in an and an["COATTYPENAME"] == "Hairless": return "Not Applicable"
             else: return "Short"
         # Cats
         elif speciesname == "Cat":
@@ -4117,7 +4117,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
             "Black": "Black",
             "Albino or Red-Eyed White": "White"
         }
-        if colourmap.has_key(s): return colourmap[s]
+        if s in colourmap: return colourmap[s]
         return "Black"
 
     def plcSpecies(self, s, ps):
@@ -4143,8 +4143,8 @@ class PetsLocatedUKPublisher(FTPPublisher):
             "Turtle": "Tortoise/Terrapin/Turtle",
             "Small&Furry": "Mouse/Rat"
         }
-        if speciesmap.has_key(s): return speciesmap[s]
-        if speciesmap.has_key(ps): return speciesmap[ps]
+        if s in speciesmap: return speciesmap[s]
+        if ps in speciesmap: return speciesmap[ps]
         return "Cat"
 
     def run(self):
@@ -5132,7 +5132,7 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
             25: "Equine",
             26: "Donkey"
         }
-        if SPECIES_MAP.has_key(asmspeciesid):
+        if asmspeciesid in SPECIES_MAP:
             return SPECIES_MAP[asmspeciesid]
         return "Miscellaneous"
 

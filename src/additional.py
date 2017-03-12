@@ -150,7 +150,7 @@ def insert_field_from_form(dbo, username, post):
         ( "FieldType", post.db_integer("type")),
         ( "LinkType", post.db_integer("link")),
         ( "DisplayIndex", post.db_integer("displayindex"))
-        ))
+    ))
     db.execute(dbo, sql)
     audit.create(dbo, username, "additionalfield", nid, audit.dump_row(dbo, "additionalfield", nid))
     return nid
@@ -173,7 +173,7 @@ def update_field_from_form(dbo, username, post):
         ( "FieldType", post.db_integer("type")),
         ( "LinkType", post.db_integer("link")),
         ( "DisplayIndex", post.db_integer("displayindex"))
-        ))
+    ))
     preaudit = db.query(dbo, "SELECT * FROM additionalfield WHERE ID = %d" % aid)
     db.execute(dbo, sql)
     postaudit = db.query(dbo, "SELECT * FROM additionalfield WHERE ID = %d" % aid)
@@ -204,14 +204,14 @@ def save_values_for_link(dbo, post, linkid, linktype = "animal"):
     l = dbo.locale
     for f in af:
         key = "a." + str(f["MANDATORY"]) + "." + str(f["ID"])
-        if post.has_key(key):
+        if key in post:
             val = post[key]
             if f["FIELDTYPE"] == YESNO:
                 val = str(post.boolean(key))
             elif f["FIELDTYPE"] == MONEY:
                 val = str(post.integer(key))
             elif f["FIELDTYPE"] == DATE:
-                if len(val.strip()) > 0 and post.date(key) == None:
+                if len(val.strip()) > 0 and post.date(key) is None:
                     raise utils.ASMValidationError(_("Additional date field '{0}' contains an invalid date.", l).format(f["FIELDNAME"]))
                 val = python2display(dbo.locale, post.date(key))
             sql = db.make_insert_sql("additional", (
@@ -221,7 +221,7 @@ def save_values_for_link(dbo, post, linkid, linktype = "animal"):
                 ( "Value", db.ds(val) ) ))
             try:
                 db.execute(dbo, sql)
-            except Exception,err:
+            except Exception as err:
                 al.error("Failed saving additional field: %s" % str(err), "animal.update_animal_from_form", dbo, sys.exc_info())
 
 

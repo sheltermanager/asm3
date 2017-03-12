@@ -42,7 +42,7 @@ def get(key):
     f = None
     try:
         fname = _getfilename(key)
-        
+
         # No cache entry found, bail
         if not os.path.exists(fname): return None
 
