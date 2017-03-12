@@ -72,7 +72,7 @@
 
     var construct_options = function(defaultlabel, valuefield, labelfield) {
         var h = [], seenvalues = {};
-        h.push('<option value="">' + defaultlabel + '</option>');
+        h.push('<option value="">' + translate(defaultlabel) + '</option>');
         adoptables.sort(sort_single(labelfield));
         adoptables.forEach(function(item, index, arr) {
             if (!seenvalues.hasOwnProperty(item[valuefield])) {

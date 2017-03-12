@@ -1,6 +1,7 @@
 40
 ================
 
+12/03/17 Allow the (any) text to be translated in adoptable_js
 11/03/17 Fix for adoptable_js comparing age groups with unicode
 11/03/17 Support for asm3_adoptable_translate dictionary with adoptable_js
 10/03/17 Add en_CA locale based on en_GB #164

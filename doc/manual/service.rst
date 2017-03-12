@@ -126,13 +126,15 @@ so they will match the language of your database.
 
 You can add on-the-fly translation by adding a script tag with a dictionary
 called asm3_adoptable_translations above the script that makes the service
-call. Eg to translate English values to French::
+call. Eg to translate English values to French and to change the default (any
+species) to all::
 
     <script>
     asm3_adoptable_translations = {
         "Dog": "Chien",
         "Cat": "Chat",
-        "Pig": "Cochon"
+        "Pig": "Cochon",
+        "(any species)": "all"
     }
     </script>
     <div id="asm3-adoptables" />
