@@ -376,43 +376,144 @@ def full_or_json(modulename, s, c, json = False):
         if c.endswith(","): c = c[0:len(c) - 1]
         return "{ %s }" % c
 
-# SSL for the server can be passed as an extra startup argument, eg:
-# python code.py 5000 ssl=true,cert=/etc/cert.crt,key=/etc/cert.key,chain=/etc/chain.crt
-if len(sys.argv) > 2:
-    from web.wsgiserver import CherryPyWSGIServer
-    for arg in sys.argv[2].split(","):
-        if arg.find("=") == -1: continue
-        k, v = arg.split("=")
-        if k == "cert": CherryPyWSGIServer.ssl_certificate = v
-        if k == "key": CherryPyWSGIServer.ssl_private_key = v
-        if k == "chain": CherryPyWSGIServer.ssl_certificate_chain = v
+def generate_routes():
+    """ Extract the url property from all classes and construct the route list """
+    g = globals().copy()
+    for name, obj in g.iteritems():
+        try:
+            url = getattr(obj, "url")
+            if url != "" and name != "web":
+                if not url.startswith("/"): url = "/%s" % url
+                routes.append(url)
+                routes.append(name)
+        except:
+            pass # Ignore objects that don't have url attributes
+    return routes
 
-# Setup the WSGI application object and session with mappings
-app = web.application(urls, globals())
-app.notfound = asm_404
-if EMAIL_ERRORS:
-    app.internalerror = asm_500_email
-session = session_manager()
+class ASMEndpoint(object):
+    """ Base class for ASM endpoints """
+    url = ""               # The route/url to this target
+    get_permissions = ( )  # List of permissions needed to GET
+    post_permissions = ( ) # List of permissions needed to POST
+    check_logged_in = True # Check whether we have a valid login
 
-# Choose startup mode
-if DEPLOYMENT_TYPE == "wsgi":
-    application = app.wsgifunc()
-elif DEPLOYMENT_TYPE == "fcgi":
-    web.wsgi.runwsgi = lambda func, addr=None: web.wsgi.runfcgi(func, addr)
-    web.runwsgi = web.runfcgi
+    def _params(self):
+        l = session.locale
+        if l is None:
+            l = LOCALE
+        post = utils.PostedData(web.input(), l)
+        return web.utils.storage( post=post, dbo=session.dbo, locale=l, user=session.user, session=session )
 
-class index:
+    def check(self, permissions):
+        """ Handle a GET, deal with permissions, session and JSON responses """
+        if self.check_logged_in:
+            utils.check_loggedin(session, web)
+        for p in permissions:
+            users.check_permission(session, p)
+
+    def content(self, o):
+        """ Virtual function: override to get the content """
+        return ""
+
+    def header(self, key, value):
+        """ Set the response header key to value """
+        web.header(key, value)
+
+    def post_all(self, o):
+        """ Virtual function: override to handle postback """
+        return ""
+
+    def redirect(self, route):
+        """ Redirect to another route """
+        raise web.seeother(route)
+
+    def referer(self):
+        """ Returns the referer request header """
+        return web.ctx.env.get("HTTP_REFERER", "")
+
+    def remote_ip(self):
+        """ Gets the IP address of the requester, taking account of reverse proxies """
+        remoteip = web.ctx['ip']
+        if "HTTP_X_FORWARDED_FOR" in web.ctx.env:
+            xf = web.ctx.env["HTTP_X_FORWARDED_FOR"]
+            if xf is not None and str(xf).strip() != "":
+                remoteip = xf
+        return remoteip
+
+    def user_agent(self):
+        """ Returns the user agent request header """
+        return web.ctx.env.get("HTTP_USER_AGENT", "")
+
     def GET(self):
+        self.check(self.get_permissions)
+        return self.content(self._params())
+
+    def POST(self):
+        """ Handle a POST, deal with permissions """
+        self.check(self.post_permissions)
+        o = self._params()
+        mode = o.post["mode"]
+        if mode == "": 
+            return self.post_all(o)
+        else:
+            # Mode has been supplied, call post_mode
+            getattr(ASMEndpoint, "post_%s" % mode)(o)
+
+class JSONEndpoint(ASMEndpoint):
+    """ Base class for ASM endpoints that return JSON """
+    js_module = ""         # The javascript module to start (can be omitted if same as url)
+    url = ""               # The route/url to this target
+
+    def controller(self, o):
+        """ Virtual function to be overridden - return controller as a dict """
+        pass
+
+    def GET(self):
+        """ Handle a GET, deal with permissions, session and JSON responses """
+        self.check(self.get_permissions)
+        o = self._params()
+        c = self.controller(o)
+        self.header("X-Frame-Options", "SAMEORIGIN")
+        self.header("Cache-Control", "no-cache, no-store, must-revalidate")
+        if self.js_module == "":
+            self.js_module = self.url
+        if not o.post["json"] == "true":
+            self.header("Content-Type", "text/html")
+            footer = "<script>\n$(document).ready(function() { common.route_listen(); common.module_start(\"%s\"); });\n</script>\n</body>\n</html>" % self.js_module
+            return "%s\n<script type=\"text/javascript\">\ncontroller = %s;\n</script>\n%s" % (html.header("", session), html.json(c), footer)
+        else:
+            web.header("Content-Type", "application/json")
+            return html.json(c)
+
+    def POST(self):
+        """ Handle a POST, deal with permissions """
+        self.check(self.post_permissions)
+        o = self._params()
+        mode = o.post["mode"]
+        if mode == "": 
+            return self.post_all(o)
+        else:
+            # Mode has been supplied, call post_mode
+            getattr(self.__class__, "post_%s" % mode)(self, o)
+
+class index(ASMEndpoint):
+    url = "/"
+    check_logged_in = False
+    def content(self, o):
+        dummy = o
         # If there's no database structure, create it before 
         # redirecting to the login page.
         if not MULTIPLE_DATABASES:
             dbo = db.DatabaseInfo()
             if not db.has_structure(dbo):
-                raise web.seeother("/database")
-        raise web.seeother("/main")
+                self.redirect("/database")
+        self.redirect("/main")
 
-class database:
-    def GET(self):
+class database(ASMEndpoint):
+    url = "database"
+    check_logged_in = False
+    def content(self, o):
+        dummy = o
         dbo = db.DatabaseInfo()
         if MULTIPLE_DATABASES:
             if smcom.active():
@@ -457,128 +558,129 @@ class database:
         web.header("Content-Type", "text/html")
         return s
 
-    def POST(self):
-        post = utils.PostedData(web.input(locale = LOCALE), LOCALE)
+    def post_all(self, o):
         dbo = db.DatabaseInfo()
-        dbo.locale = post["locale"]
+        dbo.locale = o.post["locale"]
         dbo.installpath = PATH
         dbupdate.install(dbo)
         raise web.seeother("/login")
 
-class image:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode = "animal", id = "0", seq = -1), session.locale)
+class image(ASMEndpoint):
+    url = "image"
+    def content(self, o):
         try:
-            lastmod, imagedata = extmedia.get_image_file_data(session.dbo, post["mode"], post["id"], post.integer("seq"), False)
+            lastmod, imagedata = extmedia.get_image_file_data(session.dbo, o.post["mode"], o.post["id"], o.post.integer("seq"), False)
         except Exception as err:
-            al.error("%s" % str(err), "code.image", session.dbo)
+            al.error("%s" % str(err), "code.image", o.dbo)
             return ""
         if imagedata != "NOPIC":
-            web.header("Content-Type", "image/jpeg")
-            web.header("Cache-Control", "max-age=86400")
+            self.header("Content-Type", "image/jpeg")
+            self.header("Cache-Control", "max-age=86400")
             return imagedata
         else:
-            web.header("Content-Type", "image/jpeg")
-            web.header("Cache-Control", "no-cache")
-            raise web.seeother("image?db=%s&mode=dbfs&id=/reports/nopic.jpg" % session.dbo.database)
+            self.header("Content-Type", "image/jpeg")
+            self.header("Cache-Control", "no-cache")
+            self.redirect("image?db=%s&mode=dbfs&id=/reports/nopic.jpg" % o.dbo.database)
 
-class rollupjs:
-    def GET(self):
-        web.header("Content-Type", "text/javascript")
-        web.header("Cache-Control", "max-age=86400")
+class rollupjs(ASMEndpoint):
+    url = "rollup.js"
+    check_logged_in = False
+    def content(self, o):
+        dummy = o
+        self.header("Content-Type", "text/javascript")
+        self.header("Cache-Control", "max-age=86400")
         rollup = cachemem.get("rollup")
         if rollup is None:
             rollup = html.asm_rollup_scripts(PATH)
             cachemem.put("rollup", rollup, 60)
         return rollup
 
-class configjs:
-    def GET(self):
+class configjs(ASMEndpoint):
+    url = "config.js"
+    check_logged_in = False
+    def content(self, o):
         # db is the database name and ts is the date/time the config was
         # last read upto. The ts value (config_ts) is set during login and
         # updated whenever the user posts to publish_options or options.
         # Both values are used purely to cache the config in the browser, but
         # aren't actually used by the controller here.
         # post = utils.PostedData(web.input(db = "", ts = ""), session.locale)
-        if utils.is_loggedin(session) and session.dbo is not None:
-            dbo = session.dbo
-            web.header("Content-Type", "text/javascript")
-            web.header("Cache-Control", "max-age=86400")
-            realname = ""
-            emailaddress = ""
-            expirydate = ""
-            expirydatedisplay = ""
-            if smcom.active():
-                expirydate = smcom.get_expiry_date(dbo)
-                if expirydate is not None: 
-                    expirydatedisplay = python2display(session.locale, expirydate)
-                    expirydate = expirydate.isoformat()
-            us = users.get_users(dbo, session.user)
-            if len(us) > 0:
-                emailaddress = utils.nulltostr(us[0]["EMAILADDRESS"])
-                realname = utils.nulltostr(us[0]["REALNAME"])
-            geoprovider = GEO_PROVIDER
-            geoprovidero = configuration.geo_provider_override(dbo)
-            if geoprovidero != "": geoprovider = geoprovidero
-            geoproviderkey = GEO_PROVIDER_KEY
-            geoproviderkeyo = configuration.geo_provider_key_override(dbo)
-            if geoproviderkeyo != "": geoproviderkey = geoproviderkeyo
-            mapprovider = MAP_PROVIDER
-            mapprovidero = configuration.map_provider_override(dbo)
-            if mapprovidero != "": mapprovider = mapprovidero
-            maplink = MAP_LINK
-            maplinko = configuration.map_link_override(dbo)
-            if maplinko != "": maplinko = maplink
-            s = "asm={baseurl:'%s'," % BASE_URL
-            s += "serviceurl:'%s'," % SERVICE_URL
-            s += "build:'%s'," % BUILD
-            s += "locale:'%s'," % session.locale
-            s += "theme:'%s'," % session.theme
-            s += "user:'%s'," % session.user.replace("'", "\\'")
-            s += "useremail:'%s'," % emailaddress.replace("'", "\\'")
-            s += "userreal:'%s'," % realname.replace("'", "\\'")
-            s += "useraccount:'%s'," % dbo.database
-            s += "useraccountalias: '%s'," % dbo.alias
-            s += "dateformat:'%s'," % get_display_date_format(session.locale)
-            s += "currencysymbol:'%s'," % get_currency_symbol(session.locale)
-            s += "currencydp:%d," % get_currency_dp(session.locale)
-            s += "currencyprefix:'%s'," % get_currency_prefix(session.locale)
-            s += "securitymap:'%s'," % session.securitymap
-            s += "superuser:%s," % (session.superuser and "true" or "false")
-            s += "locationfilter:'%s'," % session.locationfilter
-            s += "siteid:%s," % session.siteid
-            s += "roles:'%s'," % (session.roles.replace("'", "\\'"))
-            s += "roleids:'%s'," % (session.roleids)
-            s += "manualhtml:'%s'," % (MANUAL_HTML_URL)
-            s += "manualpdf:'%s'," % (MANUAL_PDF_URL)
-            s += "manualfaq:'%s'," % (MANUAL_FAQ_URL)
-            s += "manualvideo:'%s'," % (MANUAL_VIDEO_URL)
-            s += "smcom:%s," % (smcom.active() and "true" or "false")
-            s += "smcomexpiry:'%s'," % expirydate
-            s += "smcomexpirydisplay:'%s'," % expirydatedisplay
-            s += "smcompaymentlink:'%s'," % (SMCOM_PAYMENT_LINK.replace("{alias}", dbo.alias).replace("{database}", dbo.database))
-            s += "geoprovider:'%s'," % (geoprovider)
-            s += "geoproviderkey:'%s'," % (geoproviderkey)
-            s += "jqueryuicss:'%s'," % (JQUERY_UI_CSS)
-            s += "leafletcss:'%s'," % (LEAFLET_CSS)
-            s += "leafletjs:'%s'," % (LEAFLET_JS)
-            s += "maplink:'%s'," % (maplink)
-            s += "mapprovider:'%s'," % (mapprovider)
-            s += "osmmaptiles:'%s'," % (OSM_MAP_TILES)
-            s += "hascustomlogo:%s," % (dbfs.file_exists(dbo, "logo.jpg") and "true" or "false")
-            s += "mobileapp:%s," % (session.mobileapp and "true" or "false")
-            s += "config:" + html.json([configuration.get_map(dbo),]) + ", "
-            s += "menustructure:" + html.json_menu(session.locale, 
-                extreports.get_reports_menu(dbo, session.roleids, session.superuser), 
-                extreports.get_mailmerges_menu(dbo, session.roleids, session.superuser))
-            s += "};"
-            return s
-        else:
-            # Not logged in
-            web.header("Content-Type", "text/javascript")
-            web.header("Cache-Control", "no-cache")
+        if o.user is None:
+            # We aren't logged in and can't do anything, don't cache an empty page
+            self.header("Content-Type", "text/javascript")
+            self.header("Cache-Control", "no-cache")
             return ""
+        dbo = o.dbo
+        self.header("Content-Type", "text/javascript")
+        self.header("Cache-Control", "max-age=86400")
+        realname = ""
+        emailaddress = ""
+        expirydate = ""
+        expirydatedisplay = ""
+        if smcom.active():
+            expirydate = smcom.get_expiry_date(dbo)
+            if expirydate is not None: 
+                expirydatedisplay = python2display(o.locale, expirydate)
+                expirydate = expirydate.isoformat()
+        us = users.get_users(dbo, session.user)
+        if len(us) > 0:
+            emailaddress = utils.nulltostr(us[0]["EMAILADDRESS"])
+            realname = utils.nulltostr(us[0]["REALNAME"])
+        geoprovider = GEO_PROVIDER
+        geoprovidero = configuration.geo_provider_override(dbo)
+        if geoprovidero != "": geoprovider = geoprovidero
+        geoproviderkey = GEO_PROVIDER_KEY
+        geoproviderkeyo = configuration.geo_provider_key_override(dbo)
+        if geoproviderkeyo != "": geoproviderkey = geoproviderkeyo
+        mapprovider = MAP_PROVIDER
+        mapprovidero = configuration.map_provider_override(dbo)
+        if mapprovidero != "": mapprovider = mapprovidero
+        maplink = MAP_LINK
+        maplinko = configuration.map_link_override(dbo)
+        if maplinko != "": maplinko = maplink
+        c = { "baseurl": BASE_URL,
+            "serviceurl": SERVICE_URL,
+            "build": BUILD,
+            "locale": session.locale,
+            "theme": session.theme,
+            "user": session.user,
+            "useremail": emailaddress,
+            "userreal": realname,
+            "useraccount": dbo.database,
+            "useraccountalias": dbo.alias,
+            "dateformat": get_display_date_format(session.locale),
+            "currencysymbol": get_currency_symbol(session.locale),
+            "currencydp": get_currency_dp(session.locale),
+            "currencyprefix": get_currency_prefix(session.locale),
+            "securitymap": session.securitymap,
+            "superuser": session.superuser,
+            "locationfilter": session.locationfilter,
+            "siteid": session.siteid,
+            "roles": session.roles,
+            "roleids": session.roleids,
+            "manualhtml": MANUAL_HTML_URL,
+            "manualpdf": MANUAL_PDF_URL,
+            "manualfaq": MANUAL_FAQ_URL,
+            "smcom": smcom.active(),
+            "smcomexpiry": expirydate,
+            "smcomexpirydisplay": expirydatedisplay,
+            "smcompaymentlink": SMCOM_PAYMENT_LINK.replace("{alias}", dbo.alias).replace("{database}", dbo.database),
+            "geoprovider": geoprovider,
+            "geoproviderkey": geoproviderkey,
+            "jqueryuicss": JQUERY_UI_CSS,
+            "leafletcss": LEAFLET_CSS,
+            "leafletjs": LEAFLET_JS,
+            "maplink": maplink,
+            "mapprovider": mapprovider,
+            "osmmaptiles": OSM_MAP_TILES,
+            "hascustomlogo": dbfs.file_exists(dbo, "logo.jpg"),
+            "mobileapp": session.mobileapp,
+            "config": configuration.get_map(dbo),
+            "menustructure": html.menu_structure(session.locale, 
+            extreports.get_reports_menu(dbo, session.roleids, session.superuser), 
+            extreports.get_mailmerges_menu(dbo, session.roleids, session.superuser))
+        }
+        return "asm = %s;" % html.json(c)
 
 class css:
     def GET(self):
@@ -730,19 +832,17 @@ class mobile_sign:
         web.header("Content-Type", "text/html")
         return extmobile.page_sign(session.dbo, session, session.user)
 
-class main:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        l = session.locale
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
+class main(JSONEndpoint):
+    url = "main"
+    def controller(self, o):
+        l = o.locale
+        dbo = o.dbo
         # Do we need to request a password change?
         if session.passchange:
-            raise web.seeother("change_password?suggest=1")
-        s = html.header("", session)
+            self.redirect("change_password?suggest=1")
         # If there's something wrong with the database, logout
         if not db.has_structure(dbo):
-            raise web.seeother("logout")
+            self.redirect("logout")
         # Database update checks
         dbmessage = ""
         if dbupdate.check_for_updates(dbo):
@@ -801,49 +901,46 @@ class main:
             dm = extdiary.get_uncompleted_upto_today(dbo, "", False)
         else:
             dm = extdiary.get_uncompleted_upto_today(dbo, session.user, False)
-        # Create controller
-        c = html.controller_bool("showwelcome", showwelcome)
-        c += html.controller_str("build", BUILD)
-        c += html.controller_str("news", news)
-        c += html.controller_str("dbmessage", dbmessage)
-        c += html.controller_str("version", get_version())
-        c += html.controller_str("emergencynotice", emergency_notice())
-        c += html.controller_str("linkname", linkname)
-        c += html.controller_str("activeusers", activeusers)
-        c += html.controller_json("usersandroles", usersandroles)
-        c += html.controller_json("alerts", alerts)
-        c += html.controller_json("recent", extanimal.get_timeline(dbo, 10))
-        c += html.controller_json("stats", extanimal.get_stats(dbo))
-        c += html.controller_json("animallinks", extanimal.get_animals_brief(animallinks))
-        c += html.controller_json("diary", dm)
-        c += html.controller_json("mess", mess)
-        s += html.controller(c)
-        s += html.footer()
         al.debug("main for '%s', %d diary notes, %d messages" % (session.user, len(dm), len(mess)), "code.main", dbo)
-        return full_or_json("main", s, c, post["json"] == "true")
+        return {
+            "showwelcome": showwelcome,
+            "build": BUILD,
+            "news": news,
+            "dbmessage": dbmessage,
+            "version": get_version(),
+            "emergencynotice": emergency_notice(),
+            "linkname": linkname,
+            "activeusers": activeusers,
+            "usersandroles": usersandroles,
+            "alerts": alerts,
+            "recent": extanimal.get_timeline(dbo, 10),
+            "stats": extanimal.get_stats(dbo),
+            "animallinks": extanimal.get_animals_brief(animallinks),
+            "diary": dm,
+            "mess": mess 
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input( mode = "", id = 0 ), session.locale)
-        dbo = session.dbo
-        mode = post["mode"]
-        if mode == "addmessage":
-            extlookups.add_message(dbo, session.user, post.boolean("email"), post["message"], post["forname"], post.integer("priority"), post.date("expires"))
-        elif mode == "delmessage":
-            extlookups.delete_message(dbo, post.integer("id"))
-        elif mode == "showfirsttimescreen":
-            configuration.show_first_time_screen(dbo, True, False)
+    def post_addmessage(self, o):
+        extlookups.add_message(o.dbo, o.user, o.post.boolean("email"), o.post["message"], o.post["forname"], o.post.integer("priority"), o.post.date("expires"))
 
-class login:
-    def GET(self):
+    def post_delmessage(self, o):
+        extlookups.delete_message(o.dbo, o.post.integer("id"))
+
+    def post_showfirsttimescreen(self, o):
+        configuration.show_first_time_screen(o.dbo, True, False)
+
+class login(ASMEndpoint):
+    url = "login"
+    check_logged_in = False
+    def content(self, o):
         l = LOCALE
+        post = o.post
         has_animals = True
         custom_splash = False
-        post = utils.PostedData(web.input(smaccount = "", username = "", password = "", target = "", nologconnection = ""), l)
         # Filter out IE8 and below right now - they just aren't good enough
-        ua = web.ctx.env.get("HTTP_USER_AGENT", "")
+        ua = self.user_agent()
         if ua.find("MSIE 6") != -1 or ua.find("MSIE 7") != -1 or ua.find("MSIE 8") != -1:
-            raise web.seeother("static/pages/unsupported_ie.html")
+            self.redirect("static/pages/unsupported_ie.html")
         # Figure out how to get the default locale and any overridden splash screen
         # Single database
         if not MULTIPLE_DATABASES:
@@ -869,37 +966,36 @@ class login:
         elif MULTIPLE_DATABASES and MULTIPLE_DATABASES_TYPE == "smcom" and post["smaccount"] != "":
             dbo = smcom.get_database_info(post["smaccount"])
             if dbo.database == "WRONGSERVER":
-                raise web.seeother("https://sheltermanager.com/service/asmlogin")
+                self.redirect("https://sheltermanager.com/service/asmlogin")
             elif dbo.database != "FAIL" and dbo.database != "DISABLED":
                 custom_splash = dbfs.file_exists(dbo, "splash.jpg")
                 l = configuration.locale(dbo)
         title = _("Animal Shelter Manager Login", l)
         s = html.bare_header(title, locale = l)
-        c = html.controller_bool("smcom", smcom.active())
-        c += html.controller_bool("multipledatabases", MULTIPLE_DATABASES)
-        c += html.controller_str("locale", l)
-        c += html.controller_bool("hasanimals", has_animals)
-        c += html.controller_bool("customsplash", custom_splash)
-        c += html.controller_str("forgottenpassword", FORGOTTEN_PASSWORD)
-        c += html.controller_str("forgottenpasswordlabel", FORGOTTEN_PASSWORD_LABEL)
-        c += html.controller_str("emergencynotice", emergency_notice())
-        c += html.controller_str("smaccount", post["smaccount"])
-        c += html.controller_str("husername", post["username"])
-        c += html.controller_str("hpassword", post["password"]) 
-        c += html.controller_str("nologconnection", post["nologconnection"])
-        c += html.controller_str("qrimg", QR_IMG_SRC)
-        c += html.controller_str("target", post["target"])
-        s += html.controller(c)
-        s += "<noscript>" + _("Sorry. ASM will not work without Javascript.", l) + "</noscript>\n"
+        c = { "smcom": smcom.active(),
+             "multipledatabases": MULTIPLE_DATABASES,
+             "locale": l,
+             "hasanimals": has_animals,
+             "customsplash": custom_splash,
+             "forgottenpassword": FORGOTTEN_PASSWORD,
+             "forgottenpasswordlabel": FORGOTTEN_PASSWORD_LABEL,
+             "emergencynotice": emergency_notice(),
+             "smaccount": post["smaccount"],
+             "husername": post["username"],
+             "hpassword": post["password"],
+             "nologconnection": post["nologconnection"],
+             "qrimg": QR_IMG_SRC,
+             "target": post["target"]
+        }
+        s += "<script type=\"text/javascript\">\ncontroller = %s;\n</script>\n" % html.json(c)
         s += '<script>\n$(document).ready(function() { $("body").append(login.render()); login.bind(); });\n</script>'
         s += html.footer()
-        web.header("Content-Type", "text/html")
-        web.header("X-Frame-Options", "SAMEORIGIN")
+        self.header("Content-Type", "text/html")
+        self.header("X-Frame-Options", "SAMEORIGIN")
         return s
 
-    def POST(self):
-        post = utils.PostedData(web.input( database = "", username = "", password = "", nologconnection = "", mobile = "" ), LOCALE)
-        return users.web_login(post, session, remote_ip(), PATH)
+    def post_all(self, o):
+        return users.web_login(o.post, session, self.remote_ip(), PATH)
 
 class login_jsonp:
     def GET(self):
@@ -6730,6 +6826,37 @@ class waitinglist_results:
             users.check_permission(session, users.CHANGE_WAITING_LIST)
             for wid in post.integer_list("ids"):
                 extwaitinglist.update_waitinglist_highlight(session.dbo, wid, post["himode"])
+
+
+
+# List of routes constructed from class definitions
+routes = []
+
+# SSL for the server can be passed as an extra startup argument, eg:
+# python code.py 5000 ssl=true,cert=/etc/cert.crt,key=/etc/cert.key,chain=/etc/chain.crt
+if len(sys.argv) > 2:
+    from web.wsgiserver import CherryPyWSGIServer
+    for arg in sys.argv[2].split(","):
+        if arg.find("=") == -1: continue
+        k, v = arg.split("=")
+        if k == "cert": CherryPyWSGIServer.ssl_certificate = v
+        if k == "key": CherryPyWSGIServer.ssl_private_key = v
+        if k == "chain": CherryPyWSGIServer.ssl_certificate_chain = v
+
+# Setup the WSGI application object and session with mappings
+#app = web.application(generate_routes(), globals())
+app = web.application(urls, globals())
+app.notfound = asm_404
+if EMAIL_ERRORS:
+    app.internalerror = asm_500_email
+session = session_manager()
+
+# Choose startup mode
+if DEPLOYMENT_TYPE == "wsgi":
+    application = app.wsgifunc()
+elif DEPLOYMENT_TYPE == "fcgi":
+    web.wsgi.runwsgi = lambda func, addr=None: web.wsgi.runfcgi(func, addr)
+    web.runwsgi = web.runfcgi
 
 if __name__ == "__main__":
     app.run()

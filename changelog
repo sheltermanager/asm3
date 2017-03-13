@@ -1,6 +1,9 @@
 40
 ================
 
+13/03/17 Use flake8 for make/compilepy
+13/03/17 Refactoring code.py to remove smelly html.controller* code #173
+13/03/17 Refactoring code.py to use new ASM/JSONEndpoint #173
 12/03/17 Allow the (any) text to be translated in adoptable_js
 11/03/17 Fix for adoptable_js comparing age groups with unicode
 11/03/17 Support for asm3_adoptable_translate dictionary with adoptable_js

@@ -641,14 +641,14 @@ def doc_img_src(dbo, row, mode):
         uri = "image?db=" + dbo.database + "&mode=dbfs&id=%s" % path
         return uri
 
-def json_menu(l, reports, mailmerges):
+def menu_structure(l, reports, mailmerges):
     """
-    Returns JSON representing the main menu structure
+    Returns a list of lists representing the main menu structure
     l: The locale
     reports: A list of tuples containing the report url and name
     mailmerges: A list of tuples containing the report/mailmerge url and name
     """
-    structure = (
+    return (
         ("", "asm", _("ASM", l), (
             ( "", "", "", "--cat", "asm-icon-animal", _("Animals", l) ),
             ( users.VIEW_ANIMAL, "alt+shift+v", "", "shelterview", "asm-icon-location", _("Shelter view", l) ),
@@ -784,7 +784,6 @@ def json_menu(l, reports, mailmerges):
             (users.TRIGGER_BATCH, "", "", "batch", "asm-icon-batch", _("Trigger Batch Processes", l) )
         ))
     )
-    return extjson.dumps(structure)
 
 def json_animalfindcolumns(dbo):
     l = dbo.locale

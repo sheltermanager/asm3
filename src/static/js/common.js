@@ -1025,7 +1025,7 @@
 
         str: function(key) {
             try {
-                var s = asm.config[0][key];
+                var s = asm.config[key];
                 if (s) { return s; }
             }
             catch(err) {

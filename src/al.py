@@ -75,6 +75,6 @@ def logmsg(mtype, msg, location, dbo):
         elif mtype == 3:
             logger.critical(msg)
     except:
-        print msg
+        print(msg)
 
 
