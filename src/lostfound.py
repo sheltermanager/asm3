@@ -114,7 +114,7 @@ def get_lostanimal(dbo, aid):
     Returns a lost animal record
     """
     rows = db.query(dbo, get_lostanimal_query(dbo) + " WHERE a.ID = %d" % int(aid))
-    if rows == None or len(rows) == 0:
+    if rows is None or len(rows) == 0:
         return None
     else:
         return rows[0]
@@ -124,7 +124,7 @@ def get_foundanimal(dbo, aid):
     Returns a found animal record
     """
     rows = db.query(dbo, get_foundanimal_query(dbo) + " WHERE a.ID = %d" % int(aid))
-    if rows == None or len(rows) == 0:
+    if rows is None or len(rows) == 0:
         return None
     else:
         return rows[0]
@@ -244,8 +244,8 @@ def get_lostanimal_find_advanced(dbo, criteria, limit = 0):
     def adddate(cfieldfrom, cfieldto, field): 
         if hk(cfieldfrom) and hk(cfieldto): 
             c.append("%s >= %s AND %s <= %s" % ( 
-            field, db.dd(display2python(l, crit(cfieldfrom))), 
-            field, db.dd(display2python(l, crit(cfieldto)))))
+                field, db.dd(display2python(l, crit(cfieldfrom))), 
+                field, db.dd(display2python(l, crit(cfieldto)))))
 
     c.append("a.ID > 0")
     if crit("number") != "": c.append("a.ID = %s" % utils.cint(crit("number")))
@@ -309,8 +309,8 @@ def get_foundanimal_find_advanced(dbo, criteria, limit = 0):
     def adddate(cfieldfrom, cfieldto, field): 
         if hk(cfieldfrom) and hk(cfieldto): 
             c.append("%s >= %s AND %s <= %s" % ( 
-            field, db.dd(display2python(l, crit(cfieldfrom))), 
-            field, db.dd(display2python(l, crit(cfieldto)))))
+                field, db.dd(display2python(l, crit(cfieldfrom))), 
+                field, db.dd(display2python(l, crit(cfieldto)))))
 
     c.append("a.ID > 0")
     if crit("number") != "": c.append("a.ID = %s" % utils.cint(crit("number")))
@@ -382,8 +382,8 @@ def words(str1, str2, maxpoints):
     Evalutes words in string 1 for appearances in string 2
     Returns the number of points for 1 to 2 as a percentage of maxpoints
     """
-    if str1 == None: str1 = ""
-    if str2 == None: str2 = ""
+    if str1 is None: str1 = ""
+    if str2 is None: str2 = ""
     str1 = str1.replace(",", " ").replace("\n", " ").lower().strip()
     str2 = str2.replace(",", " ").replace("\n", " ").lower().strip()
     matches = 0
@@ -824,7 +824,7 @@ def create_animal_from_found(dbo, username, aid):
         data["shortcode"] = "FA" + str(aid)
     nextid, code = animal.insert_animal_from_form(dbo, utils.PostedData(data, l), username)
     return nextid
-   
+
 def create_waitinglist_from_found(dbo, username, aid):
     """
     Creates a waiting list entry from a found animal with the id given
