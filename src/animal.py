@@ -26,7 +26,6 @@ def get_animal_query(dbo):
     """
     Returns a select for animal rows with resolved lookups
     """
-    dummy = dbo
     return "SELECT DISTINCT a.*, " \
         "at.AnimalType AS AnimalTypeName, " \
         "ba1.AnimalName AS BondedAnimal1Name, " \
@@ -228,7 +227,6 @@ def get_animal_query(dbo):
         }
 
 def get_animal_status_query(dbo):
-    dummy = dbo
     return "SELECT a.ID, a.ShelterCode, a.ShortCode, a.AnimalName, a.DeceasedDate, a.DiedOffShelter, a.PutToSleep, " \
         "dr.ReasonName AS PTSReasonName, " \
         "il.LocationName AS ShelterLocationName, " \
@@ -241,7 +239,6 @@ def get_animal_status_query(dbo):
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation "
 
 def get_animal_movement_status_query(dbo):
-    dummy = dbo
     return "SELECT m.ID, m.MovementType, m.MovementDate, m.ReturnDate, " \
         "mt.MovementType AS MovementTypeName, " \
         "m.ReservationDate, m.ReservationCancelledDate, m.IsTrial, m.IsPermanentFoster, " \
@@ -1085,7 +1082,7 @@ def calc_age_group(dbo, animalid, a = None, bands = None):
     if bands is None:
         bands = db.query(dbo, "SELECT ItemName, ItemValue FROM configuration WHERE ItemName LIKE 'AgeGroup%' ORDER BY ItemName")
     # Loop through the bands until we find one that the age in days fits into
-    for i in xrange(0, 20):
+    for i in range(0, 20):
         band = bv("AgeGroup%d" % i, bands)
         years = utils.cfloat(band)
         if days <= years * 365:
@@ -1752,7 +1749,7 @@ def insert_animal_from_form(dbo, post, username):
     def ks(field):
         return post.string(field)
 
-    if ks("dateofbirth") == "" or None == kd("dateofbirth"):
+    if ks("dateofbirth") == "" or kd("dateofbirth") is None:
         estimateddob = 1
         dob = subtract_years(now(), kf("estimatedage"))
     else:
@@ -2004,7 +2001,7 @@ def update_animal_from_form(dbo, post, username):
     if ks("deceaseddate") != "":
         deceaseddate = d("deceaseddate")
         datebroughtin = d("datebroughtin")
-        if deceaseddate is not None and datebroughtin != None and deceaseddate < datebroughtin:
+        if deceaseddate is not None and datebroughtin is not None and deceaseddate < datebroughtin:
             raise utils.ASMValidationError(_("Animal cannot be deceased before it was brought to the shelter", l))
 
     # If the option is on and the internal location or unit has changed, log it
@@ -2035,8 +2032,10 @@ def update_animal_from_form(dbo, post, username):
                 "%s%s" % (weight, units))
 
     # Sort out any flags
+    def bi(b): 
+        return b and 1 or 0
+
     flags = post["flags"].split(",")
-    def bi(b): return b and 1 or 0
     courtesy = bi("courtesy" in flags)
     crueltycase = bi("crueltycase" in flags)
     notforadoption = bi("notforadoption" in flags)
@@ -3128,7 +3127,9 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
     currentownerid = None
     currentownername = None
     today = now(dbo.timezone)
-    b2i = lambda x: x and 1 or 0
+    
+    def b2i(x):
+        return x and 1 or 0
 
     if a is None:
         a = get_animal(dbo, animalid)
@@ -3196,7 +3197,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
 
         # Is this movement an active reservation?
         if m["RETURNDATE"] is None and m["MOVEMENTTYPE"] == movement.NO_MOVEMENT \
-            and m["MOVEMENTDATE"] is None and m["RESERVATIONCANCELLEDDATE"] == None and \
+            and m["MOVEMENTDATE"] is None and m["RESERVATIONCANCELLEDDATE"] is None and \
             m["RESERVATIONDATE"] is not None and m["RESERVATIONDATE"] <= today:
             hasreserve = True
 
@@ -3383,7 +3384,7 @@ def update_animal_figures(dbo, month = 0, year = 0):
     def sql_days(sql):
         """ Returns a query with THEDATE and TOTAL as a dictionary for add_row """
         d = {}
-        for i in xrange(1, 32):
+        for i in range(1, 32):
             d["D%d" % i] = "0"
         rows = db.query(dbo, sql)
         for r in rows:
@@ -3533,7 +3534,7 @@ def update_animal_figures(dbo, month = 0, year = 0):
 
         # On Shelter
         onshelter = {}
-        for i in xrange(1, loopdays):
+        for i in range(1, loopdays):
             d = datetime.datetime(year, month, i)
             dk = "D%d" % i
             onshelter[dk] = get_number_animals_on_shelter(dbo, d, speciesid)
@@ -3542,7 +3543,7 @@ def update_animal_figures(dbo, month = 0, year = 0):
         # On Foster (if foster on shelter set)
         if configuration.foster_on_shelter(dbo):
             onfoster = {}
-            for i in xrange(1, loopdays):
+            for i in range(1, loopdays):
                 d = datetime.datetime(year, month, i)
                 dk = "D%d" % i
                 onfoster[dk] = get_number_animals_on_foster(dbo, d, speciesid)
@@ -3554,7 +3555,7 @@ def update_animal_figures(dbo, month = 0, year = 0):
 
         # Litters
         litters = {}
-        for i in xrange(1, loopdays):
+        for i in range(1, loopdays):
             d = datetime.datetime(year, month, i)
             dk = "D%d" % i
             litters[dk] = get_number_litters_on_shelter(dbo, d, speciesid)
@@ -3730,7 +3731,7 @@ def update_animal_figures(dbo, month = 0, year = 0):
 
         # On Shelter
         onshelter = {}
-        for i in xrange(1, loopdays):
+        for i in range(1, loopdays):
             d = datetime.datetime(year, month, i)
             dk = "D%d" % i
             onshelter[dk] = get_number_animals_on_shelter(dbo, d, 0, typeid)
@@ -3739,7 +3740,7 @@ def update_animal_figures(dbo, month = 0, year = 0):
         # On Foster (if foster on shelter set)
         if configuration.foster_on_shelter(dbo):
             onfoster = {}
-            for i in xrange(1, loopdays):
+            for i in range(1, loopdays):
                 d = datetime.datetime(year, month, i)
                 dk = "D%d" % i
                 onfoster[dk] = get_number_animals_on_foster(dbo, d, 0, typeid)

@@ -66,7 +66,7 @@ def json_handler(obj):
     elif isinstance(obj, decimal.Decimal):
         return str(obj)
     else:
-        raise TypeError, 'Object of type %s with value of %s is not JSON serializable' % (type(obj), repr(obj))
+        raise TypeError('Object of type %s with value of %s is not JSON serializable' % (type(obj), repr(obj)))
 
 def json(obj, readable = False):
     """
@@ -247,9 +247,9 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
         '<body style="background-color: %(bgcol)s">\n' \
         '<noscript>\n' \
         'Sorry. ASM will not work without Javascript.\n' \
-        '</noscript>\n' % \
-            { "title": title, 
-              "scripts": 
+        '</noscript>\n' % {
+            "title": title, 
+            "scripts": 
                 css_tag(JQUERY_UI_CSS % { "theme": theme}, "jqt") +
                 css_tag(ASMSELECT_CSS) + 
                 css_tag(CODEMIRROR_CSS) + 
@@ -287,7 +287,7 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
                 script_schema() + 
                 script_i18n(locale) + 
                 asm_scripts,
-              "bgcol": bgcol }
+            "bgcol": bgcol }
 
 def tinymce_header(title, js, jswindowprint = True, pdfenabled = True, onlysavewhendirty = False, readonly = False):
     """
@@ -435,7 +435,7 @@ def header(title, session):
     title: The page title
     session: The user session
     """
-    s =  bare_header(title, session.theme, session.locale, session.dbo.database, session.config_ts)
+    s = bare_header(title, session.theme, session.locale, session.dbo.database, session.config_ts)
     return s
 
 def footer():
@@ -536,7 +536,7 @@ def controller_date(name, d):
 
 def controller_int(name, i):
     """ Adds a controller int property """
-    return controller_plain(name, str(i));
+    return controller_plain(name, str(i))
 
 def controller_plain(name, v):
     """ Adds a controller property that's already formatted for js """

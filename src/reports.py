@@ -337,7 +337,7 @@ def check_sql(dbo, username, sql):
     # Test the query
     try:
         db.query_tuple(dbo, sql)
-    except Exception,e:
+    except Exception as e:
         raise utils.ASMValidationError(str(e))
     return sql
 
@@ -790,7 +790,7 @@ class Report:
                         if utils.is_currency(fields[1]):
                             fv /= 100
                         total += fv
-                    except Exception, e:
+                    except Exception as e:
                         # Ignore anything that wasn't a number
                         pass
                 fstr = "%0." + str(roundto) + "f"
@@ -831,7 +831,7 @@ class Report:
                             fv /= 100
                         total += fv
                         num += 1
-                    except Exception, e:
+                    except Exception as e:
                         # Ignore anything that wasn't a number
                         pass
                 fstr = "%0." + str(roundto) + "f"
@@ -856,7 +856,7 @@ class Report:
                     try:
                         if str(rs[i][calcfield]).strip().lower() == str(calcfield2).strip().lower():
                             matched += 1
-                    except Exception, e:
+                    except Exception as e:
                         # Ignore errors
                         pass
 
@@ -875,7 +875,7 @@ class Report:
                 for i in range(gd.lastGroupStartPosition, gd.lastGroupEndPosition + 1):
                     try:
                         minval = min(minval, rs[i][calcfield])
-                    except Exception, e:
+                    except Exception as e:
                         # Ignore errors
                         pass
                 if minval == HIGH_MINVAL: minval = 0
@@ -894,7 +894,7 @@ class Report:
                 for i in range(gd.lastGroupStartPosition, gd.lastGroupEndPosition + 1):
                     try:
                         maxval = max(maxval, rs[i][calcfield])
-                    except Exception, e:
+                    except Exception as e:
                         # Ignore errors
                         pass
                 if utils.is_currency(fields[1]):
@@ -930,14 +930,14 @@ class Report:
                     try:
                         x = db.query_tuple(self.dbo, asql)
                         value = str(x[0][0])
-                    except Exception, e:
+                    except Exception as e:
                         value = str(e)
                 else:
                     # Action query, run it
                     try:
                         value = ""
                         db.execute(self.dbo, asql)
-                    except Exception, e:
+                    except Exception as e:
                         value = str(e)
 
             # {IMAGE.animalid[.seq]} - substitutes a link to the image
@@ -984,7 +984,7 @@ class Report:
                     continue
 
                 # Get custom report ID from title
-                crid = db.query_int(self.dbo, "SELECT ID FROM customreport WHERE LOWER(Title) LIKE '" + fields[1] + "'");
+                crid = db.query_int(self.dbo, "SELECT ID FROM customreport WHERE LOWER(Title) LIKE '" + fields[1] + "'")
                 if crid == 0:
                     self._p("Custom report '" + fields[1] + "' doesn't exist.")
                     valid = False
@@ -994,7 +994,7 @@ class Report:
                 # The first one is also passed as PARENTKEY for compatibility
                 # with older reports.
                 subparams = []
-                for x in xrange(2, len(fields)):
+                for x in range(2, len(fields)):
                     fieldname = fields[x].upper()
                     fieldvalue = ""
                     if fieldname not in rs[row]:
@@ -1012,7 +1012,7 @@ class Report:
 
             # Modify our block with the token value
             if valid:
-                out = out[0:startkey] + value + out[endkey+1:];
+                out = out[0:startkey] + value + out[endkey+1:]
 
             # Find the next key
             startkey = out.find("{", startkey+1)
@@ -1046,12 +1046,12 @@ class Report:
         'rs' is the resultset and
         'rowindex' is the current row from the recordset being looked at
         """
-        gd = GroupDescriptor();
+        gd = GroupDescriptor()
         gd.lastGroupEndPosition = len(rs) - 1
-        gd.lastGroupStartPosition = 0;
-        gd.footer = text;
-        gd.header = text;
-        self._OutputGroupBlock(gd, headfoot, rs);
+        gd.lastGroupStartPosition = 0
+        gd.footer = text
+        gd.header = text
+        self._OutputGroupBlock(gd, headfoot, rs)
 
     def _SubstituteSQLParameters(self, params):
         """
@@ -1281,7 +1281,7 @@ class Report:
         try:
             rs = db.query(self.dbo, self.sql)
             cols = db.query_columns(self.dbo, self.sql)
-        except Exception,e:
+        except Exception as e:
             self._p(e)
         return (rs, cols)
 
@@ -1304,7 +1304,7 @@ class Report:
         # Run the graph query, bail out if we have an error
         try:
             rs, cols = db.query_tuple_columns(self.dbo, self.sql)
-        except Exception,e:
+        except Exception as e:
             self._p(e)
             self._Append("</body></html>")
             return self.output
@@ -1424,7 +1424,7 @@ class Report:
         # Run the map query, bail out if we have an error
         try:
             rs, cols = db.query_tuple_columns(self.dbo, self.sql)
-        except Exception,e:
+        except Exception as e:
             self._p(e)
             self._Append("</body></html>")
             return self.output
@@ -1455,9 +1455,9 @@ class Report:
             p.append({ "latlong": g[0], "popuptext": g[1] })
             lastlatlong = g[0]
 
-        self._Append( html.json(p) + ";\n" );
-        self._Append( "mapping.draw_map(\"embeddedmap\", 10, \"%s\", points);\n" % lastlatlong );
-        self._Append( "}, 50);\n" );
+        self._Append( html.json(p) + ";\n" )
+        self._Append( "mapping.draw_map(\"embeddedmap\", 10, \"%s\", points);\n" % lastlatlong )
+        self._Append( "}, 50);\n" )
         self._Append("""
             </script>
             </body>
@@ -1507,23 +1507,23 @@ class Report:
         if headerstart == -1 or headerend == -1:
             self._p("The header block of your report is invalid.")
             return
-        cheader = self.html[headerstart+8:headerend];
+        cheader = self.html[headerstart+8:headerend]
 
-        bodystart = self.html.find("$$BODY");
-        bodyend = self.html.find("BODY$$");
+        bodystart = self.html.find("$$BODY")
+        bodyend = self.html.find("BODY$$")
 
         if bodystart == -1 or bodyend == -1:
             self._p("The body block of your report is invalid.")
             return
-        cbody = self.html[bodystart+6:bodyend];
+        cbody = self.html[bodystart+6:bodyend]
 
-        footerstart = self.html.find("$$FOOTER");
-        footerend = self.html.find("FOOTER$$");
+        footerstart = self.html.find("$$FOOTER")
+        footerend = self.html.find("FOOTER$$")
 
         if footerstart == -1 or footerend == -1:
             self._p("The footer block of your report is invalid.")
             return
-        cfooter = self.html[footerstart+8:footerend];
+        cfooter = self.html[footerstart+8:footerend]
 
         # Optional NODATA block
         nodata = ""
@@ -1537,37 +1537,37 @@ class Report:
         groupstart = self.html.find("$$GROUP_")
 
         while groupstart != -1:
-            groupend = self.html.find("GROUP$$", groupstart);
+            groupend = self.html.find("GROUP$$", groupstart)
 
             if groupend == -1:
                 self._p("A group block of your report is invalid (missing GROUP$$ closing tag)")
                 return
 
-            ghtml = self.html[groupstart:groupend];
-            ghstart = ghtml.find("$$HEAD");
+            ghtml = self.html[groupstart:groupend]
+            ghstart = ghtml.find("$$HEAD")
             if ghstart == -1:
                 self._p("A group block of your report is invalid (no group $$HEAD)")
                 return
 
-            ghstart += 6;
-            ghend = ghtml.find("$$FOOT", ghstart);
+            ghstart += 6
+            ghend = ghtml.find("$$FOOT", ghstart)
 
             if ghend == -1:
                 self._p("A group block of your report is invalid (no group $$FOOT)")
                 return
 
-            gd = GroupDescriptor();
-            gd.header = ghtml[ghstart:ghend];
-            gd.footer = ghtml[ghend+6:];
-            gd.fieldName = ghtml[8:ghstart-6].strip().upper();
-            groups.append(gd);
-            groupstart = self.html.find("$$GROUP_", groupend);
+            gd = GroupDescriptor()
+            gd.header = ghtml[ghstart:ghend]
+            gd.footer = ghtml[ghend+6:]
+            gd.fieldName = ghtml[8:ghstart-6].strip().upper()
+            groups.append(gd)
+            groupstart = self.html.find("$$GROUP_", groupend)
 
         # Scan the ORDER BY clause to make sure the order
         # matches the grouping levels.  
         if len(groups) > 0:
 
-            lsql = self.sql.lower();
+            lsql = self.sql.lower()
             startorder = lsql.find("order by")
 
             if startorder == -1:
@@ -1594,7 +1594,7 @@ class Report:
         rs = None
         try:
             rs = db.query(self.dbo, self.sql)
-        except Exception,e:
+        except Exception as e:
             self._p(e)
 
         first_record = True
@@ -1670,7 +1670,7 @@ class Report:
             for gd in groups:
                 try:
                     gd.lastFieldValue = rs[row][gd.fieldName]
-                except Exception,e:
+                except Exception as e:
                     self._p(e)
 
             # Deal with any non-field/calculation keys
@@ -1690,14 +1690,14 @@ class Report:
                         try:
                             x = db.query_tuple(self.dbo, asql)
                             value = str(x[0][0])
-                        except Exception, e:
+                        except Exception as e:
                             value = str(e)
                     else:
                         # Action query, run it
                         try:
                             value = ""
                             db.execute(self.dbo, asql)
-                        except Exception, e:
+                        except Exception as e:
                             value = str(e)
 
                 # {IMAGE.animalid[.seq]} - substitutes a link to the image
@@ -1753,7 +1753,7 @@ class Report:
                         continue
                     
                     # Get custom report ID from title
-                    crid = db.query_int(self.dbo, "SELECT ID FROM customreport WHERE LOWER(Title) LIKE '" + fields[1] + "'");
+                    crid = db.query_int(self.dbo, "SELECT ID FROM customreport WHERE LOWER(Title) LIKE '" + fields[1] + "'")
                     if crid == 0:
                         self._p("Custom report '" + fields[1] + "' doesn't exist.")
                         valid = False
@@ -1763,7 +1763,7 @@ class Report:
                     # The first one is also passed as PARENTKEY for compatibility
                     # with older reports.
                     subparams = []
-                    for x in xrange(2, len(fields)):
+                    for x in range(2, len(fields)):
                         fieldname = fields[x].upper()
                         fieldvalue = ""
                         if fieldname not in rs[row]:

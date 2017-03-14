@@ -63,7 +63,7 @@ def get_animalcontrol(dbo, acid):
     Returns an animal control incident record
     """
     rows = db.query(dbo, get_animalcontrol_query(dbo) + " WHERE ac.ID = %d" % acid)
-    if rows == None or len(rows) == 0:
+    if rows is None or len(rows) == 0:
         return None
     else:
         ac = rows[0]

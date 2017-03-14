@@ -10,7 +10,7 @@ import os, sys
 import smcom
 import utils
 import web
-from sitedefs import DBFS_STORE, DBFS_FILESTORAGE_FOLDER, DBFS_S3_BUCKET, URL_NEWS
+from sitedefs import DBFS_STORE, DBFS_FILESTORAGE_FOLDER, DBFS_S3_BUCKET
 
 class DBFSStorage(object):
     """ DBFSStorage factory """
@@ -77,7 +77,6 @@ class B64DBStorage(DBFSStorage):
 
     def put(self, dbfsid, filename, filedata):
         """ Stores the file data and returns a URL """
-        dummy = filename
         url = "base64:"
         s = base64.b64encode(filedata)
         db.execute(self.dbo, "UPDATE dbfs SET URL = '%s', Content = '%s' WHERE ID = %d" % (url, s, dbfsid))
@@ -99,7 +98,6 @@ class FileStorage(DBFSStorage):
 
     def get(self, dbfsid, url):
         """ Returns the file data for url """
-        dummy = dbfsid
         filepath = "%s/%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database, url.replace("file:", ""))
         f = open(filepath, "rb")
         s = f.read()
@@ -120,7 +118,7 @@ class FileStorage(DBFSStorage):
         f.write(filedata)
         f.flush()
         f.close()
-        os.chmod(filepath, 0666) # Make the file world read/write
+        os.chmod(filepath, 0o666) # Make the file world read/write
         db.execute(self.dbo, "UPDATE dbfs SET URL = '%s', Content = '' WHERE ID = %d" % (url, dbfsid))
         return url
 
@@ -129,7 +127,7 @@ class FileStorage(DBFSStorage):
         filepath = "%s/%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database, url.replace("file:", ""))
         try:
             os.unlink(filepath)
-        except Exception,err:
+        except Exception as err:
             al.error("Failed deleting '%s': %s" % (url, err), "FileStorage.delete", self.dbo)
 
     def url_prefix(self):
@@ -144,7 +142,6 @@ class S3Storage(DBFSStorage):
 
     def get(self, dbfsid, url):
         """ Returns the file data for url """
-        dummy = dbfsid
         name = url.replace("s3:", "")
         remotepath = "s3://%s/%s/%s" % (DBFS_S3_BUCKET, self.dbo.database, name)
         localpath = "/tmp/%s" % name
@@ -632,7 +629,7 @@ def switch_storage(dbo):
         try:
             filedata = source.get(r["ID"], r["URL"])
             target.put(r["ID"], r["NAME"], filedata)
-        except Exception,err:
+        except Exception as err:
             al.error("Error reading, skipping: %s" % str(err), "dbfs.switch_storage", dbo)
     # smcom only - perform postgresql full vacuum after switching
     if smcom.active(): smcom.vacuum_full(dbo)

@@ -84,7 +84,6 @@ class LostFoundMatch:
         db.execute(self.dbo, sql)
 
 def get_foundanimal_query(dbo):
-    dummy = dbo
     return "SELECT a.*, a.ID AS LFID, s.SpeciesName, b.BreedName, " \
         "c.BaseColour AS BaseColourName, c.AdoptAPetColour, x.Sex AS SexName, " \
         "o.OwnerSurname, o.OwnerForeNames, o.OwnerTitle, o.OwnerInitials, " \
@@ -97,7 +96,6 @@ def get_foundanimal_query(dbo):
         "LEFT OUTER JOIN owner o ON a.OwnerID = o.ID"
 
 def get_lostanimal_query(dbo):
-    dummy = dbo
     return "SELECT a.*, a.ID AS LFID, s.SpeciesName, b.BreedName, " \
         "c.BaseColour AS BaseColourName, c.AdoptAPetColour, x.Sex AS SexName, " \
         "o.OwnerSurname, o.OwnerForeNames, o.OwnerTitle, o.OwnerInitials, " \
@@ -576,9 +574,12 @@ def match_report(dbo, username = "system", lostanimalid = 0, foundanimalid = 0, 
     title = _("Match lost and found animals", l)
     h = []
     h.append(reports.get_report_header(dbo, title, username))
-    def p(s): return "<p>%s</p>" % s
-    def td(s): return "<td>%s</td>" % s
-    def hr(): return "<hr />"
+    def p(s): 
+        return "<p>%s</p>" % s
+    def td(s): 
+        return "<td>%s</td>" % s
+    def hr(): 
+        return "<hr />"
     lastid = 0
     matches = match(dbo, lostanimalid, foundanimalid, animalid)
     if len(matches) > 0:

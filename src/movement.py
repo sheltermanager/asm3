@@ -275,7 +275,7 @@ def validate_movement_form_data(dbo, post):
         al.debug("movement is returned without a movement date.", "movement.validate_movement_form_data", dbo)
         raise utils.ASMValidationError(i18n._("You can't have a return without a movement.", l))
     # Return should be after or same day as movement
-    if movementdate is not None and returndate != None and movementdate > returndate:
+    if movementdate is not None and returndate is not None and movementdate > returndate:
         al.debug("movement return date is before the movement date.", "movement.validate_movement_form_data", dbo)
         raise utils.ASMValidationError(i18n._("Return date cannot be before the movement date.", l))
     # If the option to return fosters on adoption is set, return any outstanding fosters for the animal
@@ -312,7 +312,7 @@ def validate_movement_form_data(dbo, post):
             al.debug("movement dates overlap an existing movement.", "movement.validate_movement_form_data", dbo)
             raise utils.ASMValidationError(i18n._("Movement dates clash with an existing movement.", l))
     # If there's a cancelled reservation, make sure it's after the reserve date
-    if reservationdate is not None and reservationcancelled != None and reservationcancelled < reservationdate:
+    if reservationdate is not None and reservationcancelled is not None and reservationcancelled < reservationdate:
         al.debug("reserve date is after cancelled date.", "movement.validate_movement_form_data", dbo)
         raise utils.ASMValidationError(i18n._("Reservation date cannot be after cancellation date.", l))
     # If this is a new reservation, make sure there's no open movement (fosters do not count)
@@ -461,7 +461,7 @@ def insert_adoption_from_form(dbo, username, post, creating = [], create_payment
     """
     l = dbo.locale
     # Validate that we have a movement date before doing anthing
-    if None == post.date("movementdate"):
+    if None is post.date("movementdate"):
         raise utils.ASMValidationError(i18n._("Adoption movements must have a valid adoption date.", l))
     # Get the animal record for this adoption
     a = animal.get_animal(dbo, post.integer("animal"))
@@ -565,7 +565,7 @@ def insert_foster_from_form(dbo, username, post):
     """
     # Validate that we have a movement date before doing anthing
     l = dbo.locale
-    if None == post.date("fosterdate"):
+    if None is post.date("fosterdate"):
         raise utils.ASMValidationError(i18n._("Foster movements must have a valid foster date.", l))
     # Is this animal already on foster? If so, return that foster first
     fm = get_animal_movements(dbo, post.integer("animal"))
@@ -598,7 +598,7 @@ def insert_reclaim_from_form(dbo, username, post):
     """
     l = dbo.locale
     # Validate that we have a movement date before doing anthing
-    if None == post.date("movementdate"):
+    if None is post.date("movementdate"):
         raise utils.ASMValidationError(i18n._("Reclaim movements must have a valid reclaim date.", l))
     # Get the animal record for this reclaim
     a = animal.get_animal(dbo, post.integer("animal"))
@@ -663,7 +663,7 @@ def insert_transfer_from_form(dbo, username, post):
     """
     # Validate that we have a movement date before doing anthing
     l = dbo.locale
-    if None == post.date("transferdate"):
+    if None is post.date("transferdate"):
         raise utils.ASMValidationError(i18n._("Transfers must have a valid transfer date.", l))
 
     # Is this animal already on foster? If so, return that foster first
@@ -720,7 +720,7 @@ def insert_reserve_from_form(dbo, username, post):
     """
     # Validate that we have a date before doing anthing
     l = dbo.locale
-    if None == post.date("reservationdate"):
+    if None is post.date("reservationdate"):
         raise utils.ASMValidationError(i18n._("Reservations must have a valid reservation date.", l))
 
     # Do the movement itself first
@@ -747,7 +747,7 @@ def insert_retailer_from_form(dbo, username, post):
     """
     # Validate that we have a movement date before doing anthing
     l = dbo.locale
-    if None == post.date("retailerdate"):
+    if None is post.date("retailerdate"):
         raise utils.ASMValidationError(i18n._("Retailer movements must have a valid movement date.", l))
 
     # Is this animal already at a foster? If so, return that foster first

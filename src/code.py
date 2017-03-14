@@ -500,7 +500,6 @@ class index(ASMEndpoint):
     url = "/"
     check_logged_in = False
     def content(self, o):
-        dummy = o
         # If there's no database structure, create it before 
         # redirecting to the login page.
         if not MULTIPLE_DATABASES:
@@ -513,7 +512,6 @@ class database(ASMEndpoint):
     url = "database"
     check_logged_in = False
     def content(self, o):
-        dummy = o
         dbo = db.DatabaseInfo()
         if MULTIPLE_DATABASES:
             if smcom.active():
@@ -586,7 +584,6 @@ class rollupjs(ASMEndpoint):
     url = "rollup.js"
     check_logged_in = False
     def content(self, o):
-        dummy = o
         self.header("Content-Type", "text/javascript")
         self.header("Cache-Control", "max-age=86400")
         rollup = cachemem.get("rollup")
@@ -661,6 +658,7 @@ class configjs(ASMEndpoint):
             "manualhtml": MANUAL_HTML_URL,
             "manualpdf": MANUAL_PDF_URL,
             "manualfaq": MANUAL_FAQ_URL,
+            "manualvideo": MANUAL_VIDEO_URL,
             "smcom": smcom.active(),
             "smcomexpiry": expirydate,
             "smcomexpirydisplay": expirydatedisplay,

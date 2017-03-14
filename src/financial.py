@@ -551,7 +551,7 @@ def insert_donations_from_form(dbo, username, post, donationdate, force_receive 
     created = []
     if post["receiptnumber"] == "":
         post.data["receiptnumber"] = get_next_receipt_number(dbo)
-    for i in xrange(1, 100):
+    for i in range(1, 100):
         if post.integer("amount%d" % i) == 0 and ignorezero: continue
         due = post["due%d" % i]
         received = post["received%d" % i]
@@ -701,7 +701,7 @@ def check_create_next_donation(dbo, username, odid):
     # If we have a frequency > 0, the nextcreated flag isn't set
     # and there's a datereceived and due then we need to create the
     # next donation in the sequence
-    if d["DATEDUE"] != None and d["DATE"] != None and d["FREQUENCY"] > 0 and d["NEXTCREATED"] == 0:
+    if d["DATEDUE"] is not None and d["DATE"] is not None and d["FREQUENCY"] > 0 and d["NEXTCREATED"] == 0:
         nextdue = d["DATEDUE"]
         if d["FREQUENCY"] == 1:
             nextdue = i18n.add_days(nextdue, 7)
@@ -1317,7 +1317,7 @@ def giftaid_spreadsheet(dbo, path, fromdate, todate):
         zfo.close()
         # Return the zip data
         return zo.getvalue()
-    except Exception,zderr:
+    except Exception as zderr:
         al.error("failed generating spreadsheet: %s" % str(zderr), "financial.giftaid_spreadsheet", dbo, sys.exc_info())
         raise utils.ASMError("Failed generating spreadsheet: %s" % str(zderr))
 

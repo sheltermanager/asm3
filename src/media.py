@@ -148,13 +148,13 @@ def get_image_file_data(dbo, mode, iid, seq = -1, justdate = False):
     if justdate is False, returns a tuple containing the last modified date and image data
     """
     def nopic():
-        NOPIC_DATE = datetime.datetime(2011, 01, 01)
+        NOPIC_DATE = datetime.datetime(2011, 1, 1)
         if justdate: 
             return NOPIC_DATE
         else:
             return (NOPIC_DATE, "NOPIC")
     def thumb_nopic():
-        NOPIC_DATE = datetime.datetime(2011, 01, 01)
+        NOPIC_DATE = datetime.datetime(2011, 1, 1)
         if justdate:
             return NOPIC_DATE
         else:
@@ -603,7 +603,7 @@ def scale_image(imagedata, resizespec):
         scaled_data = output.getvalue()
         output.close()
         return scaled_data
-    except Exception,err:
+    except Exception as err:
         al.error("failed scaling image: %s" % str(err), "media.scale_image")
         return imagedata
 
@@ -630,7 +630,7 @@ def auto_rotate_image(dbo, imagedata):
         rotated_data = output.getvalue()
         output.close()
         return rotated_data
-    except Exception,err:
+    except Exception as err:
         al.error("failed rotating image: %s" % str(err), "media.auto_rotate_image", dbo)
         return imagedata
 
@@ -651,7 +651,7 @@ def rotate_image(imagedata, clockwise = True):
         rotated_data = output.getvalue()
         output.close()
         return rotated_data
-    except Exception,err:
+    except Exception as err:
         al.error("failed rotating image: %s" % str(err), "media.rotate_image")
         return imagedata
 
@@ -724,7 +724,6 @@ def scale_odt(filedata):
     try:
         zf = zipfile.ZipFile(odt, "r")
     except zipfile.BadZipfile:
-        print "not a zip file"
         return ""
     # Write the replacement file
     zo = StringIO()
@@ -813,7 +812,6 @@ def scale_animal_images(dbo):
         inputfile.close()
         outputfile.close()
         al.debug("scaling %s (%d of %d)" % (name, i, len(mp)), "media.scale_animal_images", dbo)
-        print "%s (%d of %d)" % (name, i, len(mp))
         scale_image_file(inputfile.name, outputfile.name, configuration.incoming_media_scaling(dbo))
         f = open(outputfile.name, "r")
         data = f.read()
@@ -833,19 +831,15 @@ def scale_all_odt(dbo):
     for i, m in enumerate(mo):
         name = str(m["MEDIANAME"])
         al.debug("scaling %s (%d of %d)" % (name, i, len(mo)), "media.scale_all_odt", dbo)
-        print "%s (%d of %d)" % (name, i, len(mo))
         odata = dbfs.get_string(dbo, name)
         if odata == "":
             al.error("file %s does not exist" % name, "media.scale_all_odt", dbo)
-            print "file %s does not exist" % name
             continue
         path = db.query_string(dbo, "SELECT Path FROM dbfs WHERE Name='%s'" % name)
         ndata = scale_odt(odata)
         if len(ndata) < 512:
             al.error("scaled odt %s came back at %d bytes, abandoning" % (name, len(ndata)), "scale_all_odt", dbo)
-            print "file too small < 512, doing nothing"
         else:
-            print "old size: %d, new size: %d" % (len(odata), len(ndata))
             dbfs.put_string(dbo, name, path, ndata)
 
 

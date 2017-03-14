@@ -179,7 +179,7 @@ def create_additional_fields(dbo, row, errors, rowno, csvkey = "ANIMALADDITIONAL
                 ( "Value", db.ds(v) ) ))
             try:
                 db.execute(dbo, sql)
-            except Exception,e:
+            except Exception as e:
                 errors.append( (rowno, str(row), str(e)) )
 
 def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, checkduplicates = False):
@@ -363,7 +363,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
                         a["originalowner"] = str(ooid)
                         # Identify an ORIGINALOWNERADDITIONAL additional fields and create them
                         create_additional_fields(dbo, row, errors, rowno, "ORIGINALOWNERADDITIONAL", "person", ooid)
-                except Exception,e:
+                except Exception as e:
                     al.error("row %d (%s), originalowner: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
                     errors.append( (rowno, str(row), "originalowner: " + str(e)) )
             try:
@@ -375,7 +375,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
                     animalid, newcode = animal.insert_animal_from_form(dbo, utils.PostedData(a, dbo.locale), "import")
                     # Identify an ANIMALADDITIONAL additional fields and create them
                     create_additional_fields(dbo, row, errors, rowno, "ANIMALADDITIONAL", "animal", animalid)
-            except Exception,e:
+            except Exception as e:
                 al.error("row %d (%s): %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
                 errmsg = str(e)
                 if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
@@ -428,7 +428,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
                     personid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import")
                     # Identify any PERSONADDITIONAL additional fields and create them
                     create_additional_fields(dbo, row, errors, rowno, "PERSONADDITIONAL", "person", personid)
-            except Exception,e:
+            except Exception as e:
                 al.error("row %d (%s), person: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
                 errmsg = str(e)
                 if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
@@ -449,7 +449,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
             m["returncategory"] = str(configuration.default_entry_reason(dbo))
             try:
                 movementid = movement.insert_movement_from_form(dbo, "import", utils.PostedData(m, dbo.locale))
-            except Exception,e:
+            except Exception as e:
                 al.error("row %d (%s), movement: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
                 errmsg = str(e)
                 if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
@@ -472,7 +472,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
                 d["payment"] = "1"
             try:
                 financial.insert_donation_from_form(dbo, "import", utils.PostedData(d, dbo.locale))
-            except Exception,e:
+            except Exception as e:
                 al.error("row %d (%s), donation: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
                 errmsg = str(e)
                 if type(e) == utils.ASMValidationError: errmsg = e.getMsg()

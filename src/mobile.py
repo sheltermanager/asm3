@@ -119,7 +119,7 @@ def jqm_option(value, label = "", selected = False):
 def jqm_options_next_month(l):
     d = now()
     days = []
-    for dummy in xrange(0, 31):
+    for dummy in range(0, 31):
         days.append(jqm_option(python2display(l,d)))
         d = add_days(d, 1)
     d = add_months(now(), 3)
@@ -504,7 +504,7 @@ def page_medication(l, homelink, med):
             "%s - %s (%s)" % (m["ANIMALNAME"], m["SHELTERCODE"], m["TREATMENTNAME"]),
             "medical", -1, ""))
         mforms.append(jqm_page_header(pageid, m["TREATMENTNAME"], homelink))
-        mforms.append(jqm_table());
+        mforms.append(jqm_table())
         mforms.append(jqm_tablerow(_("Animal", l),
             jqm_link("mobile_post?posttype=va&id=%d" % m["ANIMALID"], m["SHELTERCODE"] + " " + m["ANIMALNAME"])))
         mforms.append(jqm_tablerow(_("Treatment", l), "%s %s<br />%s" % (required, m["TREATMENTNAME"], m["DOSAGE"])))
@@ -545,7 +545,7 @@ def page_diary(l, homelink, dia):
             "%s (%s)" % (d["SUBJECT"], d["LINKINFO"]),
             "diary", -1, ""))
         dforms.append(jqm_page_header(pageid, d["SUBJECT"], homelink))
-        dforms.append(jqm_table());
+        dforms.append(jqm_table())
         dforms.append(jqm_tablerow(_("Subject", l), d["SUBJECT"]))
         lt = d["LINKINFO"]
         if d["LINKTYPE"] == diary.ANIMAL:
@@ -1141,7 +1141,6 @@ def handler_viewincident(session, l, dbo, a, amls, cit, dia, logs, homelink, pos
     homelink: Link to the home menu
     post: The posted values
     """
-    dummy = post # TODO remove if used
     def table():
         return "<table style='width: 100%; border-bottom: 1px solid black;'>"
     def table_end():
@@ -1267,7 +1266,6 @@ def handler_viewperson(session, l, dbo, p, af, cit, dia, lic, links, logs, homel
     homelink: Link to the home menu
     post: The posted values
     """
-    dummy = post # TODO: Remove if used
     def table():
         return "<table style='width: 100%; border-bottom: 1px solid black;'>"
     def table_end():

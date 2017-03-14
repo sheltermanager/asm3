@@ -36,7 +36,7 @@ def email_uncompleted_upto_today(dbo):
     l = dbo.locale
     try:
         allusers = users.get_users(dbo)
-    except Exception,err:
+    except Exception as err:
         al.error("failed getting list of users: %s" % str(err), "diary.email_uncompleted_upto_today", dbo)
     # Grab list of diary notes for today
     notes = get_uncompleted_upto_today(dbo)
@@ -256,7 +256,7 @@ def insert_diary_from_form(dbo, username, linktypeid, linkid, post):
         raise utils.ASMValidationError(i18n._("Diary subject cannot be blank", l))
     if post["note"] == "":
         raise utils.ASMValidationError(i18n._("Diary note cannot be blank", l))
-    diarytime =  post["diarytime"].strip()
+    diarytime = post["diarytime"].strip()
     if diarytime != "":
         if diarytime.find(":") == -1:
             raise utils.ASMValidationError(i18n._("Invalid time, times should be in HH:MM format", l))
@@ -323,7 +323,7 @@ def update_diary_from_form(dbo, username, post):
         raise utils.ASMValidationError(i18n._("Diary subject cannot be blank", l))
     if post["note"] == "":
         raise utils.ASMValidationError(i18n._("Diary note cannot be blank", l))
-    diarytime =  post["diarytime"].strip()
+    diarytime = post["diarytime"].strip()
     if diarytime != "":
         if diarytime.find(":") == -1:
             raise utils.ASMValidationError(i18n._("Invalid time, times should be in HH:MM format", l))

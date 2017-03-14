@@ -31,7 +31,7 @@ def delete(key):
     try:
         fname = _getfilename(key)
         os.unlink(fname)
-    except Exception,err:
+    except Exception as err:
         al.error(str(err), "cachedisk.delete")
 
 def get(key):
@@ -56,7 +56,7 @@ def get(key):
             return None
 
         return o["value"]
-    except Exception,err:
+    except Exception as err:
         al.error(str(err), "cachedisk.get")
         return None
     finally:
@@ -83,7 +83,7 @@ def put(key, value, ttl):
         f = open(fname, "w")
         pickle.dump(o, f)
 
-    except Exception,err:
+    except Exception as err:
         al.error(str(err), "cachedisk.put")
     finally:
         try:

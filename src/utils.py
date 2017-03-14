@@ -151,7 +151,7 @@ def cmd(c, shell=False):
     try:
         output = subprocess.check_output(c.split(" "), stderr=subprocess.STDOUT, shell=shell)
         return (0, output)
-    except subprocess.CalledProcessError,e:
+    except subprocess.CalledProcessError as e:
         return (e.returncode, e.output)
 
 def iif(c, t, f):
@@ -697,7 +697,6 @@ def where_text_filter(dbo, field, term):
     normal = u"LOWER(%s) LIKE '%%%s%%'" % (field, term)
     decoded = u"LOWER(%s) LIKE  '%%%s%%'" % (field, decode_html(term))
     wc = normal + u" OR " + decoded
-    dummy = dbo.dbtype
     # If DB_DECODE_HTML_ENTITIES is true and you have a UTF collation
     # on your database, case insensitive searching will work here
     # for all languages.
@@ -928,7 +927,7 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
             p = subprocess.Popen(["/usr/sbin/sendmail", "-t", "-oi"], stdin=subprocess.PIPE)
             p.communicate(msg.as_string())
             return True
-        except Exception,err:
+        except Exception as err:
             al.error("sendmail: %s" % str(err), "utils.send_email", dbo)
             return False
     else:
@@ -940,7 +939,7 @@ def send_email(dbo, replyadd, toadd, ccadd = "", subject = "", body = "", conten
                 smtp.login(username, password)
             smtp.sendmail(fromadd, tolist, msg.as_string())
             return True
-        except Exception,err:
+        except Exception as err:
             al.error("smtp: %s" % str(err), "utils.send_email", dbo)
             return False
 
@@ -1062,10 +1061,6 @@ def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, w
     if papersize == "letter":
         psize = letter
 
-    # Not used since they control inner margins within hpitch/vpitch
-    dummy = height
-    dummy = width
-
     fout = StringIO()
     doc = SimpleDocTemplate(fout, pagesize=psize, leftMargin = lmargin * unit, topMargin = tmargin * unit, rightMargin = 0, bottomMargin = 0)
     col = 0
@@ -1074,7 +1069,7 @@ def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, w
 
     def newData():
         l = []
-        for dummy in xrange(0, rows):
+        for dummy in range(0, rows):
             l.append( [ "" ] * cols )
         return l
 

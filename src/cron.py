@@ -456,7 +456,7 @@ def maint_db_diagnostic(dbo):
     try:
         d = dbupdate.diagnostic(dbo)
         for k, v in d.iteritems():
-            print "%s: %s" % (k, v)
+            print("%s: %s" % (k, v))
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_diagnostic: %s" % em, "cron.maint_db_diagnostic", dbo, sys.exc_info())
@@ -464,7 +464,7 @@ def maint_db_diagnostic(dbo):
 def maint_db_dump(dbo):
     try:
         for x in dbupdate.dump(dbo):
-            print unicode(x).encode("utf-8")
+            print(unicode(x).encode("utf-8"))
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump: %s" % em, "cron.maint_db_dump", dbo, sys.exc_info())
@@ -478,7 +478,7 @@ def maint_db_dump_dbfs(dbo):
 
 def maint_db_dump_merge(dbo):
     try:
-        print unicode(dbupdate.dump_merge(dbo)).encode("utf-8")
+        print(unicode(dbupdate.dump_merge(dbo)).encode("utf-8"))
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump_merge: %s" % em, "cron.maint_db_dump_merge", dbo, sys.exc_info())
@@ -486,21 +486,21 @@ def maint_db_dump_merge(dbo):
 def maint_db_dump_smcom(dbo):
     try:
         for x in dbupdate.dump_smcom(dbo):
-            print unicode(x).encode("utf-8")
+            print(unicode(x).encode("utf-8"))
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump: %s" % em, "cron.maint_db_dump_smcom", dbo, sys.exc_info())
 
 def maint_db_dump_animalcsv(dbo):
     try:
-        print utils.csv(dbo.locale, animal.get_animal_find_advanced(dbo, { "logicallocation" : "all", "includedeceased": "true", "includenonshelter": "true" }))
+        print(utils.csv(dbo.locale, animal.get_animal_find_advanced(dbo, { "logicallocation" : "all", "includedeceased": "true", "includenonshelter": "true" })))
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump_animalcsv: %s" % em, "cron.maint_db_dump_animalcsv", dbo, sys.exc_info())
 
 def maint_db_dump_personcsv(dbo):
     try:
-        print utils.csv(dbo.locale, person.get_person_find_simple(dbo, "", "all", True, True, 0))
+        print(utils.csv(dbo.locale, person.get_person_find_simple(dbo, "", "all", True, True, 0)))
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump_personcsv: %s" % em, "cron.maint_db_dump_personcsv", dbo, sys.exc_info())
@@ -677,7 +677,7 @@ def run_alias(mode, alias):
         dbo  = db.get_multiple_database_info(alias)
     dbo.alias = alias
     if dbo.database == "FAIL":
-        print "Invalid database alias '%s'" % (alias)
+        print("Invalid database alias '%s'" % (alias))
         return
     else:
         dbo.timeout = 0
@@ -698,53 +698,53 @@ def run_override_database(mode, dbtype, host, port, username, password, database
     run(dbo, mode)
 
 def print_usage():
-    print "Usage: cron.py mode [alias]"
-    print ""
-    print "           alias is a database alias to find info from. If none is given"
-    print "           in multi database/map mode, the task is run for all databases"
-    print ""
-    print "   Or: cron.py mode dbtype host port username password database alias"
-    print ""
-    print "mode is one of:"
-    print "       all - runs daily and all publish_* tasks"
-    print "       daily - daily batch tasks"
-    print "       reports_email - email reports with dailyemail set (run this target once per hour)"
-    print "       publish_ap - publish to adoptapet.com"
-    print "       publish_fa - update foundanimals.org"
-    print "       publish_hlp - publish to helpinglostpets.com"
-    print "       publish_html - publish html/ftp"
-    print "       publish_mp - publish to meetapet.com"
-    print "       publish_pf - publish to petfinder"
-    print "       publish_pl - update petlink"
-    print "       publish_rg - publish to rescuegroups"
-    print "       publish_st - update smart tag"
-    print "       publish_veha - update homeagain via vetenvoy"
-    print "       publish_vear - update akc reunite via vetenvoy"
-    print "       publish_abuk - update anibase uk"
-    print "       publish_ptuk - update pettrac uk"
-    print "       publish_pcuk - publish to petslocated.com uk"
-    print "       publish_pr - update petrescue aus"
-    print "       publish_3pty - run ALL 3rd party publishers (all but html)"
-    print "       maint_animal_figures - calculate all monthly/annual figures for all time"
-    print "       maint_animal_figures_annual - calculate all annual figures for all time"
-    print "       maint_db_diagnostic - run database diagnostics"
-    print "       maint_db_dump - produce a dump of INSERT statements to recreate the db"
-    print "       maint_db_dump_dbfs - produce a dump of INSERT statements to recreate the dbfs"
-    print "       maint_db_dump_merge - produce a dump of INSERT statements, renumbering IDs to +100000"
-    print "       maint_db_dump_animalcsv - produce a CSV of animal/adoption/owner data"
-    print "       maint_db_dump_personcsv - produce a CSV of person data"
-    print "       maint_db_dump_smcom - produce an SQL dump for import into sheltermanager.com"
-    print "       maint_db_install - install structure/data into a new empty database"
-    print "       maint_db_reinstall - wipe the db and reinstall default data"
-    print "       maint_deduplicate_people - automatically merge duplicate people records"
-    print "       maint_recode_all - regenerate all animal codes"
-    print "       maint_recode_shelter - regenerate animals codes for all shelter animals"
-    print "       maint_reinstall_default_media - re-adds default document/publishing templates"
-    print "       maint_scale_animal_images - re-scales all the animal images in the database"
-    print "       maint_scale_odts - re-scales all odt files attached to records (remove images)"
-    print "       maint_scale_pdfs - re-scales all the PDFs in the database"
-    print "       maint_switch_dbfs_storage - moves all existing dbfs files to the current DBFS_STORE"
-    print "       maint_variable_data - recalculate all variable data for all animals"
+    print("Usage: cron.py mode [alias]")
+    print("")
+    print("           alias is a database alias to find info from. If none is given")
+    print("           in multi database/map mode, the task is run for all databases")
+    print("")
+    print("   Or: cron.py mode dbtype host port username password database alias")
+    print("")
+    print("mode is one of:")
+    print("       all - runs daily and all publish_* tasks")
+    print("       daily - daily batch tasks")
+    print("       reports_email - email reports with dailyemail set (run this target once per hour)")
+    print("       publish_ap - publish to adoptapet.com")
+    print("       publish_fa - update foundanimals.org")
+    print("       publish_hlp - publish to helpinglostpets.com")
+    print("       publish_html - publish html/ftp")
+    print("       publish_mp - publish to meetapet.com")
+    print("       publish_pf - publish to petfinder")
+    print("       publish_pl - update petlink")
+    print("       publish_rg - publish to rescuegroups")
+    print("       publish_st - update smart tag")
+    print("       publish_veha - update homeagain via vetenvoy")
+    print("       publish_vear - update akc reunite via vetenvoy")
+    print("       publish_abuk - update anibase uk")
+    print("       publish_ptuk - update pettrac uk")
+    print("       publish_pcuk - publish to petslocated.com uk")
+    print("       publish_pr - update petrescue aus")
+    print("       publish_3pty - run ALL 3rd party publishers (all but html)")
+    print("       maint_animal_figures - calculate all monthly/annual figures for all time")
+    print("       maint_animal_figures_annual - calculate all annual figures for all time")
+    print("       maint_db_diagnostic - run database diagnostics")
+    print("       maint_db_dump - produce a dump of INSERT statements to recreate the db")
+    print("       maint_db_dump_dbfs - produce a dump of INSERT statements to recreate the dbfs")
+    print("       maint_db_dump_merge - produce a dump of INSERT statements, renumbering IDs to +100000")
+    print("       maint_db_dump_animalcsv - produce a CSV of animal/adoption/owner data")
+    print("       maint_db_dump_personcsv - produce a CSV of person data")
+    print("       maint_db_dump_smcom - produce an SQL dump for import into sheltermanager.com")
+    print("       maint_db_install - install structure/data into a new empty database")
+    print("       maint_db_reinstall - wipe the db and reinstall default data")
+    print("       maint_deduplicate_people - automatically merge duplicate people records")
+    print("       maint_recode_all - regenerate all animal codes")
+    print("       maint_recode_shelter - regenerate animals codes for all shelter animals")
+    print("       maint_reinstall_default_media - re-adds default document/publishing templates")
+    print("       maint_scale_animal_images - re-scales all the animal images in the database")
+    print("       maint_scale_odts - re-scales all odt files attached to records (remove images)")
+    print("       maint_scale_pdfs - re-scales all the PDFs in the database")
+    print("       maint_switch_dbfs_storage - moves all existing dbfs files to the current DBFS_STORE")
+    print("       maint_variable_data - recalculate all variable data for all animals")
 
 if __name__ == "__main__": 
     if len(sys.argv) == 2 and not MULTIPLE_DATABASES:

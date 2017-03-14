@@ -226,9 +226,9 @@ def get_regimens(dbo, animalid, onlycomplete = False, sort = ASCENDING_REQUIRED)
         sc = "am.Status = 2 AND "
     sql = "SELECT am.*, " \
         "(SELECT amt.DateRequired FROM animalmedicaltreatment amt WHERE amt.AnimalMedicalID = am.ID AND amt.DateGiven Is Null " \
-            "ORDER BY amt.DateRequired DESC LIMIT 1) AS NextTreatmentDue, " \
+        "ORDER BY amt.DateRequired DESC LIMIT 1) AS NextTreatmentDue, " \
         "(SELECT amt.DateGiven FROM animalmedicaltreatment amt WHERE amt.AnimalMedicalID = am.ID AND amt.DateGiven Is Not Null " \
-            "ORDER BY amt.DateGiven DESC LIMIT 1) AS LastTreatmentGiven " \
+        "ORDER BY amt.DateGiven DESC LIMIT 1) AS LastTreatmentGiven " \
         "FROM animalmedical am WHERE %sam.AnimalID = %d" % (sc, animalid)
     if sort == ASCENDING_REQUIRED:
         sql += " ORDER BY ID"
@@ -628,7 +628,7 @@ def update_medical_treatments(dbo, username, amid):
     # If it's a one-off treatment and we've given it, mark complete
     if am["TIMINGRULE"] == ONEOFF:
         if len(amt) > 0:
-            if amt[0]["DATEGIVEN"] != None:
+            if amt[0]["DATEGIVEN"] is not None:
                 db.execute(dbo, "UPDATE animalmedical SET Status = %d WHERE ID = %d" % ( COMPLETED, amid ))
                 return
 
@@ -868,7 +868,6 @@ def update_vaccination_batch_stock(dbo, username, vid, slid):
     Updates the batch number on a vaccination record if 
     it isn't already set from a stock level record.
     """
-    dummy = username
     sl = db.query(dbo, "SELECT * FROM stocklevel WHERE ID = %d" % slid)
     if len(sl) == 0:
         al.error("stocklevel %d does not exist" % slid, "medical.update_vaccination_batch_stock", dbo)
