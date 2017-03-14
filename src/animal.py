@@ -3304,7 +3304,7 @@ def get_number_animals_on_shelter(dbo, date, speciesid = 0, animaltypeid = 0, in
     """
     Returns the number of animals on shelter at the end of a given date for a species, type,
     location and optionally for an ageselection - 0 = allages, 1 = under six months, 2 = over six months
-    startofday: movements that took place on date are not counted if true
+    startofday: movements and intake that took place on date are not counted if true
     """
     sdate = db.dd(date)
     if not startofday:
@@ -3315,20 +3315,22 @@ def get_number_animals_on_shelter(dbo, date, speciesid = 0, animaltypeid = 0, in
         sql += "SpeciesID = %d" % speciesid
     else:
         sql += "AnimalTypeID = %d" % animaltypeid
-    sql += " AND DateBroughtIn <= %s AND NonShelterAnimal = 0" % sdate
-    sql += " AND (DeceasedDate Is Null OR DeceasedDate > %s)" % sdate
+    if startofday:
+        sql += " AND DateBroughtIn < %s AND NonShelterAnimal = 0" % sdate # intake today excluded
+        sql += " AND (DeceasedDate Is Null OR DeceasedDate > %s)" % sdate # deaths today excluded
+        movementclause = "MovementDate < %s" % db.dd(date) # movements today excluded
+        returnclause = "ReturnDate > %s" % db.dd(date) # returns today excluded
+    else:
+        sql += " AND DateBroughtIn <= %s AND NonShelterAnimal = 0" % sdate # intakes today included
+        sql += " AND (DeceasedDate Is Null OR DeceasedDate >= %s)" % sdate # deaths today included
+        movementclause = "MovementDate <= %s" % sdate # movements today included
+        returnclause = "ReturnDate >= %s" % sdate # returns today included
     if internallocationid != 0:
         sql += " AND ShelterLocation = %d" % internallocationid
     if ageselection == 1:
         sql += " AND DateOfBirth >= %s" % sixmonthsago
     if ageselection == 2:
         sql += " AND DateOfBirth < %s" % sixmonthsago
-    if startofday:
-        movementclause = "MovementDate < %s" % db.dd(date) # start of day, movements today excluded
-        returnclause = "ReturnDate >= %s" % db.dd(date) # start of day, returns today included
-    else:
-        movementclause = "MovementDate <= %s" % sdate # end of day, movements today included
-        returnclause = "ReturnDate >= %s" % sdate # end of day, returns today included
     sql += " AND NOT EXISTS (SELECT adoption.ID FROM adoption " \
         "WHERE AnimalID = animal.ID AND MovementType <> 2 AND MovementDate Is Not Null AND " \
         "%s AND (ReturnDate Is Null OR %s))" % (movementclause, returnclause)
