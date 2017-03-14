@@ -229,18 +229,6 @@ class MemCacheStore(web.session.Store):
     def cleanup(self, timeout):
         pass # Not needed, we assign values to memcache with timeout
 
-def remote_ip():
-    """
-    Gets the IP address of the requester, taking account of
-    reverse proxies
-    """
-    remoteip = web.ctx['ip']
-    if "HTTP_X_FORWARDED_FOR" in web.ctx.env:
-        xf = web.ctx.env["HTTP_X_FORWARDED_FOR"]
-        if xf is not None and str(xf).strip() != "":
-            remoteip = xf
-    return remoteip
-
 def session_manager():
     """
     Sort out our session manager. We use a global in the utils module
@@ -396,18 +384,19 @@ class ASMEndpoint(object):
     get_permissions = ( )  # List of permissions needed to GET
     post_permissions = ( ) # List of permissions needed to POST
     check_logged_in = True # Check whether we have a valid login
+    login_url = "/login"   # The url to go to if not logged in
 
     def _params(self):
         l = session.locale
         if l is None:
             l = LOCALE
-        post = utils.PostedData(web.input(), l)
+        post = utils.PostedData(web.input(filechooser = {}), l)
         return web.utils.storage( post=post, dbo=session.dbo, locale=l, user=session.user, session=session )
 
     def check(self, permissions):
-        """ Handle a GET, deal with permissions, session and JSON responses """
+        """ Check logged in and permissions """
         if self.check_logged_in:
-            utils.check_loggedin(session, web)
+            utils.check_loggedin(session, web, self.login_url)
         for p in permissions:
             users.check_permission(session, p)
 
@@ -419,9 +408,17 @@ class ASMEndpoint(object):
         """ Set the response header key to value """
         web.header(key, value)
 
+    def notfound(self):
+        """ Returns a 404 """
+        raise web.notfound()
+
     def post_all(self, o):
         """ Virtual function: override to handle postback """
         return ""
+
+    def query(self):
+        """ Returns the request query string """
+        return web.ctx.query
 
     def redirect(self, route):
         """ Redirect to another route """
@@ -680,140 +677,147 @@ class configjs(ASMEndpoint):
         }
         return "asm = %s;" % html.json(c)
 
-class css:
-    def GET(self):
-        post = utils.PostedData(web.input(v = "", k = ""), LOCALE) # k is ignored here, but versions css within browser cache
-        v = post["v"]
+class css(ASMEndpoint):
+    url = "css"
+    check_logged_in = False
+    def content(self, o):
+        v = o.post["v"]
         csspath = PATH + "static/css/" + v
-        if v.find("..") != -1: raise web.notfound() # prevent escaping our PATH
-        if not os.path.exists(csspath): raise web.notfound()
-        if v == "": raise web.notfound()
+        if v.find("..") != -1: self.notfound() # prevent escaping our PATH
+        if not os.path.exists(csspath): self.notfound()
+        if v == "": self.notfound()
         f = open(csspath, "r")
         content = f.read()
         f.close()
-        web.header("Content-Type", "text/css")
-        web.header("Cache-Control", "max-age=8640000") # Don't refresh this version for 100 days
+        self.header("Content-Type", "text/css")
+        self.header("Cache-Control", "max-age=8640000") # Don't refresh this version for 100 days
         return content
 
-class i18njs:
-    def GET(self):
-        post = utils.PostedData(web.input(l = LOCALE, k = ""), LOCALE) # k is ignored here, but versions locale within cache
-        l = post["l"]
-        web.header("Content-Type", "text/javascript")
-        web.header("Cache-Control", "max-age=8640000")
+class i18njs(ASMEndpoint):
+    url = "i18n.js"
+    check_logged_in = False
+    def content(self, o):
+        l = o.post["l"]
+        if l == "": l = LOCALE
+        self.header("Content-Type", "text/javascript")
+        self.header("Cache-Control", "max-age=8640000")
         return i18nstringsjs(l)
 
-class js:
-    def GET(self):
-        post = utils.PostedData(web.input(v = "", k = ""), LOCALE) # k is ignored here, but versions js within browser cache
-        v = post["v"]
+class js(ASMEndpoint):
+    url = "js"
+    check_logged_in = False
+    def content(self, o):
+        v = o.post["v"]
         jspath = PATH + "static/js/" + v
-        if v.find("..") != -1: raise web.notfound() # prevent escaping our PATH
-        if not os.path.exists(jspath): raise web.notfound()
-        if v == "": raise web.notfound()
+        if v.find("..") != -1: self.notfound() # prevent escaping our PATH
+        if not os.path.exists(jspath): self.notfound()
+        if v == "": self.notfound()
         f = open(jspath, "r")
         content = f.read()
         f.close()
-        web.header("Content-Type", "text/javascript")
-        web.header("Cache-Control", "max-age=8640000") # Don't refresh this version for 100 days
+        self.header("Content-Type", "text/javascript")
+        self.header("Cache-Control", "max-age=8640000") # Don't refresh this version for 100 days
         return content
 
-class jserror:
+class jserror(ASMEndpoint):
     """
     Target for logging javascript errors from the frontend.
     Nothing is returned as the UI does not expect a response.
     Errors are logged and emailed to the admin if EMAIL_ERRORS is set.
     """
-    def POST(self):
-        post = utils.PostedData(web.input(), LOCALE)
-        if utils.is_loggedin(session) and session.dbo is not None:
-            dbo = session.dbo
-            emailsubject = "%s @ %s" % (post["user"], post["account"])
-            emailbody = "%s:\n\n%s" % (post["msg"], post["stack"])
-            logmess = "%s@%s: %s %s" % (post["user"], post["account"], post["msg"], post["stack"])
-            al.error(logmess, "code.jserror", dbo)
-            if EMAIL_ERRORS:
-                utils.send_email(dbo, ADMIN_EMAIL, ADMIN_EMAIL, "", emailsubject, emailbody, "plain")
+    url = "jserror"
+    def post_all(self, o):
+        dbo = o.dbo
+        post = o.post
+        emailsubject = "%s @ %s" % (post["user"], post["account"])
+        emailbody = "%s:\n\n%s" % (post["msg"], post["stack"])
+        logmess = "%s@%s: %s %s" % (post["user"], post["account"], post["msg"], post["stack"])
+        al.error(logmess, "code.jserror", dbo)
+        if EMAIL_ERRORS:
+            utils.send_email(dbo, ADMIN_EMAIL, ADMIN_EMAIL, "", emailsubject, emailbody, "plain")
 
-class media:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(id = "0"), LOCALE)
-        lastmod, medianame, mimetype, filedata = extmedia.get_media_file_data(session.dbo, post.integer("id"))
+class media(ASMEndpoint):
+    url = "media"
+    def content(self, o):
+        lastmod, medianame, mimetype, filedata = extmedia.get_media_file_data(o.dbo, o.post.integer("id"))
         web.header("Content-Type", mimetype)
         web.header("Cache-Control", "max-age=86400")
         web.header("Content-Disposition", "inline; filename=\"%s\"" % medianame)
         return filedata
 
-class mobile:
-    def GET(self):
-        utils.check_loggedin(session, web, "/mobile_login")
-        web.header("Content-Type", "text/html")
-        return extmobile.page(session.dbo, session, session.user)
+class mobile(ASMEndpoint):
+    url = "mobile"
+    login_url = "/mobile_login"
+    def content(self, o):
+        self.header("Content-Type", "text/html")
+        return extmobile.page(o.dbo, o.session, o.user)
 
-class mobile_login:
-    def GET(self):
-        l = LOCALE
-        post = utils.PostedData(web.input( smaccount = "", username = "", password = "" ), LOCALE)
+class mobile_login(ASMEndpoint):
+    url = "mobile_login"
+    check_logged_in = False
+    def content(self, o):
         if not MULTIPLE_DATABASES:
             dbo = db.DatabaseInfo()
-            l = configuration.locale(dbo)
-        web.header("Content-Type", "text/html")
-        return extmobile.page_login(l, post)
+            o.locale = configuration.locale(dbo)
+        self.header("Content-Type", "text/html")
+        return extmobile.page_login(o.locale, o.post)
 
-    def POST(self):
-        post = utils.PostedData(web.input( database="", username="", password="" ), LOCALE)
-        raise web.seeother( extmobile.login(post, session, remote_ip(), PATH) )
+    def post_all(self, o):
+        self.redirect( extmobile.login(o.post, o.session, self.remote_ip(), PATH) )
 
-class mobile_logout:
-    def GET(self):
+class mobile_logout(ASMEndpoint):
+    url = "mobile_logout"
+    login_url = "/mobile_login"
+    def content(self, o):
         url = "mobile_login"
-        post = utils.PostedData(web.input(smaccount=""), session.locale)
-        if post["smaccount"] != "":
-            url = "login?smaccount=" + post["smaccount"]
-        elif MULTIPLE_DATABASES and session.dbo is not None and session.dbo.alias is not None:
-            url = "mobile_login?smaccount=" + session.dbo.alias
-        users.update_user_activity(session.dbo, session.user, False)
-        users.logout(session, remote_ip())
-        raise web.seeother(url)
+        if o.post["smaccount"] != "":
+            url = "login?smaccount=" + o.post["smaccount"]
+        elif MULTIPLE_DATABASES and o.dbo is not None and o.dbo.alias is not None:
+            url = "mobile_login?smaccount=" + o.dbo.alias
+        users.update_user_activity(o.dbo, o.user, False)
+        users.logout(o.session, self.remote_ip())
+        self.redirect(url)
 
-class mobile_post:
-    def handle(self):
-        utils.check_loggedin(session, web, "/mobile_login")
-        post = utils.PostedData(web.input(posttype = "", id = "0", animalid = "0", medicalid = "0", logtypeid = "0", logtext = "", filechooser = {}, success = ""), session.locale)
-        s = extmobile.handler(session, post)
+class mobile_post(ASMEndpoint):
+    url = "mobile_post"
+    login_url = "/mobile_login"
+    def handle(self, o):
+        s = extmobile.handler(session, o.post)
         if s is None:
             raise utils.ASMValidationError("mobile handler failed.")
         elif s.startswith("GO "):
-            raise web.seeother(s[3:])
+            self.redirect(s[3:])
         else:
-            web.header("Content-Type", "text/html")
+            self.header("Content-Type", "text/html")
             return s
-    def GET(self):
-        return self.handle()
-    def POST(self):
-        return self.handle()
 
-class mobile_report:
-    def GET(self):
-        utils.check_loggedin(session, web, "/mobile_login")
-        users.check_permission(session, users.VIEW_REPORT)
-        post = utils.PostedData(web.input(id = "0", mode = "criteria"), session.locale)
+    def content(self, o):
+        return self.handle(o)
+
+    def post_all(self, o):
+        return self.handle(o)
+
+class mobile_report(ASMEndpoint):
+    url = "mobile_report"
+    login_url = "/mobile_login"
+    get_permissions = ( users.VIEW_REPORT, )
+    def content(self, o):
+        dbo = o.dbo
+        user = o.user
+        post = o.post
         mode = post["mode"]
-        dbo = session.dbo
-        user = session.user
         crid = post.integer("id")
         # Make sure this user has a role that can view the report
-        extreports.check_view_permission(session, crid)
-        crit = extreports.get_criteria_controls(session.dbo, crid, mode = "MOBILE", locationfilter = session.locationfilter, siteid = session.siteid) 
-        web.header("Content-Type", "text/html")
-        web.header("Cache-Control", "no-cache")
+        extreports.check_view_permission(o.session, crid)
+        crit = extreports.get_criteria_controls(dbo, crid, mode = "MOBILE", locationfilter = o.session.locationfilter, siteid = o.session.siteid) 
+        self.header("Content-Type", "text/html")
+        self.header("Cache-Control", "no-cache")
         # If the report doesn't take criteria, just show it
         if crit == "":
             al.debug("report %d has no criteria, displaying" % crid, "code.mobile_report", dbo)
             return extreports.execute(dbo, crid, user)
         # If we're in criteria mode (and there are some to get here), ask for them
-        elif mode == "criteria":
+        elif mode == "":
             title = extreports.get_title(dbo, crid)
             al.debug("building criteria form for report %d %s" % (crid, title), "code.mobile_report", dbo)
             return extmobile.report_criteria(dbo, crid, title, crit)
@@ -824,11 +828,12 @@ class mobile_report:
             p = extreports.get_criteria_params(dbo, crid, post)
             return extreports.execute(dbo, crid, user, p)
 
-class mobile_sign:
-    def GET(self):
-        utils.check_loggedin(session, web, "/mobile_login")
-        web.header("Content-Type", "text/html")
-        return extmobile.page_sign(session.dbo, session, session.user)
+class mobile_sign(ASMEndpoint):
+    url = "mobile_sign"
+    login_url = "/mobile_login"
+    def content(self, o):
+        self.header("Content-Type", "text/html")
+        return extmobile.page_sign(o.dbo, o.session, o.user)
 
 class main(JSONEndpoint):
     url = "main"
@@ -995,41 +1000,45 @@ class login(ASMEndpoint):
     def post_all(self, o):
         return users.web_login(o.post, session, self.remote_ip(), PATH)
 
-class login_jsonp:
-    def GET(self):
-        post = utils.PostedData(web.input( database = "", username = "", password = "", nologconnection = "", mobile = "", callback = "" ), LOCALE)
-        web.header("Content-Type", "text/javascript")
-        return "%s({ response: '%s' })" % (post["callback"], users.web_login(post, session, remote_ip(), PATH))
+class login_jsonp(ASMEndpoint):
+    url = "login_jsonp"
+    check_logged_in = False
+    def content(self, o):
+        self.header("Content-Type", "text/javascript")
+        return "%s({ response: '%s' })" % (o.post["callback"], users.web_login(o.post, o.session, self.remote_ip(), PATH))
 
-class login_splash:
-    def GET(self):
-        post = utils.PostedData(web.input(smaccount = ""), LOCALE)
+class login_splash(ASMEndpoint):
+    url = "login_splash"
+    check_logged_in = False
+    def content(self, o):
         try:
             dbo = db.DatabaseInfo()
+            smaccount = o.post["smaccount"]
             if MULTIPLE_DATABASES:
-                if post["smaccount"] != "":
+                if smaccount != "":
                     if MULTIPLE_DATABASES_TYPE == "smcom":
-                        dbo = smcom.get_database_info(post["smaccount"])
+                        dbo = smcom.get_database_info(smaccount)
                     else:
-                        dbo = db.get_multiple_database_info(post["smaccount"])
-            web.header("Content-Type", "image/jpeg")
-            web.header("Cache-Control", "max-age=86400")
+                        dbo = db.get_multiple_database_info(smaccount)
+            self.header("Content-Type", "image/jpeg")
+            self.header("Cache-Control", "max-age=86400")
             return dbfs.get_string_filepath(dbo, "/reports/splash.jpg")
         except Exception as err:
-            al.error("%s" % str(err), "code.login_splash", session.dbo)
+            al.error("%s" % str(err), "code.login_splash", dbo)
             return ""
 
-class logout:
-    def GET(self):
+class logout(ASMEndpoint):
+    url = "logout"
+    check_logged_in = False
+    def content(self, o):
         url = "login"
-        post = utils.PostedData(web.input(smaccount=""), session.locale)
-        if post["smaccount"] != "":
-            url = "login?smaccount=" + post["smaccount"]
-        elif MULTIPLE_DATABASES and session.dbo is not None and session.dbo.alias is not None:
-            url = "login?smaccount=" + session.dbo.alias
-        users.update_user_activity(session.dbo, session.user, False)
-        users.logout(session, remote_ip())
-        raise web.seeother(url)
+        if o.post["smaccount"] != "":
+            url = "login?smaccount=" + o.post["smaccount"]
+        elif MULTIPLE_DATABASES and o.dbo is not None and o.dbo.alias is not None:
+            url = "login?smaccount=" + o.dbo.alias
+        users.update_user_activity(o.dbo, o.user, False)
+        users.logout(o.session, self.remote_ip())
+        self.redirect(url)
 
 class accounts(JSONEndpoint):
     url = "accounts"
@@ -6038,20 +6047,23 @@ class search:
         s += html.footer()
         return full_or_json("search", s, c, post["json"] == "true")
 
-class service:
-    def handle(self):
-        post = utils.PostedData(web.input(filechooser = {}), LOCALE)
-        contenttype, maxage, response = extservice.handler(post, PATH, remote_ip(),  web.ctx.env.get("HTTP_REFERER", ""), web.ctx.query)
+class service(ASMEndpoint):
+    url = "service"
+    check_logged_in = False
+    def handle(self, o):
+        contenttype, maxage, response = extservice.handler(o.post, PATH, self.remote_ip(), self.referer(), self.query())
         if contenttype == "redirect":
-            raise web.seeother(response)
+            self.redirect(response)
         else:
-            web.header("Content-Type", contenttype)
-            web.header("Cache-Control", "max-age=%d" % maxage)
+            self.header("Content-Type", contenttype)
+            self.header("Cache-Control", "max-age=%d" % maxage)
             return response
-    def POST(self):
-        return self.handle()
-    def GET(self):
-        return self.handle()
+
+    def content(self, o):
+        return self.handle(o)
+
+    def post_all(self, o):
+        return self.handle(o)
 
 class shelterview:
     def GET(self):
