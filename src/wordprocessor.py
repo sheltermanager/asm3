@@ -95,9 +95,11 @@ def animal_tags(dbo, a):
     l = dbo.locale
     qr = QR_IMG_SRC % { "url": BASE_URL + "/animal?id=%d" % a["ID"], "size": "150x150" }
     animalage = a["ANIMALAGE"]
-    if not animalage is None and animalage.endswith("."): animalage = animalage[0:len(animalage)-1]
+    if animalage is not None and animalage.endswith("."): 
+        animalage = animalage[0:len(animalage)-1]
     timeonshelter = a["TIMEONSHELTER"]
-    if timeonshelter.endswith("."): timeonshelter = timeonshelter[0:len(timeonshelter)-1]
+    if timeonshelter.endswith("."): 
+        timeonshelter = timeonshelter[0:len(timeonshelter)-1]
     displaydob = python2display(l, a["DATEOFBIRTH"])
     displayage = animalage
     estimate = ""
@@ -727,7 +729,6 @@ def movement_tags(dbo, m):
         "RESERVATIONSTATUS":            m["RESERVATIONSTATUSNAME"],
         "MOVEMENTISTRIAL":              utils.iif(m["ISTRIAL"] == 1, _("Yes", l), _("No", l)),
         "MOVEMENTISPERMANENTFOSTER":    utils.iif(m["ISPERMANENTFOSTER"] == 1, _("Yes", l), _("No", l)),
-        "TRIALENDDATE":                 python2display(l, m["TRIALENDDATE"]),
         "MOVEMENTCOMMENTS":             m["COMMENTS"],
         "MOVEMENTCREATEDBY":            m["CREATEDBY"],
         "MOVEMENTLASTCHANGEDBY":        m["LASTCHANGEDBY"],
@@ -1031,7 +1032,7 @@ def substitute_template(dbo, template, tags, imdata = None):
             zfo.close()
             # Return the zip data
             return zo.getvalue()
-        except Exception,zderr:
+        except Exception as zderr:
             raise utils.ASMError("Failed generating odt document: %s" % str(zderr))
 
 def generate_animal_doc(dbo, template, animalid, username):

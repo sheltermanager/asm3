@@ -102,7 +102,6 @@ def route_customer_extension(dbo, when, caller, post):
 
 # -- Everything below are extensions for specific customers
 def rp0282_before_insert_animal_from_form(dbo, post):
-    dummy = dbo
     if post.integer("originalowner") == 0 or post.integer("broughtinby") == 0:
         raise utils.ASMValidationError("Original Owner and Brought In By must be set")
     return True

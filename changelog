@@ -1,6 +1,7 @@
 40
 ================
 
+14/03/17 Fix miscount in monthly figures where start of day included intake
 13/03/17 Use flake8 for make/compilepy
 13/03/17 Refactoring code.py to remove smelly html.controller* code #173
 13/03/17 Refactoring code.py to use new ASM/JSONEndpoint #173

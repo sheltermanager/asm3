@@ -457,7 +457,7 @@ class ASMEndpoint(object):
             return self.post_all(o)
         else:
             # Mode has been supplied, call post_mode
-            getattr(ASMEndpoint, "post_%s" % mode)(o)
+            getattr(self.__class__, "post_%s" % mode)(self, o)
 
 class JSONEndpoint(ASMEndpoint):
     """ Base class for ASM endpoints that return JSON """
@@ -1033,49 +1033,45 @@ class logout:
         users.logout(session, remote_ip())
         raise web.seeother(url)
 
-class accounts:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_ACCOUNT)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(offset="active"), session.locale)
-        if post["offset"] == "all":
+class accounts(JSONEndpoint):
+    url = "accounts"
+    get_permissions = ( users.VIEW_ACCOUNT, )
+
+    def controller(self, o):
+        dbo = o.dbo
+        if o.post["offset"] == "all":
             accounts = financial.get_accounts(dbo)
         else:
             accounts = financial.get_accounts(dbo, True)
         al.debug("got %d accounts" % len(accounts), "code.accounts", dbo)
-        s = html.header("", session)
-        c = html.controller_json("accounttypes", extlookups.get_account_types(dbo))
-        c += html.controller_json("costtypes", extlookups.get_costtypes(dbo))
-        c += html.controller_json("donationtypes", extlookups.get_donation_types(dbo))
-        c += html.controller_json("roles", users.get_roles(dbo))
-        c += html.controller_json("rows", accounts)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("accounts", s, c, post["json"] == "true")
+        return {
+            "accounttypes": extlookups.get_account_types(dbo),
+            "costtypes": extlookups.get_costtypes(dbo),
+            "donationtypes": extlookups.get_donation_types(dbo),
+            "roles": users.get_roles(dbo),
+            "rows": accounts
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post.string("mode")
-        if mode == "create":
-            users.check_permission(session, users.ADD_ACCOUNT)
-            return financial.insert_account_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_ACCOUNT)
-            financial.update_account_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_ACCOUNT)
-            for aid in post.integer_list("ids"):
-                financial.delete_account(session.dbo, session.user, aid)
+    def post_create(self, o):
+        users.check_permission(session, users.ADD_ACCOUNT)
+        return financial.insert_account_from_form(o.dbo, o.user, o.post)
 
-class accounts_trx:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_ACCOUNT)
-        l = session.locale
-        dbo = session.dbo
-        post = utils.PostedData(web.input(accountid = 0, fromdate = "", todate = "", recfilter = 0), l)
+    def post_update(self, o):
+        users.check_permission(session, users.CHANGE_ACCOUNT)
+        financial.update_account_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        users.check_permission(session, users.DELETE_ACCOUNT)
+        for aid in o.post.integer_list("ids"):
+            financial.delete_account(o.dbo, o.user, aid)
+
+class accounts_trx(JSONEndpoint):
+    url = "accounts_trx"
+    get_permissions = ( users.VIEW_ACCOUNT, )
+
+    def controller(self, o):
+        dbo = o.dbo
+        post = o.post
         defview = configuration.default_account_view_period(dbo)
         fromdate = post["fromdate"]
         todate = post["todate"]
@@ -1101,36 +1097,33 @@ class accounts_trx:
         accountcode = financial.get_account_code(dbo, post.integer("accountid"))
         accounteditroles = financial.get_account_edit_roles(dbo, post.integer("accountid"))
         al.debug("got %d trx for %s <-> %s" % (len(transactions), str(fromdate), str(todate)), "code.accounts_trx", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", transactions)
-        c += html.controller_json("codes", "|".join(financial.get_account_codes(dbo, accountcode)))
-        c += html.controller_int("accountid", post.integer("accountid"))
-        c += html.controller_str("accountcode", accountcode)
-        c += html.controller_str("accounteditroles", "|".join(accounteditroles))
-        c += html.controller_str("fromdate", python2display(l, fromdate))
-        c += html.controller_str("todate", python2display(l, todate))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("accounts_trx", s, c, post["json"] == "true")
+        return {
+            "rows": transactions,
+            "codes": "|".join(financial.get_account_codes(dbo, accountcode)),
+            "accountid": post.integer("accountid"),
+            "accountcode": accountcode,
+            "accounteditroles": "|".join(accounteditroles),
+            "fromdate": python2display(o.locale, fromdate),
+            "todate": python2display(o.locale, todate)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.CHANGE_TRANSACTIONS)
-            financial.insert_trx_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_TRANSACTIONS)
-            financial.update_trx_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.CHANGE_TRANSACTIONS)
-            for tid in post.integer_list("ids"):
-                financial.delete_trx(session.dbo, session.user, tid)
-        elif mode == "reconcile":
-            users.check_permission(session, users.CHANGE_TRANSACTIONS)
-            for tid in post.integer_list("ids"):
-                financial.mark_reconciled(session.dbo, tid)
+    def post_create(self, o):
+        users.check_permission(session, users.CHANGE_TRANSACTIONS)
+        financial.insert_trx_from_form(o.dbo, o.user, o.post)
+
+    def post_update(self, o):
+        users.check_permission(session, users.CHANGE_TRANSACTIONS)
+        financial.update_trx_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        users.check_permission(session, users.CHANGE_TRANSACTIONS)
+        for tid in o.post.integer_list("ids"):
+            financial.delete_trx(o.dbo, o.user, tid)
+
+    def post_reconcile(self, o):
+        users.check_permission(session, users.CHANGE_TRANSACTIONS)
+        for tid in o.post.integer_list("ids"):
+            financial.mark_reconciled(o.dbo, tid)
 
 class additional:
     def GET(self):

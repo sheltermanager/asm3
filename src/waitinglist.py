@@ -130,9 +130,9 @@ def get_waitinglist_find_simple(dbo, query = "", limit = 0):
     # If no query has been given, do a current waitinglist search
     if query == "":
         return get_waitinglist(dbo)
-
     ors = []
-    add = lambda f: "LOWER(%s) LIKE '%%%s%%'" % (f, query.lower())
+    def add(f):
+        return "LOWER(%s) LIKE '%%%s%%'" % (f, query.lower())
     if utils.is_numeric(query):
         ors.append("a.ID = " + str(utils.cint(query)))
     ors.append(add("o.OwnerName"))
