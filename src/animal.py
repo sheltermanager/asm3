@@ -425,7 +425,7 @@ def get_animal_find_simple(dbo, query, classfilter = "all", limit = 0, locationf
         ors.append(add("sz.Size"))
         ors.append(add("bc.BaseColour"))
         ors.append(add("ct.CoatType"))
-    sql = unicode(get_animal_query(dbo)) + " WHERE "
+    sql = utils.cunicode(get_animal_query(dbo)) + " WHERE "
     if classfilter == "shelter":
         sql += u" a.Archived = 0 AND "
     elif classfilter == "female":

@@ -464,7 +464,7 @@ def maint_db_diagnostic(dbo):
 def maint_db_dump(dbo):
     try:
         for x in dbupdate.dump(dbo):
-            print(unicode(x).encode("utf-8"))
+            print(utils.cunicode(x).encode("utf-8"))
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump: %s" % em, "cron.maint_db_dump", dbo, sys.exc_info())
@@ -478,7 +478,7 @@ def maint_db_dump_dbfs(dbo):
 
 def maint_db_dump_merge(dbo):
     try:
-        print(unicode(dbupdate.dump_merge(dbo)).encode("utf-8"))
+        print(utils.cunicode(dbupdate.dump_merge(dbo)).encode("utf-8"))
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump_merge: %s" % em, "cron.maint_db_dump_merge", dbo, sys.exc_info())
@@ -486,7 +486,7 @@ def maint_db_dump_merge(dbo):
 def maint_db_dump_smcom(dbo):
     try:
         for x in dbupdate.dump_smcom(dbo):
-            print(unicode(x).encode("utf-8"))
+            print(utils.cunicode(x).encode("utf-8"))
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump: %s" % em, "cron.maint_db_dump_smcom", dbo, sys.exc_info())

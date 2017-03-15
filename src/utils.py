@@ -106,6 +106,10 @@ def is_currency(f):
     CURRENCY_FIELDS = "AMT AMOUNT DONATION DAILYBOARDINGCOST COSTAMOUNT COST FEE LICENCEFEE DEPOSITAMOUNT FINEAMOUNT UNITPRICE VATAMOUNT"
     return f.upper().startswith("MONEY") or CURRENCY_FIELDS.find(f.upper()) != -1
 
+def is_date(d):
+    """ Returns true if d is a date field """
+    return isinstance(d, datetime.datetime) or isinstance(d, datetime.date)
+
 def is_numeric(s):
     """
     Returns true if the string s is a number
@@ -116,6 +120,24 @@ def is_numeric(s):
         return False
     else:
         return True
+
+def is_str(s):
+    """
+    Returns true if the string s is a str
+    """
+    return isinstance(s, str)
+
+def is_unicode(s):
+    """
+    Returns true if the string s is unicode
+    """
+    return isinstance(s, unicode)
+
+def cunicode(s, encoding = "utf8"):
+    """
+    Converts a str to unicode
+    """
+    return unicode(s, encoding)
 
 def atoi(s):
     """
@@ -163,7 +185,7 @@ def iif(c, t, f):
 def nulltostr(s):
     try:
         if s is None: return ""
-        if type(s) == unicode:
+        if is_unicode(s):
             s = s.encode("ascii", "xmlcharrefreplace")
         return str(s)
     except:
@@ -288,10 +310,12 @@ def decode_html(s):
     """
     Decodes HTML entities and returns a unicode string.
     """
+    def to_char(p):
+        return unichr(p)
     # It's empty, return an empty string
     if s is None: return ""
     # It's not a string, we can't deal with this
-    if not isinstance(s, str): return s
+    if not is_str(s): return s
     matches = re.findall("&#\d+;", s)
     if len(matches) > 0:
         hits = set(matches)
@@ -299,7 +323,7 @@ def decode_html(s):
             name = hit[2:-1]
             try:
                 entnum = int(name)
-                s = s.replace(hit, unichr(entnum))
+                s = s.replace(hit, to_char(entnum))
             except ValueError:
                 pass
     matches = re.findall("&#[xX][0-9a-fA-F]+;", s)
@@ -309,7 +333,7 @@ def decode_html(s):
             hexv = hit[3:-1]
             try:
                 entnum = int(hexv, 16)
-                s = s.replace(hit, unichr(entnum))
+                s = s.replace(hit, to_char(entnum))
             except ValueError:
                 pass
     matches = re.findall("&\w+;", s)
@@ -320,7 +344,7 @@ def decode_html(s):
     for hit in hits:
         name = hit[1:-1]
         if name in htmlentitydefs.name2codepoint:
-            s = s.replace(hit, unichr(htmlentitydefs.name2codepoint[name]))
+            s = s.replace(hit, to_char(htmlentitydefs.name2codepoint[name]))
     s = s.replace(amp, "&")
     return s
 
@@ -329,8 +353,8 @@ def encode_html(s):
     Encodes Unicode strings as HTML entities in an ASCII string
     """
     if s is None: return ""
-    if type(s) == str: 
-        return unicode(s, "utf8").encode("ascii", "xmlcharrefreplace")
+    if is_str(s):
+        return cunicode(s).encode("ascii", "xmlcharrefreplace")
     else:
         return s.encode("ascii", "xmlcharrefreplace")
 
@@ -416,8 +440,8 @@ def df_t(data, field):
     """ Returns a posted text field for the database, turns it from unicode into
         ascii with XML entities to represent codepoints > 128 """
     if field in data:
-        if type(data[field]) == str: 
-            s = unicode(data[field], "utf8").encode("ascii", "xmlcharrefreplace")
+        if is_str(data[field]):
+            s = cunicode(data[field]).encode("ascii", "xmlcharrefreplace")
         else:
             s = data[field].encode("ascii", "xmlcharrefreplace")
         return db.ds(s.strip())
@@ -552,7 +576,7 @@ class UnicodeCSVWriter(object):
     def writerow(self, row):
         outbuf = []
         for s in row:
-            if isinstance(s, unicode):
+            if is_unicode(s):
                 outbuf.append(s.encode("utf-8"))
             else:
                 outbuf.append(s)
@@ -592,7 +616,7 @@ def csv(l, rows, cols = None, includeheader = True):
         for c in cols:
             if is_currency(c):
                 rd.append(decode_html(format_currency(l, r[c])))
-            elif type(r[c]) == datetime.datetime:
+            elif is_date(r[c]):
                 rd.append(decode_html(python2display(l, r[c])))
             else:
                 rd.append(decode_html(r[c]))

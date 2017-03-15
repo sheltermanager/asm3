@@ -238,7 +238,7 @@ def query_to_insert_sql(dbo, sql, table, escapeCR = ""):
             v = r[k]
             if v is None:
                 values.append("null")
-            elif type(v) == unicode or type(v) == str:
+            elif utils.is_unicode(v) or utils.is_str(v):
                 if escapeCR != "": v = v.replace("\n", escapeCR).replace("\r", "")
                 values.append(ds(v))
             elif type(v) == datetime.datetime:
@@ -505,10 +505,10 @@ def encode_str(dbo, v):
     try:
         if v is None: 
             return v
-        elif type(v) == unicode:
+        elif utils.is_unicode(v):
             v = unescape(v)
             return v.encode("ascii", "xmlcharrefreplace")
-        elif type(v) == str:
+        elif utils.is_str(v):
             v = unescape(v)
             return v.decode("ascii", "ignore").encode("ascii", "ignore")
         else:
@@ -571,7 +571,7 @@ def ds(s, sanitise_xss = True):
     """ Formats a value as a string for the database """
     if s is None: 
         return u"NULL"
-    elif type(s) != str and type(s) != unicode:
+    elif not utils.is_str(s) and not utils.is_unicode(s):
         return u"'%s'" % str(s)
     elif not DB_DECODE_HTML_ENTITIES:
         s = utils.encode_html(s)            # Turn any leftover unicode chars into HTML entities
@@ -641,9 +641,9 @@ def escape(s):
     if DB_TYPE == "POSTGRESQL": 
         s = psycopg2.extensions.adapt(s).adapted
     elif DB_TYPE == "MYSQL":
-        if type(s) == str:
+        if utils.is_str(s):
             s = MySQLdb.escape_string(s)
-        elif type(s) == unicode:
+        elif utils.is_unicode(s):
             # Encode the string as UTF-8 for MySQL escape_string 
             # then decode it back into unicode before continuing
             s = s.encode("utf-8")
@@ -756,10 +756,10 @@ def rows_to_insert_sql(table, rows, escapeCR = ""):
             v = r[k]
             if v is None:
                 values.append("null")
-            elif type(v) == unicode or type(v) == str:
+            elif utils.is_unicode(v) or utils.is_str(v):
                 if escapeCR != "": v = v.replace("\n", escapeCR).replace("\r", "")
                 values.append(ds(v))
-            elif type(v) == datetime.datetime:
+            elif utils.is_date(v):
                 values.append(ddt(v))
             else:
                 values.append(di(v))

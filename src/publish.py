@@ -3934,9 +3934,8 @@ class PetsLocatedUKPublisher(FTPPublisher):
         """
         years = 1
         if dob is not None:
-            td = i18n.now(self.dbo.timezone) - dob
-            if type(td) == datetime.timedelta:
-                years = td.days / 365.0
+            days = i18n.date_diff_days( dob, i18n.now(self.dbo.timezone) )
+            years = days / 365.0
         else:
             years = configuration.age_group_for_name(self.dbo, agegroup) 
             if years == 0: years = 1
@@ -3948,10 +3947,10 @@ class PetsLocatedUKPublisher(FTPPublisher):
         return 3
 
     def plcNeutered(self, neutered):
-        if type(neutered) == str:
+        if utils.is_str(neutered):
             if neutered.find("payed") != -1 or neutered.find("eutered") != -1:
                 return "y"
-        elif type(neutered) == int:
+        elif utils.is_numeric(neutered):
             if neutered == 1:
                 return "y"
             return "n"

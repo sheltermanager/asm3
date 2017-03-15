@@ -3,7 +3,6 @@
 import animal
 import audit
 import configuration
-import datetime
 import db
 import dbfs
 import dbupdate
@@ -726,7 +725,7 @@ class Report:
         l = self.dbo.locale
         if v is None: return ""
 
-        if type(v) == datetime.datetime or str(v).find("00:00:00.00") != -1:
+        if utils.is_date(v) or str(v).find("00:00:00.00") != -1:
             # If the time is midnight, omit it
             if str(v).find("00:00:00") != -1:
                 return i18n.python2display(l, v)

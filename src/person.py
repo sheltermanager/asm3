@@ -403,7 +403,7 @@ def get_person_find_simple(dbo, query, username="", classfilter="all", includeSt
         cf = " AND o.IsStaff = 0"
     if not includeVolunteers:
         cf = " AND o.IsVolunteer = 0"
-    sql = unicode(get_person_query(dbo)) + " WHERE (" + u" OR ".join(ors) + ")" + cf + " ORDER BY o.OwnerName"
+    sql = utils.cunicode(get_person_query(dbo)) + " WHERE (" + u" OR ".join(ors) + ")" + cf + " ORDER BY o.OwnerName"
     if limit > 0: sql += " LIMIT " + str(limit)
     return reduce_find_results(dbo, username, db.query(dbo, sql))
 
