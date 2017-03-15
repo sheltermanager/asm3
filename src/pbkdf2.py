@@ -68,9 +68,9 @@ def pbkdf2_bin(data, salt, iterations=1000, keylen=24, hashfunc=None):
         h.update(x)
         return map(ord, h.digest())
     buf = []
-    for block in xrange(1, -(-keylen // mac.digest_size) + 1):
+    for block in xrange(1, -(-keylen // mac.digest_size) + 1): # noqa: F821
         rv = u = _pseudorandom(salt + _pack_int(block))
-        for dummy in xrange(iterations - 1):
+        for dummy in xrange(iterations - 1): # noqa: F821
             u = _pseudorandom(''.join(map(chr, u)))
             rv = starmap(xor, izip(rv, u))
         buf.extend(rv)

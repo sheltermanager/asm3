@@ -131,13 +131,13 @@ def is_unicode(s):
     """
     Returns true if the string s is unicode
     """
-    return isinstance(s, unicode)
+    return isinstance(s, unicode) # noqa: F821
 
 def cunicode(s, encoding = "utf8"):
     """
     Converts a str to unicode
     """
-    return unicode(s, encoding)
+    return unicode(s, encoding) # noqa: F821
 
 def atoi(s):
     """
@@ -311,7 +311,7 @@ def decode_html(s):
     Decodes HTML entities and returns a unicode string.
     """
     def to_char(p):
-        return unichr(p)
+        return unichr(p) # noqa: F821
     # It's empty, return an empty string
     if s is None: return ""
     # It's not a string, we can't deal with this
