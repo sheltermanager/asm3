@@ -1132,36 +1132,31 @@ class accounts_trx(JSONEndpoint):
         for tid in o.post.integer_list("ids"):
             financial.mark_reconciled(o.dbo, tid)
 
-class additional:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.MODIFY_LOOKUPS)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
+class additional(JSONEndpoint):
+    url = "additional"
+    get_permissions = ( users.MODIFY_LOOKUPS, )
+    def controller(self, o):
+        dbo = o.dbo
         fields = extadditional.get_fields(dbo)
         al.debug("got %d additional field definitions" % len(fields), "code.additional", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", fields)
-        c += html.controller_json("fieldtypes", extlookups.get_additionalfield_types(dbo))
-        c += html.controller_json("linktypes", extlookups.get_additionalfield_links(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("additional", s, c, post["json"] == "true")
+        return {
+            "rows": fields,
+            "fieldtypes": extlookups.get_additionalfield_types(dbo),
+            "linktypes": extlookups.get_additionalfield_links(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.MODIFY_LOOKUPS)
-            return extadditional.insert_field_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.MODIFY_LOOKUPS)
-            extadditional.update_field_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.MODIFY_LOOKUPS)
-            for fid in post.integer_list("ids"):
-                extadditional.delete_field(session.dbo, session.user, fid)
+    def post_create(self, o):
+        users.check_permission(session, users.MODIFY_LOOKUPS)
+        return extadditional.insert_field_from_form(o.dbo, o.user, o.post)
+
+    def post_update(self, o):
+        users.check_permission(session, users.MODIFY_LOOKUPS)
+        extadditional.update_field_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        users.check_permission(session, users.MODIFY_LOOKUPS)
+        for fid in o.post.integer_list("ids"):
+            extadditional.delete_field(o.dbo, o.user, fid)
 
 class animal:
     def GET(self):
