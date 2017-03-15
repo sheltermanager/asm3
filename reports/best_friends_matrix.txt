@@ -460,7 +460,7 @@ AND NonShelterAnimal = 0) AS JuniorCatToRescue,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType IN (4, 6, 7, 8)
+WHERE MovementType IN (4, 6, 7)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -468,7 +468,7 @@ AND NonShelterAnimal = 0) AS AdultDogOtherLive,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType IN (4, 6, 7, 8)
+WHERE MovementType IN (4, 6, 7)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
@@ -476,7 +476,7 @@ AND NonShelterAnimal = 0) AS JuniorDogOtherLive,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType IN (4, 6, 7, 8)
+WHERE MovementType IN (4, 6, 7)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth < MovementDate - INTERVAL '5 months' 
@@ -484,7 +484,7 @@ AND NonShelterAnimal = 0) AS AdultCatOtherLive,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType IN (4, 6, 7, 8)
+WHERE MovementType IN (4, 6, 7)
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
