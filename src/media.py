@@ -136,14 +136,14 @@ def get_media_file_data(dbo, mid):
     mm = get_media_by_id(dbo, mid)[0]
     return mm["DATE"], mm["MEDIANAME"], mime_type(mm["MEDIANAME"]), dbfs.get_string(dbo, mm["MEDIANAME"])
 
-def get_image_file_data(dbo, mode, iid, seq = -1, justdate = False):
+def get_image_file_data(dbo, mode, iid, seq = 0, justdate = False):
     """
     Gets an image
     mode: animal | media | animalthumb | person | personthumb | dbfs
     iid: The id of the animal for animal/thumb mode or the media record
         or a template path for dbfs mode
     seq: If the mode is animal or person, returns image X for that person/animal
-         The first image is always the preferred photo.
+         The first image is always the preferred photo and seq is 1-based.
     if justdate is True, returns the last modified date
     if justdate is False, returns a tuple containing the last modified date and image data
     """
@@ -171,7 +171,7 @@ def get_image_file_data(dbo, mode, iid, seq = -1, justdate = False):
             return (mm[0]["DATE"], scale_thumbnail(dbfs.get_string(dbo, mm[0]["MEDIANAME"])))
 
     if mode == "animal":
-        if seq == -1:
+        if seq == 0:
             mm = get_web_preferred(dbo, ANIMAL, int(iid))
             if len(mm) == 0:
                 return nopic()
@@ -185,7 +185,7 @@ def get_image_file_data(dbo, mode, iid, seq = -1, justdate = False):
                 mm = get_media_by_seq(dbo, ANIMAL, int(iid), seq)
                 return mrec(mm)
     elif mode == "person":
-        if seq == -1:
+        if seq == 0:
             mm = get_web_preferred(dbo, PERSON, int(iid))
             if len(mm) == 0:
                 return nopic()
