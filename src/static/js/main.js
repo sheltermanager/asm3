@@ -850,9 +850,6 @@ $(function() {
             main.max_news_user = format.to_int(common.local_get(asm.user + "_news"));
             $("#newsunread").html( "(" + (main.max_news_story - main.max_news_user) + ")" );
 
-            // Push this initial state onto our history to prevent pop-1 error
-            Path.history.pushState({}, "", "main");
-
         },
 
         destroy: function() {

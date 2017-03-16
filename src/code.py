@@ -476,7 +476,10 @@ class JSONEndpoint(ASMEndpoint):
             self.js_module = self.url
         if not o.post["json"] == "true":
             self.header("Content-Type", "text/html")
-            footer = "<script>\n$(document).ready(function() { common.route_listen(); common.module_start(\"%s\"); });\n</script>\n</body>\n</html>" % self.js_module
+            footer = "<script>\n$(document).ready(function() { " \
+                "common.route_listen(); " \
+                "common.module_start(\"%(js_module)s\"); " \
+                "});\n</script>\n</body>\n</html>" % { "js_module": self.js_module }
             return "%s\n<script type=\"text/javascript\">\ncontroller = %s;\n</script>\n%s" % (html.header("", session), html.json(c), footer)
         else:
             web.header("Content-Type", "application/json")

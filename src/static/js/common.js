@@ -333,10 +333,8 @@
                 window.location = path;
             });
 
-            // Listen for history state changes. The true parameter tells
-            // path.js to fallback to hash routing for browsers without the
-            // history api (IE8)
-            Path.history.listen(true);
+            // Listen for history state changes.
+            Path.history.listen();
 
             // Catch all URL clicks to see if we can use client side routing to handle them.
             $(document).on("click", "a", function(e) {
