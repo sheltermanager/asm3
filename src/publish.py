@@ -1322,6 +1322,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "Illyrian Sheepdog=Shepherd (Unknown Type)\n" \
             "McNab=Shepherd (Unknown Type)\n" \
             "Mixed Breed=Mixed Breed (Medium)\n" \
+            "Mountain Dog=Bernese Mountain Dog\n" \
             "New Guinea Singing Dog=Shepherd (Unknown Type)\n" \
             "Newfoundland Dog=Newfoundland\n" \
             "Norweigan Lundehund=Shepherd (Unknown Type)\n" \
@@ -1424,6 +1425,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "Illyrian Sheepdog=Shepherd (Unknown Type)\n" \
             "McNab=Shepherd (Unknown Type)\n" \
             "Mixed Breed=Mixed Breed (Medium)\n" \
+            "Mountain Dog=Bernese Mountain Dog\n" \
             "New Guinea Singing Dog=Shepherd (Unknown Type)\n" \
             "Newfoundland Dog=Newfoundland\n" \
             "Norweigan Lundehund=Shepherd (Unknown Type)\n" \
