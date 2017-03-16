@@ -22,7 +22,7 @@ VERSIONS = (
     33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716, 33717, 33718, 
     33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904, 33905, 33906, 
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
-    34002, 34003, 34004, 34005, 34006, 34007
+    34002, 34003, 34004, 34005, 34006, 34007, 34008
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -30,7 +30,7 @@ LATEST_VERSION = VERSIONS[-1]
 # All ASM3 tables
 TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalfield",
     "adoption", "animal", "animalcontrol", "animalcontrolanimal", "animalcontrolrole", "animalcost", 
-    "animaldiet", "animalfigures", "animalfiguresannual", "animalfiguresasilomar", "animalfiguresmonthlyasilomar", 
+    "animaldiet", "animalfigures", "animalfiguresannual",  
     "animalfound", "animalcontrolanimal", "animallitter", "animallost", "animallostfoundmatch", 
     "animalmedical", "animalmedicaltreatment", "animalname", "animalpublished", 
     "animaltype", "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", 
@@ -511,32 +511,6 @@ def sql_structure(dbo):
     sql += index("animalfiguresannual_SpeciesID", "animalfiguresannual", "SpeciesID")
     sql += index("animalfiguresannual_EntryReasonID", "animalfiguresannual", "EntryReasonID")
     sql += index("animalfiguresannual_Year", "animalfiguresannual", "Year")
-
-    sql += table("animalfiguresasilomar", (
-        fid(),
-        fint("Year"),
-        fint("OrderIndex"),
-        fstr("Code"),
-        fstr("Heading"),
-        fint("Bold"),
-        fint("Cat"),
-        fint("Dog"),
-        fint("Total")), False)
-    sql += index("animalfiguresasilomar_Year", "animalfiguresasilomar", "Year")
-
-    sql += table("animalfiguresmonthlyasilomar", (
-        fid(),
-        fint("Month"),
-        fint("Year"),
-        fint("OrderIndex"),
-        fstr("Code"),
-        fstr("Heading"),
-        fint("Bold"),
-        fint("Cat"),
-        fint("Dog"),
-        fint("Total")), False)
-    sql += index("animalfiguresmonthlyasilomar_Year", "animalfiguresmonthlyasilomar", "Year")
-    sql += index("animalfiguresmonthlyasilomar_Month", "animalfiguresmonthlyasilomar", "Month")
 
     sql += table("animalfound", (
         fid(),
@@ -2673,7 +2647,7 @@ def reset_db(dbo):
     Resets a database by removing all data from non-lookup tables.
     """
     deltables = [ "accountstrx", "additional", "adoption", "animal", "animalcontrol", "animalcost",
-        "animaldiet", "animalfigures", "animalfiguresannual", "animalfiguresasilomar", "animalfiguresmonthlyasilomar",
+        "animaldiet", "animalfigures", "animalfiguresannual", 
         "animalfound", "animallitter", "animallost", "animalmedical", "animalmedicaltreatment", "animalname",
         "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "diary", "log",
         "media", "messages", "onlineform", "onlineformfield", "onlineformincoming", "owner", "ownercitation",
@@ -4658,4 +4632,11 @@ def update_34007(dbo):
     # Add missing indexes to DiedOffShelter / NonShelterAnimal
     add_index(dbo, "animal_DiedOffShelter", "animal", "DiedOffShelter")
     add_index(dbo, "animal_NonShelterAnimal", "animal", "NonShelterAnimal")
+
+def update_34008(dbo):
+    # Remove the old asilomar figures report if it exists
+    db.execute_dbupdate(dbo, "DELETE FROM customreport WHERE Title = 'Asilomar Figures'")
+    # Remove the asilomar tables as they're no longer needed
+    db.execute_dbupdate(dbo, "DROP TABLE animalfiguresasilomar")
+    db.execute_dbupdate(dbo, "DROP TABLE animalfiguresmonthlyasilomar")
 

@@ -1,6 +1,8 @@
 40
 ================
 
+16/03/17 Remove asilomar tables and code - no longer needed #5
+16/03/17 Add new live asilomar figures report #5
 16/03/17 Add missing Mountain Dog mapping for adoptapet
 15/03/17 Fix weird back behaviour due to missing popstate #172
 14/03/17 Include other return types in annual figures/returns

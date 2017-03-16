@@ -2006,14 +2006,12 @@ class batch:
         if post["mode"] == "genfigyear":
             try:
                 extanimal.update_animal_figures_annual(dbo, post.date("figyear").year)
-                extanimal.update_animal_figures_asilomar(dbo, post.date("figyear").year)
                 return "0"
             except Exception as err:
                 return str(err)
         elif post["mode"] == "genfigmonth":
             try:
                 extanimal.update_animal_figures(dbo, post.date("figmonth").month, post.date("figmonth").year)
-                extanimal.update_animal_figures_monthly_asilomar(dbo, post.date("figmonth").month, post.date("figmonth").year)
                 return "0"
             except Exception as err:
                 return str(err)

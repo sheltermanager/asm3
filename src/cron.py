@@ -60,8 +60,6 @@ def daily(dbo):
         # Update animal figures for reports
         animal.update_animal_figures(dbo)
         animal.update_animal_figures_annual(dbo)
-        animal.update_animal_figures_asilomar(dbo)
-        animal.update_animal_figures_monthly_asilomar(dbo)
 
         # Update waiting list urgencies and auto remove
         waitinglist.auto_remove_waitinglist(dbo)
