@@ -454,7 +454,7 @@ class ASMEndpoint(object):
             return self.post_all(o)
         else:
             # Mode has been supplied, call post_mode
-            getattr(self.__class__, "post_%s" % mode)(self, o)
+            return getattr(self.__class__, "post_%s" % mode)(self, o)
 
 class JSONEndpoint(ASMEndpoint):
     """ Base class for ASM endpoints that return JSON """
@@ -494,7 +494,7 @@ class JSONEndpoint(ASMEndpoint):
             return self.post_all(o)
         else:
             # Mode has been supplied, call post_mode
-            getattr(self.__class__, "post_%s" % mode)(self, o)
+            return getattr(self.__class__, "post_%s" % mode)(self, o)
 
 class index(ASMEndpoint):
     url = "/"
@@ -619,7 +619,7 @@ class configjs(ASMEndpoint):
             if expirydate is not None: 
                 expirydatedisplay = python2display(o.locale, expirydate)
                 expirydate = expirydate.isoformat()
-        us = users.get_users(dbo, session.user)
+        us = users.get_users(dbo, o.user)
         if len(us) > 0:
             emailaddress = utils.nulltostr(us[0]["EMAILADDRESS"])
             realname = utils.nulltostr(us[0]["REALNAME"])
@@ -638,23 +638,23 @@ class configjs(ASMEndpoint):
         c = { "baseurl": BASE_URL,
             "serviceurl": SERVICE_URL,
             "build": BUILD,
-            "locale": session.locale,
-            "theme": session.theme,
-            "user": session.user,
+            "locale": o.locale,
+            "theme": o.session.theme,
+            "user": o.session.user,
             "useremail": emailaddress,
             "userreal": realname,
             "useraccount": dbo.database,
             "useraccountalias": dbo.alias,
-            "dateformat": get_display_date_format(session.locale),
-            "currencysymbol": get_currency_symbol(session.locale),
-            "currencydp": get_currency_dp(session.locale),
-            "currencyprefix": get_currency_prefix(session.locale),
-            "securitymap": session.securitymap,
-            "superuser": session.superuser,
-            "locationfilter": session.locationfilter,
-            "siteid": session.siteid,
-            "roles": session.roles,
-            "roleids": session.roleids,
+            "dateformat": get_display_date_format(o.locale),
+            "currencysymbol": get_currency_symbol(o.locale),
+            "currencydp": get_currency_dp(o.locale),
+            "currencyprefix": get_currency_prefix(o.locale),
+            "securitymap": o.session.securitymap,
+            "superuser": o.session.superuser,
+            "locationfilter": o.session.locationfilter,
+            "siteid": o.session.siteid,
+            "roles": o.session.roles,
+            "roleids": o.session.roleids,
             "manualhtml": MANUAL_HTML_URL,
             "manualpdf": MANUAL_PDF_URL,
             "manualfaq": MANUAL_FAQ_URL,
@@ -672,11 +672,11 @@ class configjs(ASMEndpoint):
             "mapprovider": mapprovider,
             "osmmaptiles": OSM_MAP_TILES,
             "hascustomlogo": dbfs.file_exists(dbo, "logo.jpg"),
-            "mobileapp": session.mobileapp,
+            "mobileapp": o.session.mobileapp,
             "config": configuration.get_map(dbo),
-            "menustructure": html.menu_structure(session.locale, 
-            extreports.get_reports_menu(dbo, session.roleids, session.superuser), 
-            extreports.get_mailmerges_menu(dbo, session.roleids, session.superuser))
+            "menustructure": html.menu_structure(o.locale, 
+            extreports.get_reports_menu(dbo, o.session.roleids, o.session.superuser), 
+            extreports.get_mailmerges_menu(dbo, o.session.roleids, o.session.superuser))
         }
         return "asm = %s;" % html.json(c)
 
@@ -1161,81 +1161,81 @@ class additional(JSONEndpoint):
         for fid in o.post.integer_list("ids"):
             extadditional.delete_field(o.dbo, o.user, fid)
 
-class animal:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_ANIMAL)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        a = extanimal.get_animal(dbo, post.integer("id"))
-        if a is None: raise web.notfound()
+class animal(JSONEndpoint):
+    url = "animal"
+    get_permissions = ( users.VIEW_ANIMAL, )
+
+    def controller(self, o):
+        dbo = o.dbo
+        a = extanimal.get_animal(dbo, o.post.integer("id"))
+        if a is None: self.notfound()
         # If a location filter is set, prevent the user opening this animal if it's
         # not in their location.
         if not extanimal.is_animal_in_location_filter(a, session.locationfilter, session.siteid):
             raise utils.ASMPermissionError("animal not in location filter/site")
         al.debug("opened animal %s %s" % (a["CODE"], a["ANIMALNAME"]), "code.animal", dbo)
-        s = html.header("", session)
-        c = html.controller_json("animal", a)
-        c += html.controller_plain("activelitters", html.json_autocomplete_litters(dbo))
-        c += html.controller_json("additional", extadditional.get_additional_fields(dbo, a["ID"], "animal"))
-        c += html.controller_json("animaltypes", extlookups.get_animal_types(dbo))
-        if users.check_permission_bool(session, users.VIEW_AUDIT_TRAIL):
-            c += html.controller_json("audit", audit.get_audit_for_link(dbo, "animal", a["ID"]))
-        c += html.controller_json("species", extlookups.get_species(dbo))
-        c += html.controller_json("breeds", extlookups.get_breeds_by_species(dbo))
-        c += html.controller_json("coattypes", extlookups.get_coattypes(dbo))
-        c += html.controller_json("colours", extlookups.get_basecolours(dbo))
-        c += html.controller_json("deathreasons", extlookups.get_deathreasons(dbo))
-        c += html.controller_json("diarytasks", extdiary.get_animal_tasks(dbo))
-        c += html.controller_json("entryreasons", extlookups.get_entryreasons(dbo))
-        c += html.controller_json("flags", extlookups.get_animal_flags(dbo))
-        c += html.controller_json("internallocations", extlookups.get_internal_locations(dbo, session.locationfilter, session.siteid))
-        c += html.controller_json("microchipmanufacturers", extlookups.MICROCHIP_MANUFACTURERS)
-        c += html.controller_json("pickuplocations", extlookups.get_pickup_locations(dbo))
-        c += html.controller_json("publishhistory", extanimal.get_publish_history(dbo, a["ID"]))
-        c += html.controller_json("posneg", extlookups.get_posneg(dbo))
-        c += html.controller_json("sexes", extlookups.get_sexes(dbo))
-        c += html.controller_json("sizes", extlookups.get_sizes(dbo))
-        c += html.controller_str("sharebutton", SHARE_BUTTON)
-        c += html.controller_json("tabcounts", extanimal.get_satellite_counts(dbo, a["ID"])[0])
-        c += html.controller_json("templates", dbfs.get_document_templates(dbo))
-        c += html.controller_json("ynun", extlookups.get_ynun(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("animal", s, c, post["json"] == "true")
+        return {
+            "animal": a,
+            "activelitters": extanimal.get_active_litters_brief(dbo),
+            "additional": extadditional.get_additional_fields(dbo, a["ID"], "animal"),
+            "animaltypes": extlookups.get_animal_types(dbo),
+            "audit": users.check_permission_bool(o.session, users.VIEW_AUDIT_TRAIL) and audit.get_audit_for_link(dbo, "animal", a["ID"]) or [],
+            "species": extlookups.get_species(dbo),
+            "breeds": extlookups.get_breeds_by_species(dbo),
+            "coattypes": extlookups.get_coattypes(dbo),
+            "colours": extlookups.get_basecolours(dbo),
+            "deathreasons": extlookups.get_deathreasons(dbo),
+            "diarytasks": extdiary.get_animal_tasks(dbo),
+            "entryreasons": extlookups.get_entryreasons(dbo),
+            "flags": extlookups.get_animal_flags(dbo),
+            "internallocations": extlookups.get_internal_locations(dbo, o.session.locationfilter, o.session.siteid),
+            "microchipmanufacturers": extlookups.MICROCHIP_MANUFACTURERS,
+            "pickuplocations": extlookups.get_pickup_locations(dbo),
+            "publishhistory": extanimal.get_publish_history(dbo, a["ID"]),
+            "posneg": extlookups.get_posneg(dbo),
+            "sexes": extlookups.get_sexes(dbo),
+            "sizes": extlookups.get_sizes(dbo),
+            "sharebutton": SHARE_BUTTON,
+            "tabcounts": extanimal.get_satellite_counts(dbo, a["ID"])[0],
+            "templates": dbfs.get_document_templates(dbo),
+            "ynun": extlookups.get_ynun(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(mode="save"), session.locale)
-        mode = post["mode"]
-        if mode == "save":
-            users.check_permission(session, users.CHANGE_ANIMAL)
-            extanimal.update_animal_from_form(dbo, post, session.user)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_ANIMAL)
-            extanimal.delete_animal(dbo, session.user, post.integer("animalid"))
-        elif mode == "gencode":
-            animaltypeid = post.integer("animaltypeid")
-            entryreasonid = post.integer("entryreasonid")
-            speciesid = post.integer("speciesid")
-            datebroughtin = post.date("datebroughtin")
-            sheltercode, shortcode, unique, year = extanimal.calc_shelter_code(dbo, animaltypeid, entryreasonid, speciesid, datebroughtin)
-            return sheltercode + "||" + shortcode + "||" + str(unique) + "||" + str(year)
-        elif mode == "randomname":
-            return extanimal.get_random_name(dbo, post.integer("sex"))
-        elif mode == "shared":
-            extanimal.insert_publish_history(dbo, post.integer("id"), post["service"])
-        elif mode == "clone":
-            users.check_permission(session, users.CLONE_ANIMAL)
-            utils.check_locked_db(session)
-            nid = extanimal.clone_animal(dbo, session.user, post.integer("animalid"))
-            return str(nid)
-        elif mode == "forgetpublish":
-            extanimal.delete_publish_history(dbo, post.integer("id"), post["service"])
-        elif mode == "webnotes":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            extanimal.update_preferred_web_media_notes(dbo, session.user, post.integer("id"), post["comments"])
+    def post_save(self, o):
+        users.check_permission(session, users.CHANGE_ANIMAL)
+        extanimal.update_animal_from_form(o.dbo, o.post, o.user)
+
+    def post_delete(self, o):
+        users.check_permission(session, users.DELETE_ANIMAL)
+        extanimal.delete_animal(o.dbo, o.user, o.post.integer("animalid"))
+
+    def post_gencode(self, o):
+        post = o.post
+        animaltypeid = post.integer("animaltypeid")
+        entryreasonid = post.integer("entryreasonid")
+        speciesid = post.integer("speciesid")
+        datebroughtin = post.date("datebroughtin")
+        sheltercode, shortcode, unique, year = extanimal.calc_shelter_code(o.dbo, animaltypeid, entryreasonid, speciesid, datebroughtin)
+        return sheltercode + "||" + shortcode + "||" + str(unique) + "||" + str(year)
+
+    def post_randomname(self, o):
+        return extanimal.get_random_name(o.dbo, o.post.integer("sex"))
+
+    def post_shared(self, o):
+        extanimal.insert_publish_history(o.dbo, o.post.integer("id"), o.post["service"])
+
+    def post_clone(self, o):
+        users.check_permission(session, users.CLONE_ANIMAL)
+        utils.check_locked_db(session)
+        nid = extanimal.clone_animal(o.dbo, o.user, o.post.integer("animalid"))
+        return str(nid)
+
+    def post_forgetpublish(self, o):
+        extanimal.delete_publish_history(o.dbo, o.post.integer("id"), o.post["service"])
+
+    def post_webnotes(self, o):
+        users.check_permission(session, users.CHANGE_MEDIA)
+        extanimal.update_preferred_web_media_notes(o.dbo, o.user, o.post.integer("id"), o.post["comments"])
 
 class animal_bulk:
     def GET(self):
@@ -1246,7 +1246,7 @@ class animal_bulk:
         s = html.header("", session)
         c = html.controller_json("ynun", extlookups.get_ynun(dbo))
         c += html.controller_json("animaltypes", extlookups.get_animal_types(dbo))
-        c += html.controller_plain("autolitters", html.json_autocomplete_litters(dbo))
+        c += html.controller_json("autolitters", extanimal.get_active_litters_brief(dbo))
         c += html.controller_json("flags", extlookups.get_animal_flags(dbo))
         c += html.controller_json("internallocations", extlookups.get_internal_locations(dbo, session.locationfilter, session.siteid))
         c += html.controller_json("movementtypes", extlookups.get_movement_types(dbo))
@@ -1814,7 +1814,7 @@ class animal_new:
         dbo = session.dbo
         post = utils.PostedData(web.input(), session.locale)
         s = html.header("", session)
-        c = html.controller_plain("autolitters", html.json_autocomplete_litters(dbo))
+        c = html.controller_json("autolitters", extanimal.get_active_litters_brief(dbo))
         c += html.controller_json("additional", extadditional.get_additional_fields(dbo, 0, "animal"))
         c += html.controller_json("animaltypes", extlookups.get_animal_types(dbo))
         c += html.controller_json("species", extlookups.get_species(dbo))

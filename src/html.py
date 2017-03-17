@@ -856,24 +856,6 @@ def json_animalfindcolumns(dbo):
     findcolumns_selectedtofront(cols, configuration.animal_search_columns(dbo))
     return json(cols)
 
-def json_autocomplete_litters(dbo):
-    l = dbo.locale
-    al = animal.get_litters(dbo)
-    rv = []
-    for i in al:
-        disp = ""
-        if i["PARENTANIMALID"] is not None and i["PARENTANIMALID"] > 0:
-            disp = _("{0}: {1} {2} - {3} {4}", l).format(
-                i["MOTHERCODE"], i["MOTHERNAME"],
-                i["ACCEPTANCENUMBER"], i["SPECIESNAME"],
-                i["COMMENTS"][:40])
-        else:
-            disp = _("{0} - {1} {2}", l).format(
-                i["ACCEPTANCENUMBER"], i["SPECIESNAME"],
-                i["COMMENTS"][:40])
-        rv.append( { "label": disp, "value": i["ACCEPTANCENUMBER"] } )
-    return json(rv)
-
 def json_lookup_tables(l):
     aslist = []
     for k, v in lookups.LOOKUP_TABLES.iteritems():

@@ -1574,6 +1574,25 @@ def get_active_litters(dbo, speciesid = -1):
     if speciesid != -1: where = "AND SpeciesID = %d " % int(speciesid)
     return db.query(dbo, sql % (db.dd(now(dbo.timezone)), where))
 
+def get_active_litters_brief(dbo):
+    """ Returns the active litters in brief form for use by autocomplete """
+    l = dbo.locale
+    al = get_litters(dbo)
+    rv = []
+    for i in al:
+        disp = ""
+        if i["PARENTANIMALID"] is not None and i["PARENTANIMALID"] > 0:
+            disp = _("{0}: {1} {2} - {3} {4}", l).format(
+                i["MOTHERCODE"], i["MOTHERNAME"],
+                i["ACCEPTANCENUMBER"], i["SPECIESNAME"],
+                i["COMMENTS"][:40])
+        else:
+            disp = _("{0} - {1} {2}", l).format(
+                i["ACCEPTANCENUMBER"], i["SPECIESNAME"],
+                i["COMMENTS"][:40])
+        rv.append( { "label": disp, "value": i["ACCEPTANCENUMBER"] } )
+    return rv
+
 def get_litters(dbo):
     """
     Returns all animal litters in descending order of age. Litters
