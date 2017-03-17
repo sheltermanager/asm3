@@ -51,6 +51,19 @@ How do I integrate my adoptable animals with my website?
 
 See :ref:`websiteintegration`.
 
+I uploaded the wrong picture for an animal, but it's "stuck"?
+-------------------------------------------------------------
+
+Your browser caches the thumbnail images for each animal. If you upload the
+wrong picture, then delete it and upload the correct picture your browser will
+continue to show the old picture. 
+
+To fix this, invalidate your browser's cache when looking at the animal's
+record by pressing :kbd:`CTRL+R` or :kdb:`F5` to reload all images from the
+server. This does not work as well in some versions of Internet Explorer and if
+you are using that, you can try :menuselection:`Tools --> Internet Options` and
+delete temporary internet files.
+
 Why do I get "page 1 of 1" in the header when I print documents?
 ----------------------------------------------------------------
 
