@@ -384,12 +384,24 @@ VaccinationManufacturer
     The manufacturer of the vaccine
 VaccinationCost
     The cost of this vaccine
-VaccinationAdministeringVet
-    The name of the vet who administered the vaccination
 VaccinationComments
     The vaccination comments
 VaccinationDescription
     The vaccination description from the lookup data.
+VaccinationAdministeringVetName
+    The name of the vet who administered the vaccination
+VaccinationAdministeringVetLicence / VaccinationAdministeringVetLicense
+    The licence number of the vet who administered the vaccination
+VaccinationAdministeringVetAddress
+    The address of the vet who administered the vaccination
+VaccinationAdministeringVetTown / VaccinationAdministeringVetCity
+    The town/city of the vet who administered the vaccination
+VaccinationAdministeringVetCounty / VaccinationAdministeringVetState
+    The county/state of the vet who administered the vaccination
+VaccinationAdministeringVetPostcode / VaccinationAdministeringVetZipcode
+    The postal/zip code of the vet who administered the vaccination
+VaccinationAdministeringVetEmail
+    The email address of the vet who administered the vaccination
 
 Just putting a number on the end of the fieldname returns that field for the
 records, counting from oldest to newest. For example, VaccinationName1 returns
@@ -425,12 +437,25 @@ TestGiven
     The date the test was performed 
 TestCost
     The cost of the test
-TestAdministeringVet
-    The name of the vet who performed the test
 TestComments
     The test comments
 TestDescription
     The test description from the lookup data.
+TestAdministeringVetName
+    The name of the vet who administered the test
+TestAdministeringVetLicence / TestAdministeringVetLicense
+    The licence number of the vet who administered the test
+TestAdministeringVetAddress
+    The address of the vet who administered the test
+TestAdministeringVetTown / TestAdministeringVetCity
+    The town/city of the vet who administered the test
+TestAdministeringVetCounty / TestAdministeringVetState
+    The county/state of the vet who administered the test
+TestAdministeringVetPostcode / TestAdministeringVetZipcode
+    The postal/zip code of the vet who administered the test
+TestAdministeringVetEmail
+    The email address of the vet who administered the test
+
 
 Medical Keys
 ------------
@@ -464,6 +489,7 @@ MedicalCost
     The cost of this medical regimen
 MedicalComments
     The medical comments 
+
 
 Payment Keys
 ------------

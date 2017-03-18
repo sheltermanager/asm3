@@ -60,7 +60,10 @@ def get_medicaltreatment_query(dbo):
         "am.*, amt.DateRequired, amt.DateGiven, amt.Comments AS TreatmentComments, " \
         "amt.TreatmentNumber, amt.TotalTreatments, ma.MediaName AS WebsiteMediaName, " \
         "am.ID AS RegimenID, amt.ID AS TreatmentID, " \
-        "amt.GivenBy, amt.AdministeringVetID, adv.OwnerName AS AdministeringVetName, am.Comments AS RegimenComments, " \
+        "amt.GivenBy, amt.AdministeringVetID, adv.OwnerName AS AdministeringVetName, " \
+        "adv.OwnerAddress AS AdministeringVetAddress, adv.OwnerTown AS AdministeringVetTown, adv.OwnerCounty AS AdministeringVetCounty, " \
+        "adv.OwnerPostcode AS AdministeringVetPostcode, adv.EmailAddress AS AdministeringVetEmail, adv.MembershipNumber AS AdministeringVetLicence, " \
+        "am.Comments AS RegimenComments, " \
         "CASE WHEN a.ActiveMovementType Is Not Null AND a.ActiveMovementType > 0 THEN " \
         "(SELECT mt.MovementType FROM lksmovementtype mt WHERE mt.ID = a.ActiveMovementType) " \
         "ELSE il.LocationName END AS LocationName, " \
@@ -132,7 +135,9 @@ def get_test_query(dbo):
         "CASE WHEN a.ActiveMovementType Is Not Null AND a.ActiveMovementType > 0 THEN " \
         "'' ELSE a.ShelterLocationUnit END AS LocationUnit, " \
         "il.LocationName AS ShelterLocationName, a.ShelterLocationUnit, " \
-        "adv.OwnerName AS AdministeringVetName " \
+        "adv.OwnerName AS AdministeringVetName, " \
+        "adv.OwnerAddress AS AdministeringVetAddress, adv.OwnerTown AS AdministeringVetTown, adv.OwnerCounty AS AdministeringVetCounty, " \
+        "adv.OwnerPostcode AS AdministeringVetPostcode, adv.EmailAddress AS AdministeringVetEmail, adv.MembershipNumber AS AdministeringVetLicence " \
         "FROM animal a " \
         "LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID " \
         "LEFT OUTER JOIN owner co ON co.ID = ad.OwnerID " \
@@ -174,7 +179,9 @@ def get_vaccination_query(dbo):
         "CASE WHEN a.ActiveMovementType Is Not Null AND a.ActiveMovementType > 0 THEN " \
         "'' ELSE a.ShelterLocationUnit END AS LocationUnit, " \
         "il.LocationName AS ShelterLocationName, a.ShelterLocationUnit, " \
-        "adv.OwnerName AS AdministeringVetName " \
+        "adv.OwnerName AS AdministeringVetName, " \
+        "adv.OwnerAddress AS AdministeringVetAddress, adv.OwnerTown AS AdministeringVetTown, adv.OwnerCounty AS AdministeringVetCounty, " \
+        "adv.OwnerPostcode AS AdministeringVetPostcode, adv.EmailAddress AS AdministeringVetEmail, adv.MembershipNumber AS AdministeringVetLicence " \
         "FROM animal a " \
         "LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID " \
         "LEFT OUTER JOIN owner co ON co.ID = ad.OwnerID " \
