@@ -1,6 +1,8 @@
 40
 ================
 
+18/03/17 Fix person_embed/lookup performance issues where not caching #176
+18/03/17 Include mandatory additional fields on embedded add person widget #175
 16/03/17 Revert #172 due to double load bug, remove IE8 hash/history support
 16/03/17 Remove asilomar tables and code - no longer needed #5
 16/03/17 Add new live asilomar figures report #5

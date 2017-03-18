@@ -12661,7 +12661,7 @@ msgstr ""
 msgid "{0} - {1} ({2} {3} aged {4})"
 msgstr ""
 
-#: html.py
+#: html.py animal.py
 msgid "{0} - {1} {2}"
 msgstr ""
 
@@ -12861,7 +12861,7 @@ msgstr ""
 msgid "{0}: waiting list - {1}"
 msgstr ""
 
-#: html.py
+#: html.py animal.py
 msgid "{0}: {1} {2} - {3} {4}"
 msgstr ""
 

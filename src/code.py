@@ -5100,62 +5100,69 @@ class person_donations:
             users.check_permission(session, users.VIEW_MOVEMENT)
             return html.json(extmovement.get_person_movements(dbo, post.integer("personid")))
 
-class person_embed:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(mode = "lookup"), session.locale)
-        mode = post["mode"]
-        if mode == "lookup":
-            rv = {}
-            rv["towns"] = "|".join(extperson.get_towns(dbo))
-            rv["counties"] = "|".join(extperson.get_counties(dbo))
-            rv["towncounties"] = "|".join(extperson.get_town_to_county(dbo))
-            rv["flags"] = extlookups.get_person_flags(dbo)
-            rv["sites"] = extlookups.get_sites(dbo)
-            web.header("Content-Type", "application/json")
-            web.header("Cache-Control", "max-age=60")
-            return html.json(rv)
+class person_embed(ASMEndpoint):
+    url = "person_embed"
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_PERSON)
+    def content(self, o):
         dbo = session.dbo
-        post = utils.PostedData(web.input(mode = "find", filter = "all", id = 0), session.locale)
-        mode = post["mode"]
-        q = post["q"]
-        web.header("Content-Type", "application/json")
-        if mode == "find":
-            rows = extperson.get_person_find_simple(dbo, q, session.user, post["filter"], \
-                users.check_permission_bool(session, users.VIEW_STAFF), \
-                users.check_permission_bool(session, users.VIEW_VOLUNTEER), 100)
-            al.debug("find '%s' got %d rows" % (str(web.ctx.query), len(rows)), "code.person_embed", dbo)
-            return html.json(rows)
-        elif mode == "id":
-            p = extperson.get_person(dbo, post.integer("id"))
-            if p is None:
-                al.error("get person by id %d found no records." % (post.integer("id")), "code.person_embed", dbo)
-                raise web.notfound()
-            else:
-                al.debug("get person by id %d got '%s'" % (post.integer("id"), p["OWNERNAME"]), "code.person_embed", dbo)
-                return html.json((p,))
-        elif mode == "similar":
-            surname = post["surname"]
-            forenames = post["forenames"]
-            address = post["address"]
-            email = post["emailaddress"]
-            p = extperson.get_person_similar(dbo, email, surname, forenames, address)
-            if len(p) == 0:
-                al.debug("No similar people found for %s, %s, %s" % (surname, forenames, address), "code.person_embed", dbo)
-            else:
-                al.debug("found similar people for %s, %s, %s: got %d records" % (surname, forenames, address, len(p)), "code.person_embed", dbo)
-            return html.json(p)
-        elif mode == "add":
-            users.check_permission(session, users.ADD_PERSON)
-            al.debug("add new person", "code.person_embed", dbo)
-            pid = extperson.insert_person_from_form(dbo, post, session.user)
-            p = extperson.get_person(dbo, pid)
+        self.header("Content-Type", "application/json")
+        self.header("Cache-Control", "max-age=180") # This data can be cached for a few minutes - good for multi-widgets on one page
+        return html.json({
+            "additional": extadditional.get_additional_fields(dbo, 0, "person"),
+            "towns": "|".join(extperson.get_towns(dbo)),
+            "counties": "|".join(extperson.get_counties(dbo)),
+            "towncounties": "|".join(extperson.get_town_to_county(dbo)),
+            "flags": extlookups.get_person_flags(dbo),
+            "sites": extlookups.get_sites(dbo)
+        })
+
+    def post_find(self, o):
+        users.check_permission(session, users.VIEW_PERSON)
+        self.header("Content-Type", "application/json")
+        q = o.post["q"]
+        rows = extperson.get_person_find_simple(o.dbo, q, o.user, o.post["filter"], \
+            users.check_permission_bool(session, users.VIEW_STAFF), \
+            users.check_permission_bool(session, users.VIEW_VOLUNTEER), 100)
+        al.debug("find '%s' got %d rows" % (str(web.ctx.query), len(rows)), "code.person_embed", o.dbo)
+        return html.json(rows)
+
+    def post_id(self, o):
+        users.check_permission(session, users.VIEW_PERSON)
+        self.header("Content-Type", "application/json")
+        dbo = o.dbo
+        post = o.post
+        p = extperson.get_person(dbo, post.integer("id"))
+        if p is None:
+            al.error("get person by id %d found no records." % (post.integer("id")), "code.person_embed", dbo)
+            raise web.notfound()
+        else:
+            al.debug("get person by id %d got '%s'" % (post.integer("id"), p["OWNERNAME"]), "code.person_embed", dbo)
             return html.json((p,))
+
+    def post_similar(self, o):
+        users.check_permission(session, users.VIEW_PERSON)
+        self.header("Content-Type", "application/json")
+        dbo = o.dbo
+        post = o.post
+        surname = post["surname"]
+        forenames = post["forenames"]
+        address = post["address"]
+        email = post["emailaddress"]
+        p = extperson.get_person_similar(dbo, email, surname, forenames, address)
+        if len(p) == 0:
+            al.debug("No similar people found for %s, %s, %s" % (surname, forenames, address), "code.person_embed", dbo)
+        else:
+            al.debug("found similar people for %s, %s, %s: got %d records" % (surname, forenames, address, len(p)), "code.person_embed", dbo)
+        return html.json(p)
+
+    def post_add(self, o):
+        users.check_permission(session, users.ADD_PERSON)
+        self.header("Content-Type", "application/json")
+        dbo = o.dbo
+        al.debug("add new person", "code.person_embed", dbo)
+        pid = extperson.insert_person_from_form(dbo, o.post, session.user)
+        p = extperson.get_person(dbo, pid)
+        return html.json((p,))
 
 class person_find:
     def GET(self):
