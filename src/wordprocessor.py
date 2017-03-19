@@ -1074,7 +1074,7 @@ def generate_animal_doc(dbo, template, animalid, username):
     # Use the person info from the latest open movement for the animal
     # This will pick up future dated adoptions instead of fosterers (which are still currentowner)
     for m in movement.get_animal_movements(dbo, animalid):
-        if m["MOVEMENTDATE"] is not None and m["RETURNDATE"] is None:
+        if m["MOVEMENTDATE"] is not None:
             md = financial.get_movement_donations(dbo, m["ID"])
             if m is not None and len(m) > 0:
                 tags = append_tags(tags, movement_tags(dbo, m))
