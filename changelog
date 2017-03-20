@@ -1,6 +1,7 @@
 40
 ================
 
+20/03/17 Publishing option to exclude animals with no bio/description #157
 19/03/17 Use person keys from latest movement instead of active for future adoptions
 18/03/17 Add administering vet wordkeys to vaccinations and tests #166
 18/03/17 Fix person_embed/lookup performance issues where not caching #176

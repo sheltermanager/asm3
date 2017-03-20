@@ -47,6 +47,7 @@ class PublishCriteria(object):
     includeQuarantine = False
     includeTrial = False
     includeHold = False
+    includeWithoutDescription = False
     includeWithoutImage = False
     includeColours = False
     bondedAsSingle = False
@@ -105,6 +106,7 @@ class PublishCriteria(object):
             if s == "includehold": self.includeHold = True
             if s == "includequarantine": self.includeQuarantine = True
             if s == "includetrial": self.includeTrial = True
+            if s == "includewithoutdescription": self.includeWithoutDescription = True
             if s == "includewithoutimage": self.includeWithoutImage = True
             if s == "includecolours": self.includeColours = True
             if s == "bondedassingle": self.bondedAsSingle = True
@@ -151,6 +153,7 @@ class PublishCriteria(object):
         if self.includeHold: s += " includehold"
         if self.includeQuarantine: s += " includequarantine"
         if self.includeTrial: s += " includetrial"
+        if self.includeWithoutDescription: s += " includewithoutdescription"
         if self.includeWithoutImage: s += " includewithoutimage"
         if self.includeColours: s += " includecolours"
         if self.bondedAsSingle: s += " bondedassingle"
@@ -205,6 +208,9 @@ def get_animal_data(dbo, pc, include_additional_fields = False):
     if configuration.publisher_use_comments(dbo):
         for r in rows:
             r["WEBSITEMEDIANOTES"] = r["ANIMALCOMMENTS"]
+    # If we aren't including animals with blank descriptions, remove them now
+    if not pc.includeWithoutDescription:
+        rows = [r for r in rows if utils.nulltostr(r["WEBSITEMEDIANOTES"]).strip() != ""]
     # Embellish additional fields if requested
     if include_additional_fields:
         for r in rows:

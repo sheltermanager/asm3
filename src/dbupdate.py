@@ -22,7 +22,7 @@ VERSIONS = (
     33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716, 33717, 33718, 
     33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904, 33905, 33906, 
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
-    34002, 34003, 34004, 34005, 34006, 34007, 34008
+    34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -4639,4 +4639,10 @@ def update_34008(dbo):
     # Remove the asilomar tables as they're no longer needed
     db.execute_dbupdate(dbo, "DROP TABLE animalfiguresasilomar")
     db.execute_dbupdate(dbo, "DROP TABLE animalfiguresmonthlyasilomar")
+
+def update_34009(dbo):
+    # Set includewithoutdescription in the publishing presets
+    s = configuration.publisher_presets(dbo)
+    s += " includewithoutdescription"
+    db.execute_dbupdate(dbo, "UPDATE configuration SET ItemValue = %s WHERE ItemName = 'PublisherPresets'" % db.ds(s))
 
