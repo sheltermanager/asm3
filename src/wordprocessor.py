@@ -1072,7 +1072,7 @@ def generate_animal_doc(dbo, template, animalid, username):
     # as get_animal_movements returns them in descending order of movement date
     has_person_tags = False
     for m in movement.get_animal_movements(dbo, animalid):
-        if m["MOVEMENTDATE"] is not None:
+        if m["MOVEMENTDATE"] is not None and m["OWNERID"] is not None and m["OWNERID"] != 0:
             has_person_tags = True
             tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, m["OWNERID"])))
             tags = append_tags(tags, movement_tags(dbo, m))
