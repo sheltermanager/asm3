@@ -1451,6 +1451,7 @@ class animal_embed(ASMEndpoint):
         return html.json(rows)
 
     def post_multiselect(self, o):
+        self.header("Content-Type", "application/json")
         dbo = o.dbo
         rows = extanimal.get_animal_find_simple(dbo, "", "all", configuration.record_search_limit(dbo), session.locationfilter, session.siteid)
         locations = extlookups.get_internal_locations(dbo)
@@ -1460,6 +1461,7 @@ class animal_embed(ASMEndpoint):
         return html.json(rv)
 
     def post_id(self, o):
+        self.header("Content-Type", "application/json")
         dbo = o.dbo
         animalid = o.post.integer("id")
         a = extanimal.get_animal(dbo, animalid)
