@@ -1465,7 +1465,7 @@ class animal_embed(ASMEndpoint):
         a = extanimal.get_animal(dbo, animalid)
         if a is None:
             al.error("get animal by id %d found no records." % animalid, "code.animal_embed", dbo)
-            raise web.notfound()
+            self.notfound()
         else:
             al.debug("got animal %s %s by id" % (a["CODE"], a["ANIMALNAME"]), "code.animal_embed", dbo)
             return html.json((a,))
