@@ -394,11 +394,17 @@ class ASMEndpoint(object):
         return web.utils.storage( post=post, dbo=session.dbo, locale=l, user=session.user, session=session )
 
     def check(self, permissions):
-        """ Check logged in and permissions """
+        """ Check logged in and permissions (which can be a single permission string or a list/tuple) """
         if self.check_logged_in:
             utils.check_loggedin(session, web, self.login_url)
-        for p in permissions:
-            users.check_permission(session, p)
+        if isinstance(permissions, str):
+            users.check_permission(session, permissions)
+        else:
+            for p in permissions:
+                users.check_permission(session, p)
+
+    def check_locked_db(self):
+        utils.check_locked_db(session)
 
     def content(self, o):
         """ Virtual function: override to get the content """
@@ -499,6 +505,7 @@ class JSONEndpoint(ASMEndpoint):
 class index(ASMEndpoint):
     url = "/"
     check_logged_in = False
+
     def content(self, o):
         # If there's no database structure, create it before 
         # redirecting to the login page.
@@ -511,6 +518,7 @@ class index(ASMEndpoint):
 class database(ASMEndpoint):
     url = "database"
     check_logged_in = False
+
     def content(self, o):
         dbo = db.DatabaseInfo()
         if MULTIPLE_DATABASES:
@@ -565,6 +573,7 @@ class database(ASMEndpoint):
 
 class image(ASMEndpoint):
     url = "image"
+
     def content(self, o):
         try:
             lastmod, imagedata = extmedia.get_image_file_data(session.dbo, o.post["mode"], o.post["id"], o.post.integer("seq"), False)
@@ -583,6 +592,7 @@ class image(ASMEndpoint):
 class rollupjs(ASMEndpoint):
     url = "rollup.js"
     check_logged_in = False
+
     def content(self, o):
         self.header("Content-Type", "text/javascript")
         self.header("Cache-Control", "max-age=86400")
@@ -595,6 +605,7 @@ class rollupjs(ASMEndpoint):
 class configjs(ASMEndpoint):
     url = "config.js"
     check_logged_in = False
+
     def content(self, o):
         # db is the database name and ts is the date/time the config was
         # last read upto. The ts value (config_ts) is set during login and
@@ -683,6 +694,7 @@ class configjs(ASMEndpoint):
 class css(ASMEndpoint):
     url = "css"
     check_logged_in = False
+
     def content(self, o):
         v = o.post["v"]
         csspath = PATH + "static/css/" + v
@@ -699,6 +711,7 @@ class css(ASMEndpoint):
 class i18njs(ASMEndpoint):
     url = "i18n.js"
     check_logged_in = False
+
     def content(self, o):
         l = o.post["l"]
         if l == "": l = LOCALE
@@ -709,6 +722,7 @@ class i18njs(ASMEndpoint):
 class js(ASMEndpoint):
     url = "js"
     check_logged_in = False
+
     def content(self, o):
         v = o.post["v"]
         jspath = PATH + "static/js/" + v
@@ -729,6 +743,7 @@ class jserror(ASMEndpoint):
     Errors are logged and emailed to the admin if EMAIL_ERRORS is set.
     """
     url = "jserror"
+
     def post_all(self, o):
         dbo = o.dbo
         post = o.post
@@ -741,6 +756,7 @@ class jserror(ASMEndpoint):
 
 class media(ASMEndpoint):
     url = "media"
+
     def content(self, o):
         lastmod, medianame, mimetype, filedata = extmedia.get_media_file_data(o.dbo, o.post.integer("id"))
         web.header("Content-Type", mimetype)
@@ -751,6 +767,7 @@ class media(ASMEndpoint):
 class mobile(ASMEndpoint):
     url = "mobile"
     login_url = "/mobile_login"
+
     def content(self, o):
         self.header("Content-Type", "text/html")
         return extmobile.page(o.dbo, o.session, o.user)
@@ -758,6 +775,7 @@ class mobile(ASMEndpoint):
 class mobile_login(ASMEndpoint):
     url = "mobile_login"
     check_logged_in = False
+
     def content(self, o):
         if not MULTIPLE_DATABASES:
             dbo = db.DatabaseInfo()
@@ -771,6 +789,7 @@ class mobile_login(ASMEndpoint):
 class mobile_logout(ASMEndpoint):
     url = "mobile_logout"
     login_url = "/mobile_login"
+
     def content(self, o):
         url = "mobile_login"
         if o.post["smaccount"] != "":
@@ -784,6 +803,7 @@ class mobile_logout(ASMEndpoint):
 class mobile_post(ASMEndpoint):
     url = "mobile_post"
     login_url = "/mobile_login"
+
     def handle(self, o):
         s = extmobile.handler(session, o.post)
         if s is None:
@@ -803,7 +823,8 @@ class mobile_post(ASMEndpoint):
 class mobile_report(ASMEndpoint):
     url = "mobile_report"
     login_url = "/mobile_login"
-    get_permissions = ( users.VIEW_REPORT, )
+    get_permissions = users.VIEW_REPORT
+
     def content(self, o):
         dbo = o.dbo
         user = o.user
@@ -834,12 +855,14 @@ class mobile_report(ASMEndpoint):
 class mobile_sign(ASMEndpoint):
     url = "mobile_sign"
     login_url = "/mobile_login"
+
     def content(self, o):
         self.header("Content-Type", "text/html")
         return extmobile.page_sign(o.dbo, o.session, o.user)
 
 class main(JSONEndpoint):
     url = "main"
+
     def controller(self, o):
         l = o.locale
         dbo = o.dbo
@@ -938,6 +961,7 @@ class main(JSONEndpoint):
 class login(ASMEndpoint):
     url = "login"
     check_logged_in = False
+
     def content(self, o):
         l = LOCALE
         post = o.post
@@ -1006,6 +1030,7 @@ class login(ASMEndpoint):
 class login_jsonp(ASMEndpoint):
     url = "login_jsonp"
     check_logged_in = False
+
     def content(self, o):
         self.header("Content-Type", "text/javascript")
         return "%s({ response: '%s' })" % (o.post["callback"], users.web_login(o.post, o.session, self.remote_ip(), PATH))
@@ -1013,6 +1038,7 @@ class login_jsonp(ASMEndpoint):
 class login_splash(ASMEndpoint):
     url = "login_splash"
     check_logged_in = False
+
     def content(self, o):
         try:
             dbo = db.DatabaseInfo()
@@ -1033,6 +1059,7 @@ class login_splash(ASMEndpoint):
 class logout(ASMEndpoint):
     url = "logout"
     check_logged_in = False
+
     def content(self, o):
         url = "login"
         if o.post["smaccount"] != "":
@@ -1045,7 +1072,7 @@ class logout(ASMEndpoint):
 
 class accounts(JSONEndpoint):
     url = "accounts"
-    get_permissions = ( users.VIEW_ACCOUNT, )
+    get_permissions = users.VIEW_ACCOUNT
 
     def controller(self, o):
         dbo = o.dbo
@@ -1063,21 +1090,21 @@ class accounts(JSONEndpoint):
         }
 
     def post_create(self, o):
-        users.check_permission(session, users.ADD_ACCOUNT)
+        self.check(users.ADD_ACCOUNT)
         return financial.insert_account_from_form(o.dbo, o.user, o.post)
 
     def post_update(self, o):
-        users.check_permission(session, users.CHANGE_ACCOUNT)
+        self.check(users.CHANGE_ACCOUNT)
         financial.update_account_from_form(o.dbo, o.user, o.post)
 
     def post_delete(self, o):
-        users.check_permission(session, users.DELETE_ACCOUNT)
+        self.check(users.DELETE_ACCOUNT)
         for aid in o.post.integer_list("ids"):
             financial.delete_account(o.dbo, o.user, aid)
 
 class accounts_trx(JSONEndpoint):
     url = "accounts_trx"
-    get_permissions = ( users.VIEW_ACCOUNT, )
+    get_permissions = users.VIEW_ACCOUNT
 
     def controller(self, o):
         dbo = o.dbo
@@ -1118,26 +1145,27 @@ class accounts_trx(JSONEndpoint):
         }
 
     def post_create(self, o):
-        users.check_permission(session, users.CHANGE_TRANSACTIONS)
+        self.check(users.CHANGE_TRANSACTIONS)
         financial.insert_trx_from_form(o.dbo, o.user, o.post)
 
     def post_update(self, o):
-        users.check_permission(session, users.CHANGE_TRANSACTIONS)
+        self.check(users.CHANGE_TRANSACTIONS)
         financial.update_trx_from_form(o.dbo, o.user, o.post)
 
     def post_delete(self, o):
-        users.check_permission(session, users.CHANGE_TRANSACTIONS)
+        self.check(users.CHANGE_TRANSACTIONS)
         for tid in o.post.integer_list("ids"):
             financial.delete_trx(o.dbo, o.user, tid)
 
     def post_reconcile(self, o):
-        users.check_permission(session, users.CHANGE_TRANSACTIONS)
+        self.check(users.CHANGE_TRANSACTIONS)
         for tid in o.post.integer_list("ids"):
             financial.mark_reconciled(o.dbo, tid)
 
 class additional(JSONEndpoint):
     url = "additional"
-    get_permissions = ( users.MODIFY_LOOKUPS, )
+    get_permissions = users.MODIFY_LOOKUPS
+
     def controller(self, o):
         dbo = o.dbo
         fields = extadditional.get_fields(dbo)
@@ -1149,21 +1177,21 @@ class additional(JSONEndpoint):
         }
 
     def post_create(self, o):
-        users.check_permission(session, users.MODIFY_LOOKUPS)
+        self.check(users.MODIFY_LOOKUPS)
         return extadditional.insert_field_from_form(o.dbo, o.user, o.post)
 
     def post_update(self, o):
-        users.check_permission(session, users.MODIFY_LOOKUPS)
+        self.check(users.MODIFY_LOOKUPS)
         extadditional.update_field_from_form(o.dbo, o.user, o.post)
 
     def post_delete(self, o):
-        users.check_permission(session, users.MODIFY_LOOKUPS)
+        self.check(users.MODIFY_LOOKUPS)
         for fid in o.post.integer_list("ids"):
             extadditional.delete_field(o.dbo, o.user, fid)
 
 class animal(JSONEndpoint):
     url = "animal"
-    get_permissions = ( users.VIEW_ANIMAL, )
+    get_permissions = users.VIEW_ANIMAL
 
     def controller(self, o):
         dbo = o.dbo
@@ -1202,11 +1230,11 @@ class animal(JSONEndpoint):
         }
 
     def post_save(self, o):
-        users.check_permission(session, users.CHANGE_ANIMAL)
+        self.check(users.CHANGE_ANIMAL)
         extanimal.update_animal_from_form(o.dbo, o.post, o.user)
 
     def post_delete(self, o):
-        users.check_permission(session, users.DELETE_ANIMAL)
+        self.check(users.DELETE_ANIMAL)
         extanimal.delete_animal(o.dbo, o.user, o.post.integer("animalid"))
 
     def post_gencode(self, o):
@@ -1225,8 +1253,8 @@ class animal(JSONEndpoint):
         extanimal.insert_publish_history(o.dbo, o.post.integer("id"), o.post["service"])
 
     def post_clone(self, o):
-        users.check_permission(session, users.CLONE_ANIMAL)
-        utils.check_locked_db(session)
+        self.check(users.CLONE_ANIMAL)
+        self.check_locked_db()
         nid = extanimal.clone_animal(o.dbo, o.user, o.post.integer("animalid"))
         return str(nid)
 
@@ -1234,227 +1262,213 @@ class animal(JSONEndpoint):
         extanimal.delete_publish_history(o.dbo, o.post.integer("id"), o.post["service"])
 
     def post_webnotes(self, o):
-        users.check_permission(session, users.CHANGE_MEDIA)
+        self.check(users.CHANGE_MEDIA)
         extanimal.update_preferred_web_media_notes(o.dbo, o.user, o.post.integer("id"), o.post["comments"])
 
-class animal_bulk:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.CHANGE_ANIMAL)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        s = html.header("", session)
-        c = html.controller_json("ynun", extlookups.get_ynun(dbo))
-        c += html.controller_json("animaltypes", extlookups.get_animal_types(dbo))
-        c += html.controller_json("autolitters", extanimal.get_active_litters_brief(dbo))
-        c += html.controller_json("flags", extlookups.get_animal_flags(dbo))
-        c += html.controller_json("internallocations", extlookups.get_internal_locations(dbo, session.locationfilter, session.siteid))
-        c += html.controller_json("movementtypes", extlookups.get_movement_types(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("animal_bulk", s, c, post["json"] == "true")
+class animal_bulk(JSONEndpoint):
+    url = "animal_bulk"
+    get_permissions = users.CHANGE_ANIMAL
+    post_permissions = users.CHANGE_ANIMAL
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        return extanimal.update_animals_from_form(dbo, post, session.user)
+    def controller(self, o):
+        dbo = o.dbo
+        return {
+            "ynun": extlookups.get_ynun(dbo),
+            "animaltypes": extlookups.get_animal_types(dbo),
+            "autolitters": extanimal.get_active_litters_brief(dbo),
+            "flags": extlookups.get_animal_flags(dbo),
+            "internallocations": extlookups.get_internal_locations(dbo, o.session.locationfilter, o.session.siteid),
+            "movementtypes": extlookups.get_movement_types(dbo)
+        }
 
-class animal_costs:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_COST)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        a = extanimal.get_animal(dbo, post.integer("id"))
-        if a is None: raise web.notfound()
-        cost = extanimal.get_costs(dbo, post.integer("id"))
-        costtypes = extlookups.get_costtypes(dbo)
-        costtotals = extanimal.get_cost_totals(dbo, post.integer("id"))
+    def post_all(self, o):
+        return extanimal.update_animals_from_form(o.dbo, o.post, o.user)
+
+class animal_costs(JSONEndpoint):
+    url = "animal_costs"
+    get_permissions = users.VIEW_COST
+
+    def controller(self, o):
+        dbo = o.dbo
+        animalid = o.post.integer("id")
+        a = extanimal.get_animal(dbo, animalid)
+        if a is None: self.notfound()
+        cost = extanimal.get_costs(dbo, animalid)
         al.debug("got %d costs for animal %s %s" % (len(cost), a["CODE"], a["ANIMALNAME"]), "code.animal_costs", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", cost)
-        c += html.controller_json("animal", a)
-        c += html.controller_json("costtypes", costtypes)
-        c += html.controller_json("costtotals", costtotals)
-        c += html.controller_json("tabcounts", extanimal.get_satellite_counts(dbo, a["ID"])[0])
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("animal_costs", s, c, post["json"] == "true")
+        return {
+            "rows": cost,
+            "animal": a,
+            "costtypes": extlookups.get_costtypes(dbo),
+            "costtotals": extanimal.get_cost_totals(dbo, animalid),
+            "tabcounts": extanimal.get_satellite_counts(dbo, animalid)[0]
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        dbo = session.dbo
-        username = session.user
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_COST)
-            return extanimal.insert_cost_from_form(dbo, username, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_COST)
-            extanimal.update_cost_from_form(dbo, username, post)
-        elif mode == "dailyboardingcost":
-            users.check_permission(session, users.CHANGE_ANIMAL)
-            animalid = post.integer("animalid")
-            cost = post.integer("dailyboardingcost")
-            extanimal.update_daily_boarding_cost(dbo, username, animalid, cost)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_COST)
-            for cid in post.integer_list("ids"):
-                extanimal.delete_cost(session.dbo, session.user, cid)
+    def post_create(self, o):
+        self.check(users.ADD_COST)
+        return extanimal.insert_cost_from_form(o.dbo, o.user, o.post)
 
-class animal_diary:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_DIARY)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        a = extanimal.get_animal(dbo, post.integer("id"))
-        if a is None: raise web.notfound()
-        diaries = extdiary.get_diaries(dbo, extdiary.ANIMAL, post.integer("id"))
+    def post_update(self, o):
+        self.check(users.CHANGE_COST)
+        extanimal.update_cost_from_form(o.dbo, o.user, o.post)
+
+    def post_dailyboardingcost(self, o):
+        self.check(users.CHANGE_ANIMAL)
+        animalid = o.post.integer("animalid")
+        cost = o.post.integer("dailyboardingcost")
+        extanimal.update_daily_boarding_cost(o.dbo, o.user, animalid, cost)
+
+    def post_delete(self, o):
+        self.check(users.DELETE_COST)
+        for cid in o.post.integer_list("ids"):
+            extanimal.delete_cost(o.dbo, o.user, cid)
+
+class animal_diary(JSONEndpoint):
+    url = "animal_diary"
+    js_module = "diary"
+    get_permissions = users.VIEW_DIARY
+
+    def controller(self, o):
+        dbo = o.dbo
+        animalid = o.post.integer("id")
+        a = extanimal.get_animal(dbo, animalid)
+        if a is None: self.notfound()
+        diaries = extdiary.get_diaries(dbo, extdiary.ANIMAL, animalid)
         al.debug("got %d notes for animal %s %s" % (len(diaries), a["CODE"], a["ANIMALNAME"]), "code.animal_diary", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", diaries)
-        c += html.controller_json("animal", a)
-        c += html.controller_json("tabcounts", extanimal.get_satellite_counts(dbo, a["ID"])[0])
-        c += html.controller_str("name", "animal_diary")
-        c += html.controller_int("linkid", a["ID"])
-        c += html.controller_json("forlist", users.get_users_and_roles(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("diary", s, c, post["json"] == "true")
+        return {
+            "rows": diaries,
+            "animal": a,
+            "tabcounts": extanimal.get_satellite_counts(dbo, animalid)[0],
+            "name": "animal_diary",
+            "linkid": animalid,
+            "forlist": users.get_users_and_roles(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_DIARY)
-            return extdiary.insert_diary_from_form(session.dbo, session.user, extdiary.ANIMAL, post.integer("linkid"), post)
-        elif mode == "update":
-            users.check_permission(session, users.EDIT_ALL_DIARY_NOTES)
-            extdiary.update_diary_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_DIARY)
-            for did in post.integer_list("ids"):
-                extdiary.delete_diary(session.dbo, session.user, did)
-        elif mode == "complete":
-            users.check_permission(session, users.BULK_COMPLETE_NOTES)
-            for did in post.integer_list("ids"):
-                extdiary.complete_diary_note(session.dbo, session.user, did)
+    def post_create(self, o):
+        self.check(users.ADD_DIARY)
+        return extdiary.insert_diary_from_form(o.dbo, o.user, extdiary.ANIMAL, o.post.integer("linkid"), o.post)
 
-class animal_diet:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_DIET)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        a = extanimal.get_animal(dbo, post.integer("id"))
-        if a is None: raise web.notfound()
-        diet = extanimal.get_diets(dbo, post.integer("id"))
-        diettypes = extlookups.get_diets(dbo)
+    def post_update(self, o):
+        self.check(users.EDIT_ALL_DIARY_NOTES)
+        extdiary.update_diary_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(users.DELETE_DIARY)
+        for did in o.post.integer_list("ids"):
+            extdiary.delete_diary(o.dbo, o.user, did)
+
+    def post_complete(self, o):
+        self.check(users.BULK_COMPLETE_NOTES)
+        for did in o.post.integer_list("ids"):
+            extdiary.complete_diary_note(o.dbo, o.user, did)
+
+class animal_diet(JSONEndpoint):
+    url = "animal_diet"
+    get_permissions = users.VIEW_DIET
+
+    def controller(self, o):
+        dbo = o.dbo
+        animalid = o.post.integer("id")
+        a = extanimal.get_animal(dbo, animalid)
+        if a is None: self.notfound()
+        diet = extanimal.get_diets(dbo, animalid)
         al.debug("got %d diets for animal %s %s" % (len(diet), a["CODE"], a["ANIMALNAME"]), "code.animal_diet", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", diet)
-        c += html.controller_json("animal", a)
-        c += html.controller_json("tabcounts", extanimal.get_satellite_counts(dbo, a["ID"])[0])
-        c += html.controller_json("diettypes", diettypes)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("animal_diet", s, c, post["json"] == "true")
+        return {
+            "rows": diet,
+            "animal": a,
+            "tabcounts": extanimal.get_satellite_counts(dbo, animalid)[0],
+            "diettypes": extlookups.get_diets(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_DIET)
-            return str(extanimal.insert_diet_from_form(session.dbo, session.user, post))
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_DIET)
-            extanimal.update_diet_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_DIET)
-            for did in post.integer_list("ids"):
-                extanimal.delete_diet(session.dbo, session.user, did)
+    def post_create(self, o):
+        self.check(users.ADD_DIET)
+        return str(extanimal.insert_diet_from_form(o.dbo, o.user, o.post))
 
-class animal_donations:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_DONATION)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        a = extanimal.get_animal(dbo, post.integer("id"))
+    def post_update(self, o):
+        self.check(users.CHANGE_DIET)
+        extanimal.update_diet_from_form(o.dbo, o.user, o.post)
+        
+    def post_delete(self, o):
+        self.check( users.DELETE_DIET)
+        for did in o.post.integer_list("ids"):
+            extanimal.delete_diet(o.dbo, o.user, did)
+
+class animal_donations(JSONEndpoint):
+    url = "animal_donations"
+    js_module = "donations"
+    get_permissions = users.VIEW_DONATION
+
+    def controller(self, o):
+        dbo = o.dbo
+        animalid = o.post.integer("id")
+        a = extanimal.get_animal(dbo, animalid)
         if a is None: raise web.notfound()
-        donations = financial.get_animal_donations(dbo, post.integer("id"))
+        donations = financial.get_animal_donations(dbo, animalid)
         al.debug("got %d donations for animal %s %s" % (len(donations), a["CODE"], a["ANIMALNAME"]), "code.animal_donations", dbo)
-        s = html.header("", session)
-        c = html.controller_json("animal", a)
-        c += html.controller_json("tabcounts", extanimal.get_satellite_counts(dbo, a["ID"])[0])
-        c += html.controller_str("name", "animal_donations")
-        c += html.controller_json("donationtypes", extlookups.get_donation_types(dbo))
-        c += html.controller_json("accounts", financial.get_accounts(dbo))
-        c += html.controller_json("paymenttypes", extlookups.get_payment_types(dbo))
-        c += html.controller_json("frequencies", extlookups.get_donation_frequencies(dbo))
-        c += html.controller_json("templates", dbfs.get_document_templates(dbo))
-        c += html.controller_json("rows", donations)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("donations", s, c, post["json"] == "true")
+        return {
+            "rows": donations,
+            "animal": a,
+            "tabcounts": extanimal.get_satellite_counts(dbo, animalid)[0],
+            "name": "animal_donations",
+            "donationtypes": extlookups.get_donation_types(dbo),
+            "accounts": financial.get_accounts(dbo),
+            "paymenttypes": extlookups.get_payment_types(dbo),
+            "frequencies": extlookups.get_donation_frequencies(dbo),
+            "templates": dbfs.get_document_templates(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        dbo = session.dbo
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_DONATION)
-            return financial.insert_donation_from_form(dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_DONATION)
-            financial.update_donation_from_form(dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_DONATION)
-            for did in post.integer_list("ids"):
-                financial.delete_donation(dbo, session.user, did)
-        elif mode == "receive":
-            users.check_permission(session, users.CHANGE_DONATION)
-            for did in post.integer_list("ids"):
-                financial.receive_donation(dbo, session.user, did)
-        elif mode == "personmovements":
-            users.check_permission(session, users.VIEW_MOVEMENT)
-            web.header("Content-Type", "application/json")
-            return html.json(extmovement.get_person_movements(dbo, post.integer("personid")))
+    def post_create(self, o):
+        self.check(users.ADD_DONATION)
+        return financial.insert_donation_from_form(o.dbo, o.user, o.post)
 
-class animal_embed:
-    def POST(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_ANIMAL)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(mode = "find"), session.locale)
-        web.header("Content-Type", "application/json")
-        mode = post["mode"]
-        if mode == "find":
-            q = post["q"]
-            rows = extanimal.get_animal_find_simple(dbo, q, post["filter"], 100, session.locationfilter, session.siteid)
-            al.debug("got %d results for '%s'" % (len(rows), str(web.ctx.query)), "code.animal_embed", dbo)
-            return html.json(rows)
-        elif mode == "multiselect":
-            rows = extanimal.get_animal_find_simple(dbo, "", "all", configuration.record_search_limit(dbo), session.locationfilter, session.siteid)
-            locations = extlookups.get_internal_locations(dbo)
-            species = extlookups.get_species(dbo)
-            litters = extanimal.get_litters(dbo)
-            rv = { "rows": rows, "locations": locations, "species": species, "litters": litters }
-            return html.json(rv)
-        elif mode == "id":
-            a = extanimal.get_animal(dbo, post.integer("id"))
-            if a is None:
-                al.error("get animal by id %d found no records." % (post.integer("id")), "code.animal_embed", dbo)
-                raise web.notfound()
-            else:
-                al.debug("got animal %s %s by id" % (a["CODE"], a["ANIMALNAME"]), "code.animal_embed", dbo)
-                return html.json((a,))
+    def post_update(self, o):
+        self.check(users.CHANGE_DONATION)
+        financial.update_donation_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(users.DELETE_DONATION)
+        for did in o.post.integer_list("ids"):
+            financial.delete_donation(o.dbo, o.user, did)
+
+    def post_receive(self, o):
+        self.check( users.CHANGE_DONATION)
+        for did in o.post.integer_list("ids"):
+            financial.receive_donation(o.dbo, o.user, did)
+
+    def post_personmovements(self, o):
+        self.check(users.VIEW_MOVEMENT)
+        self.header("Content-Type", "application/json")
+        return html.json(extmovement.get_person_movements(o.dbo, o.post.integer("personid")))
+
+class animal_embed(ASMEndpoint):
+    url = "animal_embed"
+    post_permissions = users.VIEW_ANIMAL
+
+    def post_find(self, o):
+        self.header("Content-Type", "application/json")
+        q = o.post["q"]
+        rows = extanimal.get_animal_find_simple(o.dbo, q, o.post["filter"], 100, o.session.locationfilter, o.session.siteid)
+        al.debug("got %d results for '%s'" % (len(rows), self.query()), "code.animal_embed", o.dbo)
+        return html.json(rows)
+
+    def post_multiselect(self, o):
+        dbo = o.dbo
+        rows = extanimal.get_animal_find_simple(dbo, "", "all", configuration.record_search_limit(dbo), session.locationfilter, session.siteid)
+        locations = extlookups.get_internal_locations(dbo)
+        species = extlookups.get_species(dbo)
+        litters = extanimal.get_litters(dbo)
+        rv = { "rows": rows, "locations": locations, "species": species, "litters": litters }
+        return html.json(rv)
+
+    def post_id(self, o):
+        dbo = o.dbo
+        animalid = o.post.integer("id")
+        a = extanimal.get_animal(dbo, animalid)
+        if a is None:
+            al.error("get animal by id %d found no records." % animalid, "code.animal_embed", dbo)
+            raise web.notfound()
+        else:
+            al.debug("got animal %s %s by id" % (a["CODE"], a["ANIMALNAME"]), "code.animal_embed", dbo)
+            return html.json((a,))
 
 class animal_find:
     def GET(self):
@@ -5117,7 +5131,7 @@ class person_embed(ASMEndpoint):
         })
 
     def post_find(self, o):
-        users.check_permission(session, users.VIEW_PERSON)
+        self.check(users.VIEW_PERSON)
         self.header("Content-Type", "application/json")
         q = o.post["q"]
         rows = extperson.get_person_find_simple(o.dbo, q, o.user, o.post["filter"], \
@@ -5127,7 +5141,7 @@ class person_embed(ASMEndpoint):
         return html.json(rows)
 
     def post_id(self, o):
-        users.check_permission(session, users.VIEW_PERSON)
+        self.check(users.VIEW_PERSON)
         self.header("Content-Type", "application/json")
         dbo = o.dbo
         post = o.post
@@ -5140,7 +5154,7 @@ class person_embed(ASMEndpoint):
             return html.json((p,))
 
     def post_similar(self, o):
-        users.check_permission(session, users.VIEW_PERSON)
+        self.check(users.VIEW_PERSON)
         self.header("Content-Type", "application/json")
         dbo = o.dbo
         post = o.post
@@ -5156,7 +5170,7 @@ class person_embed(ASMEndpoint):
         return html.json(p)
 
     def post_add(self, o):
-        users.check_permission(session, users.ADD_PERSON)
+        self.check(users.ADD_PERSON)
         self.header("Content-Type", "application/json")
         dbo = o.dbo
         al.debug("add new person", "code.person_embed", dbo)
@@ -6053,6 +6067,7 @@ class search:
 class service(ASMEndpoint):
     url = "service"
     check_logged_in = False
+
     def handle(self, o):
         contenttype, maxage, response = extservice.handler(o.post, PATH, self.remote_ip(), self.referer(), self.query())
         if contenttype == "redirect":
