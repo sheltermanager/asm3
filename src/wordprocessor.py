@@ -1079,6 +1079,7 @@ def generate_animal_doc(dbo, template, animalid, username):
             md = financial.get_movement_donations(dbo, m["ID"])
             if len(md) > 0: 
                 tags = append_tags(tags, donation_tags(dbo, md))
+            break
     # If we didn't have an open movement and there's a reserve, use that as the person
     if not has_person_tags and a["RESERVEDOWNERID"] is not None and a["RESERVEDOWNERID"] != 0:
         tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, a["RESERVEDOWNERID"])))
