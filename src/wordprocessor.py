@@ -1067,19 +1067,21 @@ def generate_animal_doc(dbo, template, animalid, username):
     im = media.get_image_file_data(dbo, "animal", animalid)[1]
     if a is None: raise utils.ASMValidationError("%d is not a valid animal ID" % animalid)
     tags = animal_tags(dbo, a)
-    if a["CURRENTOWNERID"] is not None and a["CURRENTOWNERID"] != 0:
-        tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, a["CURRENTOWNERID"])))
-    elif a["RESERVEDOWNERID"] is not None and a["RESERVEDOWNERID"] != 0:
-        tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, a["RESERVEDOWNERID"])))
     # Use the person info from the latest open movement for the animal
     # This will pick up future dated adoptions instead of fosterers (which are still currentowner)
+    # as get_animal_movements returns them in descending order of movement date
+    has_person_tags = False
     for m in movement.get_animal_movements(dbo, animalid):
         if m["MOVEMENTDATE"] is not None:
+            has_person_tags = True
+            tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, m["OWNERID"])))
+            tags = append_tags(tags, movement_tags(dbo, m))
             md = financial.get_movement_donations(dbo, m["ID"])
-            if m is not None and len(m) > 0:
-                tags = append_tags(tags, movement_tags(dbo, m))
             if len(md) > 0: 
                 tags = append_tags(tags, donation_tags(dbo, md))
+    # If we didn't have an open movement and there's a reserve, use that as the person
+    if not has_person_tags and a["RESERVEDOWNERID"] is not None and a["RESERVEDOWNERID"] != 0:
+        tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, a["RESERVEDOWNERID"])))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, template, tags, im)
 
