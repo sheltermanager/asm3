@@ -75,6 +75,10 @@ msgstr ""
 msgid "(use system)"
 msgstr ""
 
+#: medical.js
+msgid "({0} given, {1} remaining)"
+msgstr ""
+
 #: medical.py
 msgid "1 treatment"
 msgstr ""
@@ -3639,7 +3643,7 @@ msgstr ""
 msgid "Driver"
 msgstr ""
 
-#: media.js
+#: document_repository.js media.js
 msgid "Drop files here..."
 msgstr ""
 
@@ -11665,7 +11669,7 @@ msgid ""
 "at the top left of ASM."
 msgstr ""
 
-#: media.js
+#: document_repository.js media.js
 msgid "Uploading..."
 msgstr ""
 

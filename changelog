@@ -1,6 +1,7 @@
 40
 ================
 
+21/03/17 Add given/remaining counts to medical book/tab
 21/03/17 Add asm3_adoptable_filter support to adoptable_js #171
 21/03/17 Prevent signing pad breaking if last document to sign is deleted
 21/03/17 Document repository drag and drop support #139
