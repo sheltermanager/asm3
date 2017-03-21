@@ -128,12 +128,14 @@ def get_notes_for_id(dbo, mid):
 
 def get_media_file_data(dbo, mid):
     """
-    Gets a piece of media by id
+    Gets a piece of media by id. Returns None if the media record does not exist.
     id: The media id
     Returns a tuple containing the last modified date, media name, 
     mime type and file data
     """
-    mm = get_media_by_id(dbo, mid)[0]
+    mm = get_media_by_id(dbo, mid)
+    if len(mm) == 0: return None
+    mm = mm[0]
     return mm["DATE"], mm["MEDIANAME"], mime_type(mm["MEDIANAME"]), dbfs.get_string(dbo, mm["MEDIANAME"])
 
 def get_image_file_data(dbo, mode, iid, seq = 0, justdate = False):
