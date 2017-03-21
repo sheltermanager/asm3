@@ -140,6 +140,19 @@ species) to all::
     <div id="asm3-adoptables" />
     <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
 
+You can also add a filter callback, which allows you to implement your own filter based on other elements in the page. The callback receives the complete animal record and must return true if the record is to be included.
+
+For example, to only include animals of type dog, you could use this callback::
+
+    <script>
+    function asm3_adoptable_filter(a) {
+        return a.ANIMALTYPENAME == "D (Dog)";
+    }
+    </script>
+    <div id="asm3-adoptables" />
+    <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
+
+
 csv_mail and csv_report
 ----------------------
 

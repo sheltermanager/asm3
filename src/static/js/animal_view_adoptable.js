@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global alert, asm3_adoptable_translations */
+/*global alert, asm3_adoptable_translations, asm3_adoptable_filter */
 
 (function() {
 
@@ -8,7 +8,7 @@
     var baseurl = "{TOKEN_BASE_URL}";
 
     var filter_template = [
-        '<div class="asm3-filters" style="display: block; text-align: center; padding: 5px">',
+        '<div id="asm3-adoptable-filters" class="asm3-filters" style="display: block; text-align: center; padding: 5px">',
             '<select id="asm3-select-species">{speciesoptions}</select> ',
             '<select id="asm3-select-agegroup">{ageoptions}</select> ',
             '<select id="asm3-select-gender">{genderoptions}</select>',
@@ -96,6 +96,10 @@
             if (selspecies && item.SPECIESID != selspecies) { return; }
             if (selagegroup && decode(item.AGEGROUP) != decode(selagegroup)) { return; }
             if (selgender && item.SEX != selgender) {return; }
+
+            if (typeof asm3_adoptable_filter !== 'undefined') {
+                if (!asm3_adoptable_filter(item)) { return; }
+            }
             
             h.push(substitute(thumbnail_template, {
                 account: account,
