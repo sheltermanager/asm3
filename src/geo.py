@@ -73,7 +73,7 @@ def get_lat_long(dbo, address, town, county, postcode, country = None):
         cachemem.put(key, latlon, 86400)
         return latlon
 
-    except Exception,err:
+    except Exception as err:
         al.error(str(err), "geo.get_lat_long", dbo)
         return None
 
@@ -82,7 +82,7 @@ def get_lat_long(dbo, address, town, county, postcode, country = None):
 
 def address_hash(address, town, city, postcode):
     addrhash = "%s%s%s%s" % (address, town, city, postcode)
-    addrhash = addrhash.replace(" ", "").replace(",", "").replace("\n", "");
+    addrhash = addrhash.replace(" ", "").replace(",", "").replace("\n", "")
     if len(addrhash) > 220: addrhash = addrhash[0:220]
     return addrhash
 
@@ -94,7 +94,7 @@ def parse_nominatim(dbo, jr, j, q, h):
         latlon = "%s,%s,%s" % (str(utils.strip_non_ascii(j[0]["lat"])), str(utils.strip_non_ascii(j[0]["lon"])), h)
         al.debug("contacted nominatim to get geocode for %s = %s" % (q, latlon), "geo.parse_nominatim", dbo)
         return latlon
-    except Exception,err:
+    except Exception as err:
         al.error("couldn't find geocode in nominatim response: %s, %s" % (str(err), jr), "geo.parse_nominatim", dbo)
         return "0,0,%s" % h
     
@@ -107,7 +107,7 @@ def parse_google(dbo, jr, j, q, h):
         latlon = "%s,%s,%s" % (str(loc["lat"]), str(loc["lng"]), h)
         al.debug("contacted google to get geocode for %s = %s" % (q, latlon), "geo.parse_google", dbo)
         return latlon
-    except Exception,err:
+    except Exception as err:
         al.error("couldn't find geocode in google response. Status was %s: %s, %s" % (j["status"], str(err), jr), "geo.parse_google", dbo)
         return "0,0,%s" % h
 
@@ -117,7 +117,6 @@ def normalise_nominatim(address, town, county, postcode, country):
     q = q.replace("&", "").replace("=", "").replace("^", "").replace(".", "")
     q = q.replace("\r", "").replace("\n", ",").replace(", ", ",").replace(" ", "+")
     q = q.lower()
-    dummy = county + postcode
     return q
 
 def normalise_google(address, town, county, postcode, country):

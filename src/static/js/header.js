@@ -465,7 +465,7 @@ $(function() {
                 '</div>',
                 '<div id="linkstips" class="no-print ui-state-highlight ui-corner-all" style="display: none; padding-left: 5px; padding-right: 5px">',
                     '<p id="quicklinks" class="asm-quicklinks" style="display: none"><span class="ui-icon ui-icon-bookmark" style="float: left; margin-right: .3em;"></span>',
-                        _("Quick Links"),
+                        '<span id="quicklinks-label">' + _("Quick Links") + '</span>',
                         this.quicklinks_html(),
                     '</p>',
                     '<p id="tips" style="display: none"><span class="ui-icon ui-icon-lightbulb" style="float: left; margin-right: .3em"></span>',
@@ -505,7 +505,10 @@ $(function() {
                 $("#quicklinks").on("mouseout", "a", function() {
                     $(this).removeClass("ui-state-hover");
                 });
-
+                // If there are more than our default items, hide the text to save space
+                if (config.str("QuicklinksID").split(",").length > 7) {
+                    $("#quicklinks-label").hide();
+                }
             }
             if (config.has() && !config.bool("DisableTips")) {
                 $("#tips").show();
@@ -523,6 +526,10 @@ $(function() {
                 $("#quicklinks").on("mouseout", "a", function() {
                     $(this).removeClass("ui-state-hover");
                 });
+                // If there are more than our default items, hide the text to save space
+                if (config.str("QuicklinksID").split(",").length > 7) {
+                    $("#quicklinks-label").hide();
+                }
             }
         },
 

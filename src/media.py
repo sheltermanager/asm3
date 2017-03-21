@@ -54,7 +54,7 @@ def mime_type(filename):
         "avi"           : "video/avi"
     }
     ext = filename[filename.rfind(".")+1:]
-    if types.has_key(ext):
+    if ext in types:
         return types[ext]
     return "application/octet-stream"
 
@@ -128,33 +128,35 @@ def get_notes_for_id(dbo, mid):
 
 def get_media_file_data(dbo, mid):
     """
-    Gets a piece of media by id
+    Gets a piece of media by id. Returns None if the media record does not exist.
     id: The media id
     Returns a tuple containing the last modified date, media name, 
     mime type and file data
     """
-    mm = get_media_by_id(dbo, mid)[0]
+    mm = get_media_by_id(dbo, mid)
+    if len(mm) == 0: return (None, "", "", "")
+    mm = mm[0]
     return mm["DATE"], mm["MEDIANAME"], mime_type(mm["MEDIANAME"]), dbfs.get_string(dbo, mm["MEDIANAME"])
 
-def get_image_file_data(dbo, mode, iid, seq = -1, justdate = False):
+def get_image_file_data(dbo, mode, iid, seq = 0, justdate = False):
     """
     Gets an image
     mode: animal | media | animalthumb | person | personthumb | dbfs
     iid: The id of the animal for animal/thumb mode or the media record
         or a template path for dbfs mode
     seq: If the mode is animal or person, returns image X for that person/animal
-         The first image is always the preferred photo.
+         The first image is always the preferred photo and seq is 1-based.
     if justdate is True, returns the last modified date
     if justdate is False, returns a tuple containing the last modified date and image data
     """
     def nopic():
-        NOPIC_DATE = datetime.datetime(2011, 01, 01)
+        NOPIC_DATE = datetime.datetime(2011, 1, 1)
         if justdate: 
             return NOPIC_DATE
         else:
             return (NOPIC_DATE, "NOPIC")
     def thumb_nopic():
-        NOPIC_DATE = datetime.datetime(2011, 01, 01)
+        NOPIC_DATE = datetime.datetime(2011, 1, 1)
         if justdate:
             return NOPIC_DATE
         else:
@@ -171,7 +173,7 @@ def get_image_file_data(dbo, mode, iid, seq = -1, justdate = False):
             return (mm[0]["DATE"], scale_thumbnail(dbfs.get_string(dbo, mm[0]["MEDIANAME"])))
 
     if mode == "animal":
-        if seq == -1:
+        if seq == 0:
             mm = get_web_preferred(dbo, ANIMAL, int(iid))
             if len(mm) == 0:
                 return nopic()
@@ -185,7 +187,7 @@ def get_image_file_data(dbo, mode, iid, seq = -1, justdate = False):
                 mm = get_media_by_seq(dbo, ANIMAL, int(iid), seq)
                 return mrec(mm)
     elif mode == "person":
-        if seq == -1:
+        if seq == 0:
             mm = get_web_preferred(dbo, PERSON, int(iid))
             if len(mm) == 0:
                 return nopic()
@@ -603,7 +605,7 @@ def scale_image(imagedata, resizespec):
         scaled_data = output.getvalue()
         output.close()
         return scaled_data
-    except Exception,err:
+    except Exception as err:
         al.error("failed scaling image: %s" % str(err), "media.scale_image")
         return imagedata
 
@@ -630,7 +632,7 @@ def auto_rotate_image(dbo, imagedata):
         rotated_data = output.getvalue()
         output.close()
         return rotated_data
-    except Exception,err:
+    except Exception as err:
         al.error("failed rotating image: %s" % str(err), "media.auto_rotate_image", dbo)
         return imagedata
 
@@ -651,7 +653,7 @@ def rotate_image(imagedata, clockwise = True):
         rotated_data = output.getvalue()
         output.close()
         return rotated_data
-    except Exception,err:
+    except Exception as err:
         al.error("failed rotating image: %s" % str(err), "media.rotate_image")
         return imagedata
 
@@ -724,7 +726,6 @@ def scale_odt(filedata):
     try:
         zf = zipfile.ZipFile(odt, "r")
     except zipfile.BadZipfile:
-        print "not a zip file"
         return ""
     # Write the replacement file
     zo = StringIO()
@@ -813,7 +814,6 @@ def scale_animal_images(dbo):
         inputfile.close()
         outputfile.close()
         al.debug("scaling %s (%d of %d)" % (name, i, len(mp)), "media.scale_animal_images", dbo)
-        print "%s (%d of %d)" % (name, i, len(mp))
         scale_image_file(inputfile.name, outputfile.name, configuration.incoming_media_scaling(dbo))
         f = open(outputfile.name, "r")
         data = f.read()
@@ -833,19 +833,15 @@ def scale_all_odt(dbo):
     for i, m in enumerate(mo):
         name = str(m["MEDIANAME"])
         al.debug("scaling %s (%d of %d)" % (name, i, len(mo)), "media.scale_all_odt", dbo)
-        print "%s (%d of %d)" % (name, i, len(mo))
         odata = dbfs.get_string(dbo, name)
         if odata == "":
             al.error("file %s does not exist" % name, "media.scale_all_odt", dbo)
-            print "file %s does not exist" % name
             continue
         path = db.query_string(dbo, "SELECT Path FROM dbfs WHERE Name='%s'" % name)
         ndata = scale_odt(odata)
         if len(ndata) < 512:
             al.error("scaled odt %s came back at %d bytes, abandoning" % (name, len(ndata)), "scale_all_odt", dbo)
-            print "file too small < 512, doing nothing"
         else:
-            print "old size: %d, new size: %d" % (len(odata), len(ndata))
             dbfs.put_string(dbo, name, path, ndata)
 
 

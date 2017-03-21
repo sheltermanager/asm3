@@ -66,7 +66,7 @@ def connection(dbo):
             return c
         if dbo.dbtype == "SQLITE":
             return sqlite3.connect(dbo.database, detect_types=sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES)
-    except Exception,err:
+    except Exception as err:
         al.error(str(err), "db.connection", dbo, sys.exc_info())
 
 def connect_cursor_open(dbo):
@@ -104,10 +104,8 @@ def connect_cursor_close(dbo, c, s):
             pass
 
 def query(dbo, sql):
-    """
-        Runs the query given and returns the resultset
-        as a list of dictionaries. All fieldnames are
-	    uppercased when returned.
+    """ Runs the query given and returns the resultset as a list of dictionaries. 
+        All fieldnames are uppercased when returned.
     """
     try:
         c, s = connect_cursor_open(dbo)
@@ -130,7 +128,7 @@ def query(dbo, sql):
         for row in d:
             # Intialise a map for each row
             rowmap = {}
-            for i in xrange(0, len(row)):
+            for i in range(0, len(row)):
                 v = encode_str(dbo, row[i])
                 rowmap[cols[i]] = v
             l.append(rowmap)
@@ -140,7 +138,7 @@ def query(dbo, sql):
             if tt > DB_TIME_LOG_OVER:
                 al.debug("(%0.2f sec) %s" % (tt, sql), "db.query", dbo)
         return l
-    except Exception,err:
+    except Exception as err:
         al.error(str(err), "db.query", dbo, sys.exc_info())
         raise err
     finally:
@@ -183,7 +181,7 @@ def query_columns(dbo, sql):
             cn.append(col[0].upper())
         connect_cursor_close(dbo, c, s)
         return cn
-    except Exception,err:
+    except Exception as err:
         al.error(str(err), "db.query_columns", dbo, sys.exc_info())
         raise err
     finally:
@@ -193,10 +191,8 @@ def query_columns(dbo, sql):
             pass
 
 def query_generator(dbo, sql):
-    """
-        Runs the query given and returns the resultset
-        as a list of dictionaries. All fieldnames are
-	    uppercased when returned.
+    """ Runs the query given and returns the resultset as a list of dictionaries. 
+        All fieldnames are uppercased when returned. 
         generator function version that uses a forward cursor.
     """
     try:
@@ -212,13 +208,13 @@ def query_generator(dbo, sql):
         while row:
             # Intialise a map for each row
             rowmap = {}
-            for i in xrange(0, len(row)):
+            for i in range(0, len(row)):
                 v = encode_str(dbo, row[i])
                 rowmap[cols[i]] = v
             yield rowmap
             row = s.fetchone()
         connect_cursor_close(dbo, c, s)
-    except Exception,err:
+    except Exception as err:
         al.error(str(err), "db.query", dbo, sys.exc_info())
         raise err
     finally:
@@ -242,7 +238,7 @@ def query_to_insert_sql(dbo, sql, table, escapeCR = ""):
             v = r[k]
             if v is None:
                 values.append("null")
-            elif type(v) == unicode or type(v) == str:
+            elif utils.is_unicode(v) or utils.is_str(v):
                 if escapeCR != "": v = v.replace("\n", escapeCR).replace("\r", "")
                 values.append(ds(v))
             elif type(v) == datetime.datetime:
@@ -277,7 +273,7 @@ def query_tuple(dbo, sql):
         c.commit()
         connect_cursor_close(dbo, c, s)
         return d
-    except Exception,err:
+    except Exception as err:
         al.error(str(err), "db.query_tuple", dbo, sys.exc_info())
         raise err
     finally:
@@ -303,7 +299,7 @@ def query_tuple_columns(dbo, sql):
             cn.append(col[0].upper())
         connect_cursor_close(dbo, c, s)
         return (d, cn)
-    except Exception,err:
+    except Exception as err:
         al.error(str(err), "db.query_tuple_columns", dbo, sys.exc_info())
         raise err
     finally:
@@ -337,7 +333,7 @@ def execute(dbo, sql, override_lock = False):
             with open(DB_EXEC_LOG.replace("{database}", dbo.database), "a") as f:
                 f.write("-- %s\n%s;\n" % (nowsql(), sql))
         return rv
-    except Exception,err:
+    except Exception as err:
         al.error(str(err), "db.execute", dbo, sys.exc_info())
         try:
             # An error can leave a connection in unusable state, 
@@ -370,7 +366,7 @@ def execute_many(dbo, sql, params, override_lock = False):
         c.commit()
         connect_cursor_close(dbo, c, s)
         return rv
-    except Exception,err:
+    except Exception as err:
         al.error(str(err), "db.execute_many", dbo, sys.exc_info())
         try:
             # An error can leave a connection in unusable state, 
@@ -386,7 +382,7 @@ def execute_many(dbo, sql, params, override_lock = False):
             pass
 
 def is_number(x):
-    return isinstance(x, (int, long, float, complex))
+    return isinstance(x, (int, float, complex))
 
 def has_structure(dbo):
     try:
@@ -454,7 +450,7 @@ def get_multiple_database_info(alias):
     Gets the database info for the alias from our configured map.
     """
     dbo = DatabaseInfo()
-    if not MULTIPLE_DATABASES_MAP.has_key(alias):
+    if alias not in MULTIPLE_DATABASES_MAP:
         dbo.database = "FAIL"
         return dbo
     mapinfo = MULTIPLE_DATABASES_MAP[alias]
@@ -509,15 +505,15 @@ def encode_str(dbo, v):
     try:
         if v is None: 
             return v
-        elif type(v) == unicode:
+        elif utils.is_unicode(v):
             v = unescape(v)
             return v.encode("ascii", "xmlcharrefreplace")
-        elif type(v) == str:
+        elif utils.is_str(v):
             v = unescape(v)
             return v.decode("ascii", "ignore").encode("ascii", "ignore")
         else:
             return v
-    except Exception,err:
+    except Exception as err:
         al.error(str(err), "db.encode_str", dbo, sys.exc_info())
         raise err
 
@@ -526,7 +522,7 @@ def split_queries(sql):
     Splits semi-colon separated queries in a single
     string into a list and returns them for execution.
     """
-    queries = [];
+    queries = []
     x = 0
     instr = False
     while x <= len(sql):
@@ -575,7 +571,7 @@ def ds(s, sanitise_xss = True):
     """ Formats a value as a string for the database """
     if s is None: 
         return u"NULL"
-    elif type(s) != str and type(s) != unicode:
+    elif not utils.is_str(s) and not utils.is_unicode(s):
         return u"'%s'" % str(s)
     elif not DB_DECODE_HTML_ENTITIES:
         s = utils.encode_html(s)            # Turn any leftover unicode chars into HTML entities
@@ -645,9 +641,9 @@ def escape(s):
     if DB_TYPE == "POSTGRESQL": 
         s = psycopg2.extensions.adapt(s).adapted
     elif DB_TYPE == "MYSQL":
-        if type(s) == str:
+        if utils.is_str(s):
             s = MySQLdb.escape_string(s)
-        elif type(s) == unicode:
+        elif utils.is_unicode(s):
             # Encode the string as UTF-8 for MySQL escape_string 
             # then decode it back into unicode before continuing
             s = s.encode("utf-8")
@@ -743,7 +739,7 @@ def make_update_user_sql(dbo, table, username, cond, s, stampRecordVersion = Tru
     l.append(("LastChangedBy", ds(username)))
     l.append(("LastChangedDate", ddt(i18n.now(dbo.timezone))))
     if stampRecordVersion: l.append(("RecordVersion", di(recordversion())))
-    return make_update_sql(table, cond, l);
+    return make_update_sql(table, cond, l)
 
 def rows_to_insert_sql(table, rows, escapeCR = ""):
     """
@@ -760,10 +756,10 @@ def rows_to_insert_sql(table, rows, escapeCR = ""):
             v = r[k]
             if v is None:
                 values.append("null")
-            elif type(v) == unicode or type(v) == str:
+            elif utils.is_unicode(v) or utils.is_str(v):
                 if escapeCR != "": v = v.replace("\n", escapeCR).replace("\r", "")
                 values.append(ds(v))
-            elif type(v) == datetime.datetime:
+            elif utils.is_date(v):
                 values.append(ddt(v))
             else:
                 values.append(di(v))

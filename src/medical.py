@@ -60,7 +60,10 @@ def get_medicaltreatment_query(dbo):
         "am.*, amt.DateRequired, amt.DateGiven, amt.Comments AS TreatmentComments, " \
         "amt.TreatmentNumber, amt.TotalTreatments, ma.MediaName AS WebsiteMediaName, " \
         "am.ID AS RegimenID, amt.ID AS TreatmentID, " \
-        "amt.GivenBy, amt.AdministeringVetID, adv.OwnerName AS AdministeringVetName, am.Comments AS RegimenComments, " \
+        "amt.GivenBy, amt.AdministeringVetID, adv.OwnerName AS AdministeringVetName, " \
+        "adv.OwnerAddress AS AdministeringVetAddress, adv.OwnerTown AS AdministeringVetTown, adv.OwnerCounty AS AdministeringVetCounty, " \
+        "adv.OwnerPostcode AS AdministeringVetPostcode, adv.EmailAddress AS AdministeringVetEmail, adv.MembershipNumber AS AdministeringVetLicence, " \
+        "am.Comments AS RegimenComments, " \
         "CASE WHEN a.ActiveMovementType Is Not Null AND a.ActiveMovementType > 0 THEN " \
         "(SELECT mt.MovementType FROM lksmovementtype mt WHERE mt.ID = a.ActiveMovementType) " \
         "ELSE il.LocationName END AS LocationName, " \
@@ -132,7 +135,9 @@ def get_test_query(dbo):
         "CASE WHEN a.ActiveMovementType Is Not Null AND a.ActiveMovementType > 0 THEN " \
         "'' ELSE a.ShelterLocationUnit END AS LocationUnit, " \
         "il.LocationName AS ShelterLocationName, a.ShelterLocationUnit, " \
-        "adv.OwnerName AS AdministeringVetName " \
+        "adv.OwnerName AS AdministeringVetName, " \
+        "adv.OwnerAddress AS AdministeringVetAddress, adv.OwnerTown AS AdministeringVetTown, adv.OwnerCounty AS AdministeringVetCounty, " \
+        "adv.OwnerPostcode AS AdministeringVetPostcode, adv.EmailAddress AS AdministeringVetEmail, adv.MembershipNumber AS AdministeringVetLicence " \
         "FROM animal a " \
         "LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID " \
         "LEFT OUTER JOIN owner co ON co.ID = ad.OwnerID " \
@@ -174,7 +179,9 @@ def get_vaccination_query(dbo):
         "CASE WHEN a.ActiveMovementType Is Not Null AND a.ActiveMovementType > 0 THEN " \
         "'' ELSE a.ShelterLocationUnit END AS LocationUnit, " \
         "il.LocationName AS ShelterLocationName, a.ShelterLocationUnit, " \
-        "adv.OwnerName AS AdministeringVetName " \
+        "adv.OwnerName AS AdministeringVetName, " \
+        "adv.OwnerAddress AS AdministeringVetAddress, adv.OwnerTown AS AdministeringVetTown, adv.OwnerCounty AS AdministeringVetCounty, " \
+        "adv.OwnerPostcode AS AdministeringVetPostcode, adv.EmailAddress AS AdministeringVetEmail, adv.MembershipNumber AS AdministeringVetLicence " \
         "FROM animal a " \
         "LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID " \
         "LEFT OUTER JOIN owner co ON co.ID = ad.OwnerID " \
@@ -226,9 +233,9 @@ def get_regimens(dbo, animalid, onlycomplete = False, sort = ASCENDING_REQUIRED)
         sc = "am.Status = 2 AND "
     sql = "SELECT am.*, " \
         "(SELECT amt.DateRequired FROM animalmedicaltreatment amt WHERE amt.AnimalMedicalID = am.ID AND amt.DateGiven Is Null " \
-            "ORDER BY amt.DateRequired DESC LIMIT 1) AS NextTreatmentDue, " \
+        "ORDER BY amt.DateRequired DESC LIMIT 1) AS NextTreatmentDue, " \
         "(SELECT amt.DateGiven FROM animalmedicaltreatment amt WHERE amt.AnimalMedicalID = am.ID AND amt.DateGiven Is Not Null " \
-            "ORDER BY amt.DateGiven DESC LIMIT 1) AS LastTreatmentGiven " \
+        "ORDER BY amt.DateGiven DESC LIMIT 1) AS LastTreatmentGiven " \
         "FROM animalmedical am WHERE %sam.AnimalID = %d" % (sc, animalid)
     if sort == ASCENDING_REQUIRED:
         sql += " ORDER BY ID"
@@ -297,8 +304,8 @@ def embellish_regimen(l, rows):
     """
     for r in rows:
         st = 0
-        if r.has_key("REGIMENID"): r["COMPOSITEID"] = "%d_%d" % (r["REGIMENID"], r["TREATMENTID"])
-        if r.has_key("STATUS"): st = int(r["STATUS"])
+        if "REGIMENID" in r: r["COMPOSITEID"] = "%d_%d" % (r["REGIMENID"], r["TREATMENTID"])
+        if "STATUS" in r: st = int(r["STATUS"])
         tr = int(r["TIMINGRULE"])
         trr = int(r["TREATMENTRULE"])
         trf = int(r["TIMINGRULEFREQUENCY"])
@@ -628,7 +635,7 @@ def update_medical_treatments(dbo, username, amid):
     # If it's a one-off treatment and we've given it, mark complete
     if am["TIMINGRULE"] == ONEOFF:
         if len(amt) > 0:
-            if amt[0]["DATEGIVEN"] != None:
+            if amt[0]["DATEGIVEN"] is not None:
                 db.execute(dbo, "UPDATE animalmedical SET Status = %d WHERE ID = %d" % ( COMPLETED, amid ))
                 return
 
@@ -868,7 +875,6 @@ def update_vaccination_batch_stock(dbo, username, vid, slid):
     Updates the batch number on a vaccination record if 
     it isn't already set from a stock level record.
     """
-    dummy = username
     sl = db.query(dbo, "SELECT * FROM stocklevel WHERE ID = %d" % slid)
     if len(sl) == 0:
         al.error("stocklevel %d does not exist" % slid, "medical.update_vaccination_batch_stock", dbo)

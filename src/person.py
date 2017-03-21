@@ -403,7 +403,7 @@ def get_person_find_simple(dbo, query, username="", classfilter="all", includeSt
         cf = " AND o.IsStaff = 0"
     if not includeVolunteers:
         cf = " AND o.IsVolunteer = 0"
-    sql = unicode(get_person_query(dbo)) + " WHERE (" + u" OR ".join(ors) + ")" + cf + " ORDER BY o.OwnerName"
+    sql = utils.cunicode(get_person_query(dbo)) + " WHERE (" + u" OR ".join(ors) + ")" + cf + " ORDER BY o.OwnerName"
     if limit > 0: sql += " LIMIT " + str(limit)
     return reduce_find_results(dbo, username, db.query(dbo, sql))
 
@@ -539,7 +539,6 @@ def clone_rota_week(dbo, username, startdate, newdate, flags):
     for r in rows:
         # Were some flags set? If so, does the current person for this rota element have those flags?
         if flags is not None and flags != "":
-            print flags + " -> " + utils.nulltostr(r["ADDITIONALFLAGS"])
             if not utils.list_overlap(flags.split("|"), utils.nulltostr(r["ADDITIONALFLAGS"]).split("|")):
                 # The element doesn't have the right flags, skip to the next
                 continue
@@ -610,8 +609,11 @@ def update_person_from_form(dbo, post, username):
         raise utils.ASMValidationError(_("This record has been changed by another user, please reload.", l))
 
     pid = post.integer("id")
+
+    def bi(b): 
+        return b and 1 or 0
+
     flags = post["flags"].split(",")
-    def bi(b): return b and 1 or 0
     homechecked = bi("homechecked" in flags)
     banned = bi("banned" in flags)
     coordinator = bi("coordinator" in flags)
@@ -703,7 +705,9 @@ def update_flags(dbo, username, personid, flags):
     """
     Updates the flags on a person record from a list of flags
     """
-    def bi(b): return b and 1 or 0
+    def bi(b): 
+        return b and 1 or 0
+
     homechecked = bi("homechecked" in flags)
     banned = bi("banned" in flags)
     coordinator = bi("coordinator" in flags)
@@ -748,13 +752,15 @@ def insert_person_from_form(dbo, post, username):
     Returns the ID of the new record
     """
     def d(key, default = None): 
-        if post.data.has_key(key):
+        if key in post.data:
             return post[key]
         else:
             return default
 
+    def bi(b): 
+        return b and 1 or 0
+
     flags = post["flags"].split(",")
-    def bi(b): return b and 1 or 0
     homechecked = bi("homechecked" in flags)
     banned = bi("banned" in flags)
     volunteer = bi("volunteer" in flags)
@@ -855,7 +861,7 @@ def merge_person_details(dbo, username, personid, d):
     p = get_person(dbo, personid)
     if p is None: return
     def merge(dictfield, fieldname):
-        if not d.has_key(dictfield): return
+        if dictfield not in d: return
         if p[fieldname] is None or p[fieldname] == "":
             db.execute(dbo, "UPDATE owner SET %s = %s, LastChangedBy = %s, LastChangedDate = %s WHERE ID = %d" % \
                 (fieldname, db.ds(d[dictfield]), db.ds(username), db.ddt(now(dbo.timezone)), personid))
@@ -882,7 +888,7 @@ def merge_flags(dbo, username, personid, flags):
     epf = db.query_string(dbo, "SELECT AdditionalFlags FROM owner WHERE ID = %d" % personid)
     epfb = epf.split("|")
     for x in fgs:
-        if not x in epfb and not x == "":
+        if x not in epfb and not x == "":
             epf += "%s|" % x
     update_flags(dbo, username, personid, epf.split("|"))
     return epf
@@ -1156,9 +1162,10 @@ def lookingfor_report(dbo, username = "system", personid = 0):
     title = _("People Looking For", l)
     h = []
     h.append(reports.get_report_header(dbo, title, username))
-    def p(s): return "<p>%s</p>" % s
-    def td(s): return "<td>%s</td>" % s
-    def hr(): return "<hr />"
+    def td(s): 
+        return "<td>%s</td>" % s
+    def hr(): 
+        return "<hr />"
 
     idclause = ""
     if personid != 0:
@@ -1273,7 +1280,7 @@ def lookingfor_report(dbo, username = "system", personid = 0):
         h.append( hr())
 
     if len(people) == 0:
-        h.append( p(_("No matches found.", l)))
+        h.append( "<p>%s</p>" % _("No matches found.", l) )
 
     h.append( reports.get_report_footer(dbo, title, username))
     return "".join(h)

@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, asm, common, config, controller, dlgfx, edit_header, format, header, html, validate */
+/*global $, jQuery, _, asm, common, config, controller, dlgfx, edit_header, format, header, html, validate, Path */
 
 $(function() {
 
@@ -849,6 +849,7 @@ $(function() {
             // What's the highest news story this person has seen?
             main.max_news_user = format.to_int(common.local_get(asm.user + "_news"));
             $("#newsunread").html( "(" + (main.max_news_story - main.max_news_user) + ")" );
+
         },
 
         destroy: function() {

@@ -35,8 +35,10 @@ $(function() {
          * section of a details page. One of the tables has a class of
          * additionalmove and its contents will be relocated to other
          * sections according to config later by the screen itself.
+         * includeids: if undefined or true, output id attributes for rendered fields
+         * classes: classes to give rendered fields. undefined === "additional"
          */
-        additional_fields: function(fields) {
+        additional_fields: function(fields, includeids, classes) {
             if (fields.length == 0) { return; }
             var add = [], other = [], addidx = 0;
             add.push('<table class="asm-additional-fields-container" width=\"100%\">\n<tr>\n');
@@ -45,7 +47,7 @@ $(function() {
                 // If this field is going to the additional tab on animal, animalcontrol, owner, lostanimal, foundanimal or waitinglist
                 // then add it to our 3 column add table.
                 if (f.LINKTYPE == 0 || f.LINKTYPE == 1 || f.LINKTYPE == 9 || f.LINKTYPE == 11 || f.LINKTYPE == 13 || f.LINKTYPE == 20) {
-                    add.push(additional.render_field(f));
+                    add.push(additional.render_field(f, includeids, classes));
                     addidx += 1;
                     // Every 3rd column, drop a row
                     if (addidx == 3) {
@@ -68,13 +70,13 @@ $(function() {
          * If there are no fields, an empty string is returned.
          * The output is a serious of 2 column table rows with label/field
          */
-        additional_mandatory_fields: function(fields) {
+        additional_mandatory_fields: function(fields, includeids, classes) {
             if (fields.length == 0) { return; }
             var add = [], addidx = 0;
             $.each(fields, function(i, f) {
                 if (f.MANDATORY == 1) {
                     add.push("<tr>");
-                    add.push(additional.render_field(f));
+                    add.push(additional.render_field(f, includeids, classes));
                     add.push("</tr>");
                 }
             });
@@ -116,44 +118,49 @@ $(function() {
          * the correct value in place.
          * The data-post value will be set to a.(1 if mandatory).fieldid
          * f: A combined row from the additionalfield and additional tables
+         * includeids: undefined or true - output an id attribute with the field
+         * classes: one or more classes to give fields - undefined="additional" 
          */
-        render_field: function(f) {
+        render_field: function(f, includeids, classes) {
             var fieldname = f.ID,
                 fieldid = "add_" + fieldname,
+                fieldattr = 'id="' + fieldid + '" ',
                 fieldval = f.VALUE || f.DEFAULTVALUE,
                 postattr = "a." + f.MANDATORY + "." + fieldname,
                 fh = [];
+            if (classes === undefined) { classes = "additional"; }
+            if (includeids === false) { fieldattr = ""; } // includeids has to be explicitly false to disable id attrs
             if (f.FIELDTYPE == additional.YESNO) {
                 var checked = "";
                 if (fieldval && fieldval !== "0") { checked = 'checked="checked"'; }
                 fh.push('<td class="to' + f.LINKTYPE + '"></td><td>');
-                fh.push('<input id="' + fieldid + '" type="checkbox" class="asm-checkbox additional" data-post="' + postattr + '" ');
+                fh.push('<input ' + fieldattr + ' type="checkbox" class="asm-checkbox ' + classes + '" data-post="' + postattr + '" ');
                 fh.push('title="' + html.title(f.TOOLTIP) + '" ' + checked + ' />');
                 fh.push('<label for="' + fieldid + '" title="' + html.title(f.TOOLTIP) + '">' + f.FIELDLABEL + '</label></td>');
             }
             else if (f.FIELDTYPE == additional.TEXT) {
                 fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + '</label></td><td>');
-                fh.push('<input id="' + fieldid + '" type="textbox" class="asm-textbox additional" data-post="' + postattr + '" ');
+                fh.push('<input ' + fieldattr + ' type="textbox" class="asm-textbox ' + classes + '" data-post="' + postattr + '" ');
                 fh.push('title="' + html.title(f.TOOLTIP) + '" value="' + html.title(fieldval) + '"/></td>');
             }
             else if (f.FIELDTYPE == additional.DATE) {
                 fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + '</label></td><td>');
-                fh.push('<input id="' + fieldid + '" type="textbox" class="asm-textbox asm-datebox additional" data-post="' + postattr + '" ');
+                fh.push('<input ' + fieldattr + ' type="textbox" class="asm-textbox asm-datebox ' + classes + '" data-post="' + postattr + '" ');
                 fh.push('title="' + html.title(f.TOOLTIP) + '" value="' + html.title(fieldval) + '" /></td>');
             }
             else if (f.FIELDTYPE == additional.NOTES) {
                 fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + '</label></td><td>');
-                fh.push('<textarea id="' + fieldid + '" data-post="' + postattr + '" class="asm-textareafixed additional" ');
+                fh.push('<textarea ' + fieldattr + ' data-post="' + postattr + '" class="asm-textareafixed ' + classes + '" ');
                 fh.push('title="' + html.title(f.TOOLTIP) + '">' + fieldval + '</textarea>');
             }
             else if (f.FIELDTYPE == additional.NUMBER) {
                 fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + '</label></td><td>');
-                fh.push('<input id="' + fieldid + '" type="textbox" class="asm-textbox asm-numberbox additional" data-post="' + postattr + '" ');
+                fh.push('<input ' + fieldattr + ' type="textbox" class="asm-textbox asm-numberbox ' + classes + '" data-post="' + postattr + '" ');
                 fh.push('title="' + html.title(f.TOOLTIP) + '" value="' + html.title(fieldval) + '"/></td>');
             }
             else if (f.FIELDTYPE == additional.MONEY) {
                 fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + '</label></td><td>');
-                fh.push('<input id="' + fieldid + '" type="textbox" class="asm-textbox asm-currencybox additional" data-post="' + postattr + '" ');
+                fh.push('<input ' + fieldattr + ' type="textbox" class="asm-textbox asm-currencybox ' + classes + '" data-post="' + postattr + '" ');
                 fh.push('title="' + html.title(f.TOOLTIP) + '" value="' + format.currency(fieldval) + '"/></td>');
             }
             else if (f.FIELDTYPE == additional.LOOKUP) {
@@ -168,7 +175,7 @@ $(function() {
                     }
                 });
                 fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + '</label></td><td>');
-                fh.push('<select id="' + fieldid + '" class="asm-selectbox additional" data-post="' + postattr + '" ');
+                fh.push('<select ' + fieldattr + ' class="asm-selectbox ' + classes + '" data-post="' + postattr + '" ');
                 fh.push('title="' + html.title(f.TOOLTIP) + '">');
                 fh.push(opts.join("\n"));
                 fh.push('</select></td>');
@@ -185,19 +192,19 @@ $(function() {
                     }
                 });
                 fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + '</label></td><td>');
-                fh.push('<select id="' + fieldid + '" class="asm-bsmselect additional" multiple="multiple" data-post="' + postattr + '" ');
+                fh.push('<select ' + fieldattr + ' class="asm-bsmselect ' + classes + '" multiple="multiple" data-post="' + postattr + '" ');
                 fh.push('title="' + html.title(f.TOOLTIP) + '">');
                 fh.push(mopts.join("\n"));
                 fh.push('</select></td>');
             }
             else if (f.FIELDTYPE == additional.ANIMAL_LOOKUP) {
                 fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + '</label></td><td>');
-                fh.push('<input id="' + fieldid + '" type="hidden" class="asm-animalchooser additional" data-post="' + postattr + '" ');
+                fh.push('<input ' + fieldattr + ' type="hidden" class="asm-animalchooser ' + classes + '" data-post="' + postattr + '" ');
                 fh.push('value="' + html.title(fieldval) + '"/></td>');
             }
             else if (f.FIELDTYPE == additional.PERSON_LOOKUP) {
                 fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + '</label></td><td>');
-                fh.push('<input id="' + fieldid + '" type="hidden" class="asm-personchooser additional" data-post="' + postattr + '" ');
+                fh.push('<input ' + fieldattr + ' type="hidden" class="asm-personchooser ' + classes + '" data-post="' + postattr + '" ');
                 fh.push('value="' + html.title(fieldval) + '"/></td>');
             }
             return fh.join("\n");
@@ -205,10 +212,15 @@ $(function() {
 
 
         /**
-         * Evaluates all additional fields in the DOM and checks to
+         * Validates all additional fields in the DOM and checks to
          * see if they are mandatory and if so whether or not they
          * are blank. Returns true if all is ok, or false if a field
          * fails a check.
+         *
+         * Deliberately ignores fields with the chooser class as this 
+         * function is aimed at additional fields in bottom level forms
+         * like animal, waiting list, etc.
+         *
          * If a field fails the manadatory check:
          * 1. Its label is highlighted
          * 2. The correct accordion section is opened
@@ -216,7 +228,7 @@ $(function() {
          */
         validate_mandatory: function() {
             var valid = true;
-            $(".additional").each(function() {
+            $(".additional").not(".chooser").each(function() {
                 var t = $(this), 
                     label = $("label[for='" + t.attr("id") + "']"),
                     acchead = $("#" + t.closest(".ui-accordion-content").prev().attr("id"));
@@ -238,7 +250,36 @@ $(function() {
                 }
             });
             return valid;
+        },
+
+        /**
+         * Validates additional fields inside the node given. Returns true 
+         * if all is ok, or false if a field fails a check.
+         * On failure an error message is displayed and the previous label highlighted.
+         */
+        validate_mandatory_node: function(node) {
+            var valid = true;
+            node.find(".additional").each(function() {
+                var t = $(this), 
+                    label = t.closest("tr").find("label");
+                // ignore checkboxes
+                if (t.attr("type") != "checkbox") {
+                    var d = String(t.attr("data-post"));
+                    // mandatory additional fields have a post attribute prefixed with a.1
+                    if (d.indexOf("a.1") != -1) {
+                        if ($.trim(t.val()) == "") {
+                            header.show_error(_("{0} cannot be blank").replace("{0}", label.html()));
+                            label.addClass(validate.ERROR_LABEL_CLASS);
+                            t.focus();
+                            valid = false;
+                            return false;
+                        }
+                    }
+                }
+            });
+            return valid;
         }
+
 
     };
 

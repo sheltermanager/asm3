@@ -26,7 +26,6 @@ def get_animal_query(dbo):
     """
     Returns a select for animal rows with resolved lookups
     """
-    dummy = dbo
     return "SELECT DISTINCT a.*, " \
         "at.AnimalType AS AnimalTypeName, " \
         "ba1.AnimalName AS BondedAnimal1Name, " \
@@ -228,7 +227,6 @@ def get_animal_query(dbo):
         }
 
 def get_animal_status_query(dbo):
-    dummy = dbo
     return "SELECT a.ID, a.ShelterCode, a.ShortCode, a.AnimalName, a.DeceasedDate, a.DiedOffShelter, a.PutToSleep, " \
         "dr.ReasonName AS PTSReasonName, " \
         "il.LocationName AS ShelterLocationName, " \
@@ -241,7 +239,6 @@ def get_animal_status_query(dbo):
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation "
 
 def get_animal_movement_status_query(dbo):
-    dummy = dbo
     return "SELECT m.ID, m.MovementType, m.MovementDate, m.ReturnDate, " \
         "mt.MovementType AS MovementTypeName, " \
         "m.ReservationDate, m.ReservationCancelledDate, m.IsTrial, m.IsPermanentFoster, " \
@@ -428,7 +425,7 @@ def get_animal_find_simple(dbo, query, classfilter = "all", limit = 0, locationf
         ors.append(add("sz.Size"))
         ors.append(add("bc.BaseColour"))
         ors.append(add("ct.CoatType"))
-    sql = unicode(get_animal_query(dbo)) + " WHERE "
+    sql = utils.cunicode(get_animal_query(dbo)) + " WHERE "
     if classfilter == "shelter":
         sql += u" a.Archived = 0 AND "
     elif classfilter == "female":
@@ -1085,7 +1082,7 @@ def calc_age_group(dbo, animalid, a = None, bands = None):
     if bands is None:
         bands = db.query(dbo, "SELECT ItemName, ItemValue FROM configuration WHERE ItemName LIKE 'AgeGroup%' ORDER BY ItemName")
     # Loop through the bands until we find one that the age in days fits into
-    for i in xrange(0, 20):
+    for i in range(0, 20):
         band = bv("AgeGroup%d" % i, bands)
         years = utils.cfloat(band)
         if days <= years * 365:
@@ -1577,6 +1574,25 @@ def get_active_litters(dbo, speciesid = -1):
     if speciesid != -1: where = "AND SpeciesID = %d " % int(speciesid)
     return db.query(dbo, sql % (db.dd(now(dbo.timezone)), where))
 
+def get_active_litters_brief(dbo):
+    """ Returns the active litters in brief form for use by autocomplete """
+    l = dbo.locale
+    al = get_litters(dbo)
+    rv = []
+    for i in al:
+        disp = ""
+        if i["PARENTANIMALID"] is not None and i["PARENTANIMALID"] > 0:
+            disp = _("{0}: {1} {2} - {3} {4}", l).format(
+                i["MOTHERCODE"], i["MOTHERNAME"],
+                i["ACCEPTANCENUMBER"], i["SPECIESNAME"],
+                i["COMMENTS"][:40])
+        else:
+            disp = _("{0} - {1} {2}", l).format(
+                i["ACCEPTANCENUMBER"], i["SPECIESNAME"],
+                i["COMMENTS"][:40])
+        rv.append( { "label": disp, "value": i["ACCEPTANCENUMBER"] } )
+    return rv
+
 def get_litters(dbo):
     """
     Returns all animal litters in descending order of age. Litters
@@ -1752,7 +1768,7 @@ def insert_animal_from_form(dbo, post, username):
     def ks(field):
         return post.string(field)
 
-    if ks("dateofbirth") == "" or None == kd("dateofbirth"):
+    if ks("dateofbirth") == "" or kd("dateofbirth") is None:
         estimateddob = 1
         dob = subtract_years(now(), kf("estimatedage"))
     else:
@@ -1783,13 +1799,13 @@ def insert_animal_from_form(dbo, post, username):
 
     # Default good with
     goodwithcats = 2
-    if post.has_key("goodwithcats"): goodwithcats = ki("goodwithcats")
+    if "goodwithcats" in post: goodwithcats = ki("goodwithcats")
     goodwithdogs = 2
-    if post.has_key("goodwithdogs"): goodwithdogs = ki("goodwithdogs")
+    if "goodwithdogs" in post: goodwithdogs = ki("goodwithdogs")
     goodwithkids = 2
-    if post.has_key("goodwithkids"): goodwithkids = ki("goodwithkids")
+    if "goodwithkids" in post: goodwithkids = ki("goodwithkids")
     housetrained = 2
-    if post.has_key("housetrained"): housetrained = ki("housetrained")
+    if "housetrained" in post: housetrained = ki("housetrained")
     unknown = 0
 
     # Validate form fields
@@ -1813,7 +1829,7 @@ def insert_animal_from_form(dbo, post, username):
 
     # Set not for adoption if the option is on
     notforadoption = 0
-    if post.has_key("notforadoption"):
+    if "notforadoption" in post:
         notforadoption = ki("notforadoption")
     elif configuration.auto_not_for_adoption(dbo):
         notforadoption = 1        
@@ -2004,7 +2020,7 @@ def update_animal_from_form(dbo, post, username):
     if ks("deceaseddate") != "":
         deceaseddate = d("deceaseddate")
         datebroughtin = d("datebroughtin")
-        if deceaseddate is not None and datebroughtin != None and deceaseddate < datebroughtin:
+        if deceaseddate is not None and datebroughtin is not None and deceaseddate < datebroughtin:
             raise utils.ASMValidationError(_("Animal cannot be deceased before it was brought to the shelter", l))
 
     # If the option is on and the internal location or unit has changed, log it
@@ -2035,8 +2051,10 @@ def update_animal_from_form(dbo, post, username):
                 "%s%s" % (weight, units))
 
     # Sort out any flags
+    def bi(b): 
+        return b and 1 or 0
+
     flags = post["flags"].split(",")
-    def bi(b): return b and 1 or 0
     courtesy = bi("courtesy" in flags)
     crueltycase = bi("crueltycase" in flags)
     notforadoption = bi("notforadoption" in flags)
@@ -3128,7 +3146,9 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
     currentownerid = None
     currentownername = None
     today = now(dbo.timezone)
-    b2i = lambda x: x and 1 or 0
+    
+    def b2i(x):
+        return x and 1 or 0
 
     if a is None:
         a = get_animal(dbo, animalid)
@@ -3196,7 +3216,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
 
         # Is this movement an active reservation?
         if m["RETURNDATE"] is None and m["MOVEMENTTYPE"] == movement.NO_MOVEMENT \
-            and m["MOVEMENTDATE"] is None and m["RESERVATIONCANCELLEDDATE"] == None and \
+            and m["MOVEMENTDATE"] is None and m["RESERVATIONCANCELLEDDATE"] is None and \
             m["RESERVATIONDATE"] is not None and m["RESERVATIONDATE"] <= today:
             hasreserve = True
 
@@ -3304,7 +3324,7 @@ def get_number_animals_on_shelter(dbo, date, speciesid = 0, animaltypeid = 0, in
     """
     Returns the number of animals on shelter at the end of a given date for a species, type,
     location and optionally for an ageselection - 0 = allages, 1 = under six months, 2 = over six months
-    startofday: movements that took place on date are not counted if true
+    startofday: movements and intake that took place on date are not counted if true
     """
     sdate = db.dd(date)
     if not startofday:
@@ -3315,20 +3335,22 @@ def get_number_animals_on_shelter(dbo, date, speciesid = 0, animaltypeid = 0, in
         sql += "SpeciesID = %d" % speciesid
     else:
         sql += "AnimalTypeID = %d" % animaltypeid
-    sql += " AND DateBroughtIn <= %s AND NonShelterAnimal = 0" % sdate
-    sql += " AND (DeceasedDate Is Null OR DeceasedDate > %s)" % sdate
+    if startofday:
+        sql += " AND DateBroughtIn < %s AND NonShelterAnimal = 0" % sdate # intake today excluded
+        sql += " AND (DeceasedDate Is Null OR DeceasedDate > %s)" % sdate # deaths today excluded
+        movementclause = "MovementDate < %s" % db.dd(date) # movements today excluded
+        returnclause = "ReturnDate > %s" % db.dd(date) # returns today excluded
+    else:
+        sql += " AND DateBroughtIn <= %s AND NonShelterAnimal = 0" % sdate # intakes today included
+        sql += " AND (DeceasedDate Is Null OR DeceasedDate >= %s)" % sdate # deaths today included
+        movementclause = "MovementDate <= %s" % sdate # movements today included
+        returnclause = "ReturnDate >= %s" % sdate # returns today included
     if internallocationid != 0:
         sql += " AND ShelterLocation = %d" % internallocationid
     if ageselection == 1:
         sql += " AND DateOfBirth >= %s" % sixmonthsago
     if ageselection == 2:
         sql += " AND DateOfBirth < %s" % sixmonthsago
-    if startofday:
-        movementclause = "MovementDate < %s" % db.dd(date) # start of day, movements today excluded
-        returnclause = "ReturnDate >= %s" % db.dd(date) # start of day, returns today included
-    else:
-        movementclause = "MovementDate <= %s" % sdate # end of day, movements today included
-        returnclause = "ReturnDate >= %s" % sdate # end of day, returns today included
     sql += " AND NOT EXISTS (SELECT adoption.ID FROM adoption " \
         "WHERE AnimalID = animal.ID AND MovementType <> 2 AND MovementDate Is Not Null AND " \
         "%s AND (ReturnDate Is Null OR %s))" % (movementclause, returnclause)
@@ -3381,7 +3403,7 @@ def update_animal_figures(dbo, month = 0, year = 0):
     def sql_days(sql):
         """ Returns a query with THEDATE and TOTAL as a dictionary for add_row """
         d = {}
-        for i in xrange(1, 32):
+        for i in range(1, 32):
             d["D%d" % i] = "0"
         rows = db.query(dbo, sql)
         for r in rows:
@@ -3392,23 +3414,23 @@ def update_animal_figures(dbo, month = 0, year = 0):
     def add_days(listdays):
         """ Adds up a list of day dictionaries """
         d = {}
-        for i in xrange(1, 32):
+        for i in range(1, 32):
             d["D%d" % i] = 0
         for cd in listdays:
-            if not cd.has_key("D29"): cd["D29"] = 0
-            if not cd.has_key("D30"): cd["D30"] = 0
-            if not cd.has_key("D31"): cd["D31"] = 0
-            for i in xrange(1, 32):
+            if "D29" not in cd: cd["D29"] = 0
+            if "D30" not in cd: cd["D30"] = 0
+            if "D31" not in cd: cd["D31"] = 0
+            for i in range(1, 32):
                 dk = "D%d" % i
-                if cd.has_key(dk):
+                if dk in cd:
                     d[dk] = int(d[dk]) + int(cd[dk])
         return d
 
     def is_zero_days(days):
         """ Returns true if a map of day counts is all zero """
-        for i in xrange(1, 32):
+        for i in range(1, 32):
             dk = "D%d" % i
-            if days.has_key(dk) and int(days[dk]) > 0:
+            if dk in days and int(days[dk]) > 0:
                 return False
         return True
 
@@ -3416,28 +3438,28 @@ def update_animal_figures(dbo, month = 0, year = 0):
         """ Subtracts day dictionary subdic from initdic """
         d = initdic.copy()
         cd = subdic
-        if not d.has_key("D29"): d["D29"] = 0
-        if not d.has_key("D30"): d["D30"] = 0
-        if not d.has_key("D31"): d["D31"] = 0
-        if not cd.has_key("D29"): cd["D29"] = 0
-        if not cd.has_key("D30"): cd["D30"] = 0
-        if not cd.has_key("D31"): cd["D31"] = 0
-        for i in xrange(1, 32):
+        if "D29" not in d: d["D29"] = 0
+        if "D30" not in d: d["D30"] = 0
+        if "D31" not in d: d["D31"] = 0
+        if "D29" not in cd: cd["D29"] = 0
+        if "D30" not in cd: cd["D30"] = 0
+        if "D31" not in cd: cd["D31"] = 0
+        for i in range(1, 32):
             dk = "D%d" % i
             d[dk] = int(d[dk]) - int(cd[dk])
         return d
 
     def add_row(orderindex, code, animaltypeid, speciesid, maxdaysinmonth, heading, bold, calctotal, days):
         """ Adds a row to the animalfigures table """
-        if not days.has_key("D29"): days["D29"] = 0
-        if not days.has_key("D30"): days["D30"] = 0
-        if not days.has_key("D31"): days["D31"] = 0
+        if "D29" not in days: days["D29"] = 0
+        if "D30" not in days: days["D30"] = 0
+        if "D31" not in days: days["D31"] = 0
         avg = 0.0
         tot = 0
         total = ""
-        for i in xrange(1, maxdaysinmonth + 1):
+        for i in range(1, maxdaysinmonth + 1):
             avg += int(days["D%d" % i])
-            tot += int(days["D%d" %i])
+            tot += int(days["D%d" % i])
         avg = round(float(float(avg) / float(maxdaysinmonth)), 1)
         if calctotal: 
             total = str(tot)
@@ -3531,7 +3553,7 @@ def update_animal_figures(dbo, month = 0, year = 0):
 
         # On Shelter
         onshelter = {}
-        for i in xrange(1, loopdays):
+        for i in range(1, loopdays):
             d = datetime.datetime(year, month, i)
             dk = "D%d" % i
             onshelter[dk] = get_number_animals_on_shelter(dbo, d, speciesid)
@@ -3540,7 +3562,7 @@ def update_animal_figures(dbo, month = 0, year = 0):
         # On Foster (if foster on shelter set)
         if configuration.foster_on_shelter(dbo):
             onfoster = {}
-            for i in xrange(1, loopdays):
+            for i in range(1, loopdays):
                 d = datetime.datetime(year, month, i)
                 dk = "D%d" % i
                 onfoster[dk] = get_number_animals_on_foster(dbo, d, speciesid)
@@ -3552,7 +3574,7 @@ def update_animal_figures(dbo, month = 0, year = 0):
 
         # Litters
         litters = {}
-        for i in xrange(1, loopdays):
+        for i in range(1, loopdays):
             d = datetime.datetime(year, month, i)
             dk = "D%d" % i
             litters[dk] = get_number_litters_on_shelter(dbo, d, speciesid)
@@ -3728,7 +3750,7 @@ def update_animal_figures(dbo, month = 0, year = 0):
 
         # On Shelter
         onshelter = {}
-        for i in xrange(1, loopdays):
+        for i in range(1, loopdays):
             d = datetime.datetime(year, month, i)
             dk = "D%d" % i
             onshelter[dk] = get_number_animals_on_shelter(dbo, d, 0, typeid)
@@ -3737,7 +3759,7 @@ def update_animal_figures(dbo, month = 0, year = 0):
         # On Foster (if foster on shelter set)
         if configuration.foster_on_shelter(dbo):
             onfoster = {}
-            for i in xrange(1, loopdays):
+            for i in range(1, loopdays):
                 d = datetime.datetime(year, month, i)
                 dk = "D%d" % i
                 onfoster[dk] = get_number_animals_on_foster(dbo, d, 0, typeid)
@@ -4081,7 +4103,7 @@ def update_animal_figures_annual(dbo, year = 0):
         species_line("SELECT ad.ReturnDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
             "a.SpeciesID = %d AND ad.ReturnDate Is Not Null AND ad.ReturnDate >= %s AND ad.ReturnDate <= %s " \
-            "AND a.NonShelterAnimal = 0 AND ad.MovementType = 1 " \
+            "AND a.NonShelterAnimal = 0 AND ad.MovementType NOT IN (2, 8) " \
             "GROUP BY ad.ReturnDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
             sp["ID"], sp["SPECIESNAME"], "SP_RETURN", group, 40, showbabies, babymonths)
 
@@ -4248,7 +4270,7 @@ def update_animal_figures_annual(dbo, year = 0):
         type_line("SELECT ad.ReturnDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
             "a.AnimalTypeID = %d AND ad.ReturnDate Is Not Null AND ad.ReturnDate >= %s AND ad.ReturnDate <= %s " \
-            "AND a.NonShelterAnimal = 0 AND ad.MovementType = 1 " \
+            "AND a.NonShelterAnimal = 0 AND ad.MovementType NOT IN (2, 8) " \
             "GROUP BY ad.ReturnDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear),
             at["ID"], at["ANIMALTYPE"], "AT_RETURN", group, 40, at["SHOWSPLIT"], babymonths)
 
@@ -4397,7 +4419,7 @@ def update_animal_figures_annual(dbo, year = 0):
         entryreason_line("SELECT ad.ReturnDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
             "a.EntryReasonID = %d AND ad.ReturnDate Is Not Null AND ad.ReturnDate >= %s AND ad.ReturnDate <= %s " \
-            "AND a.NonShelterAnimal = 0 AND ad.MovementType = 1 " \
+            "AND a.NonShelterAnimal = 0 AND ad.MovementType NOT IN (2, 8) " \
             "GROUP BY ad.ReturnDate, a.DateOfBirth" % (int(er["ID"]), firstofyear, lastofyear),
             er["ID"], er["REASONNAME"], "ER_RETURN", group, 40, er["SHOWSPLIT"], babymonths)
 
@@ -4505,544 +4527,6 @@ def update_animal_figures_annual(dbo, year = 0):
     # Write out all our changes in one go
     update_db(year)
 
-def update_animal_figures_asilomar(dbo, year = 0):
-    """
-    Updates the animal figures asilomar table for the year given.
-    If year isn't given, defaults to this year, unless today is the
-    first of the year in which case we do last year.
-    """
-    batch = []
-    asrows = {}
-    nid = db._get_id_max(dbo, "animalfiguresasilomar")
-
-    def getcategory(catidx):
-        if catidx == 0: return "Healthy"
-        if catidx == 1: return "Treatable - Rehabilitatable"
-        if catidx == 2: return "Treatable - Manageable"
-        return "Unhealthy and Untreatable"
-
-    def add_row(code, heading, bold, cat, dog):
-        """ Adds a row to the animalfiguresasilomar table """
-        total = -1
-        if cat != -1 and dog != -1:
-            total = cat + dog
-        batch.append((
-            nid + len(batch),
-            year,
-            nid + len(batch),
-            code,
-            heading,
-            bold,
-            cat,
-            dog, 
-            total
-        ))
-
-    def add_section(sql, headingtext, footertext, footercode):
-        """ 
-            Executes a query and calls add_row appropriately. The query
-            should have 3 columns, CATEGORY, SPECIESID, TOTAL.
-            (0 = healthy, 1 = rehabilitatable, 2 = manageable, 3 = unhealthy),
-            the second and third are the totals for dog, then cat for
-            the query.
-            A heading of headingtext is sent first and a subtotal is
-            calculated and sent afterwards with a bold line.
-        """
-        rows = db.query(dbo, sql)
-        add_row("", headingtext, 0, -1, -1)
-        section = [
-            { "cat" : 0, "dog": 0 },
-            { "cat" : 0, "dog": 0 },
-            { "cat" : 0, "dog": 0 },
-            { "cat" : 0, "dog": 0 }
-        ]
-        catsub = 0
-        dogsub = 0
-        for r in rows:
-            if r["ASILOMARINTAKECATEGORY"] is None: r["ASILOMARINTAKECATEGORY"] = 0
-            if r["SPECIESID"] == 1:
-                section[r["ASILOMARINTAKECATEGORY"]]["dog"] = r["TOTAL"]
-            elif r["SPECIESID"] == 2:
-                section[r["ASILOMARINTAKECATEGORY"]]["cat"] = r["TOTAL"]
-        for i, s in enumerate(section):
-            add_row("", getcategory(i), 0, s["cat"], s["dog"])
-            catsub += s["cat"]
-            dogsub += s["dog"]
-        add_row(footercode, footertext, 1, catsub, dogsub)
-        asrows[footercode] = (catsub, dogsub)
-
-    def add_subtotal(sql, footertext, footercode):
-        """ 
-            Executes a subtotal query and calls add_row appropriately. The query
-            should have 2 columns, SPECIESID and TOTAL.
-            The subtotal is calculated and added with a bold line.
-        """
-        rows = db.query(dbo, sql)
-        catsub = 0
-        dogsub = 0
-        for r in rows:
-            if r["SPECIESID"] == 1:
-                dogsub = r["TOTAL"]
-            elif r["SPECIESID"] == 2:
-                catsub = r["TOTAL"]
-        add_row(footercode, footertext, 1, catsub, dogsub)
-        asrows[footercode] = (catsub, dogsub)
-
-    def add_total(selrows, footertext, footercode):
-        """
-        Adds up any letters in selrows as a string and adds a new row
-        """
-        catsub = 0
-        dogsub = 0
-        for l in selrows:
-            if asrows.has_key(l):
-                cur = asrows[l]
-                catsub += cur[0]
-                dogsub += cur[1]
-        add_row(footercode, footertext, 1, catsub, dogsub)
-        asrows[footercode] = (catsub, dogsub)
-
-    def update_db(year):
-        """ Writes all of our figures to the database """
-        db.execute(dbo, "DELETE FROM animalfiguresasilomar WHERE Year = %d" % year)
-        sql = "INSERT INTO animalfiguresasilomar (ID, Year, OrderIndex, Code, Heading, " \
-            "Bold, Cat, Dog, Total) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        db.execute_many(dbo, sql, batch)
-        al.debug("wrote %d asilomar figures records" % len(batch), "animal.update_animal_figures_asilomar", dbo)
-
-    # Is this not a US locale, or is the option turned off? Bail out.
-    if dbo.locale != "en" or configuration.disable_asilomar(dbo):
-        al.debug("Not a US locale, or asilomar is disabled", "animal.update_animal_figures_asilomar", dbo)
-        return
-
-    # If year is zero, figure out which one we're going
-    # to generate for. We use this year, unless today is the first
-    # of the year, in which case we do last year.
-    if year == 0:
-        today = now(dbo.timezone)
-        if today.day == 1 and today.month == 1: today = subtract_years(today, 1)
-        year = today.year
-    al.debug("Generating asilomar figures annual for year=%d" % year, "animal.update_animal_figures_asilomar", dbo)
-
-    # Work out the full year
-    foy = datetime.datetime(year, 1, 1)
-    loy = datetime.datetime(year, 12, 31)
-    firstofyear = db.dd(foy)
-    lastofyear = db.dd(loy)
-
-    # A Beginning of year shelter count
-    dogsub = get_number_animals_on_shelter(dbo, foy, 1, startofday=True)
-    catsub = get_number_animals_on_shelter(dbo, foy, 2, startofday=True)
-    add_row("A", "BEGINNING SHELTER COUNT", 1, catsub, dogsub)
-
-    # B Intake from the public
-    sql = "SELECT AsilomarIntakeCategory, SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND IsTransfer = 0 AND AsilomarOwnerRequestedEuthanasia = 0 " \
-        "GROUP BY AsilomarIntakeCategory, SpeciesID" % (firstofyear, lastofyear)
-    add_section(sql, "INTAKE (Live Dogs and Cats Only)", "Subtotal Intake from the Public", "B")
-
-    # C Incoming transfers from community
-    sql = "SELECT AsilomarIntakeCategory, SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND IsTransfer = 1 AND AsilomarIsTransferExternal = 0 AND AsilomarOwnerRequestedEuthanasia = 0 " \
-        "GROUP BY AsilomarIntakeCategory, SpeciesID" % (firstofyear, lastofyear)
-    add_section(sql, "Incoming Transfers from within Target Community", "Subtotal Intake from Incoming Transfers from Orgs within Community/Coalition", "C")
-
-    # D Incoming transfers from outside community
-    sql = "SELECT AsilomarIntakeCategory, SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND IsTransfer = 1 AND AsilomarIsTransferExternal = 1 AND AsilomarOwnerRequestedEuthanasia = 0 " \
-        "GROUP BY AsilomarIntakeCategory, SpeciesID" % (firstofyear, lastofyear)
-    add_section(sql, "Incoming Transfers from outside Target Community", "Subtotal Intake from Incoming Transfers from Orgs outside Community/Coalition", "D")
-
-    # E Owners requesting euthanasia
-    sql = "SELECT AsilomarIntakeCategory, SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND IsTransfer = 1 AND AsilomarIsTransferExternal = 1 AND AsilomarOwnerRequestedEuthanasia = 1 " \
-        "GROUP BY AsilomarIntakeCategory, SpeciesID" % (firstofyear, lastofyear)
-    add_section(sql, "From Owners/Guardians Requesting Euthanasia", "Subtotal Intake from Owners/Guardians Requesting Euthanasia", "E")
-
-    # F Total Intake
-    sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s " \
-        "GROUP BY SpeciesID" % (firstofyear, lastofyear)
-    add_subtotal(sql, "Total Intake [B + C + D + E]", "F")
-
-    # G Unhealthy owner requesting euthanasia
-    sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s " \
-        "AND AsilomarIntakeCategory = 3 AND AsilomarOwnerRequestedEuthanasia = 1 " \
-        "GROUP BY SpeciesID" % (firstofyear, lastofyear)
-    add_subtotal(sql, "Owner/Guardian Requested Euthanasia (Unhealthy and Untreatable Only)", "G")
-
-    # H Adjusted intake
-    sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s " \
-        "AND NOT (AsilomarIntakeCategory = 3 AND AsilomarOwnerRequestedEuthanasia = 1) " \
-        "GROUP BY SpeciesID" % (firstofyear, lastofyear)
-    add_subtotal(sql, "Adjusted Total Intake [F minus G]", "H")
-
-    # I Total Adoptions
-    sql = "SELECT a.AsilomarIntakeCategory, a.SpeciesID, COUNT(a.ID) AS Total FROM animal a " \
-        "INNER JOIN adoption m ON m.AnimalID = a.ID " \
-        "WHERE m.MovementDate >= %s AND m.MovementDate <= %s AND m.MovementType = 1 " \
-        "GROUP BY a.AsilomarIntakeCategory, a.SpeciesID" % (firstofyear, lastofyear)
-    add_section(sql, "Adoptions (Only Dogs and Cats Adopted by the Public)", "Total Adoptions", "I")
-
-    # J Total Outgoing Transfers (to orgs within community)
-    sql = "SELECT a.AsilomarIntakeCategory, a.SpeciesID, COUNT(a.ID) AS Total FROM animal a " \
-        "INNER JOIN adoption m ON m.AnimalID = a.ID " \
-        "WHERE m.MovementDate >= %s AND m.MovementDate <= %s AND m.MovementType = 3 AND a.AsilomarIsTransferExternal = 0 " \
-        "GROUP BY a.AsilomarIntakeCategory, a.SpeciesID" % (firstofyear, lastofyear)
-    add_section(sql, "Outgoing Transfers to target community", "Total Outgoing Transfers (to Orgs within Community/Coalition)", "J")
-
-    # K Total Outgoing Transfers (to orgs outside community)
-    sql = "SELECT a.AsilomarIntakeCategory, a.SpeciesID, COUNT(a.ID) AS Total FROM animal a " \
-        "INNER JOIN adoption m ON m.AnimalID = a.ID " \
-        "WHERE m.MovementDate >= %s AND m.MovementDate <= %s AND m.MovementType = 3 AND a.AsilomarIsTransferExternal = 1 " \
-        "GROUP BY a.AsilomarIntakeCategory, a.SpeciesID" % (firstofyear, lastofyear)
-    add_section(sql, "Outgoing Transfers outside target community", "Total Outgoing Transfers (to Orgs outside Community/Coalition)", "K")
-
-    # L Return to Owner/Guardian
-    sql = "SELECT a.SpeciesID, COUNT(a.ID) AS Total FROM animal a " \
-        "INNER JOIN adoption m ON m.AnimalID = a.ID " \
-        "WHERE m.MovementDate >= %s AND m.MovementDate <= %s AND m.MovementType = 5 " \
-        "GROUP BY a.SpeciesID" % (firstofyear, lastofyear)
-    add_subtotal(sql, "Return to Owner/Guardian", "L")
-
-    add_row("", "Dogs and Cats Euthanized", 0, -1, -1)
-
-    # M Healthy
-    sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DeceasedDate >= %s AND DeceasedDate <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 AND AsilomarIntakeCategory = 0 " \
-        "GROUP BY SpeciesID" % (firstofyear, lastofyear)
-    add_subtotal(sql, "Healthy (Includes Owner/Guardian Requested Euthanasia)", "M")
-
-    # N Rehabilitatable
-    sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DeceasedDate >= %s AND DeceasedDate <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 AND AsilomarIntakeCategory = 1 " \
-        "GROUP BY SpeciesID" % (firstofyear, lastofyear)
-    add_subtotal(sql, "Treatable - Rehabilitatable (Includes Owner/Guardian Requested Euthanasia)", "N")
-
-    # O Manageable
-    sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DeceasedDate >= %s AND DeceasedDate <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 AND AsilomarIntakeCategory = 2 " \
-        "GROUP BY SpeciesID" % (firstofyear, lastofyear)
-    add_subtotal(sql, "Treatable - Manageable (Includes Owner/Guardian Requested Euthanasia)", "O")
-
-    # P Unhealthy
-    sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DeceasedDate >= %s AND DeceasedDate <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 AND AsilomarIntakeCategory = 3 " \
-        "GROUP BY SpeciesID" % (firstofyear, lastofyear)
-    add_subtotal(sql, "Unhealthy and Untreatable (Includes Owner/Guardian Requested Euthanasia)", "P")
-
-    # Q Total Euthanasia 
-    sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DeceasedDate >= %s AND DeceasedDate <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 " \
-        "GROUP BY SpeciesID" % (firstofyear, lastofyear)
-    add_subtotal(sql, "Total Euthanasia [M + N + O + P]", "Q")
-
-    # R Unhealthy owner requesting euthanasia
-    sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DeceasedDate >= %s AND DeceasedDate <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 " \
-        "AND AsilomarIntakeCategory = 3 AND AsilomarOwnerRequestedEuthanasia = 1 " \
-        "GROUP BY SpeciesID" % (firstofyear, lastofyear)
-    add_subtotal(sql, "Owner/Guardian Requested Euthanasia (Unhealthy and Untreatable Only)", "R")
-
-    # S Adjusted Total Euthanasia 
-    sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DeceasedDate >= %s AND DeceasedDate <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 " \
-        "AND NOT (AsilomarIntakeCategory = 3 AND AsilomarOwnerRequestedEuthanasia = 1) " \
-        "GROUP BY SpeciesID" % (firstofyear, lastofyear)
-    add_subtotal(sql, "Adjusted Total Euthanasia [Q minus R]", "S")
-
-    # T Subtotal Outcomes
-    add_total("IJKLS", "Subtotal Outcomes [I + J + K + L + S]", "T")
-   
-    # U Died Or Lost in Shelter/Care
-    sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND DeceasedDate >= %s AND DeceasedDate <= %s AND DeceasedDate Is Not Null AND PutToSleep = 0 " \
-        "GROUP BY SpeciesID" % (firstofyear, lastofyear)
-    add_subtotal(sql, "Died Or Lost in Shelter/Care", "U")
-
-    # V Total Outcomes
-    add_total("TU", "Total Outcomes [T + U]", "V")
-
-    # W End of year shelter count
-    dogsub = get_number_animals_on_shelter(dbo, add_days(loy, 1), 1, startofday=True)
-    catsub = get_number_animals_on_shelter(dbo, add_days(loy, 1), 2, startofday=True)
-    add_row("W", "ENDING SHELTER COUNT", 1, catsub, dogsub)
-
-    # Write out all our changes in one go
-    update_db(year)
-
-def update_animal_figures_monthly_asilomar(dbo, month = 0, year = 0):
-    """
-    Updates the animal figures asilomar table for the year given.
-    If year isn't given, defaults to this year, unless today is the
-    first of the year in which case we do last year.
-    """
-    batch = []
-    asrows = {}
-    nid = db._get_id_max(dbo, "animalfiguresmonthlyasilomar")
-
-    def getcategory(catidx):
-        if catidx == 0: return "Healthy"
-        if catidx == 1: return "Treatable - Rehabilitatable"
-        if catidx == 2: return "Treatable - Manageable"
-        return "Unhealthy and Untreatable"
-
-    def add_row(code, heading, bold, cat, dog):
-        """ Adds a row to the animalfiguresmonthlyasilomar table """
-        total = -1
-        if cat != -1 and dog != -1:
-            total = cat + dog
-        batch.append((
-            nid + len(batch),
-            month,
-            year,
-            nid + len(batch),
-            code,
-            heading,
-            bold,
-            cat,
-            dog, 
-            total
-        ))
-
-    def add_section(sql, headingtext, footertext, footercode):
-        """ 
-            Executes a query and calls add_row appropriately. The query
-            should have 3 columns, CATEGORY, SPECIESID, TOTAL.
-            (0 = healthy, 1 = rehabilitatable, 2 = manageable, 3 = unhealthy),
-            the second and third are the totals for dog, then cat for
-            the query.
-            A heading of headingtext is sent first and a subtotal is
-            calculated and sent afterwards with a bold line.
-        """
-        rows = db.query(dbo, sql)
-        add_row("", headingtext, 0, -1, -1)
-        section = [
-            { "cat" : 0, "dog": 0 },
-            { "cat" : 0, "dog": 0 },
-            { "cat" : 0, "dog": 0 },
-            { "cat" : 0, "dog": 0 }
-        ]
-        catsub = 0
-        dogsub = 0
-        for r in rows:
-            if r["ASILOMARINTAKECATEGORY"] is None: r["ASILOMARINTAKECATEGORY"] = 0
-            if r["SPECIESID"] == 1:
-                section[r["ASILOMARINTAKECATEGORY"]]["dog"] = r["TOTAL"]
-            elif r["SPECIESID"] == 2:
-                section[r["ASILOMARINTAKECATEGORY"]]["cat"] = r["TOTAL"]
-        for i, s in enumerate(section):
-            add_row("", getcategory(i), 0, s["cat"], s["dog"])
-            catsub += s["cat"]
-            dogsub += s["dog"]
-        add_row(footercode, footertext, 1, catsub, dogsub)
-        asrows[footercode] = (catsub, dogsub)
-
-    def add_subtotal(sql, footertext, footercode):
-        """ 
-            Executes a subtotal query and calls add_row appropriately. The query
-            should have 2 columns, SPECIESID and TOTAL.
-            The subtotal is calculated and added with a bold line.
-        """
-        rows = db.query(dbo, sql)
-        catsub = 0
-        dogsub = 0
-        for r in rows:
-            if r["SPECIESID"] == 1:
-                dogsub = r["TOTAL"]
-            elif r["SPECIESID"] == 2:
-                catsub = r["TOTAL"]
-        add_row(footercode, footertext, 1, catsub, dogsub)
-        asrows[footercode] = (catsub, dogsub)
-
-    def add_total(selrows, footertext, footercode):
-        """
-        Adds up any letters in selrows as a string and adds a new row
-        """
-        catsub = 0
-        dogsub = 0
-        for l in selrows:
-            if asrows.has_key(l):
-                cur = asrows[l]
-                catsub += cur[0]
-                dogsub += cur[1]
-        add_row(footercode, footertext, 1, catsub, dogsub)
-        asrows[footercode] = (catsub, dogsub)
-
-    def update_db(month, year):
-        """ Writes all of our figures to the database """
-        db.execute(dbo, "DELETE FROM animalfiguresmonthlyasilomar WHERE Month = %d AND Year = %d" % (month, year))
-        sql = "INSERT INTO animalfiguresmonthlyasilomar (ID, Month, Year, OrderIndex, Code, Heading, " \
-            "Bold, Cat, Dog, Total) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        db.execute_many(dbo, sql, batch)
-        al.debug("wrote %d asilomar figures records" % len(batch), "animal.update_animal_figures_monthly_asilomar", dbo)
-
-    # Is this not a US locale, or is the option turned off? Bail out.
-    if dbo.locale != "en" or configuration.disable_asilomar(dbo):
-        al.debug("Not a US locale, or asilomar is disabled", "animal.update_animal_figures_monthly_asilomar", dbo)
-        return
-
-    # If month and year are zero, figure out which one we're going
-    # to generate for. We use this month, unless today is the first
-    # of the month, in which case we do last month
-    if month == 0 and year == 0:
-        today = now()
-        if today.day == 1: today = subtract_months(today, 1)
-        month = today.month
-        year = today.year
-    al.debug("Generating asilomar monthly figures for month=%d, year=%d" % (month, year), "animal.update_animal_figures_monthly_asilomar", dbo)
-
-    fom = datetime.datetime(year, month, 1)
-    lom = last_of_month(fom)
-    lom = lom.replace(hour=23, minute=59, second=59)
-    firstofmonth = db.dd(fom)
-    lastofmonth = db.ddt(lom)
-
-    # A Beginning of month shelter count
-    dogsub = get_number_animals_on_shelter(dbo, fom, 1, startofday=True)
-    catsub = get_number_animals_on_shelter(dbo, fom, 2, startofday=True)
-    add_row("A", "BEGINNING SHELTER COUNT", 1, catsub, dogsub)
-
-    # B Intake from the public
-    sql = "SELECT AsilomarIntakeCategory, SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND IsTransfer = 0 AND AsilomarOwnerRequestedEuthanasia = 0 " \
-        "GROUP BY AsilomarIntakeCategory, SpeciesID" % (firstofmonth, lastofmonth)
-    add_section(sql, "INTAKE (Live Dogs and Cats Only)", "Subtotal Intake from the Public", "B")
-
-    # C Incoming transfers from community
-    sql = "SELECT AsilomarIntakeCategory, SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND IsTransfer = 1 AND AsilomarIsTransferExternal = 0 AND AsilomarOwnerRequestedEuthanasia = 0 " \
-        "GROUP BY AsilomarIntakeCategory, SpeciesID" % (firstofmonth, lastofmonth)
-    add_section(sql, "Incoming Transfers from within Target Community", "Subtotal Intake from Incoming Transfers from Orgs within Community/Coalition", "C")
-
-    # D Incoming transfers from outside community
-    sql = "SELECT AsilomarIntakeCategory, SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND IsTransfer = 1 AND AsilomarIsTransferExternal = 1 AND AsilomarOwnerRequestedEuthanasia = 0 " \
-        "GROUP BY AsilomarIntakeCategory, SpeciesID" % (firstofmonth, lastofmonth)
-    add_section(sql, "Incoming Transfers from outside Target Community", "Subtotal Intake from Incoming Transfers from Orgs outside Community/Coalition", "D")
-
-    # E Owners requesting euthanasia
-    sql = "SELECT AsilomarIntakeCategory, SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s AND IsTransfer = 1 AND AsilomarIsTransferExternal = 1 AND AsilomarOwnerRequestedEuthanasia = 1 " \
-        "GROUP BY AsilomarIntakeCategory, SpeciesID" % (firstofmonth, lastofmonth)
-    add_section(sql, "From Owners/Guardians Requesting Euthanasia", "Subtotal Intake from Owners/Guardians Requesting Euthanasia", "E")
-
-    # F Total Intake
-    sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s " \
-        "GROUP BY SpeciesID" % (firstofmonth, lastofmonth)
-    add_subtotal(sql, "Total Intake [B + C + D + E]", "F")
-
-    # G Unhealthy owner requesting euthanasia
-    sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s " \
-        "AND AsilomarIntakeCategory = 3 AND AsilomarOwnerRequestedEuthanasia = 1 " \
-        "GROUP BY SpeciesID" % (firstofmonth, lastofmonth)
-    add_subtotal(sql, "Owner/Guardian Requested Euthanasia (Unhealthy and Untreatable Only)", "G")
-
-    # H Adjusted intake
-    sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %s AND DateBroughtIn <= %s " \
-        "AND NOT (AsilomarIntakeCategory = 3 AND AsilomarOwnerRequestedEuthanasia = 1) " \
-        "GROUP BY SpeciesID" % (firstofmonth, lastofmonth)
-    add_subtotal(sql, "Adjusted Total Intake [F minus G]", "H")
-
-    # I Total Adoptions
-    sql = "SELECT a.AsilomarIntakeCategory, a.SpeciesID, COUNT(a.ID) AS Total FROM animal a " \
-        "INNER JOIN adoption m ON m.AnimalID = a.ID " \
-        "WHERE m.MovementDate >= %s AND m.MovementDate <= %s AND m.MovementType = 1 " \
-        "GROUP BY a.AsilomarIntakeCategory, a.SpeciesID" % (firstofmonth, lastofmonth)
-    add_section(sql, "Adoptions (Only Dogs and Cats Adopted by the Public)", "Total Adoptions", "I")
-
-    # J Total Outgoing Transfers (to orgs within community)
-    sql = "SELECT a.AsilomarIntakeCategory, a.SpeciesID, COUNT(a.ID) AS Total FROM animal a " \
-        "INNER JOIN adoption m ON m.AnimalID = a.ID " \
-        "WHERE m.MovementDate >= %s AND m.MovementDate <= %s AND m.MovementType = 3 AND a.AsilomarIsTransferExternal = 0 " \
-        "GROUP BY a.AsilomarIntakeCategory, a.SpeciesID" % (firstofmonth, lastofmonth)
-    add_section(sql, "Outgoing Transfers to target community", "Total Outgoing Transfers (to Orgs within Community/Coalition)", "J")
-
-    # K Total Outgoing Transfers (to orgs outside community)
-    sql = "SELECT a.AsilomarIntakeCategory, a.SpeciesID, COUNT(a.ID) AS Total FROM animal a " \
-        "INNER JOIN adoption m ON m.AnimalID = a.ID " \
-        "WHERE m.MovementDate >= %s AND m.MovementDate <= %s AND m.MovementType = 3 AND a.AsilomarIsTransferExternal = 1 " \
-        "GROUP BY a.AsilomarIntakeCategory, a.SpeciesID" % (firstofmonth, lastofmonth)
-    add_section(sql, "Outgoing Transfers outside target community", "Total Outgoing Transfers (to Orgs outside Community/Coalition)", "K")
-
-    # L Return to Owner/Guardian
-    sql = "SELECT a.SpeciesID, COUNT(a.ID) AS Total FROM animal a " \
-        "INNER JOIN adoption m ON m.AnimalID = a.ID " \
-        "WHERE m.MovementDate >= %s AND m.MovementDate <= %s AND m.MovementType = 5 " \
-        "GROUP BY a.SpeciesID" % (firstofmonth, lastofmonth)
-    add_subtotal(sql, "Return to Owner/Guardian", "L")
-
-    add_row("", "Dogs and Cats Euthanized", 0, -1, -1)
-
-    # M Healthy
-    sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DeceasedDate >= %s AND DeceasedDate <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 AND AsilomarIntakeCategory = 0 " \
-        "GROUP BY SpeciesID" % (firstofmonth, lastofmonth)
-    add_subtotal(sql, "Healthy (Includes Owner/Guardian Requested Euthanasia)", "M")
-
-    # N Rehabilitatable
-    sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DeceasedDate >= %s AND DeceasedDate <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 AND AsilomarIntakeCategory = 1 " \
-        "GROUP BY SpeciesID" % (firstofmonth, lastofmonth)
-    add_subtotal(sql, "Treatable - Rehabilitatable (Includes Owner/Guardian Requested Euthanasia)", "N")
-
-    # O Manageable
-    sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DeceasedDate >= %s AND DeceasedDate <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 AND AsilomarIntakeCategory = 2 " \
-        "GROUP BY SpeciesID" % (firstofmonth, lastofmonth)
-    add_subtotal(sql, "Treatable - Manageable (Includes Owner/Guardian Requested Euthanasia)", "O")
-
-    # P Unhealthy
-    sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DeceasedDate >= %s AND DeceasedDate <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 AND AsilomarIntakeCategory = 3 " \
-        "GROUP BY SpeciesID" % (firstofmonth, lastofmonth)
-    add_subtotal(sql, "Unhealthy and Untreatable (Includes Owner/Guardian Requested Euthanasia)", "P")
-
-    # Q Total Euthanasia 
-    sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DeceasedDate >= %s AND DeceasedDate <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 " \
-        "GROUP BY SpeciesID" % (firstofmonth, lastofmonth)
-    add_subtotal(sql, "Total Euthanasia [M + N + O + P]", "Q")
-
-    # R Unhealthy owner requesting euthanasia
-    sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DeceasedDate >= %s AND DeceasedDate <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 " \
-        "AND AsilomarIntakeCategory = 3 AND AsilomarOwnerRequestedEuthanasia = 1 " \
-        "GROUP BY SpeciesID" % (firstofmonth, lastofmonth)
-    add_subtotal(sql, "Owner/Guardian Requested Euthanasia (Unhealthy and Untreatable Only)", "R")
-
-    # S Adjusted Total Euthanasia 
-    sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DeceasedDate >= %s AND DeceasedDate <= %s AND DeceasedDate Is Not Null AND PutToSleep = 1 " \
-        "AND NOT (AsilomarIntakeCategory = 3 AND AsilomarOwnerRequestedEuthanasia = 1) " \
-        "GROUP BY SpeciesID" % (firstofmonth, lastofmonth)
-    add_subtotal(sql, "Adjusted Total Euthanasia [Q minus R]", "S")
-
-    # T Subtotal Outcomes
-    add_total("IJKLS", "Subtotal Outcomes [I + J + K + L + S]", "T")
-   
-    # U Died Or Lost in Shelter/Care
-    sql = "SELECT SpeciesID, COUNT(ID) AS Total FROM animal " \
-        "WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND DeceasedDate >= %s AND DeceasedDate <= %s AND DeceasedDate Is Not Null AND PutToSleep = 0 " \
-        "GROUP BY SpeciesID" % (firstofmonth, lastofmonth)
-    add_subtotal(sql, "Died Or Lost in Shelter/Care", "U")
-
-    # V Total Outcomes
-    add_total("TU", "Total Outcomes [T + U]", "V")
-
-    # W End of year shelter count
-    dogsub = get_number_animals_on_shelter(dbo, add_days(lom, 1), 1, startofday=True)
-    catsub = get_number_animals_on_shelter(dbo, add_days(lom, 1), 2, startofday=True)
-    add_row("W", "ENDING SHELTER COUNT", 1, catsub, dogsub)
-
-    # Write out all our changes in one go
-    update_db(month, year)
-
 def auto_cancel_holds(dbo):
     """
     Automatically cancels holds after the hold until date value set
@@ -5102,12 +4586,8 @@ def maintenance_animal_figures(dbo, includeMonths = True, includeAnnual = True):
         for my in monthsyears:
             al.debug("update_animal_figures: month=%d, year=%d" % (my["THEMONTH"], my["THEYEAR"]), "animal.maintenance_animal_figures", dbo)
             update_animal_figures(dbo, int(my["THEMONTH"]), int(my["THEYEAR"]))
-            al.debug("update_animal_figures_monthly_asilomar: month=%d, year=%d" % (my["THEMONTH"], my["THEYEAR"]), "animal.maintenance_animal_fitures", dbo)
-            update_animal_figures_monthly_asilomar(dbo, int(my["THEMONTH"]), int(my["THEYEAR"]))
     if includeAnnual:
         for y in years:
             al.debug("update_animal_figures_annual: year=%d" % y["THEYEAR"], "animal.maintenance_animal_figures", dbo)
             update_animal_figures_annual(dbo, int(y["THEYEAR"]))
-            al.debug("update_animal_figures_asilomar: year=%d" % y["THEYEAR"], "animal.maintenance_animal_figures", dbo)
-            update_animal_figures_asilomar(dbo, int(y["THEYEAR"]))
 

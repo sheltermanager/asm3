@@ -43,7 +43,7 @@ VALID_FIELDS = [
 def gkc(m, f):
     """ reads field f from map m, assuming a currency amount and returning 
         an integer """
-    if not m.has_key(f): return 0
+    if f not in m: return 0
     try:
         # Remove non-numeric characters
         v = re.sub(r'[^\d.]+', '', str(m[f]))
@@ -56,7 +56,7 @@ def gkc(m, f):
 def gks(m, f):
     """ reads field f from map m, returning a string. 
         string is empty if key not present """
-    if not m.has_key(f): return ""
+    if f not in m: return ""
     return str(utils.strip_non_ascii(m[f]))
 
 def gkd(dbo, m, f, usetoday = False):
@@ -65,7 +65,7 @@ def gkd(dbo, m, f, usetoday = False):
         If usetoday is set to True, then today's date is returned
         if the date is blank.
     """
-    if not m.has_key(f): return ""
+    if f not in m: return ""
     lv = str(m[f])
     # If there's a space, then I guess we have time info - throw it away
     if lv.find(" ") > 0:
@@ -105,7 +105,7 @@ def gkb(m, f):
     """ reads field f from map m, returning a boolean. 
         boolean is false if key not present. Interprets
         anything but blank, 0 or N as yes """
-    if not m.has_key(f): return False
+    if f not in m: return False
     if m[f] == "" or m[f] == "0" or m[f].upper().startswith("N"): return False
     return True
 
@@ -128,7 +128,7 @@ def gkynu(m, f):
     """ reads field f from map m, returning a tri-state
         switch. Returns 2 (unknown) for a blank field
         Input should start with Y/N/U or 0/1/2 """
-    if not m.has_key(f): return 2
+    if f not in m: return 2
     if m[f].upper().startswith("Y") or m[f] == "0": return 0
     if m[f].upper().startswith("N") or m[f] == "1": return 1
     return 2
@@ -140,7 +140,7 @@ def gkbr(dbo, m, f, speciesid, create):
         find a match and then returns str(newid)
         speciesid is the linked species for any newly created breed
         returns "0" if key not present, or if no match was found and create is off """
-    if not m.has_key(f): return "0"
+    if f not in m: return "0"
     lv = m[f]
     matchid = db.query_int(dbo, "SELECT ID FROM breed WHERE BreedName = '%s'" % (lv.replace("'", "`")))
     if matchid == 0 and create:
@@ -156,7 +156,7 @@ def gkl(dbo, m, f, table, namefield, create):
         if create is True, adds a row to the table if it doesn't
         find a match and then returns str(newid)
         returns "0" if key not present, or if no match was found and create is off """
-    if not m.has_key(f): return "0"
+    if f not in m: return "0"
     lv = m[f]
     matchid = db.query_int(dbo, "SELECT ID FROM %s WHERE %s = '%s'" % (table, namefield, lv.replace("'", "`")))
     if matchid == 0 and create:
@@ -179,7 +179,7 @@ def create_additional_fields(dbo, row, errors, rowno, csvkey = "ANIMALADDITIONAL
                 ( "Value", db.ds(v) ) ))
             try:
                 db.execute(dbo, sql)
-            except Exception,e:
+            except Exception as e:
                 errors.append( (rowno, str(row), str(e)) )
 
 def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, checkduplicates = False):
@@ -358,12 +358,12 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
                         dups = person.get_person_similar(dbo, p["emailaddress"], p["surname"], p["forenames"], p["address"])
                         if len(dups) > 0:
                             a["originalowner"] = str(dups[0]["ID"])
-                    if not a.has_key("originalowner"):
+                    if "originalowner" not in a:
                         ooid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import")
                         a["originalowner"] = str(ooid)
                         # Identify an ORIGINALOWNERADDITIONAL additional fields and create them
                         create_additional_fields(dbo, row, errors, rowno, "ORIGINALOWNERADDITIONAL", "person", ooid)
-                except Exception,e:
+                except Exception as e:
                     al.error("row %d (%s), originalowner: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
                     errors.append( (rowno, str(row), "originalowner: " + str(e)) )
             try:
@@ -375,7 +375,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
                     animalid, newcode = animal.insert_animal_from_form(dbo, utils.PostedData(a, dbo.locale), "import")
                     # Identify an ANIMALADDITIONAL additional fields and create them
                     create_additional_fields(dbo, row, errors, rowno, "ANIMALADDITIONAL", "animal", animalid)
-            except Exception,e:
+            except Exception as e:
                 al.error("row %d (%s): %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
                 errmsg = str(e)
                 if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
@@ -428,7 +428,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
                     personid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import")
                     # Identify any PERSONADDITIONAL additional fields and create them
                     create_additional_fields(dbo, row, errors, rowno, "PERSONADDITIONAL", "person", personid)
-            except Exception,e:
+            except Exception as e:
                 al.error("row %d (%s), person: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
                 errmsg = str(e)
                 if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
@@ -449,7 +449,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
             m["returncategory"] = str(configuration.default_entry_reason(dbo))
             try:
                 movementid = movement.insert_movement_from_form(dbo, "import", utils.PostedData(m, dbo.locale))
-            except Exception,e:
+            except Exception as e:
                 al.error("row %d (%s), movement: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
                 errmsg = str(e)
                 if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
@@ -472,7 +472,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
                 d["payment"] = "1"
             try:
                 financial.insert_donation_from_form(dbo, "import", utils.PostedData(d, dbo.locale))
-            except Exception,e:
+            except Exception as e:
                 al.error("row %d (%s), donation: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
                 errmsg = str(e)
                 if type(e) == utils.ASMValidationError: errmsg = e.getMsg()

@@ -1,6 +1,6 @@
 /*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, console, jQuery */
-/*global asm, common, config, dlgfx, format, geo, html, header, log, validate, _, escape, unescape */
+/*global _, asm, additional, common, config, dlgfx, format, geo, html, header, log, validate, escape, unescape */
 
 (function($) {
 
@@ -26,6 +26,7 @@
         options: {
             id: 0,
             rec: {},
+            additionalfields: [],
             node: null,
             display: null,
             dialog: null,
@@ -246,6 +247,7 @@
                     }
                 });
                 if (!valid) { return; }
+                if (!additional.validate_mandatory_node(dialogadd)) { return; }
                 // Disable the dialog buttons before we make any ajax requests
                 dialogadd.disable_dialog_buttons();
                 // check for similar people
@@ -297,15 +299,17 @@
                     self.clear(true);
                 });
 
-            /// Go to the backend to get the towns, counties and person flags with lookup data
+            /// Go to the backend to get the additional fields, towns, counties and person flags with lookup data
             $.ajax({
                 type: "GET",
                 url:  "person_embed",
+                cache: true, // this data can be cached for a few minutes
                 data: { mode: "lookup" },
                 dataType: "text",
                 success: function(data, textStatus, jqXHR) {
                     var h = "";
                     var d = jQuery.parseJSON(data);
+                    self.options.additionalfields = d.additional;
                     self.options.towns = d.towns;
                     self.options.counties = d.counties;
                     self.options.towncounties = d.towncounties;
@@ -340,6 +344,8 @@
                     // Add sites
                     dialogadd.find(".personchooser-site").html('<option value="0">' + _("(all)") + '</option>' + 
                         html.list_to_options(self.options.sites, "ID", "SITENAME"));
+                    // Add mandatory additional fields
+                    dialogadd.find("table").append(additional.additional_mandatory_fields(d.additional, false, "additional chooser"));
 
                     // Was there a value already set by the markup? If so, use it
                     if (self.element.val() != "" && self.element.val() != "0") {

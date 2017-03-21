@@ -66,7 +66,7 @@ def json_handler(obj):
     elif isinstance(obj, decimal.Decimal):
         return str(obj)
     else:
-        raise TypeError, 'Object of type %s with value of %s is not JSON serializable' % (type(obj), repr(obj))
+        raise TypeError('Object of type %s with value of %s is not JSON serializable' % (type(obj), repr(obj)))
 
 def json(obj, readable = False):
     """
@@ -247,9 +247,9 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
         '<body style="background-color: %(bgcol)s">\n' \
         '<noscript>\n' \
         'Sorry. ASM will not work without Javascript.\n' \
-        '</noscript>\n' % \
-            { "title": title, 
-              "scripts": 
+        '</noscript>\n' % {
+            "title": title, 
+            "scripts": 
                 css_tag(JQUERY_UI_CSS % { "theme": theme}, "jqt") +
                 css_tag(ASMSELECT_CSS) + 
                 css_tag(CODEMIRROR_CSS) + 
@@ -287,7 +287,7 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
                 script_schema() + 
                 script_i18n(locale) + 
                 asm_scripts,
-              "bgcol": bgcol }
+            "bgcol": bgcol }
 
 def tinymce_header(title, js, jswindowprint = True, pdfenabled = True, onlysavewhendirty = False, readonly = False):
     """
@@ -435,7 +435,7 @@ def header(title, session):
     title: The page title
     session: The user session
     """
-    s =  bare_header(title, session.theme, session.locale, session.dbo.database, session.config_ts)
+    s = bare_header(title, session.theme, session.locale, session.dbo.database, session.config_ts)
     return s
 
 def footer():
@@ -536,7 +536,7 @@ def controller_date(name, d):
 
 def controller_int(name, i):
     """ Adds a controller int property """
-    return controller_plain(name, str(i));
+    return controller_plain(name, str(i))
 
 def controller_plain(name, v):
     """ Adds a controller property that's already formatted for js """
@@ -597,19 +597,19 @@ def img_src(row, mode):
     else:
         idval = 0
         if mode == "animal":
-            if row.has_key("ANIMALID"):
+            if "ANIMALID" in row:
                 idval = int(row["ANIMALID"])
-            elif row.has_key("ID"):
+            elif "ID" in row:
                 idval = int(row["ID"])
         elif mode == "person":
-            if row.has_key("PERSONID"):
+            if "PERSONID" in row:
                 idval = int(row["PERSONID"])
-            elif row.has_key("ID"):
+            elif "ID" in row:
                 idval = int(row["ID"])
         else:
             idval = int(row["ID"])
         uri = "image?mode=" + mode + "&id=" + str(idval)
-        if row.has_key("WEBSITEMEDIADATE") and row["WEBSITEMEDIADATE"] is not None:
+        if "WEBSITEMEDIADATE" in row and row["WEBSITEMEDIADATE"] is not None:
             uri += "&date=" + str(row["WEBSITEMEDIADATE"].isoformat())
         return uri
 
@@ -625,15 +625,15 @@ def doc_img_src(dbo, row, mode):
     else:
         path = ""
         if mode == "animal":
-            if row.has_key("ANIMALID"):
+            if "ANIMALID" in row:
                 idval = row["ANIMALID"]
-            elif row.has_key("ID"):
+            elif "ID" in row:
                 idval = row["ID"]
             path = "/animal/%d/%s" % (idval, row["DOCMEDIANAME"])
         elif mode == "person":
-            if row.has_key("PERSONID"):
+            if "PERSONID" in row:
                 idval = row["PERSONID"]
-            elif row.has_key("ID"):
+            elif "ID" in row:
                 idval = row["ID"]
             path = "/person/%d/%s" % (idval, row["DOCMEDIANAME"])
         else:
@@ -641,14 +641,14 @@ def doc_img_src(dbo, row, mode):
         uri = "image?db=" + dbo.database + "&mode=dbfs&id=%s" % path
         return uri
 
-def json_menu(l, reports, mailmerges):
+def menu_structure(l, reports, mailmerges):
     """
-    Returns JSON representing the main menu structure
+    Returns a list of lists representing the main menu structure
     l: The locale
     reports: A list of tuples containing the report url and name
     mailmerges: A list of tuples containing the report/mailmerge url and name
     """
-    structure = (
+    return (
         ("", "asm", _("ASM", l), (
             ( "", "", "", "--cat", "asm-icon-animal", _("Animals", l) ),
             ( users.VIEW_ANIMAL, "alt+shift+v", "", "shelterview", "asm-icon-location", _("Shelter view", l) ),
@@ -784,7 +784,6 @@ def json_menu(l, reports, mailmerges):
             (users.TRIGGER_BATCH, "", "", "batch", "asm-icon-batch", _("Trigger Batch Processes", l) )
         ))
     )
-    return extjson.dumps(structure)
 
 def json_animalfindcolumns(dbo):
     l = dbo.locale
@@ -856,24 +855,6 @@ def json_animalfindcolumns(dbo):
     cols = findcolumns_sort(cols)
     findcolumns_selectedtofront(cols, configuration.animal_search_columns(dbo))
     return json(cols)
-
-def json_autocomplete_litters(dbo):
-    l = dbo.locale
-    al = animal.get_litters(dbo)
-    rv = []
-    for i in al:
-        disp = ""
-        if i["PARENTANIMALID"] is not None and i["PARENTANIMALID"] > 0:
-            disp = _("{0}: {1} {2} - {3} {4}", l).format(
-                i["MOTHERCODE"], i["MOTHERNAME"],
-                i["ACCEPTANCENUMBER"], i["SPECIESNAME"],
-                i["COMMENTS"][:40])
-        else:
-            disp = _("{0} - {1} {2}", l).format(
-                i["ACCEPTANCENUMBER"], i["SPECIESNAME"],
-                i["COMMENTS"][:40])
-        rv.append( { "label": disp, "value": i["ACCEPTANCENUMBER"] } )
-    return json(rv)
 
 def json_lookup_tables(l):
     aslist = []
@@ -1007,19 +988,19 @@ def thumbnail_img_src(dbo, row, mode):
     else:
         idval = 0
         if mode == "animalthumb":
-            if row.has_key("ANIMALID"):
+            if "ANIMALID" in row:
                 idval = int(row["ANIMALID"])
-            elif row.has_key("ID"):
+            elif "ID" in row:
                 idval = int(row["ID"])
         elif mode == "personthumb":
-            if row.has_key("PERSONID"):
+            if "PERSONID" in row:
                 idval = int(row["PERSONID"])
-            elif row.has_key("ID"):
+            elif "ID" in row:
                 idval = int(row["ID"])
         else:
             idval = int(row["ID"])
         uri = "image?db=" + dbo.database + "&mode=" + mode + "&id=" + str(idval)
-        if row.has_key("WEBSITEMEDIADATE") and row["WEBSITEMEDIADATE"] is not None:
+        if "WEBSITEMEDIADATE" in row and row["WEBSITEMEDIADATE"] is not None:
             uri += "&date=" + str(row["WEBSITEMEDIADATE"].isoformat())
         return uri
 

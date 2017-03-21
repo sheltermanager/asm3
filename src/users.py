@@ -261,7 +261,7 @@ def authenticate_ip(user, remoteip):
     user: A row from the user table
     remoteip: The user's remote ip address
     """
-    if not user.has_key("IPRESTRICTION"):
+    if "IPRESTRICTION" not in user:
         return True
     if user["IPRESTRICTION"] is None or user["IPRESTRICTION"] == "":
         return True
@@ -336,7 +336,7 @@ def change_password(dbo, username, oldpassword, newpassword):
     Changes the password for a user
     """
     l = dbo.locale
-    if None == authenticate(dbo, username, oldpassword):
+    if None is authenticate(dbo, username, oldpassword):
         raise utils.ASMValidationError(i18n._("Password is incorrect.", l))
     db.execute(dbo, "UPDATE users SET Password = '%s' WHERE UserName Like %s" % (hash_password(newpassword), db.ds(username)))
 

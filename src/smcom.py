@@ -16,7 +16,7 @@ sys.path.append("/root/asmdb")
 try:
     import smcom_client
 except:
-    #sys.stderr.write("warn: no smcom_client\n")
+    # sys.stderr.write("warn: no smcom_client\n")
     pass
 
 def active():
@@ -39,7 +39,7 @@ def get_database_info(alias):
     dbo.dbtype = "POSTGRESQL"
     dbo.alias = alias
     a = _get_account_info(alias)
-    if a is None or not a.has_key("user"):
+    if a is None or "user" not in a:
         dbo.database = "FAIL"
         return dbo
     dbo.database = str(a["user"])
@@ -102,7 +102,6 @@ def route_customer_extension(dbo, when, caller, post):
 
 # -- Everything below are extensions for specific customers
 def rp0282_before_insert_animal_from_form(dbo, post):
-    dummy = dbo
     if post.integer("originalowner") == 0 or post.integer("broughtinby") == 0:
         raise utils.ASMValidationError("Original Owner and Brought In By must be set")
     return True

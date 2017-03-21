@@ -4,8 +4,8 @@ import datetime
 import json
 import time
 
-VERSION = "40u [Fri 10 Mar 12:01:19 GMT 2017]"
-BUILD = "03101201"
+VERSION = "40u [Tue 21 Mar 15:52:41 GMT 2017]"
+BUILD = "03211552"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -175,7 +175,7 @@ def translate(english, locale = "en"):
         return english
 
     # If the string isn't in our locale dictionary, fall back to English
-    if not lang.val.has_key(english): return english
+    if english not in lang.val: return english
 
     # If the value hasn't been translated, fall back to English
     s = lang.val[english]
@@ -200,7 +200,7 @@ def ntranslate(number, translations, locale = "en"):
         text = text.replace("{plural3}", str(number))
         text = text.replace("{plural4}", str(number))
         return text
-    except Exception,e:
+    except Exception as e:
         return e
 
 def get_version():
@@ -444,7 +444,7 @@ def subtract_months(date, months = 1):
         while one_month_earlier.month == t.month or one_month_earlier.day > t.day:
             one_month_earlier -= one_day
         return one_month_earlier
-    for dummy in xrange(0, months):
+    for dummy in range(0, months):
         date = subtract_one_month(date)
     return date
     #year, month = divmod(months, 12)
@@ -528,7 +528,6 @@ def date_diff_days(date1, date2):
         delta = int((ux2 - ux1) / 60 / 60 / 24)
         return delta
     except:
-        print "Invalid date: %s or %s" % ( date1, date2 )
         return 0
 
 def date_diff(l, date1, date2):
@@ -594,7 +593,7 @@ def i18nstringsjs(l):
         langs = json.dumps(lang.val)
     except:
         pass
-    s = "i18n_lang = " + langs + ";\n";
+    s = "i18n_lang = " + langs + ";\n"
     s += """
 (function($) {
     _ = function(key) {

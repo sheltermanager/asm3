@@ -969,7 +969,7 @@ def get_breeds(dbo):
 def get_breeds_by_species(dbo):
     return db.query(dbo, "SELECT breed.*, species.SpeciesName FROM breed " \
         "LEFT OUTER JOIN species ON breed.SpeciesID = species.ID " \
-        "ORDER BY species.SpeciesName, breed.BreedName");
+        "ORDER BY species.SpeciesName, breed.BreedName")
 
 def get_breed_name(dbo, bid):
     if id is None: return ""
@@ -1048,7 +1048,6 @@ def get_messages(dbo, user, roles, superuser):
     """
     messages = db.query(dbo, "SELECT * FROM messages WHERE Expires >= %s ORDER BY Added DESC" % db.dd(now(dbo.timezone)))
     rv = []
-    unused = superuser
     # Add messages our user can see
     for m in messages:
         if m["FORNAME"] == "*":

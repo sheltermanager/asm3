@@ -47,6 +47,7 @@ class PublishCriteria(object):
     includeQuarantine = False
     includeTrial = False
     includeHold = False
+    includeWithoutDescription = False
     includeWithoutImage = False
     includeColours = False
     bondedAsSingle = False
@@ -105,6 +106,7 @@ class PublishCriteria(object):
             if s == "includehold": self.includeHold = True
             if s == "includequarantine": self.includeQuarantine = True
             if s == "includetrial": self.includeTrial = True
+            if s == "includewithoutdescription": self.includeWithoutDescription = True
             if s == "includewithoutimage": self.includeWithoutImage = True
             if s == "includecolours": self.includeColours = True
             if s == "bondedassingle": self.bondedAsSingle = True
@@ -151,6 +153,7 @@ class PublishCriteria(object):
         if self.includeHold: s += " includehold"
         if self.includeQuarantine: s += " includequarantine"
         if self.includeTrial: s += " includetrial"
+        if self.includeWithoutDescription: s += " includewithoutdescription"
         if self.includeWithoutImage: s += " includewithoutimage"
         if self.includeColours: s += " includecolours"
         if self.bondedAsSingle: s += " bondedassingle"
@@ -205,6 +208,9 @@ def get_animal_data(dbo, pc, include_additional_fields = False):
     if configuration.publisher_use_comments(dbo):
         for r in rows:
             r["WEBSITEMEDIANOTES"] = r["ANIMALCOMMENTS"]
+    # If we aren't including animals with blank descriptions, remove them now
+    if not pc.includeWithoutDescription:
+        rows = [r for r in rows if utils.nulltostr(r["WEBSITEMEDIANOTES"]).strip() != ""]
     # Embellish additional fields if requested
     if include_additional_fields:
         for r in rows:
@@ -308,7 +314,7 @@ def get_microchip_data(dbo, patterns, publishername, allowintake = True):
     movementtypes = configuration.microchip_register_movements(dbo)
     try:
         rows = db.query(dbo, get_microchip_data_query(dbo, patterns, publishername, movementtypes, allowintake))
-    except Exception,err:
+    except Exception as err:
         al.error(str(err), "publisher.get_microchip_data", dbo, sys.exc_info())
     organisation = configuration.organisation(dbo)
     orgaddress = configuration.organisation_address(dbo)
@@ -805,7 +811,7 @@ class AbstractPublisher(threading.Thread):
         # build a list of IDs and deduplicate them
         for a in animals:
             m = ""
-            if a.has_key("FAILMESSAGE"):
+            if "FAILMESSAGE" in a:
                 m = a["FAILMESSAGE"]
             inclause[str(a["ID"])] = m
         # build a batch for inserting animalpublished entries into the table
@@ -826,7 +832,7 @@ class AbstractPublisher(threading.Thread):
             f.write(contents)
             f.flush()
             f.close()
-        except Exception,err:
+        except Exception as err:
             self.logError(str(err), sys.exc_info())
 
     def initLog(self, publisherKey, publisherName):
@@ -896,7 +902,7 @@ class AbstractPublisher(threading.Thread):
         self.log("generating thumbnail %s -> %s" % ( image, thumbnail ))
         try:
             media.scale_image_file(image, thumbnail, self.pc.thumbnailSize)
-        except Exception,err:
+        except Exception as err:
             self.logError("Failed scaling thumbnail: %s" % err, sys.exc_info())
 
     def scaleImage(self, image, scalesize):
@@ -926,7 +932,7 @@ class AbstractPublisher(threading.Thread):
         self.log("scaling %s to %s" % ( image, scalesize ))
         try:
             return media.scale_image_file(image, image, sizespec)
-        except Exception,err:
+        except Exception as err:
             self.logError("Failed scaling image: %s" % err, sys.exc_info())
 
 class FTPPublisher(AbstractPublisher):
@@ -986,7 +992,7 @@ class FTPPublisher(AbstractPublisher):
                 self.chdir(self.ftproot)
 
             return True
-        except Exception,err:
+        except Exception as err:
             self.logError("Failed opening FTP socket (%s->%s): %s" % (self.dbo.database, self.ftphost, err), sys.exc_info())
             return False
 
@@ -1016,7 +1022,7 @@ class FTPPublisher(AbstractPublisher):
         if not self.pc.uploadDirectly: return
         try:
             self.socket.retrlines("LIST", quietcallback)
-        except Exception,err:
+        except Exception as err:
             self.log("Dead socket (%s), reconnecting" % err)
             self.reconnectFTPSocket()
 
@@ -1036,7 +1042,7 @@ class FTPPublisher(AbstractPublisher):
             f = open(os.path.join(self.publishDir, filename), "rb")
             self.socket.storbinary("STOR %s" % filename, f, callback=quietcallback)
             f.close()
-        except Exception, err:
+        except Exception as err:
             self.logError("Failed uploading %s: %s" % (filename, err), sys.exc_info())
             self.log("reconnecting FTP socket to reset state")
             self.reconnectFTPSocket()
@@ -1045,7 +1051,7 @@ class FTPPublisher(AbstractPublisher):
         if not self.pc.uploadDirectly: return []
         try:
             return self.socket.nlst()
-        except Exception,err:
+        except Exception as err:
             self.logError("list: %s" % err)
 
     def mkdir(self, newdir):
@@ -1053,7 +1059,7 @@ class FTPPublisher(AbstractPublisher):
         self.log("FTP mkdir %s" % newdir)
         try:
             self.socket.mkd(newdir)
-        except Exception,err:
+        except Exception as err:
             self.log("mkdir %s: already exists (%s)" % (newdir, err))
 
     def chdir(self, newdir, fromroot = ""):
@@ -1065,13 +1071,13 @@ class FTPPublisher(AbstractPublisher):
                 self.currentDir = newdir
             else:
                 self.currentDir = fromroot
-        except Exception, err:
+        except Exception as err:
             self.logError("chdir %s: %s" % (newdir, err), sys.exc_info())
 
     def delete(self, filename):
         try:
             self.socket.delete(filename)
-        except Exception,err:
+        except Exception as err:
             self.log("delete %s: %s" % (filename, err))
 
     def clearExistingHTML(self):
@@ -1079,14 +1085,14 @@ class FTPPublisher(AbstractPublisher):
             oldfiles = glob.glob(os.path.join(self.publishDir, "*." + self.pc.extension))
             for f in oldfiles:
                 os.remove(f)
-        except Exception, err:
+        except Exception as err:
             self.logError("warning: failed removing %s from filesystem: %s" % (oldfiles, err), sys.exc_info())
         if not self.pc.uploadDirectly: return
         try:
             for f in self.socket.nlst("*.%s" % self.pc.extension):
                 if not f.startswith("search"):
                     self.socket.delete(f)
-        except Exception, err:
+        except Exception as err:
             self.logError("warning: failed deleting from FTP server: %s" % err, sys.exc_info())
 
     def clearExistingImages(self):
@@ -1094,13 +1100,13 @@ class FTPPublisher(AbstractPublisher):
             oldfiles = glob.glob(os.path.join(self.publishDir, "*.jpg"))
             for f in oldfiles:
                 os.remove(f)
-        except Exception, err:
+        except Exception as err:
             self.logError("warning: failed removing %s from filesystem: %s" % (oldfiles, err), sys.exc_info())
         if not self.pc.uploadDirectly: return
         try:
             for f in self.socket.nlst("*.jpg"):
                 self.socket.delete(f)
-        except Exception, err:
+        except Exception as err:
             self.logError("warning: failed deleting from FTP server: %s" % err, sys.exc_info())
 
     def cleanup(self, save_log=True):
@@ -1142,7 +1148,7 @@ class FTPPublisher(AbstractPublisher):
                 self.upload(imagefile)
                 if self.pc.thumbnails:
                     self.upload(thumbnail)
-        except Exception, err:
+        except Exception as err:
             self.logError("Failed uploading image %s: %s" % (medianame, err), sys.exc_info())
             return 0
 
@@ -1322,6 +1328,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "Illyrian Sheepdog=Shepherd (Unknown Type)\n" \
             "McNab=Shepherd (Unknown Type)\n" \
             "Mixed Breed=Mixed Breed (Medium)\n" \
+            "Mountain Dog=Bernese Mountain Dog\n" \
             "New Guinea Singing Dog=Shepherd (Unknown Type)\n" \
             "Newfoundland Dog=Newfoundland\n" \
             "Norweigan Lundehund=Shepherd (Unknown Type)\n" \
@@ -1424,6 +1431,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "Illyrian Sheepdog=Shepherd (Unknown Type)\n" \
             "McNab=Shepherd (Unknown Type)\n" \
             "Mixed Breed=Mixed Breed (Medium)\n" \
+            "Mountain Dog=Bernese Mountain Dog\n" \
             "New Guinea Singing Dog=Shepherd (Unknown Type)\n" \
             "Newfoundland Dog=Newfoundland\n" \
             "Norweigan Lundehund=Shepherd (Unknown Type)\n" \
@@ -1690,7 +1698,7 @@ class AdoptAPetPublisher(FTPPublisher):
                 csv.append(",".join(line))
                 # Mark success in the log
                 self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
-            except Exception,err:
+            except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
         # Mark published
@@ -1751,7 +1759,7 @@ class AnibaseUKPublisher(AbstractPublisher):
             25: "Equine",
             26: "Donkey"
         }
-        if SPECIES_MAP.has_key(asmspeciesid):
+        if asmspeciesid in SPECIES_MAP:
             return SPECIES_MAP[asmspeciesid]
         return "Miscellaneous"
 
@@ -1902,12 +1910,12 @@ class AnibaseUKPublisher(AbstractPublisher):
                     if not wassuccess:
                         self.logError("no successful response header %s received" % str(SUCCESS))
 
-                except Exception,err:
+                except Exception as err:
                     em = str(err)
                     self.logError("Failed registering microchip: %s" % em, sys.exc_info())
                     continue
 
-            except Exception,err:
+            except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
         # Only mark processed if we aren't using Anibase test URL
@@ -2049,7 +2057,7 @@ class FoundAnimalsPublisher(FTPPublisher):
                 # Mark success in the log
                 self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                 success.append(an)
-            except Exception,err:
+            except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
         # Mark published
@@ -2184,7 +2192,7 @@ class HelpingLostPetsPublisher(FTPPublisher):
                 csv.append(",".join(line))
                 # Mark success in the log
                 self.logSuccess("Processed Found Animal: %d: %s (%d of %d)" % ( an["ID"], an["COMMENTS"], anCount, len(foundanimals)))
-            except Exception,err:
+            except Exception as err:
                 self.logError("Failed processing found animal: %s, %s" % (str(an["ID"]), err), sys.exc_info())
 
         # Animals
@@ -2262,7 +2270,7 @@ class HelpingLostPetsPublisher(FTPPublisher):
                 csv.append(",".join(line))
                 # Mark success in the log
                 self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
-            except Exception,err:
+            except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
         # Mark published
@@ -2479,7 +2487,7 @@ class HTMLPublisher(FTPPublisher):
             footer = self.substituteHFTag(self.getFooter(), -1, user, i18n._("Recently adopted", l))
             body = self.getBody()
             thisPage = header
-        except Exception, err:
+        except Exception as err:
             self.setLastError("Error setting up adopted page: %s" % err)
             self.logError("Error setting up adopted page: %s" % err, sys.exc_info())
             return
@@ -2505,7 +2513,7 @@ class HTMLPublisher(FTPPublisher):
                 thisPage += self.substituteBodyTags(body, an)
                 self.log("Finished processing: %s" % an["SHELTERCODE"])
 
-            except Exception,err:
+            except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
         # Append the footer, flush and upload the page
@@ -2544,7 +2552,7 @@ class HTMLPublisher(FTPPublisher):
             footer = self.substituteHFTag(self.getFooter(), -1, user, i18n._("Recently deceased", l))
             body = self.getBody()
             thisPage = header
-        except Exception, err:
+        except Exception as err:
             self.setLastError("Error setting up deceased page: %s" % err)
             self.logError("Error setting up deceased page: %s" % err, sys.exc_info())
             return
@@ -2570,7 +2578,7 @@ class HTMLPublisher(FTPPublisher):
                 thisPage += self.substituteBodyTags(body, an)
                 self.log("Finished processing: %s" % an["SHELTERCODE"])
 
-            except Exception,err:
+            except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
         # Append the footer, flush and upload the page
@@ -2602,7 +2610,7 @@ class HTMLPublisher(FTPPublisher):
             for f in forms:
                 thisPage += "<p><a target='_blank' href='%s?%smethod=online_form_html&formid=%d'>%s</a></p>" % (SERVICE_URL, account, f["ID"], f["NAME"])
             thisPage += "</body></html>"
-        except Exception, err:
+        except Exception as err:
             self.setLastError("Error creating forms page: %s" % err)
             self.logError("Error creating forms page: %s" % err, sys.exc_info())
             return
@@ -2667,7 +2675,7 @@ class HTMLPublisher(FTPPublisher):
             allpage = "all.%s" % self.pc.extension
             pages[allpage] = header
 
-        except Exception, err:
+        except Exception as err:
             self.logError("Error setting up page: %s" % err, sys.exc_info())
             self.setLastError("Error setting up page: %s" % err)
             return
@@ -2706,7 +2714,7 @@ class HTMLPublisher(FTPPublisher):
                         pagename = "adult%s" % pagename
 
                 # Does this page exist?
-                if not pages.has_key(pagename):
+                if pagename not in pages:
                     # No, create it and add the header
                     page = header
                 else:
@@ -2725,7 +2733,7 @@ class HTMLPublisher(FTPPublisher):
                 # Mark success in the log
                 self.log("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
 
-            except Exception,err:
+            except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
         # Mark published
@@ -2793,7 +2801,7 @@ class HTMLPublisher(FTPPublisher):
             if self.pc.forceReupload:
                 self.clearExistingImages()
 
-        except Exception, err:
+        except Exception as err:
             self.setLastError("Error setting up page: %s" % err)
             self.logError("Error setting up page: %s" % err, sys.exc_info())
             return
@@ -2844,7 +2852,7 @@ class HTMLPublisher(FTPPublisher):
                 # Mark success in the log
                 self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
 
-            except Exception,err:
+            except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
         # Mark published
@@ -2921,7 +2929,7 @@ class HTMLPublisher(FTPPublisher):
             header = self.substituteHFTag(header, 1, user)
             footer = self.substituteHFTag(footer, 1, user)
             thisPage = header
-        except Exception, err:
+        except Exception as err:
             self.setLastError("Error setting up rss.xml: %s" % err)
             self.logError("Error setting up rss.xml: %s" % err, sys.exc_info())
             return
@@ -2946,7 +2954,7 @@ class HTMLPublisher(FTPPublisher):
                 thisPage += self.substituteBodyTags(body, an)
                 self.log("Finished processing: %s" % an["SHELTERCODE"])
 
-            except Exception,err:
+            except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
         # Append the footer, flush and upload the page
@@ -2997,7 +3005,7 @@ class HTMLPublisher(FTPPublisher):
             allpage = "all.%s" % self.pc.extension
             pages[allpage] = header
 
-        except Exception, err:
+        except Exception as err:
             self.logError("Error setting up page: %s" % err, sys.exc_info())
             self.setLastError("Error setting up page: %s" % err)
             return
@@ -3028,7 +3036,7 @@ class HTMLPublisher(FTPPublisher):
                 pagename = "%s.%s" % (an["ANIMALTYPENAME"], self.pc.extension)
 
                 # Does this page exist?
-                if not pages.has_key(pagename):
+                if pagename not in pages:
                     # No, create it and add the header
                     page = header
                 else:
@@ -3047,7 +3055,7 @@ class HTMLPublisher(FTPPublisher):
                 # Mark success in the log
                 self.log("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
 
-            except Exception,err:
+            except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
         # Mark published
@@ -3240,7 +3248,7 @@ class MeetAPetPublisher(AbstractPublisher):
                     r = utils.post_multipart(UPDATE_URL, fields, files)
                     self.log("response: %s %s" % (r["headers"], r["response"]))
 
-            except Exception,err:
+            except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
         # Now, have a look back through our animals for anything we've already sent to
@@ -3267,7 +3275,7 @@ class MeetAPetPublisher(AbstractPublisher):
                     self.markAnimalUnpublished(an["ID"])
                 else:
                     self.log("Found errors, not marking unpublished.")
-        except Exception,err:
+        except Exception as err:
             self.logError("Failed removing adopted animals: %s" % err, sys.exc_info())
 
         self.saveLog()
@@ -3422,7 +3430,7 @@ class PetFinderPublisher(FTPPublisher):
                 csv.append(",".join(line))
                 # Mark success in the log
                 self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
-            except Exception,err:
+            except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
         # Mark published
@@ -3559,7 +3567,7 @@ class PetLinkPublisher(AbstractPublisher):
                 return
             else:
                 self.log("Login to PetLink successful.")
-        except Exception,err:
+        except Exception as err:
             self.logError("Failed logging in: %s" % err, sys.exc_info())
             self.setLastError("Login failed (error during HTTP request).")
             self.saveLog()
@@ -3661,7 +3669,7 @@ class PetLinkPublisher(AbstractPublisher):
                 processed_animals.append(an)
                 # Mark success in the log
                 self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
-            except Exception,err:
+            except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
         # If we excluded our only animals and have nothing to send, stop now
@@ -3708,7 +3716,7 @@ class PetLinkPublisher(AbstractPublisher):
             else:
                 self.logError("didn't find successful response, abandoning.")
                 self.log("response hdr: %s, \nresponse: %s" % (r["headers"], r["response"]))
-        except Exception,err:
+        except Exception as err:
             self.logError("Failed uploading data file: %s" % err)
 
         self.saveLog()
@@ -3887,7 +3895,7 @@ class PetRescuePublisher(FTPPublisher):
                 csv.append(",".join(line))
                 # Mark success in the log
                 self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
-            except Exception,err:
+            except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
         # Mark published
@@ -3934,12 +3942,11 @@ class PetsLocatedUKPublisher(FTPPublisher):
         """
         years = 1
         if dob is not None:
-            td = i18n.now(self.dbo.timezone) - dob
-            if type(td) == datetime.timedelta:
-                years = td.days / 365.0
+            days = i18n.date_diff_days( dob, i18n.now(self.dbo.timezone) )
+            years = days / 365.0
         else:
-           years = configuration.age_group_for_name(self.dbo, agegroup) 
-           if years == 0: years = 1
+            years = configuration.age_group_for_name(self.dbo, agegroup) 
+            if years == 0: years = 1
         return "%0.1f" % years
 
     def plcChipChecked(self, chipped):
@@ -3948,10 +3955,10 @@ class PetsLocatedUKPublisher(FTPPublisher):
         return 3
 
     def plcNeutered(self, neutered):
-        if type(neutered) == str:
+        if utils.is_str(neutered):
             if neutered.find("payed") != -1 or neutered.find("eutered") != -1:
                 return "y"
-        elif type(neutered) == int:
+        elif utils.is_numeric(neutered):
             if neutered == 1:
                 return "y"
             return "n"
@@ -3976,8 +3983,8 @@ class PetsLocatedUKPublisher(FTPPublisher):
         # Dogs
         speciesname = an["SPECIESNAME"]
         if speciesname == "Dog":
-            if an.has_key("COATTYPENAME") and an["COATTYPENAME"] == "Long": return "Long"
-            elif an.has_key("COATTYPENAME") and an["COATTYPENAME"] == "Hairless": return "Not Applicable"
+            if "COATTYPENAME" in an and an["COATTYPENAME"] == "Long": return "Long"
+            elif "COATTYPENAME" in an and an["COATTYPENAME"] == "Hairless": return "Not Applicable"
             else: return "Short"
         # Cats
         elif speciesname == "Cat":
@@ -4051,7 +4058,6 @@ class PetsLocatedUKPublisher(FTPPublisher):
             "Chestnut/Sorrel": "Brown",
             "Champagne": "White",
             "Buckskin": "Brown",
-            "Black": "Black",
             "Bay": "Brown",
             "Appy": "Brown",
             "Grullo": "Brown",
@@ -4059,7 +4065,6 @@ class PetsLocatedUKPublisher(FTPPublisher):
             "Roan": "White",
             "Perlino": "White",
             "Paint": "White",
-            "Gray": "Grey/Silver",
             "Green": "Green",
             "Olive": "Green",
             "Orange": "Red",
@@ -4071,13 +4076,10 @@ class PetsLocatedUKPublisher(FTPPublisher):
             "Buff": "Brown",
             "Yellow": "Gold/Yellow",
             "White": "White",
-            "Black": "Black",
             "Blue": "Blue",
             "Brown": "Brown",
             "Sable": "White",
             "Albino or Red-Eyed White": "White",
-            "Blue": "Grey/Silver",
-            "Black": "Black",
             "Blond/Golden": "Gold",
             "Chinchilla": "Brown",
             "Chocolate": "Brown",
@@ -4090,34 +4092,23 @@ class PetsLocatedUKPublisher(FTPPublisher):
             "Harlequin": "White",
             "Lilac": "Grey/Silver",
             "Multi": "Multi-Coloured",
-            "Orange": "Ginger",
-            "Red": "Ginger",
             "Agouti": "Ginger",
             "Siamese": "Black",
             "Tan": "Brown",
             "Tortoise": "Multi-Coloured",
             "Tri-color": "Multi-Coloured",
             "White": "White",
-            "Yellow": "Gold",
-            "White": "White",
-            "Tortoiseshell": "Multi-Coloured",
             "Tan or Beige": "Brown",
             "Silver or Gray": "Grey/Silver",
             "Sable": "White",
-            "Red": "Ginger", 
-            "Orange": "Ginger",
             "Multi": "Multi-Coloured",
-            "Lilac": "White",
             "Golden": "Gold",
             "Cream": "White",
             "Calico": "Multi-Coloured",
-            "Buff": "White",
-            "Brown or Chocolate": "Black",
             "Blonde": "Gold",
-            "Black": "Black",
             "Albino or Red-Eyed White": "White"
         }
-        if colourmap.has_key(s): return colourmap[s]
+        if s in colourmap: return colourmap[s]
         return "Black"
 
     def plcSpecies(self, s, ps):
@@ -4143,8 +4134,8 @@ class PetsLocatedUKPublisher(FTPPublisher):
             "Turtle": "Tortoise/Terrapin/Turtle",
             "Small&Furry": "Mouse/Rat"
         }
-        if speciesmap.has_key(s): return speciesmap[s]
-        if speciesmap.has_key(ps): return speciesmap[ps]
+        if s in speciesmap: return speciesmap[s]
+        if ps in speciesmap: return speciesmap[ps]
         return "Cat"
 
     def run(self):
@@ -4278,7 +4269,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
                     csv.append(",".join(line))
                     # Mark success in the log
                     self.logSuccess("Processed Lost Animal: %d: %s (%d of %d)" % ( an["ID"], an["COMMENTS"], anCount, len(foundanimals)))
-                except Exception,err:
+                except Exception as err:
                     self.logError("Failed processing lost animal: %s, %s" % (str(an["ID"]), err), sys.exc_info())
 
         # Found Animals
@@ -4353,7 +4344,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
                 csv.append(",".join(line))
                 # Mark success in the log
                 self.logSuccess("Processed Found Animal: %d: %s (%d of %d)" % ( an["ID"], an["COMMENTS"], anCount, len(foundanimals)))
-            except Exception,err:
+            except Exception as err:
                 self.logError("Failed processing found animal: %s, %s" % (str(an["ID"]), err), sys.exc_info())
 
         # Shelter animals
@@ -4433,7 +4424,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
                     csv.append(",".join(line))
                     # Mark success in the log
                     self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
-                except Exception,err:
+                except Exception as err:
                     self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
             # Mark published
@@ -4662,7 +4653,7 @@ class PETtracUKPublisher(AbstractPublisher):
                 else:
                     self.logError("Problem with data encountered, not marking processed")
 
-            except Exception,err:
+            except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
         if len(processed_animals) > 0:
@@ -4867,7 +4858,7 @@ class RescueGroupsPublisher(FTPPublisher):
                 csv.append(",".join(line))
                 # Mark success in the log
                 self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
-            except Exception,err:
+            except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
         # Mark published
@@ -5064,7 +5055,7 @@ class SmartTagPublisher(FTPPublisher):
                 csv.append(",".join(line))
                 # Mark success in the log
                 self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
-            except Exception,err:
+            except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
         # Mark published
@@ -5132,7 +5123,7 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
             25: "Equine",
             26: "Donkey"
         }
-        if SPECIES_MAP.has_key(asmspeciesid):
+        if asmspeciesid in SPECIES_MAP:
             return SPECIES_MAP[asmspeciesid]
         return "Miscellaneous"
 
@@ -5301,12 +5292,12 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
                         an["FAILMESSAGE"] = "%s: %s" % (self.getHeader(r["headers"], "ResultCode"), self.getHeader(r["headers"], "ResultDetails"))
                         failed_animals.append(an)
 
-                except Exception,err:
+                except Exception as err:
                     em = str(err)
                     self.logError("Failed registering microchip: %s" % em, sys.exc_info())
                     continue
 
-            except Exception,err:
+            except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
         # Only mark processed if we aren't using VetEnvoy's test URL
@@ -5386,7 +5377,7 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
             userpwd = userpwd[0]
             return (userid, userpwd)
 
-        except Exception,err:
+        except Exception as err:
             em = str(err)
             al.error("Failed during autosignup: %s" % em, "VetEnvoyMicrochipPublisher.signup", dbo, sys.exc_info())
             raise utils.ASMValidationError("Failed during autosignup")

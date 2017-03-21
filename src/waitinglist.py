@@ -40,7 +40,7 @@ def get_waitinglist_by_id(dbo, wid):
     if len(rows) == 0: return None
     r = rows[0]
     ranks = get_waitinglist_ranks(dbo)
-    if ranks.has_key(r["WLID"]):
+    if r["WLID"] in ranks:
         r["RANK"] = ranks[r["WLID"]]
     else:
         r["RANK"] = ""
@@ -115,7 +115,7 @@ def get_waitinglist(dbo, priorityfloor = 5, species = -1, size = -1, addresscont
                 if wid == str(r["WLID"]).strip():
                     r["HIGHLIGHT"] = h
                     break
-        if ranks.has_key(r["WLID"]):
+        if r["WLID"] in ranks:
             r["RANK"] = ranks[r["WLID"]]
         else:
             r["RANK"] = ""
@@ -130,9 +130,9 @@ def get_waitinglist_find_simple(dbo, query = "", limit = 0):
     # If no query has been given, do a current waitinglist search
     if query == "":
         return get_waitinglist(dbo)
-
     ors = []
-    add = lambda f: "LOWER(%s) LIKE '%%%s%%'" % (f, query.lower())
+    def add(f):
+        return "LOWER(%s) LIKE '%%%s%%'" % (f, query.lower())
     if utils.is_numeric(query):
         ors.append("a.ID = " + str(utils.cint(query)))
     ors.append(add("o.OwnerName"))

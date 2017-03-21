@@ -89,6 +89,13 @@ $(function() {
                 '</select></td>',
                 '</tr>',
                 '<tr>',
+                '<td><label for="nodescription">' + _("Include animals who don't have a description") + '</label></td>',
+                '<td><select id="nodescription" class="asm-selectbox pbool preset" data="includewithoutdescription">',
+                '<option value="0">' + _("No") + '</option>',
+                '<option value="1">' + _("Yes") + '</option>',
+                '</select></td>',
+                '</tr>',
+                '<tr>',
                 '<td><label for="noimage">' + _("Include animals who don't have a picture") + '</label></td>',
                 '<td><select id="noimage" class="asm-selectbox pbool preset" data="includewithoutimage">',
                 '<option value="0">' + _("No") + '</option>',
@@ -1057,7 +1064,8 @@ $(function() {
             var cl = config.str("PublisherPresets");
             $.each(cl.split(" "), function(i, o) {
                 // Deal with boolean flags in command line
-                $.each( [ "includecase", "includereserved", "includefosters", "includewithoutimage", "includenonneutered", 
+                $.each( [ "includecase", "includereserved", "includefosters", 
+                    "includewithoutdescription", "includewithoutimage", "includenonneutered", 
                     "includecolours", "includeretailer", "includehold", "includequarantine", "includetrial",
                     "bondedassingle", "clearexisting", "uploadall", "forcereupload", 
                     "generatejavascriptdb","thumbnails", "checksocket", "uploaddirectly", 

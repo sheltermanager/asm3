@@ -22,7 +22,7 @@ VERSIONS = (
     33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716, 33717, 33718, 
     33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904, 33905, 33906, 
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
-    34002, 34003, 34004, 34005, 34006, 34007
+    34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -30,7 +30,7 @@ LATEST_VERSION = VERSIONS[-1]
 # All ASM3 tables
 TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalfield",
     "adoption", "animal", "animalcontrol", "animalcontrolanimal", "animalcontrolrole", "animalcost", 
-    "animaldiet", "animalfigures", "animalfiguresannual", "animalfiguresasilomar", "animalfiguresmonthlyasilomar", 
+    "animaldiet", "animalfigures", "animalfiguresannual",  
     "animalfound", "animalcontrolanimal", "animallitter", "animallost", "animallostfoundmatch", 
     "animalmedical", "animalmedicaltreatment", "animalname", "animalpublished", 
     "animaltype", "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", 
@@ -511,32 +511,6 @@ def sql_structure(dbo):
     sql += index("animalfiguresannual_SpeciesID", "animalfiguresannual", "SpeciesID")
     sql += index("animalfiguresannual_EntryReasonID", "animalfiguresannual", "EntryReasonID")
     sql += index("animalfiguresannual_Year", "animalfiguresannual", "Year")
-
-    sql += table("animalfiguresasilomar", (
-        fid(),
-        fint("Year"),
-        fint("OrderIndex"),
-        fstr("Code"),
-        fstr("Heading"),
-        fint("Bold"),
-        fint("Cat"),
-        fint("Dog"),
-        fint("Total")), False)
-    sql += index("animalfiguresasilomar_Year", "animalfiguresasilomar", "Year")
-
-    sql += table("animalfiguresmonthlyasilomar", (
-        fid(),
-        fint("Month"),
-        fint("Year"),
-        fint("OrderIndex"),
-        fstr("Code"),
-        fstr("Heading"),
-        fint("Bold"),
-        fint("Cat"),
-        fint("Dog"),
-        fint("Total")), False)
-    sql += index("animalfiguresmonthlyasilomar_Year", "animalfiguresmonthlyasilomar", "Year")
-    sql += index("animalfiguresmonthlyasilomar_Month", "animalfiguresmonthlyasilomar", "Month")
 
     sql += table("animalfound", (
         fid(),
@@ -2270,7 +2244,7 @@ def install_db_structure(dbo):
     sql = sql_structure(dbo)
     for s in sql.split(";"):
         if (s.strip() != ""):
-            print s.strip()
+            print(s.strip())
             db.execute_dbupdate(dbo, s.strip())
 
 def install_db_views(dbo):
@@ -2281,7 +2255,7 @@ def install_db_views(dbo):
         try:
             db.execute_dbupdate(dbo, "DROP VIEW IF EXISTS %s" % viewname)
             db.execute_dbupdate(dbo, "CREATE VIEW %s AS %s" % (viewname, sql))
-        except Exception,err:
+        except Exception as err:
             al.error("error creating view %s: %s" % (viewname, err), "dbupdate.install_db_views", dbo)
 
     # Set us upto date to stop race condition/other clients trying
@@ -2350,7 +2324,7 @@ def install_default_data(dbo, skip_config = False):
     sql = sql_default_data(dbo, skip_config)
     for s in sql.split("|="):
         if s.strip() != "":
-            print s.strip()
+            print(s.strip())
             db.execute_dbupdate(dbo, s.strip())
 
 def reinstall_default_data(dbo):
@@ -2360,7 +2334,7 @@ def reinstall_default_data(dbo):
     """
     for table in TABLES:
         if table != "dbfs" and table != "configuration" and table != "users" and table != "role" and table != "userrole":
-            print "DELETE FROM %s" % table
+            print("DELETE FROM %s" % table)
             db.execute_dbupdate(dbo, "DELETE FROM %s" % table)
     install_default_data(dbo, True)
 
@@ -2374,7 +2348,7 @@ def install_default_onlineforms(dbo):
         if o.endswith(".json"):
             try:
                 onlineform.import_onlineform_json(dbo, utils.read_text_file(path + o))
-            except Exception,err:
+            except Exception as err:
                 al.error("error importing form: %s" % str(err), "dbupdate.install_default_onlineformms", dbo)
 
 def install_default_media(dbo, removeFirst = False):
@@ -2519,14 +2493,14 @@ def dump_dbfs_stdout(dbo):
     """
     Dumps the DBFS table to stdout. For use with very large dbfs tables.
     """
-    print "BEGIN;"
-    print "DELETE FROM dbfs;"
+    print("BEGIN;")
+    print("DELETE FROM dbfs;")
     rows = db.query(dbo, "SELECT ID, Name, Path FROM dbfs")
     for r in rows:
         content = db.query_string(dbo, "SELECT Content FROM dbfs WHERE ID=%d" % r["ID"])
-        print "INSERT INTO dbfs (ID, Name, Path, Content) VALUES (%d, '%s', '%s', '%s');" % (r["ID"], r["NAME"], r["PATH"], content)
+        print("INSERT INTO dbfs (ID, Name, Path, Content) VALUES (%d, '%s', '%s', '%s');" % (r["ID"], r["NAME"], r["PATH"], content))
         del content
-    print "COMMIT;"
+    print("COMMIT;")
 
 def dump_hsqldb(dbo, includeDBFS = True):
     """
@@ -2673,7 +2647,7 @@ def reset_db(dbo):
     Resets a database by removing all data from non-lookup tables.
     """
     deltables = [ "accountstrx", "additional", "adoption", "animal", "animalcontrol", "animalcost",
-        "animaldiet", "animalfigures", "animalfiguresannual", "animalfiguresasilomar", "animalfiguresmonthlyasilomar",
+        "animaldiet", "animalfigures", "animalfiguresannual", 
         "animalfound", "animallitter", "animallost", "animalmedical", "animalmedicaltreatment", "animalname",
         "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "diary", "log",
         "media", "messages", "onlineform", "onlineformfield", "onlineformincoming", "owner", "ownercitation",
@@ -2764,7 +2738,7 @@ def drop_index(dbo, indexname):
     except:
         pass
 
-def modify_column(dbo, table, column, newtype, using =  ""):
+def modify_column(dbo, table, column, newtype, using = ""):
     if dbo.dbtype == "MYSQL":
         db.execute_dbupdate(dbo, "ALTER TABLE %s MODIFY %s %s" % (table, column, newtype))
     elif dbo.dbtype == "POSTGRESQL":
@@ -2882,8 +2856,8 @@ def update_3003(dbo):
     modify_column(dbo, "configuration", "ItemValue", longtext(dbo))
         
 def update_3004(dbo):
-    unused = dbo
     # Broken, disregard.
+    pass
 
 def update_3005(dbo):
     # 3004 was broken and deleted the mapping service by accident, so we reinstate it
@@ -3156,7 +3130,7 @@ def update_3212(dbo):
         table, field = f.split(".")
         try:
             modify_column(dbo, table, field, shorttext(dbo))
-        except Exception,err:
+        except Exception as err:
             al.error("failed extending %s: %s" % (f, str(err)), "dbupdate.update_3212", dbo)
 
 def update_3213(dbo):
@@ -3164,7 +3138,7 @@ def update_3213(dbo):
         # Make displaylocationname and displaylocationstring denormalised fields
         db.execute_dbupdate(dbo, "ALTER TABLE animal ADD DisplayLocationName %s" % shorttext(dbo))
         db.execute_dbupdate(dbo, "ALTER TABLE animal ADD DisplayLocationString %s" % shorttext(dbo))
-    except Exception,err:
+    except Exception as err:
         al.error("failed creating animal.DisplayLocationName/String: %s" % str(err), "dbupdate.update_3213", dbo)
 
     # Default the values for them
@@ -3197,7 +3171,7 @@ def update_3214(dbo):
                 db.execute_dbupdate(dbo, "ALTER TABLE %s MODIFY %s %s NOT NULL" % (table, field, shorttext(dbo)))
             elif dbo.dbtype == "POSTGRESQL":
                 db.execute_dbupdate(dbo, "ALTER TABLE %s ALTER %s TYPE %s" % (table, field, shorttext(dbo)))
-        except Exception,err:
+        except Exception as err:
             al.error("failed extending %s: %s" % (f, str(err)), "dbupdate.update_3214", dbo)
 
 def update_3215(dbo):
@@ -3261,7 +3235,7 @@ def update_3221(dbo):
                 db.execute_dbupdate(dbo, "ALTER TABLE %s MODIFY %s %s NOT NULL" % (table, field, shorttext(dbo)))
             elif dbo.dbtype == "POSTGRESQL":
                 db.execute_dbupdate(dbo, "ALTER TABLE %s ALTER %s TYPE %s" % (table, field, shorttext(dbo)))
-        except Exception,err:
+        except Exception as err:
             al.error("failed extending %s: %s" % (f, str(err)), "dbupdate.update_3221", dbo)
 
 def update_3222(dbo):
@@ -3278,12 +3252,21 @@ def update_3223(dbo):
     # PostgreSQL databases have been using VARCHAR(16384) as longtext when
     # they really shouldn't. Let's switch those fields to be TEXT instead.
     if dbo.dbtype != "POSTGRESQL": return
-    fields = [ "activeuser.Messages", "additionalfield.LookupValues", "additional.Value", "adoption.ReasonForReturn", "adoption.Comments", "animal.Markings", "animal.HiddenAnimalDetails", "animal.AnimalComments", "animal.ReasonForEntry", "animal.ReasonNO", "animal.HealthProblems", "animal.PTSReason", "animalcost.Description", "animal.AnimalComments", "animalfound.DistFeat", "animalfound.Comments", "animallitter.Comments", "animallost.DistFeat", "animallost.Comments", "animalmedical.Comments", "animalmedicaltreatment.Comments", "animalvaccination.Comments", "animalwaitinglist.ReasonForWantingToPart", "animalwaitinglist.ReasonForRemoval", "animalwaitinglist.Comments", "audittrail.Description", "customreport.Description", "diary.Subject", "diary.Note", "diarytaskdetail.Subject", "diarytaskdetail.Note", "log.Comments", "media.MediaNotes", "medicalprofile.Comments", "messages.Message", "owner.Comments", "owner.AdditionalFlags", "owner.HomeCheckAreas", "ownerdonation.Comments", "ownerinvestigation.Notes", "ownervoucher.Comments", "role.SecurityMap", "users.SecurityMap", "users.IPRestriction", "configuration.ItemValue", "customreport.SQLCommand", "customreport.HTMLBody" ]
+    fields = [ "activeuser.Messages", "additionalfield.LookupValues", "additional.Value", "adoption.ReasonForReturn", 
+        "adoption.Comments", "animal.Markings", "animal.HiddenAnimalDetails", "animal.AnimalComments", "animal.ReasonForEntry", 
+        "animal.ReasonNO", "animal.HealthProblems", "animal.PTSReason", "animalcost.Description", "animal.AnimalComments", 
+        "animalfound.DistFeat", "animalfound.Comments", "animallitter.Comments", "animallost.DistFeat", "animallost.Comments", 
+        "animalmedical.Comments", "animalmedicaltreatment.Comments", "animalvaccination.Comments", "animalwaitinglist.ReasonForWantingToPart", 
+        "animalwaitinglist.ReasonForRemoval", "animalwaitinglist.Comments", "audittrail.Description", "customreport.Description", 
+        "diary.Subject", "diary.Note", "diarytaskdetail.Subject", "diarytaskdetail.Note", "log.Comments", "media.MediaNotes", 
+        "medicalprofile.Comments", "messages.Message", "owner.Comments", "owner.AdditionalFlags", "owner.HomeCheckAreas", 
+        "ownerdonation.Comments", "ownerinvestigation.Notes", "ownervoucher.Comments", "role.SecurityMap", "users.SecurityMap", 
+        "users.IPRestriction", "configuration.ItemValue", "customreport.SQLCommand", "customreport.HTMLBody" ]
     for f in fields:
         table, field = f.split(".")
         try:
             db.execute_dbupdate(dbo, "ALTER TABLE %s ALTER %s TYPE %s" % (table, field, longtext(dbo)))
-        except Exception,err:
+        except Exception as err:
             al.error("failed switching to TEXT %s: %s" % (f, str(err)), "dbupdate.update_3223", dbo)
 
 def update_3224(dbo):
@@ -3295,7 +3278,7 @@ def update_3224(dbo):
             db.execute_dbupdate(dbo, "ALTER TABLE animalfigures RENAME COLUMN AVG TO AVERAGE")
         elif dbo.dbtype == "SQLITE":
             db.execute_dbupdate(dbo, "ALTER TABLE animalfigures ADD AVERAGE %s" % floattype(dbo))
-    except Exception,err:
+    except Exception as err:
         al.error("failed renaming AVG to AVERAGE: %s" % str(err), "dbupdate.update_3224", dbo)
 
 def update_3225(dbo):
@@ -3355,7 +3338,7 @@ def update_3307(dbo):
     sql = "CREATE TABLE testtype (ID INTEGER NOT NULL PRIMARY KEY, " \
         "TestName %(short)s NOT NULL, " \
         "TestDescription %(long)s, " \
-            "DefaultCost INTEGER)" % { "short": shorttext(dbo), "long": longtext(dbo) }
+        "DefaultCost INTEGER)" % { "short": shorttext(dbo), "long": longtext(dbo) }
     db.execute_dbupdate(dbo, sql)
     sql = "CREATE TABLE testresult (ID INTEGER NOT NULL PRIMARY KEY, " \
         "ResultName %(short)s NOT NULL, " \
@@ -3389,7 +3372,7 @@ def update_3309(dbo):
             ))
         try:
             db.execute_dbupdate(dbo, sql)
-        except Exception,err:
+        except Exception as err:
             al.error("fiv: " + str(err), "dbupdate.update_3309", dbo)
     flv = db.query(dbo, "SELECT ID, CombiTestDate, FLVResult FROM animal WHERE CombiTested = 1")
     al.debug("found %d flv results to convert" % len(flv), "update_3309", dbo)
@@ -3407,7 +3390,7 @@ def update_3309(dbo):
             ))
         try:
             db.execute_dbupdate(dbo, sql)
-        except Exception,err:
+        except Exception as err:
             al.error("flv: " + str(err), "dbupdate.update_3309", dbo)
 
     hw = db.query(dbo, "SELECT ID, HeartwormTestDate, HeartwormTestResult FROM animal WHERE HeartwormTested = 1")
@@ -3426,7 +3409,7 @@ def update_3309(dbo):
             ))
         try:
             db.execute_dbupdate(dbo, sql)
-        except Exception,err:
+        except Exception as err:
             al.error("hw: " + str(err), "dbupdate.update_3309", dbo)
 
 def update_33010(dbo):
@@ -3650,7 +3633,7 @@ def update_33203(dbo):
     db.execute_dbupdate(dbo, "INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate) " \
         "SELECT a.ID, 'pettracuk', a.ActiveMovementDate FROM animal a " \
         "WHERE ActiveMovementDate Is Not Null " \
-        "AND ActiveMovementType = 1 AND IdentichipNumber LIKE '977%'");
+        "AND ActiveMovementType = 1 AND IdentichipNumber LIKE '977%'")
 
 def update_33204(dbo):
     # Remove last published fields added since ASM3 - we're only retaining
@@ -3858,7 +3841,6 @@ def update_33307(dbo):
 
 def update_33308(dbo):
     # broken
-    dummy = dbo
     pass
 
 def update_33309(dbo):
@@ -3880,7 +3862,6 @@ def update_33309(dbo):
     add_index(dbo, "animalfiguresmonthlyasilomar_Month", "animalfiguresmonthlyasilomar", "Month")
 
 def update_33310(dbo):
-    dummy = dbo
     pass # broken
 
 def update_33311(dbo):
@@ -4096,7 +4077,7 @@ def update_33601(dbo):
         try:
             db.execute_dbupdate(dbo, sql)
             tid += 1
-        except Exception,err:
+        except Exception as err:
             al.error("failed creating animaltransport row %s: %s" % (str(err), sql), "dbupdate.update_33601", dbo)
     # Remove old transport records and the type
     db.execute_dbupdate(dbo, "DELETE FROM adoption WHERE MovementType = 13")
@@ -4386,7 +4367,7 @@ def update_33717(dbo):
         59: "Tortoiseshell",
     }
     for c in db.query(dbo, "SELECT ID FROM basecolour WHERE ID <= 59 AND (AdoptAPetColour Is Null OR AdoptAPetColour = '')"):
-        if defmap.has_key(c["ID"]):
+        if c["ID"] in defmap:
             db.execute_dbupdate(dbo, "UPDATE basecolour SET AdoptAPetColour=%s WHERE ID=%d" % (db.ds(defmap[c["ID"]]), c["ID"]))
 
 def update_33718(dbo):
@@ -4651,4 +4632,17 @@ def update_34007(dbo):
     # Add missing indexes to DiedOffShelter / NonShelterAnimal
     add_index(dbo, "animal_DiedOffShelter", "animal", "DiedOffShelter")
     add_index(dbo, "animal_NonShelterAnimal", "animal", "NonShelterAnimal")
+
+def update_34008(dbo):
+    # Remove the old asilomar figures report if it exists
+    db.execute_dbupdate(dbo, "DELETE FROM customreport WHERE Title = 'Asilomar Figures'")
+    # Remove the asilomar tables as they're no longer needed
+    db.execute_dbupdate(dbo, "DROP TABLE animalfiguresasilomar")
+    db.execute_dbupdate(dbo, "DROP TABLE animalfiguresmonthlyasilomar")
+
+def update_34009(dbo):
+    # Set includewithoutdescription in the publishing presets
+    s = configuration.publisher_presets(dbo)
+    s += " includewithoutdescription"
+    db.execute_dbupdate(dbo, "UPDATE configuration SET ItemValue = %s WHERE ItemName = 'PublisherPresets'" % db.ds(s))
 

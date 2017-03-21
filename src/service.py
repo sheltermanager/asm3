@@ -161,7 +161,7 @@ def sign_document_page(dbo, mid):
         "css":      html.asm_css_tag("asm-icon.css"),
         "thankyou": _("Thank you, the document is now signed.", l),
         "scripts":  html.script_tag(JQUERY_JS) + html.script_tag(JQUERY_UI_JS) + 
-            html.script_tag(TOUCHPUNCH_JS) + html.script_tag(SIGNATURE_JS) + html.script_tag(MOMENT_JS)
+                    html.script_tag(TOUCHPUNCH_JS) + html.script_tag(SIGNATURE_JS) + html.script_tag(MOMENT_JS)
     })
     d = []
     docnotes = []

@@ -35,14 +35,14 @@ def map_diff(row1, row2, ref = []):
         else:
             row2 = {}
     s = ""
-    if row1.has_key("ID"):
+    if "ID" in row1:
         s = "(ID %d) " % row1["ID"]
     for rv in ref:
-        if row1.has_key(rv):
+        if rv in row1:
             s += str(row1[rv]) + " "
     s += ">>> "
     for k, v in row1.iteritems():
-        if row2.has_key(k):
+        if k in row2:
             if str(row1[k]) != str(row2[k]):
                 s += k + ": " + str(row1[k]) + " ==> " + str(row2[k]) + ", "
         else:
@@ -85,7 +85,7 @@ def action(dbo, action, username, tablename, linkid, description):
         ( "TableName", db.ds(tablename) ),
         ( "LinkID", db.di(linkid) ),
         ( "Description", db.ds(description) )
-        ))
+    ))
     db.execute(dbo, sql)
 
 def clean(dbo):
@@ -93,7 +93,7 @@ def clean(dbo):
     Deletes audit trail records older than three months
     """
     d = db.today()
-    d = i18n.subtract_days(d, 93);
+    d = i18n.subtract_days(d, 93)
     count = db.query_int(dbo, "SELECT COUNT(*) FROM audittrail WHERE AuditDate< %s" % db.dd(d))
     al.debug("removing %d audit records older than 93 days." % count, "audit.clean", dbo)
     db.execute(dbo, "DELETE FROM audittrail WHERE AuditDate < %s" % db.dd(d))

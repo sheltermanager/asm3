@@ -144,7 +144,10 @@ $(function() {
                     { field: "STARTDATE", display: _("Started"), formatter: tableform.format_date },
                     { field: "NAMEDSTATUS", display: _("Status"), formatter: function(row) {
                         return row.NAMEDSTATUS + ", " + row.NAMEDFREQUENCY + " " + html.icon("right") + " " + row.NAMEDNUMBEROFTREATMENTS +
-                            " (" + row.TREATMENTNUMBER + "/" + row.TOTALTREATMENTS + ")";
+                            " (" + row.TREATMENTNUMBER + "/" + row.TOTALTREATMENTS + ")<br/>" +
+                            (row.TREATMENTSREMAINING > 0 ? 
+                                _("({0} given, {1} remaining)").replace("{0}", row.TREATMENTSGIVEN).replace("{1}", row.TREATMENTSREMAINING) 
+                                : "");
                     }},
                     { field: "COST", display: _("Cost"), formatter: tableform.format_currency,
                         hideif: function() { return !config.bool("ShowCostAmount"); }

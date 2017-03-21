@@ -749,13 +749,13 @@ def create_person(dbo, username, collationid):
         if f["FIELDNAME"].startswith("reserveanimalname"): d[f["FIELDNAME"]] = f["VALUE"]
     d["flags"] = flags
     # Have we got enough info to create the person record? We just need a surname
-    if not d.has_key("surname"):
+    if "surname" not in d:
         raise utils.ASMValidationError(i18n._("There is not enough information in the form to create a person record (need a surname).", l))
     # Does this person already exist?
     personid = 0
-    if d.has_key("surname") and d.has_key("forenames") and d.has_key("address"):
+    if "surname" in d and "forenames" in d and "address" in d:
         demail = ""
-        if d.has_key("emailaddress"): demail = d["emailaddress"]
+        if "emailaddress" in d: demail = d["emailaddress"]
         similar = person.get_person_similar(dbo, demail, d["surname"], d["forenames"], d["address"])
         if len(similar) > 0:
             personid = similar[0]["ID"]
@@ -766,7 +766,7 @@ def create_person(dbo, username, collationid):
     if personid == 0:
         personid = person.insert_person_from_form(dbo, utils.PostedData(d, dbo.locale), username)
         # Since we created a brand new person, try and get a geocode for the address if present
-        if d.has_key("address") and d.has_key("town") and d.has_key("county") and d.has_key("postcode"):
+        if "address" in d and "town" in d and "county" in d and "postcode" in d:
             latlon = geo.get_lat_long(dbo, d["address"], d["town"], d["county"], d["postcode"])
             if latlon is not None: person.update_latlong(dbo, personid, latlon)
     personname = person.get_person_name_code(dbo, personid)
@@ -779,7 +779,7 @@ def create_person(dbo, username, collationid):
         if k.startswith("reserveanimalname"):
             try:
                 movement.insert_reserve_for_animal_name(dbo, username, personid, v)
-            except Exception,err:
+            except Exception as err:
                 al.warn("could not create reservation for %d on %s (%s)" % (personid, v, err), "create_person", dbo)
                 web.ctx.status = "200 OK" # ASMValidationError sets status to 500
     return (collationid, personid, personname)
@@ -805,7 +805,7 @@ def create_animalcontrol(dbo, username, collationid):
         if f["FIELDNAME"] == "dispatchstate": d["dispatchcounty"] = f["VALUE"]
         if f["FIELDNAME"] == "dispatchzipcode": d["dispatchpostcode"] = f["VALUE"]
     # Have we got enough info to create the animal control record? We need notes and dispatchaddress
-    if not d.has_key("callnotes") or not d.has_key("dispatchaddress"):
+    if "callnotes" not in d or "dispatchaddress" not in d:
         raise utils.ASMValidationError(i18n._("There is not enough information in the form to create an incident record (need call notes and dispatch address).", l))
     # We need the person/caller record before we create the incident
     collationid, personid, personname = create_person(dbo, username, collationid)
@@ -839,13 +839,13 @@ def create_lostanimal(dbo, username, collationid):
         if f["FIELDNAME"] == "arealost": d["arealost"] = f["VALUE"]
         if f["FIELDNAME"] == "areapostcode": d["areapostcode"] = f["VALUE"]
         if f["FIELDNAME"] == "areazipcode": d["areazipcode"] = f["VALUE"]
-    if not d.has_key("species"): d["species"] = guess_species(dbo, "")
-    if not d.has_key("sex"): d["sex"] = guess_sex(dbo, "")
-    if not d.has_key("breed"): d["breed"] = guess_breed(dbo, "")
-    if not d.has_key("agegroup"): d["agegroup"] = guess_agegroup(dbo, "")
-    if not d.has_key("colour"): d["colour"] = guess_colour(dbo, "")
+    if "species" not in d: d["species"] = guess_species(dbo, "")
+    if "sex" not in d: d["sex"] = guess_sex(dbo, "")
+    if "breed" not in d: d["breed"] = guess_breed(dbo, "")
+    if "agegroup" not in d: d["agegroup"] = guess_agegroup(dbo, "")
+    if "colour" not in d: d["colour"] = guess_colour(dbo, "")
     # Have we got enough info to create the lost animal record? We need a description and arealost
-    if not d.has_key("markings") or not d.has_key("arealost"):
+    if "markings" not in d or "arealost" not in d:
         raise utils.ASMValidationError(i18n._("There is not enough information in the form to create a lost animal record (need a description and area lost).", l))
     # We need the person record before we create the lost animal
     collationid, personid, personname = create_person(dbo, username, collationid)
@@ -879,13 +879,13 @@ def create_foundanimal(dbo, username, collationid):
         if f["FIELDNAME"] == "areafound": d["areafound"] = f["VALUE"]
         if f["FIELDNAME"] == "areapostcode": d["areapostcode"] = f["VALUE"]
         if f["FIELDNAME"] == "areazipcode": d["areazipcode"] = f["VALUE"]
-    if not d.has_key("species"): d["species"] = guess_species(dbo, "")
-    if not d.has_key("sex"): d["sex"] = guess_sex(dbo, "")
-    if not d.has_key("breed"): d["breed"] = guess_breed(dbo, "")
-    if not d.has_key("agegroup"): d["agegroup"] = guess_agegroup(dbo, "")
-    if not d.has_key("colour"): d["colour"] = guess_colour(dbo, "")
+    if "species" not in d: d["species"] = guess_species(dbo, "")
+    if "sex" not in d: d["sex"] = guess_sex(dbo, "")
+    if "breed" not in d: d["breed"] = guess_breed(dbo, "")
+    if "agegroup" not in d: d["agegroup"] = guess_agegroup(dbo, "")
+    if "colour" not in d: d["colour"] = guess_colour(dbo, "")
     # Have we got enough info to create the found animal record? We need a description and areafound
-    if not d.has_key("markings") or not d.has_key("areafound"):
+    if "markings" not in d or "areafound" not in d:
         raise utils.ASMValidationError(i18n._("There is not enough information in the form to create a found animal record (need a description and area found).", l))
     # We need the person record before we create the found animal
     collationid, personid, personname = create_person(dbo, username, collationid)
@@ -933,12 +933,12 @@ def create_transport(dbo, username, collationid):
         if f["FIELDNAME"] == "dropoffdate": d["dropoffdate"] = f["VALUE"]
         if f["FIELDNAME"] == "dropofftime": d["dropofftime"] = f["VALUE"]
         if f["FIELDNAME"] == "transporttype": d["type"] = guess_transporttype(dbo, f["VALUE"])
-    if not d.has_key("type"):
+    if "type" not in d:
         d["type"] = guess_transporttype(dbo, "nomatchesusedefault")
     # Have we got enough info to create the transport record? We need an animal to attach to
-    if not d.has_key("animal"):
+    if "animal" not in d:
         raise utils.ASMValidationError(i18n._("There is not enough information in the form to create a transport record (need animalname).", l))
-    if not d.has_key("pickupdate") or not d.has_key("dropoffdate") or d["pickupdate"] == "" or d["dropoffdate"] == "":
+    if "pickupdate" not in d or "dropoffdate" not in d or d["pickupdate"] == "" or d["dropoffdate"] == "":
         raise utils.ASMValidationError(i18n._("There is not enough information in the form to create a transport record (need pickupdate and dropoffdate).", l))
     if animalid == 0:
         raise utils.ASMValidationError(i18n._("Could not find animal with name '{0}'", l).format(animalname))
@@ -965,10 +965,10 @@ def create_waitinglist(dbo, username, collationid):
         if f["FIELDNAME"] == "species": d["species"] = guess_species(dbo, f["VALUE"])
         if f["FIELDNAME"] == "description": d["description"] = f["VALUE"]
         if f["FIELDNAME"] == "reason": d["reasonforwantingtopart"] = f["VALUE"]
-    if not d.has_key("size"): d["size"] = guess_size(dbo, "nomatchesusedefault")
-    if not d.has_key("species"): d["species"] = guess_species(dbo, "nomatchesusedefault")
+    if "size" not in d: d["size"] = guess_size(dbo, "nomatchesusedefault")
+    if "species" not in d: d["species"] = guess_species(dbo, "nomatchesusedefault")
     # Have we got enough info to create the waiting list record? We need a description
-    if not d.has_key("description"):
+    if "description" not in d:
         raise utils.ASMValidationError(i18n._("There is not enough information in the form to create a waiting list record (need a description).", l))
     # We need the person record before we create the waiting list
     collationid, personid, personname = create_person(dbo, username, collationid)

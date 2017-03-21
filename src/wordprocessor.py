@@ -95,9 +95,11 @@ def animal_tags(dbo, a):
     l = dbo.locale
     qr = QR_IMG_SRC % { "url": BASE_URL + "/animal?id=%d" % a["ID"], "size": "150x150" }
     animalage = a["ANIMALAGE"]
-    if not animalage is None and animalage.endswith("."): animalage = animalage[0:len(animalage)-1]
+    if animalage is not None and animalage.endswith("."): 
+        animalage = animalage[0:len(animalage)-1]
     timeonshelter = a["TIMEONSHELTER"]
-    if timeonshelter.endswith("."): timeonshelter = timeonshelter[0:len(timeonshelter)-1]
+    if timeonshelter.endswith("."): 
+        timeonshelter = timeonshelter[0:len(timeonshelter)-1]
     displaydob = python2display(l, a["DATEOFBIRTH"])
     displayage = animalage
     estimate = ""
@@ -387,8 +389,18 @@ def animal_tags(dbo, a):
         "VACCINATIONMANUFACTURER":  "MANUFACTURER",
         "VACCINATIONCOST":          "c:COST",
         "VACCINATIONCOMMENTS":      "COMMENTS",
-        "VACCINATIONADMINISTERINGVET": "ADMINISTERINGVETNAME",
-        "VACCINATIONDESCRIPTION":   "VACCINATIONDESCRIPTION"
+        "VACCINATIONDESCRIPTION":   "VACCINATIONDESCRIPTION",
+        "VACCINATIONADMINISTERINGVETNAME":      "ADMINISTERINGVETNAME",
+        "VACCINATIONADMINISTERINGVETLICENCE":   "ADMINISTERINGVETLICENCE",
+        "VACCINATIONADMINISTERINGVETLICENSE":   "ADMINISTERINGVETLICENCE",
+        "VACCINATIONADMINISTERINGVETADDRESS":   "ADMINISTERINGVETADDRESS",
+        "VACCINATIONADMINISTERINGVETTOWN":      "ADMINISTERINGVETTOWN",
+        "VACCINATIONADMINISTERINGVETCITY":      "ADMINISTERINGVETTOWN",
+        "VACCINATIONADMINISTERINGVETCOUNTY":    "ADMINISTERINGVETCOUNTY",
+        "VACCINATIONADMINISTERINGVETSTATE":     "ADMINISTERINGVETCOUNTY",
+        "VACCINATIONADMINISTERINGVETPOSTCODE":  "ADMINISTERINGVETPOSTCODE",
+        "VACCINATIONADMINISTERINGVETZIPCODE":   "ADMINISTERINGVETPOSTCODE",
+        "VACCINATIONADMINISTERINGVETEMAIL":     "ADMINISTERINGVETEMAIL"
     }
     tags.update(table_tags(dbo, d, medical.get_vaccinations(dbo, a["ID"], not include_incomplete_vacc), "VACCINATIONTYPE", "DATEOFVACCINATION"))
     tags["ANIMALISVACCINATED"] = utils.iif(medical.get_vaccinated(dbo, a["ID"]), _("Yes", l), _("No", l))
@@ -401,8 +413,19 @@ def animal_tags(dbo, a):
         "TESTGIVEN":                "d:DATEOFTEST",
         "TESTCOST":                 "c:COST",
         "TESTCOMMENTS":             "COMMENTS",
-        "TESTADMINISTERINGVET":     "ADMINISTERINGVETNAME",
-        "TESTDESCRIPTION":          "TESTDESCRIPTION"
+        "TESTDESCRIPTION":          "TESTDESCRIPTION",
+        "TESTADMINISTERINGVETNAME":      "ADMINISTERINGVETNAME",
+        "TESTADMINISTERINGVETLICENCE":   "ADMINISTERINGVETLICENCE",
+        "TESTADMINISTERINGVETLICENSE":   "ADMINISTERINGVETLICENCE",
+        "TESTADMINISTERINGVETADDRESS":   "ADMINISTERINGVETADDRESS",
+        "TESTADMINISTERINGVETTOWN":      "ADMINISTERINGVETTOWN",
+        "TESTADMINISTERINGVETCITY":      "ADMINISTERINGVETTOWN",
+        "TESTADMINISTERINGVETCOUNTY":    "ADMINISTERINGVETCOUNTY",
+        "TESTADMINISTERINGVETSTATE":     "ADMINISTERINGVETCOUNTY",
+        "TESTADMINISTERINGVETPOSTCODE":  "ADMINISTERINGVETPOSTCODE",
+        "TESTADMINISTERINGVETZIPCODE":   "ADMINISTERINGVETPOSTCODE",
+        "TESTADMINISTERINGVETEMAIL":     "ADMINISTERINGVETEMAIL"
+
     }
     tags.update(table_tags(dbo, d, medical.get_tests(dbo, a["ID"], not include_incomplete_vacc), "TESTNAME", "DATEOFTEST"))
 
@@ -727,7 +750,6 @@ def movement_tags(dbo, m):
         "RESERVATIONSTATUS":            m["RESERVATIONSTATUSNAME"],
         "MOVEMENTISTRIAL":              utils.iif(m["ISTRIAL"] == 1, _("Yes", l), _("No", l)),
         "MOVEMENTISPERMANENTFOSTER":    utils.iif(m["ISPERMANENTFOSTER"] == 1, _("Yes", l), _("No", l)),
-        "TRIALENDDATE":                 python2display(l, m["TRIALENDDATE"]),
         "MOVEMENTCOMMENTS":             m["COMMENTS"],
         "MOVEMENTCREATEDBY":            m["CREATEDBY"],
         "MOVEMENTLASTCHANGEDBY":        m["LASTCHANGEDBY"],
@@ -920,7 +942,7 @@ def table_tags(dbo, d, rows, typefield = "", recentdatefield = ""):
                 continue
             # Is this the first of this type we've seen?
             # If so, create the tags with type as a suffix
-            if not uniquetypes.has_key(t):
+            if t not in uniquetypes:
                 uniquetypes[t] = r
                 t = t.upper().replace(" ", "").replace("/", "")
                 for k, v in d.iteritems():
@@ -934,7 +956,7 @@ def table_tags(dbo, d, rows, typefield = "", recentdatefield = ""):
                 t = r[typefield]
                 # Is this the first type with STATUS==2 we've seen?
                 # If so, create the tags with recent as a suffix.
-                if not recentgiven.has_key(t) and r[recentdatefield] == 2:
+                if t not in recentgiven and r[recentdatefield] == 2:
                     recentgiven[t] = r
                     t = t.upper().replace(" ", "").replace("/", "")
                     for k, v in d.iteritems():
@@ -943,7 +965,7 @@ def table_tags(dbo, d, rows, typefield = "", recentdatefield = ""):
                 t = r[typefield]
                 # Is this the first type with a date we've seen?
                 # If so, create the tags with recent as a suffix
-                if not recentgiven.has_key(t) and r[recentdatefield] is not None:
+                if t not in recentgiven and r[recentdatefield] is not None:
                     recentgiven[t] = r
                     t = t.upper().replace(" ", "").replace("/", "")
                     for k, v in d.iteritems():
@@ -976,7 +998,7 @@ def substitute_tags(searchin, tags, use_xml_escaping = True, opener = "&lt;&lt;"
         if ep != -1:
             matchtag = s[sp + len(opener):ep].upper()
             newval = ""
-            if tags.has_key(matchtag):
+            if matchtag in tags:
                 newval = tags[matchtag]
                 if newval is not None:
                     newval = str(newval)
@@ -1031,7 +1053,7 @@ def substitute_template(dbo, template, tags, imdata = None):
             zfo.close()
             # Return the zip data
             return zo.getvalue()
-        except Exception,zderr:
+        except Exception as zderr:
             raise utils.ASMError("Failed generating odt document: %s" % str(zderr))
 
 def generate_animal_doc(dbo, template, animalid, username):
@@ -1045,17 +1067,22 @@ def generate_animal_doc(dbo, template, animalid, username):
     im = media.get_image_file_data(dbo, "animal", animalid)[1]
     if a is None: raise utils.ASMValidationError("%d is not a valid animal ID" % animalid)
     tags = animal_tags(dbo, a)
-    if a["CURRENTOWNERID"] is not None and a["CURRENTOWNERID"] != 0:
-        tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, a["CURRENTOWNERID"])))
-    elif a["RESERVEDOWNERID"] is not None and a["RESERVEDOWNERID"] != 0:
-        tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, a["RESERVEDOWNERID"])))
-    if a["ACTIVEMOVEMENTID"] is not None and a["ACTIVEMOVEMENTID"] != 0:
-        m = movement.get_movement(dbo, a["ACTIVEMOVEMENTID"])
-        md = financial.get_movement_donations(dbo, a["ACTIVEMOVEMENTID"])
-        if m is not None and len(m) > 0:
+    # Use the person info from the latest open movement for the animal
+    # This will pick up future dated adoptions instead of fosterers (which are still currentowner)
+    # as get_animal_movements returns them in descending order of movement date
+    has_person_tags = False
+    for m in movement.get_animal_movements(dbo, animalid):
+        if m["MOVEMENTDATE"] is not None and m["OWNERID"] is not None and m["OWNERID"] != 0:
+            has_person_tags = True
+            tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, m["OWNERID"])))
             tags = append_tags(tags, movement_tags(dbo, m))
-        if len(md) > 0: 
-            tags = append_tags(tags, donation_tags(dbo, md))
+            md = financial.get_movement_donations(dbo, m["ID"])
+            if len(md) > 0: 
+                tags = append_tags(tags, donation_tags(dbo, md))
+            break
+    # If we didn't have an open movement and there's a reserve, use that as the person
+    if not has_person_tags and a["RESERVEDOWNERID"] is not None and a["RESERVEDOWNERID"] != 0:
+        tags = append_tags(tags, person_tags(dbo, person.get_person(dbo, a["RESERVEDOWNERID"])))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, template, tags, im)
 

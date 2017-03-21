@@ -68,9 +68,9 @@ def pbkdf2_bin(data, salt, iterations=1000, keylen=24, hashfunc=None):
         h.update(x)
         return map(ord, h.digest())
     buf = []
-    for block in xrange(1, -(-keylen // mac.digest_size) + 1):
+    for block in xrange(1, -(-keylen // mac.digest_size) + 1): # noqa: F821
         rv = u = _pseudorandom(salt + _pack_int(block))
-        for dummy in xrange(iterations - 1):
+        for dummy in xrange(iterations - 1): # noqa: F821
             u = _pseudorandom(''.join(map(chr, u)))
             rv = starmap(xor, izip(rv, u))
         buf.extend(rv)
@@ -82,14 +82,14 @@ def test():
     def check(data, salt, iterations, keylen, expected):
         rv = pbkdf2_hex(data, salt, iterations, keylen)
         if rv != expected:
-            print 'Test failed:'
-            print '  Expected:   %s' % expected
-            print '  Got:        %s' % rv
-            print '  Parameters:'
-            print '    data=%s' % data
-            print '    salt=%s' % salt
-            print '    iterations=%d' % iterations
-            print
+            print('Test failed:')
+            print('  Expected:   %s' % expected)
+            print('  Got:        %s' % rv)
+            print('  Parameters:')
+            print('    data=%s' % data)
+            print('    salt=%s' % salt)
+            print('    iterations=%d' % iterations)
+            print("")
             failed.append(1)
 
     # From RFC 6070
@@ -104,8 +104,8 @@ def test():
     check('pass\x00word', 'sa\x00lt', 4096, 16,
           '56fa6aa75548099dcc37d7f03425e0c3')
     # This one is from the RFC but it just takes for ages
-    ##check('password', 'salt', 16777216, 20,
-    ##      'eefe3d61cd4da4e4e9945b3d6ba2158c2634e984')
+    # check('password', 'salt', 16777216, 20,
+    #       'eefe3d61cd4da4e4e9945b3d6ba2158c2634e984')
 
     # From Crypt-PBKDF2
     check('password', 'ATHENA.MIT.EDUraeburn', 1, 16,
