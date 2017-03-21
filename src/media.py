@@ -134,7 +134,7 @@ def get_media_file_data(dbo, mid):
     mime type and file data
     """
     mm = get_media_by_id(dbo, mid)
-    if len(mm) == 0: return None
+    if len(mm) == 0: return (None, "", "", "")
     mm = mm[0]
     return mm["DATE"], mm["MEDIANAME"], mime_type(mm["MEDIANAME"]), dbfs.get_string(dbo, mm["MEDIANAME"])
 
