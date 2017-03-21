@@ -15,6 +15,7 @@ import animal as extanimal
 import animalcontrol as extanimalcontrol
 import async
 import audit
+import base64
 import cachemem
 import configuration
 import csvimport as extcsvimport
@@ -88,6 +89,7 @@ urls = (
     "/document_edit", "document_edit",
     "/document_media_edit", "document_media_edit",
     "/document_repository", "document_repository",
+    "/document_repository_file", "document_repository_file",
     "/document_templates", "document_templates",
     "/donation", "donation",
     "/donation_receive", "donation_receive",
@@ -2661,40 +2663,49 @@ class document_media_edit:
             web.header("Content-Type", "text/html")
             return "%s%s%s" % (html.tinymce_print_header(_("Print Preview", l)), post["document"], "</body></html>")
 
-class document_repository:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_REPO_DOCUMENT)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(dbfsid = 0), session.locale)
-        if post.integer("dbfsid") != 0:
-            name = dbfs.get_name_for_id(dbo, post.integer("dbfsid"))
-            mimetype, encoding = mimetypes.guess_type("file://" + name, strict=False)
-            web.header("Content-Type", mimetype)
-            web.header("Content-Disposition", "attachment; filename=\"%s\"" % name)
-            return dbfs.get_string_id(dbo, post.integer("dbfsid"))
-        else:
-            documents = dbfs.get_document_repository(dbo)
-            al.debug("got %d documents in repository" % len(documents), "code.document_repository", dbo)
-            s = html.header("", session)
-            c = html.controller_json("rows", documents)
-            s += html.controller(c)
-            s += html.footer()
-            return full_or_json("document_repository", s, c, post["json"] == "true")
+class document_repository(JSONEndpoint):
+    url = "document_repository"
+    get_permissions = users.VIEW_REPO_DOCUMENT
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(mode="create", filechooser={}), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_REPO_DOCUMENT)
-            dbfs.upload_document_repository(dbo, post["path"], post.data.filechooser)
-            raise web.seeother("document_repository")
-        if mode == "delete":
-            users.check_permission(session, users.DELETE_REPO_DOCUMENT)
-            for i in post.integer_list("ids"):
-                dbfs.delete_id(dbo, i)
+    def controller(self, o):
+        documents = dbfs.get_document_repository(o.dbo)
+        al.debug("got %d documents in repository" % len(documents), "code.document_repository", o.dbo)
+        return { "rows": documents }
+
+    def post_create(self, o):
+        self.check(users.ADD_REPO_DOCUMENT)
+        if o.post["filename"] != "":
+            # If filename is supplied it's an HTML5 upload
+            filename = o.post["filename"]
+            filedata = o.post["filedata"]
+            # Strip the data URL and decode
+            if filedata.startswith("data:"):
+                filedata = filedata[filedata.find(",")+1:]
+                filedata = filedata.replace(" ", "+") # Unescape turns pluses back into spaces, which breaks base64
+            filedata = base64.b64decode(filedata)
+        else:
+            # Otherwise it's an old style file input
+            filename = utils.filename_only(o.post.data.filechooser.filename)
+            filedata = o.post.data.filechooser.value
+        dbfs.upload_document_repository(o.dbo, o.post["path"], filename, filedata)
+        self.redirect("document_repository")
+
+    def post_delete(self, o):
+        self.check(users.DELETE_REPO_DOCUMENT)
+        for i in o.post.integer_list("ids"):
+            dbfs.delete_id(o.dbo, i)
+
+class document_repository_file(ASMEndpoint):
+    url = "document_repository_file"
+    get_permissions = users.VIEW_REPO_DOCUMENT
+
+    def content(self, o):
+        if o.post.integer("dbfsid") != 0:
+            name = dbfs.get_name_for_id(o.dbo, o.post.integer("dbfsid"))
+            mimetype, encoding = mimetypes.guess_type("file://" + name, strict=False)
+            self.header("Content-Type", mimetype)
+            self.header("Content-Disposition", "attachment; filename=\"%s\"" % name)
+            return dbfs.get_string_id(o.dbo, o.post.integer("dbfsid"))
 
 class document_templates:
     def GET(self):

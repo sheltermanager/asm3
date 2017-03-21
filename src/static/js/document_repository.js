@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, tableform, validate */
+/*global $, jQuery, FileReader, Modernizr, _, asm, common, config, controller, dlgfx, format, header, html, tableform, validate */
 
 $(function() {
 
@@ -15,7 +15,8 @@ $(function() {
                 width: 550,
                 fields: [
                     { post_field: "filechooser", label: _("Document file"), type: "file", validation: "notblank" },
-                    { post_field: "path", label: _("Path"), type: "text" }
+                    { post_field: "path", label: _("Path"), type: "text" },
+                    { type: "raw", label: "", markup: '<input type="hidden" name="mode" value="create" />' }
                 ]
             };
 
@@ -23,7 +24,7 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    common.route("document_repository?ajax=false&dbfsid=" + row.ID);
+                    common.route("document_repository_file?ajax=false&dbfsid=" + row.ID);
                 },
                 columns: [
                     { field: "NAME", display: _("Document file") },
@@ -54,11 +55,53 @@ $(function() {
                                  tableform.table_update(table);
                              });
                      } 
-                 }
+                 },
+                { type: "raw", markup: '<div style="min-height: 40px" class="asm-mediadroptarget"><p>' + _("Drop files here...") + '</p></div>',
+                    hideif: function() { return !Modernizr.filereader || !Modernizr.todataurljpeg || asm.mobileapp; }}
             ];
             this.dialog = dialog;
             this.buttons = buttons;
             this.table = table;
+        },
+
+        attach_files: function(files) {
+            var i = 0, promises = [];
+            if (!Modernizr.filereader || !Modernizr.todataurljpeg) { return; }
+            header.show_loading(_("Uploading..."));
+            for (i = 0; i < files.length; i += 1) {
+                promises.push(document_repository.attach_file(files[i])); 
+            }
+            $.when.apply(this, promises).then(function() {
+                header.hide_loading();
+                common.route_reload();
+            });
+        },
+
+        /**
+         * Uploads a single file using the FileReader API. 
+         * returns a promise.
+         */
+        attach_file: function(file, comments) {
+
+            var deferred = $.Deferred(),
+                docreader = new FileReader();
+
+            docreader.onload = function(e) {
+                // TODO: File size check?
+                // Post the file data via AJAX
+                var formdata = "mode=create&filename=" + encodeURIComponent(file.name) +
+                    "&filetype=" + encodeURIComponent(file.type) + 
+                    "&filedata=" + encodeURIComponent(e.target.result);
+                common.ajax_post(controller.name, formdata)
+                    .then(function(result) { 
+                        deferred.resolve();
+                    })
+                    .fail(function() {
+                        deferred.reject(); 
+                    });
+            };
+            docreader.readAsDataURL(file);
+            return deferred.promise();
         },
 
         render: function() {
@@ -79,6 +122,22 @@ $(function() {
             tableform.table_bind(this.table, this.buttons);
             // Assign name attribute to the path as we're using straight form POST for uploading
             $("#path").attr("name", "path");
+            // Handle drag and drop
+            $(".asm-mediadroptarget").on("dragover", function() {
+                $(".asm-mediadroptarget").addClass("asm-mediadroptarget-hover");
+                return false;
+            });
+            $(".asm-mediadroptarget").on("dragleave", function() {
+                $(".asm-mediadroptarget").removeClass("asm-mediadroptarget-hover");
+                return false;
+            });
+            $(".asm-mediadroptarget").on("drop", function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                $(".asm-mediadroptarget").removeClass("asm-mediadroptarget-hover");
+                document_repository.attach_files(e.originalEvent.dataTransfer.files);
+                return false;
+            });
         },
 
         destroy: function() {

@@ -584,16 +584,15 @@ def upload_report_image(dbo, fc):
         raise utils.ASMValidationError("upload_report_image only accepts images.")
     put_string(dbo, filename, "/reports", filedata)
 
-def upload_document_repository(dbo, path, fc):
+def upload_document_repository(dbo, path, filename, filedata):
     """
     Attaches a document from a form filechooser object and puts
     it in the /document_repository directory. 
     An extra path portion can be specified in path.
     """
     ext = ""
-    ext = fc.filename
-    filename = utils.filename_only(fc.filename)
-    filedata = fc.value
+    ext = filename
+    filename = utils.filename_only(filename)
     ext = ext[ext.rfind("."):].lower()
     if path != "" and path.startswith("/"): path = path[1:]
     if path == "":
