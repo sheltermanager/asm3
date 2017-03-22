@@ -35,9 +35,9 @@ $$HEAD
 <th>Species</th>
 <th>Breed</th>
 <th>Location</th>
-<th>VetName</th>
-<th>LicenseNumber</th>
-<th>TreatmentName</th>
+<th>Vet Name</th>
+<th>License Number</th>
+<th>Treatment Name</th>
 <th>Comments</th>
 <th>DateGiven</th>
 <th>Cost</th>
@@ -54,7 +54,7 @@ $$FOOT
 <td></td>
 <td></td>
 <td></td>
-<td><b>£{SUM.Cost}<b/></td>
+<td><b>&#163;{SUM.Cost}<b/></td>
 </tr>
 
 </table>
@@ -78,5 +78,5 @@ BODY$$
 
 $$FOOTER
 </table>
-<h3>Total: £{SUM.Cost}</h3>
+<h3>Total: &#163;{SUM.Cost}</h3>
 FOOTER$$

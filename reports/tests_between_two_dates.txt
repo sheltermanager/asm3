@@ -34,8 +34,8 @@ $$HEAD
 <th>ShelterCode</th>
 <th>Species</th>
 <th>Breed</th>
-<th>VetName</th>
-<th>LicenseNumber</th>
+<th>Vet Name</th>
+<th>License Number</th>
 <th>Comments</th>
 <th>Result</th>
 <th>Date</th>
