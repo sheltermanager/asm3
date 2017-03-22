@@ -32,8 +32,8 @@ $$HEAD
 <th>Name</th>
 <th>Breed</th>
 <th>Location</th>
-<th>VetName</th>
-<th>LicenseNumber</th>
+<th>Vet Name</th>
+<th>License Number</th>
 <th>Type</th>
 <th>Date</th>
 <th>Batch</th>
