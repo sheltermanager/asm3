@@ -92,7 +92,7 @@ $(function() {
                 var formdata = "mode=create&filename=" + encodeURIComponent(file.name) +
                     "&filetype=" + encodeURIComponent(file.type) + 
                     "&filedata=" + encodeURIComponent(e.target.result);
-                common.ajax_post(controller.name, formdata)
+                common.ajax_post("document_repository", formdata)
                     .then(function(result) { 
                         deferred.resolve();
                     })
