@@ -37,7 +37,7 @@ echo "/var/log/asm3.log
         postrotate
                 invoke-rc.d rsyslog rotate > /dev/null
         endscript
-}" > /etc/logrotate.d/asm3
+}" > sheltermanager3/etc/logrotate.d/asm3
 
 # Add our repository to the list file
 echo "deb http://public.sheltermanager.com/deb/ ./" > sheltermanager3/etc/apt/sources.list.d/sheltermanager3.list
