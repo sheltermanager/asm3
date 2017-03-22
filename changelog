@@ -1,6 +1,7 @@
 40
 ================
 
+22/03/17 Include built in flags with $ASK PERSONFLAG$ and $ASK ANIMALFLAG$ #26
 22/03/17 Secret GeocodeWithPostcodeOnly config for Google issues with Wales
 21/03/17 Add given/remaining counts to medical book/tab
 21/03/17 Add asm3_adoptable_filter support to adoptable_js #171

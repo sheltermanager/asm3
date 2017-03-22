@@ -1071,7 +1071,13 @@ def options_agegroups(dbo, includeAll = False, includeUnknown = False, selected 
 
 def options_animal_flags(dbo):
     s = ""
+    l = dbo.locale
     pf = lookups.get_animal_flags(dbo)
+    s += option(_("Courtesy Listing", l), "courtesy")
+    s += option(_("Cruelty Case", l), "crueltycase")
+    s += option(_("Non-Shelter", l), "nonshelter")
+    s += option(_("Not For Adoption", l), "notforadoption")
+    s += option(_("Quarantine", l), "quarantine")
     for p in pf:
         s += option(p["FLAG"])
     return s
@@ -1317,7 +1323,24 @@ def options_movement_types(dbo, includeAll = False, selected = -1):
 
 def options_person_flags(dbo):
     s = ""
+    l = dbo.locale
     pf = lookups.get_person_flags(dbo)
+    s += option(_("ACO", l), "aco")
+    s += option(_("Banned", l), "banned")
+    s += option(_("Adoption Coordinator", l), "coordinator")
+    s += option(_("Deceased", l), "deceased")
+    s += option(_("Donor", l), "donor")
+    s += option(_("Driver", l), "driver")
+    s += option(_("Fosterer", l), "fosterer")
+    s += option(_("Homechecked", l), "homechecked")
+    s += option(_("Homechecker", l), "homechecker")
+    s += option(_("Member", l), "member")
+    s += option(_("Retailer", l), "retailer")
+    s += option(_("Other Shelter", l), "shelter")
+    s += option(_("Staff", l), "staff")
+    s += option(_("Giftaid", l), "giftaid")
+    s += option(_("Vet", l), "vet")
+    s += option(_("Volunteer", l), "volunteer")
     for p in pf:
         s += option(p["FLAG"])
     return s
