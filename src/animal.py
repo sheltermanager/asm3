@@ -1737,8 +1737,11 @@ def get_shelterview_animals(dbo, locationfilter = "", siteid = 0):
     """
     Returns all available animals for shelterview
     """
+    limitsql = ""
+    limit = configuration.record_search_limit(dbo)
+    if limit > 0: limitsql = "LIMIT %d" % limit
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
-    return get_animals_ids(dbo, "a.AnimalName", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation WHERE Archived = 0 %s ORDER BY HasPermanentFoster, ID DESC LIMIT %d" % (locationfilter, configuration.record_search_limit(dbo)))
+    return get_animals_ids(dbo, "a.AnimalName", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation WHERE Archived = 0 %s ORDER BY HasPermanentFoster, ID DESC %s" % (locationfilter, limitsql))
 
 def insert_animal_from_form(dbo, post, username):
     """
