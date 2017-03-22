@@ -1,6 +1,7 @@
 40
 ================
 
+22/03/17 Secret GeocodeWithPostcodeOnly config for Google issues with Wales
 21/03/17 Add given/remaining counts to medical book/tab
 21/03/17 Add asm3_adoptable_filter support to adoptable_js #171
 21/03/17 Prevent signing pad breaking if last document to sign is deleted

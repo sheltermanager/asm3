@@ -186,6 +186,7 @@ DEFAULTS = {
     "FosterOnShelter": "Yes",
     "IncidentPermissions": "No",
     "IncomingMediaScaling": "640x640",
+    "GeocodeWithPostcodeOnly": "No",
     "GenerateDocumentLog": "No",
     "GenerateDocumentLogType": "5",
     "InactivityTimer": "No",

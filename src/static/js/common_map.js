@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, jQuery, google, asm, L */
+/*global $, jQuery, google, asm, config, L */
 /*global google_loaded: true, geo: true, mapping: true */
 
 (function($) {
@@ -44,6 +44,7 @@
         /** Gets the lat/long position for an address from google */
         _google_get_lat_long: function(address, town, city, postcode, callback) {
             var add = address.replace("\n", ",") + ", " + town  + ", " + city + ", " + postcode;
+            if (config.bool("GeocodeWithPostcodeOnly")) { add = postcode; }
             window._googeocallback = function() {
                 var geocoder = new google.maps.Geocoder();
                 geocoder.geocode( { 'address': add }, function(results, status) {
@@ -70,6 +71,7 @@
         /** Gets the lat/long position for an address from nominatim */
         _nominatim_get_lat_long: function(address, town, city, postcode, callback) {
             var add = encodeURIComponent(address.replace("\n", ",") + "," + town).replace(/ /g, "+");
+            if (config.bool("GeocodeWithPostcodeOnly")) { add = postcode.replace(/ /g, "+"); }
             $.getJSON("http://nominatim.openstreetmap.org/search?format=json&q=" + add + "&json_callback=?", function(data) {
                 if (!data || !data[0] || !data[0].lat) {
                     callback(0, 0);
@@ -82,8 +84,9 @@
 
         /** Gets the lat/long position for an address from sheltermanager.com */
         _smcom_get_lat_long: function(address, town, city, postcode, callback) {
-            var add = encodeURIComponent(address.replace("\n", ",") + "," + town).replace(/ /g, "+"),
-                url = "/geocode?format=json&q=" + add;
+            var add = encodeURIComponent(address.replace("\n", ",") + "," + town).replace(/ /g, "+");
+            if (config.bool("GeocodeWithPostcodeOnly")) { add = postcode.replace(/ /g, "+"); }
+            var url = "/geocode?format=json&q=" + add;
             $.ajax({
                 type: "GET",
                 dataType: "json",
@@ -101,6 +104,7 @@
         /** Gets the lat/long position for an address from mapquest */
         _mapquest_get_lat_long: function(address, town, city, postcode, callback) {
             var add = (address.replace("\n", ",") + "," + town + "," + city + "," + postcode).replace(/'/g, '');
+            if (config.bool("GeocodeWithPostcodeOnly")) { add = postcode; }
             var url = "http://www.mapquestapi.com/geocoding/v1/address?";
             if (asm.geoproviderkey) {
                 url += "key=" + asm.geoproviderkey + "&";
