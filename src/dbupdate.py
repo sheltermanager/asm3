@@ -4291,8 +4291,8 @@ def update_33713(dbo):
     db.execute_dbupdate(dbo, "UPDATE animal SET IsCourtesy=0, AdditionalFlags=''")
 
 def update_33714(dbo):
-    # Remove activeuser table (superceded by memcache)
-    db.execute_dbupdate(dbo, "DROP TABLE activeuser")
+    # ASM3 requires a nonzero value for RecordSearchLimit where ASM2 does not
+    db.execute_dbupdate(dbo, "UPDATE configuration SET ItemValue = '1000' WHERE ItemName LIKE 'RecordSearchLimit'")
 
 def update_33715(dbo):
     # Add owner.FosterCapacity field
