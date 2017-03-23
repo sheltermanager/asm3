@@ -13,10 +13,8 @@ $VAR to DATE Enter to date$
 
 SELECT animal.animalname, owner.ownername, owner.membershipnumber, vaccinationtype.vaccinationtype, animalvaccination.dateofvaccination, animalvaccination.batchnumber, animalvaccination.manufacturer,animalvaccination.cost, animal.breedname, animal.displaylocation
 FROM animalvaccination
-INNER JOIN animal
-ON animalvaccination.animalid=animal.id
-INNER JOIN vaccinationtype
-ON animalvaccination.vaccinationid=vaccinationtype.id
+INNER JOIN animal ON animalvaccination.animalid=animal.id
+INNER JOIN vaccinationtype ON animalvaccination.vaccinationid=vaccinationtype.id
 LEFT JOIN owner ON owner. id=animalvaccination.administeringvetid
 WHERE dateofvaccination >= '$@from$' AND dateofvaccination <= '$@to$'
 ORDER BY vaccinationtype, animalname
