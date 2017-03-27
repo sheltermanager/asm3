@@ -4,7 +4,7 @@ Movements
 ###
 Any
 ###
-Animals transferred into the shelter between two dates.
+Animals transferred into the shelter between two dates by transferor.
 ###
 en
 ###
@@ -22,6 +22,7 @@ ORDER BY a.DateBroughtIn
 ###
 $$HEADER
 HEADER$$
+
 $$GROUP_OwnerName
 $$HEAD
 <h2>$OwnerName</h2>
@@ -37,9 +38,8 @@ $$HEAD
 </tr>
 $$FOOT
 </table> 
-<p>Total: {COUNT.ShelterCode}</p>
+<p>Total $OwnerName: {COUNT.ShelterCode}</p>
 GROUP$$
-
 
 $$BODY
 <tr>
@@ -59,5 +59,5 @@ BODY$$
 
 $$FOOTER
 </table>
-<h3>GrandTotal: {COUNT.ShelterCode}</h3>
+<h3>Grand Total: {COUNT.ShelterCode}</h3>
 FOOTER$$
