@@ -21,6 +21,10 @@ AND DateBroughtIn >= '$ASK DATE Enter the from date$' AND DateBroughtIn <= '$ASK
 ORDER BY a.DateBroughtIn
 ###
 $$HEADER
+HEADER$$
+$$GROUP_OwnerName
+$$HEAD
+<h2>$OwnerName</h2>
 <table border="1">
 <tr>
 <th>Date</th>
@@ -31,7 +35,11 @@ $$HEADER
 <th>Location</th>
 <th>From</th>
 </tr>
-HEADER$$
+$$FOOT
+</table> 
+<p>Total: {COUNT.ShelterCode}</p>
+GROUP$$
+
 
 $$BODY
 <tr>
@@ -51,4 +59,5 @@ BODY$$
 
 $$FOOTER
 </table>
+<h3>GrandTotal: {COUNT.ShelterCode}</h3>
 FOOTER$$
