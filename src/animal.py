@@ -2353,6 +2353,7 @@ def clone_animal(dbo, username, animalid):
         ( "CurrentVetID",  db.di(a["CURRENTVETID"])),
         ( "OriginalOwnerID", db.di(a["ORIGINALOWNERID"])),
         ( "BroughtInByOwnerID", db.di(a["BROUGHTINBYOWNERID"])),
+        ( "AdoptionCoordinatorID", db.di(a["ADOPTIONCOORDINATORID"])),
         ( "ReasonForEntry", db.ds(a["REASONFORENTRY"])),
         ( "ReasonNO", db.ds(a["REASONNO"])),
         ( "DateBroughtIn", db.ddt(a["DATEBROUGHTIN"])),
