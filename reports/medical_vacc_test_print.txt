@@ -2,13 +2,12 @@ Print Medical, Vaccination and Test History
 ###
 Auditing
 ###
-3309/Any
+34004
 ###
 The combined medical, vaccination and test history for an animal
 ###
 en
 ###
-
 SELECT * FROM
 (
 
@@ -16,42 +15,44 @@ SELECT
 'Medical' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID,
 t.AnimalType, s.SpeciesName, il.LocationName, 
 am.TreatmentName, am.Dosage, amt.TreatmentNumber, 
-amt.TotalTreatments, amt.DateRequired, amt.DateGiven, am.Comments
+amt.TotalTreatments, amt.DateRequired, amt.DateGiven, am.Comments, o.ownername, o.membershipnumber
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN species s ON s.ID = a.SpeciesID
 INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 INNER JOIN animalmedical am ON a.ID = am.AnimalID
 INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID
+LEFT JOIN owner o ON o.id=amt.AdministeringvetID
 
 UNION SELECT
 'Vaccination' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
-t.AnimalType, sp.SpeciesName, il.LocationName,
+t.AnimalType, sp.SpeciesName, il.LocationName, 
 v.VaccinationType AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber,
-'1' AS TotalTreatments, av.DateRequired, av.DateOfVaccination AS DateGiven, av.Comments
+'1' AS TotalTreatments, av.DateRequired, av.DateOfVaccination AS DateGiven, av.Comments, o.ownername, o.membershipnumber
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN animalvaccination av ON a.ID = av.AnimalID
 INNER JOIN species sp ON sp.ID = a.SpeciesID
 INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID
+LEFT JOIN owner o ON o.id=av.administeringvetid
 INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 
 UNION SELECT
 'Test' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
-t.AnimalType, sp.SpeciesName, il.LocationName,
+t.AnimalType, sp.SpeciesName, il.LocationName, 
 tt.TestName AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber,
-'1' AS TotalTreatments, at.DateRequired, at.DateOfTest AS DateGiven, at.Comments
+'1' AS TotalTreatments, at.DateRequired, at.DateOfTest AS DateGiven, at.Comments, o.ownername, o.membershipnumber
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN animaltest at ON a.ID = at.AnimalID
 INNER JOIN species sp ON sp.ID = a.SpeciesID
 INNER JOIN testtype tt ON at.TestTypeID = tt.ID
+LEFT JOIN owner o ON o.id=at.administeringvetid
 INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 
 ) dummy
 WHERE AID = $ASK ANIMAL$
 ORDER BY DateGiven
-
 ###
 $$HEADER
 <h2>$ANIMALNAME - $SHELTERCODE ($ANIMALTYPE / $SPECIESNAME)</h2>
@@ -61,6 +62,8 @@ $$HEADER
 <td><b>Number</b></td>
 <td><b>Required</b></td>
 <td><b>Given</b></td>
+<td><b>Vet Name</b></td>
+<td><b>License Number</b></td>
 <td><b>Comments</b></td>
 </tr>
 HEADER$$
@@ -71,6 +74,8 @@ $$BODY<tr>
 <td>$TREATMENTNUMBER / $TOTALTREATMENTS</td>
 <td>$DATEREQUIRED</td>
 <td>$DATEGIVEN</td>
+<td>$OWNERNAME</td>
+<td>$MEMBERSHIPNUMBER</td>
 <td>$COMMENTS</td>
 </tr>
 BODY$$
