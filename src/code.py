@@ -1474,41 +1474,40 @@ class animal_embed(ASMEndpoint):
             al.debug("got animal %s %s by id" % (a["CODE"], a["ANIMALNAME"]), "code.animal_embed", dbo)
             return html.json((a,))
 
-class animal_find:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_ANIMAL)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        s = html.header("", session)
-        c = html.controller_json("agegroups", configuration.age_groups(dbo))
-        c += html.controller_json("animaltypes", extlookups.get_animal_types(dbo))
-        c += html.controller_json("species", extlookups.get_species(dbo))
-        c += html.controller_json("breeds", extlookups.get_breeds_by_species(dbo))
-        c += html.controller_json("flags", extlookups.get_animal_flags(dbo))
-        c += html.controller_json("sexes", extlookups.get_sexes(dbo))
-        c += html.controller_json("internallocations", extlookups.get_internal_locations(dbo, session.locationfilter, session.siteid))
-        c += html.controller_json("sizes", extlookups.get_sizes(dbo))
-        c += html.controller_json("colours", extlookups.get_basecolours(dbo))
-        c += html.controller_json("users", users.get_users(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        al.debug("loaded lookups for find animal", "code.animal_find", dbo)
-        return full_or_json("animal_find", s, c, post["json"] == "true")
+class animal_find(JSONEndpoint):
+    url = "animal_find"
+    get_permissions = users.VIEW_ANIMAL
 
-class animal_find_results:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_ANIMAL)
-        dbo = session.dbo
-        l = session.locale
-        post = utils.PostedData(web.input(q = "", mode = ""), session.locale)
-        q = post["q"]
-        mode = post["mode"]
+    def controller(self, o):
+        dbo = o.dbo
+        c = {
+            "agegroups": configuration.age_groups(dbo),
+            "animaltypes": extlookups.get_animal_types(dbo),
+            "species": extlookups.get_species(dbo),
+            "breeds": extlookups.get_breeds_by_species(dbo),
+            "flags": extlookups.get_animal_flags(dbo),
+            "sexes": extlookups.get_sexes(dbo),
+            "internallocations": extlookups.get_internal_locations(dbo, o.session.locationfilter, o.session.siteid),
+            "sizes": extlookups.get_sizes(dbo),
+            "colours": extlookups.get_basecolours(dbo),
+            "users": users.get_users(dbo)
+        }
+        al.debug("loaded lookups for find animal", "code.animal_find", dbo)
+        return c
+
+class animal_find_results(JSONEndpoint):
+    url = "animal_find_results"
+    get_permissions = users.VIEW_ANIMAL
+
+    def controller(self, o):
+        dbo = o.dbo
+        l = o.locale
+        q = o.post["q"]
+        mode = o.post["mode"]
         if mode == "SIMPLE":
-            results = extanimal.get_animal_find_simple(dbo, q, "all", configuration.record_search_limit(dbo), session.locationfilter, session.siteid)
+            results = extanimal.get_animal_find_simple(dbo, q, "all", configuration.record_search_limit(dbo), o.session.locationfilter, o.session.siteid)
         else:
-            results = extanimal.get_animal_find_advanced(dbo, post.data, configuration.record_search_limit(dbo), session.locationfilter, session.siteid)
+            results = extanimal.get_animal_find_advanced(dbo, o.post.data, configuration.record_search_limit(dbo), o.session.locationfilter, o.session.siteid)
         add = None
         if len(results) > 0: 
             add = extadditional.get_additional_fields_ids(dbo, results, "animal")
@@ -1516,14 +1515,12 @@ class animal_find_results:
         wasonshelter = False
         if q == "" and mode == "SIMPLE":
             wasonshelter = True
-        s = html.header("", session)
-        c = html.controller_json("rows", results)
-        c += html.controller_str("resultsmessage", _("Search returned {0} results.", l).format(len(results)))
-        c += html.controller_json("additional", add)
-        c += html.controller_bool("wasonshelter", wasonshelter)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("animal_find_results", s, c, post["json"] == "true")
+        return {
+            "rows": results,
+            "resultsmessage": _("Search returned {0} results.", l).format(len(results)),
+            "additional": add,
+            "wasonshelter": wasonshelter
+        }
 
 class animal_licence:
     def GET(self):

@@ -767,6 +767,7 @@ class Report:
         while startkey != -1:
 
             endkey = out.find("}", startkey)
+            if endkey == -1: endkey = len(out)-1
             key = out[startkey + 1:endkey]
             value = ""
             valid = False
@@ -793,7 +794,10 @@ class Report:
                         # Ignore anything that wasn't a number
                         pass
                 fstr = "%0." + str(roundto) + "f"
-                value = fstr % total
+                value = ""
+                if utils.is_currency(fields[1]):
+                    value = i18n.get_currency_symbol(self.dbo.locale)
+                value += fstr % total
 
             # {COUNT.field[.distinct]}
             if key.lower().startswith("count"):
@@ -1676,6 +1680,7 @@ class Report:
             startkey = tempbody.find("{")
             while startkey != -1:
                 endkey = tempbody.find("}", startkey)
+                if endkey == -1: endkey = len(tempbody)-1
                 key = tempbody[startkey+1:endkey]
                 value = ""
                 valid = False

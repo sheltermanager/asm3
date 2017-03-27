@@ -41,7 +41,7 @@ LOOKUP_TABLES = {
     "site":             (_("Sites"), "SiteName", _("Site"), "", 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, ("users.SiteID","internallocation.SiteID")),
     "species":          (_("Species"), "SpeciesName", _("Species"), "SpeciesDescription", 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, ("animal.SpeciesID", "animallost.AnimalTypeID", "animalfound.AnimalTypeID")),
     "stocklocation":    (_("Stock Locations"), "LocationName", _("Location"), "LocationDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("stocklevel.StockLocationID",)),
-    "stockusagetype":   (_("Stock Usage Type"), "UsageTypeName", _("Usage Type"), "UsageTypeDescription", 0, 0, 0, 0, 0, 0, 1, 1, 1, ("stockusage.StockUsageTypeID",)),
+    "stockusagetype":   (_("Stock Usage Type"), "UsageTypeName", _("Usage Type"), "UsageTypeDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("stockusage.StockUsageTypeID",)),
     "lkurgency":        (_("Urgencies"), "Urgency", _("Urgency"), "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ("animalwaitinglist.Urgency",)),
     "testtype":         (_("Test Types"), "TestName", _("Type"), "TestDescription", 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, ("animaltest.TestTypeID",)),
     "testresult":       (_("Test Results"), "ResultName", _("Result"), "ResultDescription", 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, ("animaltest.TestResultID",)),
