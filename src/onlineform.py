@@ -19,6 +19,7 @@ import publish
 import utils
 import waitinglist
 import web
+from HTMLParser import HTMLParser
 from sitedefs import BASE_URL, ASMSELECT_CSS, ASMSELECT_JS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, SIGNATURE_JS, TOUCHPUNCH_JS
 
 FIELDTYPE_YESNO = 0
@@ -74,6 +75,24 @@ FORM_FIELDS = [
     "transporttype", "pickupaddress", "pickuptown", "pickupcity", "pickupcounty", "pickupstate", "pickuppostcode", "pickupzipcode", "pickupdate", "pickuptime",
     "dropoffaddress", "dropofftown", "dropoffcity", "dropoffcounty", "dropoffstate", "dropoffpostcode", "dropoffzipcode", "dropoffdate", "dropofftime"
 ]
+
+class FormHTMLParser(HTMLParser):
+    tag = ""
+    title = ""
+    controls = None
+
+    def handle_starttag(self, tag, attrs):
+        self.tag = tag
+        if self.controls is None: self.controls = []
+        if tag == "select" or tag == "input" or tag == "textarea":
+            ad = { "tag": tag }
+            for k, v in attrs:
+                ad[k] = v
+            self.controls.append(ad)
+
+    def handle_data(self, data):
+        if self.tag == "title":
+            self.title = data
 
 def get_onlineform(dbo, formid):
     """ Returns the online form with ID formid """
@@ -266,6 +285,46 @@ def import_onlineform_json(dbo, j):
             "mandatory": utils.iif(f["mandatory"], "1", "0"),
             "lookups": f["lookups"],
             "tooltip": f["tooltip"]
+        }
+        insert_onlineformfield_from_form(dbo, "import", utils.PostedData(data, dbo.locale))
+
+def import_onlineform_html(dbo, h):
+    """
+    Imports an online form from an HTML document
+    """
+    p = FormHTMLParser()
+    p.feed(h)
+    data = {
+        "name": p.title,
+        "description": "",
+        "header": "",
+        "footer": ""
+    }
+    fid = insert_onlineform_from_form(dbo, "import", utils.PostedData(data, dbo.locale))
+    for i, control in enumerate(p.controls):
+        name = ""
+        label = ""
+        tooltip = ""
+        fieldtype = "TEXT"
+        tag = "input"
+        for k, v in control.iteritems():
+            if k == "name": 
+                name = v
+                label = v
+            if k == "tag": tag = v
+            if k == "title": tooltip = v
+        if tag == "select": fieldtype = "LOOKUP"
+        if tag == "textarea": fieldtype = "NOTES"
+        # without a name, we have nothing
+        if name == "": continue
+        data = { "formid": str(fid),
+            "fieldname": name,
+            "fieldtype": str(FIELDTYPE_MAP[fieldtype]),
+            "label": label,
+            "displayindex": i * 10,
+            "mandatory": "0",
+            "lookups": "",
+            "tooltip": tooltip
         }
         insert_onlineformfield_from_form(dbo, "import", utils.PostedData(data, dbo.locale))
 

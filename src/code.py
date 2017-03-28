@@ -4888,7 +4888,11 @@ class onlineforms:
             dbfs.put_string_filepath(session.dbo, "/onlineform/foot.html", post["footer"])
         elif mode == "import":
             users.check_permission(session, users.EDIT_ONLINE_FORMS)
-            extonlineform.import_onlineform_json(session.dbo, post.filedata())
+            fd = post.filedata()
+            if fd.startswith("{"):
+                extonlineform.import_onlineform_json(session.dbo, post.filedata())
+            else:
+                extonlineform.import_onlineform_html(session.dbo, post.filedata())
             raise web.seeother("onlineforms")
 
 class options:
