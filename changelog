@@ -1,6 +1,7 @@
 40
 ================
 
+29/03/17 Fix bug with litter references not being URI encoded for litter mates
 29/03/17 Add cost total wordkeys #177
 29/03/17 Create audit records for bulk animal change
 29/03/17 Signing pad too small on hi-res landscape tables #183

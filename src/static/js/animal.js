@@ -1393,7 +1393,7 @@ $(function() {
             });
 
             $("#button-littermates").button().click(function() {
-                common.route("animal_find_results?mode=ADVANCED&q=&litterid=" + $("#litterid").val());
+                common.route("animal_find_results?mode=ADVANCED&q=&litterid=" + encodeURIComponent($("#litterid").val()));
             });
 
             // Inline buttons

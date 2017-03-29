@@ -113,7 +113,7 @@ $(function() {
                  { id: "littermates", text: _("Littermates"), icon: "litter", enabled: "one", perm: "va", 
                      click: function() { 
                          var row = tableform.table_selected_row(table);
-                         common.route("animal_find_results?mode=ADVANCED&q=&litterid=" + row.ACCEPTANCENUMBER);
+                         common.route("animal_find_results?mode=ADVANCED&q=&litterid=" + encodeURIComponent(row.ACCEPTANCENUMBER));
                      }
                  }
             ];
