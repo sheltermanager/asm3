@@ -126,4 +126,46 @@ can view it.
 You can safely delete incoming forms once they have been attached to a record.
 The system will also remove incoming forms older than 2 weeks by default.
 
+Importing
+---------
+
+ASM also allows importing of online forms from files. 
+
+Form files can be in a structured JSON format that ASM recognises, eg::
+
+    {
+        "name": "Adoption Application",
+        "description": "",
+        "header": "",
+        "footer": ""
+        "fields": [
+            { "index": 1, "lookups": "", "mandatory": "true", "name": "reserveanimalname",
+              "tooltip": "", "label": "Animal you are interested in", "type": "ADOPTABLEANIMAL" },
+            { "index": 2, "lookups": "", "mandatory": true, "name": "firstname",
+              "tooltip": "", "label": "Applicant's First Name", "type": "TEXT" },
+            { "index": 3, "lookups": "", "mandatory": true, "name": "lastname",
+              "tooltip": "", "label": "Applicant's Last Name", "type": "TEXT" }
+        ]
+    }
+
+Files can also be HTML, where the import mechanism will extract all of the
+input, select and textarea elements. It will use the name attribute to set the
+field name and label. The HTML page title will be used as the form title.
+
+HTML import is only basic, but can be used to grab the existing fields of a
+form you already have ready for editing, eg::
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <title>My Adoption Form</title>
+    </head>
+    <body>
+    <form action="handler" method="post">
+        <p><input type="text" name="firstname"> First Name</p>
+        <p><input type="text" name="lastname"> Last Name</p>
+    </form>
+    </body>
+    </html>
+
 
