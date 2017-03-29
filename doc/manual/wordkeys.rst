@@ -573,6 +573,25 @@ CostAmount
 CostDescription
     Any other information about the cost
 
+In addition there are a number of total fields for costs:
+
+TotalVaccinationCosts
+    The total of all vaccination costs for the animal
+TotalTransportCosts
+    The total of all transport costs for the animal
+TotalTestCosts
+    The total of all test costs for the animal
+TotalMedicalCosts
+    The total of all medical costs for the animal
+TotalLineCosts
+    The total of all cost lines from the cost tab for the animal
+DailyBoardingCost
+    The animal's daily boarding cost
+CurrentBoardingCost
+    The daily boarding cost multiplied by days on shelter for the animal
+TotalCosts
+    The total of CurrentBoardingCost and all the Total Cost fields.
+
 Diet Keys
 ---------
 

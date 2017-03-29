@@ -4,6 +4,7 @@ import additional
 import animal
 import animalcontrol
 import configuration
+import db
 import dbfs
 import financial
 import html
@@ -491,6 +492,25 @@ def animal_tags(dbo, a):
         "COSTDESCRIPTION":          "DESCRIPTION"
     }
     tags.update(table_tags(dbo, d, animal.get_costs(dbo, a["ID"]), "COSTTYPENAME", "COSTPAIDDATE"))
+
+    # Cost totals
+    totalvaccinations = db.query_int(dbo, "SELECT SUM(Cost) FROM animalvaccination WHERE AnimalID = %d" % a["ID"])
+    totaltransports = db.query_int(dbo, "SELECT SUM(Cost) FROM animaltransport WHERE AnimalID = %d" % a["ID"])
+    totaltests = db.query_int(dbo, "SELECT SUM(Cost) FROM animaltest WHERE AnimalID = %d" % a["ID"])
+    totalmedicals = db.query_int(dbo, "SELECT SUM(Cost) FROM animalmedical WHERE AnimalID = %d" % a["ID"])
+    totallines = db.query_int(dbo, "SELECT SUM(CostAmount) FROM animalcost WHERE AnimalID = %d" % a["ID"])
+    totalcosts = totalvaccinations + totaltransports + totaltests + totalmedicals + totallines
+    costtags = {
+        "TOTALVACCINATIONCOSTS": format_currency_no_symbol(l, totalvaccinations),
+        "TOTALTRANSPORTCOSTS": format_currency_no_symbol(l, totaltransports),
+        "TOTALTESTCOSTS": format_currency_no_symbol(l, totaltests),
+        "TOTALMEDICALCOSTS": format_currency_no_symbol(l, totalmedicals),
+        "TOTALLINECOSTS": format_currency_no_symbol(l, totallines),
+        "DAILYBOARDINGCOST": format_currency_no_symbol(l, a["DAILYBOARDINGCOST"]),
+        "CURRENTBOARDINGCOST": format_currency_no_symbol(l, a["DAILYBOARDINGCOST"] * a["DAYSONSHELTER"]),
+        "TOTALCOSTS": format_currency_no_symbol(l, a["DAILYBOARDINGCOST"] * a["DAYSONSHELTER"] + totalcosts)
+    }
+    tags = append_tags(tags, costtags)
 
     # Logs
     d = {
