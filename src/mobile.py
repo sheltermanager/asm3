@@ -332,9 +332,9 @@ def page_sign(dbo, session, username):
     }
     #signature { 
         border: 1px solid #aaa; 
-        height: 200px; 
+        height: 250px; 
         width: 100%%;
-        max-width: 500px;
+        max-width: 1000px;
     }
     </style>
     </head>

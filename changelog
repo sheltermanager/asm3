@@ -1,6 +1,7 @@
 40
 ================
 
+29/03/17 Signing pad too small on hi-res landscape tables #183
 28/03/17 Basic support for importing online forms from HTML files #186
 27/03/17 Fix memory error and show currency symbol with {SUM} #187
 22/03/17 Include built in flags with $ASK PERSONFLAG$ and $ASK ANIMALFLAG$ #26
