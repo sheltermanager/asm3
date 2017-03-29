@@ -500,15 +500,17 @@ def animal_tags(dbo, a):
     totalmedicals = db.query_int(dbo, "SELECT SUM(Cost) FROM animalmedical WHERE AnimalID = %d" % a["ID"])
     totallines = db.query_int(dbo, "SELECT SUM(CostAmount) FROM animalcost WHERE AnimalID = %d" % a["ID"])
     totalcosts = totalvaccinations + totaltransports + totaltests + totalmedicals + totallines
+    dailyboardingcost = a["DAILYBOARDINGCOST"] or 0
+    daysonshelter = a["DAYSONSHELTER"] or 0
     costtags = {
         "TOTALVACCINATIONCOSTS": format_currency_no_symbol(l, totalvaccinations),
         "TOTALTRANSPORTCOSTS": format_currency_no_symbol(l, totaltransports),
         "TOTALTESTCOSTS": format_currency_no_symbol(l, totaltests),
         "TOTALMEDICALCOSTS": format_currency_no_symbol(l, totalmedicals),
         "TOTALLINECOSTS": format_currency_no_symbol(l, totallines),
-        "DAILYBOARDINGCOST": format_currency_no_symbol(l, a["DAILYBOARDINGCOST"]),
-        "CURRENTBOARDINGCOST": format_currency_no_symbol(l, a["DAILYBOARDINGCOST"] * a["DAYSONSHELTER"]),
-        "TOTALCOSTS": format_currency_no_symbol(l, a["DAILYBOARDINGCOST"] * a["DAYSONSHELTER"] + totalcosts)
+        "DAILYBOARDINGCOST": format_currency_no_symbol(l, dailyboardingcost),
+        "CURRENTBOARDINGCOST": format_currency_no_symbol(l, dailyboardingcost * daysonshelter),
+        "TOTALCOSTS": format_currency_no_symbol(l, dailyboardingcost * daysonshelter + totalcosts)
     }
     tags = append_tags(tags, costtags)
 
