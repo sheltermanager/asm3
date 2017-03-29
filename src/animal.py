@@ -2172,40 +2172,57 @@ def update_animals_from_form(dbo, post, username):
     Batch updates multiple animal records from the bulk form
     """
     if len(post.integer_list("animals")) == 0: return 0
+    aud = []
     if post["litterid"] != "":
         db.execute(dbo, "UPDATE animal SET AcceptanceNumber = %s WHERE ID IN (%s)" % (post.db_string("litterid"), post["animals"]))
+        aud.append("LitterID = %s" % post["litterid"])
     if post.integer("animaltype") != -1:
         db.execute(dbo, "UPDATE animal SET AnimalTypeID = %d WHERE ID IN (%s)" % (post.integer("animaltype"), post["animals"]))
+        aud.append("AnimalTypeID = %s" % post["animaltype"])
     if post.integer("location") != -1:
         db.execute(dbo, "UPDATE animal SET ShelterLocation = %d WHERE ID IN (%s)" % (post.integer("location"), post["animals"]))
+        aud.append("ShelterLocation = %s" % post["location"])
     if post.integer("fee") > 0:
         db.execute(dbo, "UPDATE animal SET Fee = %d WHERE ID IN (%s)" % (post.integer("fee"), post["animals"]))
+        aud.append("Fee = %s" % post["fee"])
     if post.integer("notforadoption") != -1:
         db.execute(dbo, "UPDATE animal SET IsNotAvailableForAdoption = %d WHERE ID IN (%s)" % (post.integer("notforadoption"), post["animals"]))
+        aud.append("IsNotAvailableForAdoption = %s" % post["notforadoption"])
     if post["holduntil"] != "":
         db.execute(dbo, "UPDATE animal SET IsHold = 1, HoldUntilDate = %s WHERE ID IN (%s)" % (post.db_date("holduntil"), post["animals"]))
+        aud.append("HoldUntilDate = %s" % post["holduntil"])
     if post.integer("goodwithcats") != -1:
         db.execute(dbo, "UPDATE animal SET IsGoodWithCats = %d WHERE ID IN (%s)" % (post.integer("goodwithcats"), post["animals"]))
+        aud.append("IsGoodWithCats = %s" % post["goodwithcats"])
     if post.integer("goodwithdogs") != -1:
         db.execute(dbo, "UPDATE animal SET IsGoodWithDogs = %d WHERE ID IN (%s)" % (post.integer("goodwithdogs"), post["animals"]))
+        aud.append("IsGoodWithDogs = %s" % post["goodwithdogs"])
     if post.integer("goodwithkids") != -1:
         db.execute(dbo, "UPDATE animal SET IsGoodWithChildren = %d WHERE ID IN (%s)" % (post.integer("goodwithkids"), post["animals"]))
+        aud.append("IsGoodWithChildren = %s" % post["goodwithkids"])
     if post.integer("housetrained") != -1:
         db.execute(dbo, "UPDATE animal SET IsHouseTrained = %d WHERE ID IN (%s)" % (post.integer("housetrained"), post["animals"]))
+        aud.append("IsHouseTrained = %s" % post["housetrained"])
     if post["neutereddate"] != "":
         db.execute(dbo, "UPDATE animal SET Neutered = 1, NeuteredDate = %s WHERE ID IN (%s)" % (post.db_date("neutereddate"), post["animals"]))
+        aud.append("NeuteredDate = %s" % post["neutereddate"])
     if post["currentvet"] != "" and post["currentvet"] != "0":
         db.execute(dbo, "UPDATE animal SET CurrentVetID = %d WHERE ID IN (%s)" % (post.integer("currentvet"), post["animals"]))
+        aud.append("CurrentVetID = %s" % post["currentvet"])
     if post["ownersvet"] != "" and post["ownersvet"] != "0":
         db.execute(dbo, "UPDATE animal SET OwnersVetID = %d WHERE ID IN (%s)" % (post.integer("ownersvet"), post["animals"]))
+        aud.append("OwnersVetID = %s" % post["ownersvet"])
     if post["adoptioncoordinator"] != "" and post["adoptioncoordinator"] != "0":
         db.execute(dbo, "UPDATE animal SET AdoptionCoordinatorID = %d WHERE ID IN (%s)" % (post.integer("adoptioncoordinator"), post["animals"]))
+        aud.append("AdoptionCoordinatorID = %s" % post["adoptioncoordinator"])
     if post["addflag"] != "":
         animals = db.query(dbo, "SELECT ID, AdditionalFlags FROM animal WHERE ID IN (%s)" % post["animals"])
         for a in animals:
             if a["ADDITIONALFLAGS"] is None: a["ADDITIONALFLAGS"] = ""
             if a["ADDITIONALFLAGS"].find("%s|" % post["addflag"]) == -1:
-                db.execute(dbo, "UPDATE animal SET AdditionalFlags = %s WHERE ID = %d" % ( db.ds("%s%s|" % (a["ADDITIONALFLAGS"], post["addflag"])), a["ID"] ))
+                newflags = "%s%s|" % (a["ADDITIONALFLAGS"], post["addflag"])
+                db.execute(dbo, "UPDATE animal SET AdditionalFlags = %s WHERE ID = %d" % ( db.ds(newflags), a["ID"] ))
+                aud.append("AdditionalFlags %s --> %s" % (a["ADDITIONALFLAGS"], newflags))
     if post.integer("movementtype") != -1:
         default_return_reason = configuration.default_return_reason(dbo)
         for animalid in post.integer_list("animals"):
@@ -2213,9 +2230,7 @@ def update_animals_from_form(dbo, post, username):
             fm = movement.get_animal_movements(dbo, animalid)
             for m in fm:
                 if m["MOVEMENTTYPE"] == movement.FOSTER and m["RETURNDATE"] is None:
-                    # if the existing foster is to this person, ignore
-                    if m["OWNERID"] != post.integer("person"):
-                        movement.return_movement(dbo, m["ID"], animalid, post.date("movementdate"))
+                    movement.return_movement(dbo, m["ID"], animalid, post.date("movementdate"))
             move_dict = {
                 "person"                : post["moveto"],
                 "animal"                : str(animalid),
@@ -2228,6 +2243,11 @@ def update_animals_from_form(dbo, post, username):
                 "returncategory"        : str(default_return_reason)
             }
             movement.insert_movement_from_form(dbo, username, utils.PostedData(move_dict, dbo.locale))
+    # Record the user as making the last change to this record and create audit records for the changes
+    db.execute(dbo, "UPDATE animal SET LastChangedBy = %s, LastChangedDate = %s WHERE ID IN (%s)" % (db.ds(username), db.ddt(now(dbo.timezone)), post["animals"]))
+    if len(aud) > 0:
+        for animalid in post.integer_list("animals"):
+            audit.edit(dbo, username, "animal", animalid, ", ".join(aud))
     return len(post.integer_list("animals"))
 
 def update_deceased_from_form(dbo, username, post):
