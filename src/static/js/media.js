@@ -14,7 +14,8 @@ $(function() {
                 _("Please select a PDF, HTML or JPG image file to attach"),
                 '</p>',
                 '</div>',
-                '<form id="addform" method="post" enctype="multipart/form-data" action="' + controller.name + '">',
+                '<form id="addform" method="post" enctype="multipart/form-data" action="media">',
+                '<input type="hidden" name="mode" value="create" />',
                 '<input type="hidden" id="linkid" name="linkid" value="' + controller.linkid + '" />',
                 '<input type="hidden" id="linktypeid" name="linktypeid" value="' + controller.linktypeid + '" />',
                 '<input type="hidden" id="controller" name="controller" value="' + controller.name + '" />',
@@ -68,8 +69,9 @@ $(function() {
                 '</div>',
 
                 '<div id="dialog-edit" style="display: none" title="' + _("Edit media notes") + '">',
-                '<form id="editform" method="post" action="' + controller.name + '">',
+                '<form id="editform" method="post" action="media">',
                 '<input type="hidden" name="linkid" value="' + controller.linkid + '" />',
+                '<input type="hidden" name="linktypeid" value="' + controller.linktypeid + '" />',
                 '<input type="hidden" name="mode" value="update" />',
                 '<input type="hidden" id="mediaid" name="mediaid" value="" />',
                 '<textarea id="editcomments" name="comments" rows="10" class="asm-textarea"></textarea>',
@@ -130,8 +132,10 @@ $(function() {
                 '<div id="signature" style="width: 500px; height: 200px;" />',
                 '</div>',
 
-                '<form id="newdocform" method="post" action="' + controller.name + '">',
+                '<form id="newdocform" method="post" action="media">',
+                '<input type="hidden" name="controller" value="' + controller.name + '" />',
                 '<input type="hidden" name="linkid" value="' + controller.linkid + '" />',
+                '<input type="hidden" name="linktypeid" value="' + controller.linktypeid + '" />',
                 '<input type="hidden" name="mode" value="createdoc" />',
                 '</form>'
             ];
@@ -350,12 +354,14 @@ $(function() {
                     var finalfile = canvas.toDataURL("image/jpeg");
 
                     // Post the scaled image
-                    var formdata = "linkid=" + controller.linkid + "&linktypeid=" + controller.linktypeid + 
+                    var formdata = "mode=create&" +
+                        "linkid=" + controller.linkid + 
+                        "&linktypeid=" + controller.linktypeid + 
                         "&comments=" + encodeURIComponent(comments) + 
                         "&filename=" + encodeURIComponent(file.name) +
                         "&filetype=" + encodeURIComponent(file.type) + 
                         "&filedata=" + encodeURIComponent(finalfile);
-                    common.ajax_post(controller.name, formdata)
+                    common.ajax_post("media", formdata)
                         .then(function(result) { 
                             deferred.resolve();
                         })
@@ -370,13 +376,14 @@ $(function() {
                 var docreader = new FileReader();
                 docreader.onload = function(e) { 
                     // Post the PDF/HTML doc via AJAX
-                    var formdata = "linkid=" + controller.linkid + 
+                    var formdata = "mode=create&" +
+                        "linkid=" + controller.linkid + 
                         "&linktypeid=" + controller.linktypeid + 
                         "&comments=" + encodeURIComponent(comments) + 
                         "&filename=" + encodeURIComponent(file.name) +
                         "&filetype=" + encodeURIComponent(file.type) + 
                         "&filedata=" + encodeURIComponent(e.target.result);
-                    common.ajax_post(controller.name, formdata)
+                    common.ajax_post("media", formdata)
                         .then(function(result) { 
                             deferred.resolve();
                         })
@@ -409,8 +416,8 @@ $(function() {
             });
             if (!hasweb && !hasdoc && newweb) {
                 $.when(
-                    common.ajax_post(controller.name, "mode=web&ids=" + newweb),
-                    common.ajax_post(controller.name, "mode=doc&ids=" + newweb)
+                    common.ajax_post("media", "mode=web&ids=" + newweb),
+                    common.ajax_post("media", "mode=doc&ids=" + newweb)
                 ).then(function() {
                     common.route_reload();
                 });
@@ -503,7 +510,7 @@ $(function() {
          * header.
          */
         ajax: function(formdata) {
-            common.ajax_post(controller.name, formdata)
+            common.ajax_post("media", formdata)
                 .then(function() { 
                     common.route_reload();
                 });
@@ -645,7 +652,7 @@ $(function() {
                     "&linktypeid=" + controller.linktypeid + 
                     "&controller=" + controller.name + "&" +
                     $("#linktype, #linktarget, #linkcomments").toPOST();
-                common.ajax_post(controller.name, formdata)
+                common.ajax_post("media", formdata)
                     .then(function() {
                         $("#dialog-addlink").dialog("close").enable_dialog_buttons();
                         common.route_reload();
@@ -674,7 +681,7 @@ $(function() {
                 var formdata = "mode=update&mediaid=" + mediaid;
                 formdata += "&comments=" + encodeURIComponent($("#editcomments").val());
                 $("#dialog-edit").disable_dialog_buttons();
-                common.ajax_post(controller.name, formdata)
+                common.ajax_post("media", formdata)
                     .then(function(result) { 
                         $("#mrow-" + mediaid + " .asm-thumbnail").attr("title", html.title($("#editcomments").val()));
                         $("#mrow-" + mediaid + " .viewlink").text(html.truncate($("#editcomments").val(), 70));
@@ -801,7 +808,7 @@ $(function() {
                         var formdata = "mode=email&email=" + encodeURIComponent($("#emailto").val()) + 
                             "&emailnote=" + encodeURIComponent($("#emailnote").richtextarea("value")) + 
                             "&ids=" + $(".asm-mediaicons input").tableCheckedData();
-                        return common.ajax_post(controller.name, formdata);
+                        return common.ajax_post("media", formdata);
                     })
                     .then(function(result) { 
                         header.show_info(_("Email successfully sent to {0}").replace("{0}", result));
@@ -826,7 +833,7 @@ $(function() {
                             "&emailnote=" + encodeURIComponent($("#emailpdfnote").richtextarea("value")) + 
                             "&ids=" + $(".asm-mediaicons input").tableCheckedData();
                         $("#dialog-emailpdf").dialog("close");
-                        return common.ajax_post(controller.name, formdata);
+                        return common.ajax_post("media", formdata);
                     })
                     .then(function(result) { 
                         header.show_info(_("Email successfully sent to {0}").replace("{0}", result));
@@ -848,7 +855,7 @@ $(function() {
                             "&emailnote=" + encodeURIComponent($("#emailsignnote").val()) + 
                             "&ids=" + $(".asm-mediaicons input").tableCheckedData();
                         $("#dialog-emailsign").dialog("close");
-                        return common.ajax_post(controller.name, formdata);
+                        return common.ajax_post("media", formdata);
                     })
                     .then(function(result) { 
                         header.show_info(_("Email successfully sent to {0}").replace("{0}", result));
@@ -865,7 +872,7 @@ $(function() {
             $("#button-signpad").click(function() {
                 $("#button-sign").asmmenu("hide_all");
                 var formdata = "mode=signpad&ids=" + $(".asm-mediaicons input").tableCheckedData();
-                common.ajax_post(controller.name, formdata)
+                common.ajax_post("media", formdata)
                     .then(function(result) {
                         header.show_info(_("Sent to mobile signing pad."));
                     });
@@ -900,7 +907,7 @@ $(function() {
                 if (img.attr("src").indexOf("tick") != -1) {
                     // Exclude
                     formdata = "mode=exclude&mediaid=" + img.attr("data") + "&exclude=1";
-                    common.ajax_post(controller.name, formdata)
+                    common.ajax_post("media", formdata)
                         .then(function(result) { 
                             img.attr("src", "static/images/ui/cross.gif");
                             img.attr("title", _("Exclude this image when publishing"));
@@ -909,7 +916,7 @@ $(function() {
                 else {
                     // Include
                     formdata = "mode=exclude&mediaid=" + img.attr("data") + "&exclude=0";
-                    common.ajax_post(controller.name, formdata)
+                    common.ajax_post("media", formdata)
                         .then(function(result) { 
                             img.attr("src", "static/images/ui/tick.gif");
                             img.attr("title", _("Include this image when publishing"));

@@ -766,6 +766,130 @@ class media(ASMEndpoint):
         web.header("Content-Disposition", "inline; filename=\"%s\"" % medianame)
         return filedata
 
+    def post_create(self, o):
+        self.check(users.ADD_MEDIA)
+        linkid = o.post.integer("linkid")
+        linktypeid = o.post.integer("linktypeid")
+        extmedia.attach_file_from_form(o.dbo, o.user, linktypeid, linkid, o.post)
+        self.redirect("%s?id=%d" % (o.post["controller"], linkid))
+
+    def post_createdoc(self, o):
+        self.check(users.ADD_MEDIA)
+        linkid = o.post.integer("linkid")
+        linktypeid = o.post.integer("linktypeid")
+        mediaid = extmedia.create_blank_document_media(o.dbo, o.user, linktypeid, linkid)
+        self.redirect("document_media_edit?id=%d&redirecturl=%s?id=%d" % (mediaid, o.post["controller"], linkid))
+
+    def post_createlink(self, o):
+        self.check(users.ADD_MEDIA)
+        linkid = o.post.integer("linkid")
+        linktypeid = o.post.integer("linktypeid")
+        extmedia.attach_link_from_form(o.dbo, o.user, linktypeid, linkid, o.post)
+        self.redirect("%s?id=%d" % (o.post["controller"], linkid))
+
+    def post_update(self, o):
+        self.check(users.CHANGE_MEDIA)
+        extmedia.update_media_notes(o.dbo, o.user, o.post.integer("mediaid"), o.post["comments"])
+
+    def post_delete(self, o):
+        self.check(users.DELETE_MEDIA)
+        for mid in o.post.integer_list("ids"):
+            extmedia.delete_media(o.dbo, o.user, mid)
+
+    def post_email(self, o):
+        self.check(users.EMAIL_PERSON)
+        dbo = o.dbo
+        post = o.post
+        l = o.locale
+        emailadd = post["email"]
+        if emailadd == "" or emailadd.find("@") == -1:
+            raise utils.ASMValidationError(_("Invalid email address", l))
+        for mid in post.integer_list("ids"):
+            m = extmedia.get_media_by_id(dbo, mid)
+            if len(m) == 0: self.notfound()
+            m = m[0]
+            content = dbfs.get_string(dbo, m["MEDIANAME"])
+            if m["MEDIANAME"].endswith("html"):
+                content = utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
+            utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], post["emailnote"], "html", content, m["MEDIANAME"])
+        return emailadd
+
+    def post_emailpdf(self, o):
+        self.check(users.EMAIL_PERSON)
+        dbo = o.dbo
+        post = o.post
+        l = o.locale
+        emailadd = post["email"]
+        if emailadd == "" or emailadd.find("@") == -1:
+            raise utils.ASMValidationError(_("Invalid email address", l))
+        for mid in post.integer_list("ids"):
+            m = extmedia.get_media_by_id(dbo, mid)
+            if len(m) == 0: self.notfound()
+            m = m[0]
+            if not m["MEDIANAME"].endswith("html"): continue
+            content = dbfs.get_string(dbo, m["MEDIANAME"])
+            contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
+            utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], post["emailnote"], "plain", contentpdf, "document.pdf")
+        return emailadd
+
+    def post_emailsign(self, o):
+        self.check(users.EMAIL_PERSON)
+        dbo = o.dbo
+        post = o.post
+        l = o.locale
+        emailadd = post["email"]
+        if emailadd == "" or emailadd.find("@") == -1:
+            raise utils.ASMValidationError(_("Invalid email address", l))
+        body = []
+        body.append(post["emailnote"] + "\n\n")
+        for mid in post.integer_list("ids"):
+            m = extmedia.get_media_by_id(dbo, mid)
+            if len(m) == 0: raise web.notfound()
+            m = m[0]
+            if not m["MEDIANAME"].endswith("html"): continue
+            body.append(m["MEDIANOTES"])
+            body.append("%s?account=%s&method=sign_document&formid=%d" % (SERVICE_URL, dbo.database, mid))
+            body.append("")
+        utils.send_email(dbo, configuration.email(dbo), emailadd, "", _("Document signing request", l), "\n".join(body), "plain")
+        return emailadd
+
+    def post_sign(self, o):
+        self.check(users.CHANGE_MEDIA)
+        for mid in o.post.integer_list("ids"):
+            extmedia.sign_document(o.dbo, o.user, mid, o.post["sig"], o.post["signdate"])
+
+    def post_signpad(self, o):
+        configuration.signpad_ids(o.dbo, o.user, o["ids"])
+
+    def post_rotateclock(self, o):
+        self.check(users.CHANGE_MEDIA)
+        for mid in o.post.integer_list("ids"):
+            extmedia.rotate_media(o.dbo, o.user, mid, True)
+
+    def post_rotateanti(self, o):
+        self.check(users.CHANGE_MEDIA)
+        for mid in o.post.integer_list("ids"):
+            extmedia.rotate_media(o.dbo, o.user, mid, False)
+
+    def post_web(self, o):
+        self.check(users.CHANGE_MEDIA)
+        mid = o.post.integer_list("ids")[0]
+        extmedia.set_web_preferred(o.dbo, o.user, mid)
+
+    def post_video(self, o):
+        self.check(users.CHANGE_MEDIA)
+        mid = o.post.integer_list("ids")[0]
+        extmedia.set_video_preferred(o.dbo, o.user, mid)
+
+    def post_doc(self, o):
+        self.check(users.CHANGE_MEDIA)
+        mid = o.post.integer_list("ids")[0]
+        extmedia.set_doc_preferred(o.dbo, o.user, mid)
+
+    def post_exclude(self, o):
+        self.check(users.CHANGE_MEDIA)
+        extmedia.set_excluded(o.dbo, o.user, o.post.integer("mediaid"), o.post.integer("exclude"))
+
 class mobile(ASMEndpoint):
     url = "mobile"
     login_url = "/mobile_login"
@@ -1522,205 +1646,97 @@ class animal_find_results(JSONEndpoint):
             "wasonshelter": wasonshelter
         }
 
-class animal_licence:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_LICENCE)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        a = extanimal.get_animal(dbo, post.integer("id"))
-        if a is None: raise web.notfound()
-        licences = financial.get_animal_licences(dbo, post.integer("id"))
+class animal_licence(JSONEndpoint):
+    url = "animal_licence"
+    js_module = "licence"
+    get_permissions = users.VIEW_LICENCE
+
+    def controller(self, o):
+        dbo = o.dbo
+        a = extanimal.get_animal(dbo, o.post.integer("id"))
+        if a is None: self.notfound()
+        licences = financial.get_animal_licences(dbo, o.post.integer("id"))
         al.debug("got %d licences" % len(licences), "code.animal_licence", dbo)
-        s = html.header("", session)
-        c = html.controller_str("name", "animal_licence")
-        c += html.controller_json("rows", licences)
-        c += html.controller_json("animal", a)
-        c += html.controller_json("templates", dbfs.get_document_templates(dbo))
-        c += html.controller_json("tabcounts", extanimal.get_satellite_counts(dbo, a["ID"])[0])
-        c += html.controller_json("licencetypes", extlookups.get_licence_types(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("licence", s, c, post["json"] == "true")
+        return {
+            "name": "animal_licence",
+            "rows": licences,
+            "animal": a,
+            "templates": dbfs.get_document_templates(dbo),
+            "tabcounts": extanimal.get_satellite_counts(dbo, a["ID"])[0],
+            "licencetypes": extlookups.get_licence_types(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_LICENCE)
-            return financial.insert_licence_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_LICENCE)
-            financial.update_licence_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_LICENCE)
-            for lid in post.integer_list("ids"):
-                financial.delete_licence(session.dbo, session.user, lid)
+    def post_create(self, o):
+        self.check(users.ADD_LICENCE)
+        return financial.insert_licence_from_form(o.dbo, o.user, o.post)
 
-class animal_log:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_LOG)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0, filter = -2), session.locale)
-        logfilter = post.integer("filter")
-        if logfilter == -2: logfilter = configuration.default_log_filter(dbo)
-        a = extanimal.get_animal(dbo, post.integer("id"))
-        if a is None: raise web.notfound()
-        logs = extlog.get_logs(dbo, extlog.ANIMAL, post.integer("id"), logfilter)
+    def post_update(self, o):
+        self.check(users.CHANGE_LICENCE)
+        financial.update_licence_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(users.DELETE_LICENCE)
+        for lid in o.post.integer_list("ids"):
+            financial.delete_licence(o.dbo, o.user, lid)
+
+class animal_log(JSONEndpoint):
+    url = "animal_log"
+    js_module = "log"
+    get_permissions = users.VIEW_LOG
+
+    def controller(self, o):
+        dbo = o.dbo
+        logfilter = o.post.integer("filter")
+        if logfilter == 0: logfilter = configuration.default_log_filter(dbo)
+        a = extanimal.get_animal(dbo, o.post.integer("id"))
+        if a is None: self.notfound()
+        logs = extlog.get_logs(dbo, extlog.ANIMAL, o.post.integer("id"), logfilter)
         al.debug("got %d logs for animal %s %s" % (len(logs), a["CODE"], a["ANIMALNAME"]), "code.animal_log", dbo)
-        s = html.header("", session)
-        c = html.controller_str("name", "animal_log")
-        c += html.controller_int("linkid", post.integer("id"))
-        c += html.controller_int("filter", logfilter)
-        c += html.controller_json("rows", logs)
-        c += html.controller_json("animal", a)
-        c += html.controller_json("tabcounts", extanimal.get_satellite_counts(dbo, a["ID"])[0])
-        c += html.controller_json("logtypes", extlookups.get_log_types(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("log", s, c, post["json"] == "true")
+        return {
+            "name": "animal_log",
+            "linkid": o.post.integer("id"),
+            "filter": logfilter,
+            "rows": logs,
+            "animal": a,
+            "tabcounts": extanimal.get_satellite_counts(dbo, a["ID"])[0],
+            "logtypes": extlookups.get_log_types(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_LOG)
-            return extlog.insert_log_from_form(session.dbo, session.user, extlog.ANIMAL, post.integer("linkid"), post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_LOG)
-            extlog.update_log_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_LOG)
-            for lid in post.integer_list("ids"):
-                extlog.delete_log(session.dbo, session.user, lid)
+    def post_create(self, o):
+        self.check(users.ADD_LOG)
+        return extlog.insert_log_from_form(o.dbo, o.user, extlog.ANIMAL, o.post.integer("linkid"), o.post)
 
-class animal_media:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_MEDIA)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0, newmedia=0), session.locale)
-        a = extanimal.get_animal(dbo, post.integer("id"))
-        if a is None: raise web.notfound()
-        m = extmedia.get_media(dbo, extmedia.ANIMAL, post.integer("id"))
+    def post_update(self, o):
+        self.check(users.CHANGE_LOG)
+        extlog.update_log_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(users.DELETE_LOG)
+        for lid in o.post.integer_list("ids"):
+            extlog.delete_log(o.dbo, o.user, lid)
+
+class animal_media(JSONEndpoint):
+    url = "animal_media"
+    js_module = "media"
+    get_permissions = users.VIEW_MEDIA
+
+    def controller(self, o):
+        dbo = o.dbo
+        a = extanimal.get_animal(dbo, o.post.integer("id"))
+        if a is None: self.notfound()
+        m = extmedia.get_media(dbo, extmedia.ANIMAL, o.post.integer("id"))
         al.debug("got %d media entries for animal %s %s" % (len(m), a["CODE"], a["ANIMALNAME"]), "code.animal_media", dbo)
-        s = html.header("", session)
-        c = html.controller_json("media", m)
-        c += html.controller_json("animal", a)
-        c += html.controller_json("tabcounts", extanimal.get_satellite_counts(dbo, a["ID"])[0])
-        c += html.controller_bool("showpreferred", True)
-        c += html.controller_int("linkid", post.integer("id"))
-        c += html.controller_int("linktypeid", extmedia.ANIMAL)
-        c += html.controller_bool("newmedia", post.integer("newmedia") == 1)
-        c += html.controller_str("name", self.__class__.__name__)
-        c += html.controller_str("sigtype", ELECTRONIC_SIGNATURES)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("media", s, c, post["json"] == "true")
-
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create", filechooser={}, linkid="0", base64image = "", _unicode=False), session.locale)
-        mode = post["mode"]
-        dbo = session.dbo
-        l = session.locale
-        linkid = post.integer("linkid")
-        if mode == "create":
-            users.check_permission(session, users.ADD_MEDIA)
-            extmedia.attach_file_from_form(session.dbo, session.user, extmedia.ANIMAL, linkid, post)
-            raise web.seeother("animal_media?id=%d" % linkid)
-        elif mode == "createdoc":
-            users.check_permission(session, users.ADD_MEDIA)
-            mediaid = extmedia.create_blank_document_media(session.dbo, session.user, extmedia.ANIMAL, linkid)
-            raise web.seeother("document_media_edit?id=%d&redirecturl=animal_media?id=%d" % (mediaid, linkid))
-        elif mode == "createlink":
-            users.check_permission(session, users.ADD_MEDIA)
-            mediaid = extmedia.attach_link_from_form(session.dbo, session.user, extmedia.ANIMAL, linkid, post)
-            raise web.seeother("animal_media?id=%d" % linkid)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            extmedia.update_media_notes(session.dbo, session.user, post.integer("mediaid"), post["comments"])
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_MEDIA)
-            for mid in post.integer_list("ids"):
-                extmedia.delete_media(session.dbo, session.user, mid)
-        elif mode == "email":
-            users.check_permission(session, users.EMAIL_PERSON)
-            emailadd = post["email"]
-            if emailadd == "" or emailadd.find("@") == -1:
-                raise utils.ASMValidationError(_("Invalid email address", l))
-            for mid in post.integer_list("ids"):
-                m = extmedia.get_media_by_id(dbo, mid)
-                if len(m) == 0: raise web.notfound()
-                m = m[0]
-                content = dbfs.get_string(dbo, m["MEDIANAME"])
-                if m["MEDIANAME"].endswith("html"):
-                    content = utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], post["emailnote"], "html", content, m["MEDIANAME"])
-            return emailadd
-        elif mode == "emailpdf":
-            users.check_permission(session, users.EMAIL_PERSON)
-            emailadd = post["email"]
-            if emailadd == "" or emailadd.find("@") == -1:
-                raise utils.ASMValidationError(_("Invalid email address", l))
-            for mid in post.integer_list("ids"):
-                m = extmedia.get_media_by_id(dbo, mid)
-                if len(m) == 0: raise web.notfound()
-                m = m[0]
-                if not m["MEDIANAME"].endswith("html"): continue
-                content = dbfs.get_string(dbo, m["MEDIANAME"])
-                contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], post["emailnote"], "plain", contentpdf, "document.pdf")
-            return emailadd
-        elif mode == "emailsign":
-            users.check_permission(session, users.EMAIL_PERSON)
-            emailadd = post["email"]
-            if emailadd == "" or emailadd.find("@") == -1:
-                raise utils.ASMValidationError(_("Invalid email address", l))
-            body = []
-            body.append(post["emailnote"] + "\n\n")
-            for mid in post.integer_list("ids"):
-                m = extmedia.get_media_by_id(dbo, mid)
-                if len(m) == 0: raise web.notfound()
-                m = m[0]
-                if not m["MEDIANAME"].endswith("html"): continue
-                body.append(m["MEDIANOTES"])
-                body.append("%s?account=%s&method=sign_document&formid=%d" % (SERVICE_URL, dbo.database, mid))
-                body.append("")
-            utils.send_email(dbo, configuration.email(dbo), emailadd, "", _("Document signing request", l), "\n".join(body), "plain")
-            return emailadd
-        elif mode == "sign":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            for mid in post.integer_list("ids"):
-                extmedia.sign_document(session.dbo, session.user, mid, post["sig"], post["signdate"])
-        elif mode == "signpad":
-            configuration.signpad_ids(session.dbo, session.user, post["ids"])
-        elif mode == "rotateclock":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            for mid in post.integer_list("ids"):
-                extmedia.rotate_media(session.dbo, session.user, mid, True)
-        elif mode == "rotateanti":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            for mid in post.integer_list("ids"):
-                extmedia.rotate_media(session.dbo, session.user, mid, False)
-        elif mode == "web":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            mid = post.integer_list("ids")[0]
-            extmedia.set_web_preferred(session.dbo, session.user, mid)
-        elif mode == "video":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            mid = post.integer_list("ids")[0]
-            extmedia.set_video_preferred(session.dbo, session.user, mid)
-        elif mode == "doc":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            mid = post.integer_list("ids")[0]
-            extmedia.set_doc_preferred(session.dbo, session.user, mid)
-        elif mode == "exclude":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            extmedia.set_excluded(session.dbo, session.user, post.integer("mediaid"), post.integer("exclude"))
+        return {
+            "media": m,
+            "animal": a,
+            "tabcounts": extanimal.get_satellite_counts(dbo, a["ID"])[0],
+            "showpreferred": True,
+            "linkid": o.post.integer("id"),
+            "linktypeid": extmedia.ANIMAL,
+            "newmedia": o.post.integer("newmedia") == 1,
+            "name": self.url,
+            "sigtype": ELECTRONIC_SIGNATURES
+        }
 
 class animal_medical:
     def GET(self):
@@ -2971,126 +2987,27 @@ class foundanimal_log:
             for lid in post.integer_list("ids"):
                 extlog.delete_log(session.dbo, session.user, lid)
 
-class foundanimal_media:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_MEDIA)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        a = extlostfound.get_foundanimal(dbo, post.integer("id"))
-        if a is None: raise web.notfound()
-        m = extmedia.get_media(dbo, extmedia.FOUNDANIMAL, post.integer("id"))
-        al.debug("got %d media for found animal %s %s %s" % (len(m), a["AGEGROUP"], a["SPECIESNAME"], a["OWNERNAME"]), "code.foundanimal_media", dbo)
-        s = html.header("", session)
-        c = html.controller_json("media", m)
-        c += html.controller_json("animal", a)
-        c += html.controller_json("tabcounts", extlostfound.get_foundanimal_satellite_counts(dbo, a["LFID"])[0])
-        c += html.controller_bool("showpreferred", False)
-        c += html.controller_int("linkid", post.integer("id"))
-        c += html.controller_int("linktypeid", extmedia.FOUNDANIMAL)
-        c += html.controller_str("name", self.__class__.__name__)
-        c += html.controller_str("sigtype", ELECTRONIC_SIGNATURES)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("media", s, c, post["json"] == "true")
+class foundanimal_media(JSONEndpoint):
+    url = "foundanimal_media"
+    js_module = "media"
+    get_permissions = users.VIEW_MEDIA
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create", filechooser={}, linkid="0", base64image = "", _unicode=False), session.locale)
-        mode = post["mode"]
-        dbo = session.dbo
-        l = session.locale
-        linkid = post.integer("linkid")
-        if mode == "create":
-            users.check_permission(session, users.ADD_MEDIA)
-            extmedia.attach_file_from_form(session.dbo, session.user, extmedia.FOUNDANIMAL, linkid, post)
-            raise web.seeother("foundanimal_media?id=%d" % linkid)
-        elif mode == "createdoc":
-            users.check_permission(session, users.ADD_MEDIA)
-            mediaid = extmedia.create_blank_document_media(session.dbo, session.user, extmedia.FOUNDANIMAL, linkid)
-            raise web.seeother("document_media_edit?id=%d&redirecturl=foundanimal_media?id=%d" % (mediaid, linkid))
-        elif mode == "createlink":
-            users.check_permission(session, users.ADD_MEDIA)
-            mediaid = extmedia.attach_link_from_form(session.dbo, session.user, extmedia.FOUNDANIMAL, linkid, post)
-            raise web.seeother("foundanimal_media?id=%d" % linkid)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            extmedia.update_media_notes(session.dbo, session.user, post.integer("mediaid"), post["comments"])
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_MEDIA)
-            for mid in post.integer_list("ids"):
-                extmedia.delete_media(session.dbo, session.user, mid)
-        elif mode == "email":
-            users.check_permission(session, users.EMAIL_PERSON)
-            emailadd = post["email"]
-            if emailadd == "" or emailadd.find("@") == -1:
-                raise utils.ASMValidationError(_("Invalid email address", l))
-            for mid in post.integer_list("ids"):
-                m = extmedia.get_media_by_id(dbo, mid)
-                if len(m) == 0: raise web.notfound()
-                m = m[0]
-                content = dbfs.get_string(dbo, m["MEDIANAME"])
-                if m["MEDIANAME"].endswith("html"):
-                    content = utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], post["emailnote"], "html", content, m["MEDIANAME"])
-            return emailadd
-        elif mode == "emailpdf":
-            users.check_permission(session, users.EMAIL_PERSON)
-            emailadd = post["email"]
-            if emailadd == "" or emailadd.find("@") == -1:
-                raise utils.ASMValidationError(_("Invalid email address", l))
-            for mid in post.integer_list("ids"):
-                m = extmedia.get_media_by_id(dbo, mid)
-                if len(m) == 0: raise web.notfound()
-                m = m[0]
-                if not m["MEDIANAME"].endswith("html"): continue
-                content = dbfs.get_string(dbo, m["MEDIANAME"])
-                contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], "", "plain", contentpdf, "document.pdf")
-            return emailadd
-        elif mode == "emailsign":
-            users.check_permission(session, users.EMAIL_PERSON)
-            emailadd = post["email"]
-            if emailadd == "" or emailadd.find("@") == -1:
-                raise utils.ASMValidationError(_("Invalid email address", l))
-            body = []
-            body.append(post["emailnote"] + "\n\n")
-            for mid in post.integer_list("ids"):
-                m = extmedia.get_media_by_id(dbo, mid)
-                if len(m) == 0: raise web.notfound()
-                m = m[0]
-                if not m["MEDIANAME"].endswith("html"): continue
-                body.append(m["MEDIANOTES"])
-                body.append("%s?account=%s&method=sign_document&formid=%d" % (SERVICE_URL, dbo.database, mid))
-                body.append("")
-            utils.send_email(dbo, configuration.email(dbo), emailadd, "", _("Document signing request", l), "\n".join(body), "plain")
-            return emailadd
-        elif mode == "sign":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            for mid in post.integer_list("ids"):
-                extmedia.sign_document(session.dbo, session.user, mid, post["sig"], post["signdate"])
-        elif mode == "signpad":
-            configuration.signpad_ids(session.dbo, session.user, post["ids"])
-        elif mode == "rotateclock":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            for mid in post.integer_list("ids"):
-                extmedia.rotate_media(session.dbo, session.user, mid, True)
-        elif mode == "rotateanti":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            for mid in post.integer_list("ids"):
-                extmedia.rotate_media(session.dbo, session.user, mid, False)
-        elif mode == "web":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            mid = post.integer_list("ids")[0]
-            extmedia.set_web_preferred(session.dbo, session.user, mid)
-        elif mode == "video":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            mid = post.integer_list("ids")[0]
-            extmedia.set_video_preferred(session.dbo, session.user, mid)
-        elif mode == "doc":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            mid = post.integer_list("ids")[0]
-            extmedia.set_doc_preferred(session.dbo, session.user, mid)
+    def controller(self, o):
+        dbo = o.dbo
+        a = extlostfound.get_foundanimal(dbo, o.post.integer("id"))
+        if a is None: self.notfound()
+        m = extmedia.get_media(dbo, extmedia.FOUNDANIMAL, o.post.integer("id"))
+        al.debug("got %d media for found animal %s %s %s" % (len(m), a["AGEGROUP"], a["SPECIESNAME"], a["OWNERNAME"]), "code.foundanimal_media", dbo)
+        return {
+            "media": m,
+            "animal": a,
+            "tabcounts": extlostfound.get_foundanimal_satellite_counts(dbo, a["LFID"])[0],
+            "showpreferred": False,
+            "linkid": o.post.integer("id"),
+            "linktypeid": extmedia.FOUNDANIMAL,
+            "name": self.url,
+            "sigtype": ELECTRONIC_SIGNATURES
+        }
 
 class foundanimal_new:
     def GET(self):
@@ -3391,126 +3308,27 @@ class incident_map:
         s += html.footer()
         return full_or_json("incident_map", s, c, post["json"] == "true")
 
-class incident_media:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_MEDIA)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        a = extanimalcontrol.get_animalcontrol(dbo, post.integer("id"))
-        if a is None: raise web.notfound()
-        m = extmedia.get_media(dbo, extmedia.ANIMALCONTROL, post.integer("id"))
-        al.debug("got %d media" % len(m), "code.incident_media", dbo)
-        s = html.header("", session)
-        c = html.controller_json("media", m)
-        c += html.controller_json("incident", a)
-        c += html.controller_json("tabcounts", extanimalcontrol.get_animalcontrol_satellite_counts(dbo, a["ACID"])[0])
-        c += html.controller_bool("showpreferred", False)
-        c += html.controller_int("linkid", post.integer("id"))
-        c += html.controller_int("linktypeid", extmedia.ANIMALCONTROL)
-        c += html.controller_str("name", self.__class__.__name__)
-        c += html.controller_str("sigtype", ELECTRONIC_SIGNATURES)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("media", s, c, post["json"] == "true")
+class incident_media(JSONEndpoint):
+    url = "incident_media"
+    js_module = "media"
+    get_permissions = users.VIEW_MEDIA
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create", filechooser={}, linkid="0", base64image = "", _unicode=False), session.locale)
-        mode = post["mode"]
-        dbo = session.dbo
-        l = session.locale
-        linkid = post.integer("linkid")
-        if mode == "create":
-            users.check_permission(session, users.ADD_MEDIA)
-            extmedia.attach_file_from_form(session.dbo, session.user, extmedia.ANIMALCONTROL, linkid, post)
-            raise web.seeother("incident_media?id=%d" % post.integer("linkid"))
-        elif mode == "createdoc":
-            users.check_permission(session, users.ADD_MEDIA)
-            mediaid = extmedia.create_blank_document_media(session.dbo, session.user, extmedia.ANIMALCONTROL, linkid)
-            raise web.seeother("document_media_edit?id=%d&redirecturl=incident_media?id=%d" % (mediaid, linkid))
-        elif mode == "createlink":
-            users.check_permission(session, users.ADD_MEDIA)
-            mediaid = extmedia.attach_link_from_form(session.dbo, session.user, extmedia.ANIMALCONTROL, linkid, post)
-            raise web.seeother("incident_media?id=%d" % linkid)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            extmedia.update_media_notes(session.dbo, session.user, post.integer("mediaid"), post["comments"])
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_MEDIA)
-            for mid in post.integer_list("ids"):
-                extmedia.delete_media(session.dbo, session.user, mid)
-        elif mode == "email":
-            users.check_permission(session, users.EMAIL_PERSON)
-            emailadd = post["email"]
-            if emailadd == "" or emailadd.find("@") == -1:
-                raise utils.ASMValidationError(_("Invalid email address", l))
-            for mid in post.integer_list("ids"):
-                m = extmedia.get_media_by_id(dbo, mid)
-                if len(m) == 0: raise web.notfound()
-                m = m[0]
-                content = dbfs.get_string(dbo, m["MEDIANAME"])
-                if m["MEDIANAME"].endswith("html"):
-                    content = utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], post["emailnote"], "html", content, m["MEDIANAME"])
-            return emailadd
-        elif mode == "emailpdf":
-            users.check_permission(session, users.EMAIL_PERSON)
-            emailadd = post["email"]
-            if emailadd == "" or emailadd.find("@") == -1:
-                raise utils.ASMValidationError(_("Invalid email address", l))
-            for mid in post.integer_list("ids"):
-                m = extmedia.get_media_by_id(dbo, mid)
-                if len(m) == 0: raise web.notfound()
-                m = m[0]
-                if not m["MEDIANAME"].endswith("html"): continue
-                content = dbfs.get_string(dbo, m["MEDIANAME"])
-                contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], "", "plain", contentpdf, "document.pdf")
-            return emailadd
-        elif mode == "emailsign":
-            users.check_permission(session, users.EMAIL_PERSON)
-            emailadd = post["email"]
-            if emailadd == "" or emailadd.find("@") == -1:
-                raise utils.ASMValidationError(_("Invalid email address", l))
-            body = []
-            body.append(post["emailnote"] + "\n\n")
-            for mid in post.integer_list("ids"):
-                m = extmedia.get_media_by_id(dbo, mid)
-                if len(m) == 0: raise web.notfound()
-                m = m[0]
-                if not m["MEDIANAME"].endswith("html"): continue
-                body.append(m["MEDIANOTES"])
-                body.append("%s?account=%s&method=sign_document&formid=%d" % (SERVICE_URL, dbo.database, mid))
-                body.append("")
-            utils.send_email(dbo, configuration.email(dbo), emailadd, "", _("Document signing request", l), "\n".join(body), "plain")
-            return emailadd
-        elif mode == "sign":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            for mid in post.integer_list("ids"):
-                extmedia.sign_document(session.dbo, session.user, mid, post["sig"], post["signdate"])
-        elif mode == "signpad":
-            configuration.signpad_ids(session.dbo, session.user, post["ids"])
-        elif mode == "rotateclock":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            for mid in post.integer_list("ids"):
-                extmedia.rotate_media(session.dbo, session.user, mid, True)
-        elif mode == "rotateanti":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            for mid in post.integer_list("ids"):
-                extmedia.rotate_media(session.dbo, session.user, mid, False)
-        elif mode == "web":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            mid = post.integer_list("ids")[0]
-            extmedia.set_web_preferred(session.dbo, session.user, mid)
-        elif mode == "video":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            mid = post.integer_list("ids")[0]
-            extmedia.set_video_preferred(session.dbo, session.user, mid)
-        elif mode == "doc":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            mid = post.integer_list("ids")[0]
-            extmedia.set_doc_preferred(session.dbo, session.user, mid)
+    def controller(self, o):
+        dbo = o.dbo
+        a = extanimalcontrol.get_animalcontrol(dbo, o.post.integer("id"))
+        if a is None: self.notfound()
+        m = extmedia.get_media(dbo, extmedia.ANIMALCONTROL, o.post.integer("id"))
+        al.debug("got %d media" % len(m), "code.incident_media", dbo)
+        return {
+            "media": m,
+            "incident": a,
+            "tabcounts": extanimalcontrol.get_animalcontrol_satellite_counts(dbo, a["ACID"])[0],
+            "showpreferred": False,
+            "linkid": o.post.integer("id"),
+            "linktypeid": extmedia.ANIMALCONTROL,
+            "name": self.url,
+            "sigtype": ELECTRONIC_SIGNATURES
+        }
 
 class incident_new:
     def GET(self):
@@ -3897,126 +3715,27 @@ class lostanimal_log:
             for lid in post.integer_list("ids"):
                 extlog.delete_log(session.dbo, session.user, lid)
 
-class lostanimal_media:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_MEDIA)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        a = extlostfound.get_lostanimal(dbo, post.integer("id"))
-        if a is None: raise web.notfound()
-        m = extmedia.get_media(dbo, extmedia.LOSTANIMAL, post.integer("id"))
-        al.debug("got %d media for lost animal %s %s %s" % (len(m), a["AGEGROUP"], a["SPECIESNAME"], a["OWNERNAME"]), "code.foundanimal_media", dbo)
-        s = html.header("", session)
-        c = html.controller_json("media", m)
-        c += html.controller_json("animal", a)
-        c += html.controller_json("tabcounts", extlostfound.get_lostanimal_satellite_counts(dbo, a["LFID"])[0])
-        c += html.controller_bool("showpreferred", False)
-        c += html.controller_int("linkid", post.integer("id"))
-        c += html.controller_int("linktypeid", extmedia.LOSTANIMAL)
-        c += html.controller_str("name", self.__class__.__name__)
-        c += html.controller_str("sigtype", ELECTRONIC_SIGNATURES)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("media", s, c, post["json"] == "true")
+class lostanimal_media(JSONEndpoint):
+    url = "lostanimal_media"
+    js_module = "media"
+    get_permissions = users.VIEW_MEDIA
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create", filechooser={}, linkid="0", base64image = "", _unicode=False), session.locale)
-        mode = post["mode"]
-        dbo = session.dbo
-        l = session.locale
-        linkid = post.integer("linkid")
-        if mode == "create":
-            users.check_permission(session, users.ADD_MEDIA)
-            extmedia.attach_file_from_form(session.dbo, session.user, extmedia.LOSTANIMAL, linkid, post)
-            raise web.seeother("lostanimal_media?id=%d" % linkid)
-        elif mode == "createdoc":
-            users.check_permission(session, users.ADD_MEDIA)
-            mediaid = extmedia.create_blank_document_media(session.dbo, session.user, extmedia.LOSTANIMAL, linkid)
-            raise web.seeother("document_media_edit?id=%d&redirecturl=lostanimal_media?id=%d" % (mediaid, linkid))
-        elif mode == "createlink":
-            users.check_permission(session, users.ADD_MEDIA)
-            mediaid = extmedia.attach_link_from_form(session.dbo, session.user, extmedia.LOSTANIMAL, linkid, post)
-            raise web.seeother("lostanimal_media?id=%d" % linkid)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            extmedia.update_media_notes(session.dbo, session.user, post.integer("mediaid"), post["comments"])
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_MEDIA)
-            for mid in post.integer_list("ids"):
-                extmedia.delete_media(session.dbo, session.user, mid)
-        elif mode == "email":
-            users.check_permission(session, users.EMAIL_PERSON)
-            emailadd = post["email"]
-            if emailadd == "" or emailadd.find("@") == -1:
-                raise utils.ASMValidationError(_("Invalid email address", l))
-            for mid in post.integer_list("ids"):
-                m = extmedia.get_media_by_id(dbo, mid)
-                if len(m) == 0: raise web.notfound()
-                m = m[0]
-                content = dbfs.get_string(dbo, m["MEDIANAME"])
-                if m["MEDIANAME"].endswith("html"):
-                    content = utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], post["emailnote"], "html", content, m["MEDIANAME"])
-            return emailadd
-        elif mode == "emailpdf":
-            users.check_permission(session, users.EMAIL_PERSON)
-            emailadd = post["email"]
-            if emailadd == "" or emailadd.find("@") == -1:
-                raise utils.ASMValidationError(_("Invalid email address", l))
-            for mid in post.integer_list("ids"):
-                m = extmedia.get_media_by_id(dbo, mid)
-                if len(m) == 0: raise web.notfound()
-                m = m[0]
-                if not m["MEDIANAME"].endswith("html"): continue
-                content = dbfs.get_string(dbo, m["MEDIANAME"])
-                contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], "", "plain", contentpdf, "document.pdf")
-            return emailadd
-        elif mode == "emailsign":
-            users.check_permission(session, users.EMAIL_PERSON)
-            emailadd = post["email"]
-            if emailadd == "" or emailadd.find("@") == -1:
-                raise utils.ASMValidationError(_("Invalid email address", l))
-            body = []
-            body.append(post["emailnote"] + "\n\n")
-            for mid in post.integer_list("ids"):
-                m = extmedia.get_media_by_id(dbo, mid)
-                if len(m) == 0: raise web.notfound()
-                m = m[0]
-                if not m["MEDIANAME"].endswith("html"): continue
-                body.append(m["MEDIANOTES"])
-                body.append("%s?account=%s&method=sign_document&formid=%d" % (SERVICE_URL, dbo.database, mid))
-                body.append("")
-            utils.send_email(dbo, configuration.email(dbo), emailadd, "", _("Document signing request", l), "\n".join(body), "plain")
-            return emailadd
-        elif mode == "sign":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            for mid in post.integer_list("ids"):
-                extmedia.sign_document(session.dbo, session.user, mid, post["sig"], post["signdate"])
-        elif mode == "signpad":
-            configuration.signpad_ids(session.dbo, session.user, post["ids"])
-        elif mode == "rotateclock":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            for mid in post.integer_list("ids"):
-                extmedia.rotate_media(session.dbo, session.user, mid, True)
-        elif mode == "rotateanti":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            for mid in post.integer_list("ids"):
-                extmedia.rotate_media(session.dbo, session.user, mid, False)
-        elif mode == "web":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            mid = post.integer_list("ids")[0]
-            extmedia.set_web_preferred(session.dbo, session.user, mid)
-        elif mode == "video":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            mid = post.integer_list("ids")[0]
-            extmedia.set_video_preferred(session.dbo, session.user, mid)
-        elif mode == "doc":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            mid = post.integer_list("ids")[0]
-            extmedia.set_doc_preferred(session.dbo, session.user, mid)
+    def controller(self, o):
+        dbo = o.dbo
+        a = extlostfound.get_lostanimal(dbo, o.post.integer("id"))
+        if a is None: self.notfound()
+        m = extmedia.get_media(dbo, extmedia.LOSTANIMAL, o.post.integer("id"))
+        al.debug("got %d media for lost animal %s %s %s" % (len(m), a["AGEGROUP"], a["SPECIESNAME"], a["OWNERNAME"]), "code.foundanimal_media", dbo)
+        return {
+            "media": m,
+            "animal": a,
+            "tabcounts": extlostfound.get_lostanimal_satellite_counts(dbo, a["LFID"])[0],
+            "showpreferred": False,
+            "linkid": o.post.integer("id"),
+            "linktypeid": extmedia.LOSTANIMAL,
+            "name": self.url, 
+            "sigtype": ELECTRONIC_SIGNATURES
+        }
 
 class lostanimal_new:
     def GET(self):
@@ -5373,126 +5092,27 @@ class person_links:
         s += html.footer()
         return full_or_json("person_links", s, c, post["json"] == "true")
 
-class person_media:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_MEDIA)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        p = extperson.get_person(dbo, post.integer("id"))
-        if p is None: raise web.notfound()
-        m = extmedia.get_media(dbo, extmedia.PERSON, post.integer("id"))
-        al.debug("got %d media" % len(m), "code.person_media", dbo)
-        s = html.header("", session)
-        c = html.controller_json("media", m)
-        c += html.controller_json("person", p)
-        c += html.controller_json("tabcounts", extperson.get_satellite_counts(dbo, p["ID"])[0])
-        c += html.controller_bool("showpreferred", True)
-        c += html.controller_int("linkid", post.integer("id"))
-        c += html.controller_int("linktypeid", extmedia.PERSON)
-        c += html.controller_str("name", self.__class__.__name__)
-        c += html.controller_str("sigtype", ELECTRONIC_SIGNATURES)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("media", s, c, post["json"] == "true")
+class person_media(JSONEndpoint):
+    url = "person_media"
+    js_module = "media"
+    get_permissions = users.VIEW_MEDIA
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create", filechooser={}, linkid="0", base64image = "", _unicode=False), session.locale)
-        mode = post["mode"]
-        dbo = session.dbo
-        l = session.locale
-        linkid = post.integer("linkid")
-        if mode == "create":
-            users.check_permission(session, users.ADD_MEDIA)
-            extmedia.attach_file_from_form(dbo, session.user, extmedia.PERSON, linkid, post)
-            raise web.seeother("person_media?id=%d" % linkid)
-        elif mode == "createdoc":
-            users.check_permission(session, users.ADD_MEDIA)
-            mediaid = extmedia.create_blank_document_media(dbo, session.user, extmedia.PERSON, linkid)
-            raise web.seeother("document_media_edit?id=%d&redirecturl=person_media?id=%d" % (mediaid, linkid))
-        elif mode == "createlink":
-            users.check_permission(session, users.ADD_MEDIA)
-            mediaid = extmedia.attach_link_from_form(session.dbo, session.user, extmedia.PERSON, linkid, post)
-            raise web.seeother("person_media?id=%d" % linkid)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            extmedia.update_media_notes(dbo, session.user, post.integer("mediaid"), post["comments"])
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_MEDIA)
-            for mid in post.integer_list("ids"):
-                extmedia.delete_media(dbo, session.user, mid)
-        elif mode == "email":
-            users.check_permission(session, users.EMAIL_PERSON)
-            emailadd = post["email"]
-            if emailadd == "" or emailadd.find("@") == -1:
-                raise utils.ASMValidationError(_("Invalid email address", l))
-            for mid in post.integer_list("ids"):
-                m = extmedia.get_media_by_id(dbo, mid)
-                if len(m) == 0: raise web.notfound()
-                m = m[0]
-                content = dbfs.get_string(dbo, m["MEDIANAME"])
-                if m["MEDIANAME"].endswith("html"):
-                    content = utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], post["emailnote"], "html", content, m["MEDIANAME"])
-            return emailadd
-        elif mode == "emailpdf":
-            users.check_permission(session, users.EMAIL_PERSON)
-            emailadd = post["email"]
-            if emailadd == "" or emailadd.find("@") == -1:
-                raise utils.ASMValidationError(_("Invalid email address", l))
-            for mid in post.integer_list("ids"):
-                m = extmedia.get_media_by_id(dbo, mid)
-                if len(m) == 0: raise web.notfound()
-                m = m[0]
-                if not m["MEDIANAME"].endswith("html"): continue
-                content = dbfs.get_string(dbo, m["MEDIANAME"])
-                contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], post["emailnote"], "plain", contentpdf, "document.pdf")
-            return emailadd
-        elif mode == "emailsign":
-            users.check_permission(session, users.EMAIL_PERSON)
-            emailadd = post["email"]
-            if emailadd == "" or emailadd.find("@") == -1:
-                raise utils.ASMValidationError(_("Invalid email address", l))
-            body = []
-            body.append(post["emailnote"] + "\n\n")
-            for mid in post.integer_list("ids"):
-                m = extmedia.get_media_by_id(dbo, mid)
-                if len(m) == 0: raise web.notfound()
-                m = m[0]
-                if not m["MEDIANAME"].endswith("html"): continue
-                body.append(m["MEDIANOTES"])
-                body.append("%s?account=%s&method=sign_document&formid=%d" % (SERVICE_URL, dbo.database, mid))
-                body.append("")
-            utils.send_email(dbo, configuration.email(dbo), emailadd, "", _("Document signing request", l), "\n".join(body), "plain")
-            return emailadd
-        elif mode == "sign":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            for mid in post.integer_list("ids"):
-                extmedia.sign_document(session.dbo, session.user, mid, post["sig"], post["signdate"])
-        elif mode == "signpad":
-            configuration.signpad_ids(session.dbo, session.user, post["ids"])
-        elif mode == "rotateclock":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            for mid in post.integer_list("ids"):
-                extmedia.rotate_media(dbo, session.user, mid, True)
-        elif mode == "rotateanti":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            for mid in post.integer_list("ids"):
-                extmedia.rotate_media(dbo, session.user, mid, False)
-        elif mode == "web":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            mid = post.integer_list("ids")[0]
-            extmedia.set_web_preferred(dbo, session.user, mid)
-        elif mode == "video":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            mid = post.integer_list("ids")[0]
-            extmedia.set_video_preferred(session.dbo, session.user, mid)
-        elif mode == "doc":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            mid = post.integer_list("ids")[0]
-            extmedia.set_doc_preferred(dbo, session.user, mid)
+    def controller(self, o):
+        dbo = o.dbo
+        p = extperson.get_person(dbo, o.post.integer("id"))
+        if p is None: self.notfound()
+        m = extmedia.get_media(dbo, extmedia.PERSON, o.post.integer("id"))
+        al.debug("got %d media" % len(m), "code.person_media", dbo)
+        return {
+            "media": m,
+            "person": p,
+            "tabcounts": extperson.get_satellite_counts(dbo, p["ID"])[0],
+            "showpreferred": True,
+            "linkid": o.post.integer("id"),
+            "linktypeid": extmedia.PERSON,
+            "name": self.url,
+            "sigtype": ELECTRONIC_SIGNATURES
+        }
 
 class person_movements:
     def GET(self):
@@ -6674,126 +6294,27 @@ class waitinglist_log:
             for lid in post.integer_list("ids"):
                 extlog.delete_log(session.dbo, session.user, lid)
 
-class waitinglist_media:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_MEDIA)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        a = extwaitinglist.get_waitinglist_by_id(dbo, post.integer("id"))
-        if a is None: raise web.notfound()
-        m = extmedia.get_media(dbo, extmedia.WAITINGLIST, post.integer("id"))
-        al.debug("got %d media" % len(m), "code.waitinglist_media", dbo)
-        s = html.header("", session)
-        c = html.controller_json("media", m)
-        c += html.controller_json("animal", a)
-        c += html.controller_json("tabcounts", extwaitinglist.get_satellite_counts(dbo, a["WLID"])[0])
-        c += html.controller_bool("showpreferred", False)
-        c += html.controller_int("linkid", post.integer("id"))
-        c += html.controller_int("linktypeid", extmedia.WAITINGLIST)
-        c += html.controller_str("name", self.__class__.__name__)
-        c += html.controller_str("sigtype", ELECTRONIC_SIGNATURES)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("media", s, c, post["json"] == "true")
+class waitinglist_media(JSONEndpoint):
+    url = "waitinglist_media"
+    js_module = "media"
+    get_permissions = users.VIEW_MEDIA
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create", filechooser={}, linkid="0", base64image = "", _unicode=False), session.locale)
-        mode = post["mode"]
-        dbo = session.dbo
-        l = session.locale
-        linkid = post.integer("linkid")
-        if mode == "create":
-            users.check_permission(session, users.ADD_MEDIA)
-            extmedia.attach_file_from_form(session.dbo, session.user, extmedia.WAITINGLIST, linkid, post)
-            raise web.seeother("waitinglist_media?id=%d" % post.integer("linkid"))
-        elif mode == "createdoc":
-            users.check_permission(session, users.ADD_MEDIA)
-            mediaid = extmedia.create_blank_document_media(session.dbo, session.user, extmedia.WAITINGLIST, linkid)
-            raise web.seeother("document_media_edit?id=%d&redirecturl=waitinglist_media?id=%d" % (mediaid, linkid))
-        elif mode == "createlink":
-            users.check_permission(session, users.ADD_MEDIA)
-            mediaid = extmedia.attach_link_from_form(session.dbo, session.user, extmedia.WAITINGLIST, linkid, post)
-            raise web.seeother("waitinglist_media?id=%d" % linkid)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            extmedia.update_media_notes(session.dbo, session.user, post.integer("mediaid"), post["comments"])
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_MEDIA)
-            for mid in post.integer_list("ids"):
-                extmedia.delete_media(session.dbo, session.user, mid)
-        elif mode == "email":
-            users.check_permission(session, users.EMAIL_PERSON)
-            emailadd = post["email"]
-            if emailadd == "" or emailadd.find("@") == -1:
-                raise utils.ASMValidationError(_("Invalid email address", l))
-            for mid in post.integer_list("ids"):
-                m = extmedia.get_media_by_id(dbo, mid)
-                if len(m) == 0: raise web.notfound()
-                m = m[0]
-                content = dbfs.get_string(dbo, m["MEDIANAME"])
-                if m["MEDIANAME"].endswith("html"):
-                    content = utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], post["emailnote"], "html", content, m["MEDIANAME"])
-            return emailadd
-        elif mode == "emailpdf":
-            users.check_permission(session, users.EMAIL_PERSON)
-            emailadd = post["email"]
-            if emailadd == "" or emailadd.find("@") == -1:
-                raise utils.ASMValidationError(_("Invalid email address", l))
-            for mid in post.integer_list("ids"):
-                m = extmedia.get_media_by_id(dbo, mid)
-                if len(m) == 0: raise web.notfound()
-                m = m[0]
-                if not m["MEDIANAME"].endswith("html"): continue
-                content = dbfs.get_string(dbo, m["MEDIANAME"])
-                contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-                utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], "", "plain", contentpdf, "document.pdf")
-            return emailadd
-        elif mode == "emailsign":
-            users.check_permission(session, users.EMAIL_PERSON)
-            emailadd = post["email"]
-            if emailadd == "" or emailadd.find("@") == -1:
-                raise utils.ASMValidationError(_("Invalid email address", l))
-            body = []
-            body.append(post["emailnote"] + "\n\n")
-            for mid in post.integer_list("ids"):
-                m = extmedia.get_media_by_id(dbo, mid)
-                if len(m) == 0: raise web.notfound()
-                m = m[0]
-                if not m["MEDIANAME"].endswith("html"): continue
-                body.append(m["MEDIANOTES"])
-                body.append("%s?account=%s&method=sign_document&formid=%d" % (SERVICE_URL, dbo.database, mid))
-                body.append("")
-            utils.send_email(dbo, configuration.email(dbo), emailadd, "", _("Document signing request", l), "\n".join(body), "plain")
-            return emailadd
-        elif mode == "sign":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            for mid in post.integer_list("ids"):
-                extmedia.sign_document(session.dbo, session.user, mid, post["sig"], post["signdate"])
-        elif mode == "signpad":
-            configuration.signpad_ids(session.dbo, session.user, post["ids"])
-        elif mode == "rotateclock":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            for mid in post.integer_list("ids"):
-                extmedia.rotate_media(session.dbo, session.user, mid, True)
-        elif mode == "rotateanti":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            for mid in post.integer_list("ids"):
-                extmedia.rotate_media(session.dbo, session.user, mid, False)
-        elif mode == "web":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            mid = post.integer_list("ids")[0]
-            extmedia.set_web_preferred(session.dbo, session.user, mid)
-        elif mode == "video":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            mid = post.integer_list("ids")[0]
-            extmedia.set_video_preferred(session.dbo, session.user, mid)
-        elif mode == "doc":
-            users.check_permission(session, users.CHANGE_MEDIA)
-            mid = post.integer_list("ids")[0]
-            extmedia.set_doc_preferred(session.dbo, session.user, mid)
+    def controller(self, o):
+        dbo = o.dbo
+        a = extwaitinglist.get_waitinglist_by_id(dbo, o.post.integer("id"))
+        if a is None: self.notfound()
+        m = extmedia.get_media(dbo, extmedia.WAITINGLIST, o.post.integer("id"))
+        al.debug("got %d media" % len(m), "code.waitinglist_media", dbo)
+        return {
+            "media": m,
+            "animal": a,
+            "tabcounts": extwaitinglist.get_satellite_counts(dbo, a["WLID"])[0],
+            "showpreferred": False,
+            "linkid": o.post.integer("id"),
+            "linktypeid": extmedia.WAITINGLIST,
+            "name": self.url,
+            "sigtype": ELECTRONIC_SIGNATURES
+        }
 
 class waitinglist_new:
     def GET(self):
