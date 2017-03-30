@@ -9,7 +9,7 @@ Import script for Greyhound rescue database az1307
 30th January, 2017
 """
 
-db = web.database( dbn = "mysql", db = "greyhoun_db", user = "root", pw = "root" )
+db = web.database( dbn = "mysql", db = "greyhoun_db", user = "robin", pw = "robin" )
 
 DEFAULT_INTAKE_DATE = datetime.datetime(2010, 01, 01)
 DEFAULT_DATE_OF_BIRTH = DEFAULT_INTAKE_DATE
@@ -36,10 +36,10 @@ asm.setid("adoption", 100)
 
 print "\\set ON_ERROR_STOP\nBEGIN;"
 print "DELETE FROM internallocation;"
-print "DELETE FROM animal WHERE ID >= 100 AND CreatedBy = 'conversion';"
-print "DELETE FROM owner WHERE ID >= 100 AND CreatedBy = 'conversion';"
-print "DELETE FROM ownerdonation WHERE ID >= 100 AND CreatedBy = 'conversion';"
-print "DELETE FROM adoption WHERE ID >= 100 AND CreatedBy = 'conversion';"
+print "DELETE FROM animal WHERE ID >= 100;"
+print "DELETE FROM owner WHERE ID >= 100;"
+print "DELETE FROM ownerdonation WHERE ID >= 100;"
+print "DELETE FROM adoption WHERE ID >= 100;"
 
 # Deal with people first
 for d in db.select("members").list():
