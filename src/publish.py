@@ -274,6 +274,8 @@ def get_animal_data_query(dbo, pc, animalid = 0):
     sql += " AND a.DeceasedDate Is Null AND a.IsNotAvailableForAdoption = 0"
     # Filter out permanent fosters
     sql += " AND a.HasPermanentFoster = 0"
+    # Filter out animals with a future adoption
+    sql += " AND NOT EXISTS(SELECT ID FROM adoption WHERE MovementType = 1 AND AnimalID = a.ID AND MovementDate > %s)" % db.dd(i18n.now(dbo.timezone))
     # Build a set of OR clauses based on any movements/locations
     moveor = []
     # Always include courtesy post animals

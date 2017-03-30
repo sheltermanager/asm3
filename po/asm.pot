@@ -700,7 +700,7 @@ msgid "Adoption"
 msgstr ""
 
 #: options.js header_edit_header.js animal.js animal_new.js animal_bulk.js
-#: shelterview.js common.js person.py
+#: shelterview.js common.js html.py person.py
 msgid "Adoption Coordinator"
 msgstr ""
 
@@ -2428,8 +2428,8 @@ msgid "Cocker Spaniel"
 msgstr ""
 
 #: common_animalchooser.js person.js animal_find_results.js animal.js
-#: animal_find.js accounts.js common_personchooser.js animal_new.js html.py
-#: person.py
+#: animal_find.js accounts.js common_personchooser.js animal_new.js mobile.py
+#: html.py person.py
 msgid "Code"
 msgstr ""
 
@@ -2642,7 +2642,7 @@ msgstr ""
 msgid "Could not find animal with name '{0}'"
 msgstr ""
 
-#: header_edit_header.js common.js
+#: header_edit_header.js common.js html.py
 msgid "Courtesy Listing"
 msgstr ""
 
@@ -2774,7 +2774,7 @@ msgstr ""
 msgid "Crossbreed"
 msgstr ""
 
-#: options.js header_edit_header.js shelterview.js common.js publish.py
+#: options.js header_edit_header.js shelterview.js common.js publish.py html.py
 msgid "Cruelty Case"
 msgstr ""
 
@@ -3011,7 +3011,7 @@ msgid "Dec"
 msgstr ""
 
 #: options.js search.js header_edit_header.js person_links.js animal_find.js
-#: common.js animal.py
+#: common.js html.py animal.py
 msgid "Deceased"
 msgstr ""
 
@@ -3639,7 +3639,8 @@ msgstr ""
 msgid "Draft"
 msgstr ""
 
-#: header_edit_header.js onlineforms.js transport.js common.js person.py
+#: header_edit_header.js onlineforms.js transport.js common.js html.py
+#: person.py
 msgid "Driver"
 msgstr ""
 
@@ -5004,6 +5005,10 @@ msgstr ""
 
 #: person_find_results.js html.py
 msgid "GiftAid"
+msgstr ""
+
+#: html.py
+msgid "Giftaid"
 msgstr ""
 
 #: dbupdate.py
@@ -7287,7 +7292,7 @@ msgstr ""
 msgid "Noise"
 msgstr ""
 
-#: options.js header_edit_header.js animal_new.js common.js
+#: options.js header_edit_header.js animal_new.js common.js html.py
 msgid "Non-Shelter"
 msgstr ""
 
@@ -7340,7 +7345,7 @@ msgid "Not Available for Adoption"
 msgstr ""
 
 #: options.js header_edit_header.js animal_bulk.js shelterview.js common.js
-#: publish.py
+#: publish.py html.py
 msgid "Not For Adoption"
 msgstr ""
 
@@ -7619,7 +7624,7 @@ msgstr ""
 msgid "Other Organisation"
 msgstr ""
 
-#: onlineforms.js common.js
+#: onlineforms.js common.js html.py
 msgid "Other Shelter"
 msgstr ""
 

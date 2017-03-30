@@ -1,6 +1,7 @@
 40
 ================
 
+30/03/17 Do not include animals with future adoptions when publishing #185
 30/03/17 Show sheltercode box on mobile add animal if manual codes enabled #190
 29/03/17 Fix bug with litter references not being URI encoded for litter mates
 29/03/17 Add cost total wordkeys #177

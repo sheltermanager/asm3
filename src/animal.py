@@ -162,6 +162,7 @@ def get_animal_query(dbo):
         "doc.MediaName AS DocMediaName, " \
         "vid.MediaName AS WebsiteVideoURL, " \
         "vid.MediaNotes AS WebsiteVideoNotes, " \
+        "CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND MovementType = 1 AND MovementDate > %(today)s) THEN 1 ELSE 0 END AS HasFutureAdoption, " \
         "(SELECT COUNT(*) FROM media WHERE LOWER(MediaName) LIKE '%%jpg' AND Date >= %(twodaysago)s AND LinkID = a.ID AND LinkTypeID = 0) AS RecentlyChangedImages, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.NonShelterAnimal) AS NonShelterAnimalName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.CrueltyCase) AS CrueltyCaseName, " \
@@ -223,6 +224,7 @@ def get_animal_query(dbo):
         "LEFT OUTER JOIN adoption ar ON ar.AnimalID = a.ID AND ar.MovementType = 0 AND ar.MovementDate Is Null AND ar.ReservationDate Is Not Null AND ar.ReservationCancelledDate Is Null AND ar.ID = (SELECT MAX(sar.ID) FROM adoption sar WHERE sar.AnimalID = a.ID AND sar.MovementType = 0 AND sar.MovementDate Is Null AND sar.ReservationDate Is Not Null AND sar.ReservationCancelledDate Is Null) " \
         "LEFT OUTER JOIN reservationstatus ars ON ars.ID = ar.ReservationStatusID " \
         "LEFT OUTER JOIN owner ro ON ro.ID = ar.OwnerID" % {
+            "today": db.dd(now(dbo.timezone)),
             "twodaysago":  db.dd(subtract_days(now(dbo.timezone), 2))
         }
 
@@ -321,6 +323,7 @@ def get_animals_brief(animals):
             "ENTRYREASONNAME": a["ENTRYREASONNAME"],
             "FLVRESULT": a["FLVRESULT"],
             "HASACTIVERESERVE": a["HASACTIVERESERVE"],
+            "HASFUTUREADOPTION": a["HASFUTUREADOPTION"],
             "HASSPECIALNEEDS": a["HASSPECIALNEEDS"],
             "HASTRIALADOPTION": a["HASTRIALADOPTION"],
             "HASPERMANENTFOSTER": a["HASPERMANENTFOSTER"],

@@ -1384,6 +1384,7 @@
             if (a.ISHOLD == 1 && a.HOLDUNTILDATE && p.indexOf("includehold") == -1) { 
                 return [ false, _("Hold until {0}").replace("{0}", format.date(a.HOLDUNTILDATE)) ]; 
             }
+            if (a.HASFUTUREADOPTION) { return [ false, _("Adopted") ]; }
             if (a.ISHOLD == 1 && p.indexOf("includehold") == -1) { return [ false, _("Hold") ]; }
             if (a.ISQUARANTINE == 1 && p.indexOf("includequarantine") == -1) { return [ false, _("Quarantine") ]; }
             if (a.DECEASEDDATE) { return [ false, _("Deceased") ]; }
