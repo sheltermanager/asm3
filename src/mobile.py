@@ -920,6 +920,8 @@ def handler_addanimal(l, homelink, dbo):
     h.append(jqm_form("animalform"))
     h.append(jqm_hidden("posttype", "aa"))
     h.append(jqm_fieldcontain("animalname", _("Name", l), jqm_text("animalname")))
+    if configuration.manual_codes(dbo):
+        h.append(jqm_fieldcontain("sheltercode", _("Code", l), jqm_text("sheltercode")))
     h.append(jqm_fieldcontain("estimatedage", _("Age", l), jqm_text("estimatedage", "1.0")))
     h.append(jqm_fieldcontain("sex", _("Sex", l), jqm_select("sex", html.options_sexes(dbo))))
     h.append(jqm_fieldcontain("animaltype", _("Type", l), jqm_select("animaltype", html.options_animal_types(dbo, False, configuration.default_type(dbo)))))
