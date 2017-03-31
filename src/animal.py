@@ -2644,8 +2644,12 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
         return
     # Any animal fields that should be copied to the new record
     broughtin = db.query_date(dbo, "SELECT DateBroughtIn FROM animal WHERE ID = %d" % cloneanimalid)
-    cloneanimalfee = db.query_int(dbo, "SELECT Fee FROM animal WHERE ID = %d" % cloneanimalid)
-    db.execute(dbo, "UPDATE animal SET Fee = %d WHERE ID = %d" % (cloneanimalfee, animalid))
+    copyfrom = db.query("SELECT Fee, AnimalComments FROM animal WHERE ID = %d" % cloneanimalid)
+    sql = db.make_update_user_sql(dbo, "animal", username, "ID=%d" % cloneanimalid, (
+        ( "Fee", db.di(copyfrom["FEE"]) ),
+        ( "AnimalComments", db.ds(copyfrom["ANIMALCOMMENTS"]) )
+        ))
+    db.execute(dbo, sql)
     # Helper function to work out the difference between intake and a date and add that
     # difference to today to get a new date
     def adjust_date(d):
