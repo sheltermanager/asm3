@@ -8044,6 +8044,10 @@ msgstr ""
 msgid "Pixie-Bob"
 msgstr ""
 
+#: mobile.py service.py
+msgid "Please click the Sign button when you are finished."
+msgstr ""
+
 #: media.js
 msgid "Please select a PDF, HTML or JPG image file to attach"
 msgstr ""
