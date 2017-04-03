@@ -1738,145 +1738,141 @@ class animal_media(JSONEndpoint):
             "sigtype": ELECTRONIC_SIGNATURES
         }
 
-class animal_medical:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_MEDICAL)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        a = extanimal.get_animal(dbo, post.integer("id"))
-        if a is None: raise web.notfound()
-        med = extmedical.get_regimens_treatments(dbo, post.integer("id"))
+class animal_medical(JSONEndpoint):
+    url = "animal_medical"
+    js_module = "medical"
+    get_permissions = users.VIEW_MEDICAL
+
+    def controller(self, o):
+        dbo = o.dbo
+        a = extanimal.get_animal(dbo, o.post.integer("id"))
+        if a is None: self.notfound()
+        med = extmedical.get_regimens_treatments(dbo, o.post.integer("id"))
         profiles = extmedical.get_profiles(dbo)
         al.debug("got %d medical entries for animal %s %s" % (len(med), a["CODE"], a["ANIMALNAME"]), "code.animal_medical", dbo)
-        s = html.header("", session)
-        c = html.controller_json("profiles", profiles)
-        c += html.controller_json("rows", med)
-        c += html.controller_str("name", "animal_medical")
-        c += html.controller_json("tabcounts", extanimal.get_satellite_counts(dbo, a["ID"])[0])
-        c += html.controller_json("stockitems", extstock.get_stock_items(dbo))
-        c += html.controller_json("stockusagetypes", extlookups.get_stock_usage_types(dbo))
-        c += html.controller_json("users", users.get_users(dbo))
-        c += html.controller_json("animal", a)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("medical", s, c, post["json"] == "true")
+        return {
+            "profiles": profiles,
+            "rows": med,
+            "name": "animal_medical",
+            "tabcounts": extanimal.get_satellite_counts(dbo, a["ID"])[0],
+            "stockitems": extstock.get_stock_items(dbo),
+            "stockusagetypes": extlookups.get_stock_usage_types(dbo),
+            "users": users.get_users(dbo),
+            "animal": a
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_MEDICAL)
-            extmedical.insert_regimen_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_MEDICAL)
-            extmedical.update_regimen_from_form(session.dbo, session.user, post)
-        elif mode == "delete_regimen":
-            users.check_permission(session, users.DELETE_MEDICAL)
-            for mid in post.integer_list("ids"):
-                extmedical.delete_regimen(session.dbo, session.user, mid)
-        elif mode == "delete_treatment":
-            users.check_permission(session, users.DELETE_MEDICAL)
-            for mid in post.integer_list("ids"):
-                extmedical.delete_treatment(session.dbo, session.user, mid)
-        elif mode == "get_profile":
-            return html.json([extmedical.get_profile(session.dbo, post.integer("profileid"))])
-        elif mode == "given":
-            users.check_permission(session, users.BULK_COMPLETE_MEDICAL)
-            newdate = post.date("newdate")
-            vet = post.integer("givenvet")
-            by = post["givenby"]
-            comments = post["treatmentcomments"]
-            for mid in post.integer_list("ids"):
-                extmedical.update_treatment_given(session.dbo, session.user, mid, newdate, by, vet, comments)
-            if post.integer("item") != -1:
-                extstock.deduct_stocklevel_from_form(session.dbo, session.user, post)
-        elif mode == "required":
-            users.check_permission(session, users.BULK_COMPLETE_MEDICAL)
-            newdate = post.date("newdate")
-            for mid in post.integer_list("ids"):
-                extmedical.update_treatment_required(session.dbo, session.user, mid, newdate)
+    def post_create(self, o):
+        self.check(users.ADD_MEDICAL)
+        extmedical.insert_regimen_from_form(o.dbo, o.user, o.post)
 
-class animal_movements:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_MOVEMENT)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        a = extanimal.get_animal(dbo, post.integer("id"))
-        if a is None: raise web.notfound()
-        movements = extmovement.get_animal_movements(dbo, post.integer("id"))
+    def post_update(self, o):
+        self.check(users.CHANGE_MEDICAL)
+        extmedical.update_regimen_from_form(o.dbo, o.user, o.post)
+
+    def post_delete_regimen(self, o):
+        self.check(users.DELETE_MEDICAL)
+        for mid in o.post.integer_list("ids"):
+            extmedical.delete_regimen(o.dbo, o.user, mid)
+
+    def post_delete_treatment(self, o):
+        self.check(users.DELETE_MEDICAL)
+        for mid in o.post.integer_list("ids"):
+            extmedical.delete_treatment(o.dbo, o.user, mid)
+
+    def post_get_profile(self, o):
+        return html.json([extmedical.get_profile(o.dbo, o.post.integer("profileid"))])
+
+    def post_given(self, o):
+        self.check(users.BULK_COMPLETE_MEDICAL)
+        post = o.post
+        newdate = post.date("newdate")
+        vet = post.integer("givenvet")
+        by = post["givenby"]
+        comments = post["treatmentcomments"]
+        for mid in post.integer_list("ids"):
+            extmedical.update_treatment_given(o.dbo, o.user, mid, newdate, by, vet, comments)
+        if post.integer("item") != -1:
+            extstock.deduct_stocklevel_from_form(session.dbo, session.user, post)
+
+    def post_required(self, o):
+        self.check(users.BULK_COMPLETE_MEDICAL)
+        newdate = o.post.date("newdate")
+        for mid in o.post.integer_list("ids"):
+            extmedical.update_treatment_required(o.dbo, o.user, mid, newdate)
+
+class animal_movements(JSONEndpoint):
+    url = "animal_movements"
+    js_module = "movements"
+    get_permissions = users.VIEW_MOVEMENT
+
+    def controller(self, o):
+        dbo = o.dbo
+        a = extanimal.get_animal(dbo, o.post.integer("id"))
+        if a is None: self.notfound()
+        movements = extmovement.get_animal_movements(dbo, o.post.integer("id"))
         al.debug("got %d movements for animal %s %s" % (len(movements), a["CODE"], a["ANIMALNAME"]), "code.animal_movements", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", movements)
-        c += html.controller_json("animal", a)
-        c += html.controller_json("tabcounts", extanimal.get_satellite_counts(dbo, a["ID"])[0])
-        c += html.controller_json("movementtypes", extlookups.get_movement_types(dbo))
-        c += html.controller_json("reservationstatuses", extlookups.get_reservation_statuses(dbo))
-        c += html.controller_json("returncategories", extlookups.get_entryreasons(dbo))
-        c += html.controller_json("templates", dbfs.get_document_templates(dbo))
-        c += html.controller_str("name", self.__class__.__name__)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("movements", s, c, post["json"] == "true")
+        return {
+            "rows": movements,
+            "animal": a,
+            "tabcounts": extanimal.get_satellite_counts(dbo, a["ID"])[0],
+            "movementtypes": extlookups.get_movement_types(dbo),
+            "reservationstatuses": extlookups.get_reservation_statuses(dbo),
+            "returncategories": extlookups.get_entryreasons(dbo),
+            "templates": dbfs.get_document_templates(dbo),
+            "name": self.url
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_MOVEMENT)
-            return extmovement.insert_movement_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_MOVEMENT)
-            extmovement.update_movement_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_MOVEMENT)
-            for mid in post.integer_list("ids"):
-                extmovement.delete_movement(session.dbo, session.user, mid)
-        elif mode == "insurance":
-            return extmovement.generate_insurance_number(session.dbo)
+    def post_create(self, o):
+        self.check(users.ADD_MOVEMENT)
+        return extmovement.insert_movement_from_form(o.dbo, o.user, o.post)
 
-class animal_new:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.ADD_ANIMAL)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        s = html.header("", session)
-        c = html.controller_json("autolitters", extanimal.get_active_litters_brief(dbo))
-        c += html.controller_json("additional", extadditional.get_additional_fields(dbo, 0, "animal"))
-        c += html.controller_json("animaltypes", extlookups.get_animal_types(dbo))
-        c += html.controller_json("species", extlookups.get_species(dbo))
-        c += html.controller_json("breeds", extlookups.get_breeds_by_species(dbo))
-        c += html.controller_json("colours", extlookups.get_basecolours(dbo))
-        c += html.controller_json("flags", extlookups.get_animal_flags(dbo))
-        c += html.controller_json("sexes", extlookups.get_sexes(dbo))
-        c += html.controller_json("entryreasons", extlookups.get_entryreasons(dbo))
-        c += html.controller_json("internallocations", extlookups.get_internal_locations(dbo, session.locationfilter, session.siteid))
-        c += html.controller_json("sizes", extlookups.get_sizes(dbo))
-        s += html.controller(c)
-        s += html.footer()
+    def post_update(self, o):
+        self.check(users.CHANGE_MOVEMENT)
+        extmovement.update_movement_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(users.DELETE_MOVEMENT)
+        for mid in o.post.integer_list("ids"):
+            extmovement.delete_movement(o.dbo, o.user, mid)
+
+    def post_insurance(self, o):
+        return extmovement.generate_insurance_number(o.dbo)
+
+class animal_new(JSONEndpoint):
+    url = "animal_new"
+    get_permissions = users.ADD_ANIMAL
+
+    def controller(self, o):
+        dbo = o.dbo
+        c = {
+            "autolitters": extanimal.get_active_litters_brief(dbo),
+            "additional": extadditional.get_additional_fields(dbo, 0, "animal"),
+            "animaltypes": extlookups.get_animal_types(dbo),
+            "species": extlookups.get_species(dbo),
+            "breeds": extlookups.get_breeds_by_species(dbo),
+            "colours": extlookups.get_basecolours(dbo),
+            "flags": extlookups.get_animal_flags(dbo),
+            "sexes": extlookups.get_sexes(dbo),
+            "entryreasons": extlookups.get_entryreasons(dbo),
+            "internallocations": extlookups.get_internal_locations(dbo, o.session.locationfilter, o.session.siteid),
+            "sizes": extlookups.get_sizes(dbo)
+        }
         al.debug("loaded lookups for new animal", "code.animal_new", dbo)
-        return full_or_json("animal_new", s, c, post["json"] == "true")
+        return c
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        utils.check_locked_db(session)
-        post = utils.PostedData(web.input(mode = "save"), session.locale)
-        mode = post["mode"]
-        if mode == "save":
-            users.check_permission(session, users.ADD_ANIMAL)
-            animalid, code = extanimal.insert_animal_from_form(session.dbo, post, session.user)
-            return str(animalid) + " " + str(code)
-        elif mode == "recentnamecheck":
-            rows = extanimal.get_recent_with_name(session.dbo, post["animalname"])
-            al.debug("recent names found %d rows for '%s'" % (len(rows), post["animalname"]), "code.animal_new.recentnamecheck", session.dbo)
-            if len(rows) > 0:
-                return "|".join((str(rows[0]["ANIMALID"]), rows[0]["SHELTERCODE"], rows[0]["ANIMALNAME"]))
-        elif mode == "units":
-            return "&&".join(extanimal.get_units_with_availability(session.dbo, post.integer("locationid")))
+    def post_save(self, o):
+        self.check(users.ADD_ANIMAL)
+        animalid, code = extanimal.insert_animal_from_form(o.dbo, o.post, o.user)
+        return "%s %s" % (animalid, code)
+
+    def post_recentnamecheck(self, o):
+        rows = extanimal.get_recent_with_name(o.dbo, o.post["animalname"])
+        al.debug("recent names found %d rows for '%s'" % (len(rows), o.post["animalname"]), "code.animal_new.recentnamecheck", o.dbo)
+        if len(rows) > 0:
+            return "|".join((str(rows[0]["ANIMALID"]), rows[0]["SHELTERCODE"], rows[0]["ANIMALNAME"]))
+
+    def post_units(self, o):
+        return "&&".join(extanimal.get_units_with_availability(o.dbo, o.post.integer("locationid")))
 
 class animal_test:
     def GET(self):

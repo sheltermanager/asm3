@@ -309,7 +309,7 @@ $(function() {
 
             $(".asm-content button").button("disable");
             header.show_loading(_("Creating..."));
-            var formdata = $("input, textarea, select").not(".chooser").toPOST();
+            var formdata = "mode=save&" + $("input, textarea, select").not(".chooser").toPOST();
             common.ajax_post("animal_new", formdata)
                 .then(function(data) { 
                     var bits = data.split(" ");
