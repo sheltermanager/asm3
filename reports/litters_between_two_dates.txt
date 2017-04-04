@@ -63,4 +63,3 @@ $$FOOTER
 </table>
 <p><b>Total Offspring: {COUNT.NUMBERINLITTER.0}</b></p>
 FOOTER$$
-###
