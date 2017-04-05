@@ -164,14 +164,14 @@ piece of information below the animal's name::
     <div id="asm3-adoptables" />
     <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
 
-By default, the output will load the target page in a floating iframe so that
-viewing adoptable animals does not leave your site. However, you can disable
-this behaviour to just use bare links to animal_view by setting
-asm3_adoptable_iframe = false in your script. Eg::
+By default, the output will load the target page in a new tab. However, the
+system can also load the page in a floating iframe so that viewing adoptable
+animals does not leave your site. You can enable this behaviour by setting
+asm3_adoptable_iframe = true in your script. Eg::
 
     <script>
     asm3_adoptable_filters = "sex breed agegroup size species";
-    asm3_adoptable_iframe = false;
+    asm3_adoptable_iframe = true;
     </script>
     <div id="asm3-adoptables" />
     <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>

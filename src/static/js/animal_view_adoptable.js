@@ -15,7 +15,7 @@
     asm3_adoptable_filters.split(" ").forEach(function(item, index, arr) {
         filters_tokens.push("{" + item + "}");
     });
-    var use_iframe = true;
+    var use_iframe = false;
     if (typeof asm3_adoptable_iframe !== 'undefined') {
         use_iframe = asm3_adoptable_iframe;
     }
