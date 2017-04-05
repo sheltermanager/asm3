@@ -356,7 +356,8 @@ def get_animals_brief(animals):
             "SPECIESID": a["SPECIESID"],
             "SPECIESNAME": a["SPECIESNAME"],
             "WEBSITEMEDIANAME": a["WEBSITEMEDIANAME"],
-            "WEBSITEMEDIADATE": a["WEBSITEMEDIADATE"] 
+            "WEBSITEMEDIADATE": a["WEBSITEMEDIADATE"],
+            "WEBSITEMEDIANOTES": a["WEBSITEMEDIANOTES"] 
         })
     return r
 
@@ -2644,10 +2645,10 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
         return
     # Any animal fields that should be copied to the new record
     broughtin = db.query_date(dbo, "SELECT DateBroughtIn FROM animal WHERE ID = %d" % cloneanimalid)
-    copyfrom = db.query("SELECT Fee, AnimalComments FROM animal WHERE ID = %d" % cloneanimalid)
-    sql = db.make_update_user_sql(dbo, "animal", username, "ID=%d" % cloneanimalid, (
-        ( "Fee", db.di(copyfrom["FEE"]) ),
-        ( "AnimalComments", db.ds(copyfrom["ANIMALCOMMENTS"]) )
+    copyfrom = db.query(dbo, "SELECT Fee, AnimalComments FROM animal WHERE ID = %d" % cloneanimalid)
+    sql = db.make_update_user_sql(dbo, "animal", username, "ID=%d" % animalid, (
+        ( "Fee", db.di(copyfrom[0]["FEE"]) ),
+        ( "AnimalComments", db.ds(copyfrom[0]["ANIMALCOMMENTS"]) )
         ))
     db.execute(dbo, sql)
     # Helper function to work out the difference between intake and a date and add that

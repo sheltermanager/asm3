@@ -1,6 +1,9 @@
 40
 ================
 
+05/04/17 Use iframe container for animal_view calls #182
+05/04/17 Add asm3_adoptable_filters to select visible dropdowns and tagline #182
+05/04/17 Add breed and size filters to adoptable_js #182
 31/03/17 Extra clarifying text on mobile/email signing
 31/03/17 Copy comments as well as fee to template cloned animals
 30/03/17 Do not include animals with future adoptions when publishing #185

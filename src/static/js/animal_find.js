@@ -281,7 +281,6 @@ $(function() {
                 '<option value="heartwormplus">' + _("Heartworm+") + '</option>',
                 '<option value="showtransfersonly">' + _("Only show transfers") + '</option>',
                 '<option value="showpickupsonly">' + _("Only show pickups") + '</option>',
-                '<option value="showcrueltycaseonly">' + _("Only show cruelty cases") + '</option>',
                 '<option value="showspecialneedsonly">' + _("Only show special needs") + '</option>',
                 '</select>',
                 '</tr>',

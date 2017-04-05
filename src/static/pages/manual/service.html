@@ -269,7 +269,6 @@ classes:</p>
 <li>asm3-adoptable-thumbnail : The thumbnail img tag</li>
 <li>asm3-adoptable-name : The animal&#8217;s name</li>
 <li>asm3-adoptable-tagline : The brief animal information</li>
-<li>asm3-adoptable-age : The animal&#8217;s age</li>
 </ul>
 <p>Eg: To add rounded corners to the thumbnails and show the animal&#8217;s name in
 bold, add this to your CSS:</p>
@@ -296,12 +295,37 @@ species) to all:</p>
 <span class="o">&lt;</span><span class="n">script</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;http://localhost:5000/service?method=animal_view_adoptable_js&quot;</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<p>You can also add a filter callback, which allows you to implement your own filter based on other elements in the page. The callback receives the complete animal record and must return true if the record is to be included.</p>
+<p>You can also add a filter callback, which allows you to implement your own
+filter based on other elements in the page. The callback receives the complete
+animal record and must return true if the record is to be included.</p>
 <p>For example, to only include animals of type dog, you could use this callback:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="n">function</span> <span class="n">asm3_adoptable_filter</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="n">a</span><span class="o">.</span><span class="n">ANIMALTYPENAME</span> <span class="o">==</span> <span class="s2">&quot;D (Dog)&quot;</span><span class="p">;</span>
 <span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;asm3-adoptables&quot;</span> <span class="o">/&gt;</span>
+<span class="o">&lt;</span><span class="n">script</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;http://localhost:5000/service?method=animal_view_adoptable_js&quot;</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Other dropdowns are supported through the use of the asm3_adoptable_filters
+string. To use them all, include the following asm3_adoptable_filters line. The
+order in which they appear in the filters line is also used to output that
+piece of information below the animal&#8217;s name:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="n">asm3_adoptable_filters</span> <span class="o">=</span> <span class="s2">&quot;sex breed agegroup size species&quot;</span><span class="p">;</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;asm3-adoptables&quot;</span> <span class="o">/&gt;</span>
+<span class="o">&lt;</span><span class="n">script</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;http://localhost:5000/service?method=animal_view_adoptable_js&quot;</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>By default, the output will load the target page in a new tab. However, the
+system can also load the page in a floating iframe so that viewing adoptable
+animals does not leave your site. You can enable this behaviour by setting
+asm3_adoptable_iframe = true in your script. Eg:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="n">asm3_adoptable_filters</span> <span class="o">=</span> <span class="s2">&quot;sex breed agegroup size species&quot;</span><span class="p">;</span>
+<span class="n">asm3_adoptable_iframe</span> <span class="o">=</span> <span class="n">true</span><span class="p">;</span>
 <span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;asm3-adoptables&quot;</span> <span class="o">/&gt;</span>
 <span class="o">&lt;</span><span class="n">script</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;http://localhost:5000/service?method=animal_view_adoptable_js&quot;</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>

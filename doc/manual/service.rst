@@ -112,7 +112,6 @@ classes:
 * asm3-adoptable-thumbnail : The thumbnail img tag
 * asm3-adoptable-name : The animal's name
 * asm3-adoptable-tagline : The brief animal information
-* asm3-adoptable-age : The animal's age
 
 Eg: To add rounded corners to the thumbnails and show the animal's name in
 bold, add this to your CSS::
@@ -140,7 +139,9 @@ species) to all::
     <div id="asm3-adoptables" />
     <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
 
-You can also add a filter callback, which allows you to implement your own filter based on other elements in the page. The callback receives the complete animal record and must return true if the record is to be included.
+You can also add a filter callback, which allows you to implement your own
+filter based on other elements in the page. The callback receives the complete
+animal record and must return true if the record is to be included.
 
 For example, to only include animals of type dog, you could use this callback::
 
@@ -152,6 +153,28 @@ For example, to only include animals of type dog, you could use this callback::
     <div id="asm3-adoptables" />
     <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
 
+Other dropdowns are supported through the use of the asm3_adoptable_filters
+string. To use them all, include the following asm3_adoptable_filters line. The
+order in which they appear in the filters line is also used to output that
+piece of information below the animal's name::
+
+    <script>
+    asm3_adoptable_filters = "sex breed agegroup size species";
+    </script>
+    <div id="asm3-adoptables" />
+    <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
+
+By default, the output will load the target page in a new tab. However, the
+system can also load the page in a floating iframe so that viewing adoptable
+animals does not leave your site. You can enable this behaviour by setting
+asm3_adoptable_iframe = true in your script. Eg::
+
+    <script>
+    asm3_adoptable_filters = "sex breed agegroup size species";
+    asm3_adoptable_iframe = true;
+    </script>
+    <div id="asm3-adoptables" />
+    <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
 
 csv_mail and csv_report
 ----------------------
