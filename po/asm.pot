@@ -7264,6 +7264,10 @@ msgstr ""
 msgid "No data."
 msgstr ""
 
+#: common.js
+msgid "No description"
+msgstr ""
+
 #: lostfound.py person.py
 msgid "No matches found."
 msgstr ""
@@ -7538,10 +7542,6 @@ msgstr ""
 
 #: options.js
 msgid "Only show account totals for the current period, which starts on "
-msgstr ""
-
-#: animal_find.js
-msgid "Only show cruelty cases"
 msgstr ""
 
 #: animal_find.js
