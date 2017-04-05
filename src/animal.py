@@ -356,7 +356,8 @@ def get_animals_brief(animals):
             "SPECIESID": a["SPECIESID"],
             "SPECIESNAME": a["SPECIESNAME"],
             "WEBSITEMEDIANAME": a["WEBSITEMEDIANAME"],
-            "WEBSITEMEDIADATE": a["WEBSITEMEDIADATE"] 
+            "WEBSITEMEDIADATE": a["WEBSITEMEDIADATE"],
+            "WEBSITEMEDIANOTES": a["WEBSITEMEDIANOTES"] 
         })
     return r
 
