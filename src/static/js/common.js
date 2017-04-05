@@ -1395,8 +1395,8 @@
             if (a.ACTIVEMOVEMENTTYPE == 1 && a.HASTRIALADOPTION == 0) { return [ false, _("Adopted") ]; }
             if (a.ACTIVEMOVEMENTTYPE >= 3 && a.ACTIVEMOVEMENTTYPE <= 7) { return [ false, a.DISPLAYLOCATION ]; }
             if (!a.WEBSITEMEDIANAME && p.indexOf("includewithoutimage") == -1) { return [ false, _("No picture") ]; }
-            if (config.str("PublisherUseComments") && !a.ANIMALCOMMENTS) { return [ false, _("No description") ]; }
-            if (!config.str("PublisherUseComments") && !a.WEBSITEMEDIANOTES) { return [ false, _("No description") ]; }
+            if (p.indexOf("includewithoutdescription") == -1 && config.str("PublisherUseComments") && !a.ANIMALCOMMENTS) { return [ false, _("No description") ]; }
+            if (p.indexOf("includewithoutdescription") == -1 && !config.str("PublisherUseComments") && !a.WEBSITEMEDIANOTES) { return [ false, _("No description") ]; }
             if (exwks) { 
                 if (common.add_days(format.date_js(a.DATEOFBIRTH), (exwks * 7)) > new Date()) { 
                     return [ false, _("Under {0} weeks old").replace("{0}", exwks) ]; 
