@@ -859,7 +859,7 @@ class media(ASMEndpoint):
             extmedia.sign_document(o.dbo, o.user, mid, o.post["sig"], o.post["signdate"])
 
     def post_signpad(self, o):
-        configuration.signpad_ids(o.dbo, o.user, o["ids"])
+        configuration.signpad_ids(o.dbo, o.user, o.post["ids"])
 
     def post_rotateclock(self, o):
         self.check(users.CHANGE_MEDIA)
