@@ -66,5 +66,6 @@ BODY$$
 
 $$FOOTER
 </table>
+<h2>Total Transfers: {COUNT.SHELTERCODE}</h2>
 FOOTER$$
 
