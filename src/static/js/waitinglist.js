@@ -240,7 +240,7 @@ $(function() {
 
             $("#button-email").button().click(function() {
                 $("#emailform").emailform("show", {
-                    post: controller.name,
+                    post: "waitinglist",
                     formdata: "mode=email&wlid=" + $("#waitinglistid").val(),
                     name: waitinglist.current_person.OWNERFORENAMES + " " + waitinglist.current_person.OWNERSURNAME,
                     email: waitinglist.current_person.EMAILADDRESS,
