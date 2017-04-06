@@ -40,7 +40,7 @@ $$HEADER
 <td><b>Came From</b></td>
 <td><b>Adoption Date</b></td>
 <td><b>Adopted To</b></td>
-<td><b>Insurance Number<b></td>
+<td><b>Policy Number<b></td>
 </tr>
 HEADER$$
 
