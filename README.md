@@ -118,7 +118,7 @@ instructions assume Debian):
 
 ```
 WSGIScriptAlias /asm /usr/lib/sheltermanager3/code.py/
-WSGIPythonPath /usr/lib/python2.6:/usr/lib/python2.6/dist-packages:/usr/lib/sheltermanager3:/usr/lib/sheltermanager3/locale
+WSGIPythonPath /usr/lib/python2.7:/usr/lib/python2.7/dist-packages:/usr/lib/sheltermanager3:/usr/lib/sheltermanager3/locale
 Alias /asm/static /usr/lib/sheltermanager3/static
 AddType text/html .py
 <Directory /usr/lib/sheltermanager3>
@@ -128,8 +128,7 @@ AddType text/html .py
 ```
 
    This assumes that your ASM3 is located at /usr/lib/sheltermanager3
-   (the default for our Debian package) and Python2.6 - change if you have
-   Python2.7
+   (the default for our Debian package) and Python2.7
 
 
 4. Restart Apache and navigate to http://localhost/asm
