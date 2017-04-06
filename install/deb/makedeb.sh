@@ -20,7 +20,7 @@ mkdir -p sheltermanager3/DEBIAN
 cp -rf ../../src/* sheltermanager3/usr/lib/sheltermanager3/
 
 # Add docs
-cp ../../README sheltermanager3/usr/share/doc/sheltermanager3
+cp ../../README.md sheltermanager3/usr/share/doc/sheltermanager3
 
 # Add logging
 echo "local3.*                          -/var/log/asm3.log" > sheltermanager3/etc/rsyslog.d/asm3.conf

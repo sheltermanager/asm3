@@ -76,4 +76,3 @@ $$FOOTER
 </table>
 <h2>Total Insurance Cover Notes: {COUNT.SHELTERCODE}</h2>
 FOOTER$$
-###
