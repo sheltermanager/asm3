@@ -71,6 +71,10 @@
         return h.join("");
     };
 
+    var spanwrap = function(cls, content) {
+        return '<span class="asm3-adoptable-tag asm3-adoptable-tag-' + cls + '">' + content + '</span>';
+    };
+
     var filter_template = [
         '<div id="asm3-adoptable-iframe-overlay" style="z-index: 9999; display: none; position: fixed; left: 0; top: 0; width: 100%; height: 100%; background-color: #fff">',
         '<p style="text-align: right"><a id="asm3-adoptable-iframe-close" style="font-size: 200%;" href="#">&times; ' + translate("CLOSE") + '</a>&nbsp;&nbsp;</p>',
@@ -127,13 +131,13 @@
                 account: account,
                 baseurl: baseurl,
                 age: item.ANIMALAGE,
-                agegroup: translate(item.AGEGROUP),
                 animalid: item.ID,
                 animalname: translate(item.ANIMALNAME),
-                breed: translate(item.BREEDNAME),
-                sex: translate(item.SEXNAME),
-                size: translate(item.SIZENAME),
-                species: translate(item.SPECIESNAME)
+                agegroup: spanwrap("agegroup", translate(item.AGEGROUP)),
+                breed: spanwrap("breed", translate(item.BREEDNAME)),
+                sex: spanwrap("sex", translate(item.SEXNAME)),
+                size: spanwrap("size", translate(item.SIZENAME)),
+                species: spanwrap("species", translate(item.SPECIESNAME))
             }));
 
         });
