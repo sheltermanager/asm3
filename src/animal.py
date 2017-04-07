@@ -617,7 +617,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
             elif flag == "nonshelter": c.append("a.NonShelterAnimal=1")
             elif flag == "notforadoption": c.append("a.IsNotAvailableForAdoption=1")
             elif flag == "quarantine": c.append("a.IsQuarantine=1")
-            else: c.append("LOWER(a.AdditionalFlags) LIKE '%%%s%%'" % str(flag).lower())
+            else: c.append("LOWER(a.AdditionalFlags) LIKE %s" % db.ds("%%%s%%" % flag.lower()))
     where = ""
     if len(c) > 0:
         where = " WHERE " + " AND ".join(c)

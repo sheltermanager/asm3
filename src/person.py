@@ -483,7 +483,7 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, limi
             elif flag == "giftaid": c.append("o.IsGiftAid=1")
             elif flag == "vet": c.append("o.IsVet=1")
             elif flag == "volunteer": c.append("o.IsVolunteer=1")
-            else: c.append("LOWER(o.AdditionalFlags) LIKE '%%%s%%'" % str(flag).lower())
+            else: c.append("LOWER(a.AdditionalFlags) LIKE %s" % db.ds("%%%s%%" % flag.lower()))
     if not includeStaff:
         c.append("o.IsStaff = 0")
     if len(c) == 0:
