@@ -542,13 +542,14 @@
         
         /**
          * Shows the email dialog.
-         * title:      The dialog title
+         * title:      The dialog title (optional: Email person)
          * post:       The ajax post target
          * formdata:   The first portion of the formdata
-         * name:       The name to show on the form
-         * email:      The email to show on the form
-         * message:    The default message
-         * logtypes:   The logtypes to populate the attach as log box
+         * name:       The name to show on the form (optional)
+         * email:      The email to show on the form (optional)
+         * subject:    The default subject (optional)
+         * message:    The default message (otpional)
+         * logtypes:   The logtypes to populate the attach as log box (optional)
          *    Eg: show({ post: "person", formdata: "mode=email&personid=52", name: "Bob Smith", email: "bob@smith.com" })
          */
         show: function(o) {
@@ -575,6 +576,9 @@
             if (o.logtypes) {
                 $("#emaillogtype").append( html.list_to_options(o.logtypes, "ID", "LOGTYPENAME") );
             }
+            else {
+                $("#emaillogtype").closest("tr").hide();
+            }
             var mailaddresses = [];
             var conf_org = html.decode(config.str("Organisation").replace(",", ""));
             var conf_email = config.str("EmailAddress");
@@ -594,6 +598,9 @@
             else { msg = "<p>&nbsp;</p>" + msg; }
             if (msg) {
                 $("#emailbody").richtextarea("value", msg);
+            }
+            if (o.subject) {
+                $("#emailsubject").val(o.subject); 
             }
             $("#emailsubject").focus();
         }

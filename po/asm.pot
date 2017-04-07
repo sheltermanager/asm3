@@ -1902,7 +1902,7 @@ msgstr ""
 msgid "By"
 msgstr ""
 
-#: incident.js common_widgets.js
+#: common_widgets.js
 msgid "CC"
 msgstr ""
 
@@ -1996,10 +1996,10 @@ msgstr ""
 
 #: report_images.js common_animalchooser.js person.js
 #: common_animalchoosermulti.js main.js roles.js reports.js medical.js
-#: accounts_trx.js person_new.js users.js incident.js media.js
-#: document_templates.js common_personchooser.js onlineforms.js test.js
-#: common_widgets.js onlineform_incoming.js common_tableform.js sql.js
-#: vaccination.js common.js publish_options.js
+#: accounts_trx.js person_new.js users.js media.js document_templates.js
+#: common_personchooser.js onlineforms.js test.js common_widgets.js
+#: onlineform_incoming.js common_tableform.js sql.js vaccination.js common.js
+#: publish_options.js
 msgid "Cancel"
 msgstr ""
 
@@ -4867,7 +4867,7 @@ msgstr ""
 msgid "Friday"
 msgstr ""
 
-#: mailmerge.js incident.js common_widgets.js onlineform_incoming.js
+#: mailmerge.js common_widgets.js onlineform_incoming.js
 msgid "From"
 msgstr ""
 
@@ -6754,7 +6754,7 @@ msgstr ""
 msgid "Message from {0}"
 msgstr ""
 
-#: incident.js common_widgets.js
+#: common_widgets.js
 msgid "Message successfully sent"
 msgstr ""
 
@@ -9340,7 +9340,7 @@ msgstr ""
 msgid "Selkirk Rex"
 msgstr ""
 
-#: incident.js common_widgets.js mobile.py
+#: common_widgets.js mobile.py
 msgid "Send"
 msgstr ""
 
@@ -10125,7 +10125,7 @@ msgstr ""
 msgid "SubTotal"
 msgstr ""
 
-#: diary.js diarytask.js mailmerge.js incident.js common_widgets.js mobile.py
+#: diary.js diarytask.js mailmerge.js common_widgets.js mobile.py
 msgid "Subject"
 msgstr ""
 
@@ -11200,7 +11200,7 @@ msgstr ""
 msgid "Title Initials Last"
 msgstr ""
 
-#: incident.js common_widgets.js
+#: common_widgets.js
 msgid "To"
 msgstr ""
 

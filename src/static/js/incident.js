@@ -300,27 +300,7 @@ $(function() {
                 edit_header.template_list(controller.templates, "ANIMALCONTROL", controller.incident.ID),
                 '</ul>',
                 '</div>',
-                '<div id="dialog-email" style="display: none" title="' + html.title(_("Email incident notes to ACO"))  + '">',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="emailfrom">' + _("From") + '</label></td>',
-                '<td><input id="emailfrom" data="from" type="text" class="asm-doubletextbox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="emailto">' + _("To") + '</label></td>',
-                '<td><input id="emailto" data="to" type="text" class="asm-doubletextbox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="emailcc">' + _("CC") + '</label></td>',
-                '<td><input id="emailcc" data="cc" type="text" class="asm-doubletextbox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="emailsubject">' + _("Subject") + '</label></td>',
-                '<td><input id="emailsubject" data="subject" type="text" class="asm-doubletextbox" /></td>',
-                '</tr>',
-                '</table>',
-                '<div id="emailbody" data="body" data-margin-top="24px" data-height="400px" class="asm-richtextarea"></div>',
-                '</div>',
+                '<div id="emailform" />',
                 '<div id="dialog-linkanimal" style="display: none" title="' + html.title(_("Link an animal")) + '">',
                 '<table width="100%">',
                 '<tr>',
@@ -469,6 +449,8 @@ $(function() {
         bind: function() {
 
             $(".asm-tabbar").asmtabs();
+            $("#emailform").emailform();
+
             $("#asm-details-accordion").accordion({
                 heightStyle: "content",
                 activate: function(event, ui) {
@@ -514,46 +496,13 @@ $(function() {
             });
 
             $("#button-email").button().click(function() {
-                var b = {}; 
-                b[_("Send")] = function() { 
-                    var formdata = "mode=email&" +
-                        $("#dialog-email input, #dialog-email select, #dialog-email .asm-richtextarea").toPOST();
-                    common.ajax_post("incident", formdata)
-                        .then(function() { 
-                            header.show_info(_("Message successfully sent"));
-                            $("#dialog-email").dialog("close");
-                        });
-                };
-                b[_("Cancel")] = function() { $(this).dialog("close"); };
-                $("#dialog-email").dialog({
-                     resizable: false,
-                     modal: true,
-                     dialogClass: "dialogshadow",
-                     width: 640,
-                     show: dlgfx.add_show,
-                     hide: dlgfx.add_hide,
-                     buttons: b
-                });
-                var mailaddresses = [];
-                var conf_org = html.decode(config.str("Organisation").replace(",", ""));
-                var conf_email = config.str("EmailAddress");
-                var org_email = conf_org + " <" + conf_email + ">";
-                var dispatch_user;
+                var emailname = "", emailaddress = "";
                 $.each(controller.users, function(i, v) {
                     if (v.USERNAME == $("#dispatchedaco").select("value")) {
-                        dispatch_user = v;
+                        emailname = v.REALNAME;
+                        emailaddress = v.EMAILADDRESS;
                     }
                 });
-                mailaddresses.push(org_email);
-                $("#emailfrom").val(org_email);
-                if (asm.useremail) {
-                    mailaddresses.push(html.decode(asm.userreal) + " <" + asm.useremail + ">");
-                }
-                $("#emailfrom").autocomplete({source: mailaddresses});
-                $("#emailfrom").autocomplete("widget").css("z-index", 1000);
-                if (dispatch_user) {
-                    $("#emailto").val(dispatch_user.EMAILADDRESS);
-                }
                 var i = controller.incident;
                 var msg = [ 
                     _("Type") + ": " + i.INCIDENTNAME,
@@ -564,12 +513,18 @@ $(function() {
                     _("Victim") + ": " + common.nulltostr(i.VICTIMNAME),
                     _("Suspect") + ": " + common.nulltostr(i.OWNERNAME1)
                 ].join("\n");
-                $("#emailsubject").val(
-                    html.decode(_("Dispatch {0}: {1}")
+                var subject = html.decode(_("Dispatch {0}: {1}")
                         .replace("{0}", format.padleft(controller.incident.ACID, 6))
-                        .replace("{1}", $("#dispatchaddress").val()) ));
-                $("#emailbody").richtextarea("value", "<p>" + common.replace_all(html.decode(msg), "\n", "<br/>") + "</p>");
-                $("#emailsubject").focus();
+                        .replace("{1}", $("#dispatchaddress").val()) );
+                $("#emailform").emailform("show", {
+                    title: _("Email incident notes to ACO"),
+                    post: "incident",
+                    formdata: "mode=email",
+                    name: emailname,
+                    email: emailaddress,
+                    message: "<p>" + common.replace_all(html.decode(msg), "\n", "<br/>") + "</p>",
+                    subject: subject
+                });
             });
 
             $("#button-delete").button().click(function() {
@@ -652,7 +607,7 @@ $(function() {
             common.widget_destroy("#owner3");
             common.widget_destroy("#caller", "personchooser");
             common.widget_destroy("#victim", "personchooser");
-            common.widget_destroy("#dialog-email");
+            common.widget_destroy("#emailform");
             common.widget_destroy("#dialog-linkanimal");
             common.widget_destroy("#emailbody", "richtextarea");
         },
