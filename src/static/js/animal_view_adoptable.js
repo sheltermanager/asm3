@@ -77,7 +77,7 @@
 
     var filter_template = [
         '<div id="asm3-adoptable-iframe-overlay" style="z-index: 9999; display: none; position: fixed; left: 0; top: 0; width: 100%; height: 100%; background-color: #fff">',
-        '<p style="position: fixed; text-align: right; top: 6%; left: 85%;">',
+        '<p style="position: fixed; text-align: right; top: 6%; left: 85%; z-index: 9999;">',
         '<a id="asm3-adoptable-iframe-close" style="font-size: 150%;" href="#">&times; ' + translate("CLOSE") + '</a>&nbsp;&nbsp;</p>',
         '<iframe id="asm3-adoptable-iframe" style="position: fixed; left: 5%; top: 5%; width: 90%; height: 90%; box-shadow: 3px 3px 5px #888;"></iframe>',
         '</div>',
