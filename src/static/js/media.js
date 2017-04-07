@@ -754,7 +754,7 @@ $(function() {
 
             var defaultemail = "", defaultname = "";
             // If we have a person, default the email address
-            if (controller.person) {
+            if (controller.person && controller.person.EMAILADDRESS) {
                 defaultemail = controller.person.EMAILADDRESS;
                 defaultname = controller.person.OWNERNAME;
             }
@@ -763,7 +763,7 @@ $(function() {
                 defaultemail = controller.animal.RESERVEDOWNEREMAILADDRESS;
                 defaultname = controller.animal.RESERVEDOWNERNAME;
             }
-            else if (controller.animal) {
+            else if (controller.animal && controller.animal.CURRENTOWNEREMAILADDRESS) {
                 defaultemail = controller.animal.CURRENTOWNEREMAILADDRESS;
                 defaultname = controller.animal.CURRENTOWNERNAME;
             }
