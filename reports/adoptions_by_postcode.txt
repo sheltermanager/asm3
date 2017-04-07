@@ -45,7 +45,7 @@ $$HEAD
 </tr>
 $$FOOT
 </table>
-<h2>Total adoptions to $OwnerPostcode: {COUNT.OwnerPostcode}</h2>
+<h2>Total adoptions in postcode $OwnerPostcode: {COUNT.OwnerPostcode}</h2>
 GROUP$$
 
 $$BODY<tr>
