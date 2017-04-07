@@ -542,10 +542,12 @@
         
         /**
          * Shows the email dialog.
+         * title:      The dialog title
          * post:       The ajax post target
          * formdata:   The first portion of the formdata
          * name:       The name to show on the form
          * email:      The email to show on the form
+         * message:    The default message
          * logtypes:   The logtypes to populate the attach as log box
          *    Eg: show({ post: "person", formdata: "mode=email&personid=52", name: "Bob Smith", email: "bob@smith.com" })
          */
@@ -561,6 +563,7 @@
             };
             b[_("Cancel")] = function() { $(this).dialog("close"); };
             $("#dialog-email").dialog({
+                 title: o.title || _("Email person"),
                  resizable: false,
                  modal: true,
                  dialogClass: "dialogshadow",
@@ -586,9 +589,11 @@
             $("#emailfrom").autocomplete({source: mailaddresses});
             $("#emailfrom").autocomplete("widget").css("z-index", 1000);
             $("#emailto").val(html.decode(o.name) + " <" + o.email + ">");
-            var sig = config.str("EmailSignature");
-            if (sig) {
-                $("#emailbody").richtextarea("value", "<p>&nbsp;</p>" + sig);
+            var msg = config.str("EmailSignature");
+            if (o.message) { msg = "<p>" + o.message + "</p>" + msg; }
+            else { msg = "<p>&nbsp;</p>" + msg; }
+            if (msg) {
+                $("#emailbody").richtextarea("value", msg);
             }
             $("#emailsubject").focus();
         }

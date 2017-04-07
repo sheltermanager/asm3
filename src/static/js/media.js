@@ -78,44 +78,7 @@ $(function() {
                 '</form>',
                 '</div>',
 
-                '<div id="dialog-email" style="display: none" title="' + html.title(_("Email media"))  + '">',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="emailto">' + _("To") + '</label></td>',
-                '<td><input id="emailto" type="text" class="asm-doubletextbox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="emailnote">' + _("Message") + '</label></td>',
-                '<td><div id="emailnote" class="asm-richtextarea" data-margin-top="24px" data-height="200px"></div></td>',
-                '</tr>',
-                '</table>',
-                '</div>',
-
-                '<div id="dialog-emailpdf" style="display: none" title="' + html.title(_("Email PDF"))  + '">',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="emailpdfto">' + _("To") + '</label></td>',
-                '<td><input id="emailpdfto" type="text" class="asm-doubletextbox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="emailpdfnote">' + _("Message") + '</label></td>',
-                '<td><div id="emailpdfnote" class="asm-richtextarea" data-margin-top="24px" data-height="200px"></div></td>',
-                '</tr>',
-                '</table>',
-                '</div>',
-
-                '<div id="dialog-emailsign" style="display: none" title="' + html.title(_("Email document for electronic signature"))  + '">',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="emailsignto">' + _("To") + '</label></td>',
-                '<td><input id="emailsignto" type="text" class="asm-doubletextbox" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="emailsignnote">' + _("Message") + '</label></td>',
-                '<td><textarea id="emailsignnote" class="asm-textarea" rows="5"></textarea></td>',
-                '</tr>',
-                '</table>',
-                '</div>',
+                '<div id="emailform" />',
 
                 '<div id="button-sign-body" class="asm-menu-body">',
                 '<ul class="asm-menu-list">',
@@ -520,6 +483,8 @@ $(function() {
 
             $(".asm-tabbar").asmtabs();
             $("#tipattach").show();
+            $("#emailform").emailform();
+            $("#emailsubject").closest("tr").hide(); // Subject is completed by the backend
 
             if (Modernizr.canvas) {
                 $("#signature").signature({ guideline: true });
@@ -787,80 +752,60 @@ $(function() {
                 media.ajax(formdata);
             });
 
+            var defaultemail = "", defaultname = "";
+            // If we have a person, default the email address
+            if (controller.person) {
+                defaultemail = controller.person.EMAILADDRESS;
+                defaultname = controller.person.OWNERNAME;
+            }
+            // Use the latest reservation/person if the animal is on shelter/foster and a reserve is available
+            else if (controller.animal && controller.animal.ARCHIVED == 0 && controller.animal.RESERVEDOWNEREMAILADDRESS) {
+                defaultemail = controller.animal.RESERVEDOWNEREMAILADDRESS;
+                defaultname = controller.animal.RESERVEDOWNERNAME;
+            }
+            else {
+                defaultemail = controller.animal.CURRENTOWNEREMAILADDRESS;
+                defaultname = controller.animal.CURRENTOWNERNAME;
+            }
+
             $("#button-email").button({disabled: true}).click(function() {
-                // If we have a person, default the email address
-                if (controller.person) {
-                    $("#emailto").val(controller.person.EMAILADDRESS);
-                }
-                // Use the latest reservation/person if the animal is on shelter/foster and a reserve is available
-                else if (controller.animal && controller.animal.ARCHIVED == 0 && controller.animal.RESERVEDOWNEREMAILADDRESS) {
-                    $("#emailto").val(controller.animal.RESERVEDOWNEREMAILADDRESS);
-                }
-                else {
-                    $("#emailto").val(controller.animal.CURRENTOWNEREMAILADDRESS);
-                }
-                // Default the email sig
-                if (config.str("EmailSignature")) {
-                    $("#emailnote").richtextarea("value", "<p>&nbsp;</p>" + config.str("EmailSignature"));
-                }
-                tableform.show_okcancel_dialog("#dialog-email", _("Send"), { width: 550, notblank: [ "emailto" ] })
-                    .then(function() {
-                        var formdata = "mode=email&email=" + encodeURIComponent($("#emailto").val()) + 
-                            "&emailnote=" + encodeURIComponent($("#emailnote").richtextarea("value")) + 
-                            "&ids=" + $(".asm-mediaicons input").tableCheckedData();
-                        return common.ajax_post("media", formdata);
-                    })
-                    .then(function(result) { 
-                        header.show_info(_("Email successfully sent to {0}").replace("{0}", result));
-                    });
+                $("#emailform").emailform("show", {
+                    title: _("Email media"),
+                    post: "media",
+                    formdata: "mode=email" +
+                        "&ids=" + $(".asm-mediaicons input").tableCheckedData(),
+                    name: defaultname,
+                    email: defaultemail,
+                    logtypes: controller.logtypes
+                });
             });
 
             $("#button-emailpdf").button({disabled: true}).click(function() {
-                // If we have a person, default the email address
-                if (controller.person) {
-                    $("#emailpdfto").val(controller.person.EMAILADDRESS);
-                }
-                else if (controller.animal) {
-                    $("#emailpdfto").val(controller.animal.CURRENTOWNEREMAILADDRESS);
-                }
-                // Default the email sig
-                if (config.str("EmailSignature")) {
-                    $("#emailpdfnote").richtextarea("value", "<p>&nbsp;</p>" + config.str("EmailSignature"));
-                }
-                tableform.show_okcancel_dialog("#dialog-emailpdf", _("Send"), { width: 550, notblank: [ "emailpdfto" ] })
-                    .then(function() {
-                        var formdata = "mode=emailpdf&email=" + encodeURIComponent($("#emailpdfto").val()) + 
-                            "&emailnote=" + encodeURIComponent($("#emailpdfnote").richtextarea("value")) + 
-                            "&ids=" + $(".asm-mediaicons input").tableCheckedData();
-                        $("#dialog-emailpdf").dialog("close");
-                        return common.ajax_post("media", formdata);
-                    })
-                    .then(function(result) { 
-                        header.show_info(_("Email successfully sent to {0}").replace("{0}", result));
-                    });
+                $("#emailform").emailform("show", {
+                    title: _("Email PDF"),
+                    post: "media",
+                    formdata: "mode=emailpdf" +
+                        "&ids=" + $(".asm-mediaicons input").tableCheckedData(),
+                    name: defaultname,
+                    email: defaultemail,
+                    logtypes: controller.logtypes
+                });
             });
 
             $("#button-sign").asmmenu().addClass("ui-state-disabled").addClass("ui-button-disabled");
 
             $("#button-signemail").click(function() {
                 $("#button-sign").asmmenu("hide_all");
-                // If we have a person, default the email address
-                if (controller.person) {
-                    $("#emailsignto").val(controller.person.EMAILADDRESS);
-                }
-                $("#emailsignnote").html( _("Please use the links below to electronically sign these documents.") );
-                tableform.show_okcancel_dialog("#dialog-emailsign", _("Send"), { width: 550, notblank: [ "emailsignto" ] })
-                    .then(function() {
-                        var formdata = "mode=emailsign&email=" + encodeURIComponent($("#emailsignto").val()) + 
-                            "&emailnote=" + encodeURIComponent($("#emailsignnote").val()) + 
-                            "&ids=" + $(".asm-mediaicons input").tableCheckedData();
-                        $("#dialog-emailsign").dialog("close");
-                        return common.ajax_post("media", formdata);
-                    })
-                    .then(function(result) { 
-                        header.show_info(_("Email successfully sent to {0}").replace("{0}", result));
-                    });
-                return false;
+                $("#emailform").emailform("show", {
+                    title: _("Email document for electronic signature"),
+                    post: "media",
+                    formdata: "mode=emailsign" +
+                        "&ids=" + $(".asm-mediaicons input").tableCheckedData(),
+                    name: defaultname,
+                    email: defaultemail,
+                    logtypes: controller.logtypes,
+                    message: _("Please use the links below to electronically sign these documents.")
+                });
             });
 
             $("#button-signscreen").click(function() {
@@ -956,15 +901,11 @@ $(function() {
         },
 
         destroy: function() {
-            common.widget_destroy("#dialog-email");
-            common.widget_destroy("#dialog-emailpdf");
-            common.widget_destroy("#dialog-emailsign");
             common.widget_destroy("#dialog-add");
             common.widget_destroy("#dialog-addlink");
             common.widget_destroy("#dialog-edit");
             common.widget_destroy("#dialog-sign");
-            common.widget_destroy("#emailnote", "richtextarea");
-            common.widget_destroy("#emailpdfnote", "richtextarea");
+            common.widget_destroy("#emailform");
         },
 
         name: "media",

@@ -3996,10 +3996,6 @@ msgstr ""
 msgid "Email submissions to"
 msgstr ""
 
-#: media.js
-msgid "Email successfully sent to {0}"
-msgstr ""
-
 #: main.js
 msgid "Email this message to all matching users"
 msgstr ""
@@ -6746,7 +6742,7 @@ msgstr ""
 msgid "Merge duplicate records"
 msgstr ""
 
-#: main.js media.js
+#: main.js
 msgid "Message"
 msgstr ""
 
@@ -9344,7 +9340,7 @@ msgstr ""
 msgid "Selkirk Rex"
 msgstr ""
 
-#: incident.js media.js common_widgets.js mobile.py
+#: incident.js common_widgets.js mobile.py
 msgid "Send"
 msgstr ""
 
@@ -11204,7 +11200,7 @@ msgstr ""
 msgid "Title Initials Last"
 msgstr ""
 
-#: incident.js media.js common_widgets.js
+#: incident.js common_widgets.js
 msgid "To"
 msgstr ""
 

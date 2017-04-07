@@ -766,6 +766,17 @@ class media(ASMEndpoint):
         web.header("Content-Disposition", "inline; filename=\"%s\"" % medianame)
         return filedata
 
+    def log_from_media_type(self, x):
+        m = {
+            extmedia.ANIMAL: extlog.ANIMAL,
+            extmedia.PERSON: extlog.PERSON,
+            extmedia.LOSTANIMAL: extlog.LOSTANIMAL,
+            extmedia.FOUNDANIMAL: extlog.FOUNDANIMAL,
+            extmedia.WAITINGLIST: extlog.WAITINGLIST,
+            extmedia.ANIMALCONTROL: extlog.ANIMALCONTROL
+        }
+        return m[x]
+
     def post_create(self, o):
         self.check(users.ADD_MEDIA)
         linkid = o.post.integer("linkid")
@@ -801,7 +812,7 @@ class media(ASMEndpoint):
         dbo = o.dbo
         post = o.post
         l = o.locale
-        emailadd = post["email"]
+        emailadd = post["to"]
         if emailadd == "" or emailadd.find("@") == -1:
             raise utils.ASMValidationError(_("Invalid email address", l))
         for mid in post.integer_list("ids"):
@@ -811,7 +822,9 @@ class media(ASMEndpoint):
             content = dbfs.get_string(dbo, m["MEDIANAME"])
             if m["MEDIANAME"].endswith("html"):
                 content = utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-            utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], post["emailnote"], "html", content, m["MEDIANAME"])
+            utils.send_email(dbo, post["from"], emailadd, "", m["MEDIANOTES"], post["body"], "html", content, m["MEDIANAME"])
+            if post.boolean("addtolog"):
+                extlog.add_log(dbo, o.user, self.log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), "%s :: %s" % (m["MEDIANOTES"], utils.html_email_to_plain(post["body"])))
         return emailadd
 
     def post_emailpdf(self, o):
@@ -819,7 +832,7 @@ class media(ASMEndpoint):
         dbo = o.dbo
         post = o.post
         l = o.locale
-        emailadd = post["email"]
+        emailadd = post["to"]
         if emailadd == "" or emailadd.find("@") == -1:
             raise utils.ASMValidationError(_("Invalid email address", l))
         for mid in post.integer_list("ids"):
@@ -829,7 +842,9 @@ class media(ASMEndpoint):
             if not m["MEDIANAME"].endswith("html"): continue
             content = dbfs.get_string(dbo, m["MEDIANAME"])
             contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-            utils.send_email(dbo, configuration.email(dbo), emailadd, "", m["MEDIANOTES"], post["emailnote"], "plain", contentpdf, "document.pdf")
+            utils.send_email(dbo, post["from"], emailadd, "", m["MEDIANOTES"], post["body"], "plain", contentpdf, "document.pdf")
+            if post.boolean("addtolog"):
+                extlog.add_log(dbo, o.user, self.log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), "%s :: %s" % (m["MEDIANOTES"], utils.html_email_to_plain(post["body"])))
         return emailadd
 
     def post_emailsign(self, o):
@@ -837,11 +852,11 @@ class media(ASMEndpoint):
         dbo = o.dbo
         post = o.post
         l = o.locale
-        emailadd = post["email"]
+        emailadd = post["to"]
         if emailadd == "" or emailadd.find("@") == -1:
             raise utils.ASMValidationError(_("Invalid email address", l))
         body = []
-        body.append(post["emailnote"] + "\n\n")
+        body.append(post["body"] + "\n\n")
         for mid in post.integer_list("ids"):
             m = extmedia.get_media_by_id(dbo, mid)
             if len(m) == 0: raise web.notfound()
@@ -850,7 +865,9 @@ class media(ASMEndpoint):
             body.append(m["MEDIANOTES"])
             body.append("%s?account=%s&method=sign_document&formid=%d" % (SERVICE_URL, dbo.database, mid))
             body.append("")
-        utils.send_email(dbo, configuration.email(dbo), emailadd, "", _("Document signing request", l), "\n".join(body), "plain")
+            if post.boolean("addtolog"):
+                extlog.add_log(dbo, o.user, self.log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), "%s :: %s" % (_("Document signing request", l), utils.html_email_to_plain("\n".join(body))))
+        utils.send_email(dbo, post["from"], emailadd, "", _("Document signing request", l), "\n".join(body), "plain")
         return emailadd
 
     def post_sign(self, o):
@@ -1733,6 +1750,7 @@ class animal_media(JSONEndpoint):
             "showpreferred": True,
             "linkid": o.post.integer("id"),
             "linktypeid": extmedia.ANIMAL,
+            "logtypes": extlookups.get_log_types(dbo),
             "newmedia": o.post.integer("newmedia") == 1,
             "name": self.url,
             "sigtype": ELECTRONIC_SIGNATURES
@@ -3001,6 +3019,7 @@ class foundanimal_media(JSONEndpoint):
             "showpreferred": False,
             "linkid": o.post.integer("id"),
             "linktypeid": extmedia.FOUNDANIMAL,
+            "logtypes": extlookups.get_log_types(dbo),
             "name": self.url,
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -3322,6 +3341,7 @@ class incident_media(JSONEndpoint):
             "showpreferred": False,
             "linkid": o.post.integer("id"),
             "linktypeid": extmedia.ANIMALCONTROL,
+            "logtypes": extlookups.get_log_types(dbo),
             "name": self.url,
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -3729,6 +3749,7 @@ class lostanimal_media(JSONEndpoint):
             "showpreferred": False,
             "linkid": o.post.integer("id"),
             "linktypeid": extmedia.LOSTANIMAL,
+            "logtypes": extlookups.get_log_types(dbo),
             "name": self.url, 
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -5106,6 +5127,7 @@ class person_media(JSONEndpoint):
             "showpreferred": True,
             "linkid": o.post.integer("id"),
             "linktypeid": extmedia.PERSON,
+            "logtypes": extlookups.get_log_types(dbo),
             "name": self.url,
             "sigtype": ELECTRONIC_SIGNATURES
         }
@@ -6308,6 +6330,7 @@ class waitinglist_media(JSONEndpoint):
             "showpreferred": False,
             "linkid": o.post.integer("id"),
             "linktypeid": extmedia.WAITINGLIST,
+            "logtypes": extlookups.get_log_types(dbo),
             "name": self.url,
             "sigtype": ELECTRONIC_SIGNATURES
         }

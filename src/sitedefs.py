@@ -251,7 +251,7 @@ MULTIPLE_DATABASES_PUBLISH_FTP = None
 SHARE_BUTTON = "shareweb,shareemail"
 
 # Type of electronic signing device available
-ELECTRONIC_SIGNATURES = ""
+ELECTRONIC_SIGNATURES = "touch"
 
 # If you want a forgotten password link on the login page,
 # the URL it should link to
