@@ -763,7 +763,7 @@ $(function() {
                 defaultemail = controller.animal.RESERVEDOWNEREMAILADDRESS;
                 defaultname = controller.animal.RESERVEDOWNERNAME;
             }
-            else {
+            else if (controller.animal) {
                 defaultemail = controller.animal.CURRENTOWNEREMAILADDRESS;
                 defaultname = controller.animal.CURRENTOWNERNAME;
             }
