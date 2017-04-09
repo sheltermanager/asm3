@@ -1,6 +1,7 @@
 40
 ================
 
+09/04/17 Only use postcodes for geo calculations in the UK due to Google issues
 07/04/17 Convert email incident notes to use emailform #179
 07/04/17 Record media tab emails in the log #12
 05/04/17 Use iframe container for animal_view calls #182

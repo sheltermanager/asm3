@@ -41,6 +41,11 @@
             return deferred.promise();
         },
 
+        /** Returns true if we should only be calculating geocodes from the postcode */
+        _only_use_postcode: function() {
+            return config.bool("GeocodeWithPostcodeOnly") || asm.locale == "en_GB";
+        },
+
         /** Gets the lat/long position for an address from google */
         _google_get_lat_long: function(address, town, city, postcode, callback) {
             var add = address.replace("\n", ",") + ", " + town  + ", " + city + ", " + postcode;
@@ -71,7 +76,7 @@
         /** Gets the lat/long position for an address from nominatim */
         _nominatim_get_lat_long: function(address, town, city, postcode, callback) {
             var add = encodeURIComponent(address.replace("\n", ",") + "," + town).replace(/ /g, "+");
-            if (config.bool("GeocodeWithPostcodeOnly")) { add = postcode.replace(/ /g, "+"); }
+            if (this._only_use_postcode()) { add = postcode.replace(/ /g, "+"); }
             $.getJSON("http://nominatim.openstreetmap.org/search?format=json&q=" + add + "&json_callback=?", function(data) {
                 if (!data || !data[0] || !data[0].lat) {
                     callback(0, 0);
@@ -85,7 +90,7 @@
         /** Gets the lat/long position for an address from sheltermanager.com */
         _smcom_get_lat_long: function(address, town, city, postcode, callback) {
             var add = encodeURIComponent(address.replace("\n", ",") + "," + town).replace(/ /g, "+");
-            if (config.bool("GeocodeWithPostcodeOnly")) { add = postcode.replace(/ /g, "+"); }
+            if (this._only_use_postcode()) { add = postcode.replace(/ /g, "+"); }
             var url = "/geocode?format=json&q=" + add;
             $.ajax({
                 type: "GET",
@@ -104,7 +109,7 @@
         /** Gets the lat/long position for an address from mapquest */
         _mapquest_get_lat_long: function(address, town, city, postcode, callback) {
             var add = (address.replace("\n", ",") + "," + town + "," + city + "," + postcode).replace(/'/g, '');
-            if (config.bool("GeocodeWithPostcodeOnly")) { add = postcode; }
+            if (this._only_use_postcode()) { add = postcode; }
             var url = "http://www.mapquestapi.com/geocoding/v1/address?";
             if (asm.geoproviderkey) {
                 url += "key=" + asm.geoproviderkey + "&";
@@ -132,6 +137,7 @@
         /** Returns a hash of an address */
         address_hash: function(address, town, city, postcode) {
             var addrhash = String(address + town + city + postcode);
+            if (this.only_use_postcode()) { addrhash = String(postcode); }
             addrhash = addrhash.replace(/ /g, '').replace(/,/g, '').replace(/\n/g, '');
             if (addrhash.length > 220) { addrhash = addrhash.substring(0, 220); }
             return addrhash;
