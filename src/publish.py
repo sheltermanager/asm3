@@ -3611,14 +3611,16 @@ class PetLinkPublisher(AbstractPublisher):
                 # If there's no email or home phone, PetLink won't accept it
                 email = utils.nulltostr(an["CURRENTOWNEREMAILADDRESS"]).strip()
                 homephone = utils.nulltostr(an["CURRENTOWNERHOMETELEPHONE"]).strip()
-                if email == "" and homephone == "":
-                    self.logError("No email address or home telephone for owner, skipping.")
+                mobilephone = utils.nulltostr(an["CURRENTOWNERMOBILETELEPHONE"]).strip()
+                if email == "" and homephone == "" and mobilephone == "":
+                    self.logError("No email address, home or cell telephone for owner, skipping.")
                     continue
                 
                 # If we don't have an email address, use the owner's
-                # phone number @petlink.tmp
+                # phone or cell number @petlink.tmp
                 if email == "":
-                    email = "".join(c for c in homephone if c.isdigit())
+                    if homephone != "": email = "".join(c for c in homephone if c.isdigit())
+                    elif mobilephone != "": email = "".join(c for c in mobilephone if c.isdigit())
                     email = email + "@petlink.tmp"
 
                 # Software

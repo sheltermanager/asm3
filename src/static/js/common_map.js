@@ -49,7 +49,7 @@
         /** Gets the lat/long position for an address from google */
         _google_get_lat_long: function(address, town, city, postcode, callback) {
             var add = address.replace("\n", ",") + ", " + town  + ", " + city + ", " + postcode;
-            if (config.bool("GeocodeWithPostcodeOnly")) { add = postcode; }
+            if (this._only_use_postcode()) { add = postcode; }
             window._googeocallback = function() {
                 var geocoder = new google.maps.Geocoder();
                 geocoder.geocode( { 'address': add }, function(results, status) {
@@ -137,7 +137,6 @@
         /** Returns a hash of an address */
         address_hash: function(address, town, city, postcode) {
             var addrhash = String(address + town + city + postcode);
-            if (this.only_use_postcode()) { addrhash = String(postcode); }
             addrhash = addrhash.replace(/ /g, '').replace(/,/g, '').replace(/\n/g, '');
             if (addrhash.length > 220) { addrhash = addrhash.substring(0, 220); }
             return addrhash;
