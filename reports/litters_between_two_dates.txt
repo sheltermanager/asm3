@@ -2,7 +2,7 @@ Litters between two dates
 ###
 Litters
 ###
-34004
+34004/Any
 ###
 Litters entering the shelter between two dates 
 ###
