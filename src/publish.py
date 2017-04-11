@@ -3611,17 +3611,18 @@ class PetLinkPublisher(AbstractPublisher):
                 # If there's no email or home phone, PetLink won't accept it
                 email = utils.nulltostr(an["CURRENTOWNEREMAILADDRESS"]).strip()
                 homephone = utils.nulltostr(an["CURRENTOWNERHOMETELEPHONE"]).strip()
+                workphone = utils.nulltostr(an["CURRENTOWNERWORKTELEPHONE"]).strip()
                 mobilephone = utils.nulltostr(an["CURRENTOWNERMOBILETELEPHONE"]).strip()
-                if email == "" and homephone == "" and mobilephone == "":
-                    self.logError("No email address, home or cell telephone for owner, skipping.")
+                if email == "" and homephone == "" and workphone == "" and mobilephone == "":
+                    self.logError("No email address or phone number for owner, skipping.")
                     continue
                 
                 # If we don't have an email address, use the owner's
-                # phone or cell number @petlink.tmp
+                # best phone number (home, mobile then work) @petlink.tmp
                 if email == "":
-                    if homephone != "": email = "".join(c for c in homephone if c.isdigit())
-                    elif mobilephone != "": email = "".join(c for c in mobilephone if c.isdigit())
-                    email = email + "@petlink.tmp"
+                    phone = homephone or mobilephone or workphone
+                    email = "".join(c for c in phone if c.isdigit())
+                    email = "%s@petlink.tmp" % email
 
                 # Software
                 line.append("\"ASM\"")
