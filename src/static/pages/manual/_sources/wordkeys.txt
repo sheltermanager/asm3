@@ -12,11 +12,11 @@ Organisation Keys
  
 These keys are available in all types of documents.
  
-Organisation
+Organisation / Organization
     The shelter's name
-OrganisationAddress
+OrganisationAddress / OrganizationAddress
     The shelter's address
-OrganisationTelephone
+OrganisationTelephone / OrganizationTelephone
     The shelter's telephone number
 Date
     Today's date

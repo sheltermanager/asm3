@@ -549,7 +549,7 @@ def todaysql():
     return dd(today())
 
 def nowsql():
-    """ Returns today as an SQL date """
+    """ Returns current time as an SQL date """
     return ddt(today())
 
 def python2db(d):

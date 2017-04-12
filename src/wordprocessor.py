@@ -35,10 +35,16 @@ def org_tags(dbo, username):
         realname = utils.nulltostr(u["REALNAME"])
         email = utils.nulltostr(u["EMAILADDRESS"])
         sig = utils.nulltostr(u["SIGNATURE"])
+    orgname = configuration.organisation(dbo)
+    orgaddress = configuration.organisation_address(dbo)
+    orgtel = configuration.organisation_telephone(dbo)
     tags = {
-        "ORGANISATION"          : configuration.organisation(dbo),
-        "ORGANISATIONADDRESS"   : configuration.organisation_address(dbo),
-        "ORGANISATIONTELEPHONE" : configuration.organisation_telephone(dbo),
+        "ORGANISATION"          : orgname,
+        "ORGANISATIONADDRESS"   : orgaddress,
+        "ORGANISATIONTELEPHONE" : orgtel,
+        "ORGANIZATION"          : orgname,
+        "ORGANIZATIONADDRESS"   : orgaddress,
+        "ORGANIZATIONTELEPHONE" : orgtel,
         "DATE"                  : python2display(dbo.locale, now(dbo.timezone)),
         "USERNAME"              : username,
         "USERREALNAME"          : realname,
