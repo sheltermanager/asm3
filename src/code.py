@@ -1892,147 +1892,143 @@ class animal_new(JSONEndpoint):
     def post_units(self, o):
         return "&&".join(extanimal.get_units_with_availability(o.dbo, o.post.integer("locationid")))
 
-class animal_test:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_TEST)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        a = extanimal.get_animal(dbo, post.integer("id"))
-        if a is None: raise web.notfound()
-        test = extmedical.get_tests(dbo, post.integer("id"))
+class animal_test(JSONEndpoint):
+    url = "animal_test"
+    js_module = "test"
+    get_permissions = users.VIEW_TEST
+
+    def controller(self, o):
+        dbo = o.dbo
+        a = extanimal.get_animal(dbo, o.post.integer("id"))
+        if a is None: self.notfound()
+        test = extmedical.get_tests(dbo, o.post.integer("id"))
         al.debug("got %d tests" % len(test), "code.animal_test", dbo)
-        s = html.header("", session)
-        c = html.controller_str("name", "animal_test")
-        c += html.controller_json("animal", a)
-        c += html.controller_json("tabcounts", extanimal.get_satellite_counts(dbo, a["ID"])[0])
-        c += html.controller_json("rows", test)
-        c += html.controller_json("stockitems", extstock.get_stock_items(dbo))
-        c += html.controller_json("stockusagetypes", extlookups.get_stock_usage_types(dbo))
-        c += html.controller_json("testtypes", extlookups.get_test_types(dbo))
-        c += html.controller_json("testresults", extlookups.get_test_results(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("test", s, c, post["json"] == "true")
+        return {
+            "name": "animal_test",
+            "animal": a,
+            "tabcounts": extanimal.get_satellite_counts(dbo, a["ID"])[0],
+            "rows": test,
+            "stockitems": extstock.get_stock_items(dbo),
+            "stockusagetypes": extlookups.get_stock_usage_types(dbo),
+            "testtypes": extlookups.get_test_types(dbo),
+            "testresults": extlookups.get_test_results(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode = "create", ids = ""), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_TEST)
-            return extmedical.insert_test_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_TEST)
-            extmedical.update_test_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_TEST)
-            for vid in post.integer_list("ids"):
-                extmedical.delete_test(session.dbo, session.user, vid)
-        elif mode == "perform":
-            users.check_permission(session, users.CHANGE_TEST)
-            newdate = post.date("newdate")
-            vet = post.integer("givenvet")
-            testresult = post.integer("testresult")
-            for vid in post.integer_list("ids"):
-                extmedical.complete_test(session.dbo, session.user, vid, newdate, testresult, vet)
-            if post.integer("item") != -1:
-                extstock.deduct_stocklevel_from_form(session.dbo, session.user, post)
+    def post_create(self, o):
+        self.check(users.ADD_TEST)
+        return extmedical.insert_test_from_form(o.dbo, o.user, o.post)
 
-class animal_transport:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_TRANSPORT)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        a = extanimal.get_animal(dbo, post.integer("id"))
-        if a is None: raise web.notfound()
-        transports = extmovement.get_animal_transports(dbo, post.integer("id"))
+    def post_update(self, o):
+        self.check(users.CHANGE_TEST)
+        extmedical.update_test_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(users.DELETE_TEST)
+        for vid in o.post.integer_list("ids"):
+            extmedical.delete_test(o.dbo, o.user, vid)
+
+    def post_perform(self, o):
+        self.check(users.CHANGE_TEST)
+        newdate = o.post.date("newdate")
+        vet = o.post.integer("givenvet")
+        testresult = o.post.integer("testresult")
+        for vid in o.post.integer_list("ids"):
+            extmedical.complete_test(o.dbo, o.user, vid, newdate, testresult, vet)
+        if o.post.integer("item") != -1:
+            extstock.deduct_stocklevel_from_form(o.dbo, o.user, o.post)
+
+class animal_transport(JSONEndpoint):
+    url = "animal_transport"
+    js_module = "transport"
+    get_permissions = users.VIEW_TRANSPORT
+
+    def controller(self, o):
+        dbo = o.dbo
+        a = extanimal.get_animal(dbo, o.post.integer("id"))
+        if a is None: self.notfound()
+        transports = extmovement.get_animal_transports(dbo, o.post.integer("id"))
         al.debug("got %d transports" % len(transports), "code.animal_transport", dbo)
-        s = html.header("", session)
-        c = html.controller_str("name", "animal_transport")
-        c += html.controller_json("animal", a)
-        c += html.controller_json("tabcounts", extanimal.get_satellite_counts(dbo, a["ID"])[0])
-        c += html.controller_json("transporttypes", extlookups.get_transport_types(dbo))
-        c += html.controller_json("rows", transports)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("transport", s, c, post["json"] == "true")
+        return {
+            "name": "animal_transport",
+            "animal": a,
+            "tabcounts": extanimal.get_satellite_counts(dbo, a["ID"])[0],
+            "transporttypes": extlookups.get_transport_types(dbo),
+            "rows": transports
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_TRANSPORT)
-            return extmovement.insert_transport_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_TRANSPORT)
-            extmovement.update_transport_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_TRANSPORT)
-            for mid in post.integer_list("ids"):
-                extmovement.delete_transport(session.dbo, session.user, mid)
-        elif mode == "setstatus":
-            users.check_permission(session, users.CHANGE_TRANSPORT)
-            extmovement.update_transport_statuses(session.dbo, session.user, post.integer_list("ids"), post.integer("newstatus"))
+    def post_create(self, o):
+        self.check(users.ADD_TRANSPORT)
+        return extmovement.insert_transport_from_form(o.dbo, o.user, o.post)
 
-class animal_vaccination:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_VACCINATION)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        a = extanimal.get_animal(dbo, post.integer("id"))
-        if a is None: raise web.notfound()
-        vacc = extmedical.get_vaccinations(dbo, post.integer("id"))
+    def post_update(self, o):
+        self.check(users.CHANGE_TRANSPORT)
+        extmovement.update_transport_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(users.DELETE_TRANSPORT)
+        for mid in o.post.integer_list("ids"):
+            extmovement.delete_transport(o.dbo, o.user, mid)
+
+    def post_setstatus(self, o):
+        self.check(users.CHANGE_TRANSPORT)
+        extmovement.update_transport_statuses(o.dbo, o.user, o.post.integer_list("ids"), o.post.integer("newstatus"))
+
+class animal_vaccination(JSONEndpoint):
+    url = "animal_vaccination"
+    js_module = "vaccination"
+    get_permissions = users.VIEW_VACCINATION
+
+    def controller(self, o):
+        dbo = o.dbo
+        a = extanimal.get_animal(dbo, o.post.integer("id"))
+        if a is None: self.notfound()
+        vacc = extmedical.get_vaccinations(dbo, o.post.integer("id"))
         al.debug("got %d vaccinations" % len(vacc), "code.vaccination", dbo)
-        s = html.header("", session)
-        c = html.controller_str("name", "animal_vaccination")
-        c += html.controller_json("animal", a)
-        c += html.controller_json("tabcounts", extanimal.get_satellite_counts(dbo, a["ID"])[0])
-        c += html.controller_json("rows", vacc)
-        c += html.controller_json("manufacturers", "|".join(extmedical.get_vacc_manufacturers(dbo)))
-        c += html.controller_json("stockitems", extstock.get_stock_items(dbo))
-        c += html.controller_json("stockusagetypes", extlookups.get_stock_usage_types(dbo))
-        c += html.controller_json("vaccinationtypes", extlookups.get_vaccination_types(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("vaccination", s, c, post["json"] == "true")
+        return {
+            "name": "animal_vaccination",
+            "animal": a,
+            "tabcounts": extanimal.get_satellite_counts(dbo, a["ID"])[0],
+            "rows": vacc,
+            "manufacturers": "|".join(extmedical.get_vacc_manufacturers(dbo)),
+            "stockitems": extstock.get_stock_items(dbo),
+            "stockusagetypes": extlookups.get_stock_usage_types(dbo),
+            "vaccinationtypes": extlookups.get_vaccination_types(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode = "create", ids = "", duration = 0), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_VACCINATION)
-            return extmedical.insert_vaccination_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_VACCINATION)
-            extmedical.update_vaccination_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_VACCINATION)
-            for vid in post.integer_list("ids"):
-                extmedical.delete_vaccination(session.dbo, session.user, vid)
-        elif mode == "given":
-            users.check_permission(session, users.BULK_COMPLETE_VACCINATION)
-            newdate = post.date("newdate")
-            rescheduledate = post.date("rescheduledate")
-            reschedulecomments = post["reschedulecomments"]
-            vet = post.integer("givenvet")
-            for vid in post.integer_list("ids"):
-                extmedical.complete_vaccination(session.dbo, session.user, vid, newdate, vet)
-                if rescheduledate is not None:
-                    extmedical.reschedule_vaccination(session.dbo, session.user, vid, rescheduledate, reschedulecomments)
-                if post.integer("item") != -1:
-                    extmedical.update_vaccination_batch_stock(session.dbo, session.user, vid, post.integer("item"))
+    def post_create(self, o):
+        self.check(users.ADD_VACCINATION)
+        return extmedical.insert_vaccination_from_form(o.dbo, o.user, o.post)
+
+    def post_update(self, o):
+        self.check(users.CHANGE_VACCINATION)
+        extmedical.update_vaccination_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(users.DELETE_VACCINATION)
+        for vid in o.post.integer_list("ids"):
+            extmedical.delete_vaccination(o.dbo, o.user, vid)
+
+    def post_given(self, o):
+        self.check(users.BULK_COMPLETE_VACCINATION)
+        post = o.post
+        newdate = post.date("newdate")
+        rescheduledate = post.date("rescheduledate")
+        reschedulecomments = post["reschedulecomments"]
+        vet = post.integer("givenvet")
+        for vid in post.integer_list("ids"):
+            extmedical.complete_vaccination(o.dbo, o.user, vid, newdate, vet)
+            if rescheduledate is not None:
+                extmedical.reschedule_vaccination(o.dbo, o.user, vid, rescheduledate, reschedulecomments)
             if post.integer("item") != -1:
-                extstock.deduct_stocklevel_from_form(session.dbo, session.user, post)
-        elif mode == "required":
-            users.check_permission(session, users.BULK_COMPLETE_VACCINATION)
-            newdate = post.date("newdate")
-            for vid in post.integer_list("ids"):
-                extmedical.update_vaccination_required(session.dbo, session.user, vid, newdate)
+                extmedical.update_vaccination_batch_stock(o.dbo, o.user, vid, post.integer("item"))
+        if post.integer("item") != -1:
+            extstock.deduct_stocklevel_from_form(o.dbo, o.user, post)
+
+    def post_required(self, o):
+        self.check(users.BULK_COMPLETE_VACCINATION)
+        newdate = o.post.date("newdate")
+        for vid in o.post.integer_list("ids"):
+            extmedical.update_vaccination_required(o.dbo, o.user, vid, newdate)
 
 class batch:
     def GET(self):
