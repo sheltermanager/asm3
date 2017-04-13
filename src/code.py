@@ -493,17 +493,6 @@ class JSONEndpoint(ASMEndpoint):
             web.header("Content-Type", "application/json")
             return html.json(c)
 
-    def POST(self):
-        """ Handle a POST, deal with permissions """
-        self.check(self.post_permissions)
-        o = self._params()
-        mode = o.post["mode"]
-        if mode == "": 
-            return self.post_all(o)
-        else:
-            # Mode has been supplied, call post_mode
-            return getattr(self.__class__, "post_%s" % mode)(self, o)
-
 class index(ASMEndpoint):
     url = "/"
     check_logged_in = False
