@@ -101,7 +101,7 @@ def set_web_preferred(dbo, username, mid):
     """
     link = db.query(dbo, "SELECT LinkID, LinkTypeID FROM media WHERE ID = %d" % int(mid))[0]
     db.execute(dbo, "UPDATE media SET WebsitePhoto = 0 WHERE LinkID = %d AND LinkTypeID = %d" % ( int(link["LINKID"]), int(link["LINKTYPEID"])))
-    db.execute(dbo, "UPDATE media SET WebsitePhoto = 1, Date = %s WHERE ID = %d" % (db.dd(i18n.now(dbo.timezone)), int(mid) ))
+    db.execute(dbo, "UPDATE media SET WebsitePhoto = 1, Date = %s WHERE ID = %d" % (db.ddt(i18n.now(dbo.timezone)), int(mid) ))
     audit.edit(dbo, username, "media", mid, str(mid) + ": web preferred for " + str(link["LINKID"]) + "/" + str(link["LINKTYPEID"]))
 
 def set_doc_preferred(dbo, username, mid):
@@ -341,7 +341,7 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
         # ASM2_COMPATIBILITY
         ( "LinkID", db.di(linkid) ),
         ( "LinkTypeID", db.di(linktype) ),
-        ( "Date", db.dd(i18n.now(dbo.timezone)))
+        ( "Date", db.ddt(i18n.now(dbo.timezone)))
         ))
     db.execute(dbo, sql)
     audit.create(dbo, username, "media", mediaid, str(mediaid) + ": for " + str(linkid) + "/" + str(linktype))
@@ -378,7 +378,7 @@ def attach_link_from_form(dbo, username, linktype, linkid, post):
         # ASM2_COMPATIBILITY
         ( "LinkID", db.di(linkid) ),
         ( "LinkTypeID", db.di(linktype) ),
-        ( "Date", db.dd(i18n.now(dbo.timezone)) )
+        ( "Date", db.ddt(i18n.now(dbo.timezone)) )
         ))
     db.execute(dbo, sql)
     audit.create(dbo, username, "media", mediaid, str(mediaid) + ": for " + str(linkid) + "/" + str(linktype) + ": link to " + post["linktarget"])
@@ -420,7 +420,7 @@ def create_blank_document_media(dbo, username, linktype, linkid):
         # ASM2_COMPATIBILITY
         ( "LinkID", db.di(linkid) ),
         ( "LinkTypeID", db.di(linktype) ),
-        ( "Date", db.dd(i18n.now(dbo.timezone)) )
+        ( "Date", db.ddt(i18n.now(dbo.timezone)) )
         ))
     db.execute(dbo, sql)
     path = ""
@@ -462,7 +462,7 @@ def create_document_media(dbo, username, linktype, linkid, template, content):
         # ASM2_COMPATIBILITY
         ( "LinkID", db.di(linkid) ),
         ( "LinkTypeID", db.di(linktype) ),
-        ( "Date", db.dd(i18n.now(dbo.timezone)) )
+        ( "Date", db.ddt(i18n.now(dbo.timezone)) )
         ))
     db.execute(dbo, sql)
     path = ""
@@ -520,7 +520,7 @@ def update_file_content(dbo, username, mid, content):
     Updates the dbfs content for the file pointed to by id
     """
     dbfs.replace_string(dbo, content, get_name_for_id(dbo, mid))
-    db.execute(dbo, "UPDATE media SET Date = %s WHERE ID = %d" % ( db.dd(i18n.now(dbo.timezone)), int(mid) ))
+    db.execute(dbo, "UPDATE media SET Date = %s WHERE ID = %d" % ( db.ddt(i18n.now(dbo.timezone)), int(mid) ))
     audit.edit(dbo, username, "media", mid, str(mid) + " changed file contents")
 
 def update_media_notes(dbo, username, mid, notes):
@@ -578,7 +578,7 @@ def rotate_media(dbo, username, mid, clockwise = True):
     # Store it back in the dbfs and add an entry to the audit trail
     dbfs.put_string(dbo, mn, path, imagedata)
     # Update the date stamp on the media record
-    db.execute(dbo, "UPDATE media SET Date = %s WHERE ID = %d" % (db.dd(i18n.now(dbo.timezone)), mid))
+    db.execute(dbo, "UPDATE media SET Date = %s WHERE ID = %d" % (db.ddt(i18n.now(dbo.timezone)), mid))
     audit.edit(dbo, username, "media", mid, "media id %d rotated, clockwise=%s" % (mid, str(clockwise)))
 
 def scale_image(imagedata, resizespec):
