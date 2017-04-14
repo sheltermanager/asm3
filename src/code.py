@@ -5665,7 +5665,7 @@ class schemajs:
             web.header("Content-Type", "text/javascript")
             web.header("Cache-Control", "max-age=86400")
             tobj = {}
-            for t in dbupdate.TABLES:
+            for t in dbupdate.TABLES + dbupdate.VIEWS:
                 try:
                     rows = db.query(dbo, "SELECT * FROM %s LIMIT 1" % t)
                     if len(rows) != 0:
