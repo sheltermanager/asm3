@@ -27,6 +27,12 @@ $(function() {
                 '<input id="person" data="person" type="hidden" class="asm-personchooser" value=\'\' />',
                 '</td>',
                 '</tr>',
+                '<tr style="display: none">',
+                '<td><label for="movement">' + _("Movement") + '</label></td>',
+                '<td>',
+                '<select id="movement" data="movement" class="asm-selectbox"></select>',
+                '</td>',
+                '</tr>',
                 '<tr>',
                 '<td><label for="received">' + _("Received") + '</label></td>',
                 '<td>',
@@ -76,6 +82,8 @@ $(function() {
                 // Default giftaid if the person is registered
                 $("#payment").payments("option", "giftaid", rec.ISGIFTAID == 1);
                 $("#giftaid1").prop("checked", rec.ISGIFTAID == 1);
+                // Update movements if available
+                donation_receive.update_movements(rec.ID);
             });
 
             // Payments
@@ -96,7 +104,7 @@ $(function() {
                 $("#receive").button("disable");
                 header.show_loading(_("Creating..."));
 
-                var formdata = $("input, select").toPOST();
+                var formdata = "mode=create&" + $("input, select").toPOST();
                 common.ajax_post("donation_receive", formdata)
                     .then(function(result) { 
                         header.hide_loading();
@@ -122,6 +130,22 @@ $(function() {
             $(".asm-selectbox").select("removeRetiredOptions");
         
         },
+
+        update_movements: function(personid) {
+            var formdata = "mode=personmovements&personid=" + personid;
+            common.ajax_post("donation", "mode=personmovements&personid=" + personid)
+                .then(function(result) {
+                    var h = "<option value=\"0\"></option>";
+                    $.each(jQuery.parseJSON(result), function(i,v) {
+                        h += "<option value=\"" + v.ID + "\">";
+                        h += v.ADOPTIONNUMBER + " - " + v.MOVEMENTNAME + ": " + v.ANIMALNAME;
+                        h += "</option>";
+                    });
+                    $("#movement").html(h);
+                    $("#movement").closest("tr").fadeIn();
+                });
+        },
+
 
         destroy: function() {
             common.widget_destroy("#animal");

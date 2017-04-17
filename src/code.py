@@ -1548,29 +1548,6 @@ class animal_donations(JSONEndpoint):
             "templates": dbfs.get_document_templates(dbo)
         }
 
-    def post_create(self, o):
-        self.check(users.ADD_DONATION)
-        return financial.insert_donation_from_form(o.dbo, o.user, o.post)
-
-    def post_update(self, o):
-        self.check(users.CHANGE_DONATION)
-        financial.update_donation_from_form(o.dbo, o.user, o.post)
-
-    def post_delete(self, o):
-        self.check(users.DELETE_DONATION)
-        for did in o.post.integer_list("ids"):
-            financial.delete_donation(o.dbo, o.user, did)
-
-    def post_receive(self, o):
-        self.check( users.CHANGE_DONATION)
-        for did in o.post.integer_list("ids"):
-            financial.receive_donation(o.dbo, o.user, did)
-
-    def post_personmovements(self, o):
-        self.check(users.VIEW_MOVEMENT)
-        self.header("Content-Type", "application/json")
-        return html.json(extmovement.get_person_movements(o.dbo, o.post.integer("personid")))
-
 class animal_embed(ASMEndpoint):
     url = "animal_embed"
     post_permissions = users.VIEW_ANIMAL
@@ -2754,74 +2731,69 @@ class document_templates:
         elif mode == "rename":
             dbfs.rename_document_template(dbo, username, post.integer("dbfsid"), post["newname"])
 
-class donation:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_DONATION)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0, offset = "m0"), session.locale)
-        donations = financial.get_donations(dbo, post["offset"])
+class donation(JSONEndpoint):
+    url = "donation"
+    js_module = "donations"
+    get_permissions = users.VIEW_DONATION
+
+    def controller(self, o):
+        dbo = o.dbo
+        offset = o.post["offset"]
+        if offset == "": offset = "m0"
+        donations = financial.get_donations(dbo, offset)
         al.debug("got %d donations" % (len(donations)), "code.donation", dbo)
-        s = html.header("", session)
-        c = html.controller_str("name", "donation")
-        c += html.controller_json("donationtypes", extlookups.get_donation_types(dbo))
-        c += html.controller_json("accounts", financial.get_accounts(dbo))
-        c += html.controller_json("paymenttypes", extlookups.get_payment_types(dbo))
-        c += html.controller_json("frequencies", extlookups.get_donation_frequencies(dbo))
-        c += html.controller_json("templates", dbfs.get_document_templates(dbo))
-        c += html.controller_json("rows", donations)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("donations", s, c, post["json"] == "true")
+        return {
+            "name": "donation",
+            "donationtypes": extlookups.get_donation_types(dbo),
+            "accounts": financial.get_accounts(dbo),
+            "paymenttypes": extlookups.get_payment_types(dbo),
+            "frequencies": extlookups.get_donation_frequencies(dbo),
+            "templates": dbfs.get_document_templates(dbo),
+            "rows": donations
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        dbo = session.dbo
-        if mode == "create":
-            users.check_permission(session, users.ADD_DONATION)
-            return financial.insert_donation_from_form(dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_DONATION)
-            financial.update_donation_from_form(dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_DONATION)
-            for did in post.integer_list("ids"):
-                financial.delete_donation(dbo, session.user, did)
-        elif mode == "receive":
-            users.check_permission(session, users.CHANGE_DONATION)
-            for did in post.integer_list("ids"):
-                financial.receive_donation(dbo, session.user, did)
-        elif mode == "nextreceipt":
-            return financial.get_next_receipt_number(dbo)
-        elif mode == "personmovements":
-            users.check_permission(session, users.VIEW_MOVEMENT)
-            web.header("Content-Type", "application/json")
-            return html.json(extmovement.get_person_movements(dbo, post.integer("personid")))
+    def post_create(self, o):
+        self.check(users.ADD_DONATION)
+        return financial.insert_donation_from_form(o.dbo, o.user, o.post)
 
-class donation_receive:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.ADD_DONATION)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        s = html.header("", session)
+    def post_update(self, o):
+        self.check(users.CHANGE_DONATION)
+        financial.update_donation_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(users.DELETE_DONATION)
+        for did in o.post.integer_list("ids"):
+            financial.delete_donation(o.dbo, o.user, did)
+
+    def post_nextreceipt(self, o):
+        return financial.get_next_receipt_number(o.dbo)
+
+    def post_receive(self, o):
+        self.check( users.CHANGE_DONATION)
+        for did in o.post.integer_list("ids"):
+            financial.receive_donation(o.dbo, o.user, did)
+
+    def post_personmovements(self, o):
+        self.check(users.VIEW_MOVEMENT)
+        self.header("Content-Type", "application/json")
+        return html.json(extmovement.get_person_movements(o.dbo, o.post.integer("personid")))
+
+class donation_receive(JSONEndpoint):
+    url = "donation_receive"
+    get_permissions = users.ADD_DONATION
+
+    def controller(self, o):
+        dbo = o.dbo
         al.debug("receiving donation", "code.donation_receive", dbo)
-        c = html.controller_json("donationtypes", extlookups.get_donation_types(dbo))
-        c += html.controller_json("paymenttypes", extlookups.get_payment_types(dbo))
-        c += html.controller_json("accounts", financial.get_accounts(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("donation_receive", s, c, post["json"] == "true")
+        return {
+            "donationtypes": extlookups.get_donation_types(dbo),
+            "paymenttypes": extlookups.get_payment_types(dbo),
+            "accounts": financial.get_accounts(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_DONATION)
-            return financial.insert_donations_from_form(session.dbo, session.user, post, post["received"], True, post["person"], post["animal"], False)
+    def post_create(self, o):
+        self.check(users.ADD_DONATION)
+        return financial.insert_donations_from_form(o.dbo, o.user, o.post, o.post["received"], True, o.post["person"], o.post["animal"], o.post["movement"], False)
 
 class foundanimal:
     def GET(self):
@@ -4803,51 +4775,27 @@ class person_diary:
             for did in post.integer_list("ids"):
                 extdiary.complete_diary_note(session.dbo, session.user, did)
 
-class person_donations:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_DONATION)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        p = extperson.get_person(dbo, post.integer("id"))
-        if p is None: raise web.notfound()
-        donations = financial.get_person_donations(dbo, post.integer("id"))
-        s = html.header("", session)
-        c = html.controller_json("person", p)
-        c += html.controller_json("tabcounts", extperson.get_satellite_counts(dbo, p["ID"])[0])
-        c += html.controller_str("name", "person_donations")
-        c += html.controller_json("donationtypes", extlookups.get_donation_types(dbo))
-        c += html.controller_json("accounts", financial.get_accounts(dbo))
-        c += html.controller_json("paymenttypes", extlookups.get_payment_types(dbo))
-        c += html.controller_json("frequencies", extlookups.get_donation_frequencies(dbo))
-        c += html.controller_json("templates", dbfs.get_document_templates(dbo))
-        c += html.controller_json("rows", donations)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("donations", s, c, post["json"] == "true")
+class person_donations(JSONEndpoint):
+    url = "person_donations"
+    js_module = "donations"
+    get_permissions = users.VIEW_DONATION
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        dbo = session.dbo
-        if mode == "create":
-            users.check_permission(session, users.ADD_DONATION)
-            return financial.insert_donation_from_form(dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_DONATION)
-            financial.update_donation_from_form(dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_DONATION)
-            for did in post.integer_list("ids"):
-                financial.delete_donation(dbo, session.user, did)
-        elif mode == "receive":
-            users.check_permission(session, users.CHANGE_DONATION)
-            for did in post.integer_list("ids"):
-                financial.receive_donation(dbo, session.user, did)
-        elif mode == "personmovements":
-            users.check_permission(session, users.VIEW_MOVEMENT)
-            return html.json(extmovement.get_person_movements(dbo, post.integer("personid")))
+    def controller(self, o):
+        dbo = o.dbo
+        p = extperson.get_person(dbo, o.post.integer("id"))
+        if p is None: self.notfound()
+        donations = financial.get_person_donations(dbo, o.post.integer("id"))
+        return {
+            "person": p,
+            "tabcounts": extperson.get_satellite_counts(dbo, p["ID"])[0],
+            "name": "person_donations",
+            "donationtypes": extlookups.get_donation_types(dbo),
+            "accounts": financial.get_accounts(dbo),
+            "paymenttypes": extlookups.get_payment_types(dbo),
+            "frequencies": extlookups.get_donation_frequencies(dbo),
+            "templates": dbfs.get_document_templates(dbo),
+            "rows": donations
+        }
 
 class person_embed(ASMEndpoint):
     url = "person_embed"

@@ -80,7 +80,7 @@ $(function() {
                             if (!donations.validation()) { tableform.dialog_enable_buttons(); return; }
                             tableform.fields_update_row(dialog.fields, row);
                             donations.set_extra_fields(row);
-                            return tableform.fields_post(dialog.fields, "mode=update&donationid=" + row.ID, controller.name);
+                            return tableform.fields_post(dialog.fields, "mode=update&donationid=" + row.ID, "donation");
                         })
                         .then(function(response) {
                             donations.calculate_total();
@@ -138,7 +138,7 @@ $(function() {
                         tableform.dialog_show_add(dialog, {
                             onadd: function() {
                                 if (!donations.validation()) { tableform.dialog_enable_buttons(); return; }
-                                tableform.fields_post(dialog.fields, "mode=create", controller.name)
+                                tableform.fields_post(dialog.fields, "mode=create", "donation")
                                     .then(function(response) {
                                         var row = {};
                                         row.ID = response;
@@ -183,7 +183,7 @@ $(function() {
                              .then(function() {
                                  tableform.buttons_default_state(buttons);
                                  var ids = tableform.table_ids(table);
-                                 return common.ajax_post(controller.name, "mode=delete&ids=" + ids);
+                                 return common.ajax_post("donation", "mode=delete&ids=" + ids);
                              })
                              .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
@@ -195,7 +195,7 @@ $(function() {
                  { id: "receive", text: _("Receive"), icon: "complete", enabled: "multi", tooltip: _("Mark selected payments received"), perm: "ocod",
                      click: function() {
                          var ids = tableform.table_ids(table);
-                         common.ajax_post(controller.name, "mode=receive&ids=" + ids)
+                         common.ajax_post("donation", "mode=receive&ids=" + ids)
                              .then(function() {
                                  $.each(controller.rows, function(i, v) {
                                     if (tableform.table_id_selected(v.ID)) {
@@ -256,7 +256,7 @@ $(function() {
 
         update_movements: function(personid) {
             var formdata = "mode=personmovements&personid=" + personid;
-            common.ajax_post(controller.name, "mode=personmovements&personid=" + personid)
+            common.ajax_post("donation", "mode=personmovements&personid=" + personid)
                 .then(function(result) {
                     var h = "<option value=\"0\"></option>";
                     $.each(jQuery.parseJSON(result), function(i,v) {

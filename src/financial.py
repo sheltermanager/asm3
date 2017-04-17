@@ -553,6 +553,7 @@ def insert_donations_from_form(dbo, username, post, donationdate, force_receive 
         post.data["receiptnumber"] = get_next_receipt_number(dbo)
     for i in range(1, 100):
         if post.integer("amount%d" % i) == 0 and ignorezero: continue
+        if post.integer("donationtype%d" % i) == 0: break # no type means nothing posted for that line, so stop
         due = post["due%d" % i]
         received = post["received%d" % i]
         # If due and received haven't been given, use the passed in date
