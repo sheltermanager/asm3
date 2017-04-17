@@ -342,7 +342,7 @@ def get_onlineform_header(dbo):
        "input, textarea, select { border: 1px solid #aaa; }\n" \
        ".asm-onlineform-title, .asm-onlineform-description { text-align: center; }\n" \
        ".asm-onlineform-table { margin-left: auto; margin-right: auto }\n" \
-       ".asm-onlineform-td:first-child { max-width: 200px; }\n" \
+       ".asm-onlineform-td:first-child { max-width: 400px; }\n" \
        ".asm-onlineform-td:nth-child(2) { white-space: nowrap; }\n" \
        "textarea { width: 300px; height: 150px; }\n" \
        "</style>\n" \
