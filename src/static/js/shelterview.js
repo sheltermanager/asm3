@@ -409,6 +409,9 @@ $(function() {
             else if (viewmode == "coordinator") {
                 this.render_view("ADOPTIONCOORDINATORNAME", "", "ADOPTIONCOORDINATORNAME,ANIMALNAME", false, false);
             }
+            else if (viewmode == "coordinatorfosterer") {
+                this.render_view("ADOPTIONCOORDINATORNAME", "CURRENTOWNERNAME", "ADOPTIONCOORDINATORNAME,CURRENTOWNERNAME,ANIMALNAME", false, false, function(a) { return a.ACTIVEMOVEMENTTYPE == 2; });
+            }
             else if (viewmode == "entrycategory") {
                 this.render_view("ENTRYREASONNAME", "", "ENTRYREASONNAME,ANIMALNAME", false, false);
             }
@@ -496,6 +499,7 @@ $(function() {
             h.push('<select id="viewmode" style="float: right;" class="asm-selectbox">');
             h.push('<option value="altered">' + _("Altered") + '</option>');
             h.push('<option value="coordinator">' + _("Adoption Coordinator") + '</option>');
+            h.push('<option value="coordinatorfosterer">' + _("Adoption Coordinator and Fosterer") + '</option>');
             h.push('<option value="agegroup">' + _("Age Group") + '</option>');
             h.push('<option value="entrycategory">' + _("Entry Category") + '</option>');
             h.push('<option value="flags">' + _("Flags") + '</option>');

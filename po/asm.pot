@@ -704,6 +704,10 @@ msgstr ""
 msgid "Adoption Coordinator"
 msgstr ""
 
+#: options.js shelterview.js
+msgid "Adoption Coordinator and Fosterer"
+msgstr ""
+
 #: dbupdate.py
 msgid "Adoption Event"
 msgstr ""
@@ -6930,7 +6934,7 @@ msgstr ""
 msgid "Moved to animal record {0}"
 msgstr ""
 
-#: donations.js dbupdate.py
+#: donation_receive.js donations.js dbupdate.py
 msgid "Movement"
 msgstr ""
 
