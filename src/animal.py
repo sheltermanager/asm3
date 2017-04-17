@@ -2069,6 +2069,13 @@ def update_animal_from_form(dbo, post, username):
     quarantine = bi("quarantine" in flags)
     flagstr = "|".join(flags) + "|"
 
+    # If the animal is non-shelter, make sure that any movements are returned on the same
+    # day. Non shelter animals don't have visible movements and this prevents a bug where
+    # an open foster/retailer movement on a non-shelter animal can make it publish for adoption
+    # when the "include fosters/retailers" publishing options are on.
+    if nonshelter == 1:
+        db.execute(dbo, "UPDATE adoption SET ReturnDate = MovementDate WHERE MovementType IN (2,8) AND AnimalID = %d" % ki("id"))
+
     preaudit = db.query(dbo, "SELECT * FROM animal WHERE ID = %d" % ki("id"))
     db.execute(dbo, db.make_update_user_sql(dbo, "animal", username, "ID=%d" % ki("id"), (
         ( "NonShelterAnimal", db.di(nonshelter)),

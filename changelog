@@ -1,6 +1,7 @@
 40
 ================
 
+17/04/17 Prevent non-shelter publishing bug with fosters/retailers #195
 12/04/17 Add <<Organization*>> alias wordkeys
 09/04/17 Only use postcodes for geo calculations in the UK due to Google issues
 07/04/17 Convert email incident notes to use emailform #179
