@@ -5605,17 +5605,28 @@ class roles:
             for rid in post.integer_list("ids"):
                 users.delete_role(session.dbo, session.user, rid)
 
-class schemajs:
-    def GET(self):
+class schemajs(ASMEndpoint):
+    url = "schema.js"
+    check_logged_in = False
+
+    def content(self, o):
         # Return schema of all database tables
-        if utils.is_loggedin(session) and session.dbo is not None:
-            dbo = session.dbo
-            web.header("Content-Type", "text/javascript")
-            web.header("Cache-Control", "max-age=86400")
+        if utils.is_loggedin(o.session) and o.dbo is not None:
+            dbo = o.dbo
+            self.header("Content-Type", "text/javascript")
+            self.header("Cache-Control", "max-age=86400")
             tobj = {}
-            for t in dbupdate.TABLES + dbupdate.VIEWS:
+            for t in dbupdate.TABLES:
                 try:
                     rows = db.query(dbo, "SELECT * FROM %s LIMIT 1" % t)
+                    if len(rows) != 0:
+                        tobj[t] = rows[0]
+                except Exception as err:
+                    al.error("%s" % str(err), "code.schemajs", dbo)
+            for t in dbupdate.VIEWS:
+                realtable = t.replace("v_", "")
+                try:
+                    rows = db.query(dbo, "SELECT * FROM %s WHERE ID = (SELECT MIN(ID) FROM %s) LIMIT 1" % (t, realtable))
                     if len(rows) != 0:
                         tobj[t] = rows[0]
                 except Exception as err:
@@ -5623,8 +5634,8 @@ class schemajs:
             return "schema = %s;" % html.json(tobj)
         else:
             # Not logged in
-            web.header("Content-Type", "text/javascript")
-            web.header("Cache-Control", "no-cache")
+            self.header("Content-Type", "text/javascript")
+            self.header("Cache-Control", "no-cache")
             return ""
 
 class search:

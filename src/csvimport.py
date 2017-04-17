@@ -483,3 +483,78 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
 
     return errors
 
+def csvexport_animals(dbo, animalids):
+    """
+    Export CSV data for the supplied comma separated list of animalids
+    """
+    l = dbo.locale
+    rows = []
+    for aid in animalids.split(","):
+        row = {}
+        a = animal.get_animal(dbo, aid)
+        if a is None: continue
+        row["ANIMALNAME"] = a["ANIMALNAME"]
+        row["ANIMALSEX"] = a["SEXNAME"]
+        row["ANIMALTYPE"] = a["ANIMALTYPENAME"]
+        row["ANIMALCOLOR"] = a["BASECOLOURNAME"]
+        row["ANIMALBREED1"] = a["BREEDNAME1"]
+        row["ANIMALBREED2"] = a["BREEDNAME2"]
+        row["ANIMALDOB"] = i18n.python2display(l, a["DATEOFBIRTH"])
+        row["ANIMALLOCATION"] = a["SHELTERLOCATIONNAME"]
+        row["ANIMALUNIT"] = a["SHELTERLOCATIONUNIT"]
+        row["ANIMALSPECIES"] = a["SPECIESNAME"]
+        row["ANIMALAGE"] = a["ANIMALAGE"]
+        row["ANIMALCOMMENTS"] = a["ANIMALCOMMENTS"]
+        row["ANIMALHIDDENDETAILS"] = a["HIDDENANIMALDETAILS"]
+        row["ANIMALHEALTHPROBLEMS"] = a["HEALTHPROBLEMS"]
+        row["ANIMALMARKINGS"] = a["MARKINGS"]
+        row["ANIMALREASONFORENTRY"] = a["REASONFORENTRY"]
+        row["ANIMALNEUTERED"] = a["NEUTERED"]
+        row["ANIMALNEUTEREDDATE"] = i18n.python2display(l, a["NEUTEREDDATE"])
+        row["ANIMALMICROCHIP"] = a["IDENTICHIPNUMBER"]
+        row["ANIMALMICROCHIPDATE"] = i18n.python2display(l, a["ANIMALMICROCHIPDATE"])
+        row["ANIMALENTRYDATE"] = i18n.python2display(l, a["DATEBROUGHTIN"])
+        row["ANIMALDECEASEDDATE"] = i18n.python2display(l, a["DECEASEDDATE"])
+        row["ANIMALCODE"] = a["SHELTERCODE"]
+        row["ANIMALNOTFORADOPTION"] = a["ISNOTAVAILABLEFORADOPTION"]
+        row["ANIMALGOODWITHCATS"] = a["ISGOODWITHCATSNAME"]
+        row["ANIMALGOODWITHDOGS"] = a["ISGOODWITHDOGSNAME"]
+        row["ANIMALGOODWITHKIDS"] = a["ISGOODWITHCHILDRENNAME"]
+        row["ANIMALHOUSETRAINED"] = a["ISHOUSETRAINEDNAME"]
+        row["ORIGINALOWNERTITLE"] = a["ORIGINALOWNERTITLE"]
+        row["ORIGINALOWNERINITIALS"] = a["ORIGINALOWNERINITIALS"]
+        row["ORIGINALOWNERFIRSTNAME"] = a["ORIGINALOWNERFORENAMES"]
+        row["ORIGINALOWNERLASTNAME"] = a["ORIGINALOWNERSURNAME"]
+        row["ORIGINALOWNERADDRESS"] = a["ORIGINALOWNERADDRESS"]
+        row["ORIGINALOWNERCITY"] = a["ORIGINALOWNERTOWN"]
+        row["ORIGINALOWNERSTATE"] = a["ORIGINALOWNERCOUNTY"]
+        row["ORIGINALOWNERZIPCODE"] = a["ORIGINALOWNERPOSTCODE"]
+        row["ORIGINALOWNERHOMEPHONE"] = a["ORIGINALOWNERHOMETELEPHONE"]
+        row["ORIGINALOWNERWORKPHONE"] = a["ORIGINALOWNERWORKTELEPHONE"]
+        row["ORIGINALOWNERCELLPHONE"] = a["ORIGINALOWNERMOBILETELEPHONE"]
+        row["ORIGINALOWNEREMAIL"] = a["ORIGINALOWNEREMAILADDRESS"]
+        row["MOVEMENTTYPE"] = a["ACTIVEMOVEMENTTYPE"]
+        row["MOVEMENTDATE"] = i18n.python2display(l, a["ACTIVEMOVEMENTDATE"])
+        row["MOVEMENTRETURNDATE"] = i18n.python2display(l, a["ACTIVERETURNDATE"])
+        row["PERSONTITLE"] = a["CURRENTOWNERTITLE"]
+        row["PERSONINITIALS"] = a["CURRENTOWNERINITIALS"]
+        row["PERSONFIRSTNAME"] = a["CURRENTOWNERFORENAMES"]
+        row["PERSONLASTNAME"] = a["CURRENTOWNERSURNAME"]
+        row["PERSONADDRESS"] = a["CURRENTOWNERADDRESS"]
+        row["PERSONCITY"] = a["CURRENTOWNERTOWN"]
+        row["PERSONSTATE"] = a["CURRENTOWNERCOUNTY"]
+        row["PERSONZIPCODE"] = a["CURRENTOWNERPOSTCODE"]
+        row["PERSONFOSTERER"] = a["ACTIVEMOVEMENTTYPE"] == 2 and 1 or 0
+        row["PERSONHOMEPHONE"] = a["CURRENTOWNERHOMETELEPHONE"]
+        row["PERSONWORKPHONE"] = a["CURRENTOWNERWORKTELEPHONE"]
+        row["PERSONCELLPHONE"] = a["CURRENTOWNERMOBILETELEPHONE"]
+        row["PERSONEMAIL"] = a["CURRENTOWNEREMAILADDRESS"]
+        rows.append(row)
+    if len(rows) == 0: return ""
+    keys = rows[0].keys()
+    out = StringIO()
+    dict_writer = csv.DictWriter(out, keys)
+    dict_writer.writeheader()
+    dict_writer.writerows(rows)
+    return out.getvalue()
+
