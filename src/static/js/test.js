@@ -53,7 +53,7 @@ $(function() {
                         .then(function() {
                             tableform.fields_update_row(dialog.fields, row);
                             test.set_extra_fields(row);
-                            return tableform.fields_post(dialog.fields, "mode=update&testid=" + row.ID, controller.name);
+                            return tableform.fields_post(dialog.fields, "mode=update&testid=" + row.ID, "test");
                         })
                         .then(function(response) {
                             tableform.table_update(table);
@@ -149,7 +149,7 @@ $(function() {
                              .then(function() {
                                  tableform.buttons_default_state(buttons);
                                  var ids = tableform.table_ids(table);
-                                 return common.ajax_post(controller.name, "mode=delete&ids=" + ids);
+                                 return common.ajax_post("test", "mode=delete&ids=" + ids);
                              })
                              .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
@@ -218,7 +218,7 @@ $(function() {
             var dialog = test.dialog, table = test.table;
             tableform.dialog_show_add(dialog, {
                 onadd: function() {
-                    tableform.fields_post(dialog.fields, "mode=create", controller.name)
+                    tableform.fields_post(dialog.fields, "mode=create", "test")
                         .then(function(response) {
                             var row = {};
                             row.ID = response;
@@ -255,7 +255,7 @@ $(function() {
             var dialog = test.dialog, table = test.table;
             tableform.dialog_show_add(dialog, {
                 onadd: function() {
-                    tableform.fields_post(dialog.fields, "mode=createbulk", controller.name)
+                    tableform.fields_post(dialog.fields, "mode=createbulk", "test")
                         .then(function(response) {
                             tableform.dialog_close();
                             common.route_reload();
@@ -337,7 +337,7 @@ $(function() {
                 $("#usagedate").val($("#newdate").val()); // copy given to usage
                 $("#dialog-given").disable_dialog_buttons();
                 var ids = tableform.table_ids(table);
-                common.ajax_post(controller.name, $("#dialog-given .asm-field").toPOST() + "&mode=perform&ids=" + ids)
+                common.ajax_post("test", $("#dialog-given .asm-field").toPOST() + "&mode=perform&ids=" + ids)
                     .then(function() {
                         $.each(controller.rows, function(i, t) {
                             if (tableform.table_id_selected(t.ID)) {

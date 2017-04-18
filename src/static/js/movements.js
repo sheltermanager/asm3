@@ -66,7 +66,7 @@ $(function() {
                             if (!movements.validation()) { tableform.dialog_enable_buttons(); return; }
                             tableform.fields_update_row(dialog.fields, row);
                             movements.set_extra_fields(row);
-                            return tableform.fields_post(dialog.fields, "mode=update&movementid=" + row.ID, controller.name);
+                            return tableform.fields_post(dialog.fields, "mode=update&movementid=" + row.ID, "movement");
                         })
                         .then(function(response) {
                             tableform.table_update(table);
@@ -222,7 +222,7 @@ $(function() {
                         tableform.dialog_show_add(dialog, {
                             onadd: function() {
                                 if (!movements.validation()) { tableform.dialog_enable_buttons(); return; }
-                                tableform.fields_post(dialog.fields, "mode=create", controller.name)
+                                tableform.fields_post(dialog.fields, "mode=create", "movement")
                                     .then(function(response) {
                                         var row = {};
                                         row.ID = response;
@@ -287,7 +287,7 @@ $(function() {
                              .then(function() {
                                  tableform.buttons_default_state(buttons);
                                  var ids = tableform.table_ids(table);
-                                 return common.ajax_post(controller.name, "mode=delete&ids=" + ids);
+                                 return common.ajax_post("movement", "mode=delete&ids=" + ids);
                              })
                              .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
@@ -313,7 +313,7 @@ $(function() {
                                 if (!movements.validation()) { tableform.dialog_enable_buttons(); return; }
                                 tableform.fields_update_row(dialog.fields, row);
                                 movements.set_extra_fields(row);
-                                tableform.fields_post(dialog.fields, "mode=update&movementid=" + row.ID, controller.name, function(response) {
+                                tableform.fields_post(dialog.fields, "mode=update&movementid=" + row.ID, "movement", function(response) {
                                     tableform.table_update(table);
                                     tableform.dialog_close();
                                 },
@@ -346,7 +346,7 @@ $(function() {
                                 if (!movements.validation()) { tableform.dialog_enable_buttons(); return; }
                                 tableform.fields_update_row(dialog.fields, row);
                                 movements.set_extra_fields(row);
-                                tableform.fields_post(dialog.fields, "mode=update&movementid=" + row.ID, controller.name, function(response) {
+                                tableform.fields_post(dialog.fields, "mode=update&movementid=" + row.ID, "movement", function(response) {
                                     tableform.table_update(table);
                                     tableform.dialog_close();
                                 },

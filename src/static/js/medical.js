@@ -80,7 +80,7 @@ $(function() {
                         .then(function() {
                             tableform.fields_update_row(dialog.fields, row);
                             medical.set_extra_fields(row);
-                            return tableform.fields_post(dialog.fields, "mode=update&regimenid=" + row.REGIMENID, controller.name);
+                            return tableform.fields_post(dialog.fields, "mode=update&regimenid=" + row.REGIMENID, "medical");
                         })
                         .then(function(response) {
                             tableform.table_update(table);
@@ -189,7 +189,7 @@ $(function() {
                              .then(function() {
                                  tableform.buttons_default_state(buttons);
                                  var ids = medical.selected_regimen_ids();
-                                 return common.ajax_post(controller.name, "mode=delete_regimen&ids=" + ids);
+                                 return common.ajax_post("medical", "mode=delete_regimen&ids=" + ids);
                              })
                              .then(function() {
                                  medical.remove_selected_regimens();
@@ -209,7 +209,7 @@ $(function() {
                              .then(function() {
                                  tableform.buttons_default_state(buttons);
                                  var ids = medical.selected_treatment_ids();
-                                 return common.ajax_post(controller.name, "mode=delete_treatment&ids=" + ids);
+                                 return common.ajax_post("medical", "mode=delete_treatment&ids=" + ids);
                              })
                              .then(function() {
                                  medical.remove_selected_treatments();
@@ -376,7 +376,7 @@ $(function() {
             tableform.dialog_show_add(dialog)
                 .then(function() {
                     tableform.dialog_disable_buttons();   
-                    return tableform.fields_post(dialog.fields, "mode=create", controller.name);
+                    return tableform.fields_post(dialog.fields, "mode=create", "medical");
                 })
                 .then(function(response) {
                     tableform.dialog_close();
@@ -398,7 +398,7 @@ $(function() {
             tableform.dialog_show_add(medical.dialog)
                 .then(function() {
                     tableform.dialog_disable_buttons();   
-                    return tableform.fields_post(medical.dialog.fields, "mode=createbulk", controller.name);
+                    return tableform.fields_post(medical.dialog.fields, "mode=createbulk", "medical");
                 })
                 .then(function(response) {
                     tableform.dialog_close();
@@ -478,7 +478,7 @@ $(function() {
                 $("#dialog-given").disable_dialog_buttons();
                 var ids = medical.selected_treatment_ids();
                 var newdate = encodeURIComponent($("#newdate").val());
-                common.ajax_post(controller.name, $("#dialog-given .asm-field").toPOST() + "&mode=given&ids=" + ids)
+                common.ajax_post("medical", $("#dialog-given .asm-field").toPOST() + "&mode=given&ids=" + ids)
                     .then(function() {
                         $.each(controller.rows, function(i, v) {
                             if (tableform.table_id_selected(v.COMPOSITEID)) {
@@ -535,7 +535,7 @@ $(function() {
                 $("#dialog-required").disable_dialog_buttons();
                 var ids = medical.selected_treatment_ids();
                 var newdate = encodeURIComponent($("#newdater").val());
-                common.ajax_post(controller.name, "mode=required&newdate=" + newdate + "&ids=" + ids)
+                common.ajax_post("medical", "mode=required&newdate=" + newdate + "&ids=" + ids)
                     .then(function() {
                         $.each(controller.rows, function(i, v) {
                             if (tableform.table_id_selected(v.COMPOSITEID)) {

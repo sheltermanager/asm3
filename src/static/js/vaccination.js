@@ -54,7 +54,7 @@ $(function() {
                         .then(function() {
                             tableform.fields_update_row(dialog.fields, row);
                             vaccination.set_extra_fields(row);
-                            return tableform.fields_post(dialog.fields, "mode=update&vaccid=" + row.ID, controller.name);
+                            return tableform.fields_post(dialog.fields, "mode=update&vaccid=" + row.ID, "vaccination");
                         })
                         .then(function(response) {
                             tableform.table_update(table);
@@ -148,7 +148,7 @@ $(function() {
                              .then(function() {
                                  tableform.buttons_default_state(buttons);
                                  var ids = tableform.table_ids(table);
-                                 return common.ajax_post(controller.name, "mode=delete&ids=" + ids);
+                                 return common.ajax_post("vaccination", "mode=delete&ids=" + ids);
                              })
                              .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
@@ -241,7 +241,7 @@ $(function() {
                 $("#dialog-required").disable_dialog_buttons();
                 var ids = tableform.table_ids(table);
                 var newdate = encodeURIComponent($("#newdate").val());
-                common.ajax_post(controller.name, "mode=required&newdate=" + newdate + "&ids=" + ids)
+                common.ajax_post("vaccination", "mode=required&newdate=" + newdate + "&ids=" + ids)
                     .then(function() {
                         $.each(controller.rows, function(i, v) {
                             if (tableform.table_id_selected(v.ID)) {
@@ -275,7 +275,7 @@ $(function() {
             var table = vaccination.table, dialog = vaccination.dialog;
             tableform.dialog_show_add(dialog, {
                 onadd: function() {
-                    tableform.fields_post(dialog.fields, "mode=create", controller.name)
+                    tableform.fields_post(dialog.fields, "mode=create", "vaccination")
                         .then(function(response) {
                             var row = {};
                             row.ID = response;
@@ -312,7 +312,7 @@ $(function() {
             var dialog = vaccination.dialog;
             tableform.dialog_show_add(dialog, {
                 onadd: function() {
-                    tableform.fields_post(dialog.fields, "mode=createbulk", controller.name)
+                    tableform.fields_post(dialog.fields, "mode=createbulk", "vaccination")
                         .then(function(response) {
                             tableform.dialog_close();
                             common.route_reload();
@@ -396,7 +396,7 @@ $(function() {
                 $("#usagedate").val($("#newdateg").val()); // copy given to usage
                 $("#dialog-given").disable_dialog_buttons();
                 var ids = tableform.table_ids(table);
-                common.ajax_post(controller.name, $("#dialog-given .asm-field").toPOST() + "&mode=given&ids=" + ids)
+                common.ajax_post("vaccination", $("#dialog-given .asm-field").toPOST() + "&mode=given&ids=" + ids)
                     .then(function() {
                         $.each(controller.rows, function(i, v) {
                             if (tableform.table_id_selected(v.ID)) {

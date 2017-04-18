@@ -76,7 +76,7 @@ $(function() {
                         onchange: function() {
                             tableform.fields_update_row(dialog.fields, row);
                             transport.set_extra_fields(row);
-                            tableform.fields_post(dialog.fields, "mode=update&transportid=" + row.ID, controller.name, function(response) {
+                            tableform.fields_post(dialog.fields, "mode=update&transportid=" + row.ID, "transport", function(response) {
                                 tableform.table_update(table);
                                 tableform.dialog_close();
                             }, function() { 
@@ -178,7 +178,7 @@ $(function() {
                          $("#animals").closest("tr").hide();
                          tableform.dialog_show_add(dialog)
                              .then(function() {
-                                 return tableform.fields_post(dialog.fields, "mode=create", controller.name);
+                                 return tableform.fields_post(dialog.fields, "mode=create", "transport");
                              })
                              .then(function(response) {
                                  var row = {};
@@ -203,7 +203,7 @@ $(function() {
                         $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
                         tableform.dialog_show_add(dialog)
                             .then(function() {
-                                return tableform.fields_post(dialog.fields, "mode=createbulk", controller.name);
+                                return tableform.fields_post(dialog.fields, "mode=createbulk", "transport");
                             })
                             .then(function(response) {
                                 common.route_reload();
@@ -227,7 +227,7 @@ $(function() {
                                 }
                             })
                             .then(function() {
-                                return tableform.fields_post(dialog.fields, "mode=createbulk", controller.name);
+                                return tableform.fields_post(dialog.fields, "mode=createbulk", "transport");
                             })
                             .then(function(response) {
                                 common.route_reload();
@@ -243,7 +243,7 @@ $(function() {
                              .then(function() {
                                  tableform.buttons_default_state(buttons);
                                  var ids = tableform.table_ids(table);
-                                 return common.ajax_post(controller.name, "mode=delete&ids=" + ids);
+                                 return common.ajax_post("transport", "mode=delete&ids=" + ids);
                              })
                              .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
@@ -254,7 +254,7 @@ $(function() {
                  { id: "setstatus", text: _("Status"), icon: "complete", type: "buttonmenu", options: statusmenu, enabled: "multi", perm: "ctr", 
                     click: function(newstatus) {
                         var ids = tableform.table_ids(table);
-                        common.ajax_post(controller.name, "mode=setstatus&ids=" + ids + "&newstatus=" + newstatus)
+                        common.ajax_post("transport", "mode=setstatus&ids=" + ids + "&newstatus=" + newstatus)
                             .then(function() {
                                 $.each(tableform.table_selected_rows(table), function(i, v) {
                                     v.STATUS = newstatus;

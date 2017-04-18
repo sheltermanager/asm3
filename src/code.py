@@ -154,6 +154,7 @@ urls = (
     "/move_reserve", "move_reserve",
     "/move_retailer", "move_retailer",
     "/move_transfer", "move_transfer",
+    "/movement", "movement",
     "/main", "main",
     "/login", "login",
     "/login_jsonp", "login_jsonp",
@@ -1745,45 +1746,6 @@ class animal_medical(JSONEndpoint):
             "animal": a
         }
 
-    def post_create(self, o):
-        self.check(users.ADD_MEDICAL)
-        extmedical.insert_regimen_from_form(o.dbo, o.user, o.post)
-
-    def post_update(self, o):
-        self.check(users.CHANGE_MEDICAL)
-        extmedical.update_regimen_from_form(o.dbo, o.user, o.post)
-
-    def post_delete_regimen(self, o):
-        self.check(users.DELETE_MEDICAL)
-        for mid in o.post.integer_list("ids"):
-            extmedical.delete_regimen(o.dbo, o.user, mid)
-
-    def post_delete_treatment(self, o):
-        self.check(users.DELETE_MEDICAL)
-        for mid in o.post.integer_list("ids"):
-            extmedical.delete_treatment(o.dbo, o.user, mid)
-
-    def post_get_profile(self, o):
-        return html.json([extmedical.get_profile(o.dbo, o.post.integer("profileid"))])
-
-    def post_given(self, o):
-        self.check(users.BULK_COMPLETE_MEDICAL)
-        post = o.post
-        newdate = post.date("newdate")
-        vet = post.integer("givenvet")
-        by = post["givenby"]
-        comments = post["treatmentcomments"]
-        for mid in post.integer_list("ids"):
-            extmedical.update_treatment_given(o.dbo, o.user, mid, newdate, by, vet, comments)
-        if post.integer("item") != -1:
-            extstock.deduct_stocklevel_from_form(session.dbo, session.user, post)
-
-    def post_required(self, o):
-        self.check(users.BULK_COMPLETE_MEDICAL)
-        newdate = o.post.date("newdate")
-        for mid in o.post.integer_list("ids"):
-            extmedical.update_treatment_required(o.dbo, o.user, mid, newdate)
-
 class animal_movements(JSONEndpoint):
     url = "animal_movements"
     js_module = "movements"
@@ -1805,22 +1767,6 @@ class animal_movements(JSONEndpoint):
             "templates": dbfs.get_document_templates(dbo),
             "name": self.url
         }
-
-    def post_create(self, o):
-        self.check(users.ADD_MOVEMENT)
-        return extmovement.insert_movement_from_form(o.dbo, o.user, o.post)
-
-    def post_update(self, o):
-        self.check(users.CHANGE_MOVEMENT)
-        extmovement.update_movement_from_form(o.dbo, o.user, o.post)
-
-    def post_delete(self, o):
-        self.check(users.DELETE_MOVEMENT)
-        for mid in o.post.integer_list("ids"):
-            extmovement.delete_movement(o.dbo, o.user, mid)
-
-    def post_insurance(self, o):
-        return extmovement.generate_insurance_number(o.dbo)
 
 class animal_new(JSONEndpoint):
     url = "animal_new"
@@ -1880,29 +1826,6 @@ class animal_test(JSONEndpoint):
             "testresults": extlookups.get_test_results(dbo)
         }
 
-    def post_create(self, o):
-        self.check(users.ADD_TEST)
-        return extmedical.insert_test_from_form(o.dbo, o.user, o.post)
-
-    def post_update(self, o):
-        self.check(users.CHANGE_TEST)
-        extmedical.update_test_from_form(o.dbo, o.user, o.post)
-
-    def post_delete(self, o):
-        self.check(users.DELETE_TEST)
-        for vid in o.post.integer_list("ids"):
-            extmedical.delete_test(o.dbo, o.user, vid)
-
-    def post_perform(self, o):
-        self.check(users.CHANGE_TEST)
-        newdate = o.post.date("newdate")
-        vet = o.post.integer("givenvet")
-        testresult = o.post.integer("testresult")
-        for vid in o.post.integer_list("ids"):
-            extmedical.complete_test(o.dbo, o.user, vid, newdate, testresult, vet)
-        if o.post.integer("item") != -1:
-            extstock.deduct_stocklevel_from_form(o.dbo, o.user, o.post)
-
 class animal_transport(JSONEndpoint):
     url = "animal_transport"
     js_module = "transport"
@@ -1921,23 +1844,6 @@ class animal_transport(JSONEndpoint):
             "transporttypes": extlookups.get_transport_types(dbo),
             "rows": transports
         }
-
-    def post_create(self, o):
-        self.check(users.ADD_TRANSPORT)
-        return extmovement.insert_transport_from_form(o.dbo, o.user, o.post)
-
-    def post_update(self, o):
-        self.check(users.CHANGE_TRANSPORT)
-        extmovement.update_transport_from_form(o.dbo, o.user, o.post)
-
-    def post_delete(self, o):
-        self.check(users.DELETE_TRANSPORT)
-        for mid in o.post.integer_list("ids"):
-            extmovement.delete_transport(o.dbo, o.user, mid)
-
-    def post_setstatus(self, o):
-        self.check(users.CHANGE_TRANSPORT)
-        extmovement.update_transport_statuses(o.dbo, o.user, o.post.integer_list("ids"), o.post.integer("newstatus"))
 
 class animal_vaccination(JSONEndpoint):
     url = "animal_vaccination"
@@ -1960,41 +1866,6 @@ class animal_vaccination(JSONEndpoint):
             "stockusagetypes": extlookups.get_stock_usage_types(dbo),
             "vaccinationtypes": extlookups.get_vaccination_types(dbo)
         }
-
-    def post_create(self, o):
-        self.check(users.ADD_VACCINATION)
-        return extmedical.insert_vaccination_from_form(o.dbo, o.user, o.post)
-
-    def post_update(self, o):
-        self.check(users.CHANGE_VACCINATION)
-        extmedical.update_vaccination_from_form(o.dbo, o.user, o.post)
-
-    def post_delete(self, o):
-        self.check(users.DELETE_VACCINATION)
-        for vid in o.post.integer_list("ids"):
-            extmedical.delete_vaccination(o.dbo, o.user, vid)
-
-    def post_given(self, o):
-        self.check(users.BULK_COMPLETE_VACCINATION)
-        post = o.post
-        newdate = post.date("newdate")
-        rescheduledate = post.date("rescheduledate")
-        reschedulecomments = post["reschedulecomments"]
-        vet = post.integer("givenvet")
-        for vid in post.integer_list("ids"):
-            extmedical.complete_vaccination(o.dbo, o.user, vid, newdate, vet)
-            if rescheduledate is not None:
-                extmedical.reschedule_vaccination(o.dbo, o.user, vid, rescheduledate, reschedulecomments)
-            if post.integer("item") != -1:
-                extmedical.update_vaccination_batch_stock(o.dbo, o.user, vid, post.integer("item"))
-        if post.integer("item") != -1:
-            extstock.deduct_stocklevel_from_form(o.dbo, o.user, post)
-
-    def post_required(self, o):
-        self.check(users.BULK_COMPLETE_VACCINATION)
-        newdate = o.post.date("newdate")
-        for vid in o.post.integer_list("ids"):
-            extmedical.update_vaccination_required(o.dbo, o.user, vid, newdate)
 
 class batch:
     def GET(self):
@@ -3861,67 +3732,71 @@ class mailmerge:
             al.debug("returning preview rows for %d" % session.mergereport, "code.mailmerge", dbo)
             return html.json(rows)
 
-class medical:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_MEDICAL)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(newmed = "0", offset = "m365"), session.locale)
-        med = extmedical.get_treatments_outstanding(dbo, post["offset"], session.locationfilter, session.siteid)
+class medical(JSONEndpoint):
+    url = "medical"
+    get_permissions = users.VIEW_MEDICAL
+
+    def controller(self, o):
+        dbo = o.dbo
+        offset = o.post["offset"]
+        if offset == "": offset = "m365"
+        med = extmedical.get_treatments_outstanding(dbo, offset, o.session.locationfilter, o.session.siteid)
         profiles = extmedical.get_profiles(dbo)
         al.debug("got %d medical treatments" % len(med), "code.medical", dbo)
-        s = html.header("", session)
-        c = html.controller_json("profiles", profiles)
-        c += html.controller_json("rows", med)
-        c += html.controller_bool("newmed", post.integer("newmed") == 1)
-        c += html.controller_str("name", "medical")
-        c += html.controller_json("stockitems", extstock.get_stock_items(dbo))
-        c += html.controller_json("stockusagetypes", extlookups.get_stock_usage_types(dbo))
-        c += html.controller_json("users", users.get_users(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("medical", s, c, post["json"] == "true")
+        return {
+            "profiles": profiles,
+            "rows": med,
+            "newmed": o.post.integer("newmed") == 1,
+            "name": "medical",
+            "stockitems": extstock.get_stock_items(dbo),
+            "stockusagetypes": extlookups.get_stock_usage_types(dbo),
+            "users": users.get_users(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"] 
-        if mode == "create":
-            users.check_permission(session, users.ADD_MEDICAL)
-            extmedical.insert_regimen_from_form(session.dbo, session.user, post)
-        if mode == "createbulk":
-            users.check_permission(session, users.ADD_MEDICAL)
-            for animalid in post.integer_list("animals"):
-                post.data["animal"] = str(animalid)
-                extmedical.insert_regimen_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_MEDICAL)
-            extmedical.update_regimen_from_form(session.dbo, session.user, post)
-        elif mode == "delete_regimen":
-            users.check_permission(session, users.DELETE_MEDICAL)
-            for mid in post.integer_list("ids"):
-                extmedical.delete_regimen(session.dbo, session.user, mid)
-        elif mode == "delete_treatment":
-            users.check_permission(session, users.DELETE_MEDICAL)
-            for mid in post.integer_list("ids"):
-                extmedical.delete_treatment(session.dbo, session.user, mid)
-        elif mode == "get_profile":
-            return html.json([extmedical.get_profile(session.dbo, post.integer("profileid"))])
-        elif mode == "given":
-            users.check_permission(session, users.BULK_COMPLETE_MEDICAL)
-            newdate = post.date("newdate")
-            vet = post.integer("givenvet")
-            by = post["givenby"]
-            comments = post["treatmentcomments"]
-            for mid in post.integer_list("ids"):
-                extmedical.update_treatment_given(session.dbo, session.user, mid, newdate, by, vet, comments)
-            if post.integer("item") != -1:
-                extstock.deduct_stocklevel_from_form(session.dbo, session.user, post)
-        elif mode == "required":
-            users.check_permission(session, users.BULK_COMPLETE_MEDICAL)
-            newdate = post.date("newdate")
-            for mid in post.integer_list("ids"):
-                extmedical.update_treatment_required(session.dbo, session.user, mid, newdate)
+    def post_create(self, o):
+        self.check(users.ADD_MEDICAL)
+        extmedical.insert_regimen_from_form(o.dbo, o.user, o.post)
+
+    def post_createbulk(self, o):
+        self.check(users.ADD_MEDICAL)
+        for animalid in o.post.integer_list("animals"):
+            o.post.data["animal"] = str(animalid)
+            extmedical.insert_regimen_from_form(o.dbo, o.user, o.post)
+
+    def post_update(self, o):
+        self.check(users.CHANGE_MEDICAL)
+        extmedical.update_regimen_from_form(o.dbo, o.user, o.post)
+
+    def post_delete_regimen(self, o):
+        self.check(users.DELETE_MEDICAL)
+        for mid in o.post.integer_list("ids"):
+            extmedical.delete_regimen(o.dbo, o.user, mid)
+
+    def post_delete_treatment(self, o):
+        self.check(users.DELETE_MEDICAL)
+        for mid in o.post.integer_list("ids"):
+            extmedical.delete_treatment(o.dbo, o.user, mid)
+
+    def post_get_profile(self, o):
+        return html.json([extmedical.get_profile(o.dbo, o.post.integer("profileid"))])
+
+    def post_given(self, o):
+        self.check(users.BULK_COMPLETE_MEDICAL)
+        post = o.post
+        newdate = post.date("newdate")
+        vet = post.integer("givenvet")
+        by = post["givenby"]
+        comments = post["treatmentcomments"]
+        for mid in post.integer_list("ids"):
+            extmedical.update_treatment_given(o.dbo, o.user, mid, newdate, by, vet, comments)
+        if post.integer("item") != -1:
+            extstock.deduct_stocklevel_from_form(session.dbo, session.user, post)
+
+    def post_required(self, o):
+        self.check(users.BULK_COMPLETE_MEDICAL)
+        newdate = o.post.date("newdate")
+        for mid in o.post.integer_list("ids"):
+            extmedical.update_treatment_required(o.dbo, o.user, mid, newdate)
 
 class medicalprofile:
     def GET(self):
@@ -3987,277 +3862,149 @@ class move_adopt:
         elif mode == "insurance":
             return extmovement.generate_insurance_number(dbo)
 
-class move_book_foster:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_MOVEMENT)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
+class move_book_foster(JSONEndpoint):
+    url = "move_book_foster"
+    js_module = "movements"
+    get_permissions = users.VIEW_MOVEMENT
+
+    def controller(self, o):
+        dbo = o.dbo
         movements = extmovement.get_movements(dbo, extmovement.FOSTER)
         al.debug("got %d movements" % len(movements), "code.move_book_foster", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", movements)
-        c += html.controller_json("movementtypes", extlookups.get_movement_types(dbo))
-        c += html.controller_json("reservationstatuses", extlookups.get_reservation_statuses(dbo))
-        c += html.controller_json("returncategories", extlookups.get_entryreasons(dbo))
-        c += html.controller_json("templates", dbfs.get_document_templates(dbo))
-        c += html.controller_str("name", self.__class__.__name__)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("movements", s, c, post["json"] == "true")
+        return {
+            "name": "move_book_foster",
+            "rows": movements,
+            "movementtypes": extlookups.get_movement_types(dbo),
+            "reservationstatuses": extlookups.get_reservation_statuses(dbo),
+            "returncategories": extlookups.get_entryreasons(dbo),
+            "templates": dbfs.get_document_templates(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_MOVEMENT)
-            return extmovement.insert_movement_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_MOVEMENT)
-            extmovement.update_movement_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_MOVEMENT)
-            for mid in post.integer_list("ids"):
-                extmovement.delete_movement(session.dbo, session.user, mid)
+class move_book_recent_adoption(JSONEndpoint):
+    url = "move_book_recent_adoption"
+    js_module = "movements"
+    get_permissions = users.VIEW_MOVEMENT
 
-class move_book_recent_adoption:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_MOVEMENT)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
+    def controller(self, o):
+        dbo = o.dbo
         movements = extmovement.get_recent_adoptions(dbo)
         al.debug("got %d movements" % len(movements), "code.move_book_recent_adoption", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", movements)
-        c += html.controller_json("movementtypes", extlookups.get_movement_types(dbo))
-        c += html.controller_json("reservationstatuses", extlookups.get_reservation_statuses(dbo))
-        c += html.controller_json("returncategories", extlookups.get_entryreasons(dbo))
-        c += html.controller_json("templates", dbfs.get_document_templates(dbo))
-        c += html.controller_str("name", self.__class__.__name__)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("movements", s, c, post["json"] == "true")
+        return {
+            "name": "move_book_recent_adoption",
+            "rows": movements,
+            "movementtypes": extlookups.get_movement_types(dbo),
+            "reservationstatuses": extlookups.get_reservation_statuses(dbo),
+            "returncategories": extlookups.get_entryreasons(dbo),
+            "templates": dbfs.get_document_templates(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_MOVEMENT)
-            return extmovement.insert_movement_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_MOVEMENT)
-            extmovement.update_movement_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_MOVEMENT)
-            for mid in post.integer_list("ids"):
-                extmovement.delete_movement(session.dbo, session.user, mid)
+class move_book_recent_other(JSONEndpoint):
+    url = "move_book_recent_other"
+    js_module = "movements"
+    get_permissions = users.VIEW_MOVEMENT
 
-class move_book_recent_other:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_MOVEMENT)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
+    def controller(self, o):
+        dbo = o.dbo
         movements = extmovement.get_recent_nonfosteradoption(dbo)
         al.debug("got %d movements" % len(movements), "code.move_book_recent_other", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", movements)
-        c += html.controller_json("movementtypes", extlookups.get_movement_types(dbo))
-        c += html.controller_json("reservationstatuses", extlookups.get_reservation_statuses(dbo))
-        c += html.controller_json("returncategories", extlookups.get_entryreasons(dbo))
-        c += html.controller_json("templates", dbfs.get_document_templates(dbo))
-        c += html.controller_str("name", self.__class__.__name__)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("movements", s, c, post["json"] == "true")
+        return {
+            "name": "move_book_recent_other",
+            "rows": movements,
+            "movementtypes": extlookups.get_movement_types(dbo),
+            "reservationstatuses": extlookups.get_reservation_statuses(dbo),
+            "returncategories": extlookups.get_entryreasons(dbo),
+            "templates": dbfs.get_document_templates(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_MOVEMENT)
-            return extmovement.insert_movement_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_MOVEMENT)
-            extmovement.update_movement_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_MOVEMENT)
-            for mid in post.integer_list("ids"):
-                extmovement.delete_movement(session.dbo, session.user, mid)
+class move_book_recent_transfer(JSONEndpoint):
+    url = "move_book_recent_transfer"
+    js_module = "movements"
+    get_permissions = users.VIEW_MOVEMENT
 
-class move_book_recent_transfer:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_MOVEMENT)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
+    def controller(self, o):
+        dbo = o.dbo
         movements = extmovement.get_recent_transfers(dbo)
         al.debug("got %d movements" % len(movements), "code.move_book_recent_transfer", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", movements)
-        c += html.controller_json("movementtypes", extlookups.get_movement_types(dbo))
-        c += html.controller_json("reservationstatuses", extlookups.get_reservation_statuses(dbo))
-        c += html.controller_json("returncategories", extlookups.get_entryreasons(dbo))
-        c += html.controller_json("templates", dbfs.get_document_templates(dbo))
-        c += html.controller_str("name", self.__class__.__name__)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("movements", s, c, post["json"] == "true")
+        return {
+            "name": "move_book_recent_transfer",
+            "rows": movements,
+            "movementtypes": extlookups.get_movement_types(dbo),
+            "reservationstatuses": extlookups.get_reservation_statuses(dbo),
+            "returncategories": extlookups.get_entryreasons(dbo),
+            "templates": dbfs.get_document_templates(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_MOVEMENT)
-            return extmovement.insert_movement_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_MOVEMENT)
-            extmovement.update_movement_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_MOVEMENT)
-            for mid in post.integer_list("ids"):
-                extmovement.delete_movement(session.dbo, session.user, mid)
+class move_book_reservation(JSONEndpoint):
+    url = "move_book_reservation"
+    js_module = "movements"
+    get_permissions = users.VIEW_MOVEMENT
 
-class move_book_reservation:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_MOVEMENT)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
+    def controller(self, o):
+        dbo = o.dbo
         movements = extmovement.get_active_reservations(dbo)
         al.debug("got %d movements" % len(movements), "code.move_book_reservation", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", movements)
-        c += html.controller_json("movementtypes", extlookups.get_movement_types(dbo))
-        c += html.controller_json("reservationstatuses", extlookups.get_reservation_statuses(dbo))
-        c += html.controller_json("returncategories", extlookups.get_entryreasons(dbo))
-        c += html.controller_json("templates", dbfs.get_document_templates(dbo))
-        c += html.controller_str("name", self.__class__.__name__)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("movements", s, c, post["json"] == "true")
+        return {
+            "name": "move_book_reservation",
+            "rows": movements,
+            "movementtypes": extlookups.get_movement_types(dbo),
+            "reservationstatuses": extlookups.get_reservation_statuses(dbo),
+            "returncategories": extlookups.get_entryreasons(dbo),
+            "templates": dbfs.get_document_templates(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_MOVEMENT)
-            return extmovement.insert_movement_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_MOVEMENT)
-            extmovement.update_movement_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_MOVEMENT)
-            for mid in post.integer_list("ids"):
-                extmovement.delete_movement(session.dbo, session.user, mid)
+class move_book_retailer(JSONEndpoint):
+    url = "move_book_retailer"
+    js_module = "movements"
+    get_permissions = users.VIEW_MOVEMENT
 
-class move_book_retailer:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_MOVEMENT)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
+    def controller(self, o):
+        dbo = o.dbo
         movements = extmovement.get_movements(dbo, extmovement.RETAILER)
         al.debug("got %d movements" % len(movements), "code.move_book_retailer", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", movements)
-        c += html.controller_json("movementtypes", extlookups.get_movement_types(dbo))
-        c += html.controller_json("reservationstatuses", extlookups.get_reservation_statuses(dbo))
-        c += html.controller_json("returncategories", extlookups.get_entryreasons(dbo))
-        c += html.controller_json("templates", dbfs.get_document_templates(dbo))
-        c += html.controller_str("name", self.__class__.__name__)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("movements", s, c, post["json"] == "true")
+        return {
+            "name": "move_book_retailer",
+            "rows": movements,
+            "movementtypes": extlookups.get_movement_types(dbo),
+            "reservationstatuses": extlookups.get_reservation_statuses(dbo),
+            "returncategories": extlookups.get_entryreasons(dbo),
+            "templates": dbfs.get_document_templates(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_MOVEMENT)
-            return extmovement.insert_movement_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_MOVEMENT)
-            extmovement.update_movement_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_MOVEMENT)
-            for mid in post.integer_list("ids"):
-                extmovement.delete_movement(session.dbo, session.user, mid)
+class move_book_trial_adoption(JSONEndpoint):
+    url = "move_book_trial_adoption"
+    js_module = "movements"
+    get_permissions = users.VIEW_MOVEMENT
 
-class move_book_trial_adoption:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_MOVEMENT)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
+    def controller(self, o):
+        dbo = o.dbo
         movements = extmovement.get_trial_adoptions(dbo)
         al.debug("got %d movements" % len(movements), "code.move_book_trial_adoption", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", movements)
-        c += html.controller_json("movementtypes", extlookups.get_movement_types(dbo))
-        c += html.controller_json("reservationstatuses", extlookups.get_reservation_statuses(dbo))
-        c += html.controller_json("returncategories", extlookups.get_entryreasons(dbo))
-        c += html.controller_json("templates", dbfs.get_document_templates(dbo))
-        c += html.controller_str("name", self.__class__.__name__)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("movements", s, c, post["json"] == "true")
+        return {
+            "name": "move_book_trial_adoption",
+            "rows": movements,
+            "movementtypes": extlookups.get_movement_types(dbo),
+            "reservationstatuses": extlookups.get_reservation_statuses(dbo),
+            "returncategories": extlookups.get_entryreasons(dbo),
+            "templates": dbfs.get_document_templates(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_MOVEMENT)
-            return extmovement.insert_movement_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_MOVEMENT)
-            extmovement.update_movement_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_MOVEMENT)
-            for mid in post.integer_list("ids"):
-                extmovement.delete_movement(session.dbo, session.user, mid)
+class move_book_unneutered(JSONEndpoint):
+    url = "move_book_unneutered"
+    js_module = "movements"
+    get_permissions = users.VIEW_MOVEMENT
 
-class move_book_unneutered:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_MOVEMENT)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
+    def controller(self, o):
+        dbo = o.dbo
         movements = extmovement.get_recent_unneutered_adoptions(dbo)
         al.debug("got %d movements" % len(movements), "code.move_book_unneutered", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", movements)
-        c += html.controller_json("movementtypes", extlookups.get_movement_types(dbo))
-        c += html.controller_json("reservationstatuses", extlookups.get_reservation_statuses(dbo))
-        c += html.controller_json("returncategories", extlookups.get_entryreasons(dbo))
-        c += html.controller_json("templates", dbfs.get_document_templates(dbo))
-        c += html.controller_str("name", self.__class__.__name__)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("movements", s, c, post["json"] == "true")
-
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_MOVEMENT)
-            return extmovement.insert_movement_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_MOVEMENT)
-            extmovement.update_movement_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_MOVEMENT)
-            for mid in post.integer_list("ids"):
-                extmovement.delete_movement(session.dbo, session.user, mid)
+        return {
+            "name": "move_book_unneutered",
+            "rows": movements,
+            "movementtypes": extlookups.get_movement_types(dbo),
+            "reservationstatuses": extlookups.get_reservation_statuses(dbo),
+            "returncategories": extlookups.get_entryreasons(dbo),
+            "templates": dbfs.get_document_templates(dbo)
+        }
 
 class move_deceased:
     def GET(self):
@@ -4401,6 +4148,25 @@ class move_transfer:
         if mode == "create":
             users.check_permission(session, users.ADD_MOVEMENT)
             return str(extmovement.insert_transfer_from_form(session.dbo, session.user, post))
+
+class movement(JSONEndpoint):
+    url = "movement"
+
+    def post_create(self, o):
+        self.check(users.ADD_MOVEMENT)
+        return extmovement.insert_movement_from_form(o.dbo, o.user, o.post)
+
+    def post_update(self, o):
+        self.check(users.CHANGE_MOVEMENT)
+        extmovement.update_movement_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(users.DELETE_MOVEMENT)
+        for mid in o.post.integer_list("ids"):
+            extmovement.delete_movement(o.dbo, o.user, mid)
+
+    def post_insurance(self, o):
+        return extmovement.generate_insurance_number(o.dbo)
 
 class onlineform_incoming:
     def GET(self):
@@ -5065,45 +4831,27 @@ class person_media(JSONEndpoint):
             "sigtype": ELECTRONIC_SIGNATURES
         }
 
-class person_movements:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_MOVEMENT)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        p = extperson.get_person(dbo, post.integer("id"))
-        if p is None: raise web.notfound()
-        movements = extmovement.get_person_movements(dbo, post.integer("id"))
-        al.debug("got %d movements" % len(movements), "code.person_movements", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", movements)
-        c += html.controller_json("person", p)
-        c += html.controller_json("tabcounts", extperson.get_satellite_counts(dbo, p["ID"])[0])
-        c += html.controller_json("movementtypes", extlookups.get_movement_types(dbo))
-        c += html.controller_json("reservationstatuses", extlookups.get_reservation_statuses(dbo))
-        c += html.controller_json("returncategories", extlookups.get_entryreasons(dbo))
-        c += html.controller_json("templates", dbfs.get_document_templates(dbo))
-        c += html.controller_str("name", self.__class__.__name__)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("movements", s, c, post["json"] == "true")
+class person_movements(JSONEndpoint):
+    url = "person_movements"
+    js_module = "movements"
+    get_permissions = users.VIEW_MOVEMENT
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_MOVEMENT)
-            return extmovement.insert_movement_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_MOVEMENT)
-            extmovement.update_movement_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_MOVEMENT)
-            for mid in post.integer_list("ids"):
-                extmovement.delete_movement(session.dbo, session.user, mid)
-        elif mode == "insurance":
-            return extmovement.generate_insurance_number(session.dbo)
+    def controller(self, o):
+        dbo = o.dbo
+        p = extperson.get_person(dbo, o.post.integer("id"))
+        if p is None: self.notfound()
+        movements = extmovement.get_person_movements(dbo, o.post.integer("id"))
+        al.debug("got %d movements" % len(movements), "code.person_movements", dbo)
+        return {
+            "name": "person_movements",
+            "rows": movements,
+            "person": p,
+            "tabcounts": extperson.get_satellite_counts(dbo, p["ID"])[0],
+            "movementtypes": extlookups.get_movement_types(dbo),
+            "reservationstatuses": extlookups.get_reservation_statuses(dbo),
+            "returncategories": extlookups.get_entryreasons(dbo),
+            "templates": dbfs.get_document_templates(dbo)
+        }
 
 class person_new:
     def GET(self):
@@ -5936,54 +5684,54 @@ class systemusers:
             for uid in post.integer_list("ids"):
                 users.reset_password(session.dbo, uid, post["password"])
 
-class test:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_TEST)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(newtest = "0", offset = "m365"), session.locale)
-        test = extmedical.get_tests_outstanding(dbo, post["offset"], session.locationfilter, session.siteid)
-        al.debug("got %d tests" % len(test), "code.test", dbo)
-        s = html.header("", session)
-        c = html.controller_str("name", "test")
-        c += html.controller_bool("newtest", post.integer("newtest") == 1)
-        c += html.controller_json("rows", test)
-        c += html.controller_json("stockitems", extstock.get_stock_items(dbo))
-        c += html.controller_json("stockusagetypes", extlookups.get_stock_usage_types(dbo))
-        c += html.controller_json("testtypes", extlookups.get_test_types(dbo))
-        c += html.controller_json("testresults", extlookups.get_test_results(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("test", s, c, post["json"] == "true")
+class test(JSONEndpoint):
+    url = "test"
+    get_permissions = users.VIEW_TEST
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode = "create", ids = ""), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_TEST)
-            return extmedical.insert_test_from_form(session.dbo, session.user, post)
-        if mode == "createbulk":
-            users.check_permission(session, users.ADD_TEST)
-            for animalid in post.integer_list("animals"):
-                post.data["animal"] = str(animalid)
-                extmedical.insert_test_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_TEST)
-            extmedical.update_test_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_TEST)
-            for vid in post.integer_list("ids"):
-                extmedical.delete_test(session.dbo, session.user, vid)
-        elif mode == "perform":
-            users.check_permission(session, users.CHANGE_TEST)
-            newdate = post.date("newdate")
-            vet = post.integer("givenvet")
-            testresult = post.integer("testresult")
-            for vid in post.integer_list("ids"):
-                extmedical.complete_test(session.dbo, session.user, vid, newdate, testresult, vet)
-            if post.integer("item") != -1:
-                extstock.deduct_stocklevel_from_form(session.dbo, session.user, post)
+    def controller(self, o):
+        dbo = o.dbo
+        offset = o.post["offset"]
+        if offset == "": offset = "m365"
+        test = extmedical.get_tests_outstanding(dbo, offset, o.session.locationfilter, o.session.siteid)
+        al.debug("got %d tests" % len(test), "code.test", dbo)
+        return {
+            "name": "test",
+            "newtest": o.post.integer("newtest") == 1,
+            "rows": test,
+            "stockitems": extstock.get_stock_items(dbo),
+            "stockusagetypes": extlookups.get_stock_usage_types(dbo),
+            "testtypes": extlookups.get_test_types(dbo),
+            "testresults": extlookups.get_test_results(dbo)
+        }
+
+    def post_create(self, o):
+        self.check(users.ADD_TEST)
+        return extmedical.insert_test_from_form(o.dbo, o.user, o.post)
+
+    def post_createbulk(self, o):
+        self.check(users.ADD_TEST)
+        for animalid in o.post.integer_list("animals"):
+            o.post.data["animal"] = str(animalid)
+            extmedical.insert_test_from_form(o.dbo, o.user, o.post)
+
+    def post_update(self, o):
+        self.check(users.CHANGE_TEST)
+        extmedical.update_test_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(users.DELETE_TEST)
+        for vid in o.post.integer_list("ids"):
+            extmedical.delete_test(o.dbo, o.user, vid)
+
+    def post_perform(self, o):
+        self.check(users.CHANGE_TEST)
+        newdate = o.post.date("newdate")
+        vet = o.post.integer("givenvet")
+        testresult = o.post.integer("testresult")
+        for vid in o.post.integer_list("ids"):
+            extmedical.complete_test(o.dbo, o.user, vid, newdate, testresult, vet)
+        if o.post.integer("item") != -1:
+            extstock.deduct_stocklevel_from_form(o.dbo, o.user, o.post)
 
 class timeline:
     def GET(self):
@@ -6001,44 +5749,42 @@ class timeline:
         al.debug("timeline events, run by %s, got %d events" % (session.user, len(evts)), "code.timeline", dbo)
         return full_or_json("timeline", s, c, post["json"] == "true")
 
-class transport:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_TRANSPORT)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
+class transport(JSONEndpoint):
+    url = "transport"
+    get_permissions = users.VIEW_TRANSPORT
+
+    def controller(self, o):
+        dbo = o.dbo
         transports = extmovement.get_active_transports(dbo)
         al.debug("got %d transports" % len(transports), "code.transport", dbo)
-        s = html.header("", session)
-        c = html.controller_str("name", "transport")
-        c += html.controller_json("transporttypes", extlookups.get_transport_types(dbo))
-        c += html.controller_json("rows", transports)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("transport", s, c, post["json"] == "true")
+        return {
+            "name": "transport",
+            "transporttypes": extlookups.get_transport_types(dbo),
+            "rows": transports
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_TRANSPORT)
-            return extmovement.insert_transport_from_form(session.dbo, session.user, post)
-        elif mode == "createbulk":
-            users.check_permission(session, users.ADD_TRANSPORT)
-            for animalid in post.integer_list("animals"):
-                post.data["animal"] = str(animalid)
-                extmovement.insert_transport_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_TRANSPORT)
-            extmovement.update_transport_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_TRANSPORT)
-            for mid in post.integer_list("ids"):
-                extmovement.delete_transport(session.dbo, session.user, mid)
-        elif mode == "setstatus":
-            users.check_permission(session, users.CHANGE_TRANSPORT)
-            extmovement.update_transport_statuses(session.dbo, session.user, post.integer_list("ids"), post.integer("newstatus"))
+    def post_create(self, o):
+        self.check(users.ADD_TRANSPORT)
+        return extmovement.insert_transport_from_form(o.dbo, o.user, o.post)
+
+    def post_createbulk(self, o):
+        self.check(users.ADD_TRANSPORT)
+        for animalid in o.post.integer_list("animals"):
+            o.post.data["animal"] = str(animalid)
+            extmovement.insert_transport_from_form(o.dbo, o.user, o.post)
+
+    def post_update(self, o):
+        self.check(users.CHANGE_TRANSPORT)
+        extmovement.update_transport_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(users.DELETE_TRANSPORT)
+        for mid in o.post.integer_list("ids"):
+            extmovement.delete_transport(o.dbo, o.user, mid)
+
+    def post_setstatus(self, o):
+        self.check(users.CHANGE_TRANSPORT)
+        extmovement.update_transport_statuses(o.dbo, o.user, o.post.integer_list("ids"), o.post.integer("newstatus"))
 
 class traploan:
     def GET(self):
@@ -6075,64 +5821,66 @@ class traploan:
             for lid in post.integer_list("ids"):
                 extanimalcontrol.delete_traploan(session.dbo, session.user, lid)
 
-class vaccination:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_VACCINATION)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(newvacc = "0", offset = "m365"), session.locale)
-        vacc = extmedical.get_vaccinations_outstanding(dbo, post["offset"], session.locationfilter, session.siteid)
-        al.debug("got %d vaccinations" % len(vacc), "code.vaccination", dbo)
-        s = html.header("", session)
-        c = html.controller_str("name", "vaccination")
-        c += html.controller_bool("newvacc", post.integer("newvacc") == 1)
-        c += html.controller_json("rows", vacc)
-        c += html.controller_json("manufacturers", "|".join(extmedical.get_vacc_manufacturers(dbo)))
-        c += html.controller_json("stockitems", extstock.get_stock_items(dbo))
-        c += html.controller_json("stockusagetypes", extlookups.get_stock_usage_types(dbo))
-        c += html.controller_json("vaccinationtypes", extlookups.get_vaccination_types(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("vaccination", s, c, post["json"] == "true")
+class vaccination(JSONEndpoint):
+    url = "vaccination"
+    get_permissions = users.VIEW_VACCINATION
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode = "create", ids = "", duration = 0), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_VACCINATION)
-            return extmedical.insert_vaccination_from_form(session.dbo, session.user, post)
-        if mode == "createbulk":
-            users.check_permission(session, users.ADD_VACCINATION)
-            for animalid in post.integer_list("animals"):
-                post.data["animal"] = str(animalid)
-                extmedical.insert_vaccination_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_VACCINATION)
-            extmedical.update_vaccination_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_VACCINATION)
-            for vid in post.integer_list("ids"):
-                extmedical.delete_vaccination(session.dbo, session.user, vid)
-        elif mode == "given":
-            users.check_permission(session, users.BULK_COMPLETE_VACCINATION)
-            newdate = post.date("newdate")
-            vet = post.integer("givenvet")
-            rescheduledate = post.date("rescheduledate")
-            reschedulecomments = post["reschedulecomments"]
-            for vid in post.integer_list("ids"):
-                extmedical.complete_vaccination(session.dbo, session.user, vid, newdate, vet)
-                if rescheduledate is not None:
-                    extmedical.reschedule_vaccination(session.dbo, session.user, vid, rescheduledate, reschedulecomments)
-                if post.integer("item") != -1:
-                    extmedical.update_vaccination_batch_stock(session.dbo, session.user, vid, post.integer("item"))
+    def controller(self, o):
+        dbo = o.dbo
+        offset = o.post["offset"]
+        if offset == "": offset = "m365"
+        vacc = extmedical.get_vaccinations_outstanding(dbo, offset, o.session.locationfilter, o.session.siteid)
+        al.debug("got %d vaccinations" % len(vacc), "code.vaccination", dbo)
+        return {
+            "name": "vaccination",
+            "newvacc": o.post.integer("newvacc") == 1,
+            "rows": vacc,
+            "manufacturers": "|".join(extmedical.get_vacc_manufacturers(dbo)),
+            "stockitems": extstock.get_stock_items(dbo),
+            "stockusagetypes": extlookups.get_stock_usage_types(dbo),
+            "vaccinationtypes": extlookups.get_vaccination_types(dbo)
+        }
+
+    def post_create(self, o):
+        self.check(users.ADD_VACCINATION)
+        return extmedical.insert_vaccination_from_form(o.dbo, o.user, o.post)
+
+    def post_createbulk(self, o):
+        self.check(users.ADD_VACCINATION)
+        for animalid in o.post.integer_list("animals"):
+            o.post.data["animal"] = str(animalid)
+            extmedical.insert_vaccination_from_form(o.dbo, o.user, o.post)
+
+    def post_update(self, o):
+        self.check(users.CHANGE_VACCINATION)
+        extmedical.update_vaccination_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(users.DELETE_VACCINATION)
+        for vid in o.post.integer_list("ids"):
+            extmedical.delete_vaccination(o.dbo, o.user, vid)
+
+    def post_given(self, o):
+        self.check(users.BULK_COMPLETE_VACCINATION)
+        post = o.post
+        newdate = post.date("newdate")
+        rescheduledate = post.date("rescheduledate")
+        reschedulecomments = post["reschedulecomments"]
+        vet = post.integer("givenvet")
+        for vid in post.integer_list("ids"):
+            extmedical.complete_vaccination(o.dbo, o.user, vid, newdate, vet)
+            if rescheduledate is not None:
+                extmedical.reschedule_vaccination(o.dbo, o.user, vid, rescheduledate, reschedulecomments)
             if post.integer("item") != -1:
-                extstock.deduct_stocklevel_from_form(session.dbo, session.user, post)
-        elif mode == "required":
-            users.check_permission(session, users.BULK_COMPLETE_VACCINATION)
-            newdate = post.date("newdate")
-            for vid in post.integer_list("ids"):
-                extmedical.update_vaccination_required(session.dbo, session.user, vid, newdate)
+                extmedical.update_vaccination_batch_stock(o.dbo, o.user, vid, post.integer("item"))
+        if post.integer("item") != -1:
+            extstock.deduct_stocklevel_from_form(o.dbo, o.user, post)
+
+    def post_required(self, o):
+        self.check(users.BULK_COMPLETE_VACCINATION)
+        newdate = o.post.date("newdate")
+        for vid in o.post.integer_list("ids"):
+            extmedical.update_vaccination_required(o.dbo, o.user, vid, newdate)
 
 class waitinglist:
     def GET(self):
