@@ -19,7 +19,8 @@ $(function() {
                 html.content_header(_("Import a CSV file")),
                 '<div class="centered" style="max-width: 900px; margin-left: auto; margin-right: auto">',
                 '<form id="csvform" action="csvimport" method="post" enctype="multipart/form-data">',
-                html.info(_("Your CSV file should have a header row with field names ASM recognises. Please see the manual for more information.")),
+                html.info(_("Your CSV file should have a header row with field names ASM recognises.") + '<br/>' + 
+                    _("Please see the manual for more information.")),
                 '<p>',
                 '<input id="cleartables" name="cleartables" type="checkbox" /> ',
                 '<label for="cleartables">' + _("Clear tables before importing") + '</label>',
@@ -44,7 +45,7 @@ $(function() {
                 '</div>',
                 '<p>',
                 '<input id="filechooser" name="filechooser" type="file" /><br/>',
-                '<button type="button">' + _("Import") + '</button>',
+                '<button id="submit" type="button">' + _("Import") + '</button>',
                 '</p>',
                 '</form>',
                 '</div>',
@@ -77,8 +78,8 @@ $(function() {
         },
 
         bind: function() {
-            $("button").button().click(function() {
-                $("button").button("disable");
+            $("#submit").button().click(function() {
+                $("#submit").button("disable");
                 $("body").css("cursor", "wait");
                 $("#csvform").submit();
             });
@@ -119,9 +120,7 @@ $(function() {
         autofocus: "#cleartables",
         title: function() { return _("Import a CSV file"); },
         routes: {
-            "csvimport": function() { 
-                common.module_start("csvimport"); 
-            }
+            "csvimport": function() { common.module_start("csvimport"); }
         }
 
     };

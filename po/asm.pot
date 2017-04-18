@@ -1277,8 +1277,8 @@ msgstr ""
 msgid "Animal shortcode format"
 msgstr ""
 
-#: roles.js medical.js incident.js test.js transport.js animal_bulk.js
-#: vaccination.js html.py
+#: roles.js medical.js csvexport.js incident.js test.js transport.js
+#: animal_bulk.js vaccination.js html.py
 msgid "Animals"
 msgstr ""
 
@@ -4333,8 +4333,12 @@ msgstr ""
 msgid "Expiry date"
 msgstr ""
 
-#: sql.js
+#: csvexport.js sql.js
 msgid "Export"
+msgstr ""
+
+#: csvexport.js html.py
+msgid "Export Animals as CSV"
 msgstr ""
 
 #: roles.js
@@ -4343,6 +4347,12 @@ msgstr ""
 
 #: report_export.js html.py
 msgid "Export Reports as CSV"
+msgstr ""
+
+#: csvexport.js
+msgid ""
+"Export a CSV file of animal records that ASM can import into another "
+"database."
 msgstr ""
 
 #: sql.js
@@ -8046,6 +8056,10 @@ msgstr ""
 
 #: mobile.py service.py
 msgid "Please click the Sign button when you are finished."
+msgstr ""
+
+#: csvimport.js csvexport.js
+msgid "Please see the manual for more information."
 msgstr ""
 
 #: media.js
@@ -12522,9 +12536,7 @@ msgid "Young Adult"
 msgstr ""
 
 #: csvimport.js
-msgid ""
-"Your CSV file should have a header row with field names ASM recognises. "
-"Please see the manual for more information."
+msgid "Your CSV file should have a header row with field names ASM recognises."
 msgstr ""
 
 #: change_password.js

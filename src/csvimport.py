@@ -491,8 +491,9 @@ def csvexport_animals(dbo, animalids):
     rows = []
     for aid in animalids.split(","):
         row = {}
-        a = animal.get_animal(dbo, aid)
+        a = animal.get_animal(dbo, utils.cint(aid))
         if a is None: continue
+        row["ANIMALCODE"] = a["SHELTERCODE"]
         row["ANIMALNAME"] = a["ANIMALNAME"]
         row["ANIMALSEX"] = a["SEXNAME"]
         row["ANIMALTYPE"] = a["ANIMALTYPENAME"]
@@ -503,7 +504,6 @@ def csvexport_animals(dbo, animalids):
         row["ANIMALLOCATION"] = a["SHELTERLOCATIONNAME"]
         row["ANIMALUNIT"] = a["SHELTERLOCATIONUNIT"]
         row["ANIMALSPECIES"] = a["SPECIESNAME"]
-        row["ANIMALAGE"] = a["ANIMALAGE"]
         row["ANIMALCOMMENTS"] = a["ANIMALCOMMENTS"]
         row["ANIMALHIDDENDETAILS"] = a["HIDDENANIMALDETAILS"]
         row["ANIMALHEALTHPROBLEMS"] = a["HEALTHPROBLEMS"]
@@ -512,10 +512,9 @@ def csvexport_animals(dbo, animalids):
         row["ANIMALNEUTERED"] = a["NEUTERED"]
         row["ANIMALNEUTEREDDATE"] = i18n.python2display(l, a["NEUTEREDDATE"])
         row["ANIMALMICROCHIP"] = a["IDENTICHIPNUMBER"]
-        row["ANIMALMICROCHIPDATE"] = i18n.python2display(l, a["ANIMALMICROCHIPDATE"])
+        row["ANIMALMICROCHIPDATE"] = i18n.python2display(l, a["IDENTICHIPDATE"])
         row["ANIMALENTRYDATE"] = i18n.python2display(l, a["DATEBROUGHTIN"])
         row["ANIMALDECEASEDDATE"] = i18n.python2display(l, a["DECEASEDDATE"])
-        row["ANIMALCODE"] = a["SHELTERCODE"]
         row["ANIMALNOTFORADOPTION"] = a["ISNOTAVAILABLEFORADOPTION"]
         row["ANIMALGOODWITHCATS"] = a["ISGOODWITHCATSNAME"]
         row["ANIMALGOODWITHDOGS"] = a["ISGOODWITHDOGSNAME"]
@@ -535,7 +534,6 @@ def csvexport_animals(dbo, animalids):
         row["ORIGINALOWNEREMAIL"] = a["ORIGINALOWNEREMAILADDRESS"]
         row["MOVEMENTTYPE"] = a["ACTIVEMOVEMENTTYPE"]
         row["MOVEMENTDATE"] = i18n.python2display(l, a["ACTIVEMOVEMENTDATE"])
-        row["MOVEMENTRETURNDATE"] = i18n.python2display(l, a["ACTIVERETURNDATE"])
         row["PERSONTITLE"] = a["CURRENTOWNERTITLE"]
         row["PERSONINITIALS"] = a["CURRENTOWNERINITIALS"]
         row["PERSONFIRSTNAME"] = a["CURRENTOWNERFORENAMES"]

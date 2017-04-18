@@ -197,6 +197,8 @@ ASM can import data from a CSV file.
 Microsoft Excel, OpenOffice Calc, Gnumeric, Google Docs and many other
 spreadsheet products can all export individual sheets in CSV format.
 
+.. note:: The screen :menuselection:`Settings --> Export Animals as CSV` produces CSV files in a format that ASM can import. This can be used to export and import animals from one ASM database to another.
+
 .. image:: images/import_csv.png
 
 The CSV file should have a header row that contains column names that ASM

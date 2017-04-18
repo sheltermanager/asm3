@@ -79,6 +79,7 @@ urls = (
     "/config.js", "configjs",
     "/rollup.js", "rollupjs",
     "/css", "css",
+    "/csvexport", "csvexport",
     "/csvimport", "csvimport",
     "/database", "database",
     "/diary_edit", "diary_edit",
@@ -2143,6 +2144,15 @@ class citations:
             users.check_permission(session, users.DELETE_CITATION)
             for lid in post.integer_list("ids"):
                 financial.delete_citation(session.dbo, session.user, lid)
+
+class csvexport(JSONEndpoint):
+    url = "csvexport"
+    get_permissions = users.USE_SQL_INTERFACE
+
+    def post_all(self, o):
+        self.header("Content-Type", "text/csv")
+        self.header("Content-Disposition", u"attachment; filename=export.csv")
+        return extcsvimport.csvexport_animals(o.dbo, o.post["animals"])
 
 class csvimport:
     def GET(self):
