@@ -319,6 +319,8 @@ def check_sql(dbo, username, sql):
     i = sql.find("$")
     while (i != -1):
         end = sql.find("$", i+1)
+        if end == -1:
+            raise utils.ASMValidationError("Unclosed $ token found")
         token = sql[i:end]
         sub = ""
         if token.startswith("$VAR"):
@@ -1162,6 +1164,8 @@ class Report:
                 continue
 
             ep = s.find("$", sp+1)
+            if ep == -1: break # stop if we have an unclosed tag
+
             token = s[sp+1:ep]
             paramtype = ""
             varname = ""
