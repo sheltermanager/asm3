@@ -3,6 +3,7 @@
 import additional
 import al
 import animal
+import collections
 import configuration
 import csv
 import datetime
@@ -490,7 +491,7 @@ def csvexport_animals(dbo, animalids):
     l = dbo.locale
     rows = []
     for aid in animalids.split(","):
-        row = {}
+        row = collections.OrderedDict()
         a = animal.get_animal(dbo, utils.cint(aid))
         if a is None: continue
         row["ANIMALCODE"] = a["SHELTERCODE"]
