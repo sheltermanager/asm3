@@ -630,7 +630,7 @@ $(function() {
                 header.show_info(controller.dbmessage);
             }
 
-            if (asm.smcom) {
+            if (asm.smcom && asm.smcomexpiry) {
                 var warnat = new Date(format.date_js(asm.smcomexpiry).getTime() - (1000 * 60 * 60 * 24 * 5)),
                     stopwarnat = format.date_js(asm.smcomexpiry),
                     now = new Date();
