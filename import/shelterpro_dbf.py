@@ -75,6 +75,7 @@ def getdateage(age, arrivaldate):
 
 owners = []
 ownerlicences = []
+logs = []
 movements = []
 animals = []
 animalvaccinations = []
@@ -82,6 +83,7 @@ animalcontrol = []
 
 ppa = {}
 ppo = {}
+ppi = {}
 addresses = {}
 addrlink = {}
 notes = {}
@@ -89,6 +91,7 @@ notes = {}
 asm.setid("adoption", START_ID)
 asm.setid("animal", START_ID)
 asm.setid("animalcontrol", START_ID)
+asm.setid("log", START_ID)
 asm.setid("owner", START_ID)
 
 if VACCINATION_IMPORT: asm.setid("animalvaccination", START_ID)
@@ -128,7 +131,7 @@ cperson = dbfread.DBF("%s/person.dbf" % PATH)
 cshelter = dbfread.DBF("%s/shelter.dbf" % PATH)
 cvacc = dbfread.DBF("%s/vacc.dbf" % PATH)
 cincident = dbfread.DBF("%s/incident.dbf" % PATH)
-#cnote = dbfread.DBF("%s/note.dbf" % PATH)
+cnote = dbfread.DBF("%s/note.dbf" % PATH)
 
 # Start with animals
 for row in canimal:
@@ -147,7 +150,6 @@ for row in canimal:
     if a.DateOfBirth is None: a.DateOfBirth = getdateage(age, row["ADDEDDATET"])
     a.DateBroughtIn = row["ADDEDDATET"]
     if a.DateBroughtIn is None:
-        asm.stderr("Bad datebroughtin: '%s'" % row["ADDEDDATET"])
         a.DateBroughtIn = datetime.datetime.today()    
     a.LastChangedDate = a.DateBroughtIn
     a.CreatedDate = a.DateBroughtIn
@@ -395,11 +397,6 @@ if LICENCE_IMPORT:
             if a.Neutered == 1:
                 ol.LicenceTypeID = 1 # Altered dog
 
-# Incident notes
-#for row in cnote:
-#    if row["EVENTTYPE"] == 2:
-#        notes[row["EVENTKEY"]] = row["NOTEMEMO"]
-
 # Incidents
 if INCIDENT_IMPORT:
     for row in cincident:
@@ -425,10 +422,41 @@ if INCIDENT_IMPORT:
         ac.IncidentTypeID = 1
         comments = "outcome: %s\n" % row["FINALOUTCO"]
         comments += "precinct: %s\n" % row["PRECINCT"]
-        if notes.has_key(row["INCIDENTKE"]):
-            comments += notes[row["INCIDENTKE"]]
         ac.CallNotes = comments
         ac.Sex = 2
+
+# Notes as log entries
+for row in cnote:
+    eventtype = row["EVENTTYPE"]
+    eventkey = row["EVENTKEY"]
+    notedate = asm.getdate_mmddyy(row["NOTEDATE"])
+    memo = row["NOTEMEMO"]
+    if eventtype in [ 1, 3 ]: # animal/intake or case notes
+        if not eventkey in ppa: continue
+        linkid = ppa[eventkey].ID
+        ppa[eventkey].HiddenAnimalDetails += "\n" + memo
+        l = asm.Log()
+        logs.append(l)
+        l.LogTypeID = 3
+        l.LinkID = linkid
+        l.LinkType = 0
+        l.Date = notedate
+        if l.Date is None:
+            l.Date = asm.now()
+        l.Comments = memo
+    elif eventtype in [ 2, 5, 10 ]: # person, case and incident notes
+        if not eventkey in ppi: continue
+        linkid = ppi[eventkey].ID
+        ppi[eventkey].CallNotes += "\n" + memo
+        l = asm.Log()
+        logs.append(l)
+        l.LogTypeID = 3
+        l.LinkID = linkid
+        l.LinkType = 6
+        l.Date = notedate
+        if l.Date is None:
+            l.Date = asm.now()
+        l.Comments = memo
 
 # Run back through the animals, if we have any that are still
 # on shelter after 2 years, add an adoption to an unknown owner
@@ -452,6 +480,8 @@ for av in animalvaccinations:
     print av
 for o in owners:
     print o
+for l in logs:
+    print l
 for m in movements:
     print m
 for ol in ownerlicences:
@@ -459,7 +489,7 @@ for ol in ownerlicences:
 for ac in animalcontrol:
     print ac
 
-asm.stderr_summary(animals=animals, animalvaccinations=animalvaccinations, owners=owners, movements=movements, ownerlicences=ownerlicences, animalcontrol=animalcontrol)
+asm.stderr_summary(animals=animals, animalvaccinations=animalvaccinations, logs=logs, owners=owners, movements=movements, ownerlicences=ownerlicences, animalcontrol=animalcontrol)
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"
