@@ -1320,9 +1320,9 @@ def get_animal_namecode(dbo, animalid):
     if len(r) == 0:
         return ""
     if configuration.use_short_shelter_codes(dbo):
-        rv = r[0]["SHORTCODE"] + " - " + r[0]["ANIMALNAME"]
+        rv = "%s - %s" % (r[0]["SHORTCODE"], r[0]["ANIMALNAME"])
     else:
-        rv = r[0]["SHELTERCODE"] + " - " + r[0]["ANIMALNAME"]
+        rv = "%s - %s" % (r[0]["SHELTERCODE"], r[0]["ANIMALNAME"])
     return rv
 
 def get_animals_namecode(dbo):
