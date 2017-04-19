@@ -8,10 +8,12 @@ All animals neutered/spayed between two dates.
 ###
 en
 ###
-SELECT ShelterCode, AnimalName,
+SELECT ShelterCode, AnimalName, ay.AnimalType, s.SpeciesName, 
 NeuteredDate, AnimalComments, x.Sex
 FROM animal
 INNER JOIN lksex x ON x.ID = animal.Sex 
+INNER JOIN animaltype ay ON ay.ID = animal.AnimalTypeID
+INNER JOIN species s ON s.ID = animal.SpeciesID
 WHERE Neutered = 1 AND 
 NeuteredDate BETWEEN '$ASK DATE Enter from date$' AND '$ASK DATE Enter to date$'
 ORDER BY NeuteredDate
@@ -25,6 +27,8 @@ $$HEAD
 <table border=1><tr>
 <td><b>Code</b></td>
 <td><b>Name</b></td>
+<td><b>Type</b></td>
+<td><b>Species</b></td>
 <td><b>Date</b></td>
 <td><b>Comments</b></td>
 </tr>
@@ -37,6 +41,8 @@ $$BODY
 <tr>
 <td>$SHELTERCODE</td>
 <td>$ANIMALNAME</td>
+<td>$ANIMALTYPE</td>
+<td>$SPECIESNAME</td>
 <td>$NEUTEREDDATE</td>
 <td>$ANIMALCOMMENTS</td>
 </tr>
