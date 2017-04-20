@@ -6,15 +6,6 @@ $(function() {
     var csvimport = {
 
         render: function() {
-            if (controller.error || controller.errors) {
-                // We have an import report, show it
-                return [
-                    html.content_header(_("Import a CSV file")),
-                    '<p class="asm-menu-category">' + _("Errors") + '</p>',
-                    csvimport.render_errors(),
-                    html.content_footer()
-                ].join("\n");
-            }
             return [
                 html.content_header(_("Import a CSV file")),
                 '<div class="centered" style="max-width: 900px; margin-left: auto; margin-right: auto">',
@@ -45,7 +36,7 @@ $(function() {
                 '</div>',
                 '<p>',
                 '<input id="filechooser" name="filechooser" type="file" /><br/>',
-                '<button id="submit" type="button">' + _("Import") + '</button>',
+                '<button id="import" type="button">' + _("Import") + '</button>',
                 '</p>',
                 '</form>',
                 '</div>',
@@ -53,34 +44,10 @@ $(function() {
             ].join("\n");
         },
 
-        render_errors: function() {
-            if (controller.error) {
-                return html.error(controller.error);
-            }
-            if (controller.errors) {
-                var s = "";
-                if (controller.errors.length > 0) {
-                    s = "<table><tr><th>" + _("Row") + "</th><th>" + _("Data") + "</th><th>" + _("Error") + "</th></tr>";
-                    $.each(controller.errors, function(i, v) {
-                        s += "<tr><td>" + v[0] + "</td><td>" + v[1] + "</td><td>" + v[2] + "</td></tr>";
-                    });
-                    s += "</table>";
-                }
-                s += html.info(
-                        common.ntranslate(controller.errors.length, [
-                            _("Import complete with {plural0} error."),
-                            _("Import complete with {plural1} errors."),
-                            _("Import complete with {plural2} errors."),
-                            _("Import complete with {plural3} errors.")
-                        ]));
-                return s;
-            }
-        },
-
         bind: function() {
-            $("#submit").button().click(function() {
-                $("#submit").button("disable");
-                $("body").css("cursor", "wait");
+            $("#import").button().click(function() {
+                if (!$("#filechooser").val()) { return; }
+                $("#import").button("disable");
                 $("#csvform").submit();
             });
             var cme = function() {

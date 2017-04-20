@@ -3,6 +3,7 @@
 import additional
 import al
 import animal
+import async
 import collections
 import configuration
 import csv
@@ -203,7 +204,8 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
         cols = row
         break
     if cols is None:
-        return [ (0, "", "Your CSV file is empty"), ]
+        async.set_last_error(dbo, "Your CSV file is empty")
+        return
 
     onevalid = False
     hasanimal = False
@@ -233,31 +235,38 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
 
     # Any valid fields?
     if not onevalid:
-        return [ (0, "", "Your CSV file did not contain any fields that ASM recognises"), ]
+        async.set_last_error(dbo, "Your CSV file did not contain any fields that ASM recognises")
+        return
 
     # If we have any animal fields, make sure at least ANIMALNAME is supplied
     if hasanimal and not hasanimalname:
-        return [ (0, "", "Your CSV file has animal fields, but no ANIMALNAME column"), ]
+        async.set_last_error(dbo, "Your CSV file has animal fields, but no ANIMALNAME column")
+        return
 
     # If we have any person fields, make sure at least PERSONLASTNAME or PERSONNAME is supplied
     if hasperson and not haspersonlastname and not haspersonname:
-        return [ (0, "", "Your CSV file has person fields, but no PERSONNAME or PERSONLASTNAME column"), ]
+        async.set_last_error(dbo, "Your CSV file has person fields, but no PERSONNAME or PERSONLASTNAME column")
+        return
 
     # If we have any original owner fields, make sure at least ORIGINALOWNERLASTNAME is supplied
     if hasoriginalowner and not hasoriginalownerlastname:
-        return [ (0, "", "Your CSV file has original owner fields, but no ORIGINALOWNERLASTNAME column"), ]
+        async.set_last_error(dbo, "Your CSV file has original owner fields, but no ORIGINALOWNERLASTNAME column")
+        return
 
     # If we have any movement fields, make sure MOVEMENTDATE is supplied
     if hasmovement and not hasmovementdate:
-        return [ (0, "", "Your CSV file has movement fields, but no MOVEMENTDATE column"), ]
+        async.set_last_error(dbo, "Your CSV file has movement fields, but no MOVEMENTDATE column")
+        return
 
     # If we have any donation fields, we need an amount
     if hasdonation and not hasdonationamount:
-        return [ (0, "", "Your CSV file has donation fields, but no DONATIONAMOUNT column"), ]
+        async.set_last_error(dbo, "Your CSV file has donation fields, but no DONATIONAMOUNT column")
+        return
 
     # We also need a valid person
     if hasdonation and not (haspersonlastname or haspersonname):
-        return [ (0, "", "Your CSV file has donation fields, but no person to apply the donation to"), ]
+        async.set_last_error(dbo, "Your CSV file has donation fields, but no person to apply the donation to")
+        return
 
     # Read the whole CSV file into a list of maps. Note, the
     # reader has a cursor at the second row already because
@@ -274,16 +283,18 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
 
     # If we're clearing down tables first, do it now
     if cleartables:
-        al.debug("Resetting the database by removing all non-lookup data", "csvimport.csvimport", dbo)
+        al.warn("Resetting the database by removing all non-lookup data", "csvimport.csvimport", dbo)
         dbupdate.reset_db(dbo)
 
     # Now that we've read them in, go through all the rows
     # and start importing.
     errors = []
     rowno = 1
+    async.set_progress_max(dbo, len(data))
     for row in data:
 
         al.debug("import csv: row %d of %d" % (rowno, len(data)), "csvimport.csvimport", dbo)
+        async.increment_progress_value(dbo)
 
         # Do we have animal data to read?
         animalid = 0
@@ -482,7 +493,11 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
 
         rowno += 1
 
-    return errors
+    h = [ "<p>%d success, %d errors</p><table>" % (len(data) - len(errors), len(errors)) ]
+    for rowno, row, err in errors:
+        h.append("<tr><td>%s</td><td>%s</td><td>%s</td></tr>" % (rowno, row, err))
+    h.append("</table>")
+    return "".join(h)
 
 def csvexport_animals(dbo, animalids):
     """

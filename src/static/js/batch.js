@@ -12,9 +12,7 @@ $(function() {
                 html.warn(_("These batch processes are run each night by the system and should not need to be run manually.") + '<br/><br/><b>' + 
                     _("Some batch processes may take a few minutes to run and could prevent other users being able to use the system for a short time.")
                     + '</b>'),
-                '<div id="progress" style="margin-top: 10px"></div>',
                 '<div id="tasks">',
-
                 '<p id="p-genshelterpos">' + _("Recalculate on-shelter animal locations") + ' <button id="button-genshelterpos">' + _("Go") + '</button></p>',
                 '<p id="p-genallpos">' + _("Recalculate ALL animal locations") + ' <button id="button-genallpos">' + _("Go") + '</button></p>',
                 '<p id="p-genlookingfor">' + _("Regenerate 'Person looking for' report") + ' <button id="button-genlookingfor">' + _("Go") + '</button></p>',
@@ -24,7 +22,6 @@ $(function() {
                 '<button id="button-genfigyear">' + _("Go") + '</button></p>',
                 '<p id="p-genfigmonth">' + _("Regenerate monthly animal figures for") + ' <input id="figmonth" class="asm-textbox asm-datebox" />',
                 '<button id="button-genfigmonth">' + _("Go") + '</button></p>',
-                
                 '</div>',
                 '</div>',
                 html.content_footer()
@@ -32,15 +29,9 @@ $(function() {
         },
 
         runmode: function(btn, formdata) {
-            $("#tasks p").hide();
-            $("#p-" + btn).show();
-            $("#button-" + btn).button("disable");
-            $("#progress").show().progressbar({ value: false });
             common.ajax_post("batch", formdata)
                 .then(function() {
-                    $("#button-" + btn).button("enable");
-                    $("#progress").hide();
-                    $("#tasks p").show();
+                    common.route("task");
                 });
         },
 

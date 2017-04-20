@@ -1,6 +1,8 @@
 40
 ================
 
+20/04/17 Move csvimport to async framework #1
+20/04/17 Complete function async task framework, switch trigger batch processes #1
 20/04/17 Simplify adoptable_js for mobile devices and fix iframe on iOS #199
 18/04/17 check_sql checks for unclosed $ and engine protects against them
 18/04/17 Export animal csv frontend screen/option #21

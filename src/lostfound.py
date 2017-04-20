@@ -3,6 +3,7 @@
 import additional
 import al
 import animal
+import async
 import audit
 import configuration
 import db
@@ -454,7 +455,9 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0):
     if animalid == 0 and lostanimalid == 0 and foundanimalid == 0:
         db.execute(dbo, "DELETE FROM animallostfoundmatch")
 
+    async.set_progress_max(dbo, len(lostanimals))
     for la in lostanimals:
+        async.increment_progress_value(dbo)
         # Found animals (if an animal id has been given don't
         # check found animals)
         if animalid == 0:
@@ -633,6 +636,7 @@ def update_match_report(dbo):
     al.debug("updating lost/found match report", "lostfound.update_match_report", dbo)
     configuration.lostfound_report(dbo, match_report(dbo))
     configuration.lostfound_last_match_count(dbo, lostfound_last_match_count(dbo))
+    return "OK %d" % lostfound_last_match_count(dbo)
 
 def get_lost_person_name(dbo, aid):
     """

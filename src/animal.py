@@ -3,6 +3,7 @@
 import additional
 import al
 import animalname
+import async
 import audit
 import configuration
 import datetime
@@ -3049,6 +3050,7 @@ def update_all_variable_animal_data(dbo, include_deceased=False, check_config=Tr
 
     # Mark the data as updated today
     configuration.set_variable_data_updated_today(dbo)
+    return "OK %d" % len(animals)
 
 def update_all_animal_statuses(dbo):
     """
@@ -3064,8 +3066,10 @@ def update_all_animal_statuses(dbo):
         "trial_on_shelter": configuration.trial_on_shelter(dbo)
     }
 
+    async.set_progress_max(dbo, len(animals))
     for a in animals:
         update_animal_status(dbo, int(a["ID"]), a, movements, animalupdatebatch, diaryupdatebatch, cfg)
+        async.increment_progress_value(dbo)
 
     aff = db.execute_many(dbo, "UPDATE animal SET " \
         "Archived = %s, " \
@@ -3082,6 +3086,7 @@ def update_all_animal_statuses(dbo):
         "WHERE ID = %s", animalupdatebatch)
     db.execute_many(dbo, "UPDATE diary SET LinkInfo = %s WHERE LinkType = %s AND LinkID = %s", diaryupdatebatch)
     al.debug("updated %d animal statuses (%d)" % (aff, len(animals)), "animal.update_all_animal_statuses", dbo)
+    return "OK %d" % len(animals)
 
 def update_foster_animal_statuses(dbo):
     """
@@ -3119,6 +3124,7 @@ def update_foster_animal_statuses(dbo):
         "WHERE ID = %s", animalupdatebatch)
     db.execute_many(dbo, "UPDATE diary SET LinkInfo = %s WHERE LinkType = %s AND LinkID = %s", diaryupdatebatch)
     al.debug("updated %d fostered animal statuses (%d)" % (aff, len(animals)), "animal.update_foster_animal_statuses", dbo)
+    return "OK %d" % len(animals)
 
 def update_on_shelter_animal_statuses(dbo):
     """
@@ -3137,8 +3143,10 @@ def update_on_shelter_animal_statuses(dbo):
         "trial_on_shelter": configuration.trial_on_shelter(dbo)
     }
 
+    async.set_progress_max(dbo, len(animals))
     for a in animals:
         update_animal_status(dbo, int(a["ID"]), a, movements, animalupdatebatch, diaryupdatebatch, cfg)
+        async.increment_progress_value(dbo)
 
     aff = db.execute_many(dbo, "UPDATE animal SET " \
         "Archived = %s, " \
@@ -3155,6 +3163,7 @@ def update_on_shelter_animal_statuses(dbo):
         "WHERE ID = %s", animalupdatebatch)
     db.execute_many(dbo, "UPDATE diary SET LinkInfo = %s WHERE LinkType = %s AND LinkID = %s", diaryupdatebatch)
     al.debug("updated %d on shelter animal statuses (%d)" % (aff, len(animals)), "animal.update_on_shelter_animal_statuses", dbo)
+    return "OK %d" % len(animals)
 
 def update_animal_status(dbo, animalid, a = None, movements = None, animalupdatebatch = None, diaryupdatebatch = None, cfg = None):
     """
@@ -3435,7 +3444,7 @@ def update_animal_figures(dbo, month = 0, year = 0):
     If month and year aren't given, defaults to this month, unless today is
     the first day of the month in which case we do last month.
     """
-
+    async.set_progress_max(dbo, 3)
     batch = []
     nid = db._get_id_max(dbo, "animalfigures")
 
@@ -3777,6 +3786,8 @@ def update_animal_figures(dbo, month = 0, year = 0):
         # End of day
         add_row(123, "SP_TOTAL", 0, speciesid, daysinmonth, _("End Of Day", l), 1, False, sheltertotal)
 
+    async.set_progress_value(dbo, 1)
+
     # Animal Types =====================================
     alltypes = lookups.get_animal_types(dbo)
     for at in alltypes:
@@ -3967,8 +3978,11 @@ def update_animal_figures(dbo, month = 0, year = 0):
         # End of day
         add_row(50, "AT_TOTAL", typeid, 0, daysinmonth, _("End Of Day", l), 1, False, sheltertotal)
 
+    async.set_progress_value(dbo, 2)
+
     # Write out our db changes
     update_db(month, year)
+    return "OK"
 
 def update_animal_figures_annual(dbo, year = 0):
     """
@@ -3976,6 +3990,7 @@ def update_animal_figures_annual(dbo, year = 0):
     If year isn't given, defaults to this year, unless today is the
     first of the year in which case we do last year.
     """
+    async.set_progress_max(dbo, 3)
     batch = []
     nid = db._get_id_max(dbo, "animalfiguresannual")
 
@@ -4265,6 +4280,8 @@ def update_animal_figures_annual(dbo, year = 0):
             "GROUP BY a.NeuteredDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
             sp["ID"], sp["SPECIESNAME"], "SP_NEUTERSPAYNS", group, 170, showbabies, babymonths)
 
+    async.set_progress_value(dbo, 1)
+
     # Types =====================================
     alltypes = lookups.get_animal_types(dbo)
     for at in alltypes:
@@ -4414,6 +4431,8 @@ def update_animal_figures_annual(dbo, year = 0):
                 "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear, movement.ADOPTION),
                 at["ID"], at["ANIMALTYPE"], "AT_TRANSFERINADOPTED", group, 150, at["SHOWSPLIT"], babymonths)
 
+    async.set_progress_value(dbo, 2)
+
     # Entry Reasons =====================================
     allreasons = lookups.get_entryreasons(dbo)
     for er in allreasons:
@@ -4562,9 +4581,12 @@ def update_animal_figures_annual(dbo, year = 0):
                 "AND a.IsTransfer = 1 AND a.NonShelterAnimal = 0 AND ad.MovementType = %d " \
                 "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(er["ID"]), firstofyear, lastofyear, movement.ADOPTION),
                 er["ID"], er["REASONNAME"], "ER_TRANSFERINADOPTED", group, 150, er["SHOWSPLIT"], babymonths)
+    
+    async.set_progress_value(dbo, 3)
 
     # Write out all our changes in one go
     update_db(year)
+    return "OK"
 
 def auto_cancel_holds(dbo):
     """

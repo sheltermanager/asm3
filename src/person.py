@@ -3,6 +3,7 @@
 import additional
 import al
 import animal
+import async
 import audit
 import configuration
 import datetime
@@ -594,10 +595,13 @@ def update_owner_names(dbo):
     al.debug("regenerating owner names...", "person.update_owner_names", dbo)
     own = db.query(dbo, "SELECT ID, OwnerType, OwnerTitle, OwnerInitials, OwnerForeNames, OwnerSurname FROM owner")
     nameformat = configuration.owner_name_format(dbo)
+    async.set_progress_max(dbo, len(own))
     for o in own:
         db.execute(dbo, "UPDATE owner SET OwnerName = %s WHERE ID = %d" % \
             (db.ds(calculate_owner_name(dbo, o["OWNERTYPE"], o["OWNERTITLE"], o["OWNERINITIALS"], o["OWNERFORENAMES"], o["OWNERSURNAME"], nameformat)), o["ID"]))
+        async.increment_progress_value(dbo)
     al.debug("regenerated %d owner names" % len(own), "person.update_owner_names", dbo)
+    return "OK %d" % len(own)
 
 def update_person_from_form(dbo, post, username):
     """
@@ -1205,7 +1209,9 @@ def lookingfor_report(dbo, username = "system", personid = 0):
     ah.append( "</tr>")
 
     totalmatches = 0
+    async.set_progress_max(dbo, len(people))
     for p in people:
+        async.increment_progress_value(dbo)
         sql = []
         if p["MATCHANIMALTYPE"] > 0: sql.append(" AND a.AnimalTypeID = %d" % int(p["MATCHANIMALTYPE"]))
         if p["MATCHSPECIES"] > 0: sql.append(" AND a.SpeciesID = %d" % int(p["MATCHSPECIES"]))
@@ -1318,5 +1324,6 @@ def update_lookingfor_report(dbo):
     al.debug("updating lookingfor report", "person.update_lookingfor_report", dbo)
     configuration.lookingfor_report(dbo, lookingfor_report(dbo))
     configuration.lookingfor_last_match_count(dbo, lookingfor_last_match_count(dbo))
+    return "OK %d" % lookingfor_last_match_count(dbo)
 
 

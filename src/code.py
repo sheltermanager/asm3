@@ -202,6 +202,7 @@ urls = (
     "/sql", "sql",
     "/sql_dump", "sql_dump", 
     "/systemusers", "systemusers",
+    "/task", "task",
     "/test", "test",
     "/timeline", "timeline",
     "/traploan", "traploan",
@@ -1868,65 +1869,34 @@ class animal_vaccination(JSONEndpoint):
             "vaccinationtypes": extlookups.get_vaccination_types(dbo)
         }
 
-class batch:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.TRIGGER_BATCH)
-        post = utils.PostedData(web.input(), session.locale)
-        s = html.header("", session)
-        s += html.controller("")
-        s += html.footer()
-        return full_or_json("batch", s, "", post["json"] == "true")
+class batch(JSONEndpoint):
+    url = "batch"
+    get_permissions = users.TRIGGER_BATCH
+    post_permissions = users.TRIGGER_BATCH
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        utils.check_locked_db(session)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(mode = ""), session.locale)
-        users.check_permission(session, users.TRIGGER_BATCH)
-        web.header("Content-Type", "text/html")
-        if post["mode"] == "genfigyear":
-            try:
-                extanimal.update_animal_figures_annual(dbo, post.date("figyear").year)
-                return "0"
-            except Exception as err:
-                return str(err)
-        elif post["mode"] == "genfigmonth":
-            try:
-                extanimal.update_animal_figures(dbo, post.date("figmonth").month, post.date("figmonth").year)
-                return "0"
-            except Exception as err:
-                return str(err)
-        elif post["mode"] == "genshelterpos":
-            try:
-                extanimal.update_on_shelter_animal_statuses(dbo)
-                return "0"
-            except Exception as err:
-                return str(err)
-        elif post["mode"] == "genallpos":
-            try:
-                extanimal.update_all_animal_statuses(dbo)
-                return "0"
-            except Exception as err:
-                return str(err)
-        elif post["mode"] == "genlookingfor":
-            try:
-                extperson.update_lookingfor_report(dbo)
-                return "0"
-            except Exception as err:
-                return str(err)
-        elif post["mode"] == "genownername":
-            try:
-                extperson.update_owner_names(dbo)
-                return "0"
-            except Exception as err:
-                return str(err)
-        elif post["mode"] == "genlostfound":
-            try:
-                extlostfound.update_match_report(dbo)
-                return "0"
-            except Exception as err:
-                return str(err)
+    def controller(self, o):
+        return {}
+
+    def post_genfigyear(self, o):
+        async.function_task(o.dbo, "Generate Annual Figures", extanimal.update_animal_figures_annual, o.dbo, o.post.date("figyear").year)
+
+    def post_genfigmonth(self, o):
+        async.function_task(o.dbo, "Generate Monthly Figures", extanimal.update_animal_figures, o.dbo, o.post.date("figmonth").month, o.post.date("figmonth").year)
+
+    def post_genshelterpos(self, o):
+        async.function_task(o.dbo, "Recalculate On Shelter Locations", extanimal.update_on_shelter_animal_statuses, o.dbo)
+
+    def post_genallpos(self, o):
+        async.function_task(o.dbo, "Recalculate ALL Positions", extanimal.update_all_animal_statuses, o.dbo)
+
+    def post_genlookingfor(self, o):
+        async.function_task(o.dbo, "Generate Looking For Report", extperson.update_lookingfor_report, o.dbo)
+
+    def post_genownername(self, o):
+        async.function_task(o.dbo, "Generate Owner Names", extperson.update_owner_names, o.dbo)
+
+    def post_genlostfound(self, o):
+        async.function_task(o.dbo, "Generate Lost and Found", extlostfound.update_match_report, o.dbo)
 
 class calendarview:
     def GET(self):
@@ -2154,42 +2124,19 @@ class csvexport(JSONEndpoint):
         self.header("Content-Disposition", u"attachment; filename=export.csv")
         return extcsvimport.csvexport_animals(o.dbo, o.post["animals"])
 
-class csvimport:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.USE_SQL_INTERFACE)
-        s = html.header("", session)
-        s += html.controller("")
-        s += html.footer()
-        return full_or_json("csvimport", s, "", False)
+class csvimport(JSONEndpoint):
+    url = "csvimport"
+    get_permissions = users.USE_SQL_INTERFACE
+    post_permissions = users.USE_SQL_INTERFACE
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        utils.check_locked_db(session)
-        dbo = session.dbo
-        l = session.locale
-        post = utils.PostedData(web.input(createmissinglookups = "", cleartables = "", checkduplicates = "", filechooser={}), session.locale)
-        users.check_permission(session, users.USE_SQL_INTERFACE)
-        web.header("Content-Type", "text/html")
-        try:
-            errors = extcsvimport.csvimport(dbo, post.filedata(), 
-                post.boolean("createmissinglookups") == 1, post.boolean("cleartables") == 1, post.boolean("checkduplicates") == 1)
-            title = _("Import a CSV file", l)
-            s = html.header(title, session)
-            c = html.controller_json("errors", errors)
-            s += html.controller(c)
-            s += html.footer()
-            return full_or_json("csvimport", s, c, False)
-        except Exception as err:
-            al.error("error in CSV data: %s" % str(err), "csvimport.csvimport", dbo, sys.exc_info())
-            if str(err).find("no attribute 'value'") != -1:
-                err = "No CSV file was uploaded"
-            title = _("Import a CSV file", l)
-            s = html.header(title, session)
-            c = html.controller_str("error", str(err))
-            s += html.controller(c)
-            s += html.footer()
-            return full_or_json("csvimport", s, c, False)
+    def controller(self, o):
+        return {}
+
+    def post_all(self, o):
+        l = o.locale
+        async.function_task(o.dbo, _("Import a CSV file", l), extcsvimport.csvimport, o.dbo, o.post.filedata(), 
+            o.post.boolean("createmissinglookups") == 1, o.post.boolean("cleartables") == 1, o.post.boolean("checkduplicates") == 1)
+        self.redirect("task")
 
 class diary_edit:
     def GET(self):
@@ -5043,13 +4990,13 @@ class person_vouchers:
             for vid in post.integer_list("ids"):
                 financial.delete_voucher(session.dbo, session.user, vid)
 
-class publish:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.USE_INTERNET_PUBLISHER)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(mode="page"), session.locale)
-        mode = post["mode"]
+class publish(JSONEndpoint):
+    url = "publish"
+    get_permissions = users.USE_INTERNET_PUBLISHER
+
+    def controller(self, o):
+        dbo = o.dbo
+        mode = o.post["mode"]
         failed = False
         al.debug("publish started for mode %s" % mode, "code.publish", dbo)
         # If a publisher is already running and we have a mode, mark
@@ -5076,22 +5023,13 @@ class publish:
             elif mode == "ptuk": extpublish.PETtracUKPublisher(dbo, pc).start()
             elif mode == "veha": extpublish.HomeAgainPublisher(dbo, pc).start()
             elif mode == "vear": extpublish.AKCReunitePublisher(dbo, pc).start()
-        s = html.header("", session)
-        c = html.controller_bool("failed", failed)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("publish", s, c, post["json"] == "true")
+        return { "failed": failed }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="poll"), session.locale)
-        mode = post["mode"]
-        dbo = session.dbo
-        if mode == "poll":
-            users.check_permission(session, users.USE_INTERNET_PUBLISHER)
-            return "%s|%d|%s" % (async.get_task_name(dbo), async.get_progress_percent(dbo), async.get_last_error(dbo))
-        elif mode == "stop":
-            async.set_cancel(dbo, True)
+    def post_poll(self, o):
+        return "%s|%d|%s" % (async.get_task_name(o.dbo), async.get_progress_percent(o.dbo), async.get_last_error(o.dbo))
+
+    def post_stop(self, o):
+        async.set_cancel(o.dbo, True)
 
 class publish_logs:
     def GET(self):
@@ -5693,6 +5631,18 @@ class systemusers:
             users.check_permission(session, users.EDIT_USER)
             for uid in post.integer_list("ids"):
                 users.reset_password(session.dbo, uid, post["password"])
+
+class task(JSONEndpoint):
+    url = "task"
+
+    def controller(self, o):
+        return { }
+   
+    def post_poll(self, o):
+        return "%s|%d|%s|%s" % (async.get_task_name(o.dbo), async.get_progress_percent(o.dbo), async.get_last_error(o.dbo), async.get_return_value(o.dbo))
+
+    def post_stop(self, o):
+        async.set_cancel(o.dbo, True)
 
 class test(JSONEndpoint):
     url = "test"

@@ -151,6 +151,10 @@ msgstr ""
 msgid "A short version of the reference number"
 msgstr ""
 
+#: task.js
+msgid "A task is already running."
+msgstr ""
+
 #: movements.js move_transfer.js move_reclaim.js move_adopt.js move_retailer.js
 #: move_reserve.js move_foster.js
 msgid "A unique number to identify this movement"
@@ -2846,7 +2850,7 @@ msgstr ""
 msgid "Dandi Dinmont Terrier"
 msgstr ""
 
-#: csvimport.js html.py
+#: html.py
 msgid "Data"
 msgstr ""
 
@@ -4192,16 +4196,8 @@ msgstr ""
 msgid "Entry reason"
 msgstr ""
 
-#: csvimport.js
-msgid "Error"
-msgstr ""
-
 #: login.js
 msgid "Error contacting server."
-msgstr ""
-
-#: csvimport.js
-msgid "Errors"
 msgstr ""
 
 #: animal_find.js dbupdate.py animal.py
@@ -4254,6 +4250,10 @@ msgstr ""
 
 #: sql.js
 msgid "Execute the SQL in the box below"
+msgstr ""
+
+#: task.js
+msgid "Executing Task"
 msgstr ""
 
 #: sql.js
@@ -5516,22 +5516,6 @@ msgstr ""
 
 #: csvimport.js code.py html.py
 msgid "Import a CSV file"
-msgstr ""
-
-#: csvimport.js
-msgid "Import complete with {plural0} error."
-msgstr ""
-
-#: csvimport.js
-msgid "Import complete with {plural1} errors."
-msgstr ""
-
-#: csvimport.js
-msgid "Import complete with {plural2} errors."
-msgstr ""
-
-#: csvimport.js
-msgid "Import complete with {plural3} errors."
 msgstr ""
 
 #: onlineforms.js
@@ -7296,6 +7280,10 @@ msgstr ""
 
 #: sql.js
 msgid "No results."
+msgstr ""
+
+#: task.js
+msgid "No tasks are running."
 msgstr ""
 
 #: reports.py
@@ -9103,10 +9091,6 @@ msgstr ""
 msgid "Rough"
 msgstr ""
 
-#: csvimport.js
-msgid "Row"
-msgstr ""
-
 #: mailmerge.js
 msgid "Rows"
 msgstr ""
@@ -10123,6 +10107,10 @@ msgstr ""
 msgid "Stolen {0}"
 msgstr ""
 
+#: task.js
+msgid "Stop"
+msgstr ""
+
 #: publish.js
 msgid "Stop Publishing"
 msgstr ""
@@ -10277,6 +10265,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Tan and White"
+msgstr ""
+
+#: task.js
+msgid "Task complete."
 msgstr ""
 
 #: animal_find_results.js animal.js animal_new.js mobile.py
@@ -12718,7 +12710,7 @@ msgstr ""
 msgid "{0} incurred in costs"
 msgstr ""
 
-#: publish.js
+#: task.js publish.js
 msgid "{0} is running ({1}&#37; complete)."
 msgstr ""
 
