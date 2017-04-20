@@ -422,7 +422,7 @@ $(function() {
             $("#button-insurance")
                 .button({ icons: { primary: "ui-icon-cart" }, text: false })
                 .click(function() {
-                    common.ajax_post("animal_movements", "mode=insurance")
+                    common.ajax_post("movement", "mode=insurance")
                         .then(function(result) { 
                             $("#insurance").val(result); 
                         })
