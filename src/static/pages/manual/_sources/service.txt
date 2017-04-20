@@ -187,6 +187,26 @@ information below the animal's name in the list::
     <div id="asm3-adoptables" />
     <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
 
+Extra Content
+^^^^^^^^^^^^^
+
+It's also possible to add an extra content callback, which adoptable_js calls
+for every animal it outputs. For example, to add the animal's bio below the
+thumbnail and basic info::
+
+    <script>
+    asm3_adoptable_filters = "sex breed agegroup size species";
+    asm3_adoptable_extra = function(a) {
+        return a.WEBSITEMEDIANOTES;
+    }
+    </script>
+    <div id="asm3-adoptables" />
+    <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
+
+You could set .asm3-adoptable-tagline to display: none and then use an extra
+content callback to output and format any data from the animal's record in the
+way you want and override the default behaviour.
+
 Popup iFrame
 ^^^^^^^^^^^^
 
