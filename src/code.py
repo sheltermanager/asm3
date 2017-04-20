@@ -1878,25 +1878,32 @@ class batch(JSONEndpoint):
         return {}
 
     def post_genfigyear(self, o):
-        async.function_task(o.dbo, "Generate Annual Figures", extanimal.update_animal_figures_annual, o.dbo, o.post.date("figyear").year)
+        l = o.locale
+        async.function_task(o.dbo, _("Regenerate annual animal figures for", l), extanimal.update_animal_figures_annual, o.dbo, o.post.date("figyear").year)
 
     def post_genfigmonth(self, o):
-        async.function_task(o.dbo, "Generate Monthly Figures", extanimal.update_animal_figures, o.dbo, o.post.date("figmonth").month, o.post.date("figmonth").year)
+        l = o.locale
+        async.function_task(o.dbo, _("Regenerate monthly animal figures for", l), extanimal.update_animal_figures, o.dbo, o.post.date("figmonth").month, o.post.date("figmonth").year)
 
     def post_genshelterpos(self, o):
-        async.function_task(o.dbo, "Recalculate On Shelter Locations", extanimal.update_on_shelter_animal_statuses, o.dbo)
+        l = o.locale
+        async.function_task(o.dbo, _("Recalculate on-shelter animal locations", l), extanimal.update_on_shelter_animal_statuses, o.dbo)
 
     def post_genallpos(self, o):
-        async.function_task(o.dbo, "Recalculate ALL Positions", extanimal.update_all_animal_statuses, o.dbo)
+        l = o.locale
+        async.function_task(o.dbo, _("Recalculate ALL animal locations", l), extanimal.update_all_animal_statuses, o.dbo)
 
     def post_genlookingfor(self, o):
-        async.function_task(o.dbo, "Generate Looking For Report", extperson.update_lookingfor_report, o.dbo)
+        l = o.locale
+        async.function_task(o.dbo, _("Regenerate 'Person looking for' report", l), extperson.update_lookingfor_report, o.dbo)
 
     def post_genownername(self, o):
-        async.function_task(o.dbo, "Generate Owner Names", extperson.update_owner_names, o.dbo)
+        l = o.locale
+        async.function_task(o.dbo, _("Regenerate person names in selected format", l), extperson.update_owner_names, o.dbo)
 
     def post_genlostfound(self, o):
-        async.function_task(o.dbo, "Generate Lost and Found", extlostfound.update_match_report, o.dbo)
+        l = o.locale
+        async.function_task(o.dbo, _("Regenerate 'Match lost and found animals' report", l), extlostfound.update_match_report, o.dbo)
 
 class calendarview:
     def GET(self):
