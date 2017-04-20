@@ -1,7 +1,7 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, plusplus: true, sloppy: true, vars: true, nomen: true */
 /*global alert */
 /*global asm3_adoptable_filters, asm3_adoptable_iframe, asm3_adoptable_iframe_height, asm3_adoptable_iframe_bgcolor */
-/*global asm3_adoptable_translations, asm3_adoptable_filter */
+/*global asm3_adoptable_translations, asm3_adoptable_extra, asm3_adoptable_filter */
 
 (function() {
 
@@ -121,6 +121,7 @@
             '</a>',
             '<br/>',
             '<span class="asm3-adoptable-tagline">' + filters_tokens.join(" ") + '</span><br/>',
+            '{extra}',
         '</div>'
     ].join("");
 
@@ -145,6 +146,11 @@
             if (typeof asm3_adoptable_filter !== 'undefined') {
                 if (!asm3_adoptable_filter(item)) { return; }
             }
+
+            var extra = "";
+            if (typeof asm3_adoptable_extra !== 'undefined') {
+                extra = asm3_adoptable_extra(item);
+            }
             
             h.push(substitute(thumbnail_template, {
                 account: account,
@@ -154,6 +160,7 @@
                 animalname: translate(item.ANIMALNAME),
                 agegroup: spanwrap("agegroup", translate(item.AGEGROUP)),
                 breed: spanwrap("breed", translate(item.BREEDNAME)),
+                extra: extra,
                 sex: spanwrap("sex", translate(item.SEXNAME)),
                 size: spanwrap("size", translate(item.SIZENAME)),
                 species: spanwrap("species", translate(item.SPECIESNAME))

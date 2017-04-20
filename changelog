@@ -1,6 +1,7 @@
 40
 ================
 
+20/04/17 asm3_adoptable_extra callable function to add extra content to each item
 20/04/17 Move csvimport to async framework #1
 20/04/17 Complete function async task framework, switch trigger batch processes #1
 20/04/17 Simplify adoptable_js for mobile devices and fix iframe on iOS #199
