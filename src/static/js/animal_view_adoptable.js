@@ -1,5 +1,7 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, plusplus: true, sloppy: true, vars: true, nomen: true */
-/*global alert, asm3_adoptable_filters: true, asm3_adoptable_iframe, asm3_adoptable_translations, asm3_adoptable_filter */
+/*global alert */
+/*global asm3_adoptable_filters, asm3_adoptable_iframe, asm3_adoptable_iframe_height, asm3_adoptable_iframe_bgcolor */
+/*global asm3_adoptable_translations, asm3_adoptable_filter */
 
 (function() {
 
@@ -8,16 +10,28 @@
     var baseurl = "{TOKEN_BASE_URL}";
     var all_filters = "agegroup sex breed size species";
 
-    if (typeof asm3_adoptable_filters === 'undefined') {
-        asm3_adoptable_filters = "agegroup sex species";
+    var active_filters = "agegroup sex species";
+    if (typeof asm3_adoptable_filters !== 'undefined') {
+        active_filters = asm3_adoptable_filters;
     }
     var filters_tokens = [];
-    asm3_adoptable_filters.split(" ").forEach(function(item, index, arr) {
+    active_filters.split(" ").forEach(function(item, index, arr) {
         filters_tokens.push("{" + item + "}");
     });
+
     var use_iframe = false;
     if (typeof asm3_adoptable_iframe !== 'undefined') {
         use_iframe = asm3_adoptable_iframe;
+    }
+
+    var iframe_height = "6000px";
+    if (typeof asm3_adoptable_iframe_height !== 'undefined') {
+        iframe_height = asm3_adoptable_iframe_height;
+    }
+
+    var iframe_bgcolor = "#fff";
+    if (typeof asm3_adoptable_iframe_bgcolor !== 'undefined') {
+        iframe_bgcolor = asm3_adoptable_iframe_bgcolor;
     }
 
     var translate = function(s) {
@@ -76,11 +90,6 @@
     };
 
     var filter_template = [
-        '<div id="asm3-adoptable-iframe-overlay" style="z-index: 9999; display: none; position: fixed; left: 0; top: 0; width: 100%; height: 100%; background-color: #fff">',
-        '<p style="position: fixed; text-align: right; top: 6%; left: 85%; z-index: 9999;">',
-        '<a id="asm3-adoptable-iframe-close" style="font-size: 150%;" href="#">&times; ' + translate("CLOSE") + '</a>&nbsp;&nbsp;</p>',
-        '<iframe id="asm3-adoptable-iframe" style="position: fixed; left: 5%; top: 5%; width: 90%; height: 90%; box-shadow: 3px 3px 5px #888;"></iframe>',
-        '</div>',
         '<div id="asm3-adoptable-filters" class="asm3-filters" style="display: block; text-align: center; padding: 5px">',
             '<select id="asm3-select-species">{speciesoptions}</select> ',
             '<select id="asm3-select-breed">{breedoptions}</select> ',
@@ -89,6 +98,15 @@
             '<select id="asm3-select-sex">{sexoptions}</select>',
         '</div>',
         '<div id="asm3-adoptable-list" class="asm3-adoptable-list" />'
+    ].join("");
+
+    var overlay_template = [
+        '<div id="asm3-adoptable-iframe-overlay" style="z-index: 9999; display: none; overflow: hidden; position: absolute; left: 0; top: 0; width: 100%; height: {iframe_height}; background-color: {iframe_bgcolor}">',
+            '<p style="text-align: right;">',
+                '<a id="asm3-adoptable-iframe-close" href="#">&times; ' + translate("CLOSE") + '</a>&nbsp;&nbsp;',
+            '</p>',
+            '<iframe id="asm3-adoptable-iframe" scrolling="no" style="width: 100%; height: 100%;"></iframe>',
+        '</div>'
     ].join("");
 
     var thumbnail_template = [
@@ -183,12 +201,15 @@
         document.getElementById("asm3-select-sex").addEventListener("change", render_adoptables);
 
         all_filters.split(" ").forEach(function(item, index, arr) {
-            if (asm3_adoptable_filters.indexOf(item) == -1) {
+            if (active_filters.indexOf(item) == -1) {
                 document.getElementById("asm3-select-" + item).style.display = "none";
             }
         });
 
         if (use_iframe) {
+            var overlay = document.createElement('div');
+            overlay.innerHTML = substitute(overlay_template, { "iframe_height": iframe_height, "iframe_bgcolor": iframe_bgcolor });
+            document.body.appendChild(overlay);
             document.getElementById("asm3-adoptable-iframe-close").addEventListener("click", function(e) {
                 document.getElementById("asm3-adoptable-iframe").src = "about:blank";
                 document.getElementById("asm3-adoptable-iframe-overlay").style.display = "none";

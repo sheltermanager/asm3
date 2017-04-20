@@ -100,12 +100,15 @@ Here's an example page showing how to inject your adoptable animal list::
     </body>
     </html>
 
-The output is unstyled - just a thumbnail with a name/link below and two lines
-of brief text containing some basic information about the animal.  You can
-style this information by adding CSS to your stylesheets for the following
-classes:
+CSS and Styles
+^^^^^^^^^^^^^^
 
-* asm3-filters : The div surrounding the dropdown filters
+The adoptable_js output is unstyled - just a thumbnail with a name/link below
+and two lines of brief text containing some basic information about the animal.
+You can style this information by adding CSS to your stylesheets for the
+following classes:
+
+* asm3-filters : The div surrounding the SELECT dropdown filters
 * asm3-adoptable-list: The div surrounding all the animal thumbnails
 * asm3-adoptable-item : The div surrounding each animal thumbnail
 * asm3-adoptable-link : The a tag enclosing the thumbnail and animal name
@@ -113,37 +116,57 @@ classes:
 * asm3-adoptable-name : The animal's name
 * asm3-adoptable-tagline : The brief animal information
 
+and the following elements by their id attribute:
+
+* asm3-adoptable-iframe-overlay: The div surrounding the popup iframe (if used)
+* asm3-adoptable-iframe-close: The close link at the top right of the popup
+* asm3-adoptable-iframe: The popup iframe itself
+
 Eg: To add rounded corners to the thumbnails and show the animal's name in
 bold, add this to your CSS::
 
     .asm3-adoptable-name { font-weight: bold; }
     .asm3-adoptable-thumbnail { border-radius: 8px; }
 
-Another trick you can do is to translate any of the text output by the
-adoptable list on the fly. By default, it only uses elements from your database
-so they will match the language of your database. 
+To increase the size of the close link, add this::
+
+    #asm3-adoptable-iframe-close { font-size: 200%; }
+
+Translations
+^^^^^^^^^^^^
+
+It's possible to translate any of the text output by the adoptable list on the
+fly. By default, it only uses text from your database values so they will match
+the language of your database. 
 
 You can add on-the-fly translation by adding a script tag with a dictionary
 called asm3_adoptable_translations above the script that makes the service
-call. Eg to translate English values to French and to change the default (any
-species) to all::
+call. Eg to translate some English species to French and to change the default (any
+species) to all as well as the CLOSE link text::
 
     <script>
     asm3_adoptable_translations = {
         "Dog": "Chien",
         "Cat": "Chat",
         "Pig": "Cochon",
-        "(any species)": "all"
+        "(any species)": "all",
+        "CLOSE": "Return to my webpage"
     }
     </script>
     <div id="asm3-adoptables" />
     <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
 
+
+Filters
+^^^^^^^
+
 You can also add a filter callback, which allows you to implement your own
 filter based on other elements in the page. The callback receives the complete
-animal record and must return true if the record is to be included.
+animal record and must return true if the record is to be included in the list
+of thumbnails.
 
-For example, to only include animals of type dog, you could use this callback::
+For example, to only output animals with an animal type of dog, you could use
+this callback::
 
     <script>
     function asm3_adoptable_filter(a) {
@@ -153,10 +176,10 @@ For example, to only include animals of type dog, you could use this callback::
     <div id="asm3-adoptables" />
     <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
 
-Other dropdowns are supported through the use of the asm3_adoptable_filters
-string. To use them all, include the following asm3_adoptable_filters line. The
-order in which they appear in the filters line is also used to output that
-piece of information below the animal's name::
+Which dropdowns appear depends on the asm3_adoptable_filters string. To use
+them all, include the following asm3_adoptable_filters line. The order in which
+they appear in the filters line is also used to output that piece of
+information below the animal's name in the list::
 
     <script>
     asm3_adoptable_filters = "sex breed agegroup size species";
@@ -164,7 +187,10 @@ piece of information below the animal's name::
     <div id="asm3-adoptables" />
     <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
 
-By default, the output will load the target page in a new tab. However, the
+Popup iFrame
+^^^^^^^^^^^^
+
+By default, clicking on an animal thumbnail or link will load the target animalview page in a new browser tab. However, the
 system can also load the page in a floating iframe so that viewing adoptable
 animals does not leave your site. You can enable this behaviour by setting
 asm3_adoptable_iframe = true in your script. Eg::
@@ -172,6 +198,22 @@ asm3_adoptable_iframe = true in your script. Eg::
     <script>
     asm3_adoptable_filters = "sex breed agegroup size species";
     asm3_adoptable_iframe = true;
+    </script>
+    <div id="asm3-adoptables" />
+    <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
+
+Some positioning styles for the iframe have to be supplied programatically and
+cannot be set by CSS (everything else can be), but there are a couple of
+javascript variables you can set for them instead. 
+
+Eg: To fix the iframe height at 2000 pixels and use a gray background instead
+of the default of white::
+
+    <script>
+    asm3_adoptable_filters = "sex breed agegroup size species";
+    asm3_adoptable_iframe = true;
+    asm3_adoptable_iframe_height = "2000px";
+    asm3_adoptable_iframe_bgcolor = "#888";
     </script>
     <div id="asm3-adoptables" />
     <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>

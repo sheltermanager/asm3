@@ -107,7 +107,13 @@
 <li class="toctree-l2"><a class="reference internal" href="#animal-image">animal_image</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#animal-thumbnail">animal_thumbnail</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#animal-view">animal_view</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#animal-view-adoptable-js">animal_view_adoptable_js</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#animal-view-adoptable-js">animal_view_adoptable_js</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#css-and-styles">CSS and Styles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#translations">Translations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#filters">Filters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#popup-iframe">Popup iFrame</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#csv-mail-and-csv-report">csv_mail and csv_report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#extra-image">extra_image</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#html-report">html_report</a></li>
@@ -257,12 +263,14 @@ found, a popup error message will appear.</p>
 &lt;/html&gt;
 </pre></div>
 </div>
-<p>The output is unstyled - just a thumbnail with a name/link below and two lines
-of brief text containing some basic information about the animal.  You can
-style this information by adding CSS to your stylesheets for the following
-classes:</p>
+<div class="section" id="css-and-styles">
+<h3>CSS and Styles<a class="headerlink" href="#css-and-styles" title="Permalink to this headline">¶</a></h3>
+<p>The adoptable_js output is unstyled - just a thumbnail with a name/link below
+and two lines of brief text containing some basic information about the animal.
+You can style this information by adding CSS to your stylesheets for the
+following classes:</p>
 <ul class="simple">
-<li>asm3-filters : The div surrounding the dropdown filters</li>
+<li>asm3-filters : The div surrounding the SELECT dropdown filters</li>
 <li>asm3-adoptable-list: The div surrounding all the animal thumbnails</li>
 <li>asm3-adoptable-item : The div surrounding each animal thumbnail</li>
 <li>asm3-adoptable-link : The a tag enclosing the thumbnail and animal name</li>
@@ -270,35 +278,54 @@ classes:</p>
 <li>asm3-adoptable-name : The animal&#8217;s name</li>
 <li>asm3-adoptable-tagline : The brief animal information</li>
 </ul>
+<p>and the following elements by their id attribute:</p>
+<ul class="simple">
+<li>asm3-adoptable-iframe-overlay: The div surrounding the popup iframe (if used)</li>
+<li>asm3-adoptable-iframe-close: The close link at the top right of the popup</li>
+<li>asm3-adoptable-iframe: The popup iframe itself</li>
+</ul>
 <p>Eg: To add rounded corners to the thumbnails and show the animal&#8217;s name in
 bold, add this to your CSS:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">asm3</span><span class="o">-</span><span class="n">adoptable</span><span class="o">-</span><span class="n">name</span> <span class="p">{</span> <span class="n">font</span><span class="o">-</span><span class="n">weight</span><span class="p">:</span> <span class="n">bold</span><span class="p">;</span> <span class="p">}</span>
 <span class="o">.</span><span class="n">asm3</span><span class="o">-</span><span class="n">adoptable</span><span class="o">-</span><span class="n">thumbnail</span> <span class="p">{</span> <span class="n">border</span><span class="o">-</span><span class="n">radius</span><span class="p">:</span> <span class="mi">8</span><span class="n">px</span><span class="p">;</span> <span class="p">}</span>
 </pre></div>
 </div>
-<p>Another trick you can do is to translate any of the text output by the
-adoptable list on the fly. By default, it only uses elements from your database
-so they will match the language of your database.</p>
+<p>To increase the size of the close link, add this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">#asm3-adoptable-iframe-close { font-size: 200%; }</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="translations">
+<h3>Translations<a class="headerlink" href="#translations" title="Permalink to this headline">¶</a></h3>
+<p>It&#8217;s possible to translate any of the text output by the adoptable list on the
+fly. By default, it only uses text from your database values so they will match
+the language of your database.</p>
 <p>You can add on-the-fly translation by adding a script tag with a dictionary
 called asm3_adoptable_translations above the script that makes the service
-call. Eg to translate English values to French and to change the default (any
-species) to all:</p>
+call. Eg to translate some English species to French and to change the default (any
+species) to all as well as the CLOSE link text:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="n">asm3_adoptable_translations</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;Dog&quot;</span><span class="p">:</span> <span class="s2">&quot;Chien&quot;</span><span class="p">,</span>
     <span class="s2">&quot;Cat&quot;</span><span class="p">:</span> <span class="s2">&quot;Chat&quot;</span><span class="p">,</span>
     <span class="s2">&quot;Pig&quot;</span><span class="p">:</span> <span class="s2">&quot;Cochon&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;(any species)&quot;</span><span class="p">:</span> <span class="s2">&quot;all&quot;</span>
+    <span class="s2">&quot;(any species)&quot;</span><span class="p">:</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;CLOSE&quot;</span><span class="p">:</span> <span class="s2">&quot;Return to my webpage&quot;</span>
 <span class="p">}</span>
 <span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;asm3-adoptables&quot;</span> <span class="o">/&gt;</span>
 <span class="o">&lt;</span><span class="n">script</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;http://localhost:5000/service?method=animal_view_adoptable_js&quot;</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="filters">
+<h3>Filters<a class="headerlink" href="#filters" title="Permalink to this headline">¶</a></h3>
 <p>You can also add a filter callback, which allows you to implement your own
 filter based on other elements in the page. The callback receives the complete
-animal record and must return true if the record is to be included.</p>
-<p>For example, to only include animals of type dog, you could use this callback:</p>
+animal record and must return true if the record is to be included in the list
+of thumbnails.</p>
+<p>For example, to only output animals with an animal type of dog, you could use
+this callback:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="n">function</span> <span class="n">asm3_adoptable_filter</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="n">a</span><span class="o">.</span><span class="n">ANIMALTYPENAME</span> <span class="o">==</span> <span class="s2">&quot;D (Dog)&quot;</span><span class="p">;</span>
@@ -308,10 +335,10 @@ animal record and must return true if the record is to be included.</p>
 <span class="o">&lt;</span><span class="n">script</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;http://localhost:5000/service?method=animal_view_adoptable_js&quot;</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<p>Other dropdowns are supported through the use of the asm3_adoptable_filters
-string. To use them all, include the following asm3_adoptable_filters line. The
-order in which they appear in the filters line is also used to output that
-piece of information below the animal&#8217;s name:</p>
+<p>Which dropdowns appear depends on the asm3_adoptable_filters string. To use
+them all, include the following asm3_adoptable_filters line. The order in which
+they appear in the filters line is also used to output that piece of
+information below the animal&#8217;s name in the list:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="n">asm3_adoptable_filters</span> <span class="o">=</span> <span class="s2">&quot;sex breed agegroup size species&quot;</span><span class="p">;</span>
 <span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
@@ -319,7 +346,10 @@ piece of information below the animal&#8217;s name:</p>
 <span class="o">&lt;</span><span class="n">script</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;http://localhost:5000/service?method=animal_view_adoptable_js&quot;</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<p>By default, the output will load the target page in a new tab. However, the
+</div>
+<div class="section" id="popup-iframe">
+<h3>Popup iFrame<a class="headerlink" href="#popup-iframe" title="Permalink to this headline">¶</a></h3>
+<p>By default, clicking on an animal thumbnail or link will load the target animalview page in a new browser tab. However, the
 system can also load the page in a floating iframe so that viewing adoptable
 animals does not leave your site. You can enable this behaviour by setting
 asm3_adoptable_iframe = true in your script. Eg:</p>
@@ -330,6 +360,22 @@ asm3_adoptable_iframe = true in your script. Eg:</p>
 <span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;asm3-adoptables&quot;</span> <span class="o">/&gt;</span>
 <span class="o">&lt;</span><span class="n">script</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;http://localhost:5000/service?method=animal_view_adoptable_js&quot;</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
 </pre></div>
+</div>
+<p>Some positioning styles for the iframe have to be supplied programatically and
+cannot be set by CSS (everything else can be), but there are a couple of
+javascript variables you can set for them instead.</p>
+<p>Eg: To fix the iframe height at 2000 pixels and use a gray background instead
+of the default of white:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="n">asm3_adoptable_filters</span> <span class="o">=</span> <span class="s2">&quot;sex breed agegroup size species&quot;</span><span class="p">;</span>
+<span class="n">asm3_adoptable_iframe</span> <span class="o">=</span> <span class="n">true</span><span class="p">;</span>
+<span class="n">asm3_adoptable_iframe_height</span> <span class="o">=</span> <span class="s2">&quot;2000px&quot;</span><span class="p">;</span>
+<span class="n">asm3_adoptable_iframe_bgcolor</span> <span class="o">=</span> <span class="s2">&quot;#888&quot;</span><span class="p">;</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;asm3-adoptables&quot;</span> <span class="o">/&gt;</span>
+<span class="o">&lt;</span><span class="n">script</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;http://localhost:5000/service?method=animal_view_adoptable_js&quot;</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="csv-mail-and-csv-report">
