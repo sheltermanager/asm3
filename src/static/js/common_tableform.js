@@ -1260,7 +1260,7 @@
                     n.prop("checked", row[v.json_field] == 1);
                 }
                 else if (v.type =="select") {
-                    n.select("value", row[v.json_field]);
+                    n.select("value", html.decode(row[v.json_field])); 
                 }
                 else if (v.type == "selectmulti") {
                     n.children().prop("selected", false);

@@ -1830,6 +1830,9 @@
          */
         decode: function(o) {
             var decode_str = function(s) {
+                // Just return the string as is if there are no html entities in there
+                // to save unnecessary creating of DOM elements.
+                if (String(s).indexOf("&") == -1) { return s; }
                 try {
                     return $("<div></div>").html(s).text();
                 }
