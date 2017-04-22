@@ -176,6 +176,7 @@
                 handler = function(e) {
                     document.getElementById("asm3-adoptable-iframe").src = this.href;
                     document.getElementById("asm3-adoptable-iframe-overlay").style.display = "block";
+                    window.scrollTo(0, 0);
                     e.preventDefault();
                 };
             for (i = 0; i < links.length; i++) {
