@@ -242,6 +242,15 @@ Vaccinations have three date fields:
 Due vaccinations for the purposes of reporting, alerts and the medical book are
 those that have a required date, but no given date yet.
 
+Expires is a "belt and braces" reminder. The system expects you to set the
+expires date when you don't expect this vaccination to be given again during
+the animal's stay with the shelter - eg: a booster vaccination that won't be
+given again for a year. It means the system can remind you a new vaccination
+needs administering in the unlikely the event that the animal is still in the
+care of the shelter when the date arrives. To get rid of the alert for an
+expired vaccination, create a new required vaccination for that animal of the
+same type.
+
 Test
 ^^^^
 
