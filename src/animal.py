@@ -159,7 +159,7 @@ def get_animal_query(dbo):
         "web.MediaName AS WebsiteMediaName, " \
         "web.Date AS WebsiteMediaDate, " \
         "web.MediaNotes AS WebsiteMediaNotes, " \
-        "(SELECT COUNT(*) FROM media mtc WHERE LOWER(mtc.MediaName) LIKE '%%.jpg' AND mtc.LinkTypeID = 0 AND mtc.LinkID = a.ID) AS WebsiteImageCount, " \
+        "(SELECT COUNT(*) FROM media mtc WHERE LOWER(mtc.MediaName) LIKE '%%.jpg' AND mtc.LinkTypeID = 0 AND mtc.LinkID = a.ID AND ExcludeFromPublish = 0) AS WebsiteImageCount, " \
         "doc.MediaName AS DocMediaName, " \
         "vid.MediaName AS WebsiteVideoURL, " \
         "vid.MediaNotes AS WebsiteVideoNotes, " \

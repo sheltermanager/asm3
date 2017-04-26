@@ -1,6 +1,7 @@
 40
 ================
 
+26/04/17 Excluded images should not be counted in WebsiteImageCount
 21/04/17 Fix unicode bug in saving and reloading diary notes/tasks #138
 20/04/17 asm3_adoptable_extra callable function to add extra content to each item
 20/04/17 Move csvimport to async framework #1
