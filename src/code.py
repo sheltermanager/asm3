@@ -73,6 +73,7 @@ urls = (
     "/animal_vaccination", "animal_vaccination", 
     "/batch", "batch", 
     "/calendarview", "calendarview",
+    "/calendar_events", "calendar_events",
     "/change_password", "change_password",
     "/change_user_settings", "change_user_settings",
     "/citations", "citations", 
@@ -407,6 +408,12 @@ class ASMEndpoint(object):
         else:
             for p in permissions:
                 users.check_permission(session, p)
+
+    def checkb(self, permissions):
+        """ Check logged in and a single permission, returning a boolean """
+        if self.check_logged_in:
+            utils.check_loggedin(session, web, self.login_url)
+        return users.check_permission_bool(session, permissions)
 
     def check_locked_db(self):
         utils.check_locked_db(session)
@@ -1905,185 +1912,177 @@ class batch(JSONEndpoint):
         l = o.locale
         async.function_task(o.dbo, _("Regenerate 'Match lost and found animals' report", l), extlostfound.update_match_report, o.dbo)
 
-class calendarview:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_ANIMAL)
-        l = session.locale
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        if post["start"] == "":
-            s = html.header("", session)
-            s += html.footer()
-            al.debug("calendarview load page", "code.calendarview", dbo)
-            return full_or_json("calendarview", s, "", post["json"] == "true")
-        elif post["start"] != "" and post["end"] != "":
-            ev = post["ev"]
-            if ev == "": ev = "dvmtrolp"
-            events = []
-            # Find data for the month
-            if "d" in ev and users.check_permission_bool(session, users.VIEW_DIARY):
-                user = session.user
-                # Show all diary notes on the calendar if the user chose to see all
-                # on the home page, or they have permission to view all notes
-                if configuration.all_diary_home_page(dbo) or users.check_permission_bool(session, users.EDIT_ALL_DIARY_NOTES):
-                    user = ""
-                for d in extdiary.get_between_two_dates(dbo, user, post["start"], post["end"]):
-                    allday = False
-                    # If the diary time is midnight, assume all day instead
-                    if d["DIARYDATETIME"].hour == 0 and d["DIARYDATETIME"].minute == 0:
-                        allday = True
-                    events.append({ 
-                        "title": d["SUBJECT"], 
-                        "allDay": allday, 
-                        "start": d["DIARYDATETIME"], 
-                        "tooltip": "%s %s" % (d["LINKINFO"], d["NOTE"]), 
-                        "icon": "diary",
-                        "link": "diary_edit_my" })
-            if "v" in ev and users.check_permission_bool(session, users.VIEW_VACCINATION):
-                for v in extmedical.get_vaccinations_two_dates(dbo, post["start"], post["end"], session.locationfilter, session.siteid):
-                    sub = "%s - %s" % (v["VACCINATIONTYPE"], v["ANIMALNAME"])
-                    tit = "%s - %s %s %s" % (v["VACCINATIONTYPE"], v["SHELTERCODE"], v["ANIMALNAME"], v["COMMENTS"])
-                    events.append({ 
-                        "title": sub, 
-                        "allDay": True, 
-                        "start": v["DATEREQUIRED"], 
-                        "tooltip": tit, 
-                        "icon": "vaccination",
-                        "link": "animal_vaccination?id=%d" % v["ANIMALID"] })
-                for v in extmedical.get_vaccinations_expiring_two_dates(dbo, post["start"], post["end"], session.locationfilter, session.siteid):
-                    sub = "%s - %s" % (v["VACCINATIONTYPE"], v["ANIMALNAME"])
-                    tit = "%s - %s %s %s" % (v["VACCINATIONTYPE"], v["SHELTERCODE"], v["ANIMALNAME"], v["COMMENTS"])
-                    events.append({ 
-                        "title": sub, 
-                        "allDay": True, 
-                        "start": v["DATEEXPIRES"], 
-                        "tooltip": tit, 
-                        "icon": "vaccination",
-                        "link": "animal_vaccination?id=%d" % v["ANIMALID"] })
-            if "m" in ev and users.check_permission_bool(session, users.VIEW_MEDICAL):
-                for m in extmedical.get_treatments_two_dates(dbo, post["start"], post["end"], session.locationfilter, session.siteid):
-                    sub = "%s - %s" % (m["TREATMENTNAME"], m["ANIMALNAME"])
-                    tit = "%s - %s %s %s %s" % (m["TREATMENTNAME"], m["SHELTERCODE"], m["ANIMALNAME"], m["DOSAGE"], m["COMMENTS"])
-                    events.append({ 
-                        "title": sub, 
-                        "allDay": True, 
-                        "start": m["DATEREQUIRED"], 
-                        "tooltip": tit, 
-                        "icon": "medical",
-                        "link": "animal_medical?id=%d" % m["ANIMALID"] })
-            if "t" in ev and users.check_permission_bool(session, users.VIEW_TEST):
-                for t in extmedical.get_tests_two_dates(dbo, post["start"], post["end"], session.locationfilter, session.siteid):
-                    sub = "%s - %s" % (t["TESTNAME"], t["ANIMALNAME"])
-                    tit = "%s - %s %s %s" % (t["TESTNAME"], t["SHELTERCODE"], t["ANIMALNAME"], t["COMMENTS"])
-                    events.append({ 
-                        "title": sub, 
-                        "allDay": True, 
-                        "start": t["DATEREQUIRED"], 
-                        "tooltip": tit, 
-                        "icon": "test",
-                        "link": "animal_test?id=%d" % t["ANIMALID"] })
-            if "p" in ev and users.check_permission_bool(session, users.VIEW_DONATION):
-                for p in financial.get_donations_due_two_dates(dbo, post["start"], post["end"]):
-                    sub = "%s - %s" % (p["DONATIONNAME"], p["OWNERNAME"])
-                    tit = "%s - %s %s %s" % (p["DONATIONNAME"], p["OWNERNAME"], html.format_currency(l, p["DONATION"]), p["COMMENTS"])
-                    events.append({ 
-                        "title": sub, 
-                        "allDay": True, 
-                        "start": p["DATEDUE"], 
-                        "tooltip": tit, 
-                        "icon": "donation",
-                        "link": "person_donations?id=%d" % p["OWNERID"] })
-            if "o" in ev and users.check_permission_bool(session, users.VIEW_INCIDENT):
-                for o in extanimalcontrol.get_followup_two_dates(dbo, post["start"], post["end"]):
-                    sub = "%s - %s" % (o["INCIDENTNAME"], o["OWNERNAME"])
-                    tit = "%s - %s %s, %s" % (o["INCIDENTNAME"], o["OWNERNAME"], o["DISPATCHADDRESS"], o["CALLNOTES"])
-                    events.append({ 
-                        "title": sub, 
-                        "allDay": False, 
-                        "start": o["FOLLOWUPDATETIME"], 
-                        "tooltip": tit, 
-                        "icon": "call",
-                        "link": "incident?id=%d" % o["ACID"] })
-            if "r" in ev and users.check_permission_bool(session, users.VIEW_TRANSPORT):
-                for r in extmovement.get_transport_two_dates(dbo, post["start"], post["end"]):
-                    sub = "%s - %s" % (r["ANIMALNAME"], r["SHELTERCODE"])
-                    tit = "%s - %s :: %s, %s" % (r["DRIVEROWNERNAME"], r["PICKUPOWNERADDRESS"], r["DROPOFFOWNERADDRESS"], r["COMMENTS"])
-                    allday = False
-                    if r["PICKUPDATETIME"].hour == 0 and r["PICKUPDATETIME"].minute == 0:
-                        allday = True
-                    events.append({ 
-                        "title": sub, 
-                        "allDay": allday, 
-                        "start": r["PICKUPDATETIME"], 
-                        "end": r["DROPOFFDATETIME"],
-                        "tooltip": tit, 
-                        "icon": "transport",
-                        "link": "animal_transport?id=%d" % r["ANIMALID"]})
-            if "l" in ev and users.check_permission_bool(session, users.VIEW_TRAPLOAN):
-                for l in extanimalcontrol.get_traploan_two_dates(dbo, post["start"], post["end"]):
-                    sub = "%s - %s" % (l["TRAPTYPENAME"], l["OWNERNAME"])
-                    tit = "%s - %s %s, %s" % (l["TRAPTYPENAME"], l["OWNERNAME"], l["TRAPNUMBER"], l["COMMENTS"])
-                    events.append({ 
-                        "title": sub, 
-                        "allDay": True, 
-                        "start": l["RETURNDUEDATE"], 
-                        "tooltip": tit, 
-                        "icon": "traploan",
-                        "link": "person_traploan?id=%d" % l["OWNERID"]})
-            al.debug("calendarview found %d events (%s->%s)" % (len(events), post["start"], post["end"]), "code.calendarview", dbo)
-            return html.json(events)
+class calendarview(JSONEndpoint):
+    url = "calendarview"
+    get_permissions = users.VIEW_ANIMAL
 
-class change_password:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        al.debug("%s change password screen" % session.user, "code.change_password", dbo)
-        s = html.header("", session)
-        c = html.controller_bool("ismaster", smcom.active() and dbo.database == session.user)
-        c += html.controller_bool("issuggest", post.integer("suggest") == 1)
-        c += html.controller_str("username", session.user)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("change_password", s, c, post["json"] == "true")
+    def controller(self, o):
+        return {}
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(oldpassword = "", newpassword = ""), session.locale)
-        oldpass = post["oldpassword"]
-        newpass = post["newpassword"]
-        al.debug("%s changed password" % (session.user), "code.change_password", dbo)
-        users.change_password(dbo, session.user, oldpass, newpass)
+class calendar_events(ASMEndpoint):
+    url = "calendar_events"
 
-class change_user_settings:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        al.debug("%s change user settings screen" % session.user, "code.change_user_settings", dbo)
-        s = html.header("", session)
-        c = html.controller_json("user", users.get_users(dbo, session.user))
-        c += html.controller_json("locales", extlookups.LOCALES)
-        c += html.controller_str("sigtype", ELECTRONIC_SIGNATURES)
-        c += html.controller_json("themes", extlookups.VISUAL_THEMES)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("change_user_settings", s, c, post["json"] == "true")
+    def content(self, o):
+        start = o.post["start"]
+        end = o.post["end"]
+        if start == "" or end == "":
+            return "[]"
+        events = []
+        ev = o.post["ev"]
+        user = o.user
+        dbo = o.dbo
+        l = o.locale
+        if "d" in ev and self.checkb(users.VIEW_DIARY):
+            # Show all diary notes on the calendar if the user chose to see all
+            # on the home page, or they have permission to view all notes
+            if configuration.all_diary_home_page(dbo) or users.check_permission_bool(session, users.EDIT_ALL_DIARY_NOTES):
+                user = ""
+            for d in extdiary.get_between_two_dates(dbo, user, start, end):
+                allday = False
+                # If the diary time is midnight, assume all day instead
+                if d["DIARYDATETIME"].hour == 0 and d["DIARYDATETIME"].minute == 0:
+                    allday = True
+                events.append({ 
+                    "title": d["SUBJECT"], 
+                    "allDay": allday, 
+                    "start": d["DIARYDATETIME"], 
+                    "tooltip": "%s %s" % (d["LINKINFO"], d["NOTE"]), 
+                    "icon": "diary",
+                    "link": "diary_edit_my" })
+        if "v" in ev and self.checkb(users.VIEW_VACCINATION):
+            for v in extmedical.get_vaccinations_two_dates(dbo, start, end, session.locationfilter, session.siteid):
+                sub = "%s - %s" % (v["VACCINATIONTYPE"], v["ANIMALNAME"])
+                tit = "%s - %s %s %s" % (v["VACCINATIONTYPE"], v["SHELTERCODE"], v["ANIMALNAME"], v["COMMENTS"])
+                events.append({ 
+                    "title": sub, 
+                    "allDay": True, 
+                    "start": v["DATEREQUIRED"], 
+                    "tooltip": tit, 
+                    "icon": "vaccination",
+                    "link": "animal_vaccination?id=%d" % v["ANIMALID"] })
+            for v in extmedical.get_vaccinations_expiring_two_dates(dbo, start, end, session.locationfilter, session.siteid):
+                sub = "%s - %s" % (v["VACCINATIONTYPE"], v["ANIMALNAME"])
+                tit = "%s - %s %s %s" % (v["VACCINATIONTYPE"], v["SHELTERCODE"], v["ANIMALNAME"], v["COMMENTS"])
+                events.append({ 
+                    "title": sub, 
+                    "allDay": True, 
+                    "start": v["DATEEXPIRES"], 
+                    "tooltip": tit, 
+                    "icon": "vaccination",
+                    "link": "animal_vaccination?id=%d" % v["ANIMALID"] })
+        if "m" in ev and self.checkb(users.VIEW_MEDICAL):
+            for m in extmedical.get_treatments_two_dates(dbo, start, end, session.locationfilter, session.siteid):
+                sub = "%s - %s" % (m["TREATMENTNAME"], m["ANIMALNAME"])
+                tit = "%s - %s %s %s %s" % (m["TREATMENTNAME"], m["SHELTERCODE"], m["ANIMALNAME"], m["DOSAGE"], m["COMMENTS"])
+                events.append({ 
+                    "title": sub, 
+                    "allDay": True, 
+                    "start": m["DATEREQUIRED"], 
+                    "tooltip": tit, 
+                    "icon": "medical",
+                    "link": "animal_medical?id=%d" % m["ANIMALID"] })
+        if "t" in ev and self.checkb(users.VIEW_TEST):
+            for t in extmedical.get_tests_two_dates(dbo, start, end, session.locationfilter, session.siteid):
+                sub = "%s - %s" % (t["TESTNAME"], t["ANIMALNAME"])
+                tit = "%s - %s %s %s" % (t["TESTNAME"], t["SHELTERCODE"], t["ANIMALNAME"], t["COMMENTS"])
+                events.append({ 
+                    "title": sub, 
+                    "allDay": True, 
+                    "start": t["DATEREQUIRED"], 
+                    "tooltip": tit, 
+                    "icon": "test",
+                    "link": "animal_test?id=%d" % t["ANIMALID"] })
+        if "p" in ev and self.checkb(users.VIEW_DONATION):
+            for p in financial.get_donations_due_two_dates(dbo, start, end):
+                sub = "%s - %s" % (p["DONATIONNAME"], p["OWNERNAME"])
+                tit = "%s - %s %s %s" % (p["DONATIONNAME"], p["OWNERNAME"], html.format_currency(l, p["DONATION"]), p["COMMENTS"])
+                events.append({ 
+                    "title": sub, 
+                    "allDay": True, 
+                    "start": p["DATEDUE"], 
+                    "tooltip": tit, 
+                    "icon": "donation",
+                    "link": "person_donations?id=%d" % p["OWNERID"] })
+        if "o" in ev and self.checkb(users.VIEW_INCIDENT):
+            for o in extanimalcontrol.get_followup_two_dates(dbo, start, end):
+                sub = "%s - %s" % (o["INCIDENTNAME"], o["OWNERNAME"])
+                tit = "%s - %s %s, %s" % (o["INCIDENTNAME"], o["OWNERNAME"], o["DISPATCHADDRESS"], o["CALLNOTES"])
+                events.append({ 
+                    "title": sub, 
+                    "allDay": False, 
+                    "start": o["FOLLOWUPDATETIME"], 
+                    "tooltip": tit, 
+                    "icon": "call",
+                    "link": "incident?id=%d" % o["ACID"] })
+        if "r" in ev and self.checkb(users.VIEW_TRANSPORT):
+            for r in extmovement.get_transport_two_dates(dbo, start, end):
+                sub = "%s - %s" % (r["ANIMALNAME"], r["SHELTERCODE"])
+                tit = "%s - %s :: %s, %s" % (r["DRIVEROWNERNAME"], r["PICKUPOWNERADDRESS"], r["DROPOFFOWNERADDRESS"], r["COMMENTS"])
+                allday = False
+                if r["PICKUPDATETIME"].hour == 0 and r["PICKUPDATETIME"].minute == 0:
+                    allday = True
+                events.append({ 
+                    "title": sub, 
+                    "allDay": allday, 
+                    "start": r["PICKUPDATETIME"], 
+                    "end": r["DROPOFFDATETIME"],
+                    "tooltip": tit, 
+                    "icon": "transport",
+                    "link": "animal_transport?id=%d" % r["ANIMALID"]})
+        if "l" in ev and self.checkb(users.VIEW_TRAPLOAN):
+            for l in extanimalcontrol.get_traploan_two_dates(dbo, start, end):
+                sub = "%s - %s" % (l["TRAPTYPENAME"], l["OWNERNAME"])
+                tit = "%s - %s %s, %s" % (l["TRAPTYPENAME"], l["OWNERNAME"], l["TRAPNUMBER"], l["COMMENTS"])
+                events.append({ 
+                    "title": sub, 
+                    "allDay": True, 
+                    "start": l["RETURNDUEDATE"], 
+                    "tooltip": tit, 
+                    "icon": "traploan",
+                    "link": "person_traploan?id=%d" % l["OWNERID"]})
+        al.debug("calendarview found %d events (%s->%s)" % (len(events), start, end), "code.calendarview", dbo)
+        self.header("Content-Type", "application/json")
+        return html.json(events)
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(theme = "", locale = "", realname = "", email = ""), session.locale)
+class change_password(JSONEndpoint):
+    url = "change_password"
+
+    def controller(self, o):
+        al.debug("%s change password screen" % o.user, "code.change_password", o.dbo)
+        return {
+            "ismaster": smcom.active() and o.dbo.database == o.user,
+            "issuggest": o.post.integer("suggest") == 1,
+            "username": o.user
+        }
+
+    def post_all(self, o):
+        oldpass = o.post["oldpassword"]
+        newpass = o.post["newpassword"]
+        al.debug("%s changed password" % (o.user), "code.change_password", o.dbo)
+        users.change_password(o.dbo, o.user, oldpass, newpass)
+
+class change_user_settings(JSONEndpoint):
+    url = "change_user_settings"
+
+    def controller(self, o):
+        al.debug("%s change user settings screen" % o.user, "code.change_user_settings", o.dbo)
+        return {
+            "user": users.get_users(o.dbo, o.user),
+            "locales": extlookups.LOCALES,
+            "sigtype": ELECTRONIC_SIGNATURES,
+            "themes": extlookups.VISUAL_THEMES
+        }
+
+    def post_all(self, o):
+        post = o.post
         theme = post["theme"]
         locale = post["locale"]
         realname = post["realname"]
         email = post["email"]
         signature = post["signature"]
-        al.debug("%s changed settings: theme=%s, locale=%s, realname=%s, email=%s" % (session.user, theme, locale, realname, email), "code.change_password", dbo)
-        users.update_user_settings(dbo, session.user, email, realname, locale, theme, signature)
-        users.update_session(session)
+        al.debug("%s changed settings: theme=%s, locale=%s, realname=%s, email=%s" % (o.user, theme, locale, realname, email), "code.change_password", o.dbo)
+        users.update_user_settings(o.dbo, o.user, email, realname, locale, theme, signature)
+        users.update_session(o.session)
 
 class citations:
     def GET(self):

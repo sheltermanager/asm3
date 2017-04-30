@@ -17,7 +17,7 @@ $(function() {
         },
 
         calendar_events: {
-            url: "calendarview",
+            url: "calendar_events",
             type: "GET",
             data: {
                 ev: "d"
