@@ -83,6 +83,7 @@ urls = (
     "/csvexport", "csvexport",
     "/csvimport", "csvimport",
     "/database", "database",
+    "/diary", "diary",
     "/diary_edit", "diary_edit",
     "/diary_edit_my", "diary_edit_my",
     "/diarytask", "diarytask",
@@ -121,6 +122,7 @@ urls = (
     "/licence", "licence",
     "/licence_renewal", "licence_renewal",
     "/litters", "litters", 
+    "/log", "log",
     "/log_new", "log_new",
     "/lookups", "lookups",
     "/lostanimal", "lostanimal",
@@ -1482,26 +1484,9 @@ class animal_diary(JSONEndpoint):
             "tabcounts": extanimal.get_satellite_counts(dbo, animalid)[0],
             "name": "animal_diary",
             "linkid": animalid,
+            "linktypeid": extdiary.ANIMAL,
             "forlist": users.get_users_and_roles(dbo)
         }
-
-    def post_create(self, o):
-        self.check(users.ADD_DIARY)
-        return extdiary.insert_diary_from_form(o.dbo, o.user, extdiary.ANIMAL, o.post.integer("linkid"), o.post)
-
-    def post_update(self, o):
-        self.check(users.EDIT_ALL_DIARY_NOTES)
-        extdiary.update_diary_from_form(o.dbo, o.user, o.post)
-
-    def post_delete(self, o):
-        self.check(users.DELETE_DIARY)
-        for did in o.post.integer_list("ids"):
-            extdiary.delete_diary(o.dbo, o.user, did)
-
-    def post_complete(self, o):
-        self.check(users.BULK_COMPLETE_NOTES)
-        for did in o.post.integer_list("ids"):
-            extdiary.complete_diary_note(o.dbo, o.user, did)
 
 class animal_diet(JSONEndpoint):
     url = "animal_diet"
@@ -1659,19 +1644,6 @@ class animal_licence(JSONEndpoint):
             "licencetypes": extlookups.get_licence_types(dbo)
         }
 
-    def post_create(self, o):
-        self.check(users.ADD_LICENCE)
-        return financial.insert_licence_from_form(o.dbo, o.user, o.post)
-
-    def post_update(self, o):
-        self.check(users.CHANGE_LICENCE)
-        financial.update_licence_from_form(o.dbo, o.user, o.post)
-
-    def post_delete(self, o):
-        self.check(users.DELETE_LICENCE)
-        for lid in o.post.integer_list("ids"):
-            financial.delete_licence(o.dbo, o.user, lid)
-
 class animal_log(JSONEndpoint):
     url = "animal_log"
     js_module = "log"
@@ -1688,25 +1660,13 @@ class animal_log(JSONEndpoint):
         return {
             "name": "animal_log",
             "linkid": o.post.integer("id"),
+            "linktypeid": extlog.ANIMAL,
             "filter": logfilter,
             "rows": logs,
             "animal": a,
             "tabcounts": extanimal.get_satellite_counts(dbo, a["ID"])[0],
             "logtypes": extlookups.get_log_types(dbo)
         }
-
-    def post_create(self, o):
-        self.check(users.ADD_LOG)
-        return extlog.insert_log_from_form(o.dbo, o.user, extlog.ANIMAL, o.post.integer("linkid"), o.post)
-
-    def post_update(self, o):
-        self.check(users.CHANGE_LOG)
-        extlog.update_log_from_form(o.dbo, o.user, o.post)
-
-    def post_delete(self, o):
-        self.check(users.DELETE_LOG)
-        for lid in o.post.integer_list("ids"):
-            extlog.delete_log(o.dbo, o.user, lid)
 
 class animal_media(JSONEndpoint):
     url = "animal_media"
@@ -2084,42 +2044,33 @@ class change_user_settings(JSONEndpoint):
         users.update_user_settings(o.dbo, o.user, email, realname, locale, theme, signature)
         users.update_session(o.session)
 
-class citations:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_CITATION)
-        l = session.locale
-        dbo = session.dbo
-        post = utils.PostedData(web.input(filter = "unpaid"), session.locale)
-        title = ""
-        citations = []
-        if post["filter"] == "unpaid":
-            title = _("Unpaid Fines", l)
-            citations = financial.get_unpaid_fines(dbo)
-        al.debug("got %d citations" % len(citations), "code.citations", dbo)
-        s = html.header(title, session)
-        c = html.controller_str("name", "citations")
-        c += html.controller_str("title", title)
-        c += html.controller_json("rows", citations)
-        c += html.controller_json("citationtypes", extlookups.get_citation_types(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("citations", s, c, post["json"] == "true")
+class citations(JSONEndpoint):
+    url = "citations"
+    get_permissions = users.VIEW_CITATION
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_CITATION)
-            return financial.insert_citation_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_CITATION)
-            financial.update_citation_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_CITATION)
-            for lid in post.integer_list("ids"):
-                financial.delete_citation(session.dbo, session.user, lid)
+    def controller(self, o):
+        # this screen only supports one mode at present - unpaid fines
+        # if o.post["filter"] == "unpaid" or o.post["filter"] == "":
+        citations = financial.get_unpaid_fines(o.dbo)
+        al.debug("got %d citations" % len(citations), "code.citations", o.dbo)
+        return {
+            "name": "citations",
+            "rows": citations,
+            "citationtypes": extlookups.get_citation_types(o.dbo)
+        }
+
+    def post_create(self, o):
+        self.check(users.ADD_CITATION)
+        return financial.insert_citation_from_form(o.dbo, o.user, o.post)
+
+    def post_update(self, o):
+        self.check(users.CHANGE_CITATION)
+        financial.update_citation_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(users.DELETE_CITATION)
+        for lid in o.post.integer_list("ids"):
+            financial.delete_citation(o.dbo, o.user, lid)
 
 class csvexport(JSONEndpoint):
     url = "csvexport"
@@ -2144,14 +2095,36 @@ class csvimport(JSONEndpoint):
             o.post.boolean("createmissinglookups") == 1, o.post.boolean("cleartables") == 1, o.post.boolean("checkduplicates") == 1)
         self.redirect("task")
 
-class diary_edit:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.EDIT_ALL_DIARY_NOTES)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0, filter="uncompleted", newnote="0"), session.locale)
-        dfilter = post["filter"]
-        if dfilter == "uncompleted":
+class diary(ASMEndpoint):
+    url = "diary"
+
+    def post_create(self, o):
+        self.check(users.ADD_DIARY)
+        extdiary.insert_diary_from_form(o.dbo, o.user, o.post.integer("linktypeid"), o.post.integer("linkid"), o.post)
+
+    def post_update(self, o):
+        self.check(users.EDIT_MY_DIARY_NOTES)
+        extdiary.update_diary_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(users.DELETE_DIARY)
+        for did in o.post.integer_list("ids"):
+            extdiary.delete_diary(o.dbo, o.user, did)
+
+    def post_complete(self, o):
+        self.check(users.BULK_COMPLETE_NOTES)
+        for did in o.post.integer_list("ids"):
+            extdiary.complete_diary_note(o.dbo, o.user, did)
+
+class diary_edit(JSONEndpoint):
+    url = "diary_edit"
+    js_module = "diary"
+    get_permissions = users.EDIT_ALL_DIARY_NOTES
+
+    def controller(self, o):
+        dbo = o.dbo
+        dfilter = o.post["filter"]
+        if dfilter == "uncompleted" or dfilter == "":
             diaries = extdiary.get_uncompleted_upto_today(dbo)
         elif dfilter == "completed":
             diaries = extdiary.get_completed_upto_today(dbo)
@@ -2160,43 +2133,25 @@ class diary_edit:
         elif dfilter == "all":
             diaries = extdiary.get_all_upto_today(dbo)
         al.debug("got %d diaries, filter was %s" % (len(diaries), dfilter), "code.diary_edit", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", diaries)
-        c += html.controller_bool("newnote", post.integer("newnote") == 1)
-        c += html.controller_str("name", "diary_edit")
-        c += html.controller_json("forlist", users.get_users_and_roles(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("diary", s, c, post["json"] == "true")
+        return {
+            "rows": diaries,
+            "newnote": o.post.integer("newnote") == 1,
+            "name": "diary_edit",
+            "linkid": 0,
+            "linktypeid": extdiary.NO_LINK,
+            "forlist": users.get_users_and_roles(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_DIARY)
-            return extdiary.insert_diary_from_form(session.dbo, session.user, extdiary.NO_LINK, 0, post)
-        elif mode == "update":
-            users.check_permission(session, users.EDIT_ALL_DIARY_NOTES)
-            extdiary.update_diary_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_DIARY)
-            for did in post.integer_list("ids"):
-                extdiary.delete_diary(session.dbo, session.user, did)
-        elif mode == "complete":
-            users.check_permission(session, users.BULK_COMPLETE_NOTES)
-            for did in post.integer_list("ids"):
-                extdiary.complete_diary_note(session.dbo, session.user, did)
+class diary_edit_my(JSONEndpoint):
+    url = "diary_edit_my"
+    js_module = "diary"
+    get_permissions = users.EDIT_MY_DIARY_NOTES
 
-class diary_edit_my:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.EDIT_MY_DIARY_NOTES)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0, filter="uncompleted", newnote="0"), session.locale)
-        userfilter = session.user.strip()
-        dfilter = post["filter"]
-        if dfilter == "uncompleted":
+    def controller(self, o):
+        dbo = o.dbo
+        userfilter = o.user
+        dfilter = o.post["filter"]
+        if dfilter == "uncompleted" or dfilter == "":
             diaries = extdiary.get_uncompleted_upto_today(dbo, userfilter)
         elif dfilter == "completed":
             diaries = extdiary.get_completed_upto_today(dbo, userfilter)
@@ -2205,103 +2160,69 @@ class diary_edit_my:
         elif dfilter == "all":
             diaries = extdiary.get_all_upto_today(dbo, userfilter)
         al.debug("got %d diaries (%s), filter was %s" % (len(diaries), userfilter, dfilter), "code.diary_edit_my", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", diaries)
-        c += html.controller_bool("newnote", post.integer("newnote") == 1)
-        c += html.controller_str("name", "diary_edit_my")
-        c += html.controller_json("forlist", users.get_users_and_roles(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("diary", s, c, post["json"] == "true")
+        return {
+            "rows": diaries,
+            "newnote": o.post.integer("newnote") == 1,
+            "name": "diary_edit_my",
+            "linkid": 0,
+            "linktypeid": extdiary.NO_LINK,
+            "forlist": users.get_users_and_roles(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_DIARY)
-            extdiary.insert_diary_from_form(session.dbo, session.user, extdiary.NO_LINK, 0, post)
-        elif mode == "update":
-            users.check_permission(session, users.EDIT_MY_DIARY_NOTES)
-            extdiary.update_diary_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_DIARY)
-            for did in post.integer_list("ids"):
-                extdiary.delete_diary(session.dbo, session.user, did)
-        elif mode == "complete":
-            users.check_permission(session, users.BULK_COMPLETE_NOTES)
-            for did in post.integer_list("ids"):
-                extdiary.complete_diary_note(session.dbo, session.user, did)
+class diarytask(JSONEndpoint):
+    url = "diarytask"
+    get_permissions = users.EDIT_DIARY_TASKS
+    post_permissions = users.EDIT_DIARY_TASKS
 
-class diarytask:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.EDIT_DIARY_TASKS)
-        l = session.locale
-        dbo = session.dbo
-        post = utils.PostedData(web.input(taskid = 0), session.locale)
-        taskid = post.integer("taskid")
+    def controller(self, o):
+        dbo = o.dbo
+        taskid = o.post.integer("taskid")
         taskname = extdiary.get_diarytask_name(dbo, taskid)
         diarytaskdetail = extdiary.get_diarytask_details(dbo, taskid)
-        title = _("Diary task: {0}", l).format(taskname)
         al.debug("got %d diary task details" % len(diarytaskdetail), "code.diarytask", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", diarytaskdetail)
-        c += html.controller_int("taskid", taskid)
-        c += html.controller_str("taskname", taskname)
-        c += html.controller_str("title", title)
-        c += html.controller_json("forlist", users.get_users_and_roles(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("diarytask", s, c, post["json"] == "true")
+        return {
+            "rows": diarytaskdetail,
+            "taskid": taskid,
+            "taskname": taskname,
+            "forlist": users.get_users_and_roles(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(mode="create", tasktype="ANIMAL", taskid="0", id="0", seldate=""), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.EDIT_DIARY_TASKS)
-            return extdiary.insert_diarytaskdetail_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.EDIT_DIARY_TASKS)
-            extdiary.update_diarytaskdetail_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.EDIT_DIARY_TASKS)
-            for did in post.integer_list("ids"):
-                extdiary.delete_diarytaskdetail(session.dbo, session.user, did)
-        elif mode == "exec":
-            users.check_permission(session, users.ADD_DIARY)
-            extdiary.execute_diary_task(dbo, session.user, post["tasktype"], post.integer("taskid"), post.integer("id"), post.date("seldate"))
+    def post_create(self, o):
+        return extdiary.insert_diarytaskdetail_from_form(o.dbo, o.user, o.post)
 
-class diarytasks:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.EDIT_DIARY_TASKS)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
+    def post_update(self, o):
+        extdiary.update_diarytaskdetail_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        for did in o.post.integer_list("ids"):
+            extdiary.delete_diarytaskdetail(o.dbo, o.user, did)
+    
+    def post_exec(self, o):
+        self.check(users.ADD_DIARY)
+        extdiary.execute_diary_task(o.dbo, o.user, o.post["tasktype"], o.post.integer("taskid"), o.post.integer("id"), o.post.date("seldate"))
+
+class diarytasks(JSONEndpoint):
+    url = "diarytasks"
+    get_permissions = users.EDIT_DIARY_TASKS
+    post_permissions = users.EDIT_DIARY_TASKS
+
+    def controller(self, o):
+        dbo = o.dbo
         diarytaskhead = extdiary.get_diarytasks(dbo)
         al.debug("got %d diary tasks" % len(diarytaskhead), "code.diarytasks", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", diarytaskhead)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("diarytasks", s, c, post["json"] == "true")
+        return {
+            "rows": diarytaskhead
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.EDIT_DIARY_TASKS)
-            return extdiary.insert_diarytaskhead_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.EDIT_DIARY_TASKS)
-            extdiary.update_diarytaskhead_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.EDIT_DIARY_TASKS)
-            for did in post.integer_list("ids"):
-                extdiary.delete_diarytask(session.dbo, session.user, did)
+    def post_create(self, o):
+        return extdiary.insert_diarytaskhead_from_form(o.dbo, o.user, o.post)
+
+    def post_update(self, o):
+        extdiary.update_diarytaskhead_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        for did in o.post.integer_list("ids"):
+            extdiary.delete_diarytask(o.dbo, o.user, did)
 
 class document_gen:
     def GET(self):
@@ -2678,45 +2599,26 @@ class foundanimal:
             users.check_permission(session, users.ADD_WAITING_LIST)
             return str(extlostfound.create_waitinglist_from_found(dbo, session.user, post.integer("id")))
 
-class foundanimal_diary:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_DIARY)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        a = extlostfound.get_foundanimal(dbo, post.integer("id"))
-        if a is None: raise web.notfound()
-        diaries = extdiary.get_diaries(dbo, extdiary.FOUNDANIMAL, post.integer("id"))
-        al.debug("got %d diaries for found animal %s %s %s" % (len(diaries), a["AGEGROUP"], a["SPECIESNAME"], a["OWNERNAME"]), "code.foundanimal_diary", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", diaries)
-        c += html.controller_json("animal", a)
-        c += html.controller_json("tabcounts", extlostfound.get_foundanimal_satellite_counts(dbo, a["LFID"])[0])
-        c += html.controller_str("name", "foundanimal_diary")
-        c += html.controller_int("linkid", a["LFID"])
-        c += html.controller_json("forlist", users.get_users_and_roles(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("diary", s, c, post["json"] == "true")
+class foundanimal_diary(JSONEndpoint):
+    url = "foundanimal_diary"
+    js_module = "diary"
+    get_permissions = users.VIEW_DIARY
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_DIARY)
-            return extdiary.insert_diary_from_form(session.dbo, session.user, extdiary.FOUNDANIMAL, post.integer("linkid"), post)
-        elif mode == "update":
-            users.check_permission(session, users.EDIT_ALL_DIARY_NOTES)
-            extdiary.update_diary_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_DIARY)
-            for did in post.integer_list("ids"):
-                extdiary.delete_diary(session.dbo, session.user, did)
-        elif mode == "complete":
-            users.check_permission(session, users.BULK_COMPLETE_NOTES)
-            for did in post.integer_list("ids"):
-                extdiary.complete_diary_note(session.dbo, session.user, did)
+    def controller(self, o):
+        dbo = o.dbo
+        a = extlostfound.get_foundanimal(dbo, o.post.integer("id"))
+        if a is None: self.notfound()
+        diaries = extdiary.get_diaries(dbo, extdiary.FOUNDANIMAL, o.post.integer("id"))
+        al.debug("got %d diaries for found animal %s %s %s" % (len(diaries), a["AGEGROUP"], a["SPECIESNAME"], a["OWNERNAME"]), "code.foundanimal_diary", dbo)
+        return {
+            "rows": diaries,
+            "animal": a,
+            "tabcounts": extlostfound.get_foundanimal_satellite_counts(dbo, a["LFID"])[0],
+            "name": "foundanimal_diary",
+            "linkid": a["LFID"],
+            "linktypeid": extdiary.FOUNDANIMAL,
+            "forlist": users.get_users_and_roles(dbo)
+        }
 
 class foundanimal_find:
     def GET(self):
@@ -2754,43 +2656,28 @@ class foundanimal_find_results:
         s += html.footer()
         return full_or_json("lostfound_find_results", s, c, post["json"] == "true")
 
-class foundanimal_log:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_LOG)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0, filter = -2), session.locale)
-        logfilter = post.integer("filter")
-        if logfilter == -2: logfilter = configuration.default_log_filter(dbo)
-        a = extlostfound.get_foundanimal(dbo, post.integer("id"))
-        if a is None: raise web.notfound()
-        logs = extlog.get_logs(dbo, extlog.FOUNDANIMAL, post.integer("id"), logfilter)
-        s = html.header("", session)
-        c = html.controller_str("name", "foundanimal_log")
-        c += html.controller_int("linkid", post.integer("id"))
-        c += html.controller_int("filter", logfilter)
-        c += html.controller_json("rows", logs)
-        c += html.controller_json("animal", a)
-        c += html.controller_json("tabcounts", extlostfound.get_foundanimal_satellite_counts(dbo, a["LFID"])[0])
-        c += html.controller_json("logtypes", extlookups.get_log_types(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("log", s, c, post["json"] == "true")
+class foundanimal_log(JSONEndpoint):
+    url = "foundanimal_log"
+    js_module = "log"
+    get_permissions = users.VIEW_LOG
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_LOG)
-            return extlog.insert_log_from_form(session.dbo, session.user, extlog.FOUNDANIMAL, post.integer("linkid"), post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_LOG)
-            extlog.update_log_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_LOG)
-            for lid in post.integer_list("ids"):
-                extlog.delete_log(session.dbo, session.user, lid)
+    def controller(self, o):
+        dbo = o.dbo
+        logfilter = o.post.integer("filter")
+        if logfilter == 0: logfilter = configuration.default_log_filter(dbo)
+        a = extlostfound.get_foundanimal(dbo, o.post.integer("id"))
+        if a is None: self.notfound()
+        logs = extlog.get_logs(dbo, extlog.FOUNDANIMAL, o.post.integer("id"), logfilter)
+        return {
+            "name": "foundanimal_log",
+            "linkid": o.post.integer("id"),
+            "linktypeid": extlog.FOUNDANIMAL,
+            "filter": logfilter,
+            "rows": logs,
+            "animal": a,
+            "tabcounts": extlostfound.get_foundanimal_satellite_counts(dbo, a["LFID"])[0],
+            "logtypes": extlookups.get_log_types(dbo)
+        }
 
 class foundanimal_media(JSONEndpoint):
     url = "foundanimal_media"
@@ -2949,40 +2836,24 @@ class incident:
             users.check_permission(session, users.CHANGE_INCIDENT)
             extanimalcontrol.update_animalcontrol_removelink(dbo, session.user, post.integer("id"), post.integer("animalid"))
 
-class incident_citations:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_CITATION)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        a = extanimalcontrol.get_animalcontrol(dbo, post.integer("id"))
-        if a is None: raise web.notfound()
-        citations = financial.get_incident_citations(dbo, post.integer("id"))
-        al.debug("got %d citations" % len(citations), "code.incident_citations", dbo)
-        s = html.header("", session)
-        c = html.controller_str("name", "incident_citations")
-        c += html.controller_json("rows", citations)
-        c += html.controller_json("incident", a)
-        c += html.controller_json("tabcounts", extanimalcontrol.get_animalcontrol_satellite_counts(dbo, a["ACID"])[0])
-        c += html.controller_json("citationtypes", extlookups.get_citation_types(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("citations", s, c, post["json"] == "true")
+class incident_citations(JSONEndpoint):
+    url = "incident_citations"
+    js_module = "citations"
+    get_permissions = users.VIEW_CITATION
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_CITATION)
-            return financial.insert_citation_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_CITATION)
-            financial.update_citation_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_CITATION)
-            for lid in post.integer_list("ids"):
-                financial.delete_citation(session.dbo, session.user, lid)
+    def controller(self, o):
+        dbo = o.dbo
+        a = extanimalcontrol.get_animalcontrol(dbo, o.post.integer("id"))
+        if a is None: self.notfound()
+        citations = financial.get_incident_citations(dbo, o.post.integer("id"))
+        al.debug("got %d citations" % len(citations), "code.incident_citations", dbo)
+        return {
+            "name": "incident_citations",
+            "rows": citations,
+            "incident": a,
+            "tabcounts": extanimalcontrol.get_animalcontrol_satellite_counts(dbo, a["ACID"])[0],
+            "citationtypes": extlookups.get_citation_types(dbo)
+        }
 
 class incident_find:
     def GET(self):
@@ -3021,84 +2892,50 @@ class incident_find_results:
         s += html.footer()
         return full_or_json("incident_find_results", s, c, post["json"] == "true")
 
-class incident_diary:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_DIARY)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        a = extanimalcontrol.get_animalcontrol(dbo, post.integer("id"))
-        if a is None: raise web.notfound()
-        diaries = extdiary.get_diaries(dbo, extdiary.ANIMALCONTROL, post.integer("id"))
+class incident_diary(JSONEndpoint):
+    url = "incident_diary"
+    js_module = "diary"
+    get_permissions = users.VIEW_DIARY
+
+    def controller(self, o):
+        dbo = o.dbo
+        a = extanimalcontrol.get_animalcontrol(dbo, o.post.integer("id"))
+        if a is None: self.notfound()
+        diaries = extdiary.get_diaries(dbo, extdiary.ANIMALCONTROL, o.post.integer("id"))
         al.debug("got %d diaries" % len(diaries), "code.incident_diary", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", diaries)
-        c += html.controller_json("incident", a)
-        c += html.controller_json("tabcounts", extanimalcontrol.get_animalcontrol_satellite_counts(dbo, a["ACID"])[0])
-        c += html.controller_str("name", "incident_diary")
-        c += html.controller_int("linkid", a["ACID"])
-        c += html.controller_json("forlist", users.get_users_and_roles(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("diary", s, c, post["json"] == "true")
+        return {
+            "rows": diaries,
+            "incident": a,
+            "tabcounts": extanimalcontrol.get_animalcontrol_satellite_counts(dbo, a["ACID"])[0],
+            "name": "incident_diary",
+            "linkid": a["ACID"],
+            "linktypeid": extdiary.ANIMALCONTROL,
+            "forlist": users.get_users_and_roles(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_DIARY)
-            return extdiary.insert_diary_from_form(session.dbo, session.user, extdiary.ANIMALCONTROL, post.integer("linkid"), post)
-        elif mode == "update":
-            users.check_permission(session, users.EDIT_ALL_DIARY_NOTES)
-            extdiary.update_diary_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_DIARY)
-            for did in post.integer_list("ids"):
-                extdiary.delete_diary(session.dbo, session.user, did)
-        elif mode == "complete":
-            users.check_permission(session, users.BULK_COMPLETE_NOTES)
-            for did in post.integer_list("ids"):
-                extdiary.complete_diary_note(session.dbo, session.user, did)
+class incident_log(JSONEndpoint):
+    url = "incident_log"
+    js_module = "log"
+    get_permissions = users.VIEW_LOG
 
-class incident_log:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_LOG)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0, filter = -2), session.locale)
-        a = extanimalcontrol.get_animalcontrol(dbo, post.integer("id"))
-        if a is None: raise web.notfound()
-        logfilter = post.integer("filter")
-        if logfilter == -2: logfilter = configuration.default_log_filter(dbo)
-        logs = extlog.get_logs(dbo, extlog.ANIMALCONTROL, post.integer("id"), logfilter)
+    def controller(self, o):
+        dbo = o.dbo
+        a = extanimalcontrol.get_animalcontrol(dbo, o.post.integer("id"))
+        if a is None: self.notfound()
+        logfilter = o.post.integer("filter")
+        if logfilter == 0: logfilter = configuration.default_log_filter(dbo)
+        logs = extlog.get_logs(dbo, extlog.ANIMALCONTROL, o.post.integer("id"), logfilter)
         al.debug("got %d logs" % len(logs), "code.incident_log", dbo)
-        s = html.header("", session)
-        c = html.controller_str("name", "incident_log")
-        c += html.controller_int("linkid", post.integer("id"))
-        c += html.controller_int("filter", logfilter)
-        c += html.controller_json("rows", logs)
-        c += html.controller_json("incident", a)
-        c += html.controller_json("tabcounts", extanimalcontrol.get_animalcontrol_satellite_counts(dbo, a["ACID"])[0])
-        c += html.controller_json("logtypes", extlookups.get_log_types(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("log", s, c, post["json"] == "true")
-
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_LOG)
-            return extlog.insert_log_from_form(session.dbo, session.user, extlog.ANIMALCONTROL, post.integer("linkid"), post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_LOG)
-            extlog.update_log_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_LOG)
-            for lid in post.integer_list("ids"):
-                extlog.delete_log(session.dbo, session.user, lid)
+        return {
+            "name": "incident_log",
+            "linkid": o.post.integer("id"),
+            "linktypeid": extlog.ANIMALCONTROL,
+            "filter": logfilter,
+            "rows": logs,
+            "incident": a,
+            "tabcounts": extanimalcontrol.get_animalcontrol_satellite_counts(dbo, a["ACID"])[0],
+            "logtypes": extlookups.get_log_types(dbo)
+        }
 
 class incident_map:
     def GET(self):
@@ -3182,37 +3019,35 @@ class latency:
         web.header("Cache-Control", "no-cache")
         return "pong"
 
-class licence:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_LICENCE)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(offset = "i31"), session.locale)
-        licences = financial.get_licences(dbo, post["offset"])
-        al.debug("got %d licences" % len(licences), "code.licence", dbo)
-        s = html.header("", session)
-        c = html.controller_str("name", "licence")
-        c += html.controller_json("rows", licences)
-        c += html.controller_json("templates", dbfs.get_document_templates(dbo))
-        c += html.controller_json("licencetypes", extlookups.get_licence_types(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("licence", s, c, post["json"] == "true")
+class licence(JSONEndpoint):
+    url = "licence"
+    get_permissions = users.VIEW_LICENCE
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_LICENCE)
-            return financial.insert_licence_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_LICENCE)
-            financial.update_licence_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_LICENCE)
-            for lid in post.integer_list("ids"):
-                financial.delete_licence(session.dbo, session.user, lid)
+    def controller(self, o):
+        dbo = o.dbo
+        offset = o.post["offset"]
+        if offset == "": offset = "i31"
+        licences = financial.get_licences(dbo, offset)
+        al.debug("got %d licences" % len(licences), "code.licence", dbo)
+        return {
+            "name": "licence",
+            "rows": licences,
+            "templates": dbfs.get_document_templates(dbo),
+            "licencetypes": extlookups.get_licence_types(dbo)
+        }
+
+    def post_create(self, o):
+        self.check(users.ADD_LICENCE)
+        return financial.insert_licence_from_form(o.dbo, o.user, o.post)
+
+    def post_update(self, o):
+        self.check(users.CHANGE_LICENCE)
+        financial.update_licence_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(users.DELETE_LICENCE)
+        for lid in o.post.integer_list("ids"):
+            financial.delete_licence(o.dbo, o.user, lid)
 
 class licence_renewal:
     def GET(self):
@@ -3273,6 +3108,22 @@ class litters:
             users.check_permission(session, users.DELETE_LITTER)
             for lid in post.integer_list("ids"):
                 extanimal.delete_litter(session.dbo, session.user, lid)
+
+class log(ASMEndpoint):
+    url = "log"
+
+    def post_create(self, o):
+        self.check(users.ADD_LOG)
+        return extlog.insert_log_from_form(o.dbo, o.user, o.post.integer("linktypeid"), o.post.integer("linkid"), o.post)
+
+    def post_update(self, o):
+        self.check(users.CHANGE_LOG)
+        extlog.update_log_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(users.DELETE_LOG)
+        for lid in o.post.integer_list("ids"):
+            extlog.delete_log(o.dbo, o.user, lid)
 
 class log_new:
     def GET(self):
@@ -3408,45 +3259,26 @@ class lostanimal:
             users.check_permission(session, users.DELETE_LOST_ANIMAL)
             extlostfound.delete_lostanimal(dbo, session.user, post.integer("id"))
 
-class lostanimal_diary:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_DIARY)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        a = extlostfound.get_lostanimal(dbo, post.integer("id"))
-        if a is None: raise web.notfound()
-        diaries = extdiary.get_diaries(dbo, extdiary.LOSTANIMAL, post.integer("id"))
-        al.debug("got %d diaries for lost animal %s %s %s" % (len(diaries), a["AGEGROUP"], a["SPECIESNAME"], a["OWNERNAME"]), "code.foundanimal_diary", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", diaries)
-        c += html.controller_json("animal", a)
-        c += html.controller_json("tabcounts", extlostfound.get_lostanimal_satellite_counts(dbo, a["LFID"])[0])
-        c += html.controller_str("name", "lostanimal_diary")
-        c += html.controller_int("linkid", a["LFID"])
-        c += html.controller_json("forlist", users.get_users_and_roles(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("diary", s, c, post["json"] == "true")
+class lostanimal_diary(JSONEndpoint):
+    url = "lostanimal_diary"
+    js_module = "diary"
+    get_permissions = users.VIEW_DIARY
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_DIARY)
-            return extdiary.insert_diary_from_form(session.dbo, session.user, extdiary.LOSTANIMAL, post.integer("linkid"), post)
-        elif mode == "update":
-            users.check_permission(session, users.EDIT_ALL_DIARY_NOTES)
-            extdiary.update_diary_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_DIARY)
-            for did in post.integer_list("ids"):
-                extdiary.delete_diary(session.dbo, session.user, did)
-        elif mode == "complete":
-            users.check_permission(session, users.BULK_COMPLETE_NOTES)
-            for did in post.integer_list("ids"):
-                extdiary.complete_diary_note(session.dbo, session.user, did)
+    def controller(self, o):
+        dbo = o.dbo
+        a = extlostfound.get_lostanimal(dbo, o.post.integer("id"))
+        if a is None: self.notfound()
+        diaries = extdiary.get_diaries(dbo, extdiary.LOSTANIMAL, o.post.integer("id"))
+        al.debug("got %d diaries for lost animal %s %s %s" % (len(diaries), a["AGEGROUP"], a["SPECIESNAME"], a["OWNERNAME"]), "code.foundanimal_diary", dbo)
+        return {
+            "rows": diaries,
+            "animal": a,
+            "tabcounts": extlostfound.get_lostanimal_satellite_counts(dbo, a["LFID"])[0],
+            "name": "lostanimal_diary",
+            "linkid": a["LFID"],
+            "linktypeid": extdiary.LOSTANIMAL,
+            "forlist": users.get_users_and_roles(dbo)
+        }
 
 class lostanimal_find:
     def GET(self):
@@ -3484,43 +3316,28 @@ class lostanimal_find_results:
         s += html.footer()
         return full_or_json("lostfound_find_results", s, c, post["json"] == "true")
 
-class lostanimal_log:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_LOG)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0, filter = -2), session.locale)
-        logfilter = post.integer("filter")
-        if logfilter == -2: logfilter = configuration.default_log_filter(dbo)
-        a = extlostfound.get_lostanimal(dbo, post.integer("id"))
-        if a is None: raise web.notfound()
-        logs = extlog.get_logs(dbo, extlog.LOSTANIMAL, post.integer("id"), logfilter)
-        s = html.header("", session)
-        c = html.controller_str("name", "lostanimal_log")
-        c += html.controller_int("linkid", post.integer("id"))
-        c += html.controller_int("filter", logfilter)
-        c += html.controller_json("rows", logs)
-        c += html.controller_json("animal", a)
-        c += html.controller_json("tabcounts", extlostfound.get_lostanimal_satellite_counts(dbo, a["LFID"])[0])
-        c += html.controller_json("logtypes", extlookups.get_log_types(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("log", s, c, post["json"] == "true")
+class lostanimal_log(JSONEndpoint):
+    url = "lostanimal_log"
+    js_module = "log"
+    get_permissions = users.VIEW_LOG
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_LOG)
-            return extlog.insert_log_from_form(session.dbo, session.user, extlog.LOSTANIMAL, post.integer("linkid"), post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_LOG)
-            extlog.update_log_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_LOG)
-            for lid in post.integer_list("ids"):
-                extlog.delete_log(session.dbo, session.user, lid)
+    def controller(self, o):
+        dbo = o.dbo
+        logfilter = o.post.integer("filter")
+        if logfilter == 0: logfilter = configuration.default_log_filter(dbo)
+        a = extlostfound.get_lostanimal(dbo, o.post.integer("id"))
+        if a is None: self.notfound()
+        logs = extlog.get_logs(dbo, extlog.LOSTANIMAL, o.post.integer("id"), logfilter)
+        return {
+            "name": "lostanimal_log",
+            "linkid": o.post.integer("id"),
+            "linktypeid": extlog.LOSTANIMAL,
+            "filter": logfilter,
+            "rows": logs,
+            "animal": a,
+            "tabcounts": extlostfound.get_lostanimal_satellite_counts(dbo, a["LFID"])[0],
+            "logtypes": extlookups.get_log_types(dbo)
+        }
 
 class lostanimal_media(JSONEndpoint):
     url = "lostanimal_media"
@@ -4428,81 +4245,45 @@ class person:
             users.check_permission(session, users.MERGE_PERSON)
             extperson.merge_person(dbo, session.user, post.integer("personid"), post.integer("mergepersonid"))
 
-class person_citations:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_CITATION)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        p = extperson.get_person(dbo, post.integer("id"))
-        if p is None: raise web.notfound()
-        title = p["OWNERNAME"]
-        citations = financial.get_person_citations(dbo, post.integer("id"))
+class person_citations(JSONEndpoint):
+    url = "person_citations"
+    js_module = "citations"
+    get_permissions = users.VIEW_CITATION
+
+    def controller(self, o):
+        dbo = o.dbo
+        p = extperson.get_person(dbo, o.post.integer("id"))
+        if p is None: self.notfound()
+        citations = financial.get_person_citations(dbo, o.post.integer("id"))
         al.debug("got %d citations" % len(citations), "code.incident_citations", dbo)
-        s = html.header(title, session)
-        c = html.controller_str("name", "person_citations")
-        c += html.controller_json("rows", citations)
-        c += html.controller_json("person", p)
-        c += html.controller_json("tabcounts", extperson.get_satellite_counts(dbo, p["ID"])[0])
-        c += html.controller_json("citationtypes", extlookups.get_citation_types(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("citations", s, c, post["json"] == "true")
+        return {
+            "name": "person_citations",
+            "rows": citations,
+            "person": p,
+            "tabcounts": extperson.get_satellite_counts(dbo, p["ID"])[0],
+            "citationtypes": extlookups.get_citation_types(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_CITATION)
-            return financial.insert_citation_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_CITATION)
-            financial.update_citation_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_CITATION)
-            for lid in post.integer_list("ids"):
-                financial.delete_citation(session.dbo, session.user, lid)
+class person_diary(JSONEndpoint):
+    url = "person_diary"
+    js_module = "diary"
+    get_permissions = users.VIEW_DIARY
 
-class person_diary:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_DIARY)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        p = extperson.get_person(dbo, post.integer("id"))
-        if p is None: raise web.notfound()
-        diaries = extdiary.get_diaries(dbo, extdiary.PERSON, post.integer("id"))
+    def controller(self, o):
+        dbo = o.dbo
+        p = extperson.get_person(dbo, o.post.integer("id"))
+        if p is None: self.notfound()
+        diaries = extdiary.get_diaries(dbo, extdiary.PERSON, o.post.integer("id"))
         al.debug("got %d diaries" % len(diaries), "code.person_diary", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", diaries)
-        c += html.controller_json("person", p)
-        c += html.controller_json("tabcounts", extperson.get_satellite_counts(dbo, p["ID"])[0])
-        c += html.controller_str("name", "person_diary")
-        c += html.controller_int("linkid", p["ID"])
-        c += html.controller_json("forlist", users.get_users_and_roles(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("diary", s, c, post["json"] == "true")
-
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_DIARY)
-            return extdiary.insert_diary_from_form(session.dbo, session.user, extdiary.PERSON, post.integer("linkid"), post)
-        elif mode == "update":
-            users.check_permission(session, users.EDIT_ALL_DIARY_NOTES)
-            extdiary.update_diary_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_DIARY)
-            for did in post.integer_list("ids"):
-                extdiary.delete_diary(session.dbo, session.user, did)
-        elif mode == "complete":
-            users.check_permission(session, users.BULK_COMPLETE_NOTES)
-            for did in post.integer_list("ids"):
-                extdiary.complete_diary_note(session.dbo, session.user, did)
+        return {
+            "rows": diaries,
+            "person": p,
+            "tabcounts": extperson.get_satellite_counts(dbo, p["ID"])[0],
+            "name": "person_diary",
+            "linkid": p["ID"],
+            "linktypeid": extdiary.PERSON,
+            "forlist": users.get_users_and_roles(dbo)
+        }
 
 class person_donations(JSONEndpoint):
     url = "person_donations"
@@ -4666,79 +4447,48 @@ class person_investigation:
             for did in post.integer_list("ids"):
                 extperson.delete_investigation(session.dbo, session.user, did)
 
-class person_licence:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_LICENCE)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        p = extperson.get_person(dbo, post.integer("id"))
-        if p is None: raise web.notfound()
-        licences = financial.get_person_licences(dbo, post.integer("id"))
+class person_licence(JSONEndpoint):
+    url = "person_licence"
+    js_module = "licence"
+    get_permissions = users.VIEW_LICENCE
+
+    def controller(self, o):
+        dbo = o.dbo
+        p = extperson.get_person(dbo, o.post.integer("id"))
+        if p is None: self.notfound()
+        licences = financial.get_person_licences(dbo, o.post.integer("id"))
         al.debug("got %d licences" % len(licences), "code.person_licence", dbo)
-        s = html.header("", session)
-        c = html.controller_str("name", "person_licence")
-        c += html.controller_json("rows", licences)
-        c += html.controller_json("person", p)
-        c += html.controller_json("templates", dbfs.get_document_templates(dbo))
-        c += html.controller_json("tabcounts", extperson.get_satellite_counts(dbo, p["ID"])[0])
-        c += html.controller_json("licencetypes", extlookups.get_licence_types(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("licence", s, c, post["json"] == "true")
+        return {
+            "name": "person_licence",
+            "rows": licences,
+            "person": p,
+            "templates": dbfs.get_document_templates(dbo),
+            "tabcounts": extperson.get_satellite_counts(dbo, p["ID"])[0],
+            "licencetypes": extlookups.get_licence_types(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_LICENCE)
-            return financial.insert_licence_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_LICENCE)
-            financial.update_licence_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_LICENCE)
-            for lid in post.integer_list("ids"):
-                financial.delete_licence(session.dbo, session.user, lid)
+class person_log(JSONEndpoint):
+    url = "person_log"
+    js_module = "log"
+    get_permissions = users.VIEW_LOG
 
-class person_log:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_LOG)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0, filter = -2), session.locale)
-        logfilter = post.integer("filter")
-        if logfilter == -2: logfilter = configuration.default_log_filter(dbo)
-        p = extperson.get_person(dbo, post.integer("id"))
-        if p is None: raise web.notfound()
-        logs = extlog.get_logs(dbo, extlog.PERSON, post.integer("id"), logfilter)
-        s = html.header("", session)
-        c = html.controller_str("name", "person_log")
-        c += html.controller_int("linkid", post.integer("id"))
-        c += html.controller_int("filter", logfilter)
-        c += html.controller_json("rows", logs)
-        c += html.controller_json("person", p)
-        c += html.controller_json("tabcounts", extperson.get_satellite_counts(dbo, p["ID"])[0])
-        c += html.controller_json("logtypes", extlookups.get_log_types(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("log", s, c, post["json"] == "true")
-
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_LOG)
-            return extlog.insert_log_from_form(session.dbo, session.user, extlog.PERSON, post.integer("linkid"), post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_LOG)
-            extlog.update_log_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_LOG)
-            for lid in post.integer_list("ids"):
-                extlog.delete_log(session.dbo, session.user, lid)
+    def controller(self, o):
+        dbo = o.dbo
+        logfilter = o.post.integer("filter")
+        if logfilter == 0: logfilter = configuration.default_log_filter(dbo)
+        p = extperson.get_person(dbo, o.post.integer("id"))
+        if p is None: self.notfound()
+        logs = extlog.get_logs(dbo, extlog.PERSON, o.post.integer("id"), logfilter)
+        return {
+            "name": "person_log",
+            "linkid": o.post.integer("id"),
+            "linktypeid": extlog.PERSON,
+            "filter": logfilter,
+            "rows": logs,
+            "person": p,
+            "tabcounts": extperson.get_satellite_counts(dbo, p["ID"])[0],
+            "logtypes": extlookups.get_log_types(dbo)
+        }
 
 class person_lookingfor:
     def GET(self):
@@ -5891,84 +5641,50 @@ class waitinglist:
             users.check_permission(session, users.ADD_ANIMAL)
             return str(extwaitinglist.create_animal(dbo, session.user, post.integer("id")))
 
-class waitinglist_diary:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_DIARY)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        a = extwaitinglist.get_waitinglist_by_id(dbo, post.integer("id"))
-        if a is None: raise web.notfound()
-        diaries = extdiary.get_diaries(dbo, extdiary.WAITINGLIST, post.integer("id"))
+class waitinglist_diary(JSONEndpoint):
+    url = "waitinglist_diary"
+    js_module = "diary"
+    get_permissions = users.VIEW_DIARY
+
+    def controller(self, o):
+        dbo = o.dbo
+        a = extwaitinglist.get_waitinglist_by_id(dbo, o.post.integer("id"))
+        if a is None: self.notfound()
+        diaries = extdiary.get_diaries(dbo, extdiary.WAITINGLIST, o.post.integer("id"))
         al.debug("got %d diaries" % len(diaries), "code.waitinglist_diary", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", diaries)
-        c += html.controller_json("animal", a)
-        c += html.controller_json("tabcounts", extwaitinglist.get_satellite_counts(dbo, a["WLID"])[0])
-        c += html.controller_str("name", "waitinglist_diary")
-        c += html.controller_int("linkid", a["WLID"])
-        c += html.controller_json("forlist", users.get_users_and_roles(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("diary", s, c, post["json"] == "true")
+        return {
+            "rows": diaries,
+            "animal": a,
+            "tabcounts": extwaitinglist.get_satellite_counts(dbo, a["WLID"])[0],
+            "name": "waitinglist_diary",
+            "linkid": a["WLID"],
+            "linktypeid": extdiary.WAITINGLIST,
+            "forlist": users.get_users_and_roles(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_DIARY)
-            return extdiary.insert_diary_from_form(session.dbo, session.user, extdiary.WAITINGLIST, post.integer("linkid"), post)
-        elif mode == "update":
-            users.check_permission(session, users.EDIT_ALL_DIARY_NOTES)
-            extdiary.update_diary_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_DIARY)
-            for did in post.integer_list("ids"):
-                extdiary.delete_diary(session.dbo, session.user, did)
-        elif mode == "complete":
-            users.check_permission(session, users.BULK_COMPLETE_NOTES)
-            for did in post.integer_list("ids"):
-                extdiary.complete_diary_note(session.dbo, session.user, did)
+class waitinglist_log(JSONEndpoint):
+    url = "waitinglist_log"
+    js_module = "log"
+    get_permissions = users.VIEW_LOG
 
-class waitinglist_log:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_LOG)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0, filter = -2), session.locale)
-        logfilter = post.integer("filter")
-        if logfilter == -2: logfilter = configuration.default_log_filter(dbo)
-        a = extwaitinglist.get_waitinglist_by_id(dbo, post.integer("id"))
-        if a is None: raise web.notfound()
-        logs = extlog.get_logs(dbo, extlog.WAITINGLIST, post.integer("id"), logfilter)
+    def controller(self, o):
+        dbo = o.dbo
+        logfilter = o.post.integer("filter")
+        if logfilter == 0: logfilter = configuration.default_log_filter(dbo)
+        a = extwaitinglist.get_waitinglist_by_id(dbo, o.post.integer("id"))
+        if a is None: self.notfound()
+        logs = extlog.get_logs(dbo, extlog.WAITINGLIST, o.post.integer("id"), logfilter)
         al.debug("got %d logs" % len(logs), "code.waitinglist_diary", dbo)
-        s = html.header("", session)
-        c = html.controller_str("name", "waitinglist_log")
-        c += html.controller_int("linkid", post.integer("id"))
-        c += html.controller_int("filter", logfilter)
-        c += html.controller_json("rows", logs)
-        c += html.controller_json("animal", a)
-        c += html.controller_json("tabcounts", extwaitinglist.get_satellite_counts(dbo, a["WLID"])[0])
-        c += html.controller_json("logtypes", extlookups.get_log_types(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("log", s, c, post["json"] == "true")
-
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_LOG)
-            return extlog.insert_log_from_form(session.dbo, session.user, extlog.WAITINGLIST, post.integer("linkid"), post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_LOG)
-            extlog.update_log_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_LOG)
-            for lid in post.integer_list("ids"):
-                extlog.delete_log(session.dbo, session.user, lid)
+        return {
+            "name": "waitinglist_log",
+            "linkid": o.post.integer("id"),
+            "linktypeid": extlog.WAITINGLIST,
+            "filter": logfilter,
+            "rows": logs,
+            "animal": a,
+            "tabcounts": extwaitinglist.get_satellite_counts(dbo, a["WLID"])[0],
+            "logtypes": extlookups.get_log_types(dbo)
+        }
 
 class waitinglist_media(JSONEndpoint):
     url = "waitinglist_media"

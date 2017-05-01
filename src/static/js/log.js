@@ -32,7 +32,7 @@ $(function() {
                             .then(function() {
                                 tableform.fields_update_row(dialog.fields, row);
                                 log.set_extra_fields(row);
-                                return tableform.fields_post(dialog.fields, "mode=update&logid=" + row.ID, controller.name);
+                                return tableform.fields_post(dialog.fields, "mode=update&logid=" + row.ID, "log");
                             })
                             .then(function(response) {
                                 tableform.table_update(table);
@@ -58,7 +58,8 @@ $(function() {
                             $("#type").select("value", config.integer("AFDefaultLogType"));    
                         }})
                         .then(function() {
-                            return tableform.fields_post(dialog.fields, "mode=create&linkid=" + controller.linkid, controller.name);
+                            return tableform.fields_post(dialog.fields, "mode=create&linktypeid=" + controller.linktypeid + 
+                                "&linkid=" + controller.linkid, "log");
                         })
                         .then(function(response) {
                             var row = {};
@@ -79,7 +80,7 @@ $(function() {
                              .then(function() {
                                  tableform.buttons_default_state(buttons);
                                  var ids = tableform.table_ids(table);
-                                 return common.ajax_post(controller.name, "mode=delete&ids=" + ids);
+                                 return common.ajax_post("log", "mode=delete&ids=" + ids);
                              })
                              .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);

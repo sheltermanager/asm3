@@ -43,7 +43,7 @@ $(function() {
                                 row.ANIMALNAME = "";
                                 row.SHELTERCODE = "";
                             }
-                            return tableform.fields_post(dialog.fields, "mode=update&licenceid=" + row.ID, controller.name);
+                            return tableform.fields_post(dialog.fields, "mode=update&licenceid=" + row.ID, "licence");
                         })
                         .then(function(response) {
                             tableform.table_update(table);
@@ -115,7 +115,7 @@ $(function() {
                          }
                          tableform.dialog_show_add(dialog, {
                              onadd: function() {
-                                 tableform.fields_post(dialog.fields, "mode=create", controller.name)
+                                 tableform.fields_post(dialog.fields, "mode=create", "licence")
                                      .then(function(response) {
                                          var row = {};
                                          row.ID = response;
@@ -147,7 +147,7 @@ $(function() {
                      click: function() { 
                          tableform.dialog_show_add(dialog, {
                              onadd: function() {
-                                 tableform.fields_post(dialog.fields, "mode=create", controller.name)
+                                 tableform.fields_post(dialog.fields, "mode=create", "licence")
                                      .then(function(response) {
                                          var row = {};
                                          row.ID = response;
@@ -186,7 +186,7 @@ $(function() {
                              .then(function() {
                                  tableform.buttons_default_state(buttons);
                                  var ids = tableform.table_ids(table);
-                                 return common.ajax_post(controller.name, "mode=delete&ids=" + ids);
+                                 return common.ajax_post("licence", "mode=delete&ids=" + ids);
                              })
                              .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);

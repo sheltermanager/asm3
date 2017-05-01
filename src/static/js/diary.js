@@ -34,7 +34,7 @@ $(function() {
                     tableform.dialog_show_edit(dialog, row, {
                         onchange: function() {
                             tableform.fields_update_row(dialog.fields, row);
-                            tableform.fields_post(dialog.fields, "mode=update&diaryid=" + row.ID, controller.name)
+                            tableform.fields_post(dialog.fields, "mode=update&diaryid=" + row.ID, "diary")
                                 .then(function(response) {
                                     tableform.table_update(table);
                                     tableform.dialog_close();
@@ -112,7 +112,7 @@ $(function() {
                              .then(function() {
                                  tableform.buttons_default_state(buttons);
                                  var ids = tableform.table_ids(table);
-                                 return common.ajax_post(controller.name, "mode=delete&ids=" + ids);
+                                 return common.ajax_post("diary", "mode=delete&ids=" + ids);
                              })
                              .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
@@ -123,7 +123,7 @@ $(function() {
                  { id: "complete", text: _("Complete"), icon: "complete", enabled: "multi", 
                      click: function() { 
                          var ids = tableform.table_ids(table);
-                         common.ajax_post(controller.name, "mode=complete&ids=" + ids)
+                         common.ajax_post("diary", "mode=complete&ids=" + ids)
                              .then(function() {
                                  $.each(controller.rows, function(i, v) {
                                     if (tableform.table_id_selected(v.ID)) {
@@ -213,7 +213,7 @@ $(function() {
         new_note: function() {
             tableform.dialog_show_add(diary.dialog, {
                 onadd: function() {
-                    tableform.fields_post(diary.dialog.fields, "mode=create&linkid=" + controller.linkid, controller.name)
+                    tableform.fields_post(diary.dialog.fields, "mode=create&linktypeid=" + controller.linktypeid + "&linkid=" + controller.linkid, "diary")
                         .then(function(response) {
                             var row = {};
                             row.ID = response;

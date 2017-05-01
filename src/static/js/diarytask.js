@@ -106,7 +106,7 @@ $(function() {
 
         name: "diarytask",
         animation: "formtab",
-        title: function() { return controller.title; },
+        title: function() { return _("Diary Task: {0}").replace("{0}", controller.taskname); },
         
         routes: {
             "diarytask": function() { 

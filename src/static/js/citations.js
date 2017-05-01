@@ -33,7 +33,7 @@ $(function() {
                             tableform.fields_update_row(dialog.fields, row);
                             row.CITATIONNAME = common.get_field(controller.citationtypes, row.CITATIONTYPEID, "CITATIONNAME");
                             row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
-                            return tableform.fields_post(dialog.fields, "mode=update&citationid=" + row.ID, controller.name);
+                            return tableform.fields_post(dialog.fields, "mode=update&citationid=" + row.ID, "citations");
                         })
                         .then(function() {
                             tableform.table_update(table);
@@ -92,7 +92,7 @@ $(function() {
                              .then(function() {
                                  var incid = "";
                                  if (controller.incident) { incid = controller.incident.ACID; }
-                                 tableform.fields_post(dialog.fields, "mode=create&incident=" + incid, controller.name);
+                                 tableform.fields_post(dialog.fields, "mode=create&incident=" + incid, "citations");
                              })
                              .then(function(response) {
                                  var row = {};
@@ -112,7 +112,7 @@ $(function() {
                              .then(function() {
                                  tableform.buttons_default_state(buttons);
                                  var ids = tableform.table_ids(table);
-                                 return common.ajax_post(controller.name, "mode=delete&ids=" + ids);
+                                 return common.ajax_post("citations", "mode=delete&ids=" + ids);
                              })
                              .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);
