@@ -1339,20 +1339,24 @@ def get_animals_on_shelter_namecode(dbo):
     Returns a resultset containing the ID, name and code
     of all on shelter animals.
     """
-    return db.query(dbo, "SELECT ID, AnimalName, ShelterCode, ShortCode, " \
+    return db.query(dbo, "SELECT animal.ID, AnimalName, ShelterCode, ShortCode, SpeciesName, " \
         "CASE WHEN EXISTS(SELECT ItemValue FROM configuration WHERE ItemName Like 'UseShortShelterCodes' AND ItemValue = 'Yes') " \
         "THEN ShortCode ELSE ShelterCode END AS Code " \
-        "FROM animal WHERE Archived = 0 ORDER BY AnimalName, ShelterCode")
+        "FROM animal " \
+        "LEFT OUTER JOIN species ON species.ID = animal.SpeciesID " \
+        "WHERE Archived = 0 ORDER BY AnimalName, ShelterCode")
 
 def get_animals_on_shelter_foster_namecode(dbo):
     """
     Returns a resultset containing the ID, name and code
     of all on shelter and foster animals.
     """
-    return db.query(dbo, "SELECT ID, AnimalName, ShelterCode, ShortCode, " \
+    return db.query(dbo, "SELECT animal.ID, AnimalName, ShelterCode, ShortCode, SpeciesName, " \
         "CASE WHEN EXISTS(SELECT ItemValue FROM configuration WHERE ItemName Like 'UseShortShelterCodes' AND ItemValue = 'Yes') " \
         "THEN ShortCode ELSE ShelterCode END AS Code " \
-        "FROM animal WHERE (Archived = 0 OR ActiveMovementType = 2) ORDER BY AnimalName, ShelterCode")
+        "FROM animal " \
+        "LEFT OUTER JOIN species ON species.ID = animal.SpeciesID " \
+        "WHERE (Archived = 0 OR ActiveMovementType = 2) ORDER BY AnimalName, ShelterCode")
 
 def get_breedname(dbo, breed1id, breed2id):
     """

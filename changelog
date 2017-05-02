@@ -1,6 +1,7 @@
 40
 ================
 
+02/05/17 Include species in adoptable/shelter online form dropdown
 01/05/17 Refactor licenses, citations, logs, diaries #173
 30/04/17 Add missing index on additional.LinkID for performance
 26/04/17 Excluded images should not be counted in WebsiteImageCount
