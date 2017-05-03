@@ -8,26 +8,30 @@ List of adoptable animals with thumbnails.
 ###
 en
 ###
-SELECT
-ShelterCode,
-AnimalName,
-BreedName,
-SizeName,
-SexName,
-NeuteredName,
-AnimalAge,
-TimeOnShelter,
-IsGoodWithCatsName,
-IsGoodWithDogsName,
-IsGoodWithChildrenName,
-IsHouseTrainedName,
-ID AS AnimalID,
-DisplayLocation,
-AnimalComments,
-SpeciesName
-FROM v_animal
-WHERE Archived = 0 AND IsNotAvailableForAdoption = 0 AND HasTrialAdoption = 0
-ORDER BY SpeciesName, AnimalName
+select  a.ID          as AnimalID,
+        a.ShelterCode,
+        a.AnimalName,
+        a.BreedName,
+        sz.Size       as SizeName,
+        sx.Sex        as SexName,
+        a.AnimalAge,
+        a.TimeOnShelter,
+        if (a.Neutered,           'Yes', 'No') as NeuteredName,
+        if (a.IsGoodWithCats,     'Yes', 'No') as IsGoodWithCatsName,
+        if (a.IsGoodWithDogs,     'Yes', 'No') as IsGoodWithDogsName,
+        if (a.IsGoodWithChildren, 'Yes', 'No') as IsGoodWithChildrenName,
+        if (a.IsHouseTrained,     'Yes', 'No') as IsHouseTrainedName,
+        a.DisplayLocation,
+        a.AnimalComments,
+        sp.SpeciesName
+from animal a
+left join lksize  sz on a.Size      = sz.ID
+left join lksex   sx on a.Sex       = sx.ID
+left join species sp on a.SpeciesID = sp.ID
+where Archived = 0
+  and IsNotAvailableForAdoption = 0
+  and HasTrialAdoption = 0
+order by SpeciesName, AnimalName
 ###
 $$HEADER
 HEADER$$ 
