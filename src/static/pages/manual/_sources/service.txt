@@ -266,6 +266,17 @@ see the parameters it requires in the address bar::
 
     http://localhost:5000/service?method=html_report&username=user&password=letmein&title=Detailed+Shelter+Inventory
 
+json_adoptable_animal and xml_adoptable_animal
+----------------------------------------------
+
+Returns a dataset containing a single animal record from the list of animals
+available for adoption. The method determines whether the format returned is
+JSON or XML::
+
+    http://localhost:5000/service?method=xml_adoptable_animal&animalid=123&username=user&password=letmein
+
+.. note:: If the animal with animalid is not adoptable, an empty result set will be returned.
+
 json_adoptable_animals and xml_adoptable_animals
 ------------------------------------------------
 

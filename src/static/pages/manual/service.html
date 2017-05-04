@@ -118,6 +118,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#csv-mail-and-csv-report">csv_mail and csv_report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#extra-image">extra_image</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#html-report">html_report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#json-adoptable-animal-and-xml-adoptable-animal">json_adoptable_animal and xml_adoptable_animal</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-adoptable-animals-and-xml-adoptable-animals">json_adoptable_animals and xml_adoptable_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-recent-adoptions-and-xml-recent-adoptions">json_recent_adoptions and xml_recent_adoptions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-shelter-animals-and-xml-shelter-animals">json_shelter_animals and xml_shelter_animals</a></li>
@@ -424,6 +425,19 @@ order within the SQL. If you run the report within the ASM frontend you will
 see the parameters it requires in the address bar:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=html_report&amp;username=user&amp;password=letmein&amp;title=Detailed+Shelter+Inventory
 </pre></div>
+</div>
+</div>
+<div class="section" id="json-adoptable-animal-and-xml-adoptable-animal">
+<h2>json_adoptable_animal and xml_adoptable_animal<a class="headerlink" href="#json-adoptable-animal-and-xml-adoptable-animal" title="Permalink to this headline">¶</a></h2>
+<p>Returns a dataset containing a single animal record from the list of animals
+available for adoption. The method determines whether the format returned is
+JSON or XML:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_adoptable_animal&amp;animalid=123&amp;username=user&amp;password=letmein
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If the animal with animalid is not adoptable, an empty result set will be returned.</p>
 </div>
 </div>
 <div class="section" id="json-adoptable-animals-and-xml-adoptable-animals">

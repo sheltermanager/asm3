@@ -32,6 +32,7 @@ from sitedefs import BASE_URL, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, CACH
 # Service methods that require authentication
 AUTH_METHODS = [ 
     "csv_mail", "csv_report", "html_report", "rss_timeline", "upload_animal_image", 
+    "xml_adoptable_animal", "json_adoptable_animal",
     "xml_adoptable_animals", "json_adoptable_animals", "jsonp_adoptable_animals",
     "xml_recent_adoptions", "json_recent_adoptions", "jsonp_recent_adoptions", 
     "xml_shelter_animals", "json_shelter_animals", "jsonp_shelter_animals"
@@ -268,7 +269,7 @@ def handler(post, path, remoteip, referer, querystring):
 
     if method =="animal_image":
         hotlink_protect("animal_image", referer)
-        if animalid == "" or utils.cint(animalid) == 0:
+        if utils.cint(animalid) == 0:
             al.error("animal_image failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
             return ("text/plain", 0, "ERROR: Invalid animalid")
         else:
@@ -279,15 +280,8 @@ def handler(post, path, remoteip, referer, querystring):
             else:
                 return set_cached_response(cache_key, "image/jpeg", 86400, 120, dbfs.get_string(dbo, mm[0]["MEDIANAME"]))
 
-    elif method == "animal_json":
-        if animalid == "" or utils.cint(animalid) == 0:
-            al.error("animal_json failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
-            return ("text/plain", 0, "ERROR: Invalid animalid")
-        else:
-            return set_cached_response(cache_key, "application/json", 3600, 3600, html.json(animal.get_animal(dbo, int(animalid))))
-
     elif method =="animal_thumbnail":
-        if animalid == "" or utils.cint(animalid) == 0:
+        if utils.cint(animalid) == 0:
             al.error("animal_thumbnail failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
             return ("text/plain", 0, "ERROR: Invalid animalid")
         else:
@@ -295,11 +289,11 @@ def handler(post, path, remoteip, referer, querystring):
             return set_cached_response(cache_key, "image/jpeg", 86400, 120, data)
 
     elif method == "animal_view":
-        if animalid == "" or utils.cint(animalid) == 0:
+        if utils.cint(animalid) == 0:
             al.error("animal_view failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
             return ("text/plain", 0, "ERROR: Invalid animalid")
         else:
-            return set_cached_response(cache_key, "text/html", 120, 120, publish.get_animal_view(dbo, int(animalid)))
+            return set_cached_response(cache_key, "text/html", 120, 120, publish.get_animal_view(dbo, utils.cint(animalid)))
 
     elif method == "animal_view_adoptable_js":
         return set_cached_response(cache_key, "application/javascript", 600, 600, publish.get_animal_view_adoptable_js(dbo))
@@ -312,22 +306,42 @@ def handler(post, path, remoteip, referer, querystring):
         hotlink_protect("extra_image", referer)
         return set_cached_response(cache_key, "image/jpeg", 86400, 120, dbfs.get_string(dbo, title, "/reports"))
 
+    elif method == "json_adoptable_animal":
+        if utils.cint(animalid) == 0:
+            al.error("json_adoptable_animal failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
+            return ("text/plain", 0, "ERROR: Invalid animalid")
+        else:
+            users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
+            pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
+            rs = publish.get_animal_data(dbo, pc, utils.cint(animalid), include_additional_fields = True)
+            return set_cached_response(cache_key, "application/json", 3600, 3600, html.json(rs))
+
     elif method == "json_adoptable_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
-        rs = publish.get_animal_data(dbo, pc, True)
+        rs = publish.get_animal_data(dbo, pc, include_additional_fields = True)
         return set_cached_response(cache_key, "application/json", 3600, 3600, html.json(rs))
 
     elif method == "jsonp_adoptable_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
-        rs = publish.get_animal_data(dbo, pc, True)
+        rs = publish.get_animal_data(dbo, pc, include_additional_fields = True)
         return ("application/javascript", 0, "%s(%s);" % (post["callback"], html.json(rs)))
+
+    elif method == "xml_adoptable_animal":
+        if utils.cint(animalid) == 0:
+            al.error("xml_adoptable_animal failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
+            return ("text/plain", 0, "ERROR: Invalid animalid")
+        else:
+            users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
+            pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
+            rs = publish.get_animal_data(dbo, pc, utils.cint(animalid), include_additional_fields = True)
+            return set_cached_response(cache_key, "application/xml", 3600, 3600, html.xml(rs))
 
     elif method == "xml_adoptable_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
-        rs = publish.get_animal_data(dbo, pc, True)
+        rs = publish.get_animal_data(dbo, pc, include_additional_fields = True)
         return set_cached_response(cache_key, "application/xml", 3600, 3600, html.xml(rs))
 
     elif method == "json_recent_adoptions":

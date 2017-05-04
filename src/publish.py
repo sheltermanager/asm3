@@ -190,11 +190,15 @@ def quietcallback(x):
     """ ftplib callback that does nothing instead of dumping to stdout """
     pass
 
-def get_animal_data(dbo, pc, include_additional_fields = False):
+def get_animal_data(dbo, pc, animalid = 0, include_additional_fields = False, strip_personal_data = False):
     """
-    Returns a resultset containing the animal info for the criteria given. 
+    Returns a resultset containing the animal info for the criteria given.
+
+    animalid: If non-zero only returns the animal given (if it is adoptable)
+    include_additional_fields: Load additional fields for each result
+    strip_personal_data: Remove any personal data such as surrenderer, brought in by, etc.
     """
-    sql = get_animal_data_query(dbo, pc)
+    sql = get_animal_data_query(dbo, pc, animalid)
     rows = db.query(dbo, sql)
     # If the sheltercode format has a slash in it, convert it to prevent
     # creating images with broken paths.
@@ -221,15 +225,21 @@ def get_animal_data(dbo, pc, include_additional_fields = False):
                     r["ADD" + str(af["ID"])] = af["VALUE"]
                 else:
                     r[af["FIELDNAME"]] = af["VALUE"]
+    # Strip any personal data if requested
+    if strip_personal_data:
+        for r in rows:
+            for k in r.iterkeys():
+                if k.startswith("ORIGINALOWNER") or k.startswith("BROUGHTINBY") or k.startswith("CURRENTOWNER") or k.startswith("RESERVEDOWNER"):
+                    r[k] = ""
     # If bondedAsSingle is on, go through the the set of animals and merge
     # the bonded animals into a single record
-    def merge_animal(a, animalid):
+    def merge_animal(a, aid):
         """
         Find the animal in rows with animalid, merge it into a and
         then remove it from the set.
         """
         for r in rows:
-            if r["ID"] == animalid:
+            if r["ID"] == aid:
                 a["ANIMALNAME"] = "%s, %s" % (a["ANIMALNAME"], r["ANIMALNAME"])
                 rows.remove(r)
                 break
@@ -466,7 +476,7 @@ def get_animal_view_adoptable_js(dbo):
     pc = PublishCriteria(configuration.publisher_presets(dbo))
     js = js.replace("{TOKEN_ACCOUNT}", dbo.database)
     js = js.replace("{TOKEN_BASE_URL}", BASE_URL)
-    js = js.replace("\"{TOKEN_ADOPTABLES}\"", html.json(get_animal_data(dbo, pc, True)))
+    js = js.replace("\"{TOKEN_ADOPTABLES}\"", html.json(get_animal_data(dbo, pc, include_additional_fields = True, strip_personal_data = True)))
     return js
 
 def get_adoption_status(dbo, a):
@@ -488,9 +498,7 @@ def is_adoptable(dbo, animalid):
     Returns true if the animal is adoptable
     """
     pc = PublishCriteria(configuration.publisher_presets(dbo))
-    sql = get_animal_data_query(dbo, pc, animalid)
-    rows = db.query(dbo, sql)
-    return len(rows) > 0
+    return len(get_animal_data(dbo, pc, animalid)) > 0
 
 def delete_old_publish_logs(dbo):
     """ Deletes all publishing logs older than 14 days """

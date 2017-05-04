@@ -203,7 +203,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             h.append('<select class="asm-onlineform-adoptableanimal" name="%s" title="%s" %s>' % ( html.escape(fname), utils.nulltostr(f["TOOLTIP"]), required))
             h.append('<option></option>')
             pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
-            rs = publish.get_animal_data(dbo, pc, True)
+            rs = publish.get_animal_data(dbo, pc, include_additional_fields = True)
             for a in rs:
                 h.append('<option value="%(name)s::%(code)s">%(name)s (%(species)s - %(code)s)</option>' % \
                     { "name": a["ANIMALNAME"], "code": a["SHELTERCODE"], "species": a["SPECIESNAME"]})
