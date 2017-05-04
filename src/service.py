@@ -279,6 +279,13 @@ def handler(post, path, remoteip, referer, querystring):
             else:
                 return set_cached_response(cache_key, "image/jpeg", 86400, 120, dbfs.get_string(dbo, mm[0]["MEDIANAME"]))
 
+    elif method == "animal_json":
+        if animalid == "" or utils.cint(animalid) == 0:
+            al.error("animal_json failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
+            return ("text/plain", 0, "ERROR: Invalid animalid")
+        else:
+            return set_cached_response(cache_key, "application/json", 3600, 3600, html.json(animal.get_animal(dbo, int(animalid))))
+
     elif method =="animal_thumbnail":
         if animalid == "" or utils.cint(animalid) == 0:
             al.error("animal_thumbnail failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
