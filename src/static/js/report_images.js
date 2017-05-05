@@ -97,7 +97,7 @@ $(function() {
                 $("#dialog-rename").disable_dialog_buttons();
                 var oldname = tableform.table_ids(table).split(",")[0];
                 var newname = encodeURIComponent($("#newname").val());
-                common.ajax_post(controller.name, "mode=rename&newname=" + newname + "&oldname=" + oldname)
+                common.ajax_post("report_images", "mode=rename&newname=" + newname + "&oldname=" + oldname)
                     .then(function() {
                         common.route_reload();
                     });
