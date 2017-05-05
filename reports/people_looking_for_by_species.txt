@@ -9,7 +9,7 @@ All person looking for matches, split by species.
 en
 ###
 SELECT 
-o.OwnerName, o.OwnerAddress, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone,
+o.OwnerName, o.OwnerAddress, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.MatchAdded, 
 ol.MatchSummary,
 a.ShelterCode, a.AnimalName, a.AnimalAge, 
 (SELECT Sex FROM lksex WHERE ID = a.Sex) AS Sex,
@@ -26,7 +26,7 @@ FROM ownerlookingfor ol
 INNER JOIN owner o ON o.ID = ol.OwnerID
 INNER JOIN animal a ON a.ID = ol.AnimalID
 INNER JOIN species s ON a.SpeciesID = s.ID
-ORDER BY s.SpeciesName
+ORDER BY s.SpeciesName, o.MatchAdded
 ###
 $$HEADER
 HEADER$$
@@ -40,7 +40,7 @@ GROUP$$
 $$GROUP_OwnerName
 $$HEAD
 <h2>$OwnerName ($OwnerAddress) $HomeTelephone $WorkTelephone $MobileTelephone</h2>
-<p>(Looking for: $MatchSummary)</p>
+<p>(Since $MatchAdded, looking for: $MatchSummary)</p>
 <hr/>
 <table border="1">
 <tr>
