@@ -77,13 +77,13 @@ NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate < '$PARENTARG1$
 AND DateBroughtIn < '$PARENTARG1$'
 AND NonShelterAnimal = 0
 AND SpeciesID = 1
-AND (DeceasedDate Is Null OR DeceasedDate >= '$PARENTARG1$')) AS Dog,
+AND (DeceasedDate Is Null OR DeceasedDate > '$PARENTARG1$')) AS Dog,
 (SELECT COUNT(*) FROM animal WHERE
 NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate < '$PARENTARG1$' AND (ReturnDate Is Null OR ReturnDate > '$PARENTARG1$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
 AND DateBroughtIn < '$PARENTARG1$'
 AND NonShelterAnimal = 0
 AND SpeciesID = 2
-AND (DeceasedDate Is Null OR DeceasedDate >= '$PARENTARG1$')) AS Cat
+AND (DeceasedDate Is Null OR DeceasedDate > '$PARENTARG1$')) AS Cat
 )) dummy
 +++
 $$HEADER
@@ -106,7 +106,7 @@ SELECT AsilomarIntakeCategory,
 CASE WHEN AsilomarIntakeCategory = 0 THEN 'Healthy' WHEN AsilomarIntakeCategory = 1 THEN 'Treatable - Rehabilitatable' WHEN AsilomarIntakeCategory = 2 THEN 'Treatable - Manageable' ELSE 'Unhealthy and Untreatable' END AS Category,
 CASE WHEN SpeciesID = 1 THEN 1 ELSE 0 END AS Dog,
 CASE WHEN SpeciesID = 2 THEN 1 ELSE 0 END AS Cat,
-1 AS Total
+CASE WHEN a.SpeciesID = 1 OR a.SpeciesID = 2 THEN 1 ELSE 0 END AS Total
 FROM animal
 WHERE NonShelterAnimal = 0 AND DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$'
 AND IsTransfer = 0 AND AsilomarOwnerRequestedEuthanasia = 0
@@ -340,7 +340,7 @@ SELECT a.AsilomarIntakeCategory,
 CASE WHEN a.AsilomarIntakeCategory = 0 THEN 'Healthy' WHEN a.AsilomarIntakeCategory = 1 THEN 'Treatable - Rehabilitatable' WHEN a.AsilomarIntakeCategory = 2 THEN 'Treatable - Manageable' ELSE 'Unhealthy and Untreatable' END AS Category,
 CASE WHEN a.SpeciesID = 1 THEN 1 ELSE 0 END AS Dog,
 CASE WHEN a.SpeciesID = 2 THEN 1 ELSE 0 END AS Cat,
-1 AS Total
+CASE WHEN a.SpeciesID = 1 OR a.SpeciesID = 2 THEN 1 ELSE 0 END AS Total
 FROM adoption m
 INNER JOIN animal a ON m.AnimalID = a.ID
 WHERE m.MovementDate >= '$PARENTARG1$' AND m.MovementDate <= '$PARENTARG2$' AND m.MovementType = 1
@@ -382,7 +382,7 @@ SELECT a.AsilomarIntakeCategory,
 CASE WHEN a.AsilomarIntakeCategory = 0 THEN 'Healthy' WHEN a.AsilomarIntakeCategory = 1 THEN 'Treatable - Rehabilitatable' WHEN a.AsilomarIntakeCategory = 2 THEN 'Treatable - Manageable' ELSE 'Unhealthy and Untreatable' END AS Category,
 CASE WHEN a.SpeciesID = 1 THEN 1 ELSE 0 END AS Dog,
 CASE WHEN a.SpeciesID = 2 THEN 1 ELSE 0 END AS Cat,
-1 AS Total
+CASE WHEN a.SpeciesID = 1 OR a.SpeciesID = 2 THEN 1 ELSE 0 END AS Total
 FROM adoption m
 INNER JOIN animal a ON m.AnimalID = a.ID
 WHERE m.MovementDate >= '$PARENTARG1$' AND m.MovementDate <= '$PARENTARG2$' AND m.MovementType = 3 AND a.AsilomarIsTransferExternal = 0
@@ -424,7 +424,7 @@ SELECT a.AsilomarIntakeCategory,
 CASE WHEN a.AsilomarIntakeCategory = 0 THEN 'Healthy' WHEN a.AsilomarIntakeCategory = 1 THEN 'Treatable - Rehabilitatable' WHEN a.AsilomarIntakeCategory = 2 THEN 'Treatable - Manageable' ELSE 'Unhealthy and Untreatable' END AS Category,
 CASE WHEN a.SpeciesID = 1 THEN 1 ELSE 0 END AS Dog,
 CASE WHEN a.SpeciesID = 2 THEN 1 ELSE 0 END AS Cat,
-1 AS Total
+CASE WHEN a.SpeciesID = 1 OR a.SpeciesID = 2 THEN 1 ELSE 0 END AS Total
 FROM adoption m
 INNER JOIN animal a ON m.AnimalID = a.ID
 WHERE m.MovementDate >= '$PARENTARG1$' AND m.MovementDate <= '$PARENTARG2$' AND m.MovementType = 3 AND a.AsilomarIsTransferExternal = 1
@@ -489,7 +489,7 @@ CASE WHEN AsilomarIntakeCategory = 0 THEN 'M' WHEN AsilomarIntakeCategory = 1 TH
 CASE WHEN AsilomarIntakeCategory = 0 THEN 'Healthy' WHEN AsilomarIntakeCategory = 1 THEN 'Treatable - Rehabilitatable' WHEN AsilomarIntakeCategory = 2 THEN 'Treatable - Manageable' ELSE 'Unhealthy and Untreatable' END AS Category,
 CASE WHEN SpeciesID = 1 THEN 1 ELSE 0 END AS Dog,
 CASE WHEN SpeciesID = 2 THEN 1 ELSE 0 END AS Cat,
-1 AS Total
+CASE WHEN a.SpeciesID = 1 OR a.SpeciesID = 2 THEN 1 ELSE 0 END AS Total
 FROM animal
 WHERE NonShelterAnimal = 0 AND DeceasedDate >= '$PARENTARG1$' AND DeceasedDate <= '$PARENTARG2$' AND DeceasedDate Is Not Null AND PutToSleep = 1
 ORDER BY Category
@@ -655,13 +655,13 @@ NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$PARENTARG2
 AND DateBroughtIn <= '$PARENTARG2$'
 AND NonShelterAnimal = 0
 AND SpeciesID = 1
-AND (DeceasedDate Is Null OR DeceasedDate > '$PARENTARG2$')) AS Dog,
+AND (DeceasedDate Is Null OR DeceasedDate >= '$PARENTARG2$')) AS Dog,
 (SELECT COUNT(*) FROM animal WHERE
 NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$PARENTARG2$' AND (ReturnDate Is Null OR ReturnDate > '$PARENTARG2$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
 AND DateBroughtIn <= '$PARENTARG2$'
 AND NonShelterAnimal = 0
 AND SpeciesID = 2
-AND (DeceasedDate Is Null OR DeceasedDate > '$PARENTARG2$')) AS Cat
+AND (DeceasedDate Is Null OR DeceasedDate >= '$PARENTARG2$')) AS Cat
 )) dummy
 +++
 $$HEADER
