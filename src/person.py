@@ -1033,18 +1033,21 @@ def delete_person(dbo, username, personid):
     if db.query_int(dbo, "SELECT COUNT(ID) FROM animaltransport WHERE DriverOwnerID=%d OR PickupOwnerID=%d OR DropoffOwnerID=%d" % (personid, personid, personid)):
         raise utils.ASMValidationError(_("This person is linked to animal transportation and cannot be removed.", l))
     animals = db.query(dbo, "SELECT AnimalID FROM adoption WHERE OwnerID = %d" % personid)
-    audit.delete(dbo, username, "owner", personid, audit.dump_row(dbo, "owner", personid))
-    db.execute(dbo, "DELETE FROM media WHERE LinkID = %d AND LinkTypeID = %d" % (personid, 1))
-    db.execute(dbo, "DELETE FROM diary WHERE LinkID = %d AND LinkType = %d" % (personid, 2))
-    db.execute(dbo, "DELETE FROM log WHERE LinkID = %d AND LinkType = %d" % (personid, 1))
+    audit.delete_rows(dbo, username, "media", "LinkID = %d AND LinkTypeID = %d" % (personid, media.PERSON))
+    db.execute(dbo, "DELETE FROM media WHERE LinkID = %d AND LinkTypeID = %d" % (personid, media.PERSON))
+    audit.delete_rows(dbo, username, "diary", "LinkID = %d AND LinkType = %d" % (personid, diary.PERSON))
+    db.execute(dbo, "DELETE FROM diary WHERE LinkID = %d AND LinkType = %d" % (personid, diary.PERSON))
+    audit.delete_rows(dbo, username, "log", "LinkID = %d AND LinkType = %d" % (personid, log.PERSON))
+    db.execute(dbo, "DELETE FROM log WHERE LinkID = %d AND LinkType = %d" % (personid, log.PERSON))
     db.execute(dbo, "DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (personid, additional.PERSON_IN))
-    db.execute(dbo, "DELETE FROM adoption WHERE OwnerID = %d" % personid)
-    db.execute(dbo, "DELETE FROM ownerdonation WHERE OwnerID = %d" % personid)
-    db.execute(dbo, "DELETE FROM ownervoucher WHERE OwnerID = %d" % personid)
+    for t in [ "adoption", "ownercitation", "ownerdonation", "ownerlicence", "ownertraploan", "ownervoucher" ]:
+        audit.delete_rows(dbo, username, t, "OwnerID = %d" % personid)
+        db.execute(dbo, "DELETE FROM %s WHERE OwnerID = %d" % (t, personid))
     dbfs.delete_path(dbo, "/owner/%d" % personid)
+    audit.delete(dbo, username, "owner", personid, audit.dump_row(dbo, "owner", personid))
     db.execute(dbo, "DELETE FROM owner WHERE ID = %d" % personid)
     # Now that we've removed the person, update any animals that were previously
-    # attached to it so that they return to the shelter.
+    # attached to it so that they return to the shelter if necessary.
     for a in animals:
         animal.update_animal_status(dbo, int(a["ANIMALID"]))
         animal.update_variable_animal_data(dbo, int(a["ANIMALID"]))

@@ -2776,17 +2776,20 @@ def delete_animal(dbo, username, animalid):
     l = dbo.locale
     if db.query_int(dbo, "SELECT COUNT(ID) FROM adoption WHERE AnimalID=%d" % animalid):
         raise utils.ASMValidationError(_("This animal has movements and cannot be removed.", l))
-    audit.delete(dbo, username, "animal", animalid, audit.dump_row(dbo, "animal", animalid))
-    db.execute(dbo, "DELETE FROM media WHERE LinkID = %d AND LinkTypeID = %d" % (animalid, 0))
-    db.execute(dbo, "DELETE FROM diary WHERE LinkID = %d AND LinkType = %d" % (animalid, 1))
-    db.execute(dbo, "DELETE FROM log WHERE LinkID = %d AND LinkType = %d" % (animalid, 0))
+    audit.delete_rows(dbo, username, "media", "LinkID = %d AND LinkTypeID = %d" % (animalid, media.ANIMAL))
+    db.execute(dbo, "DELETE FROM media WHERE LinkID = %d AND LinkTypeID = %d" % (animalid, media.ANIMAL))
+    audit.delete_rows(dbo, username, "diary", "LinkID = %d AND LinkType = %d" % (animalid, diary.ANIMAL))
+    db.execute(dbo, "DELETE FROM diary WHERE LinkID = %d AND LinkType = %d" % (animalid, diary.ANIMAL))
+    audit.delete_rows(dbo, username, "log", "LinkID = %d AND LinkType = %d" % (animalid, log.ANIMAL))
+    db.execute(dbo, "DELETE FROM log WHERE LinkID = %d AND LinkType = %d" % (animalid, log.ANIMAL))
     db.execute(dbo, "DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (animalid, additional.ANIMAL_IN))
-    db.execute(dbo, "DELETE FROM adoption WHERE AnimalID = %d" % animalid)
     db.execute(dbo, "DELETE FROM animalcontrolanimal WHERE AnimalID = %d" % animalid)
-    db.execute(dbo, "DELETE FROM animalmedical WHERE AnimalID = %d" % animalid)
-    db.execute(dbo, "DELETE FROM animalmedicaltreatment WHERE AnimalID = %d" % animalid)
-    db.execute(dbo, "DELETE FROM animalvaccination WHERE AnimalID = %d" % animalid)
+    db.execute(dbo, "DELETE FROM animalpublished WHERE AnimalID = %d" % animalid)
+    for t in [ "adoption", "animalmedical", "animalmedicaltreatment", "animaltest", "animaltransport", "animalvaccination" ]:
+        audit.delete_rows(dbo, username, t, "AnimalID = %d" % animalid)
+        db.execute(dbo, "DELETE FROM %s WHERE AnimalID = %d" % (t, animalid))
     dbfs.delete_path(dbo, "/animal/%d" % animalid)
+    audit.delete(dbo, username, "animal", animalid, audit.dump_row(dbo, "animal", animalid))
     db.execute(dbo, "DELETE FROM animal WHERE ID = %d" % animalid)
 
 def update_daily_boarding_cost(dbo, username, animalid, cost):

@@ -50,7 +50,10 @@ def map_diff(row1, row2, ref = []):
     return s
 
 def dump_row(dbo, tablename, rowid):
-    return str(db.query(dbo, "SELECT * FROM %s WHERE ID = %s" % (tablename, rowid)))
+    return dump_rows(dbo, tablename, "ID = %s" % rowid)
+
+def dump_rows(dbo, tablename, condition):
+    return str(db.query(dbo, "SELECT * FROM %s WHERE %s" % (tablename, condition)))
 
 def create(dbo, username, tablename, linkid, description):
     action(dbo, ADD, username, tablename, linkid, description)
@@ -60,6 +63,10 @@ def edit(dbo, username, tablename, linkid, description):
 
 def delete(dbo, username, tablename, linkid, description):
     action(dbo, DELETE, username, tablename, linkid, description)
+
+def delete_rows(dbo, username, tablename, condition):
+    for r in db.query(dbo, "SELECT * FROM %s WHERE %s" % (tablename, condition)):
+        action(dbo, DELETE, username, tablename, r["ID"], dump_row(dbo, tablename, r["ID"]))
 
 def move(dbo, username, tablename, linkid, description):
     action(dbo, MOVE, username, tablename, linkid, description)

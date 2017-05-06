@@ -4,6 +4,7 @@ import additional
 import audit
 import configuration
 import db
+import dbfs
 import diary
 import log
 import media
@@ -487,12 +488,16 @@ def delete_animalcontrol(dbo, username, acid):
     """
     Deletes an animal control record
     """
-    audit.delete(dbo, username, "animalcontrol", acid, audit.dump_row(dbo, "animalcontrol", acid))
-    db.execute(dbo, "DELETE FROM animalcontrol WHERE ID = %d" % acid)
+    audit.delete_rows(dbo, username, "media", "LinkID = %d AND LinkTypeID = %d" % (acid, media.ANIMALCONTROL))
     db.execute(dbo, "DELETE FROM media WHERE LinkID = %d AND LinkTypeID = %d" % (acid, media.ANIMALCONTROL))
+    audit.delete_rows(dbo, username, "diary", "LinkID = %d AND LinkType = %d" % (acid, diary.ANIMALCONTROL))
     db.execute(dbo, "DELETE FROM diary WHERE LinkID = %d AND LinkType = %d" % (acid, diary.ANIMALCONTROL))
+    audit.delete_rows(dbo, username, "log", "LinkID = %d AND LinkType = %d" % (acid, log.ANIMALCONTROL))
     db.execute(dbo, "DELETE FROM log WHERE LinkID = %d AND LinkType = %d" % (acid, log.ANIMALCONTROL))
     db.execute(dbo, "DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (acid, additional.INCIDENT_IN))
+    dbfs.delete_path(dbo, "/animalcontrol/%d" % acid)
+    audit.delete(dbo, username, "animalcontrol", acid, audit.dump_row(dbo, "animalcontrol", acid))
+    db.execute(dbo, "DELETE FROM animalcontrol WHERE ID = %d" % acid)
 
 def insert_animalcontrol(dbo, username):
     """

@@ -7,6 +7,7 @@ import async
 import audit
 import configuration
 import db
+import dbfs
 import diary
 import log
 import media
@@ -854,22 +855,29 @@ def delete_lostanimal(dbo, username, aid):
     """
     Deletes a lost animal
     """
-    audit.delete(dbo, username, "animallost", aid, audit.dump_row(dbo, "animallost", aid))
-    db.execute(dbo, "DELETE FROM animallost WHERE ID = %d" % aid)
+    audit.delete_rows(dbo, username, "media", "LinkID = %d AND LinkTypeID = %d" % (aid, media.LOSTANIMAL))
     db.execute(dbo, "DELETE FROM media WHERE LinkID = %d AND LinkTypeID = %d" % (aid, media.LOSTANIMAL))
+    audit.delete_rows(dbo, username, "diary", "LinkID = %d AND LinkType = %d" % (aid, diary.LOSTANIMAL))
     db.execute(dbo, "DELETE FROM diary WHERE LinkID = %d AND LinkType = %d" % (aid, diary.LOSTANIMAL))
+    audit.delete_rows(dbo, username, "log", "LinkID = %d AND LinkType = %d" % (aid, log.LOSTANIMAL))
     db.execute(dbo, "DELETE FROM log WHERE LinkID = %d AND LinkType = %d" % (aid, log.LOSTANIMAL))
     db.execute(dbo, "DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (aid, additional.LOSTANIMAL_IN))
+    dbfs.delete_path(dbo, "/lostanimal/%d" % aid)
+    audit.delete(dbo, username, "animallost", aid, audit.dump_row(dbo, "animallost", aid))
+    db.execute(dbo, "DELETE FROM animallost WHERE ID = %d" % aid)
 
 def delete_foundanimal(dbo, username, aid):
     """
     Deletes a found animal
     """
-    audit.delete(dbo, username, "animalfound", aid, audit.dump_row(dbo, "animalfound", aid))
-    db.execute(dbo, "DELETE FROM animalfound WHERE ID = %d" % aid)
+    audit.delete_rows(dbo, username, "media", "LinkID = %d AND LinkTypeID = %d" % (aid, media.FOUNDANIMAL))
     db.execute(dbo, "DELETE FROM media WHERE LinkID = %d AND LinkTypeID = %d" % (aid, media.FOUNDANIMAL))
+    audit.delete_rows(dbo, username, "diary", "LinkID = %d AND LinkType = %d" % (aid, diary.FOUNDANIMAL))
     db.execute(dbo, "DELETE FROM diary WHERE LinkID = %d AND LinkType = %d" % (aid, diary.FOUNDANIMAL))
+    audit.delete_rows(dbo, username, "log", "LinkID = %d AND LinkType = %d" % (aid, log.FOUNDANIMAL))
     db.execute(dbo, "DELETE FROM log WHERE LinkID = %d AND LinkType = %d" % (aid, log.FOUNDANIMAL))
     db.execute(dbo, "DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (aid, additional.FOUNDANIMAL_IN))
-
+    dbfs.delete_path(dbo, "/foundanimal/%d" % aid)
+    audit.delete(dbo, username, "animalfound", aid, audit.dump_row(dbo, "animalfound", aid))
+    db.execute(dbo, "DELETE FROM animalfound WHERE ID = %d" % aid)
 

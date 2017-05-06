@@ -164,12 +164,16 @@ def delete_waitinglist(dbo, username, wid):
     """
     Deletes a waiting list record
     """
-    audit.delete(dbo, username, "animalwaitinglist", wid, audit.dump_row(dbo, "animalwaitinglist", wid))
-    db.execute(dbo, "DELETE FROM animalwaitinglist WHERE ID = %d" % wid)
+    audit.delete_rows(dbo, username, "media", "LinkID = %d AND LinkTypeID = %d" % (wid, media.WAITINGLIST))
     db.execute(dbo, "DELETE FROM media WHERE LinkID = %d AND LinkTypeID = %d" % (wid, media.WAITINGLIST))
+    audit.delete_rows(dbo, username, "diary", "LinkID = %d AND LinkType = %d" % (wid, diary.WAITINGLIST))
     db.execute(dbo, "DELETE FROM diary WHERE LinkID = %d AND LinkType = %d" % (wid, diary.WAITINGLIST))
+    audit.delete_rows(dbo, username, "log", "LinkID = %d AND LinkType = %d" % (wid, log.WAITINGLIST))
     db.execute(dbo, "DELETE FROM log WHERE LinkID = %d AND LinkType = %d" % (wid, log.WAITINGLIST))
     db.execute(dbo, "DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (wid, additional.WAITINGLIST_IN))
+    dbfs.delete_path(dbo, "/waitinglist/%d" % wid)
+    audit.delete(dbo, username, "animalwaitinglist", wid, audit.dump_row(dbo, "animalwaitinglist", wid))
+    db.execute(dbo, "DELETE FROM animalwaitinglist WHERE ID = %d" % wid)
 
 def send_email_from_form(dbo, username, post):
     """
