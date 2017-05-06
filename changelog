@@ -1,6 +1,7 @@
 40
 ================
 
+06/05/17 Return nopic for missing animal_thumbnail #209
 04/05/17 json/xml service call to get data for a single animal #207
 04/05/17 Strip personal data for adoptable_js #207
 02/05/17 Include species in adoptable/shelter online form dropdown

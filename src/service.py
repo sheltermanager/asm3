@@ -273,12 +273,9 @@ def handler(post, path, remoteip, referer, querystring):
             al.error("animal_image failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
             return ("text/plain", 0, "ERROR: Invalid animalid")
         else:
-            if seq == 0: seq = 1
-            mm = media.get_media_by_seq(dbo, media.ANIMAL, utils.cint(animalid), seq)
-            if len(mm) == 0:
-                return set_cached_response(cache_key, "image/jpeg", 86400, 120, dbfs.get_string(dbo, "nopic.jpg", "/reports"))
-            else:
-                return set_cached_response(cache_key, "image/jpeg", 86400, 120, dbfs.get_string(dbo, mm[0]["MEDIANAME"]))
+            mediadate, data = media.get_image_file_data(dbo, "animal", utils.cint(animalid))
+            if data == "NOPIC": data = dbfs.get_string(dbo, "nopic.jpg", "/reports")
+            return set_cached_response(cache_key, "image/jpeg", 86400, 120, data)
 
     elif method =="animal_thumbnail":
         if utils.cint(animalid) == 0:
@@ -286,6 +283,7 @@ def handler(post, path, remoteip, referer, querystring):
             return ("text/plain", 0, "ERROR: Invalid animalid")
         else:
             mediadate, data = media.get_image_file_data(dbo, "animalthumb", utils.cint(animalid))
+            if data == "NOPIC": data = dbfs.get_string(dbo, "nopic.jpg", "/reports")
             return set_cached_response(cache_key, "image/jpeg", 86400, 120, data)
 
     elif method == "animal_view":
