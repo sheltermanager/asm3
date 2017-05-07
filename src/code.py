@@ -823,7 +823,7 @@ class media(ASMEndpoint):
             content = dbfs.get_string(dbo, m["MEDIANAME"])
             if m["MEDIANAME"].endswith("html"):
                 content = utils.fix_relative_document_uris(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-            utils.send_email(dbo, post["from"], emailadd, "", m["MEDIANOTES"], post["body"], "html", content, m["MEDIANAME"])
+            utils.send_email(dbo, post["from"], emailadd, post["cc"], m["MEDIANOTES"], post["body"], "html", content, m["MEDIANAME"])
             if post.boolean("addtolog"):
                 extlog.add_log(dbo, o.user, self.log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), "%s :: %s" % (m["MEDIANOTES"], utils.html_email_to_plain(post["body"])))
         return emailadd
@@ -843,7 +843,7 @@ class media(ASMEndpoint):
             if not m["MEDIANAME"].endswith("html"): continue
             content = dbfs.get_string(dbo, m["MEDIANAME"])
             contentpdf = utils.html_to_pdf(content, BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-            utils.send_email(dbo, post["from"], emailadd, "", m["MEDIANOTES"], post["body"], "plain", contentpdf, "document.pdf")
+            utils.send_email(dbo, post["from"], emailadd, post["cc"], m["MEDIANOTES"], post["body"], "plain", contentpdf, "document.pdf")
             if post.boolean("addtolog"):
                 extlog.add_log(dbo, o.user, self.log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), "%s :: %s" % (m["MEDIANOTES"], utils.html_email_to_plain(post["body"])))
         return emailadd

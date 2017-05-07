@@ -1,6 +1,7 @@
 40
 ================
 
+07/05/17 Wire up cc field when sending media/as pdf #200
 06/05/17 Audit deleted satellite records #201
 06/05/17 Return nopic for missing animal_thumbnail #209
 04/05/17 json/xml service call to get data for a single animal #207
