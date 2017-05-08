@@ -1,6 +1,7 @@
 40
 ================
 
+08/05/17 Allow user accounts to have logins disabled #211
 07/05/17 Wire up cc field when sending media/as pdf #200
 06/05/17 Audit deleted satellite records #201
 06/05/17 Return nopic for missing animal_thumbnail #209

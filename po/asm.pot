@@ -1982,6 +1982,10 @@ msgstr ""
 msgid "Camel"
 msgstr ""
 
+#: users.js
+msgid "Can Login"
+msgstr ""
+
 #: waitinglist.js waitinglist_new.js
 msgid "Can afford donation?"
 msgstr ""
@@ -3444,10 +3448,6 @@ msgstr ""
 
 #: diarytask.js
 msgid "Diary task items need a pivot, subject and note."
-msgstr ""
-
-#: code.py
-msgid "Diary task: {0}"
 msgstr ""
 
 #: diarytasks.js
@@ -8454,11 +8454,11 @@ msgstr ""
 msgid "Reason the owner did not bring in the animal themselves"
 msgstr ""
 
-#: batch.js
+#: batch.js code.py
 msgid "Recalculate ALL animal locations"
 msgstr ""
 
-#: batch.js
+#: batch.js code.py
 msgid "Recalculate on-shelter animal locations"
 msgstr ""
 
@@ -8586,23 +8586,23 @@ msgstr ""
 msgid "Refresh"
 msgstr ""
 
-#: batch.js
+#: batch.js code.py
 msgid "Regenerate 'Match lost and found animals' report"
 msgstr ""
 
-#: batch.js
+#: batch.js code.py
 msgid "Regenerate 'Person looking for' report"
 msgstr ""
 
-#: batch.js
+#: batch.js code.py
 msgid "Regenerate annual animal figures for"
 msgstr ""
 
-#: batch.js
+#: batch.js code.py
 msgid "Regenerate monthly animal figures for"
 msgstr ""
 
-#: batch.js
+#: batch.js code.py
 msgid "Regenerate person names in selected format"
 msgstr ""
 
@@ -9410,6 +9410,10 @@ msgstr ""
 
 #: options.js
 msgid "Set to 0 to never update urgencies."
+msgstr ""
+
+#: users.js
+msgid "Set wether or not this user account can log in to the user interface."
 msgstr ""
 
 #: dbupdate.py
@@ -11598,7 +11602,7 @@ msgstr ""
 msgid "Unknown microchip brand"
 msgstr ""
 
-#: citations.js code.py
+#: citations.js
 msgid "Unpaid Fines"
 msgstr ""
 
@@ -11756,6 +11760,12 @@ msgstr ""
 
 #: roles.js
 msgid "User Roles"
+msgstr ""
+
+#: users.js
+msgid ""
+"User accounts that will only ever call the Service API should set this to "
+"No."
 msgstr ""
 
 #: html.py

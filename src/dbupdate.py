@@ -22,7 +22,7 @@ VERSIONS = (
     33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716, 33717, 33718, 
     33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904, 33905, 33906, 
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
-    34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010
+    34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1401,6 +1401,7 @@ def sql_structure(dbo):
         fstr("LocaleOverride", True),
         fstr("ThemeOverride", True),
         fint("SiteID", True), 
+        fint("DisableLogin", True),
         fstr("LocationFilter", True),
         fint("RecordVersion", True)), False)
     sql += index("users_UserName", "users", "UserName")
@@ -4650,3 +4651,9 @@ def update_34009(dbo):
 def update_34010(dbo):
     # Add an index on additional.linkid for performance
     add_index(dbo, "additional_LinkID", "additional", "LinkID")
+
+def update_34011(dbo):
+    # Add users.DisableLogin
+    add_column(dbo, "users", "DisableLogin", "INTEGER")
+    db.execute_dbupdate(dbo, "UPDATE users SET DisableLogin = 0")
+

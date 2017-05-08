@@ -27,9 +27,14 @@ $(function() {
                     { json_field: "PASSWORD", post_field: "password", label: _("Password"), type: "text", readonly: true },
                     { json_field: "REALNAME", post_field: "realname", label: _("Real name"), type: "text" },
                     { json_field: "EMAILADDRESS", post_field: "email", label: _("Email"), type: "text" },
-                    { json_field: "SUPERUSER", post_field: "superuser", label: _("Type"),  type: "select", defaultval: 0, options: 
+                    { json_field: "SUPERUSER", post_field: "superuser", label: _("Type"),  type: "select", defaultval: "0", options: 
                         '<option value="0">' + _("Normal user") + '</option>' +
                         '<option value="1">' + _("Super user") + '</option>'},
+                    { json_field: "DISABLELOGIN", post_field: "disablelogin", label: _("Can Login"),  type: "select", defaultval: "0", 
+                        callout: _("Set wether or not this user account can log in to the user interface.") + " " +
+                                 _("User accounts that will only ever call the Service API should set this to No."),
+                        options: '<option value="0">' + _("Yes") + '</option>' +
+                        '<option value="1">' + _("No") + '</option>'},
                     { json_field: "ROLEIDS", post_field: "roles", label: _("Roles"), type: "selectmulti", 
                         options: { rows: controller.roles, valuefield: "ID", displayfield: "ROLENAME" }},
                     { json_field: "SITEID", post_field: "site", label: _("Site"), type: "select", 
@@ -91,6 +96,12 @@ $(function() {
                                 return _("Yes");
                             }
                             return _("No");
+                        }},
+                    { field: "DISABLELOGIN", display: _("Can Login"), formatter: function(row) {
+                            if (row.DISABLELOGIN == 1) {
+                                return _("No");
+                            }
+                            return _("Yes");
                         }},
                     { field: "SITEID", display: _("Site"), 
                         formatter: function(row) {

@@ -517,6 +517,7 @@ def insert_user_from_form(dbo, username, post):
         ( "EmailAddress", post.db_string("email")),
         ( "Password", db.ds(hash_password(post["password"]))),
         ( "SuperUser", post.db_integer("superuser")),
+        ( "DisableLogin", post.db_integer("disablelogin")),
         ( "RecordVersion", db.di(0)),
         ( "SecurityMap", db.ds("dummy")),
         ( "OwnerID", post.db_integer("person")),
@@ -558,6 +559,7 @@ def update_user_from_form(dbo, username, post):
         ( "RealName", post.db_string("realname")),
         ( "EmailAddress", post.db_string("email")),
         ( "SuperUser", post.db_integer("superuser")),
+        ( "DisableLogin", post.db_integer("disablelogin")),
         ( "OwnerID", post.db_integer("person")),
         ( "SiteID", post.db_integer("site")),
         ( "LocationFilter", post.db_string("locationfilter")),
@@ -689,6 +691,9 @@ def web_login(post, session, remoteip, path):
     user = authenticate(dbo, username, password)
     if user is not None and not authenticate_ip(user, remoteip):
         al.error("user %s with ip %s failed ip restriction check '%s'" % (username, remoteip, user["IPRESTRICTION"]), "users.web_login", dbo)
+        return "FAIL"
+    if user is not None and "DISABLELOGIN" in user and user["DISABLELOGIN"] == 1:
+        al.error("user %s with ip %s failed as account has logins disabled" % (username, remoteip), "users.web_login", dbo)
         return "FAIL"
     if user is not None:
         al.info("%s successfully authenticated from %s" % (username, remoteip), "users.web_login", dbo)
