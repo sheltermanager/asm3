@@ -5131,41 +5131,37 @@ class service(ASMEndpoint):
     def post_all(self, o):
         return self.handle(o)
 
-class shelterview:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_ANIMAL)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        animals = extanimal.get_shelterview_animals(dbo, session.locationfilter, session.siteid)
-        perrow = configuration.main_screen_animal_link_max(dbo)
-        al.debug("got %d animals for shelterview" % (len(animals)), "code.shelterview", dbo)
-        s = html.header("", session)
-        c = html.controller_json("animals", extanimal.get_animals_brief(animals))
-        c += html.controller_json("flags", extlookups.get_animal_flags(dbo))
-        c += html.controller_json("fosterers", extperson.get_shelterview_fosterers(dbo))
-        c += html.controller_json("locations", extlookups.get_internal_locations(dbo, session.locationfilter, session.siteid))
-        c += html.controller_int("perrow", perrow)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("shelterview", s, c, post["json"] == "true")
+class shelterview(JSONEndpoint):
+    url = "shelterview"
+    get_permissions = users.VIEW_ANIMAL
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="move"), session.locale)
-        mode = post["mode"]
-        if mode == "movelocation":
-            users.check_permission(session, users.CHANGE_ANIMAL)
-            extanimal.update_location_unit(session.dbo, session.user, post.integer("animalid"), post.integer("locationid"))
-        if mode == "moveunit":
-            users.check_permission(session, users.CHANGE_ANIMAL)
-            extanimal.update_location_unit(session.dbo, session.user, post.integer("animalid"), post.integer("locationid"), post["unit"])
-        if mode == "movefoster":
-            users.check_permission(session, users.ADD_MOVEMENT)
-            post.data["person"] = post["personid"]
-            post.data["animal"] = post["animalid"]
-            post.data["fosterdate"] = python2display(session.locale, now(session.dbo.timezone))
-            return extmovement.insert_foster_from_form(session.dbo, session.user, post)
+    def controller(self, o):
+        dbo = o.dbo
+        animals = extanimal.get_shelterview_animals(dbo, o.session.locationfilter, o.session.siteid)
+        al.debug("got %d animals for shelterview" % (len(animals)), "code.shelterview", dbo)
+        return {
+            "animals": extanimal.get_animals_brief(animals),
+            "flags": extlookups.get_animal_flags(dbo),
+            "fosterers": extperson.get_shelterview_fosterers(dbo),
+            "locations": extlookups.get_internal_locations(dbo, o.session.locationfilter, o.session.siteid),
+            "perrow": configuration.main_screen_animal_link_max(dbo)
+        }
+
+    def post_movelocation(self, o):
+        self.check(users.CHANGE_ANIMAL)
+        extanimal.update_location_unit(o.dbo, o.user, o.post.integer("animalid"), o.post.integer("locationid"))
+
+    def post_moveunit(self, o):
+        self.check(users.CHANGE_ANIMAL)
+        extanimal.update_location_unit(o.dbo, o.user, o.post.integer("animalid"), o.post.integer("locationid"), o.post["unit"])
+
+    def post_movefoster(self, o):
+        self.check(users.ADD_MOVEMENT)
+        post = o.post
+        post.data["person"] = post["personid"]
+        post.data["animal"] = post["animalid"]
+        post.data["fosterdate"] = python2display(o.locale, now(o.dbo.timezone))
+        return extmovement.insert_foster_from_form(o.dbo, o.user, post)
 
 class smcom_my:
     def GET(self):
