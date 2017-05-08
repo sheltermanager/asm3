@@ -68,6 +68,10 @@ $(function() {
                             tableform.dialog_close();
                         });
                 },
+                complete: function(row) {
+                    if (row.DISABLELOGIN && row.DISABLELOGIN == 1) { return true; }
+                    return false;
+                },
                 columns: [
                     { field: "USERNAME", display: _("Username"), initialsort: true, formatter: function(row) {
                             if (row.USERNAME == asm.useraccount) {

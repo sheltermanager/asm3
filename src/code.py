@@ -5347,42 +5347,40 @@ class stocklevel:
             users.check_permission(session, users.VIEW_STOCKLEVEL)
             return extstock.get_last_stock_with_name(session.dbo, post["name"])
 
-class systemusers:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.EDIT_USER)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
+class systemusers(JSONEndpoint):
+    url = "systemusers"
+    js_module = "users"
+    get_permissions = users.EDIT_USER
+
+    def controller(self, o):
+        dbo = o.dbo
         user = users.get_users(dbo)
         roles = users.get_roles(dbo)
         al.debug("editing %d system users" % len(user), "code.systemusers", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", user)
-        c += html.controller_json("roles", roles)
-        c += html.controller_json("internallocations", extlookups.get_internal_locations(dbo))
-        c += html.controller_json("sites", extlookups.get_sites(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("users", s, c, post["json"] == "true")
+        return {
+            "rows": user,
+            "roles": roles,
+            "internallocations": extlookups.get_internal_locations(dbo),
+            "sites": extlookups.get_sites(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_USER)
-            return users.insert_user_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.EDIT_USER)
-            users.update_user_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.EDIT_USER)
-            for uid in post.integer_list("ids"):
-                users.delete_user(session.dbo, session.user, uid)
-        elif mode == "reset":
-            users.check_permission(session, users.EDIT_USER)
-            for uid in post.integer_list("ids"):
-                users.reset_password(session.dbo, uid, post["password"])
+    def post_create(self, o):
+        self.check(users.ADD_USER)
+        return users.insert_user_from_form(o.dbo, o.user, o.post)
+
+    def post_update(self, o):
+        self.check(users.EDIT_USER)
+        users.update_user_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(users.EDIT_USER)
+        for uid in o.post.integer_list("ids"):
+            users.delete_user(o.dbo, o.user, uid)
+
+    def post_reset(self, o):
+        self.check(users.EDIT_USER)
+        for uid in o.post.integer_list("ids"):
+            users.reset_password(o.dbo, uid, o.post["password"])
 
 class task(JSONEndpoint):
     url = "task"
@@ -5445,21 +5443,18 @@ class test(JSONEndpoint):
         if o.post.integer("item") != -1:
             extstock.deduct_stocklevel_from_form(o.dbo, o.user, o.post)
 
-class timeline:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_ANIMAL)
-        l = session.locale
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
+class timeline(JSONEndpoint):
+    url = "timeline"
+    get_permissions = users.VIEW_ANIMAL
+
+    def controller(self, o):
+        dbo = o.dbo
         evts = extanimal.get_timeline(dbo, 500)
-        s = html.header("", session)
-        c = html.controller_json("recent", evts)
-        c += html.controller_str("explain", _("Showing {0} timeline events.", l).format(len(evts)))
-        s += html.controller(c)
-        s += html.footer()
-        al.debug("timeline events, run by %s, got %d events" % (session.user, len(evts)), "code.timeline", dbo)
-        return full_or_json("timeline", s, c, post["json"] == "true")
+        al.debug("timeline events, run by %s, got %d events" % (o.user, len(evts)), "code.timeline", dbo)
+        return {
+            "recent": evts,
+            "resultcount": len(evts)
+        }
 
 class transport(JSONEndpoint):
     url = "transport"

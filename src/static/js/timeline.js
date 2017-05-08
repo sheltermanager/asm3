@@ -8,11 +8,10 @@ $(function() {
         render: function() {
             var h = [], lastdate, modifier = "";
             h.push('<div id="asm-content" class="ui-helper-reset ui-widget-content ui-corner-all" style="padding: 10px;">');
-            if (controller.explain != "") {
-                h.push('<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">' +
-                    '<p><span class="ui-icon ui-icon-search" style="float: left; margin-right: .3em;"></span>' +
-                    controller.explain + "</p></div>");
-            }
+            h.push('<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">' +
+                '<p><span class="ui-icon ui-icon-search" style="float: left; margin-right: .3em;"></span>' +
+                _("Showing {0} timeline events.").replace("{0}", controller.resultcount)  +
+                "</p></div>");
             if (controller.recent.length == 0) {
                 h.push('<p class="asm-search-result">' + _("No results found.") + '</p>');
             }
