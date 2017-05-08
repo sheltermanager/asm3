@@ -187,10 +187,10 @@ call the API you construct a URL to the service controller. The service
 controller is /service, so if you are accessing a local ASM from your local
 machine, the URL will start <a class="reference external" href="http://localhost:5000/service">http://localhost:5000/service</a>. If you are using
 sheltermanager.com, the URL will start <a class="reference external" href="https://sheltermanager.com/asm/service">https://sheltermanager.com/asm/service</a>.</p>
-<p>If you are using sheltermanager.com, please be aware that service call
-responses are cached for performance. All requests for shelter/adoptable animal
-data will be cached for the next hour, with requests for online forms cached
-for the next couple of minutes.</p>
+<p>If you are using sheltermanager.com, or have enabled the option
+CACHE_SERVICE_RESPONSES in your sitedefs.py, please be aware that some service
+call responses are cached for performance. The cache time is indicated with the
+call below.</p>
 <p>While the examples here show passing the parameters with HTTP GET requests, you
 can POST the parameters too if you prefer.</p>
 <p>The service requires the following parameters:</p>
@@ -209,6 +209,7 @@ called.</li>
 <p>The following method values are supported:</p>
 <div class="section" id="animal-image">
 <h2>animal_image<a class="headerlink" href="#animal-image" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Cache time: 1 day</p>
 <p>Returns an animal&#8217;s preferred image. Send the id of the animal:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=animal_image&amp;animalid=520&amp;seq=1
 </pre></div>
@@ -222,6 +223,7 @@ to programatically grab all the images for a particular animal.</p>
 </div>
 <div class="section" id="animal-thumbnail">
 <h2>animal_thumbnail<a class="headerlink" href="#animal-thumbnail" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Cache time: 1 day</p>
 <p>Returns an animal&#8217;s preferred image as a thumbnail. Send the id of the animal:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=animal_thumbnail&amp;animalid=520
 </pre></div>
@@ -231,6 +233,7 @@ to programatically grab all the images for a particular animal.</p>
 </div>
 <div class="section" id="animal-view">
 <h2>animal_view<a class="headerlink" href="#animal-view" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Cache time: 2 minutes</p>
 <p>Returns a webpage with information for one animal, constructed from the
 animal_view HTML publishing template (editable at <span class="menuselection">Publishing -&gt;
 Edit HTML publishing templates</span>). Pass the id of the animal:</p>
@@ -242,6 +245,7 @@ it is this service call that the system redirects you to.</p>
 </div>
 <div class="section" id="animal-view-adoptable-js">
 <h2>animal_view_adoptable_js<a class="headerlink" href="#animal-view-adoptable-js" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Cache time: 10 minutes</p>
 <p>Returns a javascript file that when executed injects thumbnails of all
 adoptable animals into the page with links to the animal_view service call. It
 is most useful as the src attribute for a &lt;script&gt; tag.</p>
@@ -410,6 +414,7 @@ you can pass those too just like with html_report:</p>
 </div>
 <div class="section" id="extra-image">
 <h2>extra_image<a class="headerlink" href="#extra-image" title="Permalink to this headline">¶</a></h2>
+<p>Cache time: 1 day</p>
 <p>Returns an extra image (see <span class="menuselection">Settings-&gt;Reports-&gt;Extra Images</span>).
 Pass the name of the image in the title parameter:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=extra_image&amp;title=splash.jpg
@@ -418,6 +423,7 @@ Pass the name of the image in the title parameter:</p>
 </div>
 <div class="section" id="html-report">
 <h2>html_report<a class="headerlink" href="#html-report" title="Permalink to this headline">¶</a></h2>
+<p>Cache time: 1 hour</p>
 <p>Returns an HTML document containing a report. Pass the name of the report in
 the title attribute. If the report requires any parameters, you can pass those
 too. VAR parameters are just their name, ASK parameters are ASKn where n is the
@@ -429,6 +435,7 @@ see the parameters it requires in the address bar:</p>
 </div>
 <div class="section" id="json-adoptable-animal-and-xml-adoptable-animal">
 <h2>json_adoptable_animal and xml_adoptable_animal<a class="headerlink" href="#json-adoptable-animal-and-xml-adoptable-animal" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Cache time: 1 hour</p>
 <p>Returns a dataset containing a single animal record from the list of animals
 available for adoption. The method determines whether the format returned is
 JSON or XML:</p>
@@ -442,6 +449,7 @@ JSON or XML:</p>
 </div>
 <div class="section" id="json-adoptable-animals-and-xml-adoptable-animals">
 <h2>json_adoptable_animals and xml_adoptable_animals<a class="headerlink" href="#json-adoptable-animals-and-xml-adoptable-animals" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Cache time: 1 hour</p>
 <p>Returns a dataset containing all animals available for adoption. The method
 determines whether the format returned is JSON or XML:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_adoptable_animals&amp;username=user&amp;password=letmein
@@ -450,6 +458,7 @@ determines whether the format returned is JSON or XML:</p>
 </div>
 <div class="section" id="json-recent-adoptions-and-xml-recent-adoptions">
 <h2>json_recent_adoptions and xml_recent_adoptions<a class="headerlink" href="#json-recent-adoptions-and-xml-recent-adoptions" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Cache time: 1 hour</p>
 <p>Returns a dataset containing all recently adopted animals with their new owner
 information. The method name determines whether the format returned is JSON or
 XML:</p>
@@ -459,6 +468,7 @@ XML:</p>
 </div>
 <div class="section" id="json-shelter-animals-and-xml-shelter-animals">
 <h2>json_shelter_animals and xml_shelter_animals<a class="headerlink" href="#json-shelter-animals-and-xml-shelter-animals" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Cache time: 1 hour</p>
 <p>Returns a dataset containing all shelter animals. The method determines whether
 the format returned is JSON or XML:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_shelter_animals&amp;username=user&amp;password=letmein
@@ -467,6 +477,7 @@ the format returned is JSON or XML:</p>
 </div>
 <div class="section" id="rss-timeline">
 <h2>rss_timeline<a class="headerlink" href="#rss-timeline" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Cache time: 1 hour</p>
 <p>Returns an RSS feed of the timeline for use with feed aggregators:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=rss_timeline&amp;username=user&amp;password=letmein
 </pre></div>

@@ -9,10 +9,10 @@ controller is /service, so if you are accessing a local ASM from your local
 machine, the URL will start http://localhost:5000/service. If you are using
 sheltermanager.com, the URL will start https://sheltermanager.com/asm/service.
 
-If you are using sheltermanager.com, please be aware that service call
-responses are cached for performance. All requests for shelter/adoptable animal
-data will be cached for the next hour, with requests for online forms cached
-for the next couple of minutes.
+If you are using sheltermanager.com, or have enabled the option
+CACHE_SERVICE_RESPONSES in your sitedefs.py, please be aware that some service
+call responses are cached for performance. The cache time is indicated with the
+call below.
 
 While the examples here show passing the parameters with HTTP GET requests, you
 can POST the parameters too if you prefer.
@@ -39,6 +39,8 @@ The following method values are supported:
 animal_image
 ------------
 
+.. rubric:: Cache time: 1 day
+
 Returns an animal's preferred image. Send the id of the animal::
 
     http://localhost:5000/service?method=animal_image&animalid=520&seq=1
@@ -53,6 +55,8 @@ to programatically grab all the images for a particular animal.
 animal_thumbnail
 ----------------
 
+.. rubric:: Cache time: 1 day
+
 Returns an animal's preferred image as a thumbnail. Send the id of the animal::
     
     http://localhost:5000/service?method=animal_thumbnail&animalid=520
@@ -62,6 +66,8 @@ The thumbnail will be sized to whatever the main application is using
 
 animal_view
 -----------
+
+.. rubric:: Cache time: 2 minutes
 
 Returns a webpage with information for one animal, constructed from the
 animal_view HTML publishing template (editable at :menuselection:`Publishing ->
@@ -74,6 +80,8 @@ it is this service call that the system redirects you to.
 
 animal_view_adoptable_js
 ------------------------
+
+.. rubric:: Cache time: 10 minutes
 
 Returns a javascript file that when executed injects thumbnails of all
 adoptable animals into the page with links to the animal_view service call. It
@@ -250,6 +258,8 @@ you can pass those too just like with html_report::
 extra_image
 -----------
 
+Cache time: 1 day
+
 Returns an extra image (see :menuselection:`Settings->Reports->Extra Images`).
 Pass the name of the image in the title parameter::
 
@@ -257,6 +267,8 @@ Pass the name of the image in the title parameter::
 
 html_report
 -----------
+
+Cache time: 1 hour
 
 Returns an HTML document containing a report. Pass the name of the report in
 the title attribute. If the report requires any parameters, you can pass those
@@ -269,6 +281,8 @@ see the parameters it requires in the address bar::
 json_adoptable_animal and xml_adoptable_animal
 ----------------------------------------------
 
+.. rubric:: Cache time: 1 hour
+
 Returns a dataset containing a single animal record from the list of animals
 available for adoption. The method determines whether the format returned is
 JSON or XML::
@@ -280,6 +294,8 @@ JSON or XML::
 json_adoptable_animals and xml_adoptable_animals
 ------------------------------------------------
 
+.. rubric:: Cache time: 1 hour 
+
 Returns a dataset containing all animals available for adoption. The method
 determines whether the format returned is JSON or XML::
 
@@ -287,6 +303,8 @@ determines whether the format returned is JSON or XML::
 
 json_recent_adoptions and xml_recent_adoptions
 ----------------------------------------------
+
+.. rubric:: Cache time: 1 hour 
 
 Returns a dataset containing all recently adopted animals with their new owner
 information. The method name determines whether the format returned is JSON or
@@ -297,6 +315,8 @@ XML::
 json_shelter_animals and xml_shelter_animals
 --------------------------------------------
 
+.. rubric:: Cache time: 1 hour 
+
 Returns a dataset containing all shelter animals. The method determines whether
 the format returned is JSON or XML::
 
@@ -304,6 +324,8 @@ the format returned is JSON or XML::
 
 rss_timeline
 ------------
+
+.. rubric:: Cache time: 1 hour 
 
 Returns an RSS feed of the timeline for use with feed aggregators::
     
