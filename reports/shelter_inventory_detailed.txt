@@ -18,7 +18,9 @@ a.TimeOnShelter,
 sx.Sex,
 t.AnimalType,
 s.SpeciesName,
-CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' ELSE i.LocationName END AS LocationName
+CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' 
+WHEN a.ActiveMovementType = 8 THEN 'Retailer' 
+ELSE i.LocationName END AS LocationName
 FROM animal a
 LEFT OUTER JOIN animaltype t ON t.ID = a.AnimalTypeID
 LEFT OUTER JOIN species s ON s.ID = a.SpeciesID

@@ -1,10 +1,10 @@
-Detailed Shelter Inventory including Fosters
+Detailed Shelter Inventory including Fosters and Retailers
 ###
 Inventories
 ###
-PostgreSQL MySQL SQLite
+PostgreSQL
 ###
-Detailed current shelter inventory, with breed and microchip details and showing foster homes as locations.
+Detailed current shelter inventory, with breed and microchip details and showing foster homes and retailers as locations.
 ###
 en
 ###
@@ -19,7 +19,8 @@ t.AnimalType,
 s.SpeciesName,
 o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.MobileTelephone,
 CASE
-WHEN a.ActiveMovementType = 2 THEN o.OwnerName
+WHEN a.ActiveMovementType = 2 THEN 'Foster - ' || o.OwnerName
+WHEN a.ActiveMovementType = 8 THEN 'Retailer - ' || o.OwnerName 
 ELSE i.LocationName END AS DisplayLocationName
 FROM animal a
 LEFT OUTER JOIN animaltype t ON t.ID = a.AnimalTypeID
@@ -28,11 +29,8 @@ LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex
 LEFT OUTER JOIN internallocation i ON i.ID = a.ShelterLocation
 LEFT OUTER JOIN adoption ad ON a.ActiveMovementID = ad.ID
 LEFT OUTER JOIN owner o ON ad.OwnerID = o.ID
-WHERE (a.Archived = 0 OR a.ActiveMovementType = 2) AND DeceasedDate Is Null 
-ORDER BY 
-CASE
-WHEN a.ActiveMovementType = 2 THEN o.OwnerName
-ELSE i.LocationName END, s.SpeciesName, a.DateBroughtIn
+WHERE (a.Archived = 0 OR a.ActiveMovementType IN (2,8)) AND DeceasedDate Is Null 
+ORDER BY DisplayLocationName, s.SpeciesName, a.DateBroughtIn
 ###
 $$HEADER
 HEADER$$
