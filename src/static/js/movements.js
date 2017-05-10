@@ -441,7 +441,7 @@ $(function() {
                 // Update the href as it is clicked so default browser behaviour
                 // continues on to open the link in a new window
                 var template_name = $(this).attr("data");
-                $(this).prop("href", "document_gen?mode=MOVEMENT&id=" + tableform.table_selected_row(movements.table).ID + "&template=" + template_name);
+                $(this).prop("href", "document_gen?linktype=MOVEMENT&id=" + tableform.table_selected_row(movements.table).ID + "&template=" + template_name);
             });
 
         },

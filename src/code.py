@@ -3828,18 +3828,14 @@ class move_foster:
             users.check_permission(session, users.ADD_MOVEMENT)
             return str(extmovement.insert_foster_from_form(session.dbo, session.user, post))
 
-class move_gendoc:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(), session.locale)
-        dbo = session.dbo
-        s = html.header("", session)
-        c = html.controller_str("templates", html.template_selection(
-            dbfs.get_document_templates(dbo), "document_gen?mode=%s&id=%s" % (post["mode"], post["id"])))
-        c += html.controller_str("message", post["message"])
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("move_gendoc", s, c, post["json"] == "true")
+class move_gendoc(JSONEndpoint):
+    url = "move_gendoc"
+    get_permissions = users.GENERATE_DOCUMENTS
+
+    def controller(self, o):
+        return {
+            "templates": html.template_selection(dbfs.get_document_templates(o.dbo), "document_gen?linktype=%s&id=%s" % (o.post["linktype"], o.post["id"]))
+        }
 
 class move_reclaim:
     def GET(self):

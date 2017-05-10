@@ -219,7 +219,7 @@ $(function() {
                         $("#movementid").val(data);
 
                         var u = "move_gendoc?" +
-                            "mode=MOVEMENT&id=" + data + 
+                            "linktype=MOVEMENT&id=" + data + 
                             "&message=" + encodeURIComponent(common.base64_encode(_("Reservation successfully created.") + " " + 
                                 $(".animalchooser-display").html() + " " + html.icon("right") + " " +
                                 $(".personchooser-display .justlink").html() ));
