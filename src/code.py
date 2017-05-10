@@ -2224,38 +2224,40 @@ class diarytasks(JSONEndpoint):
         for did in o.post.integer_list("ids"):
             extdiary.delete_diarytask(o.dbo, o.user, did)
 
-class document_gen:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.GENERATE_DOCUMENTS)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(mode = "ANIMAL", id = "0", template = "0"), session.locale)
-        mode = post["mode"]
+class document_gen(ASMEndpoint):
+    url = "document_gen"
+    get_permissions = users.GENERATE_DOCUMENTS
+    post_permissions = users.GENERATE_DOCUMENTS
+
+    def content(self, o):
+        dbo = o.dbo
+        post = o.post
+        linktype = post["linktype"]
         if post["id"] == "" or post["id"] == "0": raise utils.ASMValidationError("no id parameter")
         template = post.integer("template")
         templatename = dbfs.get_name_for_id(dbo, template)
         title = templatename
         loglinktype = extlog.ANIMAL
-        al.debug("generating %s document for %d" % (mode, post.integer("id")), "code.document_gen", dbo)
+        al.debug("generating %s document for %d" % (linktype, post.integer("id")), "code.document_gen", dbo)
         logid = post.integer("id")
-        if mode == "ANIMAL":
+        if linktype == "ANIMAL" or linktype == "":
             loglinktype = extlog.ANIMAL
             content = wordprocessor.generate_animal_doc(dbo, template, post.integer("id"), session.user)
-        elif mode == "ANIMALCONTROL":
+        elif linktype == "ANIMALCONTROL":
             loglinktype = extlog.ANIMALCONTROL
             content = wordprocessor.generate_animalcontrol_doc(dbo, template, post.integer("id"), session.user)
-        elif mode == "PERSON":
+        elif linktype == "PERSON":
             loglinktype = extlog.PERSON
             content = wordprocessor.generate_person_doc(dbo, template, post.integer("id"), session.user)
-        elif mode == "DONATION":
+        elif linktype == "DONATION":
             loglinktype = extlog.PERSON
             logid = financial.get_donation(dbo, post.integer_list("id")[0])["OWNERID"]
             content = wordprocessor.generate_donation_doc(dbo, template, post.integer_list("id"), session.user)
-        elif mode == "LICENCE":
+        elif linktype == "LICENCE":
             loglinktype = extlog.PERSON
             logid = financial.get_licence(dbo, post.integer("id"))["OWNERID"]
             content = wordprocessor.generate_licence_doc(dbo, template, post.integer("id"), session.user)
-        elif mode == "MOVEMENT":
+        elif linktype == "MOVEMENT":
             loglinktype = extlog.PERSON
             logid = extmovement.get_movement(dbo, post.integer("id"))["OWNERID"]
             content = wordprocessor.generate_movement_doc(dbo, template, post.integer("id"), session.user)
@@ -2265,7 +2267,7 @@ class document_gen:
             web.header("Content-Type", "text/html")
             web.header("Cache-Control", "no-cache")
             return html.tinymce_header(title, "document_edit.js", jswindowprint=configuration.js_window_print(dbo)) + \
-                html.tinymce_main(dbo.locale, "document_gen", recid=post["id"], mode=post["mode"], \
+                html.tinymce_main(dbo.locale, "document_gen", recid=post["id"], linktype=post["linktype"], \
                     template=post["template"], content=utils.escape_tinymce(content))
         elif templatename.endswith(".odt"):
             web.header("Content-Type", "application/vnd.oasis.opendocument.text")
@@ -2273,139 +2275,148 @@ class document_gen:
             web.header("Cache-Control", "no-cache")
             return content
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.GENERATE_DOCUMENTS)
-        dbo = session.dbo
-        l = session.locale
-        post = utils.PostedData(web.input(recid = 0, mode = "ANIMAL", template = 0, document = "", savemode="save"), session.locale)
-        mode = post["mode"]
+    def post_save(self, o):
+        dbo = o.dbo
+        post = o.post
+        linktype = post["linktype"]
         template = post.integer("template")
         tempname = dbfs.get_name_for_id(dbo, template)
-        if post["savemode"] == "save":
-            recid = post.integer("recid")
-            if mode == "ANIMAL":
-                tempname += " - " + extanimal.get_animal_namecode(dbo, recid)
-                extmedia.create_document_media(dbo, session.user, extmedia.ANIMAL, recid, tempname, post["document"])
-                raise web.seeother("animal_media?id=%d" % recid)
-            elif mode == "ANIMALCONTROL":
-                tempname += " - " + utils.padleft(recid, 6)
-                extmedia.create_document_media(dbo, session.user, extmedia.ANIMALCONTROL, recid, tempname, post["document"])
-                raise web.seeother("incident_media?id=%d" % recid)
-            elif mode == "PERSON":
-                tempname += " - " + extperson.get_person_name(dbo, recid)
-                extmedia.create_document_media(dbo, session.user, extmedia.PERSON, recid, tempname, post["document"])
-                raise web.seeother("person_media?id=%d" % recid)
-            elif mode == "DONATION":
-                d = financial.get_donations_by_ids(dbo, post.integer_list("recid"))
-                if len(d) == 0:
-                    raise utils.ASMValidationError("list '%s' does not contain valid ids" % recid)
-                ownerid = d[0]["OWNERID"]
-                tempname += " - " + extperson.get_person_name(dbo, ownerid)
-                extmedia.create_document_media(dbo, session.user, extmedia.PERSON, ownerid, tempname, post["document"])
-                raise web.seeother("person_media?id=%d" % ownerid)
-            elif mode == "LICENCE":
-                l = financial.get_licence(dbo, recid)
-                if l is None:
-                    raise utils.ASMValidationError("%d is not a valid licence id" % recid)
-                ownerid = l["OWNERID"]
-                tempname += " - " + extperson.get_person_name(dbo, ownerid)
-                extmedia.create_document_media(dbo, session.user, extmedia.PERSON, recid, tempname, post["document"])
-                raise web.seeother("person_media?id=%d" % ownerid)
-            elif mode == "MOVEMENT":
-                m = extmovement.get_movement(dbo, recid)
-                if m is None:
-                    raise utils.ASMValidationError("%d is not a valid movement id" % recid)
-                animalid = m["ANIMALID"]
-                ownerid = m["OWNERID"]
-                tempname = "%s - %s::%s" % (tempname, extanimal.get_animal_namecode(dbo, animalid), extperson.get_person_name(dbo, ownerid))
-                extmedia.create_document_media(dbo, session.user, extmedia.PERSON, ownerid, tempname, post["document"])
-                extmedia.create_document_media(dbo, session.user, extmedia.ANIMAL, animalid, tempname, post["document"])
-                raise web.seeother("person_media?id=%d" % ownerid)
-            else:
-                raise utils.ASMValidationError("Mode '%s' is invalid, cannot save" % mode)
-        elif post["savemode"] == "pdf":
-            web.header("Content-Type", "application/pdf")
-            disposition = configuration.pdf_inline(dbo) and "inline; filename=\"doc.pdf\"" or "attachment; filename=\"doc.pdf\""
-            web.header("Content-Disposition", disposition)
-            return utils.html_to_pdf(post["document"], BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-        elif post["savemode"] == "print":
-            web.header("Content-Type", "text/html")
-            return "%s%s%s" % (html.tinymce_print_header(_("Print Preview", l)), post["document"], "</body></html>")
+        recid = post.integer("recid")
+        if linktype == "ANIMAL":
+            tempname += " - " + extanimal.get_animal_namecode(dbo, recid)
+            extmedia.create_document_media(dbo, session.user, extmedia.ANIMAL, recid, tempname, post["document"])
+            self.redirect("animal_media?id=%d" % recid)
+        elif linktype == "ANIMALCONTROL":
+            tempname += " - " + utils.padleft(recid, 6)
+            extmedia.create_document_media(dbo, session.user, extmedia.ANIMALCONTROL, recid, tempname, post["document"])
+            self.redirect("incident_media?id=%d" % recid)
+        elif linktype == "PERSON":
+            tempname += " - " + extperson.get_person_name(dbo, recid)
+            extmedia.create_document_media(dbo, session.user, extmedia.PERSON, recid, tempname, post["document"])
+            self.redirect("person_media?id=%d" % recid)
+        elif linktype == "DONATION":
+            d = financial.get_donations_by_ids(dbo, post.integer_list("recid"))
+            if len(d) == 0:
+                raise utils.ASMValidationError("list '%s' does not contain valid ids" % recid)
+            ownerid = d[0]["OWNERID"]
+            tempname += " - " + extperson.get_person_name(dbo, ownerid)
+            extmedia.create_document_media(dbo, session.user, extmedia.PERSON, ownerid, tempname, post["document"])
+            self.redirect("person_media?id=%d" % ownerid)
+        elif linktype == "LICENCE":
+            l = financial.get_licence(dbo, recid)
+            if l is None:
+                raise utils.ASMValidationError("%d is not a valid licence id" % recid)
+            ownerid = l["OWNERID"]
+            tempname += " - " + extperson.get_person_name(dbo, ownerid)
+            extmedia.create_document_media(dbo, session.user, extmedia.PERSON, recid, tempname, post["document"])
+            self.redirect("person_media?id=%d" % ownerid)
+        elif linktype == "MOVEMENT":
+            m = extmovement.get_movement(dbo, recid)
+            if m is None:
+                raise utils.ASMValidationError("%d is not a valid movement id" % recid)
+            animalid = m["ANIMALID"]
+            ownerid = m["OWNERID"]
+            tempname = "%s - %s::%s" % (tempname, extanimal.get_animal_namecode(dbo, animalid), extperson.get_person_name(dbo, ownerid))
+            extmedia.create_document_media(dbo, session.user, extmedia.PERSON, ownerid, tempname, post["document"])
+            extmedia.create_document_media(dbo, session.user, extmedia.ANIMAL, animalid, tempname, post["document"])
+            self.redirect("person_media?id=%d" % ownerid)
+        else:
+            raise utils.ASMValidationError("Linktype '%s' is invalid, cannot save" % linktype)
 
-class document_edit:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(template = 0), session.locale)
+    def post_pdf(self, o):
+        dbo = o.dbo
+        post = o.post
+        disposition = configuration.pdf_inline(dbo) and "inline; filename=\"doc.pdf\"" or "attachment; filename=\"doc.pdf\""
+        self.header("Content-Type", "application/pdf")
+        self.header("Content-Disposition", disposition)
+        return utils.html_to_pdf(post["document"], BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
+
+    def post_print(self, o):
+        l = o.locale
+        post = o.post
+        self.header("Content-Type", "text/html")
+        return "%s%s%s" % (html.tinymce_print_header(_("Print Preview", l)), post["document"], "</body></html>")
+
+class document_edit(ASMEndpoint):
+    url = "document_edit"
+    get_permissions = users.GENERATE_DOCUMENTS
+    post_permissions = users.GENERATE_DOCUMENTS
+
+    def content(self, o):
+        dbo = o.dbo
+        post = o.post
         template = post.integer("template")
         templatename = dbfs.get_name_for_id(dbo, template)
-        if templatename == "": raise web.notfound()
+        if templatename == "": self.notfound()
         title = templatename
         al.debug("editing %s" % templatename, "code.document_edit", dbo)
         if templatename.endswith(".html"):
             content = utils.escape_tinymce(dbfs.get_string_id(dbo, template))
-            web.header("Content-Type", "text/html")
-            web.header("Cache-Control", "no-cache")
+            self.header("Content-Type", "text/html")
+            self.header("Cache-Control", "no-cache")
             return html.tinymce_header(title, "document_edit.js", jswindowprint=configuration.js_window_print(dbo)) + \
                 html.tinymce_main(dbo.locale, "document_edit", template=template, content=content)
         elif templatename.endswith(".odt"):
             content = dbfs.get_string_id(dbo, template)
-            web.header("Content-Type", "application/vnd.oasis.opendocument.text")
-            web.header("Cache-Control", "no-cache")
+            self.header("Content-Type", "application/vnd.oasis.opendocument.text")
+            self.header("Cache-Control", "no-cache")
             return content
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        dbo = session.dbo
-        l = session.locale
-        post = utils.PostedData(web.input(template = "", document = "", savemode = "save"), session.locale)
-        if post["savemode"] == "save":
-            template = post.integer("template")
-            templatename = dbfs.get_name_for_id(dbo, template)
-            dbfs.put_string_id(dbo, template, templatename, post["document"])
-            raise web.seeother("document_templates")
-        elif post["savemode"] == "pdf":
-            web.header("Content-Type", "application/pdf")
-            disposition = configuration.pdf_inline(dbo) and "inline; filename=\"doc.pdf\"" or "attachment; filename=\"doc.pdf\""
-            web.header("Content-Disposition", disposition)
-            return utils.html_to_pdf(post["document"], BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-        elif post["savemode"] == "print":
-            web.header("Content-Type", "text/html")
-            return "%s%s%s" % (html.tinymce_print_header(_("Print Preview", l)), post["document"], "</body></html>")
+    def post_save(self, o):
+        dbo = o.dbo
+        post = o.post
+        template = post.integer("template")
+        templatename = dbfs.get_name_for_id(dbo, template)
+        dbfs.put_string_id(dbo, template, templatename, post["document"])
+        self.redirect("document_templates")
 
-class document_media_edit:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_MEDIA)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0, redirecturl = "/main"), session.locale)
-        lastmod, medianame, mimetype, filedata = extmedia.get_media_file_data(session.dbo, post.integer("id"))
+    def post_pdf(self, o):
+        dbo = o.dbo
+        post = o.post
+        disposition = configuration.pdf_inline(dbo) and "inline; filename=\"doc.pdf\"" or "attachment; filename=\"doc.pdf\""
+        self.header("Content-Type", "application/pdf")
+        self.header("Content-Disposition", disposition)
+        return utils.html_to_pdf(post["document"], BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
+
+    def post_print(self, o):
+        post = o.post
+        l = o.locale
+        self.header("Content-Type", "text/html")
+        return "%s%s%s" % (html.tinymce_print_header(_("Print Preview", l)), post["document"], "</body></html>")
+
+class document_media_edit(ASMEndpoint):
+    url = "document_media_edit"
+    get_permissions = users.VIEW_MEDIA
+    post_permissions = users.CHANGE_MEDIA
+
+    def content(self, o):
+        dbo = o.dbo
+        post = o.post
+        lastmod, medianame, mimetype, filedata = extmedia.get_media_file_data(dbo, post.integer("id"))
         al.debug("editing media %d" % post.integer("id"), "code.document_media_edit", dbo)
         title = medianame
-        web.header("Content-Type", "text/html")
+        self.header("Content-Type", "text/html")
         return html.tinymce_header(title, "document_edit.js", jswindowprint=configuration.js_window_print(dbo), \
             onlysavewhendirty=False, readonly=extmedia.has_signature(dbo, post.integer("id"))) + \
             html.tinymce_main(dbo.locale, "document_media_edit", mediaid=post.integer("id"), redirecturl=post["redirecturl"], \
                 content=utils.escape_tinymce(filedata))
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.CHANGE_MEDIA)
-        dbo = session.dbo
-        l = session.locale
-        post = utils.PostedData(web.input(mediaid = 0, redirecturl = "main", document = "", savemode = "save"), session.locale)
-        if post["savemode"] == "save":
-            extmedia.update_file_content(dbo, session.user, post.integer("mediaid"), post["document"])
-            raise web.seeother(post["redirecturl"])
-        elif post["savemode"] == "pdf":
-            web.header("Content-Type", "application/pdf")
-            disposition = configuration.pdf_inline(dbo) and "inline; filename=\"doc.pdf\"" or "attachment; filename=\"doc.pdf\""
-            web.header("Content-Disposition", disposition)
-            return utils.html_to_pdf(post["document"], BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
-        elif post["savemode"] == "print":
-            web.header("Content-Type", "text/html")
-            return "%s%s%s" % (html.tinymce_print_header(_("Print Preview", l)), post["document"], "</body></html>")
+    def post_save(self, o):
+        post = o.post
+        extmedia.update_file_content(o.dbo, o.user, post.integer("mediaid"), post["document"])
+        raise self.redirect(post["redirecturl"])
+
+    def post_pdf(self, o):
+        dbo = o.dbo
+        disposition = configuration.pdf_inline(dbo) and "inline; filename=\"doc.pdf\"" or "attachment; filename=\"doc.pdf\""
+        self.header("Content-Type", "application/pdf")
+        self.header("Content-Disposition", disposition)
+        return utils.html_to_pdf(o.post["document"], BASE_URL, MULTIPLE_DATABASES and dbo.database or "")
+
+    def post_print(self, o):
+        l = o.locale
+        self.header("Content-Type", "text/html")
+        return "%s%s%s" % (html.tinymce_print_header(_("Print Preview", l)), o.post["document"], "</body></html>")
 
 class document_repository(JSONEndpoint):
     url = "document_repository"

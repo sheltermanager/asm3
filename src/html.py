@@ -345,7 +345,7 @@ def tinymce_print_header(title):
     """ % { "title": title,
            "css": asm_css_tag("asm-tinymce.css") }
 
-def tinymce_main(locale, action, recid="", mediaid = "", mode = "", redirecturl = "", template = "", content = ""):
+def tinymce_main(locale, action, recid="", mediaid = "", linktype = "", redirecturl = "", template = "", content = ""):
     """ 
     Outputs the main body of a tinymce page.
     action: The post target for the controller
@@ -358,9 +358,9 @@ def tinymce_main(locale, action, recid="", mediaid = "", mode = "", redirecturl 
         <input type="hidden" name="template" value="%(template)s" />
         <input type="hidden" name="recid" value="%(recid)s" />
         <input type="hidden" name="mediaid" value="%(mediaid)s" />
-        <input type="hidden" name="mode" value="%(mode)s" />
+        <input type="hidden" name="linktype" value="%(linktype)s" />
         <input type="hidden" name="redirecturl" value="%(redirecturl)s" />
-        <input type="hidden" name="savemode" value="save" />
+        <input type="hidden" name="mode" value="save" />
         <div style="padding: 0; margin-left: auto; margin-right: auto">
         <textarea id="wp" name="document" style="margin: 0; padding: 0">
         %(content)s
@@ -374,7 +374,7 @@ def tinymce_main(locale, action, recid="", mediaid = "", mode = "", redirecturl 
             "template": template, 
             "recid": recid, 
             "mediaid": mediaid, 
-            "mode": mode, 
+            "linktype": linktype, 
             "redirecturl": redirecturl, 
             "content": content }
 

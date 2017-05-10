@@ -59,7 +59,7 @@ $(function() {
                     title: "PDF",
                     image: "static/images/icons/pdf.png",
                     onclick: function() {
-                        $("input[name='savemode']").val("pdf");
+                        $("input[name='mode']").val("pdf");
                         $("form").submit();
                     }
                 });
@@ -96,9 +96,9 @@ $(function() {
                     ed.addShortcut('ctrl+s', '', function () {});
                 }
 
-                // Handle saving ourself so we can set the right savemode
+                // Handle saving ourself so we can set the right mode
                 ed.addCommand("mceSave", function() {
-                    $("input[name='savemode']").val("save");
+                    $("input[name='mode']").val("save");
                     $("form").submit();
                 });
 
@@ -119,7 +119,7 @@ $(function() {
             if (ismobile || !jswindowprint) {
                 setTimeout(function() {
                     ed.addCommand("mcePrint", function() {
-                        $("input[name='savemode']").val("print");
+                        $("input[name='mode']").val("print");
                         $("form").submit();
                     });
                 }, 1000);
