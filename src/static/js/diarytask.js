@@ -15,8 +15,10 @@ $(function() {
                 columns: 1,
                 width: 550,
                 fields: [
+                    { json_field: "ORDERINDEX", post_field: "orderindex", label: _("Index"), type: "number",
+                        callout: _("Task items are executed in order of index, lowest to highest"), validation: "notblank" },
                     { json_field: "DAYPIVOT", post_field: "pivot", label: _("Day Pivot"), type: "number", 
-                        tooltip: _("Create note this many days from today, or 9999 to ask"), validation: "notblank" },
+                        callout: _("Create note this many days from today, or 9999 to ask"), validation: "notblank" },
                     { json_field: "WHOFOR", post_field: "for", label: _("For"), type: "select", 
                         options: { rows: controller.forlist, displayfield: "USERNAME", valuefield: "USERNAME" }},
                     { json_field: "SUBJECT", label: _("Subject"), post_field: "subject", validation: "notblank", type: "text" },
@@ -40,6 +42,7 @@ $(function() {
                 },
                 columns: [
                     { field: "WHOFOR", display: _("For") },
+                    { field: "ORDERINDEX", display: _("Index"), initialsort: true },
                     { field: "DAYPIVOT", display: _("Day Pivot") },
                     { field: "SUBJECT", display: _("Subject") },
                     { field: "NOTE", display: _("Note") }

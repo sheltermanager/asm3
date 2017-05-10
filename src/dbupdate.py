@@ -22,7 +22,7 @@ VERSIONS = (
     33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716, 33717, 33718, 
     33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904, 33905, 33906, 
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
-    34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011
+    34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -844,6 +844,7 @@ def sql_structure(dbo):
     sql += table("diarytaskdetail", (
         fid(),
         fint("DiaryTaskHeadID"),
+        fint("OrderIndex", True),
         fint("DayPivot"),
         fstr("WhoFor"),
         flongstr("Subject"),
@@ -4657,3 +4658,7 @@ def update_34011(dbo):
     add_column(dbo, "users", "DisableLogin", "INTEGER")
     db.execute_dbupdate(dbo, "UPDATE users SET DisableLogin = 0")
 
+def update_34012(dbo):
+    # Add diarytaskdetail.OrderIndex
+    add_column(dbo, "diarytaskdetail", "OrderIndex", "INTEGER")
+    db.execute_dbupdate(dbo, "UPDATE diarytaskdetail SET OrderIndex = ID")

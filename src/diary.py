@@ -354,7 +354,7 @@ def execute_diary_task(dbo, username, tasktype, taskid, linkid, selecteddate):
     def fix(s):
         return s.replace("<", "&lt;").replace(">", "&gt;")
     rollingdate = i18n.now(dbo.timezone) 
-    dtd = db.query(dbo, "SELECT * FROM diarytaskdetail WHERE DiaryTaskHeadID = %d ORDER BY ID" % int(taskid))
+    dtd = db.query(dbo, "SELECT * FROM diarytaskdetail WHERE DiaryTaskHeadID = %d ORDER BY OrderIndex" % int(taskid))
     tags = {}
     linktype = ANIMAL
     if tasktype == "ANIMAL": 
@@ -418,6 +418,7 @@ def insert_diarytaskdetail_from_form(dbo, username, post):
     sql = db.make_insert_sql("diarytaskdetail", (
         ( "ID", db.di(nid)),
         ( "DiaryTaskHeadID", post.db_integer("taskid")),
+        ( "OrderIndex", post.db_integer("orderindex")),
         ( "DayPivot", post.db_integer("pivot")),
         ( "WhoFor", post.db_string("for")),
         ( "Subject", post.db_string("subject")),
@@ -434,6 +435,7 @@ def update_diarytaskdetail_from_form(dbo, username, post):
     """
     did = post.integer("diarytaskdetailid")
     sql = db.make_update_sql("diarytaskdetail", "ID=%d" % did, (
+        ( "OrderIndex", post.db_integer("orderindex")),
         ( "DayPivot", post.db_integer("pivot")),
         ( "WhoFor", post.db_string("for")),
         ( "Subject", post.db_string("subject")),
