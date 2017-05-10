@@ -2451,40 +2451,38 @@ class document_repository_file(ASMEndpoint):
             self.header("Content-Disposition", "attachment; filename=\"%s\"" % name)
             return dbfs.get_string_id(o.dbo, o.post.integer("dbfsid"))
 
-class document_templates:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        templates = dbfs.get_document_templates(dbo)
-        al.debug("got %d document templates" % len(templates), "code.document_templates", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", templates)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("document_templates", s, c, post["json"] == "true")
+class document_templates(JSONEndpoint):
+    url = "document_templates"
+    get_permissions = users.MODIFY_DOCUMENT_TEMPLATES
+    post_permissions = users.MODIFY_DOCUMENT_TEMPLATES
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        dbo = session.dbo
-        username = session.user
-        post = utils.PostedData(web.input(mode="create", template="", filechooser={}), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            return dbfs.create_document_template(dbo, username, post["template"])
-        elif mode == "createodt":
-            fn = post.filename()
-            if post["path"] != "": fn = post["path"] + "/" + fn
-            dbfs.create_document_template(dbo, username, fn, ".odt", post.filedata())
-            raise web.seeother("document_templates")
-        elif mode == "clone":
-            for t in post.integer_list("ids"):
-                return dbfs.clone_document_template(dbo, username, t, post["template"])
-        elif mode == "delete":
-            for t in post.integer_list("ids"):
-                dbfs.delete_document_template(dbo, username, t)
-        elif mode == "rename":
-            dbfs.rename_document_template(dbo, username, post.integer("dbfsid"), post["newname"])
+    def controller(self, o):
+        templates = dbfs.get_document_templates(o.dbo)
+        al.debug("got %d document templates" % len(templates), "code.document_templates", o.dbo)
+        return {
+            "rows": templates
+        }
+
+    def post_create(self, o):
+        return dbfs.create_document_template(o.dbo, o.user, o.post["template"])
+
+    def post_createodt(self, o):
+        post = o.post
+        fn = post.filename()
+        if post["path"] != "": fn = post["path"] + "/" + fn
+        dbfs.create_document_template(o.dbo, o.user, fn, ".odt", post.filedata())
+        self.redirect("document_templates")
+
+    def post_clone(self, o):
+        for t in o.post.integer_list("ids"):
+            return dbfs.clone_document_template(o.dbo, o.user, t, o.post["template"])
+
+    def post_delete(self, o):
+        for t in o.post.integer_list("ids"):
+            dbfs.delete_document_template(o.dbo, o.user, t)
+
+    def post_rename(self, o):
+        dbfs.rename_document_template(o.dbo, o.user, o.post.integer("dbfsid"), o.post["newname"])
 
 class donation(JSONEndpoint):
     url = "donation"
@@ -2550,54 +2548,51 @@ class donation_receive(JSONEndpoint):
         self.check(users.ADD_DONATION)
         return financial.insert_donations_from_form(o.dbo, o.user, o.post, o.post["received"], True, o.post["person"], o.post["animal"], o.post["movement"], False)
 
-class foundanimal:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_FOUND_ANIMAL)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        a = extlostfound.get_foundanimal(dbo, post.integer("id"))
-        if a is None: raise web.notfound()
-        al.debug("open found animal %s %s %s" % (a["AGEGROUP"], a["SPECIESNAME"], a["OWNERNAME"]), "code.foundanimal", dbo)
-        s = html.header("", session)
-        c = html.controller_json("animal", a)
-        c += html.controller_str("name", "foundanimal")
-        c += html.controller_json("additional", extadditional.get_additional_fields(dbo, a["ID"], "foundanimal"))
-        c += html.controller_json("agegroups", configuration.age_groups(dbo))
-        if users.check_permission_bool(session, users.VIEW_AUDIT_TRAIL):
-            c += html.controller_json("audit", audit.get_audit_for_link(dbo, "animalfound", a["ID"]))
-        c += html.controller_json("breeds", extlookups.get_breeds_by_species(dbo))
-        c += html.controller_json("colours", extlookups.get_basecolours(dbo))
-        c += html.controller_json("logtypes", extlookups.get_log_types(dbo))
-        c += html.controller_json("sexes", extlookups.get_sexes(dbo))
-        c += html.controller_json("species", extlookups.get_species(dbo))
-        c += html.controller_json("tabcounts", extlostfound.get_foundanimal_satellite_counts(dbo, a["LFID"])[0])
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("lostfound", s, c, post["json"] == "true")
+class foundanimal(JSONEndpoint):
+    url = "foundanimal"
+    js_module = "lostfound"
+    get_permissions = users.VIEW_FOUND_ANIMAL
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        l = session.locale
-        dbo = session.dbo
-        post = utils.PostedData(web.input(mode="save"), session.locale)
-        mode = post["mode"]
-        if mode == "save":
-            users.check_permission(session, users.CHANGE_FOUND_ANIMAL)
-            extlostfound.update_foundanimal_from_form(dbo, post, session.user)
-        elif mode == "email":
-            users.check_permission(session, users.EMAIL_PERSON)
-            if not extlostfound.send_email_from_form(dbo, session.user, post):
-                raise utils.ASMError(_("Failed sending email", l))
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_FOUND_ANIMAL)
-            extlostfound.delete_foundanimal(dbo, session.user, post.integer("id"))
-        elif mode == "toanimal":
-            users.check_permission(session, users.ADD_ANIMAL)
-            return str(extlostfound.create_animal_from_found(dbo, session.user, post.integer("id")))
-        elif mode == "towaitinglist":
-            users.check_permission(session, users.ADD_WAITING_LIST)
-            return str(extlostfound.create_waitinglist_from_found(dbo, session.user, post.integer("id")))
+    def controller(self, o):
+        dbo = o.dbo
+        a = extlostfound.get_foundanimal(dbo, o.post.integer("id"))
+        if a is None: self.notfound()
+        al.debug("open found animal %s %s %s" % (a["AGEGROUP"], a["SPECIESNAME"], a["OWNERNAME"]), "code.foundanimal", dbo)
+        return {
+            "animal": a,
+            "name": "foundanimal",
+            "additional": extadditional.get_additional_fields(dbo, a["ID"], "foundanimal"),
+            "agegroups": configuration.age_groups(dbo),
+            "audit": users.check_permission_bool(o.session, users.VIEW_AUDIT_TRAIL) and audit.get_audit_for_link(dbo, "animalfound", a["ID"]) or [],
+            "breeds": extlookups.get_breeds_by_species(dbo),
+            "colours": extlookups.get_basecolours(dbo),
+            "logtypes": extlookups.get_log_types(dbo),
+            "sexes": extlookups.get_sexes(dbo),
+            "species": extlookups.get_species(dbo),
+            "tabcounts": extlostfound.get_foundanimal_satellite_counts(dbo, a["LFID"])[0]
+        }
+
+    def post_save(self, o):
+        self.check(users.CHANGE_FOUND_ANIMAL)
+        extlostfound.update_foundanimal_from_form(o.dbo, o.post, o.user)
+
+    def post_email(self, o):
+        l = o.locale
+        self.check(users.EMAIL_PERSON)
+        if not extlostfound.send_email_from_form(o.dbo, o.user, o.post):
+            raise utils.ASMError(_("Failed sending email", l))
+
+    def post_delete(self, o):
+        self.check(users.DELETE_FOUND_ANIMAL)
+        extlostfound.delete_foundanimal(o.dbo, o.user, o.post.integer("id"))
+
+    def post_toanimal(self, o):
+        self.check(users.ADD_ANIMAL)
+        return str(extlostfound.create_animal_from_found(o.dbo, o.user, o.post.integer("id")))
+
+    def post_towaitinglist(self, o):
+        self.check(users.ADD_WAITING_LIST)
+        return str(extlostfound.create_waitinglist_from_found(o.dbo, o.user, o.post.integer("id")))
 
 class foundanimal_diary(JSONEndpoint):
     url = "foundanimal_diary"
@@ -2620,41 +2615,39 @@ class foundanimal_diary(JSONEndpoint):
             "forlist": users.get_users_and_roles(dbo)
         }
 
-class foundanimal_find:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_FOUND_ANIMAL)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        s = html.header("", session)
-        c = html.controller_json("agegroups", configuration.age_groups(dbo))
-        c += html.controller_json("colours", extlookups.get_basecolours(dbo))
-        c += html.controller_str("name", "foundanimal_find")
-        c += html.controller_json("species", extlookups.get_species(dbo))
-        c += html.controller_json("breeds", extlookups.get_breeds_by_species(dbo))
-        c += html.controller_json("sexes", extlookups.get_sexes(dbo))
-        c += html.controller_str("mode", "found")
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("lostfound_find", s, c, post["json"] == "true")
+class foundanimal_find(JSONEndpoint):
+    url = "foundanimal_find"
+    js_module = "lostfound_find"
+    get_permissions = users.VIEW_FOUND_ANIMAL
 
-class foundanimal_find_results:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_FOUND_ANIMAL)
-        dbo = session.dbo
-        l = session.locale
-        post = utils.PostedData(web.input(mode = ""), session.locale)
-        results = extlostfound.get_foundanimal_find_advanced(dbo, post.data, configuration.record_search_limit(dbo))
+    def controller(self, o):
+        dbo = o.dbo
+        return {
+            "agegroups": configuration.age_groups(dbo),
+            "colours": extlookups.get_basecolours(dbo),
+            "name": "foundanimal_find",
+            "species": extlookups.get_species(dbo),
+            "breeds": extlookups.get_breeds_by_species(dbo),
+            "sexes": extlookups.get_sexes(dbo),
+            "mode": "found"
+        }
+
+class foundanimal_find_results(JSONEndpoint):
+    url = "foundanimal_find_results"
+    js_module = "lostfound_find_results"
+    get_permissions = users.VIEW_FOUND_ANIMAL
+
+    def controller(self, o):
+        dbo = o.dbo
+        l = o.locale
+        results = extlostfound.get_foundanimal_find_advanced(dbo, o.post.data, configuration.record_search_limit(dbo))
         resultsmessage = _("Find found animal returned {0} results.", l).format(len(results))
         al.debug("found %d results for %s" % (len(results), str(web.ctx.query)), "code.foundanimal_find_results", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", results)
-        c += html.controller_str("name", "foundanimal_find_results")
-        c += html.controller_str("resultsmessage", resultsmessage)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("lostfound_find_results", s, c, post["json"] == "true")
+        return {
+            "rows": results,
+            "name": "foundanimal_find_results",
+            "resultsmessage": resultsmessage
+        }
 
 class foundanimal_log(JSONEndpoint):
     url = "foundanimal_log"
