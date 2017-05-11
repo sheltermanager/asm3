@@ -247,7 +247,9 @@ of the default of white::
     <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
 
 csv_mail and csv_report
-----------------------
+-----------------------
+
+.. rubric:: Cache time: 10 minutes
 
 Returns a CSV file containing a mail merge or report. Pass the name of the mail
 merge/report in the title attribute and if the merge requires any parameters,
@@ -258,7 +260,7 @@ you can pass those too just like with html_report::
 extra_image
 -----------
 
-Cache time: 1 day
+.. rubric:: Cache time: 1 day
 
 Returns an extra image (see :menuselection:`Settings->Reports->Extra Images`).
 Pass the name of the image in the title parameter::
@@ -268,7 +270,7 @@ Pass the name of the image in the title parameter::
 html_report
 -----------
 
-Cache time: 1 hour
+.. rubric:: Cache time: 10 minutes
 
 Returns an HTML document containing a report. Pass the name of the report in
 the title attribute. If the report requires any parameters, you can pass those

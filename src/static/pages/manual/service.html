@@ -405,6 +405,7 @@ of the default of white:</p>
 </div>
 <div class="section" id="csv-mail-and-csv-report">
 <h2>csv_mail and csv_report<a class="headerlink" href="#csv-mail-and-csv-report" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Cache time: 10 minutes</p>
 <p>Returns a CSV file containing a mail merge or report. Pass the name of the mail
 merge/report in the title attribute and if the merge requires any parameters,
 you can pass those too just like with html_report:</p>
@@ -414,7 +415,7 @@ you can pass those too just like with html_report:</p>
 </div>
 <div class="section" id="extra-image">
 <h2>extra_image<a class="headerlink" href="#extra-image" title="Permalink to this headline">¶</a></h2>
-<p>Cache time: 1 day</p>
+<p class="rubric">Cache time: 1 day</p>
 <p>Returns an extra image (see <span class="menuselection">Settings-&gt;Reports-&gt;Extra Images</span>).
 Pass the name of the image in the title parameter:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=extra_image&amp;title=splash.jpg
@@ -423,7 +424,7 @@ Pass the name of the image in the title parameter:</p>
 </div>
 <div class="section" id="html-report">
 <h2>html_report<a class="headerlink" href="#html-report" title="Permalink to this headline">¶</a></h2>
-<p>Cache time: 1 hour</p>
+<p class="rubric">Cache time: 10 minutes</p>
 <p>Returns an HTML document containing a report. Pass the name of the report in
 the title attribute. If the report requires any parameters, you can pass those
 too. VAR parameters are just their name, ASK parameters are ASKn where n is the

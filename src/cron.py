@@ -23,9 +23,20 @@ import person
 import publish
 import reports as extreports
 import smcom
+import time
 import utils
 import waitinglist
 from sitedefs import LOCALE, TIMEZONE, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_MAP, SCALE_PDF_DURING_BATCH
+
+def ttask(fn, dbo):
+    """ Runs a function and times how long it takes """
+    x = time.time()
+    fn(dbo)
+    elapsed = time.time() - x
+    if elapsed > 10:
+        al.warn("complete in %0.2f sec" % elapsed, fn.__name__, dbo)
+    else:
+        al.debug("complete in %0.2f sec" % elapsed, fn.__name__, dbo)
 
 def daily(dbo):
     """
@@ -41,66 +52,66 @@ def daily(dbo):
 
         # Check to see if any updates need performing on this database
         if dbupdate.check_for_updates(dbo):
-            dbupdate.perform_updates(dbo)
+            ttask(dbupdate.perform_updates, dbo)
 
         if dbupdate.check_for_view_seq_changes(dbo):
-            dbupdate.install_db_views(dbo)
-            dbupdate.install_db_sequences(dbo)
+            ttask(dbupdate.install_db_views, dbo)
+            ttask(dbupdate.install_db_sequences, dbo)
 
         # Get the latest news from sheltermanager.com
         configuration.asm_news(dbo, update=True)
 
         # Update on shelter and foster animal location fields
-        animal.update_on_shelter_animal_statuses(dbo)
-        animal.update_foster_animal_statuses(dbo)
+        ttask(animal.update_on_shelter_animal_statuses, dbo)
+        ttask(animal.update_foster_animal_statuses, dbo)
 
         # Update all animal variable data (age, time on shelter, etc)
-        animal.update_all_variable_animal_data(dbo)
+        ttask(animal.update_all_variable_animal_data, dbo)
 
         # Update animal figures for reports
-        animal.update_animal_figures(dbo)
-        animal.update_animal_figures_annual(dbo)
+        ttask(animal.update_animal_figures, dbo)
+        ttask(animal.update_animal_figures_annual, dbo)
 
         # Update waiting list urgencies and auto remove
-        waitinglist.auto_remove_waitinglist(dbo)
-        waitinglist.auto_update_urgencies(dbo)
+        ttask(waitinglist.auto_remove_waitinglist, dbo)
+        ttask(waitinglist.auto_update_urgencies, dbo)
 
         # Email diary notes to users
-        diary.email_uncompleted_upto_today(dbo)
+        ttask(diary.email_uncompleted_upto_today, dbo)
 
         # Update animal litter counts
-        animal.update_active_litters(dbo)
+        ttask(animal.update_active_litters, dbo)
 
         # Find any missing person geocodes
-        person.update_missing_geocodes(dbo)
+        ttask(person.update_missing_geocodes, dbo)
 
         # Clear out any old audit logs
-        audit.clean(dbo)
+        ttask(audit.clean, dbo)
 
         # Remove old publisher logs
-        publish.delete_old_publish_logs(dbo)
+        ttask(publish.delete_old_publish_logs, dbo)
 
         # auto cancel any reservations
-        movement.auto_cancel_reservations(dbo)
+        ttask(movement.auto_cancel_reservations, dbo)
 
         # auto cancel animal holds
-        animal.auto_cancel_holds(dbo)
+        ttask(animal.auto_cancel_holds, dbo)
 
         # auto remove online forms
-        onlineform.auto_remove_old_incoming_forms(dbo)
+        ttask(onlineform.auto_remove_old_incoming_forms, dbo)
 
         # Update the generated looking for report
-        person.update_lookingfor_report(dbo)
+        ttask(person.update_lookingfor_report, dbo)
 
         # Update the generated lost/found match report
-        lostfound.update_match_report(dbo)
+        ttask(lostfound.update_match_report, dbo)
 
         # Email any reports set to run with batch
-        extreports.email_daily_reports(dbo)
+        ttask(extreports.email_daily_reports, dbo)
 
         # See if any new PDFs have been attached that we can scale down
         if SCALE_PDF_DURING_BATCH:
-            media.check_and_scale_pdfs(dbo)
+            ttask(media.check_and_scale_pdfs, dbo)
 
     except:
         em = str(sys.exc_info()[0])
@@ -113,14 +124,12 @@ def reports_email(dbo):
     """
     Batch email reports
     """
-    al.info("start batch reports_email", "cron.reports_email", dbo)
     try:
         # Email any daily reports for local time of now
         extreports.email_daily_reports(dbo, i18n.now(dbo.timezone))
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: running daily email of reports_email: %s" % em, "cron.reports_email", dbo, sys.exc_info())
-    al.info("end batch reports_email", "cron.reports_email", dbo)
 
 def publish_3pty(dbo):
     publish_ap(dbo)
@@ -147,10 +156,8 @@ def publish_ap(dbo):
             pc.ignoreLock = True
 
         if publishers.find("ap") != -1:
-            al.info("start adoptapet publisher", "cron.publish_ap", dbo)
             ap = publish.AdoptAPetPublisher(dbo, pc)
             ap.run()
-            al.info("end adoptapet publisher", "cron.publish_ap", dbo)
 
     except:
         em = str(sys.exc_info()[0])
@@ -165,10 +172,8 @@ def publish_fa(dbo):
             pc.ignoreLock = True
 
         if publishers.find("fa") != -1:
-            al.info("start foundanimals publisher", "cron.publish_fa", dbo)
             ap = publish.FoundAnimalsPublisher(dbo, pc)
             ap.run()
-            al.info("end foundanimals publisher", "cron.publish_fa", dbo)
 
     except:
         em = str(sys.exc_info()[0])
@@ -183,10 +188,8 @@ def publish_mp(dbo):
             pc.ignoreLock = True
 
         if publishers.find("mp") != -1:
-            al.info("start meetapet publisher", "cron.publish_mp", dbo)
             mp = publish.MeetAPetPublisher(dbo, pc)
             mp.run()
-            al.info("end meetapet publisher", "cron.publish_mp", dbo)
 
     except:
         em = str(sys.exc_info()[0])
@@ -201,10 +204,8 @@ def publish_hlp(dbo):
             pc.ignoreLock = True
 
         if publishers.find("hlp") != -1:
-            al.info("start helpinglostpets publisher", "cron.publish_hlp", dbo)
             pn = publish.HelpingLostPetsPublisher(dbo, pc)
             pn.run()
-            al.info("end helpinglostpets publisher", "cron.publish_hlp", dbo)
 
     except:
         em = str(sys.exc_info()[0])
@@ -217,10 +218,8 @@ def publish_html(dbo):
         publishers = configuration.publishers_enabled(dbo)
 
         if publishers.find("html") != -1:
-            al.info("start html publisher", "cron.publish_html", dbo)
             h = publish.HTMLPublisher(dbo, pc, "cron")
             h.run()
-            al.info("end html publisher", "cron.publish_html", dbo)
 
     except:
         em = str(sys.exc_info()[0])
@@ -235,10 +234,8 @@ def publish_pf(dbo):
             pc.ignoreLock = True
 
         if publishers.find("pf") != -1:
-            al.info("start petfinder publisher", "cron.publish_pf", dbo)
             pf = publish.PetFinderPublisher(dbo, pc)
             pf.run()
-            al.info("end petfinder publisher", "cron.publish_pf", dbo)
 
     except:
         em = str(sys.exc_info()[0])
@@ -253,10 +250,8 @@ def publish_pl(dbo):
             pc.ignoreLock = True
 
         if publishers.find("pl") != -1:
-            al.info("start petlink publisher", "cron.publish_pl", dbo)
             pn = publish.PetLinkPublisher(dbo, pc)
             pn.run()
-            al.info("end petlink publisher", "cron.publish_pl", dbo)
 
     except:
         em = str(sys.exc_info()[0])
@@ -271,10 +266,8 @@ def publish_pcuk(dbo):
             pc.ignoreLock = True
 
         if publishers.find("pcuk") != -1:
-            al.info("start petslocated uk publisher", "cron.publish_pcuk", dbo)
             pn = publish.PetsLocatedUKPublisher(dbo, pc)
             pn.run()
-            al.info("end petslocated uk publisher", "cron.publish_pcuk", dbo)
 
     except:
         em = str(sys.exc_info()[0])
@@ -289,10 +282,8 @@ def publish_pr(dbo):
             pc.ignoreLock = True
 
         if publishers.find("pr") != -1:
-            al.info("start petrescue publisher", "cron.publish_pr", dbo)
             pn = publish.PetRescuePublisher(dbo, pc)
             pn.run()
-            al.info("end petrescue publisher", "cron.publish_pr", dbo)
 
     except:
         em = str(sys.exc_info()[0])
@@ -307,10 +298,8 @@ def publish_rg(dbo):
             pc.ignoreLock = True
 
         if publishers.find("rg") != -1:
-            al.info("start rescuegroups publisher", "cron.publish_rg", dbo)
             rg = publish.RescueGroupsPublisher(dbo, pc)
             rg.run()
-            al.info("end rescuegroups publisher", "cron.publish_rg", dbo)
 
     except:
         em = str(sys.exc_info()[0])
@@ -325,10 +314,8 @@ def publish_abuk(dbo):
             pc.ignoreLock = True
 
         if publishers.find("abuk") != -1:
-            al.info("start anibase uk publisher", "cron.publish_abuk", dbo)
             pn = publish.AnibaseUKPublisher(dbo, pc)
             pn.run()
-            al.info("end anibase uk publisher", "cron.publish_abuk", dbo)
 
     except:
         em = str(sys.exc_info()[0])
@@ -343,10 +330,8 @@ def publish_ptuk(dbo):
             pc.ignoreLock = True
 
         if publishers.find("pt") != -1:
-            al.info("start pettrac uk publisher", "cron.publish_ptuk", dbo)
             pn = publish.PETtracUKPublisher(dbo, pc)
             pn.run()
-            al.info("end pettrac uk publisher", "cron.publish_ptuk", dbo)
 
     except:
         em = str(sys.exc_info()[0])
@@ -361,10 +346,8 @@ def publish_st(dbo):
             pc.ignoreLock = True
 
         if publishers.find("st") != -1:
-            al.info("start smarttag publisher", "cron.publish_st", dbo)
             ap = publish.SmartTagPublisher(dbo, pc)
             ap.run()
-            al.info("end smarttag publisher", "cron.publish_st", dbo)
 
     except:
         em = str(sys.exc_info()[0])
@@ -379,10 +362,8 @@ def publish_vear(dbo):
             pc.ignoreLock = True
 
         if publishers.find("ve") != -1:
-            al.info("start akc reunite publisher", "cron.publish_vear", dbo)
             ap = publish.AKCReunitePublisher(dbo, pc)
             ap.run()
-            al.info("end akc reunite publisher", "cron.publish_vear", dbo)
 
     except:
         em = str(sys.exc_info()[0])
@@ -397,10 +378,8 @@ def publish_veha(dbo):
             pc.ignoreLock = True
 
         if publishers.find("ve") != -1:
-            al.info("start homeagain publisher", "cron.publish_veha", dbo)
             ap = publish.HomeAgainPublisher(dbo, pc)
             ap.run()
-            al.info("end homeagain publisher", "cron.publish_veha", dbo)
 
     except:
         em = str(sys.exc_info()[0])
@@ -562,6 +541,8 @@ def maint_switch_dbfs_storage(dbo):
 def run(dbo, mode):
     # If the task is maint_db_install, then there won't be a 
     # locale or timezone to read
+    x = time.time()
+    al.info("start %s" % mode, "cron.run", dbo)
     if mode == "maint_db_install":
         dbo.locale = LOCALE
         dbo.timezone = TIMEZONE
@@ -654,6 +635,8 @@ def run(dbo, mode):
         maint_db_reset(dbo)
     elif mode == "maint_deduplicate_people":
         maint_deduplicate_people(dbo)
+    elapsed = time.time() - x
+    al.debug("end %s: elapsed %0.2f secs" % (mode, elapsed), "cron.run", dbo)
 
 def run_all_map_databases(mode):
     for alias in MULTIPLE_DATABASES_MAP.iterkeys():
