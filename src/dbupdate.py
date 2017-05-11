@@ -22,7 +22,8 @@ VERSIONS = (
     33708, 33709, 33710, 33711, 33712, 33713, 33714, 33715, 33716, 33717, 33718, 
     33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904, 33905, 33906, 
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
-    34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012
+    34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
+    34013
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -362,6 +363,7 @@ def sql_structure(dbo):
     sql += index("animal_IdentichipNumber", "animal", "IdentichipNumber")
     sql += index("animal_LastChangedDate", "animal", "LastChangedDate")
     sql += index("animal_MostRecentEntryDate", "animal", "MostRecentEntryDate")
+    sql += index("animal_Neutered", "animal", "Neutered")
     sql += index("animal_NonShelterAnimal", "animal", "NonShelterAnimal")
     sql += index("animal_OriginalOwnerID", "animal", "OriginalOwnerID")
     sql += index("animal_OwnersVetID", "animal", "OwnersVetID")
@@ -717,6 +719,7 @@ def sql_structure(dbo):
         flongstr("Comments") ))
     sql += index("animalvaccination_AnimalID", "animalvaccination", "AnimalID")
     sql += index("animalvaccination_AdministeringVetID", "animalvaccination", "AdministeringVetID")
+    sql += index("animalvaccination_DateExpires", "animalvaccination", "DateExpires")
     sql += index("animalvaccination_DateRequired", "animalvaccination", "DateRequired")
     sql += index("animalvaccination_CostPaidDate", "animalvaccination", "CostPaidDate")
     sql += index("animalvaccination_Manufacturer", "animalvaccination", "Manufacturer")
@@ -1155,6 +1158,14 @@ def sql_structure(dbo):
     sql += index("owner_OwnerTitle", "owner", "OwnerTitle")
     sql += index("owner_OwnerTown", "owner", "OwnerTown")
     sql += index("owner_SiteID", "owner", "SiteID")
+    sql += index("owner_IDCheck", "owner", "IDCheck")
+    sql += index("owner_IsACO", "owner", "IsACO")
+    sql += index("owner_IsAdoptionCoordinator", "owner", "IsAdoptionCoordinator")
+    sql += index("owner_IsFosterer", "owner", "IsFosterer")
+    sql += index("owner_IsRetailer", "owner", "IsRetailer")
+    sql += index("owner_IsStaff", "owner", "IsStaff")
+    sql += index("owner_IsVet", "owner", "IsVet")
+    sql += index("owner_IsVolunteer", "owner", "IsVolunteer")
 
     sql += table("ownercitation", (
         fid(),
@@ -1197,6 +1208,7 @@ def sql_structure(dbo):
     sql += index("ownerdonation_ReceiptNumber", "ownerdonation", "ReceiptNumber")
     sql += index("ownerdonation_ChequeNumber", "ownerdonation", "ChequeNumber")
     sql += index("ownerdonation_Date", "ownerdonation", "Date")
+    sql += index("ownerdonation_DateDue", "ownerdonation", "DateDue")
     sql += index("ownerdonation_IsVAT", "ownerdonation", "IsVAT")
 
     sql += table("ownerlookingfor", (
@@ -4662,3 +4674,17 @@ def update_34012(dbo):
     # Add diarytaskdetail.OrderIndex
     add_column(dbo, "diarytaskdetail", "OrderIndex", "INTEGER")
     db.execute_dbupdate(dbo, "UPDATE diarytaskdetail SET OrderIndex = ID")
+
+def update_34013(dbo):
+    # More indexes to speed up get_alerts
+    add_index(dbo, "animal_Neutered", "animal", "Neutered")
+    add_index(dbo, "owner_IDCheck", "owner", "IDCheck")
+    add_index(dbo, "owner_IsACO", "owner", "IsACO")
+    add_index(dbo, "owner_IsAdoptionCoordinator", "owner", "IsAdoptionCoordinator")
+    add_index(dbo, "owner_IsFosterer", "owner", "IsFosterer")
+    add_index(dbo, "owner_IsRetailer", "owner", "IsRetailer")
+    add_index(dbo, "owner_IsStaff", "owner", "IsStaff")
+    add_index(dbo, "owner_IsVet", "owner", "IsVet")
+    add_index(dbo, "owner_IsVolunteer", "owner", "IsVolunteer")
+    add_index(dbo, "ownerdonation_DateDue", "ownerdonation", "DateDue")
+

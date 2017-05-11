@@ -723,8 +723,8 @@ def get_alerts(dbo, locationfilter = "", siteid = 0):
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
             "WHERE Identichipped = 0 AND Archived = 0 %(locfilter)s) AS notchip, " \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
-            "WHERE IsNotAvailableForAdoption = 1 AND Archived = 0 %(locfilter)s) AS notadopt, " \
-        "(SELECT COUNT(*) FROM animal WHERE IsHold = 1 AND HoldUntilDate = %(today)s AND Archived = 0) AS holdtoday, " \
+            "WHERE Archived = 0 AND IsNotAvailableForAdoption = 1 %(locfilter)s) AS notadopt, " \
+        "(SELECT COUNT(*) FROM animal WHERE Archived = 0 AND IsHold = 1 AND HoldUntilDate = %(today)s) AS holdtoday, " \
         "(SELECT COUNT(DISTINCT CollationID) FROM onlineformincoming) AS inform, " \
         "(SELECT COUNT(*) FROM ownercitation WHERE FineDueDate Is Not Null AND FineDueDate <= %(today)s AND FinePaidDate Is Null) AS acunfine, " \
         "(SELECT COUNT(*) FROM animalcontrol WHERE CompletedDate Is Null AND DispatchDateTime Is Null AND CallDateTime Is Not Null) AS acundisp, " \
@@ -742,7 +742,7 @@ def get_alerts(dbo, locationfilter = "", siteid = 0):
         "FROM lksmovementtype LIMIT 1" \
             % { "today": today, "endoftoday": endoftoday, "oneweek": oneweek, "oneyear": oneyear, "onemonth": onemonth, 
                 "futuremonth": futuremonth, "locfilter": locationfilter, "shelterfilter": shelterfilter }
-    return db.query_cache(dbo, sql)
+    return db.query_cache(dbo, sql, 120)
 
 def get_stats(dbo):
     """
