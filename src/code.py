@@ -2706,139 +2706,119 @@ class foundanimal_media(JSONEndpoint):
             "sigtype": ELECTRONIC_SIGNATURES
         }
 
-class foundanimal_new:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.ADD_FOUND_ANIMAL)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        s = html.header("", session)
-        c = html.controller_json("agegroups", configuration.age_groups(dbo))
-        c += html.controller_json("additional", extadditional.get_additional_fields(dbo, 0, "foundanimal"))
-        c += html.controller_json("colours", extlookups.get_basecolours(dbo))
-        c += html.controller_json("species", extlookups.get_species(dbo))
-        c += html.controller_json("breeds", extlookups.get_breeds_by_species(dbo))
-        c += html.controller_json("sexes", extlookups.get_sexes(dbo))
-        c += html.controller_str("name", "foundanimal_new")
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("lostfound_new", s, c, post["json"] == "true")
+class foundanimal_new(JSONEndpoint):
+    url = "foundanimal_new"
+    js_module = "lostfound_new"
+    get_permissions = users.ADD_FOUND_ANIMAL
+    post_permissions = users.ADD_FOUND_ANIMAL
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.ADD_FOUND_ANIMAL)
-        utils.check_locked_db(session)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        return str(extlostfound.insert_foundanimal_from_form(dbo, post, session.user))
+    def controller(self, o):
+        dbo = o.dbo
+        return {
+            "agegroups": configuration.age_groups(dbo),
+            "additional": extadditional.get_additional_fields(dbo, 0, "foundanimal"),
+            "colours": extlookups.get_basecolours(dbo),
+            "species": extlookups.get_species(dbo),
+            "breeds": extlookups.get_breeds_by_species(dbo),
+            "sexes": extlookups.get_sexes(dbo),
+            "name": "foundanimal_new"
+        }
 
-class giftaid_hmrc_spreadsheet:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_DONATION)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(fromdate = "", todate = ""), session.locale)
-        fromdate = post["fromdate"]
-        todate = post["todate"]
-        if fromdate == "":
-            s = html.header("", session)
-            s += html.footer()
-            return full_or_json("giftaid_hmrc_spreadsheet", s, "", False)
-        else:
-            al.debug("generating HMRC giftaid spreadsheet for %s -> %s" % (fromdate, todate), "code.giftaid_hmrc_spreadsheet", dbo)
-            web.header("Content-Type", "application/vnd.oasis.opendocument.spreadsheet")
-            web.header("Cache-Control", "no-cache")
-            web.header("Content-Disposition", "attachment; filename=\"giftaid.ods\"")
-            return financial.giftaid_spreadsheet(dbo, PATH, post.date("fromdate"), post.date("todate"))
+    def post_all(self, o):
+        return str(extlostfound.insert_foundanimal_from_form(o.dbo, o.post, o.user))
 
-class htmltemplates:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.PUBLISH_OPTIONS)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        templates = dbfs.get_html_publisher_templates_files(dbo)
-        al.debug("editing %d html templates" % len(templates), "code.htmltemplates", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", templates)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("htmltemplates", s, c, post["json"] == "true")
+class giftaid_hmrc_spreadsheet(JSONEndpoint):
+    url = "giftaid_hmrc_spreadsheet"
+    get_permissions = users.VIEW_DONATION
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create", templatename = "", header = "", body = "", footer = ""), session.locale)
-        mode = post["mode"]
-        dbo = session.dbo
-        if mode == "create":
-            users.check_permission(session, users.PUBLISH_OPTIONS)
-            dbfs.update_html_publisher_template(dbo, session.user, post["templatename"], post["header"], post["body"], post["footer"])
-        elif mode == "update":
-            users.check_permission(session, users.PUBLISH_OPTIONS)
-            dbfs.update_html_publisher_template(dbo, session.user, post["templatename"], post["header"], post["body"], post["footer"])
-        elif mode == "delete":
-            users.check_permission(session, users.PUBLISH_OPTIONS)
-            for name in post["names"].split(","):
-                if name != "": dbfs.delete_html_publisher_template(dbo, session.user, name)
+    def controller(self, o):
+        return {}
 
-class incident:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_INCIDENT)
-        l = session.locale
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        a = extanimalcontrol.get_animalcontrol(dbo, post.integer("id"))
-        if session.siteid != 0 and a["SITEID"] != 0 and session.siteid != a["SITEID"]:
+    def post_all(self, o):
+        fromdate = o.post["fromdate"]
+        todate = o.post["todate"]
+        al.debug("generating HMRC giftaid spreadsheet for %s -> %s" % (fromdate, todate), "code.giftaid_hmrc_spreadsheet", o.dbo)
+        self.header("Content-Type", "application/vnd.oasis.opendocument.spreadsheet")
+        self.header("Cache-Control", "no-cache")
+        self.header("Content-Disposition", "attachment; filename=\"giftaid.ods\"")
+        return financial.giftaid_spreadsheet(o.dbo, PATH, o.post.date("fromdate"), o.post.date("todate"))
+
+class htmltemplates(JSONEndpoint):
+    url = "htmltemplates"
+    get_permissions = users.PUBLISH_OPTIONS
+    post_permissions = users.PUBLISH_OPTIONS
+
+    def controller(self, o):
+        templates = dbfs.get_html_publisher_templates_files(o.dbo)
+        al.debug("editing %d html templates" % len(templates), "code.htmltemplates", o.dbo)
+        return {
+            "rows": templates
+        }
+
+    def post_create(self, o):
+        dbfs.update_html_publisher_template(o.dbo, o.user, o.post["templatename"], o.post["header"], o.post["body"], o.post["footer"])
+
+    def post_update(self, o):
+        dbfs.update_html_publisher_template(o.dbo, o.user, o.post["templatename"], o.post["header"], o.post["body"], o.post["footer"])
+
+    def post_delete(self, o):
+        for name in o.post["names"].split(","):
+            if name != "": dbfs.delete_html_publisher_template(o.dbo, o.user, name)
+
+class incident(JSONEndpoint):
+    url = "incident"
+    get_permissions = users.VIEW_INCIDENT
+
+    def controller(self, o):
+        dbo = o.dbo
+        a = extanimalcontrol.get_animalcontrol(dbo, o.post.integer("id"))
+        if o.session.siteid != 0 and a["SITEID"] != 0 and o.session.siteid != a["SITEID"]:
             raise utils.ASMPermissionError("incident not in user site")
-        if a is None: raise web.notfound()
-        al.debug("open incident %s %s %s" % (a["ACID"], a["INCIDENTNAME"], python2display(l, a["INCIDENTDATETIME"])), "code.incident", dbo)
-        s = html.header("", session)
-        c = html.controller_json("agegroups", configuration.age_groups(dbo))
-        c += html.controller_json("additional", extadditional.get_additional_fields(dbo, a["ACID"], "incident"))
-        if users.check_permission_bool(session, users.VIEW_AUDIT_TRAIL):
-            c += html.controller_json("audit", audit.get_audit_for_link(dbo, "animalcontrol", a["ACID"]))
-        c += html.controller_json("incident", a)
-        c += html.controller_json("animallinks", extanimalcontrol.get_animalcontrol_animals(dbo, post.integer("id")))
-        c += html.controller_json("incidenttypes", extlookups.get_incident_types(dbo))
-        c += html.controller_json("completedtypes", extlookups.get_incident_completed_types(dbo))
-        c += html.controller_json("pickuplocations", extlookups.get_pickup_locations(dbo))
-        c += html.controller_json("roles", users.get_roles(dbo))
-        c += html.controller_json("species", extlookups.get_species(dbo))
-        c += html.controller_json("sexes", extlookups.get_sexes(dbo))
-        c += html.controller_json("sites", extlookups.get_sites(dbo))
-        c += html.controller_json("tabcounts", extanimalcontrol.get_animalcontrol_satellite_counts(dbo, a["ACID"])[0])
-        c += html.controller_json("templates", dbfs.get_document_templates(dbo))
-        c += html.controller_json("users", users.get_users(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("incident", s, c, post["json"] == "true")
+        if a is None: self.notfound()
+        al.debug("open incident %s %s %s" % (a["ACID"], a["INCIDENTNAME"], python2display(o.locale, a["INCIDENTDATETIME"])), "code.incident", dbo)
+        return {
+            "agegroups": configuration.age_groups(dbo),
+            "additional": extadditional.get_additional_fields(dbo, a["ACID"], "incident"),
+            "audit": users.check_permission_bool(o.session, users.VIEW_AUDIT_TRAIL) and audit.get_audit_for_link(dbo, "animalcontrol", a["ACID"]) or [],
+            "incident": a,
+            "animallinks": extanimalcontrol.get_animalcontrol_animals(dbo, o.post.integer("id")),
+            "incidenttypes": extlookups.get_incident_types(dbo),
+            "completedtypes": extlookups.get_incident_completed_types(dbo),
+            "pickuplocations": extlookups.get_pickup_locations(dbo),
+            "roles": users.get_roles(dbo),
+            "species": extlookups.get_species(dbo),
+            "sexes": extlookups.get_sexes(dbo),
+            "sites": extlookups.get_sites(dbo),
+            "tabcounts": extanimalcontrol.get_animalcontrol_satellite_counts(dbo, a["ACID"])[0],
+            "templates": dbfs.get_document_templates(dbo),
+            "users": users.get_users(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        dbo = session.dbo
-        l = session.locale
-        post = utils.PostedData(web.input(mode="save"), session.locale)
-        mode = post["mode"]
-        if mode == "save":
-            users.check_permission(session, users.CHANGE_INCIDENT)
-            extanimalcontrol.update_animalcontrol_from_form(dbo, post, session.user)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_INCIDENT)
-            extanimalcontrol.delete_animalcontrol(dbo, session.user, post.integer("id"))
-        elif mode == "latlong":
-            users.check_permission(session, users.CHANGE_INCIDENT)
-            extanimalcontrol.update_dispatch_latlong(dbo, post.integer("incidentid"), post["latlong"])
-        elif mode == "email":
-            users.check_permission(session, users.EMAIL_PERSON)
-            if not extperson.send_email_from_form(dbo, session.user, post):
-                raise utils.ASMError(_("Failed sending email", l))
-        elif mode == "linkanimaladd":
-            users.check_permission(session, users.CHANGE_INCIDENT)
-            extanimalcontrol.update_animalcontrol_addlink(dbo, session.user, post.integer("id"), post.integer("animalid"))
-        elif mode == "linkanimaldelete":
-            users.check_permission(session, users.CHANGE_INCIDENT)
-            extanimalcontrol.update_animalcontrol_removelink(dbo, session.user, post.integer("id"), post.integer("animalid"))
+    def post_save(self, o):
+        self.check(users.CHANGE_INCIDENT)
+        extanimalcontrol.update_animalcontrol_from_form(o.dbo, o.post, o.user)
+
+    def post_delete(self, o):
+        self.check(users.DELETE_INCIDENT)
+        extanimalcontrol.delete_animalcontrol(o.dbo, o.user, o.post.integer("id"))
+
+    def post_latlong(self, o):
+        self.check(users.CHANGE_INCIDENT)
+        extanimalcontrol.update_dispatch_latlong(o.dbo, o.post.integer("incidentid"), o.post["latlong"])
+
+    def post_email(self, o):
+        self.check(users.EMAIL_PERSON)
+        if not extperson.send_email_from_form(o.dbo, o.user, o.post):
+            l = o.locale
+            raise utils.ASMError(_("Failed sending email", l))
+
+    def post_linkanimaladd(self, o):
+        self.check(users.CHANGE_INCIDENT)
+        extanimalcontrol.update_animalcontrol_addlink(o.dbo, o.user, o.post.integer("id"), o.post.integer("animalid"))
+
+    def post_linkanimaldelete(self, o):
+        self.check(users.CHANGE_INCIDENT)
+        extanimalcontrol.update_animalcontrol_removelink(o.dbo, o.user, o.post.integer("id"), o.post.integer("animalid"))
 
 class incident_citations(JSONEndpoint):
     url = "incident_citations"
@@ -3006,21 +2986,15 @@ class incident_new:
         incidentid = extanimalcontrol.insert_animalcontrol_from_form(session.dbo, post, session.user)
         return str(incidentid)
 
-class latency:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        dbo = session.dbo
-        title = _("Latency", session.locale)
-        al.debug("latency check", "code.latency", dbo)
-        s = html.header(title, session)
-        s += html.footer()
-        return full_or_json("latency", s, "", False)
+class latency(JSONEndpoint):
+    url = "latency"
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        utils.PostedData(web.input(), session.locale)
-        web.header("Content-Type", "text/plain")
-        web.header("Cache-Control", "no-cache")
+    def controller(self, o):
+        return {}
+
+    def post_all(self, o):
+        self.header("Content-Type", "text/plain")
+        self.header("Cache-Control", "no-cache")
         return "pong"
 
 class licence(JSONEndpoint):

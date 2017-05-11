@@ -9,7 +9,7 @@ $(function() {
             return [
                 html.content_header("HMRC Gift Aid Spreadsheet"),
                 html.warn("WARNING: Generating gift aid spreadsheets can take a few minutes if you have many donations."),
-                '<form id="hmrcform" action="giftaid_hmrc_spreadsheet" method="get">',
+                '<form id="hmrcform" action="giftaid_hmrc_spreadsheet" method="post">',
                 '<table>',
                 '<tr>',
                 '<td><label for="fromdate">From</label></td>',
@@ -37,7 +37,6 @@ $(function() {
         },
 
         sync: function() {
-
         },
 
         name: "giftaid_hmrc_spreadsheet",
