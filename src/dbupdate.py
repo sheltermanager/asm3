@@ -4,7 +4,7 @@ import al
 import animal, animalcontrol, financial, lostfound, medical, movement, onlineform, person, waitinglist
 import configuration, db, dbfs, utils
 import os, sys
-from i18n import _, BUILD
+from i18n import _
 from sitedefs import DB_PK_STRATEGY
 
 VERSIONS = ( 
