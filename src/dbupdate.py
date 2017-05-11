@@ -2273,9 +2273,8 @@ def install_db_views(dbo):
         except Exception as err:
             al.error("error creating view %s: %s" % (viewname, err), "dbupdate.install_db_views", dbo)
 
-    # Set us upto date to stop race condition/other clients trying
-    # to install
-    configuration.db_view_seq_version(dbo, BUILD)
+    # Set us upto date to stop race condition/other clients trying to install
+    configuration.db_view_seq_version(dbo, LATEST_VERSION)
     create_view("v_adoption", movement.get_movement_query(dbo))
     create_view("v_animal", animal.get_animal_query(dbo))
     create_view("v_animalcontrol", animalcontrol.get_animalcontrol_query(dbo))
@@ -2652,10 +2651,10 @@ def check_for_updates(dbo):
 def check_for_view_seq_changes(dbo):
     """
     Checks to see whether we need to recreate our views and
-    sequences by looking to see if BUILD is different. Returns 
-    True if we need to update.
+    sequences by looking to see if the current database version is 
+    different. Returns True if we need to update.
     """
-    return configuration.db_view_seq_version(dbo) != BUILD
+    return configuration.db_view_seq_version(dbo) != LATEST_VERSION
 
 def reset_db(dbo):
     """
