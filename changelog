@@ -1,6 +1,7 @@
 40
 ================
 
+11/05/17 Reduce csv_report/html_report cache time to 10 minutes
 11/05/17 Additional indexes to speed up get_alerts plus 120 sec cache
 10/05/17 Allow order of diary task elements to be set #138
 08/05/17 Allow user accounts to have logins disabled #211
