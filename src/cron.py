@@ -42,8 +42,6 @@ def daily(dbo):
     """
     Tasks to run once each day before users login for the day.
     """
-    al.info("start daily tasks", "cron.daily", dbo)
-
     try:
         # The batch should never be run at a time when users may be
         # using the system, remove any database update locks as any
@@ -117,9 +115,6 @@ def daily(dbo):
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: running batch tasks: %s" % em, "cron.daily", dbo, sys.exc_info())
-
-    # We're done, hurrah!
-    al.info("end daily tasks", "cron.daily", dbo)
 
 def reports_email(dbo):
     """
@@ -637,7 +632,7 @@ def run(dbo, mode):
     elif mode == "maint_deduplicate_people":
         maint_deduplicate_people(dbo)
     elapsed = time.time() - x
-    al.debug("end %s: elapsed %0.2f secs" % (mode, elapsed), "cron.run", dbo)
+    al.info("end %s: elapsed %0.2f secs" % (mode, elapsed), "cron.run", dbo)
 
 def run_all_map_databases(mode):
     for alias in MULTIPLE_DATABASES_MAP.iterkeys():
