@@ -2274,7 +2274,7 @@ def install_db_views(dbo):
             al.error("error creating view %s: %s" % (viewname, err), "dbupdate.install_db_views", dbo)
 
     # Set us upto date to stop race condition/other clients trying to install
-    configuration.db_view_seq_version(dbo, LATEST_VERSION)
+    configuration.db_view_seq_version(dbo, str(LATEST_VERSION))
     create_view("v_adoption", movement.get_movement_query(dbo))
     create_view("v_animal", animal.get_animal_query(dbo))
     create_view("v_animalcontrol", animalcontrol.get_animalcontrol_query(dbo))
@@ -2654,7 +2654,7 @@ def check_for_view_seq_changes(dbo):
     sequences by looking to see if the current database version is 
     different. Returns True if we need to update.
     """
-    return configuration.db_view_seq_version(dbo) != LATEST_VERSION
+    return configuration.db_view_seq_version(dbo) != str(LATEST_VERSION)
 
 def reset_db(dbo):
     """

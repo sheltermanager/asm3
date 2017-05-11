@@ -57,6 +57,7 @@ def daily(dbo):
         if dbupdate.check_for_view_seq_changes(dbo):
             ttask(dbupdate.install_db_views, dbo)
             ttask(dbupdate.install_db_sequences, dbo)
+            ttask(dbupdate.install_db_stored_procedures, dbo)
 
         # Get the latest news from sheltermanager.com
         configuration.asm_news(dbo, update=True)
