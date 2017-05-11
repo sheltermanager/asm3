@@ -333,15 +333,8 @@ def cset(dbo, key, value = "", ignoreDBLock = False, sanitiseXSS = True):
     """
     Update a configuration item in the table.
     """
-    # MySQL returns wrong affected value (AFFECTED_ROWS switch in newer), delete before insert
-    if dbo.dbtype == "MYSQL":
-        db.execute(dbo, "DELETE FROM configuration WHERE ItemName LIKE %s" % db.ds(key), ignoreDBLock)
-        db.execute(dbo, "INSERT INTO configuration (ItemName, ItemValue) VALUES (%s, %s)" % (db.ds(key), db.ds(value, sanitiseXSS)), ignoreDBLock)
-    else:
-        # Otherwise, attempt the update and if no rows matched, do the insert
-        affected = db.execute(dbo, "UPDATE configuration SET ItemValue = %s WHERE ItemName LIKE %s" % (db.ds(value, sanitiseXSS), db.ds(key)))
-        if affected == 0:
-            db.execute(dbo, "INSERT INTO configuration VALUES (%s, %s)" % ( db.ds(key), db.ds(value, sanitiseXSS) ), ignoreDBLock)
+    db.execute(dbo, "DELETE FROM configuration WHERE ItemName LIKE %s" % db.ds(key), ignoreDBLock)
+    db.execute(dbo, "INSERT INTO configuration (ItemName, ItemValue) VALUES (%s, %s)" % (db.ds(key), db.ds(value, sanitiseXSS)), ignoreDBLock)
 
 def cset_db(dbo, key, value = ""):
     """
