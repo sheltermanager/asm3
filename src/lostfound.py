@@ -394,12 +394,13 @@ def words(str1, str2, maxpoints):
             matches += 1
     return int((float(matches) / float(len(s1words))) * float(maxpoints))
 
-def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0):
+def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
     """
     Performs a lost and found match by going through all lost animals
     lostanimalid:   Compare this lost animal against all found animals
     foundanimalid:  Compare all lost animals against this found animal
     animalid:       Compare all lost animals against this shelter animal
+    limit:          Stop when we hit this many matches (or 0 for all)
     returns a list of LostFoundMatch objects
     """
     l = dbo.locale
@@ -513,6 +514,8 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0):
                     matches.append(m)
                     if animalid == 0 and lostanimalid == 0 and foundanimalid == 0:
                         m.toDB()
+                    if limit > 0 and len(matches) >= limit:
+                        break
 
         # Shelter animals
         if includeshelter:
@@ -567,12 +570,14 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0):
                     matches.append(m)
                     if animalid == 0 and lostanimalid == 0 and foundanimalid == 0:
                         m.toDB()
+                    if limit > 0 and len(matches) >= limit:
+                        break
 
     return matches
 
-def match_report(dbo, username = "system", lostanimalid = 0, foundanimalid = 0, animalid = 0):
+def match_report(dbo, username = "system", lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
     """
-    Same interface as match above, but generates the match report
+    Generates the match report and returns it as a string
     """
     l = dbo.locale
     title = _("Match lost and found animals", l)
@@ -585,7 +590,7 @@ def match_report(dbo, username = "system", lostanimalid = 0, foundanimalid = 0, 
     def hr(): 
         return "<hr />"
     lastid = 0
-    matches = match(dbo, lostanimalid, foundanimalid, animalid)
+    matches = match(dbo, lostanimalid, foundanimalid, animalid, limit)
     if len(matches) > 0:
         for m in matches:
             if lastid != m.lid:
@@ -635,7 +640,7 @@ def update_match_report(dbo):
     Updates the latest version of the lost/found match report 
     """
     al.debug("updating lost/found match report", "lostfound.update_match_report", dbo)
-    configuration.lostfound_report(dbo, match_report(dbo))
+    configuration.lostfound_report(dbo, match_report(dbo, limit = 250))
     configuration.lostfound_last_match_count(dbo, lostfound_last_match_count(dbo))
     return "OK %d" % lostfound_last_match_count(dbo)
 

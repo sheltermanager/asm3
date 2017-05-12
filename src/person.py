@@ -1161,7 +1161,7 @@ def send_email_from_form(dbo, username, post):
         log.add_log(dbo, username, log.PERSON, post.integer("personid"), logtype, utils.html_email_to_plain(body))
     return rv
 
-def lookingfor_report(dbo, username = "system", personid = 0):
+def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
     """
     Generates the person looking for report
     """
@@ -1260,7 +1260,6 @@ def lookingfor_report(dbo, username = "system", personid = 0):
             if not outputheader:
                 outputheader = True
                 h.append("".join(ah))
-            totalmatches += 1
             h.append( "<tr>")
             h.append( td(a["CODE"]))
             h.append( td(a["ANIMALNAME"]))
@@ -1284,9 +1283,16 @@ def lookingfor_report(dbo, username = "system", personid = 0):
                     ( "MatchSummary", db.ds(summary) ) ))
                 db.execute(dbo, sql)
 
+            totalmatches += 1
+            if limit > 0 and totalmatches >= limit:
+                break
+
         if outputheader:
             h.append( "</table>")
         h.append( hr())
+
+        if limit > 0 and totalmatches >= limit:
+            break
 
     if len(people) == 0:
         h.append( "<p>%s</p>" % _("No matches found.", l) )
@@ -1325,7 +1331,7 @@ def update_lookingfor_report(dbo):
     Updates the latest version of the looking for report 
     """
     al.debug("updating lookingfor report", "person.update_lookingfor_report", dbo)
-    configuration.lookingfor_report(dbo, lookingfor_report(dbo))
+    configuration.lookingfor_report(dbo, lookingfor_report(dbo, limit = 250))
     configuration.lookingfor_last_match_count(dbo, lookingfor_last_match_count(dbo))
     return "OK %d" % lookingfor_last_match_count(dbo)
 

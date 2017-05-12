@@ -1,6 +1,7 @@
 40
 ================
 
+12/05/17 Limit max number of lost/found and looking for matches for performance
 11/05/17 Fix bug with duplicate config items in PostgreSQL
 11/05/17 Use LATEST_VERSION instead of build as seq/view/sp trigger
 11/05/17 Record execution times for all batch functions
