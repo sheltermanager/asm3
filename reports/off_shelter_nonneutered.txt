@@ -36,7 +36,7 @@ INNER JOIN owner ON adoption.OwnerID = owner.ID
 LEFT OUTER JOIN animalvaccination ON animalvaccination.AnimalID = animal.ID
 LEFT OUTER JOIN vaccinationtype ON animalvaccination.VaccinationID = vaccinationtype.ID
 WHERE 
-animal.Neutered = 0 
+animal.Neutered = 0 AND animal.Archived = 1 AND animal.ActiveMovementType = 1
 ORDER BY animal.ShelterCode
 ###
 $$HEADER
