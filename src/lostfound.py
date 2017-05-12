@@ -460,6 +460,9 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
     async.set_progress_max(dbo, len(lostanimals))
     for la in lostanimals:
         async.increment_progress_value(dbo)
+        # Stop if we've hit our limit
+        if limit > 0 and len(matches) >= limit:
+            break
         # Found animals (if an animal id has been given don't
         # check found animals)
         if animalid == 0:
