@@ -178,7 +178,7 @@ $(function() {
         routes: {
             "incident_citations": function() { common.module_loadandstart("citations", "incident_citations?id=" + this.qs.id); },
             "person_citations": function() { common.module_loadandstart("citations", "person_citations?id=" + this.qs.id); },
-            "citations": function() { common.module_loadandstart("citations", "citations?=" + this.rawqs); }
+            "citations": function() { common.module_loadandstart("citations", "citations?" + this.rawqs); }
         }
 
 

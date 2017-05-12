@@ -1089,6 +1089,7 @@ class main(JSONEndpoint):
             "recent": extanimal.get_timeline(dbo, 10),
             "stats": extanimal.get_stats(dbo),
             "animallinks": extanimal.get_animals_brief(animallinks),
+            "noreload": o.post.integer("noreload"),
             "diary": dm,
             "mess": mess 
         }

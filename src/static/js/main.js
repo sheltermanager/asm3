@@ -826,8 +826,10 @@ $(function() {
 
             // If there's been a new deployment of ASM since we last
             // downloaded it to the browser, force a page reload to get the new code.
-            if (asm.build != controller.build) {
-                common.route_reload(true);
+            // The noreload parameter is to make sure that if something goes wrong
+            // we only do this once and don't keep looping.
+            if (!controller.noreload && asm.build != controller.build) {
+                common.route("main?noreload=1");
             }
 
             // add a class to the html element for desktop or mobile
@@ -863,7 +865,7 @@ $(function() {
 
         routes: {
             "main": function() {
-                common.module_loadandstart("main", "main");
+                common.module_loadandstart("main", "main?" + this.rawqs);
             }
         }
 
