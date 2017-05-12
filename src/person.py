@@ -1169,6 +1169,8 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
     title = _("People Looking For", l)
     h = []
     h.append(reports.get_report_header(dbo, title, username))
+    if limit > 0:
+        h.append("<p>(" + _("Limited to {0} matches", l).format(limit) + ")</p>")
     def td(s): 
         return "<td>%s</td>" % s
     def hr(): 

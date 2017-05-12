@@ -586,6 +586,8 @@ def match_report(dbo, username = "system", lostanimalid = 0, foundanimalid = 0, 
     title = _("Match lost and found animals", l)
     h = []
     h.append(reports.get_report_header(dbo, title, username))
+    if limit > 0:
+        h.append("<p>(" + _("Limited to {0} matches", l).format(limit) + ")</p>")
     def p(s): 
         return "<p>%s</p>" % s
     def td(s): 
