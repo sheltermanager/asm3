@@ -829,7 +829,8 @@ $(function() {
             // The noreload parameter is to make sure that if something goes wrong
             // we only do this once and don't keep looping.
             if (!controller.noreload && asm.build != controller.build) {
-                common.route("main?noreload=1");
+                common.route("main?noreload=1", true);
+                return;
             }
 
             // add a class to the html element for desktop or mobile
