@@ -3808,6 +3808,7 @@ class move_gendoc(JSONEndpoint):
 
     def controller(self, o):
         return {
+            "message": o.post["message"],
             "templates": html.template_selection(dbfs.get_document_templates(o.dbo), "document_gen?linktype=%s&id=%s" % (o.post["linktype"], o.post["id"]))
         }
 
