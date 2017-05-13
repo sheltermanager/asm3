@@ -12,7 +12,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-05-12 09:15-0400\n"
+"PO-Revision-Date: 2017-05-13 04:09-0400\n"
 "Last-Translator: Egil Heine Strand <egil.h.strand@uis.no>\n"
 "Language-Team: Norwegian Bokmal <nb@li.org>\n"
 "Language: nb\n"
@@ -487,7 +487,7 @@ msgstr "Legg til ekstra felt"
 
 #: header.js html.py configuration.py
 msgid "Add an animal to the waiting list"
-msgstr "Legg til et dyr til sakslisten"
+msgstr "Legg til et dyr i sakslisten"
 
 #: citations.js
 msgid "Add citation"
@@ -4821,7 +4821,7 @@ msgstr "Fosterhjemsbok"
 
 #: person.js mobile.py
 msgid "Foster Capacity"
-msgstr ""
+msgstr "Fosterhjemskapasitet"
 
 #: dbupdate.py
 msgid "Foster Transfer"
@@ -8337,7 +8337,7 @@ msgstr "Skriv ut valgte skjemaer"
 
 #: header.js
 msgid "Printable Manual"
-msgstr ""
+msgstr "Printbar bruksanvisning"
 
 #: options.js
 msgid "Printing word processor documents uses hidden iframe and window.print"
@@ -8677,7 +8677,7 @@ msgstr "Retur"
 
 #: move_reclaim.js header.js html.py configuration.py
 msgid "Reclaim an animal"
-msgstr "Returner et dyr"
+msgstr "Returner et dyr til rettmessig eier"
 
 #: movement.py
 msgid "Reclaim movements must have a valid reclaim date."
@@ -8689,7 +8689,7 @@ msgstr "Retur er opprettet"
 
 #: animal_find.js dbupdate.py
 msgid "Reclaimed"
-msgstr "Tatt tilbake"
+msgstr "Gjenforent"
 
 #: accounts_trx.js
 msgid "Reconcile"
@@ -9827,7 +9827,7 @@ msgstr "Vis størelsefeltet"
 
 #: options.js
 msgid "Show the tattoo fields"
-msgstr ""
+msgstr "Vis tatoveringsfelt"
 
 #: options.js
 #, fuzzy
@@ -9958,14 +9958,12 @@ msgstr "Engangsbehandling"
 
 #: incident_new.js person.js person_new.js users.js incident.js
 #: common_personchooser.js lookups.js html.py lookups.py
-#, fuzzy
 msgid "Site"
-msgstr "Bitt"
+msgstr "Sentertilknytning"
 
 #: lookups.py
-#, fuzzy
 msgid "Sites"
-msgstr "Størrelser"
+msgstr "Sentere"
 
 #: person.js waitinglist.js animal_find_results.js waitinglist_results.js
 #: animal.js waitinglist_new.js animal_find.js animal_new.js mobile.py html.py
@@ -11182,11 +11180,11 @@ msgstr "Denne personen har bevegelser og kan ikke fjernes."
 
 #: move_adopt.js move_reserve.js
 msgid "This person has not passed a homecheck"
-msgstr "denne personen har ikke bestått en hjemmesjekk"
+msgstr "Denne personen har ikke bestått hjemmesjekk"
 
 #: movements.js
 msgid "This person has not passed a homecheck."
-msgstr "Denne personen har ikke bestått hjemmesjekken."
+msgstr "Denne personen har ikke bestått hjemmesjekk"
 
 #: person.py
 msgid "This person has payments and cannot be removed."
@@ -11418,7 +11416,7 @@ msgstr "Tid på hjelpesenter"
 
 #: timeline.js header.js html.py configuration.py
 msgid "Timeline"
-msgstr ""
+msgstr "Tidslinje"
 
 #: main.js
 msgid "Timeline ({0})"
@@ -12256,7 +12254,7 @@ msgstr "Vis tester"
 
 #: header.js
 msgid "View Training Videos"
-msgstr ""
+msgstr "Se instruksjonsfilmer"
 
 #: roles.js
 msgid "View Transport"
@@ -13060,11 +13058,11 @@ msgstr "{0} {1}: Flyttet fra {2} til {3}"
 
 #: animal.py
 msgid "{0} {1}: adopted by {2}"
-msgstr ""
+msgstr "{0} {1}: adoptert av {2}"
 
 #: animal.py
 msgid "{0} {1}: altered"
-msgstr ""
+msgstr "{0} {1}: kastrert"
 
 #: animal.py
 msgid "{0} {1}: available for adoption"
@@ -13076,7 +13074,7 @@ msgstr ""
 
 #: animal.py
 msgid "{0} {1}: entered the shelter"
-msgstr ""
+msgstr "{0} {1}: ble tatt inn"
 
 #: animal.py
 msgid "{0} {1}: escaped"
@@ -13088,67 +13086,67 @@ msgstr ""
 
 #: animal.py
 msgid "{0} {1}: fostered to {2}"
-msgstr ""
+msgstr "{0} {1}: i fosterhjem hos {2}"
 
 #: animal.py
 msgid "{0} {1}: held"
-msgstr ""
+msgstr "{0} {1}: på vent"
 
 #: animal.py
 msgid "{0} {1}: microchipped"
-msgstr ""
+msgstr "{0} {1}: Mikrochippet"
 
 #: animal.py
 msgid "{0} {1}: not available for adoption"
-msgstr ""
+msgstr "{0} {1}: ikke tilgjengelig for adopsjon"
 
 #: animal.py
 msgid "{0} {1}: quarantined"
-msgstr ""
+msgstr "{0} {1}: i karentene"
 
 #: animal.py
 msgid "{0} {1}: received {2}"
-msgstr ""
+msgstr "{0} {1}: ble gitt {2}"
 
 #: animal.py
 msgid "{0} {1}: reclaimed by {2}"
-msgstr ""
+msgstr "{0} {1}: gjenforent med {2}"
 
 #: animal.py
 msgid "{0} {1}: released"
-msgstr ""
+msgstr "{0} {1}: satt fri"
 
 #: animal.py
 msgid "{0} {1}: reserved by {2}"
-msgstr ""
+msgstr "{0} {1}: reservert av {2}"
 
 #: animal.py
 msgid "{0} {1}: returned by {2}"
-msgstr ""
+msgstr "{0} {1}: forlot {2}"
 
 #: animal.py
 msgid "{0} {1}: sent to retailer {2}"
-msgstr ""
+msgstr "{0} {1}: sendt til butikk {2}"
 
 #: animal.py
 msgid "{0} {1}: stolen"
-msgstr ""
+msgstr "{0} {1}: stjålet"
 
 #: animal.py
 msgid "{0} {1}: tested positive for FIV"
-msgstr ""
+msgstr "{0} {1}: testet FIV-positiv"
 
 #: animal.py
 msgid "{0} {1}: tested positive for FeLV"
-msgstr ""
+msgstr "{0} {1}: testet FeLV-positiv"
 
 #: animal.py
 msgid "{0} {1}: tested positive for Heartworm"
-msgstr ""
+msgstr "{0} {1}: testet positivt på hjerteorm"
 
 #: animal.py
 msgid "{0} {1}: transferred to {2}"
-msgstr ""
+msgstr "{0} {1}: overført til {2}"
 
 #: staff_rota.js
 msgid "{0}, Week {1}"
@@ -13251,7 +13249,7 @@ msgstr "{plural0}  medisinsk behandling må administreres i dag."
 
 #: i18n.py
 msgid "{plural0} month."
-msgstr "{plural0}  måned."
+msgstr "{plural0}  mnd."
 
 #: main.js
 msgid "{plural0} new online form submission"
@@ -13403,7 +13401,7 @@ msgstr "{plural1}  medisinsk behandling må administreres i dag"
 
 #: i18n.py
 msgid "{plural1} months."
-msgstr "{plural0} måneder."
+msgstr "{plural1} mnd."
 
 #: main.js
 msgid "{plural1} new online form submissions"
@@ -13555,7 +13553,7 @@ msgstr "{plural2} medisinsk behandling må administreres i dag"
 
 #: i18n.py
 msgid "{plural2} months."
-msgstr "{plural2} måneder."
+msgstr "{plural2} mnd."
 
 #: main.js
 msgid "{plural2} new online form submissions"
@@ -13707,7 +13705,7 @@ msgstr "{plural3} medisinsk behandling må administreres i dag"
 
 #: i18n.py
 msgid "{plural3} months."
-msgstr "{plural3} måneder."
+msgstr "{plural3} mnd."
 
 #: main.js
 msgid "{plural3} new online form submissions"
