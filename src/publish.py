@@ -2316,6 +2316,8 @@ class HTMLPublisher(FTPPublisher):
             c = MULTIPLE_DATABASES_PUBLISH_FTP
             publishCriteria.uploadDirectly = True
             publishCriteria.clearExisting = True
+            publishCriteria.forceReupload = False
+            publishCriteria.scaleImages = 1
             FTPPublisher.__init__(self, dbo, publishCriteria,
                 self.replaceMDBTokens(dbo, c["host"]),
                 self.replaceMDBTokens(dbo, c["user"]),

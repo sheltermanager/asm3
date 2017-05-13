@@ -1,6 +1,7 @@
 40
 ================
 
+12/05/17 Performance fixes for HTML publisher #215
 12/05/17 Fix lookingfor/match report to use execute_many for performance
 12/05/17 Only force a reload once from /main on build discrepancy
 12/05/17 Limit max number of lost/found and looking for matches for performance
