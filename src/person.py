@@ -1168,6 +1168,7 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
     l = dbo.locale
     title = _("People Looking For", l)
     h = []
+    batch = []
     h.append(reports.get_report_header(dbo, title, username))
     if limit > 0:
         h.append("<p>(" + _("Limited to {0} matches", l).format(limit) + ")</p>")
@@ -1190,10 +1191,6 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
         "FROM owner WHERE MatchActive = 1 AND " \
         "(MatchExpires Is Null OR MatchExpires > %s)%s " \
         "ORDER BY OwnerName" % (db.dd(now(dbo.timezone)), idclause))
-
-    # Empty ownerlookingfor before we start
-    if personid == 0:
-        db.execute(dbo, "DELETE FROM ownerlookingfor")
 
     ah = []
     ah.append(hr())
@@ -1279,11 +1276,7 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
 
             # Add an entry to ownerlookingfor for other reports
             if personid == 0:
-                sql = db.make_insert_sql("ownerlookingfor", (
-                    ( "AnimalID", db.di(a["ID"]) ),
-                    ( "OwnerID", db.di(p["ID"]) ),
-                    ( "MatchSummary", db.ds(summary) ) ))
-                db.execute(dbo, sql)
+                batch.append( ( a["ID"], p["ID"], summary ) )
 
             totalmatches += 1
             if limit > 0 and totalmatches >= limit:
@@ -1300,6 +1293,13 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
         h.append( "<p>%s</p>" % _("No matches found.", l) )
 
     h.append( reports.get_report_footer(dbo, title, username))
+
+    # Update ownerlookingfor table
+    if personid == 0:
+        db.execute(dbo, "DELETE FROM ownerlookingfor")
+        if len(batch) > 0:
+            db.execute_many(dbo, "INSERT INTO ownerlookingfor (AnimalID, OwnerID, MatchSummary) VALUES (%s, %s, %s)", batch)
+
     return "".join(h)
 
 def lookingfor_last_match_count(dbo):

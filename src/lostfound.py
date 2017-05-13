@@ -54,36 +54,12 @@ class LostFoundMatch:
     matchpoints = 0
     def __init__(self, dbo):
         self.dbo = dbo
-    def toDB(self):
-        """ Writes a lostfoundmatch record from this object """
-        sql = db.make_insert_sql("animallostfoundmatch", (
-            ( "AnimalLostID", db.di(self.lid) ),
-            ( "AnimalFoundID", db.di(self.fid) ),
-            ( "AnimalID", db.di(self.fanimalid) ),
-            ( "LostContactName", db.ds(self.lcontactname) ),
-            ( "LostContactNumber", db.ds(self.lcontactnumber) ),
-            ( "LostArea", db.ds(self.larealost) ),
-            ( "LostPostcode", db.ds(self.lareapostcode) ),
-            ( "LostAgeGroup", db.ds(self.lagegroup) ),
-            ( "LostSex", db.di(self.lsexid) ),
-            ( "LostSpeciesID", db.di(self.lspeciesid) ),
-            ( "LostBreedID", db.di(self.lbreedid) ),
-            ( "LostFeatures", db.ds(self.ldistinguishingfeatures) ),
-            ( "LostBaseColourID", db.di(self.lbasecolourid) ),
-            ( "LostDate", db.dd(self.ldatelost) ),
-            ( "FoundContactName", db.ds(self.fcontactname) ),
-            ( "FoundContactNumber", db.ds(self.fcontactnumber) ),
-            ( "FoundArea", db.ds(self.fareafound) ),
-            ( "FoundPostcode", db.ds(self.fareapostcode) ),
-            ( "FoundAgeGroup", db.ds(self.fagegroup) ),
-            ( "FoundSex", db.di(self.fsexid) ),
-            ( "FoundSpeciesID", db.di(self.fspeciesid) ),
-            ( "FoundBreedID", db.di(self.fbreedid) ),
-            ( "FoundFeatures", db.ds(self.fdistinguishingfeatures) ),
-            ( "FoundBaseColourID", db.di(self.fbasecolourid) ),
-            ( "FoundDate", db.dd(self.fdatefound) ),
-            ( "MatchPoints", db.di(self.matchpoints) ) ))
-        db.execute(self.dbo, sql)
+    def toParams(self):
+        """ Returns batch parameters for database insert """
+        return (self.lid, self.fid, self.fanimalid, self.lcontactname, self.lcontactnumber, self.larealost, self.lareapostcode, self.lagegroup,
+                self.lsexid, self.lspeciesid, self.lbreedid, self.ldistinguishingfeatures, self.lbasecolourid, self.ldatelost, self.fcontactname,
+                self.fcontactnumber, self.fareafound, self.fareapostcode, self.fagegroup, self.fsexid, self.fspeciesid, self.fbreedid,
+                self.fdistinguishingfeatures, self.fbasecolourid, self.fdatefound, self.matchpoints)
 
 def get_foundanimal_query(dbo):
     return "SELECT a.*, a.ID AS LFID, s.SpeciesName, b.BreedName, " \
@@ -404,6 +380,7 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
     returns a list of LostFoundMatch objects
     """
     l = dbo.locale
+    batch = []
     matches = []
     matchspecies = configuration.match_species(dbo)
     matchbreed = configuration.match_breed(dbo)
@@ -419,6 +396,7 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
         matchdatewithin2weeks
     matchpointfloor = configuration.match_point_floor(dbo)
     includeshelter = configuration.match_include_shelter(dbo)
+    fullmatch = animalid == 0 and lostanimalid == 0 and foundanimalid == 0
     # Ignore records older than 6 months to keep things useful
     giveup = subtract_days(now(dbo.timezone), 180)
 
@@ -452,10 +430,6 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
                 "a.Archived = 0 AND a.DateBroughtIn > %s" % db.dd(oldestdate))
         else:
             shelteranimals = db.query(dbo, animal.get_animal_query(dbo) + " WHERE a.ID = %d" % animalid)
-
-    # We're doing a full match, clear down the lostfoundmatch table
-    if animalid == 0 and lostanimalid == 0 and foundanimalid == 0:
-        db.execute(dbo, "DELETE FROM animallostfoundmatch")
 
     async.set_progress_max(dbo, len(lostanimals))
     for la in lostanimals:
@@ -515,8 +489,8 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
                     m.fdatefound = fa["DATEFOUND"]
                     m.matchpoints = int((float(matchpoints) / float(matchmax)) * 100.0)
                     matches.append(m)
-                    if animalid == 0 and lostanimalid == 0 and foundanimalid == 0:
-                        m.toDB()
+                    if fullmatch: 
+                        batch.append(m.toParams())
                     if limit > 0 and len(matches) >= limit:
                         break
 
@@ -571,10 +545,20 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
                     m.fdatefound = a["DATEBROUGHTIN"]
                     m.matchpoints = int((float(matchpoints) / float(matchmax)) * 100.0)
                     matches.append(m)
-                    if animalid == 0 and lostanimalid == 0 and foundanimalid == 0:
-                        m.toDB()
+                    if fullmatch:
+                        batch.append(m.toParams())
                     if limit > 0 and len(matches) >= limit:
                         break
+
+    if fullmatch:
+        db.execute(dbo, "DELETE FROM animallostfoundmatch")
+        sql = "INSERT INTO animallostfoundmatch (AnimalLostID, AnimalFoundID, AnimalID, LostContactName, LostContactNumber, " \
+            "LostArea, LostPostcode, LostAgeGroup, LostSex, LostSpeciesID, LostBreedID, LostFeatures, LostBaseColourID, LostDate, " \
+            "FoundContactName, FoundContactNumber, FoundArea, FoundPostcode, FoundAgeGroup, FoundSex, FoundSpeciesID, FoundBreedID, " \
+            "FoundFeatures, FoundBaseColourID, FoundDate, MatchPoints) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, " \
+            "%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        if len(batch) > 0:
+            db.execute_many(dbo, sql, batch)
 
     return matches
 
