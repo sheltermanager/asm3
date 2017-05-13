@@ -3471,7 +3471,7 @@ class mailmerge:
             web.header("Content-Type", "text/html")
             web.header("Cache-Control", "no-cache")
             return html.tinymce_header(templatename, "document_edit.js", jswindowprint=True, pdfenabled=False, readonly=True) + \
-                html.tinymce_main(dbo.locale, "", recid=0, mode="", \
+                html.tinymce_main(dbo.locale, "", recid=0, linktype="", \
                     template="", content=utils.escape_tinymce(content))
         elif mode == "labels":
             web.header("Content-Type", "application/pdf")
