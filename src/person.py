@@ -1333,7 +1333,7 @@ def update_lookingfor_report(dbo):
     Updates the latest version of the looking for report 
     """
     al.debug("updating lookingfor report", "person.update_lookingfor_report", dbo)
-    configuration.lookingfor_report(dbo, lookingfor_report(dbo, limit = 250))
+    configuration.lookingfor_report(dbo, lookingfor_report(dbo, limit = 1000))
     configuration.lookingfor_last_match_count(dbo, lookingfor_last_match_count(dbo))
     return "OK %d" % lookingfor_last_match_count(dbo)
 

@@ -629,7 +629,7 @@ def update_match_report(dbo):
     Updates the latest version of the lost/found match report 
     """
     al.debug("updating lost/found match report", "lostfound.update_match_report", dbo)
-    configuration.lostfound_report(dbo, match_report(dbo, limit = 250))
+    configuration.lostfound_report(dbo, match_report(dbo, limit = 1000))
     configuration.lostfound_last_match_count(dbo, lostfound_last_match_count(dbo))
     return "OK %d" % lostfound_last_match_count(dbo)
 
