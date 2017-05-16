@@ -26,7 +26,7 @@ FROM ownerlookingfor ol
 INNER JOIN owner o ON o.ID = ol.OwnerID
 INNER JOIN animal a ON a.ID = ol.AnimalID
 INNER JOIN species s ON a.SpeciesID = s.ID
-ORDER BY s.SpeciesName, o.MatchAdded
+ORDER BY s.SpeciesName, o.OwnerName, o.MatchAdded
 ###
 $$HEADER
 HEADER$$
