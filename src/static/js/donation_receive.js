@@ -116,7 +116,7 @@ $(function() {
                                     .replace("{0}", $("#totalamount").html())
                                     .replace("{1}", $("#received").val());
                             var u = "move_gendoc?" +
-                                "mode=DONATION&id=" + result +
+                                "linktype=DONATION&id=" + result +
                                 "&message=" + encodeURIComponent(common.base64_encode(msg));
                             common.route(u);
                         }
