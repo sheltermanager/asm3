@@ -27,6 +27,7 @@ animal.id AS animalid,
 animal.identichipnumber,
 CASE WHEN animal.heartwormtested = 1 then (SELECT Name FROM lksposneg WHERE ID = animal.heartwormtestresult) ELSE '' END AS heartworm,
 CASE WHEN animal.combitested = 1 then (SELECT Name FROM lksposneg WHERE ID = animal.combitestresult) ELSE '' END AS fivl,
+CASE WHEN animal.flvresult = 1 then (SELECT Name FROM lksposneg WHERE ID = animal.flvresult) ELSE '' END AS flv,
 entryreason.reasonname,
 (SELECT Name FROM lksynun WHERE ID = animal.IsGoodWithDogs) AS WithDogs,
 (SELECT Name FROM lksynun WHERE ID = animal.IsGoodWithCats) AS WithCats,
@@ -100,6 +101,7 @@ Size: <b>$Size</b><br />
 Microchip: <b>$identichipnumber</b><br />
 Heartworm: <b>$heartworm</b><br />
 FIV/L: <b>$fivl</b><br />
+FLV: <b>$flv</b><br />
 Housetrained? <b>$HouseTrained</b><br />
 Good With Dogs? <b>$WithDogs</b><br />
 Good With Cats? <b>$WithCats</b><br />
