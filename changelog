@@ -1,6 +1,7 @@
 40
 ================
 
+18/05/17 Fix bug where required vacc 2 has to be > expired vacc 1 (>=)
 12/05/17 Performance fixes for HTML publisher #215
 12/05/17 Fix lookingfor/match report to use execute_many for performance
 12/05/17 Only force a reload once from /main on build discrepancy
