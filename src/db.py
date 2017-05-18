@@ -140,6 +140,7 @@ def query(dbo, sql):
         return l
     except Exception as err:
         al.error(str(err), "db.query", dbo, sys.exc_info())
+        al.error("failing sql: %s" % sql, "db.query", dbo)
         raise err
     finally:
         try:
@@ -183,6 +184,7 @@ def query_columns(dbo, sql):
         return cn
     except Exception as err:
         al.error(str(err), "db.query_columns", dbo, sys.exc_info())
+        al.error("failing sql: %s" % sql, "db.query_columns", dbo)
         raise err
     finally:
         try:
@@ -215,7 +217,8 @@ def query_generator(dbo, sql):
             row = s.fetchone()
         connect_cursor_close(dbo, c, s)
     except Exception as err:
-        al.error(str(err), "db.query", dbo, sys.exc_info())
+        al.error(str(err), "db.query_generator", dbo, sys.exc_info())
+        al.error("failing sql: %s" % sql, "db.query_generator", dbo)
         raise err
     finally:
         try:
@@ -275,6 +278,7 @@ def query_tuple(dbo, sql):
         return d
     except Exception as err:
         al.error(str(err), "db.query_tuple", dbo, sys.exc_info())
+        al.error("failing sql: %s" % sql, "db.query_tuple", dbo)
         raise err
     finally:
         try:
@@ -301,6 +305,7 @@ def query_tuple_columns(dbo, sql):
         return (d, cn)
     except Exception as err:
         al.error(str(err), "db.query_tuple_columns", dbo, sys.exc_info())
+        al.error("failing sql: %s" % sql, "db.query_tuple_columns", dbo)
         raise err
     finally:
         try:
@@ -335,6 +340,7 @@ def execute(dbo, sql, override_lock = False):
         return rv
     except Exception as err:
         al.error(str(err), "db.execute", dbo, sys.exc_info())
+        al.error("failing sql: %s" % sql, "db.execute", dbo)
         try:
             # An error can leave a connection in unusable state, 
             # rollback any attempted changes.
@@ -368,6 +374,7 @@ def execute_many(dbo, sql, params, override_lock = False):
         return rv
     except Exception as err:
         al.error(str(err), "db.execute_many", dbo, sys.exc_info())
+        al.error("failing sql: %s" % sql, "db.execute_many", dbo)
         try:
             # An error can leave a connection in unusable state, 
             # rollback any attempted changes.
