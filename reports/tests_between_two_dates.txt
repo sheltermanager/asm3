@@ -55,10 +55,7 @@ $$FOOT
 <td><b> {SUM.Cost}<b/></td>
 </tr>
 </table>
-
 GROUP$$
-
-HEADER$$
 
 $$BODY
 <tr>
