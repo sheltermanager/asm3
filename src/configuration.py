@@ -5,7 +5,6 @@ import audit
 import db
 import i18n
 import sys
-import time
 import utils
 from sitedefs import LOCALE, TIMEZONE, URL_NEWS
 
@@ -982,9 +981,6 @@ def service_enabled(dbo):
 def service_auth_enabled(dbo):
     return cboolean(dbo, "ServiceAuthEnabled", DEFAULTS["ServiceAuthEnabled"] == "Yes")
 
-def set_variable_data_updated_today(dbo):
-    cset_db(dbo, "VariableAnimalDataUpdated", time.strftime("%Y%m%d", i18n.now().timetuple()))
-
 def show_first_time_screen(dbo, change = False, newvalue = False):
     if not change:
         return cboolean(dbo, "ShowFirstTime", DEFAULTS["ShowFirstTime"] == "Yes")
@@ -1047,10 +1043,6 @@ def trial_on_shelter(dbo):
 
 def unique_licence_numbers(dbo):
     return cboolean(dbo, "UniqueLicenceNumbers", DEFAULTS["UniqueLicenceNumbers"] == "Yes")
-
-def variable_data_updated_today(dbo):
-    todaystr = time.strftime("%Y%m%d", i18n.now().timetuple())
-    return todaystr == cstring(dbo, "VariableAnimalDataUpdated")
 
 def vetenvoy_user_id(dbo):
     return cstring(dbo, "VetEnvoyUserId")
