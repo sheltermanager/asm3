@@ -1340,6 +1340,10 @@ class animal(JSONEndpoint):
 
     def controller(self, o):
         dbo = o.dbo
+        # If the animal is not on the shelter currently, update the variable data 
+        # prior to opening so age/etc. is shown correctly (shelter animals are updated by the batch)
+        if not extanimal.get_is_on_shelter(dbo, o.post.integer("id")):
+            extanimal.update_variable_animal_data(dbo, o.post.integer("id"))
         a = extanimal.get_animal(dbo, o.post.integer("id"))
         if a is None: self.notfound()
         # If a location filter is set, prevent the user opening this animal if it's

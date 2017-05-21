@@ -3085,7 +3085,6 @@ def update_on_shelter_variable_animal_data(dbo):
     al.debug("updated variable data for %d animals (locale %s)" % (len(animals), l), "animal.update_on_shelter_variable_animal_data", dbo)
     return "OK %d" % len(animals)
 
-
 def update_all_animal_statuses(dbo):
     """
     Updates statuses for all animals
