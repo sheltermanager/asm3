@@ -64,8 +64,8 @@ def daily(dbo):
         ttask(animal.update_on_shelter_animal_statuses, dbo)
         ttask(animal.update_foster_animal_statuses, dbo)
 
-        # Update all animal variable data (age, time on shelter, etc)
-        ttask(animal.update_all_variable_animal_data, dbo)
+        # Update on shelter animal variable data (age, time on shelter, etc)
+        ttask(animal.update_on_shelter_variable_animal_data, dbo)
 
         # Update animal figures for reports
         ttask(animal.update_animal_figures, dbo)
@@ -397,7 +397,7 @@ def maint_recode_all(dbo):
 
 def maint_variable_data(dbo):
     try:
-        animal.update_all_variable_animal_data(dbo, include_deceased=True, check_config=False)
+        animal.update_all_variable_animal_data(dbo)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_variable_data: %s" % em, "cron.maint_variable_data", dbo, sys.exc_info())

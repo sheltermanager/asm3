@@ -3010,36 +3010,27 @@ def update_variable_animal_data(dbo, animalid, a = None, animalupdatebatch = Non
         ))
         db.execute(dbo, s)
 
-def update_all_variable_animal_data(dbo, include_deceased=False, check_config=True):
+def update_all_variable_animal_data(dbo):
     """
-    Updates variable animal data for all animals
+    Updates variable animal data for all animals. This is a big memory heavy routine is you've
+    got a lot of animal and movement records as loads sections of both complete tables into RAM.
     """
     l = dbo.locale
     
-    # We only need to do this once a day, skip if it's already
-    # been run
-    if check_config: 
-        if configuration.variable_data_updated_today(dbo):
-            al.debug("already done today", "animal.update_all_variable_animal_data", dbo)
-            return
-
     animalupdatebatch = []
 
     # Load age group bands now to save repeated looped lookups
     bands = db.query(dbo, "SELECT ItemName, ItemValue FROM configuration WHERE ItemName LIKE 'AgeGroup%' ORDER BY ItemName")
 
-    # Update variable data for either all or non-deceased animals
-    where = ""
-    if not include_deceased:
-        where = "AND DeceasedDate Is Null"
+    # Relevant fields
     animals = db.query(dbo, "SELECT ID, DateBroughtIn, DeceasedDate, DiedOffShelter, Archived, ActiveMovementDate, " \
-        "MostRecentEntryDate, DateOfBirth FROM animal WHERE ID>0 %s" % where)
+        "MostRecentEntryDate, DateOfBirth FROM animal")
 
-    # Get a single lookup of movements for our animals
+    # Get a single lookup of movement histories for our animals
     movements = db.query(dbo, "SELECT ad.AnimalID, ad.MovementDate, ad.ReturnDate " \
         "FROM adoption ad INNER JOIN animal a ON a.ID = ad.AnimalID " \
-        "WHERE ad.MovementType <> 2 AND ad.MovementDate Is Not Null AND ad.ReturnDate Is Not Null %s " \
-        "ORDER BY AnimalID" % where)
+        "WHERE ad.MovementType NOT IN (2,8) AND ad.MovementDate Is Not Null AND ad.ReturnDate Is Not Null " \
+        "ORDER BY AnimalID")
 
     for a in animals:
         update_variable_animal_data(dbo, int(a["ID"]), a, animalupdatebatch, bands, movements)
@@ -3054,10 +3045,46 @@ def update_all_variable_animal_data(dbo, include_deceased=False, check_config=Tr
         "WHERE ID = %s", animalupdatebatch)
 
     al.debug("updated variable data for %d animals (locale %s)" % (len(animals), l), "animal.update_all_variable_animal_data", dbo)
-
-    # Mark the data as updated today
-    configuration.set_variable_data_updated_today(dbo)
     return "OK %d" % len(animals)
+
+def update_on_shelter_variable_animal_data(dbo):
+    """
+    Updates variable animal data for all shelter animals.
+    """
+    l = dbo.locale
+    
+    animalupdatebatch = []
+
+    # Load age group bands now to save repeated looped lookups
+    bands = db.query(dbo, "SELECT ItemName, ItemValue FROM configuration WHERE ItemName LIKE 'AgeGroup%' ORDER BY ItemName")
+
+    # Relevant on shelter animal fields
+    animals = db.query(dbo, "SELECT ID, DateBroughtIn, DeceasedDate, DiedOffShelter, Archived, ActiveMovementDate, " \
+        "MostRecentEntryDate, DateOfBirth FROM animal WHERE Archived = 0")
+
+    # Get a single lookup of movement histories for our on shelter animals
+    movements = db.query(dbo, "SELECT ad.AnimalID, ad.MovementDate, ad.ReturnDate " \
+        "FROM animal a " \
+        "INNER JOIN adoption ad ON a.ID = ad.AnimalID " \
+        "WHERE a.Archived = 0 AND ad.MovementType NOT IN (2,8) " \
+        "AND ad.MovementDate Is Not Null AND ad.ReturnDate Is Not Null " \
+        "ORDER BY a.ID")
+
+    for a in animals:
+        update_variable_animal_data(dbo, int(a["ID"]), a, animalupdatebatch, bands, movements)
+
+    db.execute_many(dbo, "UPDATE animal SET " \
+        "TimeOnShelter = %s, " \
+        "AgeGroup = %s, " \
+        "AnimalAge = %s, " \
+        "DaysOnShelter = %s, " \
+        "TotalTimeOnShelter = %s, " \
+        "TotalDaysOnShelter = %s " \
+        "WHERE ID = %s", animalupdatebatch)
+
+    al.debug("updated variable data for %d animals (locale %s)" % (len(animals), l), "animal.update_on_shelter_variable_animal_data", dbo)
+    return "OK %d" % len(animals)
+
 
 def update_all_animal_statuses(dbo):
     """
