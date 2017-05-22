@@ -134,6 +134,7 @@ urls = (
     "/lostanimal_media", "lostanimal_media",
     "/lostanimal_new", "lostanimal_new",
     "/mailmerge", "mailmerge",
+    "/mailmerge_criteria", "mailmerge_criteria",
     "/media", "media",
     "/medicalprofile", "medicalprofile",
     "/mobile", "mobile",
@@ -191,7 +192,9 @@ urls = (
     "/publish_logs", "publish_logs",
     "/publish_options", "publish_options",
     "/report", "report",
+    "/report_criteria", "report_criteria",
     "/report_export", "report_export",
+    "/report_export_csv", "report_export_csv",
     "/report_images", "report_images",
     "/reports", "reports",
     "/roles", "roles",
@@ -2655,14 +2658,11 @@ class foundanimal_find_results(JSONEndpoint):
 
     def controller(self, o):
         dbo = o.dbo
-        l = o.locale
         results = extlostfound.get_foundanimal_find_advanced(dbo, o.post.data, configuration.record_search_limit(dbo))
-        resultsmessage = _("Find found animal returned {0} results.", l).format(len(results))
-        al.debug("found %d results for %s" % (len(results), str(web.ctx.query)), "code.foundanimal_find_results", dbo)
+        al.debug("found %d results for %s" % (len(results), self.query()), "code.foundanimal_find_results", dbo)
         return {
             "rows": results,
-            "name": "foundanimal_find_results",
-            "resultsmessage": resultsmessage
+            "name": "foundanimal_find_results"
         }
 
 class foundanimal_log(JSONEndpoint):
@@ -3161,48 +3161,43 @@ class lookups(JSONEndpoint):
         for lid in o.post.integer_list("ids"):
             extlookups.update_lookup_retired(o.dbo, o.post["lookup"], lid, 1)
 
-class lostanimal:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_LOST_ANIMAL)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(id = 0), session.locale)
-        a = extlostfound.get_lostanimal(dbo, post.integer("id"))
-        if a is None: raise web.notfound()
-        al.debug("open lost animal %s %s %s" % (a["AGEGROUP"], a["SPECIESNAME"], a["OWNERNAME"]), "code.foundanimal", dbo)
-        s = html.header("", session)
-        c = html.controller_json("animal", a)
-        c += html.controller_str("name", "lostanimal")
-        c += html.controller_json("additional", extadditional.get_additional_fields(dbo, a["ID"], "lostanimal"))
-        c += html.controller_json("agegroups", configuration.age_groups(dbo))
-        if users.check_permission_bool(session, users.VIEW_AUDIT_TRAIL):
-            c += html.controller_json("audit", audit.get_audit_for_link(dbo, "animallost", a["ID"]))
-        c += html.controller_json("breeds", extlookups.get_breeds_by_species(dbo))
-        c += html.controller_json("colours", extlookups.get_basecolours(dbo))
-        c += html.controller_json("logtypes", extlookups.get_log_types(dbo))
-        c += html.controller_json("sexes", extlookups.get_sexes(dbo))
-        c += html.controller_json("species", extlookups.get_species(dbo))
-        c += html.controller_json("tabcounts", extlostfound.get_lostanimal_satellite_counts(dbo, a["LFID"])[0])
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("lostfound", s, c, post["json"] == "true")
+class lostanimal(JSONEndpoint):
+    url = "lostanimal"
+    js_module = "lostfound"
+    get_permissions = users.VIEW_LOST_ANIMAL
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        l = session.locale
-        dbo = session.dbo
-        post = utils.PostedData(web.input(mode="save"), session.locale)
-        mode = post["mode"]
-        if mode == "save":
-            users.check_permission(session, users.CHANGE_LOST_ANIMAL)
-            extlostfound.update_lostanimal_from_form(dbo, post, session.user)
-        elif mode == "email":
-            users.check_permission(session, users.EMAIL_PERSON)
-            if not extlostfound.send_email_from_form(dbo, session.user, post):
-                raise utils.ASMError(_("Failed sending email", l))
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_LOST_ANIMAL)
-            extlostfound.delete_lostanimal(dbo, session.user, post.integer("id"))
+    def controller(self, o):
+        dbo = o.dbo
+        a = extlostfound.get_lostanimal(dbo, o.post.integer("id"))
+        if a is None: self.notfound()
+        al.debug("open lost animal %s %s %s" % (a["AGEGROUP"], a["SPECIESNAME"], a["OWNERNAME"]), "code.foundanimal", dbo)
+        return {
+            "animal": a,
+            "name": "lostanimal",
+            "additional": extadditional.get_additional_fields(dbo, a["ID"], "lostanimal"),
+            "agegroups": configuration.age_groups(dbo),
+            "audit": users.check_permission_bool(o.session, users.VIEW_AUDIT_TRAIL) and audit.get_audit_for_link(dbo, "animallost", a["ID"]) or [],
+            "breeds": extlookups.get_breeds_by_species(dbo),
+            "colours": extlookups.get_basecolours(dbo),
+            "logtypes": extlookups.get_log_types(dbo),
+            "sexes": extlookups.get_sexes(dbo),
+            "species": extlookups.get_species(dbo),
+            "tabcounts": extlostfound.get_lostanimal_satellite_counts(dbo, a["LFID"])[0]
+        }
+
+    def post_save(self, o):
+        self.check(users.CHANGE_LOST_ANIMAL)
+        extlostfound.update_lostanimal_from_form(o.dbo, o.post, o.user)
+
+    def post_email(self, o):
+        self.check(users.EMAIL_PERSON)
+        l = o.locale
+        if not extlostfound.send_email_from_form(o.dbo, o.user, o.post):
+            raise utils.ASMError(_("Failed sending email", l))
+
+    def post_delete(self, o):
+        self.check(users.DELETE_LOST_ANIMAL)
+        extlostfound.delete_lostanimal(o.dbo, o.user, o.post.integer("id"))
 
 class lostanimal_diary(JSONEndpoint):
     url = "lostanimal_diary"
@@ -3225,41 +3220,36 @@ class lostanimal_diary(JSONEndpoint):
             "forlist": users.get_users_and_roles(dbo)
         }
 
-class lostanimal_find:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_LOST_ANIMAL)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        s = html.header("", session)
-        c = html.controller_json("agegroups", configuration.age_groups(dbo))
-        c += html.controller_str("name", "lostanimal_find")
-        c += html.controller_json("colours", extlookups.get_basecolours(dbo))
-        c += html.controller_json("species", extlookups.get_species(dbo))
-        c += html.controller_json("breeds", extlookups.get_breeds_by_species(dbo))
-        c += html.controller_json("sexes", extlookups.get_sexes(dbo))
-        c += html.controller_str("mode", "lost")
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("lostfound_find", s, c, post["json"] == "true")
+class lostanimal_find(JSONEndpoint):
+    url = "lostanimal_find"
+    js_module = "lostfound_find"
+    get_permissions = users.VIEW_LOST_ANIMAL
 
-class lostanimal_find_results:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_LOST_ANIMAL)
-        dbo = session.dbo
-        l = session.locale
-        post = utils.PostedData(web.input(mode = ""), session.locale)
-        results = extlostfound.get_lostanimal_find_advanced(dbo, post.data, configuration.record_search_limit(dbo))
-        resultsmessage = _("Find lost animal returned {0} results.", l).format(len(results))
-        al.debug("found %d results for %s" % (len(results), str(web.ctx.query)), "code.lostanimal_find_results", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", results)
-        c += html.controller_str("name", "lostanimal_find_results")
-        c += html.controller_str("resultsmessage", resultsmessage)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("lostfound_find_results", s, c, post["json"] == "true")
+    def controller(self, o):
+        dbo = o.dbo
+        return {
+            "agegroups": configuration.age_groups(dbo),
+            "name": "lostanimal_find",
+            "colours": extlookups.get_basecolours(dbo),
+            "species": extlookups.get_species(dbo),
+            "breeds": extlookups.get_breeds_by_species(dbo),
+            "sexes": extlookups.get_sexes(dbo),
+            "mode": "lost"
+        }
+
+class lostanimal_find_results(JSONEndpoint):
+    url = "lostanimal_find_results"
+    js_module = "lostfound_find_results"
+    get_permissions = users.VIEW_LOST_ANIMAL
+
+    def controller(self, o):
+        dbo = o.dbo
+        results = extlostfound.get_lostanimal_find_advanced(dbo, o.post.data, configuration.record_search_limit(dbo))
+        al.debug("found %d results for %s" % (len(results), self.query()), "code.lostanimal_find_results", dbo)
+        return {
+            "rows": results,
+            "name": "lostanimal_find_results"
+        }
 
 class lostanimal_log(JSONEndpoint):
     url = "lostanimal_log"
@@ -3307,42 +3297,39 @@ class lostanimal_media(JSONEndpoint):
             "sigtype": ELECTRONIC_SIGNATURES
         }
 
-class lostanimal_new:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.ADD_LOST_ANIMAL)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        s = html.header("", session)
-        c = html.controller_json("agegroups", configuration.age_groups(dbo))
-        c += html.controller_json("additional", extadditional.get_additional_fields(dbo, 0, "lostanimal"))
-        c += html.controller_json("colours", extlookups.get_basecolours(dbo))
-        c += html.controller_json("species", extlookups.get_species(dbo))
-        c += html.controller_json("breeds", extlookups.get_breeds_by_species(dbo))
-        c += html.controller_json("sexes", extlookups.get_sexes(dbo))
-        c += html.controller_str("name", "lostanimal_new")
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("lostfound_new", s, c, post["json"] == "true")
+class lostanimal_new(JSONEndpoint):
+    url = "lostanimal_new"
+    js_module = "lostfound_new"
+    get_permissions = users.ADD_LOST_ANIMAL
+    post_permissions = users.ADD_LOST_ANIMAL
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.ADD_LOST_ANIMAL)
-        utils.check_locked_db(session)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        return str(extlostfound.insert_lostanimal_from_form(dbo, post, session.user))
+    def controller(self, o):
+        dbo = o.dbo
+        return {
+            "agegroups": configuration.age_groups(dbo),
+            "additional": extadditional.get_additional_fields(dbo, 0, "lostanimal"),
+            "colours": extlookups.get_basecolours(dbo),
+            "species": extlookups.get_species(dbo),
+            "breeds": extlookups.get_breeds_by_species(dbo),
+            "sexes": extlookups.get_sexes(dbo),
+            "name": "lostanimal_new"
+        }
 
-class lostfound_match:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(lostanimalid = 0, foundanimalid = 0, animalid = 0), session.locale)
+    def post_all(self, o):
+        return str(extlostfound.insert_lostanimal_from_form(o.dbo, o.post, o.user))
+
+class lostfound_match(ASMEndpoint):
+    url = "lostfound_match"
+    get_permissions = ( users.VIEW_LOST_ANIMAL, users.VIEW_FOUND_ANIMAL, users.VIEW_PERSON )
+
+    def content(self, o):
+        dbo = o.dbo
+        post = o.post
         lostanimalid = post.integer("lostanimalid")
         foundanimalid = post.integer("foundanimalid")
         animalid = post.integer("animalid")
-        web.header("Content-Type", "text/html")
-        web.header("Cache-Control", "no-cache")
+        self.header("Content-Type", "text/html")
+        self.header("Cache-Control", "no-cache")
         # If no parameters have been given, use the cached daily copy of the match report
         if lostanimalid == 0 and foundanimalid == 0 and animalid == 0:
             al.debug("no parameters given, using cached report at /reports/daily/lost_found_match.html", "code.lostfound_match", dbo)
@@ -3351,111 +3338,116 @@ class lostfound_match:
             al.debug("match lost=%d, found=%d, animal=%d" % (lostanimalid, foundanimalid, animalid), "code.lostfound_match", dbo)
             return extlostfound.match_report(dbo, session.user, lostanimalid, foundanimalid, animalid)
 
-class mailmerge:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.MAIL_MERGE)
-        post = utils.PostedData(web.input(id = "0", mode = "criteria"), session.locale)
-        mode = post["mode"]
-        dbo = session.dbo
-        l = session.locale
-        user = session.user
-        crit = extreports.get_criteria_controls(session.dbo, post.integer("id"))
-        title = extreports.get_title(dbo, post.integer("id"))
-        web.header("Content-Type", "text/html")
-        web.header("Cache-Control", "no-cache")
-        # If the mail merge doesn't take criteria, go to the merge selection screen instead
-        if crit == "":
-            al.debug("mailmerge %d has no criteria, moving to merge selection" % post.integer("id"), "code.mailmerge", dbo)
-            mode = "selection"
-        # If we're in criteria mode (and there are some to get here), ask for them
-        if mode == "criteria":
-            al.debug("building report criteria form for mailmerge %d %s" % (post.integer("id"), title), "code.mailmerge", dbo)
-            s = html.header(title, session)
-            c = html.controller_bool("criteria", True)
-            c += html.controller_str("title", title)
-            s += html.controller(c)
-            s += html.heading(title)
-            s += "<div id=\"criteriaform\">"
-            s += "<input data-post=\"id\" type=\"hidden\" value=\"%d\" />" % post.integer("id")
-            s += "<input data-post=\"mode\" type=\"hidden\" value=\"selection\" />"
-            s += crit
-            s += "</div>"
-            s += html.footing()
-            s += html.footer()
-            return full_or_json("mailmerge", s, c, post["json"] == "true")
-        elif mode == "selection":
-            al.debug("entering mail merge selection mode for %d" % post.integer("id"), "code.mailmerge", dbo)
-            p = extreports.get_criteria_params(dbo, post.integer("id"), post)
-            session.mergeparams = p
-            session.mergereport = post.integer("id")
-            rows, cols = extreports.execute_query(dbo, post.integer("id"), user, p)
-            if rows is None: rows = []
-            al.debug("got merge rows (%d items)" % len(rows), "code.mailmerge", dbo)
-            session.mergetitle = title.replace(" ", "_").replace("\"", "").replace("'", "").lower()
-            # construct a list of field tokens for the email helper
-            fields = []
-            if len(rows) > 0:
-                for fname in sorted(rows[0].iterkeys()):
-                    fields.append(fname)
-            # send the selection form
-            title = _("Mail Merge - {0}", l).format(title)
-            s = html.header(title, session)
-            c = html.controller_json("fields", fields)
-            c += html.controller_int("numrows", len(rows))
-            c += html.controller_bool("hasperson", "OWNERNAME" in fields and "OWNERADDRESS" in fields and "OWNERTOWN" in fields and "OWNERPOSTCODE" in fields)
-            c += html.controller_json("templates", dbfs.get_document_templates(dbo))
-            s += html.controller(c)
-            s += html.footer()
-            return full_or_json("mailmerge", s, c, post["json"] == "true")
+class mailmerge_criteria(JSONEndpoint):
+    url = "mailmerge_criteria"
+    get_permissions = users.MAIL_MERGE
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        l = session.locale
-        dbo = session.dbo
-        post = utils.PostedData(web.input(mode="csv"), session.locale)
-        mode = post["mode"]
-        rows, cols = extreports.execute_query(dbo, session.mergereport, session.user, session.mergeparams)
+    def controller(self, o):
+        dbo = o.dbo
+        post = o.post
+        title = extreports.get_title(o.dbo, o.post.integer("id"))
+        al.debug("building report criteria form for mailmerge %d %s" % (post.integer("id"), title), "code.mailmerge", dbo)
+        return {
+            "id": post.integer("id"),
+            "title": title,
+            "criteriahtml": extreports.get_criteria_controls(o.dbo, o.post.integer("id"))
+        }
+
+class mailmerge(JSONEndpoint):
+    url = "mailmerge"
+    get_permissions = users.MAIL_MERGE
+    post_permissions = users.MAIL_MERGE
+
+    def controller(self, o):
+        l = o.locale
+        dbo = o.dbo
+        post = o.post
+        crid = post.integer("id")
+        crit = extreports.get_criteria_controls(dbo, crid, locationfilter = o.session.locationfilter, siteid = o.session.siteid) 
+        title = extreports.get_title(dbo, crid)
+        # If this mail merge takes criteria and none were supplied, go to the criteria screen to get them
+        if crit != "" and post["hascriteria"] == "": self.redirect("mailmerge_criteria?id=%d" % crid)
+        al.debug("entering mail merge selection mode for %d" % post.integer("id"), "code.mailmerge", dbo)
+        p = extreports.get_criteria_params(dbo, crid, post)
+        # values we store in the session for the post handler to save sending them back every time
+        o.session.mergeparams = p
+        o.session.mergereport = crid
+        o.session.mergetitle = title.replace(" ", "_").replace("\"", "").replace("'", "").lower()
+        rows, cols = extreports.execute_query(dbo, crid, o.user, p)
+        if rows is None: rows = []
         al.debug("got merge rows (%d items)" % len(rows), "code.mailmerge", dbo)
-        if mode == "email":
-            fromadd = post["from"]
-            subject = post["subject"]
-            body = post["body"]
-            utils.send_bulk_email(dbo, fromadd, subject, body, rows, "html")
-        elif mode == "document":
-            templateid = post.integer("templateid")
-            template = dbfs.get_string_id(dbo, templateid)
-            templatename = dbfs.get_name_for_id(dbo, templateid)
-            if not templatename.endswith(".html"):
-                raise utils.ASMValidationError("Only html templates are allowed")
-            # Generate a document from the template for each row
-            org_tags = wordprocessor.org_tags(dbo, session.user)
-            c = []
-            for d in rows:
-                c.append( wordprocessor.substitute_tags(template, wordprocessor.append_tags(d, org_tags)) )
-            content = '<div class="mce-pagebreak" style="page-break-before: always; clear: both; border: 0">&nbsp;</div>'.join(c)
-            web.header("Content-Type", "text/html")
-            web.header("Cache-Control", "no-cache")
-            return html.tinymce_header(templatename, "document_edit.js", jswindowprint=True, pdfenabled=False, readonly=True) + \
-                html.tinymce_main(dbo.locale, "", recid=0, linktype="", \
-                    template="", content=utils.escape_tinymce(content))
-        elif mode == "labels":
-            web.header("Content-Type", "application/pdf")
-            disposition = configuration.pdf_inline(dbo) and "inline; filename=%s" or "attachment; filename=%s"
-            web.header("Content-Disposition", disposition % session.mergetitle + ".pdf")
-            return utils.generate_label_pdf(dbo, session.locale, rows, post["papersize"], post["units"],
-                post.floating("hpitch"), post.floating("vpitch"), 
-                post.floating("width"), post.floating("height"), 
-                post.floating("lmargin"), post.floating("tmargin"),
-                post.integer("cols"), post.integer("rows"))
-        elif mode == "csv":
-            web.header("Content-Type", "text/csv")
-            web.header("Content-Disposition", u"attachment; filename=" + utils.decode_html(session.mergetitle) + u".csv")
-            includeheader = 1 == post.boolean("includeheader")
-            return utils.csv(l, rows, cols, includeheader)
-        elif mode == "preview":
-            al.debug("returning preview rows for %d" % session.mergereport, "code.mailmerge", dbo)
-            return html.json(rows)
+        # construct a list of field tokens for the email helper
+        fields = []
+        if len(rows) > 0:
+            for fname in sorted(rows[0].iterkeys()):
+                fields.append(fname)
+        # send the selection form
+        title = _("Mail Merge - {0}", l).format(title)
+        return {
+            "title": title,
+            "fields": fields,
+            "numrows": len(rows),
+            "hasperson": "OWNERNAME" in fields and "OWNERADDRESS" in fields and "OWNERTOWN" in fields and "OWNERPOSTCODE" in fields,
+            "templates": dbfs.get_document_templates(dbo)
+        }
+   
+    def post_email(self, o):
+        dbo = o.dbo
+        post = o.post
+        rows, cols = extreports.execute_query(dbo, o.session.mergereport, o.user, o.session.mergeparams)
+        fromadd = post["from"]
+        subject = post["subject"]
+        body = post["body"]
+        utils.send_bulk_email(dbo, fromadd, subject, body, rows, "html")
+
+    def post_document(self, o):
+        dbo = o.dbo
+        post = o.post
+        rows, cols = extreports.execute_query(dbo, o.session.mergereport, o.user, o.session.mergeparams)
+        templateid = post.integer("templateid")
+        template = dbfs.get_string_id(dbo, templateid)
+        templatename = dbfs.get_name_for_id(dbo, templateid)
+        if not templatename.endswith(".html"):
+            raise utils.ASMValidationError("Only html templates are allowed")
+        # Generate a document from the template for each row
+        org_tags = wordprocessor.org_tags(dbo, session.user)
+        c = []
+        for d in rows:
+            c.append( wordprocessor.substitute_tags(template, wordprocessor.append_tags(d, org_tags)) )
+        content = '<div class="mce-pagebreak" style="page-break-before: always; clear: both; border: 0">&nbsp;</div>'.join(c)
+        self.header("Content-Type", "text/html")
+        self.header("Cache-Control", "no-cache")
+        return html.tinymce_header(templatename, "document_edit.js", jswindowprint=True, pdfenabled=False, readonly=True) + \
+            html.tinymce_main(o.locale, "", recid=0, linktype="", \
+                template="", content=utils.escape_tinymce(content))
+
+    def post_labels(self, o):
+        dbo = o.dbo
+        post = o.post
+        rows, cols = extreports.execute_query(dbo, o.session.mergereport, o.user, o.session.mergeparams)
+        self.header("Content-Type", "application/pdf")
+        disposition = configuration.pdf_inline(dbo) and "inline; filename=%s" or "attachment; filename=%s"
+        self.header("Content-Disposition", disposition % o.session.mergetitle + ".pdf")
+        return utils.generate_label_pdf(dbo, o.locale, rows, post["papersize"], post["units"],
+            post.floating("hpitch"), post.floating("vpitch"), 
+            post.floating("width"), post.floating("height"), 
+            post.floating("lmargin"), post.floating("tmargin"),
+            post.integer("cols"), post.integer("rows"))
+
+    def post_csv(self, o):
+        dbo = o.dbo
+        post = o.post
+        rows, cols = extreports.execute_query(dbo, o.session.mergereport, o.user, o.session.mergeparams)
+        self.header("Content-Type", "text/csv")
+        self.header("Content-Disposition", u"attachment; filename=" + utils.decode_html(o.session.mergetitle) + u".csv")
+        includeheader = 1 == post.boolean("includeheader")
+        return utils.csv(o.locale, rows, cols, includeheader)
+
+    def post_preview(self, o):
+        dbo = o.dbo
+        rows, cols = extreports.execute_query(dbo, o.session.mergereport, o.user, o.session.mergeparams)
+        al.debug("returning preview rows for %d" % o.session.mergereport, "code.mailmerge", dbo)
+        return html.json(rows)
 
 class medical(JSONEndpoint):
     url = "medical"
@@ -4787,101 +4779,73 @@ class publish_options:
             userid, userpwd = extpublish.VetEnvoyUSMicrochipPublisher.signup(session.dbo, post)
             return "%s,%s" % (userid, userpwd)
 
-class report:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_REPORT)
-        post = utils.PostedData(web.input(id = "0", mode = "criteria"), session.locale)
-        mode = post["mode"]
-        dbo = session.dbo
-        user = session.user
+class report(ASMEndpoint):
+    url = "report"
+    get_permissions = users.VIEW_REPORT
+
+    def content(self, o):
+        dbo = o.dbo
+        post = o.post
         crid = post.integer("id")
         # Make sure this user has a role that can view the report
-        extreports.check_view_permission(session, crid)
-        crit = extreports.get_criteria_controls(session.dbo, crid, locationfilter = session.locationfilter, siteid = session.siteid) 
-        web.header("Content-Type", "text/html")
-        web.header("Cache-Control", "no-cache")
-        # If the report doesn't take criteria, just show it
-        if crit == "":
-            al.debug("report %d has no criteria, displaying" % crid, "code.report", dbo)
-            return extreports.execute(dbo, crid, user)
-        # If we're in criteria mode (and there are some to get here), ask for them
-        elif mode == "criteria":
-            title = extreports.get_title(dbo, crid)
-            al.debug("building criteria form for report %d %s" % (crid, title), "code.report", dbo)
-            s = html.header(title, session)
-            s += html.heading(title)
-            s += "<div id=\"criteriaform\">"
-            s += "<input data-post=\"id\" type=\"hidden\" value=\"%d\" />" % crid
-            s += "<input data-post=\"mode\" type=\"hidden\" value=\"exec\" />"
-            s += crit
-            s += "</div>"
-            s += html.footing()
-            c = html.controller_str("title", title)
-            s += html.controller(c)
-            s += html.footer()
-            return full_or_json("report", s, "", post["json"] == "true")
-        # The user has entered the criteria and we're in exec mode, unpack
-        # the criteria and run the report
-        elif mode == "exec":
-            al.debug("got criteria (%s), executing report %d" % (str(post.data), crid), "code.report", dbo)
-            p = extreports.get_criteria_params(dbo, crid, post)
-            return extreports.execute(dbo, crid, user, p)
+        extreports.check_view_permission(o.session, crid)
+        crit = extreports.get_criteria_controls(dbo, crid, locationfilter = o.session.locationfilter, siteid = o.session.siteid) 
+        self.header("Content-Type", "text/html")
+        self.header("Cache-Control", "no-cache")
+        # If this report takes criteria and none were supplied, go to the criteria screen instead to get them
+        if crit != "" and post["hascriteria"] == "": self.redirect("report_criteria?id=%d&target=report" % post.integer("id"))
+        al.debug("got criteria (%s), executing report %d" % (str(post.data), crid), "code.report", dbo)
+        p = extreports.get_criteria_params(dbo, crid, post)
+        return extreports.execute(dbo, crid, o.user, p)
 
-class report_export:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_REPORT)
-        dbo = session.dbo
-        l = session.locale
-        post = utils.PostedData(web.input(id = "0", mode = "criteria"), l)
-        mode = post["mode"]
+class report_criteria(JSONEndpoint):
+    url = "report_criteria"
+    get_permissions = users.VIEW_REPORT
+
+    def controller(self, o):
+        dbo = o.dbo
+        post = o.post
+        title = extreports.get_title(o.dbo, o.post.integer("id"))
+        al.debug("building report criteria form for report %d %s" % (post.integer("id"), title), "code.report_criteria", dbo)
+        return {
+            "id": post.integer("id"),
+            "title": title,
+            "target": post["target"],
+            "criteriahtml": extreports.get_criteria_controls(o.dbo, o.post.integer("id"), locationfilter = o.session.locationfilter, siteid = o.session.siteid)
+        }
+
+class report_export(JSONEndpoint):
+    url = "report_export"
+    get_permissions = users.EXPORT_REPORT
+
+    def controller(self, o):
+        dbo = o.dbo
+        reports = extreports.get_available_reports(dbo)
+        al.debug("exporting %d reports" % len(reports), "code.report_export", dbo)
+        return {
+            "rows": reports
+        }
+
+class report_export_csv(ASMEndpoint):
+    url = "report_export_csv"
+    get_permissions = users.EXPORT_REPORT
+
+    def content(self, o):
+        dbo = o.dbo
+        post = o.post
         crid = post.integer("id")
-        # No report param passed, show the list of reports for export
-        if crid == 0:
-            reports = extreports.get_available_reports(dbo)
-            al.debug("exporting %d reports" % len(reports), "code.report_export", dbo)
-            s = html.header("", session)
-            c = html.controller_json("rows", reports)
-            s += html.controller(c)
-            s += html.footer()
-            return full_or_json("report_export", s, c, post["json"] == "true")
-        elif mode == "criteria":
-            # Make sure this user has a role that can view the report
-            extreports.check_view_permission(session, crid)
-            crit = extreports.get_criteria_controls(dbo, crid)
-            title = extreports.get_title(dbo, post.integer("id"))
-            filename = title.replace(" ", "_").replace("\"", "").replace("'", "").lower()
-            # If this report has no criteria, go straight to CSV export instead
-            if crit == "":
-                al.debug("report %d has no criteria, exporting to CSV" % post.integer("id"), "code.report_export", dbo)
-                rows, cols = extreports.execute_query(dbo, crid, session.user, [])
-                web.header("Content-Type", "text/csv")
-                web.header("Content-Disposition", u"attachment; filename=\"" + utils.decode_html(filename) + u".csv\"")
-                return utils.csv(l, rows, cols, True)
-            # If we're in criteria mode (and there are some to get here), ask for them
-            title = extreports.get_title(dbo, crid)
-            al.debug("building criteria form for report %d %s" % (crid, title), "code.report", dbo)
-            s = html.header(title, session)
-            c = html.controller_bool("norows", True)
-            s += html.controller(c)
-            s += html.heading(title)
-            s += "<div id=\"criteriaform\">"
-            s += "<input data-post=\"id\" type=\"hidden\" value=\"%d\" />" % crid
-            s += "<input data-post=\"mode\" type=\"hidden\" value=\"exec\" />"
-            s += crit
-            s += "</div>"
-            s += html.footing()
-            s += html.footer()
-            return full_or_json("report_export", s, c, post["json"] == "true")
-        elif mode == "exec":
-            title = extreports.get_title(dbo, post.integer("id"))
-            filename = title.replace(" ", "_").replace("\"", "").replace("'", "").lower()
-            p = extreports.get_criteria_params(dbo, crid, post)
-            rows, cols = extreports.execute_query(dbo, crid, session.user, p)
-            web.header("Content-Type", "text/csv")
-            web.header("Content-Disposition", u"attachment; filename=\"" + utils.decode_html(filename) + u".csv\"")
-            return utils.csv(l, rows, cols, True)
+        crit = extreports.get_criteria_controls(dbo, crid, locationfilter = o.session.locationfilter, siteid = o.session.siteid) 
+        # If this report takes criteria and none were supplied, go to the criteria screen instead to get them
+        if crit != "" and post["hascriteria"] == "": self.redirect("report_criteria?id=%d&target=report_export_csv" % crid)
+        # Make sure this user has a role that can view the report
+        extreports.check_view_permission(session, crid)
+        title = extreports.get_title(dbo, crid)
+        filename = title.replace(" ", "_").replace("\"", "").replace("'", "").lower()
+        p = extreports.get_criteria_params(dbo, crid, post)
+        rows, cols = extreports.execute_query(dbo, crid, session.user, p)
+        self.header("Content-Type", "text/csv")
+        self.header("Content-Disposition", u"attachment; filename=\"" + utils.decode_html(filename) + u".csv\"")
+        return utils.csv(o.locale, rows, cols, True)
 
 class report_images:
     def GET(self):

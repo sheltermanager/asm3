@@ -373,7 +373,7 @@
         /** Returns true if the path supplied can be handled by client side routing */
         route_is_client: function(path) {
             var NOT_CLIENT_SIDE = [ "#", "/", "http", "image?", "document_edit", "document_gen", "document_media_edit", 
-                "logout", "lostfound_match", "mailmerge?", "person_lookingfor", "report?", "report_export?", "static" ],
+                "logout", "lostfound_match", "mailmerge?", "person_lookingfor", "report?", "report_export_csv?", "static" ],
                 isclient = true;
             if (!path) { return true; }
             if (path.indexOf("ajax=false") != -1) { return false; }

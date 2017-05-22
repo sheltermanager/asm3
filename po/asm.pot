@@ -4570,7 +4570,7 @@ msgstr ""
 msgid "Find animal columns"
 msgstr ""
 
-#: code.py
+#: incident_find_results.js
 msgid "Find animal control incidents returned {0} results."
 msgstr ""
 
@@ -4590,7 +4590,7 @@ msgstr ""
 msgid "Find fosterer"
 msgstr ""
 
-#: code.py
+#: lostfound_find_results.js
 msgid "Find found animal returned {0} results."
 msgstr ""
 
@@ -4606,7 +4606,7 @@ msgstr ""
 msgid "Find incident"
 msgstr ""
 
-#: code.py
+#: lostfound_find_results.js
 msgid "Find lost animal returned {0} results."
 msgstr ""
 
@@ -5775,7 +5775,7 @@ msgstr ""
 msgid "Incomplete notes upto today"
 msgstr ""
 
-#: additional.js
+#: additional.js diarytask.js
 msgid "Index"
 msgstr ""
 
@@ -6186,6 +6186,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Lilac Tortie"
+msgstr ""
+
+#: lostfound.py person.py
+msgid "Limited to {0} matches"
 msgstr ""
 
 #: additional.js diary.js incident.js onlineform_incoming.js mobile.py
@@ -8802,7 +8806,7 @@ msgstr ""
 msgid "Report Title"
 msgstr ""
 
-#: incident_new.js header.js code.py html.py configuration.py
+#: incident_new.js header.js html.py configuration.py
 msgid "Report a new incident"
 msgstr ""
 
@@ -9709,7 +9713,7 @@ msgstr ""
 msgid "Show weight as lb rather than kg"
 msgstr ""
 
-#: code.py html.py
+#: timeline.js html.py
 msgid "Showing {0} timeline events."
 msgstr ""
 
@@ -10273,6 +10277,10 @@ msgstr ""
 
 #: task.js
 msgid "Task complete."
+msgstr ""
+
+#: diarytask.js
+msgid "Task items are executed in order of index, lowest to highest"
 msgstr ""
 
 #: animal_find_results.js animal.js animal_new.js mobile.py

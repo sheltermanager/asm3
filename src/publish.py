@@ -859,7 +859,6 @@ class AbstractPublisher(threading.Thread):
         Logs a message
         """
         self.logBuffer.append(msg)
-        al.debug(utils.truncate(msg, 1023), self.publisherName, self.dbo)
 
     def logError(self, msg, ie=None):
         """

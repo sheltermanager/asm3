@@ -4,15 +4,11 @@
 $(function() {
 
     var report = {
+
         bind: function() {
-            $("#submitcriteria").button().click(function() {
-                common.route("report?" + $("#criteriaform input, #criteriaform select").toPOST(true));
-            });
         },
 
         destroy: function() {
-            // Criteria are manually inserted by the server side page loader
-            $("#asm-content").remove();
         },
 
         name: "report",

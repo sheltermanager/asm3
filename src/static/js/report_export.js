@@ -10,7 +10,7 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    common.route("report_export?id=" + row.ID);
+                    common.route("report_export_csv?id=" + row.ID);
                 },
                 hideif: function(row) {
                     // Superusers see everything
@@ -48,17 +48,12 @@ $(function() {
                 tableform.table_bind(this.table, []);
                 $("input[type='checkbox']").hide();
             }
-            $("#submitcriteria").button().click(function() {
-                common.route("report_export?ajax=false&" + $("#criteriaform input, #criteriaform select").toPOST(true));
-            });
         },
 
         sync: function() {
         },
 
         destroy: function() {
-            // Criteria are manually inserted by the server side page loader
-            $("#asm-content").remove();
         },
 
         name: "report_export",

@@ -23,10 +23,6 @@ $(function() {
 
         render: function() {
 
-            // This can be called for mail merge criteria selection, 
-            // in which case the server supplied the ui, don't do anything
-            if (controller.criteria) { return; }
-
             return [
                 html.content_header(controller.title),
 
@@ -155,10 +151,6 @@ $(function() {
 
         bind: function() {
 
-            $("#submitcriteria").button().click(function() {
-                common.route("mailmerge?" + $("#criteriaform input, #criteriaform select").toPOST(true));
-            });
-
             var preset_change = function() {
                 var bits = presets[$("#labeltype").val()];
                 if (bits === undefined) { return; }
@@ -217,10 +209,6 @@ $(function() {
 
         sync: function() {
 
-            // This can be called for mail merge criteria selection, 
-            // in which case the server supplied the ui, don't do anything
-            if (controller.criteria) { return; }
-
             // Default the email signature for bulk emails
             var sig = config.str("EmailSignature");
             if (sig) {
@@ -270,8 +258,6 @@ $(function() {
 
         destroy: function() {
             common.widget_destroy("#emailbody", "richtextarea");
-            // Criteria are manually inserted by the server side page loader
-            $("#asm-content").remove();
         },
 
         name: "mailmerge",

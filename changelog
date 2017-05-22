@@ -1,6 +1,8 @@
 40
 ================
 
+22/05/17 Refactor lookups/lostanimal/litter/mailmerge/report/report_export #173
+22/05/17 Remove noisy debug publisher logging (only alert/success needed)
 21/05/17 Overnight batch need only update variable data for shelter animals
 18/05/17 Fix bug where required vacc 2 has to be > expired vacc 1 (>=)
 12/05/17 Performance fixes for HTML publisher #215
