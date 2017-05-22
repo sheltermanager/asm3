@@ -133,13 +133,6 @@ $(function() {
                     $("#feeinfo").fadeIn();
                 }
 
-                // Update the list of document templates
-                var formdata = "mode=templates&id=" + rec.ID;
-                common.ajax_post("move_reserve", formdata)
-                    .then(function(data) { 
-                        $("#templatelist").html(data); 
-                    });
-
             });
 
             // Callback when person is changed
@@ -212,7 +205,7 @@ $(function() {
                 $("#reserve").button("disable");
                 header.show_loading(_("Creating..."));
 
-                var formdata = $("input, select").toPOST();
+                var formdata = "mode=create&" + $("input, select").toPOST();
                 common.ajax_post("move_reserve", formdata)
                     .then(function(data) {
 

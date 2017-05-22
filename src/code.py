@@ -3515,69 +3515,63 @@ class medical(JSONEndpoint):
         for mid in o.post.integer_list("ids"):
             extmedical.update_treatment_required(o.dbo, o.user, mid, newdate)
 
-class medicalprofile:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_MEDICAL)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        med = extmedical.get_profiles(dbo)
-        al.debug("got %d medical profiles" % len(med), "code.medical_profile", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", med)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("medicalprofile", s, c, post["json"] == "true")
+class medicalprofile(JSONEndpoint):
+    url = "medicalprofile"
+    get_permissions = users.VIEW_MEDICAL
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_MEDICAL)
-            extmedical.insert_profile_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_MEDICAL)
-            extmedical.update_profile_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_MEDICAL)
-            for mid in post.integer_list("ids"):
-                extmedical.delete_profile(session.dbo, session.user, mid)
+    def controller(self, o):
+        med = extmedical.get_profiles(o.dbo)
+        al.debug("got %d medical profiles" % len(med), "code.medical_profile", o.dbo)
+        return {
+            "rows": med
+        }
 
-class move_adopt:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.ADD_MOVEMENT)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        s = html.header("", session)
-        c = html.controller_json("donationtypes", extlookups.get_donation_types(dbo))
-        c += html.controller_json("accounts", financial.get_accounts(dbo))
-        c += html.controller_json("paymenttypes", extlookups.get_payment_types(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("move_adopt", s, c, post["json"] == "true")
+    def post_create(self, o):
+        self.check(users.ADD_MEDICAL)
+        extmedical.insert_profile_from_form(o.dbo, o.user, o.post)
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        dbo = session.dbo
-        l = dbo.locale
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_MOVEMENT)
-            return str(extmovement.insert_adoption_from_form(session.dbo, session.user, post))
-        elif mode == "cost":
-            users.check_permission(session, users.VIEW_COST)
-            dailyboardcost = extanimal.get_daily_boarding_cost(dbo, post.integer("id"))
-            dailyboardcostdisplay = format_currency(l, dailyboardcost)
-            daysonshelter = extanimal.get_days_on_shelter(dbo, post.integer("id"))
-            totaldisplay = format_currency(l, dailyboardcost * daysonshelter)
-            return totaldisplay + "||" + _("On shelter for {0} days, daily cost {1}, cost record total <b>{2}</b>", l).format(daysonshelter, dailyboardcostdisplay, totaldisplay)
-        elif mode == "donationdefault":
-            return extlookups.get_donation_default(dbo, post.integer("donationtype"))
-        elif mode == "insurance":
-            return extmovement.generate_insurance_number(dbo)
+    def post_update(self, o):
+        self.check(users.CHANGE_MEDICAL)
+        extmedical.update_profile_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(users.DELETE_MEDICAL)
+        for mid in o.post.integer_list("ids"):
+            extmedical.delete_profile(o.dbo, o.user, mid)
+
+class move_adopt(JSONEndpoint):
+    url = "move_adopt"
+    get_permissions = users.ADD_MOVEMENT
+
+    def controller(self, o):
+        dbo = o.dbo
+        return {
+            "donationtypes": extlookups.get_donation_types(dbo),
+            "accounts": financial.get_accounts(dbo),
+            "paymenttypes": extlookups.get_payment_types(dbo)
+        }
+
+    def post_create(self, o):
+        self.check(users.ADD_MOVEMENT)
+        return str(extmovement.insert_adoption_from_form(o.dbo, o.user, o.post))
+
+    def post_cost(self, o):
+        dbo = o.dbo
+        post = o.post
+        l = o.locale
+        self.check(users.VIEW_COST)
+        dailyboardcost = extanimal.get_daily_boarding_cost(dbo, post.integer("id"))
+        dailyboardcostdisplay = format_currency(l, dailyboardcost)
+        daysonshelter = extanimal.get_days_on_shelter(dbo, post.integer("id"))
+        totaldisplay = format_currency(l, dailyboardcost * daysonshelter)
+        return totaldisplay + "||" + \
+            _("On shelter for {0} days, daily cost {1}, cost record total <b>{2}</b>", l).format(daysonshelter, dailyboardcostdisplay, totaldisplay)
+    
+    def post_donationdefault(self, o):
+        return extlookups.get_donation_default(o.dbo, o.post.integer("donationtype"))
+
+    def post_insurance(self, o):
+        return extmovement.generate_insurance_number(o.dbo)
 
 class move_book_foster(JSONEndpoint):
     url = "move_book_foster"
@@ -3723,43 +3717,29 @@ class move_book_unneutered(JSONEndpoint):
             "templates": dbfs.get_document_templates(dbo)
         }
 
-class move_deceased:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.CHANGE_ANIMAL)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        s = html.header("", session)
-        c = html.controller_json("deathreasons", extlookups.get_deathreasons(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("move_deceased", s, c, post["json"] == "true")
+class move_deceased(JSONEndpoint):
+    url = "move_deceased"
+    get_permissions = users.CHANGE_ANIMAL
+    post_permissions = users.CHANGE_ANIMAL
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.CHANGE_ANIMAL)
-            extanimal.update_deceased_from_form(dbo, session.user, post)
+    def controller(self, o):
+        return {
+            "deathreasons": extlookups.get_deathreasons(o.dbo)
+        }
 
-class move_foster:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.ADD_MOVEMENT)
-        post = utils.PostedData(web.input(), session.locale)
-        s = html.header("", session)
-        s += html.footer()
-        return full_or_json("move_foster", s, "", post["json"] == "true")
+    def post_create(self, o):
+        extanimal.update_deceased_from_form(o.dbo, o.user, o.post)
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_MOVEMENT)
-            return str(extmovement.insert_foster_from_form(session.dbo, session.user, post))
+class move_foster(JSONEndpoint):
+    url = "move_foster"
+    get_permissions = users.ADD_MOVEMENT
+    post_permissions = users.ADD_MOVEMENT
+
+    def controller(self, o):
+        return {}
+
+    def post_create(self, o):
+        return str(extmovement.insert_foster_from_form(o.dbo, o.user, o.post))
 
 class move_gendoc(JSONEndpoint):
     url = "move_gendoc"
@@ -3771,97 +3751,74 @@ class move_gendoc(JSONEndpoint):
             "templates": html.template_selection(dbfs.get_document_templates(o.dbo), "document_gen?linktype=%s&id=%s" % (o.post["linktype"], o.post["id"]))
         }
 
-class move_reclaim:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.ADD_MOVEMENT)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        s = html.header("", session)
-        c = html.controller_json("donationtypes", extlookups.get_donation_types(dbo))
-        c += html.controller_json("accounts", financial.get_accounts(dbo))
-        c += html.controller_json("paymenttypes", extlookups.get_payment_types(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("move_reclaim", s, c, post["json"] == "true")
+class move_reclaim(JSONEndpoint):
+    url = "move_reclaim"
+    get_permissions = users.ADD_MOVEMENT
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        dbo = session.dbo
-        l = dbo.locale
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_MOVEMENT)
-            return str(extmovement.insert_reclaim_from_form(session.dbo, session.user, post))
-        elif mode == "cost":
-            users.check_permission(session, users.VIEW_COST)
-            dailyboardcost = extanimal.get_daily_boarding_cost(dbo, post.integer("id"))
-            dailyboardcostdisplay = format_currency(l, dailyboardcost)
-            daysonshelter = extanimal.get_days_on_shelter(dbo, post.integer("id"))
-            totaldisplay = format_currency(l, dailyboardcost * daysonshelter)
-            return totaldisplay + "||" + _("On shelter for {0} days, daily cost {1}, cost record total <b>{2}</b>", l).format(daysonshelter, dailyboardcostdisplay, totaldisplay)
-        elif mode == "donationdefault":
-            return extlookups.get_donation_default(dbo, post.integer("donationtype"))
+    def controller(self, o):
+        dbo = o.dbo
+        return {
+            "donationtypes": extlookups.get_donation_types(dbo),
+            "accounts": financial.get_accounts(dbo),
+            "paymenttypes": extlookups.get_payment_types(dbo)
+        }
 
-class move_reserve:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.ADD_MOVEMENT)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        s = html.header("", session)
-        c = html.controller_json("donationtypes", extlookups.get_donation_types(dbo))
-        c += html.controller_json("accounts", financial.get_accounts(dbo))
-        c += html.controller_json("paymenttypes", extlookups.get_payment_types(dbo))
-        c += html.controller_json("reservationstatuses", extlookups.get_reservation_statuses(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("move_reserve", s, c, post["json"] == "true")
+    def post_create(self, o):
+        self.check(users.ADD_MOVEMENT)
+        return str(extmovement.insert_reclaim_from_form(o.dbo, o.user, o.post))
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_MOVEMENT)
-            return str(extmovement.insert_reserve_from_form(session.dbo, session.user, post))
+    def post_cost(self, o):
+        l = o.locale
+        dbo = o.dbo
+        post = o.post
+        self.check(users.VIEW_COST)
+        dailyboardcost = extanimal.get_daily_boarding_cost(dbo, post.integer("id"))
+        dailyboardcostdisplay = format_currency(l, dailyboardcost)
+        daysonshelter = extanimal.get_days_on_shelter(dbo, post.integer("id"))
+        totaldisplay = format_currency(l, dailyboardcost * daysonshelter)
+        return totaldisplay + "||" + _("On shelter for {0} days, daily cost {1}, cost record total <b>{2}</b>", l).format(daysonshelter, dailyboardcostdisplay, totaldisplay)
 
-class move_retailer:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.ADD_MOVEMENT)
-        post = utils.PostedData(web.input(), session.locale)
-        s = html.header("", session)
-        s += html.controller("")
-        s += html.footer()
-        return full_or_json("move_retailer", s, "", post["json"] == "true")
+    def post_donationdefault(self, o):
+        return extlookups.get_donation_default(o.dbo, o.post.integer("donationtype"))
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_MOVEMENT)
-            return str(extmovement.insert_retailer_from_form(session.dbo, session.user, post))
+class move_reserve(JSONEndpoint):
+    url = "move_reserve"
+    get_permissions = users.ADD_MOVEMENT
+    post_permissions = users.ADD_MOVEMENT
 
-class move_transfer:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.ADD_MOVEMENT)
-        post = utils.PostedData(web.input(), session.locale)
-        s = html.header("", session)
-        s += html.controller("")
-        s += html.footer()
-        return full_or_json("move_transfer", s, "", post["json"] == "true")
+    def controller(self, o):
+        dbo = o.dbo
+        return {
+            "donationtypes": extlookups.get_donation_types(dbo),
+            "accounts": financial.get_accounts(dbo),
+            "paymenttypes": extlookups.get_payment_types(dbo),
+            "reservationstatuses": extlookups.get_reservation_statuses(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_MOVEMENT)
-            return str(extmovement.insert_transfer_from_form(session.dbo, session.user, post))
+    def post_create(self, o):
+        return str(extmovement.insert_reserve_from_form(o.dbo, o.user, o.post))
+
+class move_retailer(JSONEndpoint):
+    url = "move_retailer"
+    get_permissions = users.ADD_MOVEMENT
+    post_permissions = users.ADD_MOVEMENT
+
+    def controller(self, o):
+        return {}
+
+    def post_create(self, o):
+        return str(extmovement.insert_retailer_from_form(o.dbo, o.user, o.post))
+
+class move_transfer(JSONEndpoint):
+    url = "move_transfer"
+    get_permissions = users.ADD_MOVEMENT
+    post_permissions = users.ADD_MOVEMENT
+
+    def controller(self, o):
+        return {}
+
+    def post_create(self, o):
+        return str(extmovement.insert_transfer_from_form(o.dbo, o.user, o.post))
 
 class movement(JSONEndpoint):
     url = "movement"

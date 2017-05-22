@@ -92,7 +92,7 @@ $(function() {
                 $("#deceased").button("disable");
                 header.show_loading(_("Updating..."));
 
-                var formdata = $("input, select, textarea").toPOST();
+                var formdata = "mode=create&" + $("input, select, textarea").toPOST();
                 common.ajax_post("move_deceased", formdata)
                     .then(function(data) {
                         header.show_info(_("Animal '{0}' successfully marked deceased.").replace("{0}", $(".animalchooser-display .asm-embed-name").html()));

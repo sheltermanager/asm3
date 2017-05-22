@@ -106,13 +106,6 @@ $(function() {
                     return;
                 }
 
-                // Update the list of document templates
-                var formdata = "mode=templates&id=" + rec.ID;
-                common.ajax_post("move_foster", formdata)
-                    .then(function(data) { 
-                        $("#templatelist").html(data); 
-                    });
-
             });
 
 
@@ -134,7 +127,7 @@ $(function() {
                 $("#foster").button("disable");
                 header.show_loading(_("Creating..."));
 
-                var formdata = $("input, select").toPOST();
+                var formdata = "mode=create&" + $("input, select").toPOST();
                 common.ajax_post("move_foster", formdata)
                     .then(function(data) {
                         $("#movementid").val(data);
