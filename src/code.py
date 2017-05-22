@@ -3099,71 +3099,67 @@ class log_new(JSONEndpoint):
     def post_person(self, o):
         extlog.insert_log_from_form(o.dbo, o.user, extlog.PERSON, o.post.integer("person"), o.post)
 
-class lookups:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.MODIFY_LOOKUPS)
-        l = session.locale
-        dbo = session.dbo
-        post = utils.PostedData(web.input(tablename="animaltype"), session.locale)
-        tablename = post["tablename"]
+class lookups(JSONEndpoint):
+    url = "lookups"
+    get_permissions = users.MODIFY_LOOKUPS
+    post_permissions = users.MODIFY_LOOKUPS
+
+    def controller(self, o):
+        dbo = o.dbo
+        l = o.locale
+        tablename = o.post["tablename"]
+        if tablename == "": tablename = "animaltype"
         table = list(extlookups.LOOKUP_TABLES[tablename])
         table[0] = translate(table[0], l)
         table[2] = translate(table[2], l)
         rows = extlookups.get_lookup(dbo, tablename, table[1])
         al.debug("edit lookups for %s, got %d rows" % (tablename, len(rows)), "code.lookups", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", rows)
-        c += html.controller_json("adoptapetcolours", extlookups.ADOPTAPET_COLOURS)
-        c += html.controller_json("petfinderspecies", extlookups.PETFINDER_SPECIES)
-        c += html.controller_json("petfinderbreeds", extlookups.PETFINDER_BREEDS)
-        c += html.controller_json("sites", extlookups.get_sites(dbo))
-        c += html.controller_str("tablename", tablename)
-        c += html.controller_str("tablelabel", table[0])
-        c += html.controller_str("namefield", table[1].upper())
-        c += html.controller_str("namelabel", table[2])
-        c += html.controller_str("descfield", table[3].upper())
-        c += html.controller_bool("hasspecies", table[4] == 1)
-        c += html.controller_bool("haspfspecies", table[5] == 1)
-        c += html.controller_bool("haspfbreed", table[6] == 1)
-        c += html.controller_bool("hasapcolour", table[7] == 1)
-        c += html.controller_bool("hasdefaultcost", table[8] == 1)
-        c += html.controller_bool("hasunits", table[9] == 1)
-        c += html.controller_bool("hassite", table[10] == 1)
-        c += html.controller_bool("canadd", table[11] == 1)
-        c += html.controller_bool("candelete", table[12] == 1)
-        c += html.controller_bool("canretire", table[13] == 1)
-        c += html.controller_json("species", extlookups.get_species(dbo))
-        c += html.controller_json("tables", html.json_lookup_tables(l))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("lookups", s, c, post["json"] == "true")
+        return {
+            "rows": rows,
+            "adoptapetcolours": extlookups.ADOPTAPET_COLOURS,
+            "petfinderspecies": extlookups.PETFINDER_SPECIES,
+            "petfinderbreeds": extlookups.PETFINDER_BREEDS,
+            "sites": extlookups.get_sites(dbo),
+            "tablename": tablename,
+            "tablelabel": table[0],
+            "namefield": table[1].upper(),
+            "namelabel": table[2],
+            "descfield": table[3].upper(),
+            "hasspecies": table[4] == 1,
+            "haspfspecies": table[5] == 1,
+            "haspfbreed": table[6] == 1,
+            "hasapcolour": table[7] == 1,
+            "hasdefaultcost": table[8] == 1,
+            "hasunits": table[9] == 1,
+            "hassite": table[10] == 1,
+            "canadd": table[11] == 1,
+            "candelete": table[12] == 1,
+            "canretire": table[13] == 1,
+            "species": extlookups.get_species(dbo),
+            "tables": html.json_lookup_tables(l)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(mode="create", id=0, lookup="", lookupname="", lookupdesc="", species=0, pfbreed="", pfspecies="", defaultcost="", adoptionfee=""), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.MODIFY_LOOKUPS)
-            return extlookups.insert_lookup(dbo, post["lookup"], post["lookupname"], post["lookupdesc"], \
-                post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("defaultcost"), post.integer("retired"))
-        elif mode == "update":
-            users.check_permission(session, users.MODIFY_LOOKUPS)
-            extlookups.update_lookup(dbo, post.integer("id"), post["lookup"], post["lookupname"], post["lookupdesc"], \
-                post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("defaultcost"), post.integer("retired"))
-        elif mode == "delete":
-            users.check_permission(session, users.MODIFY_LOOKUPS)
-            for lid in post.integer_list("ids"):
-                extlookups.delete_lookup(dbo, post["lookup"], lid)
-        elif mode == "active":
-            users.check_permission(session, users.MODIFY_LOOKUPS)
-            for lid in post.integer_list("ids"):
-                extlookups.update_lookup_retired(dbo, post["lookup"], lid, 0)
-        elif mode == "inactive":
-            users.check_permission(session, users.MODIFY_LOOKUPS)
-            for lid in post.integer_list("ids"):
-                extlookups.update_lookup_retired(dbo, post["lookup"], lid, 1)
+    def post_create(self, o):
+        post = o.post
+        return extlookups.insert_lookup(o.dbo, post["lookup"], post["lookupname"], post["lookupdesc"], \
+            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("defaultcost"), post.integer("retired"))
+
+    def post_update(self, o):
+        post = o.post
+        extlookups.update_lookup(o.dbo, post.integer("id"), post["lookup"], post["lookupname"], post["lookupdesc"], \
+            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("defaultcost"), post.integer("retired"))
+
+    def post_delete(self, o):
+        for lid in o.post.integer_list("ids"):
+            extlookups.delete_lookup(o.dbo, o.post["lookup"], lid)
+
+    def post_active(self, o):
+        for lid in o.post.integer_list("ids"):
+            extlookups.update_lookup_retired(o.dbo, o.post["lookup"], lid, 0)
+
+    def post_inactive(self, o):
+        for lid in o.post.integer_list("ids"):
+            extlookups.update_lookup_retired(o.dbo, o.post["lookup"], lid, 1)
 
 class lostanimal:
     def GET(self):
