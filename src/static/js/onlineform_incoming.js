@@ -49,7 +49,7 @@ $(function() {
                 },
                 { id: "print", text: _("Print"), icon: "print", enabled: "multi", tooltip: _("Print selected forms"), 
                     click: function() {
-                        common.route("onlineform_incoming?ajax=false&mode=print&ids=" + encodeURIComponent(tableform.table_ids(table)));
+                        common.route("onlineform_incoming_print?ajax=false&mode=print&ids=" + encodeURIComponent(tableform.table_ids(table)));
                     }
                 },
                 { id: "attach", icon: "link", text: _("Attach"), enabled: "one", type: "buttonmenu" },

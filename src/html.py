@@ -855,7 +855,7 @@ def json_animalfindcolumns(dbo):
         cols.append( (f["FIELDNAME"], f["FIELDLABEL"]) )
     cols = findcolumns_sort(cols)
     findcolumns_selectedtofront(cols, configuration.animal_search_columns(dbo))
-    return json(cols)
+    return cols
 
 def json_lookup_tables(l):
     aslist = []
@@ -912,7 +912,7 @@ def json_personfindcolumns(dbo):
         cols.append( (f["FIELDNAME"], f["FIELDLABEL"]) )
     findcolumns_sort(cols)
     findcolumns_selectedtofront(cols, configuration.person_search_columns(dbo))
-    return json(cols)
+    return cols
 
 def json_quicklinks(dbo):
     l = dbo.locale
@@ -921,7 +921,7 @@ def json_quicklinks(dbo):
         ql.append( ( str(k), translate(v[2], l) ) )
     ql = findcolumns_sort(ql)
     findcolumns_selectedtofront(ql, configuration.quicklinks_id(dbo))
-    return json(ql)
+    return ql
 
 def json_waitinglistcolumns(dbo):
     l = dbo.locale
@@ -951,7 +951,7 @@ def json_waitinglistcolumns(dbo):
         ]
     cols = findcolumns_sort(cols)
     findcolumns_selectedtofront(cols, configuration.waiting_list_view_columns(dbo))
-    return json(cols)
+    return cols
 
 def findcolumns_sort(cols):
     """

@@ -168,6 +168,7 @@ urls = (
     "/medical", "medical",
     "/onlineform", "onlineform",
     "/onlineform_incoming", "onlineform_incoming",
+    "/onlineform_incoming_print", "onlineform_incoming_print",
     "/onlineforms", "onlineforms",
     "/options", "options",
     "/person", "person",
@@ -3839,110 +3840,118 @@ class movement(JSONEndpoint):
     def post_insurance(self, o):
         return extmovement.generate_insurance_number(o.dbo)
 
-class onlineform_incoming:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_INCOMING_FORMS)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(mode="view"), session.locale)
-        mode = post["mode"]
-        web.header("Content-Type", "text/html")
-        web.header("Cache-Control", "no-cache")
-        if mode == "print":
-            users.check_permission(session, users.VIEW_INCOMING_FORMS)
-            return extonlineform.get_onlineformincoming_html_print(dbo, post.integer_list("ids"))
-        headers = extonlineform.get_onlineformincoming_headers(dbo)
-        al.debug("got %d submitted headers" % len(headers), "code.onlineform_incoming", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", headers)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("onlineform_incoming", s, c, post["json"] == "true")
+class onlineform_incoming(JSONEndpoint):
+    url = "onlineform_incoming"
+    get_permissions = users.VIEW_INCOMING_FORMS
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(mode="view"), session.locale)
-        mode = post["mode"]
-        personid = post.integer("personid")
-        animalid = post.integer("animalid")
-        collationid = post.integer("collationid")
-        web.header("Content-Type", "text/plain")
-        if mode == "view":
-            users.check_permission(session, users.VIEW_INCOMING_FORMS)
-            return extonlineform.get_onlineformincoming_html(dbo, collationid)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_INCOMING_FORMS)
-            for did in post.integer_list("ids"):
-                extonlineform.delete_onlineformincoming(session.dbo, session.user, did)
-        elif mode == "attachanimal":
-            formname = extonlineform.get_onlineformincoming_name(dbo, collationid)
-            formhtml = extonlineform.get_onlineformincoming_html_print(dbo, [collationid,] )
-            extmedia.create_document_media(dbo, session.user, extmedia.ANIMAL, animalid, formname, formhtml )
-            return animalid 
-        elif mode == "attachperson":
-            formname = extonlineform.get_onlineformincoming_name(dbo, collationid)
-            formhtml = extonlineform.get_onlineformincoming_html_print(dbo, [collationid,] )
-            extmedia.create_document_media(dbo, session.user, extmedia.PERSON, personid, formname, formhtml )
-            return personid 
-        elif mode == "animal":
-            users.check_permission(session, users.ADD_MEDIA)
-            rv = []
-            for pid in post.integer_list("ids"):
-                collationid, animalid, animalname = extonlineform.attach_animal(session.dbo, session.user, pid)
-                rv.append("%d|%d|%s" % (collationid, animalid, animalname))
-            return "^$".join(rv)
-        elif mode == "person":
-            users.check_permission(session, users.ADD_PERSON)
-            rv = []
-            for pid in post.integer_list("ids"):
-                collationid, personid, personname = extonlineform.create_person(session.dbo, session.user, pid)
-                rv.append("%d|%d|%s" % (collationid, personid, personname))
-            return "^$".join(rv)
-        elif mode == "lostanimal":
-            users.check_permission(session, users.ADD_LOST_ANIMAL)
-            rv = []
-            for pid in post.integer_list("ids"):
-                collationid, lostanimalid, personname = extonlineform.create_lostanimal(session.dbo, session.user, pid)
-                rv.append("%d|%d|%s" % (collationid, lostanimalid, personname))
-            return "^$".join(rv)
-        elif mode == "foundanimal":
-            users.check_permission(session, users.ADD_FOUND_ANIMAL)
-            rv = []
-            for pid in post.integer_list("ids"):
-                collationid, foundanimalid, personname = extonlineform.create_foundanimal(session.dbo, session.user, pid)
-                rv.append("%d|%d|%s" % (collationid, foundanimalid, personname))
-            return "^$".join(rv)
-        elif mode == "incident":
-            users.check_permission(session, users.ADD_INCIDENT)
-            rv = []
-            for pid in post.integer_list("ids"):
-                collationid, incidentid, personname = extonlineform.create_animalcontrol(session.dbo, session.user, pid)
-                rv.append("%d|%d|%s" % (collationid, incidentid, personname))
-            return "^$".join(rv)
-        elif mode == "transport":
-            users.check_permission(session, users.ADD_TRANSPORT)
-            rv = []
-            for pid in post.integer_list("ids"):
-                collationid, animalid, animalname = extonlineform.create_transport(session.dbo, session.user, pid)
-                rv.append("%d|%d|%s" % (collationid, animalid, animalname))
-            return "^$".join(rv)
-        elif mode == "waitinglist":
-            users.check_permission(session, users.ADD_WAITING_LIST)
-            rv = []
-            for pid in post.integer_list("ids"):
-                collationid, wlid, personname = extonlineform.create_waitinglist(session.dbo, session.user, pid)
-                rv.append("%d|%d|%s" % (collationid, wlid, personname))
-            return "^$".join(rv)
+    def controller(self, o):
+        headers = extonlineform.get_onlineformincoming_headers(o.dbo)
+        al.debug("got %d submitted headers" % len(headers), "code.onlineform_incoming", o.dbo)
+        return {
+            "rows": headers
+        }
 
-class onlineform:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.EDIT_ONLINE_FORMS)
-        l = session.locale
-        dbo = session.dbo
-        post = utils.PostedData(web.input(formid = 0), session.locale)
-        formid = post.integer("formid")
+    def post_view(self, o):
+        self.check(users.VIEW_INCOMING_FORMS)
+        return extonlineform.get_onlineformincoming_html(o.dbo, o.post.integer("collationid"))
+
+    def post_delete(self, o):
+        self.check(users.DELETE_INCOMING_FORMS)
+        for did in o.post.integer_list("ids"):
+            extonlineform.delete_onlineformincoming(o.dbo, o.user, did)
+
+    def post_attachanimal(self, o):
+        dbo = o.dbo
+        collationid = o.post.integer("collationid")
+        animalid = o.post.integer("animalid")
+        formname = extonlineform.get_onlineformincoming_name(dbo, collationid)
+        formhtml = extonlineform.get_onlineformincoming_html_print(dbo, [collationid,] )
+        extmedia.create_document_media(dbo, o.user, extmedia.ANIMAL, animalid, formname, formhtml )
+        return animalid
+
+    def post_attachperson(self, o):
+        dbo = o.dbo
+        collationid = o.post.integer("collationid")
+        personid = o.post.integer("personid")
+        formname = extonlineform.get_onlineformincoming_name(dbo, collationid)
+        formhtml = extonlineform.get_onlineformincoming_html_print(dbo, [collationid,] )
+        extmedia.create_document_media(dbo, session.user, extmedia.PERSON, personid, formname, formhtml )
+        return personid 
+
+    def post_animal(self, o):
+        self.check(users.ADD_MEDIA)
+        rv = []
+        for pid in o.post.integer_list("ids"):
+            collationid, animalid, animalname = extonlineform.attach_animal(o.dbo, o.user, pid)
+            rv.append("%d|%d|%s" % (collationid, animalid, animalname))
+        return "^$".join(rv)
+
+    def post_person(self, o):
+        self.check(users.ADD_PERSON)
+        rv = []
+        for pid in o.post.integer_list("ids"):
+            collationid, personid, personname = extonlineform.create_person(o.dbo, o.user, pid)
+            rv.append("%d|%d|%s" % (collationid, personid, personname))
+        return "^$".join(rv)
+
+    def post_lostanimal(self, o):
+        self.check(users.ADD_LOST_ANIMAL)
+        rv = []
+        for pid in o.post.integer_list("ids"):
+            collationid, lostanimalid, personname = extonlineform.create_lostanimal(o.dbo, o.user, pid)
+            rv.append("%d|%d|%s" % (collationid, lostanimalid, personname))
+        return "^$".join(rv)
+
+    def post_foundanimal(self, o):
+        self.check(users.ADD_FOUND_ANIMAL)
+        rv = []
+        for pid in o.post.integer_list("ids"):
+            collationid, foundanimalid, personname = extonlineform.create_foundanimal(o.dbo, o.user, pid)
+            rv.append("%d|%d|%s" % (collationid, foundanimalid, personname))
+        return "^$".join(rv)
+
+    def post_incident(self, o):
+        self.check(users.ADD_INCIDENT)
+        rv = []
+        for pid in o.post.integer_list("ids"):
+            collationid, incidentid, personname = extonlineform.create_animalcontrol(o.dbo, o.user, pid)
+            rv.append("%d|%d|%s" % (collationid, incidentid, personname))
+        return "^$".join(rv)
+
+    def post_transport(self, o):
+        self.check(users.ADD_TRANSPORT)
+        rv = []
+        for pid in o.post.integer_list("ids"):
+            collationid, animalid, animalname = extonlineform.create_transport(o.dbo, o.user, pid)
+            rv.append("%d|%d|%s" % (collationid, animalid, animalname))
+        return "^$".join(rv)
+
+    def post_waitinglist(self, o):
+        self.check(users.ADD_WAITING_LIST)
+        rv = []
+        for pid in o.post.integer_list("ids"):
+            collationid, wlid, personname = extonlineform.create_waitinglist(o.dbo, o.user, pid)
+            rv.append("%d|%d|%s" % (collationid, wlid, personname))
+        return "^$".join(rv)
+
+class onlineform_incoming_print(ASMEndpoint):
+    url = "onlineform_incoming_print"
+    get_permissions = users.VIEW_INCOMING_FORMS
+
+    def content(self, o):
+        self.header("Content-Type", "text/html")
+        self.header("Cache-Control", "no-cache")
+        return extonlineform.get_onlineformincoming_html_print(o.dbo, o.post.integer_list("ids"))
+
+class onlineform(JSONEndpoint):
+    url = "onlineform"
+    get_permissions = users.EDIT_ONLINE_FORMS
+    post_permissions = users.EDIT_ONLINE_FORMS
+
+    def controller(self, o):
+        l = o.locale
+        dbo = o.dbo
+        formid = o.post.integer("formid")
         formname = extonlineform.get_onlineform_name(dbo, formid)
         fields = extonlineform.get_onlineformfields(dbo, formid)
         # Escape any angle brackets in raw markup output. This is needed
@@ -3952,125 +3961,106 @@ class onlineform:
                 r["TOOLTIP"] = html.escape_angle(r["TOOLTIP"]) 
         title = _("Online Form: {0}", l).format(formname)
         al.debug("got %d online form fields" % len(fields), "code.onlineform", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", fields)
-        c += html.controller_int("formid", formid)
-        c += html.controller_str("formname", formname)
-        c += html.controller_json("formfields", extonlineform.FORM_FIELDS)
-        c += html.controller_str("title", title)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("onlineform", s, c, post["json"] == "true")
+        return {
+            "rows": fields,
+            "formid": formid,
+            "formname": formname,
+            "formfields": extonlineform.FORM_FIELDS,
+            "title": title
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.EDIT_ONLINE_FORMS)
-            return extonlineform.insert_onlineformfield_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.EDIT_ONLINE_FORMS)
-            extonlineform.update_onlineformfield_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.EDIT_ONLINE_FORMS)
-            for did in post.integer_list("ids"):
-                extonlineform.delete_onlineformfield(session.dbo, session.user, did)
+    def post_create(self, o):
+        return extonlineform.insert_onlineformfield_from_form(o.dbo, o.user, o.post)
 
-class onlineforms:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.EDIT_ONLINE_FORMS)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
+    def post_update(self, o):
+        extonlineform.update_onlineformfield_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        for did in o.post.integer_list("ids"):
+            extonlineform.delete_onlineformfield(o.dbo, o.user, did)
+
+class onlineforms(JSONEndpoint):
+    url = "onlineforms"
+    get_permissions = users.EDIT_ONLINE_FORMS
+    post_permissions = users.EDIT_ONLINE_FORMS
+
+    def controller(self, o):
+        dbo = o.dbo
         onlineforms = extonlineform.get_onlineforms(dbo)
         al.debug("got %d online forms" % len(onlineforms), "code.onlineforms", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", onlineforms)
-        c += html.controller_json("flags", extlookups.get_person_flags(dbo))
-        c += html.controller_json("header", extonlineform.get_onlineform_header(dbo))
-        c += html.controller_json("footer", extonlineform.get_onlineform_footer(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("onlineforms", s, c, post["json"] == "true")
+        return {
+            "rows": onlineforms,
+            "flags": extlookups.get_person_flags(dbo),
+            "header": extonlineform.get_onlineform_header(dbo),
+            "footer": extonlineform.get_onlineform_footer(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create", filechooser={}), session.locale)
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.EDIT_ONLINE_FORMS)
-            return extonlineform.insert_onlineform_from_form(session.dbo, session.user, post)
-        elif mode == "update":
-            users.check_permission(session, users.EDIT_ONLINE_FORMS)
-            extonlineform.update_onlineform_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.EDIT_ONLINE_FORMS)
-            for did in post.integer_list("ids"):
-                extonlineform.delete_onlineform(session.dbo, session.user, did)
-        elif mode == "clone":
-            users.check_permission(session, users.EDIT_ONLINE_FORMS)
-            for did in post.integer_list("ids"):
-                extonlineform.clone_onlineform(session.dbo, session.user, did)
-        elif mode == "headfoot":
-            users.check_permission(session, users.EDIT_ONLINE_FORMS)
-            dbfs.put_string_filepath(session.dbo, "/onlineform/head.html", post["header"])
-            dbfs.put_string_filepath(session.dbo, "/onlineform/foot.html", post["footer"])
-        elif mode == "import":
-            users.check_permission(session, users.EDIT_ONLINE_FORMS)
-            fd = post.filedata()
-            if fd.startswith("{"):
-                extonlineform.import_onlineform_json(session.dbo, post.filedata())
-            else:
-                extonlineform.import_onlineform_html(session.dbo, post.filedata())
-            raise web.seeother("onlineforms")
+    def post_create(self, o):
+        return extonlineform.insert_onlineform_from_form(o.dbo, o.user, o.post)
 
-class options:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.SYSTEM_OPTIONS)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        session.configuration = configuration.get_map(dbo)
-        s = html.header("", session)
-        c = html.controller_json("accounts", financial.get_accounts(dbo))
-        c += html.controller_plain("animalfindcolumns", html.json_animalfindcolumns(dbo))
-        c += html.controller_json("breeds", extlookups.get_breeds(dbo))
-        c += html.controller_json("coattypes", extlookups.get_coattypes(dbo))
-        c += html.controller_json("colours", extlookups.get_basecolours(dbo))
-        c += html.controller_json("costtypes", extlookups.get_costtypes(dbo))
-        c += html.controller_json("deathreasons", extlookups.get_deathreasons(dbo))
-        c += html.controller_json("donationtypes", extlookups.get_donation_types(dbo))
-        c += html.controller_json("entryreasons", extlookups.get_entryreasons(dbo))
-        c += html.controller_json("incidenttypes", extlookups.get_incident_types(dbo))
-        c += html.controller_json("locales", extlookups.LOCALES)
-        c += html.controller_json("locations", extlookups.get_internal_locations(dbo))
-        c += html.controller_json("logtypes", extlookups.get_log_types(dbo))
-        c += html.controller_plain("personfindcolumns", html.json_personfindcolumns(dbo))
-        c += html.controller_plain("quicklinks", html.json_quicklinks(dbo))
-        c += html.controller_json("reservationstatuses", extlookups.get_reservation_statuses(dbo))
-        c += html.controller_json("sizes", extlookups.get_sizes(dbo))
-        c += html.controller_json("species", extlookups.get_species(dbo))
-        c += html.controller_json("themes", extlookups.VISUAL_THEMES)
-        c += html.controller_json("testtypes", extlookups.get_test_types(dbo))
-        c += html.controller_json("types", extlookups.get_animal_types(dbo))
-        c += html.controller_json("urgencies", extlookups.get_urgencies(dbo))
-        c += html.controller_json("usersandroles", users.get_users_and_roles(dbo))
-        c += html.controller_json("vaccinationtypes", extlookups.get_vaccination_types(dbo))
-        c += html.controller_plain("waitinglistcolumns", html.json_waitinglistcolumns(dbo))
+    def post_update(self, o):
+        extonlineform.update_onlineform_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        for did in o.post.integer_list("ids"):
+            extonlineform.delete_onlineform(o.dbo, o.user, did)
+
+    def post_clone(self, o):
+        for did in o.post.integer_list("ids"):
+            extonlineform.clone_onlineform(o.dbo, o.user, did)
+
+    def post_headfoot(self, o):
+        dbfs.put_string_filepath(o.dbo, "/onlineform/head.html", o.post["header"])
+        dbfs.put_string_filepath(o.dbo, "/onlineform/foot.html", o.post["footer"])
+
+    def post_import(self, o):
+        fd = o.post.filedata()
+        if fd.startswith("{"):
+            extonlineform.import_onlineform_json(o.dbo, o.post.filedata())
+        else:
+            extonlineform.import_onlineform_html(o.dbo, o.post.filedata())
+        self.redirect("onlineforms")
+
+class options(JSONEndpoint):
+    url = "options"
+    get_permissions = users.SYSTEM_OPTIONS
+    post_permissions = users.SYSTEM_OPTIONS
+
+    def controller(self, o):
+        dbo = o.dbo
+        c = {
+            "accounts": financial.get_accounts(dbo),
+            "animalfindcolumns": html.json_animalfindcolumns(dbo),
+            "breeds": extlookups.get_breeds(dbo),
+            "coattypes": extlookups.get_coattypes(dbo),
+            "colours": extlookups.get_basecolours(dbo),
+            "costtypes": extlookups.get_costtypes(dbo),
+            "deathreasons": extlookups.get_deathreasons(dbo),
+            "donationtypes": extlookups.get_donation_types(dbo),
+            "entryreasons": extlookups.get_entryreasons(dbo),
+            "incidenttypes": extlookups.get_incident_types(dbo),
+            "locales": extlookups.LOCALES,
+            "locations": extlookups.get_internal_locations(dbo),
+            "logtypes": extlookups.get_log_types(dbo),
+            "personfindcolumns": html.json_personfindcolumns(dbo),
+            "quicklinks": html.json_quicklinks(dbo),
+            "reservationstatuses": extlookups.get_reservation_statuses(dbo),
+            "sizes": extlookups.get_sizes(dbo),
+            "species": extlookups.get_species(dbo),
+            "themes": extlookups.VISUAL_THEMES,
+            "testtypes": extlookups.get_test_types(dbo),
+            "types": extlookups.get_animal_types(dbo),
+            "urgencies": extlookups.get_urgencies(dbo),
+            "usersandroles": users.get_users_and_roles(dbo),
+            "vaccinationtypes": extlookups.get_vaccination_types(dbo),
+            "waitinglistcolumns": html.json_waitinglistcolumns(dbo)
+        }
         al.debug("lookups loaded", "code.options", dbo)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("options", s, c, post["json"] == "true")
+        return c
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="save"), session.locale)
-        mode = post["mode"]
-        if mode == "save":
-            users.check_permission(session, users.SYSTEM_OPTIONS)
-            configuration.csave(session.dbo, session.user, post)
-            users.update_session(session)
+    def post_save(self, o):
+        configuration.csave(o.dbo, o.user, o.post)
+        users.update_session(o.session)
 
 class person:
     def GET(self):
