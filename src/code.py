@@ -2844,42 +2844,33 @@ class incident_citations(JSONEndpoint):
             "citationtypes": extlookups.get_citation_types(dbo)
         }
 
-class incident_find:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_INCIDENT)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        s = html.header("", session)
-        c = html.controller_json("agegroups", configuration.age_groups(dbo))
-        c += html.controller_json("incidenttypes", extlookups.get_incident_types(dbo))
-        c += html.controller_json("completedtypes", extlookups.get_incident_completed_types(dbo))
-        c += html.controller_json("citationtypes", extlookups.get_citation_types(dbo))
-        c += html.controller_json("pickuplocations", extlookups.get_pickup_locations(dbo))
-        c += html.controller_json("species", extlookups.get_species(dbo))
-        c += html.controller_json("sexes", extlookups.get_sexes(dbo))
-        c += html.controller_json("users", users.get_users(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("incident_find", s, c, post["json"] == "true")
+class incident_find(JSONEndpoint):
+    url = "incident_find"
+    get_permissions = users.VIEW_INCIDENT
 
-class incident_find_results:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_INCIDENT)
-        dbo = session.dbo
-        l = session.locale
-        post = utils.PostedData(web.input(mode = ""), session.locale)
-        results = extanimalcontrol.get_animalcontrol_find_advanced(dbo, post.data, session.user, configuration.record_search_limit(dbo))
-        resultsmessage = _("Find animal control incidents returned {0} results.", l).format(len(results))
-        al.debug("found %d results for %s" % (len(results), str(web.ctx.query)), "code.incident_find_results", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", results)
-        c += html.controller_str("name", "incident_find_results")
-        c += html.controller_str("resultsmessage", resultsmessage)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("incident_find_results", s, c, post["json"] == "true")
+    def controller(self, o):
+        dbo = o.dbo
+        return {
+            "agegroups": configuration.age_groups(dbo),
+            "incidenttypes": extlookups.get_incident_types(dbo),
+            "completedtypes": extlookups.get_incident_completed_types(dbo),
+            "citationtypes": extlookups.get_citation_types(dbo),
+            "pickuplocations": extlookups.get_pickup_locations(dbo),
+            "species": extlookups.get_species(dbo),
+            "sexes": extlookups.get_sexes(dbo),
+            "users": users.get_users(dbo)
+        }
+
+class incident_find_results(JSONEndpoint):
+    url = "incident_find_results"
+    get_permissions = users.VIEW_INCIDENT
+
+    def controller(self, o):
+        results = extanimalcontrol.get_animalcontrol_find_advanced(o.dbo, o.post.data, o.user, configuration.record_search_limit(o.dbo))
+        al.debug("found %d results for %s" % (len(results), str(web.ctx.query)), "code.incident_find_results", o.dbo)
+        return {
+            "rows": results
+        }
 
 class incident_diary(JSONEndpoint):
     url = "incident_diary"
@@ -2926,19 +2917,17 @@ class incident_log(JSONEndpoint):
             "logtypes": extlookups.get_log_types(dbo)
         }
 
-class incident_map:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_INCIDENT)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        rows = extanimalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "incomplete" }, session.user)
+class incident_map(JSONEndpoint):
+    url = "incident_map"
+    get_permissions = users.VIEW_INCIDENT
+
+    def controller(self, o):
+        dbo = o.dbo
+        rows = extanimalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "incomplete" }, o.user)
         al.debug("incident map, %d active" % (len(rows)), "code.incident_map", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", rows)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("incident_map", s, c, post["json"] == "true")
+        return {
+            "rows": rows
+        }
 
 class incident_media(JSONEndpoint):
     url = "incident_media"
@@ -2963,32 +2952,25 @@ class incident_media(JSONEndpoint):
             "sigtype": ELECTRONIC_SIGNATURES
         }
 
-class incident_new:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.ADD_INCIDENT)
-        l = session.locale
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        title = _("Report a new incident", l)
-        s = html.header(title, session)
-        c = html.controller_json("incidenttypes", extlookups.get_incident_types(dbo))
-        c += html.controller_json("additional", extadditional.get_additional_fields(dbo, 0, "incident"))
-        c += html.controller_json("pickuplocations", extlookups.get_pickup_locations(dbo))
-        c += html.controller_json("roles", users.get_roles(dbo))
-        c += html.controller_json("sites", extlookups.get_sites(dbo))
-        c += html.controller_json("users", users.get_users(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        al.debug("add incident", "code.incident_new", dbo)
-        return full_or_json("incident_new", s, c, post["json"] == "true")
+class incident_new(JSONEndpoint):
+    url = "incident_new"
+    get_permissions = users.ADD_INCIDENT
+    post_permissions = users.ADD_INCIDENT
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.ADD_INCIDENT)
-        utils.check_locked_db(session)
-        post = utils.PostedData(web.input(), session.locale)
-        incidentid = extanimalcontrol.insert_animalcontrol_from_form(session.dbo, post, session.user)
+    def controller(self, o):
+        dbo = o.dbo
+        al.debug("add incident", "code.incident_new", dbo)
+        return {
+            "incidenttypes": extlookups.get_incident_types(dbo),
+            "additional": extadditional.get_additional_fields(dbo, 0, "incident"),
+            "pickuplocations": extlookups.get_pickup_locations(dbo),
+            "roles": users.get_roles(dbo),
+            "sites": extlookups.get_sites(dbo),
+            "users": users.get_users(dbo)
+        }
+
+    def post_all(self, o):
+        incidentid = extanimalcontrol.insert_animalcontrol_from_form(o.dbo, o.post, o.user)
         return str(incidentid)
 
 class latency(JSONEndpoint):
@@ -3032,65 +3014,54 @@ class licence(JSONEndpoint):
         for lid in o.post.integer_list("ids"):
             financial.delete_licence(o.dbo, o.user, lid)
 
-class licence_renewal:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.ADD_LICENCE)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
-        s = html.header("", session)
+class licence_renewal(JSONEndpoint):
+    url = "licence_renewal"
+    get_permissions = users.ADD_LICENCE
+    post_permissions = users.ADD_LICENCE
+
+    def controller(self, o):
+        dbo = o.dbo
         al.debug("renewing licence", "code.licence_renewal", dbo)
-        c = html.controller_json("donationtypes", extlookups.get_donation_types(dbo))
-        c += html.controller_json("licencetypes", extlookups.get_licence_types(dbo))
-        c += html.controller_json("paymenttypes", extlookups.get_payment_types(dbo))
-        c += html.controller_json("accounts", financial.get_accounts(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("licence_renewal", s, c, post["json"] == "true")
+        return {
+            "donationtypes": extlookups.get_donation_types(dbo),
+            "licencetypes": extlookups.get_licence_types(dbo),
+            "paymenttypes": extlookups.get_payment_types(dbo),
+            "accounts": financial.get_accounts(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        dbo = session.dbo
-        mode = post["mode"]
-        if mode == "create":
-            users.check_permission(session, users.ADD_LICENCE)
-            financial.insert_donations_from_form(dbo, session.user, post, post["issuedate"], False, post["person"], post["animal"]) 
-            return financial.insert_licence_from_form(session.dbo, session.user, post)
+    def post_all(self, o):
+        financial.insert_donations_from_form(o.dbo, o.user, o.post, o.post["issuedate"], False, o.post["person"], o.post["animal"]) 
+        return financial.insert_licence_from_form(o.dbo, o.user, o.post)
 
-class litters:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.VIEW_LITTER)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(), session.locale)
+class litters(JSONEndpoint):
+    url = "litters"
+    get_permissions = users.VIEW_LITTER
+
+    def controller(self, o):
+        dbo = o.dbo
         litters = extanimal.get_litters(dbo)
         al.debug("got %d litters" % len(litters), "code.litters", dbo)
-        s = html.header("", session)
-        c = html.controller_json("rows", litters)
-        c += html.controller_json("species", extlookups.get_species(dbo))
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("litters", s, c, post["json"] == "true")
+        return {
+            "rows": litters,
+            "species": extlookups.get_species(dbo)
+        }
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        dbo = session.dbo
-        if mode == "create":
-            users.check_permission(session, users.ADD_LITTER)
-            return extanimal.insert_litter_from_form(session.dbo, session.user, post)
-        elif mode == "nextlitterid":
-            nextid = db.query_int(dbo, "SELECT MAX(ID) FROM animallitter") + 1
-            return utils.padleft(nextid, 6)
-        elif mode == "update":
-            users.check_permission(session, users.CHANGE_LITTER)
-            extanimal.update_litter_from_form(session.dbo, session.user, post)
-        elif mode == "delete":
-            users.check_permission(session, users.DELETE_LITTER)
-            for lid in post.integer_list("ids"):
-                extanimal.delete_litter(session.dbo, session.user, lid)
+    def post_create(self, o):
+        self.check(users.ADD_LITTER)
+        return extanimal.insert_litter_from_form(o.dbo, o.user, o.post)
+
+    def post_nextlitterid(self, o):
+        nextid = db.query_int(o.dbo, "SELECT MAX(ID) FROM animallitter") + 1
+        return utils.padleft(nextid, 6)
+
+    def post_update(self, o):
+        self.check(users.CHANGE_LITTER)
+        extanimal.update_litter_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(users.DELETE_LITTER) 
+        for lid in o.post.integer_list("ids"):
+            extanimal.delete_litter(o.dbo, o.user, lid)
 
 class log(ASMEndpoint):
     url = "log"
@@ -3108,30 +3079,25 @@ class log(ASMEndpoint):
         for lid in o.post.integer_list("ids"):
             extlog.delete_log(o.dbo, o.user, lid)
 
-class log_new:
-    def GET(self):
-        utils.check_loggedin(session, web)
-        users.check_permission(session, users.CHANGE_ANIMAL)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(mode = "animal"), session.locale)
-        s = html.header("", session)
-        c = html.controller_json("logtypes", extlookups.get_log_types(dbo))
-        c += html.controller_str("mode", post["mode"])
-        al.debug("loaded lookups for new log", "code.log_new", dbo)
-        s += html.controller(c)
-        s += html.footer()
-        return full_or_json("log_new", s, c, post["json"] == "true")
+class log_new(JSONEndpoint):
+    url = "log_new"
+    get_permissions = users.ADD_LOG
+    post_permissions = users.ADD_LOG
 
-    def POST(self):
-        utils.check_loggedin(session, web)
-        dbo = session.dbo
-        post = utils.PostedData(web.input(mode="create"), session.locale)
-        mode = post["mode"]
-        users.check_permission(session, users.ADD_LOG)
-        if mode == "animal":
-            extlog.insert_log_from_form(dbo, session.user, extlog.ANIMAL, post.integer("animal"), post)
-        elif mode == "person":
-            extlog.insert_log_from_form(dbo, session.user, extlog.PERSON, post.integer("person"), post)
+    def controller(self, o):
+        dbo = o.dbo
+        mode = o.post["mode"]
+        if mode == "": mode = "animal"
+        return {
+            "logtypes": extlookups.get_log_types(dbo),
+            "mode": mode
+        }
+
+    def post_animal(self, o):
+        extlog.insert_log_from_form(o.dbo, o.user, extlog.ANIMAL, o.post.integer("animal"), o.post)
+
+    def post_person(self, o):
+        extlog.insert_log_from_form(o.dbo, o.user, extlog.PERSON, o.post.integer("person"), o.post)
 
 class lookups:
     def GET(self):
