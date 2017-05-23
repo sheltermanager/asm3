@@ -205,7 +205,8 @@ class ASMEndpoint(object):
         if l is None:
             l = LOCALE
         post = utils.PostedData(web.input(filechooser = {}), l)
-        return web.utils.storage( post=post, dbo=session.dbo, locale=l, user=session.user, session=session )
+        return web.utils.storage( post=post, dbo=session.dbo, locale=l, user=session.user, session=session, \
+            siteid = session.siteid, locationfilter = session.locationfilter )
 
     def check(self, permissions):
         """ Check logged in and permissions (which can be a single permission string or a list/tuple) """
@@ -484,8 +485,8 @@ class configjs(ASMEndpoint):
             "currencyprefix": get_currency_prefix(o.locale),
             "securitymap": o.session.securitymap,
             "superuser": o.session.superuser,
-            "locationfilter": o.session.locationfilter,
-            "siteid": o.session.siteid,
+            "locationfilter": o.locationfilter,
+            "siteid": o.siteid,
             "roles": o.session.roles,
             "roleids": o.session.roleids,
             "manualhtml": MANUAL_HTML_URL,
@@ -796,7 +797,7 @@ class mobile_report(ASMEndpoint):
         crid = post.integer("id")
         # Make sure this user has a role that can view the report
         extreports.check_view_permission(o.session, crid)
-        crit = extreports.get_criteria_controls(dbo, crid, mode = "MOBILE", locationfilter = o.session.locationfilter, siteid = o.session.siteid) 
+        crit = extreports.get_criteria_controls(dbo, crid, mode = "MOBILE", locationfilter = o.locationfilter, siteid = o.siteid) 
         self.header("Content-Type", "text/html")
         self.header("Cache-Control", "no-cache")
         # If the report doesn't take criteria, just show it
@@ -861,19 +862,19 @@ class main(JSONEndpoint):
         linkname = ""
         if linkmode == "recentlychanged":
             linkname = _("Recently Changed", l)
-            animallinks = extanimal.get_links_recently_changed(dbo, linkmax, session.locationfilter, session.siteid)
+            animallinks = extanimal.get_links_recently_changed(dbo, linkmax, o.locationfilter, o.siteid)
         elif linkmode == "recentlyentered":
             linkname = _("Recently Entered Shelter", l)
-            animallinks = extanimal.get_links_recently_entered(dbo, linkmax, session.locationfilter, session.siteid)
+            animallinks = extanimal.get_links_recently_entered(dbo, linkmax, o.locationfilter, o.siteid)
         elif linkmode == "recentlyadopted":
             linkname = _("Recently Adopted", l)
-            animallinks = extanimal.get_links_recently_adopted(dbo, linkmax, session.locationfilter, session.siteid)
+            animallinks = extanimal.get_links_recently_adopted(dbo, linkmax, o.locationfilter, o.siteid)
         elif linkmode == "recentlyfostered":
             linkname = _("Recently Fostered", l)
-            animallinks = extanimal.get_links_recently_fostered(dbo, linkmax, session.locationfilter, session.siteid)
+            animallinks = extanimal.get_links_recently_fostered(dbo, linkmax, o.locationfilter, o.siteid)
         elif linkmode == "longestonshelter":
             linkname = _("Longest On Shelter", l)
-            animallinks = extanimal.get_links_longest_on_shelter(dbo, linkmax, session.locationfilter, session.siteid)
+            animallinks = extanimal.get_links_longest_on_shelter(dbo, linkmax, o.locationfilter, o.siteid)
         elif linkmode == "adoptable":
             linkname = _("Up for adoption", l)
             pc = extpublish.PublishCriteria(configuration.publisher_presets(dbo))
@@ -883,7 +884,7 @@ class main(JSONEndpoint):
         usersandroles = users.get_users_and_roles(dbo)
         activeusers = users.get_active_users(dbo)
         # Alerts
-        alerts = extanimal.get_alerts(dbo, session.locationfilter, session.siteid)
+        alerts = extanimal.get_alerts(dbo, o.locationfilter, o.siteid)
         if len(alerts) > 0: 
             alerts[0]["LOOKFOR"] = configuration.lookingfor_last_match_count(dbo)
             alerts[0]["LOSTFOUND"] = configuration.lostfound_last_match_count(dbo)
@@ -1167,7 +1168,7 @@ class animal(JSONEndpoint):
         if a is None: self.notfound()
         # If a location filter is set, prevent the user opening this animal if it's
         # not in their location.
-        if not extanimal.is_animal_in_location_filter(a, session.locationfilter, session.siteid):
+        if not extanimal.is_animal_in_location_filter(a, o.locationfilter, o.siteid):
             raise utils.ASMPermissionError("animal not in location filter/site")
         al.debug("opened animal %s %s" % (a["CODE"], a["ANIMALNAME"]), "code.animal", dbo)
         return {
@@ -1184,7 +1185,7 @@ class animal(JSONEndpoint):
             "diarytasks": extdiary.get_animal_tasks(dbo),
             "entryreasons": extlookups.get_entryreasons(dbo),
             "flags": extlookups.get_animal_flags(dbo),
-            "internallocations": extlookups.get_internal_locations(dbo, o.session.locationfilter, o.session.siteid),
+            "internallocations": extlookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
             "microchipmanufacturers": extlookups.MICROCHIP_MANUFACTURERS,
             "pickuplocations": extlookups.get_pickup_locations(dbo),
             "publishhistory": extanimal.get_publish_history(dbo, a["ID"]),
@@ -1244,7 +1245,7 @@ class animal_bulk(JSONEndpoint):
             "animaltypes": extlookups.get_animal_types(dbo),
             "autolitters": extanimal.get_active_litters_brief(dbo),
             "flags": extlookups.get_animal_flags(dbo),
-            "internallocations": extlookups.get_internal_locations(dbo, o.session.locationfilter, o.session.siteid),
+            "internallocations": extlookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
             "movementtypes": extlookups.get_movement_types(dbo)
         }
 
@@ -1373,14 +1374,14 @@ class animal_embed(ASMEndpoint):
     def post_find(self, o):
         self.header("Content-Type", "application/json")
         q = o.post["q"]
-        rows = extanimal.get_animal_find_simple(o.dbo, q, o.post["filter"], 100, o.session.locationfilter, o.session.siteid)
+        rows = extanimal.get_animal_find_simple(o.dbo, q, o.post["filter"], 100, o.locationfilter, o.siteid)
         al.debug("got %d results for '%s'" % (len(rows), self.query()), "code.animal_embed", o.dbo)
         return html.json(rows)
 
     def post_multiselect(self, o):
         self.header("Content-Type", "application/json")
         dbo = o.dbo
-        rows = extanimal.get_animal_find_simple(dbo, "", "all", configuration.record_search_limit(dbo), session.locationfilter, session.siteid)
+        rows = extanimal.get_animal_find_simple(dbo, "", "all", configuration.record_search_limit(dbo), o.locationfilter, o.siteid)
         locations = extlookups.get_internal_locations(dbo)
         species = extlookups.get_species(dbo)
         litters = extanimal.get_litters(dbo)
@@ -1412,7 +1413,7 @@ class animal_find(JSONEndpoint):
             "breeds": extlookups.get_breeds_by_species(dbo),
             "flags": extlookups.get_animal_flags(dbo),
             "sexes": extlookups.get_sexes(dbo),
-            "internallocations": extlookups.get_internal_locations(dbo, o.session.locationfilter, o.session.siteid),
+            "internallocations": extlookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
             "sizes": extlookups.get_sizes(dbo),
             "colours": extlookups.get_basecolours(dbo),
             "users": users.get_users(dbo)
@@ -1429,9 +1430,9 @@ class animal_find_results(JSONEndpoint):
         q = o.post["q"]
         mode = o.post["mode"]
         if mode == "SIMPLE":
-            results = extanimal.get_animal_find_simple(dbo, q, "all", configuration.record_search_limit(dbo), o.session.locationfilter, o.session.siteid)
+            results = extanimal.get_animal_find_simple(dbo, q, "all", configuration.record_search_limit(dbo), o.locationfilter, o.siteid)
         else:
-            results = extanimal.get_animal_find_advanced(dbo, o.post.data, configuration.record_search_limit(dbo), o.session.locationfilter, o.session.siteid)
+            results = extanimal.get_animal_find_advanced(dbo, o.post.data, configuration.record_search_limit(dbo), o.locationfilter, o.siteid)
         add = None
         if len(results) > 0: 
             add = extadditional.get_additional_fields_ids(dbo, results, "animal")
@@ -1571,7 +1572,7 @@ class animal_new(JSONEndpoint):
             "flags": extlookups.get_animal_flags(dbo),
             "sexes": extlookups.get_sexes(dbo),
             "entryreasons": extlookups.get_entryreasons(dbo),
-            "internallocations": extlookups.get_internal_locations(dbo, o.session.locationfilter, o.session.siteid),
+            "internallocations": extlookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
             "sizes": extlookups.get_sizes(dbo)
         }
         al.debug("loaded lookups for new animal", "code.animal_new", dbo)
@@ -1728,7 +1729,7 @@ class calendar_events(ASMEndpoint):
                     "icon": "diary",
                     "link": "diary_edit_my" })
         if "v" in ev and self.checkb(users.VIEW_VACCINATION):
-            for v in extmedical.get_vaccinations_two_dates(dbo, start, end, session.locationfilter, session.siteid):
+            for v in extmedical.get_vaccinations_two_dates(dbo, start, end, o.locationfilter, o.siteid):
                 sub = "%s - %s" % (v["VACCINATIONTYPE"], v["ANIMALNAME"])
                 tit = "%s - %s %s %s" % (v["VACCINATIONTYPE"], v["SHELTERCODE"], v["ANIMALNAME"], v["COMMENTS"])
                 events.append({ 
@@ -1738,7 +1739,7 @@ class calendar_events(ASMEndpoint):
                     "tooltip": tit, 
                     "icon": "vaccination",
                     "link": "animal_vaccination?id=%d" % v["ANIMALID"] })
-            for v in extmedical.get_vaccinations_expiring_two_dates(dbo, start, end, session.locationfilter, session.siteid):
+            for v in extmedical.get_vaccinations_expiring_two_dates(dbo, start, end, o.locationfilter, o.siteid):
                 sub = "%s - %s" % (v["VACCINATIONTYPE"], v["ANIMALNAME"])
                 tit = "%s - %s %s %s" % (v["VACCINATIONTYPE"], v["SHELTERCODE"], v["ANIMALNAME"], v["COMMENTS"])
                 events.append({ 
@@ -1749,7 +1750,7 @@ class calendar_events(ASMEndpoint):
                     "icon": "vaccination",
                     "link": "animal_vaccination?id=%d" % v["ANIMALID"] })
         if "m" in ev and self.checkb(users.VIEW_MEDICAL):
-            for m in extmedical.get_treatments_two_dates(dbo, start, end, session.locationfilter, session.siteid):
+            for m in extmedical.get_treatments_two_dates(dbo, start, end, o.locationfilter, o.siteid):
                 sub = "%s - %s" % (m["TREATMENTNAME"], m["ANIMALNAME"])
                 tit = "%s - %s %s %s %s" % (m["TREATMENTNAME"], m["SHELTERCODE"], m["ANIMALNAME"], m["DOSAGE"], m["COMMENTS"])
                 events.append({ 
@@ -1760,7 +1761,7 @@ class calendar_events(ASMEndpoint):
                     "icon": "medical",
                     "link": "animal_medical?id=%d" % m["ANIMALID"] })
         if "t" in ev and self.checkb(users.VIEW_TEST):
-            for t in extmedical.get_tests_two_dates(dbo, start, end, session.locationfilter, session.siteid):
+            for t in extmedical.get_tests_two_dates(dbo, start, end, o.locationfilter, o.siteid):
                 sub = "%s - %s" % (t["TESTNAME"], t["ANIMALNAME"])
                 tit = "%s - %s %s %s" % (t["TESTNAME"], t["SHELTERCODE"], t["ANIMALNAME"], t["COMMENTS"])
                 events.append({ 
@@ -2587,7 +2588,7 @@ class incident(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         a = extanimalcontrol.get_animalcontrol(dbo, o.post.integer("id"))
-        if o.session.siteid != 0 and a["SITEID"] != 0 and o.session.siteid != a["SITEID"]:
+        if o.siteid != 0 and a["SITEID"] != 0 and o.siteid != a["SITEID"]:
             raise utils.ASMPermissionError("incident not in user site")
         if a is None: self.notfound()
         al.debug("open incident %s %s %s" % (a["ACID"], a["INCIDENTNAME"], python2display(o.locale, a["INCIDENTDATETIME"])), "code.incident", dbo)
@@ -3173,7 +3174,7 @@ class mailmerge(JSONEndpoint):
         dbo = o.dbo
         post = o.post
         crid = post.integer("id")
-        crit = extreports.get_criteria_controls(dbo, crid, locationfilter = o.session.locationfilter, siteid = o.session.siteid) 
+        crit = extreports.get_criteria_controls(dbo, crid, locationfilter = o.locationfilter, siteid = o.siteid) 
         title = extreports.get_title(dbo, crid)
         # If this mail merge takes criteria and none were supplied, go to the criteria screen to get them
         if crit != "" and post["hascriteria"] == "": self.redirect("mailmerge_criteria?id=%d" % crid)
@@ -3267,7 +3268,7 @@ class medical(JSONEndpoint):
         dbo = o.dbo
         offset = o.post["offset"]
         if offset == "": offset = "m365"
-        med = extmedical.get_treatments_outstanding(dbo, offset, o.session.locationfilter, o.session.siteid)
+        med = extmedical.get_treatments_outstanding(dbo, offset, o.locationfilter, o.siteid)
         profiles = extmedical.get_profiles(dbo)
         al.debug("got %d medical treatments" % len(med), "code.medical", dbo)
         return {
@@ -3883,7 +3884,7 @@ class person(JSONEndpoint):
             self.check(users.VIEW_STAFF)
         if p["ISVOLUNTEER"] == 1:
             self.check(users.VIEW_VOLUNTEER)
-        if o.session.siteid != 0 and p["SITEID"] != 0 and o.session.siteid != p["SITEID"]:
+        if o.siteid != 0 and p["SITEID"] != 0 and o.siteid != p["SITEID"]:
             raise utils.ASMPermissionError("person not in user site")
         al.debug("opened person '%s'" % p["OWNERNAME"], "code.person", dbo)
         return {
@@ -4445,7 +4446,7 @@ class report(ASMEndpoint):
         crid = post.integer("id")
         # Make sure this user has a role that can view the report
         extreports.check_view_permission(o.session, crid)
-        crit = extreports.get_criteria_controls(dbo, crid, locationfilter = o.session.locationfilter, siteid = o.session.siteid) 
+        crit = extreports.get_criteria_controls(dbo, crid, locationfilter = o.locationfilter, siteid = o.siteid) 
         self.header("Content-Type", "text/html")
         self.header("Cache-Control", "no-cache")
         # If this report takes criteria and none were supplied, go to the criteria screen instead to get them
@@ -4467,7 +4468,7 @@ class report_criteria(JSONEndpoint):
             "id": post.integer("id"),
             "title": title,
             "target": post["target"],
-            "criteriahtml": extreports.get_criteria_controls(o.dbo, o.post.integer("id"), locationfilter = o.session.locationfilter, siteid = o.session.siteid)
+            "criteriahtml": extreports.get_criteria_controls(o.dbo, o.post.integer("id"), locationfilter = o.locationfilter, siteid = o.siteid)
         }
 
 class report_export(JSONEndpoint):
@@ -4490,7 +4491,7 @@ class report_export_csv(ASMEndpoint):
         dbo = o.dbo
         post = o.post
         crid = post.integer("id")
-        crit = extreports.get_criteria_controls(dbo, crid, locationfilter = o.session.locationfilter, siteid = o.session.siteid) 
+        crit = extreports.get_criteria_controls(dbo, crid, locationfilter = o.locationfilter, siteid = o.siteid) 
         # If this report takes criteria and none were supplied, go to the criteria screen instead to get them
         if crit != "" and post["hascriteria"] == "": self.redirect("report_criteria?id=%d&target=report_export_csv" % crid)
         # Make sure this user has a role that can view the report
@@ -4677,13 +4678,13 @@ class shelterview(JSONEndpoint):
 
     def controller(self, o):
         dbo = o.dbo
-        animals = extanimal.get_shelterview_animals(dbo, o.session.locationfilter, o.session.siteid)
+        animals = extanimal.get_shelterview_animals(dbo, o.locationfilter, o.siteid)
         al.debug("got %d animals for shelterview" % (len(animals)), "code.shelterview", dbo)
         return {
             "animals": extanimal.get_animals_brief(animals),
             "flags": extlookups.get_animal_flags(dbo),
             "fosterers": extperson.get_shelterview_fosterers(dbo),
-            "locations": extlookups.get_internal_locations(dbo, o.session.locationfilter, o.session.siteid),
+            "locations": extlookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
             "perrow": configuration.main_screen_animal_link_max(dbo)
         }
 
@@ -4977,7 +4978,7 @@ class test(JSONEndpoint):
         dbo = o.dbo
         offset = o.post["offset"]
         if offset == "": offset = "m365"
-        test = extmedical.get_tests_outstanding(dbo, offset, o.session.locationfilter, o.session.siteid)
+        test = extmedical.get_tests_outstanding(dbo, offset, o.locationfilter, o.siteid)
         al.debug("got %d tests" % len(test), "code.test", dbo)
         return {
             "name": "test",
@@ -5105,7 +5106,7 @@ class vaccination(JSONEndpoint):
         dbo = o.dbo
         offset = o.post["offset"]
         if offset == "": offset = "m365"
-        vacc = extmedical.get_vaccinations_outstanding(dbo, offset, o.session.locationfilter, o.session.siteid)
+        vacc = extmedical.get_vaccinations_outstanding(dbo, offset, o.locationfilter, o.siteid)
         al.debug("got %d vaccinations" % len(vacc), "code.vaccination", dbo)
         return {
             "name": "vaccination",
