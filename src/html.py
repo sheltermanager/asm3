@@ -520,38 +520,6 @@ def script_var_str(varname, v, prefix = "controller."):
     v = "'" + v.replace("'", "\\'").replace("\n", " ") + "'"
     return script_var(varname, v, prefix)
 
-def controller(inner):
-    """ Renders the controller """
-    if inner.endswith(","): inner = inner[0:len(inner)-1]
-    return "<script type=\"text/javascript\">\ncontroller = { %s };\n</script>\n" % inner
-
-def controller_bool(name, b):
-    """ Adds a controller boolean property """
-    return controller_plain(name, b and "true" or "false")
-
-def controller_date(name, d):
-    """ Adds a controller date property """
-    if d is None: return controller_plain(name, "null")
-    return controller_str(name, d.isoformat())
-
-def controller_int(name, i):
-    """ Adds a controller int property """
-    return controller_plain(name, str(i))
-
-def controller_plain(name, v):
-    """ Adds a controller property that's already formatted for js """
-    return "\"%s\":%s," % (name, v)
-
-def controller_str(name, s):
-    """ Adds a controller string property """
-    s = "\"" + s.replace("\"", "\\\"").replace("\n", "\\n") + "\""
-    return controller_plain(name, s)
-
-def controller_json(name, obj):
-    """ Adds a controller json property (converts obj to json) """
-    jv = json(obj)
-    return controller_plain(name, jv)
-
 def rss(inner, title, link, description):
     """ Renders an RSS document """
     return '<?xml version="1.0" encoding="UTF-8"?>' \
