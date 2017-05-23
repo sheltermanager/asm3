@@ -9,7 +9,7 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    common.route("publish_logs?ajax=false&view=" + row.ID);
+                    common.route("publish_log_view?ajax=false&view=" + row.ID);
                 },
                 columns: [
                     { field: "NAME", display: _("Publisher") },

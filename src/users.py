@@ -631,7 +631,7 @@ def reset_password(dbo, userid, password):
 
 def update_session(session):
     """
-    Updates and reloads stored session data
+    Updates and reloads stored session data, triggers reloading of config.js by changing config_ts
     """
     dbo = session.dbo
     locale = configuration.locale(dbo)

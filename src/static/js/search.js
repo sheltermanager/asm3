@@ -190,7 +190,7 @@ $(function() {
         name: "search",
         animation: "results",
         autofocus: "#asm-content a:first",
-        title: function() { return controller.title; },
+        title: function() { return _("Search Results for '{0}'").replace("{0}", controller.q); },
         routes: {
             "search": function() { common.module_loadandstart("search", "search?" + this.rawqs); }
         }

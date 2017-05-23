@@ -35,7 +35,7 @@ $(function() {
                             tableform.fields_update_row(dialog.fields, row);
                             row.TRAPTYPENAME = common.get_field(controller.traptypes, row.TRAPTYPEID, "TRAPTYPENAME");
                             row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
-                            return tableform.fields_post(dialog.fields, "mode=update&traploanid=" + row.ID, controller.name);
+                            return tableform.fields_post(dialog.fields, "mode=update&traploanid=" + row.ID, "traploan");
                         })
                         .then(function(response) {
                             tableform.table_update(table);
@@ -79,7 +79,7 @@ $(function() {
                          }
                          tableform.dialog_show_add(dialog, { onload: traploan.type_change })
                              .then(function() {
-                                 return tableform.fields_post(dialog.fields, "mode=create", controller.name);
+                                 return tableform.fields_post(dialog.fields, "mode=create", "traploan");
                              })
                              .then(function(response) {
                                  var row = {};
@@ -99,7 +99,7 @@ $(function() {
                              .then(function() {
                                  tableform.buttons_default_state(buttons);
                                  var ids = tableform.table_ids(table);
-                                 return common.ajax_post(controller.name, "mode=delete&ids=" + ids);
+                                 return common.ajax_post("traploan", "mode=delete&ids=" + ids);
                              }) 
                              .then(function() {
                                  tableform.table_remove_selected_from_json(table, controller.rows);

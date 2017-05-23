@@ -11,7 +11,7 @@ $(function() {
                 '<div id="asm-results">',
                 '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em">',
                 '<p><span class="ui-icon ui-icon-search" style="float: left; margin-right: .3em;"></span>',
-                controller.resultsmessage,
+                _("Search returned {0} results.").replace("{0}", controller.rows.length),
                 '</p>',
                 '</div>',
                 '<table id="table-searchresults">',
