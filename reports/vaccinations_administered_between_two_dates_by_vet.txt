@@ -1,10 +1,10 @@
-Vaccinations administered between two dates
+Vaccinations administered between two dates by vet
 ###
 Medical
 ###
-34004
+34004/Any
 ###
-List of all vaccinations administered between two dates
+List of all vaccinations administered between two dates grouped by vet
 ###
 en
 ###
@@ -17,21 +17,19 @@ INNER JOIN animal ON animalvaccination.animalid=animal.id
 INNER JOIN vaccinationtype ON animalvaccination.vaccinationid=vaccinationtype.id
 LEFT JOIN owner ON owner. id=animalvaccination.administeringvetid
 WHERE dateofvaccination >= '$@from$' AND dateofvaccination <= '$@to$'
-ORDER BY vaccinationtype, animalname
+ORDER BY ownername, animalname
 ###
 $$HEADER
 HEADER$$
 
-$$GROUP_VaccinationType
+$$GROUP_OwnerName
 $$HEAD
-<h2>$VaccinationType</h2>
+<h2>$OwnerName $MembershipNumber</h2>
 <table border="1">
 <tr>
 <th>Name</th>
 <th>Breed</th>
 <th>Location</th>
-<th>Vet Name</th>
-<th>License Number</th>  
 <th>Type</th>
 <th>Date</th>
 <th>Expires</th>
@@ -41,9 +39,7 @@ $$HEAD
 </tr>
 $$FOOT
 <tr>
-<td></td> 
 <td></td>
-<td></td> 
 <td></td>
 <td></td>
 <td></td>
@@ -55,7 +51,7 @@ $$FOOT
 </tr>
 
 </table>
-
+<p>Total Vaccinations:{COUNT.sheltercode}</p>
 GROUP$$
 HEADER$$
 
@@ -64,8 +60,6 @@ $$BODY
 <td>$ANIMALNAME</td>
 <td>$BREEDNAME</td>
 <td>$DISPLAYLOCATION</td>
-<td>$OWNERNAME</td>
-<td>$MEMBERSHIPNUMBER</td>
 <td>$VACCINATIONTYPE</td>
 <td>$DATEOFVACCINATION</td>
 <td>$DATEEXPIRES</td>
@@ -78,5 +72,4 @@ BODY$$
 
 $$FOOTER
 </table>
-<h3>Total: {SUM.Cost}</h3>
 FOOTER$$
