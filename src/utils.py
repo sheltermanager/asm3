@@ -675,7 +675,7 @@ def substitute_tags(searchin, tags, use_xml_escaping = True, opener = "&lt;&lt;"
     return s
 
 def check_locked_db(session):
-    if session.dbo.locked: 
+    if session.dbo and session.dbo.locked: 
         l = session.locale
         raise ASMPermissionError(_("This database is locked.", l))
 

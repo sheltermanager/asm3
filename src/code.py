@@ -47,28 +47,27 @@ import web
 import wordprocessor
 from sitedefs import BASE_URL, DEPLOYMENT_TYPE, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, FORGOTTEN_PASSWORD, FORGOTTEN_PASSWORD_LABEL, LARGE_FILES_CHUNKED, LOCALE, GEO_PROVIDER, GEO_PROVIDER_KEY, JQUERY_UI_CSS, LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_PUBLISH_URL, MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETRESCUE_FTP_HOST, PETSLOCATED_FTP_USER, QR_IMG_SRC, SERVICE_URL, SESSION_SECURE_COOKIE, SHARE_BUTTON, SMARTTAG_FTP_USER, SMCOM_PAYMENT_LINK, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_VENDOR_USERID
 
-class MemCacheStore(web.session.Store):
-    """ 
-    A session manager that uses either an in-memory dictionary or memcache
-    (if available).
-    """
-    def __contains__(self, key):
-        return cachemem.get(key) is not None
-    def __getitem__(self, key):
-        return cachemem.get(key)
-    def __setitem__(self, key, value):
-        return cachemem.put(key, value, web.config.session_parameters["timeout"])
-    def __delitem__(self, key):
-        cachemem.delete(key)
-    def cleanup(self, timeout):
-        pass # Not needed, we assign values to memcache with timeout
-
 def session_manager():
     """
     Sort out our session manager. We use a global in the utils module
     to hold the session to make sure if the app/code.py is reloaded it
     always gets the same session manager.
     """
+    class MemCacheStore(web.session.Store):
+        """ 
+        A session manager that uses either an in-memory dictionary or memcache
+        (if available).
+        """
+        def __contains__(self, key):
+            return cachemem.get(key) is not None
+        def __getitem__(self, key):
+            return cachemem.get(key)
+        def __setitem__(self, key, value):
+            return cachemem.put(key, value, web.config.session_parameters["timeout"])
+        def __delitem__(self, key):
+            cachemem.delete(key)
+        def cleanup(self, timeout):
+            pass # Not needed, we assign values to memcache with timeout
     # Set session parameters, 24 hour timeout
     web.config.session_parameters["cookie_name"] = "asm_session_id"
     web.config.session_parameters["cookie_path"] = "/"
