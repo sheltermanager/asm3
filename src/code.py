@@ -45,13 +45,12 @@ import utils
 import waitinglist as extwaitinglist
 import web
 import wordprocessor
-from sitedefs import BASE_URL, DEPLOYMENT_TYPE, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, FORGOTTEN_PASSWORD, FORGOTTEN_PASSWORD_LABEL, LARGE_FILES_CHUNKED, LOCALE, GEO_PROVIDER, GEO_PROVIDER_KEY, JQUERY_UI_CSS, LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_PUBLISH_URL, MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETRESCUE_FTP_HOST, PETSLOCATED_FTP_USER, QR_IMG_SRC, SERVICE_URL, SESSION_STORE, SESSION_SECURE_COOKIE, SHARE_BUTTON, SMARTTAG_FTP_USER, SMCOM_PAYMENT_LINK, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_VENDOR_USERID
+from sitedefs import BASE_URL, DEPLOYMENT_TYPE, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, FORGOTTEN_PASSWORD, FORGOTTEN_PASSWORD_LABEL, LARGE_FILES_CHUNKED, LOCALE, GEO_PROVIDER, GEO_PROVIDER_KEY, JQUERY_UI_CSS, LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_PUBLISH_URL, MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETRESCUE_FTP_HOST, PETSLOCATED_FTP_USER, QR_IMG_SRC, SERVICE_URL, SESSION_SECURE_COOKIE, SHARE_BUTTON, SMARTTAG_FTP_USER, SMCOM_PAYMENT_LINK, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_VENDOR_USERID
 
 class MemCacheStore(web.session.Store):
     """ 
-    A session manager that uses the local memcache install
-    If anything goes wrong reading or writing a value, the client
-    reconnects so as not to leave the store in a broken state.
+    A session manager that uses either an in-memory dictionary or memcache
+    (if available).
     """
     def __contains__(self, key):
         return cachemem.get(key) is not None
@@ -67,7 +66,7 @@ class MemCacheStore(web.session.Store):
 def session_manager():
     """
     Sort out our session manager. We use a global in the utils module
-    to hold the session to make sure if the app is reloaded it
+    to hold the session to make sure if the app/code.py is reloaded it
     always gets the same session manager.
     """
     # Set session parameters, 24 hour timeout
@@ -80,30 +79,9 @@ def session_manager():
     if utils.websession is None:
         # Disable noisy logging from session db
         web.config.debug_sql = False
-        if SESSION_STORE == "memcached":
-            store = MemCacheStore()
-        else:
-            # Otherwise we're using the main database for session storage
-            dbs = db.DatabaseInfo()
-            dbn = dbs.dbtype.lower()
-            if dbn == "postgresql": dbn = "postgres"
-            if dbn == "mysql" or dbn == "postgres":
-                if dbs.password != "":
-                    wdb = web.database(dbn=dbn, host=dbs.host, port=dbs.port, db=dbs.database, user=dbs.username, pw=dbs.password)
-                else:
-                    wdb = web.database(dbn=dbn, host=dbs.host, port=dbs.port, db=dbs.database, user=dbs.username)
-            elif dbn == "sqlite":
-                wdb = web.database(dbn=dbn, db=dbs.database)
-            try:
-                wdb.printing = False
-                wdb.query("create table sessions (" \
-                    "session_id char(128) UNIQUE NOT NULL," \
-                    "atime timestamp NOT NULL default current_timestamp," \
-                    "data text)")
-            except:
-                pass
-            store = web.session.DBStore(wdb, 'sessions')
-        sess = web.session.Session(app, store, initializer={"user" : None, "dbo" : None, "locale" : None, "searches" : [] })
+        store = MemCacheStore()
+        sess = web.session.Session(app, store, initializer={"user" : None, "dbo" : None, "locale" : None, 
+            "searches" : [], "siteid": None, "locationfilter": None })
         utils.websession = sess
     else:
         sess = utils.websession

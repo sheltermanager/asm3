@@ -79,13 +79,6 @@ URL_REPORTS = "http://sheltermanager.com/repo/reports.txt"
 # Deployment type, wsgi or fcgi
 DEPLOYMENT_TYPE = "wsgi"
 
-# The storage location for HTTP sessions. If set to "database"
-# it will use the database info specified above and create a
-# "sessions" table in it. 
-# The app can only have a single session store, so it will still 
-# use the above database even if MULTIPLE_DATABASES is on below.
-SESSION_STORE = "database" # database or memcached
-
 # Whether the session cookie should be secure (only valid for https)
 SESSION_SECURE_COOKIE = False
 

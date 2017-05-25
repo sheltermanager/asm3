@@ -1,6 +1,7 @@
 40
 ================
 
+25/05/17 Remove slow DB session storage - cachemem uses dictionaries or memcache
 23/05/17 Completed full/json refactoring - rota/reports/waitinglist/etc #173
 22/05/17 Refactor onlineforms and options #173
 22/05/17 Refactor move_* targets, fix broken calls to templatelist #173
