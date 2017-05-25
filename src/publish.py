@@ -3143,7 +3143,7 @@ class MaddiesFundPublisher(AbstractPublisher):
             return
 
         cutoff = i18n.subtract_days(i18n.now(self.dbo.timezone), 31)
-        animals = db.query(self.dbo, animal.get_animal_query(self.dbo) + " WHERE a.ActiveMovementType = 1 AND " \
+        animals = db.query(self.dbo, animal.get_animal_query(self.dbo) + " WHERE a.ActiveMovementType IN (1,2) AND " \
             "a.ActiveMovementDate >= %s AND a.DeceasedDate Is Null AND a.NonShelterAnimal = 0 "
             "ORDER BY a.ID" % db.dd(cutoff))
         if len(animals) == 0:
@@ -3211,7 +3211,7 @@ class MaddiesFundPublisher(AbstractPublisher):
                         "Photo": "%s?method=animal_image&account=%s&animalid=%s" % (SERVICE_URL, self.dbo.database, an["ID"]),
                         "MicrochipNumber": an["IDENTICHIPNUMBER"],
                         "RabiesTag": an["RABIESTAG"],
-                        "RelationshipType": "Adoption",
+                        "RelationshipType": an["ACTIVEMOVEMENTTYPE"] == 1 and "Adoption" or "Foster",
                         "AdoptedDate": self.getDate(an["ACTIVEMOVEMENTDATE"])
                     }]
                 }
