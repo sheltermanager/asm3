@@ -2,7 +2,7 @@ Vaccinations administered between two dates by vet
 ###
 Medical
 ###
-34004/Any
+33801/Any
 ###
 List of all vaccinations administered between two dates grouped by vet
 ###
@@ -51,7 +51,7 @@ $$FOOT
 </tr>
 
 </table>
-<p>Total Vaccinations:{COUNT.sheltercode}</p>
+<p>Total vaccinations $OwnerName: {COUNT.sheltercode}</p>
 GROUP$$
 HEADER$$
 
