@@ -716,6 +716,7 @@ def menu_structure(l, reports, mailmerges):
             ("", "", "", "publish?mode=ftp", "asm-icon-blank", _("Publish HTML via FTP", l) ),
             ("", "", "", "publish?mode=ap", "asm-icon-blank", "Publish to AdoptAPet.com" ),
             ("", "", "", "publish?mode=hlp", "asm-icon-blank", _("Publish to HelpingLostPets.com", l) ),
+            ("", "", "", "publish?mode=mf", "asm-icon-blank", "Publish to Maddie's Pet Assistant" ),
             ("", "", "", "publish?mode=mp", "asm-icon-blank", "Publish to MeetAPet.com" ),
             ("", "", "", "publish?mode=pf", "asm-icon-blank", "Publish to PetFinder.com" ),
             ("", "", "", "publish?mode=pr", "asm-icon-blank", "Publish to PetRescue.com.au" ),

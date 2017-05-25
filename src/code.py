@@ -45,7 +45,7 @@ import utils
 import waitinglist as extwaitinglist
 import web
 import wordprocessor
-from sitedefs import BASE_URL, DEPLOYMENT_TYPE, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, FORGOTTEN_PASSWORD, FORGOTTEN_PASSWORD_LABEL, LARGE_FILES_CHUNKED, LOCALE, GEO_PROVIDER, GEO_PROVIDER_KEY, JQUERY_UI_CSS, LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_PUBLISH_URL, MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETRESCUE_FTP_HOST, PETSLOCATED_FTP_USER, QR_IMG_SRC, SERVICE_URL, SESSION_SECURE_COOKIE, SHARE_BUTTON, SMARTTAG_FTP_USER, SMCOM_PAYMENT_LINK, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_VENDOR_USERID
+from sitedefs import BASE_URL, DEPLOYMENT_TYPE, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, FORGOTTEN_PASSWORD, FORGOTTEN_PASSWORD_LABEL, LARGE_FILES_CHUNKED, LOCALE, GEO_PROVIDER, GEO_PROVIDER_KEY, JQUERY_UI_CSS, LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_PUBLISH_URL, MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETRESCUE_FTP_HOST, PETSLOCATED_FTP_USER, QR_IMG_SRC, SERVICE_URL, SESSION_SECURE_COOKIE, SHARE_BUTTON, SMARTTAG_FTP_USER, SMCOM_PAYMENT_LINK, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_VENDOR_USERID
 
 def session_manager():
     """
@@ -4338,6 +4338,7 @@ class publish(JSONEndpoint):
             elif mode == "pf":   extpublish.PetFinderPublisher(dbo, pc).start()
             elif mode == "ap":   extpublish.AdoptAPetPublisher(dbo, pc).start()
             elif mode == "rg":   extpublish.RescueGroupsPublisher(dbo, pc).start()
+            elif mode == "mf":   extpublish.MaddiesFundPublisher(dbo, pc).start()
             elif mode == "mp":   extpublish.MeetAPetPublisher(dbo, pc).start()
             elif mode == "hlp":  extpublish.HelpingLostPetsPublisher(dbo, pc).start()
             elif mode == "pl":   extpublish.PetLinkPublisher(dbo, pc).start()
@@ -4393,6 +4394,7 @@ class publish_options(JSONEndpoint):
             "flags": extlookups.get_animal_flags(dbo),
             "hasftpoverride": MULTIPLE_DATABASES_PUBLISH_FTP is not None and not configuration.publisher_ignore_ftp_override(dbo),
             "hasfoundanimals": FOUNDANIMALS_FTP_USER != "",
+            "hasmaddiesfund": MADDIES_FUND_TOKEN_URL != "",
             "haspetslocated": PETSLOCATED_FTP_USER != "",
             "hassmarttag": SMARTTAG_FTP_USER != "",
             "hasvevendor": VETENVOY_US_VENDOR_PASSWORD != "",

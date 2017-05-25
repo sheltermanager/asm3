@@ -251,10 +251,11 @@ $(function() {
                 ep.replace("pl", "");
             }
 
-            // AdoptAPet, FoundAnimals, Pets911, RescueGroups, SmartTag and VetEnvoy/US are US only
+            // AdoptAPet, FoundAnimals, Maddie's Fund, Pets911, RescueGroups, SmartTag and VetEnvoy/US are US only
             if (asm.locale != "en") {
                 ep.replace("ap", "");
                 ep.replace("fa", "");
+                ep.replace("mf", "");
                 ep.replace("p911", "");
                 ep.replace("rg", "");
                 ep.replace("st", "");
@@ -280,6 +281,7 @@ $(function() {
             if (ep.indexOf("fa") == -1) { $("#asm-menu-publishing-body [href='publish?mode=fa']").closest("li").hide(); }
             if (ep.indexOf("p911") == -1) { $("#asm-menu-publishing-body [href='publish?mode=p9']").closest("li").hide(); }
             if (ep.indexOf("rg") == -1) { $("#asm-menu-publishing-body [href='publish?mode=rg']").closest("li").hide(); }
+            if (ep.indexOf("mf") == -1) { $("#asm-menu-publishing-body [href='publish?mode=mf']").closest("li").hide(); }
             if (ep.indexOf("mp") == -1) { $("#asm-menu-publishing-body [href='publish?mode=mp']").closest("li").hide(); }
             if (ep.indexOf("hlp") == -1) { $("#asm-menu-publishing-body [href='publish?mode=hlp']").closest("li").hide(); }
             if (ep.indexOf("pl") == -1) { $("#asm-menu-publishing-body [href='publish?mode=pl']").closest("li").hide(); }

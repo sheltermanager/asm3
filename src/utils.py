@@ -771,6 +771,15 @@ def post_multipart(url, fields = None, files = None, headers = {}, cookies = {})
         "requestbody": r.request.body 
     }
 
+def post_json(url, json, headers = {}):
+    """
+    Posts a JSON document to a URL
+    """
+    headers["Content-Type"] = "text/json"
+    req = urllib2.Request(url, json, headers)
+    resp = urllib2.urlopen(req)
+    return { "headers": resp.info().headers, "response": resp.read(), "status": resp.getcode() }
+
 def post_xml(url, xml, headers = {}):
     """
     Posts an XML document to a URL

@@ -358,10 +358,9 @@ def csave(dbo, username, post):
         return False
 
     for k in post.data.iterkeys():
+        if k == "mode" or k == "filechooser": continue
         v = post.string(k, False)
-        if k == "mode":
-            pass
-        elif k == "EmailSignature":
+        if k == "EmailSignature":
             # It's HTML - don't XSS escape it
             cset(dbo, k, v, sanitiseXSS = False)
         elif k == "CodingFormat":
@@ -765,6 +764,12 @@ def lostfound_report(dbo, newval = ""):
         return cstring(dbo, "LostFoundReport")
     else:
         cset(dbo, "LostFoundReport", newval, sanitiseXSS = False)
+
+def maddies_fund_email(dbo):
+    return cstring(dbo, "MaddiesFundEmail")
+
+def maddies_fund_password(dbo):
+    return cstring(dbo, "MaddiesFundPassword")
 
 def main_screen_animal_link_mode(dbo):
     return cstring(dbo, "MainScreenAnimalLinkMode", DEFAULTS["MainScreenAnimalLinkMode"])

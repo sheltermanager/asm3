@@ -32,7 +32,7 @@ import threading
 import users
 import utils
 import wordprocessor
-from sitedefs import BASE_URL, MULTIPLE_DATABASES_PUBLISH_DIR, MULTIPLE_DATABASES_PUBLISH_FTP, MULTIPLE_DATABASES_PUBLISH_URL, ADOPTAPET_FTP_HOST, ANIBASE_BASE_URL, ANIBASE_API_USER, ANIBASE_API_KEY, FOUNDANIMALS_FTP_HOST, FOUNDANIMALS_FTP_USER, FOUNDANIMALS_FTP_PASSWORD, HELPINGLOSTPETS_FTP_HOST, PETFINDER_FTP_HOST, PETRESCUE_FTP_HOST, PETSLOCATED_FTP_HOST, PETSLOCATED_FTP_USER, PETSLOCATED_FTP_PASSWORD, RESCUEGROUPS_FTP_HOST, SMARTTAG_FTP_HOST, SMARTTAG_FTP_USER, SMARTTAG_FTP_PASSWORD, PETTRAC_UK_POST_URL, MEETAPET_BASE_URL, PETLINK_BASE_URL, SERVICE_URL, VETENVOY_US_VENDOR_USERID, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_HOMEAGAIN_RECIPIENTID, VETENVOY_US_AKC_REUNITE_RECIPIENTID, VETENVOY_US_BASE_URL, VETENVOY_US_SYSTEM_ID
+from sitedefs import BASE_URL, MULTIPLE_DATABASES_PUBLISH_DIR, MULTIPLE_DATABASES_PUBLISH_FTP, MULTIPLE_DATABASES_PUBLISH_URL, ADOPTAPET_FTP_HOST, ANIBASE_BASE_URL, ANIBASE_API_USER, ANIBASE_API_KEY, FOUNDANIMALS_FTP_HOST, FOUNDANIMALS_FTP_USER, FOUNDANIMALS_FTP_PASSWORD, HELPINGLOSTPETS_FTP_HOST, MADDIES_FUND_TOKEN_URL, MADDIES_FUND_UPLOAD_URL, PETFINDER_FTP_HOST, PETRESCUE_FTP_HOST, PETSLOCATED_FTP_HOST, PETSLOCATED_FTP_USER, PETSLOCATED_FTP_PASSWORD, RESCUEGROUPS_FTP_HOST, SMARTTAG_FTP_HOST, SMARTTAG_FTP_USER, SMARTTAG_FTP_PASSWORD, PETTRAC_UK_POST_URL, MEETAPET_BASE_URL, PETLINK_BASE_URL, SERVICE_URL, VETENVOY_US_VENDOR_USERID, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_HOMEAGAIN_RECIPIENTID, VETENVOY_US_AKC_REUNITE_RECIPIENTID, VETENVOY_US_BASE_URL, VETENVOY_US_SYSTEM_ID
 
 class PublishCriteria(object):
     """
@@ -668,6 +668,13 @@ class AbstractPublisher(threading.Thread):
         self.lastError = msg
         if msg != "": self.logError(self.lastError)
         self.resetPublisherProgress()
+
+    def cleanup(self, save_log=True):
+        """
+        Call when the publisher has completed to tidy up.
+        """
+        if save_log: self.saveLog()
+        self.setPublisherComplete()
 
     def makePublishDirectory(self):
         """
@@ -3081,6 +3088,151 @@ class HTMLPublisher(FTPPublisher):
                 self.log("Uploading page: %s" % k)
                 self.upload(self.escapePageName(k))
                 self.log("Uploaded page: %s" % k)
+
+class MaddiesFundPublisher(AbstractPublisher):
+    """
+    Handles updating recent adoptions with Maddies Fund via their API
+    """
+    def __init__(self, dbo, publishCriteria):
+        publishCriteria.uploadDirectly = True
+        publishCriteria.thumbnails = False
+        AbstractPublisher.__init__(self, dbo, publishCriteria)
+        self.initLog("maddiesfund", "Maddies Fund Publisher")
+
+    def getAge(self, dob, speciesid):
+        """ Returns an age banding based on date of birth and species """
+        # Kitten (0-8 weeks) = 1, Kitten/Juvenile (9 weeks- 5 months) = 2, Adult Cat (6 months - 8 years) =3,
+        # Senior Cat (9 years) = 4, Puppy (0-8 weeks) = 5, Puppy/Juvenile (9 weeks 11-months) =6, Adult Dog (1
+        # year - 7 years) =7, Senior Dog (8 years) = 8
+        ageinyears = i18n.date_diff_days(dob, i18n.now())
+        ageinyears /= 365.0
+        age = 0
+        # Cats
+        if speciesid == 2:
+            if ageinyears < 0.15: age = 1
+            elif ageinyears < 0.5: age = 2
+            elif ageinyears < 8: age = 3
+            else: age = 4
+        # Dogs
+        elif speciesid == 1:
+            if ageinyears < 0.15: age = 5
+            elif ageinyears < 0.9: age = 6
+            elif ageinyears < 8: age = 7
+            else: age = 8
+        return age
+
+    def getDate(self, d):
+        """ Returns a date in their preferred format of mm/dd/yyyy """
+        return i18n.format_date("%m/%d/%Y", d)
+
+    def run(self):
+        
+        self.log("Maddies Fund Publisher starting...")
+
+        if self.isPublisherExecuting(): return
+        self.updatePublisherProgress(0)
+        self.setLastError("")
+        self.setStartPublishing()
+
+        email = configuration.maddies_fund_email(self.dbo)
+        password = configuration.maddies_fund_password(self.dbo)
+
+        if email == "" or password == "":
+            self.setLastError("email and password all need to be set for Maddies Fund Publisher")
+            self.cleanup()
+            return
+
+        cutoff = i18n.subtract_days(i18n.now(self.dbo.timezone), 31)
+        animals = db.query(self.dbo, animal.get_animal_query(self.dbo) + " WHERE a.ActiveMovementType = 1 AND " \
+            "a.ActiveMovementDate >= %s AND a.DeceasedDate Is Null AND a.NonShelterAnimal = 0 "
+            "ORDER BY a.ID" % db.dd(cutoff))
+        if len(animals) == 0:
+            self.setLastError("No animals found to publish.")
+            return
+
+        # Get an authentication token
+        token = ""
+        try:
+            fields = {
+                "username": email,
+                "password": password,
+                "grant_type": "password"
+            }
+            r = utils.post_form(MADDIES_FUND_TOKEN_URL, fields)
+            token = html.json_parse(r["response"])["access_token"]
+        except Exception as err:
+            self.setLastError("failed to get access token: %s (request: '%s') (response: '%s')" % (err, r["requestbody"], r["response"]))
+            self.cleanup()
+            return
+
+        anCount = 0
+        adopters = []
+        for an in animals:
+            try:
+                anCount += 1
+                self.log("Processing: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                self.updatePublisherProgress(self.getProgress(anCount, len(animals)))
+
+                # If the user cancelled, stop now
+                if self.shouldStopPublishing(): 
+                    self.log("User cancelled publish. Stopping.")
+                    self.resetPublisherProgress()
+                    return
+
+                # Build an adoption JSON object containing the adopter and animal
+                a = {
+                    "ID": an["CURRENTOWNERID"],
+                    "Firstname": an["CURRENTOWNERFORENAMES"],
+                    "Lastname": an["CURRENTOWNERSURNAME"],
+                    "EmailAddress": an["CURRENTOWNEREMAILADDRESS"],
+                    "Street": an["CURRENTOWNERADDRESS"],
+                    "Apartment": "",
+                    "City": an["CURRENTOWNERTOWN"],
+                    "State": an["CURRENTOWNERCOUNTY"],
+                    "Zipcode": an["CURRENTOWNERPOSTCODE"],
+                    "Phone": an["CURRENTOWNERHOMETELEPHONE"],
+                    "Animals": [{
+                        "ID": an["ID"],
+                        "PetStatus": "Adopted",
+                        "PetLitterID": an["ACCEPTANCENUMBER"],
+                        "GroupType": an["ACCEPTANCENUMBER"] is not None or "",
+                        "PetName": an["ANIMALNAME"],
+                        "Type": an["SPECIESNAME"],
+                        "Sex": an["SEXNAME"],
+                        "DateofBirth": self.getDate(an["DATEOFBIRTH"]), 
+                        "Age": self.getAge(an["DATEOFBIRTH"], an["SPECIESID"]),
+                        "SpayNeuterStatus": an["NEUTERED"] == 1 and "Spayed/Neutered" or "",
+                        "Breed": an["BREEDNAME"],
+                        "PrimaryColor": an["BASECOLOURNAME"],
+                        "SecondaryColor": "",
+                        "Pattern": "",
+                        "HealthStatus": an["ASILOMARINTAKECATEGORY"] + 1, # We're zero based, they use 1-base
+                        "PetBiography": an["ANIMALCOMMENTS"],
+                        "Photo": "%s?method=animal_image&account=%s&animalid=%s" % (SERVICE_URL, self.dbo.database, an["ID"]),
+                        "MicrochipNumber": an["IDENTICHIPNUMBER"],
+                        "RabiesTag": an["RABIESTAG"],
+                        "RelationshipType": "Adoption",
+                        "AdoptedDate": self.getDate(an["ACTIVEMOVEMENTDATE"])
+                    }]
+                }
+                adopters.append(a)
+                # Mark success in the log
+                self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+
+            except Exception as err:
+                self.logError("Failed processing animal: %s, %s" % (an["SHELTERCODE"], err), sys.exc_info())
+
+        try:
+            # Turn it into a json document and send to MPA
+            j = html.json(adopters)
+            self.log("HTTP POST request %s: %s" % (MADDIES_FUND_UPLOAD_URL, j))
+            r = utils.post_json(MADDIES_FUND_UPLOAD_URL, j, { "Authorization", "Bearer %s" % token })
+            self.log("HTTP response: %s" % r["response"])
+        except Exception as err:
+            self.logError("Failed upload: %s" % err, sys.exc_info())
+
+        self.saveLog()
+        self.setPublisherComplete()
 
 class MeetAPetPublisher(AbstractPublisher):
     """

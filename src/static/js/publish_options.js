@@ -14,6 +14,7 @@ $(function() {
                 '<li class="localeus"><a href="#tab-adoptapet">AdoptAPet Publisher</a></li>',
                 '<li><a href="#tab-helpinglostpets">HelpingLostPets Publisher</a></li>',
                 '<li class="localeus localeca localemx"><a href="#tab-meetapet">MeetAPet Publisher</a></li>',
+                '<li class="localeus hasmaddiesfund"><a href="#tab-maddiesfund">Maddie\'s Fund Publisher</a></li>',
                 '<li class="localeus localeca localemx"><a href="#tab-petfinder">PetFinder Publisher</a></li>',
                 '<li class="localegb haspetslocated"><a href="#tab-petslocated">PetsLocated Publisher</a></li>',
                 '<li class="localeau"><a href="#tab-petrescue">PetRescue Publisher</a></li>',
@@ -668,6 +669,25 @@ $(function() {
             ].join("\n");
         },
 
+        render_maddiesfund: function() {
+            return [
+                '<div id="tab-maddiesfund">',
+                html.info('Signup at <a href="http://www.maddiesfund.org/mpa.htm">http://www.maddiesfund.org/mpa.htm</a>'),
+                '<p><input id="enabledmf" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledmf">' + _("Enabled") + '</label></p>',
+                '<table>',
+                '<tr>',
+                '<td><label for="mfemail">MPA Email Address</label></td>',
+                '<td><input id="mfemail" type="text" class="asm-textbox cfg" data="MaddiesFundEmail" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="mfpassword">MPA Password</label></td>',
+                '<td><input id="mfpassword" type="text" class="asm-textbox cfg" data="MaddiesFundPassword" /></td>',
+                '</tr>',
+                '</table>',
+                '</div>'
+            ].join("\n");
+        },
+
         render_meetapet: function() {
             return [
                 '<div id="tab-meetapet">',
@@ -845,6 +865,7 @@ $(function() {
                 this.render_rescuegroups(),
                 this.render_adoptapet(),
                 this.render_foundanimals(),
+                this.render_maddiesfund(),
                 this.render_meetapet(),
                 this.render_helpinglostpets(),
                 this.render_smarttag(),
@@ -934,6 +955,7 @@ $(function() {
                 if ($("#enabledap").is(":checked")) { ep += " ap"; }
                 if ($("#enabledfa").is(":checked")) { ep += " fa"; }
                 if ($("#enabledrg").is(":checked")) { ep += " rg"; }
+                if ($("#enabledmf").is(":checked")) { ep += " mf"; }
                 if ($("#enabledmp").is(":checked")) { ep += " mp"; }
                 if ($("#enabledhlp").is(":checked")) { ep += " hlp"; }
                 if ($("#enabledpl").is(":checked")) { ep += " pl"; }
@@ -1013,6 +1035,11 @@ $(function() {
             // Disable FoundAnimals if it's not setup in sitedefs
             if (!controller.hasfoundanimals) {
                 $(".hasfoundanimals").hide();
+            }
+
+            // Disable Maddie's Fund if it's not setup in sitedefs
+            if (!controller.hasmaddiesfund) {
+                $(".hasmaddiesfund").hide();
             }
 
             // Disable PetsLocated if it's not setup in sitedefs
@@ -1106,6 +1133,7 @@ $(function() {
             if (pe.indexOf("ap") != -1) { $("#enabledap").attr("checked", true); }
             if (pe.indexOf("fa") != -1) { $("#enabledfa").attr("checked", true); }
             if (pe.indexOf("rg") != -1) { $("#enabledrg").attr("checked", true); }
+            if (pe.indexOf("mf") != -1) { $("#enabledmf").attr("checked", true); }
             if (pe.indexOf("mp") != -1) { $("#enabledmp").attr("checked", true); }
             if (pe.indexOf("hlp") != -1) { $("#enabledhlp").attr("checked", true); }
             if (pe.indexOf("pl") != -1) { $("#enabledpl").attr("checked", true); }

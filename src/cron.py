@@ -131,7 +131,8 @@ def publish_3pty(dbo):
     publish_ap(dbo)
     publish_fa(dbo)
     publish_hlp(dbo)
-    publish_mp(dbo)
+    publish_mf(dbo)
+    # publish_mp(dbo) disabled
     publish_pf(dbo)
     publish_pl(dbo)
     publish_pcuk(dbo)
@@ -174,6 +175,22 @@ def publish_fa(dbo):
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running foundanimals publisher: %s" % em, "cron.publish_fa", dbo, sys.exc_info())
+
+def publish_mf(dbo):
+    try :
+
+        pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
+        publishers = configuration.publishers_enabled(dbo)
+        if smcom.active():
+            pc.ignoreLock = True
+
+        if publishers.find("mf") != -1:
+            mp = publish.MaddiesFundPublisher(dbo, pc)
+            mp.run()
+
+    except:
+        em = str(sys.exc_info()[0])
+        al.error("FAIL: uncaught error running Maddies Fund publisher: %s" % em, "cron.publish_mf", dbo, sys.exc_info())
 
 def publish_mp(dbo):
     try :
@@ -567,6 +584,8 @@ def run(dbo, mode):
         publish_hlp(dbo)
     elif mode == "publish_html":
         publish_html(dbo)
+    elif mode == "publish_mf":
+        publish_mf(dbo)
     elif mode == "publish_mp":
         publish_mp(dbo)
     elif mode == "publish_pf":
@@ -690,6 +709,7 @@ def print_usage():
     print("       publish_fa - update foundanimals.org")
     print("       publish_hlp - publish to helpinglostpets.com")
     print("       publish_html - publish html/ftp")
+    print("       publish_mf - publish adoptions to maddiesfund.org")
     print("       publish_mp - publish to meetapet.com")
     print("       publish_pf - publish to petfinder")
     print("       publish_pl - update petlink")
