@@ -3161,6 +3161,7 @@ class MaddiesFundPublisher(AbstractPublisher):
             }
             r = utils.post_form(MADDIES_FUND_TOKEN_URL, fields)
             token = html.json_parse(r["response"])["access_token"]
+            self.log("got access token: %s (%s)" % (token, r["response"]))
         except Exception as err:
             self.setLastError("failed to get access token: %s (request: '%s') (response: '%s')" % (err, r["requestbody"], r["response"]))
             self.cleanup()
@@ -3228,7 +3229,7 @@ class MaddiesFundPublisher(AbstractPublisher):
             # Turn it into a json document and send to MPA
             j = html.json(adopters)
             self.log("HTTP POST request %s: %s" % (MADDIES_FUND_UPLOAD_URL, j))
-            r = utils.post_json(MADDIES_FUND_UPLOAD_URL, j, { "Authorization", "Bearer %s" % token })
+            r = utils.post_json(MADDIES_FUND_UPLOAD_URL, j, { "Authorization": "Bearer %s" % token })
             self.log("HTTP response: %s" % r["response"])
         except Exception as err:
             self.logError("Failed upload: %s" % err, sys.exc_info())
