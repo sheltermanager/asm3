@@ -3136,6 +3136,7 @@ class MaddiesFundPublisher(AbstractPublisher):
 
         email = configuration.maddies_fund_email(self.dbo)
         password = configuration.maddies_fund_password(self.dbo)
+        organisation = configuration.organisation(self.dbo)
 
         if email == "" or password == "":
             self.setLastError("email and password all need to be set for Maddies Fund Publisher")
@@ -3190,7 +3191,8 @@ class MaddiesFundPublisher(AbstractPublisher):
                     "City": an["CURRENTOWNERTOWN"],
                     "State": an["CURRENTOWNERCOUNTY"],
                     "Zipcode": an["CURRENTOWNERPOSTCODE"],
-                    "Phone": an["CURRENTOWNERHOMETELEPHONE"],
+                    "ContactNumber": an["CURRENTOWNERHOMETELEPHONE"],
+                    "Organization": organisation,
                     "Animals": [{
                         "ID": an["ID"],
                         "PetStatus": "Adopted",
@@ -3212,7 +3214,7 @@ class MaddiesFundPublisher(AbstractPublisher):
                         "MicrochipNumber": an["IDENTICHIPNUMBER"],
                         "RabiesTag": an["RABIESTAG"],
                         "RelationshipType": an["ACTIVEMOVEMENTTYPE"] == 1 and "Adoption" or "Foster",
-                        "AdoptedDate": self.getDate(an["ACTIVEMOVEMENTDATE"])
+                        "FosterCareDate": self.getDate(an["ACTIVEMOVEMENTDATE"])
                     }]
                 }
                 adopters.append(a)
