@@ -1,0 +1,86 @@
+ADCH Chip/Neuter Figures
+###
+Figures
+###
+33600/PostgreSQL
+###
+Extra information on neutering/chipping needed to complete the ADCH member questionnaire.
+###
+en
+###
+$VAR year NUMBER Enter the year, eg: 2016$
+
+SELECT
+
+(SELECT COUNT(*) FROM animal 
+ WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
+ AND SpeciesID = 1 
+ AND Neutered = 1 AND NeuteredDate Is Null) AS DogsNeuteredOnArrival,
+ 
+(SELECT COUNT(*) FROM animal 
+ WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
+ AND SpeciesID = 1
+ AND Neutered = 1 AND NeuteredDate >= '$@year$-01-01') AS DogsNeuteredInCare,
+ 
+(SELECT COUNT(*) FROM animal 
+ WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
+ AND SpeciesID = 2 
+ AND Neutered = 1 AND NeuteredDate Is Null) AS CatsNeuteredOnArrival,
+ 
+(SELECT COUNT(*) FROM animal 
+ WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
+ AND SpeciesID = 2
+ AND Neutered = 1 AND NeuteredDate >= '$@year$-01-01') AS CatsNeuteredInCare,
+ 
+(SELECT COUNT(*) FROM animal 
+ WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
+ AND SpeciesID = 1 
+ AND Identichipped = 1 AND IdentichipDate Is Null) AS DogsChippedOnArrival,
+ 
+(SELECT COUNT(*) FROM animal 
+ WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
+ AND SpeciesID = 1
+ AND Identichipped = 1 AND IdentichipDate >= '$@year$-01-01') AS DogsChippedInCare,
+ 
+(SELECT COUNT(*) FROM animal 
+ WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
+ AND SpeciesID = 2 
+ AND Identichipped = 1 AND IdentichipDate Is Null) AS CatsChippedOnArrival,
+ 
+(SELECT COUNT(*) FROM animal 
+ WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
+ AND SpeciesID = 2
+ AND Identichipped = 1 AND IdentichipDate >= '$@year$-01-01') AS CatsChippedInCare
+ 
+FROM lksmovementtype LIMIT 1
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Dogs Neutered On Arrival</th>
+<th>Dogs Neutered In Care</th>
+<th>Cats Neutered On Arrival</th>
+<th>Cats Neutered In Care</th>
+<th>Dogs Chipped On Arrival</th>
+<th>Dogs Chipped In Care</th>
+<th>Cats Chipped On Arrival</th>
+<th>Cats Chipped In Care</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$DOGSNEUTEREDONARRIVAL</td>
+<td>$DOGSNEUTEREDINCARE</td>
+<td>$CATSNEUTEREDONARRIVAL</td>
+<td>$CATSNEUTEREDINCARE</td>
+<td>$DOGSCHIPPEDONARRIVAL</td>
+<td>$DOGSCHIPPEDINCARE</td>
+<td>$CATSCHIPPEDONARRIVAL</td>
+<td>$CATSCHIPPEDINCARE</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
