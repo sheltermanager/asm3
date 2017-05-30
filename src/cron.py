@@ -132,7 +132,6 @@ def publish_3pty(dbo):
     publish_fa(dbo)
     publish_hlp(dbo)
     publish_mf(dbo)
-    # publish_mp(dbo) disabled
     publish_pf(dbo)
     publish_pl(dbo)
     publish_pcuk(dbo)
@@ -185,28 +184,12 @@ def publish_mf(dbo):
             pc.ignoreLock = True
 
         if publishers.find("mf") != -1:
-            mp = publish.MaddiesFundPublisher(dbo, pc)
-            mp.run()
+            mf = publish.MaddiesFundPublisher(dbo, pc)
+            mf.run()
 
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running Maddies Fund publisher: %s" % em, "cron.publish_mf", dbo, sys.exc_info())
-
-def publish_mp(dbo):
-    try :
-
-        pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
-        publishers = configuration.publishers_enabled(dbo)
-        if smcom.active():
-            pc.ignoreLock = True
-
-        if publishers.find("mp") != -1:
-            mp = publish.MeetAPetPublisher(dbo, pc)
-            mp.run()
-
-    except:
-        em = str(sys.exc_info()[0])
-        al.error("FAIL: uncaught error running meetapet publisher: %s" % em, "cron.publish_mp", dbo, sys.exc_info())
 
 def publish_hlp(dbo):
     try :
@@ -586,8 +569,6 @@ def run(dbo, mode):
         publish_html(dbo)
     elif mode == "publish_mf":
         publish_mf(dbo)
-    elif mode == "publish_mp":
-        publish_mp(dbo)
     elif mode == "publish_pf":
         publish_pf(dbo)
     elif mode == "publish_pl":

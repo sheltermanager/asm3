@@ -4339,7 +4339,6 @@ class publish(JSONEndpoint):
             elif mode == "ap":   extpublish.AdoptAPetPublisher(dbo, pc).start()
             elif mode == "rg":   extpublish.RescueGroupsPublisher(dbo, pc).start()
             elif mode == "mf":   extpublish.MaddiesFundPublisher(dbo, pc).start()
-            elif mode == "mp":   extpublish.MeetAPetPublisher(dbo, pc).start()
             elif mode == "hlp":  extpublish.HelpingLostPetsPublisher(dbo, pc).start()
             elif mode == "pl":   extpublish.PetLinkPublisher(dbo, pc).start()
             elif mode == "pr":   extpublish.PetRescuePublisher(dbo, pc).start()

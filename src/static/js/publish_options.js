@@ -13,7 +13,6 @@ $(function() {
                 '<li><a href="#tab-htmlftp">' + _("HTML/FTP Publisher") + '</a></li>',
                 '<li class="localeus"><a href="#tab-adoptapet">AdoptAPet Publisher</a></li>',
                 '<li><a href="#tab-helpinglostpets">HelpingLostPets Publisher</a></li>',
-                '<li class="localeus localeca localemx"><a href="#tab-meetapet">MeetAPet Publisher</a></li>',
                 '<li class="localeus hasmaddiesfund"><a href="#tab-maddiesfund">Maddie\'s Fund Publisher</a></li>',
                 '<li class="localeus localeca localemx"><a href="#tab-petfinder">PetFinder Publisher</a></li>',
                 '<li class="localegb haspetslocated"><a href="#tab-petslocated">PetsLocated Publisher</a></li>',
@@ -688,29 +687,6 @@ $(function() {
             ].join("\n");
         },
 
-        render_meetapet: function() {
-            return [
-                '<div id="tab-meetapet">',
-                html.info('Signup at <a href="http://www.meetapet.com">www.meetapet.com</a>'),
-                '<p><input id="enabledmp" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledmp">' + _("Enabled") + '</label></p>',
-                '<table>',
-                '<tr style="display: none">',
-                '<td><label for="mpkey">MeetAPet Key</label></td>',
-                '<td><input id="mpkey" type="text" class="asm-textbox cfg" data="MeetAPetKey" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="mpsecret">MeetAPet Secret</label></td>',
-                '<td><input id="mpsecret" type="text" class="asm-textbox cfg" data="MeetAPetSecret" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="mpuserkey">MeetAPet Shelter Key</label></td>',
-                '<td><input id="mpuserkey" type="text" class="asm-textbox cfg" data="MeetAPetUserKey" /></td>',
-                '</tr>',
-                '</table>',
-                '</div>'
-            ].join("\n");
-        },
-
         render_helpinglostpets: function() {
             return [
                 '<div id="tab-helpinglostpets">',
@@ -866,7 +842,6 @@ $(function() {
                 this.render_adoptapet(),
                 this.render_foundanimals(),
                 this.render_maddiesfund(),
-                this.render_meetapet(),
                 this.render_helpinglostpets(),
                 this.render_smarttag(),
                 this.render_vetenvoy(),
@@ -1134,7 +1109,6 @@ $(function() {
             if (pe.indexOf("fa") != -1) { $("#enabledfa").attr("checked", true); }
             if (pe.indexOf("rg") != -1) { $("#enabledrg").attr("checked", true); }
             if (pe.indexOf("mf") != -1) { $("#enabledmf").attr("checked", true); }
-            if (pe.indexOf("mp") != -1) { $("#enabledmp").attr("checked", true); }
             if (pe.indexOf("hlp") != -1) { $("#enabledhlp").attr("checked", true); }
             if (pe.indexOf("pl") != -1) { $("#enabledpl").attr("checked", true); }
             if (pe.indexOf("pcuk") != -1) { $("#enabledpcuk").attr("checked", true); }

@@ -8258,14 +8258,6 @@ msgstr ""
 msgid "Publish now"
 msgstr ""
 
-#: html.py
-msgid "Publish to HelpingLostPets.com"
-msgstr ""
-
-#: html.py
-msgid "Publish to PetsLocated.com"
-msgstr ""
-
 #: publish_options.js
 msgid "Publish to folder"
 msgstr ""
