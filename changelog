@@ -1,6 +1,7 @@
 40
 ================
 
+30/05/17 Allow daily boarding cost to be set on bulk change
 25/05/17 First development of Maddie's Pet Assistant publisher #89
 25/05/17 Remove slow DB session storage - cachemem uses dictionaries or memcache
 23/05/17 Completed full/json refactoring - rota/reports/waitinglist/etc #173

@@ -54,6 +54,11 @@ $(function() {
                 '<td><input id="fee" data-post="fee" class="asm-currencybox asm-textbox" /></td>',
                 '</tr>',
 
+                '<tr id="boardingcostrow">',
+                '<td><label for="boardingcost">' + _("Daily Boarding Cost") + '</label></td>',
+                '<td><input id="boardingcost" data-post="boardingcost" class="asm-currencybox asm-textbox" /></td>',
+                '</tr>',
+
                 '<tr>',
                 '<td><label for="notforadoption">' + _("Not For Adoption") + '</label></td>',
                 '<td><select id="notforadoption" data-post="notforadoption" class="asm-selectbox">',

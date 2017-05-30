@@ -2201,6 +2201,9 @@ def update_animals_from_form(dbo, post, username):
     if post.integer("fee") > 0:
         db.execute(dbo, "UPDATE animal SET Fee = %d WHERE ID IN (%s)" % (post.integer("fee"), post["animals"]))
         aud.append("Fee = %s" % post["fee"])
+    if post.integer("boardingcost") > 0:
+        db.execute(dbo, "UPDATE animal SET DailyBoardingCost = %d WHERE ID IN (%s)" % (post.integer("boardingcost"), post["animals"]))
+        aud.append("DailyBoardingCost = %s" % post["boardingcost"])
     if post.integer("notforadoption") != -1:
         db.execute(dbo, "UPDATE animal SET IsNotAvailableForAdoption = %d WHERE ID IN (%s)" % (post.integer("notforadoption"), post["animals"]))
         aud.append("IsNotAvailableForAdoption = %s" % post["notforadoption"])
