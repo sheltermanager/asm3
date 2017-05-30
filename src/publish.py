@@ -3168,7 +3168,7 @@ class MaddiesFundPublisher(AbstractPublisher):
             return
 
         anCount = 0
-        adopters = []
+        rows = []
         for an in animals:
             try:
                 anCount += 1
@@ -3183,6 +3183,30 @@ class MaddiesFundPublisher(AbstractPublisher):
 
                 # Build an adoption JSON object containing the adopter and animal
                 a = {
+                    "PetID": an["ID"],
+                    "Site": organisation,
+                    "PetName": an["ANIMALNAME"],
+                    "PetStatus": utils.iif(an["ACTIVEMOVEMENTTYPE"] == 1, "Adopted", "Active"),
+                    "PetLitterID": an["ACCEPTANCENUMBER"],
+                    "GroupType": an["ACCEPTANCENUMBER"] is not None or "",
+                    "PetSpecies": an["SPECIESNAME"],
+                    "PetSex": an["SEXNAME"],
+                    "DateofBirth": self.getDate(an["DATEOFBIRTH"]), 
+                    "SpayNeuterStatus": utils.iif(an["NEUTERED"] == 1, "Spayed/Neutered", ""),
+                    "Breed": an["BREEDNAME"],
+                    "Color": an["BASECOLOURNAME"],
+                    "SecondaryColor": "",
+                    "Pattern": "",
+                    "HealthStatus": an["ASILOMARINTAKECATEGORY"] + 1, # We're zero based, they use 1-base
+                    "PetBiography": an["ANIMALCOMMENTS"],
+                    "Photo": "%s?method=animal_image&account=%s&animalid=%s" % (SERVICE_URL, self.dbo.database, an["ID"]),
+                    "Microchip": an["IDENTICHIPNUMBER"],
+                    "MicrochipIssuer": lookups.get_microchip_manufacturer(self.dbo.locale, an["IDENTICHIPNUMBER"]),
+                    "RelationshipType": utils.iif(an["ACTIVEMOVEMENTTYPE"] == 1, "Adoption", "Foster"),
+                    "FosterCareDate": self.getDate(an["ACTIVEMOVEMENTDATE"]),
+                    "FosterEndDate": "",
+                    "RabiesTag": an["RABIESTAG"],
+
                     "ID": an["CURRENTOWNERID"],
                     "Firstname": an["CURRENTOWNERFORENAMES"],
                     "Lastname": an["CURRENTOWNERSURNAME"],
@@ -3194,31 +3218,8 @@ class MaddiesFundPublisher(AbstractPublisher):
                     "Zipcode": an["CURRENTOWNERPOSTCODE"],
                     "ContactNumber": an["CURRENTOWNERHOMETELEPHONE"],
                     "Organization": organisation,
-                    "Animals": [{
-                        "ID": an["ID"],
-                        "PetStatus": "Adopted",
-                        "PetLitterID": an["ACCEPTANCENUMBER"],
-                        "GroupType": an["ACCEPTANCENUMBER"] is not None or "",
-                        "PetName": an["ANIMALNAME"],
-                        "Type": an["SPECIESNAME"],
-                        "Sex": an["SEXNAME"],
-                        "DateofBirth": self.getDate(an["DATEOFBIRTH"]), 
-                        "Age": self.getAge(an["DATEOFBIRTH"], an["SPECIESID"]),
-                        "SpayNeuterStatus": an["NEUTERED"] == 1 and "Spayed/Neutered" or "",
-                        "Breed": an["BREEDNAME"],
-                        "PrimaryColor": an["BASECOLOURNAME"],
-                        "SecondaryColor": "",
-                        "Pattern": "",
-                        "HealthStatus": an["ASILOMARINTAKECATEGORY"] + 1, # We're zero based, they use 1-base
-                        "PetBiography": an["ANIMALCOMMENTS"],
-                        "Photo": "%s?method=animal_image&account=%s&animalid=%s" % (SERVICE_URL, self.dbo.database, an["ID"]),
-                        "MicrochipNumber": an["IDENTICHIPNUMBER"],
-                        "RabiesTag": an["RABIESTAG"],
-                        "RelationshipType": an["ACTIVEMOVEMENTTYPE"] == 1 and "Adoption" or "Foster",
-                        "FosterCareDate": self.getDate(an["ACTIVEMOVEMENTDATE"])
-                    }]
                 }
-                adopters.append(a)
+                rows.append(a)
                 # Mark success in the log
                 self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
 
@@ -3226,7 +3227,7 @@ class MaddiesFundPublisher(AbstractPublisher):
                 self.logError("Failed processing animal: %s, %s" % (an["SHELTERCODE"], err), sys.exc_info())
 
         # Turn it into a json document and send to MPA
-        j = html.json(adopters)
+        j = html.json({ "Animals": rows })
         headers = { "Authorization": "Bearer %s" % token }
         self.log("HTTP POST request %s: headers: '%s', body: '%s'" % (MADDIES_FUND_UPLOAD_URL, headers, j))
         r = utils.post_json(MADDIES_FUND_UPLOAD_URL, j, headers)
