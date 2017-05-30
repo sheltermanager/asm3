@@ -1895,8 +1895,8 @@ class AnibaseUKPublisher(AbstractPublisher):
                     # Post the VetXML document
                     self.log("Posting microchip registration document to %s \n%s\n" % (ANIBASE_BASE_URL, x))
                     r = utils.post_xml(ANIBASE_BASE_URL, x, authheaders)
-                    self.log("HTTP response headers: %s" % r["headers"])
-                    self.log("HTTP response body: %s" % r["response"])
+                    self.log("Response %d, HTTP headers: %s, body: %s" % (r["status"], r["headers"], r["response"]))
+                    if r["status"] != 200: raise Exception(r["response"])
 
                     # Look in the headers for successful results
                     wassuccess = False
@@ -3225,14 +3225,15 @@ class MaddiesFundPublisher(AbstractPublisher):
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (an["SHELTERCODE"], err), sys.exc_info())
 
-        try:
-            # Turn it into a json document and send to MPA
-            j = html.json(adopters)
-            self.log("HTTP POST request %s: %s" % (MADDIES_FUND_UPLOAD_URL, j))
-            r = utils.post_json(MADDIES_FUND_UPLOAD_URL, j, { "Authorization": "Bearer %s" % token })
-            self.log("HTTP response: %s" % r["response"])
-        except Exception as err:
-            self.logError("Failed upload: %s" % err, sys.exc_info())
+        # Turn it into a json document and send to MPA
+        j = html.json(adopters)
+        headers = { "Authorization": "Bearer %s" % token }
+        self.log("HTTP POST request %s: headers: '%s', body: '%s'" % (MADDIES_FUND_UPLOAD_URL, headers, j))
+        r = utils.post_json(MADDIES_FUND_UPLOAD_URL, j, headers)
+        if r["status"] != 200:
+            self.logError("HTTP %d response: %s" % (r["status"], r["response"]))
+        else:
+            self.log("HTTP %d response: %s" % (r["status"], r["response"]))
 
         self.saveLog()
         self.setPublisherComplete()
@@ -5430,8 +5431,8 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
                     # Now post the XML document
                     self.log("Posting microchip registration document: %s" % x)
                     r = utils.post_xml(VETENVOY_US_BASE_URL + "Chip/" + conversationid, x, authheaders)
-                    self.log("HTTP headers: %s" % r["headers"])
-                    self.log("response body: %s" % r["response"])
+                    self.log("Response %d, HTTP headers: %s, body: %s" % (r["status"], r["headers"], r["response"]))
+                    if r["status"] != 200: raise Exception(r["response"])
 
                     # Look in the headers for successful results
                     wassuccess = False
@@ -5534,8 +5535,8 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
             # Now post the XML signup document
             al.debug("Posting signup document: %s" % x, "VetEnvoyMicrochipPublisher.signup", dbo)
             r = utils.post_xml(VETENVOY_US_BASE_URL + "AutoSignup/" + conversationid, x, authheaders)
-            al.debug("Got headers: %s" % r["headers"], "VetEnvoyMicrochipPublisher.signup", dbo)
-            al.debug("Got body: %s" % r["response"], "VetEnvoyMicrochipPublisher.signup", dbo)
+            al.debug("Response %d, HTTP headers: %s, body: %s" % (r["status"], r["headers"], r["response"]), "VetEnvoyMicrochipPublisher.signup", dbo)
+            if r["status"] != 200: raise Exception(r["response"])
 
             # Extract the id and pwd attributes
             userid = re.findall('u id="(.+?)"', r["response"])

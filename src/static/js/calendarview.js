@@ -79,9 +79,11 @@ $(function() {
                 events: [],
                 eventRender: function(event, element) {
                     var title = element.find(".fc-title");
+                    var listtitle = element.find(".fc-list-item-title a");
                     var time = element.find(".fc-time");
                     // Need to decode html entities in the title
                     title.html(event.title);
+                    listtitle.html(event.title);
                     // We extend the default event object to support tooltips and icons
                     if (event.tooltip) { element.prop("title", html.decode(event.tooltip)); }
                     if (event.link) { title.wrap('<a style="color: #fff" href="' + event.link + '"></a>'); }

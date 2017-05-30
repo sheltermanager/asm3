@@ -775,19 +775,25 @@ def post_json(url, json, headers = {}):
     """
     Posts a JSON document to a URL
     """
-    headers["Content-Type"] = "text/json"
-    req = urllib2.Request(url, json, headers)
-    resp = urllib2.urlopen(req)
-    return { "headers": resp.info().headers, "response": resp.read(), "status": resp.getcode() }
+    try:
+        headers["Content-Type"] = "text/json"
+        req = urllib2.Request(url, json, headers)
+        resp = urllib2.urlopen(req)
+        return { "headers": resp.info().headers, "response": resp.read(), "status": resp.getcode() }
+    except urllib2.HTTPError as e:
+        return { "headers": e.info().headers, "response": e.read(), "status": e.getcode() }
 
 def post_xml(url, xml, headers = {}):
     """
     Posts an XML document to a URL
     """
-    headers["Content-Type"] = "text/xml"
-    req = urllib2.Request(url, xml, headers)
-    resp = urllib2.urlopen(req)
-    return { "headers": resp.info().headers, "response": resp.read(), "status": resp.getcode() }
+    try:
+        headers["Content-Type"] = "text/xml"
+        req = urllib2.Request(url, xml, headers)
+        resp = urllib2.urlopen(req)
+        return { "headers": resp.info().headers, "response": resp.read(), "status": resp.getcode() }
+    except urllib2.HTTPError as e:
+        return { "headers": e.info().headers, "response": e.read(), "status": e.getcode() }
 
 def read_text_file(name):
     """
