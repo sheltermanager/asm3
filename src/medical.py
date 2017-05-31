@@ -384,13 +384,13 @@ def get_vaccinations_outstanding(dbo, offset = "m31", locationfilter = "", sitei
         ec = " AND av.DateExpires >= %s AND av.DateExpires <= %s AND av.DateOfVaccination Is Not Null " \
             "AND NOT EXISTS(SELECT av2.ID FROM animalvaccination av2 WHERE av2.ID <> av.ID " \
             "AND av2.AnimalID = av.AnimalID AND av2.VaccinationID = av.VaccinationID " \
-            "AND av2.DateRequired > av.DateRequired)" \
+            "AND av2.ID <> av.ID AND av2.DateRequired >= av.DateOfVaccination)" \
                 % (db.dd( subtract_days(now(dbo.timezone), offsetdays)), db.dd(now(dbo.timezone)))
     if offset.startswith("xp"):
         ec = " AND av.DateExpires >= %s AND av.DateExpires <= %s AND av.DateOfVaccination Is Not Null " \
             "AND NOT EXISTS(SELECT av2.ID FROM animalvaccination av2 WHERE av2.ID <> av.ID " \
             "AND av2.AnimalID = av.AnimalID AND av2.VaccinationID = av.VaccinationID " \
-            "AND av2.DateRequired > av.DateRequired)" \
+            "AND av2.ID <> av.ID AND av2.DateRequired >= av.DateOfVaccination)" \
                 % (db.dd(now(dbo.timezone)), db.dd( add_days(now(dbo.timezone), offsetdays)))
     locationfilter = animal.get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
     shelterfilter = ""
@@ -436,7 +436,7 @@ def get_vaccinations_expiring_two_dates(dbo, dbstart, dbend, locationfilter = ""
         "WHERE av.DateExpires Is Not Null AND av.DateOfVaccination Is Not Null " \
         "AND NOT EXISTS(SELECT av2.ID FROM animalvaccination av2 WHERE av2.ID <> av.ID " \
             "AND av2.AnimalID = av.AnimalID AND av2.VaccinationID = av.VaccinationID " \
-            "AND av2.DateRequired > av.DateRequired) " \
+            "AND av2.ID <> av.ID AND av2.DateRequired >= av.DateOfVaccination) " \
         "AND a.DeceasedDate Is Null %s %s %s " \
         "ORDER BY av.DateExpires, a.AnimalName" % (shelterfilter, ec, locationfilter))
 
