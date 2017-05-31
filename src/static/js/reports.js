@@ -7,15 +7,17 @@ $(function() {
         "Active Donors", "Active Fosters", "Active Members", "Adoptions by Date with Addresses",
         "Animal Entry Reasons", "Animal Return Reasons", "Animals Inducted by Date and Species",
         "Animals Without Photo Media", "Annual Figures (by species)", "Annual Figures (by type)",
-        "Asilomar Figures", "Audit Trail: All Changes by Date", "Audit Trail: All Changes by Specific user",
+        "Asilomar Figures (Live)", "Audit Trail: All Changes by Date", "Audit Trail: All Changes by Specific user",
         "Audit Trail: Deletions by Date", "Average Time On Shelter By Species", "Banned Owners",
         "Brought In Figures", "Cage Card", "Deceased Reasons by Species and Date",
         "Detailed Shelter Inventory", "In/Out", "In/Out by Species", "In/Out with Donations",
-        "Long Term Animals", "Medical Diary", "Monthly Adoptions By Species", 
+        "Intakes by Date with Outcomes", "Long Term Animals", "Medical Diary", 
+        "Monthly Adoptions By Species", 
         "Monthly Figures (by species)", "Monthly Figures (by type)", "Most Common Name",
         "Non-Microchipped Animals", "Non-Neutered/Spayed Animals Aged Over 6 Months",
-        "Print Animal Record", "Reserves without Homechecks", "Returned Animals",
-        "Shelter Inventory", "Shelter Inventory with Pictures by Location",
+        "Payment Breakdown By Date", "Print Animal Record", "Print Animal Record (for adopters)", 
+        "Reserves without Homechecks", "Returned Animals", "shelteranimalscount.org matrix", 
+        "Shelter Inventory", "Shelter Inventory with Pictures by Location", "Shelter Inventory at Date", 
         "Vaccination Diary (Off Shelter)", "Vaccination Diary (On Shelter)"
     ];
 

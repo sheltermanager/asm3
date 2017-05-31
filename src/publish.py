@@ -460,6 +460,13 @@ def get_animal_view(dbo, animalid):
     s = head + body + foot
     tags = wordprocessor.animal_tags(dbo, a)
     tags = wordprocessor.append_tags(tags, wordprocessor.org_tags(dbo, "system"))
+    # Add extra tags for websitemedianame2-4 if they exist
+    if a["WEBSITEIMAGECOUNT"] > 1: 
+        tags["WEBMEDIAFILENAME2"] = "%s&seq=2" % a["WEBSITEMEDIANAME"]
+    if a["WEBSITEIMAGECOUNT"] > 2: 
+        tags["WEBMEDIAFILENAME3"] = "%s&seq=3" % a["WEBSITEMEDIANAME"]
+    if a["WEBSITEIMAGECOUNT"] > 3: 
+        tags["WEBMEDIAFILENAME4"] = "%s&seq=4" % a["WEBSITEMEDIANAME"]
     # Add extra publishing text, preserving the line endings
     notes = utils.nulltostr(a["WEBSITEMEDIANOTES"])
     notes += configuration.third_party_publisher_sig(dbo)
