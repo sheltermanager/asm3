@@ -4490,7 +4490,7 @@ class report_images(JSONEndpoint):
         al.debug("got %d extra images" % len(images), "code.report_images", o.dbo)
         return { "rows": images }
 
-    def post_create(self, o):
+    def post_all(self, o):
         dbfs.upload_report_image(o.dbo, o.post.data.filechooser)
         self.reload_config()
         self.redirect("report_images")
