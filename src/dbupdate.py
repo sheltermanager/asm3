@@ -2746,9 +2746,12 @@ def drop_column(dbo, table, column):
         cascade = " CASCADE"
     db.execute_dbupdate(dbo, "ALTER TABLE %s DROP COLUMN %s%s" % (table, column, cascade))
 
-def drop_index(dbo, indexname):
+def drop_index(dbo, indexname, tablename):
     try:
-        db.execute_dbupdate(dbo, "DROP INDEX %s" % indexname)
+        if dbo.dbtype == "MYSQL":
+            db.execute_dbupdate(dbo, "DROP INDEX %s ON %s" % (indexname, tablename))
+        else:
+            db.execute_dbupdate(dbo, "DROP INDEX %s" % indexname)
     except:
         pass
 
@@ -4587,7 +4590,7 @@ def update_34000(dbo):
 
 def update_34001(dbo):
     # Remove the unique index on LicenceNumber and make it non-unique (optionally enforced by backend code)
-    drop_index(dbo, "ownerlicence_LicenceNumber")
+    drop_index(dbo, "ownerlicence_LicenceNumber", "ownerlicence")
     add_index(dbo, "ownerlicence_LicenceNumber", "ownerlicence", "LicenceNumber")
 
 def update_34002(dbo):
