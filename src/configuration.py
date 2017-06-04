@@ -221,6 +221,9 @@ DEFAULTS = {
     "MultiSiteEnabled": "No", 
     "JSWindowPrint": "Yes",
     "OnlineFormVerifyJSKey": "Yes",
+    "Organisation": "Organisation",
+    "OrganisationAddress": "Address",
+    "OrganisationTelephone": "Telephone",
     "OwnerAddressCheck": "Yes",
     "OwnerNameCheck": "Yes",
     "OwnerNameFormat": "{ownertitle} {ownerforenames} {ownersurname}",
@@ -844,10 +847,10 @@ def online_form_verify_jskey(dbo):
     return cboolean(dbo, "OnlineFormVerifyJSKey", DEFAULTS["OnlineFormVerifyJSKey"] == "Yes")
 
 def organisation(dbo):
-    return cstring(dbo, "Organisation", "")
+    return cstring(dbo, "Organisation", DEFAULTS["Organisation"])
 
 def organisation_address(dbo):
-    return cstring(dbo, "OrganisationAddress")
+    return cstring(dbo, "OrganisationAddress", DEFAULTS["OrganisationAddress"])
 
 def organisation_town(dbo):
     return cstring(dbo, "OrganisationTown")
@@ -859,7 +862,7 @@ def organisation_postcode(dbo):
     return cstring(dbo, "OrganisationPostcode")
 
 def organisation_telephone(dbo):
-    return cstring(dbo, "OrganisationTelephone")
+    return cstring(dbo, "OrganisationTelephone", DEFAULTS["OrganisationTelephone"])
 
 def owner_name_format(dbo):
     return cstring(dbo, "OwnerNameFormat", DEFAULTS["OwnerNameFormat"])
