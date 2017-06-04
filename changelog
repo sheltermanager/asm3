@@ -1,6 +1,7 @@
 40
 ================
 
+04/06/17 Use new movement date for auto closing foster movements
 31/05/17 Add WEBSITEMEDIANAME2-4 shorthand for publish.get_animal_view
 31/05/17 Add extra default reports (intakes/outcomes, print for adopters, etc)
 30/05/17 Remove meetapet publisher (supported via rescuegroups) #146

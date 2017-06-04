@@ -282,7 +282,7 @@ def validate_movement_form_data(dbo, post):
     if movementtype == ADOPTION and configuration.return_fosters_on_adoption(dbo):
         sql = "UPDATE adoption SET ReturnDate = %s " \
             "WHERE ReturnDate Is Null AND MovementType = 2 " \
-            "AND AnimalID = %d AND ID <> %d" % ( db.dd(i18n.now(dbo.timezone)), animalid, int(movementid) )
+            "AND AnimalID = %d AND ID <> %d" % ( db.dd(movementdate), animalid, int(movementid) )
         changed = db.execute(dbo, sql)
         al.debug("movement is an adoption, returning outstanding fosters (%d)." % changed, "movement.validate_movement_form_data", dbo)
     # Can't have multiple open movements
