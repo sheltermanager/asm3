@@ -417,7 +417,6 @@ AND NonShelterAnimal = 0) AS JuniorCatTransferOut,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 7
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
@@ -426,7 +425,6 @@ AND NonShelterAnimal = 0) AS AdultDogReturnToField,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 7
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
@@ -435,7 +433,6 @@ AND NonShelterAnimal = 0) AS JuniorDogReturnToField,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 7
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
@@ -444,7 +441,6 @@ AND NonShelterAnimal = 0) AS AdultCatReturnToField,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 7
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
