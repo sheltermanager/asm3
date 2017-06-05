@@ -333,7 +333,7 @@ of thumbnails.</p>
 <p>For example, to only output animals with an animal type of dog, you could use
 this callback:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
-<span class="n">function</span> <span class="n">asm3_adoptable_filter</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="p">{</span>
+<span class="n">function</span> <span class="n">asm3_adoptable_filter</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">arr</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="n">a</span><span class="o">.</span><span class="n">ANIMALTYPENAME</span> <span class="o">==</span> <span class="s2">&quot;D (Dog)&quot;</span><span class="p">;</span>
 <span class="p">}</span>
 <span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
@@ -341,8 +341,9 @@ this callback:</p>
 <span class="o">&lt;</span><span class="n">script</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;http://localhost:5000/service?method=animal_view_adoptable_js&quot;</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<p>Additional arguments are also passed to asm3_adoptable_filter containing
-the index and complete list. Eg: asm3_adoptable_filter(item, index, arr)</p>
+<p>Additional arguments are also passed to asm3_adoptable_filter containing the
+index of the current element and complete list.
+Definition: asm3_adoptable_filter(item, index, arr)</p>
 <p>Which dropdowns appear depends on the asm3_adoptable_filters string. To use
 them all, include the following asm3_adoptable_filters line. The order in which
 they appear in the filters line is also used to output that piece of

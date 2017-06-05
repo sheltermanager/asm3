@@ -177,15 +177,16 @@ For example, to only output animals with an animal type of dog, you could use
 this callback::
 
     <script>
-    function asm3_adoptable_filter(a) {
+    function asm3_adoptable_filter(a, index, arr) {
         return a.ANIMALTYPENAME == "D (Dog)";
     }
     </script>
     <div id="asm3-adoptables" />
     <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
 
-Additional arguments are also passed to asm3_adoptable_filter containing
-the index and complete list. Eg: asm3_adoptable_filter(item, index, arr)
+Additional arguments are also passed to asm3_adoptable_filter containing the
+index of the current element and complete list. 
+Definition: asm3_adoptable_filter(item, index, arr)
 
 Which dropdowns appear depends on the asm3_adoptable_filters string. To use
 them all, include the following asm3_adoptable_filters line. The order in which
