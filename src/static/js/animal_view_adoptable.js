@@ -144,7 +144,7 @@
             if (selsex && item.SEX != selsex) {return; }
 
             if (typeof asm3_adoptable_filter !== 'undefined') {
-                if (!asm3_adoptable_filter(item)) { return; }
+                if (!asm3_adoptable_filter(item, index, arr)) { return; }
             }
 
             var extra = "";

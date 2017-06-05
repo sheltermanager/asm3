@@ -184,6 +184,9 @@ this callback::
     <div id="asm3-adoptables" />
     <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
 
+Additional arguments are also passed to asm3_adoptable_filter containing
+the index and complete list. Eg: asm3_adoptable_filter(item, index, arr)
+
 Which dropdowns appear depends on the asm3_adoptable_filters string. To use
 them all, include the following asm3_adoptable_filters line. The order in which
 they appear in the filters line is also used to output that piece of

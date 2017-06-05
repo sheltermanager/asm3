@@ -264,6 +264,13 @@ username and password and to enter the postal/zipcode of your shelter.
 
 Helpinglostpets.com is global and can accept data from shelters in any country.
 
+maddiesfund.org / Maddie's Pet Assistant
+----------------------------------------
+
+ASM can send data to Maddie's Fund/MPA - an application to provide information
+and interactive help to fosterers, adopters and other caregivers. Basic data on
+the animal and contact information for the adopter/fosterer is sent.
+
 meetapet.com
 ------------
 
