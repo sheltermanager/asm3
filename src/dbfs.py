@@ -28,6 +28,8 @@ class DBFSStorage(object):
             self.o = B64DBStorage(dbo)
         elif url.startswith("file:"):
             self.o = FileStorage(dbo)
+        elif url.startswith("s3:"):
+            self.o = S3Storage(dbo)
         else:
             raise DBFSError("Invalid storage URL: %s" % url)
 
@@ -37,6 +39,8 @@ class DBFSStorage(object):
             self.o = B64DBStorage(dbo)
         elif DBFS_STORE == "file":
             self.o = FileStorage(dbo)
+        elif DBFS_STORE == "s3":
+            self.o = S3Storage(dbo)
         else:
             raise DBFSError("Invalid storage mode: %s" % DBFS_STORE)
 
@@ -406,7 +410,7 @@ def list_contents(dbo, path):
         l.append(r["NAME"])
     return l
 
-# End of storage primitives
+# End of storage primitives -- everything past here calls functions above
 
 def get_nopic(dbo):
     """
