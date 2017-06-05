@@ -1243,6 +1243,10 @@ msgstr ""
 msgid "Animal code format"
 msgstr ""
 
+#: person.js
+msgid "Animal comments MUST contain this phrase in order to match."
+msgstr ""
+
 #: header.js html.py configuration.py
 msgid "Animal control calendar"
 msgstr ""
@@ -2828,6 +2832,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "DHLPP"
+msgstr ""
+
+#: person.js
+msgid "DO NOT use this field to store notes about what the person is looking for."
 msgstr ""
 
 #: animal.py
