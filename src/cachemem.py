@@ -62,7 +62,10 @@ def _dict_increment(key):
 
 def _dict_delete(key):
     global dict_client
-    del dict_client[key]
+    try:
+        del dict_client[key]
+    except KeyError:
+        pass
 
 # ==============================================
 # Memcache implementation of memory cache
@@ -82,38 +85,22 @@ def _memcache_available():
 
 def _memcache_get(key):
     global memcache_client
-    try:
-        if memcache_client is None: memcache_client = _get_mc()
-        return memcache_client.get(key)
-    except:
-        memcache_client = _get_mc()
-        return memcache_client.get(key)
+    if memcache_client is None: memcache_client = _get_mc()
+    return memcache_client.get(key)
 
 def _memcache_put(key, value, ttl):
     global memcache_client
-    try:
-        if memcache_client is None: memcache_client = _get_mc()
-        return memcache_client.set(key, value, time = ttl )
-    except:
-        memcache_client = _get_mc()
-        return memcache_client.set(key, value, time = ttl )
+    if memcache_client is None: memcache_client = _get_mc()
+    return memcache_client.set(key, value, time = ttl )
 
 def _memcache_increment(key):
     global memcache_client
-    try:
-        if memcache_client is None: memcache_client = _get_mc()
-        return memcache_client.incr(key)
-    except:
-        memcache_client = _get_mc()
-        return memcache_client.incr(key)
+    if memcache_client is None: memcache_client = _get_mc()
+    return memcache_client.incr(key)
 
 def _memcache_delete(key):
     global memcache_client
-    try:
-        if memcache_client is None: memcache_client = _get_mc()
-        return memcache_client.delete(key)
-    except:
-        memcache_client = _get_mc()
-        return memcache_client.delete(key)
+    if memcache_client is None: memcache_client = _get_mc()
+    return memcache_client.delete(key)
 
 

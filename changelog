@@ -1,6 +1,8 @@
 40
 ================
 
+06/06/17 Only write new or changed config items #229
+06/06/17 configuration read-through cache for performance #229
 04/06/17 Use new movement date for auto closing foster movements
 31/05/17 Add WEBSITEMEDIANAME2-4 shorthand for publish.get_animal_view
 31/05/17 Add extra default reports (intakes/outcomes, print for adopters, etc)

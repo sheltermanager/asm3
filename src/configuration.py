@@ -2,6 +2,7 @@
 
 import al
 import audit
+import cachemem
 import db
 import i18n
 import sys
@@ -299,15 +300,10 @@ DEFAULTS = {
 }
 
 def cstring(dbo, key, default = ""):
-    try:
-        rows = db.query(dbo, "SELECT ITEMVALUE FROM configuration WHERE ITEMNAME LIKE '%s'" % key)
-        if len(rows) == 0: return default
-        v = rows[0]["ITEMVALUE"]
-        if v == "": return default
-        return v
-    except:
+    cmap = get_map(dbo)
+    if not key in cmap:
         return default
-    return default
+    return cmap[key]
 
 def cboolean(dbo, key, default = False):
     defstring = "No"
@@ -331,12 +327,13 @@ def cfloat(dbo, key, default = 0.0):
     except:
         return float(0)
 
-def cset(dbo, key, value = "", ignoreDBLock = False, sanitiseXSS = True):
+def cset(dbo, key, value = "", ignoreDBLock = False, sanitiseXSS = True, invalidateConfigCache = True):
     """
     Update a configuration item in the table.
     """
     db.execute(dbo, "DELETE FROM configuration WHERE ItemName LIKE %s" % db.ds(key), ignoreDBLock)
     db.execute(dbo, "INSERT INTO configuration (ItemName, ItemValue) VALUES (%s, %s)" % (db.ds(key), db.ds(value, sanitiseXSS)), ignoreDBLock)
+    if invalidateConfigCache: invalidate_config_cache(dbo)
 
 def cset_db(dbo, key, value = ""):
     """
@@ -347,8 +344,7 @@ def cset_db(dbo, key, value = ""):
 
 def csave(dbo, username, post):
     """
-    Takes configuration data passed as a web post and saves it to the
-    database.
+    Takes configuration data passed as a web post and saves it to the database.
     """
     def valid_code(s):
         """
@@ -360,43 +356,65 @@ def csave(dbo, username, post):
                 return True
         return False
 
+    cmap = get_map(dbo)
+
+    def put(k, v, sanitiseXSS = True):
+        # Only update the value in the database if it's new or changed
+        if k not in cmap or cmap[k] != v: cset(dbo, k, v, sanitiseXSS = sanitiseXSS, invalidateConfigCache = False)
+
     for k in post.data.iterkeys():
         if k == "mode" or k == "filechooser": continue
         v = post.string(k, False)
         if k == "EmailSignature":
             # It's HTML - don't XSS escape it
-            cset(dbo, k, v, sanitiseXSS = False)
+            put(k, v, sanitiseXSS = False)
         elif k == "CodingFormat":
             # If there's no valid N, X or U tokens in there, it's not valid so reset to
             # the default.
             if not valid_code(v):
-                cset(dbo, k, "TYYYYNNN")
+                put(k, "TYYYYNNN")
             else:
-                cset(dbo, k, v)
+                put(k, v)
         elif k == "ShortCodingFormat":
             # If there's no N, X or U in there, it's not valid so reset to
             # the default.
             if not valid_code(v):
-                cset(dbo, k, "NNT")
+                put(k, "NNT")
             else:
-                cset(dbo, k, v)
+                put(k, v)
         elif k == "DefaultDailyBoardingCost":
             # Need to handle currency fields differently
-            cset(dbo, k, post.db_integer(k))
+            put(k, post.db_integer(k))
         elif k.startswith("rc:"):
             # It's a NOT check
             if v == "checked": v = "No"
             if v == "off": v = "Yes"
-            cset(dbo, k[3:], v)
+            put(k[3:], v)
         elif v == "checked" or v == "off":
             # It's a checkbox
             if v == "checked": v = "Yes"
             if v == "off": v = "No"
-            cset(dbo, k, v)
+            put(k, v)
         else:
-            # Must be a string
-            cset(dbo, k, v)
+            # Plain string value
+            put(k, v)
     audit.edit(dbo, username, "configuration", 0, str(post))
+    invalidate_config_cache(dbo)
+
+def get_map(dbo):
+    """ Returns a map of the config items, using a read-through cache to save database calls """
+    CACHE_KEY = "%s_config" % dbo.database
+    cmap = cachemem.get(CACHE_KEY)
+    if cmap is None:
+        rows = db.query(dbo, "SELECT ITEMNAME, ITEMVALUE FROM configuration ORDER BY ITEMNAME")
+        cmap = DEFAULTS.copy()
+        for r in rows:
+            cmap[r["ITEMNAME"]] = r["ITEMVALUE"]
+        cachemem.put(CACHE_KEY, cmap, 3600) # one hour cache means direct database updates show up eventually
+    return cmap
+
+def invalidate_config_cache(dbo):
+    cachemem.delete("%s_config" % dbo.database)
 
 def account_period_totals(dbo):
     return cboolean(dbo, "AccountPeriodTotals")
@@ -706,13 +724,6 @@ def geo_provider_override(dbo):
 
 def geo_provider_key_override(dbo):
     return cstring(dbo, "GeoProviderKeyOverride")
-
-def get_map(dbo):
-    rows = db.query(dbo, "SELECT ITEMNAME, ITEMVALUE FROM configuration ORDER BY ITEMNAME")
-    cmap = DEFAULTS.copy()
-    for r in rows:
-        cmap[r["ITEMNAME"]] = r["ITEMVALUE"]
-    return cmap
 
 def include_incomplete_medical_doc(dbo):
     return cboolean(dbo, "IncludeIncompleteMedicalDoc", DEFAULTS["IncludeIncompleteMedicalDoc"] == "Yes")

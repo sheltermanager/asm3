@@ -968,12 +968,14 @@ $(function() {
                 var formdata = "mode=save&" + $(".cfg").toPOST();
                 formdata += "&PublisherPresets=" + cfg_presets();
                 formdata += "&PublishersEnabled=" + cfg_enabled();
+                header.show_loading(_("Saving..."));
                 common.ajax_post("publish_options", formdata)
                     .then(function() { 
                         // Needs to do a full reload to get config.js to update
                         common.route_reload(true); 
                     });
             });
+
             $("#button-save").button("disable");
 
             $(".localeau").hide();
