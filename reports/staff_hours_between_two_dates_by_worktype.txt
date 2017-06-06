@@ -19,7 +19,7 @@ FROM ownerrota ort
 INNER JOIN owner o ON o.ID = ort.OwnerID
 INNER JOIN lksrotatype rt ON rt.ID = ort.RotaTypeID
 INNER JOIN lkworktype wt ON wt.ID = ort.WorkTypeID
-WHERE ort.StartDateTime >= '$@from$' AND ort.EndDateTime <= '$@to$'
+WHERE ort.StartDateTime >= '$@from$' AND ort.EndDateTime <= '$@to$ 23:59:59'
 AND ort.RotaTypeID < 10
 ORDER BY wt.WorkType, o.OwnerName, ort.StartDateTime
 ###
