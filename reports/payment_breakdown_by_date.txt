@@ -12,7 +12,7 @@ $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
 SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName, 
-Donation AS amt, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
+Donation AS amt, ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerPostcode, donationpayment.PaymentName, ownerdonation.ReceiptNumber
 FROM ownerdonation 
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
@@ -32,11 +32,12 @@ $$HEAD
 <td><b>Receipt No</b></td>
 <td><b>Person</b></td>
 <td><b>Method</b></td>
+<td><b>Tax</b></td>
 <td><b>Amount</b></td>
 </tr>
 $$FOOT
 </table>
-<p><b>Total $DonationName: {SUM.amt.2}</b></p>
+<p><b>Total $DonationName: {SUM.amt.2} (Tax: {SUM.vatamount.2})</b></p>
 GROUP$$ 
 
 $$BODY
@@ -45,6 +46,7 @@ $$BODY
 <td>$receiptnumber</td>
 <td>$ownername</td>
 <td>$paymentname</td>
+<td>$vatamount</td>
 <td>$amt</td>
 </tr>
 BODY$$
@@ -67,7 +69,7 @@ $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
 SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName, 
-Donation AS amt, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
+Donation AS amt, ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerPostcode, donationpayment.PaymentName, ownerdonation.ReceiptNumber
 FROM ownerdonation 
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
@@ -87,11 +89,12 @@ $$HEAD
 <td><b>Receipt No</b></td>
 <td><b>Person</b></td>
 <td><b>Type</b></td>
+<td><b>Tax</b></td>
 <td><b>Amount</b></td>
 </tr>
 $$FOOT
 </table>
-<p><b>Total $PaymentName: {SUM.amt.2}</b></p>
+<p><b>Total $PaymentName: {SUM.amt.2} (Tax: {SUM.vatamount.2})</b></p>
 GROUP$$ 
 GROUP$$
 
@@ -101,6 +104,7 @@ $$BODY
 <td>$receiptnumber</td>
 <td>$ownername</td>
 <td>$donationname</td>
+<td>$vatamount</td>
 <td>$amt</td>
 </tr>
 BODY$$
@@ -122,7 +126,7 @@ $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
 SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName, 
-Donation AS amt, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
+Donation AS amt, ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerPostcode, donationpayment.PaymentName, ownerdonation.ReceiptNumber
 FROM ownerdonation 
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
@@ -138,7 +142,7 @@ $$GROUP_DonationName
 $$HEAD
 <h2>$DonationName</h2>
 $$FOOT
-<h2>Total $DonationName: {SUM.amt.2}</h2>
+<h2>Total $DonationName: {SUM.amt.2} (Tax: {SUM.vatamount.2})</h2>
 GROUP$$ 
 
 $$GROUP_PaymentName
@@ -148,11 +152,12 @@ $$HEAD
 <td><b>Date</b></td>
 <td><b>Receipt No</b></td>
 <td><b>Person</b></td>
+<td><b>Tax</b></td>
 <td><b>Amount</b></td>
 </tr>
 $$FOOT
 </table>
-<p><b>Total $DonationName - $PaymentName: {SUM.amt.2}</b></p>
+<p><b>Total $PaymentName: {SUM.amt.2} (Tax: {SUM.vatamount.2})</b></p>
 GROUP$$ 
 
 $$BODY
@@ -160,6 +165,7 @@ $$BODY
 <td>$date</td>
 <td>$receiptnumber</td>
 <td>$ownername</td>
+<td>$vatamount</td>
 <td>$amt</td>
 </tr>
 BODY$$
@@ -183,7 +189,7 @@ $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
 SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName, 
-Donation AS amt, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
+Donation AS amt, ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerPostcode, donationpayment.PaymentName, ownerdonation.ReceiptNumber
 FROM ownerdonation 
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
@@ -199,6 +205,7 @@ $$HEADER
 <td><b>Person</b></td>
 <td><b>Type</b></td>
 <td><b>Method</b></td>
+<td><b>Tax</b></td>
 <td><b>Amount</b></td>
 </tr>
 HEADER$$
@@ -210,13 +217,14 @@ $$BODY
 <td>$ownername</td>
 <td>$donationname</td>
 <td>$paymentname</td>
+<td>$vatamount</td>
 <td>$amt</td>
 </tr>
 BODY$$
 
 $$FOOTER
 </table>
-<p><b>Total: {SUM.amt.2}</b></p>
+<p><b>Total: {SUM.amt.2} (Tax: {SUM.vatamount.2})</b></p>
 FOOTER$$
 
 &&&
@@ -234,7 +242,7 @@ $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
 SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName, 
-Donation AS amt, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
+Donation AS amt, ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerPostcode, donationpayment.PaymentName, ownerdonation.ReceiptNumber
 FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
@@ -254,11 +262,12 @@ $$HEAD
 <td><b>Receipt No</b></td>
 <td><b>Person</b></td>
 <td><b>Method</b></td>
+<td><b>Tax</b></td>
 <td><b>Amount</b></td>
 </tr>
 $$FOOT
 </table>
-<p><b>Total $DonationName: {SUM.amt.2}</b></p>
+<p><b>Total $DonationName: {SUM.amt.2} (Tax: {SUM.vatamount.2})</b></p>
 GROUP$$ 
 GROUP$$
 
@@ -272,6 +281,7 @@ $ownertown<br />
 $ownercounty<br />
 $ownerpostcode</td>
 <td>$paymentname</td>
+<td>$vatamount</td>
 <td>$amt</td>
 </tr>
 BODY$$
@@ -341,7 +351,7 @@ $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
 SELECT owner.OwnerName, 
-ownerdonation.Date, ownerdonation.Donation AS amt, owner.OwnerAddress, owner.OwnerTown, 
+ownerdonation.Date, ownerdonation.Donation AS amt, ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, 
 owner.OwnerCounty, owner.OwnerPostcode, donationtype.DonationName,
 lksex.Sex, species.SpeciesName, animal.AnimalName, animal.AnimalAge,
 animal.ShelterCode, donationpayment.PaymentName, ownerdonation.ReceiptNumber
@@ -367,11 +377,12 @@ $$HEAD
 <td><b>Person</b></td>
 <td><b>Animal</b></td>
 <td><b>Method</b></td>
+<td><b>Tax</b></td>
 <td><b>Amount</b></td>
 </tr>
 $$FOOT
 </table>
-<p><b>Total $DonationName: {SUM.amt.2}</b></p>
+<p><b>Total $DonationName: {SUM.amt.2} (Tax: {SUM.vatamount.2})</b></p>
 GROUP$$ 
 
 $$BODY
@@ -387,6 +398,7 @@ $ownerpostcode</td>
 $sex $speciesname aged $animalage
 </td>
 <td>$paymentname</td>
+<td>$vatamount</td>
 <td>$amt</td>
 </tr>
 BODY$$
@@ -409,7 +421,7 @@ $VAR to NUMBER Enter latest receipt number$
 
 SELECT ownerdonation.Date, ownerdonation.DateDue, owner.OwnerName, 
 donationtype.DonationName, ownerdonation.ReceiptNumber as receipt,
-Donation AS amt, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
+Donation AS amt, ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerPostcode, donationpayment.PaymentName 
 FROM ownerdonation 
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
@@ -425,6 +437,7 @@ $$HEADER
 <td><b>Received</b></td>
 <td><b>Person</b></td>
 <td><b>Method</b></td>
+<td><b>Tax</b></td>
 <td><b>Amount</b></td>
 </tr>
 HEADER$$
@@ -436,12 +449,13 @@ $$BODY
 <td>$date</td>
 <td>$ownername</td>
 <td>$paymentname</td>
+<td>$vatamount</td>
 <td>$amt</td>
 </tr>
 BODY$$
 
 $$FOOTER
 </table>
-<p><b>Total: {SUM.amt.2}</b></p>
+<p><b>Total: {SUM.amt.2} (Tax: {SUM.vatamount.2})</b></p>
 FOOTER$$
 
