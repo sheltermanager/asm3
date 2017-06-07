@@ -310,7 +310,7 @@ class index(ASMEndpoint):
         # If there's no database structure, create it before 
         # redirecting to the login page.
         if not MULTIPLE_DATABASES:
-            dbo = db.DatabaseInfo()
+            dbo = db.get_database()
             if not db.has_structure(dbo):
                 self.redirect("/database")
         self.redirect("/main")
@@ -320,7 +320,7 @@ class database(ASMEndpoint):
     check_logged_in = False
 
     def content(self, o):
-        dbo = db.DatabaseInfo()
+        dbo = db.get_database()
         if MULTIPLE_DATABASES:
             if smcom.active():
                 raise utils.ASMPermissionError("N/A for sm.com")
@@ -365,7 +365,7 @@ class database(ASMEndpoint):
         return s
 
     def post_all(self, o):
-        dbo = db.DatabaseInfo()
+        dbo = db.get_database()
         dbo.locale = o.post["locale"]
         dbo.installpath = PATH
         dbupdate.install(dbo)
@@ -719,7 +719,7 @@ class mobile_login(ASMEndpoint):
 
     def content(self, o):
         if not MULTIPLE_DATABASES:
-            dbo = db.DatabaseInfo()
+            dbo = db.get_database()
             o.locale = configuration.locale(dbo)
         self.header("Content-Type", "text/html")
         return extmobile.page_login(o.locale, o.post)
@@ -916,14 +916,14 @@ class login(ASMEndpoint):
         # Figure out how to get the default locale and any overridden splash screen
         # Single database
         if not MULTIPLE_DATABASES:
-            dbo = db.DatabaseInfo()
+            dbo = db.get_database()
             l = configuration.locale(dbo)
             has_animals = extanimal.get_has_animals(dbo)
             custom_splash = dbfs.file_exists(dbo, "splash.jpg")
         # Multiple databases, no account given
         elif MULTIPLE_DATABASES and MULTIPLE_DATABASES_TYPE == "map" and post["smaccount"] == "":
             try:
-                dbo = db.DatabaseInfo()
+                dbo = db.get_database()
                 l = configuration.locale(dbo)
             except:
                 l = LOCALE
@@ -983,7 +983,7 @@ class login_splash(ASMEndpoint):
 
     def content(self, o):
         try:
-            dbo = db.DatabaseInfo()
+            dbo = db.get_database()
             smaccount = o.post["smaccount"]
             if MULTIPLE_DATABASES:
                 if smaccount != "":
@@ -4594,7 +4594,7 @@ class schemajs(ASMEndpoint):
             tobj = {}
             for t in dbupdate.TABLES:
                 try:
-                    rows = db.query(dbo, "SELECT * FROM %s LIMIT 1" % t)
+                    rows = db.query(dbo, "SELECT * FROM %s" % t, limit=1)
                     if len(rows) != 0:
                         tobj[t] = rows[0]
                 except Exception as err:
@@ -4602,7 +4602,7 @@ class schemajs(ASMEndpoint):
             for t in dbupdate.VIEWS:
                 realtable = t.replace("v_", "")
                 try:
-                    rows = db.query(dbo, "SELECT * FROM %s WHERE ID = (SELECT MIN(ID) FROM %s) LIMIT 1" % (t, realtable))
+                    rows = db.query(dbo, "SELECT * FROM %s WHERE ID = (SELECT MIN(ID) FROM %s)" % (t, realtable), limit=1)
                     if len(rows) != 0:
                         tobj[t] = rows[0]
                 except Exception as err:
@@ -4702,7 +4702,7 @@ class sql(JSONEndpoint):
     def post_cols(self, o):
         try:
             if o.post["table"].strip() == "": return ""
-            rows = db.query(o.dbo, "SELECT * FROM %s LIMIT 1" % o.post["table"])
+            rows = db.query(o.dbo, "SELECT * FROM %s" % o.post["table"], limit=1)
             if len(rows) == 0: return ""
             return "|".join(sorted(rows[0].iterkeys()))
         except Exception as err:
@@ -4774,17 +4774,15 @@ class sql_dump(GeneratorEndpoint):
         if mode == "dumpddlmysql":
             al.info("%s executed DDL dump MySQL" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"ddl_mysql.sql\"")
-            dbo2 = db.DatabaseInfo()
+            dbo2 = db.get_database("MYSQL")
             dbo2.locale = dbo.locale
-            dbo2.dbtype = "MYSQL"
             yield dbupdate.sql_structure(dbo2)
             yield dbupdate.sql_default_data(dbo2).replace("|=", ";")
         if mode == "dumpddlpostgres":
             al.info("%s executed DDL dump PostgreSQL" % str(session.user), "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"ddl_postgresql.sql\"")
-            dbo2 = db.DatabaseInfo()
+            dbo2 = db.get_database("POSTGRESQL")
             dbo2.locale = dbo.locale
-            dbo2.dbtype = "POSTGRESQL"
             yield dbupdate.sql_structure(dbo2)
             yield dbupdate.sql_default_data(dbo2).replace("|=", ";")
         elif mode == "dumpsqlasm2":

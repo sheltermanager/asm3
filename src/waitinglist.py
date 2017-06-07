@@ -144,8 +144,7 @@ def get_waitinglist_find_simple(dbo, query = "", limit = 0):
         ors.append(add("a.ReasonForWantingToPart"))
         ors.append(add("a.ReasonForRemoval"))
     sql = get_waitinglist_query(dbo) + " WHERE " + " OR ".join(ors)
-    if limit > 0: sql += " LIMIT " + str(limit)
-    return db.query(dbo, sql)
+    return db.query(dbo, sql, limit=limit)
 
 def get_satellite_counts(dbo, wlid):
     """

@@ -129,8 +129,7 @@ def get_animalcontrol_find_simple(dbo, query = "", username = "", limit = 0):
             ors.append(add("ac.CallNotes"))
             ors.append(add("ac.AnimalDescription"))
     sql = get_animalcontrol_query(dbo) + " WHERE " + " OR ".join(ors)
-    if limit > 0: sql += " LIMIT " + str(limit)
-    return reduce_find_results(dbo, username, db.query(dbo, sql))
+    return reduce_find_results(dbo, username, db.query(dbo, sql, limit=limit))
 
 def get_animalcontrol_find_advanced(dbo, criteria, username, limit = 0):
     """
@@ -228,8 +227,7 @@ def get_animalcontrol_find_advanced(dbo, criteria, username, limit = 0):
     if len(c) > 0:
         where = " WHERE " + " AND ".join(c)
     sql = get_animalcontrol_query(dbo) + where + " ORDER BY ac.ID"
-    if limit > 0: sql += " LIMIT " + str(limit)
-    return reduce_find_results(dbo, username, db.query(dbo, sql))
+    return reduce_find_results(dbo, username, db.query(dbo, sql, limit=limit))
 
 def reduce_find_results(dbo, username, rows):
     """

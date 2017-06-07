@@ -1,6 +1,7 @@
 40
 ================
 
+07/06/17 DB refactor phase 1 (separate provider class abstractions) #230
 06/06/17 Only write new or changed config items #229
 06/06/17 configuration read-through cache for performance #229
 04/06/17 Use new movement date for auto closing foster movements

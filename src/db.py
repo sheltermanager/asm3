@@ -9,9 +9,8 @@ import time
 import utils
 from sitedefs import DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HAS_ASM2_PK_TABLE, DB_PK_STRATEGY, DB_DECODE_HTML_ENTITIES, DB_EXEC_LOG, DB_EXPLAIN_QUERIES, DB_TIME_QUERIES, DB_TIME_LOG_OVER, DB_TIMEOUT, CACHE_COMMON_QUERIES, MULTIPLE_DATABASES_MAP
 
-
 try:
-    import MySQLdb
+    import sqlite3
 except:
     pass
 
@@ -23,16 +22,17 @@ except:
     pass
 
 try:
-    import sqlite3
+    import MySQLdb
 except:
     pass
 
-class DatabaseInfo(object):
+class Database(object):
     """
     Handles information on connecting to a database.
     Default values are supplied by the sitedefs.py file.
+    This is the base class for backend provider specific functionality.
     """
-    dbtype = DB_TYPE # MYSQL, POSTGRESQL or SQLITE
+    dbtype = DB_TYPE 
     host = DB_HOST
     port = DB_PORT
     username = DB_USERNAME
@@ -47,68 +47,256 @@ class DatabaseInfo(object):
     is_large_db = False
     timeout = DB_TIMEOUT
     connection = None
-    def __repr__(self):
-        return "DatabaseInfo->locale=%s:dbtype=%s:host=%s:port=%d:db=%s:user=%s:timeout=%s" % ( self.locale, self.dbtype, self.host, self.port, self.database, self.username, self.timeout )
+    type_shorttext = "VARCHAR(1024)"
+    type_longtext = "TEXT"
+    type_clob = "TEXT"
+    type_datetime = "TIMESTAMP"
+    type_integer = "INTEGER"
+    type_float = "REAL"
 
-def connection(dbo):
-    """
-        Creates a connection to the database and returns it
-    """
-    try:
-        if dbo.dbtype == "MYSQL": 
-            if dbo.password != "":
-                return MySQLdb.connect(host=dbo.host, port=dbo.port, user=dbo.username, passwd=dbo.password, db=dbo.database, charset="utf8", use_unicode=True)
-            else:
-                return MySQLdb.connect(host=dbo.host, port=dbo.port, user=dbo.username, db=dbo.database, charset="utf8", use_unicode=True)
-        if dbo.dbtype == "POSTGRESQL": 
-            c = psycopg2.connect(host=dbo.host, port=dbo.port, user=dbo.username, password=dbo.password, database=dbo.database)
-            c.set_client_encoding("UTF8")
-            return c
-        if dbo.dbtype == "SQLITE":
-            return sqlite3.connect(dbo.database, detect_types=sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES)
-    except Exception as err:
-        al.error(str(err), "db.connection", dbo, sys.exc_info())
-
-def connect_cursor_open(dbo):
-    """
-    Returns a tuple containing an open connection and cursor.
-    If the dbo object contains an active connection, we'll just use
-    that to get a cursor.
-    """
-    if dbo.connection is not None:
-        c = dbo.connection
-        s = dbo.connection.cursor()
-    else:
-        c = connection(dbo)
-        s = c.cursor()
-    # if timeout is non-zero, set it
-    if dbo.dbtype == "POSTGRESQL" and dbo.timeout > 0:
-        s.execute("SET statement_timeout=%d" % dbo.timeout)
-    if dbo.dbtype == "MYSQL" and dbo.timeout > 0:
-        s.execute("SET SESSION max_execution_time=%d" % dbo.timeout)
-    return c, s
-
-def connect_cursor_close(dbo, c, s):
-    """
-    Closes a connection and cursor pair. If dbo.connection exists, then
-    c must be it, so don't close it.
-    """
-    try:
-        s.close()
-    except:
+    def connect(self):
+        """ Virtual: Connect to the database and return the connection """
         pass
-    if dbo.connection is None:
+
+    def cursor_open(self):
+        """ Returns a tuple containing an open connection and cursor.
+            If the dbo object contains an active connection, we'll just use
+            that to get a cursor to save time.
+        """
+        if self.connection is not None:
+            c = self.connection
+            s = self.connection.cursor()
+        else:
+            c = self.connect()
+            s = c.cursor()
+        return c, s
+
+    def cursor_close(self, c, s):
+        """ Closes a connection and cursor pair. If self.connection exists, then
+            c must be it, so don't close it.
+        """
         try:
-            c.close()
+            s.close()
         except:
             pass
+        if self.connection is None:
+            try:
+                c.close()
+            except:
+                pass
 
-def query(dbo, sql):
+    def ddl_add_column(self, table, column, coltype):
+        return "ALTER TABLE %s ADD %s %s" % (table, column, coltype)
+
+    def ddl_add_index(self, name, table, column, unique = False, partial = False):
+        u = ""
+        if unique: u = "UNIQUE "
+        return "CREATE %sINDEX %s ON %s (%s)" % (u, name, table, column)
+
+    def ddl_add_table(self, name, fieldblock):
+        return "CREATE TABLE %s (%s)" % (name, fieldblock)
+
+    def ddl_add_table_column(self, name, coltype, nullable = True, pk = False):
+        nullstr = "NOT NULL"
+        if nullable: nullstr = "NULL"
+        pkstr = ""
+        if pk: pkstr = " PRIMARY KEY"
+        return "%s %s %s%s" % ( name, coltype, nullstr, pkstr )
+
+    def ddl_drop_column(self, table, column):
+        return "ALTER TABLE %s DROP COLUMN %s" % (table, column)
+
+    def ddl_drop_index(self, name, table):
+        return "DROP INDEX %s" % name
+
+    def ddl_modify_column(self, table, column, newtype, using = ""):
+        pass # Not all providers support this
+
+    def escape(self, s):
+        """ Makes a string value safe for database queries
+        """
+        if s is None: return ""
+        # This is historic - ASM2 switched backticks for apostrophes so we do for compatibility
+        s = s.replace("'", "`")
+        return s
+
+    def sql_char_length(dbo, item):
+        """ Writes a database independent char length """
+        return "LENGTH(%s)" % item
+
+    def sql_concat(dbo, items):
+        """ Writes concat for a list of items """
+        return " || ".join(items)
+
+    def sql_limit(dbo, x):
+        """ Writes a limit clause to X items """
+        return "LIMIT %s" % x
+
+    def __repr__(self):
+        return "Database->locale=%s:dbtype=%s:host=%s:port=%d:db=%s:user=%s:timeout=%s" % ( self.locale, self.dbtype, self.host, self.port, self.database, self.username, self.timeout )
+
+class DatabaseHSQLDB(Database):
+    type_shorttext = "VARCHAR(1024)"
+    type_longtext = "VARCHAR(2000000)"
+    type_clob = "VARCHAR(2000000)"
+    type_datetime = "TIMESTAMP"
+    type_integer = "INTEGER"
+    type_float = "DOUBLE"
+   
+    def connect(self):
+        # We can't connect to HSQL databases from Python. This class exists
+        # for dumping data in HSQLDB format.
+        pass
+
+    def ddl_add_table(self, name, fieldblock):
+        return "DROP TABLE %s IF EXISTS;\nCREATE MEMORY TABLE %s (%s)" % (name, name, fieldblock)
+
+    def ddl_add_table_column(self, name, coltype, nullable = True, pk = False):
+        nullstr = "NOT NULL"
+        if nullable: nullstr = "NULL"
+        pkstr = ""
+        if pk: pkstr = " PRIMARY KEY"
+        name = name.upper()
+        return "%s %s %s%s" % ( name, coltype, nullstr, pkstr )
+
+class DatabaseMySQL(Database):
+    type_shorttext = "VARCHAR(255)" # This is a fudge due to indexing problems above 767 chars on multi-byte sets
+    type_longtext = "LONGTEXT"
+    type_clob = "LONGTEXT"
+    type_datetime = "DATETIME"
+    type_integer = "INTEGER"
+    type_float = "DOUBLE"
+
+    def connect(self):
+        if self.password != "":
+            return MySQLdb.connect(host=self.host, port=self.port, user=self.username, passwd=self.password, db=self.database, charset="utf8", use_unicode=True)
+        else:
+            return MySQLdb.connect(host=self.host, port=self.port, user=self.username, db=self.database, charset="utf8", use_unicode=True)
+
+    def cursor_open(self):
+        """ Overridden to apply timeout """
+        if self.connection is not None:
+            c = self.connection
+            s = self.connection.cursor()
+        else:
+            c = self.connect()
+            s = c.cursor()
+        if self.timeout > 0: 
+            s.execute("SET SESSION max_execution_time=%d" % self.timeout)
+        return c, s
+
+    def ddl_add_index(self, name, table, column, unique = False, partial = False):
+        u = ""
+        if unique: u = "UNIQUE "
+        if partial: column = "%s(255)" % column
+        return "CREATE %sINDEX %s ON %s (%s)" % (u, name, table, column)
+
+    def ddl_drop_index(self, name, table):
+        return "DROP INDEX %s ON %s" % (name, table)
+
+    def ddl_modify_column(self, table, column, newtype, using = ""):
+        return "ALTER TABLE %s MODIFY %s %s" % (table, column, newtype)
+
+    def escape(self, s):
+        """ Makes a string value safe for database queries
+        """
+        if s is None: return ""
+        if utils.is_str(s):
+            s = MySQLdb.escape_string(s)
+        elif utils.is_unicode(s):
+            # Encode the string as UTF-8 for MySQL escape_string 
+            # then decode it back into unicode before continuing
+            s = s.encode("utf-8")
+            s = MySQLdb.escape_string(s)
+            s = s.decode("utf-8")
+        return s
+
+    def sql_concat(self, items):
+        """ Writes concat for a list of items """
+        return "CONCAT(" + ",".join(items) + ")"
+
+class DatabasePostgreSQL(Database):
+    type_shorttext = "VARCHAR(1024)"
+    type_longtext = "TEXT"
+    type_clob = "TEXT"
+    type_datetime = "TIMESTAMP"
+    type_integer = "INTEGER"
+    type_float = "REAL"
+    
+    def connect(self):
+        c = psycopg2.connect(host=self.host, port=self.port, user=self.username, password=self.password, database=self.database)
+        c.set_client_encoding("UTF8")
+        return c
+
+    def cursor_open(self):
+        """ Overridden to apply timeout """
+        if self.connection is not None:
+            c = self.connection
+            s = self.connection.cursor()
+        else:
+            c = self.connect()
+            s = c.cursor()
+        if self.timeout > 0:
+            s.execute("SET statement_timeout=%d" % self.timeout)
+        return c, s
+
+    def ddl_add_index(self, name, table, column, unique = False, partial = False):
+        u = ""
+        if unique: u = "UNIQUE "
+        if partial: column = "left(%s,255)" % column
+        return "CREATE %sINDEX %s ON %s (%s)" % (u, name, table, column)
+
+    def ddl_drop_column(self, table, column):
+        return "ALTER TABLE %s DROP COLUMN %s CASCADE" % (table, column)
+
+    def ddl_modify_column(self, table, column, newtype, using = ""):
+        if using != "": using = " USING %s" % using # if cast is required to change type, eg: (colname::integer)
+        return "ALTER TABLE %s ALTER %s TYPE %s%s" % (table, column, newtype, using)
+
+    def escape(self, s):
+        """ Makes a string value safe for database queries
+        """
+        if s is None: return ""
+        s = s.replace("'", "`")
+        s = psycopg2.extensions.adapt(s).adapted
+        return s
+
+    def sql_char_length(self, item):
+        """ Writes a char length """
+        return "char_length(%s)" % item
+
+class DatabaseSQLite3(Database):
+    type_shorttext = "VARCHAR(1024)"
+    type_longtext = "TEXT"
+    type_clob = "TEXT"
+    type_datetime = "TIMESTAMP"
+    type_integer = "INTEGER"
+    type_float = "REAL"
+   
+    def connect(self):
+        return sqlite3.connect(self.database, detect_types=sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES)
+
+def get_database(t = None):
+    """ Returns a database object for the current database backend, or type t if supplied """
+    m = {
+        "HSQLDB": DatabaseHSQLDB,
+        "MYSQL": DatabaseMySQL,
+        "POSTGRESQL": DatabasePostgreSQL,
+        "SQLITE": DatabaseSQLite3
+    }
+    if t is None: t = DB_TYPE
+    return m[t]()
+
+def query(dbo, sql, limit = 0):
     """ Runs the query given and returns the resultset as a list of dictionaries. 
         All fieldnames are uppercased when returned.
+        limit: Limit to X rows
     """
     try:
-        c, s = connect_cursor_open(dbo)
+        c, s = dbo.cursor_open()
+        # Add limit clause if set
+        if limit > 0:
+            sql = "%s %s" % (sql, dbo.sql_limit(limit))
         # Explain the query if the option is on
         if DB_EXPLAIN_QUERIES:
             esql = "EXPLAIN %s" % sql
@@ -132,7 +320,7 @@ def query(dbo, sql):
                 v = encode_str(dbo, row[i])
                 rowmap[cols[i]] = v
             l.append(rowmap)
-        connect_cursor_close(dbo, c, s)
+        dbo.cursor_close(c, s)
         if DB_TIME_QUERIES:
             tt = time.time() - start
             if tt > DB_TIME_LOG_OVER:
@@ -144,11 +332,11 @@ def query(dbo, sql):
         raise err
     finally:
         try:
-            connect_cursor_close(dbo, c, s)
+            dbo.cursor_close(c, s)
         except:
             pass
 
-def query_cache(dbo, sql, age = 60):
+def query_cache(dbo, sql, age = 60, limit = 0):
     """
     Runs the query given and caches the result
     for age seconds. If there's already a valid cached
@@ -162,7 +350,7 @@ def query_cache(dbo, sql, age = 60):
     results = cachemem.get(cache_key)
     if results is not None:
         return results
-    results = query(dbo, sql)
+    results = query(dbo, sql, limit=limit)
     cachemem.put(cache_key, results, age)
     return results
 
@@ -172,7 +360,7 @@ def query_columns(dbo, sql):
         a list in the order they appeared in the query
     """
     try:
-        c, s = connect_cursor_open(dbo)
+        c, s = dbo.cursor_open()
         # Run the query and retrieve all rows
         s.execute(sql)
         c.commit()
@@ -180,7 +368,7 @@ def query_columns(dbo, sql):
         cn = []
         for col in s.description:
             cn.append(col[0].upper())
-        connect_cursor_close(dbo, c, s)
+        dbo.cursor_close(c, s)
         return cn
     except Exception as err:
         al.error(str(err), "db.query_columns", dbo, sys.exc_info())
@@ -188,7 +376,7 @@ def query_columns(dbo, sql):
         raise err
     finally:
         try:
-            connect_cursor_close(dbo, c, s)
+            dbo.cursor_close(c, s)
         except:
             pass
 
@@ -198,7 +386,7 @@ def query_generator(dbo, sql):
         generator function version that uses a forward cursor.
     """
     try:
-        c, s = connect_cursor_open(dbo)
+        c, s = dbo.cursor_open()
         # Run the query and retrieve all rows
         s.execute(sql)
         c.commit()
@@ -215,14 +403,14 @@ def query_generator(dbo, sql):
                 rowmap[cols[i]] = v
             yield rowmap
             row = s.fetchone()
-        connect_cursor_close(dbo, c, s)
+        dbo.cursor_close(c, s)
     except Exception as err:
         al.error(str(err), "db.query_generator", dbo, sys.exc_info())
         al.error("failing sql: %s" % sql, "db.query_generator", dbo)
         raise err
     finally:
         try:
-            connect_cursor_close(dbo, c, s)
+            dbo.cursor_close(c, s)
         except:
             pass
 
@@ -269,12 +457,12 @@ def query_tuple(dbo, sql):
         as a grid of tuples
     """
     try:
-        c, s = connect_cursor_open(dbo)
+        c, s = dbo.cursor_open()
         # Run the query and retrieve all rows
         s.execute(sql)
         d = s.fetchall()
         c.commit()
-        connect_cursor_close(dbo, c, s)
+        dbo.cursor_close(c, s)
         return d
     except Exception as err:
         al.error(str(err), "db.query_tuple", dbo, sys.exc_info())
@@ -282,7 +470,7 @@ def query_tuple(dbo, sql):
         raise err
     finally:
         try:
-            connect_cursor_close(dbo, c, s)
+            dbo.cursor_close(c, s)
         except:
             pass
 
@@ -292,7 +480,7 @@ def query_tuple_columns(dbo, sql):
         as a grid of tuples and a list of columnames
     """
     try:
-        c, s = connect_cursor_open(dbo)
+        c, s = dbo.cursor_open()
         # Run the query and retrieve all rows
         s.execute(sql)
         d = s.fetchall()
@@ -301,7 +489,7 @@ def query_tuple_columns(dbo, sql):
         cn = []
         for col in s.description:
             cn.append(col[0].upper())
-        connect_cursor_close(dbo, c, s)
+        dbo.cursor_close(c, s)
         return (d, cn)
     except Exception as err:
         al.error(str(err), "db.query_tuple_columns", dbo, sys.exc_info())
@@ -309,7 +497,7 @@ def query_tuple_columns(dbo, sql):
         raise err
     finally:
         try:
-            connect_cursor_close(dbo, c, s)
+            dbo.cursor_close(c, s)
         except:
             pass
 
@@ -329,11 +517,11 @@ def execute(dbo, sql, override_lock = False):
     """
     if not override_lock and dbo.locked: return 0
     try:
-        c, s = connect_cursor_open(dbo)
+        c, s = dbo.cursor_open()
         s.execute(sql)
         rv = s.rowcount
         c.commit()
-        connect_cursor_close(dbo, c, s)
+        dbo.cursor_close(c, s)
         if DB_EXEC_LOG != "":
             with open(DB_EXEC_LOG.replace("{database}", dbo.database), "a") as f:
                 f.write("-- %s\n%s;\n" % (nowsql(), sql))
@@ -350,7 +538,7 @@ def execute(dbo, sql, override_lock = False):
         raise err
     finally:
         try:
-            connect_cursor_close(dbo, c, s)
+            dbo.cursor_close(c, s)
         except:
             pass
 
@@ -366,11 +554,11 @@ def execute_many(dbo, sql, params, override_lock = False):
     """
     if not override_lock and dbo.locked: return
     try:
-        c, s = connect_cursor_open(dbo)
+        c, s = dbo.cursor_open()
         s.executemany(sql, params)
         rv = s.rowcount
         c.commit()
-        connect_cursor_close(dbo, c, s)
+        dbo.cursor_close(c, s)
         return rv
     except Exception as err:
         al.error(str(err), "db.execute_many", dbo, sys.exc_info())
@@ -384,7 +572,7 @@ def execute_many(dbo, sql, params, override_lock = False):
         raise err
     finally:
         try:
-            connect_cursor_close(dbo, c, s)
+            dbo.cursor_close(c, s)
         except:
             pass
 
@@ -456,7 +644,7 @@ def get_multiple_database_info(alias):
     """
     Gets the database info for the alias from our configured map.
     """
-    dbo = DatabaseInfo()
+    dbo = get_database()
     if alias not in MULTIPLE_DATABASES_MAP:
         dbo.database = "FAIL"
         return dbo
@@ -582,12 +770,12 @@ def ds(s, sanitise_xss = True):
         return u"'%s'" % str(s)
     elif not DB_DECODE_HTML_ENTITIES:
         s = utils.encode_html(s)            # Turn any leftover unicode chars into HTML entities
-        s = escape(s)                       # DB/SQL injection safe
+        s = get_database().escape(s)        # DB/SQL injection safe
         if sanitise_xss: s = escape_xss(s)  # XSS
         return u"'%s'" % s
     else:
         s = utils.decode_html(s)            # Turn HTML entities into unicode symbols
-        s = escape(s)                       # DB/SQL Injection safe
+        s = get_database().escape(s)        # DB/SQL injection safe
         if sanitise_xss: s = escape_xss(s)  # XSS
         return u"'%s'" % s
 
@@ -605,22 +793,6 @@ def di(i):
     except:
         return "0"
 
-def concat(dbo, items):
-    """ Writes a database independent concat """
-    if dbo.dbtype == "MYSQL":
-        return "CONCAT(" + ",".join(items) + ")"
-    elif dbo.dbtype == "POSTGRESQL" or dbo.dbtype == "SQLITE":
-        return " || ".join(items)
-
-def char_length(dbo, item):
-    """ Writes a database independent char length """
-    if dbo.dbtype == "MYSQL":
-        return "LENGTH(%s)" % item
-    elif dbo.dbtype == "POSTGRESQL":
-        return "char_length(%s)" % item
-    elif dbo.dbtype == "SQLITE":
-        return "length(%s)" % item
-
 def check_recordversion(dbo, table, tid, version):
     """
     Verifies that the record with ID tid in table still has
@@ -631,32 +803,6 @@ def check_recordversion(dbo, table, tid, version):
     """
     if version < 0: return True
     return version == query_int(dbo, "SELECT RecordVersion FROM %s WHERE ID = %d" % (table, tid))
-
-def escape(s):
-    """ Makes a value safe for database queries
-    """
-    if s is None: return ""
-    
-    # This is historic - ASM2 switched backtick for apostrophes, so we retain
-    # it for compatibility as lots of data relies on it now
-    s = s.replace("'", "`")
-
-    # Use the database driver's own value escaping technique
-    # to encode backslashes/other disallowed items and mitigate 
-    # SQL injection encoding attacks.
-    # This is a stopgap measure as we should be using parameterised queries.
-    if DB_TYPE == "POSTGRESQL": 
-        s = psycopg2.extensions.adapt(s).adapted
-    elif DB_TYPE == "MYSQL":
-        if utils.is_str(s):
-            s = MySQLdb.escape_string(s)
-        elif utils.is_unicode(s):
-            # Encode the string as UTF-8 for MySQL escape_string 
-            # then decode it back into unicode before continuing
-            s = s.encode("utf-8")
-            s = MySQLdb.escape_string(s)
-            s = s.decode("utf-8")
-    return s
 
 def escape_xss(s):
     """ Make a value safe from XSS attacks by encoding tag delimiters """

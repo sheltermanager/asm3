@@ -199,7 +199,7 @@ def get_animal_data(dbo, pc, animalid = 0, include_additional_fields = False, st
     strip_personal_data: Remove any personal data such as surrenderer, brought in by, etc.
     """
     sql = get_animal_data_query(dbo, pc, animalid)
-    rows = db.query(dbo, sql)
+    rows = db.query(dbo, sql, limit=pc.limit)
     # If the sheltercode format has a slash in it, convert it to prevent
     # creating images with broken paths.
     if len(rows) > 0 and rows[0]["SHELTERCODE"].find("/") != -1:
@@ -310,9 +310,6 @@ def get_animal_data_query(dbo, pc, animalid = 0):
         sql += " ORDER BY a.AnimalName"
     else:
         sql += " ORDER BY a.MostRecentEntryDate"
-    # Limit
-    if pc.limit > 0:
-        sql += " LIMIT %d" % pc.limit
     return sql
 
 def get_microchip_data(dbo, patterns, publishername, allowintake = True):

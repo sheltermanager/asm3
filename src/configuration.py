@@ -301,7 +301,7 @@ DEFAULTS = {
 
 def cstring(dbo, key, default = ""):
     cmap = get_map(dbo)
-    if not key in cmap:
+    if key not in cmap:
         return default
     return cmap[key]
 

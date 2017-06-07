@@ -273,7 +273,7 @@ def get_animal_sheltercode(dbo, code):
     else:
         return rows[0]
 
-def get_animals_ids(dbo, sort, q, cachetime = 60):
+def get_animals_ids(dbo, sort, q, limit = 5, cachetime = 60):
     """
     Given a recordset of animal IDs, goes and gets the
     full records.
@@ -281,7 +281,7 @@ def get_animals_ids(dbo, sort, q, cachetime = 60):
     ID before feeding the list of IDs into the full animal_query. This performs
     a lot better than doing the full SELECT with ORDER BY/LIMIT
     """
-    init = db.query(dbo, q)
+    init = db.query(dbo, q, limit=limit)
     aids = []
     for aid in init:
         aids.append(str(aid["ID"]))
@@ -374,8 +374,7 @@ def get_animal_find_simple(dbo, query, classfilter = "all", limit = 0, locationf
     if query == "" and (classfilter == "all" or classfilter == "shelter"):
         locationfilter = get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid, andprefix=True)
         sql = get_animal_query(dbo) + " WHERE a.Archived = 0 %s ORDER BY a.AnimalName" % (locationfilter)
-        if limit > 0: sql += " LIMIT " + str(limit)
-        return db.query(dbo, sql)
+        return db.query(dbo, sql, limit=limit)
     ors = []
     query = query.replace("'", "`")
     def add(field):
@@ -437,8 +436,7 @@ def get_animal_find_simple(dbo, query, classfilter = "all", limit = 0, locationf
         sql += u" a.Sex = 0 AND "
     sql += get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid, andsuffix=True)
     sql += "(" + u" OR ".join(ors) + ") ORDER BY a.Archived, a.AnimalName"
-    if limit > 0: sql += " LIMIT " + str(limit)
-    return db.query(dbo, sql)
+    return db.query(dbo, sql, limit=limit)
 
 def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", siteid = 0):
     """
@@ -623,8 +621,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
     if len(c) > 0:
         where = " WHERE " + " AND ".join(c)
     sql = get_animal_query(dbo) + where + " ORDER BY a.AnimalName"
-    if limit > 0: sql += " LIMIT " + str(limit)
-    return db.query(dbo, sql)
+    return db.query(dbo, sql, limit=limit)
 
 def get_animals_not_for_adoption(dbo):
     """
@@ -739,7 +736,7 @@ def get_alerts(dbo, locationfilter = "", siteid = 0):
         "(SELECT COUNT(*) FROM animaltransport WHERE (DriverOwnerID = 0 OR DriverOwnerID Is Null) AND Status < 10) AS trnodrv, " \
         "(SELECT COUNT(*) FROM animal WHERE Archived = 0 AND DaysOnShelter > 182) AS lngterm, " \
         "(SELECT SUM(Alerts) FROM publishlog WHERE PublishDateTime >= %(today)s) AS publish " \
-        "FROM lksmovementtype LIMIT 1" \
+        "FROM lksmovementtype WHERE ID=1" \
             % { "today": today, "endoftoday": endoftoday, "oneweek": oneweek, "oneyear": oneyear, "onemonth": onemonth, 
                 "futuremonth": futuremonth, "locfilter": locationfilter, "shelterfilter": shelterfilter }
     return db.query_cache(dbo, sql, 120)
@@ -769,7 +766,7 @@ def get_stats(dbo):
             "(SELECT SUM(Cost) FROM animaltest WHERE DateOfTest >= %(from)s) + " \
             "(SELECT SUM(Cost) FROM animalmedical WHERE StartDate >= %(from)s) + " \
             "(SELECT SUM(Cost) FROM animaltransport WHERE PickupDateTime >= %(from)s) AS Costs " \
-        "FROM lksmovementtype LIMIT 1" \
+        "FROM lksmovementtype WHERE ID=1" \
         % { "from": countfrom, "adoption": movement.ADOPTION, "reclaimed": movement.RECLAIMED, "transfer": movement.TRANSFER }
     return db.query_cache(dbo, sql, 120)
 
@@ -823,161 +820,161 @@ def get_timeline(dbo, limit = 500):
         "(SELECT 'animal' AS LinkTarget, 'ENTERED' AS Category, DateBroughtIn AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 " \
-            "ORDER BY DateBroughtIn DESC, ID LIMIT %(limit)s) " \
+            "ORDER BY DateBroughtIn DESC, ID %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'MICROCHIP' AS Category, IdentichipDate AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND IdentichipDate Is Not Null " \
-            "ORDER BY IdentichipDate DESC, ID LIMIT %(limit)s) " \
+            "ORDER BY IdentichipDate DESC, ID %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'NEUTERED' AS Category, NeuteredDate AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND NeuteredDate Is Not Null " \
-            "ORDER BY NeuteredDate DESC, ID LIMIT %(limit)s) " \
+            "ORDER BY NeuteredDate DESC, ID %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'RESERVED' AS Category, ReservationDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "INNER JOIN owner ON adoption.OwnerID = owner.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Null AND ReservationDate Is Not Null " \
-            "ORDER BY ReservationDate DESC, animal.ID LIMIT %(limit)s) " \
+            "ORDER BY ReservationDate DESC, animal.ID %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'ADOPTED' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "INNER JOIN owner ON adoption.OwnerID = owner.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 1 " \
-            "ORDER BY MovementDate DESC, animal.ID LIMIT %(limit)s) " \
+            "ORDER BY MovementDate DESC, animal.ID %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'FOSTERED' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "INNER JOIN owner ON adoption.OwnerID = owner.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 2 " \
-            "ORDER BY MovementDate DESC, animal.ID LIMIT %(limit)s) " \
+            "ORDER BY MovementDate DESC, animal.ID %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'TRANSFER' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "INNER JOIN owner ON adoption.OwnerID = owner.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 3 " \
-            "ORDER BY MovementDate DESC, animal.ID LIMIT %(limit)s) " \
+            "ORDER BY MovementDate DESC, animal.ID %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'ESCAPED' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 4 " \
-            "ORDER BY MovementDate DESC, animal.ID LIMIT %(limit)s) " \
+            "ORDER BY MovementDate DESC, animal.ID %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'RECLAIMED' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "INNER JOIN owner ON adoption.OwnerID = owner.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 5 " \
-            "ORDER BY MovementDate DESC, animal.ID LIMIT %(limit)s) " \
+            "ORDER BY MovementDate DESC, animal.ID %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'STOLEN' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 6 " \
-            "ORDER BY MovementDate DESC, animal.ID LIMIT %(limit)s) " \
+            "ORDER BY MovementDate DESC, animal.ID %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'RELEASED' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 7 " \
-            "ORDER BY MovementDate DESC, animal.ID LIMIT %(limit)s) " \
+            "ORDER BY MovementDate DESC, animal.ID %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'RETAILER' AS Category, MovementDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "INNER JOIN owner ON adoption.OwnerID = owner.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND MovementType = 8 " \
-            "ORDER BY MovementDate DESC, animal.ID LIMIT %(limit)s) " \
+            "ORDER BY MovementDate DESC, animal.ID %(limit)s) " \
         "UNION ALL (SELECT 'animal_movements' AS LinkTarget, 'RETURNED' AS Category, ReturnDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, owner.OwnerName AS Text3, adoption.LastChangedBy FROM animal " \
             "INNER JOIN adoption ON adoption.AnimalID = animal.ID " \
             "LEFT OUTER JOIN owner ON adoption.OwnerID = owner.ID " \
             "WHERE NonShelterAnimal = 0 AND MovementDate Is Not Null AND ReturnDate Is Not Null " \
-            "ORDER BY ReturnDate DESC, animal.ID LIMIT %(limit)s) " \
+            "ORDER BY ReturnDate DESC, animal.ID %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'DIED' AS Category, DeceasedDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, ReasonName AS Text3, animal.LastChangedBy FROM animal " \
             "INNER JOIN deathreason ON animal.PTSReasonID = deathreason.ID " \
             "WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND PutToSleep = 0 AND DeceasedDate Is Not Null " \
-            "ORDER BY DeceasedDate DESC, animal.ID LIMIT %(limit)s) " \
+            "ORDER BY DeceasedDate DESC, animal.ID %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'EUTHANISED' AS Category, DeceasedDate AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, ReasonName AS Text3, animal.LastChangedBy FROM animal " \
             "INNER JOIN deathreason ON animal.PTSReasonID = deathreason.ID " \
             "WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND PutToSleep = 1 AND DeceasedDate Is Not Null " \
-            "ORDER BY DeceasedDate DESC, animal.ID LIMIT %(limit)s) " \
+            "ORDER BY DeceasedDate DESC, animal.ID %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'FIVP' AS Category, CombiTestDate AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND CombiTested = 1 AND CombiTestDate Is Not Null AND CombiTestResult = 2 " \
-            "ORDER BY CombiTestDate DESC, ID LIMIT %(limit)s) " \
+            "ORDER BY CombiTestDate DESC, ID %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'FLVP' AS Category, CombiTestDate AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND CombiTested = 1 AND CombiTestDate Is Not Null AND FLVResult = 2 " \
-            "ORDER BY CombiTestDate DESC, ID LIMIT %(limit)s) " \
+            "ORDER BY CombiTestDate DESC, ID %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'HWP' AS Category, CombiTestDate AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND HeartwormTested = 1 AND HeartwormTestDate Is Not Null AND HeartwormTestResult = 2 " \
-            "ORDER BY HeartwormTestDate DESC, ID LIMIT %(limit)s) " \
+            "ORDER BY HeartwormTestDate DESC, ID %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'QUARANTINE' AS Category, LastChangedDate AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND IsQuarantine = 1 " \
-            "ORDER BY LastChangedDate DESC, ID LIMIT %(limit)s) " \
+            "ORDER BY LastChangedDate DESC, ID %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'HOLD' AS Category, DateBroughtIn AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND IsHold = 1 " \
-            "ORDER BY DateBroughtIn DESC, ID LIMIT %(limit)s) " \
+            "ORDER BY DateBroughtIn DESC, ID %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'NOTADOPT' AS Category, DateBroughtIn AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND IsNotAvailableForAdoption = 1 " \
-            "ORDER BY DateBroughtIn DESC, ID LIMIT %(limit)s) " \
+            "ORDER BY DateBroughtIn DESC, ID %(limit)s) " \
         "UNION ALL (SELECT 'animal' AS LinkTarget, 'AVAILABLE' AS Category, ActiveMovementReturn AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND ActiveMovementReturn Is Not Null AND IsNotAvailableForAdoption = 0 " \
-            "ORDER BY ActiveMovementReturn DESC, ID LIMIT %(limit)s) " \
+            "ORDER BY ActiveMovementReturn DESC, ID %(limit)s) " \
         "UNION ALL (SELECT 'animal_vaccination' AS LinkTarget, 'VACC' AS Category, DateOfVaccination AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, VaccinationType AS Text3, animalvaccination.LastChangedBy FROM animal " \
             "INNER JOIN animalvaccination ON animalvaccination.AnimalID = animal.ID " \
             "INNER JOIN vaccinationtype ON vaccinationtype.ID = animalvaccination.VaccinationID " \
             "WHERE NonShelterAnimal = 0 AND DateOfVaccination Is Not Null " \
-            "ORDER BY DateOfVaccination DESC, animal.ID LIMIT %(limit)s) " \
+            "ORDER BY DateOfVaccination DESC, animal.ID %(limit)s) " \
         "UNION ALL (SELECT 'animal_test' AS LinkTarget, 'TEST' AS Category, DateOfTest AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, TestName AS Text3, animaltest.LastChangedBy FROM animal " \
             "INNER JOIN animaltest ON animaltest.AnimalID = animal.ID " \
             "INNER JOIN testtype ON testtype.ID = animaltest.TestTypeID " \
             "WHERE NonShelterAnimal = 0 AND DateOfTest Is Not Null " \
-            "ORDER BY DateOfTest DESC, animal.ID LIMIT %(limit)s) " \
+            "ORDER BY DateOfTest DESC, animal.ID %(limit)s) " \
         "UNION ALL (SELECT 'animal_medical' AS LinkTarget, 'MEDICAL' AS Category, DateGiven AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, TreatmentName AS Text3, animalmedicaltreatment.LastChangedBy FROM animal " \
             "INNER JOIN animalmedicaltreatment ON animalmedicaltreatment.AnimalID = animal.ID " \
             "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID " \
             "WHERE NonShelterAnimal = 0 AND DateGiven Is Not Null " \
-            "ORDER BY DateGiven DESC, animal.ID LIMIT %(limit)s) " \
+            "ORDER BY DateGiven DESC, animal.ID %(limit)s) " \
         "UNION ALL (SELECT 'incident' AS LinkTarget, 'INCIDENTOPEN' AS Category, IncidentDateTime AS EventDate, animalcontrol.ID, " \
             "IncidentName AS Text1, DispatchAddress AS Text2, '' AS Text3, LastChangedBy FROM animalcontrol " \
             "INNER JOIN incidenttype ON incidenttype.ID = animalcontrol.IncidentTypeID " \
-            "ORDER BY IncidentDateTime DESC, animalcontrol.ID LIMIT %(limit)s) " \
+            "ORDER BY IncidentDateTime DESC, animalcontrol.ID %(limit)s) " \
         "UNION ALL (SELECT 'incident' AS LinkTarget, 'INCIDENTCLOSE' AS Category, CompletedDate AS EventDate, animalcontrol.ID, " \
             "IncidentName AS Text1, DispatchAddress AS Text2, CompletedName AS Text3, LastChangedBy FROM animalcontrol " \
             "INNER JOIN incidenttype ON incidenttype.ID = animalcontrol.IncidentTypeID " \
             "INNER JOIN incidentcompleted ON incidentcompleted.ID = animalcontrol.IncidentCompletedID " \
-            "ORDER BY CompletedDate DESC, animalcontrol.ID LIMIT %(limit)s) " \
+            "ORDER BY CompletedDate DESC, animalcontrol.ID %(limit)s) " \
         "UNION ALL (SELECT 'lostanimal' AS LinkTarget, 'LOST' AS Category, DateLost AS EventDate, animallost.ID, " \
             "DistFeat AS Text1, AreaLost AS Text2, SpeciesName AS Text3, LastChangedBy FROM animallost " \
             "INNER JOIN species ON animallost.AnimalTypeID = species.ID " \
-            "ORDER BY DateLost DESC, animallost.ID LIMIT %(limit)s) " \
+            "ORDER BY DateLost DESC, animallost.ID %(limit)s) " \
         "UNION ALL (SELECT 'foundanimal' AS LinkTarget, 'FOUND' AS Category, DateFound AS EventDate, animalfound.ID, " \
             "DistFeat AS Text1, AreaFound AS Text2, SpeciesName AS Text3, LastChangedBy FROM animalfound " \
             "INNER JOIN species ON animalfound.AnimalTypeID = species.ID " \
-            "ORDER BY DateFound DESC, animalfound.ID LIMIT %(limit)s) " \
+            "ORDER BY DateFound DESC, animalfound.ID %(limit)s) " \
         "UNION ALL (SELECT 'waitinglist' AS LinkTarget, 'WAITINGLIST' AS Category, DatePutOnList AS EventDate, animalwaitinglist.ID, " \
             "AnimalDescription AS Text1, lkurgency.Urgency AS Text2, '' AS Text3, LastChangedBy FROM animalwaitinglist " \
             "INNER JOIN lkurgency ON lkurgency.ID = animalwaitinglist.Urgency " \
-            "ORDER BY DatePutOnList DESC, animalwaitinglist.ID LIMIT %(limit)s) " \
+            "ORDER BY DatePutOnList DESC, animalwaitinglist.ID %(limit)s) " \
         ") dummy " \
         "WHERE EventDate <= %(today)s " \
         "ORDER BY EventDate DESC, ID " \
-        "LIMIT %(limit)s" % { "today": db.ddt(now(dbo.timezone)), "limit": str(limit) }
+        "%(limit)s" % { "today": db.ddt(now(dbo.timezone)), "limit": dbo.sql_limit(limit) }
     if dbo.dbtype == "SQLITE":
         # SQLITE can't support the subquery LIMIT clauses and breaks, give SQLite users
         # a simpler timeline with just entering animals
         sql = "SELECT 'animal' AS LinkTarget, 'ENTERED' AS Category, DateBroughtIn AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
             "WHERE NonShelterAnimal = 0 AND DateBroughtIn <= %(today)s " \
-            "ORDER BY DateBroughtIn DESC, ID LIMIT %(limit)s" % \
-            { "today": db.ddt(now(dbo.timezone)), "limit": str(limit) }
+            "ORDER BY DateBroughtIn DESC, ID %(limit)s" % \
+            { "today": db.ddt(now(dbo.timezone)), "limit": dbo.sql_limit(limit) }
     return embellish_timeline(dbo.locale, db.query_cache(dbo, sql, 120))
 
 def calc_time_on_shelter(dbo, animalid, a = None):
@@ -1449,35 +1446,35 @@ def get_links_recently_adopted(dbo, limit = 5, locationfilter = "", siteid = 0):
     Returns link info for animals who were recently adopted
     """
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
-    return get_animals_ids(dbo, "a.ActiveMovementDate DESC", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE ActiveMovementType = 1 %s ORDER BY ActiveMovementDate DESC LIMIT %d" % (locationfilter, limit), 120)
+    return get_animals_ids(dbo, "a.ActiveMovementDate DESC", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE ActiveMovementType = 1 %s ORDER BY ActiveMovementDate DESC" % locationfilter, limit=limit, cachetime=120)
 
 def get_links_recently_fostered(dbo, limit = 5, locationfilter = "", siteid = 0):
     """
     Returns link info for animals who were recently fostered
     """
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
-    return get_animals_ids(dbo, "a.ActiveMovementDate DESC", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE ActiveMovementType = 2 %s ORDER BY ActiveMovementDate DESC LIMIT %d" % (locationfilter, limit), 120)
+    return get_animals_ids(dbo, "a.ActiveMovementDate DESC", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE ActiveMovementType = 2 %s ORDER BY ActiveMovementDate DESC" % locationfilter, limit=limit, cachetime=120)
 
 def get_links_recently_changed(dbo, limit = 5, locationfilter = "", siteid = 0):
     """
     Returns link info for animals who have recently been changed.
     """
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, whereprefix=True)
-    return get_animals_ids(dbo, "a.LastChangedDate DESC", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation %s ORDER BY LastChangedDate DESC LIMIT %d" % (locationfilter, limit), 120)
+    return get_animals_ids(dbo, "a.LastChangedDate DESC", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation %s ORDER BY LastChangedDate DESC" % locationfilter, limit=limit, cachetime=120)
 
 def get_links_recently_entered(dbo, limit = 5, locationfilter = "", siteid = 0):
     """
     Returns link info for animals who recently entered the shelter.
     """
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
-    return get_animals_ids(dbo, "a.MostRecentEntryDate DESC", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE Archived = 0 %s ORDER BY MostRecentEntryDate DESC LIMIT %d" % (locationfilter, limit), 120)
+    return get_animals_ids(dbo, "a.MostRecentEntryDate DESC", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE Archived = 0 %s ORDER BY MostRecentEntryDate DESC" % locationfilter, limit=limit, cachetime=120)
 
 def get_links_longest_on_shelter(dbo, limit = 5, locationfilter = "", siteid = 0):
     """
     Returns link info for animals who have been on the shelter the longest
     """
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
-    return get_animals_ids(dbo, "a.MostRecentEntryDate", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE Archived = 0 %s ORDER BY MostRecentEntryDate LIMIT %d" % (locationfilter, limit), 120)
+    return get_animals_ids(dbo, "a.MostRecentEntryDate", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE Archived = 0 %s ORDER BY MostRecentEntryDate" % locationfilter, limit=limit, cachetime=120)
 
 def get_location_filter_clause(locationfilter = "", tablequalifier = "", siteid = 0, whereprefix = False, andprefix = False, andsuffix = False):
     """
@@ -1746,11 +1743,9 @@ def get_shelterview_animals(dbo, locationfilter = "", siteid = 0):
     """
     Returns all available animals for shelterview
     """
-    limitsql = ""
     limit = configuration.record_search_limit(dbo)
-    if limit > 0: limitsql = "LIMIT %d" % limit
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
-    return get_animals_ids(dbo, "a.AnimalName", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation WHERE Archived = 0 %s ORDER BY HasPermanentFoster, ID DESC %s" % (locationfilter, limitsql))
+    return get_animals_ids(dbo, "a.AnimalName", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation WHERE Archived = 0 %s ORDER BY HasPermanentFoster, ID DESC" % locationfilter, limit=limit)
 
 def insert_animal_from_form(dbo, post, username):
     """
@@ -4324,7 +4319,7 @@ def update_animal_figures_annual(dbo, year = 0):
         # Find the last species this type referred to. If it was a dog or cat
         # species and we're splitting types for puppies/kittens, then mark the
         # type as appropriate for splitting.
-        at["SPECIESID"] = db.query_int(dbo, "SELECT SpeciesID FROM animal WHERE AnimalTypeID = %d ORDER BY ID DESC LIMIT 1" % at["ID"])
+        at["SPECIESID"] = db.query_int(dbo, "SELECT SpeciesID FROM animal WHERE AnimalTypeID = %d ORDER BY ID DESC %s" % (at["ID"], dbo.sql_limit(1)))
         at["SHOWSPLIT"] = False
         if showbabiestype and (at["SPECIESID"] == 1 or at["SPECIESID"] == 2):
             at["SHOWSPLIT"] = True
@@ -4475,7 +4470,7 @@ def update_animal_figures_annual(dbo, year = 0):
         # Find the last species this reason referred to. If it was a dog or cat
         # species and we're splitting types for puppies/kittens, then mark the
         # reason as appropriate for splitting.
-        er["SPECIESID"] = db.query_int(dbo, "SELECT SpeciesID FROM animal WHERE EntryReasonID = %d ORDER BY ID DESC LIMIT 1" % er["ID"])
+        er["SPECIESID"] = db.query_int(dbo, "SELECT SpeciesID FROM animal WHERE EntryReasonID = %d ORDER BY ID DESC %s" % (er["ID"], dbo.sql_limit(1)))
         er["SHOWSPLIT"] = False
         if showbabiestype and (er["SPECIESID"] == 1 or er["SPECIESID"] == 2):
             er["SHOWSPLIT"] = True

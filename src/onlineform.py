@@ -457,7 +457,7 @@ def get_onlineformincoming_html_print(dbo, ids):
 
 def get_onlineformincoming_name(dbo, collationid):
     """ Returns the form name for a collation id """
-    return db.query_string(dbo, "SELECT FormName FROM onlineformincoming WHERE CollationID = %d LIMIT 1" % int(collationid))
+    return db.query_string(dbo, "SELECT FormName FROM onlineformincoming WHERE CollationID = %d %s" % (int(collationid), dbo.sql_limit(1)))
 
 def get_animal_id_from_field(dbo, name):
     """ Used for ADOPTABLE/SHELTER animal fields, gets the ID from the value """
@@ -748,7 +748,7 @@ def guess_transporttype(dbo, s):
     s = str(s).lower()
     guess = db.query_int(dbo, "SELECT ID FROM transporttype WHERE LOWER(TransportTypeName) LIKE %s" % db.ds(s))
     if guess != 0: return guess
-    return db.query_int(dbo, "SELECT ID FROM transporttype ORDER BY ID LIMIT 1")
+    return db.query_int(dbo, "SELECT ID FROM transporttype ORDER BY ID")
 
 def attach_animal(dbo, username, collationid):
     """

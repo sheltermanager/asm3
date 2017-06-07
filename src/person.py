@@ -213,8 +213,8 @@ def get_links(dbo, pid):
     Gets a list of all records that link to this person
     """
     l = dbo.locale
-    linkdisplay = db.concat(dbo, ("a.ShelterCode", "' - '", "a.AnimalName"))
-    animalextra = db.concat(dbo, ("a.BreedName", "' '", "s.SpeciesName", "' ('", 
+    linkdisplay = dbo.sql_concat(("a.ShelterCode", "' - '", "a.AnimalName"))
+    animalextra = dbo.sql_concat(("a.BreedName", "' '", "s.SpeciesName", "' ('", 
         "CASE WHEN a.Archived = 0 AND a.ActiveMovementType = 2 THEN mt.MovementType " \
         "WHEN a.NonShelterAnimal = 1 THEN '' " \
         "WHEN a.Archived = 1 AND a.DeceasedDate Is Not Null AND a.ActiveMovementID = 0 THEN dr.ReasonName " \
@@ -405,8 +405,7 @@ def get_person_find_simple(dbo, query, username="", classfilter="all", includeSt
     if not includeVolunteers:
         cf = " AND o.IsVolunteer = 0"
     sql = utils.cunicode(get_person_query(dbo)) + " WHERE (" + u" OR ".join(ors) + ")" + cf + " ORDER BY o.OwnerName"
-    if limit > 0: sql += " LIMIT " + str(limit)
-    return reduce_find_results(dbo, username, db.query(dbo, sql))
+    return reduce_find_results(dbo, username, db.query(dbo, sql, limit=limit))
 
 def get_person_find_advanced(dbo, criteria, username, includeStaff = False, limit = 0):
     """
@@ -491,8 +490,7 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, limi
         sql = get_person_query(dbo) + " ORDER BY o.OwnerName"
     else:
         sql = get_person_query(dbo) + " WHERE " + " AND ".join(c) + " ORDER BY o.OwnerName"
-    if limit > 0: sql += " LIMIT " + str(limit)
-    return reduce_find_results(dbo, username, db.query(dbo, sql))
+    return reduce_find_results(dbo, username, db.query(dbo, sql, limit=limit))
 
 def reduce_find_results(dbo, username, rows):
     """
@@ -518,7 +516,7 @@ def reduce_find_results(dbo, username, rows):
     return results
 
 def get_person_rota(dbo, personid):
-    return db.query(dbo, get_rota_query(dbo) + " WHERE r.OwnerID = %d ORDER BY r.StartDateTime DESC LIMIT 100" % personid)
+    return db.query(dbo, get_rota_query(dbo) + " WHERE r.OwnerID = %d ORDER BY r.StartDateTime DESC" % personid, limit=100)
 
 def get_rota(dbo, startdate, enddate):
     """ Returns rota records that apply between the two dates given """
@@ -1320,7 +1318,7 @@ def update_missing_geocodes(dbo):
         al.warn("BULK_GEO_BATCH is False, skipping", "update_missing_geocodes", dbo)
         return
     people = db.query(dbo, "SELECT ID, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode " \
-        "FROM owner WHERE LatLong Is Null OR LatLong = '' ORDER BY CreatedDate DESC LIMIT %d" % BULK_GEO_LIMIT)
+        "FROM owner WHERE LatLong Is Null OR LatLong = '' ORDER BY CreatedDate DESC", limit=BULK_GEO_LIMIT)
     batch = []
     for p in people:
         latlong = geo.get_lat_long(dbo, p["OWNERADDRESS"], p["OWNERTOWN"], p["OWNERCOUNTY"], p["OWNERPOSTCODE"])

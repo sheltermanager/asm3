@@ -33,7 +33,7 @@ def get_database_info(alias):
     that the database does not exist on this server.
     """
     alias = re.sub(INVALID_REMOVE, '', alias).lower()
-    dbo = db.DatabaseInfo()
+    dbo = db.get_database()
     dbo.host = "/var/run/postgresql/" # use socket dir to use UNIX sockets to connect to local pgbouncer /var/run/postgresql/
     dbo.port = 6432
     dbo.dbtype = "POSTGRESQL"

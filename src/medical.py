@@ -95,12 +95,12 @@ def get_medicaltreatment_query(dbo):
         "LEFT OUTER JOIN owner adv ON adv.ID = amt.AdministeringVetID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " % \
             { 
-                "compositeid": db.concat(dbo, ["am.ID", "'_'", "amt.ID"]),
-                "daily": db.concat(dbo, ["am.TimingRule", "' treatments every '", "am.TimingRuleNoFrequencies", "' days'"]),
-                "weekly": db.concat(dbo, ["am.TimingRule", "' treatments every '", "am.TimingRuleNoFrequencies", "' weeks'"]),
-                "monthly": db.concat(dbo, ["am.TimingRule", "' treatments every '", "am.TimingRuleNoFrequencies", "' months'"]),
-                "yearly": db.concat(dbo, ["am.TimingRule", "' treatments every '", "am.TimingRuleNoFrequencies", "' years'"]),
-                "numbertreatments": db.concat(dbo, ["(am.TimingRule * am.TotalNumberOfTreatments)", "' treatments'"])
+                "compositeid": dbo.sql_concat(["am.ID", "'_'", "amt.ID"]),
+                "daily": dbo.sql_concat(["am.TimingRule", "' treatments every '", "am.TimingRuleNoFrequencies", "' days'"]),
+                "weekly": dbo.sql_concat(["am.TimingRule", "' treatments every '", "am.TimingRuleNoFrequencies", "' weeks'"]),
+                "monthly": dbo.sql_concat(["am.TimingRule", "' treatments every '", "am.TimingRuleNoFrequencies", "' months'"]),
+                "yearly": dbo.sql_concat(["am.TimingRule", "' treatments every '", "am.TimingRuleNoFrequencies", "' years'"]),
+                "numbertreatments": dbo.sql_concat(["(am.TimingRule * am.TotalNumberOfTreatments)", "' treatments'"])
             }
 
 def get_test_query(dbo):

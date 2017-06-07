@@ -136,8 +136,7 @@ def get_lostanimal_find_simple(dbo, query = "", limit = 0):
             ors.append(add("a.DistFeat"))
             ors.append(add("a.Comments"))
     sql = get_lostanimal_query(dbo) + " WHERE " + " OR ".join(ors)
-    if limit > 0: sql += " LIMIT " + str(limit)
-    return db.query(dbo, sql)
+    return db.query(dbo, sql, limit=limit)
 
 def get_foundanimal_last_days(dbo, days = 90):
     """
@@ -176,8 +175,7 @@ def get_foundanimal_find_simple(dbo, query = "", limit = 0):
             ors.append(add("a.DistFeat"))
             ors.append(add("a.Comments"))
     sql = get_foundanimal_query(dbo) + " WHERE " + " OR ".join(ors)
-    if limit > 0: sql += " LIMIT " + str(limit)
-    return db.query(dbo, sql)
+    return db.query(dbo, sql, limit=limit)
 
 def get_lostanimal_find_advanced(dbo, criteria, limit = 0):
     """f
@@ -241,8 +239,7 @@ def get_lostanimal_find_advanced(dbo, criteria, limit = 0):
         adddate("completefrom", "completeto", "a.DateFound")
     where = " WHERE " + " AND ".join(c)
     sql = get_lostanimal_query(dbo) + where + " ORDER BY a.ID"
-    if limit > 0: sql += " LIMIT " + str(limit)
-    return db.query(dbo, sql)
+    return db.query(dbo, sql, limit=limit)
 
 def get_foundanimal_find_advanced(dbo, criteria, limit = 0):
     """
@@ -306,8 +303,7 @@ def get_foundanimal_find_advanced(dbo, criteria, limit = 0):
         adddate("completefrom", "completeto", "a.ReturnToOwnerDate")
     where = " WHERE " + " AND ".join(c)
     sql = get_foundanimal_query(dbo) + where + " ORDER BY a.ID"
-    if limit > 0: sql += " LIMIT " + str(limit)
-    return db.query(dbo, sql)
+    return db.query(dbo, sql, limit=limit)
 
 def get_lostanimal_satellite_counts(dbo, lfid):
     """

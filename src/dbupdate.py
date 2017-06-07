@@ -74,48 +74,25 @@ def sql_structure(dbo):
     """
     Returns the SQL necessary to create the database for the type specified
     """
-    SHORTTEXT = "VARCHAR(1024)"
-    LONGTEXT = "TEXT"
-    CLOB = "TEXT"
-    DATETIME = "TIMESTAMP"
-    INTEGER = "INTEGER"
-    FLOAT = "REAL"
-    if dbo.dbtype == "MYSQL":
-        CLOB = "LONGTEXT"
-        SHORTTEXT = "VARCHAR(255)" # MySQL max key length is 767 bytes for multi-byte charsets
-        LONGTEXT = "LONGTEXT"
-        DATETIME = "DATETIME"
-        FLOAT = "DOUBLE"
-    if dbo.dbtype == "HSQLDB":
-        LONGTEXT = "VARCHAR(2000000)"
-        CLOB = LONGTEXT
-        FLOAT = "DOUBLE"
+    SHORTTEXT = dbo.type_shorttext
+    LONGTEXT = dbo.type_longtext
+    CLOB = dbo.type_clob
+    DATETIME = dbo.type_datetime
+    INTEGER = dbo.type_integer
+    FLOAT = dbo.type_float
     def table(name, fields, includechange = True):
-        createtable = "CREATE TABLE "
-        if dbo.dbtype == "HSQLDB":
-            createtable = "DROP TABLE %s IF EXISTS;\nCREATE MEMORY TABLE " % name
         if includechange:
             cf = (fint("RecordVersion", True),
                 fstr("CreatedBy", True),
                 fdate("CreatedDate", True),
                 fstr("LastChangedBy", True),
                 fdate("LastChangedDate", True))
-            return "%s%s (%s);\n" % (createtable, name, ",".join(fields + cf))
-        return "%s%s (%s);\n" % (createtable, name, ",".join(fields) )
-    def index(name, table, fieldlist, unique = False, blob = False):
-        uniquestr = ""
-        blobstr = ""
-        if unique: uniquestr = "UNIQUE "
-        if blob and dbo.dbtype == "MYSQL": blobstr = "(255)"
-        if blob and dbo.dbtype == "POSTGRESQL": fieldlist = "left(%s, 255)" % fieldlist
-        return "CREATE %sINDEX %s ON %s (%s%s);\n" % ( uniquestr, name, table, fieldlist, blobstr)
+            return "%s;\n" % dbo.ddl_add_table(name, ",".join(fields + cf))
+        return "%s;\n" % dbo.ddl_add_table(name, ",".join(fields))
+    def index(name, table, fieldlist, unique = False, partial = False):
+        return "%s;\n" % dbo.ddl_add_index(name, table, fieldlist, unique, partial)
     def field(name, ftype = INTEGER, nullable = True, pk = False):
-        nullstr = "NOT NULL"
-        if nullable: nullstr = "NULL"
-        pkstr = ""
-        if pk: pkstr = " PRIMARY KEY"
-        if dbo.dbtype == "HSQLDB": name = name.upper()
-        return "%s %s %s%s" % ( name, ftype, nullstr, pkstr )
+        return dbo.ddl_add_table_column(name, ftype, nullable, pk)
     def fid():
         return field("ID", INTEGER, False, True)
     def fint(name, nullable = False):
@@ -741,7 +718,7 @@ def sql_structure(dbo):
         flongstr("Comments"),
         fdate("UrgencyUpdateDate", True),
         fdate("UrgencyLastUpdatedDate", True) ))
-    sql += index("animalwaitinglist_AnimalDescription", "animalwaitinglist", "AnimalDescription", blob = True)
+    sql += index("animalwaitinglist_AnimalDescription", "animalwaitinglist", "AnimalDescription", partial = True)
     sql += index("animalwaitinglist_OwnerID", "animalwaitinglist", "OwnerID")
     sql += index("animalwaitinglist_SpeciesID", "animalwaitinglist", "SpeciesID")
     sql += index("animalwaitinglist_Size", "animalwaitinglist", "Size")
@@ -2510,7 +2487,7 @@ def dump_hsqldb(dbo, includeDBFS = True):
     generator function.
     """
     # ASM2_COMPATIBILITY
-    hdbo = db.DatabaseInfo()
+    hdbo = db.get_database()
     hdbo.dbtype = "HSQLDB"
     yield sql_structure(hdbo)
     for x in dump(dbo, includeNonASM2 = False, includeDBFS = includeDBFS, escapeCR = " ", wrapTransaction = False):
@@ -2602,8 +2579,8 @@ def diagnostic(dbo):
             "(SELECT COUNT(*) FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0) AS TotalMedia, " \
             "(SELECT COUNT(*) FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0 AND WebsitePhoto = 1) AS TotalWeb, " \
             "(SELECT COUNT(*) FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0 AND DocPhoto = 1) AS TotalDoc, " \
-            "(SELECT ID FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0 AND MediaName LIKE '%.jpg' LIMIT 1) AS FirstImage " \
-            "FROM animal"):
+            "(SELECT ID FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0 AND MediaName LIKE '%.jpg' %s) AS FirstImage " \
+            "FROM animal" % dbo.sql_limit(1)):
             if a["TOTALMEDIA"] > 0 and a["TOTALWEB"] > 1:
                 # Too many web preferreds
                 db.execute(dbo, "UPDATE media SET WebsitePhoto = 0 WHERE LinkID = %d AND LinkTypeID = 0 AND ID <> %d" % (a["ID"], a["FIRSTIMAGE"]))
@@ -2691,69 +2668,39 @@ def perform_updates(dbo):
         configuration.db_unlock(dbo)
 
 def floattype(dbo):
-    if dbo.dbtype == "MYSQL":
-        return "DOUBLE"
-    else:
-        return "REAL"
+    return dbo.type_float
 
 def datetype(dbo):
-    if dbo.dbtype == "MYSQL": 
-        return "DATETIME" 
-    else:
-        return "TIMESTAMP"
+    return dbo.type_datetime
 
 def longtext(dbo):
-    if dbo.dbtype == "MYSQL":
-        return "LONGTEXT"
-    else:
-        return "TEXT"
+    return dbo.type_longtext
 
 def shorttext(dbo):
-    if dbo.dbtype == "MYSQL":
-        return "VARCHAR(255)"
-    else:
-        return "VARCHAR(1024)"
+    return dbo.type_shorttext
 
 def add_column(dbo, table, column, coltype):
-    db.execute_dbupdate(dbo, "ALTER TABLE %s ADD %s %s" % (table, column, coltype))
+    db.execute_dbupdate( dbo.ddl_add_column(table, column, coltype) )
 
-def add_index(dbo, indexname, tablename, fieldname, unique = False, blob = False):
-    try:
-        u = ""
-        kl = ""
-        if unique: u = "UNIQUE "
-        if blob and dbo.dbtype == "MYSQL": kl = "(255)"
-        if blob and dbo.dbtype == "POSTGRESQL": fieldname = "left(%s, 255)" % fieldname
-        db.execute_dbupdate(dbo, "CREATE %sINDEX %s ON %s (%s%s)" % (u, indexname, tablename, fieldname, kl))
-    except:
-        pass
+def add_index(dbo, indexname, tablename, fieldname, unique = False, partial = False):
+    db.execute_dbupdate( dbo.ddl_add_index(indexname, tablename, fieldname, unique, partial) )
 
 def drop_column(dbo, table, column):
-    cascade = ""
-    if dbo.dbtype == "POSTGRESQL":
-        cascade = " CASCADE"
-    db.execute_dbupdate(dbo, "ALTER TABLE %s DROP COLUMN %s%s" % (table, column, cascade))
+    db.execute_dbupdate( dbo.ddl_drop_column(table, column) )
 
 def drop_index(dbo, indexname, tablename):
     try:
-        if dbo.dbtype == "MYSQL":
-            db.execute_dbupdate(dbo, "DROP INDEX %s ON %s" % (indexname, tablename))
-        else:
-            db.execute_dbupdate(dbo, "DROP INDEX %s" % indexname)
+        db.execute_dbupdate( dbo.ddl_drop_index(indexname, tablename) )
     except:
         pass
 
 def modify_column(dbo, table, column, newtype, using = ""):
-    if dbo.dbtype == "MYSQL":
-        db.execute_dbupdate(dbo, "ALTER TABLE %s MODIFY %s %s" % (table, column, newtype))
-    elif dbo.dbtype == "POSTGRESQL":
-        if using != "": using = " USING %s" % using # if cast is required to change type, eg: (colname::integer)
-        db.execute_dbupdate(dbo, "ALTER TABLE %s ALTER %s TYPE %s%s" % (table, column, newtype, using))
+    db.execute_dbupdate( dbo.ddl_modify_column(table, column, newtype, using) )
 
 def column_exists(dbo, table, column):
     """ Returns True if the column exists for the table given """
     try:
-        db.query(dbo, "SELECT %s FROM %s LIMIT 1" % (column, table))
+        db.query(dbo, "SELECT %s FROM %s" % (column, table), limit=1)
         return True
     except:
         return False
@@ -3111,10 +3058,7 @@ def update_3211(dbo):
         "OwnerName", "OwnerAddress", "OwnerTown", "OwnerCounty", "OwnerPostcode", 
         "HomeTelephone", "WorkTelephone", "MobileTelephone", "EmailAddress" ]
     for f in fields:
-        if dbo.dbtype == "MYSQL":
-            db.execute_dbupdate(dbo, "ALTER TABLE owner MODIFY %s %s NOT NULL" % (f, shorttext(dbo)))
-        elif dbo.dbtype == "POSTGRESQL":
-            db.execute_dbupdate(dbo, "ALTER TABLE owner ALTER %s TYPE %s" % (f, shorttext(dbo)))
+        modify_column(dbo, "owner", f, dbo.type_shorttext)
 
 def update_3212(dbo):
     # Many of our lookup fields are too short for foreign languages
@@ -3171,13 +3115,7 @@ def update_3214(dbo):
         "lksmedialink.LinkType", "lksdiarylink.LinkType" ]
     for f in fields:
         table, field = f.split(".")
-        try:
-            if dbo.dbtype == "MYSQL":
-                db.execute_dbupdate(dbo, "ALTER TABLE %s MODIFY %s %s NOT NULL" % (table, field, shorttext(dbo)))
-            elif dbo.dbtype == "POSTGRESQL":
-                db.execute_dbupdate(dbo, "ALTER TABLE %s ALTER %s TYPE %s" % (table, field, shorttext(dbo)))
-        except Exception as err:
-            al.error("failed extending %s: %s" % (f, str(err)), "dbupdate.update_3214", dbo)
+        modify_column(dbo, table, field, dbo.type_shorttext)
 
 def update_3215(dbo):
     # Rename DisplayLocationString column to just DisplayLocation and ditch DisplayLocationName - it should be calculated
@@ -3235,13 +3173,7 @@ def update_3221(dbo):
     fields = [ "activeuser.UserName", "customreport.Title", "customreport.Category" ]
     for f in fields:
         table, field = f.split(".")
-        try:
-            if dbo.dbtype == "MYSQL":
-                db.execute_dbupdate(dbo, "ALTER TABLE %s MODIFY %s %s NOT NULL" % (table, field, shorttext(dbo)))
-            elif dbo.dbtype == "POSTGRESQL":
-                db.execute_dbupdate(dbo, "ALTER TABLE %s ALTER %s TYPE %s" % (table, field, shorttext(dbo)))
-        except Exception as err:
-            al.error("failed extending %s: %s" % (f, str(err)), "dbupdate.update_3221", dbo)
+        modify_column(dbo, table, field, dbo.type_shorttext)
 
 def update_3222(dbo):
     # Person investigation table
@@ -3566,7 +3498,7 @@ def update_33102(dbo):
     add_index(dbo, "animallost_AreaPostcode", "animallost", "AreaPostcode")
     add_index(dbo, "animalfound_AreaFound", "animalfound", "AreaFound")
     add_index(dbo, "animalfound_AreaPostcode", "animalfound", "AreaPostcode")
-    add_index(dbo, "animalwaitinglist_AnimalDescription", "animalwaitinglist", "AnimalDescription", blob = True)
+    add_index(dbo, "animalwaitinglist_AnimalDescription", "animalwaitinglist", "AnimalDescription", partial = True)
     add_index(dbo, "animalwaitinglist_OwnerID", "animalwaitinglist", "OwnerID")
     add_index(dbo, "animalfound_AnimalTypeID", "animalfound", "AnimalTypeID")
     add_index(dbo, "animallost_AnimalTypeID", "animallost", "AnimalTypeID")

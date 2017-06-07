@@ -199,7 +199,7 @@ def handler(post, path, remoteip, referer, querystring):
     return value is a tuple containing MIME type, max-age, content
     """
     # Database info
-    dbo = db.DatabaseInfo()
+    dbo = db.get_database()
 
     # Get service parameters
     account = post["account"]

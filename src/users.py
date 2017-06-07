@@ -660,7 +660,7 @@ def web_login(post, session, remoteip, path):
         DISABLED    - The database is disabled
         WRONGSERVER - The database is not on this server
     """
-    dbo = db.DatabaseInfo()
+    dbo = db.get_database()
     database = post["database"]
     username = post["username"]
     password = post["password"]
