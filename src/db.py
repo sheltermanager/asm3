@@ -103,11 +103,17 @@ class Database(object):
         if pk: pkstr = " PRIMARY KEY"
         return "%s %s %s%s" % ( name, coltype, nullstr, pkstr )
 
+    def ddl_add_view(self, name, sql):
+        return "CREATE VIEW %s AS %s" % (name, sql)
+
     def ddl_drop_column(self, table, column):
         return "ALTER TABLE %s DROP COLUMN %s" % (table, column)
 
     def ddl_drop_index(self, name, table):
         return "DROP INDEX %s" % name
+
+    def ddl_drop_view(self, name):
+        return "DROP VIEW IF EXISTS %s" % name
 
     def ddl_modify_column(self, table, column, newtype, using = ""):
         pass # Not all providers support this
@@ -516,6 +522,7 @@ def execute(dbo, sql, override_lock = False):
         for writes, but keep databases upto date.
     """
     if not override_lock and dbo.locked: return 0
+    if sql is None or sql.strip() == "": return 0
     try:
         c, s = dbo.cursor_open()
         s.execute(sql)
@@ -553,6 +560,7 @@ def execute_many(dbo, sql, params, override_lock = False):
         for writes, but keep databases upto date.
     """
     if not override_lock and dbo.locked: return
+    if sql is None or sql.strip() == "": return 0
     try:
         c, s = dbo.cursor_open()
         s.executemany(sql, params)

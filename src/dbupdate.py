@@ -2233,8 +2233,8 @@ def install_db_views(dbo):
     """
     def create_view(viewname, sql):
         try:
-            db.execute_dbupdate(dbo, "DROP VIEW IF EXISTS %s" % viewname)
-            db.execute_dbupdate(dbo, "CREATE VIEW %s AS %s" % (viewname, sql))
+            db.execute_dbupdate( dbo.ddl_drop_view(viewname) )
+            db.execute_dbupdate( dbo.ddl_add_view(viewname, sql) )
         except Exception as err:
             al.error("error creating view %s: %s" % (viewname, err), "dbupdate.install_db_views", dbo)
 
@@ -2487,8 +2487,7 @@ def dump_hsqldb(dbo, includeDBFS = True):
     generator function.
     """
     # ASM2_COMPATIBILITY
-    hdbo = db.get_database()
-    hdbo.dbtype = "HSQLDB"
+    hdbo = db.get_database("HSQLDB")
     yield sql_structure(hdbo)
     for x in dump(dbo, includeNonASM2 = False, includeDBFS = includeDBFS, escapeCR = " ", wrapTransaction = False):
         yield x
