@@ -213,12 +213,7 @@ class DatabaseMySQL(Database):
 
     def cursor_open(self):
         """ Overridden to apply timeout """
-        if self.connection is not None:
-            c = self.connection
-            s = self.connection.cursor()
-        else:
-            c = self.connect()
-            s = c.cursor()
+        c, s = Database.cursor_open(self)
         if self.timeout > 0: 
             s.execute("SET SESSION max_execution_time=%d" % self.timeout)
         return c, s
@@ -268,12 +263,7 @@ class DatabasePostgreSQL(Database):
 
     def cursor_open(self):
         """ Overridden to apply timeout """
-        if self.connection is not None:
-            c = self.connection
-            s = self.connection.cursor()
-        else:
-            c = self.connect()
-            s = c.cursor()
+        c, s = Database.cursor_open(self)
         if self.timeout > 0:
             s.execute("SET statement_timeout=%d" % self.timeout)
         return c, s
