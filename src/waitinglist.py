@@ -18,7 +18,7 @@ def get_waitinglist_query(dbo):
     Returns the SELECT and JOIN commands necessary for selecting
     waiting list rows with resolved lookups.
     """
-    return "SELECT DISTINCT a.*, a.ID AS WLID, " \
+    return "SELECT a.*, a.ID AS WLID, " \
         "s.SpeciesName AS SpeciesName, sz.Size AS SizeName, " \
         "o.OwnerName, o.OwnerSurname, o.OwnerForeNames, o.OwnerTitle, o.OwnerInitials, " \
         "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, " \

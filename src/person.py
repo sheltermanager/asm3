@@ -34,7 +34,7 @@ def get_person_query(dbo):
     Returns the SELECT and JOIN commands necessary for selecting
     person rows with resolved lookups.
     """
-    return "SELECT DISTINCT o.*, o.ID AS PersonID, " \
+    return "SELECT o.*, o.ID AS PersonID, " \
         "ho.OwnerName AS HomeCheckedByName, ho.HomeTelephone AS HomeCheckedByHomeTelephone, " \
         "ho.MobileTelephone AS HomeCheckedByMobileTelephone, ho.EmailAddress AS HomeCheckedByEmail, " \
         "web.MediaName AS WebsiteMediaName, " \

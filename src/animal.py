@@ -27,7 +27,7 @@ def get_animal_query(dbo):
     """
     Returns a select for animal rows with resolved lookups
     """
-    return "SELECT DISTINCT a.*, " \
+    return "SELECT a.*, " \
         "at.AnimalType AS AnimalTypeName, " \
         "ba1.AnimalName AS BondedAnimal1Name, " \
         "ba1.ShelterCode AS BondedAnimal1Code, " \
