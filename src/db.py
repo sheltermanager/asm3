@@ -7,7 +7,7 @@ import i18n
 import sys
 import time
 import utils
-from sitedefs import DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HAS_ASM2_PK_TABLE, DB_PK_STRATEGY, DB_DECODE_HTML_ENTITIES, DB_EXEC_LOG, DB_EXPLAIN_QUERIES, DB_TIME_QUERIES, DB_TIME_LOG_OVER, DB_TIMEOUT, CACHE_COMMON_QUERIES, MULTIPLE_DATABASES_MAP
+from sitedefs import DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HAS_ASM2_PK_TABLE, DB_DECODE_HTML_ENTITIES, DB_EXEC_LOG, DB_EXPLAIN_QUERIES, DB_TIME_QUERIES, DB_TIME_LOG_OVER, DB_TIMEOUT, CACHE_COMMON_QUERIES, MULTIPLE_DATABASES_MAP
 
 try:
     import sqlite3
@@ -93,6 +93,9 @@ class Database(object):
         if unique: u = "UNIQUE "
         return "CREATE %sINDEX %s ON %s (%s)" % (u, name, table, column)
 
+    def ddl_add_sequence(self, table, startat):
+        return "" # Not all RDBMSes support sequences so don't do anything by default
+
     def ddl_add_table(self, name, fieldblock):
         return "CREATE TABLE %s (%s)" % (name, fieldblock)
 
@@ -112,6 +115,9 @@ class Database(object):
     def ddl_drop_index(self, name, table):
         return "DROP INDEX %s" % name
 
+    def ddl_drop_sequence(self, table):
+        return "" # Not all RDBMSes support sequences so don't do anything by default
+
     def ddl_drop_view(self, name):
         return "DROP VIEW IF EXISTS %s" % name
 
@@ -126,6 +132,21 @@ class Database(object):
         s = s.replace("'", "`")
         return s
 
+    def get_id(self, table):
+        """ Returns the next ID for a table """
+        nextid = self.get_id_max(table)
+        self.update_asm2_primarykey(table, nextid)
+        al.debug("get_id: %s -> %d (max)" % (table, nextid), "Database.get_id", self)
+        return nextid
+
+    def get_id_max(self, table):
+        """ Returns the next ID for a table using MAX(ID) """
+        return query_int(self, "SELECT MAX(ID) FROM %s" % table) + 1
+
+    def install_stored_procedures(self):
+        """ Install any supporting stored procedures (typically for reports) needed for this backend """
+        pass
+
     def sql_char_length(dbo, item):
         """ Writes a database independent char length """
         return "LENGTH(%s)" % item
@@ -137,6 +158,17 @@ class Database(object):
     def sql_limit(dbo, x):
         """ Writes a limit clause to X items """
         return "LIMIT %s" % x
+
+    def update_asm2_primarykey(self, table, nextid):
+        """
+        Update the ASM2 primary key table.
+        """
+        if not self.has_asm2_pk_table: return
+        try:
+            execute(self, "DELETE FROM primarykey WHERE TableName = '%s'" % table)
+            execute(self, "INSERT INTO primarykey (TableName, NextID) VALUES ('%s', %d)" % (table, nextid))
+        except:
+            pass
 
     def __repr__(self):
         return "Database->locale=%s:dbtype=%s:host=%s:port=%d:db=%s:user=%s:timeout=%s" % ( self.locale, self.dbtype, self.host, self.port, self.database, self.username, self.timeout )
@@ -252,8 +284,14 @@ class DatabasePostgreSQL(Database):
         if partial: column = "left(%s,255)" % column
         return "CREATE %sINDEX %s ON %s (%s)" % (u, name, table, column)
 
+    def ddl_add_sequence(self, table, startat):
+        return "CREATE SEQUENCE seq_%s START %s" % (table, startat)
+
     def ddl_drop_column(self, table, column):
         return "ALTER TABLE %s DROP COLUMN %s CASCADE" % (table, column)
+
+    def ddl_drop_sequence(self, table):
+        return "DROP SEQUENCE IF EXISTS seq_%s" % table
 
     def ddl_modify_column(self, table, column, newtype, using = ""):
         if using != "": using = " USING %s" % using # if cast is required to change type, eg: (colname::integer)
@@ -266,6 +304,37 @@ class DatabasePostgreSQL(Database):
         s = s.replace("'", "`")
         s = psycopg2.extensions.adapt(s).adapted
         return s
+
+    def get_id(self, table):
+        """ Returns the next ID for a table using sequences
+        """
+        nextid = query_int(self, "SELECT nextval('seq_%s')" % table)
+        self.update_asm2_primarykey(table, nextid)
+        al.debug("get_id: %s -> %d (sequence)" % (table, nextid), "DatabasePostgreSQL.get_id", self)
+        return nextid
+
+    def install_stored_procedures(self):
+        """ Extra PG report procedures to cast a value to date and integer while ignoring errors """
+        execute_dbupdate(self, \
+            "CREATE OR REPLACE FUNCTION asm_to_date(p_date TEXT, p_format TEXT, OUT r_date DATE)\n" \
+            "LANGUAGE plpgsql\n" \
+            "AS $$\n" \
+            "BEGIN\n" \
+            "r_date = TO_DATE(p_date, p_format);\n" \
+            "EXCEPTION\n" \
+            "WHEN OTHERS THEN r_date = NULL;\n" \
+            "END;\n" \
+            "$$")
+        execute_dbupdate(self, \
+            "CREATE OR REPLACE FUNCTION asm_to_integer(p_int TEXT, OUT r_int INTEGER)\n" \
+            "LANGUAGE plpgsql\n" \
+            "AS $$\n" \
+            "BEGIN\n" \
+            "r_int = p_int::integer;\n" \
+            "EXCEPTION\n" \
+            "WHEN OTHERS THEN r_int = 0;\n" \
+            "END;\n" \
+            "$$")
 
     def sql_char_length(self, item):
         """ Writes a char length """
@@ -594,59 +663,11 @@ def has_structure(dbo):
     except:
         return False
 
-def _get_id_set_asm2_primarykey(dbo, table, nextid):
-    """
-    Update the ASM2 primary key table.
-    """
-    try:
-        affected = execute(dbo, "UPDATE primarykey SET NextID = %d WHERE TableName = '%s'" % (nextid, table))
-        if affected == 0: 
-            execute(dbo, "INSERT INTO primarykey (TableName, NextID) VALUES ('%s', %d)" % (table, nextid))
-    except:
-        pass
-
-def _get_id_max(dbo, table):
-    return query_int(dbo, "SELECT MAX(ID) FROM %s" % table) + 1
-
-def _get_id_cache(dbo, table):
-    cache_key = "db:%s:as:%s:tb:%s" % (dbo.database, dbo.alias, table)
-    nextid = cachemem.increment(cache_key)
-    if nextid is None: 
-        nextid = query_int(dbo, "SELECT MAX(ID) FROM %s" % table) + 1
-        cachemem.put(cache_key, nextid, 600)
-    return nextid
-
-def _get_id_postgres_seq(dbo, table):
-    return query_int(dbo, "SELECT nextval('seq_%s')" % table)
-
 def get_id(dbo, table):
     """
-    Returns the next ID in sequence for a table according to a number
-    of different strategies.
-    max:   Do SELECT MAX(ID)+1 FROM TABLE
-    cache: Use an in-memory cache to track PK values (initialised by SELECT MAX)
-    pseq:  Use PostgreSQL sequences
-    If the database has an ASM2 primary key table, it will be updated
-        with the next pk value.
+    Returns the next ID in sequence for a table
     """
-    strategy = ""
-    nextid = 0
-    if DB_PK_STRATEGY == "max" or dbo.has_asm2_pk_table:
-        nextid = _get_id_max(dbo, table)
-        strategy = "max"
-    elif DB_PK_STRATEGY == "cache":
-        nextid = _get_id_cache(dbo, table)
-        strategy = "cache"
-    elif DB_PK_STRATEGY == "pseq" and dbo.dbtype == "POSTGRESQL":
-        nextid = _get_id_postgres_seq(dbo, table)
-        strategy = "pseq"
-    else:
-        raise Exception("No valid PK strategy found")
-    if dbo.has_asm2_pk_table: 
-        _get_id_set_asm2_primarykey(dbo, table, nextid + 1)
-        strategy += " asm2pk"
-    al.debug("get_id: %s -> %d (%s)" % (table, nextid, strategy), "db.get_id", dbo)
-    return nextid
+    return dbo.get_id(table)
 
 def get_multiple_database_info(alias):
     """

@@ -38,16 +38,6 @@ DB_NAME = "asm"
 # update the primarykey table that ASM2 needs
 DB_HAS_ASM2_PK_TABLE = False
 
-# The strategy for generating table primary keys. If you have
-# DB_HAS_ASM2_PK_TABLE it will override this value and set
-# it to max as it's the only compatible approach between
-# ASM2 and ASM3
-#
-# max:      Use MAX(ID)+1
-# cache:    Store IDs in a memory cache 
-# pseq:     Use PostgreSQL sequences (only valid for PostgreSQL database)
-DB_PK_STRATEGY = "max"
-
 # If False, HTML entities (all unicode chars) will be stored as is in the database.
 # (this is better for databases with non Unicode collation/storage and less of
 #  a security risk for Unicode SQL/XSS attacks)

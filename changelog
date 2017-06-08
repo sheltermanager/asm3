@@ -1,6 +1,7 @@
 40
 ================
 
+08/06/17 Move create of sequences/views/sp into db objects with get_id #230
 08/06/17 Remove DISTINCT from animal/people as unnecessary and slower #231
 07/06/17 DB refactor phase 1 (separate provider class abstractions) #230
 06/06/17 Only write new or changed config items #229

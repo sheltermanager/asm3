@@ -24,7 +24,7 @@ TRIAL_ADOPTION = 11
 PERMANENT_FOSTER = 12
 
 def get_movement_query(dbo):
-    return "SELECT DISTINCT m.*, o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, " \
+    return "SELECT m.*, o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, " \
         "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, " \
         "rs.StatusName AS ReservationStatusName, " \
         "a.ShelterCode, a.ShortCode, a.AnimalAge, a.AgeGroup, a.AnimalName, a.Neutered, a.DeceasedDate, a.HasActiveReserve, " \
@@ -68,7 +68,7 @@ def get_movement_query(dbo):
         "LEFT OUTER JOIN owner r ON m.RetailerID = r.ID "
 
 def get_transport_query(dbo):
-    return "SELECT DISTINCT t.*, tt.TransportTypeName, " \
+    return "SELECT t.*, tt.TransportTypeName, " \
         "d.OwnerName AS DriverOwnerName, p.OwnerName AS PickupOwnerName, dr.OwnerName AS DropoffOwnerName, " \
         "d.OwnerAddress AS DriverOwnerAddress, p.OwnerAddress AS PickupOwnerAddress, dr.OwnerAddress AS DropoffOwnerAddress, " \
         "d.OwnerTown AS DriverOwnerTown, p.OwnerTown AS PickupOwnerTown, dr.OwnerTown AS DropoffOwnerTown, " \

@@ -233,10 +233,10 @@ def get_regimens(dbo, animalid, onlycomplete = False, sort = ASCENDING_REQUIRED)
         sc = "am.Status = 2 AND "
     sql = "SELECT am.*, " \
         "(SELECT amt.DateRequired FROM animalmedicaltreatment amt WHERE amt.AnimalMedicalID = am.ID AND amt.DateGiven Is Null " \
-        "ORDER BY amt.DateRequired DESC LIMIT 1) AS NextTreatmentDue, " \
+        "ORDER BY amt.DateRequired DESC %s) AS NextTreatmentDue, " \
         "(SELECT amt.DateGiven FROM animalmedicaltreatment amt WHERE amt.AnimalMedicalID = am.ID AND amt.DateGiven Is Not Null " \
-        "ORDER BY amt.DateGiven DESC LIMIT 1) AS LastTreatmentGiven " \
-        "FROM animalmedical am WHERE %sam.AnimalID = %d" % (sc, animalid)
+        "ORDER BY amt.DateGiven DESC %s) AS LastTreatmentGiven " \
+        "FROM animalmedical am WHERE %sam.AnimalID = %d" % (dbo.sql_limit(1), dbo.sql_limit(1), sc, animalid)
     if sort == ASCENDING_REQUIRED:
         sql += " ORDER BY ID"
     elif sort == DESCENDING_REQUIRED:

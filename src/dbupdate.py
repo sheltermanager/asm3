@@ -5,7 +5,6 @@ import animal, animalcontrol, financial, lostfound, medical, movement, onlinefor
 import configuration, db, dbfs, utils
 import os, sys
 from i18n import _
-from sitedefs import DB_PK_STRATEGY
 
 VERSIONS = ( 
     2870, 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3050,
@@ -2233,8 +2232,8 @@ def install_db_views(dbo):
     """
     def create_view(viewname, sql):
         try:
-            db.execute_dbupdate( dbo.ddl_drop_view(viewname) )
-            db.execute_dbupdate( dbo.ddl_add_view(viewname, sql) )
+            db.execute_dbupdate( dbo, dbo.ddl_drop_view(viewname) )
+            db.execute_dbupdate( dbo, dbo.ddl_add_view(viewname, sql) )
         except Exception as err:
             al.error("error creating view %s: %s" % (viewname, err), "dbupdate.install_db_views", dbo)
 
@@ -2258,41 +2257,19 @@ def install_db_views(dbo):
 
 def install_db_sequences(dbo):
     """
-    Installs database sequences and sets their initial values
-    (only valid for PostgreSQL and if DB_PK_STRATEGY is 'pseq' ).
+    Installs database sequences if supported and sets their initial values
     """
-    if DB_PK_STRATEGY != "pseq" or dbo.dbtype != "POSTGRESQL": return
     for table in TABLES:
         if table in TABLES_NO_ID_COLUMN: continue
-        initialvalue = db._get_id_max(dbo, table)
-        db.execute_dbupdate(dbo, "DROP SEQUENCE IF EXISTS seq_%s" % table)
-        db.execute_dbupdate(dbo, "CREATE SEQUENCE seq_%s START %d" % (table, initialvalue))
+        initialvalue = dbo.get_id_max(table)
+        db.execute_dbupdate(dbo, dbo.ddl_drop_sequence(table) )
+        db.execute_dbupdate(dbo, dbo.ddl_add_sequence(table, initialvalue) )
 
 def install_db_stored_procedures(dbo):
     """
     Creates any special stored procedures we need in the target database
     """
-    if dbo.dbtype == "POSTGRESQL":
-        db.execute_dbupdate(dbo, \
-            "CREATE OR REPLACE FUNCTION asm_to_date(p_date TEXT, p_format TEXT, OUT r_date DATE)\n" \
-            "LANGUAGE plpgsql\n" \
-            "AS $$\n" \
-            "BEGIN\n" \
-            "r_date = TO_DATE(p_date, p_format);\n" \
-            "EXCEPTION\n" \
-            "WHEN OTHERS THEN r_date = NULL;\n" \
-            "END;\n" \
-            "$$")
-        db.execute_dbupdate(dbo, \
-            "CREATE OR REPLACE FUNCTION asm_to_integer(p_int TEXT, OUT r_int INTEGER)\n" \
-            "LANGUAGE plpgsql\n" \
-            "AS $$\n" \
-            "BEGIN\n" \
-            "r_int = p_int::integer;\n" \
-            "EXCEPTION\n" \
-            "WHEN OTHERS THEN r_int = 0;\n" \
-            "END;\n" \
-            "$$")
+    dbo.install_stored_procedures()
 
 def install_default_data(dbo, skip_config = False):
     """
