@@ -244,8 +244,8 @@ def auto_remove_waitinglist(dbo):
             al.debug("auto removing waitinglist entry %d due to policy" % int(r["ID"]), "waitinglist.auto_remove_waitinglist", dbo)
             updates.append((now(dbo.timezone), _("Auto removed due to lack of owner contact.", l), r["ID"]))
     if len(updates) > 0:
-        db.execute_many(dbo, "UPDATE animalwaitinglist SET DateRemovedFromList = %s, " \
-            "ReasonForRemoval=%s WHERE ID=%s", updates)
+        dbo.execute_many("UPDATE animalwaitinglist SET DateRemovedFromList = ?, " \
+            "ReasonForRemoval=? WHERE ID=?", updates)
         
 def auto_update_urgencies(dbo):
     """
@@ -265,11 +265,11 @@ def auto_update_urgencies(dbo):
         al.debug("increasing urgency of waitinglist entry %d" % int(r["ID"]), "waitinglist.auto_update_urgencies", dbo)
         updates.append((now(dbo.timezone), add_days(r["URGENCYUPDATEDATE"], update_period_days), r["URGENCY"] - 1, r["ID"]))
     if len(updates) > 0:
-        db.execute_many(dbo, "UPDATE animalwaitinglist SET " \
-            "UrgencyLastUpdatedDate=%s, " \
-            "UrgencyUpdateDate=%s, " \
-            "Urgency=%s " \
-            "WHERE ID=%s ", updates)
+        dbo.execute_many("UPDATE animalwaitinglist SET " \
+            "UrgencyLastUpdatedDate=?, " \
+            "UrgencyUpdateDate=?, " \
+            "Urgency=? " \
+            "WHERE ID=? ", updates)
             
 def update_waitinglist_from_form(dbo, post, username):
     """
@@ -279,7 +279,7 @@ def update_waitinglist_from_form(dbo, post, username):
     l = dbo.locale
     wlid = post.integer("id")
 
-    if not db.check_recordversion(dbo, "animalwaitinglist", post.integer("id"), post.integer("recordversion")):
+    if not dbo.optimistic_check("animalwaitinglist", post.integer("id"), post.integer("recordversion")):
         raise utils.ASMValidationError(_("This record has been changed by another user, please reload.", l))
 
     if post["description"] == "":

@@ -2436,7 +2436,7 @@ def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = Tr
             yield "DELETE FROM %s;\n" % outtable
         try:
             sys.stderr.write("dumping %s.., \n" % t)
-            for x in db.query_to_insert_sql(dbo, "SELECT * FROM %s" % t, outtable, escapeCR):
+            for x in dbo.query_to_insert_sql("SELECT * FROM %s" % t, outtable, escapeCR):
                 yield x
         except:
             em = str(sys.exc_info()[0])

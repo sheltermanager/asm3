@@ -28,9 +28,9 @@ except:
 
 class Database(object):
     """
-    Handles information on connecting to a database.
-    Default values are supplied by the sitedefs.py file.
-    This is the base class for backend provider specific functionality.
+    Object that handles all interactions with the database.
+    sitedefs.py supplies the default database connection info.
+    This is the base class for all RDBMS provider specific functionality.
     """
     dbtype = DB_TYPE 
     host = DB_HOST
@@ -38,15 +38,18 @@ class Database(object):
     username = DB_USERNAME
     password = DB_PASSWORD
     database = DB_NAME
+
     alias = "" 
     locale = "en"
     timezone = 0
     installpath = ""
     locked = False
+
     has_asm2_pk_table = DB_HAS_ASM2_PK_TABLE
     is_large_db = False
     timeout = DB_TIMEOUT
     connection = None
+
     type_shorttext = "VARCHAR(1024)"
     type_longtext = "TEXT"
     type_clob = "TEXT"
@@ -73,7 +76,8 @@ class Database(object):
 
     def cursor_close(self, c, s):
         """ Closes a connection and cursor pair. If self.connection exists, then
-            c must be it, so don't close it.
+            c must be it, so don't close it. Connection caching in this object
+            is done by processes called via cron.py as they do not use pooling.
         """
         try:
             s.close()
@@ -122,7 +126,29 @@ class Database(object):
         return "DROP VIEW IF EXISTS %s" % name
 
     def ddl_modify_column(self, table, column, newtype, using = ""):
-        pass # Not all providers support this
+        return "" # Not all providers support this
+
+    def encode_str(self, v):
+        """
+        Returns a value from a query result.
+        If v is unicode, encodes it as an ascii str with XML entities
+        If v is already a str, removes any non-ascii chars
+        If it is any other type, returns v untouched
+        """
+        try:
+            if v is None: 
+                return v
+            elif utils.is_unicode(v):
+                v = self.unescape(v)
+                return v.encode("ascii", "xmlcharrefreplace")
+            elif utils.is_str(v):
+                v = self.unescape(v)
+                return v.decode("ascii", "ignore").encode("ascii", "ignore")
+            else:
+                return v
+        except Exception as err:
+            al.error(str(err), "Database.encode_str", self, sys.exc_info())
+            raise err
 
     def escape(self, s):
         """ Makes a string value safe for database queries
@@ -131,6 +157,88 @@ class Database(object):
         # This is historic - ASM2 switched backticks for apostrophes so we do for compatibility
         s = s.replace("'", "`")
         return s
+
+    def execute(self, sql, params=None, override_lock=False):
+        """
+            Runs the action query given and returns rows affected
+            override_lock: if this is set to False and dbo.locked = True,
+            we don't do anything. This makes it easy to lock the database
+            for writes, but keep databases upto date.
+        """
+        if not override_lock and self.locked: return 0
+        if sql is None or sql.strip() == "": return 0
+        try:
+            c, s = self.cursor_open()
+            if params:
+                sql = self.switch_param_placeholder(sql)
+                s.execute(sql, params)
+            else:
+                s.execute(sql)
+            rv = s.rowcount
+            c.commit()
+            self.cursor_close(c, s)
+            if DB_EXEC_LOG != "":
+                with open(DB_EXEC_LOG.replace("{database}", self.database), "a") as f:
+                    f.write("-- %s\n%s;\n" % (nowsql(), sql))
+            return rv
+        except Exception as err:
+            al.error(str(err), "Database.execute", self, sys.exc_info())
+            al.error("failing sql: %s" % sql, "Database.execute", self)
+            try:
+                # An error can leave a connection in unusable state, 
+                # rollback any attempted changes.
+                c.rollback()
+            except:
+                pass
+            raise err
+        finally:
+            try:
+                self.cursor_close(c, s)
+            except:
+                pass
+
+    def execute_dbupdate(self, sql, params=None):
+        """
+        Runs an action query for a dbupdate script (sets override_lock
+        to True so we don't forget)
+        """
+        return self.execute(sql, params=params, override_lock=True)
+
+    def execute_many(self, sql, params=(), override_lock=False):
+        """
+            Runs the action query given with a list of tuples that contain
+            substitution parameters. Eg:
+            "INSERT INTO table (field1, field2) VALUES (%s, %s)", [ ( "val1", "val2" ), ( "val3", "val4" ) ]
+            Returns rows affected
+            override_lock: if this is set to False and dbo.locked = True,
+            we don't do anything. This makes it easy to lock the database
+            for writes, but keep databases upto date.
+        """
+        if not override_lock and self.locked: return
+        if sql is None or sql.strip() == "": return 0
+        try:
+            c, s = self.cursor_open()
+            sql = self.switch_param_placeholder(sql)
+            s.executemany(sql, params)
+            rv = s.rowcount
+            c.commit()
+            self.cursor_close(c, s)
+            return rv
+        except Exception as err:
+            al.error(str(err), "Database.execute_many", self, sys.exc_info())
+            al.error("failing sql: %s" % sql, "Database.execute_many", self)
+            try:
+                # An error can leave a connection in unusable state, 
+                # rollback any attempted changes.
+                c.rollback()
+            except:
+                pass
+            raise err
+        finally:
+            try:
+                self.cursor_close(c, s)
+            except:
+                pass
 
     def get_id(self, table):
         """ Returns the next ID for a table """
@@ -143,21 +251,355 @@ class Database(object):
         """ Returns the next ID for a table using MAX(ID) """
         return query_int(self, "SELECT MAX(ID) FROM %s" % table) + 1
 
+    def get_recordversion(self):
+        """
+        Returns an integer representation of now for use in the RecordVersion
+        column for optimistic locks.
+        """
+        d = today()
+        i = d.hour * 10000
+        i += d.minute * 100
+        i += d.second
+        return i
+
+    def has_structure(self):
+        """ Returns True if the current DB has an animal table """
+        try:
+            self.execute("select count(*) from animal")
+            return True
+        except:
+            return False
+
     def install_stored_procedures(self):
         """ Install any supporting stored procedures (typically for reports) needed for this backend """
         pass
 
-    def sql_char_length(dbo, item):
+    def optimistic_check(self, table, tid, version):
+        """ Verifies that the record with ID tid in table still has
+        RecordVersion = version.
+        If not, returns False otherwise True
+        If version is a negative number, that overrides the test and returns true (useful for unit tests
+        and any other time we would want to disable optimistic locking)
+        """
+        if version < 0: return True
+        return version == self.query_int("SELECT RecordVersion FROM %s WHERE ID = %d" % (table, tid))
+
+    def query(self, sql, params=None, limit=0):
+        """ Runs the query given and returns the resultset as a list of dictionaries. 
+            All fieldnames are uppercased when returned.
+            params: tuple of parameters for the query
+            limit: limit results to X rows
+        """
+        try:
+            c, s = self.cursor_open()
+            # Add limit clause if set
+            if limit > 0:
+                sql = "%s %s" % (sql, self.sql_limit(limit))
+            # Explain the query if the option is on
+            if DB_EXPLAIN_QUERIES:
+                esql = "EXPLAIN %s" % sql
+                al.debug(esql, "Database.query", self)
+                al.debug(self.query_explain(esql), "Database.query", self)
+            # Record start time
+            start = time.time()
+            # Run the query and retrieve all rows
+            if params:
+                sql = self.switch_param_placeholder(sql)
+                s.execute(sql, params)
+            else:
+                s.execute(sql)
+            c.commit()
+            d = s.fetchall()
+            l = []
+            cols = []
+            # Get the list of column names
+            for i in s.description:
+                cols.append(i[0].upper())
+            for row in d:
+                # Intialise a map for each row
+                rowmap = {}
+                for i in range(0, len(row)):
+                    v = self.encode_str(row[i])
+                    rowmap[cols[i]] = v
+                l.append(rowmap)
+            self.cursor_close(c, s)
+            if DB_TIME_QUERIES:
+                tt = time.time() - start
+                if tt > DB_TIME_LOG_OVER:
+                    al.debug("(%0.2f sec) %s" % (tt, sql), "Database.query", self)
+            return l
+        except Exception as err:
+            al.error(str(err), "Database.query", self, sys.exc_info())
+            al.error("failing sql: %s" % sql, "Database.query", self)
+            raise err
+        finally:
+            try:
+                self.cursor_close(c, s)
+            except:
+                pass
+
+    def query_cache(self, sql, params=None, age=60, limit=0):
+        """
+        Runs the query given and caches the result
+        for age seconds. If there's already a valid cached
+        entry for the query, returns the cached result
+        instead.
+        If CACHE_COMMON_QUERIES is set to false, just runs the query
+        without doing any caching and is equivalent to Database.query()
+        """
+        if not CACHE_COMMON_QUERIES: return self.query(sql, params=params, limit=limit)
+        cache_key = utils.md5_hash("%s:%s:%s" % (self.alias, self.database, sql.replace(" ", "_")))
+        results = cachemem.get(cache_key)
+        if results is not None:
+            return results
+        results = self.query(sql, params=params, limit=limit)
+        cachemem.put(cache_key, results, age)
+        return results
+
+    def query_columns(self, sql, params=None):
+        """
+            Runs the query given and returns the column names as
+            a list in the order they appeared in the query
+        """
+        try:
+            c, s = self.cursor_open()
+            # Run the query and retrieve all rows
+            if params:
+                sql = self.switch_param_placeholder(sql)
+                s.execute(sql, params)
+            else:
+                s.execute(sql)
+            c.commit()
+            # Build a list of the column names
+            cn = []
+            for col in s.description:
+                cn.append(col[0].upper())
+            self.cursor_close(c, s)
+            return cn
+        except Exception as err:
+            al.error(str(err), "Database.query_columns", self, sys.exc_info())
+            al.error("failing sql: %s" % sql, "Database.query_columns", self)
+            raise err
+        finally:
+            try:
+                self.cursor_close(c, s)
+            except:
+                pass
+
+    def query_explain(self, sql, params=None):
+        """
+        Runs an EXPLAIN query
+        """
+        if not sql.lower().startswith("EXPLAIN "):
+            sql = "EXPLAIN %s" % sql
+        rows = self.query_tuple(sql, params=params)
+        o = []
+        for r in rows:
+            o.append(r[0])
+        return "\n".join(o)
+
+    def query_generator(self, sql, params=None):
+        """ Runs the query given and returns the resultset as a list of dictionaries. 
+            All fieldnames are uppercased when returned. 
+            generator function version that uses a forward cursor.
+        """
+        try:
+            c, s = self.cursor_open()
+            # Run the query and retrieve all rows
+            if params:
+                sql = self.switch_param_placeholder(sql)
+                s.execute(sql, params)
+            else:
+                s.execute(sql)
+            c.commit()
+            cols = []
+            # Get the list of column names
+            for i in s.description:
+                cols.append(i[0].upper())
+            row = s.fetchone()
+            while row:
+                # Intialise a map for each row
+                rowmap = {}
+                for i in range(0, len(row)):
+                    v = self.encode_str(row[i])
+                    rowmap[cols[i]] = v
+                yield rowmap
+                row = s.fetchone()
+            self.cursor_close(c, s)
+        except Exception as err:
+            al.error(str(err), "Database.query_generator", self, sys.exc_info())
+            al.error("failing sql: %s" % sql, "Database.query_generator", self)
+            raise err
+        finally:
+            try:
+                self.cursor_close(c, s)
+            except:
+                pass
+
+    def query_to_insert_sql(self, sql, table, escapeCR = ""):
+        """
+        Generator function that Writes an INSERT query for the list of rows 
+        returned by running sql (a list containing dictionaries)
+        escapeCR: Turn line feed chars into this character
+        """
+        fields = []
+        donefields = False
+        for r in self.query_generator(sql):
+            values = []
+            for k in sorted(r.iterkeys()):
+                if not donefields:
+                    fields.append(k)
+                v = r[k]
+                if v is None:
+                    values.append("null")
+                elif utils.is_unicode(v) or utils.is_str(v):
+                    if escapeCR != "": v = v.replace("\n", escapeCR).replace("\r", "")
+                    values.append(ds(v))
+                elif type(v) == datetime.datetime:
+                    values.append(ddt(v))
+                else:
+                    values.append(di(v))
+            donefields = True
+            yield "INSERT INTO %s (%s) VALUES (%s);\n" % (table, ",".join(fields), ",".join(values))
+
+    def query_tuple(self, sql, params=None):
+        """ Runs the query given and returns the resultset
+            as a tuple of tuples.
+        """
+        try:
+            c, s = self.cursor_open()
+            # Run the query and retrieve all rows
+            if params:
+                sql = self.switch_param_placeholder(sql)
+                s.execute(sql, params)
+            else:
+                s.execute(sql)
+            d = s.fetchall()
+            c.commit()
+            self.cursor_close(c, s)
+            return d
+        except Exception as err:
+            al.error(str(err), "Database.query_tuple", self, sys.exc_info())
+            al.error("failing sql: %s" % sql, "Database.query_tuple", self)
+            raise err
+        finally:
+            try:
+                self.cursor_close(c, s)
+            except:
+                pass
+
+    def query_tuple_columns(self, sql, params=None):
+        """ Runs the query given and returns the resultset
+            as a grid of tuples and a list of columnames
+        """
+        try:
+            c, s = self.cursor_open()
+            # Run the query and retrieve all rows
+            if params: 
+                sql = self.switch_param_placeholder(sql)
+                s.execute(sql, params)
+            else:
+                s.execute(sql)
+            d = s.fetchall()
+            c.commit()
+            # Build a list of the column names
+            cn = []
+            for col in s.description:
+                cn.append(col[0].upper())
+            self.cursor_close(c, s)
+            return (d, cn)
+        except Exception as err:
+            al.error(str(err), "Database.query_tuple_columns", self, sys.exc_info())
+            al.error("failing sql: %s" % sql, "Database.query_tuple_columns", self)
+            raise err
+        finally:
+            try:
+                self.cursor_close(c, s)
+            except:
+                pass
+
+    def query_int(self, sql, params=None):
+        """ Runs a query and returns the first item from the first column as an integer """
+        r = self.query_tuple(sql, params=params)
+        try:
+            v = r[0][0]
+            return int(v)
+        except:
+            return int(0)
+
+    def query_float(self, sql, params=None):
+        """ Runs a query and returns the first item from the first column as a float """
+        r = self.query_tuple(sql, params=params)
+        try:
+            v = r[0][0]
+            return float(v)
+        except:
+            return float(0)
+
+    def query_string(self, sql, params=None):
+        """ Runs a query and returns the first item from the first column as a string """
+        r = self.query_tuple(sql, params=params)
+        try:
+            v = self.unescape(r[0][0])
+            return self.encode_str(v)
+        except:
+            return str("")
+
+    def query_date(self, sql, params=None):
+        """ Runs a query and returns the first item from the first column as a date """
+        r = self.query_tuple(sql, params=params)
+        try:
+            v = r[0][0]
+            return v
+        except:
+            return None
+
+    def split_queries(sql):
+        """
+        Splits semi-colon separated queries in a single
+        string into a list and returns them for execution.
+        """
+        queries = []
+        x = 0
+        instr = False
+        while x <= len(sql):
+            q = sql[x:x+1]
+            if q == "'":
+                instr = not instr
+            if x == len(sql):
+                queries.append(sql[0:x].strip())
+                break
+            if q == ";" and not instr:
+                queries.append(sql[0:x].strip())
+                sql = sql[x+1:]
+                x = 0
+                continue
+            x += 1
+        return queries
+
+    def sql_char_length(self, item):
         """ Writes a database independent char length """
         return "LENGTH(%s)" % item
 
-    def sql_concat(dbo, items):
+    def sql_concat(self, items):
         """ Writes concat for a list of items """
         return " || ".join(items)
 
-    def sql_limit(dbo, x):
+    def sql_limit(self, x):
         """ Writes a limit clause to X items """
         return "LIMIT %s" % x
+
+    def switch_param_placeholder(self, sql):
+        """ Swaps the ? token in the sql for the usual Python DBAPI placeholder of %s 
+            override if your DB driver wants another char.
+        """
+        return sql.replace("?", "%s")
+
+    def unescape(self, s):
+        """ unescapes query values """
+        if s is None: return ""
+        s = s.replace("`", "'")
+        return s
 
     def update_asm2_primarykey(self, table, nextid):
         """
@@ -296,7 +738,7 @@ class DatabasePostgreSQL(Database):
         return s
 
     def get_id(self, table):
-        """ Returns the next ID for a table using sequences
+        """ Returns the next ID for a table using Postgres sequences
         """
         nextid = query_int(self, "SELECT nextval('seq_%s')" % table)
         self.update_asm2_primarykey(table, nextid)
@@ -352,322 +794,14 @@ def get_database(t = None):
     if t is None: t = DB_TYPE
     return m[t]()
 
-def query(dbo, sql, limit = 0):
-    """ Runs the query given and returns the resultset as a list of dictionaries. 
-        All fieldnames are uppercased when returned.
-        limit: Limit to X rows
-    """
-    try:
-        c, s = dbo.cursor_open()
-        # Add limit clause if set
-        if limit > 0:
-            sql = "%s %s" % (sql, dbo.sql_limit(limit))
-        # Explain the query if the option is on
-        if DB_EXPLAIN_QUERIES:
-            esql = "EXPLAIN %s" % sql
-            al.debug(esql, "db.query", dbo)
-            al.debug(query_explain(dbo, esql), "db.query", dbo)
-        # Record start time
-        start = time.time()
-        # Run the query and retrieve all rows
-        s.execute(sql)
-        c.commit()
-        d = s.fetchall()
-        l = []
-        cols = []
-        # Get the list of column names
-        for i in s.description:
-            cols.append(i[0].upper())
-        for row in d:
-            # Intialise a map for each row
-            rowmap = {}
-            for i in range(0, len(row)):
-                v = encode_str(dbo, row[i])
-                rowmap[cols[i]] = v
-            l.append(rowmap)
-        dbo.cursor_close(c, s)
-        if DB_TIME_QUERIES:
-            tt = time.time() - start
-            if tt > DB_TIME_LOG_OVER:
-                al.debug("(%0.2f sec) %s" % (tt, sql), "db.query", dbo)
-        return l
-    except Exception as err:
-        al.error(str(err), "db.query", dbo, sys.exc_info())
-        al.error("failing sql: %s" % sql, "db.query", dbo)
-        raise err
-    finally:
-        try:
-            dbo.cursor_close(c, s)
-        except:
-            pass
-
-def query_cache(dbo, sql, age = 60, limit = 0):
-    """
-    Runs the query given and caches the result
-    for age seconds. If there's already a valid cached
-    entry for the query, returns the cached result
-    instead.
-    If CACHE_COMMON_QUERIES is set to false, just runs the query
-    without doing any caching and is equivalent to db.query()
-    """
-    if not CACHE_COMMON_QUERIES: return query(dbo, sql)
-    cache_key = utils.md5_hash("%s:%s:%s" % (dbo.alias, dbo.database, sql.replace(" ", "_")))
-    results = cachemem.get(cache_key)
-    if results is not None:
-        return results
-    results = query(dbo, sql, limit=limit)
-    cachemem.put(cache_key, results, age)
-    return results
-
-def query_columns(dbo, sql):
-    """
-        Runs the query given and returns the column names as
-        a list in the order they appeared in the query
-    """
-    try:
-        c, s = dbo.cursor_open()
-        # Run the query and retrieve all rows
-        s.execute(sql)
-        c.commit()
-        # Build a list of the column names
-        cn = []
-        for col in s.description:
-            cn.append(col[0].upper())
-        dbo.cursor_close(c, s)
-        return cn
-    except Exception as err:
-        al.error(str(err), "db.query_columns", dbo, sys.exc_info())
-        al.error("failing sql: %s" % sql, "db.query_columns", dbo)
-        raise err
-    finally:
-        try:
-            dbo.cursor_close(c, s)
-        except:
-            pass
-
-def query_generator(dbo, sql):
-    """ Runs the query given and returns the resultset as a list of dictionaries. 
-        All fieldnames are uppercased when returned. 
-        generator function version that uses a forward cursor.
-    """
-    try:
-        c, s = dbo.cursor_open()
-        # Run the query and retrieve all rows
-        s.execute(sql)
-        c.commit()
-        cols = []
-        # Get the list of column names
-        for i in s.description:
-            cols.append(i[0].upper())
-        row = s.fetchone()
-        while row:
-            # Intialise a map for each row
-            rowmap = {}
-            for i in range(0, len(row)):
-                v = encode_str(dbo, row[i])
-                rowmap[cols[i]] = v
-            yield rowmap
-            row = s.fetchone()
-        dbo.cursor_close(c, s)
-    except Exception as err:
-        al.error(str(err), "db.query_generator", dbo, sys.exc_info())
-        al.error("failing sql: %s" % sql, "db.query_generator", dbo)
-        raise err
-    finally:
-        try:
-            dbo.cursor_close(c, s)
-        except:
-            pass
-
-def query_to_insert_sql(dbo, sql, table, escapeCR = ""):
-    """
-    Generator function that Writes an INSERT query for the list of rows 
-    returned by running sql (a list containing dictionaries)
-    """
-    fields = []
-    donefields = False
-    for r in query_generator(dbo, sql):
-        values = []
-        for k in sorted(r.iterkeys()):
-            if not donefields:
-                fields.append(k)
-            v = r[k]
-            if v is None:
-                values.append("null")
-            elif utils.is_unicode(v) or utils.is_str(v):
-                if escapeCR != "": v = v.replace("\n", escapeCR).replace("\r", "")
-                values.append(ds(v))
-            elif type(v) == datetime.datetime:
-                values.append(ddt(v))
-            else:
-                values.append(di(v))
-        donefields = True
-        yield "INSERT INTO %s (%s) VALUES (%s);\n" % (table, ",".join(fields), ",".join(values))
-
-def query_explain(dbo, sql):
-    """
-    Runs an EXPLAIN query
-    """
-    if not sql.lower().startswith("EXPLAIN "):
-        sql = "EXPLAIN %s" % sql
-    rows = query_tuple(dbo, sql)
-    o = []
-    for r in rows:
-        o.append(r[0])
-    return "\n".join(o)
-
-def query_tuple(dbo, sql):
-    """
-        Runs the query given and returns the resultset
-        as a grid of tuples
-    """
-    try:
-        c, s = dbo.cursor_open()
-        # Run the query and retrieve all rows
-        s.execute(sql)
-        d = s.fetchall()
-        c.commit()
-        dbo.cursor_close(c, s)
-        return d
-    except Exception as err:
-        al.error(str(err), "db.query_tuple", dbo, sys.exc_info())
-        al.error("failing sql: %s" % sql, "db.query_tuple", dbo)
-        raise err
-    finally:
-        try:
-            dbo.cursor_close(c, s)
-        except:
-            pass
-
-def query_tuple_columns(dbo, sql):
-    """
-        Runs the query given and returns the resultset
-        as a grid of tuples and a list of columnames
-    """
-    try:
-        c, s = dbo.cursor_open()
-        # Run the query and retrieve all rows
-        s.execute(sql)
-        d = s.fetchall()
-        c.commit()
-        # Build a list of the column names
-        cn = []
-        for col in s.description:
-            cn.append(col[0].upper())
-        dbo.cursor_close(c, s)
-        return (d, cn)
-    except Exception as err:
-        al.error(str(err), "db.query_tuple_columns", dbo, sys.exc_info())
-        al.error("failing sql: %s" % sql, "db.query_tuple_columns", dbo)
-        raise err
-    finally:
-        try:
-            dbo.cursor_close(c, s)
-        except:
-            pass
-
-def execute_dbupdate(dbo, sql):
-    """
-    Runs an action query for a dbupdate script (sets override_lock
-    to True so we don't forget)
-    """
-    return execute(dbo, sql, True)
-
-def execute(dbo, sql, override_lock = False):
-    """
-        Runs the action query given and returns rows affected
-        override_lock: if this is set to False and dbo.locked = True,
-        we don't do anything. This makes it easy to lock the database
-        for writes, but keep databases upto date.
-    """
-    if not override_lock and dbo.locked: return 0
-    if sql is None or sql.strip() == "": return 0
-    try:
-        c, s = dbo.cursor_open()
-        s.execute(sql)
-        rv = s.rowcount
-        c.commit()
-        dbo.cursor_close(c, s)
-        if DB_EXEC_LOG != "":
-            with open(DB_EXEC_LOG.replace("{database}", dbo.database), "a") as f:
-                f.write("-- %s\n%s;\n" % (nowsql(), sql))
-        return rv
-    except Exception as err:
-        al.error(str(err), "db.execute", dbo, sys.exc_info())
-        al.error("failing sql: %s" % sql, "db.execute", dbo)
-        try:
-            # An error can leave a connection in unusable state, 
-            # rollback any attempted changes.
-            c.rollback()
-        except:
-            pass
-        raise err
-    finally:
-        try:
-            dbo.cursor_close(c, s)
-        except:
-            pass
-
-def execute_many(dbo, sql, params, override_lock = False):
-    """
-        Runs the action query given with a list of tuples that contain
-        substitution parameters. Eg:
-        "INSERT INTO table (field1, field2) VALUES (%s, %s)", [ ( "val1", "val2" ), ( "val3", "val4" ) ]
-        Returns rows affected
-        override_lock: if this is set to False and dbo.locked = True,
-        we don't do anything. This makes it easy to lock the database
-        for writes, but keep databases upto date.
-    """
-    if not override_lock and dbo.locked: return
-    if sql is None or sql.strip() == "": return 0
-    try:
-        c, s = dbo.cursor_open()
-        s.executemany(sql, params)
-        rv = s.rowcount
-        c.commit()
-        dbo.cursor_close(c, s)
-        return rv
-    except Exception as err:
-        al.error(str(err), "db.execute_many", dbo, sys.exc_info())
-        al.error("failing sql: %s" % sql, "db.execute_many", dbo)
-        try:
-            # An error can leave a connection in unusable state, 
-            # rollback any attempted changes.
-            c.rollback()
-        except:
-            pass
-        raise err
-    finally:
-        try:
-            dbo.cursor_close(c, s)
-        except:
-            pass
-
-def is_number(x):
-    return isinstance(x, (int, float, complex))
-
-def has_structure(dbo):
-    try:
-        execute(dbo, "select count(*) from animal")
-        return True
-    except:
-        return False
-
-def get_id(dbo, table):
-    """
-    Returns the next ID in sequence for a table
-    """
-    return dbo.get_id(table)
-
 def get_multiple_database_info(alias):
-    """
-    Gets the database info for the alias from our configured map.
-    """
-    dbo = get_database()
+    """ Gets the Database object for the alias in our map MULTIPLE_DATABASES_MAP. """
     if alias not in MULTIPLE_DATABASES_MAP:
+        dbo = get_database()
         dbo.database = "FAIL"
         return dbo
     mapinfo = MULTIPLE_DATABASES_MAP[alias]
+    dbo = get_database(mapinfo["dbtype"])
     dbo.alias = alias
     dbo.dbtype = mapinfo["dbtype"]
     dbo.host = mapinfo["host"]
@@ -676,83 +810,48 @@ def get_multiple_database_info(alias):
     dbo.password = mapinfo["password"]
     dbo.database = mapinfo["database"]
     return dbo
-  
+
+# Deprecated compatibility (replace in code with parameterised dbo.X versions)
+
+def query(dbo, sql, limit = 0):
+    return dbo.query(sql, limit=limit)
+
+def query_cache(dbo, sql, age = 60, limit = 0):
+    return dbo.query_cache(sql, age=age, limit=limit)
+
+def query_columns(dbo, sql):
+    return dbo.query_columns(sql)
+
+def query_tuple(dbo, sql):
+    return dbo.query_tuple(sql)
+
+def query_tuple_columns(dbo, sql):
+    return dbo.query_tuple_columns(sql)
+
+def execute_dbupdate(dbo, sql):
+    return dbo.execute_dbupdate(sql)
+
+def execute(dbo, sql, override_lock=False):
+    return dbo.execute(sql, override_lock=override_lock)
+
+def get_id(dbo, table):
+    return dbo.get_id(table)
+ 
 def query_int(dbo, sql):
-    r = query_tuple(dbo, sql)
-    try:
-        v = r[0][0]
-        return int(v)
-    except:
-        return int(0)
+    return dbo.query_int(sql)
 
 def query_float(dbo, sql):
-    r = query_tuple(dbo, sql)
-    try:
-        v = r[0][0]
-        return float(v)
-    except:
-        return float(0)
+    return dbo.query_float(sql)
 
 def query_string(dbo, sql):
-    r = query_tuple(dbo, sql)
-    try :
-        v = unescape(r[0][0])
-        return encode_str(dbo, v)
-    except:
-        return str("")
+    return dbo.query_string(sql)
 
 def query_date(dbo, sql):
-    r = query_tuple(dbo, sql)
-    try:
-        v = r[0][0]
-        return v
-    except:
-        return None
+    return dbo.query_date(sql)
 
-def encode_str(dbo, v):
-    """
-    Returns v from a query result.
-    If v is unicode, encodes it as an ascii str with XML entities
-    If v is already a str, removes any non-ascii chars
-    If it is any other type, returns v untouched
-    """
-    try:
-        if v is None: 
-            return v
-        elif utils.is_unicode(v):
-            v = unescape(v)
-            return v.encode("ascii", "xmlcharrefreplace")
-        elif utils.is_str(v):
-            v = unescape(v)
-            return v.decode("ascii", "ignore").encode("ascii", "ignore")
-        else:
-            return v
-    except Exception as err:
-        al.error(str(err), "db.encode_str", dbo, sys.exc_info())
-        raise err
+# ==
 
-def split_queries(sql):
-    """
-    Splits semi-colon separated queries in a single
-    string into a list and returns them for execution.
-    """
-    queries = []
-    x = 0
-    instr = False
-    while x <= len(sql):
-        q = sql[x:x+1]
-        if q == "'":
-            instr = not instr
-        if x == len(sql):
-            queries.append(sql[0:x].strip())
-            break
-        if q == ";" and not instr:
-            queries.append(sql[0:x].strip())
-            sql = sql[x+1:]
-            x = 0
-            continue
-        x += 1
-    return queries
+# old stuff to write out/port ---
 
 def today():
     """ Returns today as a python date """
@@ -770,6 +869,8 @@ def python2db(d):
     """ Formats a python date as a date for the database """
     if d is None: return "NULL"
     return "%d-%02d-%02d" % ( d.year, d.month, d.day )
+
+# These should be no longer necessary one day when all code is using dbo.insert/update/delete, question mark over escape_xss
 
 def ddt(d):
     """ Formats a python date and time as a date for the database """
@@ -812,36 +913,12 @@ def di(i):
     except:
         return "0"
 
-def check_recordversion(dbo, table, tid, version):
-    """
-    Verifies that the record with ID tid in table still has
-    RecordVersion = version.
-    If not, returns False otherwise True
-    If version is a negative number, that overrides the test and returns true (useful for unit tests
-    and any other time we would want to disable optimistic locking)
-    """
-    if version < 0: return True
-    return version == query_int(dbo, "SELECT RecordVersion FROM %s WHERE ID = %d" % (table, tid))
-
 def escape_xss(s):
     """ Make a value safe from XSS attacks by encoding tag delimiters """
     return s.replace(">", "&gt;").replace("<", "&lt;")
 
-def unescape(s):
-    """ unescapes query values """
-    if s is None: return ""
-    s = s.replace("`", "'")
-    return s
-
-def recordversion():
-    """
-    Returns an integer representation of now.
-    """
-    d = today()
-    i = d.hour * 10000
-    i += d.minute * 100
-    i += d.second
-    return i
+# Calls to methods below should be replaced with "insert" and "update" methods of Database 
+# and perform the action, using parameterised queries.
 
 def make_insert_sql(table, s):
     """
@@ -876,7 +953,7 @@ def make_insert_user_sql(dbo, table, username, s, stampRecordVersion = True):
     l.append(("CreatedDate", ddt(i18n.now(dbo.timezone))))
     l.append(("LastChangedBy", ds(username)))
     l.append(("LastChangedDate", ddt(i18n.now(dbo.timezone))))
-    if stampRecordVersion: l.append(("RecordVersion", di(recordversion())))
+    if stampRecordVersion: l.append(("RecordVersion", di(dbo.get_recordversion())))
     return make_insert_sql(table, l)
 
 def make_update_sql(table, cond, s):
@@ -910,7 +987,7 @@ def make_update_user_sql(dbo, table, username, cond, s, stampRecordVersion = Tru
     l = list(s)
     l.append(("LastChangedBy", ds(username)))
     l.append(("LastChangedDate", ddt(i18n.now(dbo.timezone))))
-    if stampRecordVersion: l.append(("RecordVersion", di(recordversion())))
+    if stampRecordVersion: l.append(("RecordVersion", di(dbo.get_recordversion())))
     return make_update_sql(table, cond, l)
 
 def rows_to_insert_sql(table, rows, escapeCR = ""):

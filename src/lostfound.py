@@ -551,10 +551,9 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
         sql = "INSERT INTO animallostfoundmatch (AnimalLostID, AnimalFoundID, AnimalID, LostContactName, LostContactNumber, " \
             "LostArea, LostPostcode, LostAgeGroup, LostSex, LostSpeciesID, LostBreedID, LostFeatures, LostBaseColourID, LostDate, " \
             "FoundContactName, FoundContactNumber, FoundArea, FoundPostcode, FoundAgeGroup, FoundSex, FoundSpeciesID, FoundBreedID, " \
-            "FoundFeatures, FoundBaseColourID, FoundDate, MatchPoints) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, " \
-            "%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            "FoundFeatures, FoundBaseColourID, FoundDate, MatchPoints) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
         if len(batch) > 0:
-            db.execute_many(dbo, sql, batch)
+            dbo.execute_many(sql, batch)
 
     return matches
 
@@ -649,7 +648,7 @@ def update_lostanimal_from_form(dbo, post, username):
     l = dbo.locale
     lfid = post.integer("id")
 
-    if not db.check_recordversion(dbo, "animallost", post.integer("id"), post.integer("recordversion")):
+    if not dbo.optimistic_check("animallost", post.integer("id"), post.integer("recordversion")):
         raise utils.ASMValidationError(_("This record has been changed by another user, please reload.", l))
 
     if post.date("datelost") is None:
@@ -724,7 +723,7 @@ def update_foundanimal_from_form(dbo, post, username):
     l = dbo.locale
     lfid = post.integer("id")
 
-    if not db.check_recordversion(dbo, "animalfound", post.integer("id"), post.integer("recordversion")):
+    if not dbo.optimistic_check("animalfound", post.integer("id"), post.integer("recordversion")):
         raise utils.ASMValidationError(_("This record has been changed by another user, please reload.", l))
 
     if post.date("datefound") is None:

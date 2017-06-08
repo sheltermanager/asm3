@@ -2001,7 +2001,7 @@ def update_animal_from_form(dbo, post, username):
         return post.string(field)
 
     # Optimistic lock check
-    if not db.check_recordversion(dbo, "animal", ki("id"), ki("recordversion")):
+    if not dbo.optimistic_check("animal", ki("id"), ki("recordversion")):
         raise utils.ASMValidationError(_("This record has been changed by another user, please reload.", l))
 
     # Validate form fields
@@ -3033,14 +3033,14 @@ def update_all_variable_animal_data(dbo):
     for a in animals:
         update_variable_animal_data(dbo, int(a["ID"]), a, animalupdatebatch, bands, movements)
 
-    db.execute_many(dbo, "UPDATE animal SET " \
-        "TimeOnShelter = %s, " \
-        "AgeGroup = %s, " \
-        "AnimalAge = %s, " \
-        "DaysOnShelter = %s, " \
-        "TotalTimeOnShelter = %s, " \
-        "TotalDaysOnShelter = %s " \
-        "WHERE ID = %s", animalupdatebatch)
+    dbo.execute_many("UPDATE animal SET " \
+        "TimeOnShelter = ?, " \
+        "AgeGroup = ?, " \
+        "AnimalAge = ?, " \
+        "DaysOnShelter = ?, " \
+        "TotalTimeOnShelter = ?, " \
+        "TotalDaysOnShelter = ? " \
+        "WHERE ID = ?", animalupdatebatch)
 
     al.debug("updated variable data for %d animals (locale %s)" % (len(animals), l), "animal.update_all_variable_animal_data", dbo)
     return "OK %d" % len(animals)
@@ -3071,14 +3071,14 @@ def update_on_shelter_variable_animal_data(dbo):
     for a in animals:
         update_variable_animal_data(dbo, int(a["ID"]), a, animalupdatebatch, bands, movements)
 
-    db.execute_many(dbo, "UPDATE animal SET " \
-        "TimeOnShelter = %s, " \
-        "AgeGroup = %s, " \
-        "AnimalAge = %s, " \
-        "DaysOnShelter = %s, " \
-        "TotalTimeOnShelter = %s, " \
-        "TotalDaysOnShelter = %s " \
-        "WHERE ID = %s", animalupdatebatch)
+    dbo.execute_many("UPDATE animal SET " \
+        "TimeOnShelter = ?, " \
+        "AgeGroup = ?, " \
+        "AnimalAge = ?, " \
+        "DaysOnShelter = ?, " \
+        "TotalTimeOnShelter = ?, " \
+        "TotalDaysOnShelter = ? " \
+        "WHERE ID = ?", animalupdatebatch)
 
     al.debug("updated variable data for %d animals (locale %s)" % (len(animals), l), "animal.update_on_shelter_variable_animal_data", dbo)
     return "OK %d" % len(animals)
@@ -3102,20 +3102,20 @@ def update_all_animal_statuses(dbo):
         update_animal_status(dbo, int(a["ID"]), a, movements, animalupdatebatch, diaryupdatebatch, cfg)
         async.increment_progress_value(dbo)
 
-    aff = db.execute_many(dbo, "UPDATE animal SET " \
-        "Archived = %s, " \
-        "ActiveMovementID = %s, " \
-        "ActiveMovementDate = %s, " \
-        "ActiveMovementType = %s, " \
-        "ActiveMovementReturn = %s, " \
-        "DiedOffShelter = %s, " \
-        "DisplayLocation = %s, " \
-        "HasActiveReserve = %s, " \
-        "HasTrialAdoption = %s, " \
-        "HasPermanentFoster = %s, " \
-        "MostRecentEntryDate = %s " \
-        "WHERE ID = %s", animalupdatebatch)
-    db.execute_many(dbo, "UPDATE diary SET LinkInfo = %s WHERE LinkType = %s AND LinkID = %s", diaryupdatebatch)
+    aff = dbo.execute_many("UPDATE animal SET " \
+        "Archived = ?, " \
+        "ActiveMovementID = ?, " \
+        "ActiveMovementDate = ?, " \
+        "ActiveMovementType = ?, " \
+        "ActiveMovementReturn = ?, " \
+        "DiedOffShelter = ?, " \
+        "DisplayLocation = ?, " \
+        "HasActiveReserve = ?, " \
+        "HasTrialAdoption = ?, " \
+        "HasPermanentFoster = ?, " \
+        "MostRecentEntryDate = ? " \
+        "WHERE ID = ?", animalupdatebatch)
+    dbo.execute_many("UPDATE diary SET LinkInfo = %s WHERE LinkType = %s AND LinkID = %s", diaryupdatebatch)
     al.debug("updated %d animal statuses (%d)" % (aff, len(animals)), "animal.update_all_animal_statuses", dbo)
     return "OK %d" % len(animals)
 
@@ -3140,20 +3140,20 @@ def update_foster_animal_statuses(dbo):
     for a in animals:
         update_animal_status(dbo, int(a["ID"]), a, movements, animalupdatebatch, diaryupdatebatch, cfg)
 
-    aff = db.execute_many(dbo, "UPDATE animal SET " \
-        "Archived = %s, " \
-        "ActiveMovementID = %s, " \
-        "ActiveMovementDate = %s, " \
-        "ActiveMovementType = %s, " \
-        "ActiveMovementReturn = %s, " \
-        "DiedOffShelter = %s, " \
-        "DisplayLocation = %s, " \
-        "HasActiveReserve = %s, " \
-        "HasTrialAdoption = %s, " \
-        "HasPermanentFoster = %s, " \
-        "MostRecentEntryDate = %s " \
-        "WHERE ID = %s", animalupdatebatch)
-    db.execute_many(dbo, "UPDATE diary SET LinkInfo = %s WHERE LinkType = %s AND LinkID = %s", diaryupdatebatch)
+    aff = dbo.execute_many("UPDATE animal SET " \
+        "Archived = ?, " \
+        "ActiveMovementID = ?, " \
+        "ActiveMovementDate = ?, " \
+        "ActiveMovementType = ?, " \
+        "ActiveMovementReturn = ?, " \
+        "DiedOffShelter = ?, " \
+        "DisplayLocation = ?, " \
+        "HasActiveReserve = ?, " \
+        "HasTrialAdoption = ?, " \
+        "HasPermanentFoster = ?, " \
+        "MostRecentEntryDate = ? " \
+        "WHERE ID = ?", animalupdatebatch)
+    dbo.execute_many("UPDATE diary SET LinkInfo = ? WHERE LinkType = ? AND LinkID = ?", diaryupdatebatch)
     al.debug("updated %d fostered animal statuses (%d)" % (aff, len(animals)), "animal.update_foster_animal_statuses", dbo)
     return "OK %d" % len(animals)
 
@@ -3179,20 +3179,20 @@ def update_on_shelter_animal_statuses(dbo):
         update_animal_status(dbo, int(a["ID"]), a, movements, animalupdatebatch, diaryupdatebatch, cfg)
         async.increment_progress_value(dbo)
 
-    aff = db.execute_many(dbo, "UPDATE animal SET " \
-        "Archived = %s, " \
-        "ActiveMovementID = %s, " \
-        "ActiveMovementDate = %s, " \
-        "ActiveMovementType = %s, " \
-        "ActiveMovementReturn = %s, " \
-        "DiedOffShelter = %s, " \
-        "DisplayLocation = %s, " \
-        "HasActiveReserve = %s, " \
-        "HasTrialAdoption = %s, " \
-        "HasPermanentFoster = %s, " \
-        "MostRecentEntryDate = %s " \
-        "WHERE ID = %s", animalupdatebatch)
-    db.execute_many(dbo, "UPDATE diary SET LinkInfo = %s WHERE LinkType = %s AND LinkID = %s", diaryupdatebatch)
+    aff = dbo.execute_many("UPDATE animal SET " \
+        "Archived = ?, " \
+        "ActiveMovementID = ?, " \
+        "ActiveMovementDate = ?, " \
+        "ActiveMovementType = ?, " \
+        "ActiveMovementReturn = ?, " \
+        "DiedOffShelter = ?, " \
+        "DisplayLocation = ?, " \
+        "HasActiveReserve = ?, " \
+        "HasTrialAdoption = ?, " \
+        "HasPermanentFoster = ?, " \
+        "MostRecentEntryDate = ? " \
+        "WHERE ID = ?", animalupdatebatch)
+    dbo.execute_many("UPDATE diary SET LinkInfo = ? WHERE LinkType = ? AND LinkID = ?", diaryupdatebatch)
     al.debug("updated %d on shelter animal statuses (%d)" % (aff, len(animals)), "animal.update_on_shelter_animal_statuses", dbo)
     return "OK %d" % len(animals)
 
@@ -3594,11 +3594,11 @@ def update_animal_figures(dbo, month = 0, year = 0):
         sql = "INSERT INTO animalfigures (ID, Month, Year, OrderIndex, Code, AnimalTypeID, " \
             "SpeciesID, MaxDaysInMonth, Heading, Bold, D1, D2, D3, D4, D5, D6, D7, D8, D9, D10, " \
             "D11, D12, D13, D14, D15, D16, D17, D18, D19, D20, D21, D22, D23, D24, D25, D26, " \
-            "D27, D28, D29, D30, D31, Total, Average) VALUES (%s, %s, %s, %s, %s, %s, " \
-            "%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, " \
-            "%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, " \
-            "%s, %s, %s, %s, %s, %s, %s)"
-        db.execute_many(dbo, sql, batch)
+            "D27, D28, D29, D30, D31, Total, Average) VALUES (?,?,?,?,?,?," \
+            "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, "\
+            "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, "\
+            "?,?,?,?,?,?,?)"
+        dbo.execute_many(sql, batch)
         al.debug("wrote %d figures records" % len(batch), "animal.update_animal_figures", dbo)
 
     # If month and year are zero, figure out which one we're going
@@ -4124,10 +4124,9 @@ def update_animal_figures_annual(dbo, year = 0):
         db.execute(dbo, "DELETE FROM animalfiguresannual WHERE Year = %d" % year)
         sql = "INSERT INTO animalfiguresannual (ID, Year, OrderIndex, Code, AnimalTypeID, " \
             "SpeciesID, EntryReasonID, GroupHeading, Heading, Bold, M1, M2, M3, M4, M5, M6, M7, M8, M9, M10, " \
-            "M11, M12, Total) VALUES (%s, %s, %s, %s, %s, %s, " \
-            "%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, " \
-            "%s, %s, %s)"
-        db.execute_many(dbo, sql, batch)
+            "M11, M12, Total) VALUES (?,?,?,?,?,?," \
+            "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+        dbo.execute_many(sql, batch)
         al.debug("wrote %d annual figures records" % len(batch), "animal.update_animal_figures_annual", dbo)
 
     # If year is zero, figure out which one we're going

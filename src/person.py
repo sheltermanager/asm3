@@ -607,7 +607,7 @@ def update_person_from_form(dbo, post, username):
     """
 
     l = dbo.locale
-    if not db.check_recordversion(dbo, "owner", post.integer("id"), post.integer("recordversion")):
+    if not dbo.optimistic_check("owner", post.integer("id"), post.integer("recordversion")):
         raise utils.ASMValidationError(_("This record has been changed by another user, please reload.", l))
 
     pid = post.integer("id")
@@ -1296,7 +1296,7 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
     if personid == 0:
         db.execute(dbo, "DELETE FROM ownerlookingfor")
         if len(batch) > 0:
-            db.execute_many(dbo, "INSERT INTO ownerlookingfor (AnimalID, OwnerID, MatchSummary) VALUES (%s, %s, %s)", batch)
+            dbo.execute_many("INSERT INTO ownerlookingfor (AnimalID, OwnerID, MatchSummary) VALUES (?,?,?)", batch)
 
     return "".join(h)
 
@@ -1323,7 +1323,7 @@ def update_missing_geocodes(dbo):
     for p in people:
         latlong = geo.get_lat_long(dbo, p["OWNERADDRESS"], p["OWNERTOWN"], p["OWNERCOUNTY"], p["OWNERPOSTCODE"])
         batch.append((latlong, p["ID"]))
-    db.execute_many(dbo, "UPDATE owner SET LatLong = %s WHERE ID = %s", batch)
+    dbo.execute_many("UPDATE owner SET LatLong = ? WHERE ID = ?", batch)
     al.debug("updated %d person geocodes" % len(batch), "person.update_missing_geocodes", dbo)
 
 def update_lookingfor_report(dbo):

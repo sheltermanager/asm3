@@ -819,8 +819,8 @@ class AbstractPublisher(threading.Thread):
             batch.append( ( int(i), self.publisherKey, i18n.now(self.dbo.timezone) ) )
             if first: self.markAnimalFirstPublished(int(i))
         if len(inclause) == 0: return
-        db.execute(self.dbo, "DELETE FROM animalpublished WHERE PublishedTo = '%s' AND AnimalID IN (%s)" % (self.publisherKey, ",".join(inclause)))
-        db.execute_many(self.dbo, "INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate) VALUES (%s, %s, %s)", batch)
+        self.dbo.execute("DELETE FROM animalpublished WHERE PublishedTo = '%s' AND AnimalID IN (%s)" % (self.publisherKey, ",".join(inclause)))
+        self.dbo.execute_many("INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate) VALUES (?,?,?)", batch)
 
     def markAnimalsPublishFailed(self, animals):
         """
@@ -839,8 +839,8 @@ class AbstractPublisher(threading.Thread):
         for k, v in inclause.iteritems():
             batch.append( ( int(k), self.publisherKey, i18n.now(self.dbo.timezone), v ) )
         if len(inclause) == 0: return
-        db.execute(self.dbo, "DELETE FROM animalpublished WHERE PublishedTo = '%s' AND AnimalID IN (%s)" % (self.publisherKey, ",".join(inclause)))
-        db.execute_many(self.dbo, "INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate, Extra) VALUES (%s, %s, %s, %s)", batch)
+        self.dbo.execute("DELETE FROM animalpublished WHERE PublishedTo = '%s' AND AnimalID IN (%s)" % (self.publisherKey, ",".join(inclause)))
+        self.dbo.execute_many("INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate, Extra) VALUES (?,?,?,?)", batch)
 
     def getMatchingAnimals(self):
         a = get_animal_data(self.dbo, self.pc)

@@ -311,7 +311,7 @@ class index(ASMEndpoint):
         # redirecting to the login page.
         if not MULTIPLE_DATABASES:
             dbo = db.get_database()
-            if not db.has_structure(dbo):
+            if not dbo.has_structure():
                 self.redirect("/database")
         self.redirect("/main")
 
@@ -334,7 +334,7 @@ class database(ASMEndpoint):
                 web.header("Content-Type", "text/plain")
                 web.header("Content-Disposition", "attachment; filename=\"setup.sql\"")
                 return s
-        if db.has_structure(dbo):
+        if dbo.has_structure():
             raise utils.ASMPermissionError("Database already created")
         s = html.bare_header("Create your database")
         s += """
@@ -811,7 +811,7 @@ class main(JSONEndpoint):
         if session.passchange:
             self.redirect("change_password?suggest=1")
         # If there's something wrong with the database, logout
-        if not db.has_structure(dbo):
+        if not dbo.has_structure():
             self.redirect("logout")
         # Database update checks
         dbmessage = ""
