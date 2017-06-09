@@ -86,7 +86,7 @@ pot:
 translation:
 	@echo "[translation] ======================"
 	cd po && ./po_to_python.py
-	mv po/locale*py src/locale
+	mv po/locale*py src/locales
 
 icons:
 	@echo "[icons] ==========================="
