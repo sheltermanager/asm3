@@ -1396,7 +1396,7 @@ def get_cost_totals(dbo, animalid):
         "FROM animal WHERE ID = %d" % int(animalid)
     return db.query(dbo, q)[0]
 
-def get_diets(dbo, animalid, sort = ASCENDING):
+def get_diets(dbo, animalid):
     """
     Returns diet records for the given animal:
     DIETNAME, DIETDESCRIPTION, DATESTARTED, COMMENTS
@@ -1404,12 +1404,8 @@ def get_diets(dbo, animalid, sort = ASCENDING):
     sql = "SELECT a.ID, a.DietID, d.DietName, d.DietDescription, a.DateStarted, a.Comments, " \
         "a.CreatedBy, a.CreatedDate, a.LastChangedBy, a.LastChangedDate " \
         "FROM animaldiet a INNER JOIN diet d ON d.ID = a.DietID " \
-        "WHERE a.AnimalID = %d" % animalid
-    if sort == ASCENDING:
-        sql += " ORDER BY a.DateStarted"
-    else:
-        sql += " ORDER BY a.DateStarted DESC"
-    return db.query(dbo, sql)
+        "WHERE a.AnimalID = ? ORDER BY a.DateStarted"
+    return dbo.query(sql, [animalid] )
 
 def get_display_location(dbo, animalid):
     """ Returns an animal's current display location """
@@ -2815,39 +2811,28 @@ def insert_diet_from_form(dbo, username, post):
     """
     Creates a diet record from posted form data
     """
-    ndietid = db.get_id(dbo, "animaldiet")
-    sql = db.make_insert_user_sql(dbo, "animaldiet", username, ( 
-        ( "ID", db.di(ndietid)),
-        ( "AnimalID", post.db_integer("animalid")),
-        ( "DietID", post.db_integer("type")),
-        ( "DateStarted", post.db_date("startdate")),
-        ( "Comments", post.db_string("comments"))
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "animaldiet", ndietid, audit.dump_row(dbo, "animaldiet", ndietid))
-    return ndietid
+    return dbo.insert("animaldiet", {
+        "AnimalID":     post.integer("animalid"),
+        "DietID":       post.integer("type"),
+        "DateStarted":  post.date("startdate"),
+        "Comments":     post["comments"]
+    }, username)
 
 def update_diet_from_form(dbo, username, post):
     """
     Updates a diet record from posted form data
     """
-    dietid = post.integer("dietid")
-    sql = db.make_update_user_sql(dbo, "animaldiet", username, "ID=%d" % dietid, ( 
-        ( "DietID", post.db_integer("type")),
-        ( "DateStarted", post.db_date("startdate")),
-        ( "Comments", post.db_string("comments"))
-        ))
-    preaudit = db.query(dbo, "SELECT * FROM animaldiet WHERE ID = %d" % dietid)
-    db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM animaldiet WHERE ID = %d" % dietid)
-    audit.edit(dbo, username, "animaldiet", dietid, audit.map_diff(preaudit, postaudit))
+    dbo.update("animaldiet", post.integer("dietid"), {
+        "DietID":       post.integer("type"),
+        "DateStarted":  post.date("startdate"),
+        "Comments":     post["comments"]
+    }, username)
 
 def delete_diet(dbo, username, did):
     """
     Deletes the selected diet
     """
-    audit.delete(dbo, username, "animaldiet", did, audit.dump_row(dbo, "animaldiet", did))
-    db.execute(dbo, "DELETE FROM animaldiet WHERE ID = %d" % int(did))
+    dbo.delete("animaldiet", did, username)
 
 def insert_cost_from_form(dbo, username, post):
     """

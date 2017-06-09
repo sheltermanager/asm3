@@ -1,6 +1,7 @@
 40
 ================
 
+09/06/17 Database insert/update/delete methods #230
 08/06/17 Move query/execute into db object and port all execute_many #230
 08/06/17 Move create of sequences/views/sp into db objects with get_id #230
 08/06/17 Remove DISTINCT from animal/people as unnecessary and slower #231

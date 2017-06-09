@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import al
+import audit
 import cachemem
 import datetime
 import i18n
@@ -128,10 +129,31 @@ class Database(object):
     def ddl_modify_column(self, table, column, newtype, using = ""):
         return "" # Not all providers support this
 
-    def encode_str(self, v):
+    def encode_str_before_write(self, values):
+        """ Fix and encode/decode any string values before storing them in the database.
+            string column names with an asterisk will not do XSS escaping.
         """
-        Returns a value from a query result.
-        If v is unicode, encodes it as an ascii str with XML entities
+        for k, v in values.copy().iteritems(): # Work from a copy to prevent iterator problems
+            if utils.is_str(v) or utils.is_unicode(v):
+                if not DB_DECODE_HTML_ENTITIES:         # Store HTML entities as is
+                    v = utils.encode_html(v)            # Turn any unicode chars into HTML entities
+                else:
+                    v = utils.decode_html(v)            # Turn HTML entities into unicode chars
+                if k.find("*") != -1:
+                    # If there's an asterisk in the name, remove it so that the
+                    # value is stored again below, but without XSS escaping
+                    del values[k]
+                    k = k.replace("*", "")
+                else:
+                    # Otherwise, do XSS escaping
+                    v = v.replace(">", "&gt;").replace("<", "&lt;")
+                values[k] = u"%s" % v
+        return values
+
+    def encode_str_after_read(self, v):
+        """
+        Encodes any string values returned by a query result.
+        If v is unicode, encodes it as an ascii str with HTML entities
         If v is already a str, removes any non-ascii chars
         If it is any other type, returns v untouched
         """
@@ -147,7 +169,7 @@ class Database(object):
             else:
                 return v
         except Exception as err:
-            al.error(str(err), "Database.encode_str", self, sys.exc_info())
+            al.error(str(err), "Database.encode_str_after_read", self, sys.exc_info())
             raise err
 
     def escape(self, s):
@@ -270,9 +292,72 @@ class Database(object):
         except:
             return False
 
+    def insert(self, table, values, user="", generateID=True, setRecordVersion=True, writeAudit=True):
+        """ Inserts a row into a table.
+            table: The table to insert into
+            values: A dict of column names with values
+            user: The user account performing the insert. If set, adds CreatedBy/Date/LastChangedBy/Date fields
+            generateID: If True, sets a value for the ID column
+            setRecordVersion: If user is non-blank and this is True, sets RecordVersion
+            writeAudit: If True, writes an audit record for the insert
+            Returns the ID of the inserted record
+        """
+        if user != "":
+            values["CreatedBy"] = user
+            values["LastChangedBy"] = user
+            values["CreatedDate"] = self.now()
+            values["LastChangedDate"] = self.now()
+            if setRecordVersion: values["RecordVersion"] = self.get_recordversion()
+        iid = 0
+        if generateID:
+            iid = self.get_id(table)
+        values = self.encode_str_before_write(values)
+        sql = "INSERT INTO %s (%s) VALUES (%s)" % ( table, ",".join(values.iterkeys()), ",".join('?'*len(values)) )
+        self.execute(sql, values.values())
+        if writeAudit and iid != 0:
+            audit.create(self, user, table, iid, audit.dump_row(self, table, iid))
+        return iid
+
+    def update(self, table, iid, values, user="", setRecordVersion=True, writeAudit=True):
+        """ Updates a row in a table.
+            table: The table to update
+            iid: The value of the ID column in the row to update
+            values: A dict of column names with values
+            user: The user account performing the update. If set, adds CreatedBy/Date/LastChangedBy/Date fields
+            setRecordVersion: If user is non-blank and this is True, sets RecordVersion
+            writeAudit: If True, writes an audit record for the update
+        """
+        if user != "":
+            values["CreatedBy"] = user
+            values["LastChangedBy"] = user
+            values["CreatedDate"] = self.now()
+            values["LastChangedDate"] = self.now()
+            if setRecordVersion: values["RecordVersion"] = self.get_recordversion()
+        values = self.encode_str_before_write(values)
+        sql = "UPDATE %s SET %s WHERE ID = %s" % ( table, ",".join( ["%s=?" % x for x in values.iterkeys()] ), iid )
+        preaudit = self.query_row(table, iid)
+        self.execute(sql, values.values())
+        postaudit = self.query_row(table, iid)
+        if user != "" and writeAudit: 
+            audit.edit(self, user, table, iid, audit.map_diff(preaudit, postaudit))
+
+    def delete(self, table, iid, user="", writeAudit=True):
+        """ Deletes row ID=iid from table 
+            table: The table to delete from
+            iid: The value of the ID column in the row to delete
+            user: The user account doing the delete
+            writeAudit: If True, writes an audit record for the delete
+        """
+        self.execute("DELETE FROM %s WHERE ID=%s" % (table, iid))
+        if writeAudit and user != "":
+            audit.delete(self, user, table, iid, audit.dump_row(self, table, iid))
+
     def install_stored_procedures(self):
         """ Install any supporting stored procedures (typically for reports) needed for this backend """
         pass
+
+    def now(self):
+        return i18n.now(self.timezone)
 
     def optimistic_check(self, table, tid, version):
         """ Verifies that the record with ID tid in table still has
@@ -319,7 +404,7 @@ class Database(object):
                 # Intialise a map for each row
                 rowmap = {}
                 for i in range(0, len(row)):
-                    v = self.encode_str(row[i])
+                    v = self.encode_str_after_read(row[i])
                     rowmap[cols[i]] = v
                 l.append(rowmap)
             self.cursor_close(c, s)
@@ -421,7 +506,7 @@ class Database(object):
                 # Intialise a map for each row
                 rowmap = {}
                 for i in range(0, len(row)):
-                    v = self.encode_str(row[i])
+                    v = self.encode_str_after_read(row[i])
                     rowmap[cols[i]] = v
                 yield rowmap
                 row = s.fetchone()
@@ -435,6 +520,10 @@ class Database(object):
                 self.cursor_close(c, s)
             except:
                 pass
+
+    def query_row(self, table, iid):
+        """ Returns the complete table row with ID=iid """
+        return self.query("SELECT * FROM %s WHERE ID=%s" % (table, iid))
 
     def query_to_insert_sql(self, sql, table, escapeCR = ""):
         """
@@ -541,7 +630,7 @@ class Database(object):
         r = self.query_tuple(sql, params=params)
         try:
             v = self.unescape(r[0][0])
-            return self.encode_str(v)
+            return self.encode_str_after_read(v)
         except:
             return str("")
 
@@ -870,7 +959,7 @@ def python2db(d):
     if d is None: return "NULL"
     return "%d-%02d-%02d" % ( d.year, d.month, d.day )
 
-# These should be no longer necessary one day when all code is using dbo.insert/update/delete, question mark over escape_xss
+# These should be no longer necessary one day when all code is using dbo.insert/update/delete
 
 def ddt(d):
     """ Formats a python date and time as a date for the database """
@@ -918,7 +1007,6 @@ def escape_xss(s):
     return s.replace(">", "&gt;").replace("<", "&lt;")
 
 # Calls to methods below should be replaced with "insert" and "update" methods of Database 
-# and perform the action, using parameterised queries.
 
 def make_insert_sql(table, s):
     """
