@@ -134,7 +134,7 @@ def insert_stocklevel_from_form(dbo, post, username):
         ( "BatchNumber", post.db_string("batchnumber") ),
         ( "Cost", post.db_integer("cost") ),
         ( "UnitPrice", post.db_integer("unitprice") ),
-        ( "CreatedDate", db.todaysql() )
+        ( "CreatedDate", db.ddt(dbo.now()) )
     )))
     insert_stockusage(dbo, username, nid, post.floating("balance"), post.date("usagedate"), post.integer("usagetype"), post["comments"])
     audit.create(dbo, username, "stocklevel", nid, audit.dump_row(dbo, "stocklevel", nid))

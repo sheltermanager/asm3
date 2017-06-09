@@ -99,8 +99,7 @@ def clean(dbo):
     """
     Deletes audit trail records older than three months
     """
-    d = db.today()
-    d = i18n.subtract_days(d, 93)
+    d = i18n.subtract_days(i18n.now(), 93)
     count = db.query_int(dbo, "SELECT COUNT(*) FROM audittrail WHERE AuditDate< %s" % db.dd(d))
     al.debug("removing %d audit records older than 93 days." % count, "audit.clean", dbo)
     db.execute(dbo, "DELETE FROM audittrail WHERE AuditDate < %s" % db.dd(d))

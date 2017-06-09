@@ -7,7 +7,6 @@ PATH = os.path.dirname(os.path.abspath(__file__)) + os.sep
 
 # Put the rest of our modules on the path
 sys.path.append(PATH)
-sys.path.append(PATH + "locale")
 
 import al
 import additional as extadditional

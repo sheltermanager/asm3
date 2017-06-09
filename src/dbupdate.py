@@ -1428,7 +1428,7 @@ def sql_default_data(dbo, skip_config = False):
     def lookup2money(tablename, fieldname, tid, name, money = 0):
         return "INSERT INTO %s (ID, %s, DefaultCost, IsRetired) VALUES (%s, '%s', %d, 0)|=\n" % ( tablename, fieldname, str(tid), db.escape(name), money)
     def account(tid, code, desc, atype, dtype, ctype):
-        return "INSERT INTO accounts VALUES (%s, '%s', '%s', 0, %s, %s, %s, 0, '%s', %s, '%s', %s)|=\n" % ( str(tid), db.escape(code), db.escape(desc), str(atype), str(ctype), str(dtype), 'default', db.todaysql(), 'default', db.todaysql())
+        return "INSERT INTO accounts VALUES (%s, '%s', '%s', 0, %s, %s, %s, 0, '%s', %s, '%s', %s)|=\n" % ( str(tid), db.escape(code), db.escape(desc), str(atype), str(ctype), str(dtype), 'default', db.ddt(dbo.now()), 'default', db.ddt(dbo.now()) )
     def breed(tid, name, petfinder, speciesid):
         return "INSERT INTO breed (ID, BreedName, BreedDescription, PetFinderBreed, SpeciesID, IsRetired) VALUES (%s, '%s', '', '%s', %s, 0)|=\n" % ( str(tid), db.escape(name), petfinder, str(speciesid) )
     def basecolour(tid, name, adoptapet):

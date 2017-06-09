@@ -4,7 +4,6 @@ import os, sys
 
 # Add our modules to the sys.path
 sys.path.append(os.getcwd())
-sys.path.append(os.getcwd() + os.sep + "locale")
 
 import al
 import audit

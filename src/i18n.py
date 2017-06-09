@@ -4,8 +4,10 @@ import datetime
 import json
 import time
 
-VERSION = "40u [Fri  9 Jun 12:26:32 BST 2017]"
-BUILD = "06091226"
+from locales import *
+
+VERSION = "40u [Fri  9 Jun 15:24:40 BST 2017]"
+BUILD = "06091524"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -160,15 +162,9 @@ def translate(english, locale = "en"):
         return english
 
     # Otherwise, look up the phrase in the correct
-    # module for our locale (modules are large
-    # val dictionaries containing an english string as
-    # the key - we generate them automatically 
-    # from po files and they're all prefixed with
-    # locale_). The python manual says we were safe
-    # to do this as importing is a non-operation for
-    # already imported modules
+    # module for our locale.
     try:
-        lang = __import__("locale_" + locale)
+        lang = globals()["locale_" + locale]
     except:
         # The module doesn't exist for the locale, fall
         # back to plain English translation
