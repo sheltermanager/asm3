@@ -2769,7 +2769,7 @@ def update_3002(dbo):
     users = db.query(dbo, "SELECT ID, UserName, SecurityMap FROM users " \
         "WHERE SuperUser = 0")
     for u in users:
-        roleid = db._get_id_max(dbo, "role") 
+        roleid = dbo.get_id_max("role") 
         # If it's the guest user, use the view animals/people role
         if u["USERNAME"] == "guest":
             roleid = 1
@@ -3272,7 +3272,7 @@ def update_3309(dbo):
     fiv = db.query(dbo, "SELECT ID, CombiTestDate, CombiTestResult FROM animal WHERE CombiTested = 1")
     al.debug("found %d fiv results to convert" % len(fiv), "update_3309", dbo)
     for f in fiv:
-        ntestid = db._get_id_max(dbo, "animaltest")
+        ntestid = dbo.get_id_max("animaltest")
         sql = db.make_insert_user_sql(dbo, "animaltest", "update", ( 
             ( "ID", db.di(ntestid)),
             ( "AnimalID", db.di(f["ID"])),
@@ -3290,7 +3290,7 @@ def update_3309(dbo):
     flv = db.query(dbo, "SELECT ID, CombiTestDate, FLVResult FROM animal WHERE CombiTested = 1")
     al.debug("found %d flv results to convert" % len(flv), "update_3309", dbo)
     for f in flv:
-        ntestid = db._get_id_max(dbo, "animaltest")
+        ntestid = dbo.get_id_max("animaltest")
         sql = db.make_insert_user_sql(dbo, "animaltest", "update", ( 
             ( "ID", db.di(ntestid)),
             ( "AnimalID", db.di(f["ID"])),
@@ -3309,7 +3309,7 @@ def update_3309(dbo):
     hw = db.query(dbo, "SELECT ID, HeartwormTestDate, HeartwormTestResult FROM animal WHERE HeartwormTested = 1")
     al.debug("found %d heartworm results to convert" % len(hw), "update_3309", dbo)
     for f in hw:
-        ntestid = db._get_id_max(dbo, "animaltest")
+        ntestid = dbo.get_id_max("animaltest")
         sql = db.make_insert_user_sql(dbo, "animaltest", "update", ( 
             ( "ID", db.di(ntestid)),
             ( "AnimalID", db.di(f["ID"])),
