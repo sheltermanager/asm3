@@ -55,9 +55,9 @@ compilejs:
 compilepy:
 	@echo "[compile python] ====================="
 	@# 800 lines per method, 35 returns, 20 args, 60 locals
-	@# pychecker -L 800 -R 35 -J 20 -K 60 -j -b al,email,httplib,multiprocessing,subprocess,threading,web src/*.py src/db/*.py
+	@# pychecker -L 800 -R 35 -J 20 -K 60 -j -b al,email,httplib,multiprocessing,subprocess,threading,web src/*.py src/dbms/*.py src/publishers/*.py
 	@# pylint --disable=C src/*.py
-	flake8 src/*.py
+	flake8 src/*.py src/dbms/*.py src/publishers/*.py
 
 smcom-dev: version clean minify
 	@echo "[smcom dev] ========================="

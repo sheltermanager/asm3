@@ -4332,23 +4332,7 @@ class publish(JSONEndpoint):
         else:
             # If a publishing mode is requested, start that publisher
             # running on a background thread
-            pc = extpublish.PublishCriteria(configuration.publisher_presets(dbo))
-            if mode == "ftp":    extpublish.HTMLPublisher(dbo, pc, session.user).start()
-            elif mode == "pf":   extpublish.PetFinderPublisher(dbo, pc).start()
-            elif mode == "ap":   extpublish.AdoptAPetPublisher(dbo, pc).start()
-            elif mode == "rg":   extpublish.RescueGroupsPublisher(dbo, pc).start()
-            elif mode == "mf":   extpublish.MaddiesFundPublisher(dbo, pc).start()
-            elif mode == "hlp":  extpublish.HelpingLostPetsPublisher(dbo, pc).start()
-            elif mode == "pl":   extpublish.PetLinkPublisher(dbo, pc).start()
-            elif mode == "pr":   extpublish.PetRescuePublisher(dbo, pc).start()
-            elif mode == "p9":   extpublish.Pets911Publisher(dbo, pc).start()
-            elif mode == "st":   extpublish.SmartTagPublisher(dbo, pc).start()
-            elif mode == "abuk": extpublish.AnibaseUKPublisher(dbo, pc).start()
-            elif mode == "fa":   extpublish.FoundAnimalsPublisher(dbo, pc).start()
-            elif mode == "pcuk": extpublish.PetsLocatedUKPublisher(dbo, pc).start()
-            elif mode == "ptuk": extpublish.PETtracUKPublisher(dbo, pc).start()
-            elif mode == "veha": extpublish.HomeAgainPublisher(dbo, pc).start()
-            elif mode == "vear": extpublish.AKCReunitePublisher(dbo, pc).start()
+            extpublish.start_publisher(dbo, mode, user=o.user, async=True)
         return { "failed": failed }
 
     def post_poll(self, o):

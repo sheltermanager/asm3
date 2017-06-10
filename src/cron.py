@@ -127,84 +127,20 @@ def reports_email(dbo):
         al.error("FAIL: running daily email of reports_email: %s" % em, "cron.reports_email", dbo, sys.exc_info())
 
 def publish_3pty(dbo):
-    publish_ap(dbo)
-    publish_fa(dbo)
-    publish_hlp(dbo)
-    publish_mf(dbo)
-    publish_pf(dbo)
-    publish_pl(dbo)
-    publish_pcuk(dbo)
-    publish_pr(dbo)
-    publish_rg(dbo)
-    publish_abuk(dbo)
-    publish_ptuk(dbo)
-    publish_st(dbo)
-    publish_vear(dbo)
-    publish_veha(dbo)
-
-def publish_ap(dbo):
-    try :
+    try:
 
         pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
         publishers = configuration.publishers_enabled(dbo)
         if smcom.active():
             pc.ignoreLock = True
 
-        if publishers.find("ap") != -1:
-            ap = publish.AdoptAPetPublisher(dbo, pc)
-            ap.run()
+        for p in publishers.split(" "):
+            if p != "ftp": # We do html/ftp publishing separate from others
+                publish.start_publisher(dbo, p, user="system", async=False)
 
     except:
         em = str(sys.exc_info()[0])
-        al.error("FAIL: uncaught error running adoptapet publisher: %s" % em, "cron.publish_ap", dbo, sys.exc_info())
-
-def publish_fa(dbo):
-    try :
-
-        pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
-        publishers = configuration.publishers_enabled(dbo)
-        if smcom.active():
-            pc.ignoreLock = True
-
-        if publishers.find("fa") != -1:
-            ap = publish.FoundAnimalsPublisher(dbo, pc)
-            ap.run()
-
-    except:
-        em = str(sys.exc_info()[0])
-        al.error("FAIL: uncaught error running foundanimals publisher: %s" % em, "cron.publish_fa", dbo, sys.exc_info())
-
-def publish_mf(dbo):
-    try :
-
-        pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
-        publishers = configuration.publishers_enabled(dbo)
-        if smcom.active():
-            pc.ignoreLock = True
-
-        if publishers.find("mf") != -1:
-            mf = publish.MaddiesFundPublisher(dbo, pc)
-            mf.run()
-
-    except:
-        em = str(sys.exc_info()[0])
-        al.error("FAIL: uncaught error running Maddies Fund publisher: %s" % em, "cron.publish_mf", dbo, sys.exc_info())
-
-def publish_hlp(dbo):
-    try :
-
-        pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
-        publishers = configuration.publishers_enabled(dbo)
-        if smcom.active():
-            pc.ignoreLock = True
-
-        if publishers.find("hlp") != -1:
-            pn = publish.HelpingLostPetsPublisher(dbo, pc)
-            pn.run()
-
-    except:
-        em = str(sys.exc_info()[0])
-        al.error("FAIL: uncaught error running helpinglostpets publisher: %s" % em, "cron.publish_hlp", dbo, sys.exc_info())
+        al.error("FAIL: uncaught error running third party publishers: %s" % em, "cron.publish_3pty", dbo, sys.exc_info())
 
 def publish_html(dbo):
     try :
@@ -219,166 +155,6 @@ def publish_html(dbo):
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running html publisher: %s" % em, "cron.publish_html", dbo, sys.exc_info())
-
-def publish_pf(dbo):
-    try :
-
-        pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
-        publishers = configuration.publishers_enabled(dbo)
-        if smcom.active():
-            pc.ignoreLock = True
-
-        if publishers.find("pf") != -1:
-            pf = publish.PetFinderPublisher(dbo, pc)
-            pf.run()
-
-    except:
-        em = str(sys.exc_info()[0])
-        al.error("FAIL: uncaught error running petfinder publisher: %s" % em, "cron.publish_pf", dbo, sys.exc_info())
-
-def publish_pl(dbo):
-    try :
-
-        pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
-        publishers = configuration.publishers_enabled(dbo)
-        if smcom.active():
-            pc.ignoreLock = True
-
-        if publishers.find("pl") != -1:
-            pn = publish.PetLinkPublisher(dbo, pc)
-            pn.run()
-
-    except:
-        em = str(sys.exc_info()[0])
-        al.error("FAIL: uncaught error running petlink publisher: %s" % em, "cron.publish_pl", dbo, sys.exc_info())
-
-def publish_pcuk(dbo):
-    try :
-
-        pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
-        publishers = configuration.publishers_enabled(dbo)
-        if smcom.active():
-            pc.ignoreLock = True
-
-        if publishers.find("pcuk") != -1:
-            pn = publish.PetsLocatedUKPublisher(dbo, pc)
-            pn.run()
-
-    except:
-        em = str(sys.exc_info()[0])
-        al.error("FAIL: uncaught error running petslocated publisher: %s" % em, "cron.publish_pcuk", dbo, sys.exc_info())
-
-def publish_pr(dbo):
-    try :
-
-        pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
-        publishers = configuration.publishers_enabled(dbo)
-        if smcom.active():
-            pc.ignoreLock = True
-
-        if publishers.find("pr") != -1:
-            pn = publish.PetRescuePublisher(dbo, pc)
-            pn.run()
-
-    except:
-        em = str(sys.exc_info()[0])
-        al.error("FAIL: uncaught error running petrescue publisher: %s" % em, "cron.publish_pr", dbo, sys.exc_info())
-
-def publish_rg(dbo):
-    try :
-
-        pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
-        publishers = configuration.publishers_enabled(dbo)
-        if smcom.active():
-            pc.ignoreLock = True
-
-        if publishers.find("rg") != -1:
-            rg = publish.RescueGroupsPublisher(dbo, pc)
-            rg.run()
-
-    except:
-        em = str(sys.exc_info()[0])
-        al.error("FAIL: uncaught error running rescuegroups publisher: %s" % em, "cron.publish_rg", dbo, sys.exc_info())
-
-def publish_abuk(dbo):
-    try :
-
-        pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
-        publishers = configuration.publishers_enabled(dbo)
-        if smcom.active():
-            pc.ignoreLock = True
-
-        if publishers.find("abuk") != -1:
-            pn = publish.AnibaseUKPublisher(dbo, pc)
-            pn.run()
-
-    except:
-        em = str(sys.exc_info()[0])
-        al.error("FAIL: uncaught error running anibase uk publisher: %s" % em, "cron.publish_abuk", dbo, sys.exc_info())
-
-def publish_ptuk(dbo):
-    try :
-
-        pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
-        publishers = configuration.publishers_enabled(dbo)
-        if smcom.active():
-            pc.ignoreLock = True
-
-        if publishers.find("pt") != -1:
-            pn = publish.PETtracUKPublisher(dbo, pc)
-            pn.run()
-
-    except:
-        em = str(sys.exc_info()[0])
-        al.error("FAIL: uncaught error running pettrac uk publisher: %s" % em, "cron.publish_ptuk", dbo, sys.exc_info())
-
-def publish_st(dbo):
-    try :
-
-        pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
-        publishers = configuration.publishers_enabled(dbo)
-        if smcom.active():
-            pc.ignoreLock = True
-
-        if publishers.find("st") != -1:
-            ap = publish.SmartTagPublisher(dbo, pc)
-            ap.run()
-
-    except:
-        em = str(sys.exc_info()[0])
-        al.error("FAIL: uncaught error running smarttag publisher: %s" % em, "cron.publish_st", dbo, sys.exc_info())
-
-def publish_vear(dbo):
-    try :
-
-        pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
-        publishers = configuration.publishers_enabled(dbo)
-        if smcom.active():
-            pc.ignoreLock = True
-
-        if publishers.find("ve") != -1:
-            ap = publish.AKCReunitePublisher(dbo, pc)
-            ap.run()
-
-    except:
-        em = str(sys.exc_info()[0])
-        al.error("FAIL: uncaught error running akc reunite publisher: %s" % em, "cron.publish_vear", dbo, sys.exc_info())
-
-def publish_veha(dbo):
-    try :
-
-        pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
-        publishers = configuration.publishers_enabled(dbo)
-        if smcom.active():
-            pc.ignoreLock = True
-
-        if publishers.find("ve") != -1:
-            ap = publish.HomeAgainPublisher(dbo, pc)
-            ap.run()
-
-    except:
-        em = str(sys.exc_info()[0])
-        al.error("FAIL: uncaught error running homeagain publisher: %s" % em, "cron.publish_veha", dbo, sys.exc_info())
 
 def maint_reinstall_default_media(dbo):
     try:
@@ -558,36 +334,6 @@ def run(dbo, mode):
         reports_email(dbo)
     elif mode == "publish_3pty":
         publish_3pty(dbo)
-    elif mode == "publish_ap":
-        publish_ap(dbo)
-    elif mode == "publish_fa":
-        publish_fa(dbo)
-    elif mode == "publish_hlp":
-        publish_hlp(dbo)
-    elif mode == "publish_html":
-        publish_html(dbo)
-    elif mode == "publish_mf":
-        publish_mf(dbo)
-    elif mode == "publish_pf":
-        publish_pf(dbo)
-    elif mode == "publish_pl":
-        publish_pl(dbo)
-    elif mode == "publish_pcuk":
-        publish_pcuk(dbo)
-    elif mode == "publish_pr":
-        publish_pr(dbo)
-    elif mode == "publish_abuk":
-        publish_abuk(dbo)
-    elif mode == "publish_ptuk":
-        publish_ptuk(dbo)
-    elif mode == "publish_rg":
-        publish_rg(dbo)
-    elif mode == "publish_st":
-        publish_st(dbo)
-    elif mode == "publish_vear":
-        publish_vear(dbo)
-    elif mode == "publish_veha":
-        publish_veha(dbo)
     elif mode == "maint_recode_all":
         maint_recode_all(dbo)
     elif mode == "maint_recode_shelter":
@@ -685,23 +431,8 @@ def print_usage():
     print("       all - runs daily and all publish_* tasks")
     print("       daily - daily batch tasks")
     print("       reports_email - email reports with dailyemail set (run this target once per hour)")
-    print("       publish_ap - publish to adoptapet.com")
-    print("       publish_fa - update foundanimals.org")
-    print("       publish_hlp - publish to helpinglostpets.com")
     print("       publish_html - publish html/ftp")
-    print("       publish_mf - publish adoptions to maddiesfund.org")
-    print("       publish_mp - publish to meetapet.com")
-    print("       publish_pf - publish to petfinder")
-    print("       publish_pl - update petlink")
-    print("       publish_rg - publish to rescuegroups")
-    print("       publish_st - update smart tag")
-    print("       publish_veha - update homeagain via vetenvoy")
-    print("       publish_vear - update akc reunite via vetenvoy")
-    print("       publish_abuk - update anibase uk")
-    print("       publish_ptuk - update pettrac uk")
-    print("       publish_pcuk - publish to petslocated.com uk")
-    print("       publish_pr - update petrescue aus")
-    print("       publish_3pty - run ALL 3rd party publishers (all but html)")
+    print("       publish_3pty - run all 3rd party publishers")
     print("       maint_animal_figures - calculate all monthly/annual figures for all time")
     print("       maint_animal_figures_annual - calculate all annual figures for all time")
     print("       maint_db_diagnostic - run database diagnostics")

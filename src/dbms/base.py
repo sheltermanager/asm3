@@ -9,7 +9,9 @@ import sys
 import time
 import utils
 
-from sitedefs import DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HAS_ASM2_PK_TABLE, DB_DECODE_HTML_ENTITIES, DB_EXEC_LOG, DB_EXPLAIN_QUERIES, DB_TIME_QUERIES, DB_TIME_LOG_OVER, DB_TIMEOUT, CACHE_COMMON_QUERIES, MULTIPLE_DATABASES_MAP
+from db import ds, di, ddt
+
+from sitedefs import DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HAS_ASM2_PK_TABLE, DB_DECODE_HTML_ENTITIES, DB_EXEC_LOG, DB_EXPLAIN_QUERIES, DB_TIME_QUERIES, DB_TIME_LOG_OVER, DB_TIMEOUT, CACHE_COMMON_QUERIES
 
 class Database(object):
     """
@@ -256,7 +258,7 @@ class Database(object):
 
     def get_id_max(self, table):
         """ Returns the next ID for a table using MAX(ID) """
-        return query_int(self, "SELECT MAX(ID) FROM %s" % table) + 1
+        return self.query_int("SELECT MAX(ID) FROM %s" % table) + 1
 
     def get_recordversion(self):
         """
@@ -682,8 +684,8 @@ class Database(object):
         """
         if not self.has_asm2_pk_table: return
         try:
-            execute(self, "DELETE FROM primarykey WHERE TableName = '%s'" % table)
-            execute(self, "INSERT INTO primarykey (TableName, NextID) VALUES ('%s', %d)" % (table, nextid))
+            self.execute("DELETE FROM primarykey WHERE TableName = '%s'" % table)
+            self.execute("INSERT INTO primarykey (TableName, NextID) VALUES ('%s', %d)" % (table, nextid))
         except:
             pass
 

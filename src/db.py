@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-import datetime
 import dbms.hsqldb, dbms.mysql, dbms.postgresql, dbms.sqlite
 import i18n
 import utils

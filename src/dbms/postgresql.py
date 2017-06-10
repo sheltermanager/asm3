@@ -67,7 +67,7 @@ class DatabasePostgreSQL(Database):
 
     def install_stored_procedures(self):
         """ Extra PG report procedures to cast a value to date and integer while ignoring errors """
-        execute_dbupdate(self, \
+        self.execute_dbupdate(\
             "CREATE OR REPLACE FUNCTION asm_to_date(p_date TEXT, p_format TEXT, OUT r_date DATE)\n" \
             "LANGUAGE plpgsql\n" \
             "AS $$\n" \
@@ -77,7 +77,7 @@ class DatabasePostgreSQL(Database):
             "WHEN OTHERS THEN r_date = NULL;\n" \
             "END;\n" \
             "$$")
-        execute_dbupdate(self, \
+        self.execute_dbupdate(\
             "CREATE OR REPLACE FUNCTION asm_to_integer(p_int TEXT, OUT r_int INTEGER)\n" \
             "LANGUAGE plpgsql\n" \
             "AS $$\n" \
