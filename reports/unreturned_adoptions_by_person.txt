@@ -19,7 +19,7 @@ oo.OwnerName AS OOName, oo.OwnerAddress AS OOAddress, oo.OwnerTown AS OOTown, oo
 oo.EmailAddress AS OOEmail,
 no.OwnerName, no.OwnerAddress,
 no.OwnerTown, no.OwnerCounty,
-no.OwnerPostcode, no.EmailAddress
+no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.MobileTelephone
 FROM adoption
 INNER JOIN animal ON adoption.AnimalID = animal.ID
 INNER JOIN owner no ON adoption.OwnerID = no.ID
@@ -35,7 +35,7 @@ HEADER$$
 
 $$GROUP_OwnerName
 $$HEAD
-<h2>$OWNERNAME ($OWNERADDRESS $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE, $EMAILADDRESS)</h2>
+<h2>$OWNERNAME ($OWNERADDRESS $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE, $EMAILADDRESS $HOMETELEPHONE $MOBILETELEPHONE)</h2>
 <table border=1><tr>
 <td><b>Code</b></td>
 <td><b>Name</b></td>
