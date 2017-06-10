@@ -9,8 +9,6 @@ import sys
 import time
 import utils
 
-from db import ds, di, ddt
-
 from sitedefs import DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HAS_ASM2_PK_TABLE, DB_DECODE_HTML_ENTITIES, DB_EXEC_LOG, DB_EXPLAIN_QUERIES, DB_TIME_QUERIES, DB_TIME_LOG_OVER, DB_TIMEOUT, CACHE_COMMON_QUERIES
 
 class Database(object):
@@ -531,11 +529,11 @@ class Database(object):
                     values.append("null")
                 elif utils.is_unicode(v) or utils.is_str(v):
                     if escapeCR != "": v = v.replace("\n", escapeCR).replace("\r", "")
-                    values.append(ds(v))
+                    values.append("'%s'" % v)
                 elif type(v) == datetime.datetime:
-                    values.append(ddt(v))
+                    values.append("'%04d-%02d-%02d %02d:%02d:%02d'" % ( d.year, d.month, d.day, d.hour, d.minute, d.second ))
                 else:
-                    values.append(di(v))
+                    values.append(str(v))
             donefields = True
             yield "INSERT INTO %s (%s) VALUES (%s);\n" % (table, ",".join(fields), ",".join(values))
 
