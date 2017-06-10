@@ -112,7 +112,7 @@ def start_publisher(dbo, code, user = "", async = True):
     """ Starts the publisher with code on a background thread """
     pc = PublishCriteria(configuration.publisher_presets(dbo))
     if async:
-        if code == "ftp":    publishers.html.HTMLPublisher(dbo, pc, user).start()
+        if code == "html":   publishers.html.HTMLPublisher(dbo, pc, user).start()
         elif code == "pf":   publishers.petfinder.PetFinderPublisher(dbo, pc).start()
         elif code == "ap":   publishers.adoptapet.AdoptAPetPublisher(dbo, pc).start()
         elif code == "rg":   publishers.rescuegroups.RescueGroupsPublisher(dbo, pc).start()
@@ -128,7 +128,7 @@ def start_publisher(dbo, code, user = "", async = True):
         elif code == "veha": publishers.vetenvoy.HomeAgainPublisher(dbo, pc).start()
         elif code == "vear": publishers.vetenvoy.AKCReunitePublisher(dbo, pc).start()
     else:
-        if code == "ftp":    publishers.html.HTMLPublisher(dbo, pc, user).run()
+        if code == "html":   publishers.html.HTMLPublisher(dbo, pc, user).run()
         elif code == "pf":   publishers.petfinder.PetFinderPublisher(dbo, pc).run()
         elif code == "ap":   publishers.adoptapet.AdoptAPetPublisher(dbo, pc).run()
         elif code == "rg":   publishers.rescuegroups.RescueGroupsPublisher(dbo, pc).run()

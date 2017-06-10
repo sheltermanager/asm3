@@ -629,7 +629,7 @@ class Database(object):
         except:
             return None
 
-    def split_queries(sql):
+    def split_queries(self, sql):
         """
         Splits semi-colon separated queries in a single
         string into a list and returns them for execution.

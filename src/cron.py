@@ -128,30 +128,18 @@ def reports_email(dbo):
 
 def publish_3pty(dbo):
     try:
-
-        pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
         publishers = configuration.publishers_enabled(dbo)
-        if smcom.active():
-            pc.ignoreLock = True
-
         for p in publishers.split(" "):
-            if p != "ftp": # We do html/ftp publishing separate from others
+            if p != "html": # We do html/ftp publishing separate from others
                 publish.start_publisher(dbo, p, user="system", async=False)
-
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running third party publishers: %s" % em, "cron.publish_3pty", dbo, sys.exc_info())
 
 def publish_html(dbo):
     try :
-
-        pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
-        publishers = configuration.publishers_enabled(dbo)
-
-        if publishers.find("html") != -1:
-            h = publish.HTMLPublisher(dbo, pc, "cron")
-            h.run()
-
+        if configuration.publishers_enabled(dbo).find("html") != -1:
+            publish.start_publisher(dbo, "html", user="system", async=False)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running html publisher: %s" % em, "cron.publish_html", dbo, sys.exc_info())
@@ -334,6 +322,8 @@ def run(dbo, mode):
         reports_email(dbo)
     elif mode == "publish_3pty":
         publish_3pty(dbo)
+    elif mode == "publish_html":
+        publish_html(dbo)
     elif mode == "maint_recode_all":
         maint_recode_all(dbo)
     elif mode == "maint_recode_shelter":
@@ -387,9 +377,9 @@ def run_all_map_databases(mode):
         run(dbo, mode)
 
 def run_default_database(mode):
-    dbo = db.DatabaseInfo()
+    dbo = db.get_database()
     dbo.timeout = 0
-    dbo.connection = db.connection(dbo)
+    dbo.connection = dbo.connect()
     run(dbo, mode)
 
 def run_alias(mode, alias):
@@ -403,7 +393,7 @@ def run_alias(mode, alias):
         return
     else:
         dbo.timeout = 0
-        dbo.connection = db.connection(dbo)
+        dbo.connection = dbo.connect()
         run(dbo, mode)
 
 def run_override_database(mode, dbtype, host, port, username, password, database, alias):

@@ -4705,7 +4705,7 @@ class sql(JSONEndpoint):
         l = dbo.locale
         rowsaffected = 0
         try:
-            for q in db.split_queries(sql):
+            for q in dbo.split_queries(sql):
                 if q == "": continue
                 al.info("%s query: %s" % (session.user, q), "code.sql", dbo)
                 if q.lower().startswith("select") or q.lower().startswith("show"):
@@ -4721,7 +4721,7 @@ class sql(JSONEndpoint):
     def exec_sql_from_file(self, dbo, sql):
         l = dbo.locale
         output = []
-        for q in db.split_queries(sql):
+        for q in dbo.split_queries(sql):
             try:
                 if q == "": continue
                 al.info("%s query: %s" % (session.user, q), "code.sql", dbo)

@@ -3462,7 +3462,7 @@ def update_animal_figures(dbo, month = 0, year = 0):
     """
     async.set_progress_max(dbo, 3)
     batch = []
-    nid = db._get_id_max(dbo, "animalfigures")
+    nid = dbo.get_id_max("animalfigures")
 
     def sql_days(sql):
         """ Returns a query with THEDATE and TOTAL as a dictionary for add_row """
@@ -4008,7 +4008,7 @@ def update_animal_figures_annual(dbo, year = 0):
     """
     async.set_progress_max(dbo, 3)
     batch = []
-    nid = db._get_id_max(dbo, "animalfiguresannual")
+    nid = dbo.get_id_max("animalfiguresannual")
 
     def add_row(orderindex, code, animaltypeid, speciesid, entryreasonid, group, heading, bold, months):
         """ Adds a row to the animalfiguresannual table, unless it's all 0 """
