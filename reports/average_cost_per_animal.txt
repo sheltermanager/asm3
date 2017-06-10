@@ -10,12 +10,12 @@ en
 ###
 SELECT
 (SELECT COUNT(*) FROM animal WHERE ActiveMovementType = 1) AS TotalAnimals,
-(SELECT SUM(CostAmount) FROM animalcost INNER JOIN animal ON animal.ID = animalcost.AnimalID WHERE ActiveMovementType = 1) +
-(SELECT SUM(Cost) FROM animalvaccination INNER JOIN animal ON animal.ID = animalvaccination.AnimalID WHERE ActiveMovementType = 1) +
-(SELECT SUM(Cost) FROM animalmedical INNER JOIN animal ON animal.ID = animalmedical.AnimalID WHERE ActiveMovementType = 1) AS Cost,
-((SELECT SUM(CostAmount) FROM animalcost INNER JOIN animal ON animal.ID = animalcost.AnimalID WHERE ActiveMovementType = 1) +
-(SELECT SUM(Cost) FROM animalvaccination INNER JOIN animal ON animal.ID = animalvaccination.AnimalID WHERE ActiveMovementType = 1) +
-(SELECT SUM(Cost) FROM animalmedical INNER JOIN animal ON animal.ID = animalmedical.AnimalID WHERE ActiveMovementType = 1)) / (SELECT COUNT(*) FROM animal WHERE ActiveMovementType = 1) AS Amount
+COALESCE((SELECT SUM(CostAmount) FROM animalcost INNER JOIN animal ON animal.ID = animalcost.AnimalID WHERE ActiveMovementType = 1), 0) +
+COALESCE((SELECT SUM(Cost) FROM animalvaccination INNER JOIN animal ON animal.ID = animalvaccination.AnimalID WHERE ActiveMovementType = 1), 0) +
+COALESCE((SELECT SUM(Cost) FROM animalmedical INNER JOIN animal ON animal.ID = animalmedical.AnimalID WHERE ActiveMovementType = 1), 0) AS Cost,
+(COALESCE((SELECT SUM(CostAmount) FROM animalcost INNER JOIN animal ON animal.ID = animalcost.AnimalID WHERE ActiveMovementType = 1), 0) +
+COALESCE((SELECT SUM(Cost) FROM animalvaccination INNER JOIN animal ON animal.ID = animalvaccination.AnimalID WHERE ActiveMovementType = 1), 0) +
+COALESCE((SELECT SUM(Cost) FROM animalmedical INNER JOIN animal ON animal.ID = animalmedical.AnimalID WHERE ActiveMovementType = 1), 0)) / (SELECT COUNT(*) FROM animal WHERE ActiveMovementType = 1) AS Amount
 FROM animal LIMIT 1
 ###
 $$HEADER
