@@ -29,6 +29,7 @@ clean:
 	rm -f src/*.pyc
 	rm -f src/dbms/*.pyc
 	rm -f src/locales/*.pyc
+	rm -f src/publishers/*.pyc
 
 version:
 	# Include me in any release target to stamp the 
