@@ -6,8 +6,7 @@ import os
 import sys
 import utils
 
-from base import FTPPublisher
-from publish import get_microchip_data
+from base import FTPPublisher, get_microchip_data
 from sitedefs import SMARTTAG_FTP_HOST, SMARTTAG_FTP_USER, SMARTTAG_FTP_PASSWORD
 
 class SmartTagPublisher(FTPPublisher):

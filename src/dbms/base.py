@@ -531,7 +531,7 @@ class Database(object):
                     if escapeCR != "": v = v.replace("\n", escapeCR).replace("\r", "")
                     values.append("'%s'" % v)
                 elif type(v) == datetime.datetime:
-                    values.append("'%04d-%02d-%02d %02d:%02d:%02d'" % ( d.year, d.month, d.day, d.hour, d.minute, d.second ))
+                    values.append("'%04d-%02d-%02d %02d:%02d:%02d'" % ( v.year, v.month, v.day, v.hour, v.minute, v.second ))
                 else:
                     values.append(str(v))
             donefields = True

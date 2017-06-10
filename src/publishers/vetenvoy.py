@@ -7,8 +7,7 @@ import re
 import sys
 import utils
 
-from base import AbstractPublisher
-from publish import get_microchip_data
+from base import AbstractPublisher, get_microchip_data
 from sitedefs import VETENVOY_US_VENDOR_USERID, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_HOMEAGAIN_RECIPIENTID, VETENVOY_US_AKC_REUNITE_RECIPIENTID, VETENVOY_US_BASE_URL, VETENVOY_US_SYSTEM_ID
 
 class VetEnvoyUSMicrochipPublisher(AbstractPublisher):

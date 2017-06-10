@@ -11,7 +11,7 @@ import datetime
 import financial
 import lostfound
 import person
-import publish
+import publishers.base
 import time
 import users
 import waitinglist
@@ -269,8 +269,7 @@ def search(dbo, session, q):
     elif q == "forpublish":
         explain = _("All animals matching current publishing options.", l)
         if viewanimal:
-            pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
-            ar(publish.get_animal_data(dbo, pc), "ANIMAL", animalsort)
+            ar(publishers.base.get_animal_data(dbo), "ANIMAL", animalsort)
     elif q == "people":
         ar(person.get_person_find_simple(dbo, "", session.user, "all", viewstaff, viewvolunteer, limit), "PERSON", personsort)
         explain = _("All people on file.", l)

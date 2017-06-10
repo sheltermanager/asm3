@@ -5,8 +5,7 @@ import i18n
 import sys
 import utils
 
-from base import AbstractPublisher
-from publish import get_microchip_data
+from base import AbstractPublisher, get_microchip_data
 from sitedefs import ANIBASE_BASE_URL, ANIBASE_API_USER, ANIBASE_API_KEY
 
 class AnibaseUKPublisher(AbstractPublisher):

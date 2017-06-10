@@ -6,8 +6,7 @@ import sys
 import users
 import utils
 
-from base import AbstractPublisher
-from publish import get_microchip_data
+from base import AbstractPublisher, get_microchip_data
 from sitedefs import PETTRAC_UK_POST_URL
 
 class PETtracUKPublisher(AbstractPublisher):

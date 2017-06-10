@@ -21,6 +21,7 @@ import media
 import movement
 import onlineform
 import publish
+import publishers.base
 import reports
 import smcom
 import users
@@ -310,20 +311,17 @@ def handler(post, path, remoteip, referer, querystring):
             return ("text/plain", 0, "ERROR: Invalid animalid")
         else:
             users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
-            pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
-            rs = publish.get_animal_data(dbo, pc, utils.cint(animalid), include_additional_fields = True)
+            rs = publishers.base.get_animal_data(dbo, None, utils.cint(animalid), include_additional_fields = True)
             return set_cached_response(cache_key, "application/json", 3600, 3600, html.json(rs))
 
     elif method == "json_adoptable_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
-        pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
-        rs = publish.get_animal_data(dbo, pc, include_additional_fields = True)
+        rs = publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
         return set_cached_response(cache_key, "application/json", 3600, 3600, html.json(rs))
 
     elif method == "jsonp_adoptable_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
-        pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
-        rs = publish.get_animal_data(dbo, pc, include_additional_fields = True)
+        rs = publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
         return ("application/javascript", 0, "%s(%s);" % (post["callback"], html.json(rs)))
 
     elif method == "xml_adoptable_animal":
@@ -332,14 +330,12 @@ def handler(post, path, remoteip, referer, querystring):
             return ("text/plain", 0, "ERROR: Invalid animalid")
         else:
             users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
-            pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
-            rs = publish.get_animal_data(dbo, pc, utils.cint(animalid), include_additional_fields = True)
+            rs = publishers.base.get_animal_data(dbo, None, utils.cint(animalid), include_additional_fields = True)
             return set_cached_response(cache_key, "application/xml", 3600, 3600, html.xml(rs))
 
     elif method == "xml_adoptable_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
-        pc = publish.PublishCriteria(configuration.publisher_presets(dbo))
-        rs = publish.get_animal_data(dbo, pc, include_additional_fields = True)
+        rs = publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
         return set_cached_response(cache_key, "application/xml", 3600, 3600, html.xml(rs))
 
     elif method == "json_recent_adoptions":

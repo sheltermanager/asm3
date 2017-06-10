@@ -5,8 +5,7 @@ import i18n
 import os, sys
 import utils
 
-from base import FTPPublisher
-from publish import get_microchip_data
+from base import FTPPublisher, get_microchip_data
 from sitedefs import FOUNDANIMALS_FTP_HOST, FOUNDANIMALS_FTP_USER, FOUNDANIMALS_FTP_PASSWORD
 
 class FoundAnimalsPublisher(FTPPublisher):
