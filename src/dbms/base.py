@@ -667,20 +667,18 @@ class Database(object):
         """ Writes concat for a list of items """
         return " || ".join(items)
 
-    def sql_date(self, d, wrapParens=True):
-        """ Writes a date in SQL form """
+    def sql_date(self, d, wrapParens=True, includeTime=True):
+        """ Writes a Python date in SQL form """
         if d is None: return "NULL"
         s = "%04d-%02d-%02d %02d:%02d:%02d" % ( d.year, d.month, d.day, d.hour, d.minute, d.second )
+        if not includeTime:
+            s = "%04d-%02d-%02d 00:00:00" % ( d.year, d.month, d.day )
         if wrapParens: return "'%s'" % s
         return s
 
-    def sql_now(self, includeTime=True):
+    def sql_now(self, wrapParens=True, includeTime=True):
         """ Writes now as an SQL date """
-        d = self.now()
-        if includeTime:
-            return "'%04d-%02d-%02d %02d:%02d:%02d'" % ( d.year, d.month, d.day, d.hour, d.minute, d.second )
-        else:
-            return "'%04d-%02d-%02d 00:00:00'" % ( d.year, d.month, d.day )
+        return self.sql_date(self.now(), wrapParens=wrapParens, includeTime=includeTime)
 
     def sql_limit(self, x):
         """ Writes a limit clause to X items """
