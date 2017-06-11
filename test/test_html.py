@@ -18,6 +18,6 @@ class TestHtml(unittest.TestCase):
     def test_escape_angle(self):
         assert html.escape("><") == "&gt;&lt;"
 
-    def test_json_menu(self):
-        assert html.json_menu("en", [], []) is not None
+    def test_menu_structure(self):
+        assert html.menu_structure("en", [], []) is not None
 

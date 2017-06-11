@@ -51,14 +51,12 @@ class TestAnimal(unittest.TestCase):
         assert len(animal.get_stats(base.get_dbo())) > 0
 
     def test_calc_fields(self):
-        assert animal.calc_most_recent_entry(base.get_dbo(), self.nid) is not None
         assert animal.calc_time_on_shelter(base.get_dbo(), self.nid) is not None
         assert animal.calc_days_on_shelter(base.get_dbo(), self.nid) is not None
         assert animal.calc_age_group(base.get_dbo(), self.nid) is not None
         assert animal.calc_age(base.get_dbo(), self.nid) is not None
 
     def test_get_fields(self):
-        animal.get_latest_movement(base.get_dbo(), self.nid)
         assert True == animal.get_is_on_shelter(base.get_dbo(), self.nid)
         animal.get_comments(base.get_dbo(), self.nid)
         animal.get_date_of_birth(base.get_dbo(), self.nid)
@@ -154,7 +152,8 @@ class TestAnimal(unittest.TestCase):
             "goodwithcats": "1",
             "goodwithdogs": "1",
             "goodwithkids": "1",
-            "housetrained": "1"
+            "housetrained": "1",
+            "movementtype": "-1"
         }
         post = utils.PostedData(data, "en")
         animal.update_animals_from_form(base.get_dbo(), post, "test")
@@ -261,8 +260,6 @@ class TestAnimal(unittest.TestCase):
     def test_animal_figures(self):
         animal.update_animal_figures(base.get_dbo())
         animal.update_animal_figures_annual(base.get_dbo())
-        animal.update_animal_figures_asilomar(base.get_dbo())
-        animal.update_animal_figures_monthly_asilomar(base.get_dbo())
 
     def test_auto_cancel_holds(self):
         animal.auto_cancel_holds(base.get_dbo())

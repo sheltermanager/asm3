@@ -103,7 +103,8 @@ suitewl = unittest.makeSuite(test_waitinglist.TestWaitingList, 'test')
 fullsuite.append(suitewl)
 
 if __name__ == "__main__":
-    dbupdate.perform_updates(base.get_dbo())
+    base.reset_db()
+    dbupdate.install(base.get_dbo())
     s = unittest.TestSuite(fullsuite)
     runner = unittest.TextTestRunner()
     runner.run(s)

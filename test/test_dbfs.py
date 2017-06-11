@@ -52,15 +52,6 @@ class TestDBFS(unittest.TestCase):
         assert "test" in dbfs.get_html_publisher_templates(base.get_dbo())
         dbfs.delete_html_publisher_template(base.get_dbo(), "test", "test")
 
-    def test_get_publish_logs(self):
-        dbfs.get_publish_logs(base.get_dbo())
-
-    def test_get_publish_alerts(self):
-        dbfs.get_publish_alerts(base.get_dbo())
-
-    def test_delete_old_publish_logs(self):
-        dbfs.delete_old_publish_logs(base.get_dbo())
-
     def test_create_html_template(self):
         dbfsid = dbfs.create_document_template(base.get_dbo(), "test", "test", ".html", "<p>TEST</p>")
         assert "test.html" == dbfs.get_name_for_id(base.get_dbo(), dbfsid)
@@ -74,8 +65,4 @@ class TestDBFS(unittest.TestCase):
 
     def test_get_report_images(self):
         assert len(dbfs.get_report_images(base.get_dbo())) > 0
-
-    def test_get_asm_news(self):
-        assert "" != dbfs.get_asm_news(base.get_dbo())
-
 

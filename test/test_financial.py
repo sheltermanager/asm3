@@ -90,7 +90,7 @@ class TestFinancial(unittest.TestCase):
             "payment": "1",
             "frequency": "0",
             "amount": "1000",
-            "due": base.today()
+            "due": base.today_display()
         }
         post = utils.PostedData(data, "en")
         did = financial.insert_donation_from_form(base.get_dbo(), "test", post)

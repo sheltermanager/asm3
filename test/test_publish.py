@@ -3,12 +3,12 @@
 import unittest
 import base
 
-import publish
+import publishers
 
 class TestPublish(unittest.TestCase):
  
     def test_gen_avid_pdf(self):
-        p = publish.PETtracUKPublisher(base.get_dbo(), publish.PublishCriteria())
+        p = publishers.pettracuk.PETtracUKPublisher(base.get_dbo(), publishers.base.PublishCriteria())
         fields = {
             "orgpostcode": "S60 2AH",
             "orgname": "Rob's Humane",

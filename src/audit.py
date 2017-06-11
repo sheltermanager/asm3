@@ -13,7 +13,7 @@ LOGOUT = 5
 
 def get_audit_for_link(dbo, tablename, linkid):
     """ Returns the audit records for a particular link and table """
-    return db.query(dbo, "SELECT * FROM audittrail WHERE tablename = %s AND linkid = %s ORDER BY AuditDate DESC" % (db.ds(tablename), db.di(linkid)))
+    return dbo.query("SELECT * FROM audittrail WHERE tablename = ? AND linkid = ? ORDER BY AuditDate DESC", (tablename, linkid))
 
 def map_diff(row1, row2, ref = []):
     """
@@ -53,7 +53,7 @@ def dump_row(dbo, tablename, rowid):
     return dump_rows(dbo, tablename, "ID = %s" % rowid)
 
 def dump_rows(dbo, tablename, condition):
-    return str(db.query(dbo, "SELECT * FROM %s WHERE %s" % (tablename, condition)))
+    return str(dbo.query("SELECT * FROM %s WHERE %s" % (tablename, condition)))
 
 def create(dbo, username, tablename, linkid, description):
     action(dbo, ADD, username, tablename, linkid, description)
@@ -65,7 +65,7 @@ def delete(dbo, username, tablename, linkid, description):
     action(dbo, DELETE, username, tablename, linkid, description)
 
 def delete_rows(dbo, username, tablename, condition):
-    for r in db.query(dbo, "SELECT * FROM %s WHERE %s" % (tablename, condition)):
+    for r in dbo.query("SELECT * FROM %s WHERE %s" % (tablename, condition)):
         action(dbo, DELETE, username, tablename, r["ID"], dump_row(dbo, tablename, r["ID"]))
 
 def move(dbo, username, tablename, linkid, description):
@@ -85,22 +85,21 @@ def action(dbo, action, username, tablename, linkid, description):
     if len(description) > 16384:
         description = description[0:16384]
 
-    sql = db.make_insert_sql("audittrail", (
-        ( "Action", db.ds(action) ),
-        ( "AuditDate", db.ddt(i18n.now(dbo.timezone)) ),
-        ( "UserName", db.ds(username) ),
-        ( "TableName", db.ds(tablename) ),
-        ( "LinkID", db.di(linkid) ),
-        ( "Description", db.ds(description) )
-    ))
-    db.execute(dbo, sql)
+    dbo.insert("audittrail", {
+        "Action":       action,
+        "AuditDate":    dbo.now(),
+        "UserName":     username,
+        "TableName":    tablename,
+        "LinkID":       linkid,
+        "Description":  description
+    }, generateID=False, writeAudit=False)
 
 def clean(dbo):
     """
     Deletes audit trail records older than three months
     """
     d = i18n.subtract_days(i18n.now(), 93)
-    count = db.query_int(dbo, "SELECT COUNT(*) FROM audittrail WHERE AuditDate< %s" % db.dd(d))
+    count = dbo.query_int("SELECT COUNT(*) FROM audittrail WHERE AuditDate < ?", [ d ])
     al.debug("removing %d audit records older than 93 days." % count, "audit.clean", dbo)
-    db.execute(dbo, "DELETE FROM audittrail WHERE AuditDate < %s" % db.dd(d))
+    dbo.execute("DELETE FROM audittrail WHERE AuditDate < ?", [ d ])
 

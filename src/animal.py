@@ -3100,7 +3100,7 @@ def update_all_animal_statuses(dbo):
         "HasPermanentFoster = ?, " \
         "MostRecentEntryDate = ? " \
         "WHERE ID = ?", animalupdatebatch)
-    dbo.execute_many("UPDATE diary SET LinkInfo = %s WHERE LinkType = %s AND LinkID = %s", diaryupdatebatch)
+    dbo.execute_many("UPDATE diary SET LinkInfo = ? WHERE LinkType = ? AND LinkID = ?", diaryupdatebatch)
     al.debug("updated %d animal statuses (%d)" % (aff, len(animals)), "animal.update_all_animal_statuses", dbo)
     return "OK %d" % len(animals)
 

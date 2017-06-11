@@ -6,16 +6,24 @@ PATH = os.path.dirname(os.path.abspath(__file__)) + os.sep
 sys.path.append(PATH)
 sys.path.append(PATH + "../src")
 
+DB_PATH = "/home/robin/tmp/asmunittest.db"
+
 import db
 
+def reset_db():
+    try:
+        os.unlink(DB_PATH)
+    except:
+        pass
+
 def get_dbo():
-    dbo = db.DatabaseInfo()
-    dbo.dbtype = "MYSQL"
-    dbo.database = "asmunittest"
+    dbo = db.get_database("SQLITE")
+    dbo.database = DB_PATH
+    dbo.installpath = "%s/../src/" % PATH
     return dbo
 
 def execute(sql):
-    db.execute(get_dbo(), sql)
+    get_dbo().execute(sql)
 
 def today():
     return datetime.datetime.today()
