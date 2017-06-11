@@ -74,15 +74,7 @@ def query_date(dbo, sql):
 
 # ==
 
-# old stuff to write out/port ---
-
-def python2db(d):
-    """ Formats a python date as a date for the database """
-    if d is None: return "NULL"
-    return "%d-%02d-%02d" % ( d.year, d.month, d.day )
-
 # These should be no longer necessary one day when all code is using dbo.insert/update/delete
-# Also, dbo.escape() is used by ds() but can be removed when ds goes.
 
 def ddt(d):
     """ Formats a python date and time as a date for the database """
@@ -201,29 +193,4 @@ def make_update_user_sql(dbo, table, username, cond, s, stampRecordVersion = Tru
     if stampRecordVersion: l.append(("RecordVersion", di(dbo.get_recordversion())))
     return make_update_sql(table, cond, l)
 
-def rows_to_insert_sql(table, rows, escapeCR = ""):
-    """
-    function that Writes an INSERT query for a list of rows (a list containing dictionaries)
-    """
-    l = []
-    fields = []
-    donefields = False
-    for r in rows:
-        values = []
-        for k in sorted(r.iterkeys()):
-            if not donefields:
-                fields.append(k)
-            v = r[k]
-            if v is None:
-                values.append("null")
-            elif utils.is_unicode(v) or utils.is_str(v):
-                if escapeCR != "": v = v.replace("\n", escapeCR).replace("\r", "")
-                values.append(ds(v))
-            elif utils.is_date(v):
-                values.append(ddt(v))
-            else:
-                values.append(di(v))
-        donefields = True
-        l.append("INSERT INTO %s (%s) VALUES (%s);\n" % (table, ",".join(fields), ",".join(values)))
-    return l
 

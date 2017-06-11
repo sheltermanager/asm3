@@ -171,7 +171,7 @@ def get_criteria_params(dbo, customreportid, post):
         if name not in post:
             raise utils.ASMValidationError("Missing parameter: %s" % name)
         if rtype == "DATE":
-            p.append( ( name , question, db.python2db(i18n.display2python(l, post[name])), post[name]) )  
+            p.append( ( name , question, dbo.sql_date(i18n.display2python(l, post[name]), wrapParens=False), post[name]) )  
         elif rtype == "STRING":
             p.append( ( name, question, post[name], post[name] ) )
         elif rtype == "NUMBER":
@@ -1072,7 +1072,7 @@ class Report:
         s = self.sql
         # Throw away any SQL comments
         s = strip_sql_comments(s)
-        s = s.replace("$CURRENT_DATE$", db.python2db(i18n.now(self.dbo.timezone)))
+        s = s.replace("$CURRENT_DATE$", self.dbo.sql_date(self.dbo.now(), wrapParens=False))
         s = s.replace("$USER$", self.user)
         # Substitute the location filter, but only if the report actually
         # references it to save unnecessary database lookups

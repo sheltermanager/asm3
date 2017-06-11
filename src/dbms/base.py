@@ -158,7 +158,8 @@ class Database(object):
 
     def escape(self, s):
         """ Makes a string value safe for database queries
-            Deprecated: Can be removed when db.ds() is removed.
+            If available, dbms implementations should override this and use whatever 
+            is available in the driver.
         """
         if s is None: return ""
         # This is historic - ASM2 switched backticks for apostrophes so we do for compatibility
@@ -517,25 +518,8 @@ class Database(object):
         returned by running sql (a list containing dictionaries)
         escapeCR: Turn line feed chars into this character
         """
-        fields = []
-        donefields = False
         for r in self.query_generator(sql):
-            values = []
-            for k in sorted(r.iterkeys()):
-                if not donefields:
-                    fields.append(k)
-                v = r[k]
-                if v is None:
-                    values.append("null")
-                elif utils.is_unicode(v) or utils.is_str(v):
-                    if escapeCR != "": v = v.replace("\n", escapeCR).replace("\r", "")
-                    values.append("'%s'" % v)
-                elif type(v) == datetime.datetime:
-                    values.append("'%04d-%02d-%02d %02d:%02d:%02d'" % ( v.year, v.month, v.day, v.hour, v.minute, v.second ))
-                else:
-                    values.append(str(v))
-            donefields = True
-            yield "INSERT INTO %s (%s) VALUES (%s);\n" % (table, ",".join(fields), ",".join(values))
+            yield self.row_to_insert_sql(table, r, escapeCR)
 
     def query_tuple(self, sql, params=None):
         """ Runs the query given and returns the resultset
@@ -629,6 +613,29 @@ class Database(object):
         except:
             return None
 
+    def row_to_insert_sql(table, r, escapeCR = ""):
+        """
+        function that Writes an INSERT query for a result row
+        """
+        fields = []
+        donefields = False
+        values = []
+        for k in sorted(r.iterkeys()):
+            if not donefields:
+                fields.append(k)
+            v = r[k]
+            if v is None:
+                values.append("null")
+            elif utils.is_unicode(v) or utils.is_str(v):
+                if escapeCR != "": v = v.replace("\n", escapeCR).replace("\r", "")
+                values.append("'%s'" % v)
+            elif type(v) == datetime.datetime:
+                values.append("'%04d-%02d-%02d %02d:%02d:%02d'" % ( v.year, v.month, v.day, v.hour, v.minute, v.second ))
+            else:
+                values.append(str(v))
+        donefields = True
+        return "INSERT INTO %s (%s) VALUES (%s);\n" % (table, ",".join(fields), ",".join(values))
+
     def split_queries(self, sql):
         """
         Splits semi-colon separated queries in a single
@@ -660,6 +667,21 @@ class Database(object):
         """ Writes concat for a list of items """
         return " || ".join(items)
 
+    def sql_date(self, d, wrapParens=True):
+        """ Writes a date in SQL form """
+        if d is None: return "NULL"
+        s = "%04d-%02d-%02d %02d:%02d:%02d" % ( d.year, d.month, d.day, d.hour, d.minute, d.second )
+        if wrapParens: return "'%s'" % s
+        return s
+
+    def sql_now(self, includeTime=True):
+        """ Writes now as an SQL date """
+        d = self.now()
+        if includeTime:
+            return "'%04d-%02d-%02d %02d:%02d:%02d'" % ( d.year, d.month, d.day, d.hour, d.minute, d.second )
+        else:
+            return "'%04d-%02d-%02d 00:00:00'" % ( d.year, d.month, d.day )
+
     def sql_limit(self, x):
         """ Writes a limit clause to X items """
         return "LIMIT %s" % x
@@ -682,8 +704,8 @@ class Database(object):
         """
         if not self.has_asm2_pk_table: return
         try:
-            self.execute("DELETE FROM primarykey WHERE TableName = '%s'" % table)
-            self.execute("INSERT INTO primarykey (TableName, NextID) VALUES ('%s', %d)" % (table, nextid))
+            self.execute("DELETE FROM primarykey WHERE TableName = ?", [table] )
+            self.execute("INSERT INTO primarykey (TableName, NextID) VALUES (?, ?)", (table, nextid))
         except:
             pass
 
