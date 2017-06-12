@@ -53,7 +53,7 @@ def mime_type(filename):
         "mp3"           : "audio/mpeg3",
         "avi"           : "video/avi"
     }
-    ext = filename[filename.rfind(".")+1:]
+    ext = filename[filename.rfind(".")+1:].lower()
     if ext in types:
         return types[ext]
     return "application/octet-stream"
