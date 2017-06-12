@@ -1,10 +1,9 @@
 #!/usr/bin/python
 
 import al
-import audit
-import db
 import sys
 import utils
+
 from i18n import _, python2display
 
 # Links
@@ -74,19 +73,12 @@ def get_additional_fields(dbo, linkid, linktype = "animal"):
     values will be returned for all fields.
     """
     inclause = clause_for_linktype(linktype)
-    animalclause = "animal.ID = a.Value"
-    personclause = "owner.ID = a.Value"
-    if dbo.dbtype == "POSTGRESQL": 
-        animalclause = "animal.ID::varchar = a.Value"
-        personclause = "owner.ID::varchar = a.Value"
-    return db.query(dbo, "SELECT af.ID, af.FieldName, af.FieldLabel, af.ToolTip, " \
-        "af.LookupValues, af.DefaultValue, af.LinkType, af.FieldType, af.DisplayIndex, af.Mandatory, a.Value, " \
-        "CASE WHEN af.FieldType = 8 AND a.Value <> '' AND a.Value <> '0' THEN (SELECT AnimalName FROM animal WHERE %s) ELSE '' END AS AnimalName, " \
-        "CASE WHEN af.FieldType = 9 AND a.Value <> '' AND a.Value <> '0' THEN (SELECT OwnerName FROM owner WHERE %s) ELSE '' END AS OwnerName " \
+    return dbo.query("SELECT af.ID, af.FieldName, af.FieldLabel, af.ToolTip, " \
+        "af.LookupValues, af.DefaultValue, af.LinkType, af.FieldType, af.DisplayIndex, af.Mandatory, a.Value " \
         "FROM additionalfield af LEFT OUTER JOIN additional a ON af.ID = a.AdditionalFieldID " \
         "AND a.LinkID = %d " \
         "WHERE af.LinkType IN (%s) " \
-        "ORDER BY af.DisplayIndex" % ( animalclause, personclause, linkid, inclause ))
+        "ORDER BY af.DisplayIndex" % ( linkid, inclause ))
 
 def get_additional_fields_ids(dbo, rows, linktype = "animal"):
     """
@@ -95,23 +87,16 @@ def get_additional_fields_ids(dbo, rows, linktype = "animal"):
     fields for lists of animals
     """
     inclause = clause_for_linktype(linktype)
-    animalclause = "animal.ID = a.Value"
-    personclause = "owner.ID = a.Value"
-    if dbo.dbtype == "POSTGRESQL": 
-        animalclause = "animal.ID::varchar = a.Value"
-        personclause = "owner.ID::varchar = a.Value"
     links = []
     for r in rows:
         links.append(str(r["ID"]))
     if len(links) == 0:
         links.append("0")
-    return db.query(dbo, "SELECT a.LinkID, af.ID, af.FieldName, af.FieldLabel, af.ToolTip, " \
-        "af.LookupValues, af.DefaultValue, af.FieldType, af.DisplayIndex, af.Mandatory, a.Value, " \
-        "CASE WHEN af.FieldType = 8 AND a.Value <> '' AND a.Value <> '0' THEN (SELECT AnimalName FROM animal WHERE %s) ELSE '' END AS AnimalName, " \
-        "CASE WHEN af.FieldType = 9 AND a.Value <> '' AND a.Value <> '0' THEN (SELECT OwnerName FROM owner WHERE %s) ELSE '' END AS OwnerName " \
+    return dbo.query("SELECT a.LinkID, af.ID, af.FieldName, af.FieldLabel, af.ToolTip, " \
+        "af.LookupValues, af.DefaultValue, af.FieldType, af.DisplayIndex, af.Mandatory, a.Value " \
         "FROM additional a INNER JOIN additionalfield af ON af.ID = a.AdditionalFieldID " \
         "WHERE a.LinkType IN (%s) AND a.LinkID IN (%s) " \
-        "ORDER BY af.DisplayIndex" % ( animalclause, personclause, inclause, ",".join(links)))
+        "ORDER BY af.DisplayIndex" % ( inclause, ",".join(links)))
 
 def get_field_definitions(dbo, linktype = "animal"):
     """
@@ -119,13 +104,13 @@ def get_field_definitions(dbo, linktype = "animal"):
     FIELDNAME, FIELDLABEL, LOOKUPVALUES, FIELDTYPE, TOOLTIP, SEARCHABLE, MANDATORY
     """
     inclause = clause_for_linktype(linktype)
-    return db.query(dbo, "SELECT * FROM additionalfield WHERE LinkType IN (%s) ORDER BY DisplayIndex" % inclause)
+    return dbo.query("SELECT * FROM additionalfield WHERE LinkType IN (%s) ORDER BY DisplayIndex" % inclause)
 
 def get_fields(dbo):
     """
     Returns all additional fields 
     """
-    return db.query(dbo, "SELECT a.*, ft.FieldType AS FieldTypeName, " \
+    return dbo.query("SELECT a.*, ft.FieldType AS FieldTypeName, " \
         "lt.LinkType AS LinkTypeName, m.Name AS MandatoryName " \
         "FROM additionalfield a " \
         "INNER JOIN lksfieldtype ft ON ft.ID = a.FieldType " \
@@ -137,23 +122,18 @@ def insert_field_from_form(dbo, username, post):
     """
     Creates an additional field
     """
-    nid = db.get_id(dbo, "additionalfield")
-    sql = db.make_insert_sql("additionalfield", ( 
-        ( "ID", db.di(nid)),
-        ( "FieldName", post.db_string("name")),
-        ( "FieldLabel", post.db_string("label")),
-        ( "ToolTip", post.db_string("tooltip")),
-        ( "LookupValues", post.db_string("lookupvalues")),
-        ( "DefaultValue", post.db_string("defaultvalue")),
-        ( "Mandatory", post.db_boolean("mandatory")),
-        ( "Searchable", post.db_boolean("searchable")),
-        ( "FieldType", post.db_integer("type")),
-        ( "LinkType", post.db_integer("link")),
-        ( "DisplayIndex", post.db_integer("displayindex"))
-    ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "additionalfield", nid, audit.dump_row(dbo, "additionalfield", nid))
-    return nid
+    return dbo.insert("additionalfield", {
+        "FieldName":        post["name"],
+        "FieldLabel":       post["label"],
+        "ToolTip":          post["tooltip"],
+        "LookupValues":     post["lookupvalues"],
+        "DefaultValue":     post["defaultvalue"],
+        "Mandatory":        post.boolean("mandatory"),
+        "Searchable":       post.boolean("searchable"),
+        "FieldType":        post.integer("type"),
+        "LinkType":         post.integer("link"),
+        "DisplayIndex":     post.integer("displayindex")
+    })
 
 def update_field_from_form(dbo, username, post):
     """
@@ -161,38 +141,32 @@ def update_field_from_form(dbo, username, post):
     field can be changed after creation since only the ID ties things 
     together.
     """
-    aid = post.integer("id")
-    sql = db.make_update_sql("additionalfield", "ID=%d" % aid, ( 
-        ( "FieldName", post.db_string("name")),
-        ( "FieldLabel", post.db_string("label")),
-        ( "ToolTip", post.db_string("tooltip")),
-        ( "LookupValues", post.db_string("lookupvalues")),
-        ( "DefaultValue", post.db_string("defaultvalue")),
-        ( "Mandatory", post.db_boolean("mandatory")),
-        ( "Searchable", post.db_boolean("searchable")),
-        ( "FieldType", post.db_integer("type")),
-        ( "LinkType", post.db_integer("link")),
-        ( "DisplayIndex", post.db_integer("displayindex"))
-    ))
-    preaudit = db.query(dbo, "SELECT * FROM additionalfield WHERE ID = %d" % aid)
-    db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM additionalfield WHERE ID = %d" % aid)
-    audit.edit(dbo, username, "additionalfield", aid, audit.map_diff(preaudit, postaudit))
+    dbo.update("additionalfield", post.integer("id"), {
+        "FieldName":        post["name"],
+        "FieldLabel":       post["label"],
+        "ToolTip":          post["tooltip"],
+        "LookupValues":     post["lookupvalues"],
+        "DefaultValue":     post["defaultvalue"],
+        "Mandatory":        post.boolean("mandatory"),
+        "Searchable":       post.boolean("searchable"),
+        "FieldType":        post.integer("type"),
+        "LinkType":         post.integer("link"),
+        "DisplayIndex":     post.integer("displayindex")
+    })
 
 def delete_field(dbo, username, fid):
     """
     Deletes the selected additional field, along with all data held by it.
     """
-    audit.delete(dbo, username, "additionalfield", fid, audit.dump_row(dbo, "additionalfield", fid))
-    db.execute(dbo, "DELETE FROM additionalfield WHERE ID = %d" % int(fid))
-    db.execute(dbo, "DELETE FROM additional WHERE AdditionalFieldID = %d" % int(fid))
+    dbo.delete("additionalfield", fid, username)
+    dbo.execute("DELETE FROM additional WHERE AdditionalFieldID = ?", [fid] )
 
 def delete_values_for_link(dbo, linkid, linktype = "animal"):
     """
     Deletes all additional field values stored for a link.
     """
     inclause = clause_for_linktype(linktype)
-    db.execute(dbo, "DELETE FROM additional WHERE LinkType IN (%s) AND LinkID = %d" % (inclause, linkid))
+    dbo.execute("DELETE FROM additional WHERE LinkType IN (%s) AND LinkID = %d" % (inclause, linkid))
 
 def save_values_for_link(dbo, post, linkid, linktype = "animal"):
     """
@@ -203,7 +177,7 @@ def save_values_for_link(dbo, post, linkid, linktype = "animal"):
     af = get_field_definitions(dbo, linktype)
     l = dbo.locale
     for f in af:
-        key = "a." + str(f["MANDATORY"]) + "." + str(f["ID"])
+        key = "a.%s.%s" % (f["MANDATORY"], f["ID"])
         if key in post:
             val = post[key]
             if f["FIELDTYPE"] == YESNO:
@@ -214,14 +188,14 @@ def save_values_for_link(dbo, post, linkid, linktype = "animal"):
                 if len(val.strip()) > 0 and post.date(key) is None:
                     raise utils.ASMValidationError(_("Additional date field '{0}' contains an invalid date.", l).format(f["FIELDNAME"]))
                 val = python2display(dbo.locale, post.date(key))
-            sql = db.make_insert_sql("additional", (
-                ( "LinkType", db.di(f["LINKTYPE"]) ),
-                ( "LinkID", db.di(int(linkid)) ),
-                ( "AdditionalFieldID", db.di(f["ID"]) ),
-                ( "Value", db.ds(val) ) ))
             try:
-                db.execute(dbo, sql)
+                dbo.insert("additional", {
+                    "LinkType":             f["LINKTYPE"],
+                    "LinkID":               linkid,
+                    "AdditionalFieldID":    f["ID"],
+                    "Value":                val
+                }, generateID=False, writeAudit=False)
             except Exception as err:
-                al.error("Failed saving additional field: %s" % str(err), "animal.update_animal_from_form", dbo, sys.exc_info())
+                al.error("Failed saving additional field: %s" % err, "additional.save_values_for_link", dbo, sys.exc_info())
 
 

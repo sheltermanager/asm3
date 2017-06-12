@@ -335,9 +335,9 @@ class Database(object):
             user: The user account doing the delete
             writeAudit: If True, writes an audit record for the delete
         """
-        self.execute("DELETE FROM %s WHERE ID=%s" % (table, iid))
         if writeAudit and user != "":
             audit.delete(self, user, table, iid, audit.dump_row(self, table, iid))
+        self.execute("DELETE FROM %s WHERE ID=%s" % (table, iid))
 
     def install_stored_procedures(self):
         """ Install any supporting stored procedures (typically for reports) needed for this backend """
