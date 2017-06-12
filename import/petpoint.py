@@ -15,11 +15,11 @@ are MedicalVaccineExpress and MedicalTestsExpress
 # The shelter's petfinder ID for grabbing animal images for adoptable animals
 PETFINDER_ID = ""
 
-INTAKE_FILENAME = "data/pp_zg1185.csv"
-MEMO_FILENAME = "data/pp_zg1185_memo.csv"
-PERSON_FILENAME = ""
-VACC_FILENAME = "data/pp_zg1185_vacc.csv"
-TEST_FILENAME = "data/pp_zg1185_test.csv"
+INTAKE_FILENAME = "data/petpoint_vm1310/intake.csv"
+MEMO_FILENAME = ""
+PERSON_FILENAME = "data/petpoint_vm1310/person.csv"
+VACC_FILENAME = ""
+TEST_FILENAME = ""
 # Whether or not the vaccine and test files are in two row stacked format
 MEDICAL_TWO_ROW_FORMAT = True
 
@@ -30,6 +30,9 @@ def findowner(ownername = ""):
         if o.OwnerName == ownername.strip():
             return o
     return None
+
+def getdate(d):
+    return asm.getdate_mmddyyyy(d)
 
 # --- START OF CONVERSION ---
 
@@ -57,6 +60,12 @@ print "DELETE FROM animalvaccination WHERE ID >= 100 AND CreatedBy = 'conversion
 print "DELETE FROM owner WHERE ID >= 100 AND CreatedBy = 'conversion';"
 print "DELETE FROM adoption WHERE ID >= 100 AND CreatedBy = 'conversion';"
 
+# Create an unknown owner
+uo = asm.Owner()
+owners.append(uo)
+uo.OwnerSurname = "Unknown Owner"
+uo.OwnerName = uo.OwnerSurname
+
 pf = ""
 if PETFINDER_ID != "":
     asm.setid("media", 100)
@@ -81,13 +90,13 @@ if PERSON_FILENAME != "":
         o.OwnerPostcode = d["Postal Code"]
         o.EmailAddress = d["Email"]
         o.HomeTelephone = d["Phone Number"]
-        o.IsBanned = asm.iif(d["Assocation"] == "Do Not Adopt", 1, 0)
-        o.IsDonor = asm.iif(d["Assocation"] == "Donor", 1, 0)
-        o.IsMember = asm.iif(d["Assocation"] == "Mailing List", 1, 0)
-        o.IsFosterer = asm.iif(d["Assocation"] == "Foster", 1, 0)
-        o.IsStaff = asm.iif(d["Assocation"] == "Employee", 1, 0)
-        o.IsVet = asm.iif(d["Assocation"] == "Operation by" or d["Assocation"] == "Medical Personnel", 1, 0)
-        o.IsVolunteer = asm.iif(d["Assocation"] == "Volunteer", 1, 0)
+        o.IsBanned = asm.iif(d["Association"] == "Do Not Adopt", 1, 0)
+        o.IsDonor = asm.iif(d["Association"] == "Donor", 1, 0)
+        o.IsMember = asm.iif(d["Association"] == "Mailing List", 1, 0)
+        o.IsFosterer = asm.iif(d["Association"] == "Foster", 1, 0)
+        o.IsStaff = asm.iif(d["Association"] == "Employee", 1, 0)
+        o.IsVet = asm.iif(d["Association"] == "Operation by" or d["Association"] == "Medical Personnel", 1, 0)
+        o.IsVolunteer = asm.iif(d["Association"] == "Volunteer", 1, 0)
         o.ExcludeFromBulkEmail = asm.iif(d["Contact By Email"] == "Yes", 1, 0)
 
 for d in asm.csv_to_list(INTAKE_FILENAME):
@@ -112,22 +121,20 @@ for d in asm.csv_to_list(INTAKE_FILENAME):
         a.AnimalName = d["Animal Name"]
         if a.AnimalName.strip() == "":
             a.AnimalName = "(unknown)"
-        if d["Date Of Birth"].strip() == "":
-            a.DateOfBirth = asm.getdate_yyyymmdd(d["Date Of Birth"])
-        else:
-            a.DateOfBirth = asm.getdate_yyyymmdd(d["Date Of Birth"])
-        if a.DateOfBirth is None:
-            a.DateOfBirth = asm.today()
-        a.DateBroughtIn = asm.getdate_yyyymmdd(d["Intake Date"])
+        a.DateBroughtIn = getdate(d["Intake Date"])
         if a.DateBroughtIn is None:
             a.DateBroughtIn = asm.today()
+        if "Date Of Birth" in d and d["Date Of Birth"].strip() != "":
+            a.DateOfBirth = getdate(d["Date Of Birth"])
+        else:
+            a.DateOfBirth = asm.subtract_days(a.DateBroughtIn, 365)
         a.CreatedDate = a.DateBroughtIn
         a.LastChangedDate = a.DateBroughtIn
         if d["Intake Type"] == "Transfer In":
             a.IsTransfer = 1
         a.generateCode()
         a.ShortCode = d["Animal ID"]
-        a.Markings = d["Distinguishing Markings"]
+        if "Distinguishing Markings" in d: a.Markings = d["Distinguishing Markings"]
         a.IsNotAvailableForAdoption = 0
         a.ShelterLocation = asm.location_id_for_name(d["Location"])
         a.Sex = asm.getsex_mf(d["Gender"])
@@ -137,24 +144,25 @@ for d in asm.csv_to_list(INTAKE_FILENAME):
         if d["Intake Type"] == "Stray": a.EntryReasonID = 7 # Stray
         if d["Intake Type"] == "Transfer In": a.EntryReasonID = 15 # Transfer from other shelter
         a.ReasonForEntry = d["Reason"]
-        a.IdentichipDate = asm.getdate_yyyymmdd(d["Microchip Issue Date"])
-        a.IdentichipNumber = d["Microchip Number"]
+        if "Microchip Issue Date" in d: a.IdentichipDate = getdate(d["Microchip Issue Date"])
+        if "Microchip Number" in d: a.IdentichipNumber = d["Microchip Number"]
         a.IsGoodWithCats = 2
         a.IsGoodWithDogs = 2
         a.IsGoodWithChildren = 2
-        a.AsilomarIntakeCategory = d["Intake Condition"] == "Healthy" and 0 or 1
+        if "Intake Condition" in d: a.AsilomarIntakeCategory = d["Intake Condition"] == "Healthy" and 0 or 1
         a.HouseTrained = 0
         if a.IdentichipNumber != "": 
             a.Identichipped = 1
         a.Archived = 0
-        comments = "Intake type: " + d["Intake Type"] + " " + d["Intake Subtype"] + ", breed: " + d["Primary Breed"] + "/" + d["Secondary Breed"]
+        comments = "Intake type: " + d["Intake Type"] + " " + d["Intake Subtype"] + ", breed: " + d["Primary Breed"] + "/"
+        if "Secondary Breed" in d: comments += d["Secondary Breed"]
         comments += ", age: " + d["Age Group"]
-        comments += ", intake condition: " + d["Intake Condition"]
+        if "Intake Condition" in d: comments += ", intake condition: " + d["Intake Condition"]
         a.BreedID = asm.breed_id_for_name(d["Primary Breed"])
         a.Breed2ID = a.BreedID
         a.BreedName = asm.breed_name_for_id(a.BreedID)
         a.CrossBreed = 0
-        if d["Secondary Breed"].strip() != "":
+        if "Secondary Breed" in d and d["Secondary Breed"].strip() != "":
             a.CrossBreed = 1
             if d["Secondary Breed"] == "Mix":
                 a.Breed2ID = 442
@@ -209,7 +217,7 @@ for d in asm.csv_to_list(INTAKE_FILENAME):
 
     ot = d["Outcome Type"]
     ost = d["Outcome Subtype"]
-    od = asm.getdate_yyyymmdd(d["Outcome Date"])
+    od = getdate(d["Outcome Date"])
     if (ot == "Transfer Out" and ost == "Potential Adopter") or ot == "Adoption":
         if a is None or o is None: continue
         m = asm.Movement()
@@ -341,14 +349,14 @@ if vacc is not None:
             if odd:
                 animalno = v["Animal #"]
                 vaccname = v["Vaccination"]
-                vaccexpires = asm.getdate_yyyymmdd(v["Re-Vac Date/Time"])
+                vaccexpires = getdate(v["Re-Vac Date/Time"])
             else:
-                vaccdate = asm.getdate_yyyymmdd(v["Status"])
+                vaccdate = getdate(v["Status"])
                 process_vacc(animalno, vaccdate, vaccexpires, vaccname)
             odd = not odd
     else:
         for v in vacc:
-            process_vacc(v["AnimalID"], asm.getdate_yyyymmdd(v["Date"]), None, v["RecordType3"])
+            process_vacc(v["AnimalID"], getdate(v["Date"]), None, v["RecordType3"])
 
 test = asm.csv_to_list(TEST_FILENAME)
 
@@ -401,13 +409,28 @@ if test is not None:
                 animalno = t["Animal #"]
                 testname = t["Test"]
             else:
-                testdate = asm.getdate_yyyymmdd(t["Status"])
+                testdate = getdate(t["Status"])
                 result = t["Test For"]
                 process_test(animalno, testdate, testname, result)
             odd = not odd
     else:
         for t in test:
-            process_test(t["AnimalID"], asm.getdate_yyyymmdd(t["ItemStatusDateTime"]), t["TestForCondition"], t["Result"])
+            process_test(t["AnimalID"], getdate(t["ItemStatusDateTime"]), t["TestForCondition"], t["Result"])
+
+# Run back through the animals, if we have any that are still
+# on shelter after 1 year, add an adoption to an unknown owner
+for a in animals:
+    if a.Archived == 0 and a.DateBroughtIn < asm.subtract_days(asm.now(), 365):
+        m = asm.Movement()
+        m.AnimalID = a.ID
+        m.OwnerID = uo.ID
+        m.MovementType = 1
+        m.MovementDate = a.DateBroughtIn
+        a.Archived = 1
+        a.ActiveMovementID = m.ID
+        a.ActiveMovementDate = a.DateBroughtIn
+        a.ActiveMovementType = 1
+        movements.append(m)
 
 # Now that everything else is done, output stored records
 for k,v in asm.locations.iteritems():
