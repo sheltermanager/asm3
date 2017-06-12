@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import al
-import db
 import i18n
 
 ADD = 0

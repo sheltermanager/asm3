@@ -73,7 +73,7 @@ def get_media_by_seq(dbo, linktype, linkid, seq):
     """
     rows = db.query(dbo, "SELECT * FROM media " \
         "WHERE LinkTypeID = %d AND LinkID = %d " \
-        "AND (LOWER(MediaName) LIKE '%%.jpg' OR LOWER(MediaName) LIKE '%%.jpeg') " \
+        "AND MediaMimeType = 'image/jpeg' " \
         "AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) " \
         "ORDER BY WebsitePhoto DESC, ID" % (linktype, linkid))
     if len(rows) >= seq:
@@ -83,7 +83,7 @@ def get_media_by_seq(dbo, linktype, linkid, seq):
 
 def get_total_seq(dbo, linktype, linkid):
     return db.query_int(dbo, "SELECT COUNT(ID) FROM media WHERE LinkTypeID = %d AND LinkID = %d " \
-        "AND (LOWER(MediaName) LIKE '%%.jpg' OR LOWER(MediaName) LIKE '%%.jpeg') " \
+        "AND MediaMimeType = 'image/jpeg' " \
         "AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null)" % (linktype, linkid))
 
 def set_video_preferred(dbo, username, mid):
@@ -329,6 +329,7 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
     sql = db.make_insert_sql("media", (
         ( "ID", db.di(mediaid) ),
         ( "MediaName", db.ds(medianame) ),
+        ( "MediaMimeType", db.ds(mime_type(medianame))),
         ( "MediaType", db.di(0) ),
         ( "MediaNotes", db.ds(comments) ),
         ( "WebsitePhoto", db.di(0) ),
@@ -366,6 +367,7 @@ def attach_link_from_form(dbo, username, linktype, linkid, post):
     sql = db.make_insert_sql("media", (
         ( "ID", db.di(mediaid) ),
         ( "MediaName", db.ds(url) ),
+        ( "MediaMimeType", db.ds("text/url")),
         ( "MediaType", post.db_integer("linktype") ),
         ( "MediaNotes", post.db_string("comments") ),
         ( "WebsitePhoto", db.di(0) ),
@@ -408,6 +410,7 @@ def create_blank_document_media(dbo, username, linktype, linkid):
     sql = db.make_insert_sql("media", (
         ( "ID", db.di(mediaid) ),
         ( "MediaName", db.ds("%d.html" % mediaid) ),
+        ( "MediaMimeType", db.ds("text/html")),
         ( "MediaType", db.di(0)),
         ( "MediaNotes", db.ds("New document") ),
         ( "WebsitePhoto", db.di(0) ),
@@ -450,6 +453,7 @@ def create_document_media(dbo, username, linktype, linkid, template, content):
     sql = db.make_insert_sql("media", (
         ( "ID", db.di(mediaid) ),
         ( "MediaName", db.ds("%d.html" % mediaid) ),
+        ( "MediaMimeType", db.ds("text/html")),
         ( "MediaType", db.di(0)),
         ( "MediaNotes", db.ds(template) ),
         ( "WebsitePhoto", db.di(0) ),
@@ -548,13 +552,13 @@ def delete_media(dbo, username, mid):
     # the web or doc preferred instead
     if mr["WEBSITEPHOTO"] == 1:
         ml = db.query(dbo, "SELECT * FROM media WHERE LinkID=%d AND LinkTypeID=%d " \
-            "AND (LOWER(MediaName) LIKE '%%.jpg' OR LOWER(MediaName) LIKE '%%.jpeg') " \
+            "AND MediaMimeType = 'image/jpeg' " \
             "ORDER BY ID" % ( mr["LINKID"], mr["LINKTYPEID"] ))
         if len(ml) > 0:
             db.execute(dbo, "UPDATE media SET WebsitePhoto = 1 WHERE ID = %d" % ml[0]["ID"])
     if mr["DOCPHOTO"] == 1:
         ml = db.query(dbo, "SELECT * FROM media WHERE LinkID=%d AND LinkTypeID=%d " \
-            "AND (LOWER(MediaName) LIKE '%%.jpg' OR LOWER(MediaName) LIKE '%%.jpeg') " \
+            "AND MediaMimeType = 'image/jpeg' " \
             "ORDER BY ID" % ( mr["LINKID"], mr["LINKTYPEID"] ))
         if len(ml) > 0:
             db.execute(dbo, "UPDATE media SET DocPhoto = 1 WHERE ID = %d" % ml[0]["ID"])
@@ -776,10 +780,10 @@ def check_and_scale_pdfs(dbo, force = False):
         return
     if force:
         mp = db.query(dbo, \
-            "SELECT ID, MediaName FROM media WHERE LOWER(MediaName) LIKE '%.pdf' ORDER BY ID DESC")
+            "SELECT ID, MediaName FROM media WHERE MediaMimeType = 'application/pdf' ORDER BY ID DESC")
     else:
         mp = db.query(dbo, \
-            "SELECT ID, MediaName FROM media WHERE LOWER(MediaName) LIKE '%.pdf' AND " \
+            "SELECT ID, MediaName FROM media WHERE MediaMimeType = 'application/pdf' AND " \
             "LOWER(MediaName) NOT LIKE '%_scaled.pdf' ORDER BY ID DESC")
     for i, m in enumerate(mp):
         filepath = db.query_string(dbo, "SELECT Path FROM dbfs WHERE Name='%s'" % m["MEDIANAME"])
@@ -802,7 +806,7 @@ def scale_animal_images(dbo):
     Goes through all animal images in the database and scales
     them to the current incoming media scaling factor.
     """
-    mp = db.query(dbo, "SELECT MediaName FROM media WHERE LOWER(MediaName) LIKE '%.jpg' AND LinkTypeID = 0")
+    mp = db.query(dbo, "SELECT MediaName FROM media WHERE MediaMimeType = 'image/jpeg' AND LinkTypeID = 0")
     for i, m in enumerate(mp):
         filepath = db.query_string(dbo, "SELECT Path FROM dbfs WHERE Name='%s'" % m["MEDIANAME"])
         name = str(m["MEDIANAME"])
@@ -829,7 +833,7 @@ def scale_all_odt(dbo):
     Goes through all odt files attached to records in the database and 
     scales them down (throws away images and objects so only the text remains to save space)
     """
-    mo = db.query(dbo, "SELECT MediaName FROM media WHERE LOWER(MediaName) LIKE '%.odt'")
+    mo = db.query(dbo, "SELECT MediaName FROM media WHERE MediaMimeType = 'application/vnd.oasis.opendocument.text'")
     for i, m in enumerate(mo):
         name = str(m["MEDIANAME"])
         al.debug("scaling %s (%d of %d)" % (name, i, len(mo)), "media.scale_all_odt", dbo)

@@ -159,12 +159,12 @@ def get_animal_query(dbo):
         "web.MediaName AS WebsiteMediaName, " \
         "web.Date AS WebsiteMediaDate, " \
         "web.MediaNotes AS WebsiteMediaNotes, " \
-        "(SELECT COUNT(*) FROM media mtc WHERE LOWER(mtc.MediaName) LIKE '%%.jpg' AND mtc.LinkTypeID = 0 AND mtc.LinkID = a.ID AND ExcludeFromPublish = 0) AS WebsiteImageCount, " \
+        "(SELECT COUNT(*) FROM media mtc WHERE MediaMimeType = 'image/jpeg' AND mtc.LinkTypeID = 0 AND mtc.LinkID = a.ID AND ExcludeFromPublish = 0) AS WebsiteImageCount, " \
         "doc.MediaName AS DocMediaName, " \
         "vid.MediaName AS WebsiteVideoURL, " \
         "vid.MediaNotes AS WebsiteVideoNotes, " \
         "CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND MovementType = 1 AND MovementDate > %(today)s) THEN 1 ELSE 0 END AS HasFutureAdoption, " \
-        "(SELECT COUNT(*) FROM media WHERE LOWER(MediaName) LIKE '%%jpg' AND Date >= %(twodaysago)s AND LinkID = a.ID AND LinkTypeID = 0) AS RecentlyChangedImages, " \
+        "(SELECT COUNT(*) FROM media WHERE MediaMimeType = 'image/jpeg' AND Date >= %(twodaysago)s AND LinkID = a.ID AND LinkTypeID = 0) AS RecentlyChangedImages, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.NonShelterAnimal) AS NonShelterAnimalName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.CrueltyCase) AS CrueltyCaseName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.CrossBreed) AS CrossBreedName, " \
@@ -256,7 +256,7 @@ def get_animal(dbo, animalid):
     (int) animalid: The animal to get
     """
     if animalid is None or animalid == 0: return None
-    rows = db.query(dbo, get_animal_query(dbo) + " WHERE a.ID = ?", [animalid])
+    rows = dbo.query(get_animal_query(dbo) + " WHERE a.ID = ?", [animalid])
     if rows is None or len(rows) == 0:
         return None
     else:

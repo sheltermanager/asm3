@@ -22,7 +22,7 @@ VERSIONS = (
     33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904, 33905, 33906, 
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
-    34013
+    34013, 34014
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -963,6 +963,7 @@ def sql_structure(dbo):
         fid(),
         fint("MediaType", True),
         fstr("MediaName"),
+        fstr("MediaMimeType", True),
         flongstr("MediaNotes"),
         fint("WebsitePhoto"),
         fint("WebsiteVideo", True),
@@ -982,6 +983,7 @@ def sql_structure(dbo):
         fint("LinkTypeID"),
         fint("RecordVersion", True),
         fdate("Date") ), False)
+    sql += index("media_MediaMimeType", "media", "MediaMimeType")
     sql += index("media_LinkID", "media", "LinkID")
     sql += index("media_LinkTypeID", "media", "LinkTypeID")
     sql += index("media_WebsitePhoto", "media", "WebsitePhoto")
@@ -4564,4 +4566,21 @@ def update_34013(dbo):
     add_index(dbo, "owner_IsVet", "owner", "IsVet")
     add_index(dbo, "owner_IsVolunteer", "owner", "IsVolunteer")
     add_index(dbo, "ownerdonation_DateDue", "ownerdonation", "DateDue")
+
+def update_34014(dbo):
+    # Add a new MediaMimeType column
+    add_column(dbo, "media", "MediaMimeType", dbo.type_shorttext)
+    add_index(dbo, "media_MediaMimeType", "media", "MediaMimeType")
+    types = {
+        "%jpg"           : "image/jpeg",
+        "%jpeg"          : "image/jpeg",
+        "%odt"           : "application/vnd.oasis.opendocument.text",
+        "%pdf"           : "application/pdf",
+        "%html"          : "text/html",
+        "http%"          : "text/url"
+    }
+    for k, v in types.iteritems():
+        dbo.execute_dbupdate("UPDATE media SET MediaMimeType = ? WHERE LOWER(MediaName) LIKE ?", (v, k))
+    dbo.execute_dbupdate("UPDATE media SET MediaMimeType = 'application/octet-stream' WHERE MediaMimeType Is Null")
+
 
