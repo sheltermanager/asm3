@@ -256,7 +256,7 @@ def get_animal(dbo, animalid):
     (int) animalid: The animal to get
     """
     if animalid is None or animalid == 0: return None
-    rows = db.query(dbo, get_animal_query(dbo) + " WHERE a.ID = %d" % animalid)
+    rows = db.query(dbo, get_animal_query(dbo) + " WHERE a.ID = ?", [animalid])
     if rows is None or len(rows) == 0:
         return None
     else:
@@ -267,7 +267,7 @@ def get_animal_sheltercode(dbo, code):
     Returns a complete animal row by ShelterCode
     """
     if code is None or code == "": return None
-    rows = db.query(dbo, get_animal_query(dbo) + " WHERE a.ShelterCode = %s" % db.ds(code))
+    rows = db.query(dbo, get_animal_query(dbo) + " WHERE a.ShelterCode = ?", [code])
     if rows is None or len(rows) == 0:
         return None
     else:
