@@ -136,7 +136,7 @@ def get_media_file_data(dbo, mid):
     mm = get_media_by_id(dbo, mid)
     if len(mm) == 0: return (None, "", "", "")
     mm = mm[0]
-    return mm["DATE"], mm["MEDIANAME"], mime_type(mm["MEDIANAME"]), dbfs.get_string(dbo, mm["MEDIANAME"])
+    return mm["DATE"], mm["MEDIANAME"], mm["MEDIAMIMETYPE"], dbfs.get_string(dbo, mm["MEDIANAME"])
 
 def get_image_file_data(dbo, mode, iid, seq = 0, justdate = False):
     """
