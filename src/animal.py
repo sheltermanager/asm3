@@ -503,55 +503,51 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
             quarantine
     locationfilter: IN clause of locations to search
     """
-    c = []
+    ands = []
+    values = []
     l = dbo.locale
     post = utils.PostedData(criteria, l)
 
-    def hk(cfield):
-        return post[cfield] != ""
-
-    def crit(cfield):
-        return post[cfield]
-
     def addid(cfield, field): 
-        if hk(cfield) and int(crit(cfield)) != -1: 
-            c.append("%s = %s" % (field, crit(cfield)))
+        if post.integer(cfield) != -1: 
+            ands.append("%s = ?" % field)
+            values.append(post.integer(cfield))
 
     def addidpair(cfield, field, field2): 
-        if hk(cfield) and int(crit(cfield)) != -1: 
-            c.append("(%s = %s OR %s = %s)" % ( 
-            field, crit(cfield), field2, crit(cfield)))
+        if post.integer(cfield) != -1: 
+            ands.append("(%s = ? OR %s = ?)" % (field, field2))
+            values.append(post.integer(cfield))
+            values.append(post.integer(cfield))
 
     def addstr(cfield, field): 
-        if hk(cfield) and crit(cfield) != "": 
-            x = crit(cfield).lower().replace("'", "`")
-            c.append("(LOWER(%s) LIKE '%%%s%%' OR LOWER(%s) LIKE '%%%s%%')" % ( 
-                field, x, 
-                field, utils.decode_html(x) 
-            ))
+        if post[cfield] != "":
+            x = post[cfield].lower().replace("'", "`")
+            x = "%%%s%%" % x
+            ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
+            values.append(x)
+            values.append(utils.decode_html(x))
 
     def adddate(cfieldfrom, cfieldto, field): 
-        if hk(cfieldfrom) and hk(cfieldto): 
+        if post[cfieldfrom] != "" and post[cfieldto] != "":
             post.data["dayend"] = "23:59:59"
-            c.append("%s >= %s AND %s <= %s" % ( 
-                field, post.db_date(cfieldfrom),
-                field, post.db_datetime(cfieldto, "dayend")))
+            ands.append("%s >= ? AND %s <= ?" % (field, field))
+            values.append(post.date(cfieldfrom))
+            values.append(post.datetime(cfieldto, "dayend"))
 
     def addfilter(f, condition):
-        if crit("filter").find(f) != -1: c.append(condition)
+        if post["filter"].find(f) != -1: ands.append(condition)
 
     def addcomp(cfield, value, condition):
-        if hk(cfield) and crit(cfield) == value: c.append(condition)
+        if post[cfield] == value: ands.append(condition)
 
     def addwords(cfield, field):
-        if hk(cfield) and crit(cfield) != "":
-            words = crit(cfield).split(" ")
+        if post[cfield] != "":
+            words = post[cfield].split(" ")
             for w in words:
                 x = w.lower().replace("'", "`")
-                c.append("(LOWER(%s) LIKE '%%%s%%' OR LOWER(%s) LIKE '%%%s%%')" % (
-                    field, x, 
-                    field, utils.decode_html(x)
-                ))
+                ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
+                values.append(x)
+                values.append(utils.decode_html(x))
 
     addstr("animalname", "a.AnimalName")
     addid("animaltypeid", "a.AnimalTypeID")
@@ -559,8 +555,8 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
     addidpair("breedid", "a.BreedID", "a.Breed2ID")
     addid("shelterlocation", "a.ShelterLocation")
     # If we have a location filter and no location has been given, use the filter
-    if locationfilter != "" and (not hk("shelterlocation") or crit("shelterlocation") == "-1"):
-        c.append(get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid))
+    if locationfilter != "" and post.integer("shelterlocation") == -1:
+        ands.append(get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid))
     addstr("microchip", "a.IdentichipNumber")
     addstr("rabiestag", "a.RabiesTag")
     addstr("pickupaddress", "a.PickupAddress")
@@ -584,24 +580,26 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
     addwords("hiddencomments", "a.HiddenAnimalDetails")
     addwords("features", "a.Markings")
     addstr("originalowner", "oo.OwnerName")
-    if crit("agegroup") != "" and crit("agegroup") != "-1":
+    if post.integer("agegroup") != -1:
         addstr("agegroup", "a.AgeGroup")
     adddate("outbetweenfrom", "outbetweento", "a.ActiveMovementDate")
     addwords("medianotes", "web.MediaNotes")
     addstr("createdby", "a.CreatedBy")
 
-    if hk("agedbetweenfrom") and hk("agedbetweento"):
-        c.append("%s >= %s AND %s <= %s" % (
-            "a.DateOfBirth", db.dd(subtract_years(now(), float(crit("agedbetweento")))),
-            "a.DateOfBirth", db.dd(subtract_years(now(), float(crit("agedbetweenfrom"))))))
+    if post["agedbetweenfrom"] != "" and post["agedbetweento"] != "":
+        ands.append("a.DateOfBirth >= ? AND a.DateOfBirth <= ?")
+        values.append(subtract_years(now(), post.floating("agedbetweento")))
+        values.append(subtract_years(now(), post.floating("agedbetweenfrom")))
 
-    if hk("insuranceno") and crit("insuranceno") != "":
-        c.append("EXISTS (SELECT InsuranceNumber FROM adoption WHERE " \
-            "LOWER(InsuranceNumber) LIKE '%%%s%%' AND AnimalID = a.ID)" % crit("insuranceno"))
+    if post["insuranceno"] != "":
+        ands.append("EXISTS (SELECT InsuranceNumber FROM adoption WHERE " \
+            "LOWER(InsuranceNumber) LIKE ? AND AnimalID = a.ID)")
+        values.append( "%%%s%%" % post["insuranceno"] )
 
-    if hk("adoptionno") and crit("adoptionno") != "":
-        c.append("EXISTS (SELECT AdoptionNumber FROM adoption WHERE " \
-            "LOWER(AdoptionNumber) LIKE '%%%s%%' AND AnimalID = a.ID)" % crit("adoptionno"))
+    if post["adoptionno"] != "":
+        ands.append("EXISTS (SELECT AdoptionNumber FROM adoption WHERE " \
+            "LOWER(AdoptionNumber) LIKE ? AND AnimalID = a.ID)")
+        values.append( "%%%s%%" % post["adoptionno"] )
 
     addcomp("reserved", "reserved", "a.HasActiveReserve = 1")
     addcomp("reserved", "unreserved", "a.HasActiveReserve = 0")
@@ -619,66 +617,68 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
     addcomp("logicallocation", "reclaimed", "a.ActiveMovementType = %d" % movement.RECLAIMED)
     addcomp("logicallocation", "retailer", "a.ActiveMovementType = %d" % movement.RETAILER)
     addcomp("logicallocation", "deceased", "a.DeceasedDate Is Not Null")
-    if crit("flags") != "":
-        for flag in crit("flags").split(","):
-            if flag == "courtesy": c.append("a.IsCourtesy=1")
-            elif flag == "crueltycase": c.append("a.CrueltyCase=1")
-            elif flag == "nonshelter": c.append("a.NonShelterAnimal=1")
-            elif flag == "notforadoption": c.append("a.IsNotAvailableForAdoption=1")
-            elif flag == "quarantine": c.append("a.IsQuarantine=1")
-            else: c.append("LOWER(a.AdditionalFlags) LIKE %s" % db.ds("%%%s%%" % flag.lower()))
+    if post["flags"] != "":
+        for flag in post["flags"].split(","):
+            if flag == "courtesy": ands.append("a.IsCourtesy=1")
+            elif flag == "crueltycase": ands.append("a.CrueltyCase=1")
+            elif flag == "nonshelter": ands.append("a.NonShelterAnimal=1")
+            elif flag == "notforadoption": ands.append("a.IsNotAvailableForAdoption=1")
+            elif flag == "quarantine": ands.append("a.IsQuarantine=1")
+            else: 
+                ands.append("LOWER(a.AdditionalFlags) LIKE ?")
+                values.append("%%%s%%" % flag.lower())
     where = ""
-    if len(c) > 0:
-        where = " WHERE " + " AND ".join(c)
-    sql = get_animal_query(dbo) + where + " ORDER BY a.AnimalName"
-    return db.query(dbo, sql, limit=limit)
+    if len(ands) > 0:
+        where = "WHERE " + " AND ".join(ands)
+    sql = "%s %s ORDER BY a.AnimalName" % (get_animal_query(dbo), where)
+    return dbo.query(sql, values, limit=limit)
 
 def get_animals_not_for_adoption(dbo):
     """
     Returns all shelter animals who have the not for adoption flag set
     """
-    return db.query(dbo, get_animal_query(dbo) + " WHERE a.IsNotAvailableForAdoption = 1 AND a.Archived = 0")
+    return dbo.query(get_animal_query(dbo) + " WHERE a.IsNotAvailableForAdoption = 1 AND a.Archived = 0")
 
 def get_animals_not_microchipped(dbo):
     """
     Returns all shelter animals who have not been microchipped
     """
-    return db.query(dbo, get_animal_query(dbo) + " WHERE a.Identichipped = 0 AND a.Archived = 0")
+    return dbo.query(get_animal_query(dbo) + " WHERE a.Identichipped = 0 AND a.Archived = 0")
 
 def get_animals_hold(dbo):
     """
     Returns all shelter animals who have the hold flag set
     """
-    return db.query(dbo, get_animal_query(dbo) + " WHERE a.IsHold = 1 AND a.Archived = 0")
+    return dbo.query(get_animal_query(dbo) + " WHERE a.IsHold = 1 AND a.Archived = 0")
 
 def get_animals_hold_today(dbo):
     """
     Returns all shelter animals who have the hold flag set and the hold ends today
     """
-    return db.query(dbo, get_animal_query(dbo) + " WHERE a.IsHold = 1 AND a.HoldUntilDate = %s AND a.Archived = 0" % db.dd(now(dbo.timezone)))
+    return dbo.query(get_animal_query(dbo) + " WHERE a.IsHold = 1 AND a.HoldUntilDate = ? AND a.Archived = 0", [dbo.now()])
 
 def get_animals_long_term(dbo):
     """
     Returns all shelter animals who have been on the shelter for 6 months or more
     """
-    return db.query(dbo, "%s WHERE a.DaysOnShelter > %d AND a.Archived = 0" % (get_animal_query(dbo), configuration.long_term_months(dbo) * 30))
+    return dbo.query("%s WHERE a.DaysOnShelter > ? AND a.Archived = 0" % get_animal_query(dbo), [configuration.long_term_months(dbo) * 30])
 
 def get_animals_quarantine(dbo):
     """
     Returns all shelter animals who have the quarantine flag set
     """
-    return db.query(dbo, get_animal_query(dbo) + " WHERE a.IsQuarantine = 1 AND a.Archived = 0")
+    return dbo.query(get_animal_query(dbo) + " WHERE a.IsQuarantine = 1 AND a.Archived = 0")
 
 def get_animals_recently_deceased(dbo):
     """
     Returns all shelter animals who are recently deceased
     """
     recent = subtract_days(now(), 30)
-    return db.query(dbo, get_animal_query(dbo) + " " \
+    return dbo.query(get_animal_query(dbo) + " " \
         "WHERE a.DeceasedDate Is Not Null " \
         "AND (a.ActiveMovementType Is Null OR a.ActiveMovementType = 0 " \
         "OR a.ActiveMovementType = 2) " \
-        "AND a.DeceasedDate > %s" % db.dd(recent))
+        "AND a.DeceasedDate > ?", [recent])
 
 def get_alerts(dbo, locationfilter = "", siteid = 0):
     """
@@ -749,7 +749,7 @@ def get_alerts(dbo, locationfilter = "", siteid = 0):
         "FROM lksmovementtype WHERE ID=1" \
             % { "today": today, "endoftoday": endoftoday, "oneweek": oneweek, "oneyear": oneyear, "onemonth": onemonth, 
                 "futuremonth": futuremonth, "locfilter": locationfilter, "shelterfilter": shelterfilter }
-    return db.query_cache(dbo, sql, 120)
+    return dbo.query_cache(sql, age=120)
 
 def get_stats(dbo):
     """
@@ -762,23 +762,23 @@ def get_stats(dbo):
     if statperiod == "thisyear": statdate = first_of_year(statdate)
     if statperiod == "alltime": statdate = datetime.datetime(1900, 1, 1)
     countfrom = db.dd(statdate)
-    sql = "SELECT " \
-        "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DateBroughtIn >= %(from)s) AS Entered," \
-        "(SELECT COUNT(*) FROM adoption WHERE MovementDate >= %(from)s AND MovementType = %(adoption)d) AS Adopted," \
-        "(SELECT COUNT(*) FROM adoption WHERE MovementDate >= %(from)s AND MovementType = %(reclaimed)d) AS Reclaimed, " \
-        "(SELECT COUNT(*) FROM adoption WHERE MovementDate >= %(from)s AND MovementType = %(transfer)d) AS Transferred, " \
-        "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND DeceasedDate >= %(from)s AND PutToSleep = 1) AS PTS, " \
-        "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND DeceasedDate >= %(from)s AND PutToSleep = 0 AND IsDOA = 0) AS Died, " \
-        "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND DeceasedDate >= %(from)s AND PutToSleep = 0 AND IsDOA = 1) AS DOA, " \
-        "(SELECT SUM(Donation) FROM ownerdonation WHERE Date >= %(from)s) AS Donations, " \
-        "(SELECT SUM(CostAmount) FROM animalcost WHERE CostDate >= %(from)s) + " \
-            "(SELECT SUM(Cost) FROM animalvaccination WHERE DateOfVaccination >= %(from)s) + " \
-            "(SELECT SUM(Cost) FROM animaltest WHERE DateOfTest >= %(from)s) + " \
-            "(SELECT SUM(Cost) FROM animalmedical WHERE StartDate >= %(from)s) + " \
-            "(SELECT SUM(Cost) FROM animaltransport WHERE PickupDateTime >= %(from)s) AS Costs " \
-        "FROM lksmovementtype WHERE ID=1" \
-        % { "from": countfrom, "adoption": movement.ADOPTION, "reclaimed": movement.RECLAIMED, "transfer": movement.TRANSFER }
-    return db.query_cache(dbo, sql, 120)
+    return dbo.query_named_params("SELECT " \
+        "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DateBroughtIn >= :from) AS Entered," \
+        "(SELECT COUNT(*) FROM adoption WHERE MovementDate >= :from AND MovementType = :adoption) AS Adopted," \
+        "(SELECT COUNT(*) FROM adoption WHERE MovementDate >= :from AND MovementType = :reclaimed) AS Reclaimed, " \
+        "(SELECT COUNT(*) FROM adoption WHERE MovementDate >= :from AND MovementType = :transfer) AS Transferred, " \
+        "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND DeceasedDate >= :from AND PutToSleep = 1) AS PTS, " \
+        "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND DeceasedDate >= :from AND PutToSleep = 0 AND IsDOA = 0) AS Died, " \
+        "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND DeceasedDate >= :from AND PutToSleep = 0 AND IsDOA = 1) AS DOA, " \
+        "(SELECT SUM(Donation) FROM ownerdonation WHERE Date >= :from) AS Donations, " \
+        "(SELECT SUM(CostAmount) FROM animalcost WHERE CostDate >= :from) + " \
+            "(SELECT SUM(Cost) FROM animalvaccination WHERE DateOfVaccination >= :from) + " \
+            "(SELECT SUM(Cost) FROM animaltest WHERE DateOfTest >= :from) + " \
+            "(SELECT SUM(Cost) FROM animalmedical WHERE StartDate >= :from) + " \
+            "(SELECT SUM(Cost) FROM animaltransport WHERE PickupDateTime >= :from) AS Costs " \
+        "FROM lksmovementtype WHERE ID=1", 
+        { "from": countfrom, "adoption": movement.ADOPTION, "reclaimed": movement.RECLAIMED, "transfer": movement.TRANSFER },
+        age=120)
 
 def embellish_timeline(l, rows):
     """
@@ -985,7 +985,7 @@ def get_timeline(dbo, limit = 500):
             "WHERE NonShelterAnimal = 0 AND DateBroughtIn <= %(today)s " \
             "ORDER BY DateBroughtIn DESC, ID %(limit)s" % \
             { "today": db.ddt(now(dbo.timezone)), "limit": dbo.sql_limit(limit) }
-    return embellish_timeline(dbo.locale, db.query_cache(dbo, sql, 120))
+    return embellish_timeline(dbo.locale, dbo.query_cache(sql, age=120))
 
 def calc_time_on_shelter(dbo, animalid, a = None):
     """
@@ -1207,23 +1207,23 @@ def calc_shelter_code(dbo, animaltypeid, entryreasonid, speciesid, datebroughtin
 
     # If our code uses N, calculate the highest code seen for this type this year
     if codeformat.find("N") != -1 or shortformat.find("N") != -1:
-        highesttyear = db.query_int(dbo, "SELECT MAX(YearCodeID) FROM animal WHERE " \
-            "DateBroughtIn >= " + db.dd(beginningofyear) + " AND " \
-            "DateBroughtIn <= " + db.dd(endofyear) + " AND " \
-            "AnimalTypeID = " + db.di(animaltypeid))
+        highesttyear = dbo.query_int("SELECT MAX(YearCodeID) FROM animal WHERE " \
+            "DateBroughtIn >= ? AND " \
+            "DateBroughtIn <= ? AND " \
+            "AnimalTypeID = ?", ( beginningofyear, endofyear, animaltypeid))
         highesttyear += 1
 
     # If our code uses X, calculate the highest code seen this year
     if codeformat.find("X") != -1 or shortformat.find("X") != -1:
-        highestyear = db.query_int(dbo, "SELECT COUNT(ID) FROM animal WHERE " \
-            "DateBroughtIn >= " + db.dd(beginningofyear) + " AND " \
-            "DateBroughtIn <= " + db.dd(endofyear))
+        highestyear = dbo.query_int("SELECT COUNT(ID) FROM animal WHERE " \
+            "DateBroughtIn >= ? AND " \
+            "DateBroughtIn <= ?", (beginningofyear, endofyear))
         highestyear += 1
 
     # If our code uses U, calculate the highest code ever seen
     if codeformat.find("U") != -1 or shortformat.find("U") != -1:
-        highestever = db.query_int(dbo, "SELECT MAX(UniqueCodeID) FROM animal WHERE " \
-            "CreatedDate >= " + db.dd(oneyearago))
+        highestever = dbo.query_int("SELECT MAX(UniqueCodeID) FROM animal WHERE " \
+            "CreatedDate >= ?", [oneyearago])
         highestever += 1
 
     unique = False
@@ -1236,7 +1236,7 @@ def calc_shelter_code(dbo, animaltypeid, entryreasonid, speciesid, datebroughtin
         shortcode = substitute_tokens(shortformat, highestyear, highesttyear, highestever, datebroughtin, animaltype, species, entryreason)
 
         # Verify the code is unique
-        unique = 0 == db.query_int(dbo, "SELECT COUNT(*) FROM animal WHERE ShelterCode LIKE '%s'" % code)
+        unique = 0 == dbo.query_int("SELECT COUNT(*) FROM animal WHERE ShelterCode LIKE ?", [code])
 
         # If it's not, increment and try again
         if not unique:
@@ -1273,27 +1273,27 @@ def get_days_on_shelter(dbo, animalid):
     """
     Returns the number of days on the shelter
     """
-    return db.query_int(dbo, "SELECT DaysOnShelter FROM animal WHERE ID = %d" % animalid)
+    return dbo.query_int("SELECT DaysOnShelter FROM animal WHERE ID = ?", [animalid])
 
 def get_daily_boarding_cost(dbo, animalid):
     """
     Returns the daily boarding cost
     """
-    return db.query_int(dbo, "SELECT DailyBoardingCost FROM animal WHERE ID = %d" % animalid)
+    return dbo.query_int("SELECT DailyBoardingCost FROM animal WHERE ID = ?", [animalid])
 
 def get_deceased_date(dbo, animalid):
     """
     Returns an animal's deceased date
     (int) animalid: The animal to get the deceased date
     """
-    return db.query_date(dbo, "SELECT DeceasedDate FROM animal WHERE ID = %d" % animalid)
+    return dbo.query_date("SELECT DeceasedDate FROM animal WHERE ID = ?", [animalid])
 
 def get_date_brought_in(dbo, animalid):
     """
     Returns the date an animal was brought in
     (int) animalid: The animal to get the brought in date from
     """
-    return db.query_date(dbo, "SELECT DateBroughtIn FROM animal WHERE ID = %d" % animalid)
+    return dbo.query_date("SELECT DateBroughtIn FROM animal WHERE ID = ?", [animalid])
 
 def get_code(dbo, animalid):
     """
@@ -1310,21 +1310,21 @@ def get_short_code(dbo, animalid):
     """
     Returns the short code for animalid
     """
-    return db.query_string(dbo, "SELECT ShortCode FROM animal WHERE ID = %d" % animalid)
+    return dbo.query_string("SELECT ShortCode FROM animal WHERE ID = ?", [animalid])
 
 def get_shelter_code(dbo, animalid):
     """
     Returns the shelter code for animalid
     """
-    return db.query_string(dbo, "SELECT ShelterCode FROM animal WHERE ID = %d" % animalid)
+    return dbo.query_string("SELECT ShelterCode FROM animal WHERE ID = ?", [animalid])
 
 def get_animal_namecode(dbo, animalid):
     """
     Returns an animal's name and code or an empty
     string if the id is not valid.
     """
-    r = db.query(dbo, "SELECT AnimalName, ShelterCode, ShortCode " \
-        "FROM animal WHERE ID = %d" % utils.cint(animalid))
+    r = dbo.query("SELECT AnimalName, ShelterCode, ShortCode " \
+        "FROM animal WHERE ID = ?", [animalid])
     if len(r) == 0:
         return ""
     if configuration.use_short_shelter_codes(dbo):
@@ -1338,7 +1338,7 @@ def get_animals_namecode(dbo):
     Returns a resultset containing the ID, name and code
     of all animals.
     """
-    return db.query(dbo, "SELECT ID, AnimalName, ShelterCode, ShortCode " \
+    return dbo.query("SELECT ID, AnimalName, ShelterCode, ShortCode " \
         "FROM animal ORDER BY AnimalName, ShelterCode")
 
 def get_animals_on_shelter_namecode(dbo):
@@ -1346,7 +1346,7 @@ def get_animals_on_shelter_namecode(dbo):
     Returns a resultset containing the ID, name and code
     of all on shelter animals.
     """
-    return db.query(dbo, "SELECT animal.ID, AnimalName, ShelterCode, ShortCode, SpeciesName, " \
+    return dbo.query("SELECT animal.ID, AnimalName, ShelterCode, ShortCode, SpeciesName, " \
         "CASE WHEN EXISTS(SELECT ItemValue FROM configuration WHERE ItemName Like 'UseShortShelterCodes' AND ItemValue = 'Yes') " \
         "THEN ShortCode ELSE ShelterCode END AS Code " \
         "FROM animal " \
@@ -1358,7 +1358,7 @@ def get_animals_on_shelter_foster_namecode(dbo):
     Returns a resultset containing the ID, name and code
     of all on shelter and foster animals.
     """
-    return db.query(dbo, "SELECT animal.ID, AnimalName, ShelterCode, ShortCode, SpeciesName, " \
+    return dbo.query("SELECT animal.ID, AnimalName, ShelterCode, ShortCode, SpeciesName, " \
         "CASE WHEN EXISTS(SELECT ItemValue FROM configuration WHERE ItemName Like 'UseShortShelterCodes' AND ItemValue = 'Yes') " \
         "THEN ShortCode ELSE ShelterCode END AS Code " \
         "FROM animal " \
@@ -1384,12 +1384,12 @@ def get_costs(dbo, animalid, sort = ASCENDING):
     sql = "SELECT a.ID, a.CostTypeID, a.CostAmount, a.CostDate, a.CostPaidDate, c.CostTypeName, a.Description, " \
         "a.CreatedBy, a.CreatedDate, a.LastChangedBy, a.LastChangedDate " \
         "FROM animalcost a INNER JOIN costtype c ON c.ID = a.CostTypeID " \
-        "WHERE a.AnimalID = %d" % animalid
+        "WHERE a.AnimalID = ?"
     if sort == ASCENDING:
         sql += " ORDER BY a.CostDate"
     else:
         sql += " ORDER BY a.CostDate DESC"
-    return db.query(dbo, sql)
+    return dbo.query(sql, [animalid])
 
 def get_cost_totals(dbo, animalid):
     """
@@ -1403,10 +1403,10 @@ def get_cost_totals(dbo, animalid):
         "(SELECT SUM(Cost) FROM animaltransport WHERE AnimalID = animal.ID) AS tr, " \
         "(SELECT SUM(CostAmount) FROM animalcost WHERE AnimalID = animal.ID) AS tc, " \
         "(SELECT SUM(Donation) FROM ownerdonation WHERE AnimalID = animal.ID) AS td " \
-        "FROM animal WHERE ID = %d" % int(animalid)
-    return db.query(dbo, q)[0]
+        "FROM animal WHERE ID = ?"
+    return dbo.query(q, [animalid])[0]
 
-def get_diets(dbo, animalid):
+def get_diets(dbo, animalid, sort = ASCENDING):
     """
     Returns diet records for the given animal:
     DIETNAME, DIETDESCRIPTION, DATESTARTED, COMMENTS
@@ -1414,12 +1414,16 @@ def get_diets(dbo, animalid):
     sql = "SELECT a.ID, a.DietID, d.DietName, d.DietDescription, a.DateStarted, a.Comments, " \
         "a.CreatedBy, a.CreatedDate, a.LastChangedBy, a.LastChangedDate " \
         "FROM animaldiet a INNER JOIN diet d ON d.ID = a.DietID " \
-        "WHERE a.AnimalID = ? ORDER BY a.DateStarted"
+        "WHERE a.AnimalID = ?"
+    if sort == ASCENDING:
+        sql += " ORDER BY a.DateStarted"
+    else:
+        sql += " ORDER BY a.DateStarted DESC"
     return dbo.query(sql, [animalid] )
 
 def get_display_location(dbo, animalid):
     """ Returns an animal's current display location """
-    return db.query_string(dbo, "SELECT DisplayLocation FROM animal WHERE ID = %d" % utils.cint(animalid))
+    return dbo.query_string("SELECT DisplayLocation FROM animal WHERE ID = ?", [animalid])
 
 def get_display_location_noq(dbo, animalid, loc = ""):
     """ Returns an animal's current display location without
@@ -1428,7 +1432,7 @@ def get_display_location_noq(dbo, animalid, loc = ""):
         loc:      The display location if the caller can supply it
     """
     if loc == "":
-        loc = db.query_string(dbo, "SELECT DisplayLocation FROM animal WHERE ID = %d" % utils.cint(animalid))
+        loc = dbo.query_string("SELECT DisplayLocation FROM animal WHERE ID = ?", [animalid])
     if loc is None:
         return ""
     if loc.find("::") != -1:
@@ -1439,13 +1443,13 @@ def get_has_animals(dbo):
     """
     Returns True if there is at least one animal in the database
     """
-    return db.query_int(dbo, "SELECT COUNT(ID) FROM animal") > 0
+    return dbo.query_int("SELECT COUNT(ID) FROM animal") > 0
 
 def get_has_animal_on_shelter(dbo):
     """
     Returns True if there is at least one animal on the shelter
     """
-    return db.query_int(dbo, "SELECT COUNT(ID) FROM animal a WHERE a.Archived = 0") > 0
+    return dbo.query_int("SELECT COUNT(ID) FROM animal a WHERE a.Archived = 0") > 0
 
 def get_links_recently_adopted(dbo, limit = 5, locationfilter = "", siteid = 0):
     """
@@ -1538,13 +1542,13 @@ def get_number_animals_on_file(dbo):
     """
     Returns the number of animals on the system
     """
-    return db.query_int(dbo, "SELECT COUNT(ID) FROM animal")
+    return dbo.query_int("SELECT COUNT(ID) FROM animal")
 
 def get_number_animals_on_shelter_now(dbo):
     """
     Returns the number of animals on shelter
     """
-    return db.query_int(dbo, "SELECT COUNT(ID) FROM animal WHERE Archived = 0")
+    return dbo.query_int("SELECT COUNT(ID) FROM animal WHERE Archived = 0")
 
 def update_active_litters(dbo):
     """
@@ -1554,20 +1558,20 @@ def update_active_litters(dbo):
     with today's date. The field CachedAnimalsLeft is updated as well 
     if it differs.
     """
-    active = db.query(dbo, "SELECT l.*, " \
+    active = dbo.query("SELECT l.*, " \
         "(SELECT COUNT(*) FROM animal a WHERE a.Archived = 0 " \
-        "AND a.AcceptanceNumber Like l.AcceptanceNumber AND a.DateOfBirth >= %s) AS dbcount " \
+        "AND a.AcceptanceNumber Like l.AcceptanceNumber AND a.DateOfBirth >= ?) AS dbcount " \
         "FROM animallitter l " \
         "WHERE l.CachedAnimalsLeft Is Not Null AND " \
-        "(l.InvalidDate Is Null OR l.InvalidDate > %s) " % ( db.dd(subtract_months(now(), 6)), db.dd(now(dbo.timezone))))
+        "(l.InvalidDate Is Null OR l.InvalidDate > ?) ", ( subtract_months(dbo.now(), 6), dbo.now() ))
     for a in active:
         remaining = a["CACHEDANIMALSLEFT"]
         newremaining = a["DBCOUNT"]
         if newremaining == 0 and remaining > 0:
             al.debug("litter '%s' has no animals left, expiring." % a["ACCEPTANCENUMBER"], "animal.update_active_litters", dbo)
-            db.execute(dbo, "UPDATE animallitter SET InvalidDate=%s WHERE ID=%d" % (db.dd(now(dbo.timezone)), int(a["ID"])))
+            dbo.execute("UPDATE animallitter SET InvalidDate=? WHERE ID=?", (dbo.now(), a["ID"]))
         if newremaining != remaining:
-            db.execute(dbo, "UPDATE animallitter SET CachedAnimalsLeft=%d WHERE ID=%d" % (int(newremaining), int(a["ID"])))
+            dbo.execute("UPDATE animallitter SET CachedAnimalsLeft=? WHERE ID=?", (newremaining, a["ID"]))
             al.debug("litter '%s' has fewer animals, setting remaining to %d." % (a["ACCEPTANCENUMBER"], int(newremaining)), "animal.update_active_litters", dbo)
 
 def get_active_litters(dbo, speciesid = -1):
@@ -1580,11 +1584,15 @@ def get_active_litters(dbo, speciesid = -1):
         "FROM animallitter l " \
         "LEFT OUTER JOIN animal a ON l.ParentAnimalID = a.ID " \
         "INNER JOIN species s ON l.SpeciesID = s.ID " \
-        "WHERE InvalidDate < %s %s" \
+        "WHERE InvalidDate < ? %s" \
         "ORDER BY l.Date DESC" 
-    where = ""
-    if speciesid != -1: where = "AND SpeciesID = %d " % int(speciesid)
-    return db.query(dbo, sql % (db.dd(now(dbo.timezone)), where))
+    values = [ dbo.now() ]
+    if speciesid != -1: 
+        sql = sql % "AND SpeciesID = ? "
+        values.append(speciesid)
+    else:
+        sql = sql % ""
+    return dbo.query(sql, values)
 
 def get_active_litters_brief(dbo):
     """ Returns the active litters in brief form for use by autocomplete """
@@ -1610,35 +1618,34 @@ def get_litters(dbo):
     Returns all animal litters in descending order of age. Litters
     over a year old are ignored.
     """
-    return db.query(dbo, "SELECT l.*, a.AnimalName AS MotherName, " \
+    return dbo.query("SELECT l.*, a.AnimalName AS MotherName, " \
         "a.ShelterCode AS Mothercode, s.SpeciesName AS SpeciesName " \
         "FROM animallitter l " \
         "LEFT OUTER JOIN animal a ON l.ParentAnimalID = a.ID " \
         "INNER JOIN species s ON l.SpeciesID = s.ID " \
-        "WHERE l.Date >= %s " \
-        "ORDER BY l.Date DESC" % ( db.dd(subtract_years(now(), 1))))
+        "WHERE l.Date >= ? " \
+        "ORDER BY l.Date DESC", [ subtract_years(now(), 1) ])
 
 def get_satellite_counts(dbo, animalid):
     """
     Returns a resultset containing the number of each type of satellite
     record that an animal has.
     """
-    sql = "SELECT a.ID, " \
+    return dbo.query("SELECT a.ID, " \
         "(SELECT COUNT(*) FROM animalvaccination av WHERE av.AnimalID = a.ID) AS vaccination, " \
         "(SELECT COUNT(*) FROM animaltest at WHERE at.AnimalID = a.ID) AS test, " \
         "(SELECT COUNT(*) FROM animalmedical am WHERE am.AnimalID = a.ID) AS medical, " \
         "(SELECT COUNT(*) FROM animaldiet ad WHERE ad.AnimalID = a.ID) AS diet, " \
         "(SELECT COUNT(*) FROM animaltransport tr WHERE tr.AnimalID = a.ID) AS transport, " \
-        "(SELECT COUNT(*) FROM media me WHERE me.LinkID = a.ID AND me.LinkTypeID = %d) AS media, " \
-        "(SELECT COUNT(*) FROM diary di WHERE di.LinkID = a.ID AND di.LinkType = %d) AS diary, " \
+        "(SELECT COUNT(*) FROM media me WHERE me.LinkID = a.ID AND me.LinkTypeID = ?) AS media, " \
+        "(SELECT COUNT(*) FROM diary di WHERE di.LinkID = a.ID AND di.LinkType = ?) AS diary, " \
         "(SELECT COUNT(*) FROM adoption ad WHERE ad.AnimalID = a.ID) AS movements, " \
-        "(SELECT COUNT(*) FROM log WHERE log.LinkID = a.ID AND log.LinkType = %d) AS logs, " \
+        "(SELECT COUNT(*) FROM log WHERE log.LinkID = a.ID AND log.LinkType = ?) AS logs, " \
         "(SELECT COUNT(*) FROM ownerdonation od WHERE od.AnimalID = a.ID) AS donations, " \
         "(SELECT COUNT(*) FROM ownerlicence ol WHERE ol.AnimalID = a.ID) AS licence, " \
         "(SELECT COUNT(*) FROM animalcost ac WHERE ac.AnimalID = a.ID) AS costs " \
-        "FROM animal a WHERE a.ID = %d" \
-        % (media.ANIMAL, diary.ANIMAL, log.ANIMAL, int(animalid))
-    return db.query(dbo, sql)
+        "FROM animal a WHERE a.ID = ?", \
+        (media.ANIMAL, diary.ANIMAL, log.ANIMAL, animalid))
 
 def get_preferred_web_media_name(dbo, animalid):
     """
@@ -1646,7 +1653,7 @@ def get_preferred_web_media_name(dbo, animalid):
     web. If no preferred is found, returns the first image available for
     the animal. If the animal has no images, an empty string is returned.
     """
-    mrec = db.query(dbo, "SELECT * FROM media WHERE LinkID = %d AND LinkTypeID = 0 AND (LOWER(MediaName) Like '%%.jpg' OR LOWER(MediaName) LIKE '%%.jpeg')" % animalid)
+    mrec = dbo.query("SELECT * FROM media WHERE LinkID = ? AND LinkTypeID = 0 AND MediaMimeType = 'image/jpeg'", [animalid])
     for m in mrec:
         if m["WEBSITEPHOTO"] == 1:
             return m["MEDIANAME"]
@@ -1661,9 +1668,9 @@ def get_random_name(dbo, sex = 0):
     that end with numbers and try to prefer less well used names.
     sex: A sex from lksex - 0 = Female, 1 = Male, 2 = Unknown
     """
-    names = db.query(dbo, "SELECT AnimalName, COUNT(AnimalName) AS Total " \
+    names = dbo.query("SELECT AnimalName, COUNT(AnimalName) AS Total " \
         "FROM animal " \
-        "WHERE Sex = %d " \
+        "WHERE Sex = ? " \
         "AND AnimalName Not Like '%%0' "\
         "AND AnimalName Not Like '%%1' "\
         "AND AnimalName Not Like '%%2' "\
@@ -1675,7 +1682,7 @@ def get_random_name(dbo, sex = 0):
         "AND AnimalName Not Like '%%8' "\
         "AND AnimalName Not Like '%%9' "\
         "GROUP BY AnimalName " \
-        "ORDER BY COUNT(AnimalName)" % sex)
+        "ORDER BY COUNT(AnimalName)", [sex])
     # We have less than a hundred animals, use one of our random set
     if len(names) < 100: return animalname.get_random_name()
     # Build a separate list of the lesser used names
@@ -1699,8 +1706,8 @@ def get_recent_with_name(dbo, name):
     Returns a list of animals who have a brought in date in the last 3 weeks
     with the name given.
     """
-    return db.query(dbo, "SELECT ID, ID AS ANIMALID, SHELTERCODE, ANIMALNAME FROM animal " \
-        "WHERE DateBroughtIn >= %s AND LOWER(ANIMALNAME) LIKE LOWER(%s)" % (db.dd(subtract_days(now(dbo.timezone), 21)), db.ds(name)))
+    return dbo.query("SELECT ID, ID AS ANIMALID, SHELTERCODE, ANIMALNAME FROM animal " \
+        "WHERE DateBroughtIn >= ? AND LOWER(AnimalName) LIKE ?", (subtract_days(dbo.now(), 21), name.lower()))
 
 def get_units_with_availability(dbo, locationid):
     """
@@ -1709,9 +1716,9 @@ def get_units_with_availability(dbo, locationid):
     Blank occupant means a free unit
     """
     a = []
-    units = db.query_string(dbo, "SELECT Units FROM internallocation WHERE ID = %d" % utils.cint(locationid)).split(",")
-    animals = db.query(dbo, "SELECT a.AnimalName, a.ShortCode, a.ShelterCode, a.ShelterLocationUnit " \
-        "FROM animal a WHERE a.Archived = 0 AND ActiveMovementID = 0 AND ShelterLocation = %d" % utils.cint(locationid))
+    units = dbo.query_string("SELECT Units FROM internallocation WHERE ID = ?", [locationid]).split(",")
+    animals = dbo.query("SELECT a.AnimalName, a.ShortCode, a.ShelterCode, a.ShelterLocationUnit " \
+        "FROM animal a WHERE a.Archived = 0 AND ActiveMovementID = 0 AND ShelterLocation = ?", [locationid])
     useshortcodes = configuration.use_short_shelter_codes(dbo)
     for u in units:
         if u == "": continue
@@ -1729,21 +1736,21 @@ def get_publish_history(dbo, animalid):
     """
     Returns a list of services and the date the animal was last registered with them.
     """
-    return db.query(dbo, "SELECT PublishedTo, SentDate, Extra FROM animalpublished WHERE AnimalID = %d ORDER BY SentDate DESC" % animalid)
+    return dbo.query("SELECT PublishedTo, SentDate, Extra FROM animalpublished WHERE AnimalID = ? ORDER BY SentDate DESC", [animalid])
 
 def insert_publish_history(dbo, animalid, service):
     """
     Marks an animal as published to a particular service now
     """
-    db.execute(dbo, "DELETE FROM animalpublished WHERE AnimalID = %d AND PublishedTo = '%s'" % (animalid, service))
-    db.execute(dbo, "INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate) VALUES (%d, '%s', %s)" % \
-        (animalid, service, db.dd(now())))
+    dbo.execute("DELETE FROM animalpublished WHERE AnimalID = ? AND PublishedTo = ?", (animalid, service))
+    dbo.execute("INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate) VALUES (?, ?, ?)", \
+        (animalid, service, dbo.now()))
 
 def delete_publish_history(dbo, animalid, service):
     """
     Forgets an animal has been published to a particular service.
     """
-    db.execute(dbo, "DELETE FROM animalpublished WHERE AnimalID = %d AND PublishedTo = '%s'" % (animalid, service))
+    dbo.execute("DELETE FROM animalpublished WHERE AnimalID = ? AND PublishedTo = ?", (animalid, service))
 
 def get_shelterview_animals(dbo, locationfilter = "", siteid = 0):
     """

@@ -508,6 +508,33 @@ class Database(object):
             except:
                 pass
 
+    def query_named_params(self, sql, params, age=0):
+        """ Allows use of :named :params in a query (must terminate with space, comma or right parentheses). params should be a dict. 
+            if age is not zero, uses query_cache instead.
+        """
+        def lowest(*args):
+            r = 99999
+            for z in args:
+                if z != -1 and z < r:
+                    r = z
+            return r
+        x = 0
+        values = []
+        while True:
+            if sql[x:x+1] == ":":
+                # Use the next space, comma or ) as separator
+                y = lowest(sql.find(" ", x), sql.find(",", x), sql.find(")", x))
+                pname = sql[x+1:y]
+                sql = sql[0:x] + "?" + sql[y:]
+                values.append(params[pname])
+                x = y
+            x += 1
+            if x >= len(sql): break
+        if age == 0:
+            return self.query(sql, values)
+        else:
+            return self.query_cache(sql, values, age=age)
+
     def query_row(self, table, iid):
         """ Returns the complete table row with ID=iid """
         return self.query("SELECT * FROM %s WHERE ID=%s" % (table, iid))
