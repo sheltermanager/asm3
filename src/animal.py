@@ -974,18 +974,18 @@ def get_timeline(dbo, limit = 500):
             "INNER JOIN lkurgency ON lkurgency.ID = animalwaitinglist.Urgency " \
             "ORDER BY DatePutOnList DESC, animalwaitinglist.ID %(limit)s) " \
         ") dummy " \
-        "WHERE EventDate <= %(today)s " \
+        "WHERE EventDate <= ? " \
         "ORDER BY EventDate DESC, ID " \
-        "%(limit)s" % { "today": db.ddt(now(dbo.timezone)), "limit": dbo.sql_limit(limit) }
+        "%(limit)s" % { "limit": dbo.sql_limit(limit) }
     if dbo.dbtype == "SQLITE":
         # SQLITE can't support the subquery LIMIT clauses and breaks, give SQLite users
         # a simpler timeline with just entering animals
         sql = "SELECT 'animal' AS LinkTarget, 'ENTERED' AS Category, DateBroughtIn AS EventDate, ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, '' AS Text3, LastChangedBy FROM animal " \
-            "WHERE NonShelterAnimal = 0 AND DateBroughtIn <= %(today)s " \
+            "WHERE NonShelterAnimal = 0 AND DateBroughtIn <= ? " \
             "ORDER BY DateBroughtIn DESC, ID %(limit)s" % \
-            { "today": db.ddt(now(dbo.timezone)), "limit": dbo.sql_limit(limit) }
-    return embellish_timeline(dbo.locale, dbo.query_cache(sql, age=120))
+            { "limit": dbo.sql_limit(limit) }
+    return embellish_timeline(dbo.locale, dbo.query_cache(sql, [dbo.now()], age=120))
 
 def calc_time_on_shelter(dbo, animalid, a = None):
     """
