@@ -281,12 +281,12 @@ def get_animals_ids(dbo, sort, q, limit = 5, cachetime = 60):
     ID before feeding the list of IDs into the full animal_query. This performs
     a lot better than doing the full SELECT with ORDER BY/LIMIT
     """
-    init = db.query(dbo, q, limit=limit)
+    init = dbo.query(q, limit=limit)
     aids = []
     for aid in init:
         aids.append(str(aid["ID"]))
     if len(aids) == 0: return aids # Return empty set if no results
-    return db.query_cache(dbo, get_animal_query(dbo) + " WHERE a.ID IN (%s) ORDER BY %s" % (",".join(aids), sort), cachetime)
+    return dbo.query_cache(get_animal_query(dbo) + " WHERE a.ID IN (%s) ORDER BY %s" % (dbo.sql_placeholders(aids), sort), aids, age=cachetime)
 
 def get_animals_brief(animals):
     """
@@ -376,67 +376,77 @@ def get_animal_find_simple(dbo, query, classfilter = "all", limit = 0, locationf
         sql = get_animal_query(dbo) + " WHERE a.Archived = 0 %s ORDER BY a.AnimalName" % (locationfilter)
         return db.query(dbo, sql, limit=limit)
     ors = []
+    values = []
     query = query.replace("'", "`")
+    querylike = "%%%s%%" % query.lower()
     def add(field):
-        return utils.where_text_filter(dbo, field, query)
-    ors.append(add("a.AnimalName"))
-    ors.append(add("a.ShelterCode"))
-    ors.append(add("a.ShortCode"))
-    ors.append(add("a.AcceptanceNumber"))
-    ors.append(add("a.BreedName"))
-    ors.append(add("a.IdentichipNumber"))
-    ors.append(add("a.TattooNumber"))
-    ors.append(add("a.RabiesTag"))
-    ors.append(add("il.LocationName"))
-    ors.append(add("a.ShelterLocationUnit"))
-    ors.append(add("a.PickupAddress"))
-    ors.append(u"EXISTS(SELECT ad.Value FROM additional ad " \
+        ors.append("LOWER(%s) LIKE ?" % field)
+        values.append(querylike)
+    def addclause(clause):
+        ors.append(clause)
+        values.append(querylike)
+    add("a.AnimalName")
+    add("a.ShelterCode")
+    add("a.ShortCode")
+    add("a.AcceptanceNumber")
+    add("a.BreedName")
+    add("a.IdentichipNumber")
+    add("a.TattooNumber")
+    add("a.RabiesTag")
+    add("il.LocationName")
+    add("a.ShelterLocationUnit")
+    add("a.PickupAddress")
+    addclause("EXISTS(SELECT ad.Value FROM additional ad " \
         "INNER JOIN additionalfield af ON af.ID = ad.AdditionalFieldID AND af.Searchable = 1 " \
-        "WHERE ad.LinkID=a.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE '%%%s%%')" % (additional.ANIMAL_IN, query.lower()))
+        "WHERE ad.LinkID=a.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE ?)" % additional.ANIMAL_IN)
     if not dbo.is_large_db: 
-        ors.append(add("a.Markings"))
-        ors.append(add("a.HiddenAnimalDetails"))
-        ors.append(add("a.AnimalComments"))
-        ors.append(add("a.ReasonNO"))
-        ors.append(add("a.HealthProblems"))
-        ors.append(add("a.PTSReason"))
-        ors.append(add("oo.OwnerName"))
-        ors.append(add("oo.OwnerAddress"))
-        ors.append(add("oo.HomeTelephone"))
-        ors.append(add("oo.WorkTelephone"))
-        ors.append(add("oo.MobileTelephone"))
-        ors.append(add("co.OwnerName"))
-        ors.append(add("co.OwnerAddress"))
-        ors.append(add("co.HomeTelephone"))
-        ors.append(add("co.WorkTelephone"))
-        ors.append(add("co.MobileTelephone"))
-        ors.append(add("bo.OwnerName"))
-        ors.append(add("bo.OwnerAddress"))
-        ors.append(add("bo.HomeTelephone"))
-        ors.append(add("bo.WorkTelephone"))
-        ors.append(add("bo.MobileTelephone"))
-        ors.append(add("ro.OwnerName"))
-        ors.append(add("ro.OwnerAddress"))
-        ors.append(add("ro.HomeTelephone"))
-        ors.append(add("ro.WorkTelephone"))
-        ors.append(add("ro.MobileTelephone"))
-        ors.append(add("cv.OwnerName"))
-        ors.append(add("cv.OwnerAddress"))
-        ors.append(add("cv.WorkTelephone"))
-        ors.append(add("at.AnimalType"))
-        ors.append(add("sp.SpeciesName"))
-        ors.append(add("sx.Sex"))
-        ors.append(add("sz.Size"))
-        ors.append(add("bc.BaseColour"))
-        ors.append(add("ct.CoatType"))
-    sql = utils.cunicode(get_animal_query(dbo)) + " WHERE "
+        add("a.Markings")
+        add("a.HiddenAnimalDetails")
+        add("a.AnimalComments")
+        add("a.ReasonNO")
+        add("a.HealthProblems")
+        add("a.PTSReason")
+        add("oo.OwnerName")
+        add("oo.OwnerAddress")
+        add("oo.HomeTelephone")
+        add("oo.WorkTelephone")
+        add("oo.MobileTelephone")
+        add("co.OwnerName")
+        add("co.OwnerAddress")
+        add("co.HomeTelephone")
+        add("co.WorkTelephone")
+        add("co.MobileTelephone")
+        add("bo.OwnerName")
+        add("bo.OwnerAddress")
+        add("bo.HomeTelephone")
+        add("bo.WorkTelephone")
+        add("bo.MobileTelephone")
+        add("ro.OwnerName")
+        add("ro.OwnerAddress")
+        add("ro.HomeTelephone")
+        add("ro.WorkTelephone")
+        add("ro.MobileTelephone")
+        add("cv.OwnerName")
+        add("cv.OwnerAddress")
+        add("cv.WorkTelephone")
+        add("at.AnimalType")
+        add("sp.SpeciesName")
+        add("sx.Sex")
+        add("sz.Size")
+        add("bc.BaseColour")
+        add("ct.CoatType")
     if classfilter == "shelter":
-        sql += u" a.Archived = 0 AND "
+        classfilter = "a.Archived = 0 AND "
     elif classfilter == "female":
-        sql += u" a.Sex = 0 AND "
-    sql += get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid, andsuffix=True)
-    sql += "(" + u" OR ".join(ors) + ") ORDER BY a.Archived, a.AnimalName"
-    return db.query(dbo, sql, limit=limit)
+        classfilter = "a.Sex = 0 AND "
+    else:
+        classfilter = ""
+    sql = "%s WHERE %s %s (%s) ORDER BY a.Archived, a.AnimalName" % ( \
+        get_animal_query(dbo),
+        classfilter,
+        get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid, andsuffix=True),
+        " OR ".join(ors))
+    return dbo.query(sql, values, limit=limit)
 
 def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", siteid = 0):
     """

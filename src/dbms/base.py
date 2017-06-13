@@ -299,7 +299,7 @@ class Database(object):
             iid = self.get_id(table)
             values["ID"] = iid
         values = self.encode_str_before_write(values)
-        sql = "INSERT INTO %s (%s) VALUES (%s)" % ( table, ",".join(values.iterkeys()), ",".join('?'*len(values)) )
+        sql = "INSERT INTO %s (%s) VALUES (%s)" % ( table, ",".join(values.iterkeys()), self.sql_placeholders(values) )
         self.execute(sql, values.values())
         if writeAudit and iid != 0:
             audit.create(self, user, table, iid, audit.dump_row(self, table, iid))
@@ -675,6 +675,10 @@ class Database(object):
             s = "%04d-%02d-%02d 00:00:00" % ( d.year, d.month, d.day )
         if wrapParens: return "'%s'" % s
         return s
+
+    def sql_placeholders(self, l):
+        """ Writes enough ? placeholders for items in l """
+        return ",".join('?'*len(l))
 
     def sql_now(self, wrapParens=True, includeTime=True):
         """ Writes now as an SQL date """
