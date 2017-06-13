@@ -122,6 +122,9 @@ class TestAnimal(unittest.TestCase):
     def test_get_shelterview_animals(self):
         assert len(animal.get_shelterview_animals(base.get_dbo())) > 0
 
+    def test_get_timeline(self):
+        assert len(animal.get_timeline(base.get_dbo())) > 0
+
     def test_get_units_with_availability(self):
         animal.get_units_with_availability(base.get_dbo(), 1);
 
