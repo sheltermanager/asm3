@@ -373,8 +373,8 @@ def get_animal_find_simple(dbo, query, classfilter = "all", limit = 0, locationf
     # do an on-shelter search instead
     if query == "" and (classfilter == "all" or classfilter == "shelter"):
         locationfilter = get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid, andprefix=True)
-        sql = get_animal_query(dbo) + " WHERE a.Archived = 0 %s ORDER BY a.AnimalName" % (locationfilter)
-        return db.query(dbo, sql, limit=limit)
+        sql = "%s WHERE Archived=0 %s ORDER BY AnimalName" % (get_animal_query(dbo), locationfilter)
+        return dbo.query(sql, limit=limit)
     ors = []
     values = []
     query = query.replace("'", "`")

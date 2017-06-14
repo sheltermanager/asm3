@@ -11,6 +11,58 @@ import utils
 
 from sitedefs import DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HAS_ASM2_PK_TABLE, DB_DECODE_HTML_ENTITIES, DB_EXEC_LOG, DB_EXPLAIN_QUERIES, DB_TIME_QUERIES, DB_TIME_LOG_OVER, DB_TIMEOUT, CACHE_COMMON_QUERIES
 
+class QueryBuilder(object):
+    """
+    Build a query from component parts, keeping track of params eg:
+
+    qb.select("animalname, sheltercode", "animal a")
+    qb.leftjoin("adoption", "adoption.AnimalID = a.ID")
+    qb.where("id", 5)
+    qb.like("animalname", "bob")
+    qb.orderby("animalname")
+
+    dbo.query(qb.sql(), qb.params())
+    """
+    sselect = ""
+    sfrom = ""
+    sjoins = ""
+    swhere = ""
+    sorderby = ""
+    values = []
+    dbo = None
+    def __init__(self, dbo):
+        self.dbo = dbo
+    def select(self, s, fromclause = ""):
+        if s.lower().startswith("select"):
+            self.sselect = s
+        else:
+            self.sselect = "SELECT %s"
+        if fromclause != "":
+            sfrom = " FROM %s " % fromclause
+    def innerjoin(self, table, cond):
+        self.sjoins += "INNER JOIN %s ON %s " % (table, cond)
+    def leftjoin(self, table, cond):
+        self.sjoins += "LEFT OUTER JOIN %s ON %s " % (table, cond)
+    def where(self, k, v = "", cond = "and", operator = "="):
+        """ If only one param is given, it is treated as a clause by itself """
+        if swhere != "":
+            swhere += " %s " % cond
+        else:
+            swhere = " WHERE "
+        if v == "":
+            swhere += k + " "
+        else:
+            swhere += "%s %s ? " % (k, operator, v)
+            self.values.append(v)
+    def like(self, k, v, cond = "and"):
+        self.where("LOWER(%s)" % k, "%%%s%%" % v.lower(), cond, "LIKE")
+    def orderby(self, s):
+        self.sorderby = " ORDER BY %s" % s
+    def sql(self):
+        return self.sselect + " " + self.sfrom + self.sjoins + self.swhere + self.sorderby
+    def params(self):
+        return self.values
+
 class Database(object):
     """
     Object that handles all interactions with the database.
@@ -258,6 +310,9 @@ class Database(object):
     def get_id_max(self, table):
         """ Returns the next ID for a table using MAX(ID) """
         return self.query_int("SELECT MAX(ID) FROM %s" % table) + 1
+
+    def get_query_builder():
+        return QueryBuilder(dbo)
 
     def get_recordversion(self):
         """
