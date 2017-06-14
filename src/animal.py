@@ -509,12 +509,12 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
     post = utils.PostedData(criteria, l)
 
     def addid(cfield, field): 
-        if post.integer(cfield) != -1: 
+        if post.integer(cfield) > 0: 
             ands.append("%s = ?" % field)
             values.append(post.integer(cfield))
 
     def addidpair(cfield, field, field2): 
-        if post.integer(cfield) != -1: 
+        if post.integer(cfield) > 0: 
             ands.append("(%s = ? OR %s = ?)" % (field, field2))
             values.append(post.integer(cfield))
             values.append(post.integer(cfield))
