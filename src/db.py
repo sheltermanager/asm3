@@ -15,7 +15,9 @@ def get_database(t = None):
         "SQLITE":       dbms.sqlite.DatabaseSQLite3
     }
     if t is None: t = DB_TYPE
-    return m[t]()
+    x = m[t]()
+    x.dbtype = t
+    return x
 
 def get_multiple_database_info(alias):
     """ Gets the Database object for the alias in our map MULTIPLE_DATABASES_MAP. """

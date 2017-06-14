@@ -31,7 +31,7 @@ class TestPerson(unittest.TestCase):
         person.get_person(base.get_dbo(), self.nid)
 
     def test_get_person_similar(self):
-        assert len(person.get_person_similar(base.get_dbo(), "Testing", "", "123")) > 0
+        assert len(person.get_person_similar(base.get_dbo(), "", "Testing", "Test", "123 street")) > 0
 
     def test_get_person_name(self):
         assert "" != person.get_person_name(base.get_dbo(), self.nid)
