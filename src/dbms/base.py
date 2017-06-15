@@ -411,11 +411,14 @@ class Database(object):
         if version < 0: return True
         return version == self.query_int("SELECT RecordVersion FROM %s WHERE ID = %d" % (table, tid))
 
-    def query(self, sql, params=None, limit=0):
+    def query(self, sql, params=None, limit=0, distincton=""):
         """ Runs the query given and returns the resultset as a list of dictionaries. 
             All fieldnames are uppercased when returned.
             params: tuple of parameters for the query
             limit: limit results to X rows
+            distincton: If set and the field exists, ignores any dups for this field during result construction.
+                        This is faster than doing DISTINCT on the full row at the database level
+                        (the only thing all RDBMS are guaranteed to support)
         """
         try:
             c, s = self.cursor_open()
@@ -442,13 +445,22 @@ class Database(object):
             # Get the list of column names
             for i in s.description:
                 cols.append(i[0].upper())
+            seendistinct = set()
             for row in d:
                 # Intialise a map for each row
                 rowmap = {}
                 for i in range(0, len(row)):
                     v = self.encode_str_after_read(row[i])
                     rowmap[cols[i]] = v
-                l.append(rowmap)
+                # If a distinct on value has been set, check for duplicates
+                # before adding this row to the resultset
+                if distincton != "" and distincton in rowmap:
+                    distinctval = rowmap[distincton]
+                    if distinctval not in seendistinct:
+                        seendistinct.add(distinctval)
+                        l.append(rowmap)
+                else:
+                    l.append(rowmap)
             self.cursor_close(c, s)
             if DB_TIME_QUERIES:
                 tt = time.time() - start
@@ -465,7 +477,7 @@ class Database(object):
             except:
                 pass
 
-    def query_cache(self, sql, params=None, age=60, limit=0):
+    def query_cache(self, sql, params=None, age=60, limit=0, distincton=""):
         """
         Runs the query given and caches the result
         for age seconds. If there's already a valid cached
@@ -479,7 +491,7 @@ class Database(object):
         results = cachemem.get(cache_key)
         if results is not None:
             return results
-        results = self.query(sql, params=params, limit=limit)
+        results = self.query(sql, params=params, limit=limit, distincton=distincton)
         cachemem.put(cache_key, results, age)
         return results
 
@@ -757,7 +769,7 @@ class Database(object):
         if d is None: return "NULL"
         s = "%04d-%02d-%02d %02d:%02d:%02d" % ( d.year, d.month, d.day, d.hour, d.minute, d.second )
         if not includeTime:
-            s = "%04d-%02d-%02d 00:00:00" % ( d.year, d.month, d.day )
+            s = "%04d-%02d-%02d" % ( d.year, d.month, d.day )
         if wrapParens: return "'%s'" % s
         return s
 

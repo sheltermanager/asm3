@@ -285,7 +285,7 @@ def get_animals_ids(dbo, sort, q, limit = 5, cachetime = 60):
     for aid in dbo.query(q, limit=limit):
         aids.append(aid["ID"])
     if len(aids) == 0: return [] # Return empty recordset if no results
-    return dbo.query_cache(get_animal_query(dbo) + " WHERE a.ID IN (%s) ORDER BY %s" % (dbo.sql_placeholders(aids), sort), aids, age=cachetime)
+    return dbo.query_cache(get_animal_query(dbo) + " WHERE a.ID IN (%s) ORDER BY %s" % (dbo.sql_placeholders(aids), sort), aids, age=cachetime, distincton="ID")
 
 def get_animals_brief(animals):
     """
@@ -445,7 +445,7 @@ def get_animal_find_simple(dbo, query, classfilter = "all", limit = 0, locationf
         classfilter,
         get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid, andsuffix=True),
         " OR ".join(ors))
-    return dbo.query(sql, values, limit=limit)
+    return dbo.query(sql, values, limit=limit, distincton="ID")
 
 def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", siteid = 0):
     """
@@ -630,7 +630,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
     if len(ands) > 0:
         where = "WHERE " + " AND ".join(ands)
     sql = "%s %s ORDER BY a.AnimalName" % (get_animal_query(dbo), where)
-    return dbo.query(sql, values, limit=limit)
+    return dbo.query(sql, values, limit=limit, distincton="ID")
 
 def get_animals_not_for_adoption(dbo):
     """
