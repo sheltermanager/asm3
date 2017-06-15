@@ -397,7 +397,7 @@ def run_alias(mode, alias):
         run(dbo, mode)
 
 def run_override_database(mode, dbtype, host, port, username, password, database, alias):
-    dbo = db.DatabaseInfo()
+    dbo = db.get_database(dbtype)
     dbo.dbtype = dbtype
     dbo.host = host
     dbo.port = port
