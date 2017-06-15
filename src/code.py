@@ -2033,31 +2033,31 @@ class document_gen(ASMEndpoint):
         templatename = dbfs.get_name_for_id(dbo, template)
         title = templatename
         loglinktype = extlog.ANIMAL
-        al.debug("generating %s document for %d" % (linktype, post.integer("id")), "code.document_gen", dbo)
+        al.debug("generating %s document for %d, template '%s'" % (linktype, post.integer("id"), templatename), "code.document_gen", dbo)
         logid = post.integer("id")
         if linktype == "ANIMAL" or linktype == "":
             loglinktype = extlog.ANIMAL
-            content = wordprocessor.generate_animal_doc(dbo, template, post.integer("id"), session.user)
+            content = wordprocessor.generate_animal_doc(dbo, template, post.integer("id"), o.user)
         elif linktype == "ANIMALCONTROL":
             loglinktype = extlog.ANIMALCONTROL
-            content = wordprocessor.generate_animalcontrol_doc(dbo, template, post.integer("id"), session.user)
+            content = wordprocessor.generate_animalcontrol_doc(dbo, template, post.integer("id"), o.user)
         elif linktype == "PERSON":
             loglinktype = extlog.PERSON
-            content = wordprocessor.generate_person_doc(dbo, template, post.integer("id"), session.user)
+            content = wordprocessor.generate_person_doc(dbo, template, post.integer("id"), o.user)
         elif linktype == "DONATION":
             loglinktype = extlog.PERSON
             logid = financial.get_donation(dbo, post.integer_list("id")[0])["OWNERID"]
-            content = wordprocessor.generate_donation_doc(dbo, template, post.integer_list("id"), session.user)
+            content = wordprocessor.generate_donation_doc(dbo, template, post.integer_list("id"), o.user)
         elif linktype == "LICENCE":
             loglinktype = extlog.PERSON
             logid = financial.get_licence(dbo, post.integer("id"))["OWNERID"]
-            content = wordprocessor.generate_licence_doc(dbo, template, post.integer("id"), session.user)
+            content = wordprocessor.generate_licence_doc(dbo, template, post.integer("id"), o.user)
         elif linktype == "MOVEMENT":
             loglinktype = extlog.PERSON
             logid = extmovement.get_movement(dbo, post.integer("id"))["OWNERID"]
-            content = wordprocessor.generate_movement_doc(dbo, template, post.integer("id"), session.user)
+            content = wordprocessor.generate_movement_doc(dbo, template, post.integer("id"), o.user)
         if configuration.generate_document_log(dbo) and configuration.generate_document_log_type(dbo) > 0:
-            extlog.add_log(dbo, session.user, loglinktype, logid, configuration.generate_document_log_type(dbo), _("Generated document '{0}'").format(templatename))
+            extlog.add_log(dbo, o.user, loglinktype, logid, configuration.generate_document_log_type(dbo), _("Generated document '{0}'").format(templatename))
         if templatename.endswith(".html"):
             web.header("Content-Type", "text/html")
             web.header("Cache-Control", "no-cache")

@@ -685,7 +685,7 @@ class Database(object):
         """ Runs a query and returns the first item from the first column as a string """
         r = self.query_tuple(sql, params=params)
         try:
-            return str(self.encode_str_after_read(v))
+            return str(self.encode_str_after_read(r[0][0]))
         except:
             return ""
 
