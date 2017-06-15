@@ -1348,7 +1348,6 @@ class Report:
         i = 0
 
         def label(s):
-            s = db.encode_str(self.dbo, s) # turn unicode into str/xml/ascii
             s = str(s).replace("'", "\\'") # fix apostrophes breaking javascript
             return s
 
@@ -1369,7 +1368,7 @@ class Report:
         elif len(rs[0]) == 2:
             values = []
             for r in rs:
-                values.append("[%d, %s]" % (i, str(r[1])))
+                values.append("[%d, %s]" % (i, r[1]))
                 ticks.append("[%d, '%s']" % (i, label(r[0])))
                 i += 1
             self._Append("{ label: '%s', \n" % label(cols[1]))
@@ -1391,7 +1390,7 @@ class Report:
             for r in rs:
                 if r[0] not in values:
                     values[r[0]] = []
-                values[r[0]].append("[%s, %s]" % (db.encode_str(self.dbo, r[1]), str(r[2])))
+                values[r[0]].append("[%s, %s]" % (r[1], r[2]))
             for k, v in values.iteritems():
                 self._Append("{ label: '%s', \n" % label(k))
                 self._Append("data: [%s], \n%s\n },\n" % (",".join(v), mode))
@@ -1696,15 +1695,14 @@ class Report:
                     if asql.lower().startswith("select"):
                         # Select - return first row/column
                         try:
-                            x = db.query_tuple(self.dbo, asql)
-                            value = str(x[0][0])
+                            value = self.dbo.query_string(asql)
                         except Exception as e:
                             value = str(e)
                     else:
                         # Action query, run it
                         try:
                             value = ""
-                            db.execute(self.dbo, asql)
+                            self.dbo.execute(asql)
                         except Exception as e:
                             value = str(e)
 

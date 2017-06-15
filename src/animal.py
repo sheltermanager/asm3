@@ -2915,7 +2915,7 @@ def insert_litter_from_form(dbo, username, post):
         ( "RecordVersion", db.di(0))
         ))
     db.execute(dbo, sql)
-    audit.create(dbo, username, nid, "animallitter", audit.dump_row(dbo, "animallitter", nid))
+    audit.create(dbo, username, "animallitter", nid, audit.dump_row(dbo, "animallitter", nid))
     update_active_litters(dbo)
     # if a list of littermates were given, set the litterid on those animal records
     for i in post.integer_list("animals"):

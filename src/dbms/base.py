@@ -38,21 +38,21 @@ class QueryBuilder(object):
         else:
             self.sselect = "SELECT %s"
         if fromclause != "":
-            sfrom = " FROM %s " % fromclause
+            self.sfrom = " FROM %s " % fromclause
     def innerjoin(self, table, cond):
         self.sjoins += "INNER JOIN %s ON %s " % (table, cond)
     def leftjoin(self, table, cond):
         self.sjoins += "LEFT OUTER JOIN %s ON %s " % (table, cond)
     def where(self, k, v = "", cond = "and", operator = "="):
         """ If only one param is given, it is treated as a clause by itself """
-        if swhere != "":
-            swhere += " %s " % cond
+        if self.swhere != "":
+            self.swhere += " %s " % cond
         else:
-            swhere = " WHERE "
+            self.swhere = " WHERE "
         if v == "":
-            swhere += k + " "
+            self.swhere += k + " "
         else:
-            swhere += "%s %s ? " % (k, operator, v)
+            self.swhere += "%s %s ? " % (k, operator, v)
             self.values.append(v)
     def like(self, k, v, cond = "and"):
         self.where("LOWER(%s)" % k, "%%%s%%" % v.lower(), cond, "LIKE")
@@ -311,8 +311,8 @@ class Database(object):
         """ Returns the next ID for a table using MAX(ID) """
         return self.query_int("SELECT MAX(ID) FROM %s" % table) + 1
 
-    def get_query_builder():
-        return QueryBuilder(dbo)
+    def get_query_builder(self):
+        return QueryBuilder(self)
 
     def get_recordversion(self):
         """
@@ -618,6 +618,10 @@ class Database(object):
             d = s.fetchall()
             c.commit()
             self.cursor_close(c, s)
+            # Fix/encode result values
+            for row in d:
+                for i in range(0, len(row)):
+                    row[i] = self.encode_str_after_read(row[i])
             return d
         except Exception as err:
             al.error(str(err), "Database.query_tuple", self, sys.exc_info())
@@ -648,6 +652,10 @@ class Database(object):
             for col in s.description:
                 cn.append(col[0].upper())
             self.cursor_close(c, s)
+            # Fix/encode result values
+            for row in d:
+                for i in range(0, len(row)):
+                    row[i] = self.encode_str_after_read(row[i])
             return (d, cn)
         except Exception as err:
             al.error(str(err), "Database.query_tuple_columns", self, sys.exc_info())
@@ -681,8 +689,7 @@ class Database(object):
         """ Runs a query and returns the first item from the first column as a string """
         r = self.query_tuple(sql, params=params)
         try:
-            v = self.unescape(r[0][0])
-            return self.encode_str_after_read(v)
+            return self.encode_str_after_read(r[0][0])
         except:
             return str("")
 
