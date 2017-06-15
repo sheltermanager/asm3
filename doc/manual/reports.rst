@@ -112,6 +112,8 @@ information, or information requested from the user at report generation time.
   separated string of internal location IDs) or a list of all internal location
   IDs if the user does not have a location filter.
 
+* $SITE$ - Substitutes the current user's site ID (multi-site only).
+
 * $CURRENT_DATE$ - Substitutes today's date in an appropriate string SQL format
   for the current database. This saves you having to use NOW() or
   CURRENT_DATE() or various other SQL functions specific to one database.
