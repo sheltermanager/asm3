@@ -7,8 +7,8 @@ import time
 # flake8: noqa - we have a lot of locales and this is convenient
 from locales import *
 
-VERSION = "40u [Wed 14 Jun 10:19:37 BST 2017]"
-BUILD = "06141019"
+VERSION = "40u [Thu 15 Jun 08:50:14 BST 2017]"
+BUILD = "06150850"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -586,7 +586,7 @@ def i18nstringsjs(l):
     """
     langs = "{}"
     try:
-        lang = __import__("locale_" + real_locale(l))
+        lang = globals()["locale_" + l]
         langs = json.dumps(lang.val)
     except:
         pass
