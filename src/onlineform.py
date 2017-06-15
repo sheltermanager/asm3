@@ -705,21 +705,21 @@ def delete_onlineformincoming(dbo, username, collationid):
 def guess_agegroup(dbo, s):
     """ Guesses an agegroup, returns the default if no match is found """
     s = str(s).lower()
-    guess = db.query_string(dbo, "SELECT ItemValue FROM configuration WHERE ItemName LIKE 'AgeGroup%Name' AND LOWER(ItemValue) LIKE '%" + db.escape(s) + "%'")
+    guess = dbo.query_string("SELECT ItemValue FROM configuration WHERE ItemName LIKE ? AND LOWER(ItemValue) LIKE ?", ["AgeGroup%Name", "%%%s%%" % s])
     if guess != "": return guess
-    return db.query_string(dbo, "SELECT ItemValue FROM configuration WHERE ItemName LIKE 'AgeGroup2Name'")
+    return dbo.query_string("SELECT ItemValue FROM configuration WHERE ItemName LIKE ?", ["AgeGroup2Name"])
 
 def guess_breed(dbo, s):
     """ Guesses a breed, returns the default if no match is found """
     s = str(s).lower()
-    guess = db.query_int(dbo, "SELECT ID FROM breed WHERE LOWER(BreedName) LIKE '%" + db.escape(s) + "%'")
+    guess = dbo.query_int("SELECT ID FROM breed WHERE LOWER(BreedName) LIKE ?", ["%%%s%%" % s])
     if guess != 0: return guess
     return configuration.default_breed(dbo)
 
 def guess_colour(dbo, s):
     """ Guesses a colour, returns the default if no match is found """
     s = str(s).lower()
-    guess = db.query_int(dbo, "SELECT ID FROM basecolour WHERE LOWER(BaseColour) LIKE '%" + db.escape(s) + "%'")
+    guess = dbo.query_int("SELECT ID FROM basecolour WHERE LOWER(BaseColour) LIKE ?", ["%%%s%%" % s])
     if guess != 0: return guess
     return configuration.default_colour(dbo)
 
@@ -732,7 +732,7 @@ def guess_sex(dummy, s):
 def guess_size(dbo, s):
     """ Guesses a size """
     s = str(s).lower()
-    guess = db.query_int(dbo, "SELECT ID FROM lksize WHERE LOWER(Size) LIKE '%" + db.escape(s) + "%'")
+    guess = dbo.query_int("SELECT ID FROM lksize WHERE LOWER(Size) LIKE ?", ["%%%s%%" % s])
     if guess != 0: return guess
     return configuration.default_size(dbo)
 

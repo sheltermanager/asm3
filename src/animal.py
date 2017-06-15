@@ -2820,8 +2820,7 @@ def update_preferred_web_media_notes(dbo, username, animalid, newnotes):
         "WebsitePhoto = 1 AND LinkID = %d AND LinkTypeID = %d" % \
         (int(animalid), media.ANIMAL))
     if mediaid > 0:
-        db.execute(dbo, "UPDATE media SET MediaNotes = '%s', UpdatedSinceLastPublish = 1 WHERE " \
-            "ID = %d" % (db.escape(newnotes), mediaid))
+        dbo.execute("UPDATE media SET MediaNotes = ?, UpdatedSinceLastPublish = 1 WHERE ID = ?", (newnotes, mediaid))
         audit.edit(dbo, username, "media", mediaid, str(mediaid) + "notes => " + newnotes)
  
 def insert_diet_from_form(dbo, username, post):
