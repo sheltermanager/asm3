@@ -231,7 +231,9 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
     else:
         asm_scripts = asm_script_tags(utils.PATH) 
     # Set the body colour from the theme
-    bgcol = BACKGROUND_COLOURS[theme]
+    bgcol = BACKGROUND_COLOURS["asm"]
+    if theme in BACKGROUND_COLOURS:
+        bgcol = BACKGROUND_COLOURS[theme]
     return '<!DOCTYPE html>\n' \
         '<html>\n' \
         '<head>\n' \
