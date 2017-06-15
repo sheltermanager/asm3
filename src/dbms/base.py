@@ -685,9 +685,9 @@ class Database(object):
         """ Runs a query and returns the first item from the first column as a string """
         r = self.query_tuple(sql, params=params)
         try:
-            return self.encode_str_after_read(r[0][0])
+            return str(self.encode_str_after_read(v))
         except:
-            return str("")
+            return ""
 
     def query_date(self, sql, params=None):
         """ Runs a query and returns the first item from the first column as a date """
