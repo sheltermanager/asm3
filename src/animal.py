@@ -281,11 +281,10 @@ def get_animals_ids(dbo, sort, q, limit = 5, cachetime = 60):
     ID before feeding the list of IDs into the full animal_query. This performs
     a lot better than doing the full SELECT with ORDER BY/LIMIT
     """
-    init = dbo.query(q, limit=limit)
-    aids = []
-    for aid in init:
-        aids.append(str(aid["ID"]))
-    if len(aids) == 0: return aids # Return empty set if no results
+    aids = set()
+    for aid in dbo.query(q, limit=limit):
+        set.add(aid["ID"])
+    if len(aids) == 0: return [] # Return empty recordset if no results
     return dbo.query_cache(get_animal_query(dbo) + " WHERE a.ID IN (%s) ORDER BY %s" % (dbo.sql_placeholders(aids), sort), aids, age=cachetime)
 
 def get_animals_brief(animals):
@@ -1456,35 +1455,35 @@ def get_links_recently_adopted(dbo, limit = 5, locationfilter = "", siteid = 0):
     Returns link info for animals who were recently adopted
     """
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
-    return get_animals_ids(dbo, "a.ActiveMovementDate DESC", "SELECT DISTINCT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE ActiveMovementType = 1 %s ORDER BY ActiveMovementDate DESC" % locationfilter, limit=limit, cachetime=120)
+    return get_animals_ids(dbo, "a.ActiveMovementDate DESC", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE ActiveMovementType = 1 %s ORDER BY ActiveMovementDate DESC" % locationfilter, limit=limit, cachetime=120)
 
 def get_links_recently_fostered(dbo, limit = 5, locationfilter = "", siteid = 0):
     """
     Returns link info for animals who were recently fostered
     """
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
-    return get_animals_ids(dbo, "a.ActiveMovementDate DESC", "SELECT DISTINCT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE ActiveMovementType = 2 %s ORDER BY ActiveMovementDate DESC" % locationfilter, limit=limit, cachetime=120)
+    return get_animals_ids(dbo, "a.ActiveMovementDate DESC", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE ActiveMovementType = 2 %s ORDER BY ActiveMovementDate DESC" % locationfilter, limit=limit, cachetime=120)
 
 def get_links_recently_changed(dbo, limit = 5, locationfilter = "", siteid = 0):
     """
     Returns link info for animals who have recently been changed.
     """
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, whereprefix=True)
-    return get_animals_ids(dbo, "a.LastChangedDate DESC", "SELECT DISTINCT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation %s ORDER BY LastChangedDate DESC" % locationfilter, limit=limit, cachetime=120)
+    return get_animals_ids(dbo, "a.LastChangedDate DESC", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation %s ORDER BY LastChangedDate DESC" % locationfilter, limit=limit, cachetime=120)
 
 def get_links_recently_entered(dbo, limit = 5, locationfilter = "", siteid = 0):
     """
     Returns link info for animals who recently entered the shelter.
     """
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
-    return get_animals_ids(dbo, "a.MostRecentEntryDate DESC", "SELECT DISTINCT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE Archived = 0 %s ORDER BY MostRecentEntryDate DESC" % locationfilter, limit=limit, cachetime=120)
+    return get_animals_ids(dbo, "a.MostRecentEntryDate DESC", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE Archived = 0 %s ORDER BY MostRecentEntryDate DESC" % locationfilter, limit=limit, cachetime=120)
 
 def get_links_longest_on_shelter(dbo, limit = 5, locationfilter = "", siteid = 0):
     """
     Returns link info for animals who have been on the shelter the longest
     """
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
-    return get_animals_ids(dbo, "a.MostRecentEntryDate", "SELECT DISTINCT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE Archived = 0 %s ORDER BY MostRecentEntryDate" % locationfilter, limit=limit, cachetime=120)
+    return get_animals_ids(dbo, "a.MostRecentEntryDate", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE Archived = 0 %s ORDER BY MostRecentEntryDate" % locationfilter, limit=limit, cachetime=120)
 
 def get_location_filter_clause(locationfilter = "", tablequalifier = "", siteid = 0, whereprefix = False, andprefix = False, andsuffix = False):
     """
@@ -1758,7 +1757,7 @@ def get_shelterview_animals(dbo, locationfilter = "", siteid = 0):
     """
     limit = configuration.record_search_limit(dbo)
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
-    return get_animals_ids(dbo, "a.AnimalName", "SELECT DISTINCT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation WHERE Archived = 0 %s ORDER BY HasPermanentFoster, animal.ID DESC" % locationfilter, limit=limit)
+    return get_animals_ids(dbo, "a.AnimalName", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation WHERE Archived = 0 %s ORDER BY HasPermanentFoster, animal.ID DESC" % locationfilter, limit=limit)
 
 def insert_animal_from_form(dbo, post, username):
     """
