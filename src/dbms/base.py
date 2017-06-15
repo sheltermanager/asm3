@@ -618,10 +618,6 @@ class Database(object):
             d = s.fetchall()
             c.commit()
             self.cursor_close(c, s)
-            # Fix/encode result values
-            for row in d:
-                for i in range(0, len(row)):
-                    row[i] = self.encode_str_after_read(row[i])
             return d
         except Exception as err:
             al.error(str(err), "Database.query_tuple", self, sys.exc_info())

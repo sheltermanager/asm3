@@ -281,9 +281,9 @@ def get_animals_ids(dbo, sort, q, limit = 5, cachetime = 60):
     ID before feeding the list of IDs into the full animal_query. This performs
     a lot better than doing the full SELECT with ORDER BY/LIMIT
     """
-    aids = set()
+    aids = []
     for aid in dbo.query(q, limit=limit):
-        set.add(aid["ID"])
+        aids.append(aid["ID"])
     if len(aids) == 0: return [] # Return empty recordset if no results
     return dbo.query_cache(get_animal_query(dbo) + " WHERE a.ID IN (%s) ORDER BY %s" % (dbo.sql_placeholders(aids), sort), aids, age=cachetime)
 

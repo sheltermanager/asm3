@@ -1348,6 +1348,7 @@ class Report:
         i = 0
 
         def label(s):
+            s = self.dbo.encode_str_after_read(s)
             s = str(s).replace("'", "\\'") # fix apostrophes breaking javascript
             return s
 
@@ -1390,7 +1391,7 @@ class Report:
             for r in rs:
                 if r[0] not in values:
                     values[r[0]] = []
-                values[r[0]].append("[%s, %s]" % (r[1], r[2]))
+                values[r[0]].append("[%s, %s]" % (self.dbo.encode_str_after_read(r[1]), r[2]))
             for k, v in values.iteritems():
                 self._Append("{ label: '%s', \n" % label(k))
                 self._Append("data: [%s], \n%s\n },\n" % (",".join(v), mode))
