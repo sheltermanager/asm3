@@ -3,18 +3,17 @@
 from base import Database
 
 try:
-    import ibm_db
     import ibm_db_dbi
 except:
     pass
 
 class DatabaseDB2(Database):
-    type_shorttext = "VARCHAR(1024)" #may be 255
+    type_shorttext = "VARCHAR(1024)" # may be 255
     type_clob = "CLOB"
     type_longtext = "VARCHAR(32K)"
 
     def connect(self):
-        return ibm_db_dbi.connect(dbo.database, dbo.username, dbo.password, dbo.host)
+        return ibm_db_dbi.connect(self.database, self.username, self.password, self.host)
 
     def ddl_drop_view(self, name):
         return "BEGIN DECLARE CONTINUE HANDLER FOR SQLSTATE '42704' BEGIN END; EXECUTE IMMEDIATE 'DROP VIEW %s; END" % name
