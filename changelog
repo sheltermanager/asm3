@@ -1,6 +1,7 @@
 40
 ================
 
+16/06/17 Send maddie's fund animals one at a time due to timeouts #89
 12/06/17 Add MediaMimeType indexed field #230
 11/06/17 Fix unit tests after database refactoring #230
 10/06/17 Break up publish.py #233

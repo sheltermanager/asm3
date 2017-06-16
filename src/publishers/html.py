@@ -6,7 +6,6 @@ import db
 import dbfs
 import i18n
 import lookups
-import html
 import math
 import onlineform
 import os

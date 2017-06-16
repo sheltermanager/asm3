@@ -90,7 +90,7 @@ class MaddiesFundPublisher(AbstractPublisher):
             return
 
         anCount = 0
-        rows = []
+        processed = []
         for an in animals:
             try:
                 anCount += 1
@@ -141,23 +141,25 @@ class MaddiesFundPublisher(AbstractPublisher):
                     "ContactNumber": an["CURRENTOWNERHOMETELEPHONE"],
                     "Organization": organisation,
                 }
-                rows.append(a)
-                # Mark success in the log
-                self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+
+                # Send the animal as a json document. We're doing them one at a time as 
+                # its better for error reporting and their endpoint times out with large
+                # volumes of data.
+                j = utils.json({ "Animals": [ a ] })
+                headers = { "Authorization": "Bearer %s" % token }
+                self.log("HTTP POST request %s: headers: '%s', body: '%s'" % (MADDIES_FUND_UPLOAD_URL, headers, j))
+                r = utils.post_json(MADDIES_FUND_UPLOAD_URL, j, headers)
+                if r["status"] != 200:
+                    self.logError("HTTP %d response: %s" % (r["status"], r["response"]))
+                else:
+                    self.log("HTTP %d response: %s" % (r["status"], r["response"]))
+                    self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                    processed.append(an)
 
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (an["SHELTERCODE"], err), sys.exc_info())
 
-        # Turn it into a json document and send to MPA
-        j = utils.json({ "Animals": rows })
-        headers = { "Authorization": "Bearer %s" % token }
-        self.log("HTTP POST request %s: headers: '%s', body: '%s'" % (MADDIES_FUND_UPLOAD_URL, headers, j))
-        r = utils.post_json(MADDIES_FUND_UPLOAD_URL, j, headers)
-        if r["status"] != 200:
-            self.logError("HTTP %d response: %s" % (r["status"], r["response"]))
-        else:
-            self.log("HTTP %d response: %s" % (r["status"], r["response"]))
-
+        self.markAnimalsPublished(processed)
         self.saveLog()
         self.setPublisherComplete()
 
