@@ -51,6 +51,8 @@ class MaddiesFundPublisher(AbstractPublisher):
         
         self.log("Maddies Fund Publisher starting...")
 
+        BATCH_SIZE = 50 # How many animals to send in one POST
+
         if self.isPublisherExecuting(): return
         self.updatePublisherProgress(0)
         self.setLastError("")
@@ -65,6 +67,7 @@ class MaddiesFundPublisher(AbstractPublisher):
             self.cleanup()
             return
 
+        # Send all fosters and adoptions for the last month
         cutoff = i18n.subtract_days(i18n.now(self.dbo.timezone), 31)
         animals = db.query(self.dbo, animal.get_animal_query(self.dbo) + " WHERE a.ActiveMovementType IN (1,2) AND " \
             "a.ActiveMovementDate >= %s AND a.DeceasedDate Is Null AND a.NonShelterAnimal = 0 "
@@ -90,6 +93,7 @@ class MaddiesFundPublisher(AbstractPublisher):
             return
 
         anCount = 0
+        thisbatch = []
         processed = []
         for an in animals:
             try:
@@ -142,24 +146,29 @@ class MaddiesFundPublisher(AbstractPublisher):
                     "Organization": organisation,
                 }
 
-                # Send the animal as a json document. We're doing them one at a time as 
-                # its better for error reporting and their endpoint times out with large
-                # volumes of data.
-                j = utils.json({ "Animals": [ a ] })
-                headers = { "Authorization": "Bearer %s" % token }
-                self.log("HTTP POST request %s: headers: '%s', body: '%s'" % (MADDIES_FUND_UPLOAD_URL, headers, j))
-                r = utils.post_json(MADDIES_FUND_UPLOAD_URL, j, headers)
-                if r["status"] != 200:
-                    self.logError("HTTP %d response: %s" % (r["status"], r["response"]))
-                else:
-                    self.log("HTTP %d response: %s" % (r["status"], r["response"]))
-                    self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
-                    processed.append(an)
+                thisbatch.append(a)
+                processed.append(an)
+                self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+
+                # If we have hit our batch size, or this is the
+                # last animal then send what we have.
+                if len(thisbatch) == BATCH_SIZE or anCount == len(animals):
+                    j = utils.json({ "Animals": thisbatch })
+                    headers = { "Authorization": "Bearer %s" % token }
+                    self.log("HTTP POST request %s: headers: '%s', body: '%s'" % (MADDIES_FUND_UPLOAD_URL, headers, j))
+                    r = utils.post_json(MADDIES_FUND_UPLOAD_URL, j, headers)
+                    if r["status"] != 200:
+                        self.logError("HTTP %d response: %s" % (r["status"], r["response"]))
+                    else:
+                        self.log("HTTP %d response: %s" % (r["status"], r["response"]))
+                        self.markAnimalsPublished(processed)
+                    # start counting again
+                    thisbatch = []
+                    processed = []
 
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (an["SHELTERCODE"], err), sys.exc_info())
 
-        self.markAnimalsPublished(processed)
         self.saveLog()
         self.setPublisherComplete()
 

@@ -7,8 +7,8 @@ import time
 # flake8: noqa - we have a lot of locales and this is convenient
 from locales import *
 
-VERSION = "40u [Fri 16 Jun 13:24:54 BST 2017]"
-BUILD = "06161324"
+VERSION = "40u [Fri 16 Jun 14:07:01 BST 2017]"
+BUILD = "06161407"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -189,7 +189,7 @@ def ntranslate(number, translations, locale = "en"):
         locale: The locale the strings are in (which plural function to use)
     """
     try:
-        pluralfun = locale_maps[locale][2]
+        pluralfun = get_plural_function(locale)
         text = translations[pluralfun(number)]
         text = text.replace("{plural0}", str(number))
         text = text.replace("{plural1}", str(number))
@@ -212,34 +212,46 @@ def get_version_number():
     """
     return VERSION[0:VERSION.find(" ")]
 
+def get_locale_map(locale, index):
+    if locale in locale_maps:
+        return locale_maps[locale][index]
+    else:
+        return locale_maps["en"][index]
+
 def get_display_date_format(locale, digitsinyear = 4):
     """
     Returns the display date format for a locale
     """
     if digitsinyear == 4:
-        return locale_maps[locale][0][0]
+        return get_locale_map(locale, 0)[0]
     else:
-        return locale_maps[locale][0][1]
+        return get_locale_map(locale, 0)[1]
 
 def get_currency_symbol(locale):
     """
     Returns the currency symbol for a locale
     """
-    return locale_maps[locale][1]
+    return get_locale_map(locale, 1)
 
 def get_currency_dp(locale):
     """
     Returns the number of decimal places for a locale when
     displaying currency
     """
-    return locale_maps[locale][4]
+    return get_locale_map(locale, 4)
 
 def get_currency_prefix(locale):
     """
     Returns "p" if the currency symbol goes at the beginning, or "s" for the end
     when displaying.
     """
-    return locale_maps[locale][3]
+    return get_locale_map(locale, 3)
+
+def get_plural_function(locale):
+    """
+    Returns the function for calculating plurals for this locale
+    """
+    return get_locale_map(locale, 2)
 
 def format_currency(locale, value):
     """
@@ -261,7 +273,7 @@ def format_currency(locale, value):
     # and the right number of decimal places for the locale
     fstr = "{:,." + dp + "f}"
     # Add the currency symbol to the format in the correct spot
-    if locale_maps[locale][3] == CURRENCY_PREFIX:
+    if get_currency_prefix(locale) == CURRENCY_PREFIX:
         fstr = symbol + fstr
     else:
         fstr += symbol
