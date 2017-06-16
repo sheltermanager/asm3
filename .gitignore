@@ -11,3 +11,5 @@ import/data
 doc/manual/_build
 cordova/asm/platforms
 .DS_Store
+/.project
+/.pydevproject
