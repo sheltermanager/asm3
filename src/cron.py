@@ -373,7 +373,7 @@ def run_all_map_databases(mode):
     for alias in MULTIPLE_DATABASES_MAP.iterkeys():
         dbo = db.get_multiple_database_info(alias)
         dbo.timeout = 0
-        dbo.connection = db.connection(dbo)
+        dbo.connection = dbo.connect()
         run(dbo, mode)
 
 def run_default_database(mode):
@@ -406,7 +406,7 @@ def run_override_database(mode, dbtype, host, port, username, password, database
     dbo.database = database
     dbo.alias = alias
     dbo.timeout = 0
-    dbo.connection = db.connection(dbo)
+    dbo.connection = dbo.connect()
     run(dbo, mode)
 
 def print_usage():
