@@ -312,17 +312,17 @@ def handler(post, path, remoteip, referer, querystring):
         else:
             users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
             rs = publishers.base.get_animal_data(dbo, None, utils.cint(animalid), include_additional_fields = True)
-            return set_cached_response(cache_key, "application/json", 3600, 3600, html.json(rs))
+            return set_cached_response(cache_key, "application/json", 3600, 3600, utils.json(rs))
 
     elif method == "json_adoptable_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         rs = publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
-        return set_cached_response(cache_key, "application/json", 3600, 3600, html.json(rs))
+        return set_cached_response(cache_key, "application/json", 3600, 3600, utils.json(rs))
 
     elif method == "jsonp_adoptable_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         rs = publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
-        return ("application/javascript", 0, "%s(%s);" % (post["callback"], html.json(rs)))
+        return ("application/javascript", 0, "%s(%s);" % (post["callback"], utils.json(rs)))
 
     elif method == "xml_adoptable_animal":
         if utils.cint(animalid) == 0:
@@ -341,12 +341,12 @@ def handler(post, path, remoteip, referer, querystring):
     elif method == "json_recent_adoptions":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         rs = movement.get_recent_adoptions(dbo)
-        return set_cached_response(cache_key, "application/json", 3600, 3600, html.json(rs))
+        return set_cached_response(cache_key, "application/json", 3600, 3600, utils.json(rs))
 
     elif method == "jsonp_recent_adoptions":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         rs = movement.get_recent_adoptions(dbo)
-        return ("application/javascript", 0, "%s(%s);" % (post["callback"], html.json(rs)))
+        return ("application/javascript", 0, "%s(%s);" % (post["callback"], utils.json(rs)))
 
     elif method == "xml_recent_adoptions":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
@@ -371,12 +371,12 @@ def handler(post, path, remoteip, referer, querystring):
     elif method == "jsonp_shelter_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         sa = animal.get_animal_find_simple(dbo, "", "shelter")
-        return ("application/javascript", 0, "%s(%s);" % (post["callback"], html.json(sa)))
+        return ("application/javascript", 0, "%s(%s);" % (post["callback"], utils.json(sa)))
 
     elif method == "json_shelter_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         sa = animal.get_animal_find_simple(dbo, "", "shelter")
-        return set_cached_response(cache_key, "application/json", 3600, 3600, html.json(sa))
+        return set_cached_response(cache_key, "application/json", 3600, 3600, utils.json(sa))
 
     elif method == "xml_shelter_animals":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)

@@ -264,13 +264,13 @@ def get_onlineform_json(dbo, formid):
             "mandatory": utils.iif(f["MANDATORY"] == 1, True, False), "index": f["DISPLAYINDEX"],
             "lookups": f["LOOKUPS"], "tooltip": f["TOOLTIP"]})
     fd["fields"] = ff
-    return html.json(fd, True)
+    return utils.json(fd, True)
 
 def import_onlineform_json(dbo, j):
     """
     Imports an online form from a JSON document
     """
-    fd = html.json_parse(j)
+    fd = utils.json_parse(j)
     data = {
         "name": fd["name"],
         "description": fd["description"],

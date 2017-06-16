@@ -5,10 +5,11 @@ import codecs
 import configuration
 import csv as extcsv
 import datetime
+import decimal
 import db
 import hashlib
 import htmlentitydefs
-import json
+import json as extjson
 import os
 import re
 import smtplib
@@ -99,7 +100,7 @@ class PostedData(object):
     def __getitem__(self, key):
         return self.string(key)
     def __repr__(self):
-        return json.dumps(self.data)
+        return json(self.data)
 
 def is_currency(f):
     """ Returns true if the field with name f is a currency field """
@@ -197,6 +198,43 @@ def filename_only(filename):
     if filename.find("/") != -1: filename = filename[filename.rfind("/")+1:]
     if filename.find("\\") != -1: filename = filename[filename.rfind("\\")+1:]
     return filename
+
+def json_parse(s):
+    """
+    Parses json and returns an object tree
+    """
+    return extjson.loads(s)
+
+def json_handler(obj):
+    """
+    Used to help when serializing python objects to json
+    """
+    if obj is None:
+        return "null"
+    elif hasattr(obj, "isoformat"):
+        return obj.isoformat()
+    elif type(obj) == datetime.timedelta:
+        hours, remain = divmod(obj.seconds, 3600)
+        minutes, seconds = divmod(remain, 60)
+        return "%02d:%02d:%02d" % (hours, minutes, seconds)
+    elif isinstance(obj, decimal.Decimal):
+        return str(obj)
+    else:
+        raise TypeError('Object of type %s with value of %s is not JSON serializable' % (type(obj), repr(obj)))
+
+def json(obj, readable = False):
+    """
+    Takes a python object and serializes it to JSON.
+    None objects are turned into "null"
+    datetime objects are turned into string isoformat for use with js Date.
+    This function switches </ for <\/ in output to prevent HTML tags in any content
+        from breaking out of a script tag.
+    readable: If True, line breaks and padding are added to make it human-readable
+    """
+    if not readable:
+        return extjson.dumps(obj, default=json_handler).replace("</", "<\\/")
+    else:
+        return extjson.dumps(obj, default=json_handler, indent=4, separators=(',', ': ')).replace("</", "<\\/")
 
 def address_first_line(address):
     """

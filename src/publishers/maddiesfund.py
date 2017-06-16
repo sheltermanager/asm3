@@ -5,7 +5,6 @@ import configuration
 import db
 import i18n
 import lookups
-import html
 import sys
 import utils
 
@@ -83,7 +82,7 @@ class MaddiesFundPublisher(AbstractPublisher):
                 "grant_type": "password"
             }
             r = utils.post_form(MADDIES_FUND_TOKEN_URL, fields)
-            token = html.json_parse(r["response"])["access_token"]
+            token = utils.json_parse(r["response"])["access_token"]
             self.log("got access token: %s (%s)" % (token, r["response"]))
         except Exception as err:
             self.setLastError("failed to get access token: %s (request: '%s') (response: '%s')" % (err, r["requestbody"], r["response"]))
@@ -150,7 +149,7 @@ class MaddiesFundPublisher(AbstractPublisher):
                 self.logError("Failed processing animal: %s, %s" % (an["SHELTERCODE"], err), sys.exc_info())
 
         # Turn it into a json document and send to MPA
-        j = html.json({ "Animals": rows })
+        j = utils.json({ "Animals": rows })
         headers = { "Authorization": "Bearer %s" % token }
         self.log("HTTP POST request %s: headers: '%s', body: '%s'" % (MADDIES_FUND_UPLOAD_URL, headers, j))
         r = utils.post_json(MADDIES_FUND_UPLOAD_URL, j, headers)

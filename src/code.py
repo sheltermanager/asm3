@@ -296,10 +296,10 @@ class JSONEndpoint(ASMEndpoint):
                 "common.route_listen(); " \
                 "common.module_start(\"%(js_module)s\"); " \
                 "});\n</script>\n</body>\n</html>" % { "js_module": self.js_module }
-            return "%s\n<script type=\"text/javascript\">\ncontroller = %s;\n</script>\n%s" % (html.header("", session), html.json(c), footer)
+            return "%s\n<script type=\"text/javascript\">\ncontroller = %s;\n</script>\n%s" % (html.header("", session), utils.json(c), footer)
         else:
             web.header("Content-Type", "application/json")
-            return html.json(c)
+            return utils.json(c)
 
 class index(ASMEndpoint):
     url = "/"
@@ -488,7 +488,7 @@ class configjs(ASMEndpoint):
             extreports.get_reports_menu(dbo, o.session.roleids, o.session.superuser), 
             extreports.get_mailmerges_menu(dbo, o.session.roleids, o.session.superuser))
         }
-        return "asm = %s;" % html.json(c)
+        return "asm = %s;" % utils.json(c)
 
 class css(ASMEndpoint):
     url = "css"
@@ -958,7 +958,7 @@ class login(ASMEndpoint):
              "qrimg": QR_IMG_SRC,
              "target": post["target"]
         }
-        s += "<script type=\"text/javascript\">\ncontroller = %s;\n</script>\n" % html.json(c)
+        s += "<script type=\"text/javascript\">\ncontroller = %s;\n</script>\n" % utils.json(c)
         s += '<script>\n$(document).ready(function() { $("body").append(login.render()); login.bind(); });\n</script>'
         s += html.footer()
         self.header("Content-Type", "text/html")
@@ -1352,7 +1352,7 @@ class animal_embed(ASMEndpoint):
         q = o.post["q"]
         rows = extanimal.get_animal_find_simple(o.dbo, q, o.post["filter"], 100, o.locationfilter, o.siteid)
         al.debug("got %d results for '%s'" % (len(rows), self.query()), "code.animal_embed", o.dbo)
-        return html.json(rows)
+        return utils.json(rows)
 
     def post_multiselect(self, o):
         self.header("Content-Type", "application/json")
@@ -1362,7 +1362,7 @@ class animal_embed(ASMEndpoint):
         species = extlookups.get_species(dbo)
         litters = extanimal.get_litters(dbo)
         rv = { "rows": rows, "locations": locations, "species": species, "litters": litters }
-        return html.json(rv)
+        return utils.json(rv)
 
     def post_id(self, o):
         self.header("Content-Type", "application/json")
@@ -1374,7 +1374,7 @@ class animal_embed(ASMEndpoint):
             self.notfound()
         else:
             al.debug("got animal %s %s by id" % (a["CODE"], a["ANIMALNAME"]), "code.animal_embed", dbo)
-            return html.json((a,))
+            return utils.json((a,))
 
 class animal_find(JSONEndpoint):
     url = "animal_find"
@@ -1797,7 +1797,7 @@ class calendar_events(ASMEndpoint):
                     "link": "person_traploan?id=%d" % l["OWNERID"]})
         al.debug("calendarview found %d events (%s->%s)" % (len(events), start, end), "code.calendarview", dbo)
         self.header("Content-Type", "application/json")
-        return html.json(events)
+        return utils.json(events)
 
 class change_password(JSONEndpoint):
     url = "change_password"
@@ -2335,7 +2335,7 @@ class donation(JSONEndpoint):
     def post_personmovements(self, o):
         self.check(users.VIEW_MOVEMENT)
         self.header("Content-Type", "application/json")
-        return html.json(extmovement.get_person_movements(o.dbo, o.post.integer("personid")))
+        return utils.json(extmovement.get_person_movements(o.dbo, o.post.integer("personid")))
 
 class donation_receive(JSONEndpoint):
     url = "donation_receive"
@@ -3234,7 +3234,7 @@ class mailmerge(JSONEndpoint):
         dbo = o.dbo
         rows, cols = extreports.execute_query(dbo, o.session.mergereport, o.user, o.session.mergeparams)
         al.debug("returning preview rows for %d" % o.session.mergereport, "code.mailmerge", dbo)
-        return html.json(rows)
+        return utils.json(rows)
 
 class medical(JSONEndpoint):
     url = "medical"
@@ -3282,7 +3282,7 @@ class medical(JSONEndpoint):
             extmedical.delete_treatment(o.dbo, o.user, mid)
 
     def post_get_profile(self, o):
-        return html.json([extmedical.get_profile(o.dbo, o.post.integer("profileid"))])
+        return utils.json([extmedical.get_profile(o.dbo, o.post.integer("profileid"))])
 
     def post_given(self, o):
         self.check(users.BULK_COMPLETE_MEDICAL)
@@ -3977,7 +3977,7 @@ class person_embed(ASMEndpoint):
         dbo = session.dbo
         self.header("Content-Type", "application/json")
         self.header("Cache-Control", "max-age=180") # This data can be cached for a few minutes - good for multi-widgets on one page
-        return html.json({
+        return utils.json({
             "additional": extadditional.get_additional_fields(dbo, 0, "person"),
             "towns": "|".join(extperson.get_towns(dbo)),
             "counties": "|".join(extperson.get_counties(dbo)),
@@ -3994,7 +3994,7 @@ class person_embed(ASMEndpoint):
             self.checkb(users.VIEW_STAFF), \
             self.checkb(users.VIEW_VOLUNTEER), 100)
         al.debug("find '%s' got %d rows" % (self.query(), len(rows)), "code.person_embed", o.dbo)
-        return html.json(rows)
+        return utils.json(rows)
 
     def post_id(self, o):
         self.check(users.VIEW_PERSON)
@@ -4007,7 +4007,7 @@ class person_embed(ASMEndpoint):
             raise web.notfound()
         else:
             al.debug("get person by id %d got '%s'" % (post.integer("id"), p["OWNERNAME"]), "code.person_embed", dbo)
-            return html.json((p,))
+            return utils.json((p,))
 
     def post_similar(self, o):
         self.check(users.VIEW_PERSON)
@@ -4023,7 +4023,7 @@ class person_embed(ASMEndpoint):
             al.debug("No similar people found for %s, %s, %s" % (surname, forenames, address), "code.person_embed", dbo)
         else:
             al.debug("found similar people for %s, %s, %s: got %d records" % (surname, forenames, address, len(p)), "code.person_embed", dbo)
-        return html.json(p)
+        return utils.json(p)
 
     def post_add(self, o):
         self.check(users.ADD_PERSON)
@@ -4032,7 +4032,7 @@ class person_embed(ASMEndpoint):
         al.debug("add new person", "code.person_embed", dbo)
         pid = extperson.insert_person_from_form(dbo, o.post, session.user)
         p = extperson.get_person(dbo, pid)
-        return html.json((p,))
+        return utils.json((p,))
 
 class person_find(JSONEndpoint):
     url = "person_find"
@@ -4537,7 +4537,7 @@ class reports(JSONEndpoint):
         dbfs.put_string_filepath(o.dbo, "/reports/foot.html", o.post["footer"])
 
     def post_smcomlist(self, o):
-        return html.json(extreports.get_smcom_reports(o.dbo))
+        return utils.json(extreports.get_smcom_reports(o.dbo))
 
     def post_smcominstall(self, o):
         self.check(users.ADD_REPORT)
@@ -4590,7 +4590,7 @@ class schemajs(ASMEndpoint):
                         tobj[t] = rows[0]
                 except Exception as err:
                     al.error("%s" % str(err), "code.schemajs", dbo)
-            return "schema = %s;" % html.json(tobj)
+            return "schema = %s;" % utils.json(tobj)
         else:
             # Not logged in
             self.header("Content-Type", "text/javascript")

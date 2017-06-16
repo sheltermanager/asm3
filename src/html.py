@@ -3,16 +3,14 @@
 import additional
 import animal
 import configuration
-import datetime
-import decimal
 import financial
-import json as extjson
 import lookups
 import medical
 import os
 import person
 import users
 import utils
+
 from i18n import BUILD, _, translate, format_currency, format_date, now, python2display, python2unix
 from sitedefs import BASE_URL, LOCALE, MINIFY_JS, ROLLUP_JS
 from sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, CODEMIRROR_CSS, CODEMIRROR_JS, CODEMIRROR_BASE, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_4_JS, TOUCHPUNCH_JS
@@ -44,43 +42,6 @@ BACKGROUND_COLOURS = {
     "ui-lightness":     "#ffffff",
     "vader":            "#888888"
 }
-
-def json_parse(s):
-    """
-    Parses json and returns an object tree
-    """
-    return extjson.loads(s)
-
-def json_handler(obj):
-    """
-    Used to help when serializing python objects to json
-    """
-    if obj is None:
-        return "null"
-    elif hasattr(obj, "isoformat"):
-        return obj.isoformat()
-    elif type(obj) == datetime.timedelta:
-        hours, remain = divmod(obj.seconds, 3600)
-        minutes, seconds = divmod(remain, 60)
-        return "%02d:%02d:%02d" % (hours, minutes, seconds)
-    elif isinstance(obj, decimal.Decimal):
-        return str(obj)
-    else:
-        raise TypeError('Object of type %s with value of %s is not JSON serializable' % (type(obj), repr(obj)))
-
-def json(obj, readable = False):
-    """
-    Takes a python object and serializes it to JSON.
-    None objects are turned into "null"
-    datetime objects are turned into string isoformat for use with js Date.
-    This function switches </ for <\/ in output to prevent HTML tags in any content
-        from breaking out of a script tag.
-    readable: If True, line breaks and padding are added to make it human-readable
-    """
-    if not readable:
-        return extjson.dumps(obj, default=json_handler).replace("</", "<\\/")
-    else:
-        return extjson.dumps(obj, default=json_handler, indent=4, separators=(',', ': ')).replace("</", "<\\/")
 
 def js_minified_name(filename):
     """
@@ -504,7 +465,7 @@ def script_json(varname, obj, prefix = "controller."):
     Outputs a script tag with a variable varname containing 
     the object obj.
     """
-    jv = json(obj)
+    jv = utils.json(obj)
     return script("var %s%s = %s;" % (prefix, varname, jv))
 
 def script_var(varname, v, prefix = "controller."):

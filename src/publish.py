@@ -9,7 +9,6 @@ import animal
 import configuration
 import db
 import dbfs
-import html
 import i18n
 import smcom
 import utils
@@ -68,7 +67,7 @@ def get_animal_view_adoptable_js(dbo):
     pc = PublishCriteria(configuration.publisher_presets(dbo))
     js = js.replace("{TOKEN_ACCOUNT}", dbo.database)
     js = js.replace("{TOKEN_BASE_URL}", BASE_URL)
-    js = js.replace("\"{TOKEN_ADOPTABLES}\"", html.json(get_animal_data(dbo, pc, include_additional_fields = True, strip_personal_data = True)))
+    js = js.replace("\"{TOKEN_ADOPTABLES}\"", utils.json(get_animal_data(dbo, pc, include_additional_fields = True, strip_personal_data = True)))
     return js
 
 def get_adoption_status(dbo, a):

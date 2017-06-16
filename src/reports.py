@@ -1462,7 +1462,7 @@ class Report:
             p.append({ "latlong": g[0], "popuptext": g[1] })
             lastlatlong = g[0]
 
-        self._Append( html.json(p) + ";\n" )
+        self._Append( utils.json(p) + ";\n" )
         self._Append( "mapping.draw_map(\"embeddedmap\", 10, \"%s\", points);\n" % lastlatlong )
         self._Append( "}, 50);\n" )
         self._Append("""

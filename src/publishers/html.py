@@ -165,7 +165,7 @@ class HTMLPublisher(FTPPublisher):
                     or k == "DISPLAYLOCATION":
                     a[k] = ""
         self.saveFile(os.path.join(self.publishDir, "db.js"), "publishDate='%s';animals=%s;" % (
-            i18n.python2display(self.locale, i18n.now(self.dbo.timezone)), html.json(animals)))
+            i18n.python2display(self.locale, i18n.now(self.dbo.timezone)), utils.json(animals)))
         if self.pc.uploadDirectly:
             self.log("Uploading javascript database...")
             self.upload("db.js")
