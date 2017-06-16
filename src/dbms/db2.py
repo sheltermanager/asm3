@@ -21,6 +21,9 @@ class DatabaseDB2(Database):
     def ddl_modify_column(self, table, column, newtype, using = ""):
         return "ALTER TABLE %s ALTER COLUMN %s SET DATA TYPE %s" % (table, column, newtype)
 
+    def ddl_drop_column(self, table, column):
+        return "ALTER TABLE %s DROP COLUMN %s CASCADE" % (table, column)
+
     def escape(self, s):
         answer = []
         for index,char in enumerate(s):
