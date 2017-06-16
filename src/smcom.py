@@ -45,8 +45,8 @@ def get_database_info(alias):
     dbo.database = str(a["user"])
     dbo.username = dbo.database
     dbo.password = dbo.database
-    # Is this sm.com account disabled?
-    if a["expired"]:
+    # Is this sm.com account disabled or removed from the server?
+    if a["expired"] or a["archived"]:
         dbo.database = "DISABLED"
     # Is this the wrong server?
     if smcom_client.get_this_server() != a["server"]: 
