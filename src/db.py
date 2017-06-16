@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import dbms.hsqldb, dbms.mysql, dbms.postgresql, dbms.sqlite
+import dbms.hsqldb, dbms.mysql, dbms.postgresql, dbms.sqlite, dbms.db2
 import i18n
 import utils
 
@@ -12,7 +12,8 @@ def get_database(t = None):
         "HSQLDB":       dbms.hsqldb.DatabaseHSQLDB,
         "MYSQL":        dbms.mysql.DatabaseMySQL,
         "POSTGRESQL":   dbms.postgresql.DatabasePostgreSQL,
-        "SQLITE":       dbms.sqlite.DatabaseSQLite3
+        "SQLITE":       dbms.sqlite.DatabaseSQLite3,
+        "DB2":          dbms.db2.DatabaseDB2
     }
     if t is None: t = DB_TYPE
     x = m[t]()
