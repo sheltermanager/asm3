@@ -16,7 +16,7 @@ class DatabaseDB2(Database):
         return ibm_db_dbi.connect(self.database, self.username, self.password, self.host)
 
     def ddl_drop_view(self, name):
-        return "BEGIN DECLARE CONTINUE HANDLER FOR SQLSTATE '42704' BEGIN END; EXECUTE IMMEDIATE 'DROP VIEW %s; END" % name
+        return "BEGIN DECLARE CONTINUE HANDLER FOR SQLSTATE '42704' BEGIN END; EXECUTE IMMEDIATE 'DROP VIEW %s'; END" % name
 
     def ddl_modify_column(self, table, column, newtype, using = ""):
         return "ALTER TABLE %s ALTER COLUMN %s SET DATA TYPE %s" % (table, column, newtype)
@@ -49,11 +49,11 @@ class DatabaseDB2(Database):
         return "CREATE SEQUENCE seq_%s START WITH %s" % (table, startat)
 
     def ddl_drop_sequence(self, table):
-        return "BEGIN DECLARE CONTINUE HANDLER FOR SQLSTATE '42704' BEGIN END; EXECUTE IMMEDIATE 'DROP SEQUENCE seq_%s; END" % table
+        return "BEGIN DECLARE CONTINUE HANDLER FOR SQLSTATE '42704' BEGIN END; EXECUTE IMMEDIATE 'DROP SEQUENCE seq_%s'; END" % table
 
     def get_id(self, table):
         """ Returns the next ID for a table using sequences
         """
-        nextid = self.query_int("SELECT NEXT VALUE FOR %s" % table)
+        nextid = self.query_int("SELECT NEXT VALUE FOR seq_%s FROM %s" % (table, table))
         self.update_asm2_primarykey(table, nextid)
         return nextid
