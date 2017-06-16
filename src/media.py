@@ -222,7 +222,12 @@ def get_image_file_data(dbo, mode, iid, seq = 0, justdate = False):
         if justdate:
             return datetime.datetime.today()
         else:
-            return (datetime.datetime.today(), dbfs.get_string_filepath(dbo, str(iid)))
+            if str(iid).startswith("/"):
+                # Complete path was given
+                return (datetime.datetime.today(), dbfs.get_string_filepath(dbo, str(iid)))
+            else:
+                # Only name was given
+                return (datetime.datetime.today(), dbfs.get_string(dbo, str(iid)))
     else:
         return nopic()
 

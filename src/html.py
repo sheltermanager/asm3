@@ -552,25 +552,9 @@ def doc_img_src(dbo, row, mode):
     mode: The mode - animal or person
     """
     if row["DOCMEDIANAME"] is None or row["DOCMEDIANAME"] == "":
-        return "image?db=" + dbo.database + "&mode=dbfs&id=/reports/nopic.jpg"
+        return "image?db=%s&mode=dbfs&id=/reports/nopic.jpg" % dbo.database
     else:
-        path = ""
-        if mode == "animal":
-            if "ANIMALID" in row:
-                idval = row["ANIMALID"]
-            elif "ID" in row:
-                idval = row["ID"]
-            path = "/animal/%d/%s" % (idval, row["DOCMEDIANAME"])
-        elif mode == "person":
-            if "PERSONID" in row:
-                idval = row["PERSONID"]
-            elif "ID" in row:
-                idval = row["ID"]
-            path = "/person/%d/%s" % (idval, row["DOCMEDIANAME"])
-        else:
-            path = "/animal/%d/%s" % (row["ID"], row["DOCMEDIANAME"])
-        uri = "image?db=" + dbo.database + "&mode=dbfs&id=%s" % path
-        return uri
+        return "image?db=%s&mode=dbfs&id=%s" % (dbo.database, row["DOCMEDIANAME"])
 
 def menu_structure(l, reports, mailmerges):
     """

@@ -299,7 +299,8 @@ def handler(post, path, remoteip, referer, querystring):
 
     elif method =="dbfs_image":
         hotlink_protect("dbfs_image", referer)
-        return set_cached_response(cache_key, "image/jpeg", 86400, 120, dbfs.get_string_filepath(dbo, title))
+        return set_cached_response(cache_key, "image/jpeg", 86400, 120, utils.iif(title.startswith("/"), 
+            dbfs.get_string_filepath(dbo, title), dbfs.get_string(dbo, title)))
 
     elif method =="extra_image":
         hotlink_protect("extra_image", referer)
