@@ -660,10 +660,6 @@ class Database(object):
             for col in s.description:
                 cn.append(col[0].upper())
             self.cursor_close(c, s)
-            # Fix/encode result values
-            for row in d:
-                for i in range(0, len(row)):
-                    row[i] = self.encode_str_after_read(row[i])
             return (d, cn)
         except Exception as err:
             al.error(str(err), "Database.query_tuple_columns", self, sys.exc_info())
