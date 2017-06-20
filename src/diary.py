@@ -86,9 +86,9 @@ def get_between_two_dates(dbo, user, dbstart, dbend):
     dbstart: An ISO start date
     dbend: An ISO end date
     """
-    return db.query(dbo, "SELECT *, cast(DiaryDateTime AS time) AS DiaryTime " \
-        "FROM diary WHERE %s " \
-        "AND DateCompleted Is Null AND DiaryDateTime >= '%s' AND DiaryDateTime <= '%s'" \
+    return db.query(dbo, "SELECT d.*, cast(DiaryDateTime AS time) AS DiaryTime " \
+        "FROM diary d WHERE %s " \
+        "AND DateCompleted Is Null AND DiaryDateTime >= '%s' AND DiaryDateTime <= '%s' " \
         "ORDER BY DiaryDateTime DESC" % (user_role_where_clause(dbo, user), dbstart, dbend))
 
 def get_uncompleted_upto_today(dbo, user = "", includecreatedby = True):
@@ -100,9 +100,9 @@ def get_uncompleted_upto_today(dbo, user = "", includecreatedby = True):
     sixmonths = i18n.subtract_days(i18n.now(dbo.timezone), 182)
     current = i18n.now(dbo.timezone)
     alltoday = datetime.datetime(current.year, current.month, current.day, 23, 59, 59)
-    return db.query(dbo, "SELECT *, cast(DiaryDateTime AS time) AS DiaryTime " \
-        "FROM diary WHERE %s " \
-        "AND DateCompleted Is Null AND DiaryDateTime <= %s AND DiaryDateTime >= %s" \
+    return db.query(dbo, "SELECT d.*, cast(DiaryDateTime AS time) AS DiaryTime " \
+        "FROM diary d WHERE %s " \
+        "AND DateCompleted Is Null AND DiaryDateTime <= %s AND DiaryDateTime >= %s " \
         "ORDER BY DiaryDateTime DESC" % (user_role_where_clause(dbo, user, includecreatedby), db.ddt(alltoday), db.ddt(sixmonths)))
 
 def get_completed_upto_today(dbo, user = ""):
@@ -112,9 +112,9 @@ def get_completed_upto_today(dbo, user = ""):
     LINKID, LINKTYPE, DIARYDATETIME, DIARYFORNAME, SUBJECT, NOTE, LINKINFO
     """
     sixmonths = i18n.subtract_days(i18n.now(dbo.timezone), 182)
-    return db.query(dbo, "SELECT *, cast(DiaryDateTime AS time) AS DiaryTime " \
-        "FROM diary WHERE %s " \
-        "AND DateCompleted Is Not Null AND DiaryDateTime <= %s AND DiaryDateTime >= %s" \
+    return db.query(dbo, "SELECT d.*, cast(DiaryDateTime AS time) AS DiaryTime " \
+        "FROM diary d WHERE %s " \
+        "AND DateCompleted Is Not Null AND DiaryDateTime <= %s AND DiaryDateTime >= %s " \
         "ORDER BY DiaryDateTime DESC" % (user_role_where_clause(dbo, user), db.ddt(i18n.now(dbo.timezone)), db.ddt(sixmonths)))
 
 def get_all_upto_today(dbo, user = ""):
@@ -124,9 +124,9 @@ def get_all_upto_today(dbo, user = ""):
     LINKID, LINKTYPE, DIARYDATETIME, DIARYFORNAME, SUBJECT, NOTE, LINKINFO
     """
     sixmonths = i18n.subtract_days(i18n.now(dbo.timezone), 182)
-    return db.query(dbo, "SELECT *, cast(DiaryDateTime AS time) AS DiaryTime " \
-        "FROM diary WHERE %s " \
-        "AND DiaryDateTime <= %s AND DiaryDateTime >= %s" \
+    return db.query(dbo, "SELECT d.*, cast(DiaryDateTime AS time) AS DiaryTime " \
+        "FROM diary d WHERE %s " \
+        "AND DiaryDateTime <= %s AND DiaryDateTime >= %s " \
         "ORDER BY DiaryDateTime DESC" % (user_role_where_clause(dbo, user), db.ddt(i18n.now(dbo.timezone)), db.ddt(sixmonths)))
 
 def get_future(dbo, user = ""):
@@ -135,9 +135,9 @@ def get_future(dbo, user = ""):
     for the user supplied (or all users if no user passed)
     LINKID, LINKTYPE, DIARYDATETIME, DIARYFORNAME, SUBJECT, NOTE, LINKINFO
     """
-    return db.query(dbo, "SELECT *, cast(DiaryDateTime AS time) AS DiaryTime " \
-        "FROM diary WHERE %s " \
-        "AND DiaryDateTime > %s" \
+    return db.query(dbo, "SELECT d.*, cast(DiaryDateTime AS time) AS DiaryTime " \
+        "FROM diary d WHERE %s " \
+        "AND DiaryDateTime > %s " \
         "ORDER BY DiaryDateTime" % (user_role_where_clause(dbo, user), db.ddt(i18n.now(dbo.timezone))))
 
 def complete_diary_note(dbo, username, diaryid):

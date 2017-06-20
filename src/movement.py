@@ -181,7 +181,7 @@ def get_trial_adoptions(dbo, mode = "ALL"):
     elif mode == "ACTIVE":
         where = "AND m.TrialEndDate > %s " % db.dd(i18n.now(dbo.timezone))
     return db.query(dbo, get_movement_query(dbo) + \
-        "WHERE m.IsTrial = 1 AND m.MovementType = 1 AND (m.ReturnDate Is Null OR m.ReturnDate > %s) %s" \
+        "WHERE m.IsTrial = 1 AND m.MovementType = 1 AND (m.ReturnDate Is Null OR m.ReturnDate > %s) %s " \
         "ORDER BY m.TrialEndDate" % (db.dd(i18n.now(dbo.timezone)), where))
 
 def get_animal_movements(dbo, aid):

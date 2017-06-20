@@ -198,9 +198,9 @@ def get_vaccinations(dbo, animalid, onlygiven = False, sort = ASCENDING_REQUIRED
     """
     dg = ""
     if onlygiven:
-        dg = "av.DateOfVaccination Is Not Null AND"
+        dg = "av.DateOfVaccination Is Not Null AND "
     sql = get_vaccination_query(dbo) + \
-        "WHERE %s av.AnimalID = %d" % (dg, animalid)
+        "WHERE %s av.AnimalID = %d " % (dg, animalid)
     if sort == ASCENDING_REQUIRED:
         sql += " ORDER BY av.DateRequired"
     elif sort == DESCENDING_REQUIRED:
@@ -214,7 +214,7 @@ def get_vaccinated(dbo, animalid):
         2. There are no outstanding vaccinations due before today
     """
     given = db.query_int(dbo, "SELECT COUNT(ID) FROM animalvaccination " \
-        "WHERE AnimalID = %d AND DateOfVaccination Is Not Null" % animalid)
+        "WHERE AnimalID = %d AND DateOfVaccination Is Not Null " % animalid)
     outstanding = db.query_int(dbo, "SELECT COUNT(ID) FROM animalvaccination " \
         "WHERE AnimalID = %d AND DateOfVaccination Is Null AND DateRequired < %s" % (animalid, db.dd(now(dbo.timezone))))
     return outstanding == 0 and given > 0
@@ -236,7 +236,7 @@ def get_regimens(dbo, animalid, onlycomplete = False, sort = ASCENDING_REQUIRED)
         "ORDER BY amt.DateRequired DESC %s) AS NextTreatmentDue, " \
         "(SELECT amt.DateGiven FROM animalmedicaltreatment amt WHERE amt.AnimalMedicalID = am.ID AND amt.DateGiven Is Not Null " \
         "ORDER BY amt.DateGiven DESC %s) AS LastTreatmentGiven " \
-        "FROM animalmedical am WHERE %sam.AnimalID = %d" % (dbo.sql_limit(1), dbo.sql_limit(1), sc, animalid)
+        "FROM animalmedical am WHERE %sam.AnimalID = %d " % (dbo.sql_limit(1), dbo.sql_limit(1), sc, animalid)
     if sort == ASCENDING_REQUIRED:
         sql += " ORDER BY ID"
     elif sort == DESCENDING_REQUIRED:
@@ -256,13 +256,13 @@ def get_regimens_treatments(dbo, animalid, sort = DESCENDING_REQUIRED):
     """
     l = dbo.locale
     sql = get_medicaltreatment_query(dbo) + \
-        "WHERE am.AnimalID = %d" % animalid
+        "WHERE am.AnimalID = %d " % animalid
     if sort == ASCENDING_REQUIRED:
-        sql += " ORDER BY amt.DateRequired"
+        sql += "ORDER BY amt.DateRequired"
     elif sort == DESCENDING_REQUIRED:
-        sql += " ORDER BY amt.DateRequired DESC"
+        sql += "ORDER BY amt.DateRequired DESC"
     elif sort == DESCENDING_GIVEN:
-        sql += " ORDER BY amt.DateGiven DESC"
+        sql += "ORDER BY amt.DateGiven DESC"
 
     rows = db.query(dbo, sql)
     # Now add our extra named fields
@@ -287,11 +287,11 @@ def get_profiles(dbo, sort = ASCENDING_NAME):
     TIMINGRULE, TIMINGRULEFREQUENCY, TIMINGRULENOFREQUENCIES, TREATMENTRULE, TOTALNUMBEROFTREATMENTS
     """
     l = dbo.locale
-    sql = "SELECT m.* FROM medicalprofile m"
+    sql = "SELECT m.* FROM medicalprofile m "
     if sort == ASCENDING_NAME:
-        sql += " ORDER BY ProfileName"
+        sql += "ORDER BY ProfileName"
     elif sort == DESCENDING_NAME:
-        sql += " ORDER BY ProfileName DESC"
+        sql += "ORDER BY ProfileName DESC"
     rows = db.query(dbo, sql)
     # Now add our extra named fields
     return embellish_regimen(l, rows)
@@ -358,13 +358,13 @@ def get_tests(dbo, animalid, onlygiven = False, sort = ASCENDING_REQUIRED):
     """
     dg = ""
     if onlygiven:
-        dg = "DateOfTest Is Not Null AND"
+        dg = "DateOfTest Is Not Null AND "
     sql = get_test_query(dbo) + \
-        "WHERE %s at.AnimalID = %d" % (dg, animalid)
+        "WHERE %s at.AnimalID = %d " % (dg, animalid)
     if sort == ASCENDING_REQUIRED:
-        sql += " ORDER BY at.DateRequired"
+        sql += "ORDER BY at.DateRequired"
     elif sort == DESCENDING_REQUIRED:
-        sql += " ORDER BY at.DateRequired DESC"
+        sql += "ORDER BY at.DateRequired DESC"
     return db.query(dbo, sql)
 
 def get_vaccinations_outstanding(dbo, offset = "m31", locationfilter = "", siteid = 0):

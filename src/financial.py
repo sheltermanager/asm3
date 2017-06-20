@@ -168,7 +168,7 @@ def get_accounts(dbo, onlyactive = False):
         "(SELECT SUM(Amount) FROM accountstrx WHERE Reconciled = 1 AND SourceAccountID = a.ID%s) AS recsrc " \
         "FROM accounts a " \
         "INNER JOIN lksaccounttype at ON at.ID = a.AccountType " \
-        "LEFT OUTER JOIN donationtype dt ON dt.ID = a.DonationTypeID %s" \
+        "LEFT OUTER JOIN donationtype dt ON dt.ID = a.DonationTypeID %s " \
         "ORDER BY a.AccountType, a.Code" % (pfilter, pfilter, pfilter, pfilter, afilter))
     for a in accounts:
         dest = a["DEST"]
