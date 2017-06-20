@@ -331,11 +331,11 @@ def get_investigation(dbo, personid, sort = ASCENDING):
     Returns investigation records for the given person:
     OWNERID, DATE, NOTES
     """
-    sql = "SELECT o.* FROM ownerinvestigation o WHERE o.OwnerID = %d" % personid
+    sql = "SELECT o.* FROM ownerinvestigation o WHERE o.OwnerID = %d " % personid
     if sort == ASCENDING:
-        sql += " ORDER BY o.Date"
+        sql += "ORDER BY o.Date"
     else:
-        sql += " ORDER BY o.Date DESC"
+        sql += "ORDER BY o.Date DESC"
     return db.query(dbo, sql)
 
 def get_person_find_simple(dbo, query, username="", classfilter="all", includeStaff = False, includeVolunteers = False, limit = 0):
