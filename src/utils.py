@@ -675,8 +675,8 @@ def fix_relative_document_uris(s, baseurl, account = "" ):
     s = s.replace("image?mode=animal&amp;id=", baseurl + "/service?method=animal_image" + accountp + "&animalid=")
     s = s.replace("image?mode=dbfs&amp;id=/reports/", baseurl + "/service?method=extra_image" + accountp + "&title=")
     s = s.replace("image?" + dbp + "mode=dbfs&amp;id=/reports/", baseurl + "/service?method=extra_image" + accountp + "&title=")
-    s = s.replace("image?mode=dbfs&amp;id=/animal/", baseurl + "/service?method=dbfs_image" + accountp + "&title=/animal/")
-    s = s.replace("image?" + dbp + "mode=dbfs&amp;id=/animal/", baseurl + "/service?method=dbfs_image" + accountp + "&title=/animal/")
+    s = s.replace("image?mode=dbfs&amp;id=", baseurl + "/service?method=dbfs_image" + accountp + "&title=")
+    s = s.replace("image?" + dbp + "mode=dbfs&amp;id=", baseurl + "/service?method=dbfs_image" + accountp + "&title=")
     return s
 
 def substitute_tags(searchin, tags, use_xml_escaping = True, opener = "&lt;&lt;", closer = "&gt;&gt;"):
