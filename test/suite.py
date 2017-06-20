@@ -98,6 +98,10 @@ import test_users
 suiteusers = unittest.makeSuite(test_users.TestUsers, 'test')
 fullsuite.append(suiteusers)
 
+import test_utils
+suiteutils = unittest.makeSuite(test_utils.TestUtils, 'test')
+fullsuite.append(suiteutils)
+
 import test_waitinglist
 suitewl = unittest.makeSuite(test_waitinglist.TestWaitingList, 'test')
 fullsuite.append(suitewl)

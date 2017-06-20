@@ -37,7 +37,7 @@ def get_animal_data(dbo, pc = None, animalid = 0, include_additional_fields = Fa
     if pc is None:
         pc = PublishCriteria(configuration.publisher_presets(dbo))
     sql = get_animal_data_query(dbo, pc, animalid)
-    rows = db.query(dbo, sql, limit=pc.limit)
+    rows = dbo.query(sql, limit=pc.limit, distincton="ID")
     # If the sheltercode format has a slash in it, convert it to prevent
     # creating images with broken paths.
     if len(rows) > 0 and rows[0]["SHELTERCODE"].find("/") != -1:
@@ -159,7 +159,7 @@ def get_microchip_data(dbo, patterns, publishername, allowintake = True):
     """
     movementtypes = configuration.microchip_register_movements(dbo)
     try:
-        rows = db.query(dbo, get_microchip_data_query(dbo, patterns, publishername, movementtypes, allowintake))
+        rows = dbo.query(get_microchip_data_query(dbo, patterns, publishername, movementtypes, allowintake), distincton="ID")
     except Exception as err:
         al.error(str(err), "publisher.get_microchip_data", dbo, sys.exc_info())
     organisation = configuration.organisation(dbo)
