@@ -51,7 +51,7 @@ class MaddiesFundPublisher(AbstractPublisher):
         
         self.log("Maddies Fund Publisher starting...")
 
-        BATCH_SIZE = 50 # How many animals to send in one POST
+        BATCH_SIZE = 250 # How many animals to send in one POST
 
         if self.isPublisherExecuting(): return
         self.updatePublisherProgress(0)
