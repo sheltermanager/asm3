@@ -48,6 +48,26 @@ $(function() {
         convert_fonts_to_spans: true,
         fontsize_formats: "8pt 10pt 11pt 12pt 14pt 16pt 18pt 20pt 22pt 24pt 36pt 72pt",
 
+        // Available fonts
+        font_formats: [ "Andale Mono=andale mono,times",
+                      "Arial=arial,helvetica,sans-serif",
+                      "Arial Black=arial black,avant garde",
+                      "Book Antiqua=book_antiquaregular,palatino",
+                      "Courier New=courier_new,courier",
+                      "Lucida Console=lucida_console,courier",
+                      "Georgia=georgia,palatino",
+                      "Helvetica=helvetica",
+                      "Impact=impactregular,chicago",
+                      "MyriadPro-Cond=myriadpro-cond",
+                      "Symbol=symbol",
+                      "Tahoma=tahoma,arial,helvetica,sans-serif",
+                      "Terminal=terminal,monaco",
+                      "Times New Roman=times new roman,times",
+                      "Trebuchet MS=trebuchet ms,geneva",
+                      "Verdana=verdana,geneva",
+                      "Webdings=webdings",
+                      "Wingdings=wingdings,zapf dingbats" ].join(";"),
+
         // Allow inline style tags
         valid_children: '+body[style]',
 
