@@ -47,12 +47,9 @@ class DatabaseDB2(Database):
     def ddl_drop_column(self, table, column):
         return "ALTER TABLE %s DROP COLUMN %s CASCADE" % (table, column)
 
-    def ddl_drop_column(self, table, column):
-        return "ALTER TABLE %s DROP COLUMN %s CASCADE" % (table, column)
-
     def escape(self, s):
         esc_chars = "\x00\x1a\\\";"
-        esc_chars2 = """&*@[]{}\^:=!-()%+?~|;_"""
+        #esc_chars2 = """&*@[]{}\^:=!-()%+?~|;_"""
         answer = []
         for index,char in enumerate(s):
             if char in esc_chars:
