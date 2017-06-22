@@ -58,7 +58,7 @@ $(function() {
                       "Georgia=georgia,palatino",
                       "Helvetica=helvetica",
                       "Impact=impactregular,chicago",
-                      "MyriadPro-Cond=myriadpro-cond",
+                      "Myriad Pro Condensed=myriad pro condensed,sans-serif",
                       "Symbol=symbol",
                       "Tahoma=tahoma,arial,helvetica,sans-serif",
                       "Terminal=terminal,monaco",
