@@ -19,7 +19,7 @@ LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType
 LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID
 LEFT OUTER JOIN owner fo ON ad.OwnerID = fo.ID
 WHERE a.Archived = 0
-AND NOT EXISTS(SELECT am.ID FROM animalmedical am WHERE av.AnimalID = a.ID AND UPPER(am.TreatmentName) LIKE UPPER('%$ASK STRING Missing medical name$%'))
+AND NOT EXISTS(SELECT am.ID FROM animalmedical am WHERE am.AnimalID = a.ID AND UPPER(am.TreatmentName) LIKE UPPER('%$ASK STRING Missing medical name$%'))
 ORDER BY a.AnimalName
 ###
 $$HEADER
