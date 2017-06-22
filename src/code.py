@@ -1345,6 +1345,7 @@ class animal_donations(JSONEndpoint):
 
 class animal_embed(ASMEndpoint):
     url = "animal_embed"
+    check_logged_in = False
     post_permissions = users.VIEW_ANIMAL
 
     def post_find(self, o):
@@ -3972,6 +3973,7 @@ class person_donations(JSONEndpoint):
 
 class person_embed(ASMEndpoint):
     url = "person_embed"
+    check_logged_in = False
 
     def content(self, o):
         dbo = session.dbo
