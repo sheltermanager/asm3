@@ -44,7 +44,7 @@ HEADER$$
 $$GROUP_FosteredTo
 $$HEAD
 <h2>$FOSTEREDTO</h2>
-<p><i>$OWNERADDRESS</i>, Phone: $HOMETELEPHONE, Mobile: $MOBILETELEPHONE</p>
+<p><i>$OWNERADDRESS</i>, H: $HOMETELEPHONE, C: $MOBILETELEPHONE</p>
 <hr />
 $$FOOT
 <p>Total animals on foster with $FOSTEREDTO: {COUNT.ShelterCode}</p>
