@@ -146,3 +146,18 @@ If I delete a user, will it delete everything they created?
 -----------------------------------------------------------
 
 No. You can safely delete user accounts and it will not delete any data.
+
+Can I undo a CSV import?
+------------------------
+
+Yes. All CSV imports are tagged with the user "import". You can run the
+following script at :menuselection:`Settings --> SQL Interface` to remove
+everything imported after the 1st January, 2017::
+
+    DELETE FROM animal WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
+    DELETE FROM owner WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
+    DELETE FROM animalcontrol WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
+    DELETE FROM adoption WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
+    DELETE FROM ownerdonation WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
+
+

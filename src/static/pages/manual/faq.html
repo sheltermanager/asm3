@@ -120,6 +120,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#why-are-asm-emails-being-sent-from-bounce-account-sheltermanager-com">Why are ASM emails being sent from bounce+account&#64;sheltermanager.com?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#why-has-my-colour-scheme-reset">Why has my colour scheme reset?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#if-i-delete-a-user-will-it-delete-everything-they-created">If I delete a user, will it delete everything they created?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#can-i-undo-a-csv-import">Can I undo a CSV import?</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="csvimportfields.html">Appendix: CSV file import fields</a></li>
@@ -296,6 +297,19 @@ at the top right, and then the &#8220;Change User Settings&#8221; menu option.</
 <div class="section" id="if-i-delete-a-user-will-it-delete-everything-they-created">
 <h2>If I delete a user, will it delete everything they created?<a class="headerlink" href="#if-i-delete-a-user-will-it-delete-everything-they-created" title="Permalink to this headline">¶</a></h2>
 <p>No. You can safely delete user accounts and it will not delete any data.</p>
+</div>
+<div class="section" id="can-i-undo-a-csv-import">
+<h2>Can I undo a CSV import?<a class="headerlink" href="#can-i-undo-a-csv-import" title="Permalink to this headline">¶</a></h2>
+<p>Yes. All CSV imports are tagged with the user &#8220;import&#8221;. You can run the
+following script at <span class="menuselection">Settings ‣ SQL Interface</span> to remove
+everything imported after the 1st January, 2017:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">DELETE</span> <span class="n">FROM</span> <span class="n">animal</span> <span class="n">WHERE</span> <span class="n">CreatedBy</span> <span class="o">=</span> <span class="s1">&#39;import&#39;</span> <span class="n">AND</span> <span class="n">CreatedDate</span> <span class="o">&gt;</span> <span class="s1">&#39;2017-01-01&#39;</span><span class="p">;</span>
+<span class="n">DELETE</span> <span class="n">FROM</span> <span class="n">owner</span> <span class="n">WHERE</span> <span class="n">CreatedBy</span> <span class="o">=</span> <span class="s1">&#39;import&#39;</span> <span class="n">AND</span> <span class="n">CreatedDate</span> <span class="o">&gt;</span> <span class="s1">&#39;2017-01-01&#39;</span><span class="p">;</span>
+<span class="n">DELETE</span> <span class="n">FROM</span> <span class="n">animalcontrol</span> <span class="n">WHERE</span> <span class="n">CreatedBy</span> <span class="o">=</span> <span class="s1">&#39;import&#39;</span> <span class="n">AND</span> <span class="n">CreatedDate</span> <span class="o">&gt;</span> <span class="s1">&#39;2017-01-01&#39;</span><span class="p">;</span>
+<span class="n">DELETE</span> <span class="n">FROM</span> <span class="n">adoption</span> <span class="n">WHERE</span> <span class="n">CreatedBy</span> <span class="o">=</span> <span class="s1">&#39;import&#39;</span> <span class="n">AND</span> <span class="n">CreatedDate</span> <span class="o">&gt;</span> <span class="s1">&#39;2017-01-01&#39;</span><span class="p">;</span>
+<span class="n">DELETE</span> <span class="n">FROM</span> <span class="n">ownerdonation</span> <span class="n">WHERE</span> <span class="n">CreatedBy</span> <span class="o">=</span> <span class="s1">&#39;import&#39;</span> <span class="n">AND</span> <span class="n">CreatedDate</span> <span class="o">&gt;</span> <span class="s1">&#39;2017-01-01&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
 </div>
 </div>
 
