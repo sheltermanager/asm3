@@ -707,7 +707,7 @@ class Database(object):
         except:
             return None
 
-    def row_to_insert_sql(table, r, escapeCR = ""):
+    def row_to_insert_sql(self, table, r, escapeCR = ""):
         """
         function that Writes an INSERT query for a result row
         """
@@ -722,7 +722,7 @@ class Database(object):
                 values.append("null")
             elif utils.is_unicode(v) or utils.is_str(v):
                 if escapeCR != "": v = v.replace("\n", escapeCR).replace("\r", "")
-                values.append("'%s'" % v)
+                values.append("'%s'" % v.replace("'", "`"))
             elif type(v) == datetime.datetime:
                 values.append("'%04d-%02d-%02d %02d:%02d:%02d'" % ( v.year, v.month, v.day, v.hour, v.minute, v.second ))
             else:

@@ -2440,7 +2440,7 @@ def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = Tr
             for x in dbo.query_to_insert_sql("SELECT * FROM %s" % t, outtable, escapeCR):
                 yield x
         except:
-            em = str(sys.exc_info()[0])
+            em = str(sys.exc_info())
             sys.stderr.write("%s: WARN: %s\n" % (t, em))
     if deleteViewSeq: yield "DELETE FROM configuration WHERE ItemName LIKE 'DBViewSeqVersion';\n"
     if deleteDBV: yield "DELETE FROM configuration WHERE ItemName LIKE 'DBV';\n"
