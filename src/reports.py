@@ -406,12 +406,11 @@ def get_smcom_reports(dbo):
     reps = s.split("&&&")
     reports = []
     i = 0
-    for rp in reps:
-        i += 1
+    for i, rp in enumerate(reps):
         b = rp.split("###")
         d = { "TITLE" : b[0].strip(), "CATEGORY" : b[1].strip(), "DATABASE" : b[2].strip(), \
             "DESCRIPTION" : b[3].strip(), "LOCALE" : b[4].strip(), "SQL" : b[5].strip(), \
-            "HTML" : b[6].strip(), "ID" : i, "TYPE": i18n._("Report", l) }
+            "HTML" : b[6].strip(), "ID" : i+1, "TYPE": i18n._("Report", l) }
         if d["HTML"].startswith("GRAPH"): d["TYPE"] = i18n._("Chart", l)
         if d["HTML"].startswith("MAIL"): d["TYPE"] = i18n._("Mail Merge", l)
         if d["HTML"].startswith("MAP"): d["TYPE"] = i18n._("Map", l)
@@ -431,8 +430,6 @@ def install_smcom_reports(dbo, user, ids):
     reports = get_smcom_reports(dbo)
     for r in reports:
         if r["ID"] in ids:
-            # Remove any existing report of that name first
-            db.execute(dbo, "DELETE FROM customreport WHERE Title LIKE '%s'" % r["TITLE"])
             data = {"title" : r["TITLE"], 
                 "category" : r["CATEGORY"], 
                 "sql" : r["SQL"],
