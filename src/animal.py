@@ -508,7 +508,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
     post = utils.PostedData(criteria, l)
 
     def addid(cfield, field): 
-        if post.integer(cfield) > 0: 
+        if post.integer(cfield) > -1: 
             ands.append("%s = ?" % field)
             values.append(post.integer(cfield))
 
