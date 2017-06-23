@@ -4770,6 +4770,13 @@ class sql_dump(GeneratorEndpoint):
             dbo2.locale = dbo.locale
             yield dbupdate.sql_structure(dbo2)
             yield dbupdate.sql_default_data(dbo2).replace("|=", ";")
+        if mode == "dumpddldb2":
+            al.info("%s executed DDL dump DB2" % str(session.user), "code.sql", dbo)
+            self.header("Content-Disposition", "attachment; filename=\"ddl_db2.sql\"")
+            dbo2 = db.get_database("DB2")
+            dbo2.locale = dbo.locale
+            yield dbupdate.sql_structure(dbo2)
+            yield dbupdate.sql_default_data(dbo2).replace("|=", ";")
         elif mode == "dumpsqlasm2":
             # ASM2_COMPATIBILITY
             al.info("%s executed SQL database dump (ASM2 HSQLDB)" % str(session.user), "code.sql", dbo)

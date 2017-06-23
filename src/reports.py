@@ -394,6 +394,7 @@ def get_smcom_reports(dbo):
         if rdb.find("Any") != -1: return True
         if rdb.find("MySQL") != -1 and dbo.dbtype == "MYSQL": return True
         if rdb.find("PostgreSQL") != -1 and dbo.dbtype == "POSTGRESQL": return True
+        if rdb.find("DB2") != -1 and dbo.dbtype == "DB2": return True
         if rdb.find("SQLite") != -1 and dbo.dbtype == "SQLITE": return True
         return False
     def builtin(s):
