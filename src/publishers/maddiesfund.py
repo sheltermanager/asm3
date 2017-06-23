@@ -2,7 +2,6 @@
 
 import animal
 import configuration
-import db
 import i18n
 import lookups
 import sys
@@ -67,11 +66,13 @@ class MaddiesFundPublisher(AbstractPublisher):
             self.cleanup()
             return
 
-        # Send all fosters and adoptions for the last month
+        # Send all fosters and adoptions for the last month that haven't been sent already
         cutoff = i18n.subtract_days(i18n.now(self.dbo.timezone), 31)
-        animals = db.query(self.dbo, animal.get_animal_query(self.dbo) + " WHERE a.ActiveMovementType IN (1,2) AND " \
-            "a.ActiveMovementDate >= %s AND a.DeceasedDate Is Null AND a.NonShelterAnimal = 0 "
-            "ORDER BY a.ID" % db.dd(cutoff))
+        sql = "%s WHERE a.ActiveMovementType IN (1,2) " \
+            "AND a.ActiveMovementDate >=? AND a.DeceasedDate Is Null AND a.NonShelterAnimal = 0 " \
+            "AND NOT EXISTS(SELECT AnimalID FROM animalpublished WHERE AnimalID = a.ID AND PublishedTo = 'maddiesfund' AND SentDate >= a.ActiveMovementDate) " \
+            "ORDER BY a.ID" % animal.get_animal_query(self.dbo)
+        animals = self.dbo.query(sql, [cutoff], distincton="ID")
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
             return
@@ -107,6 +108,12 @@ class MaddiesFundPublisher(AbstractPublisher):
                     self.resetPublisherProgress()
                     return
 
+                # If there's no email, MPA won't accept it
+                email = utils.nulltostr(an["CURRENTOWNEREMAILADDRESS"]).strip()
+                if email == "":
+                    self.logError("No email address for owner, skipping.")
+                    continue
+
                 # Build an adoption JSON object containing the adopter and animal
                 a = {
                     "PetID": an["ID"],
@@ -114,7 +121,7 @@ class MaddiesFundPublisher(AbstractPublisher):
                     "PetName": an["ANIMALNAME"],
                     "PetStatus": utils.iif(an["ACTIVEMOVEMENTTYPE"] == 1, "Adopted", "Active"),
                     "PetLitterID": an["ACCEPTANCENUMBER"],
-                    "GroupType": an["ACCEPTANCENUMBER"] is not None or "",
+                    "GroupType": utils.iif(utils.nulltostr(an["ACCEPTANCENUMBER"]) != "", "Litter", ""),
                     "PetSpecies": an["SPECIESNAME"],
                     "PetSex": an["SEXNAME"],
                     "DateofBirth": self.getDate(an["DATEOFBIRTH"]), 
