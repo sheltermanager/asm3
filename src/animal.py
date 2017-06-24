@@ -379,8 +379,9 @@ def get_animal_find_simple(dbo, query, classfilter = "all", limit = 0, locationf
     query = query.replace("'", "`")
     querylike = "%%%s%%" % query.lower()
     def add(field):
-        ors.append("LOWER(%s) LIKE ?" % field)
+        ors.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
         values.append(querylike)
+        values.append(utils.decode_html(querylike))
     def addclause(clause):
         ors.append(clause)
         values.append(querylike)
