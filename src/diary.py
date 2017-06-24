@@ -102,8 +102,8 @@ def get_uncompleted_upto_today(dbo, user = "", includecreatedby = True):
     alltoday = datetime.datetime(current.year, current.month, current.day, 23, 59, 59)
     return db.query(dbo, "SELECT d.*, cast(DiaryDateTime AS time) AS DiaryTime " \
         "FROM diary d WHERE %s " \
-        "AND DateCompleted Is Null AND DiaryDateTime <= %s AND DiaryDateTime >= %s " \
-        "ORDER BY DiaryDateTime DESC" % (user_role_where_clause(dbo, user, includecreatedby), db.ddt(alltoday), db.ddt(sixmonths)))
+        "AND d.DateCompleted Is Null AND d.DiaryDateTime <= %s AND d.DiaryDateTime >= %s " \
+        "ORDER BY d.DiaryDateTime DESC" % (user_role_where_clause(dbo, user, includecreatedby), db.ddt(alltoday), db.ddt(sixmonths)))
 
 def get_completed_upto_today(dbo, user = ""):
     """
@@ -114,8 +114,8 @@ def get_completed_upto_today(dbo, user = ""):
     sixmonths = i18n.subtract_days(i18n.now(dbo.timezone), 182)
     return db.query(dbo, "SELECT d.*, cast(DiaryDateTime AS time) AS DiaryTime " \
         "FROM diary d WHERE %s " \
-        "AND DateCompleted Is Not Null AND DiaryDateTime <= %s AND DiaryDateTime >= %s " \
-        "ORDER BY DiaryDateTime DESC" % (user_role_where_clause(dbo, user), db.ddt(i18n.now(dbo.timezone)), db.ddt(sixmonths)))
+        "AND d.DateCompleted Is Not Null AND d.DiaryDateTime <= %s AND d.DiaryDateTime >= %s " \
+        "ORDER BY d.DiaryDateTime DESC" % (user_role_where_clause(dbo, user), db.ddt(i18n.now(dbo.timezone)), db.ddt(sixmonths)))
 
 def get_all_upto_today(dbo, user = ""):
     """f
@@ -126,8 +126,8 @@ def get_all_upto_today(dbo, user = ""):
     sixmonths = i18n.subtract_days(i18n.now(dbo.timezone), 182)
     return db.query(dbo, "SELECT d.*, cast(DiaryDateTime AS time) AS DiaryTime " \
         "FROM diary d WHERE %s " \
-        "AND DiaryDateTime <= %s AND DiaryDateTime >= %s " \
-        "ORDER BY DiaryDateTime DESC" % (user_role_where_clause(dbo, user), db.ddt(i18n.now(dbo.timezone)), db.ddt(sixmonths)))
+        "AND d.DiaryDateTime <= %s AND d.DiaryDateTime >= %s " \
+        "ORDER BY d.DiaryDateTime DESC" % (user_role_where_clause(dbo, user), db.ddt(i18n.now(dbo.timezone)), db.ddt(sixmonths)))
 
 def get_future(dbo, user = ""):
     """
@@ -137,8 +137,8 @@ def get_future(dbo, user = ""):
     """
     return db.query(dbo, "SELECT d.*, cast(DiaryDateTime AS time) AS DiaryTime " \
         "FROM diary d WHERE %s " \
-        "AND DiaryDateTime > %s " \
-        "ORDER BY DiaryDateTime" % (user_role_where_clause(dbo, user), db.ddt(i18n.now(dbo.timezone))))
+        "AND d.DiaryDateTime > %s " \
+        "ORDER BY d.DiaryDateTime" % (user_role_where_clause(dbo, user), db.ddt(i18n.now(dbo.timezone))))
 
 def complete_diary_note(dbo, username, diaryid):
     """
@@ -158,9 +158,9 @@ def get_animal_tasks(dbo):
     """
     Lists all diary tasks for animals
     """
-    return db.query(dbo, "SELECT *, CASE " \
-        "WHEN EXISTS(SELECT * FROM diarytaskdetail WHERE " \
-        "DiaryTaskHeadID = dth.ID AND DayPivot = 9999) THEN 1 " \
+    return db.query(dbo, "SELECT dth.*, CASE " \
+        "WHEN EXISTS(SELECT dtd.* FROM diarytaskdetail dtd WHERE " \
+        "DiaryTaskHeadID = dth.ID AND dtd.DayPivot = 9999) THEN 1 " \
         "ELSE 0 END AS NEEDSDATE " \
         "FROM diarytaskhead dth WHERE dth.RecordType = %d" % ANIMAL_TASK)
 
@@ -168,9 +168,9 @@ def get_person_tasks(dbo):
     """
     Lists all diary tasks for people
     """
-    return db.query(dbo, "SELECT *, CASE " \
-        "WHEN EXISTS(SELECT * FROM diarytaskdetail WHERE " \
-        "DiaryTaskHeadID = dth.ID AND DayPivot = 0) THEN 1 " \
+    return db.query(dbo, "SELECT dth.*, CASE " \
+        "WHEN EXISTS(SELECT dtd.* FROM diarytaskdetail dtd WHERE " \
+        "DiaryTaskHeadID = dth.ID AND dtd.DayPivot = 0) THEN 1 " \
         "ELSE 0 END AS NEEDSDATE " \
         "FROM diarytaskhead dth WHERE dth.RecordType = %d" % PERSON_TASK)
 
@@ -178,10 +178,10 @@ def get_diarytasks(dbo):
     """
     Returns all diary tasks headers with a NUMBEROFTASKS value.
     """
-    return db.query(dbo, "SELECT d.*, " \
-        "(SELECT COUNT(*) FROM diarytaskdetail WHERE DiaryTaskHeadID = d.ID) AS NUMBEROFTASKS " \
-        "FROM diarytaskhead d " \
-        "ORDER BY d.Name")
+    return db.query(dbo, "SELECT dth.*, " \
+        "(SELECT COUNT(*) FROM diarytaskdetail WHERE DiaryTaskHeadID = dth.ID) AS NUMBEROFTASKS " \
+        "FROM diarytaskhead dth " \
+        "ORDER BY dth.Name")
 
 def get_diarytask_name(dbo, taskid):
     """
@@ -216,9 +216,9 @@ def get_diaries(dbo, linktypeid, linkid):
     """
     Returns all diary notes for a particular link
     """
-    return db.query(dbo, "SELECT *, cast(DiaryDateTime AS time) AS DiaryTime " \
-        "FROM diary WHERE LinkType=%d AND LinkID=%d " \
-        "ORDER BY DiaryDateTime" % ( int(linktypeid), int(linkid) ))
+    return db.query(dbo, "SELECT d.*, cast(DiaryDateTime AS time) AS DiaryTime " \
+        "FROM diary d WHERE d.LinkType=%d AND d.LinkID=%d " \
+        "ORDER BY d.DiaryDateTime" % ( int(linktypeid), int(linkid) ))
 
 def get_link_info(dbo, linktypeid, linkid):
     """

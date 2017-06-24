@@ -49,7 +49,6 @@ class DatabaseDB2(Database):
 
     def escape(self, s):
         esc_chars = "\x00\x1a\\\";"
-        #esc_chars2 = """&*@[]{}\^:=!-()%+?~|;_"""
         answer = []
         for index,char in enumerate(s):
             if char in esc_chars:
