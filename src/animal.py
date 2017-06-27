@@ -3535,14 +3535,12 @@ def update_animal_figures(dbo, month = 0, year = 0):
         if "D30" not in days: days["D30"] = 0
         if "D31" not in days: days["D31"] = 0
         avg = 0.0
-        tot = 0
-        total = ""
-        for i in range(1, maxdaysinmonth + 1):
-            avg += int(days["D%d" % i])
-            tot += int(days["D%d" % i])
+        total = 0
+        if calctotal:
+            for i in range(1, maxdaysinmonth + 1):
+                avg += int(days["D%d" % i])
+                total += int(days["D%d" % i])
         avg = round(float(float(avg) / float(maxdaysinmonth)), 1)
-        if calctotal: 
-            total = str(tot)
         batch.append((
             nid + len(batch),
             month,
