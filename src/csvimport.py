@@ -144,11 +144,11 @@ def gkbr(dbo, m, f, speciesid, create):
         returns "0" if key not present, or if no match was found and create is off """
     if f not in m: return "0"
     lv = m[f]
-    matchid = db.query_int(dbo, "SELECT ID FROM breed WHERE BreedName = '%s'" % (lv.replace("'", "`")))
+    matchid = dbo.query_int("SELECT ID FROM breed WHERE LOWER(BreedName) = ?", [ lv.strip().lower().replace("'", "`")] )
     if matchid == 0 and create:
-        nextid = db.get_id(dbo, "breed")
-        sql = "INSERT INTO breed (ID, SpeciesID, BreedName) VALUES (%d, %s, '%s')" % (nextid, speciesid, lv.replace("'", "`"))
-        db.execute(dbo, sql)
+        nextid = dbo.get_id("breed")
+        sql = "INSERT INTO breed (ID, SpeciesID, BreedName) VALUES (?,?,?)"
+        dbo.execute(sql, (nextid, speciesid, lv.replace("'", "`")))
         return str(nextid)
     return str(matchid)
 
