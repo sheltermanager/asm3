@@ -1,6 +1,7 @@
 40
 ================
 
+27/06/17 Setting web preferred should clear exlclude from publish
 16/06/17 Send maddie's fund animals in batches due to timeouts #89
 12/06/17 Add MediaMimeType indexed field #230
 11/06/17 Fix unit tests after database refactoring #230
