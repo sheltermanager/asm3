@@ -21,7 +21,7 @@ INNER JOIN owner ON ownerdonation.OwnerID = owner.ID
 WHERE ownerdonation.IsGiftAid = 1 AND
 ownerdonation.Date >= '$@from$' AND ownerdonation.Date <= '$@to$'
 GROUP BY owner.ID, OwnerName, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, HomeTelephone
-ORDER BY owerdonation.Date
+ORDER BY LastDate
 ###
 $$HEADER
 <table border=1><tr>
