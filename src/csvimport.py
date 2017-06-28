@@ -160,11 +160,11 @@ def gkl(dbo, m, f, table, namefield, create):
         returns "0" if key not present, or if no match was found and create is off """
     if f not in m: return "0"
     lv = m[f]
-    matchid = db.query_int(dbo, "SELECT ID FROM %s WHERE %s = '%s'" % (table, namefield, lv.replace("'", "`")))
+    matchid = dbo.query_int("SELECT ID FROM %s WHERE LOWER(%s) = ?" % (table, namefield), [ lv.strip().lower().replace("'", "`") ])
     if matchid == 0 and create:
         nextid = db.get_id(dbo, table)
-        sql = "INSERT INTO %s (ID, %s) VALUES (%d, '%s')" % (table, namefield, nextid, lv.replace("'", "`"))
-        db.execute(dbo, sql)
+        sql = "INSERT INTO %s (ID, %s) VALUES (?, ?)" % (table, namefield)
+        dbo.execute(sql, (nextid, lv.replace("'", "`")))
         return str(nextid)
     return str(matchid)
 
