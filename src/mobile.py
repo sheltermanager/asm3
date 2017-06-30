@@ -449,7 +449,7 @@ def page_vaccinations(l, homelink, vacc):
         vforms.append(jqm_table())
         vforms.append(jqm_tablerow( _("Animal", l), 
             jqm_link("mobile_post?posttype=va&id=%d" % v["ANIMALID"], v["SHELTERCODE"] + " " + v["ANIMALNAME"])))
-        vforms.append(jqm_tablerow( _("Vaccination", l), required + " " + v["VACCINATIONTYPE"]))
+        vforms.append(jqm_tablerow( _("Vaccination", l), "%s %s" % (required, v["VACCINATIONTYPE"])))
         vforms.append(jqm_tablerow( _("Comments", l), v["COMMENTS"]))
         vforms.append(jqm_table_end())
         vforms.append(jqm_button("mobile_post?posttype=vacc&id=%s&animalid=%s" % (str(v["ID"]), str(v["ANIMALID"])), _("Vaccinate", l), "check"))
