@@ -1,0 +1,84 @@
+- hosts: mysql
+  become: yes
+  roles:
+    - City-of-Bloomington.mysql
+
+- hosts: wsgi
+  become: yes
+  roles:
+    - City-of-Bloomington.wsgi
+
+- hosts: asm
+  become: yes
+  tasks:
+    - name: Install Animal Shelter Manger dependencies
+      apt:
+        name: "{{ item }}"
+        state: present
+      tags: asm
+      with_items:
+        - make
+        - python
+        - python-imaging
+        - python-webpy
+        - python-mysqldb
+        - python-psycopg2
+        - imagemagick
+        - wkhtmltopdf
+        - python-requests
+        - python-ndg-httpsclient
+        - python-pyasn1
+
+    - name: Create mysql database
+      mysql_db:
+        config_file: "{{ mysql_defaults_extra_file }}"
+        name: "{{ asm_db.name }}"
+        state: present
+      no_log: True
+
+    - name: Create mysql user for site
+      mysql_user:
+        name:     "{{ asm_db.username }}"
+        password: "{{ asm_db.password }}"
+        priv:     "{{ asm_db.name }}.*:ALL"
+        state: present
+        config_file: "{{ mysql_defaults_extra_file }}"
+      no_log: True
+
+    - name: Create web application directory
+      file: path='{{ asm_path }}' state=directory mode=2755
+
+    - name: Download release
+      get_url:
+        url: https://github.com/bobintetley/asm3/archive/{{ asm_version }}.tar.gz
+        dest: "/usr/local/src/asm3-{{ asm_version }}.tar.gz"
+      register: release
+
+    - name: Extract release
+      command: tar xzvf asm3-{{ asm_version }}.tar.gz
+      args:
+        chdir: "/usr/local/src"
+      when: release.changed
+
+    - name: Install release
+      command: rsync -rlv /usr/local/src/asm3-{{ asm_version }}/ {{ asm_path }}/
+      when: release.changed
+
+    - name: Update apache configuration
+      template:
+        src: asm.conf
+        dest: /etc/apache2/sites-available/asm.conf
+        owner: root
+        group: root
+        mode: 0644
+      notify: apache_restart
+
+    - name: Activate site
+      command: a2ensite asm
+      args:
+        creates: /etc/apache2/sites-enabled/asm.conf
+      notify: apache_restart
+
+    - name: Update sitedefs
+      lineinfile: dest={{ asm_path }}/src/sitedefs.py regexp="^{{ item.key }}" line="{{ item.key }} = {{ item.value }}"
+      with_dict: asm_sitedefs

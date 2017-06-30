@@ -13,3 +13,4 @@ cordova/asm/platforms
 .DS_Store
 /.project
 /.pydevproject
+/ansible/roles

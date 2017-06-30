@@ -1,0 +1,13 @@
+asm_path: "/srv/sites/asm"
+asm_version: 39
+
+asm_base_uri: /asm
+asm_base_url: https://{{ ansible_host }}{{ asm_base_uri }}
+
+asm_db:
+  type:     "mysql"
+  port:     3306
+  host:     "localhost"
+  name:     "asm"
+  username: "asm"
+  password: "{{ vault_asm_db.password }}"
