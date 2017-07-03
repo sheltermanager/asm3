@@ -3484,11 +3484,11 @@ def update_animal_figures(dbo, month = 0, year = 0):
         """ Returns a query with THEDATE and TOTAL as a dictionary for add_row """
         d = {}
         for i in range(1, 32):
-            d["D%d" % i] = "0"
+            d["D%d" % i] = 0
         rows = db.query(dbo, sql)
         for r in rows:
             dk = "D%d" % r["THEDATE"].day
-            d[dk] = r["TOTAL"]
+            d[dk] = int(r["TOTAL"])
         return d
 
     def add_days(listdays):
@@ -3538,11 +3538,10 @@ def update_animal_figures(dbo, month = 0, year = 0):
         tot = 0
         total = ""
         for i in range(1, maxdaysinmonth + 1):
-            avg += int(days["D%d" % i])
             tot += int(days["D%d" % i])
         if calctotal:
             total = str(tot)
-        avg = round(float(float(avg) / float(maxdaysinmonth)), 1)
+        avg = round(float(float(tot) / float(maxdaysinmonth)), 1)
         batch.append((
             nid + len(batch),
             month,
@@ -3588,7 +3587,7 @@ def update_animal_figures(dbo, month = 0, year = 0):
             total,
             avg
         ))
-
+                
     def update_db(month, year):
         """ Writes all of our figures to the database """
         db.execute(dbo, "DELETE FROM animalfigures WHERE Month = %d AND Year = %d" % (month, year))
