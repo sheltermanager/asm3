@@ -7,8 +7,8 @@ import time
 # flake8: noqa - we have a lot of locales and this is convenient
 from locales import *
 
-VERSION = "40u [Thu 29 Jun 13:51:09 BST 2017]"
-BUILD = "06291351"
+VERSION = "40u [Mon  3 Jul 16:26:59 BST 2017]"
+BUILD = "07031626"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -56,6 +56,7 @@ locale_maps = {
     "en_AU":    ( DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_BG":    ( DMY, "&#x043b;&#x0432;", PLURAL_ENGLISH, CURRENCY_SUFFIX, 2),
     "en_BH":    ( MDY, "BD", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
+    "en_BQ":    ( DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_CA":    ( MDY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_CH":    ( DMY, "CHF", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_CN":    ( YMD, YEN, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
@@ -103,6 +104,7 @@ locale_maps = {
     "nb":       ( DMY, "kr", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "nl":       ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "nl_AW":    ( DMY, "Awg.", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
+    "nl_BQ":    ( DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "pl":       ( DMY, "&#x007a;&#x0142;", PLURAL_POLISH, CURRENCY_PREFIX, 2 ),
     "pt":       ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "ru":       ( DMY, "&#1056;&#1059;&#1041;.", PLURAL_SLAVIC, CURRENCY_PREFIX, 2 ),
@@ -124,14 +126,14 @@ def real_locale(locale = "en"):
     #   en_AU (Australia)
     #   en_CA (Canada)
     #   en_GB (UK)
-    if locale in ("en_BG", "en_CH", "en_CY", "en_IE", "en_IN", "en_LU", "en_NZ", "en_PH", "en_TH", "en_TW", "en_VN", "en_ZA"):
+    if locale in ("en_BG", "en_BQ", "en_CH", "en_CY", "en_IE", "en_IN", "en_LU", "en_NZ", "en_PH", "en_TH", "en_TW", "en_VN", "en_ZA"):
         locale = "en_GB"
     if locale in ("en_BH", "en_CO", "en_KY", "en_KW", "en_IL", "en_LB", "en_MX"):
         locale = "en"
     if locale in ("en_NZ",):
         locale = "en_AU"
     # Dutch locales
-    if locale in ("nl_AW",):
+    if locale in ("nl_AW", "nl_BQ"):
         locale = "nl"
     # French locales
     if locale in ("fr_CH", "fr_LU"):
