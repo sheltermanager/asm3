@@ -34,6 +34,7 @@ import movement as extmovement
 import onlineform as extonlineform
 import person as extperson
 import publish as extpublish
+import publishers.vetenvoy
 import reports as extreports
 import search as extsearch
 import service as extservice
@@ -4396,7 +4397,7 @@ class publish_options(JSONEndpoint):
         self.reload_config()
 
     def post_vesignup(self, o):
-        userid, userpwd = extpublish.VetEnvoyUSMicrochipPublisher.signup(o.dbo, o.post)
+        userid, userpwd = publishers.vetenvoy.VetEnvoyUSMicrochipPublisher.signup(o.dbo, o.post)
         return "%s,%s" % (userid, userpwd)
 
 class report(ASMEndpoint):
