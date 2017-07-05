@@ -1962,6 +1962,48 @@
             return h.join("\n");
         },
 
+        /**
+         * Scales a DOM element img to h and w, returning a data URL.
+         * Depending on the size of the image, chooses an appropriate number
+         * of steps to avoid aliasing.
+         */
+        scale_image: function(img, w, h) {
+            if (img.height > h * 2 || img.width > w * 2) { return html.scale_image_2_step(img, w, h); }
+            return html.scale_image_1_step(img, w, h);
+        },
+
+        /**
+         * Scales DOM element img to h and w, returning a data URL.
+         */
+        scale_image_1_step: function(img, w, h) {
+            var canvas = document.createElement("canvas"),
+                ctx = canvas.getContext("2d");
+            canvas.height = h;
+            canvas.width = w;
+            ctx.drawImage(img, 0, 0, w, h);
+            return canvas.toDataURL("image/jpeg");
+        },
+
+        /**
+         * Scales DOM element img to h and w, returning a data URL.
+         * Uses a two step process to avoid aliasing.
+         */
+        scale_image_2_step: function(img, w, h) {
+            var canvas = document.createElement("canvas"),
+                ctx = canvas.getContext("2d"),
+                oc = document.createElement("canvas"),
+                octx = oc.getContext("2d");
+            canvas.height = h;
+            canvas.width = w;
+            // step 1 - render the image at 50% of its size to the first canvas
+            oc.width = img.width * 0.5;
+            oc.height = img.height * 0.5;
+            octx.drawImage(img, 0, 0, oc.width, oc.height);
+            // step 2 / final - render the 50% sized canvas to the final canvas at the correct size
+            ctx.drawImage(oc, 0, 0, oc.width, oc.height, 0, 0, canvas.width, canvas.height);
+            return canvas.toDataURL("image/jpeg");
+        },
+
         /** 
          * Removes HTML tags from a string
          */

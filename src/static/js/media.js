@@ -296,6 +296,7 @@ $(function() {
                     img.src = filedata; 
                 };
                 img.onload = function() {
+                    // Calculate the new image dimensions based on our max
                     var img_width = img.width, img_height = img.height;
                     if (img_width > img_height) {
                         if (img_width > max_width) {
@@ -309,12 +310,8 @@ $(function() {
                             img_height = max_height;
                         }
                     }
-                    var canvas = document.createElement("canvas");
-                    canvas.width = img_width;
-                    canvas.height = img_height;
-                    var ctx = canvas.getContext("2d");
-                    ctx.drawImage(img, 0, 0, img_width, img_height);
-                    var finalfile = canvas.toDataURL("image/jpeg");
+                    // Scale the image
+                    var finalfile = html.scale_image(img, img_width, img_height);
 
                     // Post the scaled image
                     var formdata = "mode=create&" +
