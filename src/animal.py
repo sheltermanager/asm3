@@ -267,7 +267,7 @@ def get_animal_sheltercode(dbo, code):
     Returns a complete animal row by ShelterCode
     """
     if code is None or code == "": return None
-    rows = db.query(dbo, get_animal_query(dbo) + " WHERE a.ShelterCode = ?", [code])
+    rows = dbo.query(get_animal_query(dbo) + " WHERE a.ShelterCode = ?", [code])
     if rows is None or len(rows) == 0:
         return None
     else:
@@ -1012,7 +1012,7 @@ def calc_days_on_shelter(dbo, animalid, a = None):
     """
     stop = now()
     if a is None:
-        a = db.query(dbo, "SELECT Archived, MostRecentEntryDate, DeceasedDate, DiedOffShelter, ActiveMovementDate FROM animal WHERE ID = %d" % animalid)
+        a = dbo.query("SELECT Archived, MostRecentEntryDate, DeceasedDate, DiedOffShelter, ActiveMovementDate FROM animal WHERE ID = ?", [animalid])
         if len(a) == 0: return
         a = a[0]
 
@@ -1036,7 +1036,7 @@ def calc_total_days_on_shelter(dbo, animalid, a = None, movements = None):
     """
     stop = now()
     if a is None:
-        a = db.query(dbo, "SELECT Archived, DateBroughtIn, DeceasedDate, DiedOffShelter, ActiveMovementDate FROM animal WHERE ID = %d" % animalid)
+        a = dbo.query("SELECT Archived, DateBroughtIn, DeceasedDate, DiedOffShelter, ActiveMovementDate FROM animal WHERE ID = ?", [animalid])
         if len(a) == 0: return 0
         a = a[0]
 
@@ -1053,11 +1053,11 @@ def calc_total_days_on_shelter(dbo, animalid, a = None, movements = None):
     # Now, go through historic movements for this animal and deduct
     # all the time the animal has been off the shelter
     if movements is None:
-        movements = db.query(dbo, "SELECT AnimalID, MovementDate, ReturnDate " \
+        movements = dbo.query("SELECT AnimalID, MovementDate, ReturnDate " \
             "FROM adoption " \
-            "WHERE AnimalID = %d AND MovementType <> 2 " \
+            "WHERE AnimalID = ? AND MovementType <> 2 " \
             "AND MovementDate Is Not Null AND ReturnDate Is Not Null " \
-            "ORDER BY AnimalID" % animalid)
+            "ORDER BY AnimalID", [animalid])
     seen = False
     for m in movements:
         if m["ANIMALID"] == animalid:
@@ -1092,7 +1092,7 @@ def calc_age_group(dbo, animalid, a = None, bands = None):
     days = date_diff_days(dob, now())
     # Load age group bands if they weren't passed
     if bands is None:
-        bands = db.query(dbo, "SELECT ItemName, ItemValue FROM configuration WHERE ItemName LIKE 'AgeGroup%' ORDER BY ItemName")
+        bands = dbo.query("SELECT ItemName, ItemValue FROM configuration WHERE ItemName LIKE 'AgeGroup%' ORDER BY ItemName")
     # Loop through the bands until we find one that the age in days fits into
     for i in range(0, 20):
         band = bv("AgeGroup%d" % i, bands)
@@ -1253,21 +1253,21 @@ def get_is_on_shelter(dbo, animalid):
     """
     Returns true if the animal is on shelter
     """
-    return 0 == db.query_int(dbo, "SELECT Archived FROM animal WHERE ID = %d" % animalid)
+    return 0 == dbo.query_int("SELECT Archived FROM animal WHERE ID = ?", [animalid])
 
 def get_comments(dbo, animalid):
     """
     Returns an animal's comments
     (int) animalid: The animal to get the comments from
     """
-    return db.query_string(dbo, "SELECT AnimalComments FROM animal WHERE ID = %d" % animalid)
+    return dbo.query_string("SELECT AnimalComments FROM animal WHERE ID = ?", [animalid])
 
 def get_date_of_birth(dbo, animalid):
     """
     Returns an animal's date of birth
     (int) animalid: The animal to get the dob
     """
-    return db.query_date(dbo, "SELECT DateOfBirth FROM animal WHERE ID = %d" % animalid)
+    return dbo.query_date("SELECT DateOfBirth FROM animal WHERE ID = ?", [animalid])
 
 def get_days_on_shelter(dbo, animalid):
     """
