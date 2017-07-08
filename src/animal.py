@@ -545,6 +545,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
             words = post[cfield].split(" ")
             for w in words:
                 x = w.lower().replace("'", "`")
+                x = "%%%s%%" % x
                 ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
                 values.append(x)
                 values.append(utils.decode_html(x))
