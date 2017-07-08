@@ -106,6 +106,7 @@ for d in asm.csv_to_list("%s/animals.csv" % PATH):
     a.CreatedDate = a.DateBroughtIn
     a.LastChangedDate = a.DateBroughtIn
     a.generateCode()
+    a.ShortCode = d["AnimalID"]
     if d["Type of Entry"].find("Surrender") != -1 or d["Type of Entry"].find("Relinquish") != -1:
         a.EntryReasonID = 17 # Surrender
     elif d["Type of Entry"].find("Stray") != -1:
@@ -138,6 +139,7 @@ for d in asm.csv_to_list("%s/animals.csv" % PATH):
         a.DeceasedDate = a.DateBroughtIn
         a.PTSReasonID = 2
         a.PutToSleep = 1
+        a.Archived = 1
     a.AnimalComments = d["Remarks"]
     a.RabiesTag = d["RabiesTagInfo"]
     a.IsNotAvailableForAdoption = 0
@@ -148,7 +150,7 @@ for d in asm.csv_to_list("%s/animals.csv" % PATH):
     a.IsGoodWithChildren = 2
     a.HouseTrained = 0
 
-    if d["Type of Placement"] != "":
+    if d["Placed"] != "0" and d["Placements_CustID"] != "":
         m = asm.Movement()
         m.AnimalID = a.ID
         m.OwnerID = ppo[d["Placements_CustID"]].ID
