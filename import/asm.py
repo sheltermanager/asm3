@@ -181,6 +181,34 @@ def parse_date(s, f):
     except:
         return None
 
+def getdate_guess(s):
+    """ Attempts to guess the date from multiple formats, eg:
+        25/08/2015, 5-3-17
+        It will assume US format and the year in third position unless obvious (4 digit year in first pos)
+        If the year is under 2000, makes it 4 digit.
+    """
+    if s is None or s == "" or s.find("N/A") != -1 or s.find("NA") != -1 or s.find("TBA") != -1 or s.find("TBD") != -1: return None
+    b = s.split("/")
+    if s.find("-") != -1:
+        b = s.split("-")
+    if len(b) < 3: return None
+    m = cint(b[0])
+    d = cint(b[1])
+    y = cint(b[2])
+    if m > 1000:
+        # it's ymd
+        y = cint(b[0])
+        m = cint(b[1])
+        d = cint(b[2])
+    elif m > 12:
+        # it's dmy
+        d = cint(b[0])
+        m = cint(b[1])
+        y = cint(b[2])
+    if y < 2000: y += 2000
+    if y == 0 or m == 0: return None
+    return datetime.datetime(y, m, d)
+
 def getdate_yyyymmdd(s):
     s = remove_time(s)
     return parse_date(s, "%Y/%m/%d")
