@@ -4647,7 +4647,7 @@ class shelterview(JSONEndpoint):
         return {
             "animals": extanimal.get_animals_brief(animals),
             "flags": extlookups.get_animal_flags(dbo),
-            "fosterers": extperson.get_shelterview_fosterers(dbo),
+            "fosterers": extperson.get_shelterview_fosterers(dbo, o.siteid),
             "locations": extlookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
             "perrow": configuration.main_screen_animal_link_max(dbo)
         }
