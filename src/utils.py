@@ -177,6 +177,12 @@ def cmd(c, shell=False):
     except subprocess.CalledProcessError as e:
         return (e.returncode, e.output)
 
+def file_contains(f, v):
+    """
+    Returns true if file f contains value v
+    """
+    return 0 == os.system("grep %s %s" % (v, f))
+
 def iif(c, t, f):
     """
     Evaluates c and returns t for True or f for False

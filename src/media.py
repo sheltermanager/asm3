@@ -760,15 +760,13 @@ def scale_pdf_file(inputfile, outputfile):
     Returns True for success or False for failure.
     """
     KNOWN_ERRORS = [ 
-        # GS produces this with out of date libpoppler and something to do with Microsoft Print PDF
-        # The problem is that this is a harmless warning if the PDF contains scanned images, but
-        # if it doesn't it can cause the output to be garbage while returning a 0.
-        # "Can't find CMap Identity-UTF16-H building a CIDDecoding resource. " 
+        # GS produces this with out of date libpoppler and Microsoft Print PDF
+        "Can't find CMap Identity-UTF16-H building a CIDDecoding resource. " 
     ]
     code, output = utils.cmd(SCALE_PDF_CMD % { "output": outputfile, "input": inputfile})
     for e in KNOWN_ERRORS:
         # Any known errors in the output should return failure
-        if output.find(e): 
+        if output.find(e) != -1: 
             al.error("Abandon PDF scaling - found known error: %s" % e, "media.scale_pdf_file")
             return False
     # A nonzero exit code is a failure
