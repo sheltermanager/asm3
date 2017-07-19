@@ -1,6 +1,7 @@
 40
 ================
 
+19/07/17 Revert KNOWN_ERRORS fix in scaling PDFs due to unscaled scans
 18/07/17 Filter fosterers to user site if set for shelterview fosterer mode
 05/07/17 Use 2-step downsampling when scaling images for smoothness
 27/06/17 Setting web preferred should clear exlclude from publish

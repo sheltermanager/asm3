@@ -701,7 +701,7 @@ def scale_thumbnail_file(inimage, outimage):
     """
     scale_image_file(inimage, outimage, "70x70")
 
-def scale_pdf(filedata):
+def scale_pdf(dbo, filedata):
     """
     Scales the given PDF filedata down and returns the compressed PDF data.
     """
@@ -712,7 +712,7 @@ def scale_pdf(filedata):
     inputfile.close()
     outputfile.close()
     # If something went wrong during the scaling, use the original data
-    if not scale_pdf_file(inputfile.name, outputfile.name):
+    if not scale_pdf_file(dbo, inputfile.name, outputfile.name):
         return filedata
     f = open(outputfile.name, "rb")
     compressed = f.read()
@@ -727,7 +727,7 @@ def scale_pdf(filedata):
         return filedata
     return compressed
 
-def scale_odt(filedata):
+def scale_odt(dbo, filedata):
     """
     Scales an ODT file down by stripping anything starting with the name "Object"
     in the root or in the "ObjectReplacements" folder. Everything in the "Pictures"
@@ -752,25 +752,28 @@ def scale_odt(filedata):
     # Return the zip data
     return zo.getvalue()
 
-def scale_pdf_file(inputfile, outputfile):
+def scale_pdf_file(dbo, inputfile, outputfile):
     """
     Scale a PDF file using the command line. There are different
     approaches to this and gs, imagemagick and pdftk (among others)
     can be used.
     Returns True for success or False for failure.
     """
+    # GS produces this with out of date libpoppler and something to do with Microsoft Print PDF
+    # The problem is that this is a harmless warning if the PDF contains scanned images, but
+    # if it doesn't it can cause the output to be garbage while returning a 0.
     KNOWN_ERRORS = [ 
-        "Can't find CMap Identity-UTF16-H building a CIDDecoding resource. ", # Imagemagick/GS choke on Microsoft Print PDF due to missing fonts
+        # "Can't find CMap Identity-UTF16-H building a CIDDecoding resource. " 
     ]
     code, output = utils.cmd(SCALE_PDF_CMD % { "output": outputfile, "input": inputfile})
     for e in KNOWN_ERRORS:
         # Any known errors in the output should return failure
         if output.find(e): 
-            al.error("Abandon PDF scaling - found known error: %s" % e, "media.scale_pdf_file")
+            al.error("Abandon PDF scaling - found known error: %s" % e, "media.scale_pdf_file", dbo)
             return False
     # A nonzero exit code is a failure
     if code > 0: 
-        al.error("Abandon PDF scaling - nonzero exit code (%s)" % code, "media.scale_pdf_file")
+        al.error("Abandon PDF scaling - nonzero exit code (%s)" % code, "media.scale_pdf_file", dbo)
         return False
     return True
    
@@ -797,7 +800,7 @@ def check_and_scale_pdfs(dbo, force = False):
         original_name = str(m["MEDIANAME"])
         new_name = str(m["ID"]) + "_scaled.pdf"
         odata = dbfs.get_string(dbo, original_name)
-        data = scale_pdf(odata)
+        data = scale_pdf(dbo, odata)
         al.debug("scaling %s (%d of %d): old size %d, new size %d" % (new_name, i, len(mp), len(odata), len(data)), "check_and_scale_pdfs", dbo)
         # Update the media entry with the new name
         db.execute(dbo, "UPDATE media SET MediaName = '%s' WHERE ID = %d" % ( new_name, m["ID"]))
