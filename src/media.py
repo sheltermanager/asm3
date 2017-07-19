@@ -759,10 +759,10 @@ def scale_pdf_file(inputfile, outputfile):
     can be used.
     Returns True for success or False for failure.
     """
-    # GS produces this with out of date libpoppler and something to do with Microsoft Print PDF
-    # The problem is that this is a harmless warning if the PDF contains scanned images, but
-    # if it doesn't it can cause the output to be garbage while returning a 0.
     KNOWN_ERRORS = [ 
+        # GS produces this with out of date libpoppler and something to do with Microsoft Print PDF
+        # The problem is that this is a harmless warning if the PDF contains scanned images, but
+        # if it doesn't it can cause the output to be garbage while returning a 0.
         # "Can't find CMap Identity-UTF16-H building a CIDDecoding resource. " 
     ]
     code, output = utils.cmd(SCALE_PDF_CMD % { "output": outputfile, "input": inputfile})
@@ -781,9 +781,8 @@ def check_and_scale_pdfs(dbo, force = False):
     """
     Goes through all PDFs in the database to see if they have been
     scaled (have a suffix of _scaled.pdf) and scales down any unscaled
-    ones.
-    If force is set, then all PDFs are checked and scaled again even
-    if they've been scaled before.
+    ones, renaming them.
+    If force is set, then ALL PDFs are checked and scaled again.
     """
     if not configuration.scale_pdfs(dbo):
         al.warn("ScalePDFs config option disabled in this database, not scaling pdfs", "media.check_and_scale_pdfs", dbo)
@@ -806,7 +805,7 @@ def check_and_scale_pdfs(dbo, force = False):
         db.execute(dbo, "UPDATE media SET MediaName = '%s' WHERE ID = %d" % ( new_name, m["ID"]))
         # Update the dbfs entry from old name to new name (will be overwritten in a minute but safer than delete)
         dbfs.rename_file(dbo, filepath, original_name, new_name)
-        # Store the PDF file data with the new name - if there was a need to change it
+        # Store the compressed PDF file data - if it's smaller
         if len(data) < len(odata):
             dbfs.put_string(dbo, new_name, filepath, data)
     al.debug("found and scaled %d pdfs" % len(mp), "media.check_and_scale_pdfs", dbo)
