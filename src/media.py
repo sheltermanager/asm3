@@ -315,9 +315,11 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
 
     # Is it a PDF? If so, compress it if we can and the option is on
     if ispdf and SCALE_PDF_DURING_ATTACH and configuration.scale_pdfs(dbo):
+        orig_len = len(filedata)
         filedata = scale_pdf(filedata)
-        medianame = "%d_scaled.pdf" % mediaid
-        al.debug("compressed PDF (%d bytes)" % (len(filedata)), "media.attach_file_from_form", dbo)
+        if len(filedata) < orig_len:
+            medianame = "%d_scaled.pdf" % mediaid
+            al.debug("compressed PDF (%d bytes)" % (len(filedata)), "media.attach_file_from_form", dbo)
 
     # Attach the file in the dbfs
     path = get_dbfs_path(linkid, linktype)
