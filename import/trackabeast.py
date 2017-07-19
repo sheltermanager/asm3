@@ -3,7 +3,12 @@
 import asm, csv, sys, datetime
 
 """
-Import script for Trackabeast export as csv
+Import script for Trackabeast export as csv. Requires 4 files:
+
+animals.csv, people.csv, placements.csv, medical.csv
+
+(Trackabeast allow export as Animals-ORG.csv, People-ORG.csv, Placements-ORG.csv, Medical-ORG.csv)
+
 13th January, 2012
 
 Complete rewrite for new library and customer, 18th July 2017
@@ -41,14 +46,26 @@ def getdate(s):
     return asm.getdate_mmddyy(s)
 
 # --- START OF CONVERSION ---
+print "\\set ON_ERROR_STOP\nBEGIN;"
+print "DELETE FROM animal WHERE ID >= 100 AND CreatedBy = 'conversion';"
+print "DELETE FROM owner WHERE ID >= 100 AND CreatedBy = 'conversion';"
+print "DELETE FROM adoption WHERE ID >= 100 AND CreatedBy = 'conversion';"
+print "DELETE FROM animalvaccination WHERE ID >= 100 AND CreatedBy = 'conversion';"
+print "DELETE FROM animalmedical WHERE ID >= 100 AND CreatedBy = 'conversion';"
+print "DELETE FROM animalmedicaltreatment WHERE ID >= 100 AND CreatedBy = 'conversion';"
 
 asm.setid("animal", 100)
+asm.setid("animalmedical", 100)
+asm.setid("animalmedicaltreatment", 100)
+asm.setid("animalvaccination", 100)
 asm.setid("owner", 100)
 asm.setid("adoption", 100)
 
 owners = []
 movements = []
 animals = []
+animalvaccinations = []
+animalmedicals = []
 
 # List of trackids we've seen for animals so far
 ppa = {}
@@ -127,10 +144,12 @@ for d in asm.csv_to_list("%s/people.csv" % PATH):
         o.HomeTelephone = d["Home Phone"]
         o.MobileTelephone = d["Cell Phone"]
         o.WorkTelephone = d["Work Phone"]
-        o.IsVolunteer = d["Vol"].strip() == "Y" and 1 or 0
-        o.IsFosterer = d["Foster"].strip() == "Y" and 1 or 0
+        o.IsVolunteer = d["Vol"] == "Y" and 1 or 0
+        o.IsFosterer = d["Foster"] == "Y" and 1 or 0
+        o.IsStaff = d["Staff"] == "Y" and 1 or 0
+        o.IsBanned = d["Do Not Adopt"].strip() == "Y" and 1 or 0
+        o.ExcludeFromBulkEmail = d["Send Mail"] == "Y" and 0 or 1
         o.Comments = d["Comments"]
-        o.IsBanned = d["Do Not Adopt"].strip() != "" and 1 or 0
         owners.append(o)
 
 for d in asm.csv_to_list("%s/placements.csv" % PATH):
@@ -167,20 +186,58 @@ for d in asm.csv_to_list("%s/placements.csv" % PATH):
             a.ActiveMovementDate = m.MovementDate
             a.ActiveMovementType = m.MovementType
 
-# Now that everything else is done, output stored records
-print "\\set ON_ERROR_STOP\nBEGIN;"
-print "DELETE FROM animal WHERE ID >= 100 AND CreatedBy = 'conversion';"
-print "DELETE FROM owner WHERE ID >= 100 AND CreatedBy = 'conversion';"
-print "DELETE FROM adoption WHERE ID >= 100 AND CreatedBy = 'conversion';"
+vaccmap = {
+    "FVRCP": 9,
+    "Rabies": 4,
+    "DHPP": 8,
+    "DHLPP": 8,
+    "Bordetella": 6
+}
 
+for d in asm.csv_to_list("%s/medical.csv" % PATH):
+
+    # Find the animal 
+    a = None
+    if d["AnimalID"] in ppa:
+        a = ppa[d["AnimalID"]]
+    else:
+        continue
+
+    td = getdate(d["Treatment Date"])
+    if td is None: td = a.DateBroughtIn
+    t = d["Treatments"]
+
+    if t == "": continue
+
+    wasvacc = False
+    for k, v in vaccmap.iteritems():
+        if t.find(k) != -1:
+            av = asm.AnimalVaccination()
+            animalvaccinations.append(av)
+            av.AnimalID = a.ID
+            av.VaccinationID = v
+            av.DateRequired = td
+            av.DateOfVaccination = td
+            av.Comments = d["Comments"]
+            wasvacc = True
+            break
+
+    if not wasvacc:
+        animalmedicals.append(asm.animal_regimen_single(a.ID, td, t, comments = d["Comments"]))
+
+# Now that everything else is done, output stored records
 for a in animals:
     print a
+for av in animalvaccinations:
+    print av
+for am in animalmedicals:
+    print am
 for o in owners:
     print o
 for m in movements:
     print m
 
-asm.stderr_summary(animals=animals, owners=owners, movements=movements)
+asm.stderr_summary(animals=animals, animalmedicals=animalmedicals, animalvaccinations=animalvaccinations, owners=owners, movements=movements)
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"

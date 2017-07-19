@@ -256,7 +256,7 @@ def now():
 def stderr(s):
     sys.stderr.write("%s\n" % s)
 
-def stderr_summary(animals=[], animalvaccinations=[], animaltests=[], owners=[], ownerlicences=[], ownerdonations=[], animalcontrol=[], movements=[], logs=[]):
+def stderr_summary(animals=[], animalmedicals=[], animalvaccinations=[], animaltests=[], owners=[], ownerlicences=[], ownerdonations=[], animalcontrol=[], movements=[], logs=[]):
     def o(l, d):
         if len(l) > 0:
             stderr("%d %s" % (len(l), d))
@@ -275,6 +275,7 @@ def stderr_summary(animals=[], animalvaccinations=[], animaltests=[], owners=[],
             elif a.DeceasedDate is not None and a.PutToSleep == 1:
                 euth += 1
         stderr("%d animals (%d on-shelter, %d off-shelter, %d dead, %d euthanised)" % (len(animals), onshelter, offshelter, dead, euth))
+    o(animalmedicals, "medicals")
     o(animalvaccinations, "vaccinations")
     o(animaltests, "tests")
     o(owners, "people")
@@ -1291,7 +1292,7 @@ def animal_regimen_single(animalid, dategiven, treatmentname, dosage = "", comme
         ( "LastChangedBy", ds("conversion") ),
         ( "LastChangedDate", dd(today()) )
         )
-    print makesql("animalmedical", s)
+    am = makesql("animalmedical", s)
     s = (
         ( "ID", di(treatmentid)),
         ( "AnimalID", di(animalid)),
@@ -1308,7 +1309,8 @@ def animal_regimen_single(animalid, dategiven, treatmentname, dosage = "", comme
         ( "LastChangedBy", ds("conversion") ),
         ( "LastChangedDate", dd(today()) )
         )
-    print makesql("animalmedicaltreatment", s)
+    amt = makesql("animalmedicaltreatment", s)
+    return "%s\n%s\n" % (am, amt)
 
 def load_image_from_file(filename):
     """ Reads image data from a disk file or returns None if the file does not exist """

@@ -34,6 +34,7 @@ def getentryreason(s):
 print "\\set ON_ERROR_STOP\nBEGIN;"
 
 animals = []
+animalmedicals = []
 animalvaccinations = []
 owners = []
 ownerdonations = []
@@ -232,12 +233,14 @@ for row in asm.csv_to_list(PATH + "allmedical.csv"):
         av.VaccinationID = asm.vaccinationtype_id_for_name(row["Vaccination"], True)
         av.Comments = "%s %s" % (row["Comments"], row["Hidden comments"])
     else:
-        asm.animal_regimen_single(a.ID, dg, "%s %s" % (row["Medical Procedure Type"], row["Medication Name"]), row["Medication Dose"], "%s %s" % (row["Comments"], row["Hidden comments"]))
+        animalmedicals.append(asm.animal_regimen_single(a.ID, dg, "%s %s" % (row["Medical Procedure Type"], row["Medication Name"]), row["Medication Dose"], "%s %s" % (row["Comments"], row["Hidden comments"])))
 
 # Now that everything else is done, output stored records
 print "DELETE FROM primarykey;"
 for a in animals:
     print a
+for am in animalmedicals:
+    print am
 for av in animalvaccinations:
     print av
 for o in owners:
@@ -249,7 +252,7 @@ for m in movements:
 for k, v in asm.vaccinationtypes.iteritems():
     print v
 
-asm.stderr_summary(animals=animals, animalvaccinations=animalvaccinations, owners=owners, movements=movements, ownerdonations=ownerdonations)
+asm.stderr_summary(animals=animals, animalmedicals=animalmedicals, animalvaccinations=animalvaccinations, owners=owners, movements=movements, ownerdonations=ownerdonations)
 
 print "DELETE FROM configuration WHERE ItemName Like 'VariableAnimalDataUpdated';"
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
