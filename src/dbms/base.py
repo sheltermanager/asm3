@@ -782,6 +782,10 @@ class Database(object):
         """ Writes a limit clause to X items """
         return "LIMIT %s" % x
 
+    def sql_replace(self, fieldexpr, findstr, replacestr):
+        """ Writes a replace expression that finds findstr in fieldexpr, replacing with replacestr """
+        return "REPLACE(%s, '%s', '%s')" % (fieldexpr, findstr, replacestr)
+
     def switch_param_placeholder(self, sql):
         """ Swaps the ? token in the sql for the usual Python DBAPI placeholder of %s 
             override if your DB driver wants another char.

@@ -323,7 +323,7 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
 
     # Attach the file in the dbfs
     path = get_dbfs_path(linkid, linktype)
-    dbfs.put_string(dbo, medianame, path, filedata)
+    dbfsid = dbfs.put_string(dbo, medianame, path, filedata)
 
     # Are the notes for an image blank and we're defaulting them from animal comments?
     if comments == "" and ispicture and linktype == ANIMAL and configuration.auto_media_notes(dbo):
@@ -335,6 +335,8 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
     # Create the media record
     sql = db.make_insert_sql("media", (
         ( "ID", db.di(mediaid) ),
+        ( "DBFSID", db.di(dbfsid) ),
+        ( "MediaSize", db.di(len(filedata))),
         ( "MediaName", db.ds(medianame) ),
         ( "MediaMimeType", db.ds(mime_type(medianame))),
         ( "MediaType", db.di(0) ),
@@ -373,6 +375,8 @@ def attach_link_from_form(dbo, username, linktype, linkid, post):
     al.debug("attached link %s" % url, "media.attach_file_from_form")
     sql = db.make_insert_sql("media", (
         ( "ID", db.di(mediaid) ),
+        ( "DBFSID", db.di(0) ),
+        ( "MediaSize", db.di(0) ),
         ( "MediaName", db.ds(url) ),
         ( "MediaMimeType", db.ds("text/url")),
         ( "MediaType", post.db_integer("linktype") ),
@@ -414,8 +418,22 @@ def create_blank_document_media(dbo, username, linktype, linkid):
     returns the new media id
     """
     mediaid = db.get_id(dbo, "media")
+    path = ""
+    if linktype == ANIMAL:
+        path = "/animal"
+    elif linktype == PERSON:
+        path = "/owner"
+    elif linktype == LOSTANIMAL:
+        path = "/lostanimal"
+    elif linktype == FOUNDANIMAL:
+        path = "/foundanimal"
+    path += "/" + str(linkid)
+    name = str(mediaid) + ".html"
+    dbfsid = dbfs.put_string(dbo, name, path, "")
     sql = db.make_insert_sql("media", (
         ( "ID", db.di(mediaid) ),
+        ( "DBFSID", db.di(dbfsid) ),
+        ( "MediaSize", db.di(0) ),
         ( "MediaName", db.ds("%d.html" % mediaid) ),
         ( "MediaMimeType", db.ds("text/html")),
         ( "MediaType", db.di(0)),
@@ -433,18 +451,6 @@ def create_blank_document_media(dbo, username, linktype, linkid):
         ( "Date", db.ddt(i18n.now(dbo.timezone)) )
         ))
     db.execute(dbo, sql)
-    path = ""
-    if linktype == ANIMAL:
-        path = "/animal"
-    elif linktype == PERSON:
-        path = "/owner"
-    elif linktype == LOSTANIMAL:
-        path = "/lostanimal"
-    elif linktype == FOUNDANIMAL:
-        path = "/foundanimal"
-    path += "/" + str(linkid)
-    name = str(mediaid) + ".html"
-    dbfs.put_string(dbo, name, path, "")
     audit.create(dbo, username, "media", mediaid, str(mediaid) + ": for " + str(linkid) + "/" + str(linktype))
     return mediaid
 
@@ -457,8 +463,22 @@ def create_document_media(dbo, username, linktype, linkid, template, content):
     content: The document contents
     """
     mediaid = db.get_id(dbo, "media")
+    path = ""
+    if linktype == ANIMAL:
+        path = "/animal"
+    elif linktype == PERSON:
+        path = "/owner"
+    elif linktype == LOSTANIMAL:
+        path = "/lostanimal"
+    elif linktype == FOUNDANIMAL:
+        path = "/foundanimal"
+    path += "/" + str(linkid)
+    name = str(mediaid) + ".html"
+    dbfsid = dbfs.put_string(dbo, name, path, content)
     sql = db.make_insert_sql("media", (
         ( "ID", db.di(mediaid) ),
+        ( "DBFSID", db.di(dbfsid) ),
+        ( "MediaSize", db.di(0) ),
         ( "MediaName", db.ds("%d.html" % mediaid) ),
         ( "MediaMimeType", db.ds("text/html")),
         ( "MediaType", db.di(0)),
@@ -476,18 +496,6 @@ def create_document_media(dbo, username, linktype, linkid, template, content):
         ( "Date", db.ddt(i18n.now(dbo.timezone)) )
         ))
     db.execute(dbo, sql)
-    path = ""
-    if linktype == ANIMAL:
-        path = "/animal"
-    elif linktype == PERSON:
-        path = "/owner"
-    elif linktype == LOSTANIMAL:
-        path = "/lostanimal"
-    elif linktype == FOUNDANIMAL:
-        path = "/foundanimal"
-    path += "/" + str(linkid)
-    name = str(mediaid) + ".html"
-    dbfs.put_string(dbo, name, path, content)
     audit.create(dbo, username, "media", mediaid, str(mediaid) + ": for " + str(linkid) + "/" + str(linktype))
 
 def sign_document(dbo, username, mid, sigurl, signdate):
@@ -761,7 +769,7 @@ def scale_pdf_file(inputfile, outputfile):
     """
     KNOWN_ERRORS = [ 
         # GS produces this with out of date libpoppler and Microsoft Print PDF
-        "Can't find CMap Identity-UTF16-H building a CIDDecoding resource. " 
+        "Can't find CMap Identity-UTF16-H building a CIDDecoding resource." 
     ]
     code, output = utils.cmd(SCALE_PDF_CMD % { "output": outputfile, "input": inputfile})
     for e in KNOWN_ERRORS:
@@ -775,45 +783,12 @@ def scale_pdf_file(inputfile, outputfile):
         return False
     return True
    
-def check_and_scale_pdfs(dbo, force = False):
-    """
-    Goes through all PDFs in the database to see if they have been
-    scaled (have a suffix of _scaled.pdf) and scales down any unscaled
-    ones, renaming them.
-    If force is set, then ALL PDFs are checked and scaled again.
-    """
-    if not configuration.scale_pdfs(dbo):
-        al.warn("ScalePDFs config option disabled in this database, not scaling pdfs", "media.check_and_scale_pdfs", dbo)
-        return
-    if force:
-        mp = db.query(dbo, \
-            "SELECT ID, MediaName FROM media WHERE MediaMimeType = 'application/pdf' ORDER BY ID DESC")
-    else:
-        mp = db.query(dbo, \
-            "SELECT ID, MediaName FROM media WHERE MediaMimeType = 'application/pdf' AND " \
-            "LOWER(MediaName) NOT LIKE '%_scaled.pdf' ORDER BY ID DESC")
-    for i, m in enumerate(mp):
-        filepath = db.query_string(dbo, "SELECT Path FROM dbfs WHERE Name='%s'" % m["MEDIANAME"])
-        original_name = str(m["MEDIANAME"])
-        new_name = str(m["ID"]) + "_scaled.pdf"
-        odata = dbfs.get_string(dbo, original_name)
-        data = scale_pdf(odata)
-        al.debug("scaling %s (%d of %d): old size %d, new size %d" % (new_name, i, len(mp), len(odata), len(data)), "check_and_scale_pdfs", dbo)
-        # Update the media entry with the new name
-        db.execute(dbo, "UPDATE media SET MediaName = '%s' WHERE ID = %d" % ( new_name, m["ID"]))
-        # Update the dbfs entry from old name to new name (will be overwritten in a minute but safer than delete)
-        dbfs.rename_file(dbo, filepath, original_name, new_name)
-        # Store the compressed PDF file data - if it's smaller
-        if len(data) < len(odata):
-            dbfs.put_string(dbo, new_name, filepath, data)
-    al.debug("found and scaled %d pdfs" % len(mp), "media.check_and_scale_pdfs", dbo)
-
-def scale_animal_images(dbo):
+def scale_all_animal_images(dbo):
     """
     Goes through all animal images in the database and scales
     them to the current incoming media scaling factor.
     """
-    mp = db.query(dbo, "SELECT MediaName FROM media WHERE MediaMimeType = 'image/jpeg' AND LinkTypeID = 0")
+    mp = db.query(dbo, "SELECT ID, MediaName FROM media WHERE MediaMimeType = 'image/jpeg' AND LinkTypeID = 0")
     for i, m in enumerate(mp):
         filepath = db.query_string(dbo, "SELECT Path FROM dbfs WHERE Name='%s'" % m["MEDIANAME"])
         name = str(m["MEDIANAME"])
@@ -824,7 +799,7 @@ def scale_animal_images(dbo):
         inputfile.flush()
         inputfile.close()
         outputfile.close()
-        al.debug("scaling %s (%d of %d)" % (name, i, len(mp)), "media.scale_animal_images", dbo)
+        al.debug("scaling %s (%d of %d)" % (name, i, len(mp)), "media.scale_all_animal_images", dbo)
         scale_image_file(inputfile.name, outputfile.name, configuration.incoming_media_scaling(dbo))
         f = open(outputfile.name, "r")
         data = f.read()
@@ -833,14 +808,16 @@ def scale_animal_images(dbo):
         os.unlink(outputfile.name)
         # Update the image file data
         dbfs.put_string(dbo, name, filepath, data)
-    al.debug("scaled %d images" % len(mp), "media.scale_animal_images", dbo)
+        dbo.execute("UPDATE media SET MediaSize = ? WHERE ID = ?", (len(data), m["ID"]))
+    al.debug("scaled %d images" % len(mp), "media.scale_all_animal_images", dbo)
 
 def scale_all_odt(dbo):
     """
     Goes through all odt files attached to records in the database and 
     scales them down (throws away images and objects so only the text remains to save space)
     """
-    mo = db.query(dbo, "SELECT MediaName FROM media WHERE MediaMimeType = 'application/vnd.oasis.opendocument.text'")
+    mo = db.query(dbo, "SELECT ID, MediaName FROM media WHERE MediaMimeType = 'application/vnd.oasis.opendocument.text'")
+    total = 0
     for i, m in enumerate(mo):
         name = str(m["MEDIANAME"])
         al.debug("scaling %s (%d of %d)" % (name, i, len(mo)), "media.scale_all_odt", dbo)
@@ -854,5 +831,27 @@ def scale_all_odt(dbo):
             al.error("scaled odt %s came back at %d bytes, abandoning" % (name, len(ndata)), "scale_all_odt", dbo)
         else:
             dbfs.put_string(dbo, name, path, ndata)
+            dbo.execute("UPDATE media SET MediaSize = ? WHERE ID = ?", (len(ndata), m["ID"]))
+            total += 1
+    al.debug("scaled %d of %d odts" % (total, len(mo)), "media.scale_all_odt", dbo)
+
+def scale_all_pdf(dbo):
+    """
+    Goes through all PDFs in the database and attempts to scale them down.
+    """
+    mp = db.query(dbo, \
+        "SELECT ID, MediaName FROM media WHERE MediaMimeType = 'application/pdf' ORDER BY ID DESC")
+    total = 0
+    for i, m in enumerate(mp):
+        dbfsid = db.query_string(dbo, "SELECT ID FROM dbfs WHERE Name='%s'" % m["MEDIANAME"])
+        odata = dbfs.get_string_id(dbo, dbfsid)
+        data = scale_pdf(odata)
+        al.debug("scaling %s (%d of %d): old size %d, new size %d" % (m["MEDIANAME"], i, len(mp), len(odata), len(data)), "check_and_scale_pdfs", dbo)
+        # Store the new compressed PDF file data - if it's smaller
+        if len(data) < len(odata):
+            dbfs.put_string_id(dbo, dbfsid, m["MEDIANAME"], data)
+            dbo.execute("UPDATE media SET MediaSize = ? WHERE ID = ?", (len(data), m["ID"]))
+            total += 1
+    al.debug("scaled %d of %d pdfs" % (total, len(mp)), "media.scale_all_pdf", dbo)
 
 
