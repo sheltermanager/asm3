@@ -545,7 +545,6 @@ def update_file_content(dbo, username, mid, content):
 def update_media_notes(dbo, username, mid, notes):
     sql = db.make_update_sql("media", "ID=%d" % int(mid), (
         ( "MediaNotes", db.ds(notes)),
-        ( "MediaName", "MediaName" ),
         # ASM2_COMPATIBILITY
         ( "UpdatedSinceLastPublish", db.di(1))
         ))
