@@ -779,8 +779,8 @@ def lostfound_report(dbo, newval = ""):
     else:
         cset(dbo, "LostFoundReport", newval, sanitiseXSS = False)
 
-def maddies_fund_email(dbo):
-    return cstring(dbo, "MaddiesFundEmail")
+def maddies_fund_username(dbo):
+    return cstring(dbo, "MaddiesFundUsername")
 
 def maddies_fund_password(dbo):
     return cstring(dbo, "MaddiesFundPassword")

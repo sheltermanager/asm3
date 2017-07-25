@@ -75,12 +75,12 @@ class MaddiesFundPublisher(AbstractPublisher):
         self.setLastError("")
         self.setStartPublishing()
 
-        email = configuration.maddies_fund_email(self.dbo)
+        username = configuration.maddies_fund_username(self.dbo)
         password = configuration.maddies_fund_password(self.dbo)
         organisation = configuration.organisation(self.dbo)
 
-        if email == "" or password == "":
-            self.setLastError("email and password all need to be set for Maddies Fund Publisher")
+        if username == "" or password == "":
+            self.setLastError("username and password all need to be set for Maddies Fund Publisher")
             self.cleanup()
             return
 
@@ -112,7 +112,7 @@ class MaddiesFundPublisher(AbstractPublisher):
         token = ""
         try:
             fields = {
-                "username": email,
+                "username": username,
                 "password": password,
                 "grant_type": "password"
             }
