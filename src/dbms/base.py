@@ -753,6 +753,10 @@ class Database(object):
             x += 1
         return queries
 
+    def sql_cast(self, expr, newtype):
+        """ Writes a database independent cast for expr to newtype """
+        return "CAST(%s AS %s)" % (expr, newtype)
+
     def sql_char_length(self, item):
         """ Writes a database independent char length """
         return "LENGTH(%s)" % item
@@ -781,6 +785,10 @@ class Database(object):
     def sql_limit(self, x):
         """ Writes a limit clause to X items """
         return "LIMIT %s" % x
+
+    def sql_replace(self, fieldexpr, findstr, replacestr):
+        """ Writes a replace expression that finds findstr in fieldexpr, replacing with replacestr """
+        return "REPLACE(%s, '%s', '%s')" % (fieldexpr, findstr, replacestr)
 
     def switch_param_placeholder(self, sql):
         """ Swaps the ? token in the sql for the usual Python DBAPI placeholder of %s 

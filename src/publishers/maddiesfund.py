@@ -46,6 +46,24 @@ class MaddiesFundPublisher(AbstractPublisher):
         """ Returns a date in their preferred format of mm/dd/yyyy """
         return i18n.format_date("%m/%d/%Y", d)
 
+    def getPetStatus(self, an):
+        """ Returns the pet status - Deceased, Active (on shelter), Inactive (foster/adopted) """
+        if an["DECEASEDDATE"] is not None:
+            return "Deceased"
+        elif an["ACTIVEMOVEMENTTYPE"] == 0:
+            return "Active"
+        else:
+            return "Inactive"
+
+    def getRelationshipType(self, an):
+        """ Returns the relationship type - adopted, fostered or blank for on shelter """
+        if an["ACTIVEMOVEMENTTYPE"] == 1:
+            return "Adoption"
+        elif an["ACTIVEMOVEMENTTYPE"] == 2:
+            return "Foster"
+        else:
+            return ""
+
     def run(self):
         
         self.log("Maddies Fund Publisher starting...")
@@ -57,22 +75,35 @@ class MaddiesFundPublisher(AbstractPublisher):
         self.setLastError("")
         self.setStartPublishing()
 
-        email = configuration.maddies_fund_email(self.dbo)
+        username = configuration.maddies_fund_username(self.dbo)
         password = configuration.maddies_fund_password(self.dbo)
         organisation = configuration.organisation(self.dbo)
 
-        if email == "" or password == "":
-            self.setLastError("email and password all need to be set for Maddies Fund Publisher")
+        if username == "" or password == "":
+            self.setLastError("username and password all need to be set for Maddies Fund Publisher")
             self.cleanup()
             return
 
         # Send all fosters and adoptions for the last month that haven't been sent already
         cutoff = i18n.subtract_days(i18n.now(self.dbo.timezone), 31)
         sql = "%s WHERE a.ActiveMovementType IN (1,2) " \
-            "AND a.ActiveMovementDate >=? AND a.DeceasedDate Is Null AND a.NonShelterAnimal = 0 " \
+            "AND a.ActiveMovementDate >= ? AND a.DeceasedDate Is Null AND a.NonShelterAnimal = 0 " \
             "AND NOT EXISTS(SELECT AnimalID FROM animalpublished WHERE AnimalID = a.ID AND PublishedTo = 'maddiesfund' AND SentDate >= a.ActiveMovementDate) " \
             "ORDER BY a.ID" % animal.get_animal_query(self.dbo)
         animals = self.dbo.query(sql, [cutoff], distincton="ID")
+
+        # Now find animals who have been sent previously and are now deceased (using sent date against deceased to prevent re-sends) 
+        sql = "%s WHERE a.DeceasedDate Is Not Null AND a.DeceasedDate >= ? AND " \
+            "EXISTS(SELECT AnimalID FROM animalpublished WHERE AnimalID = a.ID AND " \
+            "PublishedTo = 'maddiesfund' AND SentDate < a.DeceasedDate)" % animal.get_animal_query(self.dbo)
+        animals += self.dbo.query(sql, [cutoff], distincton="ID")
+
+        # Now find shelter animals who have been sent previously (using sent date against return to prevent re-sends)
+        sql = "%s WHERE a.Archived = 0 AND a.ActiveMovementType = 0 AND " \
+            "EXISTS(SELECT AnimalID FROM animalpublished WHERE AnimalID = a.ID AND " \
+            "PublishedTo = 'maddiesfund' AND SentDate < a.MostRecentEntryDate)" % animal.get_animal_query(self.dbo)
+        animals += self.dbo.query(sql, distincton="ID")
+
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
             return
@@ -81,7 +112,7 @@ class MaddiesFundPublisher(AbstractPublisher):
         token = ""
         try:
             fields = {
-                "username": email,
+                "username": username,
                 "password": password,
                 "grant_type": "password"
             }
@@ -119,7 +150,7 @@ class MaddiesFundPublisher(AbstractPublisher):
                     "PetID": an["ID"],
                     "Site": organisation,
                     "PetName": an["ANIMALNAME"],
-                    "PetStatus": utils.iif(an["ACTIVEMOVEMENTTYPE"] == 1, "Adopted", "Active"),
+                    "PetStatus": self.getPetStatus(an),
                     "PetLitterID": an["ACCEPTANCENUMBER"],
                     "GroupType": utils.iif(utils.nulltostr(an["ACCEPTANCENUMBER"]) != "", "Litter", ""),
                     "PetSpecies": an["SPECIESNAME"],
@@ -135,7 +166,7 @@ class MaddiesFundPublisher(AbstractPublisher):
                     "Photo": "%s?method=animal_image&account=%s&animalid=%s" % (SERVICE_URL, self.dbo.database, an["ID"]),
                     "Microchip": an["IDENTICHIPNUMBER"],
                     "MicrochipIssuer": lookups.get_microchip_manufacturer(self.dbo.locale, an["IDENTICHIPNUMBER"]),
-                    "RelationshipType": utils.iif(an["ACTIVEMOVEMENTTYPE"] == 1, "Adoption", "Foster"),
+                    "RelationshipType": self.getRelationshipType(an),
                     "FosterCareDate": self.getDate(an["ACTIVEMOVEMENTDATE"]),
                     "FosterEndDate": "",
                     "RabiesTag": an["RABIESTAG"],

@@ -9,19 +9,20 @@ Import script for PetPoint databases exported as CSV
 Can optionally import vacc and tests too, the PP reports
 are MedicalVaccineExpress and MedicalTestsExpress
 
-3rd March - 24th January, 2017
+3rd March - 12th January, 2017
 """
 
 # The shelter's petfinder ID for grabbing animal images for adoptable animals
 PETFINDER_ID = ""
 
-INTAKE_FILENAME = "data/petpoint_vm1310/intake.csv"
-MEMO_FILENAME = ""
-PERSON_FILENAME = "data/petpoint_vm1310/person.csv"
-VACC_FILENAME = ""
-TEST_FILENAME = ""
+INTAKE_FILENAME = "data/petpoint_tg1436/animals.csv"
+MEMO_FILENAME = "data/petpoint_tg1436/memo.csv"
+PERSON_FILENAME = "data/petpoint_tg1436/person.csv"
+VACC_FILENAME = "data/petpoint_tg1436/vacc.csv"
+TEST_FILENAME = "data/petpoint_tg1436/test.csv"
+
 # Whether or not the vaccine and test files are in two row stacked format
-MEDICAL_TWO_ROW_FORMAT = True
+MEDICAL_TWO_ROW_FORMAT = False
 
 def findowner(ownername = ""):
     """ Looks for an owner with the given name in the collection
@@ -48,7 +49,7 @@ ppo = {}
 asm.setid("animal", 100)
 asm.setid("animaltest", 100)
 asm.setid("animalvaccination", 100)
-asm.setid("log", 3000)
+asm.setid("log", 100)
 asm.setid("owner", 100)
 asm.setid("adoption", 100)
 
@@ -357,6 +358,7 @@ if vacc is not None:
     else:
         for v in vacc:
             process_vacc(v["AnimalID"], getdate(v["Date"]), None, v["RecordType3"])
+            #process_vacc(v["StatusDateTime3"], getdate(v["BodyWeight"]), None, v["RecordType3"]) # Once saw a broken version of this file like this
 
 test = asm.csv_to_list(TEST_FILENAME)
 

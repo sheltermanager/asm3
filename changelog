@@ -1,6 +1,11 @@
 40
 ================
 
+25/07/17 Refactor and add Person/Animal name resolution back to additional #262
+20/07/17 Add media.DBFSID/MediaSize, remove _scaled names and PDF batch scale #260
+19/07/17 Bad logic for KNOWN_ERRORS meant always true and no scaled PDFs
+18/07/17 Filter fosterers to user site if set for shelterview fosterer mode
+05/07/17 Use 2-step downsampling when scaling images for smoothness
 27/06/17 Setting web preferred should clear exlclude from publish
 16/06/17 Send maddie's fund animals in batches due to timeouts #89
 12/06/17 Add MediaMimeType indexed field #230

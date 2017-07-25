@@ -80,7 +80,17 @@ Lookup Data
 
 The lookup data screen allows editing of lookups. These are small, standard
 tables of information used throughout the system for values such as breeds,
-species, colours, etc. 
+species, colours, flags, sizes, vaccination types, etc. 
+
+As well as creating and deleting them here, lookup data items can be marked
+inactive so that they cannot be chosen for new records, but are retained for
+compatibility with existing records.
+
+.. image:: images/lookup_data_publisher.png
+
+Some lookups, such as breed, species and color allow you to choose a matching
+"Publisher" item. These are the items that will be sent to AdoptAPet, PetFinder
+and other third party adoption sites when transmitting adoptable animal data.
 
 Document templates
 ------------------

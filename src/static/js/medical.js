@@ -421,7 +421,7 @@ $(function() {
                 '<tr>',
                 '<td><label for="givenby">' + _("By") + '</label></td>',
                 '<td>',
-                '<select id="givenby" data="givenby" type="hidden" class="asm-selectbox asm-field">',
+                '<select id="givenby" data="givenby" class="asm-selectbox asm-field">',
                 html.list_to_options(controller.users, "USERNAME", "USERNAME"),
                 '</select>',
                 '</td>',

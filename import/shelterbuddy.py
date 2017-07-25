@@ -138,6 +138,7 @@ ppo = {}
 ppa = {}
 movements = []
 animals = []
+animalmedicals = []
 animalvaccinations = []
 
 asm.setid("animal", 100)
@@ -147,9 +148,13 @@ asm.setid("owner", 100)
 asm.setid("ownerdonation", 100)
 asm.setid("adoption", 100)
 asm.setid("animalvaccination", 100)
+asm.setid("animalmedical", 100)
+asm.setid("animalmedicaltreatment", 100)
 
 print "DELETE FROM animal WHERE ID >= 100;"
 print "DELETE FROM animalvaccination WHERE ID >= 100;"
+print "DELETE FROM animalmedical WHERE ID >= 100;"
+print "DELETE FROM animalmedicaltreatment WHERE ID >= 100;"
 print "DELETE FROM dbfs WHERE ID >= 100;"
 print "DELETE FROM media WHERE ID >= 100;"
 print "DELETE FROM owner WHERE ID >= 100;"
@@ -360,7 +365,7 @@ for row in asm.csv_to_list(PATH + "tblmedications.csv"):
     dosage = row["notes"]
     comments = row["notes"]
     if startdate is not None:
-        asm.animal_regimen_single(a.ID, startdate, treatmentname, dosage, comments)
+        animalmedicals.append(asm.animal_regimen_single(a.ID, startdate, treatmentname, dosage, comments))
 
 # tblreceiptentry.csv
 for row in asm.csv_to_list(PATH + "tblreceiptentry.csv"):
@@ -393,6 +398,8 @@ print "DELETE FROM primarykey;"
 print "DELETE FROM configuration WHERE ItemName Like 'VariableAnimalDataUpdated';"
 for a in animals:
     print a
+for am in animalmedicals:
+    print am
 for av in animalvaccinations:
     print av
 for o in owners:
@@ -402,7 +409,7 @@ for od in ownerdonations:
 for m in movements:
     print m
 
-asm.stderr_summary(animals=animals, animalvaccinations=animalvaccinations, owners=owners, ownerdonations=ownerdonations, movements=movements)
+asm.stderr_summary(animals=animals, animalmedicals=animalmedicals, animalvaccinations=animalvaccinations, owners=owners, ownerdonations=ownerdonations, movements=movements)
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"

@@ -74,11 +74,13 @@ def get_additional_fields(dbo, linkid, linktype = "animal"):
     """
     inclause = clause_for_linktype(linktype)
     return dbo.query("SELECT af.ID, af.FieldName, af.FieldLabel, af.ToolTip, " \
-        "af.LookupValues, af.DefaultValue, af.LinkType, af.FieldType, af.DisplayIndex, af.Mandatory, a.Value " \
+        "af.LookupValues, af.DefaultValue, af.LinkType, af.FieldType, af.DisplayIndex, af.Mandatory, a.Value, " \
+        "CASE WHEN af.FieldType = 8 AND a.Value <> '' AND a.Value <> '0' THEN (SELECT AnimalName FROM animal WHERE %s = a.Value) ELSE '' END AS AnimalName, " \
+        "CASE WHEN af.FieldType = 9 AND a.Value <> '' AND a.Value <> '0' THEN (SELECT OwnerName FROM owner WHERE %s = a.Value) ELSE '' END AS OwnerName " \
         "FROM additionalfield af LEFT OUTER JOIN additional a ON af.ID = a.AdditionalFieldID " \
         "AND a.LinkID = %d " \
         "WHERE af.LinkType IN (%s) " \
-        "ORDER BY af.DisplayIndex" % ( linkid, inclause ))
+        "ORDER BY af.DisplayIndex" % ( dbo.sql_cast("animal.ID", "VARCHAR"), dbo.sql_cast("owner.ID", "VARCHAR"), linkid, inclause ))
 
 def get_additional_fields_ids(dbo, rows, linktype = "animal"):
     """
@@ -93,10 +95,12 @@ def get_additional_fields_ids(dbo, rows, linktype = "animal"):
     if len(links) == 0:
         links.append("0")
     return dbo.query("SELECT a.LinkID, af.ID, af.FieldName, af.FieldLabel, af.ToolTip, " \
-        "af.LookupValues, af.DefaultValue, af.FieldType, af.DisplayIndex, af.Mandatory, a.Value " \
+        "af.LookupValues, af.DefaultValue, af.FieldType, af.DisplayIndex, af.Mandatory, a.Value, " \
+        "CASE WHEN af.FieldType = 8 AND a.Value <> '' AND a.Value <> '0' THEN (SELECT AnimalName FROM animal WHERE %s = a.Value) ELSE '' END AS AnimalName, " \
+        "CASE WHEN af.FieldType = 9 AND a.Value <> '' AND a.Value <> '0' THEN (SELECT OwnerName FROM owner WHERE %s = a.Value) ELSE '' END AS OwnerName " \
         "FROM additional a INNER JOIN additionalfield af ON af.ID = a.AdditionalFieldID " \
         "WHERE a.LinkType IN (%s) AND a.LinkID IN (%s) " \
-        "ORDER BY af.DisplayIndex" % ( inclause, ",".join(links)))
+        "ORDER BY af.DisplayIndex" % ( dbo.sql_cast("animal.ID", "VARCHAR"), dbo.sql_cast("owner.ID", "VARCHAR"), inclause, ",".join(links)))
 
 def get_field_definitions(dbo, linktype = "animal"):
     """

@@ -25,7 +25,7 @@ import smcom
 import time
 import utils
 import waitinglist
-from sitedefs import LOCALE, TIMEZONE, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_MAP, SCALE_PDF_DURING_BATCH
+from sitedefs import LOCALE, TIMEZONE, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_MAP
 
 def ttask(fn, dbo):
     """ Runs a function and times how long it takes """
@@ -106,10 +106,6 @@ def daily(dbo):
 
         # Email any reports set to run with batch
         ttask(extreports.email_daily_reports, dbo)
-
-        # See if any new PDFs have been attached that we can scale down
-        if SCALE_PDF_DURING_BATCH:
-            ttask(media.check_and_scale_pdfs, dbo)
 
     except:
         em = str(sys.exc_info()[0])
@@ -271,7 +267,7 @@ def maint_deduplicate_people(dbo):
 
 def maint_scale_animal_images(dbo):
     try:
-        media.scale_animal_images(dbo)
+        media.scale_all_animal_images(dbo)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_scale_animal_images: %s" % em, "cron.maint_scale_animal_images", dbo, sys.exc_info())
@@ -285,7 +281,7 @@ def maint_scale_odts(dbo):
 
 def maint_scale_pdfs(dbo):
     try:
-        media.check_and_scale_pdfs(dbo, True)
+        media.scale_all_pdf(dbo)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_scale_pdfs: %s" % em, "cron.maint_scale_pdfs", dbo, sys.exc_info())

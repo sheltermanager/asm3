@@ -15,6 +15,7 @@ ownerlicences = []
 logs = []
 movements = []
 animals = []
+animalmedicals = []
 animalcontrol = []
 animalcontrolanimals = []
 animalvaccinations = []
@@ -423,7 +424,7 @@ for row in cmedicalhistory:
         if tname == "": tname = row["Note"]
         sdate = asm.getdate_mmddyy(row["DateOfService"])
         if sdate is None: sdate = a.DateBroughtIn
-        asm.animal_regimen_single(a.ID, sdate, tname, "", row["Note"])
+        animalmedicals.append(asm.animal_regimen_single(a.ID, sdate, tname, "", row["Note"]))
 
 # animal notes
 for row in canimalsnotes:
@@ -509,6 +510,8 @@ for row in ccomplaintsnotes:
 # Now that everything else is done, output stored records
 for a in animals:
     print a
+for am in animalmedicals:
+    print am
 for av in animalvaccinations:
     print av
 for l in logs:
@@ -524,7 +527,7 @@ for ac in animalcontrol:
 for ac in animalcontrolanimals:
     print ac
 
-asm.stderr_summary(animals=animals, animalvaccinations=animalvaccinations, logs=logs, owners=owners, movements=movements, ownerlicences=ownerlicences, animalcontrol=animalcontrol)
+asm.stderr_summary(animals=animals, animalmedicals=animalmedicals, animalvaccinations=animalvaccinations, logs=logs, owners=owners, movements=movements, ownerlicences=ownerlicences, animalcontrol=animalcontrol)
 
 # Move all animals without a matching location off shelter
 print "UPDATE animal SET Archived = 1 WHERE Archived = 0 AND ActiveMovementID = 0 AND ShelterLocation = 1;"
