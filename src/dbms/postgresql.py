@@ -88,6 +88,10 @@ class DatabasePostgreSQL(Database):
             "END;\n" \
             "$$")
 
+    def sql_cast(self, expr, newtype):
+        """ Writes a database independent cast for expr to newtype """
+        return "%s::%s" % (expr, newtype)
+
     def sql_char_length(self, item):
         """ Writes a char length """
         return "char_length(%s)" % item
