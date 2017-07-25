@@ -676,7 +676,7 @@ $(function() {
                 '<table>',
                 '<tr>',
                 '<td><label for="mfemail">MPA API Username</label></td>',
-                '<td><input id="mfemail" type="text" class="asm-textbox cfg" data="MaddiesFundEmail" /></td>',
+                '<td><input id="mfemail" type="text" class="asm-textbox cfg" data="MaddiesFundUsername" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="mfpassword">MPA API Password</label></td>',
