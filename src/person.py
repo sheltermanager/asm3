@@ -40,11 +40,15 @@ def get_person_query(dbo):
         "web.MediaName AS WebsiteMediaName, " \
         "web.Date AS WebsiteMediaDate, " \
         "web.MediaNotes AS WebsiteMediaNotes, " \
-        "(SELECT COUNT(oi.ID) FROM ownerinvestigation oi WHERE oi.OwnerID = o.ID) AS Investigation, " \
-        "(SELECT COUNT(ac.ID) FROM animalcontrol ac WHERE ac.OwnerID = o.ID OR ac.Owner2ID = o.ID or ac.Owner3ID = o.ID) AS Incident " \
+        "CASE WHEN oi.ID IS NULL THEN 0 ELSE 1 END AS Investigation, " \
+        "CASE WHEN (ac1.ID IS NULL AND ac2.ID IS NULL AND ac3.ID IS NULL) THEN 0 ELSE 1 END AS Incident " \
         "FROM owner o " \
         "LEFT OUTER JOIN owner ho ON ho.ID = o.HomeCheckedBy " \
-        "LEFT OUTER JOIN media web ON web.LinkID = o.ID AND web.LinkTypeID = 3 AND web.WebsitePhoto = 1 "
+        "LEFT OUTER JOIN media web ON web.LinkID = o.ID AND web.LinkTypeID = 3 AND web.WebsitePhoto = 1 " \
+        "LEFT OUTER JOIN animalcontrol ac1 on o.ID = ac1.OwnerID " \
+        "LEFT OUTER JOIN animalcontrol ac2 on o.ID = ac2.OwnerID " \
+        "LEFT OUTER JOIN animalcontrol ac3 on o.ID = ac3.OwnerID " \
+        "LEFT OUTER JOIN ownerinvestigation oi on o.ID = oi.OwnerID " 
 
 def get_rota_query(dbo):
     """

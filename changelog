@@ -1,6 +1,7 @@
 40
 ================
 
+27/07/17 Fix MySQL performance issue with get_person_query (Cliff Ingham) #263
 27/07/17 Add jurisdiction table and person/incident fields #266
 25/07/17 Refactor and add Person/Animal name resolution back to additional #262
 20/07/17 Add media.DBFSID/MediaSize, remove _scaled names and PDF batch scale #260
