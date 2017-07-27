@@ -1,0 +1,61 @@
+Licenses issued between two dates by jurisdiction
+###
+Animal Control
+###
+34016/Any
+###
+Licenses that were issued between the two dates given by jurisdiction
+###
+en
+###
+SELECT
+ol.LicenceNumber,
+lt.LicenceTypeName,
+j.JurisdictionName, 
+o.OwnerName, a.AnimalName,
+ol.IssueDate, ol.ExpiryDate, ol.Comments
+FROM ownerlicence ol
+INNER JOIN licencetype lt ON lt.ID = ol.LicenceTypeID
+INNER JOIN owner o ON o.ID = ol.OwnerID
+LEFT OUTER JOIN animal a ON a.ID = ol.AnimalID 
+LEFT OUTER JOIN jurisdiction j ON j.ID = o.JurisdictionID
+WHERE ol.IssueDate >= '$ASK DATE Enter the from date$'
+AND ol.IssueDate <= '$ASK DATE Enter the to date$'
+ORDER BY j.JurisdictionName, ol.IssueDate
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_JurisdictionName
+$$HEAD
+<h2>$JurisdictionName</h2>
+<table border="1">
+<tr>
+<th>Number</th>
+<th>Type</th>
+<th>Person</th>
+<th>Animal</th>
+<th>Issued</th>
+<th>Expires</th>
+<th>Comments</th>
+</tr>
+$$FOOT
+</table>
+<p>Total $JurisdictionName: {COUNT.JurisdictionName}</p>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$LICENCENUMBER</td>
+<td>$LICENCETYPENAME</td>
+<td>$OWNERNAME</td>
+<td>$ANIMALNAME</td>
+<td>$ISSUEDATE</td>
+<td>$EXPIRYDATE</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
+
