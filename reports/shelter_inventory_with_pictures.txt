@@ -30,7 +30,7 @@ LEFT OUTER JOIN internallocation l ON l.ID = a.ShelterLocation
 LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
 WHERE Archived = 0
 ORDER BY
-CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' ELSE l.LocationName END, s.SpeciesName, a.AnimalName
+LocationName, s.SpeciesName, a.AnimalName
 ###
 $$HEADER
 HEADER$$
