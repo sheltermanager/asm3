@@ -143,50 +143,51 @@ class MaddiesFundPublisher(AbstractPublisher):
                 email = utils.nulltostr(an["CURRENTOWNEREMAILADDRESS"]).strip()
                 if email == "":
                     self.logError("No email address for owner, skipping.")
-                    continue
 
-                # Build an adoption JSON object containing the adopter and animal
-                a = {
-                    "PetID": an["ID"],
-                    "Site": organisation,
-                    "PetName": an["ANIMALNAME"],
-                    "PetStatus": self.getPetStatus(an),
-                    "PetLitterID": an["ACCEPTANCENUMBER"],
-                    "GroupType": utils.iif(utils.nulltostr(an["ACCEPTANCENUMBER"]) != "", "Litter", ""),
-                    "PetSpecies": an["SPECIESNAME"],
-                    "PetSex": an["SEXNAME"],
-                    "DateofBirth": self.getDate(an["DATEOFBIRTH"]), 
-                    "SpayNeuterStatus": utils.iif(an["NEUTERED"] == 1, "Spayed/Neutered", ""),
-                    "Breed": an["BREEDNAME"],
-                    "Color": an["BASECOLOURNAME"],
-                    "SecondaryColor": "",
-                    "Pattern": "",
-                    "HealthStatus": an["ASILOMARINTAKECATEGORY"] + 1, # We're zero based, they use 1-base
-                    "PetBiography": an["ANIMALCOMMENTS"],
-                    "Photo": "%s?method=animal_image&account=%s&animalid=%s" % (SERVICE_URL, self.dbo.database, an["ID"]),
-                    "Microchip": an["IDENTICHIPNUMBER"],
-                    "MicrochipIssuer": lookups.get_microchip_manufacturer(self.dbo.locale, an["IDENTICHIPNUMBER"]),
-                    "RelationshipType": self.getRelationshipType(an),
-                    "FosterCareDate": self.getDate(an["ACTIVEMOVEMENTDATE"]),
-                    "FosterEndDate": "",
-                    "RabiesTag": an["RABIESTAG"],
+                else:
 
-                    "ID": an["CURRENTOWNERID"],
-                    "Firstname": an["CURRENTOWNERFORENAMES"],
-                    "Lastname": an["CURRENTOWNERSURNAME"],
-                    "EmailAddress": an["CURRENTOWNEREMAILADDRESS"],
-                    "Street": an["CURRENTOWNERADDRESS"],
-                    "Apartment": "",
-                    "City": an["CURRENTOWNERTOWN"],
-                    "State": an["CURRENTOWNERCOUNTY"],
-                    "Zipcode": an["CURRENTOWNERPOSTCODE"],
-                    "ContactNumber": an["CURRENTOWNERHOMETELEPHONE"],
-                    "Organization": organisation,
-                }
+                    # Build an adoption JSON object containing the adopter and animal
+                    a = {
+                        "PetID": an["ID"],
+                        "Site": organisation,
+                        "PetName": an["ANIMALNAME"],
+                        "PetStatus": self.getPetStatus(an),
+                        "PetLitterID": an["ACCEPTANCENUMBER"],
+                        "GroupType": utils.iif(utils.nulltostr(an["ACCEPTANCENUMBER"]) != "", "Litter", ""),
+                        "PetSpecies": an["SPECIESNAME"],
+                        "PetSex": an["SEXNAME"],
+                        "DateofBirth": self.getDate(an["DATEOFBIRTH"]), 
+                        "SpayNeuterStatus": utils.iif(an["NEUTERED"] == 1, "Spayed/Neutered", ""),
+                        "Breed": an["BREEDNAME"],
+                        "Color": an["BASECOLOURNAME"],
+                        "SecondaryColor": "",
+                        "Pattern": "",
+                        "HealthStatus": an["ASILOMARINTAKECATEGORY"] + 1, # We're zero based, they use 1-base
+                        "PetBiography": an["ANIMALCOMMENTS"],
+                        "Photo": "%s?method=animal_image&account=%s&animalid=%s" % (SERVICE_URL, self.dbo.database, an["ID"]),
+                        "Microchip": an["IDENTICHIPNUMBER"],
+                        "MicrochipIssuer": lookups.get_microchip_manufacturer(self.dbo.locale, an["IDENTICHIPNUMBER"]),
+                        "RelationshipType": self.getRelationshipType(an),
+                        "FosterCareDate": self.getDate(an["ACTIVEMOVEMENTDATE"]),
+                        "FosterEndDate": "",
+                        "RabiesTag": an["RABIESTAG"],
 
-                thisbatch.append(a)
-                processed.append(an)
-                self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                        "ID": an["CURRENTOWNERID"],
+                        "Firstname": an["CURRENTOWNERFORENAMES"],
+                        "Lastname": an["CURRENTOWNERSURNAME"],
+                        "EmailAddress": an["CURRENTOWNEREMAILADDRESS"],
+                        "Street": an["CURRENTOWNERADDRESS"],
+                        "Apartment": "",
+                        "City": an["CURRENTOWNERTOWN"],
+                        "State": an["CURRENTOWNERCOUNTY"],
+                        "Zipcode": an["CURRENTOWNERPOSTCODE"],
+                        "ContactNumber": an["CURRENTOWNERHOMETELEPHONE"],
+                        "Organization": organisation,
+                    }
+
+                    thisbatch.append(a)
+                    processed.append(an)
+                    self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
 
                 # If we have hit our batch size, or this is the
                 # last animal then send what we have.
