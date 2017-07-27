@@ -59,4 +59,7 @@ class DatabaseMySQL(Database):
         """ Writes concat for a list of items """
         return "CONCAT(" + ",".join(items) + ")"
 
+    def sql_cast_char(self, expr):
+        """ Writes a database independent cast for expr to a char """
+        return self.sql_cast(expr, "CHAR")
 

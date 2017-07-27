@@ -36,6 +36,7 @@
             counties: "",
             towncounties: "",
             sites: [],
+            jurisdictions: [],
             personflags: [],
             filter: "all",
             mode: "full",
@@ -158,6 +159,13 @@
                 '<td><input class="asm-textbox chooser" maxlength="200" data="emailaddress" type="textbox" /></td>',
                 '</tr>',
                 '<tr>',
+                '<tr class="personchooser-jurisdictionrow">',
+                '<td><label>' + _("Jurisdiction") + '</label></td>',
+                '<td>',
+                '<select data="jurisdiction" class="asm-selectbox chooser personchooser-jurisdiction">',
+                '</select>',
+                '</td>',
+                '</tr>',
                 '<td><label>' + _("Flags") + '</label></td>',
                 '<td>',
                 '<select class="personchooser-flags chooser" data="flags" multiple="multiple">',
@@ -197,6 +205,11 @@
             // Hide sites for non-multi-site
             if (!config.bool("MultiSiteEnabled")) {
                 dialogadd.find(".personchooser-siterow").hide();
+            }
+
+            // Hide jurisdictions for no animal control
+            if (config.bool("DisableAnimalControl")) {
+                dialogadd.find(".personchooser-jurisdictionrow").hide();
             }
             
             // Create the find dialog
@@ -315,6 +328,7 @@
                     self.options.towncounties = d.towncounties;
                     self.options.personflags = d.flags;
                     self.options.sites = d.sites;
+                    self.options.jurisdictions = d.jurisdictions;
                     // Add person flag options to the screen
                     html.person_flag_options(null, self.options.personflags, dialogadd.find(".personchooser-flags"));
                     // Setup autocomplete widgets with the towns/counties
@@ -344,6 +358,8 @@
                     // Add sites
                     dialogadd.find(".personchooser-site").html('<option value="0">' + _("(all)") + '</option>' + 
                         html.list_to_options(self.options.sites, "ID", "SITENAME"));
+                    // Add jurisdictions
+                    dialogadd.find(".personchooser-jurisdiction").html(html.list_to_options(self.options.jurisdictions, "ID", "JURISDICTIONNAME"));
                     // Add mandatory additional fields
                     dialogadd.find("table").append(additional.additional_mandatory_fields(d.additional, false, "additional chooser"));
 

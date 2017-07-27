@@ -1476,7 +1476,7 @@ msgid ""
 "is adopted"
 msgstr ""
 
-#: header_edit_header.js common.js publish.py
+#: header_edit_header.js common.js
 msgid "Available for adoption"
 msgstr ""
 
@@ -2820,6 +2820,10 @@ msgstr ""
 
 #: options.js
 msgid "DD = current day"
+msgstr ""
+
+#: sql.js
+msgid "DDL dump (DB2)"
 msgstr ""
 
 #: sql.js
@@ -5197,7 +5201,7 @@ msgstr ""
 msgid "HTML Publishing Templates"
 msgstr ""
 
-#: publish_options.js publish.py
+#: publish_options.js
 msgid "HTML/FTP Publisher"
 msgstr ""
 
@@ -5271,10 +5275,6 @@ msgstr ""
 
 #: header.js
 msgid "Help"
-msgstr ""
-
-#: publish.py
-msgid "HelpingLostPets Publisher"
 msgstr ""
 
 #: dbupdate.py
@@ -5984,6 +5984,15 @@ msgstr ""
 msgid "June"
 msgstr ""
 
+#: incident_new.js person.js person_new.js incident.js common_personchooser.js
+#: lookups.py
+msgid "Jurisdiction"
+msgstr ""
+
+#: lookups.py
+msgid "Jurisdictions"
+msgstr ""
+
 #: dbupdate.py
 msgid "Kai Dog"
 msgstr ""
@@ -6271,6 +6280,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Loan"
+msgstr ""
+
+#: dbupdate.py
+msgid "Local"
 msgstr ""
 
 #: options.js reports.js change_user_settings.js
@@ -8526,11 +8539,7 @@ msgstr ""
 msgid "Recently Fostered"
 msgstr ""
 
-#: publish.py
-msgid "Recently adopted"
-msgstr ""
-
-#: header.js publish.py configuration.py
+#: header.js configuration.py
 msgid "Recently deceased"
 msgstr ""
 
@@ -9224,7 +9233,7 @@ msgid "Save this waiting list entry"
 msgstr ""
 
 #: options.js person.js waitinglist.js animal_costs.js animal.js incident.js
-#: lostfound.js
+#: lostfound.js publish_options.js
 msgid "Saving..."
 msgstr ""
 

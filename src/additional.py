@@ -80,7 +80,7 @@ def get_additional_fields(dbo, linkid, linktype = "animal"):
         "FROM additionalfield af LEFT OUTER JOIN additional a ON af.ID = a.AdditionalFieldID " \
         "AND a.LinkID = %d " \
         "WHERE af.LinkType IN (%s) " \
-        "ORDER BY af.DisplayIndex" % ( dbo.sql_cast("animal.ID", "VARCHAR"), dbo.sql_cast("owner.ID", "VARCHAR"), linkid, inclause ))
+        "ORDER BY af.DisplayIndex" % ( dbo.sql_cast_char("animal.ID"), dbo.sql_cast_char("owner.ID"), linkid, inclause ))
 
 def get_additional_fields_ids(dbo, rows, linktype = "animal"):
     """

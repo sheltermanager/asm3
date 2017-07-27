@@ -22,7 +22,7 @@ VERSIONS = (
     33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904, 33905, 33906, 
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
-    34013, 34014, 34015
+    34013, 34014, 34015, 34016
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -36,7 +36,7 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "animaltype", "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", 
     "basecolour", "breed", "citationtype", "configuration", "costtype", "customreport", "customreportrole", "dbfs", 
     "deathreason", "diary", "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", "donationtype", 
-    "entryreason", "incidentcompleted", "incidenttype", "internallocation", "licencetype", "lkanimalflags", "lkcoattype", 
+    "entryreason", "incidentcompleted", "incidenttype", "internallocation", "jurisdiction", "licencetype", "lkanimalflags", "lkcoattype", 
     "lkownerflags", "lksaccounttype", "lksdiarylink", "lksdonationfreq", "lksex", "lksfieldlink", "lksfieldtype", 
     "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", "lksposneg", "lksrotatype", 
     "lksyesno", "lksynun", "lkurgency", "lkworktype", "log", "logtype", "media", "medicalprofile", "messages", "onlineform", 
@@ -368,6 +368,7 @@ def sql_structure(dbo):
         fstr("DispatchLatLong", True),
         fstr("DispatchedACO", True),
         fint("PickupLocationID", True),
+        fint("JurisdictionID", True),
         fdate("DispatchDateTime", True),
         fdate("RespondedDateTime", True),
         fdate("FollowupDateTime", True),
@@ -403,6 +404,7 @@ def sql_structure(dbo):
     sql += index("animalcontrol_FollowupComplete3", "animalcontrol", "FollowupComplete3")
     sql += index("animalcontrol_CompletedDate", "animalcontrol", "CompletedDate")
     sql += index("animalcontrol_IncidentCompletedID", "animalcontrol", "IncidentCompletedID")
+    sql += index("animalcontrol_JurisdictionID", "animalcontrol", "JurisdictionID")
     sql += index("animalcontrol_PickupLocationID", "animalcontrol", "PickupLocationID")
     sql += index("animalcontrol_AnimalID", "animalcontrol", "AnimalID")
     sql += index("animalcontrol_OwnerID", "animalcontrol", "OwnerID")
@@ -876,6 +878,12 @@ def sql_structure(dbo):
         fint("SiteID", True), 
         fint("IsRetired", True) ), False)
 
+    sql += table("jurisdiction", (
+        fid(),
+        fstr("JurisdictionName"),
+        fstr("JurisdictionDescription", True),
+        fint("IsRetired", True) ), False)
+
     sql += table("licencetype", (
         fid(),
         fstr("LicenceTypeName"),
@@ -1074,6 +1082,7 @@ def sql_structure(dbo):
         fstr("MobileTelephone", True),
         fstr("EmailAddress", True),
         fint("ExcludeFromBulkEmail", True),
+        fint("JurisdictionID", True),
         fint("IDCheck", True),
         flongstr("Comments", True),
         fint("SiteID", True),
@@ -1127,6 +1136,7 @@ def sql_structure(dbo):
     sql += index("owner_HomeTelephone", "owner", "HomeTelephone")
     sql += index("owner_MobileTelephone", "owner", "MobileTelephone")
     sql += index("owner_WorkTelephone", "owner", "WorkTelephone")
+    sql += index("owner_JurisdictionID", "owner", "JurisdictionID")
     sql += index("owner_OwnerInitials", "owner", "OwnerInitials")
     sql += index("owner_OwnerPostcode", "owner", "OwnerPostcode")
     sql += index("owner_OwnerSurname", "owner", "OwnerSurname")
@@ -2011,6 +2021,7 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup2("incidenttype", "IncidentName", 9, _("Number of pets", l))
     sql += lookup2("incidenttype", "IncidentName", 10, _("Sick/injured animal", l))
     sql += internallocation(1, _("Shelter", l))
+    sql += lookup2("jurisdiction", "JurisdictionName", 1, _("Local", l))
     sql += lookup2money("licencetype", "LicenceTypeName", 1, _("Altered Dog - 1 year", l))
     sql += lookup2money("licencetype", "LicenceTypeName", 2, _("Unaltered Dog - 1 year", l))
     sql += lookup2money("licencetype", "LicenceTypeName", 3, _("Altered Dog - 3 year", l))
@@ -4599,4 +4610,21 @@ def update_34015(dbo):
     # Remove any _scaled component of names from both media and dbfs
     dbo.execute_dbupdate("UPDATE media SET MediaName = %s WHERE MediaName LIKE '%_scaled%'" % dbo.sql_replace("MediaName", "_scaled", ""))
     dbo.execute_dbupdate("UPDATE dbfs SET Name = %s WHERE Name LIKE '%_scaled%'" % dbo.sql_replace("Name", "_scaled", ""))
+
+def update_34016(dbo):
+    l = dbo.locale
+    # Add JurisdictionID
+    add_column(dbo, "owner", "JurisdictionID", dbo.type_integer)
+    add_column(dbo, "animalcontrol", "JurisdictionID", dbo.type_integer)
+    add_index(dbo, "owner_JurisdictionID", "owner", "JurisdictionID")
+    add_index(dbo, "animalcontrol_JurisdictionID", "animalcontrol", "JurisdictionID")
+    sql = "CREATE TABLE jurisdiction ( ID INTEGER NOT NULL, " \
+        "JurisdictionName %(short)s NOT NULL, " \
+        "JurisdictionDescription %(long)s, " \
+        "IsRetired INTEGER)" % { "short": dbo.type_shorttext, "long": dbo.type_longtext }
+    dbo.execute_dbupdate(sql)
+    dbo.execute_dbupdate("UPDATE owner SET JurisdictionID = 0")
+    dbo.execute_dbupdate("UPDATE animalcontrol SET JurisdictionID = 0")
+    dbo.execute_dbupdate("INSERT INTO jurisdiction VALUES (1, '%s', '', 0)" % _("Local", l))
+
 

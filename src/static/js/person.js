@@ -125,6 +125,15 @@ $(function() {
                 '<input type="text" id="worktelephone" data-json="WORKTELEPHONE" data-post="worktelephone" class="asm-textbox" />',
                 '</td>',
                 '</tr>',
+                '<tr id="jurisdictionrow">',
+                '<td><label for="jurisdiction">' + _("Jurisdiction") + '</label></td>',
+                '<td>',
+                '<select id="jurisdiction" data-json="JURISDICTIONID" data-post="jurisdiction" class="asm-selectbox">',
+                html.list_to_options(controller.jurisdictions, "ID", "JURISDICTIONNAME"),
+                '</select>',
+                '</td>',
+                '</tr>',
+
                 '</table>',
                 '<!-- right table -->',
                 '<td width="30%">',
@@ -490,6 +499,8 @@ $(function() {
             $(".towncounty").toggle( !config.bool("HideTownCounty") );
             $("#latlongrow").toggle( config.bool("ShowLatLong") );
             $("#siterow").toggle( config.bool("MultiSiteEnabled") );
+            $("#jurisdictionrow").toggle( !config.bool("DisableAnimalControl") );
+
 
             // SECURITY =============================================================
 

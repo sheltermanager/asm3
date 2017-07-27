@@ -2575,6 +2575,7 @@ class incident(JSONEndpoint):
             "additional": extadditional.get_additional_fields(dbo, a["ACID"], "incident"),
             "audit": self.checkb(users.VIEW_AUDIT_TRAIL) and audit.get_audit_for_link(dbo, "animalcontrol", a["ACID"]) or [],
             "incident": a,
+            "jurisdictions": extlookups.get_jurisdictions(dbo),
             "animallinks": extanimalcontrol.get_animalcontrol_animals(dbo, o.post.integer("id")),
             "incidenttypes": extlookups.get_incident_types(dbo),
             "completedtypes": extlookups.get_incident_completed_types(dbo),
@@ -2751,6 +2752,7 @@ class incident_new(JSONEndpoint):
         al.debug("add incident", "code.incident_new", dbo)
         return {
             "incidenttypes": extlookups.get_incident_types(dbo),
+            "jurisdictions": extlookups.get_jurisdictions(dbo),
             "additional": extadditional.get_additional_fields(dbo, 0, "incident"),
             "pickuplocations": extlookups.get_pickup_locations(dbo),
             "roles": users.get_roles(dbo),
@@ -3876,6 +3878,7 @@ class person(JSONEndpoint):
             "flags": extlookups.get_person_flags(dbo),
             "ynun": extlookups.get_ynun(dbo),
             "homecheckhistory": extperson.get_homechecked(dbo, o.post.integer("id")),
+            "jurisdictions": extlookups.get_jurisdictions(dbo),
             "logtypes": extlookups.get_log_types(dbo),
             "sexes": extlookups.get_sexes(dbo),
             "sites": extlookups.get_sites(dbo),
@@ -3982,6 +3985,7 @@ class person_embed(ASMEndpoint):
         self.header("Cache-Control", "max-age=180") # This data can be cached for a few minutes - good for multi-widgets on one page
         return utils.json({
             "additional": extadditional.get_additional_fields(dbo, 0, "person"),
+            "jurisdictions": extlookups.get_jurisdictions(dbo),
             "towns": "|".join(extperson.get_towns(dbo)),
             "counties": "|".join(extperson.get_counties(dbo)),
             "towncounties": "|".join(extperson.get_town_to_county(dbo)),
@@ -4231,6 +4235,7 @@ class person_new(JSONEndpoint):
             "counties": "|".join(extperson.get_counties(dbo)),
             "towncounties": "|".join(extperson.get_town_to_county(dbo)),
             "additional": extadditional.get_additional_fields(dbo, 0, "person"),
+            "jurisdictions": extlookups.get_jurisdictions(dbo),
             "flags": extlookups.get_person_flags(dbo),
             "sites": extlookups.get_sites(dbo)
         }

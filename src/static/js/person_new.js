@@ -79,6 +79,14 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
+                '<tr id="jurisdictionrow">',
+                '<td><label for="jurisdiction">' + _("Jurisdiction") + '</label></td>',
+                '<td>',
+                '<select id="jurisdiction" data="jurisdiction" class="asm-selectbox">',
+                html.list_to_options(controller.jurisdictions, "ID", "JURISDICTIONNAME"),
+                '</select>',
+                '</td>',
+                '</tr>',
                 '<tr id="siterow">',
                 '<td><label for="site">' + _("Site") + '</label></td>',
                 '<td>',
@@ -212,6 +220,10 @@ $(function() {
 
             if (config.bool("HideTownCounty")) {
                 $(".towncounty").hide();
+            }
+
+            if (config.bool("DisableAnimalControl")) {
+                $("#jurisdictionrow").hide();
             }
 
             if (!config.bool("MultiSiteEnabled")) {

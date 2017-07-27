@@ -757,6 +757,10 @@ class Database(object):
         """ Writes a database independent cast for expr to newtype """
         return "CAST(%s AS %s)" % (expr, newtype)
 
+    def sql_cast_char(self, expr):
+        """ Writes a database independent cast for expr to a char """
+        return self.sql_cast(expr, "TEXT")
+
     def sql_char_length(self, item):
         """ Writes a database independent char length """
         return "LENGTH(%s)" % item
