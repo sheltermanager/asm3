@@ -18,8 +18,8 @@ $(function() {
                 '<li class="localegb haspetslocated"><a href="#tab-petslocated">PetsLocated Publisher</a></li>',
                 '<li class="localeau"><a href="#tab-petrescue">PetRescue Publisher</a></li>',
                 '<li class="localeus"><a href="#tab-rescuegroups">RescueGroups Publisher</a></li>',
-                '<li class="localegb"><a href="#tab-anibase">Anibase UK Microchips</a></li>',
-                '<li class="localegb"><a href="#tab-pettrac">AVID/PETtrac UK Microchips</a></li>',
+                '<li class="localegb"><a href="#tab-pettrac">AVID UK Microchips</a></li>',
+                '<li class="localegb"><a href="#tab-anibase">Identibase UK Microchips</a></li>',
                 '<li class="localeus hasfoundanimals"><a href="#tab-foundanimals">FoundAnimals Microchips</a></li>',
                 '<li class="localeus localeca localemx"><a href="#tab-petlink">PetLink Microchips</a></li>',
                 '<li class="localeus hassmarttag"><a href="#tab-smarttag">SmartTag Tags/Microchips</a></li>',
@@ -625,7 +625,7 @@ $(function() {
         render_anibase: function() {
             return [
                 '<div id="tab-anibase">',
-                html.info('These settings are for uploading new owner information to the idENTIPCHIP/Anibase UK microchip database. <br/>' + 
+                html.info('These settings are for uploading new owner information to the Identibase/Anibase UK microchip database. <br/>' + 
                     'Find out more at <a href="http://www.animalcare.co.uk">www.animalcare.co.uk</a>'),
                 '<p><input id="enabledabuk" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledabuk">' + _("Enabled") + '</label></p>',
                 '<table>',
