@@ -23,43 +23,25 @@ WHERE a.ID = $@an$
 
 UNION SELECT
 a.ID, a.AnimalName, a.ShelterCode, 
-'Movement - Foster' AS RecordType,
+'Movement - ' || k.MovementType AS RecordType,
 ad.MovementDate AS Date,
 o.OwnerName AS LocationName
 FROM adoption ad
 INNER JOIN animal a ON ad.AnimalID = a.ID
 INNER JOIN owner o ON o.ID = ad.OwnerID
-WHERE ad.AnimalID = $@an$ AND ad.MovementType = 2
+INNER JOIN lksmovementtype k ON k.ID = ad.MovementType
+WHERE ad.AnimalID = $@an$ AND ad.MovementType > 0
 
 UNION SELECT
 a.ID, a.AnimalName, a.ShelterCode, 
-'Movement - Adoption' AS RecordType,
-ad.MovementDate AS Date,
-o.OwnerName AS LocationName
-FROM adoption ad
-INNER JOIN animal a ON ad.AnimalID = a.ID
-INNER JOIN owner o ON o.ID = ad.OwnerID
-WHERE ad.AnimalID = $@an$ AND ad.MovementType = 1
-  
-UNION SELECT
-a.ID, a.AnimalName, a.ShelterCode, 
-'Return - Adoption' AS RecordType,
+'Return - ' || k.MovementType AS RecordType,
 ad.ReturnDate AS Date,
 o.OwnerName AS LocationName
 FROM adoption ad
 INNER JOIN animal a ON ad.AnimalID = a.ID
 INNER JOIN owner o ON o.ID = ad.OwnerID
-WHERE ad.AnimalID = $@an$ AND ad.MovementType = 1 AND ad.ReturnDate Is Not Null
-  
-UNION SELECT
-a.ID, a.AnimalName, a.ShelterCode, 
-'Return - Foster' AS RecordType,
-ad.ReturnDate AS Date,
-o.OwnerName AS LocationName
-FROM adoption ad
-INNER JOIN animal a ON ad.AnimalID = a.ID
-INNER JOIN owner o ON o.ID = ad.OwnerID
-WHERE ad.AnimalID = $@an$ AND ad.MovementType = 2 AND ad.ReturnDate Is Not Null
+INNER JOIN lksmovementtype k ON k.ID = ad.MovementType
+WHERE ad.AnimalID = $@an$ AND ad.MovementType > 0 AND ad.ReturnDate Is Not Null
 
 UNION SELECT
 a.ID, a.AnimalName, a.ShelterCode, 
