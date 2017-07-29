@@ -418,12 +418,14 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
     else:
         foundanimals = db.query(dbo, get_foundanimal_query(dbo) + " WHERE a.ID = %d" % foundanimalid)
 
-    # Get the set of shelter animals for comparison
+    # Get the set of shelter animals for comparison - anything brought in recently
+    # that's 1. still on shelter or 2. was released to wild, transferred or escaped
     shelteranimals = None
     if includeshelter:
         if animalid == 0:
             shelteranimals = db.query(dbo, animal.get_animal_query(dbo) + " WHERE " + \
-                "a.Archived = 0 AND a.DateBroughtIn > %s" % db.dd(oldestdate))
+                "(a.Archived = 0 OR ActiveMovementType IN (3,4,7)) " \
+                "AND a.DateBroughtIn > %s" % db.dd(oldestdate))
         else:
             shelteranimals = db.query(dbo, animal.get_animal_query(dbo) + " WHERE a.ID = %d" % animalid)
 
