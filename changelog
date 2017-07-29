@@ -1,6 +1,7 @@
 40
 ================
 
+29/07/17 Add animal should set first in list for invalid defaults #253
 29/07/17 Show a column for breed on the reservation/foster books #232
 29/07/17 Add PDF margin support #32
 29/07/17 Include recent TNR, transfers and escapees in lost/found match #18

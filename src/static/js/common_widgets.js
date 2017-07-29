@@ -413,6 +413,13 @@
                 $(this).val( $(this).find("option:first").val() );
             });
         }
+        else if (method == "firstIfBlank") {
+            $(this).each(function() {
+                if ($(this).val() == null) {
+                    $(this).val( $(this).find("option:first").val() );
+                }
+            });
+        }
         else if (method == "value") {
             $(this).each(function() {
                 if (newval !== undefined) {
