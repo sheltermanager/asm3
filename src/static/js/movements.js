@@ -152,6 +152,12 @@ $(function() {
                             return controller.name == "animal_movements";
                         }
                     },
+                    { field: "BREEDNAME", display: _("Breed"), 
+                        hideif: function(row) {
+                            // Only show this column for foster and reservation books
+                            return controller.name != "move_book_foster" && controller.name != "move_book_reservation";
+                        }
+                    },
                     { field: "IMAGE", display: "", 
                         formatter: function(row) {
                             return '<a href="animal?id=' + row.ANIMALID + '"><img src=' + html.thumbnail_src(row, "animalthumb") + ' style="margin-right: 8px" class="asm-thumbnail thumbnailshadow" /></a>';
