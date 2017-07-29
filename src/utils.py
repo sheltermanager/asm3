@@ -1091,6 +1091,12 @@ def html_to_pdf(htmldata, baseurl = "", account = ""):
     if ps != "":
         w, h = ps.split("x")
         papersize = "--page-width %s --page-height %s" % (w, h)
+    # Margins, top/bottom/left/right eg: <!-- pdf margins 2cm 2cm 2cm 2cm end -->
+    margins = ""
+    mg = regex_one("pdf margins (.+?) end", htmldata)
+    if mg != "":
+        tm, bm, lm, rm = mg.split(" ")
+        margins = "--margin-top %s --margin-bottom %s --margin-left %s --margin-right %s" % (tm, bm, lm, rm)
     header = "<!DOCTYPE HTML>\n<html>\n<head>"
     header += '<meta http-equiv="content-type" content="text/html; charset=utf-8">\n'
     header += "</head><body>"
@@ -1114,7 +1120,7 @@ def html_to_pdf(htmldata, baseurl = "", account = ""):
     inputfile.flush()
     inputfile.close()
     outputfile.close()
-    cmdline = HTML_TO_PDF % { "output": outputfile.name, "input": inputfile.name, "orientation": orientation, "papersize": papersize }
+    cmdline = HTML_TO_PDF % { "output": outputfile.name, "input": inputfile.name, "orientation": orientation, "papersize": papersize, "margins": margins }
     code, output = cmd(cmdline)
     if code > 0:
         al.error("code %s returned from '%s': %s" % (code, cmdline, output), "utils.html_to_pdf")

@@ -1,6 +1,7 @@
 40
 ================
 
+29/07/17 Add PDF margin support #32
 29/07/17 Include recent TNR, transfers and escapees in lost/found match #18
 28/07/17 Anibase UK have rebranded as Identibase
 27/07/17 Fix MySQL performance issue with get_person_query (Cliff Ingham) #263
