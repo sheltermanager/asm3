@@ -616,6 +616,11 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     posteddate = i18n.now(dbo.timezone)
     flags = post["flags"]
     submitteremail = ""
+    firstnamelabel = ""
+    firstname = ""
+    lastnamelabel = ""
+    lastname = ""
+    post.data["formreceived"] = "%s %s" % (i18n.python2display(dbo.locale, posteddate), i18n.format_time(posteddate))
     for k, v in post.data.iteritems():
         if k not in IGNORE_FIELDS and not k.startswith("asmSelect"):
             label = ""
@@ -628,7 +633,6 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
             if k.find("_") != -1:
                 fid = utils.cint(k[k.rfind("_")+1:])
                 fieldname = k[0:k.rfind("_")]
-                if fieldname == "emailaddress": submitteremail = v.strip()
                 if fid != 0:
                     fld = db.query(dbo, "SELECT FieldType, Label, Tooltip, DisplayIndex FROM onlineformfield WHERE ID = %d" % fid)
                     if len(fld) > 0:
@@ -636,6 +640,15 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                         displayindex = fld[0]["DISPLAYINDEX"]
                         fieldtype = fld[0]["FIELDTYPE"]
                         tooltip = fld[0]["TOOLTIP"]
+                        # Store a few known fields for access later
+                        if fieldname == "emailaddress": 
+                            submitteremail = v.strip()
+                        if fieldname == "firstname": 
+                            firstname = v.strip()
+                            firstnamelabel = label
+                        if fieldname == "lastname": 
+                            lastname = v.strip()
+                            lastnamelabel = label
                         # If it's a raw markup field, store the markup as the value
                         if fieldtype == FIELDTYPE_RAWMARKUP:
                             v = "RAW::%s" % tooltip
@@ -662,12 +675,17 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     # Sort out the preview of the first few fields
     fieldssofar = 0
     preview = []
+    # If we have first and last name, always make them the first 2 in the preview
+    if firstname != "" and lastname != "":
+        preview.append("%s: %s" % (firstnamelabel, firstname))
+        preview.append("%s: %s" % (lastnamelabel, lastname))
+        fieldssofar = 2
     for fld in get_onlineformincoming_detail(dbo, collationid):
         if fieldssofar < 3:
             # Don't include raw markup or signature fields in the preview
             if fld["VALUE"].startswith("RAW::") or fld["VALUE"].startswith("data:"): continue
             fieldssofar += 1
-            preview.append( fld["LABEL"] + ": " + fld["VALUE"] )
+            preview.append( "%s: %s" % (fld["LABEL"], fld["VALUE"] ))
     db.execute(dbo, "UPDATE onlineformincoming SET Preview = %s WHERE CollationID = %s" % ( db.ds(", ".join(preview)), db.di(collationid) ))
     # Do we have a valid emailaddress for the submitter and EmailSubmitter is set? 
     # If so, send them a copy of their submission

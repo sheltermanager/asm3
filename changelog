@@ -1,6 +1,8 @@
 40
 ================
 
+30/07/17 Always include an extra date/time field in all online form posts #265
+30/07/17 Always show first and lastname in online preview if available #238
 30/07/17 Retain EXIF data when using HTML5 image scaling #6
 29/07/17 Add animal should set first in list for invalid defaults #253
 29/07/17 Show a column for breed on the reservation/foster books #232
