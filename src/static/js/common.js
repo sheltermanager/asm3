@@ -1,5 +1,5 @@
 /*jslint browser: true, forin: true, eqeq: true, plusplus: true, white: true, sloppy: true, vars: true, nomen: true */
-/*global $, console, jQuery, Modernizr, Mousetrap, Path */
+/*global $, console, jQuery, ExifRestorer, Modernizr, Mousetrap, Path */
 /*global alert, asm, atob, btoa, header, _, escape, unescape */
 /*global consts: true, common: true, config: true, controller: true, dlgfx: true, format: true, html: true, log: true, validate: true */
 
@@ -1968,8 +1968,16 @@
          * of steps to avoid aliasing.
          */
         scale_image: function(img, w, h) {
-            if (img.height > h * 2 || img.width > w * 2) { return html.scale_image_2_step(img, w, h); }
-            return html.scale_image_1_step(img, w, h);
+            var scaled;
+            if (img.height > h * 2 || img.width > w * 2) { 
+                scaled = html.scale_image_2_step(img, w, h); 
+            }
+            else {
+                scaled = html.scale_image_1_step(img, w, h);
+            }
+            // Restore any exif info that was on the original image
+            // so we don't lose orientation
+            return ExifRestorer.restore(img.src, scaled);
         },
 
         /**
