@@ -1092,7 +1092,7 @@ def html_to_pdf(htmldata, baseurl = "", account = ""):
         w, h = ps.split("x")
         papersize = "--page-width %s --page-height %s" % (w, h)
     # Margins, top/bottom/left/right eg: <!-- pdf margins 2cm 2cm 2cm 2cm end -->
-    margins = ""
+    margins = "--margin-top 1cm"
     mg = regex_one("pdf margins (.+?) end", htmldata)
     if mg != "":
         tm, bm, lm, rm = mg.split(" ")
