@@ -620,6 +620,8 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     firstname = ""
     lastnamelabel = ""
     lastname = ""
+    animalnamelabel = ""
+    animalname = ""
     post.data["formreceived"] = "%s %s" % (i18n.python2display(dbo.locale, posteddate), i18n.format_time(posteddate))
     for k, v in post.data.iteritems():
         if k not in IGNORE_FIELDS and not k.startswith("asmSelect"):
@@ -649,6 +651,9 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                         if fieldname == "lastname": 
                             lastname = v.strip()
                             lastnamelabel = label
+                        if fieldname == "animalname" or fieldname == "reserveanimalname":
+                            animalname = v.strip()
+                            animalnamelabel = label
                         # If it's a raw markup field, store the markup as the value
                         if fieldtype == FIELDTYPE_RAWMARKUP:
                             v = "RAW::%s" % tooltip
@@ -675,11 +680,15 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     # Sort out the preview of the first few fields
     fieldssofar = 0
     preview = []
-    # If we have first and last name, always make them the first 2 in the preview
+    # If we have first and last name, include them in the preview
     if firstname != "" and lastname != "":
         preview.append("%s: %s" % (firstnamelabel, firstname))
         preview.append("%s: %s" % (lastnamelabel, lastname))
-        fieldssofar = 2
+        fieldssofar += 2
+    # If we have an animal name, include that too
+    if animalname != "":
+        preview.append("%s: %s" % (animalnamelabel, animalname))
+        fieldssofar += 1
     for fld in get_onlineformincoming_detail(dbo, collationid):
         if fieldssofar < 3:
             # Don't include raw markup or signature fields in the preview
