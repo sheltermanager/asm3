@@ -424,7 +424,7 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
     if includeshelter:
         if animalid == 0:
             shelteranimals = db.query(dbo, animal.get_animal_query(dbo) + " WHERE " + \
-                "(a.Archived = 0 OR ActiveMovementType IN (3,4,7)) " \
+                "(a.Archived = 0 OR a.ActiveMovementType IN (3,4,7)) " \
                 "AND a.DateBroughtIn > %s" % db.dd(oldestdate))
         else:
             shelteranimals = db.query(dbo, animal.get_animal_query(dbo) + " WHERE a.ID = %d" % animalid)
