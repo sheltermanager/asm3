@@ -14,9 +14,9 @@ Will also look in PATH/images/ANIMALKEY.[jpg|JPG] for animal photos if available
 6th Oct, 2014 - 19th April, 2017
 """
 
-PATH = "data/shelterpro_dd1372"
+PATH = "data/shelterpro_zf1009"
 
-START_ID = 2500
+START_ID = 100
 
 INCIDENT_IMPORT = True
 LICENCE_IMPORT = True
