@@ -785,6 +785,8 @@ def insert_transport_from_form(dbo, username, post):
     l = dbo.locale
     if post.integer("animal") == 0:
         raise utils.ASMValidationError(i18n._("Transport requires an animal", l))
+    if None is post.date("pickupdate") or None is post.date("dropoffdate"):
+        raise utils.ASMValidationError(i18n._("Transports must have valid pickup and dropoff dates and times.", l))
 
     transportid = db.get_id(dbo, "animaltransport")
     sql = db.make_insert_user_sql(dbo, "animaltransport", username, ( 
@@ -818,6 +820,11 @@ def update_transport_from_form(dbo, username, post):
     """
     Updates a movement record from posted form data
     """
+    l = dbo.locale
+    if post.integer("animal") == 0:
+        raise utils.ASMValidationError(i18n._("Transport requires an animal", l))
+    if None is post.date("pickupdate") or None is post.date("dropoffdate"):
+        raise utils.ASMValidationError(i18n._("Transports must have valid pickup and dropoff dates and times.", l))
     transportid = post.integer("transportid")
     sql = db.make_update_user_sql(dbo, "animaltransport", username, "ID=%d" % transportid, ( 
         ( "AnimalID", post.db_integer("animal")),

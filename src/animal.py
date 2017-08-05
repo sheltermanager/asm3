@@ -1325,7 +1325,7 @@ def get_animal_namecode(dbo, animalid):
     string if the id is not valid.
     """
     r = dbo.query("SELECT AnimalName, ShelterCode, ShortCode " \
-        "FROM animal WHERE ID = ?", [animalid])
+        "FROM animal WHERE ID = ?", [ utils.cint(animalid) ])
     if len(r) == 0:
         return ""
     if configuration.use_short_shelter_codes(dbo):

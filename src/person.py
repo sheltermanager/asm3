@@ -44,7 +44,7 @@ def get_person_query(dbo):
         "CASE WHEN EXISTS(SELECT ac.ID FROM animalcontrol ac WHERE ac.OwnerID = o.ID OR ac.Owner2ID = o.ID OR ac.Owner3ID = o.ID) THEN 1 ELSE 0 END AS Incident " \
         "FROM owner o " \
         "LEFT OUTER JOIN owner ho ON ho.ID = o.HomeCheckedBy " \
-        "LEFT OUTER JOIN media web ON web.LinkID = o.ID AND web.LinkTypeID = 3 AND web.WebsitePhoto = 1"
+        "LEFT OUTER JOIN media web ON web.LinkID = o.ID AND web.LinkTypeID = 3 AND web.WebsitePhoto = 1 "
 
 def get_rota_query(dbo):
     """
@@ -92,7 +92,7 @@ def get_person_name(dbo, personid):
     """
     Returns the full person name for an id
     """
-    return db.query_string(dbo, "SELECT OwnerName FROM owner WHERE ID = %d" % int(personid))
+    return dbo.query_string("SELECT OwnerName FROM owner WHERE ID = ?", [ utils.cint(personid) ])
 
 def get_person_name_code(dbo, personid):
     """

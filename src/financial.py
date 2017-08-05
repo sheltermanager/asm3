@@ -1178,8 +1178,11 @@ def insert_licence_from_form(dbo, username, post):
     """
     Creates a licence record from posted form data 
     """
+    l = dbo.locale
     if configuration.unique_licence_numbers(dbo) and 0 != db.query_int(dbo, "SELECT COUNT(*) FROM ownerlicence WHERE LicenceNumber = %s" % post.db_string("number")):
-        raise utils.ASMValidationError(i18n._("License number '{0}' has already been issued.").format(post["number"]))
+        raise utils.ASMValidationError(i18n._("License number '{0}' has already been issued.", l).format(post["number"]))
+    if post.date("issuedate") is None or post.date("expirydate") is None:
+        raise utils.ASMValidationError(i18n._("Issue date and expiry date must be valid dates.", l))
     licenceid = db.get_id(dbo, "ownerlicence")
     sql = db.make_insert_user_sql(dbo, "ownerlicence", username, ( 
         ( "ID", db.di(licenceid)),
@@ -1200,9 +1203,12 @@ def update_licence_from_form(dbo, username, post):
     """
     Updates a licence record from posted form data
     """
+    l = dbo.locale
     licenceid = post.integer("licenceid")
     if configuration.unique_licence_numbers(dbo) and 0 != db.query_int(dbo, "SELECT COUNT(*) FROM ownerlicence WHERE LicenceNumber = %s AND ID <> %d" % (post.db_string("number"), licenceid)):
-        raise utils.ASMValidationError(i18n._("License number '{0}' has already been issued.").format(post["number"]))
+        raise utils.ASMValidationError(i18n._("License number '{0}' has already been issued.", l).format(post["number"]))
+    if post.date("issuedate") is None or post.date("expirydate") is None:
+        raise utils.ASMValidationError(i18n._("Issue date and expiry date must be valid dates.", l))
     sql = db.make_update_user_sql(dbo, "ownerlicence", username, "ID=%d" % licenceid, ( 
         ( "OwnerID", post.db_integer("person")),
         ( "AnimalID", post.db_integer("animal")),

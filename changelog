@@ -1,6 +1,7 @@
 40
 ================
 
+05/08/17 Handling for most common backend errors we see
 30/07/17 Always include animalname/reserveanimalname in online preview too #238
 30/07/17 Always include an extra date/time field in all online form posts #265
 30/07/17 Always show first and lastname in online preview if available #238

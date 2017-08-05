@@ -3980,6 +3980,7 @@ class person_embed(ASMEndpoint):
     check_logged_in = False
 
     def content(self, o):
+        if not session.dbo: raise utils.ASMPermissionError("No session")
         dbo = session.dbo
         self.header("Content-Type", "application/json")
         self.header("Cache-Control", "max-age=180") # This data can be cached for a few minutes - good for multi-widgets on one page
