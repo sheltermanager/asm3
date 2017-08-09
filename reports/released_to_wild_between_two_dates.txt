@@ -24,7 +24,7 @@ FROM animal
 INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 7 AND
 adoption.MovementDate >= '$@from$' AND adoption.MovementDate <= '$@to$' AND NonShelterAnimal = 0
-ORDER BY thedate
+ORDER BY MovementDate
 ###
 $$HEADER
 <table border=1><tr>
