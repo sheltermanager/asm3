@@ -2597,7 +2597,7 @@ def clone_animal(dbo, username, animalid):
         # Now clone the dbfs item pointed to by this media item if it's a file
         if me["MEDIATYPE"] == media.MEDIATYPE_FILE:
             filedata = dbfs.get_string(dbo, me["MEDIANAME"])
-            dbfsid = dbfs.put_string(dbo, medianame, "/animal/%d" % animalid, filedata)
+            dbfsid = dbfs.put_string(dbo, medianame, "/animal/%d" % nid, filedata)
             dbo.execute("UPDATE media SET DBFSID = ?, MediaSize = ? WHERE ID = ?", ( dbfsid, len(filedata), mediaid ))
     # Movements
     for mv in db.query(dbo, "SELECT * FROM adoption WHERE AnimalID = %d" % animalid):
