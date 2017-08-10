@@ -1372,8 +1372,10 @@ $(function() {
             $("#button-clone").button().click(function() {
                 $("#button-clone").button("disable");
                 var formdata = "mode=clone&animalid=" + $("#animalid").val();
+                header.show_loading(_("Cloning..."));
                 common.ajax_post("animal", formdata)
                     .then(function(result) { 
+                        header.hide_loading();
                         common.route("animal?id=" + result + "&cloned=true"); 
                     });
             });

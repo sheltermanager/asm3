@@ -2409,6 +2409,10 @@ msgstr ""
 msgid "Clone the rota this week to another week"
 msgstr ""
 
+#: animal.js
+msgid "Cloning..."
+msgstr ""
+
 #: main.js common_widgets.js onlineform_incoming.js animal_new.js
 msgid "Close"
 msgstr ""
