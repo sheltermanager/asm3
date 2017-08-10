@@ -899,6 +899,14 @@ FollowupDate
     The date the incident is due for followup
 FollowupTime
     The time the incident is due for followup
+FollowupDate2
+    The date the incident is due for followup
+FollowupTime2
+    The time the incident is due for followup
+FollowupDate3
+    The date the incident is due for followup
+FollowupTime3
+    The time the incident is due for followup
 CompletedDate
     The date the incident was completed
 CompletedTypeName
