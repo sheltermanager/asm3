@@ -1,6 +1,7 @@
 40
 ================
 
+10/08/17 Fix media cloning bug #243
 05/08/17 Handling for most common backend errors we see
 30/07/17 Always include animalname/reserveanimalname in online preview too #238
 30/07/17 Always include an extra date/time field in all online form posts #265
