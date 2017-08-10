@@ -1476,6 +1476,12 @@ msgid ""
 "is adopted"
 msgstr ""
 
+#: options.js
+msgid ""
+"Automatically return any outstanding foster movements on an animal when it "
+"is transferred"
+msgstr ""
+
 #: header_edit_header.js common.js
 msgid "Available for adoption"
 msgstr ""
@@ -1770,9 +1776,9 @@ msgid "Boykin Spaniel"
 msgstr ""
 
 #: lostfound_find_results.js lostfound_new.js onlineform.js
-#: common_animalchooser.js person.js animal_find_results.js lostfound_find.js
-#: animal.js lostfound.js animal_find.js animal_new.js mobile.py html.py
-#: person.py lookups.py
+#: common_animalchooser.js movements.js person.js animal_find_results.js
+#: lostfound_find.js animal.js lostfound.js animal_find.js animal_new.js
+#: mobile.py html.py person.py lookups.py
 msgid "Breed"
 msgstr ""
 
@@ -5894,6 +5900,10 @@ msgstr ""
 
 #: movements.js move_adopt.js
 msgid "Issue a new insurance number for this animal/adoption"
+msgstr ""
+
+#: financial.py
+msgid "Issue date and expiry date must be valid dates."
 msgstr ""
 
 #: person_vouchers.js licence_renewal.js licence.js
@@ -11412,6 +11422,10 @@ msgstr ""
 
 #: movement.py
 msgid "Transport requires an animal"
+msgstr ""
+
+#: movement.py
+msgid "Transports must have valid pickup and dropoff dates and times."
 msgstr ""
 
 #: header_edit_header.js roles.js

@@ -285,6 +285,13 @@ def validate_movement_form_data(dbo, post):
             "AND AnimalID = %d AND ID <> %d" % ( db.dd(movementdate), animalid, int(movementid) )
         changed = db.execute(dbo, sql)
         al.debug("movement is an adoption, returning outstanding fosters (%d)." % changed, "movement.validate_movement_form_data", dbo)
+    # If the option to return fosters on transfer is set, return any outstanding fosters for the animal
+    if movementtype == TRANSFER and configuration.return_fosters_on_transfer(dbo):
+        sql = "UPDATE adoption SET ReturnDate = %s " \
+            "WHERE ReturnDate Is Null AND MovementType = 2 " \
+            "AND AnimalID = %d AND ID <> %d" % ( db.dd(movementdate), animalid, int(movementid) )
+        changed = db.execute(dbo, sql)
+        al.debug("movement is a transfer, returning outstanding fosters (%d)." % changed, "movement.validate_movement_form_data", dbo)
     # Can't have multiple open movements
     if movementdate is not None and returndate is None:
         existingopen = db.query_int(dbo, "SELECT COUNT(*) FROM adoption WHERE MovementDate Is Not Null AND " \

@@ -247,6 +247,7 @@ DEFAULTS = {
     "RecordSearchLimit": "1000",
     "RetailerOnShelter": "Yes",
     "ReturnFostersOnAdoption": "Yes",
+    "ReturnFostersOnTransfer": "Yes",
     "ScalePDFs": "Yes", 
     "SearchColumns": "AnimalName,Image,ShelterCode,ShelterLocation,SpeciesID,BreedName," \
         "Sex, AnimalAge, Size, BaseColourID, Markings, IdentichipNumber, DateBroughtIn",
@@ -946,6 +947,9 @@ def record_search_limit(dbo):
 
 def return_fosters_on_adoption(dbo):
     return cboolean(dbo, "ReturnFostersOnAdoption", DEFAULTS["ReturnFostersOnAdoption"] == "Yes")
+
+def return_fosters_on_transfer(dbo):
+    return cboolean(dbo, "ReturnFostersOnTransfer", DEFAULTS["ReturnFostersOnTransfer"] == "Yes")
 
 def smarttag_accountid(dbo):
     return cstring(dbo, "SmartTagFTPUser")
