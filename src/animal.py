@@ -2578,7 +2578,7 @@ def clone_animal(dbo, username, animalid):
             ( "DBFSID", db.di(0) ),
             ( "MediaSize", db.di(0) ),
             ( "MediaName", db.ds(medianame) ),
-            ( "MediaMimeType", db.ds(mime_type(medianame))),
+            ( "MediaMimeType", db.ds(media.mime_type(medianame))),
             ( "MediaType", db.di(me["MEDIATYPE"]) ),
             ( "MediaNotes", db.ds(me["MEDIANOTES"]) ),
             ( "WebsitePhoto", db.di(me["WEBSITEPHOTO"]) ),
