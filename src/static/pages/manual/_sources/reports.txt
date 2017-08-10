@@ -215,6 +215,23 @@ times as we like::
     SELECT AnimalName, DateBroughtIn FROM animal 
     WHERE SpeciesID=$@species$ AND DateBroughtIn >= '$@broughtinafter$'
 
+CONST
+^^^^^
+
+CONST allows you to declare a constant value for later use in your query::
+
+    $CONST name=value$
+
+A constant must have a name and it can be accessed with $name$ (it does not
+require the @ prefix like variables).
+
+This example shows a list of all adopted animals and assigns the adoption
+movement type 1 to a constant::
+
+    $CONST MOVEADOPT=1$
+
+    SELECT AnimalName FROM animal WHERE ActiveMovementType = $MOVEADOPT$
+
 Report Grouping and Calculation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

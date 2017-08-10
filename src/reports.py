@@ -316,6 +316,10 @@ def check_sql(dbo, username, sql):
     COMMON_DATE_TOKENS = ( "$CURRENT_DATE", "$@from", "$@to", "$@thedate" )
     # Clean up and substitute some tags
     sql = sql.replace("$USER$", username)
+    # Subtitute CONST tokens
+    for name, value in utils.regex_multi(r"\$CONST (.+?)\=(.+?)\$", sql):
+        sql = sql.replace("$%s$" % name, value) # replace all tokens with the constant value
+        sql = sql.replace("$CONST %s=%s$" % (name, value), "") # remove the constant declaration
     i = sql.find("$")
     while (i != -1):
         end = sql.find("$", i+1)
@@ -1087,6 +1091,10 @@ class Report:
         if s.find("$SITE$") != -1:
             sf = db.query_int(self.dbo, "SELECT SiteID FROM users WHERE UserName = %s" % db.ds(self.user))
             s = s.replace("$SITE$", str(sf))
+        # Subtitute CONST tokens
+        for name, value in utils.regex_multi(r"\$CONST (.+?)\=(.+?)\$", s):
+            s = s.replace("$%s$" % name, value) # replace all tokens with the constant value
+            s = s.replace("$CONST %s=%s$" % (name, value), "") # remove the constant declaration
         self.sql = s
         # If we don't have any parameters, no point trying to deal with these
         if params is None: return

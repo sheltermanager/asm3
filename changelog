@@ -1,6 +1,7 @@
 40
 ================
 
+10/08/17 Add $CONST X=Y$ for constant values in report SQL #256
 10/08/17 Wordkeys for FollowupDate2/FollowupTime2 and 3 #204
 10/08/17 Show Cloning... dialog during clone
 10/08/17 Auto return fosters on transfer as well as adoption #255
