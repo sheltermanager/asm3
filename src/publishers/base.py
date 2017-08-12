@@ -38,9 +38,11 @@ def get_animal_data(dbo, pc = None, animalid = 0, include_additional_fields = Fa
         pc = PublishCriteria(configuration.publisher_presets(dbo))
     sql = get_animal_data_query(dbo, pc, animalid)
     rows = dbo.query(sql, limit=pc.limit, distincton="ID")
+    al.debug("get_animal_data_query returned %d rows" % len(rows), "publishers.base.get_animal_data", dbo)
     # If the sheltercode format has a slash in it, convert it to prevent
     # creating images with broken paths.
     if len(rows) > 0 and rows[0]["SHELTERCODE"].find("/") != -1:
+        al.debug("discovered forward slashes in code, repairing", "publishers.base.get_animal_data", dbo)
         for r in rows:
             r["SHORTCODE"] = r["SHORTCODE"].replace("/", "-").replace(" ", "")
             r["SHELTERCODE"] = r["SHELTERCODE"].replace("/", "-").replace(" ", "")
@@ -52,7 +54,9 @@ def get_animal_data(dbo, pc = None, animalid = 0, include_additional_fields = Fa
             r["WEBSITEMEDIANOTES"] = r["ANIMALCOMMENTS"]
     # If we aren't including animals with blank descriptions, remove them now
     if not pc.includeWithoutDescription:
+        oldcount = len(rows)
         rows = [r for r in rows if utils.nulltostr(r["WEBSITEMEDIANOTES"]).strip() != ""]
+        al.debug("removed %d rows without descriptions" % oldcount - len(rows), "publishers.base.get_animal_data", dbo)
     # Embellish additional fields if requested
     if include_additional_fields:
         for r in rows:
@@ -80,6 +84,7 @@ def get_animal_data(dbo, pc = None, animalid = 0, include_additional_fields = Fa
             if r["ID"] == aid:
                 a["ANIMALNAME"] = "%s, %s" % (a["ANIMALNAME"], r["ANIMALNAME"])
                 rows.remove(r)
+                al.debug("merged animal %d into %d" % (aid, a["ID"]), "publishers.base.get_animal_data", dbo)
                 break
     if pc.bondedAsSingle:
         for r in rows:
