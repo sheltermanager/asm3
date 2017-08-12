@@ -37,6 +37,7 @@ def get_animal_data(dbo, pc = None, animalid = 0, include_additional_fields = Fa
     if pc is None:
         pc = PublishCriteria(configuration.publisher_presets(dbo))
     sql = get_animal_data_query(dbo, pc, animalid)
+    print sql
     rows = dbo.query(sql, limit=pc.limit, distincton="ID")
     al.debug("get_animal_data_query returned %d rows" % len(rows), "publishers.base.get_animal_data", dbo)
     # If the sheltercode format has a slash in it, convert it to prevent
@@ -56,7 +57,7 @@ def get_animal_data(dbo, pc = None, animalid = 0, include_additional_fields = Fa
     if not pc.includeWithoutDescription:
         oldcount = len(rows)
         rows = [r for r in rows if utils.nulltostr(r["WEBSITEMEDIANOTES"]).strip() != ""]
-        al.debug("removed %d rows without descriptions" % oldcount - len(rows), "publishers.base.get_animal_data", dbo)
+        al.debug("removed %d rows without descriptions" % (oldcount - len(rows)), "publishers.base.get_animal_data", dbo)
     # Embellish additional fields if requested
     if include_additional_fields:
         for r in rows:
