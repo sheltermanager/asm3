@@ -200,7 +200,7 @@ CASE WHEN DeceasedDate Is Not Null AND a.PutToSleep = 0 AND a.IsDOA = 0 THEN 1 E
 CASE WHEN ad.MovementType NOT IN (5,1,3,7) AND DeceasedDate Is Not Null AND a.IsDOA = 1 THEN 1 ELSE 0 END AS Other
 FROM animal a
 LEFT OUTER JOIN adoption ad ON ad.AnimalID = a.ID
-WHERE (MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$') OR (DeceasedDate >= '$PARENTARG1$' AND DeceasedDate <= '$PARENTARG2$' AND DiedOffShelter = 0)
+WHERE ((MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$') OR (DeceasedDate >= '$PARENTARG1$' AND DeceasedDate <= '$PARENTARG2$' AND DiedOffShelter = 0))
 AND NonShelterAnimal = 0
 AND SpeciesID IN (1, 2)
 ORDER BY AgeGroup
