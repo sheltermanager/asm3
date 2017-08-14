@@ -26,18 +26,19 @@ def quietcallback(x):
     """ ftplib callback that does nothing instead of dumping to stdout """
     pass
 
-def get_animal_data(dbo, pc = None, animalid = 0, include_additional_fields = False, strip_personal_data = False):
+def get_animal_data(dbo, pc = None, animalid = 0, include_additional_fields = False, strip_personal_data = False, limit = 0):
     """
     Returns a resultset containing the animal info for the criteria given.
     pc: The publish criteria (if None, default is used)
     animalid: If non-zero only returns the animal given (if it is adoptable)
     include_additional_fields: Load additional fields for each result
     strip_personal_data: Remove any personal data such as surrenderer, brought in by, etc.
+    limit: Only return limit rows.
     """
     if pc is None:
         pc = PublishCriteria(configuration.publisher_presets(dbo))
     sql = get_animal_data_query(dbo, pc, animalid)
-    rows = dbo.query(sql, limit=pc.limit, distincton="ID")
+    rows = dbo.query(sql, distincton="ID")
     al.debug("get_animal_data_query returned %d rows" % len(rows), "publishers.base.get_animal_data", dbo)
     # If the sheltercode format has a slash in it, convert it to prevent
     # creating images with broken paths.
@@ -92,6 +93,11 @@ def get_animal_data(dbo, pc = None, animalid = 0, include_additional_fields = Fa
                 merge_animal(r, r["BONDEDANIMALID"])
             if r["BONDEDANIMAL2ID"] is not None and r["BONDEDANIMAL2ID"] != 0:
                 merge_animal(r, r["BONDEDANIMAL2ID"])
+    # If a limit was set, throw away extra rows
+    # (we do it here instead of a LIMIT clause as there's extra logic that throws
+    #  away rows above).
+    if limit > 0 and len(rows) > limit:
+        rows = rows[0:limit-1]
     return rows
 
 def get_animal_data_query(dbo, pc, animalid = 0):
@@ -312,7 +318,6 @@ class PublishCriteria(object):
     outputDeceased = False # True if html publisher should output a deceased.html page
     outputForms = False # True if html publisher should output a forms.html page
     outputRSS = False # True if html publisher should output an rss.xml page
-    limit = 0
     style = "."
     extension = "html"
     scaleImages = "" # A resize spec or old values of: 1 = None, 2 = 320x200, 3=640x480, 4=800x600, 5=1024x768, 6=300x300, 7=95x95
@@ -369,7 +374,6 @@ class PublishCriteria(object):
             if s.startswith("order"): self.order = self.get_int(s)
             if s.startswith("excludeunder"): self.excludeUnderWeeks = self.get_int(s)
             if s.startswith("animalsperpage"): self.animalsPerPage = self.get_int(s)
-            if s.startswith("limit"): self.limit = self.get_int(s)
             if s.startswith("style"): self.style = self.get_str(s)
             if s.startswith("extension"): self.extension = self.get_str(s)
             if s.startswith("scaleimages"): self.scaleImages = self.get_str(s)
@@ -415,7 +419,6 @@ class PublishCriteria(object):
         s += " order=" + str(self.order)
         s += " excludeunder=" + str(self.excludeUnderWeeks)
         s += " animalsperpage=" + str(self.animalsPerPage)
-        s += " limit=" + str(self.limit)
         s += " style=" + str(self.style)
         s += " extension=" + str(self.extension)
         s += " scaleimages=" + str(self.scaleImages)

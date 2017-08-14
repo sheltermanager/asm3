@@ -854,9 +854,7 @@ class main(JSONEndpoint):
             animallinks = extanimal.get_links_longest_on_shelter(dbo, linkmax, o.locationfilter, o.siteid)
         elif linkmode == "adoptable":
             linkname = _("Up for adoption", l)
-            pc = extpublish.PublishCriteria(configuration.publisher_presets(dbo))
-            pc.limit = linkmax
-            animallinks = extpublish.get_animal_data(dbo, pc)
+            animallinks = extpublish.get_animal_data(dbo, limit=linkmax)
         # Users and roles, active users
         usersandroles = users.get_users_and_roles(dbo)
         activeusers = users.get_active_users(dbo)
