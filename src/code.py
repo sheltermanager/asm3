@@ -665,7 +665,7 @@ class media(ASMEndpoint):
             body.append("")
             if post.boolean("addtolog"):
                 extlog.add_log(dbo, o.user, self.log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), "%s :: %s" % (_("Document signing request", l), utils.html_email_to_plain("\n".join(body))))
-        utils.send_email(dbo, post["from"], emailadd, "", _("Document signing request", l), "\n".join(body), "plain")
+        utils.send_email(dbo, post["from"], emailadd, post["cc"], _("Document signing request", l), "\n".join(body), "plain")
         return emailadd
 
     def post_sign(self, o):

@@ -37,7 +37,6 @@ def get_animal_data(dbo, pc = None, animalid = 0, include_additional_fields = Fa
     if pc is None:
         pc = PublishCriteria(configuration.publisher_presets(dbo))
     sql = get_animal_data_query(dbo, pc, animalid)
-    print sql
     rows = dbo.query(sql, limit=pc.limit, distincton="ID")
     al.debug("get_animal_data_query returned %d rows" % len(rows), "publishers.base.get_animal_data", dbo)
     # If the sheltercode format has a slash in it, convert it to prevent
