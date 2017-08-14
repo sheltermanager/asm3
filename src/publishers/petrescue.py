@@ -103,11 +103,6 @@ class PetRescuePublisher(FTPPublisher):
                     self.cleanup()
                     return
 
-                # If a limit was set, stop now
-                if self.pc.limit > 0 and anCount > self.pc.limit:
-                    self.log("Hit publishing limit of %d animals. Stopping." % self.pc.limit)
-                    break
-
                 # Upload the image for this animal
                 self.uploadImage(an, an["WEBSITEMEDIANAME"], str(an["ID"]) + ".jpg")
                 # AccountID
