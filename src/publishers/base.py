@@ -97,7 +97,7 @@ def get_animal_data(dbo, pc = None, animalid = 0, include_additional_fields = Fa
     # (we do it here instead of a LIMIT clause as there's extra logic that throws
     #  away rows above).
     if limit > 0 and len(rows) > limit:
-        rows = rows[0:limit-1]
+        rows = rows[0:limit]
     return rows
 
 def get_animal_data_query(dbo, pc, animalid = 0):
