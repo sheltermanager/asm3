@@ -414,11 +414,6 @@ class HTMLPublisher(FTPPublisher):
             try:
                 anCount += 1
 
-                # If a limit was set, stop now
-                if self.pc.limit > 0 and anCount > self.pc.limit:
-                    self.log("Hit publishing limit of %d animals. Stopping." % self.pc.limit)
-                    break
-
                 self.log("Processing: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, self.totalAnimals))
                 self.updatePublisherProgress(self.getProgress(anCount, len(animals)))
 
@@ -539,11 +534,6 @@ class HTMLPublisher(FTPPublisher):
         for an in animals:
             try:
                 anCount += 1
-
-                # If a limit was set, stop now
-                if self.pc.limit > 0 and anCount > self.pc.limit:
-                    self.log("Hit publishing limit of %d animals. Stopping." % self.pc.limit)
-                    break
 
                 self.log("Processing: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, self.totalAnimals))
                 self.updatePublisherProgress(self.getProgress(anCount, len(animals)))
@@ -743,11 +733,6 @@ class HTMLPublisher(FTPPublisher):
         for an in animals:
             try:
                 anCount += 1
-
-                # If a limit was set, stop now
-                if self.pc.limit > 0 and anCount > self.pc.limit:
-                    self.log("Hit publishing limit of %d animals. Stopping." % self.pc.limit)
-                    break
 
                 self.log("Processing: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, self.totalAnimals))
                 self.updatePublisherProgress(self.getProgress(anCount, len(animals)))

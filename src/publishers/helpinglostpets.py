@@ -75,11 +75,6 @@ class HelpingLostPetsPublisher(FTPPublisher):
                     self.resetPublisherProgress()
                     return
 
-                # If a limit was set, stop now
-                if self.pc.limit > 0 and anCount > self.pc.limit:
-                    self.log("Hit publishing limit of %d animals. Stopping." % self.pc.limit)
-                    break
-
                 # OrgID
                 line.append("\"%s\"" % shelterid)
                 # PetID
