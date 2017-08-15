@@ -3,7 +3,7 @@
 import al
 import animal, animalcontrol, financial, lostfound, medical, movement, onlineform, person, waitinglist
 import configuration, db, dbfs, utils
-import os, sys
+import os, sys, base64
 from i18n import _
 
 VERSIONS = ( 
@@ -2460,18 +2460,29 @@ def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = Tr
     if deleteDBV: yield "DELETE FROM configuration WHERE ItemName LIKE 'DBV';\n"
     if wrapTransaction: yield "COMMIT;\n"
 
-def dump_dbfs_stdout(dbo):
+def dump_dbfs_base64(dbo):
     """
-    Dumps the DBFS table to stdout. For use with very large dbfs tables.
+    Generator function that dumps the DBFS table, reading every single
+    file and including it as old style base64 in the Content column.
+    This can be used to get an old style dbfs from newer storage mechanisms for export.
     """
-    print("BEGIN;")
-    print("DELETE FROM dbfs;")
-    rows = dbo.query("SELECT ID, Name, Path FROM dbfs")
+    yield "DELETE FROM dbfs;\n"
+    rows = dbo.query("SELECT ID, Name, Path FROM dbfs ORDER BY ID")
     for r in rows:
-        content = dbo.query_string("SELECT Content FROM dbfs WHERE ID=%d" % r["ID"])
-        print("INSERT INTO dbfs (ID, Name, Path, Content) VALUES (%d, '%s', '%s', '%s');" % (r["ID"], r["NAME"], r["PATH"], content))
+        content = ""
+        url = ""
+        # Only try and read the dbfs file if it has an extension and is actually a file
+        if r["NAME"].find(".") != -1:
+            try:
+                content = dbfs.get_string_id(dbo, r["ID"])
+            except:
+                # Ignore if we couldn't read, leaving content blank
+                pass
+        if content != "":
+            url = "base64:"
+            content = base64.b64encode(content)
+        yield "INSERT INTO dbfs (ID, Name, Path, URL, Content) VALUES (%d, '%s', '%s', '%s', '%s');\n" % (r["ID"], r["NAME"], r["PATH"], url, content)
         del content
-    print("COMMIT;")
 
 def dump_hsqldb(dbo, includeDBFS = True):
     """

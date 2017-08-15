@@ -201,12 +201,13 @@ def maint_db_dump(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump: %s" % em, "cron.maint_db_dump", dbo, sys.exc_info())
 
-def maint_db_dump_dbfs(dbo):
+def maint_db_dump_dbfs_base64(dbo):
     try:
-        dbupdate.dump_dbfs_stdout(dbo)
+        for x in dbupdate.dump_dbfs_base64(dbo):
+            print(utils.cunicode(x).encode("utf-8"))
     except:
         em = str(sys.exc_info()[0])
-        al.error("FAIL: uncaught error running maint_db_dump: %s" % em, "cron.maint_db_dump", dbo, sys.exc_info())
+        al.error("FAIL: uncaught error running maint_db_dump_dbfs_base64: %s" % em, "cron.maint_db_dump_dbfs_base64", dbo, sys.exc_info())
 
 def maint_db_dump_merge(dbo):
     try:
@@ -342,8 +343,8 @@ def run(dbo, mode):
         maint_db_diagnostic(dbo)
     elif mode == "maint_db_dump":
         maint_db_dump(dbo)
-    elif mode == "maint_db_dump_dbfs":
-        maint_db_dump_dbfs(dbo)
+    elif mode == "maint_db_dump_dbfs_base64":
+        maint_db_dump_dbfs_base64(dbo)
     elif mode == "maint_db_dump_merge":
         maint_db_dump_merge(dbo)
     elif mode == "maint_db_dump_smcom":
@@ -423,7 +424,7 @@ def print_usage():
     print("       maint_animal_figures_annual - calculate all annual figures for all time")
     print("       maint_db_diagnostic - run database diagnostics")
     print("       maint_db_dump - produce a dump of INSERT statements to recreate the db")
-    print("       maint_db_dump_dbfs - produce a dump of INSERT statements to recreate the dbfs")
+    print("       maint_db_dump_dbfs_base64 - dump the dbfs table and include all content as base64")
     print("       maint_db_dump_merge - produce a dump of INSERT statements, renumbering IDs to +100000")
     print("       maint_db_dump_animalcsv - produce a CSV of animal/adoption/owner data")
     print("       maint_db_dump_personcsv - produce a CSV of person data")
