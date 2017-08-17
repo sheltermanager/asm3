@@ -197,7 +197,7 @@ CASE WHEN ad.MovementType = 3 THEN 1 ELSE 0 END AS Transferred,
 CASE WHEN ad.MovementType = 7 THEN 1 ELSE 0 END AS ReturnToField,
 CASE WHEN DeceasedDate Is Not Null AND a.PutToSleep = 1 AND a.IsDOA = 0 THEN 1 ELSE 0 END AS Euthanized,
 CASE WHEN DeceasedDate Is Not Null AND a.PutToSleep = 0 AND a.IsDOA = 0 THEN 1 ELSE 0 END AS DiedInCare,
-CASE WHEN ad.MovementType NOT IN (5,1,3,7) AND DeceasedDate Is Not Null AND a.IsDOA = 1 THEN 1 ELSE 0 END AS Other
+CASE WHEN ad.MovementType IN (4,6) OR (ad.MovementType NOT IN (5,1,3,7) AND DeceasedDate Is Not Null AND a.IsDOA = 1) THEN 1 ELSE 0 END AS Other
 FROM animal a
 LEFT OUTER JOIN adoption ad ON ad.AnimalID = a.ID
 WHERE ((MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$') OR (DeceasedDate >= '$PARENTARG1$' AND DeceasedDate <= '$PARENTARG2$' AND DiedOffShelter = 0))
