@@ -314,6 +314,20 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
             al.error("Failed during autosignup: %s" % em, "VetEnvoyMicrochipPublisher.signup", dbo, sys.exc_info())
             raise utils.ASMValidationError("Failed during autosignup")
 
+class AllVetEnvoyPublisher(AbstractPublisher):
+    """ Publisher class that runs all VetEnvoy publishers in one go. This is needed because
+        all of VetEnvoy is enabled at once rather than individuals publishers """
+    homeagain = None
+    akcreunite = None
+
+    def __init__(self, dbo, publishCriteria):
+        self.homeagain = HomeAgainPublisher(dbo, publishCriteria)
+        self.akcreunite = AKCReunitePublisher(dbo, publishCriteria)
+
+    def run(self):
+        self.homeagain.run()
+        self.akcreunite.run()
+
 class HomeAgainPublisher(VetEnvoyUSMicrochipPublisher):
     def __init__(self, dbo, publishCriteria):
         AbstractPublisher.__init__(self, dbo, publishCriteria)
