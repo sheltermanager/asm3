@@ -5,6 +5,12 @@
   <object data="$$WEBMEDIAFILENAME4$$" type="image/jpg"></object>
 </div>
 
+<script type="text/javascript">
+        if ("$$WebsiteVideoURL$$" != "" && "$$WebsiteVideoURL$$" != "None") {
+            document.write("<p><a target=\"_blank\" href=\"$$WebsiteVideoURL$$\">Click here for a video of $$AnimalName$$</a></p>");
+        }
+</script>
+
 <h2>$$ANIMALNAME$$ - $$SHELTERCODE$$</h2>
 <p>$$SEX$$ $$SPECIESNAME$$ aged $$DISPLAYAGE$$. </p>
 
@@ -24,3 +30,5 @@
 </p>
 
 <p>$$ANIMALCOMMENTS$$</p>
+
+
