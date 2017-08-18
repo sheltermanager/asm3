@@ -6,7 +6,7 @@ import animal
 import async
 import collections
 import configuration
-import csv, unicodecsv
+import csv
 import datetime
 import db
 import dbupdate
@@ -196,7 +196,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
     csvdata = csvdata.replace("\r\n", "\n")
     csvdata = csvdata.replace("\r", "\n")
 
-    reader = unicodecsv.reader(StringIO(csvdata), encoding="utf-8", dialect="excel")
+    reader = utils.UnicodeCSVReader(StringIO(csvdata))
 
     # Make sure we have a valid header
     cols = None

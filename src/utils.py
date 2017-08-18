@@ -605,6 +605,27 @@ def escape_tinymce(content):
     c = c.replace("&lt;style\n", "&lt;style&gt;\n")
     return c
 
+class UnicodeCSVReader(object):
+    """
+    A CSV reader that reads UTF-8 and converts any unicode values to
+    XML entities.
+    """
+    encoding = "utf-8"
+    def __init__(self, f, dialect=extcsv.excel, encoding="utf-8", **kwds):
+        self.encoding = encoding
+        self.reader = csv.reader(f, dialect=dialect, **kwds)
+
+    def next(self):
+        """ 
+        next() -> unicode
+        This function reads and returns the next line as a Unicode string.
+        """
+        row = self.reader.next()
+        return [ cunicode(s, self.encoding).encode("ascii", "xmlcharrefreplace") for s in row ]
+
+    def __iter__(self):
+        return self
+
 class UnicodeCSVWriter(object):
     """
     A CSV writer which will write rows to CSV file "f",
