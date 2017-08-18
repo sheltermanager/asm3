@@ -1,10 +1,10 @@
-Outcomes by Species and Entry Category
+Outcomes by Breed and Entry Category
 ###
 Movements
 ###
 Any
 ###
-Outcome totals for animals entering between two dates, broken down by species and entry category
+Outcome totals for animals entering between two dates, broken down by breed and entry category
 ###
 en
 ###
@@ -31,27 +31,27 @@ LEFT OUTER JOIN owner oo ON a.OriginalOwnerID = oo.ID
 INNER JOIN entryreason e ON a.EntryReasonID = e.ID 
 WHERE a.DateBroughtIn >= '$ASK DATE Entered shelter between$' AND a.DateBroughtIn <= '$ASK DATE and$' 
 AND NonShelterAnimal = 0 AND a.Archived = 1
-ORDER BY s.SpeciesName, e.ReasonName, OutcomeName
+ORDER BY a.BreedName, e.ReasonName, OutcomeName
 ###
 $$HEADER
 HEADER$$
 
-$$GROUP_SpeciesName
+$$GROUP_BreedName
 $$HEAD
 $$FOOT
-<h2>$SpeciesName: {COUNT.SpeciesName}</h2>
+<h2>$BreedName: {COUNT.BreedName}</h2>
 GROUP$$
 
 $$GROUP_ReasonName
 $$HEAD
 $$FOOT
-<h3>$SpeciesName $ReasonName: {COUNT.ReasonName}</h3>
+<h3>$BreedName $ReasonName: {COUNT.ReasonName}</h3>
 GROUP$$
 
 $$GROUP_OutcomeName
 $$HEAD
 $$FOOT
-<p>$SpeciesName $ReasonName $OutcomeName: {COUNT.OutcomeName}</p>
+<p>$BreedName $ReasonName $OutcomeName: {COUNT.OutcomeName}</p>
 GROUP$$
 
 $$BODY
