@@ -613,7 +613,7 @@ class UnicodeCSVReader(object):
     encoding = "utf-8"
     def __init__(self, f, dialect=extcsv.excel, encoding="utf-8", **kwds):
         self.encoding = encoding
-        self.reader = csv.reader(f, dialect=dialect, **kwds)
+        self.reader = extcsv.reader(f, dialect=dialect, **kwds)
 
     def next(self):
         """ 

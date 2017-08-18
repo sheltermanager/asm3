@@ -100,7 +100,7 @@ def get_additional_fields_ids(dbo, rows, linktype = "animal"):
         "CASE WHEN af.FieldType = 9 AND a.Value <> '' AND a.Value <> '0' THEN (SELECT OwnerName FROM owner WHERE %s = a.Value) ELSE '' END AS OwnerName " \
         "FROM additional a INNER JOIN additionalfield af ON af.ID = a.AdditionalFieldID " \
         "WHERE a.LinkType IN (%s) AND a.LinkID IN (%s) " \
-        "ORDER BY af.DisplayIndex" % ( dbo.sql_cast("animal.ID", "VARCHAR"), dbo.sql_cast("owner.ID", "VARCHAR"), inclause, ",".join(links)))
+        "ORDER BY af.DisplayIndex" % ( dbo.sql_cast_char("animal.ID"), dbo.sql_cast_char("owner.ID"), inclause, ",".join(links)))
 
 def get_field_definitions(dbo, linktype = "animal"):
     """

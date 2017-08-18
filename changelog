@@ -1,7 +1,7 @@
 40
 ================
 
-18/08/17 Use unicodecsv for importing instead of plain csv
+18/08/17 Add utils.UnicodeCSVReader, import csv files as UTF-8
 17/08/17 Ability to specify asm3_adoptable_sort to adoptable_js
 15/08/17 Export->SQL Dump(media) #225
 14/08/17 Remove publisher limit, add as a param to get_animal_data #272

@@ -476,6 +476,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
             d["amount"] = str(gkc(row, "DONATIONAMOUNT"))
             d["comments"] = gks(row, "DONATIONCOMMENTS")
             d["received"] = gkd(dbo, row, "DONATIONDATE", True)
+            d["chequenumber"] = gks(row, "DONATIONCHECKNUMBER")
             d["type"] = gkl(dbo, row, "DONATIONTYPE", "donationtype", "DonationName", createmissinglookups)
             if d["type"] == "0":
                 d["type"] = str(configuration.default_donation_type(dbo))
