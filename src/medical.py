@@ -975,7 +975,7 @@ def update_asm2_tests(dbo, testid, action = "insert"):
     # tests and if the test result was the same, reset it back to unknown
     elif action == "delete":
         if t["TESTNAME"].find("FIV") != -1:
-            db.execute(dbo, "UPDATE animal SET CombiTested = 0, CombiTestDate = Null, CombiTestResult = 0 WHERE ID = %d" \
+            db.execute(dbo, "UPDATE animal SET CombiTestResult = 0 WHERE ID = %d" \
                 " AND CombiTestResult = %d" % (t["ANIMALID"], result))
         if t["TESTNAME"].find("FLV") != -1 or t["TESTNAME"].find("FeLV") != -1:
             db.execute(dbo, "UPDATE animal SET FLVResult = 0 WHERE ID = %d" \
