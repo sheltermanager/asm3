@@ -3407,9 +3407,16 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
 
 def get_number_animals_on_shelter(dbo, date, speciesid = 0, animaltypeid = 0, internallocationid = 0, ageselection = 0, startofday = False):
     """
-    Returns the number of animals on shelter at the end of a given date for a species, type,
-    location and optionally for an ageselection - 0 = allages, 1 = under six months, 2 = over six months
-    startofday: movements and intake that took place on date are not counted if true
+    Returns the number of animals on shelter. 
+    Because this is used for figures reporting only, it does not obey any of the "treat as on shelter"
+    config flags and all movements (apart from reservations) are treated as exit movements. This
+    is so that the figures report can show intakes and outcomes for foster/retail without double counting.
+
+    date: The date to calculate the inventory for
+    animaltypeid: Only for this animal type (0 for all)
+    internallocationid: Only for this location (0 for all) 
+    ageselection: 0 = allages, 1 = under six months, 2 = over six months
+    startofday: True to calculate at the start of the day (intake and outcomes on that day don't count)
     """
     sdate = db.dd(date)
     if not startofday:
@@ -3437,7 +3444,7 @@ def get_number_animals_on_shelter(dbo, date, speciesid = 0, animaltypeid = 0, in
     if ageselection == 2:
         sql += " AND DateOfBirth < %s" % sixmonthsago
     sql += " AND NOT EXISTS (SELECT adoption.ID FROM adoption " \
-        "WHERE AnimalID = animal.ID AND MovementType <> 2 AND MovementDate Is Not Null AND " \
+        "WHERE AnimalID = animal.ID AND MovementType > 0 AND MovementDate Is Not Null AND " \
         "%s AND (ReturnDate Is Null OR %s))" % (movementclause, returnclause)
     return db.query_int(dbo, sql)
 
@@ -3643,18 +3650,15 @@ def update_animal_figures(dbo, month = 0, year = 0):
             onshelter[dk] = get_number_animals_on_shelter(dbo, d, speciesid)
         add_row(1, "SP_ONSHELTER", 0, speciesid, daysinmonth, _("On Shelter", l), 0, False, onshelter)
 
-        # On Foster (if foster on shelter set)
-        if configuration.foster_on_shelter(dbo):
-            onfoster = {}
-            for i in range(1, loopdays):
-                d = datetime.datetime(year, month, i)
-                dk = "D%d" % i
-                onfoster[dk] = get_number_animals_on_foster(dbo, d, speciesid)
-            add_row(2, "SP_ONFOSTER", 0, speciesid, daysinmonth, _("On Foster (in figures)", l), 0, False, onfoster)
-            #sheltertotal = add_days((onshelter, onfoster)) double count
-            sheltertotal = onshelter
-        else:
-            sheltertotal = onshelter
+        # On Foster
+        onfoster = {}
+        for i in range(1, loopdays):
+            d = datetime.datetime(year, month, i)
+            dk = "D%d" % i
+            onfoster[dk] = get_number_animals_on_foster(dbo, d, speciesid)
+        add_row(2, "SP_ONFOSTER", 0, speciesid, daysinmonth, _("On Foster (in figures)", l), 0, False, onfoster)
+        #sheltertotal = add_days((onshelter, onfoster))
+        sheltertotal = onshelter
 
         # Litters
         litters = {}
@@ -3842,18 +3846,15 @@ def update_animal_figures(dbo, month = 0, year = 0):
             onshelter[dk] = get_number_animals_on_shelter(dbo, d, 0, typeid)
         add_row(1, "AT_ONSHELTER", typeid, 0, daysinmonth, _("On Shelter", l), 0, False, onshelter)
 
-        # On Foster (if foster on shelter set)
-        if configuration.foster_on_shelter(dbo):
-            onfoster = {}
-            for i in range(1, loopdays):
-                d = datetime.datetime(year, month, i)
-                dk = "D%d" % i
-                onfoster[dk] = get_number_animals_on_foster(dbo, d, 0, typeid)
-            add_row(2, "AT_ONFOSTER", typeid, 0, daysinmonth, _("On Foster (in figures)", l), 0, False, onfoster)
-            #sheltertotal = add_days((onshelter, onfoster)) double count
-            sheltertotal = onshelter
-        else:
-            sheltertotal = onshelter
+        # On Foster
+        onfoster = {}
+        for i in range(1, loopdays):
+            d = datetime.datetime(year, month, i)
+            dk = "D%d" % i
+            onfoster[dk] = get_number_animals_on_foster(dbo, d, 0, typeid)
+        add_row(2, "AT_ONFOSTER", typeid, 0, daysinmonth, _("On Foster (in figures)", l), 0, False, onfoster)
+        #sheltertotal = add_days((onshelter, onfoster))
+        sheltertotal = onshelter
 
         # Start of day - handled later
 
