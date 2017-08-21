@@ -610,8 +610,8 @@ class UnicodeCSVReader(object):
     A CSV reader that reads UTF-8 and converts any unicode values to
     XML entities.
     """
-    encoding = "utf-8"
-    def __init__(self, f, dialect=extcsv.excel, encoding="utf-8", **kwds):
+    encoding = "utf-8-sig"
+    def __init__(self, f, dialect=extcsv.excel, encoding="utf-8-sig", **kwds):
         self.encoding = encoding
         self.reader = extcsv.reader(f, dialect=dialect, **kwds)
 
