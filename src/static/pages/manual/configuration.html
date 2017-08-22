@@ -120,6 +120,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#user-roles">User roles</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#import-a-csv-file">Import a CSV file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#import-a-paypal-csv-file">Import a PayPal CSV file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#trigger-batch-processes">Trigger Batch Processes</a></li>
 </ul>
 </li>
@@ -380,6 +381,16 @@ the person database for anyone with the same name and address. If the person
 already exists, it will not be created again. Similarly, if ANIMALCODE has been
 specified and an animal record with that code already exists in the database,
 it will not be created again.</p>
+</div>
+<div class="section" id="import-a-paypal-csv-file">
+<h2>Import a PayPal CSV file<a class="headerlink" href="#import-a-paypal-csv-file" title="Permalink to this headline">¶</a></h2>
+<p>ASM can import data from CSV files produced by PayPal&#8217;s activity reporting.</p>
+<p>The import process allows you to choose a payment type and method for the
+imported transactions and any flags you&#8217;d like to assign to people records
+created or updated as a result of the import. The import will use the person&#8217;s
+email or name and address to try and automatically attach payments to existing
+person records where possible. If an existing record cannot be found, a new
+person will be created.</p>
 </div>
 <div class="section" id="trigger-batch-processes">
 <h2>Trigger Batch Processes<a class="headerlink" href="#trigger-batch-processes" title="Permalink to this headline">¶</a></h2>

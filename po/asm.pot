@@ -6807,7 +6807,7 @@ msgstr ""
 msgid "Messages successfully sent"
 msgstr ""
 
-#: donations.js common_widgets.js
+#: donations.js csvimport_paypal.js common_widgets.js
 msgid "Method"
 msgstr ""
 

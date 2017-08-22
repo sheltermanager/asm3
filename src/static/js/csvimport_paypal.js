@@ -14,11 +14,21 @@ $(function() {
                 '<table>',
                 '<tr>',
                 '<td>',
-                '<label for="donationtype">' + _("Type") + '</label>',
+                '<label for="type">' + _("Type") + '</label>',
                 '</td>',
                 '<td>',
-                '<select id="donationtype" name="donationtype" class="asm-selectbox">',
+                '<select id="type" name="type" class="asm-selectbox">',
                 html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
+                '</select>',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td>',
+                '<label for="payment">' + _("Method") + '</label>',
+                '</td>',
+                '<td>',
+                '<select id="payment" name="payment" class="asm-selectbox">',
+                html.list_to_options(controller.paymenttypes, "ID", "PAYMENTNAME"), 
                 '</select>',
                 '</td>',
                 '</tr>',
@@ -61,10 +71,10 @@ $(function() {
 
         name: "csvimport_paypal",
         animation: "options",
-        autofocus: "#donationtype",
+        autofocus: "#type",
         title: function() { return _("Import a PayPal CSV file"); },
         routes: {
-            "csvimport_paypal": function() { common.module_start("csvimport_paypal"); }
+            "csvimport_paypal": function() { common.module_loadandstart("csvimport_paypal", "csvimport_paypal"); }
         }
 
     };

@@ -1,6 +1,7 @@
 40
 ================
 
+22/08/17 PayPal UI complete #56
 21/08/17 First draft of PayPal CSV import backend #56
 21/08/17 Use utf-8-sig for decoding unicode CSV to remove any BOM
 20/08/17 Monthly figures double count of foster/retailer movements #234

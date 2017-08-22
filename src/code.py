@@ -1898,12 +1898,14 @@ class csvimport_paypal(JSONEndpoint):
     def controller(self, o):
         return { 
             "donationtypes": extlookups.get_donation_types(o.dbo),
+            "paymenttypes": extlookups.get_payment_types(o.dbo),
             "flags": extlookups.get_person_flags(o.dbo)
         }
 
     def post_all(self, o):
         l = o.locale
-        async.function_task(o.dbo, _("Import a PayPal CSV file", l), extcsvimport.csvimport_paypal, o.dbo, o.post.filedata(), o.post.integer("donationtype"), o.post["flags"])
+        async.function_task(o.dbo, _("Import a PayPal CSV file", l), extcsvimport.csvimport_paypal, o.dbo, \
+            o.post.filedata(), o.post.integer("type"), o.post.integer("payment"), o.post["flags"])
         self.redirect("task")
 
 class diary(ASMEndpoint):

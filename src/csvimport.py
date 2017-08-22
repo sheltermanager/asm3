@@ -500,25 +500,21 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
     h.append("</table>")
     return "".join(h)
 
-def csvimport_paypal(dbo, csvdata, donationtypeid, flags):
+def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags):
     """
     Imports a PayPal CSV file of transactions.
     """
 
-    # Srip any BOM from the file
-    if csvdata[0:3] == "\xef\xbb\xbf": csvdata = csvdata[3:]
-
-    reader = csv.DictReader(StringIO(csvdata))
+    reader = utils.UnicodeCSVDictReader(StringIO(csvdata))
     data = list(reader)
     errors = []
     rowno = 1
     async.set_progress_max(dbo, len(data))
 
-    # payment method
-    paymentmethod = dbo.query_int("SELECT ID FROM donationpayment WHERE LOWER(PaymentName) LIKE '%paypal%'")
-    if paymentmethod == 0: paymentmethod = 1
-
     for r in data:
+
+        # Skip blank rows
+        if len(r) == 0: continue
 
         if "Date" not in r or "Net" not in r or "From Email Address" not in r:
             async.set_last_error(dbo, "This CSV file does not look like a PayPal CSV")
@@ -574,7 +570,7 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, flags):
             d["comments"] = comments
             d["received"] = r["Date"]
             d["type"] = str(donationtypeid)
-            d["payment"] = str(paymentmethod)
+            d["payment"] = str(donationpaymentid)
             try:
                 financial.insert_donation_from_form(dbo, "import", utils.PostedData(d, dbo.locale))
             except Exception as e:

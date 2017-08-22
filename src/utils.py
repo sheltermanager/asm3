@@ -621,7 +621,34 @@ class UnicodeCSVReader(object):
         This function reads and returns the next line as a Unicode string.
         """
         row = self.reader.next()
-        return [ cunicode(s, self.encoding).encode("ascii", "xmlcharrefreplace") for s in row ]
+        return [ self.process(s) for s in row ]
+
+    def process(self, s):
+        """ Process an element """
+        x = cunicode(s, self.encoding) # decode to unicode with selected encoding
+        x = x.encode("ascii", "xmlcharrefreplace") # encode back to ascii, using XML entities
+        if x.startswith("\""): x = x[1:] # strip any unwanted quotes from the beginning
+        if x.endswith("\""): x = x[0:len(x)-1] # ... and end
+        return x
+
+    def __iter__(self):
+        return self
+
+class UnicodeCSVDictReader(object):
+    """
+    A CSV reader that uses UnicodeCSVReader to handle UTF-8 and returns
+    each row as a dictionary instead.
+    """
+    def __init__(self, f):
+        self.reader = UnicodeCSVReader(f)
+        self.cols = self.reader.next()
+
+    def next(self):
+        row = self.reader.next()
+        d = {}
+        for (c, r) in zip(self.cols, row):
+            d[c] = r
+        return d
 
     def __iter__(self):
         return self
