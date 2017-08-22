@@ -500,15 +500,23 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
     h.append("</table>")
     return "".join(h)
 
-def csvimport_paypal(dbo, csvdata):
+def csvimport_paypal(dbo, csvdata, donationtypeid, flags):
     """
     Imports a PayPal CSV file of transactions.
     """
+
+    # Srip any BOM from the file
+    if csvdata[0:3] == "\xef\xbb\xbf": csvdata = csvdata[3:]
+
     reader = csv.DictReader(StringIO(csvdata))
     data = list(reader)
     errors = []
     rowno = 1
     async.set_progress_max(dbo, len(data))
+
+    # payment method
+    paymentmethod = dbo.query_int("SELECT ID FROM donationpayment WHERE LOWER(PaymentName) LIKE '%paypal%'")
+    if paymentmethod == 0: paymentmethod = 1
 
     for r in data:
 
@@ -539,7 +547,6 @@ def csvimport_paypal(dbo, csvdata):
         p["postcode"] = r["Postcode"]
         p["hometelephone"] = r["Contact Phone Number"]
         p["emailaddress"] = r["From Email Address"]
-        flags = "donor"
         p["flags"] = flags
         try:
             dups = person.get_person_similar(dbo, p["emailaddress"], p["surname"], p["forenames"], p["address"])
@@ -562,12 +569,12 @@ def csvimport_paypal(dbo, csvdata):
             d["person"] = str(personid)
             d["animal"] = "0"
             d["movement"] = "0"
-            d["amount"] = utils.cfloat(r["Net"]) * 100
-            comments = "trx: %s, title: %s, id: %s, subject: %s, note: %s" % ( r["Transaction ID"], r["Item Title"], r["Item ID"], r["Subject"], r["Note"] )
+            d["amount"] = str(utils.cint(utils.cfloat(r["Net"]) * 100))
+            comments = "PayPal ID: %s \nItem: %s %s \nSubject: %s \nNote: %s" % ( r["Transaction ID"], r["Item ID"], r["Item Title"], r["Subject"], r["Note"] )
             d["comments"] = comments
             d["received"] = r["Date"]
-            d["type"] = str(configuration.default_donation_type(dbo))
-            d["payment"] = "1"
+            d["type"] = str(donationtypeid)
+            d["payment"] = str(paymentmethod)
             try:
                 financial.insert_donation_from_form(dbo, "import", utils.PostedData(d, dbo.locale))
             except Exception as e:

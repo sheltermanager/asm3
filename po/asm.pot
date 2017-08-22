@@ -4709,7 +4709,7 @@ msgid "Flag"
 msgstr ""
 
 #: options.js onlineform.js person.js person_find.js animal.js person_new.js
-#: animal_find.js common_personchooser.js shelterview.js
+#: csvimport_paypal.js animal_find.js common_personchooser.js shelterview.js
 msgid "Flags"
 msgstr ""
 
@@ -5528,12 +5528,16 @@ msgstr ""
 msgid "Image file"
 msgstr ""
 
-#: csvimport.js onlineforms.js
+#: csvimport.js csvimport_paypal.js onlineforms.js
 msgid "Import"
 msgstr ""
 
 #: csvimport.js code.py html.py
 msgid "Import a CSV file"
+msgstr ""
+
+#: csvimport_paypal.js code.py html.py
+msgid "Import a PayPal CSV file"
 msgstr ""
 
 #: onlineforms.js
@@ -7573,10 +7577,6 @@ msgstr ""
 msgid "Only allow users with one of these roles to view this incident"
 msgstr ""
 
-#: publish_options.js
-msgid "Only publish a set number of animals"
-msgstr ""
-
 #: options.js
 msgid "Only show account totals for the current period, which starts on "
 msgstr ""
@@ -7823,6 +7823,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Patterdale Terrier (Fell Terrier)"
+msgstr ""
+
+#: dbupdate.py
+msgid "PayPal"
 msgstr ""
 
 #: calendarview.js common_widgets.js
@@ -9159,11 +9163,7 @@ msgid "SQL dump (ASM2 HSQLDB Format)"
 msgstr ""
 
 #: sql.js
-msgid "SQL dump (ASM2 HSQLDB Format, without media)"
-msgstr ""
-
-#: sql.js
-msgid "SQL dump (without media)"
+msgid "SQL dump (media)"
 msgstr ""
 
 #: reports.js sql.js
@@ -9429,10 +9429,6 @@ msgstr ""
 
 #: waitinglist.js
 msgid "Set this to 0 to never automatically remove."
-msgstr ""
-
-#: publish_options.js
-msgid "Set to 0 for no limit."
 msgstr ""
 
 #: options.js
@@ -10426,6 +10422,10 @@ msgstr ""
 
 #: animalcontrol.py
 msgid "That animal is already linked to the incident"
+msgstr ""
+
+#: csvimport_paypal.js
+msgid "The CSV file should be created by PayPal's \"All Activity\" report."
 msgstr ""
 
 #: animal.js
@@ -11552,11 +11552,11 @@ msgstr ""
 #: document_repository.js movements.js incident_new.js person.js staff_rota.js
 #: additional.js donations.js traploan.js animal_find_results.js log.js
 #: animal_costs.js animal.js mailmerge.js reports.js person_links.js log_new.js
-#: users.js incident.js media.js diarytasks.js person_vouchers.js
-#: animal_find.js accounts.js licence_renewal.js test.js common_widgets.js
-#: citations.js licence.js transport.js animal_new.js incident_find_results.js
-#: animal_bulk.js vaccination.js shelterview.js mobile.py reports.py html.py
-#: lookups.py
+#: csvimport_paypal.js users.js incident.js media.js diarytasks.js
+#: person_vouchers.js animal_find.js accounts.js licence_renewal.js test.js
+#: common_widgets.js citations.js licence.js transport.js animal_new.js
+#: incident_find_results.js animal_bulk.js vaccination.js shelterview.js
+#: mobile.py reports.py html.py lookups.py
 msgid "Type"
 msgstr ""
 

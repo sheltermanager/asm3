@@ -1890,6 +1890,22 @@ class csvimport(JSONEndpoint):
             o.post.boolean("createmissinglookups") == 1, o.post.boolean("cleartables") == 1, o.post.boolean("checkduplicates") == 1)
         self.redirect("task")
 
+class csvimport_paypal(JSONEndpoint):
+    url = "csvimport_paypal"
+    get_permissions = users.USE_SQL_INTERFACE
+    post_permissions = users.USE_SQL_INTERFACE
+
+    def controller(self, o):
+        return { 
+            "donationtypes": extlookups.get_donation_types(o.dbo),
+            "flags": extlookups.get_person_flags(o.dbo)
+        }
+
+    def post_all(self, o):
+        l = o.locale
+        async.function_task(o.dbo, _("Import a PayPal CSV file", l), extcsvimport.csvimport_paypal, o.dbo, o.post.filedata(), o.post.integer("donationtype"), o.post["flags"])
+        self.redirect("task")
+
 class diary(ASMEndpoint):
     url = "diary"
 

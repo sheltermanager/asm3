@@ -252,6 +252,17 @@ already exists, it will not be created again. Similarly, if ANIMALCODE has been
 specified and an animal record with that code already exists in the database,
 it will not be created again.
 
+Import a PayPal CSV file
+------------------------
+
+ASM can import data from CSV files produced by PayPal's activity reporting.
+
+The import process allows you to choose a payment type for the imported
+transactions and any flags you'd like to assign to people records created or
+updated as a result of the import. The import will use the person's email or
+name and address to try and automatically attach payments to existing person
+records.
+
 Trigger Batch Processes
 -----------------------
 
