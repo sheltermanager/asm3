@@ -504,6 +504,12 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags):
     """
     Imports a PayPal CSV file of transactions.
     """
+    def v(r, n, n2 = ""):
+        """ Read values n or n2 from a dictionary r depending on which is present, 
+            if neither is present empty string is returned """
+        if n in r: return r[n]
+        if n2 != "" and n2 in r: return r[n2]
+        return ""
 
     reader = utils.UnicodeCSVDictReader(StringIO(csvdata))
     data = list(reader)
@@ -516,9 +522,11 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags):
         # Skip blank rows
         if len(r) == 0: continue
 
-        if "Date" not in r or "Net" not in r or "From Email Address" not in r:
-            async.set_last_error(dbo, "This CSV file does not look like a PayPal CSV")
-            return
+        REQUIRED_FIELDS = [ "Date", "Net", "From Email Address", "Status", "Type" ]
+        for rf in REQUIRED_FIELDS:
+            if rf not in r:
+                async.set_last_error(dbo, "This CSV file does not look like a PayPal CSV (missing %s)" % rf)
+                return
 
         if r["Status"] != "Completed" and r["Type"] != "Website Payment":
             continue
@@ -526,23 +534,29 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags):
         al.debug("import paypal csv: row %d of %d" % (rowno, len(data)), "csvimport.csvimport_paypal", dbo)
         async.increment_progress_value(dbo)
 
+        # Parse name (use all up to last space for first names if only Name exists)
+        name = v(r, "Name")
+        firstname = v(r, "First Name")
+        lastname = v(r, "Last Name")
+        if name != "" and firstname == "" and lastname == "":
+            if name.find(" ") != -1:
+                firstname =name[0:name.rfind(" ")]
+                lastname =name[name.rfind(" ")+1:]
+            else:
+                lastname = name
+
         # Person data
         personid = 0
         p = {}
         p["ownertype"] = "1"
-        # all upto the last space is first names, everything after is last name
-        pname = r["Name"]
-        if pname.find(" ") != -1:
-            p["forenames"] = pname[0:pname.rfind(" ")]
-            p["surname"] = pname[pname.rfind(" ")+1:]
-        else:
-            p["surname"] = pname
-        p["address"] = r["Address Line 1"]
-        p["town"] = r["Town/City"]
-        p["county"] = r["County"]
-        p["postcode"] = r["Postcode"]
-        p["hometelephone"] = r["Contact Phone Number"]
-        p["emailaddress"] = r["From Email Address"]
+        p["forenames"] = firstname
+        p["surname"] = lastname
+        p["address"] = v(r, "Address Line 1", "Street Address 1")
+        p["town"] = v(r, "Town/City", "City")
+        p["county"] = v(r, "County", "State")
+        p["postcode"] = v(r, "Postcode", "Zip Code")
+        p["hometelephone"] = v(r, "Contact Phone Number", "Phone Number")
+        p["emailaddress"] = v(r, "From Email Address")
         p["flags"] = flags
         try:
             dups = person.get_person_similar(dbo, p["emailaddress"], p["surname"], p["forenames"], p["address"])
@@ -560,15 +574,17 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags):
             errors.append( (rowno, str(r), "person: " + errmsg) )
 
         # Donation info
-        if personid != 0 and utils.cfloat(r["Net"]) > 0:
+        net = utils.cint(utils.cfloat(v(r, "Net")) * 100)
+        if personid != 0 and net > 0:
             d = {}
             d["person"] = str(personid)
             d["animal"] = "0"
             d["movement"] = "0"
-            d["amount"] = str(utils.cint(utils.cfloat(r["Net"]) * 100))
-            comments = "PayPal ID: %s \nItem: %s %s \nSubject: %s \nNote: %s" % ( r["Transaction ID"], r["Item ID"], r["Item Title"], r["Subject"], r["Note"] )
+            d["amount"] = str(net)
+            comments = "PayPal ID: %s \nItem: %s %s \nSubject: %s \nNote: %s" % ( 
+                v(r, "Transaction ID"), v(r, "Item ID", "Item Number"), v(r, "Item Title"), v(r, "Subject"), v(r, "Note"))
             d["comments"] = comments
-            d["received"] = r["Date"]
+            d["received"] = v(r, "Date")
             d["type"] = str(donationtypeid)
             d["payment"] = str(donationpaymentid)
             try:
