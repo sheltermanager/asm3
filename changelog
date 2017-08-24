@@ -1,6 +1,7 @@
 40
 ================
 
+24/08/17 Clone animal missing IsTrial/IsPermanentFoster/ReserveStatus
 22/08/17 PayPal UI complete #56
 21/08/17 First draft of PayPal CSV import backend #56
 21/08/17 Use utf-8-sig for decoding unicode CSV to remove any BOM

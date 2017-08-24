@@ -2263,11 +2263,10 @@ def update_animals_from_form(dbo, post, username):
                 "person"                : post["moveto"],
                 "animal"                : str(animalid),
                 "movementdate"          : post["movementdate"],
-                "permanentfoster"       : "0",
                 "adoptionno"            : "",
                 "returndate"            : "",
                 "type"                  : post["movementtype"],
-                "donation"              : 0,
+                "donation"              : "0",
                 "returncategory"        : str(default_return_reason)
             }
             movement.insert_movement_from_form(dbo, username, utils.PostedData(move_dict, dbo.locale))
@@ -2613,11 +2612,15 @@ def clone_animal(dbo, username, animalid):
             ( "MovementType", db.di(mv["MOVEMENTTYPE"])),
             ( "ReturnDate", db.dd(mv["RETURNDATE"])),
             ( "ReturnedReasonID", db.di(mv["RETURNEDREASONID"])),
+            ( "Donation", db.di(mv["DONATION"])),
             ( "InsuranceNumber", db.ds(mv["INSURANCENUMBER"])),
             ( "ReasonForReturn", db.ds(mv["REASONFORRETURN"])),
             ( "ReservationDate", db.dd(mv["RESERVATIONDATE"])),
-            ( "Donation", db.di(mv["DONATION"])),
             ( "ReservationCancelledDate", db.dd(mv["RESERVATIONCANCELLEDDATE"])),
+            ( "ReservationStatusID", db.di(mv["RESERVATIONSTATUSID"])),
+            ( "IsTrial", db.di(mv["ISTRIAL"])),
+            ( "IsPermanentFoster", db.di(mv["ISPERMANENTFOSTER"])),
+            ( "TrialEndDate", db.dd(mv["TRIALENDDATE"])),
             ( "Comments", db.ds(mv["COMMENTS"]))
         ))
         db.execute(dbo, sql)
