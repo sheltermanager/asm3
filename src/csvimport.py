@@ -504,11 +504,14 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags):
     """
     Imports a PayPal CSV file of transactions.
     """
-    def v(r, n, n2 = ""):
-        """ Read values n or n2 from a dictionary r depending on which is present, 
-            if neither is present empty string is returned """
+    def v(r, n, n2 = "", n3 = "", n4 = "", n5 = ""):
+        """ Read values n(x) from a dictionary r depending on which is present, 
+            if none are present empty string is returned """
         if n in r: return r[n]
         if n2 != "" and n2 in r: return r[n2]
+        if n3 != "" and n3 in r: return r[n3]
+        if n4 != "" and n4 in r: return r[n4]
+        if n5 != "" and n5 in r: return r[n5]
         return ""
 
     reader = utils.UnicodeCSVDictReader(StringIO(csvdata))
@@ -522,17 +525,18 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags):
         # Skip blank rows
         if len(r) == 0: continue
 
-        REQUIRED_FIELDS = [ "Date", "Net", "From Email Address", "Status", "Type" ]
+        REQUIRED_FIELDS = [ "Date", "Currency", "Gross", "Fee", "Net", "From Email Address", "Status", "Type" ]
         for rf in REQUIRED_FIELDS:
             if rf not in r:
                 async.set_last_error(dbo, "This CSV file does not look like a PayPal CSV (missing %s)" % rf)
                 return
 
-        if r["Status"] != "Completed" and r["Type"] != "Website Payment":
-            continue
-
         al.debug("import paypal csv: row %d of %d" % (rowno, len(data)), "csvimport.csvimport_paypal", dbo)
         async.increment_progress_value(dbo)
+
+        if r["Status"] != "Completed" and r["Type"] not in ( "Website Payment", "Subscription Payment", "Donation Payment" ):
+            al.debug("skipping: Status='%s', Type='%s'" % (r["Status"], r["Type"]), "csvimport.csvimport_paypal", dbo)
+            continue
 
         # Parse name (use all up to last space for first names if only Name exists)
         name = v(r, "Name")
@@ -552,9 +556,9 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags):
         p["forenames"] = firstname
         p["surname"] = lastname
         p["address"] = v(r, "Address Line 1", "Street Address 1")
-        p["town"] = v(r, "Town/City", "City")
-        p["county"] = v(r, "County", "State")
-        p["postcode"] = v(r, "Postcode", "Zip Code")
+        p["town"] = v(r, "Town/City", "Town", "City")
+        p["county"] = v(r, "County", "State", "Province", "Region", "State/Province/Region/County/Territory/Prefecture/Republic")
+        p["postcode"] = v(r, "Postcode", "Zip Code", "Zip/Postal Code")
         p["hometelephone"] = v(r, "Contact Phone Number", "Phone Number")
         p["emailaddress"] = v(r, "From Email Address")
         p["flags"] = flags
@@ -581,8 +585,9 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags):
             d["animal"] = "0"
             d["movement"] = "0"
             d["amount"] = str(net)
-            comments = "PayPal ID: %s \nItem: %s %s \nSubject: %s \nNote: %s" % ( 
-                v(r, "Transaction ID"), v(r, "Item ID", "Item Number"), v(r, "Item Title"), v(r, "Subject"), v(r, "Note"))
+            comments = "PayPal ID: %s \nItem: %s %s \nCurrency: %s \nGross: %s \nFee: %s \nSubject: %s \nNote: %s" % \
+                ( v(r, "Transaction ID"), v(r, "Item ID", "Item Number"), v(r, "Item Title"), v(r, "Currency"), 
+                v(r, "Gross"), v(r, "Fee"), v(r, "Subject"), v(r, "Note") )
             d["comments"] = comments
             d["received"] = v(r, "Date")
             d["type"] = str(donationtypeid)
