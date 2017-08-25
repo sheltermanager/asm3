@@ -7,6 +7,9 @@
 
     common = {
 
+        /** Speed of all JQuery animations (is there a JQuery default? */
+        fx_speed: 100, 
+
         replace_all: function(str, find, replace) {
           return str.replace(new RegExp(find, 'g'), replace);
         },

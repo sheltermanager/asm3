@@ -1024,7 +1024,7 @@
             if (!wasactive) {
                 $(button).removeClass("ui-state-default").addClass("ui-state-active");
                 $(button + " span.ui-button-text").removeClass("ui-icon-triangle-1-e").addClass("ui-icon-triangle-1-s");
-                $(body).css("z-index", "2 !important").slideDown();
+                $(body).css("z-index", "2 !important").slideDown(common.fx_speed);
             }
         }
     });
@@ -1398,23 +1398,23 @@
             // newdata
             // report
             if (type == "main") {
-                $(this).delay(1).show("slide", {direction: 'up'});
+                $(this).show("slide", {direction: 'up'}, common.fx_speed);
                 return;
             }
             if (type == "formtab") {
-                $(this).delay(1).show("slide", {direction: 'right'});
+                $(this).show("slide", {direction: 'right'}, common.fx_speed);
                 return;
             }
             if (type == "book") {
-                $(this).delay(1).show("slide", {direction: 'down'});
+                $(this).show("slide", {direction: 'down'}, common.fx_speed);
                 return;
             }
             if (type == "options") {
-                $(this).delay(1).show("slide", {direction: 'up'});
+                $(this).show("slide", {direction: 'up'}, common.fx_speed);
                 return;
             }
             // default
-            $(this).delay(1).show("slide", {direction: 'left'});
+            $(this).show("slide", {direction: 'left'}, common.fx_speed);
         });
     };
 
