@@ -1043,6 +1043,15 @@ class Report:
         s = s.replace("$$VERSION$$", i18n.get_version())
         s = s.replace("$$USER$$", self.user)
         s = s.replace("$$REGISTEREDTO$$", configuration.organisation(self.dbo))
+        s = s.replace("$$ORGANISATION$$", configuration.organisation(self.dbo))
+        s = s.replace("$$ORGANISATIONADDRESS$$", configuration.organisation_address(self.dbo))
+        s = s.replace("$$ORGANISATIONTOWN$$", configuration.organisation_town(self.dbo))
+        s = s.replace("$$ORGANISATIONCITY$$", configuration.organisation_town(self.dbo))
+        s = s.replace("$$ORGANISATIONCOUNTY$$", configuration.organisation_county(self.dbo))
+        s = s.replace("$$ORGANISATIONSTATE$$", configuration.organisation_state(self.dbo))
+        s = s.replace("$$ORGANISATIONPOSTCODE$$", configuration.organisation_postcode(self.dbo))
+        s = s.replace("$$ORGANISATIONZIPCODE$$", configuration.organisation_postcode(self.dbo))
+        s = s.replace("$$ORGANISATIONTELEPHONE$$", configuration.organisation_telephone(self.dbo))
         return s
 
     def _SubstituteHeaderFooter(self, headfoot, text, rs):
