@@ -45,6 +45,8 @@ WHERE m.MovementDate >= '$@from$' AND m.MovementDate <= '$@to$' AND m.MovementTy
 ORDER BY m.MovementDate
 ###
 $$HEADER
+<h3>$$ORGANISATION$$</h3>
+<p>$$ORGANISATIONADDRESS$$ $$ORGANISATIONCITY$$ $$ORGANISATIONSTATE$$ $$ORGANISATIONZIPCODE$$ $$ORGANISATIONTELEPHONE$$</p>
 <table border="1">
 <tr>
 <th>Animal #</th>
