@@ -9,7 +9,7 @@ Import script for PetPoint databases exported as CSV
 Can optionally import vacc and tests too, the PP reports
 are MedicalVaccineExpress and MedicalTestsExpress
 
-3rd March - 12th January, 2017
+3rd March - 30th August, 2017
 """
 
 # The shelter's petfinder ID for grabbing animal images for adoptable animals
@@ -58,6 +58,7 @@ print "DELETE FROM internallocation;"
 print "DELETE FROM animal WHERE ID >= 100 AND CreatedBy = 'conversion';"
 print "DELETE FROM animaltest WHERE ID >= 100 AND CreatedBy = 'conversion';"
 print "DELETE FROM animalvaccination WHERE ID >= 100 AND CreatedBy = 'conversion';"
+print "DELETE FROM log WHERE ID >= 100 AND CreatedBy = 'conversion';"
 print "DELETE FROM owner WHERE ID >= 100 AND CreatedBy = 'conversion';"
 print "DELETE FROM adoption WHERE ID >= 100 AND CreatedBy = 'conversion';"
 
@@ -198,7 +199,7 @@ for d in asm.csv_to_list(INTAKE_FILENAME):
     o = None
     if d["Outcome Person Name"].strip() != "":
         o = findowner(d["Outcome Person Name"])
-        if o == None:
+        if o is None:
             o = asm.Owner()
             owners.append(o)
             o.OwnerName = d["Outcome Person Name"]
@@ -215,11 +216,32 @@ for d in asm.csv_to_list(INTAKE_FILENAME):
             o.EmailAddress = d["Out Email"]
             o.HomeTelephone = d["Out Home Phone"]
             o.MobileTelephone = d["Out Cell Phone"]
+    elif d["Outcome Agency Name"].strip() != "":
+        o = findowner(d["Outcome Agency Name"])
+        if o is None:
+            o = asm.Owner()
+            owners.append(o)
+            o.OwnerName = d["Outcome Agency Name"]
+            bits = o.OwnerName.split(" ")
+            if len(bits) > 1:
+                o.OwnerForeNames = bits[0]
+                o.OwnerSurname = bits[len(bits)-1]
+            else:
+                o.OwnerSurname = o.OwnerName
+            o.OwnerAddress = d["Agency Street Number"] + " " + d["Agency Street Name"] + " " + d["Agency Street Type"] + " " + d["Agency Street Direction"]
+            o.OwnerTown = d["Agency City"]
+            o.OwnerCounty = d["Agency Province"]
+            o.OwnerPostcode = d["Agency Postal Code"]
+            o.EmailAddress = d["Agency Email"]
+            o.HomeTelephone = d["Agency Home Phone"]
+            o.MobileTelephone = d["Agency Cell Number"]
+            o.IsShelter = 1
+
 
     ot = d["Outcome Type"]
     ost = d["Outcome Subtype"]
     od = getdate(d["Outcome Date"])
-    if (ot == "Transfer Out" and ost == "Potential Adopter") or ot == "Adoption":
+    if (ot == "Transfer Out" and ost == "Potential Adopter" and d["Outcome Person Name"] != "") or ot == "Adoption":
         if a is None or o is None: continue
         m = asm.Movement()
         m.AnimalID = a.ID
