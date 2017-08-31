@@ -33,7 +33,7 @@ def findowner(ownername = ""):
     return None
 
 def getdate(d):
-    return asm.getdate_mmddyyyy(d)
+    return asm.getdate_guess(d)
 
 # --- START OF CONVERSION ---
 
