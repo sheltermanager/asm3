@@ -188,6 +188,7 @@ def getdate_guess(s):
         If the year is under 2000, makes it 4 digit.
     """
     if s is None or s == "" or s.find("N/A") != -1 or s.find("NA") != -1 or s.find("TBA") != -1 or s.find("TBD") != -1: return None
+    if s.find(" ") > -1: s = s[0:s.find(" ")]
     b = s.split("/")
     if s.find("-") != -1:
         b = s.split("-")
@@ -207,7 +208,11 @@ def getdate_guess(s):
         y = cint(b[2])
     if y < 2000: y += 2000
     if y == 0 or m == 0: return None
-    return datetime.datetime(y, m, d)
+    try:
+        return datetime.datetime(y, m, d)
+    except Exception as err:
+        stderr("bad data: %s" % s)
+        raise err
 
 def getdate_yyyymmdd(s):
     s = remove_time(s)
