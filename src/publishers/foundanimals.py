@@ -120,7 +120,7 @@ class FoundAnimalsPublisher(FTPPublisher):
                 # Sex
                 line.append("\"%s\"" % an["SEXNAME"])
                 # Spayed/Neutered
-                line.append("\"%s\"" % utils.iif(an["NEUTERED"] == 1, "Yes", "No")
+                line.append("\"%s\"" % utils.iif(an["NEUTERED"] == 1, "Yes", "No"))
                 # Primary Breed
                 line.append("\"%s\"" % an["PETFINDERBREED"])
                 # Secondary Breed
