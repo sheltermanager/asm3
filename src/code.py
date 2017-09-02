@@ -2271,8 +2271,10 @@ class document_repository_file(ASMEndpoint):
         if o.post.integer("dbfsid") != 0:
             name = dbfs.get_name_for_id(o.dbo, o.post.integer("dbfsid"))
             mimetype, encoding = mimetypes.guess_type("file://" + name, strict=False)
+            disp = "attachment"
+            if mimetype == "application/pdf": disp = "inline" # Try to show PDFs in place
             self.header("Content-Type", mimetype)
-            self.header("Content-Disposition", "attachment; filename=\"%s\"" % name)
+            self.header("Content-Disposition", "%s; filename=\"%s\"" % (disp, name))
             return dbfs.get_string_id(o.dbo, o.post.integer("dbfsid"))
 
 class document_templates(JSONEndpoint):

@@ -1,6 +1,7 @@
 40
 ================
 
+02/09/17 Show PDFs inline from document repository
 26/08/17 Add report header/footer tokens for organisation/address/city/state
 25/08/17 Dump redundant delays and increase animation speed/responsiveness
 24/08/17 Clone animal missing IsTrial/IsPermanentFoster/ReserveStatus
