@@ -15,11 +15,11 @@ are MedicalVaccineExpress and MedicalTestsExpress
 # The shelter's petfinder ID for grabbing animal images for adoptable animals
 PETFINDER_ID = ""
 
-INTAKE_FILENAME = "data/petpoint_rw1412/animals.csv"
-MEMO_FILENAME = "data/petpoint_rw1412/memo.csv"
-PERSON_FILENAME = "data/petpoint_rw1412/person.csv"
-VACC_FILENAME = "data/petpoint_rw1412/vaccinations.csv"
-TEST_FILENAME = "data/petpoint_rw1412/tests.csv"
+INTAKE_FILENAME = "data/petpoint_bs1438/animals.csv"
+MEMO_FILENAME = "data/petpoint_bs1438/memo.csv"
+PERSON_FILENAME = "data/petpoint_bs1438/person.csv"
+VACC_FILENAME = ""
+TEST_FILENAME = ""
 
 # Whether or not the vaccine and test files are in two row stacked format
 MEDICAL_TWO_ROW_FORMAT = False
@@ -101,7 +101,9 @@ if PERSON_FILENAME != "":
         o.IsVolunteer = asm.iif(d["Association"] == "Volunteer", 1, 0)
         o.ExcludeFromBulkEmail = asm.iif(d["Contact By Email"] == "Yes", 1, 0)
 
-for d in asm.csv_to_list(INTAKE_FILENAME):
+# We go backwards through the animals so that oldest records are processed first
+# (this prevents issues where newer movements are returned for older ones)
+for d in reversed(asm.csv_to_list(INTAKE_FILENAME)):
     # Each row contains an animal, intake and outcome
     if ppa.has_key(d["Animal ID"]):
         a = ppa[d["Animal ID"]]
