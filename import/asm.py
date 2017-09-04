@@ -1990,7 +1990,7 @@ class Movement:
     MovementDate = None
     MovementType = 0
     ReturnDate = None
-    ReturnedReasonID = 1
+    ReturnedReasonID = 4 # Unable to cope
     InsuranceNumber = ""
     ReasonForReturn = ""
     ReservationDate = None
