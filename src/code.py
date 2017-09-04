@@ -2272,7 +2272,8 @@ class document_repository_file(ASMEndpoint):
             name = dbfs.get_name_for_id(o.dbo, o.post.integer("dbfsid"))
             mimetype, encoding = mimetypes.guess_type("file://" + name, strict=False)
             disp = "attachment"
-            if mimetype == "application/pdf": disp = "inline" # Try to show PDFs in place
+            if mimetype == "application/pdf": 
+                disp = "inline" # Try to show PDFs in place
             self.header("Content-Type", mimetype)
             self.header("Content-Disposition", "%s; filename=\"%s\"" % (disp, name))
             return dbfs.get_string_id(o.dbo, o.post.integer("dbfsid"))
