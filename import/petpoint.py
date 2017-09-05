@@ -101,9 +101,8 @@ if PERSON_FILENAME != "":
         o.IsVolunteer = asm.iif(d["Association"] == "Volunteer", 1, 0)
         o.ExcludeFromBulkEmail = asm.iif(d["Contact By Email"] == "Yes", 1, 0)
 
-# We go backwards through the animals so that oldest records are processed first
-# (this prevents issues where newer movements are returned for older ones)
-for d in reversed(asm.csv_to_list(INTAKE_FILENAME)):
+# Sort the data on intake date ascending
+for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intake Date"])):
     # Each row contains an animal, intake and outcome
     if ppa.has_key(d["Animal ID"]):
         a = ppa[d["Animal ID"]]
