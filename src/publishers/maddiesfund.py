@@ -3,6 +3,8 @@
 import animal
 import configuration
 import i18n
+import medical
+import movement
 import lookups
 import sys
 import utils
@@ -184,6 +186,45 @@ class MaddiesFundPublisher(AbstractPublisher):
                         "ContactNumber": an["CURRENTOWNERHOMETELEPHONE"],
                         "Organization": organisation,
                     }
+
+                    # Build a list of intake histories - use the initial one first
+                    ph = [
+                        {
+                            "IntakeType": an["ENTRYREASONNAME"],
+                            "IntakeDate": self.getDate(an["DATEBROUGHTIN"]),
+                            "City": utils.nulltostr(an["BROUGHTINBYOWNERTOWN"]),
+                            "State": utils.nulltostr(an["BROUGHTINBYOWNERCOUNTY"]),
+                            "LengthOwned": ""
+                        }
+                    ]
+                    # Then any exit movements where the animal was returned
+                    for ra in movement.get_animal_movements(self.dbo, an["ID"]):
+                        if ra["MOVEMENTTYPE"] > 0 and ra["MOVEMENTTYPE"] not in (2, 8) and ra["RETURNDATE"] is not None:
+                            ph.append({
+                                "IntakeType": ra["RETURNEDREASONNAME"],
+                                "IntakeDate": self.getDate(an["RETURNDATE"]),
+                                "City": utils.nulltostr(an["OWNERTOWN"]),
+                                "State": utils.nulltostr(an["OWNERCOUNTY"]),
+                                "LengthOwned": "" # We don't have this info
+                            })
+                    a["PetHistoryDetails"] = ph
+                    
+                    # Next add vaccination histories
+                    vh = []
+                    for v in medical.get_vaccinations(self.dbo, an["ID"]):
+                        vh.append({
+                            "VaccinationRecordNumber": str(v["ID"]),
+                            "VaccinationStatus": utils.iif(v["DATEOFVACCINATION"] is not None, "Completed", "Scheduled"),
+                            "VaccinationStatusDateTime": self.getDate(v["DATEREQUIRED"]),
+                            "Vaccine": v["VACCINATIONTYPE"],
+                            "Type": "", # Live/Killed - we don't keep this info yet, see issue #281
+                            "Manufacturer": v["MANUFACTURER"],
+                            "VaccineLot": v["BATCHNUMBER"],
+                            "VaccinationNotes": v["COMMENTS"],
+                            "Length": "", # Not sure what this value is for - advised to ignore by MPA devs
+                            "RevaccinationDate": self.getDate(v["DATEEXPIRES"])
+                        })
+                    a["PetVaccinationDetails"] = vh
 
                     thisbatch.append(a)
                     processed.append(an)
