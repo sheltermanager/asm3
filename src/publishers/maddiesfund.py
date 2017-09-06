@@ -218,8 +218,8 @@ class MaddiesFundPublisher(AbstractPublisher):
                             "VaccinationStatusDateTime": self.getDate(v["DATEREQUIRED"]),
                             "Vaccine": v["VACCINATIONTYPE"],
                             "Type": "", # Live/Killed - we don't keep this info yet, see issue #281
-                            "Manufacturer": v["MANUFACTURER"],
-                            "VaccineLot": v["BATCHNUMBER"],
+                            "Manufacturer": utils.nulltostr(v["MANUFACTURER"]),
+                            "VaccineLot": utils.nulltostr(v["BATCHNUMBER"]),
                             "VaccinationNotes": v["COMMENTS"],
                             "Length": "", # Not sure what this value is for - advised to ignore by MPA devs
                             "RevaccinationDate": self.getDate(v["DATEEXPIRES"])
