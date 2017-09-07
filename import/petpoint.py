@@ -15,11 +15,11 @@ are MedicalVaccineExpress and MedicalTestsExpress
 # The shelter's petfinder ID for grabbing animal images for adoptable animals
 PETFINDER_ID = ""
 
-INTAKE_FILENAME = "data/petpoint_bs1438/animals.csv"
-MEMO_FILENAME = "data/petpoint_bs1438/memo.csv"
-PERSON_FILENAME = "data/petpoint_bs1438/person.csv"
-VACC_FILENAME = ""
-TEST_FILENAME = ""
+INTAKE_FILENAME = "data/petpoint_rw1412/animals.csv"
+MEMO_FILENAME = "data/petpoint_rw1412/memo.csv"
+PERSON_FILENAME = "data/petpoint_rw1412/person.csv"
+VACC_FILENAME = "data/petpoint_rw1412/vaccinations.csv"
+TEST_FILENAME = "data/petpoint_rw1412/tests.csv"
 
 # Whether or not the vaccine and test files are in two row stacked format
 MEDICAL_TWO_ROW_FORMAT = False
