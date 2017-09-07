@@ -197,6 +197,15 @@ for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intak
             a.OriginalOwnerID = o.ID
             a.BroughtInByOwnerID = o.ID
 
+    if d["Intake Type"] == "Return":
+        # Return the most recent adoption for this animal
+        for m in movements:
+            if m.AnimalID == a.ID and m.ReturnDate is None and m.MovementType == 1:
+                m.ReturnDate = getdate(d["Intake Date"])
+                m.ReturnedReasonID = 17 # Surrender
+                a.Archived = 0 # Return to shelter so another movement takes it away again
+                break
+
     o = None
     if d["Outcome Person Name"].strip() != "":
         o = findowner(d["Outcome Person Name"])
@@ -237,7 +246,6 @@ for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intak
             o.HomeTelephone = d["Agency Home Phone"]
             o.MobileTelephone = d["Agency Cell Number"]
             o.IsShelter = 1
-
 
     ot = d["Outcome Type"]
     ost = d["Outcome Subtype"]
