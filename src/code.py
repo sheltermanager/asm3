@@ -2121,7 +2121,7 @@ class document_gen(ASMEndpoint):
                 raise utils.ASMValidationError("%d is not a valid licence id" % recid)
             ownerid = l["OWNERID"]
             tempname += " - " + extperson.get_person_name(dbo, ownerid)
-            extmedia.create_document_media(dbo, session.user, extmedia.PERSON, recid, tempname, post["document"])
+            extmedia.create_document_media(dbo, session.user, extmedia.PERSON, ownerid, tempname, post["document"])
             self.redirect("person_media?id=%d" % ownerid)
         elif linktype == "MOVEMENT":
             m = extmovement.get_movement(dbo, recid)
