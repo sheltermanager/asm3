@@ -366,7 +366,7 @@ def colour_id_for_name(name, firstWordOnly = False):
     return 1
 
 def colour_id_for_names(name1, name2):
-    if name1 == name2:
+    if name1 == name2 or name2.strip() == "":
         return colour_id_for_name(name1, True)
     for cid, cname in colours:
         if cname.upper().find(name1.upper()) != -1 and cname.upper().find(name2.upper()) != -1:

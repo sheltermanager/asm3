@@ -9,7 +9,10 @@ Import script for PetPoint databases exported as CSV
 Can optionally import vacc and tests too, the PP reports
 are MedicalVaccineExpress and MedicalTestsExpress
 
-3rd March - 30th August, 2017
+Can optionally import color info from location history:
+AnimalLocationHistory
+
+3rd March - 8th September, 2017
 """
 
 # The shelter's petfinder ID for grabbing animal images for adoptable animals
@@ -17,6 +20,7 @@ PETFINDER_ID = ""
 
 INTAKE_FILENAME = "data/petpoint_rw1412/animals.csv"
 MEMO_FILENAME = "data/petpoint_rw1412/memo.csv"
+LOCATION_FILENAME = "data/petpoint_rw1412/locations.csv"
 PERSON_FILENAME = "data/petpoint_rw1412/person.csv"
 VACC_FILENAME = "data/petpoint_rw1412/vaccinations.csv"
 TEST_FILENAME = "data/petpoint_rw1412/tests.csv"
@@ -336,7 +340,13 @@ if MEMO_FILENAME != "":
                 l.Date = asm.now()
             l.Comments = d["Textbox131"]
 
-vacc = asm.csv_to_list(VACC_FILENAME)
+# Extract color info from location history
+if LOCATION_FILENAME != "":
+    for d in asm.csv_to_list(LOCATION_FILENAME):
+        if ppa.has_key(d["textbox15"]):
+            name1, name2 = d["textbox59"].split("/", 1)
+            a = ppa[d["textbox15"]]
+            a.BaseColourID = asm.colour_id_for_names(name1, name2)
 
 def process_vacc(animalno, vaccdate = None, vaccexpires = None, vaccname = ""):
     """ Processes a vaccination record. PP have multiple formats of this data file """
@@ -370,7 +380,8 @@ def process_vacc(animalno, vaccdate = None, vaccexpires = None, vaccname = ""):
     av.DateExpires = vaccexpires
     av.Comments = "Type: %s" % vaccname
 
-if vacc is not None:
+if VACC_FILENAME != "":
+    vacc = asm.csv_to_list(VACC_FILENAME)
     if MEDICAL_TWO_ROW_FORMAT:
         odd = True
         vaccname = ""
@@ -390,8 +401,6 @@ if vacc is not None:
         for v in vacc:
             process_vacc(v["AnimalID"], getdate(v["Date"]), None, v["RecordType3"])
             #process_vacc(v["StatusDateTime3"], getdate(v["BodyWeight"]), None, v["RecordType3"]) # Once saw a broken version of this file like this
-
-test = asm.csv_to_list(TEST_FILENAME)
 
 def process_test(animalno, testdate = None, testname = "", result = ""):
     """ Process a test record """
@@ -430,7 +439,8 @@ def process_test(animalno, testdate = None, testname = "", result = ""):
         at.TestTypeID = 1
         at.Comments = "Test for %s" % testname
 
-if test is not None:
+if TEST_FILENAME != "":
+    test = asm.csv_to_list(TEST_FILENAME)
     if MEDICAL_TWO_ROW_FORMAT:
         odd = True
         testname = ""
