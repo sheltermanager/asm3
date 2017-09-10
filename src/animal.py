@@ -1837,6 +1837,8 @@ def insert_animal_from_form(dbo, post, username):
             raise utils.ASMValidationError(_("Microchip number {0} has already been allocated to another animal.", l).format(ks("microchipnumber")))
     if dob > now(dbo.timezone):
         raise utils.ASMValidationError(_("Date of birth cannot be in the future.", l))
+    if datebroughtin > now(dbo.timezone):
+        raise utils.ASMValidationError(_("Date brought in cannot be in the future.", l))
 
     # Set default brought in by if we have one and none was set
     dbb = ki("broughtinby")
@@ -2031,6 +2033,8 @@ def update_animal_from_form(dbo, post, username):
         raise utils.ASMValidationError(_("Date brought in cannot be blank", l))
     if kdt("datebroughtin", "timebroughtin") is None:
         raise utils.ASMValidationError(_("Date brought in is not valid", l))
+    if kdt("datebroughtin", "timebroughtin") > now(dbo.timezone):
+        raise utils.ASMValidationError(_("Date brought in cannot be in the future.", l))
     if ks("sheltercode") == "":
         raise utils.ASMValidationError(_("Shelter code cannot be blank", l))
     if db.query_int(dbo, "SELECT COUNT(ID) FROM animal WHERE ShelterCode Like '%s' AND ID <> %d" % (ks("sheltercode").replace("'", "`"), ki("id"))) > 0:
