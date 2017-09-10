@@ -140,7 +140,8 @@ for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intak
         if d["Intake Type"] == "Transfer In":
             a.IsTransfer = 1
         a.generateCode()
-        a.ShortCode = d["Animal ID"]
+        a.ShortCode = d["ARN"]
+        if a.ShortCode.strip() == "": a.ShortCode = d["Animal ID"]
         if "Distinguishing Markings" in d: a.Markings = d["Distinguishing Markings"]
         a.IsNotAvailableForAdoption = 0
         a.ShelterLocation = asm.location_id_for_name(d["Location"])
@@ -165,6 +166,7 @@ for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intak
         if "Secondary Breed" in d: comments += d["Secondary Breed"]
         comments += ", age: " + d["Age Group"]
         if "Intake Condition" in d: comments += ", intake condition: " + d["Intake Condition"]
+        comments += ", ID: " + d["Animal ID"] + ", ARN: " + d["ARN"]
         a.BreedID = asm.breed_id_for_name(d["Primary Breed"])
         a.Breed2ID = a.BreedID
         a.BreedName = asm.breed_name_for_id(a.BreedID)
@@ -179,7 +181,7 @@ for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intak
             a.BreedName = "%s / %s" % ( asm.breed_name_for_id(a.BreedID), asm.breed_name_for_id(a.Breed2ID) )
         a.HiddenAnimalDetails = comments
 
-        if d["Admitter"] != "" and d["Intake Type"] == "Owner/Guardian Surrender":
+        if d["Admitter"] != "" and d["Intake Type"] in ("Owner/Guardian Surrender", "Transfer In"):
             o = findowner(d["Admitter"])
             if o == None:
                 o = asm.Owner()
@@ -192,6 +194,7 @@ for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intak
                 else:
                     o.OwnerSurname = o.OwnerName
                 o.OwnerAddress = d["Street Number"] + " " + d["Street Name"] + " " + d["Street Type"] + " " + d["Street Direction"]
+                if o.OwnerAddress == "": o.OwnerAddress = d["Agency Address"]
                 o.OwnerTown = d["City"]
                 o.OwnerCounty = d["Province"]
                 o.OwnerPostcode = d["Postal Code"]
@@ -347,6 +350,7 @@ if LOCATION_FILENAME != "":
             name1, name2 = d["textbox59"].split("/", 1)
             a = ppa[d["textbox15"]]
             a.BaseColourID = asm.colour_id_for_names(name1, name2)
+            a.HiddenAnimalDetails += ", color: " + d["textbox15"]
 
 def process_vacc(animalno, vaccdate = None, vaccexpires = None, vaccname = ""):
     """ Processes a vaccination record. PP have multiple formats of this data file """
