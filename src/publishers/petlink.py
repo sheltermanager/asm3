@@ -93,8 +93,8 @@ class PetLinkPublisher(AbstractPublisher):
                 self.setLastError("Login failed (invalid username or password)")
                 self.saveLog()
                 return
-            elif r["response"].find("Hello") == -1:
-                self.setLastError("Login failed (no Hello found).")
+            elif r["response"].find("OK") == -1:
+                self.setLastError("Login failed (no OK found).")
                 self.log("response: headers=%s, body=%s" % (r["headers"], r["response"]))
                 self.saveLog()
                 return
