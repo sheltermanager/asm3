@@ -2629,6 +2629,9 @@ def clone_animal(dbo, username, animalid):
         ))
         db.execute(dbo, sql)
     # Log
+    # Disabled after customer said it was duplicating weight info, but can't see any
+    # reason to clone logs.
+    """
     for lo in db.query(dbo, "SELECT * FROM log WHERE LinkType = %d AND LinkID = %d" % (log.ANIMAL, animalid)):
         sql = db.make_insert_user_sql(dbo, "log", username, (
             ( "ID", db.di(db.get_id(dbo, "log")) ),
@@ -2639,6 +2642,7 @@ def clone_animal(dbo, username, animalid):
             ( "Comments", db.ds(lo["COMMENTS"]))
         ))
         db.execute(dbo, sql)
+    """
     audit.create(dbo, username, "animal", nid, audit.dump_row(dbo, "animal", nid))
     update_animal_status(dbo, nid)
     update_variable_animal_data(dbo, nid)
