@@ -202,9 +202,9 @@ class MaddiesFundPublisher(AbstractPublisher):
                         if ra["MOVEMENTTYPE"] > 0 and ra["MOVEMENTTYPE"] not in (2, 8) and ra["RETURNDATE"] is not None:
                             ph.append({
                                 "IntakeType": ra["RETURNEDREASONNAME"],
-                                "IntakeDate": self.getDate(an["RETURNDATE"]),
-                                "City": utils.nulltostr(an["OWNERTOWN"]),
-                                "State": utils.nulltostr(an["OWNERCOUNTY"]),
+                                "IntakeDate": self.getDate(ra["RETURNDATE"]),
+                                "City": utils.nulltostr(ra["OWNERTOWN"]),
+                                "State": utils.nulltostr(ra["OWNERCOUNTY"]),
                                 "LengthOwned": "" # We don't have this info
                             })
                     a["PetHistoryDetails"] = ph
