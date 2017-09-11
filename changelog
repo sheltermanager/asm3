@@ -1,7 +1,7 @@
 40
 ================
 
-10/09/17 Prevent intake dates being in the future
+10/09/17 Prevent intake dates being more than a week in the future
 08/09/17 Saving licence documents using licence id instead of person id #280
 06/09/17 Add support for vaccination and intake histories to MPA
 05/09/17 Make complete/disabled rows a little more visible
