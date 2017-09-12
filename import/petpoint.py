@@ -350,7 +350,8 @@ if LOCATION_FILENAME != "":
             name1, name2 = d["textbox59"].split("/", 1)
             a = ppa[d["textbox15"]]
             a.BaseColourID = asm.colour_id_for_names(name1, name2)
-            a.HiddenAnimalDetails += ", color: " + d["textbox15"]
+            if a.HiddenAnimalDetails.find("color:") == -1:
+                a.HiddenAnimalDetails += ", color: " + d["textbox59"]
 
 def process_vacc(animalno, vaccdate = None, vaccexpires = None, vaccname = ""):
     """ Processes a vaccination record. PP have multiple formats of this data file """
