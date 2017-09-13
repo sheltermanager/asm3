@@ -599,7 +599,7 @@
             }
             $("#emailfrom").autocomplete({source: mailaddresses});
             $("#emailfrom").autocomplete("widget").css("z-index", 1000);
-            $("#emailto").val(html.decode(o.name) + " <" + o.email + ">");
+            $("#emailto").val(common.replace_all(html.decode(o.name), ",", "") + " <" + o.email + ">");
             var msg = config.str("EmailSignature");
             if (o.message) { msg = "<p>" + o.message + "</p>" + msg; }
             else { msg = "<p>&nbsp;</p>" + msg; }
