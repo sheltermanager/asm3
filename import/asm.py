@@ -895,6 +895,21 @@ def breed_name(id1, id2 = None):
         return breed_name_for_id(id1)
     return breed_name_for_id(id1) + " / " + breed_name_for_id(id2)
 
+def breed_ids(a, breed1, breed2 = "", default = 1):
+	a.BreedID = breed_id_for_name(breed1, default)
+	a.Breed2ID = a.BreedID
+	a.BreedName = breed_name_for_id(a.BreedID)
+	a.CrossBreed = 0
+	if breed2 is not None and breed2.strip() != "":
+		a.CrossBreed = 1
+		if breed2 == "Mix" or breed2 == "Unknown":
+			a.Breed2ID = 442
+		else:
+			a.Breed2ID = breed_id_for_name(breed2, default)
+		if a.Breed2ID == 1: a.Breed2ID = 442
+        if a.Breed2ID != a.BreedID: 
+        	a.BreedName = "%s / %s" % ( breed_name_for_id(a.BreedID), breed_name_for_id(a.Breed2ID) )
+
 def breed_from_db(name, default = 2):
     """ Looks up the breed in the db when the conversion is run, assign to BreedID """
     return "COALESCE((SELECT ID FROM breed WHERE lower(BreedName) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
@@ -1255,6 +1270,24 @@ def adopt_to(a, ownerid, movementtype = 1, movementdate = None):
     a.ActiveMovementType = m.MovementType
     print m
     return m
+
+def adopt_older_than(animals, movements, ownerid=100, days=365):
+	""" Runs through animals and if any are still on shelter after 'days',
+        creates an adoption to ownerid. Returns movements
+	"""
+	for a in animals:
+		if a.Archived == 0 and a.DateBroughtIn < subtract_days(now(), days):
+			m = asm.Movement()
+			m.AnimalID = a.ID
+			m.OwnerID = ownerid
+			m.MovementType = 1
+			m.MovementDate = a.DateBroughtIn
+			a.Archived = 1
+			a.ActiveMovementID = m.ID
+			a.ActiveMovementDate = a.DateBroughtIn
+			a.ActiveMovementType = 1
+			movements.append(m)
+	return movements
 
 def animal_image(animalid, imagedata):
     """ Writes the media and dbfs entries to add an image to an animal """

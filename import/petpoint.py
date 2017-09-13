@@ -167,18 +167,7 @@ for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intak
         comments += ", age: " + d["Age Group"]
         if "Intake Condition" in d: comments += ", intake condition: " + d["Intake Condition"]
         comments += ", ID: " + d["Animal ID"] + ", ARN: " + d["ARN"]
-        a.BreedID = asm.breed_id_for_name(d["Primary Breed"])
-        a.Breed2ID = a.BreedID
-        a.BreedName = asm.breed_name_for_id(a.BreedID)
-        a.CrossBreed = 0
-        if "Secondary Breed" in d and d["Secondary Breed"].strip() != "":
-            a.CrossBreed = 1
-            if d["Secondary Breed"] == "Mix":
-                a.Breed2ID = 442
-            else:
-                a.Breed2ID = asm.breed_id_for_name(d["Secondary Breed"])
-            if a.Breed2ID == 1: a.Breed2ID = 442
-            a.BreedName = "%s / %s" % ( asm.breed_name_for_id(a.BreedID), asm.breed_name_for_id(a.Breed2ID) )
+        asm.breed_ids(a, d["Primary Breed"], d["Secondary Breed"])
         a.HiddenAnimalDetails = comments
 
         if d["Admitter"] != "" and d["Intake Type"] in ("Owner/Guardian Surrender", "Transfer In"):
@@ -467,18 +456,7 @@ if TEST_FILENAME != "":
 
 # Run back through the animals, if we have any that are still
 # on shelter after 1 year, add an adoption to an unknown owner
-for a in animals:
-    if a.Archived == 0 and a.DateBroughtIn < asm.subtract_days(asm.now(), 365):
-        m = asm.Movement()
-        m.AnimalID = a.ID
-        m.OwnerID = uo.ID
-        m.MovementType = 1
-        m.MovementDate = a.DateBroughtIn
-        a.Archived = 1
-        a.ActiveMovementID = m.ID
-        a.ActiveMovementDate = a.DateBroughtIn
-        a.ActiveMovementType = 1
-        movements.append(m)
+asm.adopt_older_than(animals, movements, uo.ID, 365)
 
 # Now that everything else is done, output stored records
 for k,v in asm.locations.iteritems():
