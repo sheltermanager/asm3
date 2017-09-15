@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import base64
 import configuration
 import i18n
 import sys
@@ -7,6 +8,8 @@ import utils
 
 from base import AbstractPublisher, get_microchip_data
 from sitedefs import PETLINK_BASE_URL
+
+UPLOAD_URL = PETLINK_BASE_URL + "api/restapi/signup/mass-import?filename=import.csv&mediumId=sheltermanager"
 
 class PetLinkPublisher(AbstractPublisher):
     """
@@ -51,59 +54,18 @@ class PetLinkPublisher(AbstractPublisher):
         email = configuration.petlink_email(self.dbo)
         password = configuration.petlink_password(self.dbo)
         chippass = configuration.petlink_chippassword(self.dbo)
-        baseurl = PETLINK_BASE_URL
 
         if email == "" or password == "":
             self.setLastError("No PetLink login has been set.")
             return
 
-        if chippass == "" or baseurl == "":
-            self.setLastError("baseurl and chippass need to be set for petlink.com publisher")
+        if chippass == "":
+            self.setLastError("chip password needs to be set for petlink.com publisher")
             return
 
         animals = get_microchip_data(self.dbo, ['98102',], "petlink")
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
-            return
-
-        LOGIN_URL = baseurl + "j_acegi_security_check"
-        UPLOAD_URL = baseurl + "animalprofessional/massImportUpload.spring"
-        WELCOME_URL = baseurl + "cms2.spring?path=/welcome.html"
-
-        # Login via HTTP
-        fields = {
-            "j_username": email,
-            "j_password": password
-        }
-        try:
-            self.log("Getting PetLink welcome page...")
-            r = utils.get_url(WELCOME_URL)
-            try:
-                rcookies = r["cookies"]
-                sessionid = rcookies["JSESSIONID"]
-            except KeyError:
-                self.setLastError("Login failed (no JSESSIONID cookie).")
-                self.saveLog()
-                return
-            self.log("Homepage returned headers: %s" % r["headers"])
-            self.log("Found session cookie: %s" % sessionid)
-            self.log("Logging in to PetLink.net... ")
-            r = utils.post_form(LOGIN_URL, fields, cookies = rcookies)
-            if r["response"].find("incorrect user name or password") != -1:
-                self.setLastError("Login failed (invalid username or password)")
-                self.saveLog()
-                return
-            elif r["response"].find("OK") == -1 and r["response"].find("Hello") == -1:
-                self.setLastError("Login failed (no OK or Hello found).")
-                self.log("response: headers=%s, body=%s" % (r["headers"], r["response"]))
-                self.saveLog()
-                return
-            else:
-                self.log("Login to PetLink successful.")
-        except Exception as err:
-            self.logError("Failed logging in: %s" % err, sys.exc_info())
-            self.setLastError("Login failed (error during HTTP request).")
-            self.saveLog()
             return
 
         anCount = 0
@@ -219,15 +181,20 @@ class PetLinkPublisher(AbstractPublisher):
         files = {
             "file": ( "import.csv", "\n".join(csv), "text/csv")
         }
+        headers = {
+            "Authorization": "Basic %s" % base64.b64encode("%s:%s" % (email, password)),
+            "Content-Type":  "text/csv"
+        }
         self.log("Uploading data file (%d csv lines) to %s..." % (len(csv), UPLOAD_URL))
         try:
-            r = utils.post_multipart(url=UPLOAD_URL, files=files, cookies=rcookies)
+            r = utils.post_multipart(url=UPLOAD_URL, files=files, headers=headers)
             self.log("(%s redirects) req hdr: %s, \nreq data: %s" % (r["redirects"], r["requestheaders"], r["requestbody"]))
 
-            # Look for any errors in the response
-            for e in utils.regex_multi("id=(\d+?), transponder: (.+?)</li>", r["response"]):
-                chip = e[0]
-                message = e[1]
+            # Parse errors in the JSON response
+            jresp = utils.json_parse(r["response"])
+            for e in jresp["errors"]:
+                chip = e["column"].replace("microchip=", "")
+                message = e["message"]
 
                 # Iterate over a copy of the processed list so we can remove this animal from it
                 for an in processed_animals[:]:
@@ -245,12 +212,12 @@ class PetLinkPublisher(AbstractPublisher):
                             self.log("%s: %s (%s) - Already registered, marking as PetLink TRANSFER for next publish" % \
                                 (an["SHELTERCODE"], an["ANIMALNAME"], an["IDENTICHIPNUMBER"]))
 
-            if r["response"].find("Upload Completed") != -1:
+            if jresp["successCount"] > 0:
                 # Mark published
-                self.log("Got successful upload response, marking processed animals as sent to petlink")
+                self.log("successCount > 0 - marking processed animals as sent to petlink")
                 self.markAnimalsPublished(processed_animals)
             else:
-                self.logError("didn't find successful response, abandoning.")
+                self.logError("successCount == 0, abandoning.")
                 self.log("response hdr: %s, \nresponse: %s" % (r["headers"], r["response"]))
         except Exception as err:
             self.logError("Failed uploading data file: %s" % err)
