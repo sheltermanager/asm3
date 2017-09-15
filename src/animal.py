@@ -2550,9 +2550,14 @@ def clone_animal(dbo, username, animalid):
             ( "Date", db.dd(dt["DATE"])),
             ( "DateDue", db.dd(dt["DATEDUE"])),
             ( "Donation", db.di(dt["DONATION"])),
+            ( "ChequeNumber", db.ds(dt["CHEQUENUMBER"])),
+            ( "ReceiptNumber", db.ds(utils.padleft(configuration.receipt_number_next(dbo), 8))),
             ( "IsGiftAid", db.di(dt["ISGIFTAID"])),
             ( "Frequency", db.di(dt["FREQUENCY"])),
             ( "NextCreated", db.di(dt["NEXTCREATED"])),
+            ( "IsVAT", db.di(dt["ISVAT"])),
+            ( "VATRate", db.df(dt["VATRATE"])),
+            ( "VATAmount", db.di(dt["VATAMOUNT"])),
             ( "Comments", db.ds(dt["COMMENTS"]))
         ))
         db.execute(dbo, sql)
