@@ -189,6 +189,7 @@ class PetLinkPublisher(AbstractPublisher):
         try:
             r = utils.post_multipart(url=UPLOAD_URL, files=files, headers=headers)
             self.log("(%s redirects) req hdr: %s, \nreq data: %s" % (r["redirects"], r["requestheaders"], r["requestbody"]))
+            self.log("resp hdr: %s, resp body: %s" % (r["headers"], r["response"]))
 
             # Parse errors in the JSON response
             jresp = utils.json_parse(r["response"])
