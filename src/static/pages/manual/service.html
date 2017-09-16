@@ -113,6 +113,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#filters">Filters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sort">Sort</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#extra-content">Extra Content</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#limit">Limit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#popup-iframe">Popup iFrame</a></li>
 </ul>
 </li>
@@ -389,6 +390,24 @@ thumbnail and basic info:</p>
 <p>You could set .asm3-adoptable-tagline to display: none and then use an extra
 content callback to output and format any data from the animal&#8217;s record in the
 way you want and override the default behaviour.</p>
+</div>
+<div class="section" id="limit">
+<h3>Limit<a class="headerlink" href="#limit" title="Permalink to this headline">¶</a></h3>
+<p>You can limit the number of animals rendered by the adoptable_js output. This
+is useful if you want to only show a limited number of animals - eg: If this
+call is on the home page of your website and you&#8217;d like to show some featured
+animals.</p>
+<p>For example, this will limit output to the first 3 animals in the set. Combined
+with the -DAYSONSHELTER sort, it will show the 3 animals who have been on
+shelter the longest:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="n">asm3_adoptable_sort</span> <span class="o">=</span> <span class="s2">&quot;-DAYSONSHELTER&quot;</span><span class="p">;</span>
+<span class="n">asm3_adoptable_limit</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;asm3-adoptables&quot;</span> <span class="o">/&gt;</span>
+<span class="o">&lt;</span><span class="n">script</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;http://localhost:5000/service?method=animal_view_adoptable_js&quot;</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="popup-iframe">
 <h3>Popup iFrame<a class="headerlink" href="#popup-iframe" title="Permalink to this headline">¶</a></h3>

@@ -233,6 +233,25 @@ You could set .asm3-adoptable-tagline to display: none and then use an extra
 content callback to output and format any data from the animal's record in the
 way you want and override the default behaviour.
 
+Limit
+^^^^^
+
+You can limit the number of animals rendered by the adoptable_js output. This
+is useful if you want to only show a limited number of animals - eg: If this
+call is on the home page of your website and you'd like to show some featured
+animals.
+
+For example, this will limit output to the first 3 animals in the set. Combined
+with the -DAYSONSHELTER sort, it will show the 3 animals who have been on
+shelter the longest::
+
+    <script>
+    asm3_adoptable_sort = "-DAYSONSHELTER";
+    asm3_adoptable_limit = 3;
+    </script>
+    <div id="asm3-adoptables" />
+    <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
+
 Popup iFrame
 ^^^^^^^^^^^^
 
