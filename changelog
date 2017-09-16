@@ -1,6 +1,7 @@
 40
 ================
 
+16/09/17 Add asm3_adoptable_limit value to adoptable_js
 15/09/17 Fix animal cloning to assign new receipt numbers, include tax
 15/09/17 Fix PetLink publisher to use new REST API
 13/09/17 Strip commas from email names to prevent splitting of addresses
