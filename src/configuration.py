@@ -135,6 +135,7 @@ DEFAULTS = {
     "AvidOverseasOriginCountry": "",
     "BoardingCostType": "1",
     "CancelReservesOnAdoption": "Yes",
+    "CloneAnimalIncludeLogs": "No",
     "CostSourceAccount": "9",
     "CreateBoardingCostOnAdoption": "Yes",
     "CreateCostTrx": "No",
@@ -551,6 +552,9 @@ def avid_reregistration(dbo):
 
 def cancel_reserves_on_adoption(dbo):
     return cboolean(dbo, "CancelReservesOnAdoption", DEFAULTS["CancelReservesOnAdoption"] == "Yes")
+
+def clone_animal_include_logs(dbo):
+    return cboolean(dbo, "CloneAnimalIncludeLogs", DEFAULTS["CloneAnimalIncludeLogs"] == "Yes")
 
 def coding_format(dbo):
     return cstring(dbo, "CodingFormat", DEFAULTS["CodingFormat"])

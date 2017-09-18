@@ -2634,20 +2634,19 @@ def clone_animal(dbo, username, animalid):
         ))
         db.execute(dbo, sql)
     # Log
-    # Disabled after customer said it was duplicating weight info, but can't see any
-    # reason to clone logs.
-    """
-    for lo in db.query(dbo, "SELECT * FROM log WHERE LinkType = %d AND LinkID = %d" % (log.ANIMAL, animalid)):
-        sql = db.make_insert_user_sql(dbo, "log", username, (
-            ( "ID", db.di(db.get_id(dbo, "log")) ),
-            ( "LinkID", db.di(nid) ),
-            ( "LinkType", db.di(log.ANIMAL) ),
-            ( "LogTypeID", db.di(lo["LOGTYPEID"])),
-            ( "Date", db.ddt(lo["DATE"])),
-            ( "Comments", db.ds(lo["COMMENTS"]))
-        ))
-        db.execute(dbo, sql)
-    """
+    if configuration.clone_animal_include_logs(dbo):
+        # Only clone logs if the hidden config switch is on
+        for lo in db.query(dbo, "SELECT * FROM log WHERE LinkType = %d AND LinkID = %d" % (log.ANIMAL, animalid)):
+            sql = db.make_insert_user_sql(dbo, "log", username, (
+                ( "ID", db.di(db.get_id(dbo, "log")) ),
+                ( "LinkID", db.di(nid) ),
+                ( "LinkType", db.di(log.ANIMAL) ),
+                ( "LogTypeID", db.di(lo["LOGTYPEID"])),
+                ( "Date", db.ddt(lo["DATE"])),
+                ( "Comments", db.ds(lo["COMMENTS"]))
+            ))
+            db.execute(dbo, sql)
+
     audit.create(dbo, username, "animal", nid, audit.dump_row(dbo, "animal", nid))
     update_animal_status(dbo, nid)
     update_variable_animal_data(dbo, nid)
