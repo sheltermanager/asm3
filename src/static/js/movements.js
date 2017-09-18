@@ -340,7 +340,7 @@ $(function() {
                  { id: "return", text: _("Return"), icon: "complete", enabled: "one", perm: "camv",
                      tooltip: _("Return this movement and bring the animal back to the shelter"),
                      hideif: function() {
-                         return controller.name.indexOf("move_book_recent") == -1;
+                         return controller.name.indexOf("move_book_recent") == -1 && controller.name.indexOf("move_book_foster") == -1;
                      },
                      click: function() {
                         var row = tableform.table_selected_row(table);
