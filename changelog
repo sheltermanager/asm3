@@ -1,6 +1,7 @@
 40
 ================
 
+18/09/17 Allow register on intake to AVID users where register overseas is on
 18/09/17 Show return button on foster book
 16/09/17 Add asm3_adoptable_limit value to adoptable_js
 15/09/17 Fix animal cloning to assign new receipt numbers, include tax
