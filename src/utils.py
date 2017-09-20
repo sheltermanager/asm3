@@ -832,6 +832,19 @@ def get_url(url, headers = {}, cookies = {}, timeout = None):
     r = requests.get(url, headers = headers, cookies=cookies, timeout=timeout)
     return { "cookies": r.cookies, "headers": r.headers, "response": r.text, "status": r.status_code, "requestheaders": r.request.headers, "requestbody": r.request.body }
 
+def post_data(url, data, contenttype = "", headers = {}):
+    """
+    Posts data to a URL as the body
+    """
+    try:
+        if contenttype != "":
+            headers["Content-Type"] = "text/csv"
+        req = urllib2.Request(url, data, headers)
+        resp = urllib2.urlopen(req)
+        return { "requestheaders": headers, "requestbody": data, "headers": resp.info().headers, "response": resp.read(), "status": resp.getcode() }
+    except urllib2.HTTPError as e:
+        return { "requestheaders": headers, "requestbody": data, "headers": e.info().headers, "response": e.read(), "status": e.getcode() }
+
 def post_form(url, fields, headers = {}, cookies = {}):
     """
     Does a form post
@@ -867,25 +880,13 @@ def post_json(url, json, headers = {}):
     """
     Posts a JSON document to a URL
     """
-    try:
-        headers["Content-Type"] = "text/json"
-        req = urllib2.Request(url, json, headers)
-        resp = urllib2.urlopen(req)
-        return { "headers": resp.info().headers, "response": resp.read(), "status": resp.getcode() }
-    except urllib2.HTTPError as e:
-        return { "headers": e.info().headers, "response": e.read(), "status": e.getcode() }
+    return post_data(url, json, "text/json", headers)
 
 def post_xml(url, xml, headers = {}):
     """
     Posts an XML document to a URL
     """
-    try:
-        headers["Content-Type"] = "text/xml"
-        req = urllib2.Request(url, xml, headers)
-        resp = urllib2.urlopen(req)
-        return { "headers": resp.info().headers, "response": resp.read(), "status": resp.getcode() }
-    except urllib2.HTTPError as e:
-        return { "headers": e.info().headers, "response": e.read(), "status": e.getcode() }
+    return post_data(url, xml, "text/xml", headers)
 
 def read_text_file(name):
     """

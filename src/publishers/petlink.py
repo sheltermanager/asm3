@@ -177,17 +177,14 @@ class PetLinkPublisher(AbstractPublisher):
             self.setPublisherComplete()
             return
 
-        # POST the csv file
-        files = {
-            "file": ( "import.csv", "\n".join(csv), "text/csv")
-        }
+        # POST the csv data
         headers = {
             "Authorization": "Basic %s" % base64.b64encode("%s:%s" % (email, password)),
             "Content-Type":  "text/csv"
         }
         self.log("Uploading data file (%d csv lines) to %s..." % (len(csv), UPLOAD_URL))
         try:
-            r = utils.post_multipart(url=UPLOAD_URL, files=files, headers=headers)
+            r = utils.post_data(UPLOAD_URL, "\n".join(csv), headers=headers)
             self.log("(%s redirects) req hdr: %s, \nreq data: %s" % (r["redirects"], r["requestheaders"], r["requestbody"]))
             self.log("resp hdr: %s, resp body: %s" % (r["headers"], r["response"]))
 
