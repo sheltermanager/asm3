@@ -505,6 +505,9 @@ class AbstractPublisher(threading.Thread):
         b = utils.nulltostr(breedname).lower()
         if b == "mix" or b == "cross" or b == "unknown" or b == "crossbreed" or breed1id == breed2id:
             return ""
+        # Don't return null
+        if publisherbreed is None:
+            return ""
         return publisherbreed
 
     def isPublisherExecuting(self):
