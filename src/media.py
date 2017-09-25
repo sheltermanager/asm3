@@ -791,15 +791,19 @@ def scale_all_animal_images(dbo):
     for i, m in enumerate(mp):
         filepath = db.query_string(dbo, "SELECT Path FROM dbfs WHERE Name='%s'" % m["MEDIANAME"])
         name = str(m["MEDIANAME"])
-        inputfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
-        outputfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
+        inputfile = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
+        outputfile = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
         odata = dbfs.get_string(dbo, name)
         inputfile.write(odata)
         inputfile.flush()
         inputfile.close()
         outputfile.close()
         al.debug("scaling %s (%d of %d)" % (name, i, len(mp)), "media.scale_all_animal_images", dbo)
-        scale_image_file(inputfile.name, outputfile.name, configuration.incoming_media_scaling(dbo))
+        try:
+            scale_image_file(inputfile.name, outputfile.name, configuration.incoming_media_scaling(dbo))
+        except Exception as err:
+            al.error("failed scaling image, doing nothing: %s" % err, "media.scale_all_animal_images", dbo)
+            continue
         f = open(outputfile.name, "r")
         data = f.read()
         f.close()
