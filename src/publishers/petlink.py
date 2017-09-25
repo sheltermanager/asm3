@@ -186,10 +186,19 @@ class PetLinkPublisher(AbstractPublisher):
         try:
             r = utils.post_data(UPLOAD_URL, "\n".join(csv), headers=headers)
             self.log("req hdr: %s, \nreq data: %s" % (r["requestheaders"], r["requestbody"]))
-            self.log("resp hdr: %s, resp body: %s" % (r["headers"], r["response"]))
+            self.log("resp hdr: %s, \nresp body: %s" % (r["headers"], r["response"]))
 
-            # Parse errors in the JSON response
             jresp = utils.json_parse(r["response"])
+            
+            # Look for remote exceptions
+            if "exception" in jresp and jresp["exception"] != "":
+                self.successes = 0
+                self.logError("PetLink remote exception received, abandoning: %s" % jresp["exception"])
+                self.saveLog()
+                self.setPublisherComplete()
+                return
+
+            # Parse any errors in the JSON response
             for e in jresp["errors"]:
                 chip = e["column"].replace("microchip=", "")
                 message = e["message"]
