@@ -70,7 +70,7 @@ class B64DBStorage(DBFSStorage):
     
     def get(self, dbfsid, dummy):
         """ Returns the file data for dbfsid or blank if not found/error """
-        r = db.query_tuple(self.dbo, "SELECT Content FROM dbfs WHERE ID = '%d'" % dbfsid)
+        r = db.query_tuple(self.dbo, "SELECT Content FROM dbfs WHERE ID = %s" % dbfsid)
         if len(r) == 0:
             raise DBFSError("Could not find content for ID %s" % dbfsid)
         try:
@@ -83,7 +83,7 @@ class B64DBStorage(DBFSStorage):
         """ Stores the file data and returns a URL """
         url = "base64:"
         s = base64.b64encode(filedata)
-        db.execute(self.dbo, "UPDATE dbfs SET URL = '%s', Content = '%s' WHERE ID = %d" % (url, s, dbfsid))
+        db.execute(self.dbo, "UPDATE dbfs SET URL = '%s', Content = '%s' WHERE ID = %s" % (url, s, dbfsid))
         return url
 
     def delete(self, url):
