@@ -135,7 +135,7 @@ DEFAULTS = {
     "AvidOverseasOriginCountry": "",
     "BoardingCostType": "1",
     "CancelReservesOnAdoption": "Yes",
-    "CloneAnimalIncludeLogs": "No",
+    "CloneAnimalIncludeLogs": "Yes",
     "CostSourceAccount": "9",
     "CreateBoardingCostOnAdoption": "Yes",
     "CreateCostTrx": "No",
