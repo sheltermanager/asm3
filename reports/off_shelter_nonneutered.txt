@@ -1,10 +1,10 @@
-Off Shelter Non-Neutered/Spayed Animals
+Adopted Non-Neutered/Spayed Animals
 ###
 Auditing
 ###
 Any
 ###
-Off shelter animals that have not been neutered/spayed with vaccination details.
+Adopted shelter animals that have not been neutered/spayed with vaccination details.
 ###
 en
 ###
