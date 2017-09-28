@@ -55,7 +55,7 @@ class PetLinkPublisher(AbstractPublisher):
         password = configuration.petlink_password(self.dbo)
         chippass = configuration.petlink_chippassword(self.dbo)
 
-        if email == "" or password == "":
+        if plemail == "" or password == "":
             self.setLastError("No PetLink login has been set.")
             return
 
