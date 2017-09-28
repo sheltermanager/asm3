@@ -51,7 +51,7 @@ class PetLinkPublisher(AbstractPublisher):
         self.setLastError("")
         self.setStartPublishing()
 
-        email = configuration.petlink_email(self.dbo)
+        plemail = configuration.petlink_email(self.dbo)
         password = configuration.petlink_password(self.dbo)
         chippass = configuration.petlink_chippassword(self.dbo)
 
@@ -179,7 +179,7 @@ class PetLinkPublisher(AbstractPublisher):
 
         # POST the csv data
         headers = {
-            "Authorization": "Basic %s" % base64.b64encode("%s:%s" % (email, password)),
+            "Authorization": "Basic %s" % base64.b64encode("%s:%s" % (plemail, password)),
             "Content-Type":  "text/csv"
         }
         self.log("Uploading data file (%d csv lines) to %s..." % (len(csv), UPLOAD_URL))
