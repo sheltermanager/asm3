@@ -18,7 +18,7 @@ CASE WHEN a.Sex = 2 THEN 'U' WHEN a.Sex = 1 THEN 'M' WHEN a.Sex = 0 THEN 'F' END
 a.BreedName,
 (SELECT DateOfVaccination FROM animalvaccination av INNER JOIN vaccinationtype vt ON av.VaccinationID = vt.ID WHERE av.AnimalID = a.ID AND vt.VaccinationType LIKE 'Rabies%' ORDER BY DateOfVaccination DESC LIMIT 1) AS DateOfRabies,
 (SELECT DateOfVaccination FROM animalvaccination av INNER JOIN vaccinationtype vt ON av.VaccinationID = vt.ID WHERE av.AnimalID = a.ID AND vt.VaccinationType LIKE 'DH%PP%' ORDER BY DateOfVaccination DESC LIMIT 1) AS DateOfDHPP,
-(SELECT DateOfVaccination FROM animalvaccination av INNER JOIN vaccinationtype vt ON av.VaccinationID = vt.ID WHERE av.AnimalID = a.ID AND vt.VaccinationType LIKE 'FVCRP%' ORDER BY DateOfVaccination DESC LIMIT 1) AS DateOfFVCRP,
+(SELECT DateOfVaccination FROM animalvaccination av INNER JOIN vaccinationtype vt ON av.VaccinationID = vt.ID WHERE av.AnimalID = a.ID AND vt.VaccinationType LIKE 'FVRCP%' ORDER BY DateOfVaccination DESC LIMIT 1) AS DateOfFVRCP,
 (SELECT DateOfVaccination FROM animalvaccination av INNER JOIN vaccinationtype vt ON av.VaccinationID = vt.ID WHERE av.AnimalID = a.ID AND vt.VaccinationType LIKE 'Lepto%' ORDER BY DateOfVaccination DESC LIMIT 1) AS DateOfLepto,
 CASE WHEN a.HeartwormTested = 1 THEN HeartwormTestDate ELSE NULL END AS DateOf4DX,
 CASE WHEN a.HeartwormTested = 1 THEN (SELECT Name FROM lksposneg WHERE ID = a.HeartwormTestResult) ELSE '' END AS ResultOf4DX,
@@ -40,7 +40,7 @@ $$HEADER
 <td><b>Breed</b></td>
 <td><b>Date of Rabies</b></td>
 <td><b>Date of DHPP</b></td>
-<td><b>Date of FVCRP</b></td>
+<td><b>Date of FVRCP</b></td>
 <td><b>Date of Lepto</b></td>
 <td><b>Date of 4DX</b></td>
 <td><b>Result of 4DX</b></td>
@@ -59,7 +59,7 @@ $$BODY
 <td>$BREEDNAME</td>
 <td>$DATEOFRABIES</td>
 <td>$DATEOFDHPP</td>
-<td>$DATEOFFVCRP</td>
+<td>$DATEOFFVRCP</td>
 <td>$DATEOFLEPTO</td>
 <td>$DATEOF4DX</td>
 <td>$RESULTOF4DX</td>
