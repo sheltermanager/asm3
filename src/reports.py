@@ -1475,7 +1475,7 @@ class Report:
         firstvalidlatlong = ""
         for g in rs:
             p.append({ "latlong": g[0], "popuptext": g[1] })
-            if firstvalidlatlong == "" and not g[0].startswith("0,0"):
+            if firstvalidlatlong == "" and g[0] is not None and not g[0].startswith("0,0"):
                 firstvalidlatlong = g[0]
 
         self._Append( utils.json(p) + ";\n" )
