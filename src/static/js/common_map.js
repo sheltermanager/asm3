@@ -177,7 +177,7 @@
                 }).addTo(map);
                 L.control.scale().addTo(map);
                 $.each(markers, function(i, v) {
-                    if (!v || v.indexOf("0,0") == 0) { return; }
+                    if (!v.latlong || v.latlong.indexOf("0,0") == 0) { return; }
                     ll = v.latlong.split(",");
                     var marker = L.marker([ll[0], ll[1]]).addTo(map);
                     if (v.popuptext) { marker.bindPopup(v.popuptext); }
@@ -195,7 +195,7 @@
                 };
                 var map = new google.maps.Map(document.getElementById(divid), mapOptions);
                 $.each(markers, function(i, v) {
-                    if (!v || v.indexOf("0,0") == 0) { return; }
+                    if (!v.latlong || v.latlong.indexOf("0,0") == 0) { return; }
                     ll = v.latlong.split(",");
                     var marker = new google.maps.Marker({
                         position: new google.maps.LatLng(parseFloat(ll[0]), parseFloat(ll[1])),
