@@ -11,7 +11,7 @@ en
 $VAR from DATE Intake between$
 $VAR to DATE and$
 
-SELECT a.DateBroughtIn AS DateDogAcquired,
+SELECT a.DateBroughtIn AS ImportDate,
 bo.OwnerTown || ', ' || bo.OwnerCounty AS AcquiredFrom,
 s.SpeciesName, a.AnimalName, a.AnimalAge, 
 CASE WHEN a.Sex = 2 THEN 'U' WHEN a.Sex = 1 THEN 'M' WHEN a.Sex = 0 THEN 'F' END AS Sex,
@@ -28,7 +28,7 @@ WHERE a.DateBroughtIn >= '$@from$' AND a.DateBroughtIn <= '$@to$' AND a.SpeciesI
 ###
 $$HEADER
 <table border=1><tr>
-<td><b>Date Dog Acquired</b></td>
+<td><b>Import Date</b></td>
 <td><b>Acquired From</b></td>
 <td><b>Dog or Cat</b></td>
 <td><b>Animal Name</b></td>
@@ -45,7 +45,7 @@ HEADER$$
 
 $$BODY
 <tr>
-<td>$DATEDOGACQUIRED</td>
+<td>$IMPORTDATE</td>
 <td>$ACQUIREDFROM</td>
 <td>$SPECIESNAME</td>
 <td>$ANIMALNAME</td>
