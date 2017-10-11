@@ -1,6 +1,7 @@
 40
 ================
 
+11/10/17 Writing database statements to execute log broke with params #290
 11/10/17 Show 365 days as 1 year in date_diff #287
 30/09/17 Ignore invalid geocodes (null, 0,0*) when drawing maps
 27/09/17 Make cloning logs the default option for everyone with opt out on demand

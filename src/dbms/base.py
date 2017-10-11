@@ -237,9 +237,7 @@ class Database(object):
             rv = s.rowcount
             c.commit()
             self.cursor_close(c, s)
-            if DB_EXEC_LOG != "":
-                with open(DB_EXEC_LOG.replace("{database}", self.database), "a") as f:
-                    f.write("-- %s\n%s;\n" % (self.now(), sql))
+            self._log_sql(sql, params)
             return rv
         except Exception as err:
             al.error(str(err), "Database.execute", self, sys.exc_info())
@@ -397,6 +395,26 @@ class Database(object):
     def install_stored_procedures(self):
         """ Install any supporting stored procedures (typically for reports) needed for this backend """
         pass
+
+    def _log_sql(self, sql, params):
+        """ If outputting statements to a log is enabled, write the statement
+            substitutes any parameters """
+        if DB_EXEC_LOG == "":
+            return
+        if params:
+            fp = []
+            for p in params:
+                # Translate null
+                if p is None:
+                    fp.append("NULL")
+                # Quote and escape string values
+                elif utils.is_str(p) or utils.is_unicode(p):
+                    fp.append("'%s'" % self.escape(p))
+                else:
+                    fp.append(p)
+            sql = sql % fp
+        with open(DB_EXEC_LOG.replace("{database}", self.database), "a") as f:
+            f.write("-- %s\n%s;\n" % (self.now(), sql))
 
     def now(self):
         return i18n.now(self.timezone)
