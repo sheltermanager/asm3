@@ -1206,6 +1206,9 @@
                         "F11": function(cm) {
                             cm.setOption("fullScreen", !cm.getOption("fullScreen"));
                         },
+                        "Shift-Ctrl-F": function(cm) {
+                            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+                        },
                         "Esc": function(cm) {
                             if (cm.getOption("fullScreen")) { cm.setOption("fullScreen", false); }
                         }
@@ -1270,6 +1273,9 @@
                     autofocus: false,
                     extraKeys: {
                         "F11": function(cm) {
+                            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+                        },
+                        "Shift-Ctrl-F": function(cm) {
                             cm.setOption("fullScreen", !cm.getOption("fullScreen"));
                         },
                         "Esc": function(cm) {
