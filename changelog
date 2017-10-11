@@ -1,6 +1,7 @@
 40
 ================
 
+11/10/17 Show 365 days as 1 year in date_diff #287
 30/09/17 Ignore invalid geocodes (null, 0,0*) when drawing maps
 27/09/17 Make cloning logs the default option for everyone with opt out on demand
 20/09/17 Post CSV data as the body for petlink, rather than multipart
