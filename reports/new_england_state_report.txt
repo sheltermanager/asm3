@@ -13,12 +13,12 @@ $VAR to DATE and$
 
 SELECT a.DateBroughtIn AS ImportDate,
 bo.OwnerTown || ', ' || bo.OwnerCounty AS AcquiredFrom,
-s.SpeciesName, a.AnimalName, a.AnimalAge, 
+s.SpeciesName, a.AnimalName, a.AnimalAge, a.DateOfBirth, 
 CASE WHEN a.Sex = 2 THEN 'U' WHEN a.Sex = 1 THEN 'M' WHEN a.Sex = 0 THEN 'F' END AS Sex,
 a.BreedName,
-(SELECT DateOfVaccination FROM animalvaccination av INNER JOIN vaccinationtype vt ON av.VaccinationID = vt.ID WHERE av.AnimalID = a.ID AND vt.VaccinationType LIKE 'Rabies%' ORDER BY DateOfVaccination DESC LIMIT 1) AS DateOfRabies,
-(SELECT DateOfVaccination FROM animalvaccination av INNER JOIN vaccinationtype vt ON av.VaccinationID = vt.ID WHERE av.AnimalID = a.ID AND (vt.VaccinationType LIKE 'DH%PP%' OR vt.VaccinationType LIKE 'FVRCP%' OR vt.VaccinationType LIKE 'FVCRP%') ORDER BY DateOfVaccination DESC LIMIT 1) AS DateOfDHPP,
-(SELECT DateOfVaccination FROM animalvaccination av INNER JOIN vaccinationtype vt ON av.VaccinationID = vt.ID WHERE av.AnimalID = a.ID AND vt.VaccinationType LIKE 'Lepto%' ORDER BY DateOfVaccination DESC LIMIT 1) AS DateOfLepto,
+(SELECT DateOfVaccination FROM animalvaccination av INNER JOIN vaccinationtype vt ON av.VaccinationID = vt.ID WHERE av.AnimalID = a.ID AND vt.VaccinationType LIKE 'Rabies%' AND av.DateOfVaccination Is Not Null ORDER BY DateOfVaccination LIMIT 1) AS DateOfRabies,
+(SELECT DateOfVaccination FROM animalvaccination av INNER JOIN vaccinationtype vt ON av.VaccinationID = vt.ID WHERE av.AnimalID = a.ID AND av.DateOfVaccination Is Not Null AND (vt.VaccinationType LIKE 'DH%PP%' OR vt.VaccinationType LIKE 'FVRCP%' OR vt.VaccinationType LIKE 'FVCRP%') ORDER BY DateOfVaccination LIMIT 1) AS DateOfDHPP,
+(SELECT DateOfVaccination FROM animalvaccination av INNER JOIN vaccinationtype vt ON av.VaccinationID = vt.ID WHERE av.AnimalID = a.ID AND vt.VaccinationType LIKE 'Lepto%' AND av.DateOfVaccination Is Not Null ORDER BY DateOfVaccination LIMIT 1) AS DateOfLepto,
 CASE WHEN a.HeartwormTested = 1 THEN HeartwormTestDate ELSE NULL END AS DateOf4DX,
 CASE WHEN a.HeartwormTested = 1 THEN (SELECT Name FROM lksposneg WHERE ID = a.HeartwormTestResult) ELSE '' END AS ResultOf4DX
 FROM animal a
@@ -32,7 +32,7 @@ $$HEADER
 <td><b>Acquired From</b></td>
 <td><b>Dog or Cat</b></td>
 <td><b>Animal Name</b></td>
-<td><b>Age</b></td>
+<td><b>DOB</b></td>
 <td><b>Sex</b></td>
 <td><b>Breed</b></td>
 <td><b>Date of Rabies</b></td>
@@ -49,7 +49,7 @@ $$BODY
 <td>$ACQUIREDFROM</td>
 <td>$SPECIESNAME</td>
 <td>$ANIMALNAME</td>
-<td>$ANIMALAGE</td>
+<td>$DATEOFBIRTH</td>
 <td>$SEX</td>
 <td>$BREEDNAME</td>
 <td>$DATEOFRABIES</td>

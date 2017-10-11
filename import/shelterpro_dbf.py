@@ -17,9 +17,9 @@ Will also look in PATH/images/ANIMALKEY.[jpg|JPG] for animal photos if available
 29th December, 2016
 """
 
-PATH = "data/shelterpro_ac0916"
+PATH = "data/shelterpro_vk1496"
 
-START_ID = 2500
+START_ID = 100
 
 INCIDENT_IMPORT = False
 LICENCE_IMPORT = True
@@ -123,15 +123,15 @@ uo.OwnerSurname = "Unknown Owner"
 uo.OwnerName = uo.OwnerSurname
 
 # Load up data files
-caddress = dbfread.DBF("%s/address.dbf" % PATH)
+caddress = dbfread.DBF("%s/address.dbf" % PATH, encoding="latin1")
 caddrlink = dbfread.DBF("%s/addrlink.dbf" % PATH)
 canimal = dbfread.DBF("%s/animal.dbf" % PATH)
 clicense = dbfread.DBF("%s/license.dbf" % PATH)
-cperson = dbfread.DBF("%s/person.dbf" % PATH)
+cperson = dbfread.DBF("%s/person.dbf" % PATH, encoding="latin1")
 cshelter = dbfread.DBF("%s/shelter.dbf" % PATH)
 cvacc = dbfread.DBF("%s/vacc.dbf" % PATH)
 cincident = dbfread.DBF("%s/incident.dbf" % PATH)
-cnote = dbfread.DBF("%s/note.dbf" % PATH)
+cnote = dbfread.DBF("%s/note.dbf" % PATH, encoding="latin1")
 
 # Start with animals
 for row in canimal:
