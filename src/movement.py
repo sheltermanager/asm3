@@ -436,12 +436,11 @@ def delete_movement(dbo, username, mid):
     """
     Deletes a movement record
     """
-    animalid = db.query_int(dbo, "SELECT AnimalID FROM adoption WHERE ID = %d" % int(mid))
+    animalid = dbo.query_int("SELECT AnimalID FROM adoption WHERE ID = ?", mid)
     if animalid == 0:
         raise utils.ASMError("Trying to delete a movement that does not exist")
-    db.execute(dbo, "UPDATE ownerdonation SET MovementID = 0 WHERE MovementID = %d" % int(mid))
-    audit.delete(dbo, username, "adoption", mid, audit.dump_row(dbo, "adoption", mid))
-    db.execute(dbo, "DELETE FROM adoption WHERE ID = %d" % int(mid))
+    dbo.execute("UPDATE ownerdonation SET MovementID = 0 WHERE MovementID = ?", mid)
+    dbo.delete("adoption", mid, username)
     animal.update_animal_status(dbo, animalid)
     animal.update_variable_animal_data(dbo, animalid)
 
