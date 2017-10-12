@@ -1,6 +1,7 @@
 40
 ================
 
+12/10/17 Fix for displaying animal/person additional fields in documents
 11/10/17 Cleaned up movement delete for dangling/phantom reserve #277
 11/10/17 Allow CTRL+SHIFT+F to also be used for codemirror fullscreen #292
 11/10/17 Writing database statements to execute log broke with params #290

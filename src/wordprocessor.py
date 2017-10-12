@@ -381,6 +381,10 @@ def animal_tags(dbo, a):
             val = additional_yesno(l, af)
         if af["FIELDTYPE"] == additional.MONEY:
             val = format_currency_no_symbol(l, af["VALUE"])
+        if af["FIELDTYPE"] == additional.ANIMAL_LOOKUP:
+            val = af["ANIMALNAME"]
+        if af["FIELDTYPE"] == additional.PERSON_LOOKUP:
+            val = af["OWNERNAME"]
         tags[af["FIELDNAME"].upper()] = val
 
     include_incomplete_vacc = configuration.include_incomplete_vacc_doc(dbo)
@@ -632,6 +636,10 @@ def animalcontrol_tags(dbo, ac):
             val = additional_yesno(l, af)
         if af["FIELDTYPE"] == additional.MONEY:
             val = format_currency_no_symbol(l, af["VALUE"])
+        if af["FIELDTYPE"] == additional.ANIMAL_LOOKUP:
+            val = af["ANIMALNAME"]
+        if af["FIELDTYPE"] == additional.PERSON_LOOKUP:
+            val = af["OWNERNAME"]
         tags[af["FIELDNAME"].upper()] = val
 
     # Citations
@@ -868,6 +876,10 @@ def person_tags(dbo, p):
             val = additional_yesno(l, af)
         if af["FIELDTYPE"] == additional.MONEY:
             val = format_currency_no_symbol(l, af["VALUE"])
+        if af["FIELDTYPE"] == additional.ANIMAL_LOOKUP:
+            val = af["ANIMALNAME"]
+        if af["FIELDTYPE"] == additional.PERSON_LOOKUP:
+            val = af["OWNERNAME"]
         tags[af["FIELDNAME"].upper()] = val
 
     # Citations
