@@ -402,18 +402,8 @@ class Database(object):
         if DB_EXEC_LOG == "":
             return
         if params:
-            fp = []
             for p in params:
-                # Translate null
-                if p is None:
-                    fp.append("NULL")
-                # Quote and escape string values
-                elif utils.is_str(p) or utils.is_unicode(p):
-                    fp.append("'%s'" % self.escape(p))
-                else:
-                    fp.append(p)
-            for p in fp:
-                sql = sql.replace("%s", str(p), 1)
+                sql = sql.replace("%s", self.sql_value(p), 1)
         with open(DB_EXEC_LOG.replace("{database}", self.database), "a") as f:
             f.write("-- %s\n%s;\n" % (self.now(), sql))
 
@@ -736,16 +726,7 @@ class Database(object):
         for k in sorted(r.iterkeys()):
             if not donefields:
                 fields.append(k)
-            v = r[k]
-            if v is None:
-                values.append("null")
-            elif utils.is_unicode(v) or utils.is_str(v):
-                if escapeCR != "": v = v.replace("\n", escapeCR).replace("\r", "")
-                values.append("'%s'" % v.replace("'", "`"))
-            elif type(v) == datetime.datetime:
-                values.append("'%04d-%02d-%02d %02d:%02d:%02d'" % ( v.year, v.month, v.day, v.hour, v.minute, v.second ))
-            else:
-                values.append(str(v))
+            values.append(self.sql_value(r[k]))
         donefields = True
         return "INSERT INTO %s (%s) VALUES (%s);\n" % (table, ",".join(fields), ",".join(values))
 
@@ -812,6 +793,17 @@ class Database(object):
     def sql_replace(self, fieldexpr, findstr, replacestr):
         """ Writes a replace expression that finds findstr in fieldexpr, replacing with replacestr """
         return "REPLACE(%s, '%s', '%s')" % (fieldexpr, findstr, replacestr)
+
+    def sql_value(self, v):
+        """ Given a value v, writes it as an SQL parameter value """
+        if v is None:
+            return "null"
+        elif utils.is_unicode(v) or utils.is_str(v):
+            return "'%s'" % v.replace("'", "`")
+        elif type(v) == datetime.datetime:
+            return "'%04d-%02d-%02d %02d:%02d:%02d'" % ( v.year, v.month, v.day, v.hour, v.minute, v.second )
+        else:
+            return str(v)
 
     def switch_param_placeholder(self, sql):
         """ Swaps the ? token in the sql for the usual Python DBAPI placeholder of %s 
