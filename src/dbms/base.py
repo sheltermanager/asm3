@@ -412,7 +412,8 @@ class Database(object):
                     fp.append("'%s'" % self.escape(p))
                 else:
                     fp.append(p)
-            sql = sql % fp
+            for p in fp:
+                sql = sql.replace("%s", str(p), 1)
         with open(DB_EXEC_LOG.replace("{database}", self.database), "a") as f:
             f.write("-- %s\n%s;\n" % (self.now(), sql))
 
