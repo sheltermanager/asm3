@@ -102,10 +102,10 @@ def animal_tags(dbo, a):
     l = dbo.locale
     qr = QR_IMG_SRC % { "url": BASE_URL + "/animal?id=%d" % a["ID"], "size": "150x150" }
     animalage = a["ANIMALAGE"]
-    if animalage is not None and animalage.endswith("."): 
+    if animalage and animalage.endswith("."): 
         animalage = animalage[0:len(animalage)-1]
     timeonshelter = a["TIMEONSHELTER"]
-    if timeonshelter.endswith("."): 
+    if timeonshelter and timeonshelter.endswith("."): 
         timeonshelter = timeonshelter[0:len(timeonshelter)-1]
     displaydob = python2display(l, a["DATEOFBIRTH"])
     displayage = animalage
