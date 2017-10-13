@@ -1,6 +1,8 @@
 40
 ================
 
+13/10/17 Include additional fields with *_shelter_animals call #288
+13/10/17 Add xml/jsonp/json_recent_changes #286
 12/10/17 Fix for displaying animal/person additional fields in documents
 11/10/17 Cleaned up movement delete for dangling/phantom reserve #277
 11/10/17 Allow CTRL+SHIFT+F to also be used for codemirror fullscreen #292

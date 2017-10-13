@@ -70,6 +70,8 @@ class TestAnimal(unittest.TestCase):
         animal.get_short_code(base.get_dbo(), self.nid)
         animal.get_shelter_code(base.get_dbo(), self.nid)
         animal.get_animal_namecode(base.get_dbo(), self.nid)
+        assert len(animal.get_recent_changes(base.get_dbo())) > 0
+        assert len(animal.get_shelter_animals(base.get_dbo())) > 0
         assert animal.get_number_animals_on_shelter_now(base.get_dbo()) > 0
         assert True == animal.get_has_animals(base.get_dbo())
         assert True == animal.get_has_animal_on_shelter(base.get_dbo())

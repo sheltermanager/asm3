@@ -60,14 +60,7 @@ def get_animal_data(dbo, pc = None, animalid = 0, include_additional_fields = Fa
         al.debug("removed %d rows without descriptions" % (oldcount - len(rows)), "publishers.base.get_animal_data", dbo)
     # Embellish additional fields if requested
     if include_additional_fields:
-        for r in rows:
-            add = additional.get_additional_fields(dbo, int(r["ID"]), "animal")
-            for af in add:
-                if af["FIELDNAME"].find("&") != -1:
-                    # We've got unicode chars for the tag name - not allowed
-                    r["ADD" + str(af["ID"])] = af["VALUE"]
-                else:
-                    r[af["FIELDNAME"]] = af["VALUE"]
+        additional.append_to_results(dbo, rows, "animal")
     # Strip any personal data if requested
     if strip_personal_data:
         for r in rows:

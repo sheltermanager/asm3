@@ -2,18 +2,14 @@
 
 import unittest
 import base
+import web.utils
 
 import mobile
-
-class FakeSession:
-    user = "test"
-    roles = ""
-    superuser = 1
-    mobileapp = False
 
 class TestMobile(unittest.TestCase):
 
     def test_page(self):
-        mobile.page(base.get_dbo(), FakeSession(), "test")
+        fakesession = web.utils.storage(user="test", roles="", superuser=1, mobileapp=False)
+        mobile.page(base.get_dbo(), fakesession, "test")
  
 

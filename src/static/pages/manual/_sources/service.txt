@@ -351,6 +351,17 @@ XML::
     
     http://localhost:5000/service?method=xml_recent_adoptions&username=user&password=letmein
 
+json_recent_changes and xml_recent_changes
+--------------------------------------------
+
+.. rubric:: Cache time: 1 hour 
+
+Returns a dataset containing all animals who have been modified in the last
+month. The method determines whether the format returned is JSON or XML::
+
+    http://localhost:5000/service?method=xml_recent_changes&username=user&password=letmein
+
+
 json_shelter_animals and xml_shelter_animals
 --------------------------------------------
 

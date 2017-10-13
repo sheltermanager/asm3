@@ -122,6 +122,21 @@ def get_fields(dbo):
         "INNER JOIN lksyesno m ON m.ID = a.Mandatory " \
         "ORDER BY a.LinkType, a.DisplayIndex")
 
+def append_to_results(dbo, rows, linktype = "animal"):
+    """
+    Goes through each row in rows and adds any additional fields to the resultset.
+    Requires an ID column in the rows.
+    """
+    for r in rows:
+        add = get_additional_fields(dbo, int(r["ID"]), linktype)
+        for af in add:
+            if af["FIELDNAME"].find("&") != -1:
+                # We've got unicode chars for the tag name - not allowed
+                r["ADD" + str(af["ID"])] = af["VALUE"]
+            else:
+                r[af["FIELDNAME"]] = af["VALUE"]
+    return rows
+
 def insert_field_from_form(dbo, username, post):
     """
     Creates an additional field

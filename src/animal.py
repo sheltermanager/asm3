@@ -1710,6 +1710,24 @@ def get_recent_with_name(dbo, name):
     return dbo.query("SELECT ID, ID AS ANIMALID, SHELTERCODE, ANIMALNAME FROM animal " \
         "WHERE DateBroughtIn >= ? AND LOWER(AnimalName) LIKE ?", (subtract_days(dbo.now(), 21), name.lower()))
 
+def get_recent_changes(dbo, months=1, include_additional_fields=True):
+    """ Returns all animal records that were changed in the last months """
+    rows = dbo.query(get_animal_query(dbo) + \
+        " WHERE a.LastChangedDate > %s " \
+        "ORDER BY a.LastChangedDate DESC" % db.dd(subtract_days(now(dbo.timezone), months * 31)))
+    if include_additional_fields: 
+        rows = additional.append_to_results(dbo, rows, "animal")
+    return rows
+
+def get_shelter_animals(dbo, include_additional_fields=True):
+    """ Return full animal records for all shelter animals """
+    rows = dbo.query(get_animal_query(dbo) + \
+        " WHERE a.Archived = 0 " \
+        "ORDER BY a.AnimalName")
+    if include_additional_fields: 
+        rows = additional.append_to_results(dbo, rows, "animal")
+    return rows
+
 def get_units_with_availability(dbo, locationid):
     """
     Returns a list of location units for location id.
