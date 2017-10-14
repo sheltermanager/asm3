@@ -2489,7 +2489,8 @@ def clone_animal(dbo, username, animalid):
         dbo.insert("animalcost", {
             "AnimalID":             nid,
             "CostTypeID":           c.costtypeid,
-            "CostDate":             c.costamount,
+            "CostDate":             c.costdate,
+            "CostAmount":           c.costamount,
             "Description":          c.description
         }, username, writeAudit=False)
     # Donations
