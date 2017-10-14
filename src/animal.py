@@ -2418,7 +2418,7 @@ def clone_animal(dbo, username, animalid):
             "LinkID":               nid,
             "AdditionalFieldID":    af.additionalfieldid,
             "Value":                af.value
-        }, "", generateID=False, writeAudit=False, setRecordVersion=False)
+        }, generateID=False, writeAudit=False, setRecordVersion=False)
     # Vaccinations
     for v in dbo.query("SELECT * FROM animalvaccination WHERE AnimalID = ?", [animalid]):
         dbo.insert("animalvaccination", {
@@ -2551,7 +2551,7 @@ def clone_animal(dbo, username, animalid):
             "LinkID":               nid,
             "LinkTypeID":           media.ANIMAL,
             "Date":                 me.date
-        }, "", generateID=False)
+        }, generateID=False)
         # Now clone the dbfs item pointed to by this media item if it's a file
         if me.mediatype == media.MEDIATYPE_FILE:
             filedata = dbfs.get_string(dbo, me.medianame)
@@ -2652,7 +2652,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
             "LinkID":               animalid,
             "AdditionalFieldID":    af.additionalfieldid,
             "Value":                af.value
-        }, "", generateID=False, writeAudit=False, setRecordVersion=False)
+        }, generateID=False, writeAudit=False, setRecordVersion=False)
     # Vaccinations
     for v in dbo.query("SELECT * FROM animalvaccination WHERE AnimalID = ?", [cloneanimalid]):
         newdate = adjust_date(v.daterequired)
@@ -2935,7 +2935,7 @@ def update_variable_animal_data(dbo, animalid, a = None, animalupdatebatch = Non
             "DaysOnShelter":        calc_days_on_shelter(dbo, animalid, a),
             "TotalTimeOnShelter":   calc_total_time_on_shelter(dbo, animalid, a),
             "TotalDaysOnShelter":   calc_total_days_on_shelter(dbo, animalid, a)
-        }, "", setRecordVersion=False, writeAudit=False)
+        }, setRecordVersion=False, writeAudit=False)
 
 def update_all_variable_animal_data(dbo):
     """
@@ -3326,7 +3326,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
             "HasTrialAdoption":     b2i(hastrial),
             "HasPermanentFoster":   b2i(haspermanentfoster),
             "MostRecentEntryDate":  mostrecententrydate
-        }, "")
+        })
 
 def get_number_animals_on_shelter(dbo, date, speciesid = 0, animaltypeid = 0, internallocationid = 0, ageselection = 0, startofday = False):
     """
@@ -4573,7 +4573,7 @@ def maintenance_reassign_all_codes(dbo):
             "ShortCode":        shortcode,
             "UniqueCodeID":     unique,
             "YearCodeID":       year
-        }, "")
+        })
         al.debug("RECODE: %s -> %s" % (a.animalname, sheltercode), "animal.maintenance_reassign_all_codes", dbo)
 
 def maintenance_reassign_shelter_codes(dbo):
@@ -4592,7 +4592,7 @@ def maintenance_reassign_shelter_codes(dbo):
             "ShortCode":        shortcode,
             "UniqueCodeID":     unique,
             "YearCodeID":       year
-        }, "")
+        })
         al.debug("RECODE: %s -> %s" % (a.animalname, sheltercode), "animal.maintenance_reassign_all_codes", dbo)
 
 def maintenance_animal_figures(dbo, includeMonths = True, includeAnnual = True):

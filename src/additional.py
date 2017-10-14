@@ -91,7 +91,7 @@ def get_additional_fields_ids(dbo, rows, linktype = "animal"):
     inclause = clause_for_linktype(linktype)
     links = []
     for r in rows:
-        links.append(str(r["ID"]))
+        links.append(str(r.id))
     if len(links) == 0:
         links.append("0")
     return dbo.query("SELECT a.LinkID, af.ID, af.FieldName, af.FieldLabel, af.ToolTip, " \
@@ -128,13 +128,13 @@ def append_to_results(dbo, rows, linktype = "animal"):
     Requires an ID column in the rows.
     """
     for r in rows:
-        add = get_additional_fields(dbo, int(r["ID"]), linktype)
+        add = get_additional_fields(dbo, r.id, linktype)
         for af in add:
-            if af["FIELDNAME"].find("&") != -1:
+            if af.fieldname.find("&") != -1:
                 # We've got unicode chars for the tag name - not allowed
-                r["ADD" + str(af["ID"])] = af["VALUE"]
+                r["ADD" + str(af.id)] = af.value
             else:
-                r[af["FIELDNAME"]] = af["VALUE"]
+                r[af.fieldname] = af.value
     return rows
 
 def insert_field_from_form(dbo, username, post):
@@ -196,22 +196,22 @@ def save_values_for_link(dbo, post, linkid, linktype = "animal"):
     af = get_field_definitions(dbo, linktype)
     l = dbo.locale
     for f in af:
-        key = "a.%s.%s" % (f["MANDATORY"], f["ID"])
+        key = "a.%s.%s" % (f.mandatory, f.id)
         if key in post:
             val = post[key]
-            if f["FIELDTYPE"] == YESNO:
+            if f.fieldtype == YESNO:
                 val = str(post.boolean(key))
-            elif f["FIELDTYPE"] == MONEY:
+            elif f.fieldtype == MONEY:
                 val = str(post.integer(key))
-            elif f["FIELDTYPE"] == DATE:
+            elif f.fieldtype == DATE:
                 if len(val.strip()) > 0 and post.date(key) is None:
-                    raise utils.ASMValidationError(_("Additional date field '{0}' contains an invalid date.", l).format(f["FIELDNAME"]))
+                    raise utils.ASMValidationError(_("Additional date field '{0}' contains an invalid date.", l).format(f.fieldname))
                 val = python2display(dbo.locale, post.date(key))
             try:
                 dbo.insert("additional", {
-                    "LinkType":             f["LINKTYPE"],
+                    "LinkType":             f.linktype,
                     "LinkID":               linkid,
-                    "AdditionalFieldID":    f["ID"],
+                    "AdditionalFieldID":    f.id,
                     "Value":                val
                 }, generateID=False, writeAudit=False)
             except Exception as err:
