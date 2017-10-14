@@ -63,6 +63,30 @@ class QueryBuilder(object):
     def params(self):
         return self.values
 
+class ResultRow(dict):
+    """
+    A ResultRow object is like a dictionary except `obj.foo` can be used
+    in addition to `obj['foo']`. 
+    It's also case insensitive as dbms tend to be on column names.
+    """
+    def __getattr__(self, key):
+        try:
+            return self[key.upper()]
+        except KeyError as k:
+            raise AttributeError(k)
+
+    def __setattr__(self, key, value):
+        self[key.upper()] = value
+
+    def __delattr__(self, key):
+        try:
+            del self[key.upper()]
+        except KeyError as k:
+            raise AttributeError(k)
+
+    def __repr__(self):
+        return '<ResultRow ' + dict.__repr__(self) + '>'
+
 class Database(object):
     """
     Object that handles all interactions with the database.
@@ -354,7 +378,7 @@ class Database(object):
         values = self.encode_str_before_write(values)
         sql = "INSERT INTO %s (%s) VALUES (%s)" % ( table, ",".join(values.iterkeys()), self.sql_placeholders(values) )
         self.execute(sql, values.values())
-        if writeAudit and iid != 0:
+        if writeAudit and iid != 0 and user != "":
             audit.create(self, user, table, iid, audit.dump_row(self, table, iid))
         return iid
 
@@ -421,7 +445,7 @@ class Database(object):
         return version == self.query_int("SELECT RecordVersion FROM %s WHERE ID = %d" % (table, tid))
 
     def query(self, sql, params=None, limit=0, distincton=""):
-        """ Runs the query given and returns the resultset as a list of dictionaries. 
+        """ Runs the query given and returns the resultset as a list of ResultRow objects. 
             All fieldnames are uppercased when returned.
             params: tuple of parameters for the query
             limit: limit results to X rows
@@ -456,8 +480,7 @@ class Database(object):
                 cols.append(i[0].upper())
             seendistinct = set()
             for row in d:
-                # Intialise a map for each row
-                rowmap = {}
+                rowmap = ResultRow()
                 for i in range(0, len(row)):
                     v = self.encode_str_after_read(row[i])
                     rowmap[cols[i]] = v
@@ -801,7 +824,7 @@ class Database(object):
         elif utils.is_unicode(v) or utils.is_str(v):
             return "'%s'" % v.replace("'", "`")
         elif type(v) == datetime.datetime:
-            return "'%04d-%02d-%02d %02d:%02d:%02d'" % ( v.year, v.month, v.day, v.hour, v.minute, v.second )
+            return self.sql_date(v)
         else:
             return str(v)
 

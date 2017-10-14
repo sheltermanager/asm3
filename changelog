@@ -1,6 +1,7 @@
 40
 ================
 
+14/10/17 Refactored animal module to use parameterised queries #252
 13/10/17 Include additional fields with *_shelter_animals call #288
 13/10/17 Add xml/jsonp/json_recent_changes #286
 12/10/17 Fix for displaying animal/person additional fields in documents
