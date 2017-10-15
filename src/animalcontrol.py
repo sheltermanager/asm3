@@ -63,23 +63,23 @@ def get_animalcontrol(dbo, acid):
     """
     Returns an animal control incident record
     """
-    rows = db.query(dbo, get_animalcontrol_query(dbo) + " WHERE ac.ID = %d" % acid)
+    rows = dbo.query(get_animalcontrol_query(dbo) + " WHERE ac.ID = ?", [acid])
     if rows is None or len(rows) == 0:
         return None
     else:
         ac = rows[0]
-        roles = db.query(dbo, "SELECT acr.*, r.RoleName FROM animalcontrolrole acr INNER JOIN role r ON acr.RoleID = r.ID WHERE acr.AnimalControlID = %d" % acid)
+        roles = dbo.query("SELECT acr.*, r.RoleName FROM animalcontrolrole acr INNER JOIN role r ON acr.RoleID = r.ID WHERE acr.AnimalControlID = ?", [acid])
         viewroleids = []
         viewrolenames = []
         editroleids = []
         editrolenames = []
         for r in roles:
-            if r["CANVIEW"] == 1:
-                viewroleids.append(str(r["ROLEID"]))
-                viewrolenames.append(str(r["ROLENAME"]))
-            if r["CANEDIT"] == 1:
-                editroleids.append(str(r["ROLEID"]))
-                editrolenames.append(str(r["ROLENAME"]))
+            if r.canview == 1:
+                viewroleids.append(str(r.roleid))
+                viewrolenames.append(str(r.rolename))
+            if r.canedit == 1:
+                editroleids.append(str(r.roleid))
+                editrolenames.append(str(r.rolename))
         ac["VIEWROLEIDS"] = "|".join(viewroleids)
         ac["VIEWROLES"] = "|".join(viewrolenames)
         ac["EDITROLEIDS"] = "|".join(editroleids)
@@ -87,13 +87,13 @@ def get_animalcontrol(dbo, acid):
         return ac
 
 def get_animalcontrol_animals(dbo, acid):
-    return db.query(dbo, get_animalcontrol_animals_query(dbo) + " WHERE aca.AnimalControlID = %d" % acid)
+    return dbo.query(get_animalcontrol_animals_query(dbo) + " WHERE aca.AnimalControlID = ?", [acid])
 
 def get_followup_two_dates(dbo, dbstart, dbend):
     """
     Returns incidents for followup between the two ISO dates specified
     """
-    return db.query(dbo, get_animalcontrol_query(dbo) + " WHERE " \
+    return dbo.query(get_animalcontrol_query(dbo) + " WHERE " \
         "(ac.FollowupDateTime >= '%(start)s' AND ac.FollowupDateTime <= '%(end)s' AND NOT ac.FollowupComplete = 1) OR " \
         "(ac.FollowupDateTime2 >= '%(start)s' AND ac.FollowupDateTime2 <= '%(end)s' AND NOT ac.FollowupComplete2 = 1) OR " \
         "(ac.FollowupDateTime3 >= '%(start)s' AND ac.FollowupDateTime3 <= '%(end)s' AND NOT ac.FollowupComplete3 = 1)" % { "start": dbstart, "end": dbend })

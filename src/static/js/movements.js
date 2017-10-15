@@ -650,11 +650,15 @@ $(function() {
                 $("#reservationdate").closest("tr").fadeIn();
                 $("#reservationstatus").closest("tr").fadeIn();
                 $("#reservationcancelled").closest("tr").fadeIn();
+                $("#movementdate").closest("tr").fadeOut();
+                $("#returndate").closest("tr").fadeOut();
             }
             else {
                 $("#reservationdate").closest("tr").fadeOut();
                 $("#reservationstatus").closest("tr").fadeOut();
                 $("#reservationcancelled").closest("tr").fadeOut();
+                $("#movementdate").closest("tr").fadeIn();
+                $("#returndate").closest("tr").fadeIn();
             }
             // If the movement is one that doesn't require a person, hide the person row
             if (mt == 4 || mt == 6 || mt == 7) {
