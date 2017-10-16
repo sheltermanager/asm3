@@ -2850,8 +2850,9 @@ def insert_litter_from_form(dbo, username, post):
         "CachedAnimalsLeft": 0,
         "InvalidDate":      post.date("expirydate"),
         "NumberInLitter":   post.integer("numberinlitter"),
-        "Comments":         post["comments"]
-    }, username)
+        "Comments":         post["comments"],
+        "RecordVersion":    dbo.get_recordversion()
+    })
     update_active_litters(dbo)
     # if a list of littermates were given, set the litterid on those animal records
     for i in post.integer_list("animals"):
@@ -2870,8 +2871,9 @@ def update_litter_from_form(dbo, username, post):
         "CachedAnimalsLeft": 0,
         "InvalidDate":      post.date("expirydate"),
         "NumberInLitter":   post.integer("numberinlitter"),
-        "Comments":         post["comments"]
-    }, username)
+        "Comments":         post["comments"],
+        "RecordVersion":    dbo.get_recordversion()
+    })
     update_active_litters(dbo)
 
 def delete_litter(dbo, username, lid):
