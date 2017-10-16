@@ -16,7 +16,7 @@ import lookups
 import media
 import movement
 import utils
-from i18n import _, date_diff, date_diff_days, format_diff, now, today, python2display, subtract_years, subtract_months, add_days, subtract_days, monday_of_week, first_of_month, last_of_month, first_of_year
+from i18n import _, date_diff, date_diff_days, format_diff, python2display, subtract_years, subtract_months, add_days, subtract_days, monday_of_week, first_of_month, last_of_month, first_of_year
 from random import choice
 
 ASCENDING = 0
@@ -225,7 +225,7 @@ def get_animal_query(dbo):
         "LEFT OUTER JOIN reservationstatus ars ON ars.ID = ar.ReservationStatusID " \
         "LEFT OUTER JOIN owner ro ON ro.ID = ar.OwnerID" % {
             "today": dbo.sql_now(includeTime=False),
-            "twodaysago":  dbo.sql_date(subtract_days(now(dbo.timezone), 2), includeTime=False)
+            "twodaysago":  dbo.sql_date(subtract_days(dbo.today(), 2))
         }
 
 def get_animal_status_query(dbo):
@@ -588,8 +588,8 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
 
     if post["agedbetweenfrom"] != "" and post["agedbetweento"] != "":
         ands.append("a.DateOfBirth >= ? AND a.DateOfBirth <= ?")
-        values.append(subtract_years(now(), post.floating("agedbetweento")))
-        values.append(subtract_years(now(), post.floating("agedbetweenfrom")))
+        values.append(subtract_years(dbo.now(), post.floating("agedbetweento")))
+        values.append(subtract_years(dbo.now(), post.floating("agedbetweenfrom")))
 
     if post["insuranceno"] != "":
         ands.append("EXISTS (SELECT InsuranceNumber FROM adoption WHERE " \
@@ -655,7 +655,7 @@ def get_animals_hold_today(dbo):
     """
     Returns all shelter animals who have the hold flag set and the hold ends today
     """
-    return dbo.query(get_animal_query(dbo) + " WHERE a.IsHold = 1 AND a.HoldUntilDate = ? AND a.Archived = 0", [dbo.now()])
+    return dbo.query(get_animal_query(dbo) + " WHERE a.IsHold = 1 AND a.HoldUntilDate = ? AND a.Archived = 0", [dbo.today()])
 
 def get_animals_long_term(dbo):
     """
@@ -673,7 +673,7 @@ def get_animals_recently_deceased(dbo):
     """
     Returns all shelter animals who are recently deceased
     """
-    recent = subtract_days(now(), 30)
+    recent = subtract_days(dbo.now(), 30)
     return dbo.query(get_animal_query(dbo) + " " \
         "WHERE a.DeceasedDate Is Not Null " \
         "AND (a.ActiveMovementType Is Null OR a.ActiveMovementType = 0 " \
@@ -684,12 +684,12 @@ def get_alerts(dbo, locationfilter = "", siteid = 0):
     """
     Returns the alert totals for the main screen.
     """
-    futuremonth = dbo.sql_date(add_days(now(dbo.timezone), 31), includeTime=False)
-    oneyear = dbo.sql_date(subtract_days(now(dbo.timezone), 365), includeTime=False)
-    onemonth = dbo.sql_date(subtract_days(now(dbo.timezone), 31), includeTime=False)
-    oneweek = dbo.sql_date(subtract_days(now(dbo.timezone), 7), includeTime=False)
-    today = dbo.sql_date(now(dbo.timezone), includeTime=False)
-    endoftoday = dbo.sql_date(now(dbo.timezone).replace(hour = 23, minute = 59, second = 59), includeTime=True)
+    futuremonth = dbo.sql_date(add_days(dbo.today(), 31))
+    oneyear = dbo.sql_date(subtract_days(dbo.today(), 365))
+    onemonth = dbo.sql_date(subtract_days(dbo.today(), 31))
+    oneweek = dbo.sql_date(subtract_days(dbo.today(), 7))
+    today = dbo.sql_date(dbo.today())
+    endoftoday = dbo.sql_date(dbo.now().replace(hour = 23, minute = 59, second = 59))
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
     shelterfilter = ""
     if not configuration.include_off_shelter_medical(dbo):
@@ -755,12 +755,12 @@ def get_stats(dbo):
     Returns the stats figures for the main screen.
     """
     statperiod = configuration.show_stats_home_page(dbo)
-    statdate = now(dbo.timezone) # defaulting to today
+    statdate = dbo.today() # defaulting to today
     if statperiod == "thisweek": statdate = monday_of_week(statdate)
     if statperiod == "thismonth": statdate = first_of_month(statdate)
     if statperiod == "thisyear": statdate = first_of_year(statdate)
     if statperiod == "alltime": statdate = datetime.datetime(1900, 1, 1)
-    countfrom = dbo.sql_date(statdate, includeTime=False)
+    countfrom = dbo.sql_date(statdate)
     return dbo.query_named_params("SELECT " \
         "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DateBroughtIn >= :from) AS Entered," \
         "(SELECT COUNT(*) FROM adoption WHERE MovementDate >= :from AND MovementType = :adoption) AS Adopted," \
@@ -984,7 +984,7 @@ def get_timeline(dbo, limit = 500):
             "WHERE NonShelterAnimal = 0 AND DateBroughtIn <= ? " \
             "ORDER BY DateBroughtIn DESC, ID %(limit)s" % \
             { "limit": dbo.sql_limit(limit) }
-    return embellish_timeline(dbo.locale, dbo.query_cache(sql, [dbo.now()], age=120))
+    return embellish_timeline(dbo.locale, dbo.query_cache(sql, [dbo.today()], age=120))
 
 def calc_time_on_shelter(dbo, animalid, a = None):
     """
@@ -1009,7 +1009,7 @@ def calc_days_on_shelter(dbo, animalid, a = None):
     Returns the number of days an animal has been on the shelter as an int
     (int) animalid: The animal to get the number of days on shelter for
     """
-    stop = now()
+    stop = dbo.now()
     if a is None:
         a = dbo.query("SELECT Archived, MostRecentEntryDate, DeceasedDate, DiedOffShelter, ActiveMovementDate FROM animal WHERE ID = ?", [animalid])
         if len(a) == 0: return
@@ -1033,7 +1033,7 @@ def calc_total_days_on_shelter(dbo, animalid, a = None, movements = None):
     a: The animal already loaded, needs Archived, DateBroughtIn, DeceasedDate, ActiveMovementDate
     movements: A list of movements that includes MovementDate and ReturnDate for this (and possibly other) animal(s) ordered by animalid
     """
-    stop = now()
+    stop = dbo.now()
     if a is None:
         a = dbo.query("SELECT Archived, DateBroughtIn, DeceasedDate, DiedOffShelter, ActiveMovementDate FROM animal WHERE ID = ?", [animalid])
         if len(a) == 0: return 0
@@ -1088,7 +1088,7 @@ def calc_age_group(dbo, animalid, a = None, bands = None):
         dob = get_date_of_birth(dbo, animalid)
     else:
         dob = a.dateofbirth
-    days = date_diff_days(dob, now())
+    days = date_diff_days(dob, dbo.now())
     # Load age group bands if they weren't passed
     if bands is None:
         bands = dbo.query("SELECT ItemName, ItemValue FROM configuration WHERE ItemName LIKE 'AgeGroup%' ORDER BY ItemName")
@@ -1115,7 +1115,7 @@ def calc_age(dbo, animalid, a = None):
     else:
         dob = get_date_of_birth(dbo, animalid)
         deceased = get_deceased_date(dbo, animalid)
-    stop = now()
+    stop = dbo.now()
 
     # If the animal is dead, stop there
     if deceased is not None:
@@ -1190,7 +1190,7 @@ def calc_shelter_code(dbo, animaltypeid, entryreasonid, speciesid, datebroughtin
         return code
 
     if datebroughtin is None:
-        datebroughtin = now()
+        datebroughtin = dbo.today()
 
     codeformat = configuration.coding_format(dbo)
     shortformat = configuration.coding_format_short(dbo)
@@ -1199,7 +1199,7 @@ def calc_shelter_code(dbo, animaltypeid, entryreasonid, speciesid, datebroughtin
     species = clean_lookup(lookups.get_species_name(dbo, speciesid))
     beginningofyear = datetime.datetime(datebroughtin.year, 1, 1, 0, 0, 0)
     endofyear = datetime.datetime(datebroughtin.year, 12, 31, 23, 59, 59)
-    oneyearago = subtract_years(now(), 1.0)
+    oneyearago = subtract_years(dbo.today(), 1.0)
     highesttyear = 0
     highestyear = 0
     highestever = 0
@@ -1562,13 +1562,13 @@ def update_active_litters(dbo):
         "AND a.AcceptanceNumber Like l.AcceptanceNumber AND a.DateOfBirth >= ?) AS dbcount " \
         "FROM animallitter l " \
         "WHERE l.CachedAnimalsLeft Is Not Null AND " \
-        "(l.InvalidDate Is Null OR l.InvalidDate > ?) ", ( subtract_months(dbo.now(), 6), dbo.now() ))
+        "(l.InvalidDate Is Null OR l.InvalidDate > ?) ", ( subtract_months(dbo.today(), 6), dbo.today() ))
     for a in active:
         remaining = a.cachedanimalsleft
         newremaining = a.dbcount
         if newremaining == 0 and remaining > 0:
             al.debug("litter '%s' has no animals left, expiring." % a.acceptancenumber, "animal.update_active_litters", dbo)
-            dbo.execute("UPDATE animallitter SET InvalidDate=? WHERE ID=?", (dbo.now(), a.id))
+            dbo.execute("UPDATE animallitter SET InvalidDate=? WHERE ID=?", (dbo.today(), a.id))
         if newremaining != remaining:
             dbo.execute("UPDATE animallitter SET CachedAnimalsLeft=? WHERE ID=?", (newremaining, a.id))
             al.debug("litter '%s' has fewer animals, setting remaining to %d." % (a.acceptancenumber, int(newremaining)), "animal.update_active_litters", dbo)
@@ -1585,7 +1585,7 @@ def get_active_litters(dbo, speciesid = -1):
         "INNER JOIN species s ON l.SpeciesID = s.ID " \
         "WHERE InvalidDate < ? %s" \
         "ORDER BY l.Date DESC" 
-    values = [ dbo.now() ]
+    values = [ dbo.today() ]
     if speciesid != -1: 
         sql = sql % "AND SpeciesID = ? "
         values.append(speciesid)
@@ -1623,7 +1623,7 @@ def get_litters(dbo):
         "LEFT OUTER JOIN animal a ON l.ParentAnimalID = a.ID " \
         "INNER JOIN species s ON l.SpeciesID = s.ID " \
         "WHERE l.Date >= ? " \
-        "ORDER BY l.Date DESC", [ subtract_years(now(), 1) ])
+        "ORDER BY l.Date DESC", [ subtract_years(dbo.today(), 1) ])
 
 def get_satellite_counts(dbo, animalid):
     """
@@ -1706,13 +1706,13 @@ def get_recent_with_name(dbo, name):
     with the name given.
     """
     return dbo.query("SELECT ID, ID AS ANIMALID, SHELTERCODE, ANIMALNAME FROM animal " \
-        "WHERE DateBroughtIn >= ? AND LOWER(AnimalName) LIKE ?", (subtract_days(dbo.now(), 21), name.lower()))
+        "WHERE DateBroughtIn >= ? AND LOWER(AnimalName) LIKE ?", (subtract_days(dbo.today(), 21), name.lower()))
 
 def get_recent_changes(dbo, months=1, include_additional_fields=True):
     """ Returns all animal records that were changed in the last months """
     rows = dbo.query(get_animal_query(dbo) + \
         " WHERE a.LastChangedDate > ? " \
-        "ORDER BY a.LastChangedDate DESC", [subtract_days(now(dbo.timezone), months * 31)])
+        "ORDER BY a.LastChangedDate DESC", [subtract_days(dbo.today(), months * 31)])
     if include_additional_fields: 
         rows = additional.append_to_results(dbo, rows, "animal")
     return rows
@@ -1791,7 +1791,7 @@ def insert_animal_from_form(dbo, post, username):
 
     if post["dateofbirth"] == "" or post.date("dateofbirth") is None:
         estimateddob = 1
-        dob = subtract_years(now(), post.floating("estimatedage"))
+        dob = subtract_years(dbo.today(), post.floating("estimatedage"))
     else:
         estimateddob = 0
         dob = post.date("dateofbirth")
@@ -1800,9 +1800,9 @@ def insert_animal_from_form(dbo, post, username):
     datebroughtin = post.datetime("datebroughtin", "timebroughtin")
     if datebroughtin is None:
         if configuration.add_animals_show_time_brought_in(dbo):
-            datebroughtin = now()
+            datebroughtin = dbo.now()
         else:
-            datebroughtin = today()
+            datebroughtin = dbo.today()
 
     # Set the code manually if we were given a code, or the option was turned on
     if configuration.manual_codes(dbo) or post["sheltercode"] != "":
@@ -1835,9 +1835,9 @@ def insert_animal_from_form(dbo, post, username):
     if post["microchipnumber"].strip() != "" and not configuration.allow_duplicate_microchip(dbo):
         if dbo.query_int("SELECT COUNT(ID) FROM animal WHERE IdentichipNumber Like ? AND ID <> ?", (post["microchipnumber"], nextid)) > 0:
             raise utils.ASMValidationError(_("Microchip number {0} has already been allocated to another animal.", l).format(post["microchipnumber"]))
-    if dob > now(dbo.timezone):
+    if dob > dbo.today():
         raise utils.ASMValidationError(_("Date of birth cannot be in the future.", l))
-    if datebroughtin > add_days(now(dbo.timezone), 6):
+    if datebroughtin > add_days(dbo.today(), 6):
         raise utils.ASMValidationError(_("Date brought in cannot be in the future.", l))
 
     # Set default brought in by if we have one and none was set
@@ -1948,7 +1948,7 @@ def insert_animal_from_form(dbo, post, username):
         "Archived":         0,
         "ActiveMovementID": 0,
         "HasActiveReserve": 0,
-        "MostRecentEntryDate": now()
+        "MostRecentEntryDate": dbo.today()
     }, username, generateID=False)
 
     # Save any additional field values given
@@ -2006,13 +2006,13 @@ def update_animal_from_form(dbo, post, username):
         raise utils.ASMValidationError(_("Date of birth cannot be blank", l))
     if post.date("dateofbirth") is None:
         raise utils.ASMValidationError(_("Date of birth is not valid", l))
-    if post.date("dateofbirth") > now(dbo.timezone):
+    if post.date("dateofbirth") > dbo.today():
         raise utils.ASMValidationError(_("Date of birth cannot be in the future.", l))
     if post["datebroughtin"] == "":
         raise utils.ASMValidationError(_("Date brought in cannot be blank", l))
     if post.datetime("datebroughtin", "timebroughtin") is None:
         raise utils.ASMValidationError(_("Date brought in is not valid", l))
-    if post.datetime("datebroughtin", "timebroughtin") > add_days(now(dbo.timezone), 6):
+    if post.datetime("datebroughtin", "timebroughtin") > add_days(dbo.today(), 6):
         raise utils.ASMValidationError(_("Date brought in cannot be in the future.", l))
     if post["sheltercode"] == "":
         raise utils.ASMValidationError(_("Shelter code cannot be blank", l))
@@ -2251,7 +2251,7 @@ def update_animals_from_form(dbo, post, username):
             }
             movement.insert_movement_from_form(dbo, username, utils.PostedData(move_dict, dbo.locale))
     # Record the user as making the last change to this record and create audit records for the changes
-    dbo.execute("UPDATE animal SET LastChangedBy = %s, LastChangedDate = %s WHERE ID IN (%s)" % (dbo.sql_value(username), dbo.sql_value(now(dbo.timezone)), post["animals"]))
+    dbo.execute("UPDATE animal SET LastChangedBy = %s, LastChangedDate = %s WHERE ID IN (%s)" % (dbo.sql_value(username), dbo.sql_now(), post["animals"]))
     if len(aud) > 0:
         for animalid in post.integer_list("animals"):
             audit.edit(dbo, username, "animal", animalid, ", ".join(aud))
@@ -2624,7 +2624,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
     babydays = babymonths * 30.5
     # 12 * 30.5 = 366 so it's one day out for a year
     if babymonths == 12: babydays = 365
-    if date_diff_days(dob, now()) < babydays:
+    if date_diff_days(dob, dbo.today()) < babydays:
         queries = babyqueries
     # Use our queries to find a potential template
     for q in queries:
@@ -2644,7 +2644,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
     # difference to today to get a new date
     def adjust_date(d):
         dayoffset = date_diff_days(broughtin, d)
-        return dbo.sql_date(add_days(now(dbo.timezone), dayoffset), includeTime=False)
+        return dbo.sql_date(add_days(dbo.today(), dayoffset))
     # Additional Fields (don't include mandatory ones as they are already set by new animal screen)
     for af in dbo.query("SELECT a.* FROM additional a INNER JOIN additionalfield af ON af.ID = a.AdditionalFieldID WHERE af.Mandatory <> 1 AND a.LinkID = %d AND a.LinkType IN (%s)" % (cloneanimalid, additional.ANIMAL_IN)):
         dbo.insert("additional", {
@@ -3091,7 +3091,7 @@ def update_on_shelter_animal_statuses(dbo):
     Updates statuses for all animals currently on shelter 
     or scheduled for return from yesterday or newer.
     """
-    cutoff = subtract_days(now(dbo.timezone), 1)
+    cutoff = subtract_days(dbo.today(), 1)
     animals = dbo.query(get_animal_status_query(dbo) + " WHERE a.Archived = 0 OR (a.Archived = 1 AND a.ActiveMovementReturn > ?)", [cutoff])
     movements = dbo.query(get_animal_movement_status_query(dbo) + \
         " WHERE AnimalID IN (SELECT ID FROM animal WHERE Archived = 0 OR (Archived = 1 AND ActiveMovementReturn > ?)) ORDER BY MovementDate DESC", [cutoff])
@@ -3153,7 +3153,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
     activemovementreturn = None
     currentownerid = None
     currentownername = None
-    today = now(dbo.timezone)
+    today = dbo.today()
     
     def b2i(x):
         return x and 1 or 0
@@ -3540,7 +3540,7 @@ def update_animal_figures(dbo, month = 0, year = 0):
     # to generate for. We use this month, unless today is the first
     # of the month, in which case we do last month
     if month == 0 and year == 0:
-        today = now()
+        today = dbo.today()
         if today.day == 1: today = subtract_months(today, 1)
         month = today.month
         year = today.year
@@ -4063,7 +4063,7 @@ def update_animal_figures_annual(dbo, year = 0):
     # of the year, in which case we do last year.
     l = dbo.locale
     if year == 0:
-        today = now(dbo.timezone)
+        today = dbo.today()
         if today.day == 1 and today.month == 1: today = subtract_years(today, 1)
         year = today.year
     al.debug("Generating animal figures annual for year=%d" % year, "animal.update_animal_figures_annual", dbo)
@@ -4554,7 +4554,7 @@ def auto_cancel_holds(dbo):
     sql = "UPDATE animal SET IsHold = 0 WHERE IsHold = 1 AND " \
         "HoldUntilDate Is Not Null AND " \
         "HoldUntilDate <= ?"
-    count = dbo.execute(sql, [now(dbo.timezone)])
+    count = dbo.execute(sql, [dbo.today()])
     al.debug("cancelled %d holds" % (count), "animal.auto_cancel_holds", dbo)
 
 def maintenance_reassign_all_codes(dbo):

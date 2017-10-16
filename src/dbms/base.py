@@ -431,8 +431,16 @@ class Database(object):
         with open(DB_EXEC_LOG.replace("{database}", self.database), "a") as f:
             f.write("-- %s\n%s;\n" % (self.now(), sql))
 
-    def now(self):
-        return i18n.now(self.timezone)
+    def now(self, time=True):
+        """ If time is True, returns the current time otherwise midnight """
+        d = i18n.now(self.timezone)
+        if time:
+            d = d.replace(hour = 0, minute = 0, second = 0)
+        return d
+
+    def today(self):
+        """ Returns today at midnight """
+        return self.now(time=False)
 
     def optimistic_check(self, table, tid, version):
         """ Verifies that the record with ID tid in table still has
@@ -816,6 +824,10 @@ class Database(object):
     def sql_replace(self, fieldexpr, findstr, replacestr):
         """ Writes a replace expression that finds findstr in fieldexpr, replacing with replacestr """
         return "REPLACE(%s, '%s', '%s')" % (fieldexpr, findstr, replacestr)
+
+    def sql_today(self, wrapParens=True, includeTime=True):
+        """ Writes today as an SQL date """
+        return self.sql_date(self.today(), wrapParens=wrapParens, includeTime=includeTime)
 
     def sql_value(self, v):
         """ Given a value v, writes it as an SQL parameter value """
