@@ -2713,7 +2713,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
                 "Comments":         amt.comments
             }, username, writeAudit=False)
     # Diet
-    for d in dbo.query("SELECT * FROM animaldiet WHERE AnimalID = %d", [cloneanimalid]):
+    for d in dbo.query("SELECT * FROM animaldiet WHERE AnimalID = ?", [cloneanimalid]):
         newdate = adjust_date(d.datestarted)
         dbo.insert("animaldiet", {
             "AnimalID":             animalid,
@@ -2722,7 +2722,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
             "Comments":             d.comments
         }, username, writeAudit=False)
     # Costs
-    for c in dbo.query("SELECT * FROM animalcost WHERE AnimalID = %d", [cloneanimalid]):
+    for c in dbo.query("SELECT * FROM animalcost WHERE AnimalID = ?", [cloneanimalid]):
         newdate = adjust_date(c.costdate)
         dbo.insert("animalcost", {
             "AnimalID":             animalid,
