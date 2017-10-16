@@ -392,9 +392,7 @@ class Database(object):
             writeAudit: If True, writes an audit record for the update
         """
         if user != "":
-            values["CreatedBy"] = user
             values["LastChangedBy"] = user
-            values["CreatedDate"] = self.now()
             values["LastChangedDate"] = self.now()
             if setRecordVersion: values["RecordVersion"] = self.get_recordversion()
         values = self.encode_str_before_write(values)

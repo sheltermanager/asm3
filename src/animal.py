@@ -2142,7 +2142,7 @@ def update_animal_from_form(dbo, post, username):
         "IsTransfer":           post.boolean("transferin"),
         "IsPickup":             post.boolean("pickedup"),
         "PickupLocationID":     post.integer("pickuplocation"),
-        "PickupAddress":        post.integer("pickupaddress"),
+        "PickupAddress":        post["pickupaddress"],
         "DateBroughtIn":        post.datetime("datebroughtin", "timebroughtin"),
         "AsilomarIntakeCategory": post.integer("asilomarintakecategory"),
         "AsilomarIsTransferExternal": post.boolean("asilomartransferexternal"),
