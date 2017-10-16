@@ -983,7 +983,7 @@ def get_timeline(dbo, limit = 500):
             "WHERE NonShelterAnimal = 0 AND DateBroughtIn <= ? " \
             "ORDER BY DateBroughtIn DESC, ID %(limit)s" % \
             { "limit": dbo.sql_limit(limit) }
-    return embellish_timeline(dbo.locale, dbo.query_cache(sql, [dbo.today()], age=120))
+    return embellish_timeline(dbo.locale, dbo.query_cache(sql, [dbo.now()], age=120))
 
 def calc_time_on_shelter(dbo, animalid, a = None):
     """
