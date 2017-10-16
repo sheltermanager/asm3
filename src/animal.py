@@ -2659,6 +2659,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
         dbo.insert("animalvaccination", {
             "AnimalID":             animalid,
             "VaccinationID":        v.vaccinationid,
+            "DateRequired":         newdate,
             "DateOfVaccination":    None,
             "DateExpires":          None,
             "AdministeringVetID":   v.administeringvetid,
