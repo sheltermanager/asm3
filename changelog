@@ -1,6 +1,7 @@
 40
 ================
 
+16/10/17 animalcontrol refactored for parameterised queries #252
 15/10/17 Hide movement date for reservations
 14/10/17 50% of animalcontrol refactored #252
 14/10/17 Refactored animal module to use parameterised queries #252

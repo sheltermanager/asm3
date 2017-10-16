@@ -431,16 +431,30 @@ class Database(object):
         with open(DB_EXEC_LOG.replace("{database}", self.database), "a") as f:
             f.write("-- %s\n%s;\n" % (self.now(), sql))
 
-    def now(self, time=True):
-        """ If time is True, returns the current time otherwise midnight """
+    def now(self, timenow=True, offset=0, settime=""):
+        """ Returns now as a Python date, adjusted for the database timezone.
+            timenow: if True, includes the current time
+            offset:  Add this many days to now (negative values supported)
+            settime: A time in HH:MM:SS format to set
+        """
         d = i18n.now(self.timezone)
-        if time:
+        if not timenow:
             d = d.replace(hour = 0, minute = 0, second = 0)
+        if offset > 0:
+            d = i18n.add_days(d, offset)
+        if offset < 0:
+            d = i18n.subtract_days(d, abs(offset))
+        if settime != "":
+            timebits = settime.split(":")
+            d = d.replace(hour = utils.cint(timebits[0]), minute = utils.cint(timebits[1]), second = utils.cint(timebits[2]))
         return d
 
-    def today(self):
-        """ Returns today at midnight """
-        return self.now(time=False)
+    def today(self, offset=0, settime=""):
+        """ Returns today at midnight
+            offset:  Add this many days to now (negative values supported) 
+            settime: A time in HH:MM:SS format to set
+        """
+        return self.now(timenow=False, offset=offset, settime=settime)
 
     def optimistic_check(self, table, tid, version):
         """ Verifies that the record with ID tid in table still has

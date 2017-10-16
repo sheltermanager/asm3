@@ -3,7 +3,6 @@
 import additional
 import audit
 import configuration
-import db
 import dbfs
 import diary
 import log
@@ -87,6 +86,7 @@ def get_animalcontrol(dbo, acid):
         return ac
 
 def get_animalcontrol_animals(dbo, acid):
+    """ Return the list of linked animals for an incident """
     return dbo.query(get_animalcontrol_animals_query(dbo) + " WHERE aca.AnimalControlID = ?", [acid])
 
 def get_followup_two_dates(dbo, dbstart, dbend):
@@ -104,32 +104,41 @@ def get_animalcontrol_find_simple(dbo, query = "", username = "", limit = 0):
     query: The search criteria
     """
     ors = []
+    values = []
     query = query.replace("'", "`")
+    querylike = "%%%s%%" % query.lower()
     def add(field):
-        return utils.where_text_filter(dbo, field, query)
+        ors.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
+        values.append(querylike)
+        values.append(utils.decode_html(querylike))
+    def addclause(clause):
+        ors.append(clause)
+        values.append(querylike)
     # If no query has been given, show open animal control records
     # from the last 30 days
     if query == "":
-        ors.append("ac.IncidentDateTime > %s AND ac.CompletedDate Is Null" % db.dd(subtract_days(now(dbo.timezone), 30)))
+        ors.append("ac.IncidentDateTime > %s AND ac.CompletedDate Is Null" % dbo.sql_date(subtract_days(dbo.today(), 30)))
     else:
         if utils.is_numeric(query):
-            ors.append("ac.ID = " + str(utils.cint(query)))
-        ors.append(add("co.OwnerName"))
-        ors.append(add("ti.IncidentName"))
-        ors.append(add("ac.DispatchAddress"))
-        ors.append(add("ac.DispatchPostcode"))
-        ors.append(add("o1.OwnerName"))
-        ors.append(add("o2.OwnerName"))
-        ors.append(add("o3.OwnerName"))
-        ors.append(add("vo.OwnerName"))
-        ors.append(u"EXISTS(SELECT ad.Value FROM additional ad " \
+            ors.append("ac.ID = %s" % utils.cint(query))
+        add("co.OwnerName")
+        add("ti.IncidentName")
+        add("ac.DispatchAddress")
+        add("ac.DispatchPostcode")
+        add("o1.OwnerName")
+        add("o2.OwnerName")
+        add("o3.OwnerName")
+        add("vo.OwnerName")
+        addclause(u"EXISTS(SELECT ad.Value FROM additional ad " \
             "INNER JOIN additionalfield af ON af.ID = ad.AdditionalFieldID AND af.Searchable = 1 " \
-            "WHERE ad.LinkID=ac.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE '%%%s%%')" % (additional.INCIDENT_IN, query.lower()))
+            "WHERE ad.LinkID=ac.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE ?)" % (additional.INCIDENT_IN))
         if not dbo.is_large_db:
-            ors.append(add("ac.CallNotes"))
-            ors.append(add("ac.AnimalDescription"))
-    sql = get_animalcontrol_query(dbo) + " WHERE " + " OR ".join(ors)
-    return reduce_find_results(dbo, username, db.query(dbo, sql, limit=limit))
+            add("ac.CallNotes")
+            add("ac.AnimalDescription")
+    sql = "%s WHERE %s ORDER BY ac.ID" % ( \
+        get_animalcontrol_query(dbo),
+        " OR ".join(ors))
+    return reduce_find_results(dbo, username, dbo.query(sql, values, limit=limit))
 
 def get_animalcontrol_find_advanced(dbo, criteria, username, limit = 0):
     """
@@ -164,43 +173,61 @@ def get_animalcontrol_find_advanced(dbo, criteria, username, limit = 0):
        completedto - completed date to in current display locale format
 
     """
-    c = []
+    ands = []
+    values = []
     l = dbo.locale
     post = utils.PostedData(criteria, l)
 
-    def hk(cfield):
-        return post[cfield] != ""
-
-    def crit(cfield):
-        return post[cfield]
-
     def addid(cfield, field): 
-        if hk(cfield) and int(crit(cfield)) != -1: 
-            c.append("%s = %s" % (field, crit(cfield)))
+        if post[cfield] != "" and post.integer(cfield) > -1:
+            ands.append("%s = ?" % field)
+            values.append(post.integer(cfield))
+
+    def addidpair(cfield, field, field2): 
+        if post[cfield] != "" and post.integer(cfield) > 0: 
+            ands.append("(%s = ? OR %s = ?)" % (field, field2))
+            values.append(post.integer(cfield))
+            values.append(post.integer(cfield))
 
     def addstr(cfield, field): 
-        if hk(cfield) and crit(cfield) != "": 
-            c.append("LOWER(%s) LIKE '%%%s%%'" % ( field, crit(cfield).lower().replace("'", "`")))
+        if post[cfield] != "":
+            x = post[cfield].lower().replace("'", "`")
+            x = "%%%s%%" % x
+            ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
+            values.append(x)
+            values.append(utils.decode_html(x))
 
     def adddate(cfieldfrom, cfieldto, field): 
-        if hk(cfieldfrom) and hk(cfieldto): 
+        if post[cfieldfrom] != "" and post[cfieldto] != "":
             post.data["dayend"] = "23:59:59"
-            c.append("%s >= %s AND %s <= %s" % ( 
-                field, post.db_date(cfieldfrom),
-                field, post.db_datetime(cfieldto, "dayend")))
+            ands.append("%s >= ? AND %s <= ?" % (field, field))
+            values.append(post.date(cfieldfrom))
+            values.append(post.datetime(cfieldto, "dayend"))
+
+    def addfilter(f, condition):
+        if post["filter"].find(f) != -1: ands.append(condition)
 
     def addcomp(cfield, value, condition):
-        if hk(cfield) and crit(cfield) == value: 
-            c.append(condition)
+        if post[cfield] == value: ands.append(condition)
 
-    c.append("ac.ID > 0")
-    if crit("number") != "": c.append("ac.ID = " + str(utils.cint(crit("number"))))
+    def addwords(cfield, field):
+        if post[cfield] != "":
+            words = post[cfield].split(" ")
+            for w in words:
+                x = w.lower().replace("'", "`")
+                x = "%%%s%%" % x
+                ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
+                values.append(x)
+                values.append(utils.decode_html(x))
+
+    ands.append("ac.ID > 0")
+    addid("number", "ac.ID")
     addstr("callername", "co.OwnerName")
     addstr("victimname", "vo.OwnerName")
     addstr("callerphone", "co.HomeTelephone")
     addid("incidenttype", "ac.IncidentTypeID")
     addid("pickuplocation", "ac.PickupLocationID")
-    if (crit("dispatchedaco") != "-1"): addstr("dispatchedaco", "ac.DispatchedACO")
+    if post["dispatchedaco"] != "-1": addstr("dispatchedaco", "ac.DispatchedACO")
     adddate("incidentfrom", "incidentto", "ac.IncidentDateTime")
     adddate("dispatchfrom", "dispatchto", "ac.DispatchDateTime")
     adddate("respondedfrom", "respondedto", "ac.RespondedDateTime")
@@ -213,21 +240,18 @@ def get_animalcontrol_find_advanced(dbo, criteria, username, limit = 0):
     addstr("postcode", "ac.DispatchPostcode")
     addstr("callnotes", "ac.CallNotes")
     addstr("description", "ac.AnimalDescription")
-    if (crit("agegroup") != "-1"): addstr("agegroup", "ac.AgeGroup")
+    if post["agegroup"] != "-1": addstr("agegroup", "ac.AgeGroup")
     addid("sex", "ac.Sex")
     addid("species", "ac.SpeciesID")
-    addcomp("filter", "incomplete", "ac.CompletedDate Is Null")
-    addcomp("filter", "undispatched", "ac.CompletedDate Is Null AND ac.CallDateTime Is Not Null AND ac.DispatchDateTime Is Null")
-    addcomp("filter", "requirefollowup", "(" \
+    addfilter("incomplete", "ac.CompletedDate Is Null")
+    addfilter("undispatched", "ac.CompletedDate Is Null AND ac.CallDateTime Is Not Null AND ac.DispatchDateTime Is Null")
+    addfilter("requirefollowup", "(" \
         "(ac.FollowupDateTime Is Not Null AND ac.FollowupDateTime <= %(now)s AND NOT ac.FollowupComplete = 1) OR " \
         "(ac.FollowupDateTime2 Is Not Null AND ac.FollowupDateTime2 <= %(now)s AND NOT ac.FollowupComplete2 = 1) OR " \
         "(ac.FollowupDateTime3 Is Not Null AND ac.FollowupDateTime3 <= %(now)s AND NOT ac.FollowupComplete3 = 1) " \
-        ")" % { "now": db.ddt(now(dbo.timezone).replace(hour = 23, minute = 59, second = 59)) } )
-    where = ""
-    if len(c) > 0:
-        where = " WHERE " + " AND ".join(c)
-    sql = get_animalcontrol_query(dbo) + where + " ORDER BY ac.ID"
-    return reduce_find_results(dbo, username, db.query(dbo, sql, limit=limit))
+        ")" % { "now": dbo.sql_date(dbo.now(settime="23:59:59")) } )
+    sql = "%s WHERE %s ORDER BY ac.ID" % (get_animalcontrol_query(dbo), " AND ".join(ands))
+    return reduce_find_results(dbo, username, dbo.query(sql, values, limit=limit))
 
 def reduce_find_results(dbo, username, rows):
     """
@@ -238,34 +262,34 @@ def reduce_find_results(dbo, username, rows):
     """
     # Do nothing if there are no results
     if len(rows) == 0: return rows
-    u = db.query(dbo, "SELECT * FROM users WHERE UserName = %s" % db.ds(username))
+    u = dbo.query("SELECT * FROM users WHERE UserName = ?", [username])
     # Do nothing if we can't find the user
     if len(u) == 0: return rows
     # Do nothing if the user is a super user and has no site
     u = u[0]
-    if u["SUPERUSER"] == 1 and u["SITEID"] == 0: return rows
+    if u.superuser == 1 and u.siteid == 0: return rows
     roles = users.get_roles_ids_for_user(dbo, username)
     # Build an IN clause of result IDs
     rids = []
     for r in rows:
-        rids.append(str(r["ACID"]))
-    viewroles = db.query(dbo, "SELECT * FROM animalcontrolrole WHERE AnimalControlID IN (%s)" % ",".join(rids))
+        rids.append(str(r.acid))
+    viewroles = dbo.query("SELECT * FROM animalcontrolrole WHERE AnimalControlID IN (%s)" % dbo.sql_placeholders(rids), rids)
     # Remove rows where the user doesn't have that role
     results = []
     for r in rows:
         rok = False
         # Compare the site ID on the incident to our user - to exclude the record,
         # both user and incident must have a site ID and they must be different
-        if r["SITEID"] != 0 and u["SITEID"] != 0 and r["SITEID"] != u["SITEID"]: continue
+        if r.siteid != 0 and u.siteid != 0 and r.siteid != u.siteid: continue
         # Get the list of required view roles for this incident
-        incroles = [ x for x in viewroles if r["ACID"] == x["ANIMALCONTROLID"] and x["CANVIEW"] == 1 ]
+        incroles = [ x for x in viewroles if r.acid == x.animalcontrolid and x.canview == 1 ]
         # If there aren't any, it's fine to view the incident
         if len(incroles) == 0: 
             rok = True
         else:
             # If the user has any of the set view roles, we're good
             for v in incroles:
-                if v["ROLEID"] in roles:
+                if v.roleid in roles:
                     rok = True
         if rok:
             results.append(r)
@@ -276,14 +300,12 @@ def get_animalcontrol_satellite_counts(dbo, acid):
     Returns a resultset containing the number of each type of satellite
     record that an animal control entry has.
     """
-    sql = "SELECT a.ID, " \
+    return dbo.query("SELECT a.ID, " \
         "(SELECT COUNT(*) FROM ownercitation oc WHERE oc.AnimalControlID = a.ID) AS citation, " \
-        "(SELECT COUNT(*) FROM media me WHERE me.LinkID = a.ID AND me.LinkTypeID = %d) AS media, " \
-        "(SELECT COUNT(*) FROM diary di WHERE di.LinkID = a.ID AND di.LinkType = %d) AS diary, " \
-        "(SELECT COUNT(*) FROM log WHERE log.LinkID = a.ID AND log.LinkType = %d) AS logs " \
-        "FROM animalcontrol a WHERE a.ID = %d" \
-        % (media.ANIMALCONTROL, diary.ANIMALCONTROL, log.ANIMALCONTROL, int(acid))
-    return db.query(dbo, sql)
+        "(SELECT COUNT(*) FROM media me WHERE me.LinkID = a.ID AND me.LinkTypeID = ?) AS media, " \
+        "(SELECT COUNT(*) FROM diary di WHERE di.LinkID = a.ID AND di.LinkType = ?) AS diary, " \
+        "(SELECT COUNT(*) FROM log WHERE log.LinkID = a.ID AND log.LinkType = ?) AS logs " \
+        "FROM animalcontrol a WHERE a.ID = ?", (media.ANIMALCONTROL, diary.ANIMALCONTROL, log.ANIMALCONTROL, acid))
 
 def get_active_traploans(dbo):
     """
@@ -292,9 +314,9 @@ def get_active_traploans(dbo):
     TRAPNUMBER, RETURNDUEDATE, RETURNDATE,
     OWNERNAME
     """
-    return db.query(dbo, get_traploan_query(dbo) + \
-        "WHERE ot.ReturnDate Is Null OR ot.ReturnDate > %s " \
-        "ORDER BY ot.LoanDate DESC" % db.dd(now(dbo.timezone)))
+    return dbo.query(get_traploan_query(dbo) + \
+        "WHERE ot.ReturnDate Is Null OR ot.ReturnDate > ? " \
+        "ORDER BY ot.LoanDate DESC", [dbo.today()])
 
 def get_person_traploans(dbo, oid, sort = ASCENDING):
     """
@@ -307,38 +329,43 @@ def get_person_traploans(dbo, oid, sort = ASCENDING):
     order = "ot.LoanDate DESC"
     if sort == ASCENDING:
         order = "ot.LoanDate"
-    return db.query(dbo, get_traploan_query(dbo) + \
-        "WHERE ot.OwnerID = %d " \
-        "ORDER BY %s" % (int(oid), order))
+    return dbo.query(get_traploan_query(dbo) + \
+        "WHERE ot.OwnerID = ? " \
+        "ORDER BY %s" % order, [oid])
 
 def get_traploan_two_dates(dbo, dbstart, dbend):
     """
     Returns unreturned trap loans with a due date between the two ISO dates
     """
-    return db.query(dbo, get_traploan_query(dbo) + \
+    return dbo.query(get_traploan_query(dbo) + \
         "WHERE ReturnDate Is Null AND ReturnDueDate >= '%s' AND ReturnDueDate <= '%s'" % (dbstart, dbend))
 
 def update_animalcontrol_completenow(dbo, acid, username, completetype):
     """
     Updates an animal control incident record, marking it completed now with the type specified
     """
-    db.execute(dbo, "UPDATE animalcontrol SET IncidentCompletedID=%s, CompletedDate=%s WHERE ID=%d" % (db.di(completetype), db.dd(now(dbo.timezone)), acid))
-    audit.edit(dbo, username, "animalcontrol", acid, "completetype=%s, completedate=%s" % (completetype, now(dbo.timezone)))
+    dbo.update("animalcontrol", acid, {
+        "IncidentCompletedID":  completetype,
+        "CompletedDate":         dbo.today(),
+    }, username)
 
 def update_animalcontrol_dispatchnow(dbo, acid, username):
     """
     Updates an animal control incident record, marking it dispatched
     now with the current user as ACO.
     """
-    db.execute(dbo, "UPDATE animalcontrol SET DispatchedACO=%s, DispatchDateTime=%s WHERE ID=%d" % (db.ds(username), db.ddt(now(dbo.timezone)), acid))
-    audit.edit(dbo, username, "animalcontrol", acid, "aco=%s, dispatch=%s" % (username, now(dbo.timezone)))
+    dbo.update("animalcontrol", acid, {
+        "DispatchedACO":        username,
+        "DispatchDateTime":     dbo.now()
+    }, username)
 
 def update_animalcontrol_respondnow(dbo, acid, username):
     """
     Updates an animal control incident record, marking it responded to now
     """
-    db.execute(dbo, "UPDATE animalcontrol SET RespondedDateTime=%s WHERE ID=%d" % (db.ddt(now(dbo.timezone)), acid))
-    audit.edit(dbo, username, "animalcontrol", acid, "responded=%s" % now(dbo.timezone))
+    dbo.update("animalcontrol", acid, {
+        "RespondedDateTime":    dbo.now()
+    }, username)
 
 def update_animalcontrol_from_form(dbo, post, username):
     """
@@ -354,71 +381,86 @@ def update_animalcontrol_from_form(dbo, post, username):
     if post.date("incidentdate") is None:
         raise utils.ASMValidationError(_("Incident date cannot be blank", l))
 
-    preaudit = db.query(dbo, "SELECT * FROM animalcontrol WHERE ID = %d" % acid)
-    db.execute(dbo, db.make_update_user_sql(dbo, "animalcontrol", username, "ID=%d" % acid, (
-        ( "IncidentDateTime", post.db_datetime("incidentdate", "incidenttime")),
-        ( "IncidentTypeID", post.db_integer("incidenttype")),
-        ( "CallDateTime", post.db_datetime("calldate", "calltime")),
-        ( "CallNotes", post.db_string("callnotes")),
-        ( "CallTaker", post.db_string("calltaker")),
-        ( "CallerID", post.db_integer("caller")),
-        ( "VictimID", post.db_integer("victim")),
-        ( "DispatchAddress", post.db_string("dispatchaddress")),
-        ( "DispatchTown", post.db_string("dispatchtown")),
-        ( "DispatchCounty", post.db_string("dispatchcounty")),
-        ( "DispatchPostcode", post.db_string("dispatchpostcode")),
-        ( "JurisdictionID", post.db_integer("jurisdiction")),
-        ( "PickupLocationID", post.db_integer("pickuplocation")),
-        ( "DispatchLatLong", post.db_string("dispatchlatlong")),
-        ( "DispatchedACO", post.db_string("dispatchedaco")),
-        ( "DispatchDateTime", post.db_datetime("dispatchdate", "dispatchtime")),
-        ( "RespondedDateTime", post.db_datetime("respondeddate", "respondedtime")),
-        ( "FollowupDateTime", post.db_datetime("followupdate", "followuptime")),
-        ( "FollowupComplete", post.db_boolean("followupcomplete")),
-        ( "FollowupDateTime2", post.db_datetime("followupdate2", "followuptime2")),
-        ( "FollowupComplete2", post.db_boolean("followupcomplete2")),
-        ( "FollowupDateTime3", post.db_datetime("followupdate3", "followuptime3")),
-        ( "FollowupComplete3", post.db_boolean("followupcomplete3")),
-        ( "CompletedDate", post.db_date("completeddate")),
-        ( "IncidentCompletedID", post.db_integer("completedtype")),
-        ( "SiteID", post.db_integer("site")),
-        ( "OwnerID", post.db_integer("owner")),
-        ( "Owner2ID", post.db_integer("owner2")),
-        ( "Owner3ID", post.db_integer("owner3")),
-        ( "AnimalDescription", post.db_string("animaldescription")),
-        ( "SpeciesID", post.db_integer("species")),
-        ( "Sex", post.db_integer("sex")),
-        ( "AgeGroup", post.db_string("agegroup"))
-    )))
-    additional.save_values_for_link(dbo, post, acid, "incident")
-    postaudit = db.query(dbo, "SELECT * FROM animalcontrol WHERE ID = %d" % acid)
-    audit.edit(dbo, username, "animalcontrol", acid, audit.map_diff(preaudit, postaudit))
+    dbo.update("animalcontrol", acid, {
+        "IncidentDateTime":     post.datetime("incidentdate", "incidenttime"),
+        "IncidentTypeID":       post.integer("incidenttype"),
+        "CallDateTime":         post.datetime("calldate", "calltime"),
+        "CallNotes":            post["callnotes"],
+        "CallTaker":            post["calltaker"],
+        "CallerID":             post.integer("caller"),
+        "VictimID":             post.integer("victim"),
+        "DispatchAddress":      post["dispatchaddress"],
+        "DispatchTown":         post["dispatchtown"],
+        "DispatchCounty":       post["dispatchcounty"],
+        "DispatchPostcode":     post["dispatchpostcode"],
+        "JurisdictionID":       post.integer("jurisdiction"),
+        "PickupLocationID":     post.integer("pickuplocation"),
+        "DispatchLatLong":      post["dispatchlatlong"],
+        "DispatchedACO":        post["dispatchedaco"],
+        "DispatchDateTime":     post.datetime("dispatchdate", "dispatchtime"),
+        "RespondedDateTime":    post.datetime("respondeddate", "respondedtime"),
+        "FollowupDateTime":     post.datetime("followupdate", "followuptime"),
+        "FollowupComplete":     post.boolean("followupcomplete"),
+        "FollowupDateTime2":    post.datetime("followupdate2", "followuptime2"),
+        "FollowupComplete2":    post.boolean("followupcomplete2"),
+        "FollowupDateTime3":    post.datetime("followupdate3", "followuptime3"),
+        "FollowupComplete3":    post.boolean("followupcomplete3"),
+        "CompletedDate":        post.date("completeddate"),
+        "IncidentCompletedID":  post.integer("completedtype"),
+        "SiteID":               post.integer("site"),
+        "OwnerID":              post.integer("owner"),
+        "Owner2ID":             post.integer("owner2"),
+        "Owner3ID":             post.integer("owner3"),
+        "AnimalDescription":    post["animaldescription"],
+        "SpeciesID":            post.integer("species"),
+        "Sex":                  post.integer("sex"),
+        "AgeGroup":             post["agegroup"]
+    }, username)
 
-    # Update view/edit roles
-    db.execute(dbo, "DELETE FROM animalcontrolrole WHERE AnimalControlID = %d" % acid)
-    for rid in post.integer_list("viewroles"):
-        db.execute(dbo, "INSERT INTO animalcontrolrole (AnimalControlID, RoleID, CanView, CanEdit) VALUES (%d, %d, 1, 0)" % (acid, rid))
-    for rid in post.integer_list("editroles"):
-        if rid in post.integer_list("viewroles"):
-            db.execute(dbo, "UPDATE animalcontrolrole SET CanEdit = 1 WHERE AnimalControlID = %d AND RoleID = %d" % (acid, rid))
+    additional.save_values_for_link(dbo, post, acid, "incident")
+    update_animalcontrol_roles(dbo, acid, post.integer_list("viewroles"), post.integer_list("editroles"))
+
+def update_animalcontrol_roles(dbo, acid, viewroles, editroles):
+    """
+    Updates the view and edit roles for an incident
+    acid:       The incident ID
+    viewroles:  a list of integer role ids
+    editroles:  a list of integer role ids
+    """
+    dbo.execute("DELETE FROM animalcontrolrole WHERE AnimalControlID = ?", [acid])
+    for rid in viewroles:
+        dbo.insert("animalcontrolrole", {
+            "AnimalControlID":  acid,
+            "RoleID":           rid,
+            "CanView":          1,
+            "CanEdit":          0
+        }, generateID=False)
+    for rid in editroles:
+        if rid in viewroles:
+            dbo.execute("UPDATE animalcontrolrole SET CanEdit = 1 WHERE AnimalControlID = ? AND RoleID = ?", (acid, rid))
         else:
-            db.execute(dbo, "INSERT INTO animalcontrolrole (AnimalControlID, RoleID, CanView, CanEdit) VALUES (%d, %d, 0, 1)" % (acid, rid))
+            dbo.insert("animalcontrolrole", {
+                "AnimalControlID":  acid,
+                "RoleID":           rid,
+                "CanView":          0,
+                "CanEdit":          1
+            }, generateID=False)
 
 def update_animalcontrol_addlink(dbo, username, acid, animalid):
     """
     Adds a link between an animal and an incident.
     """
     l = dbo.locale
-    if 0 != db.query_int(dbo, "SELECT COUNT(*) FROM animalcontrolanimal WHERE AnimalControlID = %d AND AnimalID = %d" % (acid, animalid)):
+    if 0 != dbo.query_int("SELECT COUNT(*) FROM animalcontrolanimal WHERE AnimalControlID = ? AND AnimalID = ?", (acid, animalid)):
         raise utils.ASMValidationError(_("That animal is already linked to the incident", l))
-    db.execute(dbo, "INSERT INTO animalcontrolanimal (AnimalControlID, AnimalID) VALUES (%d, %d)" % (acid, animalid))
+    dbo.execute("INSERT INTO animalcontrolanimal (AnimalControlID, AnimalID) VALUES (?, ?)", (acid, animalid))
     audit.create(dbo, username, "animalcontrolanimal", acid, "incident %d linked to animal %d" % (acid, animalid))
 
 def update_animalcontrol_removelink(dbo, username, acid, animalid):
     """
     Removes a link between an animal and an incident.
     """
-    db.execute(dbo, "DELETE FROM animalcontrolanimal WHERE AnimalControlID = %d AND AnimalID = %d" % (acid, animalid))
+    dbo.execute("DELETE FROM animalcontrolanimal WHERE AnimalControlID = ? AND AnimalID = ?", (acid, animalid))
     audit.delete(dbo, username, "animalcontrolanimal", acid, "incident %d no longer linked to animal %d" % (acid, animalid))
 
 def insert_animalcontrol_from_form(dbo, post, username):
@@ -430,58 +472,44 @@ def insert_animalcontrol_from_form(dbo, post, username):
     if post.date("incidentdate") is None:
         raise utils.ASMValidationError(_("Incident date cannot be blank", l))
 
-    nid = db.get_id(dbo, "animalcontrol")
-    db.execute(dbo, db.make_insert_user_sql(dbo, "animalcontrol", username, (
-        ( "ID", db.di(nid)),
-        ( "IncidentDateTime", post.db_datetime("incidentdate", "incidenttime")),
-        ( "IncidentTypeID", post.db_integer("incidenttype")),
-        ( "CallDateTime", post.db_datetime("calldate", "calltime")),
-        ( "CallNotes", post.db_string("callnotes")),
-        ( "CallTaker", post.db_string("calltaker")),
-        ( "CallerID", post.db_integer("caller")),
-        ( "VictimID", post.db_integer("victim")),
-        ( "DispatchAddress", post.db_string("dispatchaddress")),
-        ( "DispatchTown", post.db_string("dispatchtown")),
-        ( "DispatchCounty", post.db_string("dispatchcounty")),
-        ( "DispatchPostcode", post.db_string("dispatchpostcode")),
-        ( "JurisdictionID", post.db_integer("jurisdiction")),
-        ( "PickupLocationID", post.db_integer("pickuplocation")),
-        ( "DispatchLatLong", post.db_string("dispatchlatlong")),
-        ( "DispatchedACO", post.db_string("dispatchedaco")),
-        ( "DispatchDateTime", post.db_datetime("dispatchdate", "dispatchtime")),
-        ( "RespondedDateTime", post.db_datetime("respondeddate", "respondedtime")),
-        ( "FollowupDateTime", post.db_datetime("followupdate", "followuptime")),
-        ( "FollowupComplete", post.db_boolean("followupcomplete")),
-        ( "FollowupDateTime2", post.db_datetime("followupdate2", "followuptime2")),
-        ( "FollowupComplete2", post.db_boolean("followupcomplete2")),
-        ( "FollowupDateTime3", post.db_datetime("followupdate3", "followuptime3")),
-        ( "FollowupComplete3", post.db_boolean("followupcomplete3")),
-        ( "CompletedDate", post.db_date("completeddate")),
-        ( "IncidentCompletedID", post.db_integer("completedtype")),
-        ( "SiteID", post.db_integer("site")),
-        ( "OwnerID", post.db_integer("owner")),
-        ( "Owner2ID", post.db_integer("owner2")),
-        ( "Owner3ID", post.db_integer("owner3")),
-        ( "AnimalDescription", post.db_string("animaldescription")),
-        ( "SpeciesID", post.db_integer("species")),
-        ( "Sex", post.db_integer("sex")),
-        ( "AgeGroup", post.db_string("agegroup"))
-        )))
-    audit.create(dbo, username, "animalcontrol", nid, audit.dump_row(dbo, "animalcontrol", nid))
+    nid = dbo.insert("animalcontrol", {
+        "IncidentDateTime":     post.datetime("incidentdate", "incidenttime"),
+        "IncidentTypeID":       post.integer("incidenttype"),
+        "CallDateTime":         post.datetime("calldate", "calltime"),
+        "CallNotes":            post["callnotes"],
+        "CallTaker":            post["calltaker"],
+        "CallerID":             post.integer("caller"),
+        "VictimID":             post.integer("victim"),
+        "DispatchAddress":      post["dispatchaddress"],
+        "DispatchTown":         post["dispatchtown"],
+        "DispatchCounty":       post["dispatchcounty"],
+        "DispatchPostcode":     post["dispatchpostcode"],
+        "JurisdictionID":       post.integer("jurisdiction"),
+        "PickupLocationID":     post.integer("pickuplocation"),
+        "DispatchLatLong":      post["dispatchlatlong"],
+        "DispatchedACO":        post["dispatchedaco"],
+        "DispatchDateTime":     post.datetime("dispatchdate", "dispatchtime"),
+        "RespondedDateTime":    post.datetime("respondeddate", "respondedtime"),
+        "FollowupDateTime":     post.datetime("followupdate", "followuptime"),
+        "FollowupComplete":     post.boolean("followupcomplete"),
+        "FollowupDateTime2":    post.datetime("followupdate2", "followuptime2"),
+        "FollowupComplete2":    post.boolean("followupcomplete2"),
+        "FollowupDateTime3":    post.datetime("followupdate3", "followuptime3"),
+        "FollowupComplete3":    post.boolean("followupcomplete3"),
+        "CompletedDate":        post.date("completeddate"),
+        "IncidentCompletedID":  post.integer("completedtype"),
+        "SiteID":               post.integer("site"),
+        "OwnerID":              post.integer("owner"),
+        "Owner2ID":             post.integer("owner2"),
+        "Owner3ID":             post.integer("owner3"),
+        "AnimalDescription":    post["animaldescription"],
+        "SpeciesID":            post.integer("species"),
+        "Sex":                  post.integer("sex"),
+        "AgeGroup":             post["agegroup"]
+    }, username)
 
-    # Save any additional field values given
     additional.save_values_for_link(dbo, post, nid, "incident")
-
-    # Update view/edit roles
-    db.execute(dbo, "DELETE FROM animalcontrolrole WHERE AnimalControlID = %d" % nid)
-    for rid in post.integer_list("viewroles"):
-        db.execute(dbo, "INSERT INTO animalcontrolrole (AnimalControlID, RoleID, CanView, CanEdit) VALUES (%d, %d, 1, 0)" % (nid, rid))
-    for rid in post.integer_list("editroles"):
-        if rid in post.integer_list("viewroles"):
-            db.execute(dbo, "UPDATE animalcontrolrole SET CanEdit = 1 WHERE AnimalControlID = %d AND RoleID = %d" % (nid, rid))
-        else:
-            db.execute(dbo, "INSERT INTO animalcontrolrole (AnimalControlID, RoleID, CanView, CanEdit) VALUES (%d, %d, 0, 1)" % (nid, rid))
-
+    update_animalcontrol_roles(dbo, nid, post.integer_list("viewroles"), post.integer_list("editroles"))
     return nid
 
 def delete_animalcontrol(dbo, username, acid):
@@ -489,15 +517,15 @@ def delete_animalcontrol(dbo, username, acid):
     Deletes an animal control record
     """
     audit.delete_rows(dbo, username, "media", "LinkID = %d AND LinkTypeID = %d" % (acid, media.ANIMALCONTROL))
-    db.execute(dbo, "DELETE FROM media WHERE LinkID = %d AND LinkTypeID = %d" % (acid, media.ANIMALCONTROL))
+    dbo.execute("DELETE FROM media WHERE LinkID = ? AND LinkTypeID = ?", (acid, media.ANIMALCONTROL))
     audit.delete_rows(dbo, username, "diary", "LinkID = %d AND LinkType = %d" % (acid, diary.ANIMALCONTROL))
-    db.execute(dbo, "DELETE FROM diary WHERE LinkID = %d AND LinkType = %d" % (acid, diary.ANIMALCONTROL))
+    dbo.execute("DELETE FROM diary WHERE LinkID = ? AND LinkType = ?", (acid, diary.ANIMALCONTROL))
     audit.delete_rows(dbo, username, "log", "LinkID = %d AND LinkType = %d" % (acid, log.ANIMALCONTROL))
-    db.execute(dbo, "DELETE FROM log WHERE LinkID = %d AND LinkType = %d" % (acid, log.ANIMALCONTROL))
-    db.execute(dbo, "DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (acid, additional.INCIDENT_IN))
+    dbo.execute("DELETE FROM log WHERE LinkID = ? AND LinkType = ?", (acid, log.ANIMALCONTROL))
+    dbo.execute("DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (acid, additional.INCIDENT_IN))
     dbfs.delete_path(dbo, "/animalcontrol/%d" % acid)
     audit.delete(dbo, username, "animalcontrol", acid, audit.dump_row(dbo, "animalcontrol", acid))
-    db.execute(dbo, "DELETE FROM animalcontrol WHERE ID = %d" % acid)
+    dbo.execute("DELETE FROM animalcontrol WHERE ID = ?", [acid])
 
 def insert_animalcontrol(dbo, username):
     """
@@ -518,55 +546,46 @@ def insert_traploan_from_form(dbo, username, post):
     """
     Creates a traploan record from posted form data 
     """
-    traploanid = db.get_id(dbo, "ownertraploan")
-    sql = db.make_insert_user_sql(dbo, "ownertraploan", username, ( 
-        ( "ID", db.di(traploanid)),
-        ( "OwnerID", post.db_integer("person")),
-        ( "TrapTypeID", post.db_integer("type")),
-        ( "LoanDate", post.db_date("loandate")),
-        ( "DepositAmount", post.db_integer("depositamount")),
-        ( "DepositReturnDate", post.db_date("depositreturndate")),
-        ( "TrapNumber", post.db_string("trapnumber")),
-        ( "ReturnDueDate", post.db_date("returnduedate")),
-        ( "ReturnDate", post.db_date("returndate")),
-        ( "Comments", post.db_string("comments"))
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "ownertraploan", traploanid, audit.dump_row(dbo, "ownertraploan", traploanid))
-    return traploanid
+    return dbo.insert("ownertraploan", {
+        "OwnerID":          post.integer("person"),
+        "TrapTypeID":       post.integer("type"),
+        "LoanDate":         post.date("loandate"),
+        "DepositAmount":    post.integer("depositamount"),
+        "DepositReturnDate": post.integer("depositreturndate"),
+        "TrapNumber":       post["trapnumber"],
+        "ReturnDueDate":    post.date("returnduedate"),
+        "ReturnDate":       post.date("returndate"),
+        "Comments":         post["comments"]
+    }, username)
 
 def update_traploan_from_form(dbo, username, post):
     """
     Updates a traploan record from posted form data
     """
-    traploanid = post.integer("traploanid")
-    sql = db.make_update_user_sql(dbo, "ownertraploan", username, "ID=%d" % traploanid, ( 
-        ( "OwnerID", post.db_integer("person")),
-        ( "TrapTypeID", post.db_integer("type")),
-        ( "LoanDate", post.db_date("loandate")),
-        ( "DepositAmount", post.db_integer("depositamount")),
-        ( "DepositReturnDate", post.db_date("depositreturndate")),
-        ( "TrapNumber", post.db_string("trapnumber")),
-        ( "ReturnDueDate", post.db_date("returnduedate")),
-        ( "ReturnDate", post.db_date("returndate")),
-        ( "Comments", post.db_string("comments"))
-    ))
-    preaudit = db.query(dbo, "SELECT * FROM ownertraploan WHERE ID = %d" % traploanid)
-    db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM ownertraploan WHERE ID = %d" % traploanid)
-    audit.edit(dbo, username, "ownertraploan", traploanid, audit.map_diff(preaudit, postaudit))
+    dbo.update("ownertraploan", post.integer("traploanid"), {
+        "OwnerID":          post.integer("person"),
+        "TrapTypeID":       post.integer("type"),
+        "LoanDate":         post.date("loandate"),
+        "DepositAmount":    post.integer("depositamount"),
+        "DepositReturnDate": post.integer("depositreturndate"),
+        "TrapNumber":       post["trapnumber"],
+        "ReturnDueDate":    post.date("returnduedate"),
+        "ReturnDate":       post.date("returndate"),
+        "Comments":         post["comments"]
+    }, username)
 
 def delete_traploan(dbo, username, tid):
     """
     Deletes a traploan record
     """
-    audit.delete(dbo, username, "ownertraploan", tid, audit.dump_row(dbo, "ownertraploan", tid))
-    db.execute(dbo, "DELETE FROM ownertraploan WHERE ID = %d" % int(tid))
+    dbo.delete("ownertraploan", tid, username)
 
 def update_dispatch_latlong(dbo, incidentid, latlong):
     """
     Updates the dispatch latlong field.
     """
-    db.execute(dbo, "UPDATE animalcontrol SET DispatchLatLong = %s WHERE ID = %d" % (db.ds(latlong), int(incidentid)))
+    dbo.update("animalcontrol", incidentid, {
+        "DispatchLatLong":  latlong
+    })
 
 
