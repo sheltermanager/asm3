@@ -2126,7 +2126,7 @@ def update_animal_from_form(dbo, post, username):
         "FLVResult":            post.integer("flvresult"),
         # ASM2_COMPATIBILITY
         "Markings":             post["markings"],
-        "HiddenAnimalDetails":  post["hiddencoments"],
+        "HiddenAnimalDetails":  post["hiddencomments"],
         "AnimalComments":       post["comments"],
         "IsGoodWithCats":       post.integer("goodwithcats"),
         "IsGoodWithDogs":       post.integer("goodwithdogs"),
