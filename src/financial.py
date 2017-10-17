@@ -385,18 +385,16 @@ def get_donations(dbo, offset = "m31"):
         "WHERE %s "
         "ORDER BY %s" % (ec, order))
 
-def get_donations_due_two_dates(dbo, dbstart, dbend):
+def get_donations_due_two_dates(dbo, start, end):
     """
-    Returns a recordset of due donations between two ISO dates
+    Returns a recordset of due donations between two dates
     ID, DONATIONTYPEID, DONATIONNAME, DATE, DATEDUE, DONATION,
     ISGIFTAID, FREQUENCY, FREQUENCYNAME, NEXTCREATED, COMMENTS, OWNERNAME, 
     ANIMALNAME, SHELTERCODE, OWNERID, ANIMALID
     """
-    ec = " od.DateDue >= '%s' AND od.DateDue <= '%s' AND od.Date Is Null" % (dbstart, dbend)
-    order = "od.DateDue DESC"
-    return db.query(dbo, get_donation_query(dbo) + \
-        "WHERE %s "
-        "ORDER BY %s" % (ec, order))
+    return dbo.query(get_donation_query(dbo) + \
+        "WHERE od.DateDue >= ? AND od.DateDue <= ? AND od.Date Is Null " \
+        "ORDER BY od.DateDue DESC", (start, end))
 
 def get_animal_donations(dbo, aid, sort = ASCENDING):
     """

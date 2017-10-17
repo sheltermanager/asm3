@@ -22,7 +22,7 @@ import db, dbfs, dbupdate
 import diary as extdiary
 import financial
 import html
-from i18n import _, BUILD, translate, get_version, get_display_date_format, get_currency_prefix, get_currency_symbol, get_currency_dp, python2display, add_days, subtract_days, subtract_months, first_of_month, last_of_month, monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency, i18nstringsjs
+from i18n import _, BUILD, translate, get_version, get_display_date_format, get_currency_prefix, get_currency_symbol, get_currency_dp, parse_date, python2display, add_days, subtract_days, subtract_months, first_of_month, last_of_month, monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency, i18nstringsjs
 import log as extlog
 import lookups as extlookups
 import lostfound as extlostfound
@@ -1678,9 +1678,9 @@ class calendar_events(ASMEndpoint):
     url = "calendar_events"
 
     def content(self, o):
-        start = o.post["start"]
-        end = o.post["end"]
-        if start == "" or end == "":
+        start = parse_date("%Y-%m-%d", o.post["start"])
+        end = parse_date("%Y-%m-%d", o.post["end"])
+        if not start or not end:
             return "[]"
         events = []
         ev = o.post["ev"]

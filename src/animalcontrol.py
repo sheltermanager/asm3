@@ -89,14 +89,14 @@ def get_animalcontrol_animals(dbo, acid):
     """ Return the list of linked animals for an incident """
     return dbo.query(get_animalcontrol_animals_query(dbo) + " WHERE aca.AnimalControlID = ?", [acid])
 
-def get_followup_two_dates(dbo, dbstart, dbend):
+def get_followup_two_dates(dbo, start, end):
     """
-    Returns incidents for followup between the two ISO dates specified
+    Returns incidents for followup between the two dates specified
     """
     return dbo.query(get_animalcontrol_query(dbo) + " WHERE " \
-        "(ac.FollowupDateTime >= '%(start)s' AND ac.FollowupDateTime <= '%(end)s' AND NOT ac.FollowupComplete = 1) OR " \
-        "(ac.FollowupDateTime2 >= '%(start)s' AND ac.FollowupDateTime2 <= '%(end)s' AND NOT ac.FollowupComplete2 = 1) OR " \
-        "(ac.FollowupDateTime3 >= '%(start)s' AND ac.FollowupDateTime3 <= '%(end)s' AND NOT ac.FollowupComplete3 = 1)" % { "start": dbstart, "end": dbend })
+        "(ac.FollowupDateTime >= ? AND ac.FollowupDateTime <= ? AND NOT ac.FollowupComplete = 1) OR " \
+        "(ac.FollowupDateTime2 >= ? AND ac.FollowupDateTime2 <= ? AND NOT ac.FollowupComplete2 = 1) OR " \
+        "(ac.FollowupDateTime3 >= ? AND ac.FollowupDateTime3 <= ? AND NOT ac.FollowupComplete3 = 1)", (start, end, start, end, start, end))
 
 def get_animalcontrol_find_simple(dbo, query = "", username = "", limit = 0):
     """
@@ -333,12 +333,12 @@ def get_person_traploans(dbo, oid, sort = ASCENDING):
         "WHERE ot.OwnerID = ? " \
         "ORDER BY %s" % order, [oid])
 
-def get_traploan_two_dates(dbo, dbstart, dbend):
+def get_traploan_two_dates(dbo, start, end):
     """
-    Returns unreturned trap loans with a due date between the two ISO dates
+    Returns unreturned trap loans with a due date between the two dates
     """
     return dbo.query(get_traploan_query(dbo) + \
-        "WHERE ReturnDate Is Null AND ReturnDueDate >= '%s' AND ReturnDueDate <= '%s'" % (dbstart, dbend))
+        "WHERE ReturnDate Is Null AND ReturnDueDate >= ? AND ReturnDueDate <= ?", (start, end))
 
 def update_animalcontrol_completenow(dbo, acid, username, completetype):
     """

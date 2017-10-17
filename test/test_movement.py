@@ -41,6 +41,9 @@ class TestMovement(unittest.TestCase):
     def test_get_person_movements(self):
         movement.get_person_movements(base.get_dbo(), 1)
 
+    def test_get_transport_two_dates(self):
+        movement.get_transport_two_dates(base.get_dbo(), base.today(), base.today())
+
     def test_movement_crud(self):
         data = {
             "animalname": "Testio",

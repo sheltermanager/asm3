@@ -20,7 +20,7 @@ class TestAnimalControl(unittest.TestCase):
         assert len(animalcontrol.get_animalcontrol(base.get_dbo(), self.nid)) > 0
 
     def test_get_followup_two_dates(self):
-        animalcontrol.get_followup_two_dates(base.get_dbo(), "2014-01-01", "2014-01-31")
+        animalcontrol.get_followup_two_dates(base.get_dbo(), base.today(), base.today())
 
     def test_get_animalcontrol_find_simple(self):
         animalcontrol.get_animalcontrol_find_simple(base.get_dbo(), "test", "user")
@@ -38,7 +38,7 @@ class TestAnimalControl(unittest.TestCase):
         animalcontrol.get_person_traploans(base.get_dbo(), 0)
 
     def test_get_traploan_two_dates(self):
-        animalcontrol.get_traploan_two_dates(base.get_dbo(), '2014-01-01', '2014-01-31')
+        animalcontrol.get_traploan_two_dates(base.get_dbo(), base.today(), base.today())
 
     def test_update_animalcontrol_completenow(self):
         animalcontrol.update_animalcontrol_completenow(base.get_dbo(), 1, "test", 1)

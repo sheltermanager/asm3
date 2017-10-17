@@ -44,23 +44,23 @@ def email_uncompleted_upto_today(dbo):
     if len(notes) == 0: return
     # Go through all user to see if we have relevant notes for them
     for u in allusers:
-        if u["EMAILADDRESS"] is not None and u["EMAILADDRESS"].strip() != "":
+        if u.emailaddress and u.emailaddress.strip() != "":
             s = ""
             totalforuser = 0
             for n in notes:
                 # Is this note relevant for this user?
-                if (n["DIARYFORNAME"] == "*") \
-                or (n["DIARYFORNAME"] == u["USERNAME"]) \
-                or (u["ROLES"].find(n["DIARYFORNAME"]) != -1):
-                    s += i18n.python2display(l, n["DIARYDATETIME"]) + " "
-                    s += n["SUBJECT"]
-                    if n["LINKINFO"] is not None and n["LINKINFO"] != "": s += " / " + n["LINKINFO"]
-                    s += "\n" + n["NOTE"] + "\n\n"
+                if (n.diaryforname == "*") \
+                or (n.diaryforname == u.username) \
+                or (u.roles.find(n.diaryforname) != -1):
+                    s += i18n.python2display(l, n.diarydatetime) + " "
+                    s += n.subject
+                    if n.linkinfo is not None and n.linkinfo != "": s += " / " + n.linkinfo
+                    s += "\n" + n.note + "\n\n"
                     totalforuser += 1
             if totalforuser > 0:
-                al.debug("got %d notes for user %s" % (totalforuser, u["USERNAME"]), "diary.email_uncompleted_upto_today", dbo)
-                utils.send_email(dbo, configuration.email(dbo), u["EMAILADDRESS"], "", 
-                    i18n._("Diary notes for: {0}", l).format(i18n.python2display(l, i18n.now(dbo.timezone))), s)
+                al.debug("got %d notes for user %s" % (totalforuser, u.username), "diary.email_uncompleted_upto_today", dbo)
+                utils.send_email(dbo, configuration.email(dbo), u.emailaddress, "", 
+                    i18n._("Diary notes for: {0}", l).format(i18n.python2display(l, dbo.now())), s)
 
 def user_role_where_clause(dbo, user = "", includecreatedby = True):
     """
@@ -72,24 +72,24 @@ def user_role_where_clause(dbo, user = "", includecreatedby = True):
     if user == "": return "DiaryForName LIKE '%'"
     roles = users.get_roles_for_user(dbo, user)
     createdby = ""
-    if includecreatedby: createdby = "OR CreatedBy = %s" % db.ds(user)
-    if len(roles) == 0: return "DiaryForName = %s %s" % (db.ds(user), createdby)
+    if includecreatedby: createdby = "OR CreatedBy = %s" % dbo.sql_value(user)
+    if len(roles) == 0: return "DiaryForName = %s %s" % (dbo.sql_value(user), createdby)
     sroles = []
     for r in roles:
-        sroles.append(db.ds(r))
-    return "(DiaryForName = %s %s OR DiaryForName IN (%s))" % (db.ds(user), createdby, ",".join(sroles))
+        sroles.append(dbo.sql_value(r))
+    return "(DiaryForName = %s %s OR DiaryForName IN (%s))" % (dbo.sql_value(user), createdby, ",".join(sroles))
 
-def get_between_two_dates(dbo, user, dbstart, dbend):
+def get_between_two_dates(dbo, user, start, end):
     """
     Gets a list of incomplete diary notes between two dates for the user supplied
     LINKID, LINKTYPE, DIARYDATETIME, DIARYFORNAME, SUBJECT, NOTE, LINKINFO
-    dbstart: An ISO start date
-    dbend: An ISO end date
+    start: Start date
+    end: End date
     """
-    return db.query(dbo, "SELECT d.*, cast(DiaryDateTime AS time) AS DiaryTime " \
+    return dbo.query("SELECT d.*, cast(DiaryDateTime AS time) AS DiaryTime " \
         "FROM diary d WHERE %s " \
-        "AND DateCompleted Is Null AND DiaryDateTime >= '%s' AND DiaryDateTime <= '%s' " \
-        "ORDER BY DiaryDateTime DESC" % (user_role_where_clause(dbo, user), dbstart, dbend))
+        "AND DateCompleted Is Null AND DiaryDateTime >= ? AND DiaryDateTime <= ? " \
+        "ORDER BY DiaryDateTime DESC" % user_role_where_clause(dbo, user), (start, end))
 
 def get_uncompleted_upto_today(dbo, user = "", includecreatedby = True):
     """

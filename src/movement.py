@@ -124,9 +124,9 @@ def get_animal_transports(dbo, animalid):
     return db.query(dbo, get_transport_query(dbo) + \
         "WHERE t.AnimalID = %d ORDER BY DropoffDateTime" % animalid)
 
-def get_transport_two_dates(dbo, dbstart, dbend): 
-    return db.query(dbo, get_transport_query(dbo) + \
-        "WHERE t.PickupDateTime >= '%s' AND t.PickupDateTime <= '%s' ORDER BY t.PickupDateTime" % (dbstart, dbend))
+def get_transport_two_dates(dbo, start, end): 
+    return dbo.query(get_transport_query(dbo) + \
+        "WHERE t.PickupDateTime >= ? AND t.PickupDateTime <= ? ORDER BY t.PickupDateTime", (start, end))
 
 def get_recent_adoptions(dbo, months = 1):
     """

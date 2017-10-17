@@ -8,6 +8,12 @@ import utils
 
 class TestMedical(unittest.TestCase):
 
+    def test_calendar_event_calls(self):
+        medical.get_vaccinations_two_dates(base.get_dbo(), base.today(), base.today())
+        medical.get_vaccinations_expiring_two_dates(base.get_dbo(), base.today(), base.today())
+        medical.get_tests_two_dates(base.get_dbo(), base.today(), base.today())
+        medical.get_treatments_two_dates(base.get_dbo(), base.today(), base.today())
+
     def test_get_vaccinations(self):
         medical.get_vaccinations(base.get_dbo(), 1)
 
