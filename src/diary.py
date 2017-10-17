@@ -69,7 +69,7 @@ def user_role_where_clause(dbo, user = "", includecreatedby = True):
     blank, the where clause return is empty.
     includecreatedby: If true includes diary notes this user created as well as those for them.
     """
-    if user == "": return ""
+    if user == "": return "1=1"
     roles = users.get_roles_for_user(dbo, user)
     createdby = ""
     if includecreatedby: createdby = "OR CreatedBy = %s" % dbo.sql_value(user)
