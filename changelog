@@ -1,6 +1,7 @@
 40
 ================
 
+18/10/17 Holds ending today alert should show tomorrow #297
 17/10/17 Security fix for raw dates passed to calendar functions #296
 16/10/17 animalcontrol refactored for parameterised queries #252
 15/10/17 Hide movement date for reservations

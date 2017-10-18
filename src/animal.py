@@ -653,9 +653,9 @@ def get_animals_hold(dbo):
 
 def get_animals_hold_today(dbo):
     """
-    Returns all shelter animals who have the hold flag set and the hold ends today
+    Returns all shelter animals who have the hold flag set and the hold ends tomorrow (ie. this is the last day of hold)
     """
-    return dbo.query(get_animal_query(dbo) + " WHERE a.IsHold = 1 AND a.HoldUntilDate = ? AND a.Archived = 0", [dbo.today()])
+    return dbo.query(get_animal_query(dbo) + " WHERE a.IsHold = 1 AND a.HoldUntilDate = ? AND a.Archived = 0", [dbo.today(offset=1)])
 
 def get_animals_long_term(dbo):
     """
@@ -688,6 +688,7 @@ def get_alerts(dbo, locationfilter = "", siteid = 0):
     onemonth = dbo.sql_date(dbo.today(offset=-31))
     oneweek = dbo.sql_date(dbo.today(offset=-7))
     today = dbo.sql_date(dbo.today())
+    tomorrow = dbo.sql_date(dbo.today(offset=1))
     endoftoday = dbo.sql_date(dbo.today(settime="23:59:59"))
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, andprefix=True)
     shelterfilter = ""
@@ -729,7 +730,7 @@ def get_alerts(dbo, locationfilter = "", siteid = 0):
             "WHERE Identichipped = 0 AND Archived = 0 %(locfilter)s) AS notchip, " \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
             "WHERE Archived = 0 AND IsNotAvailableForAdoption = 1 %(locfilter)s) AS notadopt, " \
-        "(SELECT COUNT(*) FROM animal WHERE Archived = 0 AND IsHold = 1 AND HoldUntilDate = %(today)s) AS holdtoday, " \
+        "(SELECT COUNT(*) FROM animal WHERE Archived = 0 AND IsHold = 1 AND HoldUntilDate = %(tomorrow)s) AS holdtoday, " \
         "(SELECT COUNT(DISTINCT CollationID) FROM onlineformincoming) AS inform, " \
         "(SELECT COUNT(*) FROM ownercitation WHERE FineDueDate Is Not Null AND FineDueDate <= %(today)s AND FinePaidDate Is Null) AS acunfine, " \
         "(SELECT COUNT(*) FROM animalcontrol WHERE CompletedDate Is Null AND DispatchDateTime Is Null AND CallDateTime Is Not Null) AS acundisp, " \
@@ -745,7 +746,7 @@ def get_alerts(dbo, locationfilter = "", siteid = 0):
         "(SELECT COUNT(*) FROM animal WHERE Archived = 0 AND DaysOnShelter > 182) AS lngterm, " \
         "(SELECT SUM(Alerts) FROM publishlog WHERE PublishDateTime >= %(today)s) AS publish " \
         "FROM lksmovementtype WHERE ID=1" \
-            % { "today": today, "endoftoday": endoftoday, "oneweek": oneweek, "oneyear": oneyear, "onemonth": onemonth, 
+            % { "today": today, "endoftoday": endoftoday, "tomorrow": tomorrow, "oneweek": oneweek, "oneyear": oneyear, "onemonth": onemonth, 
                 "futuremonth": futuremonth, "locfilter": locationfilter, "shelterfilter": shelterfilter }
     return dbo.query_cache(sql, age=120)
 
