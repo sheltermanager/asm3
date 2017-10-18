@@ -3,7 +3,6 @@
 import al
 import audit
 import cachemem
-import db
 import i18n
 import sys
 import utils
@@ -333,8 +332,8 @@ def cset(dbo, key, value = "", ignoreDBLock = False, sanitiseXSS = True, invalid
     """
     Update a configuration item in the table.
     """
-    db.execute(dbo, "DELETE FROM configuration WHERE ItemName LIKE %s" % db.ds(key), ignoreDBLock)
-    db.execute(dbo, "INSERT INTO configuration (ItemName, ItemValue) VALUES (%s, %s)" % (db.ds(key), db.ds(value, sanitiseXSS)), ignoreDBLock)
+    dbo.execute("DELETE FROM configuration WHERE ItemName LIKE ?", [key], override_lock=ignoreDBLock)
+    dbo.execute("INSERT INTO configuration (ItemName, ItemValue) VALUES (?, ?)", (key, value), override_lock=ignoreDBLock, escape_xss=sanitiseXSS)
     if invalidateConfigCache: invalidate_config_cache(dbo)
 
 def cset_db(dbo, key, value = ""):
@@ -408,10 +407,10 @@ def get_map(dbo):
     CACHE_KEY = "%s_config" % dbo.database
     cmap = cachemem.get(CACHE_KEY)
     if cmap is None:
-        rows = db.query(dbo, "SELECT ITEMNAME, ITEMVALUE FROM configuration ORDER BY ITEMNAME")
+        rows = dbo.query("SELECT ItemName, ItemValue FROM configuration ORDER BY ItemName")
         cmap = DEFAULTS.copy()
         for r in rows:
-            cmap[r["ITEMNAME"]] = r["ITEMVALUE"]
+            cmap[r.itemname] = r.itemvalue
         cachemem.put(CACHE_KEY, cmap, 3600) # one hour cache means direct database updates show up eventually
     return cmap
 
@@ -983,7 +982,7 @@ def receipt_number_next(dbo):
     """ Returns the ReceiptNumberNext value and increments it """
     nrn = cint(dbo, "ReceiptNumberNext", 0)
     if nrn == 0:
-        nrn = 1 + db.query_int(dbo, "SELECT MAX(ID) FROM ownerdonation")
+        nrn = 1 + dbo.query_int("SELECT MAX(ID) FROM ownerdonation")
     cset(dbo, "ReceiptNumberNext", str(nrn + 1))
     return nrn
 

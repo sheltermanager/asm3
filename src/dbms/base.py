@@ -242,17 +242,28 @@ class Database(object):
         s = s.replace("'", "`")
         return s
 
-    def execute(self, sql, params=None, override_lock=False):
+    def execute(self, sql, params=None, override_lock=False, escape_xss=True):
         """
             Runs the action query given and returns rows affected
             override_lock: if this is set to False and dbo.locked = True,
-            we don't do anything. This makes it easy to lock the database
-            for writes, but keep databases upto date.
+                           we don't do anything. This makes it easy to 
+                           lock the database for writes, but keep databases 
+                           upto date.
+            escape_xss:    if set to True, checks params for string values
+                           and escapes < and >
         """
         if not override_lock and self.locked: return 0
         if sql is None or sql.strip() == "": return 0
         try:
             c, s = self.cursor_open()
+            if escape_xss and params:
+                params2 = []
+                for p in params:
+                    if utils.is_str(p) or utils.is_unicode(p):
+                        params2.append(p.replace("<", "&lt;").replace(">", "&gt;"))
+                    else:
+                        params2.append(p)
+                params = params2
             if params:
                 sql = self.switch_param_placeholder(sql)
                 s.execute(sql, params)
@@ -293,8 +304,8 @@ class Database(object):
             "INSERT INTO table (field1, field2) VALUES (%s, %s)", [ ( "val1", "val2" ), ( "val3", "val4" ) ]
             Returns rows affected
             override_lock: if this is set to False and dbo.locked = True,
-            we don't do anything. This makes it easy to lock the database
-            for writes, but keep databases upto date.
+                           we don't do anything. This makes it easy to lock the database
+                           for writes, but keep databases upto date.
         """
         if not override_lock and self.locked: return
         if sql is None or sql.strip() == "": return 0
