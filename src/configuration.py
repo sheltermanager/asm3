@@ -333,7 +333,8 @@ def cset(dbo, key, value = "", ignoreDBLock = False, sanitiseXSS = True, invalid
     Update a configuration item in the table.
     """
     dbo.execute("DELETE FROM configuration WHERE ItemName LIKE ?", [key], override_lock=ignoreDBLock)
-    dbo.execute("INSERT INTO configuration (ItemName, ItemValue) VALUES (?, ?)", (key, value), override_lock=ignoreDBLock, escape_xss=sanitiseXSS)
+    if sanitiseXSS: value = dbo.escape_xss(value)
+    dbo.execute("INSERT INTO configuration (ItemName, ItemValue) VALUES (?, ?)", (key, value), override_lock=ignoreDBLock)
     if invalidateConfigCache: invalidate_config_cache(dbo)
 
 def cset_db(dbo, key, value = ""):

@@ -4,7 +4,6 @@ import al
 import audit
 import base64
 import configuration
-import db
 import mimetypes
 import os, sys
 import smcom
@@ -70,7 +69,7 @@ class B64DBStorage(DBFSStorage):
     
     def get(self, dbfsid, dummy):
         """ Returns the file data for dbfsid or blank if not found/error """
-        r = db.query_tuple(self.dbo, "SELECT Content FROM dbfs WHERE ID = %s" % dbfsid)
+        r = self.dbo.query_tuple("SELECT Content FROM dbfs WHERE ID = ?", [dbfsid])
         if len(r) == 0:
             raise DBFSError("Could not find content for ID %s" % dbfsid)
         try:
@@ -83,7 +82,7 @@ class B64DBStorage(DBFSStorage):
         """ Stores the file data and returns a URL """
         url = "base64:"
         s = base64.b64encode(filedata)
-        db.execute(self.dbo, "UPDATE dbfs SET URL = '%s', Content = '%s' WHERE ID = %s" % (url, s, dbfsid))
+        self.dbo.execute("UPDATE dbfs SET URL = ?, Content = ? WHERE ID = ?", (url, s, dbfsid))
         return url
 
     def delete(self, url):
@@ -123,7 +122,7 @@ class FileStorage(DBFSStorage):
         f.flush()
         f.close()
         os.chmod(filepath, 0o666) # Make the file world read/write
-        db.execute(self.dbo, "UPDATE dbfs SET URL = '%s', Content = '' WHERE ID = %d" % (url, dbfsid))
+        self.dbo.execute("UPDATE dbfs SET URL = ?, Content = '' WHERE ID = ?", (url, dbfsid))
         return url
 
     def delete(self, url):
@@ -171,7 +170,7 @@ class S3Storage(DBFSStorage):
         f.close()
         returncode, output = utils.cmd("aws s3 cp %s %s" % (localpath, remotepath))
         if returncode == 0:
-            db.execute(self.dbo, "UPDATE dbfs SET URL = '%s', Content = '' WHERE ID = %d" % (url, dbfsid))
+            self.dbo.execute("UPDATE dbfs SET URL = ?, Content = '' WHERE ID = ?", (url, dbfsid))
             os.unlink(localpath)
             return url
         raise DBFSError("Failed storing in S3: %s %s" % (returncode, output))
@@ -196,7 +195,10 @@ class DBFSError(web.HTTPError):
 
 def create_path(dbo, path, name):
     """ Creates a new DBFS folder """
-    db.execute(dbo, "INSERT INTO dbfs (ID, Name, Path) VALUES (%d, '%s', '%s')" % (db.get_id(dbo, "dbfs"), name, path))
+    return dbo.insert("dbfs", {
+        "Name": name,
+        "Path": path
+    })
 
 def check_create_path(dbo, path):
     """ Verifies that portions of a path exist and creates them if not
@@ -204,7 +206,7 @@ def check_create_path(dbo, path):
     for anything within ASM.
     """
     def check(name, path):
-        if 0 == db.query_int(dbo, "SELECT COUNT(*) FROM dbfs WHERE Name = '%s' AND Path = '%s'" % (name, path)):
+        if 0 == dbo.query_int("SELECT COUNT(*) FROM dbfs WHERE Name = ? AND Path = ?", (name, path)):
             create_path(dbo, path, name)
     pat = path[1:].split("/")
     check(pat[0], "/")
@@ -228,41 +230,40 @@ def get_string(dbo, name, path = ""):
     in the dbfs (useful for media files, which have unique names)
     """
     if path != "":
-        path = " AND Path = %s" % db.ds(path)
-    r = db.query(dbo, "SELECT ID, URL FROM dbfs WHERE Name =%s%s" % (db.ds(name), path))
+        r = dbo.query("SELECT ID, URL FROM dbfs WHERE Name=? AND Path=?", (name, path))
+    else:
+        r = dbo.query("SELECT ID, URL FROM dbfs WHERE Name=?", [name])
     if len(r) == 0:
         return "" # compatibility with old behaviour - relied on by publishers
         #raise DBFSError("No element found for path=%s, name=%s" % (path, name))
     r = r[0]
-    o = DBFSStorage(dbo, r["URL"])
-    return o.get(r["ID"], r["URL"])
+    o = DBFSStorage(dbo, r.url)
+    return o.get(r.id, r.url)
 
 def get_string_id(dbo, dbfsid):
     """
     Gets DBFS file contents as a string. Returns
     an empty string if the file is not found.
     """
-    r = db.query(dbo, "SELECT URL FROM dbfs WHERE ID=%s" % dbfsid)
+    r = dbo.query("SELECT URL FROM dbfs WHERE ID=?", [dbfsid])
     if len(r) == 0:
         return "" # compatibility with old behaviour - relied on by publishers
         #raise DBFSError("No row found with ID %s" % dbfsid)
     r = r[0]
-    o = DBFSStorage(dbo, r["URL"])
-    return o.get(dbfsid, r["URL"])
+    o = DBFSStorage(dbo, r.url)
+    return o.get(dbfsid, r.url)
 
 def rename_file(dbo, path, oldname, newname):
     """
     Renames a file in the dbfs.
     """
-    db.execute(dbo, "UPDATE dbfs SET Name = '%s' WHERE Name = '%s' AND " \
-        "Path = '%s'" % \
-        (newname, oldname, path))
+    dbo.execute("UPDATE dbfs SET Name = ? WHERE Name = ? AND Path = ?", (newname, oldname, path))
 
 def rename_file_id(dbo, dbfsid, newname):
     """
     Renames a file in the dbfs.
     """
-    db.execute(dbo, "UPDATE dbfs SET Name = '%s' WHERE ID = %d" % (newname, dbfsid))
+    dbo.execute("UPDATE dbfs SET Name = ? WHERE ID = ?", (newname, dbfsid))
 
 def put_file(dbo, name, path, filepath):
     """
@@ -272,8 +273,10 @@ def put_file(dbo, name, path, filepath):
     f = open(filepath, "rb")
     s = f.read()
     f.close()
-    dbfsid = db.get_id(dbo, "dbfs")
-    db.execute(dbo, "INSERT INTO dbfs (ID, Name, Path) VALUES (%d, '%s', '%s')" % ( dbfsid, name, path ))
+    dbfsid = dbo.insert("dbfs", {
+        "Name": name,
+        "Path": path
+    })
     o = DBFSStorage(dbo)
     o.put(dbfsid, name, s)
     return dbfsid
@@ -285,10 +288,12 @@ def put_string(dbo, name, path, contents):
     check_create_path(dbo, path)
     name = name.replace("'", "")
     path = path.replace("'", "")
-    dbfsid = db.query_int(dbo, "SELECT ID FROM dbfs WHERE Path = '%s' AND Name = '%s'" % (path, name))
+    dbfsid = dbo.query_int("SELECT ID FROM dbfs WHERE Path = ? AND Name = ?", (path, name))
     if dbfsid == 0:
-        dbfsid = db.get_id(dbo, "dbfs")
-        db.execute(dbo, "INSERT INTO dbfs (ID, Name, Path) VALUES (%d, '%s', '%s')" % ( dbfsid, name, path ))
+        dbfsid = dbo.insert("dbfs", {
+            "Name": name, 
+            "Path": path
+        })
     o = DBFSStorage(dbo)
     o.put(dbfsid, name, contents)
     return dbfsid
@@ -316,14 +321,15 @@ def replace_string(dbo, content, name, path = ""):
     up by just the name.
     """
     if path != "":
-        path = " AND Path = %s" % db.ds(path)
-    r = db.query(dbo, "SELECT ID, URL, Name FROM dbfs WHERE Name =%s%s" % (db.ds(name), path))
+        r = dbo.query("SELECT ID, URL, Name FROM dbfs WHERE Name=? AND Path=?", (name, path))
+    else:
+        r = dbo.query("SELECT ID, URL, Name FROM dbfs WHERE Name=?", [name])
     if len(r) == 0:
         raise DBFSError("No item found for path=%s, name=%s" % (path, name))
     r = r[0]
-    o = DBFSStorage(dbo, r["URL"])
-    o.put(r["ID"], r["NAME"], content)
-    return r["ID"]
+    o = DBFSStorage(dbo, r.url)
+    o.put(r.id, r.name, content)
+    return r.id
 
 def get_file(dbo, name, path, saveto):
     """
@@ -340,7 +346,7 @@ def file_exists(dbo, name):
     """
     Return True if a file with name exists in the database.
     """
-    return db.query_int(dbo, "SELECT COUNT(*) FROM dbfs WHERE Name = '%s'" % name) > 0
+    return dbo.query_int("SELECT COUNT(*) FROM dbfs WHERE Name = ?", [name]) > 0
 
 def get_files(dbo, name, path, saveto):
     """
@@ -349,13 +355,14 @@ def get_files(dbo, name, path, saveto):
     the folder to save all the files to. Returns True for success
     """
     if path != "":
-        path = " AND Path = '%s'" % path
-    rows = db.query(dbo, "SELECT ID, URL FROM dbfs WHERE LOWER(Name) LIKE '%s'%s" % (name, path))
+        rows = dbo.query("SELECT ID, URL FROM dbfs WHERE LOWER(Name) LIKE ? AND Path = ?", [name, path])
+    else:
+        rows = dbo.query("SELECT ID, URL FROM dbfs WHERE LOWER(Name) LIKE ?", [name])
     if len(rows) > 0:
         for r in rows:
-            o = DBFSStorage(dbo, r["URL"])
+            o = DBFSStorage(dbo, r.url)
             f = open(saveto, "wb")
-            f.write(o.get(r["ID"], r["URL"]))
+            f.write(o.get(r.id, r.url))
             f.close()
         return True
     return False
@@ -364,23 +371,25 @@ def delete_path(dbo, path):
     """
     Deletes all items matching the path given
     """
-    rows = db.query(dbo, "SELECT ID, URL FROM dbfs WHERE Path LIKE '%s'" % path)
-    db.execute(dbo, "DELETE FROM dbfs WHERE Path LIKE '%s'" % path)
+    rows = dbo.query("SELECT ID, URL FROM dbfs WHERE Path LIKE ?", [path])
+    dbo.execute("DELETE FROM dbfs WHERE Path LIKE ?", [path])
     for r in rows:
-        o = DBFSStorage(dbo, r["URL"])
-        o.delete(r["URL"])
+        o = DBFSStorage(dbo, r.url)
+        o.delete(r.url)
 
 def delete(dbo, name, path = ""):
     """
     Deletes all items matching the name and path given
     """
     if path != "":
-        path = " AND Path = %s" % db.ds(path)
-    rows = db.query(dbo, "SELECT ID, URL FROM dbfs WHERE Name=%s%s" % (db.ds(name), path))
-    db.execute(dbo, "DELETE FROM dbfs WHERE Name=%s%s" % (db.ds(name), path))
+        rows = dbo.query("SELECT ID, URL FROM dbfs WHERE Name=? AND Path=?", (name, path))
+        dbo.execute("DELETE FROM dbfs WHERE Name=? AND Path=?", (name, path))
+    else:
+        rows = dbo.query("SELECT ID, URL FROM dbfs WHERE Name=?", [name])
+        dbo.execute("DELETE FROM dbfs WHERE Name=?", [name])
     for r in rows:
-        o = DBFSStorage(dbo, r["URL"])
-        o.delete(r["URL"])
+        o = DBFSStorage(dbo, r.url)
+        o.delete(r.url)
 
 def delete_filepath(dbo, filepath):
     """
@@ -394,8 +403,8 @@ def delete_id(dbo, dbfsid):
     """
     Deletes the dbfs entry for the id
     """
-    url = db.query_string(dbo, "SELECT URL FROM dbfs WHERE ID=%d" % dbfsid)
-    db.execute(dbo, "DELETE FROM dbfs WHERE ID = %d" % dbfsid)
+    url = dbo.query_string("SELECT URL FROM dbfs WHERE ID=?", [dbfsid])
+    dbo.execute("DELETE FROM dbfs WHERE ID = ?", [dbfsid])
     o = DBFSStorage(dbo, url)
     o.delete(url)
 
@@ -404,10 +413,10 @@ def list_contents(dbo, path):
     Returns a list of items in the path given. Directories
     are identifiable by not having a file extension.
     """
-    rows = db.query(dbo, "SELECT Name FROM dbfs WHERE Path = '%s'" % path)
+    rows = dbo.query("SELECT Name FROM dbfs WHERE Path = ?", [path])
     l = []
     for r in rows:
-        l.append(r["NAME"])
+        l.append(r.name)
     return l
 
 # End of storage primitives -- everything past here calls functions above
@@ -423,13 +432,13 @@ def get_html_publisher_templates(dbo):
     Returns a list of available template/styles for the html publisher
     """
     l = []
-    rows = db.query(dbo, "SELECT Name, Path FROM dbfs WHERE Path Like '/internet' ORDER BY Name")
+    rows = dbo.query("SELECT Name, Path FROM dbfs WHERE Path Like '/internet' ORDER BY Name")
     hasRootStyle = False
     for r in rows:
-        if r["NAME"].find(".dat") != -1:
+        if r.name.find(".dat") != -1:
             hasRootStyle = True
-        elif r["NAME"].find(".") == -1:
-            l.append(r["NAME"])
+        elif r.name.find(".") == -1:
+            l.append(r.name)
     if hasRootStyle:
         l.append(".")
     return sorted(l)
@@ -494,13 +503,13 @@ def get_html_document_templates(dbo):
     """
     Returns a list of all HTML document templates
     """
-    return db.query(dbo, "SELECT ID, Name, Path FROM dbfs WHERE Name Like '%.html' AND Path Like '/templates%' ORDER BY Path, Name")
+    return dbo.query("SELECT ID, Name, Path FROM dbfs WHERE Name Like '%.html' AND Path Like '/templates%' ORDER BY Path, Name")
 
 def get_odt_document_templates(dbo):
     """
     Returns a list of all ODT document templates
     """
-    return db.query(dbo, "SELECT ID, Name, Path FROM dbfs WHERE Name Like '%.odt' AND Path Like '/templates%' ORDER BY Path, Name")
+    return dbo.query("SELECT ID, Name, Path FROM dbfs WHERE Name Like '%.odt' AND Path Like '/templates%' ORDER BY Path, Name")
 
 def create_document_template(dbo, username, name, ext = ".html", content = "<p></p>"):
     """
@@ -551,17 +560,17 @@ def get_name_for_id(dbo, dbfsid):
     """
     Returns the filename of the item with id dbfsid
     """
-    return db.query_string(dbo, "SELECT Name FROM dbfs WHERE ID = %d" % dbfsid)
+    return dbo.query_string("SELECT Name FROM dbfs WHERE ID = ?", [dbfsid])
 
 def get_document_repository(dbo):
     """
     Returns a list of all documents in the /document_repository directory,
     also includes MIMETYPE field for display
     """
-    rows = db.query(dbo, "SELECT ID, Name, Path FROM dbfs WHERE " \
+    rows = dbo.query("SELECT ID, Name, Path FROM dbfs WHERE " \
         "Path Like '/document_repository%' AND Name Like '%.%' ORDER BY Path, Name")
     for r in rows:
-        mimetype, encoding = mimetypes.guess_type("file://" + r["NAME"], strict=False)
+        mimetype, encoding = mimetypes.guess_type("file://" + r.name, strict=False)
         r["MIMETYPE"] = mimetype
     return rows
 
@@ -569,7 +578,7 @@ def get_report_images(dbo):
     """
     Returns a list of all extra images in the /reports directory
     """
-    return db.query(dbo, "SELECT Name, Path FROM dbfs WHERE " \
+    return dbo.query("SELECT Name, Path FROM dbfs WHERE " \
         "(LOWER(Name) Like '%.jpg' OR LOWER(Name) Like '%.png' OR LOWER(Name) Like '%.gif') " \
         "AND Path Like '/report%' ORDER BY Path, Name")
 
@@ -620,18 +629,18 @@ def has_html_document_templates(dbo):
 
 def switch_storage(dbo):
     """ Goes through all files in dbfs and swaps them into the current storage scheme """
-    rows = db.query(dbo, "SELECT ID, Name, Path, URL FROM dbfs WHERE Name LIKE '%.%' ORDER BY ID")
+    rows = dbo.query("SELECT ID, Name, Path, URL FROM dbfs WHERE Name LIKE '%.%' ORDER BY ID")
     for i, r in enumerate(rows):
-        al.debug("Storage transfer %s/%s (%d of %d)" % (r["PATH"], r["NAME"], i, len(rows)), "dbfs.switch_storage", dbo)
-        source = DBFSStorage(dbo, r["URL"])
+        al.debug("Storage transfer %s/%s (%d of %d)" % (r.path, r.name, i, len(rows)), "dbfs.switch_storage", dbo)
+        source = DBFSStorage(dbo, r.url)
         target = DBFSStorage(dbo)
         # Don't bother if the file is already stored in the target format
         if source.url_prefix() == target.url_prefix():
             al.debug("source is already %s, skipping" % source.url_prefix(), "dbfs.switch_storage", dbo)
             continue
         try:
-            filedata = source.get(r["ID"], r["URL"])
-            target.put(r["ID"], r["NAME"], filedata)
+            filedata = source.get(r.id, r.url)
+            target.put(r.id, r.name, filedata)
         except Exception as err:
             al.error("Error reading, skipping: %s" % str(err), "dbfs.switch_storage", dbo)
     # smcom only - perform postgresql full vacuum after switching
