@@ -8,7 +8,6 @@ import collections
 import configuration
 import csv
 import datetime
-import db
 import dbupdate
 import financial
 import i18n
@@ -162,7 +161,7 @@ def gkl(dbo, m, f, table, namefield, create):
     lv = m[f]
     matchid = dbo.query_int("SELECT ID FROM %s WHERE LOWER(%s) = ?" % (table, namefield), [ lv.strip().lower().replace("'", "`") ])
     if matchid == 0 and create:
-        nextid = db.get_id(dbo, table)
+        nextid = dbo.get_id(table)
         sql = "INSERT INTO %s (ID, %s) VALUES (?, ?)" % (table, namefield)
         dbo.execute(sql, (nextid, lv.replace("'", "`")))
         return str(nextid)
@@ -172,15 +171,15 @@ def create_additional_fields(dbo, row, errors, rowno, csvkey = "ANIMALADDITIONAL
     # Identify any additional fields that may have been specified with
     # ANIMALADDITIONAL<fieldname>
     for a in additional.get_field_definitions(dbo, linktype):
-        v = gks(row, csvkey + str(a["FIELDNAME"]).upper())
+        v = gks(row, csvkey + str(a.fieldname).upper())
         if v != "":
-            sql = db.make_insert_sql("additional", (
-                ( "LinkType", db.di(a["LINKTYPE"]) ),
-                ( "LinkID", db.di(int(linkid)) ),
-                ( "AdditionalFieldID", db.di(a["ID"]) ),
-                ( "Value", db.ds(v) ) ))
             try:
-                db.execute(dbo, sql)
+                dbo.insert("additional", {
+                    "LinkType":             a.linktype,
+                    "LinkID":               linkid,
+                    "AdditionalFieldID":    a.id,
+                    "Value":                v
+                }, generateID=False)
             except Exception as e:
                 errors.append( (rowno, str(row), str(e)) )
 
