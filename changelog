@@ -1,6 +1,7 @@
 40
 ================
 
+20/10/17 Enable CORS for service API
 19/10/17 configuration and dbfs parameterised #252
 18/10/17 Holds ending today alert should show tomorrow #297
 17/10/17 Security fix for raw dates passed to calendar functions #296

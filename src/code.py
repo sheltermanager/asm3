@@ -4653,6 +4653,7 @@ class service(ASMEndpoint):
         else:
             self.header("Content-Type", contenttype)
             self.header("Cache-Control", "max-age=%d" % maxage)
+            self.header("Access-Control-Allow-Origin", "*") # CORS
             return response
 
     def content(self, o):
