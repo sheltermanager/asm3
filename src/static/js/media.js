@@ -367,7 +367,7 @@ $(function() {
             var newweb, newdoc, hasweb, hasdoc;
             if (!controller.showpreferred) { return false; }
             $.each(controller.media, function(i, v) {
-                if (v.MEDIANAME.indexOf(".jpg") != -1 || v.MEDIANAME.indexOf(".jpeg") != -1) { 
+                if (media.is_extension(v.MEDIANAME, "jpg") || media.is_extension(v.MEDIANAME, "jpeg")) { 
                     if (!newweb) { newweb = v.ID; }
                     if (!newdoc) { newdoc = v.ID; }
                     if (v.WEBSITEPHOTO) { hasweb = true; }
