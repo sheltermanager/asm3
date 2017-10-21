@@ -1,4 +1,4 @@
-All Persons
+All Persons (Individual/Couples)
 ###
 Auditing
 ###
@@ -12,6 +12,57 @@ SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerP
 o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.OwnerTitle, o.OwnerForenames,
 o.OwnerSurname, o.MembershipExpiryDate, o.AdditionalFlags
 FROM owner o
+WHERE o.OwnerType Is Null OR o.OwnerType <= 1
+ORDER BY o.OwnerName
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Address</th>
+<th>City</th>
+<th>State</th>
+<th>Zip</th>
+<th>Home Phone</th>
+<th>Work Phone</th>
+<th>Email</th>
+<th>Flags</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$OWNERNAME</td>
+<td>$OWNERADDRESS</td>
+<td>$OWNERTOWN</td>
+<td>$OWNERCOUNTY</td>
+<td>$OWNERPOSTCODE</td>
+<td>$HOMETELEPHONE</td>
+<td>$WORKTELEPHONE</td>
+<td>$EMAILADDRESS</td>
+<td>$ADDITIONALFLAGS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+&&&
+All Persons (Organizations)
+###
+Auditing
+###
+3000/Any
+###
+Basic person info for all organizations on file.
+###
+en
+###
+SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.OwnerTitle, o.OwnerForenames,
+o.OwnerSurname, o.MembershipExpiryDate, o.AdditionalFlags
+FROM owner o
+WHERE o.OwnerType = 2
 ORDER BY o.OwnerName
 ###
 $$HEADER
