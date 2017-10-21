@@ -442,14 +442,14 @@ class Database(object):
         """
         d = i18n.now(self.timezone)
         if not timenow:
-            d = d.replace(hour = 0, minute = 0, second = 0)
+            d = d.replace(hour = 0, minute = 0, second = 0, microsecond = 0)
         if offset > 0:
             d = i18n.add_days(d, offset)
         if offset < 0:
             d = i18n.subtract_days(d, abs(offset))
         if settime != "":
             timebits = settime.split(":")
-            d = d.replace(hour = utils.cint(timebits[0]), minute = utils.cint(timebits[1]), second = utils.cint(timebits[2]))
+            d = d.replace(hour = utils.cint(timebits[0]), minute = utils.cint(timebits[1]), second = utils.cint(timebits[2]), microsecond = 0)
         return d
 
     def today(self, offset=0, settime=""):
