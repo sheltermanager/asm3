@@ -655,7 +655,7 @@ def get_animals_hold_today(dbo):
     """
     Returns all shelter animals who have the hold flag set and the hold ends tomorrow (ie. this is the last day of hold)
     """
-    return dbo.query(get_animal_query(dbo) + " WHERE a.IsHold = 1 AND a.HoldUntilDate = ? AND a.Archived = 0", [dbo.today(offset=1)])
+    return dbo.query(get_animal_query(dbo) + " WHERE a.IsHold = 1 AND a.HoldUntilDate = ? AND a.Archived = 0", [dbo.today(offset=1)], distincton="ID")
 
 def get_animals_long_term(dbo):
     """
