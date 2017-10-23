@@ -367,7 +367,7 @@ $(function() {
             var newweb, newdoc, hasweb, hasdoc;
             if (!controller.showpreferred) { return false; }
             $.each(controller.media, function(i, v) {
-                if (media.is_jpg(v.MEDIANAME)) {
+                if (media.is_jpeg(v.MEDIANAME)) {
                     if (!newweb) { newweb = v.ID; }
                     if (!newdoc) { newdoc = v.ID; }
                     if (v.WEBSITEPHOTO) { hasweb = true; }
@@ -544,7 +544,7 @@ $(function() {
                 // selection only contains images
                 $(".asm-mediaicons input:checked").each(function() {
                     var mname = $(this).parent().parent().find(".media-name").val();
-                    if (media.is_jpg(mname)) {
+                    if (media.is_jpeg(mname)) {
                         $("#button-rotateanti").button("option", "disabled", false); 
                         $("#button-rotateclock").button("option", "disabled", false); 
                     }
