@@ -178,7 +178,7 @@ $(function() {
                     h.push('<br />');
                     h.push('<a class="viewlink" title="' + _('View media') + '" href="' + m.MEDIANAME + '">' + shortnotes + '</a>');
                 }
-                else if (media.is_extension(m.MEDIANAME, "jpg") || media.is_extension(m.MEDIANAME, "jpeg")) {
+                else if (media.is_jpeg(m.MEDIANAME)) {
                     h.push('<a href="image?mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '">');
                     h.push('<img class="asm-thumbnail thumbnailshadow" src="image?mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '" title="' + html.title(fullnotes) + '" /></a>');
                 }
@@ -268,7 +268,7 @@ $(function() {
             if (!comments) { comments = ""; }
 
             // We're only allowed to upload files of a certain type
-            if ( !media.is_extension(file.name, "jpg") && !media.is_extension(file.name, "jpeg") && 
+            if ( !media.is_jpeg(file.name) && 
                  !media.is_extension(file.name, "pdf") && !media.is_extension(file.name, "html") ) {
                 header.show_error(_("Only PDF, HTML and JPG image files can be attached."));
                 deferred.resolve();
@@ -367,7 +367,7 @@ $(function() {
             var newweb, newdoc, hasweb, hasdoc;
             if (!controller.showpreferred) { return false; }
             $.each(controller.media, function(i, v) {
-                if (media.is_extension(v.MEDIANAME, "jpg") || media.is_extension(v.MEDIANAME, "jpeg")) { 
+                if (media.is_jpg(v.MEDIANAME)) {
                     if (!newweb) { newweb = v.ID; }
                     if (!newdoc) { newdoc = v.ID; }
                     if (v.WEBSITEPHOTO) { hasweb = true; }
@@ -402,7 +402,7 @@ $(function() {
 
             // If the file isn't a jpeg or a PDF, fail validation
             var fname = $("#filechooser").val();
-            if ( !media.is_extension(fname, "jpg") && !media.is_extension(fname, "jpeg") && 
+            if ( !media.is_jpeg(fname) &&
                  !media.is_extension(fname, "pdf") && !media.is_extension(fname, "html") ) {
                 header.show_error(_("Only PDF, HTML and JPG image files can be attached."));
                 return;
@@ -444,6 +444,10 @@ $(function() {
 
         is_extension: function(s, ext) {
             return s.toLowerCase().indexOf("." + ext) != -1;
+        },
+
+        is_jpeg: function(s) {
+            return media.is_extension(s, "jpg") || media.is_extension(s, "jpeg");
         },
 
         /**
@@ -518,7 +522,7 @@ $(function() {
                 if ($(".asm-mediaicons input:checked").size() == 1) {
                     $(".asm-mediaicons input:checked").each(function() {
                         var mname = $(this).parent().parent().find(".media-name").val();
-                        if (media.is_extension(mname, "jpg") || media.is_extension(mname, "jpeg")) {
+                        if (media.is_jpeg(mname)) { 
                             $("#button-web").button("option", "disabled", false); 
                             $("#button-doc").button("option", "disabled", false); 
                         }
@@ -540,7 +544,7 @@ $(function() {
                 // selection only contains images
                 $(".asm-mediaicons input:checked").each(function() {
                     var mname = $(this).parent().parent().find(".media-name").val();
-                    if (media.is_extension(mname, "jpg") || media.is_extension(mname, "jpeg")) {
+                    if (media.is_jpg(mname)) {
                         $("#button-rotateanti").button("option", "disabled", false); 
                         $("#button-rotateclock").button("option", "disabled", false); 
                     }
