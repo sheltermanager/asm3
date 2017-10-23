@@ -225,10 +225,10 @@ $(function() {
                 if (m.DOCPHOTO == 1 && controller.showpreferred) {
                     h.push(html.icon("document", _("Default image for documents")));
                 }
-                if (media.is_extension(m.MEDIANAME, "jpg") && m.WEBSITEPHOTO == 0 && !m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
+                if (media.is_jpeg(m.MEDIANAME) && m.WEBSITEPHOTO == 0 && !m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
                     h.push('<img class="incexc" data="' + m.ID + '" src="static/images/ui/tick.gif" title="' + _('Include this image when publishing') + '" />');
                 }
-                if (media.is_extension(m.MEDIANAME, "jpg") && m.WEBSITEPHOTO == 0 && m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
+                if (media.is_jpeg(m.MEDIANAME) && m.WEBSITEPHOTO == 0 && m.EXCLUDEFROMPUBLISH && controller.name == "animal_media") {
                     h.push('<img class="incexc" data="' + m.ID + '" src="static/images/ui/cross.gif" title="' + _('Exclude this image when publishing') + '" />');
                 }
                 h.push('</span>');
