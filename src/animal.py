@@ -2229,7 +2229,7 @@ def update_animals_from_form(dbo, post, username):
             if not a.additionalflags: a.additionalflags = ""
             if a.additionalflags.find("%s|" % post["addflag"]) == -1:
                 newflags = "%s%s|" % (a.additionalflags, post["addflag"])
-                dbo.execute("UPDATE animal SET AdditionalFlags = ? WHERE ID = ?", (newflags, a["ID"]))
+                dbo.update("animal", a["ID"], { "AdditionalFlags": newflags })
                 aud.append("AdditionalFlags %s --> %s" % (a.additionalflags, newflags))
     if post.integer("movementtype") != -1:
         default_return_reason = configuration.default_return_reason(dbo)
@@ -2771,7 +2771,10 @@ def update_preferred_web_media_notes(dbo, username, animalid, newnotes):
     """
     mediaid = dbo.query_int("SELECT ID FROM media WHERE WebsitePhoto = 1 AND LinkID = ? AND LinkTypeID = ?", (animalid, media.ANIMAL))
     if mediaid > 0:
-        dbo.execute("UPDATE media SET MediaNotes = ?, UpdatedSinceLastPublish = 1 WHERE ID = ?", (newnotes, mediaid))
+        dbo.update("media", mediaid, {
+            "MediaNotes": newnotes,
+            "UpdatedSinceLastPublish": 1
+        })
         audit.edit(dbo, username, "media", mediaid, str(mediaid) + "notes => " + newnotes)
  
 def insert_diet_from_form(dbo, username, post):
@@ -2857,7 +2860,7 @@ def insert_litter_from_form(dbo, username, post):
     update_active_litters(dbo)
     # if a list of littermates were given, set the litterid on those animal records
     for i in post.integer_list("animals"):
-        dbo.execute("UPDATE animal SET AcceptanceNumber = ? WHERE ID = ?", (post["litterref"], i))
+        dbo.update("animal", i, { "AcceptanceNumber": post["litterref"] })
     return nid
 
 def update_litter_from_form(dbo, username, post):

@@ -611,7 +611,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
             raise utils.ASMValidationError("Invalid verification key")
     IGNORE_FIELDS = [ JSKEY_NAME, "formname", "flags", "redirect", "account", "filechooser", "method" ]
     l = dbo.locale
-    collationid = db.query_int(dbo, "SELECT MAX(CollationID) FROM onlineformincoming") + 1
+    collationid = dbo.query_int("SELECT MAX(CollationID) FROM onlineformincoming") + 1
     formname = post["formname"]
     posteddate = i18n.now(dbo.timezone)
     flags = post["flags"]
@@ -636,7 +636,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                 fid = utils.cint(k[k.rfind("_")+1:])
                 fieldname = k[0:k.rfind("_")]
                 if fid != 0:
-                    fld = db.query(dbo, "SELECT FieldType, Label, Tooltip, DisplayIndex FROM onlineformfield WHERE ID = %d" % fid)
+                    fld = dbo.query("SELECT FieldType, Label, Tooltip, DisplayIndex FROM onlineformfield WHERE ID = ?", [fid])
                     if len(fld) > 0:
                         label = fld[0]["LABEL"]
                         displayindex = fld[0]["DISPLAYINDEX"]
@@ -663,20 +663,21 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                             if utils.nulltostr(tooltip) != "":
                                 if flags != "": flags += ","
                                 flags += tooltip
-                                db.execute(dbo, "UPDATE onlineformincoming SET Flags = %s WHERE CollationID = %d" % (db.ds(flags), collationid))
+                                dbo.update("onlineformincoming", "CollationID=%s" % collationid, {
+                                    "Flags":    flags
+                                })
             # Do the insert
-            sql = db.make_insert_sql("onlineformincoming", ( 
-                ( "CollationID", db.di(collationid)),
-                ( "FormName", db.ds(formname)),
-                ( "PostedDate", db.ddt(posteddate)),
-                ( "Flags", db.ds(flags)),
-                ( "FieldName", db.ds(fieldname)),
-                ( "Label", db.ds(label)),
-                ( "DisplayIndex", db.di(displayindex)),
-                ( "Host", db.ds(remoteip)),
-                ( "Value", utils.iif(fieldtype == FIELDTYPE_RAWMARKUP, db.ds(v, False), db.ds(v)) )
-                ))
-            db.execute(dbo, sql)
+            dbo.insert("onlineformincoming", {
+                "CollationID":      collationid,
+                "FormName":         formname,
+                "PostedDate":       posteddate,
+                "Flags":            flags,
+                "FieldName":        fieldname,
+                "Label":            label,
+                "DisplayIndex":     displayindex,
+                "Host":             remoteip,
+                utils.iif(fieldtype == FIELDTYPE_RAWMARKUP, "*Value", "Value"): v # don't XSS escape raw markup by prefixing fieldname with *
+            }, generateID=False)
     # Sort out the preview of the first few fields
     fieldssofar = 0
     preview = []
@@ -695,25 +696,27 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
             if fld["VALUE"].startswith("RAW::") or fld["VALUE"].startswith("data:"): continue
             fieldssofar += 1
             preview.append( "%s: %s" % (fld["LABEL"], fld["VALUE"] ))
-    db.execute(dbo, "UPDATE onlineformincoming SET Preview = %s WHERE CollationID = %s" % ( db.ds(", ".join(preview)), db.di(collationid) ))
+    dbo.update("onlineformincoming", "CollationID=%s" % collationid, { 
+        "Preview": ", ".join(preview) 
+    })
     # Do we have a valid emailaddress for the submitter and EmailSubmitter is set? 
     # If so, send them a copy of their submission
-    emailsubmitter = db.query_int(dbo, "SELECT o.EmailSubmitter FROM onlineform o " \
+    emailsubmitter = dbo.query_int("SELECT o.EmailSubmitter FROM onlineform o " \
         "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
-        "WHERE oi.CollationID = %d" % int(collationid))
+        "WHERE oi.CollationID = ?", [collationid])
     if submitteremail != "" and submitteremail.find("@") != -1 and emailsubmitter == 1:
         # Get the confirmation message. If one hasn't been set, send a copy of the submission.
-        body = db.query_string(dbo, "SELECT o.EmailMessage FROM onlineform o " \
+        body = dbo.query_string("SELECT o.EmailMessage FROM onlineform o " \
             "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
-            "WHERE oi.CollationID = %d" % int(collationid))
+            "WHERE oi.CollationID = ?", [collationid])
         if body is None or body.strip() == "": 
             body = get_onlineformincoming_html_print(dbo, [collationid,])
         utils.send_email(dbo, configuration.email(dbo), submitteremail, "", i18n._("Submission received: {0}", l).format(formname), body, "html")
     # Did the original form specify some email addresses to send 
     # incoming submissions to?
-    email = db.query_string(dbo, "SELECT o.EmailAddress FROM onlineform o " \
+    email = dbo.query_string("SELECT o.EmailAddress FROM onlineform o " \
         "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
-        "WHERE oi.CollationID = %d" % int(collationid))
+        "WHERE oi.CollationID = ?", [collationid])
     if email is not None and email.strip() != "":
         # If a submitter email is set, use that to reply to instead
         replyto = submitteremail 

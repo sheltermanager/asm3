@@ -387,10 +387,10 @@ class Database(object):
             audit.create(self, user, table, iid, audit.dump_row(self, table, iid))
         return iid
 
-    def update(self, table, iid, values, user="", setRecordVersion=True, writeAudit=True):
+    def update(self, table, where, values, user="", setRecordVersion=True, writeAudit=True):
         """ Updates a row in a table.
             table: The table to update
-            iid: The value of the ID column in the row to update
+            where: Either a where clause or an int ID value for ID=where
             values: A dict of column names with values
             user: The user account performing the update. If set, adds CreatedBy/Date/LastChangedBy/Date fields
             setRecordVersion: If user is non-blank and this is True, sets RecordVersion
@@ -401,11 +401,17 @@ class Database(object):
             values["LastChangedDate"] = self.now()
             if setRecordVersion: values["RecordVersion"] = self.get_recordversion()
         values = self.encode_str_before_write(values)
-        sql = "UPDATE %s SET %s WHERE ID = %s" % ( table, ",".join( ["%s=?" % x for x in values.iterkeys()] ), iid )
-        preaudit = self.query_row(table, iid)
+        iid = 0
+        if type(where) == int: 
+            iid = where
+            where = "ID=%s" % where
+        sql = "UPDATE %s SET %s WHERE %s" % ( table, ",".join( ["%s=?" % x for x in values.iterkeys()] ), where )
+        if iid > 0: 
+            preaudit = self.query_row(table, iid)
         self.execute(sql, values.values())
-        postaudit = self.query_row(table, iid)
-        if user != "" and writeAudit: 
+        if iid > 0:
+            postaudit = self.query_row(table, iid)
+        if user != "" and iid > 0 and writeAudit: 
             audit.edit(self, user, table, iid, audit.map_diff(preaudit, postaudit))
 
     def delete(self, table, iid, user="", writeAudit=True):
