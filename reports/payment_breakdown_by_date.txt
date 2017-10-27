@@ -290,6 +290,67 @@ $$FOOTER
 FOOTER$$
 
 &&&
+Payment Breakdown by Date and User
+###
+Financial
+###
+33712/Any
+###
+All payments by type for a given date period, with totals, broken down by the entering user.
+###
+en
+###
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+
+SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName, 
+Donation AS amt, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
+owner.OwnerPostcode, donationpayment.PaymentName, ownerdonation.CreatedBy, ownerdonation.ReceiptNumber
+FROM ownerdonation 
+INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
+INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
+INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
+WHERE ownerdonation.Date BETWEEN '$@from$' AND '$@to$' 
+ORDER BY ownerdonation.CreatedBy, donationtype.DonationName, ownerdonation.Date
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_CreatedBy
+$$HEAD
+<h2>$CREATEDBY</h2>
+$$FOOT
+<p><b>Total $CREATEDBY: {SUM.amt.2}</b></p>
+GROUP$$ 
+
+$$GROUP_DonationName
+$$HEAD
+<h2>$DonationName</h2>
+<table border=1><tr>
+<td><b>Date</b></td>
+<td><b>Receipt No</b></td>
+<td><b>Person</b></td>
+<td><b>Method</b></td>
+<td><b>Amount</b></td>
+</tr>
+$$FOOT
+</table>
+<p><b>Total $DonationName: {SUM.amt.2}</b></p>
+GROUP$$ 
+
+$$BODY
+<tr>
+<td>$date</td>
+<td>$receiptnumber</td>
+<td>$ownername</td>
+<td>$paymentname</td>
+<td>$amt</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
+&&&
 Payment Breakdown By Person
 ###
 Financial
