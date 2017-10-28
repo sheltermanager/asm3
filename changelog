@@ -1,6 +1,7 @@
 40
 ================
 
+28/10/17 PetLink warnings are still success
 24/10/17 Refactored incoming online form and some animal updates #252
 23/10/17 Fix bug where exclude from publish did not appear for .jpeg
 20/10/17 Fix bug where .JPG could not be preferred web/doc

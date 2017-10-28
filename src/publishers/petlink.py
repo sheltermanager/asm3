@@ -219,12 +219,12 @@ class PetLinkPublisher(AbstractPublisher):
                             self.log("%s: %s (%s) - Already registered, marking as PetLink TRANSFER for next publish" % \
                                 (an["SHELTERCODE"], an["ANIMALNAME"], an["IDENTICHIPNUMBER"]))
 
-            if jresp["successCount"] > 0:
+            if jresp["successCount"] > 0 or jresp["warningCount"] > 0:
                 # Mark published
-                self.log("successCount > 0 - marking processed animals as sent to petlink")
+                self.log("successCount > 0 || warningCount > 0 - marking processed animals as sent to petlink")
                 self.markAnimalsPublished(processed_animals)
             else:
-                self.logError("successCount == 0, abandoning.")
+                self.logError("successCount == 0 && warningCount == 0, abandoning.")
                 self.log("response hdr: %s, \nresponse: %s" % (r["headers"], r["response"]))
         except Exception as err:
             self.logError("Failed uploading data file: %s" % err)
