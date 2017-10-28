@@ -472,51 +472,40 @@ def insert_onlineform_from_form(dbo, username, post):
     """
     Create an onlineform record from posted data
     """
-    formid = db.get_id(dbo, "onlineform")
-    sql = db.make_insert_sql("onlineform", ( 
-        ( "ID", db.di(formid)),
-        ( "Name", post.db_string("name")),
-        ( "RedirectUrlAfterPOST", post.db_string("redirect")),
-        ( "SetOwnerFlags", post.db_string("flags")),
-        ( "EmailAddress", post.db_string("email")),
-        ( "EmailSubmitter", post.db_boolean("emailsubmitter")),
-        ( "EmailMessage", db.ds(post["emailmessage"], False)),
-        ( "Header", db.ds(post["header"], False) ),
-        ( "Footer", db.ds(post["footer"], False) ),
-        ( "Description", db.ds(post["description"], False) )
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "onlineform", formid, audit.dump_row(dbo, "onlineform", formid))
-    return formid
+    return dbo.insert("onlineform", {
+        "Name":                 post["name"],
+        "RedirectUrlAfterPOST": post["redirect"],
+        "SetOwnerFlags":        post["flags"],
+        "EmailAddress":         post["email"],
+        "EmailSubmitter":       post["emailsubmitter"],
+        "*EmailMessage":        post["emailmessage"],
+        "*Header":              post["header"],
+        "*Footer":              post["footer"],
+        "*Description":         post["description"]
+    }, username)
 
 def update_onlineform_from_form(dbo, username, post):
     """
     Update an onlineform record from posted data
     """
-    formid = post.integer("formid")
-    sql = db.make_update_sql("onlineform", "ID=%d" % formid, ( 
-        ( "Name", post.db_string("name")),
-        ( "RedirectUrlAfterPOST", post.db_string("redirect")),
-        ( "SetOwnerFlags", post.db_string("flags")),
-        ( "EmailAddress", post.db_string("email")),
-        ( "EmailSubmitter", post.db_boolean("emailsubmitter")),
-        ( "EmailMessage", db.ds(post["emailmessage"], False)),
-        ( "Header", db.ds(post["header"], False) ),
-        ( "Footer", db.ds(post["footer"], False) ),
-        ( "Description", db.ds(post["description"], False) )
-        ))
-    preaudit = db.query(dbo, "SELECT * FROM onlineform WHERE ID = %d" % formid)
-    db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM onlineform WHERE ID = %d" % formid)
-    audit.edit(dbo, username, "onlineform", formid, audit.map_diff(preaudit, postaudit))
+    return dbo.update("onlineform", post.integer("formid"), {
+        "Name":                 post["name"],
+        "RedirectUrlAfterPOST": post["redirect"],
+        "SetOwnerFlags":        post["flags"],
+        "EmailAddress":         post["email"],
+        "EmailSubmitter":       post["emailsubmitter"],
+        "*EmailMessage":        post["emailmessage"],
+        "*Header":              post["header"],
+        "*Footer":              post["footer"],
+        "*Description":         post["description"]
+    }, username)
 
 def delete_onlineform(dbo, username, formid):
     """
     Deletes the specified onlineform and fields
     """
-    audit.delete(dbo, username, "onlineform", formid, audit.dump_row(dbo, "onlineform", formid))
-    db.execute(dbo, "DELETE FROM onlineformfield WHERE OnlineFormID = %d" % int(formid))
-    db.execute(dbo, "DELETE FROM onlineform WHERE ID = %d" % int(formid))
+    dbo.execute("DELETE FROM onlineformfield WHERE OnlineFormID = ?", [formid])
+    dbo.delete("onlineform", formid, username)
 
 def clone_onlineform(dbo, username, formid):
     l = dbo.locale
