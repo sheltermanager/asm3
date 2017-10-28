@@ -29,13 +29,13 @@ VALID_FIELDS = [
     "ANIMALHOUSETRAINED", "ANIMALHEALTHPROBLEMS",
     "ORIGINALOWNERTITLE", "ORIGINALOWNERINITIALS", "ORIGINALOWNERFIRSTNAME",
     "ORIGINALOWNERLASTNAME", "ORIGINALOWNERADDRESS", "ORIGINALOWNERCITY",
-    "ORIGINALOWNERSTATE", "ORIGINALOWNERZIPCODE", "ORIGINALOWNERHOMEPHONE",
+    "ORIGINALOWNERSTATE", "ORIGINALOWNERZIPCODE", "ORIGINALOWNERJURISDICTION", "ORIGINALOWNERHOMEPHONE",
     "ORIGINALOWNERWORKPHONE", "ORIGINALOWNERCELLPHONE", "ORIGINALOWNEREMAIL",
     "DONATIONDATE", "DONATIONAMOUNT", "DONATIONCHECKNUMBER", "DONATIONCOMMENTS", "DONATIONTYPE", "DONATIONPAYMENT", 
     "MOVEMENTTYPE", "MOVEMENTDATE", "MOVEMENTCOMMENTS", "MOVEMENTRETURNDATE", 
     "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME", "PERSONNAME",
     "PERSONADDRESS", "PERSONCITY", "PERSONSTATE",
-    "PERSONZIPCODE", "PERSONFOSTERER", "PERSONDONOR",
+    "PERSONZIPCODE", "PERSONJURISDICTION", "PERSONFOSTERER", "PERSONDONOR",
     "PERSONFLAGS", "PERSONCOMMENTS", "PERSONHOMEPHONE", "PERSONWORKPHONE",
     "PERSONCELLPHONE", "PERSONEMAIL", "PERSONCLASS",
     "PERSONMEMBER", "PERSONMEMBERSHIPEXPIRY"
@@ -360,6 +360,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
                 p["town"] = gks(row, "ORIGINALOWNERCITY")
                 p["county"] = gks(row, "ORIGINALOWNERSTATE")
                 p["postcode"] = gks(row, "ORIGINALOWNERZIPCODE")
+                p["jurisdiction"] = gkl(dbo, row, "ORIGINALOWNERJURISDICTION", "jurisdiction", "JurisdictionName", createmissinglookups)
                 p["hometelephone"] = gks(row, "ORIGINALOWNERHOMEPHONE")
                 p["worktelephone"] = gks(row, "ORIGINALOWNERWORKPHONE")
                 p["mobiletelephone"] = gks(row, "ORIGINALOWNERCELLPHONE")
@@ -416,6 +417,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
             p["town"] = gks(row, "PERSONCITY")
             p["county"] = gks(row, "PERSONSTATE")
             p["postcode"] = gks(row, "PERSONZIPCODE")
+            p["jurisdiction"] = gkl(dbo, row, "PERSONJURISDICTION", "jurisdiction", "JurisdictionName", createmissinglookups)
             p["hometelephone"] = gks(row, "PERSONHOMEPHONE")
             p["worktelephone"] = gks(row, "PERSONWORKPHONE")
             p["mobiletelephone"] = gks(row, "PERSONCELLPHONE")
@@ -672,6 +674,7 @@ def csvexport_animals(dbo, animalids):
         row["PERSONCELLPHONE"] = a["CURRENTOWNERMOBILETELEPHONE"]
         row["PERSONEMAIL"] = a["CURRENTOWNEREMAILADDRESS"]
         rows.append(row)
+        # TODO: Output rows for vacc, med and license
     if len(rows) == 0: return ""
     keys = rows[0].keys()
     out = StringIO()

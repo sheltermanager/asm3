@@ -99,6 +99,8 @@ ORIGINALOWNERSTATE
     The original owner's state/county.
 ORIGINALOWNERZIPCODE
     The original owner's zip or postcode.
+ORIGINALOWNERJURISDICTION
+    The original owner's jurisdiction
 ORIGINALOWNERHOMEPHONE
     The original owner's home phone.
 ORIGINALOWNERWORKPHONE
@@ -129,6 +131,8 @@ PERSONSTATE
     The person's state/county
 PERSONZIPCODE
     The person's zip or postcode
+PERSONJURISDICTION
+    The person's jurisdiction
 PERSONHOMEPHONE
     The person's home phone number
 PERSONWORKPHONE
