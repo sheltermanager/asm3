@@ -482,7 +482,7 @@ def insert_onlineform_from_form(dbo, username, post):
         "*Header":              post["header"],
         "*Footer":              post["footer"],
         "*Description":         post["description"]
-    }, username)
+    }, username, setCreated=False)
 
 def update_onlineform_from_form(dbo, username, post):
     """
@@ -498,7 +498,7 @@ def update_onlineform_from_form(dbo, username, post):
         "*Header":              post["header"],
         "*Footer":              post["footer"],
         "*Description":         post["description"]
-    }, username)
+    }, username, setLastChanged=False)
 
 def delete_onlineform(dbo, username, formid):
     """

@@ -360,7 +360,7 @@ class Database(object):
         except:
             return False
 
-    def insert(self, table, values, user="", generateID=True, setRecordVersion=True, writeAudit=True):
+    def insert(self, table, values, user="", generateID=True, setRecordVersion=True, setCreated=True, writeAudit=True):
         """ Inserts a row into a table.
             table: The table to insert into
             values: A dict of column names with values
@@ -370,7 +370,7 @@ class Database(object):
             writeAudit: If True, writes an audit record for the insert
             Returns the ID of the inserted record
         """
-        if user != "":
+        if user != "" and setCreated:
             values["CreatedBy"] = user
             values["LastChangedBy"] = user
             values["CreatedDate"] = self.now()
@@ -387,7 +387,7 @@ class Database(object):
             audit.create(self, user, table, iid, audit.dump_row(self, table, iid))
         return iid
 
-    def update(self, table, where, values, user="", setRecordVersion=True, writeAudit=True):
+    def update(self, table, where, values, user="", setRecordVersion=True, setLastChanged=True, writeAudit=True):
         """ Updates a row in a table.
             table: The table to update
             where: Either a where clause or an int ID value for ID=where
@@ -396,7 +396,7 @@ class Database(object):
             setRecordVersion: If user is non-blank and this is True, sets RecordVersion
             writeAudit: If True, writes an audit record for the update
         """
-        if user != "":
+        if user != "" and setLastChanged:
             values["LastChangedBy"] = user
             values["LastChangedDate"] = self.now()
             if setRecordVersion: values["RecordVersion"] = self.get_recordversion()
