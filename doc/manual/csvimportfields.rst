@@ -3,7 +3,7 @@
 Appendix: CSV file import fields
 ================================
 
-ASM will recognise columns with the following names when importing CSV files. Where you wish to supply multiple rows for the same animal (such as for vaccinations or regimens), make sure you have an ANIMALCODE column and repeat the code.
+ASM will recognise columns with the following names when importing CSV files. Where you wish to supply multiple rows for the same animal (such as for vaccinations or regimens), make sure you have a populated ANIMALCODE column, similarly for multiple rows to people (such as movements, licenses, etc) make sure you have populated person data.
 
 ANIMALCODE
     A code for the animal. If supplied, it will set the sheltercode and short sheltercode fields. If not supplied, the system will generate a code for the animal to the appropriate scheme. If you have manual codes turned on and no animal code is supplied, an error message will be displayed and the import abandoned.
@@ -75,6 +75,18 @@ DONATIONPAYMENT
     The payment method to use (should correspond to a payment method in your database, eg: Cash)
 DONATIONTYPE
     The payment type to use (should correspond to a payment type in your database).
+LICENSETYPE
+    The license type to use (licenses need at least person info)
+LICENSENUMBER
+    The license number (mandatory)
+LICENSEFEE
+    The fee paid for the license
+LICENSEISSUEDATE
+    The date the license was issued
+LICENSEEXPIRESDATE
+    The date the license expires
+LICENSECOMMENTS
+    Any comments on the license
 MEDICALNAME
     The name of the medical regimen for this line
 MEDICALDOSAGE

@@ -36,7 +36,7 @@ VALID_FIELDS = [
     "ORIGINALOWNERSTATE", "ORIGINALOWNERZIPCODE", "ORIGINALOWNERJURISDICTION", "ORIGINALOWNERHOMEPHONE",
     "ORIGINALOWNERWORKPHONE", "ORIGINALOWNERCELLPHONE", "ORIGINALOWNEREMAIL",
     "DONATIONDATE", "DONATIONAMOUNT", "DONATIONCHECKNUMBER", "DONATIONCOMMENTS", "DONATIONTYPE", "DONATIONPAYMENT", 
-    "MOVEMENTTYPE", "MOVEMENTDATE", "MOVEMENTCOMMENTS", "MOVEMENTRETURNDATE", 
+    "LICENSETYPE", "LICENSENUMBER", "LICENSEFEE", "LICENSEISSUEDATE", "LICENSEEXPIRESDATE", "LICENSECOMMENTS",
     "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME", "PERSONNAME",
     "PERSONADDRESS", "PERSONCITY", "PERSONSTATE",
     "PERSONZIPCODE", "PERSONJURISDICTION", "PERSONFOSTERER", "PERSONDONOR",
@@ -218,6 +218,8 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
     hasperson = False
     haspersonlastname = False
     haspersonname = False
+    haslicence = False
+    haslicencenumber = False
     hasmovement = False
     hasmovementdate = False
     hasdonation = False
@@ -231,6 +233,8 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
         if col.startswith("ORIGINALOWNER"): hasoriginalowner = True
         if col.startswith("VACCINATION"): hasvacc = True
         if col.startswith("MEDICAL"): hasmed = True
+        if col.startswith("LICENSE"): haslicence = True
+        if col == "LICENSENUMBER": haslicencenumber = True
         if col == "ORIGINALOWNERLASTNAME": hasoriginalownerlastname = True
         if col.startswith("PERSON"): hasperson = True
         if col == "PERSONLASTNAME": haspersonlastname = True
@@ -284,6 +288,15 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
     if hasvacc and not hasanimal:
         async.set_last_error(dbo, "Your CSV file has vaccination fields, but no animal to apply them to")
         return
+
+    # If we have licence fields, we need a number
+    if haslicence and not haslicencenumber:
+        async.set_last_error(dbo, "Your CSV file has license fields, but no LICENSENUMBER column")
+        return
+
+    # We also need a valid person
+    if haslicence and not (haspersonlastname or haspersonname):
+        async.set_last_error(dbo, "Your CSV file has license fields, but no person to apply the license to")
 
     # Read the whole CSV file into a list of maps. Note, the
     # reader has a cursor at the second row already because
@@ -543,14 +556,32 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
             m["singlemulti"] = "0" # single treatment
             m["status"] = "2" # completed
             try:
-                medical.insert_regimen_from_form(dbo, "import", utils.PostedData(v, dbo.locale))
+                medical.insert_regimen_from_form(dbo, "import", utils.PostedData(m, dbo.locale))
             except Exception as e:
                 al.error("row %d (%s), medical: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
                 errmsg = str(e)
                 if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
                 errors.append( (rowno, str(row), "medical: " + errmsg) )
 
-        # License? TODO:
+        # License?
+        if haslicence and personid != 0 and gks(row, "LICENSENUMBER") != "":
+            l = {}
+            l["person"] = str(personid)
+            l["animal"] = str(animalid)
+            l["type"] = gkl(dbo, row, "LICENSETYPE", "licencetype", "LicenceTypeName", createmissinglookups)
+            if l["type"] == "0": l["type"] = 1
+            l["number"] = gks(row, "LICENSENUMBER")
+            l["fee"] = str(gkc(row, "LICENSEFEE"))
+            l["issuedate"] = gkd(dbo, row, "LICENSEISSUEDATE")
+            l["expirydate"] = gkd(dbo, row, "LICENSEEXPIRESDATE")
+            l["comments"] = gks(row, "LICENSECOMMENTS")
+            try:
+                financial.insert_licence_from_form(dbo, "import", utils.PostedData(l, dbo.locale))
+            except Exception as e:
+                al.error("row %d (%s), license: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
+                errmsg = str(e)
+                if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
+                errors.append( (rowno, str(row), "license: " + errmsg) )
 
         rowno += 1
 
@@ -763,7 +794,6 @@ def csvexport_animals(dbo, animalids):
             row["MEDICALCOMMENTS"] = m["COMMENTS"]
             row["ANIMALCODE"] = a["SHELTERCODE"]
             rows.append(row)
-        # TODO: license
     if len(rows) == 0: return ""
     keys = rows[0].keys()
     out = StringIO()
