@@ -1,6 +1,7 @@
 40
 ================
 
+28/10/17 CSV import/export VACCINATION* and MEDICAL* fields #282
 28/10/17 Add ORIGINALOWNERJURISDICTION and PERSONJURISDICTION #299
 28/10/17 PetLink warnings are still success
 24/10/17 Refactored incoming online form and some animal updates #252

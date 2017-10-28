@@ -11,6 +11,7 @@ import datetime
 import dbupdate
 import financial
 import i18n
+import medical
 import movement
 import person
 import re
@@ -27,6 +28,9 @@ VALID_FIELDS = [
     "ANIMALREASONFORENTRY", "ANIMALHIDDENDETAILS", "ANIMALNOTFORADOPTION",
     "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS", 
     "ANIMALHOUSETRAINED", "ANIMALHEALTHPROBLEMS",
+    "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", 
+    "VACCINATIONMANUFACTURER", "VACCINATIONBATCHNUMBER", "VACCINATIONCOMMENTS", 
+    "MEDICALNAME", "MEDICALDOSAGE", "MEDICALGIVENDATE", "MEDICALCOMMENTS",
     "ORIGINALOWNERTITLE", "ORIGINALOWNERINITIALS", "ORIGINALOWNERFIRSTNAME",
     "ORIGINALOWNERLASTNAME", "ORIGINALOWNERADDRESS", "ORIGINALOWNERCITY",
     "ORIGINALOWNERSTATE", "ORIGINALOWNERZIPCODE", "ORIGINALOWNERJURISDICTION", "ORIGINALOWNERHOMEPHONE",
@@ -209,6 +213,8 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
     onevalid = False
     hasanimal = False
     hasanimalname = False
+    hasmed = False
+    hasvacc = False
     hasperson = False
     haspersonlastname = False
     haspersonname = False
@@ -223,6 +229,8 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
         if col.startswith("ANIMAL"): hasanimal = True
         if col == "ANIMALNAME": hasanimalname = True
         if col.startswith("ORIGINALOWNER"): hasoriginalowner = True
+        if col.startswith("VACCINATION"): hasvacc = True
+        if col.startswith("MEDICAL"): hasmed = True
         if col == "ORIGINALOWNERLASTNAME": hasoriginalownerlastname = True
         if col.startswith("PERSON"): hasperson = True
         if col == "PERSONLASTNAME": haspersonlastname = True
@@ -265,6 +273,16 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
     # We also need a valid person
     if hasdonation and not (haspersonlastname or haspersonname):
         async.set_last_error(dbo, "Your CSV file has donation fields, but no person to apply the donation to")
+        return
+
+    # If we have any med fields, we need an animal
+    if hasmed and not hasanimal:
+        async.set_last_error(dbo, "Your CSV file has medical fields, but no animal to apply them to")
+        return
+
+    # If we have any vacc fields, we need an animal
+    if hasvacc and not hasanimal:
+        async.set_last_error(dbo, "Your CSV file has vaccination fields, but no animal to apply them to")
         return
 
     # Read the whole CSV file into a list of maps. Note, the
@@ -493,6 +511,47 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
                 errors.append( (rowno, str(row), "donation: " + errmsg) )
             if movementid != 0: movement.update_movement_donation(dbo, movementid)
 
+        # Vaccination?
+        if hasvacc and animalid != 0 and gks(row, "VACCINATIONDUEDATE") != "":
+            v = {}
+            v["animal"] = str(animalid)
+            v["type"] = gkl(dbo, row, "VACCINATIONTYPE", "vaccinationtype", "VaccinationType", createmissinglookups)
+            if v["type"] == "0":
+                v["type"] = str(configuration.default_vaccination_type(dbo))
+            v["required"] = gkd(dbo, row, "VACCINATIONDUEDATE", True)
+            v["given"] = gkd(dbo, row, "VACCINATIONGIVENDATE")
+            v["expires"] = gkd(dbo, row, "VACCINATIONEXPIRESDATE")
+            v["batchnumber"] = gks(row, "VACCINATIONBATCHNUMBER")
+            v["manufacturer"] = gks(row, "VACCINATIONMANUFACTURER")
+            v["comments"] = gks(row, "VACCINATIONCOMMENTS")
+            try:
+                medical.insert_vaccination_from_form(dbo, "import", utils.PostedData(v, dbo.locale))
+            except Exception as e:
+                al.error("row %d (%s), vaccination: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
+                errmsg = str(e)
+                if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
+                errors.append( (rowno, str(row), "vaccination: " + errmsg) )
+
+        # Medical?
+        if hasmed and animalid != 0 and gks(row, "MEDICALGIVENDATE") != "" and gks(row, "MEDICALNAME") != "":
+            m = {}
+            m["animal"] = str(animalid)
+            m["treatmentname"] = gks(row, "MEDICALNAME")
+            m["dosage"] = gks(row, "MEDICALDOSAGE")
+            m["startdate"] = gkd(dbo, row, "MEDICALGIVENDATE")
+            m["comments"] = gks(row, "MEDICALCOMMENTS")
+            m["singlemulti"] = "0" # single treatment
+            m["status"] = "2" # completed
+            try:
+                medical.insert_regimen_from_form(dbo, "import", utils.PostedData(v, dbo.locale))
+            except Exception as e:
+                al.error("row %d (%s), medical: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
+                errmsg = str(e)
+                if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
+                errors.append( (rowno, str(row), "medical: " + errmsg) )
+
+        # License? TODO:
+
         rowno += 1
 
     h = [ "<p>%d success, %d errors</p><table>" % (len(data) - len(errors), len(errors)) ]
@@ -673,8 +732,38 @@ def csvexport_animals(dbo, animalids):
         row["PERSONWORKPHONE"] = a["CURRENTOWNERWORKTELEPHONE"]
         row["PERSONCELLPHONE"] = a["CURRENTOWNERMOBILETELEPHONE"]
         row["PERSONEMAIL"] = a["CURRENTOWNEREMAILADDRESS"]
+        row["VACCINATIONTYPE"] = ""
+        row["VACCINATIONDUEDATE"] = ""
+        row["VACCINATIONGIVENDATE"] = ""
+        row["VACCINATIONEXPIRESDATE"] = ""
+        row["VACCINATIONMANUFACTURER"] = ""
+        row["VACCINATIONBATCHNUMBER"] = ""
+        row["VACCINATIONCOMMENTS"] = ""
+        row["MEDICALNAME"] = ""
+        row["MEDICALDOSAGE"] = ""
+        row["MEDICALGIVENDATE"] = ""
+        row["MEDICALCOMMENTS"] = ""
         rows.append(row)
-        # TODO: Output rows for vacc, med and license
+        for v in medical.get_vaccinations(dbo, a["ID"]):
+            row = collections.OrderedDict()
+            row["VACCINATIONTYPE"] = v["VACCINATIONTYPE"]
+            row["VACCINATIONDUEDATE"] = i18n.python2display(l, a["DATEREQUIRED"])
+            row["VACCINATIONGIVENDATE"] = i18n.python2display(l, a["DATEOFVACCINATION"])
+            row["VACCINATIONEXPIRESDATE"] = i18n.python2display(l, a["DATEEXPIRES"])
+            row["VACCINATIONMANUFACTURER"] = v["MANUFACTURER"]
+            row["VACCINATIONBATCHNUMBER"] = v["BATCHNUMBER"]
+            row["VACCINATIONCOMMENTS"] = v["COMMENTS"]
+            row["ANIMALCODE"] = a["SHELTERCODE"]
+            rows.append(row)
+        for m in medical.get_regimens(dbo, a["ID"]):
+            row = collections.OrderedDict()
+            row["MEDICALNAME"] = m["TREATMENTNAME"]
+            row["MEDICALDOSAGE"] = m["DOSAGE"]
+            row["MEDICALGIVENDATE"] = i18n.python2display(l, m["STARTDATE"])
+            row["MEDICALCOMMENTS"] = m["COMMENTS"]
+            row["ANIMALCODE"] = a["SHELTERCODE"]
+            rows.append(row)
+        # TODO: license
     if len(rows) == 0: return ""
     keys = rows[0].keys()
     out = StringIO()
