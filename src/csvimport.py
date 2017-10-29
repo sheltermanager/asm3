@@ -778,9 +778,9 @@ def csvexport_animals(dbo, animalids):
         for v in medical.get_vaccinations(dbo, a["ID"]):
             row = collections.OrderedDict()
             row["VACCINATIONTYPE"] = v["VACCINATIONTYPE"]
-            row["VACCINATIONDUEDATE"] = i18n.python2display(l, a["DATEREQUIRED"])
-            row["VACCINATIONGIVENDATE"] = i18n.python2display(l, a["DATEOFVACCINATION"])
-            row["VACCINATIONEXPIRESDATE"] = i18n.python2display(l, a["DATEEXPIRES"])
+            row["VACCINATIONDUEDATE"] = i18n.python2display(l, v["DATEREQUIRED"])
+            row["VACCINATIONGIVENDATE"] = i18n.python2display(l, v["DATEOFVACCINATION"])
+            row["VACCINATIONEXPIRESDATE"] = i18n.python2display(l, v["DATEEXPIRES"])
             row["VACCINATIONMANUFACTURER"] = v["MANUFACTURER"]
             row["VACCINATIONBATCHNUMBER"] = v["BATCHNUMBER"]
             row["VACCINATIONCOMMENTS"] = v["COMMENTS"]
