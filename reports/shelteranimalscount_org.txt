@@ -55,7 +55,7 @@ AND (DeceasedDate Is Null OR DeceasedDate >= '$@from$')) AS JuniorCatBeginning,
 
 (SELECT COUNT(*) FROM animal WHERE 
 NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$@to$' AND (ReturnDate Is Null OR ReturnDate > '$@to$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
-AND DateBroughtIn <= '$@to$'
+AND DateBroughtIn <= '$@to$ 23:59:59'
 AND NonShelterAnimal = 0
 AND SpeciesID = 1
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
@@ -63,7 +63,7 @@ AND (DeceasedDate Is Null OR DeceasedDate > '$@to$')) AS AdultDogEnding,
 
 (SELECT COUNT(*) FROM animal WHERE 
 NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$@to$' AND (ReturnDate Is Null OR ReturnDate > '$@to$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
-AND DateBroughtIn <= '$@to$'
+AND DateBroughtIn <= '$@to$ 23:59:59'
 AND NonShelterAnimal = 0
 AND SpeciesID = 1
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -71,7 +71,7 @@ AND (DeceasedDate Is Null OR DeceasedDate > '$@to$')) AS JuniorDogEnding,
 
 (SELECT COUNT(*) FROM animal WHERE 
 NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$@to$' AND (ReturnDate Is Null OR ReturnDate > '$@to$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
-AND DateBroughtIn <= '$@to$'
+AND DateBroughtIn <= '$@to$ 23:59:59'
 AND NonShelterAnimal = 0
 AND SpeciesID = 2
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
@@ -79,7 +79,7 @@ AND (DeceasedDate Is Null OR DeceasedDate > '$@to$')) AS AdultCatEnding,
 
 (SELECT COUNT(*) FROM animal WHERE 
 NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$@to$' AND (ReturnDate Is Null OR ReturnDate > '$@to$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
-AND DateBroughtIn <= '$@to$'
+AND DateBroughtIn <= '$@to$ 23:59:59'
 AND NonShelterAnimal = 0
 AND SpeciesID = 2
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
