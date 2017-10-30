@@ -187,6 +187,21 @@ def create_additional_fields(dbo, row, errors, rowno, csvkey = "ANIMALADDITIONAL
             except Exception as e:
                 errors.append( (rowno, str(row), str(e)) )
 
+def row_error(errors, rowtype, rowno, row, e, dbo, exinfo):
+    """ 
+    Handles error messages during import 
+    errors: List of errors to append to
+    rowtype: The area of processing for the row (eg: animal)
+    rowno: The row number
+    row: The row data itself
+    e: The exception thrown
+    exinfo: execution info for logging
+    """
+    errmsg = str(e)
+    if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
+    al.error("row %d %s: (%s): %s" % (rowno, rowtype, str(row), errmsg), "csvimport.row_error", dbo, exinfo)
+    errors.append( (rowno, str(row), errmsg) )
+
 def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, checkduplicates = False):
     """
     Imports the csvdata.
@@ -407,8 +422,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
                         # Identify an ORIGINALOWNERADDITIONAL additional fields and create them
                         create_additional_fields(dbo, row, errors, rowno, "ORIGINALOWNERADDITIONAL", "person", ooid)
                 except Exception as e:
-                    al.error("row %d (%s), originalowner: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
-                    errors.append( (rowno, str(row), "originalowner: " + str(e)) )
+                    row_error(errors, "originalowner", rowno, row, e, dbo, sys.exc_info())
             try:
                 if checkduplicates:
                     dup = animal.get_animal_sheltercode(dbo, a["sheltercode"])
@@ -419,10 +433,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
                     # Identify an ANIMALADDITIONAL additional fields and create them
                     create_additional_fields(dbo, row, errors, rowno, "ANIMALADDITIONAL", "animal", animalid)
             except Exception as e:
-                al.error("row %d (%s): %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
-                errmsg = str(e)
-                if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
-                errors.append( (rowno, str(row), errmsg) )
+                row_error(errors, "animal", rowno, row, e, dbo, sys.exc_info())
 
         # Person data?
         personid = 0
@@ -473,10 +484,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
                     # Identify any PERSONADDITIONAL additional fields and create them
                     create_additional_fields(dbo, row, errors, rowno, "PERSONADDITIONAL", "person", personid)
             except Exception as e:
-                al.error("row %d (%s), person: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
-                errmsg = str(e)
-                if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
-                errors.append( (rowno, str(row), "person: " + errmsg) )
+                row_error(errors, "person", rowno, row, e, dbo, sys.exc_info())
 
         # Movement to tie animal/person together?
         movementid = 0
@@ -494,10 +502,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
             try:
                 movementid = movement.insert_movement_from_form(dbo, "import", utils.PostedData(m, dbo.locale))
             except Exception as e:
-                al.error("row %d (%s), movement: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
-                errmsg = str(e)
-                if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
-                errors.append( (rowno, str(row), "movement: " + errmsg) )
+                row_error(errors, "movement", rowno, row, e, dbo, sys.exc_info())
 
         # Donation?
         if hasdonation and personid != 0 and gkc(row, "DONATIONAMOUNT") != 0:
@@ -518,10 +523,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
             try:
                 financial.insert_donation_from_form(dbo, "import", utils.PostedData(d, dbo.locale))
             except Exception as e:
-                al.error("row %d (%s), donation: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
-                errmsg = str(e)
-                if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
-                errors.append( (rowno, str(row), "donation: " + errmsg) )
+                row_error(errors, "payment", rowno, row, e, dbo, sys.exc_info())
             if movementid != 0: movement.update_movement_donation(dbo, movementid)
 
         # Vaccination?
@@ -540,10 +542,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
             try:
                 medical.insert_vaccination_from_form(dbo, "import", utils.PostedData(v, dbo.locale))
             except Exception as e:
-                al.error("row %d (%s), vaccination: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
-                errmsg = str(e)
-                if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
-                errors.append( (rowno, str(row), "vaccination: " + errmsg) )
+                row_error(errors, "vaccination", rowno, row, e, dbo, sys.exc_info())
 
         # Medical?
         if hasmed and animalid != 0 and gks(row, "MEDICALGIVENDATE") != "" and gks(row, "MEDICALNAME") != "":
@@ -558,10 +557,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
             try:
                 medical.insert_regimen_from_form(dbo, "import", utils.PostedData(m, dbo.locale))
             except Exception as e:
-                al.error("row %d (%s), medical: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
-                errmsg = str(e)
-                if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
-                errors.append( (rowno, str(row), "medical: " + errmsg) )
+                row_error(errors, "medical", rowno, row, e, dbo, sys.exc_info())
 
         # License?
         if haslicence and personid != 0 and gks(row, "LICENSENUMBER") != "":
@@ -578,10 +574,7 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
             try:
                 financial.insert_licence_from_form(dbo, "import", utils.PostedData(l, dbo.locale))
             except Exception as e:
-                al.error("row %d (%s), license: %s" % (rowno, str(row), str(e)), "csvimport.csvimport", dbo, sys.exc_info())
-                errmsg = str(e)
-                if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
-                errors.append( (rowno, str(row), "license: " + errmsg) )
+                row_error(errors, "license", rowno, row, e, dbo, sys.exc_info())
 
         rowno += 1
 
@@ -663,10 +656,7 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags):
             if personid == 0:
                 personid = person.insert_person_from_form(dbo, utils.PostedData(p, dbo.locale), "import")
         except Exception as e:
-            al.error("row %d (%s), person: %s" % (rowno, str(r), str(e)), "csvimport.csvimport_paypal", dbo, sys.exc_info())
-            errmsg = str(e)
-            if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
-            errors.append( (rowno, str(r), "person: " + errmsg) )
+            row_error(errors, "person", rowno, r, e, dbo, sys.exc_info())
 
         # Donation info
         net = utils.cint(utils.cfloat(v(r, "Net")) * 100)
@@ -686,10 +676,7 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags):
             try:
                 financial.insert_donation_from_form(dbo, "import", utils.PostedData(d, dbo.locale))
             except Exception as e:
-                al.error("row %d (%s), donation: %s" % (rowno, str(r), str(e)), "csvimport.csvimport_paypal", dbo, sys.exc_info())
-                errmsg = str(e)
-                if type(e) == utils.ASMValidationError: errmsg = e.getMsg()
-                errors.append( (rowno, str(r), "donation: " + errmsg) )
+                row_error(errors, "payment", rowno, r, e, dbo, sys.exc_info())
 
         rowno += 1
 
@@ -785,6 +772,7 @@ def csvexport_animals(dbo, animalids):
             row["VACCINATIONBATCHNUMBER"] = v["BATCHNUMBER"]
             row["VACCINATIONCOMMENTS"] = v["COMMENTS"]
             row["ANIMALCODE"] = a["SHELTERCODE"]
+            row["ANIMALNAME"] = a["ANIMALNAME"]
             rows.append(row)
         for m in medical.get_regimens(dbo, a["ID"]):
             row = collections.OrderedDict()
@@ -793,6 +781,7 @@ def csvexport_animals(dbo, animalids):
             row["MEDICALGIVENDATE"] = i18n.python2display(l, m["STARTDATE"])
             row["MEDICALCOMMENTS"] = m["COMMENTS"]
             row["ANIMALCODE"] = a["SHELTERCODE"]
+            row["ANIMALNAME"] = a["ANIMALNAME"]
             rows.append(row)
     if len(rows) == 0: return ""
     keys = rows[0].keys()
