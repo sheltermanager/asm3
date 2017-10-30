@@ -85,7 +85,7 @@ WHEN a.SpeciesID = 2 AND a.DateOfBirth < '$PARENTARG1$'::timestamp - INTERVAL '5
 WHEN a.SpeciesID = 2 THEN 'Kittens' END AS AgeGroup,
 1 AS NumberInShelter
 FROM animal a
-WHERE DateBroughtIn <= '$PARENTARG1$ 23:59:59' AND (DeceasedDate Is Null OR DeceasedDate > '$PARENTARG1$')
+WHERE DateBroughtIn <= '$PARENTARG1$' AND (DeceasedDate Is Null OR DeceasedDate > '$PARENTARG1$')
 AND NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$PARENTARG1$' AND ReturnDate > '$PARENTARG1$' AND MovementType NOT IN (2, 8) AND AnimalID = a.ID)
 AND NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$PARENTARG1$' AND ReturnDate Is Null AND MovementType NOT IN (2, 8) AND AnimalID = a.ID)
 AND NonShelterAnimal = 0
