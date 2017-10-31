@@ -1534,7 +1534,7 @@ def is_animal_in_location_filter(a, locationfilter, siteid = 0):
         if a.activemovementtype == 2 and "-2" not in locs: return False
         if a.activemovementtype == 8 and "-8" not in locs: return False
         if a.nonshelteranimal == 1 and "-9" not in locs: return False
-        if str(a.shelterlocation) not in locs: return False
+        if a.archived == 0 and str(a.shelterlocation) not in locs: return False
     return True
 
 def get_number_animals_on_file(dbo):
