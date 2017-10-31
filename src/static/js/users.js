@@ -11,7 +11,7 @@ $(function() {
                 { ID: -2, LOCATIONNAME: _("Foster")},
                 { ID: -9, LOCATIONNAME: _("Non-shelter")},
                 { ID: -8, LOCATIONNAME: _("Retailer")},
-                { ID: -1, LOCATIONNAME: _("Trial Adoption")}
+                { ID: -1, LOCATIONNAME: _("Adoption")}
             );
 
             var dialog = {
