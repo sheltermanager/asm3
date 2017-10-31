@@ -7,8 +7,8 @@ import time
 # flake8: noqa - we have a lot of locales and this is convenient
 from locales import *
 
-VERSION = "40u [Tue 31 Oct 15:59:04 GMT 2017]"
-BUILD = "10311559"
+VERSION = "40u [Tue 31 Oct 16:25:40 GMT 2017]"
+BUILD = "10311625"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 MDY = ( "%m/%d/%Y", "%m/%d/%y" )
@@ -62,6 +62,7 @@ locale_maps = {
     "en_CN":    ( YMD, YEN, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_CR":    ( DMY, "&#8353;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_CY":    ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
+    "en_ES":    ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_SUFFIX, 2 ),
     "en_KW":    ( DMY, "KD", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_KY":    ( DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "en_IE":    ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
@@ -85,7 +86,7 @@ locale_maps = {
     "de_LU":    ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "de_AT":    ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "el":       ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
-    "es":       ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
+    "es":       ( DMY, EURO, PLURAL_ENGLISH, CURRENCY_SUFFIX, 2 ),
     "es_CO":    ( DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "es_CR":    ( DMY, "&#8353;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
     "es_EC":    ( DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2 ),
@@ -126,7 +127,7 @@ def real_locale(locale = "en"):
     #   en_AU (Australia)
     #   en_CA (Canada)
     #   en_GB (UK)
-    if locale in ("en_BG", "en_BQ", "en_CH", "en_CY", "en_IE", "en_IN", "en_LU", "en_NZ", "en_PH", "en_TH", "en_TW", "en_VN", "en_ZA"):
+    if locale in ("en_BG", "en_BQ", "en_CH", "en_CY", "en_ES", "en_IE", "en_IN", "en_LU", "en_NZ", "en_PH", "en_TH", "en_TW", "en_VN", "en_ZA"):
         locale = "en_GB"
     if locale in ("en_BH", "en_CO", "en_KY", "en_KW", "en_IL", "en_LB", "en_MX"):
         locale = "en"
