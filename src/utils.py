@@ -727,6 +727,9 @@ def fix_relative_document_uris(s, baseurl, account = "" ):
         dbp = "db=%s&amp;" % account
         accountp = "&account=" + account
     s = s.replace("image?mode=animal&amp;id=", baseurl + "/service?method=animal_image" + accountp + "&animalid=")
+    s = s.replace("image?mode=animalthumb&amp;id=", baseurl + "/service?method=animal_thumbnail" + accountp + "&animalid=")
+    s = s.replace("image?" + dbp + "mode=animal&amp;id=", baseurl + "/service?method=animal_image" + accountp + "&animalid=")
+    s = s.replace("image?" + dbp + "mode=animalthumb&amp;id=", baseurl + "/service?method=animal_thumbnail" + accountp + "&animalid=")
     s = s.replace("image?mode=dbfs&amp;id=/reports/", baseurl + "/service?method=extra_image" + accountp + "&title=")
     s = s.replace("image?" + dbp + "mode=dbfs&amp;id=/reports/", baseurl + "/service?method=extra_image" + accountp + "&title=")
     s = s.replace("image?mode=dbfs&amp;id=", baseurl + "/service?method=dbfs_image" + accountp + "&title=")

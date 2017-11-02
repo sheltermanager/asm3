@@ -1,6 +1,7 @@
 40
 ================
 
+02/11/17 More relative URIs including for animalthumb when generating PDF
 31/10/17 Add en_ES locale for English (Spain)
 28/10/17 Fix mismatch XSS escaping breaking join for onlineform email
 28/10/17 Support importing of licenses via CSV #301
