@@ -1085,6 +1085,7 @@ class Report:
         s = strip_sql_comments(s)
         s = s.replace("$CURRENT_DATE$", self.dbo.sql_date(self.dbo.now(), includeTime=False, wrapParens=False))
         s = s.replace("$USER$", self.user)
+        s = s.replace("$DATABASENAME$", self.dbo.database)
         # Substitute the location filter, but only if the report actually
         # references it to save unnecessary database lookups
         if s.find("$LOCATIONFILTER$") != -1:
