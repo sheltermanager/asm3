@@ -34,11 +34,12 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td>',
-                '<label for="flags">' + _("Flags") + '</label>',
+                '<label for="mflags">' + _("Flags") + '</label>',
                 '</td>',
                 '<td>',
-                '<select id="flags" name="flags" class="asm-bsmselect" multiple="multiple">',
+                '<select id="mflags" name="mflags" class="asm-bsmselect" multiple="multiple">',
                 '</select>',
+                '<input id="flags" name="flags" type="hidden" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -60,13 +61,14 @@ $(function() {
         bind: function() {
             $("#import").button().click(function() {
                 if (!$("#filechooser").val()) { return; }
+                $("#flags").val($("#mflags").val()); // Copy mflags to flags so a single value for the list is posted
                 $("#import").button("disable");
                 $("#csvform").submit();
             });
         },
 
         sync: function() {
-            html.person_flag_options(null, controller.flags, $("#flags"));
+            html.person_flag_options(null, controller.flags, $("#mflags"));
         },
 
         name: "csvimport_paypal",

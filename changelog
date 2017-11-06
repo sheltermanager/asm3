@@ -1,6 +1,7 @@
 40
 ================
 
+06/11/17 Fix error in import PayPal where only the last flag was set
 02/11/17 More relative URIs including for animalthumb when generating PDF
 31/10/17 Add en_ES locale for English (Spain)
 28/10/17 Fix mismatch XSS escaping breaking join for onlineform email
