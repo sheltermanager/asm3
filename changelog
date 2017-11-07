@@ -1,6 +1,7 @@
 40
 ================
 
+07/11/17 Fix update_3010 to populate AdditionalFlags when importing from ASM2
 06/11/17 Fix error in import PayPal where only the last flag was set
 02/11/17 More relative URIs including for animalthumb when generating PDF
 31/10/17 Add en_ES locale for English (Spain)

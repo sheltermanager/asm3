@@ -2884,6 +2884,26 @@ def update_3010(dbo):
     dbo.execute_dbupdate(sql)
     # Add additionalflags field to person
     add_column(dbo, "owner", "AdditionalFlags", dbo.type_longtext)
+    # Populate it with existing flags
+    dbo.execute_dbupdate("UPDATE owner SET AdditionalFlags = ''")
+    flags = ( 
+        ("IDCheck", "homechecked"), 
+        ("IsBanned", "banned"),
+        ("IsVolunteer", "volunteer"),
+        ("IsMember", "member"),
+        ("IsHomeChecker", "homechecker"),
+        ("IsDonor", "donor"),
+        ("IsShelter", "shelter"),
+        ("IsACO", "aco"), 
+        ("IsStaff", "staff"), 
+        ("IsFosterer", "fosterer"), 
+        ("IsRetailer", "retailer"), 
+        ("IsVet", "vet"), 
+        ("IsGiftAid", "giftaid")
+    )
+    for field, flag in flags:
+        concat = dbo.sql_concat(["AdditionalFlags", "'%s|'" % flag])
+        dbo.execute_dbupdate("UPDATE owner SET AdditionalFlags=%s WHERE %s=1" % (concat, field) )
 
 def update_3050(dbo):
     # Add default cost for vaccinations
