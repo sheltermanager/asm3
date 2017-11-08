@@ -830,9 +830,15 @@ $(function() {
                         if (!desc) { desc = _("(available)"); }
                         src.push({ label: unit + ' : ' + desc, value: unit });
                     });
-                    // Load the unit source and trigger display of the
-                    // dropdown on focus
-                    $("#unit").autocomplete({ source: src }).bind('focus', function() { 
+                    // Reload the source of available units
+                    $("#unit").autocomplete({ 
+                        source: src,
+                        // Dirty the form when an item is chosen from the dropdown
+                        select: function(event, ui) {
+                            validate.dirty(true);
+                        }
+                    // Display the autocomplete on focus
+                    }).bind('focus', function() { 
                         $(this).autocomplete("search", ":"); 
                     });
                 });
