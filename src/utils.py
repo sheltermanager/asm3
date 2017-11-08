@@ -446,6 +446,7 @@ class ASMValidationError(web.HTTPError):
         status = '500 Internal Server Error'
         headers = { 'Content-Type': "text/html" }
         data = "<h1>Validation Error</h1><p>%s</p>" % msg
+        if "headers" not in web.ctx: web.ctx.headers = []
         web.HTTPError.__init__(self, status, headers, data)
 
     def getMsg(self):
@@ -459,6 +460,7 @@ class ASMPermissionError(web.HTTPError):
         status = '500 Internal Server Error'
         headers = { 'Content-Type': "text/html" }
         data = "<h1>Permission Error</h1><p>%s</p>" % msg
+        if "headers" not in web.ctx: web.ctx.headers = []
         web.HTTPError.__init__(self, status, headers, data)
 
 class ASMError(web.HTTPError):
@@ -469,6 +471,7 @@ class ASMError(web.HTTPError):
         status = '500 Internal Server Error'
         headers = { 'Content-Type': "text/html" }
         data = "<h1>Error</h1><p>%s</p>" % msg
+        if "headers" not in web.ctx: web.ctx.headers = []
         web.HTTPError.__init__(self, status, headers, data)
 
 def df_c(data, field):
