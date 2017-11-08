@@ -1160,6 +1160,7 @@ class animal(JSONEndpoint):
             "diarytasks": extdiary.get_animal_tasks(dbo),
             "entryreasons": extlookups.get_entryreasons(dbo),
             "flags": extlookups.get_animal_flags(dbo),
+            "incidents": extanimalcontrol.get_animalcontrol_for_animal(dbo, o.post.integer("id")),
             "internallocations": extlookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
             "microchipmanufacturers": extlookups.MICROCHIP_MANUFACTURERS,
             "pickuplocations": extlookups.get_pickup_locations(dbo),

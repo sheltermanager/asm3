@@ -531,6 +531,46 @@ $(function() {
             ].join("\n");
         },
 
+        render_incidents: function() {
+            
+            if (controller.incidents.length == 0 || !common.has_permission("vaci")) {
+                return;
+            }
+
+            var h = [
+                '<h3><a href="#">' + _("Incidents") + '</a></h3>',
+                '<div>',
+                '<table class="asm-table">',
+                '<thead>',
+                '<tr>',
+                '<th>' + _("Type") + '</th>',
+                '<th>' + _("Number") + '</th>',
+                '<th>' + _("Incident Date/Time") + '</th>',
+                '<th>' + _("Address") + '</th>',
+                '<th>' + _("Suspect") + '</th>',
+                '<th>' + _("Completed") + '</th>',
+                '<th>' + _("Notes") + '</th>',
+                '</tr>',
+                '</thead>',
+                '<tbody>'
+            ];
+
+            $.each(controller.incidents, function(i, v) {
+                h.push('<tr>');
+                h.push('<td><b><a href="incident?id=' + v.ACID + '">' + v.INCIDENTNAME + '</a></b></td>');
+                h.push('<td>' + format.padleft(v.ACID, 6) + '</td>');
+                h.push('<td>' + format.date(v.INCIDENTDATETIME) + ' ' + format.time(v.INCIDENTDATETIME) + '</td>');
+                h.push('<td>' + v.DISPATCHADDRESS + ', ' + v.DISPATCHTOWN + ' ' + v.DISPATCHCOUNTY + ' ' + v.DISPATCHPOSTCODE + '</td>');
+                h.push('<td><b>' + html.person_link(v.OWNERID, v.OWNERNAME) + '</b></td>');
+                h.push('<td>' + format.date(v.COMPLETEDDATE) + ' ' + common.nulltostr(v.COMPLETEDNAME) + '</td>');
+                h.push('<td>' + v.CALLNOTES + '</td>');
+                h.push('</tr>');
+            });
+
+            h.push('</table></div>');
+            return h.join("\n");
+        },
+
         render_notes: function() {
             return [
                 '<h3><a href="#">' + _("Notes") + '</a></h3>',
@@ -742,6 +782,7 @@ $(function() {
                 this.render_entry(),
                 this.render_health_and_identification(),
                 this.render_death(),
+                this.render_incidents(),
                 this.render_publish_history(),
                 html.audit_trail_accordion(controller),
                 '</div>', // accordion
@@ -1227,6 +1268,9 @@ $(function() {
 
             // Load the tab strip
             $(".asm-tabbar").asmtabs();
+
+            // Load any extra tables (like incidents and audit trail)
+            $(".asm-table").table();
 
             // Changing the species updates the breed list
             $('#species').change(function() {

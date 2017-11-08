@@ -1,6 +1,8 @@
 40
 ================
 
+08/11/17 Use sortable tables for displaying audit trails
+08/11/17 Show all incidents on animal record #11
 07/11/17 Fix update_3010 to populate AdditionalFlags when importing from ASM2
 06/11/17 Fix error in import PayPal where only the last flag was set
 02/11/17 More relative URIs including for animalthumb when generating PDF

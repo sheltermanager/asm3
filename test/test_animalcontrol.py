@@ -19,6 +19,12 @@ class TestAnimalControl(unittest.TestCase):
     def test_get_animalcontrol(self):
         assert len(animalcontrol.get_animalcontrol(base.get_dbo(), self.nid)) > 0
 
+    def test_get_animalcontrol_animals(self):
+        animalcontrol.get_animalcontrol_animals(base.get_dbo(), self.nid)
+
+    def test_get_aniamlcontrol_for_animal(self):
+        animalcontrol.get_animalcontrol_for_animal(base.get_dbo(), 0)
+
     def test_get_followup_two_dates(self):
         animalcontrol.get_followup_two_dates(base.get_dbo(), base.today(), base.today())
 

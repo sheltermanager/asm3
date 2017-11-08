@@ -1661,13 +1661,16 @@
             var h = [
                 '<h3><a href="#">' + _("Audit Trail") + '</a></h3>',
                 '<div>',
-                '<table>',
+                '<table class="asm-table">',
+                '<thead>',
                 '<tr>',
                 '<th>Date</th>',
                 '<th>User</th>',
                 '<th>Action</th>',
                 '<th>Details</th>',
-                '</tr>'
+                '</tr>',
+                '</thead>',
+                '<tbody>'
             ], readableaction = {
                 0: _("Add"),
                 1: _("Edit"),
@@ -1682,7 +1685,9 @@
                 h.push('<td>' + v.USERNAME + '</td>');
                 h.push('<td>' + readableaction[v.ACTION] + '</td>');
                 h.push('<td>' + v.DESCRIPTION + '</td>');
+                h.push('</tr>');
             });
+            h.push('</tbody>');
             h.push('</table>');
             h.push('</div>');
             return h.join("\n");

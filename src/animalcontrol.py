@@ -89,6 +89,10 @@ def get_animalcontrol_animals(dbo, acid):
     """ Return the list of linked animals for an incident """
     return dbo.query(get_animalcontrol_animals_query(dbo) + " WHERE aca.AnimalControlID = ?", [acid])
 
+def get_animalcontrol_for_animal(dbo, aid):
+    """ Return the list of linked incidents for an animal """
+    return dbo.query(get_animalcontrol_query(dbo) + " INNER JOIN animalcontrolanimal aca ON aca.AnimalControlID = ac.ID WHERE aca.AnimalID = ? ORDER BY IncidentDateTime DESC", [aid])
+
 def get_followup_two_dates(dbo, start, end):
     """
     Returns incidents for followup between the two dates specified
