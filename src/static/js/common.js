@@ -859,6 +859,7 @@
             $(".asm-textbox, .asm-halftextbox, .asm-doubletextbox").textbox();
             $(".asm-textarea, .asm-textareafixed, .asm-textareafixeddouble").textarea();
             $(".asm-richtextarea").richtextarea();
+            $(".asm-table").table();
             if (_) {
                 $(".asm-bsmselect").attr("title", _("Select"));
             }

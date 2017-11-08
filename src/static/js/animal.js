@@ -1269,9 +1269,6 @@ $(function() {
             // Load the tab strip
             $(".asm-tabbar").asmtabs();
 
-            // Load any extra tables (like incidents and audit trail)
-            $(".asm-table").table();
-
             // Changing the species updates the breed list
             $('#species').change(function() {
                 animal.update_breed_list();

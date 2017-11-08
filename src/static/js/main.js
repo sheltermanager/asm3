@@ -338,7 +338,7 @@ $(function() {
             s += '<p class="asm-menu-category"><a href="diary_edit_my">' + common.substitute(_("Diary for {0}"), {"0": asm.user }) + '</a> ';
             s += '<button id="button-adddiary">' + _("Add a diary note") + '</button>';
             s += '<button id="button-diarycal">' + _("Calendar view") + '</button></p>';
-            s += '<table class="asm-left-table asm-table asm-underlined-rows">';
+            s += '<table class="asm-main-table asm-underlined-rows">';
             s += '<tbody>';
             $.each(controller.diary, function(i, d) {
                 var link = "#";
@@ -369,7 +369,7 @@ $(function() {
             var s = "";
 
             s += '<p class="asm-menu-category">' + _("Message Board") + ' <button id="button-addmessage">' + _("Add Message") + '</button></p>';
-            s += '<table id="asm-messageboard" class="asm-left-table asm-table asm-underlined-rows"><tbody>';
+            s += '<table id="asm-messageboard" class="asm-main-table asm-underlined-rows"><tbody>';
 
             $.each(controller.mess, function(i, m) {
                 s += '<tr><td><span style="white-space: nowrap; padding-right: 5px;">';

@@ -457,7 +457,6 @@ $(function() {
         bind: function() {
 
             $(".asm-tabbar").asmtabs();
-            $(".asm-table").table();
             $("#emailform").emailform();
 
             $("#asm-details-accordion").accordion({

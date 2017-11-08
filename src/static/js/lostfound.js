@@ -223,7 +223,6 @@ $(function() {
 
             // Load the tab strip
             $(".asm-tabbar").asmtabs();
-            $(".asm-table").table();
 
             $("#asm-details-accordion").accordion({
                 heightStyle: "content"

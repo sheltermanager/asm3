@@ -201,7 +201,6 @@ $(function() {
         bind: function() {
 
             $(".asm-tabbar").asmtabs();
-            $(".asm-table").table();
             $("#asm-details-accordion").accordion({
                 heightStyle: "content"
             }); 
