@@ -16,7 +16,7 @@ import lookups
 import media
 import movement
 import utils
-from i18n import _, date_diff, date_diff_days, format_diff, python2display, subtract_years, subtract_months, subtract_days, monday_of_week, first_of_month, last_of_month, first_of_year
+from i18n import _, date_diff, date_diff_days, format_diff, python2display, subtract_years, subtract_months, add_days, subtract_days, monday_of_week, first_of_month, last_of_month, first_of_year
 from random import choice
 
 ASCENDING = 0
@@ -2636,6 +2636,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
     # Any animal fields that should be copied to the new record
     copyfrom = dbo.query("SELECT DateBroughtIn, Fee, AnimalComments FROM animal WHERE ID = ?", [cloneanimalid])
     broughtin = copyfrom[0].datebroughtin
+    newbroughtin = dbo.query_date("SELECT DateBroughtIn FROM animal WHERE ID = ?", [animalid])
     dbo.update("animal", animalid, {
         "Fee":                      copyfrom[0].fee,
         "AnimalComments":           copyfrom[0].animalcomments
@@ -2644,7 +2645,11 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
     # difference to today to get a new date
     def adjust_date(d):
         dayoffset = date_diff_days(broughtin, d)
-        return dbo.sql_date(dbo.today(offset=dayoffset))
+        if dayoffset < 0:
+            adjdate = subtract_days(newbroughtin, dayoffset)
+        else:
+            adjdate = add_days(newbroughtin, dayoffset)
+        return dbo.sql_date(adjdate)
     # Additional Fields (don't include mandatory ones as they are already set by new animal screen)
     for af in dbo.query("SELECT a.* FROM additional a INNER JOIN additionalfield af ON af.ID = a.AdditionalFieldID WHERE af.Mandatory <> 1 AND a.LinkID = %d AND a.LinkType IN (%s)" % (cloneanimalid, additional.ANIMAL_IN)):
         dbo.insert("additional", {

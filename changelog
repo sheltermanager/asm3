@@ -1,6 +1,7 @@
 40
 ================
 
+08/11/17 Template animals were only working from today instead of new intake
 08/11/17 Prevent HTTPError subclasses breaking with no request #302
 08/11/17 Dirty the animal form when a unit is selected from the dropdown #298
 08/11/17 Use sortable tables for displaying audit trails
