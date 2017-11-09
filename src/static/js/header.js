@@ -274,7 +274,7 @@ $(function() {
                 ep.replace("pcuk", "");
             }
 
-            if (ep.indexOf("html") == -1) { $("#asm-menu-publishing-body [href='publish?mode=ftp']").closest("li").hide(); }
+            if (ep.indexOf("html") == -1) { $("#asm-menu-publishing-body [href='publish?mode=html']").closest("li").hide(); }
             if (ep.indexOf("pf") == -1) { $("#asm-menu-publishing-body [href='publish?mode=pf']").closest("li").hide(); }
             if (ep.indexOf("abuk") == -1) { $("#asm-menu-publishing-body [href='publish?mode=abuk']").closest("li").hide(); }
             if (ep.indexOf("ap") == -1) { $("#asm-menu-publishing-body [href='publish?mode=ap']").closest("li").hide(); }
