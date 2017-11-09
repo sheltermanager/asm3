@@ -4266,6 +4266,7 @@ class person_new(JSONEndpoint):
 
 class person_rota(JSONEndpoint):
     url = "person_rota"
+    js_module = "rota"
     get_permissions = users.VIEW_ROTA
 
     def controller(self, o):
