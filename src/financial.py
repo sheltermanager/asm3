@@ -801,11 +801,13 @@ def update_matching_cost_transaction(dbo, username, acid, destinationaccount = 0
         target = source
         source = oldtarget
         amount = abs(amount)
+    trxdate = c["COSTDATE"]
+    if c["COSTPAIDDATE"] is not None: trxdate = c["COSTPAIDDATE"]
     # Create the transaction
     tid = db.get_id(dbo, "accountstrx")
     sql = db.make_insert_user_sql(dbo, "accountstrx", username, (
         ( "ID", db.di(tid) ),
-        ( "TrxDate", db.dd(c["COSTDATE"])),
+        ( "TrxDate", db.dd(trxdate)),
         ( "Description", db.ds(c["DESCRIPTION"])),
         ( "Reconciled", db.di(0)),
         ( "Amount", db.di(amount)),
