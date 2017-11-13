@@ -407,6 +407,15 @@ $(function() {
                 '<input type="text" id="microchipnumber" data-json="IDENTICHIPNUMBER" data-post="microchipnumber" class="asm-textbox" title="' + html.title(_("The microchip number")) + '" /> <span id="microchipbrand"></span>',
                 '</td>',
                 '</tr>',
+                '<tr id="microchiprow2">',
+                '<td nowrap="nowrap"></td>',
+                '<td>',
+                '<input id="microchipdate2" data-json="IDENTICHIP2DATE" data-post="microchipdate2" class="asm-halftextbox asm-datebox" title="' + html.title(_("The date the animal was microchipped")) + '" />',
+                '</td>',
+                '<td>',
+                '<input type="text" id="microchipnumber2" data-json="IDENTICHIP2NUMBER" data-post="microchipnumber2" class="asm-textbox" title="' + html.title(_("The microchip number")) + '" /> <span id="microchipbrand2"></span>',
+                '</td>',
+                '</tr>',
                 '<tr id="tattoorow">',
                 '<td>',
                 '<input class="asm-checkbox" type="checkbox" id="tattoo" data-json="TATTOO" data-post="tattoo" title="' + html.title(_("This animal has a tattoo")) + '" />',
@@ -890,7 +899,7 @@ $(function() {
             $("#rabiestagrow").toggle( $("#species").select("value") == 1 || $("#species").select("value") == 2 );
 
             // Enable/disable health and identification fields based on checkboxes
-            $("#microchipdate, #microchipnumber").toggle($("#microchipped").is(":checked"));
+            $("#microchipdate, #microchipnumber, #microchiprow2").toggle($("#microchipped").is(":checked"));
             $("#tattoodate, #tattoonumber").toggle($("#tattoo").is(":checked"));
             $("#smarttagnumber, #smarttagtype").toggle($("#smarttag").is(":checked"));
             $("#neutereddate").toggle($("#neutered").is(":checked"));
@@ -1049,7 +1058,7 @@ $(function() {
             if (config.bool("DontShowCoatType")) { $("#coattyperow").hide(); }
             if (config.bool("DontShowSize")) { $("#sizerow").hide(); }
             if (config.bool("DontShowWeight")) { $("#kilosrow, #poundsrow").hide(); }
-            if (config.bool("DontShowMicrochip")) { $("#microchiprow").hide(); }
+            if (config.bool("DontShowMicrochip")) { $("#microchiprow, #microchiprow2").hide(); }
             if (config.bool("DontShowTattoo")) { $("#tattoorow").hide(); }
             if (config.str("SmartTagFTPUser") == "") { $("#smarttagrow").hide(); }
             if (config.bool("DontShowBonded")) { $("#bondedwith1row, #bondedwith2row").hide(); }
@@ -1096,28 +1105,32 @@ $(function() {
         },
 
         show_microchip_supplier: function() {
-            var m, 
-                n = $("#microchipnumber").val();
-            if (!n) { 
-                $("#microchipbrand").fadeOut();
-                return;
-            }
-            $.each(controller.microchipmanufacturers, function(i, v) {
-                if (n.length == v.length && new RegExp(v.regex).test(n)) {
-                    if (v.locales == "" || $.inArray(asm.locale, v.locales.split(" ")) != -1) {
-                        m = "<span style='font-weight: bold'>" + v.name + "</span>";
-                        return false;
-                    }
+            var pair = function(microchipnumber, microchipbrand) {
+                var m, 
+                    n = $(microchipnumber).val();
+                if (!n) { 
+                    $(microchipbrand).fadeOut();
+                    return;
                 }
-            });
-            if (!m && (n.length != 9 && n.length != 10 && n.length != 15)) {
-                m = "<span style='font-weight: bold; color: red'>" + _("Invalid microchip number length") + "</span>";
-            }
-            if (!m) {
-                m = "<span style='font-weight: bold; color: red'>" + _("Unknown microchip brand") + "</span>";
-            }
-            $("#microchipbrand").html(m);
-            $("#microchipbrand").fadeIn();
+                $.each(controller.microchipmanufacturers, function(i, v) {
+                    if (n.length == v.length && new RegExp(v.regex).test(n)) {
+                        if (v.locales == "" || $.inArray(asm.locale, v.locales.split(" ")) != -1) {
+                            m = "<span style='font-weight: bold'>" + v.name + "</span>";
+                            return false;
+                        }
+                    }
+                });
+                if (!m && (n.length != 9 && n.length != 10 && n.length != 15)) {
+                    m = "<span style='font-weight: bold; color: red'>" + _("Invalid microchip number length") + "</span>";
+                }
+                if (!m) {
+                    m = "<span style='font-weight: bold; color: red'>" + _("Unknown microchip brand") + "</span>";
+                }
+                $(microchipbrand).html(m);
+                $(microchipbrand).fadeIn();
+            };
+            pair("#microchipnumber", "#microchipbrand");
+            pair("#microchipnumber2", "#microchipbrand2");
         },
 
         /** Validates the form fields prior to saving */
@@ -1269,6 +1282,7 @@ $(function() {
             // the alphanumberbox widget.
             if (!config.bool("AllowNonANMicrochip")) {
                 $("#microchipnumber").alphanumber();
+                $("#microchipnumber2").alphanumber();
                 $("#tattoonumber").alphanumber();
             }
 
@@ -1301,6 +1315,7 @@ $(function() {
             // If the microchip number changes, lookup the manufacturer and
             // display it
             $("#microchipnumber").change(animal.show_microchip_supplier);
+            $("#microchipnumber2").change(animal.show_microchip_supplier);
 
             additional.relocate_fields();
 
@@ -1388,7 +1403,9 @@ $(function() {
             $("#specialneeds").change(animal.enable_widgets);
             $("#litterid").keyup(animal.enable_widgets);
             $("#microchipnumber").keyup(animal.enable_widgets);
+            $("#microchipnumber2").keyup(animal.enable_widgets);
             $("#microchipdate").change(animal.enable_widgets);
+            $("#microchipdate2").change(animal.enable_widgets);
             $("#pickedup").click(animal.enable_widgets).keyup(animal.enable_widgets);
             $("#transferin").click(animal.enable_widgets).keyup(animal.enable_widgets);
             $("#crossbreed").click(animal.enable_widgets).keyup(animal.enable_widgets);

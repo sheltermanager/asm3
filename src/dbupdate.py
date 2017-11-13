@@ -22,7 +22,7 @@ VERSIONS = (
     33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904, 33905, 33906, 
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
-    34013, 34014, 34015, 34016
+    34013, 34014, 34015, 34016, 34017
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -228,6 +228,8 @@ def sql_structure(dbo):
         fint("Identichipped"),
         fstr("IdentichipNumber"),
         fdate("IdentichipDate", True),
+        fstr("Identichip2Number"),
+        fdate("Identichip2Date", True),
         fint("Tattoo"),
         fstr("TattooNumber"),
         fdate("TattooDate", True),
@@ -331,6 +333,7 @@ def sql_structure(dbo):
     sql += index("animal_DiedOffShelter", "animal", "DiedOffShelter")
     sql += index("animal_EntryReasonID", "animal", "EntryReasonID")
     sql += index("animal_IdentichipNumber", "animal", "IdentichipNumber")
+    sql += index("animal_Identichip2Number", "animal", "Identichip2Number")
     sql += index("animal_LastChangedDate", "animal", "LastChangedDate")
     sql += index("animal_MostRecentEntryDate", "animal", "MostRecentEntryDate")
     sql += index("animal_Neutered", "animal", "Neutered")
@@ -4659,4 +4662,9 @@ def update_34016(dbo):
     dbo.execute_dbupdate("UPDATE animalcontrol SET JurisdictionID = 0")
     dbo.execute_dbupdate("INSERT INTO jurisdiction VALUES (1, '%s', '', 0)" % _("Local", l))
 
+def update_34017(dbo):
+    # Add extra microchip fields
+    add_column(dbo, "animal", "Identichip2Number", dbo.type_shorttext)
+    add_column(dbo, "animal", "Identichip2Date", dbo.type_datetime)
+    add_index(dbo, "animal_Identichip2Number", "animal", "Identichip2Number")
 

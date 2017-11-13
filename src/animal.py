@@ -390,6 +390,7 @@ def get_animal_find_simple(dbo, query, classfilter = "all", limit = 0, locationf
     add("a.AcceptanceNumber")
     add("a.BreedName")
     add("a.IdentichipNumber")
+    add("a.Identichip2Number")
     add("a.TattooNumber")
     add("a.RabiesTag")
     add("il.LocationName")
@@ -526,6 +527,13 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
             values.append(x)
             values.append(utils.decode_html(x))
 
+    def addstrpair(cfield, field, field2): 
+        if post[cfield] != "":
+            x = "%%%s%%" % post[cfield]
+            ands.append("(%s LIKE ? OR %s LIKE ?)" % (field, field2))
+            values.append(x)
+            values.append(x)
+
     def adddate(cfieldfrom, cfieldto, field): 
         if post[cfieldfrom] != "" and post[cfieldto] != "":
             post.data["dayend"] = "23:59:59"
@@ -557,7 +565,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
     # If we have a location filter and no location has been given, use the filter
     if locationfilter != "" and post.integer("shelterlocation") == -1:
         ands.append(get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid))
-    addstr("microchip", "a.IdentichipNumber")
+    addstrpair("microchip", "a.IdentichipNumber", "a.Identichip2Number")
     addstr("rabiestag", "a.RabiesTag")
     addstr("pickupaddress", "a.PickupAddress")
     addid("sex", "a.Sex")
@@ -2107,6 +2115,8 @@ def update_animal_from_form(dbo, post, username):
         "Identichipped":        post.boolean("microchipped"),
         "IdentichipDate":       post.date("microchipdate"),
         "IdentichipNumber":     post["microchipnumber"],
+        "Identichip2Date":      post.date("microchipdate2"),
+        "Identichip2Number":    post["microchipnumber2"],
         "Tattoo":               post.boolean("tattoo"),
         "TattooDate":           post.date("tattoodate"),
         "TattooNumber":         post["tattoonumber"],

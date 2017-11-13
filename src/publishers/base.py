@@ -173,6 +173,7 @@ def get_microchip_data(dbo, patterns, publishername, allowintake = True):
     orgpostcode = configuration.organisation_postcode(dbo)
     orgtelephone = configuration.organisation_telephone(dbo)
     email = configuration.email(dbo)
+    extras = []
     for r in rows:
         use_original_owner_info = False
         use_shelter_info = False
@@ -224,7 +225,14 @@ def get_microchip_data(dbo, patterns, publishername, allowintake = True):
             r["CURRENTOWNERMOBILEPHONE"] = orgtelephone
             r["CURRENTOWNERCELLPHONE"] = orgtelephone
             r["CURRENTOWNEREMAILADDRESS"] = email
-    return rows
+        # If this row has IDENTICHIP2NUMBER and IDENTICHIP2DATE populated, clone the 
+        # row and move the values to IDENTICHIPNUMBER and IDENTICHIPDATE for publishing
+        if r["IDENTICHIP2NUMBER"] != "":
+            x = r.copy()
+            x["IDENTICHIPNUMBER"] = x["IDENTICHIP2NUMBER"]
+            x["IDENTICHIPDATE"] = x["IDENTICHIP2DATE"]
+            extras.append(x)
+    return rows + extras
 
 def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1", allowintake = True):
     """
@@ -243,6 +251,7 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1", 
     for p in patterns:
         if p.startswith("9") or p.startswith("0"):
             pclauses.append("a.IdentichipNumber LIKE '%s%%'" % p)
+            pclauses.append("a.Identichip2Number LIKE '%s%%'" % p)
         else:
             pclauses.append("(%s)" % p)
     trialclause = ""
