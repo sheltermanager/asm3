@@ -461,20 +461,27 @@ $(function() {
 
             // Person warnings
             if (p) {
+
                 // Is this owner banned?
-                if (p.ISBANNED == 1) {
-                     if (config.bool("WarnBannedOwner")) { 
-                         warn.push(_("This person has been banned from adopting animals.")); 
-                     }
+                if (p.ISBANNED == 1 && config.bool("WarnBannedOwner")) {
+                    warn.push(_("This person has been banned from adopting animals.")); 
                 }
+
                 // Owner previously under investigation
                 if (p.INVESTIGATION > 0) {
-                    warn.push(_("This person has been under investigation"));
+                    warn.push(_("This person has been under investigation."));
                 }
+
                 // Owner part of animal control incident
                 if (p.INCIDENT > 0) {
-                    warn.push(_("This person has an animal control incident against them"));
+                    warn.push(_("This person has an animal control incident against them."));
                 }
+
+                // Owner previously surrendered?
+                if (p.SURRENDER > 0 && config.bool("WarnBroughtIn")) {
+                    warn.push(_("This person has previously surrendered an animal."));
+                }
+
                 // Does this owner live in the same postcode area as the animal's
                 // original owner?
                 if ( format.postcode_prefix($(".animalchooser-oopostcode").val()) == format.postcode_prefix(p.OWNERPOSTCODE) ||

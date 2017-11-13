@@ -649,8 +649,8 @@ msgid "Additional fields need a name, label and type."
 msgstr ""
 
 #: person_find_results.js options.js incident_new.js person.js
-#: header_edit_header.js waitinglist_results.js person_new.js incident.js
-#: incident_find.js common_personchooser.js transport.js
+#: header_edit_header.js waitinglist_results.js animal.js person_new.js
+#: incident.js incident_find.js common_personchooser.js transport.js
 #: incident_find_results.js mobile.py html.py dbupdate.py
 msgid "Address"
 msgstr ""
@@ -699,7 +699,7 @@ msgstr ""
 msgid "Adopted Transferred In {0}"
 msgstr ""
 
-#: publish_options.js dbupdate.py
+#: users.js publish_options.js dbupdate.py
 msgid "Adoption"
 msgstr ""
 
@@ -2531,7 +2531,7 @@ msgstr ""
 msgid "Complete Tasks"
 msgstr ""
 
-#: diary.js header_edit_header.js medical.js transport.js
+#: diary.js header_edit_header.js animal.js medical.js transport.js
 #: incident_find_results.js mobile.py medical.py
 msgid "Completed"
 msgstr ""
@@ -2926,6 +2926,10 @@ msgstr ""
 
 #: animal.js animal.py
 msgid "Date brought in cannot be blank"
+msgstr ""
+
+#: animal.py
+msgid "Date brought in cannot be in the future."
 msgstr ""
 
 #: animal.py
@@ -5617,7 +5621,7 @@ msgstr ""
 msgid "Incident Completed Types"
 msgstr ""
 
-#: incident_new.js incident.js incident_find_results.js mobile.py
+#: incident_new.js animal.js incident.js incident_find_results.js mobile.py
 msgid "Incident Date/Time"
 msgstr ""
 
@@ -5643,6 +5647,10 @@ msgstr ""
 
 #: diary.js log.js incident.js media.js citations.js
 msgid "Incident {0}, {1}: {2}"
+msgstr ""
+
+#: animal.js
+msgid "Incidents"
 msgstr ""
 
 #: mobile.py
@@ -6045,6 +6053,10 @@ msgstr ""
 
 #: animal.py
 msgid "Kittens (under {0} months)"
+msgstr ""
+
+#: transport.js
+msgid "Km"
 msgstr ""
 
 #: dbupdate.py
@@ -7457,7 +7469,7 @@ msgid "Now"
 msgstr ""
 
 #: lostfound_find_results.js person_find_results.js waitinglist.js
-#: lostfound_find.js incident.js lostfound.js person_vouchers.js
+#: lostfound_find.js animal.js incident.js lostfound.js person_vouchers.js
 #: incident_find.js licence_renewal.js incident_find_results.js mobile.py
 #: lostfound.py dbupdate.py
 msgid "Number"
@@ -10206,7 +10218,7 @@ msgstr ""
 msgid "Surrender Pickup"
 msgstr ""
 
-#: incident_new.js incident.js incident_find_results.js
+#: incident_new.js animal.js incident.js incident_find_results.js
 msgid "Suspect"
 msgstr ""
 
@@ -10985,36 +10997,48 @@ msgid ""
 "retailer movements."
 msgstr ""
 
-#: movements.js move_adopt.js move_reserve.js
+#: move_reserve.js
 msgid "This person has an animal control incident against them"
 msgstr ""
 
-#: move_adopt.js move_reserve.js
+#: movements.js move_adopt.js
+msgid "This person has an animal control incident against them."
+msgstr ""
+
+#: move_reserve.js
 msgid "This person has been banned from adopting animals"
 msgstr ""
 
-#: movements.js
+#: movements.js move_adopt.js
 msgid "This person has been banned from adopting animals."
 msgstr ""
 
-#: movements.js move_adopt.js move_reserve.js
+#: move_reserve.js
 msgid "This person has been under investigation"
+msgstr ""
+
+#: movements.js move_adopt.js
+msgid "This person has been under investigation."
 msgstr ""
 
 #: person.py
 msgid "This person has movements and cannot be removed."
 msgstr ""
 
-#: move_adopt.js move_reserve.js
+#: move_reserve.js
 msgid "This person has not passed a homecheck"
 msgstr ""
 
-#: movements.js
+#: movements.js move_adopt.js
 msgid "This person has not passed a homecheck."
 msgstr ""
 
 #: person.py
 msgid "This person has payments and cannot be removed."
+msgstr ""
+
+#: movements.js move_adopt.js
+msgid "This person has previously surrendered an animal."
 msgstr ""
 
 #: person.py
@@ -11488,7 +11512,7 @@ msgstr ""
 msgid "Treeing Walker Coonhound"
 msgstr ""
 
-#: options.js movements.js users.js common.js publish_options.js dbupdate.py
+#: options.js movements.js common.js publish_options.js dbupdate.py
 msgid "Trial Adoption"
 msgstr ""
 
