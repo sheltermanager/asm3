@@ -1,6 +1,7 @@
 40
 ================
 
+13/11/17 Fix charting bugs by upgrading flot to 0.8.3 #2
 13/11/17 Fix warning when adopting to a previous surrenderer #283
 13/11/17 Only show miles for UK/US #307
 13/11/17 Add second microchip number/implant date fields #17
