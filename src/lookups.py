@@ -237,6 +237,7 @@ MICROCHIP_MANUFACTURERS = [
     { "length": 15, "regex": r"^900", "name": "BCDS", "locales": "" },
     { "length": 15, "regex": r"^911002", "name": "911PetChip", "locales": "" },
     { "length": 15, "regex": r"^939", "name": "M4S ID", "locales": "" },
+    { "length": 15, "regex": r"^9410000", "name": "PetKey", "locales": "" },
     { "length": 15, "regex": r"^941", "name": "Felixcan", "locales": "" },
     { "length": 15, "regex": r"^943", "name": "BCDS", "locales": "" },
     { "length": 15, "regex": r"^945", "name": "BCDS", "locales": "" },
