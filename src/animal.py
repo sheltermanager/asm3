@@ -1895,6 +1895,8 @@ def insert_animal_from_form(dbo, post, username):
         "Identichipped":    post.boolean("microchipped"),
         "IdentichipNumber": post["microchipnumber"],
         "IdentichipDate":   post.date("microchipdate"),
+        "Identichip2Number":post["microchipnumber2"],
+        "Identichip2Date":  post.date("microchipdate2"),
         "Tattoo":           post.boolean("tattoo"),
         "TattooNumber":     post["tattoonumber"],
         "TattooDate":       post.date("tattoodate"),
