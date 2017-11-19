@@ -46,6 +46,24 @@ record, you will see the words "Not for adoption" in the banner at the top of
 the record and directly underneath that in brackets the rule that has excluded
 the animal from being adoptable.
 
+Why are my non-shelter and adopted animals appearing on the vaccination book?
+-----------------------------------------------------------------------------
+
+The option :menuselection:`Settings --> Options --> Defaults --> Include
+off-shelter animals in medical books and calendars` controls whether or not
+off-shelter animals appear in the vaccination book, medical book, test book and
+are highlighted in alerts on the home page. By default, this option is off. 
+
+Why can't I edit the date brought in field?
+-------------------------------------------
+
+The option :menuselection:`Settings --> Options --> Animal Codes --> Once
+assigned, codes cannot be changed` will cause the edit animal screen to lock
+any fields that make up part of the shelter code. For example, if your coding
+format contains T for the type, the type field will be locked for editing when
+this option is on. If your coding format has any of YYYY, MM or DD for a
+portion of the date brought in, that field will be locked too.
+
 How do I integrate my adoptable animals with my website?
 --------------------------------------------------------
 
