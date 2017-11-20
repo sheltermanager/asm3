@@ -627,6 +627,21 @@ def has_html_document_templates(dbo):
     """
     return len(get_html_document_templates(dbo)) > 0
 
+def delete_orphaned_media(dbo):
+    """
+    Removes all dbfs content should have an entry in the media table and doesn't
+    """
+    where = "WHERE " \
+        "(Path LIKE '/animal' OR Path LIKE '/owner') " \
+        "AND (LOWER(Name) LIKE '%.jpg OR LOWER(Name) LIKE '%.pdf') " \
+        "AND ID NOT IN (SELECT DBFSID FROM media)"
+    rows = dbo.query("SELECT ID, Name, Path, URL FROM dbfs %s" % where) 
+    dbo.execute("DELETE FROM dbfs %s" % where)
+    for r in rows:
+        o = DBFSStorage(dbo, r.url)
+        o.delete(r.url)
+    al.debug("Removed %s orphaned dbfs/media records" % len(rows), "dbfs.delete_orphaned_media", dbo)
+
 def switch_storage(dbo):
     """ Goes through all files in dbfs and swaps them into the current storage scheme """
     rows = dbo.query("SELECT ID, Name, Path, URL FROM dbfs WHERE Name LIKE '%.%' ORDER BY ID")
