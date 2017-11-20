@@ -1277,7 +1277,7 @@ def adopt_older_than(animals, movements, ownerid=100, days=365):
 	"""
 	for a in animals:
 		if a.Archived == 0 and a.DateBroughtIn < subtract_days(now(), days):
-			m = asm.Movement()
+			m = Movement()
 			m.AnimalID = a.ID
 			m.OwnerID = ownerid
 			m.MovementType = 1
