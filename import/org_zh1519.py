@@ -117,7 +117,12 @@ for d in asm.csv_to_list(ANIMAL_FILENAME):
         a.CreatedDate = getdate(d["CreateDate"])
         a.LastChangedDate = getdate(d["UpdateDate"])
         a.generateCode()
-        if a.ShortCode.strip() == "": a.ShortCode = d["AnimalNumber"]
+        if asm.cint(d["AnimalNumber"]) > 0:
+            a.ShortCode = d["AnimalNumber"]
+        else:
+            # Animals with a 0 or non-integer number are non-shelter
+            a.NonShelterAnimal = 1
+            a.Archived = 1
         a.IsNotAvailableForAdoption = 0
         a.Sex = asm.getsex_mf(d["Gender"])
         a.Size = 2
@@ -144,7 +149,6 @@ for d in asm.csv_to_list(ANIMAL_FILENAME):
         a.IsGoodWithDogs = 2
         a.IsGoodWithChildren = 2
         a.HouseTrained = 0
-        a.Archived = 0
 
         activeowner = 0
 
