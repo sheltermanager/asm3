@@ -127,6 +127,7 @@ for d in asm.csv_to_list(ANIMAL_FILENAME):
             # Animals with a 0 or non-integer number are non-shelter
             a.NonShelterAnimal = 1
             a.Archived = 1
+            a.OriginalOwnerID = get_asm_ownerid(d["ID"])
         a.IsNotAvailableForAdoption = 0
         a.Sex = asm.getsex_mf(d["Gender"])
         a.Size = 2
