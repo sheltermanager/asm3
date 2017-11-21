@@ -93,11 +93,11 @@ class PetLinkPublisher(AbstractPublisher):
                     continue
 
                 # Validate certain items aren't blank so we aren't registering bogus data
-                if utils.nulltostr(an["CURRENTOWNERADDRESS"].strip()) == "":
+                if utils.nulltostr(an["CURRENTOWNERADDRESS"]).strip() == "":
                     self.logError("Address for the new owner is blank, cannot process")
                     continue 
 
-                if utils.nulltostr(an["CURRENTOWNERPOSTCODE"].strip()) == "":
+                if utils.nulltostr(an["CURRENTOWNERPOSTCODE"]).strip() == "":
                     self.logError("Postal code for the new owner is blank, cannot process")
                     continue
 
