@@ -200,7 +200,7 @@ class PetLinkPublisher(AbstractPublisher):
 
             # Parse any errors in the JSON response
             for e in jresp["errors"]:
-                chip = e["column"].replace("microchip=", "")
+                chip = e["column"].replace("microchip=", "").replace("id=", "")
                 message = e["message"]
 
                 # Iterate over a copy of the processed list so we can remove this animal from it
