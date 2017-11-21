@@ -214,7 +214,7 @@ class PetLinkPublisher(AbstractPublisher):
                         # mark the animal as published but at the intake date -
                         # this will force this publisher to put it through as a transfer
                         # next time
-                        if message.startswith("This microchip code has already been registered"):
+                        if message.find("This microchip code has already been registered") != -1:
                             self.markAnimalPublished(an["ID"], an["DATEBROUGHTIN"])
                             self.log("%s: %s (%s) - Already registered, marking as PetLink TRANSFER for next publish" % \
                                 (an["SHELTERCODE"], an["ANIMALNAME"], an["IDENTICHIPNUMBER"]))
