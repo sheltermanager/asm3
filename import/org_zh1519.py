@@ -11,6 +11,7 @@ Import script for custom Access database for zh1519
 ANIMAL_FILENAME = "data/zh1519_access/Animal.csv"
 PERSONANIMAL_FILENAME = "data/zh1519_access/PersonAnimal.csv"
 PERSON_FILENAME = "data/zh1519_access/Person.csv"
+TREATMENT_FILENAME = "data/zh1519_access/TreatmentsProvided.csv"
 
 def getdate(d):
     return asm.getdate_guess(d)
@@ -22,12 +23,15 @@ ownerdonations = []
 ownerlicences = []
 movements = []
 animals = []
+animalmedicals = []
 animalvaccinations = []
 ppa = {}
 ppo = {}
 atop = {}
 
 asm.setid("animal", 100)
+asm.setid("animalmedical", 100)
+asm.setid("animalmedicaltreatment", 100)
 asm.setid("animalvaccination", 100)
 asm.setid("log", 100)
 asm.setid("owner", 100)
@@ -235,6 +239,7 @@ for d in asm.csv_to_list(ANIMAL_FILENAME):
             ownerlicences.append(ol)
 
         # Vacces
+        """
         if d["Vaccine"] != "" and d["Vaccine"] != "None":
             av = asm.AnimalVaccination()
             animalvaccinations.append(av)
@@ -252,6 +257,42 @@ for d in asm.csv_to_list(ANIMAL_FILENAME):
             av.DateRequired = a.DateBroughtIn
             av.DateOfVaccination = a.DateBroughtIn
             av.Comments = "%s %s" % (d["Vaccine"], d["Vaccinator"])
+        """
+
+# Medical treatments/vaccinations
+for d in asm.csv_to_list(TREATMENT_FILENAME):
+    if d["AnimalID"] not in ppa: continue
+    aid = ppa[d["AnimalID"]].ID
+    a = ppa[d["AnimalID"]]
+    meddate = getdate(d["CreateDate"])
+    if meddate is None: meddate = a.DateBroughtIn
+    if d["SerialNumber"] != "":
+        av = asm.AnimalVaccination()
+        animalvaccinations.append(av)
+        av.AnimalID = aid
+        av.VaccinationID = 4 # Rabies
+        av.DateRequired = meddate
+        av.DateOfVaccination = meddate
+        av.BatchNumber = d["SerialNumber"]
+        av.Manufacturer = d["Manufacturer"]
+        av.DateExpires = getdate(d["ExpireDate"])
+        av.Comments = "%s Vaccinator: %s, Vet: %s, License: %s. %s" % (d["TreatmentName"], d["Vaccinator"], d["Vet"], d["VetLicenseNumber"], d["Comments"])
+        a.RabiesTag = d["VaccineTagNbr"]
+    elif d["TreatmentName"] in ( "BORDETELLA", "DHLP/P", "FVRCP" ):
+        av = asm.AnimalVaccination()
+        animalvaccinations.append(av)
+        av.AnimalID = aid
+        av.VaccinationID = 6 # Bordetella
+        if d["TreatmentName"].startswith("DHLP"): av.VaccinationID = 8 # DHLPP
+        if d["TreatmentName"].startswith("FVRCP"): av.VaccinationID = 9 # FVRCP
+        av.DateRequired = meddate
+        av.DateOfVaccination = meddate
+        av.BatchNumber = d["SerialNumber"]
+        av.Manufacturer = d["Manufacturer"]
+        av.DateExpires = getdate(d["ExpireDate"])
+        av.Comments = "%s Vaccinator: %s, Vet: %s, License: %s. %s %s" % (d["TreatmentName"], d["Vaccinator"], d["Vet"], d["VetLicenseNumber"], d["VaccineTagNbr"], d["Comments"])
+    else:
+        animalmedicals.append(asm.animal_regimen_single(aid, meddate, d["TreatmentName"], "", "%s %s" % (d["VaccineTagNbr"], d["Comments"])))
 
 # Run back through the animals, if we have any that are still
 # on shelter after 1 year, add an adoption to an unknown owner
@@ -262,6 +303,8 @@ for k,v in asm.locations.iteritems():
     print v
 for a in animals:
     print a
+for am in animalmedicals:
+    print am
 for av in animalvaccinations:
     print av
 for o in owners:
@@ -273,7 +316,7 @@ for ol in ownerlicences:
 for m in movements:
     print m
 
-asm.stderr_summary(animals=animals, animalvaccinations=animalvaccinations, owners=owners, ownerdonations=ownerdonations, ownerlicences=ownerlicences, movements=movements)
+asm.stderr_summary(animals=animals, animalmedicals=animalmedicals, animalvaccinations=animalvaccinations, owners=owners, ownerdonations=ownerdonations, ownerlicences=ownerlicences, movements=movements)
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"
