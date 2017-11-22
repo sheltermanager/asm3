@@ -9,15 +9,20 @@ Import script for custom Access database for zh1519
 """
 
 ANIMAL_FILENAME = "data/zh1519_access/Animal.csv"
+ATTACHMENTS_FILENAME = "data/zh1519_access/Attachments.csv"
+COMPLAINTS_FILENAME = "data/zh1519_access/Complaints.csv"
 PERSONANIMAL_FILENAME = "data/zh1519_access/PersonAnimal.csv"
 PERSON_FILENAME = "data/zh1519_access/Person.csv"
 TREATMENT_FILENAME = "data/zh1519_access/TreatmentsProvided.csv"
+IMAGE_PATH = "data/zh1519_access/photos"
 
 def getdate(d):
     return asm.getdate_guess(d)
 
 # --- START OF CONVERSION ---
 
+animalcontrols = []
+animalcontrolanimals = []
 owners = []
 ownerdonations = []
 ownerlicences = []
@@ -28,8 +33,10 @@ animalvaccinations = []
 ppa = {}
 ppo = {}
 atop = {}
+atoi = {}
 
 asm.setid("animal", 100)
+asm.setid("animalcontrol", 100)
 asm.setid("animalmedical", 100)
 asm.setid("animalmedicaltreatment", 100)
 asm.setid("animalvaccination", 100)
@@ -38,14 +45,22 @@ asm.setid("owner", 100)
 asm.setid("ownerdonation", 100)
 asm.setid("ownerlicence", 100)
 asm.setid("adoption", 100)
-
+asm.setid("media", 100)
+asm.setid("dbfs", 200)
 print "\\set ON_ERROR_STOP\nBEGIN;"
 print "DELETE FROM animal WHERE ID >= 100 AND CreatedBy = 'conversion';"
+print "DELETE FROM animalcontrol WHERE ID >= 100 AND CreatedBy = 'conversion';"
+print "DELETE FROM animalcontrolanimal WHERE AnimalControlID >= 100;"
+print "DELETE FROM animalmedical WHERE ID >= 100 AND CreatedBy = 'conversion';"
+print "DELETE FROM animalmedicaltreatment WHERE ID >= 100 AND CreatedBy = 'conversion';"
 print "DELETE FROM animalvaccination WHERE ID >= 100 AND CreatedBy = 'conversion';"
 print "DELETE FROM owner WHERE ID >= 100 AND CreatedBy = 'conversion';"
 print "DELETE FROM ownerdonation WHERE ID >= 100 AND CreatedBy = 'conversion';"
 print "DELETE FROM ownerlicence WHERE ID >= 100 AND CreatedBy = 'conversion';"
 print "DELETE FROM adoption WHERE ID >= 100 AND CreatedBy = 'conversion';"
+print "DELETE FROM media WHERE ID >= 100;"
+print "DELETE FROM dbfs WHERE ID >= 200;"
+
 
 def get_asm_ownerid(oldanimalid):
     if not oldanimalid in atop:
@@ -66,6 +81,11 @@ uo.OwnerName = uo.OwnerSurname
 # Create a map of Animal IDs to Person IDs from PersonAnimal
 for d in asm.csv_to_list(PERSONANIMAL_FILENAME):
     atop[d["AnimalID"]] = d["PersonID"]
+
+# Create a map of Animal IDs to Filenames from Attachments
+for d in asm.csv_to_list(ATTACHMENTS_FILENAME):
+    f = d["FileName"]
+    atoi[d["AnimalID"]] = f[f.rfind("\\")+1:]
 
 # Deal with people first
 for d in asm.csv_to_list(PERSON_FILENAME):
@@ -155,8 +175,11 @@ for d in asm.csv_to_list(ANIMAL_FILENAME):
         a.IsGoodWithChildren = 2
         a.HouseTrained = 0
 
-        activeowner = 0
+        if d["ID"] in atoi and asm.ids["media"] < 200:
+            imagedata = asm.load_image_from_file("%s/%s" % (IMAGE_PATH, atoi[d["ID"]]))
+            asm.animal_image(a.ID, imagedata) 
 
+        activeowner = 0
         if d["PrevOwnerID"] != "0" and d["PrevOwnerID"] != "":
             if d["PrevOwnerID"] in ppo:
                 a.OriginalOwnerID = ppo[d["PrevOwnerID"]].ID
@@ -295,6 +318,31 @@ for d in asm.csv_to_list(TREATMENT_FILENAME):
     else:
         animalmedicals.append(asm.animal_regimen_single(aid, meddate, d["TreatmentName"], "", "%s %s" % (d["VaccineTagNbr"], d["Comments"])))
 
+# Incidents
+for d in asm.csv_to_list(COMPLAINTS_FILENAME):
+    if d["Complaint"].strip() == "" or d["ComplaintType"].strip() == "": continue
+    ac = asm.AnimalControl()
+    animalcontrols.append(ac)
+    calldate = getdate(d["ComplaintDate"])
+    if calldate is None: calldate = asm.now()
+    ac.CallDateTime = calldate
+    ac.IncidentDateTime = calldate
+    ac.DispatchDateTime = calldate
+    ac.CompletedDate = calldate
+    ac.CallerID = get_asm_ownerid(d["CallerPersonID"])
+    ac.OwnerID = get_asm_ownerid(d["OwnerPersonID"])
+    if d["AnimalID"] in ppa:
+        animalcontrolanimals.append("INSERT INTO animalcontrolanimal (AnimalID, AnimalControlID) VALUES (%s, %s);\n" % ( ppa[d["AnimalID"]].ID, ac.ID ))
+    ac.IncidentCompletedID = 2 # Picked up
+    ac.IncidentTypeID = 7 # Neglect
+    if d["ComplaintType"] == "Loose" or d["ComplaintType"] == "Running At Large": ac.IncidentType = 3 # At large
+    if d["ComplaintType"] == "Bite": ac.IncidentType = 5 # Bite
+    if d["ComplaintType"] == "Aggressive": ac.IncidentType = 1 # Aggressive
+    if d["ComplaintType"] == "Barking": ac.IncidentType = 8
+    comments = "type: %s, PU: %s" % (d["ComplaintType"], d["PU"])
+    ac.CallNotes = "%s. %s" % (d["Complaint"], comments)
+    ac.Sex = 2
+
 # Run back through the animals, if we have any that are still
 # on shelter after 1 year, add an adoption to an unknown owner
 asm.adopt_older_than(animals, movements, uo.ID, 365)
@@ -316,8 +364,13 @@ for ol in ownerlicences:
     print ol
 for m in movements:
     print m
+for ac in animalcontrols:
+    print ac
+for aca in animalcontrolanimals:
+    print aca
 
-asm.stderr_summary(animals=animals, animalmedicals=animalmedicals, animalvaccinations=animalvaccinations, owners=owners, ownerdonations=ownerdonations, ownerlicences=ownerlicences, movements=movements)
+
+asm.stderr_summary(animals=animals, animalcontrol=animalcontrols, animalmedicals=animalmedicals, animalvaccinations=animalvaccinations, owners=owners, ownerdonations=ownerdonations, ownerlicences=ownerlicences, movements=movements)
 
 print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
 print "COMMIT;"
