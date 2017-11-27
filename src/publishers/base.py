@@ -227,7 +227,7 @@ def get_microchip_data(dbo, patterns, publishername, allowintake = True):
             r["CURRENTOWNEREMAILADDRESS"] = email
         # If this row has IDENTICHIP2NUMBER and IDENTICHIP2DATE populated, clone the 
         # row and move the values to IDENTICHIPNUMBER and IDENTICHIPDATE for publishing
-        if r["IDENTICHIP2NUMBER"] != "":
+        if r["IDENTICHIPNUMBER"] and r["IDENTICHIP2NUMBER"] != "":
             x = r.copy()
             x["IDENTICHIPNUMBER"] = x["IDENTICHIP2NUMBER"]
             x["IDENTICHIPDATE"] = x["IDENTICHIP2DATE"]
