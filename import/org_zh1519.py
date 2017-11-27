@@ -85,6 +85,7 @@ for d in asm.csv_to_list(PERSONANIMAL_FILENAME):
 # Create a map of Animal IDs to Filenames from Attachments
 for d in asm.csv_to_list(ATTACHMENTS_FILENAME):
     f = d["FileName"]
+    if not f.startswith("A:"): continue # apparently causes problems
     atoi[d["AnimalID"]] = f[f.rfind("\\")+1:]
 
 # Deal with people first
