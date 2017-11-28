@@ -98,6 +98,9 @@ def daily(dbo):
         # auto remove online forms
         ttask(onlineform.auto_remove_old_incoming_forms, dbo)
 
+        # auto anonymise expired personal data
+        ttask(person.update_anonymise_personal_data, dbo)
+
         # Update the generated looking for report
         ttask(person.update_lookingfor_report, dbo)
 

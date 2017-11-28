@@ -104,6 +104,8 @@ DEFAULTS = {
     "AnnualFiguresShowBabiesType": "Yes",
     "AnnualFiguresBabyMonths" : "6",
     "AnnualFiguresSplitAdoptions": "Yes",
+    "AnonymisePersonalData": "No",
+    "AnonymiseAfterYears": "0",
     "AutoCancelReservesDays": "14",
     "AutoDefaultShelterCode": "Yes",
     "AutoInsuranceStart": "0",
@@ -492,6 +494,12 @@ def annual_figures_baby_months(dbo):
 
 def annual_figures_split_adoptions(dbo):
     return cboolean(dbo, "AnnualFiguresSplitAdoptions", DEFAULTS["AnnualFiguresSplitAdoptions"] == "Yes")
+
+def anonymise_personal_data(dbo):
+    return cboolean(dbo, "AnonymisePersonalData", DEFAULTS["AnonymisePersonalData"])
+
+def anonymise_after_years(dbo):
+    return cint(dbo, "AnonymiseAfterYears", DEFAULTS["AnonymiseAfterYears"])
 
 def asm_news(dbo, update=False):
     s = cstring(dbo, "ASMNews")

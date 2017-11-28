@@ -114,4 +114,6 @@ class TestPerson(unittest.TestCase):
     def test_update_lookingfor_report(self):
         person.update_lookingfor_report(base.get_dbo())
 
+    def test_update_anonymise_personal_data(self):
+        person.update_anonymise_personal_data(base.get_dbo(), 1)
 

@@ -2362,6 +2362,7 @@ def clone_animal(dbo, username, animalid):
         "Sex":              a.sex,
         "Identichipped":    a.identichipped,
         "IdentichipNumber": "",
+        "Identichip2Number": "",
         "Tattoo":           a.tattoo,
         "TattooNumber":     "",
         "Neutered":         a.neutered, 

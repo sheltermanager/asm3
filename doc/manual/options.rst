@@ -305,6 +305,16 @@ used to select starting values when finding and creating animals.
   weight so you can track the history of an animal's wieght with reports and
   graphs.
 
+* Anonymize personal data after this many years: If this option is on, the 
+  system will automatically anonymize person records this many years after
+  their creation. Anonymizing will blank the name, email, address and telephone 
+  fields. The city, state and zipcode (town, county and postcode for other locales)
+  will be retained along with the rest of the person data for statistics
+  and reporting. This option helps organisations in the EU to comply with 
+  data retention policies and the GDPR by removing identifiable personal data.
+
+.. warning:: Once anonymized, personal data is gone forever and cannot be recovered.
+
 Diary 
 -----
 

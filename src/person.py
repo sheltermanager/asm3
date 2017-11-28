@@ -1343,4 +1343,29 @@ def update_lookingfor_report(dbo):
     configuration.lookingfor_last_match_count(dbo, lookingfor_last_match_count(dbo))
     return "OK %d" % lookingfor_last_match_count(dbo)
 
+def update_anonymise_personal_data(dbo, overrideretainyears = None):
+    """
+    Anonymises personal data once the retention period in years is up.
+    The name, address, email and phone fields are blanked, the surname is set to a fixed string
+    and the town/county/postcode fields are left for statistics and reporting purposes.
+    Setting overrideretainyears allows the caller to set the retention period (None uses the config values)
+    """
+    l = dbo.locale
+    anonymised = _("No longer retained", l)
+    enabled = configuration.anonymise_personal_data(dbo)
+    retainyears = configuration.anonymise_after_years(dbo)
+    if overrideretainyears:
+        enabled = True
+        retainyears = overrideretainyears
+    if not enabled or retainyears == 0:
+        al.debug("set to retain personal data indefinitely, abandoning.", "person.update_anonymise_personal_data", dbo)
+        return
+    affected = dbo.execute("UPDATE owner SET OwnerTitle = '', OwnerInitials = '', OwnerForeNames = '', " \
+        "OwnerSurname = ?, OwnerAddress = '', EmailAddress = '', " \
+        "HomeTelephone = '', WorkTelephone = '', MobileTelephone = '', " \
+        "LastChangedDate = ?, LastChangedBy = ? " \
+        "WHERE CreatedDate <= ? AND OwnerSurname = ?", 
+        ( anonymised, dbo.now(), "system", dbo.today(offset = -365 * retainyears), anonymised ))
+    al.debug("anonymised %s expired person records outside of retention period (%s years)." % (affected, retainyears), "person.update_anonymise_personal_data", dbo)
+    return "OK %d" % affected
 
