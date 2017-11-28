@@ -1314,6 +1314,10 @@ msgstr ""
 msgid "Annually"
 msgstr ""
 
+#: options.js
+msgid "Anonymize personal data after this many years"
+msgstr ""
+
 #: csvimport.js
 msgid ""
 "Any animal types, species, breeds, colors, locations, etc. in the CSV file "
@@ -7317,6 +7321,10 @@ msgstr ""
 msgid "No description"
 msgstr ""
 
+#: person.py
+msgid "No longer retained"
+msgstr ""
+
 #: lostfound.py person.py
 msgid "No matches found."
 msgstr ""
@@ -10985,6 +10993,12 @@ msgstr ""
 msgid ""
 "This item is referred to in the database ({0}) and cannot be deleted until "
 "it is no longer in use."
+msgstr ""
+
+#: options.js
+msgid ""
+"This many years after creation of a person record, the name, address and "
+"telephone data will be anonymized."
 msgstr ""
 
 #: options.js
