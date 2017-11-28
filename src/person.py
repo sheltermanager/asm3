@@ -1346,9 +1346,14 @@ def update_lookingfor_report(dbo):
 def update_anonymise_personal_data(dbo, overrideretainyears = None):
     """
     Anonymises personal data once the retention period in years is up.
+    A cutoff date is calculated from today - retentionyears. If the person was
+    created before this date and has no movements, payments or logs more recent than that date, 
+    they are considered expired.
     The name, address, email and phone fields are blanked, the surname is set to a fixed string
-    and the town/county/postcode fields are left for statistics and reporting purposes.
+    and the town/county/postcode fields are left alone for statistics and reporting purposes.
     Setting overrideretainyears allows the caller to set the retention period (None uses the config values)
+    People with the following flags are NOT anonymised due to a presumed ongoing relationship -  
+        aco, adoptioncoordinator, retailer, homechecker, member, shelter, foster, staff, vet, volunteer
     """
     l = dbo.locale
     anonymised = _("No longer retained", l)
@@ -1360,12 +1365,18 @@ def update_anonymise_personal_data(dbo, overrideretainyears = None):
     if not enabled or retainyears == 0:
         al.debug("set to retain personal data indefinitely, abandoning.", "person.update_anonymise_personal_data", dbo)
         return
+    cutoff = dbo.today(offset = -365 * retainyears)
     affected = dbo.execute("UPDATE owner SET OwnerTitle = '', OwnerInitials = '', OwnerForeNames = '', " \
         "OwnerSurname = ?, OwnerName = ?, OwnerAddress = '', EmailAddress = '', " \
         "HomeTelephone = '', WorkTelephone = '', MobileTelephone = '', " \
         "LastChangedDate = ?, LastChangedBy = ? " \
-        "WHERE CreatedDate <= ? AND OwnerSurname <> ?", 
-        ( anonymised, anonymised, dbo.now(), "system", dbo.today(offset = -365 * retainyears), anonymised ))
+        "WHERE CreatedDate <= ? AND OwnerSurname <> ? " \
+        "AND IsACO=0 AND IsAdoptionCoordinator=0 AND IsRetailer=0 AND IsHomeChecker=0 AND IsMember=0 " \
+        "AND IsShelter=0 AND IsFosterer=0 AND IsStaff=0 AND IsVet=0 AND IsVolunteer=0 " \
+        "AND NOT EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = owner.ID AND Date > ?) " \
+        "AND NOT EXISTS(SELECT ID FROM adoption WHERE OwnerID = owner.ID AND MovementDate > ?) " \
+        "AND NOT EXISTS(SELECT ID FROM log WHERE Date > ? AND LinkID = owner.ID AND LogTypeID = 1) ", 
+        ( anonymised, anonymised, dbo.now(), "system", cutoff, anonymised, cutoff, cutoff, cutoff ))
     al.debug("anonymised %s expired person records outside of retention period (%s years)." % (affected, retainyears), "person.update_anonymise_personal_data", dbo)
     return "OK %d" % affected
 

@@ -77,7 +77,7 @@ wrong picture, then delete it and upload the correct picture your browser will
 continue to show the old picture. 
 
 To fix this, invalidate your browser's cache when looking at the animal's
-record by pressing :kbd:`CTRL+R` or :kdb:`F5` to reload all images from the
+record by pressing :kbd:`CTRL+R` or :kbd:`F5` to reload all images from the
 server. This does not work as well in some versions of Internet Explorer and if
 you are using that, you can try :menuselection:`Tools --> Internet Options` and
 delete temporary internet files.

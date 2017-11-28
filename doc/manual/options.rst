@@ -313,6 +313,13 @@ used to select starting values when finding and creating animals.
   and reporting. This option helps organisations in the EU to comply with 
   data retention policies and the GDPR by removing identifiable personal data.
 
+  To be anonymized, a record needs to be older than the retention period, and
+  all payments, movements or log entries attached to the person must be older
+  than the retention period.  The person record cannot have any flag that
+  indicates an ongoing relationship with the shelter. These flags are: 
+
+   aco, adoptioncoordinator, retailer, homechecker, member, shelter, foster, staff, vet, volunteer
+
 .. warning:: Once anonymized, personal data is gone forever and cannot be recovered.
 
 Diary 
