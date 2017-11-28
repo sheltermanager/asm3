@@ -1,6 +1,7 @@
 40
 ================
 
+28/11/17 Fix issue with NULL in second microchip field
 22/11/17 Fix bug where person diary tasks would not request a date
 20/11/17 Reset database from import CSV should delete orphaned DBFS items
 13/11/17 Fix charting bugs by upgrading flot to 0.8.3 #2

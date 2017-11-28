@@ -227,7 +227,7 @@ def get_microchip_data(dbo, patterns, publishername, allowintake = True):
             r["CURRENTOWNEREMAILADDRESS"] = email
         # If this row has IDENTICHIP2NUMBER and IDENTICHIP2DATE populated, clone the 
         # row and move the values to IDENTICHIPNUMBER and IDENTICHIPDATE for publishing
-        if r["IDENTICHIPNUMBER"] and r["IDENTICHIP2NUMBER"] != "":
+        if r["IDENTICHIP2NUMBER"] and r["IDENTICHIP2NUMBER"] != "":
             x = r.copy()
             x["IDENTICHIPNUMBER"] = x["IDENTICHIP2NUMBER"]
             x["IDENTICHIPDATE"] = x["IDENTICHIP2DATE"]
@@ -250,8 +250,8 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1", 
     pclauses = []
     for p in patterns:
         if p.startswith("9") or p.startswith("0"):
-            pclauses.append("a.IdentichipNumber LIKE '%s%%'" % p)
-            pclauses.append("a.Identichip2Number LIKE '%s%%'" % p)
+            pclauses.append("(a.IdentichipNumber IS NOT NULL AND a.IdentichipNumber LIKE '%s%%')" % p)
+            pclauses.append("(a.Identichip2Number IS NOT NULL AND a.Identichip2Number LIKE '%s%%')" % p)
         else:
             pclauses.append("(%s)" % p)
     trialclause = ""
@@ -263,7 +263,7 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1", 
         intakeclause = "OR (a.NonShelterAnimal = 0 AND a.IsHold = 0 AND a.Archived = 0 AND (a.ActiveMovementID = 0 OR a.ActiveMovementType = 2) " \
             "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
             "AND AnimalID = a.ID AND SentDate >= a.MostRecentEntryDate))" % { "publishername": publishername }
-    nonshelterclause = "OR (a.NonShelterAnimal = 1 AND a.OriginalOwnerID Is Not Null AND a.OriginalOwnerID > 0 AND a.IdentichipDate Is Not Null " \
+    nonshelterclause = "OR (a.NonShelterAnimal = 1 AND a.OriginalOwnerID Is Not Null AND a.OriginalOwnerID > 0 " \
         "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
         "AND AnimalID = a.ID AND SentDate >= a.IdentichipDate))" % { "publishername": publishername }
     where = " WHERE (%(patterns)s) AND a.DeceasedDate Is Null AND (" \
