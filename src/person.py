@@ -1361,11 +1361,11 @@ def update_anonymise_personal_data(dbo, overrideretainyears = None):
         al.debug("set to retain personal data indefinitely, abandoning.", "person.update_anonymise_personal_data", dbo)
         return
     affected = dbo.execute("UPDATE owner SET OwnerTitle = '', OwnerInitials = '', OwnerForeNames = '', " \
-        "OwnerSurname = ?, OwnerAddress = '', EmailAddress = '', " \
+        "OwnerSurname = ?, OwnerName = ?, OwnerAddress = '', EmailAddress = '', " \
         "HomeTelephone = '', WorkTelephone = '', MobileTelephone = '', " \
         "LastChangedDate = ?, LastChangedBy = ? " \
-        "WHERE CreatedDate <= ? AND OwnerSurname = ?", 
-        ( anonymised, dbo.now(), "system", dbo.today(offset = -365 * retainyears), anonymised ))
+        "WHERE CreatedDate <= ? AND OwnerSurname <> ?", 
+        ( anonymised, anonymised, dbo.now(), "system", dbo.today(offset = -365 * retainyears), anonymised ))
     al.debug("anonymised %s expired person records outside of retention period (%s years)." % (affected, retainyears), "person.update_anonymise_personal_data", dbo)
     return "OK %d" % affected
 
