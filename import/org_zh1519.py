@@ -115,6 +115,7 @@ for d in asm.csv_to_list(ANIMAL_FILENAME):
         a = asm.Animal()
         animals.append(a)
         ppa[d["ID"]] = a
+        activeowner = 0
         a.EntryReasonID = 17 # Surrender
         if d["Ownership"] == "Stray": a.EntryReasonID = 7 # Stray
         if d["Species"] == "Cat":
@@ -149,6 +150,7 @@ for d in asm.csv_to_list(ANIMAL_FILENAME):
             a.NonShelterAnimal = 1
             a.Archived = 1
             a.OriginalOwnerID = get_asm_ownerid(d["ID"])
+            activeowner = a.OriginalOwnerID
         a.IsNotAvailableForAdoption = 0
         a.Sex = asm.getsex_mf(d["Gender"])
         a.Size = 2
@@ -180,7 +182,6 @@ for d in asm.csv_to_list(ANIMAL_FILENAME):
             imagedata = asm.load_image_from_file("%s/%s" % (IMAGE_PATH, atoi[d["ID"]]))
             asm.animal_image(a.ID, imagedata) 
 
-        activeowner = 0
         if d["PrevOwnerID"] != "0" and d["PrevOwnerID"] != "":
             if d["PrevOwnerID"] in ppo:
                 a.OriginalOwnerID = ppo[d["PrevOwnerID"]].ID
