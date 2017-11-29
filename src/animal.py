@@ -529,8 +529,8 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
 
     def addstrpair(cfield, field, field2): 
         if post[cfield] != "":
-            x = "%%%s%%" % post[cfield]
-            ands.append("(%s LIKE ? OR %s LIKE ?)" % (field, field2))
+            x = "%%%s%%" % post[cfield].lower()
+            ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field2))
             values.append(x)
             values.append(x)
 
