@@ -2,7 +2,7 @@ Print Animal Record
 ###
 Auditing
 ###
-33907/Any
+34017/Any
 ###
 A complete printout of an animal record.
 ###
@@ -94,7 +94,7 @@ $$BODY
 </tr><tr>
 <td>Good With Kids</td><td>$WITHCHILDREN</td><td>Housetrained</td><td>$HOUSETRAINED</td>
 </tr><tr>
-<td>Microchipped</td><td>$YIDENTICHIPPED $IDENTICHIPDATE $IDENTICHIPNUMBER</td><td>Tattoo</td><td>$YTATTOO $TATTOODATE $TATTOONUMBER</td>
+<td>Microchipped</td><td>$YIDENTICHIPPED $IDENTICHIPDATE $IDENTICHIPNUMBER $IDENTICHIP2DATE $IDENTICHIP2NUMBER</td><td>Tattoo</td><td>$YTATTOO $TATTOODATE $TATTOONUMBER</td>
 </tr><tr>
 <td>Altered</td><td>$ALTERED $NEUTEREDDATE</td><td>Declawed</td><td>$YDECLAWED</td>
 </tr><tr>
