@@ -1,6 +1,6 @@
 # en_AU.po
 
-val = {"" : "Project-Id-Version: ASM3\nReport-Msgid-Bugs-To: db@sheltermanager.com\nPOT-Creation-Date: 2013-01-24 10:55+0000\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPO-Revision-Date: 2017-11-28 11:09-0500\nLast-Translator: Robin Rawson-Tetley <zanata@sheltermanager.com>\nLanguage-Team: English (Australia) <support@sheltermanager.com>\nLanguage: en-AU\nPlural-Forms: nplurals=2; plural=(n != 1);\nX-Generator: Zanata 3.9.6\nX-POOTLE-MTIME: 1456389497.000000\n",
+val = {"" : "Project-Id-Version: ASM3\nReport-Msgid-Bugs-To: db@sheltermanager.com\nPOT-Creation-Date: 2013-01-24 10:55+0000\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPO-Revision-Date: 2017-11-29 04:41-0500\nLast-Translator: Robin Rawson-Tetley <zanata@sheltermanager.com>\nLanguage-Team: English (Australia) <support@sheltermanager.com>\nLanguage: en-AU\nPlural-Forms: nplurals=2; plural=(n != 1);\nX-Generator: Zanata 3.9.6\nX-POOTLE-MTIME: 1456389497.000000\n",
 "{plural3} people with active reservations have not been homechecked" : "{plural3} people with active reservations have not been homechecked",
 "Select recommended" : "Select recommended",
 "Half-Yearly" : "Half-Yearly",
@@ -1097,6 +1097,7 @@ val = {"" : "Project-Id-Version: ASM3\nReport-Msgid-Bugs-To: db@sheltermanager.c
 "Tax Amount" : "GST Amount",
 "If this person is a member, the date that membership expires." : "If this person is a member, the date that membership expires.",
 "Cockapoo" : "Cockapoo",
+"Remove personally identifiable data" : "Remove personally identifiable data",
 "treatments" : "treatments",
 "Black and Tan Coonhound" : "Black and Tan Coonhound",
 "All fields should be completed." : "All fields should be completed.",
@@ -1673,6 +1674,7 @@ val = {"" : "Project-Id-Version: ASM3\nReport-Msgid-Bugs-To: db@sheltermanager.c
 "Work Types" : "Work Types",
 "Tattoo Number" : "Tattoo Number",
 "Animal Selection" : "Animal Selection",
+"Anonymize" : "Anonymise",
 "Parrot (Other)" : "Parrot (Other)",
 "Printable Manual" : "Printable Manual",
 "Lost and Found" : "Lost and Found",

@@ -1314,6 +1314,10 @@ msgstr ""
 msgid "Annually"
 msgstr ""
 
+#: person.js
+msgid "Anonymize"
+msgstr ""
+
 #: options.js
 msgid "Anonymize personal data after this many years"
 msgstr ""
@@ -7321,7 +7325,7 @@ msgstr ""
 msgid "No description"
 msgstr ""
 
-#: person.py
+#: person.js person.py
 msgid "No longer retained"
 msgstr ""
 
@@ -8707,6 +8711,10 @@ msgstr ""
 
 #: options.js
 msgid "Remove move menu and the movements tab from animal and person screens"
+msgstr ""
+
+#: person.js
+msgid "Remove personally identifiable data"
 msgstr ""
 
 #: publish_options.js
