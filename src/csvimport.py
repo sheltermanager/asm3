@@ -42,7 +42,11 @@ VALID_FIELDS = [
     "PERSONZIPCODE", "PERSONJURISDICTION", "PERSONFOSTERER", "PERSONDONOR",
     "PERSONFLAGS", "PERSONCOMMENTS", "PERSONHOMEPHONE", "PERSONWORKPHONE",
     "PERSONCELLPHONE", "PERSONEMAIL", "PERSONCLASS",
-    "PERSONMEMBER", "PERSONMEMBERSHIPEXPIRY"
+    "PERSONMEMBER", "PERSONMEMBERSHIPEXPIRY",
+    "PERSONMATCHACTIVE", "PERSONMATCHSEX", "PERSONMATCHSIZE", "PERSONMATCHCOLOR", "PERSONMATCHAGEFROM", "PERSONMATCHAGETO",
+    "PERSONMATCHTYPE", "PERSONMATCHSPECIES", "PERSONMATCHBREED1", "PERSONMATCHBREED2",
+    "PERSONMATCHGOODWITHCATS", "PERSONMATCHGOODWITHDOGS", "PERSONMATCHGOODWITHCHILDREN", "PERSONMATCHHOUSETRAINED",
+    "PERSONMATCHCOMMENTSCONTAIN"
 ]
 
 def gkc(m, f):
@@ -367,7 +371,9 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
             a["breed2"] = gkbr(dbo, row, "ANIMALBREED2", a["species"], createmissinglookups)
             if a["breed2"] != "0" and a["breed2"] != a["breed1"]:
                 a["crossbreed"] = "on"
-            a["size"] = str(configuration.default_size(dbo))
+            a["size"] = gkl(dbo, row, "ANIMALSIZE", "lksize", "Size", False)
+            if gks(row, "ANIMALSIZE") == "": 
+                a["size"] = str(configuration.default_size(dbo))
             a["internallocation"] = gkl(dbo, row, "ANIMALLOCATION", "internallocation", "LocationName", createmissinglookups)
             if a["internallocation"] == "0":
                 a["internallocation"] = str(configuration.default_location(dbo))
@@ -471,6 +477,22 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
             p["flags"] = flags
             p["comments"] = gks(row, "PERSONCOMMENTS")
             p["membershipexpires"] = gkd(dbo, row, "PERSONMEMBERSHIPEXPIRY")
+            p["matchactive"] = gkbi(row, "PERSONMATCHACTIVE")
+            if p["matchactive"] == "1":
+                if "PERSONMATCHSEX" in cols: p["matchsex"] = gks(row, "PERSONMATCHSEX").lower().startswith("m") and "1" or "0"
+                if "PERSONMATCHSIZE" in cols: p["matchsize"] = gkl(dbo, row, "PERSONMATCHSIZE", "lksize", "Size", False)
+                if "PERSONMATCHCOLOR" in cols: p["matchcolour"] = gkl(dbo, row, "PERSONMATCHCOLOR", "basecolour", "BaseColour", createmissinglookups)
+                if "PERSONMATCHAGEFROM" in cols: p["matchagefrom"] = gks(row, "PERSONMATCHAGEFROM")
+                if "PERSONMATCHAGETO" in cols: p["matchageto"] = gks(row, "PERSONMATCHAGETO")
+                if "PERSONMATCHTYPE" in cols: p["matchanimaltype"] = gkl(dbo, row, "PERSONMATCHTYPE", "animaltype", "AnimalType", createmissinglookups)
+                if "PERSONMATCHSPECIES" in cols: p["matchspecies"] = gkl(dbo, row, "PERSONMATCHSPECIES", "species", "SpeciesName", createmissinglookups)
+                if "PERSONMATCHBREED1" in cols: p["matchbreed"] = gkbr(dbo, row, "PERSONMATCHBREED1", p["matchspecies"], createmissinglookups)
+                if "PERSONMATCHBREED2" in cols: p["matchbreed2"] = gkbr(dbo, row, "PERSONMATCHBREED2", p["matchspecies"], createmissinglookups)
+                if "PERSONMATCHGOODWITHCATS" in cols: p["matchgoodwithcats"] = gkynu(row, "PERSONMATCHGOODWITHCATS")
+                if "PERSONMATCHGOODWITHDOGS" in cols: p["matchgoodwithdogs"] = gkynu(row, "PERSONMATCHGOODWITHDOGS")
+                if "PERSONMATCHGOODWITHCHILDREN" in cols: p["matchgoodwithchildren"] = gkynu(row, "PERSONMATCHGOODWITHCHILDREN")
+                if "PERSONMATCHHOUSETRAINED" in cols: p["matchhousetrained"] = gkynu(row, "PERSONMATCHHOUSETRAINED")
+                if "PERSONMATCHCOMMENTSCONTAIN" in cols: p["matchcommentscontain"] = gks(row, "PERSONMATCHCOMMENTSCONTAIN")
             try:
                 if checkduplicates:
                     dups = person.get_person_similar(dbo, p["emailaddress"], p["surname"], p["forenames"], p["address"])
