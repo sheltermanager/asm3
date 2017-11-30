@@ -174,6 +174,26 @@ PERSONFLAGS
     Additional flags that you have added to the system should exactly match their flag names as they appear on the person screens, eg: banned,Fundraising Flag 1,Custom Flag
 PERSONCOMMENTS
     Any comments to go with the person record.
+PERSONMATCHACTIVE
+    Y or 1 in this column indicates the person is looking for an animal. If this field is not set to Y or 1, the other PERSONMATCH columns are ignored for this row.
+PERSONMATCHSEX
+    The gender of the animal the person is looking for
+PERSONMATCHSIZE
+    The size of the animal the person is looking for
+PERSONMATCHCOLOR
+    The color of the animal the person is looking for
+PERSONMATCHAGEFROM, PERSONMATCHAGETO
+    The age range of the animal the person is looking for in years
+PERSONMATCHTYPE
+    The animal type of the animal the person is looking for
+PERSONMATCHSPECIES
+    The species of animal the person is looking for
+PERSONMATCHBREED1, PERSONMATCHBREED2
+    The breed of the animal the person is looking for
+PERSONMATCHGOODWITHCATS, PERSONMATCHGOODWITHDOGS, PERSONMATCHGOODWITHCHILDREN, PERSONMATCHHOUSETRAINED
+    The good with/housetrained flags of the animal the person is looking for
+PERSONMATCHCOMMENTSCONTAIN
+    The animal this person is looking for will have this value in its comments
 PERSONADDITIONAL<fieldname>
     If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth PERSONADDITIONALDATEOFBIRTH
 VACCINATIONTYPE
