@@ -183,7 +183,7 @@ a.ShelterCode, a.AnimalName,
 t.AnimalType, s.SpeciesName,
 il.LocationName, am.TreatmentName,
 am.Dosage, amt.TreatmentNumber, amt.TotalTreatments,
-amt.DateRequired, amt.DateGiven, am.Comments AS RegimeComments, amt.Comments
+am.Cost, amt.DateRequired, amt.DateGiven, am.Comments AS RegimeComments, amt.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN species s ON s.ID = a.SpeciesID
@@ -198,6 +198,7 @@ $$HEADER
 <tr>
 <td><b>Therapy</b></td>
 <td><b>Dosage</b></td>
+<td><b>Regimen Cost</b></td>
 <td><b>Number</b></td>
 <td><b>Required</b></td>
 <td><b>Given</b></td>
@@ -209,6 +210,7 @@ HEADER$$
 $$BODY<tr>
 <td>$TREATMENTNAME</td>
 <td>$DOSAGE</td>
+<td>$COST</td>
 <td>$TREATMENTNUMBER / $TOTALTREATMENTS</td>
 <td>$DATEREQUIRED</td>
 <td>$DATEGIVEN</td>
