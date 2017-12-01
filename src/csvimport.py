@@ -138,9 +138,9 @@ def gkynu(m, f):
         switch. Returns 2 (unknown) for a blank field
         Input should start with Y/N/U or 0/1/2 """
     if f not in m: return 2
-    if m[f].upper().startswith("Y") or m[f] == "0": return 0
-    if m[f].upper().startswith("N") or m[f] == "1": return 1
-    return 2
+    if m[f].upper().startswith("Y") or m[f] == "0": return "0"
+    if m[f].upper().startswith("N") or m[f] == "1": return "1"
+    return "2"
 
 def gkbr(dbo, m, f, speciesid, create):
     """ reads lookup field f from map m, returning a str(int) that
