@@ -263,22 +263,18 @@ def insert_diary_from_form(dbo, username, linktypeid, linkid, post):
             raise utils.ASMValidationError(i18n._("Invalid time, times should be in HH:MM format", l))
 
     linkinfo = get_link_info(dbo, linktypeid, linkid)
-    diaryid = db.get_id(dbo, "diary")
-    sql = db.make_insert_user_sql(dbo, "diary", username, (
-        ( "ID", db.di(diaryid)),
-        ( "LinkID", db.di(linkid) ),
-        ( "LinkType", db.di(linktypeid) ),
-        ( "LinkInfo", db.ds(linkinfo) ),
-        ( "DiaryDateTime", post.db_datetime("diarydate", "diarytime")), 
-        ( "DiaryForName", post.db_string("diaryfor")),
-        ( "Subject", post.db_string("subject")),
-        ( "Note", post.db_string("note")),
-        ( "Comments", post.db_string("comments")),
-        ( "DateCompleted", post.db_date("completed"))
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "diary", diaryid, audit.dump_row(dbo, "diary", diaryid))
-    return diaryid
+
+    return dbo.insert("diary", {
+        "LinkID":           linkid,
+        "LinkType":         linktypeid,
+        "LinkInfo":         linkinfo,
+        "DiaryDateTime":    post.datetime("diarydate", "diarytime"),
+        "DiaryForName":     post["diaryfor"],
+        "Subject":          post["subject"],
+        "Note":             post["Note"],
+        "Comments":         post["comments"],
+        "DateCompleted":    post.date("completed")
+    }, username)
 
 def insert_diary(dbo, username, linktypeid, linkid, diarydate, diaryfor, subject, note):
     """
@@ -292,28 +288,22 @@ def insert_diary(dbo, username, linktypeid, linkid, diarydate, diaryfor, subject
     linkinfo = ""
     if linkid != 0:
         linkinfo = get_link_info(dbo, linktypeid, linkid)
-    diaryid = db.get_id(dbo, "diary")
-    sql = db.make_insert_user_sql(dbo, "diary", username, (
-        ( "ID", db.di(diaryid)),
-        ( "LinkID", db.di(linkid) ),
-        ( "LinkType", db.di(linktypeid) ),
-        ( "LinkInfo", db.ds(linkinfo) ),
-        ( "DiaryDateTime", db.dd(diarydate) ),
-        ( "DiaryForName", db.ds(diaryfor) ),
-        ( "Subject", db.ds(subject) ),
-        ( "Note", db.ds(note) ),
-        ( "DateCompleted", db.dd(None) )
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "diary", diaryid, audit.dump_row(dbo, "diary", diaryid))
-    return diaryid
+
+    return dbo.insert("diary", {
+        "LinkID":           linkid,
+        "LinkType":         linktypeid,
+        "LinkInfo":         linkinfo,
+        "DiaryDateTime":    diarydate,
+        "DiaryForName":     diaryfor,
+        "Subject":          subject,
+        "Note":             note
+    }, username)
 
 def update_diary_from_form(dbo, username, post):
     """
     Updates a diary note from form data
     """
     l = dbo.locale
-    diaryid = post.integer("diaryid")
     if post["diarydate"] == "":
         raise utils.ASMValidationError(i18n._("Diary date cannot be blank", l))
     if post.date("diarydate") is None:
@@ -329,18 +319,15 @@ def update_diary_from_form(dbo, username, post):
         if not utils.is_numeric(diarytime.replace(":", "")):
             raise utils.ASMValidationError(i18n._("Invalid time, times should be in HH:MM format", l))
 
-    sql = db.make_update_user_sql(dbo, "diary", username, "ID=%d" % diaryid, (
-        ( "DiaryDateTime", post.db_datetime("diarydate", "diarytime")), 
-        ( "DiaryForName", post.db_string("diaryfor")),
-        ( "Subject", post.db_string("subject")),
-        ( "Note", post.db_string("note")),
-        ( "Comments", post.db_string("comments")),
-        ( "DateCompleted", post.db_date("completed"))
-        ))
-    preaudit = db.query(dbo, "SELECT * FROM diary WHERE ID=%d" % diaryid)
-    db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM diary WHERE ID=%d" % diaryid)
-    audit.edit(dbo, username, "diary", diaryid, audit.map_diff(preaudit, postaudit))
+    diaryid = post.integer("diaryid")
+    dbo.update("diary", diaryid, {
+        "DiaryDateTime":    post.datetime("diarydate", "diarytime"),
+        "DiaryForName":     post["diaryfor"],
+        "Subject":          post["subject"],
+        "Note":             post["note"],
+        "Comments":         post["comments"],
+        "DateCompleted":    post.date("completed")
+    }, username)
 
 def execute_diary_task(dbo, username, tasktype, taskid, linkid, selecteddate):
     """
@@ -353,7 +340,7 @@ def execute_diary_task(dbo, username, tasktype, taskid, linkid, selecteddate):
     def fix(s):
         return s.replace("<", "&lt;").replace(">", "&gt;")
     rollingdate = i18n.now(dbo.timezone) 
-    dtd = db.query(dbo, "SELECT * FROM diarytaskdetail WHERE DiaryTaskHeadID = %d ORDER BY OrderIndex" % int(taskid))
+    dtd = dbo.query("SELECT * FROM diarytaskdetail WHERE DiaryTaskHeadID = ? ORDER BY OrderIndex", [taskid])
     tags = {}
     linktype = ANIMAL
     if tasktype == "ANIMAL": 
@@ -376,80 +363,58 @@ def insert_diarytaskhead_from_form(dbo, username, post):
     """
     Creates a diary task header from form data
     """
-    nid = db.get_id(dbo, "diarytaskhead")
-    sql = db.make_insert_sql("diarytaskhead", (
-        ( "ID", db.di(nid)),
-        ( "Name", post.db_string("name")),
-        ( "RecordType", post.db_integer("type")),
-        ( "RecordVersion", db.di(0))
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "diarytaskhead", nid, audit.dump_row(dbo, "diarytaskhead", nid))
-    return nid
+    return dbo.insert("diarytaskhead", {
+        "Name":             post["name"],
+        "RecordType":       post.integer("type"),
+        "RecordVersion":    0
+    }, username, setCreated=False)
 
 def update_diarytaskhead_from_form(dbo, username, post):
     """
     Updates a diary task header from form data
     """
-    tid = post.integer("diarytaskid")
-    sql = db.make_update_sql("diarytaskhead", "ID=%d" % tid, (
-        ( "Name", post.db_string("name")),
-        ( "RecordType", post.db_integer("type"))
-        ))
-    preaudit = db.query(dbo, "SELECT * FROM diarytaskhead WHERE ID=%d" % tid)
-    db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM diarytaskhead WHERE ID=%d" % tid)
-    audit.edit(dbo, username, "diarytaskhead", tid, audit.map_diff(preaudit, postaudit))
+    dbo.update("diarytaskhead", post.integer("diarytaskid"), {
+        "Name":             post["name"],
+        "RecordType":       post.integer("type")
+    }, username, setLastChanged=False)
 
 def delete_diarytask(dbo, username, taskid):
     """
     Deletes a diary task
     """
-    audit.delete(dbo, username, "diarytaskhead", taskid, audit.dump_row(dbo, "diarytaskhead", taskid))
-    db.execute(dbo, "DELETE FROM diarytaskdetail WHERE DiaryTaskHeadID = %d" % int(taskid))
-    db.execute(dbo, "DELETE FROM diarytaskhead WHERE ID = %d" % int(taskid))
+    dbo.execute("DELETE FROM diarytaskdetail WHERE DiaryTaskHeadID = %d" % int(taskid))
+    dbo.delete("diarytaskhead", taskid, username)
 
 def insert_diarytaskdetail_from_form(dbo, username, post):
     """
     Creates a diary task detail from form data
     """
-    nid = db.get_id(dbo, "diarytaskdetail")
-    sql = db.make_insert_sql("diarytaskdetail", (
-        ( "ID", db.di(nid)),
-        ( "DiaryTaskHeadID", post.db_integer("taskid")),
-        ( "OrderIndex", post.db_integer("orderindex")),
-        ( "DayPivot", post.db_integer("pivot")),
-        ( "WhoFor", post.db_string("for")),
-        ( "Subject", post.db_string("subject")),
-        ( "Note", post.db_string("note")),
-        ( "RecordVersion", db.di(0))
-        ))
-    db.execute(dbo, sql)
-    audit.create(dbo, username, "diarytaskdetail", nid, audit.dump_row(dbo, "diarytaskdetail", nid))
-    return nid
+    return dbo.insert("diarytaskdetail", {
+        "DiaryTaskHeadID":      post.integer("taskid"),
+        "OrderIndex":           post.integer("orderindex"),
+        "DayPivot":             post.integer("pivot"),
+        "WhoFor":               post["for"],
+        "Subject":              post["subject"],
+        "Note":                 post["note"],
+        "RecordVersion":        0
+    }, username, setCreated=False)
 
 def update_diarytaskdetail_from_form(dbo, username, post):
     """
     Updates a diary task detail from form data
     """
-    did = post.integer("diarytaskdetailid")
-    sql = db.make_update_sql("diarytaskdetail", "ID=%d" % did, (
-        ( "OrderIndex", post.db_integer("orderindex")),
-        ( "DayPivot", post.db_integer("pivot")),
-        ( "WhoFor", post.db_string("for")),
-        ( "Subject", post.db_string("subject")),
-        ( "Note", post.db_string("note"))
-        ))
-    preaudit = db.query(dbo, "SELECT * FROM diarytaskdetail WHERE ID=%d" % did)
-    db.execute(dbo, sql)
-    postaudit = db.query(dbo, "SELECT * FROM diarytaskdetail WHERE ID=%d" % did)
-    audit.edit(dbo, username, "diarytaskhead", did, audit.map_diff(preaudit, postaudit))
+    dbo.update("diarytaskdetail", post.integer("diarytaskdetailid"), {
+        "OrderIndex":           post.integer("orderindex"),
+        "DayPivot":             post.integer("pivot"),
+        "WhoFor":               post["for"],
+        "Subject":              post["subject"],
+        "Note":                 post["note"]
+    }, username, setLastChanged=False)
 
 def delete_diarytaskdetail(dbo, username, did):
     """
     Deletes a diary task detail record
     """
-    audit.delete(dbo, username, "diarytaskdetail", did, audit.dump_row(dbo, "diarytaskdetail", did))
-    db.execute(dbo, "DELETE FROM diarytaskdetail WHERE ID = %d" % int(did))
+    dbo.delete("diarytaskdetail", did, username)
 
 
