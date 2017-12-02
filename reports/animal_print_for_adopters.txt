@@ -2,7 +2,7 @@ Print Animal Record (for adopters)
 ###
 Auditing
 ###
-33601/Any
+34018/Any
 ###
 A complete printout of an animal record for giving to adopters.
 ###
@@ -12,6 +12,7 @@ SELECT a.ID AS AnimalID, a.*,
 oo.OwnerName AS ooname, oo.OwnerAddress AS ooaddress, oo.OwnerPostcode AS oopostcode, oo.HomeTelephone AS ootel, oo.EmailAddress AS ooemail,
 bi.OwnerName AS biname, bi.OwnerAddress AS biaddress, bi.OwnerPostcode AS bipostcode, bi.HomeTelephone AS bitel, bi.EmailAddress AS biemail,
 cv.OwnerName AS cvname, cv.OwnerAddress AS cvaddress, cv.OwnerPostcode AS cvpostcode, cv.HomeTelephone AS cvtel, cv.EmailAddress AS cvemail,
+av.OwnerName AS avname, 
 lksize.size,
 entryreason.reasonname AS entryreasonname,
 deathreason.reasonname AS ptsreasonname,
@@ -57,6 +58,7 @@ LEFT OUTER JOIN deathreason ON deathreason.ID = a.ptsreasonid
 LEFT OUTER JOIN owner oo ON a.OriginalOwnerID = oo.ID
 LEFT OUTER JOIN owner bi ON a.BroughtInByOwnerID = bi.ID
 LEFT OUTER JOIN owner cv ON a.CurrentVetID = cv.ID
+LEFT OUTER JOIN owner av ON a.NeuteredByVetID = av.ID
 LEFT OUTER JOIN animal ba1 ON a.BondedAnimalID = ba1.ID
 LEFT OUTER JOIN animal ba2 ON a.BondedAnimal2ID = ba2.ID
 WHERE a.ID = $ASK ANIMAL$
@@ -96,7 +98,7 @@ $$BODY
 </tr><tr>
 <td>Microchipped</td><td>$YIDENTICHIPPED $IDENTICHIPDATE $IDENTICHIPNUMBER</td><td>Tattoo</td><td>$YTATTOO $TATTOODATE $TATTOONUMBER</td>
 </tr><tr>
-<td>Altered</td><td>$ALTERED $NEUTEREDDATE</td><td>Declawed</td><td>$YDECLAWED</td>
+<td>Altered</td><td>$ALTERED $NEUTEREDDATE $AVNAME</td><td>Declawed</td><td>$YDECLAWED</td>
 </tr><tr>
 <td>Heartworm Tested</td><td>$YHEARTWORMTESTED $HEARTWORMTESTDATE $PHEARTWORMTESTRESULT</td>
 </tr><tr>

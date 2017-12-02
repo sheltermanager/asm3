@@ -452,6 +452,9 @@ $(function() {
                 '<td>',
                 '<input id="neutereddate" data-json="NEUTEREDDATE" data-post="neutereddate" class="asm-halftextbox asm-datebox" title="' + html.title(_("The date the animal was altered")) + '" />',
                 '</td>',
+                '<td valign="top">',
+                '<input id="neuteringvet" data-json="NEUTEREDBYVETID" data-post="neuteringvet" data-mode="brief" data-filter="vet" type="hidden" class="asm-personchooser" />',
+                '</td>',
                 '</tr>',
                 '<tr id="declawedrow">',
                 '<td>',
@@ -903,6 +906,7 @@ $(function() {
             $("#tattoodate, #tattoonumber").toggle($("#tattoo").is(":checked"));
             $("#smarttagnumber, #smarttagtype").toggle($("#smarttag").is(":checked"));
             $("#neutereddate").toggle($("#neutered").is(":checked"));
+            $("#neuteringvet").closest("td").toggle($("#neutered").is(":checked"));
             $("#heartwormtestdate, #heartwormtestresult").toggle($("#heartwormtested").is(":checked"));
             $("#fivltestdate, #fivresult, #flvresult").toggle($("#fivltested").is(":checked"));
 
@@ -1543,6 +1547,7 @@ $(function() {
             common.widget_destroy("#bonded2", "animalchooser");
             common.widget_destroy("#originalowner", "personchooser");
             common.widget_destroy("#broughtinby", "personchooser");
+            common.widget_destroy("#neuteringvet", "personchooser");
             common.widget_destroy("#coordinator", "personchooser");
             common.widget_destroy("#pickedupby", "personchooser");
             common.widget_destroy("#currentvet", "personchooser");

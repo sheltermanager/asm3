@@ -50,6 +50,7 @@ $(function() {
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" },
                     { json_field: "RETURNDATE", post_field: "returndate", label: _("Return Date"), type: "date" },
                     { json_field: "RETURNEDREASONID", post_field: "returncategory", label: _("Return Category"), type: "select", options: { displayfield: "REASONNAME", valuefield: "ID", rows: controller.returncategories}},
+                    { json_field: "RETURNEDBYOWNERID", post_field: "returnedby", label: _("Returned By"), type: "person" },
                     { json_field: "REASONFORRETURN", post_field: "reason", label: _("Reason"), type: "textarea" }
                 ]
             };
@@ -253,6 +254,7 @@ $(function() {
                                 $("#animal").animalchooser("clear");
                                 $("#person").personchooser("clear");
                                 $("#retailer").personchooser("clear");
+                                $("#returnedby").personchooser("clear");
                                 if (controller.animal) {
                                     $("#animal").animalchooser("loadbyid", controller.animal.ID);
                                 }
@@ -689,10 +691,12 @@ $(function() {
             if ($("#returndate").val() && ( $("#type").val() == 1 || $("#type").val() == 5 )) {
                 $("#returncategory").closest("tr").fadeIn();
                 $("#reason").closest("tr").fadeIn();
+                $("#returnedby").closest("tr").fadeIn();
             }
             else {
                 $("#returncategory").closest("tr").fadeOut();
                 $("#reason").closest("tr").fadeOut();
+                $("#returnedby").closest("tr").fadeOut();
             }
         },
 

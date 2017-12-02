@@ -22,7 +22,7 @@ VERSIONS = (
     33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904, 33905, 33906, 
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
-    34013, 34014, 34015, 34016, 34017
+    34013, 34014, 34015, 34016, 34017, 34018
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -174,6 +174,7 @@ def sql_structure(dbo):
         fint("ReturnedReasonID"),
         fstr("InsuranceNumber", True),
         flongstr("ReasonForReturn"),
+        fint("ReturnedByOwnerID", True),
         fdate("ReservationDate", True),
         fdate("ReservationCancelledDate", True),
         fint("ReservationStatusID", True),
@@ -196,6 +197,7 @@ def sql_structure(dbo):
     sql += index("adoption_ReservationStatusID", "adoption", "ReservationStatusID")
     sql += index("adoption_ReturnDate", "adoption", "ReturnDate")
     sql += index("adoption_ReturnedReasonID", "adoption", "ReturnedReasonID")
+    sql += index("adoption_ReturnedByOwnerID", "adoption", "ReturnedByOwnerID")
     sql += index("adoption_TrialEndDate", "adoption", "TrialEndDate")
 
     sql += table("animal", (
@@ -241,6 +243,7 @@ def sql_structure(dbo):
         fint("SmartTagType"),
         fint("Neutered"),
         fdate("NeuteredDate", True),
+        fint("NeuteredByVetID", True), 
         fint("CombiTested"),
         fdate("CombiTestDate", True),
         fint("CombiTestResult"),
@@ -337,6 +340,7 @@ def sql_structure(dbo):
     sql += index("animal_LastChangedDate", "animal", "LastChangedDate")
     sql += index("animal_MostRecentEntryDate", "animal", "MostRecentEntryDate")
     sql += index("animal_Neutered", "animal", "Neutered")
+    sql += index("animal_NeuteredByVetID", "animal", "NeuteredByVetID")
     sql += index("animal_NonShelterAnimal", "animal", "NonShelterAnimal")
     sql += index("animal_OriginalOwnerID", "animal", "OriginalOwnerID")
     sql += index("animal_OwnersVetID", "animal", "OwnersVetID")
@@ -4667,4 +4671,14 @@ def update_34017(dbo):
     add_column(dbo, "animal", "Identichip2Number", dbo.type_shorttext)
     add_column(dbo, "animal", "Identichip2Date", dbo.type_datetime)
     add_index(dbo, "animal_Identichip2Number", "animal", "Identichip2Number")
+
+def update_34018(dbo):
+    # Add ReturnedByOwnerID
+    add_column(dbo, "adoption", "ReturnedByOwnerID", dbo.type_integer)
+    add_index(dbo, "adoption_ReturnedByOwnerID", "adoption", "ReturnedByOwnerID")
+    dbo.execute_dbupdate("UPDATE adoption SET ReturnedByOwnerID = 0")
+    # Add NeuteredByVetID
+    add_column(dbo, "animal", "NeuteredByVetID", dbo.type_integer)
+    add_index(dbo, "animal_NeuteredByVetID", "animal", "NeuteredByVetID")
+    dbo.execute_dbupdate("UPDATE animal SET NeuteredByVetID = 0")
 

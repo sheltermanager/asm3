@@ -1905,6 +1905,7 @@ def insert_animal_from_form(dbo, post, username):
         "SmartTagType":     0,
         "Neutered":         post.boolean("neutered"),
         "NeuteredDate":     post.date("neutereddate"),
+        "NeuteredByVetID":  post.integer("neuteringvet"),
         "Declawed":         0,
         # ASM2_COMPATIBILITY
         "HeartwormTested":  0,
@@ -2127,6 +2128,7 @@ def update_animal_from_form(dbo, post, username):
         "SmartTagType":         post.integer("smarttagtype"),
         "Neutered":             post.boolean("neutered"),
         "NeuteredDate":         post.date("neutereddate"),
+        "NeuteredByVetID":      post.integer("neuteringvet"),
         "Declawed":             post.boolean("declawed"),
         # ASM2_COMPATIBILITY
         "HeartwormTested":      post.boolean("heartwormtested"),
