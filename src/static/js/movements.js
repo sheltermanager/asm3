@@ -119,8 +119,13 @@ $(function() {
                     },
                     { field: "RESERVATIONSTATUSNAME", display: _("Status"),
                         hideif: function(row) {
-                            // Don't show this column if we aren't in the reservation book
-                            return controller.name != "move_book_reservation";
+                            // Don't show this column if we aren't in the reservation book or animal/person
+                            return controller.name != "move_book_reservation" && !controller.animal && !controller.person;
+                        },
+                        formatter: function(row, v) {
+                            // Only show anything for reservation
+                            if (row.MOVEMENTTYPE == 0) { return row.RESERVATIONSTATUSNAME; }
+                            return "";
                         }
                     },
                     { field: "RETURNDATE", display: _("Returned"), 

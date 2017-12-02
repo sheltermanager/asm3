@@ -1,6 +1,7 @@
 40
 ================
 
+02/12/17 Show reservation status column on animal/person movement tabs #261
 30/11/17 Add CSV import fields PERSONMATCH* #312
 29/11/17 Add anonymize button to person records #310
 28/11/17 Option to anonymize person data after a retention period #310
