@@ -27,11 +27,11 @@ COALESCE((SELECT SUM(Cost) FROM animalmedical INNER JOIN animal ON animal.ID = a
 
 (COALESCE((SELECT SUM(CostAmount) FROM animalcost INNER JOIN animal ON animal.ID = animalcost.AnimalID WHERE SpeciesID = 1 AND ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$'), 0) +
 COALESCE((SELECT SUM(Cost) FROM animalvaccination INNER JOIN animal ON animal.ID = animalvaccination.AnimalID WHERE SpeciesID = 1 AND ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$'), 0) +
-COALESCE((SELECT SUM(Cost) FROM animalmedical INNER JOIN animal ON animal.ID = animalmedical.AnimalID WHERE SpeciesID = 1 ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$'), 0)) / (SELECT COUNT(*) FROM animal WHERE SpeciesID = 1 AND ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$') AS AmountDogs, 
+COALESCE((SELECT SUM(Cost) FROM animalmedical INNER JOIN animal ON animal.ID = animalmedical.AnimalID WHERE SpeciesID = 1 AND ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$'), 0)) / (SELECT COUNT(*) FROM animal WHERE SpeciesID = 1 AND ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$') AS AmountDogs, 
 
 (COALESCE((SELECT SUM(CostAmount) FROM animalcost INNER JOIN animal ON animal.ID = animalcost.AnimalID WHERE SpeciesID = 2 AND ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$'), 0) +
 COALESCE((SELECT SUM(Cost) FROM animalvaccination INNER JOIN animal ON animal.ID = animalvaccination.AnimalID WHERE SpeciesID = 2 AND ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$'), 0) +
-COALESCE((SELECT SUM(Cost) FROM animalmedical INNER JOIN animal ON animal.ID = animalmedical.AnimalID WHERE SpeciesID = 2 ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$'), 0)) / (SELECT COUNT(*) FROM animal WHERE SpeciesID = 2 AND ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$') AS AmountCats
+COALESCE((SELECT SUM(Cost) FROM animalmedical INNER JOIN animal ON animal.ID = animalmedical.AnimalID WHERE SpeciesID = 2 AND ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$'), 0)) / (SELECT COUNT(*) FROM animal WHERE SpeciesID = 2 AND ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$') AS AmountCats
 
 FROM animal LIMIT 1
 ###
