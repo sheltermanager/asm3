@@ -269,7 +269,7 @@ def insert_diary_from_form(dbo, username, linktypeid, linkid, post):
         "DiaryDateTime":    post.datetime("diarydate", "diarytime"),
         "DiaryForName":     post["diaryfor"],
         "Subject":          post["subject"],
-        "Note":             post["Note"],
+        "Note":             post["note"],
         "Comments":         post["comments"],
         "DateCompleted":    post.date("completed")
     }, username)

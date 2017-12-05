@@ -590,15 +590,17 @@ def db_lock(dbo):
     Locks the database for updates, returns True if the lock was
     successful.
     """
-    if cboolean(dbo, "DBLock"): return False
-    cset_db(dbo, "DBLock", "Yes")
+    cache_key = "%s_db_update_lock" % dbo.database
+    if cachemem.get(cache_key): return False
+    cachemem.put(cache_key, "YES", 60 * 5)
     return True
 
 def db_unlock(dbo):
     """
     Marks the database as unlocked for updates
     """
-    cset_db(dbo, "DBLock", "No")
+    cache_key = "%s_db_update_lock" % dbo.database
+    cachemem.delete(cache_key)
 
 def db_view_seq_version(dbo, newval = None):
     if newval is None:
