@@ -48,6 +48,12 @@ class MaddiesFundPublisher(AbstractPublisher):
         """ Returns a date in their preferred format of mm/dd/yyyy """
         return i18n.format_date("%m/%d/%Y", d)
 
+    def getEmail(self, s):
+        """ Returns only the first email if more than one is specified """
+        if s is None: return ""
+        if s.strip() == "": return ""
+        return s.split(",")[0].strip()
+
     def getPetStatus(self, an):
         """ Returns the pet status - Deceased, Active (on shelter), Inactive (foster/adopted) """
         if an["DECEASEDDATE"] is not None:
@@ -145,9 +151,7 @@ class MaddiesFundPublisher(AbstractPublisher):
                 email = utils.nulltostr(an["CURRENTOWNEREMAILADDRESS"]).strip()
                 if email == "":
                     self.logError("No email address for owner, skipping.")
-
                 else:
-
                     # Build an adoption JSON object containing the adopter and animal
                     a = {
                         "PetID": an["ID"],
@@ -177,7 +181,7 @@ class MaddiesFundPublisher(AbstractPublisher):
                         "ID": an["CURRENTOWNERID"],
                         "Firstname": an["CURRENTOWNERFORENAMES"],
                         "Lastname": an["CURRENTOWNERSURNAME"],
-                        "EmailAddress": an["CURRENTOWNEREMAILADDRESS"],
+                        "EmailAddress": self.getEmail(an["CURRENTOWNEREMAILADDRESS"]),
                         "Street": an["CURRENTOWNERADDRESS"],
                         "Apartment": "",
                         "City": an["CURRENTOWNERTOWN"],
