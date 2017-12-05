@@ -22,7 +22,7 @@ VERSIONS = (
     33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904, 33905, 33906, 
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
-    34013, 34014, 34015, 34016, 34017, 34018
+    34013, 34014, 34015, 34016, 34017, 34018, 34019
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -4677,6 +4677,8 @@ def update_34018(dbo):
     add_column(dbo, "adoption", "ReturnedByOwnerID", dbo.type_integer)
     add_index(dbo, "adoption_ReturnedByOwnerID", "adoption", "ReturnedByOwnerID")
     dbo.execute_dbupdate("UPDATE adoption SET ReturnedByOwnerID = 0")
+
+def update_34019(dbo):
     # Add NeuteredByVetID
     add_column(dbo, "animal", "NeuteredByVetID", dbo.type_integer)
     add_index(dbo, "animal_NeuteredByVetID", "animal", "NeuteredByVetID")
