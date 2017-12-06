@@ -230,7 +230,7 @@ def sql_structure(dbo):
         fint("Identichipped"),
         fstr("IdentichipNumber"),
         fdate("IdentichipDate", True),
-        fstr("Identichip2Number"),
+        fstr("Identichip2Number", True),
         fdate("Identichip2Date", True),
         fint("Tattoo"),
         fstr("TattooNumber"),
