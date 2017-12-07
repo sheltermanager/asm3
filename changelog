@@ -1,6 +1,7 @@
 40
 ================
 
+07/12/17 Do not include animal/donations with donation/movement doc types
 05/12/17 Use 5 minute memory cache for DB update locks #314
 02/12/17 Add Altering Vet to Health and Identification #42
 02/12/17 Add Returned By field to movements #29
