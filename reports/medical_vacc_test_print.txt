@@ -12,7 +12,7 @@ SELECT * FROM
 (
 
 SELECT
-'Medical' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID,
+'Medical' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, a.Weight, 
 t.AnimalType, s.SpeciesName, il.LocationName, 
 am.TreatmentName, am.Dosage, '' AS ResultName, amt.TreatmentNumber, 
 amt.TotalTreatments, amt.DateRequired, amt.DateGiven, am.Comments, o.ownername, o.membershipnumber
@@ -25,7 +25,7 @@ INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID
 LEFT JOIN owner o ON o.id=amt.AdministeringvetID
 
 UNION SELECT
-'Vaccination' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
+'Vaccination' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, a.Weight, 
 t.AnimalType, sp.SpeciesName, il.LocationName, 
 v.VaccinationType AS TreatmentName, '' AS ResultName, '1' AS Dosage, '1' AS TreatmentNumber,
 '1' AS TotalTreatments, av.DateRequired, av.DateOfVaccination AS DateGiven, av.Comments, o.ownername, o.membershipnumber
@@ -38,7 +38,7 @@ LEFT JOIN owner o ON o.id=av.administeringvetid
 INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 
 UNION SELECT
-'Test' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
+'Test' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, a.Weight, 
 t.AnimalType, sp.SpeciesName, il.LocationName, 
 tt.TestName AS TreatmentName, tr.ResultName, '1' AS Dosage, '1' AS TreatmentNumber,
 '1' AS TotalTreatments, at.DateRequired, at.DateOfTest AS DateGiven, at.Comments, o.ownername, o.membershipnumber
@@ -56,7 +56,7 @@ WHERE AID = $ASK ANIMAL$
 ORDER BY DateGiven
 ###
 $$HEADER
-<h2>$ANIMALNAME - $SHELTERCODE ($ANIMALTYPE / $SPECIESNAME)</h2>
+<h2>$ANIMALNAME - $SHELTERCODE ($ANIMALTYPE / $SPECIESNAME). Weight: $WEIGHT</h2>
 <table border=1><tr>
 <td><b>Therapy</b></td>
 <td><b>Dosage</b></td>
