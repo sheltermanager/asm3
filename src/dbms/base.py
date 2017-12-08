@@ -207,6 +207,7 @@ class Database(object):
                 else:
                     # Otherwise, do XSS escaping
                     v = self.escape_xss(v)
+                v = self.escape_apos(v)
                 values[k] = u"%s" % v
         return values
 
@@ -241,6 +242,11 @@ class Database(object):
         # This is historic - ASM2 switched backticks for apostrophes so we do for compatibility
         s = s.replace("'", "`")
         return s
+
+    def escape_apos(self, s):
+        """ Turn apostrophes into backticks before storing """
+        if s is None: return ""
+        return s.replace("'", "`")
 
     def escape_xss(self, s):
         """ XSS escapes a string """
