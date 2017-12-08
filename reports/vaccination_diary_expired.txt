@@ -20,7 +20,7 @@ INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID
 INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 INNER JOIN adoption ad ON ad.ID = a.ActiveMovementID
 INNER JOIN owner o ON ad.OwnerID = o.ID
-WHERE av.DateOfVaccination Is Null
+WHERE av.DateOfVaccination Is Not Null
 AND av.DateExpires >= '$ASK DATE Expiring between$' AND av.DateExpires <= '$ASK DATE and$'
 ORDER BY av.DateExpires
 ###
