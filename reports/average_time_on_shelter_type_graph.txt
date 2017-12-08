@@ -15,6 +15,7 @@ AVG(DaysOnShelter) AS TimeOnShelter
 FROM animal
 INNER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
 WHERE DaysOnShelter > 0
+AND NonShelterAnimal = 0
 GROUP BY AnimalType, YEAR(DateBroughtIn)
 ###
 GRAPH LINES
@@ -36,6 +37,7 @@ CAST(AVG(DaysOnShelter) AS INTEGER) AS avtimeonshelter
 FROM animal
 INNER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
 WHERE DaysOnShelter > 0
+AND NonShelterAnimal = 0
 GROUP BY AnimalType, EXTRACT(YEAR FROM DateBroughtIn)
 ORDER BY AnimalType, EXTRACT(YEAR FROM DateBroughtIn)
 ###

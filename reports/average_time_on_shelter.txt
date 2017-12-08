@@ -13,6 +13,7 @@ YEAR(DateBroughtIn) AS biyear,
 AVG(DaysOnShelter) AS avtimeonshelter
 FROM animal
 WHERE DaysOnShelter > 0
+AND NonShelterAnimal = 0
 GROUP BY YEAR(DateBroughtIn)
 ORDER BY AVG(DaysOnShelter) DESC
 ###
@@ -48,6 +49,7 @@ YEAR(DateBroughtIn) AS biyear,
 AVG(DaysOnShelter) AS avtimeonshelter
 FROM animal
 WHERE DaysOnShelter > 0
+AND NonShelterAnimal = 0
 GROUP BY YEAR(DateBroughtIn)
 ORDER BY AVG(DaysOnShelter) DESC
 ###
@@ -83,6 +85,7 @@ CAST(EXTRACT(YEAR FROM DateBroughtIn) AS INTEGER) AS biyear,
 CAST(AVG(DaysOnShelter) AS INTEGER) AS avtimeonshelter
 FROM animal
 WHERE DaysOnShelter > 0
+AND NonShelterAnimal = 0
 GROUP BY EXTRACT(YEAR FROM DateBroughtIn)
 ORDER BY CAST(AVG(DaysOnShelter) AS INTEGER) DESC
 ###
