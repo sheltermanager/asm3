@@ -14,7 +14,7 @@ SELECT * FROM
 SELECT
 'Medical' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID,
 t.AnimalType, s.SpeciesName, il.LocationName, 
-am.TreatmentName, am.Dosage, '' AS ResultName, amt.TreatmentNumber, 
+am.TreatmentName, '' AS ResultName, am.Dosage, amt.TreatmentNumber, 
 amt.TotalTreatments, amt.DateRequired, amt.DateGiven, am.Comments, o.ownername, o.membershipnumber
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
@@ -71,7 +71,8 @@ $$HEADER
 HEADER$$
 
 $$BODY<tr>
-<td><b>$MTYPE: $TREATMENTNAME</b></td>
+<td>
+<b>$MTYPE: $TREATMENTNAME</b></td>
 <td>$DOSAGE</td>
 <td>$TREATMENTNUMBER / $TOTALTREATMENTS</td>
 <td>$DATEREQUIRED</td>
