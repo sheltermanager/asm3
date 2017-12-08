@@ -1045,6 +1045,10 @@ msgstr ""
 msgid "Altered Dog - 3 year"
 msgstr ""
 
+#: person.py
+msgid "Altering Vet"
+msgstr ""
+
 #: options.js
 msgid "Always show an emblem to indicate the current location"
 msgstr ""
@@ -7633,6 +7637,12 @@ msgstr ""
 msgid "Opening balances"
 msgstr ""
 
+#: vaccination.js
+msgid ""
+"Optional, the date the vaccination "wears off" and needs to be administered "
+"again"
+msgstr ""
+
 #: options.js html.py
 msgid "Options"
 msgstr ""
@@ -9052,6 +9062,10 @@ msgstr ""
 
 #: movements.js traploan.js lostfound.js animal.py
 msgid "Returned"
+msgstr ""
+
+#: movements.js person.py
+msgid "Returned By"
 msgstr ""
 
 #: animal.py
@@ -10574,6 +10588,14 @@ msgstr ""
 
 #: movements.js move_adopt.js
 msgid "The date the trial adoption is over"
+msgstr ""
+
+#: vaccination.js
+msgid "The date the vaccination is required/due to be administered"
+msgstr ""
+
+#: vaccination.js
+msgid "The date the vaccination was administered"
 msgstr ""
 
 #: lostfound_new.js lostfound.js
