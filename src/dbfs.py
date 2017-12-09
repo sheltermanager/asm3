@@ -632,8 +632,9 @@ def delete_orphaned_media(dbo):
     Removes all dbfs content should have an entry in the media table and doesn't
     """
     where = "WHERE " \
-        "(Path LIKE '/animal%' OR Path LIKE '/owner%') " \
-        "AND (LOWER(Name) LIKE '%.jpg' OR LOWER(Name) LIKE '%.pdf') " \
+        "(Path LIKE '/animal%' OR Path LIKE '/owner%' OR Path LIKE '/lostanimal%' OR Path LIKE '/foundanimal%' " \
+        "OR Path LIKE '/waitinglist%' OR Path LIKE '/animalcontrol%') " \
+        "AND (LOWER(Name) LIKE '%.jpg' OR LOWER(Name) LIKE '%.jpeg' OR LOWER(Name) LIKE '%.pdf' OR LOWER(Name) LIKE '%.html') " \
         "AND ID NOT IN (SELECT DBFSID FROM media)"
     rows = dbo.query("SELECT ID, Name, Path, URL FROM dbfs %s" % where) 
     dbo.execute("DELETE FROM dbfs %s" % where)
