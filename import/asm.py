@@ -1771,6 +1771,8 @@ class Animal:
     Identichipped = 0
     IdentichipNumber = ""
     IdentichipDate = None
+    Identichip2Number = ""
+    Identichip2Date = None
     Tattoo = 0
     TattooNumber = ""
     TattooDate = None
@@ -1781,6 +1783,7 @@ class Animal:
     SmartTagType = 0
     Neutered = 0
     NeuteredDate = None
+    NeuteredByVetID = 0
     CombiTested = 0
     CombiTestDate = None
     CombiTestResult = 0
@@ -1902,6 +1905,8 @@ class Animal:
             ( "Identichipped", di(self.Identichipped) ),
             ( "IdentichipNumber", ds(self.IdentichipNumber) ),
             ( "IdentichipDate", dd(self.IdentichipDate) ),
+            ( "Identichip2Number", ds(self.Identichip2Number) ),
+            ( "Identichip2Date", dd(self.Identichip2Date) ),
             ( "Tattoo", di(self.Tattoo) ),
             ( "TattooNumber", ds(self.TattooNumber) ),
             ( "TattooDate", dd(self.TattooDate) ),
@@ -1912,6 +1917,7 @@ class Animal:
             ( "SmartTagType", di(self.SmartTagType) ),
             ( "Neutered", di(self.Neutered) ),
             ( "NeuteredDate", dd(self.NeuteredDate) ),
+            ( "NeuteredByVetID", di(self.NeuteredByVetID) ),
             ( "CombiTested", di(self.CombiTested) ),
             ( "CombiTestDate", dd(self.CombiTestDate) ),
             ( "CombiTestResult", di(self.CombiTestResult) ),
@@ -2024,6 +2030,7 @@ class Movement:
     MovementType = 0
     ReturnDate = None
     ReturnedReasonID = 4 # Unable to cope
+    ReturnedByOwnerID = 0
     InsuranceNumber = ""
     ReasonForReturn = ""
     ReservationDate = None
@@ -2054,6 +2061,7 @@ class Movement:
             ( "MovementType", di(self.MovementType) ),
             ( "ReturnDate", dd(self.ReturnDate) ),
             ( "ReturnedReasonID", di(self.ReturnedReasonID) ),
+            ( "ReturnedByOwnerID", di(self.ReturnedByOwnerID) ),
             ( "InsuranceNumber", ds(self.InsuranceNumber) ),
             ( "ReasonForReturn", ds(self.ReasonForReturn) ),
             ( "ReservationDate", dd(self.ReservationDate) ),
