@@ -14,11 +14,13 @@ PATH = "data/zb1564_rescuegroups"
 
 #DEFAULT_BREED = 261 # default to dsh
 DEFAULT_BREED = 30 # default to black lab
+PETFINDER_ID = "GA471"
 
 animals = []
 owners = []
 movements = []
 
+asm.setid("adoption", 100)
 asm.setid("animal", 100)
 asm.setid("owner", 100)
 asm.setid("media", 100)
@@ -43,6 +45,15 @@ uo.OwnerName = "Unknown Owner"
 uo.Comments = "Catchall for adopted animal data from PetFinder"
 
 print "\\set ON_ERROR_STOP\nBEGIN;"
+print "DELETE FROM adoption WHERE ID >= 100;"
+print "DELETE FROM animal WHERE ID >= 100;"
+print "DELETE FROM owner WHERE ID >= 100;"
+print "DELETE FROM media WHERE ID >= 100;"
+print "DELETE FROM dbfs WHERE ID >= 300;"
+
+pfpage = ""
+if PETFINDER_ID != "":
+    pfpage = asm.petfinder_get_adoptable(PETFINDER_ID)
 
 for d in asm.csv_to_list("%s/Animals.csv" % PATH):
     if d["Status"] == "Deleted": continue
@@ -102,11 +113,6 @@ for d in asm.csv_to_list("%s/Animals.csv" % PATH):
         ", status: " + d["Status"] + ", internal: " + d["Internal ID"] + ", location: " + d["Location"]
     a.CreatedDate = getdate(d["Created"])
     a.LastChangedDate = getdate(d["Last Updated"])
-    # Now do the dbfs and media inserts for a photo if one is available
-    pic1 = d["Picture 1"]
-    if pic1.rfind("/") != -1: pic1 = pic1[pic1.rfind("/")+1:]
-    imdata = asm.load_image_from_file("%s/%s" % (PATH, pic1))
-    asm.animal_image(a.ID, imdata)
     # If the animal is adopted, send it to our unknown owner
     if d["Status"] == "Adopted":
         m = asm.Movement()
@@ -119,6 +125,13 @@ for d in asm.csv_to_list("%s/Animals.csv" % PATH):
         a.ActiveMovementDate = m.MovementDate
         a.ActiveMovementID = m.ID
         a.Archived = 1
+    # Now do the dbfs and media inserts for a photo if one is available
+    pic1 = d["Picture 1"]
+    if pic1.rfind("/") != -1: pic1 = pic1[pic1.rfind("/")+1:]
+    imdata = asm.load_image_from_file("%s/%s" % (PATH, pic1))
+    asm.animal_image(a.ID, imdata)
+    if a.Archived == 0 and imdata is None and pfpage != "":
+        asm.petfinder_image(pfpage, a.ID, a.AnimalName)
 
 # Now that everything else is done, output stored records
 for a in animals:

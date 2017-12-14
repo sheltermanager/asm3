@@ -1296,11 +1296,13 @@ def animal_image(animalid, imagedata):
     medianame = str(mediaid) + '.jpg'
     encoded = base64.b64encode(imagedata)
     print "UPDATE media SET websitephoto = 0, docphoto = 0 WHERE linkid = %d AND linktypeid = 0;" % animalid
-    print "INSERT INTO media (id, medianame, medianotes, websitephoto, docphoto, newsincelastpublish, updatedsincelastpublish, " \
-        "excludefrompublish, linkid, linktypeid, recordversion, date) VALUES (%d, '%s', %s, 1, 1, 0, 0, 0, %d, 0, 0, %s);" % \
-        ( mediaid, medianame, ds(""), animalid, dd(datetime.datetime.today()) )
+    print "INSERT INTO media (id, medianame, medianotes, mediasize, mediamimetype, websitephoto, docphoto, newsincelastpublish, updatedsincelastpublish, " \
+        "excludefrompublish, linkid, linktypeid, recordversion, date) VALUES (%d, '%s', %s, %s, 'image/jpeg', 1, 1, 0, 0, 0, %d, 0, 0, %s);" % \
+        ( mediaid, medianame, ds(""), len(imagedata), animalid, dd(datetime.datetime.today()) )
     print "INSERT INTO dbfs (id, name, path, content) VALUES (%d, '%s', '%s', '');" % ( getid("dbfs"), str(animalid), '/animal' )
-    print "INSERT INTO dbfs (id, name, path, url, content) VALUES (%d, '%s', '%s', 'base64:', '%s');" % (getid("dbfs"), medianame, "/animal/" + str(animalid), encoded)
+    dbfsid = getid("dbfs")
+    print "INSERT INTO dbfs (id, name, path, url, content) VALUES (%d, '%s', '%s', 'base64:', '%s');" % (dbfsid, medianame, "/animal/" + str(animalid), encoded)
+    print "UPDATE media SET DBFSID = %d WHERE ID = %d;" % (dbfsid, mediaid)
 
 def animal_regimen_single(animalid, dategiven, treatmentname, dosage = "", comments = ""):
     """ Writes a regimen and treatment record for a single given treatment """
