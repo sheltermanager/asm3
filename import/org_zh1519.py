@@ -158,7 +158,7 @@ for d in asm.csv_to_list(ANIMAL_FILENAME):
         a.IdentichipNumber = d["MicrochipNumber"]
         if a.IdentichipNumber != "N/A" and a.IdentichipNumber != "":
             a.Identichipped = 1
-        asm.breed_ids(a, d["Breed"])
+        asm.breed_ids(a, d["Breed"], default=443) # 443 = Unknown in their data
         if d["Breed"].find("Mix") != -1:
             a.CrossBreed = 1
             a.Breed2ID = 442
