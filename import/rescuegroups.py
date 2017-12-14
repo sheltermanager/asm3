@@ -3,7 +3,11 @@
 import asm, os
 
 """
-Import module to read from rescuegroups CSV export
+Import module to read from rescuegroups CSV export.
+This is done with Reports, then Animals (All Fields) for adoptable and adopted, etc.
+It produces an Animals.csv file.
+If you use Animals->Exports, you can do a manual export for PetFinder that puts all
+your images on their FTP server to pick up.
 """
 
 PATH = "data/zb1564_rescuegroups"
@@ -37,7 +41,7 @@ uo.OwnerSurname = "Unknown Owner"
 uo.OwnerName = "Unknown Owner"
 uo.Comments = "Catchall for adopted animal data from PetFinder"
 
-for d in asm.csv_to_list("%s/pets.csv" % PATH):
+for d in asm.csv_to_list("%s/Animals.csv" % PATH):
     a = asm.Animal()
     animals.append(a)
     if d["Type"] == "Cat":

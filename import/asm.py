@@ -356,32 +356,32 @@ colours = (
 ("59","Sorrel Tortoiseshell")
 )
 
-def colour_id_for_name(name, firstWordOnly = False):
+def colour_id_for_name(name, firstWordOnly = False, default = 1):
     if firstWordOnly:
         if name.find(" ") != -1: name = name[0:name.find(" ")]
         if name.find("/") != -1: name = name[0:name.find("/")]
     for cid, cname in colours:
         if cname.upper().find(name.upper()) != -1:
             return int(cid)
-    return 1
+    return default
 
-def colour_id_for_names(name1, name2):
+def colour_id_for_names(name1, name2, default = 1):
     if name1 == name2 or name2.strip() == "":
         return colour_id_for_name(name1, True)
     for cid, cname in colours:
         if cname.upper().find(name1.upper()) != -1 and cname.upper().find(name2.upper()) != -1:
             return int(cid)
-    return 1
+    return default
 
 def colour_from_db(name, default = 2):
     """ Looks up the colour in the db when the conversion is run, assign to BaseColourID """
     return "COALESCE((SELECT ID FROM basecolour WHERE lower(BaseColour) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
 
-def colour_name_for_id(id):
+def colour_name_for_id(id, default = "Black"):
     for cid, cname in colours:
         if int(cid) == id:
             return cname
-    return "Black"
+    return default
 
 # List of default species
 species = (

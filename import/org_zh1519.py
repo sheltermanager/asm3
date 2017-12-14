@@ -163,7 +163,7 @@ for d in asm.csv_to_list(ANIMAL_FILENAME):
             a.CrossBreed = 1
             a.Breed2ID = 442
             a.BreedName = asm.breed_name(a.BreedID, a.Breed2ID)
-        a.BaseColourID = asm.colour_id_for_name(d["Color"])
+        a.BaseColourID = asm.colour_id_for_name(d["Color"], default=60) # 60 = Unknown in their data
         markings = "Breed: %s" % d["Breed"]
         markings += "\nColor: %s" % d["Color"]
         markings += "\nCoat: %s %s" % (d["CoatLength"], d["CoatTexture"])
