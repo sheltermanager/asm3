@@ -301,8 +301,7 @@ for d in asm.csv_to_list(TREATMENT_FILENAME):
         av.DateOfVaccination = meddate
         av.BatchNumber = d["SerialNumber"]
         av.Manufacturer = d["Manufacturer"]
-        av.DateExpires = getdate(d["ExpireDate"])
-        av.Comments = "%s Vaccinator: %s, Vet: %s, License: %s. %s" % (d["TreatmentName"], d["Vaccinator"], d["Vet"], d["VetLicenseNumber"], d["Comments"])
+        av.Comments = "%s Vaccinator: %s, Vet: %s, License: %s. %s, Batch Expires: %s" % (d["TreatmentName"], d["Vaccinator"], d["Vet"], d["VetLicenseNumber"], d["Comments"], d["ExpireDate"])
         a.RabiesTag = d["VaccineTagNbr"]
     elif d["TreatmentName"] in ( "BORDETELLA", "DHLP/P", "FVRCP" ):
         av = asm.AnimalVaccination()
