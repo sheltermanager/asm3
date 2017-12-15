@@ -1,6 +1,7 @@
 40
 ================
 
+15/12/17 Don't show the intake date for non-template non-shelter animals
 07/12/17 Auto fix multiple website/docphoto being set
 07/12/17 Do not include animal/donations with donation/movement doc types
 05/12/17 Use 5 minute memory cache for DB update locks #314

@@ -974,7 +974,11 @@ $(function() {
                 $("#lastlocation").hide();
                 $("#locationrow").hide();
                 $("#locationunitrow").hide();
-                if ($("#animalname").val().indexOf("Template") != 0) { $("#feerow").hide(); } // Only hide the fee for non-shelter non-template animals
+                if ($("#animalname").val().indexOf("Template") != 0) { 
+                    // Only hide the fee and intake date for non-shelter non-template animals
+                    $("#feerow").hide(); 
+                    $("#datebroughtinrow").hide();
+                } 
                 $("#transferinrow").hide();
                 $("#pickeduprow").hide();
                 $("#holdrow").hide();
