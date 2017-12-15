@@ -178,7 +178,7 @@ for d in asm.csv_to_list(ANIMAL_FILENAME):
         a.IsGoodWithChildren = 2
         a.HouseTrained = 0
 
-        if d["ID"] in atoi and asm.ids["media"] < 200:
+        if d["ID"] in atoi:
             imagedata = asm.load_image_from_file("%s/%s" % (IMAGE_PATH, atoi[d["ID"]]))
             asm.animal_image(a.ID, imagedata) 
 
