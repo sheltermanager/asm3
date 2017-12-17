@@ -178,6 +178,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "Domestic Short Hair -black and white=Domestic Shorthair\n" \
             "Exotic Shorthair=Exotic\n" \
             "Extra-Toes Cat (Hemingway Polydactyl)=Hemingway/Polydactyl\n" \
+            "Havana=Havana Brown\n" \
             "Oriental Long Hair=Oriental\n" \
             "Oriental Short Hair=Oriental\n" \
             "Oriental Tabby=Oriental\n" \
@@ -281,6 +282,7 @@ class AdoptAPetPublisher(FTPPublisher):
             "Domestic Short Hair-black and white=Domestic Shorthair\n" \
             "Exotic Shorthair=Exotic\n" \
             "Extra-Toes Cat (Hemingway Polydactyl)=Hemingway/Polydactyl\n" \
+            "Havana=Havana Brown\n" \
             "Oriental Long Hair=Oriental\n" \
             "Oriental Short Hair=Oriental\n" \
             "Oriental Tabby=Oriental\n" \
