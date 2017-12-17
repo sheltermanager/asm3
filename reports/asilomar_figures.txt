@@ -110,6 +110,15 @@ CASE WHEN SpeciesID = 1 OR SpeciesID = 2 THEN 1 ELSE 0 END AS Total
 FROM animal
 WHERE NonShelterAnimal = 0 AND DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$'
 AND IsTransfer = 0 AND AsilomarOwnerRequestedEuthanasia = 0
+UNION ALL
+SELECT AsilomarIntakeCategory,
+CASE WHEN AsilomarIntakeCategory = 0 THEN 'Healthy' WHEN AsilomarIntakeCategory = 1 THEN 'Treatable - Rehabilitatable' WHEN AsilomarIntakeCategory = 2 THEN 'Treatable - Manageable' ELSE 'Unhealthy and Untreatable' END AS Category,
+CASE WHEN SpeciesID = 1 THEN 1 ELSE 0 END AS Dog,
+CASE WHEN SpeciesID = 2 THEN 1 ELSE 0 END AS Cat,
+CASE WHEN SpeciesID = 1 OR SpeciesID = 2 THEN 1 ELSE 0 END AS Total
+FROM adoption
+INNER JOIN animal ON animal.ID = adoption.AnimalID 
+WHERE MovementType NOT IN (2,8) AND ReturnDate >= '$PARENTARG1$' AND ReturnDate <= '$PARENTARG2$'
 ORDER BY Category
 +++
 $$HEADER
@@ -272,8 +281,10 @@ SUBREPORT_AsilomarFTotalIntake
 +++
 SELECT Cat, Dog, Cat + Dog AS Total FROM (
 (SELECT
-(SELECT COUNT(ID) FROM animal WHERE NonShelterAnimal = 0 AND DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$' AND SpeciesID = 1) AS Dog,
-(SELECT COUNT(ID) FROM animal WHERE NonShelterAnimal = 0 AND DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$' AND SpeciesID = 2) AS Cat
+(SELECT COUNT(ID) FROM animal WHERE NonShelterAnimal = 0 AND DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$' AND SpeciesID = 1) +
+(SELECT COUNT(adoption.ID) FROM adoption INNER JOIN animal ON animal.ID = adoption.AnimalID WHERE ReturnDate >= '$PARENTARG1$' AND ReturnDate <= '$PARENTARG2$' AND MovementType NOT IN (2,8) AND SpeciesID = 1) AS Dog,
+(SELECT COUNT(ID) FROM animal WHERE NonShelterAnimal = 0 AND DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$' AND SpeciesID = 2) +
+(SELECT COUNT(adoption.ID) FROM adoption INNER JOIN animal ON animal.ID = adoption.AnimalID WHERE ReturnDate >= '$PARENTARG1$' AND ReturnDate <= '$PARENTARG2$' AND MovementType NOT IN (2,8) AND SpeciesID = 2) AS Cat
 )) dummy
 +++
 $$HEADER
@@ -316,8 +327,10 @@ SUBREPORT_AsilomarHAdjustedIntake
 +++
 SELECT Cat, Dog, Cat + Dog AS Total FROM (
 (SELECT
-(SELECT COUNT(ID) FROM animal WHERE NonShelterAnimal = 0 AND DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$' AND NOT (AsilomarIntakeCategory = 3 AND AsilomarOwnerRequestedEuthanasia = 1) AND SpeciesID = 1) AS Dog,
-(SELECT COUNT(ID) FROM animal WHERE NonShelterAnimal = 0 AND DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$' AND NOT (AsilomarIntakeCategory = 3 AND AsilomarOwnerRequestedEuthanasia = 1) AND SpeciesID = 2) AS Cat
+(SELECT COUNT(ID) FROM animal WHERE NonShelterAnimal = 0 AND DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$' AND NOT (AsilomarIntakeCategory = 3 AND AsilomarOwnerRequestedEuthanasia = 1) AND SpeciesID = 1) +
+(SELECT COUNT(adoption.ID) FROM animal INNER JOIN adoption ON adoption.AnimalID = animal.ID WHERE NonShelterAnimal = 0 AND ReturnDate >= '$PARENTARG1$' AND ReturnDate <= '$PARENTARG2$' AND NOT (AsilomarIntakeCategory = 3 AND AsilomarOwnerRequestedEuthanasia = 1) AND MovementType NOT IN (2,8) AND SpeciesID = 1) AS Dog,
+(SELECT COUNT(ID) FROM animal WHERE NonShelterAnimal = 0 AND DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$' AND NOT (AsilomarIntakeCategory = 3 AND AsilomarOwnerRequestedEuthanasia = 1) AND SpeciesID = 2) + 
+(SELECT COUNT(adoption.ID) FROM animal INNER JOIN adoption ON adoption.AnimalID = animal.ID WHERE NonShelterAnimal = 0 AND ReturnDate >= '$PARENTARG1$' AND ReturnDate <= '$PARENTARG2$' AND NOT (AsilomarIntakeCategory = 3 AND AsilomarOwnerRequestedEuthanasia = 1) AND MovementType NOT IN (2,8) AND SpeciesID = 2) AS Cat
 )) dummy
 +++
 $$HEADER
