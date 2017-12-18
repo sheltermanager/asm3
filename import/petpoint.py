@@ -18,12 +18,12 @@ AnimalLocationHistory
 # The shelter's petfinder ID for grabbing animal images for adoptable animals
 PETFINDER_ID = ""
 
-INTAKE_FILENAME = "data/petpoint_rw1412/animals.csv"
-MEMO_FILENAME = "data/petpoint_rw1412/memo.csv"
-LOCATION_FILENAME = "data/petpoint_rw1412/locations.csv"
-PERSON_FILENAME = "data/petpoint_rw1412/person.csv"
-VACC_FILENAME = "data/petpoint_rw1412/vaccinations.csv"
-TEST_FILENAME = "data/petpoint_rw1412/tests.csv"
+INTAKE_FILENAME = "data/petpoint_nv1573/animals.csv"
+MEMO_FILENAME = ""
+LOCATION_FILENAME = ""
+PERSON_FILENAME = "data/petpoint_nv1573/person.csv"
+VACC_FILENAME = ""
+TEST_FILENAME = ""
 
 # Whether or not the vaccine and test files are in two row stacked format
 MEDICAL_TWO_ROW_FORMAT = False
