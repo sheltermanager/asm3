@@ -80,7 +80,8 @@ uo.OwnerName = uo.OwnerSurname
 
 # Create a map of Animal IDs to Person IDs from PersonAnimal
 for d in asm.csv_to_list(PERSONANIMAL_FILENAME):
-    atop[d["AnimalID"]] = d["PersonID"]
+    if d["PersonType"] == "CURRENT OWNER":
+        atop[d["AnimalID"]] = d["PersonID"]
 
 # Create a map of Animal IDs to Filenames from Attachments
 for d in asm.csv_to_list(ATTACHMENTS_FILENAME):
