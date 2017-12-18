@@ -330,8 +330,8 @@ for d in asm.csv_to_list(COMPLAINTS_FILENAME):
     ac.IncidentDateTime = calldate
     ac.DispatchDateTime = calldate
     ac.CompletedDate = calldate
-    ac.CallerID = get_asm_ownerid(d["CallerPersonID"])
-    ac.OwnerID = get_asm_ownerid(d["OwnerPersonID"])
+    ac.CallerID = d["CallerPersonID"] in ppo and ppo[d["CallerPersonID"]].ID or 0
+    ac.OwnerID = d["OwnerPersonID"] in ppo and ppo[d["OwnerPersonID"]].ID or 0
     if d["AnimalID"] in ppa:
         animalcontrolanimals.append("INSERT INTO animalcontrolanimal (AnimalID, AnimalControlID) VALUES (%s, %s);\n" % ( ppa[d["AnimalID"]].ID, ac.ID ))
     ac.IncidentCompletedID = 2 # Picked up
@@ -369,7 +369,6 @@ for ac in animalcontrols:
     print ac
 for aca in animalcontrolanimals:
     print aca
-
 
 asm.stderr_summary(animals=animals, animalcontrol=animalcontrols, animalmedicals=animalmedicals, animalvaccinations=animalvaccinations, owners=owners, ownerdonations=ownerdonations, ownerlicences=ownerlicences, movements=movements)
 
