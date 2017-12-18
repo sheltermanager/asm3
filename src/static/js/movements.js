@@ -177,7 +177,11 @@ $(function() {
                     },
                     { field: "ANIMAL", display: _("Animal"), 
                         formatter: function(row) {
-                            return html.animal_link(row, { noemblems: controller.name == "animal_movements" });
+                            return html.animal_link(row);
+                        },
+                        hideif: function(row) {
+                            // Don't show this column for animal_movement
+                            return controller.name == "animal_movements";
                         }
                     },
                     { field: "PERSON", display: _("Person"),
@@ -190,7 +194,7 @@ $(function() {
                             return "";
                         },
                         hideif: function(row) {
-                            return controller.name == "move_book_retailer";
+                            return controller.name == "move_book_retailer" || controller.name == "person_movements";
                         }
                     },
                     { field: "RETAILER", display: _("Retailer"),
