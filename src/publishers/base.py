@@ -202,8 +202,8 @@ def get_microchip_data(dbo, patterns, publishername, allowintake = True):
             r["CURRENTOWNERZIPCODE"] = r["ORIGINALOWNERPOSTCODE"]
             r["CURRENTOWNERHOMETELEPHONE"] = r["ORIGINALOWNERHOMETELEPHONE"]
             r["CURRENTOWNERPHONE"] = r["ORIGINALOWNERHOMETELEPHONE"]
-            r["CURRENTOWNERWORKPHONE"] = r["ORIGINALOWNERWORKTELEPHONE"]
-            r["CURRENTOWNERMOBILEPHONE"] = r["ORIGINALOWNERMOBILETELEPHONE"]
+            r["CURRENTOWNERWORKTELEPHONE"] = r["ORIGINALOWNERWORKTELEPHONE"]
+            r["CURRENTOWNERMOBILETELEPHONE"] = r["ORIGINALOWNERMOBILETELEPHONE"]
             r["CURRENTOWNERCELLPHONE"] = r["ORIGINALOWNERMOBILETELEPHONE"]
             r["CURRENTOWNEREMAILADDRESS"] = r["ORIGINALOWNEREMAILADDRESS"]
         if use_shelter_info:
@@ -221,8 +221,8 @@ def get_microchip_data(dbo, patterns, publishername, allowintake = True):
             r["CURRENTOWNERZIPCODE"] = orgpostcode
             r["CURRENTOWNERHOMETELEPHONE"] = orgtelephone
             r["CURRENTOWNERPHONE"] = orgtelephone
-            r["CURRENTOWNERWORKPHONE"] = orgtelephone
-            r["CURRENTOWNERMOBILEPHONE"] = orgtelephone
+            r["CURRENTOWNERWORKTELEPHONE"] = orgtelephone
+            r["CURRENTOWNERMOBILETELEPHONE"] = orgtelephone
             r["CURRENTOWNERCELLPHONE"] = orgtelephone
             r["CURRENTOWNEREMAILADDRESS"] = email
         # If this row has IDENTICHIP2NUMBER and IDENTICHIP2DATE populated, clone the 
