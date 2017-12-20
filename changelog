@@ -1,6 +1,7 @@
 40
 ================
 
+20/12/17 Fix message delete button not appearing for superusers #315
 18/12/17 Fix PetLink publisher ignoring non-shelter/oo/cell phone
 15/12/17 Don't show the intake date for non-template non-shelter animals
 07/12/17 Auto fix multiple website/docphoto being set

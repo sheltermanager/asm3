@@ -373,7 +373,7 @@ $(function() {
 
             $.each(controller.mess, function(i, m) {
                 s += '<tr><td><span style="white-space: nowrap; padding-right: 5px;">';
-                if (m.CREATEDBY == asm.user || m.FORNAME == asm.user || asm.superuser) {
+                if (m.CREATEDBY == asm.user || m.FORNAME == asm.user || asm.superuser == 1) {
                     s += '<button class="messagedelete" data="' + m.ID + '">' + _("Delete") + '</button>';
                 }
                 s += '<a href="#" class="activeuser">' + m.CREATEDBY + '</a>';
