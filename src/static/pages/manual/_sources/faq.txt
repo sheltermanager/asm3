@@ -109,7 +109,7 @@ NEVER do this!
 
 * They aren't relevant to someone browsing an animal bio online.
   
-* ASM scales down incoming pictures for the web, that assuming any pictures you
+* ASM scales down incoming pictures for the web, assuming any pictures you
   upload are always going to be photos of animals. This means smaller text on
   documents you scan as JPEG will become unreadable.
 
