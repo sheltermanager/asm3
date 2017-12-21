@@ -99,6 +99,29 @@ web browser:
 * Chrome: Untick the "Print headers and footers" box in the print preview
   screen.
 
+My scanned confidential documents are being published on my website / PetFinder!
+--------------------------------------------------------------------------------
+
+You've attached scanned documents as JPEG images to animal records. You should
+NEVER do this!
+
+* They can be published outside the shelter, which you do not want. 
+
+* They aren't relevant to someone browsing an animal bio online.
+  
+* ASM scales down incoming pictures for the web, that assuming any pictures you
+  upload are always going to be photos of animals. This means smaller text on
+  documents you scan as JPEG will become unreadable.
+
+Instead, you should always attach your scanned documents as PDF files. ASM
+scales PDFs in a different way so that they don't lose clarity and legibility,
+it will never publish a PDF to any website.
+
+If you're using phones rather than flatbed scanners to scan your documents,
+apps exist for all mobile platforms that allow you to take a photo of a
+document, clean it up and output it as a PDF. Apps such as "CamScanner" for
+Android, or "Scanner App" for iPhone.
+
 Why are ASM emails being sent from bounce+account@sheltermanager.com?
 ---------------------------------------------------------------------
 
