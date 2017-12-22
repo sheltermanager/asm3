@@ -41,16 +41,7 @@ print "DELETE FROM adoption WHERE ID >= 100 AND CreatedBy = 'conversion';"
 for d in asm.csv_to_list("data/kw1533_excel.csv"):
     a = asm.Animal()
     animals.append(a)
-    if d["Species"] == "Cat":
-        a.AnimalTypeID = 11 # Unwanted Cat
-        if d["Entry Category"] == "Stray":
-            a.AnimalTypeID = 12 # Stray Cat
-    elif d["Species"] == "Dog":
-        a.AnimalTypeID = 2 # Unwanted Dog
-        if d["Entry Category"] == "Stray":
-            a.AnimalTypeID = 10 # Stray Dog
-    else:
-        a.AnimalTypeID = 40 # Misc
+    a.AnimalTypeID = "COALESCE((SELECT ID FROM animaltype WHERE AnimalType LIKE '%s%%' LIMIT 1), 11)" % d["Type"]
     a.EntryReasonID = 17 # Surrender
     if d["Entry Category"] == "Stray": a.EntryReasonID = 7 # Stray
     a.SpeciesID = asm.species_id_for_name(d["Species"])
@@ -74,7 +65,15 @@ for d in asm.csv_to_list("data/kw1533_excel.csv"):
     a.ReasonForEntry = d["Reason for Entry"]
     a.ShelterLocation = asm.location_from_db(d["Internal Location"])
     a.Sex = asm.getsex_mf(d["Sex"])
-    asm.breed_ids(a, d["Breed 1"], d["Breed 2"])
+    a.BreedID = "COALESCE((SELECT ID FROM breed WHERE BreedName LIKE '%s' LIMIT 1), 1)" % d["Breed 1"]
+    if d["Breed 2"].strip() == "" or d["Breed 2"] == "NULL":
+        a.Breed2ID = a.BreedID
+        a.BreedName = asm.breed_name_for_id(a.BreedID)
+        a.CrossBreed = 0
+    else:
+        a.Breed2ID = "COALESCE((SELECT ID FROM breed WHERE BreedName LIKE '%s' LIMIT 1), 1)" % d["Breed 2"]
+        a.BreedName = asm.breed_name_for_id(a.BreedID) + " / " + asm.breed_name_for_id(a.Breed2ID)
+        a.CrossBreed = 1
     a.BaseColourID = asm.colour_id_for_name(d["Colour"])
     a.Markings = d["Markings"]
     a.AnimalComments = d["Comments"]
@@ -88,7 +87,8 @@ for d in asm.csv_to_list("data/kw1533_excel.csv"):
     a.IdentichipDate = getdate(d["Microchip date"])
     a.Neutered = d["Neutered/Spayed"] == "Yes" and 1 or 0
     a.NeuteredDate = getdate(d["Neutered Date"])
-    a.AdditionalFlags = d["Flag"]
+    if d["Flag"].strip() != "":
+        a.AdditionalFlags = d["Flag"] + "|"
     a.DeceasedDate = getdate(d["Deceased Date"])
     a.PTSReasonID = 4
     a.PTSReason = d["Reason"]
