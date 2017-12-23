@@ -724,19 +724,28 @@ def fix_relative_document_uris(s, baseurl, account = "" ):
     ones to the service so that documents will work outside of 
     the ASM UI.
     """
-    dbp = ""
-    accountp = ""
-    if account != "":
-        dbp = "db=%s&amp;" % account
-        accountp = "&account=" + account
-    s = s.replace("image?mode=animal&amp;id=", baseurl + "/service?method=animal_image" + accountp + "&animalid=")
-    s = s.replace("image?mode=animalthumb&amp;id=", baseurl + "/service?method=animal_thumbnail" + accountp + "&animalid=")
-    s = s.replace("image?" + dbp + "mode=animal&amp;id=", baseurl + "/service?method=animal_image" + accountp + "&animalid=")
-    s = s.replace("image?" + dbp + "mode=animalthumb&amp;id=", baseurl + "/service?method=animal_thumbnail" + accountp + "&animalid=")
-    s = s.replace("image?mode=dbfs&amp;id=/reports/", baseurl + "/service?method=extra_image" + accountp + "&title=")
-    s = s.replace("image?" + dbp + "mode=dbfs&amp;id=/reports/", baseurl + "/service?method=extra_image" + accountp + "&title=")
-    s = s.replace("image?mode=dbfs&amp;id=", baseurl + "/service?method=dbfs_image" + accountp + "&title=")
-    s = s.replace("image?" + dbp + "mode=dbfs&amp;id=", baseurl + "/service?method=dbfs_image" + accountp + "&title=")
+    patterns = (
+        # animal images
+        ( "image?mode=animal&amp;id=", "animal_image", "animalid" ),
+        ( "image?db={account}&ampmode=animal&amp;id=", "animal_image", "animalid" ),
+        ( "image?db={account}&mode=animal&id=", "animal_image", "animalid" ),
+
+        # animal thumbnail images
+        ( "image?mode=animalthumb&amp;id=", "animal_thumbnail", "animalid" ),
+        ( "image?db={account}&amp;mode=animalthumb&amp;id=", "animal_thumbnail", "animalid" ),
+        ( "image?db={account}&mode=animalthumb&id=", "animal_thumbnail", "animalid" ),
+
+        # report/extra images
+        ( "image?mode=dbfs&amp;id=/reports/", "extra_image", "title" ),
+        ( "image?db={account}&amp;mode=dbfs&amp;id=/reports/", "extra_image", "title" ),
+
+        # any image in the dbfs by path
+        ( "image?mode=dbfs&amp;id=", "dbfs_image", "title" ),
+        ( "image?db={account}&amp;mode=dbfs&amp;id=", "dbfs_image", "title" )
+    )
+    for f, m, p in patterns:
+        f = f.replace("{account}", account)
+        s = s.replace(f, baseurl + "/service?method=" + m + "&account=" + account + "&" + p + "=")
     return s
 
 def substitute_tags(searchin, tags, use_xml_escaping = True, opener = "&lt;&lt;", closer = "&gt;&gt;"):
