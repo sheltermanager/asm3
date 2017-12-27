@@ -30,7 +30,8 @@ INNER JOIN owner ro ON adoption.RetailerID = ro.ID
 INNER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
 INNER JOIN species ON species.ID = animal.SpeciesID
 LEFT OUTER JOIN owner oo ON animal.OriginalOwnerID = oo.ID
-WHERE MovementType = 1 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' ORDER BY MovementDate
+WHERE MovementType = 1 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
+ORDER BY RName, MovementDate
 ###
 $$HEADER
 HEADER$$
