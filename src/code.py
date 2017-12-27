@@ -3831,6 +3831,14 @@ class onlineforms(JSONEndpoint):
             extonlineform.import_onlineform_html(o.dbo, o.post.filedata())
         self.redirect("onlineforms")
 
+class onlineform_json(ASMEndpoint):
+    url = "onlineform_json"
+    get_permissions = users.EDIT_ONLINE_FORMS
+
+    def content(self, o):
+        self.header("Content-Type", "application/json")
+        return extonlineform.get_onlineform_json(o.dbo, o.post.integer("formid"))
+
 class options(JSONEndpoint):
     url = "options"
     get_permissions = users.SYSTEM_OPTIONS
