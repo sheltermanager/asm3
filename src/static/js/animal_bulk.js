@@ -70,6 +70,16 @@ $(function() {
                 '</tr>',
 
                 '<tr>',
+                '<td><label for="notforregistration">' + _("Do Not Register Microchip") + '</label></td>',
+                '<td><select id="notforregistration" data-post="notforregistration" class="asm-selectbox">',
+                '<option value="-1">' + _("(no change)") + '</option>',
+                '<option value="0">' + _("Register Microchip") + '</option>',
+                '<option value="1">' + _("Do Not Register Microchip") + '</option>',
+                '</select>',
+                '</td>',
+                '</tr>',
+
+                '<tr>',
                 '<td>',
                 '<label for="goodwithcats">' + _("Good with cats") + '</label>',
                 '</td>',

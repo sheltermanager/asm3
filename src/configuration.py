@@ -923,9 +923,6 @@ def petlink_email(dbo):
 def petlink_password(dbo):
     return cstring(dbo, "PetLinkPassword")
 
-def petlink_chippassword(dbo):
-    return cstring(dbo, "PetLinkChipPassword")
-
 def petrescue_user(dbo):
     return cstring(dbo, "PetRescueFTPUser")
 

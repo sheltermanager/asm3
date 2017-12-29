@@ -53,14 +53,9 @@ class PetLinkPublisher(AbstractPublisher):
 
         plemail = configuration.petlink_email(self.dbo)
         password = configuration.petlink_password(self.dbo)
-        chippass = configuration.petlink_chippassword(self.dbo)
 
         if plemail == "" or password == "":
             self.setLastError("No PetLink login has been set.")
-            return
-
-        if chippass == "":
-            self.setLastError("chip password needs to be set for petlink.com publisher")
             return
 
         animals = get_microchip_data(self.dbo, ['98102',], "petlink")
@@ -145,8 +140,8 @@ class PetLinkPublisher(AbstractPublisher):
                 line.append("\"%s\"" % ( an["CURRENTOWNERMOBILETELEPHONE"] ))
                 # Email (mandatory)
                 line.append("\"%s\"" % ( email ))
-                # Password (config item, unique to each shelter)
-                line.append("\"%s\"" % chippass)
+                # Chip Password (we leave this blank, PetLink supply the person's telephone number)
+                line.append("\"%s\"" % "")
                 # Date_of_Implant (yy-mm-dd)
                 line.append("\"%s\"" % i18n.format_date("%y-%m-%d", an["IDENTICHIPDATE"]))
                 # PetName

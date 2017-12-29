@@ -186,6 +186,7 @@ def get_animal_query(dbo):
         "(SELECT Name FROM lksynun l WHERE l.ID = a.IsGoodWithDogs) AS IsGoodWithDogsName, " \
         "(SELECT Name FROM lksynun l WHERE l.ID = a.IsHouseTrained) AS IsHouseTrainedName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.IsNotAvailableForAdoption) AS IsNotAvailableForAdoptionName, " \
+        "(SELECT Name FROM lksyesno l WHERE l.ID = a.IsNotForRegistration) AS IsNotForRegistrationName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.HasSpecialNeeds) AS HasSpecialNeedsName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.DiedOffShelter) AS DiedOffShelterName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.HasActiveReserve) AS HasActiveReserveName, " \
@@ -500,6 +501,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
             crueltycase
             nonshelter
             notforadoption
+            notforregistration
             quarantine
     locationfilter: IN clause of locations to search
     """
@@ -631,6 +633,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
             elif flag == "crueltycase": ands.append("a.CrueltyCase=1")
             elif flag == "nonshelter": ands.append("a.NonShelterAnimal=1")
             elif flag == "notforadoption": ands.append("a.IsNotAvailableForAdoption=1")
+            elif flag == "notforregistration": ands.append("a.IsNotForRegistration=1")
             elif flag == "quarantine": ands.append("a.IsQuarantine=1")
             else: 
                 ands.append("LOWER(a.AdditionalFlags) LIKE ?")
@@ -1865,6 +1868,11 @@ def insert_animal_from_form(dbo, post, username):
     elif configuration.auto_not_for_adoption(dbo):
         notforadoption = 1        
 
+    # Set not for register if the option is on
+    notforregistration = 0
+    if "notforregistration" in post:
+        notforregistration = post.integer("notforregistration")
+
     dbo.insert("animal", {
         "ID":               nextid,
         "AnimalName":       post["animalname"],
@@ -1954,6 +1962,7 @@ def insert_animal_from_form(dbo, post, username):
         "DiedOffShelter":   0,
         "PTSReason":        "",
         "IsNotAvailableForAdoption": notforadoption,
+        "IsNotForRegistration": notforregistration,
         "Size":             post.integer("size"),
         "Weight":           post.floating("weight"),
         "Archived":         0,
@@ -2073,6 +2082,7 @@ def update_animal_from_form(dbo, post, username):
     courtesy = bi("courtesy" in flags)
     crueltycase = bi("crueltycase" in flags)
     notforadoption = bi("notforadoption" in flags)
+    notforregistration = bi("notforregistration" in flags)
     nonshelter = bi("nonshelter" in flags)
     quarantine = bi("quarantine" in flags)
     flagstr = "|".join(flags) + "|"
@@ -2087,6 +2097,7 @@ def update_animal_from_form(dbo, post, username):
     dbo.update("animal", aid, {
         "NonShelterAnimal":     nonshelter,
         "IsNotAvailableForAdoption": notforadoption,
+        "IsNotForRegistration": notforregistration,
         "IsHold":               post.boolean("hold"),
         "HoldUntilDate":        post.date("holduntil"),
         "IsQuarantine":         quarantine,
@@ -2210,6 +2221,9 @@ def update_animals_from_form(dbo, post, username):
     if post.integer("notforadoption") != -1:
         dbo.execute("UPDATE animal SET IsNotAvailableForAdoption = %d WHERE ID IN (%s)" % (post.integer("notforadoption"), post["animals"]))
         aud.append("IsNotAvailableForAdoption = %s" % post["notforadoption"])
+    if post.integer("notforregistration") != -1:
+        dbo.execute("UPDATE animal SET IsNotForRegistration = %d WHERE ID IN (%s)" % (post.integer("notforregistration"), post["animals"]))
+        aud.append("IsNotForRegistration = %s" % post["notforregistration"])
     if post["holduntil"] != "":
         dbo.execute("UPDATE animal SET IsHold = 1, HoldUntilDate = %s WHERE ID IN (%s)" % (post.db_date("holduntil"), post["animals"]))
         aud.append("HoldUntilDate = %s" % post["holduntil"])

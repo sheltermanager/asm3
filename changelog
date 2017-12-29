@@ -1,6 +1,9 @@
 40
 ================
 
+29/12/17 Not registering microchips is the default for conversions #325
+29/12/17 Add IsNotForRegistration column/flag to disable chip reg #325
+29/12/17 Remove PetLink chip password field (they use tel no) #321
 20/12/17 Fix message delete button not appearing for superusers #315
 18/12/17 Fix PetLink publisher ignoring non-shelter/oo/cell phone
 15/12/17 Don't show the intake date for non-template non-shelter animals

@@ -1625,6 +1625,7 @@
                 { onshelter: true, label: _("Cruelty Case"), html: field_option("CRUELTYCASE", "crueltycase", _("Cruelty Case")) },
                 { onshelter: false, label: _("Non-Shelter"), html: field_option("NONSHELTERANIMAL", "nonshelter", _("Non-Shelter")) },
                 { onshelter: true, label: _("Not For Adoption"), html: field_option("ISNOTAVAILABLEFORADOPTION", "notforadoption", _("Not For Adoption")) },
+                { onshelter: false, label: _("Do Not Register Microchip"), html: field_option("ISNOTFORREGISTRATION", "notforregistration", _("Do Not Register Microchip")) },
                 { onshelter: true, label: _("Quarantine"), html: field_option("ISQUARANTINE", "quarantine", _("Quarantine")) }
             ];
 

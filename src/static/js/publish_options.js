@@ -263,17 +263,6 @@ $(function() {
                 '<td><label for="plpass">Password</label></td>',
                 '<td><input id="plpass" type="text" class="asm-textbox cfg" data="PetLinkPassword" /></td>',
                 '</tr>',
-                '<tr>',
-                '<td><label for="plchippass">Chip Password</label></td>',
-                '<td><input id="plchippass" type="text" class="asm-textbox cfg" data="PetLinkChipPassword" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td></td>',
-                '<td>',
-                html.info('The chip password is the password that allows owners to update their own information on the PetLink' +
-                  'website in combination with their email address.'),
-                '</td>',
-                '</tr>',
                 '</table>',
                 '</div>'
             ].join("\n");

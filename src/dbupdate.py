@@ -22,7 +22,7 @@ VERSIONS = (
     33800, 33801, 33802, 33803, 33900, 33901, 33902, 33903, 33904, 33905, 33906, 
     33907, 33908, 33909, 33911, 33912, 33913, 33914, 33915, 33916, 34000, 34001, 
     34002, 34003, 34004, 34005, 34006, 34007, 34008, 34009, 34010, 34011, 34012,
-    34013, 34014, 34015, 34016, 34017, 34018, 34019
+    34013, 34014, 34015, 34016, 34017, 34018, 34019, 34020
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -281,6 +281,7 @@ def sql_structure(dbo):
         fint("IsGoodWithChildren"),
         fint("IsHouseTrained"),
         fint("IsNotAvailableForAdoption"),
+        fint("IsNotForRegistration", True),
         fint("IsHold", True),
         fdate("HoldUntilDate", True),
         fint("IsQuarantine", True),
@@ -4647,8 +4648,8 @@ def update_34015(dbo):
     dbo.execute_dbupdate("UPDATE media SET DBFSID = (SELECT MAX(ID) FROM dbfs WHERE Name LIKE media.MediaName)")
     dbo.execute_dbupdate("UPDATE media SET DBFSID = 0 WHERE DBFSID Is Null")
     # Remove any _scaled component of names from both media and dbfs
-    dbo.execute_dbupdate("UPDATE media SET MediaName = %s WHERE MediaName LIKE '%_scaled%'" % dbo.sql_replace("MediaName", "_scaled", ""))
-    dbo.execute_dbupdate("UPDATE dbfs SET Name = %s WHERE Name LIKE '%_scaled%'" % dbo.sql_replace("Name", "_scaled", ""))
+    dbo.execute_dbupdate("UPDATE media SET MediaName = %s WHERE MediaName LIKE '%%_scaled%%'" % dbo.sql_replace("MediaName", "_scaled", ""))
+    dbo.execute_dbupdate("UPDATE dbfs SET Name = %s WHERE Name LIKE '%%_scaled%%'" % dbo.sql_replace("Name", "_scaled", ""))
 
 def update_34016(dbo):
     l = dbo.locale
@@ -4683,4 +4684,9 @@ def update_34019(dbo):
     add_column(dbo, "animal", "NeuteredByVetID", dbo.type_integer)
     add_index(dbo, "animal_NeuteredByVetID", "animal", "NeuteredByVetID")
     dbo.execute_dbupdate("UPDATE animal SET NeuteredByVetID = 0")
+
+def update_34020(dbo):
+    # Add IsNotForRegistration
+    add_column(dbo, "animal", "IsNotForRegistration", dbo.type_integer)
+    dbo.execute_dbupdate("UPDATE animal SET IsNotForRegistration = 0")
 

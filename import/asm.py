@@ -1819,6 +1819,7 @@ class Animal:
     IsGoodWithChildren = 2
     IsHouseTrained = 2
     IsNotAvailableForAdoption = 0
+    IsNotForRegistration = 1
     IsHold = 0
     HoldUntilDate = None
     IsQuarantine = 0
@@ -1956,6 +1957,7 @@ class Animal:
             ( "IsGoodWithChildren", di(self.IsGoodWithChildren) ),
             ( "IsHouseTrained", di(self.IsHouseTrained) ),
             ( "IsNotAvailableForAdoption", di(self.IsNotAvailableForAdoption) ),
+            ( "IsNotForRegistration", di(self.IsNotForRegistration) ),
             ( "IsHold", di(self.IsHold) ),
             ( "HoldUntilDate", dd(self.HoldUntilDate) ),
             ( "IsQuarantine", di(self.IsQuarantine) ),
