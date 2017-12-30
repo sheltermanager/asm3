@@ -267,7 +267,7 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1", 
         "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
         "AND AnimalID = a.ID AND SentDate >= a.IdentichipDate))" % { "publishername": publishername }
     where = " WHERE (%(patterns)s) AND a.DeceasedDate Is Null " \
-        "AND (IsNotForRegistration Is Null OR IsNotForRegistration=0) " \
+        "AND (a.IsNotForRegistration Is Null OR a.IsNotForRegistration=0) " \
         "AND (" \
         "(a.ActiveMovementID > 0 AND a.ActiveMovementType > 0 AND (a.ActiveMovementType IN (%(movementtypes)s)) %(trialclause)s " \
         "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
