@@ -3560,6 +3560,10 @@ msgstr ""
 msgid "Distemper"
 msgstr ""
 
+#: animal_bulk.js common.js
+msgid "Do Not Register Microchip"
+msgstr ""
+
 #: options.js
 msgid "Do not show"
 msgstr ""
@@ -8671,6 +8675,10 @@ msgstr ""
 msgid "Regenerate person names in selected format"
 msgstr ""
 
+#: animal_bulk.js
+msgid "Register Microchip"
+msgstr ""
+
 #: publish_options.js
 msgid "Register microchips after"
 msgstr ""
@@ -12690,7 +12698,7 @@ msgstr ""
 msgid "cm"
 msgstr ""
 
-#: medical.js medicalprofile.js medical.py
+#: header_edit_header.js medical.js medicalprofile.js medical.py
 msgid "days"
 msgstr ""
 
