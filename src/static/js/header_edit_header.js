@@ -140,7 +140,7 @@ $(function() {
                 '<td id="hleftshel">' + _("Left shelter") + ':</td><td><b>' + (a.ARCHIVED == 1 ? format.date(a.ACTIVEMOVEMENTDATE) : "") + '</b></td>',
                 '</tr>',
                 '<tr>',
-                '<td id="htimeonshel">' + _("Time on shelter") + ':</td><td><b>' + a.TIMEONSHELTER + '</b></td>',
+                '<td id="htimeonshel">' + _("Time on shelter") + ':</td><td><b>' + a.TIMEONSHELTER + ' (' + a.DAYSONSHELTER + ' ' + _("days") + ')</b></td>',
                 '</tr>',
                 '</table>',
                 '</div>'

@@ -1,6 +1,7 @@
 40
 ================
 
+03/01/18 Show time on shelter in days #322
 29/12/17 Not registering microchips is the default for conversions #325
 29/12/17 Add IsNotForRegistration column/flag to disable chip reg #325
 29/12/17 Remove PetLink chip password field (they use tel no) #321
