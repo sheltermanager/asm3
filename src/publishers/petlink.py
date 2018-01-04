@@ -228,10 +228,10 @@ class PetLinkPublisher(AbstractPublisher):
                             self.log("%s: %s (%s) - Already registered, marking as PetLink TRANSFER for next publish" % \
                                 (an["SHELTERCODE"], an["ANIMALNAME"], an["IDENTICHIPNUMBER"]))
 
-            if len(processed_animals > 0):
+            if len(processed_animals) > 0:
                 self.markAnimalsPublished(processed_animals)
 
-            if len(failed_animals > 0):
+            if len(failed_animals) > 0:
                 self.markAnimalsPublishFailed(failed_animals)
 
         except Exception as err:
