@@ -441,14 +441,18 @@ def advanced_find_animal(dbo):
 def advanced_find_animal_on_shelter(dbo):
     return cboolean(dbo, "AdvancedFindAnimalOnShelter", DEFAULTS["AdvancedFindAnimalOnShelter"] == "Yes")
 
-def age_group(dbo, band):
-    return cfloat(dbo, "AgeGroup%d" % band)
-
-def age_group_for_name(dbo, name):
+def age_group_bands(dbo):
+    bands = []
     for i in range(1, 9):
         groupname = cstring(dbo, "AgeGroup%dName" % i)
-        if groupname == name:
-            return cfloat(dbo, "AgeGroup%d" % i)
+        if groupname.strip() != "":
+            bands.append( ( groupname, cfloat(dbo, "AgeGroup%d" % i) ) )
+    return bands
+
+def age_group_for_name(dbo, name):
+    for group, years in age_group_bands(dbo):
+        if group == name:
+            return years
     return 0
 
 def age_groups(dbo):
@@ -458,6 +462,9 @@ def age_groups(dbo):
         if groupname != "":
             groups.append(groupname)
     return groups
+
+def age_group(dbo, band):
+    return cfloat(dbo, "AgeGroup%d" % band)
 
 def age_group_name(dbo, band):
     return cstring(dbo, "AgeGroup%dName" % band)

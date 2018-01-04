@@ -1088,11 +1088,6 @@ def calc_age_group(dbo, animalid, a = None, bands = None):
     date of birth.
     (int) animalid: The animal to calculate the age group for
     """
-    def bv(item, bands):
-        for b in bands:
-            if b.itemname == item:
-                return b.itemvalue
-        return ""
     # Calculate animal's age in days
     dob = None
     if a is None:
@@ -1102,13 +1097,11 @@ def calc_age_group(dbo, animalid, a = None, bands = None):
     days = date_diff_days(dob, dbo.now())
     # Load age group bands if they weren't passed
     if bands is None:
-        bands = dbo.query("SELECT ItemName, ItemValue FROM configuration WHERE ItemName LIKE 'AgeGroup%' ORDER BY ItemName")
+        bands = configuration.age_group_bands(dbo)
     # Loop through the bands until we find one that the age in days fits into
-    for i in range(0, 20):
-        band = bv("AgeGroup%d" % i, bands)
-        years = utils.cfloat(band)
+    for group, years in bands:
         if days <= years * 365:
-            return bv("AgeGroup%dName" % i, bands)
+            return group
     # Out of bands and none matched
     return ""
 
@@ -2987,7 +2980,7 @@ def update_all_variable_animal_data(dbo):
     animalupdatebatch = []
 
     # Load age group bands now to save repeated looped lookups
-    bands = dbo.query("SELECT ItemName, ItemValue FROM configuration WHERE ItemName LIKE 'AgeGroup%' ORDER BY ItemName")
+    bands = configuration.age_group_bands(dbo)
 
     # Relevant fields
     animals = dbo.query("SELECT ID, DateBroughtIn, DeceasedDate, DiedOffShelter, Archived, ActiveMovementDate, " \
@@ -3023,7 +3016,7 @@ def update_on_shelter_variable_animal_data(dbo):
     animalupdatebatch = []
 
     # Load age group bands now to save repeated looped lookups
-    bands = dbo.query("SELECT ItemName, ItemValue FROM configuration WHERE ItemName LIKE 'AgeGroup%' ORDER BY ItemName")
+    bands = configuration.age_group_bands(dbo)
 
     # Relevant on shelter animal fields
     animals = dbo.query("SELECT ID, DateBroughtIn, DeceasedDate, DiedOffShelter, Archived, ActiveMovementDate, " \
