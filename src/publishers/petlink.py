@@ -66,9 +66,12 @@ class PetLinkPublisher(AbstractPublisher):
         anCount = 0
         csv = []
         processed_animals = []
+        failed_animals = []
+
         csv.append("Software,TransactionType,MicrochipID,FirstName,LastName,Address,City,State,ZipCode,Country," \
             "Phone1,Phone2,Phone3,Email,Password,Date_of_Implant,PetName,Species,Breed,Gender," \
             "Spayed_Neutered,ColorMarkings")
+
         for an in animals:
             try:
                 line = []
@@ -198,29 +201,39 @@ class PetLinkPublisher(AbstractPublisher):
                 chip = e["column"].replace("microchip=", "").replace("id=", "")
                 message = e["message"]
 
-                # Iterate over a copy of the processed list so we can remove this animal from it
+                # Iterate over a copy of the processed list so we can remove animals from it
                 for an in processed_animals[:]:
+
                     if an["IDENTICHIPNUMBER"] == chip:
-                        # Remove this animal from the processed list
                         processed_animals.remove(an)
                         self.logError("%s: %s (%s) - Received error message from PetLink: %s" % \
                             (an["SHELTERCODE"], an["ANIMALNAME"], an["IDENTICHIPNUMBER"], message))
+
+                        # If the contact info is on file, process the animal with an error message
+                        if message.find("has an existing PetLink account and their contact information is already on file") != -1:
+                            an["FAILMESSAGE"] = message
+                            failed_animals.append(an)
+
+                        # If the message is that this microchip is not pre-paid, mark it processed with the fail message
+                        elif message.find("Not a prepaid microchip.") != -1:
+                            an["FAILMESSAGE"] = message
+                            failed_animals.append(an)
+
                         # If the message was that the chip is already registered,
                         # mark the animal as published but at the intake date -
                         # this will force this publisher to put it through as a transfer
-                        # next time
-                        if message.find("This microchip code has already been registered") != -1:
+                        # next time (we remove it from the process list above)
+                        elif message.find("This microchip code has already been registered") != -1:
                             self.markAnimalPublished(an["ID"], an["DATEBROUGHTIN"])
                             self.log("%s: %s (%s) - Already registered, marking as PetLink TRANSFER for next publish" % \
                                 (an["SHELTERCODE"], an["ANIMALNAME"], an["IDENTICHIPNUMBER"]))
 
-            if jresp["successCount"] > 0 or jresp["warningCount"] > 0:
-                # Mark published
-                self.log("successCount > 0 || warningCount > 0 - marking processed animals as sent to petlink")
+            if len(processed_animals > 0):
                 self.markAnimalsPublished(processed_animals)
-            else:
-                self.logError("successCount == 0 && warningCount == 0, abandoning.")
-                self.log("response hdr: %s, \nresponse: %s" % (r["headers"], r["response"]))
+
+            if len(failed_animals > 0):
+                self.markAnimalsPublishFailed(failed_animals)
+
         except Exception as err:
             self.logError("Failed uploading data file: %s" % err)
 
