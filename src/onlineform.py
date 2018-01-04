@@ -722,11 +722,12 @@ def delete_onlineformincoming(dbo, username, collationid):
     db.execute(dbo, "DELETE FROM onlineformincoming WHERE CollationID = %d" % int(collationid))
 
 def guess_agegroup(dbo, s):
-    """ Guesses an agegroup, returns the default if no match is found """
+    """ Guesses an agegroup, returns the third band (adult by default) if no match is found """
     s = str(s).lower()
-    guess = dbo.query_string("SELECT ItemValue FROM configuration WHERE ItemName LIKE ? AND LOWER(ItemValue) LIKE ?", ["AgeGroup%Name", "%%%s%%" % s])
-    if guess != "": return guess
-    return dbo.query_string("SELECT ItemValue FROM configuration WHERE ItemName LIKE ?", ["AgeGroup2Name"])
+    for g in configuration.age_groups(dbo):
+        if g.lower() == s:
+            return g
+    return configuration.age_group_name(dbo, 3)
 
 def guess_breed(dbo, s):
     """ Guesses a breed, returns the default if no match is found """

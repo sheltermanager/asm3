@@ -459,7 +459,7 @@ def age_groups(dbo):
     groups = []
     for i in range(1, 9):
         groupname = cstring(dbo, "AgeGroup%dName" % i)
-        if groupname != "":
+        if groupname.strip() != "":
             groups.append(groupname)
     return groups
 
