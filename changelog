@@ -1,6 +1,7 @@
 40
 ================
 
+04/01/18 Add text encoding support to CSV import for UTF16 and CP1252
 04/01/18 Log some PetLink registrations as errors so we don't keep trying
 03/01/18 Show time on shelter in days #322
 29/12/17 Not registering microchips is the default for conversions #325

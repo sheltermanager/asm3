@@ -1887,7 +1887,7 @@ class csvimport(JSONEndpoint):
 
     def post_all(self, o):
         l = o.locale
-        async.function_task(o.dbo, _("Import a CSV file", l), extcsvimport.csvimport, o.dbo, o.post.filedata(), 
+        async.function_task(o.dbo, _("Import a CSV file", l), extcsvimport.csvimport, o.dbo, o.post.filedata(), o.post["encoding"], 
             o.post.boolean("createmissinglookups") == 1, o.post.boolean("cleartables") == 1, o.post.boolean("checkduplicates") == 1)
         self.redirect("task")
 

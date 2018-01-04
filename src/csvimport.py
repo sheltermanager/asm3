@@ -206,7 +206,7 @@ def row_error(errors, rowtype, rowno, row, e, dbo, exinfo):
     al.error("row %d %s: (%s): %s" % (rowno, rowtype, str(row), errmsg), "csvimport.row_error", dbo, exinfo)
     errors.append( (rowno, str(row), errmsg) )
 
-def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, checkduplicates = False):
+def csvimport(dbo, csvdata, encoding = "utf8", createmissinglookups = False, cleartables = False, checkduplicates = False):
     """
     Imports the csvdata.
     createmissinglookups: If a lookup value is given that's not in our data, add it
@@ -218,7 +218,11 @@ def csvimport(dbo, csvdata, createmissinglookups = False, cleartables = False, c
     csvdata = csvdata.replace("\r\n", "\n")
     csvdata = csvdata.replace("\r", "\n")
 
-    reader = utils.UnicodeCSVReader(StringIO(csvdata))
+    reader = None
+    if encoding == "utf8":
+        reader = utils.UnicodeCSVReader(StringIO(csvdata))
+    else:
+        reader = utils.UnicodeCSVReader(StringIO(csvdata), encoding=encoding)
 
     # Make sure we have a valid header
     cols = None

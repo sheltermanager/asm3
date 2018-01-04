@@ -10454,6 +10454,10 @@ msgstr ""
 msgid "Text"
 msgstr ""
 
+#: csvimport.js
+msgid "Text Encoding"
+msgstr ""
+
 #: common.js
 msgid "Th"
 msgstr ""
