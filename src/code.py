@@ -22,7 +22,7 @@ import db, dbfs, dbupdate
 import diary as extdiary
 import financial
 import html
-from i18n import _, BUILD, translate, get_version, get_display_date_format, get_currency_prefix, get_currency_symbol, get_currency_dp, parse_date, python2display, add_days, subtract_days, subtract_months, first_of_month, last_of_month, monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency, i18nstringsjs
+from i18n import _, BUILD, translate, get_version, get_display_date_format, get_currency_prefix, get_currency_symbol, get_currency_dp, get_currency_radix, get_currency_digit_grouping, parse_date, python2display, add_days, subtract_days, subtract_months, first_of_month, last_of_month, monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency, i18nstringsjs
 import log as extlog
 import lookups as extlookups
 import lostfound as extlostfound
@@ -460,6 +460,8 @@ class configjs(ASMEndpoint):
             "currencysymbol": get_currency_symbol(o.locale),
             "currencydp": get_currency_dp(o.locale),
             "currencyprefix": get_currency_prefix(o.locale),
+            "currencyradix": get_currency_radix(o.locale),
+            "currencydigitgrouping": get_currency_digit_grouping(o.locale),
             "securitymap": o.session.securitymap,
             "superuser": o.session.superuser,
             "locationfilter": o.locationfilter,

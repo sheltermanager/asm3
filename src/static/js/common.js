@@ -1128,9 +1128,10 @@
             if (isNaN(nv)) { nv = 0; }
             nv = nv.toFixed(asm.currencydp);
             rv = nv.toString();
-            // add commas every 3 digits
+            // add a group digit separator every 3 digits of the whole numbers
+            // (note that radix is swapped below here when fractional portion appended)
             var parts = nv.toString().split(".");
-            rv = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (parts[1] ? "." + parts[1] : "");
+            rv = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, asm.currencydigitgrouping) + (parts[1] ? asm.currencyradix + parts[1] : "");
             // tack the currency symbol onto the beginning or end according to locale
             if (asm.currencyprefix && asm.currencyprefix == "s") {
                 rv = rv + cs;
@@ -1142,14 +1143,18 @@
         },
 
         currency_to_float: function(c) {
-            /*jslint regexp: true */
-            c = c.replace(/[^0-9\.\-]/g, '');
+            // Remove everything that isn't a digit, sign or our decimal mark
+            c = c.replace(new RegExp("[^0-9\\" + asm.currencyradix + "\\-]", "g"), '');
+            c = $.trim(c);
             // Some currency formats (eg: Russian py6. and Indian Rs. have a 
             // dot to finish. If we have a leading dot, it must be one of
             // those formats so remove it.
             if (c.substring(0, 1) == ".") {
                 c = c.substring(1);
             }
+            // Replace our decimal mark with a ".", as that's all parseFloat understands
+            // There should only ever be one of them so standard js replace is ok
+            c = c.replace(asm.currencyradix, ".");
             return parseFloat(c);
         },
 

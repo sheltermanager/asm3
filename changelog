@@ -1,6 +1,7 @@
 40
 ================
 
+05/01/18 Support currency grouping digits and radix for locales #319
 05/01/18 Reinstate hide person record from user functionality
 04/01/18 Use age group config defaults if not specified
 04/01/18 Add text encoding support to CSV import for UTF16 and CP1252

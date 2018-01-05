@@ -1338,7 +1338,7 @@
             }
         };
         if (cmd === undefined) {
-            var allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '-' ];
+            var allowed = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', asm.currencyradix, '-' ];
             this.each(function() {
                 $(this).keypress(function(e) {
                     var k = e.charCode || e.keyCode;
@@ -1367,11 +1367,8 @@
                     return 0;
                 }
                 // Extract only the numbers, sign and decimal point
-                v = v.replace(/[^0123456789\-\.]/g, '');
-                v = $.trim(v);
-                f = parseFloat(v);
-                f *= 100;
-                // Adding 0.5 corrects IEEE rounding errors 
+                f = format.currency_to_float(v) * 100;
+                // Adding 0.5 corrects IEEE rounding errors in multiplication
                 if (f > 0) { f += 0.5; }
                 return parseInt(f, 10);
             }

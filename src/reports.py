@@ -797,11 +797,10 @@ class Report:
                     except Exception as e:
                         # Ignore anything that wasn't a number
                         pass
-                fstr = "%0." + str(roundto) + "f"
-                value = ""
                 if utils.is_currency(fields[1]):
-                    value = i18n.get_currency_symbol(self.dbo.locale)
-                value += fstr % total
+                    value = i18n.format_currency(self.dbo.locale, fv * 100)
+                else:
+                    value = "%0." + str(roundto) + "f" % total
 
             # {COUNT.field[.distinct]}
             if key.lower().startswith("count"):
