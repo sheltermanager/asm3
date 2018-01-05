@@ -219,6 +219,17 @@ def get_vaccinated(dbo, animalid):
         "WHERE AnimalID = %d AND DateOfVaccination Is Null AND DateRequired < %s" % (animalid, db.dd(now(dbo.timezone))))
     return outstanding == 0 and given > 0
 
+def get_batch_for_vaccination_types(dbo):
+    """
+    Returns vaccination types and 
+    last non-empty batch number and manufacturer we saw for that type
+    """
+    return dbo.query("SELECT ID, " \
+        "(SELECT BatchNumber FROM animalvaccination v1 WHERE v1.ID = (SELECT MAX(v2.ID) FROM animalvaccination v2 WHERE v2.BatchNumber <> '' AND vt.ID = v2.VaccinationID AND DateOfVaccination Is Not Null)) AS BatchNumber, " \
+        "(SELECT Manufacturer FROM animalvaccination v1 WHERE v1.ID = (SELECT MAX(v2.ID) FROM animalvaccination v2 WHERE v2.BatchNumber <> '' AND vt.ID = v2.VaccinationID AND DateOfVaccination Is Not Null)) AS Manufacturer " \
+        "FROM vaccinationtype vt " \
+        "ORDER BY vt.ID")
+
 def get_regimens(dbo, animalid, onlycomplete = False, sort = ASCENDING_REQUIRED):
     """
     Returns a recordset of medical regimens for an animal:

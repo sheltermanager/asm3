@@ -20,6 +20,9 @@ class TestMedical(unittest.TestCase):
     def test_get_vaccinated(self):
         medical.get_vaccinated(base.get_dbo(), 1)
 
+    def test_get_batch_for_vaccination_types(self):
+        medical.get_batch_for_vaccination_types(base.get_dbo())
+
     def test_get_regimens(self):
         medical.get_regimens(base.get_dbo(), 1)
 

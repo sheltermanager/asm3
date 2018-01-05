@@ -307,6 +307,7 @@ $(function() {
                     $("#type").select("value", config.str("AFDefaultVaccinationType"));
                     vaccination.enable_default_cost = true;
                     vaccination.set_default_cost();
+                    vaccination.set_last_batch();
                 }
             });
         },
@@ -332,6 +333,7 @@ $(function() {
                     $("#type").select("value", config.str("AFDefaultVaccinationType"));
                     vaccination.enable_default_cost = true;
                     vaccination.set_default_cost();
+                    vaccination.set_last_batch();
                 }
             });
         },
@@ -440,8 +442,11 @@ $(function() {
             this.bind_givendialog();
             this.bind_requireddialog();
 
-            // When the vacc type is changed, use the default cost from the vaccination type
-            $("#type").change(vaccination.set_default_cost);
+            // When the vacc type is changed, update the default cost and batch/manufacturer
+            $("#type").change(function() {
+                vaccination.set_default_cost();
+                vaccination.set_last_batch();
+            });
 
             // Remember the currently selected animal when it changes so we can add
             // its name and code to the local set
@@ -491,6 +496,21 @@ $(function() {
                     }
                     return true;
                 }
+            });
+        },
+
+        /** Sets the batch number and manufacturer fields based on the last 
+         *  vacc of this type we saw
+         */
+        set_last_batch: function() {
+            var seltype = $("#type").val();
+            $.each(controller.batches, function(i, v) {
+                if (seltype == v.ID) {
+                    $("#batchnumber, #manufacturer").val("");
+                    if (v.BATCHNUMBER) { $("#batchnumber").val(v.BATCHNUMBER); }
+                    if (v.MANUFACTURER) { $("#manufacturer").val(v.MANUFACTURER); }
+                }
+                return true;
             });
         },
 
