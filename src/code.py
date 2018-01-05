@@ -3887,25 +3887,29 @@ class person(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         p = extperson.get_person(dbo, o.post.integer("id"))
-        if p is None: self.notfound()
+        if p is None: 
+            self.notfound()
         if p["ISSTAFF"] == 1:
             self.check(users.VIEW_STAFF)
         if p["ISVOLUNTEER"] == 1:
             self.check(users.VIEW_VOLUNTEER)
         if o.siteid != 0 and p["SITEID"] != 0 and o.siteid != p["SITEID"]:
             raise utils.ASMPermissionError("person not in user site")
+        upid = users.get_personid(dbo, o.user)
+        if upid != 0 and upid == p.id:
+            raise utils.ASMPermissionError("cannot view user staff record")
         al.debug("opened person '%s'" % p["OWNERNAME"], "code.person", dbo)
         return {
-            "additional": extadditional.get_additional_fields(dbo, p["ID"], "person"),
+            "additional": extadditional.get_additional_fields(dbo, p.id, "person"),
             "animaltypes": extlookups.get_animal_types(dbo),
-            "audit": self.checkb(users.VIEW_AUDIT_TRAIL) and audit.get_audit_for_link(dbo, "owner", p["ID"]) or [],
+            "audit": self.checkb(users.VIEW_AUDIT_TRAIL) and audit.get_audit_for_link(dbo, "owner", p.id) or [],
             "species": extlookups.get_species(dbo),
             "breeds": extlookups.get_breeds_by_species(dbo),
             "colours": extlookups.get_basecolours(dbo),
             "diarytasks": extdiary.get_person_tasks(dbo),
             "flags": extlookups.get_person_flags(dbo),
             "ynun": extlookups.get_ynun(dbo),
-            "homecheckhistory": extperson.get_homechecked(dbo, o.post.integer("id")),
+            "homecheckhistory": extperson.get_homechecked(dbo, p.id),
             "jurisdictions": extlookups.get_jurisdictions(dbo),
             "logtypes": extlookups.get_log_types(dbo),
             "sexes": extlookups.get_sexes(dbo),
@@ -3914,7 +3918,7 @@ class person(JSONEndpoint):
             "towns": "|".join(extperson.get_towns(dbo)),
             "counties": "|".join(extperson.get_counties(dbo)),
             "towncounties": "|".join(extperson.get_town_to_county(dbo)),
-            "tabcounts": extperson.get_satellite_counts(dbo, p["ID"])[0],
+            "tabcounts": extperson.get_satellite_counts(dbo, p.id)[0],
             "templates": dbfs.get_document_templates(dbo),
             "person": p
         }
