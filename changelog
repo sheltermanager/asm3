@@ -1,6 +1,7 @@
 40
 ================
 
+05/01/18 Add support for default payment method #274
 05/01/18 Support currency grouping digits and radix for locales #319
 05/01/18 Reinstate hide person record from user functionality
 04/01/18 Use age group config defaults if not specified

@@ -3126,6 +3126,10 @@ msgid "Default Log Type"
 msgstr ""
 
 #: options.js
+msgid "Default Payment Method"
+msgstr ""
+
+#: options.js
 msgid "Default Payment Type"
 msgstr ""
 

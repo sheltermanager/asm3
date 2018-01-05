@@ -119,6 +119,7 @@ DEFAULTS = {
     "AFDefaultDeathReason": "1",
     "AFDefaultDiaryPerson": "",
     "AFDefaultDonationType": "1",
+    "AFDefaultPaymentMethod": "1",
     "AFDefaultEntryReason": "4",
     "AFDefaultLocation": "1",
     "AFDefaultLogFilter": "-1",

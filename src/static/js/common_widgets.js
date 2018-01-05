@@ -786,6 +786,8 @@
             // Set the default for our new payment type
             $("#donationtype" + i).val(config.str("AFDefaultDonationType")).change();
             $("#donationtype" + i).change();
+            // Payment method
+            $("#payment" + i).val(config.str("AFDefaultPaymentMethod"));
             // If we're creating accounting transactions and the override
             // option is set, allow override of the destination account
             if (config.bool("CreateDonationTrx") && config.bool("DonationTrxOverride")) {

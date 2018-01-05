@@ -3862,6 +3862,7 @@ class options(JSONEndpoint):
             "locales": extlookups.LOCALES,
             "locations": extlookups.get_internal_locations(dbo),
             "logtypes": extlookups.get_log_types(dbo),
+            "paymenttypes": extlookups.get_payment_types(dbo),
             "personfindcolumns": html.json_personfindcolumns(dbo),
             "quicklinks": html.json_quicklinks(dbo),
             "reservationstatuses": extlookups.get_reservation_statuses(dbo),

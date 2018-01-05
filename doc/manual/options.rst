@@ -276,7 +276,8 @@ Defaults
 --------
 
 This screen allows configuration of the system defaults. These defaults are
-used to select starting values when finding and creating animals. 
+used to select starting values when finding and creating animals and other
+records.
 
 * Mark new animals as not for adoption: Setting this option will cause ASM to
   automatically tick the “not for adoption” box when creating new animals. This
