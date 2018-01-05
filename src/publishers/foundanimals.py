@@ -139,6 +139,12 @@ class FoundAnimalsPublisher(FTPPublisher):
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
+        # Bail if we didn't have anything to do
+        if len(csv) == 0:
+            self.log("No data left to send to foundanimals")
+            self.cleanup()
+            return
+
         # Mark published
         self.markAnimalsPublished(success)
 

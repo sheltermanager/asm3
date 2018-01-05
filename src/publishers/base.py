@@ -263,13 +263,13 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1", 
         intakeclause = "OR (a.NonShelterAnimal = 0 AND a.IsHold = 0 AND a.Archived = 0 AND (a.ActiveMovementID = 0 OR a.ActiveMovementType = 2) " \
             "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
             "AND AnimalID = a.ID AND SentDate >= a.MostRecentEntryDate))" % { "publishername": publishername }
-    nonshelterclause = "OR (a.NonShelterAnimal = 1 AND a.OriginalOwnerID Is Not Null AND a.OriginalOwnerID > 0 " \
+    nonshelterclause = "OR (a.NonShelterAnimal = 1 AND a.OriginalOwnerID Is Not Null AND a.OriginalOwnerID > 0 AND a.IdentichipDate Is Not Null " \
         "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
         "AND AnimalID = a.ID AND SentDate >= a.IdentichipDate))" % { "publishername": publishername }
     where = " WHERE (%(patterns)s) AND a.DeceasedDate Is Null " \
         "AND (a.IsNotForRegistration Is Null OR a.IsNotForRegistration=0) " \
         "AND (" \
-        "(a.ActiveMovementID > 0 AND a.ActiveMovementType > 0 AND (a.ActiveMovementType IN (%(movementtypes)s)) %(trialclause)s " \
+        "(a.ActiveMovementID > 0 AND a.ActiveMovementType > 0 AND a.ActiveMovementType IN (%(movementtypes)s) %(trialclause)s " \
         "AND NOT EXISTS(SELECT SentDate FROM animalpublished WHERE PublishedTo = '%(publishername)s' " \
         "AND AnimalID = a.ID AND SentDate >= a.ActiveMovementDate)) " \
         "%(nonshelterclause)s " \
