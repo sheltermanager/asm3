@@ -798,9 +798,10 @@ class Report:
                         # Ignore anything that wasn't a number
                         pass
                 if utils.is_currency(fields[1]):
-                    value = i18n.format_currency(self.dbo.locale, fv * 100)
+                    value = i18n.format_currency(self.dbo.locale, total * 100)
                 else:
-                    value = "%0." + str(roundto) + "f" % total
+                    fmt = "%%0.%sf" % roundto
+                    value = fmt % total
 
             # {COUNT.field[.distinct]}
             if key.lower().startswith("count"):
