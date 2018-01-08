@@ -107,7 +107,12 @@ class PetLinkPublisher(AbstractPublisher):
                 if email == "" and homephone == "" and workphone == "" and mobilephone == "":
                     self.logError("No email address or phone number for owner, skipping.")
                     continue
-                
+               
+                # If there's no phone, PetLink can't set the chip password so skip it
+                if homephone == "" and workphone == "" and mobilephone == "":
+                    self.logError("No phone number for owner, skipping.")
+                    continue
+
                 # If we don't have an email address, use the owner's
                 # best phone number (home, mobile then work) @petlink.tmp
                 if email == "":
