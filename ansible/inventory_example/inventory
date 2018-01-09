@@ -1,0 +1,14 @@
+[linux]
+sheltermanager
+
+[apache]
+sheltermanager
+
+[mysql]
+sheltermanager
+
+[wsgi]
+sheltermanager
+
+[asm]
+sheltermanager
