@@ -99,7 +99,7 @@ class PetLinkPublisher(AbstractPublisher):
                     self.logError("Postal code for the new owner is blank, cannot process")
                     continue
 
-                # If there's no email or home phone, PetLink won't accept it
+                # If there's no email or phone, PetLink won't accept it
                 email = utils.nulltostr(an["CURRENTOWNEREMAILADDRESS"]).strip()
                 homephone = utils.nulltostr(an["CURRENTOWNERHOMETELEPHONE"]).strip()
                 workphone = utils.nulltostr(an["CURRENTOWNERWORKTELEPHONE"]).strip()
@@ -108,17 +108,18 @@ class PetLinkPublisher(AbstractPublisher):
                     self.logError("No email address or phone number for owner, skipping.")
                     continue
                
-                # If there's no phone, PetLink can't set the chip password so skip it
+                # If there's no phone, we can't set the chip password so skip it
                 if homephone == "" and workphone == "" and mobilephone == "":
                     self.logError("No phone number for owner, skipping.")
                     continue
 
-                # If we don't have an email address, use the owner's
-                # best phone number (home, mobile then work) @petlink.tmp
+                # Get the phone number and strip it of non-numeric data
+                phone = homephone or mobilephone or workphone
+                phone = "".join(c for c in phone if c.isdigit())
+
+                # If we don't have an email address, use phone@petlink.tmp
                 if email == "":
-                    phone = homephone or mobilephone or workphone
-                    email = "".join(c for c in phone if c.isdigit())
-                    email = "%s@petlink.tmp" % email
+                    email = "%s@petlink.tmp" % phone
 
                 # Software
                 line.append("\"ASM\"")
@@ -148,8 +149,8 @@ class PetLinkPublisher(AbstractPublisher):
                 line.append("\"%s\"" % ( an["CURRENTOWNERMOBILETELEPHONE"] ))
                 # Email (mandatory)
                 line.append("\"%s\"" % ( email ))
-                # Chip Password (we leave this blank, PetLink supply the person's telephone number)
-                line.append("\"%s\"" % "")
+                # Chip Password (stripped phone number)
+                line.append("\"%s\"" % phone)
                 # Date_of_Implant (yy-mm-dd)
                 line.append("\"%s\"" % i18n.format_date("%y-%m-%d", an["IDENTICHIPDATE"]))
                 # PetName
