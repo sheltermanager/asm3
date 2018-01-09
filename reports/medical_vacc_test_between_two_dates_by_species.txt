@@ -16,7 +16,7 @@ SELECT * FROM
 
 SELECT
 'Medical' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID,
-t.AnimalType, s.SpeciesName, il.LocationName, 
+t.AnimalType, s.SpeciesName, a.DisplayLocation,
 am.TreatmentName, am.Dosage, amt.TreatmentNumber, 
 amt.TotalTreatments, amt.DateRequired, am.Comments
 FROM animal a
@@ -31,7 +31,7 @@ AND a.Archived = 0 AND a.DeceasedDate Is Null
 
 UNION SELECT
 'Vaccination' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
-t.AnimalType, sp.SpeciesName, il.LocationName,
+t.AnimalType, sp.SpeciesName, a.DisplayLocation, 
 v.VaccinationType AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber,
 '1' AS TotalTreatments, av.DateRequired, av.Comments
 FROM animal a
@@ -46,7 +46,7 @@ AND a.Archived = 0 AND a.DeceasedDate Is Null
 
 UNION SELECT
 'Test' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
-t.AnimalType, sp.SpeciesName, il.LocationName,
+t.AnimalType, sp.SpeciesName, a.DisplayLocation,
 tt.TestName AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber,
 '1' AS TotalTreatments, at.DateRequired, at.Comments
 FROM animal a
