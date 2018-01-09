@@ -22,6 +22,11 @@ AND ad.MovementType = 1
 ORDER BY r.OwnerName, a.AnimalName
 ###
 $$HEADER
+HEADER$$
+
+$$GROUP_RETAILERNAME
+$$HEAD
+<h2>$RETAILERNAME</h2>
 <table border="1">
 <tr>
 <th>Date</th>
@@ -29,11 +34,6 @@ $$HEADER
 <th>Payment</th>
 <th>Adopter</th>
 </tr>
-HEADER$$
-
-$$GROUP_RETAILERNAME
-$$HEAD
-<h2>$RETAILERNAME</h2>
 $$FOOT
 </table>
 <p>$RETAILERNAME total adoptions: <b>{COUNT.AMT}</b> <br />
