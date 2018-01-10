@@ -1,6 +1,7 @@
 40
 ================
 
+10/01/18 Only default batch/manufacturer if the vacc is given #104
 05/01/18 Default batch number and manufacturer from last vacc of type #104
 05/01/18 Add support for default payment method #274
 05/01/18 Support currency grouping digits and radix for locales #319

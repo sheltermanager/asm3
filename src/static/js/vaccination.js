@@ -307,7 +307,6 @@ $(function() {
                     $("#type").select("value", config.str("AFDefaultVaccinationType"));
                     vaccination.enable_default_cost = true;
                     vaccination.set_default_cost();
-                    vaccination.set_last_batch();
                 }
             });
         },
@@ -333,7 +332,6 @@ $(function() {
                     $("#type").select("value", config.str("AFDefaultVaccinationType"));
                     vaccination.enable_default_cost = true;
                     vaccination.set_default_cost();
-                    vaccination.set_last_batch();
                 }
             });
         },
@@ -448,6 +446,11 @@ $(function() {
                 vaccination.set_last_batch();
             });
 
+            // When focus leaves the given date, update the batch/manufacturer
+            $("#given").blur(function() {
+                vaccination.set_last_batch();
+            });
+
             // Remember the currently selected animal when it changes so we can add
             // its name and code to the local set
             $("#animal").bind("animalchooserchange", function(event, rec) { vaccination.lastanimal = rec; });
@@ -503,6 +506,8 @@ $(function() {
          *  vacc of this type we saw
          */
         set_last_batch: function() {
+            // If the vacc hasn't been given, don't do anything
+            if (!$("#given").val()) { return; }
             var seltype = $("#type").val();
             $.each(controller.batches, function(i, v) {
                 if (seltype == v.ID) {
