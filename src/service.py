@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 """
-Service functions for external applications. 
+Service functions for external applications.
 
 An account, username and password is mandatory for
 sheltermanager accounts, username and password
@@ -31,11 +31,11 @@ from sitedefs import JQUERY_JS, JQUERY_UI_JS, MOMENT_JS, SIGNATURE_JS, TOUCHPUNC
 from sitedefs import BASE_URL, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, CACHE_SERVICE_RESPONSES, IMAGE_HOTLINKING_ONLY_FROM_DOMAIN
 
 # Service methods that require authentication
-AUTH_METHODS = [ 
-    "csv_mail", "csv_report", "html_report", "rss_timeline", "upload_animal_image", 
+AUTH_METHODS = [
+    "csv_mail", "csv_report", "html_report", "rss_timeline", "upload_animal_image",
     "xml_adoptable_animal", "json_adoptable_animal",
     "xml_adoptable_animals", "json_adoptable_animals", "jsonp_adoptable_animals",
-    "xml_recent_adoptions", "json_recent_adoptions", "jsonp_recent_adoptions", 
+    "xml_recent_adoptions", "json_recent_adoptions", "jsonp_recent_adoptions",
     "xml_shelter_animals", "json_shelter_animals", "jsonp_shelter_animals",
     "xml_recent_changes", "json_recent_changes", "jsonp_recent_changes"
 ]
@@ -106,7 +106,7 @@ def sign_document_page(dbo, mid):
     <title>
     %(title)s
     </title>
-    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     %(css)s
     %(scripts)s
     <script type="text/javascript">
@@ -137,20 +137,20 @@ def sign_document_page(dbo, mid):
                     }
                 });
             });
-            $("#reviewlink").click(function() { 
+            $("#reviewlink").click(function() {
                 $("#reviewlink").fadeOut();
-                $("#review").slideDown(); 
+                $("#review").slideDown();
             });
         });
     </script>
     <style>
-    button { 
-        padding: 10px; 
-        font-size: 100%%; 
+    button {
+        padding: 10px;
+        font-size: 100%%;
     }
-    #signature { 
-        border: 1px solid #aaa; 
-        height: 200px; 
+    #signature {
+        border: 1px solid #aaa;
+        height: 200px;
         width: 100%%;
         max-width: 500px;
     }
@@ -163,7 +163,7 @@ def sign_document_page(dbo, mid):
         "account":  dbo.database,
         "css":      html.asm_css_tag("asm-icon.css"),
         "thankyou": _("Thank you, the document is now signed.", l),
-        "scripts":  html.script_tag(JQUERY_JS) + html.script_tag(JQUERY_UI_JS) + 
+        "scripts":  html.script_tag(JQUERY_JS) + html.script_tag(JQUERY_UI_JS) +
                     html.script_tag(TOUCHPUNCH_JS) + html.script_tag(SIGNATURE_JS) + html.script_tag(MOMENT_JS)
     })
     d = []
@@ -193,7 +193,7 @@ def sign_document_page(dbo, mid):
 
 def handler(post, path, remoteip, referer, querystring):
     """ Handles the various service method types.
-    post:        The GET/POST parameters 
+    post:        The GET/POST parameters
     path:        The current system path/code.PATH
     remoteip:    The IP of the caller
     referer:     The referer HTTP header
@@ -229,13 +229,13 @@ def handler(post, path, remoteip, referer, querystring):
     if account != "":
         if MULTIPLE_DATABASES:
             if MULTIPLE_DATABASES_TYPE == "smcom":
-                # Is this sheltermanager.com? If so, we need to get the 
+                # Is this sheltermanager.com? If so, we need to get the
                 # database connection info (dbo) before we can login.
                 dbo = smcom.get_database_info(account)
             else:
                 # Look up the database info from our map
                 dbo  = db.get_multiple_database_info(account)
-            if dbo.database in ( "FAIL", "DISABLED", "WRONGSERVER" ): 
+            if dbo.database in ( "FAIL", "DISABLED", "WRONGSERVER" ):
                 al.error("auth failed - invalid smaccount %s from %s (%s)" % (account, remoteip, dbo.database), "service.handler", dbo)
                 return ("text/plain", 0, "ERROR: Invalid database (%s)" % dbo.database)
 
@@ -300,7 +300,7 @@ def handler(post, path, remoteip, referer, querystring):
 
     elif method =="dbfs_image":
         hotlink_protect("dbfs_image", referer)
-        return set_cached_response(cache_key, "image/jpeg", 86400, 120, utils.iif(title.startswith("/"), 
+        return set_cached_response(cache_key, "image/jpeg", 86400, 120, utils.iif(title.startswith("/"),
             dbfs.get_string_filepath(dbo, title), dbfs.get_string(dbo, title)))
 
     elif method =="extra_image":
@@ -339,6 +339,10 @@ def handler(post, path, remoteip, referer, querystring):
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
         rs = publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
         return set_cached_response(cache_key, "application/xml", 3600, 3600, html.xml(rs))
+
+    elif method == "json_found_animals":
+        rs = lostfound.get_foundanimal_last_days(dbo)
+        return set_cached_response(cache_key, "application/json", 3600, 3600, html.json(rs))
 
     elif method == "json_recent_adoptions":
         users.check_permission_map(l, user["SUPERUSER"], securitymap, users.VIEW_ANIMAL)
